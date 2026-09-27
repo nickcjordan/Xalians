@@ -82,5 +82,16 @@ class Tools(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Stale'):
             contact(self.d,p,self.d/'contact.png')
 
+    def test_source_overlap_is_diagnostic_not_acceptance(self):
+        p=self.fixture();derive(p,self.d/'m')
+        register(p,self.d/'m.occupancy.png',self.d/'m.mask.png',self.d/'front',60,30,50)
+        reference=np.zeros((60,60),dtype=bool);reference[3:9,3:9]=True
+        save_mask(reference,self.d/'ref.png')
+        report=check(self.d,self.d/'ref.png',None)
+        score=next(c for c in report['checks'] if c['name']=='front:occupancyIoU')
+        self.assertEqual(score['status'],'pass')
+        self.assertTrue(score['evidence']['diagnosticOnly'])
+        self.assertEqual(score['evidence']['value'],0)
+
 
 if __name__=='__main__': unittest.main()

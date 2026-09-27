@@ -6,12 +6,12 @@
   "clickSelect": false,
   "signals": [
    {
-    "name": "crown",
-    "selector": ".pw-radial-crown"
+    "name": "once-foot",
+    "selector": ".pw-radial-slot.signature .pw-plate-foot"
    },
    {
-    "name": "value-bar",
-    "selector": ".pw-radial-value"
+    "name": "plate-effect",
+    "selector": ".pw-plate-effect"
    },
    {
     "name": "threat-badge",
@@ -62,8 +62,8 @@
     "selector": ".pw-matchup"
    },
    {
-    "name": "charge-mark-on-disc",
-    "selector": ".pw-radial-charge"
+    "name": "charge-foot",
+    "selector": ".pw-radial-slot .pw-plate-foot"
    },
    {
     "name": "faint-target-ring",
@@ -159,8 +159,8 @@
     "selector": ".pw-scene-unit.fallen .pw-unit-plaque"
    },
    {
-    "name": "rest-pips",
-    "selector": ".pw-radial-rest"
+    "name": "rest-foot",
+    "selector": ".pw-radial-slot .pw-plate-foot"
    }
   ]
  },
@@ -171,8 +171,8 @@
   "clickSelect": false,
   "signals": [
    {
-    "name": "spent-disc",
-    "selector": ".pw-radial-tag"
+    "name": "spent-plate",
+    "selector": ".pw-plate-reason"
    },
    {
     "name": "charged-badge",

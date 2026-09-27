@@ -10,7 +10,6 @@
 //   [data-hero-fig]     the creature arriving after the lockup, once on load
 //   [data-panel]        a painting settling into its frame as it scrolls in, once
 //   [data-panel] img    a scroll-linked drift inside the frame (no loop)
-//   [data-plate]        a caption plate sliding out from behind its panel, once
 //   [data-figure]       the specimen printing in (blur to sharp), once
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -59,13 +58,6 @@ export function startStoryMotion(root: HTMLElement): (() => void) | undefined {
 						{ yPercent: 5, ease: 'none', scrollTrigger: { trigger: panel, start: 'top bottom', end: 'bottom top', scrub: 0.6 } }
 					));
 				}
-			});
-
-			root.querySelectorAll<HTMLElement>('[data-plate]').forEach((plate) => {
-				const from = plate.dataset.plate;
-				const x = from === 'left' ? -56 : from === 'right' ? 56 : 0;
-				const y = from === 'up' ? 28 : 0;
-				keep(gsap.fromTo(plate, { x, y, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: 0.8, ease: ENTER, delay: 0.15, scrollTrigger: once(plate, 'top 90%') }));
 			});
 
 			root.querySelectorAll<HTMLElement>('[data-figure]').forEach((fig) => {

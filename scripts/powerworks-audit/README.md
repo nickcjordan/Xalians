@@ -9,7 +9,7 @@ The method is in `docs/design/powerworks-intuitiveness-audit.md`; run records li
 2. The engine's facts behind the answer key, for each moment:
    `node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/devtools/auditFacts.ts --dir=untracked/powerworks-audit --moments=scripts/powerworks-audit/moments.json > untracked/powerworks-audit/facts.json`
    Check `keys.md` against these facts when a rule or the preset squad changes.
-3. Capture every moment, and the three playback streams, from the live site (set `BASE` to test a local build):
+3. Capture every moment, and the three playback streams, from the live site (set `BASE` to test a local build, and `MOMENTS` to capture another moments file):
    `node scripts/powerworks-audit/capture.cjs`
 4. Build the neutral reader packets (images named by number only, no meaning in any file name):
    `python scripts/powerworks-audit/build_packets.py`

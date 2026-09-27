@@ -111,7 +111,7 @@ export type MoveValue = {
   healed: number;
   /** The part of `saved` that stops the target machine's own blow (a knockout, a status, a broken charge). */
   stops: number;
-  /** How many machines this use damages: its target and any its area reaches (words pass: "8 dmg on 2"). */
+  /** How many machines this use damages: its target and any its area reaches (words pass: "8 dmg across 2"). */
   reached?: number;
   /** This use knocks its target out (after the squad's other orders, when the run passed in is projected). */
   knockout: boolean;

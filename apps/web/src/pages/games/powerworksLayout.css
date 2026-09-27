@@ -39,6 +39,10 @@
   list-style: none;
   min-width: 0;
   overflow: hidden;
+  /* Room inside the clip for the "later" and "sooner" words over a portrait, which stood
+     above the list's box and were cut off (found in the move plates pass). */
+  padding-top: 12px;
+  margin-top: -12px;
 }
 /* A small chevron between figures says "then". */
 .pw-turn-strip li + li::before {

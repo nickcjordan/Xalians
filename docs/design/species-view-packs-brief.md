@@ -2,6 +2,8 @@
 
 Written 2026-09-27 as a handoff to an agent that has not seen this project. Nick approves every species' result; nothing here is final until he says so in his own words.
 
+Updated ruling, 2026-09-27: Nick removed exact source-silhouette matching as an acceptance rule because his drawings are abstractions of the intended creatures. They guide identity, anatomy, proportions and pose; they are not literal pixel templates. Source IoU and source-feature distances may be diagnostic but must not gate a candidate or drive its design. The generated views still need consistent anatomy, pose, scale and registration, plus Nick's approval. This supersedes the original wording wherever it requires an exact source outline or exact white-cutout reproduction.
+
 ## Why this exists
 
 Xalians is a creature-collection game platform with 30 invented species. For each species the designer (Nick) drew one front-view silhouette: a black shape with white cut-outs for features. It is the shape he imagined, and it is the source of truth.
@@ -10,7 +12,7 @@ A separate pipeline builds animated 3D models from these silhouettes. It can mat
 
 Your job is to build a layer that sits between the silhouette and the 3D pipeline. For each species it produces a **view pack**: shaded 2D images of the same creature, in the same pose, from around it, that Nick approves. The 3D pipeline will then trace every view, not just the front.
 
-You are building the tooling and producing the packs. You are not building 3D models or animation.
+You are building the tooling and producing the packs. Scope update, 2026-09-27: Nick authorized implementing and exercising `species-construction-pipeline.md`, including provisional geometry studies and a rough-model validation checkpoint. Finished model production, animation and game integration remain outside this work.
 
 ## What exists
 
@@ -56,12 +58,12 @@ Put approved packs in `docs/species-templates/views/<key>/`. Keep working candid
 
 ## Hard constraints and checks
 
-Build these checks as tools and run them on every candidate. A candidate that fails a check never reaches Nick.
+Build these checks as tools and run them on every final pack candidate. Failed studies may be shown as clearly labeled experiments for directional feedback under `species-construction/WORKFLOW.md`; they must never be presented as eligible final packs.
 
-1. **The front is Nick's drawing.**
-   - Register the front mask to the silhouette with scale and translation only (no rotation or warping). Overlap (intersection over union) must be 0.95 or better.
-   - Every white cut-out in the silhouette appears as a visible feature in the same place, within 2% of figure height.
-   - Output an overlay image: red for the silhouette only, blue for the view only, grey for both.
+1. **The front interprets Nick's drawing.**
+   - Preserve the intended identity, defining anatomy, proportions and pose through the approved reading. Do not enforce pixel overlap with the abstract source.
+   - Interpret white marks as the features they represent, according to Nick's direction. Exact cutout shape or location is not an acceptance requirement.
+   - Source overlays may diagnose a difference, but no source-overlap score or source-feature distance can veto a candidate. Judge the interpretation visually and obtain Nick's approval.
 2. **One creature, one pose.**
    - Landmark rows agree across views within 1.5% of figure height, and figure heights within 1%.
    - Widths agree where they must: the back view's outline mirrors the front's, except for genuinely asymmetric parts.
@@ -72,10 +74,10 @@ Build these checks as tools and run them on every candidate. A candidate that fa
 ## How to generate (a starting point; improve it)
 
 - **Generate the whole turnaround on one sheet.** Put all the views side by side on one canvas with guide lines. Image models keep one character far more consistent within a single image than across separate calls. Then split the sheet into views with your tools.
-- **Anchor the front.** If the tool can edit an image, give it a template canvas with Nick's silhouette already placed in the front slot and empty slots with guide lines for the other views, and ask it to fill the empty slots. Otherwise attach the silhouette as a reference image and say it is the front view, which must not change.
+- **Anchor the interpretation.** Attach Nick's drawing and the approved reading as design references. Carry accepted generated studies forward as visual references. Do not freeze the source pixels in the front slot or require exact source reproduction.
 - **Prompt skeleton** (per species, fill the brackets from the silhouette, the record and the approved `reading.md`):
 
-  > Character turnaround sheet of [name], an invented creature: [appearance list]. Views side by side on one white canvas, left to right: front, front-left three-quarter, left side, back, right side, front-right three-quarter. The same pose in every view: [pose, in words, from the silhouette]. The same scale and height in every view, feet on one ground line, orthographic, no perspective. Neutral mid-grey material, soft even light, no cast shadows, no background, no text or labels. The front view is the attached silhouette exactly: the same outline, proportions and pose. Its white cut-outs are drawn features: [list them]. [The view-by-view notes from reading.md.]
+  > Character turnaround sheet of [name], an invented creature: [appearance list]. Views on one white canvas: front, front-left three-quarter, left side, back, right side, front-right three-quarter. The same pose in every view: [approved pose in words]. The same scale and height in every view, feet on one ground line per row, orthographic, no perspective. Neutral mid-gray material, soft even light, no cast shadows, no background, no text or labels. Interpret the attached abstract silhouette through the approved reading, preserving its intended identity and defining features. Its white cut-outs represent: [list interpreted features]. [The view-by-view notes from reading.md.]
 
 - **Rounds:** generate several candidates per round and run the checks. Put the passing candidates on a contact sheet next to the silhouette for Nick. Log every run, including failures, with a run number, the settings and a verdict, the way `docs/art-pipeline/LOG.md` does.
 
@@ -100,7 +102,7 @@ Put the tools in `art/species-views/`, with a README. Use Python with Pillow and
 
 Each has a default, so work can start without waiting on them.
 
-- **Pose:** the drawing's pose (default) or a neutral standing pose. The drawing's pose keeps the front checkable against the silhouette.
+- **Pose:** the drawing's interpreted pose (default) or a neutral standing pose. A separate modeling pose is proposed in `species-construction-pipeline.md` and is not yet an approved replacement.
 - **Views:** four sides plus the two front three-quarters (default), or four sides only.
 - **Color:** grey form only in this round (default), with a color pass later.
 - **Where generation runs:** in the ChatGPT app, with you writing prompt packs and Nick running them and dropping the results in the work folder; or inside the agent, if its tools can generate images. Paid API use only with Nick's written go-ahead.

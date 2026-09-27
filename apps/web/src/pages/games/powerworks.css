@@ -1127,32 +1127,6 @@
   color: #b7cbc0;
   margin: 10px 0 18px;
 }
-.pw-symbol-key {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  padding: 16px;
-  background: #244039;
-  border-radius: 10px;
-  margin-bottom: 18px;
-}
-.pw-symbol-key > span {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 12px;
-}
-.pw-symbol-key svg {
-  width: 18px;
-  height: 18px;
-  color: #d1dfb2;
-}
-.pw-key-pip {
-  width: 18px;
-  height: 4px;
-  border-radius: 1px;
-  background: #b6d0c6;
-}
 .pw-guide-steps {
   display: flex;
   align-items: center;
@@ -1719,14 +1693,6 @@
   }
   .pw-dialog header h2 {
     font-size: 21px;
-  }
-  .pw-symbol-key {
-    padding: 13px;
-    gap: 12px;
-  }
-  .pw-symbol-key > span {
-    font-size: 12px;
-    gap: 7px;
   }
   .pw-guide-grid {
     grid-template-columns: 1fr;

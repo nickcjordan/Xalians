@@ -4,14 +4,12 @@ import {
   ArrowLeft,
   Ban,
   Crosshair,
-  Crown,
   HeartPulse,
   Magnet,
   RotateCcw,
   Shield,
   Sparkles,
   Users,
-  Zap,
   Hourglass,
 } from "lucide-react";
 import {
@@ -27,7 +25,6 @@ import {
 import {
   ElementIcon,
   GroupIcon,
-  MoveIcon,
   PowerIcon,
   baseName,
   charges,
@@ -200,6 +197,20 @@ function Pips({ rounds }: { rounds: number }) {
   return <span className="pw-rest-word">rests {rounds}</span>;
 }
 
+/**
+  Move plates (2026-09-27): what a ready plate says under its effect, in words, only when it
+  applies: "once" for the signature, "lands next round" for a move that charges, "rests N"
+  for one that rests after use. A signature's rest never matters, since it is used once.
+*/
+export function plateFoot(move: Move): string[] {
+  const rest = restRounds(move);
+  return [
+    ...(move.signature ? ["once"] : []),
+    ...(charges(move) ? ["lands next round"] : []),
+    ...(!move.signature && rest > 0 ? [`rests ${rest}`] : []),
+  ];
+}
+
 /** Why a slot cannot be chosen, or its readiness, in the short form a slot prints. */
 export function slotState(
   unit: Unit,
@@ -279,32 +290,28 @@ const EASE_OUT = "cubic-bezier(0.2, 0.75, 0.25, 1)";
 const EASE_IN = "cubic-bezier(0.5, 0, 0.75, 0.3)";
 
 type Point = { x: number; y: number };
+/**
+  Where the move plates stand (2026-09-27): one straight row over the selected companion's
+  head, so the moves read side by side like a hand of cards and compare at a glance. The
+  row's origin is its bottom left corner, in stage pixels.
+*/
 type Placement = {
-  /** The arc's center: the companion's feet, in stage pixels. */
-  x: number;
-  y: number;
-  radius: number;
-  below: boolean;
-  /** Each slot's disc center, relative to the arc's center. */
+  left: number;
+  bottom: number;
+  /** One plate's width, and the gap between plates. */
+  plate: number;
+  gap: number;
+  /** The row's height (the tallest plate). */
+  height: number;
+  /** Each plate's center, relative to the origin. */
   slots: Point[];
-  /** Where the discs open from and fold back to: the creature's middle, relative to the arc's center. */
+  /** Where the plates open from and fold back to: the creature's middle, relative to the origin. */
   from: Point;
-  /** The disc's size in pixels. */
-  disc: number;
-  /** The arc trim's path, relative to the arc's center. */
-  arc: string;
-  /** The ring's box (discs and labels) in stage pixels. */
-  box: Box;
 };
 
 const EDGE = 8;
 /** The move card's chamfer, the octagon the disc grows into. */
 const CHAMFER = 8;
-/** Evenly spread angles over the arc, in degrees. */
-const evenAngles = (count: number, spread: number) =>
-  count === 1
-    ? [0]
-    : Array.from({ length: count }, (_, k) => -spread + (k * 2 * spread) / (count - 1));
 const overlap = (a: Box, b: Box) =>
   Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) *
   Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
@@ -326,6 +333,11 @@ const outline = (x: number, y: number, w: number, h: number, c: number) =>
   ]
     .map(([a, b]) => `${a.toFixed(1)}px ${b.toFixed(1)}px`)
     .join(", ")})`;
+/** A plate's outline, relative to the card standing at `at`: where the card opens from. */
+const plateOutline = (plate: Box, at: { left: number; top: number }) =>
+  outline(plate.left - at.left, plate.top - at.top, plate.right - plate.left, plate.bottom - plate.top, PLATE_CHAMFER);
+/** The plate's chamfer, matched in powerworksRadial.css. */
+const PLATE_CHAMFER = 7;
 /**
   Where a creature is actually drawn in its art box: the painted square (the art is square,
   contained and set on the box's floor), not the box's empty sides.
@@ -344,33 +356,6 @@ function play(
   const target = el as HTMLElement | null | undefined;
   if (!target || typeof target.animate !== "function") return null;
   return target.animate(frames, options);
-}
-
-/**
-  The ring's geometry (decisions 3 and 8): the discs sit on a true circular arc centered on
-  the companion's feet, at a radius of about one figure height, so the arc crowns the head.
-  The discs spread evenly over the arc; a fifth (the fallback) widens the spread.
-*/
-function layout(
-  angles: number[],
-  radius: number,
-  below: boolean
-): { slots: Point[]; arc: string } {
-  const spread = Math.max(...angles.map(Math.abs));
-  const sign = below ? 1 : -1;
-  // Whole pixels (round 3): a disc and the name under it never stand on a half pixel, where
-  // their text and rim would be drawn soft.
-  const at = (deg: number, r = radius) => {
-    const a = (deg * Math.PI) / 180;
-    return { x: Math.round(r * Math.sin(a)), y: Math.round(sign * r * Math.cos(a)) };
-  };
-  const reach = spread + 9;
-  const a = at(-reach),
-    b = at(reach);
-  const arc = `M${a.x.toFixed(1)} ${a.y.toFixed(1)} A${radius} ${radius} 0 0 ${
-    below ? 0 : 1
-  } ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
-  return { slots: angles.map((d) => at(d)), arc };
 }
 
 export function PowerworksRadial({
@@ -440,7 +425,6 @@ export function PowerworksRadial({
   const map = useStageMap();
   const root = useRef<HTMLDivElement>(null),
     cardRef = useRef<HTMLDivElement>(null),
-    emblemRef = useRef<HTMLSpanElement>(null),
     bodyRef = useRef<HTMLDivElement>(null),
     slots = useRef<Array<HTMLButtonElement | null>>([]),
     pointer = useRef<string>("mouse"),
@@ -478,10 +462,10 @@ export function PowerworksRadial({
   const wheel = chosen === null && !closing;
   const cardSlot = cardIndex !== null ? indices.indexOf(cardIndex) : -1;
 
-  // Place the ring over the companion inside the stage: shift it sideways near an edge, and
-  // flip it below the figure when there is no room above (decision 8). Every box is read
-  // where it will stand once the stage camera settles (round 2), so the camera's lean
-  // never moves the ring.
+  // Place the row over the companion's head inside the stage (2026-09-27): centered on the
+  // figure, shifted sideways near an edge, its bottom just clear of the highest head it
+  // passes over, and never above the stage's top. Every box is read where it will stand
+  // once the stage camera settles (round 2), so the camera's lean never moves the row.
   useLayoutEffect(() => {
     const el = root.current;
     const m = map(el);
@@ -489,129 +473,97 @@ export function PowerworksRadial({
     const measure = () => {
       const m = map(el);
       const style = getComputedStyle(el);
-      const disc = px(style, "--disc", 60),
-        labelW = px(style, "--label-w", 80),
-        under = px(style, "--under", 30),
-        reachFactor = px(style, "--reach", 0.95),
-        spread = px(style, indices.length > 4 ? "--spread-wide" : "--spread", 38),
-        // On a phone the squad stands close together: the discs are pitched evenly and the
-        // radius is set so every disc clears every companion's head (review fix 1).
-        clearHeads = style.getPropertyValue("--clear-heads").trim() === "1",
-        pitch = px(style, "--pitch", 64);
+      const widest = px(style, "--plate-w", 132),
+        gap = px(style, "--plate-gap", 8),
+        rise = px(style, "--plate-rise", 8);
       const stage = el.closest(".pw-theater");
       const anchor = stage?.querySelector(`[data-unit="${unit.id}"] .pw-scene-character`);
       const a = m && anchor ? m.box(anchor) : null;
-      const W = m?.width ?? 0,
-        H = m?.height ?? 0;
+      const W = m?.width ?? 0;
+      const n = indices.length;
+      // Plates narrow when the row would not fit the stage (a phone, or five plates).
+      const plate = W
+        ? Math.max(64, Math.floor(Math.min(widest, (W - 2 * EDGE - (n - 1) * gap) / n)))
+        : widest;
+      const rowW = n * plate + (n - 1) * gap;
+      const height =
+        el.querySelector<HTMLElement>(".pw-radial-menu")?.offsetHeight || px(style, "--plate-h", 76);
+      const centers: Point[] = indices.map((_, k) => ({
+        x: k * (plate + gap) + plate / 2,
+        y: -height / 2,
+      }));
       // The painted figure is square and stands on its button's floor.
       const art = a && W ? Math.min(a.right - a.left, a.bottom - a.top) : 120;
-      let radius = Math.round(art * reachFactor + disc / 2),
-        angles = evenAngles(indices.length, spread);
-      if (clearHeads && a && W && stage && m) {
-        // Layout positions, not painted ones: the squad's walk-in animation moves the art
-        // while a round opens, and the ring must clear where the heads come to rest.
-        const heads = [
-          ...stage.querySelectorAll<HTMLElement>(".pw-scene-unit.ally .pw-scene-character"),
-        ].map((f) => {
-          const artEl = f.querySelector<HTMLElement>(".pw-actor-art");
-          return m.box(f).top + (artEl?.offsetTop ?? 0);
-        });
-        const lift = a.bottom - (Math.min(...heads) - 6) + disc / 2;
-        const xs = indices.map((_, k) => (k - (indices.length - 1) / 2) * pitch);
-        const widest = Math.max(...xs.map(Math.abs));
-        radius = Math.round(Math.hypot(widest, lift));
-        angles = xs.map((x) => (Math.asin(x / radius) * 180) / Math.PI);
-      }
-      const extent = (below: boolean) => {
-        const { slots: points, arc } = layout(angles, radius, below);
-        const half = Math.max(disc, labelW) / 2;
-        return {
-          points,
-          arc,
-          minX: Math.min(...points.map((p) => p.x)) - half,
-          maxX: Math.max(...points.map((p) => p.x)) + half,
-          minY: Math.min(...points.map((p) => p.y)) - disc / 2,
-          maxY: Math.max(...points.map((p) => p.y)) + disc / 2 + under,
-        };
-      };
-      if (!a || !W) {
-        const e = extent(false);
+      if (!a || !W || !stage || !m) {
         setPlace(
           (p) =>
             p ?? {
-              x: 0,
-              y: 0,
-              radius,
-              below: false,
-              slots: e.points,
-              from: { x: 0, y: -art / 2 },
-              disc,
-              arc: e.arc,
-              box: { left: 0, top: 0, right: 0, bottom: 0 },
+              left: 0,
+              bottom: 0,
+              plate,
+              gap,
+              height,
+              slots: centers,
+              from: { x: rowW / 2, y: -art / 2 },
             }
         );
         return;
       }
-      let below = false,
-        e = extent(false),
-        y = a.bottom;
-      if (y + e.minY < EDGE) {
-        const flipped = extent(true);
-        const top = a.bottom - art;
-        if (top + flipped.maxY <= H - EDGE) {
-          below = true;
-          e = flipped;
-          y = top;
-        } else y = EDGE - e.minY;
-      }
-      let x = (a.left + a.right) / 2;
-      if (x + e.minX < EDGE) x = EDGE - e.minX;
-      if (x + e.maxX > W - EDGE) x = W - EDGE - e.maxX;
       const cx = (a.left + a.right) / 2;
+      const left = Math.round(Math.min(W - EDGE - rowW, Math.max(EDGE, cx - rowW / 2)));
+      // Layout positions, not painted ones: the squad's walk-in animation moves the art
+      // while a round opens, and the row must clear where the heads come to rest.
+      const heads = [
+        ...stage.querySelectorAll<HTMLElement>(".pw-scene-unit.ally:not(.fallen) .pw-scene-character"),
+      ].flatMap((f) => {
+        const artEl = f.querySelector<HTMLElement>(".pw-actor-art");
+        const box = m.box(f);
+        const top = box.top + (artEl?.offsetTop ?? 0),
+          w = artEl?.offsetWidth ?? box.right - box.left,
+          h = artEl?.offsetHeight ?? box.bottom - box.top,
+          x = box.left + (artEl?.offsetLeft ?? 0);
+        const side = Math.min(w, h);
+        const painted = { left: x + (w - side) / 2, right: x + (w + side) / 2 };
+        return painted.right > left && painted.left < left + rowW ? [top + h - side] : [];
+      });
+      const head = Math.min(a.bottom - art, ...heads);
+      const bottom = Math.round(Math.max(EDGE + height, head - rise));
       const next: Placement = {
-        x: Math.round(x),
-        y: Math.round(y),
-        radius,
-        below,
-        slots: e.points,
-        from: {
-          x: Math.round(cx - Math.round(x)),
-          y: Math.round(a.bottom - art * 0.5 - Math.round(y)),
-        },
-        disc,
-        arc: e.arc,
-        box: {
-          left: Math.round(x + e.minX),
-          right: Math.round(x + e.maxX),
-          top: Math.round(y + e.minY),
-          bottom: Math.round(y + e.maxY),
-        },
+        left,
+        bottom,
+        plate,
+        gap,
+        height,
+        slots: centers,
+        from: { x: Math.round(cx - left), y: Math.round(a.bottom - art * 0.5 - bottom) },
       };
       setPlace((p) =>
         p &&
-        p.x === next.x &&
-        p.y === next.y &&
-        p.radius === next.radius &&
-        p.below === next.below &&
-        p.disc === next.disc
+        p.left === next.left &&
+        p.bottom === next.bottom &&
+        p.plate === next.plate &&
+        p.height === next.height &&
+        p.from.x === next.from.x &&
+        p.from.y === next.from.y
           ? p
           : next
       );
     };
     measure();
     const stage = m ? el.closest(".pw-theater") : null;
+    const menu = el.querySelector(".pw-radial-menu");
     const observer =
       typeof ResizeObserver === "undefined" || !stage ? null : new ResizeObserver(measure);
     if (stage) observer?.observe(stage);
+    if (menu) observer?.observe(menu);
     return () => observer?.disconnect();
   }, [unit.id, indices.length]);
 
-  /** A slot's disc box in stage pixels. */
+  /** A plate's box in stage pixels. */
   const discBox = (k: number): Box | null => {
     if (!place || k < 0 || !place.slots[k]) return null;
-    const c = { x: place.x + place.slots[k].x, y: place.y + place.slots[k].y },
-      h = place.disc / 2;
-    return { left: c.x - h, top: c.y - h, right: c.x + h, bottom: c.y + h };
+    const left = place.left + k * (place.plate + place.gap);
+    return { left, top: place.bottom - place.height, right: left + place.plate, bottom: place.bottom };
   };
 
   // The move card's spot (round 2 review): it covers no unit, neither its painted figure
@@ -768,76 +720,35 @@ export function PowerworksRadial({
     );
   }, [place, cardIndex]);
 
-  // The chosen disc grows into the card: the card's outline opens from the disc's octagon,
-  // the emblem travels from the disc to its place in the card, the words fade in after.
+  // The chosen plate grows into the card: the card's outline opens from the plate, and the
+  // words fade in after.
   useLayoutEffect(() => {
     if (!cardAt || chosen === null || closing || expandedFor.current === chosen) return;
     expandedFor.current = chosen;
-    const disc = discBox(cardSlot),
-      card = cardRef.current,
-      emblem = emblemRef.current;
-    if (!motion || !disc || !card || !emblem) return;
+    const plate = discBox(cardSlot),
+      card = cardRef.current;
+    if (!motion || !plate || !card) return;
     const w = card.offsetWidth,
-      h = card.offsetHeight,
-      D = disc.right - disc.left;
-    const ox = disc.left - cardAt.left,
-      oy = disc.top - cardAt.top;
-    const E = emblem.offsetWidth || 1;
-    const dx = ox + D / 2 - (emblem.offsetLeft + E / 2),
-      dy = oy + D / 2 - (emblem.offsetTop + emblem.offsetHeight / 2);
+      h = card.offsetHeight;
     const timing = { duration: WHEEL_MOTION.expand, easing: EASE_OUT };
-    play(
-      card,
-      [
-        { clipPath: outline(ox, oy, D, D, D * 0.29) },
-        { clipPath: outline(0, 0, w, h, CHAMFER) },
-      ],
-      timing
-    );
-    play(
-      emblem,
-      [
-        { transform: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${(D / E).toFixed(3)})` },
-        { transform: "none" },
-      ],
-      timing
-    );
+    play(card, [{ clipPath: plateOutline(plate, cardAt) }, { clipPath: outline(0, 0, w, h, CHAMFER) }], timing);
     play(bodyRef.current, [{ opacity: 0 }, { opacity: 0, offset: 0.35 }, { opacity: 1 }], timing);
   }, [cardAt, chosen, closing]);
 
-  // Back to the wheel: the card shrinks into the disc it came from, then the disc returns.
+  // Back to the plates: the card shrinks into the plate it came from, then the plate returns.
   useLayoutEffect(() => {
     if (returning === null) return;
-    const disc = discBox(cardSlot),
-      card = cardRef.current,
-      emblem = emblemRef.current;
+    const plate = discBox(cardSlot),
+      card = cardRef.current;
     const done = () => setReturning((r) => (r === returning ? null : r));
-    if (!disc || !card || !emblem || !cardAt) {
+    if (!plate || !card || !cardAt) {
       done();
       return;
     }
     const w = card.offsetWidth,
-      h = card.offsetHeight,
-      D = disc.right - disc.left,
-      E = emblem.offsetWidth || 1;
-    const ox = disc.left - cardAt.left,
-      oy = disc.top - cardAt.top;
-    const dx = ox + D / 2 - (emblem.offsetLeft + E / 2),
-      dy = oy + D / 2 - (emblem.offsetTop + emblem.offsetHeight / 2);
+      h = card.offsetHeight;
     const timing = { duration: WHEEL_MOTION.collapse, easing: EASE_IN, fill: "forwards" as const };
-    play(
-      card,
-      [{ clipPath: outline(0, 0, w, h, CHAMFER) }, { clipPath: outline(ox, oy, D, D, D * 0.29) }],
-      timing
-    );
-    play(
-      emblem,
-      [
-        { transform: "none" },
-        { transform: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${(D / E).toFixed(3)})` },
-      ],
-      timing
-    );
+    play(card, [{ clipPath: outline(0, 0, w, h, CHAMFER) }, { clipPath: plateOutline(plate, cardAt) }], timing);
     play(bodyRef.current, [{ opacity: 1 }, { opacity: 0, offset: 0.45 }, { opacity: 0 }], timing);
     const timer = setTimeout(done, WHEEL_MOTION.collapse);
     return () => clearTimeout(timer);
@@ -852,39 +763,23 @@ export function PowerworksRadial({
     const stage = root.current?.closest(".pw-theater");
     const chipEl = stage?.querySelector(`[data-unit="${unit.id}"] .pw-order-chip`);
     const chip = chipEl && m ? m.box(chipEl) : null;
-    const icon = chipEl?.querySelector("svg");
-    const iconBox = icon && m && icon.getBoundingClientRect().width > 0 ? m.box(icon) : null;
-    const card = cardRef.current,
-      emblem = emblemRef.current;
-    if (motion && chosen !== null && card && emblem && cardAt) {
+    const card = cardRef.current;
+    if (motion && chosen !== null && card && cardAt) {
       total = WHEEL_MOTION.lock;
       const w = card.offsetWidth,
-        h = card.offsetHeight,
-        E = emblem.offsetWidth || 1;
+        h = card.offsetHeight;
       const timing = { duration: WHEEL_MOTION.lock, easing: EASE_IN, fill: "forwards" as const };
       if (locked === chosen && chip) {
         const cx = chip.left - cardAt.left,
           cy = chip.top - cardAt.top,
           cw = chip.right - chip.left,
           ch = chip.bottom - chip.top;
-        const to = iconBox ?? { left: chip.left + 4, top: chip.top + 4, right: chip.left + 14, bottom: chip.top + 14 };
-        const k = (to.right - to.left) / E;
-        const dx = to.left - cardAt.left - emblem.offsetLeft - (E - (to.right - to.left)) / 2,
-          dy = to.top - cardAt.top - emblem.offsetTop - (E - (to.bottom - to.top)) / 2;
         play(
           card,
           [
             { clipPath: outline(0, 0, w, h, CHAMFER), opacity: 1 },
             { clipPath: outline(cx, cy, cw, ch, 1), opacity: 1, offset: 0.8 },
             { clipPath: outline(cx, cy, cw, ch, 1), opacity: 0 },
-          ],
-          timing
-        );
-        play(
-          emblem,
-          [
-            { transform: "none" },
-            { transform: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${k.toFixed(3)})` },
           ],
           timing
         );
@@ -899,12 +794,12 @@ export function PowerworksRadial({
           { duration: WHEEL_MOTION.fold, easing: EASE_IN, fill: "forwards" }
         );
     } else if (motion && locked !== null && chip) {
-      // A move on its user sets the order straight from its disc: that disc flies to the chip.
+      // A move on its user sets the order straight from its plate: that plate flies to the chip.
       const k = indices.indexOf(locked);
       const d = discBox(k),
         slot = slots.current[k];
       if (d && slot) {
-        const to = iconBox ?? chip;
+        const to = chip;
         const dx = (to.left + to.right) / 2 - (d.left + d.right) / 2,
           dy = (to.top + to.bottom) / 2 - (d.top + d.bottom) / 2;
         play(
@@ -971,18 +866,20 @@ export function PowerworksRadial({
 
   const style = place
     ? ({
-        left: place.x,
-        top: place.y,
+        left: place.left,
+        top: place.bottom,
+        "--plate-w": `${place.plate}px`,
         "--from-x": `${place.from.x}px`,
         "--from-y": `${place.from.y}px`,
       } as React.CSSProperties)
     : ({ visibility: "hidden" } as React.CSSProperties);
   const cardElement = cardMove ? elementOf(cardMove) : null;
-  const cardRest = cardMove ? restRounds(cardMove) : 0;
+  // A signature is used once per fight, so how long it would rest never matters.
+  const cardRest = cardMove && !cardMove.signature ? restRounds(cardMove) : 0;
   const marks = cardMove ? cardMarks(unit, cardMove) : [];
   const cardState = closing ? "leaving" : returning !== null && chosen === null ? "returning" : "open";
   const tipId = (key: string) => `pw-mark-${unit.id}-${cardIndex}-${key}`;
-  /** The disc a pointer or the keyboard is on: the stage previews it faintly (round 3). */
+  /** The plate a pointer or the keyboard is on: the stage previews it faintly (round 3). */
   const peek = (i: number | null) => {
     if (wheel) onPreview?.(i);
   };
@@ -991,7 +888,7 @@ export function PowerworksRadial({
     <>
       <div
         ref={root}
-        className={`pw-radial el-${unit.element} ${place?.below ? "below" : ""} ${
+        className={`pw-radial el-${unit.element} ${
           wheel
             ? "open"
             : closing && locked !== null
@@ -1004,11 +901,6 @@ export function PowerworksRadial({
         data-radial={unit.id}
         data-motion={motion ? "full" : "reduced"}
       >
-        {place && (
-          <svg className="pw-radial-arc" aria-hidden="true">
-            <path d={place.arc} />
-          </svg>
-        )}
         <div
           role={wheel ? "menu" : undefined}
           aria-label={wheel ? `${unit.name}'s moves` : undefined}
@@ -1024,7 +916,8 @@ export function PowerworksRadial({
               state = slotState(unit, m, i, legal),
               point = place?.slots[k] ?? { x: 0, y: 0 },
               element = elementOf(m),
-              rest = restRounds(m);
+              value = legal && !state.dim ? values?.[i] : undefined,
+              foot = armed === i && legal ? ["tap again"] : state.dim ? [] : plateFoot(m);
             return (
               <button
                 key={i}
@@ -1057,7 +950,7 @@ export function PowerworksRadial({
                   pointer.current = e.pointerType || "mouse";
                 }}
                 // A mouse previews on hover. A touch previews on its arming tap instead: a
-                // lifted finger leaves the disc, which must not clear what it armed.
+                // lifted finger leaves the plate, which must not clear what it armed.
                 onPointerEnter={(e) => e.pointerType !== "touch" && legal && peek(i)}
                 onPointerLeave={(e) => e.pointerType !== "touch" && peek(null)}
                 onFocus={() => {
@@ -1070,51 +963,34 @@ export function PowerworksRadial({
                 }}
                 onClick={(e) => wheel && press(i, k, e.detail === 0)}
               >
-                <span className="pw-radial-disc" aria-hidden="true">
-                  <span className="pw-radial-core">
-                    <MoveIcon move={m} />
-                  </span>
+                {/* Move plates (2026-09-27): the name, then what the move does this round in
+                    words and numbers, then what using it costs, in words. The plate carries
+                    no icon: one icon could only name one of a move's effects, and a magnet
+                    on a pull that also harms, or a crosshair on a move with no effect, told
+                    the player nothing the words below it did not. */}
+                <span className="pw-plate-name" aria-hidden="true" title={m.name}>
+                  {baseName(m)}
                 </span>
-                {m.signature && (
-                  // The signature's badge on the rim. Words pass (audit run 1): the crown read
-                  // as "leader" or "recommended" to every reader; what matters is that it is
-                  // usable once per fight, so the badge says that.
-                  <span className="pw-radial-crown pw-radial-once" aria-hidden="true">
-                    once
-                  </span>
-                )}
-                {charges(m) && (
-                  // A move that charges first: the hourglass (waits), not the lightning bolt,
-                  // which the game also uses for shocks and the electric element.
-                  <span className="pw-radial-charge" aria-hidden="true">
-                    <Hourglass />
-                  </span>
-                )}
-                {state.dim ? (
-                  <span className="pw-radial-tag" aria-hidden="true">
-                    <span className="pw-radial-reason">{state.short}</span>
-                  </span>
-                ) : (
-                  rest > 0 && (
-                    // How long it rests after use: shown only while the disc is lifted.
-                    <span className="pw-radial-rest" aria-hidden="true">
-                      <Pips rounds={rest} />
-                    </span>
-                  )
-                )}
-                <span className="pw-radial-label" aria-hidden="true">
-                  <span className="pw-radial-name">
-                    {baseName(m)}
-                    {armed === i && legal && <small>Tap again</small>}
-                  </span>
-                  {legal && !state.dim && values?.[i] && (
-                    <EffectWords
-                      value={values[i]}
-                      label={values[i].target ? valueLabel?.(values[i].target!) : undefined}
-                      className="pw-radial-value"
-                    />
+                <span className="pw-plate-effect" aria-hidden="true">
+                  {state.dim ? (
+                    <span className="pw-plate-reason">{state.short}</span>
+                  ) : (
+                    value && (
+                      <EffectWords
+                        value={value}
+                        label={value.target ? valueLabel?.(value.target) : undefined}
+                        className="pw-radial-value"
+                      />
+                    )
                   )}
                 </span>
+                {foot.length > 0 && (
+                  <span className={`pw-plate-foot ${armed === i ? "armed" : ""}`} aria-hidden="true">
+                    {foot.map((f) => (
+                      <span key={f}>{f}</span>
+                    ))}
+                  </span>
+                )}
                 {keyed && (
                   <span className="pw-radial-key" aria-hidden="true">
                     {k + 1}
@@ -1154,11 +1030,6 @@ export function PowerworksRadial({
           inert={cardState !== "open"}
           data-card={cardIndex}
         >
-          <span ref={emblemRef} className="pw-radial-emblem" aria-hidden="true">
-            <span className="pw-radial-core">
-              <MoveIcon move={cardMove} />
-            </span>
-          </span>
           <div ref={bodyRef} className="pw-radial-card-body">
             <div className="pw-radial-card-head">
               <strong title={cardMove.name}>{baseName(cardMove)}</strong>
@@ -1170,8 +1041,16 @@ export function PowerworksRadial({
                   </Mark>
                 ))}
             </div>
-            {/* What it does, then what using it costs (round 3): the rest pips at the row's
-                end. The signature's crown (once per encounter) is a badge by the name. */}
+            {/* Move plates: the card reads in the plate's order, the name, what the move
+                does on the unit it is read on, then what it carries and what it costs. */}
+            {cardValue && (
+              // Readout pass: the value follows the aim, and names whom it is read on.
+              <div className="pw-radial-card-value">
+                <EffectWords value={cardValue.reading} label={cardValue.label} />
+                <span className="pw-radial-card-value-on">on {cardValue.label}</span>
+                <span className="pw-sr">{valueWords(cardValue.reading, cardValue.label)}.</span>
+              </div>
+            )}
             <div className="pw-radial-marks">
               {marks
                 .filter((m) => m.kind !== "signature")
@@ -1204,14 +1083,6 @@ export function PowerworksRadial({
                   <Hourglass />
                   <span>{CHARGE_LINE}</span>
                 </Mark>
-              </div>
-            )}
-            {cardValue && (
-              // Readout pass: the value follows the aim, and names whom it is read on.
-              <div className="pw-radial-card-value">
-                <EffectWords value={cardValue.reading} label={cardValue.label} />
-                <span className="pw-radial-card-value-on">on {cardValue.label}</span>
-                <span className="pw-sr">{valueWords(cardValue.reading, cardValue.label)}.</span>
               </div>
             )}
             <p className={`pw-radial-card-target ${targetLine ? "aimed" : ""}`}>

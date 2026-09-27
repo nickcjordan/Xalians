@@ -6,7 +6,7 @@ const { chromium } = require(require.resolve('playwright-core', { paths: [APP] }
 const DIR = path.resolve(__dirname, '../../untracked/powerworks-audit'); const OUT = path.join(DIR, 'shots'); fs.mkdirSync(OUT, { recursive: true });
 const BASE = process.env.BASE || 'https://www.xalians.com';
 const STATES = JSON.parse(fs.readFileSync(path.join(DIR, 'states.json'), 'utf8'));
-const MOMENTS = JSON.parse(fs.readFileSync(path.join(__dirname, 'moments.json'), 'utf8'));
+const MOMENTS = JSON.parse(fs.readFileSync(process.env.MOMENTS || path.join(__dirname, 'moments.json'), 'utf8')); // MOMENTS: another moments file, e.g. the same moments at 1366x768
 const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null;
 function findChrome() { const root = path.join(process.env.LOCALAPPDATA || '', 'ms-playwright'); for (const d of fs.readdirSync(root).filter((d) => d.startsWith('chromium')).sort().reverse()) for (const sub of ['chrome-headless-shell-win64/chrome-headless-shell.exe', 'chrome-win/chrome.exe', 'chrome-win64/chrome.exe']) { const p = path.join(root, d, sub); if (fs.existsSync(p)) return p; } }
 const historyOf = (h) => (h.startsWith('sector') ? STATES.sectors[h.slice(6)] : STATES.found[h]);
