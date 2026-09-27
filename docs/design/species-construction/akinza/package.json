@@ -28,10 +28,12 @@
     },
     "tail-fork-pelvis": {
       "status": "user-direction",
-      "instruction": "One substantial common trunk blending continuously into three plumes; restrained rear pelvis. Run-0007 accepted as direction.",
+      "instruction": "Three distinct tails fuse together and with the body at a compact spinal base. Remove any extended common trunk or delayed trident split. Preserve smooth continuity and restrained pelvis.",
       "words": "Think through it a little bit more. Your design is showing one base, but then there's two pieces that sort of branch out from mid-air behind the tail. It needs to have the three pieces of the tail form together more cleanly, like the base of a tree trunk does with its branches, rather than just having two more tails spawn out of the one tail that connects to the body. I also want you to tone down the butt form a tad because it's a little too sexual",
       "followUpWords": "yeah thats better, proceed",
-      "source": "Nick, this chat, 2026-09-27"
+      "source": "Nick, this chat, 2026-09-27",
+      "latestCorrectionWords": "Yes, and I also think you need to fix where the tail splits. Right now it's shaped more like a trident where there's one base and it branches later. But what I want is more like three distinct tails coming to one base where they're all fusing together at the base and body together",
+      "continuationWords": "proceed with adjustments"
     },
     "modeling-pose": {
       "status": "proposal",
@@ -40,8 +42,17 @@
     },
     "tail-depth": {
       "status": "user-direction",
-      "instruction": "Full rounded cattail-like volumes, near-circular cross sections, soft tips and meaningful depth. Reject the flat fork-like probe. Preserve one spinal root and a continuously blended shared junction. Exact dimensions remain provisional.",
+      "instruction": "Full rounded cattail-like tail bodies with near-circular cross sections and meaningful depth. Each narrows to a pointed tip. Exact dimensions remain provisional.",
       "words": "It should feel fuller what you built is too flat, It should look closer to three cattails than whatever fork-looking thing you have there",
+      "source": "Nick, this chat, 2026-09-27",
+      "approval": null
+    },
+    "tail-taper": {
+      "status": "user-direction",
+      "instruction": "Full rounded tails must narrow through sustained taper into pointed tips. Taper is part of construction geometry, not deferred to fur.",
+      "questionWords": "What level should I be judging this? Obviously, I understand it's not the final product, but things like the fact that it feels like the tips of the tail aren't pointy enough. Is that something that is irrelevant for this layer ?",
+      "confirmationWords": "Yes, and I also think you need to fix where the tail splits. Right now it's shaped more like a trident where there's one base and it branches later. But what I want is more like three distinct tails coming to one base where they're all fusing together at the base and body together",
+      "continuationWords": "proceed with adjustments",
       "source": "Nick, this chat, 2026-09-27",
       "approval": null
     }
@@ -56,18 +67,19 @@
         "style",
         "tail-root",
         "tail-fork-pelvis",
-        "tail-depth"
+        "tail-depth",
+        "tail-taper"
       ],
       "artifacts": [
         {
           "path": "docs/design/species-view-readings/akinza/reading.md",
           "role": "reading",
-          "sha256": "f04c3c30bd2bff3c05688fcd6e9f255f5033b5b2a75b94b64fb6ff5c197eb908"
+          "sha256": "86c4b3cb731db2fa6b15fdae12d31f5c383efe5756bd02d8a7ecc6830a519974"
         },
         {
           "path": "docs/design/species-construction/akinza/brief.md",
           "role": "construction-brief",
-          "sha256": "a5f3164b3e59105df70291acb393733aca3e5dc9af77b8c5f7eb6ddcbb485aee"
+          "sha256": "074e5d36e36c8fb002dd8147919da457e0443f520aa9aac4ad9ab8d4045de8d4"
         },
         {
           "path": "apps/web/src/svg/species/akinza.svg",
@@ -86,16 +98,17 @@
           "ears-eyes": "88583ef28e057a941c21349424523582e2c78d3ac5825996d04325c53c22963f",
           "style": "adf3be4b7436dfac7252d59faa93be2bafb5c2ea4cdb063261f54cc704696c05",
           "tail-root": "80aefc7e194c9ab94e4728dc092ea778ca635bc82e8f778595facd9970911bb2",
-          "tail-fork-pelvis": "04c56397242d57a220c2b8c35d354958a2a93d00880999ec5c3d4407df63d5a6",
-          "tail-depth": "b2554ffe964266b7f31e60f47a90ddc90a1dceac90816047d1be45a33931264f"
+          "tail-fork-pelvis": "dcf9bbd9fe7e7b3f0e1096f490d698c53f0380a62180e32d1cf975a4d092dae8",
+          "tail-depth": "2b54dba1c8276f71db0fc6e9009ed42f87874d540fcf077bcc598a47e90828dc",
+          "tail-taper": "211fc8098ff683cf5fcf42dd88e94f0643f39af622a638e98104e2fa0a9df838"
         },
         "dependencies": {}
       },
       "review": {
         "status": "pending",
         "reviewer": "Codex",
-        "notes": "Reading updated from Nick's explicit fuller-tail correction. Earlier root and junction directions retained; no new art approval inferred.",
-        "artifactDigest": "455d3ac996a4f44f39b95dfaf9d3743c408b807afd3d9a4b13d569ed69017ead"
+        "notes": "Reading updated from Nick's direct body-fusion and pointed-taper correction. No approval of the new artwork inferred.",
+        "artifactDigest": "9f29aa8732b835152b6caebbd66cfa33591c501360b42a525ce264489fef39df"
       },
       "approval": null
     },
@@ -110,7 +123,8 @@
         "style",
         "tail-root",
         "tail-fork-pelvis",
-        "tail-depth"
+        "tail-depth",
+        "tail-taper"
       ],
       "artifacts": [
         {
@@ -153,7 +167,8 @@
         "ears-eyes",
         "style",
         "modeling-pose",
-        "tail-depth"
+        "tail-depth",
+        "tail-taper"
       ],
       "artifacts": [
         {
@@ -208,13 +223,14 @@
       "decisionIds": [
         "tail-root",
         "tail-fork-pelvis",
-        "tail-depth"
+        "tail-depth",
+        "tail-taper"
       ],
       "artifacts": [
         {
           "path": "docs/design/species-construction/akinza/connections.json",
           "role": "attachment-graph",
-          "sha256": "7e552526d2e273b969d26881df2bcc482012a310a566c5693b0e704637ff17db"
+          "sha256": "c7a63d88322b71814af5d6dd4e4bf97b134ebff1aa7a8a0312f31583f758a153"
         },
         {
           "path": "untracked/species-construction/akinza/study-0002/tail.png",
@@ -260,17 +276,18 @@
         "construction",
         "connections"
       ],
-      "pose": "attachment-probe-v2",
+      "pose": "attachment-probe-v3",
       "decisionIds": [
         "tail-root",
         "tail-fork-pelvis",
-        "tail-depth"
+        "tail-depth",
+        "tail-taper"
       ],
       "artifacts": [
         {
-          "path": "docs/design/species-construction/akinza/probe-spec-0002.json",
-          "role": "provisional-fuller-volumes",
-          "sha256": "36a2295a90965715a0bcf95733f3522704880df09e03c2e42f78f3041665dfa6"
+          "path": "docs/design/species-construction/akinza/probe-spec-0003.json",
+          "role": "direct-body-fusion-spec",
+          "sha256": "402bdc07670bcc5537972dac7e1428a1702ad38dec8bbd43948ab559bbbfc471"
         },
         {
           "path": "art/species-construction/blender_probe.py",
@@ -283,167 +300,168 @@
           "sha256": "a94ef5d4eb67677543869bc777ef273847c893ab7a612bc8df9f9ce72f02a760"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/probe.blend",
+          "path": "untracked/species-construction/akinza/probe-0003/probe.blend",
           "role": "rough-attachment-mesh",
-          "sha256": "7ffdb526bc98820f3d0ab2f88aaf41c184ccebc1d9d37572506821385a534ace"
+          "sha256": "1c318f8b0b65ace7efefab8e0e5e6f026f1a5a81fdc230b16af6d1b4426c0f5a"
         },
         {
-          "path": "docs/design/species-construction/akinza/records/probe-0002-geometry.json",
+          "path": "docs/design/species-construction/akinza/records/probe-0003-geometry.json",
           "role": "connectivity-and-cameras",
-          "sha256": "2c8cf8fcef44dfff81b783e4df6fc3b38964727a664f8bbff866658d1ee04e9f"
+          "sha256": "120bf3ae476a26ab9b149798fbb42540459c3a80eb1bb7f8e309b8274569233b"
         },
         {
-          "path": "docs/design/species-construction/akinza/records/probe-0002-review-assets.json",
+          "path": "docs/design/species-construction/akinza/records/probe-0003-review-assets.json",
           "role": "derived-mask-provenance",
-          "sha256": "a7956bf0838513b813fc686837813e8d0acedd0a509ca040199f74baff631ee5"
+          "sha256": "7c72dce0b389774bf1bef9ad10dc753543604c1186f5a6c625003c322610ab42"
         },
         {
-          "path": "docs/design/species-construction/akinza/records/probe-0002-comparison.json",
-          "role": "volume-and-clipping-diagnostics",
-          "sha256": "6506f55233c963129fef827222db7e72e56b3ec9c89f622244e836e2239764ae"
+          "path": "docs/design/species-construction/akinza/records/probe-0003-checks.json",
+          "role": "clipping-and-structure-diagnostics",
+          "sha256": "6ae4ad4bc5811ea29bb90f04552a4267b74d283f160ddf2c4dcfc0628cc6a9fd"
         },
         {
-          "path": "docs/design/species-construction/akinza/evidence/tail-probe-0002-contact.png",
+          "path": "docs/design/species-construction/akinza/evidence/tail-probe-0003-contact.png",
           "role": "technical-review-sheet",
-          "sha256": "6128907d734d287e499b87ed5c31d9a5839f53b3e871f5edbb0ef15392d3adea"
+          "sha256": "6348f6e327bc5d740d2ba0ad693f9b8fb0f38a176339960dcd6356eac33a2eda"
         },
         {
-          "path": "docs/design/species-construction/akinza/evidence/tail-probe-0002-turntable.gif",
+          "path": "docs/design/species-construction/akinza/evidence/tail-probe-0003-turntable.gif",
           "role": "technical-turntable",
-          "sha256": "f2f09e14d1a189c6e09decd7ff457fae6dbcce8fc01b7c63a315221ce424d625"
+          "sha256": "e3caa1a48f61371f63abc4f839a6a857912b20db7ef3dba8c04c5a75c4f4815a"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/above.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/above.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "dd037e4da9bc89555cde6b35e1929d370c0fd4417c0417c833789bd5d63b2b5a"
+          "sha256": "2be9b975c689564e377aeef53e92609c0995f110fddd96a49e4d6ae3aa9ec557"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/above.png",
+          "path": "untracked/species-construction/akinza/probe-0003/above.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "759a1abc3a1824adafbf94706ce32d8d32128b96f2accf1a0b3fcdb2276375a9"
+          "sha256": "2f749ab228bde3ccbfb59bbf1f38ab149a397c6af7d56119e355384639745095"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/contact.png",
+          "path": "untracked/species-construction/akinza/probe-0003/contact.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "6128907d734d287e499b87ed5c31d9a5839f53b3e871f5edbb0ef15392d3adea"
+          "sha256": "6348f6e327bc5d740d2ba0ad693f9b8fb0f38a176339960dcd6356eac33a2eda"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/left.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/left.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "8dcd0afdbd9db923af5c6d6c080cf8b972435841a70e7b293a59306aee665072"
+          "sha256": "3715fee47d34b032b98aa23587b45e50f362e27522222ed97a6123ff233aba53"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/left.png",
+          "path": "untracked/species-construction/akinza/probe-0003/left.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "801099592573c12406186db8999a9f1eb2cf8cf9a0df4968bc01e21ad64aab86"
+          "sha256": "ad69337c17bab92f3d4f07e7b33069f97e8d8494069b4e5f6062d40b86551dd6"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/rear.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/rear.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "d095edea7bdf71859ac4ce37f83c07869c61981f1dec19e2d434486c05ad699d"
+          "sha256": "f8800a94e1b4b856134c558f9a34a7cba70ae60500762305dcdec3c44fa74abe"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/rear.png",
+          "path": "untracked/species-construction/akinza/probe-0003/rear.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "4063db59c72a113f539b7af62e327543774754f8b96ec08a544d3f995fd74d05"
+          "sha256": "366af83ecf67f1a16058bc1ba8abbb571d4e4c1bc5f910556a29b3a148f5745e"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-000.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-000.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "97110fe5f04c2e73def05b4722832448e07026c5590659c5dea9a1f24fa9759c"
+          "sha256": "10deacc5301a001ab10ef9178dbed024671c1184a3fe08b116f2701b1a9a5d32"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-000.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-000.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "7d85110683ff0479c027d05dce5e484f60deaf1127109c5add872e8d785d4739"
+          "sha256": "55ef56a4e5dd131cda88ba12b7c5d2a35ce617b53a8389d37c9061d179276d1c"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-045.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-045.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "98aa39fa9126bcee3ac8ef97ec4237f52e44f9a8ef19eeb22f5d6748b5866ab7"
+          "sha256": "4447c958a20d81410e2d7532142833dc7259657459ef7edbe06eb8f1c1ad3f75"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-045.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-045.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "057f3949dd72ef67479f1d87657c9b47543d6d24dcb8566cd4937f91913ff8f0"
+          "sha256": "b9e28148117192d8982ed7ce9c142c2e7e044eb5ac55c53bde206ad58cda70a0"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-090.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-090.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "9664f24e36857a14cb2668e39d5cace659bb1442cf894d7580a43e48a8128c77"
+          "sha256": "88e4595baec4c41ef7f7bf5f58eb25e9281ee368f450b3c14bfefb83b357b02a"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-090.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-090.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "b41497c9c1651d2d562dec82b33df34809b74f0cc96adc682db367e83e3d540a"
+          "sha256": "c5f3847488653d341138f2ae046e2381a578ce1c1248a9544cb21b842d642d5c"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-135.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-135.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "cffdd10030d0fffeccc04663de12774855d01f0055738e07044161a8d0ce8330"
+          "sha256": "2afa1a5288ca9ff9f34916893de12aa715257072e1ccd9d22d66aeaa27de3025"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-135.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-135.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "cbee2eef492a7e49c7ee923bb034709ad6386d424399e9f9876fc8bbcc7ed7a5"
+          "sha256": "306ac87f3dd96ca214874dd3f341dd47bb1575c6d8a737e2413e86c4178d488c"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-180.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-180.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "47ccce5a97682ae13fa50c13f696713b8cfd6d77c74063a66b698d298dfb4b72"
+          "sha256": "02224378560b90ff29a628fa9bc106b56ef4a5d12c5bc6b21ee0dfc8d405d4c9"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-180.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-180.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "9af0072a01533c01952d30fbc67642e77c1305f80b5974d5663c4abf9838c6f3"
+          "sha256": "cc4d4a8b954baaed27c00878f9864fd4fec5e4d008a98fb63ea31a5ed7116557"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-225.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-225.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "1f12bb4c85906b56fb88979ba658e93289d086a9f36728433f4bfcc3ef4930fe"
+          "sha256": "5b14734a2f4d16a9774231f6e0015a7c440de76378b1b3b07eae9cbebac9b9c5"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-225.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-225.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "aa7fb9b21b3ec773e4394a2b5e2e0de1bbe74dd47a163fae0a4459d515946ffa"
+          "sha256": "5c2c2b52ad975498d71b6a24129405f10f49f4048d6df8b99c2569d41fe7ea20"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-270.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-270.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "acf2822cb379fb59f3d4eb9aa60ea2dca075548c94cc0897b29673f1f422b247"
+          "sha256": "4634cab5b442588a293a18e0f0bdf374406544285d5e7663ba09bbf883306fd3"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-270.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-270.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "661521c8fdab12e1533cc5757d250432993cfc7ecc74bc86bc5e11a0fc0ecd70"
+          "sha256": "206794478c40580bb3e36c05c5ef98eadb6f813428c5f6ff4e257b2e492cdac3"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-315.occupancy.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-315.occupancy.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "24ab8bbd1b97ccb862aa8ad53292068e9619e11e47209028f16b9d96f688f6a7"
+          "sha256": "3eba4b5b5abbc14d39860247e722c661be514d8588cfb5975da6fac79bcb520c"
         },
         {
-          "path": "untracked/species-construction/akinza/probe-0002/turn-315.png",
+          "path": "untracked/species-construction/akinza/probe-0003/turn-315.png",
           "role": "geometry-render-or-derived-mask",
-          "sha256": "b647996b3838de63cb359b2c4c76901ac3b506f5dec41ae6977dde2a07c80741"
+          "sha256": "83815b83f735c5073ebe573785fb2e40df8c951d35da682cdd72341edae765b5"
         }
       ],
       "inputSnapshot": {
         "decisions": {
           "tail-root": "80aefc7e194c9ab94e4728dc092ea778ca635bc82e8f778595facd9970911bb2",
-          "tail-fork-pelvis": "04c56397242d57a220c2b8c35d354958a2a93d00880999ec5c3d4407df63d5a6",
-          "tail-depth": "b2554ffe964266b7f31e60f47a90ddc90a1dceac90816047d1be45a33931264f"
+          "tail-fork-pelvis": "dcf9bbd9fe7e7b3f0e1096f490d698c53f0380a62180e32d1cf975a4d092dae8",
+          "tail-depth": "2b54dba1c8276f71db0fc6e9009ed42f87874d540fcf077bcc598a47e90828dc",
+          "tail-taper": "211fc8098ff683cf5fcf42dd88e94f0643f39af622a638e98104e2fa0a9df838"
         },
         "dependencies": {
-          "construction": "6dcbae881af5929097b7f55b1471566c84b59e897d0eee1be22c00c96cff4a42",
-          "connections": "3bbc57cb4b748a23c8feab5369d18ae902a27f6bff6a07e5487a0c69dad7aa62"
+          "construction": "753693cc5e366108963e50c8254ec1b393295e4fdf65b8093def39db1d909d7b",
+          "connections": "929a9b38c70deff87dc775fc106017d17aef94046d187379abdca1bec9801547"
         }
       },
       "review": {
         "status": "pending",
         "reviewer": "Codex",
-        "notes": "Probe-0002 follows Nick's fuller cattail direction. One closed connected surface, eleven unclipped views, rounded cross sections and depth separation. New art unapproved; earlier image constraints remain stale and rejected.",
-        "artifactDigest": "bb8c06b6b56ac66e7317ebdbd4091990a7b93d7eb6da3dc14e43d356789d822e"
+        "notes": "Probe-0003 removes the trunk sweep: three full round tails fuse at the body and taper to points. One closed connected surface and eleven unclipped views. Visual review pending; earlier image constraints remain stale.",
+        "artifactDigest": "fc5156f740d6417f3c9880bc35932f79818d56db0bee32a6a153009e8901ddab"
       },
       "approval": null
     },

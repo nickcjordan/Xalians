@@ -1,0 +1,77 @@
+{
+  "scope": "Geometry diagnostics, not art approval",
+  "components": 1,
+  "nonManifoldEdges": 0,
+  "sharedTrunkSweepPresent": false,
+  "threeSweepsStartAtBody": true,
+  "allElevenViewsUnclipped": true,
+  "bounds": {
+    "above.occupancy.png": [
+      47,
+      224,
+      576,
+      487
+    ],
+    "left.occupancy.png": [
+      224,
+      118,
+      487,
+      566
+    ],
+    "rear.occupancy.png": [
+      47,
+      118,
+      576,
+      566
+    ],
+    "turn-000.occupancy.png": [
+      64,
+      120,
+      593,
+      553
+    ],
+    "turn-045.occupancy.png": [
+      90,
+      125,
+      588,
+      567
+    ],
+    "turn-090.occupancy.png": [
+      224,
+      126,
+      487,
+      579
+    ],
+    "turn-135.occupancy.png": [
+      183,
+      126,
+      471,
+      580
+    ],
+    "turn-180.occupancy.png": [
+      47,
+      122,
+      576,
+      571
+    ],
+    "turn-225.occupancy.png": [
+      52,
+      115,
+      550,
+      560
+    ],
+    "turn-270.occupancy.png": [
+      153,
+      110,
+      416,
+      550
+    ],
+    "turn-315.occupancy.png": [
+      169,
+      113,
+      457,
+      546
+    ]
+  },
+  "approval": null
+}

@@ -37,14 +37,15 @@ For Akinza, the accepted tail interpretation is:
 
 ```text
 pelvis at base of spine
-  -> one shared tail root and trunk
-    -> continuous three-way junction
-      -> plume A
-      -> plume B
-      -> plume C
+  -> compact shared fusion at the body
+    -> distinct full tail A, tapering to a point
+    -> distinct full tail B, tapering to a point
+    -> distinct full tail C, tapering to a point
 ```
 
 Show the junction from the rear, side, and above, with enough visible surface to establish continuity. Preserve the reduced rear pelvic emphasis. Color-coded part overlays are technical annotations, not a new creature color scheme. Part labels do not imply separate disconnected mesh pieces.
+
+Latest Akinza correction: Nick rejected a projecting common stalk with a delayed trident split. Three tails fuse with each other and the body at the spinal base, and separate immediately. Full rounded volume must coexist with pointed taper. Older probe specifications remain historical evidence, not current construction targets.
 
 A connection record should identify the parent region, attachment location, branch relationships, visible continuity, and evidence images. Unmeasured coordinates remain unspecified. Record explicit distinctions such as hair versus ear tissue, markings versus gaps, and a shared tail base versus independently attached tails.
 
