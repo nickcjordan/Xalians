@@ -278,7 +278,7 @@ describe("shared battlefield", () => {
     // On the creature: the heal extends the health bar, and its number rides the bar.
     const plaque = document.querySelector(`[data-unit="${mate.id}"] .pw-unit-plaque`)!;
     expect(plaque.querySelector(".pw-hp-heal")).not.toBeNull();
-    expect(plaque.querySelector(".pw-hp-delta")).toHaveTextContent("+9");
+    expect(plaque.querySelector(".pw-hp-delta.heal .pw-hp-to")).toHaveTextContent(String(Math.min(mate.max, mate.hp + 9)));
     fireEvent.click(target);
     expect(onTarget).toHaveBeenCalledWith(mate.id, true);
     // A squadmate the move cannot name stays a selection button, and an enemy the move
@@ -336,8 +336,8 @@ describe("shared battlefield", () => {
     expect(chunk).toHaveClass("knockout");
     expect(chunk.style.left).toBe("0%");
     expect(chunk.style.width).toBe("100%");
-    expect(one.querySelector(".pw-hp-delta.knockout")).toHaveTextContent(`−${first.hp + 5}`);
-    expect(one.querySelector(".pw-hp-delta svg")).not.toBeNull();
+    expect(one.querySelector(".pw-hp-delta .pw-hp-to")).toHaveTextContent("0");
+    expect(one.querySelector(".pw-hp-delta .pw-hp-to svg")).not.toBeNull();
     expect(one.querySelector(".pw-pull-arrow")).not.toBeNull();
     expect(one.querySelector(".pw-status-badge.ghost.group-tempo")).toHaveTextContent("slowed75%");
     // A unit only the area reaches: a dashed ring, its own chunk, a guard's shield; a status
@@ -345,7 +345,7 @@ describe("shared battlefield", () => {
     const two = container.querySelector(`[data-unit="${second.id}"]`)!;
     expect(two).toHaveClass("reached", "muted");
     expect(two.querySelector(".pw-target-ring.area")).not.toBeNull();
-    expect(two.querySelector(".pw-hp-delta")).toHaveTextContent("−3");
+    expect(two.querySelector(".pw-hp-delta .pw-hp-to")).toHaveTextContent(String(second.hp - 3));
     expect(two.querySelector(".pw-status-badge.ghost.immune")).toHaveTextContent("frightenedimmune");
     // A squadmate the area reaches is marked in the danger color, not dimmed.
     const ally = container.querySelector(`[data-unit="${mate.id}"]`)!;
@@ -355,9 +355,8 @@ describe("shared battlefield", () => {
     expect(ally.querySelector(".pw-health.danger .pw-hp-chunk")).not.toBeNull();
     // The intent line runs from the companion to the aimed target.
     expect(container.querySelector(`.pw-aim-path[data-aim="${first.id}"]`)).not.toBeNull();
-    // The number floats over its chunk on the bar, not in a box after it.
-    expect(one.querySelector(".pw-health-bar > .pw-hp-delta")).not.toBeNull();
-    expect(one.querySelector(".pw-hp-label")).toHaveTextContent(String(first.hp));
+    // Legible effects: the change reads before and after where the health number sits.
+    expect(one.querySelector(".pw-hp-delta .pw-hp-from")).toHaveTextContent(String(first.hp));
     // A move that harms but gets nothing through says "no effect" on the bar.
     cleanup();
     scene(undefined, {

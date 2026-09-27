@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createRun, legalMoves, moveAt, type Unit } from "./index.ts";
-import { atHealth, machineThreat, moveValue, projectOrders, ticksDue, total, valueOn } from "./value.ts";
+import { atHealth, machineThreat, moveValue, pickShare, projectOrders, ticksDue, total, valueOn } from "./value.ts";
 
 // Move value pass (2026-09-26): what the wheel draws under each move and each machine.
 describe("move value, in health", () => {
@@ -86,6 +86,18 @@ describe("move value, in health", () => {
     expect(v.why?.kind).toBe("falls");
     // Its best use moves to the other machine.
     expect(moveValue(after, graviclaw, pincer).target).toBe(run.enemies[1].id);
+  });
+  it("says how often the machines pick each companion, by size (legible effects)", () => {
+    const run = createRun(1);
+    const shares = run.team.map((u) => pickShare(run, u));
+    expect(shares.reduce((a, b) => a + b, 0)).toBeCloseTo(1);
+    const avilily = run.team.find((u) => u.name === "Avilily")!;
+    const graviclaw = run.team.find((u) => u.name === "Graviclaw")!;
+    // The smallest body is picked least, the biggest most.
+    expect(pickShare(run, avilily)).toBeLessThan(0.25);
+    expect(pickShare(run, graviclaw)).toBeGreaterThan(pickShare(run, avilily));
+    graviclaw.hp = 0;
+    expect(pickShare(run, graviclaw)).toBe(0);
   });
   it("counts a degrading status's next tick, capped at what the unit has left", () => {
     const run = createRun(1);

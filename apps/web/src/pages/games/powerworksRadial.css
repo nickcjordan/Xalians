@@ -1034,26 +1034,30 @@
 
 @media (min-width: 601px) {
   /* While planning the ring rises over a companion's head; the defenders stand a little
-     higher so the ring never covers them (the stage grew when the tray left). */
-  .pw .pw-theater.planning .pw-scene-unit.defender {
+     higher so the ring never covers them (the stage grew when the tray left).
+     Legible effects (2026-09-26): the planning composition now holds through playback.
+     Playback used to put the defenders back at full size and lower, and lift the squad for
+     the action banner, which pushed Avilily's art into a crawler's feet and the Bulwark's in
+     every sector (80 to 120px of art boxes overlapping, 0 while planning). Nothing moves or
+     grows when the round starts; the banner fits under the plaques (measured). */
+  .pw .pw-theater:is(.planning, .playing) .pw-scene-unit.defender {
     top: calc(9% + var(--lane-shift, 0%));
   }
-  /* The plaque chip makes a companion's plaque taller; during playback every beat carries
-     the action banner on the stage's floor, so the squad stands a little higher and its
-     chips clear it (the stage itself keeps its planning size: overlay pass). */
-  .pw .pw-theater.playing .pw-scene-unit.ally {
-    top: calc(45% + var(--lane-shift, 0%));
-  }
   /* A crowded room (three defenders, the guardian's) leaves no floor between its rows for
-     the move card, so while planning it opens one, as the phone does (round 3 ruling): the
-     defenders stand a little smaller with half their lane stagger, the squad a little lower.
-     The composition is fixed for the whole planning phase; nothing moves on selection. */
-  .pw .pw-theater.planning.crowded .pw-scene-unit.defender {
+     the move card, so it opens one, as the phone does (round 3 ruling): the defenders stand a
+     little smaller with half their lane stagger, the squad a little lower. */
+  .pw .pw-theater.crowded:is(.planning, .playing) .pw-scene-unit.defender {
     top: calc(9% + var(--lane-shift, 0%) / 2);
     height: 34%;
   }
-  .pw .pw-theater.planning.crowded .pw-scene-unit.ally {
-    top: calc(55% + var(--lane-shift, 0%));
+  .pw .pw-theater.crowded:is(.planning, .playing) .pw-scene-unit.ally {
+    top: calc(53% + var(--lane-shift, 0%));
+  }
+  /* The order chips step aside while a round plays: the banner names each beat's actor and
+     move, and the turn strip marks who has acted, so the plaques shorten to name and health
+     and the banner fits under them without the squad moving. */
+  .pw .pw-theater.playing .pw-scene-unit.ally .pw-order-chip {
+    display: none;
   }
 }
 
@@ -1308,8 +1312,7 @@
   background: repeating-linear-gradient(120deg, #fff0bc 0 3px, #d19a3e 3px 6px);
 }
 /* The 2 HP segment gaps, drawn over the fills. */
-.pw-value-track::after,
-.pw-threat-track::after {
+.pw-value-track::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -1325,8 +1328,7 @@
   opacity: 0.55;
 }
 /* Readout pass: every bar ends in its number, in health, set like a health bar's number. */
-.pw-value-num,
-.pw-threat-num {
+.pw-value-num {
   display: inline-flex;
   align-items: center;
   gap: 1px;
@@ -1356,11 +1358,22 @@
   display: none;
 }
 
+/* Legible effects (2026-09-26): a machine's next attack is a badge, not a bar, so it never
+   reads as a second health bar. Sword or crosshair, then the health it is poised to take; when
+   the orders stop part of it, before and after: "7 → 0". */
 .pw-threat {
-  display: flex;
+  display: inline-flex;
+  align-self: flex-start;
   align-items: center;
-  gap: 4px;
-  margin-top: 3px;
+  gap: 3px;
+  margin-top: 4px;
+  padding: 2px 6px 2px 4px;
+  border-radius: 2px;
+  background: #3a1712e6;
+  box-shadow: inset 0 0 0 1px #c5604a99;
+  font: 700 12px/1 var(--font-legend);
+  font-variant-numeric: tabular-nums;
+  color: #ffd2c6;
 }
 .pw-threat > svg {
   width: 12px !important;
@@ -1368,34 +1381,31 @@
   flex: none;
   color: #e79380;
 }
-.pw-threat-track {
-  position: relative;
-  display: block;
-  height: 7px;
-  overflow: hidden;
-  border-radius: 1px;
-  background: #c5604a;
-  box-shadow: 0 0 0 1px #0008;
-  transition: width 200ms var(--ease-out);
+.pw-threat.changed .pw-threat-num {
+  font-weight: 600;
+  color: #c9a49a;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
 }
-.pw-threat-num {
-  color: #ffd2c6;
+.pw-threat-arrow {
+  width: 10px !important;
+  height: 10px !important;
+  color: #ffe7a6 !important;
 }
-/* Everything it would have landed is stopped: the number that gets through reads in gold. */
-.pw-threat.stopped .pw-threat-num {
-  color: #ffe7a6;
+.pw-threat-to {
+  padding: 1px 3px;
+  border-radius: 2px;
+  font-weight: 800;
+  color: #fff0c4;
+  background: #4a3a14;
+  box-shadow: inset 0 0 0 1px #d19a3e;
 }
-/* It already loses its turn: no track, a quiet 0. */
-.pw-threat.held .pw-threat-track {
-  width: 0 !important;
-}
-.pw-threat.held .pw-threat-num {
+/* It already loses its turn: a quiet 0. */
+.pw-threat.held {
+  background: #1d2f35e6;
+  box-shadow: inset 0 0 0 1px #6b7a7499;
   color: #b9c3bd;
 }
-/* The part of the blow the squad's orders would stop: gold, laid over the red from its start. */
-.pw-threat-track > i.stopped {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: repeating-linear-gradient(120deg, #fff0bc 0 3px, #d19a3e 3px 6px);
-  transition: width 200ms var(--ease-out);
+.pw-threat.held > svg {
+  color: #8d9a94;
 }

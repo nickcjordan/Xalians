@@ -31,7 +31,7 @@ import {
   ElementIcon,
   GroupIcon,
   Health,
-  ThreatBar,
+  ThreatBadge,
   MoveIcon,
   Portrait,
   StatusBadges,
@@ -619,7 +619,9 @@ export function PowerworksScene({
             // A hovered disc previews faintly (round 3): no unit becomes a target, nothing dims.
             const hint =
               !targeting && planning && u.hp > 0 && !armedReading ? hints[u.id] : undefined;
-            const faint = !!hint && !hint.idle;
+            // The unit the hovered move is read on (its referent) shows the full change, before
+            // and after; every other unit it could name previews faintly (legible effects).
+            const faint = !!hint && !hint.idle && u.id !== referent;
             const reading = armedReading ?? hint;
             // A squadmate the move would do nothing for reads as a non-target (round 2 review).
             const idle = !!reading?.idle;
@@ -665,7 +667,9 @@ export function PowerworksScene({
                 <b>−{preview.shock.damage}</b>
               </span>
             ) : null;
-            const marks = preview && !faint ? (
+            // Status ghosts wait for the chosen move: on a hover the wheel's discs stand where
+            // they would sit, and the change on the plate already says what the move does.
+            const marks = preview && !faint && !hint ? (
               <>
                 {preview.statuses.map((s) => (
                   <span
@@ -777,7 +781,7 @@ export function PowerworksScene({
                 >
                   <span className="pw-ground" />
                   {selected && <span className="pw-ground-ring" aria-hidden="true" />}
-                  {((target && !idle) || preview?.role === "reached" || (faint && preview)) && (
+                  {((target && !idle) || preview?.role === "reached" || (!!hint && !!preview)) && (
                     <span
                       className={`pw-target-ring ${
                         preview?.role === "reached" ? "area" : ""
@@ -867,7 +871,7 @@ export function PowerworksScene({
                     planned={planned[u.id] ?? 0}
                   />
                   {u.enemy && threats[u.id] && (
-                    <ThreatBar
+                    <ThreatBadge
                       amount={threats[u.id].amount}
                       ranged={threats[u.id].ranged}
                       held={threats[u.id].held}
