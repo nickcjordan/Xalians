@@ -64,10 +64,49 @@ export function joinStage(onActive: (active: boolean) => void): StageSlot {
 // leaves the stage and comes back re-injects without another request.
 const fragments = new Map<string, Promise<string>>();
 
+// A baked plate's still parts are pictures (scripts/plates/bake-plate.cjs):
+// start fetching them with the fragment, so they are decoded by the time the
+// plate goes into the page rather than arriving in pieces after it.
+// Kept, so the decoded pictures stay cached while the plate may still be shown.
+const warmed = new Map<string, HTMLImageElement>();
+function warmPictures(html: string) {
+	if (typeof Image === 'undefined') return;
+	for (const m of html.matchAll(/<image [^>]*href="([^"]+)"/g)) {
+		if (warmed.has(m[1])) continue;
+		const img = new Image();
+		img.decoding = 'async';
+		img.src = m[1];
+		// decoded off the main thread now, not on the first frame the plate is drawn
+		img.decode?.().catch(() => {});
+		warmed.set(m[1], img);
+	}
+}
+
+// The widest a plate is shown on this site, in CSS pixels (the story's box).
+const WIDEST = 1320;
+
+/**
+ * A baked plate's pictures come at twice its size (live/) and at its own size
+ * (live/1x/). A screen that shows the plate no more than about 1.1 times its
+ * own 1536 pixels, a phone at 3x included, gets the 1x set: a quarter of the
+ * download and of the memory, and no visible difference.
+ */
+export function atOneX(html: string): string {
+	if (typeof window === 'undefined') return html;
+	const shown = Math.min(window.innerWidth || WIDEST, WIDEST) * (window.devicePixelRatio || 1);
+	return shown <= 1700 ? html.replace(/<image [^>]*href="[^"]*\/live\/(?!1x\/)/g, (m) => m + '1x/') : html;
+}
+
 export function loadFragment(src: string): Promise<string> {
 	let p = fragments.get(src);
 	if (!p) {
-		p = fetch(src).then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))));
+		p = fetch(src)
+			.then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+			.then((html) => {
+				const picked = atOneX(html);
+				warmPictures(picked);
+				return picked;
+			});
 		p.catch(() => fragments.delete(src));
 		fragments.set(src, p);
 	}

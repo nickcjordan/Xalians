@@ -14,9 +14,12 @@ const OUT = path.join(__dirname, '..', '..', 'untracked');
 
 (async () => {
 	const b = await chromium.launch({ channel: 'chrome', headless: false, args: ['--window-position=2000,2000', '--window-size=1500,1000'] });
-	const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
+	// MOBILE=1: a phone (390 by 844 at 3x, touch); pair it with THROTTLE=4 for a mid-range one.
+	const ctx = await b.newContext(process.env.MOBILE ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true } : { viewport: { width: 1440, height: 900 } });
 	const p = await ctx.newPage();
 	await p.goto(URL, { waitUntil: 'networkidle' });
+	// STYLE: extra CSS for a what-if run (e.g. a cheaper version of an effect), added after load
+	if (process.env.STYLE) await p.addStyleTag({ content: process.env.STYLE });
 	await p.waitForTimeout(1500);
 	// Frame intervals and long tasks, marked by phase.
 	await p.evaluate(() => {
@@ -36,13 +39,14 @@ const OUT = path.join(__dirname, '..', '..', 'untracked');
 	const phase = (name) => p.evaluate((n) => (window.__perf.phase = n), name);
 	const wheel = async (dy, steps, gap = 16) => {
 		for (let i = 0; i < steps; i++) {
-			await p.mouse.wheel(0, dy);
+			if (process.env.MOBILE) await p.evaluate((dy) => window.scrollBy(0, dy), dy);
+			else await p.mouse.wheel(0, dy);
 			await p.waitForTimeout(gap);
 		}
 	};
 	await p.mouse.move(700, 450);
 	const tracePath = path.join(OUT, 'perf-home.json');
-	await b.startTracing(p, { path: tracePath, categories: ['devtools.timeline', 'disabled-by-default-devtools.timeline', 'blink.user_timing'] });
+	await b.startTracing(p, { path: tracePath, categories: ['devtools.timeline', 'disabled-by-default-devtools.timeline', 'blink.user_timing', 'gpu'] });
 	const marks = [];
 	const mark = async (name) => {
 		marks.push([name, await p.evaluate((n) => (performance.mark('phase:' + n), performance.now()), name)]);
@@ -61,10 +65,14 @@ const OUT = path.join(__dirname, '..', '..', 'untracked');
 	const storyTop = await p.evaluate(() => document.getElementById('story').getBoundingClientRect().top);
 	await wheel(100, Math.max(1, Math.round(storyTop / 100)), 30);
 	await mark('arrive and tune in');
-	await wheel(60, 4, 40);
+	// Land where the viewer rests (the page's own Play key does that), whatever the screen's height.
+	const key = p.locator('.archive-play').first();
+	if (await key.isVisible().catch(() => false)) await key.click({ noWaitAfter: true });
+	else await wheel(60, 4, 40);
 	await p.waitForTimeout(2500);
 	await mark('playing 01');
 	await p.waitForTimeout(3000);
+	console.log('live at 01:', await p.evaluate(() => [...document.querySelectorAll('[data-live-plate]')].map((e) => e.getAttribute('data-live-plate') + '@' + (e.querySelector('.live-plate-host')?.dataset.filmFps || '-')).join(' ')));
 	for (let i = 2; i <= 5; i++) {
 		await mark(`next to 0${i}`);
 		await p.getByRole('button', { name: /^Next/ }).click({ noWaitAfter: true });
@@ -112,6 +120,7 @@ const OUT = path.join(__dirname, '..', '..', 'untracked');
 	// Per phase: main-thread busy time per second, and what it was.
 	const pm = ev.filter((e) => e.name && e.name.startsWith('phase:')).map((e) => [e.name.slice(6), e.ts]).sort((a, b) => a[1] - b[1]);
 	const tasks = ev.filter((e) => e.ph === 'X' && tn[e.pid + ':' + e.tid] === 'CrRendererMain' && (e.name === 'RunTask' || e.name === 'ThreadControllerImpl::RunTask'));
+	const gpuTasks = ev.filter((e) => e.ph === 'X' && tn[e.pid + ':' + e.tid] === 'CrGpuMain' && (e.name === 'RunTask' || e.name === 'ThreadControllerImpl::RunTask'));
 	console.log('\nmain thread per phase: busy ms per second, worst task, and its biggest kinds');
 	for (let i = 0; i < pm.length - 1; i++) {
 		const [name, t0] = pm[i];
@@ -119,10 +128,11 @@ const OUT = path.join(__dirname, '..', '..', 'untracked');
 		const inside = tasks.filter((e) => e.ts >= t0 && e.ts < t1);
 		const busy = inside.reduce((a, e) => a + e.dur, 0) / 1000;
 		const worst = inside.reduce((m, e) => Math.max(m, e.dur), 0) / 1000;
+		const gpu = gpuTasks.filter((e) => e.ts >= t0 && e.ts < t1).reduce((a, e) => a + e.dur, 0) / 1000;
 		const by = {};
 		for (const e of main) if (e.ts >= t0 && e.ts < t1 && e.name !== 'RunTask' && e.name !== 'ThreadControllerImpl::RunTask') by[e.name] = (by[e.name] || 0) + e.dur / 1000;
 		const top = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => `${k} ${v.toFixed(0)}`).join(', ');
-		console.log('  ' + name.padEnd(20), (busy / ((t1 - t0) / 1e6)).toFixed(0).padStart(5) + ' ms/s', ('worst ' + worst.toFixed(0) + 'ms').padStart(12), ' ', top);
+		console.log('  ' + name.padEnd(20), (busy / ((t1 - t0) / 1e6)).toFixed(0).padStart(5) + ' ms/s', ('gpu ' + (gpu / ((t1 - t0) / 1e6)).toFixed(0)).padStart(9), ('worst ' + worst.toFixed(0) + 'ms').padStart(12), ' ', top);
 	}
 	const rasters = ev.filter((e) => e.ph === 'X' && e.name === 'RasterTask');
 	console.log('\nraster total (all threads):', (rasters.reduce((a, e) => a + e.dur, 0) / 1000).toFixed(0), 'ms over', rasters.length, 'tasks');

@@ -1,10 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { LivePlate } from '../livePlate';
+import { FILM_FPS, LivePlate } from '../livePlate';
 import { resetStage } from '../plateStage';
 
+// Layer a and the defs sheet move along paths (left to SMIL); layer b only fades (played by script).
 const FRAGMENT =
-	'<svg class="defs" id="layer-defs" width="0" height="0"><defs/></svg><svg class="layer" id="layer-a" viewBox="0 0 1536 768"><rect width="10" height="10"/></svg><svg class="layer" id="layer-b" viewBox="0 0 1536 768"><rect width="10" height="10"/></svg><div class="surface paper"></div>';
+	'<svg class="defs" id="layer-defs" width="0" height="0"><defs><circle id="spark" r="1"><animateMotion path="M0 0 L9 9" dur="1s" repeatCount="indefinite"/></circle></defs></svg>' +
+	'<svg class="layer" id="layer-a" viewBox="0 0 1536 768"><rect width="10" height="10"><animateMotion path="M0 0 L9 0" dur="2s" repeatCount="indefinite"/></rect></svg>' +
+	'<svg class="layer" id="layer-b" viewBox="0 0 1536 768"><rect id="fader" width="10" height="10"><animate attributeName="opacity" values="0;1" dur="1s" repeatCount="indefinite"/></rect></svg><div class="surface paper"></div>';
 
 type Entry = { isIntersecting: boolean; intersectionRatio: number };
 type Cb = (entries: Entry[]) => void;
@@ -55,7 +58,7 @@ describe('LivePlate', () => {
 		expect(layers(container)).toBe(0);
 	});
 
-	it('goes live in view: injects the fragment, seeks it to its first frame and plays it', async () => {
+	it('goes live in view: injects the fragment, seeks it to its first frame and plays it at the film rate', async () => {
 		const { container } = render(<LivePlate src="/assets/plates/x/plate.html" poster={poster} />);
 		show(container, 0.6);
 		await waitFor(() => expect(container.querySelector('[data-live-plate="ready"]')).toBeTruthy());
@@ -63,12 +66,15 @@ describe('LivePlate', () => {
 		expect(layers(container)).toBe(2);
 		const seek = SVGSVGElement.prototype.setCurrentTime as unknown as ReturnType<typeof vi.fn>;
 		expect(seek).toHaveBeenCalledWith(0);
-		// both layers and the defs sheet, whose animated filters keep their own clock
-		const play = SVGSVGElement.prototype.unpauseAnimations as unknown as ReturnType<typeof vi.fn>;
-		// Play starts in the effect that runs after the "ready" commit; wait for it rather
-		// than assuming it has flushed (it had not on CI, 2026-09-24).
-		await waitFor(() => expect(play).toHaveBeenCalledTimes(3));
-		expect(play.mock.instances).toContain(container.querySelector('svg.defs'));
+		// Never set running: every timeline with SMIL left, the defs sheet's too, is stepped by hand to the next film frame.
+		await waitFor(() => expect(seek).toHaveBeenCalledWith(1 / FILM_FPS));
+		expect(seek.mock.instances).toContain(container.querySelector('svg.defs'));
+		expect(seek.mock.instances).toContain(container.querySelector('#layer-a'));
+		expect(SVGSVGElement.prototype.unpauseAnimations).not.toHaveBeenCalled();
+		// A layer whose motion script took over is not stepped as SMIL; script sets its values on the film frames.
+		expect(seek.mock.instances).not.toContain(container.querySelector('#layer-b'));
+		expect(container.querySelector('#layer-b animate')).toBeNull();
+		await waitFor(() => expect(Number((container.querySelector('#fader') as SVGElement).style.opacity)).toBeGreaterThan(0));
 	});
 
 	it('keeps only one plate live: the one most in view has its SVG, the other none', async () => {
