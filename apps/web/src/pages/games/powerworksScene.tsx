@@ -33,7 +33,6 @@ import {
   GroupIcon,
   Health,
   ThreatBadge,
-  MoveIcon,
   Portrait,
   StatusBadges,
   baseName,
@@ -922,16 +921,6 @@ export function PowerworksScene({
                     >
                       {chip.move ? (
                         <>
-                          <span
-                            className={`pw-order-chip-icon ${
-                              chip.move.element && !chip.move.fallback
-                                ? `elemental el-${chip.move.element}`
-                                : "physical"
-                            }`}
-                            aria-hidden="true"
-                          >
-                            <MoveIcon move={chip.move} />
-                          </span>
                           <span className="pw-order-chip-move">
                             {baseName(chip.move)}
                           </span>

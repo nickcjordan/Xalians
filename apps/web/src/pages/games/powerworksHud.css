@@ -171,8 +171,9 @@
   background: linear-gradient(90deg, transparent, #f3d99a, transparent);
   pointer-events: none;
 }
+/* Move plates (2026-09-27): the card carries no move icon; its name takes the first column. */
 .pw .pw-move-card {
-  grid-template-columns: 36px minmax(0, 1fr) 40px;
+  grid-template-columns: minmax(0, 1fr) 40px;
   grid-template-rows: 1fr 19px;
   column-gap: 7px;
   row-gap: 3px;
@@ -194,37 +195,12 @@
   height: 2px;
   background: linear-gradient(90deg, var(--accent), #f4d69955 42%, transparent);
 }
-.pw-card-emblem {
-  grid-column: 1;
-  grid-row: 1;
-  position: relative;
-  align-self: center;
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  flex: none;
-  color: var(--accent);
-  background: linear-gradient(145deg, var(--accent), #948056);
-  clip-path: polygon(25% 1%, 75% 1%, 99% 25%, 99% 75%, 75% 99%, 25% 99%, 1% 75%, 1% 25%);
-  filter: drop-shadow(0 2px 3px #0008);
-}
-.pw-card-emblem::before {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  background: radial-gradient(circle at 35% 25%, #34484c, #0b1a21 80%);
-  clip-path: inherit;
-}
-.pw-card-emblem svg { position: relative; width: 17px; height: 17px; filter: drop-shadow(0 0 3px var(--accent)); }
-.pw-card-emblem.control { color: #d7b9eb; background: linear-gradient(#e1c2f5, #80619b); }
-.pw-card-emblem.ward { color: #acdbe4; background: linear-gradient(#b9eaf2, #547983); }
-.pw-card-identity { grid-column: 2; grid-row: 1; gap: 1px; }
+.pw-card-identity { grid-column: 1; grid-row: 1; gap: 1px; }
 .pw-card-category { font-size: 9px; color: #d2cfbf; letter-spacing: .06em; }
 .pw-card-category:empty { display: none; }
 .pw-card-category svg { width: 11px; height: 11px; }
 .pw-card-identity strong { color: #f4eee0; font-family: var(--font-legend); font-size: 12px; line-height: 1.1; }
-.pw-card-effect { grid-column: 3; grid-row: 1; padding-left: 5px; }
+.pw-card-effect { grid-column: 2; grid-row: 1; padding-left: 5px; }
 .pw-card-resource { grid-row: 2; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; }
 .pw-card-resource svg { color: var(--accent); }
 .pw-card-charges i { height: 5px; border-radius: 0; }
@@ -233,7 +209,6 @@
   background: linear-gradient(160deg, #56482e, #2a2b25 58%, #172126);
   box-shadow: inset 0 1px #ffe5a276, inset 0 -3px #0e1417, 0 0 14px #d9a94d20;
 }
-.pw-move-card.signature .pw-card-emblem { color: #ffdf95; background: linear-gradient(#ffe2a0, #a87939); }
 .pw .pw-move-card.chosen {
   border-color: #f5e0a9;
   box-shadow: inset 0 0 0 1px #eacb7d, inset 0 1px #fff0c3, 0 0 17px #f1cb6c55;
@@ -302,13 +277,11 @@
   .pw .pw-move-card {
     /* The count column matches the count's own 40px minimum, so "1 action" is not
        clipped by the card (issue #589). */
-    grid-template-columns: 29px minmax(0, 1fr) 40px;
+    grid-template-columns: minmax(0, 1fr) 40px;
     grid-template-rows: 1fr 17px;
     column-gap: 4px;
     padding: 5px 6px 0;
   }
-  .pw-card-emblem { width: 27px; height: 27px; }
-  .pw-card-emblem svg { width: 14px; height: 14px; }
   .pw-card-identity strong { font-size: 11px; }
   .pw-card-category { font-size: 9px; }
   .pw-card-effect b { font-size: 19px; }

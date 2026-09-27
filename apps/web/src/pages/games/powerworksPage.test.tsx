@@ -301,7 +301,7 @@ describe("Powerworks player flow", () => {
     // The first tap lifts the disc and arms it (round 2: no card yet); it asks for a second.
     expect(ringOwner()).toBe("Crystorn");
     expect(ram).toHaveClass("armed");
-    expect(ram.querySelector(".pw-radial-label")).toHaveTextContent("Tap again");
+    expect(ram.querySelector(".pw-plate-foot")).toHaveTextContent("tap again");
     expect(moveCard()).toBeNull();
     // The second tap chooses it: the disc expands into its card, with the full reading.
     fireEvent.pointerDown(ram, { pointerType: "touch" });
@@ -322,9 +322,9 @@ describe("Powerworks player flow", () => {
     // A guard on itself has no power; its name says what it does instead.
     const anchor = screen.getByRole("menuitem", { name: /^Graviclaw: Ground Anchor/ });
     expect(anchor).toHaveAccessibleName(/protected on itself/);
-    // Every disc carries its name underneath.
+    // Every plate carries its name at its head.
     expect(
-      screen.getAllByRole("menuitem").map((m) => m.querySelector(".pw-radial-name")!.textContent)
+      screen.getAllByRole("menuitem").map((m) => m.querySelector(".pw-plate-name")!.textContent)
     ).toEqual(["Gravity Pincer", "Gravity Draw", "Ground Anchor", "Slashing Pinch"]);
     // A mouse click chooses a slot at once (only touch arms first).
     fireEvent.click(
@@ -425,32 +425,26 @@ describe("Powerworks player flow", () => {
     expect(attack).toHaveAccessibleDescription(
       /^Ranged attack\. 5 base power\. Cools: ends Overheated and Burning\. 1 round cooldown\. Worth [0-9]+ health on Crawler [12] this round: takes [0-9]+ health\.$/
     );
-    expect(attack.querySelector(".pw-radial-label")).not.toHaveTextContent(
-      /power|ranged/
-    );
-    // Round 2: the power waits for the card, which also says how long the move rests.
-    expect(attack.querySelector(".pw-radial-disc")!.textContent).toBe("");
-    expect(attack.querySelector(".pw-radial-label")).toHaveTextContent("Emergency Water Cannon");
+    expect(shownText(attack)).not.toMatch(/power|ranged/i);
+    // Move plates: the plate says its name and what it does this round, never a base power.
+    expect(attack.querySelector(".pw-plate-name")).toHaveTextContent("Emergency Water Cannon");
+    expect(attack.querySelector(".pw-plate-effect")).toHaveTextContent(/[0-9]+ dmg/);
     expect(attack.querySelector(".pw-radial-power")).toBeNull();
     fireEvent.click(attack);
     // Round 3: no power on the card (each target carries its own outcome); how long it
     // rests is said in words with its tooltip, and once per encounter is the badge's tooltip.
     const body = moveCard()!.querySelector(".pw-radial-card-body")!;
     expect(shownText(body)).not.toMatch(/power|Rests|once per encounter|Ranged/);
-    const rest = moveCard()!.querySelector<HTMLElement>(".pw-mark.rest")!;
-    expect(rest.querySelector(".pw-rest-word")).toHaveTextContent("rests 1");
-    expect(rest).toHaveAccessibleName("Rests 1 round");
-    expect(rest).toHaveAccessibleDescription("Unavailable for 1 round after use.");
+    // A signature is used once per fight, so the card never says how long it would rest.
+    expect(moveCard()!.querySelector(".pw-mark.rest")).toBeNull();
     expect(moveCard()!.querySelector(".pw-mark.signature")).toHaveAccessibleDescription(
       "Signature: usable once per encounter."
     );
+    // Move plates: the guide keeps no key of move symbols, since no move carries one; it
+    // says what a plate reads, in the words the plate uses.
     fireEvent.click(screen.getByRole("button", { name: "Field guide" }));
-    expect(screen.getByLabelText("Move symbol key")).toHaveTextContent(
-      "Base power"
-    );
-    expect(screen.getByLabelText("Move symbol key")).toHaveTextContent(
-      "Melee attack"
-    );
+    expect(screen.queryByLabelText("Move symbol key")).toBeNull();
+    expect(screen.getByRole("dialog")).toHaveTextContent(/"lands next round"/);
   });
   it("lists each condition on a companion with its plain-language rule in the inspector", () => {
     mount();
@@ -580,8 +574,8 @@ describe("Powerworks player flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
     const long = screen.getByRole("menuitem", { name: /^Hippochamp: Piercing Shot \(/ });
     expect(long.getAttribute("aria-label")).toMatch(/;/);
-    expect(long.querySelector(".pw-radial-label")).toHaveTextContent("Piercing Shot");
-    expect(long.querySelector(".pw-radial-label")!.textContent).not.toContain("(");
+    expect(long.querySelector(".pw-plate-name")).toHaveTextContent("Piercing Shot");
+    expect(long.querySelector(".pw-plate-name")!.textContent).not.toContain("(");
     fireEvent.click(long);
     fireEvent.click(targetButton("Target Maintenance crawler M1"));
     const label = document.querySelector('[data-unit="H"] .pw-order-chip-move')!;
@@ -596,37 +590,32 @@ describe("Powerworks player flow", () => {
     /** The starter run as the page deals it, to read the rules' own preview numbers. */
     const starterRun = () => createRun(1);
 
-    it("rests each disc at its icon, name and signature rim; only an unavailable one carries a reason", () => {
+    it("rests each plate at its name, its effect and its costs in words; only an unavailable one carries a reason", () => {
       mount();
       fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
       const slots = screen.getAllByRole("menuitem");
       for (const slot of slots) {
-        // Icon and name only: no power badge, no bind count, no cooldown pips, no keycap.
-        expect(slot.querySelector(".pw-radial-disc svg")).not.toBeNull();
-        expect(slot.querySelector(".pw-radial-label")!.textContent).not.toBe("");
+        // Move plates (2026-09-27): no icon stands for the move, and no power badge, bind
+        // count, cooldown pips or keycap; the name and the effect in words.
+        expect(slot.querySelector("svg")).toBeNull();
+        expect(slot.querySelector(".pw-plate-name")!.textContent).not.toBe("");
+        expect(slot.querySelector(".pw-plate-effect")!.textContent).not.toBe("");
         expect(slot.querySelector(".pw-radial-power, .pw-card-charges, .pw-radial-key")).toBeNull();
-        expect(slot.querySelector(".pw-radial-tag")).toBeNull();
+        expect(slot.querySelector(".pw-plate-reason")).toBeNull();
       }
       const cannon = screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ });
       expect(cannon).toHaveClass("signature");
-      // Words pass (round 3 review): the signature wears a badge reading "once" on its rim,
-      // not only a gold rim.
-      expect(cannon.querySelector(".pw-radial-crown.pw-radial-once")).toHaveTextContent("once");
-      expect(document.querySelectorAll(".pw-radial-crown")).toHaveLength(1);
-      // The signature shows what kind of move it is (a ranged strike); its gold rim alone
-      // marks it, and no disc wears a crown icon or a kind-colored rim.
-      expect(cannon.querySelector(".pw-radial-disc svg")).toHaveClass("lucide-crosshair");
-      expect(document.querySelector(".pw-radial-disc .lucide-crown")).toBeNull();
+      // The signature says "once" in its foot, besides its gold rim; its rest never shows,
+      // since it is used once.
+      expect(cannon.querySelector(".pw-plate-foot")).toHaveTextContent(/^once$/);
+      expect(document.querySelectorAll(".pw-plate-foot")).not.toHaveLength(0);
       fireEvent.click(cannon);
       expect(moveCard()!.querySelector(".pw-radial-card-head .pw-mark.signature.badge")).toHaveAccessibleDescription(
         "Signature: usable once per encounter."
       );
       fireEvent.keyDown(window, { key: "Escape" });
       expect(document.querySelector(".pw-radial-slot.control, .pw-radial-slot.ward")).toBeNull();
-      expect(
-        screen.getByRole("menuitem", { name: /^Hippochamp: Repelling Slam/ }).querySelector(".pw-radial-disc svg")
-      ).toHaveClass("lucide-magnet");
       expect(slots.filter((s) => s.classList.contains("signature"))).toHaveLength(1);
       // After a round in which Hippochamp slams, its slam cools: dimmed, with its one reason.
       planAll({
@@ -641,7 +630,9 @@ describe("Powerworks player flow", () => {
       const slam = screen.getByRole("menuitem", { name: /^Hippochamp: Repelling Slam/ });
       expect(slam).toHaveClass("dim");
       expect(slam).toHaveAttribute("aria-disabled", "true");
-      expect(slam.querySelector(".pw-radial-tag")).toHaveTextContent("cooling 1");
+      // The reason stands where the effect would, and the plate says nothing else.
+      expect(slam.querySelector(".pw-plate-effect")).toHaveTextContent(/^cooling 1$/);
+      expect(slam.querySelector(".pw-plate-foot")).toBeNull();
       expect(
         screen.getByRole("menuitem", { name: /^Hippochamp: Emergency Water Cannon/ })
       ).not.toHaveClass("dim");
@@ -902,7 +893,7 @@ describe("Powerworks player flow", () => {
       return JSON.stringify({ version: SAVE_VERSION, seed: 1, history });
     }
 
-    it("dresses an elemental disc in its element and leaves a physical one steel", () => {
+    it("dresses an elemental plate in its element and leaves a physical one steel", () => {
       mount();
       fireEvent.click(screen.getByRole("button", { name: "Enter the facility" }));
       fireEvent.click(screen.getByRole("button", { name: "Select Hippochamp" }));
@@ -911,13 +902,13 @@ describe("Powerworks player flow", () => {
       expect(slot("Emergency Water Cannon")).toHaveClass("signature", "elemental", "el-water");
       expect(slot("Repelling Slam")).toHaveClass("physical");
       expect(slot("Repelling Slam")).not.toHaveClass("elemental");
-      // A charged move carries the charge mark (an hourglass) on its disc, and its icon still
-      // reads as a strike.
-      expect(slot("Crushing Kick").querySelector(".pw-radial-charge svg")).toHaveClass("lucide-hourglass");
-      expect(slot("Crushing Kick").querySelector(".pw-radial-disc svg")).toHaveClass("lucide-swords");
-      // Its rest word waits on its rim until the disc is lifted; a move usable every round has none.
-      expect(slot("Crushing Kick").querySelector(".pw-radial-rest")).toHaveTextContent("rests 2");
-      expect(slot("Water Sweep").querySelector(".pw-radial-rest")).toBeNull();
+      // A charged move says so in words in its foot, with how long it rests, instead of an
+      // hourglass (read as a cooldown in audit run 2); a move usable every round has no foot.
+      expect(
+        [...slot("Crushing Kick").querySelectorAll(".pw-plate-foot > span")].map((f) => f.textContent)
+      ).toEqual(["lands next round", "rests 2"]);
+      expect(slot("Crushing Kick").querySelector("svg")).toBeNull();
+      expect(slot("Water Sweep").querySelector(".pw-plate-foot")).toBeNull();
     });
 
     it("previews a hovered disc faintly on its targets, with matchup chevrons, and clears it when the pointer leaves", () => {

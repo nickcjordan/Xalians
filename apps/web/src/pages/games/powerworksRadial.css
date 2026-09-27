@@ -1,57 +1,34 @@
 /*
-  Powerworks orders on the stage (docs/design/powerworks-radial-orders.md): the radial move
-  menu over a selected companion, the move card its chosen disc grows into (round 2), the
-  selected companion's ground ring and raised plaque, and the order chip on every
-  companion's plaque. Every material and color here is the game's own (the move card
-  emblem, the plaque, the command trim), except an elemental move's hue (round 3), which is
-  the site's element token through the `el-<element>` scope (`--el`): an elemental move is
+  Powerworks orders on the stage (docs/design/powerworks-radial-orders.md): the row of move
+  plates over a selected companion (round 4), the move card its chosen plate grows into
+  (round 2), the selected companion's ground ring and raised plaque, and the order chip on
+  every companion's plaque. Every material and color here is the game's own (the move card,
+  the plaque, the command trim), except an elemental move's hue (round 3), which is the
+  site's element token through the `el-<element>` scope (`--el`): an elemental move is
   element-tagged content. Nothing that carries text or a thin line is scaled at rest or on
   hover (round 3): a lift is a whole-pixel translate and a glow.
 */
 .pw-radial {
-  /* The disc, the label under it, the label height below the disc, how far the arc sits
-     from the feet in figure heights, and the arc's half spread in degrees. */
-  --disc: 60px;
-  --label-w: 84px;
-  --under: 30px;
-  --reach: 0.95;
-  --spread: 38;
-  --spread-wide: 50;
+  /* A plate's width (the row narrows it to fit the stage), the gap between plates, and how
+     far the row's bottom stands above the highest head it passes over. */
+  --plate-w: 132px;
+  --plate-gap: 8px;
+  --plate-rise: 8px;
+  --plate-chamfer: 7px;
   position: absolute;
   z-index: 14;
   width: 0;
   height: 0;
 }
-
-/* The wheel's trim: a thin arc of the command panel's gold that the discs sit on. */
-.pw .pw-radial-arc {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1px;
-  height: 1px;
-  overflow: visible;
-  pointer-events: none;
-  animation: pw-fade-in 200ms var(--ease-out) both;
-}
-.pw-radial.folding .pw-radial-arc,
-.pw-radial.folded .pw-radial-arc {
-  opacity: 0;
-  animation: pw-fade-out 140ms ease-in both;
-}
-.pw-radial-arc path {
-  fill: none;
-  stroke: #c6a767;
-  stroke-width: 2px;
-  stroke-opacity: 0.55;
-  filter: drop-shadow(0 0 3px #d7b46566);
-}
+/* The row: its origin is its bottom left corner, and every plate in it is as tall as the
+   tallest, so the names, the effects and the costs line up across the row. */
 .pw-radial-menu {
   position: absolute;
   left: 0;
-  top: 0;
-  width: 0;
-  height: 0;
+  bottom: 0;
+  display: flex;
+  align-items: stretch;
+  gap: var(--plate-gap);
 }
 @keyframes pw-fade-in {
   from {
@@ -68,9 +45,9 @@
 }
 
 /*
-  Round 2 motion: the discs open out of the creature one after another and fold back the
+  Round 2 motion: the plates open out of the creature one after another and fold back the
   same way (WHEEL_MOTION in powerworksRadial.tsx holds the same durations). The scale here
-  runs only while a disc travels, never at rest.
+  runs only while a plate travels, never at rest.
 */
 @keyframes pw-disc-in {
   from {
@@ -93,31 +70,149 @@
   }
 }
 
-/* A slot is one ability disc: the move card's octagon emblem at icon size. Its center
-   stands on a whole pixel (round 3), so its rim and its name are drawn sharp. */
+/*
+  Move plates (2026-09-27). Nick: the disc gave "one useless icon that's giant inside the
+  badge", with "a handful of smaller indicators below" it. A plate is one bounded piece, read
+  top to bottom: the move's name, what it does this round in words and numbers (the loudest
+  thing on it), then what using it costs. Its rim says what kind of move it is: steel for a
+  physical move, the element's hue for an elemental one, gold for the signature.
+*/
 .pw .pw-radial .pw-radial-slot {
-  position: absolute;
-  left: calc(var(--x) - var(--disc) / 2);
-  top: calc(var(--y) - var(--disc) / 2);
-  width: var(--disc);
-  height: var(--disc);
-  display: block;
-  padding: 0;
+  --rim: linear-gradient(160deg, #d3dbd5, #6b7874);
+  --wash: transparent;
+  position: relative;
+  isolation: isolate;
+  flex: none;
+  width: var(--plate-w);
+  min-height: 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 7px 7px 6px;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
   color: #f4eee0;
+  text-align: center;
   overflow: visible;
+  filter: drop-shadow(0 3px 4px #03090bcc);
+  transition:
+    transform 120ms var(--ease-out),
+    filter 120ms var(--ease-out),
+    opacity 120ms var(--ease-out);
   animation: pw-disc-in 160ms var(--ease-out) backwards;
   animation-delay: calc(var(--k) * 25ms);
+}
+.pw .pw-radial .pw-radial-slot::before,
+.pw .pw-radial .pw-radial-slot::after {
+  content: "";
+  position: absolute;
+  clip-path: polygon(
+    var(--plate-chamfer) 0,
+    calc(100% - var(--plate-chamfer)) 0,
+    100% var(--plate-chamfer),
+    100% calc(100% - var(--plate-chamfer)),
+    calc(100% - var(--plate-chamfer)) 100%,
+    var(--plate-chamfer) 100%,
+    0 calc(100% - var(--plate-chamfer)),
+    0 var(--plate-chamfer)
+  );
+  pointer-events: none;
+}
+.pw .pw-radial .pw-radial-slot::before {
+  inset: 0;
+  z-index: -2;
+  background: var(--rim);
+}
+.pw .pw-radial .pw-radial-slot::after {
+  inset: 2px;
+  z-index: -1;
+  background:
+    linear-gradient(170deg, var(--wash), transparent 62%),
+    linear-gradient(180deg, #182830, #08151b);
 }
 .pw .pw-radial .pw-radial-slot:hover:not(:disabled) {
   background: transparent;
 }
-/* After an order locks, the companion's wheel never comes back: its discs are gone at once,
-   except the disc of a move on its user, which flies into the plaque chip. */
-.pw .pw-radial.locked .pw-radial-arc,
+/* Round 3: an elemental move wears its element, a rim of its hue and a low wash of it. */
+.pw .pw-radial .pw-radial-slot.elemental {
+  --rim: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--el) 88%, #f4eee0),
+    color-mix(in srgb, var(--el) 72%, #0b1a21)
+  );
+  --wash: color-mix(in srgb, var(--el) 30%, transparent);
+}
+/* The signature keeps its gold rim, doubled (a gold line, a dark gap, a second gold line),
+   because the light and electric hues sit close to gold: it is told by its shape as well as
+   its color. Its element's wash stays inside. */
+.pw .pw-radial .pw-radial-slot.signature {
+  --rim: linear-gradient(180deg, #ffe2a0, #a87939);
+}
+.pw .pw-radial .pw-radial-slot.signature:not(.elemental) {
+  --wash: #e9bb5226;
+}
+.pw .pw-radial .pw-radial-slot.signature::after {
+  box-shadow:
+    inset 0 0 0 1px #2b200d,
+    inset 0 0 0 2px #e2bf6bcc;
+}
+/* The name: up to two lines rather than losing its end; the full generated name on hover. */
+.pw-plate-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font: 600 12px/14px var(--font-legend);
+  color: #f4eee0;
+  text-shadow: 0 1px 2px #000;
+}
+/* What it does this round: the loudest thing on the plate. */
+.pw-plate-effect {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+}
+.pw .pw-radial-slot .pw-effect {
+  max-width: 100%;
+  gap: 3px;
+  font-size: 13px;
+  line-height: 1.25;
+}
+.pw .pw-radial-slot .pw-effect b {
+  padding: 1px 5px;
+}
+/* Why it cannot be chosen, in the place its effect would stand. */
+.pw-plate-reason {
+  font: 600 11px/1.2 var(--font-legend);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #d7bfa5;
+}
+/* What using it costs, in words, under a hairline: "once", "lands next round", "rests 1". */
+.pw-plate-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 6px;
+  padding-top: 3px;
+  border-top: 1px solid #bca77933;
+  font: 600 10px/1.25 var(--font-legend);
+  color: #e8d29c;
+}
+.pw-radial-slot.signature .pw-plate-foot {
+  color: #ffdf95;
+}
+.pw-plate-foot.armed {
+  color: #fff0bc;
+}
+
+/* After an order locks, the companion's plates never come back: they are gone at once,
+   except the plate of a move on its user, which flies into the plaque chip. */
 .pw .pw-radial.locked .pw-radial-slot {
   visibility: hidden;
   opacity: 0;
@@ -128,8 +223,8 @@
   visibility: visible;
   opacity: 1;
 }
-/* Folding back into the creature: when the wheel closes, or when a disc was chosen and
-   the others make way for its card. Folded discs stay hidden and take no taps. */
+/* Folding back into the creature: when the row closes, or when a plate was chosen and the
+   others make way for its card. Folded plates stay hidden and take no taps. */
 .pw .pw-radial.folding .pw-radial-slot,
 .pw .pw-radial.folded .pw-radial-slot {
   visibility: hidden;
@@ -138,103 +233,16 @@
   animation: pw-disc-out 140ms ease-in both;
   animation-delay: calc(var(--rk) * 20ms);
 }
-/* The chosen disc is the card now (or is still becoming the disc again): never drawn twice. */
+/* The chosen plate is the card now (or is still becoming the plate again): never drawn twice. */
 .pw .pw-radial .pw-radial-slot.held {
   visibility: hidden;
   animation: none;
 }
-/* A physical disc wears the steel rim; the signature's rim is gold. The rim is the disc's
-   own background and the core its interior, where an element's wash sits. */
-.pw-radial-disc,
-.pw-radial-emblem {
-  --octagon: polygon(29% 0, 71% 0, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0 71%, 0 29%);
-}
-.pw-radial-disc {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  color: #e3eae5;
-  background: linear-gradient(145deg, #d3dbd5, #6b7874);
-  clip-path: var(--octagon);
-  filter: drop-shadow(0 3px 4px #03090bcc);
-  transition:
-    transform 120ms var(--ease-out),
-    filter 120ms var(--ease-out),
-    opacity 120ms var(--ease-out);
-}
-.pw-radial-core {
-  position: absolute;
-  z-index: 1;
-  inset: 3px;
-  display: grid;
-  place-items: center;
-  clip-path: var(--octagon);
-  background: radial-gradient(circle at 35% 25%, #34484c, #0b1a21 80%);
-}
-.pw .pw-radial-disc svg {
-  position: relative;
-  width: 30px;
-  height: 30px;
-  filter: drop-shadow(0 0 3px #e3eae588);
-}
-.pw-radial-slot.signature .pw-radial-disc {
-  color: #ffe3a3;
-  background: linear-gradient(#ffe2a0, #a87939);
-  filter: drop-shadow(0 0 5px #e9bb5277) drop-shadow(0 3px 4px #03090bcc);
-}
-/* Round 3: an elemental move wears its element, a rim of its hue and a low wash of it
-   behind the icon. */
-.pw-radial-slot.elemental .pw-radial-disc,
-.pw-radial-card.elemental .pw-radial-emblem {
-  background: linear-gradient(
-    145deg,
-    color-mix(in srgb, var(--el) 88%, #f4eee0),
-    color-mix(in srgb, var(--el) 78%, #0b1a21)
-  );
-}
-.pw-radial-slot.elemental .pw-radial-core,
-.pw-radial-card.elemental .pw-radial-emblem .pw-radial-core {
-  background:
-    radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--el) 62%, transparent), transparent 78%),
-    radial-gradient(circle at 35% 25%, #34484c, #0b1a21 80%);
-}
-.pw .pw-radial-slot.elemental .pw-radial-disc svg,
-.pw .pw-radial-card.elemental .pw-radial-emblem svg {
-  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--el) 90%, transparent));
-}
-/* The signature keeps its gold rim, with its element's wash inside when it is elemental.
-   Its rim is doubled, a gold line, a dark gap and a second gold line, because the light and
-   electric hues sit close to gold: the signature is told by its shape as well as its color. */
-.pw-radial-slot.signature.elemental .pw-radial-disc,
-.pw-radial-card.signature.elemental .pw-radial-emblem {
-  background: linear-gradient(#ffe2a0, #a87939);
-}
-.pw-radial-slot.signature .pw-radial-disc::before,
-.pw-radial-slot.signature .pw-radial-disc::after,
-.pw-radial-card.signature .pw-radial-emblem::before,
-.pw-radial-card.signature .pw-radial-emblem::after {
-  content: "";
-  position: absolute;
-  clip-path: var(--octagon);
-}
-.pw-radial-slot.signature .pw-radial-disc::before,
-.pw-radial-card.signature .pw-radial-emblem::before {
-  inset: 3px;
-  background: #2b200d;
-}
-.pw-radial-slot.signature .pw-radial-disc::after,
-.pw-radial-card.signature .pw-radial-emblem::after {
-  inset: 5px;
-  background: linear-gradient(#ffe9b3, #b58743);
-}
-.pw-radial-slot.signature .pw-radial-core {
-  inset: 7px;
-}
-.pw-radial-slot.current .pw-radial-disc {
+/* The standing order's plate glows gold. */
+.pw .pw-radial .pw-radial-slot.current {
   filter: drop-shadow(0 0 5px #f5e0a9) drop-shadow(0 3px 4px #03090bcc);
 }
-/* Hover or focus (or the first tap on touch): the disc lifts and glows in its own rim's
+/* Hover or focus (or the first tap on touch): the plate lifts and glows in its own rim's
    color, the others soften. A lift is a whole-pixel translate, never a scale (round 3). */
 .pw-radial-slot {
   --lift-glow: #e3eae5bb;
@@ -245,197 +253,48 @@
 .pw-radial-slot.signature {
   --lift-glow: #f1cb6cdd;
 }
-/* A disc lifts when the keyboard focuses it or a first tap arms it, and on hover only where
+/* A plate lifts when the keyboard focuses it or a first tap arms it, and on hover only where
    a pointer truly hovers (the hover versions are in the block below): a tap leaves a sticky
-   hover on a touch screen, which would keep a disc lifted after the finger has gone. */
-.pw-radial.open .pw-radial-slot:focus-visible .pw-radial-disc,
-.pw-radial.open .pw-radial-slot.armed .pw-radial-disc {
+   hover on a touch screen, which would keep a plate lifted after the finger has gone. */
+.pw .pw-radial.open .pw-radial-slot:is(:focus-visible, .armed):not(.dim) {
+  z-index: 2;
   transform: translateY(-4px);
   filter: drop-shadow(0 0 7px var(--lift-glow)) drop-shadow(0 0 2px var(--lift-glow))
-    drop-shadow(0 6px 5px #03090bcc) brightness(1.12);
+    drop-shadow(0 6px 5px #03090bcc) brightness(1.1);
 }
 @media (hover: none), (pointer: coarse) {
   .pw-radial.open
     .pw-radial-menu:has(.pw-radial-slot:focus-visible, .pw-radial-slot.armed)
-    .pw-radial-slot:not(:focus-visible):not(.armed)
-    .pw-radial-disc {
-    opacity: 0.62;
+    .pw-radial-slot:not(:focus-visible):not(.armed) {
+    /* Darkened, not faded: a faded plate let the stage show through its words. */
+    filter: brightness(0.62) saturate(0.7) drop-shadow(0 3px 4px #03090bcc);
   }
 }
-.pw-radial-slot.dim {
+/* A plate that cannot be chosen: its rim and wash go grey, its name dims, and its reason
+   stands where its effect would. */
+.pw .pw-radial .pw-radial-slot.dim {
+  --rim: linear-gradient(160deg, #6d7571, #3a4341);
+  --wash: transparent;
   cursor: default;
+  filter: drop-shadow(0 3px 4px #03090bcc);
 }
-.pw-radial-slot.dim .pw-radial-disc,
-.pw-radial.open .pw-radial-slot.dim:is(:focus-visible, .armed) .pw-radial-disc {
-  transform: none;
-  filter: grayscale(0.8) brightness(0.58) drop-shadow(0 3px 4px #03090bcc);
+.pw-radial-slot.dim .pw-plate-name {
+  color: #aab4ad;
 }
 .pw .pw-radial .pw-radial-slot:focus-visible {
   outline: 3px solid #e2efad;
-  outline-offset: 5px;
-  z-index: 1;
-}
-
-/* The disc is the control; its marks, label and keycap never take a tap from the stage beneath. */
-.pw-radial-tag,
-.pw-radial-label,
-.pw-radial-key,
-.pw-radial-charge,
-.pw-radial-crown,
-.pw-radial-rest {
-  pointer-events: none;
-}
-/* The charge mark (round 3): the game's charge icon on the disc's upper rim. */
-.pw-radial-charge {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 20px;
-  height: 20px;
-  display: grid;
-  place-items: center;
-  color: #ffe6a6;
-  background: #4b3e21;
-  border: 1px solid #c6a65a;
-  border-radius: 50%;
-  transition: transform 120ms var(--ease-out);
-}
-.pw .pw-radial-charge svg {
-  width: 12px;
-  height: 12px;
-}
-.pw-radial.open .pw-radial-slot:is(:focus-visible, .armed):not(.dim) .pw-radial-charge {
-  transform: translateY(-4px);
-}
-/* The signature's crown badge on the disc's upper left rim (round 3 review). */
-.pw-radial-crown {
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  width: 20px;
-  height: 20px;
-  display: grid;
-  place-items: center;
-  color: #ffdf95;
-  background: #2b200d;
-  border: 1px solid #e2bf6b;
-  border-radius: 50%;
-  pointer-events: none;
-  transition: transform 120ms var(--ease-out);
-}
-.pw .pw-radial-crown svg {
-  width: 12px;
-  height: 12px;
-}
-.pw-radial.open .pw-radial-slot:is(:focus-visible, .armed):not(.dim) .pw-radial-crown {
-  transform: translateY(-4px);
-}
-/* Rest pips (round 3): one per round the move rests after use, on the disc's lower rim,
-   only while the disc is lifted. A move usable every round shows none. */
-.pw-radial-rest {
-  position: absolute;
-  left: calc(50% - 20px);
-  width: 40px;
-  top: calc(100% - 8px);
-  display: none;
-  justify-content: center;
-  gap: 5px;
-}
-.pw-radial-rest i,
-.pw-mark.rest i {
-  width: 7px;
-  height: 7px;
-  flex: none;
-  background: #e8d29c;
-  border: 1px solid #08151b;
-  transform: rotate(45deg);
-  box-shadow: 0 0 0 1px #cbb98f88;
-}
-.pw-radial.open .pw-radial-slot:is(:focus-visible, .armed) .pw-radial-rest {
-  display: flex;
-}
-/* Why a disc cannot be chosen: the one small tag a disc may carry, on its lower rim. It is
-   centered by a fixed even-width box on the whole-pixel disc, never by a half-pixel
-   translate (round 3). */
-.pw-radial-tag {
-  position: absolute;
-  left: calc(50% - 40px);
-  width: 80px;
-  top: calc(100% - 8px);
-  display: flex;
-  justify-content: center;
-}
-.pw-radial-reason {
-  display: flex;
-  align-items: center;
-  min-height: 14px;
-  padding: 1px 5px;
-  background: #08151bf0;
-  border: 1px solid #bca77966;
-  border-radius: 2px;
-  white-space: nowrap;
-  font: 600 9.5px/1 var(--font-legend);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #d7bfa5;
-}
-
-/* The move's name under the disc: one short line, readable without hovering. */
-.pw-radial-label {
-  position: absolute;
-  left: calc(50% - var(--label-w) / 2);
-  width: var(--label-w);
-  top: calc(100% + 8px);
-  display: flex;
-  justify-content: center;
-  transition: transform 120ms var(--ease-out);
-}
-.pw-radial-name {
-  max-width: 100%;
-  padding: 1px 5px;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  text-align: center;
-  font: 600 11px/13px var(--font-legend);
-  color: #f4eee0;
-  background: #08151bd9;
-  border-radius: 2px;
-  text-shadow: 0 1px 2px #000;
-  transition: background-color 120ms var(--ease-out);
-}
-.pw-radial-slot.dim .pw-radial-name {
-  color: #aab4ad;
-}
-.pw-radial-slot.dim .pw-radial-label,
-.pw-radial.open .pw-radial-slot:is(:focus-visible, .armed) .pw-radial-rest ~ .pw-radial-label {
-  transform: translateY(3px);
-}
-.pw .pw-radial.open .pw-radial-slot:focus-visible,
-.pw .pw-radial.open .pw-radial-slot.armed {
+  outline-offset: 3px;
   z-index: 2;
 }
-/* A lifted disc shows its whole name, wrapped within its own width, so a disc at the stage
-   edge never pushes its name outside the stage. */
-.pw-radial.open .pw-radial-slot:focus-visible .pw-radial-name,
-.pw-radial-slot.armed .pw-radial-name {
-  -webkit-line-clamp: unset;
-  background: #08151bf2;
-  box-shadow: 0 0 0 1px #c6a76799;
+/* The plate is the control; its words and keycap never take a tap from the stage beneath. */
+.pw-radial-slot > span {
+  pointer-events: none;
 }
-.pw-radial.open .pw-radial-slot.elemental:is(:focus-visible, .armed) .pw-radial-name {
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--el) 70%, transparent);
-}
-.pw-radial-name small {
-  display: block;
-  font: 500 10px/12px var(--font-body);
-  color: #efdbab;
-}
-/* The hotkey, only once the keyboard has been used: a small dim keycap on the rim. */
+/* The hotkey, only once the keyboard has been used: a small dim keycap on the corner. */
+
 .pw-radial-key {
   position: absolute;
-  bottom: -2px;
+  top: -6px;
   left: -6px;
   width: 15px;
   height: 16px;
@@ -513,43 +372,6 @@
 .pw-radial-card.returning {
   pointer-events: none;
 }
-/* The emblem is the disc itself, carried into the card, in the disc's own rim. It stands in
-   the head's corner, so every row under the name spans the card's width (round 3). */
-.pw-radial-emblem {
-  position: absolute;
-  left: 9px;
-  top: 9px;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  color: #e3eae5;
-  background: linear-gradient(145deg, #d3dbd5, #6b7874);
-  clip-path: var(--octagon);
-  transform-origin: 50% 50%;
-}
-.pw-radial-emblem .pw-radial-core {
-  inset: 2.5px;
-}
-.pw .pw-radial-emblem svg {
-  position: relative;
-  width: 21px;
-  height: 21px;
-  filter: drop-shadow(0 0 3px #e3eae588);
-}
-.pw-radial-card.signature .pw-radial-emblem {
-  color: #ffe3a3;
-  background: linear-gradient(#ffe2a0, #a87939);
-}
-.pw-radial-card.signature .pw-radial-emblem::before {
-  inset: 2.5px;
-}
-.pw-radial-card.signature .pw-radial-emblem::after {
-  inset: 4px;
-}
-.pw-radial-card.signature .pw-radial-emblem .pw-radial-core {
-  inset: 5.5px;
-}
 .pw-radial-card-body {
   min-width: 0;
   display: grid;
@@ -562,8 +384,8 @@
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 40px;
-  padding: 0 40px 0 50px;
+  min-height: 32px;
+  padding: 0 40px 0 2px;
 }
 .pw-radial-card-head strong {
   flex: 0 1 auto;
@@ -756,18 +578,11 @@
 .pw-radial-card.compact {
   padding: 7px 9px 7px 8px;
 }
-.pw-radial-card.compact .pw-radial-emblem {
-  left: 8px;
-  top: 7px;
-  width: 32px;
-  height: 32px;
-}
 .pw-radial-card.compact .pw-radial-card-body {
   gap: 4px;
 }
 .pw-radial-card.compact .pw-radial-card-head {
-  min-height: 32px;
-  padding-left: 41px;
+  min-height: 28px;
 }
 .pw-radial-card.compact .pw-radial-card-head strong {
   font-size: 13px;
@@ -779,16 +594,10 @@
   padding-top: 3px;
 }
 /* The docked card (round 3 ruling): in a crowded room it lies as one row in the floor band
-   between the enemy row and the squad: emblem, name, marks, the charge line, the target line,
+   between the enemy row and the squad: name, effect, marks, the charge line, the target line,
    Back. Its width is fixed while the player aims, so the row never reflows. */
 .pw-radial-card.docked {
-  padding: 6px 48px 6px 48px;
-}
-.pw-radial-card.docked .pw-radial-emblem {
-  left: 7px;
-  top: calc(50% - 16px);
-  width: 32px;
-  height: 32px;
+  padding: 6px 48px 6px 12px;
 }
 .pw-radial-card.docked .pw-radial-card-body {
   display: flex;
@@ -802,7 +611,8 @@
   max-width: 180px;
   padding: 0;
 }
-.pw-radial-card.docked .pw-radial-marks {
+.pw-radial-card.docked .pw-radial-marks,
+.pw-radial-card.docked .pw-radial-card-value {
   flex: none;
   flex-wrap: nowrap;
 }
@@ -937,19 +747,6 @@
 .pw .pw-unit-plaque .pw-order-chip:disabled {
   cursor: default;
 }
-.pw-order-chip-icon {
-  display: inline-flex;
-  flex: none;
-}
-.pw .pw-unit-plaque .pw-order-chip-icon svg {
-  width: 11px;
-  height: 11px;
-  color: #d3dbd5;
-}
-/* The chip's move icon wears the move's element, as its disc did (round 3). */
-.pw .pw-unit-plaque .pw-order-chip-icon.elemental svg {
-  color: color-mix(in srgb, var(--el) 75%, #f4eee0);
-}
 .pw-order-chip-move {
   min-width: 0;
   flex: 0 1 auto;
@@ -1063,41 +860,39 @@
 
 @media (max-width: 600px) {
   .pw-radial {
-    /* Companions stand 90px apart on a phone, so the arc reaches farther and spreads less:
-       every disc stays above the heads and the neighbors stay tappable. */
-    --disc: 54px;
-    --label-w: 64px;
-    --under: 32px;
-    --clear-heads: 1;
-    --pitch: 66px;
+    /* A phone row spans the stage: the plates narrow to fit it (the row sets their width),
+       and the name may take two short lines rather than lose its end. */
+    --plate-w: 96px;
+    --plate-gap: 5px;
+    --plate-chamfer: 5px;
   }
-  .pw .pw-radial-disc svg {
-    width: 27px;
-    height: 27px;
+  .pw .pw-radial .pw-radial-slot {
+    min-height: 70px;
+    gap: 3px;
+    padding: 5px 4px 5px;
   }
-  /* The name wraps to two short lines rather than losing its end. */
-  .pw-radial-label {
-    top: calc(100% + 5px);
-  }
-  .pw-radial-name {
-    font-size: 10px;
+  .pw-plate-name {
+    font-size: 10.5px;
     line-height: 12px;
+  }
+  .pw .pw-radial-slot .pw-effect {
+    font-size: 11px;
+    gap: 2px;
+  }
+  .pw .pw-radial-slot .pw-effect b {
     padding: 1px 3px;
+  }
+  .pw-plate-foot {
+    font-size: 9.5px;
   }
   /* A phone card spans the stage, less a gutter; its back control is a full 44px target. */
   .pw-radial-card {
     width: min(320px, calc(100cqw - 16px));
     padding: 8px 9px 8px 8px;
   }
-  .pw-radial-emblem {
-    left: 8px;
-    top: 8px;
-    width: 36px;
-    height: 36px;
-  }
   .pw-radial-card-head {
     min-height: 36px;
-    padding: 0 48px 0 45px;
+    padding: 0 48px 0 2px;
   }
   .pw .pw-radial-card .pw-radial-back {
     top: 2px;
@@ -1116,9 +911,6 @@
     padding: 1px 3px;
     font-size: 10px;
     line-height: 1.15;
-  }
-  .pw .pw-unit-plaque .pw-order-chip > .pw-order-chip-icon {
-    display: none;
   }
   .pw .pw-unit-plaque .pw-order-chip {
     margin-left: -3px;
@@ -1205,41 +997,17 @@
    screen leaves a sticky hover on whatever it touched last, so on touch the same looks come
    from the keyboard's focus and the first tap's arming instead (the rules above). */
 @media (hover: hover) and (pointer: fine) {
-  .pw-radial.open .pw-radial-slot:hover .pw-radial-disc {
+  .pw .pw-radial.open .pw-radial-slot:hover:not(.dim) {
+    z-index: 2;
     transform: translateY(-4px);
     filter: drop-shadow(0 0 7px var(--lift-glow)) drop-shadow(0 0 2px var(--lift-glow))
-      drop-shadow(0 6px 5px #03090bcc) brightness(1.12);
+      drop-shadow(0 6px 5px #03090bcc) brightness(1.1);
   }
   .pw-radial.open
     .pw-radial-menu:has(.pw-radial-slot:hover, .pw-radial-slot:focus-visible, .pw-radial-slot.armed)
-    .pw-radial-slot:not(:hover):not(:focus-visible):not(.armed)
-    .pw-radial-disc {
-    opacity: 0.62;
-  }
-  .pw-radial.open .pw-radial-slot.dim:hover .pw-radial-disc {
-    transform: none;
-    filter: grayscale(0.8) brightness(0.58) drop-shadow(0 3px 4px #03090bcc);
-  }
-  .pw-radial.open .pw-radial-slot:hover:not(.dim) .pw-radial-charge,
-  .pw-radial.open .pw-radial-slot:hover:not(.dim) .pw-radial-crown {
-    transform: translateY(-4px);
-  }
-  .pw-radial.open .pw-radial-slot:hover .pw-radial-rest {
-    display: flex;
-  }
-  .pw-radial.open .pw-radial-slot:hover .pw-radial-rest ~ .pw-radial-label {
-    transform: translateY(3px);
-  }
-  .pw .pw-radial.open .pw-radial-slot:hover {
-    z-index: 2;
-  }
-  .pw-radial.open .pw-radial-slot:hover .pw-radial-name {
-    -webkit-line-clamp: unset;
-    background: #08151bf2;
-    box-shadow: 0 0 0 1px #c6a76799;
-  }
-  .pw-radial.open .pw-radial-slot.elemental:hover .pw-radial-name {
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--el) 70%, transparent);
+    .pw-radial-slot:not(:hover):not(:focus-visible):not(.armed) {
+    /* Darkened, not faded: a faded plate let the stage show through its words. */
+    filter: brightness(0.62) saturate(0.7) drop-shadow(0 3px 4px #03090bcc);
   }
   .pw-mark:hover {
     border-color: #f2d68b;
@@ -1277,11 +1045,6 @@
   .pw {
     --value-track: 50px;
   }
-}
-.pw-radial-label {
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
 }
 .pw-value {
   position: relative;
@@ -1354,9 +1117,6 @@
 .pw-value-track > i.healed {
   background: repeating-linear-gradient(120deg, #d3f7dc 0 3px, #5fae7a 3px 6px);
 }
-.pw-radial-slot.dim .pw-radial-value {
-  display: none;
-}
 
 /* Legible effects (2026-09-26): a machine's next attack is a badge, not a bar, so it never
    reads as a second health bar. Sword or crosshair, then the health it is poised to take; when
@@ -1421,21 +1181,7 @@
   Words pass (2026-09-27, audit run 1): glyphs a newcomer misread are replaced by the word or
   number they stood for, set in the same place and the same small badge styles.
 */
-/* The signature badge says "once" on the rim instead of a crown. */
-.pw .pw-radial-crown.pw-radial-once {
-  width: auto;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 2px;
-  font: 700 10px/1 var(--font-legend);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-/* How long a move rests, as words. */
-.pw-radial-rest {
-  left: calc(50% - 30px);
-  width: 60px;
-}
+/* How long a move rests, as words (on the move card). */
 .pw .pw-rest-word {
   padding: 1px 4px;
   border-radius: 2px;
@@ -1495,7 +1241,7 @@
     font-size: 10px;
   }
 }
-/* The card's signature badge carries the word, like the disc's. */
+/* The card's signature badge carries the word, like the plate's foot. */
 .pw .pw-radial-card-head .pw-mark.badge.once {
   width: auto;
   min-width: 0;
