@@ -90,3 +90,9 @@ Base and taper correction, 2026-09-27: Nick asked whether the tips were insuffic
 > Yes, and I also think you need to fix where the tail splits. Right now it's shaped more like a trident where there's one base and it branches later. But what I want is more like three distinct tails coming to one base where they're all fusing together at the base and body together
 
 He then said "proceed with adjustments". This authorizes the pointed-taper and compact body-level fusion changes. Probe-0003 implements that direction as an unapproved study. It supersedes the earlier common-trunk and blunt-tip interpretation.
+
+Scoped shape acceptance, 2026-09-27:
+
+> Yeah, that's much better. I don't really have much to say to adjust it. The pose that it's in isn't necessarily my favorite, but the shape of the tail I think looks all right
+
+Record probe-0003's full tail form, pointed taper and direct body fusion as accepted. Pose is explicitly excluded, as are the full creature and final pack. Preserve the accepted form while exploring orientation separately. The artifact-bound record is `../../species-construction/akinza/tail-shape-acceptance.json`. Probes 0004 and 0005 test rigid orientations of this same analytic form; their body contact is remeshed and neither pose is approved.

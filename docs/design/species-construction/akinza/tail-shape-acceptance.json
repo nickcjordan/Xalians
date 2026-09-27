@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "reviewer": "Nick",
+  "date": "2026-09-27",
+  "words": "Yeah, that's much better. I don't really have much to say to adjust it. The pose that it's in isn't necessarily my favorite, but the shape of the tail I think looks all right",
+  "source": "Nick, this chat",
+  "acceptedAspects": [
+    "full rounded tail volume",
+    "pointed taper",
+    "three distinct tails fused directly at body"
+  ],
+  "excludedAspects": [
+    "tail pose",
+    "modeling pose",
+    "whole creature",
+    "final pack"
+  ],
+  "artifacts": [
+    {
+      "path": "docs/design/species-construction/akinza/probe-spec-0003.json",
+      "sha256": "402bdc07670bcc5537972dac7e1428a1702ad38dec8bbd43948ab559bbbfc471"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/tail-probe-0003-contact.png",
+      "sha256": "6348f6e327bc5d740d2ba0ad693f9b8fb0f38a176339960dcd6356eac33a2eda"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/tail-probe-0003-turntable.gif",
+      "sha256": "e3caa1a48f61371f63abc4f839a6a857912b20db7ef3dba8c04c5a75c4f4815a"
+    },
+    {
+      "path": "untracked/species-construction/akinza/probe-0003/probe.blend",
+      "sha256": "1c318f8b0b65ace7efefab8e0e5e6f026f1a5a81fdc230b16af6d1b4426c0f5a"
+    }
+  ],
+  "instruction": "Preserve accepted tail form. Study pose separately; no need to reapprove these accepted aspects on unchanged geometry."
+}

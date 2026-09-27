@@ -55,6 +55,22 @@
       "continuationWords": "proceed with adjustments",
       "source": "Nick, this chat, 2026-09-27",
       "approval": null
+    },
+    "tail-shape-acceptance": {
+      "status": "accepted-aspects",
+      "instruction": "Probe-0003 tail shape is accepted. Preserve volume, taper and direct body fusion; pose is explicitly excluded.",
+      "words": "Yeah, that's much better. I don't really have much to say to adjust it. The pose that it's in isn't necessarily my favorite, but the shape of the tail I think looks all right",
+      "source": "Nick, this chat",
+      "evidence": {
+        "path": "docs/design/species-construction/akinza/tail-shape-acceptance.json",
+        "role": "scoped-acceptance",
+        "sha256": "d2cae7e50648bd2b384662b226403d2205ebe14fb4a1d1612f87540c1c4b7d1a"
+      }
+    },
+    "tail-pose": {
+      "status": "proposal",
+      "instruction": "Compare relaxed down/back with a farther rearward sweep, using rigid orientation of the accepted tail assembly. No pose selected yet.",
+      "approval": null
     }
   },
   "stages": {
@@ -68,18 +84,20 @@
         "tail-root",
         "tail-fork-pelvis",
         "tail-depth",
-        "tail-taper"
+        "tail-taper",
+        "tail-shape-acceptance",
+        "tail-pose"
       ],
       "artifacts": [
         {
           "path": "docs/design/species-view-readings/akinza/reading.md",
           "role": "reading",
-          "sha256": "86c4b3cb731db2fa6b15fdae12d31f5c383efe5756bd02d8a7ecc6830a519974"
+          "sha256": "ac7b3aa166149f818f95edd25e085a2b77ada1ebfd7d5f43a387c798a16f2740"
         },
         {
           "path": "docs/design/species-construction/akinza/brief.md",
           "role": "construction-brief",
-          "sha256": "074e5d36e36c8fb002dd8147919da457e0443f520aa9aac4ad9ab8d4045de8d4"
+          "sha256": "a7a9daeb70de8bf24ac731cffdc2ab4bbbcc5bd40cd1de92145e04a794d2687a"
         },
         {
           "path": "apps/web/src/svg/species/akinza.svg",
@@ -100,15 +118,17 @@
           "tail-root": "80aefc7e194c9ab94e4728dc092ea778ca635bc82e8f778595facd9970911bb2",
           "tail-fork-pelvis": "dcf9bbd9fe7e7b3f0e1096f490d698c53f0380a62180e32d1cf975a4d092dae8",
           "tail-depth": "2b54dba1c8276f71db0fc6e9009ed42f87874d540fcf077bcc598a47e90828dc",
-          "tail-taper": "211fc8098ff683cf5fcf42dd88e94f0643f39af622a638e98104e2fa0a9df838"
+          "tail-taper": "211fc8098ff683cf5fcf42dd88e94f0643f39af622a638e98104e2fa0a9df838",
+          "tail-shape-acceptance": "4370bf068e5f1fb051167bf99a919d3740c405714d0de4b906e43757bea4cb22",
+          "tail-pose": "5c21084a5d273e1ed71708c355963369c3315bee515ce2891d42c3e51f179935"
         },
         "dependencies": {}
       },
       "review": {
         "status": "pending",
         "reviewer": "Codex",
-        "notes": "Reading updated from Nick's direct body-fusion and pointed-taper correction. No approval of the new artwork inferred.",
-        "artifactDigest": "9f29aa8732b835152b6caebbd66cfa33591c501360b42a525ce264489fef39df"
+        "notes": "Recorded exact shape-only acceptance and explicit pose reservation. Earlier study dependencies remain stale.",
+        "artifactDigest": "281369e796936c1681a1881e01e0d7d4ee82f5f7cdda0167f56f1337bfadbb0a"
       },
       "approval": null
     },
@@ -124,7 +144,9 @@
         "tail-root",
         "tail-fork-pelvis",
         "tail-depth",
-        "tail-taper"
+        "tail-taper",
+        "tail-shape-acceptance",
+        "tail-pose"
       ],
       "artifacts": [
         {
@@ -168,7 +190,9 @@
         "style",
         "modeling-pose",
         "tail-depth",
-        "tail-taper"
+        "tail-taper",
+        "tail-shape-acceptance",
+        "tail-pose"
       ],
       "artifacts": [
         {
@@ -224,7 +248,9 @@
         "tail-root",
         "tail-fork-pelvis",
         "tail-depth",
-        "tail-taper"
+        "tail-taper",
+        "tail-shape-acceptance",
+        "tail-pose"
       ],
       "artifacts": [
         {
@@ -276,12 +302,14 @@
         "construction",
         "connections"
       ],
-      "pose": "attachment-probe-v3",
+      "pose": "tail-pose-comparison-v1",
       "decisionIds": [
         "tail-root",
         "tail-fork-pelvis",
         "tail-depth",
-        "tail-taper"
+        "tail-taper",
+        "tail-shape-acceptance",
+        "tail-pose"
       ],
       "artifacts": [
         {
@@ -443,6 +471,321 @@
           "path": "untracked/species-construction/akinza/probe-0003/turn-315.png",
           "role": "geometry-render-or-derived-mask",
           "sha256": "83815b83f735c5073ebe573785fb2e40df8c951d35da682cdd72341edae765b5"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/tail-shape-acceptance.json",
+          "role": "scoped-acceptance",
+          "sha256": "d2cae7e50648bd2b384662b226403d2205ebe14fb4a1d1612f87540c1c4b7d1a"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/pose-study-recipes.json",
+          "role": "rigid-pose-provenance",
+          "sha256": "cf494a6779395c459db0970b7f83eb4fcab108cf6b513f5a02d3bd8163409861"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/pose-study-checks.json",
+          "role": "pose-diagnostics",
+          "sha256": "1b68d4df79898b205410c4d0cbc585807191c141b966faed6dcfc09314e52e6b"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/tail-pose-options.gif",
+          "role": "pose-comparison",
+          "sha256": "2e834b6c3ab8cba11f6ec20eb7ba867589b4aff13617292ac319a5faf945878c"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/tail-pose-options-rear.png",
+          "role": "pose-comparison",
+          "sha256": "c0d1e534d248b06613da7ae7904f5188f8fb4219d501b3f48ee88b9687c1bedf"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/probe-spec-0004.json",
+          "role": "unapproved-pose-evidence",
+          "sha256": "c498fc0c0831e37253f339d5f503fe89f2cbb436b88863d1dddabe81a740025c"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/probe.blend",
+          "role": "unapproved-pose-evidence",
+          "sha256": "0249936dd4ed79650a18f5aa624a2e24900a2801cee4baa5e060e9659fa1f480"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/probe-0004-geometry.json",
+          "role": "unapproved-pose-evidence",
+          "sha256": "199dfb92062a328955209bf5f4175f275c8e15147c4d4b7a6bd3a39dc34b2fb8"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/probe-0004-review-assets.json",
+          "role": "unapproved-pose-evidence",
+          "sha256": "c67f7f8322ba1b8bb8e88842a67f888a0d1b44f3cce94a058f309ed5f139607d"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/tail-probe-0004-contact.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "e1999d4b46933a885952bad7e8c6de6c0b7b909483df6680bb80c12249843be7"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/tail-probe-0004-turntable.gif",
+          "role": "unapproved-pose-evidence",
+          "sha256": "a40ea0e7e9597c8a651bab6eddf0bd6b05fc57e7973d8871938c4888b8ce1223"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/above.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "b235ed5f44e72036c5ea88c0a308e4ea41758a9e2662a068b8ba06864e52b135"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/above.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "36c07dd49ec1263e734105925b513ba7ed024fa0ebb5b4f1cd563e0f3cc49897"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/contact.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "e1999d4b46933a885952bad7e8c6de6c0b7b909483df6680bb80c12249843be7"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/left.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "4d207cbe8f81cbd8e3e50d30c86ae2a664103f66ee3382b40721585951ee31e8"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/left.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "3ac5c70a871fa58b39539cb99e2a71289a3a20d097807ab57da8139d9a7752d8"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/rear.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "9c037d14018b090c879c29a5b90352e25ba504468e1eb9b187bbdb67c2240854"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/rear.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "cfab8e7ef0f1c02c330178a1a16e51670d28ccfe1e9a117c49bdb221fff5ca14"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-000.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "3d1a1794af053196e9206c31aee5b7dfae702b6731f23f4d31cbc0a7be23a4a9"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-000.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "53c4b20b8a86ea46c8e6b91eae9b6e60a5c41dd1e6578feea4284fdce806fafa"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-045.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "d4a148cdeb24ac005e917ad614ec0fbf7d4b0a636eca1baca63aacfffb1f4303"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-045.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "b9f1463dd05f06806002901ecc49194f9c5d743bc8b3624bc4a91aac113c31dd"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-090.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "193ef18acabe2cfe33a7915b126c942eb97a9af52ba7f3345ad721afd7167ab8"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-090.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "c20299f7a6497ed41a29538890ed144d483ba1de33440456ef87df3d3d93b201"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-135.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "34a75b2663c9d66642acd6f32b69f500096c98bc77626c9b440f54c82e9d2050"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-135.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "222528592814816559bface4686c74205b717c2e17e68b5b0b2f636045c54adf"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-180.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "f8fd4076ec2e7c666e9d00ccb614aecef7208b03d52164eaa54358e46b80ae0d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-180.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "e7dc9b2963413d7e7d0a70bda0cee48df3d5e1ed7e17f958875ff48b597c10e0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-225.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "de074a69a0e019376276904d30d37693e5b0eb0fdc508e9ea8f016d4d4854977"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-225.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "cbd8752d2279d00f1ba01bad370043929678e25fa275a9309d2b59a3cc1cb19d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-270.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "2446ca60012da1a675d0a019f55fbc5e3426033b37ee0222f3a742da25d78946"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-270.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "269fea2184e6167b483539fdb78d44f75f23e7275c6994857f98167de2feea1d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-315.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "44b8d8adb589e7b27e06c6b55457ed7a356b77c2fc14d3a119033f8c0f3f7076"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0004/turn-315.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "aceb3c07682258bb957295459e3c2e318a58578f9c60021eb4407f5ff934bf4a"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/probe-spec-0005.json",
+          "role": "unapproved-pose-evidence",
+          "sha256": "a104af480d772dc4118cb46ea38a7028e449c47eb8ad1976d30cdaddeb926a9a"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/probe.blend",
+          "role": "unapproved-pose-evidence",
+          "sha256": "86d7744fdfd1a878307023f8a75dca95c603578cabd69a50ea62517074ab63d8"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/probe-0005-geometry.json",
+          "role": "unapproved-pose-evidence",
+          "sha256": "9fc7fd76ade47654189b762a21cd830d848c3d2ef5ad48cb33e999604ffd8388"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/probe-0005-review-assets.json",
+          "role": "unapproved-pose-evidence",
+          "sha256": "3931733d640314a97e49fc639fd4dcc9491dafa3bdad67e594800fae808ef346"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/tail-probe-0005-contact.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "51edbd85b6fc68739eb6a94abc30357b43f4ce54270b802e2aaf65fd02069fe3"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/tail-probe-0005-turntable.gif",
+          "role": "unapproved-pose-evidence",
+          "sha256": "3988cbb196b8e57e90c9c17451e891d491440acdc094fd229aa9cabae71a2974"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/above.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "0ceb23d955d2094ccc22ee60742d8c310055dd6c710cc2b822625561d41de39e"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/above.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "72c98ec5ec3f606d905b803cdbb12868399b474ce0a5286e2dfd9374aa42278b"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/contact.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "51edbd85b6fc68739eb6a94abc30357b43f4ce54270b802e2aaf65fd02069fe3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/left.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "20e389e5b27e803595c4ceda142428ace2e498fc32275f4793c88fc6241d42f4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/left.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "b2d07ab9c7afd63f01d14176bd0138a0b2fe2ebd5f6a43e5e85e2f27e4908f23"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/rear.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "93c8c035f834d885e3506349d809e5e2cdd9f129845a5944e82c2c9de33638d2"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/rear.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "4c81e3f6392e66bad511f1e133aa435e1ef3c906ad147880b19be7d855ba4200"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-000.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "6ad4fffe2818417a1442d7cdcd5ffe12ad82c01f76acfed0f32faf885179c524"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-000.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "2115522e39d1a0d118b97e5be69893920ddb458945f41f3a13af9609361e8b06"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-045.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "9c4d215ee481b78f8521b97b4dd24135995ad207547e131180fa559b6a6124fd"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-045.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "c963422d460f7277bd1a2549ee1c0a6ae509c0258ce42042b406032fccf36671"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-090.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "b763d9e69841dedd54c0e8c03ff2778b1f656028b42f10c567e891af6233a960"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-090.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "678222ae3616ada6b7b292ed64786f1390ac1c89d1ed7f7d505273e0103878f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-135.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "c56f143eacc9a3a87a1417906f338775d5dea79107bff180f93a286854bf9e69"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-135.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "5a87128d20bc00e3139419a8cd50eb46112596bd59249027df6f053a8302d475"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-180.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "81e648791c7a183850c7af00dcc533207eea56046f2ff567a46a8d0861c154d3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-180.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "1254c1ddafc04f7032fc2c3c7d1941a645c54eb9a07f218b8da2e84cd4eced9c"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-225.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "12f1350ad1a34dc29603d0e2cdf1b77e3f176c16ecb308750ef7c32e2fdca97f"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-225.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "f31ba67ab1dcb292ccfcc32bd2c982ff9e60525e4d4c4095e1b200e7e6e5c6e5"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-270.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "5fd833b2512756794165b484b3948ea66fa3a191717d5d0179113392a44bda46"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-270.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "2e5ee644b0bf7b786c9b8694f683b86c6c9289d39a7d2c43a518beba0c215479"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-315.occupancy.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "b6181c9ba1e801136967c5130a46670856956001df985da33b179c8ef94e1bd3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/probe-0005/turn-315.png",
+          "role": "unapproved-pose-evidence",
+          "sha256": "24432990c049248ec87fd69e8ec0dd2a2b5f4252b893f877b7428d0cdccbd396"
         }
       ],
       "inputSnapshot": {
@@ -450,18 +793,20 @@
           "tail-root": "80aefc7e194c9ab94e4728dc092ea778ca635bc82e8f778595facd9970911bb2",
           "tail-fork-pelvis": "dcf9bbd9fe7e7b3f0e1096f490d698c53f0380a62180e32d1cf975a4d092dae8",
           "tail-depth": "2b54dba1c8276f71db0fc6e9009ed42f87874d540fcf077bcc598a47e90828dc",
-          "tail-taper": "211fc8098ff683cf5fcf42dd88e94f0643f39af622a638e98104e2fa0a9df838"
+          "tail-taper": "211fc8098ff683cf5fcf42dd88e94f0643f39af622a638e98104e2fa0a9df838",
+          "tail-shape-acceptance": "4370bf068e5f1fb051167bf99a919d3740c405714d0de4b906e43757bea4cb22",
+          "tail-pose": "5c21084a5d273e1ed71708c355963369c3315bee515ce2891d42c3e51f179935"
         },
         "dependencies": {
-          "construction": "753693cc5e366108963e50c8254ec1b393295e4fdf65b8093def39db1d909d7b",
-          "connections": "929a9b38c70deff87dc775fc106017d17aef94046d187379abdca1bec9801547"
+          "construction": "ce6a36b3673970d4e93a5557b9501c05e171e2b659ccb99ff4f92691b7d79e6d",
+          "connections": "9b0ddb14dcee159b38860023f9727668f1e45d426e69bcd7676aaf8bb94205d9"
         }
       },
       "review": {
         "status": "pending",
         "reviewer": "Codex",
-        "notes": "Probe-0003 removes the trunk sweep: three full round tails fuse at the body and taper to points. One closed connected surface and eleven unclipped views. Visual review pending; earlier image constraints remain stale.",
-        "artifactDigest": "fc5156f740d6417f3c9880bc35932f79818d56db0bee32a6a153009e8901ddab"
+        "notes": "Probe-0003 tail shape accepted by Nick, with pose explicitly excluded. Probes 0004/0005 compare rigid orientations of unchanged analytic tail forms. Fused body contact is recomputed. No new pose or complete stage approval claimed.",
+        "artifactDigest": "545a4f5990fbabbee84dce1c3d91a00f7760a1c402766090b0cc057d59d33dd9"
       },
       "approval": null
     },
