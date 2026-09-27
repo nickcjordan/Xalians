@@ -64,10 +64,13 @@ describe('StoryViewer', () => {
 		const { container } = render(<StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={withPlay} />);
 		const section = container.querySelector('section')!;
 		section.getBoundingClientRect = rect(900, 1200);
+		screen.getByText('Play 01').focus();
 		fireEvent.click(screen.getByText('Play 01'));
 		// its natural top at 900 goes to 400, and 4px into the pause, where the sticky holds it
 		expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ top: window.scrollY + 504 }));
 		expect(states(container)).toEqual(['active', 'future', 'future']);
+		// The key goes away as the screen tunes in: focus moves to the beat, not out to the page.
+		expect(document.activeElement).toBe(container.querySelector('.story-scene[data-state="active"]'));
 		vi.unstubAllGlobals();
 	});
 
