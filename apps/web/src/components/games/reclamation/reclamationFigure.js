@@ -204,8 +204,9 @@ function ReclamationFigure({
 			data-hold={typeof hold === 'number' ? formatHold(hold) : undefined}
 			data-seat={mine ? 'mine' : 'theirs'}
 		>
-			{flash && <span className={`rec-figure-flash rec-figure-flash--${flash.kind}`}>{flash.text}</span>}
 			<span className="rec-piece-stage" aria-hidden="true">
+				{/* pass 64: the blow's number or word stands over the creature it lands on; above it, the rank clipped it */}
+				{flash && <span className={`rec-figure-flash rec-figure-flash--${flash.kind} rec-figure-flash--on-${mine ? 'mine' : 'theirs'}`} key={beat != null ? `blow-${beat}` : 'blow'}>{flash.text}</span>}
 				<span className="rec-piece-base" />
 				{portrait && (
 					<XalianImage

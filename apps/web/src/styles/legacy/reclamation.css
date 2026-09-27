@@ -7899,3 +7899,66 @@
 .rec-console--match[data-terminal] .rec-standing .rec-crest--settled svg { stroke-dasharray: 3 2; }
 .rec-console--match[data-terminal] .rec-plinth .rec-fit-col.rec-fit-col--settled { opacity: 0.35; }
 .rec-console--match[data-terminal] .rec-reason-mark .rec-reason-flag { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-dasharray: 3 2; }
+
+/* --- pass 64: the blow ---------------------------------------------------------------------
+   docs/design/reclamation-the-blow.md. The pass 62 critic scored the Clash 3: the fight was a
+   caption, the creature downed had already gone (fixed in pass 62), and nothing showed the hit.
+   Each blow now runs from the attacker to its target, the blow's number or word stands over the
+   creature it lands on (above it, the rank clipped it: "DOWNED" read as half its letters), and a
+   creature downed shows at full strength on the step that downs it before it settles, fallen. */
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-field { position: relative; }
+.rec-console--match[data-terminal] .rec-blow-tracer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; overflow: visible; }
+.rec-console--match[data-terminal] .rec-blow { color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-blow--on-mine { color: var(--rec-loss); }
+.rec-console--match[data-terminal] .rec-blow line {
+	stroke: currentColor;
+	stroke-width: 3;
+	stroke-linecap: round;
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+	filter: drop-shadow(0 0 5px currentColor);
+	animation: rec-blow-draw 300ms ease-in forwards, rec-blow-fade 600ms ease-out 560ms forwards;
+}
+.rec-console--match[data-terminal] .rec-blow-burst {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2.5;
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: rec-blow-burst 420ms ease-out 300ms both;
+}
+@keyframes rec-blow-draw { to { stroke-dashoffset: 0; } }
+@keyframes rec-blow-fade { to { opacity: 0.2; } }
+@keyframes rec-blow-burst { from { opacity: 1; transform: scale(0.35); } to { opacity: 0; transform: scale(1.5); } }
+
+.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-piece-stage > .rec-figure-flash,
+.rec-console--match[data-terminal] .rec-site--clashing .rec-site-floor .rec-rank .rec-piece-stage > .rec-figure-flash {
+	top: 50%;
+	left: 50%;
+	bottom: auto;
+	transform: translate(-50%, -50%);
+	font-size: clamp(12px, calc(var(--rec-piece, 56px) * 0.3), calc(26px * var(--rec-scale)));
+	line-height: 1.1;
+	padding: 1px 0.3em;
+	letter-spacing: 0.06em;
+	z-index: 5;
+	background: color-mix(in srgb, var(--g-hull-lo) 84%, transparent);
+	box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 45%, transparent);
+	animation: rec-blow-word 380ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+}
+.rec-console--match[data-terminal] .rec-figure-flash--on-theirs:is(.rec-figure-flash--rout, .rec-figure-flash--stagger) { color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-figure-flash--on-mine:is(.rec-figure-flash--rout, .rec-figure-flash--stagger) { color: var(--rec-loss); }
+.rec-console--match[data-terminal] .rec-figure-flash--recover { color: var(--g-ink); }
+@keyframes rec-blow-word { from { opacity: 0; transform: translate(-50%, -50%) scale(1.7); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+
+/* the step that downs a creature shows it whole, and then it settles, fallen */
+.rec-console--match[data-terminal] .rec-figure--fallen.rec-figure--hit { opacity: 1; filter: none; }
+.rec-console--match[data-terminal] .rec-figure--fallen.rec-figure--hit :is(.rec-piece-art, .rec-piece-disc, .rec-figure-plate, .rec-figure-foot) { animation: rec-fall 700ms ease-in 200ms both; }
+@keyframes rec-fall { from { opacity: 1; filter: none; } to { opacity: 0.4; filter: grayscale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-blow line { animation: none; stroke-dashoffset: 0; opacity: 0.85; }
+	.rec-console--match[data-terminal] .rec-blow-burst { animation: none; opacity: 0; }
+	.rec-console--match[data-terminal] .rec-site-floor .rec-rank .rec-piece-stage > .rec-figure-flash { animation: none; }
+	.rec-console--match[data-terminal] .rec-figure--fallen.rec-figure--hit :is(.rec-piece-art, .rec-piece-disc, .rec-figure-plate, .rec-figure-foot) { animation: none; }
+}

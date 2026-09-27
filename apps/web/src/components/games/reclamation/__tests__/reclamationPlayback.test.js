@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { playbackEffects, flashFor, stepWeight } from '../reclamationMatch';
+import { playbackEffects, flashFor, stepWeight, toldIndex } from '../reclamationMatch';
 
 /*
 	The clash and the Ruling, told over a frozen board (docs/design/
@@ -51,6 +51,14 @@ describe('playbackEffects', () => {
 		const view = playbackEffects(frozenView(), EVENTS, 2);
 		expect(view.board.s1.B.map((e) => e.recordId)).toEqual(['b1', 'b2']);
 		expect(view.board.s1.B[0]).toMatchObject({ fallen: true, currentHold: 0 });
+	});
+
+	// pass 64: "the result appears before the action", two blind readers; a blow flies, then lands
+	it('shows a blow in flight with its target still at what it held, and landed a beat later', () => {
+		const flying = playbackEffects(frozenView(), EVENTS, toldIndex({ index: 2, landed: false }));
+		expect(flying.board.s1.B.find((e) => e.recordId === 'b1')).toMatchObject({ currentHold: 6 });
+		const landed = playbackEffects(frozenView(), EVENTS, toldIndex({ index: 2, landed: true }));
+		expect(landed.board.s1.B.find((e) => e.recordId === 'b1')).toMatchObject({ fallen: true, currentHold: 0 });
 	});
 
 	// assumption 19: the Ruling's first step, told before the Court reads the worlds
