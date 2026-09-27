@@ -96,3 +96,9 @@ Scoped shape acceptance, 2026-09-27:
 > Yeah, that's much better. I don't really have much to say to adjust it. The pose that it's in isn't necessarily my favorite, but the shape of the tail I think looks all right
 
 Record probe-0003's full tail form, pointed taper and direct body fusion as accepted. Pose is explicitly excluded, as are the full creature and final pack. Preserve the accepted form while exploring orientation separately. The artifact-bound record is `../../species-construction/akinza/tail-shape-acceptance.json`. Probes 0004 and 0005 test rigid orientations of this same analytic form; their body contact is remeshed and neither pose is approved.
+
+Whole-body review and corrections, 2026-09-27:
+
+> The back view went back to showing the tail connecting in a spot that was not centered above where it should be. It should be at the base of the spine, not offset to the left. Also, the butt is showing sexual again. You reduce the contours of the butt cheeks so that it does not look as sexual. Also, the creature's eyes look a bit cross-eyed. I like everything about the eye except for the fact that it's cross-eyed. Everything else looks good to me
+
+Carry forward the remaining visual design direction and eye shape. Correct the shared tail root to the rear centerline at the base of the spine, reduce the paired rear contours, and make the pupils look forward without inward convergence. The corrected rear study-0008 and gaze study-0010 await review. This is scoped directional acceptance, not a passing complete stage. The bound record is `../../species-construction/akinza/body-direction-acceptance.json`. Expressive pose choices remain deferred.

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0004",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T23:39:10.847267+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Create a grayscale close-up CONSTRUCTION DETAILS sheet of the same fully fur-covered fictional animal Akinza shown in the reference. This is a proposed design-development sheet for a later sculpt. Preserve the reference's recognizable large oval eyes, tiny nose, short muzzle, large sideways ears, slender forearms and furry paws. White landscape page, clear separate panels, simple captions, consistent gray sculptural shading.\nUse four large panels in a 2 by 2 layout:\nTOP LEFT \"HEAD DEPTH\": head and short neck in true left profile, with a small front head inset. Show a compact rounded skull, large eyes and a short modest muzzle, not a long dog snout.\nTOP RIGHT \"EAR ATTACHMENT\": enlarged three-quarter head-side crop with one ear attached, plus a small side-on ear inset. Demonstrate a shallow flexible cup and soft rounded rim attached high on the side of the head. Fur is softly shaggy hair around a thin continuous ear surface, not feather quills, jagged cartilage or folded leaves. Simplify fur strongly here so underlying ear thickness and broad attachment are visible. No detached floating ear and no exposed internal anatomy.\nBOTTOM LEFT \"HAND PROPOSAL\": two views of the SAME single furry hand, relaxed palm and back, with forearm connection. As an explicitly provisional stylized solution, show exactly THREE long fingers and ONE shorter opposed thumb, four digits total, small pointed claws on all four. Consistent digit count in both views, compact paw-like palm, slender fingers. No extra fingers and no human fingernails.\nBOTTOM RIGHT \"FOOT PROPOSAL\": front three-quarter and side views of the SAME furry foot attached to the lower leg. Exactly THREE broad forward toes with small claws, a broad planted sole and modest rear heel transitioning into slender ankle. No extra toes.\nProvide readable rounded volumes and attachment continuity, no numerical measurements, bones, rig diagrams or additional full-body figures. Keep all panels spacious and all parts fully inside their panels. Do not depict tails here. Captions indicate proposals, not finalized species facts. No color or accessories.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0004/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "ae14d9c54375b5b5930a84ddd475aefa6d7049ad972edcaa09ec803e7400ca8e"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0004/inputs/body.png",
+      "role": "immutable-generation-input",
+      "sha256": "eb6f337326d5f7edf8cbb070bcb4aedd4178f06a6478eb201375942dded59c24"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0004/details.png",
+    "role": "untouched-tool-output",
+    "sha256": "522f6d44a8503ea61fa7b526d88ea05336972fb24bd8fd4965541b63532a17d2"
+  },
+  "verdict": "Superseded: feather-like ear and same-side thumb in opposite hand views.",
+  "reviewer": "Codex",
+  "approval": null
+}

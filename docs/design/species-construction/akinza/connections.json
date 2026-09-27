@@ -1,14 +1,155 @@
 {
   "schemaVersion": 1,
   "species": "akinza",
-  "scope": "tail attachment interpretation; not the complete skeletal or mesh topology",
-  "decisionIds": ["tail-root", "tail-fork-pelvis", "tail-depth", "tail-taper"],
-  "parts": ["pelvis", "tail-root", "plume-upper", "plume-middle", "plume-lower"],
+  "scope": "Visual attachment interpretations, including proposed body connections; not skeletal topology or species canon",
+  "decisionIds": [
+    "tail-root",
+    "tail-fork-pelvis",
+    "tail-depth",
+    "tail-taper",
+    "body-direction",
+    "body-details"
+  ],
+  "parts": [
+    "pelvis",
+    "tail-root",
+    "plume-upper",
+    "plume-middle",
+    "plume-lower",
+    "torso",
+    "head",
+    "muzzle",
+    "ear-left",
+    "ear-right",
+    "arm-left",
+    "hand-left",
+    "leg-left",
+    "foot-left",
+    "arm-right",
+    "hand-right",
+    "leg-right",
+    "foot-right"
+  ],
   "connections": [
-    {"parent": "pelvis", "child": "tail-root", "region": "rear midline at base of spine", "continuity": "continuous organic surface", "status": "user-direction"},
-    {"parent": "tail-root", "child": "plume-upper", "region": "upper tail fused directly at body", "continuity": "continuous organic surface", "status": "user-direction"},
-    {"parent": "tail-root", "child": "plume-middle", "region": "middle tail fused directly at body", "continuity": "continuous organic surface", "status": "user-direction"},
-    {"parent": "tail-root", "child": "plume-lower", "region": "lower tail fused directly at body", "continuity": "continuous organic surface", "status": "user-direction"}
+    {
+      "parent": "pelvis",
+      "child": "tail-root",
+      "region": "rear midline at base of spine",
+      "continuity": "continuous organic surface",
+      "status": "user-direction"
+    },
+    {
+      "parent": "tail-root",
+      "child": "plume-upper",
+      "region": "upper tail fused directly at body",
+      "continuity": "continuous organic surface",
+      "status": "user-direction"
+    },
+    {
+      "parent": "tail-root",
+      "child": "plume-middle",
+      "region": "middle tail fused directly at body",
+      "continuity": "continuous organic surface",
+      "status": "user-direction"
+    },
+    {
+      "parent": "tail-root",
+      "child": "plume-lower",
+      "region": "lower tail fused directly at body",
+      "continuity": "continuous organic surface",
+      "status": "user-direction"
+    },
+    {
+      "parent": "torso",
+      "child": "head",
+      "region": "short neck",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "head",
+      "child": "muzzle",
+      "region": "short front projection",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "head",
+      "child": "ear-left",
+      "region": "broad high lateral root",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "head",
+      "child": "ear-right",
+      "region": "broad high lateral root",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "torso",
+      "child": "pelvis",
+      "region": "continuous lower torso",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "torso",
+      "child": "arm-left",
+      "region": "shoulder",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "arm-left",
+      "child": "hand-left",
+      "region": "slender wrist",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "pelvis",
+      "child": "leg-left",
+      "region": "upper leg",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "leg-left",
+      "child": "foot-left",
+      "region": "slender ankle",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "torso",
+      "child": "arm-right",
+      "region": "shoulder",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "arm-right",
+      "child": "hand-right",
+      "region": "slender wrist",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "pelvis",
+      "child": "leg-right",
+      "region": "upper leg",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    },
+    {
+      "parent": "leg-right",
+      "child": "foot-right",
+      "region": "slender ankle",
+      "continuity": "continuous external form",
+      "status": "visual-proposal"
+    }
   ],
   "proposedSpatialInterpretation": {
     "tail-root": "compact shared fusion at body; three tails separate immediately, with no projecting common trunk",
@@ -16,6 +157,15 @@
     "measurements": null,
     "approval": null
   },
-  "retiredPartIds": {"tail-trunk": "removed by body-level fusion correction", "tail-junction": "merged into tail-root at body"},
-  "exclusions": ["independent tail roots on a hip or buttock", "floating disconnected plume stems", "extended common stalk before tails divide", "blunt rounded terminal caps", "new creature abilities or lore"]
+  "retiredPartIds": {
+    "tail-trunk": "removed by body-level fusion correction",
+    "tail-junction": "merged into tail-root at body"
+  },
+  "exclusions": [
+    "independent tail roots on a hip or buttock",
+    "floating disconnected plume stems",
+    "extended common stalk before tails divide",
+    "blunt rounded terminal caps",
+    "new creature abilities or lore"
+  ]
 }

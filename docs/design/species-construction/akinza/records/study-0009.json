@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0009",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T23:39:10.847267+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Make one precise correction to this FRONT VIEW of Akinza: correct its crossed gaze. Preserve everything else exactly, including all body, ears, fur, tail, feet, hands, eye contours and pose.\nThe two black pupil ovals are too far inward. Reposition the dark oval in the LEFT eye toward the LEFT, and the dark oval in the RIGHT eye toward the RIGHT, until EACH is centered within its own large white eye. Both eyes look straight at the viewer, with parallel gaze, neither converging on the nose. White sclera should be balanced on the inner and outer sides of each dark oval. Keep pupil size approximately the same, and retain the large oval eye shapes, outline and small white glints. No change in expression, no change in head proportions. Grayscale fictional furry creature on white, one full front figure with FRONT label.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0009/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "4656e4c4937cf9a25d8694cef18d7863d1dd870a8e6f88f6208b37cf2fe882d6"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0009/inputs/front.png",
+      "role": "immutable-generation-input",
+      "sha256": "5abc830d081ea1c4a79e9548b8fbd4d05bfb428d66e28a47446e666ce1126182"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0009/front.png",
+    "role": "untouched-tool-output",
+    "sha256": "fd9fe8394c7be05840b6a2a22d14ff24d7a7e6eaa9f2318869399367106d3ea1"
+  },
+  "verdict": "Rejected gaze correction: both pupils still touch the inward edge of the eyes.",
+  "reviewer": "Codex",
+  "approval": null,
+  "inputPreparation": {
+    "operation": "rectangular crop only, no retouching",
+    "source": {
+      "path": "untracked/species-construction/akinza/study-0007/body.png",
+      "role": "crop-source",
+      "sha256": "3fe5924897aa3220ca1eb7b019856241a7070b38333d9bfc6728b8bc154eb020"
+    },
+    "boxXYXY": [
+      0,
+      0,
+      660,
+      887
+    ]
+  }
+}

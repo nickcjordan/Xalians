@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0006",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T23:39:10.847267+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Edit this grayscale Akinza construction sheet. Preserve the character's identity, head and ear shapes, torso and limb proportions, furry surface, neutral stance, scale, white background and three-panel layout. Make these specific corrections consistently:\nBACK VIEW: The single compact attachment where all three tails meet the body must be exactly on the REAR CENTERLINE at the bottom of the spine. Follow the neck and middle of the back straight down to find this root. Move the existing offset attachment inward to that centered location. Only after leaving this centered body attachment do the three separate round tails curve toward the creature's own left. All three fuse together directly at this compact root; there is no long common stalk or delayed fork. Keep the full rounded pointed tail shapes.\nBACK VIEW LOWER TORSO: use a simple narrow furry continuous lower-back form transitioning naturally to the legs. Flatten the paired rounded bulges currently beside the tail root. Remove the central groove and paired cheek highlights. A smooth modest silhouette with soft uniform fur, no emphasized anatomical contours.\nFRONT VIEW EYES: preserve eye size, oval shape, black outline, white areas and highlights. Correct only the gaze: both dark pupils should sit in matching centered positions within their respective eye shapes, looking straight forward with parallel sight lines. Do not angle either pupil inward toward the nose.\nLEFT PROFILE: The tail curves toward the creature's own LEFT, largely toward this camera. Compress its lateral spread by foreshortening. Show overlapping rounded tail volumes near the rear body instead of repeating the full broad fan seen in front and back. The tail's attachment remains at the same centered lower-spine location.\nThe creature is a fully fur-covered fictional animal. Keep all other design features unchanged. This is a construction reference proposal, with soft neutral grayscale shading.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0006/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "1c401a54afc7e8d463ca533b44b47fda84e68799c1244572db7b9ba54fe1fc07"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0006/inputs/body.png",
+      "role": "immutable-generation-input",
+      "sha256": "eb6f337326d5f7edf8cbb070bcb4aedd4178f06a6478eb201375942dded59c24"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0006/body.png",
+    "role": "untouched-tool-output",
+    "sha256": "8352b2afbfe7bbce8e5e0f38154c2e8607187d73cc70cfd01a58471a6193ec81"
+  },
+  "verdict": "Rejected intermediate: centered root and simpler rear, but tail direction flipped and gaze unchanged.",
+  "reviewer": "Codex",
+  "approval": null
+}
