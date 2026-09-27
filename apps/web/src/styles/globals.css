@@ -404,6 +404,11 @@
 		.archive .archive-dot { animation: none !important; }
 	}
 
+	/* The home story's catch (pages/home/storyCatch.ts) holding the page: a
+	   touch screen's glide goes on after the finger lifts, and only taking the
+	   scroll away for that moment stops it. */
+	html.story-held { overflow: hidden; }
+
 	/* The home story's chapter bar (pages/home/storyViewer.tsx): a hairline
 	   track, a tick where each beat's marker starts and one at the end, the
 	   part behind the dot filled in ink, and the dot itself on the shown beat,
