@@ -23,7 +23,7 @@ describe('ArchiveScreen', () => {
 		const { rerender } = render(<ArchivePlay state="standby" rec="01" onPlay={onPlay} />);
 		fireEvent.click(screen.getByRole('button', { name: 'Play recording 01' }));
 		expect(onPlay).toHaveBeenCalledTimes(1);
-		for (const state of ['tuning', 'on', 'switch', 'off'] as const) {
+		for (const state of ['search', 'lock', 'on', 'switch', 'off'] as const) {
 			rerender(<ArchivePlay state={state} rec="01" onPlay={onPlay} />);
 			expect(screen.queryByRole('button', { name: /Play/ })).toBeNull();
 		}

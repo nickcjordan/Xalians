@@ -6,8 +6,13 @@
 //   standby  the viewer is not resting on the screen: dark glass, a faint
 //            frozen static, "Standby". The picture is not shown and nothing
 //            heavy runs.
-//   tuning   the viewer has come to rest: a burst of static, the picture
-//            opening out of a bright line, then it plays.
+//   search   the viewer has come to rest: static bursts in and holds until
+//            the recording can play (at least SCREEN_MS.search; longer while
+//            the catch still holds the page or the picture is still going in).
+//   lock     it can: the picture opens out of a bright line, already moving,
+//            and the static clears. Search and lock together are the old
+//            1.1 s tuning when nothing has to wait (Nick, 2026-09-27: no still
+//            picture between the static ending and the recording moving).
 //   switch   another recording chosen while playing: a short burst of static.
 //   on       playing: the picture, the readout's clock running.
 //   off      the viewer moved on: the picture collapses to a line and goes.
@@ -25,10 +30,10 @@ import * as React from 'react';
 import { Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type ScreenState = 'standby' | 'tuning' | 'switch' | 'on' | 'off';
+export type ScreenState = 'standby' | 'search' | 'lock' | 'switch' | 'on' | 'off';
 
-// How long each change takes; the viewer waits on these.
-export const SCREEN_MS = { tuning: 1100, switch: 520, off: 380 } as const;
+// How long each change takes; the viewer waits on these. Search is the least it lasts.
+export const SCREEN_MS = { search: 550, lock: 550, switch: 520, off: 380 } as const;
 
 function clock(sec: number) {
 	const h = Math.floor(sec / 3600);
@@ -82,7 +87,7 @@ export function ArchiveScreen({
 			<div className="archive-hud type-data" aria-hidden="true">
 				<span className="archive-hud-status">
 					<span className="archive-dot" />
-					{playing ? 'Playback' : state === 'tuning' ? 'Tuning' : 'Standby'}
+					{playing ? 'Playback' : state === 'search' || state === 'lock' ? 'Tuning' : 'Standby'}
 				</span>
 				<span className="archive-hud-clock">{clock(sec)}</span>
 				<span className="archive-hud-rec">
