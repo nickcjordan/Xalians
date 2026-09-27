@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0005",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T23:39:10.847267+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Edit this Akinza construction sheet with only two corrections; keep its layout, head and foot panels, gray palette and all labels.\n1. In the EAR ATTACHMENT panel, replace the repeated feather-like surface clumps with one simple smooth gray shallow cupped ear shell. Preserve its broad sideways silhouette and scale. Give it a continuous softly rounded thin edge with only a few wispy fur tufts around the border. Show the broad ear root smoothly connected to the head in the large view. The small inset is a genuine EDGE-ON side silhouette of that same shallow shell, a narrow curved ribbon showing slight cup depth, not another broad frontal ear. Keep everything clearly readable on white. This is an external construction sculpture, no cutaway or internal tissue.\n2. In HAND PROPOSAL, the two views must depict opposite faces of ONE hand. Preserve the palm view on the left exactly. In the BACK VIEW on the right, move the short thumb to the viewer's RIGHT side of the hand, so the back view has the correct opposite handedness. Exactly three long fingers plus one short thumb, four claws total. Preserve its forearm connection.\nDo not change the head design, eyes, muzzle, feet or other panels.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0005/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "31ad426799b4ce816abfa1bed02a251e6ada91aa3d92f877e44323fdf5c3a5bb"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0005/inputs/details.png",
+      "role": "immutable-generation-input",
+      "sha256": "522f6d44a8503ea61fa7b526d88ea05336972fb24bd8fd4965541b63532a17d2"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0005/details.png",
+    "role": "untouched-tool-output",
+    "sha256": "47de03c0f4e165d11d0193d04729844c51605169ad7ef5df3fe92e7cc12ed785"
+  },
+  "verdict": "Ear shell and hand-view correction useful; older front-head gaze superseded by study-0010. Digit counts remain art interpretations.",
+  "reviewer": "Codex",
+  "approval": null
+}

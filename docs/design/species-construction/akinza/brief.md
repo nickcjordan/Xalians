@@ -32,3 +32,7 @@ The probe is only a local tail and pelvis study. Its simplified leg stubs, torso
 ## Next review
 
 Probe-0003's full rounded tails, pointed taper and compact body fusion are accepted as shape. Nick declined the pose comparison and asked whether pose belongs later. Expressive posing is deferred until the complete creature is assembled. Use a neutral technical arrangement to inspect construction; do not require a selection between options A and B. Next resolve head and muzzle depth, ear thickness and roots, torso/pelvis volumes, limb attachments and hand/foot construction, carrying the accepted tail form into the whole-body references. These new volumes still need review. Consult `review.md`, `status.md` and the main work record for evidence and unfinished work.
+
+## Whole-body follow-through
+
+See [the current body review](body-study.md) for studies 0003 through 0010. Nick accepted the remaining design direction while requesting a centered spinal tail root, reduced rear contours and a forward gaze. The latest rear and face corrections await his review. Detail study-0005 proposes the ear shell and hand/foot construction; its older front-head gaze is superseded by study-0010. Historical sheets do not override these corrections or probe-0003 tail-shape acceptance.

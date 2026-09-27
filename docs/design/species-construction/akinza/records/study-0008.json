@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0008",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T23:39:10.847267+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Edit this single BACK VIEW of Akinza. Keep the body, head, ears, limbs, neutral stance, fur and simplified lower-back form unchanged. Keep the tail attachment EXACTLY at its current central position at the bottom of the spine. The central root is correct in this input. Only change the direction of the THREE TAILS: they must curve across toward the LEFT side of the IMAGE, rather than toward the right. Do NOT move the tail root left with the tails. Leave a visibly centered shared fusion point directly below the middle of the back. Three separate full round tails emerge together from this compact centered root and then curve left. Pointed tips. No long common stalk. No separate connection to the left hip.\nMake the lower-back fur surface gently continuous and flat beneath the tail root, with no paired round cheek volumes or central groove. Maintain the same full creature framing and BACK label. Fully fur-covered fictional animal character, gray on white, same design. One back view only.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0008/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "e58a44eec9af5f010e12a3f55ed8217e2f80be596fdaec14d313a3576fe04910"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0008/inputs/back.png",
+      "role": "immutable-generation-input",
+      "sha256": "e112fbc584bf29d7c7dd338c4e8f838d1ef7f2e13a57de9714dfc30eed8d1d6f"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0008/back.png",
+    "role": "untouched-tool-output",
+    "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+  },
+  "verdict": "Current rear correction candidate: visibly shared central root and reduced rear contours; awaiting Nick review.",
+  "reviewer": "Codex",
+  "approval": null,
+  "inputPreparation": {
+    "operation": "rectangular crop only, no retouching",
+    "source": {
+      "path": "untracked/species-construction/akinza/study-0006/body.png",
+      "role": "crop-source",
+      "sha256": "8352b2afbfe7bbce8e5e0f38154c2e8607187d73cc70cfd01a58471a6193ec81"
+    },
+    "boxXYXY": [
+      1160,
+      0,
+      1774,
+      887
+    ]
+  }
+}

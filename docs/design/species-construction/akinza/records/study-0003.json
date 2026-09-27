@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0003",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T23:39:10.847267+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Create a grayscale 3D character construction reference sheet for Akinza, a fully fur-covered fictional animal creature. Image 1 supplies the character identity, face and overall proportions. Image 2 supplies only the approved tail shape: three thick round tails with pointed ends, meeting together directly at a compact base where they join the lower back. Image 2's simple block body is only a placeholder.\nShow exactly three complete figures, clearly separated and labeled FRONT, LEFT PROFILE, BACK, on a white landscape page. Same character, same neutral upright technical stance, same scale, consistent proportions. Arms relaxed slightly away from body, feet planted slightly apart. No props or dramatic acting.\nPreserve huge broad sideways ears with soft shaggy fur borders, large distinctive oval eyes, small nose, short feline muzzle, slender furry torso and limbs, small clawed paws and broad furry feet. Keep a simple streamlined lower torso. Show soft gray sculptural volumes with broad simplified fur masses instead of dense hair texture. The character remains fully covered in fur.\nMake head depth, short muzzle projection, neck connection, shoulder and limb volumes, ankle and paw connections legible. Ears are shallow cupped flexible forms, thin with a soft rounded rim and furry edge, attached high on the sides of the head. In profile they foreshorten rather than keeping full frontal width.\nTail shape follows IMAGE 2 rather than the earlier tail in IMAGE 1. Three full rounded unequal tails taper to points, fuse directly together at their compact body attachment, and extend toward the creature's own left and slightly backward. No projecting central stalk, no delayed trident split, no flat feather or leaf shapes. Front view shows tails to viewer right, back view shows tails to viewer left. Left profile faces viewer left; the sideways tail sweep foreshortens toward the camera, with modest rearward projection to viewer right.\nSoft neutral shading, level orthographic-style cameras, aligned head heights and ground lines. These are proposed design studies for a later actual model. Prioritize recognizable identity and readable whole-body construction.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0003/prompt-retry.txt",
+    "role": "exact-prompt",
+    "sha256": "463983b5a33b8e6b786a0f53a4aedb11d41e1d210cb8557b16549fa54c79afb6"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0003/inputs/accepted-tail.png",
+      "role": "immutable-generation-input",
+      "sha256": "6348f6e327bc5d740d2ba0ad693f9b8fb0f38a176339960dcd6356eac33a2eda"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0003/inputs/identity.png",
+      "role": "immutable-generation-input",
+      "sha256": "f21a6ec1c23d150f94ba323ff4e77997a4cf7f23162c0bc1525a98342bab2f90"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0003/body.png",
+    "role": "untouched-tool-output",
+    "sha256": "eb6f337326d5f7edf8cbb070bcb4aedd4178f06a6478eb201375942dded59c24"
+  },
+  "verdict": "Whole-body direction retained except tail root, rear contours and gaze. Profile projection and digit inconsistencies block geometry use.",
+  "reviewer": "Codex",
+  "approval": null,
+  "priorBlockedAttempt": {
+    "prompt": "Use case: stylized-concept.\nAsset type: Akinza whole-body CONSTRUCTION study for 3D modeling, not a beauty illustration.\nImage 1 is the working identity reference: use its recognizable face, huge sideways ears, slender proportions and character. Its old tail design is superseded.\nImage 2 is the accepted TAIL SHAPE reference from actual geometry: its three full round tails, pointed taper and direct fusion at the body are authoritative. Do not copy the schematic torso/leg stubs of image 2 into the full creature.\nProduce a clean high-resolution landscape sheet of exactly THREE large full-body figures side by side: FRONT, LEFT PROFILE, BACK. Small plain labels outside figures, generous whitespace between figures, no overlap between panels. All are the SAME physical creature, same technical stance, same scale and lighting.\nSubject: Akinza, slender/light upright feline biped, huge broad rabbit-like ears spread sideways from head, large expressive oval eyes, short subtle feline muzzle, fur coat, slender arms and clawed hands. Preserve reference identity and head-to-body scale, not a new animal. Sculpt smooth neutral gray CLAY forms, mostly without fine hair strokes. Simplify hair into broad softly tufted silhouette masses; retain fur character at ear edges. No dense surface hair texture, no muscle anatomy diagram. This sheet should expose rounded VOLUME clearly.\nTechnical arrangement only: torso upright, feet modestly apart flat on ground, arms lowered with modest clearance from torso, hands fully visible. No heroic, seductive or performance pose. Shoulders slender, chest modest, abdomen softly tapering, pelvis restrained without prominent buttock cheeks or cleft. Rounded upper/lower limb transitions; no exaggerated muscles or hips.\nHead: slightly wider than tall rounded cranium, two very large distinctive oval eyes, tiny dark nose and short projecting muzzle. Do not enlarge muzzle into dog snout. Preserve face proportions from image 1.\nEars: very broad lateral ears, THIN cupped ear tissue with rounded soft rim, broad shallow inner bowl visible from front and a smooth convex back. Shaggy border is hair, never torn/jagged cartilage. Clear attachment high at sides of head; no ornamental base rings. LEFT PROFILE ear should foreshorten to show depth and shallow cupping, not duplicate front ear width.\nHands and feet: preserve the existing stylized division of small clawed digits and broad planted toe masses; do not add a human five-finger hand. Ensure hands are separate from thighs, feet are attached through slender ankles, claws small.\nTail: COPY THE ACCEPTED CONSTRUCTION LOGIC FROM IMAGE 2. Three distinct FULL ROUND TAILS with pointed tapers fuse directly with each other and the body at one compact attachment on the rear midline at base of spine. NO long shared stem then trident split. No flat feather-shaped fins or thin leaf blades. Keep their three unequal upper/middle/lower shapes with depth. All tails extend toward creature's own left and slightly rearward in the same neutral inspection arrangement in all views. FRONT: tails viewer RIGHT, root hidden behind pelvis. BACK: tails viewer LEFT, compact spinal body junction visible. LEFT PROFILE: creature faces viewer LEFT, tail lateral sweep points toward camera and therefore foreshortens; backward extent projects viewer RIGHT. Show the three round sections overlapping honestly, NOT a repeated broad side fan.\nOnly camera changes. Orthographic feel, level cameras, common head height and feet baseline. Pure white background, soft neutral light, no cast shadows, props, extra appendages, text on creature, measurements or invented anatomy. Three complete figures only. Make new body construction legible enough to evaluate before a real whole-body model.\n",
+    "promptFile": {
+      "path": "untracked/species-construction/akinza/study-0003/prompt.txt",
+      "role": "blocked-exact-prompt",
+      "sha256": "3ac1b3e466bdc0ba0a67ca22527b280e78b8246f525bf6a71495a9e7af98ce79"
+    },
+    "result": "Tool safety filter rejected output, category sexual. No output image received.",
+    "requestId": "e18fba8e-57cf-458f-8348-c37d3342f2f0"
+  }
+}

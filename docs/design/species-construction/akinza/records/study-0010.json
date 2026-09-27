@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0010",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T23:39:10.847267+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Edit only the pupil placement in this close-up face. Keep the eye outlines, white eye shapes, nose, muzzle, fur, expression and all surrounding features.\nThe black oval on the LEFT currently touches the INNER/right border of its white eye. Move that black oval LEFT until its center aligns exactly with the center of the white eye oval.\nThe black oval on the RIGHT currently touches the INNER/left border of its white eye. Move that black oval RIGHT until its center aligns exactly with the center of the white eye oval.\nAfter editing there must be EQUAL visible white sclera on the LEFT and RIGHT side of EACH black oval, a symmetrical white border around each pupil. Both black pupil ovals should remain vertical and approximately their current size. Keep the highlights. The eyes gaze straight ahead, with no inward convergence. This is a precise eye alignment correction to the supplied gray fictional creature face, not a redesign. Same close-up framing, no new body or text.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0010/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "108ab28d758c3d049c7e5d774b8149140e38d018b3557b14d03c3bfc71d8e138"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0010/inputs/face.png",
+      "role": "immutable-generation-input",
+      "sha256": "f24ab9bec37d583c55e3405fd5900c572088f26a1c3ad1588317796e16065503"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0010/face.png",
+    "role": "untouched-tool-output",
+    "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+  },
+  "verdict": "Current gaze correction candidate: balanced sclera around forward-looking pupils; awaiting Nick review.",
+  "reviewer": "Codex",
+  "approval": null,
+  "inputPreparation": {
+    "operation": "rectangular crop only, no retouching",
+    "source": {
+      "path": "untracked/species-construction/akinza/study-0009/front.png",
+      "role": "crop-source",
+      "sha256": "fd9fe8394c7be05840b6a2a22d14ff24d7a7e6eaa9f2318869399367106d3ea1"
+    },
+    "boxXYXY": [
+      300,
+      175,
+      625,
+      415
+    ]
+  }
+}

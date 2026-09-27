@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0007",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T23:39:10.847267+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Edit the provided grayscale creature sheet, preserving the character and all three panels. Two precise corrections:\nFRONT face: the black oval pupil in the eye on the viewer's LEFT must shift LEFT within its white eye area, away from the nose. The black oval pupil in the eye on the viewer's RIGHT must shift RIGHT within its white eye area, away from the nose. Center each pupil horizontally within its own white oval so both eyes look directly forward. Keep both eyes' outlines, size, white area, highlights and overall character. The current pupils are too close to the nose. Do not change the profile eye.\nBACK tails: the attachment is now correctly on the back's CENTERLINE. KEEP that exact center attachment and the current simplified smooth furry lower torso. Reverse only the direction of the three tails so they extend to the VIEWER'S LEFT of the back figure. Do not mirror the body. The front tails remain viewer RIGHT and the back tails must be viewer LEFT, so both indicate the creature's own left. At the body, three distinct thick round tails all fuse at one centered compact base. No projecting common stalk. Preserve pointed tips and rounded fullness.\nIn the middle LEFT PROFILE panel, shorten the visible horizontal reach of the tails substantially, showing their foreshortened round end-on volume, because their sideways sweep extends toward the camera. Avoid the repeated wide fan.\nLeave all other design choices unchanged, including the improved smooth simple lower-back contour. Fully fur-covered fictional character, soft neutral grayscale shading, white background.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0007/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "9e0112c262caf193840687d010d884e5f829313b6df32b32e8e529a0cffb3c81"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0007/inputs/body.png",
+      "role": "immutable-generation-input",
+      "sha256": "8352b2afbfe7bbce8e5e0f38154c2e8607187d73cc70cfd01a58471a6193ec81"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0007/body.png",
+    "role": "untouched-tool-output",
+    "sha256": "3fe5924897aa3220ca1eb7b019856241a7070b38333d9bfc6728b8bc154eb020"
+  },
+  "verdict": "Superseded intermediate: profile foreshortening improves, rear root drifts left again and gaze remains inward.",
+  "reviewer": "Codex",
+  "approval": null
+}

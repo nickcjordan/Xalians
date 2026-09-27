@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "reviewer": "Nick",
+  "date": "2026-09-27",
+  "source": "Nick, this chat, feedback on whole-body and detail studies",
+  "words": "The back view went back to showing the tail connecting in a spot that was not centered above where it should be. It should be at the base of the spine, not offset to the left. Also, the butt is showing sexual again. You reduce the contours of the butt cheeks so that it does not look as sexual. Also, the creature's eyes look a bit cross-eyed. I like everything about the eye except for the fact that it's cross-eyed. Everything else looks good to me",
+  "acceptedAspects": [
+    "Remaining visible design direction apart from the three named corrections",
+    "Eye design apart from inward gaze"
+  ],
+  "requiredCorrections": [
+    "Root centered at base of spine, never offset onto left side",
+    "Reduced paired rear contours",
+    "Forward gaze without inward pupil convergence"
+  ],
+  "excludedAspects": [
+    "Corrected outputs not yet reviewed",
+    "Exact biological digit count or new species facts",
+    "Multiview geometric consistency",
+    "Complete construction-stage or final-pack approval"
+  ],
+  "shownEvidence": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/body-study-0003.png",
+      "role": "whole-body-direction",
+      "sha256": "eb6f337326d5f7edf8cbb070bcb4aedd4178f06a6478eb201375942dded59c24"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/details-study-0005.png",
+      "role": "detail-direction",
+      "sha256": "47de03c0f4e165d11d0193d04729844c51605169ad7ef5df3fe92e7cc12ed785"
+    }
+  ]
+}
