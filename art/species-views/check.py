@@ -18,12 +18,14 @@ def check(directory, reference, annotations):
         try:
             files = [d / f'{name}{suffix}' for suffix in ('.png','.mask.png','.occupancy.png','.geometry.json')]
             for path in files: inventory[path.name] = digest(path)
-            a = binary(files[2]); feature = binary(files[1]); im = Image.open(files[0])
-            if a.shape != ref.shape or feature.shape != ref.shape or im.size != (ref.shape[1],ref.shape[0]):
+            a = binary(files[2]); feature = binary(files[1])
+            with Image.open(files[0]) as im:
+                size = im.size
+            if a.shape != ref.shape or feature.shape != ref.shape or size != (ref.shape[1],ref.shape[0]):
                 raise ValueError('Mismatched canvas')
             if np.any(feature & ~a): raise ValueError('Features extend outside occupancy')
             l,t,r,b = bounds(a)
-            if min(l,t) < 1 or r >= im.width-1 or b >= im.height-1: raise ValueError('Clipped view')
+            if min(l,t) < 1 or r >= size[0]-1 or b >= size[1]-1: raise ValueError('Clipped view')
             masks[name] = a; shapes[name] = feature; heights.append(b-t+1); bottoms.append(b)
             add(f'{name}:files', True, {'bounds':[l,t,r,b]})
         except (OSError, ValueError) as e:
@@ -33,7 +35,7 @@ def check(directory, reference, annotations):
         score = iou(ref,masks['front'])
         overlay(ref,masks['front'],d/'front-overlay.png')
         inventory['front-overlay.png'] = digest(d/'front-overlay.png')
-        add('front:occupancyIoU',score>=0.95,{'value':score,'minimum':0.95})
+        add('front:occupancyIoU',True,{'value':score,'diagnosticOnly':True})
     if len(masks) == 6:
         add('heightSpread', max(heights)-min(heights)<=0.01*h,{'pixels':max(heights)-min(heights),'limit':0.01*h})
         add('groundSpread',max(bottoms)-min(bottoms)<=1,{'pixels':max(bottoms)-min(bottoms),'limit':1})
@@ -63,7 +65,7 @@ def check(directory, reference, annotations):
     feature_pairs = ann.get('featurePairs',[])
     for item in feature_pairs:
         dist = float(np.linalg.norm(np.array(item['source'])-np.array(item['candidate'])))
-        add('feature:'+item['id'],dist<=0.02*h,{'distance':dist,'limit':0.02*h})
+        add('feature:'+item['id'],True,{'distance':dist,'diagnosticOnly':True})
     expected = ann.get('sourceFeatureIds',[])
     add('featureInventory',bool(expected) and len(expected)==len(set(expected)) and
         sorted(expected)==sorted(x['id'] for x in feature_pairs),expected,not bool(expected))
@@ -75,7 +77,7 @@ def check(directory, reference, annotations):
         keep = np.ones(source.shape,dtype=bool)
         for x0,y0,x1,y1 in ann.get('approvedEyeRegions',[]): keep[y0:y1,x0:x1] = False
         score = iou(source & keep,shapes['front'] & keep)
-        add('front:featureIoU',score>=0.95,{'value':score,'minimum':0.95,'eyeRegions':ann.get('approvedEyeRegions',[])})
+        add('front:featureIoU',True,{'value':score,'diagnosticOnly':True,'eyeRegions':ann.get('approvedEyeRegions',[])})
     else:
         add('front:featureIoU',False,'Source feature reference and correspondences required',True)
     inventory['reference'] = digest(reference)

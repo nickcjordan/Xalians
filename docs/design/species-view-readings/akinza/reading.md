@@ -2,7 +2,7 @@
 
 Status: reading approved to pilot with Nick's eye, ear, and centered tail-root corrections on 2026-09-27. No generated pack is approved.
 
-Sources: `apps/web/src/svg/species/akinza.svg`, its existing preview at `docs/species-templates/art/akinza.png`, and `docs/species-templates/akinza.json`. The SVG controls the proportions and outline. Camera angles name Akinza's own sides.
+Sources: `apps/web/src/svg/species/akinza.svg`, its existing preview at `docs/species-templates/art/akinza.png`, and `docs/species-templates/akinza.json`. The SVG is an abstract design reference interpreted through Nick's directions, not an exact outline requirement. Camera angles name Akinza's own sides.
 
 ## What the drawing establishes
 
@@ -26,7 +26,7 @@ Give the head a short, modest muzzle; keep the ears broad, thin, and fur-covered
 
 | View | Reading |
 |---|---|
-| Front, 0 degrees | Match the source outline and asymmetric stance. Both large, distinctive eyes and inner-ear markings, the nose and mouth, and the drawn hand and toe divisions stay in their source positions. Eye shape may interpret the abstract squiggles under Nick's correction. Ear edges read as soft shaggy hair. All three plumes fan to the viewer's right. |
+| Front, 0 degrees | Preserve the interpreted identity and expressive stance without literal source matching. Render large, distinctive eyes, inner-ear markings, nose and mouth, and intentional hand and toe divisions. Ear edges read as soft shaggy hair. All three plumes fan to the viewer's right. |
 | Front-left, 45 degrees | Look toward the face from Akinza's left. Its left cheek, ear, arm, hip, and outward-set leg are nearer. The tail fan is on the near side, sweeping away from the rear pelvis; its lateral width shortens with the angle, and the three plumes may overlap more while retaining their upper, middle, and lower identities. The far eye and ear remain where projection permits, without moving them to make a symmetrical face. |
 | Left, 90 degrees | Akinza faces the viewer's left. Show its left profile, nearer hand still on its hip, elbow still out, and the same planted stance. The short muzzle projects left. The left ear is broad sideways in space but seen more edge-on; the right ear can overlap behind it. The tail's leftward fan is foreshortened toward the camera, while its backward sweep projects to the viewer's right. Show the near plumes and their overlaps at their original heights, not a new full-width fan. Far limbs and the far eye may be hidden. |
 | Back, 180 degrees | The same stance is seen from behind. Akinza's left leg and tail fan now appear on the viewer's left. Clearly show one shared root on the rear centerline at the base of the spine, then the common base bending toward the viewer's left and separating into three plumes. It must not resemble three tails emerging from a buttock or a tail rooted on the flank. Ear backs have fur, not copies of the front inner-ear markings; no eyes or muzzle design appears on the back of the head. Hands remain on hips and elbows retain their unequal positions. The outer projection should mirror the front, with differences justified by actual occlusion rather than a changed pose. |
@@ -47,7 +47,7 @@ Style preference during the pilot, 2026-09-27:
 
 > Your first image generation, I liked much better than your second round
 
-Use run-0001 as the preferred style reference for further corrections. This preference is not final pack approval and does not waive the source proportions, pose, or check thresholds.
+Use run-0001 as the preferred style reference for further corrections. This preference is not final pack approval. The later abstract-source ruling supersedes literal source-matching thresholds.
 
 Attachment feedback, 2026-09-27:
 
@@ -65,4 +65,16 @@ Further correction from Nick on 2026-09-27:
 
 This directly authorizes revising the tail junction and reducing the rear-body emphasis. It is not approval of run-0005.
 
-For checking, retain the raw source comparison, but do not fail the pilot solely for replacing the abstract eye squiggles. Compare front occupancy against the source and check the two eye positions and prominence separately. Any eye-region exemption in the feature comparison is bounded to the source eye regions, recorded explicitly, and does not excuse changes elsewhere. Shaggy fur remains part of the outline comparison; no broad outline exemption is implied.
+Nick accepted run-0007's revised junction and rear form on 2026-09-27:
+
+> yeah thats better, proceed
+
+Use run-0007 as the accepted tail-junction and rear-form reference while carrying the design across the six views. This acceptance covers that study and permits continuation; it does not claim that an unbuilt six-view pack passed checks or received final approval. Keep run-0001 as the preferred face and overall style reference.
+
+Nick superseded literal source matching on 2026-09-27:
+
+> I don't think we should keep that rule in place because my images are always going to be an abstraction of what I actually want
+
+Interpret the entire source as a drawing of the intended creature, not a pixel template. This supersedes exact-outline and exact feature-position wording above. Keep the defining large sideways furry ears, distinctive eyes, slender upright body, hands-on-hips attitude and three leftward plumes, with the accepted spinal root, blended junction and modest rear form. Judge the interpretation visually. Source overlap and exact cutout locations do not pass or fail a candidate. The six generated views must still show one consistent creature and pose.
+
+Construction workflow update, 2026-09-27: Nick authorized implementing and exercising the layered system. The hands-on-hips set remains the expressive reference. A separate `modeling-v1` pose with hands clear of the torso is now a study proposal under `../../species-construction/akinza/brief.md`, not an approved replacement. Geometry probes are explicitly provisional. Do not mix pose sets or transfer art approval between them.

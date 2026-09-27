@@ -1,0 +1,17 @@
+name: Species construction tracker
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'art/species-construction/**'
+      - 'docs/design/species-construction/**'
+      - '.github/workflows/species-construction.yml'
+
+jobs:
+  tracker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test dependency and approval tracking
+        run: python3 -m unittest discover -s art/species-construction/tests -v

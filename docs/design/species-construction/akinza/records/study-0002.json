@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0002",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T19:24:27.026710+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Use case: stylized-concept.\nAsset type: technical tail-attachment construction study, three coordinated views.\nReference image is Akinza's accepted BACK study. Preserve its one tail root at the base of spine, short shared trunk and three unequal plumes, with modest pelvis. It establishes desired anatomy, not pixel geometry.\nDraw a new LARGE CLOSE-UP diagram on white in three side-by-side panels labeled REAR, LEFT SIDE, ABOVE. Include only lower torso/pelvis, proximal upper legs and entire shared tail trunk, fork and three plumes. No full head or full body, no hands obscuring root.\nRender as SMOOTH MATTE GRAY SCULPTING CLAY with almost NO HAIR STROKES. Keep plumes broad and tapered like three soft furry-volume masses, not long noodles. We need to see an actual continuous organic surface connection.\nGeometry to construct: one root on REAR MIDLINE of pelvis at base of spine, visibly above leg division, ONE short substantial trunk projects slightly backward then bends toward creature's OWN LEFT, a shallow three-way branch point blends into three unequal plumes. All three plume stems join the SAME substantial trunk; each must be traceable into it. No separate extra tails attached at hip; no floating parts, crossing disconnected stems, ornamental ridges or seams pretending to be joins. Restrained flat pelvis, no buttock cleft, no sexual emphasis.\nThe three panels must depict this SAME arrangement and only change camera. REAR: creature's LEFT is viewer LEFT; plumes fan viewer LEFT, upper stem bends up, middle longer outward, lower bends down. LEFT SIDE: face direction would be viewer LEFT; posterior is viewer RIGHT. Lateral fan points toward camera and is strongly FORESHORTENED and overlapping, never a repeated full-width three-plume silhouette. Show trunk's modest backward extension, roots/junction from that side; obscured branches may honestly overlap. ABOVE: looking straight down, front of torso toward page TOP, rear at page BOTTOM; creature's own LEFT on page RIGHT. Show posterior midline attachment, backward trunk then bend toward page RIGHT. Top view demonstrates shallow front-back separation and plumes' thickness; upper/lower plumes can overlap vertically.\nWhite background, flat neutral studio illumination, no cast shadow, orthographic view feel. Three panels may use different camera framing to make junction equally legible but never change geometry. Labels outside objects. No arrows covering joins, no cross sections or invented bones, no measured dimensions, no dramatic presentation. Purpose: resolve hidden attachment volumes for modeling, not a finished furry illustration.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0002/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "1f1cc17c25845bdf6dc88229468bb25496266a607364af8e51ef42a265ca5c7a"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0002/inputs/accepted-tail.png",
+      "role": "accepted-tail",
+      "sha256": "f1a839512cfa15e04acf3167afeea12f6113246b130ff0b11c3cad70f20329fe"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0002/tail.png",
+    "role": "untouched-tool-output",
+    "sha256": "1a2f5230170c7257ef963c05c818d0da95fbda0a6075e18a5ddc6f9514b05ba4"
+  },
+  "verdict": "Rejected geometric references: inconsistent cameras, prominent rear form; prompt had wrong overhead page-side instruction",
+  "reviewer": "Codex",
+  "approval": null
+}

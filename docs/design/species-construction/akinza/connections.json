@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "scope": "tail attachment interpretation; not the complete skeletal or mesh topology",
+  "decisionIds": ["tail-root", "tail-fork-pelvis", "tail-depth"],
+  "parts": ["pelvis", "tail-root", "tail-trunk", "tail-junction", "plume-upper", "plume-middle", "plume-lower"],
+  "connections": [
+    {"parent": "pelvis", "child": "tail-root", "region": "rear midline at base of spine", "continuity": "continuous organic surface", "status": "user-direction"},
+    {"parent": "tail-root", "child": "tail-trunk", "region": "short common base", "continuity": "continuous organic surface", "status": "user-direction"},
+    {"parent": "tail-trunk", "child": "tail-junction", "region": "blended common fork", "continuity": "continuous organic surface", "status": "user-direction"},
+    {"parent": "tail-junction", "child": "plume-upper", "region": "upper branch", "continuity": "continuous organic surface", "status": "user-direction"},
+    {"parent": "tail-junction", "child": "plume-middle", "region": "middle branch", "continuity": "continuous organic surface", "status": "user-direction"},
+    {"parent": "tail-junction", "child": "plume-lower", "region": "lower branch", "continuity": "continuous organic surface", "status": "user-direction"}
+  ],
+  "proposedSpatialInterpretation": {
+    "tail-trunk": "slightly rearward then toward creature left",
+    "plumeFan": "broad leftward spread with shallow front-back depth",
+    "measurements": null,
+    "approval": null
+  },
+  "exclusions": ["independent tail roots on a hip or buttock", "floating disconnected plume stems", "new creature abilities or lore"]
+}

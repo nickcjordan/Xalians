@@ -1,0 +1,32 @@
+# Species construction workflow
+
+Start with `docs/design/species-construction/WORKFLOW.md`. This directory contains a standard-library Python stage tracker and an optional Blender geometry probe. Neither calls a generation API. Subscription image generation remains an agent task using the saved prompt files.
+
+```text
+python art/species-construction/init_species.py <species-key>
+python art/species-construction/pipeline.py docs/design/species-construction/akinza/package.json --report untracked/species-construction/akinza/status.json --markdown docs/design/species-construction/akinza/status.md
+python -m unittest discover -s art/species-construction/tests -v
+```
+
+The initializer requires that species' existing SVG and record and refuses to overwrite work. It creates the brief, package and review files without copying another species' anatomy or approvals. Generation and semantic interpretation are still agent-operated stages, not an unattended one-click reconstruction service.
+
+The tested local geometry-probe command is:
+
+```text
+wsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/art/species-construction/blender_probe.py -- --spec /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/docs/design/species-construction/akinza/probe-spec.json --out /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/probe-0001
+python art/species-construction/review_probe.py untracked/species-construction/akinza/probe-0001
+```
+
+Adapt the checkout and Blender paths for another machine. Use a fresh versioned output directory for a changed study. `review_probe.py` uses Pillow from `art/species-views/requirements.txt`; the tracker and initializer use only Python's standard library. The probe exports a closed mesh, actual cameras and render hashes. The compositor verifies those hashes, derives occupancy from alpha, and builds a contact sheet and eight-view turntable. The probe spec's distances are proposed arbitrary units, not measurements recovered from images.
+
+Exit 0 means artifact integrity passed, not that art is approved. Exit 1 reports changed or missing evidence; exit 2 reports an invalid package. The report's `productionReady` and each stage's `release` remain blocked until the exact evidence has recorded semantic review, explicit Nick approval, and approved dependencies. These records are not cryptographic authentication of Nick; the agent must transcribe actual user messages honestly.
+
+The standard-library tracker/initializer tests also run in the `Species construction tracker` pull request workflow. Blender rendering and actual local evidence checks remain explicit local verification because working originals are not committed.
+
+Each stage records artifact hashes, its own pose set, the specific decisions it consumes, dependency signatures, visual review, and nullable approval. A changed decision invalidates relevant studies and their descendants. Changed or absent files also block descendants. Branches can be explored using unapproved inputs, but cannot be released as approved construction assets. Re-recording inputs is only appropriate after actually revising or revalidating the study; it is not a way to erase a stale warning.
+
+Package file hashes normalize CRLF to LF for Markdown, JSON, Python, text prompts, SVG and YAML so Git line-ending conversion does not invalidate otherwise identical evidence. Binary images and Blender files use exact bytes. The Blender geometry report separately records raw output hashes. Structural signatures use sorted compact JSON. This convention is fixed by tracker schema version 1.
+
+Working image files and Blender outputs live in gitignored `untracked/species-construction/`. A fresh checkout without these files correctly reports missing evidence. Committed run metadata and review notes remain readable. When an asset is approved, preserve its original inputs and outputs in the approved package before marking it available to production.
+
+The older `art/species-views/` utilities remain useful for complete six-view mask/registration checks. The construction tracker does not replace those checks or declare unfinished production validation complete. Detail crops and top views are not forced into a full-body six-view schema. Technical masks must be derived from their own images or actual geometry, never independently generated.

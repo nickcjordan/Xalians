@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0001",
+  "date": "2026-09-27",
+  "recordedAt": "2026-09-27T19:24:27.010547+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": [
+    "model",
+    "seed"
+  ],
+  "prompt": "Use case: stylized-concept.\nAsset type: Akinza construction study for future 3D modeling, not a final beauty turnaround.\nInput image 1 is the preferred identity reference six-view gray furry sheet. Input image 2 is the accepted rear/tail junction study and is authoritative for the single spinal tail root and connected three-plume fork.\nCreate ONE clean landscape modeling study on white, with four evenly spaced panels: FRONT, LEFT PROFILE, BACK, FRONT LEFT THREE QUARTER. Small tidy panel labels allowed outside figures. Each figure fits entirely within its panel with generous whitespace.\nSame Akinza identity as references: huge broadly sideways ears, large distinctive oval eyes, short subtle muzzle, slender upright furry feline invented creature, two arms and legs, exactly three unequal tail plumes from ONE common tail trunk at the base of the spine. Preserve overall head/body proportions and soft appealing character.\nChange to ONE consistent proposed modeling pose: arms relaxed downward and slightly away from torso, hands clear of hips, feet planted modestly apart, no hands-on-hips. No added digits or enlarged paws. This is a new pose set, not a matching overlay of the original pose.\nSurface is neutral gray clay-like construction form with simplified broad fur masses and a few soft silhouette tufts. Remove fine hair hatch detail so volume can be read; do not strip away defining ear and tail fur masses. Ears are thin softly cupped forms with shaggy hair edges, never torn/jagged cartilage. Eye expression gentle. Pelvis restrained and modest without buttock cleft, rounded cheek highlights or exaggerated waist.\nTail root lies on the rear centerline at the base of spine. A short continuous common trunk goes backward and toward creature's OWN LEFT before blending into three branches. The plumes always occupy the same world-space pose, with unequal upper/middle/lower fans. Front: tail fans to viewer RIGHT. Back: fans to viewer LEFT with centered root visible. LEFT PROFILE: creature faces viewer LEFT, tail's lateral sweep foreshortens toward camera; only its smaller backward extension projects viewer RIGHT, with legitimate overlaps. Do not show a full-width side fan in profile. Front-left: face points a little viewer LEFT, tail sweeps toward viewer RIGHT. Never mirror the creature between views. Show honest foreshortening and hidden parts. Only camera moves.\nOrthographic feel, equal figure scale, common ground row, soft neutral light, white background, no cast shadows, no props, no accessories, no color, no dimension numbers or made-up measurements. This is an explicit proposal for volume and modeling pose, not a redesign. Emphasize coherent shape and useful construction clarity.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0001/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "e69bd316fecab60af4f0dc23f8448596f378d5847e027851dbb02bac545edf48"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0001/inputs/identity.png",
+      "role": "identity",
+      "sha256": "f21a6ec1c23d150f94ba323ff4e77997a4cf7f23162c0bc1525a98342bab2f90"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0001/inputs/accepted-tail.png",
+      "role": "accepted-tail",
+      "sha256": "f1a839512cfa15e04acf3167afeea12f6113246b130ff0b11c3cad70f20329fe"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0001/construction.png",
+    "role": "untouched-tool-output",
+    "sha256": "5ed509a893f1b72cbb61c3ea0e1daad88965f0a72fb5b8798aed4912e8afda81"
+  },
+  "verdict": "Useful modeling-pose proposal; rejected as coherent geometric references",
+  "reviewer": "Codex",
+  "approval": null
+}
