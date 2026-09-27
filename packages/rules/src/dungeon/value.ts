@@ -111,6 +111,8 @@ export type MoveValue = {
   healed: number;
   /** The part of `saved` that stops the target machine's own blow (a knockout, a status, a broken charge). */
   stops: number;
+  /** How many machines this use damages: its target and any its area reaches (words pass: "8 dmg on 2"). */
+  reached?: number;
   /** This use knocks its target out (after the squad's other orders, when the run passed in is projected). */
   knockout: boolean;
   /** The target this use names. */
@@ -166,7 +168,8 @@ export function valueOn(s: Run, u: Unit, index: number, aimed: Unit): MoveValue 
     healed = 0,
     knockout = false;
   const idle: Idle[] = [];
-  let stops = 0;
+  let stops = 0,
+    reached = 0;
   // What the move does for its user on the way (a strike that also guards it).
   if (t.id !== u.id)
     for (const e of m.effects)
@@ -183,8 +186,13 @@ export function valueOn(s: Run, u: Unit, index: number, aimed: Unit): MoveValue 
     const hit = damagePreview(u, m, t);
     harm += Math.min(t.hp, hit);
     knockout = hit > 0 && hit >= t.hp;
+    if (hit > 0) reached++;
     for (const r of areaReach(s, u, m, t))
-      if (r.enemy !== u.enemy) harm += Math.min(r.hp, damagePreview(u, m, r, "area"));
+      if (r.enemy !== u.enemy) {
+        const splash = Math.min(r.hp, damagePreview(u, m, r, "area"));
+        harm += splash;
+        if (splash > 0) reached++;
+      }
     const threat = machineThreat(s, t);
     // A machine that falls strikes no more: its next blow is kept for the squad.
     if (knockout) saved += threat.amount;
@@ -246,6 +254,7 @@ export function valueOn(s: Run, u: Unit, index: number, aimed: Unit): MoveValue 
     saved: Math.round(saved),
     healed: Math.round(healed),
     stops: Math.round(stops),
+    reached,
     knockout,
     target: t.id,
   };

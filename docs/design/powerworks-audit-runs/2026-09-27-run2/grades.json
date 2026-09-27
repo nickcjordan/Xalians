@@ -1,0 +1,1578 @@
+{
+ "planning": {
+  "1a": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Avilily selected, its four moves named"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Avilily selected, its four moves named"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Avilily selected, its four moves named"
+   }
+  },
+  "1b": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Correct order from turn strip"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Correct order from turn strip"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Correct order from turn strip"
+   }
+  },
+  "1c": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "All health values right"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "All health values right"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "All health values right"
+   }
+  },
+  "1d": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Hits one of mine for 7, target unknown"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Hits one of mine for 7, target unknown"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Hits one of mine for 7, target unknown"
+   }
+  },
+  "1e": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Ambuscade, stops a crawler's whole 7 hit"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Ambuscade, stops a crawler's whole 7 hit"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Ambuscade, stops a crawler's whole 7 hit"
+   }
+  },
+  "1f": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "dmg dealt / stops enemy hit"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "dmg dealt / stops enemy hit"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "dmg dealt / stops enemy hit"
+   }
+  },
+  "1g": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Machine's next attack for 7"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Machine's next attack for 7"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Machine's next attack for 7"
+   }
+  },
+  "2a": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "4 each on both crawlers, 14 to 10, slows one"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "4 each on both crawlers, 14 to 10, slows one"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "4 each on both crawlers, 14 to 10, slows one"
+   }
+  },
+  "2b": {
+   "planning-r1": {
+    "g": "P",
+    "m": false,
+    "note": "Hedged: Cannon to kill fast, Sweep to wear both"
+   },
+   "planning-r2": {
+    "g": "W",
+    "m": false,
+    "note": "Picked Cannon: 8+8 finishes Crawler 1"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Sweep: hits both, delays, reusable"
+   }
+  },
+  "2c": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "14 to 10, rings, turn-order shift"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "14 to 10, rings, turn-order shift"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "14 to 10, rings, turn-order shift"
+   }
+  },
+  "2d": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Guessed 'later', would be delayed"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Guessed 'later', would be delayed"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Guessed 'later', would be delayed"
+   }
+  },
+  "3a": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "8 damage, 14 to 6"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "8 damage, 14 to 6"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "8 damage, 14 to 6"
+   }
+  },
+  "3b": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Health now to after"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Health now to after"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Health now to after"
+   }
+  },
+  "3c": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "8 damage on Crawler 1, 14 to 6; signature not named"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "8 damage on Crawler 1, 14 to 6; signature not named"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "8 damage on Crawler 1, 14 to 6; signature not named"
+   }
+  },
+  "3d": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Not the creature being ordered / not involved"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Not the creature being ordered / not involved"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Not the creature being ordered / not involved"
+   }
+  },
+  "4a": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Crawler 1 to 0, Rake on C2, Ram on C2"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Crawler 1 to 0, Rake on C2, Ram on C2"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Crawler 1 to 0, Rake on C2, Ram on C2"
+   }
+  },
+  "4b": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "None wasted (overkill only)"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "None wasted; Crystorn redirected"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "None wasted (overkill only)"
+   }
+  },
+  "4c": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Yes, acts before Hippochamp and Graviclaw"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Yes, acts before Hippochamp and Graviclaw"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Yes, acts before Hippochamp and Graviclaw"
+   }
+  },
+  "4d": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "C1 still 7; C2 cut to 4 by Rake"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "C1 still 7; C2 cut to 4 by Rake"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "C1 still 7; C2 cut to 4 by Rake"
+   }
+  },
+  "4e": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Crawler 2, C1 already down"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Crawler 2, C1 already down"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Crawler 2, C1 already down"
+   }
+  },
+  "5a": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Graviclaw corroding"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Graviclaw corroding"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Graviclaw corroding"
+   }
+  },
+  "5b": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "C1 down; C2 10 and slowed"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "C1 down; C2 10 and slowed"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "C1 down; C2 10 and slowed"
+   }
+  },
+  "5c": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Slowed"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Slowed"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Slowed"
+   }
+  },
+  "5d": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Spent, once-only used"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Spent, once-only used"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Spent, once-only used"
+   }
+  },
+  "6a": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Guardian charging big hit"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Guardian charging big hit"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Guardian charging big hit"
+   }
+  },
+  "6b": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "3rd this round; Rake or kill it"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "3rd this round; Rake or kill it"
+   },
+   "planning-r3": {
+    "g": "P",
+    "m": false,
+    "note": "Counters right; timing 'this round or later, can't tell'"
+   }
+  },
+  "6c": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Both down"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Both down"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Both down"
+   }
+  },
+  "6d": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Charging windup; slowed acts later"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Charging windup; slowed acts later"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Charging windup; slowed acts later"
+   }
+  },
+  "7a": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Guardian, next hit 24"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Guardian, next hit 24"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Guardian, next hit 24"
+   }
+  },
+  "7b": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Stops Guardian's 24 hit"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Stops Guardian's 24 hit"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Stops Guardian's 24 hit"
+   }
+  },
+  "7c": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "No; Drone ranged, bind stops close-in"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "No; Drone ranged, bind stops close-in"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "No; Drone ranged, bind stops close-in"
+   }
+  },
+  "8a": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Stopping hits plus rarely targeted"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Stopping hits plus rarely targeted"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Stopping hits plus rarely targeted"
+   }
+  },
+  "8b": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "15% picked, slips 12% of crawler hits"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "15% picked, slips 12% of crawler hits"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "15% picked, slips 12% of crawler hits"
+   }
+  },
+  "8c": {
+   "planning-r1": {
+    "g": "C",
+    "m": false,
+    "note": "Move's effect: damage or stopped"
+   },
+   "planning-r2": {
+    "g": "C",
+    "m": false,
+    "note": "Move's effect: damage or stopped"
+   },
+   "planning-r3": {
+    "g": "C",
+    "m": false,
+    "note": "Move's effect: damage or stopped"
+   }
+  }
+ },
+ "playback": {
+  "M01": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Round opens, fastest to slowest"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Nothing happened"
+    }
+   }
+  },
+  "M02": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Rake bound Crawler 2, can't close in"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Worked as restraint"
+    }
+   }
+  },
+  "M03": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Tool strike hit Hippochamp for 7"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Landed in full"
+    }
+   },
+   "(iii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Damage over time, 1 per tick"
+    }
+   }
+  },
+  "M04": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Corroding for 2 opportunities"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Status applied"
+    }
+   }
+  },
+  "M05": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Tool strike blocked by binding, wore off"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Stopped by Avilily's bind"
+    }
+   },
+   "(iii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "No, Blocked mark and banner"
+    }
+   }
+  },
+  "M06": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Hippochamp took 1 from corroding"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "DoT tick worked"
+    }
+   }
+  },
+  "M07": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Pincer 8 on Crawler 1, knocked out"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Worked, knocked out"
+    }
+   }
+  },
+  "M08": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Target changed to C2, Ram for 6"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Original target fell, switched"
+    }
+   },
+   "(iii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "First target down, moved to next"
+    }
+   }
+  },
+  "M09": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Peck 1 on Guardian; Core discharge at Avilily"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Guessed discharge did 1"
+    }
+   },
+   "(iii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Automatic defense, not ordered"
+    }
+   }
+  },
+  "M10": {
+   "(i)": {
+    "playback-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Core surge on Hippochamp; no damage or charge named"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Can't tell result; guessed charged attack"
+    }
+   }
+  },
+  "M11": {
+   "(i)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Draw broke charge; surge blocked"
+    }
+   },
+   "(ii)": {
+    "playback-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Surge stopped right; said Draw did no damage (3)"
+    }
+   },
+   "(iii)": {
+    "playback-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Gravity Draw broke the charge"
+    }
+   }
+  }
+ },
+ "signals": {
+  "1": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Once per fight"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Once per fight"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Once per battle, then SPENT"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "One-use, later SPENT"
+    }
+   }
+  },
+  "2": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Read as a shield value"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Prevents 7 damage"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Cancels up to 7 of enemy hit"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Blocks 7 of enemy hit"
+    }
+   }
+  },
+  "3": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "7 damage, whose attack unknown"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "7 damage, whose attack unknown"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Enemy's upcoming attack 7"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Crawler's next attack 7"
+    }
+   }
+  },
+  "4": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Selected creature"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Selected creature"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Creature being ordered"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Selected creature"
+    }
+   }
+  },
+  "5": {
+   "part1": {
+    "signals-r1": {
+     "g": "W",
+     "m": false,
+     "note": "Guess: side or rank marker"
+    },
+    "signals-r2": {
+     "g": "W",
+     "m": false,
+     "note": "Guess: team or class emblem"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Enemy element icon"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Enemy type/element icon"
+    }
+   }
+  },
+  "6": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Open details"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Open details"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Unit details"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Creature info"
+    }
+   }
+  },
+  "7": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Empty slot, not tied to order"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "Empty slot, not tied to order"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Order slot, fills with move-target"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Order slot, fills with move-target"
+    }
+   }
+  },
+  "8": {
+   "part1": {
+    "signals-r1": {
+     "g": "W",
+     "m": false,
+     "note": "Creature token; dashed = ready/selected"
+    },
+    "signals-r2": {
+     "g": "W",
+     "m": false,
+     "note": "Creature portrait; dashed = mine"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Turn order right; dashed = mine wrong"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "Turn order right; dashed = my side wrong"
+    }
+   }
+  },
+  "9": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Enemy token, no turn order"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "Enemy portrait, no turn order"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Enemy's turn"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Enemy in turn order"
+    }
+   }
+  },
+  "10": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Described card preview, not the referent"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "Described card preview, not the referent"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Attack preview, referent role not named"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "Attack preview, referent role not named"
+    }
+   }
+  },
+  "11": {
+   "part1": {
+    "signals-r1": {
+     "g": "N",
+     "m": false,
+     "note": "Can't tell"
+    },
+    "signals-r2": {
+     "g": "N",
+     "m": false,
+     "note": "Can't tell"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Enemy moved later, likely slowed"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Crawler pushed later"
+    }
+   }
+  },
+  "12": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Type advantage"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Type advantage"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Super-effective"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Strong against enemy"
+    }
+   }
+  },
+  "13": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Waiting/delayed/charging guesses"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "Waiting/charging/delayed guesses"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "W",
+     "m": true,
+     "note": "Cooldown, not ready; dim disc suggests it"
+    },
+    "signals-r2": {
+     "g": "W",
+     "m": true,
+     "note": "Resting/not usable; dim disc suggests it"
+    }
+   }
+  },
+  "14": {
+   "part1": {
+    "signals-r1": {
+     "g": "W",
+     "m": false,
+     "note": "Empty or inactive position"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Possible secondary target"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Possible target of the move"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Secondary target marker"
+    }
+   }
+  },
+  "15": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Health 14 to 6"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Health 14 to 6"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "HP after planned attack"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Health 14 to 6"
+    }
+   }
+  },
+  "16": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Highlight, maybe valid target"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Target highlight"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Chosen target"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Chosen target"
+    }
+   }
+  },
+  "17": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "8 damage to Crawler 1"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "8 damage to Crawler 1"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Selected move's effect on target"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "8 damage to Crawler 1"
+    }
+   }
+  },
+  "18": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Unit is killed"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "This hit kills it"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Planned orders kill it"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Queued orders kill it"
+    }
+   }
+  },
+  "19": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Ability aimed at Crawler 1"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Queued action at Crawler 1"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Hippochamp's order"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Hippochamp's order"
+    }
+   }
+  },
+  "20": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Done/ready/confirmed, no order"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "Done/ready/confirmed, no order"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Order assigned"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Order set"
+    }
+   }
+  },
+  "21": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Next hit reduced 7 to 4"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Attack reduced 7 to 4"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Orders cut next hit to 4"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Next hit cut 7 to 4"
+    }
+   }
+  },
+  "22": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Damage over time"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Damage-over-time status"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "DoT on Graviclaw"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Graviclaw corroding"
+    }
+   }
+  },
+  "23": {
+   "part1": {
+    "signals-r1": {
+     "g": "W",
+     "m": false,
+     "note": "Slowed; key says knocked out (key likely mislabelled)"
+    },
+    "signals-r2": {
+     "g": "W",
+     "m": false,
+     "note": "Slowed; key says knocked out (key likely mislabelled)"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "W",
+     "m": false,
+     "note": "Slowed; key says knocked out (key likely mislabelled)"
+    },
+    "signals-r2": {
+     "g": "W",
+     "m": false,
+     "note": "Slowed; key says knocked out (key likely mislabelled)"
+    }
+   }
+  },
+  "24": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Knocked out"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Defeated"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Defeated, faded"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Crawler 1 down"
+    }
+   }
+  },
+  "25": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Used up"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Used, unavailable"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Once-only already used"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "ONCE used up"
+    }
+   }
+  },
+  "26": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Building up to fire later"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Building up to fire later"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Guardian winding up big hit"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Guardian charging big hit"
+    }
+   }
+  },
+  "27": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "24 hit fully cancelled"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "24 hit fully negated"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Hit fully blocked by Ambuscade"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "24 hit fully blocked"
+    }
+   }
+  },
+  "28": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Would do nothing"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Would do nothing"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Would do nothing here"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Would do nothing"
+    }
+   }
+  },
+  "29": {
+   "part1": {
+    "signals-r1": {
+     "g": "P",
+     "m": false,
+     "note": "Restrained; 40% chance or reduction"
+    },
+    "signals-r2": {
+     "g": "P",
+     "m": false,
+     "note": "Restrained; 40% of something"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "40% chance to restrain, stops closing in"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "40% chance to restrain, blocks closing in"
+    }
+   }
+  },
+  "30": {
+   "part1": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Attacker takes 4"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Attacker takes 4 back"
+    }
+   },
+   "part2": {
+    "signals-r1": {
+     "g": "C",
+     "m": false,
+     "note": "Deals 4 back to attacker"
+    },
+    "signals-r2": {
+     "g": "C",
+     "m": false,
+     "note": "Hitting it costs 4"
+    }
+   }
+  }
+ },
+ "_grader_notes": "Key #23 says 'this unit is knocked out' but the mark (part-2-screen-05) is the machine status badge 'Slowed 2' on Crawler 2; graded W per key as instructed. Under the evident meaning (slowed), all four #23 answers would be C."
+}

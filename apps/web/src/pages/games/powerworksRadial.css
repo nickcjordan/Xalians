@@ -1416,3 +1416,92 @@
   align-items: center;
   gap: 2px;
 }
+
+/*
+  Words pass (2026-09-27, audit run 1): glyphs a newcomer misread are replaced by the word or
+  number they stood for, set in the same place and the same small badge styles.
+*/
+/* The signature badge says "once" on the rim instead of a crown. */
+.pw .pw-radial-crown.pw-radial-once {
+  width: auto;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 2px;
+  font: 700 10px/1 var(--font-legend);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* How long a move rests, as words. */
+.pw-radial-rest {
+  left: calc(50% - 30px);
+  width: 60px;
+}
+.pw .pw-rest-word {
+  padding: 1px 4px;
+  border-radius: 2px;
+  font: 600 10px/1.2 var(--font-legend);
+  color: #e8d29c;
+  background: #08151bdd;
+  white-space: nowrap;
+}
+/* A move's effect in words under its name: damage red, stops gold, heals green. */
+.pw .pw-effect {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 4px;
+  max-width: 110px;
+  font: 700 11px/1.2 var(--font-legend);
+  font-variant-numeric: tabular-nums;
+}
+.pw .pw-effect b {
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: #08151bdd;
+  white-space: nowrap;
+}
+.pw .pw-effect b.harm {
+  color: #ffc2b3;
+  box-shadow: inset 0 0 0 1px #b9533c;
+}
+.pw .pw-effect b.knockout {
+  color: #ffd6ca;
+  background: #5a1d14;
+}
+.pw .pw-effect b.saved {
+  color: #ffe7a6;
+  box-shadow: inset 0 0 0 1px #d19a3e;
+}
+.pw .pw-effect b.healed {
+  color: #d3f7dc;
+  box-shadow: inset 0 0 0 1px #5fae7a;
+}
+.pw .pw-effect b.none {
+  color: #b9c3bd;
+  font-weight: 600;
+}
+.pw .pw-effect.waiting {
+  opacity: 0.45;
+}
+/* A machine's next hit, in words. */
+.pw .pw-threat-word {
+  font-weight: 600;
+  font-size: 11px;
+  color: #e7b3a6;
+}
+@media (max-width: 600px) {
+  .pw .pw-effect {
+    max-width: 72px;
+    font-size: 10px;
+  }
+}
+/* The card's signature badge carries the word, like the disc's. */
+.pw .pw-radial-card-head .pw-mark.badge.once {
+  width: auto;
+  min-width: 0;
+  padding: 0 6px;
+  border-radius: 2px;
+  font: 700 10px/1.6 var(--font-legend);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
