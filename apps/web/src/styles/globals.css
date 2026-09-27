@@ -367,24 +367,30 @@
 	.archive-play:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 3px; }
 	.archive[data-screen="standby"] .archive-hud-clock,
 	.archive[data-screen="search"] .archive-hud-clock,
-	.archive[data-screen="lock"] .archive-hud-clock { opacity: .35; }
+	.archive[data-screen="lock"] .archive-hud-clock,
+	.archive[data-screen="out"] .archive-hud-clock { opacity: .35; }
 
 	/* Tuning in, in two parts (archiveScreen.tsx). Search: static bursts in and holds, the picture not yet
 	   shown, for as long as the recording needs to be ready to move. Lock: the picture opens out of a bright
 	   line, moving, and the static clears. */
-	.archive[data-screen="search"] .archive-picture { opacity: 0; }
+	/* All but invisible under the static rather than hidden, so the browser draws the recording's layers
+	   while it searches and the lock opens onto a picture already drawn (a hidden one was first drawn as it
+	   opened, a visible stall on the first switch to a heavy plate). */
+	.archive[data-screen="search"] .archive-picture { opacity: .01; }
 	.archive[data-screen="search"] .archive-static { animation: archive-static-in 90ms linear both, archive-jitter 240ms steps(6) infinite; }
 	.archive[data-screen="lock"] .archive-static { animation: archive-static-out 550ms linear both, archive-jitter 240ms steps(6) infinite; }
 	.archive[data-screen="lock"] .archive-picture { animation: archive-on 550ms cubic-bezier(.2, .7, .2, 1) both; }
-	/* Switching recordings: a short burst of static over the cut. */
-	.archive[data-screen="switch"] .archive-static { animation: archive-static-cut 520ms linear both, archive-jitter 240ms steps(6) infinite; }
+	/* Leaving a recording for another: static rises over the picture until it is gone. */
+	.archive[data-screen="out"] .archive-static { animation: archive-static-rise 320ms linear both, archive-jitter 240ms steps(6) infinite; }
+	.archive[data-screen="out"] .archive-picture { animation: archive-sink 320ms linear both; }
 	/* Off: the picture collapses to a line and goes. */
 	.archive[data-screen="off"] .archive-picture { animation: archive-off 380ms cubic-bezier(.6, 0, .9, .4) both; }
 	.archive-picture { will-change: transform; }
 
 	@keyframes archive-static-in { from { opacity: .1; } to { opacity: .92; } }
 	@keyframes archive-static-out { 0% { opacity: .92; } 50% { opacity: .18; } 100% { opacity: 0; } }
-	@keyframes archive-static-cut { 0% { opacity: 0; } 15% { opacity: .9; } 60% { opacity: .75; } 100% { opacity: 0; } }
+	@keyframes archive-static-rise { from { opacity: 0; } to { opacity: .92; } }
+	@keyframes archive-sink { from { opacity: 1; } to { opacity: .01; } }
 	@keyframes archive-jitter { 0% { transform: translate(0, 0); } 100% { transform: translate(-110px, 66px); } }
 	/* Transform and opacity only, so the compositor runs them even while the
 	   page is busy mounting the recording under the static; the glow of the
@@ -533,7 +539,8 @@
 		align-items: flex-end;
 		justify-content: center;
 		min-height: 0;
-		transition: opacity 560ms var(--ease-in), transform 640ms var(--ease-in);
+		/* Leaving: its screen is already all static (the `out` phase), so it goes quickly, before the next one is in. */
+		transition: opacity 160ms var(--ease-in);
 	}
 	.scene-frame > * { width: min(calc(100cqw - var(--lift)), calc((100cqh - var(--lift)) * var(--ar))); }
 	.scene-spread .scene-label { grid-area: label; }
@@ -541,11 +548,12 @@
 	.scene-spread .scene-label,
 	.scene-spread .scene-read { transition: opacity 280ms var(--ease-in), transform 280ms var(--ease-in); }
 
-	.story-scene[data-state="past"] .scene-frame { opacity: 0; transform: translateY(-9%) scale(.96); }
-	.story-scene[data-state="future"] .scene-frame { opacity: 0; transform: translateY(9%) scale(1.03); }
+	/* The screens change through static (archiveScreen.tsx), so a frame only fades where it stands. */
+	.story-scene[data-state="past"] .scene-frame,
+	.story-scene[data-state="future"] .scene-frame { opacity: 0; }
 	.story-scene:not([data-state="active"]) .scene-read,
 	.story-scene:not([data-state="active"]) .scene-label { opacity: 0; transform: translateY(20px); }
-	.story-scene[data-state="active"] .scene-frame { transition: opacity 700ms var(--ease-out) 180ms, transform 950ms var(--ease-out) 180ms; }
+	.story-scene[data-state="active"] .scene-frame { transition: opacity 280ms var(--ease-out) 140ms; }
 	.story-scene[data-state="active"] .scene-read { transition: opacity 600ms var(--ease-out) 420ms, transform 760ms var(--ease-out) 420ms; }
 	.story-scene[data-state="active"] .scene-label { transition: opacity 500ms var(--ease-out) 720ms, transform 600ms var(--ease-out) 720ms; }
 	/* The theme zeroes durations under reduced motion; the delays go too, so
