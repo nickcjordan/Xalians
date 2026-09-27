@@ -1,6 +1,6 @@
 # Species view pack run log
 
-All four initial attempts used the built-in `image_gen.imagegen` tool through the Codex subscription on 2026-09-27. Model and seed were not exposed. No paid API or key was used. Each local run contains its exact prompt, input snapshots, manifest and report under `untracked/species-views/akinza/`. Committed metadata snapshots are in `species-view-run-records/`. Images remain working candidates, not approved pack assets.
+All attempts used the built-in `image_gen.imagegen` tool through the Codex subscription on 2026-09-27. Model and seed were not exposed. No paid API or key was used. Each local run contains its exact prompt, input snapshots, manifest and report under `untracked/species-views/akinza/`. Committed metadata snapshots are in `species-view-run-records/`. Images remain working candidates, not approved pack assets.
 
 | Run | Experiment | Evidence and verdict |
 |---|---|---|
@@ -8,7 +8,8 @@ All four initial attempts used the built-in `image_gen.imagegen` tool through th
 | akinza/run-0002 | Six-slot template with the source silhouette anchoring the front | Source proportions and pose still drift. Tail fan and body relationship remain incorrect. Nick explicitly prefers run-0001. Rejected. |
 | akinza/run-0003 | Front-only contour-preservation diagnostic | Closer to the source shape, but normalized occupancy IoU is 0.9264, below 0.95. Output touches the original canvas edges. This is not an accepted front, and its style is not the selected style reference. |
 | akinza/run-0004 | Front-only correction using run-0001 as the preferred style and a padded source-shape reference | Generated before Nick's root-placement feedback, so it is not the corrected back view. Diagnostic occupancy IoU is 0.7042. Rejected; no pack approval. |
+| akinza/run-0005 | Back-only attachment correction from the preferred first sheet, after Nick confirmed the spinal root | Visual inspection finds one shared root on the rear centerline at the base of the spine, bending left into three plumes. Saved masks and registered back. Single-view attachment study only; full pack checks fail for absent views and incomplete production validation. No image approval. |
 
 The standalone front comparisons use uniform scale and translation only, with explicit source head-surface regions for occupancy and no mask replacement from the reference. These preliminary measurements do not certify feature identity or correct mask semantics. Exact settings and overlays stay with each local diagnostic folder. Raw subscription-tool results appeared in the chat as generation previews; no passing review contact sheet was produced.
 
-Current design correction: distinguish the central rear tail attachment from the lateral point where its plume fan emerges from behind the hip in the front silhouette. The reading contains the proposed correction and Nick's exact feedback. Await its confirmation before generating a corrected back view.
+Current design correction: distinguish the central rear tail attachment from the lateral point where its plume fan emerges from behind the hip in the front silhouette. Nick explicitly confirmed the spinal root before run-0005. The reading contains his exact words. The interpretation is approved; generated results still require his approval.
