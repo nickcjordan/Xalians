@@ -2,11 +2,13 @@
 
 Status: proposed implementation plan, 2026-09-27. Nick has authorized planning and the Akinza reading, not approved their subjective interpretation. The [brief](species-view-packs-brief.md) governs this work. Progress and approval gates live in [the work record](species-view-packs-active-work.md).
 
-Akinza pilot correction, 2026-09-27: Nick approved proceeding with shaggy ear hair and large, distinctive eyes interpreting the abstract squiggles. Its [reading](species-view-readings/akinza/reading.md) records his words. Preserve raw front scores, require occupancy IoU >= 0.95, and allow a declared source-eye-region exclusion from the feature-mask score while separately checking eye position and prominence. No other source feature or outline is exempt. This supersedes literal eye-shape preservation for Akinza only; pack approval is still pending.
+Akinza pilot correction, 2026-09-27: Nick approved proceeding with shaggy ear hair and large, distinctive eyes interpreting the abstract squiggles. Its [reading](species-view-readings/akinza/reading.md) records his words. The later ruling below extends interpretive freedom to the full drawing; pack approval is still pending.
+
+Superseding ruling, 2026-09-27: Nick said, "I don't think we should keep that rule in place because my images are always going to be an abstraction of what I actually want" in response to the exact source-overlap gate. Remove that gate and literal source-feature placement requirements for all species. The earlier 0.95 source score and 2% source-feature distance are diagnostic history only. The approved reading interprets the source. Continue enforcing consistency among generated views, artifact integrity, derived masks, and explicit approval. Do not spend further generation attempts optimizing source IoU.
 
 ## Outcome and boundaries
 
-Produce registered, shaded gray references for all 30 species, with image-derived masks, reproducible checks, generation provenance, and Nick's explicit approval for each pack. These are references for a later 3D pipeline. This work does not create models, animation, gameplay integration, or revised creature facts and abilities.
+Produce registered, shaded gray references for all 30 species, with image-derived masks, reproducible checks, generation provenance, and Nick's explicit approval for each pack. Nick subsequently authorized the layered construction workflow in `species-construction-pipeline.md`, including provisional geometry probes and a rough-model checkpoint. This work does not create finished production models, animation, gameplay integration, or revised creature facts and abilities.
 
 Use six views by default: front 0 degrees, front-left 45, left 90, back 180, right 270, front-right 315. Angles locate the camera around the stationary creature. Left and right always mean its own sides. Cameras remain level; one pose, scale, lighting treatment, and canvas size apply throughout a pack.
 
@@ -65,7 +67,7 @@ docs/species-templates/views/<key>/ # populated only after pack approval
 ## Generation and processing
 
 1. Prepare one turnaround sheet with six fixed slots, enough horizontal room for the widest view, and alignment guides outside creature regions. Attach the source reference and the approved reading. Default final view canvas is 1024 by 1024, but retain the actual tool output size and avoid claiming that upscaling adds detail. Use a larger common canvas if a species cannot fit without clipping.
-2. Request neutral mid-gray form, soft even light, orthographic views, no cast shadow, props, labels, or background. Use the brief's prompt skeleton with the actual observed pose and approved view notes. Anchor the front slot to the source drawing. Guides are processing aids, not final image content.
+2. Request neutral mid-gray form, soft even light, orthographic views, no cast shadow, props, labels, or background. Use the brief's prompt skeleton with the interpreted pose and approved view notes. Anchor the design to the approved reading and accepted visual studies, without freezing the source outline. Guides are processing aids, not final image content.
 3. Generate a small round of two candidates, one sheet per call if necessary. Each call gets its own provenance and verdict. Inspect failures before another round; change one documented cause where practical. Never borrow another species' anatomy as a style reference. The older art log demonstrates both reference leakage and why every failed run needs a record.
 4. `split_sheet` uses explicit crop rectangles recorded against the original sheet. It rejects overlapping, out-of-bounds, clipped, missing, or duplicate slots. It does not infer that an arbitrary six-panel image has the correct angle order.
 5. `mask` derives occupancy from alpha when trustworthy, otherwise from separation from the pure white background. Background threshold and cleanup settings are recorded. A second feature mask preserves the white drawn markings extracted from the candidate image. Keep occupancy and feature masks separate so eyes are not treated as empty anatomy. Reject ambiguous shading/mark separation for inspection rather than silently filling or deleting details.
@@ -78,13 +80,13 @@ Do not paste the source silhouette or its feature cut-outs over a failed generat
 
 ## Geometry and checks
 
-Pixel coordinates use the top-left origin, x rightward, y downward, zero-based rows, and inclusive occupied bounds. Figure height is `bottom - top + 1` of occupancy; ground row is the lowest supporting sole row for Akinza. Use the normalized source figure height H as the common tolerance denominator. For floating or limbless pilots, define the equivalent baseline and homologous landmarks in the reading; do not invent feet or knees.
+Pixel coordinates use the top-left origin, x rightward, y downward, zero-based rows, and inclusive occupied bounds. Figure height is `bottom - top + 1` of occupancy; ground row is the lowest supporting sole row for Akinza. Use the pack's common target figure height H as the tolerance denominator, independent of the abstract source proportions. For floating or limbless pilots, define the equivalent baseline and homologous landmarks in the reading; do not invent feet or knees.
 
 | Check | Acceptance and evidence |
 |---|---|
 | File integrity | All six names and angles present exactly once; same canvas; valid nonempty PNGs and binary masks; no clipping; hashes match. |
-| Front match | Intersection over union of the registered black-on-white feature mask and SVG reference mask is at least 0.95. Fit with uniform scale and translation only. Also report occupancy IoU separately. |
-| Drawn features | Every source feature ID has a visible candidate counterpart. Each corresponding annotated anchor is within Euclidean distance 0.02 H after the same front registration. No averaging away a failed feature. Feature shape and identity require visual evidence as well as the distance check. |
+| Front interpretation | Visual review against the source and approved reading. Source IoU is optional diagnostic data, never an acceptance gate. |
+| Drawn features | Review the intended feature inventory against the approved reading. Interpret abstract marks; do not require exact source cutout shapes or source-feature positions. |
 | Heights | Maximum minus minimum measured height across views is at most 0.01 H. |
 | Landmark rows | For each homologous landmark, maximum minus minimum visible row is at most 0.015 H. Measure left and right shoulders, hips, knees, and soles separately when the pose is asymmetric, plus head/ear top and eye line. Occluded landmarks are explicitly marked occluded, not fabricated. |
 | Ground row | All supporting sole rows share the target row after registration, allowing at most one pixel of raster rounding as a proposed implementation tolerance. Reject shifted or floating feet. |
