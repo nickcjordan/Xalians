@@ -274,7 +274,8 @@ for (const view of ['simple', 'advanced']) {
 						const out = [];
 						document.querySelectorAll('[data-site-id]').forEach((w) => {
 							const standing = w.querySelector('[data-standing]');
-							if (!standing) {
+							// a creature pointed at stands on the bar as a preview, with no plate of its own
+							if (!standing || standing.classList.contains('rec-standing--preview')) {
 								return;
 							}
 							const [theirs, mine] = (standing.getAttribute('data-standing-values') || '0/0').split('/').map(Number);
@@ -393,7 +394,7 @@ for (const view of ['simple', 'advanced']) {
 							const ghost = document.querySelector(`[data-ghost-piece="${id}"]`);
 							const beside = ghost && ghost.classList.contains('rec-ghost-piece--beside');
 							if (words && (innerWidth >= 1024 || !beside) && getComputedStyle(words).display === 'none') {
-								out.push(`${id}: something moves the number and the words that say what give way (step ${ghost.getAttribute('data-says-fit')})`);
+								out.push(`${id}: something moves the number and the words that say what give way (step ${ghost.getAttribute('data-says-fit')}; ${beside ? 'beside' : 'alone'}; ${[...words.querySelectorAll('[data-reason]')].map((r) => r.textContent).join(' / ')})`);
 							}
 							if (words && getComputedStyle(words).display !== 'none') {
 								const wr = words.getBoundingClientRect();

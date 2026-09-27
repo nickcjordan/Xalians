@@ -4,7 +4,7 @@ import type { XalianRecord } from '@xalians/content/schema';
 import {
 	baseHold, holdAtSite, worldMatchupMultiplier, strainLevel, strainMultiplierFor,
 	speedOf, buildActs, magnitudeOf, magnitudeAgainst, favoredAct, conductOf, prepare,
-	traitKeywordsOf, roleOf, naturalRoleOf, blowActOf, liftedStrainLevel, isSwift, isWillful,
+	traitKeywordsOf, roleOf, naturalRoleOf, blowActOf, liftedStrainLevel, isSwift, isWillful, strainCauseOf,
 } from '../creatureOnTable.ts';
 import {
 	HOLD_FLOOR, HOLD_CEILING, RAW_ATTRIBUTE_MIN, RAW_ATTRIBUTE_MAX, ROLE, BOLSTER_FLOOR,
@@ -174,7 +174,8 @@ describe('bolster lifts one grade of strain (assumption 8)', () => {
 		const lifted = holdAtSite(r, s, w, { bolstered: true, rules: FRAC });
 		expect(plain.level).toBe('strained');
 		expect(lifted.effectiveLevel).toBe('none');
-		expect(lifted.value).toBeCloseTo(plain.value / strainMultiplierFor('strained'), 5);
+		// pass 68: a world too hot costs a tenth, so lifting the grade gives the tenth back
+		expect(lifted.value).toBeCloseTo(plain.value / strainMultiplierFor('strained', 'hot'), 5);
 	});
 });
 
@@ -487,7 +488,7 @@ describe('every attribute a job (assumption 17)', () => {
 		expect(stubbornView.willful).toBe(true);
 		expect(meekView.willful).toBe(false);
 		expect(stubbornView.effectiveStrainLevel).toBe('none');
-		expect(stubbornView.hold).toBeCloseTo(meekView.hold * 2, 5);
+		expect(stubbornView.hold).toBeCloseTo(meekView.hold / strainMultiplierFor('strained', 'hot'), 5);
 
 		// bolster does not push a willful creature past comfortable: it gets the floor
 		const bolstered = prepare(stubborn, site(), world(), 0, { bolstered: true, rules: FRAC });
@@ -557,3 +558,31 @@ describe('every attribute a job (assumption 17)', () => {
 		expect(DULL_INSTINCT).toBeLessThan(KEEN_INSTINCT);
 	});
 });
+
+// pass 68 (Nick, 2026-09-27: the temperature band is "a boring factor to base so much of the gameplay on")
+describe('a world too hot or too cold weighs less than its air', () => {
+	const breathing = (temperatureC: { min: number; max: number }, ambientMedia = ['gas']) => record({ physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia, temperatureC } } });
+	test('temperature takes a tenth, and a quarter where the bands miss by more than the severe gap', () => {
+		const s = site({ environment: { medium: 'gas', temperatureC: { min: 20, max: 30 } } });
+		expect(strainCauseOf(breathing({ min: 0, max: 5 }), s, world())).toBe('hot');
+		expect(strainLevel(breathing({ min: 0, max: 5 }), s, world())).toBe('strained');
+		expect(strainMultiplierFor('strained', 'hot')).toBe(0.9);
+		const far = breathing({ min: -80, max: -30 });
+		expect(strainCauseOf(far, s, world())).toBe('hot');
+		expect(strainLevel(far, s, world())).toBe('severe');
+		expect(strainMultiplierFor('severe', 'hot')).toBe(0.75);
+		const cold = site({ environment: { medium: 'gas', temperatureC: { min: -60, max: -40 } } });
+		expect(strainCauseOf(breathing({ min: 0, max: 5 }), cold, world())).toBe('cold');
+	});
+	test('the air keeps its ladder, and the wrong medium outweighs any temperature', () => {
+		const vacuum = site({ environment: { medium: 'vacuum', temperatureC: { min: 0, max: 5 } } });
+		expect(strainCauseOf(breathing({ min: 0, max: 5 }), vacuum, world())).toBe('breath');
+		expect(strainMultiplierFor('severe', 'breath')).toBe(0.25);
+		const wrongAir = site({ environment: { medium: 'gas', temperatureC: { min: 60, max: 90 } } });
+		const swimmer = breathing({ min: 0, max: 5 }, ['liquid']);
+		expect(strainCauseOf(swimmer, wrongAir, world())).toBe('medium');
+		expect(strainLevel(swimmer, wrongAir, world())).toBe('strained');
+		expect(strainMultiplierFor('strained', 'medium')).toBe(0.5);
+	});
+});
+

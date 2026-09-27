@@ -99,7 +99,7 @@ describe('fitTable', () => {
 					selfLifts += 1;
 				}
 				expect(cell.homeFactor).toBe(cell.home ? 1.5 : 1);
-				if (cell.climate) expect(cell.climate.factor).toBe(cell.climate.level === 'severe' ? 0.25 : 0.5);
+				if (cell.climate) expect(cell.climate.factor).toBe((cell.climate.cause === 'cold' || cell.climate.cause === 'hot') ? (cell.climate.level === 'severe' ? 0.75 : 0.9) : (cell.climate.level === 'severe' ? 0.25 : 0.5));
 				// the card's arithmetic closes: a whole normal hold times the printed factor, rounded once, is the number
 				expect(Number.isInteger(cell.body)).toBe(true);
 				if (!cell.selfLift) {
@@ -300,10 +300,13 @@ describe('the instruments', () => {
 		expect(factorText(1.5)).toBe('\u00d71\u00bd');
 		expect(factorText(0.5)).toBe('\u00d7\u00bd');
 		expect(factorText(0.25)).toBe('\u00d7\u00bc');
+		// pass 68: a world's temperature takes a tenth, or a quarter far off
+		expect(factorText(0.9)).toBe('\u00d70.9');
+		expect(factorText(0.75)).toBe('\u00d7\u00be');
 		const home = render(<WhyMarks reasons={{ home: true, homeFactor: 1.5 }} factors />);
 		expect(home.container.querySelector('.rec-why-x').textContent).toBe('\u00d71\u00bd');
-		const cold = render(<WhyMarks reasons={{ climate: { level: 'severe', cause: 'cold', factor: 0.25 } }} factors />);
-		expect(cold.container.querySelector('.rec-why-x').textContent).toBe('\u00d7\u00bc');
+		const cold = render(<WhyMarks reasons={{ climate: { level: 'severe', cause: 'cold', factor: 0.75 } }} factors />);
+		expect(cold.container.querySelector('.rec-why-x').textContent).toBe('\u00d7\u00be');
 		const self = render(<WhyMarks reasons={{ selfLift: 1.2 }} factors />);
 		expect(self.container.querySelector('[data-why="self"]')).not.toBeNull();
 		expect(self.container.querySelector('.rec-why-x').textContent).toBe('+1');
@@ -320,7 +323,8 @@ describe('the instruments', () => {
 
 	it('names each reason in words for the title, and draws nothing for a creature with none', () => {
 		expect(whyWords({ home: true })).toEqual(['its home world: it holds half again as much here']);
-		expect(whyWords({ climate: { level: 'severe', cause: 'hot' } })[0]).toBe('too hot for it here: it holds a quarter of what it would');
+		expect(whyWords({ climate: { level: 'severe', cause: 'hot' } })[0]).toBe('too hot for it here: it holds three quarters of what it would');
+		expect(whyWords({ climate: { level: 'severe', cause: 'breath' } })[0]).toMatch(/it holds a quarter of what it would$/);
 		const none = render(<WhyMarks reasons={{ home: false, climate: null, company: 0, falls: false }} />);
 		expect(none.container.querySelector('[data-why]')).toBeNull();
 	});

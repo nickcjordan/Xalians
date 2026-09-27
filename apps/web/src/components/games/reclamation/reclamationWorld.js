@@ -521,12 +521,15 @@ function BlowTracer({ acting, hit, beat }) {
 	  small  the number smaller and the words set closer
 	  chain  the chain, whose marks and numbers the words say in full
 	  why    what each thing does, not why
+	  lines  (pass 68) the last lines one at a time, the fight's first, so the lines that
+	         open the list (a world already yours, its home, the climate) are the last to go
 	  words  the number and the chain alone, as the last resort
 	Beside your creatures the ghost takes the right of your half, which the world keeps for it
 	through the Deploy (data-ghost-lane): two or more of yours stood one per row across the whole
 	half, and the ghost's number sat on their names.
 */
-const SAYS_STEPS = [{}, { art: 0 }, { art: 0, small: 1 }, { art: 0, small: 1, chain: 0 }, { art: 0, small: 1, chain: 0, why: 0 }, { art: 0, small: 1, words: 0 }];
+const SAYS_TRIM = { art: 0, small: 1, chain: 0, why: 0 };
+const SAYS_STEPS = [{}, { art: 0 }, { art: 0, small: 1 }, { art: 0, small: 1, chain: 0 }, SAYS_TRIM, { ...SAYS_TRIM, lines: 3 }, { ...SAYS_TRIM, lines: 2 }, { ...SAYS_TRIM, lines: 1 }, { art: 0, small: 1, words: 0 }];
 
 export function saysFits(el) {
 	if (!el) {
@@ -632,6 +635,7 @@ function GhostPiece({ ghost, previewHere, site, beside, settled }) {
 			data-says-small={says && says.small ? '' : undefined}
 			data-says-chain={says && says.chain === 0 ? 'off' : undefined}
 			data-says-why={says && says.why === 0 ? 'off' : undefined}
+			data-says-lines={says && says.lines ? says.lines : undefined}
 			data-says-words={says && says.words === 0 ? 'off' : undefined}
 			aria-hidden="true"
 		>

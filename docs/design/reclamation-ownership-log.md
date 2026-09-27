@@ -2,24 +2,26 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 67, 2026-09-27)
+## Standing state (after pass 68, 2026-09-27)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
-### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 62)
+### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 68)
 
-No rule has changed since pass 62, so these still stand.
+Pass 68 made a world's temperature cost a tenth, or a quarter far off, instead of a half or a quarter (`reclamation-temperature-weight.md`).
 
 | Gauge | Band | Seed 7 | Seed 13 | Verdict |
 |---|---|---|---|---|
-| Round-one starter wins | about 50 | 50.2 | 44.6 (CI 40.2 to 49.0) | watch: seed 13 under |
-| Comeback (trailing after world 1, won) | 30 to 40 | 28.7 | 32.4 | about met |
-| Resolution changes the leader | 25 to 40 | 27.3 | 26.4 | met |
-| Downs per match | (the 3 to 5 band predates pass 56's fight to the last side) | 8.69 | 8.54 | reported |
-| Uncontested sites | reported | 18.1 | 17.1 | reported |
-| Strike keeper win rate | 40 to 60 | 64.9 | 63.5 | **over** |
-| Sweep / shield / bolster keeper win rate | 40 to 60 | 53.5 / 54.7 / 41.2 | 52.8 / 51.6 / 44.0 | met, bolster low |
-| Games with a stake | reported | 3.4 | 2.2 | **the stake is offered every round and almost never used** |
+| Round-one starter wins | about 50 | 48.2 | 50.4 | met |
+| Comeback (trailing after world 1, won) | 30 to 40 | 29.4 | 29.0 | just under |
+| Resolution changes the leader | 25 to 40 | 31.7 | 30.6 | met |
+| Downs per match | reported | 8.90 | 8.73 | reported |
+| Uncontested sites | reported | 11.8 | 10.5 | reported (18 before pass 68) |
+| Sends to a world that strains the creature | reported | 39.6 | 41.7 | reported (28 before pass 68) |
+| Strike keeper win rate | 40 to 60 | 67.0 | 63.2 | **over** |
+| Sweep / shield keeper win rate | 40 to 60 | 51.5 / 50.7 | 54.0 / 51.2 | met |
+| Bolster keeper win rate | 40 to 60 | 35.2 | 37.0 | **under since pass 68**: a temperature grade, its main lift, is worth a tenth now |
+| Games with a stake | reported | 0.4 | 0.4 | **the stake is almost never used** |
 
 ### The blind critic (last read: pass 65, seed 21, on Opus; next due: pass 68)
 
@@ -48,8 +50,9 @@ Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another 
 3. **Stake ×2 and Move are never explained on the table** (pass 65 critic). They are controls with their rule in their title and in How to play. Pass 66 fixed the critic's other two cases (`reclamation-plates-add-up.md`):
    - the plates now add up to their world's total, and a check holds it;
    - Grimedes' missing total was the number sliding back as the arena closed, caught mid-slide.
-4. **Balance:**
-   - strike keepers at 63.5 to 64.9 percent;
+4. **Balance** (pass 68 moved it; gauges above):
+   - bolster keepers at 35 to 37 percent since temperature weighs less; its flat lift (`BOLSTER_FLOOR`, 1) is the first lever to try;
+   - strike keepers at 63 to 67 percent;
    - the stake almost never used;
    - the starter seat on seed 13;
    - bolster keepers at 41 to 44 percent.
@@ -1446,4 +1449,25 @@ Open item 3, the pass 65 critic's numbers. The design is in `reclamation-plates-
 - web tests (261);
 - the four table checks;
 - paint at 1366 and 1440.
+
+### Pass 68 (2026-09-27): temperature weighs less
+
+Nick: "the temperature bands have way too much weight on the factor of the creature's hold ... something more along the lines of removing a quarter or removing 10% ... the planet's temperature band is a boring factor to base so much of the gameplay on." The design and every number are in `reclamation-temperature-weight.md`.
+
+**What changed:**
+- **A world too hot or too cold** now costs a tenth of a creature's hold and blows, or a quarter where the bands miss by more than 30°C.
+- **The air and the medium** keep their half and quarter. Nick named temperature; each is one lever away.
+- **The engine reports the cause** of a creature's grade.
+- **The cards, the words, the key and How to play** say the new factors.
+
+**Measured** (simulator):
+- The bot sends to a world that strains the creature 40 percent of the time, up from 28, and wins those worlds at the usual rate.
+- Uncontested worlds fell from 18 to 11 percent.
+- The Clash changes the leader 31 percent of the time, up from 27.
+- The starter seat is back in band on seed 13.
+- The cost: bolster keepers fell to 35 to 37 percent.
+
+**Found while verifying:**
+- The words under a creature went all at once in a crowded case. They now give way line by line first.
+- The proving check's plate sum flaked while a creature pointed at previewed itself on a world's bar. It now skips that world.
 

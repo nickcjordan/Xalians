@@ -262,6 +262,8 @@ export interface PreparedCreature {
 	swift: boolean;
 	presenceScale: number;
 	strainLevel: StrainLevel;
+	// pass 68: what sets the grade; a world's temperature weighs less than its air
+	strainCause: 'breath' | 'cold' | 'hot' | 'medium' | null;
 	heldStrainLevel: StrainLevel;
 	effectiveStrainLevel: StrainLevel;
 	strainMultiplier: number;

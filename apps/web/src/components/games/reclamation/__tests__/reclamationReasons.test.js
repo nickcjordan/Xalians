@@ -23,21 +23,21 @@ const text = (lines) => lines.map((l) => `${l.effect}${l.cause ? ` ${l.cause}` :
 
 describe('reasonLines', () => {
 	it('says a world too cold for it, what that costs, and how the two bands miss', () => {
-		const lines = reasonLines({ why: { climate: { level: 'strained', cause: 'cold', factor: 0.5 } }, record: frackworm, site: zolton, tolerance: warm });
-		expect(text(lines)).toEqual(['Too cold for it: it holds half. Zolton runs −40 to 20°C, mostly colder than the 5 to 55°C Frackworm is comfortable at.']);
+		const lines = reasonLines({ why: { climate: { level: 'strained', cause: 'cold', factor: 0.9 } }, record: frackworm, site: zolton, tolerance: warm });
+		expect(text(lines)).toEqual(['Too cold for it: it holds nine tenths. Zolton runs −40 to 20°C, mostly colder than the 5 to 55°C Frackworm is comfortable at.']);
 	});
 
-	it('says far too cold, a quarter, when the bands are far apart', () => {
+	it('says far too cold, three quarters, when the bands are far apart (pass 68: a temperature costs a tenth or a quarter)', () => {
 		const hot = { ...warm, temperatureC: { min: 60, max: 90 } };
-		const lines = reasonLines({ why: { climate: { level: 'severe', cause: 'cold', factor: 0.25 } }, record: frackworm, site: zolton, tolerance: hot });
-		expect(lines[0].effect).toBe('Far too cold for it: it holds a quarter.');
+		const lines = reasonLines({ why: { climate: { level: 'severe', cause: 'cold', factor: 0.75 } }, record: frackworm, site: zolton, tolerance: hot });
+		expect(lines[0].effect).toBe('Far too cold for it: it holds three quarters.');
 		expect(lines[0].cause).toContain('far colder than the 60 to 90°C');
 	});
 
 	it('says what a willful creature shrugs off', () => {
 		const hot = { ...warm, temperatureC: { min: 60, max: 90 } };
-		const lines = reasonLines({ why: { climate: { level: 'strained', cause: 'cold', factor: 0.5 }, shrugged: true }, record: frackworm, site: zolton, tolerance: hot });
-		expect(lines[0].effect).toBe('Far too cold for it, but it is willful: it holds half, not a quarter.');
+		const lines = reasonLines({ why: { climate: { level: 'strained', cause: 'cold', factor: 0.9 }, shrugged: true }, record: frackworm, site: zolton, tolerance: hot });
+		expect(lines[0].effect).toBe('Far too cold for it, but it is willful: it holds nine tenths, not three quarters.');
 	});
 
 	it('says its home world and where it comes from', () => {
@@ -105,11 +105,11 @@ describe('reasonLines', () => {
 
 	// pass 62: "It steadies itself: +6" at one world and "+1" at the next, with nothing to tell them apart
 	it('says whether a bolster eased the world a grade or added the flat 1', () => {
-		const hot = reasonLines({ why: { climate: { level: 'strained', cause: 'hot', factor: 0.5 }, selfLift: 6 }, record: frackworm, site: zolton, tolerance: warm });
+		const hot = reasonLines({ why: { climate: { level: 'strained', cause: 'hot', factor: 0.9 }, selfLift: 6 }, record: frackworm, site: zolton, tolerance: warm });
 		expect(hot.find((l) => l.key === 'self').cause).toBe('A bolster eases the heat one grade for it. Its lift reaches every creature of yours at its world, itself included.');
 		const easy = reasonLines({ why: { selfLift: 1 }, record: frackworm, site: zolton, tolerance: warm });
 		expect(easy.find((l) => l.key === 'self').cause).toBe('A bolster adds 1 where the world does not strain it. Its lift reaches every creature of yours at its world, itself included.');
-		const steadied = reasonLines({ why: { climate: { level: 'severe', cause: 'cold', factor: 0.25 }, company: 3 }, record: frackworm, site: zolton, tolerance: warm });
+		const steadied = reasonLines({ why: { climate: { level: 'severe', cause: 'cold', factor: 0.75 }, company: 3 }, record: frackworm, site: zolton, tolerance: warm });
 		expect(steadied.find((l) => l.key === 'company').cause).toBe('A bolster of yours here eases the cold one grade for it.');
 	});
 
@@ -118,9 +118,9 @@ describe('reasonLines', () => {
 	});
 
 	it('draws each line with its mark, what it does and why', () => {
-		const lines = reasonLines({ why: { climate: { level: 'strained', cause: 'cold', factor: 0.5 } }, record: frackworm, site: zolton, tolerance: warm });
+		const lines = reasonLines({ why: { climate: { level: 'strained', cause: 'cold', factor: 0.9 } }, record: frackworm, site: zolton, tolerance: warm });
 		const { container } = render(<ReasonLines lines={lines} />);
-		expect(container.querySelector('[data-reason="climate"] .rec-reason-effect').textContent).toBe('Too cold for it: it holds half.');
+		expect(container.querySelector('[data-reason="climate"] .rec-reason-effect').textContent).toBe('Too cold for it: it holds nine tenths.');
 		expect(container.querySelector('[data-reason="climate"] .rec-reason-mark svg')).not.toBeNull();
 		expect(render(<ReasonLines lines={[]} />).container.innerHTML).toBe('');
 	});

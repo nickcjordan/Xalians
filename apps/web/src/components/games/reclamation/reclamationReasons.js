@@ -30,6 +30,9 @@ const degrees = (n) => `${n < 0 ? '−' : ''}${Math.abs(n)}`;
 const listWords = (items) => (items.length <= 1 ? items[0] || '' : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`);
 const shown = (v) => formatHoldShown(Math.max(0, v || 0));
 const HOLDS = { severe: 'a quarter', strained: 'half' };
+// pass 68: a world too hot or too cold takes a tenth, or a quarter far off; the air keeps its half and quarter
+const TEMPERATURE_HOLDS = { severe: 'three quarters', strained: 'nine tenths' };
+const holdsWord = (level, cause) => ((cause === 'cold' || cause === 'hot') ? TEMPERATURE_HOLDS : HOLDS)[level] || 'less';
 const COUNT_WORDS = { 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six' };
 
 // the grade the world would put it at before its will lifts one step
@@ -53,11 +56,11 @@ function climateLine(why, name, planet, env, tol, site) {
 	}
 	let effect;
 	if (!why.shrugged) {
-		effect = `${what}: it holds ${HOLDS[held] || 'less'}.`;
+		effect = `${what}: it holds ${holdsWord(held, cause)}.`;
 	} else if (held === 'none') {
 		effect = `${what}, but it is willful and shrugs that off.`;
 	} else {
-		effect = `${what}, but it is willful: it holds ${HOLDS[held]}, not ${HOLDS[raw]}.`;
+		effect = `${what}, but it is willful: it holds ${holdsWord(held, cause)}, not ${holdsWord(raw, cause)}.`;
 	}
 	let because = '';
 	if (cause === 'cold' || cause === 'hot') {

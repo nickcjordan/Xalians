@@ -2,9 +2,9 @@ import {recordCapabilities, recordActions, recordPassives} from '@xalians/conten
 import { readRecord } from '@xalians/rules/expedition/recordReading';
 import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import React from 'react';
-import { prepare } from '@xalians/rules/expedition/creatureOnTable';
+import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 import {
-	HOME_GROUND_MULTIPLIER, ARMORED_REDUCTION, STRAIN_MULTIPLIER, SEVERE_STRAIN_MULTIPLIER,
+	HOME_GROUND_MULTIPLIER, ARMORED_REDUCTION,
 } from '@xalians/rules/expedition/expeditionInterpretation';
 import { instinctSentence, attributeLanes } from './reclamationPreview';
 import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
@@ -56,7 +56,7 @@ export function multiplierLines(record, prepared, site, world) {
 	*/
 	const GRADE = { none: 'comfortable', strained: 'strained', severe: 'far off' };
 	const held = prepared.effectiveStrainLevel || prepared.heldStrainLevel || prepared.strainLevel;
-	const strainMult = held === 'severe' ? SEVERE_STRAIN_MULTIPLIER : held === 'strained' ? STRAIN_MULTIPLIER : 1;
+	const strainMult = strainMultiplierFor(held, prepared.strainCause);
 	const lifted = [];
 	if (prepared.willful && prepared.heldStrainLevel && prepared.heldStrainLevel !== prepared.strainLevel) {
 		lifted.push('willful: one grade less');
@@ -83,7 +83,7 @@ export function standingReasons(record, prepared, site) {
 	const tol = physiology.environmentalTolerance || {};
 	const tolerance = { temperatureC: tol.temperatureC, ambientMedia: tol.ambientMedia || [], breathes: physiology.breathes || [] };
 	const held = prepared.heldStrainLevel || prepared.strainLevel;
-	const factor = held === 'severe' ? SEVERE_STRAIN_MULTIPLIER : held === 'strained' ? STRAIN_MULTIPLIER : 1;
+	const factor = strainMultiplierFor(held, prepared.strainCause);
 	const why = {
 		home: !!prepared.isHome,
 		homeFactor: prepared.isHome ? HOME_GROUND_MULTIPLIER : 1,

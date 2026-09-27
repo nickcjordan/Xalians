@@ -706,8 +706,8 @@ describe('the four roles', () => {
 			archetype: { key: 'predator', favors: [] },
 			abilities: [{ name: 'Poke', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 20 }],
 			attributes: { strength: 20, vitality: 60, endurance: 70, agility: 20, reflex: 20, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-			// a narrow tolerance band against the wide authored site band reads as strained
-			physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: 0, max: 5 } } },
+			// pass 68: the wrong medium, whose grade still halves (a world's temperature now costs only a tenth)
+			physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['liquid'], temperatureC: { min: -50, max: 200 } } },
 		});
 		const judgedHold = (state: any, id: any) => {
 			const judged = (state.resolutionLog as any[]).find((e: any) => e.type === 'judge');
