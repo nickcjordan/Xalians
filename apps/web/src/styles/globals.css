@@ -354,18 +354,24 @@
 	.archive-play:hover { border-color: var(--color-archive-ink); background: color-mix(in srgb, var(--color-archive-glass) 88%, transparent); }
 	.archive-play:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 3px; }
 	.archive[data-screen="standby"] .archive-hud-clock,
-	.archive[data-screen="tuning"] .archive-hud-clock { opacity: .35; }
+	.archive[data-screen="search"] .archive-hud-clock,
+	.archive[data-screen="lock"] .archive-hud-clock { opacity: .35; }
 
-	/* Tuning: static bursts in, the picture opens out of a bright line, the static clears. */
-	.archive[data-screen="tuning"] .archive-static { animation: archive-static 1100ms linear both, archive-jitter 240ms steps(6) infinite; }
-	.archive[data-screen="tuning"] .archive-picture { animation: archive-on 1100ms cubic-bezier(.2, .7, .2, 1) both; }
+	/* Tuning in, in two parts (archiveScreen.tsx). Search: static bursts in and holds, the picture not yet
+	   shown, for as long as the recording needs to be ready to move. Lock: the picture opens out of a bright
+	   line, moving, and the static clears. */
+	.archive[data-screen="search"] .archive-picture { opacity: 0; }
+	.archive[data-screen="search"] .archive-static { animation: archive-static-in 90ms linear both, archive-jitter 240ms steps(6) infinite; }
+	.archive[data-screen="lock"] .archive-static { animation: archive-static-out 550ms linear both, archive-jitter 240ms steps(6) infinite; }
+	.archive[data-screen="lock"] .archive-picture { animation: archive-on 550ms cubic-bezier(.2, .7, .2, 1) both; }
 	/* Switching recordings: a short burst of static over the cut. */
 	.archive[data-screen="switch"] .archive-static { animation: archive-static-cut 520ms linear both, archive-jitter 240ms steps(6) infinite; }
 	/* Off: the picture collapses to a line and goes. */
 	.archive[data-screen="off"] .archive-picture { animation: archive-off 380ms cubic-bezier(.6, 0, .9, .4) both; }
 	.archive-picture { will-change: transform; }
 
-	@keyframes archive-static { 0% { opacity: 0; } 8% { opacity: .95; } 52% { opacity: .9; } 78% { opacity: .18; } 100% { opacity: 0; } }
+	@keyframes archive-static-in { from { opacity: .1; } to { opacity: .92; } }
+	@keyframes archive-static-out { 0% { opacity: .92; } 50% { opacity: .18; } 100% { opacity: 0; } }
 	@keyframes archive-static-cut { 0% { opacity: 0; } 15% { opacity: .9; } 60% { opacity: .75; } 100% { opacity: 0; } }
 	@keyframes archive-jitter { 0% { transform: translate(0, 0); } 100% { transform: translate(-110px, 66px); } }
 	/* Transform and opacity only, so the compositor runs them even while the
@@ -380,14 +386,13 @@
 		opacity: 0;
 		pointer-events: none;
 	}
-	.archive[data-screen="tuning"] .archive-picture::after { animation: archive-flash-on 1100ms linear both; }
+	.archive[data-screen="lock"] .archive-picture::after { animation: archive-flash-on 550ms linear both; }
 	.archive[data-screen="off"] .archive-picture::after { animation: archive-flash-off 380ms linear both; }
 	@keyframes archive-on {
-		0%, 50% { opacity: 0; transform: scale(1, .004); }
-		51% { opacity: 1; transform: scale(1, .004); }
-		74%, 100% { opacity: 1; transform: none; }
+		0% { opacity: 1; transform: scale(1, .004); }
+		48%, 100% { opacity: 1; transform: none; }
 	}
-	@keyframes archive-flash-on { 0%, 50% { opacity: 0; } 51% { opacity: .9; } 70% { opacity: .35; } 100% { opacity: 0; } }
+	@keyframes archive-flash-on { 0% { opacity: .9; } 38% { opacity: .35; } 100% { opacity: 0; } }
 	@keyframes archive-off {
 		0% { transform: none; opacity: 1; }
 		62% { transform: scale(1, .004); opacity: 1; }
