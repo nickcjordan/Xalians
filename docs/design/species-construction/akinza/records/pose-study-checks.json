@@ -1,0 +1,153 @@
+{
+  "scope": "Technical checks, not art or pose approval",
+  "probes": {
+    "0004": {
+      "components": 1,
+      "nonManifoldEdges": 0,
+      "vertices": 74876,
+      "elevenViewsUnclipped": true,
+      "bounds": {
+        "above.occupancy.png": [
+          175,
+          187,
+          529,
+          542
+        ],
+        "left.occupancy.png": [
+          187,
+          145,
+          542,
+          589
+        ],
+        "rear.occupancy.png": [
+          175,
+          145,
+          529,
+          589
+        ],
+        "turn-000.occupancy.png": [
+          111,
+          167,
+          466,
+          571
+        ],
+        "turn-045.occupancy.png": [
+          94,
+          142,
+          532,
+          573
+        ],
+        "turn-090.occupancy.png": [
+          187,
+          120,
+          542,
+          583
+        ],
+        "turn-135.occupancy.png": [
+          284,
+          114,
+          479,
+          593
+        ],
+        "turn-180.occupancy.png": [
+          174,
+          128,
+          529,
+          599
+        ],
+        "turn-225.occupancy.png": [
+          108,
+          153,
+          546,
+          597
+        ],
+        "turn-270.occupancy.png": [
+          98,
+          175,
+          453,
+          590
+        ],
+        "turn-315.occupancy.png": [
+          161,
+          178,
+          356,
+          579
+        ]
+      }
+    },
+    "0005": {
+      "components": 1,
+      "nonManifoldEdges": 0,
+      "vertices": 73962,
+      "elevenViewsUnclipped": true,
+      "bounds": {
+        "above.occupancy.png": [
+          278,
+          134,
+          476,
+          601
+        ],
+        "left.occupancy.png": [
+          134,
+          156,
+          601,
+          557
+        ],
+        "rear.occupancy.png": [
+          278,
+          156,
+          476,
+          557
+        ],
+        "turn-000.occupancy.png": [
+          164,
+          143,
+          362,
+          535
+        ],
+        "turn-045.occupancy.png": [
+          94,
+          145,
+          501,
+          532
+        ],
+        "turn-090.occupancy.png": [
+          133,
+          152,
+          601,
+          543
+        ],
+        "turn-135.occupancy.png": [
+          220,
+          140,
+          560,
+          562
+        ],
+        "turn-180.occupancy.png": [
+          278,
+          144,
+          476,
+          574
+        ],
+        "turn-225.occupancy.png": [
+          139,
+          165,
+          546,
+          574
+        ],
+        "turn-270.occupancy.png": [
+          39,
+          163,
+          506,
+          564
+        ],
+        "turn-315.occupancy.png": [
+          80,
+          150,
+          420,
+          549
+        ]
+      }
+    }
+  }
+}

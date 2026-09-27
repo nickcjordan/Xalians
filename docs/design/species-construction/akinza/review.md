@@ -50,8 +50,20 @@ The mesh has one connected component, zero nonmanifold edges and 72,122 vertices
 
 ![Direct-fusion pointed-tail geometry turntable](evidence/tail-probe-0003-turntable.gif)
 
+## Shape accepted; pose studies 0004 and 0005
+
+Nick said: "Yeah, that's much better. I don't really have much to say to adjust it. The pose that it's in isn't necessarily my favorite, but the shape of the tail I think looks all right".
+
+The [scoped acceptance](tail-shape-acceptance.json) binds the accepted form to probe-0003's spec, mesh and shown evidence. It covers tail volume, taper and direct body fusion. It explicitly excludes pose, full-creature geometry and the final pack.
+
+Option A (probe-0004) tilts the complete tail assembly 25 degrees down and 30 degrees toward the back. Option B (probe-0005) tilts it 8 degrees down and 65 degrees toward the back. Both use the exact accepted control curves and circular cross-section radii under a rigid transform, preserving all pairwise control-point distances to floating-point precision. No tail is lengthened, thinned or given a new curve. The compact body connection is remeshed, so the final fused surface is not an identical mesh.
+
+Each option has eleven actual camera views, derived masks and a turntable. The comparison uses the same camera directions and orthographic scale for both. Body fragments remain schematic; these are tail-orientation choices rather than complete creature poses.
+
+![Two unapproved orientations of the accepted tail shape](evidence/tail-pose-options.gif)
+
 ## Approval state and next action
 
-Nick's earlier direction on root, fork, restrained pelvis, eye interpretation, hair and style is retained. He has not approved the new modeling pose, these construction images, this probe, or a final pack. All stage approval fields remain null.
+Nick's earlier direction on root, restrained pelvis, eye interpretation, hair and style is retained. Probe-0003's tail shape is now accepted in the scoped record. Neither new pose, the full modeling pose, construction master nor final pack is approved. Complete stage approval fields remain null because acceptance of one aspect does not release an entire stage.
 
-The concrete next design review is probe-0003's direct body fusion and pointed full tails. Earlier flat, blunt-tip and delayed-split references remain superseded, with stale input records retained rather than refreshed onto unchanged images. Use the accepted result to correct the construction master, then make the complete rough creature. Do not promote either failed generated sheet to skip that review.
+The next review concerns pose only: option A, option B, or a different direction. Preserve accepted tail form while applying the chosen pose to the construction references. Earlier flat, blunt-tip and delayed-split references remain superseded and stale. A complete rough creature follows coherent construction evidence; a local tail acceptance does not waive that requirement.

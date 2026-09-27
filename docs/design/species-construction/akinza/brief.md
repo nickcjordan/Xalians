@@ -1,6 +1,6 @@
 # Akinza construction pilot
 
-Status: active experiment, 2026-09-27. Nick authorized implementing and exercising the layered system. New construction images, modeling pose and geometry remain unapproved.
+Status: active experiment, 2026-09-27. Nick accepted probe-0003's tail shape while explicitly reserving pose. Construction images, modeling pose and final geometry package remain unapproved. See `tail-shape-acceptance.json` for the exact accepted aspects and artifact bindings.
 
 ## Evidence and identity
 
@@ -24,10 +24,11 @@ The geometry probe uses +X toward the creature's left, +Y toward its rear and +Z
 | Can generated close-ups establish one attachment from several angles? | study-0002 | Smooth masses show a fork, but side/top cameras are not reliable and rear shaping regresses |
 | Can one trunk actually join all three plumes and remain plausible around the back? | probe-0001 | A single closed connected mesh exists; real side/top renders expose the shallow fan depth for review |
 | Do the three plumes have full rounded volume? | probe-0002 | Replaces rejected flat blades with round cattail-like sweeps, soft tips and depth separation; awaiting Nick's review |
-| Do three distinct pointed tails fuse directly at the body? | probe-0003 | Removes the projecting shared trunk, brings separation back to the body and adds sustained pointed taper; awaiting Nick's review |
+| Do three distinct pointed tails fuse directly at the body? | probe-0003 | Shape accepted by Nick; pose explicitly excluded |
+| Which orientation better suits the accepted tail form? | probes 0004 and 0005 | Relaxed down/back and farther rearward options; analytic tail lengths, cross sections and relative spread preserved by rigid rotation |
 
 The probe is only a local tail and pelvis study. Its simplified leg stubs, torso stub, plume widths and thicknesses are proposed construction aids, not approved final anatomy. No full-body reconstruction, facial geometry, rig, texture or production topology exists here.
 
 ## Next review
 
-Nick rejected probe-0001 as too flat, then corrected probe-0002's blunt tips and delayed trident split. Current direction: three full rounded tails with pointed tapers, all fusing together and into the body at one compact spinal base. Review probe-0003. Its shape is a candidate, not approved art. The modeling pose also remains unapproved. Production remains blocked. Consult `review.md`, `status.md` and the main `../../species-view-packs-active-work.md` record for current evidence and unfinished work.
+Probe-0003's full rounded tails, pointed taper and compact body fusion are accepted as shape. Its pose is not selected. Compare option A (probe-0004, relaxed down and back) with option B (probe-0005, swept farther behind); both preserve the same analytic tail forms and change orientation only. Remeshing at the body means the resulting mesh is not byte-identical, so these are new pose candidates. Do not reopen accepted shape decisions. The complete creature modeling pose remains unapproved. Consult `review.md`, `status.md` and the main work record for evidence and unfinished work.

@@ -1,0 +1,73 @@
+{
+  "acceptanceSha256": "d2cae7e50648bd2b384662b226403d2205ebe14fb4a1d1612f87540c1c4b7d1a",
+  "recipes": [
+    {
+      "probe": "0004",
+      "sourceSpec": "probe-spec-0003.json",
+      "sourceSha256": "402bdc07670bcc5537972dac7e1428a1702ad38dec8bbd43948ab559bbbfc471",
+      "pose": "relaxed-down-and-back",
+      "pivot": [
+        0,
+        0.17,
+        0.08
+      ],
+      "rotationMatrix": [
+        [
+          0.7848855672213958,
+          -0.49999999999999994,
+          0.36599815077066683
+        ],
+        [
+          0.4531538935183249,
+          0.8660254037844387,
+          0.2113091308703497
+        ],
+        [
+          -0.42261826174069944,
+          0,
+          0.9063077870366499
+        ]
+      ],
+      "pitchDegrees": 25,
+      "yawDegrees": 30,
+      "maximumPairwiseControlDistanceError": 4.440892098500626e-16,
+      "crossSectionRadiiUnchanged": true,
+      "limitation": "Analytic tail form is preserved by rigid rotation; fused body contact is recomputed, not byte-identical mesh geometry.",
+      "approval": null
+    },
+    {
+      "probe": "0005",
+      "sourceSpec": "probe-spec-0003.json",
+      "sourceSha256": "402bdc07670bcc5537972dac7e1428a1702ad38dec8bbd43948ab559bbbfc471",
+      "pose": "swept-behind",
+      "pivot": [
+        0,
+        0.17,
+        0.08
+      ],
+      "rotationMatrix": [
+        [
+          0.4185053698688819,
+          -0.9063077870366499,
+          0.05881709400880573
+        ],
+        [
+          0.8974876619542298,
+          0.42261826174069944,
+          0.12613366514614516
+        ],
+        [
+          -0.13917310096006544,
+          0,
+          0.9902680687415704
+        ]
+      ],
+      "pitchDegrees": 8,
+      "yawDegrees": 65,
+      "maximumPairwiseControlDistanceError": 4.440892098500626e-16,
+      "crossSectionRadiiUnchanged": true,
+      "limitation": "Analytic tail form is preserved by rigid rotation; fused body contact is recomputed, not byte-identical mesh geometry.",
+      "approval": null
+    }
+  ]
+}
