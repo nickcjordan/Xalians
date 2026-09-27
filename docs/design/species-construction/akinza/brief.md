@@ -23,9 +23,10 @@ The geometry probe uses +X toward the creature's left, +Y toward its rear and +Z
 | Can the hands clear the torso while preserving identity? | study-0001 | Useful proposed pose; side tail projection remains inconsistent and fine fur obscures construction |
 | Can generated close-ups establish one attachment from several angles? | study-0002 | Smooth masses show a fork, but side/top cameras are not reliable and rear shaping regresses |
 | Can one trunk actually join all three plumes and remain plausible around the back? | probe-0001 | A single closed connected mesh exists; real side/top renders expose the shallow fan depth for review |
+| Do the three plumes have full rounded volume? | probe-0002 | Replaces rejected flat blades with round cattail-like sweeps, soft tips and depth separation; awaiting Nick's review |
 
 The probe is only a local tail and pelvis study. Its simplified leg stubs, torso stub, plume widths and thicknesses are proposed construction aids, not approved final anatomy. No full-body reconstruction, facial geometry, rig, texture or production topology exists here.
 
 ## Next review
 
-Review the modeling pose and actual tail probe with Nick. Resolve whether the shallow fan depth and shared junction are the intended interpretation before building a complete rough creature. Production remains blocked. Consult `review.md`, `status.md` and the main `../../species-view-packs-active-work.md` record for current evidence and unfinished work.
+Nick rejected probe-0001 as too flat and asked for something closer to three cattails. Review the fuller probe-0002, preserving the already accepted spinal root and connected junction. The new shape is a candidate, not approved art. The modeling pose also remains unapproved. Production remains blocked. Consult `review.md`, `status.md` and the main `../../species-view-packs-active-work.md` record for current evidence and unfinished work.

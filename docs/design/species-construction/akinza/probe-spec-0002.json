@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "status": "provisional-fuller-tail-probe",
+  "designIntent": "Three rounded cattail-like volumes with near-circular cross sections, soft tips and depth separation, blended through one shared spinal root. Nick rejected the earlier flat fork-like fan.",
+  "coordinateSystem": {"x": "creature left", "y": "rear", "z": "up", "units": "arbitrary construction units, not measured anatomy"},
+  "target": [0.9, 0.28, 0.12],
+  "orthoScale": 3.2,
+  "voxelSize": 0.02,
+  "volumes": [
+    {"id": "pelvis", "center": [0, 0, 0.0], "scale": [0.34, 0.20, 0.46]},
+    {"id": "lower-torso", "center": [0, -0.015, 0.46], "scale": [0.26, 0.18, 0.43]},
+    {"id": "left-upper-leg", "center": [0.20, 0, -0.43], "scale": [0.18, 0.17, 0.40]},
+    {"id": "right-upper-leg", "center": [-0.20, 0, -0.43], "scale": [0.18, 0.17, 0.40]}
+  ],
+  "sweeps": [
+    {"id": "tail-trunk", "controls": [[0,0.13,0.08,0.17,0.17],[0.10,0.29,0.08,0.18,0.18],[0.34,0.40,0.10,0.22,0.22],[0.56,0.44,0.12,0.20,0.20]]},
+    {"id": "plume-upper", "controls": [[0.40,0.40,0.14,0.16,0.16],[0.68,0.40,0.34,0.19,0.19],[0.98,0.34,0.61,0.24,0.24],[1.32,0.28,0.77,0.25,0.25],[1.60,0.30,0.78,0.22,0.22],[1.76,0.34,0.72,0.16,0.16],[1.84,0.37,0.67,0.09,0.09],[1.87,0.38,0.65,0.015,0.015]]},
+    {"id": "plume-middle", "controls": [[0.44,0.42,0.10,0.16,0.16],[0.83,0.61,0.09,0.21,0.21],[1.22,0.74,0.10,0.26,0.26],[1.60,0.83,0.12,0.25,0.25],[1.91,0.84,0.06,0.22,0.22],[2.10,0.81,-0.03,0.16,0.16],[2.18,0.79,-0.09,0.09,0.09],[2.21,0.78,-0.11,0.015,0.015]]},
+    {"id": "plume-lower", "controls": [[0.40,0.40,0.02,0.16,0.16],[0.68,0.48,-0.23,0.19,0.19],[0.92,0.51,-0.51,0.24,0.24],[1.19,0.49,-0.73,0.25,0.25],[1.44,0.45,-0.81,0.22,0.22],[1.63,0.43,-0.78,0.16,0.16],[1.72,0.42,-0.74,0.09,0.09],[1.75,0.42,-0.72,0.015,0.015]]}
+  ]
+}
