@@ -98,8 +98,13 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	const [visible, setVisible] = React.useState(true);
 	// Whether the viewer is resting where the reader can watch it, and the screen that follows.
 	const [resting, setResting] = React.useState(false);
-	// Whether the catch is holding the page: the screen waits for it to let go (storyCatch.ts).
-	const [holding, setHolding] = React.useState(false);
+	// The catch (storyCatch.ts). The page stopping there is the viewer at rest, so the screen tunes in at
+	// once, while the reader's swipe or wheel is still going. Only the heavy part, putting the recording's
+	// picture in the page, waits for the hold to let go: done during the hold, it can stall the browser
+	// long enough to hold back a still-spinning wheel's input, which the hold would read as the wheel
+	// having stopped. Until then the screen shows the recording's still. `unheld` stays true once the
+	// picture may go in, so a brief second hold does not take it out again.
+	const [unheld, setUnheld] = React.useState(true);
 	const [screen, setScreen] = React.useState<ScreenState>('standby');
 	const count = beats.length;
 
@@ -170,7 +175,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	}, [boxed, pinTop]);
 
 	// The screen follows: resting and watched, it tunes in and plays; otherwise it switches off and stands by.
-	const power = resting && visible && !holding;
+	const power = resting && visible;
 	React.useEffect(() => {
 		const quick = reducedMotion();
 		let t = 0;
@@ -244,13 +249,23 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	}, [boxed, pinTop]);
 
 	// The catch on the way down (storyCatch.ts).
+	const screenRef = React.useRef(screen);
+	React.useEffect(() => {
+		screenRef.current = screen;
+	}, [screen]);
+	const onHold = React.useCallback((holding: boolean) => {
+		if (!holding) return setUnheld(true);
+		// Caught: resting now, without waiting out REST_MS.
+		setResting(true);
+		if (screenRef.current === 'standby' || screenRef.current === 'off') setUnheld(false);
+	}, []);
 	React.useEffect(() => {
 		if (typeof window === 'undefined') return undefined;
 		return catchAtRest(() => {
 			const by = restBy();
 			return by == null ? null : window.scrollY + by;
-		}, setHolding);
-	}, [restBy]);
+		}, onHold);
+	}, [restBy, onHold]);
 
 	// Play: scroll the page to where the viewer rests, and let resting start the recording as it always does.
 	// The key goes away as the screen tunes in, so a keyboard reader's focus moves to the beat it plays
@@ -326,7 +341,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) go(index + (dx < 0 ? 1 : -1));
 	};
 
-	const liveNow = (i: number) => inView && visible && screen === 'on' && settled === index && i === index;
+	const liveNow = (i: number) => inView && visible && unheld && screen === 'on' && settled === index && i === index;
 	const last = index === count - 1;
 	const beat = beats[index];
 
@@ -395,7 +410,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
 								tabIndex={i === index ? -1 : undefined}
 							>
-								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && screen !== 'standby' && screen !== 'off', play)}
+								{b.render(liveNow(i), shown, i === index ? screen : 'standby', i === index && visible && unheld && screen !== 'standby' && screen !== 'off', play)}
 							</div>
 						);
 					})}
