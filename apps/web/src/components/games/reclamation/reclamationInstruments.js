@@ -2,6 +2,7 @@ import React from 'react';
 import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarration';
 import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
 import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph, RivalGlyph } from './reclamationGlyphs';
+import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -18,11 +19,13 @@ import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceG
 	              side there would gain by sending it there now, what the rival would lose
 	              on a tag at the top, and the rival's remaining lead as a pointer
 	              (pass 58)
-	  RoundTrack  the game's nine worlds, three rounds of three, a won world filled on the
-	              winner's half, the rival's top and yours bottom (pass 60)
-	  ScorePips   the rival's row of five above yours, each with its turn lamp
-	  SendCount   the sends each side has left: a piece, then a tick per send in fives, then
-	              the count (pass 58: a bare numeral beside the pennants read as the score)
+	  RoundTrack  the game's nine worlds, three rounds of three, each tile its world's symbol
+	              (pass 65)
+	  SideRow     one side's pennants toward the clinch, each in the color of the world it
+	              was won at, the count against the clinch, its turn pointer and its sends;
+	              the rival's in the top bar, yours at the foot with your squad (pass 65)
+	  SendMeter   the sends a side has left, a tick per send the game allows, lit while
+	              unspent, the count after (pass 65: one unbroken run)
 
 	Every moving part is a transform or a clip-path, so pointing at a creature repaints the
 	table and never moves it (pass 37's rule, held by reclamation-shift.mjs).
@@ -474,6 +477,18 @@ export function fitSentence(sites, row) {
 	}).filter(Boolean).join('. ');
 }
 
+/*
+	PASS 65, EACH SIDE AT ITS EDGE (docs/design/reclamation-each-side-at-its-edge.md). Three
+	blind readers could not read the top bar without the key: none found the score, none could
+	say which row was theirs, and all three took the sends left for the score, counting down.
+	Each mark now leans on something the reader already reads:
+	  - the track's tiles wear their worlds' symbols, so the framed three are visibly the three
+	    worlds on the table below them (the same symbols, colors and order as their heads);
+	  - a pennant won is filled in the color of the world it was won at;
+	  - each side's row sits at its own edge of the table: the rival's in the top bar, above
+	    every world, and yours at the foot, with your squad (SideRow);
+	  - the sends left are one unbroken meter against the eleven, the count after it (SendMeter).
+*/
 export function RoundTrack({ track, frameIndex }) {
 	const rounds = track || [];
 	const label = `Round ${frameIndex + 1} of ${rounds.length || 3}`;
@@ -485,8 +500,12 @@ export function RoundTrack({ track, frameIndex }) {
 						<i
 							key={site.siteId}
 							className={`rec-track-world rec-track-world--${site.who || 'open'}${site.staked ? ' rec-track-world--staked' : ''} g-el-${site.element}`}
+							data-track-world={site.planet}
+							data-won={site.who || undefined}
 							title={`${site.planet}${site.who === 'mine' ? ': yours' : site.who === 'theirs' ? ': the rival’s' : site.who === 'tie' ? ': tied' : ''}`}
-						/>
+						>
+							{getSpeciesTypeSymbol(site.element, true, 12, 'rec-track-symbol')}
+						</i>
 					))}
 				</span>
 			))}
@@ -495,75 +514,106 @@ export function RoundTrack({ track, frameIndex }) {
 }
 
 /*
-	ScorePips: each side's row, the rival's above yours: five pennants for the worlds won
-	toward the clinch (pass 54: the first blind readers of the standing took the old pips for
-	more of the round track), then the sends that side has left, and a pause mark once the
-	rival has passed this round.
-
-	PASS 54. Whose move it is is a pointer at the head of that side's row, pulsing (the turn
-	marker a board game passes across the table), in place of the "Your
-	move" and "Rival's move" words; the other row's head is empty. The sends left are a
-	row of ticks, one per send the game allows, lit for each one still to spend, with the
-	count after them, in place of a chevron and a bare number.
-
-	PASS 60. With the side colors gone the two rows differ only by place, and a blind reader
-	had to count sends against the squad to be sure which row was theirs. So the rival's row
-	carries the rival's own emblem (`rivalEmblem`, the one chosen in the lobby: the Envoy's
-	hourglass, the Proctor's scales) where yours carries the piece. Hot-seat has no rival
-	persona, and both rows keep the piece.
+	The worlds a side has won, in the order it won them, as the pennants its row plants: one
+	per world, two for a world it held under the stake. The track is read from the log, which
+	the Clash tells a step at a time, so the list is fitted to the count the table shows: a
+	pennant the log has not reached yet is plain, and never more pennants than worlds won.
 */
-export function ScorePips({ mine, theirs, toClinch, rivalPassed, mySends, theirSends, myCap, theirCap, worldsAhead, sendsTone, turn, rivalEmblem, over }) {
-	// pass 54: each world won is a pennant, the same flag the Ruling plants on the winner's bar
-	// pass 58: one world from winning, that side's last pennant burns, so the game's stakes are on the table and not only in a count
-	// pass 62: and it goes out when the game is over (the loser's kept burning under "You win the game")
-	const point = (n, i) => !over && i === n && n === toClinch - 1;
-	const row = (n, side) => Array.from({ length: toClinch }).map((_, i) => (
-		<i className={`rec-pip rec-pip--flag rec-pip--${side}${i < n ? ' rec-pip--lit' : ''}${point(n, i) ? ' rec-pip--point' : ''}`} key={`${i}-${i < n ? 'lit' : 'dark'}`} data-match-point={point(n, i) ? side : undefined}>
-			<svg viewBox="0 0 12 14" aria-hidden="true"><path className="rec-pip-staff" d="M2.5 13.5V1" /><path className="rec-pip-cloth" d="M2.5 1.5h8L8.3 4.8l2.2 3.3h-8z" /></svg>
-		</i>
-	));
-	const near = over ? '' : [theirs === toClinch - 1 ? ' The rival is one world from winning.' : '', mine === toClinch - 1 ? ' You are one world from winning.' : ''].join('');
-	const label = `First to ${toClinch} worlds wins. The rival has ${theirs}, you have ${mine}.${near}${rivalPassed ? ' The rival has passed this round.' : ''}`;
-	const lamp = (side) => (
-		<span
-			className={`rec-turn-lamp rec-turn-lamp--${side}${turn === side ? ' rec-turn-lamp--on' : ''}`}
-			key={`lamp-${side}-${turn === side ? 'on' : 'off'}`}
-			data-turn-lamp={side}
-			data-turn-on={turn === side ? '' : undefined}
-			title={turn === side ? (side === 'mine' ? 'Your move' : 'The rival is moving') : undefined}
-		>
-			{turn === side && <svg viewBox="0 0 10 12" aria-hidden="true"><path d="M1.5 1.2 9 6l-7.5 4.8z" /></svg>}
-		</span>
-	);
+export function pennantsFor(track, side, won) {
+	const list = [];
+	(track || []).forEach((round) => (round.sites || []).forEach((site) => {
+		if (site.who === side) {
+			const one = { element: site.element, planet: site.planet };
+			list.push(one);
+			if (site.staked) {
+				list.push(one);
+			}
+		}
+	}));
+	const n = Math.max(0, won || 0);
+	while (list.length < n) {
+		list.push({ element: null, planet: null });
+	}
+	return list.slice(0, n);
+}
+
+/*
+	SideRow: one side's standing, at that side's edge of the table. Whose move it is is the
+	pointer at its head (pass 54); then, for the rival, its emblem (pass 60); then a pennant for
+	each world won toward the clinch, in that world's color, unlit pennants an outline, the last
+	one burning when that side is one world from winning (pass 58) and out when the game is over
+	(pass 62); then its meter of sends left, and a pause mark once the rival has passed.
+*/
+export function SideRow({ side, pennants, toClinch, sends, cap, turn, emblem, passed, over, tone, worldsAhead }) {
+	const flags = pennants || [];
+	const n = flags.length;
+	const mine = side === 'mine';
+	const point = (i) => !over && i === n && n === toClinch - 1;
+	const near = !over && n === toClinch - 1 ? (mine ? ' You are one world from winning.' : ' The rival is one world from winning.') : '';
+	const worlds = flags.map((f) => f.planet).filter(Boolean);
+	const label = `${mine ? 'You have' : 'The rival has'} won ${n} world${n === 1 ? '' : 's'} of the ${toClinch} that win the game${worlds.length ? ` (${worlds.join(', ')})` : ''}.${near}${passed ? ' The rival has passed this round.' : ''}`;
+	const on = turn === side;
+	const count = { [mine ? 'data-sites-a' : 'data-sites-b']: n };
 	return (
-		<span className="rec-scoreboard" data-score data-turn={turn || 'none'}>
-			{lamp('theirs')}
-			<span className="rec-score-row rec-score-row--theirs" data-sites-b={theirs} title={label} aria-label={label} role="img">
-				{row(theirs, 'theirs')}
+		<span className={`rec-side rec-side--${side}`} data-score={side}>
+			<span
+				className={`rec-turn-lamp rec-turn-lamp--${side}${on ? ' rec-turn-lamp--on' : ''}`}
+				key={`lamp-${side}-${on ? 'on' : 'off'}`}
+				data-turn-lamp={side}
+				data-turn-on={on ? '' : undefined}
+				title={on ? (mine ? 'Your move' : 'The rival is moving') : undefined}
+			>
+				{on && <svg viewBox="0 0 10 12" aria-hidden="true"><path d="M1.5 1.2 9 6l-7.5 4.8z" /></svg>}
 			</span>
-			{typeof theirSends === 'number' ? <SendCount left={theirSends} cap={theirCap} side="theirs" worldsAhead={worldsAhead} emblem={rivalEmblem} /> : <span />}
-			<span className="rec-score-passed-slot">
-				{rivalPassed && <span className="rec-score-passed" data-rival-passed title="The rival has passed this round"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2.5" y="2" width="2.4" height="8" /><rect x="7.1" y="2" width="2.4" height="8" /></svg></span>}
+			{(emblem && <RivalGlyph id={emblem} className="rec-side-emblem" />) || <PieceGlyph className="rec-side-emblem rec-side-piece" />}
+			<span className={`rec-score-row rec-score-row--${side}`} {...count} title={label} aria-label={label} role="img">
+				{/* a side can end a game past the clinch (the last round is played out): every world won is planted */}
+				{Array.from({ length: Math.max(toClinch, n) }).map((_, i) => {
+					const flag = flags[i];
+					return (
+						<i
+							className={`rec-flag rec-flag--${side}${flag ? ' rec-flag--lit' : ''}${flag && flag.element ? ` g-el-${flag.element}` : ''}${point(i) ? ' rec-flag--point' : ''}`}
+							key={`${i}-${flag ? flag.element || 'lit' : 'dark'}`}
+							data-match-point={point(i) ? side : undefined}
+							data-flag-world={flag && flag.planet ? flag.planet : undefined}
+						>
+							{flag || point(i)
+								? <svg viewBox="0 0 12 14" aria-hidden="true"><path className="rec-flag-staff" d="M2.5 13.5V1" /><path className="rec-flag-cloth" d="M2.5 1.5h8L8.3 4.8l2.2 3.3h-8z" /></svg>
+								: <svg viewBox="0 0 12 14" aria-hidden="true"><circle className="rec-flag-socket" cx="6" cy="10" r="2.4" /></svg>}
+						</i>
+					);
+				})}
+				<b className="rec-side-count g-mono" aria-hidden="true">{n}{n <= toClinch && <i>/{toClinch}</i>}</b>
 			</span>
-			{lamp('mine')}
-			<span className="rec-score-row rec-score-row--mine" data-sites-a={mine} title={label} aria-label={label} role="img">{row(mine, 'mine')}</span>
-			{typeof mySends === 'number' ? <SendCount left={mySends} cap={myCap} side="mine" worldsAhead={worldsAhead} tone={sendsTone} /> : <span />}
-			<span className="rec-score-passed-slot" />
+			{typeof sends === 'number' && <SendMeter left={sends} cap={cap} side={side} worldsAhead={worldsAhead} tone={tone} />}
+			{passed && <span className="rec-score-passed" data-rival-passed title="The rival has passed this round"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2.5" y="2" width="2.4" height="8" /><rect x="7.1" y="2" width="2.4" height="8" /></svg></span>}
 		</span>
 	);
 }
 
-export function SendCount({ left, cap, side, worldsAhead, tone, emblem }) {
+/*
+	SendMeter: the sends a side has left, a tick for each send the game allows, lit while
+	unspent, and the count against the eleven after them ("8/11"). Pass 65 tried a deck with
+	the count on its face, and readers took it for one more boxed number, so the meter came
+	back as one unbroken run: in fives it left the eleventh standing alone ("one held back").
+*/
+export function SendMeter({ left, cap, side, worldsAhead, tone }) {
 	const who = side === 'theirs' ? 'The rival has' : 'You have';
-	const label = `${who} ${left} send${left === 1 ? '' : 's'} left${typeof worldsAhead === 'number' ? ` for the ${worldsAhead} world${worldsAhead === 1 ? '' : 's'} still to play` : ''}`;
+	const label = `${who} ${left} send${left === 1 ? '' : 's'} left${typeof worldsAhead === 'number' ? ` for the ${worldsAhead} world${worldsAhead === 1 ? '' : 's'} still to play` : ''}.${typeof cap === 'number' ? ` A side sends ${cap} of its creatures in a game, and the rest stay back.` : ''}`;
 	const total = Math.max(typeof cap === 'number' ? cap : left, left);
 	return (
-		<span className={`rec-sends rec-sends--${side}${tone ? ` rec-sends--${tone}` : ''}`} title={label} aria-label={label} role="img" data-sends-left={left} data-sends-side={side}>
-			{(emblem && <RivalGlyph id={emblem} className="rec-sends-emblem" />) || <PieceGlyph className="rec-sends-glyph" />}
-			<span className="rec-sends-ticks" aria-hidden="true">
-				{Array.from({ length: total }).map((_, i) => <i className={`rec-send-tick${i < left ? ' rec-send-tick--left' : ''}${i > 0 && i % 5 === 0 ? ' rec-send-tick--five' : ''}`} key={i} />)}
+		<span
+			className={`rec-sendbar rec-sendbar--${side}${left === 0 ? ' rec-sendbar--empty' : ''}${tone ? ` rec-sendbar--${tone}` : ''}`}
+			title={label}
+			aria-label={label}
+			role="img"
+			data-sends-left={left}
+			data-sends-side={side}
+		>
+			<span className="rec-sendbar-ticks" aria-hidden="true">
+				{Array.from({ length: total }).map((_, i) => <i className={`rec-sendbar-tick${i < left ? ' rec-sendbar-tick--left' : ''}`} key={i} />)}
 			</span>
-			<b className="g-mono">{left}</b>
+			<b className="rec-sendbar-count g-mono">{left}{typeof cap === 'number' && <i>/{cap}</i>}</b>
 		</span>
 	);
 }
