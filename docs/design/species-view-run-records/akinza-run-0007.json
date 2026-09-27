@@ -1,0 +1,200 @@
+{
+  "species": "akinza",
+  "candidateId": "run-0007",
+  "status": "junction-study",
+  "approval": null,
+  "generation": {
+    "tool": "image_gen.imagegen",
+    "model": null,
+    "seed": null,
+    "unavailableMetadata": "Built-in tool did not expose model or seed.",
+    "recordedAt": "2026-09-27T18:30:49.487628+00:00",
+    "billingRoute": "Codex subscription",
+    "prompt": "Edit the attached illustration with a CLEAR STRUCTURAL CHANGE, not a subtle fur retouch. Keep the head, huge sideways ears, shoulders, arms, hands-on-hips stance, legs, feet, gray-fur style, white background, camera and overall scale.\nREDESIGN ONLY THE LOWER TORSO AND TAIL BASE:\nMake the waist and rear pelvis a simple narrow gently tapering animal body, almost a straight transition from rib cage to upper legs. Flatten the buttocks substantially. Eliminate the two rounded cheek masses, deep central buttock cleft and swelling on the viewer-right hip. Use understated even fur shading, no glossy contour highlights.\nTail structure must read like ONE trunk dividing into THREE branches. A single short stout common tail trunk emerges from the centered base of the spine, then extends horizontally LEFT for a visible short distance before splitting at one broad three-way junction LEFT of the body. Past that junction, show three distinct tapering stems continuing into the existing upper, middle and lower fluffy plumes. The upper stem, middle stem and lower stem MUST each visibly join the same shared junction, with smooth structural continuity and no floating pieces. The common trunk should be visibly broader than any single stem. Do not draw one long tail with two other plumes hidden behind it. Place the three stems side by side in a shallow fan, not stacked in front of each other. The fur should flow continuously from the root, through the shared junction, and then along each of its three branches.\nKeep the three existing plume tips on the viewer's left and their soft furry appearance. The common trunk and fork are furry anatomy, not literal wood. Exactly three terminal plumes, no fourth tail, no new tufts, no detached pieces. The result should have a plainly readable three-way tail connection and a clearly flatter, less voluptuous rear body. Full body, one back view, no text or diagrams.\n",
+    "submittedImages": [
+      "inputs/back-before.png"
+    ],
+    "inputs": [
+      {
+        "path": "untracked\\species-views\\akinza\\run-0007\\inputs\\back-before.png",
+        "sha256": "09dbd8c3c721a03e0484d25122eb46ee09c6b7f1ab517382084018a443e81f39"
+      },
+      {
+        "path": "untracked\\species-views\\akinza\\run-0007\\inputs\\reading.md",
+        "sha256": "a748d33bbe62e908faf2ca59150339e1eaf48bb1f51dedb1dd123bb5872cdf7c"
+      }
+    ],
+    "output": {
+      "path": "untracked\\species-views\\akinza\\run-0007\\back.png",
+      "sha256": "f1a839512cfa15e04acf3167afeea12f6113246b130ff0b11c3cad70f20329fe",
+      "size": [
+        1254,
+        1254
+      ]
+    }
+  },
+  "userDirection": {
+    "date": "2026-09-27",
+    "source": "Current Codex chat",
+    "quote": "Think through it a little bit more. Your design is showing one base, but then there's two pieces that sort of branch out from mid-air behind the tail. It needs to have the three pieces of the tail form together more cleanly, like the base of a tree trunk does with its branches, rather than just having two more tails spawn out of the one tail that connects to the body. I also want you to tone down the butt form a tad because it's a little too sexual"
+  },
+  "inspection": {
+    "reviewer": "Codex",
+    "method": "visual",
+    "notes": "Three visible stems join a common trunk before it meets the spinal root. The rear pelvic outline is narrower and flatter, with reduced buttock emphasis. Subjective quality remains for Nick to judge.",
+    "visibleInventory": {
+      "ears": 2,
+      "arms": 2,
+      "legs": 2,
+      "tailPlumes": 3,
+      "tailRoots": 1
+    },
+    "limitations": [
+      "Single back-view study, not a full pack",
+      "Cross-view registration not established",
+      "No user approval"
+    ]
+  },
+  "packChecks": {
+    "status": "fail",
+    "checks": [
+      {
+        "name": "productionValidation",
+        "status": "blocked",
+        "evidence": "Pilot diagnostics only. Strict manifest, independent source inventory and body-axis validation remain unfinished."
+      },
+      {
+        "name": "front:files",
+        "status": "fail",
+        "evidence": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\njord\\\\.codex\\\\worktrees\\\\1d07\\\\Xalians\\\\untracked\\\\species-views\\\\akinza\\\\run-0007\\\\views\\\\front.png'"
+      },
+      {
+        "name": "front-left:files",
+        "status": "fail",
+        "evidence": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\njord\\\\.codex\\\\worktrees\\\\1d07\\\\Xalians\\\\untracked\\\\species-views\\\\akinza\\\\run-0007\\\\views\\\\front-left.png'"
+      },
+      {
+        "name": "left:files",
+        "status": "fail",
+        "evidence": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\njord\\\\.codex\\\\worktrees\\\\1d07\\\\Xalians\\\\untracked\\\\species-views\\\\akinza\\\\run-0007\\\\views\\\\left.png'"
+      },
+      {
+        "name": "back:files",
+        "status": "pass",
+        "evidence": {
+          "bounds": [
+            180,
+            101,
+            843,
+            960
+          ]
+        }
+      },
+      {
+        "name": "right:files",
+        "status": "fail",
+        "evidence": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\njord\\\\.codex\\\\worktrees\\\\1d07\\\\Xalians\\\\untracked\\\\species-views\\\\akinza\\\\run-0007\\\\views\\\\right.png'"
+      },
+      {
+        "name": "front-right:files",
+        "status": "fail",
+        "evidence": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\njord\\\\.codex\\\\worktrees\\\\1d07\\\\Xalians\\\\untracked\\\\species-views\\\\akinza\\\\run-0007\\\\views\\\\front-right.png'"
+      },
+      {
+        "name": "annotationBindings",
+        "status": "blocked",
+        "evidence": "Exact per-view image hashes required"
+      },
+      {
+        "name": "review:features",
+        "status": "blocked",
+        "evidence": {}
+      },
+      {
+        "name": "review:landmarks",
+        "status": "blocked",
+        "evidence": {}
+      },
+      {
+        "name": "review:parts",
+        "status": "blocked",
+        "evidence": {}
+      },
+      {
+        "name": "review:pose",
+        "status": "blocked",
+        "evidence": {}
+      },
+      {
+        "name": "review:rendering",
+        "status": "blocked",
+        "evidence": {}
+      },
+      {
+        "name": "review:maskDerivation",
+        "status": "blocked",
+        "evidence": {}
+      },
+      {
+        "name": "review:backProjection",
+        "status": "blocked",
+        "evidence": {}
+      },
+      {
+        "name": "landmarkInventory",
+        "status": "blocked",
+        "evidence": []
+      },
+      {
+        "name": "featureInventory",
+        "status": "blocked",
+        "evidence": []
+      },
+      {
+        "name": "front:featureIoU",
+        "status": "blocked",
+        "evidence": "Source feature reference and correspondences required"
+      }
+    ],
+    "inventory": {
+      "back.png": "8cb8b9c66538cba6262ab0e27c4ab0cdc7323cb2941c23d009744096f4185b6b",
+      "back.mask.png": "e201d7109faa78c5120f63be492356e270a34dddc70a48162844cf5acaa8f6d1",
+      "back.occupancy.png": "4559f68d1d64137310c33e86e0c674f9f3bd59d4e028ed577d822e76abe2ac22",
+      "back.geometry.json": "b2073f053d9ed8cdea65365fad34d8cedfe87181fca560c8bb137d199587dbaa",
+      "reference": "5c22d96cf3c7bef4172ce0ef0bdf78265cf66e13ac25594c93cceadeccf36a36"
+    },
+    "approval": null
+  },
+  "geometry": {
+    "sourceSha256": "f1a839512cfa15e04acf3167afeea12f6113246b130ff0b11c3cad70f20329fe",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "scale": 0.7331628303495311,
+    "translation": [
+      117.05839727195229,
+      71.54006820119355
+    ],
+    "sourceBounds": [
+      86,
+      40,
+      990,
+      1212
+    ],
+    "bounds": [
+      180,
+      101,
+      843,
+      960
+    ],
+    "figureHeight": 860,
+    "groundRow": 960,
+    "hashes": {
+      ".png": "8cb8b9c66538cba6262ab0e27c4ab0cdc7323cb2941c23d009744096f4185b6b",
+      ".occupancy.png": "4559f68d1d64137310c33e86e0c674f9f3bd59d4e028ed577d822e76abe2ac22",
+      ".mask.png": "e201d7109faa78c5120f63be492356e270a34dddc70a48162844cf5acaa8f6d1"
+    },
+    "landmarks": {}
+  }
+}
