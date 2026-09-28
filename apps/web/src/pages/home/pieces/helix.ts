@@ -23,6 +23,8 @@ export type Helix = {
 	haze?: RGB;
 	/** 0: full weight; 1: fine, its beads and slabs slimmed (coiled tight, it reads as a ring of light). */
 	thin?: number;
+	/** 0: bases lit by their glow; 1: bases that are light themselves, bright through (a lit ground would grey them). */
+	emissive?: number;
 };
 
 export type PairLook = {
@@ -122,9 +124,11 @@ export function drawHelix(ctx: Ctx, cam: Camera, h: Helix, look: (i: number) => 
 	const depthOf = (z: number) => clamp((z - h.center.z) / (h.radius * sc || 1), -1, 1);
 	const shade = (c: RGB, dn: number) => {
 		const near = (dn + 1) / 2;
-		return mixRGB(scaleRGB(c, 0.22 + 0.78 * Math.pow(near, 1.1)), haze, 0.45 * (1 - near));
+		return mixRGB(scaleRGB(c, 0.14 + 0.86 * Math.pow(near, 1.4)), haze, 0.6 * (1 - near));
 	};
-	const sizeK = (dn: number) => 0.74 + 0.36 * ((dn + 1) / 2);
+	// The near side larger than the far, enough that the grooves read as depth, not a flat zigzag.
+	const sizeK = (dn: number) => 0.62 + 0.5 * ((dn + 1) / 2);
+	const emissive = clamp(h.emissive ?? 0);
 	const thin = clamp(h.thin ?? 0);
 
 	for (let i = 0; i < h.pairs; i++) {
@@ -167,7 +171,7 @@ export function drawHelix(ctx: Ctx, cam: Camera, h: Helix, look: (i: number) => 
 					draw: () => {
 						ctx.globalAlpha = L.alpha;
 						ctx.lineCap = broken ? 'butt' : 'round';
-						ctx.strokeStyle = css(scaleRGB(lit, 0.5));
+						ctx.strokeStyle = css(scaleRGB(lit, 0.5 + 0.4 * emissive));
 						ctx.lineWidth = w;
 						ctx.beginPath();
 						ctx.moveTo(p.x, p.y);
@@ -175,8 +179,8 @@ export function drawHelix(ctx: Ctx, cam: Camera, h: Helix, look: (i: number) => 
 						ctx.stroke();
 						// the light it gives off: a bright core (the far side, dim and hazed, does without)
 						if (dn > -0.4) {
-							ctx.strokeStyle = css(mixRGB(lit, [255, 255, 255], 0.28 + 0.2 * L.glow));
-							ctx.lineWidth = w * 0.42;
+							ctx.strokeStyle = css(mixRGB(lit, [255, 255, 255], 0.28 + 0.2 * L.glow + 0.2 * emissive));
+							ctx.lineWidth = w * (0.42 + 0.2 * emissive);
 							ctx.beginPath();
 							ctx.moveTo(p.x, p.y);
 							ctx.lineTo(e.x, e.y);

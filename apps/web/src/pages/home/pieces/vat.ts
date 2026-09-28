@@ -1,7 +1,7 @@
 // Beats 2 and 3, the Generator's vat (docs/design/home-story-small-pieces.md). A round window in a dark
 // riveted housing, left of center; green gel behind thick curved glass, lit from below; bubbles rising at
 // several depths. Right of it, sunk in the same housing, the vat's readout: a round display showing the world
-// the Generator is writing for, three lamps for the three worlds, and a life-signs strip. No creature is ever
+// the Generator is writing for, the three genomes' codes as they are written, and a life-signs strip. No creature is ever
 // drawn (Nick, 2026-09-27: the creature art is still being worked out, so the story shows worlds, objects and
 // ideas); the subject is the genome.
 //
@@ -15,7 +15,7 @@
 //   of the same light closes over the world on the display; last, the heartbeat turns violet and falls into
 //   an even, machine-regular beat. The color is an art choice, not canon.
 import { BACKBONE, type Helix, type PairLook, PAIRED, drawHelix, pairPoint } from './helix';
-import { type Camera, type Ctx, type RGB, H, W, blot, clamp, css, glow, lighter, loopFade, mix, mixRGB, motes, ramp, rng, smooth, sphere, vignette } from './stage';
+import { type Camera, type Ctx, type RGB, H, W, blot, clamp, css, glow, grain, lighter, loopFade, mix, mixRGB, motes, ramp, rng, smooth, sphere, vignette } from './stage';
 
 export const FORMS_LOOP = 16;
 export const APEX_LOOP = 12;
@@ -26,10 +26,10 @@ const CY = H / 2;
 const R = 226;
 const RIM = 28;
 
-// The readout: a recessed panel, its round display, lamps and strip.
+// The readout: a recessed panel, its round display, the code rows and the strip.
 const PANEL = { x: 704, y: 66, w: 258, h: 430 };
-const GLOBE = { x: PANEL.x + PANEL.w / 2, y: 190, r: 84 };
-const LAMPS_Y = 306;
+const GLOBE = { x: PANEL.x + PANEL.w / 2, y: 180, r: 84 };
+const CODE_Y = 288; // the first code row; one row per world under it
 const STRIP = { x: PANEL.x + 16, y: 350, w: PANEL.w - 32, h: 118 };
 
 const VIOLET: RGB = [168, 118, 255];
@@ -43,16 +43,17 @@ const MACHINE: RGB = [206, 176, 255];
 
 type World = { key: 'saiphus' | 'magmuth' | 'krystos'; gel: RGB; flood: number; bases: RGB[]; lamp: RGB };
 export const WORLDS: World[] = [
-	{ key: 'saiphus', gel: [80, 140, 255], flood: 0.72, bases: [[70, 150, 255], [110, 220, 255], [60, 96, 236], [150, 170, 255]], lamp: [120, 180, 255] },
-	{ key: 'magmuth', gel: [255, 104, 40], flood: 0.74, bases: [[255, 120, 40], [255, 196, 70], [236, 64, 40], [255, 150, 90]], lamp: [255, 150, 70] },
-	{ key: 'krystos', gel: [160, 206, 255], flood: 0.84, bases: [[214, 240, 255], [120, 190, 250], [240, 250, 255], [110, 220, 240]], lamp: [214, 236, 255] },
+	{ key: 'saiphus', gel: [56, 104, 200], flood: 0.9, bases: [[70, 150, 255], [110, 220, 255], [60, 96, 236], [150, 170, 255]], lamp: [120, 180, 255] },
+	{ key: 'magmuth', gel: [196, 76, 28], flood: 0.9, bases: [[255, 120, 40], [255, 196, 70], [236, 64, 40], [255, 150, 90]], lamp: [255, 150, 70] },
+	{ key: 'krystos', gel: [128, 146, 182], flood: 0.9, bases: [[214, 240, 255], [120, 190, 250], [240, 250, 255], [110, 220, 240]], lamp: [214, 236, 255] },
 ];
 const VIOLETS: RGB[] = [[132, 64, 240], [160, 90, 250], [104, 48, 220], [176, 116, 250]];
 
 // ---- The genome.
 
-const PAIRS = 16;
-const HELIX: Omit<Helix, 'phase' | 'center'> = { pairs: PAIRS, rise: 29, radius: 100, scale: 0.8 };
+const PAIRS = 14;
+// Big in the window (it has to read on a phone), and its bases light themselves against the lit gel.
+const HELIX: Omit<Helix, 'phase' | 'center'> = { pairs: PAIRS, rise: 29, radius: 100, scale: 1, emissive: 1 };
 // Turned upright, a few degrees off, so it hangs in the gel like a specimen; written from the bottom up.
 const CAM: Camera = { cx: CX, cy: CY, pitch: 0.3, roll: Math.PI / 2 - 0.14, dist: 1500, zoom: 1 };
 const SEQ = WORLDS.map((_, k) => {
@@ -66,9 +67,9 @@ const JIT = (() => {
 
 // Beat 2's clock.
 const WRITE: [number, number] = [0.5, 2.3];
-const WORLD_AT = [2.5, 5.8, 9.1];
+const WORLD_AT = [2.4, 5.1, 7.8];
 const TUNE = 1.5; // the band's run up the helix
-const HEART_AT = 12.4;
+const HEART_AT = 10.6;
 const writeAt = (i: number) => WRITE[0] + (i / (PAIRS - 1)) * (WRITE[1] - WRITE[0]);
 const tuneAt = (k: number, i: number) => WORLD_AT[k] + 0.65 + ((i + 1.5) / (PAIRS + 3)) * TUNE + JIT[i] * 0.08;
 /** The world the readout shows at `t` in beat 2 (-1: none yet). */
@@ -77,9 +78,9 @@ const worldAt = (t: number) => (t >= WORLD_AT[2] ? 2 : t >= WORLD_AT[1] ? 1 : t 
 // Beat 3's clock.
 const RIM_RUN: [number, number] = [1.0, 2.6];
 const THREAD: [number, number] = [2.4, 3.6];
-const TAKE: [number, number] = [3.2, 8.0];
-const LATTICE: [number, number] = [6.6, 8.2];
-const MACHINE_AT = 8.6;
+const TAKE: [number, number] = [3.0, 6.8];
+const LATTICE: [number, number] = [5.4, 6.9];
+const MACHINE_AT = 7.2;
 const MACHINE_BEAT = 0.5;
 
 // ---- The heartbeat.
@@ -451,7 +452,7 @@ function lattice(ctx: Ctx, amt: number, sec: number) {
 	ctx.beginPath();
 	ctx.arc(GLOBE.x, GLOBE.y, GLOBE.r, 0, Math.PI * 2);
 	ctx.clip();
-	ctx.fillStyle = css([70, 30, 150], 0.5 * amt);
+	ctx.fillStyle = css([70, 30, 150], 0.28 * amt);
 	ctx.fillRect(GLOBE.x - GLOBE.r, GLOBE.y - GLOBE.r, GLOBE.r * 2, GLOBE.r * 2);
 	ctx.restore();
 	lighter(ctx, () => {
@@ -460,13 +461,13 @@ function lattice(ctx: Ctx, amt: number, sec: number) {
 		ctx.lineWidth = 1.5;
 		ctx.lineJoin = 'round';
 		const reach = clamp(amt * 1.15);
-		for (let m = 0; m < 12; m++)
+		for (let m = 0; m < 8; m++)
 			for (const way of [1, -1]) {
 				ctx.beginPath();
 				let on = false;
 				for (let s = 0; s <= 28; s++) {
 					const lat = -Math.PI / 2 + (s / 28) * Math.PI * reach;
-					const p = onGlobe((m / 12) * Math.PI * 2 + way * (lat + Math.PI / 2) * 1.1, lat, spin, 1.07);
+					const p = onGlobe((m / 8) * Math.PI * 2 + way * (lat + Math.PI / 2) * 1.1, lat, spin, 1.07);
 					if (p.facing <= 0) {
 						on = false;
 						continue;
@@ -547,14 +548,24 @@ function readout(ctx: Ctx, mode: 'forms' | 'apex', t: number, sec: number, take:
 	ctx.arc(GLOBE.x, GLOBE.y, GLOBE.r * 0.86, Math.PI * 1.12, Math.PI * 1.38);
 	ctx.stroke();
 
-	// the three worlds' lamps
+	// the codes: a row per world, each rung's pair as a tick, written as the band passes it; kept, so by the
+	// heartbeat three different genomes stand one above the other
+	const TICK = 11;
+	const GAP = 3;
+	const x0 = GLOBE.x - (PAIRS * (TICK + GAP) - GAP) / 2;
 	for (let n = 0; n < 3; n++) {
-		const lx = GLOBE.x + (n - 1) * 40;
-		const on = mode === 'apex' || n <= k;
+		const y = CODE_Y + n * 16;
 		const now = mode === 'apex' ? n === 2 : n === k;
-		const color = mixRGB(WORLDS[n].lamp, VIOLET, take);
-		sphere(ctx, lx, LAMPS_Y, 8, on ? mixRGB(color, [40, 40, 40], now ? 0 : 0.55) : [40, 44, 46], 1, 0.7);
-		if (now) lighter(ctx, () => glow(ctx, lx, LAMPS_Y, 28, color, 0.8));
+		for (let i = 0; i < PAIRS; i++) {
+			const x = x0 + i * (TICK + GAP);
+			const written = mode === 'apex' || t >= tuneAt(n, i);
+			const c = WORLDS[n].bases[SEQ[n][i]];
+			const color = written ? mixRGB(mixRGB(c, [30, 34, 36], now ? 0 : 0.45), VIOLET, take * 0.85) : [30, 34, 36];
+			ctx.fillStyle = css(color as RGB);
+			ctx.fillRect(x, y, TICK, 11);
+		}
+		if (now && (mode === 'apex' || t >= tuneAt(n, 0)))
+			lighter(ctx, () => glow(ctx, GLOBE.x, y + 5, 110, mixRGB(WORLDS[n].lamp, VIOLET, take), 0.12));
 	}
 
 	// the life-signs strip: the newest moment at its right edge, three seconds across
@@ -621,7 +632,7 @@ export function drawVat(ctx: Ctx, mode: 'forms' | 'apex', t: number, sec: number
 	if (mode === 'forms') {
 		for (let k = 0; k < 3; k++) gelBase = mixRGB(gelBase, mixRGB(GREEN, WORLDS[k].gel, WORLDS[k].flood), smooth(WORLD_AT[k], WORLD_AT[k] + 1.2, t));
 	} else gelBase = mixRGB(GREEN, WORLDS[2].gel, WORLDS[2].flood);
-	const taken: RGB = mixRGB(VIOLET, [40, 20, 90], 0.35);
+	const taken: RGB = mixRGB(VIOLET, [16, 6, 40], 0.6);
 	// the light the gel gives everything in it
 	const tint = mixRGB(gelBase, taken, take);
 
@@ -767,6 +778,7 @@ export function drawVat(ctx: Ctx, mode: 'forms' | 'apex', t: number, sec: number
 			if (rimRun < 1) glow(ctx, CX + Math.cos(a1) * (R + RIM + 2), CY + Math.sin(a1) * (R + RIM + 2), 34, APEX_WHITE, 0.9, 'core');
 		});
 	motes(ctx, sec, mixRGB([170, 220, 190], VIOLET, take), 'front', 0.8);
+	grain(ctx, sec);
 	vignette(ctx, 0.62);
 	const fade = loopFade(t, mode === 'apex' ? APEX_LOOP : FORMS_LOOP);
 	if (fade < 1) {

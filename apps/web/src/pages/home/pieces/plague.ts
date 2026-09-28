@@ -4,7 +4,7 @@
 // the strands fray, ash sifts down; a short broken length is left, desaturated and guttering, as the haze
 // thins and lingers over the ruin.
 import { BACKBONE, BASES, PAIRED, type Helix, type PairLook, drawHelix, pairPoint } from './helix';
-import { type Camera, type Ctx, type RGB, H, W, blot, clamp, easeOut, glow, ground, lighter, loopFade, mix, mixRGB, motes, ramp, rng, smooth, vignette } from './stage';
+import { type Camera, type Ctx, type RGB, H, W, blot, clamp, easeOut, glow, grain, ground, lighter, loopFade, mix, mixRGB, motes, ramp, rng, smooth, vignette } from './stage';
 
 export const PLAGUE_LOOP = 12;
 
@@ -12,10 +12,10 @@ export const PAIRS = 30;
 const STOP = 19.5; // where the front stops, in pairs: past it, about a turn is left whole
 const FRONT_FROM = 1.7;
 const FRONT_TO = 8.2;
-const LET_GO = 3.2; // a pair lets go this far behind the front, as soon as it has burned
+const LET_GO = 6; // a pair lets go this far behind the front: a charred length hangs behind the fire before it falls
 
 export const PLAGUE_HELIX = { pairs: PAIRS, rise: 29, radius: 100 };
-const CAM0: Camera = { cx: W / 2, cy: H / 2 + 4, pitch: 0.34, roll: -0.06, dist: 1500, zoom: 1 };
+const CAM0: Camera = { cx: W / 2, cy: H / 2 + 4, pitch: 0.34, roll: -0.06, dist: 1500, zoom: 0.93, yaw: 0.2 };
 /** The camera, easing a little toward what is left once the front has passed. */
 export const plagueCam = (t: number): Camera => ({ ...CAM0, cx: CAM0.cx - 90 * smooth(4.5, 10, t) });
 
@@ -86,21 +86,25 @@ export function plagueLook(i: number, t: number, sec: number): PairLook {
 		split,
 		fell,
 		fray,
-		ember: fell > 0 ? Math.max(0, 1 - fell / 0.8) : smooth(0.5, 1.5, d),
+		ember: fell > 0 ? Math.max(0, 1 - fell / 0.8) : smooth(0.5, 1.5, d) * (1 - 0.7 * smooth(2.5, 4.5, d)),
+		// charred, it sags before it lets go
+		away: fell > 0 ? undefined : { x: 0, y: -26 * smooth(2, LET_GO, d) * (0.7 + 0.3 * Math.sin(i * 1.7)), z: 0 },
 	};
 }
 
 type Wisp = { du: number; dy: number; len: number; thick: number; ang: number; curl: number; front: boolean; lit: number };
 const WISPS: Wisp[] = (() => {
 	const r = rng(66);
-	return Array.from({ length: 22 }, () => ({
-		du: -10 + r() * 12,
-		dy: (r() - 0.5) * 200,
-		len: 160 + r() * 200,
-		thick: 22 + r() * 30,
-		ang: (r() - 0.5) * 0.7,
+	// puffs rather than streaks: roundish, piled above and below the strands, turning as they drift
+	// many small puffs, drawn out a little along the helix and hugging the strands, some in front of them
+	return Array.from({ length: 42 }, () => ({
+		du: -9 + r() * 11,
+		dy: (r() - 0.5) * 230,
+		len: 36 + r() * 60,
+		thick: 18 + r() * 28,
+		ang: (r() - 0.5) * 0.9,
 		curl: 0.15 + r() * 0.35,
-		front: r() < 0.35,
+		front: r() < 0.45,
 		lit: r(),
 	}));
 })();
@@ -130,12 +134,11 @@ export function drawPlague(ctx: Ctx, t: number, sec: number) {
 			if (u < -5) continue;
 			const trail = w.du < -2 ? 0.35 + 0.65 * Math.exp((w.du + 2) / 3) : 1;
 			const lead = 1 - smooth(0.3, 2, w.du);
-			const a = haze * trail * lead * (front_ ? 0.4 : 1);
+			const a = haze * trail * lead * (front_ ? 0.35 : 0.7);
 			if (a <= 0.01) continue;
 			const x = endX(u) + Math.sin(sec * 0.4 + w.curl * 9) * 18;
-			const y = fp.y + w.dy + Math.cos(sec * 0.5 + w.curl * 7) * 10;
+			const y = fp.y + w.dy + Math.cos(sec * 0.5 + w.curl * 7) * 14 - ((sec * 9 * w.curl) % 40);
 			blot(ctx, x, y, w.len, w.thick * 1.4, w.ang + Math.sin(sec * w.curl) * 0.25, HAZE_DARK, Math.min(1, 1.5 * a));
-			blot(ctx, x + w.len * 0.3, y - w.thick * 0.3, w.len * 0.5, w.thick * 0.6, w.ang, HAZE_DARK, Math.min(1, 1.2 * a));
 			if (w.lit > 0.5) glow(ctx, x, y, w.thick * 1.6, HAZE_LIT, 0.14 * a * (0.6 + 0.4 * Math.sin(sec * 2.3 + w.curl * 11)));
 		}
 	};
@@ -180,6 +183,7 @@ export function drawPlague(ctx: Ctx, t: number, sec: number) {
 	}
 	});
 	motes(ctx, sec, [170, 196, 210], 'front', 0.7);
+	grain(ctx, sec);
 	vignette(ctx, 0.8);
 	const fade = loopFade(t, PLAGUE_LOOP);
 	if (fade < 1) {

@@ -52,10 +52,10 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 - **Painting:** the Unbirth living plate, unchanged.
 - **Chain step:** 1.
 
-### Beat 2 · Small piece · The first Xalian
+### Beat 2 · Small piece · The Xalian Generators
 
 - **Headline:** "Designed to thrive in Xalia's most extreme environments" (from `STORY[0]`).
-- **Reading text:** `GENERATORS`, Nick's 2022 draft slide "Creatures of Xalia" (commented out in `git show 1285604e:my-app/src/pages/home.js`), its last two sentences. (Added 2026-09-27; Nick: the piece had "just two titles" and no caption or paragraph to read alongside it.)
+- **Reading text:** `GENERATORS`, Nick's 2022 draft slide "Creatures of Xalia" (commented out in `git show 1285604e:my-app/src/pages/home.js`): its second sentence, and its third up to "the first generation of Xalians" (the rest repeated beat 1's paragraph and beat 2's headline; polish pass 2026-09-27). (Added 2026-09-27; Nick: the piece had "just two titles" and no caption or paragraph to read alongside it.)
 - **Label:** "A Generator's vat", what the recording shows (agent-written, fact-checked).
 - **What it shows:** a Generator's vat window, and beside it the vat's readout. A genome helix is written in the gel, then the recording cuts between three Generators, each on its own world, and the genome is rewritten for each as the readout shows it (Saiphus, Magmuth, Krystos), the gel flooding with each world's light; then a heartbeat starts. No creature is drawn (decision 10). Storyboard in `home-story-small-pieces.md`.
 - **Chain step:** 2.
@@ -63,7 +63,7 @@ Text sources: `STORY[0]` to `STORY[3]` and `TOKENS` are Nick's 2022 paragraphs a
 ### Beat 3 · Small piece · APEX takes the Generators
 
 - **Headline:** "The galaxy's first artificial intelligence" (from `STORY[1]`).
-- **Reading text:** `TAKEN`, Nick's 2022 draft slide "The End Wars: Fall of the Vallerii", its second sentence (added 2026-09-27).
+- **Reading text:** the first sentence of `STORY[1]` ("But the high technology of the Vallerii would prove to be their downfall..."); beat 4 reads its second. Until the polish pass, beat 3 read a sentence of Nick's End Wars draft slide that said the same thing as beat 4's paragraph.
 - **Label:** "The same vat, under APEX": the Accords placed the Generators under APEX, and what the recording shows (agent-written, fact-checked).
 - **What it shows:** the same vat and genome. A violet light runs round the rim and takes the gel from the edge inward, turning the helix's pairs as it reaches them; a net of it closes over the readout; last the heartbeat turns violet and falls into a machine's even beat. The color is an art choice, not canon.
 - **Chain step:** 3.
@@ -127,3 +127,15 @@ The two pieces' screen-reader descriptions were checked claim by claim against t
 ## 8. Deferred
 
 - **The closing tease:** after beat 7, the scrambled creature settles, and far behind it something vast stirs, never shown clearly. It would plant the ancient-presence thread without resolving it. Deferred until Nick wants the page to end on dread rather than on the call to action.
+
+## 8. Polish pass (2026-09-27)
+
+Two independent critics audited the viewer and the pieces over three rounds (pieces: `home-story-small-pieces.md` section 7). Changes to the viewer:
+
+- **Where it rests.** The viewer is centered in the room below the site's bar, and its box is sized to fit that room (`storyViewer.tsx`, `measure()`), so the heading is never under the bar on a phone.
+- **Captions.** The label reserve drops from 10rem to 7rem (beat 7 keeps 9.5rem for its tournament text), and the captions are shorter and describe only what is visible. The tournament caption is set in ink-2 because it is Nick's paragraph.
+- **The screen holds its place.** Spreads align from the top, so the screen doesn't move from beat to beat.
+- **The readout.** A scrim sits behind the readout so it stays legible over pale pictures. The clock is hidden under 720px, and the Rec line stays on one line. An unanimated scene reads "Still frame" and has no running clock.
+- **Controls.** The counter sits beside Back and Next, and the chapter markers carry their names as titles.
+- **Captions and `cn()`.** A caption set through `cn()` lost its size: tailwind-merge drops the site's `text-*` sizes when a `text-ink-*` color follows them. This affects components across the site and is filed as issue #717 for Nick.
+- **Open for Nick:** most headlines repeat a phrase of the paragraph under them (decision 3). It reads most sharply at beat 3, whose one-sentence paragraph ends on its headline.
