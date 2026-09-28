@@ -101,6 +101,14 @@ Scope extension, 2026-09-27: Nick approved implementing the proposed layered sys
 
 - Opened ready PR #723, https://github.com/nickcjordan/Xalians/pull/723, and enabled auto-merge. Local checks pass; repository CI is running. Merging preserves the experiment and does not approve its art.
 
+## Hind-leg refinement, 2026-09-28
+
+- PR #723 merged. Continued from fresh main on `codex/akinza-stronger-hindlegs`, preserving unfinished validator drafts.
+- Nick described the creature as very close, but the legs too thin. Recorded his exact request for modestly beefier hind legs implying bounding strength, explicitly avoiding literal rabbit anatomy. This is correction feedback, not complete blockout approval.
+- Built blockout-0005 by changing only the hind-leg sweep radii. The broadest thigh/calf radii increase about 20%, with smaller changes toward joints and no change at the foot transition. Parameter comparisons confirm unchanged bone paths, limb lengths, stance, paws, pelvis, tails, other geometry inputs and cameras.
+- Verified one closed connected body with 166,208 vertices and zero nonmanifold edges. Fourteen unclipped rendered views and derived occupancy masks pass review checks; all six principal heights and ground rows still match exactly. Saved exact builder/input snapshots, run provenance, full contact/turntable and an equal-scale before/after front/side comparison. Builder and review code are unchanged from the previously tested version.
+- Applied the new lesson immediately: translate an analogy for strength into the smallest requested volume change and verify its scope, rather than replacing the body plan. Layer 5 remains active with layer-3 volume refinement; surface/handoff and animation have not begun.
+
 ## Immediate next unfinished action
 
-Nick's directional review of the first whole-body geometry checkpoint in `species-construction/akinza/reconciliation.md`, focused on proportions and paw integration. Carry accepted source forms forward, resolve the recorded modeled discrepancies and any new feedback, then obtain rough-form approval. Do not treat the smooth blockout as a replacement for the accepted furry identity. Production masks, measurements, consumer adapter and final pack approval remain unfinished. A contrasting-body pilot and the remaining species follow approved Akinza. Prior validator drafts remain preserved locally.
+Nick's review of the stronger-looking hind legs in blockout-0005. The new volume is unapproved. Preserve accepted tail, paw and gaze references while continuing whole-body reconciliation after feedback. Facial blending and silhouette-defining hair mass remain unfinished before likeness acceptance. Production masks, measurements, consumer adapter, final pack approval and remaining species are still pending. Prior validator drafts remain preserved locally.

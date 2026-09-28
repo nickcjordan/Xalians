@@ -136,3 +136,7 @@ Study-0018 tail shape and positioning are accepted as shown. Preserve those aspe
 ## 2026-09-28: accepted paws and geometric reconciliation
 
 Nick accepted study-0020 with "looks good, proceed". Preserve compact animal paws and short clustered clawed digits. Exact body integration, skeleton and digit-count biology are not ratified by this visual acceptance. Use `../../species-construction/akinza/current-references.json` for the scoped accepted components. The first complete rough model now tests their combined geometry; actual side projections expose foreshortening of the leftward tail fan that the older generated profile did not show. Its new geometry still needs review.
+
+## 2026-09-28: stronger-looking hind legs
+
+Nick finds the rough creature close but its legs too thin. Use modestly fuller thighs and upper calves to imply bounding strength, inspired by a rabbit's powerful hindquarters without substituting rabbit legs or changing the existing stance and proportions. This is a visual-volume correction, not a new species ability or skeleton ruling. Exact feedback: `../../species-construction/akinza/hind-leg-feedback.json`. Revised blockout-0005 awaits review.

@@ -62,7 +62,15 @@
     "Relative scale of new paws and leg-to-paw transition",
     "Consistent head and ear depth",
     "Full creature tail occlusion across actual cameras",
-    "Modeled likeness to accepted illustrations"
+    "Modeled likeness to accepted illustrations",
+    "Modestly stronger hind-leg volumes in blockout-0005 await review"
   ],
-  "fullStageApproval": null
+  "fullStageApproval": null,
+  "directions": [
+    {
+      "path": "docs/design/species-construction/akinza/hind-leg-feedback.json",
+      "role": "latest-hind-leg-volume-direction",
+      "sha256": "03dbdcbc73aa370b2ad6dc87a4037fc91dd21dd43cad2b49dc7d068870920416"
+    }
+  ]
 }
