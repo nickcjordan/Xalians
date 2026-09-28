@@ -1,6 +1,6 @@
 # Akinza tail transition without an added body mass
 
-Current candidate: study-0018. Unapproved. Accepted gaze and other retained body design remain unchanged.
+Study-0018 tail shape and positioning are accepted by Nick; see tail-rear-acceptance.json. Accepted gaze and other retained body design remain unchanged.
 
 Nick rejected study-0015:
 
@@ -22,4 +22,6 @@ The revised prompt explicitly locates the unwanted lobe, removes it and its outl
 
 Exact prompts and immutable input/output hashes: [study-0016](records/study-0016.json), [study-0017](records/study-0017.json), [study-0018](records/study-0018.json). All three use the built-in Codex subscription image tool. No API key or paid image API was used. The displayed review image is an exact copy of the generated output.
 
-Do not promote studies 0015, 0016 or 0017 as current or transfer approval to study-0018. Once the rear junction is accepted, consolidate it with the accepted gaze and retained body/detail direction, resolving remaining view and digit inconsistencies before the complete rough creature. Do not reopen expressive pose selection.
+Do not promote studies 0015, 0016 or 0017 as current. Study-0018 has its own scoped approval. After the paw correction, consolidate it with the accepted gaze and retained body/detail direction, resolving remaining view and digit inconsistencies before the complete rough creature. Do not reopen expressive pose selection.
+
+Current status, 2026-09-28: Nick accepted study-0018 tail shape and positioning, while rejecting the human-like hands and feet. The accepted gaze remains unchanged. The next review is [animal-paw study-0020](paw-study.md). This supersedes earlier pending rear-review wording; complete construction remains unreleased.

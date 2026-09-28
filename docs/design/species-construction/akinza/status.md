@@ -13,7 +13,7 @@ Generated evidence report. Integrity is not visual or user approval.
 
 ## interpretation
 
-Gaze accepted. Study-0015 root lobe rejected. Study-0018 removes the separate mass and refines placement, awaiting Nick review. Complete construction remains unreleased.
+Tail study-0018 shape and positioning accepted; gaze accepted. Human-like hands/feet rejected. Study-0020 animal paws await review and full-body integration. Complete construction remains unreleased.
 
 ## identity
 
@@ -22,12 +22,12 @@ Run-0008 is a good starting concept; cross-view tail and pose differences preven
 
 ## construction
 
-Gaze accepted. Study-0015 root lobe rejected. Study-0018 removes the separate mass and refines placement, awaiting Nick review. Complete construction remains unreleased.
+Tail study-0018 shape and positioning accepted; gaze accepted. Human-like hands/feet rejected. Study-0020 animal paws await review and full-body integration. Complete construction remains unreleased.
 - Upstream evidence is stale or missing: identity
 
 ## connections
 
-Gaze accepted. Study-0015 root lobe rejected. Study-0018 removes the separate mass and refines placement, awaiting Nick review. Complete construction remains unreleased.
+Tail study-0018 shape and positioning accepted; gaze accepted. Human-like hands/feet rejected. Study-0020 animal paws await review and full-body integration. Complete construction remains unreleased.
 - Upstream evidence is stale or missing: identity
 
 ## geometry
