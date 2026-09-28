@@ -144,3 +144,7 @@ Nick finds the rough creature close but its legs too thin. Use modestly fuller t
 ## 2026-09-28: shin alignment
 
 Nick found the fuller legs a little better but rejected their wavy shin. Retain the thigh-to-knee hinge and fullness; the lower leg should read as a straight underlying knee-to-ankle segment with soft muscle contour, not an arc through its shaft. Blockout-0006 applies this local construction correction and awaits review. Exact words: `../../species-construction/akinza/shin-feedback.json`.
+
+## 2026-09-28: whole-creature likeness remains the requirement
+
+Nick reaffirmed the first grayscale round as the target for an equivalent untextured 3D form. The existing primitive proxy falls far short. This is not a request to add fur to that proxy. Head, muzzle, eye integration, ears, body mass and ankle/wrist connections require construction work; major silhouette-defining coat shapes also belong here. Later accepted tail, gaze and paw corrections retain precedence. Exact words: `../../species-construction/akinza/likeness-feedback.json`.

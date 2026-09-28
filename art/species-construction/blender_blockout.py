@@ -56,8 +56,19 @@ def ear(side, spec):
                 angle = 2 * math.pi * index / count
                 u = radius * math.cos(angle)
                 v = radius * math.sin(angle)
-                x = spec['center'][0] + spec['width'] * u
-                z = spec['center'][2] + spec['height'] * v + spec['tilt'] * u
+                if 'outline' in spec:
+                    # A smooth closed shell, independent of the overlying coat tufts.
+                    outline = spec['outline']
+                    segment = index / count * len(outline)
+                    k, t = int(segment), segment % 1
+                    points = [Vector(outline[(k+n) % len(outline)]) for n in (-1,0,1,2)]
+                    a,b,c,d = points
+                    boundary = .5*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t*t+(-a+3*b-3*c+d)*t*t*t)
+                    x = spec['center'][0] + radius*(boundary[0]-spec['center'][0])
+                    z = spec['center'][2] + radius*(boundary[1]-spec['center'][2])
+                else:
+                    x = spec['center'][0] + spec['width'] * u
+                    z = spec['center'][2] + spec['height'] * v + spec['tilt'] * u
                 y = spec['center'][1] + spec['cup'] * (1-radius*radius) + (.10 if back else 0)
                 verts.append((side*x, y, z))
     stride = (rings+1)*count
@@ -83,6 +94,37 @@ def ear(side, spec):
     bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
     bm.to_mesh(mesh)
     bm.free()
+    return obj
+
+
+def face_patch(part, head, mat):
+    """Conform an oval eye surface to the head, with small modeled relief."""
+    verts, faces = [], []
+    rings, count = 12, 64
+    cx,cy,cz = head['center']
+    rx,ry,rz = head['scale']
+    for ring in range(rings+1):
+        r = max(.001, ring/rings)
+        for j in range(count):
+            angle = 2*math.pi*j/count
+            x = part['center'][0]+part['scale'][0]*r*math.cos(angle)
+            z = part['center'][2]+part['scale'][2]*r*math.sin(angle)
+            y = cy-ry*math.sqrt(max(.02,1-((x-cx)/rx)**2-((z-cz)/rz)**2))
+            y -= part['relief'] + part.get('bulge',0)*(1-r*r)
+            verts.append((x,y,z))
+        if ring:
+            for j in range(count):
+                a=(ring-1)*count+j;b=(ring-1)*count+(j+1)%count
+                faces.append((a,a+count,b+count,b))
+    faces.append(tuple(reversed(range(count))))
+    mesh=bpy.data.meshes.new(part['id'])
+    mesh.from_pydata(verts,[],faces)
+    mesh.update()
+    obj=bpy.data.objects.new(part['id'],mesh)
+    bpy.context.collection.objects.link(obj)
+    obj.data.materials.append(mat)
+    for face in mesh.polygons:
+        face.use_smooth=True
     return obj
 
 
@@ -161,8 +203,17 @@ def main():
     specks = remove_voxel_specks(body)
     stats = mesh_stats(body)
     stats['removedSubVoxelDebris'] = specks
+    head = next(v for v in spec['volumes'] if v['id']=='head')
     for part in spec['surfaceParts']:
-        sphere(part, mats[part['material']])
+        if part.get('conformToHead'):
+            face_patch(part, head, mats[part['material']])
+        else:
+            sphere(part, mats[part['material']])
+    for part in spec.get('facialStrokes',[]):
+        obj=tube(part['id'],part['controls'])
+        obj.data.materials.append(mats[part['material']])
+        for face in obj.data.polygons:
+            face.use_smooth=True
     for part in spec['claws']:
         obj = tube(part['id'], part['controls'])
         obj.data.materials.append(mats['claw'])

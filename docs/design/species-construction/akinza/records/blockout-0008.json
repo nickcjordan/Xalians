@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "run": "blockout-0008",
+  "tool": "local Blender 5.2.2 LTS",
+  "billing": "local rendering, no API/key",
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/inputs/blender_blockout.py",
+      "role": "immutable-builder-or-spec",
+      "sha256": "2e1104e234738a8cb1e9874fd1a2793da00305332ed3c627f72aaf94f6605d59"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/inputs/blender_probe.py",
+      "role": "immutable-builder-or-spec",
+      "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/inputs/spec.json",
+      "role": "immutable-builder-or-spec",
+      "sha256": "4ac23958b27f4bc7b750835da469c7584c56b5f6b493174181ccc2e21b0364b8"
+    }
+  ],
+  "geometry": {
+    "path": "untracked/species-construction/akinza/blockout-0008/geometry.json",
+    "role": "geometry-report",
+    "sha256": "2d06f1f22e3d5ffa17a189ba1b8e8879cb6dd9801731c69215080d3ed3b9ace9"
+  },
+  "reviewAssets": {
+    "path": "untracked/species-construction/akinza/blockout-0008/review-assets.json",
+    "role": "technical-render-checks",
+    "sha256": "4d89a1b7fc9888382df975af472ce9ac094dee82c35e9ab20c8a75cbb5c10f17"
+  },
+  "outputs": [
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/back.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "c2e613613286d1f4b5abe1b490f70773966655cbde0f5388faa92b21c32dd3d7"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/back.png",
+      "role": "experimental-output",
+      "sha256": "b1dc25d9b7157b027ae42db4398577a2d991efc47e1f0ac967559d932a59aa4b"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/blockout.blend",
+      "role": "experimental-output",
+      "sha256": "6cb36c6c6730710ba02dbdb37abb8266f90c439eb991545fa06b9d3c88fb25f1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/contact.png",
+      "role": "experimental-output",
+      "sha256": "750ae2418f4e0408085f489fc558792096107fb03c40f92864e5d695278d807a"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/front-left.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "b652055208f3711a6e9718f6a54406990382ab89429251898b45f3ca412c524d"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/front-left.png",
+      "role": "experimental-output",
+      "sha256": "7e0ea9fa4fa687bef55e99be7555b6e0011b0d532ea81a29f656b3dc3fe157a9"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/front-right.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "1afc5bd0a5a5080c3035c0359cf07a9181b55b7e91dfab5f16da5ca45285b547"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/front-right.png",
+      "role": "experimental-output",
+      "sha256": "0b5811fd5402e85f6a23d6bcb06b42246e75b7ea5f79020c262a282cad7776bb"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/front.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "49b6a8e8282598d5271eebebe02890d6b949e768f215f84c59f8b1cd43346ad7"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/front.png",
+      "role": "experimental-output",
+      "sha256": "bb6bcb7348754d6c79483d330d37d4ba6d36782fa8b074aacecab715ebbd8681"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/left.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "f85d9532f6366df7df43721e40dea4d4d4269da6301652e724f532b724868fb1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/left.png",
+      "role": "experimental-output",
+      "sha256": "c32e9e8f6fee3ef3ae22ba6e7c382f38dd47b23c1d9b09760284f25ee2c33be1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/right.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "b392d59ebaa0e9db414be2b2f49d594cc9d83cbfd691a845c0dab9d0695d482d"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/right.png",
+      "role": "experimental-output",
+      "sha256": "9db8f649e19ba34665d859a9fe9f341ce73affda6267b7c8e147a9186ef91ba7"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-000.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "a0c857008f4f6982235163076b500c46eccd3c38de52e8c60344a8e2412d4e5b"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-000.png",
+      "role": "experimental-output",
+      "sha256": "79335b946f29d7c85df018ad69a25902b2d51334cec37c493d8709e9208a3458"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-045.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "533cbc9e5bae40ac5799f51c58f5af280b604537f9f6c97c19e25440e5166cba"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-045.png",
+      "role": "experimental-output",
+      "sha256": "432ee50f13de8871f38de42e7e422dde6d326fea956ec5c98e0f8b2ba80bea6c"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-090.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "b623e9c78a7c27cc7ba29853d55889fb44d92075d5c1ad8e892397722eabf0a8"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-090.png",
+      "role": "experimental-output",
+      "sha256": "b3cb2437c0c2a528141985cc88106c664df1e967442e3e8a4b54f712a44471b0"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-135.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "6f793d02e5fbe791a15424ecbc39416320dac1d3c5112e249d4f0cc64b1350bd"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-135.png",
+      "role": "experimental-output",
+      "sha256": "8c42289c58ad6baebdae1476c187c0b84e76c791f733931406b0e72168100333"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-180.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "0407f0fceaf2307636264800b0f4c968d0cd0f6dd3f2d1da89608e0ebd8e1756"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-180.png",
+      "role": "experimental-output",
+      "sha256": "347b15a16d7b5f15b7b138c20b768556a4bb032733b00fb7f3cd36eea44ce80c"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-225.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "2f31cc7cb61d38988c64583a6ff21cbe8d0339ee3de9835070e8aa73b7fc5e9e"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-225.png",
+      "role": "experimental-output",
+      "sha256": "2d345bc14971f0d582aea9d759086afa07359893108d8e4501df0af02b2f3578"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-270.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "f615bee4dd74f004f14fdbc7ab3e0b6fb1ff17c22b1418fd6b7d0b4182a630b8"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-270.png",
+      "role": "experimental-output",
+      "sha256": "41b038225511108b30188d5e864072e1befa09c8122969593b5ae2db9ce1f292"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-315.occupancy.png",
+      "role": "experimental-output",
+      "sha256": "d0222ebd903c64eee8d77090657dff7d3cde1a8e0618f990fa7e07a1515eec49"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turn-315.png",
+      "role": "experimental-output",
+      "sha256": "23d502e7407cec99c9e7afa7175175c4f24588c3f7f96e0fbfd308a780cfef49"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0008/turntable.gif",
+      "role": "experimental-output",
+      "sha256": "83bffe05b2d9043c46759bcf2b823cc4505ecdc1bfb759e1e29463c67e792d36"
+    }
+  ],
+  "technicalStatus": "technical-pass",
+  "visualStatus": "failed-complete-likeness",
+  "verdict": "Internal refit rejected: ear ridges look beaded, muzzle remains simplistic, full form does not match the reference. Do not show as a successful likeness revision.",
+  "approval": null
+}

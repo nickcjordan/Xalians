@@ -13,28 +13,28 @@ Generated evidence report. Integrity is not visual or user approval.
 
 ## interpretation
 
-Tail, gaze and paw source directions accepted in scope. Nick found leg fullness a little better but rejected the bowed shin. Blockout-0006 straightens the lower-leg path and awaits review. Complete likeness and release remain unapproved.
+First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
 
 ## identity
 
-Run-0008 is a good starting concept; cross-view tail and pose differences prevent release.
+First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
 - Inputs changed since this study was recorded
 
 ## construction
 
-Tail, gaze and paw source directions accepted in scope. Nick found leg fullness a little better but rejected the bowed shin. Blockout-0006 straightens the lower-leg path and awaits review. Complete likeness and release remain unapproved.
+First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: identity
 
 ## connections
 
-Tail, gaze and paw source directions accepted in scope. Nick found leg fullness a little better but rejected the bowed shin. Blockout-0006 straightens the lower-leg path and awaits review. Complete likeness and release remain unapproved.
+First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: identity
 
 ## geometry
 
-Tail, gaze and paw source directions accepted in scope. Nick found leg fullness a little better but rejected the bowed shin. Blockout-0006 straightens the lower-leg path and awaits review. Complete likeness and release remain unapproved.
+First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: construction
 - Upstream evidence is stale or missing: connections
