@@ -109,6 +109,8 @@ Scope extension, 2026-09-27: Nick approved implementing the proposed layered sys
 - Verified one closed connected body with 166,208 vertices and zero nonmanifold edges. Fourteen unclipped rendered views and derived occupancy masks pass review checks; all six principal heights and ground rows still match exactly. Saved exact builder/input snapshots, run provenance, full contact/turntable and an equal-scale before/after front/side comparison. Builder and review code are unchanged from the previously tested version.
 - Applied the new lesson immediately: translate an analogy for strength into the smallest requested volume change and verify its scope, rather than replacing the body plan. Layer 5 remains active with layer-3 volume refinement; surface/handoff and animation have not begun.
 
+- Opened ready PR #726, https://github.com/nickcjordan/Xalians/pull/726, with auto-merge enabled. Geometry and provenance checks pass; CI is pending. A merge does not approve the revised leg volume.
+
 ## Immediate next unfinished action
 
 Nick's review of the stronger-looking hind legs in blockout-0005. The new volume is unapproved. Preserve accepted tail, paw and gaze references while continuing whole-body reconciliation after feedback. Facial blending and silhouette-defining hair mass remain unfinished before likeness acceptance. Production masks, measurements, consumer adapter, final pack approval and remaining species are still pending. Prior validator drafts remain preserved locally.
