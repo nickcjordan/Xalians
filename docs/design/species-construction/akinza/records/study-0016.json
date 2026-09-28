@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0016",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T02:09:11.179692+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "model": null,
+  "seed": null,
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "prompt": "LOCAL EDIT of the supplied Akinza rear view. Preserve the whole character and the current three tail lengths. Change only the transition between the lower back and the tail bases.\n\nDEFECT TO REMOVE:\nAt the junction, immediately to the viewer's RIGHT of the three tails, there is a separate fur-covered teardrop-shaped bulge hanging down. It looks like a squeezed extra body part. Remove that entire bulge and its dark outlining crease. Do not shrink it into a smaller lump.\n\nREPLACEMENT SHAPE:\nThe furry lower back should be ONE uninterrupted, gently tapering body surface leading into the upper legs. Its left and right contours stay natural and modest.\nThe three smooth gray tail bases meet each other directly at a compact attachment on the middle of this back surface. This attachment is the smoothly blended intersection of the THREE TAILS WITH THE BODY, not an additional fourth object. Show the tail surfaces continuing into the back with a soft material transition. There is no separate furry root bulb, pad, knot, cheek or hanging lobe.\nKeep the attachment centered on the spinal midline, directly below the middle of the torso. The overlapping tail bases extend slightly across that midline so the root is not pasted onto the left side. Achieve this with the existing tail bases themselves, NOT by adding a body swelling.\nThe three tails separate immediately at the body and curve toward VIEWER LEFT. Each base reaches the SAME compact body attachment. Keep the upper and lower tails' balanced reach, the slightly longer middle tail, rounded full volumes and pointed tips. No long common stalk or vertically staggered attachments.\n\nPRESERVE:\nIdentical ears, head, torso silhouette, arms, legs, feet, fur elsewhere, stance, lighting, grayscale palette, white background and BACK label. Keep exactly three tails. The creature is a fully fur-covered fictional animal.\nA successful edit has a clean continuous lower-back surface and exactly three tail forms, with NO extra rounded mass visible on the right of their centered junction. One complete rear view.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0016/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "7da5877cb2d279d9680dc3cfcfc73f22aead34e430797b9453e9b8fc03fe5f4c"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0016/inputs/back.png",
+      "role": "immutable-generation-input",
+      "sha256": "e6409f7c10e9d30ebaa7af30245e1ef4a8017e97a7ca36b4f566c8aeef7c122c"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0016/back.png",
+    "role": "untouched-tool-output",
+    "sha256": "2a673c4c55a597d260fc5ae4189d202e21371222e08ae39b3343d08339db5fd7"
+  },
+  "verdict": "Separate lobe removed, but root shifted left; superseded intermediate.",
+  "reviewer": "Codex",
+  "approval": null
+}

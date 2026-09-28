@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0017",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T02:09:11.179692+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "model": null,
+  "seed": null,
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "prompt": "Precise local placement edit. Preserve this entire creature image and its natural continuous furry lower-back surface.\nMove the EXISTING THREE-TAIL ASSEMBLY horizontally toward the VIEWER'S RIGHT by about 45 pixels relative to this 1043-pixel-wide reference. Keep its shape, lengths, tips, thicknesses and leftward sweep intact. DO NOT mirror, rotate, enlarge or shorten the tails. DO NOT move or reshape the body.\nThis modest translation places the shared tail attachment centrally over the spine instead of left of it. The tails' existing gray base surfaces must overlap the middle of the rear body and a little of its right half. The tails cover that body surface from this camera's viewpoint; they do NOT push or squeeze it into a new shape.\nAt the relocated junction, blend the three tail bases directly into the same single attachment on the body. Restore ordinary continuous fur wherever the old tail position exposed body. Preserve exactly THREE tail volumes and the existing torso shape. Do not add a furry bulb, rounded pad, connector, hanging lobe, compressed muscle or fourth form beside the junction. The right side of the body keeps its smooth natural contour.\nLeave the head, ears, arms, legs, feet, stance, lighting, grayscale palette, white background and BACK caption unchanged. One complete rear view.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0017/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "87e6a83b4b71174eae5a8ea0c985ed76572922302376faef74faa01338926011"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0017/inputs/back.png",
+      "role": "immutable-generation-input",
+      "sha256": "2a673c4c55a597d260fc5ae4189d202e21371222e08ae39b3343d08339db5fd7"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0017/back.png",
+    "role": "untouched-tool-output",
+    "sha256": "7e54d1a41f6950e571f497eb5f671c85a176cca1d88be58295e6cb4ee1e0f4f1"
+  },
+  "verdict": "Lobe remains absent, but assembly moved too far right; rejected placement.",
+  "reviewer": "Codex",
+  "approval": null
+}

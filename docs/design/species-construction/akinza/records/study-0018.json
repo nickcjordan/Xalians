@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0018",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T02:09:11.179692+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "model": null,
+  "seed": null,
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "prompt": "These two images show the SAME creature with its three-tail assembly in two different horizontal positions. Make ONE rear view with the tail assembly positioned HALFWAY BETWEEN the two input positions. Do not otherwise change the design.\nImage 1 places the root slightly too far left. Image 2 overcorrects and places the root too far right. The correct tail-root position is their midpoint, directly below the center of the neck and aligned with the middle of the space between the upper legs.\nKeep the same three tails, same shapes, lengths and thickness, and identical head, ears, body and limbs. Translate only the existing tail assembly to the midpoint. Blend its three bases directly into the body at that one centered location. Do not create a connector bulb or a separate furry mass. The smooth gray tail bases themselves overlap the body, with a clean material transition. Keep the natural continuous lower-back and upper-leg contours from these images.\nThere must be no teardrop-shaped growth, squeezed cheek, detached lobe or rounded pad at the junction. Exactly three full rounded pointed tails, joined at the body, sweeping toward the viewer's left. No other changes. White background and BACK label.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0018/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "f3693c16791dc8ecefd2b67f72cfb95c15c644107351814069d0fd8a09ab0762"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0018/inputs/left-limit.png",
+      "role": "immutable-generation-input",
+      "sha256": "2a673c4c55a597d260fc5ae4189d202e21371222e08ae39b3343d08339db5fd7"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0018/inputs/right-limit.png",
+      "role": "immutable-generation-input",
+      "sha256": "7e54d1a41f6950e571f497eb5f671c85a176cca1d88be58295e6cb4ee1e0f4f1"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0018/back.png",
+    "role": "untouched-tool-output",
+    "sha256": "caaedd881246acdc29b5f1d52cb2801c3c87869370ba3fe58da41e5ab2db43e4"
+  },
+  "verdict": "Latest candidate: no separate furry lobe and junction below central back. Awaiting Nick review, not calibrated geometry.",
+  "reviewer": "Codex",
+  "approval": null
+}

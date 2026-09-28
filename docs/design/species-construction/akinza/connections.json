@@ -9,7 +9,8 @@
     "tail-taper",
     "body-direction",
     "body-details",
-    "root-bilateral-overlap"
+    "root-bilateral-overlap",
+    "clean-tail-transition"
   ],
   "parts": [
     "pelvis",
@@ -153,7 +154,7 @@
     }
   ],
   "proposedSpatialInterpretation": {
-    "tail-root": "One compact shared root at tailbone, centered across the rear midline, overlapping some left and right rear body surface; three tails fuse at exactly this same body-level site before sweeping left",
+    "tail-root": "One compact shared root at tailbone, centered across the rear midline, overlapping some left and right rear body surface; three tails fuse at exactly this same body-level site before sweeping left; the overlap is formed by the three tail bases, not an added furry lobe or enlarged body pad",
     "plumeFan": "three full rounded cattail-like volumes with depth separation and pointed tapers; no flat blades or delayed trident split",
     "measurements": null,
     "approval": null
@@ -169,6 +170,8 @@
     "blunt rounded terminal caps",
     "new creature abilities or lore",
     "root entirely over left rear side",
-    "staggered vertical cascade of three joins"
+    "staggered vertical cascade of three joins",
+    "separate furry root lobe",
+    "pinched body mass beside the attachment"
   ]
 }
