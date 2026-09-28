@@ -112,3 +112,35 @@ Report with sources: https://claude.ai/artifact/Qr6h3cTBpP2xQHwYFRpc3S. Every he
 
 Paths proposed for Powerworks, awaiting Nick: 1, the element belongs to the creature (recommended; 1b keeps physical moves steady); 2, one damage number per creature, moves differ only in effect; 3, yes/no weakness with a shield-and-break payoff (a later layer); 4, only visible target states change results; 5, keep per-move elements and let the screen compute (answer keys).
 
+## Rules pass: Path 1 in the engine, 2026-09-28
+
+Nick chose Path 1 (every attack takes its creature's element), with Path 2 (one damage number per creature) measured in the simulator rather than drawn. The pillar rules are a new engine beside the v5 one, `packages/rules/src/dungeon/pillars/` (`@xalians/rules/dungeon/pillars`): `read.ts` turns a record's moves into an attack power, an element and at most one of each support; `engine.ts` resolves rounds; `levers.ts` holds every number; `policy.ts` and `devtools/pillarsSim.ts` measure it; `pillars.test.ts` pins the rules. The live page still runs the v5 engine until the screen pass moves it over.
+
+Decisions made while building, each a lever:
+
+| # | Decision | Confidence | Evidence |
+|---|---|---|---|
+| 10 | An area attack hits every standing enemy at 0.6 of its power (area geometry stays parked). | 80% | `pillars/levers.ts` `AREA_FACTOR` |
+| 11 | A support aimed at everyone gives 0.6 of its number to each; binding is Hinder at 1.4 times. | 70% | `ALL_SUPPORT_FACTOR`, `BINDING_HINDER_FACTOR` |
+| 12 | A prolonged preparation (the machines' Capacitor rush and Core surge, 4% of companion moves) acts at once and rests 2 rounds, since charged attacks are parked. | 75% | `PROLONGED_REST` |
+| 13 | A shield absorbs before health and ends at its caster's next turn; boost and hinder are used up by the unit's next attack; a pass is always a legal order. | 85% | `engine.ts` |
+| 14 | Enemies pick their strongest ready attack, a self-shield half the time when below 60% health, and whom to hit by size, all hidden. | 75% | `prepare` in `engine.ts` |
+
+Measured (`node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsSim.ts --runs=120`, enemy health at 0.62 of the row, the prototype's setting; look-ahead over 30 runs):
+
+| Rules | Squad | random | biggest number | planner | look-ahead | strongest hit changes with the enemy | best move changes with the enemy |
+|---|---|---|---|---|---|---|---|
+| Element on each move (today) | preset | 14% | 38% | 100% | 100% | 32% | 15% |
+| Element on each move (today) | random draft | 32% | 63% | 68% | 80% | 7% | 13% |
+| Path 1 | preset | 22% | 75% | 100% | 100% | 0% | 9% |
+| Path 1 | random draft | 46% | 75% | 79% | 87% | 4% | 15% |
+| Path 2 | preset | 13% | 19% | 95% | 97% | 0% | 0% |
+| Path 2 | random draft | 31% | 47% | 53% | 50% | 1% | 9% |
+
+Reading:
+
+- **Path 1 reads as intended.** The move that hits hardest is the same on every enemy (0% on the preset squad against 32% today; the 4% left on drafts are ties and immune matchups). What still differs by enemy is finishing and shields, which the screen marks on the enemy.
+- **Per-move power makes real decisions, so Path 2 is not taken.** At the same enemy health, Path 2 lowers every player's results and narrows the planner's lead over random play on drafts from 33 to 22 points; the value between the best move and the others drops from 2.3 to 1.6 health. `UNIFORM_POWER` stays in the levers, off.
+- **Difficulty moved.** Every attack now carries an element, so the facility's three machine elements matter to every creature, and the same enemy health is easier on drafts. At 0.8 the planner wins 59% of random drafts and the naive "biggest number" player 14% of preset runs: steep. Enemy health is set in the screen pass against Nick's play.
+- **Looking ahead adds little yet** (0 to 8 points): most choices are decided this round; rests add some timing. Worth watching when parked mechanisms return.
+
