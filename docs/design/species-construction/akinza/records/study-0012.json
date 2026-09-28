@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0012",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T00:29:36.988220+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "prompt": "Edit ONLY the tail-to-body junction in IMAGE 1, the full rear view of Akinza. Preserve the head, ears, body proportions, arms, legs, feet, fur, gray shading, white background and BACK label. Keep the lower back a simple continuous furry form without paired bulges or central groove.\nIMAGE 2 is supporting construction evidence for three full round tails merging directly at the body. Its body fragments are placeholders and must not replace the full creature.\nREQUIRED JUNCTION: All THREE tail bases must converge together into ONE compact rounded organic root at EXACTLY the SAME LOCATION where that shared root fuses with the tailbone on the rear CENTERLINE. Think three thick ropes merging flush into one small rounded attachment at the body, with no length of common stem before they divide. Each tail emerges directly from the SAME shared root volume and then curves left. The three basal cross sections overlap and blend smoothly together there. No tail joins the side of another tail farther away. No staggered vertical row of roots. No descending seam from upper tail to middle tail to lower tail. No sharp sheet-like folds or stacked flat leaves at the junction.\nThe current image has a pointed upper meeting spot and long cascading lower joins; replace that entire local junction with the compact, full rounded shared root described above. Show enough of all three basal curves to make this single connection unambiguous.\nThe shared root must align with the spine, directly below the middle of the back. The tails curve toward the VIEWER'S LEFT only AFTER merging with this centered root. Preserve all three unequal rounded full tail bodies and pointed distal tips. Do not add a fourth tail, projecting trunk, separate hip roots, or additional body details.\nKeep the same full back-view framing. Fully fur-covered fictional animal character. One rear view only.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0012/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "6c4f028be0c6b066256f93e78e75be0c1048bd51380c1aeea418d3f50dd7980e"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0012/inputs/back.png",
+      "role": "immutable-generation-input",
+      "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0012/inputs/tail-geometry.png",
+      "role": "immutable-generation-input",
+      "sha256": "6348f6e327bc5d740d2ba0ad693f9b8fb0f38a176339960dcd6356eac33a2eda"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0012/back.png",
+    "role": "untouched-tool-output",
+    "sha256": "a7ac69b55b2f0c9eb76c659e410566493fb57f873445910ad4589de13966b6a0"
+  },
+  "verdict": "Rejected: local softening retains stacked left-side junction.",
+  "reviewer": "Codex",
+  "approval": null
+}

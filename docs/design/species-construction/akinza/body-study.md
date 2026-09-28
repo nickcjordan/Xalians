@@ -1,16 +1,20 @@
 # Akinza whole-body construction review
 
-Status: Nick accepted the remaining visible design direction while requesting corrections to the tail root, rear contours and gaze. Corrected outputs still await his review. This resumes layers 3 and 4. The neutral stance is an agent-selected inspection arrangement; expressive pose selection remains deferred.
+Status: Nick accepted the remaining visible design direction while requesting corrections to the tail root, rear contours and gaze. Nick accepted the gaze with "yup", then withdrew rear approval and clarified bilateral overlap at the root. This resumes layers 3 and 4. The neutral stance is an agent-selected inspection arrangement; expressive pose selection remains deferred.
 
-## Current correction candidates
+## Current review state
+
+The latest rear candidate is [study-0015 with research notes](tail-root-research.md). Studies 0008, 0012 and 0013 do not satisfy the central shared-root requirement. The earlier assessment of study-0008 as centered was incorrect. The gaze in study-0010 is accepted. See [the exact feedback sequence](correction-review.json).
+
+## Superseded rear and accepted gaze
 
 ![Revised rear with compact central root and reduced contours](evidence/back-study-0008.png)
 
-Study-0008 isolates the rear view. Its three tails share a compact root near the lower spine, then sweep toward the creature's left. The lower-back surface is flatter and lacks the previous paired cheek highlights. This is a visual correction candidate, not measured proof of a centered 3D attachment. Nick must judge whether the placement and contour satisfy his correction.
+Study-0008 isolates the rear view. Its three tails sweep left, but their junction remains incorrectly left-sided. The lower-back surface is flatter and lacks the previous paired cheek highlights. Nick rejected this attachment after reconsideration: the root remains left-sided and does not overlap both sides of the rear body. Do not use it as an accepted rear reference.
 
 ![Forward-looking eye alignment detail](evidence/face-study-0010.png)
 
-Study-0010 isolates the gaze. The pupils now have white space on both sides while retaining the large oval eye design. Use this detail instead of the inward-looking pupils in every earlier whole-body and head sheet. It still needs review and integration into a coherent construction master.
+Study-0010 isolates the gaze. The pupils now have white space on both sides while retaining the large oval eye design. Use this detail instead of the inward-looking pupils in every earlier whole-body and head sheet. Nick accepted this gaze. It still needs integration into a coherent construction master without regression.
 
 Whole-sheet attempts 0006 and 0007 did not reliably preserve both the centered root and correct tail direction. Study-0009 retained the inward gaze. They are saved as superseded attempts, not alternative designs for Nick to select.
 
@@ -39,10 +43,12 @@ Study-0005 refines study-0004. The ear panel now exposes a continuous shallow cu
 
 ## Evidence precedence and unfinished work
 
-Use Nick's existing corrections and scoped tail acceptance first. Use study-0008 for the current rear correction and study-0010 for gaze. For new hand/foot construction and the ear shell, use study-0005 rather than contradictory study-0003 details. Study-0003 remains a whole-body proportion study. Study-0004 is retained as revision history: its ear remained feather-like and its supposedly opposite hand views had the thumb on the same page side.
+Use Nick's existing corrections and scoped tail acceptance first. Use study-0015 as the current unapproved rear candidate and study-0010 for the accepted gaze. For new hand/foot construction and the ear shell, use study-0005 rather than contradictory study-0003 details. Study-0003 remains a whole-body proportion study. Study-0004 is retained as revision history: its ear remained feather-like and its supposedly opposite hand views had the thumb on the same page side.
 
-The corrected rear and gaze are the current review targets. These studies are not eligible for final pack approval. After review, integrate the corrected gaze and rear with the retained body direction and reconcile the chosen digit forms into coherent construction references. Preserve the accepted actual tail geometry. A small geometric probe may resolve projection ambiguity. Build the complete rough creature only after coherent construction references receive Nick's approval. Then compare actual camera renders and an unseen-angle turntable before surface detail or rigging.
+Only the moderated root and tail balance in study-0015 are the current subjective review target; do not ask for gaze approval again. These studies are not eligible for final pack approval. After review, integrate the corrected gaze and rear with the retained body direction and reconcile the chosen digit forms into coherent construction references. Preserve the accepted actual tail geometry. A small geometric probe may resolve projection ambiguity. Build the complete rough creature only after coherent construction references receive Nick's approval. Then compare actual camera renders and an unseen-angle turntable before surface detail or rigging.
 
 No masks, camera matrices, depth maps or alignment pass are claimed for these image studies. Those outputs belong to actual geometry or the later registered pack. No species contract, abilities, lore or approved asset directory changed.
 
 Exact prompts and provenance: [whole-body study](records/study-0003.json), [initial detail study](records/study-0004.json), [corrected detail study](records/study-0005.json), [first body correction](records/study-0006.json), [second body correction](records/study-0007.json), [rear correction](records/study-0008.json), [unsuccessful full-front gaze edit](records/study-0009.json), and [isolated gaze correction](records/study-0010.json). All images were generated using the built-in Codex subscription tool. Model and seed were not exposed. Full originals and input snapshots remain in the local ignored work directory; the displayed review images are exact committed copies of the outputs. See [scoped directional acceptance](body-direction-acceptance.json) for Nick's exact words and excluded aspects.
+
+Latest refinement: Nick asked to combine the earlier proportions with the centered base, moderating the large blend and long lower tail. Study-0015 is the current rear candidate; study-0014 is an intermediate placement correction. Accepted gaze and other retained design aspects remain unchanged.

@@ -70,4 +70,10 @@ Nick subsequently declined the pose choices and asked whether he needed to coach
 
 ## Whole-body and details, studies 0003 through 0010
 
-Current evidence, precedence and individual verdicts are in [body-study.md](body-study.md) and the numbered provenance records. Nick accepted the remaining visible design direction, excluding the centered tail attachment, rear contour and gaze corrections. Isolated rear study-0008 and face study-0010 address these after whole-sheet attempts regressed. Neither corrected output has Nick approval yet. No calibrated full-body set or complete rough creature is claimed. Preserve the accepted probe-0003 tail shape and resolve digit-count/projection discrepancies before releasing a construction master.
+Current evidence, precedence and individual verdicts are in [body-study.md](body-study.md) and the numbered provenance records. Nick accepted the remaining visible design direction, excluding the centered tail attachment, rear contour and gaze corrections. Isolated rear study-0008 and face study-0010 address these after whole-sheet attempts regressed. Nick subsequently approved the gaze but withdrew rear approval; see the later correction below. No calibrated full-body set or complete rough creature is claimed. Preserve the accepted probe-0003 tail shape and resolve digit-count/projection discrepancies before releasing a construction master.
+
+## Central root correction and research
+
+Nick retained study-0010 gaze approval but withdrew rear approval. The entire shared three-tail base must overlap both sides of the rear midline at the tailbone, not form a cascading seam on the left. [Research and latest candidate](tail-root-research.md) record the inspected animal references and study-0014. Studies 0012/0013 are rejected; prepared consolidation study-0011 was never generated. No complete rough creature is released while the root remains under review.
+
+Latest refinement: Nick asked to combine the earlier proportions with the centered base, moderating the large blend and long lower tail. Study-0015 is the current rear candidate; study-0014 is an intermediate placement correction. Accepted gaze and other retained design aspects remain unchanged.

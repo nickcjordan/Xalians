@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0015",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T00:32:30.666442+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "prompt": "Refine the rear-view Akinza in image 1 by combining its CENTERED tail attachment with the lighter balance of the three tail forms in image 2. Image 2's left-offset root is WRONG and must not return. Preserve all body, head, ears, limbs, fur, feet, lighting, white background and BACK label.\nKeep the shared tail root centered at the bottom of the spine, visibly overlapping a small amount of BOTH the left and right sides of the rear body. Reduce the bulky enlarged shared blend of image 1 modestly, keeping its center fixed. It should be a compact smooth junction at the body, not a large swelling.\nRebalance the three tail lengths: the UPPER and LOWER tails should have comparable flowing reach from the shared junction to their pointed tips. The upper tail should not look short and stubby while the lower looks elongated. Lengthen the upper tail's sweep somewhat, and shorten the lower tail's extra-long proximal run. Let the middle tail be slightly longest. Preserve three full rounded cattail-like volumes and pointed tapered tips.\nAll three tail bases must meet together AT THE SAME compact central attachment on the body and fan toward VIEWER LEFT immediately. The lower tail must NOT have a long separate stem descending from the root; the upper tail must NOT start farther left on the body. Show all three basal curves joining the same centered root. No delayed trident split or projecting common trunk.\nThis is a restrained adjustment between the two references: central placement of image 1, compactness and balanced visual weight informed by image 2. Do not make the root completely left-sided again. Keep the rear body softly fur-covered with modest flat contours. One complete rear view.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0015/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "c93e46d897689b6bc779e8d5b890c501c825f1131abc882df6d0bf1818826b8e"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0015/inputs/centered-base.png",
+      "role": "immutable-generation-input",
+      "sha256": "0d73c8785c5304ce0608f9600d9ee0db6125cc3a12c6a02a98ef4a730c623385"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0015/inputs/earlier-proportions.png",
+      "role": "immutable-generation-input",
+      "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0015/back.png",
+    "role": "untouched-tool-output",
+    "sha256": "e6409f7c10e9d30ebaa7af30245e1ef4a8017e97a7ca36b4f566c8aeef7c122c"
+  },
+  "userDirection": "Yeah, I think you overcompensated a tad. Maybe combine those two a little bit so that you still have the tail base being centered, but there's not one longer tail on the bottom and one short tail on top",
+  "verdict": "Latest review candidate: retains centered broad root with modestly reduced lower-tail reach and rebalanced upper/lower forms. New proportions and junction still await Nick review.",
+  "reviewer": "Codex",
+  "approval": null
+}

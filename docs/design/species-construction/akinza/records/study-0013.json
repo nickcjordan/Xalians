@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0013",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T00:29:36.988220+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "prompt": "Redraw the TAIL JUNCTION of this close-up fictional furry creature construction study. This is an external grayscale sculptural form. Preserve the three full thick rounded tails, their pointed tips and gray material, but substantially restructure their proximal thirds.\nThe current tails cascade like stacked leaves, with the lowest tail base running down beside the body. That is WRONG.\nMake the bases of all three tails come together at ONE SINGLE COMPACT COMMON ROOT on the centerline of the lower back, at the very same place this root meets the body. All THREE proximal tail centerlines meet at this one shared node. Upper tail bends up-left out of the node, middle tail extends left out of the node, LOWER tail first originates UP at that SAME node and then arcs down-left. Lift the lowest tail's base to the node. The fur-covered lower torso must be visible BELOW this root rather than a long attached tail seam descending beside the leg.\nVisually read as three rounded organic lobes fused together directly at one small central point on the back, then fanning out in three distinct directions. Three tails merge into the body at once, not a sequence of tails merging into each other at staggered locations. No common trunk length, no flat ribbon folds, no lower branch starting down the leg, no connector collar or mechanical part.\nA compact smooth rounded blend at the node is essential; do not merely blur the existing long stacked seam. Keep the flatter simple furry back surface and all unrelated shapes. Same close-up framing on white.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0013/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "2047fd0162a846cbd86cc3688c70aed1f7fbb286d706d6e374b6cea71bb35002"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0013/inputs/junction.png",
+      "role": "immutable-generation-input",
+      "sha256": "0f3a36cb01993b0fd9152db6a6a863613876a86dec34191ec11d941b0658cb63"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0013/junction.png",
+    "role": "untouched-tool-output",
+    "sha256": "d9ec73d118719f130d645d68d96cec22738ad7850a9946cf527802589cb7cccf"
+  },
+  "verdict": "Rejected: lower-tail join and shared attachment remain biased to left rear side.",
+  "reviewer": "Codex",
+  "approval": null,
+  "inputPreparation": {
+    "operation": "rectangular crop only",
+    "source": {
+      "path": "untracked/species-construction/akinza/study-0012/back.png",
+      "role": "crop-source",
+      "sha256": "a7ac69b55b2f0c9eb76c659e410566493fb57f873445910ad4589de13966b6a0"
+    },
+    "boxXYXY": [
+      25,
+      520,
+      800,
+      1220
+    ]
+  }
+}

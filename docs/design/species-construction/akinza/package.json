@@ -96,6 +96,32 @@
       "instruction": "Preserve large distinctive oval eye design, but center pupils for forward parallel gaze without inward convergence.",
       "words": "The back view went back to showing the tail connecting in a spot that was not centered above where it should be. It should be at the base of the spine, not offset to the left. Also, the butt is showing sexual again. You reduce the contours of the butt cheeks so that it does not look as sexual. Also, the creature's eyes look a bit cross-eyed. I like everything about the eye except for the fact that it's cross-eyed. Everything else looks good to me",
       "source": "Nick, this chat"
+    },
+    "gaze-acceptance": {
+      "status": "accepted-aspects",
+      "instruction": "Study-0010 forward gaze accepted; later rear correction does not revoke the gaze.",
+      "words": "yup",
+      "source": "Nick, this chat, with subsequent rear-only withdrawal",
+      "evidence": {
+        "path": "docs/design/species-construction/akinza/correction-review.json",
+        "role": "feedback-sequence",
+        "sha256": "518fbdb5ead5748ccb14feef44e4506918d88d48f0cf03fc0f8fc3556ad9824d"
+      }
+    },
+    "root-bilateral-overlap": {
+      "status": "user-direction",
+      "instruction": "One compact shared root at tailbone, centered across the rear midline, overlapping some left and right rear body surface; three tails fuse at exactly this same body-level site before sweeping left",
+      "words": "I think you need to do some online research to look at what tails look like on animals because I should not be able to see the entire right buttocks since the tail fusion should happen directly center. So it should be overlapping a little bit on the left butux and the right Botox, but you have it all on the left cheek",
+      "priorClarificationWords": "Actually, no, the rear view still shows the tail coming together a little odd. The three pieces should join together as one at the same place that it fuses into the tailbone",
+      "source": "Nick, this chat",
+      "approval": null
+    },
+    "root-tail-balance": {
+      "status": "user-direction",
+      "instruction": "Retain centered root overlapping both rear sides; moderate the bulky blend and balance upper/lower reach. Do not leave one elongated lower tail and a short upper tail.",
+      "words": "Yeah, I think you overcompensated a tad. Maybe combine those two a little bit so that you still have the tail base being centered, but there's not one longer tail on the bottom and one short tail on top",
+      "source": "Nick, this chat",
+      "approval": null
     }
   },
   "stages": {
@@ -113,18 +139,21 @@
         "tail-shape-acceptance",
         "tail-pose",
         "body-direction",
-        "forward-gaze"
+        "forward-gaze",
+        "gaze-acceptance",
+        "root-bilateral-overlap",
+        "root-tail-balance"
       ],
       "artifacts": [
         {
           "path": "docs/design/species-view-readings/akinza/reading.md",
           "role": "reading",
-          "sha256": "7463409dcd078492b2feb2b89afd79b68653196e6d51865d334148d0aae91f61"
+          "sha256": "df070bf3af62470c248593e0d61b4aab2ba0bb713274351d1d032f18de03b034"
         },
         {
           "path": "docs/design/species-construction/akinza/brief.md",
           "role": "construction-brief",
-          "sha256": "0956f2ef2ab03df3d1258edf480843ee196cad41e083a7b26716bf1adf95be2f"
+          "sha256": "2e919d56bdf8307565103c5599ca503c80b43734eac7f51ae48edc837c63bf47"
         },
         {
           "path": "apps/web/src/svg/species/akinza.svg",
@@ -140,6 +169,16 @@
           "path": "docs/design/species-construction/akinza/body-direction-acceptance.json",
           "role": "scoped-direction-acceptance",
           "sha256": "f2133cf4300db8fc555bc6670f339e70f5336c8c2e262f41301041d7b7bab600"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/correction-review.json",
+          "role": "scoped-feedback",
+          "sha256": "f8a8fa7be19b2ffa576b78fdce2a4784a9fa1a4b9cfffbba6fd9dd100a96f3ec"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/tail-root-research.md",
+          "role": "research-and-review",
+          "sha256": "e0da6fff22cac282e51e6eae87e5aafb02a116a05d74c8935c35bbe18e55a526"
         }
       ],
       "inputSnapshot": {
@@ -154,15 +193,18 @@
           "tail-shape-acceptance": "4370bf068e5f1fb051167bf99a919d3740c405714d0de4b906e43757bea4cb22",
           "tail-pose": "1e1acdbcf653d31f6e808d97ef97d361e4ece868c41afbfa418c67ea077d7230",
           "body-direction": "6d22b1f383db05ae9eb01612e9b938af92be894d356dd76867271987df6ff4cc",
-          "forward-gaze": "6ca99dae3a87c2980e6478362c33c91c888da8cf9f06be1c396d0356705ca040"
+          "forward-gaze": "6ca99dae3a87c2980e6478362c33c91c888da8cf9f06be1c396d0356705ca040",
+          "gaze-acceptance": "fc7fd4a6dd433ed321972d58120606d33051a349608b3b0273bb82fcd0e2a1a0",
+          "root-bilateral-overlap": "7f3009b4eff7b9f2ffe37303c427901618d30de37fc026bc05846a649ed53a21",
+          "root-tail-balance": "41a673efbcf0dbc5999caab93bfb3172076bc9655088afe6c0a0f23219356260"
         },
         "dependencies": {}
       },
       "review": {
         "status": "pending",
         "reviewer": "Codex",
-        "notes": "Nick accepted remaining design direction while correcting root, rear contours and gaze. Exact scoped feedback retained; revised outputs await review.",
-        "artifactDigest": "1d698398cf60d617d123c8bf03c1728b14661e4f0a4155bc91423004b6c9a265"
+        "artifactDigest": "318a3ea98342e05801d709024903f3cfedadd147714405c698386b4c6256e64e",
+        "notes": "Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased."
       },
       "approval": null
     },
@@ -229,7 +271,10 @@
         "tail-pose",
         "body-direction",
         "forward-gaze",
-        "body-details"
+        "body-details",
+        "gaze-acceptance",
+        "root-bilateral-overlap",
+        "root-tail-balance"
       ],
       "artifacts": [
         {
@@ -329,7 +374,7 @@
         },
         {
           "path": "untracked/species-construction/akinza/study-0008/back.png",
-          "role": "current-correction-candidate",
+          "role": "rejected-root-placement",
           "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
         },
         {
@@ -369,7 +414,7 @@
         },
         {
           "path": "untracked/species-construction/akinza/study-0010/face.png",
-          "role": "current-correction-candidate",
+          "role": "accepted-gaze",
           "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
         },
         {
@@ -390,7 +435,7 @@
         {
           "path": "docs/design/species-construction/akinza/body-study.md",
           "role": "review-and-precedence",
-          "sha256": "f6991849f0959ce2b3ece313d058e977458624039d5aab7fe1e1fb1e4b6b5036"
+          "sha256": "d5d4107aebef5af41b1e5442bfc453fe16813870744a7f642e25bc590a87954c"
         },
         {
           "path": "docs/design/species-construction/akinza/evidence/body-study-0003.png",
@@ -406,6 +451,146 @@
           "path": "docs/design/species-construction/akinza/evidence/face-study-0010.png",
           "role": "portable-review-image",
           "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/correction-review.json",
+          "role": "scoped-feedback",
+          "sha256": "f8a8fa7be19b2ffa576b78fdce2a4784a9fa1a4b9cfffbba6fd9dd100a96f3ec"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/tail-root-research.md",
+          "role": "research-and-review",
+          "sha256": "e0da6fff22cac282e51e6eae87e5aafb02a116a05d74c8935c35bbe18e55a526"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/back-study-0014.png",
+          "role": "superseded-root-balance",
+          "sha256": "0d73c8785c5304ce0608f9600d9ee0db6125cc3a12c6a02a98ef4a730c623385"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0011.json",
+          "role": "provenance",
+          "sha256": "c47e40a390dc54e05b6a1309ccf9c6a15728464df75864a964a2d0e9b4eb0f08"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/prompt.txt",
+          "role": "prepared-prompt",
+          "sha256": "394ac9479e11ff1fb6d7f7b6534e95ef48904d1f5584ef306a53b4ef98aeedac"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/inputs/approved-back.png",
+          "role": "immutable-generation-input",
+          "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/inputs/approved-face.png",
+          "role": "immutable-generation-input",
+          "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/inputs/body.png",
+          "role": "immutable-generation-input",
+          "sha256": "3fe5924897aa3220ca1eb7b019856241a7070b38333d9bfc6728b8bc154eb020"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/inputs/details.png",
+          "role": "immutable-generation-input",
+          "sha256": "47de03c0f4e165d11d0193d04729844c51605169ad7ef5df3fe92e7cc12ed785"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0012.json",
+          "role": "provenance",
+          "sha256": "b88ec7606553832720b139aba911955f058827961073157456ffb0d412d27749"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0012/prompt.txt",
+          "role": "exact-prompt",
+          "sha256": "6c4f028be0c6b066256f93e78e75be0c1048bd51380c1aeea418d3f50dd7980e"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0012/inputs/back.png",
+          "role": "immutable-generation-input",
+          "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0012/inputs/tail-geometry.png",
+          "role": "immutable-generation-input",
+          "sha256": "6348f6e327bc5d740d2ba0ad693f9b8fb0f38a176339960dcd6356eac33a2eda"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0012/back.png",
+          "role": "rejected-root-study",
+          "sha256": "a7ac69b55b2f0c9eb76c659e410566493fb57f873445910ad4589de13966b6a0"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0013.json",
+          "role": "provenance",
+          "sha256": "f295786607c59eacf66b5696e49fce52d46da093f39405392ffcb1d6fbc497fa"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0013/prompt.txt",
+          "role": "exact-prompt",
+          "sha256": "2047fd0162a846cbd86cc3688c70aed1f7fbb286d706d6e374b6cea71bb35002"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0013/inputs/junction.png",
+          "role": "immutable-generation-input",
+          "sha256": "0f3a36cb01993b0fd9152db6a6a863613876a86dec34191ec11d941b0658cb63"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0013/junction.png",
+          "role": "rejected-root-study",
+          "sha256": "d9ec73d118719f130d645d68d96cec22738ad7850a9946cf527802589cb7cccf"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0014.json",
+          "role": "provenance",
+          "sha256": "de905b00f696cc3d76f4e59a765fac20454f1828ec2b2b01b696280a91a83c0a"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0014/prompt.txt",
+          "role": "exact-prompt",
+          "sha256": "614ef53e0d18a838452975bd8297021ab7ecd073552db9e70506b24f97aac860"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0014/inputs/back.png",
+          "role": "immutable-generation-input",
+          "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0014/back.png",
+          "role": "superseded-root-balance",
+          "sha256": "0d73c8785c5304ce0608f9600d9ee0db6125cc3a12c6a02a98ef4a730c623385"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0015.json",
+          "role": "provenance",
+          "sha256": "1f46811b9c79e48cf9ef3502f1cf9dbcc95a247496645003dc3d6911a037a5fe"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0015/prompt.txt",
+          "role": "exact-prompt",
+          "sha256": "c93e46d897689b6bc779e8d5b890c501c825f1131abc882df6d0bf1818826b8e"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0015/back.png",
+          "role": "current-root-candidate",
+          "sha256": "e6409f7c10e9d30ebaa7af30245e1ef4a8017e97a7ca36b4f566c8aeef7c122c"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/back-study-0015.png",
+          "role": "portable-review-image",
+          "sha256": "e6409f7c10e9d30ebaa7af30245e1ef4a8017e97a7ca36b4f566c8aeef7c122c"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0015/inputs/centered-base.png",
+          "role": "immutable-generation-input",
+          "sha256": "0d73c8785c5304ce0608f9600d9ee0db6125cc3a12c6a02a98ef4a730c623385"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0015/inputs/earlier-proportions.png",
+          "role": "immutable-generation-input",
+          "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
         }
       ],
       "inputSnapshot": {
@@ -419,17 +604,20 @@
           "tail-pose": "1e1acdbcf653d31f6e808d97ef97d361e4ece868c41afbfa418c67ea077d7230",
           "body-direction": "6d22b1f383db05ae9eb01612e9b938af92be894d356dd76867271987df6ff4cc",
           "forward-gaze": "6ca99dae3a87c2980e6478362c33c91c888da8cf9f06be1c396d0356705ca040",
-          "body-details": "8a949daf3db7f36b67a3d51c5e1640c7f77ffe0be5aea9358bea97cc448a19d5"
+          "body-details": "8a949daf3db7f36b67a3d51c5e1640c7f77ffe0be5aea9358bea97cc448a19d5",
+          "gaze-acceptance": "fc7fd4a6dd433ed321972d58120606d33051a349608b3b0273bb82fcd0e2a1a0",
+          "root-bilateral-overlap": "7f3009b4eff7b9f2ffe37303c427901618d30de37fc026bc05846a649ed53a21",
+          "root-tail-balance": "41a673efbcf0dbc5999caab93bfb3172076bc9655088afe6c0a0f23219356260"
         },
         "dependencies": {
-          "identity": "70f759eb81c1acc87595f18687cf74ea14344babf6a3d1aa448f80bddd14d408"
+          "identity": "ca7e1d5750cd075323437e7acf573680de666e796c952fdd51c7e9c6a2c92243"
         }
       },
       "review": {
         "status": "fail",
         "reviewer": "Codex",
-        "notes": "Studies 0008 and 0010 are the current rear/gaze correction candidates. Body direction otherwise retained. Complete set is not coherent: older full-body gaze and digit counts remain superseded; nominal images are not calibrated geometry.",
-        "artifactDigest": "664ecb377994199e98d80f6515c67b892f6db9884acd8a5dfcd9ff7fd0d6e27b"
+        "artifactDigest": "9fd36768a5299341ff368f255c1cf03f1ff40931fbc414057b7181d342478caf",
+        "notes": "Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased."
       },
       "approval": null
     },
@@ -447,13 +635,16 @@
         "tail-pose",
         "body-direction",
         "forward-gaze",
-        "body-details"
+        "body-details",
+        "gaze-acceptance",
+        "root-bilateral-overlap",
+        "root-tail-balance"
       ],
       "artifacts": [
         {
           "path": "docs/design/species-construction/akinza/connections.json",
           "role": "attachment-graph",
-          "sha256": "b42c64399ad5c62f320be133bad083cb03c134191f658d5809441abb80e96005"
+          "sha256": "d54829cc632560ec5e4b20bfaf8ad4e1e0684868b2e6566cd7ee17adccb29ccf"
         },
         {
           "path": "untracked/species-construction/akinza/study-0002/tail.png",
@@ -523,12 +714,152 @@
         {
           "path": "docs/design/species-construction/akinza/body-study.md",
           "role": "review-and-precedence",
-          "sha256": "f6991849f0959ce2b3ece313d058e977458624039d5aab7fe1e1fb1e4b6b5036"
+          "sha256": "d5d4107aebef5af41b1e5442bfc453fe16813870744a7f642e25bc590a87954c"
         },
         {
           "path": "docs/design/species-construction/akinza/evidence/details-study-0005.png",
           "role": "portable-review-image",
           "sha256": "47de03c0f4e165d11d0193d04729844c51605169ad7ef5df3fe92e7cc12ed785"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/correction-review.json",
+          "role": "scoped-feedback",
+          "sha256": "f8a8fa7be19b2ffa576b78fdce2a4784a9fa1a4b9cfffbba6fd9dd100a96f3ec"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/tail-root-research.md",
+          "role": "research-and-review",
+          "sha256": "e0da6fff22cac282e51e6eae87e5aafb02a116a05d74c8935c35bbe18e55a526"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/back-study-0014.png",
+          "role": "superseded-root-balance",
+          "sha256": "0d73c8785c5304ce0608f9600d9ee0db6125cc3a12c6a02a98ef4a730c623385"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0011.json",
+          "role": "provenance",
+          "sha256": "c47e40a390dc54e05b6a1309ccf9c6a15728464df75864a964a2d0e9b4eb0f08"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/prompt.txt",
+          "role": "prepared-prompt",
+          "sha256": "394ac9479e11ff1fb6d7f7b6534e95ef48904d1f5584ef306a53b4ef98aeedac"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/inputs/approved-back.png",
+          "role": "immutable-generation-input",
+          "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/inputs/approved-face.png",
+          "role": "immutable-generation-input",
+          "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/inputs/body.png",
+          "role": "immutable-generation-input",
+          "sha256": "3fe5924897aa3220ca1eb7b019856241a7070b38333d9bfc6728b8bc154eb020"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0011/inputs/details.png",
+          "role": "immutable-generation-input",
+          "sha256": "47de03c0f4e165d11d0193d04729844c51605169ad7ef5df3fe92e7cc12ed785"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0012.json",
+          "role": "provenance",
+          "sha256": "b88ec7606553832720b139aba911955f058827961073157456ffb0d412d27749"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0012/prompt.txt",
+          "role": "exact-prompt",
+          "sha256": "6c4f028be0c6b066256f93e78e75be0c1048bd51380c1aeea418d3f50dd7980e"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0012/inputs/back.png",
+          "role": "immutable-generation-input",
+          "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0012/inputs/tail-geometry.png",
+          "role": "immutable-generation-input",
+          "sha256": "6348f6e327bc5d740d2ba0ad693f9b8fb0f38a176339960dcd6356eac33a2eda"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0012/back.png",
+          "role": "rejected-root-study",
+          "sha256": "a7ac69b55b2f0c9eb76c659e410566493fb57f873445910ad4589de13966b6a0"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0013.json",
+          "role": "provenance",
+          "sha256": "f295786607c59eacf66b5696e49fce52d46da093f39405392ffcb1d6fbc497fa"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0013/prompt.txt",
+          "role": "exact-prompt",
+          "sha256": "2047fd0162a846cbd86cc3688c70aed1f7fbb286d706d6e374b6cea71bb35002"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0013/inputs/junction.png",
+          "role": "immutable-generation-input",
+          "sha256": "0f3a36cb01993b0fd9152db6a6a863613876a86dec34191ec11d941b0658cb63"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0013/junction.png",
+          "role": "rejected-root-study",
+          "sha256": "d9ec73d118719f130d645d68d96cec22738ad7850a9946cf527802589cb7cccf"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0014.json",
+          "role": "provenance",
+          "sha256": "de905b00f696cc3d76f4e59a765fac20454f1828ec2b2b01b696280a91a83c0a"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0014/prompt.txt",
+          "role": "exact-prompt",
+          "sha256": "614ef53e0d18a838452975bd8297021ab7ecd073552db9e70506b24f97aac860"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0014/inputs/back.png",
+          "role": "immutable-generation-input",
+          "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0014/back.png",
+          "role": "superseded-root-balance",
+          "sha256": "0d73c8785c5304ce0608f9600d9ee0db6125cc3a12c6a02a98ef4a730c623385"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/records/study-0015.json",
+          "role": "provenance",
+          "sha256": "1f46811b9c79e48cf9ef3502f1cf9dbcc95a247496645003dc3d6911a037a5fe"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0015/prompt.txt",
+          "role": "exact-prompt",
+          "sha256": "c93e46d897689b6bc779e8d5b890c501c825f1131abc882df6d0bf1818826b8e"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0015/back.png",
+          "role": "current-root-candidate",
+          "sha256": "e6409f7c10e9d30ebaa7af30245e1ef4a8017e97a7ca36b4f566c8aeef7c122c"
+        },
+        {
+          "path": "docs/design/species-construction/akinza/evidence/back-study-0015.png",
+          "role": "portable-review-image",
+          "sha256": "e6409f7c10e9d30ebaa7af30245e1ef4a8017e97a7ca36b4f566c8aeef7c122c"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0015/inputs/centered-base.png",
+          "role": "immutable-generation-input",
+          "sha256": "0d73c8785c5304ce0608f9600d9ee0db6125cc3a12c6a02a98ef4a730c623385"
+        },
+        {
+          "path": "untracked/species-construction/akinza/study-0015/inputs/earlier-proportions.png",
+          "role": "immutable-generation-input",
+          "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
         }
       ],
       "inputSnapshot": {
@@ -541,17 +872,20 @@
           "tail-pose": "1e1acdbcf653d31f6e808d97ef97d361e4ece868c41afbfa418c67ea077d7230",
           "body-direction": "6d22b1f383db05ae9eb01612e9b938af92be894d356dd76867271987df6ff4cc",
           "forward-gaze": "6ca99dae3a87c2980e6478362c33c91c888da8cf9f06be1c396d0356705ca040",
-          "body-details": "8a949daf3db7f36b67a3d51c5e1640c7f77ffe0be5aea9358bea97cc448a19d5"
+          "body-details": "8a949daf3db7f36b67a3d51c5e1640c7f77ffe0be5aea9358bea97cc448a19d5",
+          "gaze-acceptance": "fc7fd4a6dd433ed321972d58120606d33051a349608b3b0273bb82fcd0e2a1a0",
+          "root-bilateral-overlap": "7f3009b4eff7b9f2ffe37303c427901618d30de37fc026bc05846a649ed53a21",
+          "root-tail-balance": "41a673efbcf0dbc5999caab93bfb3172076bc9655088afe6c0a0f23219356260"
         },
         "dependencies": {
-          "identity": "70f759eb81c1acc87595f18687cf74ea14344babf6a3d1aa448f80bddd14d408"
+          "identity": "ca7e1d5750cd075323437e7acf573680de666e796c952fdd51c7e9c6a2c92243"
         }
       },
       "review": {
         "status": "fail",
         "reviewer": "Codex",
-        "notes": "Study-0005 clarifies ear shell and hand/foot proposals. New body attachment graph is provisional. Corrected rear root is study-0008; complete attachment evidence is not yet approved.",
-        "artifactDigest": "2a680f0bbcdf430ad340cb94fddc88c7ba8f9da2fc45505bdebbfefd56a1f9ad"
+        "artifactDigest": "6007c0c8fad8eb13624f0299674cdf45786270035a742aeab11e54462719f9b0",
+        "notes": "Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased."
       },
       "approval": null
     },

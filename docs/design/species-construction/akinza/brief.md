@@ -35,4 +35,10 @@ Probe-0003's full rounded tails, pointed taper and compact body fusion are accep
 
 ## Whole-body follow-through
 
-See [the current body review](body-study.md) for studies 0003 through 0010. Nick accepted the remaining design direction while requesting a centered spinal tail root, reduced rear contours and a forward gaze. The latest rear and face corrections await his review. Detail study-0005 proposes the ear shell and hand/foot construction; its older front-head gaze is superseded by study-0010. Historical sheets do not override these corrections or probe-0003 tail-shape acceptance.
+See [the current body review](body-study.md) for studies 0003 through 0010. Nick accepted the remaining design direction while requesting a centered spinal tail root, reduced rear contours and a forward gaze. The face correction is accepted; rear approval was withdrawn and study-0014 is the replacement candidate. Detail study-0005 proposes the ear shell and hand/foot construction; its older front-head gaze is superseded by study-0010. Historical sheets do not override these corrections or probe-0003 tail-shape acceptance.
+
+## Central root correction and research
+
+Nick retained study-0010 gaze approval but withdrew rear approval. The entire shared three-tail base must overlap both sides of the rear midline at the tailbone, not form a cascading seam on the left. [Research and latest candidate](tail-root-research.md) record the inspected animal references and study-0014. Studies 0012/0013 are rejected; prepared consolidation study-0011 was never generated. No complete rough creature is released while the root remains under review.
+
+Latest refinement: Nick asked to combine the earlier proportions with the centered base, moderating the large blend and long lower tail. Study-0015 is the current rear candidate; study-0014 is an intermediate placement correction. Accepted gaze and other retained design aspects remain unchanged.

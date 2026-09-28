@@ -102,3 +102,21 @@ Whole-body review and corrections, 2026-09-27:
 > The back view went back to showing the tail connecting in a spot that was not centered above where it should be. It should be at the base of the spine, not offset to the left. Also, the butt is showing sexual again. You reduce the contours of the butt cheeks so that it does not look as sexual. Also, the creature's eyes look a bit cross-eyed. I like everything about the eye except for the fact that it's cross-eyed. Everything else looks good to me
 
 Carry forward the remaining visual design direction and eye shape. Correct the shared tail root to the rear centerline at the base of the spine, reduce the paired rear contours, and make the pupils look forward without inward convergence. The corrected rear study-0008 and gaze study-0010 await review. This is scoped directional acceptance, not a passing complete stage. The bound record is `../../species-construction/akinza/body-direction-acceptance.json`. Expressive pose choices remain deferred.
+
+Rear correction reconsidered, 2026-09-28:
+
+Nick first answered "yup" to the rear/gaze review, then clarified:
+
+> Actually, no, the rear view still shows the tail coming together a little odd. The three pieces should join together as one at the same place that it fuses into the tailbone
+
+He then requested animal-anatomy research and said:
+
+> I think you need to do some online research to look at what tails look like on animals because I should not be able to see the entire right buttocks since the tail fusion should happen directly center. So it should be overlapping a little bit on the left butux and the right Botox, but you have it all on the left cheek
+
+Preserve the accepted gaze. Rear approval is withdrawn. All three tail bases merge at the same central body attachment; its visible footprint must overlap some of both sides of the rear body before the tails sweep left. The research-informed study-0014 is unapproved. This supersedes earlier claims that study-0008 had resolved the centered root.
+
+Tail balance refinement:
+
+> Yeah, I think you overcompensated a tad. Maybe combine those two a little bit so that you still have the tail base being centered, but there's not one longer tail on the bottom and one short tail on top
+
+Keep the centered attachment, moderate the enlarged blend, and balance upper/lower tail reach. Study-0015 combines those directions and awaits review.

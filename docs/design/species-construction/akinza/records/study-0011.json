@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0011",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T00:29:36.988220+00:00",
+  "tool": null,
+  "billingRoute": null,
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "prompt": "Consolidate these existing Akinza designs into ONE grayscale construction sheet with exactly three large full-body views: FRONT, LEFT PROFILE, BACK. The aim is to faithfully integrate APPROVED corrections, not redesign the creature.\nREFERENCE ROLES:\n1: Full-body proportions and neutral stance. Its FRONT EYES and BACK ROOT are obsolete; override them using images 2 and 3. Its compact foreshortened side tails are useful.\n2: APPROVED FACE AND GAZE. Match this face exactly in the front view: dark pupils centered in each white oval, balanced white on either side of each pupil, looking straight forward without inward convergence. Preserve large oval eye shape, tiny nose, short muzzle and gentle expression.\n3: APPROVED BACK. Match its tail-root placement and continuous simple furry lower-back contour. A compact shared root is centered below the spine, then three thick pointed tails sweep to viewer LEFT. Preserve this back anatomy exactly.\n4: Hand and foot construction. Each hand has THREE long fingers plus ONE shorter opposed thumb, four digits total with small claws. Each foot has THREE broad forward toes with small claws. Use these same counts in all views, allowing natural occlusion. The smooth ear cup diagram explains underlying ear shape; the full character retains softly shaggy fur.\nAll views show the same slender upright fully fur-covered fictional feline creature. Preserve head/body proportions, broad sideways ears, limb volumes and the approved relaxed technical stance. Arms down slightly clear of torso, planted feet moderately apart. Same scale, aligned ground line and head heights. Soft neutral gray shading, white landscape sheet, generous panel spacing, unobtrusive captions. No numbers or annotations on the creature.\nTAIL INVARIANTS: exactly three full rounded unequal tails, each tapering to a point, fuse directly with each other and the body at a compact base on the rear midline at the base of the spine. NO long projecting common stalk and no delayed trident split. They sweep toward the creature's own LEFT and slightly backward. Front: tails viewer RIGHT. Back: tails viewer LEFT, centered spinal root clearly visible as in image 3. Left profile: faces viewer LEFT, lateral tail sweep points toward camera, so compact overlapping foreshortened round forms project modestly to viewer right, NOT the broad fan from the front/back. Only camera changes.\nKeep the rear body simplified as in approved image 3, without paired rounded bulges or a central groove. Ears have continuous thin cupped tissue beneath soft shaggy hair, never feather quills or jagged cartilage.\nCritically preserve the APPROVED centered gaze of image 2 and APPROVED centered tail attachment of image 3. Do not reproduce image 1's old errors. Maintain recognizable identity throughout.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0011/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "394ac9479e11ff1fb6d7f7b6534e95ef48904d1f5584ef306a53b4ef98aeedac"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0011/inputs/approved-back.png",
+      "role": "immutable-generation-input",
+      "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0011/inputs/approved-face.png",
+      "role": "immutable-generation-input",
+      "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0011/inputs/body.png",
+      "role": "immutable-generation-input",
+      "sha256": "3fe5924897aa3220ca1eb7b019856241a7070b38333d9bfc6728b8bc154eb020"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0011/inputs/details.png",
+      "role": "immutable-generation-input",
+      "sha256": "47de03c0f4e165d11d0193d04729844c51605169ad7ef5df3fe92e7cc12ed785"
+    }
+  ],
+  "output": null,
+  "verdict": "Canceled before generation when Nick withdrew rear approval. No image tool call or output.",
+  "reviewer": "Codex",
+  "approval": null
+}
