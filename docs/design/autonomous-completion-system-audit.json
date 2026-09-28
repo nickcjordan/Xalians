@@ -15,7 +15,7 @@
     },
     "protocol": {
       "path": "docs/design/autonomous-completion-audit.md",
-      "sha256": "682ffeec829db28ba0c9169225d194df3fdfde1c779e3d73003a0bc4691fb320"
+      "sha256": "3c4bc14899aaa73f72c232e037744c1aac1600baf1be4f778f67e5e8b7f5c6fc"
     },
     "gate": {
       "path": "scripts/completion_audit.py",
@@ -39,7 +39,11 @@
     },
     "work": {
       "path": "docs/design/autonomous-completion-active-work.md",
-      "sha256": "fbb24add89d9af682d1becb6b355b231132f574442fe9d39bcd481d6a0271649"
+      "sha256": "bedf365ab3fd94557aaf754160f37d57ecbbc378c34f784f85644ebf8d382fe8"
+    },
+    "discovery": {
+      "path": "docs/design/completion-hook-discovery-evidence.json",
+      "sha256": "ef53a324968c5c1b48c6e1e4616382db9184fba6c08b6af3a20979817f18ed32"
     }
   },
   "criteria": [
@@ -81,11 +85,12 @@
       "id": "activation",
       "expectation": "Automatic runtime dispatch is verified after the user trusts the exact hook definition.",
       "status": "blocked",
-      "assessment": "Hooks are configured and wrapper-tested. Live runtime trust/dispatch is not verified and cannot be substituted with manual script invocation.",
+      "assessment": "Fixed discovery by installing the merged definitions in the primary checkout. The actual runtime lists identical hook sources and hashes for primary and linked checkouts. Interactive startup reached the three-hook review screen. Hooks remain untrusted; actual dispatch is not yet verified.",
       "evidence": [
         "hooks",
         "work",
-        "protocol"
+        "protocol",
+        "discovery"
       ]
     }
   ],
@@ -146,19 +151,19 @@
       ],
       "blocker": {
         "externalDependency": "User review/trust of repository hooks in Codex; actual dispatch confirmation",
-        "attempts": "Verified official hook contract, installed CLI hook support, direct Windows wrapper execution, and simulated lifecycle. Did not bypass trust or edit trust records.",
+        "attempts": "Verified actual runtime discovery from both primary and linked checkouts and reached the interactive review screen after correcting missing primary-checkout files. Tested startup with --no-daemon. No trust was bypassed or granted.",
         "unblocksWhen": "User reviews/trusts this hooks.json definition on a supported Codex surface and a real lifecycle dispatch is observed."
       }
     }
   ],
   "audit": {
     "reviewer": "Codex primary with independent /root/quality_audit challenges",
-    "comparison": "Compared requested autonomous follow-through with actual instructions, gate behavior, failure regressions and Akinza negative case. Audit findings led to code fixes in this turn.",
+    "comparison": "Compared installed hook discovery and real CLI startup with the handoff instructions. Found primary-checkout hook sourcing and corrected the missing files. Saved exact runtime evidence. Existing gate regression results apply to unchanged script bytes; no new model repair is claimed.",
     "regressions": "Verified explicit stops, interrupts, per-chat isolation, changed evidence, retained findings and blocked approval. Unrelated validator drafts remain untouched.",
     "scopeCheck": "This is the explicit workflow-system request. It does not complete or erase the ongoing creature task, promise aesthetic judgment from hashes, or alter global app trust.",
     "sessionId": "01a0e3f5-ad0c-7980-905a-1595945478d8",
-    "requestId": "db68ef65-5993-43bf-b821-1f606eede094",
-    "performedAt": "2026-09-28T18:19:10.821553+00:00"
+    "requestId": "8c523734-2f88-43ad-89ad-d8157f1c0f36",
+    "performedAt": "2026-09-28T20:32:45.673156+00:00"
   },
   "stop": {
     "kind": "blocked"

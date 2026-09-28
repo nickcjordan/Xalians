@@ -1,0 +1,140 @@
+{
+  "observedAt": "2026-09-28T20:31:48.820927+00:00",
+  "runtime": "codex-cli 0.158.0-alpha.2.1",
+  "method": "hooks/list",
+  "result": {
+    "data": [
+      {
+        "cwd": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+        "hooks": [
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:user_prompt_submit:0:0",
+            "eventName": "userPromptSubmit",
+            "handlerType": "command",
+            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 10,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 0,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:06a550bc6f422500514b89e0c0696b6e603549c90051c40ad0ec67941b71254a",
+            "trustStatus": "untrusted"
+          },
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:stop:0:0",
+            "eventName": "stop",
+            "handlerType": "command",
+            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 30,
+            "statusMessage": "Checking completion audit and unfinished work",
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 1,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:e5163e9a16f35817729830b147a353d0768979849a0f676468101c1521a7c882",
+            "trustStatus": "untrusted"
+          },
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:interrupt:0:0",
+            "eventName": "interrupt",
+            "handlerType": "command",
+            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 3,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 2,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:1135508e08bde6fbde1c202975c261c06e53d9672ad2708caed8d68ae0b2ce3c",
+            "trustStatus": "untrusted"
+          }
+        ],
+        "warnings": [],
+        "errors": []
+      },
+      {
+        "cwd": "C:\\dev\\src\\Xalians",
+        "hooks": [
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:user_prompt_submit:0:0",
+            "eventName": "userPromptSubmit",
+            "handlerType": "command",
+            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 10,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 0,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:06a550bc6f422500514b89e0c0696b6e603549c90051c40ad0ec67941b71254a",
+            "trustStatus": "untrusted"
+          },
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:stop:0:0",
+            "eventName": "stop",
+            "handlerType": "command",
+            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 30,
+            "statusMessage": "Checking completion audit and unfinished work",
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 1,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:e5163e9a16f35817729830b147a353d0768979849a0f676468101c1521a7c882",
+            "trustStatus": "untrusted"
+          },
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:interrupt:0:0",
+            "eventName": "interrupt",
+            "handlerType": "command",
+            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 3,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 2,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:1135508e08bde6fbde1c202975c261c06e53d9672ad2708caed8d68ae0b2ce3c",
+            "trustStatus": "untrusted"
+          }
+        ],
+        "warnings": [],
+        "errors": []
+      }
+    ]
+  },
+  "error": null,
+  "dispatchVerified": false,
+  "trustModified": false
+}
