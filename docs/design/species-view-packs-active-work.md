@@ -119,6 +119,8 @@ Scope extension, 2026-09-27: Nick approved implementing the proposed layered sys
 - Verified one connected closed body with 164,908 vertices and zero nonmanifold edges. All 14 views and derived masks are unclipped; principal figure heights and ground rows match exactly. Inspected the full contact and matched side/front comparison. Builder/review code is unchanged. Saved exact inputs, parameter checks and run provenance.
 - Added and applied the lesson: underlying limb alignment and surface fullness are separate construction choices. Smooth connected geometry can still depict an implausibly flexible limb. Review its actual profile before seeking approval.
 
+- Verified 474 package, feedback, current-reference and new-run hashes. Opened ready PR #727, https://github.com/nickcjordan/Xalians/pull/727, with auto-merge enabled. Local geometry/provenance checks pass; CI is pending. A merge does not approve the shin correction.
+
 ## Immediate next unfinished action
 
 Nick's review of the shin correction in blockout-0006. It is unapproved. Preserve prior scoped tail, paw and eye references and carry the improved leg volume forward. Whole-body likeness, facial blending, shaggy silhouette mass, final validation/handoff and remaining species remain unfinished. Layer 5 remains active. Prior validator drafts are preserved locally.
