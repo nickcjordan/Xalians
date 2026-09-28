@@ -105,3 +105,10 @@ Three concepts were drawn on the live stage with pillar numbers computed from th
 Shared vocabulary: the landed number with a chevron (green when good for you, red when bad), a struck circle for no effect, enemy letters on every plate, a filled ember cell when a finish lands before the enemy strikes and an outlined cell with crossed swords when it strikes first, the enemy's hit on the selected creature on its plate, and Hinder shown as that hit before and after (9 → 0).
 
 Blind Opus readers got every damage, immune, hit and knockout answer on all three. Before-or-after was read correctly once the turn strip showed speed order; a discarded round showed readers trust the strip over any mark. Still open: an area Hinder is not previewed on the enemies, the keys cover the enemies' lower edge at 1920, the column heads on a phone, and the intensity scale (Avilily's pecks read as 1).
+
+## Research: where other games put the element, 2026-09-28
+
+Report with sources: https://claude.ai/artifact/Qr6h3cTBpP2xQHwYFRpc3S. Every hero battler studied (Dungeon Boss, Summoners War, Epic Seven, Raid, AFK Arena, Honkai: Star Rail) puts the element on the unit, not on each move, so the move-by-enemy grid collapses to one advantage mark per enemy (arrows on targets) and skills differ in shape, effect and timing. Advantages are small (10 to 30%) or yes/no weaknesses (Star Rail, Octopath, Fire Emblem Engage), often paid out in turns, shields or breaks rather than damage. Pokémon keeps per-move types and has the screen label each move per target. Full-information tactics games (Into the Breach, Slay the Spire, Wildfrost) keep numbers small, put per-target variance in visible target states, and always show enemy intents.
+
+Paths proposed for Powerworks, awaiting Nick: 1, the element belongs to the creature (recommended; 1b keeps physical moves steady); 2, one damage number per creature, moves differ only in effect; 3, yes/no weakness with a shield-and-break payoff (a later layer); 4, only visible target states change results; 5, keep per-move elements and let the screen compute (answer keys).
+
