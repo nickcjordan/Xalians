@@ -13,7 +13,7 @@ Generated evidence report. Integrity is not visual or user approval.
 
 ## interpretation
 
-Tail study-0018, gaze study-0010 and animal-paw study-0020 accepted in scope. Whole-body blockout-0004 now tests integration. Full likeness and stage release remain unapproved; see reconciliation.md.
+Tail, gaze and paw source directions accepted in scope. Nick requested modestly stronger hind legs after blockout-0004. Blockout-0005 applies the local volume correction and awaits review. Complete likeness and release remain unapproved.
 
 ## identity
 
@@ -22,19 +22,19 @@ Run-0008 is a good starting concept; cross-view tail and pose differences preven
 
 ## construction
 
-Tail study-0018, gaze study-0010 and animal-paw study-0020 accepted in scope. Whole-body blockout-0004 now tests integration. Full likeness and stage release remain unapproved; see reconciliation.md.
+Tail, gaze and paw source directions accepted in scope. Nick requested modestly stronger hind legs after blockout-0004. Blockout-0005 applies the local volume correction and awaits review. Complete likeness and release remain unapproved.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: identity
 
 ## connections
 
-Tail study-0018, gaze study-0010 and animal-paw study-0020 accepted in scope. Whole-body blockout-0004 now tests integration. Full likeness and stage release remain unapproved; see reconciliation.md.
+Tail, gaze and paw source directions accepted in scope. Nick requested modestly stronger hind legs after blockout-0004. Blockout-0005 applies the local volume correction and awaits review. Complete likeness and release remain unapproved.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: identity
 
 ## geometry
 
-Technical geometry passes; complete likeness does not. Actual side projection conflicts with old illustration. Face blending, shaggy silhouette mass and paw/leg integration remain open. Directional whole-body checkpoint, not approved rough form.
+Tail, gaze and paw source directions accepted in scope. Nick requested modestly stronger hind legs after blockout-0004. Blockout-0005 applies the local volume correction and awaits review. Complete likeness and release remain unapproved.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: construction
 - Upstream evidence is stale or missing: connections

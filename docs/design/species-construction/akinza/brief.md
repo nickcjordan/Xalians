@@ -1,6 +1,8 @@
 # Akinza construction pilot: current handoff
 
-Updated 2026-09-28. Nick approved the animal-paw direction in study-0020 with "looks good, proceed" and requested an audit of the layered plan and lessons. Full words and image hash: [paw acceptance](paw-acceptance.json).
+Updated 2026-09-28. Current geometry candidate: blockout-0005, with modestly fuller hind legs requested after blockout-0004. See [hind-leg-feedback.json](hind-leg-feedback.json). This does not approve the revised geometry.
+
+Nick approved the animal-paw direction in study-0020 with "looks good, proceed" and requested an audit of the layered plan and lessons. Full words and image hash: [paw acceptance](paw-acceptance.json).
 
 ## Where we are
 
@@ -19,7 +21,7 @@ These are progress states, not whole-stage approvals. Production release remains
 
 Read [current-references.json](current-references.json) before modeling or prompting. It binds exact images, allowed roles, exclusions and scoped approvals. Do not treat a historical full-body sheet as an approved master.
 
-- Body study-0003 supplies retained head, torso and limb proportion direction only. Its gaze, tail junction and extremities are superseded.
+- Body study-0003 supplies retained head, torso and limb proportion direction only. Its gaze, tail junction and extremities are superseded. Nick subsequently requested modestly beefier hind legs that imply bounding strength, using rabbit power as a reference without literal rabbit legs. Concentrate fullness in thighs and upper calves, preserving the current limb lengths, joint paths, stance and compact paws.
 - Tail study-0018 supplies accepted shape, junction and central positioning. Three full rounded tails taper to points and fuse directly together at the body-level spinal base. No delayed trident branch, left-hip attachment or extra root lobe. Keep rear contours restrained.
 - Face study-0010 supplies accepted large distinctive eyes and forward gaze.
 - Paw study-0020 supplies compact furry animal forepaws and hind paws with short clustered clawed digits. No long human fingers, opposed human thumb or human heel. Four visible digits are an illustration-level arrangement, not a species-record ruling.

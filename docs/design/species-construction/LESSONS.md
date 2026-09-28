@@ -12,8 +12,12 @@ Updated 2026-09-28. These are operational corrections within the authorized expe
 | Tracker integrity passed while visual results still failed | Byte-level integrity was easy to confuse with progress or quality | Report provenance, geometry checks, visual review and Nick approval separately | Blockout geometry report, visual discrepancy list and empty art approval are separate records |
 | The workflow required coherent images before using geometry to establish coherence | The layer boundary could cause another regeneration loop | Permit provisional full-body reconciliation from scoped accepted components; retain release gates | Enter layer 5 experimentally while layers 3/4 integration remains open |
 
-## Current experiment contract
+## Hind-leg correction applied, 2026-09-28
 
-Akinza blockout-0001 tests whether the retained body proportions, accepted tail direction and animal paws can coexist as one continuous body viewed from six real orthographic cameras. It does not test coat detail, animation or production topology. Eyes and claws may be separate surface objects; the body, ears, limbs, paws and tails must form one closed connected surface.
+Nick described rabbit-like bounding strength while explicitly rejecting literal rabbit legs. Translate that analogy into the smallest stated visual change: modest thigh and calf fullness. Blockout-0005 changes only the two leg sweeps' cross-section radii, tapering the increase toward the existing joints. Limb paths, lengths, pose, paws, pelvis and accepted neighboring forms retain their parameters. Check the front and side together so added width has real depth. Record exact parameter invariants rather than claiming all remeshed pixels are identical.
+
+## Whole-body experiment contract
+
+The Akinza whole-body blockout series tests whether the retained body proportions, accepted tail direction and animal paws can coexist as one continuous body viewed from six real orthographic cameras. It does not test coat detail, animation or production topology. Eyes and claws may be separate surface objects; the body, ears, limbs, paws and tails must form one closed connected surface.
 
 Preserve the accepted source images unchanged. Judge modeled likeness separately from technical success. Record discrepancies in `akinza/reconciliation.md`; fix clear implementation errors before seeking feedback. New whole-body scale, unseen anatomy and limb posture are provisional. Neither a successful mesh check nor a merged PR closes those design questions.
