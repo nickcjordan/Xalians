@@ -21,3 +21,7 @@ Nick described rabbit-like bounding strength while explicitly rejecting literal 
 The Akinza whole-body blockout series tests whether the retained body proportions, accepted tail direction and animal paws can coexist as one continuous body viewed from six real orthographic cameras. It does not test coat detail, animation or production topology. Eyes and claws may be separate surface objects; the body, ears, limbs, paws and tails must form one closed connected surface.
 
 Preserve the accepted source images unchanged. Judge modeled likeness separately from technical success. Record discrepancies in `akinza/reconciliation.md`; fix clear implementation errors before seeking feedback. New whole-body scale, unseen anatomy and limb posture are provisional. Neither a successful mesh check nor a merged PR closes those design questions.
+
+## Shin alignment correction applied, 2026-09-28
+
+Adding leg volume did not fix a bowed lower-leg path. A smooth sweep can depict a flexible tube even when its surface is continuous. Separate the underlying joint-to-joint segment from its muscle contour: blockout-0006 aligns the intermediate shin controls with the knee-to-ankle line while retaining the fuller radii. Check the actual profile, sample the interior sweep for straightness, and preserve soft contour changes without adding a bend through the shaft. The joint endpoints, thigh, feet and neighboring parts retain their parameters. Do not treat technical continuity as proof of credible articulation.

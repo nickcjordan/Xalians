@@ -63,7 +63,7 @@
     "Consistent head and ear depth",
     "Full creature tail occlusion across actual cameras",
     "Modeled likeness to accepted illustrations",
-    "Modestly stronger hind-leg volumes in blockout-0005 await review"
+    "Straighter shin in blockout-0006 awaits review; prior fullness was described as a little better, not fully approved"
   ],
   "fullStageApproval": null,
   "directions": [
@@ -71,6 +71,11 @@
       "path": "docs/design/species-construction/akinza/hind-leg-feedback.json",
       "role": "latest-hind-leg-volume-direction",
       "sha256": "03dbdcbc73aa370b2ad6dc87a4037fc91dd21dd43cad2b49dc7d068870920416"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/shin-feedback.json",
+      "role": "latest-shin-alignment-direction",
+      "sha256": "da43603c8758e18784a577a8c97edb33e203f298b74617cdc4c38182a5454a64"
     }
   ]
 }

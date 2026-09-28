@@ -111,6 +111,16 @@ Scope extension, 2026-09-27: Nick approved implementing the proposed layered sys
 
 - Opened ready PR #726, https://github.com/nickcjordan/Xalians/pull/726, with auto-merge enabled. Geometry and provenance checks pass; CI is pending. A merge does not approve the revised leg volume.
 
+## Shin alignment refinement, 2026-09-28
+
+- PR #726 merged. Continued from fresh main on `codex/akinza-straighter-shins`, preserving unfinished validator files.
+- Nick found the leg fullness a little better but identified a bowed shin. Recorded exact feedback; this is not full approval of the fuller legs or model. Retain the thigh-to-knee articulation and local volume improvement.
+- Built blockout-0006 by aligning three intermediate controls of each lower-leg sweep with the existing knee-to-ankle line. Joint endpoints, control heights, all radii, thigh controls, feet and other parameters are unchanged. A sampled analytic check gives interior shaft deviation under 0.000001 units, versus about 0.196 before; small joint blends remain.
+- Verified one connected closed body with 164,908 vertices and zero nonmanifold edges. All 14 views and derived masks are unclipped; principal figure heights and ground rows match exactly. Inspected the full contact and matched side/front comparison. Builder/review code is unchanged. Saved exact inputs, parameter checks and run provenance.
+- Added and applied the lesson: underlying limb alignment and surface fullness are separate construction choices. Smooth connected geometry can still depict an implausibly flexible limb. Review its actual profile before seeking approval.
+
+- Verified 474 package, feedback, current-reference and new-run hashes. Opened ready PR #727, https://github.com/nickcjordan/Xalians/pull/727, with auto-merge enabled. Local geometry/provenance checks pass; CI is pending. A merge does not approve the shin correction.
+
 ## Immediate next unfinished action
 
-Nick's review of the stronger-looking hind legs in blockout-0005. The new volume is unapproved. Preserve accepted tail, paw and gaze references while continuing whole-body reconciliation after feedback. Facial blending and silhouette-defining hair mass remain unfinished before likeness acceptance. Production masks, measurements, consumer adapter, final pack approval and remaining species are still pending. Prior validator drafts remain preserved locally.
+Nick's review of the shin correction in blockout-0006. It is unapproved. Preserve prior scoped tail, paw and eye references and carry the improved leg volume forward. Whole-body likeness, facial blending, shaggy silhouette mass, final validation/handoff and remaining species remain unfinished. Layer 5 remains active. Prior validator drafts are preserved locally.

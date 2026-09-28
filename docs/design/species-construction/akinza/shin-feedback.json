@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "source": "Nick, this chat, reviewing blockout-0005",
+  "words": "That's a little better, but I also noticed that the leg seems to be very wavy. I think the top part makes sense because it's the thigh going to a knee. So there's a hinge there. So that makes sense how it curves backwards. But then in the middle of the shin, it looks like the shin itself is an arc. I feel like that needs to be reworked a little bit so that the shin looks more reasonable",
+  "direction": "Retain the improved fullness and thigh-to-knee articulation, but remove the bowed shin. Use a straight underlying knee-to-ankle segment with soft muscle contour and localized joint transitions.",
+  "reviewedEvidence": {
+    "path": "docs/design/species-construction/akinza/evidence/blockout-0005-contact.png",
+    "role": "reviewed-whole-body-blockout",
+    "sha256": "98d4576e1d5847fca30fcfc18171320d1faf74c4e796f987eb7af2a183824abf"
+  },
+  "scope": "Art construction refinement; no skeletal canon or locomotion ability change",
+  "newGeometryApproval": null
+}

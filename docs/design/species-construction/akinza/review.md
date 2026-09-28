@@ -91,3 +91,7 @@ Applied the lesson now: changed from repeated image edits to a provisional whole
 ## 2026-09-28: modest hind-leg strength correction
 
 Nick said the creature is very close but the legs are too thin. His rabbit comparison describes stronger-looking hind limbs for bounding, explicitly not replacement rabbit legs. Saved exact feedback bound to blockout-0004. Blockout-0005 changes only leg cross-section radii, concentrating volume in thighs and upper calves and tapering toward unchanged joint positions and paws. No whole-body approval is inferred. Parameter invariants and the matched front/side crop comparison are recorded in the run provenance.
+
+## 2026-09-28: shin alignment correction
+
+Nick found the increased fullness a little better, but pointed out that the shin itself was bowed. Preserved the thigh and knee articulation, radii and joint endpoints; aligned the three intermediate shin controls between knee and ankle in blockout-0006. The sampled interior centerline deviation falls from about 0.196 units to under 0.000001 units. Side/front review shows a straighter shaft with retained calf fullness. Full geometry and this local correction remain unapproved. Exact feedback and comparison are in `shin-feedback.json` and `reconciliation.md`.
