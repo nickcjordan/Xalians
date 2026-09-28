@@ -120,3 +120,9 @@ Tail balance refinement:
 > Yeah, I think you overcompensated a tad. Maybe combine those two a little bit so that you still have the tail base being centered, but there's not one longer tail on the bottom and one short tail on top
 
 Keep the centered attachment, moderate the enlarged blend, and balance upper/lower tail reach. Study-0015 combines those directions and awaits review.
+
+Tail transition correction:
+
+> That last one has like a weird growth Like it's supposed to be the butt cheek muscle, but it got squished in. I think you need to put more effort into the prompt you're giving it
+
+The centered shared attachment is the intersection of three tail bases with the body, not an added furry bulb, compressed cheek or hanging lobe. Preserve continuous modest lower-back contours. Study-0018 is the new unapproved rear candidate after removing the extra mass and correcting placement.

@@ -20,6 +20,10 @@
     {
       "words": "Yeah, I think you overcompensated a tad. Maybe combine those two a little bit so that you still have the tail base being centered, but there's not one longer tail on the bottom and one short tail on top",
       "effect": "Retain central placement; moderate enlarged root and rebalance upper/lower reach from study-0014"
+    },
+    {
+      "words": "That last one has like a weird growth Like it's supposed to be the butt cheek muscle, but it got squished in. I think you need to put more effort into the prompt you're giving it",
+      "effect": "Reject extra furry lobe in study-0015; require centered tail-to-body intersection without a fourth body mass"
     }
   ],
   "acceptedAspects": [
@@ -44,6 +48,8 @@
     "Unreviewed study-0014",
     "Whole-stage approval",
     "Complete construction pack",
-    "Unreviewed study-0015; study-0014 is superseded for bulk and balance"
+    "Unreviewed study-0015; study-0014 is superseded for bulk and balance",
+    "Study-0015 extra body lobe",
+    "Unreviewed study-0018"
   ]
 }

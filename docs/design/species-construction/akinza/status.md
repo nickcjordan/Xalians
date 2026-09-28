@@ -13,7 +13,7 @@ Generated evidence report. Integrity is not visual or user approval.
 
 ## interpretation
 
-Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased.
+Gaze accepted. Study-0015 root lobe rejected. Study-0018 removes the separate mass and refines placement, awaiting Nick review. Complete construction remains unreleased.
 
 ## identity
 
@@ -22,12 +22,12 @@ Run-0008 is a good starting concept; cross-view tail and pose differences preven
 
 ## construction
 
-Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased.
+Gaze accepted. Study-0015 root lobe rejected. Study-0018 removes the separate mass and refines placement, awaiting Nick review. Complete construction remains unreleased.
 - Upstream evidence is stale or missing: identity
 
 ## connections
 
-Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased.
+Gaze accepted. Study-0015 root lobe rejected. Study-0018 removes the separate mass and refines placement, awaiting Nick review. Complete construction remains unreleased.
 - Upstream evidence is stale or missing: identity
 
 ## geometry

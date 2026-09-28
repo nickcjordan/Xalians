@@ -4,7 +4,7 @@ Status: Nick accepted the remaining visible design direction while requesting co
 
 ## Current review state
 
-The latest rear candidate is [study-0015 with research notes](tail-root-research.md). Studies 0008, 0012 and 0013 do not satisfy the central shared-root requirement. The earlier assessment of study-0008 as centered was incorrect. The gaze in study-0010 is accepted. See [the exact feedback sequence](correction-review.json).
+The latest rear candidate is [study-0018 with a clean transition](tail-transition.md). Studies 0008, 0012 and 0013 do not satisfy the central shared-root requirement. The earlier assessment of study-0008 as centered was incorrect. The gaze in study-0010 is accepted. See [the exact feedback sequence](correction-review.json).
 
 ## Superseded rear and accepted gaze
 
@@ -43,12 +43,14 @@ Study-0005 refines study-0004. The ear panel now exposes a continuous shallow cu
 
 ## Evidence precedence and unfinished work
 
-Use Nick's existing corrections and scoped tail acceptance first. Use study-0015 as the current unapproved rear candidate and study-0010 for the accepted gaze. For new hand/foot construction and the ear shell, use study-0005 rather than contradictory study-0003 details. Study-0003 remains a whole-body proportion study. Study-0004 is retained as revision history: its ear remained feather-like and its supposedly opposite hand views had the thumb on the same page side.
+Use Nick's existing corrections and scoped tail acceptance first. Use study-0018 as the current unapproved rear candidate and study-0010 for the accepted gaze. For new hand/foot construction and the ear shell, use study-0005 rather than contradictory study-0003 details. Study-0003 remains a whole-body proportion study. Study-0004 is retained as revision history: its ear remained feather-like and its supposedly opposite hand views had the thumb on the same page side.
 
-Only the moderated root and tail balance in study-0015 are the current subjective review target; do not ask for gaze approval again. These studies are not eligible for final pack approval. After review, integrate the corrected gaze and rear with the retained body direction and reconcile the chosen digit forms into coherent construction references. Preserve the accepted actual tail geometry. A small geometric probe may resolve projection ambiguity. Build the complete rough creature only after coherent construction references receive Nick's approval. Then compare actual camera renders and an unseen-angle turntable before surface detail or rigging.
+Only the clean tail transition and central placement in study-0018 are the current subjective review target; do not ask for gaze approval again. These studies are not eligible for final pack approval. After review, integrate the corrected gaze and rear with the retained body direction and reconcile the chosen digit forms into coherent construction references. Preserve the accepted actual tail geometry. A small geometric probe may resolve projection ambiguity. Build the complete rough creature only after coherent construction references receive Nick's approval. Then compare actual camera renders and an unseen-angle turntable before surface detail or rigging.
 
 No masks, camera matrices, depth maps or alignment pass are claimed for these image studies. Those outputs belong to actual geometry or the later registered pack. No species contract, abilities, lore or approved asset directory changed.
 
 Exact prompts and provenance: [whole-body study](records/study-0003.json), [initial detail study](records/study-0004.json), [corrected detail study](records/study-0005.json), [first body correction](records/study-0006.json), [second body correction](records/study-0007.json), [rear correction](records/study-0008.json), [unsuccessful full-front gaze edit](records/study-0009.json), and [isolated gaze correction](records/study-0010.json). All images were generated using the built-in Codex subscription tool. Model and seed were not exposed. Full originals and input snapshots remain in the local ignored work directory; the displayed review images are exact committed copies of the outputs. See [scoped directional acceptance](body-direction-acceptance.json) for Nick's exact words and excluded aspects.
 
 Latest refinement: Nick asked to combine the earlier proportions with the centered base, moderating the large blend and long lower tail. Study-0015 is the current rear candidate; study-0014 is an intermediate placement correction. Accepted gaze and other retained design aspects remain unchanged.
+
+Current rear revision: Nick rejected the separate furry lobe in study-0015. [Study-0018](tail-transition.md) removes that added mass and refines central placement. Studies 0016/0017 are placement intermediates. Study-0018 awaits review; accepted gaze remains unchanged.
