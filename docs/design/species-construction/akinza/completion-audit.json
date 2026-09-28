@@ -1,0 +1,577 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-construction",
+  "outcome": "Produce a construction model and layered reference package that matches the preferred grayscale quality and later scoped directions, then obtain Nick approval.",
+  "authorizedScope": "Continue modeling, render/compare/audit loops and export preparation. Subscription generation only. No final art approval by agents; no production rigging, animation, lore or game changes.",
+  "workRecord": "docs/design/species-view-packs-active-work.md",
+  "evidence": {
+    "audit": {
+      "path": "docs/design/species-construction/akinza/quality-audit-0020.md",
+      "sha256": "412fd52d7e564241cf46430680bf03a7462b7455829899193b5b7d556f4a30ab"
+    },
+    "actual-views": {
+      "path": "docs/design/species-construction/akinza/evidence/blockout-0020-contact.png",
+      "sha256": "146c1265f5b2c4a289ad1b8fd629fa817ba3abb17c11c898bbf61fb41f40319f"
+    },
+    "actual-details": {
+      "path": "docs/design/species-construction/akinza/evidence/detail-review-0020.png",
+      "sha256": "ec69ee5b7da5ac4ac637b185bd6d4118065b9d4ce60ce9a421532d1fceaf77ad"
+    },
+    "identity": {
+      "path": "docs/design/species-construction/akinza/evidence/identity-run-0001.png",
+      "sha256": "cd172ed009b20b65a93f02ac33b9f0af15d47dd78a7448ba9767996a52af1fcb"
+    },
+    "head-target": {
+      "path": "docs/design/species-construction/akinza/evidence/head-clay-study-0021.png",
+      "sha256": "c251eebda1037f74eeb5017208f9220662868897274440e4a9e5b5fd30167f1d"
+    },
+    "face-target": {
+      "path": "docs/design/species-construction/akinza/evidence/face-study-0010.png",
+      "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+    },
+    "paws-target": {
+      "path": "docs/design/species-construction/akinza/evidence/paws-study-0020.png",
+      "sha256": "4cb2498257c8aa37043dfa74902e2d4608e688d9a68af53858689bd4f82c2f5c"
+    },
+    "tail-target": {
+      "path": "docs/design/species-construction/akinza/evidence/back-study-0018.png",
+      "sha256": "caaedd881246acdc29b5f1d52cb2801c3c87869370ba3fe58da41e5ab2db43e4"
+    }
+  },
+  "criteria": [
+    {
+      "id": "C01",
+      "region": "Overall finish of the form",
+      "expectation": "A complete creature with consistently developed large and medium forms. Review the whole body and regional closeups together before presentation.",
+      "status": "fail",
+      "assessment": "A smooth mannequin body, sparse chunky head decoration and simple tail lobes do not share one coherent level of sculptural development. Recognizable ears and three tails are insufficient.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C02",
+      "region": "Head proportions and silhouette",
+      "expectation": "Reconstruct forehead, temples, cheeks and jaw as related volumes. Front and profile must retain a rounded, appealing head without copying the generated study's inward gaze.",
+      "status": "fail",
+      "assessment": "The face narrows into a pointed lower wedge; the forehead is broad and flat, with small blunt crown spikes. The head lacks the soft cheek and cranial fullness of the head study.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C03",
+      "region": "Eye shape and integration",
+      "expectation": "Preserve the accepted large eyes while modeling curved eye volumes, surrounding lids and their transition into the skull. Match contour, relative white area and projection before adding gloss.",
+      "status": "fail",
+      "assessment": "Tall, very regular white ovals dominate the face. Thin dark borders and projecting white rims make them read like applied plates, particularly in PROFILE.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C04",
+      "region": "Gaze and eye finish",
+      "expectation": "Keep forward gaze. Separate geometric integration from later glossy material and catchlight treatment; neither can substitute for the other.",
+      "status": "fail",
+      "assessment": "Centered dark ovals avoid the obvious inward gaze, but their flat dark treatment removes the depth and expression of the accepted eyes.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C05",
+      "region": "Muzzle, nose and mouth",
+      "expectation": "Establish the shallow paired muzzle and chin in actual geometry. Readable projection is required in profile without enlarging it into a different animal's snout.",
+      "status": "fail",
+      "assessment": "The muzzle is barely expressed. A tiny nose and thin drawn smile sit on a nearly continuous face surface. The head study has two soft muzzle masses, a meaningful nose-to-mouth transition and chin volume.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C06",
+      "region": "Cheeks and crown coat",
+      "expectation": "Form connected cheek and crown masses that change the silhouette naturally. Broad flow belongs to construction; individual hair strands can wait.",
+      "status": "fail",
+      "assessment": "Small triangular perimeter spikes are detached in visual character from the large ear locks. They do not establish the layered cheek flow visible in the references.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C07",
+      "region": "Ear silhouette and clump shape",
+      "expectation": "Establish a continuous shaggy envelope with varied overlap, width, curvature and taper. Adding more copies of the same lobe will not resolve the material or silhouette.",
+      "status": "fail",
+      "assessment": "Sparse thick, rounded leaf or finger shapes form a repeated fringe. Long upper clumps and blunt lower clumps read as separate decorative pieces rather than shaggy coat.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C08",
+      "region": "Ear tissue and cavity",
+      "expectation": "A legible cupped tissue surface with soft, intentional rim transitions and coat rooted around it. A recess being opaque does not make its shape acceptable.",
+      "status": "fail",
+      "assessment": "Dark angular recesses interrupt the inner ear. The transition from smooth tissue to the bulky rim is abrupt and mechanical.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C09",
+      "region": "Ear depth, rear surfaces and roots",
+      "expectation": "Solve ear thickness, rear coat volume and cranial attachment together in front, profile and rear oblique views. Removing a mesh seam is not the same as achieving a convincing attachment.",
+      "status": "fail",
+      "assessment": "Side views show a thin stacked assembly. Rear views show large bare cushion-like shells, with remaining root boundaries visible as curved rims. The front fringe and rear shell feel like different constructions.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C10",
+      "region": "Neck and shoulders",
+      "expectation": "Related neck, shoulder and upper-arm volumes with plausible soft transitions. The reference pose differs, so reproduce the mass relationships rather than tracing its arm outline.",
+      "status": "fail",
+      "assessment": "A narrow smooth neck stem expands abruptly beneath the jaw and into the shoulder area. The upper torso reads as a cap with tubular arms attached.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C11",
+      "region": "Chest, waist and pelvis",
+      "expectation": "Continuous large planes and volume transitions through chest, waist and pelvis, without circumferential bands. Check oblique light and profile, not only a front silhouette.",
+      "status": "fail",
+      "assessment": "Horizontal shelf-like changes remain across the chest and waist. The abdomen and pelvic transition resemble stacked sections, not continuous anatomy.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C12",
+      "region": "Arms, elbows and wrists",
+      "expectation": "Express upper-arm/forearm mass, elbow direction and wrist-to-paw transition while preserving compact animal extremities. Lowered arms should expose these forms, not excuse them.",
+      "status": "fail",
+      "assessment": "Upper arms and forearms are largely uniform curved tubes, with weak elbow structure. Wrists narrow into mitten-like ends without a convincing change of plane or articulation.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C13",
+      "region": "Forepaws and claws",
+      "expectation": "Rebuild the paw's outer volume and digit grouping before claw detail. Show front, side and underside as needed; retain the absence of a human thumb.",
+      "status": "fail",
+      "assessment": "The forepaw is a flat-ended mitten with evenly repeated rounded digit bumps and small nail-like additions. The reference has a fuller tapered paw, grouped digits and claws emerging from them.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C14",
+      "region": "Thighs and knees",
+      "expectation": "Integrate the extra bounding strength into hip/thigh/knee form. Modest fullness must not become a literal rabbit leg or isolated muscle balloon.",
+      "status": "fail",
+      "assessment": "Added thigh fullness reads as oval swelling. The knee region has abrupt bands and pinches instead of a coherent transition between upper and lower leg.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C15",
+      "region": "Calves and shins",
+      "expectation": "Preserve the straight joint-to-joint shin while shaping its surrounding volume and calf taper. Judge the rendered contour and planes, not only the numerical centerline.",
+      "status": "fail",
+      "assessment": "Lower-leg contours remain simplified, with changes of direction and thickness that read as flexible tubes. Straight control points did not establish convincing surface anatomy.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C16",
+      "region": "Ankles",
+      "expectation": "Restore local joint structure, a believable change of direction and the reference's sloping paw roof. Avoid both a human heel and a featureless continuous arc.",
+      "status": "fail",
+      "assessment": "ANKLE / PAW PROFILE still shows a long rubbery bend sweeping into a toe bulb. There is no sufficiently clear ankle transition or supported foot volume.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C17",
+      "region": "Hind paws and ground contact",
+      "expectation": "Build a substantial paw body behind the digits, integrated toes and clear ground contact. Toe bumps and claws cannot stand in for the entire foot.",
+      "status": "fail",
+      "assessment": "Small repeated toe lobes sit at the end of a thin foot. The whole-body render looks under-supported compared with the broad compact paws in the accepted study.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C18",
+      "region": "Tail volume, sweep and taper",
+      "expectation": "Retain three full tails and pointed ends while refining their three-dimensional cross-sections, curvature and taper. Do not rotate each tail for each camera to imitate incompatible generated views.",
+      "status": "fail",
+      "assessment": "The three tails remain simple crescent or leaf-like lobes with a repeated construction. Their sectional fullness and tip transitions are less developed than the accepted smooth rear study. Profile occlusion produces compressed lobes that need geometric assessment.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C19",
+      "region": "Tail fusion and surrounding pelvis",
+      "expectation": "Preserve the centered, body-level three-way fusion with no stalk or extra bulb; refine continuity into a restrained pelvis. Occlusion alone is not evidence that the root moved to the left.",
+      "status": "fail",
+      "assessment": "The modeled root looks pinched and creased where the large lobes converge. Rear shading still leaves a prominent rounded haunch beside it. A common central coordinate does not establish the accepted visual transition.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    },
+    {
+      "id": "C20",
+      "region": "Secondary form across the body",
+      "expectation": "Develop controlled medium-scale planes and attachments. More triangles, global smoothing or fur cannot replace this work.",
+      "status": "fail",
+      "assessment": "Large areas are featureless while a few boundaries are overemphasized. Smoothing joins shapes but erases useful plane changes and leaves other transitions visibly banded.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details",
+        "identity",
+        "head-target"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F01",
+      "criterion": "C01",
+      "status": "open",
+      "observation": "A smooth mannequin body, sparse chunky head decoration and simple tail lobes do not share one coherent level of sculptural development. Recognizable ears and three tails are insufficient.",
+      "nextAction": "A complete creature with consistently developed large and medium forms. Review the whole body and regional closeups together before presentation.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F02",
+      "criterion": "C02",
+      "status": "open",
+      "observation": "The face narrows into a pointed lower wedge; the forehead is broad and flat, with small blunt crown spikes. The head lacks the soft cheek and cranial fullness of the head study.",
+      "nextAction": "Reconstruct forehead, temples, cheeks and jaw as related volumes. Front and profile must retain a rounded, appealing head without copying the generated study's inward gaze.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F03",
+      "criterion": "C03",
+      "status": "open",
+      "observation": "Tall, very regular white ovals dominate the face. Thin dark borders and projecting white rims make them read like applied plates, particularly in PROFILE.",
+      "nextAction": "Preserve the accepted large eyes while modeling curved eye volumes, surrounding lids and their transition into the skull. Match contour, relative white area and projection before adding gloss.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F04",
+      "criterion": "C04",
+      "status": "open",
+      "observation": "Centered dark ovals avoid the obvious inward gaze, but their flat dark treatment removes the depth and expression of the accepted eyes.",
+      "nextAction": "Keep forward gaze. Separate geometric integration from later glossy material and catchlight treatment; neither can substitute for the other.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F05",
+      "criterion": "C05",
+      "status": "open",
+      "observation": "The muzzle is barely expressed. A tiny nose and thin drawn smile sit on a nearly continuous face surface. The head study has two soft muzzle masses, a meaningful nose-to-mouth transition and chin volume.",
+      "nextAction": "Establish the shallow paired muzzle and chin in actual geometry. Readable projection is required in profile without enlarging it into a different animal's snout.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F06",
+      "criterion": "C06",
+      "status": "open",
+      "observation": "Small triangular perimeter spikes are detached in visual character from the large ear locks. They do not establish the layered cheek flow visible in the references.",
+      "nextAction": "Form connected cheek and crown masses that change the silhouette naturally. Broad flow belongs to construction; individual hair strands can wait.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F07",
+      "criterion": "C07",
+      "status": "open",
+      "observation": "Sparse thick, rounded leaf or finger shapes form a repeated fringe. Long upper clumps and blunt lower clumps read as separate decorative pieces rather than shaggy coat.",
+      "nextAction": "Establish a continuous shaggy envelope with varied overlap, width, curvature and taper. Adding more copies of the same lobe will not resolve the material or silhouette.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F08",
+      "criterion": "C08",
+      "status": "open",
+      "observation": "Dark angular recesses interrupt the inner ear. The transition from smooth tissue to the bulky rim is abrupt and mechanical.",
+      "nextAction": "A legible cupped tissue surface with soft, intentional rim transitions and coat rooted around it. A recess being opaque does not make its shape acceptable.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F09",
+      "criterion": "C09",
+      "status": "open",
+      "observation": "Side views show a thin stacked assembly. Rear views show large bare cushion-like shells, with remaining root boundaries visible as curved rims. The front fringe and rear shell feel like different constructions.",
+      "nextAction": "Solve ear thickness, rear coat volume and cranial attachment together in front, profile and rear oblique views. Removing a mesh seam is not the same as achieving a convincing attachment.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F10",
+      "criterion": "C10",
+      "status": "open",
+      "observation": "A narrow smooth neck stem expands abruptly beneath the jaw and into the shoulder area. The upper torso reads as a cap with tubular arms attached.",
+      "nextAction": "Related neck, shoulder and upper-arm volumes with plausible soft transitions. The reference pose differs, so reproduce the mass relationships rather than tracing its arm outline.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F11",
+      "criterion": "C11",
+      "status": "open",
+      "observation": "Horizontal shelf-like changes remain across the chest and waist. The abdomen and pelvic transition resemble stacked sections, not continuous anatomy.",
+      "nextAction": "Continuous large planes and volume transitions through chest, waist and pelvis, without circumferential bands. Check oblique light and profile, not only a front silhouette.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F12",
+      "criterion": "C12",
+      "status": "open",
+      "observation": "Upper arms and forearms are largely uniform curved tubes, with weak elbow structure. Wrists narrow into mitten-like ends without a convincing change of plane or articulation.",
+      "nextAction": "Express upper-arm/forearm mass, elbow direction and wrist-to-paw transition while preserving compact animal extremities. Lowered arms should expose these forms, not excuse them.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F13",
+      "criterion": "C13",
+      "status": "open",
+      "observation": "The forepaw is a flat-ended mitten with evenly repeated rounded digit bumps and small nail-like additions. The reference has a fuller tapered paw, grouped digits and claws emerging from them.",
+      "nextAction": "Rebuild the paw's outer volume and digit grouping before claw detail. Show front, side and underside as needed; retain the absence of a human thumb.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F14",
+      "criterion": "C14",
+      "status": "open",
+      "observation": "Added thigh fullness reads as oval swelling. The knee region has abrupt bands and pinches instead of a coherent transition between upper and lower leg.",
+      "nextAction": "Integrate the extra bounding strength into hip/thigh/knee form. Modest fullness must not become a literal rabbit leg or isolated muscle balloon.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F15",
+      "criterion": "C15",
+      "status": "open",
+      "observation": "Lower-leg contours remain simplified, with changes of direction and thickness that read as flexible tubes. Straight control points did not establish convincing surface anatomy.",
+      "nextAction": "Preserve the straight joint-to-joint shin while shaping its surrounding volume and calf taper. Judge the rendered contour and planes, not only the numerical centerline.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F16",
+      "criterion": "C16",
+      "status": "open",
+      "observation": "ANKLE / PAW PROFILE still shows a long rubbery bend sweeping into a toe bulb. There is no sufficiently clear ankle transition or supported foot volume.",
+      "nextAction": "Restore local joint structure, a believable change of direction and the reference's sloping paw roof. Avoid both a human heel and a featureless continuous arc.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F17",
+      "criterion": "C17",
+      "status": "open",
+      "observation": "Small repeated toe lobes sit at the end of a thin foot. The whole-body render looks under-supported compared with the broad compact paws in the accepted study.",
+      "nextAction": "Build a substantial paw body behind the digits, integrated toes and clear ground contact. Toe bumps and claws cannot stand in for the entire foot.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F18",
+      "criterion": "C18",
+      "status": "open",
+      "observation": "The three tails remain simple crescent or leaf-like lobes with a repeated construction. Their sectional fullness and tip transitions are less developed than the accepted smooth rear study. Profile occlusion produces compressed lobes that need geometric assessment.",
+      "nextAction": "Retain three full tails and pointed ends while refining their three-dimensional cross-sections, curvature and taper. Do not rotate each tail for each camera to imitate incompatible generated views.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F19",
+      "criterion": "C19",
+      "status": "open",
+      "observation": "The modeled root looks pinched and creased where the large lobes converge. Rear shading still leaves a prominent rounded haunch beside it. A common central coordinate does not establish the accepted visual transition.",
+      "nextAction": "Preserve the centered, body-level three-way fusion with no stalk or extra bulb; refine continuity into a restrained pelvis. Occlusion alone is not evidence that the root moved to the left.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    },
+    {
+      "id": "F20",
+      "criterion": "C20",
+      "status": "open",
+      "observation": "Large areas are featureless while a few boundaries are overemphasized. Smoothing joins shapes but erases useful plane changes and leaves other transitions visibly banded.",
+      "nextAction": "Develop controlled medium-scale planes and attachments. More triangles, global smoothing or fur cannot replace this work.",
+      "evidence": [
+        "audit",
+        "actual-views",
+        "actual-details"
+      ]
+    }
+  ],
+  "audit": {
+    "reviewer": "Codex primary plus fresh /root/quality_audit",
+    "comparison": "Candidate 0020 fails reference quality across large and medium forms. Full audit and actual reference images are bound above.",
+    "regressions": "Preserve accepted central body-level three-tail fusion, forward gaze and animal-paw direction while fixing modeled equivalents.",
+    "scopeCheck": "Audit findings remain authorized implementation work. The new completion-system request does not mark Akinza complete.",
+    "performedAt": "2026-09-28",
+    "sessionId": null,
+    "requestId": null
+  },
+  "stop": {
+    "kind": "continue"
+  }
+}

@@ -1,0 +1,21 @@
+name: Completion audit gate
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/completion_audit.py'
+      - 'scripts/tests/test_completion_audit.py'
+      - '.codex/hooks.json'
+      - '.github/workflows/completion-audit.yml'
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python -m unittest discover -s scripts/tests -p test_completion_audit.py -v

@@ -75,3 +75,6 @@ untracked/
 
 # python bytecode from the plate builders
 __pycache__/
+
+# Per-chat completion receipts, never shared or committed.
+.codex/audit-state/

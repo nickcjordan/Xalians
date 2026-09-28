@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "replace-with-task-id",
+  "outcome": "The user's actual intended result, including quality.",
+  "authorizedScope": "What the conversation authorizes; preserve exclusions and approval boundaries.",
+  "workRecord": "docs/design/replace-with-task-work-record.md",
+  "evidence": {},
+  "criteria": [
+    {
+      "id": "outcome",
+      "expectation": "An observable outcome criterion",
+      "status": "pending",
+      "assessment": "Not yet inspected",
+      "evidence": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "outcome",
+      "status": "open",
+      "observation": "The criterion has not been demonstrated.",
+      "nextAction": "Do the authorized work and inspect the actual result."
+    }
+  ],
+  "audit": {
+    "reviewer": "Not yet audited",
+    "comparison": "Pending direct comparison with the user's target",
+    "regressions": "Pending inspection",
+    "scopeCheck": "Preserve the original scope. Do not narrow it to force a pass.",
+    "sessionId": "Returned by begin",
+    "requestId": "Returned by begin",
+    "performedAt": "Actual fresh audit time"
+  },
+  "stop": {
+    "kind": "continue"
+  }
+}

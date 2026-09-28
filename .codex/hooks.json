@@ -1,0 +1,24 @@
+{
+  "description": "Audit the actual outcome before stopping; continue executable authorized findings.",
+  "hooks": {
+    "UserPromptSubmit": [{"hooks": [{
+      "type": "command",
+      "command": "python3 \"$(git rev-parse --show-toplevel)/scripts/completion_audit.py\" hook",
+      "commandWindows": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+      "timeout": 10
+    }]}],
+    "Stop": [{"hooks": [{
+      "type": "command",
+      "command": "python3 \"$(git rev-parse --show-toplevel)/scripts/completion_audit.py\" hook",
+      "commandWindows": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+      "timeout": 30,
+      "statusMessage": "Checking completion audit and unfinished work"
+    }]}],
+    "Interrupt": [{"hooks": [{
+      "type": "command",
+      "command": "python3 \"$(git rev-parse --show-toplevel)/scripts/completion_audit.py\" hook",
+      "commandWindows": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+      "timeout": 3
+    }]}]
+  }
+}
