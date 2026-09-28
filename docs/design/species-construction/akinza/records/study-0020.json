@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0020",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T12:45:21.767765+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "model": null,
+  "seed": null,
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "prompt": "Edit ONLY the TOP ROW of this Akinza paw construction sheet. Preserve the entire bottom row of hind paws, all labels, layout, gray shading and animal-paw design.\nAkinza is an UPRIGHT BIPED, so its forepaws belong at the ends of its arms. In both top panels, show the SAME small forepaw hanging freely from a slender downward-pointing furry forearm, relaxed beside an implied upright body. Rotate the forepaw so its short clustered toe-like digits point DOWN, with the small curved claws at their lower tips. The paw should form a compact relaxed curled animal shape, not a flat paw planted on a floor. No ground contact or floor shadow beneath the upper forepaws.\nKeep the four short closely clustered fur-covered digits and small pointed curved claws consistent in both upper views. No long human fingers, opposed human thumb, exposed palm, knuckles or fingernails. OUTER VIEW shows the outer furry surface of the hanging paw; SIDE VIEW shows the same compact curved profile and wrist transition. Maintain modest paw size relative to the slender forearm, with natural fur blending.\nDo not turn the forepaw into another hind foot or add a heel. It is a small clawed animal forepaw on a hanging arm. Keep all other elements unchanged, especially both bottom hind-paw panels. White background, no full creature, head or tail.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0020/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "290f8ee7415217a30e15f94a0a82c1b310f314ba9b3eb0be68b63b3d95777924"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0020/inputs/paws.png",
+      "role": "immutable-generation-input",
+      "sha256": "5274341d009c9c54cc0b89d64cd0cd78d2498c9b529f3cf0df4f39b9fb1a03fc"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0020/paws.png",
+    "role": "untouched-tool-output",
+    "sha256": "4cb2498257c8aa37043dfa74902e2d4608e688d9a68af53858689bd4f82c2f5c"
+  },
+  "verdict": "Current animal-paw candidate: hanging compact forepaws and compact hind paws; unapproved. Exact counts, scale and leg integration remain provisional.",
+  "reviewer": "Codex",
+  "approval": null
+}

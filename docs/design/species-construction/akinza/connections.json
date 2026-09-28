@@ -10,7 +10,8 @@
     "body-direction",
     "body-details",
     "root-bilateral-overlap",
-    "clean-tail-transition"
+    "clean-tail-transition",
+    "animal-paws"
   ],
   "parts": [
     "pelvis",
@@ -106,7 +107,7 @@
     {
       "parent": "arm-left",
       "child": "hand-left",
-      "region": "slender wrist",
+      "region": "slender wrist into compact clawed animal forepaw; visual proposal",
       "continuity": "continuous external form",
       "status": "visual-proposal"
     },
@@ -120,7 +121,7 @@
     {
       "parent": "leg-left",
       "child": "foot-left",
-      "region": "slender ankle",
+      "region": "lower shin into compact clawed hind paw; reconcile full-body posture",
       "continuity": "continuous external form",
       "status": "visual-proposal"
     },
@@ -134,7 +135,7 @@
     {
       "parent": "arm-right",
       "child": "hand-right",
-      "region": "slender wrist",
+      "region": "slender wrist into compact clawed animal forepaw; visual proposal",
       "continuity": "continuous external form",
       "status": "visual-proposal"
     },
@@ -148,7 +149,7 @@
     {
       "parent": "leg-right",
       "child": "foot-right",
-      "region": "slender ankle",
+      "region": "lower shin into compact clawed hind paw; reconcile full-body posture",
       "continuity": "continuous external form",
       "status": "visual-proposal"
     }

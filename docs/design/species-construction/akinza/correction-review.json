@@ -24,16 +24,26 @@
     {
       "words": "That last one has like a weird growth Like it's supposed to be the butt cheek muscle, but it got squished in. I think you need to put more effort into the prompt you're giving it",
       "effect": "Reject extra furry lobe in study-0015; require centered tail-to-body intersection without a fourth body mass"
+    },
+    {
+      "words": "this tail and positioning looks good. You're starting to give the creature human-like hands and feet, and that is not going the direction that I originally wanted, but otherwise, the tail looks good",
+      "effect": "Accept study-0018 tail shape and positioning; reject human-like hands and feet"
     }
   ],
   "acceptedAspects": [
-    "Forward gaze correction in study-0010"
+    "Forward gaze correction in study-0010",
+    "Tail shape and positioning in study-0018"
   ],
   "acceptedEvidence": [
     {
       "path": "docs/design/species-construction/akinza/evidence/face-study-0010.png",
       "role": "approved-gaze",
       "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/back-study-0018.png",
+      "role": "accepted-tail-rear",
+      "sha256": "caaedd881246acdc29b5f1d52cb2801c3c87869370ba3fe58da41e5ab2db43e4"
     }
   ],
   "rejectedEvidence": [
@@ -50,6 +60,6 @@
     "Complete construction pack",
     "Unreviewed study-0015; study-0014 is superseded for bulk and balance",
     "Study-0015 extra body lobe",
-    "Unreviewed study-0018"
+    "Unreviewed study-0020 paws"
   ]
 }

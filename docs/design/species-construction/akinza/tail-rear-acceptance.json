@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "reviewer": "Nick",
+  "date": "2026-09-28",
+  "source": "Nick, this chat, responding to study-0018",
+  "words": "this tail and positioning looks good. You're starting to give the creature human-like hands and feet, and that is not going the direction that I originally wanted, but otherwise, the tail looks good",
+  "acceptedAspects": [
+    "Tail shape, junction and positioning as depicted in study-0018"
+  ],
+  "excludedAspects": [
+    "Human-like hands and feet, explicitly rejected",
+    "New paw studies",
+    "Complete creature pose approval",
+    "Calibrated geometry or full construction stage",
+    "Final pack"
+  ],
+  "evidence": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/back-study-0018.png",
+      "role": "accepted-tail-rear",
+      "sha256": "caaedd881246acdc29b5f1d52cb2801c3c87869370ba3fe58da41e5ab2db43e4"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0018/back.png",
+      "role": "accepted-original-output",
+      "sha256": "caaedd881246acdc29b5f1d52cb2801c3c87869370ba3fe58da41e5ab2db43e4"
+    }
+  ]
+}

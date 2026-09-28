@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0019",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T12:45:21.767765+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "model": null,
+  "seed": null,
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "prompt": "Create a focused grayscale PAW CONSTRUCTION STUDY for Akinza, the fictional upright feline creature in these references. This sheet corrects the drift toward human hands and human feet.\nREFERENCE 1 is the creator's original abstract silhouette: pay attention to the small compact clawed extremities and slender limb proportions. Interpret it, do not trace it.\nREFERENCE 2 supplies the softer furry character style and relative size of its small paws. Ignore its old tail and eye details. Do not draw a head, tail or full creature on this sheet.\nDraw FOUR spacious panels on one white landscape page:\nTop left: FOREPAW, OUTER VIEW, shown attached to the lower forearm.\nTop right: the SAME forepaw in SIDE VIEW, attached to the lower forearm.\nBottom left: HIND PAW, FRONT THREE-QUARTER, attached to the lower shin.\nBottom right: the SAME hind paw in SIDE VIEW, attached to the lower shin.\nForepaws: petite compact feline paw-like ends to the slender arms. Short clustered fur-covered digits flow out of a small rounded paw mass, with short pointed curved claws. Digits remain close together in a relaxed natural curl. The wrist merges into the paw through fur. Avoid long separated fingers, an opposed human thumb, exposed palms, knuckles, fingernails or a human hand wearing fur. Also avoid enormous teddy-bear mittens. These should be nimble small animal forepaws consistent with the original drawing.\nHind paws: compact narrow furry feline-style paws, modest forward toe projection, rounded short toe masses and small curved pointed claws. A smooth furry transition from the existing lower shin to the paw. Short functional sole, no long human-shaped foot, prominent human heel, arch, big toe or row of fingernails. Keep the paws modest in scale relative to the shown shins; not oversized boots. Preserve the existing upright creature's lower-leg direction; do not introduce a new leg skeleton or dramatically change the stance.\nShow the same toe/claw arrangement consistently within each pair, allowing honest side-view occlusion. There is no requirement for five digits or a human thumb. Avoid palm/sole diagrams because internal pad layout is not being designed here.\nSoft gray sculptural shading with broad simplified fur masses. Enough volume to understand the wrist and ankle transitions without dense hair detail. Clearly distinguish pointed curved claws from flat nails. Simple panel labels, no measurement numbers, props, color, bones, exposed anatomy or extra panels. These are proposed art interpretations, not finalized species facts.\nPriority: small animal-like clawed paws that fit the original creature, with no human hand/foot anatomy.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0019/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "e3c0169a791b690c037cfb47c1fa4d084fa3f646f8a5594497bbf9d2c4cef364"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0019/inputs/preferred-style.png",
+      "role": "immutable-generation-input",
+      "sha256": "cd172ed009b20b65a93f02ac33b9f0af15d47dd78a7448ba9767996a52af1fcb"
+    },
+    {
+      "path": "untracked/species-construction/akinza/study-0019/inputs/source.png",
+      "role": "immutable-generation-input",
+      "sha256": "d300be1ed50b0115149486239df2a1ebd6af34167fb5ed64313ba9edb677fd26"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0019/paws.png",
+    "role": "untouched-tool-output",
+    "sha256": "5274341d009c9c54cc0b89d64cd0cd78d2498c9b529f3cf0df4f39b9fb1a03fc"
+  },
+  "verdict": "Animal-paw direction, but forepaws are shown ground-bearing; superseded by study-0020.",
+  "reviewer": "Codex",
+  "approval": null
+}

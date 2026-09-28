@@ -126,3 +126,9 @@ Tail transition correction:
 > That last one has like a weird growth Like it's supposed to be the butt cheek muscle, but it got squished in. I think you need to put more effort into the prompt you're giving it
 
 The centered shared attachment is the intersection of three tail bases with the body, not an added furry bulb, compressed cheek or hanging lobe. Preserve continuous modest lower-back contours. Study-0018 is the new unapproved rear candidate after removing the extra mass and correcting placement.
+
+Tail acceptance and extremity correction, 2026-09-28:
+
+> this tail and positioning looks good. You're starting to give the creature human-like hands and feet, and that is not going the direction that I originally wanted, but otherwise, the tail looks good
+
+Study-0018 tail shape and positioning are accepted as shown. Preserve those aspects and the accepted gaze. Reject the human-like hand/foot direction; develop compact clawed animal paws guided by the source silhouette. Study-0020 is the new unapproved paw candidate. No exact digit count, gait or new species fact is ratified by this illustration.
