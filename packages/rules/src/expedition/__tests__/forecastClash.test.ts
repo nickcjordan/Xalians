@@ -279,7 +279,8 @@ describe('forecastSendBlows', () => {
 		expect(checked).toBeGreaterThan(100);
 		expect(withBlows).toBeGreaterThan(10);
 		expect(unlifted).toBeGreaterThan(0);
-	});
+	// pass 69: ten seeds run 5.8s on CI, past the 5s default
+	}, 30000);
 
 	// pass 67: who goes first, for the creature that loses as well as the one that wins
 	test('says which blows land before its own attack, whether it attacks at all, and whether it falls before its turn', () => {
