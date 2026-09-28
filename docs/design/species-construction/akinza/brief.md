@@ -1,48 +1,44 @@
-# Akinza construction pilot
+# Akinza construction pilot: current handoff
 
-Status: active experiment, 2026-09-27. Nick accepted probe-0003's tail shape while explicitly reserving pose. Construction images, modeling pose and final geometry package remain unapproved. See `tail-shape-acceptance.json` for the exact accepted aspects and artifact bindings.
+Updated 2026-09-28. Nick approved the animal-paw direction in study-0020 with "looks good, proceed" and requested an audit of the layered plan and lessons. Full words and image hash: [paw acceptance](paw-acceptance.json).
 
-## Evidence and identity
+## Where we are
 
-The abstract source is `apps/web/src/svg/species/akinza.svg`; species evidence is `docs/species-templates/akinza.json`. The current interpreted reading is `../../species-view-readings/akinza/reading.md`. Preserve two huge sideways furry ears, two large distinctive eyes, the slender upright feline body, two arms and legs, and three unequal leftward tail plumes.
-
-Nick prefers the first image round's soft gray style. Run-0008 is a useful identity reference that he called a good start. It is not geometrically consistent or an approved complete pack. Run-0007's tail junction and restrained rear form were accepted with "yeah thats better, proceed". Source pixels and white squiggles are abstractions, not a required literal match.
-
-Stable construction part IDs: head, ear-left, ear-right, eye-left, eye-right, muzzle, torso, pelvis, arm-left, arm-right, hand-left, hand-right, leg-left, leg-right, foot-left, foot-right, tail-root, plume-upper, plume-middle, plume-lower. The latest correction retires tail-trunk and merges tail-junction into the shared root at the body. These are art annotations, not edits to the creature contract or a decision about final mesh object separation.
-
-## Pose and coordinates
-
-`expressive-v1` retains the hands-on-hips attitude. `modeling-v1` proposes lowered arms clear of the torso and modestly separated planted feet. Study-0001 explores that pose; it does not replace the expressive reference or have Nick's approval yet.
-
-The geometry probe uses +X toward the creature's left, +Y toward its rear and +Z upward, in arbitrary construction units. The creature faces -Y. The front camera sees +X on the viewer's right. The rear sees +X on the viewer's left. The left camera sees rearward extension on the viewer's right. In the true overhead camera, the creature's front points toward page top and its left toward page left. Earlier image prompt study-0002 incorrectly asked for left on page right in its above view; retain that prompt as provenance and correct the convention in further work.
-
-## Questions exercised
-
-| Question | Study | Current finding |
+| Layer | Working state | Still required |
 |---|---|---|
-| Can the hands clear the torso while preserving identity? | study-0001 | Useful proposed pose; side tail projection remains inconsistent and fine fur obscures construction |
-| Can generated close-ups establish one attachment from several angles? | study-0002 | Smooth masses show a fork, but side/top cameras are not reliable and rear shaping regresses |
-| Can one trunk actually join all three plumes and remain plausible around the back? | probe-0001 | A single closed connected mesh exists; real side/top renders expose the shallow fan depth for review |
-| Do the three plumes have full rounded volume? | probe-0002 | Replaces rejected flat blades with round cattail-like sweeps, soft tips and depth separation; awaiting Nick's review |
-| Do three distinct pointed tails fuse directly at the body? | probe-0003 | Shape accepted by Nick; pose explicitly excluded |
-| Which orientation better suits the accepted tail form? | probes 0004 and 0005 | Relaxed down/back and farther rearward options; analytic tail lengths, cross sections and relative spread preserved by rigid rotation |
+| 1. Interpretation | Source abstraction and corrections established | Carry scoped decisions into the final manifest |
+| 2. Identity | First-round style preferred; working creature direction retained | Complete integrated likeness review |
+| 3. Construction | Body direction and animal paws selected | Whole-body scale, depth and limb posture reconciliation |
+| 4. Connections/detail | Tail form and central attachment accepted; gaze corrected | Verify their modeled equivalents and other connections around the body |
+| 5. Geometric reconciliation | Provisional whole-body blockout now being exercised, after local tail probes | Matched-view comparison, unseen-angle review and Nick's rough-form approval |
+| 6. Surface/handoff | Not started | Coat, final views, masks, measurements, manifest, consumer adapter and approval |
 
-The probe is only a local tail and pelvis study. Its simplified leg stubs, torso stub, plume widths and thicknesses are proposed construction aids, not approved final anatomy. No full-body reconstruction, facial geometry, rig, texture or production topology exists here.
+These are progress states, not whole-stage approvals. Production release remains blocked. Rigging and animation follow the approved handoff and are outside this construction exercise.
 
-## Next review
+## Current reference precedence
 
-Probe-0003's full rounded tails, pointed taper and compact body fusion are accepted as shape. Nick declined the pose comparison and asked whether pose belongs later. Expressive posing is deferred until the complete creature is assembled. Use a neutral technical arrangement to inspect construction; do not require a selection between options A and B. Next resolve head and muzzle depth, ear thickness and roots, torso/pelvis volumes, limb attachments and hand/foot construction, carrying the accepted tail form into the whole-body references. These new volumes still need review. Consult `review.md`, `status.md` and the main work record for evidence and unfinished work.
+Read [current-references.json](current-references.json) before modeling or prompting. It binds exact images, allowed roles, exclusions and scoped approvals. Do not treat a historical full-body sheet as an approved master.
 
-## Whole-body follow-through
+- Body study-0003 supplies retained head, torso and limb proportion direction only. Its gaze, tail junction and extremities are superseded.
+- Tail study-0018 supplies accepted shape, junction and central positioning. Three full rounded tails taper to points and fuse directly together at the body-level spinal base. No delayed trident branch, left-hip attachment or extra root lobe. Keep rear contours restrained.
+- Face study-0010 supplies accepted large distinctive eyes and forward gaze.
+- Paw study-0020 supplies compact furry animal forepaws and hind paws with short clustered clawed digits. No long human fingers, opposed human thumb or human heel. Four visible digits are an illustration-level arrangement, not a species-record ruling.
+- Detail study-0005 supplies only the smooth cupped ear tissue and shaggy hair-rim interpretation. Hair creates the ragged edge; the tissue is continuous. Its other panels are superseded.
 
-See [the current body review](body-study.md) for studies 0003 through 0010. Nick accepted the remaining design direction while requesting a centered spinal tail root, reduced rear contours and a forward gaze. The face correction is accepted; rear approval was withdrawn and study-0014 is the replacement candidate. Detail study-0005 proposes the ear shell and hand/foot construction; its older front-head gaze is superseded by study-0010. Historical sheets do not override these corrections or probe-0003 tail-shape acceptance.
+The source remains `apps/web/src/svg/species/akinza.svg`, species evidence remains `docs/species-templates/akinza.json`, and the interpreted reading is `../../species-view-readings/akinza/reading.md`. No source-pixel overlap acceptance rule. No changes to defining species facts or abilities.
 
-## Central root correction and research
+## Technical arrangement and unknowns
 
-Nick retained study-0010 gaze approval but withdrew rear approval. The entire shared three-tail base must overlap both sides of the rear midline at the tailbone, not form a cascading seam on the left. [Research and latest candidate](tail-root-research.md) record the inspected animal references and study-0014. Studies 0012/0013 are rejected; prepared consolidation study-0011 was never generated. No complete rough creature is released while the root remains under review.
+The agent chooses a neutral inspection arrangement with arms lowered clear of the body and feet modestly separated. Nick does not need to coach this pose. Expressive posing remains deferred. The new animal paws' scale and ankle transition must be judged with the complete body. Depth and hidden surfaces are proposed geometry, not measurements recovered from generated pictures.
 
-Latest refinement: Nick asked to combine the earlier proportions with the centered base, moderating the large blend and long lower tail. Study-0015 is the current rear candidate; study-0014 is an intermediate placement correction. Accepted gaze and other retained design aspects remain unchanged.
+Coordinates: +X creature left, +Y rear, +Z up; faces -Y. Units are arbitrary construction units. All six principal cameras share one orthographic scale, height and pose. Elevated turntable views are separate inspection evidence, not registered principal views.
 
-Current rear revision: Nick rejected the separate furry lobe in study-0015. [Study-0018](tail-transition.md) removes that added mass and refines central placement. Studies 0016/0017 are placement intermediates. Study-0018 awaits review; accepted gaze remains unchanged.
+Stable annotation IDs include head, ear-left/right, eye-left/right, muzzle, torso, pelvis, arm-left/right, hand-left/right, leg-left/right, foot-left/right, tail-root and plume-upper/middle/lower. The hand IDs do not imply human anatomy. There is no projecting tail-trunk.
 
-Current status, 2026-09-28: Nick accepted study-0018 tail shape and positioning, while rejecting the human-like hands and feet. The accepted gaze remains unchanged. The next review is [animal-paw study-0020](paw-study.md). This supersedes earlier pending rear-review wording; complete construction remains unreleased.
+## Next checkpoint and operator lessons
+
+Use [reconciliation.md](reconciliation.md) for the current whole-body experiment and actual discrepancies. Scoped component approval permits a provisional geometry experiment; it does not approve the newly modeled result. Keep accepted originals intact and compare their modeled equivalents. Do not regenerate all components to obtain another attractive sheet.
+
+Follow [WORKFLOW.md](../WORKFLOW.md) and [LESSONS.md](../LESSONS.md). Repeated geometry errors trigger a method change after two targeted image attempts. Check known regressions before involving Nick. Separate provenance checks, topology checks, likeness review and Nick's approval.
+
+Historical studies, failed candidates and feedback remain in [review.md](review.md), numbered `records/`, `correction-review.json` and the main work record. Historical references do not override this current map. Older stage snapshots remain stale deliberately; do not refresh rejected studies to make a release report green.

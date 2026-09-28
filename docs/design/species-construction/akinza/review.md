@@ -81,3 +81,9 @@ Latest refinement: Nick asked to combine the earlier proportions with the center
 Current rear revision: Nick rejected the separate furry lobe in study-0015. [Study-0018](tail-transition.md) removes that added mass and refines central placement. Studies 0016/0017 are placement intermediates. Study-0018 awaits review; accepted gaze remains unchanged.
 
 Current status, 2026-09-28: Nick accepted study-0018 tail shape and positioning, while rejecting the human-like hands and feet. The accepted gaze remains unchanged. The next review is [animal-paw study-0020](paw-study.md). This supersedes earlier pending rear-review wording; complete construction remains unreleased.
+
+## 2026-09-28: scoped paw approval and whole-body reconciliation
+
+Nick said "looks good, proceed" after study-0020 and requested a plan/learning audit. Recorded the full message and image hash in `paw-acceptance.json`. Tail study-0018 and gaze study-0010 remain accepted in scope. Consolidated the current reference map and removed contradictory current-candidate language from the brief.
+
+Applied the lesson now: changed from repeated image edits to a provisional whole-body geometry experiment. Four local blockout iterations corrected hard caps, reported and removed one bounded voxel fragment, reduced eye protrusion and fixed elevated-camera clipping. Blockout-0004 has a continuous closed body, six principal views, eight elevated views and derived occupancy masks. It is a directional integration checkpoint, not an approved likeness. See `reconciliation.md` for actual discrepancies. No stage approval was inferred from component approvals or passing technical checks.

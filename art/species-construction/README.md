@@ -30,3 +30,14 @@ Package file hashes normalize CRLF to LF for Markdown, JSON, Python, text prompt
 Working image files and Blender outputs live in gitignored `untracked/species-construction/`. A fresh checkout without these files correctly reports missing evidence. Committed run metadata and review notes remain readable. When an asset is approved, preserve its original inputs and outputs in the approved package before marking it available to production.
 
 The older `art/species-views/` utilities remain useful for complete six-view mask/registration checks. The construction tracker does not replace those checks or declare unfinished production validation complete. Detail crops and top views are not forced into a full-body six-view schema. Technical masks must be derived from their own images or actual geometry, never independently generated.
+
+## Whole-body reconciliation
+
+`blender_blockout.py` extends the local volume/sweep approach to a continuous body with cupped ears, limbs, paws and three tails. Eye surfaces and claws are separate detail objects. It is a provisional construction backend, not the rigged production template. Use a fresh output directory for every run:
+
+```text
+blender -b --factory-startup --python art/species-construction/blender_blockout.py -- --spec docs/design/species-construction/akinza/blockout-spec-0004.json --out untracked/species-construction/akinza/blockout-new
+python art/species-construction/review_blockout.py untracked/species-construction/akinza/blockout-new
+```
+
+The review tool checks output hashes, six principal camera conventions and registration, unclipped occupancy, figure-height and ground-row spread. It derives 14 masks and composes a six-view contact sheet and elevated turntable. Occupancy masks do not include the final front-feature cutouts, and these checks do not substitute for complete final-pack validation. The builder reports any removed isolated remeshing fragment, limited to 16 vertices and one voxel of extent; larger disconnected pieces still fail. Full likeness, continuity quality and biological plausibility require visual review.

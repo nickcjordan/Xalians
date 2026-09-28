@@ -8,12 +8,12 @@ Generated evidence report. Integrity is not visual or user approval.
 | identity | fail | fail | blocked |
 | construction | fail | fail | blocked |
 | connections | fail | fail | blocked |
-| geometry | fail | pending | blocked |
+| geometry | fail | fail | blocked |
 | handoff | fail | pending | blocked |
 
 ## interpretation
 
-Tail study-0018 shape and positioning accepted; gaze accepted. Human-like hands/feet rejected. Study-0020 animal paws await review and full-body integration. Complete construction remains unreleased.
+Tail study-0018, gaze study-0010 and animal-paw study-0020 accepted in scope. Whole-body blockout-0004 now tests integration. Full likeness and stage release remain unapproved; see reconciliation.md.
 
 ## identity
 
@@ -22,17 +22,19 @@ Run-0008 is a good starting concept; cross-view tail and pose differences preven
 
 ## construction
 
-Tail study-0018 shape and positioning accepted; gaze accepted. Human-like hands/feet rejected. Study-0020 animal paws await review and full-body integration. Complete construction remains unreleased.
+Tail study-0018, gaze study-0010 and animal-paw study-0020 accepted in scope. Whole-body blockout-0004 now tests integration. Full likeness and stage release remain unapproved; see reconciliation.md.
+- Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: identity
 
 ## connections
 
-Tail study-0018 shape and positioning accepted; gaze accepted. Human-like hands/feet rejected. Study-0020 animal paws await review and full-body integration. Complete construction remains unreleased.
+Tail study-0018, gaze study-0010 and animal-paw study-0020 accepted in scope. Whole-body blockout-0004 now tests integration. Full likeness and stage release remain unapproved; see reconciliation.md.
+- Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: identity
 
 ## geometry
 
-Probe-0003 shape accepted. Pose probes 0004/0005 archived; no A/B selection required. Full-body construction and full rough model remain incomplete.
+Technical geometry passes; complete likeness does not. Actual side projection conflicts with old illustration. Face blending, shaggy silhouette mass and paw/leg integration remain open. Directional whole-body checkpoint, not approved rough form.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: construction
 - Upstream evidence is stale or missing: connections

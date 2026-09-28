@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "reviewer": "Nick",
+  "date": "2026-09-28",
+  "source": "Nick, this chat, responding to animal-paw study-0020",
+  "words": "looks good, proceed. Where are we in the overall layered plan? which layer are we on? I want to make sure we are both following the plan as well as being smart about adjusting the plan where needed, and documenting lessons learned and actually learning from the lessons in the moment",
+  "acceptedAspects": [
+    "Compact animal-like forepaws and hind paws in study-0020",
+    "Short clustered clawed digits and hanging forepaws"
+  ],
+  "excludedAspects": [
+    "Whole-body integration and leg posture",
+    "New biological digit-count ruling",
+    "Calibrated geometry, complete stage release or final pack"
+  ],
+  "evidence": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/paws-study-0020.png",
+      "role": "accepted-animal-paws",
+      "sha256": "4cb2498257c8aa37043dfa74902e2d4608e688d9a68af53858689bd4f82c2f5c"
+    }
+  ]
+}

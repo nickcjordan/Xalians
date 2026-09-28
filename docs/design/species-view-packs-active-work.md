@@ -1,6 +1,6 @@
 # Species view packs: active work
 
-Updated 2026-09-27.
+Updated 2026-09-28.
 
 ## Intended outcome and authorized scope
 
@@ -89,4 +89,16 @@ Scope extension, 2026-09-27: Nick approved implementing the proposed layered sys
 - Study-0005's hand/foot proposals are superseded; its ear-shell interpretation remains useful. Updated attachment descriptions without changing stable part IDs, species contract, abilities or lore. All 281 package/provenance references verify, including 268 stage artifacts. Both new outputs decode and final release remains blocked.
 - Opened ready-for-review PR #720, https://github.com/nickcjordan/Xalians/pull/720, for the scoped tail approval and animal-paw studies. A merge does not approve the new paws.
 
-Immediate review target: animal-paw study-0020 under `species-construction/akinza/paw-study.md`. Tail shape and positioning in study-0018 and gaze study-0010 are accepted; preserve them and do not ask for those approvals again. After paw feedback, integrate the selected forms with the retained body, reconcile limb posture, counts and projections, and obtain approval of coherent construction references before the complete rough creature. Do not restore human-like hands/feet or older rejected tail roots. Only the local tail probe has exercised layer 5; the full creature, final surface handoff, production validation and downstream rigging/animation remain unfinished. Prior validator drafts remain preserved locally. The overall 30-species task still requires its individual approvals.
+## Current checkpoint, 2026-09-28
+
+- PR #720 merged. Continued from fresh main on `codex/akinza-whole-body-reconciliation`, preserving the unrelated unfinished production-validator files.
+- Nick accepted animal-paw study-0020 with "looks good, proceed" and requested an audit of layer progress and lessons. Recorded full artifact-bound scoped acceptance. Tail study-0018 and gaze study-0010 remain accepted; no complete-stage or final-pack approval inferred.
+- Rewrote the current brief and created a hashed reference map with explicit roles and exclusions. Added reusable `LESSONS.md` and changed the operator workflow: two repeated targeted image failures trigger a method change; provisional whole-body geometry may reconcile scoped accepted components before complete stage release.
+- Applied that change immediately by building the first complete rough Akinza. Four preserved local iterations corrected torso seams, bounded remeshing debris and elevated-camera clipping. `blockout-0004` has one closed connected body, six principal orthographic renders and eight elevated inspection renders, plus 14 alpha-derived occupancy masks and an editable Blender scene.
+- The actual side view exposes tail foreshortening missing from the earlier generated profile. Current review explicitly retains facial blending, missing shaggy silhouette mass and whole-body paw/leg scale as unfinished work. A successful topology check is not likeness approval.
+- Verification: 15 construction tests and 10 view-tool tests pass. All 442 checked package/current-reference/run references match their hashes. The current body has 162,860 vertices, one component and zero nonmanifold edges; all 14 views are unclipped, with zero principal height and ground-row spread. Historical dependency snapshots remain stale and every release gate remains blocked.
+- Main progress: layers 1/2 have working direction, layers 3/4 have scoped accepted component evidence and unresolved integration, layer 5 is now exercised on the complete creature, layer 6 is not started. Rigging/animation remain downstream.
+
+## Immediate next unfinished action
+
+Nick's directional review of the first whole-body geometry checkpoint in `species-construction/akinza/reconciliation.md`, focused on proportions and paw integration. Carry accepted source forms forward, resolve the recorded modeled discrepancies and any new feedback, then obtain rough-form approval. Do not treat the smooth blockout as a replacement for the accepted furry identity. Production masks, measurements, consumer adapter and final pack approval remain unfinished. A contrasting-body pilot and the remaining species follow approved Akinza. Prior validator drafts remain preserved locally.

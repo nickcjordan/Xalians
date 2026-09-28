@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "run": "blockout-0001",
+  "tool": "local Blender 5.2.2 LTS",
+  "billing": "local geometry rendering, no image API or key",
+  "prompt": null,
+  "seed": null,
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/inputs/blender_blockout.py",
+      "role": "immutable-input",
+      "sha256": "0e046b2702171fbf3ae6a4b7b354566c8159e1211c153083cf47718dc46ca706"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/inputs/blender_probe.py",
+      "role": "immutable-input",
+      "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/inputs/current-references.json",
+      "role": "immutable-input",
+      "sha256": "8e9967a30f5ec6babfe394cd774ecba256bb1e5827d1dea58ee889444b94a019"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/inputs/spec.json",
+      "role": "immutable-input",
+      "sha256": "1462b166269f312f0165cbd9762e9102f94929d917415c13d5909ec9727ef5ff"
+    }
+  ],
+  "geometry": {
+    "path": "untracked/species-construction/akinza/blockout-0001/geometry.json",
+    "role": "actual-cameras-and-output-hashes",
+    "sha256": "040f6d6e055f6435f3ba4bfd205f1672299361439afe4ad9d348dc6a2cb7eb76"
+  },
+  "outputs": [
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/back.png",
+      "role": "geometry-output",
+      "sha256": "ce13c87516c85f5f33bd2da3edbdd9c20c72f008390acd1824c67169dd5d4cc5"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/blockout.blend",
+      "role": "geometry-output",
+      "sha256": "350218896b8c76454494f4b7922a80d2d2490c3b7c1b4ac47c3f8e783c812e60"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/front-left.png",
+      "role": "geometry-output",
+      "sha256": "b80c02e4c3459d74282d50c10e070838c6ebb6ba1b75adc21cc43d072cce9225"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/front-right.png",
+      "role": "geometry-output",
+      "sha256": "3ed000a5f80632464d7ee42390305848f31640acf6b48ebe1c9383224500b9ec"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/front.png",
+      "role": "geometry-output",
+      "sha256": "d40d0e0a07328973403be70ea8470c93af52f510276d6bcc98b3fee6edd1aec9"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/left.png",
+      "role": "geometry-output",
+      "sha256": "76cae14ce02298e00fca4a4724b1f508b1d5dfad3a9e992f82fb62965ca01e1d"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/right.png",
+      "role": "geometry-output",
+      "sha256": "2e8d5afa50f2dccbcbaa416095821cb9149f0273d4d7dc1240ee584b868daf22"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/turn-000.png",
+      "role": "geometry-output",
+      "sha256": "cef163d9b853777036015fed45b810ccdfeebc7b61e390c1efc6bb39e99f9f82"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/turn-045.png",
+      "role": "geometry-output",
+      "sha256": "02f7dcb58a911e6e639dce20837a9841058f27a2202a2c0359f7c91b81ccc2e1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/turn-090.png",
+      "role": "geometry-output",
+      "sha256": "8f422dab99d386967e8b4a217e0b616938fe8e38d7dc5ba797224146db690825"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/turn-135.png",
+      "role": "geometry-output",
+      "sha256": "b33b5184309e0defd7ff598cc6c0d53a0d58382c9c8a97f0b95cc0d0d9e12c07"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/turn-180.png",
+      "role": "geometry-output",
+      "sha256": "139bb0ddc47498c2f96a5c5d7251fe6efaa4b96d95d157a3435514019cf04fa3"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/turn-225.png",
+      "role": "geometry-output",
+      "sha256": "8ee5bc51a6405b91ff91442f041b5ddb2baff18bd522f3334c304a3cb6c4dfda"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/turn-270.png",
+      "role": "geometry-output",
+      "sha256": "ba69b77f4e2dde5895cad64dca91d2fc3cd6055c04c9d712a15adc5a78199c2c"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0001/turn-315.png",
+      "role": "geometry-output",
+      "sha256": "d4077c69be6f150a30929235f84b64d1bccd7e158c97b9f62fbc6a6724a0d1d0"
+    }
+  ],
+  "technicalStatus": "technical-fail",
+  "visualReview": "See reconciliation.md; earlier iterations superseded",
+  "approval": null
+}
