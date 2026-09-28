@@ -8,7 +8,7 @@ import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { slotStateOf } from './reclamationRoster';
 import { speciesLabel, roleSentence, roleWord, rolePower } from './reclamationNarration';
 import { FitStrip, fitSentence } from './reclamationInstruments';
-import { fitScale, fitTakesAny, FIT_RIVAL_ROOM } from './reclamationFit';
+import { fitScale } from './reclamationFit';
 import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { attributeLanes } from './reclamationPreview';
 import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
@@ -42,7 +42,7 @@ import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expedition
 	suggested; it only says what would happen.
 */
 
-function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve, stripScale, stripRoom, newsSiteId, settled }) {
+function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve, stripScale, newsSiteId }) {
 	const slot = slotStateOf(record, view, you);
 	/*
 		PASS 55, KEEP ONE BACK. With no sends left, a creature still in hand is the reserve: it
@@ -119,9 +119,7 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 						focusSiteId={inHand ? focusSiteId : null}
 						off={disabled}
 						scale={stripScale}
-						room={stripRoom}
 						newsSiteId={newsSiteId}
-						settled={settled}
 					/>
 				)}
 				{kept && (
@@ -188,7 +186,6 @@ function ReclamationBench({
 	sendsTone,
 	// pass 57: the world the rival just sent to, whose columns changed with the arrival
 	newsSiteId,
-	settled,
 	// pass 65: your side row (pointer, piece, pennants, sends), at the foot with your squad
 	sideRow,
 }) {
@@ -209,8 +206,6 @@ function ReclamationBench({
 	const movers = movable || [];
 	// pass 57: one scale for every card's columns, so a column reads against the next card's
 	const stripScale = fitScale(fits);
-	// pass 58: once any card would take something off the rival, every column keeps its top for the rival's tag
-	const stripRoom = fitTakesAny(fits) ? FIT_RIVAL_ROOM : 1;
 
 	return (
 		<section className={`rec-bench rec-bench--step-${step}${yourTurn && !me.passed ? ' rec-bench--active' : ''}`} aria-label="Your squad" data-deploy-step={step}>
@@ -323,9 +318,7 @@ function ReclamationBench({
 						reserve={sendsLeft === 0}
 						focusSiteId={focusSiteId}
 						stripScale={stripScale}
-						stripRoom={stripRoom}
 						newsSiteId={newsSiteId}
-						settled={settled}
 						disabled={!yourTurn || me.passed || sendsLeft === 0}
 						onArm={onArm}
 						onInspect={onInspect}

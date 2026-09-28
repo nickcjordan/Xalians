@@ -1,9 +1,8 @@
 import React from 'react';
-import { speciesLabel, formatHoldShown, matchupWords } from './reclamationNarration';
-import { elementOf } from './reclamationFit';
+import { speciesLabel, formatHoldShown, matchupWords, articleFor } from './reclamationNarration';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { strainCause } from './reclamationPreview';
-import { HomeGlyph, StrainGlyph, NoMediumGlyph, CompanyGlyph, FallsGlyph, RoleGlyph, PhaseGlyph } from './reclamationGlyphs';
+import { HomeGlyph, StrainGlyph, NoMediumGlyph, CompanyGlyph, RoleGlyph } from './reclamationGlyphs';
 
 /*
 	PASS 61, SAY WHY (docs/design/reclamation-say-why.md). Nick, 2026-09-26, on a snowflake and
@@ -12,13 +11,17 @@ import { HomeGlyph, StrainGlyph, NoMediumGlyph, CompanyGlyph, FallsGlyph, RoleGl
 	ones where the creature is affected by something, we need to do a better job explaining what
 	that effect is and why."
 
-	reasonLines({ why, record, site, tolerance, blows }) -> [{ key, mark, effect, cause }]: one
+	reasonLines({ why, record, site, tolerance, matchups }) -> [{ key, mark, effect, cause }]: one
 	line for each thing that moves the creature's number at this world, in the order the number
-	is made (its home, the world's temperature or air, its will, the creatures beside it, the
-	Clash), each saying what it does ("it holds half") and why ("Zolton runs −40 to 20°C;
-	Hippochamp is comfortable at 5 to 35°C"). Every word comes from the engine's own facts: the
-	fit cell's reasons (`why`), the creature's tolerance, the site, and the forecast's own blows
-	(`blows`, forecastSendBlows). Nothing here judges the move.
+	is made (its home, the world's temperature or air, its will, the creatures beside it), each
+	saying what it does ("it holds half") and why ("Zolton runs −40 to 20°C; Hippochamp is
+	comfortable at 5 to 35°C"). Every word comes from the engine's own facts: the fit cell's
+	reasons (`why`), the creature's tolerance and the site. Nothing here judges the move.
+
+	PASS 72, PLACEMENT STACKS (docs/design/reclamation-placement-stacks.md). The lines no longer
+	play the Clash out ("it acts first ... strikes it for 13"): nobody knows how the fight goes
+	until both sides have passed. What the fight will turn on is said as a fact instead: the
+	element chart between it and each rival creature already there (`matchups`, both ways).
 
 	Sides, since pass 60, are said in words where there are words: a creature of yours is "your
 	X", the rival's is named bare.
@@ -36,7 +39,6 @@ const HOLDS = { severe: 'a quarter', strained: 'half' };
 // pass 68: a world too hot or too cold takes a tenth, or a quarter far off; the air keeps its half and quarter
 const TEMPERATURE_HOLDS = { severe: 'three quarters', strained: 'nine tenths' };
 const holdsWord = (level, cause) => ((cause === 'cold' || cause === 'hot') ? TEMPERATURE_HOLDS : HOLDS)[level] || 'less';
-const COUNT_WORDS = { 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six' };
 
 // the grade the world would put it at before its will lifts one step
 const rawLevel = (held, shrugged) => (!shrugged ? held : held === 'strained' ? 'severe' : held === 'none' ? 'strained' : held);
@@ -116,164 +118,52 @@ function companyLines(why, record) {
 	return out;
 }
 
-const whoseName = (who) => (who.mine ? `your ${who.name}` : who.name);
-
 /*
-	PASS 67. Who goes first, in every case, and what the forecast rests on. Nick, on Sonalloy
-	forecast to fall to Kosanos and Tizzie forecast to beat it: "How does one of them decide that
-	my creature would win the fight and the other one decides that my creature would lose?" The
-	winner's words said "it acts first"; the loser's said nothing about the order. Now a blow that
-	lands before the creature's own attack says so ("Kosanos is quicker and strikes it first"),
-	and a bolster or a shield, which never strikes, says that nothing it does weakens the attacker
-	first. And while the rival can still send, or has creatures hidden, the forecast says it holds
-	only if nothing else arrives: it is the Clash on the board as you can see it, not a promise.
+	PASS 72. The element chart between it and each rival creature standing here, each way on its
+	own line, only where the chart is not even. Its blows on theirs first, then theirs on it.
 */
-const NEVER_STRIKES = { bolster: 'A bolster mends and never strikes', shield: 'A shield guards and never strikes' };
+const HOW_HARD = { 0.25: 'a quarter as hard', 0.5: 'half as hard', 1.5: 'half again as hard', 2: 'twice as hard' };
+const howHard = (m) => HOW_HARD[m] || `${Math.round(m * 100)} percent as hard`;
 
-function clashLines(why, blows, { open, role } = {}) {
+function matchupLines(matchups, record) {
 	const out = [];
-	if (!blows) {
-		return out;
-	}
-	const unless = open ? ' if nothing else arrives' : '';
-	const going = Number(formatHoldShown(why.going || 0));
-	const kept = Number(formatHoldShown(Math.max(0, why.own || 0)));
-	const parts = [];
-	const hits = (blows.taken || []).filter((blow) => blow.by);
-	// what it lands on creatures it does not down (those are the downs line), with the rival's number before and after
-	const hurts = (blows.dealt || []).filter((h) => !h.downs).map((h) => `${whoseName(h)} for ${formatHoldShown(h.power)}${h.chart ? ` (${h.chart})` : ''}`);
-	// the order of the fight says why a blow lands less: it acts first, and an attacker already hurt lands less
-	if (blows.first && (hits.length || hurts.length)) {
-		parts.push(hurts.length ? `it acts first and hits ${listWords(hurts)}` : 'it acts first');
-	} else if (hurts.length && !hits.length) {
-		parts.push(`it hits ${listWords(hurts)}`);
-	}
-	(blows.taken || []).forEach((blow) => {
-		if (blow.by) {
-			// the fight runs in exchanges, so one attacker may land more than once
-			const n = blow.count || 1;
-			const sweep = blow.roles && blow.roles.includes('sweep') && !blow.roles.includes('strike');
-			// pass 67: a blow that lands before its own attack says the attacker is the quicker
-			const quicker = !!blow.before && blows.strikes;
-			const first = quicker ? ' first' : '';
-			const verb = sweep
-				? (n > 1 ? `catches it${first} in ${COUNT_WORDS[n] || n} sweeps for` : `catches it${first} in a sweep for`)
-				: (n > 1 ? `strikes it${first} ${n === 2 ? 'twice' : `${COUNT_WORDS[n] || n} times`} for` : `strikes it${first} for`);
-			parts.push(`${whoseName({ name: blow.name, mine: blow.mine })}${blow.hurt ? ', hurt by then and so weaker,' : ''}${quicker ? ' is quicker and' : ''} ${verb} ${formatHoldShown(blow.power)}${n > 1 ? ' in all' : ''}${blow.chart ? ` (${blow.chart})` : ''}`);
-		} else {
-			parts.push(`it loses ${formatHoldShown(blow.power)} to ${listWords(blow.statuses && blow.statuses.length ? blow.statuses : ['its condition'])}`);
+	const own = record ? elementOfRecord(record) : null;
+	(matchups || []).forEach((m) => {
+		if (m.dealt) {
+			out.push({ key: `chart-dealt-${m.recordId}`, mark: 'chart', element: own, effect: `${upper(matchupWords(m.dealt, own, m.element))}.`, cause: `Its blows land ${howHard(m.dealt)} on ${m.name}.` });
+		}
+		if (m.taken) {
+			out.push({ key: `chart-taken-${m.recordId}`, mark: 'chart', element: m.element, effect: `${upper(matchupWords(m.taken, m.element, own))}.`, cause: `${m.name}'s blows land ${howHard(m.taken)} on it.` });
 		}
 	});
-	// pass 67: a rival that lands first is said first, and what it lands back comes after
-	if (!blows.first && hurts.length && hits.length) {
-		parts.push(`then it hits ${listWords(hurts)}`);
-	}
-	// a creature that never attacks cannot weaken its attackers first, whatever its speed
-	if (blows.strikes === false && hits.length) {
-		parts.push(`${(NEVER_STRIKES[role] || 'It never strikes').replace(/^./, (c) => c.toLowerCase())}, so nothing weakens ${listWords(hits.map((b) => whoseName({ name: b.name, mine: b.mine })))} first`);
-	}
-	if (blows.unlifted > 0.5 && (blows.alliesDowned || []).length) {
-		parts.push(`your ${listWords(blows.alliesDowned)} ${blows.alliesDowned.length === 1 ? 'falls' : 'fall'} beside it, and the lift goes with ${blows.alliesDowned.length === 1 ? 'it' : 'them'} (${formatHoldShown(blows.unlifted)})`);
-	}
-	// pass 69: what a support creature of yours does for it, each in its own number
-	if (blows.guardedOff > 0.5) {
-		parts.push(`${blows.guardByName ? `${blows.guardByName === 'itself' ? 'its own' : `your ${blows.guardByName}'s`} guard` : 'a guard'} takes ${formatHoldShown(blows.guardedOff)} off`);
-	}
-	if ((blows.shrugged || []).length) {
-		parts.push(`${blows.steadiedByName ? (blows.steadiedByName === 'itself' ? 'it keeps itself clear' : `your ${blows.steadiedByName} keeps it clear`) : 'a bolster keeps it clear'}: no ${listWords(blows.shrugged)}`);
-	}
-	if (blows.recovered > 0.5) {
-		parts.push(`${blows.guardByName ? (blows.guardByName === 'itself' ? 'it mends' : `your ${blows.guardByName} mends`) : 'a bolster mends'} ${formatHoldShown(blows.recovered)}`);
-	}
-	const because = parts.length ? `${parts.join('; ').replace(/^./, (c) => c.toUpperCase())}.` : '';
-	if (blows.falls || why.falls) {
-		const when = blows.fallsBeforeActing ? 'before it can act' : 'in the Clash';
-		out.push({ key: 'falls', mark: 'falls', effect: `It falls ${when}${unless} (it goes in with ${going}).`, cause: because });
-	} else if (going - kept > 0) {
-		out.push({ key: 'clash', mark: 'clash', effect: `The Clash takes ${going - kept}${unless}.`, cause: because });
-	} else if (hurts.length) {
-		out.push({ key: 'hits', mark: 'clash', effect: `It hits ${listWords(hurts)}${unless}.`, cause: '' });
-	}
-	const downs = blows.downs || [];
-	if (downs.length) {
-		const late = downs.filter((d) => !d.early).map(whoseName);
-		const early = downs.filter((d) => d.early).map(whoseName);
-		const before = early.length ? `${listWords(early)} before ${early.length === 1 ? 'it' : 'they'} can act` : '';
-		const said = late.length && before ? `${listWords(late)}, and ${before}` : late.length ? listWords(late) : before;
-		// the condition is said once, on the first line of the fight
-		out.push({ key: 'downs', mark: 'downs', effect: `It downs ${said}${out.length ? '' : unless}.`, cause: '' });
-	}
 	return out;
 }
 
-/*
-	nameBlows(blows, match, seat) -> the forecast's blows with each creature named, and whether it
-	is yours. A creature sent leaves its roster for the board, so names come from both.
-*/
-export function nameBlows(blows, match, seat, recordId = null) {
-	if (!blows || !match) {
-		return blows || null;
-	}
-	const names = {};
-	const ours = new Set();
-	['A', 'B'].forEach((s) => {
-		((match.players[s] && match.players[s].roster) || []).forEach((r) => {
-			names[r.id] = speciesLabel(r);
-			if (s === seat) ours.add(r.id);
-		});
-		Object.values(match.board || {}).forEach((side) => (side[s] || []).forEach((e) => {
-			if (e.record) names[e.recordId] = speciesLabel(e.record);
-			if (s === seat) ours.add(e.recordId);
-		}));
-	});
-	const name = (id) => names[id] || 'a creature';
-	// pass 71: each creature's element, for the chart's words on a blow
-	const elements = {};
-	['A', 'B'].forEach((s) => {
-		((match.players[s] && match.players[s].roster) || []).forEach((r) => { elements[r.id] = elementOf(r); });
-		// the rival's roster is not in a handler's view; its creatures on the board are
-		Object.values(match.board || {}).forEach((side) => (side[s] || []).forEach((e) => { if (e.record) elements[e.recordId] = elementOf(e.record); }));
-	});
-	return {
-		...blows,
-		taken: blows.taken.map((t) => ({ ...t, name: t.by ? name(t.by) : null, mine: !!t.by && ours.has(t.by), chart: t.by ? matchupWords(t.matchup, elements[t.by], elements[recordId]) : '' })),
-		dealt: (blows.dealt || []).map((h) => ({ ...h, name: name(h.to), mine: ours.has(h.to), chart: matchupWords(h.matchup, elements[recordId], elements[h.to]) })),
-		downs: blows.downs.map((id) => ({ name: name(id), mine: ours.has(id), early: (blows.downsBeforeActing || []).includes(id) })),
-		alliesDowned: blows.alliesDowned.map(name),
-		// pass 69: whose guard and steadying, 'itself' when the previewed creature is the support creature
-		guardByName: blows.guardBy ? (blows.guardBy === recordId ? 'itself' : name(blows.guardBy)) : null,
-		steadiedByName: blows.steadiedBy ? (blows.steadiedBy === recordId ? 'itself' : name(blows.steadiedBy)) : null,
-	};
-}
+const elementOfRecord = (record) => {
+	const e = record && record.element;
+	return typeof e === 'string' ? e : (e && e.primary) || null;
+};
 
-export function reasonLines({ why, record, site, tolerance, blows, settled, open, role }) {
+export function reasonLines({ why, record, site, tolerance, matchups }) {
 	const w = why || {};
 	const name = record ? speciesLabel(record) : 'It';
 	const planet = site && site.world ? site.world.planet : 'This world';
 	const env = (site && site.environment) || {};
 	const tol = tolerance || {};
 	const out = [];
-	/*
-		PASS 63. First, when it no longer matters: the rival has passed with nothing hidden and you
-		lead here, so the world is yours this round whatever is sent. A blind critic sent three
-		creatures into worlds won by 20 or more with nothing on the table to say so.
-	*/
-	if (settled && settled.side === 'mine') {
-		out.push({ key: 'settled', mark: 'settled', effect: 'Already yours this round.', cause: `The rival has passed and cannot answer here; you lead by ${shown(settled.lead)}.` });
-	}
 	if (w.home) {
 		out.push({ key: 'home', mark: 'home', effect: 'Its home world: it holds a quarter more.', cause: `${name} comes from ${planet}.` });
 	}
 	// pass 71: the world's element, only where it is strong against this creature's
 	if (w.worldElement) {
-		out.push({ key: 'element', mark: 'element', element: w.worldElement.element, effect: `A ${w.worldElement.element} world is hard on ${w.worldElement.against || 'it'}: it holds nine tenths.`, cause: `${upper(w.worldElement.element)} is strong against ${w.worldElement.against || 'its element'} on the element chart.` });
+		out.push({ key: 'element', mark: 'element', element: w.worldElement.element, effect: `${upper(articleFor(w.worldElement.element))} ${w.worldElement.element} world is hard on ${w.worldElement.against || 'it'}: it holds nine tenths.`, cause: `${upper(w.worldElement.element)} is strong against ${w.worldElement.against || 'its element'} on the element chart.` });
 	}
 	const climate = climateLine(w, name, planet, env, tol, site);
 	if (climate) {
 		out.push(climate);
 	}
 	out.push(...companyLines(w, record));
-	out.push(...clashLines(w, blows, { open, role }));
+	out.push(...matchupLines(matchups, record));
 	return out;
 }
 
@@ -282,6 +172,9 @@ function ReasonMark({ line }) {
 		case 'home':
 			return <HomeGlyph />;
 		case 'element':
+			return line.element ? <XalianTypeSymbolBadge size={14} type={line.element} classes="rec-why-element-disc" /> : null;
+		case 'chart':
+			// pass 72: the attacking element's disc, the badge its piece wears
 			return line.element ? <XalianTypeSymbolBadge size={14} type={line.element} classes="rec-why-element-disc" /> : null;
 		case 'cold':
 		case 'hot':
@@ -293,14 +186,6 @@ function ReasonMark({ line }) {
 			return <CompanyGlyph />;
 		case 'self':
 			return <RoleGlyph role="bolster" />;
-		case 'clash':
-			// the Clash's own mark, two blows crossing, not the strike role's arrow a reader took it for
-			return <PhaseGlyph kind="clash" />;
-		case 'falls':
-		case 'downs':
-			return <FallsGlyph />;
-		case 'settled':
-			return <svg viewBox="0 0 24 24" className="rec-reason-flag"><path d="M6 21V3" /><path d="M6 4h12l-3 4.5L18 13H6" /></svg>;
 		default:
 			return null;
 	}

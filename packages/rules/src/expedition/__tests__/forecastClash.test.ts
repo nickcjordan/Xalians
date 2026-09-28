@@ -5,7 +5,7 @@
 	Ruling leaves standing, at exactly their held values. And it must not touch the state.
 */
 import { describe, test, expect } from 'vitest';
-import { createMatch, send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSend, forecastSendBlows, forecastMove, movableRecordIdsFor, createRngState, nextRandom } from '../expeditionRules.ts';
+import { createMatch, send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSend, forecastSendBlows, forecastStanding, forecastSendStanding, forecastMove, movableRecordIdsFor, createRngState, nextRandom } from '../expeditionRules.ts';
 import { chooseSend, chooseStake } from '../expeditionBot.ts';
 import { buildRosters } from '../roster.ts';
 import { getWorlds } from '../sites.ts';
@@ -144,6 +144,75 @@ describe('forecastClash', () => {
 			});
 		});
 		expect(checked).toBeGreaterThan(10);
+	});
+});
+
+/*
+	PASS 72. While sends are made the table shows the board stacked, with no Clash run: every
+	creature at the hold it would go into the Clash with, nobody downed, the rival's hidden
+	sends still hidden, and a send's standing is the standing after the real send.
+*/
+describe('forecastStanding', () => {
+	test('is every creature at the hold it goes into the Clash with, nobody downed', () => {
+		let checked = 0;
+		playMatch('st1', (before) => {
+			(['A', 'B'] as Seat[]).forEach((handler) => {
+				const clash = forecastClash(before, handler)!;
+				const standing = forecastStanding(before, handler)!;
+				expect(Object.keys(standing).sort()).toEqual(Object.keys(clash).sort());
+				Object.entries(standing).forEach(([id, f]) => {
+					expect(f.downed).toBe(false);
+					expect(f.hold).toBe(f.before);
+					expect(f.before).toBeCloseTo(clash[id].before, 9);
+					checked += 1;
+				});
+			});
+		});
+		expect(checked).toBeGreaterThan(10);
+	});
+
+	test('never counts a hidden send of the opponent, and leaves the state untouched', () => {
+		let seen = 0;
+		playMatch('st2', (before) => {
+			const siteId = Object.keys(before.board).find((id) => before.board[id].B.length > 0);
+			if (!siteId) {
+				return;
+			}
+			const board = { ...before.board, [siteId]: { ...before.board[siteId], B: before.board[siteId].B.map((e, i) => (i === 0 ? { ...e, hidden: true } : e)) } };
+			const withHidden = { ...before, board } as MatchState;
+			const hiddenId = board[siteId].B[0].recordId;
+			const snapshot = JSON.stringify(withHidden);
+			expect(forecastStanding(withHidden, 'A')![hiddenId]).toBeUndefined();
+			expect(forecastStanding(withHidden, 'B')![hiddenId]).toBeDefined();
+			expect(JSON.stringify(withHidden)).toBe(snapshot);
+			seen += 1;
+		});
+		expect(seen).toBeGreaterThan(0);
+	});
+
+	test('a send stands as the real send does', () => {
+		let checked = 0;
+		playMatch('st3', (before) => {
+			const handler = before.turn as Seat;
+			const frame = before.frames[before.frameIndex];
+			before.players[handler].roster.slice(0, 3).forEach((record) => {
+				frame.sites.forEach((site: any) => {
+					const real = send(before, handler, record.id, site.id);
+					if (!real || real.phase !== 'deploy') {
+						return;
+					}
+					expect(forecastSendStanding(before, handler, record.id, site.id)).toEqual(forecastStanding(real, handler));
+					checked += 1;
+				});
+			});
+		});
+		expect(checked).toBeGreaterThan(10);
+	});
+
+	test('is null outside Deploy', () => {
+		const state = playMatch('st4', () => {});
+		expect(forecastStanding(state, 'A')).toBe(null);
+		expect(forecastSendStanding(state, 'A', 'nope', 'nope')).toBe(null);
 	});
 });
 

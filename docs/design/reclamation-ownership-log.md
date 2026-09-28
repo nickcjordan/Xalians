@@ -2,13 +2,13 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 71, 2026-09-28)
+## Standing state (after pass 72, 2026-09-28)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
 ### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 71)
 
-Pass 71 put the element chart back in battle, made a world's element a slight penalty only where it is hard on the creature, and set home ground to a quarter more (`reclamation-elements-in-battle.md`).
+Pass 71 put the element chart back in battle, made a world's element a slight penalty only where it is hard on the creature, and set home ground to a quarter more (`reclamation-elements-in-battle.md`). Pass 72 changed only what the table shows, not the rules or the bot, so these still stand.
 
 | Gauge | Band | Seed 7 | Seed 13 | Verdict |
 |---|---|---|---|---|
@@ -25,7 +25,7 @@ Pass 71 put the element chart back in battle, made a world's element a slight pe
 | A side's round share with a bolster | reported | 50.4 | 51.0 | above the 49.6 / 49.5 without |
 | Games with a stake | reported | 0.2 | 0.6 | **the stake is almost never used** |
 
-### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 72)
+### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 73, moved from 72 because Nick is reading pass 72 live and may change it)
 
 | Clarity | Decisions | The Clash | Arc | Another game | Phone | Numbers | Feedback |
 |---|---|---|---|---|---|---|---|
@@ -41,12 +41,12 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`), updated by pass 65's critic.
 
 1. **The Clash is short to watch** (critic 4, up from 3; pass 64 readers 3). Each blow is drawn and told in two beats (pass 64). What is left is the fight itself:
-   - one blow per world, with the outcome already forecast;
+   - one blow per world. Since pass 72 the outcome is no longer forecast while sends are made, so the Clash is where the fight is first seen;
    - no number on a downing blow;
    - on a phone, the waiting worlds become slivers, and an element badge covers the caption.
 
    A longer fight is a rules question, and Nick has said the mechanics are in a decent place.
-2. **Overkill goes unflagged while the rival can still answer** (critic problem 2). Pass 63 marks a world settled only once the rival cannot act. A send that takes a world from 23 to 36 against 13 reads as a win, not as waste.
+2. **Overkill goes unflagged** (critic problem 2). A send that takes a world from 23 to 36 against 13 reads as +13 like any other. Pass 63's settled pennant, which flagged it once the rival passed, went in pass 72 with the rest of the Clash forecast: Nick ruled that nothing shown during placement may imply how the fight plays out. Anything here must say a fact of the stack, not a result.
 3. **Stake ×2 and Move are never explained on the table** (pass 65 critic). They are controls with their rule in their title and in How to play. Pass 66 fixed the critic's other two cases (`reclamation-plates-add-up.md`):
    - the plates now add up to their world's total, and a check holds it;
    - Grimedes' missing total was the number sliding back as the arena closed, caught mid-slide.
@@ -68,7 +68,7 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
     **Dropped in pass 65:** round 1's empty worlds (carried since pass 57). Two reasons:
     - Growing the squad on your move would move the table on every lift, against pass 36's rule.
     - The lifted creature's words need the world's height (pass 62).
-11. **Closed in pass 63:** the send budget at the moment of choosing and wasted sends (settled worlds), and the dead last round. Blind readers: whether a send matters 3 to 8, the budget 2 to 6.
+11. **Closed in pass 63:** the send budget at the moment of choosing and wasted sends (settled worlds), and the dead last round. Blind readers: whether a send matters 3 to 8, the budget 2 to 6. **Pass 72 removed the settled worlds** (a Clash forecast); the budget line stays.
 
 ### Every pass, the checklist
 
@@ -1550,4 +1550,17 @@ He also called the old world matchup backwards: it read the chart with the creat
 - The starter seat is 46 on seed 13, and comeback stays under band.
 
 **The process failure,** recorded so it is not repeated: pass 57 found the chart dead, fixed the read, shipped it off, and wrote "Nick's call" in this log instead of asking him. It was carried fourteen passes.
+
+### Pass 72 (2026-09-28): placement stacks
+
+Nick read the words under Tizzie at Telypso ("It falls in the Clash if nothing else arrives ... It acts first and hits Foromeer for 3; Foromeer, hurt by then and so weaker, strikes it for 13") and ruled: "during this placement phase, everything should just stack and the details that are shown should not imply that something will play out one way or another because we won't really know how something will play out until all creatures are placed and both players are passed." He asked too whether the words gave away the rival's chosen move. They did not (a creature's act is on its tag), but the forecast ran the whole Clash on an unfinished board and printed that guess five times. The pass 69 critic had named the same thing. Design: `reclamation-placement-stacks.md`.
+
+**What changed:**
+- **The engine** gained `forecastStanding` and `forecastSendStanding`: every visible creature at the hold it goes into the Clash with, nobody downed. `fitTable` reads them, so the bars, the plates, the cards and the ghost stack.
+- **Gone from the table while sends are made:** the Clash's hatched take, the crosses, the rival's tag on a card, the "+0" and "−9 ×" of a creature that would fall, the words about who acts first and who falls, and the settled pennant with its lines.
+- **New:** under the creature pointed at, the element chart between it and each rival creature already there, each way, only where it is not even and only for a side that attacks ("Dark on psychic ×2. Graviclaw's blows land twice as hard on it.").
+- **Fixed:** a card's home hover text still said "half again" (pass 71 made it a quarter more), and "A electric world" now reads "An electric world".
+- **Not changed:** the rules and the bot, so the gauges above stand. `forecastClash`, `forecastSend` and `forecastSendBlows` stay in the engine, tested and unused by the table.
+
+**Checked:** rules 656 on the Mac mini (two unrelated files timed out under load and pass alone), rules typecheck, web 1816 (Long Return timed out under load and passes alone), and the five table checks. Pictures at 1366 by 768 read the stacked totals and the chart lines on seeds 7 and 13.
 
