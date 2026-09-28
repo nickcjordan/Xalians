@@ -34,6 +34,8 @@ Applied now: the first-round image is committed as the primary likeness target; 
 
 ## Lessons from the completed internal rebuild loop, 2026-09-28
 
+Correction after Nick's rejection: this loop was completed operationally but did not achieve acceptable model quality. The readiness judgment described below is superseded by [quality-audit-0020.md](akinza/quality-audit-0020.md). Ear leaves, facial plates, joint tubes and section bands remained obvious. A seam fix was incorrectly promoted to whole-creature readiness. The current package now marks construction, connections, geometry and handoff review failed. The operator workflow requires reference-versus-render evidence for every major region before another approval request.
+
 - A shape can be closed and connected while still reading as the wrong material. Ear beads, scallops, ribs and folds were rejected before presentation. Broad coat needed actual long, flattened, overlapping volumes around smooth tissue. Applied in candidate 0020 after focused subscription-generated clay study-0021.
 - Use a scoped image study when an authoring method stops producing the desired form. Keep useful evidence separate from its regressions: study-0021 clarified coat but moved pupils inward and added excessive small locks. Those parts were excluded immediately.
 - Front views can hide rear attachment defects. Elevated turntable review caught the ear shell's hard rear endcap. Extending the root changed its contour but did not fully blend it; weighted local mesh smoothing at the union resolved the conspicuous rim while retaining distal forms.

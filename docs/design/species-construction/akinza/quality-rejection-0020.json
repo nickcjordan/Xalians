@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "source": "Nick, this chat, after explicit review links for model candidate 0020",
+  "words": "No, it does not match. If you mean, can I tell that it's supposed to be resembling it? Then sure, it matches. But if you mean, does it fit the quality that I'm looking for? Definitely not. I'd like for you to take a look at what you're asking me to look at and identify all of the places where you feel it's lacking because it feels like we're not at the point that you need to be relying on a human to point out things that you missed because there's too many things that have been missed",
+  "status": "rejected-visual-quality",
+  "direction": "Perform a comprehensive agent quality audit. Recognizable resemblance does not meet the required quality. Do not rely on Nick to identify obvious construction deficiencies.",
+  "artifacts": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/blockout-0020-contact.png",
+      "role": "rejected-model-views",
+      "sha256": "146c1265f5b2c4a289ad1b8fd629fa817ba3abb17c11c898bbf61fb41f40319f"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/detail-review-0020.png",
+      "role": "rejected-model-details",
+      "sha256": "ec69ee5b7da5ac4ac637b185bd6d4118065b9d4ce60ce9a421532d1fceaf77ad"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/blockout.blend",
+      "role": "rejected-model",
+      "sha256": "f4954efcae5d2abd240690ff036c18543f31ebb07c5944a6c0585981594942f2"
+    },
+    {
+      "path": "untracked/species-construction/akinza/akinza-construction-0020.zip",
+      "role": "rejected-model-export-bundle",
+      "sha256": "8215409ef6e74581118f0f13e481334c19b36b89e2242440e7456de80ab0910f"
+    }
+  ],
+  "audit": {
+    "path": "docs/design/species-construction/akinza/quality-audit-0020.md",
+    "role": "agent-visual-audit",
+    "sha256": "412fd52d7e564241cf46430680bf03a7462b7455829899193b5b7d556f4a30ab"
+  },
+  "priorIndependentVerdict": "Preserved unchanged as historical evidence; superseded for current readiness.",
+  "freshIndependentReview": {
+    "reviewer": "Codex subagent /root/quality_audit",
+    "verdict": "reject-before-user-review",
+    "words": "Candidate 0020 is substantially below the reference quality. I would reject it internally before asking Nick for art approval.",
+    "scope": "Fresh inspection of principal/detail/elevated renders against the preferred identity and scoped head, face, paw and tail references."
+  },
+  "approval": null
+}

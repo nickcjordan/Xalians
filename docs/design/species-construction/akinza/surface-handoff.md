@@ -1,5 +1,7 @@
 # Akinza construction handoff candidate
 
+**Rejected for visual quality, 2026-09-28.** Candidate 0020 and its portable bundle are retained as technical experiments only. Do not use them as accepted construction input. Nick rejected the model's quality; the agent's previous readiness verdict is withdrawn. [Current audit](quality-audit-0020.md) identifies substantial construction work still required. The file descriptions below document the historical export, not current readiness.
+
 This is a proposed layer-6 handoff built from the same geometry as the review renders. It does not grant Nick's approval. The preferred first-round sheet remains the appearance target; later tail, gaze and paw directions retain precedence. The editable construction surface is the starting reference for the downstream model, so that its builder does not have to infer the same hidden shapes again from pictures.
 
 ## Surface direction
