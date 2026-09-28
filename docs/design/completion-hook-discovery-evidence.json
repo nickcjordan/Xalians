@@ -1,0 +1,141 @@
+{
+  "observedAt": "2026-09-28T21:04:36.711540+00:00",
+  "runtime": "codex-cli 0.158.0-alpha.2.1",
+  "method": "hooks/list",
+  "result": {
+    "data": [
+      {
+        "cwd": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+        "hooks": [
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:user_prompt_submit:0:0",
+            "eventName": "userPromptSubmit",
+            "handlerType": "command",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 10,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 0,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:b308511a99852f3b53e0ca4c9bc23f5613a27ac5a5e3f276e30cdae4e92b5869",
+            "trustStatus": "trusted"
+          },
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:stop:0:0",
+            "eventName": "stop",
+            "handlerType": "command",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 30,
+            "statusMessage": "Checking completion audit and unfinished work",
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 1,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:d81c6641964a2ff039991b18ae173f76d2ce76ab4a7d68e1c71b5cd24f597995",
+            "trustStatus": "trusted"
+          },
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:interrupt:0:0",
+            "eventName": "interrupt",
+            "handlerType": "command",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 3,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 2,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:ee6a5f31a44f5c313a2aba6b982bb4f14cebf00fe3a6bb10f92de629955d99ca",
+            "trustStatus": "trusted"
+          }
+        ],
+        "warnings": [],
+        "errors": []
+      },
+      {
+        "cwd": "C:\\dev\\src\\Xalians",
+        "hooks": [
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:user_prompt_submit:0:0",
+            "eventName": "userPromptSubmit",
+            "handlerType": "command",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 10,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 0,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:b308511a99852f3b53e0ca4c9bc23f5613a27ac5a5e3f276e30cdae4e92b5869",
+            "trustStatus": "trusted"
+          },
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:stop:0:0",
+            "eventName": "stop",
+            "handlerType": "command",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 30,
+            "statusMessage": "Checking completion audit and unfinished work",
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 1,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:d81c6641964a2ff039991b18ae173f76d2ce76ab4a7d68e1c71b5cd24f597995",
+            "trustStatus": "trusted"
+          },
+          {
+            "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:interrupt:0:0",
+            "eventName": "interrupt",
+            "handlerType": "command",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
+            "async": false,
+            "matcher": null,
+            "timeoutSec": 3,
+            "statusMessage": null,
+            "additionalContextLimit": null,
+            "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+            "source": "project",
+            "pluginId": null,
+            "displayOrder": 2,
+            "enabled": true,
+            "isManaged": false,
+            "currentHash": "sha256:ee6a5f31a44f5c313a2aba6b982bb4f14cebf00fe3a6bb10f92de629955d99ca",
+            "trustStatus": "trusted"
+          }
+        ],
+        "warnings": [],
+        "errors": []
+      }
+    ]
+  },
+  "error": null,
+  "dispatchVerified": true,
+  "trustModified": false,
+  "dispatchEvidence": "docs/design/completion-hook-live-evidence.json"
+}

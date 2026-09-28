@@ -15,7 +15,7 @@
     },
     "protocol": {
       "path": "docs/design/autonomous-completion-audit.md",
-      "sha256": "682ffeec829db28ba0c9169225d194df3fdfde1c779e3d73003a0bc4691fb320"
+      "sha256": "227b616be8ff7c12799582faad3b378367b63ebc725554c43e1ff4e4656726b0"
     },
     "gate": {
       "path": "scripts/completion_audit.py",
@@ -23,11 +23,11 @@
     },
     "tests": {
       "path": "scripts/tests/test_completion_audit.py",
-      "sha256": "efe7c6fe89f652b5e667747a04a1bb55fa7fbb3ecce418e1efc23ebe694dc5a1"
+      "sha256": "0f113232880e0c55d3d5bd99f1d35572d6ef0297ec24758603e04590f78ac76f"
     },
     "hooks": {
       "path": ".codex/hooks.json",
-      "sha256": "24807b975cf8d3e8f87962e71afb593b0fd1fd16367657597dcaf6c1d9b30874"
+      "sha256": "b89a9e5969f2d9c72dc723ecc4e686246220e2a796b03147ffb8f1f31df5ea4b"
     },
     "ci": {
       "path": ".github/workflows/completion-audit.yml",
@@ -39,7 +39,19 @@
     },
     "work": {
       "path": "docs/design/autonomous-completion-active-work.md",
-      "sha256": "fbb24add89d9af682d1becb6b355b231132f574442fe9d39bcd481d6a0271649"
+      "sha256": "a37aa340298bf4d52f083a158ec963d8f168f85f96488b21efc7e7fdcffd0afc"
+    },
+    "discovery": {
+      "path": "docs/design/completion-hook-discovery-evidence.json",
+      "sha256": "12d225ff8ffa4457a04e7760093696ff2b50fdfa4050ec9627f19ede99944f26"
+    },
+    "liveFailure": {
+      "path": "docs/design/completion-hook-live-failure-evidence.json",
+      "sha256": "1d510aa92e058fb1540b773b29b4d97e8e43481861e5fc6c44b05b48ba457dc6"
+    },
+    "live": {
+      "path": "docs/design/completion-hook-live-evidence.json",
+      "sha256": "2df68e7dcb002a6041e20546b47d85079fc4b138eea0f91a283e01f9be49f569"
     }
   },
   "criteria": [
@@ -80,12 +92,14 @@
     {
       "id": "activation",
       "expectation": "Automatic runtime dispatch is verified after the user trusts the exact hook definition.",
-      "status": "blocked",
-      "assessment": "Hooks are configured and wrapper-tested. Live runtime trust/dispatch is not verified and cannot be substituted with manual script invocation.",
+      "status": "pass",
+      "assessment": "After Nick approved the corrected definitions, the live runtime executed prompt, Stop and Interrupt hooks. Missing receipt blocked completion; valid diagnostic receipt allowed the continuation to finish and was consumed; interruption persisted its state. This validates enforcement in a fresh session, not subjective quality or every existing client.",
       "evidence": [
         "hooks",
         "work",
-        "protocol"
+        "protocol",
+        "discovery",
+        "live"
       ]
     }
   ],
@@ -137,30 +151,28 @@
     {
       "id": "A5",
       "criterion": "activation",
-      "status": "blocked",
-      "observation": "Codex requires exact-definition hook trust before non-managed hooks execute.",
-      "evidence": [
+      "status": "resolved",
+      "observation": "Exact-definition user trust and actual runtime dispatch had not been verified.",
+      "resolution": "Verified Nick's saved trust for all corrected definitions in both checkouts and passed the real lifecycle diagnostic after fixing Windows command execution. No trust bypass or agent-granted approval was used.",
+      "resolutionEvidence": [
         "hooks",
-        "work",
-        "protocol"
-      ],
-      "blocker": {
-        "externalDependency": "User review/trust of repository hooks in Codex; actual dispatch confirmation",
-        "attempts": "Verified official hook contract, installed CLI hook support, direct Windows wrapper execution, and simulated lifecycle. Did not bypass trust or edit trust records.",
-        "unblocksWhen": "User reviews/trusts this hooks.json definition on a supported Codex surface and a real lifecycle dispatch is observed."
-      }
+        "tests",
+        "discovery",
+        "live",
+        "work"
+      ]
     }
   ],
   "audit": {
     "reviewer": "Codex primary with independent /root/quality_audit challenges",
-    "comparison": "Compared requested autonomous follow-through with actual instructions, gate behavior, failure regressions and Akinza negative case. Audit findings led to code fixes in this turn.",
+    "comparison": "Compared runtime event evidence with the intended gate behavior: block missing receipt, permit current valid receipt, consume it, and honor interruption. All eight live checks passed. Retained prior failure evidence and the independent Windows fix review.",
     "regressions": "Verified explicit stops, interrupts, per-chat isolation, changed evidence, retained findings and blocked approval. Unrelated validator drafts remain untouched.",
     "scopeCheck": "This is the explicit workflow-system request. It does not complete or erase the ongoing creature task, promise aesthetic judgment from hashes, or alter global app trust.",
     "sessionId": "01a0e3f5-ad0c-7980-905a-1595945478d8",
-    "requestId": "db68ef65-5993-43bf-b821-1f606eede094",
-    "performedAt": "2026-09-28T18:19:10.821553+00:00"
+    "requestId": "683d1347-71ce-4b66-8d91-41030aa6cef3",
+    "performedAt": "2026-09-28T21:06:38.350390+00:00"
   },
   "stop": {
-    "kind": "blocked"
+    "kind": "complete"
   }
 }

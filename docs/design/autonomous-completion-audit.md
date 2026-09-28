@@ -51,6 +51,24 @@ Hooks are a backstop. The agent must run the loop before attempting to stop, eve
 
 Current [official hook documentation](https://learn.chatgpt.com/docs/hooks) defines project hooks and Stop continuation behavior. It also requires the user to review and trust each non-managed hook definition before execution. Project trust alone is insufficient. Review this repository's hooks with `/hooks` in the Codex CLI; changed definitions require renewed trust. Do not alter trust records or use a trust-bypass flag to claim activation. This checkout's installed binary supports hooks, but live dispatch/trust must be verified separately from testing the script. No timed automation or guaranteed background execution is implied.
 
+### Verified Windows setup and linked worktrees
+
+On September 28, the installed `codex-cli 0.158.0-alpha.2.1` loaded hook definitions for linked worktrees from the primary checkout, `C:/dev/src/Xalians/.codex/hooks.json`. A hook file present only in a worktree was not discovered. The root checkout was older than the merged hook PR. Adding the merged hook definition and script there fixed discovery in both locations without changing existing tracked edits. `.codex/.gitignore` keeps local audit receipts out of Git even in an older checkout.
+
+The initial read-only `hooks/list` results showed the same three root-sourced hooks in both locations, with identical keys and hashes, awaiting trust. Interactive startup independently displayed "3 hooks are new or changed." Those checks established discovery and the review screen. The latest `completion-hook-discovery-evidence.json` now records the corrected definitions as trusted after Nick's approval and links to the successful live-dispatch evidence. The agent did not change trust settings.
+
+The desktop-bundled executable needs `--no-daemon` when used directly because it lacks a complete standalone daemon package. Its version-specific path can change after desktop updates. The tested command for this installation is:
+
+```powershell
+& "C:\Users\njord\AppData\Local\OpenAI\Codex\bin\faa963e871dd422c\codex.exe" --no-daemon -C "C:\dev\src\Xalians"
+```
+
+At startup, select **Review hooks**. The three events are UserPromptSubmit, Stop and Interrupt. The source should be the primary checkout's `.codex/hooks.json`; review the local Python command before trusting it. After trust, a fresh session still needs an observed prompt/Stop/Interrupt exercise before claiming automatic enforcement works. Do not make the user diagnose installation or discovery problems. Do not auto-pull, reset or stash a dirty primary checkout to install these files.
+
+The first live test after trust found a Windows command defect that direct-process tests missed: the runtime uses the session shell, so nesting a double-quoted PowerShell command expanded its variables before the inner shell ran. The corrected Windows definition invokes Python directly, resolves the Git root with `subprocess.check_output`, and runs the audit script with `runpy`. It accepts the lifecycle JSON on stdin. Regression coverage launches the actual configured command through PowerShell and cmd as well as directly, from a subdirectory, for all three lifecycle events. Changed definitions require renewed trust; passing these shell tests still does not replace a live lifecycle check.
+
+After Nick trusted the corrected definitions, a fresh local runtime passed the live lifecycle check on September 28. `completion-hook-live-evidence.json` records prompt dispatch, a blocked Stop without a receipt, a successful subsequent Stop with a valid diagnostic receipt, receipt consumption, and interruption handling. `completion-hook-discovery-evidence.json` records matching trusted definitions in both checkouts. This verifies the runtime mechanism in that fresh session; it does not certify visual quality or prove that every already-open client has reloaded its hook configuration. No further user setup is required for the verified definitions.
+
 ## Applied to Akinza
 
 The [0020 audit](species-construction/akinza/quality-audit-0020.md) is an unfinished repair backlog, not a completed art milestone. Its findings are represented in the task audit with status `open`; checking or sealing that record must return CONTINUE. Geometry work must address the head/ear/face method first, then trunk and joints, then paws and retained tail architecture, with whole-creature regression checks throughout. Layers 3/4 remain open, layer 5 fails quality, and the export experiment cannot close layer 6.
