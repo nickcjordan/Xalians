@@ -1,6 +1,6 @@
 # Akinza construction pilot: current handoff
 
-Updated 2026-09-28. **Construction is substantially incomplete and no current model is ready for likeness approval.** Nick reaffirmed the first grayscale round as the target and rejected the implication that only fur and texture remain. Local ankle/wrist study-0007 and broader refit-0008 are failed diagnostic experiments. See [likeness-feedback.json](likeness-feedback.json) and [reconciliation.md](reconciliation.md).
+Updated 2026-09-28. **Candidate 0020 is rejected for visual quality. No current model is ready for likeness approval.** Nick rejected recognizable resemblance as insufficient. The prior independent readiness verdict was wrong. See [the complete audit](quality-audit-0020.md), [exact feedback](quality-rejection-0020.json) and [current reconciliation](reconciliation.md).
 
 Nick approved the animal-paw direction in study-0020 with "looks good, proceed" and requested an audit of the layered plan and lessons. Full words and image hash: [paw acceptance](paw-acceptance.json).
 
@@ -10,10 +10,10 @@ Nick approved the animal-paw direction in study-0020 with "looks good, proceed" 
 |---|---|---|
 | 1. Interpretation | Reading and scoped corrections carried forward | Complete package approval |
 | 2. Identity | Preferred first-round reference retained | Nick's integrated likeness judgment |
-| 3. Construction | Candidate 0020 rebuilt and internally reviewed | Nick's clay review |
-| 4. Connections/detail | Face, ears, paws and joints in actual closeups | Nick's connection review |
-| 5. Geometric reconciliation | Connected model and registered cameras | Nick's whole-form approval |
-| 6. Surface/handoff | Surface direction and portable bundle assembled | Approved release; downstream production work |
+| 3. Construction | Candidate 0020 failed quality | Substantial face, ear, body and limb reconstruction |
+| 4. Connections/detail | Closeups expose unresolved attachments and joints | Correct modeled integration against scoped references |
+| 5. Geometric reconciliation | Technical consistency passes; likeness fails | Demonstrate reference-level form before user review |
+| 6. Surface/handoff | Export infrastructure exercised; art bundle rejected | Acceptable construction first, then rebuild derived assets |
 
 These are progress states, not whole-stage approvals. Production release remains blocked. Rigging and animation follow the approved handoff and are outside this construction exercise.
 
@@ -40,7 +40,7 @@ Stable annotation IDs include head, ear-left/right, eye-left/right, muzzle, tors
 
 ## Next checkpoint and operator lessons
 
-Use [reconciliation.md](reconciliation.md) for the current whole-body experiment and actual discrepancies. Scoped component approval permits experiments. Earlier primitive models failed whole-creature likeness; rebuilt candidate 0020 passes internal readiness for Nick's clay review. Do not infer approval or defer newly identified structural differences to texture. Keep accepted originals intact and compare their modeled equivalents. Do not regenerate all components to obtain another attractive sheet.
+Use [reconciliation.md](reconciliation.md) for the current whole-body experiment and actual discrepancies. Scoped component approval permits experiments. Earlier primitive models and rebuilt candidate 0020 failed whole-creature quality. The new audit is an internal correction list, not an approval request. Do not infer approval or defer newly identified structural differences to texture. Keep accepted originals intact and compare their modeled equivalents. Do not regenerate all components to obtain another attractive sheet.
 
 Follow [WORKFLOW.md](../WORKFLOW.md) and [LESSONS.md](../LESSONS.md). Repeated geometry errors trigger a method change after two targeted image attempts. Check known regressions before involving Nick. Separate provenance checks, topology checks, likeness review and Nick's approval.
 

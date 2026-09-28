@@ -35,7 +35,7 @@ The older `art/species-views/` utilities remain useful for complete six-view mas
 
 `authored_surfaces.py` adds continuous section cages, integrated orbital surfaces, smooth ear shells and actual broad overlapping coat masses. `surface_math.py` provides tangent-continuous monotone interpolation so a section extremum does not create an artificial band. These are authored shape controls, not measurements inferred from the source. Optional weighted local smoothing blends a named intersection after union. Exact code and spec snapshots are captured at build start.
 
-Akinza candidate 0020 passes internal readiness for Nick's clay review after independent feedback loops. This supersedes the failed primitive proxy as the current candidate, without changing the failed status of earlier studies or granting art approval.
+Akinza candidate 0020 was rejected by Nick for insufficient visual quality. The previous internal readiness verdict was incorrect. The current audit identifies unresolved face, ear, body, joint and paw construction. Export integrity remains useful evidence, but this model and its bundle are failed experiments, not construction input ready for art approval. See `docs/design/species-construction/akinza/quality-audit-0020.md`.
 
 `export_geometry.py` runs inside Blender against the saved scene. It exports a GLB, six actual camera transforms, depth, geometric normals and object identity arrays, then imports the GLB to check triangle count and world bounds. Arrays are top-to-bottom at pixel centers. Normals use camera coordinates; depth is forward distance from the orthographic camera plane, in arbitrary construction units. Background is NaN. Object IDs describe actual render objects, not anatomical segmentation of the fused body.
 
@@ -51,7 +51,7 @@ Use the GLB as a direct geometry reference. Existing numeric creature-template p
 
 ## Whole-body reconciliation
 
-The earlier Akinza primitive runs did not achieve the preferred reference likeness. Runs 0007/0008 remain failed diagnostic studies, despite technical passes. Candidate 0020 uses the authored surfaces described above and passes internal readiness for Nick's review. Do not use this backend's output as a surface-ready creature by default.
+The earlier Akinza primitive runs did not achieve the preferred reference likeness. Runs 0007/0008 and candidate 0020 remain failed diagnostic studies, despite technical passes. The authored surfaces in 0020 still produced inadequate form quality. This backend has not demonstrated the required likeness and must not be treated as a surface-ready creature generator.
 
 `blender_blockout.py` extends the local volume/sweep approach to a continuous body with cupped ears, limbs, paws and three tails. Eye surfaces and claws are separate detail objects. It is a provisional construction backend, not the rigged production template. Use a fresh output directory for every run:
 

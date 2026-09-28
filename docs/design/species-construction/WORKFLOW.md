@@ -39,6 +39,8 @@ Separate progress from release: a provisional layer-5 experiment may expose miss
 
 ## Invalidation and feedback
 
+Quality-control correction after candidate 0020: review actual geometry against the preferred references at comparable regional scale. Require front, profile and rear evidence for head/ears, facial volume and eye integration, trunk/limb transitions, paws/joints, and tail/pelvis continuity. List substantive differences first; a local improvement or absence of mesh errors cannot support a whole-creature pass. Keep any known major construction failure in internal work. Label generated design references separately from model renders in the delivery itself. A second agent must challenge the comparison, not merely confirm the last local fix. See [Akinza's failed quality review](akinza/quality-audit-0020.md).
+
 A decision has one stable ID. Reference that ID from every affected stage. Store exact feedback alongside the interpreted instruction. Changing a tail decision invalidates the tail study, rough geometry and final handoff; unrelated face studies can keep their evidence. Never rewrite a previous approval onto changed images.
 
 Geometry stages depend on both construction and connections. Full release requires approved upstream stages, recorded visual review bound to current evidence, and Nick's explicit artifact-bound approval. Technical integrity alone only establishes that records still describe the files on disk.
