@@ -58,7 +58,7 @@ Also parked from the current engine: area geometry by aim, status fit (closing v
 
 ## Still to design
 
-1. **Enemies.** What an enemy is in general: the same move grammar as companions (attacks with power and element, the four supports, rests), how a dungeon's theme sets their elements, and the roles that give each fight a priority puzzle.
+1. **Enemies: settled.** Already ruled in [creature-adventure-design-workshop.md](creature-adventure-design-workshop.md) ("Dedicated dungeon enemies accepted", 2026-09-16), restated by Nick 2026-09-28: enemies are creatures with every mechanic the squad has, authored by us to fit the existing worlds and elements, and never part of the canon or the generator pool, so a dungeon needs no deep backstory and cannot conflict with lore. A dungeon is designed by picking a place, imagining the scene, and building its enemies from the roles, the mechanics and the lesson that dungeon should teach. Settled per dungeon when the first one is designed, not as general rules: whether enemies are reused between dungeons, and each enemy's move count and signature budget (the workshop allows these to differ from the squad's).
 2. **The base round.** A working order of play that uses none of the parked mechanisms.
 3. **Numbers.** How intensity becomes power and support degree, health scale, the element steps, how big an area's reduction is.
 4. **Dungeons and squads.** Themed dungeons and who you bring. This reopens Nick's 2026-09-24 ruling that squad selection is out of scope, because element in both directions makes the choice of squad the largest element decision.
