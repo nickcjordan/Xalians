@@ -39,7 +39,7 @@
     },
     "work": {
       "path": "docs/design/autonomous-completion-active-work.md",
-      "sha256": "232d4dd3057172d1dabafd68431c25aa43fb5dcb1e63655e45808909dfa90504"
+      "sha256": "fbb24add89d9af682d1becb6b355b231132f574442fe9d39bcd481d6a0271649"
     }
   },
   "criteria": [
@@ -158,7 +158,7 @@
     "scopeCheck": "This is the explicit workflow-system request. It does not complete or erase the ongoing creature task, promise aesthetic judgment from hashes, or alter global app trust.",
     "sessionId": "01a0e3f5-ad0c-7980-905a-1595945478d8",
     "requestId": "db68ef65-5993-43bf-b821-1f606eede094",
-    "performedAt": "2026-09-28T18:17:36.752188+00:00"
+    "performedAt": "2026-09-28T18:19:10.821553+00:00"
   },
   "stop": {
     "kind": "blocked"
