@@ -2,6 +2,16 @@
 
 Updated 2026-09-28.
 
+## Active resumption after hook verification
+
+Current action: assembly 0063 removes the obvious shoulder shelf and ankle cuff through smooth spatial fairing. Its six actual orthographic views pass camera, source-hash, image-dimension and occupancy registration checks with zero height/ground spread. It remains an internal partial result: paw support is too thin, the tail fan is too high and large relative to the accepted rear study, and facial expression remains wrong. These findings came from a second agent inspecting the actual renders, and are being corrected now. Body 0066 adds rounded paw support and a modest root-preserving fan adjustment. Head 0064 tests larger eye openings on the full-model native face; its quality has not yet been accepted even internally.
+
+Experiments 0050, 0053, 0054 and 0057 failed to repair the muzzle. The bounded patch propagated raw boundary noise vertically, and its tangent handling was wrong for descending profiles. The patch has been removed from the current builder; failed source snapshots remain. Full reconstruction 0058 is a comparison, not an automatic upgrade. Shoulder spheres in 0056 were rejected and removed. The independent code audit also found abrupt smoothing masks, missing helper provenance and misleading equal-height comparison text. The current scripts use smooth falloff, snapshot imported helper sources, hash input meshes before loading, and verify source/dimension consistency.
+
+The completion gate currently retains four scoped internal passes from 0052, with 16 whole-creature criteria open. Recent studies are not approval candidates. See `species-construction/akinza/head-method-audit-0022-0024.md` and the numbered experiment ledger. No local improvement, technical pass or merged PR constitutes art approval.
+
+Nick explicitly resumed the creature work after live hook verification. Authorized work remains the complete model, reference comparison, independent critique and relevant fixes, with production rigging and animation downstream. Local reconstruction uses saved references and public weights with network inference disabled. It generates geometry only, with no image synthesis, paid service or API key. See `species-construction/akinza/head-method-audit-0022-0024.md` for the experiment ledger and provenance. The rejected 0020 package remains historical evidence.
+
 ## Intended outcome and authorized scope
 
 Nick requested the layer described in `species-view-packs-brief.md`: tooling and individually approved registered view packs for 30 species. Start with the plan PR, then Akinza's written reading and Nick's approval before generating any image. Subscription generation only, no paid API or key, no coauthor trailers, American English, no em dashes. Approval must be in Nick's own words.

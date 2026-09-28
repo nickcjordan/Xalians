@@ -835,5 +835,12 @@
     "path": "docs/design/species-construction/akinza/records/package-before-quality-rejection-0020.json",
     "role": "historical-candidate-package",
     "sha256": "31757d55e79c3859cc336c3d799b0544d3fc798d427b3f1673ce7adf6537a1fd"
+  },
+  "internalWork": {
+    "status": "active-corrections-not-ready-for-approval",
+    "latestAuditedAssembly": "assembled-0063",
+    "audit": "docs/design/species-construction/akinza/quality-audit-reconstruction-0052.md",
+    "workRecord": "docs/design/species-view-packs-active-work.md",
+    "approval": null
   }
 }

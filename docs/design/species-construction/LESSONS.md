@@ -2,6 +2,10 @@
 
 Updated 2026-09-28. These are operational corrections within the authorized experiment. They do not ratify new creature facts or approve new artwork.
 
+## Head method tests after hook verification
+
+Head-0022 and head-0023 repeated two structural failures despite more geometry: surface eye patches intersected an uncut skull, and regular coat rows produced spiky or tiled masses around a hard ear shell. Independent review confirmed both. Applied now: stop the parameter loop and test local geometry reconstruction from the retained reference, with no image synthesis or paid service. Its output must pass the same front/profile/rear comparison. If it fails, rebuild true socket openings and a rounded, thin ear cup before adding individually authored major coat groups. Do not add more coat pieces to conceal a failed underlying surface. Also check connected components: zero nonmanifold edges did not prevent 46 disconnected body pieces in head-0023.
+
 | Evidence | What failed | Changed practice | Application now |
 |---|---|---|---|
 | Akinza studies 0006-0018 repeatedly moved the same tail junction | Rephrasing spatial instructions did not establish one shared object | After two targeted failures of the same geometric requirement, change representation; inspect anatomy and use geometry | Whole-body blockout uses one centered spinal coordinate for all three branches and actual camera projections |
@@ -42,3 +46,16 @@ Correction after Nick's rejection: this loop was completed operationally but did
 - Confirm a suspected hole with alpha and geometry before treating a dark recess as missing surface. The profile pocket was opaque and hit near-ear geometry. It was not a through-hole.
 - Snapshot source code when a build starts, not only when it finishes. Later edits must not change the provenance attributed to a running build. The builder now captures its exact modules and spec automatically.
 - Independent review is an internal feedback loop, not delegated user approval. Candidate 0020 passed readiness for Nick's review. Its broad coat interpretation and whole-creature likeness remain Nick's decision.
+
+
+## Native reconstruction and bounded edits, 2026-09-28
+
+Local reconstruction can recover coupled volumes that repeated primitive assembly did not express. It also invents anatomy. The larger model repeated the wrong rear stalk and human hands, and the paw crop produced six toes where the accepted illustration shows four. Model size and recognizable likeness are not grounds to promote a result. The reconstruction wrapper records local weights, source revision, exact input, seed and output hashes and disables network inference. No image or texture generation is part of that wrapper.
+
+Preserve better native regions. Analytic central-face replacements lost the rounded muzzle and chin, so the later head reverted to 0024's native face. Projecting a new surface over old folds created artifacts in both face and torso. Broad torso excision then damaged hip and shoulder joins. Those experiments are rejected, not silently carried forward. The next body test retains the original attachment topology and relaxes relief at a coarser mesh scale. The eye test replaces only the folded annulus with closed socket geometry. Each requires actual multiview inspection before it can become a baseline.
+
+Compare at whole-creature scale as well as in closeups. The first assembly's relatively large head and heavy forearms became obvious in comparison with the preferred first sheet. A smaller head and a continuous neck bridge were retained from that audit; their success does not excuse the failed torso. Keep artifact-level acceptance separate from local technical improvements.
+
+The next independent audit found causes that connectivity checks cannot detect. A hard rectangular smoothing mask contracts one side of its boundary and freezes the other, producing a shelf on a closed mesh. A replacement muzzle strip interpolated noisy endpoints independently, stretching those ripples into vertical channels; its positive-only tangent clamp was also wrong for descending profiles. Retire a failed method when its geometry is worse. In 0063, smooth spatial falloff at a coarser intermediate mesh scale visibly improved shoulder and ankle continuity. That improvement did not supply the missing paw volume or correct the oversized tail fan, so those remained separate executable findings.
+
+Provenance must include imported geometry helpers, not just the entry script. New stages snapshot the entry, local helpers and input hashes before loading meshes. Review verifies source mesh hashes and actual PNG dimensions. A panel-fit comparison preserves aspect ratio but does not necessarily give equal subject heights; label the actual operation honestly. Historical runs without helper snapshots remain explicitly limited rather than retroactively claiming exact replay.
