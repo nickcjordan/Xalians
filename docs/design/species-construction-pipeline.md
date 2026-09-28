@@ -23,6 +23,8 @@ More independently generated angles alone cannot establish a consistent object. 
 
 Layers 3 and 4 can iterate together. Their outputs are studies until Nick approves the interpretation and the references agree. Do not generate a full new sheet for a local uncertainty that one focused study can resolve.
 
+Operational refinement, 2026-09-28: a provisional whole-body layer-5 experiment may reconcile scoped accepted component directions before full layers 3/4 release. Requiring independently generated pictures to prove geometric consistency before geometry creates a circular gate. This does not waive any art approval or production release requirement. The agent must preserve a current reference map, compare the modeled forms against accepted evidence and identify unresolved choices. See [lessons and their current application](species-construction/LESSONS.md). After two targeted image attempts repeat the same spatial failure, change representation instead of continuing a prompt loop.
+
 ### Construction references
 
 Keep the preferred gray furry appearance as the identity reference. Construction views simplify fine hair and lighting detail enough to expose head depth, muzzle projection, ear thickness, torso and pelvis depth, limb taper, and tail volume. Preserve silhouette-defining fur masses. A simplified body beneath the fur is a proposed interpretation, not an observed fact or a new species record.

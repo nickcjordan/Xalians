@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "source": "Nick, this chat, responding to blockout-0004",
+  "words": "The creature's legs became a bit too thin. I wanted the concept of the creature to have a body that was structured closer to a rabbit where the rabbit's hind legs were beefier and intended to provide the bounding strength. To be clear, I don't want you to go all the way to the portion of putting rabbit legs on this creature. I'm just saying what you have here is very close, it's just a bit too thin. I'd prefer the makeup of the legs to imply better strength",
+  "direction": "Modestly fuller thighs and upper calves that visually imply bounding strength, preserving the existing creature leg design. Do not replace the legs with literal rabbit anatomy.",
+  "reviewedEvidence": {
+    "path": "docs/design/species-construction/akinza/evidence/blockout-0004-contact.png",
+    "role": "reviewed-whole-body-blockout",
+    "sha256": "614c5cf34e43c50bd88307dcbde348ce436e6625d1c3882882611c5748d5c1a0"
+  },
+  "scope": "Art construction correction only; no ability or species-record change",
+  "newGeometryApproval": null
+}

@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "status": "scoped-component-inputs-for-provisional-reconciliation",
+  "rule": "Use only the named role. Local accepted corrections override older whole-body sheets. No image is a calibrated whole-creature master.",
+  "references": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/body-study-0003.png",
+      "role": "Retained torso, head and limb proportion direction",
+      "sha256": "eb6f337326d5f7edf8cbb070bcb4aedd4178f06a6478eb201375942dded59c24",
+      "exclude": "Old tail root, gaze, human hands and feet"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/back-study-0018.png",
+      "role": "Accepted tail shape, junction and central rear positioning",
+      "sha256": "caaedd881246acdc29b5f1d52cb2801c3c87869370ba3fe58da41e5ab2db43e4",
+      "exclude": "Hands and feet; full-body or geometry approval"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/face-study-0010.png",
+      "role": "Accepted distinctive eyes and forward gaze",
+      "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952",
+      "exclude": "Unseen head depth or calibrated eye geometry"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/paws-study-0020.png",
+      "role": "Accepted compact animal forepaws and hind paws",
+      "sha256": "4cb2498257c8aa37043dfa74902e2d4608e688d9a68af53858689bd4f82c2f5c",
+      "exclude": "Full-body scale, skeleton, gait or biological digit count"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/details-study-0005.png",
+      "role": "Retained smooth cupped ear tissue and hair rim direction",
+      "sha256": "47de03c0f4e165d11d0193d04729844c51605169ad7ef5df3fe92e7cc12ed785",
+      "exclude": "Eyes, fingers and feet; all superseded"
+    }
+  ],
+  "approvals": [
+    {
+      "path": "docs/design/species-construction/akinza/body-direction-acceptance.json",
+      "role": "scoped-review",
+      "sha256": "f2133cf4300db8fc555bc6670f339e70f5336c8c2e262f41301041d7b7bab600"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/tail-rear-acceptance.json",
+      "role": "scoped-review",
+      "sha256": "7d79392046c744bb5fae1a0eaba24b2c01851a96fcff06c6ce81e913b1586d06"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/paw-acceptance.json",
+      "role": "scoped-review",
+      "sha256": "49120cb27e9a65ab2f76a0d8bcabb226cf944188b26df3c54d78524a36f7f3fb"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/correction-review.json",
+      "role": "scoped-review",
+      "sha256": "97597f149f1310f67b47a6251c2763a18acf00fa3405f7f4669127844f5a6df0"
+    }
+  ],
+  "unresolved": [
+    "Relative scale of new paws and leg-to-paw transition",
+    "Consistent head and ear depth",
+    "Full creature tail occlusion across actual cameras",
+    "Modeled likeness to accepted illustrations",
+    "Modestly stronger hind-leg volumes in blockout-0005 await review"
+  ],
+  "fullStageApproval": null,
+  "directions": [
+    {
+      "path": "docs/design/species-construction/akinza/hind-leg-feedback.json",
+      "role": "latest-hind-leg-volume-direction",
+      "sha256": "03dbdcbc73aa370b2ad6dc87a4037fc91dd21dd43cad2b49dc7d068870920416"
+    }
+  ]
+}

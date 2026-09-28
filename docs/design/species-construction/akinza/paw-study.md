@@ -1,6 +1,6 @@
 # Akinza animal-paw direction
 
-Current review candidate: study-0020. Tail shape and positioning in study-0018 are accepted; the new paws are not yet approved.
+Accepted direction, 2026-09-28: Nick said "looks good, proceed" in response to study-0020. See [paw-acceptance.json](paw-acceptance.json) for his full words and exact evidence. Tail study-0018 and gaze study-0010 remain accepted in their scopes. Full-body integration is still provisional.
 
 Nick said:
 
@@ -12,7 +12,7 @@ Use the original abstract silhouette's small clawed extremities and slender limb
 
 This correction supersedes study-0005's proposed long fingers, opposed thumb and broad human-like foot treatment. Its ear-shell study remains useful. Stable annotation IDs such as `hand-left` do not imply human anatomy and need not be renamed. No species facts, abilities or lore changed.
 
-## Proposed forms
+## Accepted paw direction and remaining integration
 
 ![Compact clawed forepaws and hind paws](evidence/paws-study-0020.png)
 

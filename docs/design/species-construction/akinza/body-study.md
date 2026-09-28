@@ -1,6 +1,6 @@
 # Akinza whole-body construction review
 
-Current state, 2026-09-28: study-0018 tail shape and positioning and study-0010 gaze are accepted. The human-like hand/foot proposals below are superseded. [Animal-paw study-0020](paw-study.md) is the current unapproved review target. The earlier sheets remain history, not a current consolidated master.
+Current state, 2026-09-28: study-0018 tail shape and positioning and study-0010 gaze are accepted. The human-like hand/foot proposals below are superseded. [Animal-paw study-0020](paw-study.md) is now accepted in scope. The current whole-body experiment is [reconciliation.md](reconciliation.md). The earlier sheets remain history, not a current consolidated master.
 
 Status: Nick accepted the remaining visible design direction while requesting corrections to the tail root, rear contours and gaze. Nick accepted the gaze with "yup", then withdrew rear approval and clarified bilateral overlap at the root. This resumes layers 3 and 4. The neutral stance is an agent-selected inspection arrangement; expressive pose selection remains deferred.
 
