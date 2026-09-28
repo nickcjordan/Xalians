@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import type { XalianRecord } from '@xalians/content/schema';
-import { createMatch, send, pass, currentFrame, forecastSendBlows } from '../expeditionRules.ts';
+import { createMatch, send, pass, currentFrame, forecastSendBlows, getPublicState } from '../expeditionRules.ts';
+import { scoreSends } from '../expeditionBot.ts';
 import { ROSTER_SIZE, WORLDS_PER_MATCH, SUPPORT_GUARD } from '../expeditionInterpretation.ts';
 import { prepare, roleOf } from '../creatureOnTable.ts';
 import type { Seat, World } from '../types.ts';
@@ -166,5 +167,25 @@ describe('the support creature', () => {
 		expect(blows!.taken.length).toBeGreaterThan(0);
 		expect(blows!.guardBy).toBe('A_s');
 		expect(blows!.guardedOff).toBeGreaterThan(0);
+	});
+
+	/*
+		PASS 70. The bot's spread bias priced company as a cost, and support creatures went to
+		stand alone (95 percent arrived first at their world, 73 to 84 percent stood alone).
+	*/
+	test('the bot does not discount a support creature for joining its own side', () => {
+		let state = createMatch({ rosterA: roster('A', [striker('A_x'), supporter('A_s'), striker('A_y')]), rosterB: roster('B', [striker('B_x')]), worlds: makeWorlds(), seed: 'support-seed', rules: { clashExchanges: 1 } });
+		state = { ...state, starter: 'A', turn: 'A' } as typeof state;
+		const sites = currentFrame(state).sites;
+		state = send(state, 'A', 'A_x', sites[0].id, false)!;
+		state = send(state, 'B', 'B_x', sites[1].id, false)!;
+		const view = getPublicState(state, 'A');
+		const at = (weights: any, id: string) => scoreSends(view, state.players.A.roster, 'A', weights ? { id: 'test', weights } as any : null)
+			.candidates.find((c) => c.record.id === id && c.site.id === sites[0].id)!;
+		const joins = at(null, 'A_s');
+		const spreads = at({ supportJoins: false }, 'A_s');
+		expect(joins.value).toBeGreaterThan(spreads.value);
+		// everyone else still pays for the crowd
+		expect(at(null, 'A_y').value).toBeCloseTo(at({ supportJoins: false }, 'A_y').value, 6);
 	});
 });

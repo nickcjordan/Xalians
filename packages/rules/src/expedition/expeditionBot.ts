@@ -94,6 +94,20 @@ export const FLIP_SECURE_MARGIN = 5;
 export const SECURE_VALUE = 3;
 // every own creature already at a site discounts sending another there (spread bias)
 export const STACK_DISCOUNT = 0.6;
+/*
+	PASS 70: SUPPORT_JOINS. The spread bias above sent support creatures to stand alone. A
+	bolster covers its own side at its own world, so a bolster alone guards and mends only
+	itself, and the discount priced company as a cost for the one role whose whole value is
+	company. Measured at pass 69 (500 matches, seeds 7 and 13): a support creature arrived
+	first at its world 95 to 96 percent of the time and stood alone 73 to 84 percent of the
+	time, with 0.16 to 0.27 of its side beside it.
+
+	With this on, a support creature's send is not discounted for the company already at a
+	world, and a support creature standing there does not count against another creature's
+	send. Company stays a cost for everyone else, so the bot still spreads its attackers.
+	Numbers in docs/design/reclamation-support-together.md.
+*/
+export const SUPPORT_JOINS = true;
 // cost per point of hold spent: a cheap flip beats an expensive one
 export const HOLD_COST = 0.2;
 /*
@@ -281,6 +295,7 @@ function weightsFor(rival: Rival | null | undefined): RivalWeights {
 		swiftMoveGain: w.swiftMoveGain ?? SWIFT_MOVE_GAIN,
 		flipSecurity: w.flipSecurity ?? FLIP_SECURITY,
 		flipSecureMargin: w.flipSecureMargin ?? FLIP_SECURE_MARGIN,
+		supportJoins: w.supportJoins ?? SUPPORT_JOINS,
 	};
 }
 
@@ -701,7 +716,14 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 			// this the stake would be a declaration the bot never acted on, and the staker
 			// would double a world it then played exactly as it played the other two.
 			value *= stakeValueAt(publicState, site.id);
-			value *= Math.pow(weights.stackDiscount, stacked);
+			// pass 70: a support creature seeks company, and a support creature is not a crowd
+			let crowd = stacked;
+			if (weights.supportJoins) {
+				const supportsHere = (publicState.board[site.id][handler] || [])
+					.filter((e) => !e.hidden && roleOf(e.record, rulesOf(publicState)) === ROLE.BOLSTER).length;
+				crowd = prepared.role === ROLE.BOLSTER ? 0 : Math.max(0, stacked - supportsHere);
+			}
+			value *= Math.pow(weights.stackDiscount, crowd);
 			value -= weights.holdCost * h;
 			if (prepared.strainLevel === 'severe') {
 				value -= 1;
