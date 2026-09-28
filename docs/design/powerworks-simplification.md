@@ -1,6 +1,6 @@
 # Powerworks, simplified: one clear round
 
-Status: proposal, 2026-09-28, awaiting Nick's sign-off. When approved it supersedes the battle rules in [powerworks-v5-mechanics.md](powerworks-v5-mechanics.md) (passes 1 to 9) wherever they disagree; that doc stays as the record of how the full reading behaved. Evidence tool: `packages/rules/src/dungeon/devtools/powerworksGrid.ts`.
+Status: not adopted (Nick, 2026-09-28). He agreed with reducing the factors in play but not with this set, and pointed out that it was scoped to one dungeon: the design has to hold for all fourteen elements, many themed dungeons and enemy types not yet imagined. Kept as a record of the measurement (the census and the grid table below stay true of the current rules) and of one option considered. The brainstorm continues from the pillars Nick named: element, a move's attack power shaped by element synergy, and simple support moves (healing and non-healing). Evidence tool: `packages/rules/src/dungeon/devtools/powerworksGrid.ts`.
 
 ## Context
 
