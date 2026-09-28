@@ -2,27 +2,28 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 69, 2026-09-28)
+## Standing state (after pass 70, 2026-09-28)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
-### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 69)
+### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 70)
 
-Pass 69 gave the bolster three jobs at its world: a guard (a quarter off every blow), keeping its side clear of weakened and held, and a mend at its own turn (`reclamation-support-carries-weight.md`).
+Pass 69 gave the bolster three jobs at its world: a guard, keeping its side clear, and a mend (`reclamation-support-carries-weight.md`). Pass 70 stopped the bot sending it to stand alone (`reclamation-support-together.md`).
 
 | Gauge | Band | Seed 7 | Seed 13 | Verdict |
 |---|---|---|---|---|
-| Round-one starter wins | about 50 | 47.0 | 51.0 | met |
-| Comeback (trailing after world 1, won) | 30 to 40 | 26.7 | 31.3 | **under on seed 7** |
-| Resolution changes the leader | 25 to 40 | 26.7 | 27.3 | met, low (31 before pass 69) |
-| Downs per match | reported | 8.34 | 8.28 | reported |
-| Uncontested sites | reported | 11.1 | 9.6 | reported |
-| Sends to a world that strains the creature | reported | 39.7 | 41.7 | reported |
-| Strike keeper win rate | 40 to 60 | 65.2 | 62.8 | **over** |
-| Sweep / shield keeper win rate | 40 to 60 | 53.3 / 51.9 | 55.3 / 51.2 | met |
-| Bolster keeper win rate | 40 to 60 | 43.2 | 39.0 | met on seed 7, a point under on seed 13 (35 to 37 at pass 68) |
-| A side's share of a round's worlds, with a bolster that round | reported | 48.6 | 47.3 | **under the 50.3 / 50.8 without one**: it stands alone (0.31 allies) |
-| Games with a stake | reported | 0.6 | 0.6 | **the stake is almost never used** |
+| Round-one starter wins | about 50 | 51.4 | 48.6 | met |
+| Comeback (trailing after world 1, won) | 30 to 40 | 28.5 | 26.1 | **under** |
+| Resolution changes the leader | 25 to 40 | 28.0 | 27.9 | met, low |
+| Downs per match | reported | 8.53 | 8.41 | reported |
+| Uncontested sites | reported | 12.8 | 10.6 | reported |
+| Sends to a world that strains the creature | reported | 39.0 | 40.3 | reported |
+| Strike keeper win rate | 40 to 60 | 64.8 | 61.4 | **over** |
+| Sweep / shield keeper win rate | 40 to 60 | 48.6 / 45.9 | 48.6 / 47.6 | met |
+| Bolster keeper win rate | 40 to 60 | 67.1 | 64.7 | **over, read as selection**: it now stands on the worlds its side stacked; weakening it brings this into band only by giving back the round share |
+| A side's share of a round's worlds, with a bolster that round | reported | 51.4 | 51.4 | **above the 49.3 without one** (under it at pass 69) |
+| Own creatures beside a bolster | reported | 0.81 | 0.79 | reported (0.27 / 0.16 at pass 69) |
+| Games with a stake | reported | 1.0 | 0.8 | **the stake is almost never used** |
 
 ### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 72)
 
@@ -50,7 +51,9 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
    - the plates now add up to their world's total, and a check holds it;
    - Grimedes' missing total was the number sliding back as the arena closed, caught mid-slide.
 4. **Balance** (pass 69 moved it; gauges above):
-   - **the support creature's reach, waiting on Nick.** At its own world it has almost nobody to support. A prototype of support from a distance (sent for the round, covering all three worlds, holding nothing) lifted its side's round share to 53.7 / 49.5 against 46.6 / 47.7. The proposal and its four open questions are in `reclamation-support-carries-weight.md`;
+   - **support creatures now help their round (pass 70),** once the bot stopped sending them to stand alone. Support from a distance is parked: Nick wants the existing mechanics tried first. Its prototype and four open questions are in `reclamation-support-carries-weight.md`;
+   - `CLAIM_COUNTING` 'standing' (full hold while standing) measures small, because creatures pick their own targets; it would matter if players chose targets;
+   - fights around a mending support creature run long: six or more exchanges in 6 to 7 percent of fought worlds (5 before pass 70). The clash check's seed 7 round opens with seven exchanges of the same two sweeps and one mend, about 50 beats. A repeated exchange could play faster from its second one on;
    - strike keepers at 63 to 65 percent;
    - the stake almost never used;
    - comeback under band on seed 7 (26.7), and the Clash changing the leader down to 27;
@@ -1503,4 +1506,22 @@ He also asked for the area attacker's reach to the next world to go ("a splash o
 - **The factors on a card** had overlapped the next column since pass 68 ("×0.9" is 30 pixels in a 23-pixel column at 1366). They now stack under their marks, checked at 1366 and 1440 with no overlap on any card.
 - **The critic's capture** missed the Ruling behind a long fight. It now waits.
 - **Pass 68 skipped its due critic.** This pass ran it.
+
+### Pass 70 (2026-09-28): support creatures stand with their side
+
+Nick asked what sent support creatures to stand alone: "I would think that the bots would be doing the opposite of that." He wants support to work within the existing mechanics before trying support from a distance. The design and every number are in `reclamation-support-together.md`.
+
+**The cause was the bot's spread bias.** Every creature of its side already at a world multiplied a send's value by 0.6 (`STACK_DISCOUNT`). That priced company as a cost for the one role that is all company. A support creature arrived first at its world 95 percent of the time and stood alone 73 to 84 percent of the time.
+
+**The change:** `SUPPORT_JOINS`. A support creature is not discounted for joining its side, and it does not count as a crowd against the others. The bot still spreads its attackers.
+
+**Measured:**
+- Beside a support creature: 0.8 of its side, up from 0.2.
+- Alone: 22 to 25 percent, down from 73 to 84.
+- A side's round share with a support creature: 51.4 against 49.3 without.
+- Bolster keepers are over band at 65 to 67. Every weaker version brings them into band only by giving back the round share, which is what a selection effect predicts.
+
+**Nick's two rule levers:**
+- The heal was already full strength since pass 69.
+- Full hold while standing (`CLAIM_COUNTING` 'standing', an existing lever) moves little, because creatures pick their own targets. It stays at 'current'.
 

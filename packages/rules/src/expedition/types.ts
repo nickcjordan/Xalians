@@ -465,6 +465,8 @@ export interface RivalWeights {
 	// Pass 17: how much of a flip's worth depends on the margin it clears by
 	flipSecurity: number;
 	flipSecureMargin: number;
+	// Pass 70: a support creature seeks company, and company is not put off by one
+	supportJoins: boolean;
 }
 
 export interface Rival {

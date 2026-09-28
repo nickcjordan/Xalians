@@ -139,7 +139,9 @@ const probe = () => page.evaluate(() => {
 let shotN = 0;
 const samples = [];
 let sawPlaying = false;
-for (let i = 0; i < 400; i++) {
+// pass 70: seed 7's first world became a seven-exchange fight around a mending support
+// creature, which outlasted 400 samples before the camera could move on
+for (let i = 0; i < 1500; i++) {
 	const s = await probe();
 	/*
 		PASS 31. The panels must be SEEN at every step, not merely present.
