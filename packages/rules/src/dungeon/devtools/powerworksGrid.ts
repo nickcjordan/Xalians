@@ -85,6 +85,37 @@ console.log(`Passives: ${Object.entries(passives).map(([k, n]) => `${k} ${n}`).j
 const two = units.filter((u) => new Set(u.moves.filter((m) => m.element).map((m) => m.element)).size > 1).length;
 console.log(`Creatures whose moves carry more than one element: ${two} of ${units.length} (${pct(two, units.length)}).`);
 
+// 1b. Move shapes in the pillars' terms (docs/design/powerworks-pillars.md): attack, heal,
+// shield, boost, hinder, and what the pillars park (lasting effects, cleanse).
+const kind = (e: (typeof moves)[number]["effects"][number]): string | null => {
+  if (e.support === "unsupported") return null;
+  if (e.support === "harm" || e.support === "displace") return "attack";
+  if (e.support === "restore" || e.group === "mending") return "heal";
+  if (e.status === "stimulated") return "boost";
+  if (e.support === "protect" || e.group === "guarding") return "shield";
+  if (e.support === "remove") return "cleanse (parked)";
+  if (e.group === "degrading") return "lasting (parked)";
+  if (e.group === "concealment") return "conceal";
+  return "hinder";
+};
+const shapes: Record<string, number> = {};
+for (const m of moves) {
+  const parts = [
+    ...new Set(
+      m.effects
+        .map((e) => {
+          const k = kind(e);
+          return k && `${k}${e.recipient === "self" ? " (self)" : e.recipient === "area" ? " (area)" : ""}`;
+        })
+        .filter(Boolean)
+    ),
+  ].sort();
+  const key = parts.join(" + ") || "nothing supported";
+  shapes[key] = (shapes[key] ?? 0) + 1;
+}
+console.log("\n| Move shape, in the pillars' terms | Moves | Share |\n|---|---|---|");
+for (const [k, n] of Object.entries(shapes).sort((a, b) => b[1] - a[1])) console.log(`| ${k} | ${n} | ${pct(n, moves.length)} |`);
+
 // 2. The grid, along greedy runs.
 const policy = (s: Run): Record<string, Order> => {
   const orders: Record<string, Order> = {};
