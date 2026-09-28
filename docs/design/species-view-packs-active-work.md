@@ -99,6 +99,8 @@ Scope extension, 2026-09-27: Nick approved implementing the proposed layered sys
 - Verification: 15 construction tests and 10 view-tool tests pass. All 442 checked package/current-reference/run references match their hashes. The current body has 162,860 vertices, one component and zero nonmanifold edges; all 14 views are unclipped, with zero principal height and ground-row spread. Historical dependency snapshots remain stale and every release gate remains blocked.
 - Main progress: layers 1/2 have working direction, layers 3/4 have scoped accepted component evidence and unresolved integration, layer 5 is now exercised on the complete creature, layer 6 is not started. Rigging/animation remain downstream.
 
+- Opened ready PR #723, https://github.com/nickcjordan/Xalians/pull/723, and enabled auto-merge. Local checks pass; repository CI is running. Merging preserves the experiment and does not approve its art.
+
 ## Immediate next unfinished action
 
 Nick's directional review of the first whole-body geometry checkpoint in `species-construction/akinza/reconciliation.md`, focused on proportions and paw integration. Carry accepted source forms forward, resolve the recorded modeled discrepancies and any new feedback, then obtain rough-form approval. Do not treat the smooth blockout as a replacement for the accepted furry identity. Production masks, measurements, consumer adapter and final pack approval remain unfinished. A contrasting-body pilot and the remaining species follow approved Akinza. Prior validator drafts remain preserved locally.
