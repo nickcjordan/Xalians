@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import math
+import shutil
 import sys
 from pathlib import Path
 
@@ -16,6 +17,7 @@ from mathutils import Vector
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from blender_probe import aim, tube
+from authored_surfaces import head_surface, ear_surface, eye_surface, section_surface, coat_lock, orbital_surface, front_surface, facial_relief
 
 
 def sha(path):
@@ -178,12 +180,34 @@ def main():
     args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
     args.out.mkdir(parents=True, exist_ok=False)
     spec = json.loads(args.spec.read_text())
+    # Snapshot code at build start. Later edits must not change a run's provenance.
+    inputs=args.out/'inputs'
+    inputs.mkdir()
+    source_paths=[Path(__file__),Path(__file__).with_name('blender_probe.py'),
+                  Path(__file__).with_name('authored_surfaces.py'),Path(__file__).with_name('surface_math.py')]
+    source_hashes={p.name:sha(p) for p in source_paths}
+    for p in source_paths: shutil.copyfile(p,inputs/p.name)
+    shutil.copyfile(args.spec,inputs/'spec.json')
+    source_hashes['spec.json']=sha(args.spec)
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete(use_global=False)
     mats = {key: material(key, val) for key, val in spec['materials'].items()}
-    pieces = [sphere(v) for v in spec['volumes']]
+    for key in ('white','pupil','nose'):
+        mats[key].node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value=.22
+    if spec.get('eyeReflection'):
+        pupil=mats['pupil'].node_tree.nodes['Principled BSDF']
+        pupil.inputs['Roughness'].default_value=spec['eyeReflection']['roughness']
+        pupil.inputs['Specular IOR Level'].default_value=spec['eyeReflection']['strength']
+    pieces = [sphere(v) for v in spec['volumes'] if not (v['id']=='head' and spec.get('headSurface'))]
+    if spec.get('headSurface'):
+        pieces.append(head_surface(spec['headSurface']))
     pieces += [tube(s['id'], s['controls']) for s in spec['sweeps']]
-    pieces += [ear(side, spec['ear']) for side in (-1, 1)]
+    pieces += [section_surface(s) for s in spec.get('sectionSurfaces',[])]
+    pieces += [coat_lock(s) for s in spec.get('coatMasses',[])]
+    if not spec.get('integratedEarCup'):
+        pieces += [(ear_surface(side,spec['earSurface']) if spec.get('earSurface') else ear(side,spec['ear'])) for side in (-1,1)]
+    if spec.get('earCoatSurface'):
+        pieces += [ear_surface(side,spec['earCoatSurface']) for side in (-1,1)]
     bpy.ops.object.select_all(action='DESELECT')
     for obj in pieces:
         obj.select_set(True)
@@ -196,6 +220,22 @@ def main():
     smooth = body.modifiers.new('Organic continuity', 'SMOOTH')
     smooth.factor, smooth.iterations = .65, spec.get('smoothIterations', 4)
     bpy.ops.object.modifier_apply(modifier=smooth.name)
+    local_smoothing=[]
+    for region in spec.get('localSmoothing',[]):
+        group=body.vertex_groups.new(name=region['id'])
+        selected=0
+        for vertex in body.data.vertices:
+            world=body.matrix_world@vertex.co
+            radius=sum(((world[i]-region['center'][i])/region['radii'][i])**2 for i in range(3))
+            if radius<1:
+                group.add([vertex.index],(1-radius)**2,'REPLACE')
+                selected+=1
+        modifier=body.modifiers.new(region['id'],'SMOOTH')
+        modifier.vertex_group=group.name
+        modifier.factor=region['factor']
+        modifier.iterations=region['iterations']
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
+        local_smoothing.append({**region,'selectedVertices':selected})
     body.data.materials.clear()
     body.data.materials.append(mats['clay'])
     for face in body.data.polygons:
@@ -203,19 +243,40 @@ def main():
     specks = remove_voxel_specks(body)
     stats = mesh_stats(body)
     stats['removedSubVoxelDebris'] = specks
+    stats['localSmoothing']=local_smoothing
     head = next(v for v in spec['volumes'] if v['id']=='head')
+    for part in spec.get('orbits',[]):
+        orbital_surface(part,spec['headSurface'],mats)
+    for part in spec.get('detailSurfaces',[]):
+        obj=section_surface(part)
+        obj.data.materials.append(mats[part['material']])
     for part in spec['surfaceParts']:
         if part.get('conformToHead'):
-            face_patch(part, head, mats[part['material']])
+            if spec.get('headSurface'):
+                eye_surface(part,spec['headSurface'],mats[part['material']])
+            else:
+                face_patch(part, head, mats[part['material']])
         else:
             sphere(part, mats[part['material']])
     for part in spec.get('facialStrokes',[]):
-        obj=tube(part['id'],part['controls'])
+        # Author fine creases above the sweep's minimum radius, then scale them back.
+        factor=part.get('precisionScale',1)
+        controls=[list(row) for row in part['controls']]
+        if part.get('conformToHead'):
+            for row in controls:
+                row[1]=front_surface(spec['headSurface']['sections'],row[0],row[2])-facial_relief(spec['headSurface'],row[0],row[2])-.001
+        controls=[[v*factor for v in row] for row in controls]
+        obj=tube(part['id'],controls)
+        if factor!=1:
+            for vertex in obj.data.vertices: vertex.co/=factor
         obj.data.materials.append(mats[part['material']])
         for face in obj.data.polygons:
             face.use_smooth=True
     for part in spec['claws']:
-        obj = tube(part['id'], part['controls'])
+        factor=part.get('precisionScale',1)
+        obj = tube(part['id'], [[v*factor for v in row] for row in part['controls']])
+        if factor!=1:
+            for vertex in obj.data.vertices: vertex.co/=factor
         obj.data.materials.append(mats['claw'])
         for face in obj.data.polygons:
             face.use_smooth = True
@@ -263,8 +324,10 @@ def main():
               'approval': None, 'body': stats, 'surfaceParts': len(spec['surfaceParts']),
               'claws': len(spec['claws']), 'separateSurfaces': 'Eye surfaces, nose and claws intentionally separate from continuous body',
               'status': 'technical-pass' if stats['components']==1 and stats['nonManifoldEdges']==0 else 'technical-fail',
-              'specSha256': sha(args.spec), 'builderSha256': sha(__file__),
-              'sweepBuilderSha256': sha(Path(__file__).with_name('blender_probe.py')),
+              'specSha256': source_hashes['spec.json'], 'builderSha256': source_hashes['blender_blockout.py'],
+              'sweepBuilderSha256': source_hashes['blender_probe.py'],
+              'surfaceBuilderSha256': source_hashes['authored_surfaces.py'],
+              'surfaceMathSha256': source_hashes['surface_math.py'],
               'blenderVersion': bpy.app.version_string, 'cameras': cameras,
               'outputs': {p.name: sha(p) for p in args.out.iterdir() if p.suffix in ('.png','.blend')}}
     (args.out/'geometry.json').write_text(json.dumps(report, indent=2)+'\n')

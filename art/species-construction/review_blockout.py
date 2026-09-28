@@ -64,7 +64,7 @@ def build(directory):
     sheet = Image.new('RGB', (1440,1090), 'white')
     draw = ImageDraw.Draw(sheet)
     draw.text((24,12), 'AKINZA | provisional whole-body geometry | six actual cameras', fill='#27323b', font=font)
-    draw.text((24,43), 'Judge proportions, connections and depth. Coat, facial finish and animation are not represented.', fill='#46535e', font=small)
+    draw.text((24,43), 'Judge likeness, proportions and connections. Fine fur, production topology and animation are not represented.', fill='#46535e', font=small)
     for index,name in enumerate(PRINCIPAL):
         x, y = (index%3)*480, 76+(index//3)*500
         sheet.paste(white(directory/(name+'.png'), (470,470)), (x,y))

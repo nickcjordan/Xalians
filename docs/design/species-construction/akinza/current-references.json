@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "species": "akinza",
   "date": "2026-09-28",
-  "status": "likeness-recovery-required",
+  "status": "candidate-0020-awaiting-Nick-review",
   "rule": "Use only the named role. Local accepted corrections override older whole-body sheets. No image is a calibrated whole-creature master.",
   "references": [
     {
@@ -40,6 +40,12 @@
       "role": "Retained smooth cupped ear tissue and hair rim direction",
       "sha256": "47de03c0f4e165d11d0193d04729844c51605169ad7ef5df3fe92e7cc12ed785",
       "exclude": "Eyes, fingers and feet; all superseded"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/head-clay-study-0021.png",
+      "sha256": "c251eebda1037f74eeb5017208f9220662868897274440e4a9e5b5fd30167f1d",
+      "role": "Proposed sculptural explanation of broad overlapping ear coat masses only",
+      "exclude": "Inward pupils, excessive small locks, full face redesign, calibrated camera claim or Nick approval"
     }
   ],
   "approvals": [

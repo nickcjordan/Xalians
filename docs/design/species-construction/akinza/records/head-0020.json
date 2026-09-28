@@ -1,0 +1,31 @@
+{
+  "scope": "Actual closeups of candidate 0020",
+  "report": {
+    "path": "untracked/species-construction/akinza/head-0020/details.json",
+    "role": "camera-and-image-bindings",
+    "sha256": "05d802c9f1faeb934bfe3a29efc28c2406789da9fe451b35d6d29b3e736b3a2b"
+  },
+  "outputs": [
+    {
+      "path": "untracked/species-construction/akinza/head-0020/face-front.png",
+      "role": "actual-model-closeup",
+      "sha256": "b088e32d58b66ad5e9e1b6a01ebf26729bbef47a54c943517a4f546ce3e2c76f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/head-0020/head-front.png",
+      "role": "actual-model-closeup",
+      "sha256": "5cdaf80be860f025e8485e439aa4807909185d7d0de65e0ccc2a124b59b36db3"
+    },
+    {
+      "path": "untracked/species-construction/akinza/head-0020/head-oblique.png",
+      "role": "actual-model-closeup",
+      "sha256": "c522b0d3be2497495357294c88f45a77d3f6f1b34c78e078179cad963b6501dd"
+    },
+    {
+      "path": "untracked/species-construction/akinza/head-0020/head-profile.png",
+      "role": "actual-model-closeup",
+      "sha256": "13c7ad951e96c75cb4cdb5f5a50abd532da8e4d08d4760719fb597cb55d8aeed"
+    }
+  ],
+  "approval": null
+}

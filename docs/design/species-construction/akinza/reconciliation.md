@@ -1,36 +1,40 @@
-# Akinza: likeness recovery, construction incomplete
+# Akinza clay construction candidate 0020
 
-Updated 2026-09-28. Nick rejected the implication that the whole-body proxy was close to surface finishing. His standard is a 3D equivalent of the first grayscale references, without surface texture, carrying later accepted corrections. Exact words: [likeness-feedback.json](likeness-feedback.json).
+Updated 2026-09-28. Candidate 0020 is ready for Nick's whole-creature clay review. It is not approved art or a completed-stage release. The preferred first grayscale sheet remains the likeness target, with later scoped tail, gaze and paw corrections. Earlier rejected proxies and their snapshots remain in history.
 
-## Current assessment
+![Six actual views of the rebuilt candidate](evidence/blockout-0020-contact.png)
 
-**There is no new model ready for art approval.** The completed experiments establish some connectivity and camera conventions, but the current geometry fails whole-creature likeness. Layers 3 and 4 need substantial shape and connection work inside the ongoing layer-5 experiment. Layer 6 has not started. This supersedes earlier descriptions of a directional full-body checkpoint as sufficient preparation for surface work.
+## What changed
 
-![Preferred reference compared with the proxy](evidence/likeness-gap-review.png)
+The reconstruction replaces the round head and stacked limb primitives with authored continuous section surfaces. The face has integrated oval eye surfaces, a shallow connected muzzle, a small triangular nose and a surface-following mouth crease. The shoulders, wrists, knees, shins, ankles and compact paws were rebuilt as connected volumes. Foreclaws are short curved pointed forms; hind toes emerge from a sloping paw roof.
 
-The display normalizes figure heights to make the shape difference visible. The source's nominal views and expressive pose differ from the actual proxy cameras and inspection pose. This is an appearance audit, not a pixel-registration test. Crops can trim tail tips; the separately accepted tail reference governs that region.
+The ear work required another change of representation. Beads, scalloped envelopes and global folds failed to read as coat. Focused subscription-generated study-0021 clarified a smooth cupped tissue shell surrounded by overlapping broad tapered coat masses. Candidate 0020 models those masses directly, varies their lengths, sweeps the crown back, and blends the rear ear roots locally into the cranium. The generated study's inward pupils and excessive small locks were excluded.
 
-## Required geometry work
+The fuller hind legs, straighter shin, central body-level three-tail fusion and restrained rear remain. The lowered-arm inspection pose is separate from the expressive identity reference. Actual tail foreshortening is retained rather than rotating tails to present the same fan to every camera.
 
-| Region | Current failure | Required result before advancing |
+## Independent visual review
+
+Reviewer `/root/likeness_review` inspected the principal and elevated views and iterated on major revisions. Final verdict: **pass for presentation as a clay construction review candidate**. The reviewer found no remaining concrete major visible construction defect that warranted withholding the candidate. Exact scope, words and artifact bindings are in [independent-review-0020.json](independent-review-0020.json).
+
+This is readiness for Nick's judgment, not a claim that likeness is settled or that only texture remains. Broad coat grouping is an interpretation. Nick can still reject the head, body, attachments, proportions or overall appearance. Fine fur, material treatment, production topology, deformation and rigging are not certified by this review. The dark profile pocket was checked against alpha and geometry depth: it is shaded near-ear geometry, not a through-hole.
+
+## Technical evidence
+
+- One connected closed body: 353,138 vertices and zero nonmanifold edges. Eyes, nose, mouth and claws are separate detail surfaces by design.
+- Six principal orthographic views and eight elevated inspection views, all from one scene. Occupancy is unclipped and principal height and ground rows agree.
+- Exact-model depth, camera-space geometric normals and object identity arrays for all six principal views. Ray/alpha occupancy agreement is at least 99.88%; the small difference is pixel-center sampling versus antialiasing.
+- A GLB round trip preserves all 842,748 triangles and world bounds. This is a dense construction reference, not animation-ready topology.
+- The portable handoff binds images, masks, cameras, landmarks, geometry, references and exact authoring inputs. Approval fields remain empty. See [surface-handoff.md](surface-handoff.md).
+
+## Layers at this checkpoint
+
+| Layer | Reviewable evidence | Approval state |
 |---|---|---|
-| Head and face | Generic rounded cranium, eyes reading as attached pieces, simplified muzzle and missing cheek structure | Reference-specific forehead, cheek, muzzle and eye-socket volumes that carry the same expression without texture |
-| Ears | Oval or slab-like shell; connection and surrounding coat masses fail the reference | Continuous cupped tissue within the correct large ear silhouette, integrated with the head and shaped hair masses |
-| Torso and limbs | Generic smooth volumes and inadequate overall proportion comparison | Reference-guided mass distribution and credible articulation in front, profile and three-quarter views |
-| Ankle and wrist | Simplified bends and bulb-like transitions to paws | Clear local joints and believable paw connections, preserving animal extremities and the straighter shin |
-| Major coat masses | Essential silhouette and volume were treated as missing future fur | Model the broad ruff, crown and ear-rim forms during construction; only fine strands and microtexture can wait |
-| Whole creature | Technical success was given too much weight relative to likeness | Compare the complete untextured form against the first-round target, with later approved tail/gaze/paw corrections |
+| 1. Interpretation | Reading, reference map, scoped directions and exclusions | Earlier scoped directions retained; complete package approval pending |
+| 2. Identity | Preferred first-round sheet and retained eye/tail/paw references | Whole-creature likeness remains Nick's judgment |
+| 3. Construction | New full clay views and authored model surfaces | Candidate ready for review |
+| 4. Connections/detail | Actual face, ear, wrist and ankle closeups; integrated attachments | Candidate ready for review |
+| 5. Geometric reconciliation | One connected model, six views, elevated turntable and technical checks | Internal readiness passed; Nick approval pending |
+| 6. Surface/handoff | Surface direction, portable geometry-reference bundle, masks and calibrated data | Provisional handoff assembled; release blocked |
 
-## Latest experiments and why they do not pass
-
-- **Blockout-0007:** local ankle/wrist experiment. It removes the low rear foot-pad extension, adds a modest ankle transition and replaces the forepaw ball with a tapered connection. Four actual close-up cameras expose remaining simplified pad and claw shapes. This is diagnostic evidence, not a successful whole-creature candidate.
-- **Blockout-0008:** internal broader refit, rejected by the agent. Conforming eye surfaces, revised muzzle/ear contours and attempted coat masses do not deliver the target. Ear-rim forms look beaded and the face remains simplistic. Do not present it as a likeness success or ask Nick to approve it.
-- Both models pass the local connected-body and registered-render checks. Those passes do not alter their failed visual assessment. Exact specs, builder snapshots and outputs are preserved in `records/blockout-0007.json` and `records/blockout-0008.json`.
-
-The volume/sweep builder, including the new experimental features, has not demonstrated enough shape control or achieved the required sculptural quality. Repeated parameter tweaks are not a validated route to the target. Existing rendering, camera, provenance and mask tools can be reused independently of the geometry-authoring method.
-
-## Work still required
-
-Replace the inadequate coarse shape construction with reference-guided surface modeling capable of the head/ear/face and articulated limb forms. Validate a complete region against front and profile references before extending that method across the body. Do not return to Nick with another known mismatch or imply that adding texture will supply missing structure. The geometry-authoring method and faithful model remain unresolved; this record is an audit and failed experiment, not completion of the modeling task.
-
-The first-round sheet is the likeness target. Later accepted central tail fusion, reduced rear contours, forward gaze and animal paws retain precedence. The source sheet's historical rejected-pack status reflects its view/pose inconsistencies, not rejection of the appearance Nick prefers. No full-stage approval, species-canon change, paid image generation, final topology, rigging or animation is claimed.
+All six layers now have working evidence or handoff artifacts. None is newly declared approved. The next gate is Nick's review of candidate 0020; incorporate his corrections before promoting a final pack or beginning another species. Finished model production and animation remain downstream of this construction system.

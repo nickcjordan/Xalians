@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "Codex subagent /root/likeness_review",
+  "date": "2026-09-28",
+  "status": "pass-for-presentation",
+  "scope": "Readiness for Nick's clay construction review only",
+  "words": "Final independent visual verdict for blockout-0020: PASS for presentation as a clay construction review candidate, not for Nick's art approval, completed stage release, or production handoff. The local root smoothing resolves the conspicuous rear panel-rim defect: attachment reads as a continuous curved root in BACK and turn-135/225. Front/three-quarter likeness direction, actual cupped ears with broad overlapping coat masses, shallow integrated muzzle/forward oval eyes, fuller articulated legs with straight shins, compact animal paws, restrained rear and central three-tail assembly are retained. I do not see another concrete major construction defect in the inspected six principal and elevated views that warrants withholding this candidate.",
+  "limitations": [
+    "Broad coat grouping and whole-creature likeness remain Nick's judgment",
+    "Fine fur and material/eye finish not certified",
+    "No production topology, deformation or rigging certification",
+    "No final pack approval"
+  ],
+  "artifacts": [
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/blockout.blend",
+      "role": "reviewed-model",
+      "sha256": "f4954efcae5d2abd240690ff036c18543f31ebb07c5944a6c0585981594942f2"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/back.png",
+      "role": "reviewed-view",
+      "sha256": "3ca53dee9b0c2143684a29984d660559e7a1426135202e563de38406d8b3d4b0"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/front-left.png",
+      "role": "reviewed-view",
+      "sha256": "2bd802302447489e54dc493ae92c72367db0fa19c3ab848fcd2e1762c4255fb4"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/front-right.png",
+      "role": "reviewed-view",
+      "sha256": "9dc37b4d0cfeabaec7f3504310c647fd9b2cf211a2df0a65526e2fb0c286e814"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/front.png",
+      "role": "reviewed-view",
+      "sha256": "0ab17d2add7ca47b5a39cdbf60cdae302addbb7ffa40bdd7558f99ff3137807b"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/left.png",
+      "role": "reviewed-view",
+      "sha256": "38c875d4e5e72fc5fb1c925cca11abd71aa41ce14e8066d446918038a4c446b7"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/right.png",
+      "role": "reviewed-view",
+      "sha256": "13187698680adfe231ac6c4f9498999220f7f8a5c630c7a943a8ee78d71b0c3f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/turn-000.png",
+      "role": "reviewed-view",
+      "sha256": "77db761b892a3938b0a2780d219046e9f74f4669b7107f0a897400025daf466e"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/turn-045.png",
+      "role": "reviewed-view",
+      "sha256": "00a821446b74385832cdd2369b1ef834849fe025c960ae69b019db0ed94ab984"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/turn-090.png",
+      "role": "reviewed-view",
+      "sha256": "1eb20ce2f4df78d1a6fafa00ee03bee146ed68035f2b0831f8bc77d420e9bdf1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/turn-135.png",
+      "role": "reviewed-view",
+      "sha256": "0d6c57e45c8bc62c6d984fdf1e0cca18748f73a57f214c1d1cdecb22d8ec98b1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/turn-180.png",
+      "role": "reviewed-view",
+      "sha256": "466c7808f0dc2d7c74c2ca91a926066b6f7f0ff293b4c721fbe57cc239500525"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/turn-225.png",
+      "role": "reviewed-view",
+      "sha256": "1976ff521c318499881b13da06ab8995aec6258b00005031b9d301cea28acb3c"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/turn-270.png",
+      "role": "reviewed-view",
+      "sha256": "593b159971406947dcd9a9221aa46b39448afda20f42ac183fec755e2a71b8ec"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0020/turn-315.png",
+      "role": "reviewed-view",
+      "sha256": "663d22e5ee267f7796a61a02c3e15aff1d080536f66e5dfe8e3ccf72aaa23070"
+    }
+  ],
+  "approval": null
+}
