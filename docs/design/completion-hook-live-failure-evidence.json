@@ -1,0 +1,63 @@
+{
+  "observedAt": "2026-09-28T20:48:32.749361+00:00",
+  "runtime": "codex-cli 0.158.0-alpha.2.1",
+  "cwd": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+  "ephemeral": true,
+  "trustModified": false,
+  "hooks": [
+    {
+      "id": "user-prompt-submit:0:C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "eventName": "userPromptSubmit",
+      "handlerType": "command",
+      "executionMode": "sync",
+      "scope": "turn",
+      "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "source": "project",
+      "displayOrder": 0,
+      "status": "failed",
+      "statusMessage": null,
+      "startedAt": 1790628518,
+      "completedAt": 1790628521,
+      "durationMs": 3758,
+      "entries": [
+        {
+          "kind": "error",
+          "text": "hook exited with code 1"
+        }
+      ]
+    },
+    {
+      "id": "stop:1:C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "eventName": "stop",
+      "handlerType": "command",
+      "executionMode": "sync",
+      "scope": "turn",
+      "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "source": "project",
+      "displayOrder": 1,
+      "status": "failed",
+      "statusMessage": "Checking completion audit and unfinished work",
+      "startedAt": 1790628523,
+      "completedAt": 1790628525,
+      "durationMs": 2012,
+      "entries": [
+        {
+          "kind": "error",
+          "text": "hook exited with code 1"
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "allThreeTrusted": true,
+    "promptStateCreated": false
+  },
+  "assistantReplies": [
+    "HOOK_TEST"
+  ],
+  "authenticationType": "chatgpt",
+  "sessionId": "01a0e9c6-c9f0-7c83-b40c-3d48d2486fec",
+  "firstTurnStatus": "completed",
+  "passed": false,
+  "failure": "UserPromptSubmit and Stop handlers exited with code 1; no audit state was created and the turn completed without enforcement."
+}
