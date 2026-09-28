@@ -15,7 +15,7 @@
     },
     "protocol": {
       "path": "docs/design/autonomous-completion-audit.md",
-      "sha256": "dfb8a418a363a001d3b1e76f2bc6e665a3b3fd866f1ca43642a16ba8451b04a6"
+      "sha256": "227b616be8ff7c12799582faad3b378367b63ebc725554c43e1ff4e4656726b0"
     },
     "gate": {
       "path": "scripts/completion_audit.py",
@@ -39,15 +39,19 @@
     },
     "work": {
       "path": "docs/design/autonomous-completion-active-work.md",
-      "sha256": "3c9a02c6c1fd7d909e64a05756d89f16207bdb0afcd5b865022c2ecac7cc6bfe"
+      "sha256": "a37aa340298bf4d52f083a158ec963d8f168f85f96488b21efc7e7fdcffd0afc"
     },
     "discovery": {
       "path": "docs/design/completion-hook-discovery-evidence.json",
-      "sha256": "ddeb1156bd2f3c8619b6a1d0d29333175896fe60f4ff50c505b78841dccecbe1"
+      "sha256": "12d225ff8ffa4457a04e7760093696ff2b50fdfa4050ec9627f19ede99944f26"
     },
     "liveFailure": {
       "path": "docs/design/completion-hook-live-failure-evidence.json",
       "sha256": "1d510aa92e058fb1540b773b29b4d97e8e43481861e5fc6c44b05b48ba457dc6"
+    },
+    "live": {
+      "path": "docs/design/completion-hook-live-evidence.json",
+      "sha256": "2df68e7dcb002a6041e20546b47d85079fc4b138eea0f91a283e01f9be49f569"
     }
   },
   "criteria": [
@@ -88,14 +92,14 @@
     {
       "id": "activation",
       "expectation": "Automatic runtime dispatch is verified after the user trusts the exact hook definition.",
-      "status": "blocked",
-      "assessment": "Initial trust was verified. A live ephemeral test exposed Windows nested-shell expansion and exited without enforcement. Corrected the command and passed tests through both Windows shells. Updated definitions are marked modified and require renewed trust before a live retry.",
+      "status": "pass",
+      "assessment": "After Nick approved the corrected definitions, the live runtime executed prompt, Stop and Interrupt hooks. Missing receipt blocked completion; valid diagnostic receipt allowed the continuation to finish and was consumed; interruption persisted its state. This validates enforcement in a fresh session, not subjective quality or every existing client.",
       "evidence": [
         "hooks",
         "work",
         "protocol",
         "discovery",
-        "liveFailure"
+        "live"
       ]
     }
   ],
@@ -147,30 +151,28 @@
     {
       "id": "A5",
       "criterion": "activation",
-      "status": "blocked",
-      "observation": "Codex requires exact-definition hook trust before non-managed hooks execute.",
-      "evidence": [
+      "status": "resolved",
+      "observation": "Exact-definition user trust and actual runtime dispatch had not been verified.",
+      "resolution": "Verified Nick's saved trust for all corrected definitions in both checkouts and passed the real lifecycle diagnostic after fixing Windows command execution. No trust bypass or agent-granted approval was used.",
+      "resolutionEvidence": [
         "hooks",
-        "work",
-        "protocol"
-      ],
-      "blocker": {
-        "externalDependency": "User review/trust of repository hooks in Codex; actual dispatch confirmation",
-        "attempts": "Verified saved user trust, then observed real lifecycle handler failures. Reproduced nested PowerShell expansion, fixed the Windows command, and passed all 25 regression tests with PowerShell/cmd event coverage. Installed corrected definition and confirmed modified trust status. Awaiting renewed user trust for live retry; no bypass used.",
-        "unblocksWhen": "User reviews/trusts this hooks.json definition on a supported Codex surface and a real lifecycle dispatch is observed."
-      }
+        "tests",
+        "discovery",
+        "live",
+        "work"
+      ]
     }
   ],
   "audit": {
     "reviewer": "Codex primary with independent /root/quality_audit challenges",
-    "comparison": "Observed actual live dispatch after user trust. Failure evidence led to a Windows command repair and broader shell-boundary regression coverage. Independent reviewer approved the correction; a minor event-specific test gap was also closed. Successful automatic enforcement is still pending a trusted live retry.",
+    "comparison": "Compared runtime event evidence with the intended gate behavior: block missing receipt, permit current valid receipt, consume it, and honor interruption. All eight live checks passed. Retained prior failure evidence and the independent Windows fix review.",
     "regressions": "Verified explicit stops, interrupts, per-chat isolation, changed evidence, retained findings and blocked approval. Unrelated validator drafts remain untouched.",
     "scopeCheck": "This is the explicit workflow-system request. It does not complete or erase the ongoing creature task, promise aesthetic judgment from hashes, or alter global app trust.",
     "sessionId": "01a0e3f5-ad0c-7980-905a-1595945478d8",
-    "requestId": "34afb8a6-c205-4451-af55-58e0d06af7fc",
-    "performedAt": "2026-09-28T20:53:04.754086+00:00"
+    "requestId": "683d1347-71ce-4b66-8d91-41030aa6cef3",
+    "performedAt": "2026-09-28T21:06:38.350390+00:00"
   },
   "stop": {
-    "kind": "blocked"
+    "kind": "complete"
   }
 }

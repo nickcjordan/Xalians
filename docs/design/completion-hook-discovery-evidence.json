@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-09-28T20:50:53.972237+00:00",
+  "observedAt": "2026-09-28T21:04:36.711540+00:00",
   "runtime": "codex-cli 0.158.0-alpha.2.1",
   "method": "hooks/list",
   "result": {
@@ -24,7 +24,7 @@
             "enabled": true,
             "isManaged": false,
             "currentHash": "sha256:b308511a99852f3b53e0ca4c9bc23f5613a27ac5a5e3f276e30cdae4e92b5869",
-            "trustStatus": "modified"
+            "trustStatus": "trusted"
           },
           {
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:stop:0:0",
@@ -43,7 +43,7 @@
             "enabled": true,
             "isManaged": false,
             "currentHash": "sha256:d81c6641964a2ff039991b18ae173f76d2ce76ab4a7d68e1c71b5cd24f597995",
-            "trustStatus": "modified"
+            "trustStatus": "trusted"
           },
           {
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:interrupt:0:0",
@@ -62,7 +62,7 @@
             "enabled": true,
             "isManaged": false,
             "currentHash": "sha256:ee6a5f31a44f5c313a2aba6b982bb4f14cebf00fe3a6bb10f92de629955d99ca",
-            "trustStatus": "modified"
+            "trustStatus": "trusted"
           }
         ],
         "warnings": [],
@@ -88,7 +88,7 @@
             "enabled": true,
             "isManaged": false,
             "currentHash": "sha256:b308511a99852f3b53e0ca4c9bc23f5613a27ac5a5e3f276e30cdae4e92b5869",
-            "trustStatus": "modified"
+            "trustStatus": "trusted"
           },
           {
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:stop:0:0",
@@ -107,7 +107,7 @@
             "enabled": true,
             "isManaged": false,
             "currentHash": "sha256:d81c6641964a2ff039991b18ae173f76d2ce76ab4a7d68e1c71b5cd24f597995",
-            "trustStatus": "modified"
+            "trustStatus": "trusted"
           },
           {
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:interrupt:0:0",
@@ -126,7 +126,7 @@
             "enabled": true,
             "isManaged": false,
             "currentHash": "sha256:ee6a5f31a44f5c313a2aba6b982bb4f14cebf00fe3a6bb10f92de629955d99ca",
-            "trustStatus": "modified"
+            "trustStatus": "trusted"
           }
         ],
         "warnings": [],
@@ -135,6 +135,7 @@
     ]
   },
   "error": null,
-  "dispatchVerified": false,
-  "trustModified": false
+  "dispatchVerified": true,
+  "trustModified": false,
+  "dispatchEvidence": "docs/design/completion-hook-live-evidence.json"
 }
