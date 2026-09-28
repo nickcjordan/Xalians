@@ -162,10 +162,13 @@ describe('StoryViewer', () => {
 		expect(screens()).toEqual(['out', 'standby', 'standby']);
 		expect(states(container)).toEqual(['active', 'future', 'future']);
 		act(() => { vi.advanceTimersByTime(330); });
-		// Cut: the leaving screen holds its static, the new one searches, then locks on and plays.
+		// Cut: the rack runs, the leaving screen holding its static as it slides away and the new one
+		// searching as it slides in; only once it has seated does it lock on and play.
 		expect(states(container)).toEqual(['past', 'active', 'future']);
 		expect(screens()).toEqual(['search', 'search', 'standby']);
 		for (let i = 0; i < 5; i++) act(() => { vi.advanceTimersByTime(100); });
+		expect(screens()[1]).toBe('search');
+		for (let i = 0; i < 3; i++) act(() => { vi.advanceTimersByTime(100); });
 		expect(screens()[1]).toBe('lock');
 		for (let i = 0; i < 6; i++) act(() => { vi.advanceTimersByTime(100); });
 		expect(screens()[1]).toBe('on');
