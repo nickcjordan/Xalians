@@ -25,3 +25,9 @@ Preserve the accepted source images unchanged. Judge modeled likeness separately
 ## Shin alignment correction applied, 2026-09-28
 
 Adding leg volume did not fix a bowed lower-leg path. A smooth sweep can depict a flexible tube even when its surface is continuous. Separate the underlying joint-to-joint segment from its muscle contour: blockout-0006 aligns the intermediate shin controls with the knee-to-ankle line while retaining the fuller radii. Check the actual profile, sample the interior sweep for straightness, and preserve soft contour changes without adding a bend through the shaft. The joint endpoints, thigh, feet and neighboring parts retain their parameters. Do not treat technical continuity as proof of credible articulation.
+
+## Whole-creature likeness failure, 2026-09-28
+
+The agent described the primitive model as a directional milestone without enforcing the intended resemblance to the preferred first-round art. Local joint corrections and topology checks did not close that gap. Nick had to restate that the untextured 3D form should look like those references. This is a substantive failure of review, not a new requirement or a texture issue.
+
+Applied now: the first-round image is committed as the primary likeness target; a complete reference/proxy comparison and region-by-region discrepancy table replace another local approval request. Local joint experiment-0007 and attempted likeness refit-0008 are marked failed as complete models. The beaded ear rims and simplistic face in refit-0008 were rejected internally. Do not continue the same parameter-tweak loop or claim near-readiness. A different surface-authoring approach must demonstrate reference-specific forms before another complete model is submitted. Fine hair can wait; structural coat mass cannot.

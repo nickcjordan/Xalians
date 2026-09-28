@@ -121,6 +121,14 @@ Scope extension, 2026-09-27: Nick approved implementing the proposed layered sys
 
 - Verified 474 package, feedback, current-reference and new-run hashes. Opened ready PR #727, https://github.com/nickcjordan/Xalians/pull/727, with auto-merge enabled. Local geometry/provenance checks pass; CI is pending. A merge does not approve the shin correction.
 
-## Immediate next unfinished action
+## Whole-model likeness correction, 2026-09-28
 
-Nick's review of the shin correction in blockout-0006. It is unapproved. Preserve prior scoped tail, paw and eye references and carry the improved leg volume forward. Whole-body likeness, facial blending, shaggy silhouette mass, final validation/handoff and remaining species remain unfinished. Layer 5 remains active. Prior validator drafts are preserved locally.
+- PR #727 merged. Continued from fresh main on `codex/akinza-ankle-wrist-construction`, preserving unrelated validator drafts.
+- Nick identified unresolved ankle/wrist realism. While the local joint study was underway, he clarified that the current 3D model is far from the first grayscale reference and that substantial work remains before a surface pass. This steers the existing modeling task toward complete likeness, not another isolated approval loop.
+- Recorded both exact messages. Preserved the first grayscale sheet as the primary whole-creature likeness target, with later scoped tail/gaze/paw corrections retained. Its historical pack rejection does not override Nick's preference for its appearance.
+- Built local ankle/wrist experiment-0007 and four actual close-up views. A broader internal refit-0008 explores integrated eye surfaces, head/muzzle shape, shaped ears and coat masses. Both have technical passes but fail whole-creature likeness. Refit-0008 is explicitly rejected internally; its beaded ear forms and simplistic face are not presented as progress toward art approval.
+- Rewrote the current review as a complete likeness-gap audit. Updated pipeline/workflow and lessons to prohibit treating topology or a generic proxy as near surface-ready. Structural coat masses, face/ear construction, body proportions and articulated joints must be resolved before fine fur/texture work.
+
+## Immediate next unfinished action and limitation
+
+The current coarse procedural authoring has not achieved the required sculptural likeness, and a faithful model is still unresolved. Replace that inadequate shape construction with reference-guided surface modeling and demonstrate a complete region against front/profile targets before extending it across the body. No new model is ready for Nick's art approval, and no request to approve the failed proxies is pending. Layers 3/4 remain substantially open within layer 5; layer 6 has not started. The modeling task, final validation/handoff and remaining species are unfinished. Prior validator drafts remain preserved locally.

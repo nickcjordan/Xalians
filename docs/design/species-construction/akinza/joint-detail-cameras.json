@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "resolution": 640,
+  "views": [
+    {
+      "name": "ankle-side",
+      "target": [
+        0.68,
+        -0.1,
+        0.59
+      ],
+      "offset": [
+        8,
+        0,
+        0
+      ],
+      "orthoScale": 1.42
+    },
+    {
+      "name": "ankle-front",
+      "target": [
+        0.68,
+        -0.1,
+        0.59
+      ],
+      "offset": [
+        0,
+        -8,
+        0
+      ],
+      "orthoScale": 1.42
+    },
+    {
+      "name": "wrist-front",
+      "target": [
+        1.19,
+        -0.1,
+        2.99
+      ],
+      "offset": [
+        0,
+        -8,
+        0
+      ],
+      "orthoScale": 1.0
+    },
+    {
+      "name": "wrist-oblique",
+      "target": [
+        1.19,
+        -0.1,
+        2.99
+      ],
+      "offset": [
+        6,
+        -6,
+        0
+      ],
+      "orthoScale": 1.0
+    }
+  ]
+}

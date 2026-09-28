@@ -95,3 +95,9 @@ Nick said the creature is very close but the legs are too thin. His rabbit compa
 ## 2026-09-28: shin alignment correction
 
 Nick found the increased fullness a little better, but pointed out that the shin itself was bowed. Preserved the thigh and knee articulation, radii and joint endpoints; aligned the three intermediate shin controls between knee and ankle in blockout-0006. The sampled interior centerline deviation falls from about 0.196 units to under 0.000001 units. Side/front review shows a straighter shaft with retained calf fullness. Full geometry and this local correction remain unapproved. Exact feedback and comparison are in `shin-feedback.json` and `reconciliation.md`.
+
+## 2026-09-28: whole-model quality correction
+
+Nick identified unresolved ankle/wrist realism, then rejected the implication that only fur and surface texture remained. The first grayscale sheet is explicitly the likeness target, subject to later scoped corrections. The agent overstated readiness and did not adequately enforce the whole-creature comparison.
+
+Preserved local joint experiment-0007 and internally rejected refit-0008. The latter tries conforming eye surfaces, a shaped ear outline, muzzle and coat masses but still fails likeness, including beaded ear forms. No approval request is attached to either. Updated the workflow to require reference-specific structure before surface finishing, including silhouette-defining coat masses. Rendering and integrity tools remain useful; the current geometry authoring has not demonstrated the required quality. See reconciliation.md for the complete gap audit and unresolved work.

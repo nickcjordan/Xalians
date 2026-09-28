@@ -2,9 +2,15 @@
   "schemaVersion": 1,
   "species": "akinza",
   "date": "2026-09-28",
-  "status": "scoped-component-inputs-for-provisional-reconciliation",
+  "status": "likeness-recovery-required",
   "rule": "Use only the named role. Local accepted corrections override older whole-body sheets. No image is a calibrated whole-creature master.",
   "references": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/identity-run-0001.png",
+      "role": "Primary whole-creature likeness target, explicitly reaffirmed by Nick",
+      "sha256": "cd172ed009b20b65a93f02ac33b9f0af15d47dd78a7448ba9767996a52af1fcb",
+      "exclude": "Superseded tail root, gaze and human-like extremities; nominal camera/pose differences are not calibrated observations"
+    },
     {
       "path": "docs/design/species-construction/akinza/evidence/body-study-0003.png",
       "role": "Retained torso, head and limb proportion direction",
@@ -59,11 +65,12 @@
     }
   ],
   "unresolved": [
-    "Relative scale of new paws and leg-to-paw transition",
-    "Consistent head and ear depth",
-    "Full creature tail occlusion across actual cameras",
-    "Modeled likeness to accepted illustrations",
-    "Straighter shin in blockout-0006 awaits review; prior fullness was described as a little better, not fully approved"
+    "Whole-creature geometry fails likeness to first-round reference",
+    "Head, cheek, muzzle and eye integration",
+    "Ear shell, head connection and silhouette-defining coat masses",
+    "Body proportions and mass distribution across views",
+    "Ankle and wrist articulation and paw transitions",
+    "Geometry-authoring approach must express these forms before another approval candidate"
   ],
   "fullStageApproval": null,
   "directions": [
@@ -76,6 +83,11 @@
       "path": "docs/design/species-construction/akinza/shin-feedback.json",
       "role": "latest-shin-alignment-direction",
       "sha256": "da43603c8758e18784a577a8c97edb33e203f298b74617cdc4c38182a5454a64"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/likeness-feedback.json",
+      "role": "latest-whole-creature-quality-correction",
+      "sha256": "4cd9375ea4ee0d02ad828d4fdf69ec2dc016ddffdaf6150adc1304bead399576"
     }
   ]
 }

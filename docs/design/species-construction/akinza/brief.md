@@ -1,6 +1,6 @@
 # Akinza construction pilot: current handoff
 
-Updated 2026-09-28. Current geometry candidate: blockout-0006. Nick found the increased leg fullness a little better, but rejected the bowed shin in blockout-0005. See [shin-feedback.json](shin-feedback.json). This does not approve the revised geometry.
+Updated 2026-09-28. **Construction is substantially incomplete and no current model is ready for likeness approval.** Nick reaffirmed the first grayscale round as the target and rejected the implication that only fur and texture remain. Local ankle/wrist study-0007 and broader refit-0008 are failed diagnostic experiments. See [likeness-feedback.json](likeness-feedback.json) and [reconciliation.md](reconciliation.md).
 
 Nick approved the animal-paw direction in study-0020 with "looks good, proceed" and requested an audit of the layered plan and lessons. Full words and image hash: [paw acceptance](paw-acceptance.json).
 
@@ -10,9 +10,9 @@ Nick approved the animal-paw direction in study-0020 with "looks good, proceed" 
 |---|---|---|
 | 1. Interpretation | Source abstraction and corrections established | Carry scoped decisions into the final manifest |
 | 2. Identity | First-round style preferred; working creature direction retained | Complete integrated likeness review |
-| 3. Construction | Body direction and animal paws selected | Whole-body scale, depth and limb posture reconciliation |
-| 4. Connections/detail | Tail form and central attachment accepted; gaze corrected | Verify their modeled equivalents and other connections around the body |
-| 5. Geometric reconciliation | Provisional whole-body blockout now being exercised, after local tail probes | Matched-view comparison, unseen-angle review and Nick's rough-form approval |
+| 3. Construction | Target directions selected, modeled likeness failing | Substantial reference-guided form reconstruction |
+| 4. Connections/detail | Scoped image directions retained; joints and integration unresolved | Credible ankle/wrist, face and ear construction |
+| 5. Geometric reconciliation | Technical experiments only; whole-model likeness failed | A faithful untextured model and Nick's explicit approval |
 | 6. Surface/handoff | Not started | Coat, final views, masks, measurements, manifest, consumer adapter and approval |
 
 These are progress states, not whole-stage approvals. Production release remains blocked. Rigging and animation follow the approved handoff and are outside this construction exercise.
@@ -21,6 +21,7 @@ These are progress states, not whole-stage approvals. Production release remains
 
 Read [current-references.json](current-references.json) before modeling or prompting. It binds exact images, allowed roles, exclusions and scoped approvals. Do not treat a historical full-body sheet as an approved master.
 
+- First grayscale run-0001 is the primary whole-creature likeness target, reaffirmed by Nick. Preserve later accepted corrections when reconciling it; it is not a calibrated geometry master.
 - Body study-0003 supplies retained head, torso and limb proportion direction only. Its gaze, tail junction and extremities are superseded. Nick subsequently requested modestly beefier hind legs that imply bounding strength, using rabbit power as a reference without literal rabbit legs. Concentrate fullness in thighs and upper calves, preserving the thigh shape, knee and ankle positions, stance and compact paws. His next correction straightens the intervening shin path; the lower leg must not curve like a flexible tube.
 - Tail study-0018 supplies accepted shape, junction and central positioning. Three full rounded tails taper to points and fuse directly together at the body-level spinal base. No delayed trident branch, left-hip attachment or extra root lobe. Keep rear contours restrained.
 - Face study-0010 supplies accepted large distinctive eyes and forward gaze.
@@ -39,7 +40,7 @@ Stable annotation IDs include head, ear-left/right, eye-left/right, muzzle, tors
 
 ## Next checkpoint and operator lessons
 
-Use [reconciliation.md](reconciliation.md) for the current whole-body experiment and actual discrepancies. Scoped component approval permits a provisional geometry experiment; it does not approve the newly modeled result. Keep accepted originals intact and compare their modeled equivalents. Do not regenerate all components to obtain another attractive sheet.
+Use [reconciliation.md](reconciliation.md) for the current whole-body experiment and actual discrepancies. Scoped component approval permits experiments; the existing primitive models have failed whole-creature likeness. Do not present another known failure for approval or defer structural differences to texture. Keep accepted originals intact and compare their modeled equivalents. Do not regenerate all components to obtain another attractive sheet.
 
 Follow [WORKFLOW.md](../WORKFLOW.md) and [LESSONS.md](../LESSONS.md). Repeated geometry errors trigger a method change after two targeted image attempts. Check known regressions before involving Nick. Separate provenance checks, topology checks, likeness review and Nick's approval.
 

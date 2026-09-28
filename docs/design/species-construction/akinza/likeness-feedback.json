@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "source": "Nick, this chat, following blockout-0006",
+  "events": [
+    {
+      "words": "There's still a slightly odd curve happening in the ankle area. Plus, I think you lost a lot of the realistic aspects of what was in the ankle before when you moved away from the human-like features. I think the ankle still needs work, just like the wrist does, but I don't know if that's what your focus is right now",
+      "direction": "Ankle and wrist structure remain unresolved; restoring credible connections belongs in construction."
+    },
+    {
+      "words": "Okay, so if you're telling me that fur and surface texture is the only thing that should remain after this pass, then I think we have a LOT more work before that next pass. The first round of grayscale images you produced, I think, look great. And if you had a 3D model that looked just like that, minus the texture, I think we'd be good to go forward. But what you're showing me here is far from an equivalent 3D model aligning to the first round of reference images from the different angles",
+      "direction": "The first grayscale round is the whole-creature likeness target. The current 3D proxy is far from an equivalent untextured model; do not advance on a claim that only fur or texture remains."
+    }
+  ],
+  "target": {
+    "path": "docs/design/species-construction/akinza/evidence/identity-run-0001.png",
+    "role": "primary-whole-creature-likeness-target",
+    "sha256": "cd172ed009b20b65a93f02ac33b9f0af15d47dd78a7448ba9767996a52af1fcb"
+  },
+  "precedence": "Later accepted tail, gaze and paw corrections remain binding. The first sheet is a likeness target, not calibrated geometry or complete pack approval.",
+  "approval": null
+}

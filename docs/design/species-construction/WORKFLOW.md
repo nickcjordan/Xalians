@@ -27,6 +27,8 @@ Process correction after the Akinza tail exercise: expressive posing is deferred
 
 ## Adaptation during work
 
+Likeness is an exit requirement for construction and reconciliation. A model that passes topology, camera and mask checks can still fail the stage completely. Compare the whole creature to the preferred image references before asking Nick to review another local correction. If broad form fails, label the result a diagnostic proxy and revisit geometry authoring; do not describe surface work as the only remaining step. Keep head, muzzle, ear tissue, major coat masses, body proportions and ankle/wrist connections in the construction scope. Fine strands and texture cannot substitute for those shapes.
+
 Read [LESSONS.md](LESSONS.md) before choosing the next representation. Maintain one current reference map per species, with a role and explicit exclusions for each image. Keep chronological history in review records. Never feed an entire historical sheet into a correction without excluding its superseded parts.
 
 Before a study, state the uncertainty, accepted parts to preserve, expected evidence and exit condition. After it, record the actual failure or improvement and the next method. If the same geometric error survives two targeted image attempts, stop rewording the same request. Inspect anatomy if needed, then use geometry, calibrated projections or an explicit connection diagram. This is an operator retry limit introduced after Akinza, not a claim that Nick ratified a numeric quality threshold.
