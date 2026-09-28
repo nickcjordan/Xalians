@@ -1,4 +1,4 @@
-import { forecastClash, forecastSend, moveSwift, movableRecordIdsFor } from '@xalians/rules/expedition/expeditionRules';
+import { forecastStanding, forecastSendStanding, moveSwift, movableRecordIdsFor } from '@xalians/rules/expedition/expeditionRules';
 import { prepare, baseHold, roleOf, strainMultiplierFor, wholeHoldsOn } from '@xalians/rules/expedition/creatureOnTable';
 import { HOME_GROUND_MULTIPLIER } from '@xalians/rules/expedition/expeditionInterpretation';
 import { strainCause } from './reclamationPreview';
@@ -17,6 +17,16 @@ export function elementOf(record) {
 	fit strip on its card). Every number is the engine's: forecastClash() for the board as
 	it stands, forecastSend() for the board with one more creature on it, both blind to
 	the opponent's hidden sends. Nothing here is React.
+
+	PASS 72, PLACEMENT STACKS (docs/design/reclamation-placement-stacks.md). Nick, 2026-09-28:
+	"during this placement phase, everything should just stack and the details that are shown
+	should not imply that something will play out one way or another because we won't really
+	know how something will play out until all creatures are placed and both players are
+	passed." The table no longer runs the Clash ahead of time: it reads forecastStanding() and
+	forecastSendStanding(), every creature at the hold it would go into the Clash with, nobody
+	downed. So `toll`, `falls`, `taken` and `downs` below are always nothing while sends are
+	made, and what a send changes is its own number and what it adds to or costs your
+	creatures already there. The Clash says what happened when it plays.
 */
 
 // a fit column is full at this much margin; a hold bar is full at this much hold (levers)
@@ -153,15 +163,6 @@ export function fitScale(fits) {
 }
 
 /*
-	PASS 58. Whether any column on the bench would take something off the rival: then every
-	card keeps the top of its columns for the rival's side (the tag of what it would take), so a column never runs up under a tag and the columns still read on one scale.
-*/
-export const FIT_RIVAL_ROOM = 0.76;
-export function fitTakesAny(fits) {
-	return cellsOf(fits).some((cell) => (cell.taken || 0) > EPS);
-}
-
-/*
 	fitTable(match, seat, records, roleOf?) -> {
 		forecast,                         the board as it stands
 		base: { [siteId]: { mine, theirs } },
@@ -210,7 +211,7 @@ export function fitTable(match, seat, records, roleOf) {
 		return null;
 	}
 	const frame = match.frames[match.frameIndex];
-	const forecast = forecastClash(match, seat) || {};
+	const forecast = forecastStanding(match, seat) || {};
 	const base = {};
 	frame.sites.forEach((site) => {
 		base[site.id] = forecastTotalsAt(match, seat, forecast, site.id);
@@ -222,7 +223,7 @@ export function fitTable(match, seat, records, roleOf) {
 			const role = roleOf ? roleOf(record.id) : null;
 			let after = null;
 			try {
-				after = forecastSend(match, seat, record.id, site.id, role || null);
+				after = forecastSendStanding(match, seat, record.id, site.id, role || null);
 			} catch (e) {
 				after = null;
 			}
@@ -279,7 +280,7 @@ export function fitTable(match, seat, records, roleOf) {
 			let after = null;
 			try {
 				moved = moveSwift(match, seat, recordId, site.id);
-				after = moved ? forecastClash(moved, seat) : null;
+				after = moved ? forecastStanding(moved, seat) : null;
 			} catch (e) {
 				after = null;
 			}

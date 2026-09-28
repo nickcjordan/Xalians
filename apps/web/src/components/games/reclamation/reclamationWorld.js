@@ -149,7 +149,6 @@ function ReclamationWorld({
 	stakeableSiteIds,
 	pendingStakeSiteId,
 	onStake,
-	settled,
 }) {
 	const opponent = you === 'A' ? 'B' : 'A';
 	const hl = highlights || {};
@@ -178,7 +177,7 @@ function ReclamationWorld({
 				<div
 					className="rec-hidden-banner rec-rise"
 					data-hidden-banner
-					title={`The rival has ${hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in this round. It is revealed when the worlds clash, and is not in the forecast.`}
+					title={`The rival has ${hiddenEnemyCount === 1 ? 'a creature' : `${hiddenEnemyCount} creatures`} hidden somewhere in this round. It is revealed when the worlds clash, and is not in the totals.`}
 				>
 					<ReclamationSilhouette count={hiddenEnemyCount} />
 				</div>
@@ -250,6 +249,9 @@ function ReclamationWorld({
 						at or lifted, the forecast of that send (so a strike's victim shows its cut
 						before the click); otherwise the board as it stands. Undefined when nothing
 						would change, and during the Clash and the Ruling, which show live holds.
+						PASS 72: the forecast is the board stacked, with no Clash run, so the only
+						number that moves is one a send changes by standing beside it (a bolster's
+						lift, a pack's bond, a solitary creature's cost).
 					*/
 					const siteForecast = previewHere && previewHere.forecast ? previewHere.forecast : forecast;
 					const forecastOf = (entry) => {
@@ -306,7 +308,7 @@ function ReclamationWorld({
 							hover: hl.hover === entry.recordId,
 							flash: hl.hit === entry.recordId ? hl.flash : undefined,
 							arrive: arrivedIds.includes(entry.recordId),
-							lossText: after !== undefined ? (after === 0 ? 'Falls in the Clash, as the board stands' : `After the Clash, as the board stands: ${formatHoldShown(after)}`) : undefined,
+							lossText: after !== undefined ? `With this send beside it: ${formatHoldShown(after)}` : undefined,
 							onClick: (e) => {
 								e.stopPropagation();
 								onFigureClick(entry, seat, site);
@@ -386,7 +388,6 @@ function ReclamationWorld({
 										scale={standingScale}
 										marks={null}
 										verdict={verdict || null}
-										settled={settled ? settled[site.id] || null : null}
 									/>
 									{!ghost && movingRecordId && <span className="rec-ghost rec-ghost--relocate" aria-label="Move here" title="Move here"><SwiftGlyph /></span>}
 									{/*
@@ -423,12 +424,11 @@ function ReclamationWorld({
 										never moves a figure.
 										PASS 58. The number is its card's: what your side there would gain, and never
 										what it takes off the rival (pass 57's "20+14" added the two sides, Nick:
-										"Why is it adding my health and the opponent's health?"). What it does to the
-										rival is on the rival's side: the cross on the creature it would down, the
-										rival's struck number and the rival's bar.
+										"Why is it adding my health and the opponent's health?").
+										PASS 72: what it adds as the sends stack, with no fight played out.
 									*/}
 									{ghost && previewHere && previewHere.why && ghost.record && (
-										<GhostPiece key={`ghost-${ghost.record.id}`} ghost={ghost} previewHere={previewHere} site={site} beside={mine.length} settled={settled && settled[site.id] === 'mine' ? { side: 'mine', lead: front.mine - front.theirs } : null} />
+										<GhostPiece key={`ghost-${ghost.record.id}`} ghost={ghost} previewHere={previewHere} site={site} beside={mine.length} />
 									)}
 								</div>
 								{clashing === site.id && <BlowTracer acting={hl.acting} hit={hl.hit} beat={hl.beat} />}
@@ -603,29 +603,25 @@ function useSaysFit(ref, key, count) {
 	the rival. PASS 61: what moves the number, and why, in words. PASS 62: beside creatures of
 	yours, it stands in the right of your half, kept for it through the Deploy.
 */
-function GhostPiece({ ghost, previewHere, site, beside, settled }) {
+function GhostPiece({ ghost, previewHere, site, beside }) {
 	const why = previewHere.why;
-	// pass 61: what moves its number here, and why, in words under the chain
-	const reasons = reasonLines({ why, record: ghost.record, site, tolerance: ghost.tolerance, blows: ghost.blows, settled, open: ghost.open, role: ghost.role });
+	// pass 61: what moves its number here, and why, in words under the chain; pass 72: and the element chart against the rivals here
+	const reasons = reasonLines({ why, record: ghost.record, site, tolerance: ghost.tolerance, matchups: ghost.matchups });
 	const ref = React.useRef(null);
 	const step = useSaysFit(ref, `${ghost.record.id}|${beside}|${reasons.map((line) => line.effect + line.cause).join('|')}`, reasons.length ? SAYS_STEPS.length : 1);
 	const says = reasons.length ? SAYS_STEPS[Math.min(step, SAYS_STEPS.length - 1)] : null;
 	/*
 		PASS 59. How the number is made, in order, under it: its normal hold, each mark with its
-		factor, and when the Clash would take something off it, what it arrives with and what the
-		Clash takes ("13 🔥×½ → 7 −3" under "+4"), and what it adds to your creatures already there
-		("+8" beside two figures). The factor belongs to the arrival, so it stands before it. The
-		loss printed is the difference of the two numbers printed, so the chain always lands on
-		the number above it.
+		factor, and what it adds to your creatures already there ("+8" beside two figures). The
+		factor belongs to the arrival, so it stands before it. PASS 72: the Clash's toll is gone
+		from the chain, since nothing is fought until both sides have passed.
 	*/
 	const marked = !!(why.home || why.worldElement || why.climate || why.selfLift || why.company);
-	const fights = why.toll > 0.5;
 	const going = Number(formatHoldShown(why.going));
-	const kept = Number(formatHoldShown(Math.max(0, why.own)));
 	// what it adds to your creatures already there: the rest of its number, so the chain lands on it exactly
-	const helps = Number(formatHoldShown(why.gain)) - kept;
-	const steps = fights || helps !== 0;
-	const chain = marked || steps || why.falls;
+	const helps = Number(formatHoldShown(why.gain)) - going;
+	const steps = helps !== 0;
+	const chain = marked || steps;
 	return (
 		<span
 			ref={ref}
@@ -649,17 +645,15 @@ function GhostPiece({ ghost, previewHere, site, beside, settled }) {
 			{chain && (
 				<span className="rec-ghost-piece-chain g-mono" data-ghost-chain>
 					{marked && <i className="rec-ghost-piece-body">{formatHoldShown(why.body)}</i>}
-					{marked && <WhyMarks reasons={{ ...why, falls: false }} className="rec-ghost-piece-whys" factors roomy />}
+					{marked && <WhyMarks reasons={why} className="rec-ghost-piece-whys" factors roomy />}
 					{marked && steps && <i className="rec-ghost-piece-arrow" aria-hidden="true">{'→'}</i>}
 					{steps && <i className="rec-ghost-piece-going">{going}</i>}
-					{fights && <i className="rec-ghost-piece-toll">{`−${Math.max(0, going - kept)}`}</i>}
 					{helps !== 0 && (
 						<i className="rec-ghost-piece-allies" title="What it would add to your creatures already there">
 							{`${helps > 0 ? '+' : '−'}${Math.abs(helps)}`}
 							<CompanyGlyph />
 						</i>
 					)}
-					{why.falls && <WhyMarks reasons={{ falls: true }} className="rec-ghost-piece-whys" />}
 				</span>
 			)}
 			<ReasonLines lines={reasons} className="rec-ghost-piece-reasons" />

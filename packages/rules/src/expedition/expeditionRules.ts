@@ -997,8 +997,65 @@ export function forecastClash(state: MatchState, handler: Seat): Record<string, 
 	return out;
 }
 
+/*
+	PASS 72, PLACEMENT STACKS (docs/design/reclamation-placement-stacks.md). Nick, 2026-09-28, on
+	a forecast that said his creature "acts first" and falls: "during this placement phase,
+	everything should just stack and the details that are shown should not imply that something
+	will play out one way or another because we won't really know how something will play out
+	until all creatures are placed and both players are passed."
+
+	forecastStanding(state, handler) -> { [recordId]: { hold, downed: false, before } } | null
+
+	What every creature `handler` can see holds as the board stands, stacked, with no Clash run:
+	its hold at its world with its home, the world, the climate and the creatures beside it, the
+	same number forecastClash() calls `before`. The opponent's hidden sends stay hidden. `hold`
+	equals `before` and nothing is downed, so a table built for forecastClash() reads it as a
+	board where nothing has fought yet. Null outside Deploy.
+*/
+export function forecastStanding(state: MatchState, handler: Seat): Record<string, ClashForecast> | null {
+	const copy = forecastCopy(state, handler);
+	if (!copy) {
+		return null;
+	}
+	const out: Record<string, ClashForecast> = {};
+	currentFrame(state).sites.forEach((site) => {
+		(['A', 'B'] as Seat[]).forEach((player) => {
+			copy.board[site.id][player].forEach((e) => {
+				const before = currentHoldOf(copy, e);
+				out[e.recordId] = { hold: before, downed: false, before };
+			});
+		});
+	});
+	return out;
+}
+
+// pass 72: forecastStanding() with this creature sent there, placed exactly as send() places it
+export function forecastSendStanding(state: MatchState, handler: Seat, recordId: string, siteId: string, chosenRole: string | null = null): Record<string, ClashForecast> | null {
+	if (!state || state.phase !== 'deploy') {
+		return null;
+	}
+	const p = state.players[handler];
+	const record = p.roster.find((r) => r.id === recordId);
+	if (!record || !isFieldable(record) || !siteById(currentFrame(state), siteId)) {
+		return null;
+	}
+	const placed = placeEntry(state, handler, record, siteId, arrivesHidden(record, rulesOf(state)), sendCostFor(p, recordId, rulesOf(state)), rulesOf(state).actFlip ? chosenRole || null : null);
+	return forecastStanding(placed, handler);
+}
+
 // the forecast's resolve, on a copy of the board with the opponent's hidden sends taken off
 function forecastRun(state: MatchState, handler: Seat): { copy: MatchState; board: Board; resolved: MatchState } | null {
+	const copy = forecastCopy(state, handler);
+	if (!copy) {
+		return null;
+	}
+	const resolved = resolve(copy);
+	applyBolsterRecovery(resolved);
+	return { copy, board: copy.board, resolved };
+}
+
+// the board as `handler` can see it, ready to resolve: the opponent's hidden sends taken off
+function forecastCopy(state: MatchState, handler: Seat): MatchState | null {
 	if (!state || state.phase !== 'deploy') {
 		return null;
 	}
@@ -1018,9 +1075,7 @@ function forecastRun(state: MatchState, handler: Seat): { copy: MatchState; boar
 		board,
 		resolutionLog: [],
 	};
-	const resolved = resolve(copy);
-	applyBolsterRecovery(resolved);
-	return { copy, board, resolved };
+	return copy;
 }
 
 /*

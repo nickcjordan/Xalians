@@ -1,7 +1,7 @@
 import React from 'react';
-import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarration';
+import { formatHold, formatHoldShown, wholeOrTenths, articleFor } from './reclamationNarration';
 import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
-import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph, RivalGlyph } from './reclamationGlyphs';
+import { HomeGlyph, StrainGlyph, CompanyGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph, RivalGlyph } from './reclamationGlyphs';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
@@ -18,9 +18,9 @@ import { strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 	  HoldBar     a creature's hold as a bar in its world's color, the part the Clash is
 	              forecast to take striped at its end
 	  FitStrip    three columns on a bench card, one per world in world order: what your
-	              side there would gain by sending it there now, what the rival would lose
-	              on a tag at the top, and the rival's remaining lead as a pointer
-	              (pass 58)
+	              side there would gain by sending it there now, and the rival's remaining
+	              lead as a pointer (pass 58; pass 72 took off the rival's tag, which was a
+	              Clash forecast)
 	  RoundTrack  the game's nine worlds, three rounds of three, each tile its world's symbol
 	              (pass 65)
 	  SideRow     one side's pennants toward the clinch, each in the color of the world it
@@ -72,7 +72,7 @@ function leadOf(theirs, mine) {
 */
 const round1 = (v) => Math.round(v * 10) / 10;
 
-export function Standing({ siteId, now, preview, scale, marks, verdict, settled }) {
+export function Standing({ siteId, now, preview, scale, marks, verdict }) {
 	const base = now || { theirs: 0, mine: 0, theirsBefore: 0, mineBefore: 0 };
 	const shown = preview || base;
 	const t = shown.theirs || 0;
@@ -114,7 +114,6 @@ export function Standing({ siteId, now, preview, scale, marks, verdict, settled 
 					<span className="rec-standing-num" data-standing-total="theirs">
 						<b className="g-mono">{shownTheirs}</b>
 						{won === 'theirs' && <Crest verdict={verdict} />}
-						{!won && settled === 'theirs' && <SettledFlag side="theirs" />}
 					</span>
 				)}
 			</span>
@@ -129,7 +128,6 @@ export function Standing({ siteId, now, preview, scale, marks, verdict, settled 
 						{preview && mk.art && <span className="rec-standing-art" data-standing-art>{mk.art}</span>}
 						{(m > EPS || mb > EPS || preview || won === 'mine') && <b className="g-mono">{shownMine}</b>}
 						{(won === 'mine' || won === 'tie') && <Crest verdict={verdict} />}
-						{!won && settled === 'mine' && <SettledFlag side="mine" />}
 					</span>
 				)}
 			</span>
@@ -145,9 +143,9 @@ export function standingSentence(planet, theirs, mine) {
 	const lead = leadOf(theirs, mine);
 	const totals = `rival ${formatHold(theirs)}, you ${formatHold(mine)}`;
 	if (lead === 'level') {
-		return `${planet}: level, ${totals}, after the Clash as the board stands`;
+		return `${planet}: level, ${totals}, as the sends stand`;
 	}
-	return `${planet}: ${lead === 'mine' ? 'you lead' : 'the rival leads'}, ${totals}, after the Clash as the board stands`;
+	return `${planet}: ${lead === 'mine' ? 'you hold more' : 'the rival holds more'}, ${totals}, as the sends stand`;
 }
 
 /*
@@ -210,11 +208,13 @@ export function HoldBar({ hold, after, unstrained, side, className }) {
 	now and after the send, "12→0" (`room` keeps the top of every column on the bench for it
 	once any card has one). The small pointer on the column's edge is what the rival would still lead by after the send: a
 	column that passes it would put you ahead.
-*/
-function FallsMark() {
-	return <svg className="rec-fit-falls" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" /></svg>;
-}
 
+	PASS 72, PLACEMENT STACKS (docs/design/reclamation-placement-stacks.md). The fit table
+	reads the board stacked, with no Clash run, so the hatched loss, the cross and the rival's
+	tag are gone: a column is what the creature would hold there and what it adds to (or,
+	hatched, costs) your creatures already there. The pointer is the rival's total there as
+	the sends stand, less yours.
+*/
 const CLIMATE_WORDS = {
 	hot: 'too hot for it here',
 	cold: 'too cold for it here',
@@ -226,16 +226,16 @@ const CLIMATE_WORDS = {
 /*
 	WhyMarks: the reasons a creature's hold here is what it is, as marks. The same marks on a
 	card's column, on the lifted creature's preview on a world, and on a creature standing on
-	a world. `reasons` is a fit cell (or anything with { home, climate, company, falls }).
+	a world. `reasons` is a fit cell (or anything with { home, worldElement, climate, company }).
 */
 export function whyWords(reasons) {
 	const r = reasons || {};
 	const out = [];
-	if (r.home) out.push('its home world: it holds half again as much here');
+	if (r.home) out.push('its home world: it holds a quarter more here');
+	if (r.worldElement) out.push(`${articleFor(r.worldElement.element)} ${r.worldElement.element} world is hard on ${r.worldElement.against || 'it'}: it holds nine tenths here`);
 	if (r.climate) out.push(`${CLIMATE_WORDS[r.climate.cause] || CLIMATE_WORDS.strained}: it holds ${climateShare(r.climate)} of what it would`);
 	if (r.company) out.push(`the creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`);
 	if (r.selfLift) out.push(`it is a bolster, and steadies itself as it steadies its allies: ${formatHold(r.selfLift)} more`);
-	if (r.falls) out.push('the Clash would drive it to nothing');
 	return out;
 }
 
@@ -292,10 +292,9 @@ function chip(key, mark, factor) {
 export function WhyMarks({ reasons, className, factors: withFactors, roomy }) {
 	const r = reasons || {};
 	const marks = [];
-	// a creature that would fall holds nothing whatever the factors, and two marks share one narrow column:
-	// the cross stands alone, and only the first mark carries its factor
-	const crowded = !roomy && [r.home, r.worldElement, r.climate, r.selfLift, r.company, r.falls].filter(Boolean).length > 1;
-	let factors = withFactors && !r.falls;
+	// two marks share one narrow column: only the first mark carries its factor
+	const crowded = !roomy && [r.home, r.worldElement, r.climate, r.selfLift, r.company].filter(Boolean).length > 1;
+	let factors = withFactors;
 	const once = (text) => {
 		if (!factors) return null;
 		if (crowded) factors = false;
@@ -308,7 +307,7 @@ export function WhyMarks({ reasons, className, factors: withFactors, roomy }) {
 	if (r.worldElement) {
 		marks.push(chip(
 			'element',
-			<span className="rec-why rec-why--element" data-why="element" title={`A ${r.worldElement.element} world is hard on ${r.worldElement.against || 'its'} creatures: it holds nine tenths here`}>
+			<span className="rec-why rec-why--element" data-why="element" title={`${articleFor(r.worldElement.element) === 'an' ? 'An' : 'A'} ${r.worldElement.element} world is hard on ${r.worldElement.against || 'its'} creatures: it holds nine tenths here`}>
 				{/* the element's disc, as on a piece's foot, so it is not read as a temperature mark */}
 				<XalianTypeSymbolBadge size={11} type={r.worldElement.element} classes="rec-why-element-disc" />
 			</span>,
@@ -339,9 +338,6 @@ export function WhyMarks({ reasons, className, factors: withFactors, roomy }) {
 	if (r.company) {
 		marks.push(chip('company', <span className={`rec-why rec-why--company rec-why--company-${r.company > 0 ? 'up' : 'down'}`} data-why="company" title={`The creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`}><CompanyGlyph /></span>, once(signed(r.company))));
 	}
-	if (r.falls) {
-		marks.push(chip('falls', <span className="rec-why rec-why--falls" data-why="falls" title="The Clash would drive it to nothing"><FallsGlyph /></span>, null));
-	}
 	return <span className={`rec-whys${withFactors ? ' rec-whys--factors' : ''}${className ? ` ${className}` : ''}`} aria-hidden="true">{marks}</span>;
 }
 
@@ -371,28 +367,7 @@ function gainNumber(gain) {
 	return gain < -0.5 ? `\u2212${formatHoldShown(-gain)}` : formatHoldShown(Math.max(0, gain));
 }
 
-/*
-	PASS 58: what a send would do to the rival at a world, on the rival's side of the column:
-	the rival's total there now and after it ("12→0"). The first build printed the change,
-	"−12", and a blind reader took a minus sign on their own card for their own loss.
-*/
-function RivalTag({ cell }) {
-	if (!(cell.taken > EPS) || typeof cell.rivalBefore !== 'number') {
-		return null;
-	}
-	const now = formatHoldShown(cell.rivalBefore);
-	const then = formatHoldShown(Math.max(0, cell.rivalBefore - cell.taken));
-	if (now === then) {
-		return null;
-	}
-	return (
-		<span className={`rec-fit-rival${cell.downs > 0 ? ' rec-fit-rival--downs' : ''}${now.length + then.length > 3 ? ' rec-fit-rival--long' : ''}`} data-fit-rival={cell.taken.toFixed(1)} data-fit-downs={cell.downs || 0}>
-			<i className="g-mono">{now}<span className="rec-fit-rival-to" aria-hidden="true">{'\u2192'}</span>{then}</i>
-		</span>
-	);
-}
-
-export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId, room, settled }) {
+export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId, room }) {
 	const s = scale > 0 ? scale : FIT_SCALE;
 	const r = room > 0 ? room : 1;
 	const anyCell = row ? sites.map((site) => row[site.id]).find(Boolean) : null;
@@ -405,7 +380,6 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 		else if (clear !== null) classes.push('rec-fit-col--short');
 		if (over) classes.push('rec-fit-col--over');
 		if (cell.gain < -EPS) classes.push('rec-fit-col--hurts');
-		if (cell.taken > EPS) classes.push('rec-fit-col--fights');
 		if (clear !== null) style['--fit-tick'] = clear.toFixed(4);
 		return (
 			<span
@@ -421,7 +395,6 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 				{/* the number sits on its column: what your side there would gain, the same unit as your total on the world */}
 				<span className="rec-fit-num g-mono">{gainNumber(cell.gain)}</span>
 				<span className="rec-fit-well">
-					<RivalTag cell={cell} />
 					<span className="rec-fit-part rec-fit-part--own" />
 					<span className="rec-fit-part rec-fit-part--allies" />
 					<span className="rec-fit-part rec-fit-part--lost" />
@@ -442,15 +415,13 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 					classes.push('rec-fit-col--news');
 				}
 				if (sentSiteId && sentSiteId === site.id) {
-					const falls = !!(sentCell && sentCell.downed);
-					const kept = sentCell && !falls ? sentCell.hold : 0;
-					const going = sentCell ? Math.max(sentCell.before || 0, kept) : 0;
-					const { style } = stackOf({ own: kept, toll: Math.max(0, going - kept) }, s, r);
+					// pass 72: what it stands with there as the sends stack
+					const kept = sentCell ? sentCell.hold : 0;
+					const { style } = stackOf({ own: kept, toll: 0 }, s, r);
 					classes.push('rec-fit-col--sent');
-					if (falls) classes.push('rec-fit-col--falls');
 					return (
-						<span className={classes.join(' ')} key={site.id} style={style} data-fit-site={site.id} data-fit-sent={sentCell ? (falls ? 'falls' : sentCell.hold.toFixed(1)) : ''}>
-							<span className="rec-fit-num g-mono">{sentCell ? (falls ? <FallsMark /> : formatHoldShown(sentCell.hold)) : ''}</span>
+						<span className={classes.join(' ')} key={site.id} style={style} data-fit-site={site.id} data-fit-sent={sentCell ? sentCell.hold.toFixed(1) : ''}>
+							<span className="rec-fit-num g-mono">{sentCell ? formatHoldShown(sentCell.hold) : ''}</span>
 							<span className="rec-fit-well">
 								<span className="rec-fit-part rec-fit-part--own" />
 								<span className="rec-fit-part rec-fit-part--lost" />
@@ -474,11 +445,6 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 					classes.push('rec-fit-col--none');
 					return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /><span className="rec-whys rec-fit-why" /></span>;
 				}
-				// pass 63: a world already yours this round, where a send adds to a world that is won
-				if (settled && settled[site.id] === 'mine') {
-					classes.push('rec-fit-col--settled');
-					return column(site, cell, classes, { 'data-fit-settled': '' });
-				}
 				return column(site, cell, classes, {});
 			})}
 		</span>
@@ -496,20 +462,17 @@ export function fitSentence(sites, row) {
 			return null;
 		}
 		const parts = [];
-		parts.push(cell.falls ? 'it would fall in the Clash' : `it would hold ${formatHold(cell.own)}`);
+		// pass 72: what it would hold as the sends stack; the Clash is not played out ahead of time
+		parts.push(`it would hold ${formatHold(cell.own)}`);
 		if (cell.allies > EPS) parts.push(`add ${formatHold(cell.allies)} to your creatures there`);
 		if (cell.allies < -EPS) parts.push(`cost your creatures there ${formatHold(-cell.allies)}`);
-		if (cell.toll > EPS && !cell.falls) parts.push(`the Clash would take ${formatHold(cell.toll)} off it`);
-		const rival = cell.taken > EPS
-			? `; the rival would lose ${formatHold(cell.taken)} there${cell.downs > 0 ? ` (${cell.downs === 1 ? 'one creature downed' : `${cell.downs} creatures downed`})` : ''}`
-			: '';
 		const mine = cell.after ? cell.after.mine : 0;
 		const theirs = cell.after ? cell.after.theirs : 0;
-		const lead = mine - theirs > EPS ? `you would lead ${formatHold(mine)} to ${formatHold(theirs)}`
-			: theirs - mine > EPS ? `the rival would still lead ${formatHold(theirs)} to ${formatHold(mine)}`
+		const lead = mine - theirs > EPS ? `you would hold ${formatHold(mine)} to the rival's ${formatHold(theirs)}`
+			: theirs - mine > EPS ? `the rival would still hold ${formatHold(theirs)} to your ${formatHold(mine)}`
 				: 'level';
 		const why = whyWords(cell);
-		return `${site.world.planet}: ${parts.join(', ')}${rival}; ${lead}${why.length ? ` (${why.join('; ')})` : ''}`;
+		return `${site.world.planet}: ${parts.join(', ')}; ${lead}${why.length ? ` (${why.join('; ')})` : ''}`;
 	}).filter(Boolean).join('. ');
 }
 
@@ -655,18 +618,6 @@ export function SendMeter({ left, cap, side, worldsAhead, tone }) {
 }
 
 // the Ruling on a world: a pennant at the end of the winner's bar (pass 54), which shows the margin; since pass 60 the bar it rides says whose
-/*
-	PASS 63. A world settled before the Clash: the Ruling's pennant, in outline, on the bar of the
-	side that will hold it, because the side behind can no longer act this round.
-*/
-export function SettledFlag({ side }) {
-	return (
-		<span className={`rec-crest rec-crest--settled rec-crest--${side}`} data-settled={side} title={side === 'mine' ? 'Yours this round: the rival can no longer answer here' : "The rival's this round: you can no longer answer here"}>
-			<svg viewBox="0 0 24 24" aria-hidden="true" className="rec-crest-flag"><path d="M6 21V3" /><path d="M6 4h12l-3 4.5L18 13H6" /></svg>
-		</span>
-	);
-}
-
 export function Crest({ verdict }) {
 	if (!verdict) {
 		return null;

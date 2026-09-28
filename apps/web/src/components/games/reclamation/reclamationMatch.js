@@ -7,11 +7,11 @@ import { HelpPanel, HistoryPanel, SettingsPanel } from './reclamationPanels';
 import ReclamationLegend from './reclamationLegend';
 import { ReclamationReport, buildMatchReport } from './reclamationReport';
 import {
-	send, pass, moveSwift, stakeWorld, getPublicState, forecastClash, forecastSendBlows,
+	send, pass, moveSwift, stakeWorld, getPublicState,
 	createRngState, nextRandom,
 } from '@xalians/rules/expedition/expeditionRules';
 import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '@xalians/rules/expedition/expeditionBot';
-import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
+import { prepare, strainMultiplierFor, targetMatchupMultiplier } from '@xalians/rules/expedition/creatureOnTable';
 import { SENDABLE, clinchFor, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
 	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
@@ -19,7 +19,6 @@ import {
 	verdictOf, rulingLine,
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause } from './reclamationPreview';
-import { nameBlows } from './reclamationReasons';
 import { fitTable, roundTrack, standingScale, elementOf } from './reclamationFit';
 import { RoundTrack, SideRow, pennantsFor } from './reclamationInstruments';
 
@@ -80,47 +79,6 @@ function frameWorldNames(frame) {
 	A staked world counts two, so the arithmetic reads the counted value rather than the
 	number of worlds. This never announces a rule the player does not have; it only counts.
 */
-/*
-	PASS 63, SETTLED WORLDS (docs/design/reclamation-audit-2026-09-26.md, weakness 1). A world is
-	settled this round when the side behind there can no longer act: the rival has passed with
-	nothing hidden while you lead, or you are done (passed, or no sends left) while the rival
-	leads. What follows can only add to the side still acting (no friendly fire), so the forecast
-	leader holds it. A blind critic, with the rival passed, sent three creatures into worlds won
-	by 20 or more, and nothing on the table said a send there changed nothing.
-*/
-export function settledWorlds(standings, { rivalDone, rivalHidden, youDone }) {
-	const out = {};
-	Object.entries(standings || {}).forEach(([siteId, st]) => {
-		const mine = (st && st.mine) || 0;
-		const theirs = (st && st.theirs) || 0;
-		if (mine > theirs + 0.05 && rivalDone && !rivalHidden) {
-			out[siteId] = 'mine';
-		} else if (theirs > mine + 0.05 && youDone) {
-			out[siteId] = 'theirs';
-		}
-	});
-	return out;
-}
-
-// pass 63: the rival's pass, and what it settles, in one sentence
-export function rivalPassedLine(sites, standings, settled, budget) {
-	const planet = (site) => (site.world && site.world.planet) || site.id;
-	const yours = sites.filter((site) => settled && settled[site.id] === 'mine').map(planet);
-	const theirs = sites
-		.filter((site) => standings[site.id] && standings[site.id].theirs > standings[site.id].mine + 0.05)
-		.map((site) => `${planet(site)} is the rival's by ${formatHoldShown(standings[site.id].theirs - standings[site.id].mine)}`);
-	const list = (items) => (items.length <= 1 ? items[0] || '' : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`);
-	if (yours.length === 0) {
-		return theirs.length ? `The rival has passed. ${list(theirs)}.` : 'The rival has passed.';
-	}
-	const whole = yours.length === sites.length ? `all ${sites.length} worlds are yours as they stand` : `${list(yours)} ${yours.length === 1 ? 'is' : 'are'} yours as ${yours.length === 1 ? 'it stands' : 'they stand'}`;
-	// when nothing this round can change, what a send would spend: a blind reader asked for the budget beside the pass
-	const spend = yours.length === sites.length && budget && budget.toCome > 0
-		? ` You have ${plural(budget.left, 'send')} for the ${budget.toCome} worlds to come.`
-		: '';
-	return `The rival has passed: ${whole}${theirs.length ? `; ${list(theirs)}` : ''}.${spend}`;
-}
-
 // pass 63: the send budget at the moment of choosing a send, against what is still to come
 export function budgetLine(sendsLeft, worldsToCome) {
 	const after = Math.max(0, sendsLeft - 1);
@@ -130,6 +88,30 @@ export function budgetLine(sendsLeft, worldsToCome) {
 	return worldsToCome > 0
 		? `After this send: ${plural(after, 'send')} left for the ${worldsToCome} worlds still to come.`
 		: `After this send: ${plural(after, 'send')} left.`;
+}
+
+/*
+	PASS 72, PLACEMENT STACKS. What the element chart does between a creature pointed at a world
+	and each rival creature standing there, both ways: `dealt` is its element on theirs when it
+	strikes or sweeps, `taken` theirs on it when that rival does. The chart is a fact of the two
+	creatures; who lands what, and in what order, is the Clash's to say when both have passed.
+	Neutral pairs are left out. A rival's hidden send is not on the view, so it is not here.
+*/
+const ATTACKS = new Set(['strike', 'sweep']);
+export function matchupsAt(view, site, record, role, opponent) {
+	const rules = view && view.rules;
+	const theirs = ((view && view.board && view.board[site.id] && view.board[site.id][opponent]) || []).filter((e) => e.record && !e.hidden);
+	return theirs.map((e) => {
+		const dealt = ATTACKS.has(role) ? targetMatchupMultiplier(record, e.record, rules) : 1;
+		const taken = ATTACKS.has(e.role) ? targetMatchupMultiplier(e.record, record, rules) : 1;
+		return {
+			recordId: e.recordId,
+			name: speciesLabel(e.record),
+			element: elementOf(e.record),
+			dealt: Math.abs(dealt - 1) > 1e-9 ? dealt : null,
+			taken: Math.abs(taken - 1) > 1e-9 ? taken : null,
+		};
+	}).filter((m) => m.dealt !== null || m.taken !== null);
 }
 
 /*
@@ -1767,39 +1749,6 @@ class ReclamationMatch extends React.Component {
 		return value;
 	}
 
-	/*
-		PASS 61. The fight behind the Clash's toll on the creature pointed at or lifted, world by
-		world, with names: who lands how much on it, what it downs, what a bolster gives back,
-		and the lift it loses when an ally of yours beside it falls. The engine's own forecast
-		(forecastSendBlows), blind to the rival's hidden sends, cached like the fit table.
-	*/
-	blowsFor(recordId, role) {
-		const { match } = this.state;
-		if (!match || match.phase !== 'deploy' || !recordId) {
-			return null;
-		}
-		const seat = this.seatInPlay();
-		const key = `${seat}|${recordId}|${role || ''}`;
-		if (this.blowCache && this.blowCache.match === match && this.blowCache.key === key) {
-			return this.blowCache.value;
-		}
-		const value = {};
-		const frame = match.frames && match.frames[match.frameIndex];
-		((frame && frame.sites) || []).forEach((site) => {
-			let blows = null;
-			try {
-				blows = forecastSendBlows(match, seat, recordId, site.id, role || null);
-			} catch (e) {
-				blows = null;
-			}
-			if (blows) {
-				value[site.id] = nameBlows(blows, match, seat, recordId);
-			}
-		});
-		this.blowCache = { match, key, value };
-		return value;
-	}
-
 	totalsForBoard(view) {
 		const totals = {};
 		view.frame.sites.forEach((site) => {
@@ -1820,15 +1769,6 @@ class ReclamationMatch extends React.Component {
 		if (!record) {
 			return null;
 		}
-		const blows = this.blowsFor(id, id === armedRecordId ? this.state.armedRole : null);
-		/*
-			pass 67: the forecast is the Clash on the board as you can see it. While the rival can
-			still send, or has creatures hidden, its words say it holds only if nothing else arrives.
-		*/
-		const rival = view.players[this.seatOpponent()];
-		const rivalCap = typeof rival.sendableCap === 'number' ? rival.sendableCap : SENDABLE;
-		const rivalDone = !!rival.passed || (rival.sentCount || 0) >= rivalCap;
-		const open = !rivalDone || (rival.hiddenSentThisRound || 0) > 0;
 		const ghosts = {};
 		view.frame.sites.forEach((site) => {
 			// the whole arithmetic of this send at this world: hold after strain and any
@@ -1847,15 +1787,13 @@ class ReclamationMatch extends React.Component {
 				lines: plan.lines,
 				effect: plan.effect,
 				recordId: record.id,
-				targetRecordId: plan.targetRecordId,
 				strainLevel: plan.strainLevel,
 				isHome: plan.isHome,
 				bolstered: plan.bolstered,
 				preview: !armedRecordId,
 				unstrained: plan.hold / strainMultiplierFor(plan.strainLevel, prepared.strainCause),
-				// pass 61: the fight behind its toll here, named
-				blows: blows ? blows[site.id] || null : null,
-				open,
+				// pass 72: the element chart against each rival creature standing here, both ways; facts, not a fight
+				matchups: matchupsAt(view, site, record, plan.role, this.seatOpponent()),
 				// the creature's own band and media, drawn over the site's on the environment scale
 				tolerance: {
 					temperatureC: tolerance.temperatureC || null,
@@ -1921,11 +1859,6 @@ class ReclamationMatch extends React.Component {
 			return this.state.coached ? '' : 'Now pick a world.';
 		}
 		const rivalPassed = view.players[this.seatOpponent()].passed;
-		// pass 63: what the rival's pass settles, world by world, in place of the bare pass
-		if (rivalPassed && table.standings) {
-			const toCome = Math.max(0, FRAMES_PER_MATCH - (view.frameIndex + 1)) * view.frame.sites.length;
-			return rivalPassedLine(view.frame.sites, table.standings, table.settled, { left: cap - (me.sentCount || 0), toCome });
-		}
 		if (this.state.lastRival) {
 			return this.state.lastRival;
 		}
@@ -2257,6 +2190,9 @@ class ReclamationMatch extends React.Component {
 			marked to fall survive because its slower attacker fell first. The forecast is now
 			the engine's own resolve run on what this seat can see (forecastClash), so each
 			creature's number and each world's total print what the Clash would leave.
+			PASS 72: no longer. While sends are made the numbers stack (forecastStanding): each
+			creature at the hold it would go into the Clash with, and each world's totals the sum.
+			Nobody knows how the fight goes until both have passed, so the table does not say.
 		*/
 		const fits = deploying ? this.fitsFor() : null;
 		const forecast = fits ? fits.forecast : null;
@@ -2309,10 +2245,6 @@ class ReclamationMatch extends React.Component {
 			}]));
 		}
 		const reach = deploying ? reachabilityLine(view, me, them) : null;
-		const sendsLeftNow = Math.max(0, (typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE) - (me.sentCount || 0));
-		const settled = deploying
-			? settledWorlds(standings, { rivalDone: !!them.passed, rivalHidden: (them.hiddenSentThisRound || 0) > 0, youDone: !!me.passed || sendsLeftNow <= 0 })
-			: null;
 
 		// assumption 20: your swift creatures that may still move this round, as the bench's
 		// move buttons. The engine's own list, so a button never offers an illegal move.
@@ -2323,10 +2255,6 @@ class ReclamationMatch extends React.Component {
 		// what to light on the table: the creature the ghost would strike, or the event
 		// being told during resolution
 		const highlights = {};
-		const armedGhost = ghosts && this.state.hoverSiteId ? ghosts[this.state.hoverSiteId] : null;
-		if (armedGhost && armedGhost.targetRecordId) {
-			highlights.hover = armedGhost.targetRecordId;
-		}
 		if (playback && playback.current) {
 			const kind = classifyEvent(playback.current);
 			/*
@@ -2429,7 +2357,7 @@ class ReclamationMatch extends React.Component {
 
 		return (
 			<div className={`rec-match${simple ? ' rec-match--simple' : ' rec-match--advanced'}`} data-moment={moment}>
-				{this.renderStatusStrip(view, { standings, settled })}
+				{this.renderStatusStrip(view, { standings })}
 				{this.renderPanel(view)}
 
 				{/*
@@ -2469,7 +2397,6 @@ class ReclamationMatch extends React.Component {
 							stakes={view.stakes}
 							stakeableSiteIds={deploying && view.turn === this.seatInPlay() && (this.state.stakeMode || this.state.pendingStakeSiteId) ? (me.stakeableSiteIds || []) : []}
 							pendingStakeSiteId={this.state.pendingStakeSiteId}
-							settled={settled}
 							onStake={this.askStake}
 							onSiteClick={this.handleSiteClick}
 							onSiteHover={(id) => this.setState({ hoverSiteId: id })}
@@ -2506,8 +2433,7 @@ class ReclamationMatch extends React.Component {
 									fits={fits}
 									focusSiteId={this.state.hoverSiteId}
 									newsSiteId={newsSiteId}
-									settled={settled}
-									sendsTone={reach && (reach.tone === 'lost' || reach.tone === 'stake') ? reach.tone : null}
+											sendsTone={reach && (reach.tone === 'lost' || reach.tone === 'stake') ? reach.tone : null}
 									movable={movable}
 									onArm={this.armRecord}
 									/*

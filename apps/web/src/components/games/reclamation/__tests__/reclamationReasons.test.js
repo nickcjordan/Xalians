@@ -2,18 +2,18 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { buildDraftPools, draftOptionsFromRules } from '@xalians/rules/expedition/draft';
-import { createMatch, send, forecastSendBlows, DEFAULT_RULES } from '@xalians/rules/expedition/expeditionRules';
+import { createMatch, send, getPublicState, DEFAULT_RULES } from '@xalians/rules/expedition/expeditionRules';
 import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { fitTable } from '../reclamationFit';
-import { formatHoldShown } from '../reclamationNarration';
-import { reasonLines, ReasonLines, nameBlows } from '../reclamationReasons';
+import { reasonLines, ReasonLines } from '../reclamationReasons';
+import { matchupsAt } from '../reclamationMatch';
 
 /*
 	PASS 61, SAY WHY (docs/design/reclamation-say-why.md). Each thing that moves a creature's number
 	at a world gets a line on that world saying what it does and why, from the engine's own facts.
 	These pin the words for each cause, and hold them to a real game: every world that changes a
-	number says so, and the Clash's line lands on the toll the chain prints.
+	number says so. Pass 72: and the element chart against each rival there, never the fight.
 */
 
 const frackworm = { id: 'f', species: 'frackworm', traits: [] };
@@ -49,6 +49,8 @@ describe('reasonLines', () => {
 	it('says when a world\'s element is hard on the creature', () => {
 		const lines = reasonLines({ why: { worldElement: { element: 'water', against: 'fire', factor: 0.9 } }, record: frackworm, site: zolton, tolerance: warm });
 		expect(text(lines)).toEqual(['A water world is hard on fire: it holds nine tenths. Water is strong against fire on the element chart.']);
+		// pass 72: the pass 71 line read "A electric world"
+		expect(reasonLines({ why: { worldElement: { element: 'electric', against: 'water', factor: 0.9 } }, record: frackworm, site: zolton })[0].effect).toBe('An electric world is hard on water: it holds nine tenths.');
 	});
 
 	it('says air it cannot breathe, and what it breathes', () => {
@@ -58,72 +60,33 @@ describe('reasonLines', () => {
 		expect(lines[0].mark).toBe('breath');
 	});
 
-	it('names the fight behind the Clash toll, in the chain\'s own numbers', () => {
-		const blows = { taken: [{ by: 'v', name: 'Venemist', power: 3, roles: ['strike'], mine: false }], downs: [{ name: 'Hippochamp', mine: false }], recovered: 0, unlifted: 0, alliesDowned: [], falls: false };
-		const lines = reasonLines({ why: { going: 7, own: 4 }, record: frackworm, site: zolton, tolerance: warm, blows });
-		expect(text(lines)).toEqual(['The Clash takes 3. Venemist strikes it for 3.', 'It downs Hippochamp.']);
-	});
-
-	it('says the order of the fight: who acts first, a hurt attacker, a creature downed before it acts', () => {
-		const blows = { taken: [{ by: 'h', name: 'Hippochamp', power: 5, roles: ['sweep'], mine: false, hurt: true }], downs: [{ name: 'Hippochamp', mine: false, early: false }, { name: 'Kosanos', mine: false, early: true }], recovered: 0, unlifted: 0, alliesDowned: [], falls: false, first: true };
-		const lines = reasonLines({ why: { going: 20, own: 15 }, record: frackworm, site: zolton, tolerance: warm, blows });
-		expect(text(lines)).toEqual(['The Clash takes 5. It acts first; Hippochamp, hurt by then and so weaker, catches it in a sweep for 5.', 'It downs Hippochamp, and Kosanos before it can act.']);
-	});
-
-	it('says what it lands on a creature it does not down', () => {
-		const blows = { taken: [{ by: 'h', name: 'Hippochamp', power: 11, count: 3, roles: ['sweep'], mine: false, hurt: true }], dealt: [{ to: 'h', name: 'Hippochamp', power: 5, count: 1, downs: false, mine: false }], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: true };
-		expect(text(reasonLines({ why: { going: 9, own: 0, falls: true }, record: frackworm, site: zolton, blows }))).toEqual(['It falls in the Clash (it goes in with 9). It acts first and hits Hippochamp for 5; Hippochamp, hurt by then and so weaker, catches it in three sweeps for 11 in all.']);
-		const untouched = { taken: [], dealt: [{ to: 'v', name: 'Venemist', power: 4, count: 1, downs: false, mine: false }], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: false, first: true };
-		expect(text(reasonLines({ why: { going: 9, own: 9 }, record: frackworm, site: zolton, blows: untouched }))).toEqual(['It hits Venemist for 4.']);
-	});
-
-	it('says when a fallen ally takes its lift with it, and when it falls', () => {
-		const twice = { taken: [{ by: 'h', name: 'Hippochamp', power: 11, count: 2, roles: ['sweep'], mine: false }], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: false };
-		expect(reasonLines({ why: { going: 20, own: 9 }, record: frackworm, site: zolton, blows: twice })[0].cause).toBe('Hippochamp catches it in two sweeps for 11 in all.');
-		const lifted = { taken: [], downs: [], recovered: 0, unlifted: 6, alliesDowned: ['Figzy'], falls: false };
-		expect(text(reasonLines({ why: { going: 13, own: 7 }, record: frackworm, site: zolton, blows: lifted }))).toEqual(['The Clash takes 6. Your Figzy falls beside it, and the lift goes with it (6).']);
-		const falls = { taken: [{ by: 'v', name: 'Venemist', power: 14, roles: ['strike'], mine: false }], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true };
-		expect(text(reasonLines({ why: { going: 12, own: 0, falls: true }, record: frackworm, site: zolton, blows: falls }))).toEqual(['It falls in the Clash (it goes in with 12). Venemist strikes it for 14.']);
-	});
-
 	/*
-		PASS 67. Nick, on Sonalloy forecast to fall to Kosanos and Tizzie forecast to beat it: "How
-		does one of them decide that my creature would win the fight and the other one decides that
-		my creature would lose?" Both now say who goes first, and the forecast says what it rests on.
+		PASS 72, PLACEMENT STACKS. Nick, on a forecast that said his creature "acts first" and falls:
+		"the details that are shown should not imply that something will play out one way or
+		another". The lines no longer play the Clash out; they say the element chart between it and
+		each rival creature there, each way, as a fact of the two creatures.
 	*/
-	it('says who goes first when the rival lands before it, and that a bolster never strikes', () => {
-		const quicker = { taken: [{ by: 'k', name: 'Kosanos', power: 16, roles: ['strike'], mine: false, before: true }], dealt: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: true, fallsBeforeActing: true };
-		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: quicker }))).toEqual(['It falls before it can act (it goes in with 13). Kosanos is quicker and strikes it first for 16.']);
-		const bolster = { taken: [{ by: 'k', name: 'Kosanos', power: 16, roles: ['strike'], mine: false, before: true }], dealt: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: false, fallsBeforeActing: false };
-		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: bolster, role: 'bolster' }))).toEqual(['It falls in the Clash (it goes in with 13). Kosanos strikes it for 16; a bolster mends and never strikes, so nothing weakens Kosanos first.']);
+	it('says the element chart against each rival creature here, both ways, and nothing of the fight', () => {
+		const fire = { ...frackworm, element: { primary: 'fire' } };
+		const matchups = [
+			{ recordId: 'n', name: 'Neph', element: 'water', dealt: 0.5, taken: 2 },
+			{ recordId: 'k', name: 'Kosanos', element: 'plant', dealt: 2, taken: null },
+		];
+		const lines = reasonLines({ why: { going: 9, own: 9 }, record: fire, site: zolton, tolerance: warm, matchups });
+		expect(text(lines)).toEqual([
+			'Fire on water ×½. Its blows land half as hard on Neph.',
+			"Water on fire ×2. Neph's blows land twice as hard on it.",
+			'Fire on plant ×2. Its blows land twice as hard on Kosanos.',
+		]);
+		expect(lines.map((l) => l.mark)).toEqual(['chart', 'chart', 'chart']);
+		expect(lines.map((l) => l.element)).toEqual(['fire', 'water', 'fire']);
+		lines.forEach((l) => expect(`${l.effect} ${l.cause}`).not.toMatch(/first|falls|downs|Clash/));
 	});
 
-	// pass 71: the element chart behind each blow, in the forecast's own words
-	it('names the element chart behind a blow it takes and a blow it lands', () => {
-		const chart = { taken: [{ by: 'n', name: 'Neph', power: 12, roles: ['strike'], mine: false, chart: 'water on fire ×2' }], dealt: [{ to: 'k', name: 'Kosanos', power: 3, downs: false, mine: false, chart: 'fire on water ×½' }], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: false, first: false, strikes: true };
-		expect(reasonLines({ why: { going: 20, own: 8 }, record: frackworm, site: zolton, blows: chart })[0].cause)
-			.toBe('Neph strikes it for 12 (water on fire ×2); then it hits Kosanos for 3 (fire on water ×½).');
-	});
-
-	// pass 69: what a support creature of yours does for it, each in its own number
-	it('says what your support creature guards, steadies and mends', () => {
-		const covered = { taken: [{ by: 'n', name: 'Neph', power: 9, roles: ['strike'], mine: false }], dealt: [], downs: [], recovered: 4, unlifted: 0, alliesDowned: [], falls: false, first: false, strikes: true, guardedOff: 3, guardByName: 'Kosanos', shrugged: ['restrained'], steadiedByName: 'Kosanos' };
-		expect(reasonLines({ why: { going: 14, own: 9 }, record: frackworm, site: zolton, blows: covered })[0].cause)
-			.toBe("Neph strikes it for 9; your Kosanos's guard takes 3 off; your Kosanos keeps it clear: no restrained; your Kosanos mends 4.");
-		const itself = { ...covered, guardByName: 'itself', steadiedByName: 'itself' };
-		expect(reasonLines({ why: { going: 14, own: 9 }, record: frackworm, site: zolton, blows: itself })[0].cause)
-			.toBe('Neph strikes it for 9; its own guard takes 3 off; it keeps itself clear: no restrained; it mends 4.');
-	});
-
-	it("says a quicker rival's blow before what the creature lands back", () => {
-		const blows = { taken: [{ by: 'h', name: 'Hippochamp', power: 11, count: 2, roles: ['sweep'], mine: false, before: true }], dealt: [{ to: 'h', name: 'Hippochamp', power: 1, count: 1, downs: false, mine: false }], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: true, fallsBeforeActing: false };
-		expect(reasonLines({ why: { going: 7, own: 0, falls: true }, record: frackworm, site: zolton, blows })[0].cause).toBe('Hippochamp is quicker and catches it first in two sweeps for 11 in all; then it hits Hippochamp for 1.');
-	});
-
-	it('says the forecast holds only if nothing else arrives while the rival can still answer', () => {
-		const blows = { taken: [{ by: 'k', name: 'Kosanos', power: 4, roles: ['strike'], mine: false, hurt: true }], dealt: [], downs: [{ name: 'Kosanos', mine: false, early: false }], recovered: 0, unlifted: 0, alliesDowned: [], falls: false, first: true, strikes: true };
-		expect(text(reasonLines({ why: { going: 7, own: 3 }, record: frackworm, site: zolton, blows, open: true }))).toEqual(['The Clash takes 4 if nothing else arrives. It acts first; Kosanos, hurt by then and so weaker, strikes it for 4.', 'It downs Kosanos.']);
-		expect(text(reasonLines({ why: { going: 7, own: 3 }, record: frackworm, site: zolton, blows, open: false }))[0]).toMatch(/^The Clash takes 4\. /);
+	it('says a quarter and half again in words', () => {
+		const fire = { ...frackworm, element: 'fire' };
+		const lines = reasonLines({ why: {}, record: fire, site: zolton, matchups: [{ recordId: 'v', name: 'Voltish', element: 'rock', dealt: 0.25, taken: 1.5 }] });
+		expect(lines.map((l) => l.cause)).toEqual(['Its blows land a quarter as hard on Voltish.', "Voltish's blows land half again as hard on it."]);
 	});
 
 	// pass 62: "It steadies itself: +6" at one world and "+1" at the next, with nothing to tell them apart
@@ -137,7 +100,7 @@ describe('reasonLines', () => {
 	});
 
 	it('says nothing for a creature nothing moves', () => {
-		expect(reasonLines({ why: { going: 9, own: 9 }, record: frackworm, site: zolton, tolerance: warm, blows: { taken: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: false } })).toEqual([]);
+		expect(reasonLines({ why: { going: 9, own: 9 }, record: frackworm, site: zolton, tolerance: warm, matchups: [] })).toEqual([]);
 	});
 
 	it('draws each line with its mark, what it does and why', () => {
@@ -150,9 +113,9 @@ describe('reasonLines', () => {
 });
 
 describe('reasonLines on a real game', () => {
-	it('gives every world that moves a number its line, and the Clash line lands on the chain\'s toll', () => {
+	it('gives every world that moves a number its line, and the chart against every uneven rival there', () => {
 		let checked = 0;
-		let clash = 0;
+		let charts = 0;
 		[7, 11, 13].forEach((seed) => {
 			const { poolA, poolB } = buildDraftPools(seed, draftOptionsFromRules(DEFAULT_RULES));
 			let match = createMatch({ rosterA: poolA.slice(0, ROSTER_SIZE), rosterB: poolB.slice(0, ROSTER_SIZE), worlds: getWorlds(), seed });
@@ -164,31 +127,31 @@ describe('reasonLines on a real game', () => {
 				match = send(match, seat, record.id, site.id, false, null) || match;
 			}
 			const seat = match.turn;
+			const view = getPublicState(match, seat);
+			const opponent = seat === 'A' ? 'B' : 'A';
 			const table = fitTable(match, seat, match.players[seat].roster);
 			match.players[seat].roster.forEach((record) => {
 				match.frames[match.frameIndex].sites.forEach((site) => {
 					const why = table.fits[record.id] && table.fits[record.id][site.id];
 					if (!why) return;
+					// pass 72: nothing is fought ahead of time
+					expect(why.toll).toBe(0);
+					expect(why.falls).toBe(false);
+					expect(why.taken).toBe(0);
 					const tolerance = { ...(record.physiology.environmentalTolerance || {}), breathes: record.physiology.breathes || [] };
-					const blows = nameBlows(forecastSendBlows(match, seat, record.id, site.id), match, seat);
-					const lines = reasonLines({ why, record, site, tolerance, blows });
+					const matchups = matchupsAt(view, site, record, why.role || null, opponent);
+					const lines = reasonLines({ why, record, site, tolerance, matchups });
 					const keys = lines.map((l) => l.key);
 					if (why.home) expect(keys).toContain('home');
 					if (why.climate) expect(keys).toContain('climate');
-					const toll = Number(formatHoldShown(why.going)) - Number(formatHoldShown(Math.max(0, why.own)));
-					if (!why.falls && toll > 0) {
-						const line = lines.find((l) => l.key === 'clash');
-						expect(line.effect).toBe(`The Clash takes ${toll}.`);
-						expect(line.cause.length).toBeGreaterThan(0);
-						clash += 1;
-					}
-					if (why.falls) expect(keys).toContain('falls');
-					lines.forEach((l) => expect(`${l.effect} ${l.cause}`).not.toMatch(/undefined|NaN|a creature/));
+					expect(lines.filter((l) => l.mark === 'chart').length).toBe(matchups.reduce((n, m) => n + (m.dealt ? 1 : 0) + (m.taken ? 1 : 0), 0));
+					charts += matchups.length;
+					lines.forEach((l) => expect(`${l.effect} ${l.cause}`).not.toMatch(/undefined|NaN|a creature|null/));
 					checked += 1;
 				});
 			});
 		});
 		expect(checked).toBeGreaterThan(50);
-		expect(clash).toBeGreaterThan(0);
+		expect(charts).toBeGreaterThan(0);
 	});
 });

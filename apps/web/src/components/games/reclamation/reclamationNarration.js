@@ -197,6 +197,9 @@ function guardedWords(event) {
 	Said only where it is not neutral. `from` and `to` are element keys; the factor is the
 	chart's, 0 already softened to a quarter.
 */
+// pass 72: "an electric world", "a water world"
+export const articleFor = (word) => (/^[aeiou]/i.test(word || '') ? 'an' : 'a');
+
 const CHART_WORDS = { 0.25: '\u00d7\u00bc', 0.5: '\u00d7\u00bd', 1.5: '\u00d71\u00bd', 2: '\u00d72' };
 export function matchupWords(matchup, from, to) {
 	if (typeof matchup !== 'number' || matchup === 1) {

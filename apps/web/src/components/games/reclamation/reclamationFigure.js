@@ -34,7 +34,9 @@ import { HoldBar, WhyMarks } from './reclamationInstruments';
 	  roles), drawn as one glyph beside the hold bulb with the role sentence as its title;
 	  'none' draws nothing
 	- forecast: the hold the Clash would leave it at, as the board stands (pass 52: drawn as
-	  the struck end of its hold bar, and a cross over it when that is nothing)
+	  the struck end of its hold bar, and a cross over it when that is nothing). Pass 72: the
+	  table no longer plays the Clash ahead of time, so this is its hold with the send pointed
+	  at beside it (a bolster's lift, a pack's bond, a solitary creature's cost)
 
 	The CSS class names still read `staggered` and `routed`; the words the player sees are
 	Pass 2's, hurt and downed (docs/design/reclamation-base-redesign.md assumption 17).
@@ -275,7 +277,7 @@ function ReclamationFigure({
 					and its cross: an arrow to 0 cost a crowded rank most of every name.
 				*/}
 				{typeof hold === 'number' && (
-					<span className="rec-figure-hold" title={`hold ${formatHold(hold)}${changes ? `; the Clash would leave it ${formatHold(forecast)}` : ''}`} data-hold-after={changes ? formatHoldShown(forecast) : undefined}>
+					<span className="rec-figure-hold" title={`hold ${formatHold(hold)}${changes ? `; ${formatHold(forecast)} with this send beside it` : ''}`} data-hold-after={changes ? formatHoldShown(forecast) : undefined}>
 						<span className="rec-figure-hold-now">{hold > 0 && hold < 0.5 && !downed ? '<1' : formatHoldShown(hold)}</span>
 						{changes && <><i className="rec-figure-hold-arrow" aria-hidden="true">→</i><span className="rec-figure-hold-after">{formatHoldShown(forecast)}</span></>}
 					</span>
