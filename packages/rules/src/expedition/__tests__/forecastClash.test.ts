@@ -236,12 +236,13 @@ describe('forecastMove', () => {
 */
 describe('forecastSendBlows', () => {
 	test('adds up to the forecast toll, and downs what the forecast downs', () => {
-		// unlifted counts the cases where a fallen ally's lift is part of the toll; pass 69's
-		// support rules made it rarer, so ten seeds rather than five find one
+		// unlifted counts the cases where a fallen ally's lift is part of the toll. It is rare:
+		// pass 71 scanned b1 to b60 and found it at b17, b24, b31, b40 and b47, so two of
+		// those ride with eight ordinary seeds
 		let checked = 0;
 		let withBlows = 0;
 		let unlifted = 0;
-		['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10'].forEach((seed) => {
+		['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b17', 'b24'].forEach((seed) => {
 			playMatch(seed, (before) => {
 				const handler = before.turn as Seat;
 				before.players[handler].roster.forEach((record: any) => {

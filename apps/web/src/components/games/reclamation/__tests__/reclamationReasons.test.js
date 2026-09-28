@@ -42,7 +42,13 @@ describe('reasonLines', () => {
 
 	it('says its home world and where it comes from', () => {
 		const lines = reasonLines({ why: { home: true }, record: frackworm, site: { ...zolton, world: { planet: 'Endessa' } }, tolerance: warm });
-		expect(text(lines)).toEqual(['Its home world: it holds half again. Frackworm comes from Endessa.']);
+		expect(text(lines)).toEqual(['Its home world: it holds a quarter more. Frackworm comes from Endessa.']);
+	});
+
+	// pass 71: a world's element touches a creature only where it is strong against it
+	it('says when a world\'s element is hard on the creature', () => {
+		const lines = reasonLines({ why: { worldElement: { element: 'water', against: 'fire', factor: 0.9 } }, record: frackworm, site: zolton, tolerance: warm });
+		expect(text(lines)).toEqual(['A water world is hard on fire: it holds nine tenths. Water is strong against fire on the element chart.']);
 	});
 
 	it('says air it cannot breathe, and what it breathes', () => {
@@ -90,6 +96,13 @@ describe('reasonLines', () => {
 		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: quicker }))).toEqual(['It falls before it can act (it goes in with 13). Kosanos is quicker and strikes it first for 16.']);
 		const bolster = { taken: [{ by: 'k', name: 'Kosanos', power: 16, roles: ['strike'], mine: false, before: true }], dealt: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: false, fallsBeforeActing: false };
 		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: bolster, role: 'bolster' }))).toEqual(['It falls in the Clash (it goes in with 13). Kosanos strikes it for 16; a bolster mends and never strikes, so nothing weakens Kosanos first.']);
+	});
+
+	// pass 71: the element chart behind each blow, in the forecast's own words
+	it('names the element chart behind a blow it takes and a blow it lands', () => {
+		const chart = { taken: [{ by: 'n', name: 'Neph', power: 12, roles: ['strike'], mine: false, chart: 'water on fire ×2' }], dealt: [{ to: 'k', name: 'Kosanos', power: 3, downs: false, mine: false, chart: 'fire on water ×½' }], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: false, first: false, strikes: true };
+		expect(reasonLines({ why: { going: 20, own: 8 }, record: frackworm, site: zolton, blows: chart })[0].cause)
+			.toBe('Neph strikes it for 12 (water on fire ×2); then it hits Kosanos for 3 (fire on water ×½).');
 	});
 
 	// pass 69: what a support creature of yours does for it, each in its own number

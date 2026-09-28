@@ -618,7 +618,7 @@ function GhostPiece({ ghost, previewHere, site, beside, settled }) {
 		loss printed is the difference of the two numbers printed, so the chain always lands on
 		the number above it.
 	*/
-	const marked = !!(why.home || why.climate || why.selfLift || why.company);
+	const marked = !!(why.home || why.worldElement || why.climate || why.selfLift || why.company);
 	const fights = why.toll > 0.5;
 	const going = Number(formatHoldShown(why.going));
 	const kept = Number(formatHoldShown(Math.max(0, why.own)));

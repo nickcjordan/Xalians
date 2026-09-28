@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
 	speciesLabel, formatHold, classifyEvent, narrateEvent, cueForEvent, roleSentence,
-	roleWord, narrateSwiftMove, narrateSend, narratePass, narrateJudge, narrateMatchEnd, captionEvent,
+	roleWord, narrateSwiftMove, narrateSend, narratePass, narrateJudge, narrateMatchEnd, captionEvent, matchupWords,
 } from '../reclamationNarration';
 
 describe('speciesLabel', () => {
@@ -229,5 +229,22 @@ describe('the support creature in the Clash', () => {
 		expect(captionEvent({ type: 'status', status: 'restrained', shrugged: 'k', target: 't' }, { actor: neph, target: tizzie, bolster: kosanos }))
 			.toEqual([kosanos, ' keeps ', tizzie, ' clear: no restrained']);
 		expect(captionEvent({ type: 'status', status: 'restrained', target: 't' }, { actor: neph, target: tizzie })).toBe(null);
+	});
+});
+
+// pass 71: the element chart behind a blow, where it is not neutral
+describe('the element chart in the Clash', () => {
+	const neph = { name: 'Neph', seat: 'B', element: 'water' };
+	const imprit = { name: 'Imprit', seat: 'A', element: 'fire' };
+	it('says the chart in its own terms, and nothing when neutral', () => {
+		expect(matchupWords(2, 'water', 'fire')).toBe('water on fire \u00d72');
+		expect(matchupWords(0.25, 'fire', 'ghost')).toBe('fire on ghost \u00d7\u00bc');
+		expect(matchupWords(1, 'water', 'fire')).toBe('');
+	});
+	it('rides on the caption and the sentence of a blow', () => {
+		expect(captionEvent({ type: 'attack', role: 'strike', outcome: 'hurt', power: 12, matchup: 2, remaining: 3 }, { actor: neph, target: imprit }).filter((p) => typeof p === 'string').join(''))
+			.toContain('−12, water on fire \u00d72, 3 left');
+		expect(narrateEvent({ type: 'attack', role: 'strike', outcome: 'hurt', power: 12, matchup: 2, remaining: 3 }, { actorName: 'Neph', targetName: 'Imprit', actorElement: 'water', targetElement: 'fire' }))
+			.toBe('Neph strikes Imprit for 12 (water on fire \u00d72); Imprit stands at 3.');
 	});
 });

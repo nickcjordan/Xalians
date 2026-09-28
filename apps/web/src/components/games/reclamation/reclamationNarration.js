@@ -192,6 +192,24 @@ function guardedWords(event) {
 	return event && event.guarded && typeof event.unguarded === 'number' ? ` (guarded from ${formatHoldShown(event.unguarded)})` : '';
 }
 
+/*
+	PASS 71. The element chart behind a blow, in the chart's own terms: "water on fire ×2".
+	Said only where it is not neutral. `from` and `to` are element keys; the factor is the
+	chart's, 0 already softened to a quarter.
+*/
+const CHART_WORDS = { 0.25: '\u00d7\u00bc', 0.5: '\u00d7\u00bd', 1.5: '\u00d71\u00bd', 2: '\u00d72' };
+export function matchupWords(matchup, from, to) {
+	if (typeof matchup !== 'number' || matchup === 1) {
+		return '';
+	}
+	const factor = CHART_WORDS[matchup] || `\u00d7${Math.round(matchup * 100) / 100}`;
+	return from && to ? `${from} on ${to} ${factor}` : factor;
+}
+const elementKey = (unit) => {
+	const e = unit && unit.record ? unit.record.element : unit && unit.element;
+	return typeof e === 'string' ? e : (e && e.primary) || null;
+};
+
 export function narrateEvent(event, ctx = {}) {
 	if (!event) {
 		return null;
@@ -263,10 +281,14 @@ export function narrateEvent(event, ctx = {}) {
 		return null;
 	}
 	switch (event.outcome) {
-		case 'downed':
-			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)} and downs ${target}.`;
-		case 'hurt':
-			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)}${guardedWords(event)}; ${standsAt(target, event.remaining)}.`;
+		case 'downed': {
+			const chart = matchupWords(event.matchup, ctx.actorElement, ctx.targetElement);
+			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)}${chart ? ` (${chart})` : ''} and downs ${target}.`;
+		}
+		case 'hurt': {
+			const chart = matchupWords(event.matchup, ctx.actorElement, ctx.targetElement);
+			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)}${chart ? ` (${chart})` : ''}${guardedWords(event)}; ${standsAt(target, event.remaining)}.`;
+		}
 		case 'cancelled':
 			// said by the shield event that cancelled it
 			return null;
@@ -454,13 +476,19 @@ export function captionEvent(event, ctx = {}) {
 			// pass 47: a sweep catching its own side says so, or two names in one color read as a mistake
 			const own = actor.seat && target.seat && actor.seat === target.seat ? 'its own ' : '';
 			switch (event.outcome) {
-				case 'downed':
-					return [actor, ` downs ${own}`, target];
-				case 'hurt':
+				case 'downed': {
+					// pass 71: the element chart behind the blow, where it is not neutral
+					const chart = matchupWords(event.matchup, elementKey(actor), elementKey(target));
+					return chart ? [actor, ` downs ${own}`, target, `, ${chart}`] : [actor, ` downs ${own}`, target];
+				}
+				case 'hurt': {
+					const chart = matchupWords(event.matchup, elementKey(actor), elementKey(target));
+					const tail = chart ? `, ${chart}` : '';
 					// pass 69: a guarded blow reads before and after, the whole blow struck to what landed
 					return event.guarded && typeof event.unguarded === 'number'
-						? [actor, ` ${attackVerb(event.role)} ${own}`, target, `: −${formatHoldShown(event.unguarded)}→${formatHoldShown(event.power)} guarded, ${left(event.remaining)}`]
-						: [actor, ` ${attackVerb(event.role)} ${own}`, target, `: −${formatHoldShown(event.power)}, ${left(event.remaining)}`];
+						? [actor, ` ${attackVerb(event.role)} ${own}`, target, `: −${formatHoldShown(event.unguarded)}→${formatHoldShown(event.power)} guarded${tail}, ${left(event.remaining)}`]
+						: [actor, ` ${attackVerb(event.role)} ${own}`, target, `: −${formatHoldShown(event.power)}${tail}, ${left(event.remaining)}`];
+				}
 				case 'lapsed':
 					return [actor, ' falls before it acts'];
 				case 'pinned':

@@ -2,28 +2,28 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 70, 2026-09-28)
+## Standing state (after pass 71, 2026-09-28)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
-### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 70)
+### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 71)
 
-Pass 69 gave the bolster three jobs at its world: a guard, keeping its side clear, and a mend (`reclamation-support-carries-weight.md`). Pass 70 stopped the bot sending it to stand alone (`reclamation-support-together.md`).
+Pass 71 put the element chart back in battle, made a world's element a slight penalty only where it is hard on the creature, and set home ground to a quarter more (`reclamation-elements-in-battle.md`).
 
 | Gauge | Band | Seed 7 | Seed 13 | Verdict |
 |---|---|---|---|---|
-| Round-one starter wins | about 50 | 51.4 | 48.6 | met |
-| Comeback (trailing after world 1, won) | 30 to 40 | 28.5 | 26.1 | **under** |
-| Resolution changes the leader | 25 to 40 | 28.0 | 27.9 | met, low |
-| Downs per match | reported | 8.53 | 8.41 | reported |
-| Uncontested sites | reported | 12.8 | 10.6 | reported |
-| Sends to a world that strains the creature | reported | 39.0 | 40.3 | reported |
-| Strike keeper win rate | 40 to 60 | 64.8 | 61.4 | **over** |
-| Sweep / shield keeper win rate | 40 to 60 | 48.6 / 45.9 | 48.6 / 47.6 | met |
-| Bolster keeper win rate | 40 to 60 | 67.1 | 64.7 | **over, read as selection**: it now stands on the worlds its side stacked; weakening it brings this into band only by giving back the round share |
-| A side's share of a round's worlds, with a bolster that round | reported | 51.4 | 51.4 | **above the 49.3 without one** (under it at pass 69) |
-| Own creatures beside a bolster | reported | 0.81 | 0.79 | reported (0.27 / 0.16 at pass 69) |
-| Games with a stake | reported | 1.0 | 0.8 | **the stake is almost never used** |
+| Round-one starter wins | about 50 | 48.4 | 46.0 | met on 7, **low on 13** |
+| Comeback (trailing after world 1, won) | 30 to 40 | 26.9 | 28.3 | **under** |
+| Resolution changes the leader | 25 to 40 | 31.0 | 31.9 | met |
+| Downs per match | reported | 8.68 | 8.65 | reported |
+| Uncontested sites | reported | 13.6 | 12.2 | reported |
+| Blows the element chart changes | reported | 54.8 | 55.0 | reported (0 before pass 71) |
+| The side with the element edge wins the world | reported | 67.2 | 69.1 | reported |
+| Strike keeper win rate | 40 to 60 | 63.8 | 62.1 | **over** |
+| Sweep / shield keeper win rate | 40 to 60 | 50.2 / 50.9 | 48.1 / 51.6 | met |
+| Bolster keeper win rate | read as selection | 63.9 | 63.4 | over; judge by round share |
+| A side's round share with a bolster | reported | 50.4 | 51.0 | above the 49.6 / 49.5 without |
+| Games with a stake | reported | 0.2 | 0.6 | **the stake is almost never used** |
 
 ### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 72)
 
@@ -61,7 +61,7 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
 5. **Fathomaw has no art** ("?"). Readers take its dashed "?" box for a hidden or unplaced creature.
 6. **Whose move it is does not read.** Every pass 65 reader took it from the rival's last line and the Pass key, not from the pointer.
 7. **On a phone, a creature pointed at beside yours shows nothing on the world** (a world there is 110 pixels wide).
-8. **Nick's call, not mine:** whether element should matter (the type chart, off since pass 57).
+8. **Closed in pass 71:** whether element should matter. It was never mine to park: pass 57 found the chart dead and shipped it off without asking, and it sat here for fourteen passes. Nick ruled it the biggest factor in battle. **Lesson:** a switched-off rule the design depends on is a question to Nick the same day, never an open item.
 9. **No human has played a full Proving.** The hot-seat instrument exists (passes 20 to 23).
 10. **Closed in pass 65:** the top bar. Opus readers went from 6 to 7 of 10, with every answer right. The score rows now sit beside the squad (carried since pass 60), and the send counter's one held back is gone (carried since pass 58).
 
@@ -1524,4 +1524,30 @@ Nick asked what sent support creatures to stand alone: "I would think that the b
 **Nick's two rule levers:**
 - The heal was already full strength since pass 69.
 - Full hold while standing (`CLAIM_COUNTING` 'standing', an existing lever) moves little, because creatures pick their own targets. It stays at 'current'.
+
+### Pass 71 (2026-09-28): elements decide fights
+
+Nick asked why the element chart was off, "I thought we explicitly said that was one of the few factors that we were keeping", and ruled:
+- the element chart belongs in battle and is "supposed to be the biggest factor here, besides the health and attack power";
+- a world's element should have "a slight effect on the creature if it's a negative combination. Otherwise, it's irrelevant";
+- home ground should be "a slight boost".
+
+He also called the old world matchup backwards: it read the chart with the creature attacking the world, which put a fire creature at half strength on the fire world. The design and every number are in `reclamation-elements-in-battle.md`.
+
+**What changed:**
+- **In battle:** a blow lands times the chart, the attacker's element against its target's (×¼ to ×2).
+- **A world's element** costs a creature a tenth only where it is strong against the creature's element. The world matchup is deleted.
+- **Home ground** is ×1.25, down from ×1½. The ×1.1 setting put the round-one starter at 44 to 45 percent.
+- **The table says it:**
+  - the element disc and ×0.9 on a card;
+  - "water on fire ×2" on the blow, in the log and in the words under a lifted creature;
+  - an Elements section in How to play.
+
+**Measured:**
+- 55 percent of blows are not neutral now.
+- The side with the element edge won 67 to 69 percent of those worlds.
+- The Clash changes the leader 31 to 32 percent of the time (28 before).
+- The starter seat is 46 on seed 13, and comeback stays under band.
+
+**The process failure,** recorded so it is not repeated: pass 57 found the chart dead, fixed the read, shipped it off, and wrote "Nick's call" in this log instead of asking him. It was carried fourteen passes.
 

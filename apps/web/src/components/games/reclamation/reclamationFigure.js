@@ -256,7 +256,7 @@ function ReclamationFigure({
 				)}
 				<span className="rec-figure-name">{name}</span>
 				{/* pass 57: why it holds what it does here, the marks its card's column carries */}
-				{reasons && (reasons.home || reasons.climate) && <WhyMarks reasons={reasons} className="rec-figure-whys" />}
+				{reasons && (reasons.home || reasons.worldElement || reasons.climate) && <WhyMarks reasons={reasons} className="rec-figure-whys" />}
 				{badge && <span className="rec-figure-badge">{badge}</span>}
 			</span>
 			{/*

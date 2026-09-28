@@ -3,6 +3,7 @@ import { formatHold, formatHoldShown, wholeOrTenths } from './reclamationNarrati
 import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
 import { HomeGlyph, StrainGlyph, CompanyGlyph, FallsGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph, RivalGlyph } from './reclamationGlyphs';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
+import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 
 /*
@@ -256,7 +257,11 @@ export function factorText(v) {
 		(×0.9, ×0.75); the halves and quarters of air, water and home stay fractions.
 	*/
 	if (Math.abs(v - 0.75) < 1e-6) {
-		return '×0.75';
+		return '\u00d70.75';
+	}
+	// pass 71: home ground's quarter more reads as a decimal too, for the same reason
+	if (Math.abs(v - 1.25) < 1e-6) {
+		return '\u00d71.25';
 	}
 	if (Math.abs(v * 4 - Math.round(v * 4)) > 1e-6) {
 		return `\u00d7${Number(v.toFixed(2))}`;
@@ -279,7 +284,7 @@ function chip(key, mark, factor) {
 	return (
 		<span className="rec-why-chip" key={key}>
 			{mark}
-			{factor && <i className="rec-why-x g-mono">{factor}</i>}
+			{factor && <i className={`rec-why-x g-mono${String(factor).length >= 5 ? ' rec-why-x--long' : ''}`}>{factor}</i>}
 		</span>
 	);
 }
@@ -289,7 +294,7 @@ export function WhyMarks({ reasons, className, factors: withFactors, roomy }) {
 	const marks = [];
 	// a creature that would fall holds nothing whatever the factors, and two marks share one narrow column:
 	// the cross stands alone, and only the first mark carries its factor
-	const crowded = !roomy && [r.home, r.climate, r.selfLift, r.company, r.falls].filter(Boolean).length > 1;
+	const crowded = !roomy && [r.home, r.worldElement, r.climate, r.selfLift, r.company, r.falls].filter(Boolean).length > 1;
 	let factors = withFactors && !r.falls;
 	const once = (text) => {
 		if (!factors) return null;
@@ -297,7 +302,18 @@ export function WhyMarks({ reasons, className, factors: withFactors, roomy }) {
 		return text;
 	};
 	if (r.home) {
-		marks.push(chip('home', <span className="rec-why rec-why--home" data-why="home" title="Home world: it holds half again as much here"><HomeGlyph /></span>, once(factorText(r.homeFactor || 1.5))));
+		marks.push(chip('home', <span className="rec-why rec-why--home" data-why="home" title="Home world: it holds a quarter more here"><HomeGlyph /></span>, once(factorText(r.homeFactor || 1.25))));
+	}
+	// pass 71: the world's element, where it is strong against the creature's
+	if (r.worldElement) {
+		marks.push(chip(
+			'element',
+			<span className="rec-why rec-why--element" data-why="element" title={`A ${r.worldElement.element} world is hard on ${r.worldElement.against || 'its'} creatures: it holds nine tenths here`}>
+				{/* the element's disc, as on a piece's foot, so it is not read as a temperature mark */}
+				<XalianTypeSymbolBadge size={11} type={r.worldElement.element} classes="rec-why-element-disc" />
+			</span>,
+			once(factorText(r.worldElement.factor)),
+		));
 	}
 	if (r.climate) {
 		const cause = r.climate.cause || 'strained';

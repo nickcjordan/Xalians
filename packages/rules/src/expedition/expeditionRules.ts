@@ -79,6 +79,8 @@ import {
 	CLASH_EXCHANGES,
 	FRIENDLY_FIRE,
 	ELEMENT_MATCHUPS,
+	WORLD_ELEMENT_PENALTY,
+	HOME_GROUND_MULTIPLIER,
 	WHOLE_HOLDS,
 	SHIELD_CAPS,
 	ROLE,
@@ -370,6 +372,9 @@ export const DEFAULT_RULES: Rules = {
 	friendlyFire: FRIENDLY_FIRE,
 	// Pass 57: the type chart, off (what schema 5 creatures have played since the conversion)
 	elementMatchups: ELEMENT_MATCHUPS,
+	// Pass 71: a world's element only where it is a bad place, and home ground a slight boost
+	worldElementPenalty: WORLD_ELEMENT_PENALTY,
+	homeGround: HOME_GROUND_MULTIPLIER,
 	// Pass 59: whole holds, so the card's factors add up
 	wholeHolds: WHOLE_HOLDS,
 	// Pass 69: support that carries weight
@@ -437,6 +442,8 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		clashExchanges: Math.max(1, Math.floor(num(r.clashExchanges, DEFAULT_RULES.clashExchanges))),
 		friendlyFire: r.friendlyFire !== undefined ? !!r.friendlyFire : DEFAULT_RULES.friendlyFire,
 		elementMatchups: r.elementMatchups !== undefined ? !!r.elementMatchups : DEFAULT_RULES.elementMatchups,
+		worldElementPenalty: num(r.worldElementPenalty, DEFAULT_RULES.worldElementPenalty),
+		homeGround: num(r.homeGround, DEFAULT_RULES.homeGround),
 		wholeHolds: r.wholeHolds !== undefined ? !!r.wholeHolds : DEFAULT_RULES.wholeHolds,
 		supportGuard: num(r.supportGuard, DEFAULT_RULES.supportGuard),
 		supportSteadies: r.supportSteadies !== undefined ? !!r.supportSteadies : DEFAULT_RULES.supportSteadies,
@@ -1044,8 +1051,8 @@ function forecastRun(state: MatchState, handler: Seat): { copy: MatchState; boar
 	attacks at all (a bolster or a shield never swings, so nothing it does weakens an attacker
 	first), and `fallsBeforeActing` when it is downed before its own turn comes.
 */
-export interface ForecastBlow { by: string | null; power: number; count: number; roles: string[]; downs: boolean; statuses?: string[]; hurt?: boolean; before?: boolean }
-export interface ForecastHit { to: string; power: number; count: number; downs: boolean }
+export interface ForecastBlow { by: string | null; power: number; count: number; roles: string[]; downs: boolean; statuses?: string[]; hurt?: boolean; before?: boolean; matchup?: number }
+export interface ForecastHit { to: string; power: number; count: number; downs: boolean; matchup?: number }
 export interface ForecastBlows {
 	taken: ForecastBlow[]; dealt: ForecastHit[]; downs: string[]; downsBeforeActing: string[]; recovered: number; falls: boolean;
 	unlifted: number; alliesDowned: string[]; first: boolean; strikes: boolean; fallsBeforeActing: boolean;
@@ -1108,7 +1115,7 @@ export function forecastSendBlows(state: MatchState, handler: Seat, recordId: st
 		}
 		if (event.type === 'attack' && event.target === recordId && typeof event.power === 'number' && event.power > 0 && (event.outcome === 'hurt' || event.outcome === 'downed')) {
 			const by = String(event.recordId);
-			const blow = byAttacker.get(by) || { by, power: 0, count: 0, roles: [], downs: false, hurt: struck.has(by), before: index < ourFirst };
+			const blow = byAttacker.get(by) || { by, power: 0, count: 0, roles: [], downs: false, hurt: struck.has(by), before: index < ourFirst, matchup: typeof event.matchup === 'number' ? event.matchup as number : 1 };
 			blow.power = round1(blow.power + (event.power as number));
 			blow.count += 1;
 			if (!blow.roles.includes(String(event.role))) blow.roles.push(String(event.role));
@@ -1120,7 +1127,7 @@ export function forecastSendBlows(state: MatchState, handler: Seat, recordId: st
 		} else if (event.type === 'attack' && event.recordId === recordId && event.target && typeof event.power === 'number' && event.power > 0 && (event.outcome === 'hurt' || event.outcome === 'downed')) {
 			// what it lands, on whom, across the exchanges
 			const to = String(event.target);
-			const hit = byTarget.get(to) || { to, power: 0, count: 0, downs: false };
+			const hit = byTarget.get(to) || { to, power: 0, count: 0, downs: false, matchup: typeof event.matchup === 'number' ? event.matchup as number : 1 };
 			hit.power = round1(hit.power + (event.power as number));
 			hit.count += 1;
 			if (!byTarget.has(to)) { byTarget.set(to, hit); dealt.push(hit); }
@@ -1911,7 +1918,9 @@ interface Declaration {
 	hidden: boolean;
 	first: boolean;
 	target?: AttackCandidate | null;
-	victims?: Array<{ victim: BoardEntry; amount: number }>;
+	victims?: Array<{ victim: BoardEntry; amount: number; matchup?: number }>;
+	/** pass 71: the element chart, this attacker against its target (1 for neutral) */
+	matchup?: number;
 	amount: number;
 	cancelledAgainst: Partial<Record<Seat, { recordId: string; fraction: number }>>;
 	/*
@@ -1992,6 +2001,7 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 				first: item.hidden,
 				target: target || null,
 				amount: target ? round1(attackPowerAgainst(state, entry, prepared, target) * powerFactor) : 0,
+				matchup: target ? targetMatchupMultiplier(entry.record, target.record, rules) : 1,
 				cancelledAgainst: {},
 				/*
 					PASS 32. Was `prepared.blow.effectKind === 'restrain'`, which schema 5
@@ -2008,7 +2018,7 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 		// pass 56: with rules.friendlyFire (off since pass 56) it also caught its own side
 		const victims = present
 			.filter((e) => e.recordId !== entry.recordId && (rules.friendlyFire || e.player !== entry.player))
-			.map((victim) => ({ victim, amount: round1(attackPowerAgainst(state, entry, prepared, victim) * powerFactor) }));
+			.map((victim) => ({ victim, amount: round1(attackPowerAgainst(state, entry, prepared, victim) * powerFactor), matchup: targetMatchupMultiplier(entry.record, victim.record, rules) }));
 		declarations.push({
 			entry,
 			role: ROLE.SWEEP,
@@ -2437,6 +2447,8 @@ function landStrike(state: MatchState, site: FrameSite, declaration: Declaration
 	const { remaining, outcome } = applyBlow(state, site, live, landing);
 	logEvent(state, {
 		...base, target: live.recordId, power: landing, remaining, outcome, cancelled: !!cut,
+		// pass 71: the element chart behind this blow, where it is not neutral
+		...(typeof declaration.matchup === 'number' && declaration.matchup !== 1 ? { matchup: declaration.matchup } : {}),
 		// pass 69: a support creature's guard took its share off this blow
 		...(guard && landing < unguarded ? { guarded: guard.by, unguarded } : {}),
 	});
@@ -2459,7 +2471,7 @@ function landSweep(state: MatchState, site: FrameSite, declaration: Declaration,
 		cancelledAgainst: cancelledSides,
 	});
 	const struck: string[] = [];
-	(declaration.victims || []).forEach(({ victim, amount }) => {
+	(declaration.victims || []).forEach(({ victim, amount, matchup }) => {
 		const base = {
 			type: 'attack',
 			recordId: declaration.entry.recordId,
@@ -2484,6 +2496,7 @@ function landSweep(state: MatchState, site: FrameSite, declaration: Declaration,
 		const { remaining, outcome } = applyBlow(state, site, live, landing);
 		logEvent(state, {
 			...base, power: landing, remaining, outcome, cancelled: !!cut,
+			...(typeof matchup === 'number' && matchup !== 1 ? { matchup } : {}),
 			...(guard && landing < unguarded ? { guarded: guard.by, unguarded } : {}),
 		});
 		if (outcome !== 'downed') {

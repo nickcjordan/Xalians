@@ -2,14 +2,14 @@ import {recordActions} from '@xalians/content/ability-compatibility';
 import { describe, test, it, expect } from 'vitest';
 import type { XalianRecord } from '@xalians/content/schema';
 import {
-	baseHold, holdAtSite, worldMatchupMultiplier, strainLevel, strainMultiplierFor,
+	baseHold, holdAtSite, worldElementFactor, strainLevel, strainMultiplierFor,
 	speedOf, buildActs, magnitudeOf, magnitudeAgainst, favoredAct, conductOf, prepare,
 	traitKeywordsOf, roleOf, naturalRoleOf, blowActOf, liftedStrainLevel, isSwift, isWillful, strainCauseOf,
 } from '../creatureOnTable.ts';
 import {
 	HOLD_FLOOR, HOLD_CEILING, RAW_ATTRIBUTE_MIN, RAW_ATTRIBUTE_MAX, ROLE, BOLSTER_FLOOR,
 	MAGNITUDE_SCALE, WILLFUL_THRESHOLD, SWIFT_SPEED, KEEN_INSTINCT, DULL_INSTINCT,
-	presenceScaleOf, instinctLaneOf, getGoverningAttributeForAction,
+	presenceScaleOf, instinctLaneOf, getGoverningAttributeForAction, WORLD_ELEMENT_PENALTY, HOME_GROUND_MULTIPLIER,
 } from '../expeditionInterpretation.ts';
 import type { FrameSite, World } from '../types.ts';
 
@@ -179,58 +179,47 @@ describe('bolster lifts one grade of strain (assumption 8)', () => {
 	});
 });
 
-describe('worldMatchupMultiplier', () => {
-	// pass 57: the type chart is a lever, off as shipped; these pin what it does when it is on
-	const CHART = { elementMatchups: true };
-	test('a favorable matchup (matrix[creature][world] = 2) doubles hold contribution', () => {
-		// fire vs plant world: matrix[Fire][Plant] = 2 per typeEffectivenessMatrix.json
-		const r = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
-		const w = world({ element: 'plant' });
-		expect(worldMatchupMultiplier(r, w.element, CHART)).toBeCloseTo(2, 5);
-	});
-
-	test('an unfavorable matchup (matrix[creature][world] = 0.5) halves hold contribution', () => {
-		// fire vs water world: matrix[Fire][Water] = 0.5
-		const r = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
-		const w = world({ element: 'water' });
-		expect(worldMatchupMultiplier(r, w.element, CHART)).toBeCloseTo(0.5, 5);
-	});
-
-	test('a hard-zero matchup is softened to 0.25, never a full exclusion', () => {
-		// fire vs ghost world: matrix[Fire][Ghost] = 0
-		const r = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
-		const w = world({ element: 'ghost' });
-		expect(worldMatchupMultiplier(r, w.element, CHART)).toBeCloseTo(0.25, 5);
-	});
-
-	test('pass 57: a schema 5 element (a bare string) reads the chart when the lever is on', () => {
-		// the conversion's miss: `element.primary` of 'fire' is undefined, so the chart answered 1
+describe('worldElementFactor', () => {
+	// pass 71: the world's element acts on the creature, and only where it is a bad place for it
+	test('a world whose element is strong against the creature costs it a tenth', () => {
+		// water against fire: matrix[Water][Fire] = 2
 		const r = record({ element: 'fire' as never });
-		expect(worldMatchupMultiplier(r, 'plant', CHART)).toBeCloseTo(2, 5);
-		expect(worldMatchupMultiplier(r, 'water', CHART)).toBeCloseTo(0.5, 5);
+		expect(worldElementFactor(r, 'water')).toBeCloseTo(WORLD_ELEMENT_PENALTY, 5);
+		expect(WORLD_ELEMENT_PENALTY).toBe(0.9);
 	});
 
-	test('pass 57: off as shipped, so a world never scales a hold by element', () => {
-		const v4 = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
-		const v5 = record({ element: 'fire' as never });
-		expect(worldMatchupMultiplier(v4, 'plant')).toBe(1);
-		expect(worldMatchupMultiplier(v5, 'plant')).toBe(1);
-		expect(worldMatchupMultiplier(v5, 'plant', { elementMatchups: false })).toBe(1);
+	test('a creature on a world of its own element is untouched', () => {
+		// fire against fire is 0.5 on the chart: the world is not attacking it, so nothing happens
+		const r = record({ element: 'fire' as never });
+		expect(worldElementFactor(r, 'fire')).toBe(1);
+	});
+
+	test('a world the creature is strong against, or neutral to, is untouched', () => {
+		const r = record({ element: 'fire' as never });
+		// fire is strong against plant; plant against fire is 0.5
+		expect(worldElementFactor(r, 'plant')).toBe(1);
+		expect(worldElementFactor(r, 'electric')).toBe(1);
+	});
+
+	test('the lever at 1 turns it off, and a schema 4 element reads the same', () => {
+		expect(worldElementFactor(record({ element: 'fire' as never }), 'water', { worldElementPenalty: 1 })).toBe(1);
+		expect(worldElementFactor(record({ element: { primary: 'fire', affinities: { fire: 100 } } }), 'water')).toBeCloseTo(0.9, 5);
 	});
 });
 
 describe('holdAtSite: home ground and strain composition', () => {
-	test('home ground multiplies hold by 1.5 on the creature\'s origin world (lowercase compare)', () => {
+	test('home ground multiplies hold by 1.5 on the creature\'s origin world, a quarter more since pass 71 (lowercase compare)', () => {
 		const r = record({ provenance: { serial: 1, origin: 'stonera' }, element: { primary: 'rock', affinities: { rock: 100 } } });
 		const w = world({ planet: 'Stonera', element: 'rock' });
 		const s = site({ environment: { medium: 'gas', temperatureC: { min: -10, max: 40 } } });
 		const { value, isHome } = holdAtSite(r, s, w, { rules: FRAC });
 		expect(isHome).toBe(true);
-		// baseHold * matchup(rock-vs-rock = 1) * home(1.5) * strain(1)
-		expect(value).toBeCloseTo(baseHold(r, FRAC) * 1 * 1.5, 5);
-		// pass 59: as shipped the whole normal hold times 1.5, rounded once
+		// baseHold * world element (rock on rock is untouched) * home (a quarter more since pass 71) * strain(1)
+		expect(HOME_GROUND_MULTIPLIER).toBe(1.25);
+		expect(value).toBeCloseTo(baseHold(r, FRAC) * 1 * HOME_GROUND_MULTIPLIER, 5);
+		// pass 59: as shipped the whole normal hold times home ground, rounded once
 		const whole = holdAtSite(r, s, w);
-		expect(whole.value).toBe(Math.round(baseHold(r) * 1.5));
+		expect(whole.value).toBe(Math.round(baseHold(r) * HOME_GROUND_MULTIPLIER));
 	});
 
 	test('no home ground bonus off the origin world', () => {
@@ -328,8 +317,9 @@ describe('act magnitudes', () => {
 		const magFavorable = magnitudeAgainst(actor, act, targetFavorable, { elementMatchups: true });
 		const magUnfavorable = magnitudeAgainst(actor, act, targetUnfavorable, { elementMatchups: true });
 		expect(magFavorable).toBeGreaterThan(magUnfavorable);
-		// pass 57: off as shipped, a blow lands the same on every element
-		expect(magnitudeAgainst(actor, act, targetFavorable)).toBe(magnitudeAgainst(actor, act, targetUnfavorable));
+		// pass 71: on as shipped; with the lever off a blow lands the same on every element
+		expect(magnitudeAgainst(actor, act, targetFavorable)).toBeGreaterThan(magnitudeAgainst(actor, act, targetUnfavorable));
+		expect(magnitudeAgainst(actor, act, targetFavorable, { elementMatchups: false })).toBe(magnitudeAgainst(actor, act, targetUnfavorable, { elementMatchups: false }));
 	});
 });
 

@@ -29,7 +29,8 @@ describe('the dossier', () => {
 				match.players.A.roster.forEach((record) => {
 					const prepared = prepare(record, site, site.world, 0, { rules: DEFAULT_RULES });
 					const lines = Object.fromEntries(multiplierLines(record, prepared, site, site.world).map((l) => [l.key, l.val]));
-					const made = number(lines['Base hold']) * factor(lines['Home ground']) * factor(lines.Strain);
+					// pass 71: the world's element, where it is strong against the creature's, is one more factor
+					const made = number(lines['Base hold']) * factor(lines['Home ground']) * (lines['World element'] ? factor(lines['World element']) : 1) * factor(lines.Strain);
 					expect(Math.abs(Math.round(made) - number(lines['Hold here']))).toBeLessThanOrEqual(1);
 					if (prepared.heldStrainLevel !== prepared.strainLevel) {
 						willful += 1;

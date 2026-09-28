@@ -43,9 +43,9 @@ const READ_TRAITS = new Set(Object.values(TRAIT));
 export function multiplierLines(record, prepared, site, world) {
 	const lines = [];
 	lines.push({ key: 'Base hold', val: formatHold(prepared.baseHold) });
-	// pass 57: the type chart is off as shipped (rules.elementMatchups), so the line prints only when it moves the hold
+	// pass 71: the world's element, only where it is strong against this creature's
 	if (typeof prepared.holdMultiplier === 'number' && Math.abs(prepared.holdMultiplier - 1) > 1e-9) {
-		lines.push({ key: 'World matchup', val: `x${(Math.round(prepared.holdMultiplier * 100) / 100)}` });
+		lines.push({ key: 'World element', val: `x${(Math.round(prepared.holdMultiplier * 100) / 100)}` });
 	}
 	lines.push({ key: 'Home ground', val: prepared.isHome ? `x${HOME_GROUND_MULTIPLIER}` : 'x1 (not its origin world)' });
 	/*
@@ -87,6 +87,7 @@ export function standingReasons(record, prepared, site) {
 	const why = {
 		home: !!prepared.isHome,
 		homeFactor: prepared.isHome ? HOME_GROUND_MULTIPLIER : 1,
+		worldElement: prepared.holdMultiplier < 1 ? { element: site.world && site.world.element, against: typeof record.element === 'string' ? record.element : record.element && record.element.primary, factor: prepared.holdMultiplier } : null,
 		climate: held !== 'none' ? { level: held, cause: strainCause(tolerance, site) || 'strained', medium: (site.environment && site.environment.medium) || null, factor } : null,
 		shrugged: held !== prepared.strainLevel,
 	};
