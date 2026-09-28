@@ -13,7 +13,7 @@ Generated evidence report. Integrity is not visual or user approval.
 
 ## interpretation
 
-Nick accepted remaining design direction while correcting root, rear contours and gaze. Exact scoped feedback retained; revised outputs await review.
+Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased.
 
 ## identity
 
@@ -22,12 +22,12 @@ Run-0008 is a good starting concept; cross-view tail and pose differences preven
 
 ## construction
 
-Studies 0008 and 0010 are the current rear/gaze correction candidates. Body direction otherwise retained. Complete set is not coherent: older full-body gaze and digit counts remain superseded; nominal images are not calibrated geometry.
+Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased.
 - Upstream evidence is stale or missing: identity
 
 ## connections
 
-Study-0005 clarifies ear shell and hand/foot proposals. New body attachment graph is provisional. Corrected rear root is study-0008; complete attachment evidence is not yet approved.
+Gaze accepted; rear study-0008 rejected. Research informed central overlap in study-0014, then Nick requested moderated bulk and balanced upper/lower reach. Study-0015 awaits review. Complete construction remains unreleased.
 - Upstream evidence is stale or missing: identity
 
 ## geometry

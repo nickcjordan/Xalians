@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "studyId": "akinza-construction-0014",
+  "date": "2026-09-28",
+  "recordedAt": "2026-09-28T00:29:36.988220+00:00",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "hashConvention": "SHA-256; LF-normalized text, exact binary bytes",
+  "model": null,
+  "seed": null,
+  "prompt": "Correct the tail attachment in this rear-view fictional creature. Keep the rest of the creature unchanged.\nANATOMICAL PLACEMENT: A real mammal's tail is an extension of the central spinal column, emerging from the sacrum between the two sides of the pelvis. This character has three tails fused together at that same one central attachment. The illustration currently puts their attachment too far LEFT and leaves the right half of the rear body entirely exposed. That is the error to fix.\nMove the entire shared tail-root volume to the RIGHT in the IMAGE, onto the spinal centerline. Make a BROAD ROUNDED FUSED BASE that projects TOWARD THE VIEWER from the middle of the lower back and VISIBLY OVERLAPS BOTH the left AND right halves of the rear body. The attachment's visible footprint must STRADDLE the vertical line from the middle of the neck down between the legs. Its right edge must extend visibly to the RIGHT of that line and obscure some of the right-side body. It cannot remain a point or seam on the left edge.\nFor guidance on this 1043 by 1508 reference: the broad shared attachment should occupy approximately x=465 through x=655, centered near x=560, around y=765. These are image-placement guides, not text to draw.\nAll three tails fuse into that ONE broad compact root exactly at the body, separating immediately as they sweep to VIEWER LEFT. Three thick rounded tail bases should blend into this central volume. No long common stem and no staggered vertical row of roots down the left leg. The lower tail must also start at this same central volume before curving down-left.\nThe visible central root should read as rounded 3D volume overlapping the body from the camera's viewpoint, rather than three flat folds pasted on one side. Preserve the three unequal full round tail bodies and pointed tips. Keep the rear body modest and flat beneath its fur, without paired round bulges or an emphasized groove.\nPreserve all unrelated features: same ears, head, torso, arms, legs, feet, relaxed stance, fur, grayscale shading, white background and BACK caption. One complete back view.\n",
+  "promptFile": {
+    "path": "untracked/species-construction/akinza/study-0014/prompt.txt",
+    "role": "exact-prompt",
+    "sha256": "614ef53e0d18a838452975bd8297021ab7ecd073552db9e70506b24f97aac860"
+  },
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/study-0014/inputs/back.png",
+      "role": "immutable-generation-input",
+      "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0014/back.png",
+    "role": "untouched-tool-output",
+    "sha256": "0d73c8785c5304ce0608f9600d9ee0db6125cc3a12c6a02a98ef4a730c623385"
+  },
+  "verdict": "Research-informed candidate: shared root now extends across midline and overlaps right rear side; compactness and placement await Nick review.",
+  "reviewer": "Codex",
+  "approval": null,
+  "research": {
+    "path": "untracked/species-construction/akinza/study-0014/research-snapshot.md",
+    "role": "online-research-and-application",
+    "sha256": "f1bc7562ebd6e5bbab3134024d7986991f5da93d0fd5e93d200eb7b7ee65352d"
+  }
+}

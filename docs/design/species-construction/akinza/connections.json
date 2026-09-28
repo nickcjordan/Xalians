@@ -8,7 +8,8 @@
     "tail-depth",
     "tail-taper",
     "body-direction",
-    "body-details"
+    "body-details",
+    "root-bilateral-overlap"
   ],
   "parts": [
     "pelvis",
@@ -152,7 +153,7 @@
     }
   ],
   "proposedSpatialInterpretation": {
-    "tail-root": "compact shared fusion at body; three tails separate immediately, with no projecting common trunk",
+    "tail-root": "One compact shared root at tailbone, centered across the rear midline, overlapping some left and right rear body surface; three tails fuse at exactly this same body-level site before sweeping left",
     "plumeFan": "three full rounded cattail-like volumes with depth separation and pointed tapers; no flat blades or delayed trident split",
     "measurements": null,
     "approval": null
@@ -166,6 +167,8 @@
     "floating disconnected plume stems",
     "extended common stalk before tails divide",
     "blunt rounded terminal caps",
-    "new creature abilities or lore"
+    "new creature abilities or lore",
+    "root entirely over left rear side",
+    "staggered vertical cascade of three joins"
   ]
 }

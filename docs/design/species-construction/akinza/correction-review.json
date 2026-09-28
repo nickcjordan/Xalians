@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "reviewer": "Nick",
+  "date": "2026-09-28",
+  "source": "Nick, this chat",
+  "events": [
+    {
+      "words": "yup",
+      "inResponseTo": "Do the revised rear and gaze now match what you meant?"
+    },
+    {
+      "words": "Actually, no, the rear view still shows the tail coming together a little odd. The three pieces should join together as one at the same place that it fuses into the tailbone",
+      "effect": "Withdraw rear acceptance; preserve gaze acceptance"
+    },
+    {
+      "words": "I think you need to do some online research to look at what tails look like on animals because I should not be able to see the entire right buttocks since the tail fusion should happen directly center. So it should be overlapping a little bit on the left butux and the right Botox, but you have it all on the left cheek",
+      "effect": "Require central shared root footprint that overlaps both rear sides; research real anatomy"
+    },
+    {
+      "words": "Yeah, I think you overcompensated a tad. Maybe combine those two a little bit so that you still have the tail base being centered, but there's not one longer tail on the bottom and one short tail on top",
+      "effect": "Retain central placement; moderate enlarged root and rebalance upper/lower reach from study-0014"
+    }
+  ],
+  "acceptedAspects": [
+    "Forward gaze correction in study-0010"
+  ],
+  "acceptedEvidence": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/face-study-0010.png",
+      "role": "approved-gaze",
+      "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+    }
+  ],
+  "rejectedEvidence": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/back-study-0008.png",
+      "role": "rejected-root-placement",
+      "sha256": "c41055e5ea81276e189397e2069b330d113fd16f021834ee1bf9c0f880cf1f4d"
+    }
+  ],
+  "excludedAspects": [
+    "Rear junction in studies 0008, 0012 and 0013",
+    "Unreviewed study-0014",
+    "Whole-stage approval",
+    "Complete construction pack",
+    "Unreviewed study-0015; study-0014 is superseded for bulk and balance"
+  ]
+}
