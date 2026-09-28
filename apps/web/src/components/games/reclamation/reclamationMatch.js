@@ -20,7 +20,7 @@ import {
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause } from './reclamationPreview';
 import { nameBlows } from './reclamationReasons';
-import { fitTable, roundTrack, standingScale } from './reclamationFit';
+import { fitTable, roundTrack, standingScale, elementOf } from './reclamationFit';
 import { RoundTrack, SideRow, pennantsFor } from './reclamationInstruments';
 
 
@@ -1547,6 +1547,9 @@ class ReclamationMatch extends React.Component {
 		const sentence = narrateEvent(event, {
 			actorName: actor ? sided(actor) : 'A creature',
 			targetName: other ? sided(other) : undefined,
+			// pass 71: the elements behind a blow, for the chart's words
+			actorElement: actor ? elementOf(actor.record) : undefined,
+			targetElement: other ? elementOf(other.record) : undefined,
 			// pass 69: a mend or a status kept clear names whose support creature, as a blow names whose striker
 			bolsterName: bolster ? ((kind === 'recover' && event.mend) || kind === 'status' ? sided(bolster) : speciesLabel(bolster.record)) : undefined,
 			// assumption 18: a hurt attacker lands less, so the sentence names the condition
@@ -1722,6 +1725,8 @@ class ReclamationMatch extends React.Component {
 						// pass 57: why it holds what it does here, the marks its card's column carries
 						reasons: {
 							home: !!prepared.isHome,
+							// pass 71: the world's element, where it is strong against this creature's
+							worldElement: prepared.holdMultiplier < 1 ? { element: site.world && site.world.element, against: elementOf(e.record), factor: prepared.holdMultiplier } : null,
 							climate: prepared.effectiveStrainLevel && prepared.effectiveStrainLevel !== 'none'
 								? { level: prepared.effectiveStrainLevel, cause: strainCause(toleranceOf(e.record), site) || 'strained', medium: (site.environment && site.environment.medium) || null }
 								: null,
@@ -2368,7 +2373,8 @@ class ReclamationMatch extends React.Component {
 			}
 			// pass 45: what is happening, said on the clashing world rather than in the top bar
 			const snap = playback.boardBefore || {};
-			const who = (id) => (id && snap[id] ? { name: speciesLabel(snap[id].record), seat: snap[id].seat } : null);
+			// pass 71: the element rides with the name, so a caption can say the chart behind a blow
+			const who = (id) => (id && snap[id] ? { name: speciesLabel(snap[id].record), seat: snap[id].seat, element: elementOf(snap[id].record) } : null);
 			const ev = playback.current;
 			const parts = captionEvent(ev, {
 				actor: who(ev.recordId) || undefined,

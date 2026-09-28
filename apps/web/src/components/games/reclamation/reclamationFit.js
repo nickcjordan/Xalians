@@ -3,6 +3,12 @@ import { prepare, baseHold, roleOf, strainMultiplierFor, wholeHoldsOn } from '@x
 import { HOME_GROUND_MULTIPLIER } from '@xalians/rules/expedition/expeditionInterpretation';
 import { strainCause } from './reclamationPreview';
 
+// pass 71: a record's element as a bare key, whichever schema wrote it
+export function elementOf(record) {
+	const e = record && record.element;
+	return typeof e === 'string' ? e : (e && e.primary) || null;
+}
+
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
 
@@ -93,7 +99,9 @@ export function breakdown(ownForecast, base, totals, record, site, reading, rule
 		? (strainCause({ temperatureC: tolerance.temperatureC, ambientMedia: tolerance.ambientMedia || [], breathes: (record.physiology && record.physiology.breathes) || [] }, site) || 'strained')
 		: null;
 	// rounded as the engine rounds a hold at a world (rules.wholeHolds), so a plain 13 x 1/2 is 7 and no company
-	const plain = body * (home ? HOME_GROUND_MULTIPLIER : 1) * strainMultiplierFor(held, cause);
+	// pass 71: a world whose element is strong against the creature's costs it a tenth
+	const worldFactor = reading && typeof reading.holdMultiplier === 'number' ? reading.holdMultiplier : 1;
+	const plain = body * (home ? HOME_GROUND_MULTIPLIER : 1) * worldFactor * strainMultiplierFor(held, cause);
 	const expected = wholeHoldsOn(rules) ? Math.round(plain) : plain;
 	const lift = going - expected;
 	// a bolster with none of yours beside it can only have lifted itself
@@ -111,6 +119,7 @@ export function breakdown(ownForecast, base, totals, record, site, reading, rule
 		body,
 		home,
 		homeFactor: home ? HOME_GROUND_MULTIPLIER : 1,
+		worldElement: worldFactor < 1 ? { element: site.world && site.world.element, against: elementOf(record), factor: worldFactor } : null,
 		climate: held !== 'none' ? { level: held, cause, medium: (site.environment && site.environment.medium) || null, factor: strainMultiplierFor(held, cause) } : null,
 		// willpower lifted its grade here: it would be strained, and is not (or less so)
 		shrugged: level !== held,

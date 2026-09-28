@@ -117,8 +117,12 @@ export interface Rules {
 	clashExchanges: number;
 	// Pass 56: a sweep also catches its own side (off: the other side only)
 	friendlyFire: boolean;
-	// Pass 57: the type chart, for a creature against its world and an attacker against its target
+	// Pass 57, reshaped in pass 71: the type chart in battle, an attacker's element against its target's
 	elementMatchups: boolean;
+	// Pass 71: a world's element against the creature, only where it is a bad place for it (1 is off)
+	worldElementPenalty: number;
+	// Pass 71: what a creature holds on its home world, as a multiplier
+	homeGround: number;
 	// Pass 59: a creature's normal hold and its hold at a world are whole numbers
 	wholeHolds: boolean;
 	// Pass 69: what a support creature does for the creatures it covers

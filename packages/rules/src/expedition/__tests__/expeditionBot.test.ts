@@ -413,7 +413,10 @@ describe('chooseSend: swift creatures move', () => {
 	*/	test('every move the bot proposes names one of its own movable creatures and is legal', () => {
 		const seeds = ['bot-swift-seed', 'bot-swift-seed-2', 'bot-swift-seed-3', 'bot-swift-seed-4',
 			'bot-swift-seed-5', 'bot-swift-seed-6', 'bot-swift-seed-7', 'bot-swift-seed-8',
-			'bot-swift-seed-9', 'bot-swift-seed-10', 'bot-swift-seed-11', 'bot-swift-seed-12'];
+			'bot-swift-seed-9', 'bot-swift-seed-10', 'bot-swift-seed-11', 'bot-swift-seed-12',
+			// pass 71: elements in battle quietened these twelve while real rosters still move
+			// 0.35 times a match (seed 7, 300 matches), so the fixture gets twelve more
+			...Array.from({ length: 12 }, (_, i) => `bot-swift-seed-${i + 13}`)];
 		let proposalsAcrossSeeds = 0;
 		for (const swiftSeed of seeds) {
 			proposalsAcrossSeeds += runOneSwiftBoard(swiftSeed);

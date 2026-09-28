@@ -98,12 +98,14 @@ describe('fitTable', () => {
 					expect(roleOf(record, match.rules)).toBe('bolster');
 					selfLifts += 1;
 				}
-				expect(cell.homeFactor).toBe(cell.home ? 1.5 : 1);
+				// pass 71: home ground is a quarter more
+				expect(cell.homeFactor).toBe(cell.home ? 1.25 : 1);
+				if (cell.worldElement) expect(cell.worldElement.factor).toBe(0.9);
 				if (cell.climate) expect(cell.climate.factor).toBe((cell.climate.cause === 'cold' || cell.climate.cause === 'hot') ? (cell.climate.level === 'severe' ? 0.75 : 0.9) : (cell.climate.level === 'severe' ? 0.25 : 0.5));
 				// the card's arithmetic closes: a whole normal hold times the printed factor, rounded once, is the number
 				expect(Number.isInteger(cell.body)).toBe(true);
 				if (!cell.selfLift) {
-					expect(cell.own).toBe(Math.round(cell.body * cell.homeFactor * (cell.climate ? cell.climate.factor : 1)));
+					expect(cell.own).toBe(Math.round(cell.body * cell.homeFactor * (cell.worldElement ? cell.worldElement.factor : 1) * (cell.climate ? cell.climate.factor : 1)));
 				}
 			}));
 		});

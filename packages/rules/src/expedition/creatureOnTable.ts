@@ -13,7 +13,7 @@ import { readRecord, EFFECT_ROLE } from './recordReading.ts';
 
 import type { XalianRecord } from '@xalians/content/schema';
 import { conditionMultiplier } from './elementMatchup.ts';
-import { typeEffectivenessMultiplier } from './expeditionInterpretation.ts';
+import { typeEffectivenessMultiplier, WORLD_ELEMENT_PENALTY } from './expeditionInterpretation.ts';
 import {
 	RAW_ATTRIBUTE_MIN,
 	RAW_ATTRIBUTE_MAX,
@@ -74,7 +74,7 @@ function recordElement(record: XalianRecord | null | undefined): XalianRecord['e
 	return (element as XalianRecord['element']) || ({ primary: '', affinities: {} } as unknown as XalianRecord['element']);
 }
 
-// pass 57: whether the type chart is in play (rules.elementMatchups, off as shipped)
+// pass 57: whether the type chart is in play in battle (rules.elementMatchups, on since pass 71)
 export function elementMatchupsOn(rules?: Partial<Rules> | null): boolean {
 	return rules && typeof rules.elementMatchups === 'boolean' ? rules.elementMatchups : ELEMENT_MATCHUPS;
 }
@@ -84,12 +84,24 @@ export function wholeHoldsOn(rules?: Partial<Rules> | null): boolean {
 	return rules && typeof rules.wholeHolds === 'boolean' ? rules.wholeHolds : WHOLE_HOLDS;
 }
 
-// world matchup: matrix[creature][world], softened + blended, creature as attacker
-export function worldMatchupMultiplier(record: XalianRecord, worldElement: string | null | undefined, rules?: Partial<Rules> | null): number {
-	if (!elementMatchupsOn(rules)) {
+/*
+	PASS 71: the world's element, acting on the creature, and only where it is a bad place for
+	it: the chart with the WORLD's element as the attacker and the creature's as the defender,
+	and the penalty only where that reads strong (1.5 or 2). Everything else is 1, a creature
+	on a world of its own element included. Replaces pass 57's "world matchup", which read the
+	chart with the creature attacking the world (WORLD_ELEMENT_PENALTY says why it went).
+*/
+export function worldElementFactor(record: XalianRecord, worldElement: string | null | undefined, rules?: Partial<Rules> | null): number {
+	const penalty = rules && typeof rules.worldElementPenalty === 'number' ? rules.worldElementPenalty : WORLD_ELEMENT_PENALTY;
+	if (!(penalty < 1) || !worldElement) {
 		return 1;
 	}
-	return conditionMultiplier(worldElement, recordElement(record));
+	return typeEffectivenessMultiplier(worldElement, recordElement(record).primary) > 1 ? penalty : 1;
+}
+
+// pass 71: what a creature holds on its home world (rules.homeGround)
+export function homeGroundOf(rules?: Partial<Rules> | null): number {
+	return rules && typeof rules.homeGround === 'number' ? rules.homeGround : HOME_GROUND_MULTIPLIER;
 }
 
 // magnitude scaling: matrix[creature][target], softened + blended with the TARGET's
@@ -340,10 +352,11 @@ export function holdAtSite(
 	const world = worldOfSite(site, worldArg);
 	const rules = opts.rules as Partial<Rules> | undefined;
 	const base = baseHold(record, rules);
-	const matchup = worldMatchupMultiplier(record, world && world.element, rules);
+	// pass 71: a world's element touches a creature only where it is a bad place for it
+	const matchup = worldElementFactor(record, world && world.element, rules);
 	const origin = record && record.provenance && record.provenance.origin;
 	const isHome = !!origin && !!(world && world.planet) && String(origin).toLowerCase() === String(world.planet).toLowerCase();
-	const homeGround = isHome ? HOME_GROUND_MULTIPLIER : 1;
+	const homeGround = isHome ? homeGroundOf(rules) : 1;
 	const { level, cause } = strainOf(record, site, world);
 	// willpower's job (assumption 17): a willful creature holds against the world, one
 	// grade less strain, applied BEFORE bolster so the two never stack past comfortable.

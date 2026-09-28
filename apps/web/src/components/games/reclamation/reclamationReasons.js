@@ -1,5 +1,7 @@
 import React from 'react';
-import { speciesLabel, formatHoldShown } from './reclamationNarration';
+import { speciesLabel, formatHoldShown, matchupWords } from './reclamationNarration';
+import { elementOf } from './reclamationFit';
+import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { strainCause } from './reclamationPreview';
 import { HomeGlyph, StrainGlyph, NoMediumGlyph, CompanyGlyph, FallsGlyph, RoleGlyph, PhaseGlyph } from './reclamationGlyphs';
 
@@ -29,6 +31,7 @@ const CLIMATE_KIND = { cold: 'cold', hot: 'hot', medium: 'medium', breath: 'brea
 const degrees = (n) => `${n < 0 ? '−' : ''}${Math.abs(n)}`;
 const listWords = (items) => (items.length <= 1 ? items[0] || '' : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`);
 const shown = (v) => formatHoldShown(Math.max(0, v || 0));
+const upper = (text) => (text ? text.charAt(0).toUpperCase() + text.slice(1) : '');
 const HOLDS = { severe: 'a quarter', strained: 'half' };
 // pass 68: a world too hot or too cold takes a tenth, or a quarter far off; the air keeps its half and quarter
 const TEMPERATURE_HOLDS = { severe: 'three quarters', strained: 'nine tenths' };
@@ -138,7 +141,7 @@ function clashLines(why, blows, { open, role } = {}) {
 	const parts = [];
 	const hits = (blows.taken || []).filter((blow) => blow.by);
 	// what it lands on creatures it does not down (those are the downs line), with the rival's number before and after
-	const hurts = (blows.dealt || []).filter((h) => !h.downs).map((h) => `${whoseName(h)} for ${formatHoldShown(h.power)}`);
+	const hurts = (blows.dealt || []).filter((h) => !h.downs).map((h) => `${whoseName(h)} for ${formatHoldShown(h.power)}${h.chart ? ` (${h.chart})` : ''}`);
 	// the order of the fight says why a blow lands less: it acts first, and an attacker already hurt lands less
 	if (blows.first && (hits.length || hurts.length)) {
 		parts.push(hurts.length ? `it acts first and hits ${listWords(hurts)}` : 'it acts first');
@@ -156,7 +159,7 @@ function clashLines(why, blows, { open, role } = {}) {
 			const verb = sweep
 				? (n > 1 ? `catches it${first} in ${COUNT_WORDS[n] || n} sweeps for` : `catches it${first} in a sweep for`)
 				: (n > 1 ? `strikes it${first} ${n === 2 ? 'twice' : `${COUNT_WORDS[n] || n} times`} for` : `strikes it${first} for`);
-			parts.push(`${whoseName({ name: blow.name, mine: blow.mine })}${blow.hurt ? ', hurt by then and so weaker,' : ''}${quicker ? ' is quicker and' : ''} ${verb} ${formatHoldShown(blow.power)}${n > 1 ? ' in all' : ''}`);
+			parts.push(`${whoseName({ name: blow.name, mine: blow.mine })}${blow.hurt ? ', hurt by then and so weaker,' : ''}${quicker ? ' is quicker and' : ''} ${verb} ${formatHoldShown(blow.power)}${n > 1 ? ' in all' : ''}${blow.chart ? ` (${blow.chart})` : ''}`);
 		} else {
 			parts.push(`it loses ${formatHoldShown(blow.power)} to ${listWords(blow.statuses && blow.statuses.length ? blow.statuses : ['its condition'])}`);
 		}
@@ -224,10 +227,17 @@ export function nameBlows(blows, match, seat, recordId = null) {
 		}));
 	});
 	const name = (id) => names[id] || 'a creature';
+	// pass 71: each creature's element, for the chart's words on a blow
+	const elements = {};
+	['A', 'B'].forEach((s) => {
+		((match.players[s] && match.players[s].roster) || []).forEach((r) => { elements[r.id] = elementOf(r); });
+		// the rival's roster is not in a handler's view; its creatures on the board are
+		Object.values(match.board || {}).forEach((side) => (side[s] || []).forEach((e) => { if (e.record) elements[e.recordId] = elementOf(e.record); }));
+	});
 	return {
 		...blows,
-		taken: blows.taken.map((t) => ({ ...t, name: t.by ? name(t.by) : null, mine: !!t.by && ours.has(t.by) })),
-		dealt: (blows.dealt || []).map((h) => ({ ...h, name: name(h.to), mine: ours.has(h.to) })),
+		taken: blows.taken.map((t) => ({ ...t, name: t.by ? name(t.by) : null, mine: !!t.by && ours.has(t.by), chart: t.by ? matchupWords(t.matchup, elements[t.by], elements[recordId]) : '' })),
+		dealt: (blows.dealt || []).map((h) => ({ ...h, name: name(h.to), mine: ours.has(h.to), chart: matchupWords(h.matchup, elements[recordId], elements[h.to]) })),
 		downs: blows.downs.map((id) => ({ name: name(id), mine: ours.has(id), early: (blows.downsBeforeActing || []).includes(id) })),
 		alliesDowned: blows.alliesDowned.map(name),
 		// pass 69: whose guard and steadying, 'itself' when the previewed creature is the support creature
@@ -252,7 +262,11 @@ export function reasonLines({ why, record, site, tolerance, blows, settled, open
 		out.push({ key: 'settled', mark: 'settled', effect: 'Already yours this round.', cause: `The rival has passed and cannot answer here; you lead by ${shown(settled.lead)}.` });
 	}
 	if (w.home) {
-		out.push({ key: 'home', mark: 'home', effect: 'Its home world: it holds half again.', cause: `${name} comes from ${planet}.` });
+		out.push({ key: 'home', mark: 'home', effect: 'Its home world: it holds a quarter more.', cause: `${name} comes from ${planet}.` });
+	}
+	// pass 71: the world's element, only where it is strong against this creature's
+	if (w.worldElement) {
+		out.push({ key: 'element', mark: 'element', element: w.worldElement.element, effect: `A ${w.worldElement.element} world is hard on ${w.worldElement.against || 'it'}: it holds nine tenths.`, cause: `${upper(w.worldElement.element)} is strong against ${w.worldElement.against || 'its element'} on the element chart.` });
 	}
 	const climate = climateLine(w, name, planet, env, tol, site);
 	if (climate) {
@@ -267,6 +281,8 @@ function ReasonMark({ line }) {
 	switch (line.mark) {
 		case 'home':
 			return <HomeGlyph />;
+		case 'element':
+			return line.element ? <XalianTypeSymbolBadge size={14} type={line.element} classes="rec-why-element-disc" /> : null;
 		case 'cold':
 		case 'hot':
 			return <StrainGlyph cause={line.mark} />;

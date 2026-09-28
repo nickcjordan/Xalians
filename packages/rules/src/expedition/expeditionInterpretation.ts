@@ -56,7 +56,13 @@ export const HOLD_FLOOR = 2.8;
 export const HOLD_CEILING = 17.6;
 
 // Hold is multiplied by this on the creature's origin world ("home ground").
-export const HOME_GROUND_MULTIPLIER = 1.5;
+/*
+	PASS 71: home ground is a slight boost. Nick, 2026-09-28: "If a creature is on his home
+	world, then maybe that gives a slight boost ... Otherwise, where the creature is doesn't
+	really have any effect, right? And it shouldn't." It was half again (1.5) from the first
+	design. The sweep that set it is in docs/design/reclamation-elements-in-battle.md.
+*/
+export const HOME_GROUND_MULTIPLIER = 1.25;
 
 // Strain halves hold and blow magnitudes; severe strain (cannot breathe the site's
 // medium at all) quarters them instead. Bolster lifts a creature one grade up this
@@ -632,25 +638,34 @@ export const CLASH_EXCHANGES = 12;
 */
 export const FRIENDLY_FIRE = false;
 /*
-	PASS 57: false, which is what the game has actually played since the schema 5 conversion
-	(2026-09-21). Schema 5 writes a creature's element as a bare string ('ghost') where
-	schema 4 wrote { primary, affinities }; the conversion moved the interface's reads to the
-	new shape but creatureOnTable still read `element.primary`, so both uses of the type chart
-	came back 1 for every live creature: the world matchup (a creature's element against the
-	world's, scaling its hold) and the target matchup (an attacker's element against its
-	target's, scaling the blow). Every measurement from pass 25 on was taken with both at 1.
+	PASS 71: ON, and it is the element chart in BATTLE only. Nick, 2026-09-28: "the elemental
+	aspect is supposed to be the biggest factor here, besides the health and attack power ...
+	The status effects come from when two creatures are battling. That's where the effect
+	should be at play."
 
-	Found in pass 57 while explaining why a creature is worth more at one world than another
-	(Nick: "it's obvious when the creature has an element that aligns to the element on the
-	screen, but it's not obvious when it's any other combination"). With the chart dead, what
-	moves a creature's hold from world to world is home ground, the world's climate and the
-	company it keeps; an element symbol only ever says where a creature comes from (every
-	species' element is its home world's). The reader now understands schema 5, so this lever
-	really switches the chart; it ships off so the game Nick has been playing is unchanged.
-	The world matchup reads the combat chart against a place, which puts a fire creature at
-	half strength on the fire world, the opposite of what a player expects.
+	History, so it is not repeated. The schema 5 conversion (2026-09-21) broke the element
+	read and the chart answered 1 for every creature, silently. Pass 57 found and fixed the
+	read, then shipped the chart OFF and parked "whether element should matter" in the log
+	instead of asking Nick. It should have been a question to him the same day.
+
+	What it does: a blow lands times the chart, the attacker's element against its target's
+	(0 is softened to a quarter). A world's element no longer reads this chart at all; see
+	WORLD_ELEMENT_PENALTY.
 */
-export const ELEMENT_MATCHUPS = false;
+export const ELEMENT_MATCHUPS = true;
+/*
+	PASS 71: a world's element touches a creature only when it is a bad place for it. Nick,
+	2026-09-28: "The element of the world should have a slight effect on the creature if it's
+	a negative combination. Otherwise, it's irrelevant."
+
+	The world's element is read as acting ON the creature: where the chart has the world's
+	element strong against the creature's (1.5 or 2), the creature holds this share. Anything
+	else, including a creature on a world of its own element, is untouched. The rule this
+	replaced (the "world matchup", every design since 2026-09-02) read the chart with the
+	creature attacking the world, which put a fire creature at half strength on the fire world.
+	It was backwards and is deleted.
+*/
+export const WORLD_ELEMENT_PENALTY = 0.9;
 
 // A blow-role creature with no attacking ability at all still strikes, at the pool's
 // minimum printed magnitude (magnitudeOf floors at 1). The simulator counts how often

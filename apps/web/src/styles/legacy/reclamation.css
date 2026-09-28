@@ -8115,3 +8115,19 @@
 	.rec-console--match[data-terminal] .rec-fit-why { height: calc(var(--why) * 1.8); align-items: flex-start; }
 	.rec-console--match[data-terminal] .rec-fit-why.rec-whys--factors .rec-why-chip { flex-direction: column; gap: 1px; }
 }
+/* pass 71: a five-character factor (×0.75, ×1.25) sets a little tighter, so it stays inside its own column */
+@media (min-width: 761px) {
+	.rec-console--match[data-terminal] .rec-fit-why .rec-why-x { letter-spacing: -0.08em; }
+	.rec-console--match[data-terminal] .rec-fit-why .rec-why-x--long { font-size: min(calc(11.5px * var(--rec-scale)), 29cqw); }
+}
+/* pass 71: a world's element on a card or in the words is the piece's element disc, at the mark's size */
+.rec-console--match[data-terminal] .rec-why-element-disc {
+	width: var(--why, 12px) !important;
+	height: var(--why, 12px) !important;
+	border-radius: 50%;
+	justify-content: center;
+	filter: none !important;
+	flex: 0 0 auto;
+}
+.rec-console--match[data-terminal] .rec-why-element-disc svg { width: 78%; height: 78%; }
+.rec-console--match[data-terminal] .rec-reason-mark .rec-why-element-disc { width: 1em !important; height: 1em !important; }
