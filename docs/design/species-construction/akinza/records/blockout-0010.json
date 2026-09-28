@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "run": "blockout-0010",
+  "tool": "local Blender 5.2.2 LTS",
+  "billing": "local rendering, no API/key",
+  "inputs": [
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/inputs/authored_surfaces.py",
+      "role": "immutable-authoring-input",
+      "sha256": "6c362abefde7fd0a8dfde3e0c46af62ef6887cec586bab5e14c1d386aaf05f97"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/inputs/blender_blockout.py",
+      "role": "immutable-authoring-input",
+      "sha256": "0feb2fe7341a26ca3debd20dd8df372cda2f8aaa469fda9b3edec43a3658aa1f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/inputs/blender_probe.py",
+      "role": "immutable-authoring-input",
+      "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/inputs/blockout-spec-0010.json",
+      "role": "immutable-authoring-input",
+      "sha256": "06cb3996758aa553c4a9611b9f16c6931425c9fd687ebcd25f66075ac2a1d614"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/inputs/build_surface_study_0010.py",
+      "role": "immutable-authoring-input",
+      "sha256": "f0e281c5525c7c72205e0458fdb37d3fc24b561a1050a070c88f9a6058a7aede"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/inputs/current-references.json",
+      "role": "immutable-authoring-input",
+      "sha256": "e53a5b0da5d4dd876c11cfeea752c2aacba2aa23552d72d7ee3389620e526862"
+    }
+  ],
+  "geometry": {
+    "path": "untracked/species-construction/akinza/blockout-0010/geometry.json",
+    "role": "geometry-report",
+    "sha256": "3ff5c3b8b5217690a16556868e5b394aeddb07f50f6b2a2b978df47038ed5650"
+  },
+  "reviewAssets": {
+    "path": "untracked/species-construction/akinza/blockout-0010/review-assets.json",
+    "role": "technical-render-checks",
+    "sha256": "dea14dae3cfd560814b7c82be51cdbbcbad116eac244a5386a4b5c56cc959489"
+  },
+  "outputs": [
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/back.occupancy.png",
+      "role": "construction-output",
+      "sha256": "3a485d72447d0304fcb1f25e3bbbb895871eab9e397cadc3111e15f671c67fc1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/back.png",
+      "role": "construction-output",
+      "sha256": "7e93d05f16c52609579f04c549216b5caede9a6f9eab15a2a2a561840aeab762"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/blockout.blend",
+      "role": "construction-output",
+      "sha256": "e98efcfc9e565575af673f9b3aaa57e334f37c4192312e2eb7e350e60756b00e"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/contact.png",
+      "role": "construction-output",
+      "sha256": "c5a6e9a7d4d0ae474544011c62077681142d7a5c714efc78b6e1ab7ed73ae8df"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/front-left.occupancy.png",
+      "role": "construction-output",
+      "sha256": "c74ee2c317fe80c71b312de753883dc6df213a52653b06d6c76695d6b2c5c7c5"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/front-left.png",
+      "role": "construction-output",
+      "sha256": "3d57b3097c9f88b92c1fd9270d3d47f523bd4f89c30e74895c14677027bae55b"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/front-right.occupancy.png",
+      "role": "construction-output",
+      "sha256": "84dc4eacbfc824c8054ebe529e785350585af367d7057e1c4db90f63d0e8b609"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/front-right.png",
+      "role": "construction-output",
+      "sha256": "ca1ea7b6b7c82c2e124c3b321a8517e89626a2bda1fd85de1b3998d46c09f474"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/front.occupancy.png",
+      "role": "construction-output",
+      "sha256": "36ea847a01d930c56ee4589f3fda1e3cff915852dec1b0a00d093a9c28672f22"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/front.png",
+      "role": "construction-output",
+      "sha256": "7e861484b8995a648f714e6b2635c0ec6ce4688945b62bb31679b078b72529ff"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/left.occupancy.png",
+      "role": "construction-output",
+      "sha256": "450649acfc4af68d4ed8693a138a1bca4ed740273ea7ecc58d7a9b24f8c9dd09"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/left.png",
+      "role": "construction-output",
+      "sha256": "dbb74ffd78c99b78c49e8521c49c4ae73554f067fe682f3e19037146ef3b71f3"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/right.occupancy.png",
+      "role": "construction-output",
+      "sha256": "e2f08b9c77565342c8c25a0d22402ce6da02d1386495a0b0cdd06e5ed47c11ec"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/right.png",
+      "role": "construction-output",
+      "sha256": "f4c9cf63f9fda5135e4b22ed8d39d7f11526f81dc144ab7446a6df39bc4efe47"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-000.occupancy.png",
+      "role": "construction-output",
+      "sha256": "e7d86fc1f21fa4b49132e8336da530a41176b6433b99e1bf046ebd67f2e3bd49"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-000.png",
+      "role": "construction-output",
+      "sha256": "27f9a610c2ebe1b2f53a0720d6ac0796434d81c28e2e549760f4a8c1f5467050"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-045.occupancy.png",
+      "role": "construction-output",
+      "sha256": "25bf8583d7c71fcd4d4ab79196275419250d92a17d781b4cad4cc7573140a5cd"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-045.png",
+      "role": "construction-output",
+      "sha256": "2de14922443c197bf12fbc6fb5f0ddb87e201ce786461f982f34147f820a0325"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-090.occupancy.png",
+      "role": "construction-output",
+      "sha256": "4d02ceada787e5cea117d107ab9c67c92e1e236c97cd4d06a01c83d8aa64f43d"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-090.png",
+      "role": "construction-output",
+      "sha256": "b851b86b15dc6649211dec289d4ae79e1dc8797880df049db4bffec3465212eb"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-135.occupancy.png",
+      "role": "construction-output",
+      "sha256": "73048db975c3ec21d291327eb2b4e35ee5dbb4595ef02083f9b2d1410edde4ef"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-135.png",
+      "role": "construction-output",
+      "sha256": "6b0b211afbe23aeebebb3e70402efc99ff7576397e9aa7670389871cf174f5eb"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-180.occupancy.png",
+      "role": "construction-output",
+      "sha256": "a415f5bb37be5e95861163c5ff9c16a153d658653211192f4878a02cef1476c7"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-180.png",
+      "role": "construction-output",
+      "sha256": "367b2a7fb32023caf6cb99e02b9479c5ef059d173a7c933b54239ad4b5f330e1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-225.occupancy.png",
+      "role": "construction-output",
+      "sha256": "4f3b3ef4a94e55cb090d4393f5c305ddcaf7f2177d0424ce63d8decdf025cd38"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-225.png",
+      "role": "construction-output",
+      "sha256": "1d1d5305f711af9ec0c2c0bf299319808a7f18acef6f919fe3c80c119f74dc0f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-270.occupancy.png",
+      "role": "construction-output",
+      "sha256": "c97ac294ed45fb430cf070d1cd5d014d140e8598a3d813228178206d68f8dbda"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-270.png",
+      "role": "construction-output",
+      "sha256": "34583017e2cb3351dfd944e34d3a7b496440612f75bb1db9c956a52812ad1c71"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-315.occupancy.png",
+      "role": "construction-output",
+      "sha256": "3a7de5069708fe0ae6348db7ad5993f961c2a1194d990f939d0ed1d7c73424ed"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turn-315.png",
+      "role": "construction-output",
+      "sha256": "63eaf69f2e1a2401c66168fbd3eaef0158ff022961f79406679c03be4f33214c"
+    },
+    {
+      "path": "untracked/species-construction/akinza/blockout-0010/turntable.gif",
+      "role": "construction-output",
+      "sha256": "a8b55617befdaec589585da674916b6359b2b5d1178b464c22ba4f22e4cb865a"
+    }
+  ],
+  "visualVerdict": "superseded-study",
+  "notes": "Body surfaces improved; ear coat still beaded.",
+  "approval": null
+}

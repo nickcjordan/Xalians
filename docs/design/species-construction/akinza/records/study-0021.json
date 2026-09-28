@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "date": "2026-09-28",
+  "tool": "image_gen.imagegen",
+  "billingRoute": "Codex subscription",
+  "model": null,
+  "seed": null,
+  "unavailableMetadata": "The built-in tool did not expose model identifier or seed.",
+  "prompt": {
+    "path": "docs/design/species-construction/akinza/prompts/study-0021-head-clay.txt",
+    "role": "exact-prompt",
+    "sha256": "f816a299387676ac811a3d27dd19ab87fcb8c2b006d1f63c04e4ca61cd72ca31"
+  },
+  "inputs": [
+    {
+      "path": "docs/design/species-construction/akinza/evidence/identity-run-0001.png",
+      "role": "reference-image",
+      "sha256": "cd172ed009b20b65a93f02ac33b9f0af15d47dd78a7448ba9767996a52af1fcb"
+    },
+    {
+      "path": "docs/design/species-construction/akinza/evidence/face-study-0010.png",
+      "role": "reference-image",
+      "sha256": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952"
+    }
+  ],
+  "output": {
+    "path": "untracked/species-construction/akinza/study-0021/head-clay.png",
+    "role": "untouched-generated-image",
+    "sha256": "c251eebda1037f74eeb5017208f9220662868897274440e4a9e5b5fd30167f1d"
+  },
+  "committedEvidence": {
+    "path": "docs/design/species-construction/akinza/evidence/head-clay-study-0021.png",
+    "role": "proposed-coat-construction-reference",
+    "sha256": "c251eebda1037f74eeb5017208f9220662868897274440e4a9e5b5fd30167f1d"
+  },
+  "verdict": "Useful scoped coat-volume reference; not calibrated and not approved",
+  "exclusions": [
+    "Inward pupil drift",
+    "Excessive small locks",
+    "Any full-face redesign or Nick approval claim"
+  ],
+  "approval": null
+}

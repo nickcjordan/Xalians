@@ -1,0 +1,31 @@
+{
+  "scope": "Actual closeups of candidate 0020",
+  "report": {
+    "path": "untracked/species-construction/akinza/joints-0020/details.json",
+    "role": "camera-and-image-bindings",
+    "sha256": "cb04355522a00964538ebedb392d51c45680ccb158d67008d0549519df0560f7"
+  },
+  "outputs": [
+    {
+      "path": "untracked/species-construction/akinza/joints-0020/ankle-front.png",
+      "role": "actual-model-closeup",
+      "sha256": "997e5c7e5431648a5157853247394efee0f9c904a509f103a12f44d49c6ffdd5"
+    },
+    {
+      "path": "untracked/species-construction/akinza/joints-0020/ankle-side.png",
+      "role": "actual-model-closeup",
+      "sha256": "08fa7c5c25bb74f5ce84682f1128f0ed822362dc1b0375e3b38c23da6383c3b2"
+    },
+    {
+      "path": "untracked/species-construction/akinza/joints-0020/wrist-front.png",
+      "role": "actual-model-closeup",
+      "sha256": "4511c57887226d5bb0ea0698fb35cb3bf129ffc66489b0adf858807ef0f5b3fa"
+    },
+    {
+      "path": "untracked/species-construction/akinza/joints-0020/wrist-oblique.png",
+      "role": "actual-model-closeup",
+      "sha256": "68a8e6149f8a607ca5ca7654affdcccf83a004279a972e4dc0128a505a5d3a7c"
+    }
+  ],
+  "approval": null
+}

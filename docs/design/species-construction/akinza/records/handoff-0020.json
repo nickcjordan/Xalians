@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "scope": "Portable provisional construction candidate",
+  "manifest": {
+    "path": "untracked/species-construction/akinza/handoff-0020/manifest.json",
+    "role": "candidate-manifest",
+    "sha256": "e5b5fbf2640e53093f22960d3bab3cbee3bb361f623dc1445a481f168dd3efeb"
+  },
+  "checks": {
+    "path": "untracked/species-construction/akinza/handoff-0020/bundle-checks.json",
+    "role": "integrity-checks",
+    "sha256": "53e2f4ec12d9ef46d80be08fe57101a73f9d776cccd446e53428590b1bf87a6d"
+  },
+  "export": {
+    "path": "untracked/species-construction/akinza/export-0020/handoff.json",
+    "role": "measured-data-record",
+    "sha256": "6a42ea85021cd9fa6bb6ee2f85e27ccc60f09a17a8be1c03cfaa330bb51f3221"
+  },
+  "exportReview": {
+    "path": "untracked/species-construction/akinza/export-0020/review.json",
+    "role": "technical-checks",
+    "sha256": "3db9df4e05d98b9ce990173155b52e37c47c7c27f720ad278e9bdc6d5e100463"
+  },
+  "approval": null
+}

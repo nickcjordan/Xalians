@@ -8,12 +8,12 @@ Nick approved the animal-paw direction in study-0020 with "looks good, proceed" 
 
 | Layer | Working state | Still required |
 |---|---|---|
-| 1. Interpretation | Source abstraction and corrections established | Carry scoped decisions into the final manifest |
-| 2. Identity | First-round style preferred; working creature direction retained | Complete integrated likeness review |
-| 3. Construction | Target directions selected, modeled likeness failing | Substantial reference-guided form reconstruction |
-| 4. Connections/detail | Scoped image directions retained; joints and integration unresolved | Credible ankle/wrist, face and ear construction |
-| 5. Geometric reconciliation | Technical experiments only; whole-model likeness failed | A faithful untextured model and Nick's explicit approval |
-| 6. Surface/handoff | Not started | Coat, final views, masks, measurements, manifest, consumer adapter and approval |
+| 1. Interpretation | Reading and scoped corrections carried forward | Complete package approval |
+| 2. Identity | Preferred first-round reference retained | Nick's integrated likeness judgment |
+| 3. Construction | Candidate 0020 rebuilt and internally reviewed | Nick's clay review |
+| 4. Connections/detail | Face, ears, paws and joints in actual closeups | Nick's connection review |
+| 5. Geometric reconciliation | Connected model and registered cameras | Nick's whole-form approval |
+| 6. Surface/handoff | Surface direction and portable bundle assembled | Approved release; downstream production work |
 
 These are progress states, not whole-stage approvals. Production release remains blocked. Rigging and animation follow the approved handoff and are outside this construction exercise.
 
@@ -40,7 +40,7 @@ Stable annotation IDs include head, ear-left/right, eye-left/right, muzzle, tors
 
 ## Next checkpoint and operator lessons
 
-Use [reconciliation.md](reconciliation.md) for the current whole-body experiment and actual discrepancies. Scoped component approval permits experiments; the existing primitive models have failed whole-creature likeness. Do not present another known failure for approval or defer structural differences to texture. Keep accepted originals intact and compare their modeled equivalents. Do not regenerate all components to obtain another attractive sheet.
+Use [reconciliation.md](reconciliation.md) for the current whole-body experiment and actual discrepancies. Scoped component approval permits experiments. Earlier primitive models failed whole-creature likeness; rebuilt candidate 0020 passes internal readiness for Nick's clay review. Do not infer approval or defer newly identified structural differences to texture. Keep accepted originals intact and compare their modeled equivalents. Do not regenerate all components to obtain another attractive sheet.
 
 Follow [WORKFLOW.md](../WORKFLOW.md) and [LESSONS.md](../LESSONS.md). Repeated geometry errors trigger a method change after two targeted image attempts. Check known regressions before involving Nick. Separate provenance checks, topology checks, likeness review and Nick's approval.
 

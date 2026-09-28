@@ -31,9 +31,27 @@ Working image files and Blender outputs live in gitignored `untracked/species-co
 
 The older `art/species-views/` utilities remain useful for complete six-view mask/registration checks. The construction tracker does not replace those checks or declare unfinished production validation complete. Detail crops and top views are not forced into a full-body six-view schema. Technical masks must be derived from their own images or actual geometry, never independently generated.
 
+## Authored construction and portable handoff
+
+`authored_surfaces.py` adds continuous section cages, integrated orbital surfaces, smooth ear shells and actual broad overlapping coat masses. `surface_math.py` provides tangent-continuous monotone interpolation so a section extremum does not create an artificial band. These are authored shape controls, not measurements inferred from the source. Optional weighted local smoothing blends a named intersection after union. Exact code and spec snapshots are captured at build start.
+
+Akinza candidate 0020 passes internal readiness for Nick's clay review after independent feedback loops. This supersedes the failed primitive proxy as the current candidate, without changing the failed status of earlier studies or granting art approval.
+
+`export_geometry.py` runs inside Blender against the saved scene. It exports a GLB, six actual camera transforms, depth, geometric normals and object identity arrays, then imports the GLB to check triangle count and world bounds. Arrays are top-to-bottom at pixel centers. Normals use camera coordinates; depth is forward distance from the orthographic camera plane, in arbitrary construction units. Background is NaN. Object IDs describe actual render objects, not anatomical segmentation of the fused body.
+
+```text
+blender -b <run>/blockout.blend --python art/species-construction/export_geometry.py -- --spec <spec.json> --out <fresh-export-directory>
+python art/species-construction/review_export.py <export-directory> <run>
+python art/species-construction/build_handoff.py --renders <run> --export <export-directory> --out <fresh-bundle-directory>
+```
+
+The export review verifies raw file hashes, array shape/coverage, finite unit normals, feature containment, ray/alpha occupancy agreement and projected landmark rows. It derives front feature cutouts from visible eye-white, nose and mouth geometry and occupancy from the corresponding render alpha. The style interpretation remains subject to visual review. The portable bundle includes source references, scoped decisions, exact authoring code, scene, GLB, images, masks and measurements. Its manifest and import contract explicitly remain unapproved. This workflow does not promote a final species pack or replace Nick's approval.
+
+Use the GLB as a direct geometry reference. Existing numeric creature-template parameters cannot express the authored face and ear surfaces; the import contract reports that limitation instead of supplying a lossy parameter conversion. Production retopology, rigging and game integration remain downstream.
+
 ## Whole-body reconciliation
 
-The Akinza runs demonstrated that this procedural volume builder has not achieved the preferred reference likeness. Runs 0007/0008 remain failed diagnostic studies, despite technical passes. Optional shaped ear outlines and conforming eye surfaces are experimental capabilities, not proof of a successful model. Do not use this backend's output as a surface-ready creature by default.
+The earlier Akinza primitive runs did not achieve the preferred reference likeness. Runs 0007/0008 remain failed diagnostic studies, despite technical passes. Candidate 0020 uses the authored surfaces described above and passes internal readiness for Nick's review. Do not use this backend's output as a surface-ready creature by default.
 
 `blender_blockout.py` extends the local volume/sweep approach to a continuous body with cupped ears, limbs, paws and three tails. Eye surfaces and claws are separate detail objects. It is a provisional construction backend, not the rigged production template. Use a fresh output directory for every run:
 

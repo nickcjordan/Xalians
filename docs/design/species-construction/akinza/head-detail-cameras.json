@@ -1,0 +1,61 @@
+{
+  "resolution": 768,
+  "views": [
+    {
+      "name": "head-front",
+      "target": [
+        0,
+        0,
+        5.27
+      ],
+      "offset": [
+        0,
+        -8,
+        0
+      ],
+      "orthoScale": 3.85
+    },
+    {
+      "name": "face-front",
+      "target": [
+        0,
+        0,
+        5.25
+      ],
+      "offset": [
+        0,
+        -8,
+        0
+      ],
+      "orthoScale": 1.55
+    },
+    {
+      "name": "head-profile",
+      "target": [
+        0,
+        0,
+        5.27
+      ],
+      "offset": [
+        8,
+        0,
+        0
+      ],
+      "orthoScale": 1.65
+    },
+    {
+      "name": "head-oblique",
+      "target": [
+        0,
+        0,
+        5.27
+      ],
+      "offset": [
+        6,
+        -6,
+        0
+      ],
+      "orthoScale": 3.4
+    }
+  ]
+}

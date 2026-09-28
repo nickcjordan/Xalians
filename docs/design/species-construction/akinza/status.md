@@ -4,43 +4,33 @@ Generated evidence report. Integrity is not visual or user approval.
 
 | Stage | Integrity | Review | Release |
 |---|---|---|---|
-| interpretation | pass | pending | blocked |
-| identity | fail | fail | blocked |
-| construction | fail | fail | blocked |
-| connections | fail | fail | blocked |
-| geometry | fail | fail | blocked |
-| handoff | fail | pending | blocked |
+| interpretation | pass | pass | blocked |
+| identity | pass | pass | blocked |
+| construction | pass | pass | blocked |
+| connections | pass | pass | blocked |
+| geometry | pass | pass | blocked |
+| handoff | pass | pass | blocked |
 
 ## interpretation
 
-First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
+Current interpretation and scoped directions carried into the new candidate; earlier scoped acceptances are retained separately. No complete package approval inferred.
 
 ## identity
 
-First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
-- Inputs changed since this study was recorded
+Preferred first-round appearance and later scoped corrections reviewed as current references. Study-0021 is restricted to broad coat construction; its gaze and excess detail are excluded.
 
 ## construction
 
-First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
-- Inputs changed since this study was recorded
-- Upstream evidence is stale or missing: identity
+Candidate 0020 passes internal readiness for Nick's clay review. This does not settle likeness or complete a stage release.
 
 ## connections
 
-First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
-- Inputs changed since this study was recorded
-- Upstream evidence is stale or missing: identity
+Actual face, ear, wrist and ankle geometry shown in complementary views. Independent review passed candidate readiness after rear-root smoothing; Nick's connection judgment remains pending.
 
 ## geometry
 
-First grayscale round is the explicit likeness target, with later scoped corrections. Current geometry fails whole-creature likeness. Experiments 0007/0008 are diagnostic failures, not approval candidates. Construction remains substantially incomplete.
-- Inputs changed since this study was recorded
-- Upstream evidence is stale or missing: construction
-- Upstream evidence is stale or missing: connections
+One connected closed body, six principal views and eight elevated views. Internal visual readiness and automated checks pass separately. No art approval or production-topology claim.
 
 ## handoff
 
-Not a final handoff: requires coherent approved construction, complete rough creature and consumer integration.
-- Inputs changed since this study was recorded
-- Upstream evidence is stale or missing: geometry
+Portable provisional bundle and surface direction assembled. Exact-model GLB round trip and auxiliary-array checks pass. The adapter consumes geometry directly; numeric template conversion is unsupported. Final style-mask and art approval remain pending.
