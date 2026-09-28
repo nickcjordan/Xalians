@@ -89,7 +89,17 @@ describe('reasonLines', () => {
 		const quicker = { taken: [{ by: 'k', name: 'Kosanos', power: 16, roles: ['strike'], mine: false, before: true }], dealt: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: true, fallsBeforeActing: true };
 		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: quicker }))).toEqual(['It falls before it can act (it goes in with 13). Kosanos is quicker and strikes it first for 16.']);
 		const bolster = { taken: [{ by: 'k', name: 'Kosanos', power: 16, roles: ['strike'], mine: false, before: true }], dealt: [], downs: [], recovered: 0, unlifted: 0, alliesDowned: [], falls: true, first: false, strikes: false, fallsBeforeActing: false };
-		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: bolster, role: 'bolster' }))).toEqual(['It falls in the Clash (it goes in with 13). Kosanos strikes it for 16; a bolster lifts and never strikes, so nothing weakens Kosanos first.']);
+		expect(text(reasonLines({ why: { going: 13, own: 0, falls: true }, record: frackworm, site: zolton, blows: bolster, role: 'bolster' }))).toEqual(['It falls in the Clash (it goes in with 13). Kosanos strikes it for 16; a bolster mends and never strikes, so nothing weakens Kosanos first.']);
+	});
+
+	// pass 69: what a support creature of yours does for it, each in its own number
+	it('says what your support creature guards, steadies and mends', () => {
+		const covered = { taken: [{ by: 'n', name: 'Neph', power: 9, roles: ['strike'], mine: false }], dealt: [], downs: [], recovered: 4, unlifted: 0, alliesDowned: [], falls: false, first: false, strikes: true, guardedOff: 3, guardByName: 'Kosanos', shrugged: ['restrained'], steadiedByName: 'Kosanos' };
+		expect(reasonLines({ why: { going: 14, own: 9 }, record: frackworm, site: zolton, blows: covered })[0].cause)
+			.toBe("Neph strikes it for 9; your Kosanos's guard takes 3 off; your Kosanos keeps it clear: no restrained; your Kosanos mends 4.");
+		const itself = { ...covered, guardByName: 'itself', steadiedByName: 'itself' };
+		expect(reasonLines({ why: { going: 14, own: 9 }, record: frackworm, site: zolton, blows: itself })[0].cause)
+			.toBe('Neph strikes it for 9; its own guard takes 3 off; it keeps itself clear: no restrained; it mends 4.');
 	});
 
 	it("says a quicker rival's blow before what the creature lands back", () => {

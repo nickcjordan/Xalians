@@ -364,6 +364,39 @@ export const HURT_ATTACKS_LESS = true;
 export const BOLSTER_RECOVERY = 0.5;
 
 /*
+	PASS 69: SUPPORT THAT CARRIES WEIGHT. Nick, 2026-09-28, on the four options put to him:
+	pass a support creature's guard to its allies ("definitely something worth putting in
+	place"), let its allies shrug off statuses ("that's a big part of what support generally
+	implies") and let it heal during the fight ("since we have the clash phase expanding now
+	so that the battles play out fully ... the healing probably makes more sense than it did
+	before"). Design and every number: docs/design/reclamation-support-carries-weight.md.
+
+	Who a support creature covers: its own side at its own world, itself included, while it
+	stands. How far it reaches is the open question Nick asked to rethink (support from a
+	distance), so it is decided in one place, supportAt in expeditionRules.ts.
+
+	SUPPORT_GUARD: a blow on a creature a support creature covers lands at this share. The
+	catalog's `protected` ("an applied protection grants its explicitly declared scope and
+	degree"), declared as a quarter off every blow. Guards do not stack.
+*/
+export const SUPPORT_GUARD = 0.75;
+/*
+	SUPPORT_STEADIES: a creature a support creature covers shrugs off the two status groups
+	that take a fight away from it, weakened (half power) and held (no swing). Harm statuses
+	still bite, since the blow that carries them has already landed.
+*/
+export const SUPPORT_STEADIES = true;
+/*
+	SUPPORT_MEND: a support creature mends at its own turn in each exchange, in speed order
+	like a blow, and gives the creature it covers that is closest to falling back this share
+	of its mend. Its mend is its heal's strength, or its strongest act's when the record
+	carries no heal (46 of 84 support creatures in a 960-record sample), scaled by charisma.
+	It replaces the between-exchanges recovery pass 56 added. 1 is the whole mend, measured
+	against 0.5 and 0.75 in docs/design/reclamation-support-carries-weight.md.
+*/
+export const SUPPORT_MEND = 1;
+
+/*
 	PASS 4: CONCEALMENT ONLY (docs/design/reclamation-base-redesign.md assumption 24).
 
 	Hiding used to bundle two things: information (the rival sees that a creature was
@@ -741,68 +774,10 @@ export const SENDABLE = 11;
 export const ROUND_SEND_CAP = 0;
 
 /*
-	PASS 25. CROSS-WORLD PROJECTION, and why it is not a new invention.
-
-	The base redesign's own lever pool names this and names the condition that brings it back
-	(docs/design/reclamation-base-redesign.md, "The lever pool"):
-
-		"Cross-world projection: if sealed worlds measure as three disconnected games (option
-		 spread and decided-after-round-1 worsen), one area act that reaches one other world."
-
-	BOTH HALVES OF THAT CONDITION NOW MEASURE AS FAILING.
-
-	- Option spread (pass 24): near-best options per decision run 3.9 / 2.8 / 2.05 across the
-	  three rounds, and by round three HALF of all decisions have one dominant answer. Pass 2
-	  measured 5.7 near-best and 14 percent dominant, so the game has got shallower as it got
-	  balanced.
-	- Decided after round 1, canonical definition (the earliest round after which the winner
-	  led strictly and never fell behind or tied again): **47.5 / 50.7 / 48.5 percent against a
-	  band of under 35.** Half of all matches are effectively over after the first round.
-
-	So this is the ruling the design pre-authorized, applied on the evidence it asked for,
-	rather than a new mechanic on taste. Assumption 3 ("worlds are sealed: only creatures
-	standing at a world touch it") was held at 85 percent confidence and tentative; this is the
-	measured case that reopens it, and it reopens it as narrowly as the lever pool words it -
-	ONE act, reaching ONE other world, and only for the creatures whose record already says
-	they reach that far.
-
-	PROJECTION_REACH is the reach at which an AREA act also catches the next world in the
-	frame. The pool's reach grades are contact 1, short 2, medium 3, long 4 (REACH_BY_RANGE),
-	and across five seeds of 87 creatures the act histogram is 251 at reach 0, 1003 at 1, 163
-	at 2 and 102 at 3. 0 disables the rule entirely.
-
-	PROJECTION_FALLOFF is the share of the sweep's power that lands at the far world, so
-	distance costs something and a projected sweep is not simply a bigger sweep.
-
-	SHIPPED OFF. THE NEGATIVE RESULT, and it is the useful part of this pass.
-
-	First, a content fact the design could not have known: **an area act never reaches past 2,
-	and a reach-3 act is never an area.** The joint distribution over 1519 usable acts on five
-	seeds is reach 0 x area 226, reach 1 x area 132, reach 2 x area 89, reach 3 x single 102,
-	and nothing above. The generator treats spread and distance as a tradeoff, so the lever
-	pool's literal wording - "one AREA act that reaches one other world" - describes a creature
-	this content cannot produce. Projection therefore had to key on reach 2 (89 acts, 5.9
-	percent) or lower to fire at all.
-
-	Second, it fires and it changes nothing. At reach 1, where EVERY area act projects, sweep
-	victims per match rise 10.2 to 14.4 - 41 percent more creatures caught - and the gauges do
-	not move:
-
-		                      decided-r1        r3 depth       downs  1v1    flips
-		no projection         47.4/50.4/47.8    2.05/50%       4.5    55%    31%
-		reach 2, falloff 0.5  47.0/50.2/47.0    2.06/50%       4.5    55%    31%
-		reach 2, falloff 1.0  48.2/49.6/46.8    2.07/50%       4.6    55%    31%
-		reach 1, falloff 0.5  47.2/49.4/50.2    2.06/50%       4.7    55%    31%
-
-	WHY, and this is what the next pass should act on. Projection adds DAMAGE across worlds,
-	and the decision problem is not about damage - it is about which world to commit a creature
-	to. A cloud that spills into the next world changes what a send is worth by a little and
-	changes the shape of the choice not at all: the handler still picks one creature and one
-	world, and by round three there are few of each. Cross-world REACH is not a second axis. A
-	second axis has to change what a decision is ABOUT, not add a number to the one that exists.
-
-	Kept, off, with the sweep reproducible, so the lever pool's entry is closed by measurement
-	rather than left as an untried alternative (the fault pass 15 found in `worldsPerFrame`).
+	PASS 69: cross-world projection is gone. Pass 25 built it (an area act that also caught
+	the next world) and shipped it off, because it moved no gauge. Nick, 2026-09-28: "I don't
+	think a splash on one world makes sense to splash over to the next world." Nothing
+	crosses between worlds now. The measurement is kept in the ownership log's pass 25 entry.
 */
 /*
 	PASS 25. ACT FLIP: the handler chooses which of a creature's acts it uses, at send.
@@ -873,8 +848,6 @@ export const ROUND_SEND_CAP = 0;
 */
 export const ACT_FLIP = false;
 
-export const PROJECTION_REACH = 0;
-export const PROJECTION_FALLOFF = 0.5;
 export const FRAMES_PER_MATCH = 3;
 /*
 	PASS 15 (2026-09-19): the frame width, swept and left where it was. THE NEGATIVE RESULT.

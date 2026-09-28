@@ -1531,7 +1531,8 @@ class ReclamationMatch extends React.Component {
 		// PASS 18: `pin` joins the narrated kinds. A restraining attack takes its target's
 		// swing, and a swing that vanishes without a sentence is how a table loses a player's
 		// trust, so the cause is said out loud before the effect.
-		if (kind !== 'attack' && kind !== 'sweep' && kind !== 'shield' && kind !== 'recover' && kind !== 'pin') {
+		// pass 69: a status a support creature's steadying stopped is told too
+		if (kind !== 'attack' && kind !== 'sweep' && kind !== 'shield' && kind !== 'recover' && kind !== 'pin' && !(kind === 'status' && event.shrugged)) {
 			return;
 		}
 		const sided = (u) => (u.seat === YOU ? `your ${speciesLabel(u.record)}` : `the rival's ${speciesLabel(u.record)}`);
@@ -1540,12 +1541,14 @@ class ReclamationMatch extends React.Component {
 		// name their target
 		const otherId = kind === 'shield' ? event.cancelled : event.target;
 		const other = otherId ? snap[otherId] : null;
-		const bolster = kind === 'recover' && event.bolster ? snap[event.bolster] : null;
+		const bolster = kind === 'recover' && event.bolster ? snap[event.bolster]
+			: kind === 'status' && event.shrugged ? snap[event.shrugged] : null;
 		const site = event.site ? playback.frame.sites.find((s) => s.id === event.site) : null;
 		const sentence = narrateEvent(event, {
 			actorName: actor ? sided(actor) : 'A creature',
 			targetName: other ? sided(other) : undefined,
-			bolsterName: bolster ? speciesLabel(bolster.record) : undefined,
+			// pass 69: a mend or a status kept clear names whose support creature, as a blow names whose striker
+			bolsterName: bolster ? ((kind === 'recover' && event.mend) || kind === 'status' ? sided(bolster) : speciesLabel(bolster.record)) : undefined,
 			// assumption 18: a hurt attacker lands less, so the sentence names the condition
 			actorHurt: (kind === 'attack' || kind === 'sweep') && this.wasHurtBefore(event, playback),
 			siteName: site ? site.name : (actor ? actor.siteName : undefined),
@@ -1708,6 +1711,7 @@ class ReclamationMatch extends React.Component {
 						hold: live,
 						role: e.role !== undefined ? e.role : prepared.role,
 						blowMagnitude: prepared.blowMagnitude,
+						mendMagnitude: prepared.mendMagnitude,
 						hurt: live < full,
 						strainLevel: prepared.strainLevel,
 						isHome: prepared.isHome,
@@ -1784,7 +1788,7 @@ class ReclamationMatch extends React.Component {
 				blows = null;
 			}
 			if (blows) {
-				value[site.id] = nameBlows(blows, match, seat);
+				value[site.id] = nameBlows(blows, match, seat, recordId);
 			}
 		});
 		this.blowCache = { match, key, value };
@@ -2356,6 +2360,12 @@ class ReclamationMatch extends React.Component {
 				highlights.hit = playback.current.recordId;
 				highlights.flash = flashFor(playback.current);
 			}
+			// pass 69: the support creature that kept a creature clear lights with it
+			if (kind === 'status' && playback.current.shrugged) {
+				highlights.acting = playback.current.shrugged;
+				highlights.hit = playback.current.target || null;
+				highlights.flash = flashFor(playback.current);
+			}
 			// pass 45: what is happening, said on the clashing world rather than in the top bar
 			const snap = playback.boardBefore || {};
 			const who = (id) => (id && snap[id] ? { name: speciesLabel(snap[id].record), seat: snap[id].seat } : null);
@@ -2363,7 +2373,7 @@ class ReclamationMatch extends React.Component {
 			const parts = captionEvent(ev, {
 				actor: who(ev.recordId) || undefined,
 				target: who(kind === 'shield' ? ev.cancelled : ev.target) || undefined,
-				bolster: kind === 'recover' ? who(ev.bolster) || undefined : undefined,
+				bolster: kind === 'recover' ? who(ev.bolster) || undefined : kind === 'status' ? who(ev.shrugged) || undefined : undefined,
 			});
 			if (parts && ev.site) {
 				highlights.caption = { parts, key: playback.index };
@@ -2804,6 +2814,10 @@ export function stepWeight(event) {
 	if (event.type === 'shield' || event.type === 'recover') {
 		return 0.9;
 	}
+	// pass 69: a status steadied away is a beat; one that took is said by the swing it costs
+	if (event.type === 'status') {
+		return event.shrugged ? 0.9 : 0.35;
+	}
 	return 1;
 }
 
@@ -2818,6 +2832,9 @@ export function flashFor(event) {
 	}
 	if (event.type === 'recover') {
 		return { kind: 'recover', text: `+${formatBlow(event.amount)}` };
+	}
+	if (event.type === 'status') {
+		return event.shrugged ? { kind: 'ward', text: 'clear' } : null;
 	}
 	if (event.type !== 'attack') {
 		return null;

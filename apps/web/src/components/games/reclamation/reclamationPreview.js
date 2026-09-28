@@ -31,7 +31,7 @@
 import { prepare, magnitudeAgainst, targetMatchupMultiplier, STRAIN_OVERLAP_COMFORT } from '@xalians/rules/expedition/creatureOnTable';
 import { attackPowerAgainst } from '@xalians/rules/expedition/expeditionRules';
 import { ROLE, instinctLaneOf, presenceScaleOf } from '@xalians/rules/expedition/expeditionInterpretation';
-import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { speciesLabel, formatHold, roleSentence, rolePower } from './reclamationNarration';
 
 const OTHER = { A: 'B', B: 'A' };
 
@@ -389,7 +389,7 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 		bolstered: prepared.bolstered,
 		role,
 		blowMagnitude: prepared.blowMagnitude,
-		roleLine: roleSentence(role, prepared.blowMagnitude),
+		roleLine: roleSentence(role, rolePower(prepared)),
 		lines,
 		effect,
 		targetRecordId,

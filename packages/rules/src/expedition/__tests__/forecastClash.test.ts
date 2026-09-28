@@ -236,11 +236,12 @@ describe('forecastMove', () => {
 */
 describe('forecastSendBlows', () => {
 	test('adds up to the forecast toll, and downs what the forecast downs', () => {
-		// unlifted counts the cases where a fallen ally's lift is part of the toll
+		// unlifted counts the cases where a fallen ally's lift is part of the toll; pass 69's
+		// support rules made it rarer, so ten seeds rather than five find one
 		let checked = 0;
 		let withBlows = 0;
 		let unlifted = 0;
-		['b1', 'b2', 'b3', 'b4', 'b5'].forEach((seed) => {
+		['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10'].forEach((seed) => {
 			playMatch(seed, (before) => {
 				const handler = before.turn as Seat;
 				before.players[handler].roster.forEach((record: any) => {
@@ -285,7 +286,7 @@ describe('forecastSendBlows', () => {
 		let quicker = 0;
 		let neverStrikes = 0;
 		let beforeTurn = 0;
-		['b1', 'b2', 'b3', 'b4', 'b5'].forEach((seed) => {
+		['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10'].forEach((seed) => {
 			playMatch(seed, (before) => {
 				const handler = before.turn as Seat;
 				before.players[handler].roster.forEach((record: any) => {

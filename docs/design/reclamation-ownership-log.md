@@ -2,39 +2,38 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 68, 2026-09-27)
+## Standing state (after pass 69, 2026-09-28)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
-### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 68)
+### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 69)
 
-Pass 68 made a world's temperature cost a tenth, or a quarter far off, instead of a half or a quarter (`reclamation-temperature-weight.md`).
+Pass 69 gave the bolster three jobs at its world: a guard (a quarter off every blow), keeping its side clear of weakened and held, and a mend at its own turn (`reclamation-support-carries-weight.md`).
 
 | Gauge | Band | Seed 7 | Seed 13 | Verdict |
 |---|---|---|---|---|
-| Round-one starter wins | about 50 | 48.2 | 50.4 | met |
-| Comeback (trailing after world 1, won) | 30 to 40 | 29.4 | 29.0 | just under |
-| Resolution changes the leader | 25 to 40 | 31.7 | 30.6 | met |
-| Downs per match | reported | 8.90 | 8.73 | reported |
-| Uncontested sites | reported | 11.8 | 10.5 | reported (18 before pass 68) |
-| Sends to a world that strains the creature | reported | 39.6 | 41.7 | reported (28 before pass 68) |
-| Strike keeper win rate | 40 to 60 | 67.0 | 63.2 | **over** |
-| Sweep / shield keeper win rate | 40 to 60 | 51.5 / 50.7 | 54.0 / 51.2 | met |
-| Bolster keeper win rate | 40 to 60 | 35.2 | 37.0 | **under since pass 68**: a temperature grade, its main lift, is worth a tenth now |
-| Games with a stake | reported | 0.4 | 0.4 | **the stake is almost never used** |
+| Round-one starter wins | about 50 | 47.0 | 51.0 | met |
+| Comeback (trailing after world 1, won) | 30 to 40 | 26.7 | 31.3 | **under on seed 7** |
+| Resolution changes the leader | 25 to 40 | 26.7 | 27.3 | met, low (31 before pass 69) |
+| Downs per match | reported | 8.34 | 8.28 | reported |
+| Uncontested sites | reported | 11.1 | 9.6 | reported |
+| Sends to a world that strains the creature | reported | 39.7 | 41.7 | reported |
+| Strike keeper win rate | 40 to 60 | 65.2 | 62.8 | **over** |
+| Sweep / shield keeper win rate | 40 to 60 | 53.3 / 51.9 | 55.3 / 51.2 | met |
+| Bolster keeper win rate | 40 to 60 | 43.2 | 39.0 | met on seed 7, a point under on seed 13 (35 to 37 at pass 68) |
+| A side's share of a round's worlds, with a bolster that round | reported | 48.6 | 47.3 | **under the 50.3 / 50.8 without one**: it stands alone (0.31 allies) |
+| Games with a stake | reported | 0.6 | 0.6 | **the stake is almost never used** |
 
-### The blind critic (last read: pass 65, seed 21, on Opus; next due: pass 68)
+### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 72)
 
 | Clarity | Decisions | The Clash | Arc | Another game | Phone | Numbers | Feedback |
 |---|---|---|---|---|---|---|---|
-| 6 | 6 | 4 | 5 | 5 | 6 | 5 | 7 |
+| 6 | 5 | 4 | 4 | 4 | 5 | 4 | 6 |
 
-Pass 62's read: 7, 5, 3, 4, 6, 6, 5, 6. The critic's best thing, again: the three bars per card and the lifted preview. Its three problems:
-1. "The Clash is a formality": the forecast already showed the outcome, and each world gets about one blow.
-2. Round 1 decided the game. Sends to worlds already won by 20 went unflagged while the rival could still answer, so rounds 2 and 3 were walkovers.
-3. Numbers and controls a stranger cannot trust (details in open item 3).
-
-Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another game 5, phone 7. Pass 65's critic ran on Opus with the rules given; the model behind earlier critics was not recorded, so compare the trend, not single points.
+Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this one covers passes 66 to 69 together. The capture caught a different game: the harness spent 8 of 11 sends in round 1 and conceded round 3, so decisions and arc read that game as much as the build. The critic's best thing was the Charter's grid of who held what, with a plain reason for the loss. Its three problems:
+1. Nothing warns about spending sends too early, so the last round can be dead (open item 2).
+2. The Clash's result is shown before the Clash: crosses and struck numbers, and "yours as they stand" (open item 1).
+3. Too many numbers, and the smallest unreadable. It read "×¾" as "×%". Pass 69 writes it ×0.75 and stacks each card's factor under its mark, since "×0.9" had run into the next column since pass 68.
 
 ### Open items, ranked (resume here)
 
@@ -50,12 +49,12 @@ Pass 50's read, for comparison: clarity 6, decisions 4, Clash 5, arc 3, another 
 3. **Stake ×2 and Move are never explained on the table** (pass 65 critic). They are controls with their rule in their title and in How to play. Pass 66 fixed the critic's other two cases (`reclamation-plates-add-up.md`):
    - the plates now add up to their world's total, and a check holds it;
    - Grimedes' missing total was the number sliding back as the arena closed, caught mid-slide.
-4. **Balance** (pass 68 moved it; gauges above):
-   - bolster keepers at 35 to 37 percent since temperature weighs less; its flat lift (`BOLSTER_FLOOR`, 1) is the first lever to try;
-   - strike keepers at 63 to 67 percent;
+4. **Balance** (pass 69 moved it; gauges above):
+   - **the support creature's reach, waiting on Nick.** At its own world it has almost nobody to support. A prototype of support from a distance (sent for the round, covering all three worlds, holding nothing) lifted its side's round share to 53.7 / 49.5 against 46.6 / 47.7. The proposal and its four open questions are in `reclamation-support-carries-weight.md`;
+   - strike keepers at 63 to 65 percent;
    - the stake almost never used;
-   - the starter seat on seed 13;
-   - bolster keepers at 41 to 44 percent.
+   - comeback under band on seed 7 (26.7), and the Clash changing the leader down to 27;
+   - air and water still cost a half and a quarter at four worlds of 42. Nick questioned the concept (the creature rules promise air, not water); softening them to temperature's scale or removing them is his call.
 5. **Fathomaw has no art** ("?"). Readers take its dashed "?" box for a hidden or unplaced creature.
 6. **Whose move it is does not read.** Every pass 65 reader took it from the rival's last line and the Pass key, not from the pointer.
 7. **On a phone, a creature pointed at beside yours shows nothing on the world** (a world there is 110 pixels wide).
@@ -1470,4 +1469,38 @@ Nick: "the temperature bands have way too much weight on the factor of the creat
 **Found while verifying:**
 - The words under a creature went all at once in a crowded case. They now give way line by line first.
 - The proving check's plate sum flaked while a creature pointed at previewed itself on a world's bar. It now skips that world.
+
+### Pass 69 (2026-09-28): support that carries weight
+
+Nick answered the five options for the bolster one by one:
+- the guard, keeping its side clear of statuses, and healing in the fight: build them;
+- reaching other worlds: rethink it as support from a distance;
+- more statuses in play: hold.
+
+He also asked for the area attacker's reach to the next world to go ("a splash on one world" should not "splash over to the next world"). The design and every number are in `reclamation-support-carries-weight.md`.
+
+**What changed:**
+- **The guard:** every blow on a creature a bolster covers lands at three quarters.
+- **Keeping clear:** the creatures it covers shrug off weakened and held.
+- **The mend:** at its own turn in each exchange it mends the one closest to falling, for its heal times its charisma, at full strength however hurt it is. It replaces the between-exchanges recovery.
+- **The table** tells each job where it happens:
+  - "−11→8 guarded, 5 left";
+  - "Bioflim mends itself: +7, 12 left";
+  - "Kosanos keeps Tizzie clear: no restrained".
+
+  The words under a lifted creature give each job its number.
+- **Cross-world projection's code is deleted.** It was already off, so nothing plays differently.
+
+**Measured:**
+- **Bolster keepers** rose from 35 to 37 percent to 43 and 39.
+- **Fights are no longer:** 2.3 exchanges per fought world either way.
+- **The round is not better** for the side that sends one: 48.6 and 47.3 against 50.3 and 50.8. A bolster shares its world with 0.31 of its own side, so what it does lands mostly on itself.
+- **The throwaway prototype of support from a distance** is the first version that is worth something to the round. It is measured and waiting on Nick.
+- **Hurt mending less spiralled.** A hurt mender mending less (as a hurt striker strikes less) left bolster keepers at 26 to 30 percent.
+
+**Found while verifying:**
+- **The ×¾ mark** read as "×%" to the critic. It is now written ×0.75.
+- **The factors on a card** had overlapped the next column since pass 68 ("×0.9" is 30 pixels in a 23-pixel column at 1366). They now stack under their marks, checked at 1366 and 1440 with no overlap on any card.
+- **The critic's capture** missed the Ruling behind a long fight. It now waits.
+- **Pass 68 skipped its due critic.** This pass ran it.
 

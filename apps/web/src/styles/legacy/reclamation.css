@@ -8102,3 +8102,16 @@
 .rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-lines="2"] .rec-reasons > :nth-child(n+3),
 .rec-console--match[data-terminal] .rec-ghost-piece--says[data-says-lines="1"] .rec-reasons > :nth-child(n+2) { display: none; }
 
+
+/*
+	PASS 69: on a card, each factor stands under its mark. A card's column is 23px wide at
+	1366, and a mark with its factor beside it ("×0.9", 30px) ran into the next column's
+	since pass 68 made temperature a decimal. Stacked, "×0.75" fits its own column. Every
+	card reserves the two lines, so the wells, and the bars in them, keep one height across
+	the bench. The phone shows marks without factors and keeps its one line.
+*/
+@media (min-width: 761px) {
+	.rec-console--match[data-terminal] .rec-fit-col { grid-template-rows: minmax(0, 1fr) auto calc(var(--why) * 1.8); }
+	.rec-console--match[data-terminal] .rec-fit-why { height: calc(var(--why) * 1.8); align-items: flex-start; }
+	.rec-console--match[data-terminal] .rec-fit-why.rec-whys--factors .rec-why-chip { flex-direction: column; gap: 1px; }
+}

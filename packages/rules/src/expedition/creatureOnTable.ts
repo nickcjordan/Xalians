@@ -39,6 +39,7 @@ import {
 	WILLFUL_THRESHOLD,
 	SWIFT_SPEED,
 	presenceScaleOf,
+	SUPPORT_MEND,
 } from './expeditionInterpretation.ts';
 import type {
 	Act, ActClass, AuthoredSite, Conduct, FrameSite, HoldResult, PrepareOptions,
@@ -746,6 +747,17 @@ export function flippableRolesOf(record: XalianRecord, rules?: Partial<Rules> | 
 	no attacking ability at all strikes at MIN_BLOW_MAGNITUDE; `fallback` marks that case
 	so the simulator can count how often it fires.
 */
+/*
+	PASS 69. What a support creature mends for: its strongest heal, or, when the record
+	carries no heal (a support creature by its archetype rather than its acts), its strongest
+	act of any kind. Already scaled by strain and the magnitude scale, as every act is.
+*/
+export function mendMagnitudeOf(acts: Act[]): number {
+	const mends = acts.filter((a) => a.action === 'mend');
+	const pool = mends.length ? mends : acts;
+	return pool.reduce((best, a) => Math.max(best, a.magnitude || 0), 0);
+}
+
 export function blowActOf(record: XalianRecord, acts: Act[], role: Role): Act | null {
 	const minimum: Act = {
 		name: 'Blow',
@@ -909,6 +921,10 @@ export function prepare(
 		blow,
 		blowMagnitude: blow ? blow.magnitude : 0,
 		blowIsFallback: !!(blow && blow.fallback),
+		// pass 69: the number it mends for at its turn, charisma and rules.supportMend in
+		mendMagnitude: role === ROLE.BOLSTER
+			? round1(mendMagnitudeOf(acts) * (rules && typeof rules.supportMend === 'number' ? rules.supportMend : SUPPORT_MEND) * presenceScaleOf(record, rules))
+			: 0,
 		conduct: conductOf(record),
 		traitKeywords,
 		stealthy: traitKeywords.includes('stealthy'),

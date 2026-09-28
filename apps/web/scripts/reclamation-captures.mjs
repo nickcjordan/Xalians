@@ -96,7 +96,8 @@ for (const width of [1440, 390]) {
 	// the Clash, caught on the events rather than on a timer
 	let blows = 0;
 	let sawJudge = false;
-	for (let i = 0; i < 260; i++) {
+	// pass 69: a fight to the end can outlast 260 polls at this step, and the Ruling went uncaught
+	for (let i = 0; i < 900; i++) {
 		const state = await page.evaluate(() => {
 			const d = window.__reclamationDebug || {};
 			return { playing: d.playing, event: d.currentEvent };

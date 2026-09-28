@@ -302,11 +302,11 @@ describe('the instruments', () => {
 		expect(factorText(0.25)).toBe('\u00d7\u00bc');
 		// pass 68: a world's temperature takes a tenth, or a quarter far off
 		expect(factorText(0.9)).toBe('\u00d70.9');
-		expect(factorText(0.75)).toBe('\u00d7\u00be');
+		expect(factorText(0.75)).toBe('\u00d70.75');
 		const home = render(<WhyMarks reasons={{ home: true, homeFactor: 1.5 }} factors />);
 		expect(home.container.querySelector('.rec-why-x').textContent).toBe('\u00d71\u00bd');
 		const cold = render(<WhyMarks reasons={{ climate: { level: 'severe', cause: 'cold', factor: 0.75 } }} factors />);
-		expect(cold.container.querySelector('.rec-why-x').textContent).toBe('\u00d7\u00be');
+		expect(cold.container.querySelector('.rec-why-x').textContent).toBe('\u00d70.75');
 		const self = render(<WhyMarks reasons={{ selfLift: 1.2 }} factors />);
 		expect(self.container.querySelector('[data-why="self"]')).not.toBeNull();
 		expect(self.container.querySelector('.rec-why-x').textContent).toBe('+1');
