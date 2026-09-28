@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-09-28T20:31:48.820927+00:00",
+  "observedAt": "2026-09-28T20:50:53.972237+00:00",
   "runtime": "codex-cli 0.158.0-alpha.2.1",
   "method": "hooks/list",
   "result": {
@@ -11,7 +11,7 @@
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:user_prompt_submit:0:0",
             "eventName": "userPromptSubmit",
             "handlerType": "command",
-            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
             "async": false,
             "matcher": null,
             "timeoutSec": 10,
@@ -23,14 +23,14 @@
             "displayOrder": 0,
             "enabled": true,
             "isManaged": false,
-            "currentHash": "sha256:06a550bc6f422500514b89e0c0696b6e603549c90051c40ad0ec67941b71254a",
-            "trustStatus": "untrusted"
+            "currentHash": "sha256:b308511a99852f3b53e0ca4c9bc23f5613a27ac5a5e3f276e30cdae4e92b5869",
+            "trustStatus": "modified"
           },
           {
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:stop:0:0",
             "eventName": "stop",
             "handlerType": "command",
-            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
             "async": false,
             "matcher": null,
             "timeoutSec": 30,
@@ -42,14 +42,14 @@
             "displayOrder": 1,
             "enabled": true,
             "isManaged": false,
-            "currentHash": "sha256:e5163e9a16f35817729830b147a353d0768979849a0f676468101c1521a7c882",
-            "trustStatus": "untrusted"
+            "currentHash": "sha256:d81c6641964a2ff039991b18ae173f76d2ce76ab4a7d68e1c71b5cd24f597995",
+            "trustStatus": "modified"
           },
           {
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:interrupt:0:0",
             "eventName": "interrupt",
             "handlerType": "command",
-            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
             "async": false,
             "matcher": null,
             "timeoutSec": 3,
@@ -61,8 +61,8 @@
             "displayOrder": 2,
             "enabled": true,
             "isManaged": false,
-            "currentHash": "sha256:1135508e08bde6fbde1c202975c261c06e53d9672ad2708caed8d68ae0b2ce3c",
-            "trustStatus": "untrusted"
+            "currentHash": "sha256:ee6a5f31a44f5c313a2aba6b982bb4f14cebf00fe3a6bb10f92de629955d99ca",
+            "trustStatus": "modified"
           }
         ],
         "warnings": [],
@@ -75,7 +75,7 @@
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:user_prompt_submit:0:0",
             "eventName": "userPromptSubmit",
             "handlerType": "command",
-            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
             "async": false,
             "matcher": null,
             "timeoutSec": 10,
@@ -87,14 +87,14 @@
             "displayOrder": 0,
             "enabled": true,
             "isManaged": false,
-            "currentHash": "sha256:06a550bc6f422500514b89e0c0696b6e603549c90051c40ad0ec67941b71254a",
-            "trustStatus": "untrusted"
+            "currentHash": "sha256:b308511a99852f3b53e0ca4c9bc23f5613a27ac5a5e3f276e30cdae4e92b5869",
+            "trustStatus": "modified"
           },
           {
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:stop:0:0",
             "eventName": "stop",
             "handlerType": "command",
-            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
             "async": false,
             "matcher": null,
             "timeoutSec": 30,
@@ -106,14 +106,14 @@
             "displayOrder": 1,
             "enabled": true,
             "isManaged": false,
-            "currentHash": "sha256:e5163e9a16f35817729830b147a353d0768979849a0f676468101c1521a7c882",
-            "trustStatus": "untrusted"
+            "currentHash": "sha256:d81c6641964a2ff039991b18ae173f76d2ce76ab4a7d68e1c71b5cd24f597995",
+            "trustStatus": "modified"
           },
           {
             "key": "C:\\dev\\src\\Xalians\\.codex\\hooks.json:interrupt:0:0",
             "eventName": "interrupt",
             "handlerType": "command",
-            "command": "powershell -NoProfile -Command \"$auditRoot = git rev-parse --show-toplevel; python (Join-Path $auditRoot 'scripts/completion_audit.py') hook\"",
+            "command": "python -c \"import runpy, subprocess; runpy.run_path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip() + '/scripts/completion_audit.py', run_name='__main__')\" hook",
             "async": false,
             "matcher": null,
             "timeoutSec": 3,
@@ -125,8 +125,8 @@
             "displayOrder": 2,
             "enabled": true,
             "isManaged": false,
-            "currentHash": "sha256:1135508e08bde6fbde1c202975c261c06e53d9672ad2708caed8d68ae0b2ce3c",
-            "trustStatus": "untrusted"
+            "currentHash": "sha256:ee6a5f31a44f5c313a2aba6b982bb4f14cebf00fe3a6bb10f92de629955d99ca",
+            "trustStatus": "modified"
           }
         ],
         "warnings": [],

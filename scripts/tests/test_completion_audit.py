@@ -239,11 +239,28 @@ class CompletionAuditTests(unittest.TestCase):
         (self.root/'scripts/completion_audit.py').write_bytes(Path(gate.__file__).read_bytes())
         (self.root/'nested').mkdir()
         config = gate.read(source/'.codex/hooks.json')
-        command = config['hooks']['Stop'][0]['hooks'][0]['commandWindows']
-        process = subprocess.run(command, input=json.dumps(self.payload()), text=True,
-                                 capture_output=True, cwd=self.root/'nested')
-        self.assertEqual(process.returncode, 0, process.stderr)
-        self.assertEqual(json.loads(process.stdout)['decision'], 'block')
+        # Codex can wrap commandWindows in the session's PowerShell, not just cmd.
+        # A nested PowerShell -Command with double-quoted $variables expands too early.
+        shells = {
+            'direct': lambda command: command,
+            'powershell': lambda command: ['powershell', '-NoProfile', '-Command', command],
+            'cmd': lambda command: os.environ.get('COMSPEC', 'cmd.exe') + ' /C "' + command + '"',
+        }
+        for name, invocation in shells.items():
+            with self.subTest(shell=name):
+                for event in ('UserPromptSubmit', 'Stop', 'Interrupt'):
+                    command = config['hooks'][event][0]['hooks'][0]['commandWindows']
+                    payload = self.payload()
+                    payload['hook_event_name'] = event
+                    process = subprocess.run(invocation(command), input=json.dumps(payload), text=True,
+                                             capture_output=True, cwd=self.root/'nested', timeout=10)
+                    self.assertEqual(process.returncode, 0, process.stderr)
+                    result = json.loads(process.stdout)
+                    if event == 'Stop':
+                        self.assertEqual(result['decision'], 'block')
+                    else:
+                        self.assertEqual(result, {})
+                self.assertTrue(gate.read(gate.state_path(self.root, payload['session_id']))['interrupted'])
 
 
 if __name__ == '__main__':
