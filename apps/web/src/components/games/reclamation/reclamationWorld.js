@@ -294,7 +294,8 @@ function ReclamationWorld({
 							noTarget: seat === you && !!deploying && !!h && h.role === 'strike'
 								&& theirs.length === 0 && !(hiddenEnemyCount > 0),
 							forecast: after,
-							blowMagnitude: h ? h.blowMagnitude : undefined,
+							// pass 69: a support creature's sentence carries its mend
+							blowMagnitude: h ? (h.role === 'bolster' ? h.mendMagnitude : h.blowMagnitude) : undefined,
 							selected: armedRecordId === entry.recordId || movingRecordId === entry.recordId,
 							// pass 38: not at the Ruling, where the winners of the round were dimmed along with the fallen
 							dimmed: !verdict && holdingIds && holdingIds.includes(entry.recordId),

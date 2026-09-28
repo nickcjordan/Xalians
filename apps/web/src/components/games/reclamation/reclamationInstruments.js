@@ -250,6 +250,14 @@ function climateShare(climate) {
 
 // pass 59: a factor as the card prints it beside its mark (pass 68: a tenth off prints as ×0.9)
 export function factorText(v) {
+	/*
+		PASS 69. Three quarters is written ×0.75. The font's ¾ at a card's mark size reads as
+		"%": the pass 69 critic read "×%" under Magmuth. Temperature's two factors are decimals
+		(×0.9, ×0.75); the halves and quarters of air, water and home stay fractions.
+	*/
+	if (Math.abs(v - 0.75) < 1e-6) {
+		return '×0.75';
+	}
 	if (Math.abs(v * 4 - Math.round(v * 4)) > 1e-6) {
 		return `\u00d7${Number(v.toFixed(2))}`;
 	}

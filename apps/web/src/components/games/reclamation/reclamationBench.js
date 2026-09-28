@@ -6,7 +6,7 @@ import {
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { slotStateOf } from './reclamationRoster';
-import { speciesLabel, roleSentence, roleWord } from './reclamationNarration';
+import { speciesLabel, roleSentence, roleWord, rolePower } from './reclamationNarration';
 import { FitStrip, fitSentence } from './reclamationInstruments';
 import { fitScale, fitTakesAny, FIT_RIVAL_ROOM } from './reclamationFit';
 import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
@@ -57,7 +57,7 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 	// the base redesign's one glyph per creature: the role it plays at the Clash, the same
 	// on the bench as on the plinth on the table and in the dossier
 	const role = readAt.role;
-	const roleLine = roleSentence(role, readAt.blowMagnitude);
+	const roleLine = roleSentence(role, rolePower(readAt));
 	// the attribute lanes that are actually doing something for this creature: the marks
 	// beside the speed number, each with its own lane sentence (Pass 2, assumption 17)
 	const laneMarks = attributeLanes(readAt, view.rules).filter((l) => l.glyph);

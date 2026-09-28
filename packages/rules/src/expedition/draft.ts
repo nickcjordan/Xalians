@@ -23,7 +23,7 @@ import { createRngState, nextRandom, createMatch } from './expeditionRules.ts';
 import { getWorlds } from './sites.ts';
 import { prepare, roleOf, speedOf } from './creatureOnTable.ts';
 import {
-	ROSTER_SIZE, ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP,
+	ROSTER_SIZE, ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP, SUPPORT_GUARD,
 	DRAFT_POOL_SIZE as DEFAULT_DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES,
 } from './expeditionInterpretation.ts';
 import type { Frame, Role as RoleType, Rules, StrainLevel } from './types.ts';
@@ -251,6 +251,8 @@ export interface DraftWorldRow {
 	strainLevel: StrainLevel;
 	blowMagnitude: number;
 	bolsterLift: number;
+	// pass 69: what a support creature mends for at this world
+	mendMagnitude: number;
 }
 
 export interface DraftRating {
@@ -307,6 +309,7 @@ export function rateForDraft(record: XalianRecord, frames: Frame[], options: Dra
 			isHome: view.isHome,
 			strainLevel: view.strainLevel,
 			blowMagnitude: view.blowMagnitude,
+			mendMagnitude: view.mendMagnitude,
 			bolsterLift: Math.max(0, lifted.hold - view.hold),
 		};
 	});
@@ -328,7 +331,17 @@ export function rateForDraft(record: XalianRecord, frames: Frame[], options: Dra
 		const typicalCancel = typeof options.poolMeanBlow === 'number' ? options.poolMeanBlow : 0;
 		roleValue = shieldCap === 'half' ? typicalCancel / 2 : typicalCancel;
 	} else if (role === ROLE.BOLSTER) {
-		roleValue = meanLift * BOLSTER_EXPECTED_ALLIES + bolsterFloor;
+		/*
+			pass 69: plus its guard on a typical blow (a quarter of the pool's mean blow at the
+			shipped setting) and one exchange's mend, the same two things the bot prices at a
+			real world
+		*/
+		const guard = rules && typeof rules.supportGuard === 'number' ? rules.supportGuard : SUPPORT_GUARD;
+		const typicalBlow = typeof options.poolMeanBlow === 'number' ? options.poolMeanBlow : 0;
+		const meanMend = byWorld.length > 0 ? byWorld.reduce((sum, w) => sum + w.mendMagnitude, 0) / byWorld.length : 0;
+		roleValue = meanLift * BOLSTER_EXPECTED_ALLIES + bolsterFloor
+			+ typicalBlow * Math.max(0, 1 - guard)
+			+ Math.min(typicalBlow, meanMend);
 	}
 
 	const perSpeed = typeof options.speedValue === 'number' ? options.speedValue : DRAFT_SPEED_VALUE;

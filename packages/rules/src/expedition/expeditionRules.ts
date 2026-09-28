@@ -53,8 +53,9 @@ import {
 	SENDABLE,
 	ROUND_SEND_CAP,
 	ACT_FLIP,
-	PROJECTION_REACH,
-	PROJECTION_FALLOFF,
+	SUPPORT_GUARD,
+	SUPPORT_STEADIES,
+	SUPPORT_MEND,
 	ROSTER_TRAILING_BONUS,
 	WORLDS_PER_MATCH,
 	FRAMES_PER_MATCH,
@@ -359,7 +360,6 @@ export const DEFAULT_RULES: Rules = {
 	sendable: SENDABLE,
 	// Pass 24: the most a handler may send in ONE round; 0 is no per-round cap
 	roundSendCap: ROUND_SEND_CAP,
-	// Pass 25: cross-world projection, the base redesign's own lever pool entry
 	// Pass 25: the handler chooses a creature's act at send (lever pool: act flip)
 	actFlip: ACT_FLIP,
 	// Pass 55: shields cancel only the other side's attacks
@@ -372,8 +372,10 @@ export const DEFAULT_RULES: Rules = {
 	elementMatchups: ELEMENT_MATCHUPS,
 	// Pass 59: whole holds, so the card's factors add up
 	wholeHolds: WHOLE_HOLDS,
-	projectionReach: PROJECTION_REACH,
-	projectionFalloff: PROJECTION_FALLOFF,
+	// Pass 69: support that carries weight
+	supportGuard: SUPPORT_GUARD,
+	supportSteadies: SUPPORT_STEADIES,
+	supportMend: SUPPORT_MEND,
 	worldsPerFrame: WORLDS_PER_FRAME,
 };
 
@@ -436,8 +438,9 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		friendlyFire: r.friendlyFire !== undefined ? !!r.friendlyFire : DEFAULT_RULES.friendlyFire,
 		elementMatchups: r.elementMatchups !== undefined ? !!r.elementMatchups : DEFAULT_RULES.elementMatchups,
 		wholeHolds: r.wholeHolds !== undefined ? !!r.wholeHolds : DEFAULT_RULES.wholeHolds,
-		projectionReach: num(r.projectionReach, DEFAULT_RULES.projectionReach),
-		projectionFalloff: num(r.projectionFalloff, DEFAULT_RULES.projectionFalloff),
+		supportGuard: num(r.supportGuard, DEFAULT_RULES.supportGuard),
+		supportSteadies: r.supportSteadies !== undefined ? !!r.supportSteadies : DEFAULT_RULES.supportSteadies,
+		supportMend: num(r.supportMend, DEFAULT_RULES.supportMend),
 		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
 	};
 }
@@ -1043,7 +1046,14 @@ function forecastRun(state: MatchState, handler: Seat): { copy: MatchState; boar
 */
 export interface ForecastBlow { by: string | null; power: number; count: number; roles: string[]; downs: boolean; statuses?: string[]; hurt?: boolean; before?: boolean }
 export interface ForecastHit { to: string; power: number; count: number; downs: boolean }
-export interface ForecastBlows { taken: ForecastBlow[]; dealt: ForecastHit[]; downs: string[]; downsBeforeActing: string[]; recovered: number; falls: boolean; unlifted: number; alliesDowned: string[]; first: boolean; strikes: boolean; fallsBeforeActing: boolean }
+export interface ForecastBlows {
+	taken: ForecastBlow[]; dealt: ForecastHit[]; downs: string[]; downsBeforeActing: string[]; recovered: number; falls: boolean;
+	unlifted: number; alliesDowned: string[]; first: boolean; strikes: boolean; fallsBeforeActing: boolean;
+	/** pass 69: what a support creature's guard took off the blows it takes, and whose guard */
+	guardedOff: number; guardBy: string | null;
+	/** pass 69: the statuses it shrugged off, and who steadied it */
+	shrugged: string[]; steadiedBy: string | null;
+}
 export function forecastSendBlows(state: MatchState, handler: Seat, recordId: string, siteId: string, chosenRole: string | null = null): ForecastBlows | null {
 	if (!state || state.phase !== 'deploy') {
 		return null;
@@ -1073,9 +1083,21 @@ export function forecastSendBlows(state: MatchState, handler: Seat, recordId: st
 	let theirFirst = Infinity;
 	let recovered = 0;
 	let falls = false;
+	let guardedOff = 0;
+	let guardBy: string | null = null;
+	const shrugged: string[] = [];
+	let steadiedBy: string | null = null;
 	(run.resolved.resolutionLog || []).forEach((event, index) => {
 		if (event.site !== siteId) {
 			return;
+		}
+		if (event.type === 'attack' && event.target === recordId && event.guarded && typeof event.unguarded === 'number' && typeof event.power === 'number') {
+			guardedOff = round1(guardedOff + (event.unguarded as number) - (event.power as number));
+			guardBy = String(event.guarded);
+		}
+		if (event.type === 'status' && event.target === recordId && event.shrugged) {
+			if (!shrugged.includes(String(event.status))) shrugged.push(String(event.status));
+			steadiedBy = String(event.shrugged);
 		}
 		if (event.type === 'attack' && event.outcome === 'lapsed') {
 			lapsed.add(String(event.recordId));
@@ -1142,6 +1164,10 @@ export function forecastSendBlows(state: MatchState, handler: Seat, recordId: st
 		first: ourFirst < theirFirst,
 		strikes,
 		fallsBeforeActing: falls && lapsed.has(recordId) && !acted.has(recordId),
+		guardedOff,
+		guardBy,
+		shrugged,
+		steadiedBy,
 	};
 }
 
@@ -1781,7 +1807,10 @@ function resolveBattle(state: MatchState, site: FrameSite): void {
 				fight to the end the creature that cannot strike keeps the ones that can standing.
 				Measured: without it a bolster's world was won 33 to 37 percent of the time.
 			*/
-			applyBolsterRecovery(state, site);
+			// pass 69: a support creature mends at its own turn now, so this only runs with the mend off
+			if (!(rulesOf(state).supportMend > 0)) {
+				applyBolsterRecovery(state, site);
+			}
 			tickStatuses(state, site);
 			recomputeHoldsAtSite(state, site);
 			if (!canStillFight(state, site)) {
@@ -1893,6 +1922,8 @@ interface Declaration {
 	holds?: boolean;
 	/** the statuses this act leaves on what it touches */
 	applies?: StatusEffectReading[];
+	/** pass 69: a support creature's mend, landed at its turn like a blow */
+	mend?: boolean;
 }
 
 /*
@@ -1929,6 +1960,13 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 	order.forEach((item) => {
 		const entry = item.entry;
 		const prepared = prepareEntry(state, entry);
+		// pass 69: a support creature takes its turn in the order too, to mend
+		if (prepared.role === ROLE.BOLSTER && rules.supportMend > 0 && prepared.mendMagnitude > 0) {
+			declarations.push({
+				entry, role: ROLE.BOLSTER, hidden: !!item.wasHidden, first: item.hidden, amount: 0, cancelledAgainst: {}, mend: true,
+			});
+			return;
+		}
 		if (prepared.role !== ROLE.STRIKE && prepared.role !== ROLE.SWEEP) {
 			return;
 		}
@@ -1971,41 +2009,6 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 		const victims = present
 			.filter((e) => e.recordId !== entry.recordId && (rules.friendlyFire || e.player !== entry.player))
 			.map((victim) => ({ victim, amount: round1(attackPowerAgainst(state, entry, prepared, victim) * powerFactor) }));
-		/*
-			PASS 25. CROSS-WORLD PROJECTION (the base redesign's lever pool: "one area act that
-			reaches one other world", brought back on the condition it names, both halves of
-			which now measure as failing - see PROJECTION_REACH).
-
-			A sweep whose record reaches at least rules.projectionReach also catches the NEXT
-			world in the frame, at rules.projectionFalloff of its power. Narrow on purpose:
-			- only a sweep, because an area act is what the lever pool authorises;
-			- only the next world, not any world, so the frame keeps an order that matters;
-			- only creatures whose record already says they reach that far, so this is read off
-			  the record rather than granted;
-			- at reduced power, so distance costs something and this is not simply a bigger
-			  sweep.
-
-			The sealed-world ruling (assumption 3) stands everywhere else: nothing MOVES between
-			worlds, holds are still counted where the creature stands, and a world is still won
-			by who holds it. What crosses is one cloud, once.
-		*/
-		const projectionReach = typeof rules.projectionReach === 'number' ? rules.projectionReach : 0;
-		if (projectionReach > 0 && (prepared.blow ? prepared.blow.reach || 0 : 0) >= projectionReach) {
-			const frame = currentFrame(state);
-			const index = frame.sites.findIndex((s) => s.id === site.id);
-			const next = index >= 0 ? frame.sites[index + 1] : null;
-			if (next) {
-				const falloff = typeof rules.projectionFalloff === 'number' ? rules.projectionFalloff : 0.5;
-				(['A', 'B'] as Seat[]).filter((player) => rules.friendlyFire || player !== entry.player).forEach((player) => {
-					state.board[next.id][player].filter(isAlive).forEach((victim) => {
-						victims.push({
-							victim,
-							amount: round1(attackPowerAgainst(state, entry, prepared, victim) * powerFactor * falloff),
-						});
-					});
-				});
-			}
-		}
 		declarations.push({
 			entry,
 			role: ROLE.SWEEP,
@@ -2042,6 +2045,10 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 		or nothing.
 	*/
 	function amountAgainstSide(declaration: Declaration, side: Seat): number {
+		// a mend is nothing a shield could cancel
+		if (declaration.mend) {
+			return 0;
+		}
 		if (declaration.cancelledAgainst[side]) {
 			return 0;
 		}
@@ -2135,6 +2142,12 @@ function resolveWorld(state: MatchState, site: FrameSite): void {
 	const held = new Set<string>();
 	declarations.forEach((declaration) => {
 		const striker = findLiveEntry(state, declaration.entry.recordId);
+		if (declaration.mend) {
+			if (striker && !striker.downed && !(rules.pinning && held.has(declaration.entry.recordId))) {
+				landMend(state, site, striker);
+			}
+			return;
+		}
 		if (!striker || striker.downed) {
 			logEvent(state, {
 				type: 'attack',
@@ -2249,6 +2262,23 @@ function applyActStatuses(
 			if (!application) {
 				continue;
 			}
+			// pass 69: a creature a support creature covers shrugs off weakened and held
+			const steadier = recipientId !== sourceId && rules.supportSteadies
+				&& (application.concept === CONCEPT.DIMINISHED || application.concept === CONCEPT.HELD)
+				? supportAt(state, live) : null;
+			if (steadier) {
+				logEvent(state, {
+					type: 'status',
+					recordId: sourceId,
+					target: recipientId,
+					site: site.id,
+					status: application.status,
+					concept: application.concept,
+					rounds: 0,
+					shrugged: steadier.recordId,
+				});
+				continue;
+			}
 			live.statuses = [...(live.statuses || []), application];
 			logEvent(state, {
 				type: 'status',
@@ -2264,6 +2294,89 @@ function applyActStatuses(
 			}
 		}
 	}
+}
+
+/*
+	PASS 69. THE SUPPORT CREATURE'S REACH, decided here and only here.
+
+	A support creature covers its own side at its own world, itself included, while it
+	stands. Nick asked for the reach to be rethought (support from a distance rather than
+	from one world), so every rule that asks "is this creature covered?" asks this function,
+	and changing the answer is one edit. When two support creatures stand together the one
+	with the greater presence covers, since guards do not stack.
+*/
+function supportAt(state: MatchState, entry: { recordId: string; siteId?: string; player?: Seat }): BoardEntry | null {
+	const live = findLiveEntry(state, entry.recordId);
+	if (!live || live.downed || !live.siteId || !state.board[live.siteId]) {
+		return null;
+	}
+	const rules = rulesOf(state);
+	let best: BoardEntry | null = null;
+	let bestScale = -Infinity;
+	state.board[live.siteId][live.player].forEach((e) => {
+		if (e.hidden || e.downed || roleOfEntry(state, e) !== ROLE.BOLSTER) {
+			return;
+		}
+		const scale = presenceScaleOf(e.record, rules);
+		if (scale > bestScale) {
+			best = e;
+			bestScale = scale;
+		}
+	});
+	return best;
+}
+
+/** the guard on a creature about to be struck: who gives it and the share a blow lands at */
+function guardOn(state: MatchState, target: { recordId: string }): { by: string; share: number } | null {
+	const share = rulesOf(state).supportGuard;
+	if (!(share < 1)) {
+		return null;
+	}
+	const support = supportAt(state, target);
+	return support ? { by: support.recordId, share: Math.max(0, share) } : null;
+}
+
+/*
+	PASS 69. A support creature's mend, at its own turn in the exchange.
+
+	It mends the creature it covers that is closest to falling (the least hold left among the
+	hurt, itself included), for its mend times rules.supportMend, times its charisma, and
+	never more than that creature has lost. A hurt mender mends at full strength: priced like
+	a blow (hurt lands less) it spiralled, and support creatures won 26 to 30 percent of their
+	worlds against 39 to 44 without it (300 matches, seeds 7 and 13). It is a `recover` event, the same event the Ruling's
+	recovery writes, with `mend: true`, so the table plays it where it happened.
+*/
+function landMend(state: MatchState, site: FrameSite, mender: BoardEntry): void {
+	const rules = rulesOf(state);
+	const prepared = prepareEntry(state, mender);
+	const hurt = state.board[site.id][mender.player].filter((e) => isAlive(e) && (e.damage || 0) > 0);
+	if (!hurt.length) {
+		return;
+	}
+	const target = hurt.reduce((best, e) => {
+		const hold = e.currentHold ?? 0;
+		const bestHold = best.currentHold ?? 0;
+		if (hold !== bestHold) {
+			return hold < bestHold ? e : best;
+		}
+		return (e.damage || 0) > (best.damage || 0) ? e : best;
+	});
+	const amount = round1(Math.min(prepared.mendMagnitude, target.damage || 0));
+	if (amount <= 0) {
+		return;
+	}
+	target.damage = round1((target.damage || 0) - amount);
+	target.currentHold = round1(target.fullHold - target.damage);
+	target.hurt = target.damage > 0;
+	logEvent(state, {
+		type: 'recover',
+		recordId: target.recordId,
+		site: site.id,
+		bolster: mender.recordId,
+		amount,
+		remaining: target.currentHold,
+		mend: true,
+	});
 }
 
 function hurtFactorOf(state: MatchState, entry: BoardEntry): number {
@@ -2300,7 +2413,9 @@ function landStrike(state: MatchState, site: FrameSite, declaration: Declaration
 	const cut = declaration.cancelledAgainst[targetSide];
 	// a partial cancel (rules.shieldCap 'ownHold', or a charmless shielder) leaves a
 	// remainder that still lands; a hurt attacker lands less of it (assumption 18)
-	const landing = round1(declaration.amount * (1 - (cut ? cut.fraction : 0)) * hurtFactor);
+	const unguarded = round1(declaration.amount * (1 - (cut ? cut.fraction : 0)) * hurtFactor);
+	const guard = guardOn(state, declaration.target);
+	const landing = guard ? round1(unguarded * guard.share) : unguarded;
 	if (cut && landing <= 0) {
 		logEvent(state, {
 			...base,
@@ -2322,6 +2437,8 @@ function landStrike(state: MatchState, site: FrameSite, declaration: Declaration
 	const { remaining, outcome } = applyBlow(state, site, live, landing);
 	logEvent(state, {
 		...base, target: live.recordId, power: landing, remaining, outcome, cancelled: !!cut,
+		// pass 69: a support creature's guard took its share off this blow
+		...(guard && landing < unguarded ? { guarded: guard.by, unguarded } : {}),
 	});
 	// pass 8: a strike that reached a standing creature is one that can pin it
 	return outcome !== 'downed';
@@ -2352,7 +2469,9 @@ function landSweep(state: MatchState, site: FrameSite, declaration: Declaration,
 			hidden: declaration.hidden,
 		};
 		const cut = declaration.cancelledAgainst[victim.player];
-		const landing = round1(amount * (1 - (cut ? cut.fraction : 0)) * hurtFactor);
+		const unguarded = round1(amount * (1 - (cut ? cut.fraction : 0)) * hurtFactor);
+		const guard = guardOn(state, victim);
+		const landing = guard ? round1(unguarded * guard.share) : unguarded;
 		if (cut && landing <= 0) {
 			logEvent(state, { ...base, power: amount, remaining: null, outcome: 'cancelled', cancelled: true });
 			return;
@@ -2363,7 +2482,10 @@ function landSweep(state: MatchState, site: FrameSite, declaration: Declaration,
 			return;
 		}
 		const { remaining, outcome } = applyBlow(state, site, live, landing);
-		logEvent(state, { ...base, power: landing, remaining, outcome, cancelled: !!cut });
+		logEvent(state, {
+			...base, power: landing, remaining, outcome, cancelled: !!cut,
+			...(guard && landing < unguarded ? { guarded: guard.by, unguarded } : {}),
+		});
 		if (outcome !== 'downed') {
 			struck.push(victim.recordId);
 		}

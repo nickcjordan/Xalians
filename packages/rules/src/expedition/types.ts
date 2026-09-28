@@ -109,7 +109,6 @@ export interface Rules {
 	sendable: number;
 	// Pass 24: the most a handler may send in one round; 0 means no per-round cap
 	roundSendCap: number;
-	// Pass 25: reach at which an area act also catches the next world; 0 disables
 	// Pass 25: the handler chooses a creature's act at send
 	actFlip: boolean;
 	// Pass 55: a shield may also cancel its own side's sweep (off: only the other side's attacks)
@@ -122,8 +121,10 @@ export interface Rules {
 	elementMatchups: boolean;
 	// Pass 59: a creature's normal hold and its hold at a world are whole numbers
 	wholeHolds: boolean;
-	projectionReach: number;
-	projectionFalloff: number;
+	// Pass 69: what a support creature does for the creatures it covers
+	supportGuard: number;
+	supportSteadies: boolean;
+	supportMend: number;
 	worldsPerFrame: number;
 }
 
@@ -273,6 +274,8 @@ export interface PreparedCreature {
 	blow: Act | null;
 	blowMagnitude: number;
 	blowIsFallback: boolean;
+	// pass 69: what a support creature mends for at its turn (charisma and rules.supportMend in); 0 for everyone else
+	mendMagnitude: number;
 	conduct: Conduct;
 	traitKeywords: string[];
 	stealthy: boolean;

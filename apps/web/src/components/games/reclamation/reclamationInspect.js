@@ -7,7 +7,7 @@ import {
 	HOME_GROUND_MULTIPLIER, ARMORED_REDUCTION,
 } from '@xalians/rules/expedition/expeditionInterpretation';
 import { instinctSentence, attributeLanes } from './reclamationPreview';
-import { speciesLabel, formatHold, roleSentence } from './reclamationNarration';
+import { speciesLabel, formatHold, roleSentence, rolePower } from './reclamationNarration';
 import { flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
@@ -207,7 +207,7 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 				<span className="g-label">Role</span>
 				<p className="g-body rec-inspect-role" data-inspect-role={prepared.role}>
 					{prepared.role && prepared.role !== 'none' && <RoleGlyph role={prepared.role} className="rec-inspect-role-glyph" />}
-					{roleSentence(prepared.role, prepared.blowMagnitude)}.
+					{roleSentence(prepared.role, rolePower(prepared))}.
 				</p>
 				{/*
 					PASS 27. The old sentence here read "its role is fixed the moment it is sent;

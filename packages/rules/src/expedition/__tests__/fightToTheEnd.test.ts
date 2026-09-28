@@ -5,7 +5,7 @@
 
 	Each test pins one sentence of the rule: a world fights exchange after exchange until one
 	side has nobody standing, nobody standing can attack, or an exchange changes nothing; a
-	bolster mends between exchanges; the single exchange is still there as a lever.
+	bolster mends at its own turn (pass 69); the single exchange is still there as a lever.
 */
 import { describe, test, expect } from 'vitest';
 import { createMatch, send, pass, currentFrame } from '../expeditionRules.ts';
@@ -117,17 +117,16 @@ describe('a world fights to the last side standing', () => {
 		expect(exchanges.every((e) => e.exchange <= 2)).toBe(true);
 	});
 
-	test('a bolster mends its allies between exchanges, not only at the Ruling', () => {
-		// a tough striker with a mender, against a striker that hurts it without downing it at once
+	test('a bolster mends at its own turn in the fight, after the blow that hurt its ally', () => {
+		// pass 69: the mend lands in speed order like a blow, so it is inside the exchange
 		const state = fight([hardy(), mender()], [hardy({ strength: 60 })]);
 		const log = state.resolutionLog as any[];
-		const firstExchange = log.findIndex((e) => e.type === 'exchange');
+		const hurt = log.findIndex((e) => e.type === 'attack' && e.outcome === 'hurt' && String(e.target).startsWith('A_'));
+		const mend = log.findIndex((e) => e.type === 'recover' && e.mend === true);
 		const judge = log.findIndex((e) => e.type === 'judge');
-		expect(firstExchange).toBeGreaterThan(-1);
-		// the first exchange hurt one of A's, and a recovery comes before the Ruling's own
-		const damageBefore = log.slice(0, firstExchange).some((e) => e.type === 'attack' && e.outcome === 'hurt' && String(e.target).startsWith('A_'));
-		const mended = log.slice(firstExchange, judge).some((e) => e.type === 'recover');
-		expect(damageBefore).toBe(true);
-		expect(mended).toBe(true);
+		expect(hurt).toBeGreaterThan(-1);
+		expect(mend).toBeGreaterThan(hurt);
+		expect(mend).toBeLessThan(judge);
+		expect(log[mend].bolster).toBe('A_1');
 	});
 });

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
 	speciesLabel, formatHold, classifyEvent, narrateEvent, cueForEvent, roleSentence,
-	roleWord, narrateSwiftMove, narrateSend, narratePass, narrateJudge, narrateMatchEnd,
+	roleWord, narrateSwiftMove, narrateSend, narratePass, narrateJudge, narrateMatchEnd, captionEvent,
 } from '../reclamationNarration';
 
 describe('speciesLabel', () => {
@@ -53,7 +53,8 @@ describe('roleSentence', () => {
 	it('gives one sentence per role, naming the number where there is one', () => {
 		expect(roleSentence('strike', 4)).toBe('Attacks one enemy here for 4');
 		expect(roleSentence('sweep', 2.5)).toBe('Sweeps every other creature here, yours too, for 2.5');
-		expect(roleSentence('bolster')).toBe('Bolsters allies here against the world, and recovers what they lose');
+		// pass 69: guards, steadies and mends, naming what it mends for
+		expect(roleSentence('bolster', 6)).toBe('Guards yours here (a quarter off every blow), keeps them from being weakened or held, and mends the one closest to falling for 6');
 		expect(roleSentence('shield')).toBe('Shields allies here from the largest attack');
 		expect(roleSentence('none')).toBe('Stands here and throws nothing');
 	});
@@ -203,5 +204,30 @@ describe('narrateMatchEnd', () => {
 	it('names the loss', () => {
 		expect(narrateMatchEnd({ winner: 'B', you: 'A', sitesYou: 3, sitesThem: 4, reason: 'frames-exhausted' }))
 			.toBe('The rival takes the Charter, 4 worlds to 3, after the third frame.');
+	});
+});
+
+// pass 69: what a support creature does in the Clash, told where it happens
+describe('the support creature in the Clash', () => {
+	const test = it;
+	const kosanos = { name: 'Kosanos', seat: 'A' };
+	const tizzie = { name: 'Tizzie', seat: 'A' };
+	const neph = { name: 'Neph', seat: 'B' };
+	test('a guarded blow reads the whole blow struck to what landed', () => {
+		const parts = captionEvent({ type: 'attack', role: 'strike', outcome: 'hurt', power: 6, unguarded: 8, guarded: 'k', remaining: 4 }, { actor: neph, target: tizzie });
+		expect(parts.filter((p) => typeof p === 'string').join('')).toContain('−8→6 guarded, 4 left');
+		expect(narrateEvent({ type: 'attack', role: 'strike', outcome: 'hurt', power: 6, unguarded: 8, guarded: 'k', remaining: 4 }, { actorName: 'Neph', targetName: 'Tizzie' }))
+			.toBe('Neph strikes Tizzie for 6 (guarded from 8); Tizzie stands at 4.');
+	});
+	test('a mend names who mends whom, and what is left', () => {
+		expect(captionEvent({ type: 'recover', mend: true, recordId: 't', bolster: 'k', amount: 5, remaining: 9 }, { actor: tizzie, bolster: kosanos }))
+			.toEqual([kosanos, ' mends ', tizzie, ': +5, 9 left']);
+		expect(captionEvent({ type: 'recover', mend: true, recordId: 'k', bolster: 'k', amount: 5, remaining: 9 }, { actor: kosanos, bolster: kosanos }))
+			.toEqual([kosanos, ' mends itself: +5, 9 left']);
+	});
+	test('a status kept clear says it did not take', () => {
+		expect(captionEvent({ type: 'status', status: 'restrained', shrugged: 'k', target: 't' }, { actor: neph, target: tizzie, bolster: kosanos }))
+			.toEqual([kosanos, ' keeps ', tizzie, ' clear: no restrained']);
+		expect(captionEvent({ type: 'status', status: 'restrained', target: 't' }, { actor: neph, target: tizzie })).toBe(null);
 	});
 });

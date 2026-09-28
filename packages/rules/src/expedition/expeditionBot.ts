@@ -28,7 +28,7 @@ import type { XalianRecord } from '@xalians/content/schema';
 import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1, flippableRolesOf } from './creatureOnTable.ts';
 import {
 	ROLE, SENDABLE, clinchFor, FRAMES_PER_MATCH,
-	presenceScaleOf, instinctLaneOf,
+	presenceScaleOf, instinctLaneOf, SUPPORT_GUARD,
 } from './expeditionInterpretation.ts';
 import type {
 	Act, BotAction, FrameSite, PreparedCreature, PublicPlayerView, PublicState, Rival,
@@ -1081,10 +1081,37 @@ export function roleValueOf(publicState: PublicState, record: XalianRecord, site
 	}
 
 	if (view.role === ROLE.BOLSTER) {
+		/*
+			PASS 69: a support creature also guards what it covers (a blow lands at
+			rules.supportGuard) and mends at its turn in the fight. Both are priced against the
+			blows the visible enemies here would land on the creatures it would cover, this one
+			included: the guard takes its share off them, and the mend gives back up to two
+			exchanges' worth, never more than they would lose.
+		*/
+		const rules = rulesOf(publicState);
+		const covered: Array<PublicEntry | typeof self> = [...allies, self];
+		let incoming = 0;
+		enemies.forEach((enemy) => {
+			const enemyPrepared = prepareAt(publicState, site.id, enemy);
+			if (enemyPrepared.role !== ROLE.STRIKE && enemyPrepared.role !== ROLE.SWEEP) {
+				return;
+			}
+			const weakest = covered.reduce(
+				(best, e) => (holdOf(publicState, site.id, e as PublicEntry) < holdOf(publicState, site.id, best as PublicEntry) ? e : best),
+				covered[0],
+			);
+			incoming += Math.min(
+				rawBlowAmount(publicState, site.id, enemy, weakest as PublicEntry, enemyPrepared),
+				holdOf(publicState, site.id, weakest as PublicEntry),
+			);
+		});
+		const guard = rules && typeof rules.supportGuard === 'number' ? rules.supportGuard : SUPPORT_GUARD;
+		const mendValue = Math.min(incoming, (view.mendMagnitude || 0) * 2);
+		const guardValue = guard < 1 ? incoming * (1 - guard) : 0;
 		// what arriving restores: every ally here recomputed with the strain lift, plus
-		// this creature's own lift, and nothing at all where a bolsterer already stands
+		// this creature's own lift; where a bolsterer already stands only the mend is new
 		if (bolsterPresent(publicState, site.id, seat)) {
-			return 0;
+			return round1(mendValue);
 		}
 		// charisma prices what this bolsterer restores (assumption 17), so the scale that
 		// travels into every recomputation below is the ARRIVING creature's own
@@ -1098,7 +1125,7 @@ export function roleValueOf(publicState: PublicState, record: XalianRecord, site
 		const selfBefore = prepare(record, site, null, sentIndex, { rules: rulesOf(publicState) }).hold;
 		const selfAfter = prepare(record, site, null, sentIndex, { rules: rulesOf(publicState), bolstered: true, bolsterScale }).hold;
 		restored += Math.max(0, selfAfter - selfBefore);
-		return round1(restored);
+		return round1(restored + guardValue + mendValue);
 	}
 
 	// ROLE.NONE: a role switched off leaves a plain holder, worth exactly its own hold

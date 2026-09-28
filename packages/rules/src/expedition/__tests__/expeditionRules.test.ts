@@ -21,7 +21,7 @@ function createMatch(args: any) {
 import {
 	ROSTER_SIZE, SENDABLE, SITES_TO_CLINCH, WORLDS_PER_MATCH, FRAMES_PER_MATCH, WORLDS_PER_FRAME,
 	ROUND_SEND_CAP,
-	PROJECTION_REACH, PROJECTION_FALLOFF, ACT_FLIP, SHIELD_OWN_SWEEPS, CLASH_EXCHANGES, FRIENDLY_FIRE, ELEMENT_MATCHUPS,
+	SUPPORT_GUARD, SUPPORT_STEADIES, SUPPORT_MEND, ACT_FLIP, SHIELD_OWN_SWEEPS, CLASH_EXCHANGES, FRIENDLY_FIRE, ELEMENT_MATCHUPS,
 	WHOLE_HOLDS,
 	ROSTER_TRAILING_BONUS, ROLE, HOLD_FLOOR, HOLD_CEILING, MAGNITUDE_SCALE, SWEEP_DISCOUNT,
 	BOLSTER_FLOOR, ARMORED_REDUCTION, SHIELD_CAP, WILLFUL_THRESHOLD, KEEN_INSTINCT,
@@ -1293,10 +1293,6 @@ describe('rules ablation switches', () => {
 			// decision depth by starving the Clash: at cap 3 downs fell to 1.9 and 87 percent
 			// of contested worlds were one against one. See ROUND_SEND_CAP for the sweep.
 			roundSendCap: ROUND_SEND_CAP,
-			// Pass 25: cross-world projection, the base redesign's own lever pool entry,
-			// built on the condition it names and shipped OFF. It fires hard (sweep victims
-			// 10.2 to 14.4 a match) and moves no gauge: reach adds damage across worlds and
-			// the decision is about which world to commit to. See PROJECTION_REACH.
 			// Pass 25: act flip, the second decision axis. It took round-three decision depth
 			// from 2.05 near-best options to 3.53. Pass 55 turned it OFF on Nick's word (the
 			// choice read as an unexplained complication); off it measures 2.34.
@@ -1309,8 +1305,10 @@ describe('rules ablation switches', () => {
 			// Pass 57: the type chart, off: what schema 5 creatures have played since the conversion
 			elementMatchups: ELEMENT_MATCHUPS,
 			wholeHolds: WHOLE_HOLDS,
-			projectionReach: PROJECTION_REACH,
-			projectionFalloff: PROJECTION_FALLOFF,
+			// Pass 69: what a support creature does for the creatures it covers
+			supportGuard: SUPPORT_GUARD,
+			supportSteadies: SUPPORT_STEADIES,
+			supportMend: SUPPORT_MEND,
 			worldsPerFrame: WORLDS_PER_FRAME,
 		});
 		// assumption 20 cut the catch-up send, so the shipped default is zero

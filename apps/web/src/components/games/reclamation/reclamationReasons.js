@@ -125,7 +125,7 @@ const whoseName = (who) => (who.mine ? `your ${who.name}` : who.name);
 	first. And while the rival can still send, or has creatures hidden, the forecast says it holds
 	only if nothing else arrives: it is the Clash on the board as you can see it, not a promise.
 */
-const NEVER_STRIKES = { bolster: 'A bolster lifts and never strikes', shield: 'A shield guards and never strikes' };
+const NEVER_STRIKES = { bolster: 'A bolster mends and never strikes', shield: 'A shield guards and never strikes' };
 
 function clashLines(why, blows, { open, role } = {}) {
 	const out = [];
@@ -172,8 +172,15 @@ function clashLines(why, blows, { open, role } = {}) {
 	if (blows.unlifted > 0.5 && (blows.alliesDowned || []).length) {
 		parts.push(`your ${listWords(blows.alliesDowned)} ${blows.alliesDowned.length === 1 ? 'falls' : 'fall'} beside it, and the lift goes with ${blows.alliesDowned.length === 1 ? 'it' : 'them'} (${formatHoldShown(blows.unlifted)})`);
 	}
+	// pass 69: what a support creature of yours does for it, each in its own number
+	if (blows.guardedOff > 0.5) {
+		parts.push(`${blows.guardByName ? `${blows.guardByName === 'itself' ? 'its own' : `your ${blows.guardByName}'s`} guard` : 'a guard'} takes ${formatHoldShown(blows.guardedOff)} off`);
+	}
+	if ((blows.shrugged || []).length) {
+		parts.push(`${blows.steadiedByName ? (blows.steadiedByName === 'itself' ? 'it keeps itself clear' : `your ${blows.steadiedByName} keeps it clear`) : 'a bolster keeps it clear'}: no ${listWords(blows.shrugged)}`);
+	}
 	if (blows.recovered > 0.5) {
-		parts.push(`a bolster gives ${formatHoldShown(blows.recovered)} back`);
+		parts.push(`${blows.guardByName ? (blows.guardByName === 'itself' ? 'it mends' : `your ${blows.guardByName} mends`) : 'a bolster mends'} ${formatHoldShown(blows.recovered)}`);
 	}
 	const because = parts.length ? `${parts.join('; ').replace(/^./, (c) => c.toUpperCase())}.` : '';
 	if (blows.falls || why.falls) {
@@ -200,7 +207,7 @@ function clashLines(why, blows, { open, role } = {}) {
 	nameBlows(blows, match, seat) -> the forecast's blows with each creature named, and whether it
 	is yours. A creature sent leaves its roster for the board, so names come from both.
 */
-export function nameBlows(blows, match, seat) {
+export function nameBlows(blows, match, seat, recordId = null) {
 	if (!blows || !match) {
 		return blows || null;
 	}
@@ -223,6 +230,9 @@ export function nameBlows(blows, match, seat) {
 		dealt: (blows.dealt || []).map((h) => ({ ...h, name: name(h.to), mine: ours.has(h.to) })),
 		downs: blows.downs.map((id) => ({ name: name(id), mine: ours.has(id), early: (blows.downsBeforeActing || []).includes(id) })),
 		alliesDowned: blows.alliesDowned.map(name),
+		// pass 69: whose guard and steadying, 'itself' when the previewed creature is the support creature
+		guardByName: blows.guardBy ? (blows.guardBy === recordId ? 'itself' : name(blows.guardBy)) : null,
+		steadiedByName: blows.steadiedBy ? (blows.steadiedBy === recordId ? 'itself' : name(blows.steadiedBy)) : null,
 	};
 }
 

@@ -139,10 +139,19 @@ export function roleSentence(role, attackPower) {
 	switch (role) {
 		case 'strike': return `Attacks one enemy here for ${n}`;
 		case 'sweep': return `Sweeps every other creature here, yours too, for ${n}`;
-		case 'bolster': return 'Bolsters allies here against the world, and recovers what they lose';
+		// pass 69: the support creature guards, steadies and mends; N is what it mends for
+		case 'bolster': return `Guards yours here (a quarter off every blow), keeps them from being weakened or held, and mends the one closest to falling for ${n}`;
 		case 'shield': return 'Shields allies here from the largest attack';
 		default: return 'Stands here and throws nothing';
 	}
+}
+
+// pass 69: the number a role sentence carries: a blow, or for a support creature its mend
+export function rolePower(prepared) {
+	if (!prepared) {
+		return undefined;
+	}
+	return prepared.role === 'bolster' ? prepared.mendMagnitude : prepared.blowMagnitude;
 }
 
 // the word for the role, where a sentence is too much (a chip, a title attribute)
@@ -178,6 +187,11 @@ function standsAt(name, remaining) {
 	return formatHoldShown(remaining) === '0' ? `${name} barely stands` : `${name} stands at ${formatHoldShown(remaining)}`;
 }
 
+// pass 69: a blow a support creature's guard cut says what it would have been
+function guardedWords(event) {
+	return event && event.guarded && typeof event.unguarded === 'number' ? ` (guarded from ${formatHoldShown(event.unguarded)})` : '';
+}
+
 export function narrateEvent(event, ctx = {}) {
 	if (!event) {
 		return null;
@@ -211,6 +225,16 @@ export function narrateEvent(event, ctx = {}) {
 	if (event.type === 'mending') {
 		return `${actor} mends ${formatHoldShown(event.amount)}.`;
 	}
+	// pass 69: a support creature's mend, at its own turn in the fight
+	if (event.type === 'recover' && event.mend) {
+		const by = ctx.bolsterName || 'A bolster';
+		const whom = event.bolster === event.recordId ? 'itself' : actor;
+		return `${by} mends ${whom} for ${formatHoldShown(event.amount)}; ${standsAt(event.bolster === event.recordId ? 'it' : actor, event.remaining)}.`;
+	}
+	// pass 69: a creature a support creature covers shrugs off being weakened or held
+	if (event.type === 'status' && event.shrugged) {
+		return `${target} shrugs off ${event.status}: ${ctx.bolsterName || 'a bolster'} keeps it clear.`;
+	}
 	if (event.type === 'recover') {
 		const under = ctx.bolsterName ? `under ${ctx.bolsterName}'s bolster` : 'under a bolster';
 		return `${actor} recovers ${formatHoldShown(event.amount)} ${under}; ${standsAt('', event.remaining).trim()}.`;
@@ -242,7 +266,7 @@ export function narrateEvent(event, ctx = {}) {
 		case 'downed':
 			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)} and downs ${target}.`;
 		case 'hurt':
-			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)}; ${standsAt(target, event.remaining)}.`;
+			return `${actor}${condition} ${attackVerb(event.role)} ${target} for ${formatHoldShown(event.power)}${guardedWords(event)}; ${standsAt(target, event.remaining)}.`;
 		case 'cancelled':
 			// said by the shield event that cancelled it
 			return null;
@@ -403,9 +427,18 @@ export function captionEvent(event, ctx = {}) {
 		case 'shield':
 			return event.cancelled ? [actor, ' blocks ', target, `'s ${formatHoldShown(event.amount)}`] : [actor, ' shields; nothing comes'];
 		case 'recover':
+			// pass 69: a mend at its turn in the fight names who mends whom, and what is left
+			if (event.mend && ctx.bolster) {
+				return event.bolster === event.recordId
+					? [ctx.bolster, ` mends itself: +${formatHoldShown(event.amount)}, ${left(event.remaining)}`]
+					: [ctx.bolster, ' mends ', actor, `: +${formatHoldShown(event.amount)}, ${left(event.remaining)}`];
+			}
 			return ctx.bolster
 				? [ctx.bolster, ' gives ', actor, ` ${formatHoldShown(event.amount)} back`]
 				: [actor, ` recovers ${formatHoldShown(event.amount)}`];
+		// pass 69: a status that does not take, because a support creature steadies its target
+		case 'status':
+			return event.shrugged && ctx.bolster ? [ctx.bolster, ' keeps ', target, ` clear: no ${event.status}`] : null;
 		case 'pin':
 			return [actor, ' restrains ', target];
 		// pass 56: the fight goes on, exchange after exchange, and what a status does between them
@@ -424,7 +457,10 @@ export function captionEvent(event, ctx = {}) {
 				case 'downed':
 					return [actor, ` downs ${own}`, target];
 				case 'hurt':
-					return [actor, ` ${attackVerb(event.role)} ${own}`, target, `: −${formatHoldShown(event.power)}, ${left(event.remaining)}`];
+					// pass 69: a guarded blow reads before and after, the whole blow struck to what landed
+					return event.guarded && typeof event.unguarded === 'number'
+						? [actor, ` ${attackVerb(event.role)} ${own}`, target, `: −${formatHoldShown(event.unguarded)}→${formatHoldShown(event.power)} guarded, ${left(event.remaining)}`]
+						: [actor, ` ${attackVerb(event.role)} ${own}`, target, `: −${formatHoldShown(event.power)}, ${left(event.remaining)}`];
 				case 'lapsed':
 					return [actor, ' falls before it acts'];
 				case 'pinned':
