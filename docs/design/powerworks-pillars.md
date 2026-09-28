@@ -59,10 +59,31 @@ Nick, 2026-09-28: hold these off and reintroduce them one by one once the pillar
 
 Also parked from the current engine: area geometry by aim, status fit (closing versus stationary, ranged), innate protections, triggered passives, cleanse, displacement as its own effect.
 
+## What the creatures can supply today
+
+Every move of the 1,204 creatures a player could field (the preset squad and 150 draft offers), read in the pillars' terms (`devtools/powerworksGrid.ts`, "Move shape"):
+
+| Move shape | Share |
+|---|---|
+| Attack | 55% |
+| Hinder (standalone; includes the binding moves) | 16% |
+| Attack on an area | 10% |
+| Shield on itself | 4% |
+| Attack + a lasting effect (parked) | 3% |
+| Shield on an ally | 2% |
+| Heal | 1% |
+| Attack + hinder | 1% |
+| Attack + heal itself (a drain) | under 1% |
+| Boost | 0 |
+
+About 94% of moves are one kind already, so "one move, one kind, one number" loses little. The riders that exist (attack + hinder, drains) are 2%.
+
+**Friction reported, 2026-09-28.** Boost has no source: no species' acts produce `stimulated` (the enhancement status is in the vocabulary, `packages/content/src/schema/status.ts`, but `acts.ts` never derives it), and `focused` reads as a guard. Heal is 1% of moves and shielding an ally 2%, so most squads a collection can field have no support aimed past themselves, and "who do I protect" rarely comes up. Smallest fix, for Nick to rule on: an authoring pass over the species audits for anatomy that justifies helping a squadmate (restoring secretions, signals that rally, bodies that cover others), adding enhancement and ally-aimed acts where the anatomy supports them, versioned as a new generation release. Until then Boost can live on enemies only.
+
 ## Still to design
 
 1. **Enemies: settled.** Already ruled in [creature-adventure-design-workshop.md](creature-adventure-design-workshop.md) ("Dedicated dungeon enemies accepted", 2026-09-16), restated by Nick 2026-09-28: enemies are creatures with every mechanic the squad has, authored by us to fit the existing worlds and elements, and never part of the canon or the generator pool, so a dungeon needs no deep backstory and cannot conflict with lore. A dungeon is designed by picking a place, imagining the scene, and building its enemies from the roles, the mechanics and the lesson that dungeon should teach. Settled per dungeon when the first one is designed, not as general rules: whether enemies are reused between dungeons, and each enemy's move count and signature budget (the workshop allows these to differ from the squad's).
 2. **The base round: settled.** The whole squad plans together; enemy orders stay hidden (workshop); units act in speed order, fixed for the fight (decision 8); an attack whose target has fallen goes to the next enemy in the row (workshop).
 3. **Numbers.** How intensity becomes power and support degree, health scale, the element steps, how big an area's reduction is.
-4. **Dungeons and squads.** Themed dungeons and who you bring. This reopens Nick's 2026-09-24 ruling that squad selection is out of scope, because element in both directions makes the choice of squad the largest element decision.
+4. **Dungeons and squads.** Themed dungeons, and what a squad meets in them. Not a reopening of Nick's 2026-09-24 ruling: the game will be played with a person's own creatures, and building squad selection now would be throwaway code, so the run keeps the preset squad while the design assumes any squad a collection can field.
 5. **The screen.** Checked against the question this began with: which move is best on which enemy, without selecting a move.
