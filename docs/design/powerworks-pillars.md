@@ -93,3 +93,15 @@ A check on the present, not a verdict: of the 4,816 moves of the 1,204 creatures
 3. **Numbers.** How intensity becomes power and support degree, health scale, the element steps, how big an area's reduction is.
 4. **Dungeons and squads: settled by the workshop.** Each dungeon's enemies form a cohesive theme explained by the place; teaching belongs to the dungeon as a whole, from simple behaviors to combinations, and ordinary attackers need no lesson of their own ("Cohesive dungeon themes accepted", "Teaching belongs to the dungeon", 2026-09-16). Core dungeons are validated with healer-free squads (2026-09-14). The run keeps the preset squad for now: the game will be played with a person's own creatures, and building selection today would be throwaway code (2026-09-24); the design assumes any squad a collection can field.
 5. **The screen.** Checked against the question this began with: which move is best on which enemy, without selecting a move.
+
+## Screen concepts, 2026-09-28
+
+Three concepts were drawn on the live stage with pillar numbers computed from the real records (mock tooling, untracked). The page with every shot is https://claude.ai/artifact/6kQbLYJDZ9jLqG6zTG1wfB.
+
+- **Answer keys** (recommended): each move key carries its result on every enemy, one cell per enemy in stage order, headed by the enemy's letter; a move that deals the same to everyone collapses to one number. Independent critic 50 of 80.
+- **Ledger**: results written under each enemy's plate. Critic 39; the panels bury the enemy art.
+- **Marks**: one matchup mark per enemy, and the player does the sum. Critic 38; the arithmetic fails the test.
+
+Shared vocabulary: the landed number with a chevron (green when good for you, red when bad), a struck circle for no effect, enemy letters on every plate, a filled ember cell when a finish lands before the enemy strikes and an outlined cell with crossed swords when it strikes first, the enemy's hit on the selected creature on its plate, and Hinder shown as that hit before and after (9 → 0).
+
+Blind Opus readers got every damage, immune, hit and knockout answer on all three. Before-or-after was read correctly once the turn strip showed speed order; a discarded round showed readers trust the strip over any mark. Still open: an area Hinder is not previewed on the enemies, the keys cover the enemies' lower edge at 1920, the column heads on a phone, and the intensity scale (Avilily's pecks read as 1).
