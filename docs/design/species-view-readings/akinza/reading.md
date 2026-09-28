@@ -132,3 +132,7 @@ Tail acceptance and extremity correction, 2026-09-28:
 > this tail and positioning looks good. You're starting to give the creature human-like hands and feet, and that is not going the direction that I originally wanted, but otherwise, the tail looks good
 
 Study-0018 tail shape and positioning are accepted as shown. Preserve those aspects and the accepted gaze. Reject the human-like hand/foot direction; develop compact clawed animal paws guided by the source silhouette. Study-0020 is the new unapproved paw candidate. No exact digit count, gait or new species fact is ratified by this illustration.
+
+## 2026-09-28: accepted paws and geometric reconciliation
+
+Nick accepted study-0020 with "looks good, proceed". Preserve compact animal paws and short clustered clawed digits. Exact body integration, skeleton and digit-count biology are not ratified by this visual acceptance. Use `../../species-construction/akinza/current-references.json` for the scoped accepted components. The first complete rough model now tests their combined geometry; actual side projections expose foreshortening of the leftward tail fan that the older generated profile did not show. Its new geometry still needs review.
