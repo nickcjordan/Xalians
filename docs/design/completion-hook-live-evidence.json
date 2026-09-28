@@ -1,0 +1,113 @@
+{
+  "observedAt": "2026-09-28T21:04:37.010412+00:00",
+  "runtime": "codex-cli 0.158.0-alpha.2.1",
+  "cwd": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+  "ephemeral": true,
+  "trustModified": false,
+  "hooks": [
+    {
+      "id": "user-prompt-submit:0:C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "eventName": "userPromptSubmit",
+      "handlerType": "command",
+      "executionMode": "sync",
+      "scope": "turn",
+      "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "source": "project",
+      "displayOrder": 0,
+      "status": "completed",
+      "statusMessage": null,
+      "startedAt": 1790629480,
+      "completedAt": 1790629481,
+      "durationMs": 1115,
+      "entries": []
+    },
+    {
+      "id": "stop:1:C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "eventName": "stop",
+      "handlerType": "command",
+      "executionMode": "sync",
+      "scope": "turn",
+      "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "source": "project",
+      "displayOrder": 1,
+      "status": "blocked",
+      "statusMessage": "Checking completion audit and unfinished work",
+      "startedAt": 1790629484,
+      "completedAt": 1790629484,
+      "durationMs": 798,
+      "entries": [
+        {
+          "kind": "feedback",
+          "text": "Completion audit required. Read AGENTS.md and docs/design/autonomous-completion-audit.md. Inspect the actual result against the original outcome, record every substantive gap, fix executable authorized findings, and audit again. Do not stop after writing the audit. Preserve user stops and real external blockers; do not invent work or broaden scope. First run python scripts/completion_audit.py begin --session \"01a0e9d5-7d36-72c1-9ca0-2163a8347023\" and bind the audit to its returned sessionId/requestId. Then inspect, update the task audit JSON and run python scripts/completion_audit.py seal --session \"01a0e9d5-7d36-72c1-9ca0-2163a8347023\" --record <repository-relative-audit.json>. Set audit.performedAt to the actual review time. This receipt must describe this chat, not another task."
+        }
+      ]
+    },
+    {
+      "id": "stop:1:C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "eventName": "stop",
+      "handlerType": "command",
+      "executionMode": "sync",
+      "scope": "turn",
+      "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "source": "project",
+      "displayOrder": 1,
+      "status": "completed",
+      "statusMessage": "Checking completion audit and unfinished work",
+      "startedAt": 1790629491,
+      "completedAt": 1790629492,
+      "durationMs": 1137,
+      "entries": []
+    },
+    {
+      "id": "user-prompt-submit:0:C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "eventName": "userPromptSubmit",
+      "handlerType": "command",
+      "executionMode": "sync",
+      "scope": "turn",
+      "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "source": "project",
+      "displayOrder": 0,
+      "status": "completed",
+      "statusMessage": null,
+      "startedAt": 1790629492,
+      "completedAt": 1790629493,
+      "durationMs": 787,
+      "entries": []
+    },
+    {
+      "id": "interrupt:2:C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "eventName": "interrupt",
+      "handlerType": "command",
+      "executionMode": "sync",
+      "scope": "turn",
+      "sourcePath": "C:\\dev\\src\\Xalians\\.codex\\hooks.json",
+      "source": "project",
+      "displayOrder": 2,
+      "status": "completed",
+      "statusMessage": null,
+      "startedAt": 1790629493,
+      "completedAt": 1790629494,
+      "durationMs": 837,
+      "entries": []
+    }
+  ],
+  "checks": {
+    "allThreeTrusted": true,
+    "promptStateCreated": true,
+    "missingReceiptBlocked": true,
+    "validFixtureSealed": true,
+    "validReceiptAllowed": true,
+    "receiptConsumed": true,
+    "interruptExecuted": true,
+    "interruptStateSaved": true
+  },
+  "assistantReplies": [
+    "HOOK_TEST",
+    "HOOK_TEST"
+  ],
+  "authenticationType": "chatgpt",
+  "sessionId": "01a0e9d5-7d36-72c1-9ca0-2163a8347023",
+  "firstTurnStatus": "completed",
+  "secondTurnStatus": "interrupted",
+  "passed": true
+}
