@@ -100,5 +100,12 @@
       "role": "current-quality-rejection-and-audit",
       "sha256": "930f19e0a44091c85b615b08d67b5d7274a1c13e5580231c159462ec607bec90"
     }
-  ]
+  ],
+  "internalWork": {
+    "status": "active-corrections-not-ready-for-approval",
+    "latestAuditedAssembly": "assembled-0063",
+    "audit": "docs/design/species-construction/akinza/quality-audit-reconstruction-0052.md",
+    "workRecord": "docs/design/species-view-packs-active-work.md",
+    "approval": null
+  }
 }

@@ -2,6 +2,20 @@
 
 Start with `docs/design/species-construction/WORKFLOW.md`. This directory contains a standard-library Python stage tracker and an optional Blender geometry probe. Neither calls a generation API. Subscription image generation remains an agent task using the saved prompt files.
 
+## Local reconstruction experiments
+
+The resumed Akinza work tests local shape reconstruction from saved reference images. `reconstruct_shape.py` runs a separately installed [Hunyuan3D-2 checkout](https://github.com/Tencent-Hunyuan/Hunyuan3D-2) with separately downloaded public weights. It disables Hugging Face network access during inference, does not read an API key, and generates geometry only. Source and model licenses remain with their upstream distributions. No image synthesis or texture synthesis is part of this wrapper. The optional source checkout, weights and isolated environment stay under ignored `untracked/tools/` and are not repository dependencies.
+
+Every run requires a fresh output directory and records source revision, model/input hashes, parameters, runtime, failure or result, and output hash. Retained image crops have separate records describing their source, rectangle, mask and excluded interpretations. Hidden surfaces are model inferences requiring comparison, not measurements recovered from the image.
+
+`refine_reconstructed_head.py`, `refine_reconstructed_body.py`, `reconcile_reconstructed_body.py`, `integrate_reconstructed_paws.py` and `assemble_reconstructed_creature.py` are Akinza-specific experiments, not a species-general sculpting backend. Each snapshots its source before modifying geometry. They preserve failed outputs in numbered working folders and never mark an artifact approved. The procedural head tests in `sculpted_head.py` and `study_sculpted_head.py` also failed likeness and are retained for reproducibility.
+
+`render_shape_study.py` renders one GLB through six fixed orthographic cameras and a rear inspection camera. `--turntable` adds elevated inspection frames. `review_shape_study.py` verifies hashes and principal camera conventions, derives occupancy masks, checks figure and ground registration, and creates display sheets without stretching aspect ratios. Its occupancy masks do not claim final front feature-cutout compliance. Its technical result is separate from artistic quality.
+
+`fair_reconstruction_joints.py` is a bounded Akinza correction study for shoulder/ankle continuity, paw support and fan proportions. It is not a general anatomical solver. New Blender stages use `study_provenance.py` to snapshot entry and helper sources and hash inputs before import. Each output directory is immutable; use a new numbered directory for changed geometry. Historical experiments that predate helper snapshots have limited replay provenance.
+
+See `docs/design/species-construction/akinza/head-method-audit-0022-0024.md` and `quality-audit-reconstruction-0052.md` for actual failures and current corrections. Newer output is not automatically a better baseline. No reconstructed asset is approved for production.
+
 ```text
 python art/species-construction/init_species.py <species-key>
 python art/species-construction/pipeline.py docs/design/species-construction/akinza/package.json --report untracked/species-construction/akinza/status.json --markdown docs/design/species-construction/akinza/status.md
