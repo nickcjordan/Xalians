@@ -51,6 +51,20 @@ Hooks are a backstop. The agent must run the loop before attempting to stop, eve
 
 Current [official hook documentation](https://learn.chatgpt.com/docs/hooks) defines project hooks and Stop continuation behavior. It also requires the user to review and trust each non-managed hook definition before execution. Project trust alone is insufficient. Review this repository's hooks with `/hooks` in the Codex CLI; changed definitions require renewed trust. Do not alter trust records or use a trust-bypass flag to claim activation. This checkout's installed binary supports hooks, but live dispatch/trust must be verified separately from testing the script. No timed automation or guaranteed background execution is implied.
 
+### Verified Windows setup and linked worktrees
+
+On September 28, the installed `codex-cli 0.158.0-alpha.2.1` loaded hook definitions for linked worktrees from the primary checkout, `C:/dev/src/Xalians/.codex/hooks.json`. A hook file present only in a worktree was not discovered. The root checkout was older than the merged hook PR. Adding the merged hook definition and script there fixed discovery in both locations without changing existing tracked edits. `.codex/.gitignore` keeps local audit receipts out of Git even in an older checkout.
+
+The read-only `hooks/list` results are saved in `completion-hook-discovery-evidence.json`: both locations report the same three root-sourced hooks, with identical keys and hashes, all awaiting trust. Interactive startup independently displayed "3 hooks are new or changed." This establishes discovery and the review screen, not actual hook dispatch. No trust setting was changed.
+
+The desktop-bundled executable needs `--no-daemon` when used directly because it lacks a complete standalone daemon package. Its version-specific path can change after desktop updates. The tested command for this installation is:
+
+```powershell
+& "C:\Users\njord\AppData\Local\OpenAI\Codex\bin\faa963e871dd422c\codex.exe" --no-daemon -C "C:\dev\src\Xalians"
+```
+
+At startup, select **Review hooks**. The three events are UserPromptSubmit, Stop and Interrupt. The source should be the primary checkout's `.codex/hooks.json`; review the local Python command before trusting it. After trust, a fresh session still needs an observed prompt/Stop/Interrupt exercise before claiming automatic enforcement works. Do not make the user diagnose installation or discovery problems. Do not auto-pull, reset or stash a dirty primary checkout to install these files.
+
 ## Applied to Akinza
 
 The [0020 audit](species-construction/akinza/quality-audit-0020.md) is an unfinished repair backlog, not a completed art milestone. Its findings are represented in the task audit with status `open`; checking or sealing that record must return CONTINUE. Geometry work must address the head/ear/face method first, then trunk and joints, then paws and retained tail architecture, with whole-creature regression checks throughout. Layers 3/4 remain open, layer 5 fails quality, and the export experiment cannot close layer 6.
