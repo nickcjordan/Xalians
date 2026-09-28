@@ -1,0 +1,65 @@
+# Powerworks pillars: the battle rebuilt from what the platform is about
+
+Status: direction approved by Nick, 2026-09-28 ("let's go with this direction"). Brainstorm in progress: the pillars below are settled as a direction; the pieces under "Still to design" are not. Supersedes the battle rules in [powerworks-v5-mechanics.md](powerworks-v5-mechanics.md) once built; [powerworks-simplification.md](powerworks-simplification.md) is the measurement and the option that was not adopted.
+
+## Context
+
+Nick asked for a game where a player who has selected a companion can see how each of its moves fares against each enemy without selecting the move, and said the game had tried to implement every mechanic the creature schema could express too early. The first simplification proposal was scoped to the one existing dungeon (three machine elements) and was not adopted: every rule here has to hold for all fourteen elements, many themed dungeons, and enemy types not yet imagined.
+
+The pillars come from what the platform is: fourteen worlds, each creature built for its world's element; creatures generated from their anatomy, so every kit is different; one collection used across games.
+
+## Assumptions & Decisions
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 1 | Element works in both directions: a move's element against its target, and an enemy attack's element against the companion it hits. | 90%, Nick named element as a big pillar; approved direction | This conversation, 2026-09-28 |
+| 2 | Players never need the 14×14 chart memorized: the screen shows the computed matchup on each enemy for the selected companion. The shared chart (`typeEffectivenessMatrix.json`) stays as it is. | 85%, 10 of 1,204 fieldable creatures carry moves of two elements, so one mark per enemy covers almost every companion | `devtools/powerworksGrid.ts` census |
+| 3 | Physical moves are steady (never strong, never weak); elemental moves swing with the matchup. | 80%, already the rule (`PHYSICAL_HARM_NEUTRAL`); it becomes a named decision | `packages/rules/src/dungeon/levers.ts` |
+| 4 | An attack has one power number, from the move's intensity; element synergy is the only thing that changes it from one target to another. An area attack hits everything it reaches with one reduced number. | 85%, Nick: "attack power can be enhanced or reduced based on the synergy of the elements" | This conversation |
+| 5 | Support is four kinds, each with one number in health: Heal N, Shield N, Boost +N, Hinder −N. Each aims at one target, or at everyone for a smaller number. | 85%, Nick approved; the record's restore, protect, enhancement and weakening effects all fold into them | Table below |
+| 6 | Element does not touch support in the base game. | 70%, keeps element the attack axis; elemental shields are a candidate layer | This conversation |
+| 7 | Rest times from the record stay (ready, rests 1, rests 2), and the signature stays once per fight. | 80%, cheap to read, gives the "when" decision | `levers.ts` `COOLDOWN_ROUNDS` |
+
+## The pillars
+
+**Element, both directions.** Your move's element against the enemy's; the enemy attack's element against your companion's. With a companion selected, each enemy wears the result for that companion's element. This scales to any dungeon and any enemy without the player learning the chart.
+
+**Attack power.** One number per attack. Element is the only per-target modifier. Physical is the sure hit; elemental is the gamble on the matchup.
+
+**Support, in one currency.**
+
+| Support | What it does | What it reads from the record |
+|---|---|---|
+| Heal N | Restores N health now | restore, mending |
+| Shield N | Absorbs the next N damage on an ally | protect, shielded, reinforced, resistant |
+| Boost +N | The ally's next attack deals N more | stimulated, focused (the enhancement family) |
+| Hinder −N | An enemy's next attack deals N less | frightened, blinded, slowed and their like; binding may be the strong form |
+
+Every number is health, so "strike for 8" and "shield for 6" compare directly.
+
+**Timing.** Ready, rests 1, rests 2; the signature once per fight.
+
+A round is three pulls: attack to end the fight sooner, support to survive it, aim for the matchup, plus when to spend a move that rests.
+
+## Parked: reintroduce one at a time after the pillars are built
+
+Nick, 2026-09-28: hold these off and reintroduce them one by one once the pillars are ironed out. Each comes back alone, with the grid tool rerun to show it did not bring back differences the screen cannot show.
+
+| Parked mechanism | What it would add | What it costs |
+|---|---|---|
+| Showing each enemy's next move | Shield and Hinder become exact numbers | Surprise |
+| Turn order by speed | Speed gets a job | Ordering to read and reason about |
+| Lasting effects (burning over rounds, statuses with durations) | Setting up future rounds | State to track between rounds |
+| Chance on statuses | Swing | Inexact previews |
+| Charged enemy attacks (a big blow announced a round ahead) | A clear "stop it" puzzle | A second kind of enemy turn |
+| Elemental shields | Element reaches support | A second element axis |
+
+Also parked from the current engine: area geometry by aim, status fit (closing versus stationary, ranged), innate protections, triggered passives, cleanse, displacement as its own effect.
+
+## Still to design
+
+1. **Enemies.** What an enemy is in general: the same move grammar as companions (attacks with power and element, the four supports, rests), how a dungeon's theme sets their elements, and the roles that give each fight a priority puzzle.
+2. **The base round.** A working order of play that uses none of the parked mechanisms.
+3. **Numbers.** How intensity becomes power and support degree, health scale, the element steps, how big an area's reduction is.
+4. **Dungeons and squads.** Themed dungeons and who you bring. This reopens Nick's 2026-09-24 ruling that squad selection is out of scope, because element in both directions makes the choice of squad the largest element decision.
+5. **The screen.** Checked against the question this began with: which move is best on which enemy, without selecting a move.
