@@ -13,7 +13,7 @@ Generated evidence report. Integrity is not visual or user approval.
 
 ## interpretation
 
-Tail, gaze and paw source directions accepted in scope. Nick requested modestly stronger hind legs after blockout-0004. Blockout-0005 applies the local volume correction and awaits review. Complete likeness and release remain unapproved.
+Tail, gaze and paw source directions accepted in scope. Nick found leg fullness a little better but rejected the bowed shin. Blockout-0006 straightens the lower-leg path and awaits review. Complete likeness and release remain unapproved.
 
 ## identity
 
@@ -22,19 +22,19 @@ Run-0008 is a good starting concept; cross-view tail and pose differences preven
 
 ## construction
 
-Tail, gaze and paw source directions accepted in scope. Nick requested modestly stronger hind legs after blockout-0004. Blockout-0005 applies the local volume correction and awaits review. Complete likeness and release remain unapproved.
+Tail, gaze and paw source directions accepted in scope. Nick found leg fullness a little better but rejected the bowed shin. Blockout-0006 straightens the lower-leg path and awaits review. Complete likeness and release remain unapproved.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: identity
 
 ## connections
 
-Tail, gaze and paw source directions accepted in scope. Nick requested modestly stronger hind legs after blockout-0004. Blockout-0005 applies the local volume correction and awaits review. Complete likeness and release remain unapproved.
+Tail, gaze and paw source directions accepted in scope. Nick found leg fullness a little better but rejected the bowed shin. Blockout-0006 straightens the lower-leg path and awaits review. Complete likeness and release remain unapproved.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: identity
 
 ## geometry
 
-Tail, gaze and paw source directions accepted in scope. Nick requested modestly stronger hind legs after blockout-0004. Blockout-0005 applies the local volume correction and awaits review. Complete likeness and release remain unapproved.
+Tail, gaze and paw source directions accepted in scope. Nick found leg fullness a little better but rejected the bowed shin. Blockout-0006 straightens the lower-leg path and awaits review. Complete likeness and release remain unapproved.
 - Inputs changed since this study was recorded
 - Upstream evidence is stale or missing: construction
 - Upstream evidence is stale or missing: connections

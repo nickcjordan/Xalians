@@ -140,3 +140,7 @@ Nick accepted study-0020 with "looks good, proceed". Preserve compact animal paw
 ## 2026-09-28: stronger-looking hind legs
 
 Nick finds the rough creature close but its legs too thin. Use modestly fuller thighs and upper calves to imply bounding strength, inspired by a rabbit's powerful hindquarters without substituting rabbit legs or changing the existing stance and proportions. This is a visual-volume correction, not a new species ability or skeleton ruling. Exact feedback: `../../species-construction/akinza/hind-leg-feedback.json`. Revised blockout-0005 awaits review.
+
+## 2026-09-28: shin alignment
+
+Nick found the fuller legs a little better but rejected their wavy shin. Retain the thigh-to-knee hinge and fullness; the lower leg should read as a straight underlying knee-to-ankle segment with soft muscle contour, not an arc through its shaft. Blockout-0006 applies this local construction correction and awaits review. Exact words: `../../species-construction/akinza/shin-feedback.json`.
