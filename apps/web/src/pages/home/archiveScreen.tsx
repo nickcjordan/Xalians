@@ -62,6 +62,7 @@ export function ArchiveScreen({
 	rec,
 	place,
 	start = 0,
+	still = false,
 	children,
 	className,
 }: {
@@ -72,28 +73,30 @@ export function ArchiveScreen({
 	place: string;
 	/** Where the recording's clock starts, in seconds, so each reads as a cut from a longer reel. */
 	start?: number;
+	/** A still picture, not a moving recording: the readout says so and its clock does not run. */
+	still?: boolean;
 	children: React.ReactNode;
 	className?: string;
 }) {
 	const [sec, setSec] = React.useState(start);
 	React.useEffect(() => {
-		if (state !== 'on') return undefined;
+		if (state !== 'on' || still) return undefined;
 		const t = window.setInterval(() => setSec((v) => v + 1), 1000);
 		return () => window.clearInterval(t);
-	}, [state]);
+	}, [state, still]);
 
 	const playing = state === 'on';
 	return (
-		<div className={cn('archive', className)} data-screen={state}>
+		<div className={cn('archive', className)} data-screen={state} data-still={still ? '' : undefined}>
 			<div className="archive-picture">{children}</div>
 			<div className="archive-static" aria-hidden="true" />
 			<div className="archive-glass" aria-hidden="true" />
 			<div className="archive-hud type-data" aria-hidden="true">
 				<span className="archive-hud-status">
 					<span className="archive-dot" />
-					{playing ? 'Playback' : state === 'search' || state === 'lock' || state === 'out' ? 'Tuning' : 'Standby'}
+					{playing ? (still ? 'Still frame' : 'Playback') : state === 'search' || state === 'lock' || state === 'out' ? 'Tuning' : 'Standby'}
 				</span>
-				<span className="archive-hud-clock">{clock(sec)}</span>
+				{still ? null : <span className="archive-hud-clock">{clock(sec)}</span>}
 				<span className="archive-hud-rec">
 					Rec {rec} · {place}
 				</span>

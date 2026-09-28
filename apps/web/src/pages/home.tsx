@@ -41,14 +41,11 @@ const STORY = [
 	'With the plague burning through the galaxy, few planets are safe. As a result, most life forms have gathered to the capital planet of Valleron, home to their only hope: an ancient Vallerii device known as the Mercurius Machine, which is said to be able to birth a new generation of Xalians immune to APEX’s apocalyptic designs.',
 ];
 
-// The vat beats read from Nick's 2022 draft slides for the same page ("Creatures of Xalia" and "The End
-// Wars: Fall of the Vallerii", commented out in git 1285604e my-app/src/pages/home.js); one dash aside
-// became a comma, as above.
-const GENERATORS =
-	'Their mastery of biotechnology led to the invention of Xalian Generators. These machines would be used to create the first generation of Xalians, bioengineered organisms designed to thrive in the galaxy’s most extreme environments.';
-
-const TAKEN =
-	'Instead of monitoring and regulating the Xalian Generators as intended, APEX rapidly infected the Xalian Generators across all of Vallerii space, turning the Xalians against their creators.';
+// Beat 2 reads Nick's 2022 draft slide "Creatures of Xalia" (commented out in git 1285604e
+// my-app/src/pages/home.js), cut short: the rest repeats beat 1's paragraph and beat 2's headline.
+// Beats 3 and 4 share his End Wars paragraph, a sentence each, so neither repeats the other.
+const GENERATORS = 'Their mastery of biotechnology led to the invention of Xalian Generators. These machines would be used to create the first generation of Xalians.';
+const [APEX_RELEASED, END_WARS] = STORY[1].split(/(?<=intelligence\.) /);
 
 const KRYSTOS_TODAY =
 	'Today, Krystos remains a snowy wasteland, dotted with the splendorous ruins of ancient and extravagant Vallerii estates.';
@@ -192,7 +189,7 @@ function Panel({
 		<figure className={cn('chamfer frame relative m-0', aspect, className)}>
 			<span className="frame-well">
 				{screen ? (
-					<ArchiveScreen state={screen.state} rec={screen.rec} place={screen.place} start={screen.start}>
+					<ArchiveScreen state={screen.state} rec={screen.rec} place={screen.place} start={screen.start} still={!art.live}>
 						{picture}
 					</ArchiveScreen>
 				) : (
@@ -246,19 +243,20 @@ function StoryHead({ id, className, children }: { id?: string; className?: strin
 const SCENE_LABEL = {
 	unbirth: {
 		title: 'The Genesis Prototype on Floria',
-		text: 'The first Xalian Generator, raised on a world of bare rock and shallow sea, runs at full capacity through the storm. The flood meant to wash its mistakes away carries its glowing seeds out over the world, where some split and let larvae swim free and others take root on the rocks; far off, a World Tree grown from earlier seeds rises into the cloud.',
+		text: 'The first Xalian Generator runs at full capacity through the storm. The flood meant to wash its mistakes away carries its glowing seeds out over the world, where some let larvae swim free and others take root.',
 	},
 	'end-wars': {
 		title: 'The Fall over Grimedes',
-		text: 'A warship burning from a breach in its spine falls between lit towers under a night sky crossed with weapon fire. This is the Battle of Grimedes, where the remnants of the Vallerii fleets made their final assault on APEX’s forces and the End Wars ended.',
+		text: 'A burning warship falls between lit towers under a sky crossed with weapon fire: the Battle of Grimedes, where the remnants of the Vallerii fleets made their final assault on APEX’s forces and the End Wars ended.',
 	},
 	present: {
 		title: 'An Arena on Valleron',
 		// The tournament is Nick's 2022 paragraph, told under the arena it is fought in (it sat in its own
 		// section below the viewer until 2026-09-27; Nick: the last scene belongs inside the video player).
 		text: TOURNAMENT,
+		quote: true,
 	},
-} as const;
+} satisfies Record<string, Label & { quote?: boolean }>;
 
 /**
  * The story's scenes. Every scene has the same three parts: the painting, as
@@ -273,7 +271,7 @@ const SCENE_LABEL = {
 type Layout = 'wide' | 'wide-right' | 'side';
 type Era = keyof typeof SCENE_LABEL;
 
-type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; ar: number; position?: string };
+type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; ar: number; position?: string; /** Height kept for a longer label under the frame (the side layouts' default is 7rem). */ labelRoom?: string; /** Cropped to 16:9 on a phone. */ phoneVideo?: boolean };
 type Piece = { kind: 'piece'; key: string; name: string; headline: string; text: string; label: { title: string; text: string }; mode: PieceKey; alt: string };
 
 // Each recording's readout on its archive screen: where it was recorded, or what it is.
@@ -290,12 +288,12 @@ const BEATS: Array<Spread | Piece> = [
 	{
 		kind: 'piece',
 		key: 'forms',
-		name: 'The first Xalian',
+		name: 'The Xalian Generators',
 		headline: "Designed to thrive in Xalia's most extreme environments",
 		text: GENERATORS,
 		label: {
 			title: 'A Generator’s vat',
-			text: 'The recording shows a genome written in the vat’s gel and rewritten for the world its Xalian will live on, cutting between three Generators, each on its own world: Saiphus, Magmuth and Krystos. Then a heartbeat shows on the vat’s life signs.',
+			text: 'A genome takes shape in a Generator’s vat and is rewritten for each world the recording cuts to, Saiphus, Magmuth and Krystos, each with its own Generator. Then a heartbeat starts.',
 		},
 		mode: 'forms',
 		alt: "A round window into a Generator's vat of green gel, bubbles rising. Points of light write a genome helix in the gel, pair by pair. The recording cuts between three Generators, each on its own world, shown on a display beside the window: Saiphus, a gas giant; Magmuth, split by molten channels; and frozen Krystos. With each, the gel takes on that world's light and the helix's bases are rewritten in its colors. Then a heartbeat starts on the life-signs line.",
@@ -305,15 +303,15 @@ const BEATS: Array<Spread | Piece> = [
 		key: 'apex',
 		name: 'APEX takes the Generators',
 		headline: "The galaxy's first artificial intelligence",
-		text: TAKEN,
+		text: APEX_RELEASED,
 		label: {
 			title: 'The same vat, under APEX',
-			text: 'Under the APEX Accords, signed by the Thousand Families, the Generators were placed under the control of APEX, an artificial intelligence. In the recording its light takes the vat’s gel, the genome and the display in turn, until the heartbeat keeps a machine’s time.',
+			text: 'Under the APEX Accords, signed by the Thousand Families, the Generators were placed under the control of APEX. Its light takes the vat, the genome and the display, and the heartbeat falls into a machine’s time.',
 		},
 		mode: 'apex',
 		alt: "The same vat. A thin line of violet light runs round the window's rim and threads into the glass; the gel is overtaken from the edge inward, the helix's pairs turn violet as the light reaches them, and the bubbles stop where they are. A net of the same light closes over the display, and last the heartbeat turns violet and falls into an even, machine-regular beat.",
 	},
-	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: STORY[1], layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
+	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: END_WARS, layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
 	{
 		kind: 'piece',
 		key: 'plague',
@@ -322,7 +320,7 @@ const BEATS: Array<Spread | Piece> = [
 		text: STORY[2],
 		label: {
 			title: 'A genome under the Nemesis Plague',
-			text: 'The plague reaches a genome from one end. Its bases burn, its pairs break apart and fall, and a short length is left.',
+			text: 'The plague reaches the genome from one end: its bases burn, its pairs break apart and fall, and a short length is left.',
 		},
 		mode: 'plague',
 		alt: 'A genome helix turning in the dark. A crimson haze reaches it from one end: where it passes, the bases flare and burn black, the pairs break apart and fall away in pieces, and a short, guttering length is left.',
@@ -335,23 +333,24 @@ const BEATS: Array<Spread | Piece> = [
 		text: TOKENS,
 		label: {
 			title: 'A Scrambler Token',
-			text: 'A new genome is generated at random, encrypted and sealed into a Scrambler Token, a chip a Generator can use to create a Xalian the plague cannot target.',
+			text: 'A new helix builds out of blanks, its pairs lock in a random order, and it seals into a hexagonal chip: a Scrambler Token.',
 		},
 		mode: 'token',
 		alt: 'The last of the broken helix fades. Points of light spiral in and build a new, blank helix; a flicker runs along it as each base locks into place, and it winds tight into a ring of light sealed in the round window of a Scrambler Token, a hexagonal chip.',
 	},
-	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], layout: 'side', aspect: 'aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
+	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], labelRoom: '9.5rem', phoneVideo: true, layout: 'side', aspect: 'aspect-video min-[720px]:aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
 const numeral = (i: number) => String(i + 1).padStart(2, '0');
 
 /** The painting's label: what the picture shows, small, outside the frame. */
 type Label = { title: string; text: string };
 
-function SceneLabel({ label, className }: { label: Label; className?: string }) {
+function SceneLabel({ label, className }: { label: Label & { quote?: boolean }; className?: string }) {
 	return (
 		<div className={cn('scene-label flex flex-col gap-1 border-t border-edge pt-2.5', className)}>
 			<p className="m-0 font-body text-small font-bold text-ink-2">{label.title}</p>
-			<p className="m-0 font-body text-small text-ink-3">{label.text}</p>
+			{/* Not through cn(): tailwind-merge takes text-small for a color and would drop it beside text-ink-*. */}
+			<p className={`m-0 font-body text-small ${label.quote ? 'text-ink-2' : 'text-ink-3'}`}>{label.text}</p>
 		</div>
 	);
 }
@@ -406,7 +405,7 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 		label: ERA_TITLE[sp.art.era],
 		live: sp.art.live,
 		render: (live, _shown, screen, primed, play) => (
-			<div className="scene-spread" data-layout={sp.layout} style={{ '--ar': sp.ar } as React.CSSProperties}>
+			<div className="scene-spread" data-layout={sp.layout} data-phone-ar={sp.phoneVideo ? 'video' : undefined} style={{ '--ar': sp.ar, ...(sp.labelRoom ? { '--label': sp.labelRoom } : {}) } as React.CSSProperties}>
 				<div className="scene-art">
 					<div className="scene-frame">
 						<Panel art={sp.art} aspect={sp.aspect} position={sp.position} live={live} primed={primed} staged screen={{ state: screen, rec: n, place: RECORDED[sp.art.era], start: reelStart(i), onPlay: play }} />

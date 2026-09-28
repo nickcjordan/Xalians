@@ -337,9 +337,22 @@
 	@media (max-width: 719px) { .archive-hud { padding: 8px 10px; } .archive-play { padding: 8px 14px 8px 12px; font-size: var(--text-tiny); } }
 	.archive-hud-status { display: inline-flex; align-items: center; gap: 8px; }
 	.archive-hud-clock { justify-self: end; font-variant-numeric: tabular-nums; }
-	.archive-hud-rec { grid-column: 1 / -1; grid-row: 3; }
+	/* A 4:3 scene is cropped to 16:9 on a phone, so it spans the width like the others. */
+	@media (max-width: 719px) { .scene-spread[data-phone-ar="video"] { --ar: 1.7778 !important; } }
+	.archive-hud-rec { grid-column: 1 / -1; grid-row: 3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 	.archive-dot { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--color-archive-ink) 50%, transparent); }
 	.archive[data-screen="on"] .archive-dot { background: var(--color-archive-lamp); animation: archive-blink 1.6s steps(1) infinite; }
+	.archive[data-still] .archive-dot { background: color-mix(in srgb, var(--color-archive-ink) 70%, transparent); animation: none; }
+	/* The readout stays legible over a pale picture: a scrim at the top and the foot of the glass. */
+	.archive-hud::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: linear-gradient(to bottom, color-mix(in srgb, var(--color-archive-glass) 60%, transparent), transparent 20%, transparent 80%, color-mix(in srgb, var(--color-archive-glass) 60%, transparent));
+	}
+	.archive-hud { isolation: isolate; }
+	@media (max-width: 719px) { .archive-hud-clock { display: none; } }
 	/* The Play key over a screen standing by (ArchivePlay): a plain transport key in the screen's own ink,
 	   laid over the frame by the beat, beside the frame's link rather than inside it. */
 	.archive-play {
@@ -527,7 +540,8 @@
 		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: minmax(0, var(--fit)) auto auto;
 		grid-template-areas: "frame" "read" "label";
-		align-content: center;
+		/* From the top, so the screen stays where it is from beat to beat whatever the length of the words. */
+		align-content: start;
 		row-gap: 12px;
 		height: 100%;
 	}
@@ -591,7 +605,7 @@
 		   and the label is never narrower than 24rem, so it always fits there. */
 		.scene-spread[data-layout="portrait"],
 		.scene-spread[data-layout="side"] {
-			--label: 10rem;
+			--label: 7rem;
 			grid-template-rows: minmax(0, 1fr);
 			column-gap: 56px;
 			align-items: center;
@@ -628,6 +642,9 @@
 		.scene-spread[data-layout="portrait"] .scene-label,
 		.scene-spread[data-layout="side"] .scene-label {
 			flex: none;
+			/* Room for three caption lines whatever the caption: the art column is then the same height on
+			   every beat of a shape, so centering it cannot move the screen from beat to beat. */
+			min-height: 4.5rem;
 			width: max(min(24rem, calc(100cqw - var(--lift))), min(calc(100cqw - var(--lift)), calc((100cqh - var(--label) - var(--lift)) * var(--ar))));
 		}
 		.story-scene:not([data-state="active"]) [data-layout="portrait"] .scene-read { transform: translateX(-40px); }
@@ -641,7 +658,7 @@
 	@container scene (min-width: 940px) and (min-aspect-ratio: 2.1) {
 		.scene-spread[data-layout="wide"],
 		.scene-spread[data-layout="wide-right"] {
-			--label: 10rem;
+			--label: 7rem;
 			grid-template-rows: minmax(0, 1fr);
 			column-gap: 48px;
 			align-items: center;

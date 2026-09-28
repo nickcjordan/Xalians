@@ -44,18 +44,22 @@ export const css = (c: RGB, alpha = 1) => `rgba(${Math.round(clamp(c[0], 0, 255)
 export type P3 = { x: number; y: number; z: number };
 export type Proj = { x: number; y: number; s: number; z: number };
 
-export type Camera = { cx: number; cy: number; pitch: number; roll: number; dist: number; zoom: number };
+export type Camera = { cx: number; cy: number; pitch: number; roll: number; dist: number; zoom: number; /** Turn about the vertical first, so one end comes toward the viewer. */ yaw?: number };
 
 export function project(cam: Camera, p: P3): Proj {
-	// pitch: tip the chamber toward the viewer about x; roll: turn the frame about the view axis
+	// yaw: turn about the vertical; pitch: tip the chamber toward the viewer about x; roll: turn the frame about the view axis
+	const cy = Math.cos(cam.yaw ?? 0);
+	const sy = Math.sin(cam.yaw ?? 0);
+	const x0 = p.x * cy - p.z * sy;
+	const z0 = p.x * sy + p.z * cy;
 	const cp = Math.cos(cam.pitch);
 	const sp = Math.sin(cam.pitch);
-	const y1 = p.y * cp - p.z * sp;
-	const z1 = p.y * sp + p.z * cp;
+	const y1 = p.y * cp - z0 * sp;
+	const z1 = p.y * sp + z0 * cp;
 	const cr = Math.cos(cam.roll);
 	const sr = Math.sin(cam.roll);
-	const x2 = p.x * cr - y1 * sr;
-	const y2 = p.x * sr + y1 * cr;
+	const x2 = x0 * cr - y1 * sr;
+	const y2 = x0 * sr + y1 * cr;
 	const s = (cam.dist / (cam.dist - z1)) * cam.zoom;
 	return { x: cam.cx + x2 * s, y: cam.cy - y2 * s, s, z: z1 };
 }
@@ -172,6 +176,35 @@ export function ground(ctx: Ctx, ch: Chamber) {
 	g.addColorStop(1, css(ch.pool, 0));
 	ctx.fillStyle = g;
 	ctx.fillRect(0, 0, W, H);
+}
+
+// Film grain: one tile of noise, laid over the whole frame at a new offset each step, so the pieces share the
+// painted plates' grain rather than reading as clean renders.
+let grainTile: HTMLCanvasElement | null = null;
+export function grain(ctx: Ctx, sec: number, alpha = 0.07) {
+	if (!grainTile) {
+		if (typeof document === 'undefined') return;
+		const c = document.createElement('canvas');
+		c.width = c.height = 256;
+		const g = c.getContext('2d');
+		if (!g) return;
+		const img = g.createImageData(256, 256);
+		const r = rng(1234);
+		for (let k = 0; k < img.data.length; k += 4) {
+			const v = Math.floor(r() * 255);
+			img.data[k] = img.data[k + 1] = img.data[k + 2] = v;
+			img.data[k + 3] = 255;
+		}
+		g.putImageData(img, 0, 0);
+		grainTile = c;
+	}
+	const step = Math.floor(sec * 20);
+	const ox = -((step * 97) % 256);
+	const oy = -((step * 57) % 256);
+	ctx.globalCompositeOperation = 'source-over';
+	ctx.globalAlpha = alpha;
+	for (let y = oy; y < H; y += 256) for (let x = ox; x < W; x += 256) ctx.drawImage(grainTile, x, y);
+	ctx.globalAlpha = 1;
 }
 
 /** Darken the edges, last, over everything. */

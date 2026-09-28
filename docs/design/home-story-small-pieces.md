@@ -66,3 +66,21 @@ The broken length from the plague piece dims away. In the dark, points of light 
 2. An independent reviewer (an Opus subagent that writes no code) reads the sheets against this brief and ranks what is wrong; the builder never grades its own round.
 3. Rounds continue until the reviewer's top finding is taste rather than a fault, which Nick judges live.
 4. The screen-reader descriptions of the pieces pass the lore fact-check before they ship.
+
+## 7. Polish pass (2026-09-27)
+
+Nick asked for an independent audit of the pieces and of the viewer around them, with several passes. Two Opus critics wrote no code: one for the pieces and one for the presentation. Each ran three rounds. What changed in the pieces:
+
+- **One family of footage.** All four pieces share a film grain (`grain()` in `stage.ts`). The helix reads deeper: the near side is about 1.8 times the size of the far side, and the far side is darker and hazed. The plague and token helices turn about 11 degrees toward the camera (`Camera.yaw`). The vat helix is the same molecule, drawn large in the window, and its bases light themselves (`Helix.emissive`), so the lit gel no longer greys them.
+- **Beat 2, "many kinds".** The readout's lamps became code rows, one per world. Each row is written as the band passes and kept, so by the heartbeat three different genomes stand stacked. The world gels replace the green almost entirely, in darker, desaturated tones; Krystos is a cold grey-blue, clear of the green write phase. The worlds come faster, and the heartbeat starts at 10.6 s of 16.
+- **Beat 3.** The taken gel is near black-violet, and the net over the display's world is sparser so the world stays visible. The machine pulse starts at 7.2 s, and the code rows turn violet with the takeover.
+- **Beat 5.**
+  - A charred length of about six pairs hangs behind the fire and sags before it falls, so the burn reads as destruction, not as the helix getting shorter.
+  - The haze is many small puffs hugging the strands, some in front of them, not long horizontal streaks.
+- **Beat 6, "unique".**
+  - The plague's remnant is gone by 0.7 s.
+  - Short comets come in from the sides, not from off the frame.
+  - A code row under the helix locks rung by rung while two faint rows of other codes riffle above and below it and fall away, so the code that locks reads as one draw among countless others.
+  - The coil is tighter, and the ring of light holds alone for about 0.9 s before the chip forms.
+
+Left for Nick as taste: the coiled genome in the token's window still reads a little like a pinwheel; the chip is cleaner than the painted scenes; the untaken middle of the vat mid-takeover reads as a glass bubble.

@@ -92,6 +92,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	const boxRef = React.useRef<HTMLDivElement>(null);
 	const pinRef = React.useRef<HTMLDivElement>(null);
 	const [pinTop, setPinTop] = React.useState(0);
+	const [boxH, setBoxH] = React.useState<number | null>(null);
 	const [boxed, setBoxed] = React.useState(canBox);
 	const [index, setIndex] = React.useState(0);
 	const [settled, setSettled] = React.useState(-1);
@@ -118,11 +119,22 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		return () => mq.removeEventListener?.('change', apply);
 	}, []);
 
-	// Where the viewer rests: the height that centers it on the screen.
+	// Where the viewer rests: centered in the room below the site's bar, and the box as tall as that room
+	// allows once the chapter bar and the controls have theirs (the bar hides on the way down, but it can
+	// come back at any moment, and the viewer must never sit under it).
 	React.useEffect(() => {
 		const pin = pinRef.current;
-		if (!boxed || !pin || typeof window === 'undefined') return undefined;
-		const measure = () => setPinTop(Math.max(8, Math.round((window.innerHeight - pin.offsetHeight) / 2)));
+		const box = boxRef.current;
+		if (!boxed || !pin || !box || typeof window === 'undefined') return undefined;
+		const measure = () => {
+			const nav = document.getElementById('navvy')?.offsetHeight ?? 0;
+			const room = window.innerHeight - nav;
+			const chrome = pin.offsetHeight - box.offsetHeight;
+			const h = Math.round(Math.min(820, Math.max(360, room - chrome - 24)));
+			setBoxH((v) => (v === h ? v : h));
+			// centered by the pin's height as it stands; once the box takes its new height the pin is measured again
+			setPinTop(nav + Math.max(8, Math.round((room - pin.offsetHeight) / 2)));
+		};
 		measure();
 		window.addEventListener('resize', measure);
 		const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
@@ -437,6 +449,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 										type="button"
 										onClick={() => go(i)}
 										aria-label={`${b.n} ${b.label}`}
+										title={b.label}
 										aria-current={i === index ? 'step' : undefined}
 										data-reached={i <= index ? '' : undefined}
 										data-minor={b.minor ? '' : undefined}
@@ -460,7 +473,8 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 
 				<div
 					ref={boxRef}
-					className={cn('story-box relative', boxed ? 'h-[clamp(360px,calc(100svh-14.5rem),820px)]' : '')}
+					className={cn('story-box relative', boxed && boxH == null ? 'h-[clamp(360px,calc(100svh-14.5rem),820px)]' : '')}
+					style={boxed && boxH != null ? { height: boxH } : undefined}
 					data-boxed={boxed ? '' : undefined}
 					onTouchStart={onTouchStart}
 					onTouchEnd={onTouchEnd}
@@ -488,11 +502,11 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 				</div>
 
 				{/* Back and Next, with where the reader is. On the last beat Next reads on into the page. */}
-				<div className="mt-4 flex items-center justify-between gap-4">
-					<span className="type-data text-tiny tracking-legend text-ink-3" aria-hidden="true">
-						{beat.n} / {beats[count - 1].n}
-					</span>
+				<div className="mt-4 flex items-center justify-end gap-4">
 					<div className="flex items-center gap-3">
+						<span className="type-data mr-2 text-tiny tracking-legend text-ink-3" aria-hidden="true">
+							{beat.n} / {beats[count - 1].n}
+						</span>
 						<Button type="button" variant="outline" onClick={() => go(index - 1)} disabled={index === 0}>
 							<ArrowLeft aria-hidden="true" />
 							Back

@@ -8,12 +8,12 @@
 // turn of a few degrees toward the light, and a glint across its face.
 import { BACKBONE, BASES, PAIRED, type Helix, type PairLook, drawHelix, strandPoint } from './helix';
 import { PLAGUE_HELIX, plagueCam, plagueLook } from './plague';
-import { type Camera, type Ctx, type P3, type RGB, H, W, clamp, css, easeIn, easeOut, glow, ground, lighter, loopFade, mix, mixRGB, motes, project, ramp, rng, smooth, vignette } from './stage';
+import { type Camera, type Ctx, type P3, type RGB, H, W, clamp, css, easeIn, easeOut, glow, grain, ground, lighter, loopFade, mix, mixRGB, motes, project, ramp, rng, smooth, vignette } from './stage';
 
 export const TOKEN_LOOP = 13;
 
 const PAIRS = PLAGUE_HELIX.pairs;
-const CAM: Camera = { cx: W / 2, cy: H / 2 + 4, pitch: 0.34, roll: -0.06, dist: 1500, zoom: 1 };
+const CAM: Camera = { cx: W / 2, cy: H / 2 + 4, pitch: 0.34, roll: -0.06, dist: 1500, zoom: 0.93, yaw: 0.2 };
 
 const BLANK: RGB = [150, 162, 172];
 const CORE: RGB = [196, 255, 240];
@@ -23,14 +23,15 @@ const JIT = Array.from({ length: PAIRS }, () => r());
 const MIDDLE = (PAIRS - 1) / 2;
 
 const T = {
-	remnantOut: [0.2, 1.3],
-	arrive: [1.0, 3.5],
-	band: [3.8, 6.4],
-	coil: [7.0, 8.8],
-	chip: [8.4, 9.3],
-	seal: 9.25,
-	turn: [9.3, 12.2],
-	glint: [10.2, 11.2],
+	remnantOut: [0.1, 0.7],
+	arrive: [0.4, 2.8],
+	band: [3.1, 5.8],
+	coil: [6.2, 7.8],
+	// the ring of light holds alone before the chip forms round it
+	chip: [8.7, 9.5],
+	seal: 9.45,
+	turn: [9.5, 12.2],
+	glint: [10.4, 11.3],
 } as const;
 
 const landAt = (i: number) => T.arrive[0] + (T.arrive[1] - T.arrive[0] - 0.9) * (Math.abs(i - MIDDLE) / MIDDLE) * 0.92 + JIT[i] * 0.12;
@@ -304,7 +305,7 @@ export function drawToken(ctx: Ctx, t: number, sec: number) {
 	const h: Helix = {
 		pairs: PAIRS,
 		rise: mix(29, 9, coil),
-		radius: mix(100, 26, coil),
+		radius: mix(100, 15, coil),
 		phase: 0.33 * sec + spin,
 		center: { x: 0, y: 0, z: 0 },
 		scale: 1,
@@ -312,7 +313,7 @@ export function drawToken(ctx: Ctx, t: number, sec: number) {
 		haze: [12, 18, 22],
 		thin: coil,
 	};
-	const cam: Camera = { ...CAM, pitch: mix(CAM.pitch, 0, coil), roll: mix(CAM.roll, 0, coil) };
+	const cam: Camera = { ...CAM, pitch: mix(CAM.pitch, 0, coil), roll: mix(CAM.roll, 0, coil), yaw: mix(CAM.yaw ?? 0, 0, coil) };
 
 	// The coiled genome and its core, drawn where the window is once the chip is there.
 	const drawGenome = () => {
@@ -332,13 +333,15 @@ export function drawToken(ctx: Ctx, t: number, sec: number) {
 			if (q <= 0 || q >= 1) continue;
 			for (const strand of [0, 1] as const) {
 				let prev: { x: number; y: number; s: number } | null = null;
-				for (let k = 0; k < 10; k++) {
-					const qq = q - k * 0.022;
+				// in from the side the pair is on, curving round the axis, never from off the frame
+				const out = (i - MIDDLE) / MIDDLE;
+				for (let k = 0; k < 7; k++) {
+					const qq = q - k * 0.028;
 					if (qq <= 0) break;
 					const away = 1 - easeOut(qq);
-					const pr = project(cam, strandPoint({ ...h, phase: h.phase + away * 5 }, i, strand, 1 + 2.8 * away));
+					const pr = project(cam, strandPoint({ ...h, phase: h.phase + away * 3.2 }, clamp(i + out * away * 7 + (out >= 0 ? 1 : -1) * away * 3, -3, PAIRS + 2), strand, 1 + 0.9 * away));
 					if (prev) {
-						const fadeK = 1 - k / 10;
+						const fadeK = 1 - k / 7;
 						ctx.strokeStyle = css([190, 232, 255], 0.55 * fadeK);
 						ctx.lineWidth = 4.5 * pr.s * fadeK + 0.5;
 						ctx.beginPath();
@@ -354,6 +357,38 @@ export function drawToken(ctx: Ctx, t: number, sec: number) {
 			}
 		}
 	});
+
+	// The code under the helix while it is written: the chosen row locks rung by rung as the band passes, and
+	// above and below it other possible codes keep riffling, so what locks reads as one of countless draws.
+	const rows = smooth(T.arrive[1] - 0.4, T.band[0], t) * (1 - smooth(T.coil[0], T.coil[0] + 0.6, t));
+	if (rows > 0.01) {
+		const TW = 16;
+		const G = 4;
+		const x0 = W / 2 - (PAIRS * (TW + G) - G) / 2;
+		const y0 = Math.round(H * 0.79);
+		const riffle = rng(Math.floor(sec * 12) * 7 + 3);
+		for (let row = -1; row <= 1; row++) {
+			for (let i = 0; i < PAIRS; i++) {
+				const x = x0 + i * (TW + G);
+				const y = y0 + row * 17;
+				let c: RGB;
+				let a = rows;
+				if (row === 0) {
+					const lock = lockAt(i);
+					c = t >= lock ? BASES[NEW[i]] : Math.abs(i - bandAt(t)) < 3.5 ? BASES[Math.floor(sec * 16 + i * 3) % 4] : BLANK;
+					a *= t >= lock ? 1 : 0.5;
+				} else {
+					c = BASES[Math.floor(riffle() * 4)];
+					// the others fall away once the chosen code has locked there
+					a *= 0.5 * (1 - smooth(lockAt(i), lockAt(i) + 0.5, t) * 0.8);
+				}
+				ctx.globalAlpha = a;
+				ctx.fillStyle = css(c);
+				ctx.fillRect(x, y, TW, row === 0 ? 11 : 6);
+			}
+		}
+		ctx.globalAlpha = 1;
+	}
 
 	if (chipIn > 0.01) {
 		chip(ctx, t, yaw, tilt, mix(1.15, 1, easeOut(chipIn)), chipIn, (clip) => {
@@ -375,6 +410,7 @@ export function drawToken(ctx: Ctx, t: number, sec: number) {
 	} else if (t > T.arrive[0]) drawGenome();
 
 	motes(ctx, sec, [170, 196, 210], 'front', 0.7);
+	grain(ctx, sec);
 	vignette(ctx, 0.8);
 	const fade = loopFade(t, TOKEN_LOOP);
 	if (fade < 1) {
