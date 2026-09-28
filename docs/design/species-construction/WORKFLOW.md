@@ -18,6 +18,8 @@ Process correction after the Akinza tail exercise: expressive posing is deferred
 
 ## Every study
 
+Apply the repository [autonomous completion loop](../autonomous-completion-audit.md) after each study. Maintain `completion-audit.json` beside the current species brief. The visual audit's open findings are implementation obligations: fix, render, compare and audit again. Do not end with the audit itself while known authorized corrections are executable. Candidate 0020's current audit is a deliberately failing backlog and must not be sealed as ready.
+
 - Save the exact prompt before generation and label input roles. Copy immutable input snapshots into the run folder. Record SHA-256 hashes, tool, timestamp, billing route, exposed model/seed or honest nulls, and returned output.
 - Keep working originals outside the approved-pack directory. Record visual failures even when the result looks appealing. Retain failures to prevent repeated mistakes.
 - Record the intended pose, nominal views, decisions consumed and unknowns addressed. Describe technical measurements separately from proposed anatomical choices.

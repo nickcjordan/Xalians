@@ -8,7 +8,11 @@ Before making platform, generation-economy, creature-lifecycle, trading, restora
 
 In particular, current free generation, physical release deletion, and automatic Arcade-credit-to-token conversion are implementation facts, not the approved future economy. Do not make a local game's engine conform to platform replay, receipts, or rewards until Nick requests that game's integration cutover. The current prototype creature and economy records may be cleared at a future explicit cutover, but not as part of ordinary gameplay work.
 
-## Project
+## Completion audit requirement
+
+Follow `AGENTS.md` and `docs/design/autonomous-completion-audit.md` after each meaningful work iteration and before declaring completion. Audit the actual result against the user's intended outcome, fix executable authorized findings, and repeat. A critique, passing check or completed phase does not end unfinished implementation. Persistent findings and the task-specific audit record carry the loop across sessions. Codex hook support is optional runtime enforcement; this instruction applies regardless of the agent tool.
+
+## Project overview
 
 Xalians is a shared creature-generation and collection platform with multiple games. The TypeScript generator in `packages/rules` produces creatures with species, elements, physiology, attributes, and abilities. AWS Lambda and API Gateway expose the current registry, DynamoDB stores owned records, and a Vite/React frontend is hosted on S3 at `xalians.com`.
 

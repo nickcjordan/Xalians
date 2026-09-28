@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "id": "autonomous-completion-system",
+  "outcome": "Install a repository-wide audit, repair and re-audit system that prevents premature stopping on known authorized work.",
+  "authorizedScope": "Implement the explicitly requested workflow system, persistence, tests and supported runtime configuration. Preserve Akinza as unfinished work in its own record; do not grant art approval or bypass hook trust.",
+  "workRecord": "docs/design/autonomous-completion-active-work.md",
+  "evidence": {
+    "instructions": {
+      "path": "AGENTS.md",
+      "sha256": "5ee863144567667eae51635c6348a96d85e2d11a1e1474d760ccf69db001e0c3"
+    },
+    "claude": {
+      "path": "CLAUDE.md",
+      "sha256": "8d1f0a4289bd8f6dd29338f33030916072d6eb59ad3a7705ff1d38185d44c063"
+    },
+    "protocol": {
+      "path": "docs/design/autonomous-completion-audit.md",
+      "sha256": "682ffeec829db28ba0c9169225d194df3fdfde1c779e3d73003a0bc4691fb320"
+    },
+    "gate": {
+      "path": "scripts/completion_audit.py",
+      "sha256": "dc9464b38655c844bb3d48e7ff911d2d030cd7016c32d03a3f94adeb89ba342a"
+    },
+    "tests": {
+      "path": "scripts/tests/test_completion_audit.py",
+      "sha256": "efe7c6fe89f652b5e667747a04a1bb55fa7fbb3ecce418e1efc23ebe694dc5a1"
+    },
+    "hooks": {
+      "path": ".codex/hooks.json",
+      "sha256": "24807b975cf8d3e8f87962e71afb593b0fd1fd16367657597dcaf6c1d9b30874"
+    },
+    "ci": {
+      "path": ".github/workflows/completion-audit.yml",
+      "sha256": "7142afa549a1688feeb479bfc6c1a69608203a40f7ccbe84cd242e5d3c9fe55b"
+    },
+    "backlog": {
+      "path": "docs/design/species-construction/akinza/completion-audit.json",
+      "sha256": "b3d13cfa11fdc887a7fe9746d49b2629a87f5233b6395c6661f7b7c3ace63ccc"
+    },
+    "work": {
+      "path": "docs/design/autonomous-completion-active-work.md",
+      "sha256": "fbb24add89d9af682d1becb6b355b231132f574442fe9d39bcd481d6a0271649"
+    }
+  },
+  "criteria": [
+    {
+      "id": "instructions",
+      "expectation": "New sessions inherit audit and follow-through requirements tied to the original outcome.",
+      "status": "pass",
+      "assessment": "AGENTS.md, CLAUDE.md and species workflow require direct inspection, findings, repairs and re-audit; stop boundaries and scope limits are explicit.",
+      "evidence": [
+        "instructions",
+        "claude",
+        "protocol"
+      ]
+    },
+    {
+      "id": "gate",
+      "expectation": "Mechanism rejects stale reviews and unfinished work, preserves findings and user control, and has meaningful regression coverage.",
+      "status": "pass",
+      "assessment": "25 tests pass, including actual Windows hook wrapper. Independent audits found defects that were repaired and covered before stopping. Script cannot prove subjective quality; this limit is documented.",
+      "evidence": [
+        "gate",
+        "tests",
+        "hooks",
+        "ci",
+        "work"
+      ]
+    },
+    {
+      "id": "backlog",
+      "expectation": "Current Akinza audit becomes executable unfinished work, not an approval request or completed milestone.",
+      "status": "pass",
+      "assessment": "20 failed criteria and 20 open findings are bound to actual current evidence. Running the checker returns CONTINUE. No model corrections are claimed.",
+      "evidence": [
+        "backlog",
+        "protocol"
+      ]
+    },
+    {
+      "id": "activation",
+      "expectation": "Automatic runtime dispatch is verified after the user trusts the exact hook definition.",
+      "status": "blocked",
+      "assessment": "Hooks are configured and wrapper-tested. Live runtime trust/dispatch is not verified and cannot be substituted with manual script invocation.",
+      "evidence": [
+        "hooks",
+        "work",
+        "protocol"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "A1",
+      "criterion": "gate",
+      "status": "resolved",
+      "observation": "Old passing audits could be reused across chats or later stops.",
+      "resolution": "Fresh session/request binding and one-use consumption, with new-prompt invalidation.",
+      "resolutionEvidence": [
+        "gate",
+        "tests"
+      ]
+    },
+    {
+      "id": "A2",
+      "criterion": "gate",
+      "status": "resolved",
+      "observation": "Interrupt and explicit-stop behavior conflicted with persistence.",
+      "resolution": "Interrupt takes precedence until new input; user_stop bypasses history without erasing obligations.",
+      "resolutionEvidence": [
+        "gate",
+        "tests"
+      ]
+    },
+    {
+      "id": "A3",
+      "criterion": "gate",
+      "status": "resolved",
+      "observation": "Approval and blocker records lacked meaningful stopping boundaries.",
+      "resolution": "Require existing approval authority and specific decision; blockers cover all remaining nonpassing criteria and no runnable findings.",
+      "resolutionEvidence": [
+        "gate",
+        "tests"
+      ]
+    },
+    {
+      "id": "A4",
+      "criterion": "gate",
+      "status": "resolved",
+      "observation": "Findings could disappear and invalid closures could advance history.",
+      "resolution": "Canonical persistent inventory retains newly observed obligations on failed checks; per-finding failure baselines and actual-byte validation precede resolution.",
+      "resolutionEvidence": [
+        "gate",
+        "tests"
+      ]
+    },
+    {
+      "id": "A5",
+      "criterion": "activation",
+      "status": "blocked",
+      "observation": "Codex requires exact-definition hook trust before non-managed hooks execute.",
+      "evidence": [
+        "hooks",
+        "work",
+        "protocol"
+      ],
+      "blocker": {
+        "externalDependency": "User review/trust of repository hooks in Codex; actual dispatch confirmation",
+        "attempts": "Verified official hook contract, installed CLI hook support, direct Windows wrapper execution, and simulated lifecycle. Did not bypass trust or edit trust records.",
+        "unblocksWhen": "User reviews/trusts this hooks.json definition on a supported Codex surface and a real lifecycle dispatch is observed."
+      }
+    }
+  ],
+  "audit": {
+    "reviewer": "Codex primary with independent /root/quality_audit challenges",
+    "comparison": "Compared requested autonomous follow-through with actual instructions, gate behavior, failure regressions and Akinza negative case. Audit findings led to code fixes in this turn.",
+    "regressions": "Verified explicit stops, interrupts, per-chat isolation, changed evidence, retained findings and blocked approval. Unrelated validator drafts remain untouched.",
+    "scopeCheck": "This is the explicit workflow-system request. It does not complete or erase the ongoing creature task, promise aesthetic judgment from hashes, or alter global app trust.",
+    "sessionId": "01a0e3f5-ad0c-7980-905a-1595945478d8",
+    "requestId": "db68ef65-5993-43bf-b821-1f606eede094",
+    "performedAt": "2026-09-28T18:19:10.821553+00:00"
+  },
+  "stop": {
+    "kind": "blocked"
+  }
+}
