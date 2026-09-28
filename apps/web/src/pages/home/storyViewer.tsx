@@ -57,9 +57,9 @@ export type ViewerBeat = {
 	render: (live: boolean, shown: boolean, screen: ScreenState, primed: boolean, play: () => void) => React.ReactNode;
 };
 
-// The incoming beat's frame has faded in by now (see `.story-scene`); its screen locks on only after,
-// like a shot that settles first.
-const SETTLE_MS = 420;
+// The incoming beat has slid into place by now (see `.story-scene`, 640 ms); its screen locks on only
+// after, like a tape that has to seat before it plays.
+const SETTLE_MS = 680;
 // Resting this long counts as having stopped: the screen tunes in.
 const REST_MS = 220;
 // The longest the screen searches for a recording that does not arrive, once nothing else holds it.
@@ -493,6 +493,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 								aria-hidden={i === index ? undefined : true}
 								inert={i === index ? undefined : true}
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
+								data-leaving={i === leaving ? '' : undefined}
 								tabIndex={i === index ? -1 : undefined}
 							>
 								{b.render(liveNow(i), shown, i === index ? screen : i === leaving && screen !== 'standby' && screen !== 'off' ? 'search' : 'standby', i === index && visible && unheld && screen !== 'standby' && screen !== 'off', play)}

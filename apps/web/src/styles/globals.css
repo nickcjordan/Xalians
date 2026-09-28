@@ -508,17 +508,34 @@
 	.story-marker[data-minor]::before { height: 6px; }
 
 	/* The viewer's box (pages/home/storyViewer.tsx): every beat stacked in it,
-	   the shown one on top. Beats behind the reader wait above ("past"), beats
-	   ahead wait below ("future"): Next sends the shown frame out the way the
-	   story travels while the next drifts in after it, then its reading column
-	   and label arrive; Back plays it the other way. Without the box (a short
+	   the shown one on top, like a rack of archive screens. Beats behind the
+	   reader wait off to the left ("past"), beats ahead off to the right
+	   ("future"), out past the window's edge, set back a little and dimmed.
+	   Next ejects the playing tape into static, then the rack runs: the shown
+	   screen slides away to the left while the next slides in from the right
+	   and seats, and only then tunes in (Nick, 2026-09-28: "slide left and
+	   right into and off of view... like you are cycling through a view of old
+	   video archives"). Back runs it the other way. Only the beat arriving and
+	   the one leaving travel; the rest jump unseen, so a jump across several
+	   chapters passes nothing through the view. Without the box (a short
 	   window) only the shown beat is in the page, at its own height. */
 	.story-scene {
+		--rack: calc(50vw + 50% + 32px);
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
+		transition: none;
 	}
-	.story-box:not([data-boxed]) .story-scene { position: relative; inset: auto; }
+	.story-scene[data-state="past"] { transform: translateX(calc(-1 * var(--rack))) scale(.94); opacity: .5; }
+	.story-scene[data-state="future"] { transform: translateX(var(--rack)) scale(.94); opacity: .5; }
+	.story-scene[data-state="active"],
+	.story-scene[data-leaving] { transition: transform 640ms cubic-bezier(.62, 0, .3, 1), opacity 640ms cubic-bezier(.62, 0, .3, 1); }
+	.story-scene:not([data-state="active"]):not([data-leaving]) { visibility: hidden; }
+	@media (prefers-reduced-motion: reduce) {
+		.story-scene[data-state="active"],
+		.story-scene[data-leaving] { transition: none; }
+	}
+	.story-box:not([data-boxed]) .story-scene { position: relative; inset: auto; transform: none; opacity: 1; }
 	.story-scene[data-state="active"] { z-index: 1; pointer-events: auto; }
 
 	/* One column by default (a phone): the painting takes the height the words
@@ -553,8 +570,6 @@
 		align-items: flex-end;
 		justify-content: center;
 		min-height: 0;
-		/* Leaving: its screen is already all static (the `out` phase), so it goes quickly, before the next one is in. */
-		transition: opacity 160ms var(--ease-in);
 	}
 	.scene-frame > * { width: min(calc(100cqw - var(--lift)), calc((100cqh - var(--lift)) * var(--ar))); }
 	.scene-spread .scene-label { grid-area: label; }
@@ -562,14 +577,11 @@
 	.scene-spread .scene-label,
 	.scene-spread .scene-read { transition: opacity 280ms var(--ease-in), transform 280ms var(--ease-in); }
 
-	/* The screens change through static (archiveScreen.tsx), so a frame only fades where it stands. */
-	.story-scene[data-state="past"] .scene-frame,
-	.story-scene[data-state="future"] .scene-frame { opacity: 0; }
+	/* The screens travel with their beat (above); the words go as it leaves and arrive once it has seated. */
 	.story-scene:not([data-state="active"]) .scene-read,
 	.story-scene:not([data-state="active"]) .scene-label { opacity: 0; transform: translateY(20px); }
-	.story-scene[data-state="active"] .scene-frame { transition: opacity 280ms var(--ease-out) 140ms; }
-	.story-scene[data-state="active"] .scene-read { transition: opacity 600ms var(--ease-out) 420ms, transform 760ms var(--ease-out) 420ms; }
-	.story-scene[data-state="active"] .scene-label { transition: opacity 500ms var(--ease-out) 720ms, transform 600ms var(--ease-out) 720ms; }
+	.story-scene[data-state="active"] .scene-read { transition: opacity 600ms var(--ease-out) 520ms, transform 760ms var(--ease-out) 520ms; }
+	.story-scene[data-state="active"] .scene-label { transition: opacity 500ms var(--ease-out) 760ms, transform 600ms var(--ease-out) 760ms; }
 	/* The theme zeroes durations under reduced motion; the delays go too, so
 	   a scene change is one instant cut. */
 	@media (prefers-reduced-motion: reduce) {
