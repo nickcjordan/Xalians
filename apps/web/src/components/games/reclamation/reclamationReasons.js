@@ -2,7 +2,7 @@ import React from 'react';
 import { speciesLabel, formatHoldShown, matchupWords, articleFor } from './reclamationNarration';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { strainCause } from './reclamationPreview';
-import { HomeGlyph, StrainGlyph, NoMediumGlyph, CompanyGlyph, RoleGlyph } from './reclamationGlyphs';
+import { HomeGlyph, StrainGlyph, NoMediumGlyph, CompanyGlyph, RoleGlyph, ArmorGlyph } from './reclamationGlyphs';
 
 /*
 	PASS 61, SAY WHY (docs/design/reclamation-say-why.md). Nick, 2026-09-26, on a snowflake and
@@ -132,6 +132,10 @@ function matchupLines(matchups, record) {
 		if (m.dealt) {
 			out.push({ key: `chart-dealt-${m.recordId}`, mark: 'chart', element: own, effect: `${upper(matchupWords(m.dealt, own, m.element))}.`, cause: `Its blows land ${howHard(m.dealt)} on ${m.name}.` });
 		}
+		// pass 73: why the blow drawn on an armored creature is a quarter less than the chart makes it
+		if (m.armored) {
+			out.push({ key: `armored-${m.recordId}`, mark: 'armored', effect: `${m.name} is armored.`, cause: 'Every blow lands on it at three quarters.' });
+		}
 		if (m.taken) {
 			out.push({ key: `chart-taken-${m.recordId}`, mark: 'chart', element: m.element, effect: `${upper(matchupWords(m.taken, m.element, own))}.`, cause: `${m.name}'s blows land ${howHard(m.taken)} on it.` });
 		}
@@ -176,6 +180,8 @@ function ReasonMark({ line }) {
 		case 'chart':
 			// pass 72: the attacking element's disc, the badge its piece wears
 			return line.element ? <XalianTypeSymbolBadge size={14} type={line.element} classes="rec-why-element-disc" /> : null;
+		case 'armored':
+			return <ArmorGlyph />;
 		case 'cold':
 		case 'hot':
 			return <StrainGlyph cause={line.mark} />;

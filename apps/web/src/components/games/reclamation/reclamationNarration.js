@@ -1,4 +1,5 @@
 import { speciesDisplayName, getSpeciesTemplate } from '@xalians/rules/generator';
+import { SWEEP_DISCOUNT } from '@xalians/rules/expedition/expeditionInterpretation';
 
 /*
 	Reclamation - plain-sentence narration of the engine's resolution log.
@@ -146,12 +147,25 @@ export function roleSentence(role, attackPower) {
 	}
 }
 
-// pass 69: the number a role sentence carries: a blow, or for a support creature its mend
-export function rolePower(prepared) {
+/*
+	pass 69: the number a role sentence carries: a blow, or for a support creature its mend.
+	PASS 73: a sweep's number is what it lands on each creature, after the sweep's share
+	(rules.sweepDiscount), so the card's number times the chart is the number on the target.
+	It had printed the whole blow, and each creature took six tenths of it. A shield never
+	strikes, so it carries none.
+*/
+export function rolePower(prepared, rules) {
 	if (!prepared) {
 		return undefined;
 	}
-	return prepared.role === 'bolster' ? prepared.mendMagnitude : prepared.blowMagnitude;
+	if (prepared.role === 'bolster') {
+		return prepared.mendMagnitude;
+	}
+	if (prepared.role === 'shield') {
+		return undefined;
+	}
+	const share = prepared.role === 'sweep' ? (rules && typeof rules.sweepDiscount === 'number' ? rules.sweepDiscount : SWEEP_DISCOUNT) : 1;
+	return prepared.blowMagnitude * share;
 }
 
 // the word for the role, where a sentence is too much (a chip, a title attribute)

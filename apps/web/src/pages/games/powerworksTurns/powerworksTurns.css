@@ -1,0 +1,1657 @@
+/*
+  Powerworks, turn by turn (docs/design/powerworks-turn-screen.md). Immersive tier: the
+  play screen is composed at 1280x720 and scaled to fit any landscape viewport with CSS
+  zoom (never a page scroll). Visual vocabulary follows the v5 stage (dark glass plates,
+  Saira/Martian Mono type roles, painted portraits) without reusing its class names, since
+  the layout here is simpler (one companion's keys, not a whole-squad radial).
+*/
+.pwt {
+  position: fixed;
+  inset: 0;
+  background: var(--color-room);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pwt-console {
+  width: 1280px;
+  height: 720px;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* --- top bar (UX pass, 2026-09-29): where you are, whose turn it is, and what comes next,
+   in one band above the stage. Left to right: the place, the turn banner (the loudest text
+   outside the stage), the turn rail, then playback and tools. --- */
+.pwt-top {
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+  height: 100px;
+  padding: 0 16px 0 18px;
+  background: var(--color-s1);
+  border-bottom: 1px solid var(--color-edge);
+  flex: 0 0 auto;
+}
+.pwt-where {
+  flex: 0 0 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+.pwt-brand {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-2);
+  text-decoration: none;
+}
+.pwt-brand:hover { color: var(--color-viable); }
+.pwt-sector {
+  margin-top: 4px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--color-ink-3);
+  text-transform: uppercase;
+}
+.pwt-where h1 {
+  margin: 0;
+  font-family: var(--font-legend);
+  font-size: 15px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+}
+.pwt-top-fill { flex: 1 1 auto; }
+
+/* The banner: a kicker (your turn, enemy turn) over the actor's name, large. */
+.pwt-banner {
+  flex: 0 0 390px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  padding-left: 18px;
+  border-left: 1px solid var(--color-edge);
+}
+.pwt-banner-label {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  animation: pwt-banner-in 260ms var(--ease-out) both;
+}
+.pwt-banner-kicker {
+  font-family: var(--font-legend);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.pwt-banner-who {
+  font-family: var(--font-legend);
+  font-size: 21px;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pwt-banner.squad .pwt-banner-kicker,
+.pwt-banner.squad .pwt-banner-who { color: var(--color-viable); }
+.pwt-banner.enemy .pwt-banner-kicker { color: var(--color-plague); }
+.pwt-banner.enemy .pwt-banner-who { color: var(--color-ink); }
+.pwt-banner-label.round .pwt-banner-kicker {
+  font-size: 26px;
+  color: var(--color-caution);
+  letter-spacing: 0.04em;
+}
+@keyframes pwt-banner-in {
+  from { opacity: 0; transform: translateX(-14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.pwt-banner-line {
+  margin: 0;
+  min-height: 16px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+.pwt-banner-line.empty { color: var(--color-ink-3); }
+.pwt-banner-line.since {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-ink-2);
+}
+.pwt-banner-line.since:hover { color: var(--color-ink); }
+.pwt-banner-line-label {
+  font-family: var(--font-legend);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-3);
+  margin-right: 4px;
+}
+
+/* The rail: one time axis; enemies above the track, the squad below it. */
+.pwt-rail {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 0 14px;
+  list-style: none;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  overflow: hidden;
+  border-left: 1px solid var(--color-edge);
+  -webkit-mask-image: linear-gradient(to right, #000 88%, transparent);
+  mask-image: linear-gradient(to right, #000 88%, transparent);
+}
+.pwt-rail-track {
+  position: absolute;
+  left: 14px;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--color-edge-strong);
+}
+.pwt-rail-col {
+  position: relative;
+  flex: 0 0 44px;
+}
+.pwt-rail-col.now { flex-basis: 58px; }
+.pwt-rail-slot {
+  position: absolute;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translateX(-50%);
+}
+.pwt-rail-col.enemy .pwt-rail-slot { bottom: calc(50% + 2px); }
+.pwt-rail-col.squad .pwt-rail-slot { top: calc(50% + 2px); }
+.pwt-rail-col.now .pwt-rail-slot { width: 42px; height: 42px; }
+/* A stub joins every slot to the track, so its side reads as above or below the line. */
+.pwt-rail-col::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 1px;
+  height: 3px;
+  background: var(--color-edge-strong);
+}
+.pwt-rail-col.enemy::before { bottom: 50%; }
+.pwt-rail-col.squad::before { top: 50%; }
+.pwt-rail-portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--color-edge-strong);
+  background: var(--color-s3);
+}
+.pwt-rail-portrait .pw-portrait,
+.pwt-rail-portrait .pw-portrait img,
+.pwt-rail-portrait .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.pwt-rail-col.now .pwt-rail-portrait { border: 2px solid var(--color-ink); box-shadow: 0 0 0 2px var(--color-s1), 0 0 14px var(--color-ink-3); }
+.pwt-rail-col.now.squad .pwt-rail-portrait { border-color: var(--color-viable); box-shadow: 0 0 0 2px var(--color-s1), 0 0 14px var(--color-viable); }
+.pwt-rail-col.next .pwt-rail-portrait { border: 2px solid var(--color-caution); }
+.pwt-rail-col.done .pwt-rail-portrait { opacity: 0.3; filter: grayscale(0.7); }
+.pwt-rail-col.down .pwt-rail-portrait { opacity: 0.25; filter: grayscale(1); }
+.pwt-rail-letter {
+  position: absolute;
+  top: -3px;
+  left: -5px;
+  z-index: 1;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  color: var(--color-ink);
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+.pwt-rail-mark {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  color: var(--color-ink-2);
+}
+.pwt-rail-mark.down { color: var(--color-plague); }
+.pwt-rail-mark svg { width: 10px; height: 10px; }
+/* NOW and NEXT: a pill on the slot's bottom edge, the same place in both lanes. */
+.pwt-rail-tag {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  z-index: 2;
+  transform: translateX(-50%);
+  padding: 0 4px;
+  font-family: var(--font-legend);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--color-caution);
+  color: var(--color-room);
+}
+.pwt-rail-col.now .pwt-rail-tag { background: var(--color-ink); }
+.pwt-rail-col.now.squad .pwt-rail-tag { background: var(--color-viable); }
+.pwt-rail-divider {
+  position: relative;
+  flex: 0 0 40px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.pwt-rail-divider::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  width: 1px;
+  background: var(--color-ink-3);
+}
+.pwt-rail-divider span {
+  position: relative;
+  margin-top: 2px;
+  padding: 0 3px;
+  background: var(--color-s1);
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--color-ink-2);
+}
+
+/* Playback and tools on the right. */
+.pwt-top-right {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+}
+.pwt-playtools,
+.pwt-top-tools {
+  display: flex;
+  gap: 6px;
+}
+.pwt-playtools button,
+.pwt-top-tools button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink-2);
+  font-family: var(--font-legend);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+.pwt-playtools button:hover:not(:disabled),
+.pwt-top-tools button:hover { color: var(--color-ink); border-color: var(--color-edge-strong); }
+.pwt-playtools button:disabled { opacity: 0.35; cursor: default; }
+.pwt-playtools svg,
+.pwt-top-tools svg { width: 13px; height: 13px; }
+@media (prefers-reduced-motion: reduce) {
+  .pwt-banner-label { animation: none; }
+}
+
+/* --- stage --- */
+.pwt-stage {
+  position: relative;
+  flex: 1 1 auto;
+  overflow: hidden;
+  background: #1b3036;
+}
+/* The v5 backplate: one painted image per sector, the same rule powerworksHud.css uses on
+   .pw-facility.sector-N, replicated here since this page imports none of the v5 CSS. */
+.pwt-stage .pw-facility {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.pwt-stage .pw-facility.sector-0 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-1.webp'); }
+.pwt-stage .pw-facility.sector-1 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-2.webp'); }
+.pwt-stage .pw-facility.sector-2 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-3.webp'); }
+.pwt-stage .pw-facility.sector-3 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-4.webp'); }
+.pwt-stage .pw-facility > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+}
+/*
+  Fixed row bands (paint review round 3, item 1): each row gets a fixed height, and every
+  plate fills it exactly (figure band + ground + plaque, always the same total), so a
+  taller figure (the guardian) scales down inside its own band rather than growing the row
+  and pushing the squad row's plaques under the key bar. Every plate in a row also sits on
+  one baseline this way, fixing the uneven enemy heights in scenB and scenC.
+*/
+.pwt-rows {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 28px 10px;
+  gap: 6px;
+  overflow: hidden;
+}
+.pwt-row {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  flex: 0 0 auto;
+}
+/*
+  The enemy row anchors from the TOP (paint review round 5, item 2), not the bottom: a
+  taller plaque (more mark chips, the hit badge) then grows the plate's bottom, never
+  pushing the figure or its letter badge up past the stage's top edge. The boss figure
+  stays largest (its own fixed height, unchanged); the squad row keeps bottom-alignment
+  since its plaques sit just above the fixed key bar, never crowding a top edge.
+*/
+.pwt-row.enemies { height: 44%; padding-top: 18px; align-items: flex-start; }
+.pwt-row.squad { height: 38%; align-items: flex-end; }
+
+/*
+  Plate (paint review round 4): the figure keeps a fixed, role-sized height (the guardian
+  towers, as in v5's .pw-scene-unit.guardian) independent of the plaque, which no longer
+  competes with it for the band's height. The plate is bottom-aligned in its row
+  (.pwt-row's align-items: flex-end) at its natural (auto) height, so it never needs to
+  flex-shrink the figure to make room for a taller plaque (a two-line name). The plaque
+  overlaps the lower part of the figure's ground area at a fixed negative offset instead of
+  stacking fully below it, so a taller figure's plate is simply taller, never a smaller
+  figure — and the squad row still sits in its own fixed band above the key bar, so nothing
+  pushes those plaques out of view.
+*/
+.pwt-plate {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 150px;
+  transition: transform 120ms var(--ease-out);
+}
+.pwt-row.enemies .pwt-plate { width: 128px; }
+.pwt-plate.down .pwt-figure { opacity: 0.18; filter: grayscale(1); }
+.pwt-plate.down .pwt-plaque { opacity: 0.7; }
+.pwt-plate.down .pwt-letter { opacity: 0.4; }
+.pwt-down-tag {
+  font-family: var(--font-legend);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-plague);
+}
+.pwt-plate.active {
+  transform: translateY(-8px);
+}
+.pwt-plate.active .pwt-figure {
+  filter: drop-shadow(0 0 14px rgba(134, 255, 181, 0.55)) drop-shadow(0 4px 1px #07101e);
+}
+.pwt-plate.lit .pwt-figure {
+  filter: drop-shadow(0 0 16px rgba(207, 165, 74, 0.6)) drop-shadow(0 4px 1px #07101e);
+}
+/* The full painted figure: a fixed height by role, never flex-shrunk by its plaque.
+   Ordinary squad and enemy figures share one size; the guardian (the boss, largest art)
+   is noticeably taller, the way v5 towers it over the room. */
+.pwt-figure {
+  width: 100%;
+  flex: 0 0 auto;
+  height: 118px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  filter: drop-shadow(0 4px 1px #07101e);
+}
+.pwt-row.enemies .pwt-figure { height: 100px; }
+.pwt-figure.boss { height: 168px; }
+.pwt-row.enemies .pwt-figure.boss { height: 150px; }
+.pwt-figure .pw-portrait { width: 100%; height: 100%; align-items: flex-end; }
+.pwt-figure .pw-portrait img { width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+.pwt-figure .pw-portrait svg { width: 100%; height: 100%; }
+.pwt-ground {
+  flex: 0 0 auto;
+  width: 78%;
+  height: 14px;
+  border-radius: 50%;
+  background: #0009;
+  box-shadow: 0 2px 7px #0007;
+  margin-top: -6px;
+}
+.pwt-plate.active .pwt-ground { background: rgba(134, 255, 181, 0.28); box-shadow: 0 0 13px rgba(134, 255, 181, 0.3); }
+
+.pwt-letter {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  color: var(--color-ink);
+  font-family: var(--font-data);
+  font-size: 15px;
+  font-weight: 700;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* --- spotlight (UX pass, 2026-09-29): the current actor brighter, a little larger, a floor
+   ring, a pointer over its head; everyone else one step dimmer. Follows the actor through
+   every beat of the enemy phase, never staying on a companion who has already acted. --- */
+/* A modest scale, applied to the figure alone (never the plate box), growing from its own
+   bottom edge (transform-origin) so it never reaches up into the row above: a squad plate
+   sits close under the enemy row's plaques, and any upward growth read as the figure
+   climbing into them (UX pass round 1 and round 2 fixes). */
+.pwt-plate.spotlit .pwt-figure {
+  filter: drop-shadow(0 0 20px rgba(134, 255, 181, 0.6)) drop-shadow(0 4px 1px #07101e);
+}
+/* The "slightly larger" scale only on the enemy row: an enemy figure has clear headroom
+   above it (the stage's own top edge). A squad figure sits close under the enemy row's
+   plaques with very little headroom (a tall pose, e.g. Hippochamp rearing, already reaches
+   the row above at 1x), so the squad row reads "spotlit" through the ring, pointer and glow
+   alone, with no extra scale that would grow it further into that row (UX pass round 2). */
+.pwt-row.enemies .pwt-plate.spotlit .pwt-figure {
+  transform: scale(1.06);
+  transform-origin: bottom center;
+}
+.pwt-plate.spotlit .pwt-ground {
+  background: rgba(134, 255, 181, 0.32);
+  box-shadow: 0 0 16px rgba(134, 255, 181, 0.35);
+}
+.pwt-plate.dimmed:not(.spotlit) {
+  opacity: 0.85;
+  transition: opacity 200ms var(--ease-out);
+}
+.pwt-plate.dimmed:not(.spotlit) .pwt-figure {
+  filter: brightness(0.72) saturate(0.8) drop-shadow(0 4px 1px #07101e);
+}
+.pwt-body {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pwt-spot-ring {
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 74%;
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  border: 2px solid var(--color-viable);
+  box-shadow: 0 0 14px rgba(134, 255, 181, 0.55);
+  pointer-events: none;
+  z-index: 0;
+  animation: pwt-ring-breathe 1.1s ease-in-out infinite alternate;
+}
+@keyframes pwt-ring-breathe {
+  from { opacity: 0.55; }
+  to { opacity: 0.95; }
+}
+.pwt-spot-pointer {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 9px solid var(--color-viable);
+  z-index: 4;
+  animation: pwt-pointer-bob 0.9s ease-in-out infinite alternate;
+}
+@keyframes pwt-pointer-bob {
+  from { transform: translateX(-50%) translateY(0); }
+  to { transform: translateX(-50%) translateY(4px); }
+}
+.pwt-plate.targeted .pwt-figure {
+  filter: drop-shadow(0 0 16px var(--color-caution)) drop-shadow(0 4px 1px #07101e);
+}
+.pwt-plate.targeted .pwt-body::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -4px;
+  height: 18px;
+  border: 2px solid var(--color-caution);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* --- delta chip (UX pass, 2026-09-29): "-7" / "+5" since the player's previous turn --- */
+.pwt-delta {
+  position: absolute;
+  top: -4px;
+  right: -2px;
+  z-index: 3;
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge-strong);
+  animation: pwt-delta-in 220ms var(--ease-out) both;
+}
+.pwt-delta.hurt { color: var(--color-plague); }
+.pwt-delta.heal { color: var(--color-viable); }
+@keyframes pwt-delta-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- beat choreography (UX pass, 2026-09-29, storyboard item 4): the acting plate lunges
+   toward its target for the whole beat (.pwt-plate.lit); the target plate flashes and
+   recoils only during the impact phase (.pwt-plate.impact-target, set by the page). --- */
+.pwt-plate.lit .pwt-figure {
+  animation: pwt-lunge 1400ms ease-in-out both;
+}
+.pwt-plate.impact-target .pwt-figure {
+  animation: pwt-recoil 420ms ease-out both;
+}
+.pwt-plate.impact-target .pwt-body::before {
+  content: "";
+  position: absolute;
+  inset: 8% 10% 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 244, 214, 0.55), transparent 70%);
+  animation: pwt-target-flash 260ms ease-out forwards;
+  pointer-events: none;
+  z-index: 2;
+}
+@keyframes pwt-lunge {
+  0% { transform: translateY(0); }
+  35%, 55% { transform: translateY(-6px) scale(1.04); }
+  100% { transform: translateY(0); }
+}
+@keyframes pwt-recoil {
+  0% { transform: translateX(0); filter: brightness(1.6); }
+  30% { transform: translateX(5px) rotate(2deg); }
+  65% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+@keyframes pwt-target-flash {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pwt-plate.lit .pwt-figure,
+  .pwt-plate.impact-target .pwt-figure,
+  .pwt-spot-ring,
+  .pwt-spot-pointer {
+    animation: none !important;
+  }
+  .pwt-plate.impact-target .pwt-body::before { animation: none; opacity: 0; }
+}
+
+/* --- aim line (UX pass, 2026-09-29, storyboard "choosing" step): a faint line from the
+   active companion to the enemy under the pointer. --- */
+.pwt-aim-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.pwt-aim-line {
+  stroke: var(--color-viable);
+  stroke-width: 2px;
+  stroke-dasharray: 4 6;
+  opacity: 0.5;
+}
+
+/* --- plaque --- */
+.pwt-plaque {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: 4px;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge);
+  padding: 4px 6px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.pwt-plate.active .pwt-plaque { border-color: var(--color-viable); }
+.pwt-name {
+  font-family: var(--font-legend);
+  font-size: 11px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-ink);
+  text-align: center;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+.pwt-plate.active .pwt-name { color: var(--color-viable); }
+
+.pwt-health {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pwt-health-track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge);
+  position: relative;
+  overflow: hidden;
+}
+.pwt-health-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--color-viable);
+  transform-origin: left;
+  transition: width 500ms var(--ease-out);
+}
+.pwt-health-fill.critical { background: var(--color-plague); }
+.pwt-health-num {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  color: var(--color-ink-2);
+  min-width: 20px;
+  text-align: right;
+}
+
+/*
+  One row, never wrapping (paint review round 5, item 1): shield, boost, hinder and the
+  enemy's hit chip all sit side by side. A plaque with more chips than fits shrinks each
+  chip's padding/font rather than wrapping to a second line, so a plate's total height
+  never grows past what its fixed-height figure band was measured for (round 4's fix,
+  which the wrap was quietly breaking).
+*/
+.pwt-marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+}
+.pwt-chip {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  padding: 1px 3px;
+  border: 1px solid var(--color-edge);
+  background: var(--color-s2);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.pwt-chip svg { width: 9px; height: 9px; flex: 0 0 auto; }
+
+.pwt-hit-on-active {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  color: var(--color-plague);
+  background: var(--color-plague-tint);
+  border: 1px solid rgba(181, 86, 108, 0.3);
+  padding: 1px 4px;
+  white-space: nowrap;
+}
+.pwt-hit-on-active svg { width: 10px; height: 10px; flex: 0 0 auto; }
+.pwt-hit-on-active .up,
+.pwt-hit-on-active .down { width: 12px; height: 12px; }
+.pwt-hit-on-active .up { color: var(--color-plague); }
+.pwt-hit-on-active .down { color: var(--color-viable); }
+
+/* --- keys --- */
+.pwt-keybar {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  gap: 10px;
+  padding: 10px 20px 16px;
+  align-items: stretch;
+  background: linear-gradient(to top, rgba(0,0,0,0.35), transparent);
+  /* The row's height stays fixed during playback (item 8 of round 1): the keys dim
+     instead of unmounting, so nothing below shifts. The caption (round 2, item 1) is a
+     sibling overlay here, not inside .pwt-stage, so it never covers a squad plate; it
+     stays at full opacity while the dimmed keys sit behind it. */
+  min-height: 128px;
+}
+.pwt-keybar > .pwt-key,
+.pwt-keybar > .pwt-pass {
+  transition: opacity 150ms var(--ease-out);
+}
+.pwt-keybar.busy > .pwt-key,
+.pwt-keybar.busy > .pwt-pass {
+  opacity: 0.35;
+  pointer-events: none;
+}
+/* The key bar's left-edge portrait/name (UX pass, 2026-09-29, storyboard item 5): "the keys
+   are visibly that creature's". */
+.pwt-keybar-portrait {
+  flex: 0 0 auto;
+  width: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding-right: 10px;
+  border-right: 1px solid var(--color-edge);
+  margin-right: 2px;
+}
+.pwt-keybar-portrait-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 2px solid var(--color-viable);
+  box-shadow: 0 0 10px rgba(134, 255, 181, 0.4);
+  background: var(--color-s2);
+  flex: 0 0 auto;
+}
+.pwt-keybar-portrait-img .pw-portrait,
+.pwt-keybar-portrait-img .pw-portrait img,
+.pwt-keybar-portrait-img .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.pwt-keybar-who {
+  font-family: var(--font-legend);
+  font-size: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  color: var(--color-el-fire);
+}
+.pwt-keybar-who.el-fire { color: var(--color-el-fire); }
+.pwt-keybar-who.el-water { color: var(--color-el-water); }
+.pwt-keybar-who.el-dark { color: var(--color-el-dark); }
+.pwt-keybar-who.el-light { color: var(--color-el-light); }
+.pwt-keybar-who.el-plant { color: var(--color-el-plant); }
+.pwt-keybar-who.el-electric { color: var(--color-el-electric); }
+.pwt-keybar-who.el-ghost { color: var(--color-el-ghost); }
+.pwt-keybar-who.el-rock { color: var(--color-el-rock); }
+.pwt-keybar-who.el-chemical { color: var(--color-el-chemical); }
+.pwt-keybar-who.el-air { color: var(--color-el-air); }
+.pwt-keybar-who.el-psychic { color: var(--color-el-psychic); }
+.pwt-keybar-who.el-ice { color: var(--color-el-ice); }
+.pwt-keybar-who.el-metal { color: var(--color-el-metal); }
+.pwt-keybar-who.el-sand { color: var(--color-el-sand); }
+.pwt-key {
+  flex: 1;
+  min-width: 0;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge);
+  box-shadow: var(--thickness-key) var(--thickness-key) 0 rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  cursor: default;
+}
+.pwt-key.resting,
+.pwt-key.spent { opacity: 0.45; }
+.pwt-key-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.pwt-key-index {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  color: var(--color-ink-3);
+}
+.pwt-key-name {
+  font-family: var(--font-legend);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pwt-key.signature .pwt-key-name { color: var(--color-caution); }
+/* Foot line: timing words on the left, the key's own supports (riders) on the right, so a
+   rider never reads as belonging to whichever cell it happens to sit under (paint review
+   round 4, item 3). */
+.pwt-key-foot {
+  margin-top: auto;
+  padding-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 18px;
+}
+.pwt-key-foot-words {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  color: var(--color-ink-3);
+}
+
+/*
+  An area attack's cells sit inside a band labeled ALL (paint review round 4, item 2): a
+  bracket spanning every cell, so the key does not read as aimed at one enemy. The cells
+  underneath stay individually clickable.
+*/
+.pwt-cells-wrap.area {
+  border: 1px solid var(--color-edge-strong);
+  padding: 12px 2px 2px;
+  position: relative;
+}
+.pwt-area-band {
+  position: absolute;
+  top: 0;
+  left: 6px;
+  right: 6px;
+  display: flex;
+  justify-content: center;
+}
+.pwt-area-band span {
+  transform: translateY(-50%);
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge-strong);
+  color: var(--color-ink-2);
+  font-family: var(--font-legend);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
+}
+
+.pwt-cells {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.pwt-cell {
+  flex: 1;
+  min-width: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--color-s1);
+  border: 1px solid var(--color-edge);
+  padding: 4px 2px;
+  cursor: pointer;
+  color: var(--color-ink);
+  font-family: var(--font-data);
+}
+.pwt-cell:hover:not(:disabled) { border-color: var(--color-viable); background: var(--color-s2); }
+.pwt-cell:disabled { cursor: not-allowed; opacity: 0.5; }
+/* A finishing cell is good for the player: the concept's "filled ember cell" (amber fill,
+   dark bright number, skull) instead of the plague red a bare number would suggest,
+   making it clearly the loudest cell on the key (paint review round 3, item 2). Uses the
+   existing caution token, not a new color. */
+.pwt-cell.finish {
+  background: var(--color-caution);
+  border-color: var(--color-caution);
+}
+.pwt-cell.finish:hover:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink); }
+.pwt-cell.finish .pwt-cell-letter { color: var(--color-room); opacity: 0.75; }
+.pwt-cell-letter {
+  font-size: var(--text-tiny);
+  color: var(--color-ink-3);
+}
+.pwt-cell-portrait {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.pwt-cell-portrait .pw-portrait,
+.pwt-cell-portrait .pw-portrait img,
+.pwt-cell-portrait .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.pwt-cell-num {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+}
+.pwt-cell-num.finish { color: var(--color-room); }
+.pwt-cell-num.heal { color: var(--color-viable); }
+.pwt-cell-heal-icon { width: 11px; height: 11px; }
+/* Chevrons are a primary signal (paint review round 1): sized and colored to read
+   next to the number, not a faint decoration. */
+.pwt-cell-chevron-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+}
+.pwt-cell-chevron-wrap svg { width: 13px; height: 13px; }
+.pwt-cell-chevron-wrap.up { color: var(--color-viable-ink); background: var(--color-viable); }
+.pwt-cell-chevron-wrap.down { color: var(--color-plague-ink); background: var(--color-plague); }
+.pwt-cell-immune-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 2px solid var(--color-ink-3);
+}
+.pwt-cell-immune-icon { width: 13px; height: 13px; color: var(--color-ink-3); }
+.pwt-cell-hinder {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 17px;
+  font-weight: 700;
+}
+.pwt-cell-hinder-icon { width: 15px; height: 15px; color: var(--color-ink-3); }
+.pwt-cell-before {
+  font-size: 13px;
+  color: var(--color-ink-3);
+  text-decoration: line-through;
+}
+.pwt-cell-arrow { color: var(--color-ink-3); font-size: 13px; }
+/* A hinder dropping an enemy's hit toward 0 is good for the player: the "after" number
+   reads in the viable green, the same as a heal, not the plague red (paint review round
+   2, item 2 — red is reserved for what is bad for the player). */
+.pwt-cell-num.hinder { color: var(--color-viable); }
+.pwt-cell-shield-note {
+  color: var(--color-el-ice);
+}
+.pwt-cell-skull { width: 13px; height: 13px; color: var(--color-room); }
+
+/* Rider chips: a key's own supports, in the foot line's right side (paint review round 4,
+   item 3), not centered under one cell where a blind reader took it for that cell alone. */
+.pwt-riders {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.pwt-rider {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  padding: 1px 4px;
+  border: 1px solid var(--color-edge);
+  background: var(--color-s1);
+  color: var(--color-ink-2);
+}
+.pwt-rider svg { width: 10px; height: 10px; }
+.pwt-rider.heal { color: var(--color-viable); }
+.pwt-rider.shield { color: var(--color-el-ice); }
+.pwt-rider.boost { color: var(--color-caution); }
+.pwt-rider.hinder { color: var(--color-viable); }
+.pwt-rider.delay { color: var(--color-ink-2); }
+.pwt-rider-each {
+  font-family: var(--font-legend);
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  margin-left: 2px;
+}
+
+.pwt-same {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.pwt-same-num {
+  font-family: var(--font-data);
+  font-size: var(--text-subhead);
+  font-weight: 700;
+}
+.pwt-same-label {
+  font-family: var(--font-legend);
+  font-size: var(--text-tiny);
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+.pwt-same-letters {
+  display: flex;
+  gap: 3px;
+}
+.pwt-same-letters button {
+  width: 22px;
+  height: 22px;
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  background: var(--color-s1);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink-2);
+  cursor: pointer;
+}
+.pwt-same-letters button:hover { border-color: var(--color-viable); color: var(--color-ink); }
+
+.pwt-key-now {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  border: none;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+.pwt-key-now:hover:not(:disabled) .pwt-key-now-label { color: var(--color-viable); }
+.pwt-key-now:disabled { cursor: not-allowed; color: var(--color-ink-3); }
+.pwt-key-now-chip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-data);
+  font-size: 15px;
+  font-weight: 700;
+}
+.pwt-key-now-chip svg { width: 13px; height: 13px; }
+.pwt-key-now-chip.heal { color: var(--color-viable); }
+.pwt-key-now-chip.shield { color: var(--color-el-ice); }
+.pwt-key-now-chip.boost { color: var(--color-caution); }
+.pwt-key-now-chip.hinder,
+.pwt-key-now-chip.delay { color: var(--color-plague); }
+.pwt-key-now-label {
+  font-family: var(--font-legend);
+  font-size: var(--text-tiny);
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.pwt-pass {
+  flex: 0 0 90px;
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink-2);
+  font-family: var(--font-legend);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-legend);
+  cursor: pointer;
+}
+.pwt-pass:hover { color: var(--color-ink); border-color: var(--color-edge-strong); }
+
+/* --- floating number (storyboard item 4) --- */
+.pwt-float {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: pwt-float-up 900ms var(--ease-out) both;
+}
+.pwt-float-num {
+  position: relative;
+  font-family: var(--font-data);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--color-plague);
+  text-shadow: 0 2px 0 #000, 0 0 10px #000;
+}
+.pwt-float-num.heal { color: var(--color-viable); }
+.pwt-float-num.shield,
+.pwt-float-num.boost,
+.pwt-float-num.hinder {
+  font-family: var(--font-legend);
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+}
+/* Rises once, then holds for the rest of the beat so it can be read. */
+@keyframes pwt-float-up {
+  0% { transform: translate(-50%, -30%); opacity: 0; }
+  25% { transform: translate(-50%, -80%); opacity: 1; }
+  100% { transform: translate(-50%, -95%); opacity: 1; }
+}
+/* The strike line: actor to target for the length of a beat. */
+.pwt-strike-line {
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: pwt-strike-draw 380ms var(--ease-out) forwards;
+}
+.pwt-strike-line.enemy { stroke: var(--color-plague); }
+.pwt-strike-line.squad { stroke: var(--color-viable); }
+.pwt-strike-head.enemy { fill: var(--color-plague); }
+.pwt-strike-head.squad { fill: var(--color-viable); }
+@keyframes pwt-strike-draw {
+  to { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pwt-float,
+  .pwt-strike-line { animation: none; stroke-dashoffset: 0; }
+}
+
+/* --- camp / end panels --- */
+.pwt-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 9, 8, 0.72);
+}
+.pwt-panel {
+  width: 620px;
+  max-height: 640px;
+  overflow-y: auto;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge-strong);
+  box-shadow: var(--shadow-float);
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pwt-panel h2 {
+  font-family: var(--font-legend);
+  font-size: var(--text-title);
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--color-ink);
+}
+.pwt-panel .eyebrow {
+  font-family: var(--font-legend);
+  font-size: var(--text-legend);
+  letter-spacing: var(--tracking-legend);
+  text-transform: uppercase;
+  color: var(--color-viable);
+  margin: 0;
+}
+.pwt-panel p { margin: 0; color: var(--color-ink-2); font-size: var(--text-body); }
+.pwt-panel-squad {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.pwt-panel-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 110px;
+}
+.pwt-panel-unit.down { opacity: 0.7; }
+.pwt-portrait-ring {
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.pwt-portrait-ring .pw-portrait { width: 100%; height: 100%; }
+.pwt-portrait-ring .pw-portrait img,
+.pwt-portrait-ring .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.pwt-panel-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.pwt-primary {
+  background: var(--color-viable);
+  color: var(--color-viable-ink);
+  border: none;
+  box-shadow: var(--thickness-primary) var(--thickness-primary) 0 rgba(0,0,0,0.4);
+  font-family: var(--font-legend);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 10px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.pwt-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.pwt-secondary {
+  background: var(--color-s2);
+  color: var(--color-ink-2);
+  border: 1px solid var(--color-edge);
+  font-family: var(--font-legend);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 10px 18px;
+  cursor: pointer;
+}
+.pwt-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+.pwt-revive-btn {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.pwt-revive-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* --- guide / record panels --- */
+.pwt-panel ul { margin: 0; padding-left: 18px; color: var(--color-ink-2); font-size: var(--text-body); }
+.pwt-panel li { margin-bottom: 6px; }
+.pwt-record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.pwt-record-list p {
+  font-family: var(--font-data);
+  font-size: var(--text-small);
+  color: var(--color-ink-2);
+  border-bottom: 1px solid var(--color-edge);
+  padding-bottom: 4px;
+}
+
+/* --- rotate prompt (phone portrait) --- */
+.pwt-rotate {
+  display: none;
+}
+@media (max-width: 600px) and (orientation: portrait) {
+  .pwt-console { display: none; }
+  .pwt-rotate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 100%;
+    color: var(--color-ink-2);
+    text-align: center;
+    padding: 0 24px;
+  }
+  .pwt-rotate svg { width: 40px; height: 40px; }
+}
+
+/* While the enemies act, the key bar says so and names your next companion. */
+.pwt-keybar-wait {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: rgba(12, 11, 10, 0.82);
+  animation: pwt-wait-in 200ms var(--ease-out) both;
+}
+.pwt-keybar-wait-kicker {
+  font-family: var(--font-legend);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-plague);
+}
+.pwt-keybar-wait-next {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--color-ink-2);
+}
+.pwt-keybar-wait-next b { color: var(--color-ink); font-weight: 700; }
+.pwt-keybar-wait-portrait {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 2px solid var(--color-edge-strong);
+  background: var(--color-s3);
+}
+.pwt-keybar-wait-portrait .pw-portrait,
+.pwt-keybar-wait-portrait img { width: 100%; height: 100%; object-fit: cover; }
+@keyframes pwt-wait-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* "Your turn" over the stage at the hand-off: shown once, never blocks a click. */
+.pwt-handoff {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  z-index: 7;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 34px 12px;
+  background: rgba(12, 11, 10, 0.78);
+  border-top: 2px solid var(--color-viable);
+  border-bottom: 2px solid var(--color-viable);
+  pointer-events: none;
+  animation: pwt-handoff 1100ms var(--ease-out) both;
+}
+.pwt-handoff span {
+  font-family: var(--font-legend);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-viable);
+}
+.pwt-handoff b {
+  font-family: var(--font-legend);
+  font-size: 34px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-ink);
+}
+@keyframes pwt-handoff {
+  0% { opacity: 0; transform: translate(-50%, -40%); }
+  18% { opacity: 1; transform: translate(-50%, -50%); }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pwt-handoff { animation: none; }
+}
+
+.pwt-hit-who {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  margin-left: 1px;
+  border: 1px solid var(--color-edge-strong);
+  background: var(--color-s3);
+}
+.pwt-hit-who .pw-portrait,
+.pwt-hit-who img { width: 100%; height: 100%; object-fit: cover; }
+
+/* --- flow review round 1 (Opus critic and readers, 2026-09-29) --- */
+/* The key bar keeps one height for every companion, so nothing on the stage moves at a hand-off. */
+.pwt-keybar { height: 150px; min-height: 150px; }
+/* "Your turn" arrives where "Your next turn" was, in the key bar, for a moment. */
+.pwt-keybar-wait.handoff {
+  background: rgba(12, 11, 10, 0.9);
+  border-top: 2px solid var(--color-viable);
+  animation: pwt-handoff-bar 1100ms var(--ease-out) both;
+}
+.pwt-keybar-wait.handoff .pwt-keybar-wait-kicker { color: var(--color-viable); }
+.pwt-keybar-wait-who {
+  font-family: var(--font-legend);
+  font-size: 30px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-ink);
+}
+@keyframes pwt-handoff-bar {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+/* Strike lines run under the plates, so they never cross a name. */
+.pwt-stage > .pwt-aim-svg { z-index: 0; }
+.pwt-rows { z-index: 1; }
+/* An acting enemy is ringed in the danger color, never the accent that means yours. */
+.pwt-row.enemies .pwt-plate.spotlit .pwt-spot-ring { border-color: var(--color-plague); box-shadow: 0 0 14px var(--color-plague); }
+.pwt-row.enemies .pwt-plate.spotlit .pwt-spot-pointer { border-top-color: var(--color-plague); }
+.pwt-row.enemies .pwt-plate.spotlit .pwt-ground { background: var(--color-plague-tint); box-shadow: 0 0 16px var(--color-plague-tint); }
+.pwt-row.enemies .pwt-plate.spotlit .pwt-figure { filter: drop-shadow(0 0 16px var(--color-plague-tint)) drop-shadow(0 4px 1px #07101e); }
+.pwt-row.enemies .pwt-plate.spotlit .pwt-plaque { border-color: var(--color-plague); }
+/* Your companion keeps its lit plaque through its own action. */
+.pwt-row.squad .pwt-plate.spotlit .pwt-plaque { border-color: var(--color-viable); }
+.pwt-row.squad .pwt-plate.spotlit .pwt-name { color: var(--color-viable); }
+/* The lunge: toward the target, then back. */
+.pwt-plate.lit .pwt-figure { animation: pwt-lunge-to 900ms ease-in-out both; }
+@keyframes pwt-lunge-to {
+  0% { transform: translate(0, 0); }
+  35%, 50% { transform: translate(var(--lunge-x, 0px), var(--lunge-y, -6px)) scale(1.04); }
+  100% { transform: translate(0, 0); }
+}
+/* A knocked-out unit sinks and fades where it stood. */
+.pwt-figure { transition: opacity 450ms var(--ease-out), filter 450ms var(--ease-out); }
+/* The change since your last turn, beside the health number, a size up. */
+.pwt-health .pwt-delta {
+  position: static;
+  font-size: 12px;
+  padding: 0 4px;
+  animation: pwt-delta-in 220ms var(--ease-out) both;
+}
+/* The round in progress, named at the rail's start. */
+.pwt-rail-round {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  padding-right: 6px;
+}
+.pwt-rail-round span {
+  position: relative;
+  padding: 1px 5px;
+  background: var(--color-s1);
+  font-family: var(--font-legend);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.pwt-rail { -webkit-mask-image: linear-gradient(to right, #000 78%, transparent); mask-image: linear-gradient(to right, #000 78%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  .pwt-plate.lit .pwt-figure,
+  .pwt-keybar-wait.handoff { animation: none; }
+}
+/* Acted slots are kept small so the rail has room for what comes next. */
+.pwt-rail-col.done { flex-basis: 30px; }
+.pwt-rail-col.done .pwt-rail-slot { width: 26px; height: 26px; }
+.pwt-rail-col.done .pwt-rail-letter { transform: scale(0.85); }
+.pwt-keybar { height: 160px; min-height: 160px; }
+/* Width for the rail: the banner and the place give up a little, the rail shows further ahead. */
+.pwt-where { flex-basis: 150px; }
+.pwt-banner { flex: 0 0 330px; }
+.pwt-rail { -webkit-mask-image: linear-gradient(to right, #000 90%, transparent); mask-image: linear-gradient(to right, #000 90%, transparent); }
+.pwt-rail-col { flex-basis: 40px; }
+.pwt-rail-col.now { flex-basis: 50px; }
+.pwt-top { gap: 14px; }
+.pwt-rail-divider { flex-basis: 58px; }
+.pwt-rail-divider span { white-space: nowrap; font-family: var(--font-legend); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* --- flow review round 2 (2026-09-29) --- */
+/* The top bar gives the rail its width: the tools stack in a narrow column. */
+.pwt-top-right { flex: 0 0 auto; }
+.pwt-top-tools { flex-direction: column; gap: 4px; }
+.pwt-top-tools button { padding: 3px 9px; font-size: 10.5px; justify-content: flex-start; }
+.pwt-rail-col { flex-basis: 48px; }
+.pwt-rail-col .pwt-rail-slot { width: 40px; height: 40px; }
+.pwt-rail-col.now { flex-basis: 58px; }
+.pwt-rail-col.now .pwt-rail-slot { width: 44px; height: 44px; }
+.pwt-rail-col.done { flex-basis: 36px; }
+.pwt-rail-col.done .pwt-rail-slot { width: 32px; height: 32px; }
+.pwt-rail-col.done .pwt-rail-portrait { opacity: 0.5; filter: grayscale(0.5); }
+/* The banner's line may take two lines, so a result is never cut off. */
+.pwt-banner-line {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.25;
+}
+.pwt-banner-line.since { color: var(--color-ink); }
+.pwt-banner-line-label { color: var(--color-ink-2); }
+/* Speed and skip sit at the right of the key bar while beats play. */
+.pwt-keybar-play {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  z-index: 4;
+  transform: translateY(-50%);
+}
+.pwt-keybar-play .pwt-playtools { flex-direction: column; }
+/* 5. The hand-off card is opaque: nothing shows through it. */
+.pwt-keybar-wait.handoff { background: var(--color-s1); }
+/* 10. The enemy's pointer is larger, and the others step back while someone acts. */
+.pwt-spot-pointer { border-left-width: 9px; border-right-width: 9px; border-top-width: 13px; top: -18px; }
+.pwt-plate.dimmed:not(.spotlit) .pwt-figure { filter: brightness(0.6) saturate(0.7) drop-shadow(0 4px 1px #07101e); }
+/* Cells keep the number and its marks on one line (matchup arrow and shield beside the
+   number, not under it), so every key fits its card at 1366x768. */
+.pwt-cell { position: relative; padding: 4px 2px 6px; }
+.pwt-cell .pwt-cell-chevron,
+.pwt-cell .pwt-cell-shield-note {
+  position: absolute;
+  right: 5px;
+}
+.pwt-cell .pwt-cell-chevron { top: 50%; transform: translateY(-15%); }
+.pwt-cell .pwt-cell-shield-note { top: 4px; }
+.pwt-cell-num { font-size: 20px; }
+.pwt-cell .pwt-cell-chevron-wrap { position: absolute; right: 5px; bottom: 6px; }
+
+/* --- flow review round 3 (2026-09-29) --- */
+.pwt-hit-before { color: var(--color-ink-3); margin-right: 2px; }
+/* While beats play, speed and skip take the Pass key's place instead of sitting on it. */
+.pwt-keybar.busy .pwt-pass { visibility: hidden; }
+.pwt-keybar-play { right: 28px; }
+
+/* --- flow review round 3, fixes (2026-09-29) --- */
+/* The acting enemy's sprite never covers its own plate title. */
+.pwt-plaque { position: relative; z-index: 2; }
+/* Cell marks in fixed corners the number cannot reach: matchup top right, shield top left. */
+.pwt-cell .pwt-cell-chevron-wrap { top: 4px; right: 4px; bottom: auto; }
+.pwt-cell .pwt-cell-shield-note { top: 4px; left: 4px; right: auto; }
+.pwt-cell-chevron-wrap svg { width: 14px; height: 14px; }
+/* Deltas never make a plate taller. */
+.pwt-health { height: 14px; }
+.pwt-health .pwt-delta { line-height: 12px; padding: 0 3px; font-size: 11.5px; }
+/* The banner line always holds two lines, so a wrap never moves the banner. */
+.pwt-banner-line { min-height: 30px; }
+.pwt-rail { -webkit-mask-image: linear-gradient(to right, #000 84%, transparent 97%); mask-image: linear-gradient(to right, #000 84%, transparent 97%); }
+/* While the enemies act, the key bar shows only the enemy-turn card. */
+.pwt-keybar.busy .pwt-keybar-portrait { visibility: hidden; }
+.pwt-keybar-wait-round {
+  font-family: var(--font-legend);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-caution);
+}
+/* A readable lunge and a clear impact flash. */
+@keyframes pwt-lunge-to {
+  0% { transform: translate(0, 0); }
+  35%, 50% { transform: translate(calc(var(--lunge-x, 0px) * 1.8), calc(var(--lunge-y, -6px) * 1.8)) scale(1.05); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes pwt-recoil {
+  0% { transform: translateX(0); filter: brightness(2.4); }
+  25% { transform: translateX(6px) rotate(2deg); filter: brightness(1.6); }
+  60% { transform: translateX(-3px); filter: brightness(1); }
+  100% { transform: translateX(0); }
+}
+
+/* --- flow review round 4 (2026-09-29) --- */
+.pwt-banner-round { color: var(--color-caution); }
+.pwt-keybar-wait-round { font-size: 22px; letter-spacing: 0.06em; }
+/* The keys wait under the hand-off card and under the enemy-turn card. */
+.pwt-keybar.handing-off > .pwt-key,
+.pwt-keybar.handing-off > .pwt-pass,
+.pwt-keybar.handing-off > .pwt-keybar-portrait { opacity: 0; }
+.pwt-keybar > .pwt-key,
+.pwt-keybar > .pwt-pass { transition: opacity 220ms var(--ease-out); }
+.pwt-keybar-wait { background: var(--color-s1); }
+/* A knocked-out figure sinks as it fades. */
+.pwt-figure { transition: opacity 500ms var(--ease-out), filter 500ms var(--ease-out), translate 500ms var(--ease-out); }
+.pwt-plate.down .pwt-figure { translate: 0 10px; }
+/* --- flow review round 5, headroom fixes (2026-09-29) --- */
+/* The enlarged NOW slot in the upper lane stays inside the bar. */
+.pwt-rail-col.now .pwt-rail-slot { width: 42px; height: 42px; }
+.pwt-rail-col.enemy .pwt-rail-letter { top: 0; }
+/* A short fade only at the very edge, so an upcoming slot never looks like an acted one. */
+.pwt-rail { -webkit-mask-image: linear-gradient(to right, #000 95%, transparent); mask-image: linear-gradient(to right, #000 95%, transparent); }
+/* An enemy's hit on the active companion is about your turn: hidden while beats play. */
+.pwt[data-busy="true"] .pwt-hit-on-active { visibility: hidden; }
+/* The hand-off is quick: the card and the keys overlap. */
+.pwt-keybar-wait.handoff { animation-duration: 560ms; }
+.pwt-banner-line { text-wrap: pretty; }

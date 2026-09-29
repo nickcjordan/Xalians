@@ -14,6 +14,7 @@
   practice XP, the stalemate rule) is the prototype's.
 */
 import cards from "../cards.json";
+import roles from "./roles.json";
 import chart from "@xalians/content/typeEffectivenessMatrix.json";
 import { readCard, type Card, type Unit } from "../reading.ts";
 import { checkSquad, squadUnits, type Squad } from "../index.ts";
@@ -23,7 +24,7 @@ import {
   ENCOUNTER_XP,
   ENEMY_HP_FACTOR,
   ENEMY_SHIELD_BELOW,
-  ENEMY_SHIELD_CHANCE,
+  ENEMY_NOISE,
   FINAL_ENCOUNTER_XP,
   RECOVERY_STATION_HP,
   SIGNATURE_ONCE,
@@ -55,6 +56,8 @@ export type Fighter = {
   boost: number;
   /** Taken from this unit's next attack. */
   hinder: number;
+  /** Turn-by-turn: a pending push of this unit's next turn, as a percent of its interval. */
+  delay?: number;
 };
 export type Order = { move: number; target: string };
 export type Phase = "planning" | "camp" | "won" | "lost" | "retreated";
@@ -77,7 +80,7 @@ export type PRun = {
 };
 export type PEvent =
   | { kind: "hit"; actor: string; target: string; move: string; amount: number; absorbed: number; step: number; fell: boolean }
-  | { kind: "heal" | "shield" | "boost" | "hinder"; actor: string; target: string; move: string; amount: number }
+  | { kind: "heal" | "shield" | "boost" | "hinder" | "delay"; actor: string; target: string; move: string; amount: number }
   | { kind: "redirect"; actor: string; from: string; to: string }
   | { kind: "pass"; actor: string }
   | { kind: "lapsed"; actor: string; move: string };
@@ -91,20 +94,21 @@ const NAMES: Record<string, string> = {
   guardian: "Central guardian",
 };
 export const ROOMS = cards.rooms;
+export const roomsFor = (rules: Rules) => (rules.rooms === "roles" ? roles.rooms.roles : cards.rooms);
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const standing = (units: Fighter[]) => units.filter((u) => u.hp > 0);
-const clone = <T>(v: T): T => structuredClone(v);
+export const standing = (units: Fighter[]) => units.filter((u) => u.hp > 0);
+export const clone = <T>(v: T): T => structuredClone(v);
 
 /** The shared chart's step for an attack's element against a unit's element; physical is 1. */
 export function step(attack: string | null, defend: string): number {
   if (!attack) return 1;
   return (chart as Record<string, Record<string, number>>)[cap(attack)]?.[cap(defend)] ?? 1;
 }
-function random(s: PRun) {
+export function random(s: { rng: number }) {
   s.rng = (Math.imul(1664525, s.rng) + 1013904223) >>> 0;
   return s.rng / 4294967296;
 }
-function fighter(u: Unit, rules: Rules): Fighter {
+export function fighter(u: Unit, rules: Rules): Fighter {
   const moves = readMoves(u, rules);
   return {
     id: u.id,
@@ -123,9 +127,10 @@ function fighter(u: Unit, rules: Rules): Fighter {
     hinder: 0,
   };
 }
-function enemyFighter(species: string, id: string, hp: number, rules: Rules): Fighter {
-  const card = cards.templates[species as keyof typeof cards.templates] as Card;
-  return fighter(readCard(card, species, id, NAMES[species] ?? species, hp), rules);
+export function enemyFighter(species: string, id: string, hp: number, rules: Rules): Fighter {
+  const card = ((cards.templates as Record<string, unknown>)[species] ?? (roles.templates as Record<string, unknown>)[species]) as Card;
+  const name = NAMES[species] ?? (roles.names as Record<string, string>)[species] ?? species;
+  return fighter(readCard(card, species, id, name, hp), rules);
 }
 
 /** Can this move be used now (ready, signature unspent, does something)? */
@@ -136,10 +141,10 @@ export function ready(u: Fighter, i: number): boolean {
 export function legalMoves(u: Fighter): number[] {
   return u.moves.map((_, i) => i).filter((i) => ready(u, i));
 }
-const foesOf = (s: PRun, u: Fighter) => (u.enemy ? s.team : s.enemies);
-const matesOf = (s: PRun, u: Fighter) => (u.enemy ? s.enemies : s.team);
+export const foesOf = (s: Pick<PRun, "team" | "enemies">, u: Fighter) => (u.enemy ? s.team : s.enemies);
+export const matesOf = (s: Pick<PRun, "team" | "enemies">, u: Fighter) => (u.enemy ? s.enemies : s.team);
 /** Whom an order for move i may name: a standing foe when the move attacks or hinders, a squadmate for a helping move, the user for a move that only acts on itself. */
-export function legalTargets(s: PRun, u: Fighter, i: number): Fighter[] {
+export function legalTargets(s: Pick<PRun, "team" | "enemies">, u: Fighter, i: number): Fighter[] {
   const m = u.moves[i];
   if (!m || u.hp <= 0) return [];
   if (m.power > 0 || m.parts.some((p) => p.aim === "enemy")) return standing(foesOf(s, u));
@@ -175,7 +180,7 @@ export function actsBefore(s: PRun, u: Fighter, t: Fighter): boolean {
   return order.findIndex((x) => x.id === u.id) < order.findIndex((x) => x.id === t.id);
 }
 
-function pickTarget(s: PRun, foes: Fighter[]): Fighter {
+export function pickTarget(s: { rng: number }, foes: Fighter[]): Fighter {
   const roll = random(s);
   if (!TARGET_SIZE_WEIGHT) return foes[Math.floor(roll * foes.length)];
   const weights = foes.map((f) => Math.pow(f.max, TARGET_SIZE_WEIGHT));
@@ -183,20 +188,57 @@ function pickTarget(s: PRun, foes: Fighter[]): Fighter {
   for (let i = 0; i < foes.length; i++) if ((left -= weights[i]) < 0) return foes[i];
   return foes[foes.length - 1];
 }
-/** The enemies' hidden orders: the strongest ready attack, a self-shield sometimes when hurt. */
+/**
+  The enemies' hidden orders. Each standing enemy weighs its ready moves in health, as the
+  squad's planner does: an attack by what it deals to the companion it picks (by size); a heal
+  by the health its most hurt ally is missing; a shield by the blow it may keep off its most
+  hurt ally; a boost by what it adds to its hardest-hitting ally; a hinder by what it takes off
+  the hardest-hitting companion. A little noise from the run rng keeps it from being a script.
+*/
 function prepare(s: PRun) {
   s.orders = {};
   for (const u of standing(s.enemies)) {
-    const moves = legalMoves(u);
-    if (!moves.length) continue;
-    const shield = moves.find((i) => u.moves[i].power === 0 && u.moves[i].parts.some((p) => p.kind === "shield"));
-    const attacks = moves.filter((i) => u.moves[i].power > 0).sort((a, b) => u.moves[b].power - u.moves[a].power);
-    const hurt = u.hp < u.max * ENEMY_SHIELD_BELOW;
-    const move = shield !== undefined && (hurt ? random(s) < ENEMY_SHIELD_CHANCE : !attacks.length) ? shield : attacks[0] ?? moves[0];
-    const targets = legalTargets(s, u, move);
-    const target = targets.some((t) => t.enemy === u.enemy) || targets[0]?.id === u.id ? targets[0] : pickTarget(s, targets);
-    s.orders[u.id] = { move, target: target.id };
+    const o = enemyChoice(s, u);
+    if (o) s.orders[u.id] = o;
   }
+}
+/** One enemy's choice for its next action, weighed in health against the board as it stands. */
+export function enemyChoice(s: Pick<PRun, "team" | "enemies" | "rng">, u: Fighter): Order | null {
+  const team = standing(s.team);
+  const allies = standing(s.enemies);
+  const hurt = [...allies].sort((a, b) => a.hp / a.max - b.hp / b.max)[0];
+  const hitter = [...allies].sort((a, b) => Math.max(...b.moves.map((m) => m.power)) - Math.max(...a.moves.map((m) => m.power)))[0];
+  const threat = [...team].sort((a, b) => Math.max(...b.moves.map((m) => m.power)) - Math.max(...a.moves.map((m) => m.power)))[0];
+  const pick = team.length ? pickTarget(s, team) : undefined;
+  let best: { move: number; target: string; v: number } | null = null;
+  for (const i of legalMoves(u)) {
+    const m = u.moves[i];
+    let v = 0;
+    let target = pick?.id ?? u.id;
+    if (m.power > 0 && pick) v += Math.floor(m.power * step(m.element, pick.element));
+    for (const p of m.parts) {
+      if (p.kind === "heal") {
+        const t = p.aim === "self" ? u : hurt;
+        v += Math.min(p.n, t.max - t.hp);
+        if (!m.power && p.aim !== "self") target = t.id;
+      } else if (p.kind === "shield") {
+        const t = p.aim === "self" ? u : hurt;
+        v += t.hp < t.max * ENEMY_SHIELD_BELOW ? p.n : p.n * 0.4;
+        if (!m.power && p.aim !== "self") target = t.id;
+      } else if (p.kind === "boost") {
+        const t = p.aim === "self" ? u : hitter;
+        v += t.id === u.id ? p.n * 0.5 : p.n * 0.8;
+        if (!m.power && p.aim !== "self") target = t.id;
+      } else if ((p.kind === "hinder" || p.kind === "delay") && threat) {
+        v += Math.min(p.n, Math.max(...threat.moves.map((x) => x.power))) * 0.8;
+        if (!m.power) target = threat.id;
+      }
+    }
+    v *= 1 - ENEMY_NOISE / 2 + ENEMY_NOISE * random(s);
+    if (!legalTargets(s, u, i).some((t) => t.id === target)) target = legalTargets(s, u, i)[0]?.id ?? u.id;
+    if (!best || v > best.v) best = { move: i, target, v };
+  }
+  return best ? { move: best.move, target: best.target } : null;
 }
 function enter(s: PRun) {
   s.round = 1;
@@ -209,7 +251,7 @@ function enter(s: PRun) {
     u.boost = 0;
     u.hinder = 0;
   }
-  s.enemies = ROOMS[s.room].enemies.map((row) =>
+  s.enemies = roomsFor(s.rules)[s.room].enemies.map((row) =>
     enemyFighter(String(row[0]), String(row[1]), Math.round(Number(row[2]) * s.rules.enemyHpFactor), s.rules)
   );
   for (const row of [s.team, s.enemies])
@@ -217,7 +259,7 @@ function enter(s: PRun) {
       const j = Math.floor(random(s) * (i + 1));
       [row[i], row[j]] = [row[j], row[i]];
     }
-  s.log.push(`Entered ${ROOMS[s.room].name}.`);
+  s.log.push(`Entered ${roomsFor(s.rules)[s.room].name}.`);
   prepare(s);
 }
 export function createPillarRun(seed = 1, squad: Squad = "starter", rules: Rules = DEFAULT_RULES): PRun {
@@ -243,7 +285,7 @@ export function createPillarRun(seed = 1, squad: Squad = "starter", rules: Rules
 }
 
 /** Give one support part to its recipients. */
-function support(s: PRun, u: Fighter, m: PMove, p: Part, target: Fighter, emit: (e: PEvent) => void) {
+export function support(s: Pick<PRun, "team" | "enemies">, u: Fighter, m: PMove, p: Part, target: Fighter, emit: (e: PEvent) => void) {
   const n = p.all ? Math.max(1, Math.floor(p.n * ALL_SUPPORT_FACTOR)) : p.n;
   const pool = p.aim === "enemy" ? standing(foesOf(s, u)) : standing(matesOf(s, u));
   const to = p.aim === "self" ? [u] : p.all ? pool : [p.aim === "enemy" ? target : target.enemy === u.enemy ? target : u];
@@ -259,6 +301,9 @@ function support(s: PRun, u: Fighter, m: PMove, p: Part, target: Fighter, emit: 
     } else if (p.kind === "boost") {
       t.boost = Math.max(t.boost, n);
       emit({ kind: "boost", actor: u.id, target: t.id, move: m.name, amount: n });
+    } else if (p.kind === "delay") {
+      t.delay = Math.max(t.delay ?? 0, p.n);
+      emit({ kind: "delay", actor: u.id, target: t.id, move: m.name, amount: p.n });
     } else {
       t.hinder = Math.max(t.hinder, n);
       emit({ kind: "hinder", actor: u.id, target: t.id, move: m.name, amount: n });
@@ -266,7 +311,7 @@ function support(s: PRun, u: Fighter, m: PMove, p: Part, target: Fighter, emit: 
   }
 }
 /** One attack on one target: shields absorb first, then health. */
-function strike(u: Fighter, m: PMove, t: Fighter, emit: (e: PEvent) => void) {
+export function strike(u: Fighter, m: PMove, t: Fighter, emit: (e: PEvent) => void) {
   let amount = attackOn(u, m, t);
   let absorbed = 0;
   for (const sh of t.shields) {
@@ -341,9 +386,10 @@ export function resolvePillarRound(previous: PRun, orders: Record<string, Order>
     s.phase = "lost";
     s.log.push("The squad has fallen.");
   } else if (!standing(s.enemies).length) {
-    const xp = s.room === ROOMS.length - 1 ? FINAL_ENCOUNTER_XP : ENCOUNTER_XP;
+    const last = roomsFor(s.rules).length - 1;
+    const xp = s.room === last ? FINAL_ENCOUNTER_XP : ENCOUNTER_XP;
     s.xp += xp;
-    s.phase = s.room === ROOMS.length - 1 ? "won" : "camp";
+    s.phase = s.room === last ? "won" : "camp";
     s.log.push(`Encounter cleared. +${xp} practice XP.`);
   } else if ((s.stalled = progress ? 0 : s.stalled + 1) >= STALL_ROUNDS) {
     s.phase = "retreated";
@@ -368,7 +414,7 @@ export function pillarCommand(previous: PRun, c: PCommand): PRun {
     s.phase = "retreated";
   } else {
     s.room++;
-    if (s.room === ROOMS.length - 1) for (const u of standing(s.team)) u.hp = Math.min(u.max, u.hp + RECOVERY_STATION_HP);
+    if (s.room === roomsFor(s.rules).length - 1) for (const u of standing(s.team)) u.hp = Math.min(u.max, u.hp + RECOVERY_STATION_HP);
     enter(s);
   }
   return s;

@@ -1,11 +1,11 @@
 import React from 'react';
-import { speciesLabel, formatHold, formatHoldShown, roleSentence } from './reclamationNarration';
-import { RoleGlyph, PIECE_RIM } from './reclamationGlyphs';
+import { speciesLabel, formatHold, formatHoldShown, formatBlow, roleSentence, matchupWords } from './reclamationNarration';
+import { RoleGlyph, ArmorGlyph, PIECE_RIM } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { getSpeciesTemplate } from '@xalians/rules/generator';
-import { HoldBar, WhyMarks } from './reclamationInstruments';
+import { HoldBar, WhyMarks, factorText } from './reclamationInstruments';
 
 /*
 	ReclamationFigure — one creature standing at a site.
@@ -140,6 +140,7 @@ function ReclamationFigure({
 	lossText,
 	noTarget,
 	reasons,
+	blowIn,
 }) {
 	const mine = seat === you;
 	const px = size === 'small' ? 40 : FIGURE_SIZE;
@@ -226,6 +227,29 @@ function ReclamationFigure({
 				)}
 				{!portrait && <span className="rec-piece-unknown">?</span>}
 				{element && <XalianTypeSymbolBadge size={Math.round(px / 2.6)} type={element} classes="rec-piece-disc" />}
+				{/*
+					PASS 73, THE BLOW ON EACH TARGET (docs/design/reclamation-blow-on-target.md). While a
+					creature of yours is pointed at or lifted, each creature it could hit here carries the
+					blow it would land on it: one blow at full strength, the chart's factor beside it when
+					the chart is not even, the plates where it is armored. It sits on the creature it
+					measures, beside that creature's hold, so the two read against each other. It is drawn
+					dashed, like every other "would be" on the table (the ghost's "+10"), and has no minus
+					sign (pass 58: a minus read as the reader's own loss). It stands in the corner of the
+					stage, off the art and off the element badge, and gives way to the Clash's own number,
+					which lands at the stage's heart.
+				*/}
+				{blowIn && !flash && (
+					<span
+						className={`rec-figure-blow${blowIn.mine ? ' rec-figure-blow--on-mine' : ''}`}
+						data-blow-in={formatBlow(blowIn.power)}
+						data-blow-chart={blowIn.chart !== 1 ? blowIn.chart : undefined}
+						title={blowTitle(blowIn, name)}
+					>
+						<b className="g-mono">{formatBlow(blowIn.power)}</b>
+						{Math.abs((blowIn.chart || 1) - 1) > 1e-9 && <i className="rec-figure-blow-x g-mono">{factorText(blowIn.chart)}</i>}
+						{blowIn.armored && <ArmorGlyph className="rec-figure-blow-armor" />}
+					</span>
+				)}
 			</span>
 			{/*
 				pass 32: a plate that is acting or being hit carries the engine step as its key,
@@ -290,6 +314,20 @@ function ReclamationFigure({
 			)}
 		</button>
 	);
+}
+
+// pass 73: the blow in words, for the chip's title: who, how much, and how it is made
+function blowTitle(blowIn, name) {
+	const who = blowIn.by || 'It';
+	const verb = blowIn.role === 'sweep' ? 'sweep' : 'strike';
+	const parts = [];
+	if (typeof blowIn.base === 'number') parts.push(`${formatHold(blowIn.base)}`);
+	const chart = matchupWords(blowIn.chart, blowIn.byElement, blowIn.toElement);
+	if (chart) parts.push(chart);
+	if (blowIn.armored) parts.push(`armored \u00d70.75`);
+	const made = parts.length > 1 ? ` (${parts.join(', ')})` : '';
+	const whose = blowIn.mine ? `your ${name}` : name;
+	return `Each ${who} ${verb} lands ${formatBlow(blowIn.power)} on ${whose} at full strength${made}. A creature already hurt lands less, and a guard takes a quarter off.`;
 }
 
 /*

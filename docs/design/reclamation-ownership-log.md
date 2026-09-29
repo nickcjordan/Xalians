@@ -2,13 +2,13 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 72, 2026-09-28)
+## Standing state (after pass 75, 2026-09-29)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
 ### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 71)
 
-Pass 71 put the element chart back in battle, made a world's element a slight penalty only where it is hard on the creature, and set home ground to a quarter more (`reclamation-elements-in-battle.md`). Pass 72 changed only what the table shows, not the rules or the bot, so these still stand.
+Pass 71 put the element chart back in battle, made a world's element a slight penalty only where it is hard on the creature, and set home ground to a quarter more (`reclamation-elements-in-battle.md`). Passes 72 and 73 changed only what the table shows, not the rules or the bot, so these still stand.
 
 | Gauge | Band | Seed 7 | Seed 13 | Verdict |
 |---|---|---|---|---|
@@ -25,7 +25,7 @@ Pass 71 put the element chart back in battle, made a world's element a slight pe
 | A side's round share with a bolster | reported | 50.4 | 51.0 | above the 49.6 / 49.5 without |
 | Games with a stake | reported | 0.2 | 0.6 | **the stake is almost never used** |
 
-### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 73, moved from 72 because Nick is reading pass 72 live and may change it)
+### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 74, moved from 72 because Nick is reading passes 72 and 73 live and steering them)
 
 | Clarity | Decisions | The Clash | Arc | Another game | Phone | Numbers | Feedback |
 |---|---|---|---|---|---|---|---|
@@ -1563,4 +1563,47 @@ Nick read the words under Tizzie at Telypso ("It falls in the Clash if nothing e
 - **Not changed:** the rules and the bot, so the gauges above stand. `forecastClash`, `forecastSend` and `forecastSendBlows` stay in the engine, tested and unused by the table.
 
 **Checked:** rules 656 on the Mac mini (two unrelated files timed out under load and pass alone), rules typecheck, web 1816 (Long Return timed out under load and passes alone), and the five table checks. Pictures at 1366 by 768 read the stacked totals and the chart lines on seeds 7 and 13.
+
+### Pass 73 (2026-09-28): the blow on each target
+
+Nick asked whether anything showed how effective your attacks would be at a world, and on the proposal: "yes but be intentional in design". Nothing did: the chart's factor was in words with no amount, attack power was in a title, and the card's number was speed. Design: `reclamation-blow-on-target.md`.
+
+**What changed:**
+- **While a creature is pointed at or lifted,** each creature it could hit carries one blow at full strength, dashed in your color in its stage's corner, beside its hold: "22 ×1½" (the chart's factor only when uneven), a plates mark where it is armored, in loss red on your own creature under a sweep. No minus sign. It gives way to the Clash's own number. `blowsAt` in `reclamationPreview.js`, from the engine's `attackPowerAgainst`, under the act it would play.
+- **Each card** carries its attack beside its role mark ("↗13"; a bolster's mend; nothing for a shield). It is the number the chip starts from.
+- **The words** say why an armored target takes a quarter less.
+- **Fixed:** a sweep's number was the whole blow while each creature took six tenths of it; `rolePower` gives the share on the card, the plate and the dossier.
+
+**Checked:** web 1824 on the Mac mini (Long Return timed out under load again), the five table checks, and pictures at 1366 by 768, 1440 by 900 and 390 by 844.
+
+**Open from it:** the card's attack hides on the phone and on short screens with the role mark; the rival's blows on your creature are words only.
+
+### Pass 74 (2026-09-29): the dashed box on a card's column goes
+
+Nick asked what the dotted lines around the bars represent: "I feel like that's not accurate anymore. It needs to be fixed." They were pass 59's normal-hold box (what a creature holds at a world that neither helps nor hurts it). Its height was right: a check over four whole bot matches found all 2,148 unmarked columns at their box. But it was the one mark on a card with no number, its note still said the Clash could cut a column, and since passes 72 and 73 a dashed outline means what your send would do. The box is gone; the number, the fill and the marks with their factors carry it, and pointing shows the whole chain on each world. Design: `reclamation-no-body-box.md`.
+
+### Pass 75 (2026-09-29): the squad as a roster
+
+Nick asked for the squad card to be rethought from the ground up: "I don't want you to reuse any of the pieces just for the sake of reusing them". His complaints were tiny icons crammed at the foot of each card, every card still showing a round deep, and no order. Measured at 1440 by 900 in round 3: eight of twelve cards were spent creatures, and the four you could send were squeezed to the right. Design: `reclamation-squad-roster.md`.
+
+**What changed:**
+- **The plinth cards and the fit strip are gone.** The squad is a roster: a row per creature you can still send, in columns that line up under each world's symbol.
+- **A row:** silhouette with element badge, name, act and attack, then a cell per world.
+- **A cell:** "+N" (what it adds there), a bar in the world's color with the rival's mark, at most one ▲ or ▼ for what the world did to its hold, and at most one element factor against the rivals there.
+- **Order:** by act and attack; press a world's symbol to sort by it.
+- **Rows through a round:** a creature sent this round keeps its quiet row until the round is ruled, so a send moves nothing.
+- **Used creatures:** they sit small in the head: underlined on a world, crossed when fallen.
+- **Columns:** the roster takes as many as its room allows (two at 1440, three at 1366, two on a phone). On a phone the names and the head give way so every key stands 32 pixels.
+- **Removed as dead:** the pass 4 roster rail module (`reclamationRoster.js`, nothing drew it; `slotStateOf` moved into the squad), `FitStrip` and `fitSentence`.
+- **Also fixed:** the log's head, which let lines scroll into the gap above it.
+
+**Checked:**
+- the five table checks, with proving updated to read the roster;
+- web tests, with new `reclamationSquad.test.js`;
+- pictures at 1440, 1366 and 390 across rounds 1 to 3.
+
+**Blind reader (Opus): 6 of 10.**
+- Read right: sent rows, the world columns, the element factors, the rival's mark, and the used creatures in the head.
+- Missed: speed, and that the symbols sort.
+- Its worst problem was whether a cell's number is an addition or a strength. The number is now signed "+N", and the symbols carry a faint caret.
 

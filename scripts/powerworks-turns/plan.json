@@ -1,0 +1,42 @@
+[
+  {
+    "name": "before-enemy-phase",
+    "scenario": "before-enemy-phase",
+    "steps": [
+      { "op": "shot" },
+      { "op": "act", "key": 1, "target": "A" },
+      { "op": "frames", "ms": 6000, "every": 100 },
+      { "op": "waitIdle" },
+      { "op": "shot" }
+    ]
+  },
+  {
+    "name": "checkpoint-graviclaw-hover",
+    "scenario": "checkpoint-graviclaw",
+    "steps": [
+      { "op": "shot" },
+      { "op": "hover", "target": "cell:A" },
+      { "op": "shot" },
+      { "op": "hover", "target": "figure:B" },
+      { "op": "shot" }
+    ]
+  },
+  {
+    "name": "first-full-cycle",
+    "scenario": "first",
+    "steps": [
+      { "op": "shot" },
+      { "op": "act", "key": 1, "target": "A" },
+      { "op": "frames", "ms": 6000, "every": 100 },
+      { "op": "waitIdle" },
+      { "op": "shot" }
+    ]
+  },
+  {
+    "name": "camp",
+    "scenario": "camp",
+    "steps": [
+      { "op": "shot" }
+    ]
+  }
+]

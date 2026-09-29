@@ -39,12 +39,25 @@ export const SIGNATURE_ONCE = true;
 export const ENEMY_HP_FACTOR = 0.62;
 /** An enemy picks whom to hit weighted by max HP raised to this power (0: uniform). */
 export const TARGET_SIZE_WEIGHT = 1;
-/** An enemy with a self-shield uses it with this chance when below SHIELD_BELOW of its max HP. */
-export const ENEMY_SHIELD_CHANCE = 0.5;
+/** An enemy values a shield in full on an ally below this share of its max HP, and at 0.4 otherwise. */
 export const ENEMY_SHIELD_BELOW = 0.6;
+/** An enemy's move values are scaled by a random factor in [1 - NOISE/2, 1 + NOISE/2] from the run rng. */
+export const ENEMY_NOISE = 0.3;
 /** Run structure, unchanged from the prototype. */
 export const ENCOUNTER_XP = 10;
 export const FINAL_ENCOUNTER_XP = 30;
 export const RECOVERY_STATION_HP = 10;
 export const STALL_ROUNDS = 6;
 export const PILLAR_SAVE_VERSION = 1;
+/**
+  Turn-by-turn, speed timeline: a unit's interval between turns is TIMELINE_SCALE / (SPEED_BASE +
+  speed). SPEED_BASE softens speed: at 0 a speed-72 creature acts 2.6 times as often as a
+  speed-28 one; at 100, 1.34 times. The first sweep at 0 crushed the slow preset squad.
+*/
+export const TIMELINE_SCALE = 1000;
+export const SPEED_BASE = 100;
+/** A delay pushes the target's next turn back by this share of its interval (the turn-order layer). */
+export const DELAY_SHARE = 0.3;
+/** Turn-by-turn: this many turns in a row without anyone losing health force the squad out. */
+export const STALL_TURNS_PER_UNIT = 6;
+

@@ -9,7 +9,7 @@ import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { roleOf } from '@xalians/rules/expedition/creatureOnTable';
 import { fitTable, forecastTotalsAt, standingScale, STANDING_FLOOR, roundTrack, FIT_SCALE, fitScale } from '../reclamationFit';
-import { Standing, FitStrip, SideRow, RoundTrack, pennantsFor, HoldBar, Crest, WhyMarks, whyWords, fitSentence, factorText } from '../reclamationInstruments';
+import { Standing, SideRow, RoundTrack, pennantsFor, HoldBar, Crest, WhyMarks, whyWords, factorText } from '../reclamationInstruments';
 
 /*
 	PASS 52, THE GLANCE REDESIGN (docs/design/reclamation-glance-redesign.md).
@@ -251,39 +251,6 @@ describe('the instruments', () => {
 		expect(container.querySelector('[data-standing-total="theirs"] [data-crest]')).toBeNull();
 	});
 
-	it('prints your side alone on each column, and ticks the lead still to pass', () => {
-		const sites = [
-			{ id: 's1', world: { planet: 'One', element: 'fire' } },
-			{ id: 's2', world: { planet: 'Two', element: 'air' } },
-			{ id: 's3', world: { planet: 'Three', element: 'ice' } },
-		];
-		// s1: holds 16 against the rival's 12; s2: home, holds 9.6, the rival 14 there; s3: costs a solitary creature of yours 1.2
-		const row = {
-			s1: { swing: 16, gain: 16, clear: 0, deficit: 12, takes: true, after: { mine: 16, theirs: 12 }, own: 16, toll: 0, allies: 0, taken: 0, body: 8, home: false, climate: null },
-			s2: { swing: 9.6, gain: 9.6, clear: 14, deficit: 14, takes: false, after: { mine: 9.6, theirs: 14 }, own: 9.6, toll: 0, allies: 0, taken: 0, body: 8, home: true, climate: null },
-			s3: { swing: 2.4, gain: 2.4, clear: 0, deficit: 0, takes: false, after: { mine: 2.4, theirs: 0 }, own: 3.6, toll: 0, allies: -1.2, taken: 0, body: 8, home: false, climate: { level: 'strained', cause: 'cold', factor: 0.9 } },
-		};
-		const { container } = render(<FitStrip sites={sites} row={row} scale={24} />);
-		const cols = [...container.querySelectorAll('[data-fit-site]')];
-		expect(cols.map((c) => c.querySelector('.rec-fit-num').textContent)).toEqual(['16', '10', '2']);
-		expect(cols[0].className).toContain('rec-fit-col--takes');
-		expect(cols[1].className).toContain('rec-fit-col--short');
-		// the pointer is what the rival holds there beyond you
-		expect(cols[0].querySelector('.rec-fit-tick')).toBeNull();
-		expect(Number(cols[1].style.getPropertyValue('--fit-tick'))).toBeCloseTo(14 / 24, 3);
-		// pass 72: no rival tag, no Clash toll
-		expect(container.querySelector('[data-fit-rival]')).toBeNull();
-		expect(Number(cols[0].style.getPropertyValue('--p-own'))).toBeCloseTo(16 / 24, 3);
-		expect(Number(cols[0].style.getPropertyValue('--p-lost'))).toBe(0);
-		// a creature that costs your others stands lower by that much, the cost hatched
-		expect(Number(cols[2].style.getPropertyValue('--p-lost'))).toBeCloseTo(1.2 / 24, 3);
-		expect(Number(container.querySelector('[data-fit]').style.getPropertyValue('--fit-body'))).toBeCloseTo(8 / 24, 3);
-		expect(cols[0].querySelector('[data-why]')).toBeNull();
-		expect(cols[1].querySelector('[data-why="home"]')).not.toBeNull();
-		expect(cols[2].querySelector('[data-why="cold"]')).not.toBeNull();
-		expect(container.querySelector('[data-why="falls"]')).toBeNull();
-	});
-
 	// pass 59: each mark carries the factor it applies, so the card shows how its number was made
 	it('prints each mark with its factor', () => {
 		expect(factorText(1.5)).toBe('\u00d71\u00bd');
@@ -314,48 +281,6 @@ describe('the instruments', () => {
 		expect(whyWords({ climate: { level: 'severe', cause: 'breath' } })[0]).toMatch(/it holds a quarter of what it would$/);
 		const none = render(<WhyMarks reasons={{ home: false, climate: null, company: 0, falls: false }} />);
 		expect(none.container.querySelector('[data-why]')).toBeNull();
-	});
-
-	it('shows a sent creature only at the world it went to', () => {
-		const sites = [{ id: 's1', world: { planet: 'One', element: 'fire' } }, { id: 's2', world: { planet: 'Two', element: 'air' } }];
-		const { container } = render(<FitStrip sites={sites} row={null} sentSiteId="s2" />);
-		const cols = [...container.querySelectorAll('[data-fit-site]')];
-		expect(cols[0].className).toContain('rec-fit-col--gone');
-		expect(cols[1].className).toContain('rec-fit-col--sent');
-	});
-
-	// pass 55: the sent column is the creature's own number there, not one bar the same height on every card
-	it('draws a sent creature as what it holds there as the sends stack', () => {
-		const sites = [{ id: 's1', world: { planet: 'One', element: 'fire' } }, { id: 's2', world: { planet: 'Two', element: 'air' } }];
-		const kept = render(<FitStrip sites={sites} row={null} sentSiteId="s1" sentCell={{ hold: 9.4, downed: false, before: 9.4 }} />);
-		const col = kept.container.querySelector('[data-fit-site="s1"]');
-		expect(col.getAttribute('data-fit-sent')).toBe('9.4');
-		expect(col.querySelector('.rec-fit-num').textContent).toBe('9');
-		expect(Number(col.style.getPropertyValue('--p-own'))).toBeCloseTo(9.4 / FIT_SCALE, 3);
-		expect(Number(col.style.getPropertyValue('--p-lost'))).toBe(0);
-	});
-
-	it('draws what a swift creature would do by moving, in the columns of the worlds it could step to', () => {
-		const sites = [{ id: 's1', world: { planet: 'One', element: 'fire' } }, { id: 's2', world: { planet: 'Two', element: 'air' } }, { id: 's3', world: { planet: 'Three', element: 'ice' } }];
-		// pass 58: a move reads like a send at the world it would join, your side and the rival's apart
-		const moveRow = {
-			s2: { swing: 6.2, gain: 6.2, own: 6.2, allies: 0, toll: 0, taken: 0, clear: 0, takes: true },
-			s3: { swing: -1, gain: -1, own: 0, allies: -1, toll: 0, taken: 0, clear: 0, takes: false },
-		};
-		const { container } = render(<FitStrip sites={sites} row={null} sentSiteId="s1" sentCell={{ hold: 9, downed: false, before: 9 }} moveRow={moveRow} />);
-		const cols = [...container.querySelectorAll('[data-fit-site]')];
-		expect(cols[1].className).toContain('rec-fit-col--move');
-		expect(cols[1].querySelector('.rec-fit-num').textContent).toBe('6');
-		expect(cols[2].className).toContain('rec-fit-col--hurts');
-		expect(cols[2].querySelector('.rec-fit-num').textContent).toBe('\u22121');
-	});
-
-	it('says each side apart in the card title, and who would hold more', () => {
-		const sites = [{ id: 's1', world: { planet: 'Endessa', element: 'sand' } }];
-		const row = { s1: { gain: 20, own: 20, allies: 0, toll: 0, taken: 0, falls: false, after: { mine: 20, theirs: 14 }, home: true } };
-		const text = fitSentence(sites, row);
-		expect(text).toBe("Endessa: it would hold 20; you would hold 20 to the rival's 14 (its home world: it holds a quarter more here)");
-		expect(text).not.toMatch(/Clash|lose|fall/);
 	});
 
 	// pass 58: a side one world from winning shows it, on its next pennant

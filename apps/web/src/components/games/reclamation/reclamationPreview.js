@@ -32,6 +32,7 @@ import { prepare, magnitudeAgainst, targetMatchupMultiplier, STRAIN_OVERLAP_COMF
 import { attackPowerAgainst } from '@xalians/rules/expedition/expeditionRules';
 import { ROLE, instinctLaneOf, presenceScaleOf } from '@xalians/rules/expedition/expeditionInterpretation';
 import { speciesLabel, formatHold, roleSentence, rolePower } from './reclamationNarration';
+import { elementOf } from './reclamationVocabulary';
 
 const OTHER = { A: 'B', B: 'A' };
 
@@ -389,11 +390,83 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 		bolstered: prepared.bolstered,
 		role,
 		blowMagnitude: prepared.blowMagnitude,
-		roleLine: roleSentence(role, rolePower(prepared)),
+		roleLine: roleSentence(role, rolePower(prepared, rulesOfView(publicState))),
 		lines,
 		effect,
 		targetRecordId,
 	};
+}
+
+/*
+	PASS 73, THE BLOW ON EACH TARGET (docs/design/reclamation-blow-on-target.md). Nick, on the
+	stacked table: "are there any indications in place showing the effectiveness of the attacks
+	you would be making on the enemy if you sent them to that particular world". Then: "yes but
+	be intentional in design".
+
+	blowsAt(publicState, record, site, seat, sentIndex, chosenRole?) -> {
+		role,     the act it would play there (the chosen act under the act flip)
+		power,    its card's number: a blow, a sweep's share on each creature, a bolster's mend
+		lands: { [recordId]: { power, chart, armored, mine } }
+	}
+
+	One blow at full strength on each creature it could hit there, from the engine's own
+	attackPowerAgainst: its attack, times the element chart, times a sweep's share, less an
+	armored target's quarter. It is a fact of the two creatures, like a hold, so it holds
+	whatever else is sent: it says nothing of who goes first, how many blows land, who is hurt
+	by then, or who falls (pass 72). A strike could land on any rival there, since its instinct
+	picks the target in the Clash; a sweep lands on every other creature there, yours too; a
+	bolster and a shield never strike. A rival's hidden send is not on the view.
+*/
+export function blowsAt(publicState, record, site, seat, sentIndex, chosenRole) {
+	const rules = rulesOfView(publicState);
+	const actor = prepare(record, site, null, sentIndex, { rules, chosenRole: chosenRole || undefined });
+	const role = actor.role;
+	const out = { role, power: rolePower(actor, rules), lands: {} };
+	if ((role !== ROLE.STRIKE && role !== ROLE.SWEEP) || !actor.blow) {
+		return out;
+	}
+	flattenBoard(publicState)
+		.filter((u) => u.site.id === site.id && u.recordId !== record.id && !(u.hidden && u.seat !== seat))
+		.forEach((u) => {
+			const mine = u.seat === seat;
+			if (mine && role !== ROLE.SWEEP) {
+				return;
+			}
+			out.lands[u.recordId] = {
+				power: attackPower(publicState, record, actor, u.record),
+				chart: targetMatchupMultiplier(record, u.record, rules),
+				armored: !!(u.prepared && u.prepared.armored),
+				mine,
+			};
+		});
+	return out;
+}
+
+/*
+	PASS 72, PLACEMENT STACKS. What the element chart does between a creature pointed at a world
+	and each rival creature standing there, both ways: `dealt` is its element on theirs when it
+	strikes or sweeps, `taken` theirs on it when that rival does. The chart is a fact of the two
+	creatures; who lands what, and in what order, is the Clash's to say when both have passed.
+	Neutral pairs are left out. A rival's hidden send is not on the view, so it is not here.
+	PASS 73: `lands` (blowsAt) says which of them are armored, so the words can say why the blow
+	drawn on an armored creature is a quarter less than the chart alone would make it.
+*/
+const ATTACKS = new Set(['strike', 'sweep']);
+export function matchupsAt(view, site, record, role, opponent, lands) {
+	const rules = view && view.rules;
+	const theirs = ((view && view.board && view.board[site.id] && view.board[site.id][opponent]) || []).filter((e) => e.record && !e.hidden);
+	return theirs.map((e) => {
+		const dealt = ATTACKS.has(role) ? targetMatchupMultiplier(record, e.record, rules) : 1;
+		const taken = ATTACKS.has(e.role) ? targetMatchupMultiplier(e.record, record, rules) : 1;
+		return {
+			recordId: e.recordId,
+			name: speciesLabel(e.record),
+			element: elementOf(e.record),
+			dealt: Math.abs(dealt - 1) > 1e-9 ? dealt : null,
+			taken: Math.abs(taken - 1) > 1e-9 ? taken : null,
+			armored: !!(ATTACKS.has(role) && lands && lands[e.recordId] && lands[e.recordId].armored),
+		};
+	}).filter((m) => m.dealt !== null || m.taken !== null || m.armored);
 }
 
 /*
@@ -601,7 +674,7 @@ export function attributeLanes(prepared, rules) {
 		lanes.push({
 			key: 'power',
 			label: governing,
-			text: `${governing} ${value}: attack power ${formatHold(prepared.blowMagnitude)}${sweeping ? ', spread over everything here' : ''}.`,
+			text: `${governing} ${value}: attack power ${formatHold(prepared.blowMagnitude)}${sweeping ? `, ${formatHold(rolePower(prepared, rules))} on each creature here` : ''}.`,
 		});
 	} else {
 		lanes.push({

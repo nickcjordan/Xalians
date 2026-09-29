@@ -65,7 +65,7 @@ for (let i = 0; i < arms; i++) {
 // send the first creature and read the role that landed against the one its card shows
 const first = page.locator('[data-slot-state="hand"]').first();
 sentName = await first.getAttribute('data-slot');
-cardRole = await first.locator('.rec-plinth-role').first().getAttribute('data-role').catch(() => null);
+cardRole = await first.locator('.rec-squad-act').first().getAttribute('data-role').catch(() => null);
 await first.locator('[data-arm]').first().click({ timeout: 4000 }).catch(() => {});
 await page.waitForTimeout(100);
 await page.locator('[data-site-id]').first().click({ force: true, timeout: 4000 }).catch(() => {});

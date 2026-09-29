@@ -653,7 +653,13 @@ export const PAINTED_SPECIES: ReadonlySet<string> = new Set([
   "guardian",
 ]);
 export const hasPaintedArt = (species: string) => PAINTED_SPECIES.has(species);
-export function Portrait({ u, small = false }: { u: Unit; small?: boolean }) {
+export function Portrait({
+  u,
+  small = false,
+}: {
+  u: Pick<Unit, "species" | "element">;
+  small?: boolean;
+}) {
   return (
     <span
       className={`pw-portrait el-${u.element} species-${u.species} ${

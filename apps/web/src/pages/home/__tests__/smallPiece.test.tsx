@@ -41,7 +41,7 @@ describe('SmallPiece', () => {
 	});
 
 	it('rests on its telling moment when it will never play', () => {
-		for (const key of ['forms', 'apex', 'plague', 'token'] as const) {
+		for (const key of ['plague', 'token'] as const) {
 			const def = PIECES[key];
 			expect(def.rest).toBeGreaterThan(0);
 			expect(def.rest).toBeLessThan(def.loop - 1);

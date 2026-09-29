@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatHold, formatHoldShown, wholeOrTenths, articleFor } from './reclamationNarration';
-import { FIT_SCALE, HOLD_BAR_SCALE } from './reclamationFit';
+import { HOLD_BAR_SCALE } from './reclamationFit';
 import { HomeGlyph, StrainGlyph, CompanyGlyph, NoMediumGlyph, PieceGlyph, RoleGlyph, RivalGlyph } from './reclamationGlyphs';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
@@ -17,10 +17,6 @@ import { strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 	              replaced pass 52's FrontLine)
 	  HoldBar     a creature's hold as a bar in its world's color, the part the Clash is
 	              forecast to take striped at its end
-	  FitStrip    three columns on a bench card, one per world in world order: what your
-	              side there would gain by sending it there now, and the rival's remaining
-	              lead as a pointer (pass 58; pass 72 took off the rival's tag, which was a
-	              Clash forecast)
 	  RoundTrack  the game's nine worlds, three rounds of three, each tile its world's symbol
 	              (pass 65)
 	  SideRow     one side's pennants toward the clinch, each in the color of the world it
@@ -173,47 +169,9 @@ export function HoldBar({ hold, after, unstrained, side, className }) {
 }
 
 /*
-	FitStrip: one column per world. `row` is fitTable's row for this creature; `focusSiteId`
-	lights one world's column and dims the others while that world is pointed at.
-
-	PASS 55. A sent creature's card (`sentSiteId`) keeps its strip. The column of the world it
-	went to is its own forecast there (`sentCell`, the engine's { hold, downed, before }): the
-	bar is what the Clash would leave it, the hatched run above is what the Clash would take,
-	and a cross stands in for the number when it would fall. A swift creature that may still
-	step to another world (`moveRow`, fitTable's moves) shows, in the other columns, what the
-	move would do across the frame, striped like every other "would be" on the table.
-
-	PASS 57, THE COLUMN SAYS WHY (docs/design/reclamation-attention-and-why.md). A column is
-	stacked from what makes it, bottom up, on one scale for the whole bench (`scale`,
-	fitScale()). A dashed line across the three columns marks its body, what it holds at a
-	world that neither favors nor strains it, so a column that stands above the line was
-	lifted by the world and one below it was cut; under each column a row of marks says by
-	what: a house on its home world, a flame, a snowflake or a breath where the world is too
-	hot, too cold or the wrong air, two figures where company moves it, a cross where it
-	would fall.
-
-	PASS 58, ONE SIDE PER NUMBER (docs/design/reclamation-one-side-per-number.md). Nick,
-	2026-09-24, on a card reading 34 at a world where it would hold 20 and down a rival of
-	14: "Why does it show 20 plus 14? Why is it adding my health and the opponent's
-	health?" Nothing on a card adds the two sides any more. The column and its number are
-	your side only, in your color:
-
-	  own      what the creature would still stand with after the Clash
-	  allies   lighter: what it would add to your creatures already there
-	  lost     hatched red on top: what the Clash would take off it
-
-	and the number is own and allies, what your side there would gain. What the send would
-	take off the rival is the rival's side, so it is drawn where the rival's side of a world
-	is, at the top: a tag hanging from the top of the column with the rival's total there
-	now and after the send, "12→0" (`room` keeps the top of every column on the bench for it
-	once any card has one). The small pointer on the column's edge is what the rival would still lead by after the send: a
-	column that passes it would put you ahead.
-
-	PASS 72, PLACEMENT STACKS (docs/design/reclamation-placement-stacks.md). The fit table
-	reads the board stacked, with no Clash run, so the hatched loss, the cross and the rival's
-	tag are gone: a column is what the creature would hold there and what it adds to (or,
-	hatched, costs) your creatures already there. The pointer is the rival's total there as
-	the sends stand, less yours.
+	PASS 75: the fit strip is gone with the plinth cards; the squad is a roster
+	(reclamationSquad.js). What stays here is what the roster, the plates and the ghost share:
+	the words for what a world does to a hold, the factor as printed, and the marks.
 */
 const CLIMATE_WORDS = {
 	hot: 'too hot for it here',
@@ -339,141 +297,6 @@ export function WhyMarks({ reasons, className, factors: withFactors, roomy }) {
 		marks.push(chip('company', <span className={`rec-why rec-why--company rec-why--company-${r.company > 0 ? 'up' : 'down'}`} data-why="company" title={`The creatures with it here ${r.company > 0 ? 'add' : 'take'} ${formatHold(Math.abs(r.company))}`}><CompanyGlyph /></span>, once(signed(r.company))));
 	}
 	return <span className={`rec-whys${withFactors ? ' rec-whys--factors' : ''}${className ? ` ${className}` : ''}`} aria-hidden="true">{marks}</span>;
-}
-
-// the stacked parts of a column, as fractions of the bench's scale, bottom up; `room` is
-// the share of the column's height the parts may use (the rest is the rival's tag)
-function stackOf(cell, scale, room) {
-	const s = scale > 0 ? scale : FIT_SCALE;
-	const r = room > 0 ? room : 1;
-	const own = Math.max(0, cell.own || 0);
-	const allies = cell.allies || 0;
-	// a creature that costs your others something stands lower by that much, and the cost is hatched with its toll
-	const solid = Math.max(0, own + Math.min(0, allies));
-	const parts = [['own', solid], ['allies', Math.max(0, allies)], ['lost', Math.max(0, cell.toll || 0) + (own - solid)]];
-	let at = 0;
-	const style = {};
-	parts.forEach(([key, value]) => {
-		const from = Math.min(1, at / s);
-		const to = Math.min(1, (at + value) / s);
-		style[`--p-${key}-at`] = (from * r).toFixed(4);
-		style[`--p-${key}`] = (Math.max(0, to - from) * r).toFixed(4);
-		at += value;
-	});
-	return { style, over: at > s + EPS };
-}
-
-function gainNumber(gain) {
-	return gain < -0.5 ? `\u2212${formatHoldShown(-gain)}` : formatHoldShown(Math.max(0, gain));
-}
-
-export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId, room }) {
-	const s = scale > 0 ? scale : FIT_SCALE;
-	const r = room > 0 ? room : 1;
-	const anyCell = row ? sites.map((site) => row[site.id]).find(Boolean) : null;
-	const body = anyCell && typeof anyCell.body === 'number' ? clamp01(anyCell.body / s) * r : null;
-	// one column of a send or a move: your side's gain, the rival's loss on its tag, the lead still to pass
-	const column = (site, cell, classes, extra) => {
-		const { style, over } = stackOf(cell, s, r);
-		const clear = cell.clear > EPS ? clamp01(cell.clear / s) * r : null;
-		if (cell.takes) classes.push('rec-fit-col--takes');
-		else if (clear !== null) classes.push('rec-fit-col--short');
-		if (over) classes.push('rec-fit-col--over');
-		if (cell.gain < -EPS) classes.push('rec-fit-col--hurts');
-		if (clear !== null) style['--fit-tick'] = clear.toFixed(4);
-		return (
-			<span
-				className={classes.join(' ')}
-				key={site.id}
-				style={style}
-				data-fit-site={site.id}
-				data-fit-gain={cell.gain.toFixed(2)}
-				data-fit-parts={[cell.own, cell.allies, cell.toll].map((v) => (v || 0).toFixed(1)).join('/')}
-				data-fit-takes={cell.takes ? '' : undefined}
-				{...extra}
-			>
-				{/* the number sits on its column: what your side there would gain, the same unit as your total on the world */}
-				<span className="rec-fit-num g-mono">{gainNumber(cell.gain)}</span>
-				<span className="rec-fit-well">
-					<span className="rec-fit-part rec-fit-part--own" />
-					<span className="rec-fit-part rec-fit-part--allies" />
-					<span className="rec-fit-part rec-fit-part--lost" />
-					{clear !== null && <span className="rec-fit-tick" />}
-				</span>
-				<WhyMarks reasons={cell} className="rec-fit-why" factors />
-			</span>
-		);
-	};
-	return (
-		<span className={`rec-fit${off ? ' rec-fit--off' : ''}${r < 1 ? ' rec-fit--rival-room' : ''}`} data-fit data-fit-scale={s} aria-hidden="true" style={body !== null ? { '--fit-body': body.toFixed(4), '--fit-room': r.toFixed(4) } : { '--fit-room': r.toFixed(4) }}>
-			{sites.map((site) => {
-				const classes = ['rec-fit-col', `g-el-${site.world.element}`];
-				if (focusSiteId) {
-					classes.push(focusSiteId === site.id ? 'rec-fit-col--focus' : 'rec-fit-col--dim');
-				}
-				if (newsSiteId && newsSiteId === site.id) {
-					classes.push('rec-fit-col--news');
-				}
-				if (sentSiteId && sentSiteId === site.id) {
-					// pass 72: what it stands with there as the sends stack
-					const kept = sentCell ? sentCell.hold : 0;
-					const { style } = stackOf({ own: kept, toll: 0 }, s, r);
-					classes.push('rec-fit-col--sent');
-					return (
-						<span className={classes.join(' ')} key={site.id} style={style} data-fit-site={site.id} data-fit-sent={sentCell ? sentCell.hold.toFixed(1) : ''}>
-							<span className="rec-fit-num g-mono">{sentCell ? formatHoldShown(sentCell.hold) : ''}</span>
-							<span className="rec-fit-well">
-								<span className="rec-fit-part rec-fit-part--own" />
-								<span className="rec-fit-part rec-fit-part--lost" />
-							</span>
-							<span className="rec-whys rec-fit-why" />
-						</span>
-					);
-				}
-				if (sentSiteId) {
-					const move = moveRow && moveRow[site.id];
-					if (!move || typeof move.gain !== 'number') {
-						classes.push('rec-fit-col--gone');
-						return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /><span className="rec-whys rec-fit-why" /></span>;
-					}
-					// pass 58: a move reads like a send, at the world it would join
-					classes.push('rec-fit-col--move');
-					return column(site, move, classes, { 'data-fit-move': move.gain.toFixed(2) });
-				}
-				const cell = row && row[site.id];
-				if (!cell) {
-					classes.push('rec-fit-col--none');
-					return <span className={classes.join(' ')} key={site.id} data-fit-site={site.id}><span className="rec-fit-num" /><span className="rec-fit-well" /><span className="rec-whys rec-fit-why" /></span>;
-				}
-				return column(site, cell, classes, {});
-			})}
-		</span>
-	);
-}
-
-// the fit strip's reading in words, for the card's title: each side's part said on its own
-export function fitSentence(sites, row) {
-	if (!row) {
-		return '';
-	}
-	return sites.map((site) => {
-		const cell = row[site.id];
-		if (!cell) {
-			return null;
-		}
-		const parts = [];
-		// pass 72: what it would hold as the sends stack; the Clash is not played out ahead of time
-		parts.push(`it would hold ${formatHold(cell.own)}`);
-		if (cell.allies > EPS) parts.push(`add ${formatHold(cell.allies)} to your creatures there`);
-		if (cell.allies < -EPS) parts.push(`cost your creatures there ${formatHold(-cell.allies)}`);
-		const mine = cell.after ? cell.after.mine : 0;
-		const theirs = cell.after ? cell.after.theirs : 0;
-		const lead = mine - theirs > EPS ? `you would hold ${formatHold(mine)} to the rival's ${formatHold(theirs)}`
-			: theirs - mine > EPS ? `the rival would still hold ${formatHold(theirs)} to your ${formatHold(mine)}`
-				: 'level';
-		const why = whyWords(cell);
-		return `${site.world.planet}: ${parts.join(', ')}; ${lead}${why.length ? ` (${why.join('; ')})` : ''}`;
-	}).filter(Boolean).join('. ');
 }
 
 /*

@@ -1,17 +1,10 @@
-import { elementOf } from './reclamationVocabulary';
 import React from 'react';
-import {
-	InfoGlyph, HiddenGlyph, RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph, PIECE_RIM,
-} from './reclamationGlyphs';
-import XalianImage from '../../xalianImage';
-import { pieceShadowFilter } from '../duel/board/duelPieceToken';
-import { slotStateOf } from './reclamationRoster';
-import { speciesLabel, roleSentence, roleWord, rolePower } from './reclamationNarration';
-import { FitStrip, fitSentence } from './reclamationInstruments';
+import { SwiftGlyph } from './reclamationGlyphs';
+import { speciesLabel, roleSentence, roleWord } from './reclamationNarration';
 import { fitScale } from './reclamationFit';
-import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
-import { attributeLanes } from './reclamationPreview';
-import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
+import { flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
+import { SENDABLE } from '@xalians/rules/expedition/expeditionInterpretation';
+import ReclamationSquad, { SquadGone } from './reclamationSquad';
 
 /*
 	ReclamationBench — the squad on a bench under the three worlds (Nick, 2026-09-04,
@@ -27,7 +20,7 @@ import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expedition
 
 	The bench head carries what the deploy panel used to: the state of the turn, the
 	sends left, the swift moves available this round, hidden, pass. Every number is the
-	engine's, through siteHoldsFor() and prepare().
+	engine's, through prepare() and the fit table.
 
 	PASS 2 ("every attribute a job"): each plinth prints the creature's speed and, beside
 	it, a mark per attribute lane that is doing something - a wing for swift, an upright
@@ -40,121 +33,11 @@ import { SENDABLE, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expedition
 	only, what your side there would gain, with what the rival would lose on a tag at its
 	top (docs/design/reclamation-one-side-per-number.md). Nothing on a card is
 	suggested; it only says what would happen.
-*/
 
-function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover, advanced, fitRow, focusSiteId, sentCell, moveRow, reserve, stripScale, newsSiteId }) {
-	const slot = slotStateOf(record, view, you);
-	/*
-		PASS 55, KEEP ONE BACK. With no sends left, a creature still in hand is the reserve: it
-		stays back for the rest of the Proving (and an unsent creature breaks a tie in worlds),
-		so it is drawn as kept, not as a card that can still be played.
-	*/
-	const kept = slot.state === 'hand' && !!reserve;
-	const inHand = slot.state === 'hand' && !kept;
-	const sites = view.frame.sites;
-	const readAt = prepare(record, view.frame.sites[0], null, 0, { rules: view.rules });
-	const stealthy = readAt.stealthy;
-	// the base redesign's one glyph per creature: the role it plays at the Clash, the same
-	// on the bench as on the plinth on the table and in the dossier
-	const role = readAt.role;
-	const roleLine = roleSentence(role, rolePower(readAt));
-	// the attribute lanes that are actually doing something for this creature: the marks
-	// beside the speed number, each with its own lane sentence (Pass 2, assumption 17)
-	const laneMarks = attributeLanes(readAt, view.rules).filter((l) => l.glyph);
-	const el = elementOf(record);
-	const classes = ['rec-plinth', `rec-plinth--${kept ? 'reserve' : slot.state}`];
-	if (armed) classes.push('rec-plinth--armed');
-	if (disabled) classes.push('rec-plinth--disabled');
-	if (inHand && fitRow && Object.values(fitRow).some((cell) => cell && cell.takes)) classes.push('rec-plinth--takes');
-	const title = inHand
-		? `${speciesLabel(record)}${armed ? ', lifted: press a world to send it there, or press it again to set it down' : ''}. ${fitSentence(sites, fitRow)}`
-		: kept ? 'Kept in reserve: eleven sends from a squad of twelve, so one creature always stays back. Unsent creatures break a tie in worlds.'
-			: slot.state === 'sent' ? `Sent to ${slot.site.world.planet}` : slot.state === 'holding' ? 'Won its world in an earlier round, and stays there' : slot.state === 'downed' ? 'Fell in a Clash, out of the game' : 'Spent on a world that was lost or tied, out of the game';
-	return (
-		<div className={classes.join(' ')} data-slot={record.id} data-slot-state={kept ? 'reserve' : slot.state}>
-			<button
-				type="button"
-				className="rec-plinth-main"
-				onClick={() => inHand && !disabled && onArm && onArm(record.id)}
-				onMouseEnter={() => onHover && onHover(record.id)}
-				onMouseLeave={() => onHover && onHover(null)}
-				onFocus={() => onHover && onHover(record.id)}
-				onBlur={() => onHover && onHover(null)}
-				aria-pressed={armed}
-				disabled={!inHand}
-				title={title}
-				data-arm={inHand && !disabled ? record.id : undefined}
-			>
-				<span className="rec-plinth-stage" aria-hidden="true">
-					<span className="rec-plinth-base" />
-					<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 44)} moreClasses="rec-plinth-art" />
-				</span>
-				<span className="rec-plinth-name">{speciesLabel(record)}</span>
-				{role && role !== 'none' && (
-					<span className="rec-role-glyph rec-plinth-role" title={roleLine} aria-label={roleLine} data-role={role}>
-						<RoleGlyph role={role} />
-					</span>
-				)}
-				{/* pass 38: speed and the attribute lanes are arithmetic, shown in advanced mode; the dossier always has them */}
-				{advanced && <span className="rec-plinth-init g-mono" title="Speed: the faster attacks land first when the worlds resolve">{Math.round(speedOf(record))}</span>}
-				{advanced && laneMarks.length > 0 && (
-					<span className="rec-plinth-lanes" aria-label="What this creature's attributes do here">
-						{laneMarks.map((mark) => (
-							<span className={`rec-plinth-lane rec-plinth-lane--${mark.glyph}`} key={mark.key} title={mark.text} aria-label={mark.text} data-lane-mark={mark.glyph}>
-								{mark.glyph === 'swift' && <SwiftGlyph />}
-								{mark.glyph === 'willful' && <WillfulGlyph />}
-								{(mark.glyph === 'keen' || mark.glyph === 'dull') && <InstinctGlyph lane={mark.glyph} />}
-							</span>
-						))}
-					</span>
-				)}
-				{/* pass 52: the fit strip, one column per world, for a creature in hand or the world it went to */}
-				{((inHand && fitRow) || slot.state === 'sent') && (
-					<FitStrip
-						sites={sites}
-						row={inHand ? fitRow : null}
-						sentSiteId={slot.state === 'sent' && slot.site ? slot.site.id : null}
-						sentCell={slot.state === 'sent' ? sentCell : null}
-						moveRow={slot.state === 'sent' ? moveRow : null}
-						focusSiteId={inHand ? focusSiteId : null}
-						off={disabled}
-						scale={stripScale}
-						newsSiteId={newsSiteId}
-					/>
-				)}
-				{kept && (
-					<span className="rec-plinth-tag rec-plinth-tag--reserve" aria-label="kept in reserve">
-						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v18l-5-4-5 4z" /></svg>
-					</span>
-				)}
-				{!inHand && !kept && slot.state !== 'sent' && (
-					<span className={`rec-plinth-tag rec-plinth-tag--${slot.state}`} aria-label={slot.state === 'holding' ? 'won its world' : slot.state === 'downed' ? 'fell in a Clash' : 'spent'}>
-						{slot.state === 'holding'
-							? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V3" /><path d="M6 4h12l-3 4.5L18 13H6" /></svg>
-							: slot.state === 'downed'
-								? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
-								: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>}
-					</span>
-				)}
-				{inHand && stealthy && (
-					<span className="rec-plinth-marks">
-						<span className="rec-plinth-mark rec-plinth-mark--glyph" title="Stealthy: arrives hidden"><HiddenGlyph /></span>
-					</span>
-				)}
-			</button>
-			<button
-				type="button"
-				className="rec-plinth-read"
-				onClick={(e) => { e.stopPropagation(); onInspect && onInspect(record); }}
-				title="Read this creature's dossier"
-				aria-label="Read this creature's dossier"
-				data-read={record.id}
-			>
-				<InfoGlyph />
-			</button>
-		</div>
-	);
-}
+	PASS 75: the plinths are gone. The squad is a roster of the creatures you can still send,
+	a row each with a column per world (reclamationSquad.js, docs/design/reclamation-squad-roster.md),
+	and the creatures already used sit small in the head (SquadGone).
+*/
 
 function ReclamationBench({
 	view,
@@ -195,16 +78,12 @@ function ReclamationBench({
 	// the round's cap: the sendable ten, plus the trailing seat's bonus send this round
 	const cap = typeof me.sendableCap === 'number' ? me.sendableCap : SENDABLE;
 	const sendsLeft = Math.max(0, cap - (me.sentCount || 0));
-	// this round's worlds and every round still to come
-	const worldsAhead = ((view.frame && view.frame.sites.length) || 3) * Math.max(1, FRAMES_PER_MATCH - (view.frameIndex || 0));
 	const armed = armedRecordId ? (me.roster || []).find((r) => r.id === armedRecordId) : null;
 	const step = !yourTurn ? 0 : armed ? 2 : 1;
-	const armedRead = armed ? prepare(armed, view.frame.sites[0], null, 0, { rules: view.rules }) : null;
-	const armedStealthy = !!(armedRead && armedRead.stealthy);
 	// assumption 20: a swift creature already on the table may move once a round, and it
 	// does not spend the turn. One button per creature that still may.
 	const movers = movable || [];
-	// pass 57: one scale for every card's columns, so a column reads against the next card's
+	// pass 57: one scale for the whole squad, so a bar reads against the next row's
 	const stripScale = fitScale(fits);
 
 	return (
@@ -212,6 +91,8 @@ function ReclamationBench({
 			<header className="rec-bench-head">
 				{/* pass 65: your side's row at your edge of the table, beside the squad it counts */}
 				<div className="rec-bench-side">{sideRow}</div>
+				{/* pass 75: the creatures already used, small, so the roster below is only what you can send */}
+				<SquadGone view={view} you={you} squad={squad} />
 				{/*
 					PASS 38. The head keeps only what is acted on: the act picker, the sends left and
 					the pass. "Your squad 12/12", the heading and the lead line repeated the top bar's
@@ -304,29 +185,21 @@ function ReclamationBench({
 				)}
 			</header>
 
-			<div className="rec-plinths" role="list">
-				{squad.map((record) => (
-					<Plinth
-						key={record.id}
-						record={record}
-						view={view}
-						you={you}
-						armed={armedRecordId === record.id}
-						fitRow={fits && fits.fits ? fits.fits[record.id] : null}
-						sentCell={fits && fits.forecast ? fits.forecast[record.id] || null : null}
-						moveRow={fits && fits.moves ? fits.moves[record.id] || null : null}
-						reserve={sendsLeft === 0}
-						focusSiteId={focusSiteId}
-						stripScale={stripScale}
-						newsSiteId={newsSiteId}
-						disabled={!yourTurn || me.passed || sendsLeft === 0}
-						onArm={onArm}
-						onInspect={onInspect}
-						onHover={onHoverRecord}
-						advanced={advanced}
-					/>
-				))}
-			</div>
+			<ReclamationSquad
+				view={view}
+				you={you}
+				squad={squad}
+				fits={fits}
+				scale={stripScale}
+				armedRecordId={armedRecordId}
+				disabled={!yourTurn || me.passed || sendsLeft === 0}
+				reserve={sendsLeft === 0}
+				focusSiteId={focusSiteId}
+				advanced={advanced}
+				onArm={onArm}
+				onInspect={onInspect}
+				onHover={onHoverRecord}
+			/>
 		</section>
 	);
 }

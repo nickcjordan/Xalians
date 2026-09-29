@@ -11,14 +11,14 @@ import {
 	createRngState, nextRandom,
 } from '@xalians/rules/expedition/expeditionRules';
 import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '@xalians/rules/expedition/expeditionBot';
-import { prepare, strainMultiplierFor, targetMatchupMultiplier } from '@xalians/rules/expedition/creatureOnTable';
+import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 import { SENDABLE, clinchFor, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
-	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
+	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove, rolePower,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord, captionEvent,
 	verdictOf, rulingLine,
 } from './reclamationNarration';
-import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause } from './reclamationPreview';
+import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause, blowsAt, matchupsAt } from './reclamationPreview';
 import { fitTable, roundTrack, standingScale, elementOf } from './reclamationFit';
 import { RoundTrack, SideRow, pennantsFor } from './reclamationInstruments';
 
@@ -90,29 +90,8 @@ export function budgetLine(sendsLeft, worldsToCome) {
 		: `After this send: ${plural(after, 'send')} left.`;
 }
 
-/*
-	PASS 72, PLACEMENT STACKS. What the element chart does between a creature pointed at a world
-	and each rival creature standing there, both ways: `dealt` is its element on theirs when it
-	strikes or sweeps, `taken` theirs on it when that rival does. The chart is a fact of the two
-	creatures; who lands what, and in what order, is the Clash's to say when both have passed.
-	Neutral pairs are left out. A rival's hidden send is not on the view, so it is not here.
-*/
-const ATTACKS = new Set(['strike', 'sweep']);
-export function matchupsAt(view, site, record, role, opponent) {
-	const rules = view && view.rules;
-	const theirs = ((view && view.board && view.board[site.id] && view.board[site.id][opponent]) || []).filter((e) => e.record && !e.hidden);
-	return theirs.map((e) => {
-		const dealt = ATTACKS.has(role) ? targetMatchupMultiplier(record, e.record, rules) : 1;
-		const taken = ATTACKS.has(e.role) ? targetMatchupMultiplier(e.record, record, rules) : 1;
-		return {
-			recordId: e.recordId,
-			name: speciesLabel(e.record),
-			element: elementOf(e.record),
-			dealt: Math.abs(dealt - 1) > 1e-9 ? dealt : null,
-			taken: Math.abs(taken - 1) > 1e-9 ? taken : null,
-		};
-	}).filter((m) => m.dealt !== null || m.taken !== null);
-}
+// pass 75: matchupsAt lives with the other readings of the board (reclamationPreview), so the squad can use it too
+export { matchupsAt } from './reclamationPreview';
 
 /*
 	PASS 63. The line under a Ruling says what the next round holds. With no sends left, a blind
@@ -1697,6 +1676,8 @@ class ReclamationMatch extends React.Component {
 						role: e.role !== undefined ? e.role : prepared.role,
 						blowMagnitude: prepared.blowMagnitude,
 						mendMagnitude: prepared.mendMagnitude,
+						// pass 73: the number its role sentence carries (a sweep's share on each creature, a bolster's mend)
+						rolePower: rolePower({ ...prepared, role: e.role !== undefined ? e.role : prepared.role }, view.rules),
 						hurt: live < full,
 						strainLevel: prepared.strainLevel,
 						isHome: prepared.isHome,
@@ -1776,14 +1757,19 @@ class ReclamationMatch extends React.Component {
 			// board as it stands (the base redesign's "Interface consequences")
 			const seat = this.seatInPlay();
 			const plan = ghostPlanFor(view, record, site, seat, view.players[seat].sentCount);
+			// pass 73: its blow on each creature it could hit here, under the act it would play
+			const blows = blowsAt(view, record, site, seat, view.players[seat].sentCount, id === armedRecordId ? this.state.armedRole : null);
 			const prepared = prepare(record, site, site.world, view.players[this.seatInPlay()].sentCount, { rules: view.rules });
 			const tolerance = (record.physiology && record.physiology.environmentalTolerance) || {};
 			ghosts[site.id] = {
 				// pass 54: the creature itself rides the bar it would add on each world's standing
 				record,
 				hold: plan.hold,
-				role: plan.role,
+				role: blows.role,
 				roleLine: plan.roleLine,
+				// pass 73: one full-strength blow on each creature it could hit here, drawn on that creature
+				lands: blows.lands,
+				power: blows.power,
 				lines: plan.lines,
 				effect: plan.effect,
 				recordId: record.id,
@@ -1793,7 +1779,7 @@ class ReclamationMatch extends React.Component {
 				preview: !armedRecordId,
 				unstrained: plan.hold / strainMultiplierFor(plan.strainLevel, prepared.strainCause),
 				// pass 72: the element chart against each rival creature standing here, both ways; facts, not a fight
-				matchups: matchupsAt(view, site, record, plan.role, this.seatOpponent()),
+				matchups: matchupsAt(view, site, record, blows.role, this.seatOpponent(), blows.lands),
 				// the creature's own band and media, drawn over the site's on the environment scale
 				tolerance: {
 					temperatureC: tolerance.temperatureC || null,
