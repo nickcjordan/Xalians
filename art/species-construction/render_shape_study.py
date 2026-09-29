@@ -19,6 +19,7 @@ parser.add_argument('--mesh', type=Path, required=True)
 parser.add_argument('--out', type=Path, required=True)
 parser.add_argument('--preserve-materials', action='store_true')
 parser.add_argument('--turntable', action='store_true')
+parser.add_argument('--studio-fill', action='store_true')
 args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=False)
@@ -51,6 +52,11 @@ scene.render.image_settings.file_format = 'PNG'
 scene.render.image_settings.color_mode = 'RGBA'
 scene.render.film_transparent = True
 scene.world.color = (.55, .55, .55)
+if args.studio_fill:
+    scene.world.use_nodes = True
+    background = next(n for n in scene.world.node_tree.nodes if n.type == 'BACKGROUND')
+    background.inputs['Color'].default_value = (.60,.60,.60,1)
+    background.inputs['Strength'].default_value = .5
 scene.view_settings.view_transform = 'Standard'
 scale = max(extent.x, extent.y, extent.z * 1.5) * 1.15
 for pos, power, size in [((-3, -5, 7), 650, 4), ((4, -2, 4), 300, 4), ((1, 4, 6), 550, 3)]:
@@ -83,9 +89,15 @@ for name, angle, elevation in views:
 scene.camera = bpy.data.objects['front-left']
 bpy.ops.wm.save_as_mainfile(filepath=str(args.out / 'study.blend'))
 record = {'scope': 'Actual imported geometry, no texture',
+          'studioFill': args.studio_fill,
+          'worldBackground': [{'color':list(n.inputs['Color'].default_value),
+                               'strength':n.inputs['Strength'].default_value}
+                              for n in scene.world.node_tree.nodes if n.type=='BACKGROUND'],
           'preserveMaterials': args.preserve_materials,
           'approval': None, 'stageProvenanceSha256': provenance_sha, 'source': str(args.mesh.resolve()), 'sourceSha256': sha(args.mesh),
-          'objects': {obj.name: mesh_stats(obj) for obj in objects},
+          'objects': {obj.name: mesh_stats(obj, weld_distance=.000001) for obj in objects},
+          'rawImportedTopology': {obj.name: mesh_stats(obj) for obj in objects},
+          'topologyMeasurement': 'objects uses a temporary BMesh with coincident seams welded at .000001 local units; rendered meshes are unchanged',
           'bounds': [list(low), list(high)], 'cameras': cameras,
           'outputs': {f.name: sha(f) for f in args.out.iterdir() if f.suffix in ['.png', '.blend']},
           'scriptSha256': sha(args.out / 'render_source.py')}

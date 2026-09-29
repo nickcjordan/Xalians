@@ -1,0 +1,32 @@
+{
+  "approval": null,
+  "comparison": "Exact vertex comparison of source Blender geometry",
+  "retainedObjects": {
+    "eye_globe_-1": {
+      "sameVertexCount": true,
+      "maximumCoordinateDelta": 0.0
+    },
+    "forward_iris_-1": {
+      "sameVertexCount": true,
+      "maximumCoordinateDelta": 0.0
+    },
+    "lid_-1": {
+      "sameVertexCount": true,
+      "maximumCoordinateDelta": 0.0
+    },
+    "eye_globe_1": {
+      "sameVertexCount": true,
+      "maximumCoordinateDelta": 0.0
+    },
+    "forward_iris_1": {
+      "sameVertexCount": true,
+      "maximumCoordinateDelta": 0.0
+    },
+    "lid_1": {
+      "sameVertexCount": true,
+      "maximumCoordinateDelta": 0.0
+    }
+  },
+  "outsideMuzzleMaximumCoordinateDelta": 0.0,
+  "changedVertices": 29790
+}

@@ -56,6 +56,42 @@
     "latest-body-comparison": {
       "path": "docs/design/species-construction/akinza/evidence/reconstruction-0063-reference-comparison.png",
       "sha256": "18c029a7765a42d9dede312a31b53d95ae2149768c5c42cdff8bc3244d27c03f"
+    },
+    "assembly-0077-views": {
+      "path": "docs/design/species-construction/akinza/evidence/reconstruction-0077-contact.png",
+      "sha256": "d0974ff73b0b9aee707f714f3ead8972514f2d07925389e6ce88c5fab8c099c7"
+    },
+    "assembly-0077-details": {
+      "path": "docs/design/species-construction/akinza/evidence/reconstruction-0077-details.png",
+      "sha256": "3bc9432bc9c92e28701139658c3916e17a28faef78f9b1c310c5fe87dbc75fac"
+    },
+    "assembly-0077-comparison": {
+      "path": "docs/design/species-construction/akinza/evidence/reconstruction-0077-reference-comparison.png",
+      "sha256": "7d96da5ae00701bbe26963c48f981ad5a86fc173c43903bbe4c1d34b2fafb9f5"
+    },
+    "proportion-measurement": {
+      "path": "docs/design/species-construction/akinza/records/proportion-landmarks-0093.json",
+      "sha256": "2f65d80756436fb0cea899d90f49fab030aafade2aabc3a93d98415b4b9bedc9"
+    },
+    "integration-followup": {
+      "path": "docs/design/species-construction/akinza/quality-audit-reconstruction-0052.md",
+      "sha256": "63010dff133cac805a7c6e7195c594cc0be4194bff0aef880f2e1030959f58cc"
+    },
+    "assembly-0149-views": {
+      "path": "docs/design/species-construction/akinza/evidence/reconstruction-0149-contact.png",
+      "sha256": "fa44176dc67e6e0889d7fec2ad79472efc1d381883992f119fed36d40a1b58ad"
+    },
+    "assembly-0149-details": {
+      "path": "docs/design/species-construction/akinza/evidence/reconstruction-0149-details.png",
+      "sha256": "c895f44223b6a67c1ccddc5f1d821a68c468d141348b6cf8dab1c070b17432f7"
+    },
+    "assembly-0149-comparison": {
+      "path": "docs/design/species-construction/akinza/evidence/reconstruction-0149-reference-comparison.png",
+      "sha256": "cb3d027e44e4dc2ec496e6a4ffbfbc475b42be4cf65b63247ee6cc295eae5e3b"
+    },
+    "assembly-0149-turntable": {
+      "path": "docs/design/species-construction/akinza/evidence/reconstruction-0149-turntable.png",
+      "sha256": "43d0ceb5656bd41773d5fef26fb433d9a983aeab684696ed80c4960e5d072ccd"
     }
   },
   "criteria": [
@@ -64,11 +100,12 @@
       "region": "Overall finish of the form",
       "expectation": "A complete creature with consistently developed large and medium forms. Review the whole body and regional closeups together before presentation.",
       "status": "fail",
-      "assessment": "0052 improves the reconstructed head, overall scale and torso, but has major muzzle, shoulder, knee and paw failures. Internal work continues.",
+      "assessment": "Combined 0149 has one closed skin and consistent registration, but a smooth mannequin body, spiky ear clumps and balloon-like tail lobes do not yet read as one developed creature.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
         "head-target"
       ]
@@ -77,14 +114,14 @@
       "id": "C02",
       "region": "Head proportions and silhouette",
       "expectation": "Reconstruct forehead, temples, cheeks and jaw as related volumes. Front and profile must retain a rounded, appealing head without copying the generated study's inward gaze.",
-      "status": "pass",
-      "assessment": "0052 retains a rounded reconstructed cranium and cheeks with a smaller head-to-body ratio. Front and profile improve over the rejected wedge-shaped 0020. Subjective likeness remains unapproved.",
+      "status": "fail",
+      "assessment": "Front proportion at head scale .50 is close to the first sheet. In profile the bare posterior skull bulges behind the ear, and the ear span is narrower than the reference.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
       ]
     },
     {
@@ -92,13 +129,14 @@
       "region": "Eye shape and integration",
       "expectation": "Preserve the accepted large eyes while modeling curved eye volumes, surrounding lids and their transition into the skull. Match contour, relative white area and projection before adding gloss.",
       "status": "fail",
-      "assessment": "Closed curved eyes and annular sockets remove intersecting spikes, but broad upper socket bowls and regular small openings still differ from the accepted face.",
+      "assessment": "The front oval matches face study 0010, but in profile each eye stands proud as a disk with a raised rim, without a socket or lid mass over it.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "face-target"
       ]
     },
     {
@@ -106,13 +144,14 @@
       "region": "Gaze and eye finish",
       "expectation": "Keep forward gaze. Separate geometric integration from later glossy material and catchlight treatment; neither can substitute for the other.",
       "status": "pass",
-      "assessment": "Forward-centered glossy ocular volumes retain balanced pupils without the earlier inward gaze. This is a construction comparison, not Nick approval.",
+      "assessment": "The composed 0112 eye finish on the retained head keeps forward, centered pupils with coherent highlights in 0149. Construction comparison only, not Nick approval.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "face-target"
       ]
     },
     {
@@ -120,13 +159,14 @@
       "region": "Muzzle, nose and mouth",
       "expectation": "Establish the shallow paired muzzle and chin in actual geometry. Readable projection is required in profile without enlarging it into a different animal's snout.",
       "status": "fail",
-      "assessment": "Native pads retain a folded underside. Displacement tests 0050 and 0053 create a hollow; they are rejected. A bounded topology replacement is in progress.",
+      "assessment": "Conformal nose 0146 is a convex pad seated on a recessed muzzle and no longer projects as a wedge, but small dents remain at its lower corners, the side mouth lines run wide and the chin sags.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "face-target"
       ]
     },
     {
@@ -134,11 +174,12 @@
       "region": "Cheeks and crown coat",
       "expectation": "Form connected cheek and crown masses that change the silhouette naturally. Broad flow belongs to construction; individual hair strands can wait.",
       "status": "fail",
-      "assessment": "Native cheeks and crown have useful connected mass, but residual cheek spikes and heavy repeated rear locks require further comparison and refinement.",
+      "assessment": "The cheek fringe is acceptable; small forehead pits and nubs near the top center remain.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
         "head-target"
       ]
@@ -148,11 +189,12 @@
       "region": "Ear silhouette and clump shape",
       "expectation": "Establish a continuous shaggy envelope with varied overlap, width, curvature and taper. Adding more copies of the same lobe will not resolve the material or silhouette.",
       "status": "fail",
-      "assessment": "Reconstructed broad overlapping ear forms improve volume, but their thick pointed clumps still need comparison with the softer preferred envelope.",
+      "assessment": "The fan is narrower than the first sheet, droops around the cheeks, and its clumps are sharp even spikes rather than broad locks flaring out.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
         "head-target"
       ]
@@ -161,12 +203,13 @@
       "id": "C08",
       "region": "Ear tissue and cavity",
       "expectation": "A legible cupped tissue surface with soft, intentional rim transitions and coat rooted around it. A recess being opaque does not make its shape acceptable.",
-      "status": "pass",
-      "assessment": "The reconstructed ear has continuous cupped tissue and a rounded shared rim. Front and profile no longer expose the old beaded shell construction.",
+      "status": "fail",
+      "assessment": "Reopened by the 0149 review: the pale cupped inner ear does not read from the front, and in profile the cavity is a deep dark slot.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
         "head-target"
       ]
@@ -176,13 +219,15 @@
       "region": "Ear depth, rear surfaces and roots",
       "expectation": "Solve ear thickness, rear coat volume and cranial attachment together in front, profile and rear oblique views. Removing a mesh seam is not the same as achieving a convincing attachment.",
       "status": "fail",
-      "assessment": "Native ear depth and root continuity improve over the bare rear shell; rear coat organization remains a separate open finding.",
+      "assessment": "From behind, the fan is one smooth dish edged with nubs rather than two thick furred wings over a central crown.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "head-target",
+        "tail-target"
       ]
     },
     {
@@ -190,27 +235,28 @@
       "region": "Neck and shoulders",
       "expectation": "Related neck, shoulder and upper-arm volumes with plausible soft transitions. The reference pose differs, so reproduce the mass relationships rather than tracing its arm outline.",
       "status": "fail",
-      "assessment": "Neck cutoff lips were removed. Flat shoulder corners and mechanical root transitions remain visible in 0052; a rounded local root correction is being tested.",
+      "assessment": "The neck is continuous, but the skull underside forms a shelf on a narrow neck and the shoulders read as a flat shelf with round deltoids.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
       ]
     },
     {
       "id": "C11",
       "region": "Chest, waist and pelvis",
       "expectation": "Continuous large planes and volume transitions through chest, waist and pelvis, without circumferential bands. Check oblique light and profile, not only a front silhouette.",
-      "status": "pass",
-      "assessment": "Coarser local relaxation removes paired chest bulges and rounds the crotch transition while preserving a slender torso and restrained pelvis. No separate human-like rear forms were added.",
+      "status": "fail",
+      "assessment": "Reopened by the 0149 review: the trunk is a flat-fronted tube without the reference waist or restrained buttock definition.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "tail-target"
       ]
     },
     {
@@ -218,13 +264,14 @@
       "region": "Arms, elbows and wrists",
       "expectation": "Express upper-arm/forearm mass, elbow direction and wrist-to-paw transition while preserving compact animal extremities. Lowered arms should expose these forms, not excuse them.",
       "status": "fail",
-      "assessment": "Wrist ledges are removed, but the current distal forearm/paw transition is over-smoothed and needs local articulation and grouped digits.",
+      "assessment": "Arm proportion is acceptable; the elbows lack a landmark and the forearm is nearly as thick as the paw. Forearm grooves were softened in 0141.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "paws-target"
       ]
     },
     {
@@ -232,13 +279,14 @@
       "region": "Forepaws and claws",
       "expectation": "Rebuild the paw's outer volume and digit grouping before claw detail. Show front, side and underside as needed; retain the absence of a human thumb.",
       "status": "fail",
-      "assessment": "Forepaws remain mitten-like, with blunt oval claw ends. Rebuild compact distal digit grouping and short tapered claws without human fingers or thumb.",
+      "assessment": "Rebuilt forepaws follow study 0020, with the palm toward the thigh and four digits spread front to back, readable from the side. From the front the paw reads as a narrow stump with two claws visible.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "paws-target"
       ]
     },
     {
@@ -246,13 +294,13 @@
       "region": "Thighs and knees",
       "expectation": "Integrate the extra bounding strength into hip/thigh/knee form. Modest fullness must not become a literal rabbit leg or isolated muscle balloon.",
       "status": "fail",
-      "assessment": "Strong thighs remain, but isolated front dimples and knee swellings are visible. Current local cleanup targets these distortions without thinning the whole leg.",
+      "assessment": "Bounded field smoothing with volume compensation softened the knee knob in 0141, but the knee still sits in a lumpy run of bulges.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
       ]
     },
     {
@@ -260,13 +308,13 @@
       "region": "Calves and shins",
       "expectation": "Preserve the straight joint-to-joint shin while shaping its surrounding volume and calf taper. Judge the rendered contour and planes, not only the numerical centerline.",
       "status": "fail",
-      "assessment": "The retained lower leg is more anatomical than the earlier sweep, but its contour must be checked with the rebuilt ankle in profile before closure.",
+      "assessment": "Reopened by the 0149 review: the calf still bulges inward from the front, although the 0141 smoothing softened it.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
       ]
     },
     {
@@ -274,13 +322,14 @@
       "region": "Ankles",
       "expectation": "Restore local joint structure, a believable change of direction and the reference's sloping paw roof. Avoid both a human heel and a featureless continuous arc.",
       "status": "fail",
-      "assessment": "Measured paw alignment improves placement, but a pinched transition and inadequate paw-bridge thickness remain. A wider continuous splice is in progress.",
+      "assessment": "The field morph removed the cut ring and the ankle kink; from the front the shin still enters the paw as a column without clear narrowing.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "paws-target"
       ]
     },
     {
@@ -288,13 +337,14 @@
       "region": "Hind paws and ground contact",
       "expectation": "Build a substantial paw body behind the digits, integrated toes and clear ground contact. Toe bumps and claws cannot stand in for the entire foot.",
       "status": "fail",
-      "assessment": "Four toes replace the six invented by reconstruction. Paw depth is insufficient and a cap ridge remains behind the toes; increase the shared paw volume and inspect contact.",
+      "assessment": "The rebuilt hind paw has a heel, a sloped roof, four integrated toe lobes, pale curved claws and planted contact. The toes still read as a row of equal beads, the paw is short, and the sole has no pad relief.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "paws-target"
       ]
     },
     {
@@ -302,13 +352,14 @@
       "region": "Tail volume, sweep and taper",
       "expectation": "Retain three full tails and pointed ends while refining their three-dimensional cross-sections, curvature and taper. Do not rotate each tail for each camera to imitate incompatible generated views.",
       "status": "fail",
-      "assessment": "Three full rounded tails taper to pointed ends and retain one pose across all views. Final comparison with the accepted smooth tail remains required.",
+      "assessment": "Crescent controls from study 0018 now curl the tips up and out in the front and back views, but in profile the lobes read as inflated balloons with teat-like tips, and the fan reads radial rather than layered.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "tail-target"
       ]
     },
     {
@@ -316,13 +367,14 @@
       "region": "Tail fusion and surrounding pelvis",
       "expectation": "Preserve the centered, body-level three-way fusion with no stalk or extra bulb; refine continuity into a restrained pelvis. Occlusion alone is not evidence that the root moved to the left.",
       "status": "fail",
-      "assessment": "Architecture remains centered at the body-level spinal base, with restrained surrounding pelvis. Root crease quality still requires closeup review.",
+      "assessment": "The opposite-side wall is now a rounded overlap edge, but the three roots meet in a narrow knot with a crease line rather than a thick fused root spreading over the rump.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "tail-target"
       ]
     },
     {
@@ -330,13 +382,13 @@
       "region": "Secondary form across the body",
       "expectation": "Develop controlled medium-scale planes and attachments. More triangles, global smoothing or fur cannot replace this work.",
       "status": "fail",
-      "assessment": "Head, limbs and paws do not yet share a consistent level of medium-form resolution. Surface detail cannot close the identified construction defects.",
+      "assessment": "Medium form is still uneven: lumpy limb knobs coexist with featureless torso and tail surfaces.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
       ]
     }
   ],
@@ -345,12 +397,13 @@
       "id": "F01",
       "criterion": "C01",
       "status": "open",
-      "observation": "0052 improves the reconstructed head, overall scale and torso, but has major muzzle, shoulder, knee and paw failures. Internal work continues.",
-      "nextAction": "A complete creature with consistently developed large and medium forms. Review the whole body and regional closeups together before presentation.",
+      "observation": "Combined 0149 has one closed skin and consistent registration, but a smooth mannequin body, spiky ear clumps and balloon-like tail lobes do not yet read as one developed creature.",
+      "nextAction": "Develop consistent medium form across ears, tails, torso and limbs, then rerun the combined review.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
         "head-target"
       ]
@@ -358,18 +411,18 @@
     {
       "id": "F02",
       "criterion": "C02",
-      "status": "resolved",
-      "observation": "0052 retains a rounded reconstructed cranium and cheeks with a smaller head-to-body ratio. Front and profile improve over the rejected wedge-shaped 0020. Subjective likeness remains unapproved.",
-      "nextAction": "Reconstruct forehead, temples, cheeks and jaw as related volumes. Front and profile must retain a rounded, appealing head without copying the generated study's inward gaze.",
+      "status": "open",
+      "observation": "Front proportion at head scale .50 is close to the first sheet. In profile the bare posterior skull bulges behind the ear, and the ear span is narrower than the reference.",
+      "nextAction": "Reduce the posterior skull bulge behind the ear and recheck head scale once the ear span is corrected.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
       ],
-      "resolution": "Rechecked in actual assembly 0063: 0052 retains a rounded reconstructed cranium and cheeks with a smaller head-to-body ratio. Front and profile improve over the rejected wedge-shaped 0020. Subjective likeness remains unapproved.",
-      "resolutionEvidence": [
+      "priorResolution": "Rechecked in actual assembly 0063: 0052 retains a rounded reconstructed cranium and cheeks with a smaller head-to-body ratio. Front and profile improve over the rejected wedge-shaped 0020. Subjective likeness remains unapproved.",
+      "priorResolutionEvidence": [
         "latest-body-views",
         "latest-body-comparison"
       ]
@@ -378,14 +431,15 @@
       "id": "F03",
       "criterion": "C03",
       "status": "open",
-      "observation": "Closed curved eyes and annular sockets remove intersecting spikes, but broad upper socket bowls and regular small openings still differ from the accepted face.",
-      "nextAction": "Preserve the accepted large eyes while modeling curved eye volumes, surrounding lids and their transition into the skull. Match contour, relative white area and projection before adding gloss.",
+      "observation": "The front oval matches face study 0010, but in profile each eye stands proud as a disk with a raised rim, without a socket or lid mass over it.",
+      "nextAction": "Sink each globe into a socket, bring the rim flush and add brow and lid mass over the top edge; recheck in profile.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "face-target"
       ]
     },
     {
@@ -411,26 +465,28 @@
       "id": "F05",
       "criterion": "C05",
       "status": "open",
-      "observation": "Native pads retain a folded underside. Displacement tests 0050 and 0053 create a hollow; they are rejected. A bounded topology replacement is in progress.",
-      "nextAction": "Establish the shallow paired muzzle and chin in actual geometry. Readable projection is required in profile without enlarging it into a different animal's snout.",
+      "observation": "Conformal nose 0146 is a convex pad seated on a recessed muzzle and no longer projects as a wedge, but small dents remain at its lower corners, the side mouth lines run wide and the chin sags.",
+      "nextAction": "Blend the dents at the nose corners into the pad tops, shorten the side mouth lines to the pads and firm the chin.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "face-target"
       ]
     },
     {
       "id": "F06",
       "criterion": "C06",
       "status": "open",
-      "observation": "Native cheeks and crown have useful connected mass, but residual cheek spikes and heavy repeated rear locks require further comparison and refinement.",
-      "nextAction": "Form connected cheek and crown masses that change the silhouette naturally. Broad flow belongs to construction; individual hair strands can wait.",
+      "observation": "The cheek fringe is acceptable; small forehead pits and nubs near the top center remain.",
+      "nextAction": "Fill the forehead pits and remove stray crown nubs without flattening the cheek fringe.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
         "head-target"
       ]
@@ -439,12 +495,13 @@
       "id": "F07",
       "criterion": "C07",
       "status": "open",
-      "observation": "Reconstructed broad overlapping ear forms improve volume, but their thick pointed clumps still need comparison with the softer preferred envelope.",
-      "nextAction": "Establish a continuous shaggy envelope with varied overlap, width, curvature and taper. Adding more copies of the same lobe will not resolve the material or silhouette.",
+      "observation": "The fan is narrower than the first sheet, droops around the cheeks, and its clumps are sharp even spikes rather than broad locks flaring out.",
+      "nextAction": "Widen the fan toward the first-sheet span, lift the lobe ends and replace even spikes with broader overlapping locks.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
         "head-target"
       ]
@@ -452,202 +509,215 @@
     {
       "id": "F08",
       "criterion": "C08",
-      "status": "resolved",
-      "observation": "The reconstructed ear has continuous cupped tissue and a rounded shared rim. Front and profile no longer expose the old beaded shell construction.",
-      "nextAction": "A legible cupped tissue surface with soft, intentional rim transitions and coat rooted around it. A recess being opaque does not make its shape acceptable.",
+      "status": "open",
+      "observation": "Reopened by the 0149 review: the pale cupped inner ear does not read from the front, and in profile the cavity is a deep dark slot.",
+      "nextAction": "Open the cup so a pale inner triangle reads from the front, and make the profile cavity shallow.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
         "head-target"
       ],
-      "resolution": "Rechecked in actual assembly 0063: The reconstructed ear has continuous cupped tissue and a rounded shared rim. Front and profile no longer expose the old beaded shell construction.",
-      "resolutionEvidence": [
-        "latest-body-views",
-        "latest-body-comparison"
-      ]
+      "priorResolution": "Rechecked in actual assembly 0063: The reconstructed ear has continuous cupped tissue and a rounded shared rim. Front and profile no longer expose the old beaded shell construction."
     },
     {
       "id": "F09",
       "criterion": "C09",
       "status": "open",
-      "observation": "Native ear depth and root continuity improve over the bare rear shell; rear coat organization remains a separate open finding.",
-      "nextAction": "Solve ear thickness, rear coat volume and cranial attachment together in front, profile and rear oblique views. Removing a mesh seam is not the same as achieving a convincing attachment.",
+      "observation": "From behind, the fan is one smooth dish edged with nubs rather than two thick furred wings over a central crown.",
+      "nextAction": "Give the fan real rear thickness split into two wings over a central crown, with coat masses on the rear surface.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "head-target",
+        "tail-target"
       ]
     },
     {
       "id": "F10",
       "criterion": "C10",
       "status": "open",
-      "observation": "Neck cutoff lips were removed. Flat shoulder corners and mechanical root transitions remain visible in 0052; a rounded local root correction is being tested.",
-      "nextAction": "Related neck, shoulder and upper-arm volumes with plausible soft transitions. The reference pose differs, so reproduce the mass relationships rather than tracing its arm outline.",
+      "observation": "The neck is continuous, but the skull underside forms a shelf on a narrow neck and the shoulders read as a flat shelf with round deltoids.",
+      "nextAction": "Round the skull underside into the neck, add a soft trapezius slope and soften the deltoid balls.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
+      ],
+      "priorResolution": "0077 front, profile and trunk closeups show a continuous neck and shoulder root without the former cutoff lip or shelf. Independent review retains this correction. Local inner-arm dents remain under C12.",
+      "priorResolutionEvidence": [
+        "assembly-0077-views",
+        "assembly-0077-details"
       ]
     },
     {
       "id": "F11",
       "criterion": "C11",
-      "status": "resolved",
-      "observation": "Coarser local relaxation removes paired chest bulges and rounds the crotch transition while preserving a slender torso and restrained pelvis. No separate human-like rear forms were added.",
-      "nextAction": "Continuous large planes and volume transitions through chest, waist and pelvis, without circumferential bands. Check oblique light and profile, not only a front silhouette.",
+      "status": "open",
+      "observation": "Reopened by the 0149 review: the trunk is a flat-fronted tube without the reference waist or restrained buttock definition.",
+      "nextAction": "Add a slight waist and restrained buttock definition without reintroducing human-like rear forms.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "tail-target"
       ],
-      "resolution": "Rechecked in actual assembly 0063: Coarser local relaxation removes paired chest bulges and rounds the crotch transition while preserving a slender torso and restrained pelvis. No separate human-like rear forms were added.",
-      "resolutionEvidence": [
-        "latest-body-views",
-        "latest-body-comparison"
-      ]
+      "priorResolution": "Rechecked in actual assembly 0063: Coarser local relaxation removes paired chest bulges and rounds the crotch transition while preserving a slender torso and restrained pelvis. No separate human-like rear forms were added."
     },
     {
       "id": "F12",
       "criterion": "C12",
       "status": "open",
-      "observation": "Wrist ledges are removed, but the current distal forearm/paw transition is over-smoothed and needs local articulation and grouped digits.",
-      "nextAction": "Express upper-arm/forearm mass, elbow direction and wrist-to-paw transition while preserving compact animal extremities. Lowered arms should expose these forms, not excuse them.",
+      "observation": "Arm proportion is acceptable; the elbows lack a landmark and the forearm is nearly as thick as the paw. Forearm grooves were softened in 0141.",
+      "nextAction": "Add a modest elbow landmark and taper the forearm toward the wrist.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "paws-target"
       ]
     },
     {
       "id": "F13",
       "criterion": "C13",
       "status": "open",
-      "observation": "Forepaws remain mitten-like, with blunt oval claw ends. Rebuild compact distal digit grouping and short tapered claws without human fingers or thumb.",
-      "nextAction": "Rebuild the paw's outer volume and digit grouping before claw detail. Show front, side and underside as needed; retain the absence of a human thumb.",
+      "observation": "Rebuilt forepaws follow study 0020, with the palm toward the thigh and four digits spread front to back, readable from the side. From the front the paw reads as a narrow stump with two claws visible.",
+      "nextAction": "Make the four digits read from the front as well as the side, keeping no human thumb.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "paws-target"
       ]
     },
     {
       "id": "F14",
       "criterion": "C14",
       "status": "open",
-      "observation": "Strong thighs remain, but isolated front dimples and knee swellings are visible. Current local cleanup targets these distortions without thinning the whole leg.",
-      "nextAction": "Integrate the extra bounding strength into hip/thigh/knee form. Modest fullness must not become a literal rabbit leg or isolated muscle balloon.",
+      "observation": "Bounded field smoothing with volume compensation softened the knee knob in 0141, but the knee still sits in a lumpy run of bulges.",
+      "nextAction": "Merge the knee and thigh bulges into one smooth thigh-to-knee transition while keeping the requested fullness.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
       ]
     },
     {
       "id": "F15",
       "criterion": "C15",
       "status": "open",
-      "observation": "The retained lower leg is more anatomical than the earlier sweep, but its contour must be checked with the rebuilt ankle in profile before closure.",
-      "nextAction": "Preserve the straight joint-to-joint shin while shaping its surrounding volume and calf taper. Judge the rendered contour and planes, not only the numerical centerline.",
+      "observation": "Reopened by the 0149 review: the calf still bulges inward from the front, although the 0141 smoothing softened it.",
+      "nextAction": "Merge the inward calf bulge into one clean calf line.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
-      ]
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
+      ],
+      "priorResolution": "0077 profile places calf fullness posteriorly and no longer shows the earlier bowed mid-shaft tube. Independent review retains shin direction; knee and ankle findings remain separately open."
     },
     {
       "id": "F16",
       "criterion": "C16",
       "status": "open",
-      "observation": "Measured paw alignment improves placement, but a pinched transition and inadequate paw-bridge thickness remain. A wider continuous splice is in progress.",
-      "nextAction": "Restore local joint structure, a believable change of direction and the reference's sloping paw roof. Avoid both a human heel and a featureless continuous arc.",
+      "observation": "The field morph removed the cut ring and the ankle kink; from the front the shin still enters the paw as a column without clear narrowing.",
+      "nextAction": "Narrow the ankle above the heel in the front view.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "paws-target"
       ]
     },
     {
       "id": "F17",
       "criterion": "C17",
       "status": "open",
-      "observation": "Four toes replace the six invented by reconstruction. Paw depth is insufficient and a cap ridge remains behind the toes; increase the shared paw volume and inspect contact.",
-      "nextAction": "Build a substantial paw body behind the digits, integrated toes and clear ground contact. Toe bumps and claws cannot stand in for the entire foot.",
+      "observation": "The rebuilt hind paw has a heel, a sloped roof, four integrated toe lobes, pale curved claws and planted contact. The toes still read as a row of equal beads, the paw is short, and the sole has no pad relief.",
+      "nextAction": "Vary and splay the toes, lengthen the paw slightly and add sole pad relief; keep planted contact.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "paws-target"
       ]
     },
     {
       "id": "F18",
       "criterion": "C18",
       "status": "open",
-      "observation": "Three full rounded tails taper to pointed ends and retain one pose across all views. Final comparison with the accepted smooth tail remains required.",
-      "nextAction": "Retain three full tails and pointed ends while refining their three-dimensional cross-sections, curvature and taper. Do not rotate each tail for each camera to imitate incompatible generated views.",
+      "observation": "Crescent controls from study 0018 now curl the tips up and out in the front and back views, but in profile the lobes read as inflated balloons with teat-like tips, and the fan reads radial rather than layered.",
+      "nextAction": "Flatten and layer the crescent tails so they read as three stacked crescents in profile and three-quarter views, and remove the teat-like tip pinches.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "tail-target"
       ]
     },
     {
       "id": "F19",
       "criterion": "C19",
       "status": "open",
-      "observation": "Architecture remains centered at the body-level spinal base, with restrained surrounding pelvis. Root crease quality still requires closeup review.",
-      "nextAction": "Preserve the centered, body-level three-way fusion with no stalk or extra bulb; refine continuity into a restrained pelvis. Occlusion alone is not evidence that the root moved to the left.",
+      "observation": "The opposite-side wall is now a rounded overlap edge, but the three roots meet in a narrow knot with a crease line rather than a thick fused root spreading over the rump.",
+      "nextAction": "Widen the fused root and blend it over the rump to remove the crease knot.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
         "identity",
-        "head-target"
+        "tail-target"
+      ],
+      "priorResolution": "0077 removes all old tail remnants and shows three full tails joining directly at a compact body-level root. All three authored root X values are zero with overlapping bases. Independent review confirms the centered fusion and restrained pelvis; tip quality remains open under C18.",
+      "priorResolutionEvidence": [
+        "assembly-0077-views",
+        "assembly-0077-details"
       ]
     },
     {
       "id": "F20",
       "criterion": "C20",
       "status": "open",
-      "observation": "Head, limbs and paws do not yet share a consistent level of medium-form resolution. Surface detail cannot close the identified construction defects.",
-      "nextAction": "Develop controlled medium-scale planes and attachments. More triangles, global smoothing or fur cannot replace this work.",
+      "observation": "Medium form is still uneven: lumpy limb knobs coexist with featureless torso and tail surfaces.",
+      "nextAction": "Bring torso, limbs and tails to the same level of medium-form development before surface work.",
       "evidence": [
-        "reconstruction-views",
-        "reconstruction-details",
-        "reconstruction-comparison",
-        "identity",
-        "head-target"
+        "assembly-0149-views",
+        "assembly-0149-details",
+        "assembly-0149-comparison",
+        "assembly-0149-turntable",
+        "identity"
       ]
     }
   ],
   "audit": {
-    "reviewer": "Codex primary plus /root/likeness_review",
-    "comparison": "0052 remains an internal failed comparison. Local passes preserve improvements but do not grant whole-creature readiness.",
-    "regressions": "Preserve accepted central body-level three-tail fusion, forward gaze and animal-paw direction while fixing modeled equivalents.",
-    "scopeCheck": "Continue the authorized correction loop. Nick approval is not yet the blocker.",
-    "performedAt": "2026-09-28T23:24:43.835884+00:00",
+    "reviewer": "Claude primary plus two independent Opus visual reviews (0139, 0149)",
+    "comparison": "Combined model 0149 composes retained head 0110, eye finish 0112 and conformal nose 0146 with field-rebuilt body 0148 (paws, crescent tails, tail root, limb smoothing). Nose, paws and tail root improved against their closeups, but the second review fails 19 of 20 criteria; only C04 passes. Earlier passes for C08, C11 and C15 are reopened by the combined review.",
+    "regressions": "Tail tips now curl up per accepted study 0018 rather than droop as in the first sheet; this is a deliberate reference-governed shape change reported to Nick. Preserve the central body-level three-tail fusion, forward gaze and animal-paw direction.",
+    "scopeCheck": "Continue the authorized correction loop. The ear fan rear and profile, and the tail profile, are the next corrections. Nick approval is not the blocker.",
+    "performedAt": "2026-09-29T22:31:33.313720+00:00",
     "sessionId": null,
     "requestId": null
   },

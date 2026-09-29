@@ -16,6 +16,7 @@ from blender_probe import tube
 parser = argparse.ArgumentParser()
 parser.add_argument('--mesh', type=Path, required=True)
 parser.add_argument('--out', type=Path, required=True)
+parser.add_argument('--omit-tails', action='store_true')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=False)
@@ -117,6 +118,8 @@ tails = [
     [[0, .085, -.155, .055, .058], [.075, .17, -.20, .078, .080], [.21, .28, -.345, .113, .120], [.40, .37, -.480, .103, .112], [.52, .42, -.59, .055, .058], [.53, .44, -.67, .001, .001]],
 ]
 for name, controls in zip(['upper', 'middle', 'lower'], tails):
+    if args.omit_tails:
+        continue
     for row in controls:
         row[2] += .07
     # The existing sweep's minimum radius is .01, so author at 10x and scale back.
@@ -162,7 +165,8 @@ bpy.ops.wm.save_as_mainfile(filepath=str(args.out/'body.blend'))
     'changes': ['Excluded original head', 'Retained negative-X half and mirrored it',
                 'Removed inherited tail and extra stalk', 'Rebuilt three full body-level tails',
                 'Removed human hands and rebuilt compact forepaws', 'Reduced chest and rear contour artifacts'],
-    'tailControls': tails, 'body': mesh_stats(body),
+    'tailControls': [] if args.omit_tails else tails, 'tailsOmitted': args.omit_tails,
+    'body': mesh_stats(body),
     'unresolved': ['Whole-body comparison', 'Straight shin and ankle articulation', 'Paw construction and contact',
                    'Likeness of new tail volume and centered root', 'Chest and posterior continuity', 'Head integration'],
     'outputs': {f.name: sha(f) for f in args.out.iterdir() if f.suffix in ['.glb', '.blend']}

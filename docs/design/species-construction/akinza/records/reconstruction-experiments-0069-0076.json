@@ -1,0 +1,2733 @@
+{
+  "approval": null,
+  "scope": "Internal corrections; incomplete records remain pending",
+  "experiments": [
+    {
+      "study": "assembled-0070",
+      "recordsAndSourceSnapshots": [
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/assembly.json",
+          "sha256": "436f21991b88ab89214df7df3d878b62f7a8a74c38da552d5413cb4af0bc2c6e"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/assembly_source.py",
+          "sha256": "7cf270673a67dd6ce47d36fc8e891a4d76c0d4d6657a7ad4bbc44b94e5ba06ae"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/geometry.json",
+          "sha256": "31f1c5a9f8eaf66939440bfcd407c3b3eae3ee828f3299f29c8463cee50aa1a9"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/render_source.py",
+          "sha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/review.json",
+          "sha256": "2145fd81e46b49cff7714f06e049a9a66eb10bf1e46a9629b19d0111393813bc"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/source-snapshot/render_shape_study.py",
+          "sha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/render/stage-start.json",
+          "sha256": "e05e2e81d2c29222c7fba8e0cfb166f572a331f5b4b5aee012cc8bf606bc09c9"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/source-snapshot/assemble_reconstructed_creature.py",
+          "sha256": "7cf270673a67dd6ce47d36fc8e891a4d76c0d4d6657a7ad4bbc44b94e5ba06ae"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/assembled-0070/stage-start.json",
+          "sha256": "350810def4936824b57b90f3b6484d8ce7ce72f4581a15f6811ed53faf1e43b4"
+        }
+      ],
+      "records": {
+        "assembly.json": {
+          "approval": null,
+          "stageProvenanceSha256": "350810def4936824b57b90f3b6484d8ce7ce72f4581a15f6811ed53faf1e43b4",
+          "scope": "Internal whole-creature reconciliation, not animation topology",
+          "inputs": {
+            "untracked\\species-construction\\akinza\\head-0046\\shape.glb": "f7e3d43a3bce4c457873c4105c0b362843e0e887d1f1dc8fe8d33482b6cc3dcc",
+            "untracked\\species-construction\\akinza\\body-0069\\shape.glb": "f0d38cd8598a5c92d933f644f2af42d1755d693028cd480ae59e4367e34071db"
+          },
+          "headTransform": {
+            "scale": 0.6,
+            "translation": [
+              0,
+              -0.045,
+              0.7
+            ],
+            "neckTrimZ": 0.49
+          },
+          "neck": "Both cutoff regions removed, new continuous bridge fused and locally relaxed",
+          "seamWeldDistance": 1e-06,
+          "scriptSha256": "7cf270673a67dd6ce47d36fc8e891a4d76c0d4d6657a7ad4bbc44b94e5ba06ae",
+          "objects": {
+            "body_Claw 1 1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw 1 2": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw 1 3": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw 1 4": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw -1 1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw -1 2": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw -1 3": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw -1 4": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "akinza_continuous_construction": {
+              "components": 3,
+              "nonManifoldEdges": 0,
+              "vertices": 978950
+            },
+            "body_Tapered fore claw 1 0": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw 1 1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw 1 2": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw 1 3": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw -1 0": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw -1 1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw -1 2": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw -1 3": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "head_eye_globe_1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 6050
+            },
+            "head_eye_globe_-1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 6050
+            },
+            "head_forward_iris_1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 2498
+            },
+            "head_forward_iris_-1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 2498
+            },
+            "head_lid_1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 1280
+            },
+            "head_lid_-1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 1280
+            }
+          },
+          "outputs": {
+            "akinza.blend": "5568a82306a2dc48ec4090c8db26dea8b9e88369745f04f442f239d18013964e",
+            "akinza.glb": "d3a6633fe0465b099e08aafd9df8499df1b6d0394989a5df295f198387a5ebbc"
+          }
+        },
+        "render/geometry.json": {
+          "scope": "Actual imported geometry, no texture",
+          "preserveMaterials": true,
+          "approval": null,
+          "stageProvenanceSha256": "e05e2e81d2c29222c7fba8e0cfb166f572a331f5b4b5aee012cc8bf606bc09c9",
+          "source": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\assembled-0070\\akinza.glb",
+          "sourceSha256": "d3a6633fe0465b099e08aafd9df8499df1b6d0394989a5df295f198387a5ebbc",
+          "objects": {
+            "akinza_continuous_construction": {
+              "components": 4,
+              "nonManifoldEdges": 156,
+              "vertices": 979028
+            },
+            "body_Claw 1 1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw 1 2": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw 1 3": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw 1 4": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw -1 1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw -1 2": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw -1 3": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Claw -1 4": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 18690
+            },
+            "body_Tapered fore claw 1 0": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw 1 1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw 1 2": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw 1 3": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw -1 0": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw -1 1": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw -1 2": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "body_Tapered fore claw -1 3": {
+              "components": 1,
+              "nonManifoldEdges": 0,
+              "vertices": 800
+            },
+            "head_eye_globe_1": {
+              "components": 1,
+              "nonManifoldEdges": 508,
+              "vertices": 6303
+            },
+            "head_eye_globe_-1": {
+              "components": 1,
+              "nonManifoldEdges": 508,
+              "vertices": 6303
+            },
+            "head_forward_iris_1": {
+              "components": 1,
+              "nonManifoldEdges": 332,
+              "vertices": 2663
+            },
+            "head_forward_iris_-1": {
+              "components": 1,
+              "nonManifoldEdges": 332,
+              "vertices": 2663
+            },
+            "head_lid_1": {
+              "components": 1,
+              "nonManifoldEdges": 276,
+              "vertices": 1419
+            },
+            "head_lid_-1": {
+              "components": 1,
+              "nonManifoldEdges": 276,
+              "vertices": 1419
+            }
+          },
+          "bounds": [
+            [
+              -0.5959904789924622,
+              -0.3471590578556061,
+              -0.9717391133308411
+            ],
+            [
+              0.6754947304725647,
+              0.47947123646736145,
+              1.0412057638168335
+            ]
+          ],
+          "cameras": [
+            {
+              "name": "front",
+              "angle": 0,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  1.0,
+                  0.0,
+                  0.0,
+                  0.03975212574005127
+                ],
+                [
+                  0.0,
+                  -1.6292068494294654e-07,
+                  -1.0,
+                  -9.933843612670898
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -1.6292068494294654e-07,
+                  0.034733325242996216
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "front-left",
+              "angle": 45,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front-left.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  0.7071067690849304,
+                  -2.4158891775982738e-08,
+                  0.7071067690849304,
+                  7.1108198165893555
+                ],
+                [
+                  0.7071067690849304,
+                  -8.597613287975037e-08,
+                  -0.7071067690849304,
+                  -7.00491189956665
+                ],
+                [
+                  7.787722466900959e-08,
+                  1.0,
+                  -4.371138828673793e-08,
+                  0.034733325242996216
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "left",
+              "angle": 90,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "left.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -4.371138828673793e-08,
+                  4.371138828673793e-08,
+                  1.0,
+                  10.039752006530762
+                ],
+                [
+                  1.0,
+                  1.910685676922942e-15,
+                  4.371138828673793e-08,
+                  0.06615608930587769
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4.371138828673793e-08,
+                  0.034733325242996216
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "back",
+              "angle": 180,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "back.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -1.0,
+                  -1.5099580252808664e-07,
+                  1.1399865765455465e-14,
+                  0.03975212574005127
+                ],
+                [
+                  0.0,
+                  7.549790126404332e-08,
+                  1.0,
+                  10.066156387329102
+                ],
+                [
+                  -1.5099580252808664e-07,
+                  1.0,
+                  -7.549790126404332e-08,
+                  0.034733325242996216
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "right",
+              "angle": 270,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "right.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -4.371138828673793e-08,
+                  -4.371138828673793e-08,
+                  -1.0,
+                  -9.960247993469238
+                ],
+                [
+                  -1.0,
+                  1.910685676922942e-15,
+                  4.371138828673793e-08,
+                  0.06615608930587769
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4.371138828673793e-08,
+                  0.034733325242996216
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "front-right",
+              "angle": 315,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front-right.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  0.7071067690849304,
+                  2.4158891775982738e-08,
+                  -0.7071067690849304,
+                  -7.031315803527832
+                ],
+                [
+                  -0.7071067690849304,
+                  -8.597613287975037e-08,
+                  -0.7071067690849304,
+                  -7.00491189956665
+                ],
+                [
+                  -7.787722466900959e-08,
+                  1.0,
+                  -4.371138828673793e-08,
+                  0.034733325242996216
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "rear-oblique",
+              "angle": 135,
+              "elevation": 2,
+              "projection": "orthographic",
+              "elevationOffset": 2,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "rear-oblique.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -0.7071067690849304,
+                  -0.13867510855197906,
+                  0.6933752298355103,
+                  7.1108198165893555
+                ],
+                [
+                  0.7071067690849304,
+                  -0.13867509365081787,
+                  0.6933752298355103,
+                  7.137223720550537
+                ],
+                [
+                  -8.386589200881645e-09,
+                  0.9805806875228882,
+                  0.19611620903015137,
+                  2.034733295440674
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "turn-000",
+              "angle": 0,
+              "elevation": 1.4,
+              "projection": "orthographic",
+              "elevationOffset": 1.4,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "turn-000.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  1.0,
+                  0.0,
+                  0.0,
+                  0.03975212574005127
+                ],
+                [
+                  0.0,
+                  0.13864776492118835,
+                  -0.9903417825698853,
+                  -9.933843612670898
+                ],
+                [
+                  0.0,
+                  0.9903417825698853,
+                  0.13864776492118835,
+                  1.434733271598816
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "turn-045",
+              "angle": 45,
+              "elevation": 1.4,
+              "projection": "orthographic",
+              "elevationOffset": 1.4,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "turn-045.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  0.7071067690849304,
+                  -0.09803887456655502,
+                  0.7002773880958557,
+                  7.1108198165893555
+                ],
+                [
+                  0.7071067690849304,
+                  0.09803884476423264,
+                  -0.7002773284912109,
+                  -7.00491189956665
+                ],
+                [
+                  1.9130400374933743e-08,
+                  0.9903417229652405,
+                  0.1386478841304779,
+                  1.434733271598816
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "turn-090",
+              "angle": 90,
+              "elevation": 1.4,
+              "projection": "orthographic",
+              "elevationOffset": 1.4,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "turn-090.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -4.371138828673793e-08,
+                  -0.13864776492118835,
+                  0.9903417825698853,
+                  10.039752006530762
+                ],
+                [
+                  1.0,
+                  1.722959197536511e-08,
+                  4.654982532770191e-08,
+                  0.06615608930587769
+                ],
+                [
+                  -2.3517213065815668e-08,
+                  0.9903417825698853,
+                  0.13864776492118835,
+                  1.434733271598816
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "turn-135",
+              "angle": 135,
+              "elevation": 1.4,
+              "projection": "orthographic",
+              "elevationOffset": 1.4,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "turn-135.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -0.7071067690849304,
+                  -0.09803878515958786,
+                  0.7002773880958557,
+                  7.1108198165893555
+                ],
+                [
+                  0.7071067690849304,
+                  -0.09803876280784607,
+                  0.7002773880958557,
+                  7.137223720550537
+                ],
+                [
+                  -1.3718560509801137e-08,
+                  0.9903417825698853,
+                  0.13864776492118835,
+                  1.434733271598816
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "turn-180",
+              "angle": 180,
+              "elevation": 1.4,
+              "projection": "orthographic",
+              "elevationOffset": 1.4,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "turn-180.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -1.0,
+                  -7.362125842291789e-08,
+                  -9.858233340764855e-08,
+                  0.03975212574005127
+                ],
+                [
+                  -8.742277657347586e-08,
+                  -0.13864776492118835,
+                  0.9903417825698853,
+                  10.066156387329102
+                ],
+                [
+                  -8.657842442971742e-08,
+                  0.9903417825698853,
+                  0.13864776492118835,
+                  1.434733271598816
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "turn-225",
+              "angle": 225,
+              "elevation": 1.4,
+              "projection": "orthographic",
+              "elevationOffset": 1.4,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "turn-225.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -0.7071067690849304,
+                  0.09803878515958786,
+                  -0.7002773880958557,
+                  -7.031315803527832
+                ],
+                [
+                  -0.7071067690849304,
+                  -0.09803876280784607,
+                  0.7002773880958557,
+                  7.137223720550537
+                ],
+                [
+                  1.3718560509801137e-08,
+                  0.9903417825698853,
+                  0.13864776492118835,
+                  1.434733271598816
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "turn-270",
+              "angle": 270,
+              "elevation": 1.4,
+              "projection": "orthographic",
+              "elevationOffset": 1.4,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "turn-270.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  -4.371138828673793e-08,
+                  0.13864776492118835,
+                  -0.9903417825698853,
+                  -9.960247993469238
+                ],
+                [
+                  -1.0,
+                  1.722959197536511e-08,
+                  4.654982532770191e-08,
+                  0.06615608930587769
+                ],
+                [
+                  2.3517213065815668e-08,
+                  0.9903417825698853,
+                  0.13864776492118835,
+                  1.434733271598816
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "turn-315",
+              "angle": 315,
+              "elevation": 1.4,
+              "projection": "orthographic",
+              "elevationOffset": 1.4,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "turn-315.png",
+              "orthoScale": 3.4723300158977506,
+              "matrixWorld": [
+                [
+                  0.7071067690849304,
+                  0.09803887456655502,
+                  -0.7002773880958557,
+                  -7.031315803527832
+                ],
+                [
+                  -0.7071067690849304,
+                  0.09803884476423264,
+                  -0.7002773284912109,
+                  -7.00491189956665
+                ],
+                [
+                  -1.9130400374933743e-08,
+                  0.9903417229652405,
+                  0.1386478841304779,
+                  1.434733271598816
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            }
+          ],
+          "outputs": {
+            "back.png": "2226a06109575e73b5ab242950654660854cca10fa40512091ea7174f4fabae6",
+            "front-left.png": "be3005a3ab717ebf8a56f90890aedb079a8bb74962c2043f272d839c7861d69d",
+            "front-right.png": "c27655a7751cf14cc4e2eed2175fd36f64261a8085ad088c7161130d2d81d6f5",
+            "front.png": "196cf5cb0a6a900143d0509be9e70e34cb0e69da45d0170708892bcbb414593c",
+            "left.png": "e4b509b2854a5e0d838b54bf65ee637c4c802456e97f245f6b0d92a9c3b88123",
+            "rear-oblique.png": "2775845c6e127f8e6fa66c39022a73e587f3baab0a2e99b68bd615e2e7b202fc",
+            "right.png": "30d8fd7a9cca7646d342c6171ffd87cccfb70e21f91110e000b2ed3d39b0c513",
+            "study.blend": "beedd6aa59a539ab167dd33c09ff8403f87aa508b275fc6394642886fc9b42af",
+            "turn-000.png": "af4ef86edd1ebc5f4cc5ac7e47a54c0ccc8d055dd9385feb05b4423010f2cf1c",
+            "turn-045.png": "78d91eef85b44c5dfdcdff7ee8f3ebb47e93a485cb9829d8358adad766e32485",
+            "turn-090.png": "37306a58dca5a509825114a214bc525c4470174d3822132dfe15cb0baed2cd29",
+            "turn-135.png": "c81b7282302c64ff6e21e7010b2ecf09c8a9258061daa768fe1d5d2947b360fc",
+            "turn-180.png": "cf7c115a96d46fee3afe1d1c2a4bc9bc30a40fd41c9308f97030c45b2f0e2933",
+            "turn-225.png": "3a8436f1ade8cd836fe78387c13e8f94db6faab03bf09099147ebb717aff217a",
+            "turn-270.png": "2a2d8814b26e221628105e0f14eaf311a005c53fba51327793520372ce8a1292",
+            "turn-315.png": "34a39cf0f8d7054c456773181ed58e13e99cf44cc5ff051e9c8908519209c8cb"
+          },
+          "scriptSha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        "render/review.json": {
+          "approval": null,
+          "scope": "Technical projection checks and internal display, not final-pack eligibility",
+          "geometrySha256": "31f1c5a9f8eaf66939440bfcd407c3b3eae3ee828f3299f29c8463cee50aa1a9",
+          "masks": {
+            "front.occupancy.png": {
+              "sha256": "0ba84f7b1860b0390295328a995b89081f90ac93dd446c1f58c09dc78b2e5073",
+              "sourceSha256": "196cf5cb0a6a900143d0509be9e70e34cb0e69da45d0170708892bcbb414593c",
+              "method": "Black occupancy where render alpha >=128, white background"
+            },
+            "front-left.occupancy.png": {
+              "sha256": "971b9db7fc391171411cd2ba5653e95543940b48c344437b1faed3620bc9ceca",
+              "sourceSha256": "be3005a3ab717ebf8a56f90890aedb079a8bb74962c2043f272d839c7861d69d",
+              "method": "Black occupancy where render alpha >=128, white background"
+            },
+            "left.occupancy.png": {
+              "sha256": "1c4cbb39f68a26be165722354182127303146c8672cb4a52583a7f35bfa4a2ea",
+              "sourceSha256": "e4b509b2854a5e0d838b54bf65ee637c4c802456e97f245f6b0d92a9c3b88123",
+              "method": "Black occupancy where render alpha >=128, white background"
+            },
+            "back.occupancy.png": {
+              "sha256": "7690e88ec50bbbf1e86898c4b16f6b7f3a6a5e6aaa56935cd28bff02580d218b",
+              "sourceSha256": "2226a06109575e73b5ab242950654660854cca10fa40512091ea7174f4fabae6",
+              "method": "Black occupancy where render alpha >=128, white background"
+            },
+            "right.occupancy.png": {
+              "sha256": "68c6c0a19d7eed8b19657190fff1c7335c82816516dc3585a91f8a6c5b2f1b25",
+              "sourceSha256": "30d8fd7a9cca7646d342c6171ffd87cccfb70e21f91110e000b2ed3d39b0c513",
+              "method": "Black occupancy where render alpha >=128, white background"
+            },
+            "front-right.occupancy.png": {
+              "sha256": "76dedeecaafb5822b05f2629919602ef9c05cfb294413b37159b786c8a932b85",
+              "sourceSha256": "c27655a7751cf14cc4e2eed2175fd36f64261a8085ad088c7161130d2d81d6f5",
+              "method": "Black occupancy where render alpha >=128, white background"
+            }
+          },
+          "derived": {
+            "contact.png": "ac32b506b8587dfd38b79561dc18292d8d826a3df092a514f7e2c7222030eca9",
+            "turntable.gif": "98e31149310c1a532b3d12ee73bfa3714ca84fb20d513271f8d913af09d836a0",
+            "reference-comparison.png": "af17b98bae6f4bacc824942a0d8f228ec4472767683bb0a1f375528cdb262ad1"
+          },
+          "heightSpreadFraction": 0.0,
+          "groundSpreadFraction": 0.0,
+          "displayCrop": [
+            356,
+            28,
+            860,
+            772
+          ],
+          "displayAspectPreserved": true,
+          "referenceSha256": "78c0383cd6da91dd7056c954be672003df9dff255fcb2ba8b2927eafd008d4ff",
+          "limitations": [
+            "Occupancy only; final front feature cutouts are not asserted",
+            "Technical checks do not establish reference likeness or animation readiness"
+          ]
+        },
+        "render/stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\assembled-0070\\akinza.glb": "d3a6633fe0465b099e08aafd9df8499df1b6d0394989a5df295f198387a5ebbc"
+          },
+          "sources": {
+            "render_shape_study.py": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        },
+        "stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\body-0069\\shape.glb": "f0d38cd8598a5c92d933f644f2af42d1755d693028cd480ae59e4367e34071db",
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\head-0046\\shape.glb": "f7e3d43a3bce4c457873c4105c0b362843e0e887d1f1dc8fe8d33482b6cc3dcc"
+          },
+          "sources": {
+            "assemble_reconstructed_creature.py": "7cf270673a67dd6ce47d36fc8e891a4d76c0d4d6657a7ad4bbc44b94e5ba06ae",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        }
+      }
+    },
+    {
+      "study": "body-0069",
+      "recordsAndSourceSnapshots": [
+        {
+          "path": "untracked/species-construction/akinza/body-0069/fairing.json",
+          "sha256": "4716e00879b5a8e69f9d3c0d61994cd2143b6f0afe72e355cfd2804a5dc275cf"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0069/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0069/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0069/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0069/source-snapshot/fair_reconstruction_joints.py",
+          "sha256": "8189b76f86a466f3fdf8000c5810b384e566e6103b23cf23294d9dc260b21073"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0069/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0069/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0069/stage-start.json",
+          "sha256": "34409f783123868059bef9109914816808846ff4c35c65b4d4ab01658fc07df9"
+        }
+      ],
+      "records": {
+        "fairing.json": {
+          "approval": null,
+          "stageProvenanceSha256": "34409f783123868059bef9109914816808846ff4c35c65b4d4ab01658fc07df9",
+          "scope": "Internal joint curvature, paw support and tail fan correction",
+          "body": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 635136
+          },
+          "tailControls": [
+            [
+              [
+                0,
+                0.085,
+                -0.03,
+                0.054,
+                0.055
+              ],
+              [
+                0.07267093314415637,
+                0.15,
+                -0.027183201399925458,
+                0.07488,
+                0.0768
+              ],
+              [
+                0.24160014963185897,
+                0.24,
+                0.057187541851813774,
+                0.1056,
+                0.1104
+              ],
+              [
+                0.4514834000481942,
+                0.32,
+                0.10953361328677383,
+                0.10368,
+                0.10944
+              ],
+              [
+                0.6109274832378327,
+                0.35,
+                0.05348981937687166,
+                0.0576,
+                0.0624
+              ],
+              [
+                0.675530125135448,
+                0.37,
+                -0.0023069651169368294,
+                0.00096,
+                0.00096
+              ]
+            ],
+            [
+              [
+                0,
+                0.09,
+                -0.058,
+                0.058,
+                0.058
+              ],
+              [
+                0.09989128595788022,
+                0.18,
+                -0.08014679637511947,
+                0.0816,
+                0.08352
+              ],
+              [
+                0.2684499883214424,
+                0.29,
+                -0.13803821506141567,
+                0.12,
+                0.12672
+              ],
+              [
+                0.4716195426043049,
+                0.36,
+                -0.21243475202721165,
+                0.1152,
+                0.12
+              ],
+              [
+                0.5954054567783996,
+                0.4,
+                -0.30395145789058753,
+                0.058559999999999994,
+                0.0624
+              ],
+              [
+                0.6280451792132588,
+                0.42,
+                -0.3769919159900228,
+                0.00096,
+                0.00096
+              ]
+            ],
+            [
+              [
+                0,
+                0.085,
+                -0.085,
+                0.055,
+                0.058
+              ],
+              [
+                0.0550567454143893,
+                0.17,
+                -0.13748244387520508,
+                0.07488,
+                0.0768
+              ],
+              [
+                0.1513135450046432,
+                0.28,
+                -0.29458735637841643,
+                0.10848,
+                0.1152
+              ],
+              [
+                0.2995483748278707,
+                0.37,
+                -0.4527395859778717,
+                0.09888,
+                0.10752
+              ],
+              [
+                0.38859993237461854,
+                0.42,
+                -0.5751718942077596,
+                0.0528,
+                0.05568
+              ],
+              [
+                0.3829335533373895,
+                0.44,
+                -0.6499364723755419,
+                0.00096,
+                0.00096
+              ]
+            ]
+          ],
+          "outputs": {
+            "body.blend": "6769dca3347653f6cd62bb155b7bc286862125764825859fa8cefd0086f027b9",
+            "shape.glb": "f0d38cd8598a5c92d933f644f2af42d1755d693028cd480ae59e4367e34071db"
+          }
+        },
+        "stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\body-0059\\shape.glb": "23991c08417572814c771800c1724c5c25c6b90ba00eff62f6ab31fabed730e3"
+          },
+          "sources": {
+            "fair_reconstruction_joints.py": "8189b76f86a466f3fdf8000c5810b384e566e6103b23cf23294d9dc260b21073",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        }
+      }
+    },
+    {
+      "study": "body-0072",
+      "recordsAndSourceSnapshots": [
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/refine_source.py",
+          "sha256": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/refinement.json",
+          "sha256": "2c7ac69ec865d3d7b002e31514b2286b74b178cbcdb8ac2bfaead093fd3f1036"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/source-snapshot/refine_reconstructed_body.py",
+          "sha256": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/attempt-02/stage-start.json",
+          "sha256": "8342ffc62046df27a22ea5014d4e2ff626ea102d7955eda8c2a5826c141f5e8f"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/refine_source.py",
+          "sha256": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/source-snapshot/refine_reconstructed_body.py",
+          "sha256": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0072/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      ],
+      "records": {
+        "attempt-02/refinement.json": {
+          "approval": null,
+          "stageProvenanceSha256": "8342ffc62046df27a22ea5014d4e2ff626ea102d7955eda8c2a5826c141f5e8f",
+          "sourceSha256": "35fdef14a423942211b413956ca109d10271873d6941d56244283cef722b962c",
+          "scriptSha256": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad",
+          "sourceTransform": {
+            "translation": [
+              0.14,
+              0.35,
+              0
+            ]
+          },
+          "changes": [
+            "Excluded original head",
+            "Retained negative-X half and mirrored it",
+            "Removed inherited tail and extra stalk",
+            "Rebuilt three full body-level tails",
+            "Removed human hands and rebuilt compact forepaws",
+            "Reduced chest and rear contour artifacts"
+          ],
+          "tailControls": [],
+          "tailsOmitted": true,
+          "body": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 293408
+          },
+          "unresolved": [
+            "Whole-body comparison",
+            "Straight shin and ankle articulation",
+            "Paw construction and contact",
+            "Likeness of new tail volume and centered root",
+            "Chest and posterior continuity",
+            "Head integration"
+          ],
+          "outputs": {
+            "body.blend": "d2c440d90129080376afae733b671f45248e766d12cd777231f190b70d7e94ec",
+            "shape.glb": "b49a73749f843b4758b5c7ffd634022e853c5fa8ab962e0570982ea2af7e3d53"
+          }
+        },
+        "attempt-02/stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\body-reconstruction-0028\\attempt-01\\shape.glb": "35fdef14a423942211b413956ca109d10271873d6941d56244283cef722b962c"
+          },
+          "sources": {
+            "refine_reconstructed_body.py": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        }
+      }
+    },
+    {
+      "study": "body-0073",
+      "recordsAndSourceSnapshots": [
+        {
+          "path": "untracked/species-construction/akinza/body-0073/reconcile_source.py",
+          "sha256": "7de623822a403559d269c968a862f96d46b240c5b9914e0f6f25873cee449b65"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0073/reconciliation.json",
+          "sha256": "ae458cbdac543a1a1805f8e273cb4b36b3a835d0907b3582d80f50bf28b7c113"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0073/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0073/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0073/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0073/source-snapshot/reconcile_reconstructed_body.py",
+          "sha256": "7de623822a403559d269c968a862f96d46b240c5b9914e0f6f25873cee449b65"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0073/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0073/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0073/stage-start.json",
+          "sha256": "e19ac10a36a07082427550ac1500216e12b31fda1a4ebb94cec005cc7fbe1bff"
+        }
+      ],
+      "records": {
+        "reconciliation.json": {
+          "approval": null,
+          "stageProvenanceSha256": "e19ac10a36a07082427550ac1500216e12b31fda1a4ebb94cec005cc7fbe1bff",
+          "sourceSha256": "b49a73749f843b4758b5c7ffd634022e853c5fa8ab962e0570982ea2af7e3d53",
+          "scriptSha256": "7de623822a403559d269c968a862f96d46b240c5b9914e0f6f25873cee449b65",
+          "changes": [
+            "Native torso retained with coarse-scale local relaxation",
+            "Slimmer forearms",
+            "Relaxed wrist ledges",
+            "Rounded crotch saddle",
+            "Masked limb scan cleanup"
+          ],
+          "body": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 276894
+          },
+          "outputs": {
+            "body.blend": "2724d1fe33113df042fe5c0465db818e11f33d294cdbc79d5cd81b66c4ef453d",
+            "shape.glb": "2c70de1ddd6d110e67a40e90e622749ccf4dcb92da2c335b7ac509b07015c3e9"
+          }
+        },
+        "stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\body-0072\\attempt-02\\shape.glb": "b49a73749f843b4758b5c7ffd634022e853c5fa8ab962e0570982ea2af7e3d53"
+          },
+          "sources": {
+            "reconcile_reconstructed_body.py": "7de623822a403559d269c968a862f96d46b240c5b9914e0f6f25873cee449b65",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        }
+      }
+    },
+    {
+      "study": "body-0074",
+      "recordsAndSourceSnapshots": [
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/integration.json",
+          "sha256": "b4704e28466ddecc1cb126159284fa95ce5d2bfa15efeff099e66123c82145a6"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/integration_source.py",
+          "sha256": "0d53ae1c7a717c0e4cb8e6caa7d981fa5c5d2fdd306626ea95e6b1943c69a0b6"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/source-snapshot/integrate_reconstructed_paws.py",
+          "sha256": "0d53ae1c7a717c0e4cb8e6caa7d981fa5c5d2fdd306626ea95e6b1943c69a0b6"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/attempt-02/stage-start.json",
+          "sha256": "3c859d586bc3d43e78d6e7e3b86ef7dbac113a7a26043b4294496aa2ec8f9324"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/integration_source.py",
+          "sha256": "0d53ae1c7a717c0e4cb8e6caa7d981fa5c5d2fdd306626ea95e6b1943c69a0b6"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/source-snapshot/integrate_reconstructed_paws.py",
+          "sha256": "0d53ae1c7a717c0e4cb8e6caa7d981fa5c5d2fdd306626ea95e6b1943c69a0b6"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0074/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      ],
+      "records": {
+        "attempt-02/integration.json": {
+          "approval": null,
+          "stageProvenanceSha256": "3c859d586bc3d43e78d6e7e3b86ef7dbac113a7a26043b4294496aa2ec8f9324",
+          "inputs": {
+            "untracked\\species-construction\\akinza\\body-0073\\shape.glb": "2c70de1ddd6d110e67a40e90e622749ccf4dcb92da2c335b7ac509b07015c3e9",
+            "untracked\\species-construction\\akinza\\paw-reconstruction-0041\\attempt-01\\shape.glb": "4ed599c4c24a1e5a83f1615a02f5f49238e9ab1063afb133bb21d50edbcd7fbb"
+          },
+          "scriptSha256": "0d53ae1c7a717c0e4cb8e6caa7d981fa5c5d2fdd306626ea95e6b1943c69a0b6",
+          "changes": [
+            "Removed old feet and ankle region",
+            "Removed reconstructed six-toe cluster",
+            "Retained ankle and sloping bridge",
+            "Built four grouped toes and short curved claws"
+          ],
+          "digitCountScope": "Illustration arrangement only, no species-record change",
+          "body": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 518948
+          },
+          "outputs": {
+            "body.blend": "d3544a71980d37f8faede5b301b0baf5e8a1a7c6d9d2771ec9ad58c920bb84fd",
+            "shape.glb": "7993394b62ae2c301a84b5e23f5413d18d83a2bd6c16dbc3c31861561153b0e2"
+          }
+        },
+        "attempt-02/stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\body-0073\\shape.glb": "2c70de1ddd6d110e67a40e90e622749ccf4dcb92da2c335b7ac509b07015c3e9",
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\paw-reconstruction-0041\\attempt-01\\shape.glb": "4ed599c4c24a1e5a83f1615a02f5f49238e9ab1063afb133bb21d50edbcd7fbb"
+          },
+          "sources": {
+            "integrate_reconstructed_paws.py": "0d53ae1c7a717c0e4cb8e6caa7d981fa5c5d2fdd306626ea95e6b1943c69a0b6",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        }
+      }
+    },
+    {
+      "study": "body-0075",
+      "recordsAndSourceSnapshots": [
+        {
+          "path": "untracked/species-construction/akinza/body-0075/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0075/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0075/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0075/source-snapshot/fair_reconstruction_joints.py",
+          "sha256": "eabf58a99f070b4443c135bc8dd813bc4c9b41dc4fd181c9e5ecd64e547844bd"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0075/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0075/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/body-0075/stage-start.json",
+          "sha256": "cd481b724c1a1fffc5dbc4750e9ed6d4a868cf4721a14a71878fb71a14d9fc1e"
+        }
+      ],
+      "records": {
+        "stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\body-0074\\attempt-02\\shape.glb": "7993394b62ae2c301a84b5e23f5413d18d83a2bd6c16dbc3c31861561153b0e2"
+          },
+          "sources": {
+            "fair_reconstruction_joints.py": "eabf58a99f070b4443c135bc8dd813bc4c9b41dc4fd181c9e5ecd64e547844bd",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        }
+      }
+    },
+    {
+      "study": "head-0071",
+      "recordsAndSourceSnapshots": [
+        {
+          "path": "untracked/species-construction/akinza/head-0071/refine_source.py",
+          "sha256": "ea4ce7b3eceee2db99aa5a007516a2eced39f1c7ff4e4bb17e4ef79867e66013"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/refinement.json",
+          "sha256": "19f0335c7d748bb1cfe6a450eb4dc7b804529c178f90c1c8cb6d2e9c7b8651f8"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/geometry.json",
+          "sha256": "1ec67561f4024adf38dce95a0e88b2805549dded0e37bfe2261ee3a6c7e96613"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/render_source.py",
+          "sha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/source-snapshot/render_shape_study.py",
+          "sha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/render/stage-start.json",
+          "sha256": "ccba1c48445d1ccfa272cec69bfe05fb31f1a62a2fd15af8482627c5df5426fc"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/source-snapshot/refine_reconstructed_head.py",
+          "sha256": "ea4ce7b3eceee2db99aa5a007516a2eced39f1c7ff4e4bb17e4ef79867e66013"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0071/stage-start.json",
+          "sha256": "0fffc2fb39758ff7a9f53edcf39d0606486f29fbca68b378621fe58f5dd2bc02"
+        }
+      ],
+      "records": {
+        "refinement.json": {
+          "approval": null,
+          "stageProvenanceSha256": "0fffc2fb39758ff7a9f53edcf39d0606486f29fbca68b378621fe58f5dd2bc02",
+          "sourceSha256": "935675ed55f78d0486df558d18121547e83726d4070b15f2a260c295fbeadf8a",
+          "scriptSha256": "ea4ce7b3eceee2db99aa5a007516a2eced39f1c7ff4e4bb17e4ef79867e66013",
+          "retainNativeMuzzle": true,
+          "removedDebris": [
+            {
+              "vertices": 8,
+              "bounds": [
+                [
+                  0.024186166003346443,
+                  -0.2864502966403961,
+                  0.3189227283000946
+                ],
+                [
+                  0.024650292471051216,
+                  -0.28598615527153015,
+                  0.31957218050956726
+                ]
+              ]
+            },
+            {
+              "vertices": 8,
+              "bounds": [
+                [
+                  0.48379409313201904,
+                  0.1573464572429657,
+                  0.08999410271644592
+                ],
+                [
+                  0.48844537138938904,
+                  0.16273951530456543,
+                  0.09464538097381592
+                ]
+              ]
+            },
+            {
+              "vertices": 8,
+              "bounds": [
+                [
+                  -0.48844537138938904,
+                  0.1573464572429657,
+                  0.08999410271644592
+                ],
+                [
+                  -0.48379409313201904,
+                  0.16273951530456543,
+                  0.09464538097381592
+                ]
+              ]
+            },
+            {
+              "vertices": 8,
+              "bounds": [
+                [
+                  -0.024650292471051216,
+                  -0.2864502966403961,
+                  0.3189227283000946
+                ],
+                [
+                  -0.024186166003346443,
+                  -0.28598615527153015,
+                  0.31957218050956726
+                ]
+              ]
+            }
+          ],
+          "changes": [
+            "Largest connected component retained",
+            "Positive-X half mirrored",
+            "Region-masked smoothing of scan residue",
+            "Native muzzle retained",
+            "Eye apertures cut through fused relief",
+            "Closed separate eyes and forward-centered irises"
+          ],
+          "before": {
+            "components": 31,
+            "nonManifoldEdges": 0,
+            "vertices": 272666
+          },
+          "body": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 1498558
+          },
+          "eyes": [
+            {
+              "side": -1,
+              "centerXZ": [
+                -0.202,
+                0.035
+              ],
+              "apertureRadiiXZ": [
+                0.112,
+                0.143
+              ],
+              "closedGlobe": {
+                "components": 1,
+                "nonManifoldEdges": 0,
+                "vertices": 6050
+              },
+              "iris": {
+                "components": 1,
+                "nonManifoldEdges": 0,
+                "vertices": 2498
+              }
+            },
+            {
+              "side": 1,
+              "centerXZ": [
+                0.202,
+                0.035
+              ],
+              "apertureRadiiXZ": [
+                0.112,
+                0.143
+              ],
+              "closedGlobe": {
+                "components": 1,
+                "nonManifoldEdges": 0,
+                "vertices": 6050
+              },
+              "iris": {
+                "components": 1,
+                "nonManifoldEdges": 0,
+                "vertices": 2498
+              }
+            }
+          ],
+          "outputs": {
+            "head.blend": "91f256a4c017e7042da0cbe9b4c3aacf299af115214c5f196e00c81a64b467e7",
+            "shape.glb": "fb7560a31ab514b2edfe6c1a1ad4f73be6c991ba6a2f7b7e761c7435981358f6"
+          }
+        },
+        "render/geometry.json": {
+          "scope": "Actual imported geometry, no texture",
+          "preserveMaterials": true,
+          "approval": null,
+          "stageProvenanceSha256": "ccba1c48445d1ccfa272cec69bfe05fb31f1a62a2fd15af8482627c5df5426fc",
+          "source": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\head-0071\\shape.glb",
+          "sourceSha256": "fb7560a31ab514b2edfe6c1a1ad4f73be6c991ba6a2f7b7e761c7435981358f6",
+          "objects": {
+            "cleaned_head_with_openings": {
+              "components": 54495,
+              "nonManifoldEdges": 270290,
+              "vertices": 1687566
+            },
+            "eye_globe_1": {
+              "components": 1,
+              "nonManifoldEdges": 508,
+              "vertices": 6303
+            },
+            "eye_globe_-1": {
+              "components": 1,
+              "nonManifoldEdges": 508,
+              "vertices": 6303
+            },
+            "forward_iris_1": {
+              "components": 1,
+              "nonManifoldEdges": 332,
+              "vertices": 2663
+            },
+            "forward_iris_-1": {
+              "components": 1,
+              "nonManifoldEdges": 332,
+              "vertices": 2663
+            },
+            "lid_1": {
+              "components": 1,
+              "nonManifoldEdges": 276,
+              "vertices": 1419
+            },
+            "lid_-1": {
+              "components": 1,
+              "nonManifoldEdges": 276,
+              "vertices": 1419
+            }
+          },
+          "bounds": [
+            [
+              -0.9920461773872375,
+              -0.35843199491500854,
+              -0.529092013835907
+            ],
+            [
+              0.9920461773872375,
+              0.27652665972709656,
+              0.5257346630096436
+            ]
+          ],
+          "cameras": [
+            {
+              "name": "front",
+              "angle": 0,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front.png",
+              "orthoScale": 2.2817062079906463,
+              "matrixWorld": [
+                [
+                  1.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  -1.6292068494294654e-07,
+                  -1.0,
+                  -10.040952682495117
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -1.6292068494294654e-07,
+                  -0.0016786754131317139
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "front-left",
+              "angle": 45,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front-left.png",
+              "orthoScale": 2.2817062079906463,
+              "matrixWorld": [
+                [
+                  0.7071067690849304,
+                  -2.4158891775982738e-08,
+                  0.7071067690849304,
+                  7.071067810058594
+                ],
+                [
+                  0.7071067690849304,
+                  -8.597613287975037e-08,
+                  -0.7071067690849304,
+                  -7.112020492553711
+                ],
+                [
+                  7.787722466900959e-08,
+                  1.0,
+                  -4.371138828673793e-08,
+                  -0.0016786754131317139
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "left",
+              "angle": 90,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "left.png",
+              "orthoScale": 2.2817062079906463,
+              "matrixWorld": [
+                [
+                  -4.371138828673793e-08,
+                  4.371138828673793e-08,
+                  1.0,
+                  10.0
+                ],
+                [
+                  1.0,
+                  1.910685676922942e-15,
+                  4.371138828673793e-08,
+                  -0.040952667593955994
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4.371138828673793e-08,
+                  -0.0016786754131317139
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "back",
+              "angle": 180,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "back.png",
+              "orthoScale": 2.2817062079906463,
+              "matrixWorld": [
+                [
+                  -1.0,
+                  1.5099580252808664e-07,
+                  -1.1399865765455465e-14,
+                  1.2246467996456087e-15
+                ],
+                [
+                  0.0,
+                  7.549790126404332e-08,
+                  1.0,
+                  9.959047317504883
+                ],
+                [
+                  1.5099580252808664e-07,
+                  1.0,
+                  -7.549790126404332e-08,
+                  -0.0016786754131317139
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "right",
+              "angle": 270,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "right.png",
+              "orthoScale": 2.2817062079906463,
+              "matrixWorld": [
+                [
+                  -4.371138828673793e-08,
+                  -4.371138828673793e-08,
+                  -1.0,
+                  -10.0
+                ],
+                [
+                  -1.0,
+                  1.910685676922942e-15,
+                  4.371138828673793e-08,
+                  -0.040952667593955994
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4.371138828673793e-08,
+                  -0.0016786754131317139
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "front-right",
+              "angle": 315,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front-right.png",
+              "orthoScale": 2.2817062079906463,
+              "matrixWorld": [
+                [
+                  0.7071067690849304,
+                  2.4158891775982738e-08,
+                  -0.7071067690849304,
+                  -7.071067810058594
+                ],
+                [
+                  -0.7071067690849304,
+                  -8.597613287975037e-08,
+                  -0.7071067690849304,
+                  -7.112020492553711
+                ],
+                [
+                  -7.787722466900959e-08,
+                  1.0,
+                  -4.371138828673793e-08,
+                  -0.0016786754131317139
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "rear-oblique",
+              "angle": 135,
+              "elevation": 2,
+              "projection": "orthographic",
+              "elevationOffset": 2,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "rear-oblique.png",
+              "orthoScale": 2.2817062079906463,
+              "matrixWorld": [
+                [
+                  -0.7071067690849304,
+                  -0.13867510855197906,
+                  0.6933752298355103,
+                  7.071067810058594
+                ],
+                [
+                  0.7071067690849304,
+                  -0.13867509365081787,
+                  0.6933752298355103,
+                  7.030115127563477
+                ],
+                [
+                  -8.386589200881645e-09,
+                  0.9805806875228882,
+                  0.19611620903015137,
+                  1.998321294784546
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            }
+          ],
+          "outputs": {
+            "back.png": "d550b606c5296f991666ff86e70d2b21a1f9d903004adc6efc2cf9b34740ebc4",
+            "front-left.png": "95f9428dfa54bb1f62abdb7078cafdafd9b556b7c00fa65c5e86b2c6ef775d9c",
+            "front-right.png": "2024dbbfd3c6cd00db399b9e79b801bbd59052a68b8806ac1eab98315e9e0705",
+            "front.png": "f961df0a7858644004550debc33e1aedd82e00cf5c44202698285af5116ef261",
+            "left.png": "1385172a95aa9433fb286cb11745c1ff0d71d580b99c787b4ba49be98673e82c",
+            "rear-oblique.png": "a351343d956639a729404f1493a652fb930e65142e9587a3f69af73fbba4ef67",
+            "right.png": "de861a224e3f82e4366a1ce39c39b173424d52b3ea6de98dc801cdfe1eabd21e",
+            "study.blend": "a4b7ba9f38f89b6460ee940efa244b59d44971ab40d73b473e7dd2e722b6ca06"
+          },
+          "scriptSha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        "render/stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\head-0071\\shape.glb": "fb7560a31ab514b2edfe6c1a1ad4f73be6c991ba6a2f7b7e761c7435981358f6"
+          },
+          "sources": {
+            "render_shape_study.py": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        },
+        "stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\head-full-0058\\shape.glb": "935675ed55f78d0486df558d18121547e83726d4070b15f2a260c295fbeadf8a"
+          },
+          "sources": {
+            "refine_reconstructed_head.py": "ea4ce7b3eceee2db99aa5a007516a2eced39f1c7ff4e4bb17e4ef79867e66013",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        }
+      }
+    },
+    {
+      "study": "head-0076",
+      "recordsAndSourceSnapshots": [
+        {
+          "path": "untracked/species-construction/akinza/head-0076/refine_source.py",
+          "sha256": "d4f141d62a49d5250233adfeec38ad025e20fc0f5a3494d4088803ab07a7d592"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/refinement.json",
+          "sha256": "4639864c40878d2be9f21a331b5db6b9d104aea012dbfb9a386d511e16811769"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/geometry.json",
+          "sha256": "fadda9bcb6b7cfa3e1e70bd1e9d7f44da5593e8be3dc14f382630f8e29d7b127"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/render_source.py",
+          "sha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/source-snapshot/render_shape_study.py",
+          "sha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/render/stage-start.json",
+          "sha256": "b7a6fbf02fee7d9fe9d2eabfc059e33fda6025fe7b2158c3a56dedd6dd5b360f"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/source-snapshot/authored_surfaces.py",
+          "sha256": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/source-snapshot/blender_blockout.py",
+          "sha256": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/source-snapshot/blender_probe.py",
+          "sha256": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/source-snapshot/refine_reconstructed_head.py",
+          "sha256": "d4f141d62a49d5250233adfeec38ad025e20fc0f5a3494d4088803ab07a7d592"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/source-snapshot/study_provenance.py",
+          "sha256": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/source-snapshot/surface_math.py",
+          "sha256": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        },
+        {
+          "path": "untracked/species-construction/akinza/head-0076/stage-start.json",
+          "sha256": "ee91852cb4b22300b6a51ac8f0e6ff432ffb054c588f527227a97fe760f57872"
+        }
+      ],
+      "records": {
+        "refinement.json": {
+          "approval": null,
+          "stageProvenanceSha256": "ee91852cb4b22300b6a51ac8f0e6ff432ffb054c588f527227a97fe760f57872",
+          "sourceSha256": "935675ed55f78d0486df558d18121547e83726d4070b15f2a260c295fbeadf8a",
+          "scriptSha256": "d4f141d62a49d5250233adfeec38ad025e20fc0f5a3494d4088803ab07a7d592",
+          "retainNativeMuzzle": true,
+          "removedDebris": [],
+          "changes": [
+            "Largest connected component retained",
+            "Positive-X half mirrored",
+            "Region-masked smoothing of scan residue",
+            "Native muzzle retained",
+            "Eye apertures cut through fused relief",
+            "Closed separate eyes and forward-centered irises"
+          ],
+          "before": {
+            "components": 31,
+            "nonManifoldEdges": 0,
+            "vertices": 272666
+          },
+          "body": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 1508700
+          },
+          "eyes": [
+            {
+              "side": -1,
+              "centerXZ": [
+                -0.202,
+                0.035
+              ],
+              "apertureRadiiXZ": [
+                0.112,
+                0.143
+              ],
+              "closedGlobe": {
+                "components": 1,
+                "nonManifoldEdges": 0,
+                "vertices": 6050
+              },
+              "iris": {
+                "components": 1,
+                "nonManifoldEdges": 0,
+                "vertices": 2498
+              }
+            },
+            {
+              "side": 1,
+              "centerXZ": [
+                0.202,
+                0.035
+              ],
+              "apertureRadiiXZ": [
+                0.112,
+                0.143
+              ],
+              "closedGlobe": {
+                "components": 1,
+                "nonManifoldEdges": 0,
+                "vertices": 6050
+              },
+              "iris": {
+                "components": 1,
+                "nonManifoldEdges": 0,
+                "vertices": 2498
+              }
+            }
+          ],
+          "outputs": {
+            "head.blend": "5f46908f4ca9b5c0b1f98c5f412536b0488cda274f0c24e9d0b8b4969463874f",
+            "shape.glb": "211f4e25fed0a35507f14491c6b2d247bf6ce3c32f5bd82bf05c97fc8f50df43"
+          }
+        },
+        "render/geometry.json": {
+          "scope": "Actual imported geometry, no texture",
+          "preserveMaterials": true,
+          "approval": null,
+          "stageProvenanceSha256": "b7a6fbf02fee7d9fe9d2eabfc059e33fda6025fe7b2158c3a56dedd6dd5b360f",
+          "source": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\head-0076\\shape.glb",
+          "sourceSha256": "211f4e25fed0a35507f14491c6b2d247bf6ce3c32f5bd82bf05c97fc8f50df43",
+          "objects": {
+            "cleaned_head_with_openings": {
+              "components": 53091,
+              "nonManifoldEdges": 284864,
+              "vertices": 1703543
+            },
+            "eye_globe_1": {
+              "components": 1,
+              "nonManifoldEdges": 508,
+              "vertices": 6303
+            },
+            "eye_globe_-1": {
+              "components": 1,
+              "nonManifoldEdges": 508,
+              "vertices": 6303
+            },
+            "forward_iris_1": {
+              "components": 1,
+              "nonManifoldEdges": 332,
+              "vertices": 2663
+            },
+            "forward_iris_-1": {
+              "components": 1,
+              "nonManifoldEdges": 332,
+              "vertices": 2663
+            },
+            "lid_1": {
+              "components": 1,
+              "nonManifoldEdges": 276,
+              "vertices": 1419
+            },
+            "lid_-1": {
+              "components": 1,
+              "nonManifoldEdges": 276,
+              "vertices": 1419
+            }
+          },
+          "bounds": [
+            [
+              -0.9918850660324097,
+              -0.35836508870124817,
+              -0.529033899307251
+            ],
+            [
+              0.991911768913269,
+              0.27621009945869446,
+              0.525740921497345
+            ]
+          ],
+          "cameras": [
+            {
+              "name": "front",
+              "angle": 0,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front.png",
+              "orthoScale": 2.2813663601875303,
+              "matrixWorld": [
+                [
+                  1.0,
+                  0.0,
+                  0.0,
+                  1.33514404296875e-05
+                ],
+                [
+                  0.0,
+                  -1.6292068494294654e-07,
+                  -1.0,
+                  -10.041077613830566
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -1.6292068494294654e-07,
+                  -0.001646488904953003
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "front-left",
+              "angle": 45,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front-left.png",
+              "orthoScale": 2.2813663601875303,
+              "matrixWorld": [
+                [
+                  0.7071067690849304,
+                  -2.4158891775982738e-08,
+                  0.7071067690849304,
+                  7.071081161499023
+                ],
+                [
+                  0.7071067690849304,
+                  -8.597613287975037e-08,
+                  -0.7071067690849304,
+                  -7.11214542388916
+                ],
+                [
+                  7.787722466900959e-08,
+                  1.0,
+                  -4.371138828673793e-08,
+                  -0.001646488904953003
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "left",
+              "angle": 90,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "left.png",
+              "orthoScale": 2.2813663601875303,
+              "matrixWorld": [
+                [
+                  -4.371138828673793e-08,
+                  4.371138828673793e-08,
+                  1.0,
+                  10.00001335144043
+                ],
+                [
+                  1.0,
+                  1.910685676922942e-15,
+                  4.371138828673793e-08,
+                  -0.041077494621276855
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4.371138828673793e-08,
+                  -0.001646488904953003
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "back",
+              "angle": 180,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "back.png",
+              "orthoScale": 2.2813663601875303,
+              "matrixWorld": [
+                [
+                  -1.0,
+                  -1.5099580252808664e-07,
+                  1.1399865765455465e-14,
+                  1.33514404296875e-05
+                ],
+                [
+                  0.0,
+                  7.549790126404332e-08,
+                  1.0,
+                  9.958922386169434
+                ],
+                [
+                  -1.5099580252808664e-07,
+                  1.0,
+                  -7.549790126404332e-08,
+                  -0.001646488904953003
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "right",
+              "angle": 270,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "right.png",
+              "orthoScale": 2.2813663601875303,
+              "matrixWorld": [
+                [
+                  -4.371138828673793e-08,
+                  -4.371138828673793e-08,
+                  -1.0,
+                  -9.99998664855957
+                ],
+                [
+                  -1.0,
+                  1.910685676922942e-15,
+                  4.371138828673793e-08,
+                  -0.041077494621276855
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4.371138828673793e-08,
+                  -0.001646488904953003
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "front-right",
+              "angle": 315,
+              "elevation": 0,
+              "projection": "orthographic",
+              "elevationOffset": 0,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "front-right.png",
+              "orthoScale": 2.2813663601875303,
+              "matrixWorld": [
+                [
+                  0.7071067690849304,
+                  2.4158891775982738e-08,
+                  -0.7071067690849304,
+                  -7.071054458618164
+                ],
+                [
+                  -0.7071067690849304,
+                  -8.597613287975037e-08,
+                  -0.7071067690849304,
+                  -7.11214542388916
+                ],
+                [
+                  -7.787722466900959e-08,
+                  1.0,
+                  -4.371138828673793e-08,
+                  -0.001646488904953003
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            },
+            {
+              "name": "rear-oblique",
+              "angle": 135,
+              "elevation": 2,
+              "projection": "orthographic",
+              "elevationOffset": 2,
+              "resolution": [
+                1200,
+                800
+              ],
+              "image": "rear-oblique.png",
+              "orthoScale": 2.2813663601875303,
+              "matrixWorld": [
+                [
+                  -0.7071067690849304,
+                  -0.13867510855197906,
+                  0.6933752298355103,
+                  7.071081161499023
+                ],
+                [
+                  0.7071067690849304,
+                  -0.13867509365081787,
+                  0.6933752298355103,
+                  7.029990196228027
+                ],
+                [
+                  -8.386589200881645e-09,
+                  0.9805806875228882,
+                  0.19611620903015137,
+                  1.9983534812927246
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ]
+            }
+          ],
+          "outputs": {
+            "back.png": "a315e11e527ce7539d84eaac25860484e48cdacf9d8db703e15b2ddf6090c865",
+            "front-left.png": "e695e248cccb6a28c3395841269ec700686e8ede2225bc07c0b4f4cc1d7eef74",
+            "front-right.png": "966f4899228810d794f292c576c363ef25a0aeb891380416b6792bab49f228d6",
+            "front.png": "1c7516034cbefbc2cc47ee54628ebe5a0f39d2f3f56d579adb1e2a7e9c42c1f9",
+            "left.png": "ad3de0cba7ac5e012dd121b0b2b934ca7fa2a8d1960bfa2f96fcd14d0ad2bcd8",
+            "rear-oblique.png": "fe9aae614c96b87ef0099f4349c2113e9db3d842550df6f4da6a582f8b50ee9e",
+            "right.png": "24e148b6356b31125fb8f10c86939a88a5dc12305f23c1a6419d61e2ff7413bd",
+            "study.blend": "b754cde95ca42f7650dec27473ae2abac558bb41b0f5332bbdb4b7d4b85721b7"
+          },
+          "scriptSha256": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92"
+        },
+        "render/stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\head-0076\\shape.glb": "211f4e25fed0a35507f14491c6b2d247bf6ce3c32f5bd82bf05c97fc8f50df43"
+          },
+          "sources": {
+            "render_shape_study.py": "f88b0293a39349c948655e0efe543638c2be20148315db3411170a0ca0e8bf92",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        },
+        "stage-start.json": {
+          "scope": "Input and helper snapshot taken before mesh import",
+          "inputs": {
+            "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\head-full-0058\\shape.glb": "935675ed55f78d0486df558d18121547e83726d4070b15f2a260c295fbeadf8a"
+          },
+          "sources": {
+            "refine_reconstructed_head.py": "d4f141d62a49d5250233adfeec38ad025e20fc0f5a3494d4088803ab07a7d592",
+            "study_provenance.py": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+            "blender_blockout.py": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4",
+            "blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+            "authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+            "surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "approval": null,
+  "method": "Manual landmarks in original-resolution images, inspected with unscaled crops. Pixel bounds are estimates, not segmentation or registration.",
+  "reference": {
+    "path": "docs/design/species-construction/akinza/evidence/identity-run-0001.png",
+    "dimensions": [
+      2132,
+      738
+    ],
+    "crop": [
+      0,
+      0,
+      390,
+      738
+    ],
+    "topEarY": [
+      60,
+      64
+    ],
+    "cranialTuftTopY": [
+      71,
+      79
+    ],
+    "chinY": [
+      199,
+      204
+    ],
+    "floorY": [
+      686,
+      690
+    ],
+    "earSpanX": [
+      10,
+      356
+    ],
+    "headPlusEarHeightFraction": [
+      0.215,
+      0.23
+    ],
+    "cranialHeightFraction": [
+      0.19,
+      0.214
+    ],
+    "earSpanPerHeight": 0.551
+  },
+  "model": {
+    "path": "untracked/species-construction/akinza/assembled-0093/render/front.png",
+    "dimensions": [
+      1200,
+      800
+    ],
+    "crop": [
+      360,
+      35,
+      810,
+      285
+    ],
+    "topEarY": [
+      50,
+      55
+    ],
+    "cranialTuftTopY": [
+      58,
+      67
+    ],
+    "chinY": [
+      238,
+      246
+    ],
+    "floorY": [
+      743,
+      749
+    ],
+    "earSpanX": [
+      378,
+      798
+    ],
+    "headPlusEarHeightFraction": [
+      0.264,
+      0.284
+    ],
+    "cranialHeightFraction": [
+      0.245,
+      0.274
+    ],
+    "earSpanPerHeight": 0.605
+  },
+  "inference": "Current head has disproportionately greater vertical height than the preferred first front. Ear span is also larger relative to total height, but by less, so a single uniform scale will be an approximation rather than exact reconciliation.",
+  "uncertainty": [
+    "Reference is posed and has no calibrated camera. Model is orthographic.",
+    "Chin-to-neck boundary is estimated from shading, especially the current muzzle/chin.",
+    "Tuft outlines differ; report includes separate ear-top and cranial-top estimates.",
+    "Later head study may govern facial design, while first full-body identity governs overall proportion. Confirm the record before claiming one supersedes the other.",
+    "No width rescale inferred for body from the posed illustration."
+  ]
+}

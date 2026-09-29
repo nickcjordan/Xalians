@@ -77,3 +77,11 @@ python art/species-construction/review_blockout.py untracked/species-constructio
 The review tool checks output hashes, six principal camera conventions and registration, unclipped occupancy, figure-height and ground-row spread. It derives 14 masks and composes a six-view contact sheet and elevated turntable. Occupancy masks do not include the final front-feature cutouts, and these checks do not substitute for complete final-pack validation. The builder reports any removed isolated remeshing fragment, limited to 16 vertices and one voxel of extent; larger disconnected pieces still fail. Full likeness, continuity quality and biological plausibility require visual review.
 
 `render_details.py` renders local orthographic close-ups from an existing saved scene with the same geometry and lights. Supply `joint-detail-cameras.json` and a new output directory after Blender's `--`. Its report binds the scene, camera spec and renderer hashes and records actual camera matrices. Local close-ups intentionally cut through limbs at the frame edge and are not full-body registration candidates.
+
+## Field-space body corrections
+
+`rebuild_body_field.py` converts a closed body to an OpenVDB level set with Blender's bundled `openvdb` module, edits the distance field and meshes it once. It rebuilds the hind paws and forepaws as analytic volumes joined by weighted field morphs, optionally rebuilds the tails from a controls file onto a tail-free torso, rounds the tail-root overlap edge with fill-only blurs, and applies bounded, volume-compensated limb smoothing. It records every parameter, the measured deviation outside the edited regions, planted contact and claw minimums, and writes an updated tail and contact record for assembly. It is an Akinza-specific construction stage, not a general sculpting backend.
+
+```text
+blender -b --factory-startup --python art/species-construction/rebuild_body_field.py -- --body <shape.glb> --tail-record <fairing.json> --out <new-dir> [--tail-controls <controls.json> --tail-free-body <tail-free shape.glb>]
+```

@@ -130,9 +130,11 @@ def face_patch(part, head, mat):
     return obj
 
 
-def mesh_stats(obj):
+def mesh_stats(obj, weld_distance=None):
     bm = bmesh.new()
     bm.from_mesh(obj.data)
+    if weld_distance is not None:
+        bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=weld_distance)
     unseen, components = set(bm.verts), 0
     while unseen:
         components += 1
@@ -149,8 +151,20 @@ def mesh_stats(obj):
     return result
 
 
-def remove_voxel_specks(obj):
-    """Remove only isolated sub-voxel debris, never a disconnected body part."""
+def require_single_closed_mesh(obj, out, stage):
+    """Reject a broken solid before a later remesh can disguise its origin."""
+    stats = mesh_stats(obj)
+    if stats['components'] != 1 or stats['nonManifoldEdges'] != 0:
+        failure = {'approval': None, 'stage': stage, 'object': obj.name,
+                   'expected': {'components': 1, 'nonManifoldEdges': 0}, 'actual': stats}
+        (Path(out) / 'geometry-failure.json').write_text(json.dumps(failure, indent=2)+'\n')
+        bpy.ops.wm.save_as_mainfile(filepath=str(Path(out) / 'geometry-failure.blend'))
+        raise ValueError(f'{stage}: expected one closed solid, got {stats}')
+    return stats
+
+
+def remove_voxel_specks(obj, max_extent=None, min_z=None):
+    """Remove explicitly bounded tiny remesh fragments, recording their bounds."""
     bm = bmesh.new()
     bm.from_mesh(obj.data)
     unseen, removed = set(bm.verts), []
@@ -164,9 +178,12 @@ def remove_voxel_specks(obj):
                         unseen.remove(vertex)
                         group.add(vertex)
                         queue.append(vertex)
-        extent = max(max(v.co[i] for v in group)-min(v.co[i] for v in group) for i in range(3))
-        if len(group) <= 16 and extent <= obj.data.remesh_voxel_size:
-            removed.append({'vertices': len(group), 'maxExtent': extent})
+        bounds = [[min(v.co[i] for v in group) for i in range(3)],
+                  [max(v.co[i] for v in group) for i in range(3)]]
+        extent = max(bounds[1][i]-bounds[0][i] for i in range(3))
+        limit = obj.data.remesh_voxel_size if max_extent is None else max_extent
+        if len(group) <= 16 and extent <= limit and (min_z is None or bounds[0][2] >= min_z):
+            removed.append({'vertices': len(group), 'maxExtent': extent, 'bounds': bounds})
             bmesh.ops.delete(bm, geom=list(group), context='VERTS')
     bm.to_mesh(obj.data)
     bm.free()

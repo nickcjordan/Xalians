@@ -59,3 +59,41 @@ Compare at whole-creature scale as well as in closeups. The first assembly's rel
 The next independent audit found causes that connectivity checks cannot detect. A hard rectangular smoothing mask contracts one side of its boundary and freezes the other, producing a shelf on a closed mesh. A replacement muzzle strip interpolated noisy endpoints independently, stretching those ripples into vertical channels; its positive-only tangent clamp was also wrong for descending profiles. Retire a failed method when its geometry is worse. In 0063, smooth spatial falloff at a coarser intermediate mesh scale visibly improved shoulder and ankle continuity. That improvement did not supply the missing paw volume or correct the oversized tail fan, so those remained separate executable findings.
 
 Provenance must include imported geometry helpers, not just the entry script. New stages snapshot the entry, local helpers and input hashes before loading meshes. Review verifies source mesh hashes and actual PNG dimensions. A panel-fit comparison preserves aspect ratio but does not necessarily give equal subject heights; label the actual operation honestly. Historical runs without helper snapshots remain explicitly limited rather than retroactively claiming exact replay.
+
+A fused mesh loses the part boundaries needed for safe proportion changes. A partial spatial deformation of the tail distorted its sections, while a planar excision left slivers of the old sweeps. Rebuild from the saved tail-free body recipe, apply retained body corrections, and add the revised tail sweeps once. In the full-head test, fitting reconstructed eye curvature canceled the intended convex eye cap. Use native samples for placement and orientation, then control globe convexity independently. Validate the actual surface normals at a patch splice: matching only the farthest ring does not help if a Boolean boundary clips the blend earlier.
+
+Recorded measurements must control the next action. Body 0079 reported 3,334 components, yet later fairing and assembly ran on it and produced a visibly broken lattice. The solid-geometry gate now raises before assembly on a disconnected or nonmanifold skin and preserves a failure record. Zero nonmanifold edges alone is insufficient: thousands of separate closed fragments can still satisfy that measure. Keep the last inspected baseline until a changed build passes technical and visual review.
+
+Check the renderer's effective lighting, not an unused setting. Blender's node-based world ignored the old `world.color` assignment. A separately recorded studio-fill render now helps compare gray forms with the softly lit reference; standard lighting remains available to expose defects. Lighting cannot excuse the remaining muzzle ramp or substitute for inspecting its geometry.
+
+## Integration and evidence corrections, 2026-09-28
+
+Reference-specific reconstruction can supply a useful local form even when its full output fails. The face-only reconstruction invented a rectangular head and hollow eyes, but its native paired muzzle pads were closer than repeated analytic ramps. Transplant only the bounded useful surface, preserve surrounding coordinates, and test the boundary in oblique views. A successful local transplant does not approve the entire donor mesh.
+
+Copy Blender landmark vectors before modifying their source mesh. A live `vertex.co` reference became invalid during smoothing and wrote meaningless coordinates into head 0100's record, although the already calculated transform was correct. A separate audit remeasured the unchanged inputs and verified the transform. Preserve the original faulty record and append the correction; never rewrite old evidence to imply it was accurate at creation.
+
+Reopen integrated criteria when their dependencies change. The full head replaced the earlier head, so the old neck bridge dimensions produced a shelf despite a previously passed neck study. Measure sections on the actual new head and body, bridge those sections, then inspect the complete result again. Likewise, original-resolution reference comparison reopened head scale and reduced the uniform factor from .60 to .50. Historical local passes are evidence, not permanent exemptions.
+
+GLB import can duplicate vertices along material or normal seams. Report raw imported topology separately from connectivity measured on a temporary welded copy. Do not mutate the rendered geometry to make a report pass, and do not mistake exported seams for thousands of detached anatomical parts. Geometry construction still checks its actual welded skin before export.
+
+Ground contact is an integration property. Flattening a paw before assembly does not guarantee that final remeshing preserves its sole. Reapply the recorded bounded sole map after assembly, check shared toe and pad contact, and verify that the map introduced no collapsed edges or faces. Keep deformation away from the paw roof and articulation.
+
+Preserve the intended property, not every coordinate that happened to implement it. Paw tests 0114 through 0124 kept the old broad sole patch while changing the roof, which left a slab or erased distinct toes. Those tests were rejected. The next method constructs rounded individual pads with small planted patches, preserving the surrounding leg and tail. A contact test must permit a better contact shape instead of locking in the defect being corrected.
+
+Validate the full spatial scope of a local mask. A paw mask bounded by x and z still reached the tail farther behind the body. Add the missing depth bound and independently hash the protected tail region. Do not infer that a region was untouched merely because its name was absent from the editing code.
+
+## Field-space corrections, 2026-09-29
+
+Edit fused bodies as distance fields when the correction is a blend. Box excisions followed by Boolean unions and vertex smoothing produced balls on a stump (paws 0130) or smoothing that cancels itself (tail root 0129). Converting the closed body to an OpenVDB level set, editing the field and meshing once gave the first paw with a heel, a sloped roof and a readable print. Blender's bundled `openvdb` module converts meshes to level sets and back, so no new dependency is needed.
+
+A cut followed by a smooth union always leaves a ring where the cut meets the new part. A weighted morph between the native field and the new analytic field across the joint leaves none. Mask the morph to the limb's own axis whenever a neighboring body part shares the edit box.
+
+Locate a defect in 3D before choosing its fix scale. Casting rays from the saved camera matrix through the defect's pixels showed that the tail-root "crease" was a sheer wall about .085 deep, far larger than the blur that failed to remove it. A fill centered on the wall's middle did nothing; centered on the measured corner it worked. A fill-only blur, `min(native, blur(native))`, closes concave corners without eroding convex forms.
+
+A blur that removes lumps also thins a limb by roughly sigma squared over twice its radius. Dilate by that amount inside the same weight when the requested fullness must survive, as with Nick's beefier hind legs.
+
+A sphere-swept sweep whose radius collapses over one short segment ends in a blunt nub, and a minimum over short tapered cones leaves faint ribs under grazing light. Taper over several controls and lightly blur the new sweep field before fusing it.
+
+When two accepted references disagree, the one that explicitly accepted the aspect governs. The preferred first sheet has drooping plumes; Nick accepted study 0018's "tail and positioning", whose tips curl up. The model follows 0018, and the change is reported to him as a visible shape decision rather than silently applied.
+
+Verify a reviewer's factual claims before acting on them. The first independent review of 0139 counted five tails; the tail closeup shows three. Its underlying observation, petal-shaped tails with tips turning down, was correct and led to the crescent rebuild.

@@ -11,7 +11,7 @@ from mathutils import Matrix,Vector
 
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from study_provenance import snapshot
-from blender_blockout import material,mesh_stats,sha,sphere
+from blender_blockout import material,mesh_stats,sha,sphere,require_single_closed_mesh
 from blender_probe import tube
 
 parser=argparse.ArgumentParser()
@@ -52,8 +52,33 @@ def activate(obj):
     bpy.context.view_layer.objects.active=obj
 
 
+def excise_forepaw_tips(obj):
+    # Deleting vertices at three simultaneous thresholds creates branching
+    # boundary loops that holes_fill cannot close. Cut the same solid region
+    # with a bounded Boolean before any voxel remesh sees the body.
+    bounds=[list(v.co) for v in obj.data.vertices]
+    low=[min(p[i] for p in bounds)-.05 for i in range(3)]
+    high=[max(p[i] for p in bounds)+.05 for i in range(3)]
+    for side in [-1,1]:
+        start=[low[0] if side<0 else .40,low[1],low[2]]
+        end=[-.40 if side<0 else high[0],-.06,-.273]
+        if any(end[i]<=start[i] for i in range(3)):
+            raise ValueError('Forepaw trim box does not intersect expected anatomy')
+        bpy.ops.mesh.primitive_cube_add(size=1,location=[(start[i]+end[i])/2 for i in range(3)])
+        cutter=bpy.context.object
+        cutter.scale=[end[i]-start[i] for i in range(3)]
+        bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
+        activate(obj)
+        modifier=obj.modifiers.new('Closed distal forepaw trim '+str(side),'BOOLEAN')
+        modifier.operation='DIFFERENCE';modifier.solver='EXACT';modifier.object=cutter
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
+        bpy.data.objects.remove(cutter,do_unlink=True)
+        require_single_closed_mesh(obj,args.out,'After closed forepaw trim '+str(side))
+
+
 body=load(args.body)
 activate(body)
+require_single_closed_mesh(body,args.out,'Imported body after vertex welding')
 group=body.vertex_groups.new(name='Lower thigh scan residue')
 for v in body.data.vertices:
     x,y,z=v.co
@@ -64,23 +89,36 @@ mod.vertex_group=group.name;mod.iterations=600;mod.factor=.65
 bpy.ops.object.modifier_apply(modifier=mod.name)
 edit_mesh(body,lambda bm:bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
           dist=.000001,plane_co=(0,0,-.770),plane_no=(0,0,1),clear_inner=True))
+require_single_closed_mesh(body,args.out,'After shin plane trim')
+excise_forepaw_tips(body)
 paw=load(args.paw)
-edit_mesh(paw,lambda bm:bmesh.ops.delete(bm,geom=[v for v in bm.verts
-          if v.co.z < -.975 or v.co.z > .46 or (v.co.y < -.18 and v.co.z < -.55)],context='VERTS'))
+for height,inner,outer in [(-.55,True,False),(.46,False,True)]:
+    edit_mesh(paw,lambda bm:bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
+              dist=.000001,plane_co=(0,0,height),plane_no=(0,0,1),clear_inner=inner,clear_outer=outer))
+# The height trim leaves two detached tips of the excluded original toes near
+# y=-.65. The retained ankle's measured front bound is y=-.210.
+edit_mesh(paw,lambda bm:bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
+          dist=.000001,plane_co=(0,-.35,0),plane_no=(0,1,0),clear_inner=True))
+ankle_before_resampling=mesh_stats(paw)
+# The raw reconstruction includes separate closed surface flecks. Require
+# closed boundaries before resampling, then exactly one retained ankle after it.
+if ankle_before_resampling['nonManifoldEdges']:
+    require_single_closed_mesh(paw,args.out,'Retained ankle plane trim closure')
 activate(paw)
 paw.data.remesh_voxel_size=.011
 bpy.ops.object.voxel_remesh()
+require_single_closed_mesh(paw,args.out,'Resampled retained ankle')
 mod=paw.modifiers.new('Remove reconstructed fur residue','SMOOTH')
 mod.iterations=65;mod.factor=.7
 bpy.ops.object.modifier_apply(modifier=mod.name)
 pieces=[paw]
-pieces.append(sphere({'id':'Compact paw body','center':[0,-.25,-.64],'scale':[.46,.52,.325]}))
+pieces.append(sphere({'id':'Compact paw body','center':[0,-.25,-.64],'scale':[.52,.52,.325]}))
 claws=[]
 for i in range(4):
-    x=(i-1.5)*.205
+    x=(i-1.5)*.24
     front=-.68-(.045 if i in [1,2] else 0)
     pieces.append(sphere({'id':f'Grouped toe {i}','center':[x,front,-.765],
-                         'scale':[.132,.205,.172]}))
+                         'scale':[.16,.205,.172]}))
     controls=[[x,front-.11,-.735,.063,.056], [x,front-.20,-.755,.056,.045],
               [x,front-.25,-.795,.033,.029], [x,front-.26,-.843,.002,.002]]
     claw=tube(f'Short curved hind claw {i}',[[n*10 for n in row] for row in controls])
@@ -94,6 +132,7 @@ for o in pieces:o.select_set(True)
 bpy.ops.object.join()
 paw.data.remesh_voxel_size=.009
 bpy.ops.object.voxel_remesh()
+require_single_closed_mesh(paw,args.out,'Fused ankle and grouped hind toes')
 mod=paw.modifiers.new('Fuse four toes to paw roof','SMOOTH');mod.iterations=16;mod.factor=.5
 bpy.ops.object.modifier_apply(modifier=mod.name)
 base_paw=paw.data.copy()
@@ -107,15 +146,15 @@ for obj in list(bpy.context.scene.objects):
 for side in [-1,1]:
     for i in range(4):
         x=side*.479+(i-1.5)*.029
-        z=-.259+.008*abs(i-1.5)
+        z=-.278+.008*abs(i-1.5)
         skin_parts.append(sphere({'id':f'Compact fore digit {side} {i}',
                                   'center':[x,-.142,z],'scale':[.0175,.026,.026]}))
         claw=tube(f'Tapered fore claw {side} {i}',[
-            [x,-.157,z-.010,.008,.009],[x,-.167,z-.027,.007,.007],
-            [x,-.164,z-.042,.010,.010]])
+            [x,-.157,z-.010,.008,.009],[x,-.167,z-.020,.007,.007],
+            [x,-.164,z-.032,.010,.010]])
         # Author the short tip explicitly; the legacy sweep clamps radii at .01.
         for v in claw.data.vertices:
-            t=max(0,min(1,(-v.co.z+z-.010)/.033))
+            t=max(0,min(1,(-v.co.z+z-.010)/.023))
             v.co.x=x+(v.co.x-x)*(1-.92*t)
             v.co.y=-.164+(v.co.y+.164)*(1-.75*t)
         claw.data.materials.append(claw_mat)
@@ -143,6 +182,7 @@ for side in [-1,1]:
     bpy.ops.object.modifier_apply(modifier=sub.name)
     skin_parts.append(bridge)
 activate(body)
+require_single_closed_mesh(body,args.out,'Body before joining rebuilt extremities')
 for o in skin_parts:o.select_set(True)
 bpy.ops.object.join()
 body.data.remesh_voxel_size=.0025
@@ -162,6 +202,7 @@ for obj in bpy.context.scene.objects:
         activate(obj);bpy.ops.mesh.customdata_custom_splitnormals_clear()
         obj.data.validate(clean_customdata=True)
         for p in obj.data.polygons:p.use_smooth=True
+require_single_closed_mesh(body,args.out,'Completed paw integration')
 bpy.ops.export_scene.gltf(filepath=str(args.out/'shape.glb'),export_format='GLB')
 bpy.ops.wm.save_as_mainfile(filepath=str(args.out/'body.blend'))
 (args.out/'integration.json').write_text(json.dumps({
@@ -170,5 +211,6 @@ bpy.ops.wm.save_as_mainfile(filepath=str(args.out/'body.blend'))
     'changes':['Removed old feet and ankle region','Removed reconstructed six-toe cluster',
                'Retained ankle and sloping bridge','Built four grouped toes and short curved claws'],
     'digitCountScope':'Illustration arrangement only, no species-record change',
+    'ankleBeforeResampling':ankle_before_resampling,
     'body':mesh_stats(body),'outputs':{p.name:sha(p) for p in args.out.iterdir() if p.suffix in ['.glb','.blend']}
 },indent=2)+'\n')

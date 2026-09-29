@@ -1,0 +1,26 @@
+{
+  "approval": null,
+  "scope": "Internal body correction and mesh/render verification, not Nick approval",
+  "input": "body-0086/attempt-03/shape.glb",
+  "candidate": "body-0100/attempt-02/shape.glb",
+  "changes": [
+    "Moved paw support from under toes into heel transition",
+    "Blended ankle roof and heel while excluding forward toe group",
+    "Removed isolated anterior lower-thigh reconstruction dimples",
+    "Smoothed forearm longitudinal dents with explicit wrist exclusion",
+    "Established shared sole contact with C2 perimeter transition"
+  ],
+  "verification": [
+    "One skin component, zero nonmanifold edges, 623412 vertices",
+    "Seven actual body views inspected",
+    "Matched paw, lower-leg and forearm closeups inspected",
+    "Actual upward rays confirm toe and central pad contact at -.957",
+    "5074 skin vertices on contact plane",
+    "Original failed build diagnostic retained; no deletion of detached components to conceal failure"
+  ],
+  "limitations": [
+    "Final assembly remeshing must preserve or recheck planted contact",
+    "Whole-creature head-to-body ratio requires reconciliation, recorded separately in proportion-landmarks.json",
+    "Subjective quality and animation readiness are not established by mesh closure"
+  ]
+}
