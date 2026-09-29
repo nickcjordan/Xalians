@@ -14,6 +14,7 @@ from mathutils import Vector
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from blender_probe import aim
+from study_provenance import snapshot
 
 
 def sha(path):
@@ -25,7 +26,11 @@ def main():
     parser.add_argument('--spec', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
+    args.out = args.out.resolve()
+    args.spec = args.spec.resolve()
     args.out.mkdir(parents=True, exist_ok=False)
+    provenance = snapshot(args.out, __file__, [args.spec, Path(bpy.data.filepath)])
+    scene_hash, spec_hash = sha(bpy.data.filepath), sha(args.spec)
     spec = json.loads(args.spec.read_text())
     scene = bpy.context.scene
     scene.render.resolution_x = scene.render.resolution_y = spec['resolution']
@@ -44,8 +49,9 @@ def main():
         records.append({**view, 'matrixWorld': [list(row) for row in camera.matrix_world],
                         'image': view['name']+'.png', 'sha256': sha(scene.render.filepath)})
     report = {'scope': 'Local joint-construction comparison, not full-body registration',
-              'sceneSha256': sha(bpy.data.filepath), 'specSha256': sha(args.spec),
-              'rendererSha256': sha(__file__), 'resolution': spec['resolution'],
+              'sceneSha256': scene_hash, 'specSha256': spec_hash,
+              'stageProvenanceSha256': provenance,
+              'rendererSha256': sha(args.out/'source-snapshot/render_details.py'), 'resolution': spec['resolution'],
               'views': records, 'approval': None}
     (args.out/'details.json').write_text(json.dumps(report,indent=2)+'\n')
 

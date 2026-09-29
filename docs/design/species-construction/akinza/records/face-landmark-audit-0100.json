@@ -1,0 +1,31 @@
+{
+  "approval": null,
+  "scope": "Explicit audit of serialized target landmark; no mesh or original record edited",
+  "originalRecord": "transplant.json",
+  "originalRecordSha256": "4f0a7fc3828db2056e884ae95b9b4eab3c925308684edb7a7ace02b8cc569662",
+  "measuredBase": "/mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0095/head.blend",
+  "measuredBaseSha256": "c63e52fec3d9fc8b204ebf1461ce20fa459cb9e9a7d8434a0c0bf9dfe712c1aa",
+  "originalTargetNose": [
+    1.5189865158511368e-39,
+    1.5189977262388514e-39,
+    1.51900052883578e-39
+  ],
+  "remeasuredTargetNose": [
+    -0.0010796979768201709,
+    -0.3582952916622162,
+    -0.12427704781293869
+  ],
+  "originalLandmarkCorrect": false,
+  "cause": "Target landmark held a Blender vertex-coordinate reference across a Smooth modifier, invalidating the metadata reference in head0100. Immediate vector copies now prevent this. Head0098 did not apply that modifier.",
+  "correctedFields": {
+    "targetNose": [
+      -0.0010796979768201709,
+      -0.3582952916622162,
+      -0.12427704781293869
+    ]
+  },
+  "transformCheck": {
+    "maximumYZResidual": 2.980232227667301e-09
+  },
+  "meshUnchanged": true
+}

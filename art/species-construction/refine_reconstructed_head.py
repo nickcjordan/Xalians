@@ -14,7 +14,7 @@ from mathutils.bvhtree import BVHTree
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from study_provenance import snapshot
-from blender_blockout import material, mesh_stats, sha
+from blender_blockout import material, mesh_stats, sha, sphere
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mesh', type=Path, required=True)
@@ -92,14 +92,11 @@ smooth_region('Cheek residue cleanup',
 smooth_region('Occipital groove reduction',
               lambda x, y, z: ramp(y, .12, .28) * ramp(.44-abs(x), 0, .14)
               * ramp(z+.38, 0, .12), 40)
+smooth_region('Bridge scan residue',
+              lambda x,y,z:ramp(-y,.20,.28)*math.exp(-(x/.085)**2-((z-.105)/.060)**2),180)
 smooth_region('Lower cheek scan cleanup',
               lambda x,y,z: ramp(-y,.10,.18)*ramp(abs(x),.09,.14)
               *ramp(.36-abs(x),0,.08)*ramp(z+.31,0,.06)*ramp(-.11-z,0,.06), 240)
-# Fill the small inferred central valley instead of collapsing the paired pads.
-for vertex in body.data.vertices:
-    x,y,z = vertex.co
-    weight = math.exp(-(x/.048)**2-((z+.22)/.038)**2)*ramp(-y,.16,.24)
-    vertex.co.y -= .036*weight
 native_tree = BVHTree.FromPolygons([v.co for v in body.data.vertices],
                                   [list(p.vertices) for p in body.data.polygons])
 
@@ -111,8 +108,78 @@ def native_front(x, z):
     return hit.y
 
 
-# The underside patch was rejected in studies 0054 and 0057. Preserve native
-# coupled facial geometry; failed recipes remain in their immutable snapshots.
+# Reconstruct only the muzzle's front graph. Smooth compact weights retain
+# native boundary positions and tangents without a rectangular guide collar.
+def ease(t):
+    t=max(0,min(1,t))
+    return t*t*t*(10+t*(-15+6*t))
+
+
+def guide(x,z):
+    chin=-.270+1.8*x*x
+    pads=sum(math.exp(-((x-side*.06)/.065)**2) for side in [-1,1])
+    return chin-.067*pads*math.exp(-((z+.170)/.072)**2)
+
+
+nu,nv=100,100
+positions=np.empty((nv+1,nu+1,2))
+native=np.empty((nv+1,nu+1))
+heights=np.empty((nv+1,nu+1))
+for j in range(nv+1):
+    for i in range(nu+1):
+        x=-.22+.44*i/nu
+        bottom=-.29+.07*(x/.22)**2
+        z=-.115+(bottom+.115)*j/nv
+        positions[j,i]=[x,z]
+        native[j,i]=native_front(x,z)
+        weight=(ease((.18-abs(x))/.07)*ease((-.115-z)/.05)
+                *ease((z-bottom)/.045))
+        nose_protection=ease((.045-abs(x))/.015)*ease((z+.170)/.018)
+        weight*=1-nose_protection
+        heights[j,i]=native[j,i]*(1-weight)+guide(x,z)*weight
+heights=(heights+heights[:,::-1])/2
+verts=[(float(positions[j,i,0]),float(heights[j,i]),float(positions[j,i,1]))
+       for j in range(nv+1) for i in range(nu+1)]
+faces=[]
+n=len(verts);verts.extend((x,.02,z) for x,y,z in list(verts))
+for j in range(nv):
+    for i in range(nu):
+        a=j*(nu+1)+i;b=a+1;c=b+nu+1;d=a+nu+1
+        faces.extend([(a,b,c,d),(a+n,d+n,c+n,b+n)])
+edge=list(range(nu+1))+[j*(nu+1)+nu for j in range(1,nv+1)]
+edge+=list(range(nv*(nu+1)+nu-1,nv*(nu+1)-1,-1))
+edge+=[j*(nu+1) for j in range(nv-1,0,-1)]
+for a,b in zip(edge,edge[1:]+edge[:1]):faces.append((a,a+n,b+n,b))
+cut_verts=[]
+for y in [-1,-.12]:
+    for zside in [0,1]:
+        for i in range(41):
+            x=-.21+.42*i/40
+            z=-.121 if zside==0 else -.285+.07*(x/.22)**2
+            cut_verts.append((x,y,z))
+cut_faces=[]
+for i in range(40):
+    cut_faces.extend([(i,i+1,i+42,i+41),(i+82,i+123,i+124,i+83),
+                      (i,i+82,i+83,i+1),(i+41,i+42,i+124,i+123)])
+cut_faces.extend([(0,41,123,82),(40,122,163,81)])
+cut_mesh=bpy.data.meshes.new('Curved lower-face excision');cut_mesh.from_pydata(cut_verts,[],cut_faces);cut_mesh.update()
+cutter=bpy.data.objects.new('Curved lower-face excision',cut_mesh);bpy.context.collection.objects.link(cutter)
+bm=bmesh.new();bm.from_mesh(cut_mesh);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(cut_mesh);bm.free()
+bpy.context.view_layer.objects.active=body
+cut=body.modifiers.new('Excise complete lower transition','BOOLEAN')
+cut.operation='DIFFERENCE';cut.solver='EXACT';cut.object=cutter
+bpy.ops.object.modifier_apply(modifier=cut.name)
+bpy.data.objects.remove(cutter,do_unlink=True)
+mesh=bpy.data.meshes.new('Coupled lower muzzle surface');mesh.from_pydata(verts,[],faces);mesh.update()
+patch=bpy.data.objects.new('Constrained pad to chin transition',mesh);bpy.context.collection.objects.link(patch)
+bm=bmesh.new();bm.from_mesh(mesh);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(mesh);bm.free()
+bpy.ops.object.select_all(action='DESELECT');body.select_set(True);patch.select_set(True)
+bpy.context.view_layer.objects.active=body;bpy.ops.object.join()
+body.data.remesh_voxel_size=.0025;bpy.ops.object.voxel_remesh()
+smooth_region('Muzzle overlap resampling',lambda x,y,z:ramp(-y,.16,.23)
+              *ease((.15-abs(x))/.025)*ease((-.16-z)/.02)*ease((z+.295)/.025),12)
+native_tree = BVHTree.FromPolygons([v.co for v in body.data.vertices],
+                                  [list(p.vertices) for p in body.data.polygons])
 
 
 clay = material('Head clay', .38)
@@ -136,7 +203,7 @@ def eye_y(side, x, z):
     dx = x-side*EYE_X
     dz = z-EYE_Z
     u, v = dx/EYE_RX, dz/EYE_RZ
-    return float(np.dot(eye_fits[side], [1, u, v, u*u, u*v, v*v]))-.014-.027*(1-u*u-v*v)
+    return float(np.dot(eye_fits[side][:3], [1, u, v]))-.085+.045*u*u+.045*v*v
 
 
 
@@ -167,7 +234,7 @@ for side in [-1, 1]:
     eye_boundaries[side] = boundary
     bpy.ops.mesh.primitive_cylinder_add(vertices=128, radius=1, depth=1, location=(cx, -.61, cz), rotation=(math.pi/2, 0, 0))
     cutter = bpy.context.object
-    cutter.scale = (rx*1.43, rz*1.43, .96)
+    cutter.scale = (rx*1.35, rz*1.35, .96)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     bpy.context.view_layer.objects.active = body
     cut = body.modifiers.new('True eye aperture', 'BOOLEAN')
@@ -185,14 +252,15 @@ for side in [-1, 1]:
     rings, segments = 12, 128
     for j in range(rings+1):
         t = j/rings
-        radius = 1+.48*t
-        blend = t*t*(3-2*t)
+        radius = 1+.65*t
+        blend = min(1, (radius-1)/.30)
+        blend = blend*blend*(3-2*blend)
         for i in range(segments):
             angle = i*math.tau/segments
             ux, uz = math.cos(angle), math.sin(angle)
             px,pz=cx+rx*radius*ux,cz+rz*radius*uz
             inner_y = eye_y(side,px,pz)+.003
-            outer_y = native_front(px,pz)+.003
+            outer_y = native_front(px,pz)
             verts.append((cx+rx*radius*ux,inner_y*(1-blend)+outer_y*blend,cz+rz*radius*uz))
     front_count = len(verts)
     verts.extend((x,0,z) for x,y,z in list(verts))
@@ -261,9 +329,31 @@ bpy.context.view_layer.objects.active=body
 bpy.ops.object.join()
 body.data.remesh_voxel_size=.0022
 bpy.ops.object.voxel_remesh()
-smooth_region('Socket annulus fusion', lambda x,y,z: ramp(-y,.19,.29)*max(
-    max(0,1-abs(math.sqrt(((x-s*EYE_X)/EYE_RX)**2+((z-EYE_Z)/EYE_RZ)**2)-1.47)/.20)
-    for s in [-1,1]), 35)
+def socket_fair_weight(x,y,z):
+    radius=min(math.hypot((x-side*EYE_X)/EYE_RX,(z-EYE_Z)/EYE_RZ) for side in [-1,1])
+    if not 1.05 < radius < 1.75: return 0
+    native_y=native_front(x,z)
+    if y > native_y+.035:return 0
+    return math.sin(math.pi*(radius-1.05)/.70)**2
+
+smooth_region('Socket overlap curvature', socket_fair_weight, 35)
+# Only tiny isolated remnants may be removed, never a meaningful disconnected part.
+bm=bmesh.new();bm.from_mesh(body.data)
+unseen=set(bm.verts);debris=[]
+while unseen:
+    first=unseen.pop();component={first};stack=[first]
+    while stack:
+        v=stack.pop()
+        for edge in v.link_edges:
+            other=edge.other_vert(v)
+            if other in unseen:unseen.remove(other);component.add(other);stack.append(other)
+    if len(component)<=64:
+        bounds=[[min(v.co[i] for v in component) for i in range(3)],
+                [max(v.co[i] for v in component) for i in range(3)]]
+        if max(bounds[1][i]-bounds[0][i] for i in range(3))<.01:
+            debris.append({'vertices':len(component),'bounds':bounds})
+            bmesh.ops.delete(bm,geom=list(component),context='VERTS')
+bm.to_mesh(body.data);bm.free()
 body.data.materials.clear()
 body.data.materials.append(clay)
 body.data.materials.append(nose_mat)
@@ -275,6 +365,28 @@ for poly in body.data.polygons:
     if abs(x) < width and -.153 < z < -.108 and y < -.338:
         poly.material_index = nose_index
 
+# A thin closed-mouth crease follows the final head surface. It does not add a
+# lip shelf or an open cavity, and its projection is measured after all unions.
+mouth_tree=BVHTree.FromPolygons([v.co for v in body.data.vertices],
+                               [list(p.vertices) for p in body.data.polygons])
+mouth_mat=material('Closed mouth crease',.105)
+mouth_paths=[]
+for side in [-1,1]:
+    mouth_paths.append([(side*.105*t,-.192-.020*math.sin(math.pi*t)-.005*t)
+                        for t in np.linspace(0,1,65)])
+mouth_paths.append([(0,z) for z in np.linspace(-.151,-.192,25)])
+for index,path in enumerate(mouth_paths):
+    curve=bpy.data.curves.new('Closed mouth path '+str(index),'CURVE')
+    curve.dimensions='3D';curve.bevel_depth=.0013;curve.bevel_resolution=3
+    curve.use_fill_caps=True
+    spline=curve.splines.new('POLY');spline.points.add(len(path)-1)
+    for point,(x,z) in zip(spline.points,path):
+        hit,_,_,_=mouth_tree.ray_cast(Vector((x,-1,z)),Vector((0,1,0)))
+        if hit is None:raise ValueError('Mouth surface ray missed')
+        point.co=(x,hit.y-.0003,z,1)
+    mouth=bpy.data.objects.new('closed_mouth_'+str(index),curve)
+    bpy.context.collection.objects.link(mouth);mouth.data.materials.append(mouth_mat)
+
 body.name = 'cleaned_head_with_openings'
 bpy.context.view_layer.objects.active = body
 bpy.ops.mesh.customdata_custom_splitnormals_clear()
@@ -285,9 +397,14 @@ bpy.ops.export_scene.gltf(filepath=str(args.out/'shape.glb'), export_format='GLB
 bpy.ops.wm.save_as_mainfile(filepath=str(args.out/'head.blend'))
 (args.out/'refinement.json').write_text(json.dumps({
     'approval': None, 'stageProvenanceSha256': provenance_sha, 'sourceSha256': sha(args.mesh), 'scriptSha256': sha(args.out/'refine_source.py'),
-    'retainNativeMuzzle': True,
+    'retainNativeUpperPads': False,
+    'muzzlePadField': {'centersXZ':[[-.06,-.170],[.06,-.170]],'radiiXZ':[.065,.072],'projection':.067},
+    'closedMouth': {'radius':.0013,'halfWidth':.105,'centerZ':-.192,'surfaceRayCast':True},
+    'noseMaterialRegion': {'z':[-.153,-.108],'maximumY':-.338,'halfWidthRule':'.034*max(.20, 1+.8*(z+.108)/.05)'},
+    'muzzleFairing': {'method':'Compact C2 surface blend with protected nose', 'domain':'Curved jaw footprint with native boundary positions and tangents'}, 'removedDebris': debris,
     'changes': ['Largest connected component retained', 'Positive-X half mirrored',
-                'Region-masked smoothing of scan residue', 'Native muzzle retained',
+                'Region-masked smoothing of scan residue', 'Bounded paired-pad crowns blend into native cheek and chin boundaries',
+                'Thin closed mouth follows final surface without an additive lip',
                 'Eye apertures cut through fused relief', 'Closed separate eyes and forward-centered irises'],
     'before': before, 'body': mesh_stats(body), 'eyes': eye_records,
     'outputs': {f.name: sha(f) for f in args.out.iterdir() if f.suffix in ['.glb', '.blend']}

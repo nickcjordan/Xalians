@@ -1,0 +1,49 @@
+{
+  "approval": null,
+  "scope": "Independent proportion-only review",
+  "candidate": "assembled-0101/attempt-02/render/front.png",
+  "candidateSha256": "0d129c234c4eb43037f66c864efeebd81a7d97cdc3702efcd83b03dee3606dfd",
+  "headScale": 0.5,
+  "reference": "identity-run-0001.png first front",
+  "estimatedLandmarks": {
+    "chinY": [
+      213,
+      221
+    ],
+    "floorY": [
+      743,
+      749
+    ],
+    "earSpanX": [
+      393,
+      757
+    ],
+    "earTopY": [
+      50,
+      55
+    ]
+  },
+  "estimatedRatios": {
+    "earSpanPerHeight": 0.523,
+    "referenceEarTopToChinPerHeight": [
+      0.215,
+      0.23
+    ],
+    "earTopToChinPerHeight": [
+      0.234,
+      0.243
+    ],
+    "referenceEarSpanPerHeight": 0.551
+  },
+  "verdict": "Uniform .50 head scale is closer to the preferred full-body reference than .60. Preserve skull shape. Recover any desired ear emphasis with outer-ear extension rather than vertical skull compression or rescaling the whole head.",
+  "caveats": [
+    "Approximate visual landmarks, not calibrated registration",
+    "Narrow visible neck now appears comparatively long; inspect with the final head before changing jaw anchor",
+    "This assembly uses older body0094; current feet and limb corrections are body0100/attempt02",
+    "Later head reference informs facial character; whole-body reference informs proportions"
+  ],
+  "suggestedEarOnlySpanAdjustment": [
+    1.05,
+    1.06
+  ]
+}

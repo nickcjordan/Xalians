@@ -103,9 +103,17 @@
   ],
   "internalWork": {
     "status": "active-corrections-not-ready-for-approval",
-    "latestAuditedAssembly": "assembled-0063",
+    "latestAuditedAssembly": "assembled-0077",
     "audit": "docs/design/species-construction/akinza/quality-audit-reconstruction-0052.md",
     "workRecord": "docs/design/species-view-packs-active-work.md",
-    "approval": null
+    "approval": null,
+    "rejectedRegressions": [
+      "body-0079",
+      "body-0080",
+      "assembled-0081",
+      "body-0083",
+      "assembled-0084"
+    ],
+    "latestIsolatedTipTest": "assembled-0088"
   }
 }
