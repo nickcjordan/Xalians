@@ -838,7 +838,7 @@
   },
   "internalWork": {
     "status": "active-corrections-not-ready-for-approval",
-    "latestAuditedAssembly": "assembled-0149",
+    "latestAuditedAssembly": "assembled-0156",
     "audit": "docs/design/species-construction/akinza/quality-audit-reconstruction-0052.md",
     "workRecord": "docs/design/species-view-packs-active-work.md",
     "approval": null,
@@ -850,13 +850,16 @@
       "assembled-0084",
       "head-0127",
       "body-0129",
-      "body-0130"
+      "body-0130",
+      "head-0150",
+      "head-0151",
+      "body-0154"
     ],
     "latestIsolatedTipTest": "assembled-0088",
     "currentInternalModel": {
-      "assembly": "assembled-0149",
-      "head": "head-0146",
-      "body": "body-0148",
+      "assembly": "assembled-0156",
+      "head": "head-0152",
+      "body": "body-0155",
       "recipe": "docs/design/species-construction/akinza/reconstruction-recipe.json",
       "approval": null
     }

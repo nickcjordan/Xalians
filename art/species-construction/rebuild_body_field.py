@@ -103,8 +103,11 @@ grid = vdb.FloatGrid.createLevelSetFromPolygons(
     points, triangles=triangles, transform=vdb.createLinearTransform(voxelSize=VS),
     halfWidth=HALF_WIDTH)
 BAND = HALF_WIDTH*VS
-lo_index = np.floor(points.min(axis=0)/VS).astype(int)-24
-hi_index = np.ceil(points.max(axis=0)/VS).astype(int)+24
+# Pad generously: rebuilt tails may reach beyond the input body's bounds, and a
+# grid edge would slice them flat (body 0154).
+PAD = int(math.ceil(.16/VS))
+lo_index = np.floor(points.min(axis=0)/VS).astype(int)-PAD
+hi_index = np.ceil(points.max(axis=0)/VS).astype(int)+PAD
 shape = tuple(int(v) for v in hi_index-lo_index+1)
 field = np.empty(shape, dtype=np.float32)
 grid.copyToArray(field, ijk=tuple(int(v) for v in lo_index))

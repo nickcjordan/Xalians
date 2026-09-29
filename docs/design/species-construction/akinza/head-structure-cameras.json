@@ -1,0 +1,9 @@
+{
+  "resolution": 800,
+  "views": [
+    {"name": "head-back", "target": [0, 0, 0.05], "offset": [0, 6, 0], "orthoScale": 1.7},
+    {"name": "head-top", "target": [0, 0, 0.05], "offset": [0, -0.001, 6], "orthoScale": 1.7},
+    {"name": "head-side", "target": [0, 0, 0.05], "offset": [6, 0, 0], "orthoScale": 1.7},
+    {"name": "head-front", "target": [0, 0, 0.05], "offset": [0, -6, 0], "orthoScale": 1.7}
+  ]
+}

@@ -2,7 +2,16 @@
 
 Updated 2026-09-29.
 
-## Current checkpoint: combined model 0149, 2026-09-29
+## Current checkpoint: combined model 0156, 2026-09-29
+
+- PR #754 merged the 0149 work. Continued from fresh main on `codex/akinza-rear-coat`.
+- Added `add_rear_coat_field.py`; rear coat head 0152 replaces the bald rear dish with flowing clumps parted at the midline. Rejected 0150 (spines) and 0151 (feather shingles).
+- Swept the distal tail rows about 25 percent farther back (`tail-controls-crescent-deep.json`); fixed a field grid-bounds bug that sliced tips flat (0154) and rebuilt body 0155.
+- Assembled 0156; geometry review zero spread. Third independent review passes C04, C06, C12, C19. Height-normalized measurement shows the ear span matches the first sheet and the neck and torso are 30 to 40 percent too wide.
+
+Next unfinished action: slim the neck and torso toward the measured reference widths (neck about .065, shoulders about .20, waist about .14 of figure height) with hips reading slightly wider than the waist, without moving the accepted tail root. Then notch the ear fan above the skull and carve a cupped inner ear, sink the eyes, and refine paws, legs and tail girth, reassembling and reviewing after each substantial change.
+
+## Previous checkpoint: combined model 0149, 2026-09-29
 
 Ownership moved to a new agent after the previous one ran out of credits; Nick asked it to continue the same work. Branch `codex/akinza-joint-reconciliation`. There is still no approval candidate.
 
