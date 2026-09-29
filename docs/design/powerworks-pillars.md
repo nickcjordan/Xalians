@@ -165,3 +165,35 @@ Choosing whom to hit is worth at most 7 points over the plain rule "hit the enem
 
 **Reading.** None of the three levers made the round-to-round choice clearly deeper. Under the pillars as built, the game is decided mostly by the squad and by one plain rule a player learns fast. The sim players are crude, so a person may find more, but the gap between thinking and the plain rule is small everywhere. The research points at where depth comes from in the games that have it: triage against known threats (Into the Breach, Slay the Spire, Wildfrost show enemy intents), and a threat you can stop (charged attacks). Both are parked mechanisms; this is the evidence to reintroduce one, measured with the same tool.
 
+## Turn by turn, 2026-09-29
+
+Nick, after watching the reference games: planning four creatures at once is the paralysis ("you have to click through each creature to see how their moves would result"); a timeline should decide who acts, and on each turn the player makes only that creature's choice. This replaces the workshop's whole-squad planning (2026-09-14, "Whole-squad planning selected") and makes hidden enemy orders moot, since an enemy chooses on its own turn. He also set the goal of "easy to learn, hard to master": a base that is fun as it is, and layers that add strategy for harder battles.
+
+Built as `pillars/turns.ts` beside the whole-squad engine, with its own players (`turnPolicy.ts`), tests (`turns.test.ts`) and measure (`devtools/pillarsTurns.ts`). Two timelines and one layer, all levers:
+
+- **Rounds**: every unit acts once per round, fastest first; two companions next to each other in speed act back to back.
+- **Speed**: a unit's next turn comes `1000 / (100 + speed)` after its last, so faster units act a little more often. The first sweep used `1000 / speed` and the slow preset squad lost every run (machines at 45 to 65 acted up to twice as often as Crystorn at 28); `SPEED_BASE` 100 caps the spread at 1.34 times.
+- **Turn-order layer** (`tempo`): slowing statuses and pulls push the target's next turn back 30% of its interval.
+
+At matched difficulty (roles facility; enemy health 0.62, 0.62, 0.55, 0.55 so the naive player lands near a third on the preset squad; 150 runs, look-ahead 60):
+
+| Mode | Squad | random | biggest number | hardest-hit | planner | look-ahead |
+|---|---|---|---|---|---|---|
+| whole-squad planning | preset | 1% | 36% | 97% | 87% | 93% |
+| whole-squad planning | draft | 25% | 59% | 63% | 60% | 65% |
+| turn by turn, rounds | preset | 2% | 26% | 100% | 84% | 82% |
+| turn by turn, rounds | draft | 22% | 55% | 58% | 51% | 55% |
+| turn by turn, speed | preset | 4% | 15% | 99% | 81% | 57% |
+| turn by turn, speed | draft | 25% | 57% | 57% | 59% | 62% |
+| speed + turn-order layer | preset | 15% | 27% | 100% | 97% | 97% |
+| speed + turn-order layer | draft | 30% | 61% | 72% | 69% | 73% |
+
+Reading:
+
+- **Turn by turn costs nothing the sim can see.** Difficulty and the gap between careless and careful play match whole-squad planning at matched enemy health, and the choice per decision drops from a joint plan of four creatures to one creature's moves and targets.
+- **The best player in every mode is a simple rule**: choose the move by its worth, and send an attack to the enemy it damages most. The planner and look-ahead do worse than that rule on the preset squad, so the sim's "thinking" players are weaker than the rule and cannot measure mastery depth. That is a limit of the tools, not evidence either way; depth now has to be judged by play.
+- **The simple rule is the base game's good news**: a new player who hits where the marks say wins most runs. That is "easy to learn".
+- **The turn-order layer is strong**: every player improves, random play most (2% to 15% on the preset squad). It needs tuning before it is a mastery layer rather than an easy button.
+
+Recommendation: rounds as the base (one strip is one round, easiest to read), the speed timeline and the turn-order layer held as the first mastery layers, and the screen pass next so depth can be judged in play.
+
