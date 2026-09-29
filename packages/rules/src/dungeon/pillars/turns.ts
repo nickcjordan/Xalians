@@ -243,3 +243,33 @@ export function turnCommand(previous: TRun, c: TCommand): { state: TRun; events:
 /** The active companion, for players and the screen. */
 export const activeOf = (s: TRun) => s.team.find((t) => t.id === s.active) ?? null;
 export { legalMoves, legalTargets };
+
+/**
+  1-based round of the encounter. Clocks are seated at k/(n+1) at encounter start (seatClocks)
+  and each unit's clock rises by its own interval per own turn (1 on the round timeline), so the
+  round is floor(the smallest clock among standing units) + 1. On the speed timeline a "round" is
+  not a seated concept (units act at different rates), so this is a turns-based best effort: the
+  fewest turns any standing unit has taken, plus 1.
+*/
+export function roundOf(s: TRun): number {
+  const units = standing(all(s));
+  if (!units.length) return 1;
+  if (s.rules.timeline === "speed") return Math.floor(Math.min(...units.map((u) => s.clock[u.id] / interval(s, u))) - 1) + 1;
+  return Math.floor(Math.min(...units.map((u) => s.clock[u.id]))) + 1;
+}
+/**
+  Every unit of this round (team and enemies, fallen included) in timeline order: the fractional
+  part of its seated clock, which is the seated speed order and fixed for the fight (see
+  seatClocks). done: it has acted this round already (its clock has risen past the round). Fallen
+  units keep their slot so the strip does not reshuffle when someone falls.
+
+  On the speed timeline there is no shared round to slot into, so this falls back to the next few
+  turns as the timeline actually stands (`upcoming`), none of them marked done.
+*/
+export function roundStrip(s: TRun): { unit: Fighter; done: boolean }[] {
+  if (s.rules.timeline === "speed") return upcoming(s, 8).map((unit) => ({ unit, done: false }));
+  const round = roundOf(s);
+  return all(s)
+    .sort((a, b) => (s.clock[a.id] % 1) - (s.clock[b.id] % 1))
+    .map((unit) => ({ unit, done: unit.hp <= 0 ? false : s.clock[unit.id] >= round }));
+}
