@@ -75,7 +75,7 @@
     },
     "integration-followup": {
       "path": "docs/design/species-construction/akinza/quality-audit-reconstruction-0052.md",
-      "sha256": "3ba81ddce47df2612f71e76da0d75959d4dc6caedf42e1d60c167e129a19ced3"
+      "sha256": "3b88511b527e5b4365b9206b24300d7f99b4ceac5becc1ee03eadfba89611b36"
     },
     "assembly-0149-views": {
       "path": "docs/design/species-construction/akinza/evidence/reconstruction-0149-contact.png",
