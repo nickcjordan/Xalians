@@ -3,7 +3,7 @@ import ReclamationFigure, { ReclamationSilhouette } from './reclamationFigure';
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { SwiftGlyph, MediumGlyph, CompanyGlyph, PIECE_RIM } from './reclamationGlyphs';
-import { formatHoldShown, countWord, captionOwned } from './reclamationNarration';
+import { formatHoldShown, countWord, captionOwned, speciesLabel } from './reclamationNarration';
 import { reasonLines, ReasonLines } from './reclamationReasons';
 import { elementOf } from './reclamationVocabulary';
 import { Standing, standingSentence, WhyMarks } from './reclamationInstruments';
@@ -295,9 +295,13 @@ function ReclamationWorld({
 							// pass 38: a strike of yours at a world with no rival in sight will find no target
 							noTarget: seat === you && !!deploying && !!h && h.role === 'strike'
 								&& theirs.length === 0 && !(hiddenEnemyCount > 0),
+							// pass 73: the blow the creature pointed at would land on this one, at full strength
+							blowIn: ghost && ghost.lands && ghost.lands[entry.recordId]
+								? { ...ghost.lands[entry.recordId], by: speciesLabel(ghost.record), role: ghost.role, base: ghost.power, byElement: elementOf(ghost.record), toElement: elementOf(entry.record) }
+								: null,
 							forecast: after,
 							// pass 69: a support creature's sentence carries its mend
-							blowMagnitude: h ? (h.role === 'bolster' ? h.mendMagnitude : h.blowMagnitude) : undefined,
+							blowMagnitude: h ? h.rolePower : undefined,
 							selected: armedRecordId === entry.recordId || movingRecordId === entry.recordId,
 							// pass 38: not at the Ruling, where the winners of the round were dimmed along with the fallen
 							dimmed: !verdict && holdingIds && holdingIds.includes(entry.recordId),

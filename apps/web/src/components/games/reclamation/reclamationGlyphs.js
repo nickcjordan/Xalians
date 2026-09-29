@@ -136,6 +136,17 @@ export function HiddenGlyph({ className }) {
 	bolster a hand lifting a bar
 	shield  a plate over what stands behind it
 */
+// pass 73: an armored creature, as overlapping plates (the shield role's outline is a different thing: an act)
+export function ArmorGlyph({ className }) {
+	return (
+		<svg className={`rec-glyph rec-glyph--armor${className ? ` ${className}` : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+			<path d="M4 10a8 6 0 0 1 16 0" />
+			<path d="M4 15a8 6 0 0 1 16 0" />
+			<path d="M4 20a8 6 0 0 1 16 0" />
+		</svg>
+	);
+}
+
 export function RoleGlyph({ role, className }) {
 	const cls = `rec-glyph rec-glyph--role rec-glyph--role-${role}${className ? ` ${className}` : ''}`;
 	switch (role) {

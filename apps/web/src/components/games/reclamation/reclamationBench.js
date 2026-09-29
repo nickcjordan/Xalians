@@ -6,7 +6,7 @@ import {
 import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { slotStateOf } from './reclamationRoster';
-import { speciesLabel, roleSentence, roleWord, rolePower } from './reclamationNarration';
+import { speciesLabel, roleSentence, roleWord, rolePower, formatBlow } from './reclamationNarration';
 import { FitStrip, fitSentence } from './reclamationInstruments';
 import { fitScale } from './reclamationFit';
 import { prepare, speedOf, flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
@@ -57,7 +57,9 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 	// the base redesign's one glyph per creature: the role it plays at the Clash, the same
 	// on the bench as on the plinth on the table and in the dossier
 	const role = readAt.role;
-	const roleLine = roleSentence(role, rolePower(readAt));
+	// pass 73: a sweep's share on each creature, a bolster's mend; a shield carries none
+	const power = rolePower(readAt, view.rules);
+	const roleLine = roleSentence(role, power);
 	// the attribute lanes that are actually doing something for this creature: the marks
 	// beside the speed number, each with its own lane sentence (Pass 2, assumption 17)
 	const laneMarks = attributeLanes(readAt, view.rules).filter((l) => l.glyph);
@@ -93,6 +95,13 @@ function Plinth({ record, view, you, armed, disabled, onArm, onInspect, onHover,
 				{role && role !== 'none' && (
 					<span className="rec-role-glyph rec-plinth-role" title={roleLine} aria-label={roleLine} data-role={role}>
 						<RoleGlyph role={role} />
+						{/*
+							PASS 73. Its attack, on the mark of the act that throws it: what one blow lands on a
+							creature the chart leaves even, the same number the dashed blow on a target starts
+							from. Nick: the element chart is "the biggest factor here, besides the health and
+							attack power"; health was on every column and attack power was in a title.
+						*/}
+						{typeof power === 'number' && <b className="rec-plinth-power g-mono" data-plinth-power={formatBlow(power)}>{formatBlow(power)}</b>}
 					</span>
 				)}
 				{/* pass 38: speed and the attribute lanes are arithmetic, shown in advanced mode; the dossier always has them */}

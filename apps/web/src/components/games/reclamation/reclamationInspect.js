@@ -208,7 +208,7 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 				<span className="g-label">Role</span>
 				<p className="g-body rec-inspect-role" data-inspect-role={prepared.role}>
 					{prepared.role && prepared.role !== 'none' && <RoleGlyph role={prepared.role} className="rec-inspect-role-glyph" />}
-					{roleSentence(prepared.role, rolePower(prepared))}.
+					{roleSentence(prepared.role, rolePower(prepared, rules))}.
 				</p>
 				{/*
 					PASS 27. The old sentence here read "its role is fixed the moment it is sent;
