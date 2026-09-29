@@ -36,7 +36,15 @@ export type PMove = {
   /** Supports and riders, at most one of each kind and aim. */
   parts: Part[];
 };
-export type Rules = { elementSource: ElementSource; uniformPower: boolean; enemyHpFactor: number };
+export type Rules = {
+  elementSource: ElementSource;
+  uniformPower: boolean;
+  enemyHpFactor: number;
+  /** An attack that rests gains this share of power per rest round (depth pass, part 3). */
+  restBonus?: number;
+  /** Which rooms the run crosses: the prototype facility, or the facility with support roles (depth pass, part 2). */
+  rooms?: "facility" | "roles";
+};
 
 const intensity = (e: MoveEffect) => e.intensity || DEFAULT_INTENSITY;
 const HINDER_GROUPS = ["binding", "attention", "shock", "tempo", "senses"];
@@ -89,7 +97,8 @@ export function readMove(u: Unit, m: Move, rules: Rules, uniform?: number): PMov
     else parts.push(p);
   }
   const rests = Math.max(REST_ROUNDS[m.recovery], m.preparation === "prolonged" ? PROLONGED_REST : 0);
-  return { key: m.key, name: m.name, signature: m.signature, rests, power, area, element, parts };
+  const rested = attacks && rules.restBonus ? Math.floor(power * (1 + rules.restBonus * rests)) : power;
+  return { key: m.key, name: m.name, signature: m.signature, rests, power: rested, area, element, parts };
 }
 
 /** Every move of a unit; under uniform power each attack deals the creature's one number. */

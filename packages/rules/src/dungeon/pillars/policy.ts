@@ -25,6 +25,14 @@ function expectedBlow(s: PRun, e: Fighter): number {
   const total = w.reduce((a, b) => a + b, 0) || 1;
   return foes.reduce((sum, f, k) => sum + (w[k] / total) * blow(e, f), 0);
 }
+/** What an enemy is worth removing: its expected blow, or what its best ready support gives its side. */
+export function threat(s: PRun, e: Fighter): number {
+  let support = 0;
+  e.moves.forEach((m, i) => {
+    if (e.cooldowns[i] === 0) for (const p of m.parts) support = Math.max(support, p.n * (p.kind === "shield" ? 0.6 : 0.8));
+  });
+  return Math.max(expectedBlow(s, e), support);
+}
 /** Blows expected on one companion this round. */
 function incoming(s: PRun, t: Fighter): number {
   const foes = s.team.filter((u) => u.hp > 0);
@@ -43,7 +51,7 @@ export function worth(s: PRun, u: Fighter, i: number, target: Fighter, hp: Recor
       const shield = t.shields.reduce((a, b) => a + b.n, 0);
       const dealt = Math.min(left, Math.max(0, attackOn(u, m, t) - shield));
       v += dealt;
-      if (dealt >= left) v += expectedBlow(s, t) * (actsBefore(s, u, t) ? 1.5 : 0.8);
+      if (dealt >= left) v += threat(s, t) * (actsBefore(s, u, t) ? 1.5 : 0.8);
     }
   }
   for (const p of m.parts) {
@@ -96,17 +104,29 @@ export const biggestPolicy: Policy = (s) => {
   The planner: companions in turn order, each taking the (move, target) worth the most against
   the enemies' health after the orders before it, so kills are shared out and overkill avoided.
 */
-export const plannerPolicy: Policy = (s) => {
+export const plannerPolicy: Policy = (s) => plan(s, false);
+/**
+  The planner that never chooses whom to hit: every attack goes to the enemy it damages most
+  (the lowest health on a tie). Its gap to the planner is what choosing a target is worth.
+*/
+export const hardestHitPolicy: Policy = (s) => plan(s, true);
+function plan(s: PRun, naiveTarget: boolean): Record<string, Order> {
   const orders: Record<string, Order> = {};
   const hp: Record<string, number> = Object.fromEntries(s.enemies.map((e) => [e.id, e.hp]));
   for (const u of turnOrder(s).filter((x) => !x.enemy)) {
     let best: { i: number; t: Fighter; v: number } | null = null;
-    for (const i of legalMoves(u))
-      for (const t of legalTargets(s, u, i)) {
-        if (t.enemy && hp[t.id] <= 0) continue;
+    for (const i of legalMoves(u)) {
+      let targets = legalTargets(s, u, i).filter((t) => !t.enemy || hp[t.id] > 0);
+      if (naiveTarget && targets.some((t) => t.enemy) && u.moves[i].power > 0)
+        targets = [targets.reduce((a, b) => {
+          const da = attackOn(u, u.moves[i], a), db = attackOn(u, u.moves[i], b);
+          return db > da || (db === da && hp[b.id] < hp[a.id]) ? b : a;
+        })];
+      for (const t of targets) {
         const v = worth(s, u, i, t, hp);
         if (!best || v > best.v) best = { i, t, v };
       }
+    }
     if (!best) {
       orders[u.id] = pass(u);
       continue;
@@ -118,7 +138,7 @@ export const plannerPolicy: Policy = (s) => {
   }
   for (const u of s.team.filter((t) => t.hp > 0 && !orders[t.id])) orders[u.id] = pass(u);
   return orders;
-};
+}
 
 import { pillarCommand } from "./engine.ts";
 /** A position's worth for the look-ahead: squad health kept against enemy health left, and the outcome. */
@@ -140,9 +160,9 @@ function rollout(s: PRun, horizon: number): number {
   choices drawn fresh each time) ends in a better position. It is the player who thinks about
   rests and timing, where the planner only sees this round.
 */
-export function lookahead(opts: { candidates: number; horizon: number; samples: number } = { candidates: 3, horizon: 3, samples: 2 }): Policy {
+export function lookahead(opts: { candidates: number; horizon: number; samples: number; from?: Policy } = { candidates: 3, horizon: 3, samples: 2 }): Policy {
   return (s, rand) => {
-    const orders = plannerPolicy(s, rand);
+    const orders = (opts.from ?? plannerPolicy)(s, rand);
     const score = (o: Record<string, Order>) => {
       let sum = 0;
       for (let k = 0; k < opts.samples; k++) {

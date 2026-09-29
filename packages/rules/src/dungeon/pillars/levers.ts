@@ -39,9 +39,10 @@ export const SIGNATURE_ONCE = true;
 export const ENEMY_HP_FACTOR = 0.62;
 /** An enemy picks whom to hit weighted by max HP raised to this power (0: uniform). */
 export const TARGET_SIZE_WEIGHT = 1;
-/** An enemy with a self-shield uses it with this chance when below SHIELD_BELOW of its max HP. */
-export const ENEMY_SHIELD_CHANCE = 0.5;
+/** An enemy values a shield in full on an ally below this share of its max HP, and at 0.4 otherwise. */
 export const ENEMY_SHIELD_BELOW = 0.6;
+/** An enemy's move values are scaled by a random factor in [1 - NOISE/2, 1 + NOISE/2] from the run rng. */
+export const ENEMY_NOISE = 0.3;
 /** Run structure, unchanged from the prototype. */
 export const ENCOUNTER_XP = 10;
 export const FINAL_ENCOUNTER_XP = 30;

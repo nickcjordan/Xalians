@@ -14,6 +14,7 @@
   practice XP, the stalemate rule) is the prototype's.
 */
 import cards from "../cards.json";
+import roles from "./roles.json";
 import chart from "@xalians/content/typeEffectivenessMatrix.json";
 import { readCard, type Card, type Unit } from "../reading.ts";
 import { checkSquad, squadUnits, type Squad } from "../index.ts";
@@ -23,7 +24,7 @@ import {
   ENCOUNTER_XP,
   ENEMY_HP_FACTOR,
   ENEMY_SHIELD_BELOW,
-  ENEMY_SHIELD_CHANCE,
+  ENEMY_NOISE,
   FINAL_ENCOUNTER_XP,
   RECOVERY_STATION_HP,
   SIGNATURE_ONCE,
@@ -91,6 +92,7 @@ const NAMES: Record<string, string> = {
   guardian: "Central guardian",
 };
 export const ROOMS = cards.rooms;
+export const roomsFor = (rules: Rules) => (rules.rooms === "roles" ? roles.rooms.roles : cards.rooms);
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const standing = (units: Fighter[]) => units.filter((u) => u.hp > 0);
 const clone = <T>(v: T): T => structuredClone(v);
@@ -124,8 +126,9 @@ function fighter(u: Unit, rules: Rules): Fighter {
   };
 }
 function enemyFighter(species: string, id: string, hp: number, rules: Rules): Fighter {
-  const card = cards.templates[species as keyof typeof cards.templates] as Card;
-  return fighter(readCard(card, species, id, NAMES[species] ?? species, hp), rules);
+  const card = ((cards.templates as Record<string, unknown>)[species] ?? (roles.templates as Record<string, unknown>)[species]) as Card;
+  const name = NAMES[species] ?? (roles.names as Record<string, string>)[species] ?? species;
+  return fighter(readCard(card, species, id, name, hp), rules);
 }
 
 /** Can this move be used now (ready, signature unspent, does something)? */
@@ -183,19 +186,51 @@ function pickTarget(s: PRun, foes: Fighter[]): Fighter {
   for (let i = 0; i < foes.length; i++) if ((left -= weights[i]) < 0) return foes[i];
   return foes[foes.length - 1];
 }
-/** The enemies' hidden orders: the strongest ready attack, a self-shield sometimes when hurt. */
+/**
+  The enemies' hidden orders. Each standing enemy weighs its ready moves in health, as the
+  squad's planner does: an attack by what it deals to the companion it picks (by size); a heal
+  by the health its most hurt ally is missing; a shield by the blow it may keep off its most
+  hurt ally; a boost by what it adds to its hardest-hitting ally; a hinder by what it takes off
+  the hardest-hitting companion. A little noise from the run rng keeps it from being a script.
+*/
 function prepare(s: PRun) {
   s.orders = {};
+  const team = standing(s.team);
   for (const u of standing(s.enemies)) {
-    const moves = legalMoves(u);
-    if (!moves.length) continue;
-    const shield = moves.find((i) => u.moves[i].power === 0 && u.moves[i].parts.some((p) => p.kind === "shield"));
-    const attacks = moves.filter((i) => u.moves[i].power > 0).sort((a, b) => u.moves[b].power - u.moves[a].power);
-    const hurt = u.hp < u.max * ENEMY_SHIELD_BELOW;
-    const move = shield !== undefined && (hurt ? random(s) < ENEMY_SHIELD_CHANCE : !attacks.length) ? shield : attacks[0] ?? moves[0];
-    const targets = legalTargets(s, u, move);
-    const target = targets.some((t) => t.enemy === u.enemy) || targets[0]?.id === u.id ? targets[0] : pickTarget(s, targets);
-    s.orders[u.id] = { move, target: target.id };
+    const allies = standing(s.enemies);
+    const hurt = [...allies].sort((a, b) => a.hp / a.max - b.hp / b.max)[0];
+    const hitter = [...allies].sort((a, b) => Math.max(...b.moves.map((m) => m.power)) - Math.max(...a.moves.map((m) => m.power)))[0];
+    const threat = [...team].sort((a, b) => Math.max(...b.moves.map((m) => m.power)) - Math.max(...a.moves.map((m) => m.power)))[0];
+    const pick = team.length ? pickTarget(s, team) : undefined;
+    let best: { move: number; target: string; v: number } | null = null;
+    for (const i of legalMoves(u)) {
+      const m = u.moves[i];
+      let v = 0;
+      let target = pick?.id ?? u.id;
+      if (m.power > 0 && pick) v += Math.floor(m.power * step(m.element, pick.element));
+      for (const p of m.parts) {
+        if (p.kind === "heal") {
+          const t = p.aim === "self" ? u : hurt;
+          v += Math.min(p.n, t.max - t.hp);
+          if (!m.power && p.aim !== "self") target = t.id;
+        } else if (p.kind === "shield") {
+          const t = p.aim === "self" ? u : hurt;
+          v += t.hp < t.max * ENEMY_SHIELD_BELOW ? p.n : p.n * 0.4;
+          if (!m.power && p.aim !== "self") target = t.id;
+        } else if (p.kind === "boost") {
+          const t = p.aim === "self" ? u : hitter;
+          v += t.id === u.id ? p.n * 0.5 : p.n * 0.8;
+          if (!m.power && p.aim !== "self") target = t.id;
+        } else if (p.kind === "hinder" && threat) {
+          v += Math.min(p.n, Math.max(...threat.moves.map((x) => x.power))) * 0.8;
+          if (!m.power) target = threat.id;
+        }
+      }
+      v *= 1 - ENEMY_NOISE / 2 + ENEMY_NOISE * random(s);
+      if (!legalTargets(s, u, i).some((t) => t.id === target)) target = legalTargets(s, u, i)[0]?.id ?? u.id;
+      if (!best || v > best.v) best = { move: i, target, v };
+    }
+    if (best) s.orders[u.id] = { move: best.move, target: best.target };
   }
 }
 function enter(s: PRun) {
@@ -209,7 +244,7 @@ function enter(s: PRun) {
     u.boost = 0;
     u.hinder = 0;
   }
-  s.enemies = ROOMS[s.room].enemies.map((row) =>
+  s.enemies = roomsFor(s.rules)[s.room].enemies.map((row) =>
     enemyFighter(String(row[0]), String(row[1]), Math.round(Number(row[2]) * s.rules.enemyHpFactor), s.rules)
   );
   for (const row of [s.team, s.enemies])
@@ -217,7 +252,7 @@ function enter(s: PRun) {
       const j = Math.floor(random(s) * (i + 1));
       [row[i], row[j]] = [row[j], row[i]];
     }
-  s.log.push(`Entered ${ROOMS[s.room].name}.`);
+  s.log.push(`Entered ${roomsFor(s.rules)[s.room].name}.`);
   prepare(s);
 }
 export function createPillarRun(seed = 1, squad: Squad = "starter", rules: Rules = DEFAULT_RULES): PRun {
@@ -341,9 +376,10 @@ export function resolvePillarRound(previous: PRun, orders: Record<string, Order>
     s.phase = "lost";
     s.log.push("The squad has fallen.");
   } else if (!standing(s.enemies).length) {
-    const xp = s.room === ROOMS.length - 1 ? FINAL_ENCOUNTER_XP : ENCOUNTER_XP;
+    const last = roomsFor(s.rules).length - 1;
+    const xp = s.room === last ? FINAL_ENCOUNTER_XP : ENCOUNTER_XP;
     s.xp += xp;
-    s.phase = s.room === ROOMS.length - 1 ? "won" : "camp";
+    s.phase = s.room === last ? "won" : "camp";
     s.log.push(`Encounter cleared. +${xp} practice XP.`);
   } else if ((s.stalled = progress ? 0 : s.stalled + 1) >= STALL_ROUNDS) {
     s.phase = "retreated";
@@ -368,7 +404,7 @@ export function pillarCommand(previous: PRun, c: PCommand): PRun {
     s.phase = "retreated";
   } else {
     s.room++;
-    if (s.room === ROOMS.length - 1) for (const u of standing(s.team)) u.hp = Math.min(u.max, u.hp + RECOVERY_STATION_HP);
+    if (s.room === roomsFor(s.rules).length - 1) for (const u of standing(s.team)) u.hp = Math.min(u.max, u.hp + RECOVERY_STATION_HP);
     enter(s);
   }
   return s;
