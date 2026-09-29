@@ -6,7 +6,7 @@
 */
 import { describe, expect, it } from "vitest";
 import { DEFAULT_RULES, createTurnRun, legalTargets, turnCommand, type Fighter, type Order, type TRun } from "@xalians/rules/dungeon/pillars";
-import { eventWords, playback, turnView, type Cell } from "./view.ts";
+import { eventWords, hpSnapshot, playback, turnDeltas, turnView, type Beat, type Cell } from "./view.ts";
 
 const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: 0.62 };
 
@@ -324,9 +324,9 @@ describe("eventWords", () => {
 
   it("describes a hit with a strong/weak tag and a fall", () => {
     const strong = eventWords(s, { kind: "hit", actor: a, target: b, move: "Test", amount: 7, absorbed: 0, step: 2, fell: false });
-    expect(strong).toContain("(strong)");
+    expect(strong).toContain("strong matchup");
     const weak = eventWords(s, { kind: "hit", actor: a, target: b, move: "Test", amount: 7, absorbed: 0, step: 0.5, fell: false });
-    expect(weak).toContain("(weak)");
+    expect(weak).toContain("weak matchup");
     const fell = eventWords(s, { kind: "hit", actor: a, target: b, move: "Test", amount: 7, absorbed: 0, step: 1, fell: true });
     expect(fell).toContain("fell");
   });
@@ -348,6 +348,92 @@ describe("eventWords", () => {
     const words = eventWords(s, { kind: "redirect", actor: a, from: b, to: s.team[1]?.id ?? a });
     expect(words).toMatch(/^.+ turned from .+ to .+\.$/);
     expect(words.startsWith(s.team[0].name)).toBe(true);
+  });
+});
+
+describe("turn rail", () => {
+  it("marks the active companion NOW, exactly one slot NEXT, and covers the whole round", () => {
+    const s = freshState(1);
+    const v = turnView(s);
+    expect(v.rail.length).toBeGreaterThanOrEqual(s.team.length + s.enemies.length);
+    const now = v.rail.filter((r) => r.state === "now");
+    expect(now.length).toBe(1);
+    expect(now[0].id).toBe(s.active);
+    const next = v.rail.filter((r) => r.state === "next");
+    expect(next.length).toBe(1);
+    expect(v.nextId).toBe(next[0].id);
+  });
+
+  it("peeks past this round's end into the next round's own start, with a round-start marker", () => {
+    const s = freshState(1);
+    const v = turnView(s);
+    const boundary = v.rail.find((r) => r.roundStart !== undefined);
+    expect(boundary).toBeTruthy();
+    expect(boundary!.roundStart).toBe(v.round + 1);
+    // Everything in the round in progress appears before the boundary slot.
+    const boundaryIndex = v.rail.indexOf(boundary!);
+    const thisRoundIds = new Set(v.strip.map((sl) => sl.id));
+    for (let i = 0; i < boundaryIndex; i++) expect(thisRoundIds.has(v.rail[i].id)).toBe(true);
+  });
+
+  it("starts the next round with its fastest unit, not a repeat of this round's last", () => {
+    const s = freshState(1);
+    const v = turnView(s);
+    const boundary = v.rail.find((r) => r.roundStart !== undefined)!;
+    // The next round opens in the same seated order as this one: the rail's first slot.
+    expect(boundary.id).toBe(v.rail[0].id);
+    const before = v.rail[v.rail.indexOf(boundary) - 1];
+    expect(before.id).not.toBe(boundary.id);
+  });
+
+  it("gives no rail outside a companion's turn (camp, won, lost)", () => {
+    const s = freshState(1);
+    const camped = { ...s, phase: "camp" as const };
+    expect(turnView(camped).rail).toEqual([]);
+    expect(turnView(camped).nextId).toBeNull();
+  });
+});
+
+describe("turnDeltas and hpSnapshot", () => {
+  it("snapshots every unit's current (floored at 0) health", () => {
+    const s = freshState(1);
+    const snap = hpSnapshot(s);
+    for (const u of [...s.team, ...s.enemies]) expect(snap[u.id]).toBe(Math.max(0, u.hp));
+  });
+
+  it("reads a negative delta for damage and a positive one for healing since the snapshot", () => {
+    const s = stateWithActiveAttacker();
+    const active = s.team.find((t) => t.id === s.active)!;
+    const i = active.moves.findIndex((m) => m.power > 0);
+    const target = s.enemies.find((e) => e.hp > 0)!.id;
+    const snap = hpSnapshot(s);
+    const { events } = turnCommand(s, { kind: "act", order: { move: i, target } });
+    const beats = playback(s, events);
+    const { deltas } = turnDeltas(snap, beats);
+    const hitEvent = events.find((e) => e.kind === "hit" && e.target === target);
+    if (hitEvent && hitEvent.kind === "hit") expect(deltas[target]).toBe(-hitEvent.amount);
+  });
+
+  it("takes only the most recent read of a unit's health across several beats", () => {
+    const before: Beat[] = [
+      { event: { kind: "hit", actor: "a", target: "x", move: "M", amount: 3, absorbed: 0, step: 1, fell: false }, words: "a hit x for 3.", actor: "a", hp: { x: 7 } },
+      { event: { kind: "hit", actor: "a", target: "x", move: "M", amount: 2, absorbed: 0, step: 1, fell: false }, words: "a hit x for 2.", actor: "a", hp: { x: 5 } },
+    ];
+    const { deltas } = turnDeltas({ x: 10 }, before);
+    expect(deltas.x).toBe(-5);
+  });
+
+  it("keeps at most 4 lines, dropping passes and lapsed moves", () => {
+    const beat = (words: string, kind: "hit" | "pass" | "lapsed" = "hit"): Beat =>
+      kind === "pass"
+        ? { event: { kind: "pass", actor: "a" }, words, actor: "a", hp: {} }
+        : kind === "lapsed"
+        ? { event: { kind: "lapsed", actor: "a", move: "M" }, words, actor: "a", hp: {} }
+        : { event: { kind: "hit", actor: "a", target: "x", move: "M", amount: 1, absorbed: 0, step: 1, fell: false }, words, actor: "a", hp: { x: 1 } };
+    const beats = [beat("one"), beat("skip", "pass"), beat("two"), beat("lapse", "lapsed"), beat("three"), beat("four"), beat("five")];
+    const { lines } = turnDeltas({}, beats);
+    expect(lines.length).toBe(4);
+    expect(lines).toEqual(["two", "three", "four", "five"]);
   });
 });
 

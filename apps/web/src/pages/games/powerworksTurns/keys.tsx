@@ -80,6 +80,7 @@ function CellButton({
   ally,
   armed,
   onPick,
+  onHover,
 }: {
   cell: Cell;
   kind: KeyView["kind"];
@@ -88,6 +89,9 @@ function CellButton({
   ally?: SquadView;
   armed: boolean;
   onPick: () => void;
+  /** Hovering this cell rings its target on the stage (storyboard "choosing" step). Enemy
+      cells only: an ally cell's target already sits in the squad row below the key bar. */
+  onHover?: (targetId: string | null) => void;
 }) {
   const hinderOnly = kind === "support" && cell.before !== undefined;
   const heal = kind === "support" && !hinderOnly;
@@ -104,6 +108,10 @@ function CellButton({
       type="button"
       className={`pwt-cell ${cell.finishes ? "finish" : ""}`}
       onClick={onPick}
+      onMouseEnter={onHover ? () => onHover(cell.target) : undefined}
+      onMouseLeave={onHover ? () => onHover(null) : undefined}
+      onFocus={onHover ? () => onHover(cell.target) : undefined}
+      onBlur={onHover ? () => onHover(null) : undefined}
       disabled={!armed}
       aria-label={label}
       title={label}
@@ -169,12 +177,16 @@ export function KeyCard({
   squad,
   disabled,
   onAct,
+  onHoverTarget,
 }: {
   keyView: KeyView;
   /** The active companion's standing squadmates, for ally cells' portraits. */
   squad: SquadView[];
   disabled: boolean;
   onAct: (target: string) => void;
+  /** Hovering an enemy-aimed cell (or its letter, in the "same" layout) reports the target id,
+      or null on leave (storyboard "choosing" step: ring the enemy, draw the aim line). */
+  onHoverTarget?: (targetId: string | null) => void;
 }) {
   const armed = keyView.state === "ready" && !disabled;
   const foot = footWords(keyView);
@@ -224,6 +236,10 @@ export function KeyCard({
                 disabled={!armed}
                 aria-label={`${keyView.name} on ${c.letter}: ${keyView.cells[0].n} damage`}
                 onClick={() => onAct(c.target)}
+                onMouseEnter={onHoverTarget ? () => onHoverTarget(c.target) : undefined}
+                onMouseLeave={onHoverTarget ? () => onHoverTarget(null) : undefined}
+                onFocus={onHoverTarget ? () => onHoverTarget(c.target) : undefined}
+                onBlur={onHoverTarget ? () => onHoverTarget(null) : undefined}
               >
                 {c.letter}
               </button>
@@ -250,6 +266,7 @@ export function KeyCard({
                   ally={ally}
                   armed={armed}
                   onPick={() => onAct(c.target)}
+                  onHover={keyView.aim === "enemy" ? onHoverTarget : undefined}
                 />
               );
             })}

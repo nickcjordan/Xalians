@@ -39,13 +39,14 @@ describe("Powerworks turn by turn", () => {
     await act(async () => {
       fireEvent.click(cells[0]);
     });
-    // Playback runs; skip it to reach the settled state.
-    const skip = await screen.findByRole("button", { name: /skip/i });
+    // Playback runs; the banner's Skip jumps straight to the next hand-off to the player.
+    const skip = await screen.findByRole("button", { name: /skip to your next turn/i });
     await act(async () => {
       fireEvent.click(skip);
     });
+    // Skip lives in the key bar only while beats play: back on the player's turn it is gone.
     await waitFor(() => {
-      expect(screen.queryByRole("button", { name: /skip/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /skip to your next turn/i })).toBeNull();
     });
   });
 
@@ -56,5 +57,40 @@ describe("Powerworks turn by turn", () => {
     localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state }));
     mount();
     expect(screen.getByRole("button", { name: /continue/i })).toBeInTheDocument();
+  });
+
+  it("carries the harness's stable hooks: banner, spotlight, busy and rail slots", () => {
+    const { container } = mount();
+    const banner = container.querySelector("[data-turn-banner]");
+    expect(banner).toBeTruthy();
+    expect(banner!.getAttribute("data-side")).toBe("squad");
+    const stage = container.querySelector(".pwt-stage");
+    expect(stage!.hasAttribute("data-spotlight")).toBe(true);
+    expect(stage!.getAttribute("data-spotlight")).not.toBe("");
+    const root = container.querySelector('[data-busy]')!;
+    expect(root.getAttribute("data-busy")).toBe("false");
+    const rail = container.querySelector("[data-rail]");
+    expect(rail).toBeTruthy();
+    const slots = container.querySelectorAll("[data-slot]");
+    expect(slots.length).toBeGreaterThan(0);
+    slots.forEach((slot) => {
+      expect(["now", "next", "done", "down", "later"]).toContain(slot.getAttribute("data-state"));
+    });
+  });
+
+  it("sets data-busy=true while a command's beats are playing, and marks the acting enemy's spotlight", async () => {
+    mount();
+    const cells = screen
+      .getAllByRole("button")
+      .filter((b) => / on [A-F], /.test(b.getAttribute("aria-label") || ""));
+    await act(async () => {
+      fireEvent.click(cells[0]);
+    });
+    const root = document.querySelector('[data-busy]')!;
+    expect(root.getAttribute("data-busy")).toBe("true");
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /skip to your next turn/i }));
+    });
+    await waitFor(() => expect(root.getAttribute("data-busy")).toBe("false"));
   });
 });
