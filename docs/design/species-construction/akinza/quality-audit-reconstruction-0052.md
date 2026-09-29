@@ -82,3 +82,15 @@ Current priority, most damaging to likeness first:
 5. The legs still carry knee and calf lumps, the trunk lacks a waist, and the skull underside forms a shelf on a narrow neck.
 
 There is still no approval candidate. These are the next executable corrections.
+
+## Follow-up comparison: 0156
+
+Evidence: [0156 six views](evidence/reconstruction-0156-contact.png), [closeups](evidence/reconstruction-0156-details.png), [turntable](evidence/reconstruction-0156-turntable.png) and [reference comparison](evidence/reconstruction-0156-reference-comparison.png), all from one geometry: head 0152 (rear coat on nose head 0146) with body 0155 (deeper crescent tails), at the tested placement. One closed skin, zero height and ground spread.
+
+`add_rear_coat_field.py` replaces the bald rear dish with locks laid in field space on ray-cast rear surface points. The first attempt radiated spines from one point like a sea urchin; the second laid rounded shingles that read as feathers. The retained 0152 parts the coat at the midline and flows long tapered clumps sideways toward each wing, each spanning about three rows, with locks whose tips would leave the surface dropped so the front silhouette is unchanged. The tails' distal rows sweep about 25 percent farther back, matching the first sheet's profile depth; body 0154 exposed a grid-bounds bug that sliced the new tips flat, fixed in 0155 by padding the field.
+
+Height-normalized silhouette measurement corrects a shared misreading. The ear fan's width matches the first sheet within about .02 of figure height at every level from 3 to 15 percent; it only reads narrow because the neck is about 40 percent and the shoulders and waist about 30 to 40 percent wider than the reference. Widening the fan would be wrong. The first sheet's torso is also pear-shaped, with hips a little wider than shoulders, where the model is the reverse.
+
+The third independent review verified three tails and four toes and passes C04, C06, C12 and C19. It fails the ear rear (still one dish with pinched tips and no head visible between wings), the inner ear cup, eyes proud of the face, the body's missing coat masses and muscle knots, leg lumps, paw toe rows and claw placement, and tail pods in profile.
+
+Next, in order: slim the neck and torso toward the measured reference widths without moving the accepted tail root; notch the fan above the skull and carve a cupped inner ear; sink the eyes; then paws, legs and tail girth. Still no approval candidate.

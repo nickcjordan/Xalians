@@ -85,3 +85,5 @@ The review tool checks output hashes, six principal camera conventions and regis
 ```text
 blender -b --factory-startup --python art/species-construction/rebuild_body_field.py -- --body <shape.glb> --tail-record <fairing.json> --out <new-dir> [--tail-controls <controls.json> --tail-free-body <tail-free shape.glb>]
 ```
+
+`add_rear_coat_field.py` converts a head's skin to a level set and lays flattened, tapered coat locks on its rear surface in field space: sites come from ray casts from behind, the coat parts at the midline and flows toward each wing, lock roots join the skin with a small smooth union, and locks whose tips would leave the surface are dropped. Separate eye, nose and mouth objects are untouched.

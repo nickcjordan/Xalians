@@ -1,6 +1,6 @@
 {
   "approval": null,
-  "scope": "Verified component dependencies and the current combined internal review model 0149. No approval candidate.",
+  "scope": "Verified component dependencies and the current combined internal review model 0156. No approval candidate.",
   "replay": "Use the source-snapshot and stage-start.json beside each output for exact historical code. Current script contents may include later experiments.",
   "body": [
     {
@@ -95,15 +95,15 @@
     }
   ],
   "unfinished": [
-    "Ear fan span, rear surfaces and profile cavity (C07 to C09)",
-    "Eye integration in profile (C03)",
-    "Head-to-neck underside and torso medium form (C10, C11, C20)",
-    "Knee and calf medium form, forepaw edge view (C13 to C15)",
+    "Neck and torso width about 30 to 40 percent over the first sheet (C02, C10, C11)",
+    "Ear fan notch between wings, inner cup and pinched rear tips (C07 to C09)",
+    "Eye sockets in profile (C03)",
+    "Paw toe rows, claw placement and paw scale; leg lumps; tail girth in profile (C13 to C18)",
     "Whole-creature independent audit passes before any request to Nick",
     "Explicit approval from Nick"
   ],
   "combined": {
-    "model": "assembled-0149",
+    "model": "assembled-0156",
     "head": [
       {
         "script": "refine_reconstructed_eyes.py",
@@ -132,6 +132,22 @@
           "path": "untracked/species-construction/akinza/head-0146/nose-refinement.json",
           "sha256": "f1008863e210c06c80aecb59bb03a85621845a0202cd591e8cdc443cafabb42c"
         }
+      },
+      {
+        "script": "add_rear_coat_field.py",
+        "options": "--seed 7 --voxel .0025 --spacing .062 --root-blend .008",
+        "input": {
+          "path": "untracked/species-construction/akinza/head-0146/head.blend",
+          "sha256": "c168d2720898230a2cfd4f6e62da6e2caa381e1c89eb930fe61e6bfb0bc793d0"
+        },
+        "output": {
+          "path": "untracked/species-construction/akinza/head-0152/shape.glb",
+          "sha256": "f8211ca58aa97670698d21f702f8698761975b07b47c4c6e60ee60777b3c808b"
+        },
+        "record": {
+          "path": "untracked/species-construction/akinza/head-0152/rear-coat.json",
+          "sha256": "1db9a81824e54df8b99a95756f9504717e7521ade2264d247fc0485f6fc12091"
+        }
       }
     ],
     "body": [
@@ -151,16 +167,16 @@
           "sha256": "158d95705ac732f3c78baa8a00923f0173fdd60ea8818cace88b934acdb25a81"
         },
         "tailControls": {
-          "path": "docs/design/species-construction/akinza/tail-controls-crescent.json",
-          "sha256": "a212727dc651ac163863ae59fe2336b0b39b3abf141d1dcacf500b8b93735d58"
+          "path": "docs/design/species-construction/akinza/tail-controls-crescent-deep.json",
+          "sha256": "871b78f0c12bbe4676460f2405f82eb6af733845e5d78660428ab1bf754ffa77"
         },
         "output": {
-          "path": "untracked/species-construction/akinza/body-0148/shape.glb",
-          "sha256": "073d787a8ae845ed5996205f63dd5a2b0ef57207fbbfa0c3b89f080c96cb0f74"
+          "path": "untracked/species-construction/akinza/body-0155/shape.glb",
+          "sha256": "c9c537a03c937f51d4fc0963879337438d6cb00642beb5d600a4ce289b487eb4"
         },
         "record": {
-          "path": "untracked/species-construction/akinza/body-0148/field-rebuild.json",
-          "sha256": "18d0d3390c9693607275bf21155d0bc34547495a634d02ffebcc9989582033e1"
+          "path": "untracked/species-construction/akinza/body-0155/field-rebuild.json",
+          "sha256": "65b9140c9dc292c26f1d98e52cc932294d55be9071b75893562e7fc58e081f71"
         }
       }
     ],
@@ -168,26 +184,27 @@
       "script": "assemble_reconstructed_creature.py",
       "options": "--head-scale .50 --jaw-anchor-z .500 --head-depth-offset -.020 --fragment-voxels 5",
       "head": {
-        "path": "untracked/species-construction/akinza/head-0146/shape.glb",
-        "sha256": "ed47fbefe092bbd8210ddb39cf161bd7926ddeaedf9248ef5fe27664fca8812e"
+        "path": "untracked/species-construction/akinza/head-0152/shape.glb",
+        "sha256": "f8211ca58aa97670698d21f702f8698761975b07b47c4c6e60ee60777b3c808b"
       },
       "body": {
-        "path": "untracked/species-construction/akinza/body-0148/shape.glb",
-        "sha256": "073d787a8ae845ed5996205f63dd5a2b0ef57207fbbfa0c3b89f080c96cb0f74"
+        "path": "untracked/species-construction/akinza/body-0155/shape.glb",
+        "sha256": "c9c537a03c937f51d4fc0963879337438d6cb00642beb5d600a4ce289b487eb4"
       },
       "tailRecord": {
-        "path": "untracked/species-construction/akinza/body-0148/fairing.json",
-        "sha256": "5a422d0f7691329e5c27a9b0f8f1f90803508417b3fa617e548984bc98dc6410"
+        "path": "untracked/species-construction/akinza/body-0155/fairing.json",
+        "sha256": "be049b6cf174028dba164518271755da2d5551e77221e945cfbd3692b71a576b"
       },
       "output": {
-        "path": "untracked/species-construction/akinza/assembled-0149/akinza.glb",
-        "sha256": "ad17c99e0039d5f3f8dc5996f292a59ca6ee89bd2307e495a7583c2070e3eb49"
+        "path": "untracked/species-construction/akinza/assembled-0156/akinza.glb",
+        "sha256": "dbed64c3ce3dea5ebade93cd4574d3ea823ee0485d41d992aaa1337149c056a0"
       },
       "record": {
-        "path": "untracked/species-construction/akinza/assembled-0149/assembly.json",
-        "sha256": "3b57c5e6b4a9ae532c2dc9e1dc6ae03c4d14c33daec9ce1cb60e1a34cbd42b95"
+        "path": "untracked/species-construction/akinza/assembled-0156/assembly.json",
+        "sha256": "6e0e36042b8c64a3fa00e77c1cc814e32bbf540692299eacb3f7d8b7409dfca7"
       }
     },
     "renders": "render_shape_study.py --preserve-materials --studio-fill --turntable, then render_details.py with assembled-face-cameras.json, reconstruction-detail-cameras.json, the 0115 neck and tail-body cameras and the 0130 paw cameras"
-  }
+  },
+  "previousCombined": "assembled-0149 (head 0146, body 0148); its chain is in git history"
 }

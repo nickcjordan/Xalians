@@ -97,3 +97,7 @@ A sphere-swept sweep whose radius collapses over one short segment ends in a blu
 When two accepted references disagree, the one that explicitly accepted the aspect governs. The preferred first sheet has drooping plumes; Nick accepted study 0018's "tail and positioning", whose tips curl up. The model follows 0018, and the change is reported to him as a visible shape decision rather than silently applied.
 
 Verify a reviewer's factual claims before acting on them. The first independent review of 0139 counted five tails; the tail closeup shows three. Its underlying observation, petal-shaped tails with tips turning down, was correct and led to the crescent rebuild.
+
+Measure a proportion before correcting it. Two reviewers and the builder all read the ear fan as too narrow. Height-normalized width profiles showed the fan matched the first sheet within about .02 of figure height; the neck and torso were 30 to 40 percent too wide, which made the fan read small. Widening the fan would have compounded the real error. Normalize by figure height, not by a neighboring part that may itself be wrong.
+
+Coat masses read by their shape and flow, not their count. Spines radiating from one point read as a sea urchin, rounded shingles as feathers. Long tapered clumps that part at the midline and flow toward the wings, each overlapping several rows, read as fur. Drop any lock whose tip would leave the surface so the authored silhouette stays intact.
