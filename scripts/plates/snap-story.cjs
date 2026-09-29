@@ -1,7 +1,7 @@
 // Bring the home story's viewer to rest, click through it the way a reader
 // does, and check its rules: the archive screen is on at rest; at every beat at most one thing animates (a living plate with its SVG
 // ready, or a small piece playing), nothing is live mid-change, only the shown
-// beat and the one leaving hold a piece's drawing, nothing overflows sideways,
+// beat and the one leaving hold a piece's drawing (a figure counts as playing while its stage is live), nothing overflows sideways,
 // and the console stays clean. A screenshot of every settled beat is kept.
 //
 // usage: node scripts/plates/snap-story.cjs [wide|laptop|phone|small|reduced|landscape ...]
@@ -34,7 +34,7 @@ const state = (p) =>
 		plates: [...document.querySelectorAll('.story-scene [data-live-plate="ready"]')].map((e) => e.getAttribute('data-plate-src').split('/')[3]),
 		plateSvgHosts: [...document.querySelectorAll('.live-plate-host')].filter((e) => e.childElementCount > 0).length,
 		drawings: document.querySelectorAll('.story-scene [data-piece-live]').length,
-		playing: document.querySelectorAll('.story-scene [data-piece-live="true"]').length,
+		playing: document.querySelectorAll('.story-scene [data-piece-live="true"]').length + document.querySelectorAll('.figure-stage[data-figure-live="true"]').length,
 		overflowX: document.documentElement.scrollWidth > window.innerWidth,
 	}));
 

@@ -24,6 +24,12 @@
 // stays still for `DWELL` of scroll as the reader moves on ("a tiny bit
 // sticky when you start to scroll again"). The story never moves with it.
 //
+// The small beats are figures (docs/design/home-story-figures.md): drawn in light on the page by the figure
+// stage (figureStage.tsx) rather than played on a screen. A change that touches a figure does not run the
+// rack: the words cross-fade where they stand, a recording collapses to a point that becomes the figure, a
+// figure runs on into its next beat or pulls into a point that switches the next screen on (Nick,
+// 2026-09-29: "the transition changes you made, I think, are great").
+//
 // A window too short for the box (a small phone, a phone on its side) shows the
 // shown beat in the page at its natural height instead, with the same controls
 // and the same catch, with the picture centered, but no pause.
@@ -33,6 +39,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { loadFragment } from '@/components/plates/plateStage';
 import { SCREEN_MS, type ScreenState } from './archiveScreen';
+import { FIGURE_TO_SCREEN_MS, FigureStage } from './figureStage';
+import type { FigureKey } from './pieces/figures';
 import { catchAtRest } from './storyCatch';
 
 export type ViewerBeat = {
@@ -43,6 +51,8 @@ export type ViewerBeat = {
 	label: string;
 	/** A small piece: a minor tick on the bar, its numeral only. */
 	minor?: boolean;
+	/** A figure's beat: which figure draws it, and which of its beats this is. It has no screen. */
+	figure?: { key: FigureKey; stage: number };
 	/** A living plate's fragment, fetched ahead while its beat is next. */
 	live?: string;
 	/**
@@ -77,6 +87,9 @@ function reducedMotion() {
 	return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+// The shown beat's picture: its recording's frame, or its figure's place.
+const PICTURE = '.story-scene[data-state="active"] .frame, .story-scene[data-state="active"] [data-figure-slot]';
+
 // How much of the chapter bar a beat's item takes on a wide screen, where the full scenes show their names.
 function barWeight(b: ViewerBeat) {
 	return b.minor ? 0.45 : 1.5;
@@ -109,6 +122,10 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	// picture may go in, so a brief second hold does not take it out again.
 	const [unheld, setUnheld] = React.useState(true);
 	const [screen, setScreen] = React.useState<ScreenState>('standby');
+	// How the last change ran: the rack for one recording to another, or a morph for anything with a figure in it;
+	// and, in a morph away from a recording, the state its screen holds as it goes (collapsed).
+	const [change, setChange] = React.useState<'rack' | 'morph'>('rack');
+	const [leaveScreen, setLeaveScreen] = React.useState<ScreenState | null>(null);
 	const count = beats.length;
 
 	React.useEffect(() => {
@@ -163,7 +180,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 				now = Math.abs(r.top - pinTop) < 2 && r.bottom <= window.innerHeight + 1;
 			} else {
 				// Without the box the beat can be taller than the screen: its picture is what must be in view.
-				const pic = box.querySelector<HTMLElement>('.story-scene[data-state="active"] .frame') ?? box;
+				const pic = box.querySelector<HTMLElement>(PICTURE) ?? box;
 				const r = pic.getBoundingClientRect();
 				const seen = Math.min(window.innerHeight, r.bottom) - Math.max(0, r.top);
 				now = r.height > 0 && seen / r.height >= 0.9;
@@ -199,7 +216,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 				searchMin.current = SCREEN_MS.search;
 				return 'search';
 			}
-			if (!power && (cur === 'on' || cur === 'search' || cur === 'lock' || cur === 'out')) {
+			if (!power && (cur === 'on' || cur === 'search' || cur === 'lock' || cur === 'out' || cur === 'collapse' || cur === 'dark')) {
 				if (quick) return 'standby';
 				t = window.setTimeout(() => setScreen((c) => (c === 'off' ? 'standby' : c)), SCREEN_MS.off);
 				return 'off';
@@ -295,7 +312,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 			const natural = wrap.getBoundingClientRect().top + parseFloat(getComputedStyle(wrap).paddingTop || '0');
 			return natural - pinTop + REST_IN;
 		}
-		const pic = box.querySelector<HTMLElement>('.story-scene[data-state="active"] .frame') ?? box;
+		const pic = box.querySelector<HTMLElement>(PICTURE) ?? box;
 		const r = pic.getBoundingClientRect();
 		return r.height <= window.innerHeight ? r.top - (window.innerHeight - r.height) / 2 : r.top - 8;
 	}, [boxed, pinTop]);
@@ -349,9 +366,11 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 		indexRef.current = index;
 	}, [index]);
 	const cut = React.useCallback(
-		(next: number) => {
+		(next: number, mode: 'rack' | 'morph' = 'rack', leaveAs: ScreenState | null = null) => {
 			const from = indexRef.current;
 			if (next === from) return;
+			setChange(mode);
+			setLeaveScreen(leaveAs);
 			setLeaving(from);
 			window.setTimeout(() => setLeaving((l) => (l === from ? -1 : l)), EXIT_MS);
 			setIndex(next);
@@ -366,32 +385,80 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	// picture (`out`), the viewer cuts to the chosen beat, and its screen searches and locks on as it
 	// always does, the leaving screen holding its static as it fades. A screen standing by just cuts.
 	// Choices made during the rise take the last one.
+	//
+	// With a figure on either side it morphs instead. From a recording: the picture collapses to a point
+	// (`collapse`), then the viewer cuts and the figure stage carries the point to the figure. From a figure: the
+	// viewer cuts at once; to another figure's beat the stage runs on, and to a recording the next screen stands
+	// by until the light from the figure reaches it, then tunes in.
 	const pending = React.useRef<number | null>(null);
+	const toScreen = React.useRef(0);
 	const go = React.useCallback(
 		(to: number) => {
 			const next = Math.max(0, Math.min(count - 1, to));
-			const powered = screen === 'on' || screen === 'search' || screen === 'lock' || screen === 'out';
+			const from = indexRef.current;
+			const morph = !!beats[next]?.figure || !!beats[from]?.figure;
+			const powered = screen === 'on' || screen === 'search' || screen === 'lock' || screen === 'out' || screen === 'collapse' || screen === 'dark';
+			window.clearTimeout(toScreen.current);
 			if (reducedMotion() || !powered) {
-				cut(next);
+				cut(next, morph ? 'morph' : 'rack');
 				return;
 			}
-			if (screen === 'out') {
+			if (screen === 'out' || screen === 'collapse') {
 				pending.current = next;
 				return;
 			}
-			if (next === indexRef.current) return;
+			if (next === from) return;
 			pending.current = next;
+			const land = (target: number) => {
+				if (beats[target]?.figure) {
+					setScreen('on');
+					return;
+				}
+				setScreen('dark');
+				toScreen.current = window.setTimeout(() => {
+					searchMin.current = 150;
+					setScreen((c) => (c === 'dark' ? 'search' : c));
+				}, FIGURE_TO_SCREEN_MS);
+			};
+			if (beats[from]?.figure) {
+				pending.current = null;
+				cut(next, 'morph');
+				land(next);
+				return;
+			}
+			if (morph) {
+				setScreen('collapse');
+				window.setTimeout(() => {
+					const target = pending.current;
+					pending.current = null;
+					if (target == null) return;
+					if (beats[target]?.figure) {
+						cut(target, 'morph', 'collapse');
+						land(target);
+					} else {
+						cut(target);
+						searchMin.current = 0;
+						setScreen('search');
+					}
+				}, SCREEN_MS.collapse);
+				return;
+			}
 			setScreen('out');
 			window.setTimeout(() => {
 				const target = pending.current;
 				pending.current = null;
-				if (target != null) cut(target);
+				if (target != null) cut(target, beats[target]?.figure ? 'morph' : 'rack', beats[target]?.figure ? 'collapse' : null);
+				if (target != null && beats[target]?.figure) {
+					land(target);
+					return;
+				}
 				searchMin.current = 0;
 				setScreen((c) => (c === 'out' ? 'search' : c));
 			}, SCREEN_MS.out);
 		},
-		[count, screen, cut]
+		[count, screen, cut, beats]
 	);
+	React.useEffect(() => () => window.clearTimeout(toScreen.current), []);
 
 	// The arrow keys move the story while it is mostly on the screen, unless the reader is typing.
 	React.useEffect(() => {
@@ -476,6 +543,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 					className={cn('story-box relative', boxed && boxH == null ? 'h-[clamp(360px,calc(100svh-14.5rem),820px)]' : '')}
 					style={boxed && boxH != null ? { height: boxH } : undefined}
 					data-boxed={boxed ? '' : undefined}
+					data-change={change}
 					onTouchStart={onTouchStart}
 					onTouchEnd={onTouchEnd}
 					aria-live="polite"
@@ -494,12 +562,14 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 								inert={i === index ? undefined : true}
 								data-state={i === index ? 'active' : i < index ? 'past' : 'future'}
 								data-leaving={i === leaving ? '' : undefined}
+								data-beat={b.key}
 								tabIndex={i === index ? -1 : undefined}
 							>
-								{b.render(liveNow(i), shown, i === index ? screen : i === leaving && screen !== 'standby' && screen !== 'off' ? 'search' : 'standby', i === index && visible && unheld && screen !== 'standby' && screen !== 'off', play)}
+								{b.render(liveNow(i), shown, i === index ? screen : i === leaving ? (leaveScreen ?? (screen !== 'standby' && screen !== 'off' ? 'search' : 'standby')) : 'standby', i === index && visible && unheld && screen !== 'standby' && screen !== 'off', play)}
 							</div>
 						);
 					})}
+					{beats.some((b) => b.figure) ? <FigureStage beats={beats} index={index} boxRef={boxRef} live={liveNow(index) && !!beat.figure && !reducedMotion()} motion={boxed && !reducedMotion()} /> : null}
 				</div>
 
 				{/* Back and Next, with where the reader is. On the last beat Next reads on into the page. */}

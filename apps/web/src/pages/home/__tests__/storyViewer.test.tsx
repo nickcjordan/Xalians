@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { StoryViewer, type ViewerBeat } from '../storyViewer';
 
 // The story as a click-through viewer: one beat shown at a time, moved on by
@@ -14,6 +14,11 @@ const beats: ViewerBeat[] = [
 
 const states = (c: HTMLElement) => [...c.querySelectorAll('.story-scene')].map((s) => s.getAttribute('data-state'));
 const shown = (c: HTMLElement) => [...c.querySelectorAll('[data-shown]')].map((e) => e.getAttribute('data-shown'));
+
+// The figure stage draws on a canvas, and jsdom has none to draw on.
+beforeAll(() => {
+	HTMLCanvasElement.prototype.getContext = (() => null) as unknown as HTMLCanvasElement['getContext'];
+});
 
 afterEach(() => {
 	vi.useRealTimers();
@@ -172,6 +177,53 @@ describe('StoryViewer', () => {
 		expect(screens()[1]).toBe('lock');
 		for (let i = 0; i < 6; i++) act(() => { vi.advanceTimersByTime(100); });
 		expect(screens()[1]).toBe('on');
+		vi.unstubAllGlobals();
+	});
+
+	it('morphs through a figure: the screen collapses into it, it runs on into its next beat, and the next screen waits dark for its light', () => {
+		vi.useFakeTimers();
+		let y = 0;
+		vi.stubGlobal('innerHeight', 800);
+		vi.stubGlobal('scrollTo', (o: ScrollToOptions) => {
+			y = o.top ?? y;
+		});
+		Object.defineProperty(window, 'scrollY', { configurable: true, get: () => y });
+		const probe: ViewerBeat[] = [
+			{ key: 'a', n: '01', label: 'Recording', render: (_l, _s, sc) => <p data-screen={sc}>A</p> },
+			{ key: 'b', n: '02', label: 'Figure one', minor: true, figure: { key: 'generators', stage: 0 }, render: (live) => <p data-fig-live={String(live)}>B</p> },
+			{ key: 'c', n: '03', label: 'Figure two', minor: true, figure: { key: 'generators', stage: 1 }, render: (live) => <p data-fig-live={String(live)}>C</p> },
+			{ key: 'd', n: '04', label: 'Recording two', render: (_l, _s, sc) => <p data-screen={sc}>D</p> },
+		];
+		const { container } = render(<StoryViewer id="story" title={<h2 id="story-title">The Story</h2>} beats={probe} />);
+		container.querySelector('section')!.getBoundingClientRect = () => rect(900 - y, 1200)();
+		const box = () => container.querySelector('.story-box')!;
+		const screenOf = (k: string) => container.querySelector(`.story-scene[data-beat="${k}"] [data-screen]`)?.getAttribute('data-screen');
+		act(() => { window.dispatchEvent(new Event('scroll')); });
+		act(() => { window.dispatchEvent(new WheelEvent('wheel', { deltaY: 600, cancelable: true })); });
+		for (let i = 0; i < 20; i++) act(() => { vi.advanceTimersByTime(100); });
+		expect(screenOf('a')).toBe('on');
+		expect(container.querySelector('.figure-stage')).not.toBeNull();
+		// Recording to figure: the picture collapses first; the beat has not changed yet.
+		fireEvent.click(screen.getByRole('button', { name: /Next/ }));
+		expect(screenOf('a')).toBe('collapse');
+		expect(states(container)).toEqual(['active', 'future', 'future', 'future']);
+		act(() => { vi.advanceTimersByTime(450); });
+		// Cut, as a morph: no rack, and the leaving screen stays collapsed as it goes.
+		expect(states(container)).toEqual(['past', 'active', 'future', 'future']);
+		expect(box().getAttribute('data-change')).toBe('morph');
+		expect(screenOf('a')).toBe('collapse');
+		// Figure to figure: at once, the same figure running on.
+		fireEvent.click(screen.getByRole('button', { name: /Next/ }));
+		expect(states(container)).toEqual(['past', 'past', 'active', 'future']);
+		expect(box().getAttribute('data-change')).toBe('morph');
+		// Figure to recording: the screen waits dark for the light, then tunes in.
+		fireEvent.click(screen.getByRole('button', { name: /Next/ }));
+		expect(states(container)).toEqual(['past', 'past', 'past', 'active']);
+		expect(screenOf('d')).toBe('dark');
+		act(() => { vi.advanceTimersByTime(950); });
+		expect(screenOf('d')).toBe('search');
+		for (let i = 0; i < 12; i++) act(() => { vi.advanceTimersByTime(100); });
+		expect(screenOf('d')).toBe('on');
 		vi.unstubAllGlobals();
 	});
 
