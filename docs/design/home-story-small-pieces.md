@@ -32,6 +32,8 @@ One genome helix model serves the plague and the token: a double helix with a ma
 
 ## 4. The pieces
 
+> **2026-09-29:** beats 2 and 3 are no longer small pieces on the archive screen. They are the Generators figure (`home-story-figures.md`), and `vat.ts` is gone. Their entries below are kept as the record of the earlier build.
+
 ### Beat 2 · "Designed to thrive in Xalia's most extreme environments"
 
 No creature is drawn (Nick, 2026-09-27: "I don't want to use the creature art in that section necessarily because I'm still iterating on what the creature art should look like... we are only showing art representing planets and objects and concepts rather than distinct creatures"). The first build's species silhouettes gave way to the genome, which also gives beats 2, 3, 5 and 6 one subject: the Generator writes it, APEX takes it, the plague burns it, the token rebuilds it.

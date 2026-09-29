@@ -381,7 +381,8 @@
 	.archive[data-screen="standby"] .archive-hud-clock,
 	.archive[data-screen="search"] .archive-hud-clock,
 	.archive[data-screen="lock"] .archive-hud-clock,
-	.archive[data-screen="out"] .archive-hud-clock { opacity: .35; }
+	.archive[data-screen="out"] .archive-hud-clock,
+	.archive[data-screen="dark"] .archive-hud-clock { opacity: .35; }
 
 	/* Tuning in, in two parts (archiveScreen.tsx). Search: static bursts in and holds, the picture not yet
 	   shown, for as long as the recording needs to be ready to move. Lock: the picture opens out of a bright
@@ -396,6 +397,16 @@
 	/* Leaving a recording for another: static rises over the picture until it is gone. */
 	.archive[data-screen="out"] .archive-static { animation: archive-static-rise 320ms linear both, archive-jitter 240ms steps(6) infinite; }
 	.archive[data-screen="out"] .archive-picture { animation: archive-sink 320ms linear both; }
+	/* Collapse: on to a figure. The picture flattens to a bright line, the line shrinks to a point, and the
+	   figure stage takes the point on from there (figureStage.tsx); the glass stays dark as the beat goes. */
+	.archive[data-screen="collapse"] .archive-picture { animation: archive-collapse 420ms cubic-bezier(.55, 0, .75, .4) both; }
+	.archive[data-screen="collapse"] .archive-picture::after { animation: archive-collapse-flash 420ms linear both; }
+	.archive[data-screen="collapse"] .archive-static { opacity: 0; }
+	@keyframes archive-collapse { 0% { transform: scale(1, 1); } 52% { transform: scale(1, .006); } 100% { transform: scale(0, .006); } }
+	@keyframes archive-collapse-flash { 0% { opacity: 0; } 50% { opacity: .9; } 100% { opacity: 1; } }
+	/* Dark: waiting for the light coming back from a figure; nothing on the glass yet. */
+	.archive[data-screen="dark"] .archive-picture { opacity: 0; }
+	.archive[data-screen="dark"] .archive-static { opacity: 0; }
 	/* Off: the picture collapses to a line and goes. */
 	.archive[data-screen="off"] .archive-picture { animation: archive-off 380ms cubic-bezier(.6, 0, .9, .4) both; }
 	.archive-picture { will-change: transform; }
@@ -536,6 +547,19 @@
 		.story-scene[data-leaving] { transition: none; }
 	}
 	.story-box:not([data-boxed]) .story-scene { position: relative; inset: auto; transform: none; opacity: 1; }
+	/* A change with a figure in it does not run the rack (storyViewer.tsx, figureStage.tsx): the beats stay
+	   where they stand and cross-fade, and the light between the pictures does the travelling. */
+	.story-box[data-change="morph"] .story-scene[data-state="past"],
+	.story-box[data-change="morph"] .story-scene[data-state="future"] { transform: none; opacity: 0; }
+	.story-box[data-change="morph"] .story-scene[data-state="active"],
+	.story-box[data-change="morph"] .story-scene[data-leaving] { transition: opacity 520ms cubic-bezier(.2, .7, .2, 1); }
+	/* The words arrive sooner than after the rack: nothing has to seat first, and the reading column is never left empty for long. */
+	.story-box[data-change="morph"] .story-scene[data-state="active"] .scene-read { transition-delay: 160ms; }
+	.story-box[data-change="morph"] .story-scene[data-state="active"] .scene-label { transition-delay: 260ms; }
+	/* A screen coming back from a figure waits for the figure to pull in before it appears. */
+	.story-box[data-change="morph"] .story-scene[data-state="active"]:has(.archive) { transition-delay: 240ms; }
+	/* A figure's place: no frame, no screen; the figure stage draws over it. */
+	.figure-slot { display: block; }
 	.story-scene[data-state="active"] { z-index: 1; pointer-events: auto; }
 
 	/* One column by default (a phone): the painting takes the height the words

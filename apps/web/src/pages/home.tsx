@@ -6,7 +6,7 @@
 // story's words are Nick's (git 1285604e, my-app/src/pages/home.js) and the
 // 2021 Yetimoth entry, and every beat's headline is a phrase of his. The
 // agent-written text is each scene's small label (SCENE_LABEL) and each small
-// piece's description for screen readers: plain accounts of what is shown,
+// piece's and figure's label and description for screen readers: plain accounts of what is shown,
 // fact-checked against the planet histories with the lore-factcheck skill.
 import * as React from 'react';
 import { Link } from 'react-router';
@@ -26,6 +26,7 @@ import { StoryViewer, type ViewerBeat } from './home/storyViewer';
 import { ArchivePlay, ArchiveScreen, type ScreenState } from './home/archiveScreen';
 import { SmallPiece } from './home/pieces/smallPiece';
 import type { PieceKey } from './home/pieces/pieces';
+import type { FigureKey } from './home/pieces/figures';
 
 /* ------------------------------------------------------------------ copy */
 
@@ -273,43 +274,48 @@ type Era = keyof typeof SCENE_LABEL;
 
 type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; ar: number; position?: string; /** Height kept for a longer label under the frame (the side layouts' default is 7rem). */ labelRoom?: string; /** Cropped to 16:9 on a phone. */ phoneVideo?: boolean };
 type Piece = { kind: 'piece'; key: string; name: string; headline: string; text: string; label: { title: string; text: string }; mode: PieceKey; alt: string };
+/** A beat drawn as a figure on the page (docs/design/home-story-figures.md): no screen; `stage` is which of the figure's beats it is. */
+type FigureBeat = { kind: 'figure'; key: string; figure: FigureKey; stage: number; name: string; headline: string; text: string; label: { title: string; text: string }; alt: string };
 
 // Each recording's readout on its archive screen: where it was recorded, or what it is.
-const RECORDED: Record<string, string> = { unbirth: 'Floria', forms: 'Generator vat', apex: 'Generator vat', 'end-wars': 'Grimedes', plague: 'Genome record', token: 'Genome record', present: 'Valleron' };
+const RECORDED: Record<string, string> = { unbirth: 'Floria', 'end-wars': 'Grimedes', plague: 'Genome record', token: 'Genome record', present: 'Valleron' };
 // Each reel's clock starts partway in, so the clip reads as a cut from a longer recording.
 const reelStart = (i: number) => 1800 + ((i * 7919) % 5400);
 
 // The story's beats, in order (docs/design/home-story-content-plan.md). A
 // headline is a phrase from Nick's 2022 page; the reading text is his
 // paragraph. The small pieces are drawn live (pages/home/pieces/,
-// docs/design/home-story-small-pieces.md).
-const BEATS: Array<Spread | Piece> = [
+// docs/design/home-story-small-pieces.md); beats 2 and 3 are one figure, the
+// Generators (docs/design/home-story-figures.md).
+const BEATS: Array<Spread | Piece | FigureBeat> = [
 	{ kind: 'scene', art: ART.unbirth, headline: 'They birthed the first Xalians', text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', ar: 21 / 9, position: 'object-[center_40%]' },
 	{
-		kind: 'piece',
-		key: 'forms',
+		kind: 'figure',
+		key: 'generators',
+		figure: 'generators',
+		stage: 0,
 		name: 'The Xalian Generators',
 		headline: "Designed to thrive in Xalia's most extreme environments",
 		text: GENERATORS,
 		label: {
-			title: 'A Generator’s vat',
-			text: 'A genome takes shape in a Generator’s vat and is rewritten for each world the recording cuts to, Saiphus, Magmuth and Krystos, each with its own Generator. Then a heartbeat starts.',
+			title: 'A Generator, world after world',
+			text: 'The Generators were built for the worlds they stood on. As the worlds pass, the machine reads each one, and the seeds of life in its vat take on forms suited to it.',
 		},
-		mode: 'forms',
-		alt: "A round window into a Generator's vat of green gel, bubbles rising. Points of light write a genome helix in the gel, pair by pair. The recording cuts between three Generators, each on its own world, shown on a display beside the window: Saiphus, a gas giant; Magmuth, split by molten channels; and frozen Krystos. With each, the gel takes on that world's light and the helix's bases are rewritten in its colors. Then a heartbeat starts on the life-signs line.",
+		alt: "A heavy steel Generator with a tall glowing vat stands still while worlds pass behind it: a storm world, a lava world, an ice world and a sea. With each, the sensor ring on its mast pulses, the vat's gel takes the world's light, and the dark seeds of life floating inside take on forms suited to that world: winged, armored, spiked, bell-shaped.",
 	},
 	{
-		kind: 'piece',
+		kind: 'figure',
 		key: 'apex',
+		figure: 'generators',
+		stage: 1,
 		name: 'APEX takes the Generators',
 		headline: "The galaxy's first artificial intelligence",
 		text: APEX_RELEASED,
 		label: {
-			title: 'The same vat, under APEX',
-			text: 'Under the APEX Accords, signed by the Thousand Families, the Generators were placed under the control of APEX. Its light takes the vat, the genome and the display, and the heartbeat falls into a machine’s time.',
+			title: 'The Generators, under APEX',
+			text: 'Under the APEX Accords, signed by the Thousand Families, the Generators were placed under the control of APEX. Here, as its links take hold, the life in each vat stops changing with its world and keeps APEX’s time.',
 		},
-		mode: 'apex',
-		alt: "The same vat. A thin line of violet light runs round the window's rim and threads into the glass; the gel is overtaken from the edge inward, the helix's pairs turn violet as the light reaches them, and the bubbles stop where they are. A net of the same light closes over the display, and last the heartbeat turns violet and falls into an even, machine-regular beat.",
+		alt: "The machine's lights dip. The view pulls back to show more Generators, each on its own world, with dark space between them. A see-through lattice resolves above them, marked APEX, and dashed links snap from it to each of them. In their vats the seeds stop changing, line up down the middle and pulse together on one steady beat.",
 	},
 	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: END_WARS, layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
 	{
@@ -370,6 +376,28 @@ function SceneReading({ n, name, headline, text, className }: { n: string; name:
 
 const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 	const n = numeral(i);
+	if (sp.kind === 'figure') {
+		// A figure: its place in the spread, where the figure stage draws it (no frame, no screen), its label
+		// under it and its words beside it, like any beat.
+		return {
+			key: sp.key,
+			n,
+			label: sp.name,
+			minor: true,
+			figure: { key: sp.figure, stage: sp.stage },
+			render: () => (
+				<div className="scene-spread" data-layout="side" style={{ '--ar': 16 / 9 } as React.CSSProperties}>
+					<div className="scene-art">
+						<div className="scene-frame">
+							<div data-figure-slot={sp.figure} className="figure-slot relative aspect-video" role="img" aria-label={sp.alt} />
+						</div>
+						<SceneLabel label={sp.label} />
+					</div>
+					<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} />
+				</div>
+			),
+		};
+	}
 	if (sp.kind === 'piece') {
 		// A small piece: one animation on the archive screen, its label under it,
 		// its words beside it, like a scene. Off the screen it holds nothing in the DOM.
