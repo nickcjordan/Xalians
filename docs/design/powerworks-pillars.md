@@ -144,3 +144,24 @@ Reading:
 - **Difficulty moved.** Every attack now carries an element, so the facility's three machine elements matter to every creature, and the same enemy health is easier on drafts. At 0.8 the planner wins 59% of random drafts and the naive "biggest number" player 14% of preset runs: steep. Enemy health is set in the screen pass against Nick's play.
 - **Looking ahead adds little yet** (0 to 8 points): most choices are decided this round; rests add some timing. Worth watching when parked mechanisms return.
 
+## Depth pass, 2026-09-28
+
+Nick asked for one bounded pass on the mechanisms before the screen, because the rules pass hinted the choices were thin. Three questions, Path 1 rules, `devtools/pillarsDepth.ts` (150 runs per player; the look-ahead over 100, about ±10 points). New tooling: `pillars/roles.json`, a test facility whose rooms add support enemies built from the pillars' grammar (a Repair drone that heals, a Barrier node that shields, a Signal jammer that hinders, an Overclock relay that boosts; not canon); an enemy planner that weighs heal, shield, boost and hinder in health like the squad's; a "hardest-hit" player that sends every attack to the enemy it damages most; a rest-bonus lever.
+
+**1. Difficulty.** On the preset squad a real gap exists: the prototype facility at 0.75 of row health, or the roles facility at 0.62, has random play winning 1 to 4%, the naive "biggest number" player about a third, and a careful player 87 to 100%. On random drafts the gap compresses (random about a quarter, careful 57 to 70%): the squad decides more than the play.
+
+**2. Enemy roles and target choice.**
+
+| Rooms | Enemy health | Squad | random | biggest number | hardest-hit targets | planner | look-ahead | look-ahead from hardest-hit | target choice worth |
+|---|---|---|---|---|---|---|---|---|---|
+| facility | 0.75 | preset | 4% | 32% | 100% | 100% | 99% | 98% | -2 pts |
+| facility | 0.75 | draft | 22% | 47% | 56% | 57% | 57% | 58% | 4 pts |
+| roles | 0.62 | preset | 1% | 36% | 97% | 87% | 93% | 96% | -1 pts |
+| roles | 0.62 | draft | 25% | 59% | 63% | 60% | 66% | 70% | 7 pts |
+
+Choosing whom to hit is worth at most 7 points over the plain rule "hit the enemy your attack damages most", even with enemies that heal, shield and hinder. The support enemies made the facility harder, not deeper.
+
+**3. Rests.** A bonus of 25% power per rest round raised what planning ahead is worth on the preset squad from 4 to 12 points (drafts unchanged at 6), but it also raised the machines' charged attacks (they rest 2), so the game got much harder (careful play 87% to 53%) and the two effects cannot be told apart. Not adopted; `restBonus` stays in the rules, off.
+
+**Reading.** None of the three levers made the round-to-round choice clearly deeper. Under the pillars as built, the game is decided mostly by the squad and by one plain rule a player learns fast. The sim players are crude, so a person may find more, but the gap between thinking and the plain rule is small everywhere. The research points at where depth comes from in the games that have it: triage against known threats (Into the Breach, Slay the Spire, Wildfrost show enemy intents), and a threat you can stop (charged attacks). Both are parked mechanisms; this is the evidence to reintroduce one, measured with the same tool.
+

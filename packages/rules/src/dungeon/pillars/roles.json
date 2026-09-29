@@ -1,0 +1,292 @@
+{
+ "_note": "Pillar-only enemy roles for the depth pass (docs/design/powerworks-pillars.md): the same card shape as ../cards.json, using the supports. Not canon; a test facility.",
+ "names": {
+  "mender": "Repair drone",
+  "warden": "Barrier node",
+  "jammer": "Signal jammer",
+  "rallier": "Overclock relay"
+ },
+ "templates": {
+  "mender": {
+   "hp": 26,
+   "speed": 55,
+   "element": "sand",
+   "enemy": true,
+   "attrs": {
+    "strength": 50,
+    "willpower": 50
+   },
+   "moves": [
+    {
+     "key": "patch-weld",
+     "name": "Patch weld",
+     "approach": "stationary",
+     "range": "short",
+     "preparation": "brief",
+     "recovery": "repeatable",
+     "effects": [
+      {
+       "key": "outcome",
+       "type": "restore",
+       "recipient": "target",
+       "likelihood": "consistent",
+       "intensity": 80
+      }
+     ]
+    },
+    {
+     "key": "spark-jab",
+     "name": "Spark jab",
+     "approach": "closing",
+     "range": "contact",
+     "preparation": "brief",
+     "recovery": "repeatable",
+     "effects": [
+      {
+       "key": "outcome",
+       "type": "harm",
+       "recipient": "target",
+       "likelihood": "consistent",
+       "intensity": 40,
+       "mechanism": "impact"
+      }
+     ]
+    }
+   ]
+  },
+  "warden": {
+   "hp": 30,
+   "speed": 40,
+   "element": "sand",
+   "enemy": true,
+   "attrs": {
+    "strength": 50,
+    "willpower": 50
+   },
+   "moves": [
+    {
+     "key": "project-barrier",
+     "name": "Project barrier",
+     "approach": "stationary",
+     "range": "medium",
+     "preparation": "brief",
+     "recovery": "repeatable",
+     "effects": [
+      {
+       "key": "outcome",
+       "type": "protect",
+       "recipient": "target",
+       "likelihood": "consistent",
+       "intensity": 80
+      }
+     ]
+    },
+    {
+     "key": "ram",
+     "name": "Ram",
+     "approach": "closing",
+     "range": "contact",
+     "preparation": "brief",
+     "recovery": "repeatable",
+     "effects": [
+      {
+       "key": "outcome",
+       "type": "harm",
+       "recipient": "target",
+       "likelihood": "consistent",
+       "intensity": 50,
+       "mechanism": "impact"
+      }
+     ]
+    }
+   ]
+  },
+  "jammer": {
+   "hp": 22,
+   "speed": 70,
+   "element": "electric",
+   "enemy": true,
+   "attrs": {
+    "strength": 50,
+    "willpower": 50
+   },
+   "moves": [
+    {
+     "key": "signal-jam",
+     "name": "Signal jam",
+     "approach": "stationary",
+     "range": "medium",
+     "preparation": "brief",
+     "recovery": "repeatable",
+     "effects": [
+      {
+       "key": "outcome",
+       "type": "status",
+       "recipient": "target",
+       "likelihood": "consistent",
+       "intensity": 70,
+       "status": "frightened",
+       "persistence": "lingering",
+       "duration": "brief",
+       "removable": [
+        "disrupting"
+       ]
+      }
+     ]
+    },
+    {
+     "key": "zap",
+     "name": "Zap",
+     "approach": "stationary",
+     "range": "short",
+     "preparation": "brief",
+     "recovery": "repeatable",
+     "effects": [
+      {
+       "key": "outcome",
+       "type": "harm",
+       "recipient": "target",
+       "likelihood": "consistent",
+       "intensity": 40,
+       "mechanism": "elemental"
+      }
+     ],
+     "element": "electric"
+    }
+   ]
+  },
+  "rallier": {
+   "hp": 24,
+   "speed": 58,
+   "element": "electric",
+   "enemy": true,
+   "attrs": {
+    "strength": 50,
+    "willpower": 50
+   },
+   "moves": [
+    {
+     "key": "overclock",
+     "name": "Overclock",
+     "approach": "stationary",
+     "range": "medium",
+     "preparation": "brief",
+     "recovery": "repeatable",
+     "effects": [
+      {
+       "key": "outcome",
+       "type": "status",
+       "recipient": "target",
+       "likelihood": "consistent",
+       "intensity": 60,
+       "status": "stimulated",
+       "persistence": "lingering",
+       "duration": "brief",
+       "removable": [
+        "stabilizing"
+       ]
+      }
+     ]
+    },
+    {
+     "key": "zap",
+     "name": "Zap",
+     "approach": "stationary",
+     "range": "short",
+     "preparation": "brief",
+     "recovery": "repeatable",
+     "effects": [
+      {
+       "key": "outcome",
+       "type": "harm",
+       "recipient": "target",
+       "likelihood": "consistent",
+       "intensity": 40,
+       "mechanism": "elemental"
+      }
+     ],
+     "element": "electric"
+    }
+   ]
+  }
+ },
+ "rooms": {
+  "roles": [
+   {
+    "name": "1. Service entrance",
+    "enemies": [
+     [
+      "crawler",
+      "M1",
+      22
+     ],
+     [
+      "crawler",
+      "M2",
+      22
+     ]
+    ]
+   },
+   {
+    "name": "2. Security checkpoint",
+    "enemies": [
+     [
+      "crawler",
+      "M3",
+      22
+     ],
+     [
+      "mender",
+      "R2",
+      26
+     ],
+     [
+      "drone",
+      "D2",
+      24
+     ]
+    ]
+   },
+   {
+    "name": "3. Power chamber",
+    "enemies": [
+     [
+      "discharge",
+      "V3",
+      48
+     ],
+     [
+      "warden",
+      "W3",
+      30
+     ],
+     [
+      "jammer",
+      "J3",
+      22
+     ]
+    ]
+   },
+   {
+    "name": "4. Control chamber",
+    "enemies": [
+     [
+      "guardian",
+      "B4",
+      110
+     ],
+     [
+      "mender",
+      "R4",
+      26
+     ],
+     [
+      "rallier",
+      "O4",
+      24
+     ]
+    ]
+   }
+  ]
+ }
+}
