@@ -192,6 +192,13 @@ export function HoldBar({ hold, after, unstrained, side, className }) {
 	hot, too cold or the wrong air, two figures where company moves it, a cross where it
 	would fall.
 
+	PASS 74: the dashed body box is gone (docs/design/reclamation-no-body-box.md). Nick,
+	2026-09-29: the dotted lines around the bars were "not accurate anymore". The box's
+	height was right, but it was the one mark on a card with no number, a "before" nobody
+	could read, and since pass 73 a dashed rule on the table means what your send would do.
+	The number and the marks with their factors under each column say what the world did;
+	pointing at the creature shows the whole chain on each world ("12 ⌂×1.25").
+
 	PASS 58, ONE SIDE PER NUMBER (docs/design/reclamation-one-side-per-number.md). Nick,
 	2026-09-24, on a card reading 34 at a world where it would hold 20 and down a rival of
 	14: "Why does it show 20 plus 14? Why is it adding my health and the opponent's
@@ -370,8 +377,6 @@ function gainNumber(gain) {
 export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteId, off, scale, newsSiteId, room }) {
 	const s = scale > 0 ? scale : FIT_SCALE;
 	const r = room > 0 ? room : 1;
-	const anyCell = row ? sites.map((site) => row[site.id]).find(Boolean) : null;
-	const body = anyCell && typeof anyCell.body === 'number' ? clamp01(anyCell.body / s) * r : null;
 	// one column of a send or a move: your side's gain, the rival's loss on its tag, the lead still to pass
 	const column = (site, cell, classes, extra) => {
 		const { style, over } = stackOf(cell, s, r);
@@ -405,7 +410,7 @@ export function FitStrip({ sites, row, sentSiteId, sentCell, moveRow, focusSiteI
 		);
 	};
 	return (
-		<span className={`rec-fit${off ? ' rec-fit--off' : ''}${r < 1 ? ' rec-fit--rival-room' : ''}`} data-fit data-fit-scale={s} aria-hidden="true" style={body !== null ? { '--fit-body': body.toFixed(4), '--fit-room': r.toFixed(4) } : { '--fit-room': r.toFixed(4) }}>
+		<span className={`rec-fit${off ? ' rec-fit--off' : ''}${r < 1 ? ' rec-fit--rival-room' : ''}`} data-fit data-fit-scale={s} aria-hidden="true" style={{ '--fit-room': r.toFixed(4) }}>
 			{sites.map((site) => {
 				const classes = ['rec-fit-col', `g-el-${site.world.element}`];
 				if (focusSiteId) {

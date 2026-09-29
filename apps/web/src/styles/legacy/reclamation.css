@@ -7105,17 +7105,6 @@
 .rec-console--match[data-terminal] .rec-fit-col--takes .rec-fit-part--own { background: var(--rec-you); box-shadow: 0 0 8px color-mix(in srgb, var(--rec-you) 60%, transparent); }
 .rec-console--match[data-terminal] .rec-fit-col--short .rec-fit-part--own { opacity: 0.7; }
 .rec-console--match[data-terminal] .rec-fit-col--over .rec-fit-well { box-shadow: inset 0 2px 0 var(--g-ink); }
-/* the creature's body, across the three columns: above it the world lifted it, below it the world or the Clash cut it */
-.rec-console--match[data-terminal] .rec-fit[style*="--fit-body"] .rec-fit-col:not(.rec-fit-col--gone):not(.rec-fit-col--none) .rec-fit-well::after {
-	content: "";
-	position: absolute;
-	left: -4px;
-	right: -4px;
-	bottom: calc(var(--fit-body) * 100%);
-	border-top: 1.5px dashed color-mix(in srgb, var(--g-ink) 60%, transparent);
-	pointer-events: none;
-	z-index: 2;
-}
 /* the rival's lead there, as a brass pointer on the column's edge: a column that reaches past it takes the world */
 .rec-console--match[data-terminal] .rec-fit-tick {
 	left: -1px;
@@ -7537,7 +7526,8 @@
    no side's color: each column is its world's color again, the numbers are plain ink, the
    rival's tag and the lead pointer are neutral. And each column shows its calculation: a
    dashed box at the creature's normal hold, the fill at what it holds there, and under it
-   the mark with the factor that made the difference. */
+   the mark with the factor that made the difference. Pass 74 took the dashed box away
+   (reclamation-no-body-box.md): the marks and their factors say it in numbers. */
 
 /* the column in its world's color */
 .rec-console--match[data-terminal] .rec-fit-well {
@@ -7563,16 +7553,6 @@
 .rec-console--match[data-terminal] .rec-fit-col--hurts .rec-fit-num { color: var(--rec-loss); }
 .rec-console--match[data-terminal] .rec-match[data-moment="mine"] .rec-plinth--hand .rec-plinth-name { color: var(--g-ink); }
 
-/* its normal hold, per column: a dashed box from the foot, so the fill shows what the world did to it */
-.rec-console--match[data-terminal] .rec-fit[style*="--fit-body"] .rec-fit-col:not(.rec-fit-col--gone):not(.rec-fit-col--none):not(.rec-fit-col--sent) .rec-fit-well::after {
-	left: 10%;
-	right: 10%;
-	bottom: 0;
-	height: calc(var(--fit-body) * 100%);
-	border: 1.5px dashed color-mix(in srgb, var(--g-ink) 70%, transparent);
-	border-bottom: 0;
-	z-index: 2;
-}
 
 /* the rival's tag and the lead to pass, in neutral ink: the card is yours, and the tag's place at the top says whose it is */
 .rec-console--match[data-terminal] .rec-fit-rival {

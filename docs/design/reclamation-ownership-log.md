@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 73, 2026-09-28)
+## Standing state (after pass 74, 2026-09-29)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -1577,4 +1577,8 @@ Nick asked whether anything showed how effective your attacks would be at a worl
 **Checked:** web 1824 on the Mac mini (Long Return timed out under load again), the five table checks, and pictures at 1366 by 768, 1440 by 900 and 390 by 844.
 
 **Open from it:** the card's attack hides on the phone and on short screens with the role mark; the rival's blows on your creature are words only.
+
+### Pass 74 (2026-09-29): the dashed box on a card's column goes
+
+Nick asked what the dotted lines around the bars represent: "I feel like that's not accurate anymore. It needs to be fixed." They were pass 59's normal-hold box (what a creature holds at a world that neither helps nor hurts it). Its height was right: a check over four whole bot matches found all 2,148 unmarked columns at their box. But it was the one mark on a card with no number, its note still said the Clash could cut a column, and since passes 72 and 73 a dashed outline means what your send would do. The box is gone; the number, the fill and the marks with their factors carry it, and pointing shows the whole chain on each world. Design: `reclamation-no-body-box.md`.
 
