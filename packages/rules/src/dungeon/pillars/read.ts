@@ -10,6 +10,7 @@ import {
   AREA_FACTOR,
   BINDING_HINDER_FACTOR,
   DEFAULT_INTENSITY,
+  DELAY_SHARE,
   DISPLACE_POWER_FACTOR,
   POWER_DIVISOR,
   PROLONGED_REST,
@@ -18,7 +19,7 @@ import {
   type ElementSource,
 } from "./levers.ts";
 
-export type SupportKind = "heal" | "shield" | "boost" | "hinder";
+export type SupportKind = "heal" | "shield" | "boost" | "hinder" | "delay";
 export type Aim = "enemy" | "ally" | "self";
 export type Part = { kind: SupportKind; n: number; aim: Aim; all: boolean };
 export type PMove = {
@@ -44,14 +45,23 @@ export type Rules = {
   restBonus?: number;
   /** Which rooms the run crosses: the prototype facility, or the facility with support roles (depth pass, part 2). */
   rooms?: "facility" | "roles";
+  /**
+    Turn-by-turn only. "round": every unit acts once per round, fastest first. "speed": a unit
+    acts again after an interval of TIMELINE_SCALE / speed, so a faster unit acts more often.
+  */
+  timeline?: "round" | "speed";
+  /** The turn-order layer: tempo statuses (slowed, sedated) and pulls push the target's next turn back by DELAY_SHARE of its interval. */
+  tempo?: boolean;
 };
 
 const intensity = (e: MoveEffect) => e.intensity || DEFAULT_INTENSITY;
 const HINDER_GROUPS = ["binding", "attention", "shock", "tempo", "senses"];
 
 /** One effect as a support part, or null when the pillars do not read it. */
-function part(e: MoveEffect, attacks: boolean): Part | null {
+function part(e: MoveEffect, attacks: boolean, rules: Rules): Part | null {
   const all = e.recipient === "area";
+  if (rules.tempo && e.recipient !== "self" && (e.group === "tempo" || e.support === "displace"))
+    return { kind: "delay", n: Math.round(DELAY_SHARE * 100), aim: "enemy", all };
   const n = Math.floor(intensity(e) / SUPPORT_DIVISOR);
   // A restore that requires the move's harm is a drain: it lands on the user.
   const onUser = e.recipient === "self" || (!!e.requires && attacks);
@@ -90,7 +100,7 @@ export function readMove(u: Unit, m: Move, rules: Rules, uniform?: number): PMov
     : m.element ?? (elemental ? u.element : null);
   const parts: Part[] = [];
   for (const e of m.effects) {
-    const p = part(e, attacks);
+    const p = part(e, attacks, rules);
     if (!p || p.n <= 0) continue;
     const same = parts.find((q) => q.kind === p.kind && q.aim === p.aim);
     if (same) same.n = Math.max(same.n, p.n);

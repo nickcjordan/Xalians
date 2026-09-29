@@ -49,3 +49,15 @@ export const FINAL_ENCOUNTER_XP = 30;
 export const RECOVERY_STATION_HP = 10;
 export const STALL_ROUNDS = 6;
 export const PILLAR_SAVE_VERSION = 1;
+/**
+  Turn-by-turn, speed timeline: a unit's interval between turns is TIMELINE_SCALE / (SPEED_BASE +
+  speed). SPEED_BASE softens speed: at 0 a speed-72 creature acts 2.6 times as often as a
+  speed-28 one; at 100, 1.34 times. The first sweep at 0 crushed the slow preset squad.
+*/
+export const TIMELINE_SCALE = 1000;
+export const SPEED_BASE = 100;
+/** A delay pushes the target's next turn back by this share of its interval (the turn-order layer). */
+export const DELAY_SHARE = 0.3;
+/** Turn-by-turn: this many turns in a row without anyone losing health force the squad out. */
+export const STALL_TURNS_PER_UNIT = 6;
+
