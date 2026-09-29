@@ -277,7 +277,8 @@ describe('the instruments', () => {
 		expect(Number(cols[0].style.getPropertyValue('--p-lost'))).toBe(0);
 		// a creature that costs your others stands lower by that much, the cost hatched
 		expect(Number(cols[2].style.getPropertyValue('--p-lost'))).toBeCloseTo(1.2 / 24, 3);
-		expect(Number(container.querySelector('[data-fit]').style.getPropertyValue('--fit-body'))).toBeCloseTo(8 / 24, 3);
+		// pass 74: no dashed body box; the marks and their factors say what the world did
+		expect(container.querySelector('[data-fit]').style.getPropertyValue('--fit-body')).toBe('');
 		expect(cols[0].querySelector('[data-why]')).toBeNull();
 		expect(cols[1].querySelector('[data-why="home"]')).not.toBeNull();
 		expect(cols[2].querySelector('[data-why="cold"]')).not.toBeNull();
