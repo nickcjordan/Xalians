@@ -31,7 +31,7 @@ const GLANCE = [
 	// pass 52: the fit strip on each card in hand; pass 54: each world's standing, and the
 	// scoreboard whose lamp says whose move it is
 	['who is winning this world', '[data-standing]'],
-	['what each creature would do at each world', '[data-slot-state="hand"] [data-fit] [data-fit-site]'],
+	['what each creature would do at each world', '[data-slot-state="hand"] [data-fit-site]'],
 	['who is winning the Proving', '[data-score] [data-turn-lamp]'],
 	// pass 57: each world's climate, which the flame and the snowflake on a card are about
 	['what each world is like', '[data-site-id] .rec-env-scale'],
@@ -190,19 +190,21 @@ for (const view of ['simple', 'advanced']) {
 			await page.mouse.move(2, 2);
 			await page.waitForTimeout(250);
 			const strips = await page.evaluate(() => [...document.querySelectorAll('[data-slot-state="hand"]')].map((card) => {
-				const cols = [...card.querySelectorAll('[data-fit] [data-fit-site]')];
-				const numbers = cols.map((col) => (col.querySelector('.rec-fit-num') || {}).textContent || '');
-				const strip = card.querySelector('[data-fit]');
+				// pass 75: the squad is a roster, a row per creature with a cell per world
+				const cols = [...card.querySelectorAll('[data-fit-site]')];
+				const numbers = cols.map((col) => (col.querySelector('.rec-squad-num') || {}).textContent || '');
 				const box = card.getBoundingClientRect();
-				const r = strip ? strip.getBoundingClientRect() : null;
-				const inside = !!r && r.left >= box.left - 1 && r.right <= box.right + 1 && r.top >= box.top - 1 && r.bottom <= box.bottom + 1;
+				const inside = cols.length > 0 && cols.every((col) => {
+					const r = col.getBoundingClientRect();
+					return r.left >= box.left - 1 && r.right <= box.right + 1 && r.top >= box.top - 1 && r.bottom <= box.bottom + 1;
+				});
 				return { id: card.getAttribute('data-slot'), cols: cols.length, numbers, inside };
 			}));
 			assert(strips.length > 0, `${label}: no creature in hand at the start of the game`);
 			strips.forEach((strip) => {
 				assert.equal(strip.cols, 3, `${label}: ${strip.id} shows ${strip.cols} of 3 world columns`);
-				strip.numbers.forEach((n) => assert(/^\u2212?\d+$/.test(n.trim()), `${label}: ${strip.id} has a fit column without a number ("${n}")`));
-				assert(strip.inside, `${label}: ${strip.id}'s fit strip runs outside its card`);
+				strip.numbers.forEach((n) => assert(/^[+\u2212]?\d+$/.test(n.trim()), `${label}: ${strip.id} has a world cell without a number ("${n}")`));
+				assert(strip.inside, `${label}: ${strip.id}'s world cells run outside its row`);
 			});
 
 			let guard = 0;
@@ -338,7 +340,7 @@ for (const view of ['simple', 'advanced']) {
 							card's, and both are your side's gain alone, never what it would take off the
 							rival added in (Nick: "Why is it adding my health and the opponent's health?").
 						*/
-						const armedCard = document.querySelector('.rec-plinth--armed');
+						const armedCard = document.querySelector('.rec-squad-row--armed');
 						const armedCols = armedCard ? [...armedCard.querySelectorAll('[data-fit-site][data-fit-gain]')] : [];
 						if (armedCols.length > 0 && !armedCols.some((col) => document.querySelector(`[data-ghost-piece="${col.getAttribute('data-fit-site')}"] [data-ghost-gain]`))) {
 							out.push('no ghost prints its gain beside the lifted card');
@@ -352,7 +354,7 @@ for (const view of ['simple', 'advanced']) {
 							if (ghostNum.getAttribute('data-ghost-gain') !== col.getAttribute('data-fit-gain')) {
 								out.push(`${id}: the ghost's number is not its card's`);
 							}
-							const card = ((col.querySelector('.rec-fit-num') || {}).textContent || '').trim();
+							const card = ((col.querySelector('.rec-squad-num') || {}).textContent || '').trim().replace(/^\+/, '');
 							const ghostText = ghostNum.textContent.trim().replace(/^\+/, '');
 							if (card !== ghostText) {
 								out.push(`${id}: the card prints ${card} and the ghost ${ghostNum.textContent.trim()}`);

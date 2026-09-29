@@ -1,0 +1,409 @@
+import React from 'react';
+import XalianImage from '../../xalianImage';
+import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
+import { pieceShadowFilter } from '../duel/board/duelPieceToken';
+import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
+import { InfoGlyph, HiddenGlyph, RoleGlyph, PIECE_RIM } from './reclamationGlyphs';
+import { speciesLabel, roleSentence, rolePower, formatBlow, formatHold, formatHoldShown, matchupWords } from './reclamationNarration';
+import { elementOf } from './reclamationVocabulary';
+import { whyWords, factorText } from './reclamationInstruments';
+import { matchupsAt } from './reclamationPreview';
+import { prepare, speedOf } from '@xalians/rules/expedition/creatureOnTable';
+
+/*
+	PASS 75, THE SQUAD AS A ROSTER (docs/design/reclamation-squad-roster.md). Nick, 2026-09-29:
+	"I think you need to take the concept of this card and redesign it ... I don't want you to
+	reuse any of the pieces just for the sake of reusing them ... It has a bunch of tiny little
+	icons crammed into the bottom of the card ... after you're a round deep, all the cards still
+	show, and there's no organization as to ordering the cards".
+
+	Every turn asks one question: which creature, to which world. So the squad is a roster of the
+	creatures you can still send, one row each, with a column per world lined up under the
+	worlds' own symbols, so a column reads down the squad ("who holds most on Zolton") without
+	pointing at anything. A world's cell is a miniature of that world's bar: what the creature
+	would add there, its bar on one scale for the squad, the rival's mark to pass, at most one
+	arrow for what the world did to its hold and at most one factor for the element chart against
+	the rivals already there. Creatures sent, holding, fallen or spent leave the roster for the
+	squad's head (SquadGone). The order is by act and attack, or by what each would add at a world
+	when that world's symbol is pressed; it sorts facts and suggests nothing.
+*/
+
+const EPS = 0.05;
+
+/*
+	slotStateOf(record, view, you) -> where a creature of your squad is: 'hand' (can still be
+	sent), 'sent' (on a world this round, with the site), 'holding' (won its world in an
+	earlier round and stays there), 'downed' (fell in a Clash) or 'away' (spent on a world
+	that was lost or tied). Moved here from the pass 4 roster rail, which nothing drew any more.
+*/
+export function slotStateOf(record, view, you) {
+	const me = view.players[you];
+	if ((me.roster || []).some((r) => r.id === record.id)) {
+		return { state: 'hand' };
+	}
+	for (const site of view.frame.sites) {
+		if ((view.board[site.id][you] || []).some((e) => e.recordId === record.id)) {
+			return { state: 'sent', site };
+		}
+	}
+	if ((me.holding || []).includes(record.id)) {
+		return { state: 'holding' };
+	}
+	if ((me.downed || []).includes(record.id)) {
+		return { state: 'downed' };
+	}
+	return { state: 'away' };
+}
+// strikers first, then sweepers, then the two that never strike
+const ACT_ORDER = { strike: 0, sweep: 1, shield: 2, bolster: 3 };
+
+// what a row reads off the engine once: its act, the number that act carries, its speed
+export function readOf(record, view) {
+	const prepared = prepare(record, view.frame.sites[0], null, 0, { rules: view.rules });
+	return {
+		role: prepared.role,
+		power: rolePower(prepared, view.rules),
+		speed: speedOf(record),
+		stealthy: !!prepared.stealthy,
+	};
+}
+
+/*
+	squadOrder(records, reads, fits, sortSiteId) -> records in the order the roster lists them.
+	By act, then the strongest attack, then the name; with a world chosen, by what each would
+	add there first.
+*/
+export function squadOrder(records, reads, fits, sortSiteId) {
+	const byDefault = (a, b) => {
+		const ra = reads[a.id] || {};
+		const rb = reads[b.id] || {};
+		const act = (ACT_ORDER[ra.role] ?? 9) - (ACT_ORDER[rb.role] ?? 9);
+		if (act !== 0) return act;
+		const power = (rb.power || 0) - (ra.power || 0);
+		if (Math.abs(power) > 1e-9) return power;
+		return speciesLabel(a).localeCompare(speciesLabel(b));
+	};
+	const gainAt = (record) => {
+		const cell = sortSiteId && fits && fits.fits && fits.fits[record.id] ? fits.fits[record.id][sortSiteId] : null;
+		return cell ? cell.gain : -Infinity;
+	};
+	return [...records].sort((a, b) => {
+		if (sortSiteId) {
+			const d = gainAt(b) - gainAt(a);
+			if (Math.abs(d) > 1e-9) return d;
+		}
+		return byDefault(a, b);
+	});
+}
+
+/*
+	cellFacts(cell, matchups, role) -> what one world's cell draws:
+		gain    what your side there would gain, the ghost's "+N"
+		shift   'up' where the world lifted its hold above its normal hold, 'down' where it cut it
+		chart   the chart's best factor for its blows on the rivals there (null when even or none)
+		clear   what the rival would still hold there beyond you, the mark the bar must pass
+		takes   whether the send alone would give you more there than the rival
+*/
+export function cellFacts(cell, matchups, role) {
+	if (!cell) {
+		return null;
+	}
+	const own = cell.own || 0;
+	const body = typeof cell.body === 'number' ? cell.body : own;
+	const shift = own - body >= 0.5 ? 'up' : body - own >= 0.5 ? 'down' : null;
+	let chart = null;
+	if (role === 'strike' || role === 'sweep') {
+		const dealt = (matchups || []).map((m) => (typeof m.dealt === 'number' ? m.dealt : 1));
+		if (dealt.length) {
+			const best = Math.max(...dealt);
+			chart = Math.abs(best - 1) > 1e-9 ? best : null;
+		}
+	}
+	return { gain: cell.gain, shift, chart, clear: cell.clear || 0, takes: !!cell.takes };
+}
+
+// the words behind a cell, for its title: what it adds, what the world did, the chart there
+function cellTitle(site, cell, facts, matchups) {
+	const parts = [`${site.world.planet}: adds ${formatHold(Math.max(0, facts.gain))}${facts.gain < -EPS ? `, costs your creatures there ${formatHold(-facts.gain)}` : ''}`];
+	const why = whyWords(cell);
+	if (why.length) parts.push(why.join('; '));
+	(matchups || []).filter((m) => m.dealt).forEach((m) => parts.push(`its blows land ${factorText(m.dealt)} on ${m.name} (${matchupWords(m.dealt, null, null) || ''})`.replace(' ()', '')));
+	if (facts.clear > EPS) parts.push(`the rival holds ${formatHold(facts.clear)} more there than you now`);
+	return parts.join('. ');
+}
+
+function WorldCell({ site, cell, facts, matchups, scale, focus }) {
+	const el = site.world.element;
+	const classes = ['rec-squad-cell', `g-el-${el}`];
+	if (!facts) {
+		classes.push('rec-squad-cell--none');
+		return <span className={classes.join(' ')} data-fit-site={site.id} />;
+	}
+	if (facts.takes) classes.push('rec-squad-cell--takes');
+	if (facts.gain < -EPS) classes.push('rec-squad-cell--costs');
+	if (focus) classes.push(focus === site.id ? 'rec-squad-cell--focus' : 'rec-squad-cell--dim');
+	const s = scale > 0 ? scale : 24;
+	const fill = Math.max(0, Math.min(1, Math.max(0, facts.gain) / s));
+	const tick = facts.clear > EPS ? Math.max(0, Math.min(1, facts.clear / s)) : null;
+	// signed as the creature pointed at prints it on the world ("+12"): what it would add there, not a strength of its own (the pass 75 reader could not tell which)
+	const shown = facts.gain < -0.5 ? `−${formatHoldShown(-facts.gain)}` : `+${formatHoldShown(Math.max(0, facts.gain))}`;
+	return (
+		<span
+			className={classes.join(' ')}
+			data-fit-site={site.id}
+			data-fit-gain={facts.gain.toFixed(2)}
+			data-fit-takes={facts.takes ? '' : undefined}
+			title={cellTitle(site, cell, facts, matchups)}
+			style={{ '--sq-fill': fill.toFixed(4), '--sq-tick': tick !== null ? tick.toFixed(4) : undefined }}
+		>
+			<span className="rec-squad-cell-read">
+				<b className="rec-squad-num g-mono">{shown}</b>
+				{facts.shift && <i className={`rec-squad-shift rec-squad-shift--${facts.shift}`} data-shift={facts.shift} aria-hidden="true">{facts.shift === 'up' ? '▲' : '▼'}</i>}
+			</span>
+			{/* the bar, and at its end the chart's factor against the rivals there: under the number, so it never reads as the next world's */}
+			<span className="rec-squad-cell-foot">
+				<span className="rec-squad-bar" aria-hidden="true">
+					<span className="rec-squad-fill" />
+					{tick !== null && <span className="rec-squad-tick" />}
+				</span>
+				{facts.chart && <i className={`rec-squad-chart g-mono${facts.chart > 1 ? ' rec-squad-chart--edge' : ''}`} data-chart={facts.chart}>{factorText(facts.chart)}</i>}
+			</span>
+		</span>
+	);
+}
+
+/*
+	A creature sent this round keeps its row until the round is ruled, so a send moves nothing on
+	the table (pass 36's rule): the row goes quiet, and only the cell of the world it went to
+	carries its number, what it holds there as the sends stack. The roster closes up between rounds.
+*/
+function SentCell({ site, hold, scale }) {
+	const s = scale > 0 ? scale : 24;
+	const fill = Math.max(0, Math.min(1, (hold || 0) / s));
+	return (
+		<span className={`rec-squad-cell rec-squad-cell--sent g-el-${site.world.element}`} data-fit-site={site.id} data-fit-sent={(hold || 0).toFixed(1)} title={`On ${site.world.planet} this round, holding ${formatHold(hold || 0)} as the sends stand`} style={{ '--sq-fill': fill.toFixed(4) }}>
+			<span className="rec-squad-cell-read"><b className="rec-squad-num g-mono">{formatHoldShown(hold || 0)}</b></span>
+			<span className="rec-squad-cell-foot"><span className="rec-squad-bar" aria-hidden="true"><span className="rec-squad-fill" /></span></span>
+		</span>
+	);
+}
+
+function Row({ record, read, view, you, sites, fitRow, scale, focusSiteId, armed, disabled, kept, sentSite, sentHold, advanced, onArm, onInspect, onHover }) {
+	const el = elementOf(record);
+	const opponent = you === 'A' ? 'B' : 'A';
+	const roleLine = roleSentence(read.role, read.power);
+	const classes = ['rec-squad-row'];
+	if (armed) classes.push('rec-squad-row--armed');
+	if (disabled) classes.push('rec-squad-row--off');
+	if (kept) classes.push('rec-squad-row--kept');
+	if (sentSite) classes.push('rec-squad-row--sent');
+	const active = !kept && !disabled && !sentSite;
+	return (
+		<div className={classes.join(' ')} role="listitem" data-slot={record.id} data-slot-state={sentSite ? 'sent' : kept ? 'reserve' : 'hand'}>
+			<button
+				type="button"
+				className="rec-squad-main"
+				onClick={() => active && onArm && onArm(record.id)}
+				onMouseEnter={() => onHover && onHover(record.id)}
+				onMouseLeave={() => onHover && onHover(null)}
+				onFocus={() => onHover && onHover(record.id)}
+				onBlur={() => onHover && onHover(null)}
+				aria-pressed={armed}
+				disabled={kept || !!sentSite}
+				data-arm={active ? record.id : undefined}
+				title={sentSite
+					? `${speciesLabel(record)}: on ${sentSite.world.planet} this round. ${roleLine}.`
+					: kept
+						? `${speciesLabel(record)}: kept in reserve. Eleven sends from a squad of twelve, so one creature always stays back; unsent creatures break a tie in worlds.`
+						: `${speciesLabel(record)}${armed ? ', lifted: press a world to send it there, or press it again to set it down' : ': press to lift it, then press a world'}. ${roleLine}.`}
+			>
+				<span className="rec-squad-art" aria-hidden="true">
+					<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 28)} moreClasses="rec-squad-img" />
+					{el && <XalianTypeSymbolBadge size={12} type={el} classes="rec-squad-disc" />}
+				</span>
+				<span className="rec-squad-name">
+					{speciesLabel(record)}
+					{read.stealthy && <span className="rec-squad-hidden" title="Stealthy: arrives hidden"><HiddenGlyph /></span>}
+				</span>
+				<span className="rec-squad-act" title={roleLine} data-role={read.role}>
+					<RoleGlyph role={read.role} />
+					{typeof read.power === 'number' && <b className="g-mono" data-plinth-power={formatBlow(read.power)}>{formatBlow(read.power)}</b>}
+					{advanced && <i className="rec-squad-speed g-mono" title="Speed: the faster attacks land first when the worlds resolve">{Math.round(read.speed)}</i>}
+				</span>
+				{sites.map((site) => {
+					if (sentSite) {
+						return site.id === sentSite.id
+							? <SentCell key={site.id} site={site} hold={sentHold} scale={scale} />
+							: <span key={site.id} className={`rec-squad-cell rec-squad-cell--none g-el-${site.world.element}`} data-fit-site={site.id} />;
+					}
+					const cell = fitRow ? fitRow[site.id] : null;
+					const matchups = cell ? matchupsAt(view, site, record, read.role, opponent) : [];
+					return <WorldCell key={site.id} site={site} cell={cell} facts={cellFacts(cell, matchups, read.role)} matchups={matchups} scale={scale} focus={kept ? null : focusSiteId} />;
+				})}
+			</button>
+			<button type="button" className="rec-squad-read" onClick={(e) => { e.stopPropagation(); onInspect && onInspect(record); }} title="Read this creature's dossier" aria-label={`Read ${speciesLabel(record)}'s dossier`} data-read={record.id}>
+				<InfoGlyph />
+			</button>
+		</div>
+	);
+}
+
+function Header({ sites, sortSiteId, onSort }) {
+	// the same grid as a row's, so each world's symbol stands exactly over its cells
+	return (
+		<div className="rec-squad-row rec-squad-head">
+			<div className="rec-squad-main rec-squad-head-main">
+				<span />
+				<span />
+				<span />
+				{sites.map((site) => (
+					<button
+						type="button"
+						key={site.id}
+						className={`rec-squad-head-world g-el-${site.world.element}${sortSiteId === site.id ? ' rec-squad-head-world--on' : ''}`}
+						onClick={() => onSort(sortSiteId === site.id ? null : site.id)}
+						aria-pressed={sortSiteId === site.id}
+						title={sortSiteId === site.id ? `Sorted by what each would add on ${site.world.planet}; press again for the squad's own order` : `Sort by what each would add on ${site.world.planet}`}
+						data-squad-sort={site.id}
+					>
+						{getSpeciesTypeSymbol(site.world.element, true, 14, 'rec-squad-head-symbol')}
+						{/* a faint caret says the symbol sorts; it lights when the squad is sorted by this world */}
+						<i className="rec-squad-head-sorted" aria-hidden="true">{'▾'}</i>
+					</button>
+				))}
+			</div>
+			<span className="rec-squad-head-tail" />
+		</div>
+	);
+}
+
+/*
+	columnsFor(width, height, count) -> how many columns the roster takes: the fewest that let
+	every row stand at least ROW_MIN tall, so a row keeps room for its name and numbers, and
+	never so many that a column is narrower than COL_MIN. Two at 1440 by 900 (six rows of 38
+	pixels), three at 1366 by 768 (four rows of 27), two on a phone.
+*/
+const ROW_MIN = 26;
+const HEAD = 22;
+const COL_MIN = 290;
+export function columnsFor(width, height, count) {
+	if (!(width > 0) || !(height > 0) || width < 2 * COL_MIN) {
+		return 2;
+	}
+	const most = Math.max(2, Math.floor(width / COL_MIN));
+	for (let cols = 2; cols <= most; cols += 1) {
+		const rows = Math.max(1, Math.ceil(count / cols));
+		if ((height - HEAD) / rows >= ROW_MIN) {
+			return cols;
+		}
+	}
+	return most;
+}
+
+// the roster's box, measured, so its columns follow the room it has
+function useBox(ref) {
+	const [box, setBox] = React.useState({ w: 0, h: 0 });
+	React.useLayoutEffect(() => {
+		const el = ref.current;
+		if (!el || typeof ResizeObserver === 'undefined') {
+			return undefined;
+		}
+		const read = () => {
+			const r = el.getBoundingClientRect();
+			setBox((prev) => (Math.round(prev.w) === Math.round(r.width) && Math.round(prev.h) === Math.round(r.height) ? prev : { w: r.width, h: r.height }));
+		};
+		read();
+		const observer = new ResizeObserver(read);
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [ref]);
+	return box;
+}
+
+export default function ReclamationSquad({ view, you, squad, fits, scale, armedRecordId, disabled, reserve, focusSiteId, advanced, onArm, onInspect, onHover }) {
+	const ref = React.useRef(null);
+	const box = useBox(ref);
+	const sites = view.frame.sites;
+	const [sort, setSort] = React.useState(null);
+	// a sort belongs to its round's worlds
+	const sortSiteId = sort && sites.some((s) => s.id === sort) ? sort : null;
+	// in hand, and sent this round (their rows stay until the round is ruled, so a send moves nothing)
+	const slots = {};
+	squad.forEach((record) => { slots[record.id] = slotStateOf(record, view, you); });
+	const listed = squad.filter((record) => slots[record.id].state === 'hand' || slots[record.id].state === 'sent');
+	const reads = {};
+	listed.forEach((record) => { reads[record.id] = readOf(record, view); });
+	const ordered = squadOrder(listed, reads, fits, sortSiteId);
+	const cols = columnsFor(box.w, box.h, ordered.length);
+	const perCol = Math.max(1, Math.ceil(ordered.length / cols));
+	const columns = Array.from({ length: cols }, (_, i) => ordered.slice(i * perCol, (i + 1) * perCol));
+	return (
+		<div className="rec-squad" ref={ref} role="list" data-squad data-squad-cols={cols} data-squad-rows={perCol} data-squad-advanced={advanced ? '' : undefined} style={{ '--sq-cols': cols, '--sq-rows': perCol }}>
+			{columns.map((column, i) => (
+				<div className="rec-squad-col" key={i}>
+					<Header sites={sites} sortSiteId={sortSiteId} onSort={setSort} />
+					{column.map((record) => (
+						<Row
+							key={record.id}
+							record={record}
+							read={reads[record.id]}
+							view={view}
+							you={you}
+							sites={sites}
+							fitRow={fits && fits.fits ? fits.fits[record.id] : null}
+							scale={scale}
+							focusSiteId={focusSiteId}
+							armed={armedRecordId === record.id}
+							disabled={disabled}
+							kept={reserve && slots[record.id].state === 'hand'}
+							sentSite={slots[record.id].state === 'sent' ? slots[record.id].site : null}
+							sentHold={fits && fits.forecast && fits.forecast[record.id] ? fits.forecast[record.id].hold : null}
+							advanced={advanced}
+							onArm={onArm}
+							onInspect={onInspect}
+							onHover={onHover}
+						/>
+					))}
+				</div>
+			))}
+		</div>
+	);
+}
+
+/*
+	SquadGone: your creatures that have left the roster, as faded silhouettes in the squad's head,
+	so you keep count of who is spent without a card each. On a world they carry its color under
+	them; a fallen one is crossed; a spent one is plain.
+*/
+const GONE_ORDER = { sent: 0, holding: 1, downed: 2, away: 3 };
+const GONE_WORDS = {
+	sent: (slot) => `on ${slot.site.world.planet} this round`,
+	holding: () => 'won its world in an earlier round, and stays there',
+	downed: () => 'fell in a Clash, out of the game',
+	away: () => 'spent on a world that was lost or tied, out of the game',
+};
+export function SquadGone({ view, you, squad }) {
+	// a creature sent this round still has its row; the head keeps the rounds before
+	const gone = squad
+		.map((record) => ({ record, slot: slotStateOf(record, view, you) }))
+		.filter((g) => g.slot.state !== 'hand' && g.slot.state !== 'sent')
+		.sort((a, b) => (GONE_ORDER[a.slot.state] ?? 9) - (GONE_ORDER[b.slot.state] ?? 9));
+	if (gone.length === 0) {
+		return null;
+	}
+	return (
+		<div className="rec-squad-gone" data-squad-gone={gone.length}>
+			{gone.map(({ record, slot }) => (
+				<span
+					key={record.id}
+					className={`rec-squad-token rec-squad-token--${slot.state}${slot.site ? ` g-el-${slot.site.world.element}` : ''}`}
+					title={`${speciesLabel(record)}: ${(GONE_WORDS[slot.state] || GONE_WORDS.away)(slot)}`}
+					data-gone={slot.state}
+				>
+					<XalianImage variant="token" speciesName={record.species} primaryType={elementOf(record)} padding="0px" fill="black" moreClasses="rec-squad-token-img" />
+					{slot.state === 'downed' && <svg className="rec-squad-token-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>}
+				</span>
+			))}
+		</div>
+	);
+}

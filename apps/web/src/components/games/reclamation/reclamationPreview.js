@@ -32,6 +32,7 @@ import { prepare, magnitudeAgainst, targetMatchupMultiplier, STRAIN_OVERLAP_COMF
 import { attackPowerAgainst } from '@xalians/rules/expedition/expeditionRules';
 import { ROLE, instinctLaneOf, presenceScaleOf } from '@xalians/rules/expedition/expeditionInterpretation';
 import { speciesLabel, formatHold, roleSentence, rolePower } from './reclamationNarration';
+import { elementOf } from './reclamationVocabulary';
 
 const OTHER = { A: 'B', B: 'A' };
 
@@ -439,6 +440,33 @@ export function blowsAt(publicState, record, site, seat, sentIndex, chosenRole) 
 			};
 		});
 	return out;
+}
+
+/*
+	PASS 72, PLACEMENT STACKS. What the element chart does between a creature pointed at a world
+	and each rival creature standing there, both ways: `dealt` is its element on theirs when it
+	strikes or sweeps, `taken` theirs on it when that rival does. The chart is a fact of the two
+	creatures; who lands what, and in what order, is the Clash's to say when both have passed.
+	Neutral pairs are left out. A rival's hidden send is not on the view, so it is not here.
+	PASS 73: `lands` (blowsAt) says which of them are armored, so the words can say why the blow
+	drawn on an armored creature is a quarter less than the chart alone would make it.
+*/
+const ATTACKS = new Set(['strike', 'sweep']);
+export function matchupsAt(view, site, record, role, opponent, lands) {
+	const rules = view && view.rules;
+	const theirs = ((view && view.board && view.board[site.id] && view.board[site.id][opponent]) || []).filter((e) => e.record && !e.hidden);
+	return theirs.map((e) => {
+		const dealt = ATTACKS.has(role) ? targetMatchupMultiplier(record, e.record, rules) : 1;
+		const taken = ATTACKS.has(e.role) ? targetMatchupMultiplier(e.record, record, rules) : 1;
+		return {
+			recordId: e.recordId,
+			name: speciesLabel(e.record),
+			element: elementOf(e.record),
+			dealt: Math.abs(dealt - 1) > 1e-9 ? dealt : null,
+			taken: Math.abs(taken - 1) > 1e-9 ? taken : null,
+			armored: !!(ATTACKS.has(role) && lands && lands[e.recordId] && lands[e.recordId].armored),
+		};
+	}).filter((m) => m.dealt !== null || m.taken !== null || m.armored);
 }
 
 /*
