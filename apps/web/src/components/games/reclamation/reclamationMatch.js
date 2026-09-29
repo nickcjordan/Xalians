@@ -14,11 +14,11 @@ import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '@xalians/r
 import { prepare, strainMultiplierFor, targetMatchupMultiplier } from '@xalians/rules/expedition/creatureOnTable';
 import { SENDABLE, clinchFor, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
-	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove,
+	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove, rolePower,
 	narrateSend, narratePass, narrateJudge, narrateMatchEnd, narrateStake, countWord, captionEvent,
 	verdictOf, rulingLine,
 } from './reclamationNarration';
-import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause } from './reclamationPreview';
+import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause, blowsAt } from './reclamationPreview';
 import { fitTable, roundTrack, standingScale, elementOf } from './reclamationFit';
 import { RoundTrack, SideRow, pennantsFor } from './reclamationInstruments';
 
@@ -96,9 +96,11 @@ export function budgetLine(sendsLeft, worldsToCome) {
 	strikes or sweeps, `taken` theirs on it when that rival does. The chart is a fact of the two
 	creatures; who lands what, and in what order, is the Clash's to say when both have passed.
 	Neutral pairs are left out. A rival's hidden send is not on the view, so it is not here.
+	PASS 73: `lands` (blowsAt) says which of them are armored, so the words can say why the blow
+	drawn on an armored creature is a quarter less than the chart alone would make it.
 */
 const ATTACKS = new Set(['strike', 'sweep']);
-export function matchupsAt(view, site, record, role, opponent) {
+export function matchupsAt(view, site, record, role, opponent, lands) {
 	const rules = view && view.rules;
 	const theirs = ((view && view.board && view.board[site.id] && view.board[site.id][opponent]) || []).filter((e) => e.record && !e.hidden);
 	return theirs.map((e) => {
@@ -110,8 +112,9 @@ export function matchupsAt(view, site, record, role, opponent) {
 			element: elementOf(e.record),
 			dealt: Math.abs(dealt - 1) > 1e-9 ? dealt : null,
 			taken: Math.abs(taken - 1) > 1e-9 ? taken : null,
+			armored: !!(ATTACKS.has(role) && lands && lands[e.recordId] && lands[e.recordId].armored),
 		};
-	}).filter((m) => m.dealt !== null || m.taken !== null);
+	}).filter((m) => m.dealt !== null || m.taken !== null || m.armored);
 }
 
 /*
@@ -1697,6 +1700,8 @@ class ReclamationMatch extends React.Component {
 						role: e.role !== undefined ? e.role : prepared.role,
 						blowMagnitude: prepared.blowMagnitude,
 						mendMagnitude: prepared.mendMagnitude,
+						// pass 73: the number its role sentence carries (a sweep's share on each creature, a bolster's mend)
+						rolePower: rolePower({ ...prepared, role: e.role !== undefined ? e.role : prepared.role }, view.rules),
 						hurt: live < full,
 						strainLevel: prepared.strainLevel,
 						isHome: prepared.isHome,
@@ -1776,14 +1781,19 @@ class ReclamationMatch extends React.Component {
 			// board as it stands (the base redesign's "Interface consequences")
 			const seat = this.seatInPlay();
 			const plan = ghostPlanFor(view, record, site, seat, view.players[seat].sentCount);
+			// pass 73: its blow on each creature it could hit here, under the act it would play
+			const blows = blowsAt(view, record, site, seat, view.players[seat].sentCount, id === armedRecordId ? this.state.armedRole : null);
 			const prepared = prepare(record, site, site.world, view.players[this.seatInPlay()].sentCount, { rules: view.rules });
 			const tolerance = (record.physiology && record.physiology.environmentalTolerance) || {};
 			ghosts[site.id] = {
 				// pass 54: the creature itself rides the bar it would add on each world's standing
 				record,
 				hold: plan.hold,
-				role: plan.role,
+				role: blows.role,
 				roleLine: plan.roleLine,
+				// pass 73: one full-strength blow on each creature it could hit here, drawn on that creature
+				lands: blows.lands,
+				power: blows.power,
 				lines: plan.lines,
 				effect: plan.effect,
 				recordId: record.id,
@@ -1793,7 +1803,7 @@ class ReclamationMatch extends React.Component {
 				preview: !armedRecordId,
 				unstrained: plan.hold / strainMultiplierFor(plan.strainLevel, prepared.strainCause),
 				// pass 72: the element chart against each rival creature standing here, both ways; facts, not a fight
-				matchups: matchupsAt(view, site, record, plan.role, this.seatOpponent()),
+				matchups: matchupsAt(view, site, record, blows.role, this.seatOpponent(), blows.lands),
 				// the creature's own band and media, drawn over the site's on the environment scale
 				tolerance: {
 					temperatureC: tolerance.temperatureC || null,

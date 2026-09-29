@@ -389,11 +389,56 @@ export function ghostPlanFor(publicState, record, site, seat, sentIndex) {
 		bolstered: prepared.bolstered,
 		role,
 		blowMagnitude: prepared.blowMagnitude,
-		roleLine: roleSentence(role, rolePower(prepared)),
+		roleLine: roleSentence(role, rolePower(prepared, rulesOfView(publicState))),
 		lines,
 		effect,
 		targetRecordId,
 	};
+}
+
+/*
+	PASS 73, THE BLOW ON EACH TARGET (docs/design/reclamation-blow-on-target.md). Nick, on the
+	stacked table: "are there any indications in place showing the effectiveness of the attacks
+	you would be making on the enemy if you sent them to that particular world". Then: "yes but
+	be intentional in design".
+
+	blowsAt(publicState, record, site, seat, sentIndex, chosenRole?) -> {
+		role,     the act it would play there (the chosen act under the act flip)
+		power,    its card's number: a blow, a sweep's share on each creature, a bolster's mend
+		lands: { [recordId]: { power, chart, armored, mine } }
+	}
+
+	One blow at full strength on each creature it could hit there, from the engine's own
+	attackPowerAgainst: its attack, times the element chart, times a sweep's share, less an
+	armored target's quarter. It is a fact of the two creatures, like a hold, so it holds
+	whatever else is sent: it says nothing of who goes first, how many blows land, who is hurt
+	by then, or who falls (pass 72). A strike could land on any rival there, since its instinct
+	picks the target in the Clash; a sweep lands on every other creature there, yours too; a
+	bolster and a shield never strike. A rival's hidden send is not on the view.
+*/
+export function blowsAt(publicState, record, site, seat, sentIndex, chosenRole) {
+	const rules = rulesOfView(publicState);
+	const actor = prepare(record, site, null, sentIndex, { rules, chosenRole: chosenRole || undefined });
+	const role = actor.role;
+	const out = { role, power: rolePower(actor, rules), lands: {} };
+	if ((role !== ROLE.STRIKE && role !== ROLE.SWEEP) || !actor.blow) {
+		return out;
+	}
+	flattenBoard(publicState)
+		.filter((u) => u.site.id === site.id && u.recordId !== record.id && !(u.hidden && u.seat !== seat))
+		.forEach((u) => {
+			const mine = u.seat === seat;
+			if (mine && role !== ROLE.SWEEP) {
+				return;
+			}
+			out.lands[u.recordId] = {
+				power: attackPower(publicState, record, actor, u.record),
+				chart: targetMatchupMultiplier(record, u.record, rules),
+				armored: !!(u.prepared && u.prepared.armored),
+				mine,
+			};
+		});
+	return out;
 }
 
 /*
@@ -601,7 +646,7 @@ export function attributeLanes(prepared, rules) {
 		lanes.push({
 			key: 'power',
 			label: governing,
-			text: `${governing} ${value}: attack power ${formatHold(prepared.blowMagnitude)}${sweeping ? ', spread over everything here' : ''}.`,
+			text: `${governing} ${value}: attack power ${formatHold(prepared.blowMagnitude)}${sweeping ? `, ${formatHold(rolePower(prepared, rules))} on each creature here` : ''}.`,
 		});
 	} else {
 		lanes.push({

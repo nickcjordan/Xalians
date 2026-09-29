@@ -2,13 +2,13 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 72, 2026-09-28)
+## Standing state (after pass 73, 2026-09-28)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
 ### Gauges (simulator, proctor mirror, 500 matches each on seeds 7 and 13, pass 71)
 
-Pass 71 put the element chart back in battle, made a world's element a slight penalty only where it is hard on the creature, and set home ground to a quarter more (`reclamation-elements-in-battle.md`). Pass 72 changed only what the table shows, not the rules or the bot, so these still stand.
+Pass 71 put the element chart back in battle, made a world's element a slight penalty only where it is hard on the creature, and set home ground to a quarter more (`reclamation-elements-in-battle.md`). Passes 72 and 73 changed only what the table shows, not the rules or the bot, so these still stand.
 
 | Gauge | Band | Seed 7 | Seed 13 | Verdict |
 |---|---|---|---|---|
@@ -25,7 +25,7 @@ Pass 71 put the element chart back in battle, made a world's element a slight pe
 | A side's round share with a bolster | reported | 50.4 | 51.0 | above the 49.6 / 49.5 without |
 | Games with a stake | reported | 0.2 | 0.6 | **the stake is almost never used** |
 
-### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 73, moved from 72 because Nick is reading pass 72 live and may change it)
+### The blind critic (last read: pass 69, seed 21, on Opus; next due: pass 74, moved from 72 because Nick is reading passes 72 and 73 live and steering them)
 
 | Clarity | Decisions | The Clash | Arc | Another game | Phone | Numbers | Feedback |
 |---|---|---|---|---|---|---|---|
@@ -1563,4 +1563,18 @@ Nick read the words under Tizzie at Telypso ("It falls in the Clash if nothing e
 - **Not changed:** the rules and the bot, so the gauges above stand. `forecastClash`, `forecastSend` and `forecastSendBlows` stay in the engine, tested and unused by the table.
 
 **Checked:** rules 656 on the Mac mini (two unrelated files timed out under load and pass alone), rules typecheck, web 1816 (Long Return timed out under load and passes alone), and the five table checks. Pictures at 1366 by 768 read the stacked totals and the chart lines on seeds 7 and 13.
+
+### Pass 73 (2026-09-28): the blow on each target
+
+Nick asked whether anything showed how effective your attacks would be at a world, and on the proposal: "yes but be intentional in design". Nothing did: the chart's factor was in words with no amount, attack power was in a title, and the card's number was speed. Design: `reclamation-blow-on-target.md`.
+
+**What changed:**
+- **While a creature is pointed at or lifted,** each creature it could hit carries one blow at full strength, dashed in your color in its stage's corner, beside its hold: "22 ×1½" (the chart's factor only when uneven), a plates mark where it is armored, in loss red on your own creature under a sweep. No minus sign. It gives way to the Clash's own number. `blowsAt` in `reclamationPreview.js`, from the engine's `attackPowerAgainst`, under the act it would play.
+- **Each card** carries its attack beside its role mark ("↗13"; a bolster's mend; nothing for a shield). It is the number the chip starts from.
+- **The words** say why an armored target takes a quarter less.
+- **Fixed:** a sweep's number was the whole blow while each creature took six tenths of it; `rolePower` gives the share on the card, the plate and the dossier.
+
+**Checked:** web 1824 on the Mac mini (Long Return timed out under load again), the five table checks, and pictures at 1366 by 768, 1440 by 900 and 390 by 844.
+
+**Open from it:** the card's attack hides on the phone and on short screens with the role mark; the rival's blows on your creature are words only.
 

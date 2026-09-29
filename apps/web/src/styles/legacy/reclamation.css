@@ -8131,3 +8131,62 @@
 }
 .rec-console--match[data-terminal] .rec-why-element-disc svg { width: 78%; height: 78%; }
 .rec-console--match[data-terminal] .rec-reason-mark .rec-why-element-disc { width: 1em !important; height: 1em !important; }
+
+/*
+	PASS 73, THE BLOW ON EACH TARGET (docs/design/reclamation-blow-on-target.md). While a creature
+	of yours is pointed at or lifted, each creature it could hit carries the blow it would land:
+	dashed in your color, like the ghost's own number, because it is a "would be" of your send.
+	It sits in the stage's top corner, off the art and off the element badge (bottom left), and
+	close to the hold it is read against. On a creature of yours (a sweep hits its own side) the
+	number is the loss red the Clash uses for what it takes from you. Quiet by weight, not by
+	size: the one loud thing while pointing is still the ghost's number.
+*/
+.rec-console--match[data-terminal] .rec-figure-blow {
+	position: absolute;
+	top: 0;
+	right: -8%;
+	z-index: 4;
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.18em;
+	padding: 0 0.28em;
+	font-size: clamp(10px, calc(var(--rec-piece, 56px) * 0.24), calc(17px * var(--rec-scale, 1)));
+	line-height: 1.2;
+	background: color-mix(in srgb, var(--g-hull-lo) 86%, transparent);
+	border: 1px dashed color-mix(in srgb, var(--rec-you) 70%, transparent);
+	pointer-events: auto;
+	animation: rec-ghost-piece-in 220ms ease-out both;
+}
+.rec-console--match[data-terminal] .rec-figure-blow b {
+	font-weight: 700;
+	color: var(--g-ink);
+	font-variant-numeric: tabular-nums;
+}
+.rec-console--match[data-terminal] .rec-figure-blow-x {
+	font-style: normal;
+	font-size: 0.72em;
+	color: var(--g-ink-mid);
+	letter-spacing: -0.04em;
+}
+.rec-console--match[data-terminal] .rec-figure-blow-armor { width: 0.8em; height: 0.8em; align-self: center; color: var(--g-ink-mid); }
+.rec-console--match[data-terminal] .rec-figure-blow--on-mine { border-color: color-mix(in srgb, var(--rec-loss) 70%, transparent); }
+.rec-console--match[data-terminal] .rec-figure-blow--on-mine b { color: var(--rec-loss); }
+@media (prefers-reduced-motion: reduce) {
+	.rec-console--match[data-terminal] .rec-figure-blow { animation: none; }
+}
+
+/* pass 73: a card's attack rides beside the mark of the act that throws it */
+/* only where the role mark shows at all: the phone and a short screen hide it (passes 52 and 38) */
+@media (min-width: 761px) and (min-height: 681px) {
+	.rec-console--match[data-terminal] .rec-plinth-role { display: inline-flex; align-items: center; gap: 2px; }
+}
+.rec-console--match[data-terminal] .rec-plinth-power {
+	font-size: calc(10px * var(--rec-scale, 1));
+	line-height: 1;
+	font-weight: 700;
+	color: var(--g-ink);
+	font-variant-numeric: tabular-nums;
+	/* it rides over the card's art, so it carries the hull behind it */
+	text-shadow: 0 0 2px var(--g-hull-lo), 0 0 4px var(--g-hull-lo);
+}
+.rec-console--match[data-terminal] .rec-reason-mark .rec-glyph--armor { width: 1em; height: 1em; }
