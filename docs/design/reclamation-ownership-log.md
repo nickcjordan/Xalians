@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 74, 2026-09-29)
+## Standing state (after pass 75, 2026-09-29)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -1581,4 +1581,29 @@ Nick asked whether anything showed how effective your attacks would be at a worl
 ### Pass 74 (2026-09-29): the dashed box on a card's column goes
 
 Nick asked what the dotted lines around the bars represent: "I feel like that's not accurate anymore. It needs to be fixed." They were pass 59's normal-hold box (what a creature holds at a world that neither helps nor hurts it). Its height was right: a check over four whole bot matches found all 2,148 unmarked columns at their box. But it was the one mark on a card with no number, its note still said the Clash could cut a column, and since passes 72 and 73 a dashed outline means what your send would do. The box is gone; the number, the fill and the marks with their factors carry it, and pointing shows the whole chain on each world. Design: `reclamation-no-body-box.md`.
+
+### Pass 75 (2026-09-29): the squad as a roster
+
+Nick asked for the squad card to be rethought from the ground up: "I don't want you to reuse any of the pieces just for the sake of reusing them". His complaints were tiny icons crammed at the foot of each card, every card still showing a round deep, and no order. Measured at 1440 by 900 in round 3: eight of twelve cards were spent creatures, and the four you could send were squeezed to the right. Design: `reclamation-squad-roster.md`.
+
+**What changed:**
+- **The plinth cards and the fit strip are gone.** The squad is a roster: a row per creature you can still send, in columns that line up under each world's symbol.
+- **A row:** silhouette with element badge, name, act and attack, then a cell per world.
+- **A cell:** "+N" (what it adds there), a bar in the world's color with the rival's mark, at most one ▲ or ▼ for what the world did to its hold, and at most one element factor against the rivals there.
+- **Order:** by act and attack; press a world's symbol to sort by it.
+- **Rows through a round:** a creature sent this round keeps its quiet row until the round is ruled, so a send moves nothing.
+- **Used creatures:** they sit small in the head: underlined on a world, crossed when fallen.
+- **Columns:** the roster takes as many as its room allows (two at 1440, three at 1366, two on a phone). On a phone the names and the head give way so every key stands 32 pixels.
+- **Removed as dead:** the pass 4 roster rail module (`reclamationRoster.js`, nothing drew it; `slotStateOf` moved into the squad), `FitStrip` and `fitSentence`.
+- **Also fixed:** the log's head, which let lines scroll into the gap above it.
+
+**Checked:**
+- the five table checks, with proving updated to read the roster;
+- web tests, with new `reclamationSquad.test.js`;
+- pictures at 1440, 1366 and 390 across rounds 1 to 3.
+
+**Blind reader (Opus): 6 of 10.**
+- Read right: sent rows, the world columns, the element factors, the rival's mark, and the used creatures in the head.
+- Missed: speed, and that the symbols sort.
+- Its worst problem was whether a cell's number is an addition or a strength. The number is now signed "+N", and the symbols carry a faint caret.
 
