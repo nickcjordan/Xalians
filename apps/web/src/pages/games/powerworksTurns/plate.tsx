@@ -1,6 +1,7 @@
 import React from "react";
 import { Shield, ChevronUp, ChevronDown, Swords, Ban, Zap } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
+import { DeltaChip, SpotlightMarks } from "./banner";
 import type { EnemyView, Marks, SquadView } from "./view";
 
 /**
@@ -49,7 +50,7 @@ export function MarkChips({ marks }: { marks: Marks }) {
   );
 }
 
-function HealthBar({ hp, max }: { hp: number; max: number }) {
+function HealthBar({ hp, max, delta = 0 }: { hp: number; max: number; delta?: number }) {
   const pct = max > 0 ? Math.max(0, Math.min(100, (hp / max) * 100)) : 0;
   return (
     <div className="pwt-health">
@@ -66,6 +67,7 @@ function HealthBar({ hp, max }: { hp: number; max: number }) {
         />
       </div>
       <span className="pwt-health-num">{hp}</span>
+      {!!delta && <DeltaChip n={delta} />}
     </div>
   );
 }
@@ -96,22 +98,57 @@ function Figure({
   );
 }
 
-export function SquadPlate({ u, lit = false }: { u: SquadView; lit?: boolean }) {
+export function SquadPlate({
+  u,
+  lit = false,
+  spotlit = false,
+  dimmed = false,
+  delta = 0,
+  targeted = false,
+  impactTarget = false,
+  onHover,
+}: {
+  u: SquadView;
+  lit?: boolean;
+  /** This unit is the spotlit actor (UX pass): brighter, a floor ring, a head pointer. */
+  spotlit?: boolean;
+  /** Someone else is spotlit right now: this plate steps one notch dimmer. */
+  dimmed?: boolean;
+  /** Health change since the player's previous turn ("-7" or "+5"); 0 shows no chip. */
+  delta?: number;
+  /** Hovering an enemy key cell that targets this squadmate (not used by squad plates today,
+      kept for symmetry with EnemyPlate's targeting ring). */
+  targeted?: boolean;
+  /** This unit is the current beat's target, at the impact phase: flash and recoil. */
+  impactTarget?: boolean;
+  onHover?: (hovering: boolean) => void;
+}) {
   const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0;
   return (
     <div
-      className={`pwt-plate ${u.down ? "down" : ""} ${u.active ? "active" : ""} ${lit ? "lit" : ""}`}
+      className={`pwt-plate ${u.down ? "down" : ""} ${u.active ? "active" : ""} ${lit ? "lit" : ""} ${
+        spotlit ? "spotlit" : ""
+      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""}`}
       data-unit={u.id}
+      onMouseEnter={onHover ? () => onHover(true) : undefined}
+      onMouseLeave={onHover ? () => onHover(false) : undefined}
     >
-      <Figure art={u.art} element={u.element} />
-      <span className="pwt-ground" aria-hidden="true" />
+      <div className="pwt-body">
+        {spotlit && <SpotlightMarks />}
+        <Figure art={u.art} element={u.element} />
+        <span className="pwt-ground" aria-hidden="true" />
+      </div>
       <div className="pwt-plaque">
         <span className="pwt-name">{u.name}</span>
-        <HealthBar hp={u.hp} max={u.max} />
-        {hasMarks && (
-          <div className="pwt-marks">
-            <MarkChips marks={u} />
-          </div>
+        <HealthBar hp={u.hp} max={u.max} delta={delta} />
+        {u.down ? (
+          <span className="pwt-down-tag">Down</span>
+        ) : (
+          hasMarks && (
+            <div className="pwt-marks">
+              <MarkChips marks={u} />
+            </div>
+          )
         )}
       </div>
     </div>
@@ -122,26 +159,57 @@ export function EnemyPlate({
   u,
   lit = false,
   activeName,
+  activeArt,
+  spotlit = false,
+  dimmed = false,
+  delta = 0,
+  targeted = false,
+  impactTarget = false,
+  onHover,
 }: {
   u: EnemyView;
   lit?: boolean;
   /** The active companion's name, for the hit chip's words (paint review round 4, item 6). */
   activeName?: string;
+  /** The active companion's portrait, drawn small in the hit chip: whom the number is about. */
+  activeArt?: { species: string; element: string };
+  /** This unit is the spotlit actor (UX pass): brighter, a floor ring, a head pointer. */
+  spotlit?: boolean;
+  /** Someone else is spotlit right now: this plate steps one notch dimmer. */
+  dimmed?: boolean;
+  /** Health change since the player's previous turn ("-7" or "+5"); 0 shows no chip. */
+  delta?: number;
+  /** Hovering the key cell that targets this enemy rings it (storyboard "choosing" step). */
+  targeted?: boolean;
+  /** This unit is the current beat's target, at the impact phase: flash and recoil. */
+  impactTarget?: boolean;
+  onHover?: (hovering: boolean) => void;
 }) {
   const hit = u.hitOnActive;
   const who = activeName ?? "the active companion";
   const showHit = !!hit && !u.down;
   const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0 || showHit;
   return (
-    <div className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""}`} data-unit={u.id}>
-      <Figure art={u.art} element={u.element} letter={u.letter} />
-      <span className="pwt-ground" aria-hidden="true" />
+    <div
+      className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
+        dimmed ? "dimmed" : ""
+      } ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""}`}
+      data-unit={u.id}
+      onMouseEnter={onHover ? () => onHover(true) : undefined}
+      onMouseLeave={onHover ? () => onHover(false) : undefined}
+    >
+      <div className="pwt-body">
+        {spotlit && <SpotlightMarks />}
+        <Figure art={u.art} element={u.element} letter={u.letter} />
+        <span className="pwt-ground" aria-hidden="true" />
+      </div>
       <div className="pwt-plaque">
         <span className="pwt-name">
           {u.letter} · {u.name}
         </span>
-        <HealthBar hp={u.hp} max={u.max} />
-        {hasMarks && (
+        <HealthBar hp={u.hp} max={u.max} delta={delta} />
+        {u.down && <span className="pwt-down-tag">Down</span>}
+        {hasMarks && !u.down && (
           <div className="pwt-marks">
             <MarkChips marks={u} />
             {showHit && (
@@ -150,7 +218,7 @@ export function EnemyPlate({
                 aria-label={
                   hit!.step === 0
                     ? `hits ${who} for no effect`
-                    : `hits ${who} for ${hit!.n}${
+                    : `hits ${who} for ${hit!.n}${hit!.before !== undefined ? `, weakened from ${hit!.before}` : ""}${
                         hit!.step > 1 ? ", strong" : hit!.step < 1 ? ", weak" : ""
                       }`
                 }
@@ -163,9 +231,15 @@ export function EnemyPlate({
                 }
               >
                 <Swords />
+                {hit!.before !== undefined && <s className="pwt-hit-before">{hit!.before}</s>}
                 {hit!.step === 0 ? <Ban /> : hit!.n}
                 {hit!.step > 1 && <ChevronUp className="up" />}
                 {hit!.step > 0 && hit!.step < 1 && <ChevronDown className="down" />}
+                {activeArt && (
+                  <span className="pwt-hit-who" aria-hidden="true">
+                    <Portrait u={activeArt} small />
+                  </span>
+                )}
               </span>
             )}
           </div>

@@ -17,6 +17,7 @@ import {
   roundStrip,
   standing,
   step,
+  upcoming,
   type Fighter,
   type PEvent,
   type PMove,
@@ -67,7 +68,7 @@ export type EnemyView = Marks & {
     companion's shields, and the element step (0, 0.5, 1, 1.5, 2). null when no companion is
     active or it has no ready attack.
   */
-  hitOnActive: { n: number; step: number } | null;
+  hitOnActive: { n: number; step: number; before?: number } | null;
 };
 
 /** One target cell on a key: what this key does to that one target. */
@@ -134,6 +135,25 @@ export type StripSlot = {
   state: "done" | "now" | "next" | "down";
 };
 
+/**
+  One slot on the turn rail (UX pass, 2026-09-29): the whole-round strip plus a peek into
+  the start of the next round, so the rail can show "the rest of this round and the start
+  of the next" per the storyboard. `roundStart` marks the first slot of a new round (a
+  divider plus "Round n+1" renders before it); undefined everywhere else.
+*/
+export type RailSlot = {
+  id: string;
+  enemy: boolean;
+  letter?: Letter;
+  name: string;
+  art: string;
+  element: string;
+  /** now: the active companion; next: the very next to act; done: acted this round; down:
+      fallen; later: standing and yet to act, beyond "next". */
+  state: "now" | "next" | "done" | "down" | "later";
+  roundStart?: number;
+};
+
 export type TurnView = {
   phase: TRun["phase"];
   /** 1-based round within the encounter. */
@@ -149,6 +169,11 @@ export type TurnView = {
   keys: KeyView[];
   /** This round in timeline order (every unit, fallen ones as "down"). */
   strip: StripSlot[];
+  /** The turn rail (UX pass, 2026-09-29): this round plus a peek at the next one's start. */
+  rail: RailSlot[];
+  /** The id of the unit that acts right after the current one (null with no standing units
+      left to act, i.e. the encounter is over). */
+  nextId: string | null;
   revivalLeft: number;
   xp: number;
 };
@@ -216,6 +241,14 @@ function hitOnActive(s: TRun, e: Fighter, withHinder?: number): { n: number; ste
   return best;
 }
 
+/** The hit on the active companion, and, when a hinder lowers it, the hit without the hinder. */
+function withBefore(s: TRun, u: Fighter): EnemyView["hitOnActive"] {
+  const hit = hitOnActive(s, u);
+  if (!hit || u.hinder <= 0) return hit;
+  const clean = hitOnActive(s, { ...u, hinder: 0 });
+  return clean && clean.n > hit.n ? { ...hit, before: clean.n } : hit;
+}
+
 function enemyView(s: TRun, u: Fighter): EnemyView {
   return {
     ...marksOf(u),
@@ -228,7 +261,7 @@ function enemyView(s: TRun, u: Fighter): EnemyView {
     hp: Math.max(0, u.hp),
     max: u.max,
     down: u.hp <= 0,
-    hitOnActive: hitOnActive(s, u),
+    hitOnActive: withBefore(s, u),
   };
 }
 
@@ -340,9 +373,68 @@ function stripSlot(s: TRun, unit: Fighter, done: boolean): StripSlot {
   };
 }
 
+function railBase(s: TRun, unit: Fighter, state: RailSlot["state"]): RailSlot {
+  return {
+    id: unit.id,
+    enemy: unit.enemy,
+    letter: unit.enemy ? letterFor(s, unit.id) : undefined,
+    name: unit.name,
+    art: unit.enemy ? ENEMY_ART[unit.species] ?? unit.species : unit.species,
+    element: unit.element,
+    state,
+  };
+}
+
+/**
+  The turn rail (UX pass, 2026-09-29, storyboard item "what happens next"): this round in
+  timeline order, then a peek at the next round's own start, so the rail always shows a
+  little of what is coming after the round in progress finishes. Built from `roundStrip`
+  (this round) plus `upcoming` (the timeline as it actually stands) rather than a new engine
+  helper, so it stays entirely on this side of the view boundary. Only the very first slot
+  after "now" is labeled NEXT; everything further out (later in this round, or into the
+  next) is "later" so the rail has exactly one NEXT at a time.
+*/
+function railFor(s: TRun): RailSlot[] {
+  const round = roundStrip(s);
+  let labeledNext = false;
+  const slots: RailSlot[] = round.map(({ unit, done }) => {
+    let state: RailSlot["state"] = unit.hp <= 0 ? "down" : unit.id === s.active ? "now" : done ? "done" : "later";
+    if (state === "later" && !labeledNext) {
+      state = "next";
+      labeledNext = true;
+    }
+    return railBase(s, unit, state);
+  });
+  if (s.rules.timeline === "speed") return slots; // roundStrip already fell back to `upcoming`.
+  // Peek past this round's end: `upcoming` walks the timeline as it actually stands, so
+  // skipping past however many standing units are still to act in this round lands exactly
+  // on the next round's own order.
+  // The unit acting now has not finished its turn either, so it counts as still to act.
+  const stillToAct = slots.filter((r) => r.state === "now" || r.state === "next" || r.state === "later").length;
+  const peek = upcoming(s, stillToAct + 3).slice(stillToAct);
+  peek.forEach((unit, i) => {
+    let state: RailSlot["state"] = "later";
+    if (!labeledNext) {
+      state = "next";
+      labeledNext = true;
+    }
+    const slot = railBase(s, unit, state);
+    if (i === 0) slot.roundStart = roundOf(s) + 1;
+    slots.push(slot);
+  });
+  return slots;
+}
+
+/** Who acts right after the current one, from the rail's one NEXT slot. Null once nobody is
+    left to peek at (the encounter has just ended). */
+function nextIdFrom(rail: RailSlot[]): string | null {
+  return rail.find((r) => r.state === "next")?.id ?? null;
+}
+
 export function turnView(s: TRun): TurnView {
   const active = s.team.find((t) => t.id === s.active) ?? null;
   const activeReady = s.phase === "turn" && !!active;
+  const rail = s.phase === "turn" ? railFor(s) : [];
   return {
     phase: s.phase,
     round: roundOf(s),
@@ -354,12 +446,20 @@ export function turnView(s: TRun): TurnView {
     enemies: s.enemies.map((u) => enemyView(s, u)),
     keys: activeReady ? active!.moves.map((_, i) => keyView(s, active!, i)) : [],
     strip: roundStrip(s).map(({ unit, done }) => stripSlot(s, unit, done)),
+    rail,
+    nextId: nextIdFrom(rail),
     revivalLeft: s.revival,
     xp: s.xp,
   };
 }
 
-const nameOf = (s: TRun, id: string): string => s.team.find((u) => u.id === id)?.name ?? s.enemies.find((u) => u.id === id)?.name ?? id;
+/** Display name for the words: an enemy carries its letter, since two can share a name. */
+const nameOf = (s: TRun, id: string): string => {
+  const mate = s.team.find((u) => u.id === id);
+  if (mate) return mate.name;
+  const foe = s.enemies.find((u) => u.id === id);
+  return foe ? `${foe.name} ${letterFor(s, id) ?? ""}`.trim() : id;
+};
 
 /** Words for one event, with display names: "Security drone hit Graviclaw for 7." */
 export function eventWords(s: TRun, e: PEvent): string {
@@ -369,7 +469,7 @@ export function eventWords(s: TRun, e: PEvent): string {
   if (e.kind === "redirect") return `${actor} turned from ${nameOf(s, e.from)} to ${nameOf(s, e.to)}.`;
   const target = nameOf(s, e.target);
   if (e.kind === "hit") {
-    const tag = e.step > 1 ? " (strong)" : e.step < 1 && e.step > 0 ? " (weak)" : "";
+    const tag = e.step > 1 ? " (strong matchup)" : e.step < 1 && e.step > 0 ? " (weak matchup)" : "";
     let words = `${actor} hit ${target} for ${e.amount}${tag}.`;
     if (e.absorbed > 0) words += ` ${target}'s shield took ${e.absorbed}.`;
     if (e.fell) words += ` ${target} fell.`;
@@ -394,4 +494,44 @@ export function playback(before: TRun, events: PEvent[]): Beat[] {
     beats.push({ event: e, words: eventWords(before, e), actor: e.actor, hp: { ...hp } });
   }
   return beats;
+}
+
+/**
+  "What happened since your last turn" (UX pass, 2026-09-29, storyboard item "what just
+  happened"): per-unit health deltas since the health snapshot the page took at the player's
+  previous hand-off, plus a short list of lines from the beats played since. Pure over its
+  inputs so the page's snapshot (taken once per hand-off, cleared once the player acts) is
+  the only state involved; view.ts still computes every number.
+*/
+export type SinceLastTurn = {
+  /** Health change per unit id since the snapshot: negative for damage, positive for healing.
+      Absent (or 0) units carry no chip. */
+  deltas: Record<string, number>;
+  /** 2 to 4 short lines, oldest first, of what happened since. */
+  lines: string[];
+};
+
+const MAX_SINCE_LINES = 4;
+
+export function turnDeltas(snapshot: Record<string, number>, beatsSince: Beat[]): SinceLastTurn {
+  const deltas: Record<string, number> = {};
+  for (const [id, before] of Object.entries(snapshot)) {
+    const beat = [...beatsSince].reverse().find((b) => id in b.hp);
+    if (!beat) continue;
+    const after = beat.hp[id];
+    const delta = after - before;
+    if (delta !== 0) deltas[id] = delta;
+  }
+  const lines = beatsSince
+    .filter((b) => b.event.kind !== "pass" && b.event.kind !== "lapsed")
+    .map((b) => b.words)
+    .slice(-MAX_SINCE_LINES);
+  return { deltas, lines };
+}
+
+/** A snapshot of every unit's current health, for the page to hold across a hand-off. */
+export function hpSnapshot(s: TRun): Record<string, number> {
+  const snap: Record<string, number> = {};
+  for (const u of [...s.team, ...s.enemies]) snap[u.id] = Math.max(0, u.hp);
+  return snap;
 }

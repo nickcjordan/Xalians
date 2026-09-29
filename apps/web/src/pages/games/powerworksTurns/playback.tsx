@@ -1,59 +1,74 @@
-import React, { useEffect } from "react";
-import { SkipForward } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import type { Beat } from "./view";
 
-const BEAT_MS = 700;
+/**
+  Beat choreography timing (UX pass, 2026-09-29, storyboard item 4: "about 1.4s per beat at
+  1x"). `IMPACT_AT` is when the blow lands within the beat (the actor's lunge or cast
+  reaches its target and the impact flash, number and health drain all start together); the
+  rest of the beat is the settle. Mirrors the shape of v5's `actionPresentation`
+  (`powerworksPresentation.ts`) without importing it: this page's beat model (one event per
+  beat, not a whole frame) does not carry the same fields.
+*/
+const BEAT_MS = 1700;
+const IMPACT_FRACTION = 0.35;
+
+export type BeatPhase = "approach" | "impact" | "settle";
+
+export function beatTiming(speed: 1 | 2, reducedMotion: boolean) {
+  if (reducedMotion) return { beatMs: 1, impactMs: 0 };
+  const beatMs = BEAT_MS / speed;
+  return { beatMs, impactMs: Math.round(beatMs * IMPACT_FRACTION) };
+}
 
 /**
-  Plays the beats of a resolved command one at a time (docs contract: "about 700 ms each,
-  the actor's plate lights, the target shows a floating number, the caption line reads the
-  beat's words"). Space, Enter or Skip finishes at once. `onBeat` reports the current beat
-  index up so the page can light the actor's plate and float the number on the target.
+  Plays the beats of a resolved command one at a time. Reports the current beat index and
+  its phase (approach: actor moving toward target; impact: the blow lands, this is when the
+  page lights the impact flash, the floating number and the health drain; settle: the
+  beat's sentence stays up before the next beat starts) so the page can drive the actor's
+  lunge/cast class and the target's impact/recoil class. Renders nothing itself: the
+  storyboard's Skip control lives in the turn banner, which jumps to the next hand-off by
+  setting `skip`, and Space/Enter are handled globally by the page for the same reason.
 */
 export function Playback({
   beats,
+  speed,
+  reducedMotion,
+  skip,
   onBeat,
   onDone,
 }: {
   beats: Beat[];
-  onBeat: (index: number) => void;
+  speed: 1 | 2;
+  reducedMotion: boolean;
+  /** True to finish the whole sequence at once (the banner's Skip, or reduced motion). */
+  skip: boolean;
+  onBeat: (index: number, phase: BeatPhase) => void;
   onDone: () => void;
 }) {
-  const [index, setIndex] = React.useState(0);
+  const [index, setIndex] = useState(0);
+  const { beatMs, impactMs } = beatTiming(speed, reducedMotion);
 
   useEffect(() => {
-    onBeat(index);
+    if (skip || reducedMotion) {
+      // Report every remaining beat's impact (so health, deltas and the record all catch up)
+      // before finishing, rather than jumping straight to onDone with the last beat unseen.
+      for (let i = index; i < beats.length; i++) onBeat(i, "impact");
+      onDone();
+      return;
+    }
     if (index >= beats.length) {
       onDone();
       return;
     }
-    const t = window.setTimeout(() => setIndex((i) => i + 1), BEAT_MS);
-    return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, beats.length]);
-
-  useEffect(() => {
-    const key = (e: KeyboardEvent) => {
-      if (e.key === " " || e.key === "Enter") {
-        e.preventDefault();
-        onDone();
-      }
+    onBeat(index, "approach");
+    const toImpact = window.setTimeout(() => onBeat(index, "impact"), impactMs);
+    const toNext = window.setTimeout(() => setIndex((i) => i + 1), beatMs);
+    return () => {
+      window.clearTimeout(toImpact);
+      window.clearTimeout(toNext);
     };
-    window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [index, beats.length, beatMs, impactMs, reducedMotion, skip]);
 
-  const beat = beats[Math.min(index, beats.length - 1)];
-  if (!beat) return null;
-  return (
-    <div className="pwt-playback">
-      <div className="pwt-caption">
-        <p>{beat.words}</p>
-        <button type="button" onClick={onDone}>
-          <SkipForward /> Skip
-        </button>
-      </div>
-    </div>
-  );
+  return null;
 }
