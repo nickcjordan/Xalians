@@ -1,0 +1,976 @@
+/*
+  Powerworks, turn by turn (docs/design/powerworks-turn-screen.md). Immersive tier: the
+  play screen is composed at 1280x720 and scaled to fit any landscape viewport with CSS
+  zoom (never a page scroll). Visual vocabulary follows the v5 stage (dark glass plates,
+  Saira/Martian Mono type roles, painted portraits) without reusing its class names, since
+  the layout here is simpler (one companion's keys, not a whole-squad radial).
+*/
+.pwt {
+  position: fixed;
+  inset: 0;
+  background: var(--color-room);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pwt-console {
+  width: 1280px;
+  height: 720px;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* --- top bar --- */
+.pwt-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 20px;
+  background: var(--color-s1);
+  border-bottom: 1px solid var(--color-edge);
+  flex: 0 0 auto;
+}
+.pwt-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-brand);
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.pwt-brand:hover { color: var(--color-viable); }
+.pwt-room {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.pwt-room h1 {
+  font-family: var(--font-legend);
+  font-size: var(--text-heading);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-heading);
+  margin: 0;
+}
+.pwt-round {
+  font-family: var(--font-data);
+  font-size: var(--text-small);
+  color: var(--color-ink-2);
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  padding: 4px 10px;
+}
+.pwt-top-tools {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+.pwt-top-tools button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink-2);
+  font-family: var(--font-legend);
+  font-size: var(--text-legend);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-legend);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.pwt-top-tools button:hover { color: var(--color-ink); border-color: var(--color-edge-strong); }
+.pwt-top-tools svg { width: 14px; height: 14px; }
+
+/* --- stage --- */
+.pwt-stage {
+  position: relative;
+  flex: 1 1 auto;
+  overflow: hidden;
+  background: #1b3036;
+}
+/* The v5 backplate: one painted image per sector, the same rule powerworksHud.css uses on
+   .pw-facility.sector-N, replicated here since this page imports none of the v5 CSS. */
+.pwt-stage .pw-facility {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.pwt-stage .pw-facility.sector-0 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-1.webp'); }
+.pwt-stage .pw-facility.sector-1 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-2.webp'); }
+.pwt-stage .pw-facility.sector-2 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-3.webp'); }
+.pwt-stage .pw-facility.sector-3 { background-image: linear-gradient(#07111933, #07111944), url('/assets/powerworks/facility-angle-4.webp'); }
+.pwt-stage .pw-facility > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+}
+/*
+  Fixed row bands (paint review round 3, item 1): each row gets a fixed height, and every
+  plate fills it exactly (figure band + ground + plaque, always the same total), so a
+  taller figure (the guardian) scales down inside its own band rather than growing the row
+  and pushing the squad row's plaques under the key bar. Every plate in a row also sits on
+  one baseline this way, fixing the uneven enemy heights in scenB and scenC.
+*/
+.pwt-rows {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 28px 10px;
+  gap: 6px;
+  overflow: hidden;
+}
+.pwt-row {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  flex: 0 0 auto;
+}
+/*
+  The enemy row anchors from the TOP (paint review round 5, item 2), not the bottom: a
+  taller plaque (more mark chips, the hit badge) then grows the plate's bottom, never
+  pushing the figure or its letter badge up past the stage's top edge. The boss figure
+  stays largest (its own fixed height, unchanged); the squad row keeps bottom-alignment
+  since its plaques sit just above the fixed key bar, never crowding a top edge.
+*/
+.pwt-row.enemies { height: 44%; padding-top: 18px; align-items: flex-start; }
+.pwt-row.squad { height: 38%; align-items: flex-end; }
+
+/*
+  Plate (paint review round 4): the figure keeps a fixed, role-sized height (the guardian
+  towers, as in v5's .pw-scene-unit.guardian) independent of the plaque, which no longer
+  competes with it for the band's height. The plate is bottom-aligned in its row
+  (.pwt-row's align-items: flex-end) at its natural (auto) height, so it never needs to
+  flex-shrink the figure to make room for a taller plaque (a two-line name). The plaque
+  overlaps the lower part of the figure's ground area at a fixed negative offset instead of
+  stacking fully below it, so a taller figure's plate is simply taller, never a smaller
+  figure — and the squad row still sits in its own fixed band above the key bar, so nothing
+  pushes those plaques out of view.
+*/
+.pwt-plate {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 150px;
+  transition: transform 120ms var(--ease-out);
+}
+.pwt-row.enemies .pwt-plate { width: 128px; }
+.pwt-plate.down { opacity: 0.35; filter: grayscale(0.6); }
+.pwt-plate.active {
+  transform: translateY(-8px);
+}
+.pwt-plate.active .pwt-figure {
+  filter: drop-shadow(0 0 14px rgba(134, 255, 181, 0.55)) drop-shadow(0 4px 1px #07101e);
+}
+.pwt-plate.lit .pwt-figure {
+  filter: drop-shadow(0 0 16px rgba(207, 165, 74, 0.6)) drop-shadow(0 4px 1px #07101e);
+}
+/* The full painted figure: a fixed height by role, never flex-shrunk by its plaque.
+   Ordinary squad and enemy figures share one size; the guardian (the boss, largest art)
+   is noticeably taller, the way v5 towers it over the room. */
+.pwt-figure {
+  width: 100%;
+  flex: 0 0 auto;
+  height: 118px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  filter: drop-shadow(0 4px 1px #07101e);
+}
+.pwt-row.enemies .pwt-figure { height: 100px; }
+.pwt-figure.boss { height: 168px; }
+.pwt-row.enemies .pwt-figure.boss { height: 150px; }
+.pwt-figure .pw-portrait { width: 100%; height: 100%; align-items: flex-end; }
+.pwt-figure .pw-portrait img { width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+.pwt-figure .pw-portrait svg { width: 100%; height: 100%; }
+.pwt-ground {
+  flex: 0 0 auto;
+  width: 78%;
+  height: 14px;
+  border-radius: 50%;
+  background: #0009;
+  box-shadow: 0 2px 7px #0007;
+  margin-top: -6px;
+}
+.pwt-plate.active .pwt-ground { background: rgba(134, 255, 181, 0.28); box-shadow: 0 0 13px rgba(134, 255, 181, 0.3); }
+
+.pwt-letter {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  color: var(--color-ink);
+  font-family: var(--font-data);
+  font-size: 15px;
+  font-weight: 700;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* --- plaque --- */
+.pwt-plaque {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: 4px;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge);
+  padding: 4px 6px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.pwt-plate.active .pwt-plaque { border-color: var(--color-viable); }
+.pwt-name {
+  font-family: var(--font-legend);
+  font-size: 11px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-ink);
+  text-align: center;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+.pwt-plate.active .pwt-name { color: var(--color-viable); }
+
+.pwt-health {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pwt-health-track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge);
+  position: relative;
+  overflow: hidden;
+}
+.pwt-health-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--color-viable);
+  transform-origin: left;
+}
+.pwt-health-fill.critical { background: var(--color-plague); }
+.pwt-health-num {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  color: var(--color-ink-2);
+  min-width: 20px;
+  text-align: right;
+}
+
+/*
+  One row, never wrapping (paint review round 5, item 1): shield, boost, hinder and the
+  enemy's hit chip all sit side by side. A plaque with more chips than fits shrinks each
+  chip's padding/font rather than wrapping to a second line, so a plate's total height
+  never grows past what its fixed-height figure band was measured for (round 4's fix,
+  which the wrap was quietly breaking).
+*/
+.pwt-marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+}
+.pwt-chip {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  padding: 1px 3px;
+  border: 1px solid var(--color-edge);
+  background: var(--color-s2);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.pwt-chip svg { width: 9px; height: 9px; flex: 0 0 auto; }
+
+.pwt-hit-on-active {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  color: var(--color-plague);
+  background: var(--color-plague-tint);
+  border: 1px solid rgba(181, 86, 108, 0.3);
+  padding: 1px 4px;
+  white-space: nowrap;
+}
+.pwt-hit-on-active svg { width: 10px; height: 10px; flex: 0 0 auto; }
+.pwt-hit-on-active .up,
+.pwt-hit-on-active .down { width: 12px; height: 12px; }
+.pwt-hit-on-active .up { color: var(--color-plague); }
+.pwt-hit-on-active .down { color: var(--color-viable); }
+
+/* --- keys --- */
+.pwt-keybar {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  gap: 10px;
+  padding: 10px 20px 16px;
+  align-items: stretch;
+  background: linear-gradient(to top, rgba(0,0,0,0.35), transparent);
+  /* The row's height stays fixed during playback (item 8 of round 1): the keys dim
+     instead of unmounting, so nothing below shifts. The caption (round 2, item 1) is a
+     sibling overlay here, not inside .pwt-stage, so it never covers a squad plate; it
+     stays at full opacity while the dimmed keys sit behind it. */
+  min-height: 128px;
+}
+.pwt-keybar > .pwt-key,
+.pwt-keybar > .pwt-pass {
+  transition: opacity 150ms var(--ease-out);
+}
+.pwt-keybar.busy > .pwt-key,
+.pwt-keybar.busy > .pwt-pass {
+  opacity: 0.35;
+  pointer-events: none;
+}
+.pwt-key {
+  flex: 1;
+  min-width: 0;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge);
+  box-shadow: var(--thickness-key) var(--thickness-key) 0 rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  cursor: default;
+}
+.pwt-key.resting,
+.pwt-key.spent { opacity: 0.45; }
+.pwt-key-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.pwt-key-index {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  color: var(--color-ink-3);
+}
+.pwt-key-name {
+  font-family: var(--font-legend);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pwt-key.signature .pwt-key-name { color: var(--color-caution); }
+/* Foot line: timing words on the left, the key's own supports (riders) on the right, so a
+   rider never reads as belonging to whichever cell it happens to sit under (paint review
+   round 4, item 3). */
+.pwt-key-foot {
+  margin-top: auto;
+  padding-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 18px;
+}
+.pwt-key-foot-words {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  color: var(--color-ink-3);
+}
+
+/*
+  An area attack's cells sit inside a band labeled ALL (paint review round 4, item 2): a
+  bracket spanning every cell, so the key does not read as aimed at one enemy. The cells
+  underneath stay individually clickable.
+*/
+.pwt-cells-wrap.area {
+  border: 1px solid var(--color-edge-strong);
+  padding: 12px 2px 2px;
+  position: relative;
+}
+.pwt-area-band {
+  position: absolute;
+  top: 0;
+  left: 6px;
+  right: 6px;
+  display: flex;
+  justify-content: center;
+}
+.pwt-area-band span {
+  transform: translateY(-50%);
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge-strong);
+  color: var(--color-ink-2);
+  font-family: var(--font-legend);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
+}
+
+.pwt-cells {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.pwt-cell {
+  flex: 1;
+  min-width: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--color-s1);
+  border: 1px solid var(--color-edge);
+  padding: 4px 2px;
+  cursor: pointer;
+  color: var(--color-ink);
+  font-family: var(--font-data);
+}
+.pwt-cell:hover:not(:disabled) { border-color: var(--color-viable); background: var(--color-s2); }
+.pwt-cell:disabled { cursor: not-allowed; opacity: 0.5; }
+/* A finishing cell is good for the player: the concept's "filled ember cell" (amber fill,
+   dark bright number, skull) instead of the plague red a bare number would suggest,
+   making it clearly the loudest cell on the key (paint review round 3, item 2). Uses the
+   existing caution token, not a new color. */
+.pwt-cell.finish {
+  background: var(--color-caution);
+  border-color: var(--color-caution);
+}
+.pwt-cell.finish:hover:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink); }
+.pwt-cell.finish .pwt-cell-letter { color: var(--color-room); opacity: 0.75; }
+.pwt-cell-letter {
+  font-size: var(--text-tiny);
+  color: var(--color-ink-3);
+}
+.pwt-cell-portrait {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.pwt-cell-portrait .pw-portrait,
+.pwt-cell-portrait .pw-portrait img,
+.pwt-cell-portrait .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.pwt-cell-num {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+}
+.pwt-cell-num.finish { color: var(--color-room); }
+.pwt-cell-num.heal { color: var(--color-viable); }
+.pwt-cell-heal-icon { width: 11px; height: 11px; }
+/* Chevrons are a primary signal (paint review round 1): sized and colored to read
+   next to the number, not a faint decoration. */
+.pwt-cell-chevron-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+}
+.pwt-cell-chevron-wrap svg { width: 13px; height: 13px; }
+.pwt-cell-chevron-wrap.up { color: var(--color-viable-ink); background: var(--color-viable); }
+.pwt-cell-chevron-wrap.down { color: var(--color-plague-ink); background: var(--color-plague); }
+.pwt-cell-immune-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 2px solid var(--color-ink-3);
+}
+.pwt-cell-immune-icon { width: 13px; height: 13px; color: var(--color-ink-3); }
+.pwt-cell-hinder {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 17px;
+  font-weight: 700;
+}
+.pwt-cell-hinder-icon { width: 15px; height: 15px; color: var(--color-ink-3); }
+.pwt-cell-before {
+  font-size: 13px;
+  color: var(--color-ink-3);
+  text-decoration: line-through;
+}
+.pwt-cell-arrow { color: var(--color-ink-3); font-size: 13px; }
+/* A hinder dropping an enemy's hit toward 0 is good for the player: the "after" number
+   reads in the viable green, the same as a heal, not the plague red (paint review round
+   2, item 2 — red is reserved for what is bad for the player). */
+.pwt-cell-num.hinder { color: var(--color-viable); }
+.pwt-cell-shield-note {
+  color: var(--color-el-ice);
+}
+.pwt-cell-skull { width: 13px; height: 13px; color: var(--color-room); }
+
+/* Rider chips: a key's own supports, in the foot line's right side (paint review round 4,
+   item 3), not centered under one cell where a blind reader took it for that cell alone. */
+.pwt-riders {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.pwt-rider {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  padding: 1px 4px;
+  border: 1px solid var(--color-edge);
+  background: var(--color-s1);
+  color: var(--color-ink-2);
+}
+.pwt-rider svg { width: 10px; height: 10px; }
+.pwt-rider.heal { color: var(--color-viable); }
+.pwt-rider.shield { color: var(--color-el-ice); }
+.pwt-rider.boost { color: var(--color-caution); }
+.pwt-rider.hinder { color: var(--color-viable); }
+.pwt-rider.delay { color: var(--color-ink-2); }
+.pwt-rider-each {
+  font-family: var(--font-legend);
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  margin-left: 2px;
+}
+
+.pwt-same {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.pwt-same-num {
+  font-family: var(--font-data);
+  font-size: var(--text-subhead);
+  font-weight: 700;
+}
+.pwt-same-label {
+  font-family: var(--font-legend);
+  font-size: var(--text-tiny);
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+.pwt-same-letters {
+  display: flex;
+  gap: 3px;
+}
+.pwt-same-letters button {
+  width: 22px;
+  height: 22px;
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  background: var(--color-s1);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink-2);
+  cursor: pointer;
+}
+.pwt-same-letters button:hover { border-color: var(--color-viable); color: var(--color-ink); }
+
+.pwt-key-now {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  border: none;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+.pwt-key-now:hover:not(:disabled) .pwt-key-now-label { color: var(--color-viable); }
+.pwt-key-now:disabled { cursor: not-allowed; color: var(--color-ink-3); }
+.pwt-key-now-chip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-data);
+  font-size: 15px;
+  font-weight: 700;
+}
+.pwt-key-now-chip svg { width: 13px; height: 13px; }
+.pwt-key-now-chip.heal { color: var(--color-viable); }
+.pwt-key-now-chip.shield { color: var(--color-el-ice); }
+.pwt-key-now-chip.boost { color: var(--color-caution); }
+.pwt-key-now-chip.hinder,
+.pwt-key-now-chip.delay { color: var(--color-plague); }
+.pwt-key-now-label {
+  font-family: var(--font-legend);
+  font-size: var(--text-tiny);
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.pwt-pass {
+  flex: 0 0 90px;
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink-2);
+  font-family: var(--font-legend);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-legend);
+  cursor: pointer;
+}
+.pwt-pass:hover { color: var(--color-ink); border-color: var(--color-edge-strong); }
+
+/* --- turn strip --- */
+.pwt-strip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 20px 10px;
+  background: var(--color-s1);
+  border-top: 1px solid var(--color-edge);
+}
+.pwt-strip-round {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  color: var(--color-ink-3);
+  flex: 0 0 auto;
+}
+.pwt-strip-slots {
+  display: flex;
+  gap: 6px;
+  overflow: hidden;
+}
+.pwt-strip-slot {
+  width: 42px;
+  height: 42px;
+  position: relative;
+  flex: 0 0 auto;
+}
+/*
+  The dim (done/next) or grayscale (down) treatment lives on this inner wrapper, not the
+  slot itself, so the letter badge (a sibling) always stays fully legible (paint review
+  round 3, item 4): a strip slot's identity should read the same whether it has acted yet
+  or not.
+*/
+/*
+  Upcoming (now or next) reads fully bright: the point of the strip is what is still to
+  come, not a distinction between the active slot and the ones after it. Acted (done) is
+  much dimmer, with a check mark, so "has this happened yet" reads at a glance (paint
+  review round 4, item 5).
+*/
+.pwt-strip-portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--color-edge);
+  opacity: 1;
+  background: var(--color-s2);
+}
+.pwt-strip-portrait .pw-portrait,
+.pwt-strip-portrait .pw-portrait img,
+.pwt-strip-portrait .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.pwt-strip-letter {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  z-index: 1;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  color: var(--color-ink);
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pwt-strip-slot.now .pwt-strip-portrait {
+  border-color: var(--color-viable);
+  box-shadow: 0 0 8px rgba(134,255,181,0.4);
+}
+.pwt-strip-slot.done .pwt-strip-portrait { opacity: 0.18; }
+.pwt-strip-slot.down .pwt-strip-portrait { opacity: 0.25; filter: grayscale(1); }
+.pwt-strip-slot.down::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 2px solid var(--color-plague);
+  top: 50%;
+  transform: rotate(-20deg);
+}
+.pwt-strip-check {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  color: var(--color-ink-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pwt-strip-check svg { width: 10px; height: 10px; }
+/* A thin divider between the last acted slot and the first one still to come. */
+.pwt-strip-slot.divider-after {
+  margin-right: 6px;
+  padding-right: 6px;
+  border-right: 1px solid var(--color-edge);
+}
+
+/* --- playback --- */
+/* Lives inside .pwt-keybar (a sibling of the dimmed keys), not the stage, so it never
+   covers a squad plate (paint review round 2, item 1). */
+.pwt-playback {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.pwt-caption {
+  pointer-events: auto;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge-strong);
+  box-shadow: var(--shadow-float);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 900px;
+  width: calc(100% - 40px);
+}
+.pwt-caption p {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  margin: 0;
+}
+.pwt-caption button {
+  flex: 0 0 auto;
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink-2);
+  font-family: var(--font-legend);
+  font-size: var(--text-tiny);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-legend);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.pwt-float-num {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-data);
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--color-plague);
+  text-shadow: 0 2px 6px #000;
+  z-index: 6;
+  pointer-events: none;
+  animation: pwt-float-up 700ms var(--ease-out);
+}
+.pwt-float-num.heal { color: var(--color-viable); }
+@keyframes pwt-float-up {
+  0% { transform: translate(-50%, -50%); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(-50%, calc(-50% - 34px)); opacity: 0; }
+}
+
+/* --- camp / end panels --- */
+.pwt-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 9, 8, 0.72);
+}
+.pwt-panel {
+  width: 620px;
+  max-height: 640px;
+  overflow-y: auto;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge-strong);
+  box-shadow: var(--shadow-float);
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pwt-panel h2 {
+  font-family: var(--font-legend);
+  font-size: var(--text-title);
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--color-ink);
+}
+.pwt-panel .eyebrow {
+  font-family: var(--font-legend);
+  font-size: var(--text-legend);
+  letter-spacing: var(--tracking-legend);
+  text-transform: uppercase;
+  color: var(--color-viable);
+  margin: 0;
+}
+.pwt-panel p { margin: 0; color: var(--color-ink-2); font-size: var(--text-body); }
+.pwt-panel-squad {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.pwt-panel-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 110px;
+}
+.pwt-panel-unit.down { opacity: 0.7; }
+.pwt-portrait-ring {
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.pwt-portrait-ring .pw-portrait { width: 100%; height: 100%; }
+.pwt-portrait-ring .pw-portrait img,
+.pwt-portrait-ring .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.pwt-panel-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.pwt-primary {
+  background: var(--color-viable);
+  color: var(--color-viable-ink);
+  border: none;
+  box-shadow: var(--thickness-primary) var(--thickness-primary) 0 rgba(0,0,0,0.4);
+  font-family: var(--font-legend);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 10px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.pwt-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.pwt-secondary {
+  background: var(--color-s2);
+  color: var(--color-ink-2);
+  border: 1px solid var(--color-edge);
+  font-family: var(--font-legend);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 10px 18px;
+  cursor: pointer;
+}
+.pwt-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+.pwt-revive-btn {
+  font-family: var(--font-data);
+  font-size: var(--text-tiny);
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge);
+  color: var(--color-ink);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.pwt-revive-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* --- guide / record panels --- */
+.pwt-panel ul { margin: 0; padding-left: 18px; color: var(--color-ink-2); font-size: var(--text-body); }
+.pwt-panel li { margin-bottom: 6px; }
+.pwt-record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.pwt-record-list p {
+  font-family: var(--font-data);
+  font-size: var(--text-small);
+  color: var(--color-ink-2);
+  border-bottom: 1px solid var(--color-edge);
+  padding-bottom: 4px;
+}
+
+/* --- rotate prompt (phone portrait) --- */
+.pwt-rotate {
+  display: none;
+}
+@media (max-width: 600px) and (orientation: portrait) {
+  .pwt-console { display: none; }
+  .pwt-rotate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 100%;
+    color: var(--color-ink-2);
+    text-align: center;
+    padding: 0 24px;
+  }
+  .pwt-rotate svg { width: 40px; height: 40px; }
+}
