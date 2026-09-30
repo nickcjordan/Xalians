@@ -1,49 +1,51 @@
 # Akinza builder brief
 
-You are the builder in the construction loop described in `docs/design/species-construction/LOOP.md`. You receive one work order per round. You change the model's geometry to address exactly that order, then produce a candidate the critic can judge. You do not grade your own result: a separate critic scores it and the orchestrator keeps or reverts it. Read `docs/design/species-construction/LESSONS.md` once before your first build.
+You are a builder in the construction loop described in `docs/design/species-construction/LOOP.md`. You receive one work order per round for one component, the head or the body. Another builder may be working on the other component at the same time. You change the geometry to satisfy the order's rubric criteria, check your own progress with the cheap silhouette tools, and hand one candidate to the critic. You do not grade the visual criteria yourself; a separate critic does, and the orchestrator keeps or reverts the result. Read `docs/design/species-construction/LESSONS.md` once before your first build.
 
 ## Environment
 
-- Repository: `C:\Users\njord\.codex\worktrees\1d07\Xalians`, branch `akinza/construction-loop`. Use Git Bash syntax.
-- Working outputs live in `untracked/species-construction/akinza/` (gitignored). Every output directory is immutable. Build into a new numbered directory; get the next number with `python art/species-construction/loop/loop_tools.py next-number`. Name component directories `head-NNNN` and `body-NNNN`, and assemblies `assembled-NNNN`.
-- Run Blender only through `loop_tools.py blender <script> <args>`, or through the `assemble` and `render` commands. Run one Blender process at a time; the machine has 31 GB of RAM.
+- Repository: `C:\dev\src\xalians-akinza-loop`, branch `akinza/construction-loop`. Use Git Bash syntax.
+- Working outputs live in `untracked/species-construction/akinza/` (gitignored). Every output directory is immutable. Build into a new numbered directory; get the next number with `python art/species-construction/loop/loop_tools.py next-number` immediately before you create it, because the other builder draws from the same numbers. Name component directories `head-NNNN` and `body-NNNN`, previews `preview-NNNN`, and assemblies `assembled-NNNN`.
+- Run Blender only through `loop_tools.py` (`blender`, `quick`, `assemble`, `render`). It holds a shared slot lock, so at most two Blender processes run at once; a call may wait for a slot.
 - `rm -rf` is denied on this machine; use new names instead of deleting. Never use bare `git stash`.
-- Commit your code and documentation changes at the end of the round with a plain message and no `Co-Authored-By` trailer. Never commit `untracked/`. Never push, and never open a pull request.
+- Commit only your own code and document changes at the end of the round, with a plain message and no `Co-Authored-By` trailer. Stage files by name, never `git add -A`, because the other builder may have uncommitted work. Never commit `untracked/`. Never push, and never open a pull request.
 - Write American English with no em dashes.
 
 ## Coordinates and current model
 
-- Front is -y, up is +z. The figure is about 1.86 tall, and the floor is z = -.957. The head is modeled in its own frame and placed at scale .50 with offset (0, -.02, .635): head-local (x, y, z) maps to world (.5x, .5y - .02, .5z + .635).
-- **Current head chain:** `head-0110/lower-ear-taper` → eye finish (`refine_reconstructed_eyes.py`) as `head-0131` → conformal nose (`refine_reconstructed_nose.py --relax-native-relief --method conformal --dome-height .006 --rim-height .0015 --recess-muzzle .012 --lower-point-z -.148`) as `head-0146` → rear coat (`add_rear_coat_field.py`) as `head-0152`.
-- **Current body chain:** `rebuild_body_field.py` on `body-0100/attempt-02/shape.glb` with that directory's `fairing.json`, `--tail-controls docs/design/species-construction/akinza/tail-controls-crescent-deep.json --tail-free-body untracked/species-construction/akinza/body-0086/attempt-03/shape.glb --tail-side-sigma .05 --tail-sweep-sigma .009`, as `body-0155`.
-- The work order names the current baseline, which may be newer than these. Always start from the baseline it names.
+- Front is -y, up is +z. The floor is z = -.957, and the loop measures against a fixed figure height of 1.8605 (floor to crown). The head is modelled in its own frame and placed at scale .50 with offset (0, -.02, .635): head-local (x, y, z) maps to world (.5x, .5y - .02, .5z + .635).
+- The work order names the baseline head and body. Always start from those.
+
+## The inner loop: iterate against the silhouette before you hand over
+
+1. `python art/species-construction/loop/loop_tools.py fit <baseline assembly> --out untracked/species-construction/akinza/fit-<baseline>` once, to get the baseline `fit.json` and the overlay `fit.png` (grey both, blue model only, orange reference only, in front, left, back, and back against the back study).
+2. After each component build, run `loop_tools.py quick <head-dir> <body-dir> preview-NNNN --baseline <baseline fit.json>`. It places the parts as the assembly does and renders flat silhouettes from fixed cameras in well under a minute. It prints the overlap change per band and writes the overlay. Look at the overlay for your region.
+3. Keep iterating on the component while the measured criteria in your order and the overlay for your region improve. Stop when your measured targets pass or stop improving. Fixed cameras mean a preview never reframes; the neck band is approximate because previews skip the neck bridge.
+4. Silhouette overlap is necessary, not sufficient. The critic still judges surface structure (locks, cups, creases) from the closeups.
 
 ## Methods
 
 Prefer field-space edits. Convert a closed mesh to an OpenVDB level set (Blender's bundled `openvdb` module), change the distance field, and mesh it once. Weighted morphs, smooth unions and bounded blurs in field space leave no seams. Boolean cuts followed by vertex smoothing leave rings and ledges.
 
-- `rebuild_body_field.py` holds the body's analytic paws (the `HIND` and `FORE` tables), the tail rebuild, the tail-root fillets and `LIMB_REGIONS` smoothing. Add new edits as new options or table entries, with defaults that keep earlier runs reproducible.
-- `add_rear_coat_field.py` lays coat locks on the head in field space. Its sampling, flow and lock-shape functions can be reused for other coat masses.
-- A new script is fine when a change does not fit an existing one. Snapshot provenance with `study_provenance.snapshot`, write a JSON record of every parameter, and keep `approval: null`.
-- Useful checks:
-  - `require_single_closed_mesh` from `blender_blockout.py`.
-  - A deviation check outside the edited region: the nearest distance from new vertices to the old surface.
-  - Camera ray casts, to locate a defect seen in a closeup before choosing the scale of its fix.
+- `rebuild_body_field.py` holds the body's analytic paws, the tail rebuild, the tail-root fillets and limb smoothing. `add_rear_coat_field.py`, `author_rear_locks_field.py`, `shape_ear_front_field.py` and `shape_face_field.py` hold the head's coat and face work. Add new edits as new options with defaults that keep earlier runs reproducible.
+- When the order includes a spec (`docs/design/species-construction/akinza/loop/specs/<region>.md`), implement the spec's structure table: counts, positions, directions and lengths. Do not invent a different structure. If the spec is impossible to build, say why in `build.json`.
+- Read the region's history card in the order. Do not repeat an approach it lists as rejected, unless you name what you are changing about it. Reuse the listed reusable options when they help.
+- Snapshot provenance with `study_provenance.snapshot`, write a JSON record of every parameter, and keep `approval: null`.
 
 ## Procedure
 
-1. Read the work order. Look at the baseline packet's images for the target region, and at the named reference.
-2. Measure or locate before editing. For proportions, run `loop_tools.py measure <baseline assembly>`. For a local defect, ray-cast it or read its section coordinates.
-3. Implement the smallest change that addresses the order's issues. Keep the accepted directions: forward gaze, no human hands or feet, the three-tail root at the base of the spine, the tail tips curling up and out, and the requested fuller hind legs.
-4. Build the changed component or components into new directories. Look at a component closeup to confirm the change happened and nothing broke, such as holes, sliced tips, detached pieces or a changed silhouette elsewhere. Fixing technical breakage is part of your budget; judging likeness is not your job.
-5. Assemble with `loop_tools.py assemble <head> <body> <assembled-NNNN>`, which also renders. Then run `loop_tools.py check <assembled-NNNN>`, and `loop_tools.py packet <assembled-NNNN> untracked/species-construction/akinza/loop/packets/<assembled-NNNN>`.
-6. Write `build.json` in that packet folder: the order, the components and their exact commands, parameters, measurements before and after (when relevant), the technical check, and anything you could not do.
-7. Commit your code and document changes.
+1. Read the work order, the rubric criteria it names, the spec if any, and the history card. Look at the baseline packet images for your region and at `m11`.
+2. Run the inner loop above. Budget: at most six component builds (failed ones count) and as many quick previews as you need.
+3. When satisfied, assemble your component with the baseline's other component: `loop_tools.py assemble <head> <body> assembled-NNNN`. Then `loop_tools.py check assembled-NNNN`, `loop_tools.py packet assembled-NNNN untracked/species-construction/akinza/loop/packets/assembled-NNNN`, and `loop_tools.py diff <baseline packet> <your packet>`. One assembly per round.
+4. Write `build.json` in the packet folder: the order, components and exact commands, parameters, the fit and measured values before and after, the technical check, and anything you could not do.
+5. Commit your code and document changes by name.
+6. In your structured output, give `approach` (one sentence someone can recognise next round), and `reusable`: each new opt-in option or script you added that a later round could reuse, with what it does.
 
-**Budget:** at most four component builds (failed ones count) and one assembly per round. If you run out without a valid candidate, stop and report failure with the reason and what you learned. A clear failure is useful; a forced candidate is not.
+If you run out of budget without a valid candidate, stop and report failure with the reason and what you learned. A clear failure is useful; a forced candidate is not.
 
 ## Hard limits
 
-- Never edit references, approvals or acceptance records under `docs/design/species-construction/akinza/evidence/` or its `*-acceptance.json` files. Never edit species records, lore or the site.
-- Do not change regions outside the order. If an unavoidable side effect touches another region, say so in `build.json`.
+- Never edit references, approvals or acceptance records under `docs/design/species-construction/akinza/evidence/` or its `*-acceptance.json` files, the rubric, the invariants or the specs. Never edit species records, lore or the site.
+- Change only your component, and only your order's region. If an unavoidable side effect touches another region, say so in `build.json`.
+- Keep every invariant in `docs/design/species-construction/akinza/loop/invariants.json`.
 - Do not regenerate images with any image model. Geometry only.

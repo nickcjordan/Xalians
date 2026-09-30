@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "adopted": "2026-09-30",
+  "scoring": "Each criterion is pass (1), partial (0.5) or fail (0). A region's score is 10 x its credited fraction, rounded to 0.1. Measured criteria are computed by loop_tools.py into the packet's measured.json and are copied, never re-judged. Visual criteria are judged by the critic from the named images.",
+  "regions": {
+    "R01": [
+      {"id": "R01.1", "kind": "measured", "text": "Front head band silhouette overlaps the first sheet: IoU at least .90", "source": "fit", "view": "front", "band": "head", "metric": "iou", "min": 0.9},
+      {"id": "R01.2", "kind": "measured", "text": "Side head band silhouette overlaps the first sheet: IoU at least .90", "source": "fit", "view": "left", "band": "head", "metric": "iou", "min": 0.9},
+      {"id": "R01.3", "kind": "visual", "text": "A round skull crown rises between the ear roots in the front view instead of sitting level with the inner fan rim", "images": ["m04 head-front", "m02 front", "m01"]},
+      {"id": "R01.4", "kind": "visual", "text": "From behind, a rounded head mass reads centred in the fan and blends into it, with no rim line, seam or separate disc", "images": ["m04 head-back", "m02 back", "r03"]},
+      {"id": "R01.5", "kind": "visual", "text": "The lower face tapers to a small rounded chin (a soft U), with no square jaw and no pinched stem", "images": ["m04 head-front", "m06 neck-front", "m01"]}
+    ],
+    "R02": [
+      {"id": "R02.1", "kind": "visual", "text": "The eyes are very large tall ovals set into shallow sockets; in profile the eye is no prouder than the brow and cheek", "images": ["m05 eyes-front", "m05 nose-profile", "r01"]},
+      {"id": "R02.2", "kind": "visual", "text": "The eye outline is a thin lid line, not a thick raised black ring", "images": ["m05 eyes-front", "r01"]},
+      {"id": "R02.3", "kind": "visual", "text": "A small dark triangular nose pad sits seated in the muzzle, not a flat tab or a stuck-on bead", "images": ["m05 nose-front", "m05 nose-profile", "r01"]},
+      {"id": "R02.4", "kind": "visual", "text": "The muzzle is one soft rounded mass with a closed w mouth, no knob under the mouth, and in profile it stays behind the nose tip", "images": ["m05 nose-front", "m05 nose-below", "m05 nose-profile", "r01"]},
+      {"id": "R02.5", "kind": "visual", "text": "Soft cheek tufts break the lower face outline as broad coat masses, not jagged plates and not invisible relief", "images": ["m05 eyes-front", "m06 neck-front", "r01", "r04"]}
+    ],
+    "R03": [
+      {"id": "R03.1", "kind": "measured", "text": "Front ear span within 3 percent of the first sheet", "source": "measure", "view": "front", "key": "earSpan", "min": 0.97, "max": 1.03},
+      {"id": "R03.2", "kind": "measured", "text": "Front head band: at most 6 percent of the reference fan area is left uncovered", "source": "fit", "view": "front", "band": "head", "metric": "missing", "max": 0.06},
+      {"id": "R03.3", "kind": "visual", "text": "The fan outline has the V tilt of the first sheet: crown about .02 to .03 of figure height below the tips, and each tip tapers to an up-flared point, not a blunt square end", "images": ["m02 front", "m04 head-front", "m01"]},
+      {"id": "R03.4", "kind": "visual", "text": "The fan front is built from large shaggy pointed locks radiating from the ear roots (roughly 8 to 10 per side), not knobs, thorns, scales, shingles or lumps", "images": ["m04 head-front", "m05 head-three-quarter", "m01", "r04"]},
+      {"id": "R03.5", "kind": "visual", "text": "A cupped inner ear reads from the front on each side: a real hollow beside the skull with a clean rim and a pointed upper tip", "images": ["m04 head-front", "m01"]},
+      {"id": "R03.6", "kind": "visual", "text": "The lower fan edge drapes toward the cheeks instead of lifting clear of them", "images": ["m02 front", "m04 head-front", "m01"]}
+    ],
+    "R04": [
+      {"id": "R04.1", "kind": "measured", "text": "Back head band silhouette overlaps the first sheet: IoU at least .90", "source": "fit", "view": "back", "band": "head", "metric": "iou", "min": 0.9},
+      {"id": "R04.2", "kind": "measured", "text": "Side head band: model-only area at most 6 percent of the reference", "source": "fit", "view": "left", "band": "head", "metric": "extra", "max": 0.06},
+      {"id": "R04.3", "kind": "visual", "text": "From behind, the fan is one soft shaggy mass whose locks flow down and outward from a crown tuft, with no bowl rim, lattice, tiles, teeth or seams", "images": ["m04 head-back", "m05 head-rear-oblique", "r03", "m01"]},
+      {"id": "R04.4", "kind": "visual", "text": "The top edge rises spiky toward the tips and domes toward the crown; from above and behind it does not read as a flat tray", "images": ["m03 turn-135", "m03 turn-225", "m05 head-rear-oblique", "r03"]},
+      {"id": "R04.5", "kind": "visual", "text": "In profile the fan sweeps up and back as a curved shell of locks around a visible cavity, with no slabs, pins, picket or seam", "images": ["m04 head-side", "m02 left", "m01", "r04"]}
+    ],
+    "R05": [
+      {"id": "R05.1", "kind": "measured", "text": "Front neck width within 10 percent of the first sheet", "source": "measure", "view": "front", "key": "neck", "min": 0.9, "max": 1.1},
+      {"id": "R05.2", "kind": "measured", "text": "Side neck depth within 15 percent of the first sheet", "source": "measure", "view": "left", "key": "neck", "min": 0.9, "max": 1.15},
+      {"id": "R05.3", "kind": "measured", "text": "Front shoulder width within 7 percent of the first sheet", "source": "measure", "view": "front", "key": "shoulders", "min": 0.93, "max": 1.07},
+      {"id": "R05.4", "kind": "visual", "text": "The head meets the neck in a soft furred transition under the jaw and at the nape, with no stem pinch, notch or kink", "images": ["m06 neck-front", "m06 neck-profile", "m06 neck-rear"]},
+      {"id": "R05.5", "kind": "visual", "text": "The shoulders slope down from the neck to soft rounded caps, with no square yoke, corner nubs, ledges or bands", "images": ["m06 shoulders-front", "m06 neck-rear", "m01"]}
+    ],
+    "R06": [
+      {"id": "R06.1", "kind": "measured", "text": "Front waist at most 10 percent wider than the first sheet", "source": "measure", "view": "front", "key": "waist", "max": 1.1},
+      {"id": "R06.2", "kind": "measured", "text": "Side waist depth within 15 percent of the first sheet", "source": "measure", "view": "left", "key": "waist", "min": 0.9, "max": 1.15},
+      {"id": "R06.3", "kind": "visual", "text": "The trunk tapers smoothly from rib cage to waist to hips, with no shelf or abrupt flare", "images": ["m06 trunk-front", "m02 front"]},
+      {"id": "R06.4", "kind": "visual", "text": "The chest has a soft forward plane and rib cage volume, not a smooth tube", "images": ["m06 trunk-front", "m02 left", "m01"]},
+      {"id": "R06.5", "kind": "visual", "text": "The figure reads slim, not athletic, with a restrained rear", "images": ["m02", "m01"]}
+    ],
+    "R07": [
+      {"id": "R07.1", "kind": "visual", "text": "The upper arm is round in cross-section with no flat facet or hard-edged slab", "images": ["m07 forearm-profile", "m02 left"]},
+      {"id": "R07.2", "kind": "visual", "text": "The arm has a readable elbow and a wrist narrower than the forearm", "images": ["m07 forearm-front", "m07 forearm-profile"]},
+      {"id": "R07.3", "kind": "visual", "text": "Each forepaw has four digit lobes, each with a short curved claw coming out of its tip", "images": ["m07 forepaw-front", "m07 forepaw-profile", "r02"]},
+      {"id": "R07.4", "kind": "visual", "text": "The forepaw is a compact animal paw with no human fingers or thumb, palm toward the thigh", "images": ["m07", "r02"]}
+    ],
+    "R08": [
+      {"id": "R08.1", "kind": "visual", "text": "Each lower leg has one smooth calf swell, with no double bulge and no low shin lump", "images": ["m08 hindleg-front", "m08 shin-profile"]},
+      {"id": "R08.2", "kind": "visual", "text": "The knee reads as a soft kneecap plane, not a knob or a groove", "images": ["m08 hindleg-front", "m08 hindleg-profile"]},
+      {"id": "R08.3", "kind": "visual", "text": "The thighs are strong and full but not rabbit-like", "images": ["m02 left", "m08", "m01"]},
+      {"id": "R08.4", "kind": "visual", "text": "The ankles and heels taper; they are not thick", "images": ["m08 hindleg-profile", "m09 hindpaw-profile"]}
+    ],
+    "R09": [
+      {"id": "R09.1", "kind": "visual", "text": "The toe row arches: the middle toes lead and the outer toes are smaller, not four equal beads in a straight row", "images": ["m09 hindpaw-front", "m09 hindpaw-oblique", "r02"]},
+      {"id": "R09.2", "kind": "visual", "text": "Short claws emerge from the toe tips and curve down, not spikes standing clear", "images": ["m09 hindpaw-front", "m09 hindpaw-profile", "r02"]},
+      {"id": "R09.3", "kind": "visual", "text": "The paw has a heel, a sloping top and a flat sole in full ground contact", "images": ["m09 hindpaw-profile", "m09 hindpaw-underside"]},
+      {"id": "R09.4", "kind": "visual", "text": "The paw size reads right against the leg, as in the paw study", "images": ["m09", "m02 front", "r02"]}
+    ],
+    "R10": [
+      {"id": "R10.1", "kind": "measured", "text": "Back view against the accepted back study, trunk band (upper tails): IoU at least .74", "source": "fit", "view": "back-r03", "band": "trunk", "metric": "iou", "min": 0.74},
+      {"id": "R10.2", "kind": "measured", "text": "Back view against the accepted back study, legs band (lower tails): IoU at least .72", "source": "fit", "view": "back-r03", "band": "legs", "metric": "iou", "min": 0.72},
+      {"id": "R10.3", "kind": "visual", "text": "Exactly three full tails", "images": ["m10 tail-fan-back", "m02 back"]},
+      {"id": "R10.4", "kind": "visual", "text": "Each tail is a full crescent whose tip curls up and out, as in the back study, not a leaf or a downward hook", "images": ["m10 tail-fan-back", "m02 back", "r03"]},
+      {"id": "R10.5", "kind": "visual", "text": "The tails lie shingled in a stack on one side, overlapping near the root, not splayed like fingers", "images": ["m10 tail-fan-back", "m02 back", "r03"]},
+      {"id": "R10.6", "kind": "visual", "text": "Each tail is full near the root and tapers smoothly to a point; in profile the tails read as layered crescents, not pods", "images": ["m02 left", "m02 right", "m10", "r03"]}
+    ],
+    "R11": [
+      {"id": "R11.1", "kind": "visual", "text": "The three tails fuse into one root at the base of the spine, centred on the sacrum, not on one hip", "images": ["m10 tail-root-back", "m10 tail-root-oblique", "r03"]},
+      {"id": "R11.2", "kind": "visual", "text": "The root mass overlaps onto both rear sides", "images": ["m10 tail-root-back", "m10 tail-root-opposite", "r03"]},
+      {"id": "R11.3", "kind": "visual", "text": "No crease, pinch or V fold where the root meets the body or where the tails part", "images": ["m10 tail-root-back", "m10 tail-root-opposite"]},
+      {"id": "R11.4", "kind": "visual", "text": "The root reads as one sheath before the tails split", "images": ["m10 tail-root-oblique", "r03"]}
+    ],
+    "R12": [
+      {"id": "R12.1", "kind": "visual", "text": "Every part is at one level of development: body coat masses (cheek, chest, forearm or calf tufts) match the head fan's, or the fan is simplified to the body's level", "images": ["m02", "m03"]},
+      {"id": "R12.2", "kind": "visual", "text": "One coat idiom is used across the model: fan front, fan rear and body masses read as the same kind of fur lock", "images": ["m04", "m05", "m02"]},
+      {"id": "R12.3", "kind": "visual", "text": "No stray lumps, knots, seams, facets or placeholder shapes anywhere", "images": ["m02", "m03"]},
+      {"id": "R12.4", "kind": "visual", "text": "Proportions read as one creature: head, fan, body and tails in the first sheet's balance", "images": ["m02", "m11", "m01"]}
+    ]
+  }
+}

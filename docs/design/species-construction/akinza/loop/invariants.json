@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "note": "Settled decisions. The critic checks every one on every candidate. A newly violated invariant is a regression and the candidate is reverted. An invariant the baseline already violates is marked open: a round must not make it worse, and fixing it is part of the named region's work.",
+  "invariants": [
+    {"id": "I01", "text": "Forward gaze: both eyes look forward, not inward", "region": "R02"},
+    {"id": "I02", "text": "No human hands or feet: forepaws and hind paws are compact animal paws with no fingers or thumb", "region": "R07"},
+    {"id": "I03", "text": "Exactly three full tails", "region": "R10"},
+    {"id": "I04", "text": "The three tails fuse at one body-level root at the base of the spine", "region": "R11"},
+    {"id": "I05", "text": "The tail tips curl up and out, as in the accepted back study 0018", "region": "R10", "open": "The round 6 blade rebuild lost the curl; tips now point down and out. Restoring it is R10 work."},
+    {"id": "I06", "text": "The hind legs stay fuller, as Nick asked", "region": "R08"},
+    {"id": "I07", "text": "Neutral construction stance with the arms down", "region": "R07"},
+    {"id": "I08", "text": "One closed mesh: the technical check passes", "region": "R12"},
+    {"id": "I09", "text": "Figure height unchanged within 1 percent (floor to crown about 1.86), so every measurement stays comparable", "region": "R01"}
+  ]
+}
