@@ -287,7 +287,8 @@ export default function PowerworksTurnsPage() {
     setArmedAlly(null);
     setHoverTarget(null);
     clearSince();
-    dispatch({ kind: "act", order: { move: index, target } });
+    // A key that only acts on its user has no cell to name a target: the user is the target.
+    dispatch({ kind: "act", order: { move: index, target: target || view.active?.id || "" } });
   }
 
   function pass() {
