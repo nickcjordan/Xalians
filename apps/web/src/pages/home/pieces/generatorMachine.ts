@@ -740,21 +740,26 @@ function shelfFor(wi: number) {
 		g.fillStyle = css(r() < 0.5 ? BLACK : pal.lit, 0.05 + r() * 0.07);
 		g.fillRect(SHELF.x + r() * 200, y, 240 + r() * 400, h);
 	}
-	// rubble: small stones, larger and darker toward us
-	for (let k = 0; k < 190; k++) {
+	// rubble: stones of very different sizes (about threefold), rotated and some soft, in clumps with gaps, larger toward us
+	for (let k = 0; k < 170; k++) {
 		const y = GROUND - 12 + Math.pow(r(), 1.2) * 132;
 		const x = SHELF.x + r() * SHELF.w;
-		const s = 1.5 + (y - GROUND + 20) * 0.045 * (0.5 + r());
-		g.fillStyle = css(r() < 0.6 ? scale3(pal.stone, 0.3 + r() * 0.3) : scale3(pal.stone, 0.9 + r() * 0.3), 0.55 + r() * 0.3);
+		if (Math.sin(x * 0.045 + y * 0.03) > 0.55) continue;
+		const s = (1.2 + (y - GROUND + 20) * 0.03 * (0.4 + r())) * (0.6 + 2.6 * Math.pow(r(), 2.2));
+		g.save();
+		g.translate(x, y);
+		g.rotate((r() - 0.5) * 1.2);
+		g.fillStyle = css(r() < 0.6 ? scale3(pal.stone, 0.3 + r() * 0.3) : scale3(pal.stone, 0.9 + r() * 0.3), 0.3 + r() * 0.5);
 		g.beginPath();
-		g.moveTo(x - s, y + s * 0.4);
-		g.lineTo(x - s * 0.4, y - s * 0.6);
-		g.lineTo(x + s * 0.7, y - s * 0.4);
-		g.lineTo(x + s, y + s * 0.5);
+		g.moveTo(-s, s * 0.4);
+		g.lineTo(-s * 0.4, -s * 0.6);
+		g.lineTo(s * 0.7, -s * 0.4);
+		g.lineTo(s, s * 0.5);
 		g.closePath();
 		g.fill();
-		g.fillStyle = css(pal.lit, 0.12);
-		g.fillRect(x - s * 0.4, y - s * 0.6, s, 1);
+		g.fillStyle = css(pal.lit, 0.1);
+		g.fillRect(-s * 0.4, -s * 0.6, s, 1);
+		g.restore();
 	}
 	if (wi === 0) {
 		// wet: dark puddles with a paler rim, catching the sky
@@ -894,6 +899,34 @@ function foundationFor(wi: number) {
 	g.fillStyle = ao;
 	g.fillRect(-270, -270, 540, 540);
 	g.restore();
+	if (wi === 3) {
+		// a wet dark rock mass under it, about 1.2 times the slab's width, its top edge lit wet
+		const top = GROUND + 30;
+		g.beginPath();
+		g.moveTo(MX - 232, GFOOT + 24);
+		let px2 = MX - 232;
+		for (let x = MX - 232; x <= MX + 232; x += 12) {
+			const yy = top + Math.abs(x - MX) * 0.06 + (wr() - 0.5) * 8;
+			g.lineTo(x, yy);
+			px2 = x;
+		}
+		g.lineTo(px2, GFOOT + 24);
+		g.closePath();
+		const rg2 = g.createLinearGradient(0, top, 0, GFOOT + 24);
+		rg2.addColorStop(0, css([26, 38, 46]));
+		rg2.addColorStop(1, css([14, 22, 28]));
+		g.fillStyle = rg2;
+		g.fill();
+		g.strokeStyle = css([120, 170, 186], 0.18);
+		g.lineWidth = 1;
+		g.beginPath();
+		for (let x = MX - 232; x <= MX + 232; x += 12) {
+			const yy = top + Math.abs(x - MX) * 0.06 + (wr() - 0.5) * 8;
+			if (x === MX - 232) g.moveTo(x, yy);
+			else g.lineTo(x, yy);
+		}
+		g.stroke();
+	}
 	// the lower course: wider than the slab, solid, graded darker toward the ground
 	{
 		const lg = g.createLinearGradient(0, SLAB_B, 0, GFOOT);
@@ -934,6 +967,36 @@ function foundationFor(wi: number) {
 		quad([[MX - 186, SLAB_F], [MX + 186, SLAB_F], [MX + 188, SLAB_B], [MX - 188, SLAB_B]], fg);
 		g.fillStyle = css(pal.lit, 0.14);
 		g.fillRect(MX - 186, SLAB_F - 0.5, 372, 1.1);
+		// tooled: faint parallel chisel marks across the top face, and chips out of its near edge
+		g.save();
+		g.beginPath();
+		g.moveTo(MX - 168, GROUND - 4);
+		g.lineTo(MX + 168, GROUND - 4);
+		g.lineTo(MX + 186, SLAB_F);
+		g.lineTo(MX - 186, SLAB_F);
+		g.closePath();
+		g.clip();
+		for (let k = 0; k < 90; k++) {
+			const x = MX - 186 + wr() * 372;
+			const y = GROUND - 3 + wr() * (SLAB_F - GROUND);
+			g.strokeStyle = css(wr() < 0.5 ? BLACK : pal.lit, 0.1);
+			g.lineWidth = 0.8;
+			g.beginPath();
+			g.moveTo(x, y);
+			g.lineTo(x + 5 + wr() * 9, y - 2 - wr() * 2);
+			g.stroke();
+		}
+		for (let k = 0; k < 14; k++) {
+			const x = MX - 184 + wr() * 368;
+			g.fillStyle = css(BLACK, 0.34);
+			g.beginPath();
+			g.moveTo(x, SLAB_F);
+			g.lineTo(x + 2 + wr() * 4, SLAB_F);
+			g.lineTo(x + 1, SLAB_F - 2 - wr() * 3);
+			g.closePath();
+			g.fill();
+		}
+		g.restore();
 	}
 	// course joints: two horizontal ones in the lower course, and vertical joints staggered from one course to the next
 	g.strokeStyle = css(BLACK, 0.5);
@@ -980,21 +1043,31 @@ function foundationFor(wi: number) {
 		g.fillStyle = css(BLACK, 0.3);
 		g.fillRect(x + 1, SLAB_F, 2 + wr() * 4, 1 + wr() * 2);
 	}
-	// two cables in the foundation's own value: dark, sagging curves across the face, entering the rubble at an angle
-	for (const [x0, dx] of [[MX - 118, -46], [MX + 112, 40]] as [number, number][]) {
-		const cable = scale3(st, 1.25);
+	// two cables: near black, 4 to 5 units thick, a 1 px highlight at 0.2, sagging deeply across the face and leaving
+	// past the buttresses into the ground outside the slab
+	for (const sg of [-1, 1]) {
+		const x0 = MX + sg * 116;
+		const xe = MX + sg * 250;
+		const path = () => {
+			g.beginPath();
+			g.moveTo(x0, GROUND - 4);
+			g.lineTo(x0, SLAB_F);
+			g.quadraticCurveTo(x0 + sg * 26, GFOOT + 22, xe - sg * 34, GFOOT + 2);
+			g.quadraticCurveTo(xe - sg * 10, GFOOT - 2, xe, GFOOT + 8);
+		};
 		g.lineCap = 'round';
-		g.strokeStyle = css(BLACK, 0.55);
-		g.lineWidth = 8;
-		g.beginPath();
-		g.moveTo(x0, GROUND - 4);
-		g.lineTo(x0, SLAB_F);
-		g.quadraticCurveTo(x0 + dx * 0.15, SLAB_F + 26, x0 + dx * 0.5, GFOOT - 4);
-		g.quadraticCurveTo(x0 + dx * 0.75, GFOOT + 4, x0 + dx, GFOOT + 8);
+		g.lineJoin = 'round';
+		path();
+		g.strokeStyle = css([20, 20, 22]);
+		g.lineWidth = 4.6;
 		g.stroke();
-		g.strokeStyle = css(cable);
-		g.lineWidth = 5.4;
+		g.save();
+		g.translate(-1, -1);
+		path();
+		g.strokeStyle = css([220, 226, 232], 0.2);
+		g.lineWidth = 1;
 		g.stroke();
+		g.restore();
 	}
 	// the lower part of the foundation is drawn over by the ground: its bottom 14 units fade into it
 	g.globalCompositeOperation = 'destination-out';
@@ -1004,6 +1077,24 @@ function foundationFor(wi: number) {
 	g.fillStyle = bm;
 	g.fillRect(MX - 240, GFOOT - 14, 480, 24);
 	g.globalCompositeOperation = 'source-over';
+	// contact darkening: a dark band 6 to 10 units tall at about 0.5, soft up into the stone and out onto the ground
+	{
+		const cg = g.createLinearGradient(0, GFOOT - 10, 0, GFOOT + 8);
+		cg.addColorStop(0, css(BLACK, 0));
+		cg.addColorStop(0.55, css(BLACK, 0.5));
+		cg.addColorStop(1, css(BLACK, 0));
+		g.fillStyle = cg;
+		g.fillRect(MX - 214, GFOOT - 10, 428, 18);
+		g.save();
+		g.translate(MX, GFOOT + 5);
+		g.scale(1, 0.06);
+		const og = g.createRadialGradient(0, 0, 130, 0, 0, 236);
+		og.addColorStop(0, css(BLACK, 0.5));
+		og.addColorStop(1, css(BLACK, 0));
+		g.fillStyle = og;
+		g.fillRect(-240, -240, 480, 480);
+		g.restore();
+	}
 	// what has settled against the foot
 	const r = rng(7 + wi);
 	if (wi === 2) {
@@ -1044,7 +1135,35 @@ function foundationFor(wi: number) {
 			g.beginPath();
 			g.ellipse(x + (k % 2 ? 10 : -10), baseY + 4, w * 1.1, 4, 0, 0, TAU);
 			g.fill();
+			// its straight bottom edge feathered into the snowfield over about 8 units
+			g.save();
+			g.globalCompositeOperation = 'destination-out';
+			const fe = g.createLinearGradient(0, baseY - 6, 0, baseY + 5);
+			fe.addColorStop(0, 'rgba(0,0,0,0)');
+			fe.addColorStop(1, 'rgba(0,0,0,0.85)');
+			g.fillStyle = fe;
+			g.fillRect(x - w - 4, baseY - 6, w * 2 + 8, 12);
+			g.restore();
 		});
+		// one drift rides up onto the foundation's face
+		{
+			const x = MX - 82;
+			const baseY = GFOOT + 6;
+			const gr2 = g.createLinearGradient(x - 60, 0, x + 60, 0);
+			gr2.addColorStop(0, css([186, 198, 210]));
+			gr2.addColorStop(1, css([150, 165, 180]));
+			g.fillStyle = gr2;
+			g.beginPath();
+			g.moveTo(x - 62, baseY + 2);
+			g.bezierCurveTo(x - 48, baseY - 20, x - 20, baseY - 38, x + 6, baseY - 34);
+			g.bezierCurveTo(x + 34, baseY - 26, x + 52, baseY - 8, x + 64, baseY + 3);
+			g.closePath();
+			g.fill();
+			g.fillStyle = css([226, 234, 244], 0.3);
+			g.beginPath();
+			g.ellipse(x - 12, baseY - 24, 22, 5, -0.2, 0, TAU);
+			g.fill();
+		}
 		// a little snow lying on the slab's top face and ledges, and on the buttresses
 		g.fillStyle = css([164, 176, 190], 0.5);
 		for (let k = 0; k < 8; k++) {
@@ -1060,26 +1179,39 @@ function foundationFor(wi: number) {
 			g.fill();
 		}
 	} else {
-		// soil, rubble and crust heaped over the foot, so it reads as sunk in; the cables enter it
-		for (let k = 0; k < 110; k++) {
-			const x = MX - 226 + r() * 452;
-			g.fillStyle = css(scale3(palOf(wi).bot, wi === 3 ? 0.7 + r() * 0.7 : 1.1 + r() * 1.8), 0.7 + r() * 0.3);
+		// soil, rubble and crust heaped over the foot, so it reads as sunk in: clumps with gaps, stones of very different sizes
+		for (let k = 0; k < 90; k++) {
+			const x = MX - 230 + r() * 460;
+			if (Math.sin(x * 0.07 + 1) > 0.5) continue;
+			g.fillStyle = css(scale3(palOf(wi).bot, wi === 3 ? 0.7 + r() * 0.7 : 1.1 + r() * 1.8), 0.6 + r() * 0.35);
 			g.beginPath();
-			g.ellipse(x, GFOOT - 3 + r() * 12, 5 + r() * 12, 3 + r() * 4.5, 0, 0, TAU);
+			g.ellipse(x, GFOOT - 3 + r() * 12, 4 + r() * 12, 2.4 + r() * 4.5, 0, 0, TAU);
 			g.fill();
 		}
-		for (let k = 0; k < 16; k++) {
-			const x = MX - 220 + r() * 440;
-			const s2 = 2 + r() * 3.5;
-			g.fillStyle = css(scale3(st, 0.5 + r() * 0.5), 0.9);
+		const stone = (x: number, y: number, s2: number, dark: number) => {
+			g.save();
+			g.translate(x, y);
+			g.rotate((r() - 0.5) * 1.1);
+			g.fillStyle = css(scale3(st, dark), 0.6 + r() * 0.4);
 			g.beginPath();
-			g.moveTo(x - s2, GFOOT + 8);
-			g.lineTo(x - s2 * 0.4, GFOOT + 8 - s2 * 1.4);
-			g.lineTo(x + s2 * 0.7, GFOOT + 8 - s2);
-			g.lineTo(x + s2, GFOOT + 8);
+			g.moveTo(-s2, s2 * 0.4);
+			g.lineTo(-s2 * 0.5, -s2 * 0.8);
+			g.lineTo(s2 * 0.4, -s2 * 1.0);
+			g.lineTo(s2, s2 * 0.3);
 			g.closePath();
 			g.fill();
+			g.fillStyle = css(palOf(wi).lit, 0.1);
+			g.fillRect(-s2 * 0.5, -s2 * 0.8, s2 * 0.9, 1);
+			g.restore();
+		};
+		for (let k = 0; k < 22; k++) {
+			const x = MX - 236 + r() * 472;
+			if (Math.sin(x * 0.05 + 2) > 0.45) continue;
+			stone(x, GFOOT + 4 + r() * 10, 1.6 + 7 * Math.pow(r(), 2.3), 0.4 + r() * 0.6);
 		}
+		// a few stones up on the foundation's foot, and two or three larger ones in front
+		for (let k = 0; k < 4; k++) stone(MX - 150 + r() * 300, GFOOT - 6 - r() * 5, 3 + r() * 5, 0.5 + r() * 0.4);
+		for (let k = 0; k < 3; k++) stone(MX - 170 + k * 120 + r() * 60, GFOOT + 16 + r() * 6, 9 + r() * 5, 0.28 + r() * 0.2);
 		if (wi === 1) {
 			// crust fragments in front of the base, dark and angular
 			for (let k = 0; k < 12; k++) {
@@ -1098,20 +1230,20 @@ function foundationFor(wi: number) {
 			}
 		}
 		if (wi === 3) {
-			// foam catching the light in a few places, and breaking against the buttresses
-			for (let k = 0; k < 4; k++) {
-				g.fillStyle = css([200, 226, 232], 0.3 + r() * 0.2);
+			// soft foam: irregular blobs at 0.25 to 0.45 breaking up the buttresses' sides, and lapping at the front
+			const foam = (x: number, y: number, rr: number, al: number) => {
+				const fg = g.createRadialGradient(x, y, 0, x, y, rr);
+				fg.addColorStop(0, css([214, 234, 240], al));
+				fg.addColorStop(0.6, css([214, 234, 240], al * 0.5));
+				fg.addColorStop(1, css([214, 234, 240], 0));
+				g.fillStyle = fg;
 				g.beginPath();
-				g.ellipse(MX - 150 + k * 96 + r() * 30, GFOOT + 4 + r() * 6, 8 + r() * 12, 1.6 + r() * 1.4, 0, 0, TAU);
+				g.ellipse(x, y, rr, rr * (0.55 + r() * 0.3), r() * 1.2, 0, TAU);
 				g.fill();
-			}
+			};
 			for (const sg of [-1, 1])
-				for (let k = 0; k < 4; k++) {
-					g.fillStyle = css([214, 234, 240], 0.4);
-					g.beginPath();
-					g.ellipse(MX + sg * (222 + r() * 6), GROUND + 20 + k * 12 + r() * 4, 7 + r() * 8, 1.6 + r() * 1.6, 0, 0, TAU);
-					g.fill();
-				}
+				for (let k = 0; k < 7; k++) foam(MX + sg * (216 + r() * 14), GROUND + 6 + r() * 46, 4 + r() * 8, 0.25 + r() * 0.2);
+			for (let k = 0; k < 6; k++) foam(MX - 190 + r() * 380, GFOOT + 12 + r() * 8, 6 + r() * 10, 0.25 + r() * 0.2);
 		}
 	}
 	return (fndCache[key] = o.c);
@@ -1167,7 +1299,8 @@ function groundLight(ctx: Ctx, wi: number, a: number, S: MachineLook, lit: numbe
 	if (wi === 1) {
 		const lgl = ctx.createLinearGradient(0, SLAB_B, 0, GFOOT);
 		lgl.addColorStop(0, css([255, 120, 50], 0));
-		lgl.addColorStop(1, css([255, 120, 50], 0.25 * a));
+		lgl.addColorStop(0.65, css([255, 120, 50], 0.25 * a));
+		lgl.addColorStop(1, css([255, 120, 50], 0));
 		ctx.save();
 		ctx.globalCompositeOperation = 'lighter';
 		ctx.fillStyle = lgl;
