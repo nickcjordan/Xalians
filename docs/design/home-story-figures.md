@@ -15,11 +15,15 @@ Nick, 2026-09-28: the small pieces had been fitted into a mechanism built for fi
 | 3 | Every story animation passes the glance test: a casual visitor sees what is happening in the first moment; the mechanism belongs to the paragraph. Explainer animations (keys, pattern scans, counters) were rejected. | 95%, Nick's ruling | conversation 2026-09-28 |
 | 4 | Nothing leaves a Generator on screen. Life spreading out of a Generator belongs to the Floria scene alone, where it stands for the first, experimental machine. | 95%, Nick's ruling | conversation 2026-09-28 |
 | 5 | Beat 2 shows a later model of the Genesis Prototype: Floria's machine with the technology matured. The lore dates nothing between the prototype and the production Generators, so the design shows time passing without a number. | 85%, Nick's idea | conversation 2026-09-28; `planets.json` Floria history |
-| 6 | Beat 2 names no world. A first-time visitor does not know one world from another; the worlds are told by their look (storm, lava, ice, sea). The label says each world had its own Generator, so the passing worlds read as a montage and not one machine serving many. | 85%, Nick agreed to go general | conversation 2026-09-28; the 2026-09-27 fact-check (one Generator per world) |
+| 6 | Beat 2 names no world. A first-time visitor does not know one world from another; the worlds are told by their look (storm, lava, ice, sea). The label says the Generators were built for the worlds they stood on, so the passing worlds read as a montage and not one machine serving many. Never "each world had its own Generator" or "every Generator": Endessa's stolen prototype and Phantiri's secret Generator are exceptions (fact-check, 2026-09-29). | 85%, Nick agreed to go general | conversation 2026-09-28; `planets.json` Endessa, Phantiri |
 | 7 | APEX is a signal, not a thing: a see-through lattice with scanlines over many Generators, linked to them by dashed data lines. Nothing hangs over a single machine and nothing physically grips it. Its name appears once, small, beside it. | 90%, Nick's ruling | conversation 2026-09-29 ("I don't want it to look like the orb is a physical thing hovering over the generator") |
 | 8 | APEX's arrival is dramatic: a power dip, a pull-back to many Generators, the lattice resolving out of interference, a closing vignette. | 85%, Nick asked for more drama | conversation 2026-09-28 |
 | 9 | Under APEX a machine stops reading its world and its seeds line up and pulse together: APEX controls the machines. Nothing marches out as an army; turning the Xalians against their masters is beat 4's story. | 85% | conversation 2026-09-28; `STORY[1]` |
 | 10 | Figures draw on one canvas over the viewer's box (the figure stage), so one figure can run on from one beat into the next without being cut by the change. Each beat still renders its own place for the figure (`[data-figure-slot]`), which carries the screen-reader description. | 80% | `figureStage.tsx` |
+| 11 | A figure fades out in an oval well inside its place, so it never shows a box: the point of a figure is the part that matters, not a full scene. | 95%, Nick's ruling | conversation 2026-09-29 ("I think the oval fade out is the right move") |
+| 12 | APEX links only to Generators, never Generator to Generator: QED linked APEX to the Generators it controlled. | 90%, fact-check | `planets.json` Zolton |
+| 13 | No figure reaches `main` below the bar: every rubric line 8.5 or higher, the blind reader right, the fact-check clean (the `story-figure-polish` skill). Nick may waive it in words. | 95%, Nick approved the system | conversation 2026-09-29 |
+| 14 | Beats 5 and 6 become one figure, the outbreak (section 7), from the direction Nick picked on 2026-09-28 ("I like your second option better"): a galaxy of lit worlds with the plague spreading across it, then a token holding it back. He was "not sold on the exact animations", so the prototype's look is a starting point, not a spec. | 85% | conversation 2026-09-28; prototype `https://claude.ai/artifact/YRyoxJA4cqyKrjx1QVM5z7` |
 
 ## 3. How a change runs
 
@@ -50,3 +54,33 @@ A figure moves only while its beat is live (the viewer resting on it, on screen,
 - `node scripts/design/snap-figures.cjs [wide|laptop|phone|reduced]` saves frames partway through each change around the figures and prints the viewer's state after each.
 - `node scripts/design/snap-figure-close.cjs` saves the figure alone at twice the pixels at set moments of 02 and 03, for review.
 - `node scripts/plates/snap-story.cjs` still checks the whole story's rules (one live thing at a time, nothing live mid-change, no overflow, a clean console).
+
+## 7. The outbreak (beats 5 and 6), to build
+
+Beat 5, "Designed by APEX to target the genome", and beat 6, "The only way to safely generate new Xalians", become one figure that runs on from one into the next, as the Generators do. It replaces the helix pieces (`plague.ts`, `token.ts`) on the archive screen; both files go when it ships.
+
+- **Arrival (04 to 05).** The End Wars screen collapses to a point; the point flies to a far world of the galaxy and turns crimson there. That world is the plague's first.
+- **05.** A galaxy of small lit worlds, warm and alive. From the first world the plague spreads world to world along lanes; each world it reaches flares crimson and goes dark, and a red haze gathers where it has passed. A small cluster of lights near the core holds (Valleron: "few planets are safe", `STORY[3]`), unnamed on screen. Glance line: "a red sickness spreads across the worlds and puts their lights out."
+- **06 (runs on).** The view closes in on the cluster that held. A Scrambler Token forms there, a hexagonal chip in white light (its look carried from `token.ts`: a wafer of dark glass and worn metal). The haze draws back from its light, and light goes back out from it to dark worlds, which light again. Glance line: "one bright chip holds the red back, and the worlds light up again."
+- **Departure (06 to 07).** The token pulls into a point that flies to the arena screen on Valleron, where the tokens are fought for.
+- **Defaults I will use unless Nick says otherwise:** no world is named; the first infected world has a faint cold tint (a nod to Krystos, where the histories put the plague's making) and is never labeled; Valleron is a cluster, not a single marked world; the relit worlds are only those near the token, so it reads as a beginning, not a cure. Every one of these goes through the fact-check with the labels.
+- **Open for the fact-check:** whether "light goes back out to dark worlds" overclaims what tokens do (the lore summary has Xalians winning tokens to repopulate their homeworlds; the histories must support it, or the relighting becomes the token's own light only).
+
+## 8. Glance lines (what the blind reader must say)
+
+| Beat | It passes when the reader says, in their own words |
+|---|---|
+| 02 | a machine makes life, and the life changes to suit each world it is shown in |
+| 03 | something (a network, an intelligence) takes control of many such machines |
+| 05 | a red sickness spreads across many worlds and puts their lights out |
+| 06 | one bright object holds the sickness back and the worlds come alive again |
+
+## 9. Budgets
+
+- A figure draws at the plates' film rate (20 frames a second) while it only plays, and at the screen's rate only while light travels.
+- Draw time per frame, measured on the laptop profile (1366 by 640) in headed Chrome: under 8 ms on average and under 16 ms at the 95th percentile. Measure it with a round's harness page before shipping; never guess.
+- No new network requests: figures are drawn in code, nothing is fetched.
+
+## 10. The round harness (build first)
+
+Before round 1 of any figure: a standalone study page that runs one figure outside the site, for the graders and for Nick. `apps/web/dev/figureStudy.ts` bundles the figure module with a small stage (the same oval mask, the figure's beats as keys, Replay, a draw-time readout) into one HTML file (`node scripts/design/export-figure-study.cjs <figure>` writes `untracked/figure-study/<figure>.html`), which is what gets published as the round's artifact. Close frames and change sheets still come from the dev site (`scripts/design/snap-figure-close.cjs`, `scripts/design/snap-figures.cjs`), since the changes need the real viewer.
