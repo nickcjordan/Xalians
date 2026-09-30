@@ -143,4 +143,23 @@ A landscape phone layout that uses the full width, drops plate chrome to name an
 
 **Not done or open:** the Guide is a scrolling sheet on a phone, not a fit-to-screen page (16 rows cannot stay at 12 px in 390 px). A touch screen taller than 500 px (a tablet) still gets the desktop console and so has no tap preview. No safe-area padding for notches or rounded corners. No cold-reader or critic pass has been run on the phone layout yet (that is the round's judging step).
 
+**Judged after Round 3** (fresh critic and readers): stages S01 6, S02 6, S03 6, S04 7, S05 6, S06 6, S07 7, S08 6, S09 6, S10 7, S11 7, S12 4 (before Round 4); readers graded 99.1%, 99.1% and 99.6% on facts, and each rated understanding 7 of 10.
+
+### Round 5: from 6 to 8
+
+A fresh critic after Round 3 scored every stage 6 or 7 (phone 4, before Round 4); three fresh readers rated their understanding 7 of 10, and all three named the same worst moment: an enemy hit that will knock out a companion looks like any other hit. Evidence and frames: critic report, scratchpad `ux2r3v/critic.md`.
+
+1. **Knockout warnings on enemy hits.** When an enemy's hit chip (on the acting companion) equals or exceeds that companion's health, the chip carries the skull, as a fact; the matchup color never makes a lethal hit look favorable. On every squad plate, mark a companion that an enemy acting before its next turn can knock out with its strongest ready hit (a small skull on the plate, the same mark). Guide row for it.
+2. **End states are quiet.** When a sector-cleared hold, the squad's fall or the victory hold starts, the key bar and the rail stop showing a live turn ("Your next turn", a coming round). The Guardian's fall gets its own hold ("Guardian down") distinct from an ordinary room.
+3. **Deltas describe the present.** "Since your last turn" deltas clear from plates the moment playback starts; during playback a plate shows only the current beat's change.
+4. **Retreat is guarded.** At camp, Retreat moves away from Continue, takes the danger outline and asks once, naming what ends and what is kept (sector, XP). Camp buttons sit on one row without wrapping. The last camp before the Guardian says so ("Last camp before the Guardian"), and an unused revive says the fallen companion sits out the final fight.
+5. **A hindered companion's keys stay alive.** Keys are not dimmed when a key still does something (a rider, a support); the struck form keeps full contrast; the reason sits on the key bar's first line, not under the portrait; a struck cell is the same height as a normal cell.
+6. **Chips never clip.** Plates grow or wrap chips to a second row; the resting "in N" is always whole at every size.
+7. **Area hover lights everything it hits**: hovering any cell of an area key rings every enemy it reaches and lights all of its cells. Hovering an enemy figure rings its plate (the critic saw no change on figure hover).
+8. **Distinct glyphs**: the enemy hit chip gets its own glyph (an impact mark), distinct from the hinder chip's swords; the shield glyph is drawn large enough to read as a shield; the in-cell shield ("its shield absorbs 4 first") gets a Guide row.
+9. **Landing numbers** sit beside the plate they changed, clear of letter tags and strike arrows; during playback enemy hit chips stay and show a hinder as the struck form on the chip.
+10. **Victory and endings**: the whole squad on victory with the fallen marked Down, "+30 for the Guardian" beside XP; defeat and withdrew get a neutral eyebrow (mint only on victory) and a treatment that cannot be mistaken for victory.
+11. **Teaching in place**: the briefing gains one row that shows a single key with two cells and one sentence ("each key shows what it does to each enemy; pick a cell to act"); XP is either explained in one line or dropped from the briefing and reports until it does something. First-occurrence notes (first hinder cell, first shield, first ALL band) appear once, in place, and go.
+12. **Small fixes**: the rail never clips a slot at 1366 (fit or drop the last peek slot); area result sentences shorten ("weakened each by 6") instead of truncating; the summary wraps to two lines before "+N more"; the Record lists a round's lines in play order (rounds newest first) with a side mark per line; the restart dialog names the sector and XP lost; the cancel message appears once (toast only); the portrait prompt icon gets a rotate cue.
+
 Not adopted: a commit guard or undo (the answer keys already preview the outcome before the click); reopen if play shows misclicks.
