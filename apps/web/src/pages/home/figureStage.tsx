@@ -44,8 +44,6 @@ export function FigureStage({ beats, index, boxRef, live, motion }: { beats: Sta
 	const pr = React.useRef(1);
 	const off = React.useRef<HTMLCanvasElement | null>(null);
 	const kick = React.useRef<() => void>(() => {});
-	// the color the figures sit on, so their oval fades out into it (the first opaque background above the box)
-	const page = React.useRef<string | null>(null);
 
 	const figureOf = (key: FigureKey) => {
 		let f = figs.current.get(key);
@@ -132,13 +130,6 @@ export function FigureStage({ beats, index, boxRef, live, motion }: { beats: Sta
 		if (!box || !canvas) return undefined;
 		const fit = () => {
 			const r = box.getBoundingClientRect();
-			for (let el: HTMLElement | null = box; el; el = el.parentElement) {
-				const bg = getComputedStyle(el).backgroundColor;
-				if (bg && bg !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(bg)) {
-					page.current = bg;
-					break;
-				}
-			}
 			pr.current = Math.min(1.25, window.devicePixelRatio || 1, 1800 / Math.max(1, r.width));
 			const w = Math.max(1, Math.round(r.width * pr.current));
 			const h = Math.max(1, Math.round(r.height * pr.current));
@@ -184,7 +175,7 @@ export function FigureStage({ beats, index, boxRef, live, motion }: { beats: Sta
 			oc.setTransform(ow / W, 0, 0, oh / H, 0, 0);
 			f.fig.draw(oc, sec, { compact: s.w < 520 });
 			// suspended on the page: an oval that fades out well before the edges of its place, never a box
-			ovalFade(oc, f.fig.groundHold, page.current);
+			ovalFade(oc, f.fig.groundHold);
 			ctx.drawImage(o, Math.round(s.x * p), Math.round(s.y * p));
 		}
 		const fl = flight.current;

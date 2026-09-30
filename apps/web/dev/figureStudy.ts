@@ -50,7 +50,7 @@ function paint(o: HTMLCanvasElement, fig: Figure, sec: number, compact: boolean)
 	oc.clearRect(0, 0, o.width, o.height);
 	oc.setTransform(o.width / W, 0, 0, o.height / H, 0, 0);
 	fig.draw(oc, sec, { compact });
-	ovalFade(oc, fig.groundHold, ROOM);
+	ovalFade(oc, fig.groundHold);
 }
 
 /* ------------------------------------------------------------------ styles */
