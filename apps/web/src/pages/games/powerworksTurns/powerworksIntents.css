@@ -89,6 +89,13 @@
 .pwt-key-aim { font-family: var(--font-body); font-size: 12px; color: var(--color-ink-3); text-align: right; }
 .pwt-key-head { display: flex; margin-bottom: 4px; }
 .pwt-key-foot { margin-top: 0; min-height: 16px; justify-content: flex-start; }
+.pwt-key-power-word { font-family: var(--font-body); font-size: 12px; font-weight: 400; color: var(--color-ink-3); align-self: flex-end; padding-bottom: 3px; }
+.pwt-key-power-was { font-size: 20px; font-weight: 400; color: var(--color-ink-3); }
+.pwt-key-power-arrow { font-size: 18px; font-weight: 400; color: var(--color-ink-3); }
+/* The companion's own mark on an attack key, beside the number it changed. */
+.pwt-key-own { display: inline-flex; align-items: center; gap: 3px; font-family: var(--font-data); font-size: 13px; line-height: 1.2; padding: 1px 5px; border: 1px solid var(--color-edge-strong); background: var(--color-s2); color: var(--color-ink-2); white-space: nowrap; }
+.pwt-key-own svg { width: 12px; height: 12px; flex: 0 0 auto; }
+.pwt-key-own-words { font-family: var(--font-body); font-size: 12px; }
 .pwt-key.resting .pwt-key-power,
 .pwt-key.spent .pwt-key-power { color: var(--color-ink-3); }
 
@@ -108,8 +115,17 @@
   color: var(--color-ink);
 }
 .pwt-intent.lethal { border-color: var(--color-plague); }
-.pwt-intent.off { visibility: hidden; }
+.pwt-intent { transition: opacity 150ms var(--ease-out), border-color 150ms var(--ease-out); }
+/* While beats play: the acting enemy's promise stays lit, every other chip steps back (none is hidden, so no plate looks empty). */
+.pwt-intent.dim { opacity: 0.45; }
+.pwt-intent.lit { border-color: var(--color-ink-2); }
+.pwt-intent.lit.lethal { border-color: var(--color-plague); }
 .pwt-intent-to { display: flex; align-items: center; gap: 4px; min-width: 0; }
+/* The verb is the intent's own grammar: a word before its target, in ink, never a status glyph or a side color. */
+.pwt-intent-verb { flex: 0 0 auto; font-family: var(--font-legend); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-ink-3); }
+.pwt-intent-arrow { flex: 0 0 auto; color: var(--color-ink-3); font-size: 12px; }
+.pwt-intent-portrait.struck { opacity: 0.45; position: relative; }
+.pwt-intent-portrait.struck::after { content: ""; position: absolute; left: -2px; right: -2px; top: 50%; border-top: 2px solid var(--color-ink); transform: rotate(-35deg); }
 .pwt-intent-portrait {
   flex: 0 0 auto;
   width: 18px;
@@ -133,15 +149,14 @@
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
-.pwt-intent-what { display: flex; align-items: center; justify-content: center; gap: 3px; font-size: 14px; font-weight: 700; line-height: 1.1; }
+.pwt-intent-what { display: flex; align-items: center; justify-content: center; gap: 3px; white-space: nowrap; font-size: 14px; font-weight: 700; line-height: 1.1; }
 .pwt-intent-what svg { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-ink-2); }
 .pwt-intent-what .pwt-hit-skull { width: 14px; height: 14px; color: var(--color-plague); }
 .pwt-intent-what .pwt-hit-before { font-size: 12px; font-weight: 400; color: var(--color-ink-3); margin-right: 0; }
 .pwt-intent-what .pwt-hit-arrow { color: var(--color-ink-3); font-size: 12px; font-weight: 400; }
 .pwt-intent-all { font-family: var(--font-legend); font-size: 10px; letter-spacing: 0.08em; border: 1px solid var(--color-ink-3); padding: 0 3px; font-weight: 700; }
 .pwt-intent-support { display: inline-flex; align-items: center; gap: 2px; }
-.pwt-intent-support.heal svg { color: var(--color-viable); }
-.pwt-intent-support.shield svg { color: var(--color-el-ice); }
+/* An enemy's heal or shield favors the enemy: neutral ink, never the green that means "good for you". */
 .pwt-intent .pwt-cell-chevron-wrap {
   display: inline-flex;
   align-items: center;
@@ -183,6 +198,11 @@
 .pwt-match.strong { color: var(--color-viable-ink); background: var(--color-viable); border-color: var(--color-viable); }
 .pwt-match.weak { color: var(--color-plague-ink); background: var(--color-plague); border-color: var(--color-plague); }
 .pwt-match.immune { color: var(--color-ink-3); }
+.pwt-match:not(.immune) { padding: 0 3px; gap: 1px; letter-spacing: 0; }
+.pwt-match-x { font-family: var(--font-data); letter-spacing: 0; font-size: 10px; }
+/* The tab is the chevron and its multiplier (the word is on hover and in the Guide): a plate's width holds it beside the element tag. */
+.pwt-match .pwt-match-word { display: none; }
+.pwt-match.immune .pwt-match-word { display: inline; }
 
 /* --- the preview: what the hovered or selected key would land on this unit, always in the same place --- */
 .pwt-preview {
@@ -234,6 +254,9 @@
 .pwt-preview.heal .pwt-preview-num { color: var(--color-viable); }
 .pwt-preview.shield .pwt-preview-num svg { color: var(--color-el-ice); }
 .pwt-preview .pwt-preview-num svg.saved { color: var(--color-ink-3); }
+/* A skull that stays after a hinder: the hit still knocks the companion out. */
+.pwt-preview .pwt-preview-num svg.live,
+.pwt-preview-note svg.live { color: var(--color-plague); }
 .pwt-preview-note {
   display: inline-flex;
   align-items: center;
@@ -320,4 +343,10 @@
 .pwt-console:not(.phone) .pwt-keybar { height: 132px; min-height: 132px; }
 /* The guardian's plaque carries its own tag row above the element badge: its preview sits above that. */
 .pwt-plate.boss .pwt-preview { bottom: 39px; left: calc(50% + 8px); }
+.pwt-banner-open { display: inline-block; width: 12px; height: 12px; vertical-align: -2px; margin-left: 4px; color: var(--color-ink-3); }
+.pwt-preview.knocks .pwt-preview-num { font-size: 20px; gap: 2px; }
+.pwt-preview.knocks .pwt-preview-before,
+.pwt-preview.knocks .pwt-preview-arrow { font-size: 15px; }
+.pwt-preview.knocks .pwt-preview-num svg { width: 15px; height: 15px; }
+.pwt-plate.boss .pwt-preview.knocks { left: 50%; }
 .pwt-preview-notes { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0 8px; }

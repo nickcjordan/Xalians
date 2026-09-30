@@ -31,6 +31,7 @@ import {
   campView,
   knockoutHold,
   reviveWords,
+  revivesLeftWords,
   revivedWords,
   runSummary,
   stationHeal,
@@ -968,13 +969,15 @@ describe("round 2: briefing, camp, title card, holds and the run summary", () =>
     expect(c.revives).toHaveLength(1);
     const to = Math.ceil(fallen.team[0].max / 2);
     expect(c.revives[0].to).toBe(to);
-    expect(c.revives[0].text).toBe(`Revive ${fallen.team[0].name} to ${to} health · 1 revive left`);
+    expect(c.revives[0].text).toBe(`Revive ${fallen.team[0].name} to ${to} health`);
+    expect(revivesLeftWords(1)).toBe("1 revive left.");
     expect(c.unusedNote).toMatch(/unused/);
     // The number the button promises is what the engine gives.
     const after = turnCommand(fallen, { kind: "revive", id: fallen.team[0].id }).state;
     expect(after.team[0].hp).toBe(to);
     expect(revivedWords("Ann", 63, after.revival)).toBe("Ann revived to 63 health. No revives left.");
-    expect(reviveWords("Ann", 63, 2)).toBe("Revive Ann to 63 health · 2 revives left");
+    expect(reviveWords("Ann", 63)).toBe("Revive Ann to 63 health");
+    expect(revivesLeftWords(2)).toBe("2 revives left.");
     // No revive left, or nobody down: no offer and no note.
     expect(campView({ ...fallen, revival: 0 }).revives).toEqual([]);
     expect(campView({ ...fallen, revival: 0 }).unusedNote).toBeNull();
@@ -1211,8 +1214,14 @@ describe("round 5: first-occurrence notes (item 11)", () => {
     } as typeof base;
     const first = keyNote(v, [])!;
     expect(first).toMatchObject({ id: "hinder", keyIndex: 1 });
-    expect(first.text).toBe(`Hinder: ${hinderWords(14, "Avilily", 14, 0)}.`);
-    expect(first.text).toBe("Hinder: that enemy's next hit, on whoever it strikes, falls by 14 (its hit on Avilily: 14 to 0).");
+    expect(first.text).toBe(`Hinder: ${hinderWords()}. The plate shows that hit before and after.`);
+    // A note explains the mark only: no target's name and no number from the live state (they read as advice).
+    for (const id of [[], ["hinder"], ["hinder", "shield"]]) {
+      const n = keyNote(v, id)!;
+      expect(n.text).not.toMatch(/\d/);
+      expect(n.short).not.toMatch(/\d/);
+      expect(n.text).not.toMatch(/Avilily/);
+    }
     expect(first.keyName).toBe("K");
     expect(keyNote(v, ["hinder"])).toMatchObject({ id: "shield", keyIndex: 0 });
     expect(keyNote(v, ["hinder", "shield"])).toMatchObject({ id: "all", keyIndex: 2 });
@@ -1371,9 +1380,34 @@ describe("round 6: the forecast agrees with the result", () => {
       for (const c of key.cells) expect(c).toMatchObject({ hinder: 21, before: 30, n: 9, hitOn: a.name });
     });
 
-    it("the hinder words say whom it falls on and give the example", () => {
-      expect(hinderWords(14, "Avilily", 14, 0)).toBe("that enemy's next hit, on whoever it strikes, falls by 14 (its hit on Avilily: 14 to 0)");
-      expect(hinderWords(14, "", 14, 0)).toBe("that enemy's next hit, on whoever it strikes, falls by 14");
+    it("the hinder words say what the mark does and name no target and no number", () => {
+      expect(hinderWords()).toBe("takes health off that enemy's next hit, on whoever it strikes");
+    });
+
+    it("a hinder that leaves the hit lethal says so: knocks is set when the after number still meets the health, saves when it does not", () => {
+      const { s, a } = riderWorld();
+      a.moves[0] = { ...a.moves[0], power: 0, parts: [{ kind: "hinder", n: 10, aim: "enemy", all: false } as never] };
+      a.hp = 20; // each enemy's committed hit is 30: 30 -> 20 still meets 20
+      const still = turnView(s).keys[0].cells;
+      for (const c of still) expect(c).toMatchObject({ before: 30, n: 20, knocks: true });
+      for (const c of still) expect(c.saves).toBeUndefined();
+      a.hp = 25; // 30 >= 25 but 20 < 25: the hinder saves
+      const saved = turnView(s).keys[0].cells;
+      for (const c of saved) expect(c).toMatchObject({ saves: true });
+      for (const c of saved) expect(c.knocks).toBeUndefined();
+    });
+
+    it("a hindered companion's attack keys show the power before and after its own mark, and why", () => {
+      const { s, a } = riderWorld();
+      a.moves[0] = { ...a.moves[0], power: 4, parts: [] };
+      a.hinder = 14;
+      const k = turnView(s).keys[0];
+      expect(k).toMatchObject({ power: 4, powerNow: 0, ownMark: { kind: "hinder", n: 14 } });
+      a.hinder = 0;
+      a.boost = 6;
+      expect(turnView(s).keys[0]).toMatchObject({ power: 4, powerNow: 10, ownMark: { kind: "boost", n: 6 } });
+      a.boost = 0;
+      expect(turnView(s).keys[0].powerNow).toBeUndefined();
     });
   });
 

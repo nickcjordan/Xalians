@@ -1,7 +1,8 @@
 import React from "react";
 import { ImpactMark } from "./plate";
 import { SUPPORT_WORD, SupportTags } from "./support";
-import type { KeyView } from "./view";
+import { TrendingDown, Zap } from "lucide-react";
+import { actsOnPress, type KeyView } from "./view";
 
 /** Keyboard focus only: a mouse press also focuses a button, and that must not keep a key's previews up after it is used. */
 function keyboardFocused(el: HTMLElement): boolean {
@@ -58,10 +59,11 @@ export function KeyCard({
 }) {
   const k = keyView;
   const isAttack = k.kind === "attack";
-  const foot = selected && k.state === "ready" ? "pick a target" : footWords(k);
+  // A chosen key that acts on its own (a touch screen selects first) says so; one that needs an enemy asks for it.
+  const foot = selected && k.state === "ready" ? (actsOnPress(k) ? "tap again to use" : "pick a target") : footWords(k);
   const word = aimWords(k);
   const label = `${k.index + 1}. ${k.name}: ${
-    isAttack ? `power ${k.power}${k.area ? ", hits every enemy" : ""}` : k.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ")
+    isAttack ? `power ${k.power}${k.powerNow !== undefined ? `, ${k.ownMark?.kind === "boost" ? "boosted" : "hindered"} to ${k.powerNow}` : ""}${k.area ? ", hits every enemy" : ""}` : k.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ")
   }, ${word}${footWords(k) ? `, ${footWords(k)}` : ""}`;
   return (
     <button
@@ -84,11 +86,30 @@ export function KeyCard({
       <span className="pwt-key-body">
         {isAttack ? (
           <>
-            <span className="pwt-key-power" data-power={k.power} title={`Attack power ${k.power} before the matchup`}>
+            <span className="pwt-key-power" data-power={k.power} data-power-now={k.powerNow} title={`Attack power ${k.power} before the matchup${k.ownMark ? `; ${k.ownMark.kind === "boost" ? "boosted" : "hindered"} by ${k.ownMark.n} on its next attack` : ""}`}>
               <ImpactMark />
-              {k.power}
+              {k.powerNow !== undefined ? (
+                <>
+                  <s className="pwt-key-power-was">{k.power}</s>
+                  <span className="pwt-key-power-arrow" aria-hidden="true">
+                    →
+                  </span>
+                  {k.powerNow}
+                </>
+              ) : (
+                k.power
+              )}
+              <span className="pwt-key-power-word">power</span>
             </span>
             <span className="pwt-key-shape">
+              {k.ownMark && (
+                <span className={`pwt-key-own ${k.ownMark.kind}`} data-own={k.ownMark.kind}>
+                  {k.ownMark.kind === "hinder" ? <TrendingDown /> : <Zap />}
+                  <span className="pwt-key-own-words">{k.ownMark.kind === "hinder" ? "hindered" : "boosted"}</span>
+                  {k.ownMark.kind === "hinder" ? "-" : "+"}
+                  {k.ownMark.n}
+                </span>
+              )}
               {k.area && (
                 <span className="pwt-shape-all" title="Hits every enemy at once">
                   ALL

@@ -1,5 +1,5 @@
 import React from "react";
-import { Shield, HeartPulse, Zap, Link2, Swords } from "lucide-react";
+import { Shield, HeartPulse, Zap, Link2, Swords, TrendingDown } from "lucide-react";
 import type { SupportChip } from "./view";
 
 /**
@@ -9,13 +9,23 @@ import type { SupportChip } from "./view";
   sign says which way. Delay (the turn-order layer) is the one kind that is not about a hit,
   so it keeps the link icon.
 */
-export function SupportIcon({ kind }: { kind: SupportChip["kind"] }) {
+export function SupportIcon({ kind, onCompanion = false }: { kind: SupportChip["kind"]; /** The hinder lands on a companion: its own next attack made smaller, so not the swords. */ onCompanion?: boolean }) {
   if (kind === "heal") return <HeartPulse />;
   if (kind === "shield") return <Shield />;
   if (kind === "boost") return <Zap />;
   if (kind === "delay") return <Link2 />;
-  return <Swords />; // hinder
+  return onCompanion ? <TrendingDown /> : <Swords />; // hinder
 }
+
+/** An intent chip's verb: what the enemy's committed move does, in a word before its target. */
+export const INTENT_VERB: Record<"hit" | SupportChip["kind"], string> = {
+  hit: "hits",
+  heal: "heals",
+  shield: "shields",
+  boost: "boosts",
+  hinder: "weakens",
+  delay: "slows",
+};
 export const SUPPORT_WORD: Record<SupportChip["kind"], string> = {
   heal: "heal",
   shield: "shield",

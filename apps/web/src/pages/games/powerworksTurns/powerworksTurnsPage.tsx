@@ -461,7 +461,12 @@ export default function PowerworksTurnsPage() {
     if (busy || k.state !== "ready") return;
     const step = keyPressStep(twoTap, selectedKey, k.index, actsOnPress(k));
     if (step === "select") setSelectedKey(k.index);
-    else if (step === "unselect") setSelectedKey(null);
+    else if (step === "unselect") {
+      // Backing out clears the frames with it: the ring on a plate and the aim line go, and the preview.
+      setSelectedKey(null);
+      setHoverTarget(null);
+      setHoverKey(null);
+    }
     else act(k.index, k.aim === "now" ? "" : k.cells[0]?.target ?? "");
   }
 
@@ -505,6 +510,8 @@ export default function PowerworksTurnsPage() {
       if (field) return;
       if (e.key === "Escape") {
         setSelectedKey(null);
+        setHoverTarget(null);
+        setHoverKey(null);
         return;
       }
       if (e.key.toLowerCase() === "p") {
@@ -637,10 +644,18 @@ export default function PowerworksTurnsPage() {
     return out;
   };
 
-  // Intent chips are not drawn while beats play (the plate keeps their space): an intent is about the next
-  // turn, and it must never disagree with the beat playing beside it. The settled state brings the enemies'
-  // freshly committed intents back.
-  // The matchup mark is for the companion whose turn it is; while beats play there is none, so it is not drawn either.
+  // Intent chips stay while beats play, as promises read beside what happens: the acting enemy's is lit and the
+  // others step back, so the player can check that each enemy did what it said (a redirect shows the old target struck).
+  // The settled state brings the enemies' freshly committed intents.
+  // The matchup mark is for the companion whose turn it is; while beats play there is none, so it is not drawn.
+  // The acting enemy's target fell before its turn: its chip shows the old target struck and the companion it turned to.
+  const turnedTo = (enemyId: string) => {
+    if (!busy || !moment || actorId !== enemyId) return undefined;
+    const r = moment.beats.find((b) => b.event.kind === "redirect" && b.event.actor === enemyId);
+    if (!r || r.event.kind !== "redirect") return undefined;
+    const to = view.squad.find((u) => u.id === (r.event as { to: string }).to);
+    return to ? { name: to.name, art: to.art, element: to.element } : undefined;
+  };
   const enemyShown = (e: (typeof view.enemies)[number]) => ({ ...withHp(e), matchup: busy ? null : e.matchup });
 
   // The round and the rail during playback come from the beat being played: playback() replays
@@ -662,7 +677,8 @@ export default function PowerworksTurnsPage() {
     [chosenKey, view.active, standingSquad]
   );
   const previewFor = (id: string) => (shownKeyView && !busy ? previews[id] : undefined);
-  const offTarget = (id: string, down: boolean) => !busy && anyPreview && !previews[id] && !down;
+  // The unit acting is never stepped back: it is the one using the key, not a unit the key cannot reach.
+  const offTarget = (id: string, down: boolean) => !busy && anyPreview && !previews[id] && !down && id !== view.active?.id;
   const pickFor = (id: string) => (chosenKey && pickable[id] ? () => act(chosenKey.index, id) : undefined);
 
   const beatNow = busy && moment ? moment.beats[0] : null;
@@ -678,8 +694,10 @@ export default function PowerworksTurnsPage() {
   const nextMine = useMemo(() => {
     if (hold) return null;
     const now = rail.findIndex((r) => r.state === "now");
-    return rail.slice(now + 1).find((r) => !r.enemy && r.state !== "down" && r.state !== "done") ?? null;
-  }, [rail, hold]);
+    // The rail is as it stood when the beat's actor acted: a companion felled by a blow that has landed since is not next.
+    const fell = (id: string) => !!shownHp && shownHp[id] !== undefined && shownHp[id] <= 0;
+    return rail.slice(now + 1).find((r) => !r.enemy && r.state !== "down" && r.state !== "done" && !fell(r.id)) ?? null;
+  }, [rail, hold, shownHp]);
 
   // The banner's actor name/letter and the moment's words.
   const bannerActor = busy
@@ -950,8 +968,8 @@ export default function PowerworksTurnsPage() {
             <h1>{roomName}</h1>
             {view.phase === "turn" && (
               <span className={`pwt-revives${view.revivalLeft > 0 ? "" : " none"}`} data-revives={view.revivalLeft} title="A fallen companion can be revived at camp while a revive is left.">
-                <span className="pwt-revives-full">{view.revivalLeft > 0 ? `Revives left: ${view.revivalLeft}` : "No revives left"}</span>
-                <span className="pwt-revives-short">{view.revivalLeft > 0 ? `Revives ${view.revivalLeft}` : "No revives"}</span>
+                <span className="pwt-revives-full">{view.revivalLeft > 0 ? `Revives left ${view.revivalLeft} · at camp` : "No revives left"}</span>
+                <span className="pwt-revives-short">{view.revivalLeft > 0 ? `Revive ${view.revivalLeft} at camp` : "No revives"}</span>
               </span>
             )}
           </div>
@@ -963,7 +981,7 @@ export default function PowerworksTurnsPage() {
                 actorLetter={bannerLetter}
                 line={ended ? "" : beatWords || (busy || phone ? "" : station?.text ?? since.text)}
                 lineIsSince={!ended && !beatWords && !busy && !station && !!since.text && !phone}
-                prompt={chosenKey ? "Now choose a target." : "Choose a move."}
+                prompt={chosenKey ? (actsOnPress(chosenKey) ? "Tap again to use it." : "Now choose a target.") : "Choose a move."}
                 note={phone && shownNote ? shownNote.short : null}
                 noteId={phone && shownNote ? shownNote.id : undefined}
                 onOpenRecord={() => setPanel("record")}
@@ -1074,7 +1092,8 @@ export default function PowerworksTurnsPage() {
                 <EnemyPlate
                   key={e.id}
                   u={enemyShown(e)}
-                  intentOff={busy}
+                  intentMode={!busy ? "live" : actorId === e.id ? "lit" : "dim"}
+                  turnedTo={turnedTo(e.id)}
                   lit={busy && actorId === e.id}
                   activeName={view.active?.name}
                   spotlit={spotlightId === e.id}

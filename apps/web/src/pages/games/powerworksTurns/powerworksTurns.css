@@ -1875,7 +1875,9 @@
 /* --- 4. Camp: one row of actions, Retreat set apart and guarded --- */
 .pwt-panel.pwt-camp { width: 740px; }
 .pwt-camp-actions { flex-wrap: nowrap; }
-.pwt-camp-actions button { flex: 0 1 auto; min-width: 0; white-space: nowrap; }
+/* A revive's words never clip: the buttons share the row and their text wraps inside them (the count of revives left is said once above them). */
+.pwt-camp-actions button { flex: 1 1 0; min-width: 0; white-space: normal; line-height: 1.2; }
+.pwt-camp-actions button:last-child { flex: 0 0 auto; white-space: nowrap; }
 .pwt-camp-leave { display: flex; justify-content: flex-end; padding-top: 10px; border-top: 1px solid var(--color-edge); }
 .pwt-camp-leave .pwt-danger { display: inline-flex; align-items: center; gap: 6px; }
 .pwt-camp-leave svg { width: 15px; height: 15px; }
@@ -2047,7 +2049,8 @@
 .pwt-keybar-lines { display: none; }
 
 /* Round 7, item 9: revives left, in the top bar while a fight is on. */
-.pwt-revives { font-family: var(--font-data); font-size: 11px; color: var(--color-ink-2); text-transform: uppercase; letter-spacing: 0.02em; }
+/* Body type, one line: "Revives left 1 · at camp" says the revive is for the camp, and must fit the 150 px column without wrapping into the brand. */
+.pwt-revives { font-family: var(--font-body); font-size: 12px; color: var(--color-ink-2); white-space: nowrap; }
 .pwt-revives.none { color: var(--color-ink-3); }
 
 /* Round 7, item 10: the Guardian's fall is the run's forward moment, so its plaque is framed in mint: a
@@ -2106,7 +2109,7 @@
 .pwt-guide-foot .pwt-panel-actions { margin: 0; flex: 0 0 auto; }
 .pwt-guide .pwt-ko, .pwt-guide .pwt-ko-words { white-space: nowrap; }
 .pwt-guide .pwt-legend-row { min-height: 36px; }
-.pwt-panel.pwt-guide { padding: 14px 32px 14px; gap: 6px; }
+.pwt-panel.pwt-guide { padding: 7px 32px 7px; gap: 6px; }
 .pwt-guide h2 { font-size: 22px; margin: 0; }
 .pwt-guide .pwt-legend-sample { flex-basis: 156px; }
 

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, cleanup, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import PowerworksTurnsPage from "./powerworksTurnsPage";
+import { MarkChips } from "./plate";
 import { createTurnRun, DEFAULT_RULES, ENEMY_HP_FACTOR, PILLAR_SAVE_VERSION } from "@xalians/rules/dungeon/pillars";
 
 const SAVE_KEY = "xalians.powerworks.turns.v1";
@@ -116,10 +117,36 @@ describe("Powerworks turn by turn", () => {
     fireEvent.mouseMove(plate);
     expect(plate.className).toContain("targeted");
     expect(c.querySelectorAll(".pwt-row.squad .pwt-plate.off-target").length).toBeGreaterThan(0);
+    // The unit acting is never stepped back while its own key is chosen.
+    expect(c.querySelector(".pwt-row.squad .pwt-plate.active")!.className).not.toContain("off-target");
+    // Pressing the chosen key again backs out and clears the ring on the plate.
+    fireEvent.click(key);
+    expect(key.getAttribute("aria-pressed")).toBe("false");
+    expect(c.querySelectorAll(".pwt-plate.targeted").length).toBe(0);
+    fireEvent.click(key);
+    fireEvent.mouseMove(targets(c)[0]);
     // Escape puts the key back.
     fireEvent.keyDown(window, { key: "Escape" });
+    expect(c.querySelectorAll(".pwt-plate.targeted").length).toBe(0);
     expect(key.getAttribute("aria-pressed")).toBe("false");
     expect(c.querySelectorAll(".pwt-stage [data-preview]").length).toBe(0);
+  });
+
+  it("the header's revive count says the revives are for the camp, not for now", () => {
+    const { container } = mount();
+    fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    const r = (container as HTMLElement).querySelector(".pwt-revives")!;
+    expect(r.querySelector(".pwt-revives-full")!.textContent).toMatch(/^Revives left \d+ · at camp$/);
+    expect(r.querySelector(".pwt-revives-short")!.textContent).toMatch(/^Revive \d+ at camp$/);
+  });
+
+  it("the two hinders have two glyphs: an enemy's next hit cut (swords), your companion's next attack cut (falling line)", () => {
+    const enemy = render(<MarkChips marks={{ shield: 0, boost: 0, hinder: 6 }} side="enemy" />).container;
+    const mine = render(<MarkChips marks={{ shield: 0, boost: 0, hinder: 6 }} />).container;
+    expect(enemy.querySelector(".pwt-chip.hit-cut svg")!.getAttribute("class")).toContain("lucide-swords");
+    expect(mine.querySelector(".pwt-chip.own-cut svg")!.getAttribute("class")).toContain("lucide-trending-down");
+    expect(enemy.querySelector(".pwt-chip")!.getAttribute("aria-label")).toMatch(/its next hit/);
+    expect(mine.querySelector(".pwt-chip")!.getAttribute("aria-label")).toMatch(/your next attack/);
   });
 
   it("the keyboard is a key (1 to 4), then an enemy (A to F)", async () => {
@@ -367,7 +394,9 @@ describe("Powerworks turn by turn", () => {
       const camp = screen.getByRole("dialog", { name: "Camp" });
       const revive = Array.from(camp.querySelectorAll("button")).find((b) => /^Revive /.test((b.textContent || "").trim()))!;
       expect(revive.className).toContain("pwt-primary");
-      expect(revive.textContent).toMatch(/to \d+ health · 1 revive left/);
+      // The button's words are the effect only (they never clip); the count is said once above them.
+      expect(revive.textContent).toMatch(/to \d+ health$/);
+      expect(camp.textContent).toMatch(/1 revive left\./);
       const cont = Array.from(camp.querySelectorAll("button")).find((b) => /^Continue/.test((b.textContent || "").trim()))!;
       expect(cont.className).toContain("pwt-secondary");
       expect(camp.textContent).toMatch(/leaves the revive unused/);
@@ -516,6 +545,9 @@ describe("Powerworks on a landscape phone", () => {
     fireEvent.click(own);
     expect(c.querySelector("[data-busy]")!.getAttribute("data-busy")).toBe("false");
     expect(own.getAttribute("aria-pressed")).toBe("true");
+    // It is not asked for a target: the key and the banner say a second tap uses it.
+    expect(own.querySelector(".pwt-key-foot-words")!.textContent).toBe("tap again to use");
+    expect(c.querySelector(".pwt-banner-line")!.textContent).toBe("Tap again to use it.");
     await act(async () => {
       fireEvent.click(own);
     });
@@ -679,25 +711,26 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(hasTools(c)).toBe(false);
   });
 
-  it("item 2: intent chips are not drawn while enemies act, and come back freshly committed at the settled hand-off", async () => {
+  it("item 2: intent chips stay while enemies act (the acting enemy's lit, the rest stepped back) and come back live at the settled hand-off", async () => {
     const { container } = mount();
     const c = container as HTMLElement;
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /begin/i }));
     });
     expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent").length).toBeGreaterThan(0);
-    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.off").length).toBe(0);
+    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.dim, .pwt-row.enemies .pwt-intent.lit").length).toBe(0);
     await useKey(c);
-    // While beats play, no chip is drawn (the space is kept, so nothing moves).
+    // While beats play every chip stays (no plate looks empty); at most the acting enemy's is lit and the others are dim.
     await tick(200);
     const chips = c.querySelectorAll(".pwt-row.enemies .pwt-intent");
     expect(chips.length).toBeGreaterThan(0);
-    chips.forEach((chip) => expect(chip.classList.contains("off")).toBe(true));
+    chips.forEach((chip) => expect(chip.classList.contains("dim") || chip.classList.contains("lit")).toBe(true));
+    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.lit").length).toBeLessThanOrEqual(1);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /skip to your next turn/i }));
     });
     expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent").length).toBeGreaterThan(0);
-    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.off").length).toBe(0);
+    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.dim, .pwt-row.enemies .pwt-intent.lit").length).toBe(0);
   });
 
   it("item 4: the sector card is a line along the stage's top edge and the first-use note sits on the key bar, never over a plate", async () => {
@@ -795,7 +828,11 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(text).toContain("The Record (top right)");
     expect(text).toContain("Squad health: raspberry is lost, green gained.");
     expect(text).toContain("green favors you, raspberry the enemy");
-    expect(text).toContain("committed next move");
+    expect(text).toContain("committed move");
+    // The two hinders, and the two skulls a hinder can leave, are in the Guide.
+    expect(text).toContain("Swords on an enemy: its next hit is cut");
+    expect(text).toContain("Falling line on yours: its next attack is cut");
+    expect(text).toContain("A grey skull: it would have knocked a companion out, and now does not. A red skull: it still does.");
     expect(text).not.toMatch(/Green is good for you/);
   });
 });

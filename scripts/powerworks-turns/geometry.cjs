@@ -212,8 +212,10 @@ async function riderProblems(page) {
           if (r.width && (r.left < cr.left - 0.5 || r.right > cr.right + 0.5 || r.top < cr.top - 0.5 || r.bottom > cr.bottom + 0.5)) out.push(`intent chip of ${who}: ${el.className.toString().split(" ")[0] || el.tagName} pokes out of the chip`);
           if (el.children.length === 0 && el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== "visible") out.push(`intent chip of ${who}: text clipped "${el.textContent.trim()}"`);
         });
-        for (const a of squadTags) if (hit(cr, a.getBoundingClientRect())) out.push(`intent chip of ${who} overlaps a squad plate tag (${a.className.toString().split(" ")[0]})`);
-        for (const a of squadArt) if (hit(cr, a)) out.push(`intent chip of ${who} overlaps a squad figure`);
+        // While a beat plays the acting unit lunges toward its target (the enemy's chip stays lit): a lunge may cross the other row, so chips are not held to it then.
+        const lunging = !!chip.closest(".pwt-plate.lit") || !!stage.querySelector(".pwt-rows")?.style.getPropertyValue("--lunge-x");
+        for (const a of squadTags) if (!lunging && hit(cr, a.getBoundingClientRect())) out.push(`intent chip of ${who} overlaps a squad plate tag (${a.className.toString().split(" ")[0]})`);
+        for (const a of squadArt) if (!lunging && hit(cr, a)) out.push(`intent chip of ${who} overlaps a squad figure`);
         for (const a of pointers) if (hit(cr, a.getBoundingClientRect())) out.push(`intent chip of ${who} overlaps the active pointer`);
       });
       stage.querySelectorAll(".pwt-preview").forEach((pv) => {
