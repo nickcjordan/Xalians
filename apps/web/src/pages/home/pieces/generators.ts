@@ -207,7 +207,7 @@ function soften(o: HTMLCanvasElement, a: number) {
 // fallback until its picture has loaded.
 const ART = ['zolton', 'magmuth', 'krystos', 'poseidas'];
 /** Where in each picture (rows of its 512) the crop starts, so the machine's feet land on the painted ground. */
-const ART_Y0 = [130, 70, 60, 60];
+const ART_Y0 = [130, 70, -22, 60];
 type Pic = { c: HTMLCanvasElement; light: RGB; side: number; amb: RGB; sky: RGB };
 /** Traces of building in the paintings (a derrick, an aqueduct, a gantry) that the story has not earned yet, in picture pixels: x, y, rx, ry. */
 const RUINS: [number, number, number, number][][] = [
@@ -232,7 +232,10 @@ function buildPic(wi: number, img: HTMLImageElement) {
 		g.translate(WWD, 0);
 		g.scale(-1, 1);
 	}
-	g.drawImage(img, 0, ART_Y0[wi], img.naturalWidth, PH / sc, 0, 0, WWD, PH);
+	// (a negative start lowers the horizon: the picture sits down the frame and its top rows are stretched over the gap)
+	const dy0 = Math.max(0, -ART_Y0[wi]) * sc;
+	g.drawImage(img, 0, Math.max(0, ART_Y0[wi]), img.naturalWidth, (PH - dy0) / sc, 0, dy0, WWD, PH - dy0);
+	if (dy0 > 0) g.drawImage(img, 0, 0, img.naturalWidth, 6, 0, 0, WWD, dy0);
 	if (flip) g.restore();
 	// paint the traces of building out with the ground round them
 	try {
@@ -1019,7 +1022,7 @@ function drawPatch(ctx: Ctx, wi: number, sec: number, a: number, lk: number) {
 	const p = worldPatch(wi);
 	if (!p) return;
 	ctx.save();
-	ctx.globalAlpha = a * 0.75;
+	ctx.globalAlpha = a * 0.95;
 	ctx.drawImage(p, 480 - PATCH.w / 2, PATCH.y0, PATCH.w, PATCH.h);
 	ctx.translate(480, GROUND + 6);
 	ctx.scale(1, 0.14);
@@ -1427,6 +1430,7 @@ function paintMachine(g: Ctx) {
 // The machine seen in a world's light: its cache tinted with that painting's ambient color, its darkest tones lifted
 // to sit with the painting's foreground. Built once per world, after the picture is in.
 const scale3 = (c: RGB, k: number): RGB => [c[0] * k, c[1] * k, c[2] * k];
+const TINT_LIFT = [0.42, 0.15, 0.1, 0.12];
 const tcache: (HTMLCanvasElement | null | undefined)[] = [];
 function machineTinted(wi: number) {
 	const base = machineCache();
@@ -1450,7 +1454,26 @@ function machineTinted(wi: number) {
 	o.g.drawImage(base, 0, 0);
 	o.g.globalCompositeOperation = 'multiply';
 	o.g.drawImage(m.c, 0, 0);
+	// lifted toward a mid gray by an amount per world, so the housing sits a touch above its painting
+	o.g.globalCompositeOperation = 'source-atop';
+	o.g.fillStyle = css(mixRGB([128, 130, 138], P.amb, 0.25), TINT_LIFT[wi]);
+	o.g.fillRect(0, 0, base.width, base.height);
 	return (tcache[wi] = o.c);
+}
+// The same machine at a third of the pixels, for the small far ones in 03 (drawing the full size down each frame costs).
+const scache: (HTMLCanvasElement | null | undefined)[] = [];
+function machineSmall(wi: number) {
+	const key = wi + 1;
+	const hit = scache[key];
+	if (hit) return hit;
+	const full = machineTinted(wi);
+	if (!full) return null;
+	const o = offscreen(full.width / 3, full.height / 3);
+	if (!o) return full;
+	o.g.drawImage(full, 0, 0, o.c.width, o.c.height);
+	// only cache once the tinted version is the real one (its picture is in)
+	if (wi < 0 || pics[wi]) scache[key] = o.c;
+	return o.c;
 }
 // A strip of the painting's own foreground laid over the pad's lower edge, feathered on top and at its ends.
 const fcache: (HTMLCanvasElement | null | undefined)[] = [];
@@ -1547,6 +1570,13 @@ type MachineLook = {
 	reading: number;
 	dishCol: RGB;
 	needle: number;
+	/** 0 to 1: how far the housing has built out round the vat, and how far the vat and its seeds have appeared (a bloom builds the vat first). */
+	housing: number;
+	vat: number;
+	/** A small, far machine: drops the fine detail nobody can see at its size. */
+	lite: boolean;
+	/** Drawn from the smaller copy (it is small on screen). */
+	small?: boolean;
 	/** Which world's painting it stands in (its tint and ground), or -1; `world2` fades in over it by `wk` while one world gives way to the next. */
 	world: number;
 	world2: number;
@@ -1560,7 +1590,8 @@ type MachineLook = {
 const MEMBRANE_N = 30;
 
 function drawMachine(ctx: Ctx, S: MachineLook) {
-	const { sec, gel, light, a, apex, beatPulse, reading, dishCol, side } = S;
+	const { sec, gel, light, apex, beatPulse, reading, dishCol, side } = S;
+	const a = S.a * S.housing;
 	ctx.save();
 	// the vat's glow on the ground in front of it
 	ctx.save();
@@ -1571,11 +1602,11 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 		glow(ctx, side * 60, 0, 260, light, 0.16 * a);
 	});
 	ctx.restore();
-	const mc = machineTinted(S.world);
+	const mc = S.lite || S.small ? machineSmall(S.world) : machineTinted(S.world);
 	if (mc) {
 		ctx.globalAlpha = a;
 		ctx.drawImage(mc, MC.x, MC.y, MC.w, MC.h);
-		const mc2 = S.wk > 0.01 && S.world2 >= 0 ? machineTinted(S.world2) : null;
+		const mc2 = !S.lite && S.wk > 0.01 && S.world2 >= 0 ? machineTinted(S.world2) : null;
 		if (mc2) {
 			ctx.globalAlpha = a * S.wk;
 			ctx.drawImage(mc2, MC.x, MC.y, MC.w, MC.h);
@@ -1619,7 +1650,7 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
 	ctx.restore();
 	// the housing is a cylinder: dark down the shadow side, fading out well before the lit side, a soft strip of shine near it
-	{
+	if (!S.lite) {
 		const xs = side < 0 ? BODY.x1 : BODY.x0;
 		
 		const k = 0.5 + 0.5 * Math.min(1, Math.abs(side) / 0.6);
@@ -1722,7 +1753,9 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 		}
 	}
 
-	// the vat
+	// the vat (and what is in it) comes first when the machine blooms in
+	{
+	const a = S.a * S.vat;
 	ctx.save();
 	vatPath(ctx);
 	ctx.clip();
@@ -1744,7 +1777,7 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	// for the world; under APEX they line up and all beat together, brighter, in its violet
 	const halos: [number, number, number, number][] = [];
 	const sparks: [number, number, number][] = [];
-	const flashes: [number, number, number][] = [];
+	const flashes: [number, number, number, number][] = [];
 	SEEDS.forEach((s, k) => {
 		const free = 1 - apex;
 		const dx = Math.sin(sec * s.sp + s.ph) * 5 * free;
@@ -1796,6 +1829,7 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.lineWidth = 3 + 3.5 * wall;
 			ctx.stroke();
 			ctx.restore();
+			if (!S.lite) {
 			// the nucleus: a small dark body well off center (at a storm's head end), never a dot in a ring; it swells with each beat
 			const nr = r * 0.2 * (0.8 + 0.4 * hash(k, 11)) * (1 + 0.15 * pulse);
 			const away = s.ph + rot;
@@ -1815,15 +1849,16 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.beginPath();
 			ctx.arc(x - (nx - x) * 0.9 + r * 0.05, y - (ny - y) * 0.9, r * 0.07, 0, TAU);
 			ctx.fill();
+			}
 		}
 		halos.push([x, y, r, pulse]);
 		if (form < 0.5) sparks.push([x, y, 1 - form]);
 		// a short bright flash where the new seed catches
-		const fl2 = Math.exp(-Math.pow((kmk - 0.52) / 0.07, 2)) * (1 - apex);
-		if (fl2 > 0.05) flashes.push([x, y, fl2]);
+		const fl2 = Math.exp(-Math.pow((kmk - 0.52) / 0.17, 2)) * (1 - apex);
+		if (fl2 > 0.05) flashes.push([x, y, fl2, s.r]);
 	});
 	// a feed line: tiny bright motes rising from the vat's base into the gel, and gathering into a seed that is forming
-	lighter(ctx, () => {
+	if (!S.lite) lighter(ctx, () => {
 		const mote = mixRGB(gel, WHITE, 0.7);
 		for (let m = 0; m < 14; m++) {
 			const u = (sec * (0.1 + hash(m) * 0.08) + hash(m, 2)) % 1;
@@ -1844,10 +1879,8 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 			glow(ctx, x, y, 7 + 10 * f, WHITE, 0.8 * f * a, 'core');
 			glow(ctx, x, y, 18 * f, mixRGB(gel, WHITE, 0.5), 0.5 * f * a);
 		}
-		for (const [x, y, f] of flashes) {
-			glow(ctx, x, y, 34 * f, WHITE, 0.9 * f * a, 'core');
-			glow(ctx, x, y, 44 * f, mixRGB(gel, WHITE, 0.6), 0.6 * f * a);
-		}
+		// (kept to 1.2 seed radii and 0.6 at its peak, so it does not wash the vat)
+		for (const [x, y, f, rn] of flashes) glow(ctx, x, y, rn * 1.2, WHITE, 0.6 * f * a, 'core');
 	});
 	// the glass's own sheen
 	ctx.fillStyle = css(WHITE, 0.18 * a);
@@ -1864,6 +1897,7 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 		ctx.fillRect(VX - VR - 6, y - 2, VR * 2 + 12, 5);
 		ctx.fillStyle = css([170, 178, 172], 0.25 * a);
 		ctx.fillRect(VX - VR - 6, y - 2, VR * 2 + 12, 1);
+	}
 	}
 	ctx.restore();
 }
@@ -1893,7 +1927,7 @@ const ORB = (() => {
 
 // The lattice is drawn once per frame into three small canvases (its violet image and two color-split
 // copies), then copied onto the figure a row at a time, torn and jittered: a transmitted image of a mind.
-const lattice: { c: HTMLCanvasElement | null; m: HTMLCanvasElement | null; y: HTMLCanvasElement | null } = { c: null, m: null, y: null };
+const lattice: { c: HTMLCanvasElement | null; m: HTMLCanvasElement | null; y: HTMLCanvasElement | null; step: number; px: number } = { c: null, m: null, y: null, step: -1, px: 0 };
 function latticeCanvas(which: 'c' | 'm' | 'y', w: number, h: number) {
 	if (typeof document === 'undefined') return null;
 	let c = lattice[which];
@@ -1911,7 +1945,7 @@ function latticeCanvas(which: 'c' | 'm' | 'y', w: number, h: number) {
 /** When APEX's image is built, row by row behind a sweeping line, in seconds into 03. */
 const BUILD: [number, number] = [2.0, 2.5];
 
-function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: number, sec: number, beatPulse: number, labelPx: number) {
+function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: number, sec: number, beatPulse: number, labelPx: number, compact: boolean) {
 	const a = a0 * smooth(BUILD[0], BUILD[0] + 0.1, t3);
 	if (a <= 0.01) return;
 	const tf = ctx.getTransform();
@@ -1934,6 +1968,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	const band1 = ((sec % 1.6) / 1.6) * 1.5 - 0.25;
 	const band2 = ((sec * 0.2 + 0.6) % 1.5) - 0.25;
 	const gapStep = Math.floor(sec * 0.8);
+	const rr0 = (i: number, j: number) => Math.hypot((P[i][0] + P[j][0]) / 2 - pad - R, (P[i][1] + P[j][1]) / 2 - pad - R) / R;
 	const paint = (which: 'c' | 'm' | 'y', col: RGB) => {
 		const c = latticeCanvas(which, px, px);
 		const g = c?.getContext('2d');
@@ -1944,7 +1979,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 		g.lineWidth = Math.max(1.4, 1.5 / f);
 		ORB.e.forEach(([i, j], k) => {
 			if (hash(k, gapStep + 40) < 0.13) return;
-			if (f < 1.2 && hash(k, 77) < 0.4) return;
+			if (compact && (hash(k, 77) < 0.4 || (rr0(i, j) > 0.78 && hash(k, 78) < 0.5))) return;
 			const d = (P[i][2] + P[j][2]) / 2;
 			const yn = ((P[i][1] + P[j][1]) / 2 - pad) / (2 * R);
 			const b1 = Math.exp(-Math.pow((yn - band1) / 0.07, 2));
@@ -1954,7 +1989,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 			const fl = Math.exp(-Math.pow(((sec * 1.3 + hash(k) * 11) % 3.1) - 0.1, 2) * 50) + beatPulse * 0.3;
 			const nb = (nodeB[i] + nodeB[j]) / 2;
 			let al = (0.45 + 0.6 * ((d + 1) / 2)) * (0.55 + 0.8 * nb) * (1 - 0.45 * b2) + 0.6 * b1 + 0.3 * fl;
-			if (f < 1.2) al = Math.max(al, 0.7 * feather);
+			if (compact) al = Math.max(al, 0.7 * feather);
 			g.strokeStyle = css(mixRGB(col, WHITE, Math.min(1, fl * 0.5 + b1 * 0.6)), Math.min(1, al * feather));
 			g.beginPath();
 			g.moveTo(P[i][0], P[i][1]);
@@ -1970,9 +2005,14 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 		});
 		return c;
 	};
-	const main = paint('c', VIOLET);
-	const mag = paint('m', [255, 80, 200]);
-	const cyan = paint('y', [80, 220, 255]);
+	// the lattice itself is redrawn at 12 a second, not every frame: the rows torn and jittered from it move faster
+	const step = Math.floor(sec * 12);
+	const fresh = lattice.step !== step || lattice.px !== px;
+	lattice.step = step;
+	lattice.px = px;
+	const main = fresh ? paint('c', VIOLET) : latticeCanvas('c', px, px);
+	const mag = fresh ? paint('m', [255, 80, 200]) : latticeCanvas('m', px, px);
+	const cyan = fresh ? paint('y', [80, 220, 255]) : latticeCanvas('y', px, px);
 	if (!main) return;
 	// the image arrives behind a sweeping line, row by row, then holds: torn rows, jitter, a split in its color
 	const build = ramp(BUILD[0], BUILD[1], t3);
@@ -1980,6 +2020,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	const y0 = cy - R - pad;
 	const reveal = y0 + size * build;
 	const rowH = 2;
+	// on a phone the image is sparser still: most rows are gaps, wide enough for the stars behind to show
 	const jitterStep = Math.floor(sec / 0.08);
 	const tearAt = Math.floor(sec / 0.9);
 	const tearing = sec % 0.9 < 0.14;
@@ -1988,7 +2029,9 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	const roll = sec % 2 < 0.1 ? 8 : 0;
 	const copy = (img: HTMLCanvasElement, alpha: number, dx: number, seedOff: number) => {
 		for (let r = 0, y = y0; y < y0 + size; r++, y += rowH) {
-			if (r % 5 === 2 || y > reveal) continue;
+			if (seedOff && r % 2) continue;
+			if (compact ? r % 4 !== 0 : r % 5 === 2) continue;
+			if (y > reveal) continue;
 			const edge = Math.abs(y - cy) / (R + pad);
 			const keep = hash(r, jitterStep * 3 + 1 + seedOff) > 0.55 * Math.pow(edge, 2);
 			if (!keep) continue;
@@ -2005,8 +2048,8 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	ctx.save();
 	ctx.globalCompositeOperation = 'lighter';
 	// its glow: a volume of light, faint, so the network reads as an image and not a solid
-	if (mag) copy(mag, (f < 1.2 ? 0.5 : 0.8) * a, -4.5, 3);
-	if (cyan) copy(cyan, 0.8 * a, 4.5, 7);
+	if (mag) copy(mag, (compact ? 0.5 : 0.8) * 1.4 * a, -4.5, 3);
+	if (cyan) copy(cyan, 0.8 * 1.4 * a, 4.5, 7);
 	copy(main, 1 * a, 0, 0);
 	// a few blocks of the image displaced sideways, as a bad frame does
 	if (jitterStep % 4 < 2) {
@@ -2128,6 +2171,8 @@ export function createGenerators(): Figure {
 	let stage = 0;
 	let present = false;
 	let vis = 0;
+	/** Whether the bloom has finished, so a pull-back does not run it backwards. */
+	let built = false;
 	/** 02's clock: the worlds' cycle. */
 	let t2 = 0;
 	/** 03's clock, from the moment it is entered. */
@@ -2169,6 +2214,8 @@ export function createGenerators(): Figure {
 			}
 			present = isPresent;
 			vis += ((present ? 1 : 0) - vis) * (1 - Math.exp(-dt * (present ? 2.6 : 7)));
+			if (vis > 0.9) built = true;
+			if (vis < 0.002 && !present) built = false;
 			if (vis < 0.002 && !present) vis = 0;
 			// the worlds stop where they stand when APEX comes, so the dip falls on the world it found
 			if (stage !== 1) t2 += dt;
@@ -2270,12 +2317,16 @@ export function createGenerators(): Figure {
 					}
 					const own = first ? gel : WORLDS[wi].gel;
 					// the far machines keep a little light of their own, so none is lost in the dark
-					if (!first) lighter(ctx, () => glow(ctx, 480, 330, 240, mixRGB(own, VIOLET, lk * 0.7), 0.2 * app * vis));
+					if (!first) lighter(ctx, () => glow(ctx, 480, 330, 300, mixRGB(own, VIOLET, lk * 0.7), 0.34 * app * vis));
 				const kind: SeedKind | null = first ? null : WORLDS[wi].key;
 				const tintWorld = first ? (xfade ? ws.prev : w3) : wi;
 				const lavaW = first ? underNow : wi === 1 ? 1 : 0;
 				const fl = first && stage === 0 && WORLDS[ws.cur].key === 'storm' ? Math.max(lightning(ws.since, 0.7), lightning(ws.since, 1.9)) : 0;
 				drawMachine(ctx, {
+					lite: !first,
+					small: first && arrive > 0.9,
+					housing: first && !built ? smooth(0.3, 0.8, vis) : 1,
+					vat: first && !built ? smooth(0, 0.4, vis) : 1,
 					world: tintWorld,
 					world2: first && xfade ? ws.cur : -1,
 					wk: first && xfade ? ws.k : 0,
@@ -2320,9 +2371,9 @@ export function createGenerators(): Figure {
 			// the view closes in on them
 			const grade = v3 * smooth(0.3, 1.8, t3);
 			if (grade > 0.01) {
-				const vg = ctx.createRadialGradient(480, 280, 280, 480, 280, 640);
+				const vg = ctx.createRadialGradient(480, 280, 340, 480, 280, 680);
 				vg.addColorStop(0, css([8, 4, 16], 0));
-				vg.addColorStop(1, css([8, 4, 16], 0.5 * grade * vis));
+				vg.addColorStop(1, css([8, 4, 16], 0.4 * grade * vis));
 				ctx.fillStyle = vg;
 				ctx.fillRect(-40, -40, PW + 80, PH + 80);
 			}
@@ -2330,7 +2381,7 @@ export function createGenerators(): Figure {
 			// to the Generators it controlled: Zolton's history).
 			if (v3 > 0.01) {
 				const hub = L.hub;
-				drawNet(ctx, hub.x, hub.y, hub.r, t3, v3 * vis, sec, beatPulse, L.label);
+				drawNet(ctx, hub.x, hub.y, hub.r, t3, v3 * vis, sec, beatPulse, L.label, !!opts?.compact);
 				ctx.save();
 				sensors.forEach((g, k) => {
 					const on = v3 * vis * smooth(g.at, g.at + 0.08, t3) * g.a;
@@ -2339,7 +2390,7 @@ export function createGenerators(): Figure {
 					// while the links settle they pulse on APEX's beat; once the last machine is taken they hold
 					const pz = smooth(4, 4.2, t3) * (1 - smooth(6, 6.3, t3));
 					ctx.setLineDash([6, 6]);
-					ctx.lineDashOffset = -sec * 40;
+					ctx.lineDashOffset = (present ? -1 : 1) * sec * 40;
 					ctx.strokeStyle = css(VIOLET, (0.65 - 0.3 * pz * (1 - beatPulse)) * on + 0.35 * flash);
 					ctx.lineWidth = 1.5 + 1.4 * pz * beatPulse;
 					ctx.beginPath();
