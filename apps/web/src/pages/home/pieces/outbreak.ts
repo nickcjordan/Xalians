@@ -1204,6 +1204,8 @@ export function createOutbreak(): Figure {
 						vatFill: fill,
 						seedBorn: ramp(4.5, 6.0, t1),
 						foot: false,
+						ringHalo: true,
+						seedVary: true,
 						rim2: [120, 150, 196],
 					});
 					// the link: a bright line from the chip up into the base of the vat over 0.35 s (a 3 px core, an 8 px glow),
@@ -1258,6 +1260,32 @@ export function createOutbreak(): Figure {
 						ctx.beginPath();
 						ctx.arc(CX + bx * s * ck, cy(42), 2 * s * ck, 0, TAU);
 						ctx.fill();
+					}
+					// the top face is lit from the chip, warm, about 0.5 near it and falling off to the corners
+					{
+						ctx.save();
+						ctx.beginPath();
+						ctx.moveTo(CX - 52 * s * ck, cy(8));
+						ctx.lineTo(CX + 52 * s * ck, cy(8));
+						ctx.lineTo(CX + 64 * s * ck, cy(28));
+						ctx.lineTo(CX - 64 * s * ck, cy(28));
+						ctx.closePath();
+						ctx.clip();
+						ctx.globalCompositeOperation = 'lighter';
+						const lit1 = mk(ctx, consoleA);
+						lit1(spr([236, 190, 130]), CX, cy(18), 70 * s * ck, 0.5);
+						ctx.restore();
+					}
+					// the front face darkens toward the ground, and a 1 px shadow line where the box meets the pad
+					{
+						const dg2 = ctx.createLinearGradient(0, cy(28), 0, cy(54));
+						dg2.addColorStop(0, css([0, 0, 0], 0));
+						dg2.addColorStop(1, css([0, 0, 0], 0.3));
+						ctx.globalAlpha = consoleA;
+						ctx.fillStyle = dg2;
+						ctx.fillRect(CX - 64 * s * ck, cy(28), 128 * s * ck, 26 * s * ck);
+						ctx.fillStyle = css([0, 0, 0], 0.55);
+						ctx.fillRect(CX - 52 * s * ck, cy(8) - 1, 104 * s * ck, 1);
 					}
 					// the socket: a hexagonal recess, dark, with a worn lip
 					ctx.beginPath();

@@ -1065,7 +1065,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	// a signal, not a solid: nodes that come and go, a bright band sweeping down through it, a dark one after,
 	// and now and then a stretch of it dropped altogether
 	const nodeB = P.map((_, i) => (0.3 + 0.7 * hash(i, 9)) * (0.65 + 0.35 * Math.sin(sec * (0.7 + hash(i, 2) * 2.2) + i)));
-	const band1 = ((sec % 1.6) / 1.6) * 1.5 - 0.25;
+	const band1 = ((sec % 6) / 6) * 1.5 - 0.25;
 	const band2 = ((sec * 0.2 + 0.6) % 1.5) - 0.25;
 	const gapStep = Math.floor(sec * 0.8);
 	const rr0 = (i: number, j: number) => Math.hypot((P[i][0] + P[j][0]) / 2 - pad - R, (P[i][1] + P[j][1]) / 2 - pad - R) / R;

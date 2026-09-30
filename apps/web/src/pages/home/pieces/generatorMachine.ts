@@ -692,6 +692,10 @@ export type MachineLook = {
 	rimEdge?: boolean;
 	/** 0 to 1: a pulse of light running from the sensor ring down the mast, through the roof and into the gel, to where the new seed starts. */
 	pulse?: number;
+	/** Instead of the reading rings, one soft halo round the sensor ring (about 2.5x its size, 0.25, a slow pulse of 0.05). */
+	ringHalo?: boolean;
+	/** Seeds differ in size, tilt, darkness and drift, so they read as grown and not stamped. */
+	seedVary?: boolean;
 	/** 0 to 1: a 60 ms flash on the sensor ring just before the pulse drops. */
 	ringFlash?: number;
 	/** 0 to 1: the readout's single tick as the pulse leaves the ring (decays by itself). */
@@ -907,7 +911,8 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		glow(ctx, DISH.x, DISH.y, 8, WHITE, a * (1 - dorm), 'core');
 		if ((S.ringFlash ?? 0) > 0.01) glow(ctx, DISH.x, DISH.y, 30, mixRGB(gel, WHITE, 0.5), 0.9 * S.ringFlash! * a);
 	});
-	if (reading > 0.02) {
+	if (S.ringHalo) lighter(ctx, () => glow(ctx, DISH.x, DISH.y, 62, dishCol, (0.25 + 0.05 * Math.sin(sec * 1.1)) * a * (1 - dorm)));
+	if (reading > 0.02 && !S.ringHalo) {
 		ctx.lineWidth = 1.4;
 		for (let k = 0; k < 3; k++) {
 			const u = (sec * 0.9 + k / 3) % 1;
@@ -960,12 +965,13 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	const dissolves: [number, number, number, number, number][] = [];
 	SEEDS.forEach((s, k) => {
 		const free = 1 - apex;
-		const dx = Math.sin(sec * s.sp + s.ph) * 5 * free;
-		const dy = Math.cos(sec * s.sp * 0.8 + s.ph) * 4 * free;
+		const vary = S.seedVary === true;
+		const dx = Math.sin(sec * s.sp + s.ph) * (vary ? 1.5 : 5) * free;
+		const dy = Math.cos(sec * s.sp * 0.8 + s.ph) * (vary ? 1.5 : 4) * free;
 		const x = mix(VX + s.x + dx, VX, apex);
 		const y = mix(s.y + dy, SEED_Y[k], apex);
 		// a slow drift of about 6 degrees, and a breath of 4 percent every 1.8 s, out of step from one seed to the next
-		const rot = mix(s.tilt + Math.sin(sec * 0.5 + s.ph) * 0.105, 0, apex);
+		const rot = mix(s.tilt + Math.sin(sec * 0.5 + s.ph) * 0.105 + (vary ? [-0.2, 0.16, 0.04][k] : 0), 0, apex);
 		const own = ((sec * s.hb + s.ph / TAU) % 1 + 1) % 1;
 		const pulse = mix(Math.exp(-own * 5) * (own < 0.6 ? 1 : 0), beatPulse, apex);
 		// a new seed forms: the old one is gone, a bright point swells into the new shape
@@ -973,7 +979,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const born = S.seedBorn === undefined ? 1 : clamp(S.seedBorn * 1.3 - k * 0.14);
 		if (born <= 0.001) return;
 		const form = born * mix(kmk < 0.5 ? mix(1, 0, smooth(0, 0.5, kmk)) : mix(0.2, 1, smooth(0.5, 1, kmk)), 1, apex);
-		const r = mix(s.r, 15, apex) * form * (S.seedScale ?? 1) * (1 + 0.05 * Math.sin((sec * TAU) / 1.6 + s.ph) + 0.06 * pulse);
+		const r = mix(s.r, 15, apex) * form * (vary ? [0.8, 1, 1.15][k] : 1) * (S.seedScale ?? 1) * (1 + 0.05 * Math.sin((sec * TAU) / 1.6 + s.ph) + 0.06 * pulse);
 		const kindNow: SeedKind = kmk < 0.5 ? S.kindA : S.kindB;
 		const stormW = kindNow === 'storm' ? 1 - apex : 0;
 		const wall = kindNow === 'lava' ? 1 - apex : 0;
@@ -991,7 +997,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			};
 		};
 		const tint = mixRGB(gel, VIOLET, apex * 0.7);
-		const fillC = css(mixRGB(tint, BLACK, 0.62 - 0.27 * apex), (0.8 + 0.12 * apex) * a);
+		const fillC = css(mixRGB(tint, BLACK, (0.62 - 0.27 * apex) * (vary ? [0.9, 1.1, 1][k] : 1)), (0.8 + 0.12 * apex) * a);
 		if (r > 0.6) {
 			// the membrane: the gel's own color darkened, so the seed sits dark in the glow; a storm's fins trail see-through
 			if (stormW > 0) {
