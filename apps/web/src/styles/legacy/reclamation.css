@@ -7966,12 +7966,11 @@
 .rec-console--match[data-terminal] .rec-flag--point { color: var(--g-ink); animation: rec-pip-point 1100ms ease-in-out infinite alternate; }
 .rec-console--match[data-terminal] .rec-flag--point .rec-flag-cloth { stroke-width: 1.3; stroke-dasharray: 2 1.6; }
 /* an empty slot is a socket, not an outline flag */
-.rec-console--match[data-terminal] .rec-flag .rec-flag-socket { fill: currentColor; }
 /* the sends: one unbroken meter against the eleven, the count after it */
 .rec-console--match[data-terminal] .rec-sendbar { display: inline-flex; align-items: center; gap: calc(5px * var(--rec-scale)); margin-left: calc(6px * var(--rec-scale)); color: var(--g-ink); }
 .rec-console--match[data-terminal] .rec-sendbar-ticks { display: inline-flex; align-items: center; gap: calc(2px * var(--rec-scale)); }
-.rec-console--match[data-terminal] .rec-sendbar-tick { display: block; width: calc(4px * var(--rec-scale)); height: calc(13px * var(--rec-scale)); box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 35%, transparent); }
-.rec-console--match[data-terminal] .rec-sendbar-tick--left { background: currentColor; box-shadow: none; }
+.rec-console--match[data-terminal] .rec-sendbar-tick { display: block; flex: 0 0 auto; width: calc(11px * var(--rec-scale)); height: calc(15px * var(--rec-scale)); fill: none; stroke: color-mix(in srgb, currentColor 38%, transparent); stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.rec-console--match[data-terminal] .rec-sendbar-tick--left { fill: currentColor; stroke: currentColor; }
 .rec-console--match[data-terminal] .rec-sendbar-count { font-size: calc(15px * var(--rec-scale)); font-weight: 700; min-width: 2ch; line-height: 1; }
 .rec-console--match[data-terminal] .rec-sendbar--empty { color: var(--g-ink-low); }
 .rec-console--match[data-terminal] .rec-sendbar--lost { color: var(--rec-loss); }
@@ -8024,8 +8023,14 @@
 	.rec-console--match[data-terminal] .rec-side-emblem { width: 12px; height: 12px; }
 	.rec-console--match[data-terminal] .rec-flag { width: 11px; height: 13px; }
 	.rec-console--match[data-terminal] .rec-side .rec-score-row { gap: 2px; }
-	/* a phone has no room for eleven ticks a side: the count stands alone */
-	.rec-console--match[data-terminal] .rec-sendbar-ticks { display: none; }
+	.rec-console--match[data-terminal] .rec-sendbar-ticks { gap: 0; }
+	.rec-console--match[data-terminal] .rec-sendbar-tick { width: 6px; height: 9px; }
+	/* the rival's row shares the top bar with the track and the buttons, so it runs smaller than yours */
+	.rec-console--match[data-terminal] .rec-side--theirs { gap: 2px; }
+	.rec-console--match[data-terminal] .rec-side--theirs .rec-flag { width: 8px; height: 10px; }
+	.rec-console--match[data-terminal] .rec-side--theirs .rec-sendbar-tick { width: 4.5px; height: 7px; }
+	.rec-console--match[data-terminal] .rec-side--theirs .rec-side-emblem { width: 9px; height: 9px; }
+	.rec-console--match[data-terminal] .rec-side--theirs :is(.rec-side-count, .rec-sendbar-count) { font-size: 10px; }
 	.rec-console--match[data-terminal] .rec-sendbar { margin-left: 2px; }
 	.rec-console--match[data-terminal] .rec-sendbar-count { font-size: 12px; }
 	.rec-console--match[data-terminal] .rec-track-world,
@@ -8074,7 +8079,6 @@
 	.rec-console--match[data-terminal] .rec-bench-actions { grid-column: 3; justify-self: end; min-width: 0; max-width: 100%; }
 	.rec-console--match[data-terminal] .rec-bench-actions .g-btn { min-width: 0; flex: 0 1 auto; }
 	.rec-console--match[data-terminal] .rec-move-word { display: none; }
-	.rec-console--match[data-terminal] .rec-side .rec-flag:not(.rec-flag--lit):not(.rec-flag--point) { display: none; }
 }
 
 /* pass 68: before the words go entirely, the last lines go one at a time (reclamationWorld SAYS_STEPS) */

@@ -387,7 +387,8 @@ export function SideRow({ side, pennants, toClinch, sends, cap, turn, emblem, pa
 			>
 				{on && <svg viewBox="0 0 10 12" aria-hidden="true"><path d="M1.5 1.2 9 6l-7.5 4.8z" /></svg>}
 			</span>
-			{(emblem && <RivalGlyph id={emblem} className="rec-side-emblem" />) || <PieceGlyph className="rec-side-emblem rec-side-piece" />}
+			{/* your own pieces are the send meter's ticks, so only the rival wears an emblem here */}
+			{emblem ? <RivalGlyph id={emblem} className="rec-side-emblem" /> : (!mine && <PieceGlyph className="rec-side-emblem rec-side-piece" />)}
 			<span className={`rec-score-row rec-score-row--${side}`} {...count} title={label} aria-label={label} role="img">
 				{/* a side can end a game past the clinch (the last round is played out): every world won is planted */}
 				{Array.from({ length: Math.max(toClinch, n) }).map((_, i) => {
@@ -399,9 +400,8 @@ export function SideRow({ side, pennants, toClinch, sends, cap, turn, emblem, pa
 							data-match-point={point(i) ? side : undefined}
 							data-flag-world={flag && flag.planet ? flag.planet : undefined}
 						>
-							{flag || point(i)
-								? <svg viewBox="0 0 12 14" aria-hidden="true"><path className="rec-flag-staff" d="M2.5 13.5V1" /><path className="rec-flag-cloth" d="M2.5 1.5h8L8.3 4.8l2.2 3.3h-8z" /></svg>
-								: <svg viewBox="0 0 12 14" aria-hidden="true"><circle className="rec-flag-socket" cx="6" cy="10" r="2.4" /></svg>}
+							{/* an unlit slot is the same flag in outline, so "0/5" follows five empty flags */}
+							<svg viewBox="0 0 12 14" aria-hidden="true"><path className="rec-flag-staff" d="M2.5 13.5V1" /><path className="rec-flag-cloth" d="M2.5 1.5h8L8.3 4.8l2.2 3.3h-8z" /></svg>
 						</i>
 					);
 				})}
@@ -433,7 +433,7 @@ export function SendMeter({ left, cap, side, worldsAhead, tone }) {
 			data-sends-side={side}
 		>
 			<span className="rec-sendbar-ticks" aria-hidden="true">
-				{Array.from({ length: total }).map((_, i) => <i className={`rec-sendbar-tick${i < left ? ' rec-sendbar-tick--left' : ''}`} key={i} />)}
+				{Array.from({ length: total }).map((_, i) => <PieceGlyph className={`rec-sendbar-tick${i < left ? ' rec-sendbar-tick--left' : ''}`} key={i} />)}
 			</span>
 			<b className="rec-sendbar-count g-mono">{left}{typeof cap === 'number' && <i>/{cap}</i>}</b>
 		</span>

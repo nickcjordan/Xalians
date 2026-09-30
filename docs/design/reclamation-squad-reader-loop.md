@@ -21,9 +21,9 @@ A round passes only when all three of these hold:
 
 ## Budget
 
-- **Cap: about 1.5 million Opus tokens** for the whole loop, as quoted to Nick.
-- **Cost:** one reader is about 80,000 tokens, so a round of three is about 250,000.
-- **Stopping:** four to six rounds are expected. Stop and report to Nick if the cap is reached before the bar is.
+- **No token cap (Nick, 2026-09-30): "yes we can do what we need for agents".** The first plan set a cap of about 1.5M Opus tokens; rounds 1 to 5 spent about 1.34M of it.
+- **Cost per round:** about 270k Opus tokens for three readers.
+- **No help for readers.** They never see the "?" legend, tooltips or hover text. Nick: "The reader should not have to see a tooltip to know how to play the game."
 
 ## Who does what
 
@@ -185,5 +185,20 @@ The orchestrator scores each factual answer right or wrong against that JSON. It
   - the tick;
   - the head strip's turn arrow, pawn, "0/5" and "11/11".
 - **Intuitive likely needs confirmation, not a better symbol.** A symbol a reader decodes right but cannot confirm still scores as not self-evident. What could confirm them is the game's own legend, the "?" key a new player sees, or a word or two on the squad itself. Which of those is allowed is Nick's call, since the affordances rule says no labels on the board.
+
+| 6 | 139 | Finding 6, 6, 6; Intuitive 5, 5, 5 | 42 of 42 (100%) | the same unconfirmed marks as rounds 4 and 5 (▲/▼, the tick, the sort icon, the act glyphs, the badge in the hit box) (3 of 3); the roster's two side-by-side blocks, which split each world's column in two (1 of 3) | none yet: repeated for three rounds, so it goes to Nick as the words question (below) |
+
+### Round 6 notes (seed 139)
+
+- **The new counters read right, 3 of 3:**
+  - empty flag outlines filling toward "2/5";
+  - small pieces for sends ("7/11: 7 filled").
+- **The act glyphs are still read as guesses.**
+  - The sword draws as a "slash" at 11 pixels. Sonnet's first sword had an arrowhead tip and read as an arrow, so it was redrawn before capture.
+  - The bolster's heart reads as a "heart-shield".
+  - The burst reads as "sun or gear".
+- **Intuitive has held at 5 from nine readers across three rounds of symbol changes.** Readers now guess every symbol right, yet list each one as unconfirmed.
+  - A symbol at 11 pixels cannot confirm its own meaning, and Nick ruled out the legend and tooltips.
+  - What is left is words on the squad (its column heads or the act column), or fewer marks. Words on the table break the affordances rule, so that is Nick's call.
 
 - **Harness note: the fixed policy loses quickly.** Seeds 41, 43, 53, 61 and 67 ended at 1 to 5 worlds in round 2, before the round 3 capture, so the round 2 seed was 71.
