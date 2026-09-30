@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Cross, Heart, HeartCrack, LogOut, Timer, Trophy 
 import { Portrait } from "../powerworksVisuals";
 import { TurnLesson } from "./guide";
 import type { BriefingView, CampView, Ending, RecordEntry, RunSummary, SinceItem, SquadView, TitleCard, TurnView } from "./view";
+import { revivesLeftWords } from "./view";
 
 /** The screen before a new run's first turn: the goal, the sectors, the squad, the run rules. */
 export function BriefingPanel({ briefing, onBegin }: { briefing: BriefingView; onBegin: () => void }) {
@@ -146,6 +147,8 @@ export function CampPanel({
               </>
             ) : !offerRevive && someDown ? (
               "No revives left."
+            ) : offerRevive ? (
+              revivesLeftWords(view.revivalLeft)
             ) : (
               ""
             )}
@@ -157,7 +160,7 @@ export function CampPanel({
             <button
               key={r.id}
               type="button"
-              className={i === 0 ? "pwt-primary" : "pwt-secondary"}
+              className="pwt-primary"
               onClick={() => onRevive(r.id)}
               autoFocus={i === 0}
             >

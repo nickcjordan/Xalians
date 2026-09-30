@@ -4,7 +4,7 @@ import { KeyCard } from "./keys";
 import { IntentChip, MarkChips, MatchupMark, ElementBadge, KoMark, PreviewBadge } from "./plate";
 import { TurnRail } from "./rail";
 import { DeltaChip } from "./banner";
-import type { IntentView, KeyView, Preview, RailSlot } from "./view";
+import type { Cell, IntentView, KeyView, Preview, RailSlot } from "./view";
 
 /**
   The Guide as a legend: every mark a player meets, drawn by the same component the play screen uses,
@@ -22,6 +22,8 @@ const preview = (over: Partial<Preview>): Preview => ({
   absorbed: 0,
   ...over,
 });
+
+const previewCell = (letter: string): Cell => ({ target: letter, letter: letter as Cell["letter"], n: 0, step: 1, immune: false, finishes: false, absorbed: 0 });
 
 const sampleKey = (over: Partial<KeyView>): KeyView => ({
   index: 0,
@@ -138,7 +140,7 @@ export function GuidePanel({
               </span>
             }
           >
-            A move key shows its power once: the damage before the element matchup. ALL hits every enemy. Tags are what else it does; below, its rest.
+            A move key shows its power once: the damage before the element matchup. ALL hits every enemy. Tags are what else it does; below, its rest. Hindered: power before and after.
           </Row>
           <Row
             sample={
@@ -164,10 +166,11 @@ export function GuidePanel({
             sample={
               <span className="pwt-legend-tiles">
                 <PreviewTile p={preview({ kind: "hinder", before: 14, n: 0, saves: true, hitOn: "Companion" })} />
+                <PreviewTile p={preview({ kind: "hinder", before: 30, n: 20, knocks: true, hitOn: "Companion" })} />
               </span>
             }
           >
-            A hinder: that enemy&apos;s committed hit falls by that much (14 to 0). A struck skull: it would have knocked a companion out, and now does not.
+            A hinder: that enemy&apos;s committed hit falls by that much (14 to 0). A grey skull: it would have knocked a companion out, and now does not. A red skull: it still does.
           </Row>
           <Row
             sample={
@@ -182,7 +185,7 @@ export function GuidePanel({
           <Row
             sample={
               <span className="pwt-legend-keys">
-                <KeyCard keyView={sampleKey({ name: "Choose", power: 12 })} armed selected onPress={noop} />
+                <KeyCard keyView={sampleKey({ name: "Choose", power: 12, cells: [previewCell("A"), previewCell("B")] })} armed selected onPress={noop} />
               </span>
             }
           >
@@ -200,11 +203,12 @@ export function GuidePanel({
           <Row
             sample={
               <span className="pwt-legend-chips">
-                <MarkChips marks={{ shield: 10, boost: 12, hinder: 14 }} />
+                <MarkChips marks={{ shield: 10, boost: 12, hinder: 14 }} side="enemy" />
+                <MarkChips marks={{ shield: 0, boost: 0, hinder: 14 }} />
               </span>
             }
           >
-            Chips on a plate: shield absorbs that much damage; boost adds to its next attack; hinder (swords) takes off its next attack.
+            Shield absorbs damage; boost adds to a next attack. Swords on an enemy: its next hit is cut (good for you). Falling line on yours: its next attack is cut (bad for you).
           </Row>
           <Row
             sample={
@@ -213,7 +217,7 @@ export function GuidePanel({
               </span>
             }
           >
-            An enemy&apos;s chip is its committed next move: whom it will hit and the damage it would land now. A skull: that knocks the companion out. Move name on hover.
+            An enemy&apos;s chip is its committed move: the target, what it does (hits, heals, shields, weakens, boosts) and the number it would land now. A skull: that knocks the companion out.
           </Row>
           <Row
             sample={
@@ -233,7 +237,7 @@ export function GuidePanel({
               </span>
             }
           >
-            The mark on an enemy is the matchup for the companion acting now, the same for all its attacks.
+            The mark on an enemy is the matchup for the companion acting now: its multiplier, green when strong, raspberry when weak.
           </Row>
           <Row
             sample={

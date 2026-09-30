@@ -1,8 +1,8 @@
 import React from "react";
-import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap, HeartPulse } from "lucide-react";
+import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap, HeartPulse, TrendingDown } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import { DeltaChip, SpotlightMarks } from "./banner";
-import { SupportIcon, SUPPORT_WORD } from "./support";
+import { SupportIcon, SUPPORT_WORD, INTENT_VERB } from "./support";
 import type { EnemyView, IntentView, Marks, Preview, SquadView } from "./view";
 
 /**
@@ -38,7 +38,7 @@ export function ImpactMark({ className = "" }: { className?: string }) {
   to a second row and pushes the plate taller than its fixed figure band (paint review
   round 5, item 1).
 */
-export function MarkChips({ marks }: { marks: Marks }) {
+export function MarkChips({ marks, side = "squad" }: { marks: Marks; side?: "squad" | "enemy" }) {
   if (!marks.shield && !marks.boost && !marks.hinder) return null;
   return (
     <>
@@ -57,15 +57,18 @@ export function MarkChips({ marks }: { marks: Marks }) {
           <Zap />+{marks.boost}
         </span>
       )}
-      {marks.hinder > 0 && (
-        <span
-          className="pwt-chip"
-          aria-label={`its next hit -${marks.hinder}`}
-          title={`Its next hit -${marks.hinder}`}
-        >
-          <Swords />-{marks.hinder}
-        </span>
-      )}
+      {marks.hinder > 0 &&
+        (side === "enemy" ? (
+          // An enemy's hinder is its next hit made smaller: crossed swords, good for you.
+          <span className="pwt-chip hit-cut" aria-label={`its next hit -${marks.hinder}`} title={`Its next hit -${marks.hinder}`}>
+            <Swords />-{marks.hinder}
+          </span>
+        ) : (
+          // A companion's hinder is your own next attack made smaller: a falling line, not the swords.
+          <span className="pwt-chip own-cut" aria-label={`your next attack -${marks.hinder}`} title={`Your next attack -${marks.hinder}`}>
+            <TrendingDown />-{marks.hinder}
+          </span>
+        ))}
     </>
   );
 }
@@ -261,19 +264,23 @@ export function MatchupMark({ step, who }: { step: number | null; who?: string }
     return (
       <span className="pwt-match immune" title={`No effect${by}: the element chart gives 0`} aria-label={`no effect${by}`} data-match="immune">
         <Ban />
-        <span>no effect</span>
+        <span className="pwt-match-word">no effect</span>
       </span>
     );
   const strong = step > 1;
+  // The multiplier is on the tab, so a landing number larger than a key's power has its reason beside it.
+  // Written without a leading zero ("×.5"): a narrow plate holds it beside the element tag.
+  const times = `×${String(step).replace(/^0\./, ".")}`;
   return (
     <span
       className={`pwt-match ${strong ? "strong" : "weak"}`}
-      title={`${strong ? "Strong" : "Weak"} matchup${by}`}
-      aria-label={`${strong ? "strong" : "weak"} matchup${by}`}
+      title={`${strong ? "Strong" : "Weak"} matchup${by}: attacks land ${times}`}
+      aria-label={`${strong ? "strong" : "weak"} matchup${by}, attacks land ${times}`}
       data-match={strong ? "strong" : "weak"}
     >
       {strong ? <ChevronUp /> : <ChevronDown />}
-      <span>{strong ? "strong" : "weak"}</span>
+      <span className="pwt-match-word">{strong ? "strong" : "weak"}</span>
+      <span className="pwt-match-x">{times}</span>
     </span>
   );
 }
@@ -283,10 +290,24 @@ export function MatchupMark({ step, who }: { step: number | null; who?: string }
   name), then the number it would land now, a skull when that is lethal. The move's name is on hover. A
   support intent shows its kind and its recipient. Numbers and words in place, stated as facts.
 */
-export function IntentChip({ intent, off = false }: { intent: IntentView; off?: boolean }) {
+export type IntentMode = "live" | "lit" | "dim";
+
+export function IntentChip({
+  intent,
+  mode = "live",
+  turnedTo,
+}: {
+  intent: IntentView;
+  /** While beats play: the acting enemy's chip stays lit, the others step back; "live" outside playback. */
+  mode?: IntentMode;
+  /** The acting enemy turned from its committed target to this one (its target fell): the old one is struck. */
+  turnedTo?: { name: string; art: string; element: string };
+}) {
   const t = intent.target;
   const who = t.self ? "itself" : t.name;
   const isAttack = intent.kind === "attack";
+  const kind = isAttack ? "hit" : intent.supports[0]?.kind ?? "heal";
+  const verb = INTENT_VERB[kind];
   const words = isAttack
     ? intent.step === 0
       ? `${intent.move} on ${who}: no effect`
@@ -294,21 +315,34 @@ export function IntentChip({ intent, off = false }: { intent: IntentView; off?: 
           intent.step > 1 ? ", strong" : intent.step < 1 ? ", weak" : ""
         }${intent.lethal ? `, knocks ${who} out` : ""}`
     : `${intent.move} on ${who}: ${intent.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ")}`;
+  const turned = turnedTo ? `; turned from ${who} to ${turnedTo.name}` : "";
   return (
-    <span className={`pwt-intent ${isAttack ? "attack" : "support"} ${intent.lethal ? "lethal" : ""} ${off ? "off" : ""}`} aria-label={`Next: ${words}`} title={`Next: ${words}`} data-intent={intent.move}>
+    <span className={`pwt-intent ${isAttack ? "attack" : "support"} ${intent.lethal ? "lethal" : ""} ${mode}`} aria-label={`Next: ${words}${turned}`} title={`Next: ${words}${turned}`} data-intent={intent.move} data-mode={mode}>
       <span className="pwt-intent-to">
         {t.self ? (
           <span className="pwt-intent-self">itself</span>
         ) : (
           <>
-            <span className="pwt-intent-portrait" aria-hidden="true">
+            <span className={`pwt-intent-portrait${turnedTo ? " struck" : ""}`} aria-hidden="true">
               <Portrait u={{ species: t.art, element: t.element }} small />
             </span>
-            <span className="pwt-intent-name">{t.name}</span>
+            {turnedTo ? (
+              <>
+                <span className="pwt-intent-arrow" aria-hidden="true">
+                  →
+                </span>
+                <span className="pwt-intent-portrait" aria-hidden="true">
+                  <Portrait u={{ species: turnedTo.art, element: turnedTo.element }} small />
+                </span>
+              </>
+            ) : (
+              <span className="pwt-intent-name">{t.name}</span>
+            )}
           </>
         )}
       </span>
       <span className="pwt-intent-what">
+        <span className="pwt-intent-verb" aria-hidden="true">{verb}</span>
         {isAttack ? (
           <>
             <ImpactMark />
@@ -323,13 +357,11 @@ export function IntentChip({ intent, off = false }: { intent: IntentView; off?: 
             {intent.step === 0 ? <Ban /> : intent.n}
             {intent.lethal && <Skull className="pwt-hit-skull" />}
             {intent.area && <span className="pwt-intent-all">ALL</span>}
-            {/* The chevron's direction is the damage; its color is who that favors: strong on your companion is bad for you. */}
-            <Chevron step={intent.step} tone={intent.lethal ? "neutral" : "them"} />
           </>
         ) : (
           intent.supports.map((s) => (
             <span key={`${s.kind}-${s.aim}`} className={`pwt-intent-support ${s.kind}`}>
-              <SupportIcon kind={s.kind} />
+              <SupportIcon kind={s.kind} onCompanion={!t.ally} />
               {s.kind === "hinder" || s.kind === "delay" ? "-" : s.kind === "boost" ? "+" : ""}
               {s.n}
             </span>
@@ -401,6 +433,7 @@ export function PreviewBadge({ p, keyName }: { p: Preview; keyName: string }) {
                   <s>{p.rider.before}</s>
                   <span className="pwt-preview-arrow">→</span>
                   {p.rider.after}
+                  {p.knocks && <Skull className="live" />}
                 </span>
               )}
             </span>
@@ -408,11 +441,11 @@ export function PreviewBadge({ p, keyName }: { p: Preview; keyName: string }) {
         </>
       );
       words = `${p.n} damage${p.finishes ? ", finishes" : ""}${p.step > 1 ? ", strong" : p.step < 1 ? ", weak" : ""}${p.absorbed > 0 ? `, its shield absorbs ${p.absorbed} first` : ""}${
-        p.rider ? `; its committed hit on ${p.hitOn ?? "a companion"} falls from ${p.rider.before} to ${p.rider.after}` : ""
+        p.rider ? `; its committed hit on ${p.hitOn ?? "a companion"} falls from ${p.rider.before} to ${p.rider.after}${p.saves ? ", no longer knocking out" : p.knocks ? ", still knocking out" : ""}` : ""
       }`;
     }
   } else if (p.kind === "hinder") {
-    cls = "hinder";
+    cls = p.knocks ? "hinder knocks" : "hinder";
     const nothing = p.before === 0 && !p.hitOn;
     body = nothing ? (
       <span className="pwt-preview-num plain">
@@ -426,6 +459,7 @@ export function PreviewBadge({ p, keyName }: { p: Preview; keyName: string }) {
           <s className="pwt-preview-before">{p.before}</s>
           <span className="pwt-preview-arrow">→</span>
           {p.n}
+          {p.knocks && <Skull className="live" />}
         </span>
         <span className="pwt-preview-note" title={`Its committed hit${p.hitOn ? ` on ${p.hitOn}` : ""}`}>
           <Swords />
@@ -433,7 +467,7 @@ export function PreviewBadge({ p, keyName }: { p: Preview; keyName: string }) {
         </span>
       </>
     );
-    words = nothing ? "it has no attack committed for this to cut" : `its committed hit falls from ${p.before} to ${p.n}${p.saves ? ", no longer knocking out" : ""}`;
+    words = nothing ? "it has no attack committed for this to cut" : `its committed hit falls from ${p.before} to ${p.n}${p.saves ? ", no longer knocking out" : p.knocks ? ", still knocking out" : ""}`;
   } else {
     cls = p.kind;
     body = (
@@ -465,7 +499,8 @@ export function EnemyPlate({
   impactTarget = false,
   struck = false,
   onHover,
-  intentOff = false,
+  intentMode = "live",
+  turnedTo,
   preview,
   previewKey = "",
   offTarget = false,
@@ -489,11 +524,12 @@ export function EnemyPlate({
   struck?: boolean;
   onHover?: (hovering: boolean) => void;
   /**
-    While the enemies act the intent chips are not drawn (the space is kept, so the plate does not
-    move): an intent is a promise about the next turn, and it must never disagree with the beat
-    playing beside it. The settled state brings them back, freshly committed.
+    While the enemies act the chips stay (a promise, read beside what happens): the acting enemy's is lit,
+    the others step back. Outside playback every chip is "live".
   */
-  intentOff?: boolean;
+  intentMode?: IntentMode;
+  /** The acting enemy turned from its committed target to this companion (the old target fell). */
+  turnedTo?: { name: string; art: string; element: string };
   /** What the hovered or selected key would land here (the number, drawn big on the plate). */
   preview?: Preview;
   previewKey?: string;
@@ -546,12 +582,12 @@ export function EnemyPlate({
         {u.down && <span className="pwt-down-tag">Down</span>}
         {(u.shield > 0 || u.boost > 0 || u.hinder > 0) && !u.down && (
           <div className="pwt-marks">
-            <MarkChips marks={u} />
+            <MarkChips marks={u} side="enemy" />
           </div>
         )}
         {showIntent && (
           <div className="pwt-marks intent">
-            <IntentChip intent={intent!} off={intentOff} />
+            <IntentChip intent={intent!} mode={intentMode} turnedTo={turnedTo} />
           </div>
         )}
       </div>

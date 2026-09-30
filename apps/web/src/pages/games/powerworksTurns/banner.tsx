@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SkipForward } from "lucide-react";
+import { ScrollText, SkipForward } from "lucide-react";
 import type { EnemyView, SquadView } from "./view";
 
 /**
@@ -76,13 +76,17 @@ export function TurnBanner({
         <span className="pwt-banner-who">{who}</span>
       </p>
       {note && !ended ? (
+        // The instruction stays; the note is one more sentence after it (a note about a mark, never the prompt's replacement).
         <p className="pwt-banner-line pwt-note" role="note" data-note={noteId}>
+          {actorSide === "squad" && <span className="pwt-banner-prompt">{prompt} </span>}
           {note}
         </p>
       ) : line ? (
         lineIsSince && !readOnly ? (
           <button type="button" className="pwt-banner-line since" onClick={onOpenRecord} title="Open the full record">
             <span className="pwt-banner-line-label">Since your last turn</span> {line}
+            {/* The line is cut to what fits; the whole of it is in the Record, and the icon says the line opens it. */}
+            <ScrollText className="pwt-banner-open" aria-hidden="true" />
           </button>
         ) : (
           <p className="pwt-banner-line">
