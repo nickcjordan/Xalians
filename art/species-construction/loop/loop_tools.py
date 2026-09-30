@@ -150,6 +150,9 @@ def cmd_render(args):
         run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'render_shape_study.py'), '--',
                      '--mesh', str(glb), '--out', str(out/'render'), '--preserve-materials', '--studio-fill',
                      '--turntable'], WORK/f'{args.name}-render.log')
+    if not (out/'render/torso.json').exists():
+        run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'torso_sections.py'), '--',
+                     '--mesh', str(glb), '--out', str(out/'render/torso.json')], WORK/f'{args.name}-torso.log')
     for name in CAMERA_SETS:
         target = out/f'details-{name}'
         if target.exists():
@@ -287,8 +290,19 @@ def measurements(name):
     for view, (a, b) in REFERENCE_PANELS.items():
         ref = width_profile(reference[:, a:b])
         model = width_profile(np.array(Image.open(render/f'{view}.png').getchannel('A')) > 20, model_span(render, view))
-        out[view] = {'reference': named(ref), 'model': named(model),
-                     'ratio': {k: (round(named(model)[k]/named(ref)[k], 3) if named(ref)[k] and named(model)[k] else None)
+        model_named = named(model)
+        torso = render/'torso.json'
+        if torso.exists():
+            # Torso rows from mesh sections: an arm or tail showing through a gap
+            # cannot merge into the torso reading (see torso_sections.py).
+            key = 'width' if view == 'front' else 'depth'
+            rows = [{'at': r['at'], 'central': r[key] or 0} for r in json.loads(torso.read_text())['rows']]
+            sectioned = named([{**r, 'full': 0} for r in rows])
+            for k in ('neck', 'shoulders', 'waist', 'hips'):
+                model_named[k] = sectioned[k]
+            model_named['source'] = 'earSpan from the silhouette; neck, shoulders, waist and hips from mesh sections'
+        out[view] = {'reference': named(ref), 'model': model_named,
+                     'ratio': {k: (round(model_named[k]/named(ref)[k], 3) if named(ref)[k] and model_named[k] else None)
                                for k in named(ref)},
                      'profile': [{'at': r['at'], 'referenceFull': r['full'], 'modelFull': m['full'],
                                   'referenceCentral': r['central'], 'modelCentral': m['central']}
