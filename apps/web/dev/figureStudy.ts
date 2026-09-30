@@ -203,6 +203,10 @@ function buildStudy() {
 	let frame = 0;
 	let last = -1;
 	let lastDraw = -1;
+	let lastMs = -1;
+	const gaps: number[] = [];
+	// ?stress=1 draws every frame instead of at film rate: whether the screen keeps up is the GPU's share
+	const stress = q.get('stress') === '1';
 
 	function go(i: number, fresh = false) {
 		paused = false;
@@ -231,25 +235,29 @@ function buildStudy() {
 		for (const p of places) {
 			const t0 = performance.now();
 			paint(p.canvas, p.fig, sec, p.compact);
-			// canvas work is queued and rasterized later; reading one pixel back makes it finish inside the timing
-			p.canvas.getContext('2d')!.getImageData(0, 0, 1, 1);
+			// the script's share only: the canvas rasterizes later, on the GPU, which the frame rate below shows
 			p.times.push(performance.now() - t0);
 			if (p.times.length > 120) p.times.shift();
 			const sorted = p.times.slice().sort((a, b) => a - b);
 			const avg = sorted.reduce((s, v) => s + v, 0) / sorted.length;
 			const p95 = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.95))];
-			p.readout.textContent = `draw ${avg.toFixed(1)} ms avg, ${p95.toFixed(1)} ms p95`;
-			p.readout.classList.toggle('over', avg > 8 || p95 > 16);
+			const fps = gaps.length ? 1000 / (gaps.reduce((s, v) => s + v, 0) / gaps.length) : 0;
+			p.readout.textContent = `draw ${avg.toFixed(1)} ms avg, ${p95.toFixed(1)} ms p95${stress ? `, ${fps.toFixed(0)} fps` : ''}`;
+			p.readout.classList.toggle('over', avg > 8 || p95 > 16 || (stress && gaps.length > 60 && fps < 58));
 		}
 	}
 
 	function tick(ms: number) {
 		frame = 0;
+		if (lastMs >= 0) gaps.push(ms - lastMs);
+		if (gaps.length > 120) gaps.shift();
+		lastMs = ms;
 		const sec = ms / 1000;
 		const dt = last < 0 ? 0 : Math.min(0.1, sec - last);
 		last = sec;
 		if (paused || document.hidden) {
 			last = -1;
+			lastMs = -1;
 			return;
 		}
 		let busy = false;
@@ -257,7 +265,7 @@ function buildStudy() {
 			p.fig.step(dt, stage, present);
 			busy = busy || p.fig.busy(stage, present);
 		}
-		if (busy || sec - lastDraw >= 1 / FILM_FPS - 0.001) {
+		if (stress || busy || sec - lastDraw >= 1 / FILM_FPS - 0.001) {
 			drawAll(sec);
 			lastDraw = sec;
 		}

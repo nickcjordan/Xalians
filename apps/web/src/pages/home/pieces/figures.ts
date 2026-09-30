@@ -2,6 +2,7 @@
 // rather than played back on the archive screen. One figure can carry several beats in a row, running on
 // from one into the next instead of cutting; the viewer's figure stage (figureStage.tsx) draws it.
 import { createGenerators } from './generators';
+import { createOutbreak } from './outbreak';
 import type { Ctx, RGB } from './stage';
 
 export interface Figure {
@@ -28,8 +29,9 @@ export interface Figure {
 	draw(ctx: Ctx, sec: number, opts?: { compact?: boolean }): void;
 }
 
-export type FigureKey = 'generators';
+export type FigureKey = 'generators' | 'outbreak';
 
 export const FIGURES: Record<FigureKey, () => Figure> = {
 	generators: createGenerators,
+	outbreak: createOutbreak,
 };

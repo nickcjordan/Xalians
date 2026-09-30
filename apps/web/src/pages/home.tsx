@@ -1,12 +1,12 @@
 // Tier: chrome. The front door, told as a story: the brand, one fixed sample
 // creature standing on its world, Nick's own 2022 account of Xalia as a
-// sequence of beats (full scenes and small pieces), the creature's page, and
+// sequence of beats (painted scenes and figures), the creature's page, and
 // the tournament that leads to the Generator. Brief: docs/design/home-story-
 // page-brief.md; the beats: docs/design/home-story-content-plan.md. The
 // story's words are Nick's (git 1285604e, my-app/src/pages/home.js) and the
 // 2021 Yetimoth entry, and every beat's headline is a phrase of his. The
-// agent-written text is each scene's small label (SCENE_LABEL) and each small
-// piece's and figure's label and description for screen readers: plain accounts of what is shown,
+// agent-written text is each scene's small label (SCENE_LABEL) and each
+// figure's label and description for screen readers: plain accounts of what is shown,
 // fact-checked against the planet histories with the lore-factcheck skill.
 import * as React from 'react';
 import { Link } from 'react-router';
@@ -24,8 +24,6 @@ import specimen from './home/specimen.json';
 import { startStoryMotion } from './home/motion';
 import { StoryViewer, type ViewerBeat } from './home/storyViewer';
 import { ArchivePlay, ArchiveScreen, type ScreenState } from './home/archiveScreen';
-import { SmallPiece } from './home/pieces/smallPiece';
-import type { PieceKey } from './home/pieces/pieces';
 import type { FigureKey } from './home/pieces/figures';
 
 /* ------------------------------------------------------------------ copy */
@@ -273,21 +271,20 @@ type Layout = 'wide' | 'wide-right' | 'side';
 type Era = keyof typeof SCENE_LABEL;
 
 type Spread = { kind: 'scene'; art: Art & { era: Era }; headline: string; text: string; layout: Layout; aspect: string; ar: number; position?: string; /** Height kept for a longer label under the frame (the side layouts' default is 7rem). */ labelRoom?: string; /** Cropped to 16:9 on a phone. */ phoneVideo?: boolean };
-type Piece = { kind: 'piece'; key: string; name: string; headline: string; text: string; label: { title: string; text: string }; mode: PieceKey; alt: string };
 /** A beat drawn as a figure on the page (docs/design/home-story-figures.md): no screen; `stage` is which of the figure's beats it is. */
 type FigureBeat = { kind: 'figure'; key: string; figure: FigureKey; stage: number; name: string; headline: string; text: string; label: { title: string; text: string }; alt: string };
 
 // Each recording's readout on its archive screen: where it was recorded, or what it is.
-const RECORDED: Record<string, string> = { unbirth: 'Floria', 'end-wars': 'Grimedes', plague: 'Genome record', token: 'Genome record', present: 'Valleron' };
+const RECORDED: Record<string, string> = { unbirth: 'Floria', 'end-wars': 'Grimedes', present: 'Valleron' };
 // Each reel's clock starts partway in, so the clip reads as a cut from a longer recording.
 const reelStart = (i: number) => 1800 + ((i * 7919) % 5400);
 
 // The story's beats, in order (docs/design/home-story-content-plan.md). A
 // headline is a phrase from Nick's 2022 page; the reading text is his
-// paragraph. The small pieces are drawn live (pages/home/pieces/,
-// docs/design/home-story-small-pieces.md); beats 2 and 3 are one figure, the
-// Generators (docs/design/home-story-figures.md).
-const BEATS: Array<Spread | Piece | FigureBeat> = [
+// paragraph. The small beats are figures drawn on the page (pages/home/pieces/,
+// docs/design/home-story-figures.md): beats 2 and 3 are one figure, the
+// Generators; beats 5 and 6 another, the outbreak.
+const BEATS: Array<Spread | FigureBeat> = [
 	{ kind: 'scene', art: ART.unbirth, headline: 'They birthed the first Xalians', text: STORY[0], layout: 'wide', aspect: 'aspect-[21/9]', ar: 21 / 9, position: 'object-[center_40%]' },
 	{
 		kind: 'figure',
@@ -319,30 +316,32 @@ const BEATS: Array<Spread | Piece | FigureBeat> = [
 	},
 	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: END_WARS, layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
 	{
-		kind: 'piece',
+		kind: 'figure',
 		key: 'plague',
+		figure: 'outbreak',
+		stage: 0,
 		name: 'The Nemesis Plague',
 		headline: 'Designed by APEX to target the genome',
 		text: STORY[2],
 		label: {
-			title: 'A genome under the Nemesis Plague',
-			text: 'The plague reaches the genome from one end: its bases burn, its pairs break apart and fall, and a short length is left.',
+			title: 'The plague across Xalia',
+			text: 'The plague burns through the galaxy, and few worlds are safe; most life gathers on Valleron.',
 		},
-		mode: 'plague',
-		alt: 'A genome helix turning in the dark. A crimson haze reaches it from one end: where it passes, the bases flare and burn black, the pairs break apart and fall away in pieces, and a short, guttering length is left.',
+		alt: 'A spiral galaxy of small warm lights. A crimson haze creeps in from several places at once and spreads until it covers most of the galaxy; each world it reaches flares red and dims to an ember. One world in the disk grows brighter as small lights drift in to it from its neighbors, and it stays lit as the haze thins around it.',
 	},
 	{
-		kind: 'piece',
+		kind: 'figure',
 		key: 'token',
+		figure: 'outbreak',
+		stage: 1,
 		name: 'The Scrambler Token',
 		headline: 'The only way to safely generate new Xalians',
 		text: TOKENS,
 		label: {
-			title: 'A Scrambler Token',
-			text: 'A new helix builds out of blanks, its pairs lock in a random order, and it seals into a hexagonal chip: a Scrambler Token.',
+			title: 'A Scrambler Token on Valleron',
+			text: 'A Scrambler Token, printed by the Mercurius Machine on Valleron, averts the plague, so new Xalians can be generated safely; tokens carried home bring life back to a few worlds.',
 		},
-		mode: 'token',
-		alt: 'The last of the broken helix fades. Points of light spiral in and build a new, blank helix; a flicker runs along it as each base locks into place, and it winds tight into a ring of light sealed in the round window of a Scrambler Token, a hexagonal chip.',
+		alt: 'The view closes in on the bright world. A Scrambler Token forms there, a hexagonal chip of dark glass and worn metal in white light, and the red haze draws back from it in a widening ring. Small glints leave it for a few nearby dark worlds, and each world they reach lights again around a small green glow. Beyond them the red remains.',
 	},
 	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], labelRoom: '9.5rem', phoneVideo: true, layout: 'side', aspect: 'aspect-video min-[720px]:aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
@@ -390,35 +389,6 @@ const STORY_BEATS: ViewerBeat[] = BEATS.map((sp, i): ViewerBeat => {
 					<div className="scene-art">
 						<div className="scene-frame">
 							<div data-figure-slot={sp.figure} className="figure-slot relative aspect-video" role="img" aria-label={sp.alt} />
-						</div>
-						<SceneLabel label={sp.label} />
-					</div>
-					<SceneReading n={n} name={sp.name} headline={sp.headline} text={sp.text} />
-				</div>
-			),
-		};
-	}
-	if (sp.kind === 'piece') {
-		// A small piece: one animation on the archive screen, its label under it,
-		// its words beside it, like a scene. Off the screen it holds nothing in the DOM.
-		return {
-			key: sp.key,
-			n,
-			label: sp.name,
-			minor: true,
-			render: (live, shown, screen, _primed, play) => (
-				<div className="scene-spread" data-layout="side" style={{ '--ar': 16 / 9 } as React.CSSProperties}>
-					<div className="scene-art">
-						<div className="scene-frame">
-							{/* A small piece plays on the same archive screen as the scenes, in a plain frame. */}
-							<figure className="chamfer frame relative m-0 aspect-video">
-								<span className="frame-well">
-									<ArchiveScreen state={screen} rec={n} place={RECORDED[sp.key]} start={reelStart(i)}>
-										{shown ? <SmallPiece piece={sp.mode} live={live} label={sp.alt} /> : null}
-									</ArchiveScreen>
-								</span>
-								<ArchivePlay state={screen} rec={n} onPlay={play} />
-							</figure>
 						</div>
 						<SceneLabel label={sp.label} />
 					</div>
@@ -509,7 +479,7 @@ function Home() {
 				<div className="mx-auto max-w-[1160px]">
 					{/* The Story: a click-through viewer, one beat at a time, full
 					    scenes (same frame, same plate, a different arrangement every
-					    time) and small pieces between them. Only the shown beat
+					    time) and figures between them. Only the shown beat
 					    animates, and only once it has settled. */}
 					<StoryViewer id="story" title={<StoryHead id="story-title" className="mb-0">The Story</StoryHead>} beats={STORY_BEATS} after="#specimen" />
 
