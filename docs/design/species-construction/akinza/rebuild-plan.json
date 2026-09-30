@@ -1,0 +1,2789 @@
+{
+  "schema": "akinza-rebuild-plan/1",
+  "approval": null,
+  "written": "2026-09-30",
+  "target": {
+    "assembly": "assembled-0205",
+    "head": "head-0204",
+    "body": "body-0195",
+    "placement": "--head-scale .50 --jaw-anchor-z .500 --head-depth-offset -.020 --fragment-voxels 5",
+    "scope": "Only the stages assembled-0205 depends on, back to the committed reference images. Nothing here was run to write this plan except regenerating the four input crops in a scratch folder to check their hashes."
+  },
+  "certaintyRules": {
+    "exact": "Full command recovered verbatim from a transcript, and the script bytes at run time either equal a git blob or were recovered by replay and confirmed by a recorded hash (direct scriptSha256, a stage-start.json source hash, or a recomputed stage-start.json hash).",
+    "reconstructed": "Command verbatim, but some part (named in certaintyNote) was inferred without an independent hash check.",
+    "unknown": "Something needed to rerun the step is missing."
+  },
+  "counts": {
+    "steps": 37,
+    "exact": 34,
+    "reconstructed": 3,
+    "unknown": 0,
+    "kind:input-image": 4,
+    "kind:hunyuan": 4,
+    "kind:blender-script": 28,
+    "kind:python-script": 0,
+    "kind:assemble": 1
+  },
+  "workingTree": {
+    "original": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+    "now": "C:\\dev\\src\\xalians-akinza-loop (untracked/species-construction/akinza is a junction to C:\\dev\\art-data\\species-construction\\akinza)",
+    "pathNote": "Commands use paths relative to the original worktree root, except the WSL runs, which use /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/... Provenance files (stage-start.json) embed absolute paths, so their hashes only reproduce if the rebuild runs at the same absolute path. Output geometry does not depend on the path."
+  },
+  "toolchain": {
+    "windowsBlender": {
+      "path": "C:/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe",
+      "version": "Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)",
+      "archiveSha256": {
+        "blender-5.2.2-windows-x64.zip": "3849d17a682cba006075aaa3f3597ecb5c9c30ec31035b2e092c53e40679b535"
+      },
+      "presentOn2026-09-30": true,
+      "usedBy": "every body stage, S13 to S23, A01"
+    },
+    "wslLinuxBlender": {
+      "path": "/home/njord/.local/opt/blender-5.2.2-linux-x64/blender",
+      "invocation": "wsl -e ...",
+      "version": "Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:34:58)",
+      "archiveSha256": {
+        "blender-5.2.2-linux-x64.tar.xz": "84098912789dc450e95697c4184fb8a90acbe5111c2ba4aede3fecb57806a168"
+      },
+      "presentOn2026-09-30": true,
+      "usedBy": "S05 to S12 (head-0095 through head-0110/lower-ear-taper). Use the Linux build for these, since floating-point results can differ between builds."
+    },
+    "loopTools": "python art/species-construction/loop/loop_tools.py blender <script> [--log NAME] <args> runs \"<windows blender> -b --factory-startup --python <script> -- <args>\" with cwd at the repo root and the log under untracked/species-construction/akinza/.",
+    "hunyuan3d": {
+      "checkout": "git clone --depth 1 --filter=blob:none https://github.com/Tencent-Hunyuan/Hunyuan3D-2.git untracked/tools/Hunyuan3D-2  (HEAD f8db63096c8282cb27354314d896feba5ba6ff8a)",
+      "venv": [
+        "& C:/Users/njord/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe -m venv --system-site-packages untracked/tools/shape-env",
+        "write untracked/tools/shape-env/Lib/site-packages/xalians_existing_art_runtime.pth containing C:/dev/src/xalians-art/.venv/Lib/site-packages (supplies torch 2.11.0+cu128, diffusers 0.40.0, transformers 5.16.1, huggingface_hub 1.29.0; still present on 2026-09-30)",
+        "& untracked/tools/shape-env/Scripts/python.exe -m pip install --disable-pip-version-check einops omegaconf trimesh pymeshlab scikit-image ninja pybind11",
+        "& untracked/tools/shape-env/Scripts/python.exe -m pip install --disable-pip-version-check --no-deps torchvision==0.26.0 --index-url https://download.pytorch.org/whl/cu128",
+        "& untracked/tools/shape-env/Scripts/python.exe -m pip install opencv-python-headless"
+      ],
+      "weights": [
+        "hf_hub_download('tencent/Hunyuan3D-2mini','hunyuan3d-dit-v2-mini/'+name,local_dir='untracked/tools/hunyuan-mini-weights',token=False) for name in config.yaml, model.fp16.safetensors",
+        "hf_hub_download('tencent/Hunyuan3D-2','hunyuan3d-dit-v2-0/'+name,local_dir='untracked/tools/hunyuan-full-weights',token=False) for name in config.yaml, model.fp16.safetensors"
+      ],
+      "weightHashes": {
+        "mini": {
+          "config.yaml": "cabcba7f6115752c8fe5b370e12bf714936f70377a8a80f151872f76c2d64609",
+          "model.fp16.safetensors": "3cc66f3bea33e4062b7dbc875ffe1d70c4888914aec3e91b60f94e9bd01b522b"
+        },
+        "full": {
+          "config.yaml": "70bbfcdd18b9686ee56fe011c3a059b222eae1f5450f904577c50f0e107a8a53",
+          "model.fp16.safetensors": "360bc281fc956d4acac0c3d36d5ec0ebf8cdddbf4b8892e894d12419388d479b"
+        }
+      },
+      "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec calls at 2026-09-28T20:5x-21:2xZ (extract lines 7873, 7906, 7926, 7957, 7968, 8726)",
+          "quote": "git clone --depth 1 --filter=blob:none https://github.com/Tencent-Hunyuan/Hunyuan3D-2.git untracked/tools/Hunyuan3D-2"
+        }
+      ]
+    },
+    "python": "Input crops S01, B01 and B03 ran under shape-env python (PIL/scipy/numpy from the xalians-art venv); S03 ran under the system python. On 2026-09-30, PIL 12.2.0, scipy 1.18.0 and numpy 2.5.1 reproduce the three recorded crop hashes."
+  },
+  "scriptRecovery": {
+    "problem": "Stages S02 to S12 and B02 to B08 ran before their scripts were first committed; ten of them (B02, B04, S02, B05, B07, B08, S05, S06, S07, S08) ran on versions that were never committed. The Codex worktree was deleted, but the four Codex rollouts still hold every edit.",
+    "rollouts": [
+      "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+      "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+      "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T12-29-50-01a0e910-d631-7990-8d6f-dd97b1df28d2.jsonl",
+      "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T20-19-35-01a0eabe-e7d4-7de3-a235-fb9fe4b863ec.jsonl"
+    ],
+    "method": [
+      "Start from the raw blobs of commit 414f48af (art/species-construction and docs/design/species-construction) at its commit time 2026-09-28T17:35:18Z. Branch switches in the window never changed art/species-construction (414f48af..430e9302 only adds files in ba7cd0e3).",
+      "Merge the custom_tool_call \"exec\" events of all four rollouts in timestamp order, and within one exec in source order.",
+      "Parse each JS string passed to tools.apply_patch and apply it with codex-rs semantics: lines are split on LF, trailing CR is ignored for matching, context and added lines are written without CR, Add File joins lines with LF plus a final LF.",
+      "For tools.exec_command, run each PowerShell here-string piped to python (\"@' ... '@ | python -\") that writes a .py file, with cwd at the tree root, using Windows Python so read_text/write_text normalize to CRLF. A here-string piped to Set-Content writes its text plus CRLF.",
+      "Hash the files at the moment of each chain command."
+    ],
+    "validation": [
+      "At the ba7cd0e3 commit time the replayed tree equals ba7cd0e3 for all 33 tracked files in art/species-construction.",
+      "At the end of the Codex session the replayed content of every chain script equals its 46dbc305 blob (the next commit).",
+      "The replay reproduces all 52 distinct run-time script hashes recorded in the committed records and printed in the rollouts for this window, with no mismatch (for example 20 refine_reconstructed_head.py versions for head-0025 to head-0076, reconstruct_shape.py 0ee5b2d2, dbf322ed, 35aa04f0 and e50d8508, refine_reconstructed_body.py a068b52f, integrate_reconstructed_paws.py 20ed73ba and f5943d9d, transplant_reconstructed_muzzle.py 634da89e and 4f79af4a, and nine assemble_reconstructed_creature.py versions).",
+      "stage-start.json hashes recomputed from the replayed hashes match the records for body-0072/attempt-02, body-0073, body-0100/attempt-02, head-0100, head-0110/attempt-02, head-0110/cranial-volume and head-0110/lower-ear-taper."
+    ],
+    "tool": "The replay used for this plan was a scratch script (codex_replay.py) in the session scratchpad and is not committed. Commit it, and the recovered script versions, before the rollouts are lost too (see gaps).",
+    "loopAndMainSession": "For the Claude transcripts, the same kind of simulation (Write, Edit, heredoc, sed -i and Python edits applied to the parent commit) shows each loop and main-session run used exactly the content of the commit named in scriptCommit."
+  },
+  "gaps": [
+    {
+      "id": "G1",
+      "steps": [
+        "S05",
+        "S07",
+        "S08"
+      ],
+      "gap": "Three script versions were recovered only by replay, with no run-time hash to confirm them: refine_reconstructed_head.py at head-0095 (14b45dab...), refine_reconstructed_coat.py at head-0109 (3eef4fef...) and recover_0109_flakes.py (e7ca2554..., an untracked file).",
+      "proposal": "Accept the replay (it reproduced all 52 recorded script hashes and both commit checkpoints), then confirm downstream: head-0095/head.blend should hash c63e52fe... and head-0109/recovered-02/head.blend df37df1f... If .blend bytes differ, compare the head-0100 and head-0110/attempt-02 glb hashes (bc2dbd75..., 009eed73...) and vertex counts (1509526, 1022996) instead."
+    },
+    {
+      "id": "G2",
+      "steps": [
+        "S03"
+      ],
+      "gap": "No record of the face-source-0095/input.png hash survives (only its tail was ever printed). Today the code gives 5277c2a4... (224251 masked pixels).",
+      "proposal": "Run S03, then S04; if the Hunyuan output hashes 0b7e354e..., the crop was right. If not, try the other Python installs available at the time (the system python ran this snippet, not shape-env)."
+    },
+    {
+      "id": "G3",
+      "steps": [
+        "B02",
+        "B04",
+        "S02",
+        "S04"
+      ],
+      "gap": "Hunyuan3D-2 inference on the GPU may not be bit-reproducible, and the local install (shape-env, checkout, weights) was deleted with the worktree.",
+      "proposal": "Rebuild the install exactly as in toolchain.hunyuan3d, check the four weight hashes, and compare output glb hashes. If an output differs, keep the new mesh only if vertex and face counts match; otherwise treat that branch as a fresh start rather than a replay."
+    },
+    {
+      "id": "G4",
+      "steps": [
+        "B02",
+        "B04",
+        "S02",
+        "B05",
+        "B07",
+        "B08",
+        "S05",
+        "S06",
+        "S07",
+        "S08"
+      ],
+      "gap": "Ten entry-script versions and two blender_blockout.py versions (d861ad5b... and b22f1565...) exist only as edits in the Codex rollouts.",
+      "proposal": "Commit the replay tool and the recovered files (for example docs/design/species-construction/akinza/recovered-sources/<name>@<sha12>.py) so the rebuild no longer depends on the rollout files."
+    },
+    {
+      "id": "G5",
+      "steps": [
+        "S16",
+        "S19",
+        "S20",
+        "S21",
+        "S22",
+        "S23",
+        "B11",
+        "B13",
+        "A01"
+      ],
+      "gap": "Many loop stages have no recorded glb hash, and .blend files are unlikely to be byte-reproducible.",
+      "proposal": "Verify with the recorded mesh statistics (vertex counts, deviations, skin top) and, for the final model, loop_tools.py check and measure against the round-16 values (727170 vertices, front ear span .523)."
+    },
+    {
+      "id": "G6",
+      "steps": [
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12"
+      ],
+      "gap": "These stages ran under the WSL Linux Blender build; all others under the Windows build.",
+      "proposal": "Keep that split. Both builds are still installed."
+    },
+    {
+      "id": "G7",
+      "steps": [
+        "all"
+      ],
+      "gap": "stage-start.json and other provenance files embed absolute paths and CRLF or LF line endings, so their hashes reproduce only at C:/Users/njord/.codex/worktrees/1d07/Xalians with the same script bytes.",
+      "proposal": "Treat provenance hashes as optional; geometry hashes and mesh statistics are the checks that matter."
+    }
+  ],
+  "excludedLookalikes": [
+    "body-0155 and body-0157 (the 0156 and round-1 bodies; body-0172 rebuilds from body-0100/attempt-02 instead)",
+    "head-0164 to head-0167 (round 4, reverted)",
+    "head-0185 (round 9; head-0187 is built from head-0182)",
+    "head-0189 to head-0193 (rounds 11 and 12; head-0203 is built from head-0187)",
+    "head-0197 to head-0202 (round 14 and scratch trials)",
+    "body-0175, body-0176, body-0180, body-0181 (superseded builds)",
+    "head-0024/attempt-01 (only head-0024/input.png is used)",
+    "head-0112 (its eye method lives in refine_reconstructed_eyes.py; no file from it is read)",
+    "head-0132 and head-0142 (nose trials)",
+    "assembled-0156 and every assembly except assembled-0205"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "id": "S01",
+      "output": "untracked/species-construction/akinza/head-0024/input.png",
+      "kind": "input-image",
+      "branch": "head",
+      "script": "inline Python piped to untracked/tools/shape-env/Scripts/python.exe",
+      "scriptCommit": null,
+      "command": "@'\nfrom PIL import Image\nfrom scipy import ndimage\nimport numpy as np,json,hashlib\nfrom pathlib import Path\nsource=Path('docs/design/species-construction/akinza/evidence/head-clay-study-0021.png')\nout=Path('untracked/species-construction/akinza/head-0024');out.mkdir(exist_ok=False,parents=True)\nrect=(0,120,853,653)\nim=Image.open(source).convert('RGB').crop(rect)\na=np.asarray(im);white=a.min(axis=2)>240\nseed=np.zeros(white.shape,bool);seed[0,:]=white[0,:];seed[-1,:]=white[-1,:];seed[:,0]=white[:,0];seed[:,-1]=white[:,-1]\nbg=ndimage.binary_propagation(seed,mask=white)\nmask=(~bg).astype('uint8')*255\nim.putalpha(Image.fromarray(mask));im.save(out/'input.png')\n(input.json writer omitted here; it only records hashes)\n'@ | & untracked/tools/shape-env/Scripts/python.exe -",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "docs/design/species-construction/akinza/evidence/head-clay-study-0021.png"
+      ],
+      "expected": {
+        "input.png": "3b3f560be93b607255eaa11a6f5212c515219e384ff7ac81e8e3d0d8c5489d4a",
+        "sourceSha256": "c251eebda1037f74eeb5017208f9220662868897274440e4a9e5b5fd30167f1d",
+        "cropBox": [
+          0,
+          120,
+          853,
+          653
+        ],
+        "mask": "edge-connected RGB>240 flood fill, enclosed whites retained",
+        "regeneratedToday": "Regenerated on 2026-09-30 with PIL 12.2.0, scipy 1.18.0, numpy 2.5.1 from the committed evidence file: sha256 matches 3b3f560b... exactly"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Code copied verbatim from the rollout; the regenerated file hashes identically.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_90W8vA8V1IIHSTuFmS2DginY, 2026-09-28T21:23:27Z",
+          "quote": "rect=(0,120,853,653) ... white=a.min(axis=2)>240 ... im.save(out/'input.png')"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/records/reconstruction-experiments-0022-0068.json",
+          "locator": "experiments[head-0024].records[\"input.json\"]",
+          "quote": "\"inputSha256\": \"3b3f560be93b607255eaa11a6f5212c515219e384ff7ac81e8e3d0d8c5489d4a\""
+        }
+      ],
+      "dependsOn": []
+    },
+    {
+      "order": 2,
+      "id": "B01",
+      "output": "untracked/species-construction/akinza/body-reconstruction-0028/input.png",
+      "kind": "input-image",
+      "branch": "body",
+      "script": "inline Python piped to untracked/tools/shape-env/Scripts/python.exe",
+      "scriptCommit": null,
+      "command": "@'\nfrom PIL import Image\nfrom scipy import ndimage\nimport numpy as np,json,hashlib\nfrom pathlib import Path\nsource=Path('docs/design/species-construction/akinza/evidence/body-study-0003.png')\nout=Path('untracked/species-construction/akinza/body-reconstruction-0028');out.mkdir(exist_ok=False,parents=True)\nrect=(0,0,650,810)\nim=Image.open(source).convert('RGB').crop(rect)\na=np.asarray(im);white=a.min(axis=2)>235\nseed=np.zeros(white.shape,bool);seed[0,:]=white[0,:];seed[-1,:]=white[-1,:];seed[:,0]=white[:,0];seed[:,-1]=white[:,-1]\nbg=ndimage.binary_propagation(seed,mask=white)\nlabels,n=ndimage.label(~bg);counts=np.bincount(labels.ravel());counts[0]=0\nmask=(labels==counts.argmax()).astype('uint8')*255\nim.putalpha(Image.fromarray(mask));im.save(out/'input.png')\n(input.json writer omitted here)\n'@ | & untracked/tools/shape-env/Scripts/python.exe -",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "docs/design/species-construction/akinza/evidence/body-study-0003.png"
+      ],
+      "expected": {
+        "input.png": "6b2d46ac62de678c82325e360df2ac29ca945aa9d3bd466393b80a364144874e",
+        "sourceSha256": "eb6f337326d5f7edf8cbb070bcb4aedd4178f06a6478eb201375942dded59c24",
+        "cropBox": [
+          0,
+          0,
+          650,
+          810
+        ],
+        "regeneratedToday": "sha256 matches exactly (PIL 12.2.0, scipy 1.18.0, numpy 2.5.1)"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Verbatim code; regenerated hash matches the record.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_eGK2ebZITwf8EwIO8ImlL3P0, 2026-09-28T21:37:18Z",
+          "quote": "rect=(0,0,650,810) ... white=a.min(axis=2)>235 ... mask=(labels==counts.argmax())"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/records/reconstruction-experiments-0022-0068.json",
+          "locator": "experiments[body-reconstruction-0028].records[\"input.json\"]",
+          "quote": "\"inputSha256\": \"6b2d46ac...\""
+        }
+      ],
+      "dependsOn": []
+    },
+    {
+      "order": 3,
+      "id": "B03",
+      "output": "untracked/species-construction/akinza/paw-reconstruction-0041/input.png",
+      "kind": "input-image",
+      "branch": "body",
+      "script": "inline Python piped to untracked/tools/shape-env/Scripts/python.exe",
+      "scriptCommit": null,
+      "command": "@'\nfrom PIL import Image\nfrom pathlib import Path\nimport numpy as np, scipy.ndimage as ndi, hashlib,json\nsrc=Path('docs/design/species-construction/akinza/evidence/paws-study-0020.png')\nout=Path('untracked/species-construction/akinza/paw-reconstruction-0041');out.mkdir(exist_ok=False)\nrect=(175,480,590,980)\nim=Image.open(src).convert('RGB').crop(rect)\na=np.asarray(im); white=(a.min(axis=2)>235)\nborder=np.zeros(white.shape,bool);border[0,:]=border[-1,:]=True;border[:,0]=border[:,-1]=True\nbg=ndi.binary_propagation(border&white,mask=white)\nlabels,n=ndi.label(~bg); sizes=np.bincount(labels.flat);sizes[0]=0;mask=labels==sizes.argmax()\nrgba=np.dstack((a,mask.astype('uint8')*255));Image.fromarray(rgba).save(out/'input.png')\n(input.json writer omitted here)\n'@ | & untracked/tools/shape-env/Scripts/python.exe -",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "docs/design/species-construction/akinza/evidence/paws-study-0020.png"
+      ],
+      "expected": {
+        "input.png": "09cc0501c97af88f6e924e702f350c5aa5b83ebdb427ba6ff32acdd3af146a4a",
+        "sourceSha256": "4cb2498257c8aa37043dfa74902e2d4608e688d9a68af53858689bd4f82c2f5c",
+        "cropBox": [
+          175,
+          480,
+          590,
+          980
+        ],
+        "regeneratedToday": "sha256 matches exactly"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Verbatim code; regenerated hash matches the record.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_X4MlA56fdy6PrgTSVzp930fk, 2026-09-28T22:20:55Z",
+          "quote": "rect=(175,480,590,980) ... white=(a.min(axis=2)>235)"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/records/reconstruction-experiments-0022-0068.json",
+          "locator": "experiments[paw-reconstruction-0041].records[\"input.json\"]",
+          "quote": "\"outputSha256\": \"09cc0501...\""
+        }
+      ],
+      "dependsOn": []
+    },
+    {
+      "order": 4,
+      "id": "S03",
+      "output": "untracked/species-construction/akinza/face-source-0095/input.png",
+      "kind": "input-image",
+      "branch": "head",
+      "script": "inline Python piped to the system python (not shape-env)",
+      "scriptCommit": null,
+      "command": "@'\nimport hashlib,json\nfrom pathlib import Path\nfrom collections import deque\nfrom PIL import Image\nsrc=Path('docs/design/species-construction/akinza/evidence/face-study-0010.png')\nout=Path('untracked/species-construction/akinza/face-source-0095')\nout.mkdir(exist_ok=False)\nim=Image.open(src).convert('RGBA');px=im.load();w,h=im.size\nqueue=deque([(x,y) for x in range(w) for y in [0,h-1]]+[(x,y) for y in range(h) for x in [0,w-1]])\nseen=set();count=0\nwhile queue:\n x,y=queue.popleft()\n if (x,y) in seen or not (0<=x<w and 0<=y<h):continue\n seen.add((x,y))\n if min(px[x,y][:3])<=240:continue\n px[x,y]=(*px[x,y][:3],0);count+=1\n queue.extend([(x-1,y),(x+1,y),(x,y-1),(x,y+1)])\nim.save(out/'input.png')\n(input.json writer omitted here; it records maskedPixelCount and inputSha256)\n'@ | python -",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "docs/design/species-construction/akinza/evidence/face-study-0010.png"
+      ],
+      "expected": {
+        "input.png": null,
+        "inputRecorded": false,
+        "sourceSha256Today": "a31f0bf5e1ef8dad1a90fd2c39b6ec5f839871110f3e4330a492bf8e2e3a5952 (file unchanged in git since 18874ebb, 2026-09-27)",
+        "regeneratedToday": "sha256 5277c2a425e388c59f3cf26b76b1a0bdd2fea88a55ea3ee6cf170ba8d8f35ad4, maskedPixelCount 224251 (PIL 12.2.0); no recorded value to compare",
+        "indirectCheck": "the Hunyuan output of S04 must hash 0b7e354e..."
+      },
+      "certainty": "exact",
+      "certaintyNote": "Code is verbatim from the rollout, but no record of the resulting input.png hash survives, so the regenerated file cannot be confirmed directly.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_4mizmoC89Y7eReW75qgo4K5t, 2026-09-29T00:22:39Z",
+          "quote": "src=Path('docs/design/species-construction/akinza/evidence/face-study-0010.png') ... if min(px[x,y][:3])<=240:continue"
+        }
+      ],
+      "dependsOn": []
+    },
+    {
+      "order": 5,
+      "id": "B02",
+      "output": "untracked/species-construction/akinza/body-reconstruction-0028/attempt-01",
+      "kind": "hunyuan",
+      "branch": "body",
+      "script": "art/species-construction/reconstruct_shape.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "0ee5b2d287aec35965ab01ee278e102cfe2f7cea647cb9a521f85afca8d4e1b2",
+      "scriptRecovery": "Not in git (first commit ba7cd0e3 is a later version). Recover by replaying the rollout edits (see scriptRecovery) to 2026-09-28T21:37:18Z; the replayed bytes hash 0ee5b2d2..., equal to the record.",
+      "command": "& untracked/tools/shape-env/Scripts/python.exe art/species-construction/reconstruct_shape.py --source untracked/tools/Hunyuan3D-2 --weights untracked/tools/hunyuan-mini-weights --input untracked/species-construction/akinza/body-reconstruction-0028/input.png --out untracked/species-construction/akinza/body-reconstruction-0028/attempt-01",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-reconstruction-0028/input.png",
+        "untracked/tools/Hunyuan3D-2",
+        "untracked/tools/hunyuan-mini-weights/hunyuan3d-dit-v2-mini"
+      ],
+      "hunyuan": {
+        "upstream": "https://github.com/Tencent-Hunyuan/Hunyuan3D-2",
+        "upstreamCommit": "f8db63096c8282cb27354314d896feba5ba6ff8a",
+        "runtime": {
+          "torch": "2.11.0+cu128",
+          "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU"
+        },
+        "model": "tencent/Hunyuan3D-2mini/hunyuan3d-dit-v2-mini",
+        "modelId": "tencent/Hunyuan3D-2mini",
+        "subfolder": "hunyuan3d-dit-v2-mini",
+        "weights": {
+          "config.yaml": "cabcba7f6115752c8fe5b370e12bf714936f70377a8a80f151872f76c2d64609",
+          "model.fp16.safetensors": "3cc66f3bea33e4062b7dbc875ffe1d70c4888914aec3e91b60f94e9bd01b522b"
+        },
+        "seed": 12345,
+        "steps": 50,
+        "octreeResolution": 380,
+        "numChunks": 8000,
+        "guidanceScale": 5.0,
+        "dtype": "float16",
+        "cpuOffload": false,
+        "variant": "fp16",
+        "device": "cuda",
+        "note": "This script version did not pass guidance_scale to the pipeline (the explicit guidance_scale=5.0 argument was added at 22:55:52Z); the record states 5.0, which is the upstream default. cpuOffload key is absent from this record because the option did not exist yet."
+      },
+      "expected": {
+        "shape.glb": "35fdef14a423942211b413956ca109d10271873d6941d56244283cef722b962c",
+        "vertices": 319598,
+        "faces": 639216,
+        "watertight": false,
+        "elapsedSeconds": 139.0,
+        "peakGpuMemoryBytes": 4846193664,
+        "reconstruction.json": "6bf9a105cdbd2c80233df3c956d85041eff4adbb0b851bbb0ffeb90c15ae5a65"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script bytes recovered by replay and equal to the recorded scriptSha256. GPU inference may not be bit-reproducible; check the output hash.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_eGK2ebZITwf8EwIO8ImlL3P0, 2026-09-28T21:37:18Z",
+          "quote": "reconstruct_shape.py --source untracked/tools/Hunyuan3D-2 --weights untracked/tools/hunyuan-mini-weights --input .../body-reconstruction-0028/input.png --out .../attempt-01"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/records/reconstruction-experiments-0022-0068.json",
+          "locator": "experiments[body-reconstruction-0028].records[\"attempt-01/reconstruction.json\"]",
+          "quote": "\"scriptSha256\": \"0ee5b2d2...\", \"outputSha256\": \"35fdef14...\""
+        }
+      ],
+      "dependsOn": [
+        "B01"
+      ]
+    },
+    {
+      "order": 6,
+      "id": "B04",
+      "output": "untracked/species-construction/akinza/paw-reconstruction-0041/attempt-01",
+      "kind": "hunyuan",
+      "branch": "body",
+      "script": "art/species-construction/reconstruct_shape.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "dbf322ed5e78cb41c38032dd6ed64bd4e71a6555b2502ff07f4a7011ec4de946",
+      "scriptRecovery": "Not in git. Replay the rollout edits to 2026-09-28T22:22:44Z; replayed bytes hash dbf322ed..., equal to the record.",
+      "command": "& untracked/tools/shape-env/Scripts/python.exe art/species-construction/reconstruct_shape.py --source untracked/tools/Hunyuan3D-2 --weights untracked/tools/hunyuan-full-weights --subfolder hunyuan3d-dit-v2-0 --model-id tencent/Hunyuan3D-2 --cpu-offload --input untracked/species-construction/akinza/paw-reconstruction-0041/input.png --out untracked/species-construction/akinza/paw-reconstruction-0041/attempt-01 *> untracked/species-construction/akinza/paw-reconstruction-0041/run.log",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/paw-reconstruction-0041/input.png",
+        "untracked/tools/Hunyuan3D-2",
+        "untracked/tools/hunyuan-full-weights/hunyuan3d-dit-v2-0"
+      ],
+      "hunyuan": {
+        "upstream": "https://github.com/Tencent-Hunyuan/Hunyuan3D-2",
+        "upstreamCommit": "f8db63096c8282cb27354314d896feba5ba6ff8a",
+        "runtime": {
+          "torch": "2.11.0+cu128",
+          "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU"
+        },
+        "model": "tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0",
+        "modelId": "tencent/Hunyuan3D-2",
+        "subfolder": "hunyuan3d-dit-v2-0",
+        "weights": {
+          "config.yaml": "70bbfcdd18b9686ee56fe011c3a059b222eae1f5450f904577c50f0e107a8a53",
+          "model.fp16.safetensors": "360bc281fc956d4acac0c3d36d5ec0ebf8cdddbf4b8892e894d12419388d479b"
+        },
+        "seed": 12345,
+        "steps": 50,
+        "octreeResolution": 380,
+        "numChunks": 8000,
+        "guidanceScale": 5.0,
+        "dtype": "float16",
+        "cpuOffload": true,
+        "variant": "fp16",
+        "device": "cpu, then enable_model_cpu_offload()",
+        "note": "guidance_scale not passed explicitly in this version (upstream default 5.0 recorded)"
+      },
+      "expected": {
+        "shape.glb": "4ed599c4c24a1e5a83f1615a02f5f49238e9ab1063afb133bb21d50edbcd7fbb",
+        "vertices": 567390,
+        "faces": 1134734,
+        "renderComponents": 40,
+        "elapsedSeconds": 299.7,
+        "peakGpuMemoryBytes": 2639611904,
+        "reconstruction.json": "09cacb52ebf9539c83c9a2cd83bba9047dfa5ca40f29e2474d1a4e169749d183"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; replayed script bytes equal the recorded scriptSha256.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_AaCFlAPlqaVwFoslpyePQGgg, 2026-09-28T22:22:44Z",
+          "quote": "--subfolder hunyuan3d-dit-v2-0 --model-id tencent/Hunyuan3D-2 --cpu-offload --input .../paw-reconstruction-0041/input.png"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/records/reconstruction-experiments-0022-0068.json",
+          "locator": "experiments[paw-reconstruction-0041].records[\"attempt-01/reconstruction.json\"]",
+          "quote": "\"scriptSha256\": \"dbf322ed...\", \"cpuOffload\": true, \"outputSha256\": \"4ed599c4...\""
+        }
+      ],
+      "dependsOn": [
+        "B03"
+      ]
+    },
+    {
+      "order": 7,
+      "id": "S02",
+      "output": "untracked/species-construction/akinza/head-full-0058",
+      "kind": "hunyuan",
+      "branch": "head",
+      "script": "art/species-construction/reconstruct_shape.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "35aa04f0dcb83edb35ae33d52a6965bdb0808993bb568811328b2420c107ee20",
+      "scriptRecovery": "Not in git. Replay to 2026-09-28T23:02:11Z; replayed bytes hash 35aa04f0..., equal to the record and to the reconstruction_source.py snapshot hash.",
+      "command": "& untracked/tools/shape-env/Scripts/python.exe art/species-construction/reconstruct_shape.py --source untracked/tools/Hunyuan3D-2 --weights untracked/tools/hunyuan-full-weights --subfolder hunyuan3d-dit-v2-0 --model-id tencent/Hunyuan3D-2 --cpu-offload --input untracked/species-construction/akinza/head-0024/input.png --out untracked/species-construction/akinza/head-full-0058 *> untracked/species-construction/akinza/head-full-0058.log",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0024/input.png",
+        "untracked/tools/Hunyuan3D-2",
+        "untracked/tools/hunyuan-full-weights/hunyuan3d-dit-v2-0"
+      ],
+      "hunyuan": {
+        "upstream": "https://github.com/Tencent-Hunyuan/Hunyuan3D-2",
+        "upstreamCommit": "f8db63096c8282cb27354314d896feba5ba6ff8a",
+        "runtime": {
+          "torch": "2.11.0+cu128",
+          "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU"
+        },
+        "model": "tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0",
+        "modelId": "tencent/Hunyuan3D-2",
+        "subfolder": "hunyuan3d-dit-v2-0",
+        "weights": {
+          "config.yaml": "70bbfcdd18b9686ee56fe011c3a059b222eae1f5450f904577c50f0e107a8a53",
+          "model.fp16.safetensors": "360bc281fc956d4acac0c3d36d5ec0ebf8cdddbf4b8892e894d12419388d479b"
+        },
+        "seed": 12345,
+        "steps": 50,
+        "octreeResolution": 380,
+        "numChunks": 8000,
+        "guidanceScale": 5.0,
+        "dtype": "float16",
+        "cpuOffload": true,
+        "variant": "fp16",
+        "note": "guidance_scale=5.0 passed explicitly from this version on"
+      },
+      "expected": {
+        "shape.glb": "935675ed55f78d0486df558d18121547e83726d4070b15f2a260c295fbeadf8a",
+        "vertices": 272666,
+        "faces": 545334,
+        "renderComponents": 31,
+        "elapsedSeconds": 244.4,
+        "peakGpuMemoryBytes": 2639611904,
+        "reconstruction.json": "b989dc0301c148864bbf03aceaa3d4acd132022cba7188508f8a33a6d46de9e8"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; replayed script bytes equal the recorded scriptSha256.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_OFGLQ9imVv4m3uGGlHMJzzbO, 2026-09-28T23:02:11Z",
+          "quote": "--cpu-offload --input untracked/species-construction/akinza/head-0024/input.png --out untracked/species-construction/akinza/head-full-0058"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/records/reconstruction-experiments-0022-0068.json",
+          "locator": "experiments[head-full-0058].records[\"reconstruction.json\"]",
+          "quote": "\"scriptSha256\": \"35aa04f0...\", \"outputSha256\": \"935675ed...\""
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "face[0].input",
+          "quote": "head-full-0058/shape.glb sha256 935675ed..."
+        }
+      ],
+      "dependsOn": [
+        "S01"
+      ]
+    },
+    {
+      "order": 8,
+      "id": "S04",
+      "output": "untracked/species-construction/akinza/face-source-0095/reconstruction",
+      "kind": "hunyuan",
+      "branch": "head",
+      "script": "art/species-construction/reconstruct_shape.py",
+      "scriptCommit": "ba7cd0e3",
+      "scriptSha256AtRun": "b7b9dfde01f0e1d20e94db55c1c50c8902f2f9edb2b3427bf23279d4e8d07435",
+      "scriptRecovery": "Replayed bytes at 2026-09-29T00:22:39Z equal the ba7cd0e3 blob (raw sha b7b9dfde...), the only committed version.",
+      "command": "(same exec as S03, second line) & untracked/tools/shape-env/Scripts/python.exe art/species-construction/reconstruct_shape.py --source untracked/tools/Hunyuan3D-2 --weights untracked/tools/hunyuan-full-weights --subfolder hunyuan3d-dit-v2-0 --model-id tencent/Hunyuan3D-2 --cpu-offload --input untracked/species-construction/akinza/face-source-0095/input.png --out untracked/species-construction/akinza/face-source-0095/reconstruction *> untracked/species-construction/akinza/face-source-0095.log",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/face-source-0095/input.png",
+        "untracked/tools/Hunyuan3D-2",
+        "untracked/tools/hunyuan-full-weights/hunyuan3d-dit-v2-0"
+      ],
+      "hunyuan": {
+        "upstream": "https://github.com/Tencent-Hunyuan/Hunyuan3D-2",
+        "upstreamCommit": "f8db63096c8282cb27354314d896feba5ba6ff8a",
+        "runtime": {
+          "torch": "2.11.0+cu128",
+          "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU"
+        },
+        "model": "tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0",
+        "modelId": "tencent/Hunyuan3D-2",
+        "subfolder": "hunyuan3d-dit-v2-0",
+        "weights": {
+          "config.yaml": "70bbfcdd18b9686ee56fe011c3a059b222eae1f5450f904577c50f0e107a8a53",
+          "model.fp16.safetensors": "360bc281fc956d4acac0c3d36d5ec0ebf8cdddbf4b8892e894d12419388d479b"
+        },
+        "seed": 12345,
+        "steps": 50,
+        "octreeResolution": 380,
+        "numChunks": 8000,
+        "guidanceScale": 5.0,
+        "dtype": "float16",
+        "cpuOffload": true,
+        "parametersSource": "script defaults of ba7cd0e3 plus the command flags; the full reconstruction.json was never printed, only its tail"
+      },
+      "expected": {
+        "shape.glb": "0b7e354e7b00b4e50d378415e12e9a18c72b93356f9a87f830cfaa732caa1fec",
+        "vertices": 472514,
+        "faces": 945052,
+        "renderComponents": 2,
+        "elapsedSeconds": 285.4,
+        "peakGpuMemoryBytes": 2639611904
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script equals the ba7cd0e3 commit. Parameters follow from that script and the flags.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_4mizmoC89Y7eReW75qgo4K5t, 2026-09-29T00:22:39Z",
+          "quote": "--input untracked/species-construction/akinza/face-source-0095/input.png --out untracked/species-construction/akinza/face-source-0095/reconstruction"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec at 2026-09-29T00:29:10Z (Get-Content .../face-source-0095/reconstruction/reconstruction.json -Tail 20)",
+          "quote": "\"outputSha256\": \"0b7e354e...\", \"vertices\": 472514, \"faces\": 945052"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "face[1].donor",
+          "quote": "face-source-0095/reconstruction/shape.glb sha256 0b7e354e..."
+        }
+      ],
+      "dependsOn": [
+        "S03"
+      ]
+    },
+    {
+      "order": 9,
+      "id": "B05",
+      "output": "untracked/species-construction/akinza/body-0072/attempt-02",
+      "kind": "blender-script",
+      "branch": "body",
+      "script": "art/species-construction/refine_reconstructed_body.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad",
+      "scriptRecovery": "Not in git: ba7cd0e3 plus the --omit-tails patch applied at 2026-09-28T23:33:08Z (exec call_Tu81tVZ1VPKMliUhxMOzzYkJ). Replayed bytes equal the recorded scriptSha256 and the source-snapshot hash.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows",
+      "command": "& 'C:/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe' -b --factory-startup --python-exit-code 1 --python art/species-construction/refine_reconstructed_body.py -- --mesh untracked/species-construction/akinza/body-reconstruction-0028/attempt-01/shape.glb --out untracked/species-construction/akinza/body-0072/attempt-02 --omit-tails *> untracked/species-construction/akinza/body-0072-retry.log",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-reconstruction-0028/attempt-01/shape.glb"
+      ],
+      "expected": {
+        "shape.glb": "b49a73749f843b4758b5c7ffd634022e853c5fa8ab962e0570982ea2af7e3d53",
+        "body.blend": "d2c440d90129080376afae733b671f45248e766d12cd777231f190b70d7e94ec",
+        "refinement.json": "2c7ac69ec865d3d7b002e31514b2286b74b178cbcdb8ac2bfaead093fd3f1036",
+        "stage-start.json": "8342ffc62046df27a22ea5014d4e2ff626ea102d7955eda8c2a5826c141f5e8f",
+        "body": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 293408
+        },
+        "sourceTransform": [
+          0.14,
+          0.35,
+          0
+        ],
+        "tailsOmitted": true
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; replayed script equals recorded hash; recomputed stage-start.json hash (8342ffc6...) from the replayed helper hashes matches the record.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_5ajdHKPNhO5Y2apWcCEVD8pj, 2026-09-28T23:34:37Z",
+          "quote": "--mesh .../body-reconstruction-0028/attempt-01/shape.glb --out .../body-0072/attempt-02 --omit-tails"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/records/reconstruction-experiments-0069-0076.json",
+          "locator": "experiments[body-0072]",
+          "quote": "\"scriptSha256\": \"a068b52f...\", outputs shape.glb b49a7374..."
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "body[0]",
+          "quote": "\"option\": \"--omit-tails\""
+        }
+      ],
+      "dependsOn": [
+        "B02"
+      ]
+    },
+    {
+      "order": 10,
+      "id": "B06",
+      "output": "untracked/species-construction/akinza/body-0073",
+      "kind": "blender-script",
+      "branch": "body",
+      "script": "art/species-construction/reconcile_reconstructed_body.py",
+      "scriptCommit": "ba7cd0e3",
+      "scriptSha256AtRun": "7de623822a403559d269c968a862f96d46b240c5b9914e0f6f25873cee449b65",
+      "scriptRecovery": "Equals the CRLF working copy of the ba7cd0e3 blob.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "f4f5314746275d12c9a11d99f833466beaf84efefac6c47380806e02c2be92e4"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows",
+      "command": "& 'C:/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe' -b --factory-startup --python-exit-code 1 --python art/species-construction/reconcile_reconstructed_body.py -- --mesh untracked/species-construction/akinza/body-0072/attempt-02/shape.glb --out untracked/species-construction/akinza/body-0073 *> untracked/species-construction/akinza/body-0073.log",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-0072/attempt-02/shape.glb"
+      ],
+      "expected": {
+        "shape.glb": "2c70de1ddd6d110e67a40e90e622749ccf4dcb92da2c335b7ac509b07015c3e9",
+        "body.blend": "2724d1fe33113df042fe5c0465db818e11f33d294cdbc79d5cd81b66c4ef453d",
+        "reconciliation.json": "ae458cbdac543a1a1805f8e273cb4b36b3a835d0907b3582d80f50bf28b7c113",
+        "stage-start.json": "e19ac10a36a07082427550ac1500216e12b31fda1a4ebb94cec005cc7fbe1bff",
+        "body": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 276894
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script is a commit; stage-start hash recomputes exactly.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+          "locator": "exec call_UVhAky45qnMIr03tF7wgRncm, 2026-09-28T23:35:56Z",
+          "quote": "--mesh .../body-0072/attempt-02/shape.glb --out .../body-0073"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/records/reconstruction-experiments-0069-0076.json",
+          "locator": "experiments[body-0073]",
+          "quote": "\"scriptSha256\": \"7de62382...\", shape.glb 2c70de1d..."
+        }
+      ],
+      "dependsOn": [
+        "B05"
+      ]
+    },
+    {
+      "order": 11,
+      "id": "B07",
+      "output": "untracked/species-construction/akinza/body-0086/attempt-03",
+      "kind": "blender-script",
+      "branch": "body",
+      "script": "art/species-construction/integrate_reconstructed_paws.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "f5943d9d29552d447a4c063da4d829f293b7ff7a4efc7b47508d665e5ebe67f0",
+      "scriptRecovery": "Not in git. Replay to 2026-09-29T00:17:17Z (the ankle-closure patch in the same exec is applied first). Replayed bytes equal the hash printed from body-0086/attempt-03/stage-start.json.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": null,
+          "sha256AtRun": "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a",
+          "note": "Intermediate blender_blockout.py version, not in git; replay-recovered and equal to the stage-start record"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows",
+      "command": "& 'C:/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe' -b --factory-startup --python art/species-construction/integrate_reconstructed_paws.py -- --body untracked/species-construction/akinza/body-0073/shape.glb --paw untracked/species-construction/akinza/paw-reconstruction-0041/attempt-01/shape.glb --out untracked/species-construction/akinza/body-0086/attempt-03",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-0073/shape.glb",
+        "untracked/species-construction/akinza/paw-reconstruction-0041/attempt-01/shape.glb"
+      ],
+      "expected": {
+        "shape.glb": "158d95705ac732f3c78baa8a00923f0173fdd60ea8818cace88b934acdb25a81",
+        "body.blend": "17760f217090f67b6b57b070c4b9672f50f3b2b256f28e3472f3f205607737ef",
+        "body": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 522150
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; replayed script and blockout helper equal the hashes recorded in this stage-start.json.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T12-29-50-01a0e910-d631-7990-8d6f-dd97b1df28d2.jsonl",
+          "locator": "exec call_3ba151QBCfXqJMOWNS5J7MDA, 2026-09-29T00:17:17Z",
+          "quote": "--body .../body-0073/shape.glb --paw .../paw-reconstruction-0041/attempt-01/shape.glb --out .../body-0086/attempt-03"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T12-29-50-01a0e910-d631-7990-8d6f-dd97b1df28d2.jsonl",
+          "locator": "exec output 2026-09-29T00:25:46Z",
+          "quote": "\"integrate_reconstructed_paws.py\": \"f5943d9d...\", \"blender_blockout.py\": \"d861ad5b...\""
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T12-29-50-01a0e910-d631-7990-8d6f-dd97b1df28d2.jsonl",
+          "locator": "exec output 2026-09-29T00:18:47Z",
+          "quote": "\"shape.glb\": \"158d9570...\", vertices 522150"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "body[2]",
+          "quote": "body-0086/attempt-03/shape.glb 158d9570..."
+        }
+      ],
+      "dependsOn": [
+        "B04",
+        "B06"
+      ]
+    },
+    {
+      "order": 12,
+      "id": "B08",
+      "output": "untracked/species-construction/akinza/body-0100/attempt-02",
+      "kind": "blender-script",
+      "branch": "body",
+      "script": "art/species-construction/fair_reconstruction_joints.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "588a276ee6e4fd5c0ab397106f62cd207e7594716e3a875bec7537851e41ba8f",
+      "scriptRecovery": "Not in git. Replay to 2026-09-29T00:37:32Z (the forearm-dent patch in the same exec is applied first). No direct script hash was printed, but the stage-start.json hash recomputed from the replayed script and helpers (e77e21c3...) equals the recorded stageProvenanceSha256.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": null,
+          "sha256AtRun": "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a",
+          "note": "Intermediate version, not in git; equal to the hash recorded in head-0100 stage-start.json"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows",
+      "command": "& 'C:/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe' -b --factory-startup --python-exit-code 1 --python art/species-construction/fair_reconstruction_joints.py -- --mesh untracked/species-construction/akinza/body-0086/attempt-03/shape.glb --out untracked/species-construction/akinza/body-0100/attempt-02 --tail-free-input",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-0086/attempt-03/shape.glb"
+      ],
+      "expected": {
+        "shape.glb": "4bf34b95078d3a67cdd21261f7fdd9d47d4aa1c799e1a471747d5674a3287a60",
+        "body.blend": "d097ae536a2ffecea0e6bde24052ae53f5a20ebf2c16a7a5cbcca22f768b086e",
+        "fairing.json": "742c938b79a3b2bdd71df8fbab455cc4c249ddb32fae02a95686b549a37c8b61",
+        "stage-start.json": "e77e21c388d1c8bc0f963306aa655ff508c7c48f7e3c342f12da7d766a264354",
+        "body": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 623412
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; replayed script bytes confirmed indirectly through the stage-start.json hash.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T12-29-50-01a0e910-d631-7990-8d6f-dd97b1df28d2.jsonl",
+          "locator": "exec call_RJSOFuW6cj2cH27d9Ip23PLo, 2026-09-29T00:37:32Z",
+          "quote": "--mesh .../body-0086/attempt-03/shape.glb --out .../body-0100/attempt-02 --tail-free-input"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T12-29-50-01a0e910-d631-7990-8d6f-dd97b1df28d2.jsonl",
+          "locator": "exec output 2026-09-29T00:41:51Z",
+          "quote": "\"stageProvenanceSha256\": \"e77e21c3...\", vertices 623412"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "body[3]",
+          "quote": "\"option\": \"--tail-free-input\", shape.glb 4bf34b95..., fairing.json 742c938b..."
+        }
+      ],
+      "dependsOn": [
+        "B07"
+      ]
+    },
+    {
+      "order": 13,
+      "id": "S05",
+      "output": "untracked/species-construction/akinza/head-0095",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/refine_reconstructed_head.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "14b45dab83edb80aaf82852d41bbd23296c1f77fc6762e52aca54c38d06ae901",
+      "scriptRecovery": "Not in git and no run-time hash survives. Replay to 2026-09-29T00:23:26Z, including the Python edit in the same exec (call_PCCwrzPJHqrO8V2N9kl1Dx28) that rewrites the muzzle section. The replay reproduces every recorded refine_reconstructed_head.py hash from head-0025 through head-0076 and ends equal to 46dbc305, but this particular version has no independent check.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": null,
+          "sha256AtRun": "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a",
+          "note": "same intermediate version recorded for body-0086/attempt-03"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "wsl-linux",
+      "command": "wsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python-exit-code 1 --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/art/species-construction/refine_reconstructed_head.py -- --mesh /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-full-0058/shape.glb --out /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0095",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-full-0058/shape.glb"
+      ],
+      "expected": {
+        "head.blend": "c63e52fec3d9fc8b204ebf1461ce20fa459cb9e9a7d8434a0c0bf9dfe712c1aa",
+        "log": "After eye aperture: -1 1114470 vertices; After eye aperture: 1 1089597 vertices"
+      },
+      "certainty": "reconstructed",
+      "certaintyNote": "Command verbatim. Inferred: the script bytes, taken from the replay because no hash of this version was recorded. Checked only by the output head.blend hash, which may not reproduce byte-for-byte.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec call_PCCwrzPJHqrO8V2N9kl1Dx28, 2026-09-29T00:23:26Z",
+          "quote": "refine_reconstructed_head.py -- --mesh .../head-full-0058/shape.glb --out .../head-0095"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "face[0]",
+          "quote": "refine_reconstructed_head.py, output head-0095/head.blend c63e52fe..."
+        }
+      ],
+      "dependsOn": [
+        "S02"
+      ]
+    },
+    {
+      "order": 14,
+      "id": "S06",
+      "output": "untracked/species-construction/akinza/head-0100",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/transplant_reconstructed_muzzle.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "4f79af4a5b9a283750c48e0c4ee7d6d961a1e4788055bc9f22e5b3cedc1b2341",
+      "scriptRecovery": "Not in git (46dbc305 has a later version). Replay to 2026-09-29T00:39:38Z, after the collar-cleanup patch in the same exec; replayed bytes equal the hash in head-0100/stage-start.json.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": null,
+          "sha256AtRun": "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a",
+          "note": "intermediate version, not in git"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "wsl-linux",
+      "command": "wsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python-exit-code 1 --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/art/species-construction/transplant_reconstructed_muzzle.py -- --base /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0095/head.blend --donor /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/face-source-0095/reconstruction/shape.glb --out /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0100",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0095/head.blend",
+        "untracked/species-construction/akinza/face-source-0095/reconstruction/shape.glb"
+      ],
+      "expected": {
+        "head.blend": "499e1483f0d78e59c1b9d29216f85860db108165dbfbd2171bc8ebebbfca95e7",
+        "shape.glb": "bc2dbd752969732e3c89478d2723e688bb3a46b99fa5d4434236f6dfd56002b1",
+        "stage-start.json": "b1eb8fe8dea7420a25654f3f63b3b2f58be3e8bd3aa08d2e13647a6221480a47",
+        "skinVertices": 1509526,
+        "records": {
+          "landmark-audit.json": "1bab394d918a4c5d85b5e061cd005df163dec42f03e039853a7784f9f6d2e581",
+          "retention-check.json": "7a5cdf7c8847942f3c85abeae628fd1925f46f19a3fcce186965a26c1b8bbd90",
+          "note": "Audit records only (committed copies under records/face-*-0100.json); they do not change geometry. The original muzzle record has a known corrupted landmark vector (LESSONS.md)."
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; replayed script equals the recorded source hash, and the recomputed stage-start hash matches.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec call_jWbOZpMs4gdRx7C7BkvEHTcL, 2026-09-29T00:39:38Z",
+          "quote": "transplant_reconstructed_muzzle.py -- --base .../head-0095/head.blend --donor .../face-source-0095/reconstruction/shape.glb --out .../head-0100"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T12-29-50-01a0e910-d631-7990-8d6f-dd97b1df28d2.jsonl",
+          "locator": "exec output 2026-09-29T00:53:52Z",
+          "quote": "\"transplant_reconstructed_muzzle.py\": \"4f79af4a...\", \"blender_blockout.py\": \"b22f1565...\""
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "face[1]",
+          "quote": "head-0100/head.blend 499e1483..."
+        }
+      ],
+      "dependsOn": [
+        "S04",
+        "S05"
+      ]
+    },
+    {
+      "order": 15,
+      "id": "S07",
+      "output": "untracked/species-construction/akinza/head-0109",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/refine_reconstructed_coat.py",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "3eef4fefecbfb5105dfdda6924f485d84d85e6e25d0d612729a1069d342b29d5",
+      "scriptRecovery": "Not in git. Replay to 2026-09-29T01:04:42Z including the Python edit in the same exec (root and cranial weights). The debris-volume patch at 01:12:54Z came after this run and is not part of it.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "wsl-linux",
+      "command": "(same exec runs this Python edit first:) @' from pathlib import Path; p=Path('art/species-construction/refine_reconstructed_coat.py') ... p.write_text(s) '@ | python -\nwsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python-exit-code 1 --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/art/species-construction/refine_reconstructed_coat.py -- --mesh /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0100/shape.glb --out /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0109",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0100/shape.glb"
+      ],
+      "expected": {
+        "result": "This run is expected to FAIL the single-closed-mesh guard and save head-0109/geometry-failure.blend (two thin remesh flakes). The failure file is the input of S08.",
+        "geometry-failure.blend": null
+      },
+      "certainty": "reconstructed",
+      "certaintyNote": "Command verbatim. Inferred: script bytes from the replay only; no hash of this version or of geometry-failure.blend survives.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec call_uflCRRJtDv4UH1MhzJ2aVA6R, 2026-09-29T01:04:42Z",
+          "quote": "refine_reconstructed_coat.py -- --mesh .../head-0100/shape.glb --out .../head-0109"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "message 2026-09-29T01:15:11Z",
+          "quote": "The two detached pieces are thin flakes with less volume than one remesh voxel"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "apply_patch head-0110/handoff.md at 2026-09-29T01:44:07Z",
+          "quote": "2. head-0109/recovered-02/head.blend: broad rear reconstruction and explicit removal of two measured, negligible-volume remesh flakes. The original guard failure is preserved."
+        }
+      ],
+      "dependsOn": [
+        "S06"
+      ]
+    },
+    {
+      "order": 16,
+      "id": "S08",
+      "output": "untracked/species-construction/akinza/head-0109/recovered-02",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "untracked/species-construction/akinza/recover_0109_flakes.py (untracked, lost)",
+      "scriptCommit": null,
+      "scriptSha256AtRun": "e7ca2554c40869fc7d4d8ba97af8933f5c56b10aceac47f33ccd54032acc0300",
+      "scriptRecovery": "Recreate the file from the rollout: the PowerShell here-string written with Set-Content in exec call_2dZs6bP64LljwONFDl7QjdDO (2026-09-29T01:12:54Z), then the Python edit in exec call_C3UCaE2OKWdf82rjiibwZ32w (01:14:15Z) that adds shutil, renames the output to recovered-02 and inlines the source snapshot. Replayed bytes (CRLF after the Python write) hash e7ca2554...; LF form 1c46cff9.... The first run (out dir recovered) failed on the snapshot and is not needed.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "wsl-linux",
+      "command": "wsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python-exit-code 1 --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/recover_0109_flakes.py",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0109/geometry-failure.blend"
+      ],
+      "expected": {
+        "head.blend": "df37df1fbf738a827271ec9ca616263ead49ab1fd3c0b1a15b47bbe336cd2c48",
+        "removed": "two flakes, each smaller in volume than one .0025 voxel",
+        "files": [
+          "shape.glb",
+          "head.blend",
+          "recovery.json",
+          "stage-start.json",
+          "source-snapshot/"
+        ]
+      },
+      "certainty": "reconstructed",
+      "certaintyNote": "Command verbatim. Inferred: the recovery script bytes, rebuilt from the rollout text with no surviving hash. Checked only by the downstream baseSha256 df37df1f... of head.blend.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec call_C3UCaE2OKWdf82rjiibwZ32w, 2026-09-29T01:14:15Z",
+          "quote": "s.replace(\"out=source.parent/'recovered'\", \"out=source.parent/'recovered-02'\") ... wsl -e .../blender ... --python .../recover_0109_flakes.py"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec output 2026-09-29T01:22:18Z (head-0110/attempt-02 record)",
+          "quote": "\"baseSha256\": \"df37df1f...\""
+        }
+      ],
+      "dependsOn": [
+        "S07"
+      ]
+    },
+    {
+      "order": 17,
+      "id": "S09",
+      "output": "untracked/species-construction/akinza/head-0110/attempt-02",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/refine_reconstructed_cheek.py",
+      "scriptCommit": "46dbc305",
+      "scriptSha256AtRun": "f0ae13acc57600f5925a45b592613c2e19dab7817b48ba2621394b58b1f133e8",
+      "scriptRecovery": "Replayed bytes (after the tip patch in the same exec) equal the 46dbc305 blob; confirmed by the recomputed stage-start hash.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "wsl-linux",
+      "command": "wsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python-exit-code 1 --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/art/species-construction/refine_reconstructed_cheek.py -- --base /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0109/recovered-02/head.blend --out /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0110/attempt-02",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0109/recovered-02/head.blend"
+      ],
+      "expected": {
+        "head.blend": "b8c5a8295f27aaf03325f9422e4d5cfc18937a715dba589c66a8d08e91b21bb2",
+        "shape.glb": "009eed73c53aa43dc81cd1b81175494db8f32c558622ee373fa6c2fe4a35e299",
+        "stage-start.json": "c6d65413fa1ae722f9f76d5e7e40cdaf1b9d2854ef42a3a2f7787b89ce3df2cb",
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 1022996
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script equals a commit; stage-start hash recomputes exactly.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec call_tlvlFa4jVEObktOSwChQL1ge, 2026-09-29T01:20:23Z",
+          "quote": "refine_reconstructed_cheek.py -- --base .../head-0109/recovered-02/head.blend --out .../head-0110/attempt-02"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec output 2026-09-29T01:22:18Z",
+          "quote": "\"stageProvenanceSha256\": \"c6d65413...\", \"head.blend\": \"b8c5a829...\", \"shape.glb\": \"009eed73...\""
+        }
+      ],
+      "dependsOn": [
+        "S08"
+      ]
+    },
+    {
+      "order": 18,
+      "id": "S10",
+      "output": "untracked/species-construction/akinza/head-0110/posterior-pass",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/fair_reconstructed_transitions.py",
+      "scriptCommit": "46dbc305",
+      "scriptSha256AtRun": "544adbaa191ce36f5c68faf732032191f6324102bc276fc7170913a16ac8dacf",
+      "scriptRecovery": "Added at 2026-09-29T01:21:55Z and never edited afterwards; replayed bytes equal the 46dbc305 blob.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "wsl-linux",
+      "command": "wsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python-exit-code 1 --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/art/species-construction/fair_reconstructed_transitions.py -- --base /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0110/attempt-02/head.blend --out /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0110/posterior-pass",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0110/attempt-02/head.blend"
+      ],
+      "expected": {
+        "head.blend": "893d8448c9b68404e318c077267ea8b1992b2de844c8264a6a48b649e7f1d22e (from the cranial-volume record sourceSha256)"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script equals a commit.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec call_B86NjrmrkLe7PJpb4LgPBOsl, 2026-09-29T01:25:11Z",
+          "quote": "fair_reconstructed_transitions.py -- --base .../head-0110/attempt-02/head.blend --out .../head-0110/posterior-pass"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec output 2026-09-29T01:38:10Z",
+          "quote": "cranial-volume record \"sourceSha256\": \"893d8448...\""
+        }
+      ],
+      "dependsOn": [
+        "S09"
+      ]
+    },
+    {
+      "order": 19,
+      "id": "S11",
+      "output": "untracked/species-construction/akinza/head-0110/cranial-volume",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/reshape_reconstructed_occiput.py",
+      "scriptCommit": "46dbc305",
+      "scriptSha256AtRun": "c5839775ba11868944312e87acbc5511bee3be5e82694d9e04cd4fdefb5797d0",
+      "scriptRecovery": "Added in the same exec as the run; equal to the 46dbc305 blob; stage-start hash recomputes.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "wsl-linux",
+      "command": "wsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python-exit-code 1 --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/art/species-construction/reshape_reconstructed_occiput.py -- --base /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0110/posterior-pass/head.blend --out /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0110/cranial-volume",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0110/posterior-pass/head.blend"
+      ],
+      "expected": {
+        "head.blend": "ca5a4c81b7aa19bb8c83ed4a752ef6daac249106cba1af746d116ea1b3729fc9 (from the lower-ear-taper record sourceSha256)",
+        "stage-start.json": "a53c51511f9c91e8b8c10c580b584492af9795de147f16f64570e02540e77ef0",
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 1022996
+        },
+        "handoff": "At z=0, center posterior depth rises from .2274 to .2763 while x=.35 changes by about .0019"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script equals a commit; stage-start hash recomputes exactly.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec call_FoijBzSi5BwusSQqN6NfKmUa, 2026-09-29T01:37:09Z",
+          "quote": "reshape_reconstructed_occiput.py -- --base .../head-0110/posterior-pass/head.blend --out .../head-0110/cranial-volume"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec output 2026-09-29T01:38:10Z",
+          "quote": "\"stageProvenanceSha256\": \"a53c5151...\""
+        }
+      ],
+      "dependsOn": [
+        "S10"
+      ]
+    },
+    {
+      "order": 20,
+      "id": "S12",
+      "output": "untracked/species-construction/akinza/head-0110/lower-ear-taper",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/refine_lower_ear_web.py",
+      "scriptCommit": "46dbc305",
+      "scriptSha256AtRun": "04813f6d00f94cd8a12af6a6783e6724a75000de564134aaa3bbad091a6c000f",
+      "scriptRecovery": "Added in the same exec as the run; equal to the 46dbc305 blob; stage-start hash recomputes.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "wsl-linux",
+      "command": "wsl -e /home/njord/.local/opt/blender-5.2.2-linux-x64/blender -b --factory-startup --python-exit-code 1 --python /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/art/species-construction/refine_lower_ear_web.py -- --base /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0110/cranial-volume/head.blend --out /mnt/c/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0110/lower-ear-taper",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0110/cranial-volume/head.blend"
+      ],
+      "expected": {
+        "head.blend": "1c49d8d06cbb9df75ac020eda997f43fffd49b06da71ce8381db849646675136",
+        "shape.glb": "b43f02e15ef1b2b341ed619cc965e524cce0b42159293df723bef39da64a4c6b",
+        "stage-start.json": "8d73c736f7a8f10dfc4f8a4c18f3722f273cecec75ac00eac4a9d15a6e5a52b3",
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 1022996
+        },
+        "maximumDisplacementInside": 0.04428467334437294,
+        "maximumDisplacementOutside": 0.0
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script equals a commit; stage-start and output hashes recorded.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec call_Taafugi0v9iNBDyi8n6ypy79, 2026-09-29T01:39:58Z",
+          "quote": "refine_lower_ear_web.py -- --base .../head-0110/cranial-volume/head.blend --out .../head-0110/lower-ear-taper"
+        },
+        {
+          "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+          "locator": "exec output 2026-09-29T01:41:26Z",
+          "quote": "\"head.blend\": \"1c49d8d0...\", \"shape.glb\": \"b43f02e1...\""
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "combined.head[0].input",
+          "quote": "head-0110/lower-ear-taper/head.blend 1c49d8d0..."
+        }
+      ],
+      "dependsOn": [
+        "S11"
+      ]
+    },
+    {
+      "order": 21,
+      "id": "S13",
+      "output": "untracked/species-construction/akinza/head-0131",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/refine_reconstructed_eyes.py",
+      "scriptCommit": "46dbc305",
+      "scriptRecovery": "Untracked Codex file at the start of the Claude session; not edited by that session before the 46dbc305 commit, so the run used the committed content.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows",
+      "command": "B=\"/c/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe\"; A=untracked/species-construction/akinza; \"$B\" -b --factory-startup --python art/species-construction/refine_reconstructed_eyes.py -- --scene $A/head-0110/lower-ear-taper/head.blend --out $A/head-0131 > $A/head-0131.log 2>&1",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0110/lower-ear-taper/head.blend"
+      ],
+      "expected": {
+        "head.blend": "5596c79a1e607ce9cf0ca191e0c84074626a44de5c3c0d8f0c0c41eed3062fdb"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim from the Claude transcript; no edits to the script between the run and the commit.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567.jsonl",
+          "locator": "Bash toolu_01TZGPaRCGPNoLLYZ2omxmWj, 2026-09-29T21:11:55Z",
+          "quote": "refine_reconstructed_eyes.py -- --scene $A/head-0110/lower-ear-taper/head.blend --out $A/head-0131"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "combined.head[0]",
+          "quote": "\"note\": \"Eye finish method retained from 0112, applied to the retained head\", output 5596c79a..."
+        }
+      ],
+      "dependsOn": [
+        "S12"
+      ]
+    },
+    {
+      "order": 22,
+      "id": "S14",
+      "output": "untracked/species-construction/akinza/head-0146",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/refine_reconstructed_nose.py",
+      "scriptCommit": "46dbc305",
+      "scriptRecovery": "The sed in the same command (minimumFrontClearance < .5*min(...)) is the last edit before the 46dbc305 commit; run content equals the commit.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows",
+      "command": "sed -i \"s/if record\\['minimumFrontClearance'\\] < min(.0015, args.rim_height):/if record['minimumFrontClearance'] < .5*min(.0015, args.rim_height):/\" art/species-construction/refine_reconstructed_nose.py && B=\"/c/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe\"; A=untracked/species-construction/akinza; \"$B\" -b --factory-startup --python art/species-construction/refine_reconstructed_nose.py -- --scene $A/head-0131/head.blend --out $A/head-0146 --relax-native-relief --method conformal --dome-height .006 --rim-height .0015 --recess-muzzle .012 --lower-point-z -.148 > $A/head-0146.log 2>&1",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0131/head.blend"
+      ],
+      "expected": {
+        "shape.glb": "ed47fbefe092bbd8210ddb39cf161bd7926ddeaedf9248ef5fe27664fca8812e",
+        "head.blend": "c168d2720898230a2cfd4f6e62da6e2caa381e1c89eb930fe61e6bfb0bc793d0",
+        "nose-refinement.json": "f1008863e210c06c80aecb59bb03a85621845a0202cd591e8cdc443cafabb42c",
+        "muzzleRecess": {
+          "movedVertices": 2650,
+          "largestShift": 0.011988667630164413
+        },
+        "minimumFrontClearance": 0.0014252066612243652
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script equals the commit.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567.jsonl",
+          "locator": "Bash toolu_01WYegQ57NuFAfkhBQvDj6ar, 2026-09-29T22:09:29Z",
+          "quote": "--scene $A/head-0131/head.blend --out $A/head-0146 --relax-native-relief --method conformal --dome-height .006 --rim-height .0015 --recess-muzzle .012 --lower-point-z -.148"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "combined.head[1]",
+          "quote": "options identical; shape.glb ed47fbef..."
+        }
+      ],
+      "dependsOn": [
+        "S13"
+      ]
+    },
+    {
+      "order": 23,
+      "id": "S15",
+      "output": "untracked/species-construction/akinza/head-0152",
+      "kind": "blender-script",
+      "branch": "head",
+      "script": "art/species-construction/add_rear_coat_field.py",
+      "scriptCommit": "755e1d84",
+      "scriptSha256AtRun": "1134768c89c55b2de085372c0ae1b91827228ecd251fdc11fdb0c766ed4b737e",
+      "scriptRecovery": "The Python edit in the same command is the last change before 755e1d84; the head-0158 stage-start records add_rear_coat_field.py 1134768c..., equal to the 755e1d84 blob.",
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows",
+      "command": "B=\"/c/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe\"; A=untracked/species-construction/akinza; \"$B\" -b --factory-startup --python art/species-construction/add_rear_coat_field.py -- --scene $A/head-0146/head.blend --out $A/head-0152 > $A/head-0152.log 2>&1",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0146/head.blend"
+      ],
+      "expected": {
+        "shape.glb": "f8211ca58aa97670698d21f702f8698761975b07b47c4c6e60ee60777b3c808b",
+        "head.blend": "45171153c42c392641ac4b8f818e666c3b445e8f985b1affd92935306d6075c2",
+        "rear-coat.json": "1db9a81824e54df8b99a95756f9504717e7521ade2264d247fc0485f6fc12091",
+        "lockCount": 215,
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 1039804
+        },
+        "removedFlecks": 6,
+        "frontSurfaceDeviation": {
+          "maximum": 0.0013128877617418766,
+          "p99": 0.0003968785400502384
+        },
+        "defaults": "recipe lists --seed 7 --voxel .0025 --spacing .062 --root-blend .008; the actual command passed no options, so these are the script defaults"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script equals the commit (confirmed by a later stage-start hash).",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567.jsonl",
+          "locator": "Bash toolu_01TZiKaAvomupBtMdkQGyPEF, 2026-09-29T22:43:10Z",
+          "quote": "add_rear_coat_field.py -- --scene $A/head-0146/head.blend --out $A/head-0152"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/reconstruction-recipe.json",
+          "locator": "combined.head[2]",
+          "quote": "shape.glb f8211ca5..."
+        }
+      ],
+      "dependsOn": [
+        "S14"
+      ]
+    },
+    {
+      "order": 24,
+      "id": "S16",
+      "output": "untracked/species-construction/akinza/head-0158",
+      "kind": "blender-script",
+      "branch": "head",
+      "loopRound": 1,
+      "script": "art/species-construction/warp_neck_field.py (with neck_warp.py)",
+      "scriptCommit": "691ddddd",
+      "scriptSha256AtRun": {
+        "warp_neck_field.py": "6a57681be6e5c5c9ac7399adb14538c6b19a3b1b37cd51cd8c09d8fac8e2a107",
+        "neck_warp.py": "f7f409fd1797a225817c9b7f334ad947b2ddd4eedfbc78529fba39b4d4651e46"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "W=$PWD/untracked/species-construction/akinza && time python art/species-construction/loop/loop_tools.py blender art/species-construction/warp_neck_field.py -- --scene $W/head-0152/head.blend --kind head --out $W/head-0158",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0152/head.blend"
+      ],
+      "expected": {
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 1039804
+        },
+        "movedVertices": 100868,
+        "note": "No output hash recorded. Round 1 kept (R05 4 to 5.5, weighted 5.23)."
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; file-state simulation of the builder transcript gives the committed 691ddddd content at run time; head-0158 stage-start (printed later) lists warp_neck_field.py 6a57681b...",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_e861669f-6d1\\agent-a42fc60e1cda70ccf.jsonl",
+          "locator": "builder r1: R05, Bash toolu_01NfiJSLD9rg3Vr8ZKpywv9W, 2026-09-30T01:02:14Z",
+          "quote": "warp_neck_field.py -- --scene $W/head-0152/head.blend --kind head --out $W/head-0158"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/loop/status.json",
+          "locator": "history[round=1].build",
+          "quote": "I built body-0157 (from body-0155) and head-0158 (from head-0152), then assembled-0159"
+        }
+      ],
+      "dependsOn": [
+        "S15"
+      ]
+    },
+    {
+      "order": 25,
+      "id": "S17",
+      "output": "untracked/species-construction/akinza/head-0160",
+      "kind": "blender-script",
+      "branch": "head",
+      "loopRound": 2,
+      "script": "art/species-construction/warp_head_field.py (with head_warp.py)",
+      "scriptCommit": "d2987690",
+      "scriptSha256AtRun": {
+        "warp_head_field.py": "6c219c5e239612bf8de33067034d60425e11b128d295227ff5eebd5f263d2a95",
+        "head_warp.py": "07bd561b9f324d75a016ca28d4bed2f8bc1fb46c274d327756b9ef5b890d706f"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "python art/species-construction/loop/loop_tools.py blender art/species-construction/warp_head_field.py -- --scene untracked/species-construction/akinza/head-0158/head.blend --out untracked/species-construction/akinza/head-0160",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0158/head.blend"
+      ],
+      "expected": {
+        "head.blend": "8e80ab0acae2ff9fadb2b6480e206fc1039e7eb01d62e8bc6947b706f7553283",
+        "shape.glb": "87b7f0a578d04d12c4def0ec7efcb258cbe72ee232d9a3a74b80309c334872eb",
+        "skin": {
+          "vertices": 1039804
+        },
+        "movedVertices": 861889,
+        "maximumShiftWorldUnits": 0.09105592434241198
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; simulated script state equals d2987690.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_e861669f-6d1\\agent-af0a6cca56564db6a.jsonl",
+          "locator": "builder r2: R01, Bash toolu_01UKGnUZrePk9jcUv2LGyVeL, 2026-09-30T01:34:57Z",
+          "quote": "\"shape.glb\": \"87b7f0a5...\""
+        }
+      ],
+      "dependsOn": [
+        "S16"
+      ]
+    },
+    {
+      "order": 26,
+      "id": "S18",
+      "output": "untracked/species-construction/akinza/head-0162",
+      "kind": "blender-script",
+      "branch": "head",
+      "loopRound": 3,
+      "script": "art/species-construction/shape_ear_front_field.py (with ear_warp.py)",
+      "scriptCommit": "26c906f9",
+      "scriptSha256AtRun": {
+        "shape_ear_front_field.py": "57c5aab6d44b5d1929e1f1abe9d32d23c02a4ce9f6123ab6733c426972473677",
+        "ear_warp.py": "0bf2f411d9b5965b6844fb9855e94b183a39cad9669b138d407784f1b418ad4d"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "sed -i \"s/parser.add_argument('--lock-spacing', type=float, default=.07)/parser.add_argument('--lock-spacing', type=float, default=.058)/\" art/species-construction/shape_ear_front_field.py && python art/species-construction/loop/loop_tools.py blender art/species-construction/shape_ear_front_field.py -- --scene untracked/species-construction/akinza/head-0160/head.blend --out untracked/species-construction/akinza/head-0162",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0160/head.blend"
+      ],
+      "expected": {
+        "head.blend": "f175ed35d3179d4b4d527f1ec482b31c37716d3a059a893fab61de4764c6da47",
+        "shape.glb": "8773a50a88d5718a69f1038bfacaabe3376143fd30cc2b3284f639c0ce3875b2",
+        "frontEarSpan": ".5324 to .5209 against reference .5207"
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; 26c906f9 already contains the sed default (.058); head-0162 stage-start records shape_ear_front_field.py 57c5aab6..., the 26c906f9 blob.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_e861669f-6d1\\agent-aa847df23b6d4c136.jsonl",
+          "locator": "builder r3: R03, Bash toolu_01W38KZ3RtowYdMwfCTuPvJV, 2026-09-30T02:58:04Z",
+          "quote": "--scene .../head-0160/head.blend --out .../head-0162"
+        }
+      ],
+      "dependsOn": [
+        "S17"
+      ]
+    },
+    {
+      "order": 27,
+      "id": "S19",
+      "output": "untracked/species-construction/akinza/head-0170",
+      "kind": "blender-script",
+      "branch": "head",
+      "loopRound": 5,
+      "script": "art/species-construction/shape_ear_rear_field.py (with ear_rear_warp.py)",
+      "scriptCommit": "17a683c5",
+      "scriptSha256AtRun": {
+        "shape_ear_rear_field.py": "0b989015a80135ff5ac9e35916d1695ecca633ab80b3a5b70fb4ed14d19f71db",
+        "ear_rear_warp.py": "a99d5aeca1a05d458223c2b8b077deafafa29982d66e3b606e79e6aa98edf49f (CRLF, recorded)"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "python art/species-construction/loop/loop_tools.py blender --log head-0170 art/species-construction/shape_ear_rear_field.py --scene untracked/species-construction/akinza/head-0162/head.blend --out untracked/species-construction/akinza/head-0170 --dome .30 .10 .32 --dome-blur 6",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0162/head.blend"
+      ],
+      "expected": {
+        "head.blend": "b378d39171927aead3f5890343560a327be944289cab68e699c5f4181e7440f3 (from head-0182 fan-simplify.json sourceSha256)",
+        "stage-start.json": "b78cfd1318df0cb2da8dc856f89a4ec2cf2f7890f0ccefdde1840f607081e8e2",
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 1004410
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; scripts equal 17a683c5 at run time. head-0165/0167 (round 4, reverted) are not inputs: head-0170 is built from head-0162.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_c9319feb-367\\agent-a3fefae82900b0a36.jsonl",
+          "locator": "builder r5: R04, Bash toolu_01J3yHqNdPPi5QhgSq5HEMhR, 2026-09-30T03:51:45Z",
+          "quote": "--scene .../head-0162/head.blend --out .../head-0170 --dome .30 .10 .32 --dome-blur 6"
+        }
+      ],
+      "dependsOn": [
+        "S18"
+      ]
+    },
+    {
+      "order": 28,
+      "id": "B09",
+      "output": "untracked/species-construction/akinza/body-0172",
+      "kind": "blender-script",
+      "branch": "body",
+      "loopRound": 6,
+      "script": "art/species-construction/rebuild_body_field.py",
+      "scriptCommit": "d8b37f08",
+      "scriptSha256AtRun": {
+        "rebuild_body_field.py": "5b7ae2ff19ffa0bb0e29e0edfb6b7c6e03cbf21bb60e6b3e25fe2ef23f34640a",
+        "tail-controls-blades.json": "0cb8ae76d02e441fd7cb20d4c01f9fcbee48e60c2349f76b5511526918a42746"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "A=untracked/species-construction/akinza && time python art/species-construction/loop/loop_tools.py blender --log body-0172 art/species-construction/rebuild_body_field.py --body $A/body-0100/attempt-02/shape.glb --tail-record $A/body-0100/attempt-02/fairing.json --out $A/body-0172 --tail-controls docs/design/species-construction/akinza/tail-controls-blades.json --tail-free-body $A/body-0086/attempt-03/shape.glb --tail-side-sigma .05 --tail-sweep-sigma .009",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-0100/attempt-02/shape.glb",
+        "untracked/species-construction/akinza/body-0100/attempt-02/fairing.json",
+        "untracked/species-construction/akinza/body-0086/attempt-03/shape.glb",
+        "docs/design/species-construction/akinza/tail-controls-blades.json"
+      ],
+      "expected": {
+        "body.blend": "13ec39a4d9e66979b88b686d25f05a3c7be1751b2eccb9191d95eb7b47a6f91c",
+        "fairing.json": "3a25f8d00d80b4da28923902976fd086fe930ee5c179600045715e765683a36f",
+        "body": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 660910
+        },
+        "outsideEditDeviation": {
+          "maximum": 0.00027745685656554997,
+          "p99": 5.0433499636710284e-05
+        },
+        "tailRebuild": {
+          "sweepFlatten": 0.62,
+          "sweepBlurSigma": 0.009,
+          "replacementBand": 0.035,
+          "unionBlend": 0.025,
+          "tailFreeSha256": "158d9570..."
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script and controls equal d8b37f08. body-0155 (the 0156 baseline body) is not an input.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_c9319feb-367\\agent-af8aa37f946e98f6b.jsonl",
+          "locator": "builder r6: R10, Bash toolu_01KSag64yKHd63v7JurVTZEc, 2026-09-30T04:11:51Z",
+          "quote": "--body $A/body-0100/attempt-02/shape.glb ... --tail-controls docs/design/species-construction/akinza/tail-controls-blades.json"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/loop/status.json",
+          "locator": "history[round=6].build",
+          "quote": "`body-0172` is the tail rebuild from `body-0100`"
+        }
+      ],
+      "dependsOn": [
+        "B07",
+        "B08"
+      ]
+    },
+    {
+      "order": 29,
+      "id": "B10",
+      "output": "untracked/species-construction/akinza/body-0173",
+      "kind": "blender-script",
+      "branch": "body",
+      "loopRound": 6,
+      "script": "art/species-construction/warp_neck_field.py (with neck_warp.py)",
+      "scriptCommit": "691ddddd",
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "A=untracked/species-construction/akinza && python art/species-construction/loop/loop_tools.py blender --log body-0173 art/species-construction/warp_neck_field.py --scene $A/body-0172/body.blend --kind body --out $A/body-0173 --fairing $A/body-0172/fairing.json",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-0172/body.blend",
+        "untracked/species-construction/akinza/body-0172/fairing.json"
+      ],
+      "expected": {
+        "body.blend": "d048db4e03612ef0a8c67b2982c185d0aa8bf1bafbaa0c49936584da2b3db5f7",
+        "shape.glb": "956b30f9777d4a9d74852ae3e0dbb237a3a943bde3903c4678d1783c8dbffaed",
+        "body": {
+          "vertices": 660910
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; body-0173 stage-start records warp_neck_field.py 6a57681b... and neckWarpSha256 f7f409fd... (691ddddd).",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_c9319feb-367\\agent-af8aa37f946e98f6b.jsonl",
+          "locator": "builder r6: R10, Bash toolu_01UG81cGL95r3Dy8SRg6iiue, 2026-09-30T04:14:08Z",
+          "quote": "--scene $A/body-0172/body.blend --kind body --out $A/body-0173 --fairing $A/body-0172/fairing.json"
+        }
+      ],
+      "dependsOn": [
+        "B09"
+      ]
+    },
+    {
+      "order": 30,
+      "id": "B11",
+      "output": "untracked/species-construction/akinza/body-0177",
+      "kind": "blender-script",
+      "branch": "body",
+      "loopRound": 7,
+      "script": "art/species-construction/smooth_torso_field.py",
+      "scriptCommit": "330692bd",
+      "scriptSha256AtRun": {
+        "smooth_torso_field.py": "754286632836d51448dfc2638c385a8a3deef0911101624933596e2a5a66ff4b",
+        "torso-smooth-regions-r7.json": "c77c28650b989b8c64b61ad825422aec605a945a6af76d974cdb0380967bbe86"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "cat > C:/tmp/r7/regions177.json <<'E' (5 regions, identical to the committed torso-smooth-regions-r7.json) E; cp C:/tmp/r7/regions177.json docs/design/species-construction/akinza/torso-smooth-regions-r7.json; python art/species-construction/loop/loop_tools.py blender --log body-0177 art/species-construction/smooth_torso_field.py --scene untracked/species-construction/akinza/body-0173/body.blend --fairing untracked/species-construction/akinza/body-0173/fairing.json --out untracked/species-construction/akinza/body-0177 --regions docs/design/species-construction/akinza/torso-smooth-regions-r7.json",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-0173/body.blend",
+        "untracked/species-construction/akinza/body-0173/fairing.json",
+        "docs/design/species-construction/akinza/torso-smooth-regions-r7.json"
+      ],
+      "expected": {
+        "body.blend": "102cd8bc930311105f5313bc0e21c530a8e5562f9a8231d7ea26d9357a323678",
+        "fairing.json": "b52d5440b9cc6d82ff4a3db14950c46eeeafdb4c9ce8a0a45b62886197df71fa",
+        "body": {
+          "before": 660910,
+          "after": 648263
+        },
+        "outside": {
+          "maximum": 0.0011965037556365132,
+          "p99": 0.00011823079432360824
+        },
+        "inside": {
+          "maximum": 0.008267007768154144,
+          "p99": 0.004132311372086408
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script and regions equal 330692bd. Round 7 was reverted, but round 8 built body-0183 from this body, so it is in the chain.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_c9319feb-367\\agent-aaa9b5d6ad55f9400.jsonl",
+          "locator": "builder r7: R12, Bash toolu_01VeWTs3uad6RnavgEK5JqDK, 2026-09-30T04:40:36Z",
+          "quote": "--scene .../body-0173/body.blend ... --out .../body-0177 --regions docs/design/species-construction/akinza/torso-smooth-regions-r7.json"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/loop/status.json",
+          "locator": "history[round=8].build",
+          "quote": "Body: body-0177's shoulder-shelf and arm-ripple smoothing is kept"
+        }
+      ],
+      "dependsOn": [
+        "B10"
+      ]
+    },
+    {
+      "order": 31,
+      "id": "S20",
+      "output": "untracked/species-construction/akinza/head-0182",
+      "kind": "blender-script",
+      "branch": "head",
+      "loopRound": 8,
+      "script": "art/species-construction/simplify_fan_field.py",
+      "scriptCommit": "20d0887b",
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "python art/species-construction/loop/loop_tools.py blender --log head-0182 art/species-construction/simplify_fan_field.py --scene untracked/species-construction/akinza/head-0170/head.blend --out untracked/species-construction/akinza/head-0182 --close-steps 8 --open-steps 3 --blur 3 --crown-z .20 --crown-y-min -.34",
+      "verbatim": "H=head-0182; ... python art/species-construction/loop/loop_tools.py blender --log $H art/species-construction/simplify_fan_field.py --scene untracked/species-construction/akinza/head-0170/head.blend --out untracked/species-construction/akinza/$H --close-steps 8 --open-steps 3 --blur 3 --crown-z .20 --crown-y-min -.34",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0170/head.blend"
+      ],
+      "expected": {
+        "head.blend": "d32cf5e2a0ddf5bc302978168f4d110a8b68f1a97a5a09510a61e25558a5ff7d",
+        "stage-start.json": "abea7cec3c7cfe4346fdd7ad3c0e2fc387d9a6a16ac3fd00d3d2d1045ad70a18",
+        "skin": {
+          "before": 1004410,
+          "after": 910284
+        },
+        "inside": {
+          "maximum": 0.0210422296077013,
+          "mean": 0.0012688103923228686
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim (shell variables expanded); script equals 20d0887b.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_c9319feb-367\\agent-a8bec287c4462b058.jsonl",
+          "locator": "builder r8: R12, Bash toolu_01UaVmvj261Kjd7BrCDkuKLN, 2026-09-30T05:14:20Z",
+          "quote": "simplify_fan_field.py --scene .../head-0170/head.blend --out .../$H --close-steps 8 --open-steps 3 --blur 3 --crown-z .20 --crown-y-min -.34"
+        }
+      ],
+      "dependsOn": [
+        "S19"
+      ]
+    },
+    {
+      "order": 32,
+      "id": "B12",
+      "output": "untracked/species-construction/akinza/body-0183",
+      "kind": "blender-script",
+      "branch": "body",
+      "loopRound": 8,
+      "script": "art/species-construction/smooth_torso_field.py",
+      "scriptCommit": "20d0887b",
+      "scriptSha256AtRun": {
+        "smooth_torso_field.py": "ad99dc4fcaf9e9350d122eed54d0dc0f666ba6cdd096d513389a4a8301984704 (CRLF, recorded in body-0183 stage-start)",
+        "chest-ease-r8.json": "1b03f03b1fbf2b69641bd2d5780d291c3a437b5b043dd414aae32ac9861e1ff6",
+        "torso-smooth-none.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "python art/species-construction/loop/loop_tools.py blender --log body-0183 art/species-construction/smooth_torso_field.py --scene untracked/species-construction/akinza/body-0177/body.blend --fairing untracked/species-construction/akinza/body-0177/fairing.json --out untracked/species-construction/akinza/body-0183 --regions docs/design/species-construction/akinza/torso-smooth-none.json --chest-ease docs/design/species-construction/akinza/chest-ease-r8.json",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-0177/body.blend",
+        "untracked/species-construction/akinza/body-0177/fairing.json",
+        "docs/design/species-construction/akinza/torso-smooth-none.json",
+        "docs/design/species-construction/akinza/chest-ease-r8.json"
+      ],
+      "expected": {
+        "shape.glb": "a2523de5eeb8ae941dcc6e24dc1bb2d04653c5815bbb620510c1a5e6d5e7a70e",
+        "fairing.json": "b0b6d8b639e913a474e7dda2fac1760daabb78db1194f9212de7ce89594216e9",
+        "body": {
+          "before": 648263,
+          "after": 647383
+        },
+        "outside": {
+          "maximum": 0.0006828256300650537
+        },
+        "inside": {
+          "maximum": 0.01099400594830513
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; all three files equal 20d0887b and the recorded stage-start hashes.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_c9319feb-367\\agent-a8bec287c4462b058.jsonl",
+          "locator": "builder r8: R12, Bash toolu_01UaVmvj261Kjd7BrCDkuKLN, 2026-09-30T05:14:20Z",
+          "quote": "--scene .../body-0177/body.blend ... --regions .../torso-smooth-none.json --chest-ease .../chest-ease-r8.json"
+        },
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_7cbaa78e-d15\\agent-aef7ece9909af2b05.jsonl",
+          "locator": "builder r13 printing body-0183/stage-start.json, Bash n/a, 2026-09-30T08:08:36Z",
+          "quote": "\"smooth_torso_field.py\": \"ad99dc4f...\", \"chest-ease-r8.json\": \"1b03f03b...\""
+        }
+      ],
+      "dependsOn": [
+        "B11"
+      ]
+    },
+    {
+      "order": 33,
+      "id": "S21",
+      "output": "untracked/species-construction/akinza/head-0187",
+      "kind": "blender-script",
+      "branch": "head",
+      "loopRound": 10,
+      "script": "art/species-construction/author_fan_locks_field.py",
+      "scriptCommit": "58b5a28e",
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "e9d8e926",
+        "sha256AtRun": "9bc3da4f7ca5fcf57c3e201db9a6622d8494a8a1d9469d3dc8520e043fb8759d",
+        "note": "content unchanged from e9d8e926 through 58b5a28e (rounds 1 to 10)"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "python art/species-construction/loop/loop_tools.py blender --log head-0187 art/species-construction/author_fan_locks_field.py --scene untracked/species-construction/akinza/head-0182/head.blend --out untracked/species-construction/akinza/head-0187 --tilt .06 --tilt-x0 .80 --tilt-x1 1.0 --sink .055 --sink-x .40 .52 .62 .95 --rim-cap .515 --lock-cap .515 --tilt-low 0 --wall-blur 4 --cup-clean 5 --rim-x .44 .52 .60 .68 .76 .84 .92 --rim-angle0 42 --rim-angle1 28 --rim-down .05 --rim-ext0 .03 --rim-ext1 .04 --rim-lift -.045 --rings .50 .62 .74 .86 --ring-spacing .085 --ring-length .23 --ring-width .05 --ring-thickness .018 --ring-angle-min 28 --cup-clear .012 --ring-tip-slack .03 --edge-spacing .13 --edge-rows 2 --edge-lift .012 --edge-max-facing .5 --edge-row-step .08",
+      "verbatim": "COMMON=\"--tilt-low 0 ... --edge-row-step .08\"; python art/species-construction/loop/loop_tools.py blender --log head-0187 art/species-construction/author_fan_locks_field.py --scene ... --out ... --tilt .06 --tilt-x0 .80 --tilt-x1 1.0 --sink .055 --sink-x .40 .52 .62 .95 --rim-cap .515 --lock-cap .515 $COMMON",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0182/head.blend"
+      ],
+      "expected": {
+        "head.blend": "594635cd8037de46e88d88167b4654b0bcdc58922157ab521801381e7aedd08d",
+        "skinTopZ": {
+          "before": 0.4973495602607727,
+          "after": 0.5261168479919434
+        },
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 961152
+        },
+        "lockCount": 23,
+        "removedFlecks": 8,
+        "deviationOutsideFanWindow": {
+          "maximum": 0.0008156417170539498,
+          "p99": 0.00024286696352646706
+        }
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim ($COMMON expanded); script equals 58b5a28e. Built from head-0182, not from head-0185 (round 9).",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_fbef00fa-e7e\\agent-afd400b16636d19b7.jsonl",
+          "locator": "builder r10: R03, Bash toolu_01U69dmzUKuBoCxBqW9tAfzn, 2026-09-30T06:22:12Z",
+          "quote": "COMMON=\"--tilt-low 0 --wall-blur 4 ... --edge-row-step .08\""
+        },
+        {
+          "source": "docs/design/species-construction/akinza/loop/status.json",
+          "locator": "history[round=10].build",
+          "quote": "R03 rebuilt as head-0187 (fan-lock stage on head-0182, one component build)"
+        }
+      ],
+      "dependsOn": [
+        "S20"
+      ]
+    },
+    {
+      "order": 34,
+      "id": "B13",
+      "output": "untracked/species-construction/akinza/body-0195",
+      "kind": "blender-script",
+      "branch": "body",
+      "loopRound": 13,
+      "script": "art/species-construction/warp_waist_field.py",
+      "scriptCommit": "a658bc9d",
+      "scriptSha256AtRun": {
+        "warp_waist_field.py": "cd2340d38865bab956a1deca2f54a542e777b0e4f6f241ad88a147e60f53caea",
+        "waist-warp-r13.json": "f09c998d7758455a5482c8184b6e3d9b96ac0a2d2d25b5a22946c4addc6ece21"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "a894151c",
+        "sha256AtRun": "db4d93dcb1b3218dc40055ffbf924aa571f5695ecccc9b2c1bca96379b8e01d5",
+        "note": "rounds 13 to 16"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "sed -i 's/\"zTop\": 0.22/\"zTop\": 0.24/' docs/design/species-construction/akinza/waist-warp-r13.json && python art/species-construction/loop/loop_tools.py blender --log body-0195 art/species-construction/warp_waist_field.py --scene untracked/species-construction/akinza/body-0183/body.blend --fairing untracked/species-construction/akinza/body-0183/fairing.json --spec docs/design/species-construction/akinza/waist-warp-r13.json --out untracked/species-construction/akinza/body-0195",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/body-0183/body.blend",
+        "untracked/species-construction/akinza/body-0183/fairing.json",
+        "docs/design/species-construction/akinza/waist-warp-r13.json"
+      ],
+      "expected": {
+        "body": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 646405
+        },
+        "minimumSamplingDerivative": 0.2674211248285263,
+        "deviationOutsideWarpBox": {
+          "maximum": 0.0005503238644450903,
+          "p99": 0.00010272742110828403
+        },
+        "frontWaistRow40": ".2006 to .1676 of figure height",
+        "note": "No output hash recorded; the committed waist-warp-r13.json already has zTop 0.24, so skip the sed."
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script and spec equal a658bc9d.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_7cbaa78e-d15\\agent-aef7ece9909af2b05.jsonl",
+          "locator": "builder r13: R06, Bash toolu_011uSgQXcQeBX5YkzhqmiGLk, 2026-09-30T08:13:32Z",
+          "quote": "--scene .../body-0183/body.blend ... --spec .../waist-warp-r13.json --out .../body-0195"
+        }
+      ],
+      "dependsOn": [
+        "B12"
+      ]
+    },
+    {
+      "order": 35,
+      "id": "S22",
+      "output": "untracked/species-construction/akinza/head-0203",
+      "kind": "blender-script",
+      "branch": "head",
+      "loopRound": 16,
+      "script": "art/species-construction/author_rear_locks_field.py",
+      "scriptCommit": "2f8505d5",
+      "scriptSha256AtRun": {
+        "author_rear_locks_field.py": "31483c7f6275b5dfc939b86dab0b59b860cd28aed933f3ea927fee3a93feb5c3"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "a894151c",
+        "sha256AtRun": "db4d93dcb1b3218dc40055ffbf924aa571f5695ecccc9b2c1bca96379b8e01d5",
+        "note": "rounds 13 to 16"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "python art/species-construction/loop/loop_tools.py blender --log head-0203 art/species-construction/author_rear_locks_field.py --scene untracked/species-construction/akinza/head-0187/head.blend --out untracked/species-construction/akinza/head-0203 --bevel .03 --bevel-x .42 .55 .76 .88 --swell .11 --swell-x .40 .58 .70 .84 --swell-z -.15 .0 .28 .48 --swell-follow-low .04 .12 --lock-cap .520 --lock-cap-inner .470 --tip-x-max .975 --x-min .38 --edge-x-min .50 --shingle-amp .03 --shingle-edge .25 --shingle-base .25 --shingle-fade .05 --shingle-floor-min .10 --shingle-slope-max .5 --shingle-x-fade .80 .90 --rings .25 .32 .39 .46 .53 .60 .67 .74 .81 .88 .95 1.02 --ring-spacing .065 --ring-length .19 --ring-width .06 --ring-up .1 --ring-angle-min 10 --edge-spacing .075 --edge-rows 1 --edge-inset .06 --edge-lift .008 --edge-width .055 --edge-thickness .02 --edge-out .006 --edge-out-top .05 --edge-top-ramp .3 --edge-end-skip .7 --rim-spacing .08 --rim-x .46 .92 --rim-rows 1 --rim-width .06 --rim-thickness .03 --rim-lift .025 --rim-rise .015 .04 --rim-inset .045 --root-blend .012 --floor-x0 -.005 --cap-lattice --cap-spacing .06 --cap-length .15 --cap-width .055 --cap-amp .04 --push .11 --push-x .15 .34 .85 1.05 --push-fill .09 --push-fill-x .10 .20 .55 .70 --push-round .10 --push-smooth .012 --push-blend .02",
+      "verbatim": "bash $S/rear_cmd.sh head-0203 --floor-x0 -.005 --cap-lattice ... --push-blend .02, where rear_cmd.sh (written at 09:06:37Z) holds the fixed round-12 arguments",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0187/head.blend"
+      ],
+      "expected": {
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 1128128
+        },
+        "skinTopZ": {
+          "before": 0.5261168479919434,
+          "after": 0.5273433923721313
+        },
+        "push": {
+          "maximumAdded": 0.15727975700598026,
+          "columns": 128610,
+          "meanAddedWhereApplied": 0.0740953420749176
+        },
+        "capShinglesPlaced": 82,
+        "shingles": {
+          "count": 132,
+          "maximumRelief": 0.043425038593676746
+        },
+        "deviationOutsideRearWindow": {
+          "maximum": 0.09073501825332642,
+          "p99": 0.060119872838258634
+        },
+        "note": "No output hash recorded. Built on head-0187, not on the round-12 head-0193."
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim (rear_cmd.sh expanded from its heredoc); script equals 2f8505d5 at run time.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_7cbaa78e-d15\\agent-a4263a6018bcd580d.jsonl",
+          "locator": "builder r16: R04, Bash toolu_01DriBxGesZWxueVAfKmmj8o, 2026-09-30T09:06:37Z",
+          "quote": "cat > $A/scratch16/rear_cmd.sh <<'E' ... --scene untracked/species-construction/akinza/head-0187/head.blend --out untracked/species-construction/akinza/$N --bevel .03 ..."
+        },
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_7cbaa78e-d15\\agent-a4263a6018bcd580d.jsonl",
+          "locator": "builder r16: R04, Bash toolu_01EgRH4Ws916GJwbctEaoha7, 2026-09-30T09:09:01Z",
+          "quote": "bash $S/rear_cmd.sh head-0203 --floor-x0 -.005 --cap-lattice --cap-spacing .06 ... --push-blend .02"
+        }
+      ],
+      "dependsOn": [
+        "S21"
+      ]
+    },
+    {
+      "order": 36,
+      "id": "S23",
+      "output": "untracked/species-construction/akinza/head-0204",
+      "kind": "blender-script",
+      "branch": "head",
+      "loopRound": 16,
+      "script": "art/species-construction/shape_face_field.py",
+      "scriptCommit": "2f8505d5",
+      "scriptSha256AtRun": {
+        "shape_face_field.py": "e43d9b34c89bcd6e8ced71418671c26186bfbe56eef3916f28c25246a9934ad5",
+        "face-r16.json": "e0e76c3810e40edd539359371cc03f5874d037bf9831b57c49a4cbb5678af03e"
+      },
+      "loopTools": {
+        "script": "art/species-construction/loop/loop_tools.py",
+        "commit": "a894151c",
+        "sha256AtRun": "db4d93dcb1b3218dc40055ffbf924aa571f5695ecccc9b2c1bca96379b8e01d5",
+        "note": "rounds 13 to 16"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows via loop_tools.py blender",
+      "command": "A=untracked/species-construction/akinza; python art/species-construction/loop/loop_tools.py blender --log head-0204 art/species-construction/shape_face_field.py --scene $A/head-0203/head.blend --spec docs/design/species-construction/akinza/face-r16.json --out $A/head-0204",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0203/head.blend",
+        "docs/design/species-construction/akinza/face-r16.json"
+      ],
+      "expected": {
+        "skin": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 1086260
+        },
+        "removedFlecks": 2,
+        "deviationOutsideFace": {
+          "maximum": 0.0065405662171542645,
+          "p99": 0.0029717437550425495
+        },
+        "cheekSmoothMaxFieldChange": [
+          0.007654239889234304,
+          0.007441174238920212
+        ],
+        "rearSmoothMaxFieldChange": [
+          0.007460573688149452,
+          0.007399679161608219
+        ]
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; script and spec equal 2f8505d5.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_7cbaa78e-d15\\agent-a4263a6018bcd580d.jsonl",
+          "locator": "builder r16: R04, Bash toolu_0168pFaTovTziWVL23zXu96V, 2026-09-30T09:12:05Z",
+          "quote": "--scene $A/head-0203/head.blend --spec docs/design/species-construction/akinza/face-r16.json --out $A/head-0204"
+        }
+      ],
+      "dependsOn": [
+        "S22"
+      ]
+    },
+    {
+      "order": 37,
+      "id": "A01",
+      "output": "untracked/species-construction/akinza/assembled-0205",
+      "kind": "assemble",
+      "branch": "assembly",
+      "loopRound": 16,
+      "script": "art/species-construction/loop/loop_tools.py assemble -> art/species-construction/assemble_reconstructed_creature.py",
+      "scriptCommit": "a894151c (loop_tools.py); 46dbc305 (assemble_reconstructed_creature.py, unchanged through 2f8505d5)",
+      "scriptSha256AtRun": {
+        "loop_tools.py": "db4d93dcb1b3218dc40055ffbf924aa571f5695ecccc9b2c1bca96379b8e01d5",
+        "assemble_reconstructed_creature.py": "d608919f5fa77b3b06699d7ae7d385ab3a9850431e52090f3ab2ba89b06b884c"
+      },
+      "helpers": {
+        "study_provenance.py": {
+          "commit": "ba7cd0e3",
+          "sha256AtRun": "cab4639f252f348afe932d36e0cfc027485507d7816d8abe48de228c644e72f0",
+          "note": "CRLF working copy of the ba7cd0e3 blob (LF sha c96e23816b3c...)"
+        },
+        "blender_blockout.py": {
+          "commit": "46dbc305",
+          "sha256AtRun": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a"
+        },
+        "blender_probe.py": {
+          "commit": "b2a850ee",
+          "sha256AtRun": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675"
+        },
+        "authored_surfaces.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3"
+        },
+        "surface_math.py": {
+          "commit": "daba0da2",
+          "sha256AtRun": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+        }
+      },
+      "blender": "windows",
+      "command": "python art/species-construction/loop/loop_tools.py assemble head-0204 body-0195 assembled-0205",
+      "expandedCommand": "\"C:/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe\" -b --factory-startup --python art/species-construction/assemble_reconstructed_creature.py -- --body C:/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/body-0195/shape.glb --head C:/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/head-0204/shape.glb --tail-record C:/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/body-0195/fairing.json --out C:/Users/njord/.codex/worktrees/1d07/Xalians/untracked/species-construction/akinza/assembled-0205 --head-scale .50 --jaw-anchor-z .500 --head-depth-offset -.020 --fragment-voxels 5.0 (followed by cmd_render: render_shape_study.py --preserve-materials --studio-fill --turntable and render_details.py per camera set)",
+      "workingDirectory": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians",
+      "inputs": [
+        "untracked/species-construction/akinza/head-0204/shape.glb",
+        "untracked/species-construction/akinza/body-0195/shape.glb",
+        "untracked/species-construction/akinza/body-0195/fairing.json"
+      ],
+      "expected": {
+        "check": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "vertices": 727170,
+          "removedFragments": 0,
+          "heightSpread": 0.0,
+          "groundSpread": 0.0,
+          "pass": true
+        },
+        "criticScores": {
+          "R01": 6,
+          "R02": 6.5,
+          "R03": 6.5,
+          "R04": 6.5,
+          "R05": 6,
+          "R06": 5.5,
+          "R07": 5,
+          "R08": 6,
+          "R09": 6,
+          "R10": 6.5,
+          "R11": 5,
+          "R12": 6
+        },
+        "weightedMean": 6.05,
+        "silhouette": "front ear span .523 against reference .52 (loop status round 16)",
+        "note": "No output hash recorded; compare with loop_tools.py check and measure against the round-16 values."
+      },
+      "certainty": "exact",
+      "certaintyNote": "Command verbatim; placement constants are loop_tools.PLACEMENT at a894151c; --fragment-voxels uses the default 5.",
+      "evidence": [
+        {
+          "source": "C:\\Users\\njord\\.claude\\projects\\c--dev-src-Xalians\\f0532f7e-7c4a-4de8-a1ff-d63721d93567\\subagents\\workflows\\wf_7cbaa78e-d15\\agent-a4263a6018bcd580d.jsonl",
+          "locator": "builder r16: R04, Bash toolu_01RMuSG9FhSLEg9qr9uaE9gx, 2026-09-30T09:13:14Z",
+          "quote": "loop_tools.py assemble head-0204 body-0195 assembled-0205 ... \"vertices\": 727170, \"removedFragments\": 0, \"pass\": true"
+        },
+        {
+          "source": "docs/design/species-construction/akinza/loop/status.json",
+          "locator": "baseline",
+          "quote": "{\"head\": \"head-0204\", \"body\": \"body-0195\", \"assembly\": \"assembled-0205\"}"
+        },
+        {
+          "source": "art/species-construction/loop/loop_tools.py@a894151c",
+          "locator": "PLACEMENT, cmd_assemble",
+          "quote": "PLACEMENT = ['--head-scale', '.50', '--jaw-anchor-z', '.500', '--head-depth-offset', '-.020']"
+        }
+      ],
+      "dependsOn": [
+        "B13",
+        "S23"
+      ]
+    }
+  ]
+}
