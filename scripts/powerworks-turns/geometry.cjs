@@ -8,7 +8,12 @@
 
   Usage:
     node scripts/powerworks-turns/geometry.cjs --scenario-dir=<dir with *.json scenarios> \
-      [--base=http://localhost:3108] [--sizes=1920x1080,1366x768,844x390] [--out=<dir for screenshots>]
+      [--base=http://localhost:3108] [--sizes=1920x1080,1366x768,844x390,932x430,667x375] [--out=<dir for screenshots>]
+
+  Round 4 (phone): a landscape screen 500 px tall or less is opened as a touch phone (isMobile,
+  hasTouch) and gets the phone checks on top of the rest: no visible text under 12 CSS px, no
+  button or link under 40 px in its short side, nothing clipped or outside the screen, no page
+  scroll, and the tap flow (first tap on a key cell previews, the second uses it).
 
   Exits non-zero on any failure, printing each one.
 */
@@ -23,9 +28,36 @@ const arg = (k, d) => {
 const SCEN_DIR = arg("scenario-dir", "");
 const BASE = arg("base", "http://localhost:3108");
 const OUT = arg("out", path.join(SCEN_DIR || ".", "geometry-shots"));
-const sizes = arg("sizes", "1920x1080,1366x768,844x390")
+const sizes = arg("sizes", "1920x1080,1366x768,844x390,932x430,667x375")
   .split(",")
   .map((s) => s.split("x").map(Number));
+
+const isPhone = (w, h) => w > h && h <= 500;
+
+/** Opens a page at a size; a phone size is a touch device with a 2x screen. */
+async function openPage(browser, w, h) {
+  const phone = isPhone(w, h);
+  const context = await browser.newContext({
+    viewport: { width: w, height: h },
+    ...(phone ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}),
+  });
+  const page = await context.newPage();
+  const close = async () => {
+    await page.close();
+    await context.close();
+  };
+  return { page, close, phone };
+}
+const press = (page, phone, loc) => (phone ? loc.tap() : loc.click());
+
+/** Opens a tool (Guide, Record, Restart): a button on a desktop, an item in the Menu on a phone. */
+async function openTool(page, phone, name) {
+  if (phone) {
+    await page.locator("button.pwt-menu-btn").tap();
+    await page.waitForTimeout(150);
+    await page.locator('[role="menuitem"]', { hasText: name }).tap();
+  } else await page.click(`button:has-text('${name}')`);
+}
 
 function within(inner, outer, slack = 0.5) {
   return (
@@ -34,6 +66,197 @@ function within(inner, outer, slack = 0.5) {
     inner.x + inner.width <= outer.x + outer.width + slack &&
     inner.y + inner.height <= outer.y + outer.height + slack
   );
+}
+
+
+/**
+  Round 2 additions: a panel (briefing, camp, end of run, guide, restart) must fit the viewport, must
+  not scroll inside itself, and every element inside it must sit inside its box (text that could
+  overflow shows up as a child poking out, or a single-line text clipped by its own box).
+*/
+async function panelProblems(page, selector, allowScroll = false) {
+  return page.evaluate(([sel, scrolls]) => {
+    const panel = document.querySelector(sel);
+    if (!panel) return null;
+    const pr = panel.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const out = [];
+    if (pr.left < -0.5 || pr.top < -0.5 || pr.right > vw + 0.5 || pr.bottom > vh + 0.5)
+      out.push(`panel outside the viewport: ${JSON.stringify({ l: pr.left, t: pr.top, r: pr.right, b: pr.bottom, vw, vh })}`);
+    if (!scrolls && panel.scrollHeight > panel.clientHeight + 1) out.push(`panel scrolls inside (scrollHeight ${panel.scrollHeight} > ${panel.clientHeight})`);
+    panel.querySelectorAll("*").forEach((el) => {
+      if (el.closest("[aria-hidden='true']") && el.closest(".pwt-legend-sample") === null) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      // A reference panel that scrolls (the phone Guide) only has to hold its width.
+      if (r.left < pr.left - 1 || r.right > pr.right + 1 || (!scrolls && (r.top < pr.top - 1 || r.bottom > pr.bottom + 1)))
+        out.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]} pokes out of the panel`);
+      if (el.children.length === 0 && el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== "visible")
+        out.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]} text clipped`);
+    });
+    return out;
+  }, [selector, allowScroll]);
+}
+
+/**
+  Round 4, the phone checks (run on every phone-size page): every piece of visible text at 12 CSS
+  px or more, every button and link at 40 px or more in its short side, nothing outside the
+  screen and no text clipped by its own box. Things that truncate or cut off on purpose are named
+  here: the banner's one-line sentence (the Record holds the rest), the turn rail's far end and a
+  panel that scrolls (the Guide, the Record).
+*/
+async function phoneProblems(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const name = (el) => `${el.tagName.toLowerCase()}.${String(typeof el.className === "string" ? el.className : "").split(" ")[0]}`;
+    const visible = (el) => {
+      const cs = getComputedStyle(el);
+      if (cs.display === "none" || cs.visibility === "hidden") return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    };
+    const inScroller = (el) => !!el.closest(".pwt-guide, .pwt-record-list");
+    const inRail = (el) => !!el.closest(".pwt-rail");
+    const all = [...document.querySelectorAll("body *")].filter((el) => !el.closest("svg") && !["SCRIPT", "STYLE"].includes(el.tagName));
+    for (const el of all) {
+      if (!visible(el)) continue;
+      const own = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+      const r = el.getBoundingClientRect();
+      if (own) {
+        const px = parseFloat(getComputedStyle(el).fontSize);
+        if (px < 12) out.push(`text under 12px (${px}px): ${name(el)} "${el.textContent.trim().slice(0, 30)}"`);
+        // Clipped by its own box (an ellipsis, or text cut off), other than the named exceptions.
+        if (el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== "visible" && !el.closest(".pwt-banner-line, .pwt-rail"))
+          out.push(`text clipped: ${name(el)} "${el.textContent.trim().slice(0, 30)}"`);
+      }
+      const isControl = el.matches("button, a[href], [role='button'], [role='menuitem'], input, select") && !el.closest("[inert]");
+      if (isControl) {
+        const short = Math.min(r.width, r.height);
+        if (short < 39.5) out.push(`control under 40px (${r.width.toFixed(0)}x${r.height.toFixed(0)}): ${name(el)} "${(el.getAttribute("aria-label") || el.textContent).trim().slice(0, 24)}"`);
+      }
+      if ((own || isControl) && !inRail(el) && !inScroller(el)) {
+        if (r.left < -0.5 || r.top < -0.5 || r.right > vw + 0.5 || r.bottom > vh + 0.5)
+          out.push(`outside the screen: ${name(el)} ${JSON.stringify({ l: r.left | 0, t: r.top | 0, r: r.right | 0, b: r.bottom | 0 })}`);
+      }
+    }
+    // A key's name is the one thing on a key that must never be cut short.
+    document.querySelectorAll(".pwt-key-name").forEach((el) => {
+      if (el.scrollWidth > el.clientWidth + 1) out.push(`key name cut short: "${el.textContent.trim()}"`);
+    });
+    return out;
+  });
+}
+
+/**
+  Round 7: a rider preview never prints over its cell's number (its box must not touch the number,
+  the struck pair or the letter, and must sit inside the cell); a landing number, measured where it
+  comes to rest, stays inside the stage and off every element tag, letter tag, plaque and knockout
+  mark; a banner sentence is never cut (its text fits its box).
+*/
+async function riderProblems(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const hit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
+    document.querySelectorAll(".pwt-cell.has-rider").forEach((cell) => {
+      const rider = cell.querySelector(".pwt-cell-rider");
+      if (!rider) return;
+      const rr = rider.getBoundingClientRect();
+      const cr = cell.getBoundingClientRect();
+      if (rr.left < cr.left - 0.5 || rr.right > cr.right + 0.5 || rr.top < cr.top - 0.5 || rr.bottom > cr.bottom + 0.5)
+        out.push(`rider box leaves its cell: ${cell.getAttribute("aria-label")?.slice(0, 40)}`);
+      for (const sel of [".pwt-cell-num", ".pwt-cell-hinder", ".pwt-cell-letter"]) {
+        cell.querySelectorAll(sel).forEach((n) => {
+          if (rider.contains(n)) return;
+          if (hit(rr, n.getBoundingClientRect())) out.push(`rider overlaps ${sel}: ${cell.getAttribute("aria-label")?.slice(0, 40)}`);
+        });
+      }
+    });
+    document.querySelectorAll(".pwt-key").forEach((key) => {
+      const kr = key.getBoundingClientRect();
+      key.querySelectorAll("*").forEach((el) => {
+        if (el.closest(".pwt-note") || el.closest("svg")) return;
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        if (r.left < kr.left - 1 || r.right > kr.right + 1 || r.top < kr.top - 1 || r.bottom > kr.bottom + 1)
+          out.push(`${el.className.toString().split(" ")[0] || el.tagName} pokes out of its key "${key.getAttribute("aria-label")}"`);
+      });
+    });
+    const line = document.querySelector(".pwt-banner-line");
+    if (line && line.scrollHeight > line.clientHeight + 1) out.push(`banner sentence truncated: "${line.textContent.trim().slice(0, 50)}"`);
+    return out;
+  });
+}
+/** Round 8, item 7: on a phone the rail always keeps the round divider and at least one next-round slot after it. */
+async function railProblems(page) {
+  return page.evaluate(() => {
+    const ol = document.querySelector(".pwt-rail[data-rail]");
+    if (!ol || !ol.querySelector("[data-slot]")) return [];
+    const kids = [...ol.children];
+    const d = kids.findIndex((k) => k.classList.contains("pwt-rail-divider"));
+    if (d < 0) return ["phone rail lost its round divider"];
+    if (!kids.slice(d + 1).some((k) => k.hasAttribute("data-slot"))) return ["phone rail has a divider and no next-round slot"];
+    return [];
+  });
+}
+async function floatProblems(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const stage = document.querySelector(".pwt-stage");
+    if (!stage) return out;
+    const sb = stage.getBoundingClientRect();
+    const z = sb.width / stage.offsetWidth || 1;
+    const hit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
+    stage.querySelectorAll(".pwt-float").forEach((f) => {
+      const anims = f.getAnimations();
+      if (anims.length && !anims.every((a) => a.playState === "finished")) return; // measure at rest only
+      const r = f.getBoundingClientRect();
+      if (r.left < sb.left - 0.5 || r.right > sb.right + 0.5 || r.top < sb.top - 0.5 || r.bottom > sb.bottom + 0.5)
+        out.push(`landing number leaves the stage: "${f.textContent.trim()}" ${JSON.stringify({ l: r.left | 0, r: r.right | 0, t: r.top | 0, b: r.bottom | 0, sl: sb.left | 0, sr: sb.right | 0 })}`);
+      stage.querySelectorAll(".pwt-el, .pwt-letter, .pwt-plaque, .pwt-guardian-tag, .pwt-ko").forEach((a) => {
+        if (hit(r, a.getBoundingClientRect())) out.push(`landing number "${f.textContent.trim()}" sits on ${a.className.split(" ")[0]}`);
+      });
+      // Round 8, item 2: the number's horizontal center lies within its own target's plate.
+      const plate = stage.querySelector(`[data-unit="${f.dataset.target}"]`);
+      if (plate) {
+        const pr = plate.getBoundingClientRect();
+        const cx = (r.left + r.right) / 2;
+        if (cx < pr.left - 0.5 || cx > pr.right + 0.5)
+          out.push(`landing number "${f.textContent.trim()}" is outside its target's column (center ${cx | 0}, plate ${pr.left | 0} to ${pr.right | 0})`);
+        // The pair reads as landing on its target only if the big number itself is over that plate too.
+        const num = f.querySelector(".pwt-float-num");
+        if (num) {
+          const nr = num.firstChild && num.firstChild.nodeType === 3 ? (() => { const rg = document.createRange(); rg.selectNodeContents(num.firstChild); return rg.getBoundingClientRect(); })() : num.getBoundingClientRect();
+          const ncx = (nr.left + nr.right) / 2;
+          if (ncx < pr.left - 0.5 || ncx > pr.right + 0.5) out.push(`landing digits "${f.textContent.trim()}" are over a neighbor (digits center ${ncx | 0}, plate ${pr.left | 0} to ${pr.right | 0})`);
+        }
+      }
+    });
+    // Round 8, item 9: the one plaque of an end hold covers no plate: no plaque, letter or tag, and no painted figure
+    // (the art's own bounds inside its box, at its natural proportions).
+    const card = stage.querySelector(".pwt-hold-card");
+    if (card) {
+      const cr = card.getBoundingClientRect();
+      stage.querySelectorAll(".pwt-plaque, .pwt-letter, .pwt-el, .pwt-guardian-tag").forEach((a) => {
+        if (hit(cr, a.getBoundingClientRect())) out.push(`hold plaque "${card.textContent.trim()}" covers ${a.className.split(" ")[0]}`);
+      });
+      stage.querySelectorAll(".pwt-figure").forEach((f) => {
+        const fr = f.getBoundingClientRect();
+        const img = f.querySelector("img");
+        let ar = fr;
+        if (img && img.naturalWidth && img.naturalHeight) {
+          const k = Math.min(fr.width / img.naturalWidth, fr.height / img.naturalHeight);
+          const w = img.naturalWidth * k;
+          const h = img.naturalHeight * k;
+          ar = { left: fr.left + (fr.width - w) / 2, right: fr.left + (fr.width + w) / 2, top: fr.bottom - h, bottom: fr.bottom };
+        }
+        if (hit(cr, ar)) out.push(`hold plaque "${card.textContent.trim()}" covers a figure`);
+      });
+    }
+    return out;
+  });
 }
 
 (async () => {
@@ -58,7 +281,7 @@ function within(inner, outer, slack = 0.5) {
   for (const scen of files) {
     for (const [w, h] of sizes) {
       const tag = `${scen.name}-${w}x${h}`;
-      const page = await browser.newPage({ viewport: { width: w, height: h } });
+      const { page, close, phone } = await openPage(browser, w, h);
       const url = `${BASE}/powerworks`;
       await page.goto(url, { waitUntil: "networkidle" });
       await page.evaluate((s) => localStorage.setItem("xalians.powerworks.turns.v1", s), fs.readFileSync(scen.file, "utf8"));
@@ -108,7 +331,19 @@ function within(inner, outer, slack = 0.5) {
           console.log(`[${tag}] FAIL ${item.kind}[${item.index}] not inside stage: box=${JSON.stringify(item.box)} stage=${JSON.stringify(stageBox)}`);
         }
       }
-      if (keybarBox) {
+      // On a phone the key bar sits beside the stage, not under it: the squad plaques then have
+      // to stay clear of it sideways instead of above it.
+      const keysBeside = keybarBox && keybarBox.x >= stageBox.x + stageBox.width - 1;
+      if (keysBeside) {
+        for (let i = 0; i < result.squadPlaques.length; i++) {
+          checks++;
+          const p = result.squadPlaques[i];
+          if (p.x + p.width > keybarBox.x + 0.5) {
+            failures++;
+            console.log(`[${tag}] FAIL squad plaque[${i}] right edge (${(p.x + p.width).toFixed(1)}) runs into the key column (${keybarBox.x.toFixed(1)})`);
+          }
+        }
+      } else if (keybarBox) {
         for (let i = 0; i < result.squadPlaques.length; i++) {
           checks++;
           const p = result.squadPlaques[i];
@@ -149,9 +384,176 @@ function within(inner, outer, slack = 0.5) {
         console.log(`[${tag}] checked ${result.items.length} elements + ${result.squadPlaques.length} squad plaques, ok`);
       }
 
+      if (phone) {
+        const probs = await phoneProblems(page);
+        checks++;
+        if (probs.length) {
+          failures += probs.length;
+          probs.forEach((m) => console.log(`[${tag}] FAIL phone: ${m}`));
+        } else console.log(`[${tag}] phone checks ok (12px text, 40px controls, nothing clipped or outside)`);
+      }
+      if (phone) {
+        const probs = await railProblems(page);
+        checks++;
+        if (probs.length) {
+          failures += probs.length;
+          probs.forEach((m) => console.log(`[${tag}] FAIL ${m}`));
+        }
+      }
+      {
+        const probs = await riderProblems(page);
+        checks++;
+        if (probs.length) {
+          failures += probs.length;
+          probs.forEach((m) => console.log(`[${tag}] FAIL ${m}`));
+        }
+      }
+      for (const sel of [".pwt-panel", ".pwt-titlecard", ".pwt-hold-card"]) {
+        const probs = await panelProblems(page, sel);
+        if (probs) {
+          checks++;
+          if (probs.length) {
+            failures += probs.length;
+            probs.forEach((m) => console.log(`[${tag}] FAIL ${sel}: ${m}`));
+          }
+        }
+      }
       await page.screenshot({ path: path.join(OUT, `${tag}.png`) });
-      await page.close();
+
+      // Round 7: play the first ready cell out and check, on every frame that settles, the landing
+      // numbers (inside the stage, off tags and plaques) and the banner sentence (never cut).
+      if (["first", "before-enemy-phase", "power-hippochamp", "checkpoint-graviclaw", "final-blow", "last-blow", "last-stand"].includes(scen.name) && !(phone && scen.name === "first")) {
+        const finisher = page.locator(".pwt-key .pwt-cell.finish:not([disabled])").first();
+        const cell = ["final-blow", "last-blow", "last-stand"].includes(scen.name) && (await finisher.count()) ? finisher : page.locator(".pwt-key .pwt-cell:not([disabled])").first();
+        if (await cell.count()) {
+          if (phone) {
+            await cell.tap();
+            await page.waitForTimeout(150);
+            await page.locator(".pwt-cell.previewed").first().tap();
+          } else {
+            await cell.click();
+            await page.mouse.move(2, 2);
+          }
+          const seen = new Set();
+          checks++;
+          for (let i = 0; i < 70; i++) {
+            const b = await page.evaluate(() => document.querySelector("[data-busy]")?.getAttribute("data-busy"));
+            (await floatProblems(page)).forEach((m) => seen.add(m));
+            (await riderProblems(page)).forEach((m) => seen.add(m));
+            if (phone && b === "true") (await railProblems(page)).forEach((m) => seen.add(m));
+            if (b !== "true" && i > 3) break;
+            await page.waitForTimeout(250);
+          }
+          if (seen.size) {
+            failures += seen.size;
+            seen.forEach((m) => console.log(`[${tag}] FAIL while playing out: ${m}`));
+          } else console.log(`[${tag}] playing out: landing numbers and banner sentences ok`);
+        }
+      }
+
+      // The tap flow, once per phone size on the first scenario with a turn on it: the first tap
+      // on a key cell previews it (the stage rings its target, the move is not used), the second
+      // tap on the same cell uses it.
+      if (phone && scen.name === "first") {
+        const cell = page.locator(".pwt-key .pwt-cell:not([disabled])").first();
+        const busy = () => page.evaluate(() => document.querySelector("[data-busy]").getAttribute("data-busy"));
+        checks++;
+        await cell.tap();
+        await page.waitForTimeout(200);
+        const previewed = await page.locator(".pwt-cell.previewed").count();
+        const ringed = await page.locator(".pwt-plate.targeted").count();
+        if (previewed !== 1 || (await busy()) !== "false") {
+          failures++;
+          console.log(`[${tag}] FAIL first tap should preview only (previewed cells ${previewed}, busy ${await busy()})`);
+        } else if (ringed < 1) {
+          failures++;
+          console.log(`[${tag}] FAIL first tap did not ring its target on the stage`);
+        } else console.log(`[${tag}] first tap previews and rings its target ok`);
+        checks++;
+        await page.locator(".pwt-cell.previewed").first().tap();
+        await page.waitForTimeout(300);
+        if ((await busy()) !== "true") {
+          failures++;
+          console.log(`[${tag}] FAIL second tap on the same cell did not use the move`);
+        } else console.log(`[${tag}] second tap uses the move ok`);
+        // The move and the enemy turns that follow play out: the same phone checks on those
+        // frames (the banner names an enemy and its letter, the key column is one card, speed and
+        // skip are 40 px or more).
+        checks++;
+        const seen = new Set();
+        for (let i = 0; i < 16 && (await busy()) === "true"; i++) {
+          (await phoneProblems(page)).forEach((m) => seen.add(m));
+          (await floatProblems(page)).forEach((m) => seen.add(m));
+          (await riderProblems(page)).forEach((m) => seen.add(m));
+          await page.waitForTimeout(400);
+        }
+        if (seen.size) {
+          failures += seen.size;
+          seen.forEach((m) => console.log(`[${tag}] FAIL phone (while playing out): ${m}`));
+        } else console.log(`[${tag}] phone checks ok while the move and the enemy turns play out`);
+      }
+      await close();
     }
+  }
+
+  // The arrival screens: the briefing, the sector title card, the legend and the restart dialog.
+  const first = files.find((f) => f.name === "first");
+  for (const [w, h] of sizes) {
+    const tag = `arrival-${w}x${h}`;
+    const { page, close, phone } = await openPage(browser, w, h);
+    await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
+    await page.evaluate(() => localStorage.clear());
+    await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(600);
+    const steps = [];
+    steps.push([".pwt-briefing", await panelProblems(page, ".pwt-briefing")]);
+    if (phone) {
+      const probs = await phoneProblems(page);
+      checks++;
+      if (probs.length) {
+        failures += probs.length;
+        probs.forEach((m) => console.log(`[${tag}] FAIL phone briefing: ${m}`));
+      }
+    }
+    await press(page, phone, page.locator("button:has-text('Begin')"));
+    await page.waitForTimeout(700);
+    steps.push([".pwt-titlecard", await panelProblems(page, ".pwt-titlecard")]);
+    if (first) {
+      await page.evaluate((s) => localStorage.setItem("xalians.powerworks.turns.v1", s), fs.readFileSync(first.file, "utf8"));
+      await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(500);
+    }
+    const keybarBox = () => page.evaluate(() => { const k = document.querySelector(".pwt-keybar"); if (!k) return null; const r = k.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map((n) => Math.round(n)).join(","); });
+    const keybarBefore = await keybarBox();
+    await openTool(page, phone, "Guide");
+    await page.waitForTimeout(300);
+    steps.push([".pwt-guide", await panelProblems(page, ".pwt-guide", phone)]);
+    if (phone) {
+      const probs = await phoneProblems(page);
+      checks++;
+      if (probs.length) {
+        failures += probs.length;
+        probs.forEach((m) => console.log(`[${tag}] FAIL phone guide: ${m}`));
+      }
+    }
+    await page.screenshot({ path: path.join(OUT, `${tag}-guide.png`) });
+    await press(page, phone, page.locator("button:has-text('Close')"));
+    await openTool(page, phone, "Restart");
+    await page.waitForTimeout(200);
+    steps.push([".pwt-panel restart", await panelProblems(page, ".pwt-panel")]);
+    // Round 8, item 10: nothing behind a dialog moves; the key bar keeps its place and size under it.
+    steps.push(["key bar stays put under the dialog", (await keybarBox()) === keybarBefore ? [] : [`key bar moved: ${keybarBefore} -> ${await keybarBox()}`]]);
+    for (const [name, probs] of steps) {
+      checks++;
+      if (!probs) {
+        failures++;
+        console.log(`[${tag}] FAIL ${name} not found`);
+      } else if (probs.length) {
+        failures += probs.length;
+        probs.forEach((m) => console.log(`[${tag}] FAIL ${name}: ${m}`));
+      } else console.log(`[${tag}] ${name} ok`);
+    }
+    await close();
   }
   await browser.close();
   console.log(`\n${checks} checks, ${failures} failures`);

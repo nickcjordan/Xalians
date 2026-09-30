@@ -1,8 +1,27 @@
 import React from "react";
-import { Shield, ChevronUp, ChevronDown, Swords, Ban, Zap } from "lucide-react";
+import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import { DeltaChip, SpotlightMarks } from "./banner";
 import type { EnemyView, Marks, SquadView } from "./view";
+
+/**
+  The enemy hit's own glyph (UX pass 2, round 5): a jagged burst, an impact. The swords stay the
+  hinder's glyph ("its next hit is smaller"), so a plate's hit chip and its hinder chip never share
+  a picture. Drawn inline so it takes the chip's ink like a lucide icon does.
+*/
+export function ImpactMark({ className = "" }: { className?: string }) {
+  return (
+    <svg className={`pwt-impact ${className}`} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <polygon
+        points="12,1.5 14.6,8.2 21.6,6.4 17.2,12 22.5,16.6 15.4,16.4 14.6,22.5 12,17.2 9.4,22.5 8.6,16.4 1.5,16.6 6.8,12 2.4,6.4 9.4,8.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 /**
   Shield, boost and hinder chips shared by every plate (Marks: shield, boost, hinder).
@@ -23,7 +42,7 @@ export function MarkChips({ marks }: { marks: Marks }) {
   return (
     <>
       {marks.shield > 0 && (
-        <span className="pwt-chip" aria-label={`shield ${marks.shield}`} title={`Shield ${marks.shield}`}>
+        <span className="pwt-chip shield" aria-label={`shield ${marks.shield}`} title={`Shield ${marks.shield}`}>
           <Shield />
           {marks.shield}
         </span>
@@ -50,7 +69,37 @@ export function MarkChips({ marks }: { marks: Marks }) {
   );
 }
 
-function HealthBar({ hp, max, delta = 0 }: { hp: number; max: number; delta?: number }) {
+/**
+  A small element tag on every unit (UX pass 2, round 3): the element's own hue through the
+  `el-<element>` scope, a dot and the word. Small on purpose: the chevrons stay the matchup
+  signal, this only teaches which element the unit is so the lesson carries to the next room.
+*/
+export function ElementBadge({ element, className = "" }: { element: string; className?: string }) {
+  return (
+    <span className={`pwt-el el-${element} ${className}`} title={`Element: ${element}`} data-element={element}>
+      <i aria-hidden="true" />
+      {element}
+    </span>
+  );
+}
+
+/**
+  The knockout mark on a companion's plaque (UX pass 2, round 5): an enemy that acts before this
+  companion's next turn has a ready hit that equals or exceeds its health. The same skull the
+  player's finishing cells carry, as a fact.
+*/
+export function KoMark({ from, name }: { from: string[]; name: string }) {
+  const who = from.length > 1 ? `${from.join(" and ")} each have` : `${from[0]} has`;
+  const words = `${who} a ready hit that knocks ${name} out before its next turn`;
+  return (
+    <span className="pwt-ko" title={words} aria-label={words} data-ko={from.join("")}>
+      <Skull />
+      <span className="pwt-ko-words">can fall</span>
+    </span>
+  );
+}
+
+function HealthBar({ hp, max, delta = 0, plain = false }: { hp: number; max: number; delta?: number; plain?: boolean }) {
   const pct = max > 0 ? Math.max(0, Math.min(100, (hp / max) * 100)) : 0;
   return (
     <div className="pwt-health">
@@ -67,7 +116,7 @@ function HealthBar({ hp, max, delta = 0 }: { hp: number; max: number; delta?: nu
         />
       </div>
       <span className="pwt-health-num">{hp}</span>
-      {!!delta && <DeltaChip n={delta} />}
+      {!!delta && <DeltaChip n={delta} plain={plain} />}
     </div>
   );
 }
@@ -106,6 +155,7 @@ export function SquadPlate({
   delta = 0,
   targeted = false,
   impactTarget = false,
+  struck = false,
   onHover,
 }: {
   u: SquadView;
@@ -121,6 +171,8 @@ export function SquadPlate({
   targeted?: boolean;
   /** This unit is the current beat's target, at the impact phase: flash and recoil. */
   impactTarget?: boolean;
+  /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
+  struck?: boolean;
   onHover?: (hovering: boolean) => void;
 }) {
   const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0;
@@ -128,7 +180,7 @@ export function SquadPlate({
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${u.active ? "active" : ""} ${lit ? "lit" : ""} ${
         spotlit ? "spotlit" : ""
-      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""}`}
+      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""}`}
       data-unit={u.id}
       onMouseEnter={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
@@ -139,19 +191,134 @@ export function SquadPlate({
         <span className="pwt-ground" aria-hidden="true" />
       </div>
       <div className="pwt-plaque">
+        <ElementBadge element={u.element} />
+        {u.koFrom && !u.down && <KoMark from={u.koFrom} name={u.name} />}
         <span className="pwt-name">{u.name}</span>
         <HealthBar hp={u.hp} max={u.max} delta={delta} />
         {u.down ? (
           <span className="pwt-down-tag">Down</span>
         ) : (
-          hasMarks && (
-            <div className="pwt-marks">
-              <MarkChips marks={u} />
-            </div>
-          )
+          // The chip row is always there, empty or not, so a shield gained never lifts the plate (round 8, item 10).
+          <div className="pwt-marks reserved">{hasMarks && <MarkChips marks={u} />}</div>
         )}
       </div>
     </div>
+  );
+}
+
+/** The hit's own glyph, number, lethal skull and matchup chevron, shared by the Guide's chip and the plate's box. */
+function HitBody({ hit }: { hit: NonNullable<EnemyView["hitOnActive"]> }) {
+  return (
+    <span className="pwt-hit-body">
+        <ImpactMark />
+        {hit.before !== undefined && (
+            <>
+              <s className="pwt-hit-before">{hit.before}</s>
+              <span className="pwt-hit-arrow" aria-hidden="true">
+              →
+              </span>
+            </>
+        )}
+        {hit.step === 0 ? <Ban /> : hit.n}
+        {hit.lethal && <Skull className="pwt-hit-skull" />}
+        {/* The chevron's direction is the damage (more, less); its color is who that favors:
+            a strong hit on your companion is bad for you, a weak one is good (the same rule as
+            the key cells, where a strong hit on an enemy is good for you). A hit that knocks the
+            companion out is never dressed as good news: its chevron goes neutral. */}
+        {hit.step > 1 && (
+            <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "bad"}`}>
+              <ChevronUp />
+            </span>
+        )}
+        {hit.step > 0 && hit.step < 1 && (
+            <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "good"}`}>
+              <ChevronDown />
+            </span>
+        )}
+    </span>
+  );
+}
+
+/** The enemy's strongest ready hit on the acting companion at its next turn. */
+export function HitChip({ hit, who, off = false }: { hit: NonNullable<EnemyView["hitOnActive"]>; who: string; off?: boolean }) {
+  return (
+    <span
+      className={`pwt-hit-on-active ${hit.lethal ? "lethal" : ""} ${off ? "off" : ""}`}
+      aria-label={
+        hit.step === 0
+          ? `hits ${who} for no effect`
+          : `hits ${who} for ${hit.n}${hit.before !== undefined ? `, weakened from ${hit.before}` : ""}${
+              hit.step > 1 ? ", strong" : hit.step < 1 ? ", weak" : ""
+            }${hit.lethal ? `, knocks ${who} out` : ""}`
+      }
+      title={
+        hit.step === 0
+          ? `Its strongest hit on ${who} at its next turn does no effect`
+          : `Its strongest hit on ${who} at its next turn: ${hit.n}${
+              hit.step > 1 ? " (strong)" : hit.step < 1 ? " (weak)" : ""
+            }${hit.lethal ? `. That equals or exceeds ${who}'s health: it knocks ${who} out.` : ""}`
+      }
+    >
+      <HitBody hit={hit} />
+    </span>
+  );
+}
+
+/** A stronger hit that is resting now, shown with the turns until it can act. */
+export function ComingChip({ coming, who, off = false }: { coming: NonNullable<EnemyView["hitComing"]>; who: string; off?: boolean }) {
+  return (
+    <span
+      className={`pwt-hit-on-active coming ${off ? "off" : ""}`}
+      aria-label={`a stronger hit on ${who}, ${coming.n}, is resting: ready ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn`}
+      title={`Resting: its stronger hit on ${who}, ${coming.n}${
+        coming.step > 1 ? " (strong)" : coming.step < 1 ? " (weak)" : ""
+      }, is usable ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn`}
+    >
+      <ImpactMark />
+      {coming.step === 0 ? <Ban /> : coming.n}
+      <span className="pwt-hit-in">in {coming.turns}</span>
+    </span>
+  );
+}
+
+/**
+  The enemy's forecast, one chip with its subject (round 8, item 5): a small "on Avilily" caption names whose health the
+  hit is on, the strongest ready hit sits under it, and the stronger hit that is resting folds in as a last line
+  ("then 64 in 2", turns counted after its next turn). One box, so a plate carries one hit chip and never two.
+*/
+export function EnemyHit({
+  hit,
+  coming,
+  who,
+  off = false,
+}: {
+  hit: EnemyView["hitOnActive"];
+  coming: EnemyView["hitComing"];
+  who: string;
+  off?: boolean;
+}) {
+  const label = [
+    hit
+      ? hit.step === 0
+        ? `hits ${who} for no effect`
+        : `hits ${who} for ${hit.n}${hit.before !== undefined ? `, weakened from ${hit.before}` : ""}${hit.step > 1 ? ", strong" : hit.step < 1 ? ", weak" : ""}${
+            hit.lethal ? `, knocks ${who} out` : ""
+          }`
+      : "",
+    coming ? `a stronger hit on ${who}, ${coming.n}, is resting: ready ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn` : "",
+  ]
+    .filter(Boolean)
+    .join("; ");
+  return (
+    <span className={`pwt-hit-on-active pwt-hitbox ${hit?.lethal ? "lethal" : ""} ${coming ? "has-coming" : ""} ${off ? "off" : ""}`} aria-label={label} title={label}>
+      <span className="pwt-hit-on">on {who}</span>
+      {hit && <HitBody hit={hit} />}
+      {coming && (
+        <span className="pwt-hit-then">
+          then {coming.step === 0 ? "no effect" : coming.n} in {coming.turns}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -159,20 +326,20 @@ export function EnemyPlate({
   u,
   lit = false,
   activeName,
-  activeArt,
   spotlit = false,
   dimmed = false,
   delta = 0,
   targeted = false,
   impactTarget = false,
+  struck = false,
   onHover,
+  onTap,
+  forecastOff = false,
 }: {
   u: EnemyView;
   lit?: boolean;
   /** The active companion's name, for the hit chip's words (paint review round 4, item 6). */
   activeName?: string;
-  /** The active companion's portrait, drawn small in the hit chip: whom the number is about. */
-  activeArt?: { species: string; element: string };
   /** This unit is the spotlit actor (UX pass): brighter, a floor ring, a head pointer. */
   spotlit?: boolean;
   /** Someone else is spotlit right now: this plate steps one notch dimmer. */
@@ -183,20 +350,34 @@ export function EnemyPlate({
   targeted?: boolean;
   /** This unit is the current beat's target, at the impact phase: flash and recoil. */
   impactTarget?: boolean;
+  /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
+  struck?: boolean;
   onHover?: (hovering: boolean) => void;
+  /** Touch on a phone: tapping the plate rings it and lights its cell in every key. */
+  onTap?: () => void;
+  /**
+    While an enemy acts its hit chips are hidden (kept in the layout so the plate does not move): the
+    chip forecasts a hit on the companion who has just acted, and it must never disagree with the
+    beat playing beside it (UX pass 2, round 6).
+  */
+  forecastOff?: boolean;
 }) {
   const hit = u.hitOnActive;
   const who = activeName ?? "the active companion";
-  const showHit = !!hit && !u.down;
-  const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0 || showHit;
+  const coming = u.hitComing;
+  // While an enemy acts, its forecast chips are not drawn at all and, with no marks of its own, the
+  // chip row collapses: no empty well under the name (round 7, item 8).
+  const showHit = !!hit && !u.down && !forecastOff;
+  const showComing = !!coming && !u.down && !forecastOff;
   return (
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
         dimmed ? "dimmed" : ""
-      } ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""}`}
+      } ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""}`}
       data-unit={u.id}
       onMouseEnter={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
+      onClick={onTap}
     >
       <div className="pwt-body">
         {spotlit && <SpotlightMarks />}
@@ -204,44 +385,21 @@ export function EnemyPlate({
         <span className="pwt-ground" aria-hidden="true" />
       </div>
       <div className="pwt-plaque">
+        <ElementBadge element={u.element} />
+        {isBoss(u.species) && <span className="pwt-guardian-tag">Guardian</span>}
         <span className="pwt-name">
           {u.letter} · {u.name}
         </span>
-        <HealthBar hp={u.hp} max={u.max} delta={delta} />
+        <HealthBar hp={u.hp} max={u.max} delta={delta} plain />
         {u.down && <span className="pwt-down-tag">Down</span>}
-        {hasMarks && !u.down && (
+        {(u.shield > 0 || u.boost > 0 || u.hinder > 0) && !u.down && (
           <div className="pwt-marks">
             <MarkChips marks={u} />
-            {showHit && (
-              <span
-                className="pwt-hit-on-active"
-                aria-label={
-                  hit!.step === 0
-                    ? `hits ${who} for no effect`
-                    : `hits ${who} for ${hit!.n}${hit!.before !== undefined ? `, weakened from ${hit!.before}` : ""}${
-                        hit!.step > 1 ? ", strong" : hit!.step < 1 ? ", weak" : ""
-                      }`
-                }
-                title={
-                  hit!.step === 0
-                    ? `Hits ${who} for no effect`
-                    : `Hits ${who} for ${hit!.n}${
-                        hit!.step > 1 ? " (strong)" : hit!.step < 1 ? " (weak)" : ""
-                      }`
-                }
-              >
-                <Swords />
-                {hit!.before !== undefined && <s className="pwt-hit-before">{hit!.before}</s>}
-                {hit!.step === 0 ? <Ban /> : hit!.n}
-                {hit!.step > 1 && <ChevronUp className="up" />}
-                {hit!.step > 0 && hit!.step < 1 && <ChevronDown className="down" />}
-                {activeArt && (
-                  <span className="pwt-hit-who" aria-hidden="true">
-                    <Portrait u={activeArt} small />
-                  </span>
-                )}
-              </span>
-            )}
+          </div>
+        )}
+        {(showHit || showComing) && (
+          <div className="pwt-marks hit">
+            <EnemyHit hit={showHit ? hit : null} coming={showComing ? coming : null} who={who} off={forecastOff} />
           </div>
         )}
       </div>

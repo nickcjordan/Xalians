@@ -4,7 +4,7 @@
   format for key xalians.powerworks.turns.v1: { version: PILLAR_SAVE_VERSION, state: TRun }.
 
   Scenarios are reached by playing real turns with turnHardestHit against
-  { ...DEFAULT_RULES, rooms: "roles", timeline: "round", enemyHpFactor: 0.62 }, seed 1 unless
+  { ...DEFAULT_RULES, rooms: "roles", timeline: "round" }, seed 1 unless
   noted. See the doc comment above each scenario function for what it captures and why.
 
   Run: node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/turnScenarios.ts --out=<dir>
@@ -20,11 +20,15 @@ import {
   activeOf,
   createTurnRun,
   roundOf,
+  roundStrip,
+  standing,
   turnCommand,
+  upcoming,
+  type PEvent,
   type Rules,
   type TRun,
 } from "../index.ts";
-import { turnHardestHit } from "../turnPolicy.ts";
+import { turnHardestHit, turnRandom, type TurnPolicy } from "../turnPolicy.ts";
 
 const arg = (k: string, d: string) => process.argv.find((a) => a.startsWith(`--${k}=`))?.split("=")[1] ?? d;
 const OUT = arg("out", "");
@@ -34,7 +38,7 @@ if (!OUT) {
 }
 fs.mkdirSync(OUT, { recursive: true });
 
-const RULES: Rules = { ...DEFAULT_RULES, rooms: "roles", timeline: "round", enemyHpFactor: 0.62 };
+const RULES: Rules = { ...DEFAULT_RULES, rooms: "roles", timeline: "round" };
 
 function fresh(seed = 1): TRun {
   return createTurnRun(seed, "starter", RULES).state;
@@ -67,9 +71,13 @@ function describe(s: TRun): string {
   return `room ${s.room} (${s.phase}), active ${active ? `${active.name} (${active.id})` : "none"}, round ${s.phase === "turn" || s.phase === "camp" ? roundOf(s) : "-"}`;
 }
 
+/** The Record a searched scenario would have accumulated (the page keeps one; a real save carries it). Reset after each write. */
+let LAST_RECORD: { room: number; round: number; actor: string; words: string; event: unknown }[] = [];
+
 function write(name: string, s: TRun) {
   const file = path.join(OUT, `${name}.json`);
-  fs.writeFileSync(file, JSON.stringify({ version: PILLAR_SAVE_VERSION, state: s }));
+  fs.writeFileSync(file, JSON.stringify({ version: PILLAR_SAVE_VERSION, state: s, record: LAST_RECORD }));
+  LAST_RECORD = [];
   console.log(`${name}: ${describe(s)} -> ${file}`);
 }
 
@@ -174,3 +182,142 @@ scenarioPowerHippochamp();
 scenarioControlCrystorn();
 scenarioBeforeEnemyPhase();
 scenarioCamp();
+
+
+// ======================================================================================
+// UX pass 2 scenarios (docs/design/powerworks-ux-pass-2.md, "Capture"). Every state below is
+// reached by playing real commands from a fresh seeded run and searching seeds for the state;
+// nothing is hand-edited. Each function prints the seed and policy that reached it.
+// ======================================================================================
+const PASS_POLICY: TurnPolicy = (s) => ({ move: -2, target: activeOf(s)!.id });
+const POLICIES: Record<string, TurnPolicy> = { hardest: (s) => turnHardestHit(s, () => 0), random: turnRandom, pass: PASS_POLICY };
+
+/** Plays one seeded run with a policy, calling `probe` on every state (companion turn, camp, end); returns the first state it accepts. */
+function search(name: string, policies: string[], seeds: number[], probe: (s: TRun) => boolean, guard = 400): TRun | null {
+  for (const pol of policies)
+    for (const seed of seeds) {
+      const rand = stream(seed * 7919 + 3);
+      let s = fresh(seed);
+      const rec: typeof LAST_RECORD = [];
+      const log = (before: TRun, events: PEvent[]) => {
+        for (const e of events) rec.push({ room: before.room, round: roundOf(before), actor: e.actor, words: `${e.actor} ${e.kind}`, event: e });
+      };
+      for (let k = 0; k < guard; k++) {
+        if (probe(s)) {
+          console.log(`${name}: found with seed ${seed}, policy ${pol}, after ${k} steps`);
+          LAST_RECORD = rec;
+          return s;
+        }
+        if (s.phase === "turn") {
+          const r = turnCommand(s, { kind: "act", order: POLICIES[pol](s, rand) });
+          log(s, r.events);
+          s = r.state;
+        } else if (s.phase === "camp") {
+          const r = turnCommand(s, { kind: "advance" });
+          log(s, r.events);
+          s = r.state;
+        } else break;
+      }
+      if (probe(s)) {
+        console.log(`${name}: found with seed ${seed}, policy ${pol}, at the end`);
+        LAST_RECORD = rec;
+        return s;
+      }
+    }
+  console.warn(`${name}: NOT FOUND`);
+  return null;
+}
+const SEEDS = Array.from({ length: 150 }, (_, i) => i + 1);
+
+/** Does some legal order of the active companion end the encounter now? */
+function canFinish(s: TRun): boolean {
+  if (s.phase !== "turn" || !s.active) return false;
+  const u = activeOf(s)!;
+  for (const i of u.moves.keys()) {
+    if (u.cooldowns[i] > 0 || (u.moves[i].signature && u.signatureSpent)) continue;
+    for (const t of s.enemies.filter((e) => e.hp > 0)) {
+      try {
+        const after = turnCommand(s, { kind: "act", order: { move: i, target: t.id } }).state;
+        if (after.phase !== "turn") return true;
+      } catch {
+        /* illegal order */
+      }
+    }
+  }
+  return false;
+}
+
+// ---- camp-fallen: camp after a clear with a fallen companion and the one revival unspent. ----
+function scenarioCampFallen() {
+  const s = search("camp-fallen", ["random", "hardest"], SEEDS, (s) => s.phase === "camp" && s.revival > 0 && s.team.some((u) => u.hp <= 0) && s.team.some((u) => u.hp > 0));
+  if (s) write("camp-fallen", s);
+}
+
+// ---- final-blow: one enemy left, low, and the active companion can end the fight this turn (room 0..2, not the last). ----
+function scenarioFinalBlow() {
+  const last = 3;
+  const s = search("final-blow", ["hardest", "random"], SEEDS, (s) => s.phase === "turn" && s.room >= 1 && s.room < last && standing(s.enemies).length === 1 && s.enemies.some((e) => e.hp > 0 && e.hp <= e.max * 0.5) && canFinish(s));
+  if (s) write("final-blow", s);
+}
+
+// ---- round-open-enemy: the active companion is the last unit of its round (everyone else standing has acted), and the
+// next round opens on an enemy's turn, so acting brings a run of enemy turns that begins a new round. ----
+function scenarioRoundOpenEnemy() {
+  const s = search("round-open-enemy", ["hardest", "random"], SEEDS, (s) => {
+    if (s.phase !== "turn" || !s.active || standing(s.enemies).length < 2 || roundOf(s) > 6) return false;
+    const lastOfRound = roundStrip(s).every(({ unit, done }) => unit.hp <= 0 || unit.id === s.active || done);
+    if (!lastOfRound) return false;
+    return !!upcoming(s, 2)[1]?.enemy;
+  });
+  if (s) write("round-open-enemy", s);
+}
+
+// ---- lost: a run the squad cannot finish (a deep room, everyone fallen). ----
+function scenarioLost() {
+  const s = search("lost", ["random", "pass"], SEEDS, (s) => s.phase === "lost" && s.room >= 2);
+  if (s) write("lost", s);
+}
+
+// ---- won: the last chamber cleared. ----
+function scenarioWon() {
+  const s = search("won", ["hardest", "random"], SEEDS, (s) => s.phase === "won");
+  if (s) write("won", s);
+}
+
+// ---- retreated-command: the player's own retreat command, from camp. ----
+function scenarioRetreatCommand() {
+  const camp = search("retreated-command (camp)", ["hardest"], [1], (s) => s.phase === "camp");
+  if (camp) write("retreated-command", turnCommand(camp, { kind: "retreat" }).state);
+}
+
+// ---- retreated-stall: the fight stalls and the squad is forced out. Only reachable when neither side can lower the other's total health. ----
+function scenarioRetreatStall() {
+  const s = search("retreated-stall", ["pass", "random"], SEEDS.slice(0, 40), (s) => s.phase === "retreated", 300);
+  if (s) write("retreated-stall", s);
+}
+
+// ---- last-stand: one companion left standing and it is that companion's turn; passing (or almost anything) hands the enemies the killing blow. ----
+function scenarioLastStand() {
+  const s = search("last-stand", ["random", "hardest"], SEEDS, (s) => {
+    if (s.phase !== "turn" || !s.active || s.room < 1 || standing(s.team).length !== 1 || standing(s.enemies).length < 2) return false;
+    const after = turnCommand(s, { kind: "act", order: PASS_POLICY(s, () => 0) }).state;
+    return after.phase === "lost";
+  });
+  if (s) write("last-stand", s);
+}
+
+// ---- last-blow: the last chamber, one enemy left and the active companion can end the run this turn. ----
+function scenarioLastBlow() {
+  const s = search("last-blow", ["hardest", "random"], SEEDS, (s) => s.phase === "turn" && s.room === 3 && standing(s.enemies).length === 1 && canFinish(s));
+  if (s) write("last-blow", s);
+}
+
+scenarioCampFallen();
+scenarioLastStand();
+scenarioLastBlow();
+scenarioFinalBlow();
+scenarioRoundOpenEnemy();
+scenarioLost();
+scenarioWon();
+scenarioRetreatCommand();
+scenarioRetreatStall();

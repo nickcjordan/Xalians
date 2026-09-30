@@ -12,7 +12,14 @@ import type { Beat } from "./view";
 const BEAT_MS = 1700;
 const IMPACT_FRACTION = 0.35;
 
-export type BeatPhase = "approach" | "impact" | "settle";
+/** settle: the blow has landed and the beat's words stay up (a knockout collapses here); hold:
+    every beat is done and the stage waits on a knockout before the panel that follows. */
+export type BeatPhase = "approach" | "impact" | "settle" | "hold";
+
+/** The settle phase starts this long after the impact (the target's recoil is done by then). */
+const SETTLE_AFTER_IMPACT_MS = 500;
+/** A beat that knocks a unit out lasts this much longer, so the fall is seen before anything moves. */
+const KNOCKOUT_EXTRA_MS = 800;
 
 export function beatTiming(speed: 1 | 2, reducedMotion: boolean) {
   if (reducedMotion) return { beatMs: 1, impactMs: 0 };
@@ -34,10 +41,16 @@ export function Playback({
   speed,
   reducedMotion,
   skip,
+  knockouts,
+  holdMs = 0,
   onBeat,
   onDone,
 }: {
   beats: Beat[];
+  /** Per beat: does it knock a unit out (its beat then runs longer). */
+  knockouts?: boolean[];
+  /** After the last beat, hold the stage this long (at 1x) before onDone. */
+  holdMs?: number;
   speed: 1 | 2;
   reducedMotion: boolean;
   /** True to finish the whole sequence at once (the banner's Skip, or reduced motion). */
@@ -57,18 +70,26 @@ export function Playback({
       return;
     }
     if (index >= beats.length) {
+      if (holdMs > 0 && beats.length > 0) {
+        onBeat(beats.length - 1, "hold");
+        const toDone = window.setTimeout(onDone, holdMs / speed);
+        return () => window.clearTimeout(toDone);
+      }
       onDone();
       return;
     }
+    const thisMs = beatMs + (knockouts?.[index] ? KNOCKOUT_EXTRA_MS / speed : 0);
     onBeat(index, "approach");
     const toImpact = window.setTimeout(() => onBeat(index, "impact"), impactMs);
-    const toNext = window.setTimeout(() => setIndex((i) => i + 1), beatMs);
+    const toSettle = window.setTimeout(() => onBeat(index, "settle"), Math.min(impactMs + SETTLE_AFTER_IMPACT_MS, beatMs - 50));
+    const toNext = window.setTimeout(() => setIndex((i) => i + 1), thisMs);
     return () => {
       window.clearTimeout(toImpact);
+      window.clearTimeout(toSettle);
       window.clearTimeout(toNext);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, beats.length, beatMs, impactMs, reducedMotion, skip]);
+  }, [index, beats.length, beatMs, impactMs, reducedMotion, skip, holdMs, speed]);
 
   return null;
 }

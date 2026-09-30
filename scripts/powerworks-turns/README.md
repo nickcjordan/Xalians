@@ -11,3 +11,14 @@ Dev server must already be running at `http://localhost:3108` (do not start a se
 4. Geometry check (every figure/letter/plaque inside the stage, squad plaques above the key bar, rail and banner inside the viewport, no page scroll; exits non-zero on failure):
    `node scripts/powerworks-turns/geometry.cjs --scenario-dir=/tmp/pwt-scen`
 5. Review: open `sheet.png` (or `sheet.html` if PIL is unavailable) in each `<scenario>-<size>/` folder under the frames output, and read `hooks.json` next to it for the per-frame banner/side/spotlight/busy/rail/delta values (null when a hook is not built yet).
+
+## UX pass 2 additions
+
+- `plan-ux2.json`: the whole-journey capture plan (arrival, first look, hovers, acting, enemy turns, encounter end, camp, defeat, victory, retreat, tools, phone portrait). Run it with `--plan=scripts/powerworks-turns/plan-ux2.json --scenario-dir=<scenarios> --out=<dir>`. An entry may set `"sizes": ["844x390"]` and `"fresh": true` (first visit: clears localStorage, no scenario).
+- New step ops in `flow.cjs`: `click` (`text` matches a button's text or aria-label, optional `settle` ms), `framesUntilIdle` (`every`, `max`; frames until `data-busy` is false, then one idle frame), `wait` (`ms`, no capture), and `hover` now takes `key` (restrict to key N) and `cell:*` (that key's first button).
+- New scenarios in `turnScenarios.ts`, all reached by playing real engine commands and searching seeds: `camp-fallen`, `final-blow`, `round-open-enemy`, `last-stand`, `last-blow`, `lost`, `won`, `retreated-command`. `retreated-stall` is searched for and reported NOT FOUND (the stall force-out needs a fight where neither side lowers the other's total health, which the engine never produces in the seeded search).
+- Self-only keys ("now" keys such as Ground Anchor) ignored mouse clicks until UX pass 2 fixed `act()` to name the user as the target; `click` and `key` both work now.
+
+- `--only=S01,S06` limits a `--plan` run to the entries whose name starts with one of the prefixes.
+- Round 2: the geometry check also opens the briefing, the sector title card, the Guide and the Restart dialog on a fresh page at every size, and checks every panel (fits the viewport, no inner scroll, nothing pokes out or is clipped). The searched scenarios now save a Record, so the end screens show real summary numbers.
+- Round 4 (phone): a size 500 px tall or less is opened as a touch phone (isMobile, hasTouch, 2x) by both tools. `flow.cjs` taps instead of clicking (a key cell needs two taps: the first previews, the second uses it) and opens Guide, Record and Restart through the Menu button; `--only-size=844x390` limits a `--plan` run to entries that include that size. `geometry.cjs` runs the phone checks at 844x390, 932x430 and 667x375 (no text under 12 CSS px, no button or link under 40 px in its short side, nothing outside the screen or clipped, no page scroll, the tap flow, and the same checks while a move and the enemy turns play out).

@@ -1,0 +1,595 @@
+[
+ {
+  "name": "S01-arrival",
+  "fresh": true,
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "frames",
+    "ms": 900,
+    "every": 300
+   },
+   {
+    "op": "click",
+    "text": "Begin",
+    "settle": 300
+   },
+   {
+    "op": "frames",
+    "ms": 2800,
+    "every": 400
+   },
+   {
+    "op": "click",
+    "text": "Guide"
+   },
+   {
+    "op": "wait",
+    "ms": 500
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S02-first-look",
+  "scenario": "first",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "wait",
+    "ms": 1200
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S03a-options-graviclaw",
+  "scenario": "checkpoint-graviclaw",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "hover",
+    "key": 1,
+    "target": "cell:A"
+   },
+   {
+    "op": "hover",
+    "key": 1,
+    "target": "cell:C"
+   },
+   {
+    "op": "hover",
+    "key": 2,
+    "target": "cell:B"
+   },
+   {
+    "op": "hover",
+    "key": 3,
+    "target": "cell:*"
+   },
+   {
+    "op": "hover",
+    "key": 4,
+    "target": "cell:A"
+   },
+   {
+    "op": "hover",
+    "target": "figure:C"
+   }
+  ]
+ },
+ {
+  "name": "S03b-options-hippochamp",
+  "scenario": "power-hippochamp",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "hover",
+    "key": 4,
+    "target": "cell:C"
+   },
+   {
+    "op": "hover",
+    "key": 1,
+    "target": "cell:C"
+   },
+   {
+    "op": "hover",
+    "key": 3,
+    "target": "cell:A"
+   },
+   {
+    "op": "hover",
+    "key": 2,
+    "target": "cell:B"
+   }
+  ]
+ },
+ {
+  "name": "S03c-options-crystorn",
+  "scenario": "control-crystorn",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "hover",
+    "key": 3,
+    "target": "cell:B"
+   },
+   {
+    "op": "hover",
+    "key": 1,
+    "target": "cell:A"
+   },
+   {
+    "op": "hover",
+    "key": 4,
+    "target": "cell:C"
+   }
+  ]
+ },
+ {
+  "name": "S04a-acting",
+  "scenario": "first",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "act",
+    "key": 2,
+    "target": "A"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 150
+   }
+  ]
+ },
+ {
+  "name": "S04b-acting-shield",
+  "scenario": "checkpoint-graviclaw",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "key",
+    "key": "3"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 150
+   }
+  ]
+ },
+ {
+  "name": "S04c-acting-area",
+  "scenario": "power-hippochamp",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "act",
+    "key": 4,
+    "target": "A"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 150
+   }
+  ]
+ },
+ {
+  "name": "S05a-enemy-turns",
+  "scenario": "before-enemy-phase",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "act",
+    "key": 3,
+    "target": "A"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 100
+   }
+  ]
+ },
+ {
+  "name": "S05b-round-change",
+  "scenario": "round-open-enemy",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "act",
+    "key": 1,
+    "target": "A"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 120
+   }
+  ]
+ },
+ {
+  "name": "S06-encounter-end",
+  "scenario": "final-blow",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "act",
+    "key": 2,
+    "target": "B"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 150
+   },
+   {
+    "op": "wait",
+    "ms": 800
+   },
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Continue"
+   },
+   {
+    "op": "frames",
+    "ms": 2800,
+    "every": 400
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S07-camp",
+  "scenario": "camp-fallen",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Revive"
+   },
+   {
+    "op": "shot"
+   },
+   {
+    "op": "wait",
+    "ms": 1500
+   },
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Continue"
+   },
+   {
+    "op": "frames",
+    "ms": 2800,
+    "every": 400
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S08a-defeat-transition",
+  "scenario": "last-stand",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Pass"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 150
+   },
+   {
+    "op": "wait",
+    "ms": 800
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S08b-defeat-screen",
+  "scenario": "lost",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Play again"
+   },
+   {
+    "op": "wait",
+    "ms": 600
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S09a-victory-transition",
+  "scenario": "last-blow",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "act",
+    "key": 1,
+    "target": "B"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 150
+   },
+   {
+    "op": "wait",
+    "ms": 800
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S09b-victory-screen",
+  "scenario": "won",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S10a-retreat-screen",
+  "scenario": "retreated-command",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S10b-restart-confirm",
+  "scenario": "first",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Restart"
+   },
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Cancel"
+   },
+   {
+    "op": "shot"
+   },
+   {
+    "op": "wait",
+    "ms": 800
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S11a-record",
+  "scenario": "first",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "act",
+    "key": 2,
+    "target": "A"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 200
+   },
+   {
+    "op": "click",
+    "text": "Record"
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S11b-tools-skip",
+  "scenario": "round-open-enemy",
+  "sizes": [
+   "1366x768",
+   "1920x1080"
+  ],
+  "steps": [
+   {
+    "op": "act",
+    "key": 3,
+    "target": "A"
+   },
+   {
+    "op": "wait",
+    "ms": 700
+   },
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "2x",
+    "settle": 500
+   },
+   {
+    "op": "wait",
+    "ms": 500
+   },
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Skip",
+    "settle": 100
+   },
+   {
+    "op": "frames",
+    "ms": 800,
+    "every": 100
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 200
+   }
+  ]
+ },
+ {
+  "name": "S12-phone-portrait",
+  "scenario": "first",
+  "sizes": [
+   "390x844"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "wait",
+    "ms": 1000
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ }
+]
