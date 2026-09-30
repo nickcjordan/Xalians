@@ -50,6 +50,46 @@ describe("Powerworks turn by turn", () => {
     });
   });
 
+  it("round 3: every plate carries its element, and the rail numbers the order after NEXT", () => {
+    const { container } = mount();
+    const plates = container.querySelectorAll(".pwt-plate");
+    expect(plates.length).toBeGreaterThan(0);
+    plates.forEach((pl) => expect(pl.querySelector(".pwt-el[data-element]")).toBeTruthy());
+    expect(container.querySelector(".pwt-keybar-portrait .pwt-el")).toBeTruthy();
+    const laters = Array.from(container.querySelectorAll('[data-slot][data-state="later"] .pwt-rail-order')).map((n) => Number(n.textContent));
+    // Counted from NOW (1) and NEXT (2): the first numbered slot is 3, then rising by one.
+    if (laters.length) {
+      expect(laters[0]).toBe(3);
+      laters.forEach((n, i) => expect(n).toBe(3 + i));
+    }
+  });
+
+  it("round 3: hovering an enemy plate rings it and lights its column in every attack key", () => {
+    const { container } = mount();
+    const plate = container.querySelector(".pwt-row.enemies .pwt-plate")!;
+    fireEvent.mouseEnter(plate);
+    expect(plate.className).toContain("targeted");
+    const lit = container.querySelectorAll(".pwt-cell.col-lit");
+    expect(lit.length).toBeGreaterThan(0);
+    fireEvent.mouseLeave(plate);
+    expect(container.querySelectorAll(".pwt-cell.col-lit").length).toBe(0);
+  });
+
+  it("round 3: while a move plays the key bar shows one playing card and speed is a labeled 1x/2x control", async () => {
+    const { container } = mount();
+    const cells = screen.getAllByRole("button").filter((b) => / on [A-F], /.test(b.getAttribute("aria-label") || ""));
+    await act(async () => {
+      fireEvent.click(cells[0]);
+    });
+    expect(container.querySelector("[data-playing]")).toBeTruthy();
+    const seg = screen.getByRole("group", { name: "Playback speed" });
+    const buttons = Array.from(seg.querySelectorAll("button"));
+    expect(buttons.map((b) => b.textContent)).toEqual(["1x", "2x"]);
+    expect(buttons[0].getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(buttons[1]);
+    expect(buttons[1].getAttribute("aria-pressed")).toBe("true");
+  });
+
   it("shows Continue when a saved state is in camp", () => {
     let { state } = createTurnRun(1, "starter", RULES);
     // Force the run into camp by clearing the enemies' health.

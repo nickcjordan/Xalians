@@ -115,7 +115,7 @@
 .pwt-banner.enemy .pwt-banner-who { color: var(--color-ink); }
 .pwt-banner-label.round .pwt-banner-kicker {
   font-size: 26px;
-  color: var(--color-caution);
+  color: var(--color-ink);
   letter-spacing: 0.04em;
 }
 @keyframes pwt-banner-in {
@@ -216,7 +216,7 @@
 .pwt-rail-portrait .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
 .pwt-rail-col.now .pwt-rail-portrait { border: 2px solid var(--color-ink); box-shadow: 0 0 0 2px var(--color-s1), 0 0 14px var(--color-ink-3); }
 .pwt-rail-col.now.squad .pwt-rail-portrait { border-color: var(--color-viable); box-shadow: 0 0 0 2px var(--color-s1), 0 0 14px var(--color-viable); }
-.pwt-rail-col.next .pwt-rail-portrait { border: 2px solid var(--color-caution); }
+.pwt-rail-col.next .pwt-rail-portrait { border: 2px solid var(--color-ink); }
 .pwt-rail-col.done .pwt-rail-portrait { opacity: 0.3; filter: grayscale(0.7); }
 .pwt-rail-col.down .pwt-rail-portrait { opacity: 0.25; filter: grayscale(1); }
 .pwt-rail-letter {
@@ -268,11 +268,12 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
-  background: var(--color-caution);
-  color: var(--color-room);
+  background: var(--color-s3);
+  color: var(--color-ink);
+  border: 1px solid var(--color-ink-2);
 }
-.pwt-rail-col.now .pwt-rail-tag { background: var(--color-ink); }
-.pwt-rail-col.now.squad .pwt-rail-tag { background: var(--color-viable); }
+.pwt-rail-col.now .pwt-rail-tag { background: var(--color-ink); color: var(--color-room); border-color: var(--color-ink); }
+.pwt-rail-col.now.squad .pwt-rail-tag { background: var(--color-viable); color: var(--color-viable-ink); border-color: var(--color-viable); }
 .pwt-rail-divider {
   position: relative;
   flex: 0 0 40px;
@@ -437,7 +438,7 @@
   filter: drop-shadow(0 0 14px rgba(134, 255, 181, 0.55)) drop-shadow(0 4px 1px #07101e);
 }
 .pwt-plate.lit .pwt-figure {
-  filter: drop-shadow(0 0 16px rgba(207, 165, 74, 0.6)) drop-shadow(0 4px 1px #07101e);
+  filter: drop-shadow(0 0 16px rgba(217, 210, 192, 0.55)) drop-shadow(0 4px 1px #07101e);
 }
 /* The full painted figure: a fixed height by role, never flex-shrunk by its plaque.
    Ordinary squad and enemy figures share one size; the guardian (the boss, largest art)
@@ -559,7 +560,7 @@
   to { transform: translateX(-50%) translateY(4px); }
 }
 .pwt-plate.targeted .pwt-figure {
-  filter: drop-shadow(0 0 16px var(--color-caution)) drop-shadow(0 4px 1px #07101e);
+  filter: drop-shadow(0 0 14px var(--color-ink)) drop-shadow(0 4px 1px #07101e);
 }
 .pwt-plate.targeted .pwt-body::after {
   content: "";
@@ -568,7 +569,8 @@
   right: 8%;
   bottom: -4px;
   height: 18px;
-  border: 2px solid var(--color-caution);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0 0 10px rgba(217, 210, 192, 0.55);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -753,17 +755,13 @@
   min-width: 0;
   font-family: var(--font-data);
   font-size: 10.5px;
-  color: var(--color-plague);
-  background: var(--color-plague-tint);
-  border: 1px solid rgba(181, 86, 108, 0.3);
+  color: var(--color-ink);
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge-strong);
   padding: 1px 4px;
   white-space: nowrap;
 }
 .pwt-hit-on-active svg { width: 10px; height: 10px; flex: 0 0 auto; }
-.pwt-hit-on-active .up,
-.pwt-hit-on-active .down { width: 12px; height: 12px; }
-.pwt-hit-on-active .up { color: var(--color-plague); }
-.pwt-hit-on-active .down { color: var(--color-viable); }
 
 /* --- keys --- */
 .pwt-keybar {
@@ -873,7 +871,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.pwt-key.signature .pwt-key-name { color: var(--color-caution); }
+.pwt-key.signature .pwt-key-name { color: var(--color-ink); }
 /* Foot line: timing words on the left, the key's own supports (riders) on the right, so a
    rider never reads as belonging to whichever cell it happens to sit under (paint review
    round 4, item 3). */
@@ -988,8 +986,8 @@
   border-radius: 999px;
 }
 .pwt-cell-chevron-wrap svg { width: 13px; height: 13px; }
-.pwt-cell-chevron-wrap.up { color: var(--color-viable-ink); background: var(--color-viable); }
-.pwt-cell-chevron-wrap.down { color: var(--color-plague-ink); background: var(--color-plague); }
+.pwt-cell-chevron-wrap.good { color: var(--color-viable-ink); background: var(--color-viable); }
+.pwt-cell-chevron-wrap.bad { color: var(--color-plague-ink); background: var(--color-plague); }
 .pwt-cell-immune-wrap {
   display: flex;
   align-items: center;
@@ -1045,8 +1043,8 @@
 .pwt-rider svg { width: 10px; height: 10px; }
 .pwt-rider.heal { color: var(--color-viable); }
 .pwt-rider.shield { color: var(--color-el-ice); }
-.pwt-rider.boost { color: var(--color-caution); }
-.pwt-rider.hinder { color: var(--color-viable); }
+.pwt-rider.boost { color: var(--color-ink-2); }
+.pwt-rider.hinder { color: var(--color-ink-2); }
 .pwt-rider.delay { color: var(--color-ink-2); }
 .pwt-rider-each {
   font-family: var(--font-legend);
@@ -1084,9 +1082,9 @@
 .pwt-key-now-chip svg { width: 13px; height: 13px; }
 .pwt-key-now-chip.heal { color: var(--color-viable); }
 .pwt-key-now-chip.shield { color: var(--color-el-ice); }
-.pwt-key-now-chip.boost { color: var(--color-caution); }
+.pwt-key-now-chip.boost { color: var(--color-ink-2); }
 .pwt-key-now-chip.hinder,
-.pwt-key-now-chip.delay { color: var(--color-plague); }
+.pwt-key-now-chip.delay { color: var(--color-ink-2); }
 .pwt-key-now-label {
   font-family: var(--font-legend);
   font-size: var(--text-tiny);
@@ -1570,7 +1568,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-caution);
+  color: var(--color-ink);
 }
 /* A readable lunge and a clear impact flash. */
 @keyframes pwt-lunge-to {
@@ -1586,7 +1584,7 @@
 }
 
 /* --- flow review round 4 (2026-09-29) --- */
-.pwt-banner-round { color: var(--color-caution); }
+.pwt-banner-round { color: var(--color-ink-2); }
 .pwt-keybar-wait-round { font-size: 22px; letter-spacing: 0.06em; }
 /* The keys wait under the hand-off card and under the enemy-turn card. */
 .pwt-keybar.handing-off > .pwt-key,
@@ -1884,3 +1882,170 @@
 }
 .pwt-panel-actions button, .pwt-panel-actions .pwt-linkbtn { white-space: nowrap; }
 .pwt-summary div:nth-child(5) { grid-column: 1 / -1; }
+
+/* --- UX pass 2, round 3: one meaning per mark, and impact (2026-09-29) --- */
+/*
+  Colors, one rule each. Gold is the finishing cell and nothing else. Chevrons: the direction
+  is the damage (up more, down less) and the color is who that favors (green good for you,
+  raspberry bad), in key cells and on an enemy's hit chip alike. The swords glyph always says
+  "a hit" and is neutral ink wherever it sits; only an outcome number takes a color.
+*/
+/* The enemy's hit chip: neutral, the chevron badge carries the matchup. */
+.pwt-hit-on-active svg { color: var(--color-ink-2); }
+.pwt-hit-on-active .pwt-cell-chevron-wrap { width: 14px; height: 14px; }
+.pwt-hit-on-active .pwt-cell-chevron-wrap svg { width: 11px; height: 11px; }
+.pwt-hit-on-active .pwt-cell-chevron-wrap.good svg { color: var(--color-viable-ink); }
+.pwt-hit-on-active .pwt-cell-chevron-wrap.bad svg { color: var(--color-plague-ink); }
+.pwt-hit-on-active.coming svg { color: var(--color-ink-3); }
+
+/* A signature key: its name stays ink; a small star and "once per fight" say what it is. */
+.pwt-key-star { margin-left: auto; flex: 0 0 auto; display: flex; align-items: center; color: var(--color-ink-2); }
+.pwt-key-star svg { width: 12px; height: 12px; fill: currentColor; }
+
+/* A hinder cell reads as the enemy's hit: the swords lead, then that hit struck, then what it
+   falls to. A dashed frame and a faint green wash set it apart from a damage cell at a glance. */
+.pwt-cell.hinder {
+  border-style: dashed;
+  border-color: var(--color-edge-strong);
+  background: var(--color-viable-tint);
+}
+.pwt-cell .pwt-cell-hinder { flex-direction: column; gap: 1px; }
+.pwt-cell-hinder-icon { width: 22px; height: 22px; color: var(--color-ink); }
+.pwt-cell-hinder-nums { display: flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 700; line-height: 1; }
+.pwt-cell-hinder-nums .pwt-cell-before { font-size: 12px; }
+.pwt-cell-hinder-nums .pwt-cell-arrow { font-size: 12px; }
+.pwt-cell-hinder-nums .pwt-cell-num { font-size: 14px; }
+
+/* A self-only key is a cell like the others: press it, hover it to ring who it lands on. */
+.pwt-cell.now { flex-direction: column; justify-content: center; gap: 4px; min-height: 52px; }
+.pwt-key-now-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; }
+.pwt-cell.now .pwt-key-now-label { color: var(--color-ink-2); }
+
+/* An enemy under the pointer (its plate, or the same column in another key) lights its cell. */
+.pwt-cell.col-lit:not(:disabled) {
+  border-color: var(--color-viable);
+  background: var(--color-s2);
+  box-shadow: 0 0 0 1px var(--color-viable);
+}
+.pwt-cell.finish.col-lit:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink); box-shadow: 0 0 0 1px var(--color-ink); }
+.pwt-cell.col-lit .pwt-cell-letter { color: var(--color-ink); font-weight: 700; }
+.pwt-cell.finish.col-lit .pwt-cell-letter { color: var(--color-room); }
+
+/* Element on every unit: a small tag on the plaque's top edge, the key bar's portrait beneath its name. */
+.pwt-el {
+  position: absolute;
+  top: -15px;
+  right: 4px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 14px;
+  padding: 0 5px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  font-family: var(--font-legend);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--el);
+  white-space: nowrap;
+}
+.pwt-el i { width: 6px; height: 6px; border-radius: 999px; background: var(--el); flex: 0 0 auto; }
+.pwt-el.pwt-el-static { position: static; height: 13px; margin-top: 2px; background: transparent; }
+
+/* The turn rail reads in one pass: one row in time order, enemies raised a notch and the squad
+   lowered a notch, the track threaded through every slot so the eye follows it left to right
+   instead of reading the upper lane and then the lower. Small numbers count the order. */
+.pwt-rail-col.enemy .pwt-rail-slot { bottom: calc(50% - 13px); }
+.pwt-rail-col.squad .pwt-rail-slot { top: calc(50% - 13px); }
+.pwt-rail-col::before { display: none; }
+.pwt-rail-track { height: 2px; background: var(--color-ink-4); }
+.pwt-rail-order {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  z-index: 1;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-s1);
+  border: 1px solid var(--color-edge-strong);
+  border-radius: 999px;
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--color-ink-2);
+}
+.pwt-rail-col.enemy .pwt-rail-letter { top: -3px; }
+
+/* Impact: a struck unit flashes and is knocked back a few pixels away from the attacker, then
+   settles. One brief flash, no shake, no blur. */
+.pwt-plate.impact-target.struck .pwt-figure { animation: pwt-knockback 480ms ease-out both; }
+.pwt-plate.impact-target.struck .pwt-body::before {
+  background: radial-gradient(circle, rgba(255, 244, 214, 0.85), transparent 72%);
+  animation: pwt-target-flash 340ms ease-out forwards;
+}
+@keyframes pwt-knockback {
+  0% { transform: translate(0, 0); filter: brightness(2.6) saturate(0.7); }
+  22% { transform: translate(calc(var(--lunge-x, 20px) * 0.45), calc(var(--lunge-y, 0px) * 0.45)); filter: brightness(1.8); }
+  60% { transform: translate(calc(var(--lunge-x, 20px) * 0.14), calc(var(--lunge-y, 0px) * 0.14)); filter: brightness(1.1); }
+  100% { transform: translate(0, 0); filter: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pwt-plate.impact-target.struck .pwt-figure { animation: none !important; }
+}
+/* The number is large, with STRONG or WEAK beside it in the matchup color. */
+.pwt-float-num { display: flex; align-items: center; gap: 8px; }
+.pwt-float-num.hurt { font-size: 60px; }
+.pwt-float-tag {
+  font-family: var(--font-legend);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  text-shadow: none;
+  border: 1px solid #000;
+  box-shadow: 0 2px 0 #000;
+}
+.pwt-float-tag.good { background: var(--color-viable); color: var(--color-viable-ink); }
+.pwt-float-tag.bad { background: var(--color-plague); color: var(--color-plague-ink); }
+
+/* While beats play the key bar shows one state, a card: the enemy's turn (raspberry kicker) or
+   your own move playing out (neutral). The keys stay hidden behind it, never a ghost. */
+.pwt-keybar-wait.playing.squad .pwt-keybar-wait-kicker { color: var(--color-ink-2); }
+.pwt-keybar.busy > .pwt-key,
+.pwt-keybar.busy > .pwt-pass { opacity: 0; }
+
+/* Speed is a labeled two-part control; Skip is its own button. */
+.pwt-keybar-play .pwt-playtools { flex-direction: column; align-items: stretch; gap: 8px; }
+.pwt-speed { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.pwt-speed-label { font-family: var(--font-legend); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-2); }
+.pwt-speed-seg { display: flex; border: 1px solid var(--color-edge-strong); }
+.pwt-playtools .pwt-speed-seg button {
+  border: 0;
+  background: var(--color-s2);
+  color: var(--color-ink-2);
+  padding: 5px 12px;
+  font-family: var(--font-data);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.pwt-playtools .pwt-speed-seg button + button { border-left: 1px solid var(--color-edge-strong); }
+.pwt-playtools .pwt-speed-seg button.on { background: var(--color-ink); color: var(--color-room); }
+.pwt-playtools .pwt-skip { justify-content: center; }
+.pwt-legend-chips { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.pwt-legend-sample .pwt-cell.now { flex: 0 0 104px; }
+.pwt-legend-sample .pwt-float-tag { box-shadow: none; }
+.pwt-plate.targeted .pwt-plaque { box-shadow: 0 0 0 2px var(--color-ink); }
+/* Sized so three numbers with their tags still clear each other across an enemy row. */
+.pwt-float-num.hurt { font-size: 50px; gap: 6px; }
+.pwt-float-tag { font-size: 12.5px; padding: 1px 5px; }
