@@ -298,7 +298,7 @@ const BEATS: Array<Spread | FigureBeat> = [
 			title: 'A Generator, world after world',
 			text: 'The Generators were built for the worlds they stood on. As the worlds pass, the machine reads each one, and the seeds of life in its vat take on forms suited to it.',
 		},
-		alt: "A heavy steel Generator with a tall glowing vat stands still while worlds pass behind it: a storm world, a lava world, an ice world and a sea. With each, the sensor ring on its mast pulses, the vat's gel takes the world's light, and the dark seeds of life floating inside take on forms suited to that world: winged, armored, spiked, bell-shaped.",
+		alt: "A heavy steel Generator with a tall glowing vat stands still while worlds pass behind it: a storm world, a lava world, an ice world and a sea. With each, the sensor ring on its mast reads the world, a pulse of light runs down into the vat, the gel takes the world's light, and new seeds of life form in it, dark against the glow, in shapes suited to that world: finned, armored, spiked, bell-shaped.",
 	},
 	{
 		kind: 'figure',
@@ -338,10 +338,10 @@ const BEATS: Array<Spread | FigureBeat> = [
 		headline: 'The only way to safely generate new Xalians',
 		text: TOKENS,
 		label: {
-			title: 'A Scrambler Token on Valleron',
-			text: 'A Scrambler Token, printed by the Mercurius Machine on Valleron, averts the plague, so new Xalians can be generated safely; tokens carried home bring life back to a few worlds.',
+			title: 'A Scrambler Token brought home',
+			text: 'Carried home from Valleron, where the Mercurius Machine prints them, a Scrambler Token lets a Generator make new Xalians immune to the plague.',
 		},
-		alt: 'The view closes in on the bright world. A Scrambler Token forms there, a hexagonal chip of dark glass and worn metal in white light, and the red haze draws back from it in a widening ring. Small glints leave it for a few nearby dark worlds, and each world they reach lights again around a small green glow. Beyond them the red remains.',
+		alt: 'The view dives from the galaxy to one dark world under a red haze, where a Generator stands dormant, its vat empty. A small hexagonal chip falls from the direction of a distant bright star and seats in a console at the machine’s foot. Light runs from the chip up into the vat, which fills with green, and new seeds of life form in it. A warm glow spreads over the ground from the chip, and the red haze draws back around the machine.',
 	},
 	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], labelRoom: '9.5rem', phoneVideo: true, layout: 'side', aspect: 'aspect-video min-[720px]:aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
