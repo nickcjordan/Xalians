@@ -2,7 +2,17 @@
 
 Updated 2026-09-29.
 
-## Current checkpoint: combined model 0156, 2026-09-29
+## Current checkpoint: builder and critic loop running, 2026-09-29
+
+Nick asked for an autonomous loop and check-ins only at very large milestones; per-round PRs are retired in favor of a private review artifact (https://claude.ai/artifact/LppftpFgTmznHifZBrWRQt, built by a scratch script from the latest packet).
+
+- System: `docs/design/species-construction/LOOP.md`; briefs, cameras and state in `docs/design/species-construction/akinza/loop/`; harness `art/species-construction/loop/loop_tools.py`. Branch `akinza/construction-loop`, no PRs.
+- Models, verified from agent logs: critic `claude-opus-5-5` (alias opus), builder `claude-sonnet-5-5` (alias sonnet).
+- Batch 1 is running as workflow run `wf_f28743c3-122` from baseline assembled-0156 (packet `untracked/species-construction/akinza/loop/packets/assembled-0156`). The script is in the session's workflow scripts folder; resume with `resumeFromRunId`.
+
+Next unfinished action, when the batch returns: write its returned `status` into `akinza/loop/status.json` and its `history` into the round log. Review parked regions and write any method changes. Refresh the review artifact from the new baseline packet. Commit, then launch the next batch with the updated status. Contact Nick only at the approval gate or the 16-round hard stop.
+
+## Previous checkpoint: combined model 0156, 2026-09-29
 
 - PR #754 merged the 0149 work. Continued from fresh main on `codex/akinza-rear-coat`.
 - Added `add_rear_coat_field.py`; rear coat head 0152 replaces the bald rear dish with flowing clumps parted at the midline. Rejected 0150 (spines) and 0151 (feather shingles).
