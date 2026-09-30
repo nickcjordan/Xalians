@@ -60,6 +60,9 @@ parser.add_argument('--lock-spacing', type=float, default=.058)
 parser.add_argument('--lock-min-floor', type=float, default=.02, help='locks only where the floor is on the plate (y above this)')
 parser.add_argument('--root-blend', type=float, default=.008)
 parser.add_argument('--no-locks', action='store_true')
+parser.add_argument('--cup-lock-clear', type=float, default=None,
+                    help='when set, drop every lock whose root is inside the cup outline or within this distance '
+                         'of it (head-local units); off by default so earlier builds reproduce')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=False)
@@ -289,7 +292,7 @@ if args.smooth_sigma > 0:
 # 6. Leaf locks laid on the floor, radiating from the ear root.
 rng = np.random.default_rng(args.seed)
 locks = []
-rejected = {'skullOrRoofOrEmpty': 0, 'tipLeavesPlate': 0}
+rejected = {'skullOrRoofOrEmpty': 0, 'tipLeavesPlate': 0, 'insideCup': 0}
 if not args.no_locks:
     root_point = np.array([.31, -.03])
     gx = np.gradient(floor, VS, axis=0)
@@ -337,6 +340,11 @@ if not args.no_locks:
                 slope_here = max(abs(at(gx, x, pz)), abs(at(gz, x, pz)))
                 if slope_here > .6 or any(not (args.lock_min_floor <= v <= .22) or abs(v-y) > .10 for v in levels):
                     rejected['tipLeavesPlate'] += 1
+                    continue
+                # Applied last, after every draw and every other test, so the surviving locks outside the
+                # cup are exactly the ones an earlier build (flag off) laid.
+                if args.cup_lock_clear is not None and float(polygon_sdf(np.array([px]), np.array([pz]))[0]) < args.cup_lock_clear:
+                    rejected['insideCup'] += 1
                     continue
                 hit = np.array([x, y, pz])
                 locks.append({'side': side, 'root': list(hit), 'normal': list(normal),
