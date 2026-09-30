@@ -121,3 +121,11 @@ Builder: the chip lit (about 2.6 times its surroundings at 1@5), a ground condui
 Generators critic: Glance 8, Lore 8.5 (clears), Subject 8, Setting 8.5 (clears), Motion 8 (the strips show a real lead and follow), Changes 8, Finish 8, Phone 7.5. Subject and Finish at this path's ceiling (8); 8.5 needs a painted machine or Nick's waiver.
 Outbreak critic: Glance 8.5 (pending the reader), Lore 8.5 (clears), Subject 7.5, Setting 8, Motion 8, Changes 8, Finish 7.5, Phone 7.5.
 Blind readers (fresh): 02 "the tanks glow a matching color and hold something small growing inside" (medium): the best 02 read yet; 03 passes (one tank still orange at 6 s: a bug); 05 passes; 06 "its tall glass window lights up green, a small lamp in front of it comes on ... things growing in a tank" (medium): the red pulled back not seen, so Glance stays at 8 until a reader sees it.
+
+### Round 10 (2026-09-29)
+
+Builder: a pulse down the mast into the gel where each seed grows, a readout tick; FIRST moved to 2.7 s; the painting cross-fade over the full 0.5 s; glitch states held 0.4 s; the 03 machine that stayed orange fixed; in 06 a stronger red before and after, the chip falling face-on from Valleron's star, the dormant machine lit on its sun side.
+Generators critic: Glance 7.5, Lore 8.5 (clears), Subject 8, Setting 8.5 (clears), Motion 7.5, Changes 8, Finish 7.5, Phone 7.5. Regressed: forming now fills about 2 s of each 2.7 s world, as a white bloom, so no formed seed shows.
+Outbreak critic: Glance 8, Lore 8, Subject 7.5, Setting 8, Motion 8, Changes 8, Finish 7, Phone 7. Regressed: the red as a flat tint makes the dormant machine a see-through ghost and puts pink inside the vat (the plague inside the Generator, against the lore).
+Blind readers (fresh): 02 "the glow inside changes each time ... with sparks or bubbles rising" (no seeds seen); 06 "the machine switches on and starts growing something ... the small glowing hexagon at the machine's base: a key, a battery or an input?" (medium-high; the red held back never mentioned); 03 and 05 pass.
+Round 11 subtracts: formed seeds own each world, dark against the glow; an opaque machine; a clean green vat; one line from chip to vat.
