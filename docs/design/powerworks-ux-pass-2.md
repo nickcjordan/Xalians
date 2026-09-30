@@ -180,6 +180,24 @@ A fresh critic after Round 3 scored every stage 6 or 7 (phone 4, before Round 4)
 11. **Enemy letters are stable.** Check that an enemy keeps its letter for the whole encounter (never reassigned when another falls) and that letters follow the room's row order; if they already do, the letter differs only between sectors and nothing changes.
 12. **Summaries and reports.** "Since your last turn" includes a blocked or reduced enemy hit; the defeat report shows the enemy that ended the run with its remaining health; camp says what the next sector holds (its name and enemies). The Guide adds Pass, Down, strike lines, the playing card and the Record. The chosen speed persists per browser.
 
+
+**Judged after Round 6**: desktop S01 6, S02 7, S03 5, S04 6, S05 6, S06 7, S07 8, S08 8, S09 7, S10 8, S11 7, S12 8; phone S01 6, S02 6, S03 5, S04 5, S05 5, S07 7, S08 7, S09 7, S11 6. Every number on screen matched the engine. Readers graded 99.6%, 99.6% and 94.2% (7, 7 and 6 of 10). Three Round 6 items were recorded as built but did not show in frames (phone landing numbers, phone two-line results, clearing the preview on a new companion), so every Round 7 item is confirmed on a named frame before it counts.
+
+### Round 7: layout that holds
+
+1. **Riders get their own line.** A rider preview never prints over a cell's number; the cell grows a second line (or the key grows a rider row) at every size, including phone.
+2. **No cell arrives framed.** Hover, armed and preview state clear on every change of active companion; a hover applies only after the pointer moves.
+3. **Phone text keeps the facts.** Result sentences take two lines on phone; first-use notes are short enough to end on their number; "since your last turn" and the recovery line get their own place (a row in the key column) so a note never displaces them; the round label is not clipped.
+4. **Calmer finish and hinder cells.** A finishing cell is a gold frame and skull on a dark cell, not a gold slab; a hinder cell is a dashed neutral cell; one hover and echo treatment for every cell type.
+5. **Landing numbers clamp inside the stage** and stay off element tags and plaques, at every size.
+6. **Banner sentences never truncate their number** on desktop: two lines, or a shorter second clause ("blocked" where a hinder zeroed the hit, matching the float).
+7. **The Guide fits** at 1366 and 1920 with margins, grouped into three sections (reading keys, reading plates, turn and tools); its CAN FALL and shield samples render correctly.
+8. **No empty chip well** on enemy plates during enemy beats: the row collapses or fades.
+9. **Revives left** shows in the top bar during play; the briefing says how a run is lost (every companion down).
+10. **Victory has a moment on the stage**: a Guardian down plaque framed in mint; the note outline is replaced by a small tag in the key head.
+11. **Real hit numbers.** An enemy hit is never silently capped at a companion's remaining health: chips and rider previews show the real number, with the skull when it is lethal ("48" with a skull on a companion at 46), so a hinder of 10 visibly removes 10.
+12. **A heal after damage reads as such**: the since-line lists the damage before the heal when both happened to one unit.
+
 Not adopted: a commit guard or undo (the answer keys already preview the outcome before the click); reopen if play shows misclicks.
 
 **Built (2026-09-30, branch feat/powerworks-ux-2-r6):**
