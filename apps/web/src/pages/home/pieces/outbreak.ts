@@ -788,6 +788,8 @@ const HAZES = (() => {
 		return { x: 60 + r() * 880, y: layer === 0 ? 352 + r() * 40 : 396 + layer * 22 + r() * 26, rx: 80 + r() * 150 + layer * 30, ry: layer === 0 ? 20 + r() * 22 : 20 + r() * 26 + layer * 6, a: layer === 0 ? 0.24 + r() * 0.12 : 0.42 + r() * 0.16, ph: r() * TAU, sp: 2 + r() * 4, v: k % 2 };
 	});
 })();
+// ember points on the face of the world the dive falls into: unit-disc positions (below the limb), reach and glow
+const EMBERS = [{ u: -0.42, v: -0.5, r: 3, a: 0.85 }, { u: -0.12, v: -0.72, r: 2.4, a: 0.75 }, { u: 0.3, v: -0.55, r: 3.2, a: 0.9 }, { u: 0.55, v: -0.3, r: 2.2, a: 0.7 }, { u: -0.62, v: -0.2, r: 2.6, a: 0.75 }, { u: 0.05, v: -0.3, r: 2, a: 0.65 }];
 // wisps that drift across the front of the machine
 const WISPS = (() => {
 	const r = rng(91);
@@ -928,7 +930,7 @@ export function createOutbreak(): Figure {
 			ctx.globalAlpha = 1;
 			// the galaxy dissolves as the world ahead grows into a limb and flattens to a horizon
 			const galA = 1 - smooth(0.5, 1.2, t1);
-			const dive = ramp(0.5, 1.9, t1);
+			const dive = ramp(0.4, 1.5, t1);
 			const sceneA = smooth(1.5, 2.3, t1);
 			// everything of the galaxy is drawn at A; the bright world's own light at vis * galA
 			const A = vis * field * galA;
@@ -1017,9 +1019,10 @@ export function createOutbreak(): Figure {
 				ctx.globalCompositeOperation = 'source-over';
 			}
 
-			// ---- the dive's end: the dark world grows into a limb and flattens into the horizon
-			if (dive > 0 && dive < 1.001 && As > 0.004) {
-				const pa = smooth(0.4, 0.9, t1) * (1 - smooth(1.8, 2.3, t1)) * As;
+			// ---- the dive's end: one of the dimmed worlds grows into a limb (a thin crimson edge on the side facing Valleron's
+			// star, embers on its face) and flattens into the horizon; the limb is held and becomes the ground line
+			if (dive > 0 && As > 0.004) {
+				const pa = smooth(0.4, 0.9, t1) * (1 - smooth(1.9, 2.5, t1)) * As;
 				if (pa > 0.004) {
 					const d = ease(dive);
 					const Rp = 40 * Math.pow(120, d);
@@ -1033,10 +1036,27 @@ export function createOutbreak(): Figure {
 					ctx.arc(CX, hy + Rp, Rp, 0, TAU);
 					ctx.fillStyle = css([18, 8, 15]);
 					ctx.fill();
-					ctx.strokeStyle = css([190, 54, 66], 0.8);
-					ctx.lineWidth = 2;
+					// five or six dim ember points on its face, like the burned-out worlds of 05
+					if (Rp < 900) {
+						ctx.globalCompositeOperation = 'lighter';
+						for (const em of EMBERS) {
+							const ex2 = CX + em.u * Rp;
+							const ey2 = hy + Rp + em.v * Rp;
+							if (ey2 < hy + 3) continue;
+							ctx.globalAlpha = pa * em.a;
+							const es = spr(EMBER);
+							if (es) ctx.drawImage(es, ex2 - em.r * 3, ey2 - em.r * 3, em.r * 6, em.r * 6);
+						}
+						ctx.globalCompositeOperation = 'source-over';
+					}
+					// the limb: a thin crimson edge on the side facing the star
+					const aS = Math.atan2(starY - (hy + Rp), starX - CX);
+					const span = Rp < 1500 ? 0.6 : 0.35;
+					ctx.globalAlpha = pa;
+					ctx.strokeStyle = css([214, 60, 72], 0.6);
+					ctx.lineWidth = 1.5;
 					ctx.beginPath();
-					ctx.arc(CX, hy + Rp, Rp, Math.PI * 1.15, Math.PI * 1.85);
+					ctx.arc(CX, hy + Rp, Rp, aS - span, aS + span);
 					ctx.stroke();
 				}
 			}
@@ -1059,6 +1079,7 @@ export function createOutbreak(): Figure {
 				const domeOn = easeOut(ramp(6.0, 7.5, t1));
 				const pulse = 0.94 + 0.06 * Math.sin(sec * 1.2);
 				const s = compact ? 1.08 : 0.88;
+				const ck = compact ? 1.3 : 1; // the chip and its intake, larger on a phone
 				const MH = 370 * s; // the machine's height on the stage
 				const rx = 250;
 				const ry = 1.2 * MH;
@@ -1068,7 +1089,7 @@ export function createOutbreak(): Figure {
 				const lightBoost = mixRGB([190, 54, 66], [236, 170, 120], domeOn);
 				// the front on the ground: an edge with its radius varied about 10 percent, so it breaks
 				const Rf = rx * domeOn;
-				const frontY = py(GROUND + 18);
+				const frontY = py(GROUND + 18 * ck);
 				const fry = Rf * 0.3 + 30;
 				const frontPath = () => {
 					ctx.beginPath();
@@ -1212,13 +1233,13 @@ export function createOutbreak(): Figure {
 				// the intake console in front of the pad, with a hexagonal socket in its top: where the token is set
 				const consoleA = sA * smooth(1.9, 2.6, t1);
 				{
-					const cy = (g: number) => py(GROUND + g);
+					const cy = (g: number) => py(GROUND + g * ck);
 					ctx.globalAlpha = consoleA;
 					ctx.beginPath();
-					ctx.moveTo(CX - 52 * s, cy(8));
-					ctx.lineTo(CX + 52 * s, cy(8));
-					ctx.lineTo(CX + 64 * s, cy(28));
-					ctx.lineTo(CX - 64 * s, cy(28));
+					ctx.moveTo(CX - 52 * s * ck, cy(8));
+					ctx.lineTo(CX + 52 * s * ck, cy(8));
+					ctx.lineTo(CX + 64 * s * ck, cy(28));
+					ctx.lineTo(CX - 64 * s * ck, cy(28));
 					ctx.closePath();
 					const tg = ctx.createLinearGradient(0, cy(8), 0, cy(28));
 					tg.addColorStop(0, css([46, 38, 42]));
@@ -1229,13 +1250,13 @@ export function createOutbreak(): Figure {
 					fg.addColorStop(0, css([34, 28, 32]));
 					fg.addColorStop(1, css([10, 8, 11]));
 					ctx.fillStyle = fg;
-					ctx.fillRect(CX - 64 * s, cy(28), 128 * s, 26 * s);
+					ctx.fillRect(CX - 64 * s * ck, cy(28), 128 * s * ck * ck, 26 * s * ck * ck);
 					ctx.fillStyle = css([190, 176, 160], 0.35);
-					ctx.fillRect(CX - 64 * s, cy(28), 128 * s, 1.2);
+					ctx.fillRect(CX - 64 * s * ck, cy(28), 128 * s * ck * ck, 1.2);
 					ctx.fillStyle = css([6, 5, 8], 0.9);
 					for (const bx of [-56, 56]) {
 						ctx.beginPath();
-						ctx.arc(CX + bx * s, cy(42), 2 * s, 0, TAU);
+						ctx.arc(CX + bx * s * ck, cy(42), 2 * s * ck, 0, TAU);
 						ctx.fill();
 					}
 					// the socket: a hexagonal recess, dark, with a worn lip
@@ -1255,7 +1276,7 @@ export function createOutbreak(): Figure {
 					ctx.stroke();
 					if (slotOn > 0.01) {
 						ctx.globalCompositeOperation = 'lighter';
-						putS(spr(mixRGB([255, 244, 226], GENESIS, awake)), CX, cy(18), 60 * s, 0.5 * slotOn);
+						putS(spr(mixRGB([255, 244, 226], GENESIS, awake)), CX, cy(18), 60 * s * ck, 0.5 * slotOn);
 						ctx.globalCompositeOperation = 'source-over';
 					}
 				}
@@ -1291,11 +1312,9 @@ export function createOutbreak(): Figure {
 					ctx.save();
 					ctx.translate(CX, frontY);
 					ctx.scale(1, fry / Rf);
-					const rg5 = ctx.createRadialGradient(0, 0, Math.max(1, Rf - 9), 0, 0, Rf + 9);
-					rg5.addColorStop(0, css([224, 184, 132], 0));
-					rg5.addColorStop(0.5, css([224, 184, 132], 0.35));
-					rg5.addColorStop(1, css([224, 184, 132], 0));
-					ctx.globalAlpha = clamp((1 - smooth(0.4, 1, domeOn)) * sA);
+					const rg5 = ctx.createRadialGradient(0, 0, Math.max(1, Rf - 13), 0, 0, Rf + 13);
+					for (const [o, al] of [[0, 0], [0.18, 0.05], [0.36, 0.2], [0.5, 0.28], [0.64, 0.2], [0.82, 0.05], [1, 0]] as [number, number][]) rg5.addColorStop(o, css([224, 184, 132], al));
+					ctx.globalAlpha = clamp(smooth(0, 0.12, domeOn) * (1 - smooth(0.4, 1, domeOn)) * sA);
 					ctx.fillStyle = rg5;
 					ctx.fillRect(-Rf - 12, -Rf - 12, (Rf + 12) * 2, (Rf + 12) * 2);
 					ctx.restore();
@@ -1368,7 +1387,7 @@ export function createOutbreak(): Figure {
 					const dl = Math.hypot(dx, dy) || 1;
 					dx /= dl;
 					const dyn = dy / dl;
-					const P2 = [CX, py(GROUND + 18)] as const;
+					const P2 = [CX, py(GROUND + 18 * ck)] as const;
 					const P0 = [starX, starY] as const;
 					const P1 = [(P0[0] + P2[0]) / 2, Math.min(P0[1], P2[1]) - 20] as const;
 					const at = (q: number) => {
@@ -1391,10 +1410,10 @@ export function createOutbreak(): Figure {
 							}
 							ctx.globalCompositeOperation = 'source-over';
 						}
-						const size = (64 * s) / (CHIP_R * 1.732);
+						const size = (64 * s * ck) / (CHIP_R * 1.732);
 						ctx.globalCompositeOperation = 'lighter';
 						const flB = Math.pow(Math.max(0, 1 - (t1 - seatAt) / 0.55), 0.7);
-						if (t1 >= seatAt && flB > 0) putS(spr(WHITE), P2[0], P2[1], 1.5 * 72 * s, 0.8 * flB);
+						if (t1 >= seatAt && flB > 0) putS(spr(WHITE), P2[0], P2[1], 1.5 * 72 * s * ck, 0.8 * flB);
 						const pulseSeat0 = mix(0.5, 0.8, Math.exp(-Math.max(0, t1 - seatAt) / 0.5));
 						putS(spr([255, 244, 226]), head[0], head[1] + 5 * seated * s, 48 * s, (arrive < 1 ? smooth(0.3, 0.9, arrive) * 0.55 : pulseSeat0));
 						ctx.globalCompositeOperation = 'source-over';

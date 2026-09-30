@@ -253,6 +253,25 @@ export function paintMachine(g: Ctx) {
 	for (let k = 0; k < 9; k++) g.fillRect(MX + 112, 318 + k * 12, 32, 5);
 	rivetAt(g, MX + 110, 256, true);
 	rivetAt(g, MX + 146, 256, true);
+	// grime darkening the bottom 15 percent of each side box
+	for (const [x0, x1, y0] of [[MX - 150, MX - 104, 300], [MX + 104, MX + 152, 250]] as const) {
+		const hh = (GROUND - 2 - y0) * 0.15;
+		const gr = g.createLinearGradient(0, GROUND - 2 - hh, 0, GROUND - 2);
+		gr.addColorStop(0, css(BLACK, 0));
+		gr.addColorStop(1, css(BLACK, 0.25));
+		g.fillStyle = gr;
+		g.fillRect(x0, GROUND - 2 - hh, x1 - x0, hh);
+	}
+	// an oil stain on the pad beside the intake
+	g.save();
+	g.translate(MX + 170, GROUND + 9);
+	g.scale(1, 0.22);
+	const oil2 = g.createRadialGradient(0, 0, 0, 0, 0, 42);
+	oil2.addColorStop(0, css([4, 4, 4], 0.3));
+	oil2.addColorStop(1, css([4, 4, 4], 0));
+	g.fillStyle = oil2;
+	g.fillRect(-44, -44, 88, 88);
+	g.restore();
 	// contact shadows where the side boxes meet the ground
 	for (const [x0, x1] of [[MX - 152, MX - 102], [MX + 102, MX + 154]] as const) {
 		const cs = g.createLinearGradient(0, GROUND - 3, 0, GROUND + 8);
@@ -404,12 +423,12 @@ export function paintMachine(g: Ctx) {
 	g.save();
 	bodyPath(g);
 	g.clip();
-	for (const [x, y] of [[MX - 92, 232], [MX + 84, 334], [MX - 36, 372]] as [number, number][]) {
-		const st = g.createLinearGradient(0, y, 0, y + 32);
-		st.addColorStop(0, css([140, 70, 30], 0.42));
-		st.addColorStop(1, css([130, 66, 30], 0));
+	for (const [x, y, len] of [[MX - 62, 152, 46], [MX + 76, 178, 62], [MX - 96, 178, 58]] as [number, number, number][]) {
+		const st = g.createLinearGradient(0, y, 0, y + len);
+		st.addColorStop(0, css([190, 92, 36], 0.34));
+		st.addColorStop(1, css([190, 92, 36], 0));
 		g.fillStyle = st;
-		g.fillRect(x - 2, y, 4, 32);
+		g.fillRect(x - 2.5, y, 5, len);
 	}
 	g.fillStyle = css(BLACK, 0.4);
 	g.beginPath();
@@ -434,6 +453,12 @@ export function paintMachine(g: Ctx) {
 	g.save();
 	metal(g, MX - 72, 142, MX + 72, 172, 1.0, 71);
 	metal(g, MX - 80, 166, MX + 80, 176, 0.86, 72);
+	// light nicks along the cap's front edge
+	{
+		const nr3 = rng(65);
+		g.fillStyle = css([226, 230, 220], 0.6);
+		for (let k = 0; k < 12; k++) g.fillRect(MX - 78 + nr3() * 156, 175, 1 + Math.floor(nr3() * 3), 1);
+	}
 	// light nicks along the cap's top edge
 	{
 		const nr2 = rng(64);
