@@ -4,7 +4,7 @@
   format for key xalians.powerworks.turns.v1: { version: PILLAR_SAVE_VERSION, state: TRun }.
 
   Scenarios are reached by playing real turns with turnHardestHit against
-  { ...DEFAULT_RULES, rooms: "roles", timeline: "round", enemyHpFactor: 0.62 }, seed 1 unless
+  { ...DEFAULT_RULES, rooms: "roles", timeline: "round" }, seed 1 unless
   noted. See the doc comment above each scenario function for what it captures and why.
 
   Run: node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/turnScenarios.ts --out=<dir>
@@ -34,7 +34,7 @@ if (!OUT) {
 }
 fs.mkdirSync(OUT, { recursive: true });
 
-const RULES: Rules = { ...DEFAULT_RULES, rooms: "roles", timeline: "round", enemyHpFactor: 0.62 };
+const RULES: Rules = { ...DEFAULT_RULES, rooms: "roles", timeline: "round" };
 
 function fresh(seed = 1): TRun {
   return createTurnRun(seed, "starter", RULES).state;
