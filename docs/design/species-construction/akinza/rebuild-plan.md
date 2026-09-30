@@ -139,3 +139,14 @@ The four input-image steps have been run: S01, B01 and B03 reproduce their recor
 - **GPU nondeterminism (B02, B04, S02, S04).** If a Hunyuan mesh differs, every count downstream is compared within 2 percent, and every hash will show as drift.
 - **S07 must fail.** S07 has to reproduce its guard failure. If slightly different geometry passes the guard, the runner stops at S07, because S08 needs `geometry-failure.blend`. The owner then decides whether to feed `head-0109/head.blend` to S09 instead.
 - **Some steps have no recorded statistics.** S05, S06, S13 and S18 have hash and file checks but no recorded statistics, so drift there cannot be told apart from a real difference until the next recorded statistic downstream.
+
+## Result, 2026-09-30
+
+The replay ran all 37 steps plus acceptance, in two parallel lanes, in about 75 minutes of machine time. The rebuilt `assembled-0205` is identical to the lost one:
+
+- All four Hunyuan3D reconstructions reproduced their recorded output hashes bit for bit on the same GPU, weights and runtime.
+- Every Blender stage with recorded statistics matched them exactly: vertex counts, moved-vertex counts, deviations and lock counts, to the last printed digit. The three `reconstructed` steps (S05, S07, S08) were confirmed through head-0100 and head-0110/attempt-02, whose welded vertex counts match.
+- `.blend` and `.glb` byte hashes differ only because Blender embeds the output location, which moved from the Codex worktree to `C:\dev\art-data`.
+- Acceptance (`rebuild/acceptance/rebuild-result-X01.json`): check values, all ten fixed-height measurement ratios, all sixteen silhouette fit values and the figure height match exactly, and the six views match the saved image with a mean absolute difference of 0.0.
+
+Generated geometry now lives in `C:\dev\art-data\species-construction\akinza`, outside any worktree.

@@ -1,0 +1,223 @@
+{
+  "step": "X01",
+  "output": "{LOG}/X01-fit and C:/dev/art-data/rebuild/log/X01.json",
+  "commands": [
+    [
+      "C:\\Python314\\python.exe",
+      "art/species-construction/loop/loop_tools.py",
+      "check",
+      "assembled-0205"
+    ],
+    [
+      "C:\\Python314\\python.exe",
+      "art/species-construction/loop/loop_tools.py",
+      "measure",
+      "assembled-0205"
+    ],
+    [
+      "C:\\Python314\\python.exe",
+      "art/species-construction/loop/loop_tools.py",
+      "fit",
+      "assembled-0205",
+      "--out",
+      "C:\\dev\\art-data\\rebuild\\log/X01-fit"
+    ]
+  ],
+  "cwd": "C:\\dev\\art-data\\rebuild\\trees\\X01",
+  "tree": "C:\\dev\\art-data\\rebuild\\trees\\X01",
+  "treeResults": {
+    "resolvedCommit": "82e6d3941f0cc70a850be05f1bb7a81a88720326",
+    "edits": []
+  },
+  "exitCode": 0,
+  "elapsedSeconds": 7.1,
+  "stdout": "C:\\dev\\art-data\\rebuild\\log\\X01.out",
+  "hashes": {},
+  "checks": [],
+  "problems": [],
+  "outputHashes": {
+    "C:\\dev\\art-data\\rebuild\\log/X01-fit/fit.json": "37fc0c54eccebf15ff6ab80a1a2bd7fe91be3f56b92bf9d50b62ad931319c25c",
+    "C:\\dev\\art-data\\rebuild\\log/X01-fit/fit.png": "b3b42b8ba7d8171911ab24a60dd2db38b5a65f587a3331dd4e66b3252f3647a8",
+    "C:\\dev\\art-data\\species-construction\\akinza/assembled-0205/render/review.json": "9dee72decee91938ee4c48cd1ac375647855856b68bac006a03e35f0fb0b6340"
+  },
+  "verdict": "match",
+  "acceptance": {
+    "check": {
+      "components": {
+        "expected": 1,
+        "got": 1
+      },
+      "nonManifoldEdges": {
+        "expected": 0,
+        "got": 0
+      },
+      "vertices": {
+        "expected": 727170,
+        "got": 727170
+      },
+      "removedFragments": {
+        "expected": 0,
+        "got": 0
+      }
+    },
+    "measurementRatios": {
+      "front.earSpan": {
+        "expected": 1.004,
+        "got": 1.004
+      },
+      "front.neck": {
+        "expected": 1.036,
+        "got": 1.036
+      },
+      "front.shoulders": {
+        "expected": 1.006,
+        "got": 1.006
+      },
+      "front.waist": {
+        "expected": 1.279,
+        "got": 1.279
+      },
+      "front.hips": {
+        "expected": 0.822,
+        "got": 0.822
+      },
+      "left.earSpan": {
+        "expected": 1.005,
+        "got": 1.005
+      },
+      "left.neck": {
+        "expected": 1.047,
+        "got": 1.047
+      },
+      "left.shoulders": {
+        "expected": 0.922,
+        "got": 0.922
+      },
+      "left.waist": {
+        "expected": 1.095,
+        "got": 1.095
+      },
+      "left.hips": {
+        "expected": 0.816,
+        "got": 0.816
+      }
+    },
+    "fit": {
+      "front.all": {
+        "expected": 0.5661,
+        "got": 0.5661
+      },
+      "front.head": {
+        "expected": 0.8501,
+        "got": 0.8501
+      },
+      "front.trunk": {
+        "expected": 0.577,
+        "got": 0.577
+      },
+      "front.legs": {
+        "expected": 0.4119,
+        "got": 0.4119
+      },
+      "left.all": {
+        "expected": 0.6596,
+        "got": 0.6596
+      },
+      "left.head": {
+        "expected": 0.8764,
+        "got": 0.8764
+      },
+      "left.trunk": {
+        "expected": 0.6684,
+        "got": 0.6684
+      },
+      "left.legs": {
+        "expected": 0.5727,
+        "got": 0.5727
+      },
+      "back.all": {
+        "expected": 0.6119,
+        "got": 0.6119
+      },
+      "back.head": {
+        "expected": 0.8821,
+        "got": 0.8821
+      },
+      "back.trunk": {
+        "expected": 0.623,
+        "got": 0.623
+      },
+      "back.legs": {
+        "expected": 0.4638,
+        "got": 0.4638
+      },
+      "back-r03.all": {
+        "expected": 0.6284,
+        "got": 0.6284
+      },
+      "back-r03.head": {
+        "expected": 0.5679,
+        "got": 0.5679
+      },
+      "back-r03.trunk": {
+        "expected": 0.6782,
+        "got": 0.6782
+      },
+      "back-r03.legs": {
+        "expected": 0.6426,
+        "got": 0.6426
+      }
+    },
+    "figureHeight": {
+      "expected": 1.8557,
+      "got": 1.8557,
+      "measuredAs": "render/geometry.json bounds z span"
+    },
+    "sixViews": {
+      "savedSize": [
+        1800,
+        451
+      ],
+      "newSize": [
+        1800,
+        451
+      ],
+      "resizedForComparison": false,
+      "cells": [
+        {
+          "view": "front",
+          "meanAbsDifference": 0.0,
+          "silhouetteIoU": 1.0
+        },
+        {
+          "view": "front-left",
+          "meanAbsDifference": 0.0,
+          "silhouetteIoU": 1.0
+        },
+        {
+          "view": "left",
+          "meanAbsDifference": 0.0,
+          "silhouetteIoU": 1.0
+        },
+        {
+          "view": "back",
+          "meanAbsDifference": 0.0,
+          "silhouetteIoU": 1.0
+        },
+        {
+          "view": "right",
+          "meanAbsDifference": 0.0,
+          "silhouetteIoU": 1.0
+        },
+        {
+          "view": "front-right",
+          "meanAbsDifference": 0.0,
+          "silhouetteIoU": 0.9999
+        }
+      ],
+      "comparisonImage": "C:\\dev\\art-data\\rebuild\\log\\X01-six-views-comparison.png",
+      "note": "Reported, not gated: rendering noise and JPEG encoding make small differences normal."
+    },
+    "fail": []
+  }
+}
