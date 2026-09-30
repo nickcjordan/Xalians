@@ -2,13 +2,13 @@
 
 The running record of every grading round for the home story's figures (`home-story-figures.md`), kept by the `story-figure-polish` skill. Rewrite the standing state at the top each round; append the round below it. Resume at the top open item.
 
-## Standing state (2026-09-29, after round 13)
+## Standing state (2026-09-30, shipped)
 
-Both figures live on branch `figure/outbreak` (the Generators branch merged in at round 6), sharing one Generator (`pieces/generatorMachine.ts`). Round artifacts: Generators https://claude.ai/artifact/W2wa7nxc58qfZSZJSxjzuf, outbreak https://claude.ai/artifact/Dh4QVoJUmCLT2MEXPr6myw. The labels and descriptions of all four beats passed the lore fact-check twice. Draw time within budget in headed Chrome.
-
-- **Generators (beats 2 and 3):** six of eight lines clear (Glance, Lore, Setting, Motion, Changes, Phone at 8.5). Subject and Finish hold at 8, the ceiling for a machine drawn in code in front of painted worlds, raised as a design decision four times. **Waiting on Nick:** paint the machine (moving parts stay in code; one painting serves 02, 03 and 06), or waive Subject and Finish at 8 in words.
-- **Outbreak (beats 5 and 6), after round 16:** seven of eight lines clear; Glance 8 is held only by its wording. Mechanical checks pass. **Waiting on Nick:** whether 06's glance line is met by "a chip brings a dead machine back to life" (every recent reader says that; none names the red held back, which the critic judges unreadable in this staging), and whether 06 at a Generator's scale stands (applied as my recommendation after the galaxy-scale token failed five readers).
-- **Order of work (Nick, 2026-09-29):** set up the system, then run it on the Generators and on the outbreak to round out the small beats. Drawing goes to Sonnet 5.5; critics and readers are Opus.
+Nick, 2026-09-30, after seeing the grounded build: "i think this looks good ... lets see how all your changes look on the live site now." Both figures shipped from `figure/outbreak` on his word, with the gate's remaining lines waived by it:
+- **Generators (beats 2 and 3):** Glance, Lore, Setting, Motion, Changes, Phone at 8.5; Subject 8 and Finish 8 (a machine drawn in code in front of painted worlds, seen from a different angle). Blind readers pass 02 and 03.
+- **Outbreak (beats 5 and 6):** seven of eight lines at 8.5; Glance 8, held only by 06's glance-line wording (every recent reader says "a chip powers a dead machine and something grows in it"; none names the red held back).
+- **Open for later:** the machine's viewpoint against the paintings (painted machine, or a top-down redraw); the sea world's ground; the ice drifts; 02's seeds at page size; 06's glance line wording.
+- Artifacts: Generators https://claude.ai/artifact/W2wa7nxc58qfZSZJSxjzuf, outbreak https://claude.ai/artifact/Dh4QVoJUmCLT2MEXPr6myw.
 
 ## Open findings, Generators (from round 0b, superseded by round 1)
 
@@ -195,3 +195,7 @@ Blind reader (fresh): "on a flat, stepped metal plinth resting on the ground. In
 Builder: contact darkening at the foundation's foot in every world and 06, no light edge; a wet dark rock under the foundation at sea with soft foam; heavy dark cables sagging into the ground outside the slab; rubble varied and broken up; drifts feathered into the snowfield, one riding up the face; a chiselled stone top.
 Blind reader (fresh), asked where the machine stands per frame: storm "looks pasted on, because nothing touches the base"; lava "looks the most pasted on: the ground is seen from above but the machine is seen from the front, and the base has only a faint glow and no shadow"; ice "the most grounded of the three, though the snow looks like a flat strip laid in front". 02 and 03 read as before (03 passes).
 Diagnosis: the paintings look down on their landscapes from high up, while the drawn machine is a flat front elevation. No amount of detail at the foot reconciles the two viewpoints; it is the same gap that holds Subject and Finish at 8. Taken to Nick: give the drawn machine the paintings' high viewpoint (its tops seen from above, a shadow cast across the ground), or paint the machine at that viewpoint (the pending decision).
+
+### The fade (2026-09-30)
+
+Nick: the vignette had turned from fade-to-transparent to fade-to-black. A wash toward the page's color was tried and read as a gray patch (the page is textured, not flat), so it was removed. The oval now fades to transparent with an eased fall-off (the upper half holds to 0.5, the lower half to `groundHold`), so dark edges thin out into the page instead of leaving a band.
