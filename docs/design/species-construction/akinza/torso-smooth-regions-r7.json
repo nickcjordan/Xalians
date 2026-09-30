@@ -1,0 +1,7 @@
+[
+ {"name":"upper arm +1","center":[0.28,-0.03,0.27],"radii":[0.10,0.10,0.17],"sigma":[0.005,0.005,0.040],"compensation":0.0},
+ {"name":"upper arm -1","center":[-0.28,-0.03,0.27],"radii":[0.10,0.10,0.17],"sigma":[0.005,0.005,0.040],"compensation":0.0},
+ {"name":"upper chest and back","center":[0,-0.02,0.29],"radii":[0.26,0.20,0.20],"sigma":[0.012,0.012,0.055],"compensation":0.0},
+ {"name":"shoulder shelf +1","center":[0.13,-0.02,0.408],"radii":[0.10,0.16,0.045],"sigma":0.02,"compensation":0.0},
+ {"name":"shoulder shelf -1","center":[-0.13,-0.02,0.408],"radii":[0.10,0.16,0.045],"sigma":0.02,"compensation":0.0}
+]
