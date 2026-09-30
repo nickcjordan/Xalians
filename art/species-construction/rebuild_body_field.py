@@ -50,6 +50,8 @@ parser.add_argument('--tail-fill-sigma', type=float, default=.022)
 parser.add_argument('--tail-side-sigma', type=float, default=.032)
 parser.add_argument('--skip-tail-root', action='store_true')
 parser.add_argument('--skip-limb-smoothing', action='store_true')
+# Tails only: leave paws, claws, tail root and limbs exactly as the input has them.
+parser.add_argument('--tails-only', action='store_true')
 # Optional tail rebuild: new sweep controls plus the tail-free torso they fuse onto.
 parser.add_argument('--tail-controls', type=Path)
 parser.add_argument('--tail-free-body', type=Path)
@@ -288,7 +290,7 @@ HIND = {
     'toeRadii': [.025, .035, .035],
     'blend': {'toeToToe': .006, 'toeToPad': .016, 'paw': .030, 'floor': .004},
 }
-for side in [1, -1]:
+for side in ([] if args.tails_only else [1, -1]):
     center, half = section(side, -.805)
     ax, ay = float(center[0]), float(center[1])
     low = (min(side*.18, ax+side*.26), ay-.30, FLOOR-.02)
@@ -336,7 +338,7 @@ FORE = {'wristZ': -.130, 'tipZ': -.292,
         'digits': [[.143, -.004, -.039], [.150, -.004, -.013], [.150, -.004, .013], [.143, -.004, .039]],
         'digitRadii': [.028, .025, .0145],
         'blend': {'digitToDigit': .004, 'digitToPalm': .012, 'palmToWrist': .025}}
-for side in [1, -1]:
+for side in ([] if args.tails_only else [1, -1]):
     wrist_center, wrist_half = section(side, FORE['wristZ'], y_limit=.05, x_min=.33)
     tip_center, _ = section(side, FORE['tipZ'], y_limit=.05, x_min=.33)
     W = np.array([wrist_center[0], wrist_center[1], FORE['wristZ']])
@@ -381,7 +383,7 @@ for side in [1, -1]:
             'length': .026, 'bend': .85, 'radius': .0048, 'floor': None})
 
 # Tail root ---------------------------------------------------------------
-if not args.skip_tail_root:
+if not (args.skip_tail_root or args.tails_only):
     center, radii = np.array([.015, .13, -.065]), np.array([.14, .16, .15])
     sigma, fill_sigma = args.tail_blur_sigma, args.tail_fill_sigma
     pad_width = 3*max(sigma, fill_sigma, args.tail_side_sigma)
@@ -437,7 +439,7 @@ LIMB_REGIONS = [
     for name, cx, cy, cz, radii, sigma, maximum_y, compensation in [
         ('knee and calf', .285, -.010, -.500, [.160, .150, .200], .030, .120, .0055),
         ('forearm', .430, -.060, .020, [.090, .090, .150], .020, .060, .0040)]]
-if not args.skip_limb_smoothing:
+if not (args.skip_limb_smoothing or args.tails_only):
     limb_records = []
     for region in LIMB_REGIONS:
         center, radii, sigma = np.array(region['center']), np.array(region['radii']), region['sigma']
@@ -480,8 +482,9 @@ for polygon in rebuilt.data.polygons:
     polygon.use_smooth = True
 require_single_closed_mesh(rebuilt, args.out, 'Field rebuilt body')
 bpy.data.objects.remove(body, do_unlink=True)
-for claw in old_claws:
-    bpy.data.objects.remove(claw, do_unlink=True)
+if not args.tails_only:
+    for claw in old_claws:
+        bpy.data.objects.remove(claw, do_unlink=True)
 
 
 def build_claw(spec, rings=24, segments=20):
