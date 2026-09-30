@@ -1,6 +1,6 @@
 // The Generator machine, shared by the home story's figures (docs/design/home-story-figures.md): the Generators
 // figure (beats 02 and 03) and the outbreak figure's 06, which shows the same machine dormant and then woken.
-// Everything static (the housing, cabinets, tower, pipes, pad, sensor ring, readout and vat frame) is drawn once
+// Everything static (the housing, cabinets, pipes, pad, sensor ring, readout and vat frame) is drawn once
 // into offscreen canvases on first use; `drawMachine` composes them and draws what moves.
 import { clamp, css, easeOut, glow, lighter, mix, mixRGB, ramp, rng, smooth, type Ctx, type RGB } from './stage';
 
@@ -52,7 +52,7 @@ export const pics: (Pic | null)[] = [null, null, null, null];
 
 /* ------------------------------------------------------------------ the Generator */
 // Kept from Floria's Genesis Prototype: the riveted banded housing with its rounded shoulders, the tall capsule
-// vat, seeds of life in the glow, the lattice tower and pipes at its side, the side box and its gauge. Changed
+// vat, seeds of life in the glow, the pipes at its side, the side box and its gauge. Changed
 // with time: cleaner plating with lit seams, a sensor ring on a mast, an intake grille that glows as it reads,
 // a life-signs readout, a standing pad. No chute.
 
@@ -215,51 +215,8 @@ export function paintMachine(g: Ctx) {
 		g.fill();
 	}
 
-	// the lattice tower at its side, and the cables to the roof
-	const tx0 = MX + 164;
-	const tx1 = MX + 190;
-	const ty0 = 92;
-	g.lineCap = 'butt';
-	g.strokeStyle = css([30, 34, 36]);
-	g.lineWidth = 1.6;
-	g.beginPath();
-	for (let y = ty0; y < GROUND - 26; y += 26) {
-		const up = Math.floor((y - ty0) / 26) % 2 === 0;
-		g.moveTo(up ? tx0 : tx1, y);
-		g.lineTo(up ? tx1 : tx0, y + 26);
-		g.moveTo(tx0, y);
-		g.lineTo(tx1, y);
-	}
-	g.stroke();
-	for (const x of [tx0, tx1 - 3]) {
-		g.fillStyle = css([36, 41, 43]);
-		g.fillRect(x, ty0, 3, GROUND - 2 - ty0);
-		g.fillStyle = css([170, 178, 172], 0.2);
-		g.fillRect(x, ty0, 1, GROUND - 2 - ty0);
-	}
-	g.fillStyle = css([28, 32, 34]);
-	g.fillRect(tx0 - 5, ty0 - 4, 36, 6);
-	g.strokeStyle = css([60, 66, 66]);
-	g.lineWidth = 1.5;
-	g.beginPath();
-	g.moveTo(tx0 + 13, ty0 - 4);
-	g.lineTo(tx0 + 13, ty0 - 20);
-	g.stroke();
-	g.fillStyle = css([190, 90, 60], 0.85);
-	g.beginPath();
-	g.arc(tx0 + 13, ty0 - 21, 1.8, 0, TAU);
-	g.fill();
-	g.strokeStyle = css([10, 12, 12], 0.7);
-	g.lineWidth = 1.4;
-	g.beginPath();
-	g.moveTo(MX + 60, 150);
-	g.quadraticCurveTo(MX + 120, 210, tx0, 188);
-	g.moveTo(MX + 100, 210);
-	g.quadraticCurveTo(MX + 140, 256, tx0, 240);
-	g.stroke();
-	// pipes: over the roof to the tower, and down the left to the side box
-	pipe(g, [[MX + 52, 148], [MX + 52, 122], [MX + 80, 116], [MX + 178, 116]], 7);
-	pipe(g, [[MX + 128, 252], [MX + 128, 226], [tx0, 226]], 5);
+	// pipes: over the roof and down into the intake box, and down the left to the side box (the later model has no lattice tower)
+	pipe(g, [[MX + 52, 148], [MX + 52, 122], [MX + 80, 116], [MX + 128, 116], [MX + 128, 248]], 7);
 	pipe(g, [[MX - 60, 158], [MX - 127, 158], [MX - 127, 300]], 6);
 
 	// the side box and the intake box
@@ -423,6 +380,31 @@ export function paintMachine(g: Ctx) {
 		rivetAt(g, VX + rb, y, true);
 	}
 
+	// weathering: rust streaks running down from three rivets, and one dent in the plating
+	g.save();
+	bodyPath(g);
+	g.clip();
+	for (const [x, y, len] of [[MX - 92, 232, 58], [MX + 84, 334, 48], [MX - 36, 372, 40]] as [number, number, number][]) {
+		const st = g.createLinearGradient(0, y, 0, y + len);
+		st.addColorStop(0, css([120, 64, 30], 0.15));
+		st.addColorStop(1, css([120, 64, 30], 0));
+		g.fillStyle = st;
+		g.fillRect(x - 2, y, 4, len);
+		g.fillRect(x + 3, y + 4, 2, len * 0.6);
+	}
+	const dent = g.createRadialGradient(MX + 74, 356, 2, MX + 74, 356, 15);
+	dent.addColorStop(0, css(BLACK, 0.3));
+	dent.addColorStop(0.7, css(BLACK, 0.1));
+	dent.addColorStop(1, css(BLACK, 0));
+	g.fillStyle = dent;
+	g.fillRect(MX + 56, 338, 36, 36);
+	g.strokeStyle = css([190, 198, 190], 0.22);
+	g.lineWidth = 1.2;
+	g.beginPath();
+	g.arc(MX + 74, 356, 11, 0.25 * Math.PI, 0.85 * Math.PI);
+	g.stroke();
+	g.restore();
+
 	// the neck and roof cap, the mast for the sensor ring
 	g.save();
 	metal(g, MX - 72, 142, MX + 72, 172, 1.0, 71);
@@ -448,6 +430,8 @@ export function paintMachine(g: Ctx) {
 // to sit with the painting's foreground. Built once per world, after the picture is in.
 export const scale3 = (c: RGB, k: number): RGB => [c[0] * k, c[1] * k, c[2] * k];
 export const TINT_LIFT = [0.1, 0.15, 0.1, 0.12, 0.12];
+/** How much the housing is darkened for each world, after the lift (the storm's painting is dark, and the plating must sit in it). */
+export const TINT_DARK = [0.45, 0, 0, 0, 0];
 export const tcache: (HTMLCanvasElement | null | undefined)[] = [];
 export function machineTinted(wi: number) {
 	const base = machineCache();
@@ -475,6 +459,10 @@ export function machineTinted(wi: number) {
 	o.g.globalCompositeOperation = 'source-atop';
 	o.g.fillStyle = css(mixRGB([128, 130, 138], P.amb, 0.25), TINT_LIFT[wi]);
 	o.g.fillRect(0, 0, base.width, base.height);
+	if (TINT_DARK[wi]) {
+		o.g.fillStyle = css(BLACK, TINT_DARK[wi]);
+		o.g.fillRect(0, 0, base.width, base.height);
+	}
 	return (tcache[wi] = o.c);
 }
 // The same machine at a third of the pixels, for the small far ones in 03 (drawing the full size down each frame costs).
@@ -564,7 +552,7 @@ export function seedR(kind: SeedKind, th: number, fins = true, v = 0) {
 	if (kind === 'apex') return 0.85; // all the same
 	return 1 + 0.1 * Math.cos(2 * th) - 0.16 * Math.sin(th); // Genesis: a plain oval seed
 }
-export const SEEDS = Array.from({ length: 4 }, (_, k) => ({ x: (hash(k, 1) - 0.5) * 18, y: VY0 + 46 + k * 50 + (hash(k, 2) - 0.5) * 6, r: 20.5 * (0.9 + hash(k, 3) * 0.2), ph: hash(k, 4) * TAU, sp: 0.6 + hash(k, 5) * 0.5, tilt: (hash(k, 6) - 0.5) * 0.5, hb: 0.5 + hash(k, 7) * 0.25 }));
+export const SEEDS = Array.from({ length: 4 }, (_, k) => ({ x: (hash(k, 1) - 0.5) * 18, y: VY0 + 48 + k * 49 + (hash(k, 2) - 0.5) * 6, r: 24 * (0.9 + hash(k, 3) * 0.2), ph: hash(k, 4) * TAU, sp: 0.6 + hash(k, 5) * 0.5, tilt: (hash(k, 6) - 0.5) * 0.5, hb: 0.5 + hash(k, 7) * 0.25 }));
 
 export function ecg(ph: number) {
 	const p = ((ph % 1) + 1) % 1;
@@ -621,8 +609,6 @@ export type MachineLook = {
 	foot?: boolean;
 	/** A cool rim along the housing's upper left edge, from the sky (default none). */
 	rim2?: RGB;
-	/** 0 to 1: a lit edge round the housing in the gel's color, as the vat fills (default 0). */
-	edgeGlow?: number;
 };
 
 export const MEMBRANE_N = 30;
@@ -684,11 +670,18 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		ctx.fillStyle = css([200, 208, 255], 0.25 * S.flash * a);
 		ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
 	}
-	const spill = ctx.createRadialGradient(VX, 300, 20, VX, 300, 170);
-	spill.addColorStop(0, css(gel, 0.16 * a * lit));
+	const spill = ctx.createRadialGradient(VX, 300, 20, VX, 300, 150);
+	spill.addColorStop(0, css(gel, 0.25 * a * lit));
 	spill.addColorStop(1, css(gel, 0));
 	ctx.fillStyle = spill;
 	ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
+	// the lowest panels sit darker where they meet the ground
+	const low = ctx.createLinearGradient(0, BODY.bot - 80, 0, BODY.bot);
+	low.addColorStop(0, css(BLACK, 0));
+	low.addColorStop(1, css(BLACK, 0.4 * a));
+	ctx.globalCompositeOperation = 'source-over';
+	ctx.fillStyle = low;
+	ctx.fillRect(BODY.x0, BODY.bot - 80, BODY.x1 - BODY.x0, 80);
 	ctx.restore();
 	// the housing is a cylinder: dark down the shadow side, fading out well before the lit side, a soft strip of shine near it
 	if (!S.lite) {
@@ -745,30 +738,16 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.stroke();
 	ctx.restore();
 	ctx.restore();
-	// a cool rim from the sky along the upper left, and the gel's own light along the edges once the vat fills
-	if (S.rim2) {
+	// a cool rim from the sky along the top edges (the shoulders and the roof), fading down the sides
+	{
 		ctx.save();
 		ctx.globalCompositeOperation = 'lighter';
-		const cg = ctx.createLinearGradient(BODY.x0, 0, BODY.x0 + 70, 0);
-		cg.addColorStop(0, css(S.rim2, 0.5 * a));
-		cg.addColorStop(1, css(S.rim2, 0));
+		const skyRim = S.rim2 ?? mixRGB(light, [170, 190, 220], 0.6);
+		const cg = ctx.createLinearGradient(0, BODY.top, 0, BODY.top + 90);
+		cg.addColorStop(0, css(skyRim, (S.rim2 ? 0.5 : 0.28) * a));
+		cg.addColorStop(1, css(skyRim, 0));
 		ctx.strokeStyle = cg;
 		ctx.lineWidth = 2;
-		bodyPath(ctx);
-		ctx.stroke();
-		ctx.restore();
-	}
-	if ((S.edgeGlow ?? 0) > 0.01) {
-		ctx.save();
-		ctx.globalCompositeOperation = 'lighter';
-		ctx.strokeStyle = css(mixRGB(gel, WHITE, 0.2), 0.3 * S.edgeGlow! * a);
-		ctx.lineWidth = 2;
-		bodyPath(ctx);
-		ctx.stroke();
-		bodyPath(ctx);
-		ctx.clip();
-		ctx.strokeStyle = css(gel, 0.14 * S.edgeGlow! * a);
-		ctx.lineWidth = 10;
 		bodyPath(ctx);
 		ctx.stroke();
 		ctx.restore();
@@ -865,7 +844,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const dx = Math.sin(sec * s.sp + s.ph) * 5 * free;
 		const dy = Math.cos(sec * s.sp * 0.8 + s.ph) * 4 * free;
 		const x = mix(VX + s.x + dx, VX, apex);
-		const y = mix(s.y + dy, VY0 + 46 + k * 50, apex);
+		const y = mix(s.y + dy, VY0 + 48 + k * 49, apex);
 		// a slow drift of about 6 degrees, and a breath of 4 percent every 1.8 s, out of step from one seed to the next
 		const rot = mix(s.tilt + Math.sin(sec * 0.5 + s.ph) * 0.105, 0, apex);
 		const own = ((sec * s.hb + s.ph / TAU) % 1 + 1) % 1;
@@ -874,7 +853,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const kmk = clamp(S.km * 1.25 - k * 0.06);
 		const born = S.seedBorn === undefined ? 1 : clamp(S.seedBorn * 1.3 - k * 0.14);
 		if (born <= 0.001) return;
-		const form = born * mix(kmk < 0.5 ? mix(1, 0.06, smooth(0, 0.5, kmk)) : mix(0.06, 1, easeOut(ramp(0.5, 1, kmk))), 1, apex);
+		const form = born * mix(kmk < 0.5 ? mix(1, 0.06, smooth(0, 0.5, kmk)) : mix(0.06, 1, smooth(0.5, 1, kmk)), 1, apex);
 		const r = mix(s.r, 15, apex) * form * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
 		const kindNow: SeedKind = kmk < 0.5 ? S.kindA : S.kindB;
 		const stormW = kindNow === 'storm' ? 1 - apex : 0;
@@ -950,9 +929,12 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 9, mote, 0.25 * (1 - u) * (1 - apex * 0.9) * a * lit);
 		}
 		for (const [sx2, sy2, f] of sparks) {
-			for (let j = 0; j < 4; j++) {
-				const u = (sec * 1.3 + j / 4 + sx2 * 0.01) % 1;
-				glow(ctx, mix(VX + Math.sin(j * 2 + sec) * 12, sx2, easeOut(u)), mix(VY1 - 8, sy2, u), 3.4, mote, 1 * f * (1 - u * 0.3) * a * lit, 'core');
+			for (let j = 0; j < 7; j++) {
+				const u = (sec * 1.1 + j / 7 + sx2 * 0.01) % 1;
+				const mxp = mix(VX + Math.sin(j * 2 + sec) * 16, sx2, easeOut(u));
+				const myp = mix(VY1 - 8, sy2, u);
+				glow(ctx, mxp, myp, 4.6, mote, 1 * f * (1 - u * 0.3) * a * lit, 'core');
+				glow(ctx, mxp, myp, 11, mote, 0.35 * f * (1 - u) * a * lit);
 			}
 		}
 	});
@@ -960,8 +942,8 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	lighter(ctx, () => {
 		for (const [x, y, r, p] of halos) glow(ctx, x, y, r * 2.2 + 3, apex > 0.05 ? mixRGB(gel, VIOLET, apex) : gel, (0.22 + 0.16 * p + 0.3 * apex) * a * lit);
 		for (const [x, y, f] of sparks) {
-			glow(ctx, x, y, 7 + 10 * f, WHITE, 0.8 * f * a, 'core');
-			glow(ctx, x, y, 18 * f, mixRGB(gel, WHITE, 0.5), 0.5 * f * a);
+			glow(ctx, x, y, 10 + 16 * f, WHITE, 0.95 * f * a, 'core');
+			glow(ctx, x, y, 34 * f, mixRGB(gel, WHITE, 0.5), 0.6 * f * a);
 		}
 		// (kept to 1.2 seed radii and 0.6 at its peak, so it does not wash the vat)
 		for (const [x, y, f, rn] of flashes) glow(ctx, x, y, rn * 1.2, WHITE, 0.6 * f * a, 'core');

@@ -1371,7 +1371,7 @@ export function createGenerators(): Figure {
 			// what the machine has read: a world arrives, the ring reads it, then the life inside takes its form
 			const readT = ws.since;
 			const reading = (1 - v3) * smooth(-0.1, 0.1, readT) * (1 - smooth(1.2, 1.7, readT));
-			const adapt = t < FIRST ? smooth(0.2, 0.95, t) : smooth(0.05, 0.9, readT);
+			const adapt = t < FIRST ? smooth(0.2, 1.6, t) : smooth(0.05, 1.6, readT);
 			let kindA: SeedKind = ws.prev >= 0 ? WORLDS[ws.prev].key : 'genesis';
 			let kindB: SeedKind = WORLDS[ws.cur].key;
 			let km = adapt;

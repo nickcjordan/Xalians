@@ -721,13 +721,21 @@ function scene() {
 		g.fillStyle = css([210, 200, 225], 0.1 + 0.3 * r() * r());
 		g.fillRect(Math.floor(r() * W), Math.floor(r() * 250), 1, 1);
 	}
-	// a faint red sun, seen through the haze
+	// a faint red sun, low toward the horizon: a firmer disc under a veil of haze
+	const sunX = 735;
+	const sunY = 338;
+	const sd = g.createRadialGradient(sunX, sunY, 0, sunX, sunY, 24);
+	sd.addColorStop(0, css([204, 78, 62], 0.5));
+	sd.addColorStop(0.86, css([190, 64, 54], 0.42));
+	sd.addColorStop(1, css([196, 66, 56], 0));
+	g.fillStyle = sd;
+	g.beginPath();
+	g.arc(sunX, sunY, 24, 0, TAU);
+	g.fill();
 	const sun = puff([196, 62, 54]);
 	if (sun) {
-		g.globalAlpha = 0.3;
-		g.drawImage(sun, 735 - 90, 300 - 90, 180, 180);
-		g.globalAlpha = 0.4;
-		g.drawImage(sun, 735 - 34, 300 - 34, 68, 68);
+		g.globalAlpha = 0.5;
+		g.drawImage(sun, sunX - 63, sunY - 63, 126, 126);
 		g.globalAlpha = 1;
 	}
 	// two value layers of low ridges, the far one paler in the haze
@@ -756,6 +764,24 @@ function scene() {
 	ground.addColorStop(1, css([6, 4, 8]));
 	g.fillStyle = ground;
 	g.fillRect(0, 394, W, H - 394);
+	// a foreground band of rock silhouettes, for depth: darkest, along the bottom and up at the edges
+	g.fillStyle = css([6, 4, 8]);
+	for (const [x0, x1, hgt, seed] of [[-20, 250, 118, 5], [740, 1020, 108, 6], [250, 740, 34, 7]] as [number, number, number, number][]) {
+		const rr = rng(seed);
+		g.beginPath();
+		g.moveTo(x0, H);
+		let x = x0;
+		while (x < x1) {
+			const kx = Math.min(1, Math.abs(x - 500) / 500);
+			const top = H - hgt * (0.15 + 0.85 * Math.pow(kx, 1.5)) * (0.6 + 0.6 * rr());
+			g.lineTo(x, top);
+			x += 10 + rr() * 22;
+			g.lineTo(x - 4, top + (rr() - 0.3) * 14);
+		}
+		g.lineTo(x1, H);
+		g.closePath();
+		g.fill();
+	}
 	// low noise so the flat darks are not flat
 	const img = g.getImageData(0, 0, W, H);
 	const nr = rng(3);
@@ -776,6 +802,11 @@ const HAZES = (() => {
 		const layer = k % 4; // 0 high and faint, 1 to 3 on the ground, nearer the viewer lower and larger
 		return { x: 60 + r() * 880, y: layer === 0 ? 352 + r() * 40 : 396 + layer * 22 + r() * 26, rx: 80 + r() * 150 + layer * 30, ry: layer === 0 ? 20 + r() * 22 : 20 + r() * 26 + layer * 6, a: layer === 0 ? 0.14 + r() * 0.1 : 0.22 + r() * 0.24, ph: r() * TAU, sp: 2 + r() * 4, v: k % 2 };
 	});
+})();
+// wisps that drift across the front of the machine
+const WISPS = (() => {
+	const r = rng(91);
+	return Array.from({ length: 8 }, (_, k) => ({ x: (k / 7 - 0.5) * 460 + (r() - 0.5) * 40, y: 318 + r() * 86, rx: 90 + r() * 70, ry: 22 + r() * 16, a: 0.32 + r() * 0.05, ph: r() * TAU, sp: 0.8 + r() * 1.2, v: k % 2 }));
 })();
 // the curl at the dome's edge: haze piled where it was pushed back
 const CURL = Array.from({ length: 18 }, (_, k) => ({ a: Math.PI + (k / 17) * Math.PI, r: 44 + ((k * 37) % 30), v: k % 2 }));
@@ -1024,8 +1055,8 @@ export function createOutbreak(): Figure {
 				// the timeline of the machine's waking
 				const rise = easeOut(ramp(1.8, 2.9, t1));
 				const seatAt = 3.9; // the token seats
-				const slotOn = smooth(seatAt, seatAt + 0.4, t1);
-				const conduit = ramp(seatAt + 0.2, seatAt + 1.1, t1);
+				const slotOn = smooth(seatAt, seatAt + 0.3, t1);
+				const conduit = ramp(seatAt + 0.2, seatAt + 0.6, t1);
 				const fill = easeOut(ramp(4.7, 6.4, t1));
 				const awake = smooth(5.0, 6.2, t1);
 				const domeOn = easeOut(ramp(6.2, 7.7, t1));
@@ -1039,6 +1070,15 @@ export function createOutbreak(): Figure {
 				const py = (y: number) => GY + (y - GROUND) * s;
 				const lightBoost = mixRGB([190, 54, 66], [236, 170, 120], domeOn);
 
+				// the sky behind the machine turns from red toward a dim violet-blue as the dome grows
+				if (domeOn > 0.01) {
+					const vg2 = ctx.createRadialGradient(CX, 300, 20, CX, 300, 430);
+					vg2.addColorStop(0, css([84, 80, 150], 0.34 * domeOn));
+					vg2.addColorStop(1, css([84, 80, 150], 0));
+					ctx.globalAlpha = sA;
+					ctx.fillStyle = vg2;
+					ctx.fillRect(0, 0, W, HORIZON + 30);
+				}
 				dormantWorld();
 				ctx.save();
 				// it rises out of the dark ground
@@ -1077,33 +1117,15 @@ export function createOutbreak(): Figure {
 						seedBorn: ramp(5.6, 7.2, t1),
 						foot: false,
 						rim2: [120, 150, 196],
-						edgeGlow: fill,
 					});
-					// the socket below the vat, and the light that runs up from it into the vat
+					// the light that runs up the two channels at the vat's edges, from the console in front of the pad
 					const gA = As * sceneA;
-					ctx.globalAlpha = gA;
-					ctx.fillStyle = css([6, 5, 8]);
-					ctx.fillRect(MX - 40, 414, 80, 20);
-					ctx.strokeStyle = css([64, 56, 58]);
-					ctx.lineWidth = 3;
-					ctx.strokeRect(MX - 40, 414, 80, 20);
-					ctx.strokeStyle = css([190, 176, 160], 0.35);
-					ctx.lineWidth = 1;
-					ctx.beginPath();
-					ctx.moveTo(MX - 39, 415);
-					ctx.lineTo(MX + 39, 415);
-					ctx.stroke();
-					if (slotOn > 0.01) {
-						lighter(ctx, () => {
-							glow(ctx, MX, 424, 62, mixRGB([255, 244, 226], GENESIS, awake), 0.55 * slotOn * gA);
-						});
-					}
 					if (conduit > 0.01) {
 						ctx.globalCompositeOperation = 'lighter';
 						ctx.lineCap = 'round';
 						for (const sx2 of [-1, 1]) {
-							const x = MX + sx2 * (VR + 12);
-							const yb = 414;
+							const x = MX + sx2 * (VR + 9);
+							const yb = 434;
 							const yt = 214;
 							const head = mix(yb, yt, easeOut(conduit));
 							const cg = ctx.createLinearGradient(0, yb, 0, head);
@@ -1126,6 +1148,57 @@ export function createOutbreak(): Figure {
 				}
 				ctx.restore();
 
+				// the intake console in front of the pad, with a hexagonal socket in its top: where the token is set
+				const consoleA = sA * smooth(1.9, 2.6, t1);
+				{
+					const cy = (g: number) => py(GROUND + g);
+					ctx.globalAlpha = consoleA;
+					ctx.beginPath();
+					ctx.moveTo(CX - 52 * s, cy(8));
+					ctx.lineTo(CX + 52 * s, cy(8));
+					ctx.lineTo(CX + 64 * s, cy(28));
+					ctx.lineTo(CX - 64 * s, cy(28));
+					ctx.closePath();
+					const tg = ctx.createLinearGradient(0, cy(8), 0, cy(28));
+					tg.addColorStop(0, css([46, 38, 42]));
+					tg.addColorStop(1, css([70, 60, 62]));
+					ctx.fillStyle = tg;
+					ctx.fill();
+					const fg = ctx.createLinearGradient(0, cy(28), 0, cy(54));
+					fg.addColorStop(0, css([34, 28, 32]));
+					fg.addColorStop(1, css([10, 8, 11]));
+					ctx.fillStyle = fg;
+					ctx.fillRect(CX - 64 * s, cy(28), 128 * s, 26 * s);
+					ctx.fillStyle = css([190, 176, 160], 0.35);
+					ctx.fillRect(CX - 64 * s, cy(28), 128 * s, 1.2);
+					ctx.fillStyle = css([6, 5, 8], 0.9);
+					for (const bx of [-56, 56]) {
+						ctx.beginPath();
+						ctx.arc(CX + bx * s, cy(42), 2 * s, 0, TAU);
+						ctx.fill();
+					}
+					// the socket: a hexagonal recess, dark, with a worn lip
+					ctx.beginPath();
+					for (let k = 0; k < 6; k++) {
+						const an2 = (Math.PI / 3) * k;
+						const hx = CX + Math.cos(an2) * 38 * s;
+						const hy = cy(18) + Math.sin(an2) * 38 * s * 0.42;
+						if (k) ctx.lineTo(hx, hy);
+						else ctx.moveTo(hx, hy);
+					}
+					ctx.closePath();
+					ctx.fillStyle = css([4, 3, 6]);
+					ctx.fill();
+					ctx.strokeStyle = css([104, 90, 90], 0.8);
+					ctx.lineWidth = 2;
+					ctx.stroke();
+					if (slotOn > 0.01) {
+						ctx.globalCompositeOperation = 'lighter';
+						putS(spr(mixRGB([255, 244, 226], GENESIS, awake)), CX, cy(18), 60 * s, 0.5 * slotOn);
+						ctx.globalCompositeOperation = 'source-over';
+					}
+				}
+
 				// the low crimson haze around its feet, and the dome the life in the vat pushes it out of
 				const hp0 = hazePuff(0);
 				const hp1 = hazePuff(1);
@@ -1136,19 +1209,31 @@ export function createOutbreak(): Figure {
 					const x = h.x + Math.sin(sec * 0.05 * h.sp + h.ph) * 14;
 					const d = Math.hypot((x - CX) / rx, (h.y - GY) / ry);
 					const inside = domeOn * (1 - smooth(0.8, 1.05, d));
-					let a = h.a * mix(1, 0.1, inside);
-					// nearer the machine's own face the haze lies thinner, so the socket stays in view
+					let a = h.a * mix(1, 0.05, inside);
+					// nearer the machine's own face the haze lies thinner, so the console stays in view
 					if (Math.abs(x - CX) < 110 && h.y < 440) a *= 0.45;
 					if (a < 0.01) continue;
 					ctx.globalAlpha = clamp(a * sA);
 					ctx.drawImage(hp, x - h.rx, h.y - h.ry, h.rx * 2, h.ry * 2);
 				}
-				// the curl: haze piled at the dome's edge as it widens
+				// wisps drifting across the front of the machine: it stands in the red, until the dome pushes them out
+				if (hp0 && hp1) {
+					for (const w of WISPS) {
+						const push = Math.sign(w.x) * domeOn * 300;
+						const x = CX + w.x + Math.sin(sec * 0.12 * w.sp + w.ph) * 46 + push;
+						const y = w.y + Math.sin(sec * 0.07 * w.sp + w.ph * 2) * 8;
+						const a = w.a * (1 - 0.95 * smooth(0, 0.9, domeOn)) * smooth(1.9, 2.8, t1);
+						if (a < 0.01) continue;
+						ctx.globalAlpha = clamp(a * sA);
+						ctx.drawImage(w.v ? hp1 : hp0, x - w.rx, y - w.ry, w.rx * 2, w.ry * 2);
+					}
+				}
+				// the curl: haze piled at the dome's edge as it is pushed out
 				if (domeOn > 0.02 && hp0 && hp1) {
 					for (const c of CURL) {
 						const cx = CX + Math.cos(c.a) * rx * domeOn;
 						const cy = GY + Math.sin(c.a) * ry * domeOn * 0.85;
-						ctx.globalAlpha = clamp(0.24 * sA * Math.min(1, domeOn * 2));
+						ctx.globalAlpha = clamp(0.45 * sA * Math.min(1, domeOn * 2));
 						ctx.drawImage(c.v ? hp1 : hp0, cx - c.r, cy - c.r * 0.8, c.r * 2, c.r * 1.6);
 					}
 				}
@@ -1172,8 +1257,8 @@ export function createOutbreak(): Figure {
 				}
 				ctx.globalCompositeOperation = 'source-over';
 
-				// the token: a small hexagonal glint falls in a shallow arc from the far bright point, slows, turns to
-				// face the viewer, and seats in the socket with a short flash
+				// the token: a small hexagonal glint falls in a shallow arc from the far bright point, slows, and in its
+				// last 0.4 s turns face-on; it seats in the socket with a flash three times the socket's width
 				const arrive = ramp(2.9, seatAt, t1);
 				if (t1 > 2.9) {
 					let dx = vd[0];
@@ -1181,7 +1266,7 @@ export function createOutbreak(): Figure {
 					const dl = Math.hypot(dx, dy) || 1;
 					dx /= dl;
 					const dyn = dy / dl;
-					const P2 = [px(MX), py(424)] as const;
+					const P2 = [CX, py(GROUND + 18)] as const;
 					const P0 = [P2[0] + dx * 380, P2[1] + dyn * 300 - 60] as const;
 					const P1 = [(P0[0] + P2[0]) / 2 + dyn * 40, (P0[1] + P2[1]) / 2 - 90] as const;
 					const at = (q: number) => {
@@ -1190,37 +1275,38 @@ export function createOutbreak(): Figure {
 					};
 					const q = easeOut(arrive);
 					const head = at(q);
-					const facing = smooth(0.4, 1, arrive);
+					const facing = smooth(0.6, 1, arrive);
+					const seated = smooth(seatAt, seatAt + 0.15, t1);
 					const tex2 = chip();
 					const soft = chipBlur();
 					if (tex2 && soft) {
-						// a short trail behind it (25 px at most, at 0.4)
+						// a short bright trail behind it, about 30 px
 						if (arrive < 0.98) {
 							ctx.globalCompositeOperation = 'lighter';
-							for (let k = 1; k <= 5; k++) {
-								const tq = Math.max(0, q - k * 0.012);
-								const p = at(tq);
-								putS(spr([255, 226, 170]), p[0], p[1], 4.5 - k * 0.5, 0.4 * (1 - k / 6));
+							for (let k = 1; k <= 8; k++) {
+								const p = at(Math.max(0, q - k * 0.006));
+								putS(spr([255, 232, 180]), p[0], p[1], 7 - k * 0.55, 0.7 * (1 - k / 9));
 							}
 							ctx.globalCompositeOperation = 'source-over';
 						}
-						const size = ((46 * s) / (CHIP_R * 1.732)) * (0.8 + 0.2 * facing);
+						const size = (64 * s) / (CHIP_R * 1.732);
 						ctx.save();
-						ctx.translate(head[0], head[1]);
+						ctx.translate(head[0], head[1] + 5 * seated * s);
 						ctx.rotate((1 - facing) * 0.8);
-						ctx.scale(size, size * mix(0.32, 0.72, facing));
-						const sharp = smooth(0.3, 0.8, arrive);
-						ctx.globalAlpha = clamp(smooth(0, 0.15, arrive) * (1 - sharp) * sA);
+						ctx.scale(size * (0.85 + 0.15 * facing), size * mix(0.3, 0.72, facing) * mix(1, 0.72, seated));
+						const sharp = smooth(0.2, 0.6, arrive);
+						ctx.globalAlpha = clamp(smooth(0, 0.1, arrive) * (1 - sharp) * sA);
 						ctx.drawImage(soft, -CHIP_CENTER.x, -CHIP_CENTER.y, CHIP_N, CHIP_N);
 						ctx.globalAlpha = clamp(sharp * sA);
 						ctx.drawImage(tex2, -CHIP_CENTER.x, -CHIP_CENTER.y);
 						ctx.restore();
 						ctx.globalCompositeOperation = 'lighter';
 						const br = 0.62 + 0.16 * Math.sin(sec * 1.4);
-						putS(spr([255, 250, 242]), head[0], head[1], 15 * s * (0.92 + 0.12 * br), smooth(0, 0.2, arrive) * br * 0.7);
-						// the seating flash: 0.15 s
-						const fl = Math.max(0, 1 - (t1 - seatAt) / 0.15);
-						if (t1 >= seatAt && fl > 0) putS(spr(WHITE), head[0], head[1], 34, 0.9 * fl);
+						// a warm-white glint on it while it falls, then its own white core
+						putS(spr([255, 240, 214]), head[0], head[1], 20 * s, 0.75 * (1 - seated) * smooth(0, 0.2, arrive));
+						putS(spr([255, 250, 242]), head[0], head[1], 20 * s * (0.92 + 0.12 * br), smooth(0.3, 0.9, arrive) * br * 0.6);
+						const fl = Math.max(0, 1 - (t1 - seatAt) / 0.2);
+						if (t1 >= seatAt && fl > 0) putS(spr(WHITE), P2[0], P2[1], 1.5 * 72 * s, 0.8 * fl);
 						ctx.globalCompositeOperation = 'source-over';
 					}
 				}
