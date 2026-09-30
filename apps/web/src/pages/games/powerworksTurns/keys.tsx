@@ -49,7 +49,7 @@ function matchupWord(step: number): string {
   item 3). `area` says whether the key's attack reaches every enemy, so the words can say
   "each" rather than implying one target.
 */
-function SupportRiders({ supports, area }: { supports: SupportChip[]; area: boolean }) {
+export function SupportRiders({ supports, area }: { supports: SupportChip[]; area: boolean }) {
   if (!supports.length) return null;
   return (
     <div className="pwt-riders">
@@ -72,7 +72,7 @@ function SupportRiders({ supports, area }: { supports: SupportChip[]; area: bool
 }
 
 /** One target cell: an enemy letter head or an ally portrait head, the landed number, and its marks. */
-function CellButton({
+export function CellButton({
   cell,
   kind,
   keyName,

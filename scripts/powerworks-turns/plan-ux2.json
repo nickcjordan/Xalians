@@ -9,8 +9,18 @@
   "steps": [
    {
     "op": "frames",
-    "ms": 1500,
+    "ms": 900,
     "every": 300
+   },
+   {
+    "op": "click",
+    "text": "Begin",
+    "settle": 300
+   },
+   {
+    "op": "frames",
+    "ms": 2800,
+    "every": 400
    },
    {
     "op": "click",
@@ -18,7 +28,7 @@
    },
    {
     "op": "wait",
-    "ms": 400
+    "ms": 500
    },
    {
     "op": "shot"
@@ -293,8 +303,9 @@
     "text": "Continue"
    },
    {
-    "op": "framesUntilIdle",
-    "every": 200
+    "op": "frames",
+    "ms": 2800,
+    "every": 400
    },
    {
     "op": "shot"
@@ -321,12 +332,20 @@
     "op": "shot"
    },
    {
+    "op": "wait",
+    "ms": 1500
+   },
+   {
+    "op": "shot"
+   },
+   {
     "op": "click",
     "text": "Continue"
    },
    {
-    "op": "framesUntilIdle",
-    "every": 200
+    "op": "frames",
+    "ms": 2800,
+    "every": 400
    },
    {
     "op": "shot"
@@ -462,6 +481,13 @@
    {
     "op": "click",
     "text": "Cancel"
+   },
+   {
+    "op": "shot"
+   },
+   {
+    "op": "wait",
+    "ms": 800
    },
    {
     "op": "shot"

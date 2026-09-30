@@ -10,6 +10,7 @@ import {
   ENEMY_HP_FACTOR,
   ENCOUNTER_XP,
   FINAL_ENCOUNTER_XP,
+  RECOVERY_STATION_HP,
   STALLED_LOG,
   STALL_TURNS_PER_UNIT,
   WITHDREW_LOG,
@@ -25,6 +26,15 @@ import {
   type TRun,
 } from "@xalians/rules/dungeon/pillars";
 import {
+  beatsFell,
+  briefingView,
+  campView,
+  knockoutHold,
+  reviveWords,
+  revivedWords,
+  runSummary,
+  stationHeal,
+  titleCard,
   endingOf,
   eventWords,
   hinderOnAttack,
@@ -801,5 +811,127 @@ describe("camp XP and the endings (items 3 and 9)", () => {
     expect(endingOf(freshState(1))).toBeNull();
     expect(endingOf({ ...left, phase: "won" as const })!.kind).toBe("won");
     expect(endingOf({ ...left, phase: "lost" as const })!.kind).toBe("lost");
+  });
+});
+
+describe("round 2: briefing, camp, title card, holds and the run summary", () => {
+  it("the briefing names the goal, every sector (the last is the guardian's), the squad and the run rules", () => {
+    const s = freshState(1);
+    const b = briefingView(s);
+    expect(b.goal).toBe("Clear all 4 sectors.");
+    expect(b.sectors.map((x) => x.n)).toEqual([1, 2, 3, 4]);
+    expect(b.sectors.map((x) => x.guardian)).toEqual([false, false, false, true]);
+    expect(b.sectors[0].name).toBe("Service entrance");
+    expect(b.squad.map((u) => u.id)).toEqual(s.team.map((u) => u.id));
+    expect(b.squad[0].hp).toBe(s.team[0].hp);
+    expect(b.rules.join(" ")).toContain("Health carries");
+    expect(b.rules.join(" ")).toContain("1 revive");
+    expect(b.rules.join(" ")).toContain(`${RECOVERY_STATION_HP} health`);
+  });
+
+  it("camp offers a revive per fallen companion with the engine's half health and the revives left", () => {
+    const base = { ...freshState(1), phase: "camp" as const };
+    const fallen = { ...base, team: base.team.map((u, i) => (i === 0 ? { ...u, hp: 0 } : u)) };
+    const c = campView(fallen);
+    expect(c.revives).toHaveLength(1);
+    const to = Math.ceil(fallen.team[0].max / 2);
+    expect(c.revives[0].to).toBe(to);
+    expect(c.revives[0].text).toBe(`Revive ${fallen.team[0].name} to ${to} health · 1 revive left`);
+    expect(c.unusedNote).toMatch(/unused/);
+    // The number the button promises is what the engine gives.
+    const after = turnCommand(fallen, { kind: "revive", id: fallen.team[0].id }).state;
+    expect(after.team[0].hp).toBe(to);
+    expect(revivedWords("Ann", 63, after.revival)).toBe("Ann revived to 63 health. No revives left.");
+    expect(reviveWords("Ann", 63, 2)).toBe("Revive Ann to 63 health · 2 revives left");
+    // No revive left, or nobody down: no offer and no note.
+    expect(campView({ ...fallen, revival: 0 }).revives).toEqual([]);
+    expect(campView({ ...fallen, revival: 0 }).unusedNote).toBeNull();
+    expect(campView(base).revives).toEqual([]);
+  });
+
+  it("the recovery station is stated at the camp before the last sector, with the engine's amount", () => {
+    const camp = (room: number) => campView({ ...freshState(1), phase: "camp" as const, room });
+    expect(camp(2).station?.amount).toBe(RECOVERY_STATION_HP);
+    expect(camp(2).station?.text).toContain(`restores ${RECOVERY_STATION_HP} health to each standing companion`);
+    expect(camp(0).station).toBeNull();
+    expect(camp(3).station).toBeNull();
+  });
+
+  it("arriving at the last sector reports each companion's gain, capped by missing health", () => {
+    const base = { ...freshState(1), phase: "camp" as const, room: 2 };
+    const hurt = {
+      ...base,
+      team: base.team.map((u, i) => ({ ...u, hp: i === 0 ? Math.max(1, u.max - 5) : i === 1 ? 0 : Math.max(1, u.max - 100) })),
+    };
+    const after = turnCommand(hurt, { kind: "advance" }).state;
+    const heal = stationHeal(hurt, after)!;
+    expect(after.room).toBe(3);
+    expect(heal.deltas[hurt.team[0].id]).toBe(5);
+    expect(heal.deltas[hurt.team[1].id]).toBeUndefined(); // fallen companions are not healed
+    expect(heal.text).toContain("Recovery station:");
+    for (const [id, gain] of Object.entries(heal.deltas)) {
+      expect(after.team.find((u) => u.id === id)!.hp - hurt.team.find((u) => u.id === id)!.hp).toBe(gain);
+    }
+    // No station on the other sectors.
+    expect(stationHeal({ ...base, room: 0 }, turnCommand({ ...base, room: 0 }, { kind: "advance" }).state)).toBeNull();
+  });
+
+  it("the title card names the sector, its enemies by letter and whether it is the guardian's", () => {
+    const s = freshState(1);
+    const c = titleCard(turnView(s));
+    expect(c.kicker).toBe("Sector 1 of 4");
+    expect(c.name).toBe("Service entrance");
+    expect(c.guardian).toBe(false);
+    expect(c.enemies.length).toBe(s.enemies.length);
+    expect(c.enemies[0].letter).toBe("A");
+    const last = titleCard(turnView({ ...freshState(1), room: 3 }));
+    expect(last.kicker).toBe("Sector 4 of 4");
+    expect(last.guardian).toBe(true);
+    expect(titleCard(turnView(s), "Recovery station: X +20 health.").note).toBe("Recovery station: X +20 health.");
+  });
+
+  it("the stage holds on the last fall: cleared, the boss's win and the last companion's fall hold, a mid-fight fall does not", () => {
+    const s = freshState(1);
+    expect(knockoutHold({ ...s, phase: "camp" as const })).toMatchObject({ kind: "cleared", text: "Sector cleared" });
+    const boss = knockoutHold({ ...s, phase: "won" as const })!;
+    const fallen = knockoutHold({ ...s, phase: "lost" as const })!;
+    const cleared = knockoutHold({ ...s, phase: "camp" as const })!;
+    expect(boss.ms).toBeGreaterThan(cleared.ms);
+    expect(fallen.ms).toBeGreaterThan(cleared.ms);
+    expect(knockoutHold(s)).toBeNull();
+    const enemy = s.enemies[0];
+    const fell = playback(s, [{ kind: "hit", actor: s.team[0].id, target: enemy.id, move: "x", amount: enemy.hp, absorbed: 0, step: 1, fell: true }]);
+    expect(beatsFell(fell)).toBe(true);
+    const nofall = playback(s, [{ kind: "hit", actor: s.team[0].id, target: enemy.id, move: "x", amount: 1, absorbed: 0, step: 1, fell: false }]);
+    expect(beatsFell(nofall)).toBe(false);
+  });
+
+  it("the run summary comes from the engine and the Record: sectors, rounds, knockouts, XP and the final blow", () => {
+    const s = freshState(1);
+    const foe = s.enemies[0];
+    const mate = s.team[0];
+    const ev = (o: object) => ({ kind: "hit", move: "Clamp strike", amount: 5, absorbed: 0, step: 1, fell: false, ...o }) as never;
+    const record: RecordEntry[] = [
+      { room: 0, round: 1, actor: mate.id, words: "", event: ev({ actor: mate.id, target: foe.id }) },
+      { room: 0, round: 3, actor: mate.id, words: "", event: ev({ actor: mate.id, target: foe.id, fell: true }) },
+      { room: 1, round: 2, actor: mate.id, words: "", event: ev({ actor: mate.id, target: foe.id, fell: true }) },
+      { room: 1, round: 2, actor: foe.id, words: "", event: ev({ actor: foe.id, target: mate.id, fell: true }) },
+    ];
+    const lost = { ...s, phase: "lost" as const, room: 1, xp: 10 };
+    const sum = runSummary(lost, turnView(lost), record);
+    expect(sum.sectors).toBe(1);
+    expect(sum.rounds).toBe(3 + 2);
+    expect(sum.knockouts).toBe(2);
+    expect(sum.xp).toBe(10);
+    expect(sum.finalBlow).toBe(`${foe.name} A, Clamp strike`);
+    expect(sum.rows.map((r) => r.label)).toContain("Final blow");
+    const won = { ...s, phase: "won" as const, room: 3, xp: 30 };
+    const w = runSummary(won, turnView(won), record);
+    expect(w.sectors).toBe(4);
+    expect(w.xp).toBe(30);
+    expect(w.finalBlow).toBeNull();
+    expect(w.rows.map((r) => r.label)).not.toContain("Final blow");
+    const left = turnCommand({ ...freshState(1), phase: "camp" as const, room: 1 }, { kind: "retreat" }).state;
+    expect(runSummary(left, turnView(left), []).sectors).toBe(2);
   });
 });

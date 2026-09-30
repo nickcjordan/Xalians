@@ -24,6 +24,7 @@ import {
   standing,
   turnCommand,
   upcoming,
+  type PEvent,
   type Rules,
   type TRun,
 } from "../index.ts";
@@ -70,9 +71,13 @@ function describe(s: TRun): string {
   return `room ${s.room} (${s.phase}), active ${active ? `${active.name} (${active.id})` : "none"}, round ${s.phase === "turn" || s.phase === "camp" ? roundOf(s) : "-"}`;
 }
 
+/** The Record a searched scenario would have accumulated (the page keeps one; a real save carries it). Reset after each write. */
+let LAST_RECORD: { room: number; round: number; actor: string; words: string; event: unknown }[] = [];
+
 function write(name: string, s: TRun) {
   const file = path.join(OUT, `${name}.json`);
-  fs.writeFileSync(file, JSON.stringify({ version: PILLAR_SAVE_VERSION, state: s }));
+  fs.writeFileSync(file, JSON.stringify({ version: PILLAR_SAVE_VERSION, state: s, record: LAST_RECORD }));
+  LAST_RECORD = [];
   console.log(`${name}: ${describe(s)} -> ${file}`);
 }
 
@@ -193,17 +198,29 @@ function search(name: string, policies: string[], seeds: number[], probe: (s: TR
     for (const seed of seeds) {
       const rand = stream(seed * 7919 + 3);
       let s = fresh(seed);
+      const rec: typeof LAST_RECORD = [];
+      const log = (before: TRun, events: PEvent[]) => {
+        for (const e of events) rec.push({ room: before.room, round: roundOf(before), actor: e.actor, words: `${e.actor} ${e.kind}`, event: e });
+      };
       for (let k = 0; k < guard; k++) {
         if (probe(s)) {
           console.log(`${name}: found with seed ${seed}, policy ${pol}, after ${k} steps`);
+          LAST_RECORD = rec;
           return s;
         }
-        if (s.phase === "turn") s = turnCommand(s, { kind: "act", order: POLICIES[pol](s, rand) }).state;
-        else if (s.phase === "camp") s = advanceCamp(s);
-        else break;
+        if (s.phase === "turn") {
+          const r = turnCommand(s, { kind: "act", order: POLICIES[pol](s, rand) });
+          log(s, r.events);
+          s = r.state;
+        } else if (s.phase === "camp") {
+          const r = turnCommand(s, { kind: "advance" });
+          log(s, r.events);
+          s = r.state;
+        } else break;
       }
       if (probe(s)) {
         console.log(`${name}: found with seed ${seed}, policy ${pol}, at the end`);
+        LAST_RECORD = rec;
         return s;
       }
     }
