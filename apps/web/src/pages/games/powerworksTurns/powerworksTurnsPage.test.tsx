@@ -340,7 +340,7 @@ describe("Powerworks turn by turn", () => {
       expect(guide.querySelectorAll(".pwt-legend-row").length).toBeGreaterThanOrEqual(14);
       expect(guide.querySelector(".pwt-cell.finish")).toBeTruthy();
       expect(guide.querySelector(".pwt-area-band")).toBeTruthy();
-      expect(guide.querySelector(".pwt-hit-on-active.coming")).toBeTruthy();
+      expect(guide.querySelector(".pwt-hit-on-active.has-coming")).toBeTruthy();
       expect(guide.querySelector("[data-rail]")).toBeTruthy();
       expect(guide.textContent).toMatch(/along the top/);
       expect(guide.textContent).not.toMatch(/along the bottom/);
@@ -542,9 +542,11 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     await tick(2200);
     expect(container.querySelector("[data-hold-card]")!.textContent).toBe("Sector cleared");
     const c = container as HTMLElement;
-    expect(card(c)).toBe("Sector cleared");
+    // Round 8, item 9: the words are on the stage once; the band shows the blow's sentence and the banner keeps the round.
+    expect((c.textContent!.match(/Sector cleared/g) ?? []).length).toBe(1);
+    expect(card(c)).toMatch(/fell\./);
     expect(card(c)).not.toMatch(/next turn/i);
-    expect(c.querySelector("[data-turn-banner]")!.textContent).toMatch(/Sector cleared/);
+    expect(c.querySelector("[data-turn-banner]")!.textContent).not.toMatch(/Sector cleared/);
     expect(c.querySelector("[data-turn-banner]")!.textContent).not.toMatch(/choose a move|pick a cell|your turn|next turn/i);
     expect(hasTools(c)).toBe(false);
     expect(screen.queryByRole("group", { name: "Playback speed" })).toBeNull();
@@ -562,7 +564,8 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     await tick(500);
     expect(card(c)).not.toMatch(/next turn/i);
     await tick(2200);
-    expect(card(c)).toBe("Guardian down");
+    expect((c.textContent!.match(/Guardian down/g) ?? []).length).toBe(1);
+    expect(card(c)).toMatch(/fell\./);
     expect(c.querySelector("[data-turn-banner]")!.textContent).not.toMatch(/choose a move|pick a cell|your turn|next turn/i);
     expect(hasTools(c)).toBe(false);
   });
@@ -585,7 +588,8 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     }
     expect(sawEnemy).toBe(true);
     expect(held).toBe(true);
-    expect(card(c)).toBe("The squad has fallen");
+    expect((c.textContent!.match(/The squad has fallen/gi) ?? []).length).toBe(1);
+    expect(card(c)).toMatch(/fell\./);
     expect(c.querySelector("[data-turn-banner]")!.textContent).not.toMatch(/choose a move|pick a cell|your turn|next turn/i);
     expect(hasTools(c)).toBe(false);
   });
@@ -716,7 +720,7 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(text).toMatch(/Down:/);
     expect(text).toMatch(/a line runs from actor to target/);
     expect(text).toContain("The Record (top right)");
-    expect(text).toContain("Health numbers: raspberry is health lost, green is health gained, on either side.");
+    expect(text).toContain("Health numbers on your squad: raspberry is health lost, green is health gained.");
     expect(text).toContain("Matchup marks: green favors you, raspberry favors the enemy.");
     expect(text).not.toMatch(/Green is good for you/);
   });

@@ -9,7 +9,6 @@ import {
   Link2,
   Swords,
   Ban,
-  Star,
 } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import { hinderWords, type Cell, type KeyView, type SquadView, type SupportChip } from "./view";
@@ -71,6 +70,18 @@ export function SupportRiders({ supports, area, kept = false }: { supports: Supp
         );
       })}
     </div>
+  );
+}
+
+/**
+  Round 8, item 4: the skull struck through. The enemy's hit on the acting companion would knock it out (the same
+  skull the "can fall" mark and the hit chip carry); the hinder or rider takes the hit below its health.
+*/
+export function SavedSkull() {
+  return (
+    <span className="pwt-saved" title="Would knock the companion out; this takes the hit below its health" aria-label="no longer knocks the companion out">
+      <Skull />
+    </span>
   );
 }
 
@@ -148,9 +159,13 @@ export function CellButton({
         <span className="pwt-cell-letter">{cell.letter}</span>
       )}
       {hinderOnly ? (
-        <span className="pwt-cell-hinder">
-          <Swords className="pwt-cell-hinder-icon" />
+        <span className="pwt-cell-hinder" title={`Their hit on ${activeName}`}>
+          <span className="pwt-cell-hinder-cap">
+            <Swords className="pwt-cell-hinder-icon" />
+            their hit
+          </span>
           <span className="pwt-cell-hinder-nums">
+            {cell.saves && <SavedSkull />}
             <s className="pwt-cell-before">{cell.before}</s>
             <span className="pwt-cell-arrow">→</span>
             <span className="pwt-cell-num hinder">{cell.n}</span>
@@ -184,8 +199,8 @@ export function CellButton({
         </span>
       )}
       {cell.rider && (
-        <span className="pwt-cell-rider" data-rider="">
-          <Swords />
+        <span className="pwt-cell-rider" data-rider="" data-saves={cell.saves ? "" : undefined}>
+          {cell.saves ? <SavedSkull /> : <Swords />}
           <s>{cell.rider.before}</s>
           <span className="pwt-cell-arrow">→</span>
           {cell.rider.after}
@@ -288,31 +303,13 @@ export function KeyCard({
   const areaIds = keyView.area && keyView.aim === "enemy" ? keyView.cells.map((c) => c.target) : null;
   return (
     <div
-      className={`pwt-key ${keyView.state} ${keyView.signature ? "signature" : ""} ${noted ? "noted" : ""}`}
+      className={`pwt-key ${keyView.state} ${keyView.signature ? "signature" : ""} ${noted ? "noted" : ""} ${keyView.calm ? "calm" : ""}`}
       role="group"
       aria-label={keyView.name}
     >
       <div className="pwt-key-head">
         <span className="pwt-key-index">{keyView.index + 1}</span>
         <span className="pwt-key-name">{keyView.name}</span>
-        {noted && (
-          <span className="pwt-key-note-tag" title="The note above the keys is about this key">
-            <span className="pwt-note-full">Note</span>
-            <span className="pwt-note-short" aria-hidden="true">
-              i
-            </span>
-          </span>
-        )}
-        {hinderHead && (
-          <span className="pwt-key-hinder" title={`Hinder ${hinderHead.n}: that enemy's next hit falls by ${hinderHead.n}`} data-hinder={hinderHead.n}>
-            -{hinderHead.n}
-          </span>
-        )}
-        {keyView.signature && (
-          <span className="pwt-key-star" title="Signature: once per fight" aria-label="Signature move">
-            <Star />
-          </span>
-        )}
       </div>
       {keyView.aim === "now" ? (
         <div className="pwt-cells-wrap">
@@ -393,16 +390,31 @@ export function KeyCard({
         </div>
       )}
       <div className="pwt-key-foot">
-        <span className="pwt-key-foot-words">
-          {foot === "once per fight" ? (
-            <>
-              <span className="pwt-foot-full">once per fight</span>
-              <span className="pwt-foot-short">once</span>
-            </>
-          ) : (
-            foot
+        <span className="pwt-key-foot-left">
+          {noted && (
+            <span className="pwt-key-note-tag" title="The note above the keys is about this key">
+              <span className="pwt-note-full">Note</span>
+              <span className="pwt-note-short" aria-hidden="true">
+                i
+              </span>
+            </span>
           )}
+          <span className="pwt-key-foot-words">
+            {foot === "once per fight" ? (
+              <>
+                <span className="pwt-foot-full">once per fight</span>
+                <span className="pwt-foot-short">once</span>
+              </>
+            ) : (
+              foot
+            )}
+          </span>
         </span>
+        {hinderHead && (
+          <span className="pwt-key-hinder" title={`Hinder ${hinderHead.n}: that enemy's next hit falls by ${hinderHead.n}`} data-hinder={hinderHead.n}>
+            <Swords />-{hinderHead.n}
+          </span>
+        )}
         {keyView.aim === "enemy" && keyView.kind === "attack" && (
           <SupportRiders supports={keyView.supports} area={keyView.area} kept={keyView.riderKept} />
         )}

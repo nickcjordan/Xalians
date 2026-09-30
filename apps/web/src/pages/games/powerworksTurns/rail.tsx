@@ -18,6 +18,10 @@ const PHONE_DONE_SHOWN = 0;
   harness's hooks.
 */
 export function TurnRail({ rail, round, compact = false, width = 0 }: { rail: RailSlot[]; round: number; compact?: boolean; /** The console's width, so a resize measures the rail again. */ width?: number }) {
+  // Round 8, item 7: the row is measured against the room it really has. If that room changes after the first
+  // measure (fonts arriving, the banner settling), the whole order is laid out and measured again, so a
+  // cut made on a too-narrow first pass never stays.
+  const [again, setAgain] = React.useState(0);
   if (!rail.length) return null;
   const now = rail.findIndex((r) => r.state === "now");
   // Phone: the rail is short, so only the last slot to have acted stays before NOW.
@@ -25,15 +29,15 @@ export function TurnRail({ rail, round, compact = false, width = 0 }: { rail: Ra
   // A fallen unit leaves the order: its plate already says Down.
   const shown = rail.slice(from).filter((r) => r.state !== "down");
   // A new key measures the fit again from every slot whenever the order or the room changes.
-  const signature = `${compact ? "c" : "d"}${width}:${round}:${shown.map((r) => `${r.id}.${r.state}.${r.roundStart ?? ""}`).join(",")}`;
-  return <RailRow key={signature} shown={shown} round={round} compact={compact} />;
+  const signature = `${compact ? "c" : "d"}${width}.${again}:${round}:${shown.map((r) => `${r.id}.${r.state}.${r.roundStart ?? ""}`).join(",")}`;
+  return <RailRow key={signature} shown={shown} round={round} compact={compact} onRoom={() => setAgain((n) => n + 1)} />;
 }
 
 /**
   The row itself. After it lays out, any slot that would be cut by the row's right edge is dropped
   (with a divider that would end up last), so no portrait is ever shown half.
 */
-function RailRow({ shown, round, compact }: { shown: RailSlot[]; round: number; compact: boolean }) {
+function RailRow({ shown, round, compact, onRoom }: { shown: RailSlot[]; round: number; compact: boolean; onRoom: () => void }) {
   const ref = useRef<HTMLOListElement>(null);
   const [limit, setLimit] = useState(shown.length);
   // Phone: when the round boundary would fall off the end, the slots just before it fold into "+N"
@@ -52,24 +56,44 @@ function RailRow({ shown, round, compact }: { shown: RailSlot[]; round: number; 
     });
     const d = shown.findIndex((r) => r.roundStart !== undefined);
     if (compact && d > 0 && d >= cut && cols.length > 2) {
+      // The round boundary would fall off the end: the slots between NEXT and the divider fold into "+N more" so the
+      // divider and the first slots of the next round always stay on the rail. Fold as few as will do; when even the
+      // most folding cannot fit a whole next-round slot, fold all of them and keep one (round 8, item 7).
       const pitch = cols[1].offsetLeft - cols[0].offsetLeft;
-      const gap = 32;
+      const gap = 62;
       const first = Math.max(keepAtLeast, 0);
+      let chosen = -1;
       for (let from = Math.min(d, first); from < d; from++) {
         const saved = (d - from) * pitch - gap;
-        const fits = (j: number) => cols[j].offsetLeft + cols[j].offsetWidth - saved <= edge + 1;
-        if (fits(d)) {
-          let last = d;
-          while (last + 1 < cols.length && fits(last + 1)) last++;
-          setFold({ from, to: d });
-          setLimit(last + 1);
-          return;
+        if (cols[d].offsetLeft + cols[d].offsetWidth - saved <= edge + 1) {
+          chosen = from;
+          break;
         }
+      }
+      const from = chosen >= 0 ? chosen : Math.min(d, first);
+      if (from < d) {
+        const saved = (d - from) * pitch - gap;
+        let last = d;
+        while (last + 1 < cols.length && cols[last + 1].offsetLeft + cols[last + 1].offsetWidth - saved <= edge + 1) last++;
+        setFold({ from, to: d });
+        setLimit(last + 1);
+        return;
       }
     }
     // A round divider that would be the last thing shown goes with the slot it introduces.
-    while (cut > 0 && shown[cut - 1]?.roundStart !== undefined) cut--;
+    // On a phone the first slot of the next round is the point of the rail, so it stays even as the last one shown.
+    if (!compact) while (cut > 0 && shown[cut - 1]?.roundStart !== undefined) cut--;
     if (cut !== limit) setLimit(cut);
+    // The room this measure was made in: if the row's width changes later, measure again from every slot.
+    const made = ol.clientWidth;
+    const watch = typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => ol.clientWidth !== made && onRoom()) : null;
+    watch?.observe(ol);
+    let live = true;
+    document.fonts?.ready.then(() => live && ol.clientWidth !== made && onRoom());
+    return () => {
+      live = false;
+      watch?.disconnect();
+    };
   }, []);
   const visible = shown.slice(0, limit);
   const folded = fold ? fold.to - fold.from : 0;
@@ -84,7 +108,7 @@ function RailRow({ shown, round, compact }: { shown: RailSlot[]; round: number; 
       {visible.map((r, i) => fold && i >= fold.from && i < fold.to ? (
         i === fold.from ? (
           <li key="fold" className="pwt-rail-fold" aria-label={`${folded} more turns this round`} data-fold={folded}>
-            <span>+{folded}</span>
+            <span>+{folded} more</span>
           </li>
         ) : null
       ) : (

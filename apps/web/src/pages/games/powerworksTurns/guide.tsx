@@ -1,7 +1,7 @@
 import React from "react";
 import { Shield, ScrollText } from "lucide-react";
 import { CellButton, SupportRiders } from "./keys";
-import { HitChip, ComingChip, MarkChips, ElementBadge, KoMark } from "./plate";
+import { EnemyHit, MarkChips, ElementBadge, KoMark } from "./plate";
 import { TurnRail } from "./rail";
 import { DeltaChip } from "./banner";
 import type { Cell, RailSlot } from "./view";
@@ -145,11 +145,11 @@ export function GuidePanel({
             wide
             sample={
               <Cells>
-                <CellButton {...cellProps} kind="support" cell={cell({ before: 14, n: 0 })} />
+                <CellButton {...cellProps} kind="support" cell={cell({ before: 14, n: 0, saves: true })} />
               </Cells>
             }
           >
-            A hinder cell: that enemy&apos;s next hit, on whoever it strikes, falls by that much (on you, 14 to 0). A hinder rider shows the same fall under its number.
+            A hinder cell: "their hit" is that enemy&apos;s next hit, on whoever it strikes; it falls by that much (14 to 0). A struck skull: that hit would have knocked the companion out, and now does not. A hinder rider shows the same fall under its number.
           </Row>
           <Row
             wide
@@ -194,7 +194,7 @@ export function GuidePanel({
               </div>
             }
           >
-            A rider chip: the move also does this to the enemy it hits. Rests: turns a move waits after use. A star: the signature, once per fight.
+            A rider chip: the move also does this to the enemy it hits. Rests: turns a move waits after use. Once per fight: the signature move.
           </Row>
             </ul>
           </section>
@@ -215,13 +215,12 @@ export function GuidePanel({
           <Row
             sample={
               <span className="pwt-legend-chips">
-                <HitChip hit={{ n: 21, step: 1.5 }} who="the companion acting" />
-                <HitChip hit={{ n: 7, step: 0.5 }} who="the companion acting" />
-                <HitChip hit={{ n: 18, step: 0.5, lethal: true }} who="the companion acting" />
+                <EnemyHit hit={{ n: 21, step: 1.5 }} coming={null} who="Avilily" />
+                <EnemyHit hit={{ n: 18, step: 0.5, lethal: true }} coming={null} who="Avilily" />
               </span>
             }
           >
-            An enemy&apos;s hit chip (a burst): its strongest hit on the companion acting now, at its next turn. Raspberry chevron: strong for it. Green: weak. A skull: the hit equals or exceeds that health.
+            An enemy&apos;s hit chip (a burst): its strongest hit on the companion named under it, at its next turn. Raspberry chevron: strong for it. Green: weak. A skull: the hit equals or exceeds that health.
           </Row>
           <Row
             sample={
@@ -235,8 +234,8 @@ export function GuidePanel({
           >
             A skull on a plate: an enemy acting before that companion&apos;s next turn has a ready hit that knocks it out.
           </Row>
-          <Row sample={<ComingChip coming={{ n: 46, step: 1, turns: 1 }} who="the companion acting" />}>
-            The resting form: a stronger hit not ready yet. &quot;in 1&quot; is how many of its turns after its next one it waits.
+          <Row sample={<EnemyHit hit={{ n: 18, step: 1 }} coming={{ n: 46, step: 1, turns: 1 }} who="Avilily" />}>
+            The last line of the chip: a stronger hit not ready yet. &quot;then 46 in 1&quot; is that hit, and how many of its turns after its next one it waits.
           </Row>
           <Row
             sample={
@@ -262,7 +261,7 @@ export function GuidePanel({
               </span>
             }
           >
-            Health numbers: raspberry is health lost, green is health gained, on either side. A chip on a plate is the change since your last turn.
+            Health numbers on your squad: raspberry is health lost, green is health gained. Numbers that land on an enemy are plain. A chip on a plate is the change since your last turn.
           </Row>
             </ul>
           </section>

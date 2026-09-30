@@ -92,6 +92,8 @@ export function CampPanel({
   onRetreat: () => void;
 }) {
   const offerRevive = camp.revives.length > 0;
+  const someDown = view.squad.some((u) => u.down);
+  const holdsRevive = offerRevive || !!revived || someDown;
   return (
     <div className="pwt-overlay">
       <div className={`pwt-panel pwt-camp ${camp.last ? "last" : ""}`} role="dialog" aria-label="Camp">
@@ -131,16 +133,24 @@ export function CampPanel({
               <span>
                 {u.hp} / {u.max}
               </span>
-              {u.down && <span className="pwt-down-tag">Down</span>}
+              {u.down ? <span className="pwt-down-tag">Down</span> : holdsRevive ? <span className="pwt-down-tag pwt-down-hold" aria-hidden="true">Down</span> : null}
             </div>
           ))}
         </div>
-        {revived && (
-          <p className="pwt-revived-line" role="status">
-            <Heart /> {revived.words}
+        {/* One status line, with its room kept whether or not it speaks: the panel never moves after a revive (round 8, item 10). */}
+        {holdsRevive && (
+          <p className={`pwt-camp-status ${revived ? "pwt-revived-line" : ""}`} role="status">
+            {revived ? (
+              <>
+                <Heart /> {revived.words}
+              </>
+            ) : !offerRevive && someDown ? (
+              "No revives left."
+            ) : (
+              ""
+            )}
           </p>
         )}
-        {!offerRevive && !revived && view.squad.some((u) => u.down) && <p>No revives left.</p>}
         {/* One row: the revives, then Continue. Retreat ends the run, so it sits apart below. */}
         <div className="pwt-panel-actions pwt-camp-actions">
           {camp.revives.map((r, i) => (
@@ -163,7 +173,7 @@ export function CampPanel({
             Continue <ArrowRight />
           </button>
         </div>
-        {camp.unusedNote && <p className="pwt-panel-note">{camp.unusedNote}</p>}
+        {holdsRevive ? <p className="pwt-panel-note pwt-camp-unused">{camp.unusedNote ?? ""}</p> : camp.unusedNote ? <p className="pwt-panel-note">{camp.unusedNote}</p> : null}
         <div className="pwt-camp-leave">
           <button type="button" className="pwt-danger" onClick={onRetreat} title="Leave the expedition here and end the run">
             <LogOut /> Retreat

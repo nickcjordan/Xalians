@@ -139,6 +139,12 @@ export type Cell = {
     attack finishes the enemy (a fallen enemy takes no rider) or the rider changes nothing.
   */
   rider?: { before: number; after: number };
+  /**
+    Round 8, item 4: the enemy's hit on the acting companion (before the rider or hinder) equals or exceeds
+    its health, and after the rider or hinder it does not: the cell shows a struck skull, the "can fall" mark
+    taken away.
+  */
+  saves?: true;
 };
 
 export type SupportChip = { kind: SupportKind; n: number; aim: Aim; all: boolean };
@@ -173,6 +179,11 @@ export type KeyView = {
     so the rider still lands.
   */
   riderKept: boolean;
+  /**
+    Round 8, item 4: every attack cell of this key reads 0 because the acting companion is hindered (none is an
+    immune matchup). The cells draw calmly, in neutral ink; the key bar's status line states the reason once.
+  */
+  calm: boolean;
 };
 
 export type StripSlot = {
@@ -455,10 +466,14 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
       const clean = u.hinder > 0 || u.boost > 0 ? landedOn({ ...u, boost: 0, hinder: 0 }, m, t) : n;
       const finishes = n >= t.hp && n > 0;
       let rider: Cell["rider"];
+      let saves = false;
       if (riderN > 0 && !finishes) {
         const before = threatOnActive(s, t).ready?.n ?? 0;
         const after = threatOnActive(s, t, riderN).ready?.n ?? 0;
-        if (after < before) rider = { before, after };
+        if (after < before) {
+          rider = { before, after };
+          saves = u.hp > 0 && before >= u.hp && after < u.hp;
+        }
       }
       return {
         target: t.id,
@@ -470,6 +485,7 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
         finishes,
         absorbed: shieldAbsorbed,
         ...(rider ? { rider } : {}),
+        ...(saves ? { saves: true as const } : {}),
       };
     }
     // Hinder-only: before is the enemy's current hit on the active companion; after applies this
@@ -477,7 +493,8 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
     const before = threatOnActive(s, t).ready?.n ?? 0;
     const hinderN = hinderPart ? (hinderPart.all ? allShare(hinderPart.n) : hinderPart.n) : 0;
     const n = threatOnActive(s, t, hinderN).ready?.n ?? 0;
-    return { target: t.id, letter, n, before, hinder: hinderN, step: 1, immune: false, finishes: false, absorbed: 0 };
+    const saves = u.hp > 0 && before >= u.hp && n < u.hp;
+    return { target: t.id, letter, n, before, hinder: hinderN, step: 1, immune: false, finishes: false, absorbed: 0, ...(saves ? { saves: true as const } : {}) };
   });
 }
 
@@ -504,6 +521,7 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
   const aim: KeyView["aim"] = aimsEnemy ? "enemy" : aimsAlly ? "ally" : "now";
   const cells = aim === "enemy" ? enemyCells(s, u, m, targets) : aim === "ally" ? allyCells(u, m, targets) : [];
   const riderKept = kind === "attack" && aim === "enemy" && m.parts.length > 0 && cells.some((c) => c.ownBefore !== undefined && c.n === 0 && !c.immune);
+  const calm = kind === "attack" && aim === "enemy" && cells.length > 0 && cells.every((c) => c.n === 0 && !c.immune && c.ownBefore !== undefined);
   return {
     index: i,
     name: m.name,
@@ -517,6 +535,7 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
     cells,
     supports: m.parts.map(supportChip),
     riderKept,
+    calm,
   };
 }
 
@@ -671,18 +690,24 @@ export function eventWords(s: TRun, e: PEvent): string {
   if (e.kind === "lapsed") return `${actor}'s ${e.move} finds no target.`;
   if (e.kind === "redirect") return `${actor} turned from ${nameOf(s, e.from)} to ${nameOf(s, e.to)}.`;
   const target = nameOf(s, e.target);
+  const self = e.target === e.actor;
   if (e.kind === "hit") {
-    // A hit a hinder cut to nothing says "blocked", matching the number that rises over the target (round 7, item 6).
-    if (e.amount === 0 && e.absorbed === 0) return e.step === 0 ? `${actor}'s hit on ${target} had no effect.` : `${actor}'s hit on ${target} was blocked.`;
+    // A hit a hinder cut to nothing says "blocked" and whose hinder did it, matching the number that rises over the
+    // target (round 7, item 6; round 8, item 8): an enemy's hit was cut by the player's hinder, a companion's by an enemy's.
+    if (e.amount === 0 && e.absorbed === 0) {
+      if (e.step === 0) return `${actor}'s hit on ${target} had no effect.`;
+      const enemyActor = s.enemies.some((x) => x.id === e.actor);
+      return `${actor}'s hit on ${target} was blocked by ${enemyActor ? "your hinder" : "an enemy's hinder"}.`;
+    }
     const tag = e.step > 1 ? " (strong matchup)" : e.step < 1 && e.step > 0 ? " (weak matchup)" : "";
     let words = `${actor} hit ${target} for ${e.amount}${tag}.`;
     if (e.absorbed > 0) words += ` ${target}'s shield took ${e.absorbed}.`;
     if (e.fell) words += ` ${target} fell.`;
     return words;
   }
-  if (e.kind === "heal") return `${actor} healed ${target} for ${e.amount}.`;
-  if (e.kind === "shield") return `${actor} shielded ${target} for ${e.amount}.`;
-  if (e.kind === "boost") return `${actor} boosted ${target}'s next attack by ${e.amount}.`;
+  if (e.kind === "heal") return `${actor} healed ${self ? "itself" : target} for ${e.amount}.`;
+  if (e.kind === "shield") return `${actor} shielded ${self ? "itself" : target} for ${e.amount}.`;
+  if (e.kind === "boost") return `${actor} boosted ${self ? "its own" : `${target}'s`} next attack by ${e.amount}.`;
   if (e.kind === "hinder") return `${actor} weakened ${target}'s next attack by ${e.amount}.`;
   // delay: the turn-order layer, described the same way as a hinder on timing rather than damage.
   return `${actor} slowed ${target}'s next turn.`;
@@ -695,7 +720,13 @@ export function eventWords(s: TRun, e: PEvent): string {
   A hit that knocks its target out carries KO in place of a matchup tag (neutral); a hit that a
   hinder cut to 0 says "blocked", not "-0"; an immune matchup says "no effect".
 */
-export type FloatItem = { text: string; kind: string; tag?: { word: string; tone: "good" | "bad" | "neutral" } };
+export type FloatItem = {
+  text: string;
+  kind: string;
+  tag?: { word: string; tone: "good" | "bad" | "neutral" };
+  /** Round 8, item 6: a number that lands on an enemy is plain ink; only the matchup tag and a squad's health carry color. */
+  plain?: true;
+};
 export function floatWords(e: PEvent, targetIsEnemy = false): FloatItem | null {
   if (e.kind === "hit") {
     if (e.absorbed > 0 && e.amount === 0) return { text: `shield took ${e.absorbed}`, kind: "shield" };
@@ -707,9 +738,9 @@ export function floatWords(e: PEvent, targetIsEnemy = false): FloatItem | null {
       : e.step > 0 && e.step < 1
       ? { word: "Weak", tone: targetIsEnemy ? "bad" : "good" }
       : undefined;
-    return { text: `-${e.amount}`, kind: "hurt", tag };
+    return { text: `-${e.amount}`, kind: "hurt", tag, ...(targetIsEnemy ? { plain: true as const } : {}) };
   }
-  if (e.kind === "heal") return { text: `+${e.amount}`, kind: "heal" };
+  if (e.kind === "heal") return { text: `+${e.amount}`, kind: "heal", ...(targetIsEnemy ? { plain: true as const } : {}) };
   if (e.kind === "shield") return { text: `shield ${e.amount}`, kind: "shield" };
   if (e.kind === "boost") return { text: `next attack +${e.amount}`, kind: "boost" };
   if (e.kind === "hinder") return { text: `next hit -${e.amount}`, kind: "hinder" };
@@ -779,7 +810,7 @@ export function playback(before: TRun, events: PEvent[]): Beat[] {
       }
       if (actHinder! > 0) {
         weakened = actHinder!;
-        if (first) weakenedText = weakenedWords(nameOf(before, e.actor), actHinder!);
+        if (first) weakenedText = weakenedWords(nameOf(before, e.actor), actHinder!, before.enemies.some((x) => x.id === e.actor) ? "your hinder" : "an enemy's hinder");
       }
     } else if (e.kind === "hinder") hind[e.target] = Math.max(hind[e.target] ?? 0, e.amount);
     beats.push({
@@ -833,9 +864,10 @@ export function momentWords(beats: Beat[], units: Named[]): string {
       // An area move's rider on the units it just hit is said once: "weakened each by 6".
       const each = many && hits.length > 1 && targets.every((t) => hitIds.has(t));
       const owned = joinWords(names.map((x) => `${x}'s`));
-      if (kind === "heal") clauses.push(each ? `healed each for ${n}` : `healed ${joinWords(names)} for ${n}`);
-      else if (kind === "shield") clauses.push(each ? `shielded each for ${n}` : `shielded ${joinWords(names)} for ${n}`);
-      else if (kind === "boost") clauses.push(each ? `boosted each by ${n}` : `boosted ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
+      const itself = targets.length === 1 && targets[0] === first.actor;
+      if (kind === "heal") clauses.push(each ? `healed each for ${n}` : `healed ${itself ? "itself" : joinWords(names)} for ${n}`);
+      else if (kind === "shield") clauses.push(each ? `shielded each for ${n}` : `shielded ${itself ? "itself" : joinWords(names)} for ${n}`);
+      else if (kind === "boost") clauses.push(each ? `boosted each by ${n}` : itself ? `boosted its own next attack by ${n}` : `boosted ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
       else if (kind === "hinder") clauses.push(each ? `weakened each by ${n}` : `weakened ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
       else clauses.push(each ? "slowed each" : `slowed ${owned} next ${many ? "turns" : "turn"}`);
     }
@@ -860,17 +892,23 @@ export function hinderOnAttack(start: Record<string, number>, priorBeats: Beat[]
   return hinder;
 }
 
-/** "Central guardian A's hit was weakened by 10." Names the unit whose hit it was. */
 /**
-  The banner's own short form: "Crawler A hit Hippochamp for 8 (weak matchup), weakened by 6." One sentence, so the
-  number is never the part a second sentence pushes off the line (round 7, item 6). A hit that was cut to nothing
-  already says "blocked", so it needs no clause.
+  The banner's own short form, the cause said inside the hit's clause (round 8, item 8): "Crawler A hit Hippochamp for 8
+  (weak matchup, cut by 6 by your hinder)". One sentence, so the number is never the part a second sentence pushes off the
+  line (round 7, item 6), and the amount cannot be read as a second weakening of anyone. A hit that was cut to nothing
+  already says "blocked by your hinder", so it needs no clause. `by` names whose hinder it was.
 */
-export function withWeakened(words: string, n: number | undefined): string {
+export function withWeakened(words: string, n: number | undefined, by = "a hinder"): string {
   if (!n) return words;
-  return words.replace(/\./, `, weakened by ${n}.`);
+  const hit = /( for \d+(?:(?:, | and )\d+)*)( \(([^)]*)\))?/;
+  const m = hit.exec(words);
+  if (!m) return words;
+  const many = /(?:, | and )\d/.test(m[1]);
+  const cut = `${many ? "each " : ""}cut by ${n} by ${by}`;
+  const inner = m[3] ? `${m[3]}, ${cut}` : cut;
+  return words.replace(hit, `${m[1]} (${inner})`);
 }
-export const weakenedWords = (name: string, n: number): string => `${name}'s hit was weakened by ${n}.`;
+export const weakenedWords = (name: string, n: number, by = "a hinder"): string => `${name}'s hit was cut by ${n} by ${by}.`;
 
 /** One line of the Record: a beat's sentence, filed under its sector and round. */
 export type RecordEntry = { room: number; round: number; actor: string; words: string; event: PEvent; /** How much the actor's hinder weakened this hit; absent on older saves. */ weakened?: number };
@@ -880,7 +918,7 @@ export function recordEntries(room: number, beats: Beat[]): RecordEntry[] {
     room,
     round: b.round,
     actor: b.actor,
-    words: b.weakenedText ? `${b.words} ${b.weakenedText}` : b.words,
+    words: b.weakenedText && !/blocked by/.test(b.words) ? `${b.words} ${b.weakenedText}` : b.words,
     event: b.event,
     ...(b.weakened ? { weakened: b.weakened } : {}),
   }));
@@ -927,10 +965,13 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
   let ownStart = last;
   while (ownStart > 0 && inRoom[ownStart - 1].actor === v.active.id) ownStart--;
   const ownAct = last >= 0 ? inRoom.slice(ownStart, last + 1) : [];
-  type Seen = { lost: number; healed: number; fell: boolean; shieldUp: number; shieldDown: number; boosted: boolean; hindered: boolean; blocked: boolean; weakenedBy: number };
+  type Seen = { lost: number; healed: number; fell: boolean; shieldUp: number; shieldDown: number; boosted: boolean; hindered: boolean; blocked: boolean; weakenedBy: number; boostedBy: string; hinderedBy: string };
   const seen: Record<string, Seen> = {};
-  const of = (id: string): Seen => (seen[id] ??= { lost: 0, healed: 0, fell: false, shieldUp: 0, shieldDown: 0, boosted: false, hindered: false, blocked: false, weakenedBy: 0 });
+  const of = (id: string): Seen => (seen[id] ??= { lost: 0, healed: 0, fell: false, shieldUp: 0, shieldDown: 0, boosted: false, hindered: false, blocked: false, weakenedBy: 0, boostedBy: "", hinderedBy: "" });
   const enemyIds = new Set(v.enemies.map((x) => x.id));
+  // Who a mark came from, for the line ("hindered 14 by A", "boosted 12 by itself"): an enemy by its letter.
+  const byWhom = (actor: string, target: string) =>
+    actor === target ? "itself" : v.enemies.find((x) => x.id === actor)?.letter ?? v.squad.find((x) => x.id === actor)?.name ?? actor;
   for (const { event: e, weakened } of window) {
     if (e.kind === "hit") {
       const u = of(e.target);
@@ -946,8 +987,15 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
       }
     } else if (e.kind === "heal") of(e.target).healed += e.amount;
     else if (e.kind === "shield") of(e.target).shieldUp += e.amount;
-    else if (e.kind === "boost") of(e.target).boosted = true;
-    else if (e.kind === "hinder") of(e.target).hindered = true;
+    else if (e.kind === "boost") {
+      const b = of(e.target);
+      b.boosted = true;
+      b.boostedBy = byWhom(e.actor, e.target);
+    } else if (e.kind === "hinder") {
+      const h = of(e.target);
+      h.hindered = true;
+      h.hinderedBy = byWhom(e.actor, e.target);
+    }
   }
   for (const [id, c] of Object.entries(seen)) {
     if (!c.healed) continue;
@@ -970,14 +1018,15 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
     if (c.fell) parts.push("fell");
     if (c.shieldUp) parts.push(`shield +${c.shieldUp}`);
     if (c.shieldDown) parts.push(`shield -${c.shieldDown}`);
-    if (c.boosted && u.boost > 0) parts.push(`boosted ${u.boost}`);
-    if (c.hindered && u.hinder > 0) parts.push(`hindered ${u.hinder}`);
-    if (c.blocked) parts.push("hit blocked");
-    else if (c.weakenedBy) parts.push(`hit weakened ${c.weakenedBy}`);
-    if (!parts.length) continue;
+    if (c.boosted && u.boost > 0) parts.push(`boosted ${u.boost} by ${c.boostedBy}`);
+    if (c.hindered && u.hinder > 0) parts.push(`hindered ${u.hinder} by ${c.hinderedBy}`);
+    // An enemy's hit the player's hinder cut (round 8, item 8): said as that unit's own hit, with its cause.
+    const hit = c.blocked ? "blocked by your hinder" : c.weakenedBy ? `cut by ${c.weakenedBy} by your hinder` : "";
+    if (!parts.length && !hit) continue;
     if (c.healed - c.lost) deltas[u.id] = c.healed - c.lost;
     const short = enemy ? (u as EnemyView).letter : name;
-    items.push({ id: u.id, name, enemy, text: `${name} ${parts.join(", ")}`, short: `${short} ${parts.join(", ")}` });
+    const line = (who: string) => [parts.length ? `${who} ${parts.join(", ")}` : "", hit ? `${who}'s hit ${hit}` : ""].filter(Boolean).join(", ");
+    items.push({ id: u.id, name, enemy, text: line(name), short: line(short) });
   }
   let text = "";
   let shown = 0;
