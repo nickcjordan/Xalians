@@ -23,6 +23,12 @@
     { "op": "waitIdle" }
     { "op": "key", "key": "Escape" }
     { "op": "hover", "target": "cell:A" | "figure:A" }  // hovers a key cell or an enemy figure
+    { "op": "hover", "key": 2, "target": "cell:C" | "cell:*" }  // restricts the cell search to key 2; * is its first button
+    { "op": "click", "text": "Guide" }                   // clicks the first button whose text or aria-label contains it
+    { "op": "framesUntilIdle", "every": 100, "max": 20000 }  // frames until data-busy is false, then one idle frame
+    { "op": "wait", "ms": 500 }                          // pause without capturing
+  A plan entry may set "sizes": ["844x390"] to override --sizes for that entry, and "fresh": true to
+  clear localStorage instead of loading a scenario (a first visit).
 
   Frames land at <out>/<scenario>-<size>/NNN-<ms>.png, with a contact sheet sheet.png per
   sequence and a hooks.json recording, per captured frame, data-turn-banner text and
@@ -119,7 +125,7 @@ async function act(page, keyIndex, target) {
 }
 
 /** Hovers a key cell (by target letter/name) or an enemy/ally figure on the stage. */
-async function hover(page, target) {
+async function hover(page, target, keyIndex) {
   const [kind, who] = target.split(":");
   if (kind === "figure") {
     const el = await page.locator(`[data-unit] .pwt-figure`).all();
@@ -136,9 +142,14 @@ async function hover(page, target) {
     return;
   }
   // kind === "cell": hover a key's cell button the same way act() finds it.
-  const groups = await page.locator('[role="group"]').all();
+  let groups = await page.locator('[role="group"]').all();
+  if (keyIndex) groups = groups.slice(keyIndex - 1, keyIndex);
   for (const g of groups) {
     const buttons = await g.locator("button").all();
+    if (who === "*" && buttons[0]) {
+      await buttons[0].hover();
+      return;
+    }
     for (const b of buttons) {
       const label = (await b.getAttribute("aria-label")) || "";
       if (label.toLowerCase().includes(`on ${who.toLowerCase()}`)) {
@@ -167,9 +178,16 @@ async function waitIdle(page, timeoutMs = 8000) {
   // Tolerate: the hook may not exist yet on this build. Proceed rather than throwing.
 }
 
-/** Loads a scenario's saved-run JSON into localStorage and reloads the page onto it. */
+/** Loads a scenario's saved-run JSON into localStorage and reloads the page onto it. A null
+    file is a first visit: storage is cleared and the page loaded cold. */
 async function loadScenario(page, url, scenarioFile) {
   await page.goto(url, { waitUntil: "networkidle" });
+  if (!scenarioFile) {
+    await page.evaluate(() => localStorage.clear());
+    await page.goto(url, { waitUntil: "networkidle" });
+    await page.waitForTimeout(500);
+    return;
+  }
   const raw = fs.readFileSync(scenarioFile, "utf8");
   await page.evaluate((s) => localStorage.setItem("xalians.powerworks.turns.v1", s), raw);
   await page.goto(url, { waitUntil: "networkidle" });
@@ -219,9 +237,30 @@ async function runSteps(page, steps, outDir) {
       await page.waitForTimeout(80);
       await capture("key");
     } else if (step.op === "hover") {
-      await hover(page, step.target);
+      await hover(page, step.target, step.key);
       await page.waitForTimeout(80);
       await capture("hover");
+    } else if (step.op === "click") {
+      const loc = page.locator("button", { hasText: step.text }).first();
+      const byLabel = page.locator(`button[aria-label*="${step.text}"]`).first();
+      if (await loc.count()) await loc.click();
+      else await byLabel.click();
+      await page.waitForTimeout(step.settle ?? 300);
+      await capture("click:" + step.text);
+    } else if (step.op === "framesUntilIdle") {
+      const every = step.every ?? 100;
+      const max = step.max ?? 20000;
+      const start = Date.now();
+      await page.waitForTimeout(40);
+      while (Date.now() - start < max) {
+        await capture("frame");
+        if (await isIdle(page)) break;
+        await page.waitForTimeout(every);
+      }
+      await page.waitForTimeout(400);
+      await capture("idle");
+    } else if (step.op === "wait") {
+      await page.waitForTimeout(step.ms ?? 500);
     } else {
       console.warn(`unknown step op "${step.op}", skipping`);
     }
@@ -290,8 +329,8 @@ sheet.save(f"{out_dir}/sheet.png")
   return res2.status === 0 && fs.existsSync(path.join(outDir, "sheet.png"));
 }
 
-async function runOne(browser, { scenario, scenarioFile, steps, outRoot }) {
-  for (const [w, h] of SIZES) {
+async function runOne(browser, { scenario, scenarioFile, steps, outRoot, sizes }) {
+  for (const [w, h] of sizes || SIZES) {
     const page = await browser.newPage({ viewport: { width: w, height: h } });
     const outDir = path.join(outRoot, `${scenario}-${w}x${h}`);
     try {
@@ -321,8 +360,8 @@ async function main() {
       if (!scenarioDir) throw new Error("--plan requires --scenario-dir");
       const plan = readJson(planPath);
       for (const entry of plan) {
-        const scenarioFile = path.join(scenarioDir, `${entry.scenario}.json`);
-        if (!fs.existsSync(scenarioFile)) {
+        const scenarioFile = entry.fresh ? null : path.join(scenarioDir, `${entry.scenario}.json`);
+        if (scenarioFile && !fs.existsSync(scenarioFile)) {
           console.warn(`plan entry "${entry.name ?? entry.scenario}": missing scenario file ${scenarioFile}, skipping`);
           continue;
         }
@@ -331,6 +370,7 @@ async function main() {
           scenarioFile,
           steps: entry.steps,
           outRoot,
+          sizes: entry.sizes ? entry.sizes.map((z) => z.split("x").map(Number)) : undefined,
         });
       }
     } else {
