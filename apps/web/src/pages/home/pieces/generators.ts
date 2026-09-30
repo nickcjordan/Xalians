@@ -761,7 +761,17 @@ function drawWorld(ctx: Ctx, wi: number, shift: number, sec: number, a: number, 
 			for (const [k, sx] of [[0.7, 0], [1.9, 1]] as const) {
 				const fl = lightning(lt, k);
 				if (fl <= 0) continue;
-				lighter(ctx, () => glow(ctx, 300 + hash(Math.floor(sec - lt), sx + 3) * 400, 120, 460, [200, 205, 255], 0.4 * fl * a));
+				const lx = 300 + hash(Math.floor(sec - lt), sx + 3) * 400;
+				lighter(ctx, () => glow(ctx, lx, 120, 460, [200, 205, 255], 0.4 * fl * a));
+				// a strike lifts the backdrop: a pale gradient from the bolt's side
+				const lg = ctx.createLinearGradient(lx, 0, lx + (lx < 480 ? 520 : -520), 0);
+				lg.addColorStop(0, css([236, 240, 255], 0.15 * fl * a));
+				lg.addColorStop(1, css([236, 240, 255], 0));
+				ctx.save();
+				ctx.globalCompositeOperation = 'screen';
+				ctx.fillStyle = lg;
+				ctx.fillRect(-20, -20, PW + 40, GROUND + 20);
+				ctx.restore();
 			}
 		}
 		if (w.key === 'lava') {

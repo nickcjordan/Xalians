@@ -680,7 +680,7 @@ function chipBlur() {
 // token. The place (sky, a dim red sun through the haze, two ridges, the ground) is built once into `sceneBg`;
 // the haze, the machine, the token and the life it brings are drawn over it each frame.
 
-const GY = 410; // where the machine's feet stand, in stage units
+let GY = 410; // where the machine's feet stand, in stage units (a little lower in compact, where the machine is larger)
 const HORIZON = 396; // where the limb of the world flattens to
 let sceneBg: HTMLCanvasElement | null = null;
 const hazeTex: (HTMLCanvasElement | null)[] = [];
@@ -760,12 +760,12 @@ function scene() {
 	g.fillStyle = band;
 	g.fillRect(0, 340, W, 56);
 	const ground = g.createLinearGradient(0, 394, 0, H);
-	ground.addColorStop(0, css([22, 11, 18]));
-	ground.addColorStop(1, css([6, 4, 8]));
+	ground.addColorStop(0, css([34, 15, 24]));
+	ground.addColorStop(1, css([28, 13, 21]));
 	g.fillStyle = ground;
 	g.fillRect(0, 394, W, H - 394);
 	// a foreground band of rock silhouettes, for depth: darkest, along the bottom and up at the edges
-	g.fillStyle = css([6, 4, 8]);
+	g.fillStyle = css([13, 7, 12]);
 	for (const [x0, x1, hgt, seed] of [[-20, 250, 118, 5], [740, 1020, 108, 6], [250, 740, 34, 7]] as [number, number, number, number][]) {
 		const rr = rng(seed);
 		g.beginPath();
@@ -800,7 +800,7 @@ const HAZES = (() => {
 	const r = rng(77);
 	return Array.from({ length: 40 }, (_, k) => {
 		const layer = k % 4; // 0 high and faint, 1 to 3 on the ground, nearer the viewer lower and larger
-		return { x: 60 + r() * 880, y: layer === 0 ? 352 + r() * 40 : 396 + layer * 22 + r() * 26, rx: 80 + r() * 150 + layer * 30, ry: layer === 0 ? 20 + r() * 22 : 20 + r() * 26 + layer * 6, a: layer === 0 ? 0.14 + r() * 0.1 : 0.22 + r() * 0.24, ph: r() * TAU, sp: 2 + r() * 4, v: k % 2 };
+		return { x: 60 + r() * 880, y: layer === 0 ? 352 + r() * 40 : 396 + layer * 22 + r() * 26, rx: 80 + r() * 150 + layer * 30, ry: layer === 0 ? 20 + r() * 22 : 20 + r() * 26 + layer * 6, a: layer === 0 ? 0.2 + r() * 0.12 : 0.34 + r() * 0.14, ph: r() * TAU, sp: 2 + r() * 4, v: k % 2 };
 	});
 })();
 // wisps that drift across the front of the machine
@@ -880,6 +880,7 @@ export function createOutbreak(): Figure {
 		draw(ctx, sec, opts) {
 			if (vis <= 0.005) return;
 			const compact = !!opts?.compact;
+			GY = compact ? 426 : 410;
 			// 06's pieces are built one at a time while 05 plays, so none of them costs a frame when the dive needs it
 			if (stage === 0 && t1 === 0) {
 				if (t0 > 3 && !chipTex) chip();
@@ -1054,16 +1055,17 @@ export function createOutbreak(): Figure {
 
 				// the timeline of the machine's waking
 				const rise = easeOut(ramp(1.8, 2.9, t1));
-				const seatAt = 3.9; // the token seats
+				const seatAt = 3.2; // the token seats
 				const slotOn = smooth(seatAt, seatAt + 0.3, t1);
-				const conduit = ramp(seatAt + 0.2, seatAt + 0.6, t1);
-				const fill = easeOut(ramp(4.7, 6.4, t1));
-				const awake = smooth(5.0, 6.2, t1);
-				const domeOn = easeOut(ramp(6.2, 7.7, t1));
+				const ground = ramp(seatAt + 0.05, seatAt + 0.35, t1);
+				const conduit = ramp(seatAt + 0.35, seatAt + 0.75, t1);
+				const fill = easeOut(ramp(4.0, 5.7, t1));
+				const awake = smooth(4.3, 5.5, t1);
+				const domeOn = easeOut(ramp(5.5, 7.0, t1));
 				const pulse = 0.94 + 0.06 * Math.sin(sec * 1.2);
-				const s = compact ? 1.0 : 0.88;
+				const s = compact ? 1.08 : 0.88;
 				const MH = 370 * s; // the machine's height on the stage
-				const rx = 330;
+				const rx = 290;
 				const ry = 1.2 * MH;
 				// stage position of a point in the machine's own units
 				const px = (x: number) => CX + (x - MX) * s;
@@ -1114,7 +1116,7 @@ export function createOutbreak(): Figure {
 						lit: fill * pulse,
 						dormant: 1 - awake,
 						vatFill: fill,
-						seedBorn: ramp(5.6, 7.2, t1),
+						seedBorn: ramp(4.9, 6.5, t1),
 						foot: false,
 						rim2: [120, 150, 196],
 					});
@@ -1199,6 +1201,26 @@ export function createOutbreak(): Figure {
 					}
 				}
 
+				// a lit conduit on the ground from the console to the pad, splitting to the foot of each channel
+				if (ground > 0.01) {
+					const yc = py(GROUND + 8);
+					const yp = py(GROUND + 1);
+					ctx.globalCompositeOperation = 'lighter';
+					ctx.lineCap = 'round';
+					ctx.strokeStyle = css([255, 226, 170]);
+					ctx.lineWidth = 2;
+					ctx.globalAlpha = clamp(0.6 * sA);
+					ctx.beginPath();
+					ctx.moveTo(CX, yc);
+					ctx.lineTo(CX, mix(yc, yp, easeOut(ground)));
+					for (const sg of [-1, 1]) {
+						ctx.moveTo(CX, yp);
+						ctx.lineTo(mix(CX, CX + sg * (VR + 9) * s, easeOut(ground)), yp);
+					}
+					ctx.stroke();
+					ctx.globalCompositeOperation = 'source-over';
+				}
+
 				// the low crimson haze around its feet, and the dome the life in the vat pushes it out of
 				const hp0 = hazePuff(0);
 				const hp1 = hazePuff(1);
@@ -1219,10 +1241,9 @@ export function createOutbreak(): Figure {
 				// wisps drifting across the front of the machine: it stands in the red, until the dome pushes them out
 				if (hp0 && hp1) {
 					for (const w of WISPS) {
-						const push = Math.sign(w.x) * domeOn * 300;
-						const x = CX + w.x + Math.sin(sec * 0.12 * w.sp + w.ph) * 46 + push;
+						const x = CX + mix(w.x, Math.sign(w.x) * rx * 0.96, 0.92 * domeOn) + Math.sin(sec * 0.12 * w.sp + w.ph) * 46 * (1 - domeOn);
 						const y = w.y + Math.sin(sec * 0.07 * w.sp + w.ph * 2) * 8;
-						const a = w.a * (1 - 0.95 * smooth(0, 0.9, domeOn)) * smooth(1.9, 2.8, t1);
+						const a = w.a * (1 - 0.6 * smooth(0, 0.9, domeOn)) * smooth(1.9, 2.8, t1);
 						if (a < 0.01) continue;
 						ctx.globalAlpha = clamp(a * sA);
 						ctx.drawImage(w.v ? hp1 : hp0, x - w.rx, y - w.ry, w.rx * 2, w.ry * 2);
@@ -1259,8 +1280,8 @@ export function createOutbreak(): Figure {
 
 				// the token: a small hexagonal glint falls in a shallow arc from the far bright point, slows, and in its
 				// last 0.4 s turns face-on; it seats in the socket with a flash three times the socket's width
-				const arrive = ramp(2.9, seatAt, t1);
-				if (t1 > 2.9) {
+				const arrive = ramp(2.2, seatAt, t1);
+				if (t1 > 2.2) {
 					let dx = vd[0];
 					const dy = Math.min(vd[1], -0.3 * Math.abs(vd[0]) - 30);
 					const dl = Math.hypot(dx, dy) || 1;
@@ -1283,9 +1304,9 @@ export function createOutbreak(): Figure {
 						// a short bright trail behind it, about 30 px
 						if (arrive < 0.98) {
 							ctx.globalCompositeOperation = 'lighter';
-							for (let k = 1; k <= 8; k++) {
-								const p = at(Math.max(0, q - k * 0.006));
-								putS(spr([255, 232, 180]), p[0], p[1], 7 - k * 0.55, 0.7 * (1 - k / 9));
+							for (let k = 1; k <= 10; k++) {
+								const p = at(Math.max(0, q - k * 0.0064));
+								putS(spr([255, 232, 180]), p[0], p[1], 8 - k * 0.6, 0.85 * (1 - k / 11));
 							}
 							ctx.globalCompositeOperation = 'source-over';
 						}
@@ -1303,9 +1324,15 @@ export function createOutbreak(): Figure {
 						ctx.globalCompositeOperation = 'lighter';
 						const br = 0.62 + 0.16 * Math.sin(sec * 1.4);
 						// a warm-white glint on it while it falls, then its own white core
-						putS(spr([255, 240, 214]), head[0], head[1], 20 * s, 0.75 * (1 - seated) * smooth(0, 0.2, arrive));
-						putS(spr([255, 250, 242]), head[0], head[1], 20 * s * (0.92 + 0.12 * br), smooth(0.3, 0.9, arrive) * br * 0.6);
-						const fl = Math.max(0, 1 - (t1 - seatAt) / 0.2);
+						putS(spr([255, 240, 214]), head[0], head[1], 24 * s, 0.9 * (1 - seated) * smooth(0, 0.2, arrive));
+						// seated, it stays lit: a warm-white core about 1.5 times its size, one pulse to 0.8, then steady at 0.5
+						const pulseSeat = mix(0.5, 0.8, Math.exp(-Math.max(0, t1 - seatAt) / 0.5));
+						const coreA = arrive < 1 ? smooth(0.3, 0.9, arrive) * 0.55 : pulseSeat * (0.94 + 0.06 * br);
+						putS(spr([255, 244, 226]), head[0], head[1] + 5 * seated * s, 48 * s, coreA);
+						putS(spr([255, 250, 240]), head[0], head[1] + 5 * seated * s, 20 * s, coreA * 0.8);
+						// the light it pools on the ground round the console
+						putS(spr([255, 214, 150]), CX, py(GROUND + 30), 150 * s, 0.32 * seated);
+						const fl = Math.pow(Math.max(0, 1 - (t1 - seatAt) / 0.55), 0.7);
 						if (t1 >= seatAt && fl > 0) putS(spr(WHITE), P2[0], P2[1], 1.5 * 72 * s, 0.8 * fl);
 						ctx.globalCompositeOperation = 'source-over';
 					}

@@ -242,6 +242,14 @@ export function paintMachine(g: Ctx) {
 	for (let k = 0; k < 9; k++) g.fillRect(MX + 112, 318 + k * 12, 32, 5);
 	rivetAt(g, MX + 110, 256, true);
 	rivetAt(g, MX + 146, 256, true);
+	// contact shadows where the side boxes meet the ground
+	for (const [x0, x1] of [[MX - 152, MX - 102], [MX + 102, MX + 154]] as const) {
+		const cs = g.createLinearGradient(0, GROUND - 3, 0, GROUND + 8);
+		cs.addColorStop(0, css(BLACK, 0.45));
+		cs.addColorStop(1, css(BLACK, 0));
+		g.fillStyle = cs;
+		g.fillRect(x0, GROUND - 3, x1 - x0, 11);
+	}
 
 	// the housing: rounded shoulders, banded in plates that differ a little from one to the next
 	g.save();
@@ -380,28 +388,34 @@ export function paintMachine(g: Ctx) {
 		rivetAt(g, VX + rb, y, true);
 	}
 
-	// weathering: rust streaks running down from three rivets, and one dent in the plating
+	// weathering: rust streaks running down from three rivets, one dent in the plating, and the outer edge
+	// softened with a darker line just inside it, so the housing does not read as a vector cut-out
 	g.save();
 	bodyPath(g);
 	g.clip();
-	for (const [x, y, len] of [[MX - 92, 232, 58], [MX + 84, 334, 48], [MX - 36, 372, 40]] as [number, number, number][]) {
-		const st = g.createLinearGradient(0, y, 0, y + len);
-		st.addColorStop(0, css([120, 64, 30], 0.15));
-		st.addColorStop(1, css([120, 64, 30], 0));
+	for (const [x, y] of [[MX - 92, 232], [MX + 84, 334], [MX - 36, 372]] as [number, number][]) {
+		const st = g.createLinearGradient(0, y, 0, y + 25);
+		st.addColorStop(0, css([130, 66, 30], 0.3));
+		st.addColorStop(1, css([130, 66, 30], 0));
 		g.fillStyle = st;
-		g.fillRect(x - 2, y, 4, len);
-		g.fillRect(x + 3, y + 4, 2, len * 0.6);
+		g.fillRect(x - 1, y, 2, 25);
 	}
-	const dent = g.createRadialGradient(MX + 74, 356, 2, MX + 74, 356, 15);
-	dent.addColorStop(0, css(BLACK, 0.3));
-	dent.addColorStop(0.7, css(BLACK, 0.1));
-	dent.addColorStop(1, css(BLACK, 0));
-	g.fillStyle = dent;
-	g.fillRect(MX + 56, 338, 36, 36);
-	g.strokeStyle = css([190, 198, 190], 0.22);
+	g.fillStyle = css(BLACK, 0.4);
+	g.beginPath();
+	g.ellipse(MX + 74, 356, 5, 3, 0, 0, TAU);
+	g.fill();
+	g.strokeStyle = css([200, 206, 198], 0.45);
 	g.lineWidth = 1.2;
 	g.beginPath();
-	g.arc(MX + 74, 356, 11, 0.25 * Math.PI, 0.85 * Math.PI);
+	g.ellipse(MX + 74, 356, 5.6, 3.6, 0, 0.15 * Math.PI, 0.85 * Math.PI);
+	g.stroke();
+	g.strokeStyle = css(BLACK, 0.14);
+	g.lineWidth = 10;
+	bodyPath(g);
+	g.stroke();
+	g.strokeStyle = css(BLACK, 0.4);
+	g.lineWidth = 2;
+	bodyPath(g);
 	g.stroke();
 	g.restore();
 
@@ -667,8 +681,12 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		ctx.fillRect(BODY.x0, BODY.bot - 110, BODY.x1 - BODY.x0, 110);
 	}
 	if (S.flash > 0.01) {
-		ctx.fillStyle = css([200, 208, 255], 0.25 * S.flash * a);
-		ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
+		// a strike lifts the machine only along its lit left edge, not the whole face
+		const fg2 = ctx.createLinearGradient(BODY.x0, 0, BODY.x0 + 60, 0);
+		fg2.addColorStop(0, css([200, 208, 255], 0.22 * S.flash * a));
+		fg2.addColorStop(1, css([200, 208, 255], 0));
+		ctx.fillStyle = fg2;
+		ctx.fillRect(BODY.x0, BODY.top, 60, BODY.bot - BODY.top);
 	}
 	const spill = ctx.createRadialGradient(VX, 300, 20, VX, 300, 150);
 	spill.addColorStop(0, css(gel, 0.25 * a * lit));
@@ -839,6 +857,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	const halos: [number, number, number, number][] = [];
 	const sparks: [number, number, number][] = [];
 	const flashes: [number, number, number, number][] = [];
+	const dissolves: [number, number, number, number, number][] = [];
 	SEEDS.forEach((s, k) => {
 		const free = 1 - apex;
 		const dx = Math.sin(sec * s.sp + s.ph) * 5 * free;
@@ -853,7 +872,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const kmk = clamp(S.km * 1.25 - k * 0.06);
 		const born = S.seedBorn === undefined ? 1 : clamp(S.seedBorn * 1.3 - k * 0.14);
 		if (born <= 0.001) return;
-		const form = born * mix(kmk < 0.5 ? mix(1, 0.06, smooth(0, 0.5, kmk)) : mix(0.06, 1, smooth(0.5, 1, kmk)), 1, apex);
+		const form = born * mix(kmk < 0.5 ? mix(1, 0, smooth(0, 0.5, kmk)) : mix(0.2, 1, smooth(0.5, 1, kmk)), 1, apex);
 		const r = mix(s.r, 15, apex) * form * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
 		const kindNow: SeedKind = kmk < 0.5 ? S.kindA : S.kindB;
 		const stormW = kindNow === 'storm' ? 1 - apex : 0;
@@ -876,9 +895,30 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		if (r > 0.6) {
 			// the membrane: the gel's own color darkened, so the seed sits dark in the glow; a storm's fins trail see-through
 			if (stormW > 0) {
-				shape(true)();
-				ctx.fillStyle = css(mixRGB(tint, BLACK, 0.55), 0.4 * a);
-				ctx.fill();
+				// each fin a tapered crescent swept from a lens tip, 0.6 of the lens's length, faint at the root and gone at the tip
+				const lens = 1.5 * 2 * r;
+				const fl = 0.6 * lens;
+				for (const sg of [1, -1]) {
+					const cx0 = Math.cos(rot);
+					const cy0 = Math.sin(rot);
+					const loc = (u: number, v: number): [number, number] => [x + (cx0 * u - cy0 * v) * sg, y + (cy0 * u + cx0 * v) * sg * 0.9];
+					const root = 1.42 * r;
+					const b0 = loc(root, -0.2 * r);
+					const b1 = loc(root, 0.2 * r);
+					const tip = loc(root + fl * 0.85, -fl * 0.5);
+					const c0 = loc(root + fl * 0.5, -fl * 0.42);
+					const c1 = loc(root + fl * 0.4, -0.02 * fl);
+					const fg = ctx.createLinearGradient(b0[0], b0[1], tip[0], tip[1]);
+					fg.addColorStop(0, css(mixRGB(tint, BLACK, 0.55), 0.35 * a));
+					fg.addColorStop(1, css(mixRGB(tint, BLACK, 0.55), 0));
+					ctx.beginPath();
+					ctx.moveTo(b0[0], b0[1]);
+					ctx.quadraticCurveTo(c0[0], c0[1], tip[0], tip[1]);
+					ctx.quadraticCurveTo(c1[0], c1[1], b1[0], b1[1]);
+					ctx.closePath();
+					ctx.fillStyle = fg;
+					ctx.fill();
+				}
 			}
 			const path = shape(stormW === 0);
 			path();
@@ -915,7 +955,8 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			}
 		}
 		halos.push([x, y, r, pulse]);
-		if (form < 0.5) sparks.push([x, y, 1 - form]);
+		if (form < 0.5 && kmk >= 0.5) sparks.push([x, y, 1 - form]);
+		if (kmk > 0.02 && kmk < 0.5 && apex < 0.05) dissolves.push([x, y, s.r, kmk / 0.5, k]);
 		// a short bright flash where the new seed catches
 		const fl2 = Math.exp(-Math.pow((kmk - 0.52) / 0.17, 2)) * (1 - apex);
 		if (fl2 > 0.05) flashes.push([x, y, fl2, s.r]);
@@ -938,6 +979,18 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			}
 		}
 	});
+	// the old seed comes apart into motes that rise from where it was
+	if (dissolves.length)
+		lighter(ctx, () => {
+			const mote = mixRGB(gel, WHITE, 0.6);
+			for (const [x, y, rd, u, k] of dissolves)
+				for (let j = 0; j < 9; j++) {
+					const ph = hash(j, k + 20);
+					const up = clamp(u * 1.3 - ph * 0.3);
+					if (up <= 0) continue;
+					glow(ctx, x + (hash(j, k + 30) - 0.5) * rd * 1.4, y - up * (28 + ph * 34) - (hash(j, 7) - 0.5) * rd * 0.6, 3.4, mote, 0.95 * (1 - up) * a, 'core');
+				}
+		});
 	// a faint glow of life round each, and the bright point a new seed starts as
 	lighter(ctx, () => {
 		for (const [x, y, r, p] of halos) glow(ctx, x, y, r * 2.2 + 3, apex > 0.05 ? mixRGB(gel, VIOLET, apex) : gel, (0.22 + 0.16 * p + 0.3 * apex) * a * lit);
