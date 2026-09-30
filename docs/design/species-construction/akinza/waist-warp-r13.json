@@ -1,0 +1,12 @@
+{
+  "purpose": "Round 13, R06: narrow the front-view waist and taper the ribcage into it. x-only field warp, so side depth is untouched.",
+  "shift": 0.044,
+  "zTop": 0.24,
+  "zPeak": 0.11,
+  "zHold": 0.03,
+  "zBottom": -0.05,
+  "xFull": 0.145,
+  "xZero": 0.235,
+  "yFull": 0.06,
+  "yZero": 0.13
+}
