@@ -14,7 +14,12 @@ const web = path.join(__dirname, '..', '..', 'apps', 'web');
 const { buildSync } = require(require.resolve('esbuild', { paths: [web] }));
 
 const FIGURES = {
-	generators: { title: 'Generators Figure Study', beats: ['02 A Generator, world after world', '03 APEX takes the Generators'] },
+	generators: {
+		title: 'Generators Figure Study',
+		beats: ['02 Generators, world by world', '03 APEX takes the Generators'],
+		// pictures the figure paints from, inlined so the page stands alone (the site loads them by path)
+		assets: ['zolton', 'magmuth', 'krystos', 'poseidas'].map((n) => `/assets/img/planets/art/${n}-landscape-768.webp`),
+	},
 	outbreak: { title: 'Outbreak Figure Study', beats: ['05 The Nemesis Plague', '06 The Scrambler Token'] },
 };
 
@@ -52,13 +57,16 @@ const res = buildSync({
 	alias: { '@': path.join(web, 'src') },
 });
 const js = res.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
-const study = { figure, ...FIGURES[figure], rounds };
+const { assets = [], ...meta } = FIGURES[figure];
+const inline = {};
+for (const a of assets) inline[a] = `data:image/webp;base64,${fs.readFileSync(path.join(web, 'public', a)).toString('base64')}`;
+const study = { figure, ...meta, rounds };
 const json = JSON.stringify(study).replace(/</g, '\\u003c');
 const html = `<title>${FIGURES[figure].title}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@500;600&family=Atkinson+Hyperlegible&family=Martian+Mono:wght@400;500&display=swap" />
 <div id="study"></div>
-<script>window.__STUDY__ = ${json};</script>
+<script>window.__STUDY__ = ${json}; window.__FIGURE_ASSETS__ = ${JSON.stringify(inline)};</script>
 <script>${js}</script>
 `;
 fs.mkdirSync(outDir, { recursive: true });

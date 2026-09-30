@@ -46,8 +46,8 @@ A figure moves only while its beat is live (the viewer resting on it, on screen,
 `pages/home/pieces/generators.ts`.
 
 - **02.** The machine stands still while four worlds fly past behind it, each in about 2.7 s with parallax. At each, the sensor ring sends out reading pulses, the intake glows, the vat's gel takes the world's light, and the seeds change shape to suit it: a narrow lens with swept fins (storm), an armored hexagon (lava), six sharp points (ice), a bell with a scalloped hem (sea), each passing through a plain round on the way to the next. It opens in the Genesis Prototype's green.
-- **03.** The machine's lights dip and flicker; the view pulls back until it is one of five Generators, each on a patch of its own world with dark space between; APEX resolves over them (0.7 s of interference), its links snap to every sensor at once and then between neighbors; where a link lands the machine stops reading, its seeds line up down the vat and pulse on APEX's beat (0.55 s), and its readout falls into a square rhythm. Back from 03 runs it in reverse.
-- **Kept from Floria:** the riveted steel housing, the tall capsule vat and its straps, seeds dark against the glow, the side box and gauge, the roof pipe. **Changed with time:** cleaner plating with lit seams, a sensor ring on a mast in place of the open lattice tower (the histories have Generators sensing their surroundings: Phantiri, Endessa), an intake grille, a life-signs readout, a standing pad, and no chute.
+- **03.** The machine's lights dip and flicker; the view pulls back until it is one of five Generators, each on a patch of its own world with dark space between; APEX resolves over them (0.7 s of interference), its links snap to every sensor at once (never between Generators, ruling 12); where a link lands the machine stops reading, its seeds line up down the vat and pulse on APEX's beat (0.55 s), and its readout falls into a square rhythm. Back from 03 runs it in reverse.
+- **Kept from Floria:** the riveted steel housing, the tall capsule vat and its straps, seeds dark against the glow, the side box and gauge, the roof pipe. **Changed with time:** cleaner plating with lit seams, a sensor ring on a mast in place of the open lattice tower, which the later model drops (the histories have Generators sensing their surroundings: Phantiri, Endessa), an intake grille, a life-signs readout, a standing pad, and no chute.
 
 ## 6. Checking
 
@@ -55,16 +55,18 @@ A figure moves only while its beat is live (the viewer resting on it, on screen,
 - `node scripts/design/snap-figure-close.cjs` saves the figure alone at twice the pixels at set moments of 02 and 03, for review.
 - `node scripts/plates/snap-story.cjs` still checks the whole story's rules (one live thing at a time, nothing live mid-change, no overflow, a clean console).
 
-## 7. The outbreak (beats 5 and 6), to build
+## 7. The outbreak (beats 5 and 6)
 
 Beat 5, "Designed by APEX to target the genome", and beat 6, "The only way to safely generate new Xalians", become one figure that runs on from one into the next, as the Generators do. It replaces the helix pieces (`plague.ts`, `token.ts`) on the archive screen; both files go when it ships.
 
-- **Arrival (04 to 05).** The End Wars screen collapses to a point; the point flies to a far world of the galaxy and turns crimson there. That world is the plague's first.
-- **05.** A galaxy of small lit worlds, warm and alive. From the first world the plague spreads world to world along lanes; each world it reaches flares crimson and goes dark, and a red haze gathers where it has passed. A small cluster of lights near the core holds (Valleron: "few planets are safe", `STORY[3]`), unnamed on screen. Glance line: "a red sickness spreads across the worlds and puts their lights out."
-- **06 (runs on).** The view closes in on the cluster that held. A Scrambler Token forms there, a hexagonal chip in white light (its look carried from `token.ts`: a wafer of dark glass and worn metal). The haze draws back from its light, and light goes back out from it to dark worlds, which light again. Glance line: "one bright chip holds the red back, and the worlds light up again."
-- **Departure (06 to 07).** The token pulls into a point that flies to the arena screen on Valleron, where the tokens are fought for.
-- **Defaults I will use unless Nick says otherwise:** no world is named; the first infected world has a faint cold tint (a nod to Krystos, where the histories put the plague's making) and is never labeled; Valleron is a cluster, not a single marked world; the relit worlds are only those near the token, so it reads as a beginning, not a cure. Every one of these goes through the fact-check with the labels.
-- **Open for the fact-check:** whether "light goes back out to dark worlds" overclaims what tokens do (the lore summary has Xalians winning tokens to repopulate their homeworlds; the histories must support it, or the relighting becomes the token's own light only).
+The concept went through the fact-check before a line was drawn (2026-09-29, Sonnet, `lore-factcheck` brief). It changed the first plan in six places: the sources name no world where the plague began and no route it took; Valleron is one planet, not a cluster, and no source places it in the galaxy (Telypso is at the center, Grimedes on the rim); no source says Valleron is untouched, only that "few planets are safe" and "most life forms have gathered" there; the plague ravaged the Vallerii and threatens the Xalians but emptied no world; tokens are carried home by those who win them and used at a Generator, not beamed out; and a token flying to the arena reverses the tournament, where tokens are the prize.
+
+- **Arrival (04 to 05).** The End Wars screen collapses to a point; the point flies to the heart of the galaxy, turning crimson on the way, and the galaxy blooms from it.
+- **05.** A spiral galaxy of small warm lit worlds, seen at a tilt, turning very slowly. A crimson haze creeps in from several places at once (no single origin, no lanes) and spreads until it covers most of the galaxy; each world it reaches flares crimson and dims to an ember, most of them, not all. One world in the disk (Valleron, never named, not at the core) grows brighter as warm motes drift in to it from its neighbors before they dim: most life gathers there. The haze reaches it too and thins around it; it stays lit. Glance line: "a red sickness spreads across the worlds and puts their lights out."
+- **06 (runs on), as built after round 5.** The galaxy-scale token (a chip or a hexagon of light on Valleron) failed five blind readers: at that scale a token is too small to be an object, or reads as a marker. 06 now works at one Generator's scale (my recommendation, applied while Nick rules; the lore basis is the token entry: a token "can be used by a Xalian Generator to create new, unique Xalians that are immune to the Nemesis Plague"). The view dives from the galaxy into one dimmed world (a dark disc with a crimson limb toward Valleron's distant light, becoming the horizon). On it the Generator of beats 02 and 03 (the same drawing, `pieces/generatorMachine.ts`) stands idle under red haze, its vat empty. A small hexagonal chip arrives from the direction of that distant light, carried, never beamed, and seats in an intake at the machine's foot; light runs from it up into the vat, which fills with the Genesis green from its first pixel, and three seeds of life grow in it. A warm band of light goes out from the chip along the ground and the red keeps back from the new life, while beyond the machine the red remains: a beginning, not a cure. Nothing leaves the machine. Glance line: see section 8.
+- **Departure (06 to 07).** The whole figure pulls into a neutral warm-white point centered on it, which flies to the arena screen; nothing green leaves the vat and the token does not fly to the arena (tokens are the tournament's prize).
+- **Names and nods.** Nothing is named on screen. No first infected world and no cold tint (Krystos is where APEX designed the plague, not where it began).
+- **Captions, as fact-checked twice (2026-09-29):** 05 "The plague burns through the galaxy, and few worlds are safe; most life gathers on Valleron." 06 "Carried home from Valleron, where the Mercurius Machine prints them, a Scrambler Token lets a Generator make new Xalians immune to the plague."
 
 ## 8. Glance lines (what the blind reader must say)
 
@@ -73,7 +75,7 @@ Beat 5, "Designed by APEX to target the genome", and beat 6, "The only way to sa
 | 02 | a machine makes life, and the life changes to suit each world it is shown in |
 | 03 | something (a network, an intelligence) takes control of many such machines |
 | 05 | a red sickness spreads across many worlds and puts their lights out |
-| 06 | one bright object holds the sickness back and the worlds come alive again |
+| 06 | a small bright object brings a dead machine back to life and something grows in it (proposed 2026-09-29 after the redesign, pending Nick; the earlier line asked a reader to name the sickness held back, which no reader has done in this staging) |
 
 ## 9. Budgets
 

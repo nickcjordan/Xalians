@@ -9,7 +9,7 @@
 // Stills for a contact sheet: ?frames=0@1.5;0@4>1@2.3;c0@6  (beat@seconds, ">" runs on into the next beat
 // without a reset, a leading "c" draws it compact). Sets window.__done when they are drawn.
 import { FIGURES, type Figure, type FigureKey } from '../src/pages/home/pieces/figures';
-import { H, W } from '../src/pages/home/pieces/stage';
+import { H, ovalFade, W } from '../src/pages/home/pieces/stage';
 
 type Round = {
 	round: string;
@@ -19,11 +19,15 @@ type Round = {
 	reader?: string[];
 	changes?: string[];
 	open?: string[];
+	/** A decision the round needs from Nick: the question, then the options. */
+	decision?: { question: string; options: string[] };
 	frames?: { src: string; caption?: string }[];
 };
 type Study = { figure: FigureKey; title?: string; beats?: string[]; rounds?: Round[] };
 
 const FILM_FPS = 20;
+/** The site's room color (tokens.css --color-room): what a figure sits on, and fades out into. */
+const ROOM = '#121110';
 const BAR = 8.5;
 const LINES = ['Glance', 'Lore', 'Subject', 'Setting', 'Motion', 'Changes', 'Finish', 'Phone'];
 
@@ -46,19 +50,7 @@ function paint(o: HTMLCanvasElement, fig: Figure, sec: number, compact: boolean)
 	oc.clearRect(0, 0, o.width, o.height);
 	oc.setTransform(o.width / W, 0, 0, o.height / H, 0, 0);
 	fig.draw(oc, sec, { compact });
-	oc.globalCompositeOperation = 'destination-in';
-	oc.globalAlpha = 1;
-	oc.save();
-	oc.translate(W / 2, H / 2);
-	oc.scale(1, (0.46 * H) / (0.48 * W));
-	const m = oc.createRadialGradient(0, 0, 0, 0, 0, 0.48 * W);
-	m.addColorStop(0, 'rgba(0,0,0,1)');
-	m.addColorStop(0.55, 'rgba(0,0,0,1)');
-	m.addColorStop(1, 'rgba(0,0,0,0)');
-	oc.fillStyle = m;
-	oc.fillRect(-W, -W, 2 * W, 2 * W);
-	oc.restore();
-	oc.globalCompositeOperation = 'source-over';
+	ovalFade(oc, fig.groundHold);
 }
 
 /* ------------------------------------------------------------------ styles */
@@ -76,7 +68,7 @@ body { margin: 0; font: 15px/1.5 'Atkinson Hyperlegible', system-ui, sans-serif;
 .stages { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 @media (max-width: 720px) { .stages { grid-template-columns: minmax(0, 1fr); } }
 .place { display: grid; gap: 6px; }
-.place canvas { display: block; width: 100%; aspect-ratio: ${W} / ${H}; background: #000; }
+.place canvas { display: block; width: 100%; aspect-ratio: ${W} / ${H}; background: ${ROOM}; }
 .place .phone-frame { max-width: 360px; }
 .meta { display: flex; justify-content: space-between; gap: 8px; font: 12px/1.3 'Martian Mono', ui-monospace, monospace; color: var(--muted); font-variant-numeric: tabular-nums; }
 .meta .over { color: var(--under); }
@@ -92,14 +84,16 @@ body { margin: 0; font: 15px/1.5 'Atkinson Hyperlegible', system-ui, sans-serif;
 .scores td.n { font-family: 'Martian Mono', ui-monospace, monospace; }
 .scores td.ok { color: var(--mint); }
 .scores td.under { color: var(--under); }
-.round ul { margin: 0; padding-left: 20px; max-width: 72ch; }
+.round ul, .round ol { margin: 0; padding-left: 20px; max-width: 72ch; }
+.decision { border: 1px solid var(--mint); background: var(--panel); padding: 14px 16px; display: grid; gap: 8px; max-width: 76ch; }
+.decision p { margin: 0; }
 .round li { margin: 4px 0; }
-.frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; }
+.frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 560px), 1fr)); gap: 10px; }
 .frames figure { margin: 0; }
 .frames img { display: block; width: 100%; height: auto; background: #000; }
 .frames figcaption { font: 12px/1.3 'Martian Mono', ui-monospace, monospace; color: var(--muted); padding-top: 4px; }
 .stills { display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: 6px; padding: 6px; }
-.stills canvas { display: block; width: 100%; aspect-ratio: ${W} / ${H}; background: #000; }
+.stills canvas { display: block; width: 100%; aspect-ratio: ${W} / ${H}; background: ${ROOM}; }
 .stills figcaption { font: 11px/1.3 'Martian Mono', ui-monospace, monospace; color: var(--muted); }
 .stills figure { margin: 0; }
 `;
@@ -123,22 +117,27 @@ if (framesSpec) {
 	root.append(grid);
 	const px = Number(q.get('w') || 1000);
 	const dt = 1 / 60;
-	for (const item of framesSpec.split(';').filter(Boolean)) {
-		const compact = item.startsWith('c');
-		const legs = (compact ? item.slice(1) : item).split('>').map((leg) => leg.split('@').map(Number) as [number, number]);
-		const fig = make();
-		fig.reset(legs[0][0]);
-		let sec = 0;
-		for (const [stage, secs] of legs) for (let t = 0; t < secs - 1e-6; t += dt, sec += dt) fig.step(dt, stage, true);
-		const c = el('canvas');
-		c.width = compact ? Math.round(px * 0.36) : px;
-		c.height = Math.round((c.width * H) / W);
-		paint(c, fig, sec, compact);
-		const f = el('figure');
-		f.append(c, el('figcaption', {}, `${study.figure} ${item}`));
-		grid.append(f);
-	}
-	(window as unknown as { __done: boolean }).__done = true;
+	const stills = async () => {
+		await make().ready?.();
+		for (const item of framesSpec.split(';').filter(Boolean)) {
+			const compact = item.startsWith('c');
+			const legs = (compact ? item.slice(1) : item).split('>').map((leg) => leg.split('@').map(Number) as [number, number]);
+			const fig = make();
+			await fig.ready?.();
+			fig.reset(legs[0][0]);
+			let sec = 0;
+			for (const [stage, secs] of legs) for (let t = 0; t < secs - 1e-6; t += dt, sec += dt) fig.step(dt, stage, true);
+			const c = el('canvas');
+			c.width = compact ? Math.round(px * 0.36) : px;
+			c.height = Math.round((c.width * H) / W);
+			paint(c, fig, sec, compact);
+			const f = el('figure');
+			f.append(c, el('figcaption', {}, `${study.figure} ${item}`));
+			grid.append(f);
+		}
+		(window as unknown as { __done: boolean }).__done = true;
+	};
+	void stills();
 } else {
 	buildStudy();
 }
@@ -203,6 +202,10 @@ function buildStudy() {
 	let frame = 0;
 	let last = -1;
 	let lastDraw = -1;
+	let lastMs = -1;
+	const gaps: number[] = [];
+	// ?stress=1 draws every frame instead of at film rate: whether the screen keeps up is the GPU's share
+	const stress = q.get('stress') === '1';
 
 	function go(i: number, fresh = false) {
 		paused = false;
@@ -231,25 +234,29 @@ function buildStudy() {
 		for (const p of places) {
 			const t0 = performance.now();
 			paint(p.canvas, p.fig, sec, p.compact);
-			// canvas work is queued and rasterized later; reading one pixel back makes it finish inside the timing
-			p.canvas.getContext('2d')!.getImageData(0, 0, 1, 1);
+			// the script's share only: the canvas rasterizes later, on the GPU, which the frame rate below shows
 			p.times.push(performance.now() - t0);
 			if (p.times.length > 120) p.times.shift();
 			const sorted = p.times.slice().sort((a, b) => a - b);
 			const avg = sorted.reduce((s, v) => s + v, 0) / sorted.length;
 			const p95 = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.95))];
-			p.readout.textContent = `draw ${avg.toFixed(1)} ms avg, ${p95.toFixed(1)} ms p95`;
-			p.readout.classList.toggle('over', avg > 8 || p95 > 16);
+			const fps = gaps.length ? 1000 / (gaps.reduce((s, v) => s + v, 0) / gaps.length) : 0;
+			p.readout.textContent = `draw ${avg.toFixed(1)} ms avg, ${p95.toFixed(1)} ms p95${stress ? `, ${fps.toFixed(0)} fps` : ''}`;
+			p.readout.classList.toggle('over', avg > 8 || p95 > 16 || (stress && gaps.length > 60 && fps < 58));
 		}
 	}
 
 	function tick(ms: number) {
 		frame = 0;
+		if (lastMs >= 0) gaps.push(ms - lastMs);
+		if (gaps.length > 120) gaps.shift();
+		lastMs = ms;
 		const sec = ms / 1000;
 		const dt = last < 0 ? 0 : Math.min(0.1, sec - last);
 		last = sec;
 		if (paused || document.hidden) {
 			last = -1;
+			lastMs = -1;
 			return;
 		}
 		let busy = false;
@@ -257,7 +264,7 @@ function buildStudy() {
 			p.fig.step(dt, stage, present);
 			busy = busy || p.fig.busy(stage, present);
 		}
-		if (busy || sec - lastDraw >= 1 / FILM_FPS - 0.001) {
+		if (stress || busy || sec - lastDraw >= 1 / FILM_FPS - 0.001) {
 			drawAll(sec);
 			lastDraw = sec;
 		}
@@ -278,6 +285,14 @@ function roundSection(r: Round) {
 	h.append(el('div', { class: 'kicker' }, r.date ? `${r.round}, ${r.date}` : r.round), el('h2', {}, r.round));
 	s.append(h);
 	if (r.summary) s.append(el('p', { class: 'lede' }, r.summary));
+	if (r.decision) {
+		const d = el('div', { class: 'decision' });
+		d.append(el('div', { class: 'kicker' }, 'Needs your call'), el('p', {}, r.decision.question));
+		const ol = el('ol');
+		for (const o of r.decision.options) ol.append(el('li', {}, o));
+		d.append(ol);
+		s.append(d);
+	}
 	if (r.scores) {
 		const t = el('table', { class: 'scores' });
 		const hr = el('tr');
