@@ -37,7 +37,9 @@ import {
   titleCard,
   endingOf,
   eventWords,
+  floatWords,
   hinderOnAttack,
+  hinderWords,
   hitDuring,
   keyNote,
   momentWords,
@@ -666,7 +668,7 @@ describe("since your last turn (item 4)", () => {
     rec.forEach((r, i) => {
       expect(r.room).toBe(3);
       expect(r.round).toBe(beats[i].round);
-      expect(r.words).toBe(beats[i].words);
+      expect(r.words).toBe(beats[i].weakenedText ? `${beats[i].words} ${beats[i].weakenedText}` : beats[i].words);
     });
   });
 });
@@ -1102,7 +1104,7 @@ describe("round 5: first-occurrence notes (item 11)", () => {
     const s = freshState(1);
     const base = turnView(s);
     const cell = (over: Partial<Cell>): Cell => ({ target: "x", letter: "A", n: 5, step: 1, immune: false, finishes: false, absorbed: 0, ...over });
-    const key = (index: number, over: object) => ({ index, name: "K", signature: false, rests: 0, state: "ready" as const, restLeft: 0, kind: "attack" as const, area: false, aim: "enemy" as const, cells: [cell({})], supports: [], ...over });
+    const key = (index: number, over: object) => ({ index, name: "K", signature: false, rests: 0, state: "ready" as const, restLeft: 0, kind: "attack" as const, area: false, aim: "enemy" as const, cells: [cell({})], supports: [], riderKept: false, ...over });
     const v = {
       ...base,
       keys: [
@@ -1113,7 +1115,9 @@ describe("round 5: first-occurrence notes (item 11)", () => {
     } as typeof base;
     const first = keyNote(v, [])!;
     expect(first).toMatchObject({ id: "hinder", keyIndex: 1 });
-    expect(first.text).toBe(`Hinder: that enemy's next hit on ${v.active!.name} falls from 14 to 0.`);
+    expect(first.text).toBe(`Hinder: ${hinderWords(14, v.active!.name, 14, 0)}.`);
+    expect(first.text).toBe(`Hinder: that enemy's next hit, on whoever it strikes, falls by 14 (on ${v.active!.name}: 14 to 0).`);
+    expect(first.keyName).toBe("K");
     expect(keyNote(v, ["hinder"])).toMatchObject({ id: "shield", keyIndex: 0 });
     expect(keyNote(v, ["hinder", "shield"])).toMatchObject({ id: "all", keyIndex: 2 });
     expect(keyNote(v, ["hinder", "shield", "all"])).toBeNull();
@@ -1121,5 +1125,249 @@ describe("round 5: first-occurrence notes (item 11)", () => {
     expect(keyNote({ ...v, keys: [key(0, {})] } as typeof base, [])).toBeNull();
     // A resting key is not offered a note.
     expect(keyNote({ ...v, keys: [key(1, { kind: "support", state: "resting", cells: [cell({ before: 14, n: 0 })] })] } as typeof base, [])).toBeNull();
+  });
+});
+
+describe("round 6: the forecast agrees with the result", () => {
+  /** A state with one attack key carrying a hinder rider, and enemies whose one ready hit is 30. */
+  function riderWorld(): { s: TRun; a: Fighter } {
+    const s = structuredClone(stateWithActiveAttacker());
+    const a = s.team.find((t) => t.id === s.active)!;
+    const base = a.moves.find((m) => m.power > 0)!;
+    a.moves[0] = { ...base, power: 2, rests: 0, signature: false, area: false, parts: [{ kind: "hinder", n: 10, aim: "enemy", all: false } as never] };
+    a.cooldowns = a.moves.map(() => 0);
+    a.signatureSpent = false;
+    a.hinder = 0;
+    a.boost = 0;
+    a.shields = [];
+    a.hp = a.max;
+    for (const foe of s.enemies) {
+      const fb = foe.moves.find((m) => m.power > 0) ?? foe.moves[0];
+      foe.moves = [{ ...fb, power: 30, element: null as never, rests: 0, signature: false, parts: [], area: false }];
+      foe.cooldowns = [0];
+      foe.signatureSpent = false;
+      foe.boost = 0;
+      foe.hinder = 0;
+    }
+    return { s, a };
+  }
+
+  describe("item 2: a chip never shows a struck form without a live hinder", () => {
+    it("the boost an enemy spends on its own attack lowers the number with no struck one", () => {
+      // The Guardian's 26 was 14 plus a 12 boost; after it attacks the boost is gone.
+      const hit = { n: 26, step: 1, raw: 14, cap: 46 };
+      const after = hitDuring(hit, { boost: 0, hinder: 0, hp: 46 });
+      expect(after.n).toBe(14);
+      expect(after.before).toBeUndefined();
+    });
+
+    it("a hinder that lands strikes the number it was, including the boost still carried", () => {
+      const hit = { n: 26, step: 1, raw: 14, cap: 46 };
+      expect(hitDuring(hit, { boost: 12, hinder: 10, hp: 46 })).toMatchObject({ n: 16, before: 26 });
+    });
+
+    it("the settled view has no struck form on an enemy with no hinder, boosted or not", () => {
+      const s = structuredClone(stateWithActiveAttacker());
+      const foe = s.enemies.find((e) => e.hp > 0)!;
+      foe.hinder = 0;
+      foe.boost = 12;
+      const hit = turnView(s).enemies.find((e) => e.id === foe.id)!.hitOnActive;
+      if (hit) expect(hit.before).toBeUndefined();
+    });
+  });
+
+  describe("item 3: two color rules, and the words that keep them", () => {
+    const hit = (over: object) => ({ kind: "hit" as const, actor: "a", target: "b", move: "M", amount: 9, absorbed: 0, step: 1, fell: false, ...over });
+
+    it("a matchup tag is green when it favors you and raspberry when it favors the enemy", () => {
+      expect(floatWords(hit({ step: 1.5 }), true)!.tag).toEqual({ word: "Strong", tone: "good" });
+      expect(floatWords(hit({ step: 1.5 }), false)!.tag).toEqual({ word: "Strong", tone: "bad" });
+      expect(floatWords(hit({ step: 0.5 }), true)!.tag).toEqual({ word: "Weak", tone: "bad" });
+      expect(floatWords(hit({ step: 0.5 }), false)!.tag).toEqual({ word: "Weak", tone: "good" });
+      expect(floatWords(hit({}), true)!.tag).toBeUndefined();
+    });
+
+    it("a health number is health lost: one kind, whoever loses it", () => {
+      expect(floatWords(hit({}), true)).toMatchObject({ text: "-9", kind: "hurt" });
+      expect(floatWords(hit({}), false)).toMatchObject({ text: "-9", kind: "hurt" });
+      expect(floatWords({ kind: "heal", actor: "a", target: "b", move: "M", amount: 5 })).toMatchObject({ text: "+5", kind: "heal" });
+    });
+
+    it("a hit that knocks a unit out carries KO in place of a matchup tag, neutral", () => {
+      expect(floatWords(hit({ step: 0.5, fell: true }), false)!.tag).toEqual({ word: "KO", tone: "neutral" });
+      expect(floatWords(hit({ step: 1.5, fell: true }), true)!.tag).toEqual({ word: "KO", tone: "neutral" });
+    });
+
+    it("a hit a hinder cut to 0 says blocked, not -0; an immune matchup says no effect; a shield-only hit is a shield", () => {
+      expect(floatWords(hit({ amount: 0, step: 0.5 }), false)).toMatchObject({ text: "blocked", kind: "blocked" });
+      expect(floatWords(hit({ amount: 0, step: 0 }), false)).toMatchObject({ text: "no effect" });
+      expect(floatWords(hit({ amount: 0, absorbed: 6 }), false)).toMatchObject({ text: "shield took 6", kind: "shield" });
+    });
+  });
+
+  describe("item 6: a hinder rider on an attack shows what that enemy's hit falls to", () => {
+    it("puts the before and after on each enemy's cell", () => {
+      const { s } = riderWorld();
+      const cells = turnView(s).keys[0].cells;
+      expect(cells.length).toBeGreaterThan(0);
+      for (const c of cells) if (!c.finishes) expect(c.rider).toEqual({ before: 30, after: 20 });
+    });
+
+    it("shows a lethal hit taken below the acting companion's health", () => {
+      const { s, a } = riderWorld();
+      a.hp = 30; // the enemy's 30 equals it: lethal; the rider's 10 takes it to 20
+      const foe = turnView(s).enemies.find((e) => !e.down)!;
+      expect(foe.hitOnActive).toMatchObject({ n: 30, lethal: true });
+      expect(turnView(s).keys[0].cells[0].rider).toEqual({ before: 30, after: 20 });
+    });
+
+    it("shows nothing on a cell whose attack finishes the enemy (a fallen enemy takes no rider), or when the rider changes nothing", () => {
+      const { s } = riderWorld();
+      s.enemies[0].hp = 1;
+      const cells = turnView(s).keys[0].cells;
+      expect(cells.find((c) => c.target === s.enemies[0].id)!.finishes).toBe(true);
+      expect(cells.find((c) => c.target === s.enemies[0].id)!.rider).toBeUndefined();
+      const t = riderWorld().s;
+      for (const foe of t.enemies) foe.hinder = 40; // already carries more than the rider gives
+      for (const c of turnView(t).keys[0].cells) expect(c.rider).toBeUndefined();
+    });
+
+    it("a key with no rider has no rider numbers", () => {
+      const { s, a } = riderWorld();
+      a.moves[0] = { ...a.moves[0], parts: [] };
+      for (const c of turnView(s).keys[0].cells) expect(c.rider).toBeUndefined();
+    });
+  });
+
+  describe("item 10: the hinder number is on the cell and the rider stays when the attack reads 0", () => {
+    it("a hinder-only cell carries the hinder it applies", () => {
+      const { s, a } = riderWorld();
+      a.moves[0] = { ...a.moves[0], power: 0, parts: [{ kind: "hinder", n: 21, aim: "enemy", all: false } as never] };
+      const key = turnView(s).keys[0];
+      expect(key.kind).toBe("support");
+      for (const c of key.cells) expect(c).toMatchObject({ hinder: 21, before: 30, n: 9 });
+    });
+
+    it("the hinder words say whom it falls on and give the example", () => {
+      expect(hinderWords(14, "Avilily", 14, 0)).toBe("that enemy's next hit, on whoever it strikes, falls by 14 (on Avilily: 14 to 0)");
+    });
+
+    it("a hindered companion whose attack reads 0 keeps its rider, and the key says so", () => {
+      const { s, a } = riderWorld();
+      expect(turnView(s).keys[0].riderKept).toBe(false);
+      a.hinder = 9999;
+      const key = turnView(s).keys[0];
+      expect(key.cells.every((c) => c.n === 0)).toBe(true);
+      expect(key.riderKept).toBe(true);
+    });
+
+    it("a key with no rider never claims one", () => {
+      const { s, a } = riderWorld();
+      a.moves[0] = { ...a.moves[0], parts: [] };
+      a.hinder = 9999;
+      expect(turnView(s).keys[0].riderKept).toBe(false);
+    });
+  });
+
+  describe("item 11: enemy letters are stable for the whole encounter", () => {
+    it("keeps every enemy's letter, by row order, through a whole run of commands", () => {
+      let s = freshState(3);
+      let room = s.room;
+      let letters = turnView(s).enemies.map((e) => `${e.id}:${e.letter}`);
+      expect(letters).toEqual(s.enemies.map((e, i) => `${e.id}:${String.fromCharCode(65 + i)}`));
+      for (let i = 0; i < 120 && (s.phase === "turn" || s.phase === "camp"); i++) {
+        s = s.phase === "camp" ? turnCommand(s, { kind: "advance" }).state : turnCommand(s, { kind: "act", order: firstLegalOrder(s) }).state;
+        if (s.room !== room) {
+          room = s.room;
+          letters = turnView(s).enemies.map((e) => `${e.id}:${e.letter}`);
+          continue;
+        }
+        if (s.phase === "turn") expect(turnView(s).enemies.map((e) => `${e.id}:${e.letter}`)).toEqual(letters);
+      }
+    });
+  });
+
+  describe("item 12: since your last turn, the camp, the report and the Record", () => {
+    it("playback tells each hit how much its actor's hinder weakened it, and names it once per act", () => {
+      const s = structuredClone(freshState(1));
+      const foe = s.enemies[0];
+      const [t0, t1] = s.team;
+      foe.hinder = 10;
+      const hit = (target: string, amount: number) => ({ kind: "hit" as const, actor: foe.id, target, move: "Sweep", amount, absorbed: 0, step: 1, fell: false });
+      const beats = playback(s, [hit(t0.id, 0), hit(t1.id, 4)]);
+      expect(beats[0]).toMatchObject({ weakened: 10, weakenedText: `${foe.name} A's hit was weakened by 10.` });
+      expect(beats[1].weakened).toBe(10);
+      expect(beats[1].weakenedText).toBeUndefined();
+      // The player's hinder lands earlier in the command: it counts, and an attack spends it.
+      const clean = structuredClone(s);
+      clean.enemies[0].hinder = 0;
+      const ally = clean.team[0];
+      const seq = playback(clean, [
+        { kind: "hinder", actor: ally.id, target: foe.id, move: "Rake", amount: 14 },
+        { ...hit(t0.id, 0) },
+        { ...hit(t0.id, 5), move: "Second" },
+      ]);
+      expect(seq[1].weakened).toBe(14);
+      expect(seq[2].weakened).toBeUndefined();
+    });
+
+    it("the Record keeps the weakened note with the hit's line", () => {
+      const s = structuredClone(freshState(1));
+      const foe = s.enemies[0];
+      foe.hinder = 10;
+      const beats = playback(s, [{ kind: "hit", actor: foe.id, target: s.team[0].id, move: "Sweep", amount: 0, absorbed: 0, step: 1, fell: false }]);
+      const [entry] = recordEntries(0, beats);
+      expect(entry.words).toContain("was weakened by 10");
+      expect(entry.weakened).toBe(10);
+    });
+
+    it("since your last turn lists a blocked or reduced enemy hit on the enemy", () => {
+      const s = structuredClone(freshState(1));
+      const v = turnView(s);
+      const foe = v.enemies[0];
+      const active = v.active!;
+      const other = v.squad.find((u) => u.id !== active.id)!;
+      const entry = (amount: number, weakened: number): RecordEntry => ({
+        room: v.room,
+        round: 1,
+        actor: foe.id,
+        words: "",
+        weakened,
+        event: { kind: "hit", actor: foe.id, target: other.id, move: "M", amount, absorbed: 0, step: 1, fell: false },
+      });
+      const blocked = sinceView([entry(0, 14)], v);
+      expect(blocked.items.find((i) => i.id === foe.id)!.text).toBe(`${foe.name} ${foe.letter} hit blocked`);
+      const reduced = sinceView([entry(4, 6)], v);
+      expect(reduced.items.find((i) => i.id === foe.id)!.short).toBe(`${foe.letter} hit weakened 6`);
+      expect(reduced.items.find((i) => i.id === other.id)!.text).toContain("-4");
+      // No hinder, no note.
+      expect(sinceView([entry(4, 0)], v).items.find((i) => i.id === foe.id)).toBeUndefined();
+    });
+
+    it("the defeat report gives the ending enemy's health left", () => {
+      const s = structuredClone(freshState(1));
+      const foe = s.enemies[0];
+      foe.hp = 77;
+      const lost = { ...s, phase: "lost" as const };
+      const rec: RecordEntry[] = [
+        { room: 0, round: 1, actor: foe.id, words: "", event: { kind: "hit", actor: foe.id, target: s.team[0].id, move: "Heavy Ram", amount: 9, absorbed: 0, step: 1, fell: true } },
+      ];
+      const sum = runSummary(lost, turnView(lost), rec);
+      expect(sum.finalBlow).toBe(`${foe.name} A, Heavy Ram`);
+      expect(sum.finalBlowLeft).toBe(`77 of ${foe.max} health left`);
+      expect(sum.rows.find((r) => r.label === "Final blow")!.value).toBe(`${foe.name} A, Heavy Ram. 77 of ${foe.max} health left`);
+    });
+
+    it("camp says what the next sector holds: its name, enemies counted, and whether it is the Guardian's", () => {
+      const s = { ...freshState(1), phase: "camp" as const, room: 0 };
+      const next = campView(s).next!;
+      expect(next.n).toBe(2);
+      expect(next.name.length).toBeGreaterThan(0);
+      expect(next.enemies.reduce((n, e) => n + e.count, 0)).toBeGreaterThan(0);
+      expect(next.guardian).toBe(false);
+      const last = campView({ ...s, room: 2 }).next!;
+      expect(last.guardian).toBe(true);
+      expect(campView({ ...s, room: 3 }).next).toBeNull();
+    });
   });
 });

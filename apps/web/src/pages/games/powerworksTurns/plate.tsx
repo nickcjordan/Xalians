@@ -94,6 +94,7 @@ export function KoMark({ from, name }: { from: string[]; name: string }) {
   return (
     <span className="pwt-ko" title={words} aria-label={words} data-ko={from.join("")}>
       <Skull />
+      <span className="pwt-ko-words">can fall</span>
     </span>
   );
 }
@@ -209,10 +210,10 @@ export function SquadPlate({
 }
 
 /** The enemy's strongest ready hit on the acting companion at its next turn. */
-export function HitChip({ hit, who }: { hit: NonNullable<EnemyView["hitOnActive"]>; who: string }) {
+export function HitChip({ hit, who, off = false }: { hit: NonNullable<EnemyView["hitOnActive"]>; who: string; off?: boolean }) {
   return (
     <span
-      className={`pwt-hit-on-active ${hit.lethal ? "lethal" : ""}`}
+      className={`pwt-hit-on-active ${hit.lethal ? "lethal" : ""} ${off ? "off" : ""}`}
       aria-label={
         hit.step === 0
           ? `hits ${who} for no effect`
@@ -229,7 +230,14 @@ export function HitChip({ hit, who }: { hit: NonNullable<EnemyView["hitOnActive"
       }
     >
       <ImpactMark />
-      {hit.before !== undefined && <s className="pwt-hit-before">{hit.before}</s>}
+      {hit.before !== undefined && (
+        <>
+          <s className="pwt-hit-before">{hit.before}</s>
+          <span className="pwt-hit-arrow" aria-hidden="true">
+            →
+          </span>
+        </>
+      )}
       {hit.step === 0 ? <Ban /> : hit.n}
       {hit.lethal && <Skull className="pwt-hit-skull" />}
       {/* The chevron's direction is the damage (more, less); its color is who that favors:
@@ -251,10 +259,10 @@ export function HitChip({ hit, who }: { hit: NonNullable<EnemyView["hitOnActive"
 }
 
 /** A stronger hit that is resting now, shown with the turns until it can act. */
-export function ComingChip({ coming, who }: { coming: NonNullable<EnemyView["hitComing"]>; who: string }) {
+export function ComingChip({ coming, who, off = false }: { coming: NonNullable<EnemyView["hitComing"]>; who: string; off?: boolean }) {
   return (
     <span
-      className="pwt-hit-on-active coming"
+      className={`pwt-hit-on-active coming ${off ? "off" : ""}`}
       aria-label={`a stronger hit on ${who}, ${coming.n}, is resting: ready ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn`}
       title={`Resting: its stronger hit on ${who}, ${coming.n}${
         coming.step > 1 ? " (strong)" : coming.step < 1 ? " (weak)" : ""
@@ -279,6 +287,7 @@ export function EnemyPlate({
   struck = false,
   onHover,
   onTap,
+  forecastOff = false,
 }: {
   u: EnemyView;
   lit?: boolean;
@@ -299,6 +308,12 @@ export function EnemyPlate({
   onHover?: (hovering: boolean) => void;
   /** Touch on a phone: tapping the plate rings it and lights its cell in every key. */
   onTap?: () => void;
+  /**
+    While an enemy acts its hit chips are hidden (kept in the layout so the plate does not move): the
+    chip forecasts a hit on the companion who has just acted, and it must never disagree with the
+    beat playing beside it (UX pass 2, round 6).
+  */
+  forecastOff?: boolean;
 }) {
   const hit = u.hitOnActive;
   const who = activeName ?? "the active companion";
@@ -323,6 +338,7 @@ export function EnemyPlate({
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
+        {isBoss(u.species) && <span className="pwt-guardian-tag">Guardian</span>}
         <span className="pwt-name">
           {u.letter} · {u.name}
         </span>
@@ -331,8 +347,8 @@ export function EnemyPlate({
         {hasMarks && !u.down && (
           <div className="pwt-marks">
             <MarkChips marks={u} />
-            {showHit && <HitChip hit={hit!} who={who} />}
-            {showComing && <ComingChip coming={coming!} who={who} />}
+            {showHit && <HitChip hit={hit!} who={who} off={forecastOff} />}
+            {showComing && <ComingChip coming={coming!} who={who} off={forecastOff} />}
           </div>
         )}
       </div>

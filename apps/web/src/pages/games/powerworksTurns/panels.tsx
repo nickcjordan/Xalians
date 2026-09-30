@@ -100,7 +100,21 @@ export function CampPanel({
         <p className="pwt-panel-total">
           +{view.xpGain} XP this sector · {view.xp} in all
         </p>
-        <p>Squad health carries forward. Cooldowns and signatures refresh.</p>
+        <p className="pwt-camp-carry">Squad health carries forward. Cooldowns and signatures refresh.</p>
+        {camp.next && (
+          <p className="pwt-camp-next" data-next-sector="">
+            <span>
+              Next: sector {camp.next.n}, <b>{camp.next.name}</b>
+            </span>
+            {camp.next.enemies.map((e) => (
+              <span key={e.name} className={`el-${e.element}`}>
+                {e.name}
+                {e.count > 1 ? ` x${e.count}` : ""}
+              </span>
+            ))}
+            {camp.next.guardian && <span className="pwt-camp-next-tag">Guardian sector</span>}
+          </p>
+        )}
         {camp.station && (
           <p className="pwt-station">
             <Cross /> {camp.station.text}

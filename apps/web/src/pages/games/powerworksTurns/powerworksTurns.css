@@ -2212,3 +2212,185 @@
 .pwt-guide h2 { font-size: 24px; }
 .pwt-legend-row { min-height: 30px; margin-bottom: 3px; }
 .pwt-lesson-key .pwt-key-name { overflow: visible; }
+
+/* ==========================================================================================
+   UX pass 2, round 6: the forecast agrees with the result
+   ========================================================================================== */
+
+/* --- 1. The hand-off keeps the keys: they are there at once, and the key bar's top edge flashes once --- */
+.pwt-keybar.handing-off > .pwt-key,
+.pwt-keybar.handing-off > .pwt-pass,
+.pwt-keybar.handing-off > .pwt-keybar-portrait { opacity: 1; }
+.pwt-keybar:not(.busy) > .pwt-key,
+.pwt-keybar:not(.busy) > .pwt-pass { transition: none; }
+.pwt-keybar.handing-off { animation: pwt-arrive 700ms var(--ease-out) both; }
+@keyframes pwt-arrive {
+  from { box-shadow: inset 0 3px 0 var(--color-viable); }
+  to { box-shadow: inset 0 3px 0 transparent; }
+}
+
+/* --- 2. While an enemy acts its forecast chips are hidden (they keep their room) --- */
+.pwt[data-busy="true"] .pwt-hit-on-active.off { visibility: hidden; }
+.pwt-hit-arrow { color: var(--color-ink-3); margin: 0 2px; font-size: 11px; }
+
+/* --- 3. Two color rules: a health number is raspberry lost, green gained; a matchup tag is green when
+   it favors you and raspberry when it favors the enemy. KO and blocked are neither. --- */
+.pwt-float-num.blocked {
+  font-family: var(--font-legend);
+  font-size: 26px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink);
+}
+.pwt-float-tag.neutral { background: var(--color-s3); color: var(--color-ink); border-color: var(--color-ink-2); }
+
+/* --- 4. The sector card docks along the stage's top edge, clear of the plates and their chips --- */
+.pwt-titlecard {
+  left: 0;
+  right: 0;
+  top: 0;
+  transform: none;
+  min-width: 0;
+  max-width: none;
+  height: 30px;
+  padding: 0 18px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  border-width: 0 0 1px 0;
+}
+.pwt-titlecard-name { font-size: 18px; }
+.pwt-titlecard-enemies { flex-wrap: nowrap; gap: 0 14px; font-size: 13px; }
+.pwt-titlecard-note { font-size: 13px; }
+.pwt-titlecard-kicker { font-size: 13px; }
+
+/* --- 4. A first-use note is a line on the key bar's top row, its key named in bold and outlined --- */
+.pwt-keybar-statusline { gap: 18px; }
+.pwt-status-text { flex: 0 0 auto; }
+.pwt-note {
+  position: static;
+  z-index: auto;
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0 0 0 10px;
+  background: none;
+  border: 0;
+  border-left: 2px solid var(--color-ink-2);
+  box-shadow: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-ink);
+}
+.pwt-note::after { display: none; }
+.pwt-note b { font-weight: 700; }
+.pwt-key.noted { border-color: var(--color-ink-2); }
+
+/* --- 6. A hinder rider on an attack: what that enemy's hit falls to, in the struck form --- */
+.pwt-cell-rider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  line-height: 12px;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.pwt-cell-rider svg { width: 11px; height: 11px; color: var(--color-ink-2); }
+.pwt-cell-rider s { color: var(--color-ink-2); }
+.pwt-cell-rider .pwt-cell-arrow { font-size: 11px; }
+
+/* --- 7. Preview states: the hovered or armed cell is the strong one, the column echo is quiet --- */
+.pwt-cell.col-lit:not(:disabled) {
+  border-color: var(--color-ink-2);
+  background: transparent;
+  box-shadow: none;
+}
+.pwt-cell.finish.col-lit:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink-2); box-shadow: none; }
+.pwt-cell:hover:not(:disabled),
+.pwt-cell:focus-visible:not(:disabled),
+.pwt-cell.hot:not(:disabled) {
+  border-color: var(--color-viable);
+  background: var(--color-s2);
+  box-shadow: 0 0 0 2px var(--color-viable);
+}
+.pwt-cell.finish:hover:not(:disabled),
+.pwt-cell.finish.hot:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink); box-shadow: 0 0 0 2px var(--color-ink); }
+.pwt-cell.hot .pwt-cell-letter { color: var(--color-ink); font-weight: 700; }
+
+/* --- 9. Marks readable where they are used --- */
+.pwt-ko { width: auto; height: 18px; padding: 0 5px; gap: 4px; top: -19px; }
+.pwt-ko svg { width: 12px; height: 12px; }
+.pwt-ko-words { font-family: var(--font-legend); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; }
+.pwt-guardian-tag {
+  /* Its own row above the element badge: side by side they collide on a narrow plaque. */
+  position: absolute;
+  top: -38px;
+  left: 4px;
+  z-index: 3;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-plague);
+  color: var(--color-plague);
+  font-family: var(--font-legend);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* --- 10. A hinder key names its number in its head --- */
+.pwt-key-hinder {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-data);
+  font-size: 12px;
+  color: var(--color-ink);
+}
+.pwt-key-hinder { padding: 0 4px; border: 1px solid var(--color-ink-3); line-height: 14px; }
+.pwt-key-hinder + .pwt-key-star { margin-left: 6px; }
+
+/* --- 12. Camp: what the next sector holds --- */
+.pwt-camp-next { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: 0; font-size: var(--text-small); color: var(--color-ink-2); }
+.pwt-camp-next b { color: var(--color-ink); font-weight: 700; }
+.pwt-camp-next .pwt-camp-next-tag { font-family: var(--font-legend); font-size: var(--text-tiny); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-plague); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pwt-keybar.handing-off { animation: none; }
+}
+
+/* Guide samples added in round 6 */
+.pwt-legend-pass { display: inline-flex; align-items: center; justify-content: center; min-width: 54px; padding: 4px 12px; border: 1px solid var(--color-edge-strong); font-family: var(--font-legend); font-size: var(--text-tiny); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ink-2); }
+.pwt-legend-playing { display: flex; flex-direction: column; gap: 2px; }
+.pwt-legend-playing-kicker { font-family: var(--font-legend); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-plague); }
+.pwt-legend-playing-next { font-size: 12px; color: var(--color-ink-2); }
+
+/* A cell that also shows its rider's effect: the number steps down so the rider line has its own row. */
+.pwt-cell.has-rider { padding-top: 2px; padding-bottom: 14px; }
+.pwt-cell.has-rider .pwt-cell-num { font-size: 16px; line-height: 1; }
+.pwt-cell.has-rider .pwt-cell-letter { font-size: 10px; line-height: 11px; }
+.pwt-guardian-tag { font-size: 10px; letter-spacing: 0.02em; padding: 0 4px; }
+.pwt-panel.pwt-camp { gap: 8px; padding-top: 16px; padding-bottom: 16px; }
+.pwt-camp-carry { margin: 0; }
+.pwt-panel.pwt-guide { padding: 11px 28px; gap: 6px; }

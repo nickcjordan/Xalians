@@ -5,7 +5,7 @@ import type { RailSlot } from "./view";
 
 /** How many acted slots stay on the rail before NOW: enough to see who just went. */
 const DONE_SHOWN = 8;
-const PHONE_DONE_SHOWN = 1;
+const PHONE_DONE_SHOWN = 0;
 
 /**
   The turn rail (UX pass, 2026-09-29, "what happens next"): one time axis, left to right,
@@ -26,16 +26,19 @@ export function TurnRail({ rail, round, compact = false, width = 0 }: { rail: Ra
   const shown = rail.slice(from).filter((r) => r.state !== "down");
   // A new key measures the fit again from every slot whenever the order or the room changes.
   const signature = `${compact ? "c" : "d"}${width}:${round}:${shown.map((r) => `${r.id}.${r.state}.${r.roundStart ?? ""}`).join(",")}`;
-  return <RailRow key={signature} shown={shown} round={round} />;
+  return <RailRow key={signature} shown={shown} round={round} compact={compact} />;
 }
 
 /**
   The row itself. After it lays out, any slot that would be cut by the row's right edge is dropped
   (with a divider that would end up last), so no portrait is ever shown half.
 */
-function RailRow({ shown, round }: { shown: RailSlot[]; round: number }) {
+function RailRow({ shown, round, compact }: { shown: RailSlot[]; round: number; compact: boolean }) {
   const ref = useRef<HTMLOListElement>(null);
   const [limit, setLimit] = useState(shown.length);
+  // Phone: when the round boundary would fall off the end, the slots just before it fold into "+N"
+  // so the divider and the first slots of the next round stay on the rail (UX pass 2, round 6).
+  const [fold, setFold] = useState<{ from: number; to: number } | null>(null);
   useLayoutEffect(() => {
     const ol = ref.current;
     if (!ol) return;
@@ -47,11 +50,29 @@ function RailRow({ shown, round }: { shown: RailSlot[]; round: number }) {
     cols.forEach((li, i) => {
       if (cut === shown.length && li.offsetLeft + li.offsetWidth > edge + 1 && i + 1 > keepAtLeast) cut = i;
     });
+    const d = shown.findIndex((r) => r.roundStart !== undefined);
+    if (compact && d > 0 && d >= cut && cols.length > 2) {
+      const pitch = cols[1].offsetLeft - cols[0].offsetLeft;
+      const gap = 32;
+      const first = Math.max(keepAtLeast, 0);
+      for (let from = Math.min(d, first); from < d; from++) {
+        const saved = (d - from) * pitch - gap;
+        const fits = (j: number) => cols[j].offsetLeft + cols[j].offsetWidth - saved <= edge + 1;
+        if (fits(d)) {
+          let last = d;
+          while (last + 1 < cols.length && fits(last + 1)) last++;
+          setFold({ from, to: d });
+          setLimit(last + 1);
+          return;
+        }
+      }
+    }
     // A round divider that would be the last thing shown goes with the slot it introduces.
     while (cut > 0 && shown[cut - 1]?.roundStart !== undefined) cut--;
     if (cut !== limit) setLimit(cut);
   }, []);
   const visible = shown.slice(0, limit);
+  const folded = fold ? fold.to - fold.from : 0;
   // The order after NOW, counted on the slots still to act (NOW is 1, NEXT is 2, then 3, 4...).
   const nowAt = visible.findIndex((r) => r.state === "now");
   return (
@@ -60,7 +81,13 @@ function RailRow({ shown, round }: { shown: RailSlot[]; round: number }) {
       <li className="pwt-rail-round" aria-label={`Round ${round}`}>
         <span>Round {round}</span>
       </li>
-      {visible.map((r, i) => (
+      {visible.map((r, i) => fold && i >= fold.from && i < fold.to ? (
+        i === fold.from ? (
+          <li key="fold" className="pwt-rail-fold" aria-label={`${folded} more turns this round`} data-fold={folded}>
+            <span>+{folded}</span>
+          </li>
+        ) : null
+      ) : (
         <React.Fragment key={`${r.id}-${i}`}>
           {r.roundStart !== undefined && (
             <li className="pwt-rail-divider" aria-label={`Round ${r.roundStart} starts`}>

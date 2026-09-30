@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ChevronUp,
   ChevronDown,
@@ -12,7 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
-import type { Cell, KeyNote, KeyView, SquadView, SupportChip } from "./view";
+import { hinderWords, type Cell, type KeyView, type SquadView, type SupportChip } from "./view";
 import { cellId, tapStep } from "./phone";
 
 /**
@@ -51,7 +51,7 @@ function matchupWord(step: number): string {
   item 3). `area` says whether the key's attack reaches every enemy, so the words can say
   "each" rather than implying one target.
 */
-export function SupportRiders({ supports, area }: { supports: SupportChip[]; area: boolean }) {
+export function SupportRiders({ supports, area, kept = false }: { supports: SupportChip[]; area: boolean; kept?: boolean }) {
   if (!supports.length) return null;
   return (
     <div className="pwt-riders">
@@ -61,11 +61,12 @@ export function SupportRiders({ supports, area }: { supports: SupportChip[]; are
           <span
             key={`${s.kind}-${s.aim}`}
             className={`pwt-rider ${s.kind}`}
-            title={`${SUPPORT_WORD[s.kind]} ${s.n}${whom}`}
+            title={`${SUPPORT_WORD[s.kind]} ${s.n}${whom}${kept ? ". It still applies while the attack reads 0." : ""}`}
           >
             <SupportIcon kind={s.kind} />
             {s.n}
             {s.aim === "enemy" && area ? <span className="pwt-rider-each">each</span> : null}
+            {kept ? <span className="pwt-rider-each">still applies</span> : null}
           </span>
         );
       })}
@@ -84,7 +85,9 @@ export function CellButton({
   onPick,
   onHover,
   columnLit = false,
+  hot = false,
   previewed = false,
+  activeName = "the acting companion",
 }: {
   cell: Cell;
   kind: KeyView["kind"];
@@ -99,8 +102,12 @@ export function CellButton({
   /** Its enemy is under the pointer somewhere else (a plate, or the same column in another
       key): the cell lights like a hovered one, so an enemy reads down every key at once. */
   columnLit?: boolean;
+  /** An area key's other cells while the pointer is on any one of them: lit as strongly as the hovered one. */
+  hot?: boolean;
   /** Touch: this cell has had its first tap and waits for the second (phone mode). */
   previewed?: boolean;
+  /** The acting companion: the one the enemy's hit numbers are computed on. */
+  activeName?: string;
 }) {
   const hinderOnly = kind === "support" && cell.before !== undefined;
   // The companion's own hinder or boost changed this attack's number: show the struck plain
@@ -111,18 +118,18 @@ export function CellButton({
   const label = ally
     ? `${keyName} on ${targetName}: ${cell.n}${heal ? " health" : ""}`
     : hinderOnly
-    ? `${keyName} on ${cell.letter}, ${targetName}: its next hit ${cell.before} to ${cell.n}`
+    ? `${keyName} on ${cell.letter}, ${targetName}: ${hinderWords(cell.hinder ?? cell.before! - cell.n, activeName, cell.before!, cell.n)}`
     : `${keyName} on ${cell.letter}, ${targetName}: ${
         cell.immune
           ? "no effect"
           : `${cell.n} damage${marked ? ` (${cell.ownBefore} without the companion's own mark)` : ""}${word ? `, ${word}` : ""}${cell.finishes ? ", finishes" : ""}${
               cell.absorbed > 0 ? `, its shield absorbs ${cell.absorbed} first` : ""
-            }`
+            }${cell.rider ? `; its rider takes that enemy's next hit on ${activeName} from ${cell.rider.before} to ${cell.rider.after}` : ""}`
       }`;
   return (
     <button
       type="button"
-      className={`pwt-cell ${cell.finishes ? "finish" : ""} ${hinderOnly ? "hinder" : ""} ${columnLit ? "col-lit" : ""} ${previewed ? "previewed" : ""}`}
+      className={`pwt-cell ${cell.finishes ? "finish" : ""} ${hinderOnly ? "hinder" : ""} ${columnLit ? "col-lit" : ""} ${hot ? "hot" : ""} ${previewed ? "previewed" : ""} ${cell.rider ? "has-rider" : ""}`}
       onClick={onPick}
       onMouseEnter={onHover ? () => onHover(cell.target) : undefined}
       onMouseLeave={onHover ? () => onHover(null) : undefined}
@@ -175,6 +182,14 @@ export function CellButton({
           <ChevronDown />
         </span>
       )}
+      {cell.rider && (
+        <span className="pwt-cell-rider" data-rider="">
+          <Swords />
+          <s>{cell.rider.before}</s>
+          <span className="pwt-cell-arrow">→</span>
+          {cell.rider.after}
+        </span>
+      )}
       {cell.absorbed > 0 && (
         <span className="pwt-cell-shield-note" title={`Its shield absorbs ${cell.absorbed} first`}>
           <Shield />
@@ -206,7 +221,8 @@ export function KeyCard({
   onHoverTarget,
   onHoverUnits,
   litTargets = [],
-  note = null,
+  noted = false,
+  activeName,
   twoTap = false,
   previewed = null,
   onPreview,
@@ -227,8 +243,10 @@ export function KeyCard({
   /** The enemies under the pointer (from any key or the stage; every enemy an area key reaches):
       their cells light in every key. */
   litTargets?: string[];
-  /** A first-occurrence note to show beside this key, or null (the page decides which key). */
-  note?: KeyNote | null;
+  /** A first-occurrence note is about this key (the note itself sits on the key bar's top line). */
+  noted?: boolean;
+  /** The acting companion's name, for the hit numbers' words. */
+  activeName?: string;
   /** Touch on a phone: the first tap on a cell previews it, the second uses it (phone.ts). */
   twoTap?: boolean;
   /** The previewed cell's id across every key, or null. */
@@ -236,6 +254,8 @@ export function KeyCard({
   onPreview?: (id: string | null) => void;
 }) {
   const armed = keyView.state === "ready" && !disabled;
+  // The pointer is on some cell of this area key: all of its cells light, and only this key's.
+  const [areaHot, setAreaHot] = useState(false);
   // A cell answers a tap by previewing (who it lands on is ringed on the stage) or, when it is
   // the one already previewed, by acting. Off touch, and off phone, every press acts at once.
   const press = (id: string, target: string, preview: () => void) => {
@@ -247,6 +267,9 @@ export function KeyCard({
     onPreview?.(null);
     onAct(target);
   };
+  // A hinder-only key names its hinder in its head, so two hinder keys never look alike by their cells
+  // alone (the signature's 21 and an ordinary 14 read differently before any cell is read).
+  const hinderHead = keyView.kind === "support" && keyView.aim === "enemy" ? keyView.supports.find((x) => x.kind === "hinder") : undefined;
   const previewedHere = !!previewed && previewed.startsWith(`${keyView.index}:`);
   const foot = previewedHere ? "tap again to use" : footWords(keyView);
   // The units a self-only key lands on: the user, or the whole standing squad.
@@ -261,18 +284,18 @@ export function KeyCard({
   const areaIds = keyView.area && keyView.aim === "enemy" ? keyView.cells.map((c) => c.target) : null;
   return (
     <div
-      className={`pwt-key ${keyView.state} ${keyView.signature ? "signature" : ""}`}
+      className={`pwt-key ${keyView.state} ${keyView.signature ? "signature" : ""} ${noted ? "noted" : ""}`}
       role="group"
       aria-label={keyView.name}
     >
-      {note && (
-        <p className={`pwt-note ${note.id}`} role="note" data-note={note.id}>
-          {note.text}
-        </p>
-      )}
       <div className="pwt-key-head">
         <span className="pwt-key-index">{keyView.index + 1}</span>
         <span className="pwt-key-name">{keyView.name}</span>
+        {hinderHead && (
+          <span className="pwt-key-hinder" title={`Hinder ${hinderHead.n}: that enemy's next hit falls by ${hinderHead.n}`} data-hinder={hinderHead.n}>
+            -{hinderHead.n}
+          </span>
+        )}
         {keyView.signature && (
           <span className="pwt-key-star" title="Signature: once per fight" aria-label="Signature move">
             <Star />
@@ -328,6 +351,7 @@ export function KeyCard({
                   kind={keyView.kind}
                   keyName={keyView.name}
                   targetName={ally?.name ?? c.letter ?? "target"}
+                  activeName={activeName}
                   ally={ally}
                   armed={armed}
                   previewed={previewed === cellId(keyView.index, c.target)}
@@ -338,7 +362,10 @@ export function KeyCard({
                   }
                   onHover={
                     areaIds && onHoverUnits
-                      ? (id) => onHoverUnits(id ? areaIds : null)
+                      ? (id) => {
+                          setAreaHot(!!id);
+                          onHoverUnits(id ? areaIds : null);
+                        }
                       : keyView.aim === "enemy"
                       ? onHoverTarget
                       : onHoverUnits
@@ -346,6 +373,7 @@ export function KeyCard({
                       : undefined
                   }
                   columnLit={keyView.aim === "enemy" && litTargets.includes(c.target)}
+                  hot={!!areaIds && (areaHot || previewedHere)}
                 />
               );
             })}
@@ -355,7 +383,7 @@ export function KeyCard({
       <div className="pwt-key-foot">
         <span className="pwt-key-foot-words">{foot}</span>
         {keyView.aim === "enemy" && keyView.kind === "attack" && (
-          <SupportRiders supports={keyView.supports} area={keyView.area} />
+          <SupportRiders supports={keyView.supports} area={keyView.area} kept={keyView.riderKept} />
         )}
       </div>
     </div>

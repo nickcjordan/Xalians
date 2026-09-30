@@ -15,6 +15,7 @@ import {
   STALLED_LOG,
   STALL_TURNS_PER_UNIT,
   attackOn,
+  enemyFighter,
   interval,
   landedOn,
   legalTargets,
@@ -130,6 +131,14 @@ export type Cell = {
   finishes: boolean;
   /** Attack cells: health the target's shields would absorb first. */
   absorbed: number;
+  /** Hinder-only cells: how much the hinder takes off that enemy's next hit. */
+  hinder?: number;
+  /**
+    Attack cells whose key carries a hinder rider: that enemy's hit on the acting companion before
+    the rider and what it falls to after (the struck form the hinder keys use). Absent when the
+    attack finishes the enemy (a fallen enemy takes no rider) or the rider changes nothing.
+  */
+  rider?: { before: number; after: number };
 };
 
 export type SupportChip = { kind: SupportKind; n: number; aim: Aim; all: boolean };
@@ -158,6 +167,12 @@ export type KeyView = {
   cells: Cell[];
   /** The move's supports, n already reduced for "all" (allShare). */
   supports: SupportChip[];
+  /**
+    An attack key whose cells read 0 because the acting companion is hindered while a rider is still
+    on the key: the engine applies a move's supports whatever its attack deals (act() in turns.ts),
+    so the rider still lands.
+  */
+  riderKept: boolean;
 };
 
 export type StripSlot = {
@@ -236,6 +251,10 @@ export type Beat = {
   round: number;
   /** The turn rail as it stands when this beat's actor acts, its round divider included. */
   rail: RailSlot[];
+  /** A hit that the actor's hinder weakened: how much it carried into this attack (every hit of the act). */
+  weakened?: number;
+  /** The sentence for it ("Central guardian A's hit was weakened by 10."), on the act's first hit only. */
+  weakenedText?: string;
 };
 
 /** Painted art borrowed by the role enemies (roles.json has no paintings of its own). */
@@ -360,16 +379,19 @@ function withBefore(s: TRun, u: Fighter): EnemyView["hitOnActive"] {
 /**
   The enemy's hit chip while a command plays: the same hit re-read with the boost and hinder the
   enemy carries at that point of the playback and the health the companion has then. A hinder that
-  lands during playback lowers it and shows the number it was as the struck one; the lethal mark
-  follows the health shown. Returns the hit unchanged when it carries no replay data.
+  lands during playback lowers it and shows the number it was as the struck one (only a live hinder
+  ever does; a spent boost just lowers the number); the lethal mark follows the health shown.
+  Returns the hit unchanged when it carries no replay data.
 */
 export function hitDuring(hit: NonNullable<EnemyView["hitOnActive"]>, now: { boost: number; hinder: number; hp: number }): NonNullable<EnemyView["hitOnActive"]> {
   if (hit.raw === undefined || hit.step === 0) return hit;
+  const plain = Math.min(now.hp, Math.max(0, hit.raw + now.boost));
   const n = Math.min(now.hp, Math.max(0, hit.raw + now.boost - now.hinder));
   const { lethal: _lethal, before: _before, ...rest } = hit;
   const out: NonNullable<EnemyView["hitOnActive"]> = { ...rest, n, cap: now.hp, ...(n > 0 && n >= now.hp ? { lethal: true as const } : {}) };
-  if (n < hit.n) out.before = hit.n;
-  else if (n === hit.n && hit.before !== undefined) out.before = hit.before;
+  // The struck number is a live hinder's and nothing else: a boost the enemy has just spent lowers
+  // the number without a struck form (UX pass 2, round 6, item 2).
+  if (now.hinder > 0 && n < plain) out.before = plain;
   return out;
 }
 
@@ -411,6 +433,8 @@ function supportChip(p: Part): SupportChip {
     one per standing enemy showing the before/after of the hinder alone). */
 function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
   const hinderPart = m.parts.find((p) => p.kind === "hinder");
+  const riderPart = m.power > 0 ? m.parts.find((p) => p.kind === "hinder" && p.aim === "enemy") : undefined;
+  const riderN = riderPart ? (riderPart.all ? allShare(riderPart.n) : riderPart.n) : 0;
   return targets.map((t) => {
     const letter = letterFor(s, t.id);
     if (m.power > 0) {
@@ -419,6 +443,13 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
       const shieldAbsorbed = Math.min(shieldSum(t), attackOn(u, m, t));
       // The companion's own hinder or boost: what this attack would land without it.
       const clean = u.hinder > 0 || u.boost > 0 ? landedOn({ ...u, boost: 0, hinder: 0 }, m, t) : n;
+      const finishes = n >= t.hp && n > 0;
+      let rider: Cell["rider"];
+      if (riderN > 0 && !finishes) {
+        const before = threatOnActive(s, t).ready?.n ?? 0;
+        const after = threatOnActive(s, t, riderN).ready?.n ?? 0;
+        if (after < before) rider = { before, after };
+      }
       return {
         target: t.id,
         letter,
@@ -426,8 +457,9 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
         ...(clean !== n ? { ownBefore: clean } : {}),
         step: st,
         immune: st === 0,
-        finishes: n >= t.hp && n > 0,
+        finishes,
         absorbed: shieldAbsorbed,
+        ...(rider ? { rider } : {}),
       };
     }
     // Hinder-only: before is the enemy's current hit on the active companion; after applies this
@@ -435,7 +467,7 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
     const before = threatOnActive(s, t).ready?.n ?? 0;
     const hinderN = hinderPart ? (hinderPart.all ? allShare(hinderPart.n) : hinderPart.n) : 0;
     const n = threatOnActive(s, t, hinderN).ready?.n ?? 0;
-    return { target: t.id, letter, n, before, step: 1, immune: false, finishes: false, absorbed: 0 };
+    return { target: t.id, letter, n, before, hinder: hinderN, step: 1, immune: false, finishes: false, absorbed: 0 };
   });
 }
 
@@ -461,6 +493,7 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
   const aimsAlly = !aimsEnemy && m.parts.some((p) => p.aim === "ally");
   const aim: KeyView["aim"] = aimsEnemy ? "enemy" : aimsAlly ? "ally" : "now";
   const cells = aim === "enemy" ? enemyCells(s, u, m, targets) : aim === "ally" ? allyCells(u, m, targets) : [];
+  const riderKept = kind === "attack" && aim === "enemy" && m.parts.length > 0 && cells.some((c) => c.ownBefore !== undefined && c.n === 0 && !c.immune);
   return {
     index: i,
     name: m.name,
@@ -473,6 +506,7 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
     aim,
     cells,
     supports: m.parts.map(supportChip),
+    riderKept,
   };
 }
 
@@ -642,6 +676,34 @@ export function eventWords(s: TRun, e: PEvent): string {
   return `${actor} slowed ${target}'s next turn.`;
 }
 
+/**
+  The number that rises over a beat's target (UX pass 2, round 6, item 3). Two color rules, kept
+  apart: a health number is raspberry when health is lost and green when it is gained, on either
+  side; a matchup tag is green when the matchup favors you and raspberry when it favors the enemy.
+  A hit that knocks its target out carries KO in place of a matchup tag (neutral); a hit that a
+  hinder cut to 0 says "blocked", not "-0"; an immune matchup says "no effect".
+*/
+export type FloatItem = { text: string; kind: string; tag?: { word: string; tone: "good" | "bad" | "neutral" } };
+export function floatWords(e: PEvent, targetIsEnemy = false): FloatItem | null {
+  if (e.kind === "hit") {
+    if (e.absorbed > 0 && e.amount === 0) return { text: `shield took ${e.absorbed}`, kind: "shield" };
+    if (e.amount === 0) return { text: e.step === 0 ? "no effect" : "blocked", kind: "blocked" };
+    const tag: FloatItem["tag"] = e.fell
+      ? { word: "KO", tone: "neutral" }
+      : e.step > 1
+      ? { word: "Strong", tone: targetIsEnemy ? "good" : "bad" }
+      : e.step > 0 && e.step < 1
+      ? { word: "Weak", tone: targetIsEnemy ? "bad" : "good" }
+      : undefined;
+    return { text: `-${e.amount}`, kind: "hurt", tag };
+  }
+  if (e.kind === "heal") return { text: `+${e.amount}`, kind: "heal" };
+  if (e.kind === "shield") return { text: `shield ${e.amount}`, kind: "shield" };
+  if (e.kind === "boost") return { text: `next attack +${e.amount}`, kind: "boost" };
+  if (e.kind === "hinder") return { text: `next hit -${e.amount}`, kind: "hinder" };
+  return null;
+}
+
 const moveOf = (e: PEvent): string | null => ("move" in e ? e.move : null);
 
 /** Does this event open a new act (one unit's one action) rather than continue the last one? */
@@ -665,12 +727,18 @@ export function playback(before: TRun, events: PEvent[]): Beat[] {
   for (const u of [...before.team, ...before.enemies]) hp[u.id] = u.hp;
   const clock = { ...before.clock };
   const delays: Record<string, number> = {};
+  // The hinder each unit carries as the command plays: a hinder event raises it (max, as the engine
+  // does) and an attack spends it, so a hit knows how much it was weakened.
+  const hind: Record<string, number> = {};
+  for (const u of [...before.team, ...before.enemies]) hind[u.id] = u.hinder;
+  let actHinder: number | null = null;
   const unit = (id: string) => [...before.team, ...before.enemies].find((u) => u.id === id)!;
   const beats: Beat[] = [];
   let prev: PEvent | null = null;
   let at: { round: number; rail: RailSlot[] } = { round: roundOf(before), rail: [] };
   for (const e of events) {
     if (opensAct(prev, e)) {
+      actHinder = null;
       if (prev) {
         // The previous act ends: its actor's clock rises, then any delay lands on its target.
         clock[prev.actor] += interval(before, unit(prev.actor));
@@ -689,7 +757,29 @@ export function playback(before: TRun, events: PEvent[]): Beat[] {
     if (e.kind === "hit") hp[e.target] = Math.max(0, (hp[e.target] ?? 0) - e.amount);
     else if (e.kind === "heal") hp[e.target] = (hp[e.target] ?? 0) + e.amount;
     else if (e.kind === "delay") delays[e.target] = Math.max(delays[e.target] ?? 0, e.amount);
-    beats.push({ event: e, words: eventWords(before, e), actor: e.actor, hp: { ...hp }, round: at.round, rail: at.rail });
+    let weakened: number | undefined;
+    let weakenedText: string | undefined;
+    if (e.kind === "hit") {
+      const first = actHinder === null;
+      if (first) {
+        actHinder = hind[e.actor] ?? 0;
+        hind[e.actor] = 0;
+      }
+      if (actHinder! > 0) {
+        weakened = actHinder!;
+        if (first) weakenedText = weakenedWords(nameOf(before, e.actor), actHinder!);
+      }
+    } else if (e.kind === "hinder") hind[e.target] = Math.max(hind[e.target] ?? 0, e.amount);
+    beats.push({
+      event: e,
+      words: eventWords(before, e),
+      actor: e.actor,
+      hp: { ...hp },
+      round: at.round,
+      rail: at.rail,
+      ...(weakened ? { weakened } : {}),
+      ...(weakenedText ? { weakenedText } : {}),
+    });
     prev = e;
   }
   return beats;
@@ -762,10 +852,17 @@ export function hinderOnAttack(start: Record<string, number>, priorBeats: Beat[]
 export const weakenedWords = (name: string, n: number): string => `${name}'s hit was weakened by ${n}.`;
 
 /** One line of the Record: a beat's sentence, filed under its sector and round. */
-export type RecordEntry = { room: number; round: number; actor: string; words: string; event: PEvent };
+export type RecordEntry = { room: number; round: number; actor: string; words: string; event: PEvent; /** How much the actor's hinder weakened this hit; absent on older saves. */ weakened?: number };
 
 export function recordEntries(room: number, beats: Beat[]): RecordEntry[] {
-  return beats.map((b) => ({ room, round: b.round, actor: b.actor, words: b.words, event: b.event }));
+  return beats.map((b) => ({
+    room,
+    round: b.round,
+    actor: b.actor,
+    words: b.weakenedText ? `${b.words} ${b.weakenedText}` : b.words,
+    event: b.event,
+    ...(b.weakened ? { weakened: b.weakened } : {}),
+  }));
 }
 
 /** What changed for one unit since the active companion's last turn. */
@@ -803,15 +900,23 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
     if (e.actor === v.active!.id) last = i;
   });
   const window = inRoom.slice(last + 1);
-  type Seen = { lost: number; healed: number; fell: boolean; shieldUp: number; shieldDown: number; boosted: boolean; hindered: boolean };
+  type Seen = { lost: number; healed: number; fell: boolean; shieldUp: number; shieldDown: number; boosted: boolean; hindered: boolean; blocked: boolean; weakenedBy: number };
   const seen: Record<string, Seen> = {};
-  const of = (id: string): Seen => (seen[id] ??= { lost: 0, healed: 0, fell: false, shieldUp: 0, shieldDown: 0, boosted: false, hindered: false });
-  for (const { event: e } of window) {
+  const of = (id: string): Seen => (seen[id] ??= { lost: 0, healed: 0, fell: false, shieldUp: 0, shieldDown: 0, boosted: false, hindered: false, blocked: false, weakenedBy: 0 });
+  const enemyIds = new Set(v.enemies.map((x) => x.id));
+  for (const { event: e, weakened } of window) {
     if (e.kind === "hit") {
       const u = of(e.target);
       u.lost += e.amount;
       u.shieldDown += e.absorbed;
       if (e.fell) u.fell = true;
+      // An enemy's hit that a hinder weakened or blocked outright: said on the enemy, since that is
+      // where the player's hinder paid off.
+      if (weakened && enemyIds.has(e.actor)) {
+        const a = of(e.actor);
+        if (e.amount === 0 && e.absorbed === 0) a.blocked = true;
+        else a.weakenedBy = weakened;
+      }
     } else if (e.kind === "heal") of(e.target).healed += e.amount;
     else if (e.kind === "shield") of(e.target).shieldUp += e.amount;
     else if (e.kind === "boost") of(e.target).boosted = true;
@@ -836,6 +941,8 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
     if (c.shieldDown) parts.push(`shield -${c.shieldDown}`);
     if (c.boosted && u.boost > 0) parts.push(`boosted ${u.boost}`);
     if (c.hindered && u.hinder > 0) parts.push(`hindered ${u.hinder}`);
+    if (c.blocked) parts.push("hit blocked");
+    else if (c.weakenedBy) parts.push(`hit weakened ${c.weakenedBy}`);
     if (!parts.length) continue;
     if (c.healed - c.lost) deltas[u.id] = c.healed - c.lost;
     const short = enemy ? (u as EnemyView).letter : name;
@@ -899,6 +1006,8 @@ export type CampView = {
   last: boolean;
   /** The camp's eyebrow: "Sector cleared", or "Last camp before the Guardian". */
   eyebrow: string;
+  /** The sector ahead: its name and its enemies (by name, counted; their letters are dealt on arrival). */
+  next: { n: number; name: string; guardian: boolean; enemies: { name: string; count: number; element: string }[] } | null;
 };
 
 /** The revive button's words: the effect in numbers and how many revives are left. */
@@ -920,9 +1029,19 @@ export function campView(s: TRun): CampView {
           return { id: u.id, name: u.name, to, text: reviveWords(u.name, to, s.revival) };
         })
       : [];
-  const beforeLast = s.room === roomsFor(s.rules).length - 2;
+  const rooms = roomsFor(s.rules);
+  const beforeLast = s.room === rooms.length - 2;
   const sitOut = joinWords(revives.map((r) => r.name));
+  const ahead = rooms[s.room + 1];
+  const enemies: { name: string; count: number; element: string }[] = [];
+  for (const row of ahead?.enemies ?? []) {
+    const f = enemyFighter(String(row[0]), String(row[1]), 1, s.rules);
+    const seen = enemies.find((e) => e.name === f.name);
+    if (seen) seen.count++;
+    else enemies.push({ name: f.name, count: 1, element: f.element });
+  }
   return {
+    next: ahead ? { n: s.room + 2, name: bareRoomName(ahead.name), guardian: s.room + 1 === rooms.length - 1, enemies } : null,
     revives,
     last: beforeLast,
     eyebrow: beforeLast ? "Last camp before the Guardian" : "Sector cleared",
@@ -1001,6 +1120,8 @@ export type RunSummary = {
   xp: number;
   /** The enemy (and its move) that dealt the last companion's final blow; null unless the run was lost that way. */
   finalBlow: string | null;
+  /** That enemy's health when the run ended ("77 of 168 health left"): how close the run came. */
+  finalBlowLeft: string | null;
   rows: { label: string; value: string }[];
 };
 
@@ -1024,10 +1145,14 @@ export function runSummary(s: TRun, v: TurnView, record: RecordEntry[]): RunSumm
     else knockouts++;
   }
   let finalBlow: string | null = null;
+  let finalBlowLeft: string | null = null;
   if (ending?.kind === "lost" && blow) {
     const foe = v.enemies.find((e) => e.id === blow!.actor);
     const move = "move" in blow.event ? (blow.event as { move: string }).move : "";
-    if (foe) finalBlow = `${foe.name} ${foe.letter}${move ? `, ${move}` : ""}`;
+    if (foe) {
+      finalBlow = `${foe.name} ${foe.letter}${move ? `, ${move}` : ""}`;
+      finalBlowLeft = `${foe.hp} of ${foe.max} health left`;
+    }
   }
   const rows = [
     { label: "Sectors cleared", value: `${sectors} of ${count}` },
@@ -1035,8 +1160,8 @@ export function runSummary(s: TRun, v: TurnView, record: RecordEntry[]): RunSumm
     { label: "Enemies knocked out", value: String(knockouts) },
     { label: "XP earned", value: ending?.kind === "won" ? `${s.xp} (+${FINAL_ENCOUNTER_XP} for the Guardian)` : String(s.xp) },
   ];
-  if (finalBlow) rows.push({ label: "Final blow", value: finalBlow });
-  return { sectors, rounds, knockouts, xp: s.xp, finalBlow, rows };
+  if (finalBlow) rows.push({ label: "Final blow", value: `${finalBlow}. ${finalBlowLeft}` });
+  return { sectors, rounds, knockouts, xp: s.xp, finalBlow, finalBlowLeft, rows };
 }
 
 /* ------------------------------------------------------------------------------------------
@@ -1045,7 +1170,15 @@ export function runSummary(s: TRun, v: TurnView, record: RecordEntry[]): RunSumm
 ------------------------------------------------------------------------------------------ */
 
 export type NoteId = "hinder" | "shield" | "all";
-export type KeyNote = { id: NoteId; keyIndex: number; text: string };
+
+/**
+  A hinder's words, for the cell's label and the first-use note: it takes `by` off that enemy's next
+  hit whoever it strikes; the example is the acting companion, the one the number is computed on.
+*/
+export function hinderWords(by: number, on: string, before: number, after: number): string {
+  return `that enemy's next hit, on whoever it strikes, falls by ${by} (on ${on}: ${before} to ${after})`;
+}
+export type KeyNote = { id: NoteId; keyIndex: number; /** The key the note is about, named so it needs no arrow to it. */ keyName: string; text: string; /** The same in fewer words, for a phone's two-line banner. */ short: string };
 
 /**
   The first-occurrence note to show on this companion's keys, or null. `seen` holds the ids already
@@ -1059,18 +1192,18 @@ export function keyNote(v: TurnView, seen: readonly string[]): KeyNote | null {
   if (!seen.includes("hinder")) {
     for (const k of ready) {
       const cell = k.kind === "support" && k.aim === "enemy" ? k.cells.find((c) => c.before !== undefined) : undefined;
-      if (cell) return { id: "hinder", keyIndex: k.index, text: `Hinder: that enemy's next hit on ${name} falls from ${cell.before} to ${cell.n}.` };
+      if (cell) return { id: "hinder", keyIndex: k.index, keyName: k.name, text: `Hinder: ${hinderWords(cell.hinder ?? cell.before! - cell.n, name, cell.before!, cell.n)}.`, short: `Hinder: that enemy's next hit, on whoever it strikes, falls by ${cell.hinder ?? cell.before! - cell.n}.` };
     }
   }
   if (!seen.includes("shield")) {
     for (const k of ready) {
       const cell = k.aim === "enemy" && k.kind === "attack" ? k.cells.find((c) => c.absorbed > 0) : undefined;
-      if (cell) return { id: "shield", keyIndex: k.index, text: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The number is what is left.` };
+      if (cell) return { id: "shield", keyIndex: k.index, keyName: k.name, text: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The number is what is left.`, short: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The number is what is left.` };
     }
   }
   if (!seen.includes("all")) {
     for (const k of ready) {
-      if (k.area && k.aim === "enemy" && k.cells.length > 1) return { id: "all", keyIndex: k.index, text: "ALL: this move hits every enemy at once. Each cell is that enemy's number." };
+      if (k.area && k.aim === "enemy" && k.cells.length > 1) return { id: "all", keyIndex: k.index, keyName: k.name, text: "ALL: this move hits every enemy at once. Each cell is that enemy's number.", short: "ALL: hits every enemy at once. Each cell is that enemy's number." };
     }
   }
   return null;

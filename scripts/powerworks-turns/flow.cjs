@@ -25,7 +25,7 @@
     { "op": "hover", "target": "cell:A" | "figure:A" }  // hovers a key cell or an enemy figure
     { "op": "hover", "key": 2, "target": "cell:C" | "cell:*" }  // restricts the cell search to key 2; * is its first button
     { "op": "click", "text": "Guide" }                   // clicks the first button whose text or aria-label contains it
-    { "op": "framesUntilIdle", "every": 100, "max": 20000 }  // frames until data-busy is false, then one idle frame
+    { "op": "framesUntilIdle", "every": 100, "max": 20000, "after": 1500 }  // frames until data-busy is false, then frames for `after` ms, the last one tagged idle
     { "op": "wait", "ms": 500 }                          // pause without capturing
   --only-size=844x390 limits a --plan run to entries that include that size.
   A plan entry may set "sizes": ["844x390"] to override --sizes for that entry, and "fresh": true to
@@ -287,7 +287,15 @@ async function runSteps(page, steps, outDir) {
         if (await isIdle(page)) break;
         await page.waitForTimeout(every);
       }
-      await page.waitForTimeout(400);
+      // Round 6: keep capturing for `after` ms (default 1500) once the hand-off has happened, so the
+      // settled key bar (keys live, no card over them) is in the last frame.
+      const after = step.after ?? 1500;
+      const from = Date.now();
+      while (Date.now() - from < after - 300) {
+        await page.waitForTimeout(300);
+        await capture("settling");
+      }
+      await page.waitForTimeout(300);
       await capture("idle");
     } else if (step.op === "wait") {
       await page.waitForTimeout(step.ms ?? 500);

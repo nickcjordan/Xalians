@@ -1,5 +1,5 @@
 import React from "react";
-import { Shield } from "lucide-react";
+import { Shield, ScrollText } from "lucide-react";
 import { CellButton, SupportRiders } from "./keys";
 import { HitChip, ComingChip, MarkChips, ElementBadge, KoMark } from "./plate";
 import { TurnRail } from "./rail";
@@ -103,19 +103,11 @@ export function GuidePanel({
             sample={
               <Cells>
                 <CellButton {...cellProps} cell={cell({})} />
+                <CellButton {...cellProps} cell={cell({ absorbed: 4, n: 9, letter: "B" })} />
               </Cells>
             }
           >
-            A damage cell: the health this move takes from that enemy. The letter is the enemy.
-          </Row>
-          <Row
-            sample={
-              <Cells>
-                <CellButton {...cellProps} cell={cell({ absorbed: 4, n: 9 })} />
-              </Cells>
-            }
-          >
-            A shield mark in a cell: that enemy&apos;s shield absorbs that much first. The number is what is left.
+            A damage cell: the health this move takes from that enemy (the letter). A shield mark: its shield absorbs that much first; the number is what is left.
           </Row>
           <Row
             sample={
@@ -134,7 +126,7 @@ export function GuidePanel({
               </Cells>
             }
           >
-            Chevrons: up is a strong element matchup, more damage; down is weak, less. Green is good for you, raspberry is bad for you, everywhere.
+            Chevrons: up is a strong element matchup, more damage; down is weak, less. Matchup marks: green favors you, raspberry favors the enemy.
           </Row>
           <Row
             sample={
@@ -153,7 +145,7 @@ export function GuidePanel({
               </Cells>
             }
           >
-            A hinder cell (swords, dashed frame): that enemy&apos;s next hit on you falls from 14 to 0.
+            A hinder cell: that enemy&apos;s next hit, on whoever it strikes, falls by that much (on you, 14 to 0). A hinder rider shows the same fall under its number.
           </Row>
           <Row
             wide
@@ -212,15 +204,6 @@ export function GuidePanel({
           </Row>
           <Row
             sample={
-              <div className="pwt-key-foot">
-                <SupportRiders supports={[{ kind: "hinder", n: 14, aim: "enemy", all: false }]} area={false} />
-              </div>
-            }
-          >
-            A rider chip: the move also does this to the enemy it hits.
-          </Row>
-          <Row
-            sample={
               <div className="pwt-cells-wrap area">
                 <div className="pwt-area-band">
                   <span>ALL</span>
@@ -237,12 +220,12 @@ export function GuidePanel({
           <Row
             sample={
               <div className="pwt-key-foot">
+                <SupportRiders supports={[{ kind: "hinder", n: 14, aim: "enemy", all: false }]} area={false} />
                 <span className="pwt-key-foot-words">rests 1 turn</span>
-                <span className="pwt-key-foot-words">once per fight</span>
               </div>
             }
           >
-            Rests: turns a move waits after use. Once per fight: the signature (a star) works once.
+            A rider chip: the move also does this to the enemy it hits. Rests: turns a move waits after use. A star: the signature, once per fight.
           </Row>
           <Row
             sample={
@@ -250,10 +233,11 @@ export function GuidePanel({
                 <ElementBadge element={foe.element} className="pwt-el-static" />
                 <span className="pwt-float-tag good">Strong</span>
                 <span className="pwt-float-tag bad">Weak</span>
+                <span className="pwt-float-tag neutral">KO</span>
               </span>
             }
           >
-            The element tag names a unit&apos;s element. STRONG or WEAK beside a landing number is the matchup: green favors you, raspberry does not.
+            The element tag names a unit&apos;s element. STRONG or WEAK beside a landing number is the matchup; KO replaces it on a knockout; BLOCKED means a hinder cut the hit to 0.
           </Row>
           <Row
             wide
@@ -264,6 +248,28 @@ export function GuidePanel({
             }
           >
             The turn rail, along the top: one row in time order. NOW acts, NEXT is after it, then 3, 4 and on. Enemies ride above the line, your squad below; a divider starts the next round.
+          </Row>
+          <Row
+            wide
+            sample={
+              <span className="pwt-legend-playing">
+                <span className="pwt-legend-playing-kicker">Enemy turn</span>
+                <span className="pwt-legend-playing-next">Your next turn</span>
+              </span>
+            }
+          >
+            While moves play, a line runs from actor to target and the key bar shows whose turn is playing and your next one, with Speed and Skip.
+          </Row>
+          <Row
+            sample={
+              <span className="pwt-legend-chips">
+                <span className="pwt-legend-pass">Pass</span>
+                <span className="pwt-down-tag">Down</span>
+                <ScrollText size={16} />
+              </span>
+            }
+          >
+            Pass ends a turn without acting. Down: out of the fight. The Record (top right) lists every beat, newest first.
           </Row>
           <Row
             sample={
@@ -277,7 +283,7 @@ export function GuidePanel({
               </span>
             }
           >
-            A change on a plate: health lost or gained since your last turn.
+            Health numbers: raspberry is health lost, green is health gained, on either side. A chip on a plate is the change since your last turn.
           </Row>
         </ul>
         <p className="pwt-panel-note">
