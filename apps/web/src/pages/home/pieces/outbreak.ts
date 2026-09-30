@@ -1080,9 +1080,9 @@ export function createOutbreak(): Figure {
 				const awake = smooth(3.9, 5.1, t1);
 				const domeOn = easeOut(ramp(6.0, 7.5, t1));
 				const pulse = 0.94 + 0.06 * Math.sin(sec * 1.2);
-				const s = compact ? 0.98 : 0.88;
+				const s = compact ? 0.92 : 0.88;
 				const ck = compact ? 1.3 : 1; // the chip and its intake, larger on a phone
-				const cofs = compact ? 34 : 66; // the intake stands on the ground in front of the foundation, not on it
+				const cofs = compact ? 24 : 44; // the intake stands on the ground in front of the foundation, not on it
 				const MH = 370 * s; // the machine's height on the stage
 				const rx = 250;
 				const ry = 1.2 * MH;
@@ -1236,8 +1236,22 @@ export function createOutbreak(): Figure {
 				}
 				ctx.restore();
 
+				// the foundation meets the ground: a contact shadow along its foot (about 0.4) and a 2 px lip of ground catching light on its left
+				{
+					const fy = py(GROUND + 62);
+					ctx.globalAlpha = 0.4 * sA * smooth(1.9, 2.6, t1);
+					ctx.fillStyle = css([0, 0, 0]);
+					ctx.beginPath();
+					ctx.ellipse(CX, fy + 4, 214 * s, 6, 0, 0, TAU);
+					ctx.fill();
+					ctx.globalAlpha = 0.5 * sA * smooth(1.9, 2.6, t1);
+					ctx.fillStyle = css([150, 80, 76]);
+					ctx.fillRect(CX - 214 * s, fy + 6, 120 * s, 2);
+				}
+
 				// the intake console in front of the pad, with a hexagonal socket in its top: where the token is set
 				const consoleA = sA * smooth(1.9, 2.6, t1);
+				const consoleA0 = consoleA;
 				{
 					const cy = (g: number) => py(GROUND + (g + cofs) * ck);
 					ctx.globalAlpha = consoleA;
@@ -1265,6 +1279,19 @@ export function createOutbreak(): Figure {
 						ctx.arc(CX + bx * s * ck, cy(42), 2 * s * ck, 0, TAU);
 						ctx.fill();
 					}
+					// dormant, its top face still catches a dim warm rim (about 0.2)
+					ctx.globalCompositeOperation = 'lighter';
+					ctx.strokeStyle = css([236, 190, 130]);
+					ctx.lineWidth = 1.4;
+					ctx.globalAlpha = consoleA * 0.2;
+					ctx.beginPath();
+					ctx.moveTo(CX - 52 * s * ck, cy(8));
+					ctx.lineTo(CX + 52 * s * ck, cy(8));
+					ctx.lineTo(CX + 64 * s * ck, cy(28));
+					ctx.lineTo(CX - 64 * s * ck, cy(28));
+					ctx.closePath();
+					ctx.stroke();
+					ctx.globalCompositeOperation = 'source-over';
 					// the top face is lit from the chip, warm, about 0.5 near it and falling off to the corners
 					{
 						ctx.save();
@@ -1331,6 +1358,9 @@ export function createOutbreak(): Figure {
 						let a = h.a * (1 - 0.15 * domeOn) * mix(1, 0.05, inside);
 						// nearer the machine's own face the haze lies thinner, so the console stays in view
 						if (Math.abs(x - CX) < 110 && h.y < 440) a *= 0.8;
+						// in front of the slab at most 0.25, in front of the intake at most 0.15
+						if (Math.abs(x - CX) < 230 && h.y > GY - 20 && h.y < GY + 130) a = Math.min(a, 0.25);
+						if (Math.abs(x - CX) < 90 && h.y > GY + 40) a = Math.min(a, 0.15);
 						if (a < 0.01) continue;
 						ctx.globalAlpha = clamp(a * sA);
 						ctx.drawImage(hp, x - h.rx, h.y - h.ry, h.rx * 2, h.ry * 2);

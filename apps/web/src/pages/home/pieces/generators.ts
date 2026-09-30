@@ -170,10 +170,10 @@ function blades(g: Ctx, xs: number[], col: RGB, seed: number, hmin: number, hmax
 const ART = ['zolton', 'magmuth', 'krystos', 'poseidas'];
 /** Where in each picture (rows of its 512) the crop starts, so the machine's feet land on the painted ground. */
 /** How far each picture is scaled up and how far down it sits (so its near ground lies under the machine and out to both sides, its horizon and distance behind the machine's upper half). */
-const PIC_K = [1.32, 1.3, 1.32, 1.3];
+const PIC_K = [1.3, 1.3, 1.32, 1.14];
 const PIC_DY = [0, 0, 0, 0];
 /** Sideways, so a picture's own outcrop or shelf lies under the machine. */
-const PIC_DX = [0, 0, 0, 230];
+const PIC_DX = [180, 0, 0, 200];
 const ART_Y0 = [130, 70, -22, 60];
 /** Traces of building in the paintings (a derrick, an aqueduct, a gantry) that the story has not earned yet, in picture pixels: x, y, rx, ry. */
 const RUINS: [number, number, number, number][][] = [
@@ -1431,8 +1431,8 @@ export function createGenerators(): Figure {
 				const lk = v3 * smooth(LINK + m.order * 0.14 + 0.25, LINK + m.order * 0.14 + 0.7, t3);
 				const app = first ? 1 : v3 * smooth(0.8 + i * 0.12, 1.6 + i * 0.12, t3);
 				if (app <= 0.01) return;
-				const z = first ? mix(L === COMPACT ? 0.98 : 0.86, m.s, arrive) : m.s;
-				const gy = first ? mix(GROUND - 112, m.g, arrive) : m.g;
+				const z = first ? mix(L === COMPACT ? 0.9 : 0.86, m.s, arrive) : m.s;
+				const gy = first ? mix(GROUND - (L === COMPACT ? 70 : 80), m.g, arrive) : m.g;
 				const wi = first ? w3 : (w3 + m.wOff) % 4;
 				ctx.save();
 				ctx.translate(m.x, gy);
