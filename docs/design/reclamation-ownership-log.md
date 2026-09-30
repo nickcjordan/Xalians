@@ -40,6 +40,8 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`), updated by pass 65's critic.
 
+0. **Resume here: the squad reader loop** (`reclamation-squad-reader-loop.md`, approved 2026-09-29). Pass 75's roster reached Nick at 6 of 10 from one reader, which he rejected as a bar. Three fresh Opus readers must each score it 8 or higher, and 9 in 10 factual answers must be right, before anything reaches him. Sonnet implements, Opus reads, and the budget cap is about 1.5 million Opus tokens.
+
 1. **The Clash is short to watch** (critic 4, up from 3; pass 64 readers 3). Each blow is drawn and told in two beats (pass 64). What is left is the fight itself:
    - one blow per world. Since pass 72 the outcome is no longer forecast while sends are made, so the Clash is where the fight is first seen;
    - no number on a downing blow;
