@@ -42,6 +42,15 @@ export function assetUrl(path: string) {
 
 export type FigureKey = 'generators' | 'outbreak';
 
+/**
+ * The color of the light that leaves each figure's beat for a recording, which tints the first moments of that
+ * screen tuning in (the viewer's --arrival). Kept equal to each figure's own `light()` at that stage.
+ */
+export const FIGURE_LIGHT: Record<FigureKey, string[]> = {
+	generators: ['rgb(150 236 140)', 'rgb(172 124 255)'],
+	outbreak: ['rgb(232 54 84)', 'rgb(255 240 222)'],
+};
+
 export const FIGURES: Record<FigureKey, () => Figure> = {
 	generators: createGenerators,
 	outbreak: createOutbreak,

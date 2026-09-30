@@ -95,6 +95,8 @@ export function ArchiveScreen({
 		<div className={cn('archive', className)} data-screen={state} data-still={still ? '' : undefined}>
 			<div className="archive-picture">{children}</div>
 			<div className="archive-static" aria-hidden="true" />
+			{/* The light arriving from a figure, carried into the first moments of tuning (the viewer sets --arrival). */}
+			<div className="archive-arrival" aria-hidden="true" />
 			<div className="archive-glass" aria-hidden="true" />
 			<div className="archive-hud type-data" aria-hidden="true">
 				<span className="archive-hud-status">

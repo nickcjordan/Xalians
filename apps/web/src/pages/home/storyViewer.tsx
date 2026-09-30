@@ -40,7 +40,7 @@ import { cn } from '@/lib/utils';
 import { loadFragment } from '@/components/plates/plateStage';
 import { SCREEN_MS, type ScreenState } from './archiveScreen';
 import { FIGURE_TO_SCREEN_MS, FigureStage } from './figureStage';
-import type { FigureKey } from './pieces/figures';
+import { FIGURE_LIGHT, type FigureKey } from './pieces/figures';
 import { catchAtRest } from './storyCatch';
 
 export type ViewerBeat = {
@@ -126,6 +126,8 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	// and, in a morph away from a recording, the state its screen holds as it goes (collapsed).
 	const [change, setChange] = React.useState<'rack' | 'morph'>('rack');
 	const [leaveScreen, setLeaveScreen] = React.useState<ScreenState | null>(null);
+	// The light a figure sends to the recording after it, tinting that screen's first static.
+	const [arrival, setArrival] = React.useState<string | null>(null);
 	const count = beats.length;
 
 	React.useEffect(() => {
@@ -371,6 +373,8 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 			if (next === from) return;
 			setChange(mode);
 			setLeaveScreen(leaveAs);
+			const left = beats[from]?.figure;
+			setArrival(left && !beats[next]?.figure ? (FIGURE_LIGHT[left.key]?.[left.stage] ?? null) : null);
 			setLeaving(from);
 			window.setTimeout(() => setLeaving((l) => (l === from ? -1 : l)), EXIT_MS);
 			setIndex(next);
@@ -378,7 +382,7 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 			const wrap = wrapRef.current;
 			if (!boxed && wrap && wrap.getBoundingClientRect().top < 0) wrap.scrollIntoView({ block: 'start' });
 		},
-		[boxed]
+		[boxed, beats]
 	);
 
 	// Moving the story on. A screen that is on (or tuning in) phases through static: static rises over the
@@ -541,9 +545,10 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 				<div
 					ref={boxRef}
 					className={cn('story-box relative', boxed && boxH == null ? 'h-[clamp(360px,calc(100svh-14.5rem),820px)]' : '')}
-					style={boxed && boxH != null ? { height: boxH } : undefined}
+					style={{ ...(boxed && boxH != null ? { height: boxH } : {}), ...(arrival ? { '--arrival': arrival } : {}) } as React.CSSProperties}
 					data-boxed={boxed ? '' : undefined}
 					data-change={change}
+					data-arrival={arrival ? '' : undefined}
 					onTouchStart={onTouchStart}
 					onTouchEnd={onTouchEnd}
 					aria-live="polite"

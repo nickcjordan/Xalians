@@ -297,6 +297,16 @@
 		pointer-events: none;
 	}
 	.archive[data-screen="standby"] .archive-static { opacity: .1; }
+	/* A figure's light carried into the screen it hands on to: a wash of its color over the first static. */
+	.archive-arrival {
+		position: absolute;
+		inset: 0;
+		background: var(--arrival, transparent);
+		opacity: 0;
+		pointer-events: none;
+	}
+	.story-box[data-arrival] .archive[data-screen="search"] .archive-arrival { animation: archive-arrival 400ms linear both; }
+	@keyframes archive-arrival { from { opacity: .2; } to { opacity: 0; } }
 	.archive-glass {
 		position: absolute;
 		inset: 0;
@@ -445,6 +455,7 @@
 	@keyframes archive-blink { 0% { opacity: 1; } 50% { opacity: .25; } }
 	@media (prefers-reduced-motion: reduce) {
 		.archive .archive-static,
+		.archive .archive-arrival,
 		.archive .archive-picture,
 		.archive .archive-picture::after,
 		.archive .archive-glass::after,
