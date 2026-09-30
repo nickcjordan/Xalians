@@ -16,7 +16,7 @@ const { buildSync } = require(require.resolve('esbuild', { paths: [web] }));
 const FIGURES = {
 	generators: {
 		title: 'Generators Figure Study',
-		beats: ['02 A Generator, world after world', '03 APEX takes the Generators'],
+		beats: ['02 Generators, world by world', '03 APEX takes the Generators'],
 		// pictures the figure paints from, inlined so the page stands alone (the site loads them by path)
 		assets: ['zolton', 'magmuth', 'krystos', 'poseidas'].map((n) => `/assets/img/planets/art/${n}-landscape-768.webp`),
 	},

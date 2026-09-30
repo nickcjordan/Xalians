@@ -295,10 +295,10 @@ const BEATS: Array<Spread | FigureBeat> = [
 		headline: "Designed to thrive in Xalia's most extreme environments",
 		text: GENERATORS,
 		label: {
-			title: 'A Generator, world after world',
-			text: 'The Generators were built for the worlds they stood on. As the worlds pass, the machine reads each one, and the seeds of life in its vat take on forms suited to it.',
+			title: 'Generators, world by world',
+			text: 'Each Generator was built for the world it stood on, and the seeds of life in its vat took forms suited to that world.',
 		},
-		alt: "A heavy steel Generator with a tall glowing vat stands still while worlds pass behind it: a storm world, a lava world, an ice world and a sea. With each, the sensor ring on its mast reads the world, a pulse of light runs down into the vat, the gel takes the world's light, and new seeds of life form in it, dark against the glow, in shapes suited to that world: finned, armored, spiked, bell-shaped.",
+		alt: "The same heavy steel Generator, a tall glowing vat at its heart, shown on one world after another: a storm world, a lava world, an ice world and a sea. On each, the sensor ring on its mast reads the world, a pulse of light runs down into the vat, the gel takes the world's light, and new seeds of life form in it, dark against the glow, in shapes suited to that world: finned, armored, spiked, bell-shaped.",
 	},
 	{
 		kind: 'figure',
@@ -310,9 +310,9 @@ const BEATS: Array<Spread | FigureBeat> = [
 		text: APEX_RELEASED,
 		label: {
 			title: 'The Generators, under APEX',
-			text: 'Under the APEX Accords, signed by the Thousand Families, the Generators were placed under the control of APEX. Here, as its links take hold, the life in each vat stops changing with its world and keeps APEX’s time.',
+			text: 'Under the APEX Accords, signed by the Thousand Families, the Generators were placed under the control of APEX.',
 		},
-		alt: "The machine's lights dip. The view pulls back to show more Generators, each on its own world, with dark space between them. A see-through lattice resolves above them, marked APEX, and dashed links snap from it to each of them. In their vats the seeds stop changing, line up down the middle and pulse together on one steady beat.",
+		alt: "The machine's lights dip. The view pulls back to show more Generators, each on its own world, with dark space between them. A see-through lattice resolves above them, marked APEX, and dashed links snap from it to the machines. Their vats turn APEX's violet, and the seeds in them line up and pulse together on one steady beat.",
 	},
 	{ kind: 'scene', art: ART.endWars, headline: 'Turned the Xalians against their masters', text: END_WARS, layout: 'wide-right', aspect: 'aspect-[2/1]', ar: 2 },
 	{
@@ -327,7 +327,7 @@ const BEATS: Array<Spread | FigureBeat> = [
 			title: 'The plague across Xalia',
 			text: 'The plague burns through the galaxy, and few worlds are safe; most life gathers on Valleron.',
 		},
-		alt: 'A spiral galaxy of small warm lights. A crimson haze creeps in from several places at once and spreads until it covers most of the galaxy; each world it reaches flares red and dims to an ember. One world in the disk grows brighter as small lights drift in to it from its neighbors, and it stays lit as the haze thins around it.',
+		alt: 'A spiral galaxy of small warm lights. A crimson haze spreads across it until it covers most of the galaxy, and the lights it reaches dim to embers. One light grows brighter as small lights drift in to it from its neighbors.',
 	},
 	{
 		kind: 'figure',
@@ -341,7 +341,7 @@ const BEATS: Array<Spread | FigureBeat> = [
 			title: 'A Scrambler Token brought home',
 			text: 'Carried home from Valleron, where the Mercurius Machine prints them, a Scrambler Token lets a Generator make new Xalians immune to the plague.',
 		},
-		alt: 'The view dives from the galaxy to one dark world under a red haze, where a Generator stands dormant, its vat empty. A small hexagonal chip falls from the direction of a distant bright star and seats in a console at the machine’s foot. Light runs from the chip up into the vat, which fills with green, and new seeds of life form in it. A warm glow spreads over the ground from the chip, and the red haze draws back around the machine.',
+		alt: 'The view dives from the galaxy to one dark world under a red haze, where a Generator stands idle, its vat empty. A small hexagonal chip arrives and is set into a console at the machine’s foot. Light runs from the chip up into the vat, which fills with green, and new seeds of life form in it. Around the machine and its new life the red haze keeps back; beyond it, the red remains.',
 	},
 	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], labelRoom: '9.5rem', phoneVideo: true, layout: 'side', aspect: 'aspect-video min-[720px]:aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
