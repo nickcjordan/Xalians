@@ -254,21 +254,39 @@ export function loopFade(t: number, period: number, inS = 0.6, outS = 0.8) {
 /**
  * Fade what is drawn to the oval every figure is suspended in (docs/design/home-story-figures.md, ruling 11):
  * nothing shows a box. `hold` is how far out, as a share of the radius, the lower half stays solid before it
- * fades; a figure standing on ground holds its lower half longer, so the ground recedes into the dark instead of
- * ending under the thing standing on it. The upper half holds to 0.55, and the hold eases between the two so the
- * oval has no seam. The mask is built once per canvas size and hold, then laid over with destination-in.
+ * fades; a figure standing on ground holds its lower half longer, so the ground recedes instead of ending under
+ * the thing standing on it. The upper half holds to 0.55, and the hold eases between the two so the oval has no
+ * seam. `page`, the color of what the figure sits on, is washed into the fading ring first, so a figure whose
+ * edges are darker than the page fades out into it rather than leaving a dark rim (Nick, 2026-09-30: "it should
+ * fade out"). The mask and the wash are built once per canvas size, hold and color.
  */
-const MASKS = new Map<string, HTMLCanvasElement>();
-function ovalMask(w: number, h: number, hold: number) {
-	const key = `${w}x${h}@${hold}`;
+const MASKS = new Map<string, { mask: HTMLCanvasElement; wash: HTMLCanvasElement | null }>();
+function ovalMask(w: number, h: number, hold: number, page: string | null) {
+	const key = `${w}x${h}@${hold}/${page ?? ''}`;
 	let m = MASKS.get(key);
 	if (m) return m;
 	if (MASKS.size > 8) MASKS.clear();
-	m = document.createElement('canvas');
-	m.width = w;
-	m.height = h;
-	const mc = m.getContext('2d')!;
-	const img = mc.createImageData(w, h);
+	const mask = document.createElement('canvas');
+	mask.width = w;
+	mask.height = h;
+	const mc = mask.getContext('2d')!;
+	const mi = mc.createImageData(w, h);
+	let wash: HTMLCanvasElement | null = null;
+	let wc: CanvasRenderingContext2D | null = null;
+	let wi: ImageData | null = null;
+	let rgb: RGB = [0, 0, 0];
+	if (page) {
+		const probe = document.createElement('canvas').getContext('2d')!;
+		probe.fillStyle = page;
+		probe.fillRect(0, 0, 1, 1);
+		const d = probe.getImageData(0, 0, 1, 1).data;
+		rgb = [d[0], d[1], d[2]];
+		wash = document.createElement('canvas');
+		wash.width = w;
+		wash.height = h;
+		wc = wash.getContext('2d')!;
+		wi = wc.createImageData(w, h);
+	}
 	const rx = 0.48 * w;
 	const ry = (0.46 * H * h) / H;
 	for (let y = 0; y < h; y++) {
@@ -279,22 +297,38 @@ function ovalMask(w: number, h: number, hold: number) {
 		for (let x = 0; x < w; x++) {
 			const dx = (x + 0.5 - w / 2) / rx;
 			const r = Math.sqrt(dx * dx + dy * dy);
-			const a = r <= inner ? 1 : r >= 1 ? 0 : 1 - (r - inner) / (1 - inner);
-			img.data[(y * w + x) * 4 + 3] = Math.round(a * 255);
+			const f = r <= inner ? 0 : r >= 1 ? 1 : (r - inner) / (1 - inner);
+			const i = (y * w + x) * 4;
+			mi.data[i + 3] = Math.round((1 - f) * 255);
+			if (wi) {
+				wi.data[i] = rgb[0];
+				wi.data[i + 1] = rgb[1];
+				wi.data[i + 2] = rgb[2];
+				// the wash leads the fade, so the ring is page-colored before it is transparent
+				const e = Math.min(1, f * 1.6);
+				wi.data[i + 3] = Math.round(e * e * (3 - 2 * e) * 0.92 * 255);
+			}
 		}
 	}
-	mc.putImageData(img, 0, 0);
+	mc.putImageData(mi, 0, 0);
+	if (wc && wi) wc.putImageData(wi, 0, 0);
+	m = { mask, wash };
 	MASKS.set(key, m);
 	return m;
 }
 
-export function ovalFade(ctx: Ctx, hold = 0.55) {
+export function ovalFade(ctx: Ctx, hold = 0.55, page: string | null = null) {
 	const { width, height } = ctx.canvas;
+	const { mask, wash } = ovalMask(width, height, hold, page);
 	ctx.save();
 	ctx.setTransform(1, 0, 0, 1, 0, 0);
-	ctx.globalCompositeOperation = 'destination-in';
 	ctx.globalAlpha = 1;
-	ctx.drawImage(ovalMask(width, height, hold), 0, 0);
+	if (wash) {
+		ctx.globalCompositeOperation = 'source-atop';
+		ctx.drawImage(wash, 0, 0);
+	}
+	ctx.globalCompositeOperation = 'destination-in';
+	ctx.drawImage(mask, 0, 0);
 	ctx.restore();
 	ctx.globalCompositeOperation = 'source-over';
 }

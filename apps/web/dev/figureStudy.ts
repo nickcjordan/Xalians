@@ -26,6 +26,8 @@ type Round = {
 type Study = { figure: FigureKey; title?: string; beats?: string[]; rounds?: Round[] };
 
 const FILM_FPS = 20;
+/** The site's room color (tokens.css --color-room): what a figure sits on, and fades out into. */
+const ROOM = '#121110';
 const BAR = 8.5;
 const LINES = ['Glance', 'Lore', 'Subject', 'Setting', 'Motion', 'Changes', 'Finish', 'Phone'];
 
@@ -48,7 +50,7 @@ function paint(o: HTMLCanvasElement, fig: Figure, sec: number, compact: boolean)
 	oc.clearRect(0, 0, o.width, o.height);
 	oc.setTransform(o.width / W, 0, 0, o.height / H, 0, 0);
 	fig.draw(oc, sec, { compact });
-	ovalFade(oc, fig.groundHold);
+	ovalFade(oc, fig.groundHold, ROOM);
 }
 
 /* ------------------------------------------------------------------ styles */
@@ -66,7 +68,7 @@ body { margin: 0; font: 15px/1.5 'Atkinson Hyperlegible', system-ui, sans-serif;
 .stages { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 @media (max-width: 720px) { .stages { grid-template-columns: minmax(0, 1fr); } }
 .place { display: grid; gap: 6px; }
-.place canvas { display: block; width: 100%; aspect-ratio: ${W} / ${H}; background: #000; }
+.place canvas { display: block; width: 100%; aspect-ratio: ${W} / ${H}; background: ${ROOM}; }
 .place .phone-frame { max-width: 360px; }
 .meta { display: flex; justify-content: space-between; gap: 8px; font: 12px/1.3 'Martian Mono', ui-monospace, monospace; color: var(--muted); font-variant-numeric: tabular-nums; }
 .meta .over { color: var(--under); }
@@ -91,7 +93,7 @@ body { margin: 0; font: 15px/1.5 'Atkinson Hyperlegible', system-ui, sans-serif;
 .frames img { display: block; width: 100%; height: auto; background: #000; }
 .frames figcaption { font: 12px/1.3 'Martian Mono', ui-monospace, monospace; color: var(--muted); padding-top: 4px; }
 .stills { display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: 6px; padding: 6px; }
-.stills canvas { display: block; width: 100%; aspect-ratio: ${W} / ${H}; background: #000; }
+.stills canvas { display: block; width: 100%; aspect-ratio: ${W} / ${H}; background: ${ROOM}; }
 .stills figcaption { font: 11px/1.3 'Martian Mono', ui-monospace, monospace; color: var(--muted); }
 .stills figure { margin: 0; }
 `;
