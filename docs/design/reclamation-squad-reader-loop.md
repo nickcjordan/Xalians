@@ -246,4 +246,14 @@ The orchestrator scores each factual answer right or wrong against that JSON. It
 - **The fix prints the standing where the column starts.** "−4" (behind, in the loss ink) or "+3" sits beside the world's symbol, so a cell's "+10" under a head's "−4" reads as the sum.
 - **Still wanted, and left out by pass 72:** what a blow does to the count, which the fight decides.
 
+| 10 | 233 | Finding 7, 7, 7; own Intuitive 6, 6, 6; every mark shown explained right by all three | 36 of 36 (100%) | what a blow does to the count: "whether a hit of 22 on a 14 creature wins the world" (3 of 3; the round 3 finding again) | none: the finding is pass 72's withheld outcome, repeated three rounds, so it goes to Nick |
+
+### Round 10 notes (seed 233)
+
+- **The signed standing at each column head read right, 3 of 3.** "−12" was read as "the rival leads by 12" and "+14" as "you lead". Every reader answered "can one creature put you ahead" from it.
+- **Accuracy and Intuitive have now held at the bar for three rounds** (8, 9 and 10).
+- **Finding holds at 7 for three rounds, all for one reason.** Readers cannot tell whether a blow takes a rival creature off the count, so they cannot weigh a big hit against a big "+N".
+  - That is the fight's outcome, which pass 72 keeps off the table until both sides pass.
+  - The blow chip already shows its size; showing it against the target's hold would say "this one falls", which pass 72 removed on purpose.
+
 - **Harness note: the fixed policy loses quickly.** Seeds 41, 43, 53, 61 and 67 ended at 1 to 5 worlds in round 2, before the round 3 capture, so the round 2 seed was 71.
