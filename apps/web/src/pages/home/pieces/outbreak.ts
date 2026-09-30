@@ -20,7 +20,7 @@
 // Each frame lays them on the stage under one affine turn-and-tilt, so nothing here boils: static textures
 // and a slow drift. No state but the figure's clocks.
 import { clamp, css, easeOut, glow, grain, H, lighter, mix, mixRGB, ramp, rng, smooth, W, type Ctx, type RGB } from './stage';
-import { GROUND, MX, VR, drawMachine, machineTinted, offscreen, pics } from './generatorMachine';
+import { GROUND, MX, VR, VY0, VY1, drawMachine, machineTinted, offscreen, pics } from './generatorMachine';
 import type { Figure } from './figures';
 
 const TAU = Math.PI * 2;
@@ -764,23 +764,6 @@ function scene() {
 	ground.addColorStop(1, css([28, 13, 21]));
 	g.fillStyle = ground;
 	g.fillRect(0, 394, W, H - 394);
-	// foreground rocks for depth: a few dark silhouettes low left and low right, overlapping the ground line
-	g.fillStyle = css([12, 6, 11]);
-	for (const [cx, w, h, seed] of [[70, 130, 52, 5], [205, 96, 34, 6], [800, 110, 40, 7], [935, 120, 54, 8]] as [number, number, number, number][]) {
-		const rr = rng(seed);
-		const base = 512;
-		g.beginPath();
-		g.moveTo(cx - w / 2, base + 30);
-		const n = 7;
-		for (let k = 0; k <= n; k++) {
-			const u = k / n;
-			const hump = Math.sin(u * Math.PI);
-			g.lineTo(cx - w / 2 + u * w, base - h * (0.25 + 0.75 * hump) * (0.75 + 0.35 * rr()));
-		}
-		g.lineTo(cx + w / 2, base + 30);
-		g.closePath();
-		g.fill();
-	}
 	// low noise so the flat darks are not flat
 	const img = g.getImageData(0, 0, W, H);
 	const nr = rng(3);
@@ -805,7 +788,12 @@ const HAZES = (() => {
 // wisps that drift across the front of the machine
 const WISPS = (() => {
 	const r = rng(91);
-	return Array.from({ length: 8 }, (_, k) => ({ x: (k / 7 - 0.5) * 460 + (r() - 0.5) * 40, y: 318 + r() * 86, rx: 90 + r() * 70, ry: 22 + r() * 16, a: 0.4 + r() * 0.08, ph: r() * TAU, sp: 0.8 + r() * 1.2, v: k % 2 }));
+	return Array.from({ length: 8 }, (_, k) => ({ x: (k / 7 - 0.5) * 460 + (r() - 0.5) * 40, y: 318 + r() * 86, rx: 90 + r() * 70, ry: 22 + r() * 16, a: 0.16 + r() * 0.08, ph: r() * TAU, sp: 0.8 + r() * 1.2, v: k % 2 }));
+})();
+// wisps behind the machine, slower, at a different depth
+const WISPS_BACK = (() => {
+	const r = rng(191);
+	return Array.from({ length: 6 }, (_, k) => ({ x: (k / 5 - 0.5) * 520 + (r() - 0.5) * 60, y: 300 + r() * 80, rx: 110 + r() * 80, ry: 24 + r() * 18, a: 0.3 + r() * 0.08, ph: r() * TAU, sp: 0.4 + r() * 0.5, v: (k + 1) % 2 }));
 })();
 // the curl at the dome's edge: haze piled where it was pushed back
 const CURL = Array.from({ length: 18 }, (_, k) => ({ a: Math.PI + (k / 17) * Math.PI, r: 44 + ((k * 37) % 30), v: k % 2 }));
@@ -1062,11 +1050,10 @@ export function createOutbreak(): Figure {
 				const rise = easeOut(ramp(1.8, 2.9, t1));
 				const seatAt = 3.2; // the token seats
 				const slotOn = smooth(seatAt, seatAt + 0.3, t1);
-				const ground = ramp(seatAt + 0.05, seatAt + 0.35, t1);
-				const conduit = ramp(seatAt + 0.35, seatAt + 0.75, t1);
-				const fill = easeOut(ramp(4.0, 5.7, t1));
-				const awake = smooth(4.3, 5.5, t1);
-				const domeOn = easeOut(ramp(5.5, 7.0, t1));
+				const link = ramp(seatAt, seatAt + 0.35, t1);
+				const fill = easeOut(ramp(3.55, 5.25, t1));
+				const awake = smooth(3.9, 5.1, t1);
+				const domeOn = easeOut(ramp(5.0, 6.5, t1));
 				const pulse = 0.94 + 0.06 * Math.sin(sec * 1.2);
 				const s = compact ? 1.08 : 0.88;
 				const MH = 370 * s; // the machine's height on the stage
@@ -1086,6 +1073,18 @@ export function createOutbreak(): Figure {
 					ctx.fillStyle = vg2;
 					ctx.fillRect(0, 0, W, HORIZON + 30);
 				}
+				// wisps behind the machine, at their own pace
+				{
+					const bp0 = hazePuff(0);
+					const bp1 = hazePuff(1);
+					if (bp0 && bp1)
+						for (const w of WISPS_BACK) {
+							const x = CX + mix(w.x, Math.sign(w.x) * rx * 0.96, 0.92 * domeOn) - Math.sin(sec * 0.09 * w.sp + w.ph) * 60 * (1 - domeOn);
+							const y = w.y + Math.sin(sec * 0.05 * w.sp + w.ph * 2) * 6;
+							ctx.globalAlpha = clamp(w.a * (1 - 0.7 * smooth(0, 0.9, domeOn)) * smooth(1.6, 2.4, t1) * sA);
+							ctx.drawImage(w.v ? bp1 : bp0, x - w.rx, y - w.ry, w.rx * 2, w.ry * 2);
+						}
+				}
 				dormantWorld();
 				ctx.save();
 				// it rises out of the dark ground
@@ -1101,7 +1100,8 @@ export function createOutbreak(): Figure {
 						gel: GENESIS,
 						light: lightBoost,
 						side: 0.55,
-						a: As * sceneA * smooth(1.8, 2.4, t1),
+						a: As * sceneA,
+						emerge: smooth(1.8, 2.7, t1),
 						rimK: smooth(2.6, 3.3, t1),
 						rimEdge: true,
 						kindA: 'genesis',
@@ -1123,50 +1123,33 @@ export function createOutbreak(): Figure {
 						lit: fill * pulse,
 						dormant: 1 - awake,
 						vatFill: fill,
-						seedBorn: ramp(4.9, 6.5, t1),
+						seedBorn: ramp(4.5, 6.0, t1),
 						foot: false,
 						rim2: [120, 150, 196],
 					});
-					// the light that runs up the two channels at the vat's edges, from the console in front of the pad
-					const gA = As * sceneA;
-					if (conduit > 0.01) {
+					// the link: a bright line from the chip up into the base of the vat over 0.35 s (a 3 px core, an 8 px glow),
+					// warm white turning green as it climbs; it then holds lit at 0.5, and the green rises from where it enters
+					if (link > 0.005) {
+						const y0 = GROUND + 14;
+						const yh = mix(y0, VY1, easeOut(link));
+						const hold = mix(1, 0.5, smooth(0.9, 1, link));
+						const lg = ctx.createLinearGradient(0, y0, 0, VY1);
+						lg.addColorStop(0, css([255, 244, 226]));
+						lg.addColorStop(1, css(GENESIS));
 						ctx.globalCompositeOperation = 'lighter';
 						ctx.lineCap = 'round';
-						for (const sx2 of [-1, 1]) {
-							const x = MX + sx2 * (VR + 9);
-							const yb = 434;
-							const yt = 214;
-							const head = mix(yb, yt, easeOut(conduit));
-							const cg = ctx.createLinearGradient(0, yb, 0, head);
-							cg.addColorStop(0, css(mixRGB(WHITE, GENESIS, 0.5), 0.75));
-							cg.addColorStop(1, css(GENESIS, 0.3));
-							ctx.strokeStyle = cg;
-							ctx.globalAlpha = clamp(gA * (0.4 + 0.5 * awake));
-							ctx.lineWidth = 2.4;
-							ctx.beginPath();
-							ctx.moveTo(x, yb);
-							ctx.lineTo(x, head);
-							ctx.stroke();
-							if (conduit < 1) {
-								ctx.globalAlpha = gA;
-								glow(ctx, x, head, 12, WHITE, 0.9, 'core');
-							}
-						}
+						ctx.strokeStyle = lg;
+						ctx.lineWidth = 3;
+						ctx.globalAlpha = clamp(As * sceneA * hold);
+						ctx.beginPath();
+						ctx.moveTo(MX, y0);
+						ctx.lineTo(MX, yh);
+						ctx.stroke();
+						glow(ctx, MX, yh, 8, mixRGB([255, 244, 226], GENESIS, link), 0.9 * As * sceneA * hold, 'core');
 						ctx.globalCompositeOperation = 'source-over';
 					}
 				}
 				ctx.restore();
-
-				// the machine stands deep in the red: a dense haze over its lower half, which the dome later clears
-				{
-					const hv = hazePuff(0);
-					if (hv) {
-						ctx.globalAlpha = clamp(sA * (1 - 0.96 * smooth(0, 0.85, domeOn)) * smooth(1.9, 2.6, t1) * 0.62);
-						ctx.drawImage(hv, CX - 280, py(GROUND - 60) - 110, 560, 220);
-						ctx.drawImage(hv, CX - 250, py(GROUND - 150) - 90, 500, 180);
-						ctx.drawImage(hv, CX - 320, GY - 40, 640, 90);
-					}
-				}
 
 				// the intake console in front of the pad, with a hexagonal socket in its top: where the token is set
 				const consoleA = sA * smooth(1.9, 2.6, t1);
@@ -1219,26 +1202,6 @@ export function createOutbreak(): Figure {
 					}
 				}
 
-				// a lit conduit on the ground from the console to the pad, splitting to the foot of each channel
-				if (ground > 0.01) {
-					const yc = py(GROUND + 8);
-					const yp = py(GROUND + 1);
-					ctx.globalCompositeOperation = 'lighter';
-					ctx.lineCap = 'round';
-					ctx.strokeStyle = css([255, 226, 170]);
-					ctx.lineWidth = 2;
-					ctx.globalAlpha = clamp(0.6 * sA);
-					ctx.beginPath();
-					ctx.moveTo(CX, yc);
-					ctx.lineTo(CX, mix(yc, yp, easeOut(ground)));
-					for (const sg of [-1, 1]) {
-						ctx.moveTo(CX, yp);
-						ctx.lineTo(mix(CX, CX + sg * (VR + 9) * s, easeOut(ground)), yp);
-					}
-					ctx.stroke();
-					ctx.globalCompositeOperation = 'source-over';
-				}
-
 				// the low crimson haze around its feet, and the dome the life in the vat pushes it out of
 				const hp0 = hazePuff(0);
 				const hp1 = hazePuff(1);
@@ -1258,6 +1221,23 @@ export function createOutbreak(): Figure {
 				}
 				// wisps drifting across the front of the machine: it stands in the red, until the dome pushes them out
 				if (hp0 && hp1) {
+					ctx.save();
+					// never over the vat's glass: the clip is the whole stage minus the vat
+					{
+						const vl = CX - VR * s;
+						const vr = CX + VR * s;
+						const vt = py(VY0);
+						const vb = py(VY1);
+						const rr2 = VR * s;
+						ctx.beginPath();
+						ctx.rect(0, 0, W, H);
+						ctx.moveTo(vl, vt + rr2);
+						ctx.arc(CX, vt + rr2, rr2, Math.PI, 0);
+						ctx.lineTo(vr, vb - rr2);
+						ctx.arc(CX, vb - rr2, rr2, 0, Math.PI);
+						ctx.closePath();
+						ctx.clip('evenodd');
+					}
 					for (const w of WISPS) {
 						const x = CX + mix(w.x, Math.sign(w.x) * rx * 0.96, 0.92 * domeOn) + Math.sin(sec * 0.12 * w.sp + w.ph) * 46 * (1 - domeOn);
 						const y = w.y + Math.sin(sec * 0.07 * w.sp + w.ph * 2) * 8;
@@ -1266,6 +1246,7 @@ export function createOutbreak(): Figure {
 						ctx.globalAlpha = clamp(a * sA);
 						ctx.drawImage(w.v ? hp1 : hp0, x - w.rx, y - w.ry, w.rx * 2, w.ry * 2);
 					}
+					ctx.restore();
 				}
 				// the curl: haze piled at the dome's edge as it is pushed out
 				if (domeOn > 0.02 && hp0 && hp1) {
@@ -1319,6 +1300,22 @@ export function createOutbreak(): Figure {
 					const tex2 = chip();
 					const soft = chipBlur();
 					if (tex2 && soft) {
+						// a line from Valleron's star to the chip, seen for about 0.3 s as it comes in
+						const sl = smooth(0.62, 0.72, arrive) * (1 - smooth(0.96, 1, arrive));
+						if (sl > 0.01) {
+							const lg2 = ctx.createLinearGradient(starX, starY, head[0], head[1]);
+							lg2.addColorStop(0, css([255, 226, 170], 0));
+							lg2.addColorStop(1, css([255, 236, 200], 0.5));
+							ctx.globalCompositeOperation = 'lighter';
+							ctx.globalAlpha = clamp(sl * sA);
+							ctx.strokeStyle = lg2;
+							ctx.lineWidth = 1.6;
+							ctx.beginPath();
+							ctx.moveTo(starX, starY);
+							ctx.lineTo(head[0], head[1]);
+							ctx.stroke();
+							ctx.globalCompositeOperation = 'source-over';
+						}
 						// a short bright trail behind it, about 30 px
 						if (arrive < 0.98) {
 							ctx.globalCompositeOperation = 'lighter';

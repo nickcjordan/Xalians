@@ -1106,7 +1106,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 		return c;
 	};
 	// the lattice itself is redrawn at 12 a second, not every frame: the rows torn and jittered from it move faster
-	const step = Math.floor(sec * 12);
+	const step = Math.floor(sec * 4);
 	const fresh = lattice.step !== step || lattice.px !== px;
 	lattice.step = step;
 	lattice.px = px;
@@ -1380,13 +1380,15 @@ export function createGenerators(): Figure {
 			}
 			// what the machine has read: a world arrives, the ring reads it, then the life inside takes its form
 			const readT = ws.since;
-			const reading = (1 - v3) * smooth(-0.1, 0.1, readT) * (1 - smooth(0.8, 1.15, readT));
-			// the old form starts coming apart with the gel's cross-fade; the ring reads; a pulse of light runs down the mast
-			// into the gel; the new seed grows from where it lands
+			// each world's 2.7 s: the ring reads and the old form comes apart with the gel's cross-fade (0 to 0.5 s), a pulse of
+			// light runs down the mast into the gel (0.5 to 0.8), the four seeds grow, staggered 0.1 s (0.8 to 1.5), and the
+			// formed seeds hold for the rest
 			const eT = readT + CROSS * 0.3;
-			const PULSE0 = 1.25;
+			const reading = (1 - v3) * smooth(-0.1, 0.1, readT) * (1 - smooth(0.25, 0.45, readT));
+			const PULSE0 = 0.5;
 			const PULSE_LEN = 0.3;
-			const adapt = smooth(0, 1.0, eT) * 0.4 + smooth(PULSE0 + PULSE_LEN, 2.6, eT) * 0.6;
+			const adapt = smooth(0, 0.5, eT) * 0.4 + smooth(PULSE0 + PULSE_LEN, 1.5, eT) * 0.6;
+			const growT = eT - (PULSE0 + PULSE_LEN);
 			const pulseU = stage !== 1 ? ramp(PULSE0, PULSE0 + PULSE_LEN, eT) : 0;
 			const tickV = stage !== 1 && eT > PULSE0 ? Math.exp(-(eT - PULSE0) / 0.12) : 0;
 			let kindA: SeedKind = ws.prev >= 0 ? WORLDS[ws.prev].key : 'genesis';
@@ -1440,6 +1442,7 @@ export function createGenerators(): Figure {
 					under: lavaW * (1 - lk * 0.6),
 					flash: fl,
 					pulse: first && pulseU > 0 && pulseU < 1 ? pulseU : undefined,
+					growT: first && stage !== 1 && v3 < 0.5 ? growT : undefined,
 					tick: first ? tickV : 0,
 					seedScale: L === COMPACT ? 1.35 : 1,
 					sec: sec + i * 1.7,
