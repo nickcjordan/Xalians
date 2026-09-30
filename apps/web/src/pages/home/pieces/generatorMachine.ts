@@ -431,13 +431,13 @@ export function paintMachine(g: Ctx) {
 	for (let k = 0; k < 5; k++) g.fillRect(MX - 40 + k * 14, 150, 8, 3);
 	g.restore();
 	g.strokeStyle = css([10, 12, 12]);
-	g.lineWidth = 4;
+	g.lineWidth = 8;
 	g.beginPath();
 	g.moveTo(DISH.x, 142);
 	g.lineTo(DISH.x, 112);
 	g.stroke();
 	g.strokeStyle = css([120, 128, 124], 0.9);
-	g.lineWidth = 2;
+	g.lineWidth = 4;
 	g.beginPath();
 	g.moveTo(DISH.x, 142);
 	g.lineTo(DISH.x, 112);
@@ -447,7 +447,7 @@ export function paintMachine(g: Ctx) {
 // The machine seen in a world's light: its cache tinted with that painting's ambient color, its darkest tones lifted
 // to sit with the painting's foreground. Built once per world, after the picture is in.
 export const scale3 = (c: RGB, k: number): RGB => [c[0] * k, c[1] * k, c[2] * k];
-export const TINT_LIFT = [0.42, 0.15, 0.1, 0.12];
+export const TINT_LIFT = [0.1, 0.15, 0.1, 0.12, 0.12];
 export const tcache: (HTMLCanvasElement | null | undefined)[] = [];
 export function machineTinted(wi: number) {
 	const base = machineCache();
@@ -521,6 +521,12 @@ export function footStrip(wi: number) {
 	g.fillStyle = h;
 	g.fillRect(0, 0, FOOT.w, FOOT.h);
 	return (fcache[wi] = o.c);
+}
+
+/** A world's painting has changed: forget the machine copies tinted and footed for it. */
+export function resetMachineWorld(wi: number) {
+	tcache[wi] = undefined;
+	fcache[wi] = undefined;
 }
 
 export function machineCache() {
@@ -602,12 +608,30 @@ export type MachineLook = {
 	under: number;
 	/** 0 to 1: a lightning flash lifting it. */
 	flash: number;
+	// The outbreak's 06 shows this machine dormant and then woken; all of these default to the Generators figure's look.
+	/** 0 to 1: how lit the vat's gel is; scales the light it throws on the ground, the housing and the seeds (default 1). */
+	lit?: number;
+	/** 0 to 1: how dead the machine is: the sensor ring and pad lights out, the life-signs line flat (default 0). */
+	dormant?: number;
+	/** 0 to 1: how full of gel the vat is, from the bottom (default 1); the rest is dark glass. */
+	vatFill?: number;
+	/** 0 to 1: how far the seeds have formed, each from a bright point in turn (default: all formed). */
+	seedBorn?: number;
+	/** False: leave out the painting's foreground strip over the pad (a world with no painting). */
+	foot?: boolean;
+	/** A cool rim along the housing's upper left edge, from the sky (default none). */
+	rim2?: RGB;
+	/** 0 to 1: a lit edge round the housing in the gel's color, as the vat fills (default 0). */
+	edgeGlow?: number;
 };
 
 export const MEMBRANE_N = 30;
 
 export function drawMachine(ctx: Ctx, S: MachineLook) {
 	const { sec, gel, light, apex, beatPulse, reading, dishCol, side } = S;
+	const lit = S.lit ?? 1;
+	const dorm = S.dormant ?? 0;
+	const fill = S.vatFill ?? 1;
 	const a = S.a * S.housing;
 	ctx.save();
 	// the vat's glow on the ground in front of it
@@ -615,7 +639,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.translate(VX, GROUND + 12);
 	ctx.scale(1, 0.13);
 	lighter(ctx, () => {
-		glow(ctx, 0, 0, 200, gel, 0.4 * a);
+		glow(ctx, 0, 0, 200, gel, 0.4 * a * lit);
 		glow(ctx, side * 60, 0, 260, light, 0.16 * a);
 	});
 	ctx.restore();
@@ -630,12 +654,12 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.globalAlpha = a;
 		}
 		const fw = S.wk > 0.5 && S.world2 >= 0 ? S.world2 : S.world;
-		const fs2 = fw >= 0 ? footStrip(fw) : null;
+		const fs2 = fw >= 0 && S.foot !== false ? footStrip(fw) : null;
 		if (fs2) ctx.drawImage(fs2, FOOT.x, FOOT.y, FOOT.w, FOOT.h);
 		ctx.globalAlpha = 1;
 	}
 	lighter(ctx, () => {
-		for (let k = 0; k < 7; k++) glow(ctx, MX - 132 + k * 44, GROUND + 8, 7, mixRGB(gel, WHITE, 0.3), 0.8 * a * (0.6 + 0.4 * Math.sin(sec * 2 + k)), 'core');
+		for (let k = 0; k < 7; k++) glow(ctx, MX - 132 + k * 44, GROUND + 8, 7, mixRGB(gel, WHITE, 0.3), 0.8 * a * (1 - dorm) * (0.6 + 0.4 * Math.sin(sec * 2 + k)), 'core');
 	});
 	// the world's light on the housing: a wash across the face on the bright side, a rim along its edge, the
 	// vat's own glow falling on the plates round the window
@@ -661,7 +685,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
 	}
 	const spill = ctx.createRadialGradient(VX, 300, 20, VX, 300, 170);
-	spill.addColorStop(0, css(gel, 0.16 * a));
+	spill.addColorStop(0, css(gel, 0.16 * a * lit));
 	spill.addColorStop(1, css(gel, 0));
 	ctx.fillStyle = spill;
 	ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
@@ -721,6 +745,34 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.stroke();
 	ctx.restore();
 	ctx.restore();
+	// a cool rim from the sky along the upper left, and the gel's own light along the edges once the vat fills
+	if (S.rim2) {
+		ctx.save();
+		ctx.globalCompositeOperation = 'lighter';
+		const cg = ctx.createLinearGradient(BODY.x0, 0, BODY.x0 + 70, 0);
+		cg.addColorStop(0, css(S.rim2, 0.5 * a));
+		cg.addColorStop(1, css(S.rim2, 0));
+		ctx.strokeStyle = cg;
+		ctx.lineWidth = 2;
+		bodyPath(ctx);
+		ctx.stroke();
+		ctx.restore();
+	}
+	if ((S.edgeGlow ?? 0) > 0.01) {
+		ctx.save();
+		ctx.globalCompositeOperation = 'lighter';
+		ctx.strokeStyle = css(mixRGB(gel, WHITE, 0.2), 0.3 * S.edgeGlow! * a);
+		ctx.lineWidth = 2;
+		bodyPath(ctx);
+		ctx.stroke();
+		bodyPath(ctx);
+		ctx.clip();
+		ctx.strokeStyle = css(gel, 0.14 * S.edgeGlow! * a);
+		ctx.lineWidth = 10;
+		bodyPath(ctx);
+		ctx.stroke();
+		ctx.restore();
+	}
 
 	// the gauge needle and the intake's readout, which glow with what the machine reads
 	ctx.strokeStyle = css(mixRGB(gel, WHITE, 0.4), 0.95 * a);
@@ -736,13 +788,13 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		ctx.fillRect(MX + 112, y, 32, 5);
 	}
 	if (reading > 0.05) lighter(ctx, () => glow(ctx, MX + 128, 366, 56, dishCol, 0.32 * reading * a));
-	ctx.strokeStyle = css(mixRGB(gel, VIOLET, apex), 0.9 * a);
+	ctx.strokeStyle = css(mixRGB(gel, VIOLET, apex), 0.9 * a * (1 - 0.7 * dorm));
 	ctx.lineWidth = 1.2;
 	ctx.beginPath();
 	for (let q = 0; q <= 32; q++) {
 		const ph = sec * 1.1 - (1 - q / 32) * 1.1;
 		const square = ((ph % 0.5) + 0.5) % 0.5 < 0.1 ? 1 : 0;
-		const v = mix(ecg(ph), square * 0.8, apex);
+		const v = mix(ecg(ph), square * 0.8, apex) * (1 - dorm);
 		if (q) ctx.lineTo(MX + 112 + q, 286 - v * 13);
 		else ctx.moveTo(MX + 112 + q, 286 - v * 13);
 	}
@@ -750,19 +802,19 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 
 	// the sensor ring: it reads the world (and, taken, answers to APEX)
 	ctx.strokeStyle = css(mixRGB([170, 176, 170], dishCol, 0.6), 0.95 * a);
-	ctx.lineWidth = 2.4;
+	ctx.lineWidth = 3.2;
 	ctx.beginPath();
-	ctx.ellipse(DISH.x, DISH.y, 18, 7, 0, 0, TAU);
+	ctx.ellipse(DISH.x, DISH.y, 25, 10, 0, 0, TAU);
 	ctx.stroke();
 	lighter(ctx, () => {
-		glow(ctx, DISH.x, DISH.y, 30, dishCol, 0.6 * a * (0.4 + 0.6 * reading));
-		glow(ctx, DISH.x, DISH.y, 6, WHITE, a, 'core');
+		glow(ctx, DISH.x, DISH.y, 40, dishCol, 0.6 * a * (1 - dorm) * (0.4 + 0.6 * reading));
+		glow(ctx, DISH.x, DISH.y, 8, WHITE, a * (1 - dorm), 'core');
 	});
 	if (reading > 0.02) {
 		ctx.lineWidth = 1.4;
 		for (let k = 0; k < 3; k++) {
 			const u = (sec * 0.9 + k / 3) % 1;
-			const rr = 18 + u * 150;
+			const rr = 25 + u * 150;
 			ctx.strokeStyle = css(dishCol, 0.45 * (1 - u) * reading * a);
 			ctx.beginPath();
 			ctx.ellipse(DISH.x, DISH.y, rr, rr * 0.38, 0, 0, TAU);
@@ -780,9 +832,22 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	vg.addColorStop(0, css(mixRGB(gel, WHITE, 0.25), 0.97 * a));
 	vg.addColorStop(0.6, css(gel, 0.94 * a));
 	vg.addColorStop(1, css(mixRGB(gel, BLACK, 0.45), 0.97 * a));
+	if (fill < 1) {
+		// unlit glass: dark, with the gel rising in it from the bottom
+		const dg = ctx.createLinearGradient(0, VY0, 0, VY1);
+		dg.addColorStop(0, css([26, 34, 36], 0.97 * a));
+		dg.addColorStop(1, css([16, 22, 24], 0.97 * a));
+		ctx.fillStyle = dg;
+		ctx.fillRect(VX - VR, VY0, VR * 2, VY1 - VY0);
+	}
+	const gelTop = VY0 + (1 - fill) * (VY1 - VY0);
 	ctx.fillStyle = vg;
-	ctx.fillRect(VX - VR, VY0, VR * 2, VY1 - VY0);
-	ctx.strokeStyle = css(WHITE, 0.3 * a);
+	ctx.fillRect(VX - VR, gelTop, VR * 2, VY1 - gelTop);
+	if (fill < 0.999 && fill > 0.005) {
+		ctx.fillStyle = css(mixRGB(gel, WHITE, 0.6), 0.7 * a);
+		ctx.fillRect(VX - VR, gelTop - 1, VR * 2, 2.5);
+	}
+	ctx.strokeStyle = css(WHITE, 0.3 * a * lit);
 	ctx.lineWidth = 1;
 	for (let b = 0; b < 12; b++) {
 		const by = VY1 - ((sec * (18 + hash(b) * 20) * (1 - 0.9 * apex) + hash(b, 2) * 300) % (VY1 - VY0));
@@ -807,7 +872,9 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const pulse = mix(Math.exp(-own * 5) * (own < 0.6 ? 1 : 0), beatPulse, apex);
 		// a new seed forms: the old one is gone, a bright point swells into the new shape
 		const kmk = clamp(S.km * 1.25 - k * 0.06);
-		const form = mix(kmk < 0.5 ? mix(1, 0.06, smooth(0, 0.5, kmk)) : mix(0.06, 1, easeOut(ramp(0.5, 1, kmk))), 1, apex);
+		const born = S.seedBorn === undefined ? 1 : clamp(S.seedBorn * 1.3 - k * 0.14);
+		if (born <= 0.001) return;
+		const form = born * mix(kmk < 0.5 ? mix(1, 0.06, smooth(0, 0.5, kmk)) : mix(0.06, 1, easeOut(ramp(0.5, 1, kmk))), 1, apex);
 		const r = mix(s.r, 15, apex) * form * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
 		const kindNow: SeedKind = kmk < 0.5 ? S.kindA : S.kindB;
 		const stormW = kindNow === 'storm' ? 1 - apex : 0;
@@ -879,19 +946,19 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const mote = mixRGB(gel, WHITE, 0.7);
 		for (let m = 0; m < 14; m++) {
 			const u = (sec * (0.1 + hash(m) * 0.08) + hash(m, 2)) % 1;
-			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 3.6, mote, 1 * (1 - u * 0.6) * (1 - apex * 0.9) * a, 'core');
-			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 9, mote, 0.25 * (1 - u) * (1 - apex * 0.9) * a);
+			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 3.6, mote, 1 * (1 - u * 0.6) * (1 - apex * 0.9) * a * lit, 'core');
+			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 9, mote, 0.25 * (1 - u) * (1 - apex * 0.9) * a * lit);
 		}
 		for (const [sx2, sy2, f] of sparks) {
 			for (let j = 0; j < 4; j++) {
 				const u = (sec * 1.3 + j / 4 + sx2 * 0.01) % 1;
-				glow(ctx, mix(VX + Math.sin(j * 2 + sec) * 12, sx2, easeOut(u)), mix(VY1 - 8, sy2, u), 3.4, mote, 1 * f * (1 - u * 0.3) * a, 'core');
+				glow(ctx, mix(VX + Math.sin(j * 2 + sec) * 12, sx2, easeOut(u)), mix(VY1 - 8, sy2, u), 3.4, mote, 1 * f * (1 - u * 0.3) * a * lit, 'core');
 			}
 		}
 	});
 	// a faint glow of life round each, and the bright point a new seed starts as
 	lighter(ctx, () => {
-		for (const [x, y, r, p] of halos) glow(ctx, x, y, r * 2.2 + 3, apex > 0.05 ? mixRGB(gel, VIOLET, apex) : gel, (0.22 + 0.16 * p + 0.3 * apex) * a);
+		for (const [x, y, r, p] of halos) glow(ctx, x, y, r * 2.2 + 3, apex > 0.05 ? mixRGB(gel, VIOLET, apex) : gel, (0.22 + 0.16 * p + 0.3 * apex) * a * lit);
 		for (const [x, y, f] of sparks) {
 			glow(ctx, x, y, 7 + 10 * f, WHITE, 0.8 * f * a, 'core');
 			glow(ctx, x, y, 18 * f, mixRGB(gel, WHITE, 0.5), 0.5 * f * a);
@@ -900,20 +967,49 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		for (const [x, y, f, rn] of flashes) glow(ctx, x, y, rn * 1.2, WHITE, 0.6 * f * a, 'core');
 	});
 	// the glass's own sheen
-	ctx.fillStyle = css(WHITE, 0.18 * a);
+	ctx.fillStyle = css(WHITE, mix(0.18, 0.25, 1 - fill) * a);
 	ctx.fillRect(VX - VR + 7, VY0 + 26, 5, VY1 - VY0 - 52);
 	ctx.restore();
-	lighter(ctx, () => glow(ctx, VX, (VY0 + VY1) / 2, 170, gel, 0.28 * a));
+	lighter(ctx, () => glow(ctx, VX, (VY0 + VY1) / 2, 170, gel, 0.28 * a * lit));
 	// the glass's own rim, and the straps across it
 	ctx.strokeStyle = css(mixRGB(gel, WHITE, 0.6), 0.45 * a);
 	ctx.lineWidth = 1;
 	vatPath(ctx);
 	ctx.stroke();
+	if (fill < 1) {
+		// unlit glass shows a lit rim
+		ctx.strokeStyle = css([176, 196, 204], 0.4 * (1 - fill) * a);
+		ctx.lineWidth = 1.6;
+		vatPath(ctx);
+		ctx.stroke();
+	}
+	// the straps: raised bands standing a few pixels proud of the glass, a lit top edge, bolts at the ends
 	for (const y of [270, 340]) {
-		ctx.fillStyle = css([28, 33, 34], 0.95 * a);
-		ctx.fillRect(VX - VR - 6, y - 2, VR * 2 + 12, 5);
-		ctx.fillStyle = css([170, 178, 172], 0.25 * a);
-		ctx.fillRect(VX - VR - 6, y - 2, VR * 2 + 12, 1);
+		const x0 = VX - VR - 7;
+		const w = VR * 2 + 14;
+		ctx.fillStyle = css(BLACK, 0.4 * a);
+		ctx.fillRect(VX - VR, y + 4, VR * 2, 3);
+		const sg = ctx.createLinearGradient(0, y - 4, 0, y + 4);
+		sg.addColorStop(0, css([120, 128, 124], 0.95 * a));
+		sg.addColorStop(0.3, css([56, 63, 63], 0.95 * a));
+		sg.addColorStop(1, css([20, 24, 24], 0.95 * a));
+		ctx.fillStyle = sg;
+		ctx.fillRect(x0, y - 4, w, 8);
+		ctx.fillStyle = css([214, 220, 212], 0.55 * a);
+		ctx.fillRect(x0, y - 4, w, 1);
+		ctx.strokeStyle = css([6, 8, 8], 0.8 * a);
+		ctx.lineWidth = 1;
+		ctx.strokeRect(x0 + 0.5, y - 3.5, w - 1, 7);
+		for (const bx of [x0 + 5, x0 + w - 5, VX]) {
+			ctx.fillStyle = css([10, 12, 13], 0.9 * a);
+			ctx.beginPath();
+			ctx.arc(bx, y, 2, 0, TAU);
+			ctx.fill();
+			ctx.fillStyle = css([160, 168, 162], 0.7 * a);
+			ctx.beginPath();
+			ctx.arc(bx - 0.5, y - 0.6, 0.9, 0, TAU);
+			ctx.fill();
+		}
 	}
 	}
 	ctx.restore();

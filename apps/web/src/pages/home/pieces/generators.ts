@@ -21,7 +21,7 @@
 // into offscreen canvases on first use; a frame only composes them and draws what moves.
 import { blot, clamp, css, easeOut, glow, grain, H, lighter, mix, mixRGB, ramp, rng, smooth, W, type Ctx, type RGB } from './stage';
 import { assetUrl, type Figure } from './figures';
-import { BLACK, BODY, DISH, FOOT, GROUND, MC, MX, PH, PW, TAU, VIOLET, VR, VX, VY0, VY1, WHITE, WX0, drawMachine, ease, hash, machineCache, machineSmall, machineTinted, offscreen, pics, seedR, soften, type MachineLook, type Pic, type SeedKind, type WorldKey } from './generatorMachine';
+import { BLACK, BODY, DISH, FOOT, GROUND, MC, MX, PH, PW, TAU, VIOLET, VR, VX, VY0, VY1, WHITE, WX0, drawMachine, ease, hash, machineCache, machineSmall, machineTinted, offscreen, resetMachineWorld, pics, seedR, soften, type MachineLook, type Pic, type SeedKind, type WorldKey } from './generatorMachine';
 
 const vnoise = (x: number, s: number) => {
 	const i = Math.floor(x);
@@ -185,8 +185,8 @@ function buildPic(wi: number, img: HTMLImageElement) {
 	if (!o) return;
 	const g = o.g;
 	const sc = WWD / img.naturalWidth;
-	// ice is mirrored, so its broken ice sheets fill the left where the ruins were
-	const flip = wi === 2;
+	// ice is not mirrored: its mountain range runs behind the machine and into the left third (the ruins there are painted out below)
+	const flip = false;
 	if (flip) {
 		g.save();
 		g.translate(WWD, 0);
@@ -274,8 +274,7 @@ function buildPic(wi: number, img: HTMLImageElement) {
 	g.fillRect(0, 0, WWD, PH);
 	g.restore();
 	pics[wi] = { c: o.c, light, side, amb, sky };
-	tcache[wi] = undefined;
-	fcache[wi] = undefined;
+	resetMachineWorld(wi);
 	pcache[wi] = undefined;
 }
 
@@ -1427,7 +1426,7 @@ export function createGenerators(): Figure {
 					gel: mixRGB(own, mixRGB(own, [128, 104, 190], 0.78), lk),
 					light: mixRGB(first ? lightNow : worldSeam(wi), VIOLET, lk * 0.5),
 						side: first ? sideNow : worldSide(wi) * 0.7,
-					a: Math.max(first ? 1 : 0.6 * app, app) * (1 - dip),
+					a: Math.max(first ? 1 : 0.6 * app, app) * (1 - dip) * smooth(0, 0.6, vis),
 					kindA: kind ?? kindA,
 					kindB: kind ?? kindB,
 					km: kind ? 1 : km,
