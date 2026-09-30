@@ -13,7 +13,9 @@
       and pulls push the target's next turn back.
   Everything else is the pillar engine's (engine.ts): the same reading, matchups, supports.
 */
-import { checkSquad, squadUnits, type Squad } from "../index.ts";
+import type { CreatureRecord } from "@xalians/content/creature";
+import { checkSquad, squadUnits, unitIds, type Squad } from "../index.ts";
+import { readCompanion, type Unit } from "../reading.ts";
 import {
   DEFAULT_RULES,
   clone,
@@ -125,15 +127,14 @@ function enter(s: TRun) {
   seatClocks(s);
   s.log.push(`Entered ${roomsFor(s.rules)[s.room].name}.`);
 }
-export function createTurnRun(seed = 1, squad: Squad = "starter", rules: Rules = { ...DEFAULT_RULES, timeline: "round" }): { state: TRun; events: PEvent[] } {
-  const picked = checkSquad(squad);
+function startRun(seed: number, squad: Squad, units: Unit[], rules: Rules): { state: TRun; events: PEvent[] } {
   const s: TRun = {
     seed: seed >>> 0,
     rng: seed >>> 0,
     rules,
-    squad: picked,
+    squad,
     room: 0,
-    team: squadUnits(seed >>> 0, picked).map((u) => fighter(u, rules)),
+    team: units.map((u) => fighter(u, rules)),
     enemies: [],
     clock: {},
     active: null,
@@ -148,6 +149,19 @@ export function createTurnRun(seed = 1, squad: Squad = "starter", rules: Rules =
   const events: PEvent[] = [];
   run(s, events);
   return { state: s, events };
+}
+export function createTurnRun(seed = 1, squad: Squad = "starter", rules: Rules = { ...DEFAULT_RULES, timeline: "round" }): { state: TRun; events: PEvent[] } {
+  const picked = checkSquad(squad);
+  return startRun(seed, picked, squadUnits(seed >>> 0, picked), rules);
+}
+/**
+  A run for an explicit list of creature records (the measuring tools: sample creatures, mixed
+  squads). Same reading, same rules; only the source of the squad differs. Its `squad` field is
+  the "starter" placeholder, so such a run is a measuring run, never a saved one.
+*/
+export function createTurnRunFrom(seed: number, records: readonly CreatureRecord[], rules: Rules = { ...DEFAULT_RULES, timeline: "round" }): { state: TRun; events: PEvent[] } {
+  const ids = unitIds(records.map((r) => r.species));
+  return startRun(seed, "starter", records.map((r, i) => readCompanion(r, ids[i])), rules);
 }
 
 /** One unit's action: the order resolves, then its next turn is placed on the timeline. */

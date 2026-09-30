@@ -276,3 +276,116 @@ node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pi
 node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=length --modes=1 --hp=0.76 --runs=150
 ```
 
+### Against the sample set, 2026-09-29
+
+The catalog is still being filled in, so many mechanisms the creature guidelines allow are barely exercised by today's creatures (no species produces a boost, heals are 1% of moves). Every measure below reports the real catalog and the creature sample set ([creature-sample-set.md](creature-sample-set.md)) as separate columns, never merged. Three sources: **catalog** (the draft offers of seeds 1 to 200, 1,600 creatures, as in the census above), **samples** (the 168 generated records of the 56 sample species, 14 roles by 14 elements, 7 attribute profiles, 5 output bands), and **grid** (each of the 472 effect-grid actions read as the only move of a standard unit, attributes 50). Nothing here changed a lever; the findings propose them.
+
+Built: `createTurnRunFrom(seed, records, rules)` in `turns.ts` starts a run from an explicit list of records (same reading and rules; `"starter"` and draft squads and the save format are untouched, and the run's `squad` field is a placeholder, so it is a measuring run, never a saved one). `pillarsNumbers.ts` takes `--source=catalog|samples|grid|all`. `pillarsTurns.ts` takes `--part=sources --squads=preset,draft,samples,mixed` and `--part=roles --roleruns=600`. Tests: `pillars/samples.test.ts` plays all 168 sample creatures, each with three starters, to an end (no exception, no NaN or negative health, finite event amounts, under a 3,000-command cap), and `powerworksTurns/view.samples.test.ts` steps 20 squads (every one of the 14 roles) and renders `turnView`, `eventWords` and `playback` at every state with no NaN, undefined or null in any string.
+
+**Census by source** (`pillarsNumbers.ts`, the engine's own `stepDamage` and `attackOn`):
+
+| | catalog | samples | grid |
+|---|---|---|---|
+| creatures or actions | 1,600 | 168 | 472 |
+| attacks (area) | 4,614 (762) | 404 (43) | 183 (63) |
+| attack power, max | 18 | 26 | 30 |
+| weak step not strictly between 0 and neutral | 19 (0.4%) | 25 (6.2%) | 18 (9.8%) |
+| strong step not strictly above neutral | 0 | 0 | 0 |
+| health p0 / p5 / p50 / p95 / p100 | 46 / 62 / 116 / 152 / 166 | 16 / 20 / 100 / 204 / 208 | none (no health of its own) |
+
+All weak-step failures are power 1 in every source. Support numbers, count and p5 / p50 / p95 (max):
+
+| Kind | catalog | samples | grid |
+|---|---|---|---|
+| heal, ally | 63: 9 / 13 / 13 (13) | 35: 2 / 11 / 26 (27) | 25: 2 / 10 / 20 (30) |
+| heal, self | 33: 2 / 3 / 6 (9) | 42: 1 / 7 / 16 (26) | 23: 2 / 5 / 15 (30) |
+| shield, ally | 127: 11 / 12 / 12 (13) | 15: 5 / 11 / 19 (20) | 24: 2 / 10 / 20 (30) |
+| shield, self | 269: 10 / 10 / 14 (14) | 50: 9 / 10 / 21 (27) | 63: 5 / 10 / 10 (30) |
+| hinder | 1,192: 10 / 14 / 14 (21) | 125: 10 / 14 / 27 (38) | 51: 4 / 10 / 14 (30) |
+| boost, ally | 1: 10 | 13: 5 / 20 / 25 (26) | 13: 10 / 10 / 10 |
+| boost, self | none | 1: 14 | 11: 10 / 15 / 15 (15) |
+
+**What the pillar reading does not read** (grid, each effect read alone; 510 effects, 399 read, 111 not read; 103 of the 472 whole actions turn into nothing, no attack and no support):
+
+| Effect x recipient | read | not read | read as |
+|---|---|---|---|
+| harm x target / area | 111 / 57 | 0 / 0 | attack / area attack |
+| harm x self | 0 | 3 | |
+| displace x target / area | 12 / 7 | 0 / 0 | attack (x0.6) / area attack |
+| displace x self | 0 | 2 | |
+| restore x target / area / self | 22 / 2 / 20 | 1 / 0 / 1 | heal ally (self for a drain) / heal all / heal self |
+| protect x target / area / self | 14 / 2 / 10 | 1 / 0 / 1 | shield ally / shield all / shield self |
+| remove x target / area / self | 0 | 11 / 8 / 8 | |
+| status x target | 56 | 32 | boost 11, heal 1, hinder 38, shield 6 |
+| status x area | 20 | 18 | boost 2, heal 1, hinder 14, shield 3 |
+| status x self | 66 | 25 | boost 11, heal 2, shield 53 |
+
+Not read, by reason (effects): lasting damage ticks (burning, chilled, corroding, overheated, poisoned on a target or area) 37; cleanse (`remove`) 27; a hostile status on itself 17; a number that rounds to 0 (intensity 1 restore, protect or slowed) 5; concealment 4; phased 4; harm aimed at itself 3; deafened, revealed, marked, dispersed 3 each; displacement aimed at itself 2. So Powerworks exercises harm, displace, restore, protect, and the helping and hindering statuses; it does not exercise cleanse, damage over time, concealment, perception statuses (deafened, revealed, marked), phasing or dispersal. Dead keys (a move that reads as nothing) are 4.2% of catalog moves and 2.8% of sample moves (9 of 168 sample signatures, all status-appliers); the sample set is no worse here than the catalog.
+
+**Difficulty by source** (`pillarsTurns.ts --part=sources`, round timeline, roles rooms, `ENEMY_HP_FACTOR` 0.76, 150 runs, look-ahead 60; the run has four rooms; mixed is two starter companions and two sample creatures; unfinished is a run still going after 3,000 commands):
+
+| Squads | random | biggest number | hardest-hit | planner | look-ahead | hardest-hit won / lost / retreated / unfinished | mean rooms entered (of 4) | turns per encounter |
+|---|---|---|---|---|---|---|---|---|
+| preset (catalog) | 5% | 40% | 97% | 82% | 67% | 97% / 3% / 0% / 0% | 4.00 | 22.5 |
+| draft (catalog) | 27% | 53% | 61% | 51% | 48% | 61% / 25% / 11% / 2% | 3.92 | 27.0 |
+| samples | 17% | 35% | 35% | 35% | 53% | 35% / 37% / 23% / 5% | 3.39 | 35.1 |
+| mixed | 12% | 37% | 48% | 38% | 52% | 48% / 39% / 12% / 1% | 3.75 | 32.6 |
+
+Turns per encounter are over finished runs only; the earlier table's draft figure (41.8) included the unfinished runs at the cap, which is why it moves to 27.0 here. On sample squads the hardest-hit rule (35%) is no better than the biggest number (35%) and the planner (35%), and the look-ahead (53%, 60 runs) is 18 points better: these squads have real decisions that the catalog squads do not (supports, drains, boosts) and the simple rule is worse at them.
+
+**Win rate by the role, profile and band of each squad member** (600 sample squads, hardest-hit; a squad counts toward every value it holds, so rows overlap; all squads 36% won, 39% lost, 20% retreated, 4% unfinished, 3.37 rooms):
+
+| role | squads | won | lost | retreated | unfinished | mean rooms |
+|---|---|---|---|---|---|---|
+| ally-healer | 147 | 31% | 41% | 23% | 5% | 3.29 |
+| ally-shielder | 145 | 32% | 40% | 24% | 4% | 3.41 |
+| area-striker | 153 | 44% | 31% | 22% | 3% | 3.52 |
+| binder | 160 | 51% | 36% | 13% | 1% | 3.51 |
+| booster | 141 | 40% | 37% | 16% | 8% | 3.51 |
+| charger | 151 | 39% | 46% | 13% | 2% | 3.43 |
+| displacer | 166 | 28% | 45% | 22% | 5% | 3.34 |
+| drain | 165 | 49% | 35% | 10% | 7% | 3.42 |
+| hinderer | 172 | 38% | 38% | 21% | 3% | 3.37 |
+| pure-support | 163 | 20% | 51% | 24% | 5% | 2.93 |
+| self-guard | 151 | 32% | 42% | 21% | 5% | 3.32 |
+| self-healer | 149 | 33% | 40% | 17% | 10% | 3.18 |
+| status-applier | 157 | 34% | 41% | 23% | 2% | 3.41 |
+| striker | 162 | 37% | 38% | 23% | 2% | 3.52 |
+
+| profile | squads | won | lost | retreated | unfinished | mean rooms |
+|---|---|---|---|---|---|---|
+| bulky | 295 | 33% | 43% | 21% | 3% | 3.44 |
+| exceptional | 272 | 58% | 25% | 12% | 5% | 3.60 |
+| fast | 261 | 43% | 33% | 18% | 7% | 3.56 |
+| fragile | 282 | 34% | 44% | 17% | 4% | 3.34 |
+| minimal | 273 | 21% | 45% | 29% | 5% | 3.08 |
+| slow | 291 | 28% | 49% | 19% | 3% | 3.22 |
+| standard | 242 | 44% | 28% | 24% | 3% | 3.51 |
+
+| band | squads | won | lost | retreated | unfinished | mean rooms |
+|---|---|---|---|---|---|---|
+| 25 | 354 | 32% | 45% | 17% | 5% | 3.25 |
+| 50 | 350 | 40% | 34% | 22% | 5% | 3.46 |
+| 75 | 357 | 36% | 44% | 15% | 4% | 3.30 |
+| 100 | 378 | 40% | 34% | 23% | 3% | 3.56 |
+| 130 | 360 | 35% | 38% | 21% | 6% | 3.29 |
+
+The band axis is nearly flat (32% to 40%), so the signature's output size does not decide runs; the profile axis does (minimal 21%, slow 28%, exceptional 58%), and pure-support is the weakest role (20%).
+
+**Findings** (for Nick and the orchestrator to decide; no lever changed). Each is a shape the guidelines allow that the catalog does not yet have.
+
+1. **Exceptional-band signatures can one-shot a small enemy.** Case: the sample drain and charger signatures at band 130 read as power 25 to 26 (catalog maximum 18; 15 of 404 sample attacks are above 18). At the best matchup step (x1.5 to x2) that is 39 to 52 damage against the Maintenance crawler (34 health), Security drone (36) and Signal jammer (34): 3 of 404 sample attacks (0.7%) can one-shot one, against 0 of 4,614 catalog attacks. Smallest lever: cap an attack's power at read, `MAX_POWER` 18 (the catalog's own maximum). Checked by arithmetic on the reading: with the cap, 0 of 404 sample attacks one-shot a small enemy. It costs the 15 attacks above 18 their extra power.
+2. **Minimal and fragile profiles fall to a single blow.** Case: minimal creatures (every rating 8 to 12) have 16 to 20 health, fragile ones about 35, against the Discharge unit's blow of 32 and the Central guardian's 36 (the catalog's weakest creature has 46). Of the 24 minimal sample records, 12 fall from full health to the single worst enemy blow at its matchup step; 9 of 24 fragile do; 1 of the 1,600 catalog creatures does. 48 of 168 sample creatures are under 46 health. Minimal squads win 21% (standard 44%) and retreat 29%. Smallest lever: a floor on scaled health in `fighter()`, `HEALTH_FLOOR` 40 (above the strongest unboosted enemy blow, 36; the catalog minimum is 46). It changes only creatures under 40 (48 of 168 samples, none of the catalog).
+3. **Weak steps collapse at low intensity.** Case: an attack at intensity 1 to 7 reads as power 1, where x0.5 rounds half up to 1, equal to neutral. 25 of the 404 sample attacks (6.2%, against 0.4% for the catalog) and 18 of the 183 grid attacks (9.8%) do this. All 25 sample cases are minimal-profile creatures: 25 of their 54 attacks are power 1 and 48 of 54 are power 2 or less; every other profile has none. Strong steps never collapse (0 in every source). Smallest lever: floor an attack's power at 2 after the area factor, `MIN_POWER` 2, so a weak step deals 1 and a neutral hit 2. It doubles the smallest attacks.
+4. **Supports dwarf attacks.** Case: sample support numbers reach 26 to 27 (heal), 25 to 26 (boost), 27 to 38 (hinder) and 27 (shield), against a sample median attack of 7, a catalog support p95 of 13 to 14 and the enemies' own strongest support of 16. A hinder of 38 cancels every enemy blow (the strongest is 36); a boost is flat, not scaled by the matchup, so a boost of 25 on a catalog p95 attack of 14 is 39, more than any small enemy's health (3 of 14 sample boosts reach 36 on a power-14 attack); 3 of 77 heals are at least the healer's own maximum health. Above 16: 15 of 125 hinders, 15 of 77 heals, 9 of 65 shields, 7 of 14 boosts. Smallest lever: cap a support number at read, `SUPPORT_CAP` 16 (the enemies' strongest support; it touches only the catalog's top tail, hinder max 21 against p95 14).
+5. **Some fights never end.** Case: 25 of 600 sample squads (4.2%; 2% of catalog draft runs, 0% of the preset) are still fighting after 3,000 commands under the hardest-hit rule, 24 of them in the Security checkpoint (room 2) and 1 in the Power chamber. Example: striker-fire, hinderer-plant, hinderer-ghost, booster-dark (attack numbers 1 to 9): they take the drone and the crawler down, then chip the Repair drone (40 health) for 14 every fourth turn and its heal (16 to all, 10 each after the share) puts it back to 39 or 40 the next turn. The stall counter resets whenever any unit loses health, so each chip resets it and the fight cycles without end. The roles that end this way most: self-healer 10%, booster 8%, drain 7%. Smallest change (an engine rule, not a lever): reset `stalled` only when the enemies' total health reaches a new low for the encounter; or add a per-encounter turn cap lever. The page lets the player retreat, so this is mostly a simulation and scoring problem, but a fight a squad can neither win nor lose is a dead end for a player who does not think to leave.
+6. **A squad of pure supports cannot damage anything.** Case: all 12 pure-support records have no attack. Four of them (60 squads) lose 60 of 60 in the first room; three starters and one pure-support win 23 of 60 (the preset squad of four starters wins 97%). Across the 600 squads, pure-support squads reach 2.93 rooms against 3.37 overall. Smallest change: a draft rule that a squad needs at least two attackers (the draft already guarantees answers), or a fallback strike for a unit with no attack (the classic page already has a desperate strike); neither is a numbers lever.
+7. **Elements and dead keys are not a problem.** The step chart holds for every source (strong steps 0 failures) and dead keys are no more common in the samples (2.8% of moves) than in the catalog (4.2%). The reading table above is the list of what the game cannot yet show: cleanse, damage over time, concealment, perception statuses, phasing and dispersal.
+
+Run:
+
+```
+node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsNumbers.ts --source=all
+node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=sources --runs=150 --look=60
+node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=roles --roleruns=600
+```
