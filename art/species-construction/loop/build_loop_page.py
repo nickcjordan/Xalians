@@ -203,6 +203,9 @@ def esc(text):
 
 def clip(text, n=320):
     text = ' '.join(str(text or '').split())
+    # Drop the critic's pointer to its own file; the path means nothing to a reader and cannot wrap.
+    text = re.sub(r'\s*[^.]*\b(critique|output)\b[^.]*?[A-Za-z]:\\\S*', '', text, flags=re.I)
+    text = re.sub(r'\s*[^.]*\b(critique|output)\b[^.]*?untracked/\S*', '', text, flags=re.I)
     return text if len(text) <= n else text[:n].rsplit(' ', 1)[0]+'…'
 
 
@@ -210,7 +213,7 @@ def fmt(score):
     return '·' if score is None else f'{score:g}'
 
 
-def page(loop, batch_label):
+def page(loop, batch_label, report=''):
     S = loop.S
     rounds = [h for h in loop.history if h['kind'] == 'round']
     reference = uri(Image.open(EV/'identity-run-0001.png').convert('RGB'), 1800)
@@ -311,7 +314,8 @@ def page(loop, batch_label):
   --viable: #86ffb5; --viable-tint: rgba(134, 255, 181, 0.10); --warn: #f0b45a; --warn-tint: rgba(240, 180, 90, 0.12); --down: #ff7a9c;
   color-scheme: dark;
 }}
-body {{ background: var(--ground); color: var(--ink); font: 16px/1.55 var(--body); margin: 0; }}
+body {{ background: var(--ground); color: var(--ink); font: 16px/1.55 var(--body); margin: 0; overflow-wrap: anywhere; }}
+.wrap > * {{ min-width: 0; }}
 .wrap {{ max-width: 1180px; margin: 0 auto; padding: 28px 16px 64px; display: grid; gap: 36px; }}
 header {{ display: grid; gap: 10px; }}
 .eyebrow {{ font: 600 12px/1 var(--legend); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }}
@@ -324,6 +328,7 @@ p {{ margin: 0; max-width: 72ch; }}
 .chip.not {{ border-color: var(--warn); color: var(--warn); background: var(--warn-tint); }}
 .chip.ok {{ border-color: var(--viable); color: var(--viable); background: var(--viable-tint); }}
 section {{ display: grid; gap: 14px; }}
+section.report {{ border: 1px solid var(--warn); background: var(--panel); padding: 18px 20px; }}
 .latest {{ border-left: 3px solid var(--viable); background: var(--panel); padding: 16px 18px; display: grid; gap: 10px; }}
 .mat {{ background: var(--mat); border: 1px solid var(--rule); }}
 .mat img {{ display: block; width: 100%; height: auto; }}
@@ -350,6 +355,7 @@ ul {{ margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 76ch; }
     <p class="muted">An Opus 5.5 critic scores twelve regions against your references; a Sonnet 5.5 builder works the region that looks most wrong; a candidate is kept only if its region rises and nothing else drops. Follow-along only: this is not an approval request.</p>
     <div class="status">{''.join(chips)}</div>
   </header>
+  {report}
   <section class="latest"><h2>Latest</h2>{latest}</section>
   <section><h2>Model against your sheet</h2><div class="stack">{''.join(figures)}</div>
     <p class="muted">The arms-down stance is a neutral construction pose. Fur strands and texture are a later stage.</p></section>
@@ -366,10 +372,11 @@ def main():
     parser.add_argument('--out', required=True)
     parser.add_argument('--state')
     parser.add_argument('--batch', default='batch 1')
+    parser.add_argument('--report', help='HTML fragment shown above the latest round, for a milestone report')
     args = parser.parse_args()
     loop = replay(args.journals, json.loads(STATUS.read_text(encoding='utf-8')))
     out = Path(args.out)
-    out.write_text(page(loop, args.batch), encoding='utf-8')
+    out.write_text(page(loop, args.batch, Path(args.report).read_text(encoding='utf-8') if args.report else ''), encoding='utf-8')
     if args.state:
         Path(args.state).write_text(json.dumps({'status': loop.S, 'history': loop.history, 'running': loop.running,
                                                 'weightedMean': loop.mean()}, indent=2), encoding='utf-8')
