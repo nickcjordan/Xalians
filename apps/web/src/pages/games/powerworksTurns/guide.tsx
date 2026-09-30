@@ -98,7 +98,11 @@ export function GuidePanel({
       <div className="pwt-panel pwt-guide" role="dialog" aria-label="Guide" onClick={(e) => e.stopPropagation()}>
         <p className="eyebrow">Guide</p>
         <h2>What the marks mean</h2>
-        <ul className="pwt-legend">
+        <div className="pwt-guide-cols">
+          <div className="pwt-guide-col">
+          <section className="pwt-legend-section">
+            <h3>Reading keys</h3>
+            <ul className="pwt-legend">
           <Row
             sample={
               <Cells>
@@ -169,6 +173,38 @@ export function GuidePanel({
           </Row>
           <Row
             sample={
+              <div className="pwt-cells-wrap area">
+                <div className="pwt-area-band">
+                  <span>ALL</span>
+                </div>
+                <Cells>
+                  <CellButton {...cellProps} cell={cell({})} />
+                  <CellButton {...cellProps} cell={cell({ letter: "B", n: 9 })} />
+                </Cells>
+              </div>
+            }
+          >
+            The ALL band: an area move, it hits every enemy at once and each cell shows that enemy&apos;s number.
+          </Row>
+          <Row
+            sample={
+              <div className="pwt-key-foot">
+                <SupportRiders supports={[{ kind: "hinder", n: 14, aim: "enemy", all: false }]} area={false} />
+                <span className="pwt-key-foot-words">rests 1 turn</span>
+              </div>
+            }
+          >
+            A rider chip: the move also does this to the enemy it hits. Rests: turns a move waits after use. A star: the signature, once per fight.
+          </Row>
+            </ul>
+          </section>
+          </div>
+          <div className="pwt-guide-col">
+          <section className="pwt-legend-section">
+            <h3>Reading plates</h3>
+            <ul className="pwt-legend">
+          <Row
+            sample={
               <span className="pwt-legend-chips">
                 <MarkChips marks={{ shield: 10, boost: 12, hinder: 14 }} />
               </span>
@@ -204,31 +240,6 @@ export function GuidePanel({
           </Row>
           <Row
             sample={
-              <div className="pwt-cells-wrap area">
-                <div className="pwt-area-band">
-                  <span>ALL</span>
-                </div>
-                <Cells>
-                  <CellButton {...cellProps} cell={cell({})} />
-                  <CellButton {...cellProps} cell={cell({ letter: "B", n: 9 })} />
-                </Cells>
-              </div>
-            }
-          >
-            The ALL band: an area move, it hits every enemy at once and each cell shows that enemy&apos;s number.
-          </Row>
-          <Row
-            sample={
-              <div className="pwt-key-foot">
-                <SupportRiders supports={[{ kind: "hinder", n: 14, aim: "enemy", all: false }]} area={false} />
-                <span className="pwt-key-foot-words">rests 1 turn</span>
-              </div>
-            }
-          >
-            A rider chip: the move also does this to the enemy it hits. Rests: turns a move waits after use. A star: the signature, once per fight.
-          </Row>
-          <Row
-            sample={
               <span className="pwt-legend-chips">
                 <ElementBadge element={foe.element} className="pwt-el-static" />
                 <span className="pwt-float-tag good">Strong</span>
@@ -239,6 +250,25 @@ export function GuidePanel({
           >
             The element tag names a unit&apos;s element. STRONG or WEAK beside a landing number is the matchup; KO replaces it on a knockout; BLOCKED means a hinder cut the hit to 0.
           </Row>
+          <Row
+            sample={
+              <span className="pwt-legend-delta">
+                <span className="pwt-legend-delta-anchor">
+                  <DeltaChip n={-7} />
+                </span>
+                <span className="pwt-legend-delta-anchor">
+                  <DeltaChip n={20} />
+                </span>
+              </span>
+            }
+          >
+            Health numbers: raspberry is health lost, green is health gained, on either side. A chip on a plate is the change since your last turn.
+          </Row>
+            </ul>
+          </section>
+          <section className="pwt-legend-section">
+            <h3>Turn and tools</h3>
+            <ul className="pwt-legend">
           <Row
             wide
             sample={
@@ -271,30 +301,21 @@ export function GuidePanel({
           >
             Pass ends a turn without acting. Down: out of the fight. The Record (top right) lists every beat, newest first.
           </Row>
-          <Row
-            sample={
-              <span className="pwt-legend-delta">
-                <span className="pwt-legend-delta-anchor">
-                  <DeltaChip n={-7} />
-                </span>
-                <span className="pwt-legend-delta-anchor">
-                  <DeltaChip n={20} />
-                </span>
-              </span>
-            }
-          >
-            Health numbers: raspberry is health lost, green is health gained, on either side. A chip on a plate is the change since your last turn.
-          </Row>
-        </ul>
+            </ul>
+          </section>
+          </div>
+        </div>
+        <div className="pwt-guide-foot">
         <p className="pwt-panel-note">
-          {touch
-            ? "Touch: tap a cell once to see who it lands on, tap it again to use it. Tap Pass to end a turn without acting."
-            : "Keyboard: 1 to 4 picks a key, A to F an enemy cell, 1 to 4 a squadmate cell, Escape backs out, P passes."}
-        </p>
-        <div className="pwt-panel-actions">
-          <button type="button" className="pwt-secondary" onClick={onClose} autoFocus>
-            Close
-          </button>
+            {touch
+              ? "Touch: tap a cell once to see who it lands on, tap it again to use it. Tap Pass to end a turn without acting."
+              : "Keyboard: 1 to 4 picks a key, A to F an enemy cell, 1 to 4 a squadmate cell, Escape backs out, P passes."}
+          </p>
+          <div className="pwt-panel-actions">
+            <button type="button" className="pwt-secondary" onClick={onClose} autoFocus>
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

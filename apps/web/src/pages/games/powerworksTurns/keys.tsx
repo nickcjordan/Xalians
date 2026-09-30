@@ -132,6 +132,7 @@ export function CellButton({
       className={`pwt-cell ${cell.finishes ? "finish" : ""} ${hinderOnly ? "hinder" : ""} ${columnLit ? "col-lit" : ""} ${hot ? "hot" : ""} ${previewed ? "previewed" : ""} ${cell.rider ? "has-rider" : ""}`}
       onClick={onPick}
       onMouseEnter={onHover ? () => onHover(cell.target) : undefined}
+      onMouseMove={onHover ? () => onHover(cell.target) : undefined}
       onMouseLeave={onHover ? () => onHover(null) : undefined}
       onFocus={onHover ? () => onHover(cell.target) : undefined}
       onBlur={onHover ? () => onHover(null) : undefined}
@@ -226,6 +227,7 @@ export function KeyCard({
   twoTap = false,
   previewed = null,
   onPreview,
+  pointerLive = true,
 }: {
   keyView: KeyView;
   /** The active companion's standing squadmates, for ally cells' portraits. */
@@ -252,6 +254,8 @@ export function KeyCard({
   /** The previewed cell's id across every key, or null. */
   previewed?: string | null;
   onPreview?: (id: string | null) => void;
+  /** The pointer has moved since the active companion changed; an area hover before that is ignored. */
+  pointerLive?: boolean;
 }) {
   const armed = keyView.state === "ready" && !disabled;
   // The pointer is on some cell of this area key: all of its cells light, and only this key's.
@@ -291,6 +295,14 @@ export function KeyCard({
       <div className="pwt-key-head">
         <span className="pwt-key-index">{keyView.index + 1}</span>
         <span className="pwt-key-name">{keyView.name}</span>
+        {noted && (
+          <span className="pwt-key-note-tag" title="The note above the keys is about this key">
+            <span className="pwt-note-full">Note</span>
+            <span className="pwt-note-short" aria-hidden="true">
+              i
+            </span>
+          </span>
+        )}
         {hinderHead && (
           <span className="pwt-key-hinder" title={`Hinder ${hinderHead.n}: that enemy's next hit falls by ${hinderHead.n}`} data-hinder={hinderHead.n}>
             -{hinderHead.n}
@@ -363,7 +375,7 @@ export function KeyCard({
                   onHover={
                     areaIds && onHoverUnits
                       ? (id) => {
-                          setAreaHot(!!id);
+                          if (!id || pointerLive) setAreaHot(!!id);
                           onHoverUnits(id ? areaIds : null);
                         }
                       : keyView.aim === "enemy"
@@ -381,7 +393,16 @@ export function KeyCard({
         </div>
       )}
       <div className="pwt-key-foot">
-        <span className="pwt-key-foot-words">{foot}</span>
+        <span className="pwt-key-foot-words">
+          {foot === "once per fight" ? (
+            <>
+              <span className="pwt-foot-full">once per fight</span>
+              <span className="pwt-foot-short">once</span>
+            </>
+          ) : (
+            foot
+          )}
+        </span>
         {keyView.aim === "enemy" && keyView.kind === "attack" && (
           <SupportRiders supports={keyView.supports} area={keyView.area} kept={keyView.riderKept} />
         )}

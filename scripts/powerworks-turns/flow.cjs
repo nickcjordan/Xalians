@@ -115,7 +115,13 @@ async function act(page, keyIndex, target) {
       await b.tap(); // first tap previews
       await page.waitForTimeout(120);
       await b.tap(); // second tap uses it
-    } else await b.click();
+    } else {
+      await b.click();
+      // The pointer does not rest on the cell that was used (round 7): the frame after a click must not
+      // owe its look to the harness's own mouse. PWT_KEEP_POINTER=1 leaves it there on purpose, to prove
+      // the page clears state under a resting pointer.
+      if (!process.env.PWT_KEEP_POINTER) await page.mouse.move(3, 3);
+    }
   };
   if (target === "now" || buttons.length === 1) {
     await commit(buttons[0]);

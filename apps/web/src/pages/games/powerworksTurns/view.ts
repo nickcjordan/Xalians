@@ -339,6 +339,16 @@ function turnsToReady(e: Fighter, i: number): number | null {
   `withHinder` lets a hinder-only cell ask "what would this be with the hinder applied", since
   the engine's hinder is max(current, n), not additive (support() in engine.ts).
 */
+/**
+  What an attack would deal to a target before its health caps it: the attack less the shields, never
+  below 0. The engine's `landedOn` stops at the target's health; a forecast of an enemy's hit shows this
+  number instead, so a hinder of 10 visibly removes 10 (48 on a companion at 46 reads 48, and 38 after the hinder).
+*/
+export function hitUncapped(u: Fighter, m: PMove, t: Fighter): number {
+  const shield = t.shields.reduce((a, b) => a + b.n, 0);
+  return Math.max(0, attackOn(u, m, t) - shield);
+}
+
 function threatOn(
   s: TRun,
   e: Fighter,
@@ -352,7 +362,7 @@ function threatOn(
   e.moves.forEach((m, i) => {
     const wait = turnsToReady(e, i);
     if (m.power <= 0 || wait === null) return;
-    const n = landedOn(wait === 0 ? attacker : { ...e, boost: 0, hinder: 0 }, m, target);
+    const n = hitUncapped(wait === 0 ? attacker : { ...e, boost: 0, hinder: 0 }, m, target);
     const st = step(m.element, target.element);
     if (wait === 0) {
       if (!ready || n > ready.n) ready = { n, step: st, raw: st === 0 ? 0 : stepDamage(m.power, st) - shieldSum(target) };
@@ -385,8 +395,8 @@ function withBefore(s: TRun, u: Fighter): EnemyView["hitOnActive"] {
 */
 export function hitDuring(hit: NonNullable<EnemyView["hitOnActive"]>, now: { boost: number; hinder: number; hp: number }): NonNullable<EnemyView["hitOnActive"]> {
   if (hit.raw === undefined || hit.step === 0) return hit;
-  const plain = Math.min(now.hp, Math.max(0, hit.raw + now.boost));
-  const n = Math.min(now.hp, Math.max(0, hit.raw + now.boost - now.hinder));
+  const plain = Math.max(0, hit.raw + now.boost);
+  const n = Math.max(0, hit.raw + now.boost - now.hinder);
   const { lethal: _lethal, before: _before, ...rest } = hit;
   const out: NonNullable<EnemyView["hitOnActive"]> = { ...rest, n, cap: now.hp, ...(n > 0 && n >= now.hp ? { lethal: true as const } : {}) };
   // The struck number is a live hinder's and nothing else: a boost the enemy has just spent lowers
@@ -662,6 +672,8 @@ export function eventWords(s: TRun, e: PEvent): string {
   if (e.kind === "redirect") return `${actor} turned from ${nameOf(s, e.from)} to ${nameOf(s, e.to)}.`;
   const target = nameOf(s, e.target);
   if (e.kind === "hit") {
+    // A hit a hinder cut to nothing says "blocked", matching the number that rises over the target (round 7, item 6).
+    if (e.amount === 0 && e.absorbed === 0) return e.step === 0 ? `${actor}'s hit on ${target} had no effect.` : `${actor}'s hit on ${target} was blocked.`;
     const tag = e.step > 1 ? " (strong matchup)" : e.step < 1 && e.step > 0 ? " (weak matchup)" : "";
     let words = `${actor} hit ${target} for ${e.amount}${tag}.`;
     if (e.absorbed > 0) words += ` ${target}'s shield took ${e.absorbed}.`;
@@ -849,6 +861,15 @@ export function hinderOnAttack(start: Record<string, number>, priorBeats: Beat[]
 }
 
 /** "Central guardian A's hit was weakened by 10." Names the unit whose hit it was. */
+/**
+  The banner's own short form: "Crawler A hit Hippochamp for 8 (weak matchup), weakened by 6." One sentence, so the
+  number is never the part a second sentence pushes off the line (round 7, item 6). A hit that was cut to nothing
+  already says "blocked", so it needs no clause.
+*/
+export function withWeakened(words: string, n: number | undefined): string {
+  if (!n) return words;
+  return words.replace(/\./, `, weakened by ${n}.`);
+}
 export const weakenedWords = (name: string, n: number): string => `${name}'s hit was weakened by ${n}.`;
 
 /** One line of the Record: a beat's sentence, filed under its sector and round. */
@@ -900,6 +921,12 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
     if (e.actor === v.active!.id) last = i;
   });
   const window = inRoom.slice(last + 1);
+  // The blow the active companion itself struck in its last act sits just before the window: a unit that
+  // was healed since then would read as an over-heal ("+14" on a full plate) without it, so that damage is
+  // counted for such a unit, ahead of the heal (round 7, item 12).
+  let ownStart = last;
+  while (ownStart > 0 && inRoom[ownStart - 1].actor === v.active.id) ownStart--;
+  const ownAct = last >= 0 ? inRoom.slice(ownStart, last + 1) : [];
   type Seen = { lost: number; healed: number; fell: boolean; shieldUp: number; shieldDown: number; boosted: boolean; hindered: boolean; blocked: boolean; weakenedBy: number };
   const seen: Record<string, Seen> = {};
   const of = (id: string): Seen => (seen[id] ??= { lost: 0, healed: 0, fell: false, shieldUp: 0, shieldDown: 0, boosted: false, hindered: false, blocked: false, weakenedBy: 0 });
@@ -921,6 +948,10 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
     else if (e.kind === "shield") of(e.target).shieldUp += e.amount;
     else if (e.kind === "boost") of(e.target).boosted = true;
     else if (e.kind === "hinder") of(e.target).hindered = true;
+  }
+  for (const [id, c] of Object.entries(seen)) {
+    if (!c.healed) continue;
+    for (const { event: e } of ownAct) if (e.kind === "hit" && e.target === id) c.lost += e.amount;
   }
   const active = v.active;
   const order = [
@@ -985,7 +1016,7 @@ export function briefingView(s: TRun): BriefingView {
     sectors: names.map((name, i) => ({ n: i + 1, name, guardian: i === count - 1 })),
     squad: s.team.map((u) => ({ id: u.id, name: u.name, art: u.species, element: u.element, hp: u.hp, max: u.max })),
     rules: [
-      "Health carries into the next sector.",
+      "Health carries into the next sector. The run is lost when every companion is down.",
       `You have ${s.revival} ${plural(s.revival, "revive", "revives")} for the run: at camp, a fallen companion returns at half health.`,
       `The last sector has a recovery station: it restores ${RECOVERY_STATION_HP} health to each standing companion when you arrive.`,
       `Each sector cleared adds practice XP (${ENCOUNTER_XP}, and ${FINAL_ENCOUNTER_XP} for the Guardian). It is a running tally; nothing spends it yet.`,
@@ -1192,18 +1223,18 @@ export function keyNote(v: TurnView, seen: readonly string[]): KeyNote | null {
   if (!seen.includes("hinder")) {
     for (const k of ready) {
       const cell = k.kind === "support" && k.aim === "enemy" ? k.cells.find((c) => c.before !== undefined) : undefined;
-      if (cell) return { id: "hinder", keyIndex: k.index, keyName: k.name, text: `Hinder: ${hinderWords(cell.hinder ?? cell.before! - cell.n, name, cell.before!, cell.n)}.`, short: `Hinder: that enemy's next hit, on whoever it strikes, falls by ${cell.hinder ?? cell.before! - cell.n}.` };
+      if (cell) return { id: "hinder", keyIndex: k.index, keyName: k.name, text: `Hinder: ${hinderWords(cell.hinder ?? cell.before! - cell.n, name, cell.before!, cell.n)}.`, short: `Hinder: that enemy's next hit falls by ${cell.hinder ?? cell.before! - cell.n}.` };
     }
   }
   if (!seen.includes("shield")) {
     for (const k of ready) {
       const cell = k.aim === "enemy" && k.kind === "attack" ? k.cells.find((c) => c.absorbed > 0) : undefined;
-      if (cell) return { id: "shield", keyIndex: k.index, keyName: k.name, text: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The number is what is left.`, short: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The number is what is left.` };
+      if (cell) return { id: "shield", keyIndex: k.index, keyName: k.name, text: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The number is what is left.`, short: `Shield: absorbs ${cell.absorbed} first. Cell shows the rest.` };
     }
   }
   if (!seen.includes("all")) {
     for (const k of ready) {
-      if (k.area && k.aim === "enemy" && k.cells.length > 1) return { id: "all", keyIndex: k.index, keyName: k.name, text: "ALL: this move hits every enemy at once. Each cell is that enemy's number.", short: "ALL: hits every enemy at once. Each cell is that enemy's number." };
+      if (k.area && k.aim === "enemy" && k.cells.length > 1) return { id: "all", keyIndex: k.index, keyName: k.name, text: "ALL: this move hits every enemy at once. Each cell is that enemy's number.", short: "ALL: hits every enemy. Each cell is that enemy's number." };
     }
   }
   return null;
