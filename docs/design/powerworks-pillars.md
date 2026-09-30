@@ -197,3 +197,22 @@ Reading:
 
 Recommendation: rounds as the base (one strip is one round, easiest to read), the speed timeline and the turn-order layer held as the first mastery layers, and the screen pass next so depth can be judged in play.
 
+
+## Numbers pass, 2026-09-29
+
+Context: the turn screen shows every attack's result on every enemy, and some of those numbers contradict their own marks. Avilily's pecks read "1 (strong matchup)", and on a weak matchup a peck reads 0, which looks like immunity. The cause is the scale, not the chart: attack power is `floor(intensity / 10)`, so across the 4,614 attacks of the roughly 1,200 creatures a player can field (census over draft seeds 1 to 200), 12% have power 1. On those, a strong step (x1.5) changes nothing and a weak step (x0.5) floors to 0. Supports share the scale (Hinder 7, Shield 5, Heal 6 at the median), so they move with it.
+
+Goal: every element step is visible on every attack (immune 0 < weak < neutral < strong), with the balance between the sides unchanged, so difficulty stays a separate lever for play.
+
+### Assumptions & Decisions
+
+| # | Assumption / Decision | Confidence | Supporting Evidence |
+|---|---|---|---|
+| 1 | Double the scale: attack and support divisors 10 to 5, and every unit's health times 2 (`HEALTH_SCALE`, applied to both sides in `fighter`), so time to knock out is unchanged and the smallest attack is power 2 or more. | 80%, the smallest change that makes every step visible; the cost is three-digit health on the largest units (companion p95 76 becomes 152) | census above; `pillars/levers.ts` `POWER_DIVISOR`, `SUPPORT_DIVISOR` |
+| 2 | Round half up instead of flooring, at the read (power) and at the matchup (power x step); a non-immune attack deals at least 1 before boost and hinder. Flooring made weak steps harsher than the chart (3 x 0.5 dealt 1, a third). | 85% | `engine.ts` `attackOn`, `read.ts` `readMove` |
+| 3 | The chart's steps are unchanged; only how they round. | 90%, Nick's ruling (PR #724: shared chart unchanged) | "Rules pass" above |
+| 4 | Difficulty stays where it is: after the rescale, enemy health factor is retuned so the hardest-hit rule and the random player on the preset squad land within 3 points of today's turn-by-turn rounds figures; the target itself comes from Nick's play. | 75% | "Turn by turn" table above |
+| 5 | Fixed health amounts scale too: the recovery station 10 to 20. | 90% | `RECOVERY_STATION_HP` |
+| 6 | Saves move to version 2; a version 1 run is dropped and a new run starts (the page already does this on a version mismatch). | 90% | `PILLAR_SAVE_VERSION`, `powerworksTurnsPage.tsx` load |
+| 7 | The very weakest area attacks (power x 0.6 below 1.5) may still read weak equal to neutral at 1; accepted and counted rather than special-cased. | 70% | census after the change |
+| 8 | The v5 engine and `/powerworks/classic` keep their own levers; this pass touches only `pillars/`. | 95% | `dungeon/levers.ts` `HP_SCALE` is shared with the classic page |
