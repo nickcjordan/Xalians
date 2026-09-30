@@ -27,6 +27,7 @@
     { "op": "click", "text": "Guide" }                   // clicks the first button whose text or aria-label contains it
     { "op": "framesUntilIdle", "every": 100, "max": 20000 }  // frames until data-busy is false, then one idle frame
     { "op": "wait", "ms": 500 }                          // pause without capturing
+  --only-size=844x390 limits a --plan run to entries that include that size.
   A plan entry may set "sizes": ["844x390"] to override --sizes for that entry, and "fresh": true to
   clear localStorage instead of loading a scenario (a first visit).
 
@@ -48,7 +49,15 @@ const BASE = arg("base", "http://localhost:3108");
 const SIZES = arg("sizes", "1920x1080,1366x768")
   .split(",")
   .map((s) => s.split("x").map(Number));
+const SIZE_LIST = arg("sizes", "1920x1080,1366x768").split(",");
 const SAVE_KEY = "xalians.powerworks.turns.v1";
+
+/** A phone-sized landscape screen (height 500 or less) is driven as a touch device: taps, not
+    clicks. Round 4 of UX pass 2: a key cell answers the first tap with a preview and the second
+    with the move, so act() taps twice and hover() taps once. */
+let TOUCH = false;
+const isPhoneSize = (w, h) => w > h && h <= 500;
+const press = async (loc) => (TOUCH ? loc.tap() : loc.click());
 
 function readJson(p) {
   return JSON.parse(fs.readFileSync(p, "utf8"));
@@ -101,15 +110,22 @@ async function act(page, keyIndex, target) {
   if (!group) throw new Error(`act: no key at index ${keyIndex} (found ${groups.length} key groups)`);
   const buttons = await group.locator("button").all();
   if (!buttons.length) throw new Error(`act: key ${keyIndex} has no buttons`);
+  const commit = async (b) => {
+    if (TOUCH) {
+      await b.tap(); // first tap previews
+      await page.waitForTimeout(120);
+      await b.tap(); // second tap uses it
+    } else await b.click();
+  };
   if (target === "now" || buttons.length === 1) {
-    await buttons[0].click();
+    await commit(buttons[0]);
     return;
   }
   // Prefer a button whose aria-label contains " on <target>," (letter or ally name).
   for (const b of buttons) {
     const label = (await b.getAttribute("aria-label")) || "";
     if (label.includes(`on ${target},`) || label.includes(`on ${target}:`) || label.toLowerCase().includes(`on ${target.toLowerCase()}`)) {
-      await b.click();
+      await commit(b);
       return;
     }
   }
@@ -117,7 +133,7 @@ async function act(page, keyIndex, target) {
   for (const b of buttons) {
     const text = (await b.textContent()) || "";
     if (text.trim() === target) {
-      await b.click();
+      await commit(b);
       return;
     }
   }
@@ -134,11 +150,11 @@ async function hover(page, target, keyIndex) {
       const plate = await f.locator("xpath=ancestor::*[@data-unit][1]").first();
       const unitId = await plate.getAttribute("data-unit");
       if (unitId && unitId.toUpperCase().startsWith(who.toUpperCase())) {
-        await f.hover();
+        await (TOUCH ? f.tap() : f.hover());
         return;
       }
     }
-    if (el[0]) await el[0].hover();
+    if (el[0]) await (TOUCH ? el[0].tap() : el[0].hover());
     return;
   }
   // kind === "cell": hover a key's cell button the same way act() finds it.
@@ -147,13 +163,13 @@ async function hover(page, target, keyIndex) {
   for (const g of groups) {
     const buttons = await g.locator("button").all();
     if (who === "*" && buttons[0]) {
-      await buttons[0].hover();
+      await (TOUCH ? buttons[0].tap() : buttons[0].hover());
       return;
     }
     for (const b of buttons) {
       const label = (await b.getAttribute("aria-label")) || "";
       if (label.toLowerCase().includes(`on ${who.toLowerCase()}`)) {
-        await b.hover();
+        await (TOUCH ? b.tap() : b.hover());
         return;
       }
     }
@@ -240,11 +256,18 @@ async function runSteps(page, steps, outDir) {
       await hover(page, step.target, step.key);
       await page.waitForTimeout(80);
       await capture("hover");
+    } else if (step.op === "click" && TOUCH && ["Guide", "Record", "Restart"].includes(step.text)) {
+      // Phone: the three tools live in one Menu button.
+      await press(page.locator("button.pwt-menu-btn"));
+      await page.waitForTimeout(150);
+      await press(page.locator('[role="menuitem"]', { hasText: step.text }));
+      await page.waitForTimeout(step.settle ?? 300);
+      await capture("click:" + step.text);
     } else if (step.op === "click") {
       const loc = page.locator("button", { hasText: step.text }).first();
       const byLabel = page.locator(`button[aria-label*="${step.text}"]`).first();
-      if (await loc.count()) await loc.click();
-      else await byLabel.click();
+      if (await loc.count()) await press(loc);
+      else await press(byLabel);
       await page.waitForTimeout(step.settle ?? 300);
       await capture("click:" + step.text);
     } else if (step.op === "framesUntilIdle") {
@@ -331,7 +354,12 @@ sheet.save(f"{out_dir}/sheet.png")
 
 async function runOne(browser, { scenario, scenarioFile, steps, outRoot, sizes }) {
   for (const [w, h] of sizes || SIZES) {
-    const page = await browser.newPage({ viewport: { width: w, height: h } });
+    TOUCH = isPhoneSize(w, h);
+    const context = await browser.newContext({
+      viewport: { width: w, height: h },
+      ...(TOUCH ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}),
+    });
+    const page = await context.newPage();
     const outDir = path.join(outRoot, `${scenario}-${w}x${h}`);
     try {
       await loadScenario(page, `${BASE}/powerworks`, scenarioFile);
@@ -342,6 +370,7 @@ async function runOne(browser, { scenario, scenarioFile, steps, outRoot, sizes }
       console.error(`${scenario} @ ${w}x${h}: FAILED: ${err.message}`);
     } finally {
       await page.close();
+      await context.close();
     }
   }
 }
@@ -360,6 +389,7 @@ async function main() {
       if (!scenarioDir) throw new Error("--plan requires --scenario-dir");
       const plan = readJson(planPath);
       const only = arg("only", "").split(",").filter(Boolean);
+      const onlySize = arg("only-size", "").split(",").filter(Boolean);
       for (const entry of plan) {
         if (only.length && !only.some((o) => (entry.name ?? entry.scenario).startsWith(o))) continue;
         const scenarioFile = entry.fresh ? null : path.join(scenarioDir, `${entry.scenario}.json`);
@@ -372,7 +402,9 @@ async function main() {
           scenarioFile,
           steps: entry.steps,
           outRoot,
-          sizes: entry.sizes ? entry.sizes.map((z) => z.split("x").map(Number)) : undefined,
+          sizes: (entry.sizes ? entry.sizes : SIZE_LIST)
+            .filter((z) => !onlySize.length || onlySize.includes(z))
+            .map((z) => z.split("x").map(Number)),
         });
       }
     } else {

@@ -8,7 +8,12 @@
 
   Usage:
     node scripts/powerworks-turns/geometry.cjs --scenario-dir=<dir with *.json scenarios> \
-      [--base=http://localhost:3108] [--sizes=1920x1080,1366x768,844x390] [--out=<dir for screenshots>]
+      [--base=http://localhost:3108] [--sizes=1920x1080,1366x768,844x390,932x430,667x375] [--out=<dir for screenshots>]
+
+  Round 4 (phone): a landscape screen 500 px tall or less is opened as a touch phone (isMobile,
+  hasTouch) and gets the phone checks on top of the rest: no visible text under 12 CSS px, no
+  button or link under 40 px in its short side, nothing clipped or outside the screen, no page
+  scroll, and the tap flow (first tap on a key cell previews, the second uses it).
 
   Exits non-zero on any failure, printing each one.
 */
@@ -23,9 +28,36 @@ const arg = (k, d) => {
 const SCEN_DIR = arg("scenario-dir", "");
 const BASE = arg("base", "http://localhost:3108");
 const OUT = arg("out", path.join(SCEN_DIR || ".", "geometry-shots"));
-const sizes = arg("sizes", "1920x1080,1366x768,844x390")
+const sizes = arg("sizes", "1920x1080,1366x768,844x390,932x430,667x375")
   .split(",")
   .map((s) => s.split("x").map(Number));
+
+const isPhone = (w, h) => w > h && h <= 500;
+
+/** Opens a page at a size; a phone size is a touch device with a 2x screen. */
+async function openPage(browser, w, h) {
+  const phone = isPhone(w, h);
+  const context = await browser.newContext({
+    viewport: { width: w, height: h },
+    ...(phone ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}),
+  });
+  const page = await context.newPage();
+  const close = async () => {
+    await page.close();
+    await context.close();
+  };
+  return { page, close, phone };
+}
+const press = (page, phone, loc) => (phone ? loc.tap() : loc.click());
+
+/** Opens a tool (Guide, Record, Restart): a button on a desktop, an item in the Menu on a phone. */
+async function openTool(page, phone, name) {
+  if (phone) {
+    await page.locator("button.pwt-menu-btn").tap();
+    await page.waitForTimeout(150);
+    await page.locator('[role="menuitem"]', { hasText: name }).tap();
+  } else await page.click(`button:has-text('${name}')`);
+}
 
 function within(inner, outer, slack = 0.5) {
   return (
@@ -42,8 +74,8 @@ function within(inner, outer, slack = 0.5) {
   not scroll inside itself, and every element inside it must sit inside its box (text that could
   overflow shows up as a child poking out, or a single-line text clipped by its own box).
 */
-async function panelProblems(page, selector) {
-  return page.evaluate((sel) => {
+async function panelProblems(page, selector, allowScroll = false) {
+  return page.evaluate(([sel, scrolls]) => {
     const panel = document.querySelector(sel);
     if (!panel) return null;
     const pr = panel.getBoundingClientRect();
@@ -52,18 +84,70 @@ async function panelProblems(page, selector) {
     const out = [];
     if (pr.left < -0.5 || pr.top < -0.5 || pr.right > vw + 0.5 || pr.bottom > vh + 0.5)
       out.push(`panel outside the viewport: ${JSON.stringify({ l: pr.left, t: pr.top, r: pr.right, b: pr.bottom, vw, vh })}`);
-    if (panel.scrollHeight > panel.clientHeight + 1) out.push(`panel scrolls inside (scrollHeight ${panel.scrollHeight} > ${panel.clientHeight})`);
+    if (!scrolls && panel.scrollHeight > panel.clientHeight + 1) out.push(`panel scrolls inside (scrollHeight ${panel.scrollHeight} > ${panel.clientHeight})`);
     panel.querySelectorAll("*").forEach((el) => {
       if (el.closest("[aria-hidden='true']") && el.closest(".pwt-legend-sample") === null) return;
       const r = el.getBoundingClientRect();
       if (!r.width || !r.height) return;
-      if (r.left < pr.left - 1 || r.right > pr.right + 1 || r.top < pr.top - 1 || r.bottom > pr.bottom + 1)
+      // A reference panel that scrolls (the phone Guide) only has to hold its width.
+      if (r.left < pr.left - 1 || r.right > pr.right + 1 || (!scrolls && (r.top < pr.top - 1 || r.bottom > pr.bottom + 1)))
         out.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]} pokes out of the panel`);
       if (el.children.length === 0 && el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== "visible")
         out.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]} text clipped`);
     });
     return out;
-  }, selector);
+  }, [selector, allowScroll]);
+}
+
+/**
+  Round 4, the phone checks (run on every phone-size page): every piece of visible text at 12 CSS
+  px or more, every button and link at 40 px or more in its short side, nothing outside the
+  screen and no text clipped by its own box. Things that truncate or cut off on purpose are named
+  here: the banner's one-line sentence (the Record holds the rest), the turn rail's far end and a
+  panel that scrolls (the Guide, the Record).
+*/
+async function phoneProblems(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const name = (el) => `${el.tagName.toLowerCase()}.${String(typeof el.className === "string" ? el.className : "").split(" ")[0]}`;
+    const visible = (el) => {
+      const cs = getComputedStyle(el);
+      if (cs.display === "none" || cs.visibility === "hidden") return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    };
+    const inScroller = (el) => !!el.closest(".pwt-guide, .pwt-record-list");
+    const inRail = (el) => !!el.closest(".pwt-rail");
+    const all = [...document.querySelectorAll("body *")].filter((el) => !el.closest("svg") && !["SCRIPT", "STYLE"].includes(el.tagName));
+    for (const el of all) {
+      if (!visible(el)) continue;
+      const own = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+      const r = el.getBoundingClientRect();
+      if (own) {
+        const px = parseFloat(getComputedStyle(el).fontSize);
+        if (px < 12) out.push(`text under 12px (${px}px): ${name(el)} "${el.textContent.trim().slice(0, 30)}"`);
+        // Clipped by its own box (an ellipsis, or text cut off), other than the named exceptions.
+        if (el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== "visible" && !el.closest(".pwt-banner-line, .pwt-rail"))
+          out.push(`text clipped: ${name(el)} "${el.textContent.trim().slice(0, 30)}"`);
+      }
+      const isControl = el.matches("button, a[href], [role='button'], [role='menuitem'], input, select") && !el.closest("[inert]");
+      if (isControl) {
+        const short = Math.min(r.width, r.height);
+        if (short < 39.5) out.push(`control under 40px (${r.width.toFixed(0)}x${r.height.toFixed(0)}): ${name(el)} "${(el.getAttribute("aria-label") || el.textContent).trim().slice(0, 24)}"`);
+      }
+      if ((own || isControl) && !inRail(el) && !inScroller(el)) {
+        if (r.left < -0.5 || r.top < -0.5 || r.right > vw + 0.5 || r.bottom > vh + 0.5)
+          out.push(`outside the screen: ${name(el)} ${JSON.stringify({ l: r.left | 0, t: r.top | 0, r: r.right | 0, b: r.bottom | 0 })}`);
+      }
+    }
+    // A key's name is the one thing on a key that must never be cut short.
+    document.querySelectorAll(".pwt-key-name").forEach((el) => {
+      if (el.scrollWidth > el.clientWidth + 1) out.push(`key name cut short: "${el.textContent.trim()}"`);
+    });
+    return out;
+  });
 }
 
 (async () => {
@@ -88,7 +172,7 @@ async function panelProblems(page, selector) {
   for (const scen of files) {
     for (const [w, h] of sizes) {
       const tag = `${scen.name}-${w}x${h}`;
-      const page = await browser.newPage({ viewport: { width: w, height: h } });
+      const { page, close, phone } = await openPage(browser, w, h);
       const url = `${BASE}/powerworks`;
       await page.goto(url, { waitUntil: "networkidle" });
       await page.evaluate((s) => localStorage.setItem("xalians.powerworks.turns.v1", s), fs.readFileSync(scen.file, "utf8"));
@@ -138,7 +222,19 @@ async function panelProblems(page, selector) {
           console.log(`[${tag}] FAIL ${item.kind}[${item.index}] not inside stage: box=${JSON.stringify(item.box)} stage=${JSON.stringify(stageBox)}`);
         }
       }
-      if (keybarBox) {
+      // On a phone the key bar sits beside the stage, not under it: the squad plaques then have
+      // to stay clear of it sideways instead of above it.
+      const keysBeside = keybarBox && keybarBox.x >= stageBox.x + stageBox.width - 1;
+      if (keysBeside) {
+        for (let i = 0; i < result.squadPlaques.length; i++) {
+          checks++;
+          const p = result.squadPlaques[i];
+          if (p.x + p.width > keybarBox.x + 0.5) {
+            failures++;
+            console.log(`[${tag}] FAIL squad plaque[${i}] right edge (${(p.x + p.width).toFixed(1)}) runs into the key column (${keybarBox.x.toFixed(1)})`);
+          }
+        }
+      } else if (keybarBox) {
         for (let i = 0; i < result.squadPlaques.length; i++) {
           checks++;
           const p = result.squadPlaques[i];
@@ -179,6 +275,14 @@ async function panelProblems(page, selector) {
         console.log(`[${tag}] checked ${result.items.length} elements + ${result.squadPlaques.length} squad plaques, ok`);
       }
 
+      if (phone) {
+        const probs = await phoneProblems(page);
+        checks++;
+        if (probs.length) {
+          failures += probs.length;
+          probs.forEach((m) => console.log(`[${tag}] FAIL phone: ${m}`));
+        } else console.log(`[${tag}] phone checks ok (12px text, 40px controls, nothing clipped or outside)`);
+      }
       for (const sel of [".pwt-panel", ".pwt-titlecard", ".pwt-hold-card"]) {
         const probs = await panelProblems(page, sel);
         if (probs) {
@@ -190,7 +294,47 @@ async function panelProblems(page, selector) {
         }
       }
       await page.screenshot({ path: path.join(OUT, `${tag}.png`) });
-      await page.close();
+
+      // The tap flow, once per phone size on the first scenario with a turn on it: the first tap
+      // on a key cell previews it (the stage rings its target, the move is not used), the second
+      // tap on the same cell uses it.
+      if (phone && scen.name === "first") {
+        const cell = page.locator(".pwt-key .pwt-cell:not([disabled])").first();
+        const busy = () => page.evaluate(() => document.querySelector("[data-busy]").getAttribute("data-busy"));
+        checks++;
+        await cell.tap();
+        await page.waitForTimeout(200);
+        const previewed = await page.locator(".pwt-cell.previewed").count();
+        const ringed = await page.locator(".pwt-plate.targeted").count();
+        if (previewed !== 1 || (await busy()) !== "false") {
+          failures++;
+          console.log(`[${tag}] FAIL first tap should preview only (previewed cells ${previewed}, busy ${await busy()})`);
+        } else if (ringed < 1) {
+          failures++;
+          console.log(`[${tag}] FAIL first tap did not ring its target on the stage`);
+        } else console.log(`[${tag}] first tap previews and rings its target ok`);
+        checks++;
+        await page.locator(".pwt-cell.previewed").first().tap();
+        await page.waitForTimeout(300);
+        if ((await busy()) !== "true") {
+          failures++;
+          console.log(`[${tag}] FAIL second tap on the same cell did not use the move`);
+        } else console.log(`[${tag}] second tap uses the move ok`);
+        // The move and the enemy turns that follow play out: the same phone checks on those
+        // frames (the banner names an enemy and its letter, the key column is one card, speed and
+        // skip are 40 px or more).
+        checks++;
+        const seen = new Set();
+        for (let i = 0; i < 16 && (await busy()) === "true"; i++) {
+          (await phoneProblems(page)).forEach((m) => seen.add(m));
+          await page.waitForTimeout(400);
+        }
+        if (seen.size) {
+          failures += seen.size;
+          seen.forEach((m) => console.log(`[${tag}] FAIL phone (while playing out): ${m}`));
+        } else console.log(`[${tag}] phone checks ok while the move and the enemy turns play out`);
+      }
+      await close();
     }
   }
 
@@ -198,14 +342,22 @@ async function panelProblems(page, selector) {
   const first = files.find((f) => f.name === "first");
   for (const [w, h] of sizes) {
     const tag = `arrival-${w}x${h}`;
-    const page = await browser.newPage({ viewport: { width: w, height: h } });
+    const { page, close, phone } = await openPage(browser, w, h);
     await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
     await page.evaluate(() => localStorage.clear());
     await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
     await page.waitForTimeout(600);
     const steps = [];
     steps.push([".pwt-briefing", await panelProblems(page, ".pwt-briefing")]);
-    await page.click("button:has-text('Begin')");
+    if (phone) {
+      const probs = await phoneProblems(page);
+      checks++;
+      if (probs.length) {
+        failures += probs.length;
+        probs.forEach((m) => console.log(`[${tag}] FAIL phone briefing: ${m}`));
+      }
+    }
+    await press(page, phone, page.locator("button:has-text('Begin')"));
     await page.waitForTimeout(700);
     steps.push([".pwt-titlecard", await panelProblems(page, ".pwt-titlecard")]);
     if (first) {
@@ -213,12 +365,20 @@ async function panelProblems(page, selector) {
       await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
       await page.waitForTimeout(500);
     }
-    await page.click("button:has-text('Guide')");
+    await openTool(page, phone, "Guide");
     await page.waitForTimeout(300);
-    steps.push([".pwt-guide", await panelProblems(page, ".pwt-guide")]);
+    steps.push([".pwt-guide", await panelProblems(page, ".pwt-guide", phone)]);
+    if (phone) {
+      const probs = await phoneProblems(page);
+      checks++;
+      if (probs.length) {
+        failures += probs.length;
+        probs.forEach((m) => console.log(`[${tag}] FAIL phone guide: ${m}`));
+      }
+    }
     await page.screenshot({ path: path.join(OUT, `${tag}-guide.png`) });
-    await page.click("button:has-text('Close')");
-    await page.click("button:has-text('Restart')");
+    await press(page, phone, page.locator("button:has-text('Close')"));
+    await openTool(page, phone, "Restart");
     await page.waitForTimeout(200);
     steps.push([".pwt-panel restart", await panelProblems(page, ".pwt-panel")]);
     for (const [name, probs] of steps) {
@@ -231,7 +391,7 @@ async function panelProblems(page, selector) {
         probs.forEach((m) => console.log(`[${tag}] FAIL ${name}: ${m}`));
       } else console.log(`[${tag}] ${name} ok`);
     }
-    await page.close();
+    await close();
   }
   await browser.close();
   console.log(`\n${checks} checks, ${failures} failures`);

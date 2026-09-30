@@ -5,7 +5,7 @@
 // what just happened, what happens next" throughout.
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, BookOpen, ScrollText, RotateCcw, Smartphone } from "lucide-react";
+import { ArrowLeft, BookOpen, Menu, ScrollText, RotateCcw, Smartphone, X } from "lucide-react";
 
 import {
   createTurnRun,
@@ -48,8 +48,10 @@ import { TurnBanner, PlaybackTools } from "./banner";
 import { Playback, beatTiming, type BeatPhase } from "./playback";
 import { BriefingPanel, CampPanel, EndPanel, RecordPanel, RestartPanel, TitleCardView } from "./panels";
 import { GuidePanel } from "./guide";
+import { cellId, isPhoneLandscape, tapStep } from "./phone";
 import { PowerworksEnvironment } from "../powerworksEnvironment";
 import "./powerworksTurns.css";
+import "./powerworksPhone.css";
 
 /** The number that rises over a beat's target: damage, healing, or the support it received. */
 function floatOf(beat: Beat, targetIsEnemy = false): FloatItem | null {
@@ -132,14 +134,32 @@ function consoleScale(width: number, height: number): number {
   return Math.min(width / CONSOLE.width, height / CONSOLE.height);
 }
 
-function useConsoleScale() {
+/**
+  The console's size. On a desktop it is the fixed 1280x720 scaled with zoom. On a landscape phone
+  (phone.ts) it is composed again at the screen's own size at zoom 1, so type stays real size.
+*/
+function useConsoleBox() {
   const [box, setBox] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }));
   useEffect(() => {
     const read = () => setBox({ w: window.innerWidth, h: window.innerHeight });
     window.addEventListener("resize", read);
     return () => window.removeEventListener("resize", read);
   }, []);
-  return consoleScale(box.w, box.h);
+  const phone = isPhoneLandscape(box.w, box.h);
+  return { phone, w: box.w, h: box.h, zoom: phone ? 1 : consoleScale(box.w, box.h) };
+}
+
+/** True on a screen with no hover (a touch screen): hover-only help needs a tap equivalent. */
+function useNoHover() {
+  const query = "(hover: none)";
+  const [none, setNone] = useState(() => window.matchMedia?.(query).matches ?? false);
+  useEffect(() => {
+    const media = window.matchMedia?.(query);
+    const change = () => setNone(media?.matches ?? false);
+    media?.addEventListener?.("change", change);
+    return () => media?.removeEventListener?.("change", change);
+  }, []);
+  return none;
 }
 
 function useReducedMotion() {
@@ -215,7 +235,13 @@ export default function PowerworksTurnsPage() {
   const [revived, setRevived] = useState<{ id: string; to: number; words: string } | null>(null);
   const [station, setStation] = useState<{ deltas: Record<string, number>; text: string } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const zoom = useConsoleScale();
+  const { phone, w: boxW, h: boxH, zoom } = useConsoleBox();
+  const noHover = useNoHover();
+  // Phone mode on a touch screen: a first tap on a key cell previews it (rings who it lands on),
+  // the second tap on the same cell uses it. `previewed` is that cell's id (phone.ts).
+  const twoTap = phone && noHover;
+  const [previewed, setPreviewed] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const reducedMotion = useReducedMotion();
   // The command's settled state, applied only once playback finishes (finishPlayback):
   // applying it earlier flips view.phase out from under the still-animating keybar/camp
@@ -269,6 +295,23 @@ export default function PowerworksTurnsPage() {
     if (run.phase === "turn") showCard(titleCard(view, station?.text ?? null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [run.room]);
+
+  // A preview belongs to the moment it was made in: acting, a new active companion or a panel ends it.
+  useEffect(() => {
+    setPreviewed(null);
+  }, [busy, view.active?.id, panel]);
+  // Touch has no hover: a tap anywhere but a cell or a plate clears the preview and its ring.
+  useEffect(() => {
+    if (!twoTap) return;
+    const onDown = (e: PointerEvent) => {
+      if ((e.target as Element | null)?.closest?.(".pwt-cell, .pwt-plate")) return;
+      setPreviewed(null);
+      setHoverTarget(null);
+      setHoverUnits([]);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [twoTap]);
 
   // A cancelled restart says so for a moment, so it cannot be mistaken for a restart.
   useEffect(() => {
@@ -343,6 +386,7 @@ export default function PowerworksTurnsPage() {
     setArmedAlly(null);
     setHoverTarget(null);
     setHoverUnits([]);
+    setPreviewed(null);
     // A key that only acts on its user has no cell to name a target: the user is the target.
     dispatch({ kind: "act", order: { move: index, target: target || view.active?.id || "" } });
   }
@@ -633,12 +677,14 @@ export default function PowerworksTurnsPage() {
   return (
     <main className="pwt" data-tier="immersive" id="main" data-busy={busy ? "true" : "false"}>
       <div
-        className="pwt-console"
-        style={{ zoom, width: CONSOLE.width, height: CONSOLE.height } as React.CSSProperties}
+        className={`pwt-console${phone ? " phone" : ""}`}
+        style={
+          (phone ? { width: boxW, height: boxH } : { zoom, width: CONSOLE.width, height: CONSOLE.height }) as React.CSSProperties
+        }
       >
         <header className="pwt-top">
           <div className="pwt-where">
-            <Link to="/" className="pwt-brand">
+            <Link to="/" className="pwt-brand" title="Back to Xalians">
               <ArrowLeft size={14} />
               <span>XALIANS</span>
             </Link>
@@ -657,8 +703,9 @@ export default function PowerworksTurnsPage() {
                 lineIsSince={!beatWords && !busy && !notice && !station && !!since.text}
                 onOpenRecord={() => setPanel("record")}
                 round={shownRound}
+                readOnly={phone}
               />
-              <TurnRail rail={rail} round={shownRound} />
+              <TurnRail rail={rail} round={shownRound} compact={phone} />
             </>
           ) : (
             <div className="pwt-top-fill" />
@@ -680,6 +727,44 @@ export default function PowerworksTurnsPage() {
                 <RotateCcw /> Restart
               </button>
             </nav>
+            {/* Phone: the three tools fold into one menu button. */}
+            <div className="pwt-menu">
+              <button
+                type="button"
+                className="pwt-menu-btn"
+                aria-expanded={menuOpen}
+                aria-haspopup="menu"
+                onClick={() => setMenuOpen((o) => !o)}
+              >
+                {menuOpen ? <X /> : <Menu />} Menu
+              </button>
+              {menuOpen && (
+                <>
+                  <button type="button" className="pwt-menu-scrim" aria-label="Close the menu" onClick={() => setMenuOpen(false)} />
+                  <div className="pwt-menu-list" role="menu" aria-label="Tools">
+                    {(
+                      [
+                        ["guide", BookOpen, "Guide"],
+                        ["record", ScrollText, "Record"],
+                        ["restart", RotateCcw, "Restart"],
+                      ] as const
+                    ).map(([id, Icon, label]) => (
+                      <button
+                        key={id}
+                        type="button"
+                        role="menuitem"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setPanel(id);
+                        }}
+                      >
+                        <Icon /> {label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </header>
 
@@ -732,6 +817,7 @@ export default function PowerworksTurnsPage() {
                   impactTarget={impactTargets.includes(e.id)}
                   struck={struckIds.includes(e.id)}
                   onHover={(hovering) => setHoverTarget(hovering ? e.id : null)}
+                  onTap={twoTap ? () => setHoverTarget(e.id) : undefined}
                 />
               ))}
             </div>
@@ -794,6 +880,9 @@ export default function PowerworksTurnsPage() {
                 activeId={view.active!.id}
                 disabled={busy}
                 onAct={(target) => act(k.index, target)}
+                twoTap={twoTap}
+                previewed={previewed}
+                onPreview={setPreviewed}
                 onHoverTarget={(id) => setHoverTarget(id)}
                 onHoverUnits={(ids) => setHoverUnits(ids ?? [])}
                 litTarget={busy ? null : hoverTarget}
@@ -868,6 +957,7 @@ export default function PowerworksTurnsPage() {
         {panel === "guide" && (
           <GuidePanel
             onClose={() => setPanel(null)}
+            touch={twoTap}
             squadArt={view.squad[0] ? { art: view.squad[0].art, element: view.squad[0].element } : undefined}
             enemyArt={view.enemies[0] ? { art: view.enemies[0].art, element: view.enemies[0].element } : undefined}
           />

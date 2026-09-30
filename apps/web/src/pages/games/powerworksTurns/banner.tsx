@@ -18,6 +18,7 @@ export function TurnBanner({
   lineIsSince,
   onOpenRecord,
   round,
+  readOnly = false,
 }: {
   actorSide: "squad" | "enemy";
   actorName: string;
@@ -27,6 +28,8 @@ export function TurnBanner({
   lineIsSince: boolean;
   onOpenRecord: () => void;
   round: number;
+  /** Phone: the line is plain text (it truncates to one line; the Record, in the menu, holds it all). */
+  readOnly?: boolean;
 }) {
   const kicker = actorSide === "squad" ? "Your turn" : "Enemy turn";
   const who = `${actorName}${actorSide === "enemy" && actorLetter ? ` ${actorLetter}` : ""}`;
@@ -49,12 +52,19 @@ export function TurnBanner({
         <span className="pwt-banner-who">{who}</span>
       </p>
       {line ? (
-        lineIsSince ? (
+        lineIsSince && !readOnly ? (
           <button type="button" className="pwt-banner-line since" onClick={onOpenRecord} title="Open the full record">
             <span className="pwt-banner-line-label">Since your last turn</span> {line}
           </button>
         ) : (
-          <p className="pwt-banner-line">{line}</p>
+          <p className="pwt-banner-line">
+            {lineIsSince && (
+              <>
+                <span className="pwt-banner-line-label">Since your last turn</span>{" "}
+              </>
+            )}
+            {line}
+          </p>
         )
       ) : (
         <p className="pwt-banner-line empty">{actorSide === "squad" ? "Choose a move, then a target." : ""}</p>
