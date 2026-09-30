@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_RULES } from "./engine.ts";
-import { STALLED_LOG, WITHDREW_LOG, activeOf, createTurnRun, interval, legalTargets, roundOf, roundStrip, turnCommand, upcoming, type TRun } from "./turns.ts";
+import { PILLAR_SAVE_VERSION } from "./levers.ts";
+import { STALLED_LOG, resolveIntent, WITHDREW_LOG, activeOf, createTurnRun, interval, legalTargets, roundOf, roundStrip, turnCommand, upcoming, type TRun } from "./turns.ts";
 import { turnPlanner } from "./turnPolicy.ts";
 import { HEALTH_SCALE } from "./levers.ts";
 import { squadUnits } from "../index.ts";
@@ -112,5 +113,102 @@ describe("turn by turn", () => {
     expect(left.phase).toBe("retreated");
     expect(left.log[left.log.length - 1]).toBe(WITHDREW_LOG);
     expect(WITHDREW_LOG).not.toBe(STALLED_LOG);
+  });
+
+  describe("enemy intents", () => {
+    const step = (s: TRun) => turnCommand(s, { kind: "act", order: turnPlanner(s, () => 0.5) });
+    it("saves as version 3", () => expect(PILLAR_SAVE_VERSION).toBe(3));
+    it("has an intent for every standing enemy on every companion turn, and none for the fallen", () => {
+      for (const timeline of ["round", "speed"] as const) {
+        let s = createTurnRun(4, "starter", { ...DEFAULT_RULES, timeline }).state;
+        for (let k = 0; k < 400 && s.phase === "turn"; k++) {
+          for (const e of s.enemies) {
+            if (e.hp > 0) {
+              const i = s.intents[e.id];
+              expect(i).toBeDefined();
+              expect(e.moves[i.move]).toBeDefined();
+              expect(s.team.some((t) => t.id === i.target) || s.enemies.some((t) => t.id === i.target)).toBe(true);
+            } else expect(s.intents[e.id]).toBeUndefined();
+          }
+          s = step(s).state;
+        }
+      }
+    });
+    it("carries out exactly the committed move and target, or redirects from it when the target fell", () => {
+      let checked = 0;
+      let redirected = 0;
+      for (const seed of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]) {
+        let s = createTurnRun(seed, "starter", { ...DEFAULT_RULES, timeline: "round" }).state;
+        for (let k = 0; k < 300 && s.phase === "turn"; k++) {
+          const before = s;
+          const out = step(s);
+          s = out.state;
+          for (const e of before.enemies.filter((x) => x.hp > 0)) {
+            const i = before.intents[e.id];
+            const mine = out.events.filter((ev) => "actor" in ev && ev.actor === e.id);
+            // An enemy that fell to an earlier actor this step may not have acted.
+            if (!mine.length) continue;
+            const move = e.moves[i.move];
+            const redirect = mine.find((ev) => ev.kind === "redirect");
+            const acted = mine.filter((ev) => ev.kind !== "redirect" && ev.kind !== "lapsed");
+            if (!acted.length) continue;
+            const wantTarget = redirect && redirect.kind === "redirect" ? redirect.to : i.target;
+            if (redirect) redirected++;
+            for (const ev of acted) if (ev.kind !== "pass" && move.area !== true) expect(ev.move).toBe(move.name);
+            const first = acted[0];
+            if (first.kind !== "pass" && move.power > 0 && !move.area) expect(first.target).toBe(wantTarget);
+            checked++;
+          }
+        }
+      }
+      expect(checked).toBeGreaterThan(40);
+      expect(redirected).toBeGreaterThanOrEqual(0);
+    });
+    it("resolves to the intent when the target stands", () => {
+      const { state } = createTurnRun(1);
+      const e = state.enemies.find((x) => x.hp > 0)!;
+      const ready0 = { ...state, enemies: state.enemies.map((x) => ({ ...x, cooldowns: x.cooldowns.map(() => 0) })) };
+      const i = ready0.intents[e.id];
+      expect(resolveIntent(ready0, ready0.enemies.find((x) => x.id === e.id)!)).toEqual(i);
+    });
+    it("sends an attack to the next standing companion in row order when its target has fallen", () => {
+      const { state } = createTurnRun(1);
+      let found = 0;
+      for (const e of state.enemies) {
+        const s: TRun = structuredClone(state);
+        const u = s.enemies.find((x) => x.id === e.id)!;
+        u.cooldowns = u.cooldowns.map(() => 0);
+        const i = u.moves.findIndex((m) => m.power > 0);
+        if (i < 0) continue;
+        s.intents[u.id] = { move: i, target: s.team[0].id };
+        s.team[0].hp = 0;
+        const o = resolveIntent(s, u)!;
+        expect(o.move).toBe(i);
+        expect(o.target).toBe(s.team[1].id);
+        found++;
+      }
+      expect(found).toBeGreaterThan(0);
+    });
+    it("picks a support's recipient again among its allies when that ally has fallen", () => {
+      const { state } = createTurnRun(1);
+      const s: TRun = structuredClone(state);
+      const helper = s.enemies[0];
+      helper.moves = [{ ...helper.moves[0], power: 0, area: false, rests: 0, signature: false, parts: [{ kind: "heal", aim: "ally", n: 5 }] } as never];
+      helper.cooldowns = [0];
+      const mates = s.enemies.filter((x) => x.id !== helper.id);
+      if (mates.length < 2) return;
+      s.intents[helper.id] = { move: 0, target: mates[0].id };
+      mates[0].hp = 0;
+      const o = resolveIntent(s, helper)!;
+      expect(o.move).toBe(0);
+      expect(o.target).not.toBe(mates[0].id);
+      expect(mates.slice(1).some((m) => m.id === o.target)).toBe(true);
+    });
+    it("clears intents when the encounter ends", () => {
+      let s = createTurnRun(1).state;
+      for (let k = 0; k < 400 && s.phase === "turn"; k++) s = step(s).state;
+      expect(s.phase).not.toBe("turn");
+      expect(s.intents).toEqual({});
+    });
   });
 });

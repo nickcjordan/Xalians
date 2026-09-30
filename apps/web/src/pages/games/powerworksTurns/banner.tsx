@@ -22,6 +22,7 @@ export function TurnBanner({
   ended = null,
   note = null,
   noteId,
+  prompt = "Choose a move.",
 }: {
   actorSide: "squad" | "enemy";
   actorName: string;
@@ -44,6 +45,8 @@ export function TurnBanner({
   */
   note?: string | null;
   noteId?: string;
+  /** What the empty line says on your turn: "Choose a move.", or "Now choose a target." once a key waits for one. */
+  prompt?: string;
 }) {
   // While the stage holds on a fall its one plaque says what happened; the banner only keeps the round and the sector
   // (round 8, item 9: the same words were on the banner, the stage and the key bar).
@@ -92,7 +95,7 @@ export function TurnBanner({
           </p>
         )
       ) : (
-        <p className="pwt-banner-line empty">{actorSide === "squad" && !ended ? "Pick a cell to act." : ""}</p>
+        <p className="pwt-banner-line empty">{actorSide === "squad" && !ended ? prompt : ""}</p>
       )}
     </div>
   );

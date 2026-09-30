@@ -18,6 +18,7 @@ import {
   DEFAULT_RULES,
   PILLAR_SAVE_VERSION,
   activeOf,
+  attackOn,
   createTurnRun,
   roundOf,
   roundStrip,
@@ -321,3 +322,80 @@ scenarioLost();
 scenarioWon();
 scenarioRetreatCommand();
 scenarioRetreatStall();
+
+// ======================================================================================
+// Intents scenarios (docs/design/powerworks-intents-and-keys.md): states where an enemy's committed move
+// matters, again reached by playing real commands and searching seeds.
+// ======================================================================================
+
+/** The health a committed attack would take from its target now (uncapped), or 0 when the intent is not an attack. */
+function intentHit(s: TRun, id: string): { n: number; targetHp: number } {
+  const e = s.enemies.find((x) => x.id === id);
+  const i = s.intents[id];
+  if (!e || !i || e.hp <= 0) return { n: 0, targetHp: 0 };
+  const m = e.moves[i.move];
+  const t = [...s.team, ...s.enemies].find((x) => x.id === i.target);
+  if (!m || !t || m.power <= 0) return { n: 0, targetHp: 0 };
+  return { n: Math.max(0, attackOn(e, m, t) - t.shields.reduce((a, b) => a + b.n, 0)), targetHp: t.hp };
+}
+
+// ---- lethal-intent: a companion's turn where an enemy that acts before some standing companion's next turn is committed to a hit
+// that knocks that companion out, so its plate carries "can fall" (the view's rule, read from the timeline). ----
+function canFallSomewhere(s: TRun): boolean {
+  if (s.phase !== "turn" || !s.active) return false;
+  const order = upcoming(s, standing([...s.team, ...s.enemies]).length * 2 + 2);
+  for (const c of standing(s.team)) {
+    const first = s.active === c.id ? 1 : 0;
+    for (let i = first; i < order.length && order[i].id !== c.id; i++) {
+      const e = order[i];
+      if (!e.enemy) continue;
+      const int = s.intents[e.id];
+      const m = int ? e.moves[int.move] : undefined;
+      if (!int || !m || m.power <= 0 || (int.target !== c.id && !m.area)) continue;
+      const n = Math.max(0, attackOn(e, m, c) - c.shields.reduce((a, b) => a + b.n, 0));
+      if (n > 0 && n >= c.hp) return true;
+    }
+  }
+  return false;
+}
+function scenarioLethalIntent() {
+  const s = search("lethal-intent", ["random", "hardest"], SEEDS, (s) => s.room >= 1 && canFallSomewhere(s));
+  if (s) write("lethal-intent", s);
+}
+
+// ---- support-intent: a companion's turn where an enemy is committed to a support move (a heal, shield, boost or hinder). ----
+function scenarioSupportIntent() {
+  const s = search("support-intent", ["hardest", "random"], SEEDS, (s) => s.phase === "turn" && s.room >= 1 && s.enemies.some((e) => e.hp > 0 && s.intents[e.id] && e.moves[s.intents[e.id].move].power <= 0));
+  if (s) write("support-intent", s);
+}
+
+// ---- redirect: a companion's turn from which some legal order makes an enemy turn from its committed target (it fell first). ----
+function scenarioRedirect() {
+  let via = "";
+  const s = search("redirect", ["random", "hardest"], SEEDS, (s) => {
+    if (s.phase !== "turn" || !s.active) return false;
+    const u = activeOf(s)!;
+    for (const i of u.moves.keys()) {
+      if (u.cooldowns[i] > 0 || (u.moves[i].signature && u.signatureSpent)) continue;
+      for (const t of [...s.enemies, ...s.team].filter((x) => x.hp > 0)) {
+        try {
+          if (turnCommand(s, { kind: "act", order: { move: i, target: t.id } }).events.some((e) => e.kind === "redirect")) {
+            via = `key ${i + 1} on ${t.enemy ? `enemy ${String.fromCharCode(65 + s.enemies.indexOf(t))}` : t.name}`;
+            return true;
+          }
+        } catch {
+          /* illegal order */
+        }
+      }
+    }
+    return false;
+  });
+  if (s) {
+    console.log(`redirect: a companion's ${via} makes an enemy turn from its committed target`);
+    write("redirect", s);
+  }
+}
+
+scenarioLethalIntent();
+scenarioSupportIntent();
+scenarioRedirect();

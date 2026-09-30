@@ -176,11 +176,8 @@
 .pwt-console.phone .pwt-health-num { font-size: 12px; min-width: 18px; }
 .pwt-console.phone .pwt-health .pwt-delta { font-size: 12px; line-height: 14px; }
 .pwt-console.phone .pwt-marks { flex-wrap: wrap; overflow: visible; gap: 2px; }
-.pwt-console.phone .pwt-chip,
-.pwt-console.phone .pwt-hit-on-active { font-size: 12px; padding: 0 3px; }
-.pwt-console.phone .pwt-hit-in { font-size: 12px; }
+.pwt-console.phone .pwt-chip { font-size: 12px; padding: 0 3px; }
 .pwt-console.phone .pwt-chip svg { width: 11px; height: 11px; }
-.pwt-console.phone .pwt-hit-on-active svg { width: 11px; height: 11px; }
 .pwt-console.phone .pwt-el { font-size: 12px; height: 16px; top: -18px; right: 2px; letter-spacing: 0.04em; padding: 0 4px; }
 .pwt-console.phone .pwt-letter { font-size: 13px; width: 20px; height: 20px; top: 0; left: 2px; }
 .pwt-console.phone .pwt-spot-pointer { top: -14px; border-left-width: 7px; border-right-width: 7px; border-top-width: 10px; }
@@ -266,48 +263,8 @@
 .pwt-console.phone .pwt-key-name { font-size: 12px; line-height: 15px; }
 .pwt-console.phone .pwt-key-foot { grid-area: 1 / 2; margin: 0; padding: 0; min-height: 0; min-width: 0; gap: 6px; justify-content: flex-end; }
 .pwt-console.phone .pwt-key-foot-words { font-family: var(--font-body); font-size: 12px; line-height: 15px; white-space: nowrap; }
-.pwt-console.phone .pwt-riders { flex-wrap: nowrap; gap: 3px; }
-.pwt-console.phone .pwt-rider { font-size: 12px; padding: 0 3px; line-height: 15px; }
-.pwt-console.phone .pwt-rider-each { font-size: 12px; }
-.pwt-console.phone .pwt-key-star svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-cells-wrap { grid-area: 2 / 1 / 3 / 3; min-height: 0; display: flex; }
-.pwt-console.phone .pwt-cells { flex: 1 1 auto; flex-wrap: nowrap; gap: 3px; min-width: 0; align-items: stretch; }
-.pwt-console.phone .pwt-cell { min-width: 40px; min-height: 40px; flex: 1 1 0; padding: 2px 1px 2px; gap: 1px; justify-content: center; }
-.pwt-console.phone .pwt-cell-letter { font-size: 12px; line-height: 12px; }
-.pwt-console.phone .pwt-cell-num { font-size: 18px; }
-.pwt-console.phone .pwt-cell-portrait { width: 18px; height: 18px; }
-.pwt-console.phone .pwt-cell-skull { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-cell-heal-icon { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-cell .pwt-cell-chevron-wrap { top: 2px; right: 2px; width: 14px; height: 14px; }
 .pwt-console.phone .pwt-cell-chevron-wrap svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-cell .pwt-cell-shield-note { top: 2px; left: 2px; }
-.pwt-console.phone .pwt-cell-shield-note svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-cell-immune-wrap { width: 20px; height: 20px; }
-.pwt-console.phone .pwt-cell .pwt-cell-hinder { font-size: 13px; }
-.pwt-console.phone .pwt-cell .pwt-cell-hinder-icon { position: absolute; top: 2px; right: 2px; width: 12px; height: 12px; }
-.pwt-console.phone .pwt-cell-hinder-nums,
-.pwt-console.phone .pwt-cell-hinder-nums .pwt-cell-before,
-.pwt-console.phone .pwt-cell-hinder-nums .pwt-cell-arrow,
-.pwt-console.phone .pwt-cell-hinder-nums .pwt-cell-num,
-.pwt-console.phone .pwt-cell .pwt-cell-hinder .pwt-cell-before,
-.pwt-console.phone .pwt-cell .pwt-cell-hinder .pwt-cell-arrow,
-.pwt-console.phone .pwt-cell .pwt-cell-hinder .pwt-cell-num { font-size: 13px; gap: 1px; }
-.pwt-console.phone .pwt-cell.now { min-height: 40px; flex-direction: column; gap: 1px; }
-.pwt-console.phone .pwt-key-now-chip { font-size: 14px; }
-.pwt-console.phone .pwt-key-now-chip svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-key-now-chips { gap: 0 8px; }
-/* An area attack: the ALL label leads the cells at their left instead of riding the top edge. */
-.pwt-console.phone .pwt-cells-wrap.area { border: 1px solid var(--color-edge-strong); padding: 0; align-items: stretch; }
-.pwt-console.phone .pwt-area-band {
-  position: static;
-  flex: 0 0 auto;
-  width: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid var(--color-edge-strong);
-}
-.pwt-console.phone .pwt-area-band span { transform: none; border: 0; background: transparent; font-size: 12px; padding: 0; }
+
 /* The tapped cell waits for a second tap; the words in the key's head say so. */
 
 /* While beats play, the column is one card, with speed and skip at its foot. */
@@ -397,10 +354,6 @@
 .pwt-console.phone .pwt-legend-row { gap: 10px; min-height: 44px; margin-bottom: 4px; }
 .pwt-console.phone .pwt-legend-row p { font-size: 13px; line-height: 1.3; }
 .pwt-console.phone .pwt-legend-sample { flex: 0 0 132px; }
-.pwt-console.phone .pwt-legend-sample .pwt-cell { flex: 0 0 44px; min-width: 40px; }
-.pwt-console.phone .pwt-legend-sample.wide .pwt-cell,
-.pwt-console.phone .pwt-legend-sample .pwt-cell.now { flex: 0 0 100px; }
-.pwt-console.phone .pwt-legend-sample .pwt-cells-wrap.area { width: 132px; }
 .pwt-console.phone .pwt-legend-sample .pwt-key-foot { flex-direction: column; align-items: flex-start; }
 .pwt-console.phone .pwt-legend-row:has(.pwt-legend-rail) { flex-direction: column; align-items: flex-start; gap: 2px; }
 .pwt-console.phone .pwt-legend-row:has(.pwt-legend-rail) .pwt-legend-sample { flex: 0 0 auto; }
@@ -462,10 +415,7 @@
 .pwt-console.phone .pwt-ko { top: -18px; left: 2px; height: 16px; width: 22px; }
 .pwt-console.phone .pwt-ko svg { width: 12px; height: 12px; }
 .pwt-console.phone .pwt-impact { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-hit-on-active .pwt-hit-skull { width: 12px; height: 12px; }
 .pwt-console.phone .pwt-chip.shield svg { width: 13px; height: 13px; }
-.pwt-console.phone .pwt-cell .pwt-cell-shield-note { font-size: 12px; }
-.pwt-console.phone .pwt-cell-shield-note svg { width: 14px; height: 14px; }
 /* A first-occurrence note sits to the left of its key, over the stage's edge, never over the cells. */
 .pwt-console.phone .pwt-keybar { overflow: visible; }
 .pwt-console.phone .pwt-note {
@@ -496,7 +446,6 @@
 .pwt-console.phone .pwt-lesson { gap: 8px; }
 .pwt-console.phone .pwt-lesson .pwt-legend-sample { flex: 0 0 150px; }
 .pwt-console.phone .pwt-lesson-key { padding: 2px 4px 4px; }
-.pwt-console.phone .pwt-lesson-key .pwt-cell { width: 44px; min-width: 40px; min-height: 40px; }
 .pwt-console.phone .pwt-lesson p { font-size: 12px; line-height: 1.25; }
 .pwt-console.phone .pwt-briefing-rules li { margin-bottom: 0; }
 
@@ -525,9 +474,6 @@
 .pwt-console.phone .pwt-ko { top: -19px; left: 2px; height: 18px; width: auto; padding: 0 4px; }
 .pwt-console.phone .pwt-ko-words { font-size: 12px; }
 .pwt-console.phone .pwt-guardian-tag { top: -19px; left: 2px; font-size: 12px; }
-.pwt-console.phone .pwt-cell-rider { font-size: 12px; }
-.pwt-console.phone .pwt-key-hinder { font-size: 12px; }
-.pwt-console.phone .pwt-cell.has-rider { padding-bottom: 14px; }
 .pwt-console.phone .pwt-guardian-tag { font-size: 12px; padding: 0 3px; letter-spacing: 0; }
 /* The note takes the banner's two lines exactly; it never grows the top bar. */
 .pwt-console.phone .pwt-banner-line.pwt-note {
@@ -540,10 +486,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-/* A cell with a rider line: letter in the corner, number and rider stacked. */
-.pwt-console.phone .pwt-cell.has-rider .pwt-cell-letter { position: absolute; top: 2px; left: 6px; font-size: 12px; line-height: 12px; }
-.pwt-console.phone .pwt-cell.has-rider .pwt-cell-num { font-size: 17px; margin-top: -4px; }
-.pwt-console.phone .pwt-cell.has-rider { padding-top: 2px; padding-bottom: 15px; }
+
 /* Rail: slots folded before a round boundary read "+N". */
 .pwt-console.phone .pwt-rail-fold { display: flex; align-items: center; justify-content: center; width: 26px; flex: 0 0 26px; font-family: var(--font-data); font-size: 12px; color: var(--color-ink-2); }
 .pwt-console.phone .pwt-banner-line { height: 30px; -webkit-line-clamp: 2; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; }
@@ -551,8 +494,7 @@
 /* Round 6 phone fixes */
 .pwt-console.phone .pwt-banner-kicker { line-height: 12px; }
 .pwt-console.phone .pwt-banner-line, .pwt-console.phone .pwt-banner-line.pwt-note { height: 28px; line-height: 14px; }
-.pwt-console.phone .pwt-hit-arrow, .pwt-console.phone .pwt-cell-arrow, .pwt-console.phone .pwt-cell-rider .pwt-cell-arrow { font-size: 12px; }
-.pwt-console.phone .pwt-key-star { display: none; }
+.pwt-console.phone .pwt-hit-arrow { font-size: 12px; }
 .pwt-console.phone .pwt-camp-carry { display: none; }
 .pwt-console.phone .pwt-camp-next { font-size: 12px; }
 .pwt-console.phone .pwt-banner-kicker span { display: inline-block; line-height: 12px; }
@@ -561,11 +503,6 @@
 .pwt-console.phone .pwt-banner-who { line-height: 14px; }
 /* The banner already names the round; the rail spends that room on the round boundary. */
 .pwt-console.phone .pwt-rail-round { display: none; }
-
-/* Round 7, item 1 (phone): the rider line is in the cell's flow, so the cell is as tall as it needs. */
-.pwt-console.phone .pwt-cell.has-rider { justify-content: flex-start; padding: 2px 1px 3px; }
-.pwt-console.phone .pwt-cell .pwt-cell-rider { font-size: 12px; line-height: 13px; }
-.pwt-console.phone .pwt-cell .pwt-cell-rider svg { width: 12px; height: 12px; }
 
 /* ==========================================================================================
    Round 7 on the phone
@@ -602,10 +539,6 @@
 .pwt-console.phone .pwt-keybar-portrait { min-height: 46px; }
 /* Item 1: each key is as tall as its cells need (a rider line grows its own key); the others share the rest. */
 .pwt-console.phone .pwt-keybar { grid-auto-rows: minmax(min-content, 1fr); }
-.pwt-console.phone .pwt-cells-wrap { min-height: min-content; }
-.pwt-console.phone .pwt-cell.has-rider .pwt-cell-letter { position: static; font-size: 12px; line-height: 12px; }
-.pwt-console.phone .pwt-cell.has-rider .pwt-cell-num { margin-top: 0; font-size: 17px; }
-.pwt-console.phone .pwt-cell.has-rider { padding: 1px 1px 2px; gap: 0; }
 .pwt-console.phone .pwt-revives { grid-column: 2; font-size: 12px; line-height: 13px; }
 .pwt-console.phone .pwt-where { row-gap: 0; grid-template-rows: auto auto auto; }
 .pwt-console.phone .pwt-key-note-tag { font-size: 12px; line-height: 15px; padding: 0 3px; letter-spacing: 0.04em; }
@@ -616,10 +549,6 @@
 }
 .pwt-console.phone .pwt-guide .pwt-legend-row p { font-size: 13px; }
 .pwt-console.phone .pwt-guide .pwt-legend-sample { flex: 0 0 132px; }
-.pwt-console.phone .pwt-guide .pwt-legend-sample .pwt-cell { flex: 0 0 44px; }
-.pwt-console.phone .pwt-guide .pwt-legend-sample.wide .pwt-cell,
-.pwt-console.phone .pwt-guide .pwt-legend-sample .pwt-cell.now { flex: 0 0 100px; }
-.pwt-console.phone .pwt-guide .pwt-legend-sample .pwt-cells-wrap.area { width: 132px; }
 .pwt-console.phone .pwt-guide .pwt-legend-rail { width: 250px; height: 60px; }
 /* The phone Guide scrolls: a fade above Close says there is more. */
 .pwt-console.phone .pwt-guide .pwt-panel-actions::before {
@@ -655,8 +584,6 @@
   .pwt-console.phone .pwt-keybar-portrait-img { width: 32px; height: 32px; }
   .pwt-console.phone .pwt-key { padding: 1px 5px 2px; }
   .pwt-console.phone .pwt-key-head, .pwt-console.phone .pwt-key-name { line-height: 14px; }
-  .pwt-console.phone .pwt-cell.has-rider { min-height: 40px; }
-  .pwt-console.phone .pwt-cell .pwt-cell-rider { margin-top: 0; padding-top: 0; }
 }
 @media (max-width: 700px) {
   .pwt-console.phone .pwt-foot-full { display: none; }
@@ -671,19 +598,6 @@
 /* The Guardian tag sits in its own row above the element tag on a phone too (they collided side by side). */
 .pwt-console.phone .pwt-guardian-tag { top: -37px; left: 2px; }
 
-/* =====================================================================================
-   Round 8 on the phone
-   ===================================================================================== */
-.pwt-console.phone .pwt-cell .pwt-cell-hinder-cap { font-size: 12px; line-height: 12px; }
-.pwt-console.phone .pwt-cell .pwt-cell-hinder-cap .pwt-cell-hinder-icon { position: static; width: 12px; height: 12px; }
-.pwt-console.phone .pwt-cell .pwt-cell-hinder { gap: 1px; }
-.pwt-console.phone .pwt-cell .pwt-cell-hinder .pwt-cell-num.hinder,
-.pwt-console.phone .pwt-cell .pwt-cell-hinder-nums .pwt-cell-before,
-.pwt-console.phone .pwt-cell .pwt-cell-hinder-nums .pwt-cell-arrow { font-size: 13px; }
-.pwt-console.phone .pwt-saved svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-hit-on,
-.pwt-console.phone .pwt-hit-then { font-size: 12px; line-height: 12px; }
-.pwt-console.phone .pwt-hit-on-active.pwt-hitbox { padding: 1px 3px; }
 .pwt-console.phone .pwt-keybar-wait-words { font-size: 13px; line-height: 1.25; max-width: 96%; }
 .pwt-console.phone .pwt-keybar-wait { gap: 4px; }
 /* The fold reads "+N more" in a small pill, so it is a count of hidden turns and not a boost. */
@@ -730,3 +644,76 @@
    slot of the next round fit even on the narrowest rail. */
 .pwt-console.phone .pwt-rail-divider { flex-basis: 24px; overflow: visible; }
 .pwt-console.phone .pwt-rail-divider span { position: absolute; left: 50%; top: 0; transform: translateX(-50%); white-space: nowrap; }
+
+/* ==========================================================================================
+   Intents and keys on the phone (docs/design/powerworks-intents-and-keys.md): 12 px text, 40 px
+   controls. A key is one button on the key column; its numbers show on the plates when it is selected.
+   ========================================================================================== */
+.pwt-console.phone .pwt-key { align-items: stretch; text-align: left; }
+.pwt-console.phone .pwt-key .pwt-key-head { grid-area: 1 / 1; }
+.pwt-console.phone .pwt-key .pwt-key-body { grid-area: 2 / 1 / 3 / 3; min-height: 0; gap: 6px; }
+.pwt-console.phone .pwt-key .pwt-key-foot { grid-area: 1 / 2; }
+.pwt-console.phone .pwt-key-power { font-size: 26px; gap: 4px; }
+.pwt-console.phone .pwt-key-power .pwt-impact { width: 16px; height: 16px; }
+.pwt-console.phone .pwt-shape-all { font-size: 12px; padding: 0 5px; }
+.pwt-console.phone .pwt-tag { font-size: 12px; padding: 0 4px; }
+.pwt-console.phone .pwt-tag svg { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-tags.big .pwt-tag { font-size: 22px; }
+.pwt-console.phone .pwt-tags.big .pwt-tag svg { width: 18px; height: 18px; }
+.pwt-console.phone .pwt-key-aim { font-size: 12px; }
+.pwt-console.phone .pwt-key-foot-words { font-size: 12px; }
+.pwt-console.phone .pwt-key-body { align-items: center; }
+
+.pwt-console.phone .pwt-match { font-size: 12px; height: 16px; top: -18px; left: 2px; padding: 0 4px; letter-spacing: 0.04em; gap: 2px; }
+.pwt-console.phone .pwt-match svg { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-intent { font-size: 12px; padding: 1px 3px 2px; gap: 0; }
+.pwt-console.phone .pwt-intent-name,
+.pwt-console.phone .pwt-intent-self { font-size: 12px; letter-spacing: 0; }
+.pwt-console.phone .pwt-intent-portrait { width: 16px; height: 16px; }
+.pwt-console.phone .pwt-intent-what { font-size: 15px; gap: 2px; }
+.pwt-console.phone .pwt-intent-what svg { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-intent-what .pwt-hit-before,
+.pwt-console.phone .pwt-intent-what .pwt-hit-arrow { font-size: 12px; }
+.pwt-console.phone .pwt-intent-all { font-size: 12px; padding: 0 2px; }
+.pwt-console.phone .pwt-marks.intent { flex-wrap: nowrap; }
+
+.pwt-console.phone .pwt-preview { bottom: 19px; padding: 1px 6px 2px; min-width: 44px; }
+.pwt-console.phone .pwt-preview-num { font-size: 21px; gap: 2px; }
+.pwt-console.phone .pwt-preview-num svg { width: 16px; height: 16px; }
+.pwt-console.phone .pwt-preview-word { font-size: 12px; }
+.pwt-console.phone .pwt-preview-before,
+.pwt-console.phone .pwt-preview-arrow { font-size: 14px; }
+.pwt-console.phone .pwt-preview-note { font-size: 12px; }
+.pwt-console.phone .pwt-preview-note svg { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-preview-chip { font-size: 18px; }
+.pwt-console.phone .pwt-preview-chip svg { width: 14px; height: 14px; }
+.pwt-console.phone .pwt-preview .pwt-cell-chevron-wrap { width: 14px; height: 14px; }
+.pwt-console.phone .pwt-preview .pwt-cell-chevron-wrap svg { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-row.enemies { padding-top: 14px; }
+.pwt-console.phone .pwt-row.enemies .pwt-figure:not(.boss) { height: auto; }
+.pwt-console.phone .pwt-row.enemies .pwt-figure.boss { height: auto; }
+/* The preview may rise a little above a short figure area (it stays inside the stage and off the tags). */
+.pwt-console.phone .pwt-plate.boss .pwt-preview { bottom: 41px; left: 50%; }
+.pwt-console.phone .pwt-spot-pointer { top: 0; }
+.pwt-console.phone .pwt-preview-notes { gap: 0 6px; }
+.pwt-console.phone .pwt-lesson .pwt-legend-sample { flex: 0 0 auto; gap: 4px; }
+.pwt-console.phone .pwt-lesson-key { flex: 0 0 112px; padding: 0; }
+.pwt-console.phone .pwt-lesson-key > .pwt-key { min-height: 0; padding: 2px 5px 2px; }
+.pwt-console.phone .pwt-lesson-key .pwt-key-power { font-size: 22px; }
+.pwt-console.phone .pwt-lesson-key .pwt-key-shape { display: none; }
+.pwt-console.phone .pwt-lesson-then { display: none; }
+.pwt-console.phone .pwt-lesson .pwt-legend-tile { width: 62px; height: 46px; }
+/* The enemy plaques carry an intent chip: the enemy row takes more of the short stage, the squad row less. */
+.pwt-console.phone .pwt-row.enemies { height: 58%; }
+.pwt-console.phone .pwt-row.squad { height: 40%; }
+.pwt-console.phone .pwt-plate.boss .pwt-preview { bottom: 19px; }
+/* The matchup mark is its icon alone on a phone plate (the plate is too narrow for the word beside the element tag). */
+.pwt-console.phone .pwt-match { width: 20px; height: 16px; padding: 0; justify-content: center; }
+.pwt-console.phone .pwt-match span { display: none; }
+.pwt-console.phone .pwt-match svg { width: 13px; height: 13px; }
+.pwt-console.phone .pwt-legend-chips .pwt-match { position: static; }
+.pwt-console.phone .pwt-legend-keys > .pwt-key { min-width: 118px; }
+/* A long final-blow line (an enemy and its move by name) wraps to three lines on the smallest phone: a step smaller keeps the report on one screen. */
+.pwt-console.phone .pwt-summary > div:last-child dd { font-size: 15px; line-height: 1.25; }
+/* The "can fall" mark rides above the element tag on a phone plate, not beside it (a narrow plate cannot hold both on one line). */
+.pwt-console.phone .pwt-ko { top: -40px; left: 2px; }

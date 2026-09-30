@@ -41,6 +41,8 @@ import { ENCOUNTER_XP, FINAL_ENCOUNTER_XP, RECOVERY_STATION_HP, SPEED_BASE, STAL
 /** The log line a chosen retreat leaves; a stall's forced exit leaves STALLED_LOG, so the two endings can be told apart. */
 export const WITHDREW_LOG = "The squad withdrew.";
 export const STALLED_LOG = "The fight stalled: the squad is forced out.";
+/** What an enemy has committed to for its next turn: a move (index into its moves) and a target (unit id). */
+export type Intent = { move: number; target: string };
 export type TPhase = "turn" | "camp" | "won" | "lost" | "retreated";
 export type TRun = {
   seed: number;
@@ -54,6 +56,8 @@ export type TRun = {
   clock: Record<string, number>;
   /** The companion whose turn it is; null outside a fight. */
   active: string | null;
+  /** Each standing enemy's committed next move and target, shown on its plate; empty outside a fight. */
+  intents: Record<string, Intent>;
   phase: TPhase;
   turns: number;
   stalled: number;
@@ -132,6 +136,7 @@ function enter(s: TRun) {
       [row[i], row[j]] = [row[j], row[i]];
     }
   seatClocks(s);
+  planAll(s);
   s.log.push(`Entered ${roomsFor(s.rules)[s.room].name}.`);
 }
 function startRun(seed: number, squad: Squad, units: Unit[], rules: Rules): { state: TRun; events: PEvent[] } {
@@ -145,6 +150,7 @@ function startRun(seed: number, squad: Squad, units: Unit[], rules: Rules): { st
     enemies: [],
     clock: {},
     active: null,
+    intents: {},
     phase: "turn",
     turns: 0,
     stalled: 0,
@@ -171,6 +177,44 @@ export function createTurnRunFrom(seed: number, records: readonly CreatureRecord
   return startRun(seed, "starter", records.map((r, i) => readCompanion(r, ids[i])), rules);
 }
 
+/** An enemy commits to its next move and target, judging readiness at its next turn. */
+function plan(s: TRun, u: Fighter) {
+  const o = u.hp > 0 ? enemyChoice(s, u, 1) : null;
+  if (o) s.intents[u.id] = { move: o.move, target: o.target };
+  else delete s.intents[u.id];
+}
+function planAll(s: TRun) {
+  s.intents = {};
+  for (const u of standing(s.enemies)) plan(s, u);
+}
+/**
+  The order an enemy carries out at its turn: its intent. When the target has fallen an attack
+  goes to the next standing companion in row order (the workshop's redirect rule, mirrored) and a
+  support picks again among its allies, the most hurt first; the move stays the same. An intent
+  that is somehow not usable is chosen afresh.
+*/
+export function resolveIntent(s: TRun, u: Fighter): Order | null {
+  const i = s.intents?.[u.id];
+  if (i && u.moves[i.move] && ready(u, i.move)) {
+    const legal = legalTargets(s, u, i.move);
+    if (legal.some((t) => t.id === i.target)) return { move: i.move, target: i.target };
+    if (legal.length) {
+      const m = u.moves[i.move];
+      const row = m.power > 0 || m.parts.some((p) => p.aim === "enemy") ? foesOf(s, u) : null;
+      if (row) {
+        const from = row.findIndex((t) => t.id === i.target);
+        for (let k = 1; k <= row.length; k++) {
+          const t = row[(from + k) % row.length];
+          if (t.hp > 0) return { move: i.move, target: t.id };
+        }
+      }
+      const hurt = [...legal].sort((a, b) => a.hp / a.max - b.hp / b.max)[0];
+      return { move: i.move, target: hurt.id };
+    }
+  }
+  return enemyChoice(s, u);
+}
+
 /** One unit's action: the order resolves, then its next turn is placed on the timeline. */
 function act(s: TRun, u: Fighter, q: Order | null, emit: (e: PEvent) => void) {
   for (const t of all(s)) t.shields = t.shields.filter((sh) => sh.from !== u.id);
@@ -194,6 +238,8 @@ function act(s: TRun, u: Fighter, q: Order | null, emit: (e: PEvent) => void) {
       t.delay = 0;
     }
   s.turns++;
+  for (const id of Object.keys(s.intents ?? {})) if (!s.enemies.some((e) => e.id === id && e.hp > 0)) delete s.intents[id];
+  if (u.enemy && standing(s.team).length && standing(s.enemies).length) plan(s, u);
   const totals: [number, number] = [total(s.team), total(s.enemies)];
   const low = s.lows ?? [Infinity, Infinity];
   s.stalled = totals[0] < low[0] || totals[1] < low[1] ? 0 : s.stalled + 1;
@@ -205,11 +251,13 @@ function run(s: TRun, events: PEvent[]) {
   s.active = null;
   for (let guard = 0; guard < 500; guard++) {
     if (!standing(s.team).length) {
+      s.intents = {};
       s.phase = "lost";
       s.log.push("The squad has fallen.");
       return;
     }
     if (!standing(s.enemies).length) {
+      s.intents = {};
       const last = roomsFor(s.rules).length - 1;
       const xp = s.room === last ? FINAL_ENCOUNTER_XP : ENCOUNTER_XP;
       s.xp += xp;
@@ -218,6 +266,7 @@ function run(s: TRun, events: PEvent[]) {
       return;
     }
     if (s.stalled >= STALL_TURNS_PER_UNIT * standing(all(s)).length) {
+      s.intents = {};
       s.phase = "retreated";
       s.log.push(STALLED_LOG);
       return;
@@ -229,7 +278,10 @@ function run(s: TRun, events: PEvent[]) {
       s.active = u.id;
       return;
     }
-    act(s, u, enemyChoice(s, u), emit);
+    const order = resolveIntent(s, u);
+    const meant = s.intents[u.id];
+    if (order && meant && meant.move === order.move && meant.target !== order.target) emit({ kind: "redirect", actor: u.id, from: meant.target, to: order.target });
+    act(s, u, order, emit);
   }
 }
 /** Is this order legal for the companion whose turn it is? */

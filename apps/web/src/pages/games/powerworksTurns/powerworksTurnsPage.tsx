@@ -1,8 +1,10 @@
 // Tier: immersive. Powerworks, turn by turn (docs/design/powerworks-turn-screen.md, "UX pass,
-// 2026-09-29"): a timeline decides who acts next; on a companion's turn its four answer keys
-// already carry their result on every target. Enemies play back between turns, one beat at a
-// time, with a turn banner, a spotlit actor and a turn rail answering "whose turn, is it mine,
-// what just happened, what happens next" throughout.
+// 2026-09-29"; docs/design/powerworks-intents-and-keys.md): a timeline decides who acts next; on a
+// companion's turn its four move keys each show one power number, choosing a key shows what it would
+// land on each target's plate, and choosing a target acts. Each enemy has committed to a move and a
+// target, shown on its plate. Enemies play back between turns, one beat at a time, with a turn banner,
+// a spotlit actor and a turn rail answering "whose turn, is it mine, what just happened, what happens
+// next" throughout.
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ArrowLeft, BookOpen, Menu, ScrollText, RotateCcw, RotateCw, Smartphone, X } from "lucide-react";
@@ -34,10 +36,12 @@ import {
   knockoutHold,
   beatsFell,
   revivedWords,
-  hitDuring,
   withWeakened,
   keyNote,
+  previewsOf,
+  actsOnPress,
   type FloatItem,
+  type KeyView,
   type Hold,
   type TitleCard,
   type Beat,
@@ -51,9 +55,10 @@ import { TurnBanner, PlaybackTools } from "./banner";
 import { Playback, beatTiming, type BeatPhase } from "./playback";
 import { BriefingPanel, CampPanel, EndPanel, RecordPanel, RestartPanel, RetreatPanel, TitleCardView } from "./panels";
 import { GuidePanel } from "./guide";
-import { cellId, isPhoneLandscape, tapStep } from "./phone";
+import { isPhoneLandscape, keyPressStep } from "./phone";
 import { PowerworksEnvironment } from "../powerworksEnvironment";
 import "./powerworksTurns.css";
+import "./powerworksIntents.css";
 import "./powerworksPhone.css";
 
 type Moment = { actor: string; beats: Beat[]; words: string };
@@ -236,11 +241,14 @@ export default function PowerworksTurnsPage() {
   const [beatPhase, setBeatPhase] = useState<BeatPhase>("approach");
   const [skipPlayback, setSkipPlayback] = useState(false);
   const [panel, setPanel] = useState<Panel>(null);
-  const [armedAlly, setArmedAlly] = useState<{ index: number } | null>(null);
+  // The key that waits for a target (selected), and the key under the pointer or focus (hovered): while
+  // either is set, each plate shows what that move would land on it (the hovered one wins).
+  const [selectedKey, setSelectedKey] = useState<number | null>(null);
+  const [hoverKey, setHoverKey] = useState<number | null>(null);
+  const [focusKey, setFocusKey] = useState<number | null>(null);
+  // The enemy or squadmate under the pointer while a key waits for its target: ringed, with an aim line.
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
-  // Units a hovered key lands on (a self-only key, an ally cell): the stage rings them.
-  const [hoverUnits, setHoverUnits] = useState<string[]>([]);
-  const ringed = (id: string) => !busy && (hoverTarget === id || hoverUnits.includes(id));
+  const ringed = (id: string) => !busy && hoverTarget === id;
   const [speed, setSpeed] = useState<1 | 2>(readSpeed);
   const chooseSpeed = (v: 1 | 2) => {
     setSpeed(v);
@@ -257,10 +265,9 @@ export default function PowerworksTurnsPage() {
   const [notice, setNotice] = useState<string | null>(null);
   const { phone, w: boxW, h: boxH, zoom } = useConsoleBox();
   const noHover = useNoHover();
-  // Phone mode on a touch screen: a first tap on a key cell previews it (rings who it lands on),
-  // the second tap on the same cell uses it. `previewed` is that cell's id (phone.ts).
+  // Phone mode on a touch screen: a tap selects a key (its numbers show on the plates); a key that acts on
+  // its own needs a second tap on the same key, a key that needs a target waits for a tap on an enemy.
   const twoTap = phone && noHover;
-  const [previewed, setPreviewed] = useState<string | null>(null);
   // Round 7, item 2: a hover applies only after the pointer moves. When the active companion changes
   // (or a panel opens) the pointer is idle until it travels a few pixels, so keys that appear under a
   // resting pointer arrive with no frame and no ring. `pointerAt` follows every move; `idleAt` is where
@@ -322,16 +329,17 @@ export default function PowerworksTurnsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [run.room]);
 
-  // A preview belongs to the moment it was made in: acting, a new active companion or a panel ends it.
+  // A selection belongs to the moment it was made in: acting, a new active companion or a panel ends it.
   useEffect(() => {
-    setPreviewed(null);
+    setSelectedKey(null);
+    setHoverKey(null);
   }, [busy, view.active?.id, panel]);
-  // A new active companion arrives with nothing hovered, armed or previewed, whatever the pointer rests on.
+  // A new active companion arrives with nothing hovered or selected, whatever the pointer rests on.
   useEffect(() => {
     setHoverTarget(null);
-    setHoverUnits([]);
-    setArmedAlly(null);
-    setPreviewed(null);
+    setSelectedKey(null);
+    setHoverKey(null);
+    setFocusKey(null);
     liveRef.current = false;
     idleAt.current = pointerAt.current;
     setPointerLive(false);
@@ -350,14 +358,13 @@ export default function PowerworksTurnsPage() {
     window.addEventListener("pointermove", onMove);
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
-  // Touch has no hover: a tap anywhere but a cell or a plate clears the preview and its ring.
+  // Touch has no hover: a tap anywhere but a key or a plate puts the selected key back.
   useEffect(() => {
     if (!twoTap) return;
     const onDown = (e: PointerEvent) => {
-      if ((e.target as Element | null)?.closest?.(".pwt-cell, .pwt-plate")) return;
-      setPreviewed(null);
+      if ((e.target as Element | null)?.closest?.(".pwt-key, .pwt-plate, .pwt-keybar")) return;
+      setSelectedKey(null);
       setHoverTarget(null);
-      setHoverUnits([]);
     };
     document.addEventListener("pointerdown", onDown);
     return () => document.removeEventListener("pointerdown", onDown);
@@ -442,12 +449,20 @@ export default function PowerworksTurnsPage() {
   function act(index: number, target: string) {
     if (busy) return;
     dismissNote();
-    setArmedAlly(null);
+    setSelectedKey(null);
+    setHoverKey(null);
     setHoverTarget(null);
-    setHoverUnits([]);
-    setPreviewed(null);
     // A key that only acts on its user has no cell to name a target: the user is the target.
     dispatch({ kind: "act", order: { move: index, target: target || view.active?.id || "" } });
+  }
+
+  /** Press a key: it acts on the press alone, or it is selected (or unselected) to wait for its target. */
+  function pressKey(k: KeyView) {
+    if (busy || k.state !== "ready") return;
+    const step = keyPressStep(twoTap, selectedKey, k.index, actsOnPress(k));
+    if (step === "select") setSelectedKey(k.index);
+    else if (step === "unselect") setSelectedKey(null);
+    else act(k.index, k.aim === "now" ? "" : k.cells[0]?.target ?? "");
   }
 
   function pass() {
@@ -481,49 +496,44 @@ export default function PowerworksTurnsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [busy]);
 
-  // Keyboard: 1-4 picks a key; while an aimed key is armed, A-F an enemy cell, 1-4 a
-  // squadmate cell; Escape backs out; P passes.
+  // Keyboard: 1-4 picks a key (a key that acts on its own acts); then A-F names an enemy, or 1-4 a
+  // squadmate when the key is aimed at one; Escape backs out; P passes.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (busy || panel || briefing || e.altKey || e.ctrlKey || e.metaKey) return;
       const field = (e.target as Element | null)?.closest?.("input, textarea, select");
       if (field) return;
       if (e.key === "Escape") {
-        setArmedAlly(null);
+        setSelectedKey(null);
         return;
       }
       if (e.key.toLowerCase() === "p") {
         pass();
         return;
       }
+      const chosen = selectedKey !== null ? view.keys.find((k) => k.index === selectedKey) : undefined;
       if (/^[1-4]$/.test(e.key)) {
         const i = Number(e.key) - 1;
+        if (chosen && chosen.aim === "ally") {
+          const cell = chosen.cells[i];
+          if (cell) act(chosen.index, cell.target);
+          return;
+        }
         const key = view.keys[i];
         if (!key || key.state !== "ready") return;
-        if (key.aim === "now") {
-          act(key.index, key.cells[0]?.target ?? view.active?.id ?? "");
-        } else if (key.aim === "ally" && armedAlly) {
-          const cell = key.cells[i];
-          if (cell) act(key.index, cell.target);
-        } else {
-          setArmedAlly({ index: i });
-        }
+        pressKey(key);
         return;
       }
-      if (armedAlly !== null) {
-        const key = view.keys[armedAlly.index];
-        if (!key) return;
-        if (key.aim === "enemy" && /^[a-f]$/i.test(e.key)) {
-          const letter = e.key.toUpperCase();
-          const cell = key.cells.find((c) => c.letter === letter);
-          if (cell) act(key.index, cell.target);
-        }
+      if (chosen && chosen.aim === "enemy" && /^[a-f]$/i.test(e.key)) {
+        const letter = e.key.toUpperCase();
+        const cell = chosen.cells.find((c) => c.letter === letter);
+        if (cell) act(chosen.index, cell.target);
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, busy, panel, briefing, armedAlly]);
+  }, [view, busy, panel, briefing, selectedKey, twoTap]);
 
   function restart() {
     const next = createTurnRun((run.seed + 1) >>> 0, "starter", RULES).state;
@@ -627,22 +637,34 @@ export default function PowerworksTurnsPage() {
     return out;
   };
 
-  // An enemy's hit chip keeps showing while beats play, re-read with the boost and hinder the
-  // enemy carries at this point of the playback and the health the companion has then: a hinder
-  // that lands shows as the struck number on the chip.
-  // While an enemy acts they are hidden: the chip is a forecast for the companion who has just acted,
-  // and it would disagree with the beat beside it (round 6, item 2). The settled state brings the
-  // chips back, recomputed for the companion whose turn it is.
-  const enemyShown = (e: (typeof view.enemies)[number]) => {
-    const u = withHp(e);
-    if (!busy || !u.hitOnActive || !view.active) return u;
-    const hp = shownHp?.[view.active.id] ?? view.active.hp;
-    return { ...u, hitOnActive: hitDuring(u.hitOnActive, { boost: u.boost, hinder: u.hinder, hp }) };
-  };
+  // Intent chips are not drawn while beats play (the plate keeps their space): an intent is about the next
+  // turn, and it must never disagree with the beat playing beside it. The settled state brings the enemies'
+  // freshly committed intents back.
+  // The matchup mark is for the companion whose turn it is; while beats play there is none, so it is not drawn either.
+  const enemyShown = (e: (typeof view.enemies)[number]) => ({ ...withHp(e), matchup: busy ? null : e.matchup });
 
   // The round and the rail during playback come from the beat being played: playback() replays
   // the clocks act by act, so a round that opens on an enemy's turn is the new round (banner,
   // rail divider and the enemy-turn card) from the moment that enemy acts.
+  // What the hovered (else the selected) key would land on each unit: drawn on that unit's plate.
+  const shownKey = busy ? null : hoverKey ?? focusKey ?? selectedKey;
+  const shownKeyView = shownKey !== null ? view.keys.find((k) => k.index === shownKey && k.state === "ready") : undefined;
+  const standingSquad = useMemo(() => view.squad.filter((s) => !s.down).map((s) => s.id), [view.squad]);
+  const previews = useMemo(
+    () => (shownKeyView && view.active ? previewsOf(shownKeyView, view.active.id, standingSquad) : {}),
+    [shownKeyView, view.active, standingSquad]
+  );
+  const anyPreview = Object.keys(previews).length > 0;
+  // The selected key's legal targets: pressing one of these plates uses the key on it (a self or whole-squad key acts on the key alone).
+  const chosenKey = !busy && selectedKey !== null ? view.keys.find((k) => k.index === selectedKey && k.state === "ready") : undefined;
+  const pickable = useMemo(
+    () => (chosenKey && chosenKey.aim !== "now" && view.active ? previewsOf(chosenKey, view.active.id, standingSquad) : {}),
+    [chosenKey, view.active, standingSquad]
+  );
+  const previewFor = (id: string) => (shownKeyView && !busy ? previews[id] : undefined);
+  const offTarget = (id: string, down: boolean) => !busy && anyPreview && !previews[id] && !down;
+  const pickFor = (id: string) => (chosenKey && pickable[id] ? () => act(chosenKey.index, id) : undefined);
+
   const beatNow = busy && moment ? moment.beats[0] : null;
   const shownRound = beatNow ? beatNow.round : view.round;
   const rail = beatNow ? beatNow.rail : view.rail;
@@ -889,7 +911,7 @@ export default function PowerworksTurnsPage() {
   // Targeting hover (storyboard "choosing" step): hovering a key cell rings its enemy target
   // and draws a faint aim line from the active companion.
   const aimLine = useMemo(() => {
-    if (!hoverTarget || !view.active || busy) return null;
+    if (!hoverTarget || !view.active || busy || !pickable[hoverTarget]) return null;
     const stage = stageRef.current;
     if (!stage) return null;
     const from = stage.querySelector<HTMLElement>(`[data-unit="${view.active.id}"] .pwt-figure`);
@@ -906,7 +928,7 @@ export default function PowerworksTurnsPage() {
       y2: (toBox.top + toBox.height / 2 - stageBox.top) / zoomFactor,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hoverTarget, view.active?.id, busy]);
+  }, [hoverTarget, view.active?.id, busy, pickable]);
 
   return (
     <main className="pwt" data-tier="immersive" id="main" data-busy={busy ? "true" : "false"} data-pointer={pointerLive ? "live" : "idle"}>
@@ -941,6 +963,7 @@ export default function PowerworksTurnsPage() {
                 actorLetter={bannerLetter}
                 line={ended ? "" : beatWords || (busy || phone ? "" : station?.text ?? since.text)}
                 lineIsSince={!ended && !beatWords && !busy && !station && !!since.text && !phone}
+                prompt={chosenKey ? "Now choose a target." : "Choose a move."}
                 note={phone && shownNote ? shownNote.short : null}
                 noteId={phone && shownNote ? shownNote.id : undefined}
                 onOpenRecord={() => setPanel("record")}
@@ -1051,7 +1074,7 @@ export default function PowerworksTurnsPage() {
                 <EnemyPlate
                   key={e.id}
                   u={enemyShown(e)}
-                  forecastOff={busy && actorIsEnemy}
+                  intentOff={busy}
                   lit={busy && actorId === e.id}
                   activeName={view.active?.name}
                   spotlit={spotlightId === e.id}
@@ -1060,19 +1083,14 @@ export default function PowerworksTurnsPage() {
                   targeted={ringed(e.id)}
                   impactTarget={impactTargets.includes(e.id)}
                   struck={struckIds.includes(e.id)}
+                  preview={previewFor(e.id)}
+                  previewKey={shownKeyView?.name ?? ""}
+                  offTarget={offTarget(e.id, e.down)}
+                  onPick={pickFor(e.id)}
                   onHover={(hovering) => {
-                    if (!hovering || liveRef.current || twoTap) setHoverTarget(hovering ? e.id : null);
+                    if (!hovering) setHoverTarget(null);
+                    else if (liveRef.current || twoTap) setHoverTarget(e.id);
                   }}
-                  onTap={
-                    twoTap
-                      ? () => {
-                          // A tap on an enemy previews that enemy and drops any cell that was waiting for its second tap.
-                          setPreviewed(null);
-                          setHoverUnits([]);
-                          setHoverTarget(e.id);
-                        }
-                      : undefined
-                  }
                 />
               ))}
             </div>
@@ -1088,6 +1106,14 @@ export default function PowerworksTurnsPage() {
                   targeted={ringed(u.id)}
                   impactTarget={impactTargets.includes(u.id)}
                   struck={struckIds.includes(u.id)}
+                  preview={previewFor(u.id)}
+                  previewKey={shownKeyView?.name ?? ""}
+                  offTarget={offTarget(u.id, u.down)}
+                  onPick={pickFor(u.id)}
+                  onHover={(hovering) => {
+                    if (!hovering) setHoverTarget(null);
+                    else if (liveRef.current || twoTap) setHoverTarget(u.id);
+                  }}
                 />
               ))}
             </div>
@@ -1152,24 +1178,16 @@ export default function PowerworksTurnsPage() {
             {view.keys.map((k) => (
               <KeyCard
                 key={`${view.active!.id}-${k.index}`}
-                pointerLive={pointerLive}
                 keyView={k}
-                squad={view.squad.filter((s) => s.id !== view.active!.id && !s.down)}
-                activeId={view.active!.id}
-                disabled={busy}
-                onAct={(target) => act(k.index, target)}
-                twoTap={twoTap}
-                previewed={previewed}
-                onPreview={setPreviewed}
-                onHoverTarget={(id) => {
-                  if (id === null || liveRef.current || twoTap) setHoverTarget(id);
+                armed={k.state === "ready" && !busy}
+                selected={selectedKey === k.index}
+                onPress={() => pressKey(k)}
+                onHover={(on) => {
+                  if (!on) setHoverKey(null);
+                  else if (liveRef.current || twoTap) setHoverKey(k.index);
                 }}
-                onHoverUnits={(ids) => {
-                  if (ids === null || liveRef.current || twoTap) setHoverUnits(ids ?? []);
-                }}
-                litTargets={busy || !hoverTarget ? [] : [hoverTarget]}
+                onFocusKey={(on) => setFocusKey(on ? k.index : null)}
                 noted={!!shownNote && shownNote.keyIndex === k.index}
-                activeName={view.active!.name}
               />
             ))}
             <button type="button" className="pwt-pass" disabled={busy} onClick={pass}>

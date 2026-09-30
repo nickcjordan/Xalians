@@ -1,8 +1,9 @@
 import React from "react";
-import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap } from "lucide-react";
+import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap, HeartPulse } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import { DeltaChip, SpotlightMarks } from "./banner";
-import type { EnemyView, Marks, SquadView } from "./view";
+import { SupportIcon, SUPPORT_WORD } from "./support";
+import type { EnemyView, IntentView, Marks, Preview, SquadView } from "./view";
 
 /**
   The enemy hit's own glyph (UX pass 2, round 5): a jagged burst, an impact. The swords stay the
@@ -157,6 +158,10 @@ export function SquadPlate({
   impactTarget = false,
   struck = false,
   onHover,
+  preview,
+  previewKey = "",
+  offTarget = false,
+  onPick,
 }: {
   u: SquadView;
   lit?: boolean;
@@ -174,21 +179,43 @@ export function SquadPlate({
   /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
   struck?: boolean;
   onHover?: (hovering: boolean) => void;
+  /** What the hovered or selected key would land here (a heal, a shield, a boost). */
+  preview?: Preview;
+  previewKey?: string;
+  /** A key is hovered or selected and this unit is not one it can name: the plate steps back. */
+  offTarget?: boolean;
+  /** The plate is a legal target of the selected key: pressing it uses the key on it. */
+  onPick?: () => void;
 }) {
   const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0;
   return (
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${u.active ? "active" : ""} ${lit ? "lit" : ""} ${
         spotlit ? "spotlit" : ""
-      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""}`}
+      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""}`}
       data-unit={u.id}
-      onMouseEnter={onHover ? () => onHover(true) : undefined}
+      onMouseMove={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
+      onClick={onPick}
+      role={onPick ? "button" : undefined}
+      tabIndex={onPick ? 0 : undefined}
+      aria-label={onPick ? `Use ${previewKey} on ${u.name}` : undefined}
+      onKeyDown={
+        onPick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onPick();
+              }
+            }
+          : undefined
+      }
     >
       <div className="pwt-body">
         {spotlit && <SpotlightMarks />}
         <Figure art={u.art} element={u.element} />
         <span className="pwt-ground" aria-hidden="true" />
+        {preview && <PreviewBadge p={preview} keyName={previewKey} />}
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
@@ -206,118 +233,223 @@ export function SquadPlate({
   );
 }
 
-/** The hit's own glyph, number, lethal skull and matchup chevron, shared by the Guide's chip and the plate's box. */
-function HitBody({ hit }: { hit: NonNullable<EnemyView["hitOnActive"]> }) {
-  return (
-    <span className="pwt-hit-body">
-        <ImpactMark />
-        {hit.before !== undefined && (
-            <>
-              <s className="pwt-hit-before">{hit.before}</s>
-              <span className="pwt-hit-arrow" aria-hidden="true">
-              →
-              </span>
-            </>
-        )}
-        {hit.step === 0 ? <Ban /> : hit.n}
-        {hit.lethal && <Skull className="pwt-hit-skull" />}
-        {/* The chevron's direction is the damage (more, less); its color is who that favors:
-            a strong hit on your companion is bad for you, a weak one is good (the same rule as
-            the key cells, where a strong hit on an enemy is good for you). A hit that knocks the
-            companion out is never dressed as good news: its chevron goes neutral. */}
-        {hit.step > 1 && (
-            <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "bad"}`}>
-              <ChevronUp />
-            </span>
-        )}
-        {hit.step > 0 && hit.step < 1 && (
-            <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "good"}`}>
-              <ChevronDown />
-            </span>
-        )}
-    </span>
-  );
+/** The matchup chevron beside a number: up is more damage, down is less; the color says who that favors. */
+function Chevron({ step, tone }: { step: number; tone: "you" | "them" | "neutral" }) {
+  if (step > 1)
+    return (
+      <span className={`pwt-cell-chevron-wrap ${tone === "you" ? "good" : tone === "them" ? "bad" : "neutral"}`}>
+        <ChevronUp />
+      </span>
+    );
+  if (step > 0 && step < 1)
+    return (
+      <span className={`pwt-cell-chevron-wrap ${tone === "you" ? "bad" : tone === "them" ? "good" : "neutral"}`}>
+        <ChevronDown />
+      </span>
+    );
+  return null;
 }
 
-/** The enemy's strongest ready hit on the acting companion at its next turn. */
-export function HitChip({ hit, who, off = false }: { hit: NonNullable<EnemyView["hitOnActive"]>; who: string; off?: boolean }) {
+/**
+  The matchup mark on an enemy's plaque: the acting companion's element against this enemy's, said once
+  per enemy (every attack takes its creature's element). Nothing on a neutral matchup.
+*/
+export function MatchupMark({ step, who }: { step: number | null; who?: string }) {
+  if (step === null || step === 1) return null;
+  const by = who ? ` for ${who}` : "";
+  if (step === 0)
+    return (
+      <span className="pwt-match immune" title={`No effect${by}: the element chart gives 0`} aria-label={`no effect${by}`} data-match="immune">
+        <Ban />
+        <span>no effect</span>
+      </span>
+    );
+  const strong = step > 1;
   return (
     <span
-      className={`pwt-hit-on-active ${hit.lethal ? "lethal" : ""} ${off ? "off" : ""}`}
-      aria-label={
-        hit.step === 0
-          ? `hits ${who} for no effect`
-          : `hits ${who} for ${hit.n}${hit.before !== undefined ? `, weakened from ${hit.before}` : ""}${
-              hit.step > 1 ? ", strong" : hit.step < 1 ? ", weak" : ""
-            }${hit.lethal ? `, knocks ${who} out` : ""}`
-      }
-      title={
-        hit.step === 0
-          ? `Its strongest hit on ${who} at its next turn does no effect`
-          : `Its strongest hit on ${who} at its next turn: ${hit.n}${
-              hit.step > 1 ? " (strong)" : hit.step < 1 ? " (weak)" : ""
-            }${hit.lethal ? `. That equals or exceeds ${who}'s health: it knocks ${who} out.` : ""}`
-      }
+      className={`pwt-match ${strong ? "strong" : "weak"}`}
+      title={`${strong ? "Strong" : "Weak"} matchup${by}`}
+      aria-label={`${strong ? "strong" : "weak"} matchup${by}`}
+      data-match={strong ? "strong" : "weak"}
     >
-      <HitBody hit={hit} />
-    </span>
-  );
-}
-
-/** A stronger hit that is resting now, shown with the turns until it can act. */
-export function ComingChip({ coming, who, off = false }: { coming: NonNullable<EnemyView["hitComing"]>; who: string; off?: boolean }) {
-  return (
-    <span
-      className={`pwt-hit-on-active coming ${off ? "off" : ""}`}
-      aria-label={`a stronger hit on ${who}, ${coming.n}, is resting: ready ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn`}
-      title={`Resting: its stronger hit on ${who}, ${coming.n}${
-        coming.step > 1 ? " (strong)" : coming.step < 1 ? " (weak)" : ""
-      }, is usable ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn`}
-    >
-      <ImpactMark />
-      {coming.step === 0 ? <Ban /> : coming.n}
-      <span className="pwt-hit-in">in {coming.turns}</span>
+      {strong ? <ChevronUp /> : <ChevronDown />}
+      <span>{strong ? "strong" : "weak"}</span>
     </span>
   );
 }
 
 /**
-  The enemy's forecast, one chip with its subject (round 8, item 5): a small "on Avilily" caption names whose health the
-  hit is on, the strongest ready hit sits under it, and the stronger hit that is resting folds in as a last line
-  ("then 64 in 2", turns counted after its next turn). One box, so a plate carries one hit chip and never two.
+  What an enemy has committed to (its intent), on its plate: the companion it is aimed at (portrait and
+  name), then the number it would land now, a skull when that is lethal. The move's name is on hover. A
+  support intent shows its kind and its recipient. Numbers and words in place, stated as facts.
 */
-export function EnemyHit({
-  hit,
-  coming,
-  who,
-  off = false,
-}: {
-  hit: EnemyView["hitOnActive"];
-  coming: EnemyView["hitComing"];
-  who: string;
-  off?: boolean;
-}) {
-  const label = [
-    hit
-      ? hit.step === 0
-        ? `hits ${who} for no effect`
-        : `hits ${who} for ${hit.n}${hit.before !== undefined ? `, weakened from ${hit.before}` : ""}${hit.step > 1 ? ", strong" : hit.step < 1 ? ", weak" : ""}${
-            hit.lethal ? `, knocks ${who} out` : ""
-          }`
-      : "",
-    coming ? `a stronger hit on ${who}, ${coming.n}, is resting: ready ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn` : "",
-  ]
-    .filter(Boolean)
-    .join("; ");
+export function IntentChip({ intent, off = false }: { intent: IntentView; off?: boolean }) {
+  const t = intent.target;
+  const who = t.self ? "itself" : t.name;
+  const isAttack = intent.kind === "attack";
+  const words = isAttack
+    ? intent.step === 0
+      ? `${intent.move} on ${who}: no effect`
+      : `${intent.move} on ${intent.area ? `${who} and every companion` : who}: ${intent.n}${intent.before !== undefined ? `, cut from ${intent.before} by its hinder` : ""}${
+          intent.step > 1 ? ", strong" : intent.step < 1 ? ", weak" : ""
+        }${intent.lethal ? `, knocks ${who} out` : ""}`
+    : `${intent.move} on ${who}: ${intent.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ")}`;
   return (
-    <span className={`pwt-hit-on-active pwt-hitbox ${hit?.lethal ? "lethal" : ""} ${coming ? "has-coming" : ""} ${off ? "off" : ""}`} aria-label={label} title={label}>
-      <span className="pwt-hit-on">on {who}</span>
-      {hit && <HitBody hit={hit} />}
-      {coming && (
-        <span className="pwt-hit-then">
-          then {coming.step === 0 ? "no effect" : coming.n} in {coming.turns}
+    <span className={`pwt-intent ${isAttack ? "attack" : "support"} ${intent.lethal ? "lethal" : ""} ${off ? "off" : ""}`} aria-label={`Next: ${words}`} title={`Next: ${words}`} data-intent={intent.move}>
+      <span className="pwt-intent-to">
+        {t.self ? (
+          <span className="pwt-intent-self">itself</span>
+        ) : (
+          <>
+            <span className="pwt-intent-portrait" aria-hidden="true">
+              <Portrait u={{ species: t.art, element: t.element }} small />
+            </span>
+            <span className="pwt-intent-name">{t.name}</span>
+          </>
+        )}
+      </span>
+      <span className="pwt-intent-what">
+        {isAttack ? (
+          <>
+            <ImpactMark />
+            {intent.before !== undefined && (
+              <>
+                <s className="pwt-hit-before">{intent.before}</s>
+                <span className="pwt-hit-arrow" aria-hidden="true">
+                  →
+                </span>
+              </>
+            )}
+            {intent.step === 0 ? <Ban /> : intent.n}
+            {intent.lethal && <Skull className="pwt-hit-skull" />}
+            {intent.area && <span className="pwt-intent-all">ALL</span>}
+            {/* The chevron's direction is the damage; its color is who that favors: strong on your companion is bad for you. */}
+            <Chevron step={intent.step} tone={intent.lethal ? "neutral" : "them"} />
+          </>
+        ) : (
+          intent.supports.map((s) => (
+            <span key={`${s.kind}-${s.aim}`} className={`pwt-intent-support ${s.kind}`}>
+              <SupportIcon kind={s.kind} />
+              {s.kind === "hinder" || s.kind === "delay" ? "-" : s.kind === "boost" ? "+" : ""}
+              {s.n}
+            </span>
+          ))
+        )}
+      </span>
+    </span>
+  );
+}
+
+/**
+  What the hovered or selected key would land on this unit, big and in the same place on every plate:
+  the number, a skull when it finishes, "no effect" when the chart gives 0. A hinder shows the enemy's
+  committed hit before and after; a support shows its number.
+*/
+export function PreviewBadge({ p, keyName }: { p: Preview; keyName: string }) {
+  let body: React.ReactNode;
+  let words: string;
+  let cls = "";
+  if (p.chips) {
+    body = (
+      <span className="pwt-preview-chips">
+        {p.chips.map((s) => (
+          <span key={`${s.kind}-${s.aim}`} className={`pwt-preview-chip ${s.kind}`}>
+            <SupportIcon kind={s.kind} />
+            {s.kind === "hinder" || s.kind === "delay" ? "-" : s.kind === "boost" ? "+" : ""}
+            {s.n}
+          </span>
+        ))}
+      </span>
+    );
+    words = p.chips.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ");
+  } else if (p.kind === "hit") {
+    if (p.immune) {
+      cls = "immune";
+      body = (
+        <span className="pwt-preview-num plain">
+          <Ban />
+          <span className="pwt-preview-word">no effect</span>
         </span>
-      )}
+      );
+      words = "no effect";
+    } else {
+      cls = p.finishes ? "finish" : "";
+      body = (
+        <>
+          <span className="pwt-preview-num">
+            {p.finishes && <Skull />}
+            {p.ownBefore !== undefined && (
+              <>
+                <s className="pwt-preview-before">{p.ownBefore}</s>
+                <span className="pwt-preview-arrow">→</span>
+              </>
+            )}
+            {p.n}
+            <Chevron step={p.step} tone="you" />
+          </span>
+          {(p.absorbed > 0 || p.rider) && (
+            <span className="pwt-preview-notes">
+              {p.absorbed > 0 && (
+                <span className="pwt-preview-note" title={`Its shield absorbs ${p.absorbed} first`}>
+                  <Shield />
+                  {p.absorbed}
+                </span>
+              )}
+              {p.rider && (
+                <span className="pwt-preview-note rider" data-saves={p.saves ? "" : undefined}>
+                  {p.saves ? <Skull /> : <Swords />}
+                  <s>{p.rider.before}</s>
+                  <span className="pwt-preview-arrow">→</span>
+                  {p.rider.after}
+                </span>
+              )}
+            </span>
+          )}
+        </>
+      );
+      words = `${p.n} damage${p.finishes ? ", finishes" : ""}${p.step > 1 ? ", strong" : p.step < 1 ? ", weak" : ""}${p.absorbed > 0 ? `, its shield absorbs ${p.absorbed} first` : ""}${
+        p.rider ? `; its committed hit on ${p.hitOn ?? "a companion"} falls from ${p.rider.before} to ${p.rider.after}` : ""
+      }`;
+    }
+  } else if (p.kind === "hinder") {
+    cls = "hinder";
+    const nothing = p.before === 0 && !p.hitOn;
+    body = nothing ? (
+      <span className="pwt-preview-num plain">
+        <Swords />
+        <span className="pwt-preview-word">no hit to cut</span>
+      </span>
+    ) : (
+      <>
+        <span className="pwt-preview-num">
+          {p.saves && <Skull className="saved" />}
+          <s className="pwt-preview-before">{p.before}</s>
+          <span className="pwt-preview-arrow">→</span>
+          {p.n}
+        </span>
+        <span className="pwt-preview-note" title={`Its committed hit${p.hitOn ? ` on ${p.hitOn}` : ""}`}>
+          <Swords />
+          its hit
+        </span>
+      </>
+    );
+    words = nothing ? "it has no attack committed for this to cut" : `its committed hit falls from ${p.before} to ${p.n}${p.saves ? ", no longer knocking out" : ""}`;
+  } else {
+    cls = p.kind;
+    body = (
+      <span className="pwt-preview-num">
+        {p.kind === "heal" && <HeartPulse />}
+        {p.kind === "shield" && <Shield />}
+        {p.kind === "boost" && <Zap />}
+        {p.kind === "heal" || p.kind === "boost" ? "+" : ""}
+        {p.n}
+      </span>
+    );
+    words = p.kind === "heal" ? `heals ${p.n}` : p.kind === "shield" ? `shield ${p.n}` : `next attack +${p.n}`;
+  }
+  return (
+    <span className={`pwt-preview ${cls}`} data-preview="" aria-label={`${keyName}: ${words}`}>
+      {body}
     </span>
   );
 }
@@ -333,12 +465,15 @@ export function EnemyPlate({
   impactTarget = false,
   struck = false,
   onHover,
-  onTap,
-  forecastOff = false,
+  intentOff = false,
+  preview,
+  previewKey = "",
+  offTarget = false,
+  onPick,
 }: {
   u: EnemyView;
   lit?: boolean;
-  /** The active companion's name, for the hit chip's words (paint review round 4, item 6). */
+  /** The active companion's name, for the matchup mark's words. */
   activeName?: string;
   /** This unit is the spotlit actor (UX pass): brighter, a floor ring, a head pointer. */
   spotlit?: boolean;
@@ -346,46 +481,63 @@ export function EnemyPlate({
   dimmed?: boolean;
   /** Health change since the player's previous turn ("-7" or "+5"); 0 shows no chip. */
   delta?: number;
-  /** Hovering the key cell that targets this enemy rings it (storyboard "choosing" step). */
+  /** The pointer is on this enemy while a key waits for a target: it is ringed. */
   targeted?: boolean;
   /** This unit is the current beat's target, at the impact phase: flash and recoil. */
   impactTarget?: boolean;
   /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
   struck?: boolean;
   onHover?: (hovering: boolean) => void;
-  /** Touch on a phone: tapping the plate rings it and lights its cell in every key. */
-  onTap?: () => void;
   /**
-    While an enemy acts its hit chips are hidden (kept in the layout so the plate does not move): the
-    chip forecasts a hit on the companion who has just acted, and it must never disagree with the
-    beat playing beside it (UX pass 2, round 6).
+    While the enemies act the intent chips are not drawn (the space is kept, so the plate does not
+    move): an intent is a promise about the next turn, and it must never disagree with the beat
+    playing beside it. The settled state brings them back, freshly committed.
   */
-  forecastOff?: boolean;
+  intentOff?: boolean;
+  /** What the hovered or selected key would land here (the number, drawn big on the plate). */
+  preview?: Preview;
+  previewKey?: string;
+  /** A key is hovered or selected and this unit is not one it can name: the plate steps back. */
+  offTarget?: boolean;
+  /** The plate is a legal target of the selected key: pressing it uses the key on it. */
+  onPick?: () => void;
 }) {
-  const hit = u.hitOnActive;
-  const who = activeName ?? "the active companion";
-  const coming = u.hitComing;
-  // While an enemy acts, its forecast chips are not drawn at all and, with no marks of its own, the
-  // chip row collapses: no empty well under the name (round 7, item 8).
-  const showHit = !!hit && !u.down && !forecastOff;
-  const showComing = !!coming && !u.down && !forecastOff;
+  const intent = u.intent;
+  const showIntent = !!intent && !u.down;
+  const who = activeName;
   return (
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
         dimmed ? "dimmed" : ""
-      } ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""}`}
+      } ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""} ${isBoss(u.species) ? "boss" : ""}`}
       data-unit={u.id}
-      onMouseEnter={onHover ? () => onHover(true) : undefined}
+      data-letter={u.letter}
+      onMouseMove={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
-      onClick={onTap}
+      onClick={onPick}
+      role={onPick ? "button" : undefined}
+      tabIndex={onPick ? 0 : undefined}
+      aria-label={onPick ? `Use ${previewKey} on ${u.name} ${u.letter}` : undefined}
+      onKeyDown={
+        onPick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onPick();
+              }
+            }
+          : undefined
+      }
     >
       <div className="pwt-body">
         {spotlit && <SpotlightMarks />}
         <Figure art={u.art} element={u.element} letter={u.letter} />
         <span className="pwt-ground" aria-hidden="true" />
+        {preview && <PreviewBadge p={preview} keyName={previewKey} />}
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
+        {!u.down && <MatchupMark step={u.matchup} who={who} />}
         {isBoss(u.species) && <span className="pwt-guardian-tag">Guardian</span>}
         <span className="pwt-name">
           {u.letter} · {u.name}
@@ -397,9 +549,9 @@ export function EnemyPlate({
             <MarkChips marks={u} />
           </div>
         )}
-        {(showHit || showComing) && (
-          <div className="pwt-marks hit">
-            <EnemyHit hit={showHit ? hit : null} coming={showComing ? coming : null} who={who} off={forecastOff} />
+        {showIntent && (
+          <div className="pwt-marks intent">
+            <IntentChip intent={intent!} off={intentOff} />
           </div>
         )}
       </div>
