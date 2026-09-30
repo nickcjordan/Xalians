@@ -157,19 +157,20 @@ def six_views(render):
     return row
 
 
-def width_profile(mask):
+def width_profile(mask, span=None):
+    """Widths per 2% row. span=(top, bottom) fixes the rows in pixels instead of the mask's bounding box."""
     rows = np.where(mask.any(axis=1))[0]
-    top, bottom = rows.min(), rows.max()
+    top, bottom = span if span else (rows.min(), rows.max())
     height = bottom-top
     # Body centerline: midpoint of the widest row in the top fifth (the ear fan,
     # centered on the head). The topmost row is often one off-center tuft.
-    band = range(top, int(top+.2*height))
+    band = range(max(top, rows.min()), int(top+.2*height))
     widest = max(band, key=lambda r: np.ptp(np.where(mask[r])[0]) if mask[r].any() else -1)
     cols = np.where(mask[widest])[0]
     cx = (cols.min()+cols.max())/2
     table = []
     for fraction in np.round(np.arange(0, 1.0001, .02), 2):
-        row = mask[min(bottom, int(top+fraction*height))]
+        row = mask[min(mask.shape[0]-1, int(top+fraction*height))]
         cols = np.where(row)[0]
         if not len(cols):
             table.append({'at': float(fraction), 'full': 0.0, 'central': 0.0})
@@ -191,14 +192,31 @@ def named(table):
             'hips': window(.46, .56, 'central', max)}
 
 
+# Model rows are fixed in world space: the floor, and the loop-start figure's
+# height (assembled-0156, floor -.957 to crown .9035). Normalizing by each
+# render's own bounding box let a raised ear tip rescale every body reading.
+FLOOR_Z = -.957
+FIXED_HEIGHT = 1.8605
+
+
+def model_span(render, view):
+    geometry = json.loads((render/'geometry.json').read_text(encoding='utf-8'))
+    camera = next(c for c in geometry['cameras'] if c['name'] == view)
+    width, height = camera['resolution']
+    per_unit = max(width, height)/camera['orthoScale']
+    center_z = camera['matrixWorld'][2][3]
+    row = lambda z: height/2-(z-center_z)*per_unit
+    return round(row(FLOOR_Z+FIXED_HEIGHT)), round(row(FLOOR_Z))
+
+
 def measurements(name):
     render = work(name)/'render'
     reference = np.array(Image.open(EVIDENCE/'identity-run-0001.png').convert('L')) < 200
-    out = {'note': 'Widths are fractions of figure height. The reference poses hands on hips, so its '
+    out = {'note': 'Widths are fractions of figure height; for the model that is a fixed world height (the loop-start figure, 1.8605 from the floor), so raising an ear tip does not rescale the body. The reference poses hands on hips, so its '
                    'central torso run can include arms at waist and hip rows.'}
     for view, (a, b) in REFERENCE_PANELS.items():
         ref = width_profile(reference[:, a:b])
-        model = width_profile(np.array(Image.open(render/f'{view}.png').getchannel('A')) > 20)
+        model = width_profile(np.array(Image.open(render/f'{view}.png').getchannel('A')) > 20, model_span(render, view))
         out[view] = {'reference': named(ref), 'model': named(model),
                      'ratio': {k: (round(named(model)[k]/named(ref)[k], 3) if named(ref)[k] and named(model)[k] else None)
                                for k in named(ref)},
