@@ -1123,8 +1123,9 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	// on a phone the image is sparser still: most rows are gaps, wide enough for the stars behind to show
 	const jitterStep = Math.floor(sec * 2);
 	// a tear in the image holds with everything else, and comes on at most one hold in three
-	const tearing = jitterStep % 3 === 0;
-	const tearRow = Math.floor(hash(jitterStep, 5) * (size / rowH));
+	const tearHold = Math.floor(t3 * 2);
+	const tearing = tearHold % 3 === 1;
+	const tearRow = Math.floor(hash(tearHold, 5) * (size / rowH));
 	// now and then the whole image rolls, as a picture held by a weak signal does
 	const roll = 8 * Math.exp(-Math.pow((sec % 2.6 - 0.2) / 0.22, 2));
 	// at most two bright rows at a time, travelling down the image
@@ -1156,7 +1157,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	if (cyan) copy(cyan, 0.8 * 1.4 * a, 4.5, 7);
 	copy(main, 1 * a, 0, 0);
 	// a few blocks of the image displaced sideways, as a bad frame does
-	if (jitterStep % 4 < 2) {
+	if (tearing) {
 		for (let k = 0; k < 3; k++) {
 			const sy = Math.floor(hash(jitterStep, k + 20) * (px * 0.8));
 			const sh = Math.max(3, Math.round(px * (0.03 + hash(jitterStep, k + 30) * 0.05)));

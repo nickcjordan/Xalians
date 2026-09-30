@@ -683,6 +683,9 @@ function chipBlur() {
 let GY = 410; // where the machine's feet stand, in stage units (a little lower in compact, where the machine is larger)
 const HORIZON = 396; // where the limb of the world flattens to
 let sceneBg: HTMLCanvasElement | null = null;
+let dustCv: HTMLCanvasElement | null = null;
+/** The lobes the warm ground's irregular edge is made of: centers and reaches as fractions of the front's radius. */
+const DUST_LOBES = [{ x: 0, y: 0.05, k: 1 }, { x: -0.3, y: 0.02, k: 0.86 }, { x: 0.32, y: 0.04, k: 0.9 }, { x: -0.12, y: -0.1, k: 0.92 }, { x: 0.15, y: 0.12, k: 0.82 }, { x: -0.42, y: 0.1, k: 0.62 }, { x: 0.46, y: 0.06, k: 0.64 }];
 const hazeTex: (HTMLCanvasElement | null)[] = [];
 function hazePuff(v: number) {
 	const hit = hazeTex[v];
@@ -796,7 +799,7 @@ const WISPS_BACK = (() => {
 	return Array.from({ length: 6 }, (_, k) => ({ x: (k / 5 - 0.5) * 520 + (r() - 0.5) * 60, y: 300 + r() * 80, rx: 110 + r() * 80, ry: 24 + r() * 18, a: 0.3 + r() * 0.08, ph: r() * TAU, sp: 0.4 + r() * 0.5, v: (k + 1) % 2 }));
 })();
 // the curl at the dome's edge: haze piled where it was pushed back
-const CURL = Array.from({ length: 12 }, (_, k) => ({ side: k % 2 ? 1 : -1, dy: (Math.floor(k / 2) - 2.5) * 6, r: 46 + ((k * 37) % 26), v: k % 2 }));
+const CURL = Array.from({ length: 15 }, (_, k) => ({ side: k % 2 ? 1 : -1, dy: (Math.floor(k / 2) - 2.5) * 6 - (k >= 12 ? 26 : 0), ahead: k >= 12 ? -30 : 0, r: 46 + ((k * 37) % 26), v: k % 2 }));
 
 type PutFn = (s: HTMLCanvasElement | null, x: number, y: number, r: number, a: number) => void;
 
@@ -1089,26 +1092,43 @@ export function createOutbreak(): Figure {
 					ctx.fillStyle = vg2;
 					ctx.fillRect(0, 0, W, HORIZON + 30);
 				}
-				// the cleared ground: warm dust (about #5a4636 near the pad), lit by the chip's pool and falling off toward the
-				// edge, never rising above the horizon
+				// the cleared ground: warm dust (about #5a4636 near the pad), lit by the chip's pool. Its edge is several feathered
+				// lobes of different reach (no straight or unbroken line), and its upper 35 percent thins into the distant red
 				if (Rf > 2) {
-					ctx.save();
-					frontPath();
-					ctx.clip();
-					ctx.beginPath();
-					ctx.rect(0, HORIZON - 4, W, H);
-					ctx.clip();
-					ctx.translate(CX, frontY);
-					ctx.scale(1, fry / Rf);
-					const dg = ctx.createRadialGradient(0, 8, 0, 0, 8, Rf * 1.1);
-					dg.addColorStop(0, css([90, 70, 54], 0.95));
-					dg.addColorStop(0.6, css([86, 66, 52], 0.85));
-					dg.addColorStop(0.9, css([80, 60, 48], 0.4));
-					dg.addColorStop(1, css([80, 60, 48], 0));
-					ctx.globalAlpha = clamp(sA * domeOn);
-					ctx.fillStyle = dg;
-					ctx.fillRect(-Rf * 1.2, -Rf * 1.2, Rf * 2.4, Rf * 2.4);
-					ctx.restore();
+					const dh = 300;
+					const dy0 = Math.round(frontY - fry * 1.25);
+					if (!dustCv) dustCv = canvasOf(W, dh);
+					const dgx = dustCv?.getContext('2d');
+					if (dustCv && dgx) {
+						dgx.setTransform(1, 0, 0, 1, 0, 0);
+						dgx.globalCompositeOperation = 'source-over';
+						dgx.globalAlpha = 1;
+						dgx.clearRect(0, 0, W, dh);
+						for (const lb of DUST_LOBES) {
+							dgx.save();
+							dgx.translate(CX + lb.x * Rf, frontY - dy0 + lb.y * fry);
+							dgx.scale(1, (fry * lb.k) / (Rf * lb.k));
+							const rr3 = Rf * lb.k;
+							const dg = dgx.createRadialGradient(0, 0, 0, 0, 0, rr3);
+							dg.addColorStop(0, css([90, 70, 54], 0.62));
+							dg.addColorStop(0.55, css([86, 66, 52], 0.5));
+							dg.addColorStop(0.85, css([80, 60, 48], 0.2));
+							dg.addColorStop(1, css([80, 60, 48], 0));
+							dgx.fillStyle = dg;
+							dgx.fillRect(-rr3, -rr3, rr3 * 2, rr3 * 2);
+							dgx.restore();
+						}
+						// its upper 35 percent fades out into the far red
+						dgx.globalCompositeOperation = 'destination-in';
+						const top = frontY - fry - dy0;
+						const vg4 = dgx.createLinearGradient(0, top, 0, top + fry * 2 * 0.35 + 1);
+						vg4.addColorStop(0, 'rgba(0,0,0,0)');
+						vg4.addColorStop(1, 'rgba(0,0,0,1)');
+						dgx.fillStyle = vg4;
+						dgx.fillRect(0, 0, W, dh);
+						ctx.globalAlpha = clamp(sA * domeOn * 1.4);
+						ctx.drawImage(dustCv, 0, dy0);
+					}
 				}
 
 				// wisps behind the machine, at their own pace
@@ -1245,12 +1265,17 @@ export function createOutbreak(): Figure {
 				const hp1 = hazePuff(1);
 				ctx.globalCompositeOperation = 'source-over';
 				// the front: an ellipse on the ground centered on the chip; the red ground band is outside it, warm dust inside
-				const drawHazes = (only: 'out' | 'in') => {
+				// the red ground band is drawn back by a soft, irregular front (each cloud thins as it is passed), never a cut
+				const drawHazes = () => {
 					for (const h of HAZES) {
 						const hp = h.v ? hp1 : hp0;
 						if (!hp) continue;
 						const x = h.x + Math.sin(sec * 0.05 * h.sp + h.ph) * 14;
-						let a = only === 'in' ? h.a * 0.05 : h.a * (1 - 0.15 * domeOn);
+						const ang = Math.atan2((h.y - frontY) / Math.max(1, fry), (x - CX) / Math.max(1, Rf));
+						const nz = 1 + 0.1 * (0.5 * Math.sin(3 * ang + 1) + 0.3 * Math.sin(5 * ang + 2) + 0.2 * Math.sin(9 * ang + 4));
+						const d = Rf > 2 ? Math.hypot((x - CX) / (Rf * nz), (h.y - frontY) / (fry * nz)) : 9;
+						const inside = 1 - smooth(0.8, 1.25, d);
+						let a = h.a * (1 - 0.15 * domeOn) * mix(1, 0.05, inside);
 						// nearer the machine's own face the haze lies thinner, so the console stays in view
 						if (Math.abs(x - CX) < 110 && h.y < 440) a *= 0.8;
 						if (a < 0.01) continue;
@@ -1258,27 +1283,22 @@ export function createOutbreak(): Figure {
 						ctx.drawImage(hp, x - h.rx, h.y - h.ry, h.rx * 2, h.ry * 2);
 					}
 				};
-				if (Rf < 2) drawHazes('out');
-				else {
-					ctx.save();
-					frontPath();
-					ctx.rect(0, 0, W, H);
-					ctx.clip('evenodd');
-					drawHazes('out');
-					ctx.restore();
-					ctx.save();
-					frontPath();
-					ctx.clip();
-					drawHazes('in');
-					ctx.restore();
-					// the ripple of light that leads the front out from the chip along the ground
+				drawHazes();
+				if (Rf > 2) {
+					// the ripple of light that leads the front out from the chip: a soft additive band on the ground plane,
+					// about 16 px wide, warm, peaking about 0.35 and fading as it widens
 					ctx.globalCompositeOperation = 'lighter';
-					ctx.strokeStyle = css([255, 226, 170]);
-					ctx.lineWidth = 3;
-					ctx.globalAlpha = clamp(0.55 * (1 - smooth(0.55, 1, domeOn)) * sA);
-					ctx.beginPath();
-					ctx.ellipse(CX, frontY, Rf * 1.02, fry * 1.02, 0, 0, TAU);
-					ctx.stroke();
+					ctx.save();
+					ctx.translate(CX, frontY);
+					ctx.scale(1, fry / Rf);
+					const rg5 = ctx.createRadialGradient(0, 0, Math.max(1, Rf - 9), 0, 0, Rf + 9);
+					rg5.addColorStop(0, css([224, 184, 132], 0));
+					rg5.addColorStop(0.5, css([224, 184, 132], 0.35));
+					rg5.addColorStop(1, css([224, 184, 132], 0));
+					ctx.globalAlpha = clamp((1 - smooth(0.4, 1, domeOn)) * sA);
+					ctx.fillStyle = rg5;
+					ctx.fillRect(-Rf - 12, -Rf - 12, (Rf + 12) * 2, (Rf + 12) * 2);
+					ctx.restore();
 					ctx.globalCompositeOperation = 'source-over';
 				}
 				// wisps drifting across the front of the machine: it stands in the red, until the dome pushes them out
@@ -1313,7 +1333,7 @@ export function createOutbreak(): Figure {
 				// the curl: haze piled on the ground where the front stops
 				if (domeOn > 0.02 && hp0 && hp1) {
 					for (const c of CURL) {
-						const cx = CX + c.side * Rf;
+						const cx = CX + c.side * (Rf + 22 + c.ahead);
 						const cy = frontY + c.dy * (0.4 + Rf * 0.1);
 						ctx.globalAlpha = clamp(0.4 * sA * Math.min(1, domeOn * 2));
 						ctx.drawImage(c.v ? hp1 : hp0, cx - c.r, cy - c.r * 0.45, c.r * 2, c.r * 0.9);

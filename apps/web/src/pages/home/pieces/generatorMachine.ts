@@ -599,7 +599,7 @@ export function seedR(kind: SeedKind, th: number, fins = true, v = 0) {
 		// a bell: a domed top, and a hem with four scallops about 3 px deep cut into its lower edge
 		if (Math.sin(th) < 0) return 1;
 		const phi = th - Math.PI / 2;
-		return Math.min(1.15, 0.45 / Math.max(0.22, Math.abs(Math.sin(th)))) * (1 - 0.14 * (0.5 + 0.5 * Math.cos(8 * phi)) * smooth(0.25, 0.7, Math.sin(th)));
+		return Math.min(1.15, 0.45 / Math.max(0.22, Math.abs(Math.sin(th)))) * (1 - 0.23 * (0.5 + 0.5 * Math.cos(8 * phi)) * smooth(0.25, 0.7, Math.sin(th)));
 	}
 	if (kind === 'apex') return 0.85; // all the same
 	return 1 + 0.1 * Math.cos(2 * th) - 0.16 * Math.sin(th); // Genesis: a plain oval seed
@@ -681,7 +681,7 @@ export type MachineLook = {
 	rim2?: RGB;
 };
 
-export const MEMBRANE_N = 30;
+export const MEMBRANE_N = 48;
 
 export function drawMachine(ctx: Ctx, S: MachineLook) {
 	const { sec, gel, light, apex, beatPulse, reading, dishCol, side } = S;
@@ -997,13 +997,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			}
 			const path = shape(stormW === 0);
 			path();
-			if (kindNow === 'sea' && apex < 0.5) {
-				const bc = mixRGB(tint, BLACK, 0.62 - 0.27 * apex);
-				const bg2 = ctx.createLinearGradient(0, y - r * 0.3, 0, y + r);
-				bg2.addColorStop(0, css(bc, (0.8 + 0.12 * apex) * a));
-				bg2.addColorStop(1, css(bc, 0.5 * (0.8 + 0.12 * apex) * a));
-				ctx.fillStyle = bg2;
-			} else ctx.fillStyle = fillC;
+			ctx.fillStyle = fillC;
 			ctx.fill();
 			// a lighter rim just inside it
 			ctx.save();
