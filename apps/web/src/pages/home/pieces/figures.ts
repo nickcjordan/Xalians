@@ -8,6 +8,8 @@ import type { Ctx, RGB } from './stage';
 export interface Figure {
 	/** How many beats it carries, in order. */
 	readonly stages: number;
+	/** Resolves once any pictures it paints from have loaded (it draws a fallback until then). Optional. */
+	ready?(): Promise<void>;
 	/** Enter afresh at `stage`: nothing shown yet, its clocks at the stage's start. */
 	reset(stage: number): void;
 	/** Jump to `stage`'s telling moment, fully shown (reduced motion, or no time to play it in). */
@@ -27,6 +29,15 @@ export interface Figure {
 	light(): RGB;
 	/** Draw it in stage units; `sec` only turns and drifts things. `compact`: its place is small (a phone), so it keeps fewer, larger things. */
 	draw(ctx: Ctx, sec: number, opts?: { compact?: boolean }): void;
+}
+
+/**
+ * Where a figure loads a picture from: the site path, unless a study page has handed it the picture inline
+ * (scripts/design/export-figure-study.cjs puts `window.__FIGURE_ASSETS__` there).
+ */
+export function assetUrl(path: string) {
+	const inline = typeof window !== 'undefined' ? (window as unknown as { __FIGURE_ASSETS__?: Record<string, string> }).__FIGURE_ASSETS__ : undefined;
+	return inline?.[path] ?? path;
 }
 
 export type FigureKey = 'generators' | 'outbreak';

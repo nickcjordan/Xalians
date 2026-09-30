@@ -36,7 +36,7 @@ const RAD = 300; // the disk's radius in stage units at the start
 const TILT = 0.5; // the disk's squash toward the viewer
 const ROLL = -0.2; // the tilt's own turn, so the disk is not level
 const SPIN = 0.03; // radians a second
-const ZOOM = 2.5; // how far 06 closes in
+const ZOOM = 1.4; // how far 06 closes in
 const EXT = 1.15; // half the plane the textures cover
 
 const WARM: RGB[] = [
@@ -203,7 +203,7 @@ for (const i of NEIGHBORS) {
 // the worlds a glint reaches in 06: one nearby dim world in each quarter, arriving one after another
 const GLINTS: { to: number; leave: number; fly: number }[] = (() => {
 	const out: { to: number; leave: number; fly: number }[] = [];
-	for (let q = 0; q < 4; q++) {
+	for (let q = 0; q < 5; q++) {
 		let best = -1;
 		let bd = 9;
 		WORLDS.forEach((w, i) => {
@@ -211,16 +211,16 @@ const GLINTS: { to: number; leave: number; fly: number }[] = (() => {
 			const dx = w.x - VALLERON.x;
 			const dy = w.y - VALLERON.y;
 			const d = Math.hypot(dx, dy);
-			if (d < 0.17 || d > 0.4) return;
+			if (d < 0.15 || d > 0.42) return;
 			const a = Math.atan2(dy, dx) + Math.PI;
-			if (Math.floor(((a + 0.5) / TAU) * 4) % 4 !== q) return;
+			if (Math.floor(((a + 0.5) / TAU) * 5) % 5 !== q) return;
 			const score = Math.abs(d - 0.27);
 			if (score < bd) {
 				bd = score;
 				best = i;
 			}
 		});
-		if (best >= 0) out.push({ to: best, leave: 2.9 + q * 0.42, fly: 1.35 });
+		if (best >= 0) out.push({ to: best, leave: 2.8 + q * 0.4, fly: 1.3 });
 	}
 	return out;
 })();
@@ -353,7 +353,6 @@ let eraser: HTMLCanvasElement | null = null;
 let softEraser: HTMLCanvasElement | null = null;
 let edgeMask: HTMLCanvasElement | null = null;
 let grainPat: CanvasPattern | null = null;
-let clearEdge: HTMLCanvasElement | null = null;
 function makeHazeParts(g0: CanvasRenderingContext2D) {
 	// a clean-edged round: the haze is taken out of it, and true dark is laid in it
 	const round = (stops: [number, string][]) => {
@@ -368,8 +367,6 @@ function makeHazeParts(g0: CanvasRenderingContext2D) {
 	};
 	eraser = round([[0, 'rgba(0,0,0,1)'], [0.88, 'rgba(0,0,0,1)'], [1, 'rgba(0,0,0,0)']]);
 	softEraser = round([[0, 'rgba(0,0,0,1)'], [0.4, 'rgba(0,0,0,0.75)'], [1, 'rgba(0,0,0,0)']]);
-	// where the haze curls back: a thin crimson edge
-	clearEdge = round([[0, 'rgba(176,48,58,0)'], [0.74, 'rgba(176,48,58,0)'], [0.9, 'rgba(176,48,58,0.22)'], [1, 'rgba(176,48,58,0)']]);
 	const m = canvasOf(HZ, HZ);
 	const mg = m?.getContext('2d');
 	if (m && mg) {
@@ -417,7 +414,7 @@ function makeHazeParts(g0: CanvasRenderingContext2D) {
 
 /** The clear round's radius in the galaxy's plane: a thin thinning round Valleron in 05, then 06's widening ring. */
 const thinR = (t0: number) => 0.07 * smooth(WORLDS[0].it - 0.3, WORLDS[0].it + 2, t0);
-const ringR = (t1: number) => 0.12 * easeOut(ramp(2.0, 3.5, t1));
+const ringR = (t1: number) => 0.3 * easeOut(ramp(1.6, 4.6, t1));
 const clearR = (t0: number, t1: number) => thinR(t0) + ringR(t1);
 
 /**
@@ -488,8 +485,8 @@ function paintHaze(st: HazeState, t0: number, t1: number) {
 		const R = clearR(t0, t1) * hk;
 		const grad = g.createRadialGradient(px, py, 0, px, py, R);
 		grad.addColorStop(0, 'rgba(0,0,0,0.88)');
-		grad.addColorStop(0.6, 'rgba(0,0,0,0.88)');
-		grad.addColorStop(0.92, 'rgba(0,0,0,0)');
+		grad.addColorStop(0.55, 'rgba(0,0,0,0.88)');
+		grad.addColorStop(1, 'rgba(0,0,0,0)');
 		g.fillStyle = grad;
 		g.globalAlpha = 1;
 		g.beginPath();
@@ -503,6 +500,16 @@ function paintHaze(st: HazeState, t0: number, t1: number) {
 		g.closePath();
 		g.fill();
 	}
+	// each world a glint reaches warms the haze back round it
+	if (softEraser)
+		for (const gl of GLINTS) {
+			const lt = smooth(0, 1.3, t1 - gl.leave - gl.fly);
+			if (lt < 0.01) continue;
+			const w = WORLDS[gl.to];
+			const r = 0.085 * lt * hk;
+			g.globalAlpha = 0.85;
+			g.drawImage(softEraser, HZ / 2 + w.x * hk - r * 1.6, HZ / 2 + w.y * hk - r * 1.6, r * 3.2, r * 3.2);
+		}
 	g.globalAlpha = 1;
 	g.globalCompositeOperation = 'source-over';
 	return st.cv;
@@ -548,24 +555,25 @@ function space() {
 	return c;
 }
 
-// ---- the Scrambler Token: a hexagon of smoked glass in a stepped, worn metal bevel, drawn once. (Carried from
-// token.ts, cut down to what reads at page size: no pins, which read as a label, and no bright target.)
+// ---- the Scrambler Token: a designed object, drawn once. Six bevel faces each shaded as its own flat value
+// (warm toward Valleron's light, cool away from it), a dark inner lip, dark glass with a faint hex grid, a
+// glint, worn scratches, one chipped corner and a crimson rim light from the haze on the lower right.
+// (The hexagon's look is carried from token.ts; the shape is shorthand, the sources give none.)
 
 const CHIP_N = 340;
 const CHIP_R = 118;
 const CHIP_CENTER = { x: CHIP_N / 2, y: CHIP_N / 2 };
 let chipTex: HTMLCanvasElement | null = null;
-let chipFace: [number, number][] = [];
-let scrambleTile: HTMLCanvasElement | null = null;
+let chipSoft: HTMLCanvasElement | null = null;
 function chip() {
 	if (chipTex) return chipTex;
 	const c = canvasOf(CHIP_N, CHIP_N);
 	const g = c?.getContext('2d');
 	if (!c || !g) return null;
-	const yaw = 0.16;
-	const tilt = 0.1;
-	const THICK = 22;
-	const LIGHT = { x: -0.5, y: 0.6, z: 0.62 };
+	const yaw = 0.12;
+	const tilt = 0.08;
+	const THICK = 24;
+	const LIGHT_A = (150 * Math.PI) / 180; // toward Valleron: up and to the left
 	const orient = (x: number, y: number, z: number) => {
 		const x1 = x * Math.cos(yaw) + z * Math.sin(yaw);
 		const z1 = -x * Math.sin(yaw) + z * Math.cos(yaw);
@@ -586,62 +594,83 @@ function chip() {
 		});
 		g.closePath();
 	};
-	const litOf = (nx: number, ny: number) => {
-		const l = Math.hypot(nx, ny, 0.8) || 1;
-		return Math.max(0, (nx * LIGHT.x + ny * LIGHT.y + 0.8 * LIGHT.z) / l);
-	};
+	const lit = (a: V, b: V) => clamp(0.42 + 0.85 * Math.cos(Math.atan2((a[1] + b[1]) / 2, (a[0] + b[0]) / 2) - LIGHT_A));
 	const outer = hex(CHIP_R, 0);
 	const back = hex(CHIP_R, -THICK);
-	const mid = hex(CHIP_R - 12, 4);
-	const face = hex(CHIP_R - 26, 2);
-	chipFace = face.map((p) => P(p[0], p[1], p[2]));
-	// the edge below, in shadow
+	const mid = hex(CHIP_R - 20, 5);
+	const face = hex(CHIP_R - 38, 2);
+	// the thickness below, in shadow
 	for (let k = 0; k < 6; k++) {
 		const a = outer[k];
 		const b = outer[(k + 1) % 6];
 		if ((a[1] + b[1]) / 2 > 0) continue;
 		poly([a, b, back[(k + 1) % 6], back[k]]);
-		g.fillStyle = css([28, 26, 24]);
+		g.fillStyle = css([26, 24, 24]);
 		g.fill();
 	}
-	// the outer bevel: each side lit by how it faces the light, upper left a worn pale metal, lower right shadow
+	// the outer bevel: each face one flat value, warm (#e0b884) toward the light, cool (#5a5f66) away
 	for (let k = 0; k < 6; k++) {
 		const a = outer[k];
 		const b = outer[(k + 1) % 6];
-		const l = litOf((a[0] + b[0]) / 2 / CHIP_R, (a[1] + b[1]) / 2 / CHIP_R);
 		poly([a, b, mid[(k + 1) % 6], mid[k]]);
-		g.fillStyle = css(mixRGB([30, 28, 26], [201, 194, 180], clamp(l * 1.15)));
+		g.fillStyle = css(mixRGB([90, 95, 102], [224, 184, 132], Math.pow(lit(a, b), 1.5)), 0.96);
 		g.fill();
 	}
-	// the step down: the inner bevel, lit the other way, so it reads as a step and not a flat rim
+	// the step down: darker, a little warm where it faces the light
 	for (let k = 0; k < 6; k++) {
 		const a = mid[k];
 		const b = mid[(k + 1) % 6];
-		const l = litOf(-(a[0] + b[0]) / 2 / CHIP_R, -(a[1] + b[1]) / 2 / CHIP_R);
 		poly([a, b, face[(k + 1) % 6], face[k]]);
-		g.fillStyle = css(mixRGB([36, 34, 32], [128, 122, 112], clamp(l * 0.9)));
+		g.fillStyle = css(mixRGB([20, 22, 26], [92, 78, 64], lit(a, b) * 0.55));
 		g.fill();
 	}
-	// the face: smoked glass, dark at the edge and a little paler toward the light
+	// the dark glass
 	poly(face);
-	const c0 = P(-20, 30, 2);
+	const c0 = P(-30, 40, 2);
 	const grad = g.createRadialGradient(c0[0], c0[1], 4, CHIP_N / 2, CHIP_N / 2, CHIP_R);
-	grad.addColorStop(0, css([26, 34, 40]));
-	grad.addColorStop(1, css([7, 10, 12]));
+	grad.addColorStop(0, css([24, 32, 38]));
+	grad.addColorStop(1, css([6, 9, 11]));
 	g.fillStyle = grad;
 	g.fill();
-	// one diagonal glint across the glass
+	// a faint micro hex grid under the glass, and one short curved glint in a corner
 	g.save();
 	poly(face);
 	g.clip();
-	poly([[-70, 78, 2], [-42, 78, 2], [58, -46, 2], [30, -46, 2]]);
-	g.fillStyle = 'rgba(255,255,255,0.25)';
-	g.fill();
-	poly([[-30, 78, 2], [-18, 78, 2], [82, -46, 2], [70, -46, 2]]);
-	g.fillStyle = 'rgba(255,255,255,0.1)';
-	g.fill();
+	g.strokeStyle = 'rgba(196,216,226,0.08)';
+	g.lineWidth = 1.2;
+	const cs = 11;
+	for (let j = -12; j <= 12; j++)
+		for (let i = -12; i <= 12; i++) {
+			const cx = cs * Math.sqrt(3) * (i + j / 2);
+			const cy = cs * 1.5 * j;
+			if (Math.hypot(cx, cy) > CHIP_R) continue;
+			g.beginPath();
+			for (let k = 0; k < 6; k++) {
+				const an = (Math.PI / 3) * k + Math.PI / 6;
+				const q = P(cx + Math.cos(an) * cs, cy + Math.sin(an) * cs, 3);
+				if (k) g.lineTo(q[0], q[1]);
+				else g.moveTo(q[0], q[1]);
+			}
+			g.closePath();
+			g.stroke();
+		}
 	g.restore();
-	// wear: light and dark chips and scratches along the bevel
+	const gs = P(-76, 22, 3);
+	const gc = P(-70, 58, 3);
+	const ge = P(-42, 74, 3);
+	g.strokeStyle = 'rgba(255,255,255,0.2)';
+	g.lineWidth = 4;
+	g.lineCap = 'round';
+	g.beginPath();
+	g.moveTo(gs[0], gs[1]);
+	g.quadraticCurveTo(gc[0], gc[1], ge[0], ge[1]);
+	g.stroke();
+	// a 1 px dark inner lip where the glass meets the metal
+	poly(face);
+	g.strokeStyle = 'rgba(0,0,0,0.85)';
+	g.lineWidth = 2;
+	g.stroke();
+	// wear: three scratches on the bevel
 	const mark = (x0: number, y0: number, x1: number, y1: number, col: string, w: number) => {
 		const a = P(x0, y0, 4);
 		const b = P(x1, y1, 4);
@@ -652,19 +681,17 @@ function chip() {
 		g.lineTo(b[0], b[1]);
 		g.stroke();
 	};
-	mark(-96, 34, -78, 62, 'rgba(240,234,220,0.75)', 3);
-	mark(-40, 96, -14, 104, 'rgba(240,234,220,0.6)', 3);
-	mark(60, -84, 84, -66, 'rgba(20,18,16,0.7)', 3);
-	mark(96, 20, 100, 44, 'rgba(20,18,16,0.6)', 3);
-	mark(-60, -40, -20, -58, 'rgba(210,214,216,0.18)', 2);
-	mark(30, 40, 70, 22, 'rgba(210,214,216,0.14)', 2);
-	// the haze's rim light along the lower edge
-	g.strokeStyle = 'rgba(176,48,58,0.45)';
+	mark(-100, 30, -84, 58, 'rgba(244,236,220,0.75)', 2.4);
+	mark(-38, 100, -14, 108, 'rgba(244,236,220,0.6)', 2.4);
+	mark(62, -88, 88, -70, 'rgba(18,16,14,0.7)', 2.4);
+	// the haze's rim light along the lower right
+	g.strokeStyle = 'rgba(176,48,58,0.5)';
 	g.lineWidth = 5;
+	g.lineCap = 'butt';
 	for (let k = 0; k < 6; k++) {
 		const a = outer[k];
 		const b = outer[(k + 1) % 6];
-		if ((a[1] + b[1]) / 2 > -20) continue;
+		if (Math.cos(Math.atan2((a[1] + b[1]) / 2, (a[0] + b[0]) / 2) + 0.95) < 0.55) continue;
 		const pa = P(a[0], a[1], -THICK * 0.4);
 		const pb = P(b[0], b[1], -THICK * 0.4);
 		g.beginPath();
@@ -672,38 +699,36 @@ function chip() {
 		g.lineTo(pb[0], pb[1]);
 		g.stroke();
 	}
-	// a chipped corner
+	// one chipped corner
 	g.globalCompositeOperation = 'destination-out';
 	{
-		const v0 = outer[0];
-		const v1 = outer[1];
-		const v5 = outer[5];
 		const t = (a: V, b: V, f: number): V => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2]];
-		poly([v0, t(v0, v1, 0.16), t(v0, v5, 0.14)]);
+		poly([outer[4], t(outer[4], outer[3], 0.17), t(outer[4], outer[5], 0.15)]);
 		g.fill();
 	}
 	g.globalCompositeOperation = 'source-over';
 	chipTex = c;
 	return c;
 }
-/** The faint scramble under the glass: small cells of pale light, shifting slowly (texture, not a message). */
-function scramble() {
-	if (scrambleTile) return scrambleTile;
-	const c = canvasOf(96, 96);
+/** A soft copy of the chip (drawn small, blown up), which sharpens into the real one as the token forms. */
+function chipBlur() {
+	if (chipSoft) return chipSoft;
+	const t = chip();
+	const c = canvasOf(70, 70);
 	const g = c?.getContext('2d');
-	if (!c || !g) return null;
-	const r = rng(9);
-	for (let y = 0; y < 96; y += 6)
-		for (let x = 0; x < 96; x += 6) {
-			if (r() < 0.55) continue;
-			g.fillStyle = css([176, 196, 206], 0.35 + 0.65 * r());
-			g.fillRect(x, y, 4 + Math.floor(r() * 2), 4);
-		}
-	scrambleTile = c;
+	if (!t || !c || !g) return null;
+	g.drawImage(t, 0, 0, 70, 70);
+	chipSoft = c;
 	return c;
 }
 
+// the galaxy goes out of focus behind the token: it is drawn again at a third of the size and blown up
+const LRK = 0.33;
+let lowRes: HTMLCanvasElement | null = null;
+
 // ---- the figure
+
+type PutFn = (s: HTMLCanvasElement | null, x: number, y: number, r: number, a: number) => void;
 
 export function createOutbreak(): Figure {
 	let stage = 0;
@@ -716,11 +741,11 @@ export function createOutbreak(): Figure {
 	/** 06's clock, from the moment it is entered; it winds back when Back runs 06 in reverse. */
 	let t1 = 0;
 	const haze: HazeState = { cv: null, key: -1 };
-	const zoomAt = () => ease(ramp(0, 2.0, t1));
-	// Valleron sits a little below the middle at the close-in, with the token above it
-	const VOFF = 24;
-	// the anchor is the galaxy's heart, and by the end of 06 the bright world, which the view has centered
-	const anchor = () => ({ x: CX, y: CY + VOFF * zoomAt() });
+	const zoomAt = () => ease(ramp(0, 1.6, t1));
+	// at the close-in Valleron sits up and to the left, and the token low and to the right in front of the galaxy
+	const VX = -50;
+	const VY = -70;
+	const anchor = () => ({ x: CX + VX * zoomAt(), y: CY + VY * zoomAt() });
 
 	// per-frame scratch
 	const sx = new Float32Array(WORLDS.length);
@@ -757,7 +782,7 @@ export function createOutbreak(): Figure {
 		},
 		visible: () => vis > 0.005,
 		// the close-in always plays through, even before its beat is live; so does running back out
-		busy: (s, isPresent) => Math.abs((isPresent ? 1 : 0) - vis) > 0.004 || (s === 1 && stage !== 1) || (s === 1 && isPresent && t1 < 2.2) || (s !== 1 && t1 > 0.01),
+		busy: (s, isPresent) => Math.abs((isPresent ? 1 : 0) - vis) > 0.004 || (s === 1 && stage !== 1) || (s === 1 && isPresent && t1 < 1.8) || (s !== 1 && t1 > 0.01),
 		anchor,
 		light: (): RGB => (stage === 1 ? WHITE : SICK),
 		draw(ctx, sec, opts) {
@@ -780,7 +805,7 @@ export function createOutbreak(): Figure {
 			const ex = lin(1, 0);
 			const ey = lin(0, 1);
 			const vv = lin(VALLERON.x, VALLERON.y);
-			const m = { a: z * ex[0], b: z * ex[1], c: z * ey[0], d: z * ey[1], ox: CX - z * e * vv[0], oy: CY + VOFF * e - z * e * vv[1] };
+			const m = { a: z * ex[0], b: z * ex[1], c: z * ey[0], d: z * ey[1], ox: CX + VX * e - z * e * vv[0], oy: CY + VY * e - z * e * vv[1] };
 			WORLDS.forEach((w, i) => {
 				sx[i] = m.a * w.x + m.c * w.y + m.ox;
 				sy[i] = m.b * w.x + m.d * w.y + m.oy;
@@ -798,281 +823,271 @@ export function createOutbreak(): Figure {
 			ctx.globalAlpha = 1;
 			// everything but the bright world is drawn at A; the bright world's own light at vis
 			const A = vis * field;
-			const putAt = (k: number) => (s: HTMLCanvasElement | null, x: number, y: number, r: number, a: number) => {
-				if (!s || a <= 0.004 || r <= 0.4) return;
-				ctx.globalAlpha = clamp(a * k);
-				ctx.drawImage(s, x - r, y - r, r * 2, r * 2);
-			};
-			const put = putAt(A);
-			const putV = putAt(vis);
+			const mk =
+				(c: Ctx, k: number): PutFn =>
+				(s, x, y, r, a) => {
+					if (!s || a <= 0.004 || r <= 0.4) return;
+					c.globalAlpha = clamp(a * k);
+					c.drawImage(s, x - r, y - r, r * 2, r * 2);
+				};
+			const put = mk(ctx, A);
+			const putV = mk(ctx, vis);
 
-			// deep space, drifting a little against the close-in
-			const gr = space();
-			if (gr && A > 0.004) {
-				const gs = 1.02 + 0.07 * e;
-				ctx.globalAlpha = A;
-				ctx.drawImage(gr, CX - (W * gs) / 2, CY - (H * gs) / 2, W * gs, H * gs);
-			}
-
-			if (!eraser) paintHaze(haze, t0, t1); // builds the clear-ring sprites before the first frame uses them
 			const rr = clearR(t0, t1);
-			const ringOn = smooth(1.9, 2.6, t1);
-			// the disk (dust, arms, core), turned and tilted; its light fades a little as the haze takes it
-			const tex = disk();
-			const cover = smooth(1.5, 8, t0);
-			if (tex && A > 0.004) {
-				ctx.save();
-				ctx.transform(m.a, m.b, m.c, m.d, m.ox, m.oy);
-				ctx.globalAlpha = A * (1 - 0.3 * cover);
-				ctx.drawImage(tex, -EXT, -EXT, EXT * 2, EXT * 2);
-				ctx.restore();
-			}
-
-			// the haze, in the plane: grainy crimson smoke, drawn back from Valleron
-			ctx.globalCompositeOperation = 'source-over';
-			const key = Math.floor(t0 * 12) * 4096 + Math.floor(t1 * 20);
-			const hz = key === haze.key && haze.cv ? haze.cv : paintHaze(haze, t0, t1);
-			haze.key = key;
-			if (hz && A > 0.004) {
-				ctx.save();
-				ctx.transform(m.a, m.b, m.c, m.d, m.ox, m.oy);
-				ctx.globalAlpha = A;
-				ctx.drawImage(hz, -EXT, -EXT, EXT * 2, EXT * 2);
-				if (clearEdge && ringOn > 0.01) {
-					ctx.globalAlpha = A * ringOn;
-					const er = rr * 1.1;
-					ctx.drawImage(clearEdge, VALLERON.x - er, VALLERON.y - er, er * 2, er * 2);
-					// the dust inside repainted toward gold: the galaxy warmed back, not a hole
-					ctx.globalCompositeOperation = 'lighter';
-					ctx.globalAlpha = A * ringOn * 0.5;
-					const gs = spr([217, 178, 122]);
-					if (gs) ctx.drawImage(gs, VALLERON.x - rr * 1.05, VALLERON.y - rr * 1.05, rr * 2.1, rr * 2.1);
-					ctx.globalCompositeOperation = 'source-over';
-				}
-				ctx.restore();
-			}
-
-			// the worlds: warm lights that flare crimson when the haze reaches them and dim to small embers
-			ctx.globalCompositeOperation = 'lighter';
+			const ringOn = smooth(1.6, 2.6, t1);
 			const GOLD: RGB = [255, 226, 160];
-			for (let i = 1; i < WORLDS.length; i++) {
-				const w = WORLDS[i];
-				if (compact && w.minor) continue;
-				const age = t0 - w.it;
-				let col: RGB = w.hue;
-				let b = 0.7 + 0.15 * Math.sin(sec * w.twRate + w.tw);
-				let flare = 0;
-				let dim = 0;
-				if (age > 0) {
-					flare = smooth(0, 0.2, age) * (1 - smooth(0.2, 1.1, age));
-					dim = smooth(0.25, 1.4, age);
-					col = mixRGB(mixRGB(w.hue, CRIMSON, smooth(0, 0.25, age)), EMBER, dim);
-					b = mix(b, 0.3 + 0.12 * e, dim) + 0.9 * flare;
+			if (!eraser) paintHaze(haze, t0, t1); // builds the sprites before the first frame uses them
+
+			// ---- the field: deep space, the galaxy, the haze and every world's light. In 06 it is drawn out of focus.
+			const drawField = (c: Ctx, p: PutFn) => {
+				const gr = space();
+				if (gr && A > 0.004) {
+					const gs = 1.02 + 0.05 * e;
+					c.globalAlpha = A;
+					c.drawImage(gr, CX - (W * gs) / 2, CY - (H * gs) / 2, W * gs, H * gs);
 				}
-				// inside the clearing the worlds are lit again, warm
-				if (age > 0 && ringOn > 0.01) {
-					const k = ringOn * (1 - smooth(0.5, 0.95, dist(w.x, w.y, VALLERON.x, VALLERON.y) / Math.max(rr, 0.001)));
-					if (k > 0.01) {
-						col = mixRGB(col, GOLD, 0.7 * k);
-						b = mix(b, 0.8, k);
-						dim *= 1 - 0.6 * k;
+				// the disk (dust, arms, core), turned and tilted; its light fades a little as the haze takes it
+				const tex = disk();
+				const cover = smooth(1.5, 8, t0);
+				if (tex && A > 0.004) {
+					c.save();
+					c.transform(m.a, m.b, m.c, m.d, m.ox, m.oy);
+					c.globalAlpha = A * (1 - 0.3 * cover);
+					c.drawImage(tex, -EXT, -EXT, EXT * 2, EXT * 2);
+					c.restore();
+				}
+				// the haze, in the plane: grainy crimson smoke, drawn back from Valleron and from each world relit
+				c.globalCompositeOperation = 'source-over';
+				const key = Math.floor(t0 * 12) * 4096 + Math.floor(t1 * 20);
+				const hz = key === haze.key && haze.cv ? haze.cv : paintHaze(haze, t0, t1);
+				haze.key = key;
+				if (hz && A > 0.004) {
+					c.save();
+					c.transform(m.a, m.b, m.c, m.d, m.ox, m.oy);
+					c.globalAlpha = A;
+					c.drawImage(hz, -EXT, -EXT, EXT * 2, EXT * 2);
+					// the dust inside the clearing repainted toward gold: the galaxy warmed back
+					if (ringOn > 0.01) {
+						c.globalCompositeOperation = 'lighter';
+						c.globalAlpha = A * ringOn * 0.6;
+						const gs = spr([217, 178, 122]);
+						if (gs) c.drawImage(gs, VALLERON.x - rr * 1.05, VALLERON.y - rr * 1.05, rr * 2.1, rr * 2.1);
+						c.globalCompositeOperation = 'source-over';
+					}
+					c.restore();
+				}
+				// the worlds: warm lights that flare crimson when the haze reaches them and dim to small embers
+				c.globalCompositeOperation = 'lighter';
+				for (let i = 1; i < WORLDS.length; i++) {
+					const w = WORLDS[i];
+					if (compact && w.minor) continue;
+					const age = t0 - w.it;
+					let col: RGB = w.hue;
+					let b = 0.7 + 0.15 * Math.sin(sec * w.twRate + w.tw);
+					let flare = 0;
+					let dim = 0;
+					if (age > 0) {
+						flare = smooth(0, 0.2, age) * (1 - smooth(0.2, 1.1, age));
+						dim = smooth(0.25, 1.4, age);
+						col = mixRGB(mixRGB(w.hue, CRIMSON, smooth(0, 0.25, age)), EMBER, dim);
+						b = mix(b, 0.3 + 0.12 * e, dim) + 0.9 * flare;
+					}
+					// inside the clearing the worlds are lit again, warm
+					if (age > 0 && ringOn > 0.01) {
+						const k = ringOn * (1 - smooth(0.45, 1, dist(w.x, w.y, VALLERON.x, VALLERON.y) / Math.max(rr, 0.001)));
+						if (k > 0.01) {
+							col = mixRGB(col, GOLD, 0.7 * k);
+							b = mix(b, 0.8, k);
+							dim *= 1 - 0.6 * k;
+						}
+					}
+					const size = w.size * (1 + 0.9 * flare);
+					let haloR = mix(6 + size * 4.6, 3.4, dim);
+					let coreR = mix(1.7 + size * 1.2, 1.2, dim);
+					if (w.relit >= 0) {
+						// its light is drawn in front (sharp); here only the halo and the rewarmed dust round it
+						const lt = smooth(0, 0.7, t1 - w.relit);
+						if (lt > 0.01) p(spr([217, 178, 122]), sx[i], sy[i], 12 * zs, 0.35 * lt);
+						haloR = mix(haloR, 9, lt);
+						coreR = mix(coreR, 1.2, lt);
+						b = mix(b, 0.9, lt);
+						col = mixRGB(col, GOLD, lt);
+					}
+					p(spr(col), sx[i], sy[i], haloR * zs, (w.relit >= 0 ? 0.5 : 0.4) * b);
+					p(spr(mixRGB(col, WHITE, 0.45 * (1 - dim))), sx[i], sy[i], coreR * zs, Math.min(1, 0.95 * b));
+				}
+				// life gathering: warm motes drift in to Valleron from the neighbors before they dim
+				if (t0 < 8 && t1 < 3) {
+					const fade = 1 - smooth(1, 2.5, t1);
+					for (const i of NEIGHBORS) {
+						const mo = WORLDS[i].mote;
+						if (!mo || (compact && WORLDS[i].minor)) continue;
+						if (t0 < mo.from || t0 > mo.to) continue;
+						const u = ((((t0 - mo.from) / mo.per + mo.ph) % 1) + 1) % 1;
+						const k = ease(u);
+						const bend = Math.sin(u * Math.PI) * mo.bend * RAD * z;
+						const x = mix(sx[i], vx, k) + bend;
+						const y = mix(sy[i], vy, k) - bend * 0.6;
+						p(spr(WARM[0]), x, y, 5 * zs, Math.sin(u * Math.PI) * fade);
+						p(spr(WHITE), x, y, 1.6 * zs, Math.sin(u * Math.PI) * 0.9 * fade);
 					}
 				}
-				const size = w.size * (1 + 0.9 * flare);
-				let haloR = mix(6 + size * 4.6, 3.4, dim);
-				let coreR = mix(1.7 + size * 1.2, 1.2, dim);
-				let greenA = 0;
-				let pop = 0;
-				let dustA = 0;
-				if (w.relit >= 0) {
-					// it lights again in its own warm white-gold, with a small Generator glow inside it
-					const ra = t1 - w.relit;
-					const lit = smooth(0, 0.6, ra);
-					col = mixRGB(col, GOLD, lit);
-					b = mix(b, 1.0, lit);
-					haloR = mix(haloR, 9, lit);
-					coreR = mix(coreR, 3, lit);
-					dustA = 0.3 * lit;
-					greenA = smooth(0.3, 0.8, ra);
-					pop = Math.exp(-Math.pow((ra - 0.75) / 0.3, 2));
-				}
-				if (dustA > 0.01) put(spr([217, 178, 122]), sx[i], sy[i], 6.6 * zs, dustA);
-				put(spr(col), sx[i], sy[i], haloR * zs, (w.relit >= 0 ? 0.5 : 0.4) * b);
-				put(spr(mixRGB(col, WHITE, 0.45 * (1 - dim))), sx[i], sy[i], coreR * zs, Math.min(1, 0.95 * b));
-				if (greenA > 0.01) {
-					put(spr(GENESIS), sx[i], sy[i], 6 * zs * (1 + 0.5 * pop), 0.14 * greenA);
-					ctx.globalCompositeOperation = 'source-over';
-					put(spr(GENESIS), sx[i], sy[i], 1.7 * zs * (1 + 0.6 * pop), 0.9 * greenA);
-					ctx.globalCompositeOperation = 'lighter';
+				c.globalCompositeOperation = 'source-over';
+			};
+			const bl = smooth(1.2, 2.2, t1);
+			if (bl < 0.98) drawField(ctx, put);
+			if (bl > 0.02) {
+				if (!lowRes) lowRes = canvasOf(Math.ceil(W * LRK), Math.ceil(H * LRK));
+				const lg = lowRes?.getContext('2d');
+				if (lowRes && lg) {
+					lg.setTransform(1, 0, 0, 1, 0, 0);
+					lg.globalCompositeOperation = 'source-over';
+					lg.globalAlpha = 1;
+					lg.clearRect(0, 0, lowRes.width, lowRes.height);
+					lg.scale(LRK, LRK);
+					drawField(lg, mk(lg, A));
+					lg.setTransform(1, 0, 0, 1, 0, 0);
+					ctx.globalAlpha = bl;
+					ctx.drawImage(lowRes, 0, 0, W, H);
 				}
 			}
 
-			// life gathering: warm motes drift in to Valleron from the neighbors before they dim
-			if (t0 < 8 && t1 < 3) {
-				const fade = 1 - smooth(1, 2.5, t1);
-				for (const i of NEIGHBORS) {
-					const mo = WORLDS[i].mote;
-					if (!mo || (compact && WORLDS[i].minor)) continue;
-					if (t0 < mo.from || t0 > mo.to) continue;
-					const u = ((((t0 - mo.from) / mo.per + mo.ph) % 1) + 1) % 1;
-					const k = ease(u);
-					const bend = Math.sin(u * Math.PI) * mo.bend * RAD * z;
-					const x = mix(sx[i], vx, k) + bend;
-					const y = mix(sy[i], vy, k) - bend * 0.6;
-					put(spr(WARM[0]), x, y, 5 * zs, Math.sin(u * Math.PI) * fade);
-					put(spr(WHITE), x, y, 1.6 * zs, Math.sin(u * Math.PI) * 0.9 * fade);
-				}
-			}
-
+			ctx.globalCompositeOperation = 'lighter';
 			// Valleron: a small bright world in a warm corona, brighter as life gathers, unmoved by the haze
 			const gather = smooth(1.4, 5.2, t0);
 			const vb = 1 + 1.5 * gather + 0.1 * Math.sin(sec * 0.8);
 			putV(spr([255, 214, 150]), vx, vy, (30 + 30 * gather) * zs * (1 + 0.04 * Math.sin(sec * 1.3)), 0.3 + 0.3 * gather);
 			putV(spr([255, 236, 200]), vx, vy, (9 + 6 * gather) * zs, Math.min(1, 0.55 * vb));
 			putV(spr(WHITE), vx, vy, (3.2 + 1.4 * gather) * zs, 0.95);
-			// its own look, the same in 05 and at the centre of 06: a warm corona and a ring of motes gathering round it
+			// its own look, the same in 05 and in 06: a warm corona and a ring of motes gathering round it
 			{
 				const ringIn = smooth(1.4, 4.2, t0);
 				for (let k = 0; k < 12; k++) {
-					const an = (k / 12) * TAU + sec * 0.22;
-					const rx = Math.cos(an) * (17 + 7 * gather) * zs;
-					const ry = Math.sin(an) * (17 + 7 * gather) * zs * 0.6;
+					const a2 = (k / 12) * TAU + sec * 0.22;
+					const rx = Math.cos(a2) * (17 + 7 * gather) * zs;
+					const ry = Math.sin(a2) * (17 + 7 * gather) * zs * 0.6;
 					putV(spr([255, 226, 176]), vx + rx * cr - ry * sr, vy + rx * sr + ry * cr, 1.7 * zs, ringIn * (0.5 + 0.4 * Math.sin(sec * 1.6 + k * 1.9)));
 				}
 			}
 
-			// 06: the Scrambler Token grows out of that world's light, just above it
-			const S = compact ? 110 : 64;
-			const cxp = vx;
-			const cyp = vy - (S * 0.85 + 18);
+			// 06: the token forms in front of the galaxy, low and a little right, out of a stream of Valleron's light
+			const S = compact ? 118 : 98;
+			const tcx = CX + 50;
+			const tcy = CY + (compact ? 70 : 80);
 			if (t1 > 1.2 && A > 0.004) {
-				// a line of white light rises from the world, then the shape, then the metal
-				const rise = easeOut(ramp(1.3, 1.9, t1));
-				const lineA = smooth(1.2, 1.5, t1) * (1 - smooth(2.2, 2.7, t1));
-				if (lineA > 0.01) {
-					ctx.globalAlpha = clamp(0.6 * lineA * A);
-					ctx.strokeStyle = css(WHITE);
-					ctx.lineWidth = 1.4;
+				const form = smooth(1.7, 2.4, t1);
+				// the stream: warm light coming forward from Valleron along a curve
+				const qx = (vx + tcx) / 2 - 70;
+				const qy = (vy + tcy) / 2 - 30;
+				const bz = (u: number) => {
+					const k = 1 - u;
+					return [k * k * vx + 2 * k * u * qx + u * u * tcx, k * k * vy + 2 * k * u * qy + u * u * tcy] as const;
+				};
+				for (let k = 0; k < 14; k++) {
+					const u = ramp(1.3 + k * 0.035, 2.1 + k * 0.035, t1);
+					if (u <= 0 || u >= 1) continue;
+					const p = bz(ease(u));
+					put(spr([255, 220, 160]), p[0], p[1], (5 + 7 * u) * (compact ? 1.4 : 1), Math.sin(u * Math.PI) * 0.8);
+				}
+				// a faint warm thread keeps the token and the world linked
+				if (form > 0.01) {
+					ctx.globalAlpha = clamp(0.2 * form * A);
+					ctx.strokeStyle = css([255, 226, 170]);
+					ctx.lineWidth = 1.6;
 					ctx.beginPath();
 					ctx.moveTo(vx, vy);
-					ctx.lineTo(vx, mix(vy, cyp, rise));
+					ctx.quadraticCurveTo(qx, qy, tcx - S * 0.35, tcy - S * 0.55);
 					ctx.stroke();
 				}
-				const outline = smooth(1.7, 2.0, t1) * (1 - smooth(2.1, 2.6, t1));
-				if (outline > 0.01 && chip() && chipFace.length) {
-					ctx.save();
-					ctx.translate(cxp, cyp);
-					ctx.rotate(ROLL);
-					const os = (S / CHIP_R) * 1.12;
-					ctx.scale(os, os * 0.8);
-					ctx.globalAlpha = clamp(0.7 * outline * A);
-					ctx.strokeStyle = css(WHITE);
-					ctx.lineWidth = 3;
-					ctx.beginPath();
-					chipFace.forEach((p, k) => (k ? ctx.lineTo(p[0] - CHIP_CENTER.x, p[1] - CHIP_CENTER.y) : ctx.moveTo(p[0] - CHIP_CENTER.x, p[1] - CHIP_CENTER.y)));
-					ctx.closePath();
-					ctx.stroke();
-					ctx.restore();
-				}
-				const form = smooth(1.8, 2.6, t1);
-				put(spr([255, 252, 246]), cxp, cyp, S * 2.0, 0.16 * form + 0.1 * smooth(1.5, 2.0, t1) * (1 - form));
-				// a faint warm column down to the world, so the token hangs over it
-				if (form > 0.01) {
-					const cg = ctx.createLinearGradient(cxp, cyp, vx, vy);
-					cg.addColorStop(0, css([255, 226, 170], 0));
-					cg.addColorStop(0.3, css([255, 226, 170], 0.15));
-					cg.addColorStop(1, css([255, 226, 170], 0.15));
-					ctx.globalCompositeOperation = 'lighter';
-					ctx.globalAlpha = clamp(form * A);
-					ctx.strokeStyle = cg;
-					ctx.lineWidth = S * 0.22;
-					ctx.beginPath();
-					ctx.moveTo(cxp, cyp);
-					ctx.lineTo(vx, vy);
-					ctx.stroke();
-					ctx.globalCompositeOperation = 'source-over';
-				}
+				// the light gathering where it will stand, then holding behind it
+				put(spr([255, 226, 170]), tcx - S * 0.25, tcy - S * 0.2, S * 1.5, 0.2 * smooth(1.4, 2.0, t1));
 			}
 
-			// tokens carried home: warm-white glints leave the token in arcs to nearby dim worlds, each with a trail
+			// glints leave Valleron along curved streaks to nearby dark worlds; each flashes on arrival and settles
+			// warm with a small Genesis-green core
 			for (const gl of GLINTS) {
-				const u = (t1 - gl.leave) / gl.fly;
-				if (u <= 0 || u >= 1) continue;
 				const i = gl.to;
-				const dx = sx[i] - cxp;
-				const dy = sy[i] - cyp;
-				const len = Math.hypot(dx, dy);
-				const nx = -dy / (len || 1);
-				const ny = dx / (len || 1);
-				const bow = len * 0.3 * (i % 2 ? 1 : -1);
-				const at = (q: number) => {
-					const k = ease(q);
-					const bb = Math.sin(k * Math.PI) * bow;
-					return [cxp + dx * k + nx * bb, cyp + dy * k + ny * bb] as const;
-				};
-				const env = smooth(0, 0.06, u) * (1 - smooth(0.94, 1, u));
-				// a continuous curved streak that fades over about 0.6 s behind the head
-				const tail = 0.6 / gl.fly;
-				let last = at(Math.max(0, u - tail));
-				ctx.lineCap = 'butt';
-				for (let s2 = 1; s2 <= 26; s2++) {
-					const f = s2 / 26;
-					const p = at(Math.max(0, u - tail * (1 - f)));
-					ctx.globalAlpha = clamp(0.75 * env * f * f * A);
-					ctx.strokeStyle = css([255, 232, 184]);
-					ctx.lineWidth = (0.8 + 3 * f) * zs;
-					ctx.beginPath();
-					ctx.moveTo(last[0], last[1]);
-					ctx.lineTo(p[0], p[1]);
-					ctx.stroke();
-					last = p;
+				const u = (t1 - gl.leave) / gl.fly;
+				if (u > 0 && u < 1) {
+					const dx = sx[i] - vx;
+					const dy = sy[i] - vy;
+					const len = Math.hypot(dx, dy);
+					const nx = -dy / (len || 1);
+					const ny = dx / (len || 1);
+					const bow = len * 0.3 * (i % 2 ? 1 : -1);
+					const at = (q: number) => {
+						const k = ease(q);
+						const bb = Math.sin(k * Math.PI) * bow;
+						return [vx + dx * k + nx * bb, vy + dy * k + ny * bb] as const;
+					};
+					const env = smooth(0, 0.08, u) * (1 - smooth(0.94, 1, u));
+					const tail = 0.6 / gl.fly;
+					let last = at(Math.max(0, u - tail));
+					ctx.lineCap = 'butt';
+					for (let s2 = 1; s2 <= 26; s2++) {
+						const f = s2 / 26;
+						const p = at(Math.max(0, u - tail * (1 - f)));
+						ctx.globalAlpha = clamp(0.8 * env * f * f * A);
+						ctx.strokeStyle = css([255, 232, 184]);
+						ctx.lineWidth = (0.8 + 3.2 * f) * zs;
+						ctx.beginPath();
+						ctx.moveTo(last[0], last[1]);
+						ctx.lineTo(p[0], p[1]);
+						ctx.stroke();
+						last = p;
+					}
+					const p = at(u);
+					put(spr([255, 232, 180]), p[0], p[1], 14 * zs, 0.6 * env);
+					put(spr(WHITE), p[0], p[1], 4 * zs, env);
 				}
-				const p = at(u);
-				put(spr([255, 232, 180]), p[0], p[1], 13 * zs, 0.6 * env);
-				put(spr(WHITE), p[0], p[1], 3.8 * zs, env);
+				const ra = t1 - gl.leave - gl.fly;
+				if (ra > 0) {
+					const flash = Math.max(0, 1 - ra / 0.3);
+					if (flash > 0) put(spr(WHITE), sx[i], sy[i], 12 * zs, 0.8 * flash);
+					const lt = smooth(0, 0.6, ra);
+					put(spr([255, 226, 160]), sx[i], sy[i], 3.8 * zs, lt);
+					// the Genesis green: a core of at least 3 px that pulses once
+					const pop = Math.exp(-Math.pow((ra - 0.7) / 0.3, 2));
+					ctx.globalCompositeOperation = 'source-over';
+					put(spr(GENESIS), sx[i], sy[i], 4 * zs * (1 + 0.5 * pop), 0.9 * smooth(0.3, 0.8, ra));
+					ctx.globalCompositeOperation = 'lighter';
+				}
 			}
 			ctx.globalCompositeOperation = 'source-over';
 
-			// the chip itself: smoked glass in worn metal, tipped to the galaxy's plane, sitting in the scene
-			if (t1 > 1.8 && A > 0.004) {
-				const form = smooth(1.9, 2.6, t1);
+			// the chip: a designed object with weight, sharpening out of Valleron's light
+			if (t1 > 1.7 && A > 0.004) {
+				const form = smooth(1.7, 2.4, t1);
+				const sharp = smooth(1.9, 2.7, t1);
 				const tex2 = chip();
-				if (tex2 && form > 0.01) {
-					const s = (S / CHIP_R) * (0.9 + 0.1 * easeOut(form));
+				const soft = chipBlur();
+				if (tex2 && soft && form > 0.01) {
+					const s = (S / CHIP_R) * (0.94 + 0.06 * easeOut(form));
 					// a soft contact shadow under it
-					put(puff([0, 0, 0]), cxp + S * 0.12, cyp + S * 0.55, S * 1.25, 0.55 * form);
+					put(puff([0, 0, 0]), tcx + S * 0.1, tcy + S * 0.6, S * 1.3, 0.55 * form);
 					ctx.save();
-					ctx.translate(cxp, cyp);
-					ctx.rotate(ROLL);
+					ctx.translate(tcx, tcy);
+					ctx.rotate(ROLL * 0.6);
 					ctx.scale(s, s * 0.8);
-					ctx.globalAlpha = clamp(form * A);
+					ctx.globalAlpha = clamp(form * (1 - sharp) * A);
+					ctx.drawImage(soft, -CHIP_CENTER.x, -CHIP_CENTER.y, CHIP_N, CHIP_N);
+					ctx.globalAlpha = clamp(form * sharp * A);
 					ctx.drawImage(tex2, -CHIP_CENTER.x, -CHIP_CENTER.y);
-					// the scramble under the glass, faint and slow
-					const sc = scramble();
-					if (sc && chipFace.length) {
-						ctx.beginPath();
-						chipFace.forEach((p, k) => (k ? ctx.lineTo(p[0] - CHIP_CENTER.x, p[1] - CHIP_CENTER.y) : ctx.moveTo(p[0] - CHIP_CENTER.x, p[1] - CHIP_CENTER.y)));
-						ctx.closePath();
-						ctx.clip();
-						ctx.globalAlpha = clamp(0.15 * form * A);
-						const o = (sec * 4) % 96;
-						for (let y = -96 + o; y < CHIP_N; y += 96) for (let x = -96 - o * 0.5; x < CHIP_N; x += 96) ctx.drawImage(sc, x - CHIP_CENTER.x, y - CHIP_CENTER.y);
-					}
 					ctx.restore();
-					// its white light, breathing slowly
+					// its white light, glowing under the glass and breathing slowly
 					ctx.globalCompositeOperation = 'lighter';
-					const br = 0.6 + 0.2 * Math.sin(sec * 1.4);
-					put(spr([255, 250, 242]), cxp, cyp, S * 0.62 * (0.92 + 0.12 * br), form * br * 0.7);
-					put(spr(WHITE), cxp, cyp, S * 0.16, form * 0.6);
+					const br = 0.62 + 0.16 * Math.sin(sec * 1.4);
+					put(spr([255, 250, 242]), tcx, tcy, S * 0.55 * (0.92 + 0.12 * br), form * br * 0.75);
+					put(spr(WHITE), tcx, tcy, S * 0.16, form * 0.55);
 					ctx.globalCompositeOperation = 'source-over';
 				}
 			}
 
-			// the close-in darkens the edges a little, to hold the eye on the one bright world
+			// the close-in darkens the edges a little
 			if (e > 0.02 && A > 0.004) {
 				const vg = ctx.createRadialGradient(CX, CY, 150, CX, CY, 620);
 				vg.addColorStop(0, css([4, 4, 10], 0));
-				vg.addColorStop(1, css([4, 4, 10], 0.5 * e * A));
+				vg.addColorStop(1, css([4, 4, 10], 0.4 * e * A));
 				ctx.globalAlpha = 1;
 				ctx.fillStyle = vg;
 				ctx.fillRect(-40, -40, W + 80, H + 80);
