@@ -29,6 +29,18 @@ export const POWER_DIVISOR = 5;
   unchanged while the smallest attack is power 2 or more and every element step is visible.
 */
 export const HEALTH_SCALE = 2;
+/**
+  A companion's health is never below this (sample set, 2026-09-29): creatures rated near 10 read
+  16 to 20 health and fell to one enemy blow from full health (the strongest blow is 36). It only
+  reaches creatures the catalog does not have yet; enemies are authored and keep their own health.
+*/
+export const HEALTH_FLOOR = 40;
+/**
+  An attack's power is never below this (sample set, 2026-09-29): at power 1 a weak step (x0.5)
+  rounds up to the neutral number, so the matchup is invisible. It reaches attacks under
+  intensity 8 and the weakest area attacks.
+*/
+export const MIN_POWER = 2;
 /** A pull or push deals its impact at this share of its intensity. */
 export const DISPLACE_POWER_FACTOR = 0.6;
 /** An area attack hits every standing enemy with its power times this. */
@@ -70,6 +82,11 @@ export const TIMELINE_SCALE = 1000;
 export const SPEED_BASE = 100;
 /** A delay pushes the target's next turn back by this share of its interval (the turn-order layer). */
 export const DELAY_SHARE = 0.3;
-/** Turn-by-turn: this many turns in a row without anyone losing health force the squad out. */
+/**
+  Turn-by-turn: this many turns per standing unit in a row without either side's total health
+  reaching a new low for the encounter force the squad out. A new low, not any loss: a healer
+  undoing each chip kept health moving forever (sample set, 2026-09-29, 4% of sample squads and 2%
+  of drafted squads never finished).
+*/
 export const STALL_TURNS_PER_UNIT = 6;
 

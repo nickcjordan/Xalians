@@ -13,6 +13,7 @@ import {
   DELAY_SHARE,
   DISPLACE_POWER_FACTOR,
   POWER_DIVISOR,
+  MIN_POWER,
   PROLONGED_REST,
   REST_ROUNDS,
   SUPPORT_DIVISOR,
@@ -92,7 +93,7 @@ export function readMove(u: Unit, m: Move, rules: Rules, uniform?: number): PMov
   const attacks = raw > 0;
   const area = attacks && m.effects.some((e) => (e.support === "harm" || e.support === "displace") && e.recipient === "area");
   const base = uniform !== undefined && attacks ? uniform : raw;
-  const power = attacks ? Math.max(1, Math.round(base * (area ? AREA_FACTOR : 1))) : 0;
+  const power = attacks ? Math.max(MIN_POWER, Math.round(base * (area ? AREA_FACTOR : 1))) : 0;
   const elemental = m.effects.some((e) => e.support === "harm" && e.mechanism === "elemental");
   const element = !attacks
     ? null

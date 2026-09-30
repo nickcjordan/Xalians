@@ -389,3 +389,32 @@ node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pi
 node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=sources --runs=150 --look=60
 node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=roles --roleruns=600
 ```
+
+### Decisions on the sample-set findings, 2026-09-29
+
+Applied, each a lever or rule that reaches only shapes the catalog does not have yet (the preset squad's figures are unchanged: random 5%, hardest-hit 97%):
+
+| # | Finding | Decision | Confidence | Evidence |
+|---|---|---|---|---|
+| 2 | Minimal and fragile companions fall to one blow | `HEALTH_FLOOR` 40 for companions only (enemies are authored). Minimal squads 21% to 24%. | 75%, a floor flattens the weakest bodies together; an affine health curve is the alternative if that ever matters | `levers.ts`, `engine.ts` `fighter` |
+| 3 | Weak steps collapse at low intensity | `MIN_POWER` 2. Weak-step failures 0 of 4,614 catalog, 0 of 404 sample, 0 of 183 grid attacks. | 85% | census below |
+| 5 | Fights that never end | The stall counter now resets only when either side's total health reaches a new low for the encounter; a total can only fall so often, so every encounter ends. Unfinished runs 0 in every source (samples were 4.2%, drafts 2%). | 90% | `turns.ts` `act`, `STALL_TURNS_PER_UNIT` |
+
+Not applied, recorded so they can be reopened on evidence:
+
+| # | Finding | Why not now |
+|---|---|---|
+| 1 | Band-130 signatures can knock out a small enemy in one hit (3 of 404 sample attacks, at the best matchup) | A signature is once per fight and an exceptional output should feel exceptional; a cap at the catalog's maximum would fit the rules to today's creatures. Reopen when a dungeon meets it. |
+| 4 | Exceptional supports dwarf attacks (hinder 38 cancels any blow; boost 25) | Same reasoning: exceptional supports are rare by the workshop's ruling. One real question inside it stays open: a boost adds its flat number to every target of an area attack. |
+| 6 | Pure-support squads cannot finish a room | A squad rule, not a number: when players field their own creatures, a squad needs an attacker or an attack-less unit needs a fallback strike. Squad building is deferred (2026-09-24). |
+
+After the changes (round timeline, roles rooms, enemy health 0.76, 150 runs, look-ahead 60):
+
+| Squads | random | biggest number | hardest-hit | planner | look-ahead | hardest-hit won / lost / retreated / unfinished | turns per encounter |
+|---|---|---|---|---|---|---|---|
+| preset | 5% | 40% | 97% | 82% | 67% | 97 / 3 / 0 / 0 | 22.5 |
+| draft | 27% | 52% | 61% | 51% | 45% | 61 / 25 / 13 / 0 | 27.3 |
+| samples | 17% | 37% | 38% | 37% | 53% | 38 / 32 / 30 / 0 | 34.0 |
+| mixed | 12% | 35% | 49% | 40% | 53% | 49 / 37 / 14 / 0 | 31.7 |
+
+Sample roles, hardest-hit over 600 squads: pure support 22% is the one outlier (finding 6); every other role sits between 31% (displacer) and 52% (binder). Profiles: exceptional 61%, standard 43%, minimal 24%, slow 29%. Output bands are flat (36% to 41%).

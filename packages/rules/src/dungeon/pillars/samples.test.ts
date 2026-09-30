@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 import { COMPANION_KEYS, COMPANION_RECORDS } from "../index.ts";
 import { sampleCreatures } from "../../samples/index.ts";
 import { DEFAULT_RULES, type Fighter, type PEvent } from "./engine.ts";
+import { HEALTH_FLOOR, MIN_POWER } from "./levers.ts";
 import { createTurnRunFrom, turnCommand, type TRun } from "./turns.ts";
 import { turnHardestHit } from "./turnPolicy.ts";
 
@@ -59,4 +60,22 @@ describe("sample creatures in whole runs", () => {
     });
     expect(outcomes.won + outcomes.lost + outcomes.retreated).toBe(samples.length);
   }, 120_000);
+  it("keeps every companion above one enemy blow and every attack's matchup visible", () => {
+    for (const record of samples) {
+      const u = createTurnRunFrom(1, [record], RULES).state.team[0];
+      expect(u.max).toBeGreaterThanOrEqual(HEALTH_FLOOR);
+      for (const m of u.moves) if (m.power > 0) expect(m.power).toBeGreaterThanOrEqual(MIN_POWER);
+    }
+  });
+  it("forces a stalled fight out when neither side reaches a new low", () => {
+    const s = createTurnRunFrom(1, COMPANION_KEYS.map((k) => COMPANION_RECORDS[k]), RULES).state;
+    s.lows = [0, 0];
+    s.stalled = 0;
+    let t: TRun = s;
+    for (let k = 0; k < 400 && t.phase === "turn"; k++) {
+      t.lows = [0, 0];
+      t = turnCommand(t, { kind: "act", order: { move: -2, target: t.active! } }).state;
+    }
+    expect(t.phase).toBe("retreated");
+  });
 });

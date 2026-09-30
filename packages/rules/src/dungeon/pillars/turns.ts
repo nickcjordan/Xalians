@@ -54,6 +54,8 @@ export type TRun = {
   phase: TPhase;
   turns: number;
   stalled: number;
+  /** Each side's lowest total health this encounter, squad then enemies: progress is a new low. */
+  lows?: [number, number];
   revival: number;
   xp: number;
   log: string[];
@@ -61,6 +63,7 @@ export type TRun = {
 export type TCommand = { kind: "act"; order: Order } | { kind: "advance" } | { kind: "revive"; id: string } | { kind: "retreat" };
 
 const all = (s: TRun) => [...s.team, ...s.enemies];
+const total = (units: Fighter[]) => units.reduce((a, u) => a + Math.max(0, u.hp), 0);
 /** How far a unit's next turn is from its last. */
 export function interval(s: Pick<TRun, "rules">, u: Fighter): number {
   return s.rules.timeline === "speed" ? TIMELINE_SCALE / (SPEED_BASE + Math.max(1, u.speed)) : 1;
@@ -108,6 +111,7 @@ function enter(s: TRun) {
   s.phase = "turn";
   s.turns = 0;
   s.stalled = 0;
+  s.lows = undefined;
   for (const u of s.team) {
     u.cooldowns = u.moves.map(() => 0);
     u.signatureSpent = false;
@@ -166,7 +170,6 @@ export function createTurnRunFrom(seed: number, records: readonly CreatureRecord
 
 /** One unit's action: the order resolves, then its next turn is placed on the timeline. */
 function act(s: TRun, u: Fighter, q: Order | null, emit: (e: PEvent) => void) {
-  const before = all(s).map((x) => x.hp);
   for (const t of all(s)) t.shields = t.shields.filter((sh) => sh.from !== u.id);
   if (!q || q.move < 0) emit({ kind: "pass", actor: u.id });
   else {
@@ -188,7 +191,10 @@ function act(s: TRun, u: Fighter, q: Order | null, emit: (e: PEvent) => void) {
       t.delay = 0;
     }
   s.turns++;
-  s.stalled = all(s).some((x, k) => x.hp < before[k]) ? 0 : s.stalled + 1;
+  const totals: [number, number] = [total(s.team), total(s.enemies)];
+  const low = s.lows ?? [Infinity, Infinity];
+  s.stalled = totals[0] < low[0] || totals[1] < low[1] ? 0 : s.stalled + 1;
+  s.lows = [Math.min(low[0], totals[0]), Math.min(low[1], totals[1])];
 }
 /** Play enemy turns until a companion's turn or the encounter's end. */
 function run(s: TRun, events: PEvent[]) {
