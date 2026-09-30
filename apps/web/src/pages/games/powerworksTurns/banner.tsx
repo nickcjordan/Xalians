@@ -22,6 +22,10 @@ export function TurnBanner({
   ended = null,
   note = null,
   noteId,
+  noteKey,
+  status = null,
+  next = null,
+  playing = false,
   prompt = "Choose a move.",
 }: {
   actorSide: "squad" | "enemy";
@@ -45,6 +49,14 @@ export function TurnBanner({
   */
   note?: string | null;
   noteId?: string;
+  /** Desktop: the move the note is about, named in bold at the start of the note (there is no key bar to point at it). */
+  noteKey?: string;
+  /** Desktop: the hindered (or boosted) reason for the acting companion, a fact in one sentence under the name. */
+  status?: string | null;
+  /** Desktop: while the enemies act, the companion whose turn is next (the key bar that used to say it is gone). */
+  next?: string | null;
+  /** The enemies and the beats are playing out (the harness's hook for "a turn is playing"). */
+  playing?: boolean;
   /** What the empty line says on your turn: "Choose a move.", or "Now choose a target." once a key waits for one. */
   prompt?: string;
 }) {
@@ -63,7 +75,7 @@ export function TurnBanner({
   }, [label]);
 
   return (
-    <div className={`pwt-banner ${ended ? "hold" : actorSide}`} data-turn-banner="" data-side={ended ? "hold" : actorSide} aria-live="polite">
+    <div className={`pwt-banner ${ended ? "hold" : actorSide}`} data-turn-banner="" data-side={ended ? "hold" : actorSide} data-playing={playing ? "" : undefined} aria-live="polite">
       <p className="pwt-banner-label" key={slideKey}>
         <span className="pwt-banner-kicker">
           {!ended && (
@@ -75,10 +87,16 @@ export function TurnBanner({
         </span>
         <span className="pwt-banner-who">{who}</span>
       </p>
+      {status && !ended && !playing && (
+        <p className="pwt-banner-status" data-status="">
+          {status}
+        </p>
+      )}
       {note && !ended ? (
         // The instruction stays; the note is one more sentence after it (a note about a mark, never the prompt's replacement).
         <p className="pwt-banner-line pwt-note" role="note" data-note={noteId}>
           {actorSide === "squad" && <span className="pwt-banner-prompt">{prompt} </span>}
+          {noteKey && <b>{noteKey} </b>}
           {note}
         </p>
       ) : line ? (
@@ -100,6 +118,11 @@ export function TurnBanner({
         )
       ) : (
         <p className="pwt-banner-line empty">{actorSide === "squad" && !ended ? prompt : ""}</p>
+      )}
+      {next && !ended && (
+        <p className="pwt-banner-next">
+          Your next turn: <b>{next}</b>
+        </p>
       )}
     </div>
   );
