@@ -101,3 +101,55 @@ The orchestrator scores each factual answer right or wrong against that JSON. It
 | Round | Seed | Reader scores | Answers right | Top confusion | Fix |
 |---|---|---|---|---|---|
 | 0 (pass 75) | 7 and 13 | 6 (one reader) | not measured | whether a cell's number is an addition or a strength | signed "+N", sort caret |
+| 1 | 29 | 6, 5, 6 | 27 of 33 (82%) | the chart factor sat at the bar's end, beside the next world's cell, so no reader could tell which world it belonged to; it was hidden on the phone (3 of 3) | the factor moves beside its own number, prefixed by the creature's act glyph ("↗×2"), and shows on the phone |
+
+### Round 1 notes (seed 29)
+
+- **The signed "+N" worked.** All three readers read it as what the creature adds, and all found the largest one in a column.
+- **The ▲/▼ read right (3 of 3),** as the world lifting or cutting the creature.
+- **The rival tick read right (3 of 3),** as the rival's total to pass.
+- **The sort caret was guessed right (3 of 3),** as a sort key, though each reader called it a guess.
+- **Wrong 3 of 3: which used creature is which, and what happened to each.** The small silhouettes in the head carried no badge, and an underline was the only sign of a creature holding a world. Fix: each token gets its element badge, and a holding token gets the header's won-world flag.
+- **Wrong 3 of 3: the phone's chart factor.** It was hidden. Fixed with the move above.
+- **Not scored: which world the pointer was over (2 of 3 said the right world, the key said the middle).** A player knows where their own pointer is. The harness now records the world actually hovered.
+- **Named but not yet fixed:**
+  - the act glyphs before the attack number (↗, the sweep's star, the bolster's lift, the shield), named 3 of 3; the "↗×2" pairing is the first attempt to teach them;
+  - the head's flags beside "2/5";
+  - "STAKE ×2".
+
+| 2 | 71 | 6, 6, 6 | 35 of 36 (97%) | the chart factor is tiny and faint, and whether "+8 ×1½" means 8 or 12 (3 of 3; one round 1 reader had named it) | the factor becomes the blow itself ("↗28" beside an act column's "↗14"), shown in every attacker's cell wherever a rival stands; ▲/▼ only for a cut or lift of 10% and 1 point |
+
+### Round 2 notes (seed 71)
+
+- **Accuracy passed the bar.** Round 1's fixes worked:
+  - every reader placed each factor on its own world;
+  - every reader read the phone's factors;
+  - all three named each used creature, and two of three gave every fate right (the flag read as "won a world").
+- **Scores did not move from 6.** Readers can find every fact, but deciding needs more than the biggest number.
+- **The top finding is the factor's meaning, not its place.** Readers asked:
+  - whether "+N" includes the factor;
+  - whether an unmarked cell means neutral or no data.
+
+  This is the second round in a row that the factor leads, so round 3 is the last attempt before it goes to Nick as a design question. The attempt:
+  - print the blow as a number with the act's own glyph, so "↗14" in the act column and "↗28" in a cell read as the same kind of thing;
+  - show a blow wherever a rival stands, even when even.
+- **The act glyphs are still unread (3 of 3, and 3 of 3 in round 1).** The blow shares the act column's glyph and number kind, to teach it by pairing. If round 3 still misses it, it goes to Nick with the factor.
+- **▼ on almost every cell (2 of 3 noted it).** The mark said little, so it now shows only for a cut or lift of at least 10% and 1 point.
+| 3 | 89 | 6, 6, 6 | 39 of 39 (100%) | who ends up ahead after the fight: "the panel never totals it" (2 of 3); two numbers in a cell and nothing marking the best creature (1 of 3) | none: this goes to Nick as a design question (below) |
+
+### Round 3 notes (seed 89)
+
+- **Every fact was read right.** All three readers:
+  - read the blow in a cell as the act column's hit at that world;
+  - explained a smaller blow as the element matchup;
+  - named "↗ a single strike, ✳ a burst" for the first time, though still as a guess;
+  - found the only creature whose "+16" passes the rival's tick;
+  - read the flags on used creatures as worlds won.
+- **An act-column bug came out of the round 2 captures.** The act column ("↗8") printed the blow as the round's first world cut it, so it changed from round to round and sat beside a larger even blow in a cell. It now prints the creature's own blow, on no world.
+- **The scores held at 6 for nine readers in a row, with accuracy rising from 82% to 100%.** What the readers now want is exactly what two standing rules withhold:
+  - who wins the world once the fight is done (pass 72: nothing shown during placement may imply how the fight plays out);
+  - a mark on the best creature for each world (affordances: no suggestions).
+
+  The score question asks how fast the panel lets a reader decide. Under these rules, deciding is the player's own judgment, so the score likely cannot pass 8 by changing how the facts are drawn. Per the bar's third condition, a repeated top finding is a design decision, so it goes to Nick.
+
+- **Harness note: the fixed policy loses quickly.** Seeds 41, 43, 53, 61 and 67 ended at 1 to 5 worlds in round 2, before the round 3 capture, so the round 2 seed was 71.

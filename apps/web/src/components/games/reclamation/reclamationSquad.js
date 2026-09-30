@@ -7,7 +7,7 @@ import { InfoGlyph, HiddenGlyph, RoleGlyph, PIECE_RIM } from './reclamationGlyph
 import { speciesLabel, roleSentence, rolePower, formatBlow, formatHold, formatHoldShown, matchupWords } from './reclamationNarration';
 import { elementOf } from './reclamationVocabulary';
 import { whyWords, factorText } from './reclamationInstruments';
-import { matchupsAt } from './reclamationPreview';
+import { matchupsAt, blowsAt } from './reclamationPreview';
 import { prepare, speedOf } from '@xalians/rules/expedition/creatureOnTable';
 
 /*
@@ -57,9 +57,14 @@ export function slotStateOf(record, view, you) {
 // strikers first, then sweepers, then the two that never strike
 const ACT_ORDER = { strike: 0, sweep: 1, shield: 2, bolster: 3 };
 
-// what a row reads off the engine once: its act, the number that act carries, its speed
+/*
+	What a row reads off the engine once: its act, the number that act carries, its speed. The
+	number is the creature's own, on no world: read at the round's first world it carried that
+	world's strain, so it changed from round to round and sat beside an even cell's larger blow
+	(pass 76, round 2). Each world's cell prints the blow as that world leaves it.
+*/
 export function readOf(record, view) {
-	const prepared = prepare(record, view.frame.sites[0], null, 0, { rules: view.rules });
+	const prepared = prepare(record, null, null, 0, { rules: view.rules });
 	return {
 		role: prepared.role,
 		power: rolePower(prepared, view.rules),
@@ -101,16 +106,22 @@ export function squadOrder(records, reads, fits, sortSiteId) {
 		gain    what your side there would gain, the ghost's "+N"
 		shift   'up' where the world lifted its hold above its normal hold, 'down' where it cut it
 		chart   the chart's best factor for its blows on the rivals there (null when even or none)
+		blow    the largest blow it would land on a rival there, null when no rival stands there
+		blowTone 'above' or 'below' its act column's number by more than half a point, else 'even'
 		clear   what the rival would still hold there beyond you, the mark the bar must pass
 		takes   whether the send alone would give you more there than the rival
 */
-export function cellFacts(cell, matchups, role) {
+export function cellFacts(cell, matchups, role, blow, actPower) {
 	if (!cell) {
 		return null;
 	}
 	const own = cell.own || 0;
 	const body = typeof cell.body === 'number' ? cell.body : own;
-	const shift = own - body >= 0.5 ? 'up' : body - own >= 0.5 ? 'down' : null;
+	// an arrow only for a lift or cut that matters: a tenth of the normal hold and a whole point
+	const bar = Math.max(1, 0.1 * body);
+	const shift = own - body >= bar ? 'up' : body - own >= bar ? 'down' : null;
+	const hasBlow = typeof blow === 'number' && isFinite(blow);
+	const blowTone = !hasBlow || typeof actPower !== 'number' ? 'even' : blow - actPower > 0.5 ? 'above' : actPower - blow > 0.5 ? 'below' : 'even';
 	let chart = null;
 	if (role === 'strike' || role === 'sweep') {
 		const dealt = (matchups || []).map((m) => (typeof m.dealt === 'number' ? m.dealt : 1));
@@ -119,7 +130,7 @@ export function cellFacts(cell, matchups, role) {
 			chart = Math.abs(best - 1) > 1e-9 ? best : null;
 		}
 	}
-	return { gain: cell.gain, shift, chart, clear: cell.clear || 0, takes: !!cell.takes };
+	return { gain: cell.gain, shift, chart, blow: hasBlow ? blow : null, blowTone, clear: cell.clear || 0, takes: !!cell.takes };
 }
 
 // the words behind a cell, for its title: what it adds, what the world did, the chart there
@@ -132,7 +143,17 @@ function cellTitle(site, cell, facts, matchups) {
 	return parts.join('. ');
 }
 
-function WorldCell({ site, cell, facts, matchups, scale, focus }) {
+// the largest blow it would land on a rival at a world; null when none stands there (a sweep's lands include your own, which do not count)
+export function blowAt(view, record, site, you, role) {
+	if (role !== 'strike' && role !== 'sweep') {
+		return null;
+	}
+	const { lands } = blowsAt(view, record, site, you, view.players[you].sentCount);
+	const theirs = Object.values(lands).filter((l) => !l.mine).map((l) => l.power);
+	return theirs.length ? Math.max(...theirs) : null;
+}
+
+function WorldCell({ site, cell, facts, matchups, scale, focus, role }) {
 	const el = site.world.element;
 	const classes = ['rec-squad-cell', `g-el-${el}`];
 	if (!facts) {
@@ -159,14 +180,19 @@ function WorldCell({ site, cell, facts, matchups, scale, focus }) {
 			<span className="rec-squad-cell-read">
 				<b className="rec-squad-num g-mono">{shown}</b>
 				{facts.shift && <i className={`rec-squad-shift rec-squad-shift--${facts.shift}`} data-shift={facts.shift} aria-hidden="true">{facts.shift === 'up' ? '▲' : '▼'}</i>}
+				{/* the blow itself, not the factor: the creature's act glyph and the number it would land on a rival here, so it reads against the act column's number; the "+N" is the hold and does not include it */}
+				{facts.blow !== null && (
+					<span className={`rec-squad-chartrun rec-squad-chartrun--${facts.blowTone}`}>
+						<RoleGlyph role={role} />
+						<i className="rec-squad-chart g-mono" data-chart={facts.chart || 1} data-blow={formatBlow(facts.blow)}>{formatBlow(facts.blow)}</i>
+					</span>
+				)}
 			</span>
-			{/* the bar, and at its end the chart's factor against the rivals there: under the number, so it never reads as the next world's */}
 			<span className="rec-squad-cell-foot">
 				<span className="rec-squad-bar" aria-hidden="true">
 					<span className="rec-squad-fill" />
 					{tick !== null && <span className="rec-squad-tick" />}
 				</span>
-				{facts.chart && <i className={`rec-squad-chart g-mono${facts.chart > 1 ? ' rec-squad-chart--edge' : ''}`} data-chart={facts.chart}>{factorText(facts.chart)}</i>}
 			</span>
 		</span>
 	);
@@ -238,7 +264,8 @@ function Row({ record, read, view, you, sites, fitRow, scale, focusSiteId, armed
 					}
 					const cell = fitRow ? fitRow[site.id] : null;
 					const matchups = cell ? matchupsAt(view, site, record, read.role, opponent) : [];
-					return <WorldCell key={site.id} site={site} cell={cell} facts={cellFacts(cell, matchups, read.role)} matchups={matchups} scale={scale} focus={kept ? null : focusSiteId} />;
+					const blow = cell ? blowAt(view, record, site, you, read.role) : null;
+					return <WorldCell key={site.id} site={site} cell={cell} facts={cellFacts(cell, matchups, read.role, blow, read.power)} matchups={matchups} scale={scale} focus={kept ? null : focusSiteId} role={read.role} />;
 				})}
 			</button>
 			<button type="button" className="rec-squad-read" onClick={(e) => { e.stopPropagation(); onInspect && onInspect(record); }} title="Read this creature's dossier" aria-label={`Read ${speciesLabel(record)}'s dossier`} data-read={record.id}>
@@ -382,7 +409,7 @@ const GONE_WORDS = {
 	downed: () => 'fell in a Clash, out of the game',
 	away: () => 'spent on a world that was lost or tied, out of the game',
 };
-export function SquadGone({ view, you, squad }) {
+export function SquadGone({ view, you, squad, heldWorlds }) {
 	// a creature sent this round still has its row; the head keeps the rounds before
 	const gone = squad
 		.map((record) => ({ record, slot: slotStateOf(record, view, you) }))
@@ -393,17 +420,32 @@ export function SquadGone({ view, you, squad }) {
 	}
 	return (
 		<div className="rec-squad-gone" data-squad-gone={gone.length}>
-			{gone.map(({ record, slot }) => (
-				<span
-					key={record.id}
-					className={`rec-squad-token rec-squad-token--${slot.state}${slot.site ? ` g-el-${slot.site.world.element}` : ''}`}
-					title={`${speciesLabel(record)}: ${(GONE_WORDS[slot.state] || GONE_WORDS.away)(slot)}`}
-					data-gone={slot.state}
-				>
-					<XalianImage variant="token" speciesName={record.species} primaryType={elementOf(record)} padding="0px" fill="black" moreClasses="rec-squad-token-img" />
-					{slot.state === 'downed' && <svg className="rec-squad-token-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>}
-				</span>
-			))}
+			{gone.map(({ record, slot }) => {
+				// the view names who holds a world, not which one: the Ruling log does (heldWorlds)
+				const held = slot.state === 'holding' && heldWorlds ? heldWorlds[record.id] : null;
+				const world = slot.site ? slot.site.world.element : held ? held.element : null;
+				const el = elementOf(record);
+				const words = held ? `won ${held.planet} in an earlier round, and stays there` : (GONE_WORDS[slot.state] || GONE_WORDS.away)(slot);
+				return (
+					<span
+						key={record.id}
+						className={`rec-squad-token rec-squad-token--${slot.state}${world ? ` g-el-${world}` : ''}`}
+						title={`${speciesLabel(record)}: ${words}`}
+						data-gone={slot.state}
+					>
+						<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" moreClasses="rec-squad-token-img" />
+						{/* the badge the creature's row wore, so a token matches its silhouette and disc */}
+						{el && <XalianTypeSymbolBadge size={12} type={el} classes="rec-squad-token-disc" />}
+						{slot.state === 'downed' && <svg className="rec-squad-token-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>}
+						{/* a creature holding a world stands under the flag its win planted, the one the head's count draws */}
+						{slot.state === 'holding' && (
+							<i className="rec-flag rec-flag--lit rec-squad-token-flag" data-token-flag>
+								<svg viewBox="0 0 12 14" aria-hidden="true"><path className="rec-flag-staff" d="M2.5 13.5V1" /><path className="rec-flag-cloth" d="M2.5 1.5h8L8.3 4.8l2.2 3.3h-8z" /></svg>
+							</i>
+						)}
+					</span>
+				);
+			})}
 		</div>
 	);
 }

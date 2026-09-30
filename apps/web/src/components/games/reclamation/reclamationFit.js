@@ -380,3 +380,28 @@ export function roundTrack(frames, log, you, currentIndex) {
 		}),
 	}));
 }
+
+/*
+	heldWorldsOf(frames, log, seat) -> { [recordId]: { element, planet } }: the world each of
+	your creatures won and still stands on, read from the Ruling events in the log (the view
+	names who holds, not where). A creature the log has not reached yet is simply missing.
+*/
+export function heldWorldsOf(frames, log, seat) {
+	const sites = {};
+	(frames || []).forEach((frame) => frame.sites.forEach((site) => { sites[site.id] = site; }));
+	const held = {};
+	(log || []).forEach((event) => {
+		if (!event || event.type !== 'judge' || !event.siteResults) {
+			return;
+		}
+		Object.entries(event.siteResults).forEach(([siteId, result]) => {
+			const site = sites[siteId];
+			if (site && result && result.winner === seat) {
+				((result.entries && result.entries[seat]) || []).forEach((e) => {
+					held[e.recordId] = { element: site.world.element, planet: site.world.planet };
+				});
+			}
+		});
+	});
+	return held;
+}
