@@ -48,10 +48,17 @@ parser.add_argument('--root', type=float, nargs=2, default=[.31, -.03], help='fl
 parser.add_argument('--root-blend', type=float, default=.008)
 parser.add_argument('--dome', type=float, nargs=3, default=[.33, .08, .46], help='skull dome ellipse half-width, center z, half-height (locks keep out)')
 parser.add_argument('--x-min', type=float, default=.40, help='no lock is rooted nearer the midline than this')
+# Bevel: a bounded erosion of the rear half of the roof's top edge, so the rear rim is a rounded shoulder that
+# lock tips rise from, instead of a straight lip.
+parser.add_argument('--bevel', type=float, default=0., help='erosion of the rear top edge, head-local (0 = off)')
+parser.add_argument('--bevel-band', type=float, default=.06, help='depth below the local top over which the bevel acts')
+parser.add_argument('--bevel-y', type=float, nargs=2, default=[.09, .15], help='weight ramps from 0 to 1 between these y values')
+parser.add_argument('--bevel-x', type=float, nargs=4, default=[.42, .55, .95, 1.06], help='ramp in, full, ramp out start, out end')
 # Swell: bounded dilation of the rear of the fan.
 parser.add_argument('--swell', type=float, default=0., help='dilation of the rear fan wall, head-local (0 = off)')
 parser.add_argument('--swell-x', type=float, nargs=4, default=[.36, .50, .90, 1.04], help='ramp in, full, ramp out start, out end')
 parser.add_argument('--swell-z', type=float, nargs=4, default=[-.16, -.04, .36, .50], help='ramp in, full, ramp out start, out end')
+parser.add_argument('--swell-follow-low', type=float, nargs=2, default=None, help='the lower ramp follows the fan lower edge: weight rises from (lowest solid z at that x + first value) over the second value')
 parser.add_argument('--swell-y', type=float, nargs=2, default=[.08, .15], help='weight ramps from 0 to 1 between these y values')
 # Row locks.
 parser.add_argument('--rings', type=float, nargs='*', default=[.36, .50, .64, .78, .92])
@@ -66,12 +73,28 @@ parser.add_argument('--ring-angle-min', type=float, default=-80.)
 parser.add_argument('--ring-angle-max', type=float, default=112.)
 parser.add_argument('--ring-inset', type=float, default=.03, help='a row lock root must lie this far inside the outline')
 parser.add_argument('--ring-tip-slack', type=float, default=.0, help='a row lock tip may stand this far beyond the outline')
+# Shingles: low relief leaves pressed into the rear wall by shifting its surface back (no protruding blades), laid out
+# on the same rings as the row locks. When --shingle-amp is above zero the rings place shingles instead of row locks.
+parser.add_argument('--shingle-amp', type=float, default=0., help='relief height of a shingle at its tip, head-local (0 = off)')
+parser.add_argument('--shingle-base', type=float, default=.3, help='fraction of the amplitude at a shingle root')
+parser.add_argument('--shingle-edge', type=float, default=.35, help='fraction of the shingle half width over which its side rounds off')
+parser.add_argument('--shingle-fade', type=float, default=.03, help='relief fades to zero over this distance inside the fan outline')
+parser.add_argument('--shingle-y', type=float, nargs=2, default=[.05, .015], help='the shift acts from this far below the rear floor (zero) to this far (full)')
+parser.add_argument('--shingle-floor-min', type=float, default=-9., help='no relief where the rear floor is nearer the front than this y (steep end and rim slopes)')
+parser.add_argument('--shingle-x-fade', type=float, nargs=2, default=[9., 10.], help='relief fades out between these |x| values (the outer end face stays smooth)')
+parser.add_argument('--shingle-blend', type=float, default=.004, help='smooth union radius between the relief and the skin')
+parser.add_argument('--shingle-slope-max', type=float, default=9., help='relief fades out where the rear floor slope (rise per run) passes this')
+parser.add_argument('--shingle-taper', type=float, default=2.0, help='exponent of the width falloff toward the tip')
 # Fringe locks along the outline.
 parser.add_argument('--edge-spacing', type=float, default=.10, help='arc spacing of fringe locks along the outline (0 = off)')
 parser.add_argument('--edge-rows', type=int, default=2)
 parser.add_argument('--edge-inset', type=float, default=.12, help='root distance inside the outline, first row')
 parser.add_argument('--edge-row-step', type=float, default=.09)
 parser.add_argument('--edge-out', type=float, default=.015, help='how far a fringe lock tip stands beyond the outline')
+parser.add_argument('--edge-out-top', type=float, default=.0, help='extra reach of fringe tips where the outline faces up')
+parser.add_argument('--edge-top-ramp', type=float, default=1.0, help='fraction of --edge-out-top at the inner end (x .45); it rises to the full value by x .95')
+parser.add_argument('--edge-end-thin', type=float, default=2.0, help='where the outline faces outward (normal x above this fraction... 2 = off), every other fringe lock is skipped')
+parser.add_argument('--edge-end-skip', type=float, default=2.0, help='no fringe lock where the outline normal x exceeds this (2 = off): the outer end face stays smooth from the side')
 parser.add_argument('--edge-width', type=float, default=.05)
 parser.add_argument('--edge-thickness', type=float, default=.016)
 parser.add_argument('--edge-lift', type=float, default=.03)
@@ -83,6 +106,19 @@ parser.add_argument('--edge-max-facing', type=float, default=.55)
 parser.add_argument('--lock-cap', type=float, default=None, help='no lock tip rises above this height')
 parser.add_argument('--lock-cap-inner', type=float, default=None, help='cap for tips at the inner end of the fan; the cap rises to --lock-cap by --cap-x1')
 parser.add_argument('--cap-x', type=float, nargs=2, default=[.45, .95], help='x where the cap starts to rise and where it reaches --lock-cap')
+# Rim locks: leaf tips rooted a little below the rear top edge and standing up past it, so the rear rim breaks into tips.
+parser.add_argument('--rim-spacing', type=float, default=0., help='arc spacing along x of rim locks (0 = off)')
+parser.add_argument('--rim-x', type=float, nargs=2, default=[.46, .92], help='x range of the rim locks')
+parser.add_argument('--rim-rise', type=float, nargs=2, default=[.02, .05], help='how far a tip stands above the rear top edge, at the inner and outer end')
+parser.add_argument('--rim-inset', type=float, default=.05, help='root depth below the rear top edge, first row')
+parser.add_argument('--rim-rows', type=int, default=2)
+parser.add_argument('--rim-row-step', type=float, default=.06)
+parser.add_argument('--rim-dir-x', type=float, default=.35, help='outward lean of a rim lock (fraction of the up direction)')
+parser.add_argument('--rim-floor-min', type=float, default=.12, help='the rear top edge is the highest z where the rear floor is at least this far back')
+parser.add_argument('--rim-width', type=float, default=.05)
+parser.add_argument('--rim-thickness', type=float, default=.02)
+parser.add_argument('--rim-lift', type=float, default=.015)
+parser.add_argument('--tip-x-max', type=float, default=None, help='no lock tip reaches beyond this |x|, so the fan span does not grow')
 parser.add_argument('--no-rows', action='store_true')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
@@ -145,6 +181,29 @@ def dome_value(px, pz):
     return np.sqrt((px/a)**2+((pz-cz)/b)**2)
 
 
+# 1b. Bevel of the rear top edge (erosion, weighted).
+bevel_record = {'applied': args.bevel > 0}
+if args.bevel > 0:
+    solid_all = field < 0
+    # local top surface per (x, y) column: the highest solid voxel, read from the top down
+    top_idx = solid_all.shape[2]-1-np.argmax(solid_all[:, :, ::-1], axis=2)
+    top_z = np.where(solid_all.any(axis=2), Z[top_idx], -9.0)
+    del solid_all
+    valid = top_z > -8
+    filled = np.where(valid, top_z, 0.0)
+    smooth_top = gauss2d(filled, .03/VS)
+    smooth_w = gauss2d(valid.astype(np.float64), .03/VS)
+    top_z = np.where(smooth_w > .5, smooth_top/np.maximum(smooth_w, 1e-6), -9.0)
+    ax = np.abs(X)
+    x0, x1, x2, x3 = args.bevel_x
+    wx = smoothstep((ax-x0)/(x1-x0))*(1-smoothstep((ax-x2)/(x3-x2)))
+    wy = smoothstep((Y-args.bevel_y[0])/(args.bevel_y[1]-args.bevel_y[0]))
+    wz = smoothstep((Z[None, None, :]-(top_z[:, :, None]-args.bevel_band))/args.bevel_band)
+    bevel_weight = (wx[:, None, None]*wy[None, :, None]*wz).astype(np.float32)
+    field = (field+args.bevel*bevel_weight).astype(np.float32)
+    bevel_record['maximumWeight'] = float(bevel_weight.max())
+    del bevel_weight, wz, top_z
+
 # 2. Swell of the rear wall.
 swell_record = {'applied': args.swell > 0}
 shaped = field
@@ -155,7 +214,18 @@ if args.swell > 0:
     wx = smoothstep((ax-x0)/(x1-x0))*(1-smoothstep((ax-x2)/(x3-x2)))
     wz = smoothstep((Z-z0)/(z1-z0))*(1-smoothstep((Z-z2)/(z3-z2)))
     wy = smoothstep((Y-args.swell_y[0])/(args.swell_y[1]-args.swell_y[0]))
-    weight = (wx[:, None, None]*wy[None, :, None]*wz[None, None, :]).astype(np.float32)
+    if args.swell_follow_low is not None:
+        rear_solid = (field < 0) & (Y[None, :, None] > .10) & (Y[None, :, None] < .30)
+        has_z = rear_solid.any(axis=1)
+        low_idx = np.argmax(has_z, axis=1)
+        low_z = np.where(has_z.any(axis=1), Z[low_idx], 9.0)
+        del rear_solid, has_z
+        low_z = np.where(np.abs(X) > .3, low_z, 9.0)
+        wl = smoothstep((Z[None, :]-(low_z[:, None]+args.swell_follow_low[0]))/args.swell_follow_low[1])
+        wz_up = 1-smoothstep((Z-z2)/(z3-z2))
+        weight = (wx[:, None, None]*wy[None, :, None]*(wl*wz_up[None, :])[:, None, :]).astype(np.float32)
+    else:
+        weight = (wx[:, None, None]*wy[None, :, None]*wz[None, None, :]).astype(np.float32)
     reach = BAND-.012
     fade = 1-smoothstep((field-reach)/.006)  # keep the far background untouched
     shaped = (field-args.swell*weight*fade).astype(np.float32)
@@ -220,15 +290,18 @@ def at(arr, x, z):
 # 3-4. Author the locks (right side; mirrored to the left).
 rng = np.random.default_rng(args.seed)
 rx, rz = args.root
+shingles = []
 locks, skipped = [], {'insideDome': 0, 'tooShallow': 0, 'tipOutside': 0, 'leavesFloor': 0, 'nearMidline': 0}
 
 
-def add_lock(kind, x, z, direction2, length, width, thickness, lift):
+def add_lock(kind, x, z, direction2, length, width, thickness, lift, flat=False):
     """direction2 is the in-plane (x, z) direction; the lock is projected onto the rear floor's tangent plane."""
     y = at(floor_filled, x, z)
     gx, gz = at(gxs, x, z), at(gzs, x, z)
     slope = np.array([-np.clip(gx, -1.2, 1.2), 1.0, -np.clip(gz, -1.2, 1.2)])
     normal = slope/np.linalg.norm(slope)
+    if flat:
+        normal = np.array([0., 1., 0.])
     d = np.array([direction2[0], 0.0, direction2[1]])
     d = d-normal*d.dot(normal)
     d /= np.linalg.norm(d)
@@ -239,6 +312,8 @@ def add_lock(kind, x, z, direction2, length, width, thickness, lift):
             cap = args.lock_cap_inner+(args.lock_cap-args.lock_cap_inner)*float(smoothstep((tip_x-args.cap_x[0])/(args.cap_x[1]-args.cap_x[0])))
         reach = (cap-z-normal[2]*lift)/d[2]
         length = min(length, max(reach, .05))
+    if args.tip_x_max is not None and d[0] > 1e-6:
+        length = min(length, max((args.tip_x_max-abs(x))/d[0], .04))
     locks.append({'kind': kind, 'root': [x, y, z], 'normal': normal.tolist(), 'direction': d.tolist(),
                   'length': float(length), 'width': float(width), 'thickness': float(thickness), 'lift': float(lift)})
 
@@ -263,6 +338,16 @@ if not args.no_rows and args.rings:
             pz = rz+r*math.sin(th)
             theta += step
             if not root_ok(px, pz):
+                continue
+            if args.shingle_amp > 0:
+                if at(depth_in, px, pz) < .004:
+                    skipped['tooShallow'] += 1
+                    continue
+                radial = np.array([math.cos(th), math.sin(th)])
+                d2 = radial*(1-args.ring_up)+np.array([0, 1.])*args.ring_up
+                d2 /= np.linalg.norm(d2)
+                shingles.append((px, pz, float(d2[0]), float(d2[1]), args.ring_length*rng.uniform(.92, 1.08),
+                                 args.ring_width*rng.uniform(.92, 1.1), args.shingle_amp*rng.uniform(.85, 1.1)))
                 continue
             if at(depth_in, px, pz) < args.ring_inset:
                 skipped['tooShallow'] += 1
@@ -301,7 +386,7 @@ if args.edge_spacing > 0:
     for row in range(args.edge_rows):
         inset = args.edge_inset+row*args.edge_row_step
         marks = np.arange(args.edge_spacing*(.5 if row == 0 else 1.0), seg[-1], args.edge_spacing)
-        for m in marks:
+        for mi, m in enumerate(marks):
             P = np.array([np.interp(m, seg, outline[:, 0]), np.interp(m, seg, outline[:, 1])])
             if P[0] < args.edge_x_min:
                 continue
@@ -309,6 +394,10 @@ if args.edge_spacing > 0:
             if np.linalg.norm(N) < 1e-9:
                 continue
             N /= np.linalg.norm(N)
+            if N[0] > args.edge_end_thin and (mi+row) % 2 == 1:
+                continue
+            if N[0] > args.edge_end_skip:
+                continue
             rad = P-np.array([rx, rz])
             rad /= np.linalg.norm(rad)
             d2 = N*(1-args.edge_radial)+rad*args.edge_radial+np.array([0., args.edge_up])
@@ -327,11 +416,85 @@ if args.edge_spacing > 0:
             if facing > args.edge_max_facing:
                 skipped['leavesFloor'] += 1
                 continue
-            length = (inset+args.edge_out)/max(float(d2@N), .55)*rng.uniform(.95, 1.05)
+            ramp = args.edge_top_ramp+(1-args.edge_top_ramp)*float(smoothstep((P[0]-.45)/.5))
+            out_reach = args.edge_out+args.edge_out_top*ramp*max(float(N[1]), 0.0)
+            length = (inset+out_reach)/max(float(d2@N), .55)*rng.uniform(.95, 1.05)
             add_lock('edge%d' % row, float(root[0]), float(root[1]), d2, length,
                      args.edge_width*rng.uniform(.92, 1.08)*(1-.1*row), args.edge_thickness, args.edge_lift)
             edge_record['placed'] += 1
     edge_record['outlinePoints'] = int(len(outline))
+
+shingle_record = {'applied': bool(shingles), 'count': len(shingles)}
+if shingles:
+    hs = np.zeros((len(SX), len(SZ)))
+    for px, pz, dx, dz, L, W, A in shingles:
+        ext = L+W+.01
+        i0, i1 = max(0, int((px-ext-SX[0])/VS)), min(len(SX), int((px+ext-SX[0])/VS)+1)
+        k0, k1 = max(0, int((pz-ext-SZ[0])/VS)), min(len(SZ), int((pz+ext-SZ[0])/VS)+1)
+        gx, gz = np.meshgrid(SX[i0:i1]-px, SZ[k0:k1]-pz, indexing='ij')
+        u = gx*dx+gz*dz
+        w = -gx*dz+gz*dx
+        t = np.clip(u/L, 0, 1)
+        omega = W*np.clip(1-t**args.shingle_taper, 0, 1)**.6+1e-6
+        side = smoothstep((1-np.abs(w)/omega)/args.shingle_edge)
+        head_edge = smoothstep(u/(.06*L+1e-6))
+        h = A*(args.shingle_base+(1-args.shingle_base)*t)*side*head_edge*((u >= 0) & (u <= L))
+        hs[i0:i1, k0:k1] = np.maximum(hs[i0:i1, k0:k1], h)
+    hs *= smoothstep(depth_in/args.shingle_fade)
+    hs *= smoothstep((floor_smooth-args.shingle_floor_min)/.04)
+    hs *= (1-smoothstep((np.abs(SX)[:, None]-args.shingle_x_fade[0])/(args.shingle_x_fade[1]-args.shingle_x_fade[0])))
+    slope = np.hypot(gxs, gzs)
+    hs *= 1-smoothstep((slope-args.shingle_slope_max)/.4)
+    front_y = np.where(has, Y[np.argmax(sub < 0, axis=1)], 0.0)
+    thick = np.where(has, floor_smooth-front_y, 0.0)  # wall thickness: the shift must not reach the front face
+    hs *= smoothstep((thick-.05)/.04)
+    ax_i = np.clip(np.round((np.abs(X)-SX[0])/VS).astype(int), 0, len(SX)-1)
+    ok_x = (np.abs(X) >= SX[0]) & (np.abs(X) <= SX[-1])
+    H = np.zeros((len(X), len(Z)), dtype=np.float32)
+    FL = np.zeros((len(X), len(Z)), dtype=np.float32)
+    H[np.ix_(ok_x, np.arange(r0, r1))] = hs[ax_i[ok_x], :]
+    FL[np.ix_(ok_x, np.arange(r0, r1))] = floor_smooth[ax_i[ok_x], :]
+    TH = np.zeros((len(X), len(Z)), dtype=np.float32)
+    TH[np.ix_(ok_x, np.arange(r0, r1))] = thick[ax_i[ok_x], :]
+    # The relief is a slab of solid laid on the measured rear floor: from just under the floor to the floor plus the
+    # relief height, unioned with the skin. (Shifting the field along y instead left hatch stripes on the steep end.)
+    FLR = np.zeros((len(X), len(Z)), dtype=np.float32)
+    FLR[np.ix_(ok_x, np.arange(r0, r1))] = floor_filled[ax_i[ok_x], :]
+    slab = np.full(shape, BAND, dtype=np.float32)
+    for i in np.where(ok_x & (H.max(axis=1) > .0015))[0]:
+        top = FLR[i]+H[i]-.002
+        bottom = FLR[i]-.02
+        d = np.maximum(Y[:, None]-top[None, :], bottom[None, :]-Y[:, None])
+        slab[i] = np.where(H[i][None, :] > .0015, np.clip(d, -BAND, BAND), BAND)
+    shaped = smin(shaped, slab, args.shingle_blend).astype(np.float32)
+    del slab
+    shingle_record['maximumRelief'] = float(hs.max())
+    shingle_record['coveredColumns'] = int((hs > .001).sum())
+
+rim_record = {'applied': args.rim_spacing > 0, 'placed': 0}
+if args.rim_spacing > 0:
+    for j, x in enumerate(np.arange(args.rim_x[0], args.rim_x[1], args.rim_spacing)):
+        for row in range(args.rim_rows):
+            xr = x+(args.rim_spacing*.5 if row % 2 else 0.0)+rng.uniform(-.008, .008)
+            if xr > args.rim_x[1]:
+                continue
+            ci = int(np.clip(round((xr-SX[0])/VS), 0, len(SX)-1))
+            ks = np.where(has[ci, :] & (floor_filled[ci, :] > args.rim_floor_min))[0]
+            if not len(ks):
+                continue
+            ztop = float(SZ[ks[-1]])
+            tt = float(np.clip((xr-args.rim_x[0])/(args.rim_x[1]-args.rim_x[0]), 0, 1))
+            rise = args.rim_rise[0]+(args.rim_rise[1]-args.rim_rise[0])*tt
+            inset = args.rim_inset+row*args.rim_row_step
+            d2 = np.array([args.rim_dir_x, 1.0])
+            d2 /= np.linalg.norm(d2)
+            zr = ztop-inset
+            if at(depth_in, xr, zr) < .01:
+                skipped['tooShallow'] += 1
+                continue
+            add_lock('rim%d' % row, xr, zr, d2, (inset+rise)/d2[1]*rng.uniform(.95, 1.05),
+                     args.rim_width*rng.uniform(.92, 1.08), args.rim_thickness, args.rim_lift, flat=True)
+            rim_record['placed'] += 1
 
 lock_field = np.full(shape, BAND, dtype=np.float32)
 for lock in locks:
@@ -443,7 +606,7 @@ summary = {
     'approval': None, 'stageProvenanceSha256': provenance, 'sourceSha256': sha(args.scene),
     'scope': 'Ear fan rear: layered row and fringe locks on the back of the fan joined by a smooth union; face objects and the front of the fan preserved',
     'parameters': {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items() if k not in ('scene', 'out')},
-    'swell': swell_record, 'skinTopZ': {'before': top_before, 'after': top_after}, 'edge': edge_record,
+    'swell': swell_record, 'bevel': bevel_record, 'shingles': shingle_record, 'rim': rim_record, 'skinTopZ': {'before': top_before, 'after': top_after}, 'edge': edge_record,
     'lockCount': len(locks), 'lockSkipped': skipped, 'locks': locks,
     'removedFlecks': removed_flecks, 'removedFloatingPieces': removed_pieces, 'skinBefore': before, 'skinAfter': after,
     'deviationOutsideRearWindow': {'samples': int(len(outside)), 'maximum': float(outside.max()) if len(outside) else None,
