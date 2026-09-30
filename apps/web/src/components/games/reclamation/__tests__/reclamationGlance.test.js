@@ -314,12 +314,12 @@ describe('the instruments', () => {
 		expect(row.querySelectorAll('.rec-flag').length).toBe(5);
 		expect(row.querySelector('.rec-score-row').getAttribute('aria-label')).toContain('won 3 worlds of the 5 that win the game (Zolton, Telypso, Telypso)');
 		const deck = row.querySelector('[data-sends-side="theirs"]');
-		// the counts stand against the rules' own numbers: sends left of the eleven, worlds won of the five
-		expect(deck.textContent).toBe('6/11');
+		// worlds won stand against the five that win; sends left are counted alone
+		expect(deck.textContent).toBe('6');
 		expect(row.querySelector('.rec-side-count').textContent).toBe('3/5');
 		expect(deck.getAttribute('aria-label')).toContain('6 sends left for the 6 worlds still to play');
-		// one unbroken run of ticks, a tick per send the game allows, lit while unspent
-		expect(deck.querySelectorAll('.rec-sendbar-tick').length).toBe(11);
+		// a piece per send still to make, none for spent ones (pass 76, round 8)
+		expect(deck.querySelectorAll('.rec-sendbar-tick').length).toBe(6);
 		expect(deck.querySelectorAll('.rec-sendbar-tick--left').length).toBe(6);
 		// an empty slot is the same flag in outline (staff and cloth), not a dot
 		const dark = [...row.querySelectorAll('.rec-flag:not(.rec-flag--lit):not(.rec-flag--point)')];
@@ -335,8 +335,7 @@ describe('the instruments', () => {
 		expect(mine.container.querySelector('.rec-sendbar').className).toContain('rec-sendbar--empty');
 		// your pieces are the meter's ticks, so your row has no separate piece; the rival keeps its emblem
 		expect(mine.container.querySelector('.rec-side-piece')).toBeNull();
-		expect(mine.container.querySelectorAll('svg.rec-sendbar-tick').length).toBe(11);
-		expect(mine.container.querySelectorAll('.rec-sendbar-tick--left').length).toBe(0);
+		expect(mine.container.querySelectorAll('svg.rec-sendbar-tick').length).toBe(0);
 	});
 
 	it('plants a pennant per world won, two for a staked one, fitted to the count the table shows', () => {

@@ -11,11 +11,12 @@ A UI pass reaches Nick only once it clears a set bar, measured by readers who ha
 ## The bar
 
 A round passes only when all three of these hold:
-1. **Three fresh Opus readers each give the squad 8 of 10 or higher on both scores:**
-   - **Finding:** how quickly they can find each fact they would weigh in choosing which creature to send where.
-   - **Intuitive:** how much of what the panel shows they understood without anyone explaining it.
+1. **Finding and Intuitive, from three fresh Opus readers.**
+   - **Finding:** each reader scores 8 of 10 or higher on how quickly they can find each fact they would weigh in choosing which creature to send where.
+   - **Intuitive, measured mark by mark (Nick, 2026-09-30, from round 8):** each reader explains every mark on the squad panel with no help, from a fixed list given by where each mark sits. A mark counts as intuitive only if all three readers explain it right. The bar is every mark intuitive.
+   - The readers' own 1 to 10 Intuitive score is still recorded, but it does not gate. It held at 5 for twelve readers across rounds 4 to 7, while those same readers explained nearly every mark correctly.
 
-   Nick, 2026-09-30, after three rounds held at 6: "it should score how quickly it can find facts. Things should be intuitive". Rounds 1 to 3 scored how quickly the panel let a reader decide. Deciding is the player's own judgment, which pass 72 and the no-suggestions rule leave to them on purpose.
+   Nick, 2026-09-30, after three rounds held at 6 on "how fast it lets you decide": "it should score how quickly it can find facts. Things should be intuitive". Deciding is the player's own judgment, which pass 72 and the no-suggestions rule leave to them on purpose.
 2. **At least 9 in 10 of their factual answers are right,** checked against the engine's own numbers (see Ground truth).
 3. **No reader names the same confusion** a previous round already tried to fix. A repeated top finding is a design decision, and it goes to Nick as a question (see `svg-plate-review-loop` in memory: a repeated top finding means a composition decision).
 
@@ -215,5 +216,34 @@ The orchestrator scores each factual answer right or wrong against that JSON. It
 - **An objective count names the real gaps.** Round 7's lists, scored mark by mark against what each reader guessed:
   - **explained right by all three:** ▲/▼ as better or worse there than usual, the tick as the rival's total, the sort icon, the element badges, the act words, the flags as worlds won and the ✕ as fallen;
   - **explained wrong or not at all by at least one:** the badge inside a hit box (whose element it is), the tint on the pointed column, hollow and solid pieces in the send count, and the gap between "7/11" and eight listed creatures.
+
+| 8 | 197 | Finding 7, 7, 6; own Intuitive 6, 6, 6; marks 20 of 20 explained right by all three | 33 of 33 (100%) | the hit box is small, and its target is only a tiny badge to match against the board (3 of 3) | the badge and arrow show only where two or more rivals could take the blow; the blow's number is larger |
+
+### Round 8 notes (seed 197, the first round measured mark by mark)
+
+- **Intuitive passes the bar.** All three readers explained all twenty marks right, with no help:
+  - the act words and glyphs, "+N", ▲/▼, the bar and the rival's tick;
+  - the hit box and its arrow onto the target's badge;
+  - the element badges, the column symbols, the sort icon and ⓘ;
+  - the greyed sent row;
+  - in the top strip: the turn pointer, the flags toward 5, the pieces for sends left, the creatures holding won worlds;
+  - STAKE ×2, MOVE and PASS.
+
+  The loosest answer was one reader's "a marker for whose turn it is, or a play control" for the turn pointer. It named the right meaning first, so it counts.
+- **Round 7's three misses read right this time:**
+  - the hit box badge, now with an arrow onto it;
+  - the send count, now only the pieces left, with no "/11";
+  - the pointed column, whose tint is gone.
+- **The readers' own Intuitive score rose from 5 to 6** for the first time in five rounds.
+- **Finding is the remaining gap: 7, 7, 6.** All three name the hit box. It is small, and its target is a badge to be matched against the board.
+
+| 9 | 199 | Finding 7, 7, 7; own Intuitive 6, 6, 6; every mark shown explained right by all three | 33 of 33 (100%) | the rival's standing at each world is only a tick, so readers look up at the world and subtract (2 of 3); the hit box does not say what it does to the count (1 of 3, by design, pass 72) | the head of each world's column prints how your side stands there, signed ("−4", "+3") |
+
+### Round 9 notes (seed 199)
+
+- **Finding rose to 7 from all three** once the target badge showed only where two or more rivals stand. Every world in this seed had a single rival, so no reader saw the arrow and badge; they read right in round 8.
+- **What slows finding is now the tick.** Readers read it right, but to use it they looked up at the world for the rival's number.
+- **The fix prints the standing where the column starts.** "−4" (behind, in the loss ink) or "+3" sits beside the world's symbol, so a cell's "+10" under a head's "−4" reads as the sum.
+- **Still wanted, and left out by pass 72:** what a blow does to the count, which the fight decides.
 
 - **Harness note: the fixed policy loses quickly.** Seeds 41, 43, 53, 61 and 67 ended at 1 to 5 worlds in round 2, before the round 3 capture, so the round 2 seed was 71.

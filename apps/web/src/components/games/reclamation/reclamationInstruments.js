@@ -422,7 +422,6 @@ export function SideRow({ side, pennants, toClinch, sends, cap, turn, emblem, pa
 export function SendMeter({ left, cap, side, worldsAhead, tone }) {
 	const who = side === 'theirs' ? 'The rival has' : 'You have';
 	const label = `${who} ${left} send${left === 1 ? '' : 's'} left${typeof worldsAhead === 'number' ? ` for the ${worldsAhead} world${worldsAhead === 1 ? '' : 's'} still to play` : ''}.${typeof cap === 'number' ? ` A side sends ${cap} of its creatures in a game, and the rest stay back.` : ''}`;
-	const total = Math.max(typeof cap === 'number' ? cap : left, left);
 	return (
 		<span
 			className={`rec-sendbar rec-sendbar--${side}${left === 0 ? ' rec-sendbar--empty' : ''}${tone ? ` rec-sendbar--${tone}` : ''}`}
@@ -432,10 +431,13 @@ export function SendMeter({ left, cap, side, worldsAhead, tone }) {
 			data-sends-left={left}
 			data-sends-side={side}
 		>
+			{/* pass 76, round 8: a piece for each send still to make, and nothing for spent ones. Readers
+			   could not tell a hollow piece (spent) from a solid one, and "7/11" beside eight creatures
+			   read as a mismatch; the pieces now count only what is left */}
 			<span className="rec-sendbar-ticks" aria-hidden="true">
-				{Array.from({ length: total }).map((_, i) => <PieceGlyph className={`rec-sendbar-tick${i < left ? ' rec-sendbar-tick--left' : ''}`} key={i} />)}
+				{Array.from({ length: left }).map((_, i) => <PieceGlyph className="rec-sendbar-tick rec-sendbar-tick--left" key={i} />)}
 			</span>
-			<b className="rec-sendbar-count g-mono">{left}{typeof cap === 'number' && <i>/{cap}</i>}</b>
+			<b className="rec-sendbar-count g-mono">{left}</b>
 		</span>
 	);
 }

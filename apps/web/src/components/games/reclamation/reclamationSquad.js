@@ -166,7 +166,9 @@ export function blowTargetAt(view, record, site, you, role) {
 		return null;
 	}
 	const theirs = flattenBoardRecord(view, site, best.recordId);
-	return { ...best, element: elementOf(theirs) };
+	// how many rival creatures the blow could land on: with one, the target needs no badge
+	const among = Object.values(lands).filter((l) => !l.mine).length;
+	return { ...best, element: elementOf(theirs), among };
 }
 
 // the record of a creature standing at a world (the blow's target), from the public board
@@ -219,7 +221,11 @@ function WorldCell({ site, cell, facts, matchups, scale, focus, role, target }) 
 					<span className={`rec-squad-chartrun rec-squad-chartrun--${facts.blowTone}`} data-blow-on={target ? target.recordId : undefined}>
 						<RoleGlyph role={role} />
 						<i className="rec-squad-chart g-mono" data-chart={facts.chart || 1} data-blow={formatBlow(facts.blow)}>{formatBlow(facts.blow)}</i>
-						{target && target.element && <XalianTypeSymbolBadge size={10} type={target.element} classes="rec-squad-chart-target" />}
+						{/* round 8: an arrow onto the badge says the badge is the rival it lands on, not the attacker's own element */}
+						{/* round 9: with one rival at the world the blow can only land on it, so the arrow and badge
+						   stand only where there are two or more (readers had to match a tiny badge to the board) */}
+						{target && target.element && target.among > 1 && <svg className="rec-squad-chart-onto" viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 6h8M6.5 3l3 3-3 3" /></svg>}
+						{target && target.element && target.among > 1 && <XalianTypeSymbolBadge size={10} type={target.element} classes="rec-squad-chart-target" />}
 					</span>
 				)}
 			</span>
@@ -312,7 +318,21 @@ function Row({ record, read, view, you, sites, fitRow, scale, focusSiteId, armed
 	);
 }
 
-function Header({ sites, sortSiteId, onSort }) {
+/*
+	PASS 76, round 10. How your side stands at each world as the sends stand, signed, at the head of
+	its column: "−4" behind, "+3" ahead. Readers had to look up at the world and subtract to read the
+	tick on each bar; a cell's "+N" against the head's "−4" now says the sum at a glance. The rival
+	stands at the top of the table, so its side of the count sits at the top of the column.
+*/
+function marginAt(base, siteId) {
+	const t = base && base[siteId];
+	if (!t || (t.mine || 0) + (t.theirs || 0) < 0.05) {
+		return null;
+	}
+	return (t.mine || 0) - (t.theirs || 0);
+}
+
+function Header({ sites, sortSiteId, onSort, base }) {
 	// the same grid as a row's, so each world's symbol stands exactly over its cells
 	return (
 		<div className="rec-squad-row rec-squad-head">
@@ -331,6 +351,12 @@ function Header({ sites, sortSiteId, onSort }) {
 						data-squad-sort={site.id}
 					>
 						{getSpeciesTypeSymbol(site.world.element, true, 14, 'rec-squad-head-symbol')}
+						{(() => {
+							const m = marginAt(base, site.id);
+							if (m === null) return null;
+							const shown = Math.abs(m) < 0.5 ? '0' : `${m < 0 ? '−' : '+'}${formatHoldShown(Math.abs(m))}`;
+							return <b className={`rec-squad-head-margin g-mono${m < -0.5 ? ' rec-squad-head-margin--behind' : ''}`} data-squad-margin={m.toFixed(1)}>{shown}</b>;
+						})()}
 						{/* the sort icon (descending bars) says the symbol sorts; it lights when the squad is sorted by this world */}
 						<SortGlyph className="rec-squad-head-sorted" />
 					</button>
@@ -405,7 +431,7 @@ export default function ReclamationSquad({ view, you, squad, fits, scale, armedR
 		<div className="rec-squad" ref={ref} role="list" data-squad data-squad-cols={cols} data-squad-rows={perCol} data-squad-advanced={advanced ? '' : undefined} style={{ '--sq-cols': cols, '--sq-rows': perCol }}>
 			{columns.map((column, i) => (
 				<div className="rec-squad-col" key={i}>
-					<Header sites={sites} sortSiteId={sortSiteId} onSort={setSort} />
+					<Header sites={sites} sortSiteId={sortSiteId} onSort={setSort} base={fits && fits.base} />
 					{column.map((record) => (
 						<Row
 							key={record.id}

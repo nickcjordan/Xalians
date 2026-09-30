@@ -118,6 +118,13 @@ describe('the roster on a real game', () => {
 			expect(nums.length).toBe(state === 'sent' ? 1 : 3);
 			nums.forEach((n) => expect(n).toMatch(/^[+−]?\d+$/));
 		});
+		// round 10: each column's head says how your side stands there as the sends stand, signed
+		container.querySelectorAll('[data-squad-margin]').forEach((m) => {
+			const siteId = m.closest('[data-squad-sort]').getAttribute('data-squad-sort');
+			const t = fits.base[siteId];
+			expect(Number(m.getAttribute('data-squad-margin'))).toBeCloseTo(t.mine - t.theirs, 1);
+		});
+		expect(container.querySelectorAll('[data-squad-margin]').length).toBeGreaterThan(0);
 		const gone = render(<SquadGone view={view} you="A" squad={all} />).container;
 		expect(gone.querySelectorAll('[data-gone]').length).toBe(states.filter((st) => st !== 'hand' && st !== 'sent').length);
 		// a round has been ruled and this one is under way: every kind of row is here
@@ -177,12 +184,13 @@ describe('the roster on a real game', () => {
 						expect(node).not.toBeNull();
 						expect(node.getAttribute('data-blow')).toBe(formatBlow(Math.max(...theirs)));
 						expect(blowAt(view, record, site, seat, role)).toBe(Math.max(...theirs));
-						// round 4: the chip carries the act glyph, the number and the badge of the rival it lands on
+						// round 4: the chip carries the act glyph and the number it lands
 						const chip = node.parentElement;
 						const target = blowTargetAt(view, record, site, seat, role);
 						expect(chip.querySelector(`.rec-glyph--role-${role}`)).not.toBeNull();
 						expect(chip.getAttribute('data-blow-on')).toBe(target.recordId);
-						if (target.element) expect(chip.querySelector('.rec-squad-chart-target')).not.toBeNull();
+						// round 9: the badge names the target only where two or more rivals could take the blow
+						if (target.element) expect(!!chip.querySelector('.rec-squad-chart-target')).toBe(target.among > 1);
 						withBlow += 1;
 					} else {
 						expect(node).toBeNull();
