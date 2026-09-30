@@ -8200,7 +8200,7 @@
 	grid-template-rows: auto repeat(var(--sq-rows, 4), minmax(0, calc(44px * var(--rec-scale))));
 	align-content: start;
 	--sq-art: calc(26px * var(--rec-scale));
-	--sq-act: 3.2em;
+	--sq-act: 6.4em;
 	--sq-info: calc(16px * var(--rec-scale));
 	--sq-gap: calc(6px * var(--rec-scale));
 	font-size: calc(12px * var(--rec-scale));
@@ -8278,13 +8278,16 @@
 /* its act and the number it carries: a strike's arrow and its blow, a bolster's mend, a shield's mark alone */
 .rec-console--match[data-terminal] .rec-squad-act { display: inline-flex; align-items: center; gap: 2px; min-width: 0; white-space: nowrap; }
 .rec-console--match[data-terminal] .rec-squad-act .rec-glyph { width: 1.05em; height: 1.05em; flex: 0 0 auto; }
+/* the act's name beside its glyph: the choice itself, in words (pass 76, round 7) */
+.rec-console--match[data-terminal] .rec-squad-act-word { font-size: 0.82em; font-weight: 600; letter-spacing: 0.02em; color: var(--g-ink-mid); margin: 0 0.25em 0 0.1em; }
 .rec-console--match[data-terminal] .rec-squad-act b { font-size: 1.05em; font-weight: 700; color: var(--g-ink); font-variant-numeric: tabular-nums; }
 .rec-console--match[data-terminal] .rec-squad-speed { font-style: normal; font-size: 0.8em; color: var(--g-ink-low); margin-left: 3px; }
 /* advanced mode's speed rides after the attack, so the act column is wider there */
-.rec-console--match[data-terminal] .rec-squad[data-squad-advanced] .rec-squad-row { --sq-act: 5.6em; }
+.rec-console--match[data-terminal] .rec-squad[data-squad-advanced] .rec-squad-row { --sq-act: 8.6em; }
 /* a narrow column keeps the attack and lets the speed go to the dossier */
 @container (max-width: 400px) {
-	.rec-console--match[data-terminal] .rec-squad[data-squad-advanced] .rec-squad-row { --sq-act: 3.2em; }
+	.rec-console--match[data-terminal] .rec-squad[data-squad-advanced] .rec-squad-row { --sq-act: 5.8em; }
+	.rec-console--match[data-terminal] .rec-squad-row { --sq-act: 5.8em; }
 	.rec-console--match[data-terminal] .rec-squad-speed { display: none; }
 	/* the name gives way first, so a world's number, arrow and factor keep to their own cell */
 	.rec-console--match[data-terminal] .rec-squad-main { grid-template-columns: var(--sq-art) minmax(0, 1fr) var(--sq-act) repeat(3, minmax(0, 1.05fr)); }
@@ -8454,6 +8457,8 @@
 	.rec-console--match[data-terminal] .rec-squad-col { font-size: 10px; --sq-art: 20px; --sq-act: 2.6em; --sq-info: 12px; --sq-gap: 3px; }
 	/* a phone's column is 180 pixels: the silhouette names the creature (its name is on its title and its dossier), and the numbers get the room */
 	.rec-console--match[data-terminal] .rec-squad-name { display: none; }
+	/* a phone's act column has room for the glyph and its number; the name is on the desktop column */
+	.rec-console--match[data-terminal] .rec-squad-act-word { display: none; }
 	.rec-console--match[data-terminal] .rec-squad .rec-squad-main { grid-template-columns: var(--sq-art) var(--sq-act) repeat(3, minmax(0, 1fr)); }
 	.rec-console--match[data-terminal] .rec-squad .rec-squad-row { --sq-act: 2.8em; }
 	/* the top line has no room for the factor here: the cell reads number, bar, then the factor on a line of its own */

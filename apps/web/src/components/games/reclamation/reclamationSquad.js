@@ -56,6 +56,13 @@ export function slotStateOf(record, view, you) {
 }
 // strikers first, then sweepers, then the two that never strike
 const ACT_ORDER = { strike: 0, sweep: 1, shield: 2, bolster: 3 };
+/*
+	PASS 76, round 7. The act is the choice a player makes, so its name is printed beside its glyph
+	(Nick, 2026-09-30: "those words are descriptive of different actions ... we don't necessarily
+	need to abstract those actions away into icons"). Six rounds of readers guessed every glyph right
+	and could not confirm one; the word here confirms the glyph wherever else it appears.
+*/
+const ACT_WORDS = { strike: 'strike', sweep: 'sweep', bolster: 'mend', shield: 'guard' };
 
 /*
 	What a row reads off the engine once: its act, the number that act carries, its speed. The
@@ -281,6 +288,7 @@ function Row({ record, read, view, you, sites, fitRow, scale, focusSiteId, armed
 				</span>
 				<span className="rec-squad-act" title={roleLine} data-role={read.role}>
 					<RoleGlyph role={read.role} />
+					<span className="rec-squad-act-word" data-act-word={read.role}>{ACT_WORDS[read.role] || ''}</span>
 					{typeof read.power === 'number' && <b className="g-mono" data-plinth-power={formatBlow(read.power)}>{formatBlow(read.power)}</b>}
 					{advanced && <i className="rec-squad-speed g-mono" title="Speed: the faster attacks land first when the worlds resolve">{Math.round(read.speed)}</i>}
 				</span>

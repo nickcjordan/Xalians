@@ -201,4 +201,19 @@ The orchestrator scores each factual answer right or wrong against that JSON. It
   - A symbol at 11 pixels cannot confirm its own meaning, and Nick ruled out the legend and tooltips.
   - What is left is words on the squad (its column heads or the act column), or fewer marks. Words on the table break the affordances rule, so that is Nick's call.
 
+| 7 | 163 | Finding 6, 6, 6; Intuitive 5, 5, 5 | 40 of 42 (95%) | "what I add" against "what I hit" in one small cell; the reason behind ▲/▼ only on the world after a pick-up (3 of 3) | none yet: the Intuitive score has not moved in four rounds, so the question of how it is measured goes to Nick (below) |
+
+### Round 7 notes (seed 163)
+
+- **The act words read right, 3 of 3** ("strike 14", "sweep 5", "mend 6"). They were Nick's ruling: words only for the choices themselves. No reader listed the act glyphs as unread any more.
+- **Intuitive held at 5 for the fourth round running,** across four different changes:
+  - blow chips;
+  - glyph redraws;
+  - flag and piece counters;
+  - act words.
+- **The subjective score does not track what readers understand.** Twelve readers have scored 5 while explaining nearly every mark correctly. Readers list every mark they had to reason out, and score by that uncertainty, not by what they got right.
+- **An objective count names the real gaps.** Round 7's lists, scored mark by mark against what each reader guessed:
+  - **explained right by all three:** ▲/▼ as better or worse there than usual, the tick as the rival's total, the sort icon, the element badges, the act words, the flags as worlds won and the ✕ as fallen;
+  - **explained wrong or not at all by at least one:** the badge inside a hit box (whose element it is), the tint on the pointed column, hollow and solid pieces in the send count, and the gap between "7/11" and eight listed creatures.
+
 - **Harness note: the fixed policy loses quickly.** Seeds 41, 43, 53, 61 and 67 ended at 1 to 5 worlds in round 2, before the round 3 capture, so the round 2 seed was 71.
