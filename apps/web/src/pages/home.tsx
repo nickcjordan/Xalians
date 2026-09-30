@@ -296,7 +296,7 @@ const BEATS: Array<Spread | FigureBeat> = [
 		text: GENERATORS,
 		label: {
 			title: 'Generators, world by world',
-			text: 'Each Generator was built for the world it stood on, and the seeds of life in its vat took forms suited to that world.',
+			text: 'Each Generator made Xalians suited to the world it stood on; the seeds of life in its vat took forms fit for that world.',
 		},
 		alt: "The same heavy steel Generator, a tall glowing vat at its heart, shown on one world after another: a storm world, a lava world, an ice world and a sea. On each, the sensor ring on its mast reads the world, a pulse of light runs down into the vat, the gel takes the world's light, and new seeds of life form in it, dark against the glow, in shapes suited to that world: finned, armored, spiked, bell-shaped.",
 	},
@@ -341,7 +341,7 @@ const BEATS: Array<Spread | FigureBeat> = [
 			title: 'A Scrambler Token brought home',
 			text: 'Carried home from Valleron, where the Mercurius Machine prints them, a Scrambler Token lets a Generator make new Xalians immune to the plague.',
 		},
-		alt: 'The view dives from the galaxy to one dark world under a red haze, where a Generator stands idle, its vat empty. A small hexagonal chip arrives and is set into a console at the machine’s foot. Light runs from the chip up into the vat, which fills with green, and new seeds of life form in it. Around the machine and its new life the red haze keeps back; beyond it, the red remains.',
+		alt: 'The view dives from the galaxy to one dark world under a red haze, where a Generator stands idle, its vat empty. A small hexagonal chip arrives and is set into a console at the machine’s foot. Light runs from the chip up into the vat, which fills with green, and new seeds of life form in it. The red haze keeps back from the new life; beyond the machine, the red remains.',
 	},
 	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], labelRoom: '9.5rem', phoneVideo: true, layout: 'side', aspect: 'aspect-video min-[720px]:aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
