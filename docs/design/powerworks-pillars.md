@@ -216,3 +216,63 @@ Goal: every element step is visible on every attack (immune 0 < weak < neutral <
 | 6 | Saves move to version 2; a version 1 run is dropped and a new run starts (the page already does this on a version mismatch). | 90% | `PILLAR_SAVE_VERSION`, `powerworksTurnsPage.tsx` load |
 | 7 | The very weakest area attacks (power x 0.6 below 1.5) may still read weak equal to neutral at 1; accepted and counted rather than special-cased. | 70% | census after the change |
 | 8 | The v5 engine and `/powerworks/classic` keep their own levers; this pass touches only `pillars/`. | 95% | `dungeon/levers.ts` `HP_SCALE` is shared with the classic page |
+
+### Built and measured, 2026-09-29
+
+Built as decided: `POWER_DIVISOR` and `SUPPORT_DIVISOR` 5, `HEALTH_SCALE` 2 (applied once, in `fighter()`, so both sides and both engines get it), round half up everywhere a power or support number is scaled (`read.ts`, `stepDamage` and `allShare` in `engine.ts`, and the sim players and the page's key view through the same two helpers), `RECOVERY_STATION_HP` 20, `PILLAR_SAVE_VERSION` 2. The look-ahead players' position value scales its two fixed health constants (25 per standing companion, 60 for reaching camp) by `HEALTH_SCALE`, so those players value what they did before.
+
+**Census** (`devtools/pillarsNumbers.ts`, 1,600 creatures and 4,614 attacks from the draft offers of seeds 1 to 200, the engine's own `attackOn`):
+
+| | before | after |
+|---|---|---|
+| weak step not strictly between 0 and neutral | 555 (12.0%), all dealing 0 | 19 (0.4%), none dealing 0 |
+| strong step not strictly above neutral | 504 (10.9%) | 0 |
+| health p5 / p50 / p95 | 31 / 58 / 76 | 62 / 116 / 152 |
+| median Hinder / Heal / Shield | 7 / 6 / 5 | 14 / 13 / 11 |
+
+Attack power, by bucket (count of attacks):
+
+| power | 1 | 2 to 3 | 4 to 6 | 7 to 9 | 10 to 12 | 13 to 18 |
+|---|---|---|---|---|---|---|
+| before | 555 | 1,809 | 1,889 | 361 | 0 | 0 |
+| after | 19 | 394 | 1,236 | 1,285 | 1,029 | 651 |
+
+The 19 attacks that still fail are area attacks at power 1 (power x 0.6 rounds to 1): their weak step reads 1, equal to neutral. Accepted (decision 7).
+
+**Difficulty** (`devtools/pillarsTurns.ts`, turn by turn on the round timeline, roles rooms, 150 runs, look-ahead 60 runs). Baseline is the unchanged engine at enemy health 0.62. The rescale alone made the game easier (at 0.62: random 27%, biggest number 81% on the preset squad), because rounding up and the weak-step floor add damage on both sides; the factor was retuned to 0.76 (sweep below).
+
+| Squad | | random | biggest number | hardest-hit | planner | look-ahead | turns per encounter |
+|---|---|---|---|---|---|---|---|
+| preset | baseline (0.62) | 2% | 26% | 100% | 84% | 82% | 21.7 |
+| preset | after (0.76) | 5% | 40% | 97% | 82% | 67% | 22.5 |
+| draft | baseline (0.62) | 22% | 55% | 58% | 51% | 55% | 34.1 |
+| draft | after (0.76) | 27% | 53% | 61% | 51% | 48% | 41.8 |
+
+Turns per encounter are companion turns, hardest-hit rule, averaged over the encounters each run enters.
+
+Enemy health sweep (random / biggest number / hardest-hit, 150 runs):
+
+| Enemy health | preset | draft |
+|---|---|---|
+| 0.62 | 27% / 81% / 100% | 37% / 72% / 72% |
+| 0.68 | 10% / 57% / 99% | 32% / 65% / 73% |
+| 0.74 | 5% / 43% / 99% | 30% / 61% / 65% |
+| 0.75 | 5% / 41% / 97% | 27% / 53% / 61% |
+| 0.76 | 5% / 40% / 97% | 27% / 53% / 61% |
+| 0.77 | 5% / 34% / 96% | 27% / 51% / 60% |
+| 0.78 | 3% / 33% / 96% | 26% / 51% / 62% |
+| 0.80 | 0% / 25% / 94% | 24% / 47% / 59% |
+
+`ENEMY_HP_FACTOR` is 0.76: the hardest-hit rule (97%) and the random player (5%) on the preset squad each sit exactly 3 points from the baseline, which is the edge of the tolerance, and the draft squad is closest there. The biggest-number player on the preset squad is 14 points easier than before (40% against 26%) and does not come back without pushing the hardest-hit rule below the tolerance; this pass did not chase it. The look-ahead player reads 15 points lower on the preset squad (67% against 82%); 60 runs is a wide interval, and the sim's thinking players were already weaker than the simple rule.
+
+Screen: the geometry check passes at 1920x1080, 1366x768 and 844x390 with three-digit health on every plate (387 checks, 0 failures), and the flow plan runs without errors.
+
+Run:
+
+```
+node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsNumbers.ts
+node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=compare --modes=1 --hps=0.76,0.76,0.76,0.76 --rooms=roles --runs=150 --look=60
+node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=sweep --modes=1 --runs=150 --hp=0.7,0.76,0.8
+node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=length --modes=1 --hp=0.76 --runs=150
+```
+

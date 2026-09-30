@@ -8,7 +8,7 @@
   signature without the orchestrator's sign-off.
 */
 import {
-  ALL_SUPPORT_FACTOR,
+  allShare,
   attackOn,
   landedOn,
   legalTargets,
@@ -120,7 +120,7 @@ export type KeyView = {
   cells: Cell[];
   /** Every cell shows the same n, step 1, not immune, no finish: the key can show one number. */
   same: boolean;
-  /** The move's supports, n already reduced for "all" (ALL_SUPPORT_FACTOR). */
+  /** The move's supports, n already reduced for "all" (allShare). */
   supports: SupportChip[];
 };
 
@@ -278,7 +278,7 @@ function keyState(u: Fighter, i: number): { state: KeyView["state"]; restLeft: n
 
 /** One support part's chip, its n already reduced for "all" the way engine.support() reduces it. */
 function supportChip(p: Part): SupportChip {
-  const n = p.all ? Math.max(1, Math.floor(p.n * ALL_SUPPORT_FACTOR)) : p.n;
+  const n = p.all ? allShare(p.n) : p.n;
   return { kind: p.kind, n, aim: p.aim, all: p.all };
 }
 
@@ -297,7 +297,7 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
     // Hinder-only: before is the enemy's current hit on the active companion; after applies this
     // hinder on top of whatever it already carries (engine's hinder is max(current, n), not additive).
     const before = hitOnActive(s, t)?.n ?? 0;
-    const hinderN = hinderPart ? (hinderPart.all ? Math.max(1, Math.floor(hinderPart.n * ALL_SUPPORT_FACTOR)) : hinderPart.n) : 0;
+    const hinderN = hinderPart ? (hinderPart.all ? allShare(hinderPart.n) : hinderPart.n) : 0;
     const n = hitOnActive(s, t, hinderN)?.n ?? 0;
     return { target: t.id, letter, n, before, step: 1, immune: false, finishes: false, absorbed: 0 };
   });

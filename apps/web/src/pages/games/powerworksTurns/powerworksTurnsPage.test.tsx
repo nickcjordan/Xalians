@@ -3,10 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, cleanup, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import PowerworksTurnsPage from "./powerworksTurnsPage";
-import { createTurnRun, DEFAULT_RULES, PILLAR_SAVE_VERSION } from "@xalians/rules/dungeon/pillars";
+import { createTurnRun, DEFAULT_RULES, ENEMY_HP_FACTOR, PILLAR_SAVE_VERSION } from "@xalians/rules/dungeon/pillars";
 
 const SAVE_KEY = "xalians.powerworks.turns.v1";
-const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: 0.62 };
+const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: ENEMY_HP_FACTOR };
 
 beforeEach(() => {
   cleanup();

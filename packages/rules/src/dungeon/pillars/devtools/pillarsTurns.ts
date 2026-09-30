@@ -7,6 +7,9 @@
                        hardest-hit) and what planning ahead is worth (look-ahead against planner),
                        for whole-squad planning, the round timeline, the speed timeline, and the
                        speed timeline with the turn-order layer
+    --part=length      mean turns (companion turn commands) per encounter entered, hardest-hit rule
+    --part=sweep       random, biggest and hardest-hit win rates over --hp=a,b,c (retuning enemy health)
+    --modes=1,2        only these modes (indexes into the mode list), for a quick run
 
   Run: node apps/web/scripts/runNode.cjs packages/rules/src/dungeon/pillars/devtools/pillarsTurns.ts --part=compare --runs=150 --look=60
 */
@@ -97,4 +100,43 @@ if (part === "compare") {
       );
     }
   });
+}
+if (part === "length") {
+  // Turn commands per encounter entered, averaged over runs, for the hardest-hit rule.
+  const rooms = arg("rooms", "roles") as "facility" | "roles";
+  const hp = Number(arg("hp", String(DEFAULT_RULES.enemyHpFactor)));
+  console.log("| Mode | Enemy health | Squad | turns per encounter |\n|---|---|---|---|");
+  for (const mode of modes.filter((m) => m.kind === "turns"))
+    for (const squad of ["preset", "draft"] as const) {
+      const rules = { ...base, ...mode.rules, rooms, enemyHpFactor: hp } as Rules;
+      let turns = 0, encounters = 0;
+      for (let seed = 1; seed <= RUNS; seed++) {
+        const rand = stream(seed * 7 + 3);
+        let s: TRun = createTurnRun(seed, squad === "preset" ? "starter" : randomDraft(seed), rules).state;
+        encounters++;
+        for (let k = 0; k < 3000 && (s.phase === "turn" || s.phase === "camp"); k++) {
+          if (s.phase === "camp") {
+            const down = s.team.find((u) => u.hp <= 0);
+            if (down && s.revival) s = turnCommand(s, { kind: "revive", id: down.id }).state;
+            s = turnCommand(s, { kind: "advance" }).state;
+            encounters++;
+          } else {
+            s = turnCommand(s, { kind: "act", order: turnHardestHit(s, rand) }).state;
+            turns++;
+          }
+        }
+      }
+      console.log(`| ${mode.label} | ${hp} | ${squad} | ${(turns / encounters).toFixed(1)} |`);
+    }
+}
+if (part === "sweep") {
+  const rooms = arg("rooms", "roles") as "facility" | "roles";
+  console.log("| Mode | Enemy health | Squad | random | biggest number | hardest-hit |\n|---|---|---|---|---|---|");
+  for (const mode of modes)
+    for (const hp of arg("hp", "0.5,0.56,0.62,0.68,0.74").split(",").map(Number))
+      for (const squad of ["preset", "draft"] as const) {
+        const rules = { ...base, ...mode.rules, rooms, enemyHpFactor: hp } as Rules;
+        const r = (["random", "biggest", "hardest"] as const).map((w) => winRate(mode, rules, squad, w, RUNS));
+        console.log(`| ${mode.label} | ${hp} | ${squad} | ${r.map(P).join(" | ")} |`);
+      }
 }
