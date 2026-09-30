@@ -836,6 +836,8 @@ export function createOutbreak(): Figure {
 
 	return {
 		stages: 2,
+		// 06 stands on ground: the oval holds its lower half longer so the ground recedes rather than ends
+		groundHold: 0.72,
 		reset(s) {
 			stage = s;
 			vis = 0;

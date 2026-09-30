@@ -250,3 +250,51 @@ export function motes(ctx: Ctx, sec: number, color: RGB, layer: 'back' | 'front'
 export function loopFade(t: number, period: number, inS = 0.6, outS = 0.8) {
 	return Math.min(ramp(0, inS, t), 1 - ramp(period - outS, period, t));
 }
+
+/**
+ * Fade what is drawn to the oval every figure is suspended in (docs/design/home-story-figures.md, ruling 11):
+ * nothing shows a box. `hold` is how far out, as a share of the radius, the lower half stays solid before it
+ * fades; a figure standing on ground holds its lower half longer, so the ground recedes into the dark instead of
+ * ending under the thing standing on it. The upper half holds to 0.55, and the hold eases between the two so the
+ * oval has no seam. The mask is built once per canvas size and hold, then laid over with destination-in.
+ */
+const MASKS = new Map<string, HTMLCanvasElement>();
+function ovalMask(w: number, h: number, hold: number) {
+	const key = `${w}x${h}@${hold}`;
+	let m = MASKS.get(key);
+	if (m) return m;
+	if (MASKS.size > 8) MASKS.clear();
+	m = document.createElement('canvas');
+	m.width = w;
+	m.height = h;
+	const mc = m.getContext('2d')!;
+	const img = mc.createImageData(w, h);
+	const rx = 0.48 * w;
+	const ry = (0.46 * H * h) / H;
+	for (let y = 0; y < h; y++) {
+		const dy = (y + 0.5 - h / 2) / ry;
+		// 0.55 above the middle, easing to `hold` by halfway down
+		const k = dy <= 0 ? 0 : Math.min(1, dy / 0.5);
+		const inner = 0.55 + (hold - 0.55) * (k * k * (3 - 2 * k));
+		for (let x = 0; x < w; x++) {
+			const dx = (x + 0.5 - w / 2) / rx;
+			const r = Math.sqrt(dx * dx + dy * dy);
+			const a = r <= inner ? 1 : r >= 1 ? 0 : 1 - (r - inner) / (1 - inner);
+			img.data[(y * w + x) * 4 + 3] = Math.round(a * 255);
+		}
+	}
+	mc.putImageData(img, 0, 0);
+	MASKS.set(key, m);
+	return m;
+}
+
+export function ovalFade(ctx: Ctx, hold = 0.55) {
+	const { width, height } = ctx.canvas;
+	ctx.save();
+	ctx.setTransform(1, 0, 0, 1, 0, 0);
+	ctx.globalCompositeOperation = 'destination-in';
+	ctx.globalAlpha = 1;
+	ctx.drawImage(ovalMask(width, height, hold), 0, 0);
+	ctx.restore();
+	ctx.globalCompositeOperation = 'source-over';
+}

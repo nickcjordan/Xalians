@@ -1299,6 +1299,8 @@ export function createGenerators(): Figure {
 
 	return {
 		stages: 2,
+		// it stands on ground: the oval holds its lower half longer so the ground recedes rather than ends
+		groundHold: 0.76,
 		ready: loadArt,
 		reset(s) {
 			stage = s;

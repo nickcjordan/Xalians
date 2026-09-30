@@ -9,7 +9,7 @@
 // Stills for a contact sheet: ?frames=0@1.5;0@4>1@2.3;c0@6  (beat@seconds, ">" runs on into the next beat
 // without a reset, a leading "c" draws it compact). Sets window.__done when they are drawn.
 import { FIGURES, type Figure, type FigureKey } from '../src/pages/home/pieces/figures';
-import { H, W } from '../src/pages/home/pieces/stage';
+import { H, ovalFade, W } from '../src/pages/home/pieces/stage';
 
 type Round = {
 	round: string;
@@ -48,19 +48,7 @@ function paint(o: HTMLCanvasElement, fig: Figure, sec: number, compact: boolean)
 	oc.clearRect(0, 0, o.width, o.height);
 	oc.setTransform(o.width / W, 0, 0, o.height / H, 0, 0);
 	fig.draw(oc, sec, { compact });
-	oc.globalCompositeOperation = 'destination-in';
-	oc.globalAlpha = 1;
-	oc.save();
-	oc.translate(W / 2, H / 2);
-	oc.scale(1, (0.46 * H) / (0.48 * W));
-	const m = oc.createRadialGradient(0, 0, 0, 0, 0, 0.48 * W);
-	m.addColorStop(0, 'rgba(0,0,0,1)');
-	m.addColorStop(0.55, 'rgba(0,0,0,1)');
-	m.addColorStop(1, 'rgba(0,0,0,0)');
-	oc.fillStyle = m;
-	oc.fillRect(-W, -W, 2 * W, 2 * W);
-	oc.restore();
-	oc.globalCompositeOperation = 'source-over';
+	ovalFade(oc, fig.groundHold);
 }
 
 /* ------------------------------------------------------------------ styles */

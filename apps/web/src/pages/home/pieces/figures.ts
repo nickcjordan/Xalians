@@ -10,6 +10,8 @@ export interface Figure {
 	readonly stages: number;
 	/** Resolves once any pictures it paints from have loaded (it draws a fallback until then). Optional. */
 	ready?(): Promise<void>;
+	/** How long the lower half of the oval stays solid before it fades (see `ovalFade`); 0.55 when absent. */
+	readonly groundHold?: number;
 	/** Enter afresh at `stage`: nothing shown yet, its clocks at the stage's start. */
 	reset(stage: number): void;
 	/** Jump to `stage`'s telling moment, fully shown (reduced motion, or no time to play it in). */
