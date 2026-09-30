@@ -38,6 +38,9 @@ import {
 } from "./engine.ts";
 import { ENCOUNTER_XP, FINAL_ENCOUNTER_XP, RECOVERY_STATION_HP, SPEED_BASE, STALL_TURNS_PER_UNIT, TIMELINE_SCALE } from "./levers.ts";
 
+/** The log line a chosen retreat leaves; a stall's forced exit leaves STALLED_LOG, so the two endings can be told apart. */
+export const WITHDREW_LOG = "The squad withdrew.";
+export const STALLED_LOG = "The fight stalled: the squad is forced out.";
 export type TPhase = "turn" | "camp" | "won" | "lost" | "retreated";
 export type TRun = {
   seed: number;
@@ -216,7 +219,7 @@ function run(s: TRun, events: PEvent[]) {
     }
     if (s.stalled >= STALL_TURNS_PER_UNIT * standing(all(s)).length) {
       s.phase = "retreated";
-      s.log.push("The fight stalled: the squad is forced out.");
+      s.log.push(STALLED_LOG);
       return;
     }
     const u = nextActor(s)!;
@@ -251,7 +254,10 @@ export function turnCommand(previous: TRun, c: TCommand): { state: TRun; events:
     if (!u || u.hp > 0 || !s.revival) throw new Error("Revival is unavailable.");
     u.hp = Math.ceil(u.max / 2);
     s.revival = 0;
-  } else if (c.kind === "retreat") s.phase = "retreated";
+  } else if (c.kind === "retreat") {
+    s.phase = "retreated";
+    s.log.push(WITHDREW_LOG);
+  }
   else {
     s.room++;
     if (s.room === roomsFor(s.rules).length - 1) for (const u of standing(s.team)) u.hp = Math.min(u.max, u.hp + RECOVERY_STATION_HP);

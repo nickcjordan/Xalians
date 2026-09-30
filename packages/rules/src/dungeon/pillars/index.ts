@@ -15,6 +15,8 @@ export {
   legalOrder,
   roundOf,
   roundStrip,
+  STALLED_LOG,
+  WITHDREW_LOG,
   turnCommand,
   upcoming,
   type TCommand,

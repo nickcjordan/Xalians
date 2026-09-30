@@ -94,6 +94,9 @@ function CellButton({
   onHover?: (targetId: string | null) => void;
 }) {
   const hinderOnly = kind === "support" && cell.before !== undefined;
+  // The companion's own hinder or boost changed this attack's number: show the struck plain
+  // number and the marked one, the same form the enemy chips use.
+  const marked = kind === "attack" && cell.ownBefore !== undefined;
   const heal = kind === "support" && !hinderOnly;
   const word = matchupWord(cell.step);
   const label = ally
@@ -101,7 +104,9 @@ function CellButton({
     : hinderOnly
     ? `${keyName} on ${cell.letter}, ${targetName}: its next hit ${cell.before} to ${cell.n}`
     : `${keyName} on ${cell.letter}, ${targetName}: ${
-        cell.immune ? "no effect" : `${cell.n} damage${word ? `, ${word}` : ""}${cell.finishes ? ", finishes" : ""}`
+        cell.immune
+          ? "no effect"
+          : `${cell.n} damage${marked ? ` (${cell.ownBefore} without the companion's own mark)` : ""}${word ? `, ${word}` : ""}${cell.finishes ? ", finishes" : ""}`
       }`;
   return (
     <button
@@ -133,6 +138,12 @@ function CellButton({
       ) : cell.immune ? (
         <span className="pwt-cell-immune-wrap">
           <Ban className="pwt-cell-immune-icon" />
+        </span>
+      ) : marked ? (
+        <span className="pwt-cell-hinder">
+          <s className="pwt-cell-before">{cell.ownBefore}</s>
+          <span className="pwt-cell-arrow">→</span>
+          <span className={`pwt-cell-num own ${cell.n < cell.ownBefore! ? "down" : "up"}`}>{cell.n}</span>
         </span>
       ) : (
         <span className={`pwt-cell-num ${cell.finishes ? "finish" : ""} ${heal ? "heal" : ""}`}>
@@ -190,10 +201,11 @@ export function KeyCard({
 }) {
   const armed = keyView.state === "ready" && !disabled;
   const foot = footWords(keyView);
-  // An area attack reaches every enemy: a visible band across its cells labeled ALL, so it
+  // One rule for every enemy-aimed key: a cell per standing enemy, even when the numbers match.
+  // Only an area attack draws the ALL band across them: a visible band labeled ALL, so it
   // does not read as a single target (blind readers took Water Sweep for one — paint
   // review round 4, item 2). The cells underneath stay individually clickable.
-  const showAreaBand = keyView.area && keyView.aim === "enemy" && !keyView.same && keyView.cells.length > 1;
+  const showAreaBand = keyView.area && keyView.aim === "enemy" && keyView.cells.length > 1;
   return (
     <div
       className={`pwt-key ${keyView.state} ${keyView.signature ? "signature" : ""}`}
@@ -224,28 +236,6 @@ export function KeyCard({
             {keyView.supports[0]?.all ? "whole squad" : "on itself"}
           </span>
         </button>
-      ) : keyView.same && keyView.cells.length > 0 ? (
-        <div className="pwt-same">
-          <span className="pwt-same-num">{keyView.cells[0].n}</span>
-          <span className="pwt-same-label">every enemy</span>
-          <div className="pwt-same-letters">
-            {keyView.cells.map((c) => (
-              <button
-                key={c.target}
-                type="button"
-                disabled={!armed}
-                aria-label={`${keyView.name} on ${c.letter}: ${keyView.cells[0].n} damage`}
-                onClick={() => onAct(c.target)}
-                onMouseEnter={onHoverTarget ? () => onHoverTarget(c.target) : undefined}
-                onMouseLeave={onHoverTarget ? () => onHoverTarget(null) : undefined}
-                onFocus={onHoverTarget ? () => onHoverTarget(c.target) : undefined}
-                onBlur={onHoverTarget ? () => onHoverTarget(null) : undefined}
-              >
-                {c.letter}
-              </button>
-            ))}
-          </div>
-        </div>
       ) : (
         <div className={`pwt-cells-wrap ${showAreaBand ? "area" : ""}`}>
           {showAreaBand && (
@@ -275,7 +265,7 @@ export function KeyCard({
       )}
       <div className="pwt-key-foot">
         <span className="pwt-key-foot-words">{foot}</span>
-        {((keyView.aim === "enemy" && keyView.kind === "attack") || keyView.same) && (
+        {keyView.aim === "enemy" && keyView.kind === "attack" && (
           <SupportRiders supports={keyView.supports} area={keyView.area} />
         )}
       </div>

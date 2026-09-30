@@ -1,16 +1,18 @@
 import React from "react";
 import { ArrowRight, Heart, RotateCcw, Trophy, Shield, X } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
-import type { TurnView } from "./view";
+import type { Ending, RecordEntry, SinceItem, TurnView } from "./view";
 
 export function CampPanel({
   view,
   onRevive,
   onContinue,
+  onRetreat,
 }: {
   view: TurnView;
   onRevive: (id: string) => void;
   onContinue: () => void;
+  onRetreat: () => void;
 }) {
   const lastRoom = view.roomCount - 1;
   const before = lastRoom - 1;
@@ -18,7 +20,8 @@ export function CampPanel({
     <div className="pwt-overlay">
       <div className="pwt-panel">
         <p className="eyebrow">Sector cleared</p>
-        <h2>+{view.xp} XP</h2>
+        <h2>+{view.xpGain} XP</h2>
+        <p className="pwt-panel-total">Practice XP so far: {view.xp}</p>
         <p>Squad health carries forward. Cooldowns and signatures refresh.</p>
         {view.room === before && (
           <p>
@@ -48,32 +51,28 @@ export function CampPanel({
           <button type="button" className="pwt-primary" onClick={onContinue}>
             Continue <ArrowRight />
           </button>
+          <button
+            type="button"
+            className="pwt-secondary"
+            onClick={onRetreat}
+            title="Leave the expedition here and end the run"
+          >
+            Retreat
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-export function EndPanel({
-  phase,
-  onPlayAgain,
-}: {
-  phase: "won" | "lost" | "retreated";
-  onPlayAgain: () => void;
-}) {
-  const title = phase === "won" ? "Powerworks silenced" : phase === "lost" ? "Squad fallen" : "Forced out";
-  const text =
-    phase === "won"
-      ? "The defense network falls silent. Your squad made it through."
-      : phase === "lost"
-      ? "Your squad could not continue. A fresh attempt restores everyone."
-      : "Rounds passed without progress. The squad is forced out.";
+export function EndPanel({ ending, onPlayAgain }: { ending: Ending; onPlayAgain: () => void }) {
+  const { kind, title, text } = ending;
   return (
     <div className="pwt-overlay">
       <div className="pwt-panel">
         <p className="eyebrow">Expedition report</p>
         <h2>
-          {phase === "won" ? <Trophy /> : phase === "lost" ? <X /> : <RotateCcw />} {title}
+          {kind === "won" ? <Trophy /> : kind === "lost" ? <X /> : <RotateCcw />} {title}
         </h2>
         <p>{text}</p>
         <div className="pwt-panel-actions">
@@ -109,19 +108,52 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function RecordPanel({ log, onClose }: { log: string[]; onClose: () => void }) {
+/**
+  The Record (UX pass 2): every beat's sentence, grouped by sector and round, newest first. The
+  full "since your last turn" list sits on top while it has anything to say.
+*/
+export function RecordPanel({
+  entries,
+  roomNames,
+  since,
+  onClose,
+}: {
+  entries: RecordEntry[];
+  roomNames: string[];
+  since: SinceItem[];
+  onClose: () => void;
+}) {
+  const groups: { key: string; room: number; round: number; lines: string[] }[] = [];
+  for (const e of entries.slice().reverse()) {
+    const last = groups[groups.length - 1];
+    if (last && last.room === e.room && last.round === e.round) last.lines.push(e.words);
+    else groups.push({ key: `${e.room}-${e.round}-${groups.length}`, room: e.room, round: e.round, lines: [e.words] });
+  }
   return (
     <div className="pwt-overlay" onClick={onClose}>
       <div className="pwt-panel" onClick={(e) => e.stopPropagation()}>
         <p className="eyebrow">Record</p>
         <h2>What happened</h2>
         <div className="pwt-record-list">
-          {log
-            .slice()
-            .reverse()
-            .map((line, i) => (
-              <p key={i}>{line}</p>
-            ))}
+          {since.length > 0 && (
+            <section className="pwt-record-since" aria-label="Since your last turn">
+              <h3>Since your last turn</h3>
+              {since.map((s) => (
+                <p key={s.id}>{s.text}</p>
+              ))}
+            </section>
+          )}
+          {groups.length === 0 && <p>Nothing has happened yet.</p>}
+          {groups.map((g) => (
+            <section key={g.key} className="pwt-record-group" aria-label={`Sector ${g.room + 1}, round ${g.round}`}>
+              <h3>
+                Sector {g.room + 1} · {roomNames[g.room] ?? ""} · Round {g.round}
+              </h3>
+              {g.lines.map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
+            </section>
+          ))}
         </div>
         <div className="pwt-panel-actions">
           <button type="button" className="pwt-secondary" onClick={onClose}>
