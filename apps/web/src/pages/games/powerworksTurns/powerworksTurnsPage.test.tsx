@@ -142,8 +142,80 @@ describe("Powerworks turn by turn", () => {
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /^retreat$/i }));
     });
+    // Round 5: Retreat asks once, like Restart: Cancel first and the default, the danger action outlined.
+    const dialog = screen.getByRole("dialog", { name: "Retreat" });
+    const buttons = Array.from(dialog.querySelectorAll("button"));
+    expect(buttons[0].textContent).toBe("Cancel");
+    expect(document.activeElement).toBe(buttons[0]);
+    expect(buttons[1].className).toContain("pwt-danger");
+    expect(dialog.textContent).toMatch(/after sector 1 of 4/);
+    expect(dialog.textContent).toMatch(/keep the 0 XP/);
+    expect(screen.queryByText("Squad withdrew")).toBeNull();
+    await act(async () => {
+      fireEvent.click(buttons[1]);
+    });
     expect(screen.getByText("Squad withdrew")).toBeInTheDocument();
     expect(screen.queryByText(/new low/i)).toBeNull();
+  });
+
+  it("round 5: cancelling the retreat dialog leaves the camp as it was", () => {
+    let { state } = createTurnRun(1, "starter", RULES);
+    state = { ...state, phase: "camp" as const };
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state }));
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: /^retreat$/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByRole("dialog", { name: "Retreat" })).toBeNull();
+    expect(screen.getByRole("dialog", { name: "Camp" })).toBeInTheDocument();
+    expect(screen.queryByText("Squad withdrew")).toBeNull();
+  });
+
+  it("round 5: camp puts its actions on one row and sets Retreat apart in the danger style", () => {
+    let { state } = createTurnRun(1, "starter", RULES);
+    state = { ...state, phase: "camp" as const, room: 2, team: state.team.map((u, i) => (i === 0 ? { ...u, hp: 0 } : u)) };
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state }));
+    mount();
+    const camp = screen.getByRole("dialog", { name: "Camp" });
+    const row = camp.querySelector(".pwt-camp-actions")!;
+    expect(Array.from(row.querySelectorAll("button")).map((b) => (b.textContent || "").trim().split(" ")[0])).toEqual(["Revive", "Continue"]);
+    const retreat = camp.querySelector(".pwt-camp-leave .pwt-danger")!;
+    expect(retreat.textContent).toMatch(/Retreat/);
+    expect(row.contains(retreat)).toBe(false);
+    expect(camp.querySelector(".eyebrow")!.textContent).toBe("Last camp before the Guardian");
+    expect(camp.textContent).toMatch(/sits out the Guardian's fight/);
+  });
+
+  it("round 5: hovering any cell of an area key rings every enemy it reaches and lights all its cells", () => {
+    const { container } = mount();
+    const area = Array.from(container.querySelectorAll(".pwt-key")).find((k) => k.querySelector(".pwt-area-band"));
+    if (!area) return; // this seed's first companion has no area key
+    const cells = Array.from(area.querySelectorAll<HTMLButtonElement>(".pwt-cell"));
+    fireEvent.mouseEnter(cells[0]);
+    expect(container.querySelectorAll(".pwt-row.enemies .pwt-plate.targeted").length).toBe(cells.length);
+    expect(area.querySelectorAll(".pwt-cell.col-lit").length).toBe(cells.length);
+    fireEvent.mouseLeave(cells[0]);
+    expect(container.querySelectorAll(".pwt-plate.targeted").length).toBe(0);
+  });
+
+  it("round 5: a first-occurrence note shows once, beside a key, and any action ends it for good", async () => {
+    const { container, unmount } = mount();
+    fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    const note = container.querySelector(".pwt-note");
+    expect(note).toBeTruthy();
+    // Never on top of the cells it explains: it is a sibling of the key's head and cells, not inside a cell.
+    expect(note!.closest(".pwt-cell")).toBeNull();
+    const id = note!.getAttribute("data-note")!;
+    expect(container.querySelectorAll(".pwt-note").length).toBe(1);
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Pass" }));
+    });
+    expect(JSON.parse(localStorage.getItem("xalians.powerworks.notes.v1")!)).toContain(id);
+    unmount();
+    // A later visit does not show that note again.
+    localStorage.removeItem("xalians.powerworks.turns.v1");
+    const again = mount().container;
+    fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    expect(again.querySelector(`.pwt-note[data-note="${id}"]`)).toBeNull();
   });
 
   it("shows this sector's XP at camp, not the run total", () => {
@@ -278,9 +350,12 @@ describe("Powerworks turn by turn", () => {
       mount();
       const end = screen.getByRole("dialog", { name: "Expedition report" });
       expect(end.className).toContain("won");
-      expect(end.querySelectorAll(".pwt-end-unit").length).toBe(3);
+      // Round 5: the whole squad, the fallen marked Down, and the Guardian's +30 named beside XP.
+      expect(end.querySelectorAll(".pwt-end-unit").length).toBe(4);
+      expect(end.querySelectorAll(".pwt-end-unit.down").length).toBe(1);
       expect(end.textContent).toMatch(/Sectors cleared4 of 4/);
-      expect(end.textContent).toMatch(/XP earned30/);
+      expect(end.textContent).toMatch(/XP earned30 \(\+30 for the Guardian\)/);
+      expect(end.querySelector(".eyebrow")!.className).not.toContain("quiet");
       expect(screen.getAllByRole("link", { name: /back to xalians/i }).length).toBeGreaterThan(0);
     });
 
@@ -289,6 +364,8 @@ describe("Powerworks turn by turn", () => {
       mount();
       const end = screen.getByRole("dialog", { name: "Expedition report" });
       expect(end.className).toContain("lost");
+      // Mint is only for victory: a defeat's eyebrow is neutral.
+      expect(end.querySelector(".eyebrow")!.className).toContain("quiet");
       expect(end.querySelectorAll(".pwt-end-unit.down").length).toBe(4);
       expect(end.querySelector(".pwt-end-mark")!.getAttribute("aria-hidden")).toBe("true");
       expect(end.textContent).toMatch(/Sectors cleared1 of 4/);

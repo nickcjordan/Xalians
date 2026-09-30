@@ -5,7 +5,7 @@
 // what just happened, what happens next" throughout.
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, BookOpen, Menu, ScrollText, RotateCcw, Smartphone, X } from "lucide-react";
+import { ArrowLeft, BookOpen, Menu, ScrollText, RotateCcw, RotateCw, Smartphone, X } from "lucide-react";
 
 import {
   createTurnRun,
@@ -35,6 +35,8 @@ import {
   knockoutHold,
   beatsFell,
   revivedWords,
+  hitDuring,
+  keyNote,
   type Hold,
   type TitleCard,
   type Beat,
@@ -46,7 +48,7 @@ import { KeyCard } from "./keys";
 import { TurnRail } from "./rail";
 import { TurnBanner, PlaybackTools } from "./banner";
 import { Playback, beatTiming, type BeatPhase } from "./playback";
-import { BriefingPanel, CampPanel, EndPanel, RecordPanel, RestartPanel, TitleCardView } from "./panels";
+import { BriefingPanel, CampPanel, EndPanel, RecordPanel, RestartPanel, RetreatPanel, TitleCardView } from "./panels";
 import { GuidePanel } from "./guide";
 import { cellId, isPhoneLandscape, tapStep } from "./phone";
 import { PowerworksEnvironment } from "../powerworksEnvironment";
@@ -209,7 +211,26 @@ function save(state: TRun, record: RecordEntry[]) {
   }
 }
 
-type Panel = "guide" | "record" | "restart" | null;
+type Panel = "guide" | "record" | "restart" | "retreat" | null;
+
+/** First-occurrence notes already shown in this browser (view.ts keyNote), kept in localStorage. */
+const NOTES_KEY = "xalians.powerworks.notes.v1";
+function readSeen(): string[] {
+  try {
+    const raw = localStorage.getItem(NOTES_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+function writeSeen(ids: string[]) {
+  try {
+    localStorage.setItem(NOTES_KEY, JSON.stringify(ids));
+  } catch {
+    /* Storage unavailable: the note may show again; play is unaffected. */
+  }
+}
 
 export default function PowerworksTurnsPage() {
   const [booted] = useState(boot);
@@ -241,6 +262,7 @@ export default function PowerworksTurnsPage() {
   // the second tap on the same cell uses it. `previewed` is that cell's id (phone.ts).
   const twoTap = phone && noHover;
   const [previewed, setPreviewed] = useState<string | null>(null);
+  const [seenNotes, setSeenNotes] = useState<string[]>(readSeen);
   const [menuOpen, setMenuOpen] = useState(false);
   const reducedMotion = useReducedMotion();
   // The command's settled state, applied only once playback finishes (finishPlayback):
@@ -381,8 +403,17 @@ export default function PowerworksTurnsPage() {
     setSkipPlayback(false);
   }
 
+  /** Any action dismisses the first-occurrence note on screen, for good in this browser. */
+  function dismissNote() {
+    if (!shownNote) return;
+    const next = [...seenNotes, shownNote.id];
+    setSeenNotes(next);
+    writeSeen(next);
+  }
+
   function act(index: number, target: string) {
     if (busy) return;
+    dismissNote();
     setArmedAlly(null);
     setHoverTarget(null);
     setHoverUnits([]);
@@ -393,6 +424,7 @@ export default function PowerworksTurnsPage() {
 
   function pass() {
     if (busy || !view.active) return;
+    dismissNote();
     dispatch({ kind: "act", order: { move: -2, target: view.active.id } });
   }
 
@@ -498,6 +530,8 @@ export default function PowerworksTurnsPage() {
   // playback, or the active companion on its own turn. Never the unit that just acted once
   // the moment has moved on.
   const holding = busy && beatPhase === "hold";
+  // First-occurrence teaching notes: one at a time, never over a panel or while beats play.
+  const shownNote = !busy && !panel && !briefing && view.phase === "turn" ? keyNote(view, seenNotes) : null;
   const spotlightId = holding ? null : busy ? actorId ?? null : view.active?.id ?? null;
   const spotlightSide: "squad" | "enemy" = actorIsEnemy ? "enemy" : "squad";
   const showImpact = busy && beatPhase === "impact";
@@ -511,7 +545,19 @@ export default function PowerworksTurnsPage() {
     [showImpact, moment]
   );
   // Health changes shown with a green delta: the recovery station's arrival heal, until you act.
-  const deltaOf = (id: string) => station?.deltas[id] ?? since.deltas[id] ?? 0;
+  // Once beats play, the plates describe the present: the recovery station's and "since your last
+  // turn" deltas go, and a plate shows only the change the beat now landing made to it.
+  const momentDeltas = useMemo(() => {
+    const out: Record<string, number> = {};
+    if (!busy || !moment || !landed) return out;
+    for (const b of moment.beats) {
+      const e = b.event;
+      if (e.kind === "hit") out[e.target] = (out[e.target] ?? 0) - e.amount;
+      else if (e.kind === "heal") out[e.target] = (out[e.target] ?? 0) + e.amount;
+    }
+    return out;
+  }, [busy, moment, landed]);
+  const deltaOf = (id: string) => (busy ? momentDeltas[id] ?? 0 : station?.deltas[id] ?? since.deltas[id] ?? 0);
   const knockouts = useMemo(() => moments.map((m) => beatsFell(m.beats)), [moments]);
 
   // Health during playback: the settled state is held until playback ends, so each plate
@@ -552,6 +598,16 @@ export default function PowerworksTurnsPage() {
     return out;
   };
 
+  // An enemy's hit chip keeps showing while beats play, re-read with the boost and hinder the
+  // enemy carries at this point of the playback and the health the companion has then: a hinder
+  // that lands shows as the struck number on the chip.
+  const enemyShown = (e: (typeof view.enemies)[number]) => {
+    const u = withHp(e);
+    if (!busy || !u.hitOnActive || !view.active) return u;
+    const hp = shownHp?.[view.active.id] ?? view.active.hp;
+    return { ...u, hitOnActive: hitDuring(u.hitOnActive, { boost: u.boost, hinder: u.hinder, hp }) };
+  };
+
   // The round and the rail during playback come from the beat being played: playback() replays
   // the clocks act by act, so a round that opens on an enemy's turn is the new round (banner,
   // rail divider and the enemy-turn card) from the moment that enemy acts.
@@ -559,6 +615,9 @@ export default function PowerworksTurnsPage() {
   const shownRound = beatNow ? beatNow.round : view.round;
   const rail = beatNow ? beatNow.rail : view.rail;
   const roundOpened = !!beatNow && beatNow.round !== view.round;
+  // While the stage holds on a fall there is no live turn: the banner, the rail and the key bar say
+  // what happened instead of whose turn it is or who acts next.
+  const ended = holding && hold ? { kicker: hold.text, who: view.roomName } : null;
 
   // Whose turn is yours next, for the key bar while the enemies act.
   const nextMine = useMemo(() => {
@@ -632,7 +691,9 @@ export default function PowerworksTurnsPage() {
         const uy = (to.y - from.y) / len;
         lines.push({ id: t, x1: from.x + ux * pad, y1: from.y + uy * pad, x2: to.x - ux * pad, y2: to.y - uy * pad });
       }
-      const top = at(t, 0.25);
+      // Beside the plate it changed, low on the figure: clear of the letter tag at an enemy's top
+      // corner and of the strike arrow, which ends above a companion's body.
+      const top = at(t, enemyIds.has(t) ? 0.72 : 0.85);
       const all = moment.beats
         .filter((b) => "target" in b.event && (b.event as { target: string }).target === t)
         .map((b) => floatOf(b, enemyIds.has(t)))
@@ -699,13 +760,14 @@ export default function PowerworksTurnsPage() {
                 actorSide={spotlightSide}
                 actorName={bannerName}
                 actorLetter={bannerLetter}
-                line={beatWords || (busy ? "" : notice ?? station?.text ?? since.text)}
-                lineIsSince={!beatWords && !busy && !notice && !station && !!since.text}
+                line={ended ? "" : beatWords || (busy ? "" : station?.text ?? since.text)}
+                lineIsSince={!ended && !beatWords && !busy && !station && !!since.text}
                 onOpenRecord={() => setPanel("record")}
                 round={shownRound}
                 readOnly={phone}
+                ended={ended}
               />
-              <TurnRail rail={rail} round={shownRound} compact={phone} />
+              {ended ? <div className="pwt-rail pwt-rail-quiet" aria-hidden="true" /> : <TurnRail rail={rail} round={shownRound} compact={phone} width={boxW} />}
             </>
           ) : (
             <div className="pwt-top-fill" />
@@ -807,7 +869,7 @@ export default function PowerworksTurnsPage() {
               {view.enemies.map((e) => (
                 <EnemyPlate
                   key={e.id}
-                  u={withHp(e)}
+                  u={enemyShown(e)}
                   lit={busy && actorId === e.id}
                   activeName={view.active?.name}
                   spotlit={spotlightId === e.id}
@@ -825,7 +887,7 @@ export default function PowerworksTurnsPage() {
               {view.squad.map((u) => (
                 <SquadPlate
                   key={u.id}
-                  u={busy ? { ...withHp(u), active: false } : u}
+                  u={busy ? { ...withHp(u), active: false, koFrom: undefined } : u}
                   lit={busy && actorId === u.id}
                   spotlit={spotlightId === u.id}
                   dimmed={!!spotlightId && spotlightId !== u.id}
@@ -857,15 +919,22 @@ export default function PowerworksTurnsPage() {
         </div>
 
         {view.phase === "turn" && view.active && (
-          <div className={`pwt-keybar ${busy ? "busy" : ""} ${handoff ? "handing-off" : ""}`}>
+          <div className={`pwt-keybar ${busy ? "busy" : ""} ${handoff ? "handing-off" : ""} ${view.activeStatus ? "has-status" : ""}`}>
+            {view.activeStatus && !busy && (
+              <p className="pwt-keybar-statusline" data-status="" title={view.activeStatus.sentence}>
+                {view.activeStatus.sentence}
+              </p>
+            )}
             <div className="pwt-keybar-portrait">
               <span className="pwt-keybar-portrait-img">
                 <Portrait u={{ species: view.active.art, element: view.active.element }} />
               </span>
               <span className={`pwt-keybar-who el-${view.active.element}`}>{view.active.name}</span>
               <ElementBadge element={view.active.element} className="pwt-el-static" />
+              {/* On a phone the column's first line is the portrait row, so the short reason sits there;
+                  on a desktop the full sentence runs along the key bar's top line above the keys. */}
               {view.activeStatus && (
-                <span className="pwt-keybar-status" title={view.activeStatus.sentence} aria-label={view.activeStatus.sentence}>
+                <span className="pwt-keybar-status" aria-hidden="true">
                   {view.activeStatus.parts.map((p) => (
                     <span key={p}>{p}</span>
                   ))}
@@ -885,7 +954,8 @@ export default function PowerworksTurnsPage() {
                 onPreview={setPreviewed}
                 onHoverTarget={(id) => setHoverTarget(id)}
                 onHoverUnits={(ids) => setHoverUnits(ids ?? [])}
-                litTarget={busy ? null : hoverTarget}
+                litTargets={busy ? [] : [...(hoverTarget ? [hoverTarget] : []), ...hoverUnits]}
+                note={shownNote && shownNote.keyIndex === k.index ? shownNote : null}
               />
             ))}
             <button type="button" className="pwt-pass" disabled={busy} onClick={pass}>
@@ -909,10 +979,14 @@ export default function PowerworksTurnsPage() {
               </div>
             )}
             {busy && (
-              <div className={`pwt-keybar-wait playing ${actorIsEnemy ? "enemy" : "squad"}`} aria-live="polite" data-playing="">
-                {roundOpened && beatNow && <span className="pwt-keybar-wait-round">Round {beatNow.round}</span>}
-                <span className="pwt-keybar-wait-kicker">{actorIsEnemy ? "Enemy turn" : "Playing out"}</span>
-                {nextMine && (
+              <div
+                className={`pwt-keybar-wait playing ${ended ? "hold" : actorIsEnemy ? "enemy" : "squad"}`}
+                aria-live="polite"
+                data-playing=""
+              >
+                {!ended && roundOpened && beatNow && <span className="pwt-keybar-wait-round">Round {beatNow.round}</span>}
+                <span className="pwt-keybar-wait-kicker">{ended ? ended.kicker : actorIsEnemy ? "Enemy turn" : "Playing out"}</span>
+                {!ended && nextMine && (
                   <span className="pwt-keybar-wait-next">
                     <span className="pwt-keybar-wait-portrait">
                       <Portrait u={{ species: nextMine.art, element: nextMine.element }} />
@@ -947,7 +1021,7 @@ export default function PowerworksTurnsPage() {
             revived={revived}
             onRevive={(id) => dispatch({ kind: "revive", id })}
             onContinue={() => dispatch({ kind: "advance" })}
-            onRetreat={() => dispatch({ kind: "retreat" })}
+            onRetreat={() => setPanel("retreat")}
           />
         )}
         {view.ending && !busy && (
@@ -963,10 +1037,17 @@ export default function PowerworksTurnsPage() {
           />
         )}
         {panel === "record" && (
-          <RecordPanel entries={record} roomNames={roomNames} since={since.items} onClose={() => setPanel(null)} />
+          <RecordPanel
+            entries={record}
+            roomNames={roomNames}
+            since={since.items}
+            squadIds={run.team.map((u) => u.id)}
+            onClose={() => setPanel(null)}
+          />
         )}
         {panel === "restart" && (
           <RestartPanel
+            lost={briefing ? null : `sector ${view.room + 1} of ${view.roomCount}, ${view.xp} XP`}
             onConfirm={restart}
             onClose={() => {
               setPanel(null);
@@ -974,10 +1055,24 @@ export default function PowerworksTurnsPage() {
             }}
           />
         )}
+        {panel === "retreat" && (
+          <RetreatPanel
+            sectorText={`sector ${view.room + 1} of ${view.roomCount}`}
+            xp={view.xp}
+            onConfirm={() => {
+              setPanel(null);
+              dispatch({ kind: "retreat" });
+            }}
+            onClose={() => setPanel(null)}
+          />
+        )}
         {briefing && <BriefingPanel briefing={briefingView(run)} onBegin={begin} />}
       </div>
       <div className="pwt-rotate">
-        <Smartphone className="pwt-rotate-icon" />
+        <span className="pwt-rotate-art" aria-hidden="true">
+          <Smartphone className="pwt-rotate-icon" />
+          <RotateCw className="pwt-rotate-cue" />
+        </span>
         <p>Turn your phone sideways to play</p>
         <Link to="/" className="pwt-rotate-back">
           <ArrowLeft size={14} />

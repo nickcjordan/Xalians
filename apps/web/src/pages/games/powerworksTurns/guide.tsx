@@ -1,7 +1,7 @@
 import React from "react";
 import { Shield } from "lucide-react";
 import { CellButton, SupportRiders } from "./keys";
-import { HitChip, ComingChip, MarkChips, ElementBadge } from "./plate";
+import { HitChip, ComingChip, MarkChips, ElementBadge, KoMark } from "./plate";
 import { TurnRail } from "./rail";
 import { DeltaChip } from "./banner";
 import type { Cell, RailSlot } from "./view";
@@ -47,6 +47,31 @@ function Row({ sample, children, wide }: { sample: React.ReactNode; children: Re
   );
 }
 
+/**
+  The turn in one picture, for the briefing (UX pass 2, round 5): a single key with two cells and
+  one sentence. Inert, drawn by the play screen's own components.
+*/
+export function TurnLesson() {
+  const props = { kind: "attack" as const, keyName: "Move", targetName: "enemy", armed: true, onPick: noop };
+  return (
+    <div className="pwt-lesson" data-lesson="">
+      <Sample>
+        <div className="pwt-key pwt-lesson-key">
+          <div className="pwt-key-head">
+            <span className="pwt-key-index">1</span>
+            <span className="pwt-key-name">A move</span>
+          </div>
+          <Cells>
+            <CellButton {...props} cell={cell({ n: 14, step: 1.5 })} />
+            <CellButton {...props} cell={cell({ n: 7, letter: "B", step: 0.5 })} />
+          </Cells>
+        </div>
+      </Sample>
+      <p>Each key shows what it does to each enemy. Pick a cell to act; the enemies answer in turn order.</p>
+    </div>
+  );
+}
+
 export function GuidePanel({
   onClose,
   touch = false,
@@ -82,6 +107,15 @@ export function GuidePanel({
             }
           >
             A damage cell: the health this move takes from that enemy. The letter is the enemy.
+          </Row>
+          <Row
+            sample={
+              <Cells>
+                <CellButton {...cellProps} cell={cell({ absorbed: 4, n: 9 })} />
+              </Cells>
+            }
+          >
+            A shield mark in a cell: that enemy&apos;s shield absorbs that much first. The number is what is left.
           </Row>
           <Row
             sample={
@@ -148,20 +182,33 @@ export function GuidePanel({
               </span>
             }
           >
-            Chips on a plate: shield (absorbs that much damage), boost (added to its next attack), hinder (taken off its next attack).
+            Chips on a plate: shield absorbs that much damage; boost adds to its next attack; hinder (swords) takes off its next attack.
           </Row>
           <Row
             sample={
               <span className="pwt-legend-chips">
                 <HitChip hit={{ n: 21, step: 1.5 }} who="the companion acting" />
                 <HitChip hit={{ n: 7, step: 0.5 }} who="the companion acting" />
+                <HitChip hit={{ n: 18, step: 0.5, lethal: true }} who="the companion acting" />
               </span>
             }
           >
-            An enemy&apos;s hit chip: the strongest hit it can make on the companion acting now, at its next turn. A strong matchup for it is raspberry, a weak one is green.
+            An enemy&apos;s hit chip (a burst): its strongest hit on the companion acting now, at its next turn. Raspberry chevron: strong for it. Green: weak. A skull: the hit equals or exceeds that health.
+          </Row>
+          <Row
+            sample={
+              <span className="pwt-legend-chips pwt-legend-ko">
+                <span className="pwt-legend-ko-plaque">
+                  <KoMark from={["A"]} name="the companion" />
+                  <span className="pwt-name">Companion</span>
+                </span>
+              </span>
+            }
+          >
+            A skull on a plate: an enemy acting before that companion&apos;s next turn has a ready hit that knocks it out.
           </Row>
           <Row sample={<ComingChip coming={{ n: 46, step: 1, turns: 1 }} who="the companion acting" />}>
-            The resting form: a stronger hit that is not ready yet. &quot;in 1&quot; is how many of its turns after its next one it waits.
+            The resting form: a stronger hit not ready yet. &quot;in 1&quot; is how many of its turns after its next one it waits.
           </Row>
           <Row
             sample={
@@ -195,20 +242,18 @@ export function GuidePanel({
               </div>
             }
           >
-            Rests: turns the move waits after use. Once per fight: the signature (marked with a star) works one time a fight.
-          </Row>
-          <Row sample={<ElementBadge element={foe.element} className="pwt-el-static" />}>
-            The element tag on every unit. The chevrons already compare elements for you.
+            Rests: turns a move waits after use. Once per fight: the signature (a star) works once.
           </Row>
           <Row
             sample={
               <span className="pwt-legend-chips">
+                <ElementBadge element={foe.element} className="pwt-el-static" />
                 <span className="pwt-float-tag good">Strong</span>
                 <span className="pwt-float-tag bad">Weak</span>
               </span>
             }
           >
-            Beside a landing number: STRONG or WEAK matchup, green when it favors you, raspberry when it does not.
+            The element tag names a unit&apos;s element. STRONG or WEAK beside a landing number is the matchup: green favors you, raspberry does not.
           </Row>
           <Row
             wide
@@ -218,7 +263,7 @@ export function GuidePanel({
               </div>
             }
           >
-            The turn rail, along the top: one row in time order. NOW acts, NEXT is after it, then 3, 4 and on. Enemies ride a notch above the line, your squad a notch below; a divider starts the next round.
+            The turn rail, along the top: one row in time order. NOW acts, NEXT is after it, then 3, 4 and on. Enemies ride above the line, your squad below; a divider starts the next round.
           </Row>
           <Row
             sample={

@@ -23,6 +23,7 @@ import {
   roundStrip,
   standing,
   step,
+  stepDamage,
   upcoming,
   type Fighter,
   type PEvent,
@@ -46,6 +47,12 @@ export type Marks = {
 };
 
 export type SquadView = Marks & {
+  /**
+    Enemies (by letter) that act before this companion's next turn and whose strongest ready hit
+    would knock it out: the hit equals or exceeds its health. Absent when none can. A fact about
+    the present state, not advice.
+  */
+  koFrom?: Letter[];
   id: string;
   name: string;
   species: string;
@@ -74,7 +81,18 @@ export type EnemyView = Marks & {
     companion's shields, and the element step (0, 0.5, 1, 1.5, 2). null when no companion is
     active or it has no ready attack.
   */
-  hitOnActive: { n: number; step: number; before?: number } | null;
+  hitOnActive: {
+    n: number;
+    step: number;
+    before?: number;
+    /** This hit equals or exceeds the acting companion's health: it would knock it out. */
+    lethal?: true;
+    /** The move's damage on this matchup less the companion's shield, before the enemy's own boost or
+        hinder and the health cap (`hitDuring` replays a boost or hinder that lands during playback). */
+    raw?: number;
+    /** The acting companion's health when this was read. */
+    cap?: number;
+  } | null;
   /**
     A stronger attack on the active companion that is resting now: its health, the element
     step, and how many of the enemy's own turns after its next one it waits (cooldowns
@@ -238,7 +256,44 @@ const shieldSum = (u: Fighter) => u.shields.reduce((a, b) => a + b.n, 0);
 const marksOf = (u: Fighter): Marks => ({ shield: shieldSum(u), boost: u.boost, hinder: u.hinder });
 
 function squadView(s: TRun, u: Fighter): SquadView {
-  return { ...marksOf(u), id: u.id, name: u.name, species: u.species, art: u.species, element: u.element, hp: Math.max(0, u.hp), max: u.max, down: u.hp <= 0, active: s.active === u.id };
+  const ko = s.phase === "turn" ? knockoutThreats(s, u) : [];
+  return {
+    ...marksOf(u),
+    id: u.id,
+    name: u.name,
+    species: u.species,
+    art: u.species,
+    element: u.element,
+    hp: Math.max(0, u.hp),
+    max: u.max,
+    down: u.hp <= 0,
+    active: s.active === u.id,
+    ...(ko.length ? { koFrom: ko.map((k) => k.letter) } : {}),
+  };
+}
+
+/**
+  The enemies that can knock this companion out before it next acts: an enemy in the timeline's
+  upcoming turns ahead of the companion's own next one whose strongest ready hit on it equals or
+  exceeds its health (the same computation the enemy's hit chip uses). For the companion acting
+  now, "next" is its turn after this one. Empty for a fallen companion or outside a companion's turn.
+*/
+export function knockoutThreats(s: TRun, target: Fighter): { letter: Letter; n: number }[] {
+  if (s.phase !== "turn" || target.hp <= 0) return [];
+  const standingCount = standing([...s.team, ...s.enemies]).length;
+  const order = upcoming(s, standingCount * 2 + 2);
+  const first = s.active === target.id ? 1 : 0;
+  const window: Fighter[] = [];
+  for (let i = first; i < order.length; i++) {
+    if (order[i].id === target.id) break;
+    if (order[i].enemy) window.push(order[i]);
+  }
+  const out: { letter: Letter; n: number }[] = [];
+  for (const e of window) {
+    const hit = threatOn(s, e, target).ready;
+    if (hit && hit.n > 0 && hit.n >= target.hp && !out.some((o) => o.letter === letterFor(s, e.id))) out.push({ letter: letterFor(s, e.id)!, n: hit.n });
+  }
+  return out;
 }
 
 /**
@@ -265,36 +320,57 @@ function turnsToReady(e: Fighter, i: number): number | null {
   `withHinder` lets a hinder-only cell ask "what would this be with the hinder applied", since
   the engine's hinder is max(current, n), not additive (support() in engine.ts).
 */
-function threatOnActive(
+function threatOn(
   s: TRun,
   e: Fighter,
+  target: Fighter | undefined,
   withHinder?: number
-): { ready: { n: number; step: number } | null; coming: { n: number; step: number; turns: number } | null } {
-  const active = s.team.find((t) => t.id === s.active);
-  if (!active || e.hp <= 0) return { ready: null, coming: null };
+): { ready: { n: number; step: number; raw: number } | null; coming: { n: number; step: number; turns: number } | null } {
+  if (!target || e.hp <= 0) return { ready: null, coming: null };
   const attacker = withHinder === undefined ? e : { ...e, hinder: Math.max(e.hinder, withHinder) };
-  let ready: { n: number; step: number } | null = null;
+  let ready: { n: number; step: number; raw: number } | null = null;
   const resting: { n: number; step: number; turns: number }[] = [];
   e.moves.forEach((m, i) => {
     const wait = turnsToReady(e, i);
     if (m.power <= 0 || wait === null) return;
-    const n = landedOn(wait === 0 ? attacker : { ...e, boost: 0, hinder: 0 }, m, active);
-    const st = step(m.element, active.element);
+    const n = landedOn(wait === 0 ? attacker : { ...e, boost: 0, hinder: 0 }, m, target);
+    const st = step(m.element, target.element);
     if (wait === 0) {
-      if (!ready || n > ready.n) ready = { n, step: st };
+      if (!ready || n > ready.n) ready = { n, step: st, raw: st === 0 ? 0 : stepDamage(m.power, st) - shieldSum(target) };
     } else resting.push({ n, step: st, turns: wait });
   });
   // The soonest resting attack that beats the ready one (ties: the strongest).
   const better = resting.filter((r) => !ready || r.n > ready.n).sort((a, b) => a.turns - b.turns || b.n - a.n);
   return { ready, coming: better[0] ?? null };
 }
+const threatOnActive = (s: TRun, e: Fighter, withHinder?: number) => threatOn(s, e, s.team.find((t) => t.id === s.active), withHinder);
 
 /** The hit on the active companion, and, when a hinder lowers it, the hit without the hinder. */
 function withBefore(s: TRun, u: Fighter): EnemyView["hitOnActive"] {
-  const hit = threatOnActive(s, u).ready;
-  if (!hit || u.hinder <= 0) return hit;
+  const active = s.team.find((t) => t.id === s.active);
+  const found = threatOnActive(s, u).ready;
+  if (!found || !active) return null;
+  const { n, step: st, raw } = found;
+  const hit: NonNullable<EnemyView["hitOnActive"]> = { n, step: st, raw, cap: active.hp, ...(n > 0 && n >= active.hp ? { lethal: true as const } : {}) };
+  if (u.hinder <= 0) return hit;
   const clean = threatOnActive(s, { ...u, hinder: 0 }).ready;
   return clean && clean.n > hit.n ? { ...hit, before: clean.n } : hit;
+}
+
+/**
+  The enemy's hit chip while a command plays: the same hit re-read with the boost and hinder the
+  enemy carries at that point of the playback and the health the companion has then. A hinder that
+  lands during playback lowers it and shows the number it was as the struck one; the lethal mark
+  follows the health shown. Returns the hit unchanged when it carries no replay data.
+*/
+export function hitDuring(hit: NonNullable<EnemyView["hitOnActive"]>, now: { boost: number; hinder: number; hp: number }): NonNullable<EnemyView["hitOnActive"]> {
+  if (hit.raw === undefined || hit.step === 0) return hit;
+  const n = Math.min(now.hp, Math.max(0, hit.raw + now.boost - now.hinder));
+  const { lethal: _lethal, before: _before, ...rest } = hit;
+  const out: NonNullable<EnemyView["hitOnActive"]> = { ...rest, n, cap: now.hp, ...(n > 0 && n >= now.hp ? { lethal: true as const } : {}) };
+  if (n < hit.n) out.before = hit.n;
+  else if (n === hit.n && hit.before !== undefined) out.before = hit.before;
+  return out;
 }
 
 function enemyView(s: TRun, u: Fighter): EnemyView {
@@ -644,18 +720,22 @@ export function momentWords(beats: Beat[], units: Named[]): string {
   const hits = events.filter((e): e is Extract<PEvent, { kind: "hit" }> => e.kind === "hit");
   if (hits.length) clauses.push(`hit ${joinWords(hits.map((h) => short(h.target)))} for ${joinWords(hits.map((h) => String(h.amount)))}`);
   type Support = Extract<PEvent, { kind: "heal" | "shield" | "boost" | "hinder" | "delay" }>;
+  const hitIds = new Set(hits.map((h) => h.target));
   for (const kind of ["heal", "shield", "boost", "hinder", "delay"] as const) {
     const ofKind = events.filter((e): e is Support => e.kind === kind);
     const amounts = [...new Set(ofKind.map((e) => e.amount))];
     for (const n of amounts) {
-      const names = ofKind.filter((e) => e.amount === n).map((e) => labelOf(units, e.target));
+      const targets = ofKind.filter((e) => e.amount === n).map((e) => e.target);
+      const names = targets.map((t) => labelOf(units, t));
       const many = names.length > 1;
+      // An area move's rider on the units it just hit is said once: "weakened each by 6".
+      const each = many && hits.length > 1 && targets.every((t) => hitIds.has(t));
       const owned = joinWords(names.map((x) => `${x}'s`));
-      if (kind === "heal") clauses.push(`healed ${joinWords(names)} for ${n}`);
-      else if (kind === "shield") clauses.push(`shielded ${joinWords(names)} for ${n}`);
-      else if (kind === "boost") clauses.push(`boosted ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
-      else if (kind === "hinder") clauses.push(`weakened ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
-      else clauses.push(`slowed ${owned} next ${many ? "turns" : "turn"}`);
+      if (kind === "heal") clauses.push(each ? `healed each for ${n}` : `healed ${joinWords(names)} for ${n}`);
+      else if (kind === "shield") clauses.push(each ? `shielded each for ${n}` : `shielded ${joinWords(names)} for ${n}`);
+      else if (kind === "boost") clauses.push(each ? `boosted each by ${n}` : `boosted ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
+      else if (kind === "hinder") clauses.push(each ? `weakened each by ${n}` : `weakened ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
+      else clauses.push(each ? "slowed each" : `slowed ${owned} next ${many ? "turns" : "turn"}`);
     }
   }
   let words = `${actor}'s ${move} ${joinWords(clauses)}.`;
@@ -689,7 +769,7 @@ export function recordEntries(room: number, beats: Beat[]): RecordEntry[] {
 }
 
 /** What changed for one unit since the active companion's last turn. */
-export type SinceItem = { id: string; name: string; enemy: boolean; text: string };
+export type SinceItem = { id: string; name: string; enemy: boolean; text: string; /** The same line with an enemy by its letter alone, for the banner. */ short: string };
 export type SinceView = {
   /** Squad then enemies, the active companion first; only units something happened to. */
   items: SinceItem[];
@@ -699,8 +779,12 @@ export type SinceView = {
   text: string;
 };
 
-/** How many characters of the summary the banner's two lines hold before "+N more". */
-const SINCE_BUDGET = 92;
+/**
+  How many characters of the summary the banner's two lines hold before "+N more", after the label
+  ("Since your last turn") has taken its share of the first line. Enemies are named by their letter
+  alone here (the stage shows the letter on each), so more of the summary fits.
+*/
+const SINCE_BUDGET = 84;
 
 /**
   "Since your last turn" (UX pass 2, round 1): every change that matters for the next choice,
@@ -754,12 +838,13 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
     if (c.hindered && u.hinder > 0) parts.push(`hindered ${u.hinder}`);
     if (!parts.length) continue;
     if (c.healed - c.lost) deltas[u.id] = c.healed - c.lost;
-    items.push({ id: u.id, name, enemy, text: `${name} ${parts.join(", ")}` });
+    const short = enemy ? (u as EnemyView).letter : name;
+    items.push({ id: u.id, name, enemy, text: `${name} ${parts.join(", ")}`, short: `${short} ${parts.join(", ")}` });
   }
   let text = "";
   let shown = 0;
   for (const it of items) {
-    const next = text ? `${text}; ${it.text}` : it.text;
+    const next = text ? `${text}; ${it.short}` : it.short;
     if (shown > 0 && next.length > SINCE_BUDGET) break;
     text = next;
     shown++;
@@ -796,6 +881,7 @@ export function briefingView(s: TRun): BriefingView {
       "Health carries into the next sector.",
       `You have ${s.revival} ${plural(s.revival, "revive", "revives")} for the run: at camp, a fallen companion returns at half health.`,
       `The last sector has a recovery station: it restores ${RECOVERY_STATION_HP} health to each standing companion when you arrive.`,
+      `Each sector cleared adds practice XP (${ENCOUNTER_XP}, and ${FINAL_ENCOUNTER_XP} for the Guardian). It is a running tally; nothing spends it yet.`,
     ],
   };
 }
@@ -804,10 +890,15 @@ export function briefingView(s: TRun): BriefingView {
 export type CampView = {
   /** One per fallen companion while a revive is left. `to` is the engine's half health. */
   revives: { id: string; name: string; to: number; text: string }[];
-  /** Said under Continue when a revive is being left unused; null otherwise. */
+  /** Said under Continue when a revive is being left unused; null otherwise. On the last camp it
+      names who sits out the Guardian's fight. */
   unusedNote: string | null;
   /** The recovery station ahead, in numbers; null when the next sector has none. */
   station: { amount: number; text: string } | null;
+  /** The camp before the Guardian's sector: the last one. */
+  last: boolean;
+  /** The camp's eyebrow: "Sector cleared", or "Last camp before the Guardian". */
+  eyebrow: string;
 };
 
 /** The revive button's words: the effect in numbers and how many revives are left. */
@@ -830,9 +921,16 @@ export function campView(s: TRun): CampView {
         })
       : [];
   const beforeLast = s.room === roomsFor(s.rules).length - 2;
+  const sitOut = joinWords(revives.map((r) => r.name));
   return {
     revives,
-    unusedNote: revives.length ? "Continuing leaves the revive unused." : null,
+    last: beforeLast,
+    eyebrow: beforeLast ? "Last camp before the Guardian" : "Sector cleared",
+    unusedNote: revives.length
+      ? beforeLast
+        ? `Continuing leaves the revive unused: ${sitOut} ${revives.length > 1 ? "sit" : "sits"} out the Guardian's fight.`
+        : "Continuing leaves the revive unused."
+      : null,
     station: beforeLast
       ? {
           amount: RECOVERY_STATION_HP,
@@ -888,7 +986,7 @@ export type Hold = { kind: "cleared" | "boss" | "fallen"; text: string; ms: numb
 */
 export function knockoutHold(next: TRun): Hold | null {
   if (next.phase === "camp") return { kind: "cleared", text: "Sector cleared", ms: 1500 };
-  if (next.phase === "won") return { kind: "boss", text: "Sector cleared", ms: 2600 };
+  if (next.phase === "won") return { kind: "boss", text: "Guardian down", ms: 2600 };
   if (next.phase === "lost") return { kind: "fallen", text: "The squad has fallen", ms: 2600 };
   return null;
 }
@@ -935,8 +1033,45 @@ export function runSummary(s: TRun, v: TurnView, record: RecordEntry[]): RunSumm
     { label: "Sectors cleared", value: `${sectors} of ${count}` },
     { label: "Rounds played", value: String(rounds) },
     { label: "Enemies knocked out", value: String(knockouts) },
-    { label: "XP earned", value: String(s.xp) },
+    { label: "XP earned", value: ending?.kind === "won" ? `${s.xp} (+${FINAL_ENCOUNTER_XP} for the Guardian)` : String(s.xp) },
   ];
   if (finalBlow) rows.push({ label: "Final blow", value: finalBlow });
   return { sectors, rounds, knockouts, xp: s.xp, finalBlow, rows };
+}
+
+/* ------------------------------------------------------------------------------------------
+   UX pass 2, round 5: teaching in place. A note appears once per browser, next to the first
+   occurrence of a mark that has confused a cold reader, and goes at the first action.
+------------------------------------------------------------------------------------------ */
+
+export type NoteId = "hinder" | "shield" | "all";
+export type KeyNote = { id: NoteId; keyIndex: number; text: string };
+
+/**
+  The first-occurrence note to show on this companion's keys, or null. `seen` holds the ids already
+  shown in this browser. Priority: hinder, then shield, then ALL; the note attaches to the first key
+  where the mark appears, and its words state the numbers on that key (facts, never advice).
+*/
+export function keyNote(v: TurnView, seen: readonly string[]): KeyNote | null {
+  if (!v.active || v.phase !== "turn") return null;
+  const name = v.active.name;
+  const ready = v.keys.filter((k) => k.state === "ready");
+  if (!seen.includes("hinder")) {
+    for (const k of ready) {
+      const cell = k.kind === "support" && k.aim === "enemy" ? k.cells.find((c) => c.before !== undefined) : undefined;
+      if (cell) return { id: "hinder", keyIndex: k.index, text: `Hinder: that enemy's next hit on ${name} falls from ${cell.before} to ${cell.n}.` };
+    }
+  }
+  if (!seen.includes("shield")) {
+    for (const k of ready) {
+      const cell = k.aim === "enemy" && k.kind === "attack" ? k.cells.find((c) => c.absorbed > 0) : undefined;
+      if (cell) return { id: "shield", keyIndex: k.index, text: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The number is what is left.` };
+    }
+  }
+  if (!seen.includes("all")) {
+    for (const k of ready) {
+      if (k.area && k.aim === "enemy" && k.cells.length > 1) return { id: "all", keyIndex: k.index, text: "ALL: this move hits every enemy at once. Each cell is that enemy's number." };
+    }
+  }
+  return null;
 }
