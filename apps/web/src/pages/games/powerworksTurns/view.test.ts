@@ -48,6 +48,7 @@ import {
   sinceView,
   turnView,
   weakenedWords,
+  withWeakened,
   type Beat,
   type Cell,
   type RecordEntry,
@@ -653,6 +654,25 @@ describe("since your last turn (item 4)", () => {
     expect(sv.items.map((i) => i.id)).toEqual([mate.id]);
   });
 
+  it("round 7, item 12: a heal after the active companion's own blow lists that damage first, so it never reads as an over-heal", () => {
+    const own = entry({ kind: "hit", actor: active.id, target: foe.id, move: "M", amount: 20, absorbed: 0, step: 1, fell: false });
+    const heal = entry({ kind: "heal", actor: foe.id, target: foe.id, move: "M", amount: 14 });
+    const sv = sinceView([own, heal], v);
+    const item = sv.items.find((i) => i.id === foe.id)!;
+    expect(item.text).toContain("-20, +14");
+    expect(sv.deltas[foe.id]).toBe(-6);
+    // Damage the active companion dealt to a unit nothing healed is not "since" anything.
+    expect(sinceView([own], v).items).toEqual([]);
+  });
+
+  it("round 7, item 6: a hit a hinder cut to nothing reads blocked; the weakened clause is one sentence", () => {
+    const words = eventWords(s, { kind: "hit", actor: foe.id, target: mate.id, move: "M", amount: 0, absorbed: 0, step: 0.5, fell: false });
+    expect(words).toMatch(/was blocked\.$/);
+    expect(eventWords(s, { kind: "hit", actor: foe.id, target: mate.id, move: "M", amount: 0, absorbed: 0, step: 0, fell: false })).toMatch(/had no effect\.$/);
+    expect(withWeakened("A hit B for 8 (weak matchup).", 6)).toBe("A hit B for 8 (weak matchup), weakened by 6.");
+    expect(withWeakened("A hit B for 8.", undefined)).toBe("A hit B for 8.");
+  });
+
   it("puts what fits in the banner line and counts the rest behind '+N more'", () => {
     const entries = [hit(active.id, 5), hit(mate.id, 5), ...v.enemies.map((e) => hit(e.id, 5))];
     const sv = sinceView(entries, v);
@@ -974,8 +994,8 @@ describe("round 5: knockout warnings (item 1)", () => {
     active.hp = 18; // 18 on 18: it knocks it out
     expect(read().n).toBe(18);
     expect(read().lethal).toBe(true);
-    active.hp = 17; // a hit above its health is capped at that health and still lethal
-    expect(read().n).toBe(17);
+    active.hp = 17; // a hit above its health is shown whole (round 7, item 11) and lethal
+    expect(read().n).toBe(18);
     expect(read().lethal).toBe(true);
     // Its shield counts: 18 less a 4 shield leaves 14, which does not knock out 15 health.
     active.hp = 15;
@@ -1230,6 +1250,34 @@ describe("round 6: the forecast agrees with the result", () => {
       const t = riderWorld().s;
       for (const foe of t.enemies) foe.hinder = 40; // already carries more than the rider gives
       for (const c of turnView(t).keys[0].cells) expect(c.rider).toBeUndefined();
+    });
+
+    it("item 11: an enemy hit is never capped at the companion's health; 48 on 46 reads 48, 38 after a rider of 10", () => {
+      const { s, a } = riderWorld();
+      for (const foe of s.enemies) foe.moves[0] = { ...foe.moves[0], power: 48 };
+      a.hp = 46;
+      const view = turnView(s);
+      const foe = view.enemies.find((e) => !e.down)!;
+      expect(foe.hitOnActive).toMatchObject({ n: 48, lethal: true });
+      const cell = view.keys[0].cells.find((c) => !c.finishes)!;
+      expect(cell.rider).toEqual({ before: 48, after: 38 });
+      // the hinder is visibly its stated size
+      expect(cell.rider!.before - cell.rider!.after).toBe(10);
+    });
+
+    it("item 11: a hinder-only cell shows the uncapped before and after too", () => {
+      const { s, a } = riderWorld();
+      for (const foe of s.enemies) foe.moves[0] = { ...foe.moves[0], power: 48 };
+      a.hp = 46;
+      a.moves[0] = { ...a.moves[0], power: 0 };
+      const cell = turnView(s).keys[0].cells[0];
+      expect(cell).toMatchObject({ before: 48, n: 38 });
+    });
+
+    it("item 11: hitDuring keeps the uncapped number and marks it lethal against the health shown", () => {
+      const hit = { n: 48, step: 1, raw: 48, cap: 46, lethal: true as const };
+      expect(hitDuring(hit, { boost: 0, hinder: 10, hp: 46 })).toMatchObject({ n: 38, before: 48 });
+      expect(hitDuring(hit, { boost: 0, hinder: 0, hp: 46 })).toMatchObject({ n: 48, lethal: true });
     });
 
     it("a key with no rider has no rider numbers", () => {

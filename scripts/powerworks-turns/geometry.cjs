@@ -150,6 +150,67 @@ async function phoneProblems(page) {
   });
 }
 
+/**
+  Round 7: a rider preview never prints over its cell's number (its box must not touch the number,
+  the struck pair or the letter, and must sit inside the cell); a landing number, measured where it
+  comes to rest, stays inside the stage and off every element tag, letter tag, plaque and knockout
+  mark; a banner sentence is never cut (its text fits its box).
+*/
+async function riderProblems(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const hit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
+    document.querySelectorAll(".pwt-cell.has-rider").forEach((cell) => {
+      const rider = cell.querySelector(".pwt-cell-rider");
+      if (!rider) return;
+      const rr = rider.getBoundingClientRect();
+      const cr = cell.getBoundingClientRect();
+      if (rr.left < cr.left - 0.5 || rr.right > cr.right + 0.5 || rr.top < cr.top - 0.5 || rr.bottom > cr.bottom + 0.5)
+        out.push(`rider box leaves its cell: ${cell.getAttribute("aria-label")?.slice(0, 40)}`);
+      for (const sel of [".pwt-cell-num", ".pwt-cell-hinder", ".pwt-cell-letter"]) {
+        cell.querySelectorAll(sel).forEach((n) => {
+          if (rider.contains(n)) return;
+          if (hit(rr, n.getBoundingClientRect())) out.push(`rider overlaps ${sel}: ${cell.getAttribute("aria-label")?.slice(0, 40)}`);
+        });
+      }
+    });
+    document.querySelectorAll(".pwt-key").forEach((key) => {
+      const kr = key.getBoundingClientRect();
+      key.querySelectorAll("*").forEach((el) => {
+        if (el.closest(".pwt-note") || el.closest("svg")) return;
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        if (r.left < kr.left - 1 || r.right > kr.right + 1 || r.top < kr.top - 1 || r.bottom > kr.bottom + 1)
+          out.push(`${el.className.toString().split(" ")[0] || el.tagName} pokes out of its key "${key.getAttribute("aria-label")}"`);
+      });
+    });
+    const line = document.querySelector(".pwt-banner-line");
+    if (line && line.scrollHeight > line.clientHeight + 1) out.push(`banner sentence truncated: "${line.textContent.trim().slice(0, 50)}"`);
+    return out;
+  });
+}
+async function floatProblems(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const stage = document.querySelector(".pwt-stage");
+    if (!stage) return out;
+    const sb = stage.getBoundingClientRect();
+    const z = sb.width / stage.offsetWidth || 1;
+    const hit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
+    stage.querySelectorAll(".pwt-float").forEach((f) => {
+      const anims = f.getAnimations();
+      if (anims.length && !anims.every((a) => a.playState === "finished")) return; // measure at rest only
+      const r = f.getBoundingClientRect();
+      if (r.left < sb.left - 0.5 || r.right > sb.right + 0.5 || r.top < sb.top - 0.5 || r.bottom > sb.bottom + 0.5)
+        out.push(`landing number leaves the stage: "${f.textContent.trim()}" ${JSON.stringify({ l: r.left | 0, r: r.right | 0, t: r.top | 0, b: r.bottom | 0, sl: sb.left | 0, sr: sb.right | 0 })}`);
+      stage.querySelectorAll(".pwt-el, .pwt-letter, .pwt-plaque, .pwt-guardian-tag, .pwt-ko").forEach((a) => {
+        if (hit(r, a.getBoundingClientRect())) out.push(`landing number "${f.textContent.trim()}" sits on ${a.className.split(" ")[0]}`);
+      });
+    });
+    return out;
+  });
+}
+
 (async () => {
   if (!SCEN_DIR) {
     console.error("usage: node scripts/powerworks-turns/geometry.cjs --scenario-dir=<dir> [--base=...] [--sizes=...]");
@@ -283,6 +344,14 @@ async function phoneProblems(page) {
           probs.forEach((m) => console.log(`[${tag}] FAIL phone: ${m}`));
         } else console.log(`[${tag}] phone checks ok (12px text, 40px controls, nothing clipped or outside)`);
       }
+      {
+        const probs = await riderProblems(page);
+        checks++;
+        if (probs.length) {
+          failures += probs.length;
+          probs.forEach((m) => console.log(`[${tag}] FAIL ${m}`));
+        }
+      }
       for (const sel of [".pwt-panel", ".pwt-titlecard", ".pwt-hold-card"]) {
         const probs = await panelProblems(page, sel);
         if (probs) {
@@ -294,6 +363,35 @@ async function phoneProblems(page) {
         }
       }
       await page.screenshot({ path: path.join(OUT, `${tag}.png`) });
+
+      // Round 7: play the first ready cell out and check, on every frame that settles, the landing
+      // numbers (inside the stage, off tags and plaques) and the banner sentence (never cut).
+      if (["first", "before-enemy-phase", "power-hippochamp", "checkpoint-graviclaw"].includes(scen.name) && !(phone && scen.name === "first")) {
+        const cell = page.locator(".pwt-key .pwt-cell:not([disabled])").first();
+        if (await cell.count()) {
+          if (phone) {
+            await cell.tap();
+            await page.waitForTimeout(150);
+            await page.locator(".pwt-cell.previewed").first().tap();
+          } else {
+            await cell.click();
+            await page.mouse.move(2, 2);
+          }
+          const seen = new Set();
+          checks++;
+          for (let i = 0; i < 70; i++) {
+            const b = await page.evaluate(() => document.querySelector("[data-busy]")?.getAttribute("data-busy"));
+            (await floatProblems(page)).forEach((m) => seen.add(m));
+            (await riderProblems(page)).forEach((m) => seen.add(m));
+            if (b !== "true" && i > 3) break;
+            await page.waitForTimeout(250);
+          }
+          if (seen.size) {
+            failures += seen.size;
+            seen.forEach((m) => console.log(`[${tag}] FAIL while playing out: ${m}`));
+          } else console.log(`[${tag}] playing out: landing numbers and banner sentences ok`);
+        }
+      }
 
       // The tap flow, once per phone size on the first scenario with a turn on it: the first tap
       // on a key cell previews it (the stage rings its target, the move is not used), the second
@@ -327,6 +425,8 @@ async function phoneProblems(page) {
         const seen = new Set();
         for (let i = 0; i < 16 && (await busy()) === "true"; i++) {
           (await phoneProblems(page)).forEach((m) => seen.add(m));
+          (await floatProblems(page)).forEach((m) => seen.add(m));
+          (await riderProblems(page)).forEach((m) => seen.add(m));
           await page.waitForTimeout(400);
         }
         if (seen.size) {

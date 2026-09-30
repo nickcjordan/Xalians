@@ -35,6 +35,7 @@ import {
   beatsFell,
   revivedWords,
   hitDuring,
+  withWeakened,
   keyNote,
   type FloatItem,
   type Hold,
@@ -260,6 +261,14 @@ export default function PowerworksTurnsPage() {
   // the second tap on the same cell uses it. `previewed` is that cell's id (phone.ts).
   const twoTap = phone && noHover;
   const [previewed, setPreviewed] = useState<string | null>(null);
+  // Round 7, item 2: a hover applies only after the pointer moves. When the active companion changes
+  // (or a panel opens) the pointer is idle until it travels a few pixels, so keys that appear under a
+  // resting pointer arrive with no frame and no ring. `pointerAt` follows every move; `idleAt` is where
+  // it was when the state was cleared.
+  const [pointerLive, setPointerLive] = useState(false);
+  const liveRef = useRef(false);
+  const pointerAt = useRef<{ x: number; y: number } | null>(null);
+  const idleAt = useRef<{ x: number; y: number } | null>(null);
   const [seenNotes, setSeenNotes] = useState<string[]>(readSeen);
   const [menuOpen, setMenuOpen] = useState(false);
   const reducedMotion = useReducedMotion();
@@ -317,6 +326,30 @@ export default function PowerworksTurnsPage() {
   useEffect(() => {
     setPreviewed(null);
   }, [busy, view.active?.id, panel]);
+  // A new active companion arrives with nothing hovered, armed or previewed, whatever the pointer rests on.
+  useEffect(() => {
+    setHoverTarget(null);
+    setHoverUnits([]);
+    setArmedAlly(null);
+    setPreviewed(null);
+    liveRef.current = false;
+    idleAt.current = pointerAt.current;
+    setPointerLive(false);
+  }, [view.active?.id, view.room]);
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      const at = { x: e.clientX, y: e.clientY };
+      pointerAt.current = at;
+      if (liveRef.current) return;
+      const from = idleAt.current;
+      if (from && Math.hypot(at.x - from.x, at.y - from.y) < 4) return;
+      liveRef.current = true;
+      setPointerLive(true);
+    };
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
   // Touch has no hover: a tap anywhere but a cell or a plate clears the preview and its ring.
   useEffect(() => {
     if (!twoTap) return;
@@ -633,15 +666,18 @@ export default function PowerworksTurnsPage() {
     : view.active;
   const bannerName = bannerActor?.name ?? view.active?.name ?? "";
   const bannerLetter = actorIsEnemy && bannerActor && "letter" in bannerActor ? bannerActor.letter : undefined;
-  // A hit its actor's hinder weakened: say what it cost, naming the unit (the beat carries it).
-  const weakenedNote = useMemo(() => {
-    const text = busy && moment ? moment.beats.find((b) => b.weakenedText)?.weakenedText : undefined;
-    return text ? ` ${text}` : "";
+  // A hit its actor's hinder weakened: one clause on the hit's own sentence ("..., weakened by 6."). Nothing
+  // when every hit was cut to nothing; those say "blocked" themselves.
+  const weakenedBy = useMemo(() => {
+    if (!busy || !moment) return undefined;
+    const b = moment.beats.find((x) => x.weakenedText);
+    const dealt = moment.beats.some((x) => x.event.kind === "hit" && (x.event as { amount: number }).amount > 0);
+    return b && dealt ? b.weakened : undefined;
   }, [busy, moment]);
   const beatWords =
     busy && moment
       ? landed
-        ? momentWords(moment.beats, [...view.squad, ...view.enemies]) + weakenedNote
+        ? withWeakened(momentWords(moment.beats, [...view.squad, ...view.enemies]), weakenedBy)
         : approachWords(moment, [...view.squad, ...view.enemies])
       : "";
 
@@ -707,21 +743,74 @@ export default function PowerworksTurnsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [busy, moment, targets]);
 
-  // A landing number never clips at the stage's edge: one that would poke out is nudged back in
-  // (the rightmost companion's number on a phone).
+  // A landing number stays inside the stage and off every tag and plaque (round 7, item 5). It is
+  // measured where it comes to rest (the rise ends at translate(-50%, -95%)), in the stage's own
+  // units, so the animation's first frame cannot fool the check: pushed in from either edge, then up
+  // until it clears any element tag, letter tag, plaque or knockout mark it would sit on.
   useLayoutEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
+    const place = () => {
     const box = stage.getBoundingClientRect();
     const z = box.width / stage.offsetWidth || 1;
+    const W = stage.offsetWidth;
+    const avoid = [...stage.querySelectorAll<HTMLElement>(".pwt-plaque, .pwt-el, .pwt-letter, .pwt-guardian-tag, .pwt-ko, .pwt-plate-name")].map((a) => {
+      const r = a.getBoundingClientRect();
+      const pad = 5; // a figure is knocked back a little as the number lands; keep clear of where its tags settle
+      return { l: (r.left - box.left) / z - pad, r: (r.right - box.left) / z + pad, t: (r.top - box.top) / z - pad, b: (r.bottom - box.top) / z + pad };
+    });
     stage.querySelectorAll<HTMLElement>(".pwt-float").forEach((el) => {
       el.style.marginLeft = "0px";
-      const r = el.getBoundingClientRect();
-      let shift = 0;
-      if (r.right > box.right - 4) shift = (box.right - 4 - r.right) / z;
-      else if (r.left < box.left + 4) shift = (box.left + 4 - r.left) / z;
-      if (shift) el.style.marginLeft = `${shift}px`;
+      el.style.marginTop = "0px";
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      const left = parseFloat(el.style.left) || 0;
+      const top = parseFloat(el.style.top) || 0;
+      const x0 = left - w / 2;
+      const y0 = top - h * 0.95;
+      const H = stage.offsetHeight;
+      // How much of the tags and plaques a position would cover (0 is clear); off the stage is out.
+      const covered = (dx: number, dy: number) => {
+        const l = x0 + dx;
+        const t = y0 + dy;
+        if (l < 4 || l + w > W - 4 || t < 2 || t + h > H - 2) return Infinity;
+        let sum = 0;
+        for (const a of avoid) {
+          const ow = Math.min(l + w, a.r) - Math.max(l, a.l);
+          const oh = Math.min(t + h, a.b) - Math.max(t, a.t);
+          if (ow > 0 && oh > 0) sum += ow * oh;
+        }
+        return sum;
+      };
+      // The nearest place that covers nothing (or, when the stage is that crowded, the least): offsets in
+      // growing distance, up before sideways, down only as a last resort.
+      let dx = 0;
+      let dy = 0;
+      let best = Infinity;
+      for (let ddy = -140; ddy <= 70; ddy += 6) {
+        for (let ddx = -320; ddx <= 320; ddx += 6) {
+          const c = covered(ddx, ddy);
+          if (c === Infinity) continue;
+          const cost = c * 50 + Math.abs(ddx) * 1.4 + (ddy > 0 ? ddy * 3 : -ddy);
+          if (cost < best) {
+            best = cost;
+            dx = ddx;
+            dy = ddy;
+          }
+        }
+      }
+      if (best === Infinity) {
+        dx = Math.max(4 - x0, Math.min(W - 4 - w - x0, 0));
+        dy = Math.max(2 - y0, 0);
+      }
+      if (dx) el.style.marginLeft = `${dx}px`;
+      if (dy) el.style.marginTop = `${dy}px`;
     });
+    };
+    place();
+    // The struck figure is knocked back and settles a beat later: place again once its tags are at rest.
+    const timer = window.setTimeout(place, 650);
+    return () => window.clearTimeout(timer);
   }, [marks.floats, beatIndex, landed, holding]);
 
   // Targeting hover (storyboard "choosing" step): hovering a key cell rings its enemy target
@@ -747,7 +836,7 @@ export default function PowerworksTurnsPage() {
   }, [hoverTarget, view.active?.id, busy]);
 
   return (
-    <main className="pwt" data-tier="immersive" id="main" data-busy={busy ? "true" : "false"}>
+    <main className="pwt" data-tier="immersive" id="main" data-busy={busy ? "true" : "false"} data-pointer={pointerLive ? "live" : "idle"}>
       <div
         className={`pwt-console${phone ? " phone" : ""}`}
         style={
@@ -764,6 +853,12 @@ export default function PowerworksTurnsPage() {
               Sector {view.room + 1}/{view.roomCount}
             </span>
             <h1>{roomName}</h1>
+            {view.phase === "turn" && (
+              <span className={`pwt-revives${view.revivalLeft > 0 ? "" : " none"}`} data-revives={view.revivalLeft} title="A fallen companion can be revived at camp while a revive is left.">
+                <span className="pwt-revives-full">{view.revivalLeft > 0 ? `Revives left: ${view.revivalLeft}` : "No revives left"}</span>
+                <span className="pwt-revives-short">{view.revivalLeft > 0 ? `Revives ${view.revivalLeft}` : "No revives"}</span>
+              </span>
+            )}
           </div>
           {view.phase === "turn" ? (
             <>
@@ -771,8 +866,8 @@ export default function PowerworksTurnsPage() {
                 actorSide={spotlightSide}
                 actorName={bannerName}
                 actorLetter={bannerLetter}
-                line={ended ? "" : beatWords || (busy ? "" : station?.text ?? since.text)}
-                lineIsSince={!ended && !beatWords && !busy && !station && !!since.text && !(phone && shownNote)}
+                line={ended ? "" : beatWords || (busy || phone ? "" : station?.text ?? since.text)}
+                lineIsSince={!ended && !beatWords && !busy && !station && !!since.text && !phone}
                 note={phone && shownNote ? shownNote.short : null}
                 noteId={phone && shownNote ? shownNote.id : undefined}
                 onOpenRecord={() => setPanel("record")}
@@ -892,7 +987,9 @@ export default function PowerworksTurnsPage() {
                   targeted={ringed(e.id)}
                   impactTarget={impactTargets.includes(e.id)}
                   struck={struckIds.includes(e.id)}
-                  onHover={(hovering) => setHoverTarget(hovering ? e.id : null)}
+                  onHover={(hovering) => {
+                    if (!hovering || liveRef.current || twoTap) setHoverTarget(hovering ? e.id : null);
+                  }}
                   onTap={
                     twoTap
                       ? () => {
@@ -961,17 +1058,28 @@ export default function PowerworksTurnsPage() {
               <ElementBadge element={view.active.element} className="pwt-el-static" />
               {/* On a phone the column's first line is the portrait row, so the short reason sits there;
                   on a desktop the full sentence runs along the key bar's top line above the keys. */}
-              {view.activeStatus && (
-                <span className="pwt-keybar-status" aria-hidden="true">
-                  {view.activeStatus.parts.map((p) => (
-                    <span key={p}>{p}</span>
-                  ))}
+              {(view.activeStatus || (phone && !busy && (station?.text ?? since.text))) && (
+                <span className="pwt-keybar-lines">
+                  {view.activeStatus && (
+                    <span className="pwt-keybar-status" aria-hidden="true">
+                      {view.activeStatus.parts.map((p) => (
+                        <span key={p}>{p}</span>
+                      ))}
+                    </span>
+                  )}
+                  {phone && !busy && (station?.text ?? since.text) && (
+                    <span className="pwt-keybar-since" data-since="">
+                      {station?.text ? null : <b>Since your last turn </b>}
+                      {station?.text ?? since.text}
+                    </span>
+                  )}
                 </span>
               )}
             </div>
             {view.keys.map((k) => (
               <KeyCard
-                key={k.index}
+                key={`${view.active!.id}-${k.index}`}
+                pointerLive={pointerLive}
                 keyView={k}
                 squad={view.squad.filter((s) => s.id !== view.active!.id && !s.down)}
                 activeId={view.active!.id}
@@ -980,8 +1088,12 @@ export default function PowerworksTurnsPage() {
                 twoTap={twoTap}
                 previewed={previewed}
                 onPreview={setPreviewed}
-                onHoverTarget={(id) => setHoverTarget(id)}
-                onHoverUnits={(ids) => setHoverUnits(ids ?? [])}
+                onHoverTarget={(id) => {
+                  if (id === null || liveRef.current || twoTap) setHoverTarget(id);
+                }}
+                onHoverUnits={(ids) => {
+                  if (ids === null || liveRef.current || twoTap) setHoverUnits(ids ?? []);
+                }}
                 litTargets={busy || !hoverTarget ? [] : [hoverTarget]}
                 noted={!!shownNote && shownNote.keyIndex === k.index}
                 activeName={view.active!.name}

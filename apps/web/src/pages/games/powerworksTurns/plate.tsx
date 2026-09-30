@@ -318,8 +318,10 @@ export function EnemyPlate({
   const hit = u.hitOnActive;
   const who = activeName ?? "the active companion";
   const coming = u.hitComing;
-  const showHit = !!hit && !u.down;
-  const showComing = !!coming && !u.down;
+  // While an enemy acts, its forecast chips are not drawn at all and, with no marks of its own, the
+  // chip row collapses: no empty well under the name (round 7, item 8).
+  const showHit = !!hit && !u.down && !forecastOff;
+  const showComing = !!coming && !u.down && !forecastOff;
   const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0 || showHit || showComing;
   return (
     <div

@@ -67,6 +67,7 @@ describe("Powerworks turn by turn", () => {
   it("round 3: hovering an enemy plate rings it and lights its column in every attack key", () => {
     const { container } = mount();
     const plate = container.querySelector(".pwt-row.enemies .pwt-plate")!;
+    fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
     fireEvent.mouseEnter(plate);
     expect(plate.className).toContain("targeted");
     const lit = container.querySelectorAll(".pwt-cell.col-lit");
@@ -190,6 +191,7 @@ describe("Powerworks turn by turn", () => {
     const area = Array.from(container.querySelectorAll(".pwt-key")).find((k) => k.querySelector(".pwt-area-band"));
     if (!area) return; // this seed's first companion has no area key
     const cells = Array.from(area.querySelectorAll<HTMLButtonElement>(".pwt-cell"));
+    fireEvent.pointerMove(window, { clientX: 200, clientY: 200 });
     fireEvent.mouseEnter(cells[0]);
     expect(container.querySelectorAll(".pwt-row.enemies .pwt-plate.targeted").length).toBe(cells.length);
     expect(area.querySelectorAll(".pwt-cell.hot").length).toBe(cells.length);
@@ -602,11 +604,11 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     // The companion's own beat: the chips still describe it.
     await tick(200);
     expect(c.querySelectorAll(".pwt-row.enemies .pwt-hit-on-active.off").length).toBe(0);
-    // Once an enemy's beat plays, every chip is off (kept in the layout, hidden).
+    // Once an enemy's beat plays, no chip is drawn (round 7, item 8: no empty well either).
     let sawOff = false;
     for (let i = 0; i < 12 && !sawOff; i++) {
       await tick(400);
-      if (c.querySelector(".pwt-banner.enemy")) sawOff = c.querySelectorAll(".pwt-row.enemies .pwt-hit-on-active").length === c.querySelectorAll(".pwt-row.enemies .pwt-hit-on-active.off").length;
+      if (c.querySelector(".pwt-banner.enemy")) sawOff = c.querySelectorAll(".pwt-row.enemies .pwt-hit-on-active").length === 0;
     }
     expect(sawOff).toBe(true);
     await act(async () => {
@@ -660,6 +662,42 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     });
     expect(screen.getByRole("group", { name: "Playback speed" }).querySelectorAll("button")[0].getAttribute("aria-pressed")).toBe("true");
     spy.mockRestore();
+  });
+
+  it("round 7, item 2: a new active companion arrives with no cell hovered, armed or previewed, and a hover waits for the pointer to move", async () => {
+    const { container } = mount();
+    const c = container as HTMLElement;
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    });
+    const state = () => ({
+      cells: c.querySelectorAll(".pwt-cell.hot, .pwt-cell.col-lit, .pwt-cell.previewed").length,
+      rings: c.querySelectorAll(".pwt-plate.targeted").length,
+    });
+    // Idle pointer: an enter event with no movement changes nothing.
+    fireEvent.mouseEnter(cells(c)[0]);
+    expect(state()).toEqual({ cells: 0, rings: 0 });
+    expect(c.querySelector("main")!.getAttribute("data-pointer")).toBe("idle");
+    // Once it moves, hover applies.
+    fireEvent.pointerMove(window, { clientX: 400, clientY: 500 });
+    fireEvent.mouseEnter(cells(c)[0]);
+    expect(c.querySelector("main")!.getAttribute("data-pointer")).toBe("live");
+    expect(state().rings + state().cells).toBeGreaterThan(0);
+    const first = c.querySelector(".pwt-keybar-who")!.textContent;
+    // Act with the pointer resting on the cell, then let the enemies finish: the next companion's keys
+    // arrive under the same resting pointer.
+    await act(async () => {
+      fireEvent.click(cells(c)[0]);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /skip to your next turn/i }));
+    });
+    expect(c.querySelector(".pwt-keybar-who")!.textContent).not.toBe(first);
+    expect(state()).toEqual({ cells: 0, rings: 0 });
+    expect(c.querySelector("main")!.getAttribute("data-pointer")).toBe("idle");
+    // A stray enter under the resting pointer still does nothing.
+    fireEvent.mouseEnter(cells(c)[0]);
+    expect(state()).toEqual({ cells: 0, rings: 0 });
   });
 
   it("item 12: camp names the next sector", () => {

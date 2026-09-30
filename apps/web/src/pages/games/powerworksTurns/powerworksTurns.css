@@ -939,18 +939,11 @@
   color: var(--color-ink);
   font-family: var(--font-data);
 }
-.pwt-cell:hover:not(:disabled) { border-color: var(--color-viable); background: var(--color-s2); }
 .pwt-cell:disabled { cursor: not-allowed; opacity: 0.5; }
 /* A finishing cell is good for the player: the concept's "filled ember cell" (amber fill,
    dark bright number, skull) instead of the plague red a bare number would suggest,
    making it clearly the loudest cell on the key (paint review round 3, item 2). Uses the
    existing caution token, not a new color. */
-.pwt-cell.finish {
-  background: var(--color-caution);
-  border-color: var(--color-caution);
-}
-.pwt-cell.finish:hover:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink); }
-.pwt-cell.finish .pwt-cell-letter { color: var(--color-room); opacity: 0.75; }
 .pwt-cell-letter {
   font-size: var(--text-tiny);
   color: var(--color-ink-3);
@@ -972,7 +965,7 @@
   font-weight: 700;
   line-height: 1;
 }
-.pwt-cell-num.finish { color: var(--color-room); }
+.pwt-cell-num.finish { color: var(--color-caution); }
 .pwt-cell-num.heal { color: var(--color-viable); }
 .pwt-cell-heal-icon { width: 11px; height: 11px; }
 /* Chevrons are a primary signal (paint review round 1): sized and colored to read
@@ -1019,7 +1012,7 @@
 .pwt-cell-shield-note {
   color: var(--color-el-ice);
 }
-.pwt-cell-skull { width: 13px; height: 13px; color: var(--color-room); }
+.pwt-cell-skull { width: 13px; height: 13px; color: var(--color-caution); }
 
 /* Rider chips: a key's own supports, in the foot line's right side (paint review round 4,
    item 3), not centered under one cell where a blind reader took it for that cell alone. */
@@ -1904,11 +1897,6 @@
 
 /* A hinder cell reads as the enemy's hit: the swords lead, then that hit struck, then what it
    falls to. A dashed frame and a faint green wash set it apart from a damage cell at a glance. */
-.pwt-cell.hinder {
-  border-style: dashed;
-  border-color: var(--color-edge-strong);
-  background: var(--color-viable-tint);
-}
 .pwt-cell .pwt-cell-hinder { flex-direction: column; gap: 1px; }
 .pwt-cell-hinder-icon { width: 22px; height: 22px; color: var(--color-ink); }
 .pwt-cell-hinder-nums { display: flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 700; line-height: 1; }
@@ -1922,14 +1910,6 @@
 .pwt-cell.now .pwt-key-now-label { color: var(--color-ink-2); }
 
 /* An enemy under the pointer (its plate, or the same column in another key) lights its cell. */
-.pwt-cell.col-lit:not(:disabled) {
-  border-color: var(--color-viable);
-  background: var(--color-s2);
-  box-shadow: 0 0 0 1px var(--color-viable);
-}
-.pwt-cell.finish.col-lit:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink); box-shadow: 0 0 0 1px var(--color-ink); }
-.pwt-cell.col-lit .pwt-cell-letter { color: var(--color-ink); font-weight: 700; }
-.pwt-cell.finish.col-lit .pwt-cell-letter { color: var(--color-room); }
 
 /* Element on every unit: a small tag on the plaque's top edge, the key bar's portrait beneath its name. */
 .pwt-el {
@@ -2316,21 +2296,6 @@
 .pwt-cell-rider .pwt-cell-arrow { font-size: 11px; }
 
 /* --- 7. Preview states: the hovered or armed cell is the strong one, the column echo is quiet --- */
-.pwt-cell.col-lit:not(:disabled) {
-  border-color: var(--color-ink-2);
-  background: transparent;
-  box-shadow: none;
-}
-.pwt-cell.finish.col-lit:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink-2); box-shadow: none; }
-.pwt-cell:hover:not(:disabled),
-.pwt-cell:focus-visible:not(:disabled),
-.pwt-cell.hot:not(:disabled) {
-  border-color: var(--color-viable);
-  background: var(--color-s2);
-  box-shadow: 0 0 0 2px var(--color-viable);
-}
-.pwt-cell.finish:hover:not(:disabled),
-.pwt-cell.finish.hot:not(:disabled) { background: var(--color-caution); border-color: var(--color-ink); box-shadow: 0 0 0 2px var(--color-ink); }
 .pwt-cell.hot .pwt-cell-letter { color: var(--color-ink); font-weight: 700; }
 
 /* --- 9. Marks readable where they are used --- */
@@ -2394,3 +2359,124 @@
 .pwt-panel.pwt-camp { gap: 8px; padding-top: 16px; padding-bottom: 16px; }
 .pwt-camp-carry { margin: 0; }
 .pwt-panel.pwt-guide { padding: 11px 28px; gap: 6px; }
+
+
+/* =====================================================================================
+   Round 7, item 4: one treatment for every cell type.
+   A finishing cell is a gold frame and skull on a dark cell; a hinder cell is a dashed neutral
+   cell; the hovered, armed or previewed cell is one mint frame (only after the pointer has moved:
+   data-pointer="live"); the column echo is one quiet grey line. Nothing here is a fill.
+   ===================================================================================== */
+.pwt-cell.finish { border-color: var(--color-caution); box-shadow: inset 0 0 0 1px var(--color-caution); }
+.pwt-cell.hinder { border-style: dashed; border-color: var(--color-edge-strong); background: transparent; }
+.pwt-cell.col-lit:not(:disabled) { border-color: var(--color-ink-2); box-shadow: none; }
+.pwt-cell.col-lit .pwt-cell-letter { color: var(--color-ink); font-weight: 700; }
+.pwt-cell:focus-visible:not(:disabled),
+.pwt-cell.hot:not(:disabled),
+.pwt-cell.previewed:not(:disabled),
+.pwt[data-pointer="live"] .pwt-cell:hover:not(:disabled) {
+  border-color: var(--color-viable);
+  border-style: solid;
+  background: var(--color-s2);
+  box-shadow: 0 0 0 2px var(--color-viable);
+}
+.pwt-cell.hot .pwt-cell-letter,
+.pwt-cell.previewed .pwt-cell-letter { color: var(--color-ink); font-weight: 700; }
+
+/* Round 7, item 1: a rider preview is a line of its own inside the cell, in the flow under the
+   number. The cell grows to hold it (every cell of the key stretches to the same height), so it can
+   never print over a number, at any size. */
+.pwt-cell.has-rider { padding: 3px 2px 4px; gap: 1px; justify-content: flex-start; }
+.pwt-cell .pwt-cell-rider {
+  position: static;
+  flex: 0 0 auto;
+  margin-top: 1px;
+  padding-top: 2px;
+  border-top: 1px dashed var(--color-edge-strong);
+  align-self: stretch;
+}
+.pwt-cell.has-rider .pwt-cell-num { font-size: 17px; }
+.pwt-cell.has-rider .pwt-cell-hinder.own { font-size: 14px; }
+
+/* Round 7, item 3: the phone's status and since lines live in one container; a desktop reads them elsewhere. */
+.pwt-keybar-lines { display: none; }
+
+/* Round 7, item 9: revives left, in the top bar while a fight is on. */
+.pwt-revives { font-family: var(--font-data); font-size: 11px; color: var(--color-ink-2); text-transform: uppercase; letter-spacing: 0.02em; }
+.pwt-revives.none { color: var(--color-ink-3); }
+
+/* Round 7, item 10: the Guardian's fall is the run's forward moment, so its plaque is framed in mint: a
+   double frame (the plaque and one ring outside it) on the stage, the only mint on a quiet hold. */
+.pwt-stage[data-hold="boss"] .pwt-hold-card {
+  border: 2px solid var(--color-viable);
+  box-shadow: 0 0 0 4px var(--color-s1), 0 0 0 5px var(--color-viable);
+  color: var(--color-ink);
+  padding: 12px 36px;
+}
+/* The first-use note is a small tag in its key's head; the key itself is not outlined (it read as preselected). */
+.pwt-key.noted { border-color: var(--color-edge); }
+.pwt-key-note-tag {
+  flex: 0 0 auto;
+  margin-left: 6px;
+  padding: 0 4px;
+  border: 1px solid var(--color-ink-2);
+  font-family: var(--font-legend);
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+}
+
+/* Round 7, item 7: the Guide in three sections over two columns (reading keys; reading plates, then
+   turn and tools), with margins clear of the console edge at 1366 and 1920. */
+.pwt-panel.pwt-guide { width: 1120px; padding: 18px 32px 16px; gap: 8px; }
+.pwt-guide-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 40px; align-items: start; }
+.pwt-guide-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.pwt-legend-section h3 {
+  margin: 0 0 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--color-edge);
+  font-family: var(--font-legend);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+}
+.pwt-guide .pwt-legend { column-count: 1; }
+.pwt-guide .pwt-legend-row { min-height: 40px; margin-bottom: 2px; }
+.pwt-guide .pwt-legend-row p { font-size: 12.5px; line-height: 1.3; }
+.pwt-guide .pwt-legend-sample { flex: 0 0 150px; }
+.pwt-guide .pwt-legend-sample.wide { flex-basis: 150px; }
+.pwt-guide .pwt-legend-row:has(.pwt-legend-rail) .pwt-legend-sample { flex-basis: 200px; }
+.pwt-guide .pwt-legend-rail { width: 200px; height: 78px; }
+.pwt-guide .pwt-legend-sample .pwt-cell { flex: 0 0 40px; }
+.pwt-guide .pwt-legend-sample.wide .pwt-cell { flex: 0 0 96px; }
+.pwt-guide .pwt-legend-sample .pwt-cell.now { flex: 0 0 96px; }
+.pwt-guide .pwt-legend-sample .pwt-cells-wrap.area { width: 116px; }
+.pwt-guide .pwt-legend-ko-plaque { margin-top: 20px; margin-left: 4px; }
+.pwt-guide .pwt-panel-note { margin: 2px 0 0; }
+.pwt-revives-short { display: none; }
+.pwt-note-short { display: none; }
+.pwt-foot-short { display: none; }
+.pwt-float { transition: margin 180ms var(--ease-out); }
+.pwt-guide-foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 2px; }
+.pwt-guide-foot .pwt-panel-note { margin: 0; flex: 1 1 auto; }
+.pwt-guide-foot .pwt-panel-actions { margin: 0; flex: 0 0 auto; }
+.pwt-guide .pwt-legend-sample .pwt-cell { flex: 0 0 48px; }
+.pwt-guide .pwt-legend-sample.wide .pwt-cell,
+.pwt-guide .pwt-legend-sample .pwt-cell.now { flex: 0 0 104px; }
+.pwt-guide .pwt-legend-sample .pwt-cells-wrap.area { width: 134px; }
+.pwt-guide .pwt-ko, .pwt-guide .pwt-ko-words { white-space: nowrap; }
+.pwt-guide .pwt-legend-row { min-height: 36px; }
+.pwt-panel.pwt-guide { padding: 14px 32px 14px; gap: 6px; }
+.pwt-guide h2 { font-size: 22px; margin: 0; }
+.pwt-guide .pwt-legend-sample .pwt-cell.finish { flex-basis: 56px; }
+.pwt-guide .pwt-legend-sample .pwt-cell { flex-basis: 58px; }
+.pwt-guide .pwt-legend-sample .pwt-cells-wrap.area { width: 150px; }
+.pwt-guide .pwt-legend-sample { flex-basis: 156px; }
+
+/* Round 7, item 1: the key bar is 10 px taller on a desktop so a key whose cells carry a rider line (and an
+   ALL band) still holds its foot line inside its own box. */
+.pwt-console:not(.phone) .pwt-keybar { height: 170px; min-height: 170px; }
+.pwt-guide .pwt-legend-sample .pwt-cell:has(.pwt-cell-shield-note) { flex-basis: 78px; }
