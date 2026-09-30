@@ -207,7 +207,7 @@ function soften(o: HTMLCanvasElement, a: number) {
 // fallback until its picture has loaded.
 const ART = ['zolton', 'magmuth', 'krystos', 'poseidas'];
 /** Where in each picture (rows of its 512) the crop starts, so the machine's feet land on the painted ground. */
-const ART_Y0 = [90, 70, 60, 60];
+const ART_Y0 = [130, 70, 60, 60];
 type Pic = { c: HTMLCanvasElement; light: RGB; side: number; amb: RGB; sky: RGB };
 /** Traces of building in the paintings (a derrick, an aqueduct, a gantry) that the story has not earned yet, in picture pixels: x, y, rx, ry. */
 const RUINS: [number, number, number, number][][] = [
@@ -225,11 +225,19 @@ function buildPic(wi: number, img: HTMLImageElement) {
 	if (!o) return;
 	const g = o.g;
 	const sc = WWD / img.naturalWidth;
+	// ice is mirrored, so its broken ice sheets fill the left where the ruins were
+	const flip = wi === 2;
+	if (flip) {
+		g.save();
+		g.translate(WWD, 0);
+		g.scale(-1, 1);
+	}
 	g.drawImage(img, 0, ART_Y0[wi], img.naturalWidth, PH / sc, 0, 0, WWD, PH);
+	if (flip) g.restore();
 	// paint the traces of building out with the ground round them
 	try {
 		for (const [px, py, rx, ry] of RUINS[wi]) {
-			const ux = px * sc;
+			const ux = flip ? WWD - px * sc : px * sc;
 			const uy = (py - ART_Y0[wi]) * sc;
 			const pts = [[-1.5, 0], [1.5, 0], [0, -1.5], [0, 1.5]].map(([dx, dy]) => g.getImageData(clamp(Math.round(ux + dx * rx * sc), 0, WWD - 1), clamp(Math.round(uy + dy * ry * sc), 0, PH - 1), 1, 1).data);
 			const c: RGB = [0, 1, 2].map((k) => pts.reduce((acc, d) => acc + d[k] / 4, 0)) as RGB;
@@ -260,7 +268,7 @@ function buildPic(wi: number, img: HTMLImageElement) {
 	}
 	g.save();
 	g.globalCompositeOperation = 'source-atop';
-	g.fillStyle = css([64, 68, 78], 0.2);
+	g.fillStyle = css([64, 68, 78], wi === 2 ? 0.05 : 0.2);
 	g.fillRect(0, 0, WWD, PH);
 	g.fillStyle = css(BLACK, 0.22);
 	g.fillRect(0, 0, WWD, PH);
@@ -299,7 +307,7 @@ function buildPic(wi: number, img: HTMLImageElement) {
 	// the haze of the world's own sky between the painting and the machine
 	g.save();
 	g.globalCompositeOperation = 'source-atop';
-	g.fillStyle = css(sky, 0.15);
+	g.fillStyle = css(sky, wi === 2 ? 0.08 : 0.15);
 	g.fillRect(0, 0, WWD, PH);
 	g.restore();
 	pics[wi] = { c: o.c, light, side, amb, sky };
@@ -1343,6 +1351,16 @@ function paintMachine(g: Ctx) {
 	top.addColorStop(1, css([210, 216, 206], 0));
 	g.fillStyle = top;
 	g.fillRect(BODY.x0, BODY.top, 212, 70);
+	const ao = g.createLinearGradient(0, 176, 0, 190);
+	ao.addColorStop(0, css(BLACK, 0.4));
+	ao.addColorStop(1, css(BLACK, 0));
+	g.fillStyle = ao;
+	g.fillRect(BODY.x0, 176, 212, 14);
+	const aop = g.createLinearGradient(0, BODY.bot - 12, 0, BODY.bot);
+	aop.addColorStop(0, css(BLACK, 0));
+	aop.addColorStop(1, css(BLACK, 0.4));
+	g.fillStyle = aop;
+	g.fillRect(BODY.x0, BODY.bot - 12, 212, 12);
 	const foot = g.createLinearGradient(0, BODY.bot - 67, 0, BODY.bot);
 	foot.addColorStop(0, css([20, 14, 8], 0));
 	foot.addColorStop(1, css([20, 14, 8], 0.4));
@@ -1408,6 +1426,7 @@ function paintMachine(g: Ctx) {
 
 // The machine seen in a world's light: its cache tinted with that painting's ambient color, its darkest tones lifted
 // to sit with the painting's foreground. Built once per world, after the picture is in.
+const scale3 = (c: RGB, k: number): RGB => [c[0] * k, c[1] * k, c[2] * k];
 const tcache: (HTMLCanvasElement | null | undefined)[] = [];
 function machineTinted(wi: number) {
 	const base = machineCache();
@@ -1417,12 +1436,20 @@ function machineTinted(wi: number) {
 	if (hit) return hit;
 	const o = offscreen(base.width, base.height);
 	if (!o) return base;
+	// multiply by the world's ambient (its hue, kept gentle), only where the machine is
+	const m = offscreen(base.width, base.height);
+	if (!m) return base;
+	const mx = Math.max(P.amb[0], P.amb[1], P.amb[2], 1);
+	const hue = mixRGB(WHITE, [(P.amb[0] / mx) * 255, (P.amb[1] / mx) * 255, (P.amb[2] / mx) * 255], 0.75);
+	const lum = (P.amb[0] * 0.3 + P.amb[1] * 0.59 + P.amb[2] * 0.11) / 255;
+	const br = clamp(0.62 + lum * 1.6, 0.66, 1);
+	m.g.fillStyle = css(scale3(hue, br));
+	m.g.fillRect(0, 0, base.width, base.height);
+	m.g.globalCompositeOperation = 'destination-in';
+	m.g.drawImage(base, 0, 0);
 	o.g.drawImage(base, 0, 0);
-	o.g.globalCompositeOperation = 'source-atop';
-	o.g.fillStyle = css(mixRGB(P.amb, [60, 66, 78], 0.4), 0.32);
-	o.g.fillRect(0, 0, base.width, base.height);
-	o.g.fillStyle = css([26, 27, 30], 0.12);
-	o.g.fillRect(0, 0, base.width, base.height);
+	o.g.globalCompositeOperation = 'multiply';
+	o.g.drawImage(m.c, 0, 0);
 	return (tcache[wi] = o.c);
 }
 // A strip of the painting's own foreground laid over the pad's lower edge, feathered on top and at its ends.
@@ -1477,7 +1504,8 @@ function seedR(kind: SeedKind, th: number, fins = true, v = 0) {
 		const b = 0.68;
 		const lens = (a * b) / Math.sqrt(Math.pow(b * Math.cos(th), 2) + Math.pow(a * Math.sin(th), 2));
 		const fin = (d: number) => (fins ? 0.5 : 0) * Math.exp(-Math.pow(d / 0.17, 2));
-		return lens + fin(w(th - 2.6)) + fin(w(th - 3.68));
+		// a symmetric lens, one fin swept off each tip in turn: no head, no tail
+		return lens + fin(w(th - 2.7)) + fin(w(th + 0.44));
 	}
 	if (kind === 'lava') {
 		// six-sided, walled
@@ -1490,7 +1518,7 @@ function seedR(kind: SeedKind, th: number, fins = true, v = 0) {
 	if (kind === 'apex') return 0.85; // all the same
 	return 1 + 0.1 * Math.cos(2 * th) - 0.16 * Math.sin(th); // Genesis: a plain oval seed
 }
-const SEEDS = Array.from({ length: 5 }, (_, k) => ({ x: (hash(k, 1) - 0.5) * 22, y: VY0 + 38 + k * 40 + (hash(k, 2) - 0.5) * 6, r: 16.5 * (0.88 + hash(k, 3) * 0.24), ph: hash(k, 4) * TAU, sp: 0.6 + hash(k, 5) * 0.5, tilt: (hash(k, 6) - 0.5) * 0.5, hb: 0.5 + hash(k, 7) * 0.25 }));
+const SEEDS = Array.from({ length: 4 }, (_, k) => ({ x: (hash(k, 1) - 0.5) * 18, y: VY0 + 46 + k * 50 + (hash(k, 2) - 0.5) * 6, r: 20.5 * (0.9 + hash(k, 3) * 0.2), ph: hash(k, 4) * TAU, sp: 0.6 + hash(k, 5) * 0.5, tilt: (hash(k, 6) - 0.5) * 0.5, hb: 0.5 + hash(k, 7) * 0.25 }));
 
 function ecg(ph: number) {
 	const p = ((ph % 1) + 1) % 1;
@@ -1519,8 +1547,10 @@ type MachineLook = {
 	reading: number;
 	dishCol: RGB;
 	needle: number;
-	/** Which world's painting it stands in (its tint and ground), or -1. */
+	/** Which world's painting it stands in (its tint and ground), or -1; `world2` fades in over it by `wk` while one world gives way to the next. */
 	world: number;
+	world2: number;
+	wk: number;
 	/** 0 to 1: how much orange light comes up from below (lava). */
 	under: number;
 	/** 0 to 1: a lightning flash lifting it. */
@@ -1545,7 +1575,14 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	if (mc) {
 		ctx.globalAlpha = a;
 		ctx.drawImage(mc, MC.x, MC.y, MC.w, MC.h);
-		const fs2 = S.world >= 0 ? footStrip(S.world) : null;
+		const mc2 = S.wk > 0.01 && S.world2 >= 0 ? machineTinted(S.world2) : null;
+		if (mc2) {
+			ctx.globalAlpha = a * S.wk;
+			ctx.drawImage(mc2, MC.x, MC.y, MC.w, MC.h);
+			ctx.globalAlpha = a;
+		}
+		const fw = S.wk > 0.5 && S.world2 >= 0 ? S.world2 : S.world;
+		const fs2 = fw >= 0 ? footStrip(fw) : null;
 		if (fs2) ctx.drawImage(fs2, FOOT.x, FOOT.y, FOOT.w, FOOT.h);
 		ctx.globalAlpha = 1;
 	}
@@ -1560,7 +1597,7 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.globalCompositeOperation = 'lighter';
 	const bx = side < 0 ? BODY.x0 : BODY.x1;
 	const wash = ctx.createLinearGradient(bx, 0, bx + (side < 0 ? 120 : -120), 0);
-	wash.addColorStop(0, css(light, 0.24 * Math.abs(side) * a));
+	wash.addColorStop(0, css(light, 0.16 * Math.abs(side) * a));
 	wash.addColorStop(1, css(light, 0));
 	ctx.fillStyle = wash;
 	ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
@@ -1576,11 +1613,44 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 		ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
 	}
 	const spill = ctx.createRadialGradient(VX, 300, 20, VX, 300, 170);
-	spill.addColorStop(0, css(gel, 0.28 * a));
+	spill.addColorStop(0, css(gel, 0.16 * a));
 	spill.addColorStop(1, css(gel, 0));
 	ctx.fillStyle = spill;
 	ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
 	ctx.restore();
+	// the housing is a cylinder: dark down the shadow side, fading out well before the lit side, a soft strip of shine near it
+	{
+		const xs = side < 0 ? BODY.x1 : BODY.x0;
+		
+		const k = 0.5 + 0.5 * Math.min(1, Math.abs(side) / 0.6);
+		ctx.save();
+		bodyPath(ctx);
+		ctx.clip();
+		const sg = ctx.createLinearGradient(xs, 0, xs + (bx - xs) * 0.65, 0);
+		sg.addColorStop(0, css(BLACK, 0.45 * k * a));
+		sg.addColorStop(1, css(BLACK, 0));
+		ctx.fillStyle = sg;
+		ctx.fillRect(BODY.x0, BODY.top, 212, BODY.bot - BODY.top);
+		const sx2 = bx + (side < 0 ? 1 : -1) * 212 * 0.25;
+		const spg = ctx.createLinearGradient(sx2 - 9, 0, sx2 + 9, 0);
+		spg.addColorStop(0, css(light, 0));
+		spg.addColorStop(0.5, css(mixRGB(light, WHITE, 0.4), 0.12 * a));
+		spg.addColorStop(1, css(light, 0));
+		ctx.globalCompositeOperation = 'lighter';
+		ctx.fillStyle = spg;
+		ctx.fillRect(sx2 - 9, BODY.top + 10, 18, BODY.bot - BODY.top - 20);
+		ctx.restore();
+		// the vat's rim, shaded the same way
+		const vs = VX - (side < 0 ? 1 : -1) * (VR + 8);
+		const vl = VX + (side < 0 ? 1 : -1) * (VR + 8);
+		const vgd = ctx.createLinearGradient(vs, 0, vl, 0);
+		vgd.addColorStop(0, css(BLACK, 0.45 * k * a));
+		vgd.addColorStop(0.65, css(BLACK, 0));
+		ctx.strokeStyle = vgd;
+		ctx.lineWidth = 15;
+		vatPath(ctx);
+		ctx.stroke();
+	}
 	ctx.save();
 	ctx.globalCompositeOperation = 'lighter';
 	const rim = ctx.createLinearGradient(bx, 0, bx + (side < 0 ? 90 : -90), 0);
@@ -1674,12 +1744,13 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	// for the world; under APEX they line up and all beat together, brighter, in its violet
 	const halos: [number, number, number, number][] = [];
 	const sparks: [number, number, number][] = [];
+	const flashes: [number, number, number][] = [];
 	SEEDS.forEach((s, k) => {
 		const free = 1 - apex;
 		const dx = Math.sin(sec * s.sp + s.ph) * 5 * free;
 		const dy = Math.cos(sec * s.sp * 0.8 + s.ph) * 4 * free;
 		const x = mix(VX + s.x + dx, VX, apex);
-		const y = mix(s.y + dy, VY0 + 38 + k * 40, apex);
+		const y = mix(s.y + dy, VY0 + 46 + k * 50, apex);
 		// a slow drift of about 6 degrees, and a breath of 4 percent every 1.8 s, out of step from one seed to the next
 		const rot = mix(s.tilt + Math.sin(sec * 0.5 + s.ph) * 0.105, 0, apex);
 		const own = ((sec * s.hb + s.ph / TAU) % 1 + 1) % 1;
@@ -1687,7 +1758,7 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 		// a new seed forms: the old one is gone, a bright point swells into the new shape
 		const kmk = clamp(S.km * 1.25 - k * 0.06);
 		const form = mix(kmk < 0.5 ? mix(1, 0.06, smooth(0, 0.5, kmk)) : mix(0.06, 1, easeOut(ramp(0.5, 1, kmk))), 1, apex);
-		const r = mix(s.r, 12, apex) * form * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
+		const r = mix(s.r, 15, apex) * form * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
 		const kindNow: SeedKind = kmk < 0.5 ? S.kindA : S.kindB;
 		const stormW = kindNow === 'storm' ? 1 - apex : 0;
 		const wall = kindNow === 'lava' ? 1 - apex : 0;
@@ -1728,9 +1799,9 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 			// the nucleus: a small dark body well off center (at a storm's head end), never a dot in a ring; it swells with each beat
 			const nr = r * 0.2 * (0.8 + 0.4 * hash(k, 11)) * (1 + 0.15 * pulse);
 			const away = s.ph + rot;
-			const off = r * (0.25 + 0.4 * stormW);
-			const nx = x + Math.cos(stormW > 0 ? rot : away) * off + Math.cos(s.ph + sec * 0.3) * r * 0.03;
-			const ny = y + Math.sin(stormW > 0 ? rot : away) * off * 0.9 + Math.sin(s.ph + sec * 0.3) * r * 0.03;
+			const off = r * 0.25;
+			const nx = x + Math.cos(away) * off + Math.cos(s.ph + sec * 0.3) * r * 0.03;
+			const ny = y + Math.sin(away) * off * 0.9 + Math.sin(s.ph + sec * 0.3) * r * 0.03;
 			const ng = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr * 1.5);
 			ng.addColorStop(0, css(mixRGB(tint, BLACK, 0.85 - 0.3 * apex), 0.9 * a));
 			ng.addColorStop(0.65, css(mixRGB(tint, BLACK, 0.8 - 0.3 * apex), 0.7 * a));
@@ -1747,18 +1818,22 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 		}
 		halos.push([x, y, r, pulse]);
 		if (form < 0.5) sparks.push([x, y, 1 - form]);
+		// a short bright flash where the new seed catches
+		const fl2 = Math.exp(-Math.pow((kmk - 0.52) / 0.07, 2)) * (1 - apex);
+		if (fl2 > 0.05) flashes.push([x, y, fl2]);
 	});
 	// a feed line: tiny bright motes rising from the vat's base into the gel, and gathering into a seed that is forming
 	lighter(ctx, () => {
 		const mote = mixRGB(gel, WHITE, 0.7);
 		for (let m = 0; m < 14; m++) {
 			const u = (sec * (0.1 + hash(m) * 0.08) + hash(m, 2)) % 1;
-			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 2.4, mote, 0.7 * (1 - u) * (1 - apex * 0.9) * a, 'core');
+			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 3.6, mote, 1 * (1 - u * 0.6) * (1 - apex * 0.9) * a, 'core');
+			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 9, mote, 0.25 * (1 - u) * (1 - apex * 0.9) * a);
 		}
 		for (const [sx2, sy2, f] of sparks) {
 			for (let j = 0; j < 4; j++) {
 				const u = (sec * 1.3 + j / 4 + sx2 * 0.01) % 1;
-				glow(ctx, mix(VX + Math.sin(j * 2 + sec) * 12, sx2, easeOut(u)), mix(VY1 - 8, sy2, u), 2.2, mote, 0.85 * f * (1 - u * 0.3) * a, 'core');
+				glow(ctx, mix(VX + Math.sin(j * 2 + sec) * 12, sx2, easeOut(u)), mix(VY1 - 8, sy2, u), 3.4, mote, 1 * f * (1 - u * 0.3) * a, 'core');
 			}
 		}
 	});
@@ -1768,6 +1843,10 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 		for (const [x, y, f] of sparks) {
 			glow(ctx, x, y, 7 + 10 * f, WHITE, 0.8 * f * a, 'core');
 			glow(ctx, x, y, 18 * f, mixRGB(gel, WHITE, 0.5), 0.5 * f * a);
+		}
+		for (const [x, y, f] of flashes) {
+			glow(ctx, x, y, 34 * f, WHITE, 0.9 * f * a, 'core');
+			glow(ctx, x, y, 44 * f, mixRGB(gel, WHITE, 0.6), 0.6 * f * a);
 		}
 	});
 	// the glass's own sheen
@@ -1865,7 +1944,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 		g.lineWidth = Math.max(1.4, 1.5 / f);
 		ORB.e.forEach(([i, j], k) => {
 			if (hash(k, gapStep + 40) < 0.13) return;
-			if (f < 1.2 && hash(k, 77) < 0.3) return;
+			if (f < 1.2 && hash(k, 77) < 0.4) return;
 			const d = (P[i][2] + P[j][2]) / 2;
 			const yn = ((P[i][1] + P[j][1]) / 2 - pad) / (2 * R);
 			const b1 = Math.exp(-Math.pow((yn - band1) / 0.07, 2));
@@ -1926,7 +2005,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	ctx.save();
 	ctx.globalCompositeOperation = 'lighter';
 	// its glow: a volume of light, faint, so the network reads as an image and not a solid
-	if (mag) copy(mag, 0.8 * a, -4.5, 3);
+	if (mag) copy(mag, (f < 1.2 ? 0.5 : 0.8) * a, -4.5, 3);
 	if (cyan) copy(cyan, 0.8 * a, 4.5, 7);
 	copy(main, 1 * a, 0, 0);
 	// a few blocks of the image displaced sideways, as a bad frame does
@@ -2165,7 +2244,11 @@ export function createGenerators(): Figure {
 				({ kindA, kindB, km, gel } = frozen);
 			}
 			const sideOf = (k: SeedKind) => (k === 'genesis' ? -0.4 : k === 'apex' ? 0 : worldSide(WKEYS.indexOf(k)));
-				const sideNow = mix(sideOf(kindA), sideOf(kindB), km);
+				// all the machine's lighting crosses over inside the backdrop's own CROSS
+				const xfade = stage !== 1 && ws.prev >= 0 && ws.k < 1;
+				const sideNow = xfade ? mix(worldSide(ws.prev), worldSide(ws.cur), ws.k) : ws.prev < 0 && stage !== 1 ? mix(sideOf('genesis'), worldSide(ws.cur), smooth(0.2, 0.7, t)) : worldSide(ws.cur);
+				const lightNow = xfade ? mixRGB(worldSeam(ws.prev), worldSeam(ws.cur), ws.k) : worldSeam(w3);
+				const underNow = xfade ? mix(ws.prev === 1 ? 1 : 0, ws.cur === 1 ? 1 : 0, ws.k) : w3 === 1 ? 1 : 0;
 				// the machines, each on its own world: ours first, the others coming into view as the view pulls back
 			const sensors: { x: number; y: number; at: number; a: number }[] = [];
 			L.machines.forEach((m, i) => {
@@ -2189,16 +2272,18 @@ export function createGenerators(): Figure {
 					// the far machines keep a little light of their own, so none is lost in the dark
 					if (!first) lighter(ctx, () => glow(ctx, 480, 330, 240, mixRGB(own, VIOLET, lk * 0.7), 0.2 * app * vis));
 				const kind: SeedKind | null = first ? null : WORLDS[wi].key;
-				const tintWorld = first ? (stage === 1 ? w3 : ws.prev >= 0 && ws.k < 0.5 ? ws.prev : ws.cur) : wi;
-				const lavaW = first ? (kindA === 'lava' ? 1 - km : 0) + (kindB === 'lava' ? km : 0) : wi === 1 ? 1 : 0;
+				const tintWorld = first ? (xfade ? ws.prev : w3) : wi;
+				const lavaW = first ? underNow : wi === 1 ? 1 : 0;
 				const fl = first && stage === 0 && WORLDS[ws.cur].key === 'storm' ? Math.max(lightning(ws.since, 0.7), lightning(ws.since, 1.9)) : 0;
 				drawMachine(ctx, {
 					world: tintWorld,
+					world2: first && xfade ? ws.cur : -1,
+					wk: first && xfade ? ws.k : 0,
 					under: lavaW * (1 - lk * 0.6),
 					flash: fl,
 					sec: sec + i * 1.7,
 					gel: mixRGB(own, mixRGB(own, [128, 104, 190], 0.78), lk),
-					light: mixRGB(worldSeam(wi), VIOLET, lk * 0.5),
+					light: mixRGB(first ? lightNow : worldSeam(wi), VIOLET, lk * 0.5),
 						side: first ? sideNow : worldSide(wi) * 0.7,
 					a: Math.max(first ? 1 : 0.6 * app, app) * (1 - dip),
 					kindA: kind ?? kindA,

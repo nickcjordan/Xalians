@@ -98,7 +98,7 @@ body { margin: 0; font: 15px/1.5 'Atkinson Hyperlegible', system-ui, sans-serif;
 .decision { border: 1px solid var(--mint); background: var(--panel); padding: 14px 16px; display: grid; gap: 8px; max-width: 76ch; }
 .decision p { margin: 0; }
 .round li { margin: 4px 0; }
-.frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; }
+.frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 560px), 1fr)); gap: 10px; }
 .frames figure { margin: 0; }
 .frames img { display: block; width: 100%; height: auto; background: #000; }
 .frames figcaption { font: 12px/1.3 'Martian Mono', ui-monospace, monospace; color: var(--muted); padding-top: 4px; }
