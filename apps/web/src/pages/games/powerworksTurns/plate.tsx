@@ -1,8 +1,27 @@
 import React from "react";
-import { Shield, ChevronUp, ChevronDown, Swords, Ban, Zap } from "lucide-react";
+import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import { DeltaChip, SpotlightMarks } from "./banner";
 import type { EnemyView, Marks, SquadView } from "./view";
+
+/**
+  The enemy hit's own glyph (UX pass 2, round 5): a jagged burst, an impact. The swords stay the
+  hinder's glyph ("its next hit is smaller"), so a plate's hit chip and its hinder chip never share
+  a picture. Drawn inline so it takes the chip's ink like a lucide icon does.
+*/
+export function ImpactMark({ className = "" }: { className?: string }) {
+  return (
+    <svg className={`pwt-impact ${className}`} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <polygon
+        points="12,1.5 14.6,8.2 21.6,6.4 17.2,12 22.5,16.6 15.4,16.4 14.6,22.5 12,17.2 9.4,22.5 8.6,16.4 1.5,16.6 6.8,12 2.4,6.4 9.4,8.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 /**
   Shield, boost and hinder chips shared by every plate (Marks: shield, boost, hinder).
@@ -23,7 +42,7 @@ export function MarkChips({ marks }: { marks: Marks }) {
   return (
     <>
       {marks.shield > 0 && (
-        <span className="pwt-chip" aria-label={`shield ${marks.shield}`} title={`Shield ${marks.shield}`}>
+        <span className="pwt-chip shield" aria-label={`shield ${marks.shield}`} title={`Shield ${marks.shield}`}>
           <Shield />
           {marks.shield}
         </span>
@@ -60,6 +79,21 @@ export function ElementBadge({ element, className = "" }: { element: string; cla
     <span className={`pwt-el el-${element} ${className}`} title={`Element: ${element}`} data-element={element}>
       <i aria-hidden="true" />
       {element}
+    </span>
+  );
+}
+
+/**
+  The knockout mark on a companion's plaque (UX pass 2, round 5): an enemy that acts before this
+  companion's next turn has a ready hit that equals or exceeds its health. The same skull the
+  player's finishing cells carry, as a fact.
+*/
+export function KoMark({ from, name }: { from: string[]; name: string }) {
+  const who = from.length > 1 ? `${from.join(" and ")} each have` : `${from[0]} has`;
+  const words = `${who} a ready hit that knocks ${name} out before its next turn`;
+  return (
+    <span className="pwt-ko" title={words} aria-label={words} data-ko={from.join("")}>
+      <Skull />
     </span>
   );
 }
@@ -157,6 +191,7 @@ export function SquadPlate({
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
+        {u.koFrom && !u.down && <KoMark from={u.koFrom} name={u.name} />}
         <span className="pwt-name">{u.name}</span>
         <HealthBar hp={u.hp} max={u.max} delta={delta} />
         {u.down ? (
@@ -177,35 +212,37 @@ export function SquadPlate({
 export function HitChip({ hit, who }: { hit: NonNullable<EnemyView["hitOnActive"]>; who: string }) {
   return (
     <span
-      className="pwt-hit-on-active"
+      className={`pwt-hit-on-active ${hit.lethal ? "lethal" : ""}`}
       aria-label={
         hit.step === 0
           ? `hits ${who} for no effect`
           : `hits ${who} for ${hit.n}${hit.before !== undefined ? `, weakened from ${hit.before}` : ""}${
               hit.step > 1 ? ", strong" : hit.step < 1 ? ", weak" : ""
-            }`
+            }${hit.lethal ? `, knocks ${who} out` : ""}`
       }
       title={
         hit.step === 0
           ? `Its strongest hit on ${who} at its next turn does no effect`
           : `Its strongest hit on ${who} at its next turn: ${hit.n}${
               hit.step > 1 ? " (strong)" : hit.step < 1 ? " (weak)" : ""
-            }`
+            }${hit.lethal ? `. That equals or exceeds ${who}'s health: it knocks ${who} out.` : ""}`
       }
     >
-      <Swords />
+      <ImpactMark />
       {hit.before !== undefined && <s className="pwt-hit-before">{hit.before}</s>}
       {hit.step === 0 ? <Ban /> : hit.n}
+      {hit.lethal && <Skull className="pwt-hit-skull" />}
       {/* The chevron's direction is the damage (more, less); its color is who that favors:
           a strong hit on your companion is bad for you, a weak one is good (the same rule as
-          the key cells, where a strong hit on an enemy is good for you). */}
+          the key cells, where a strong hit on an enemy is good for you). A hit that knocks the
+          companion out is never dressed as good news: its chevron goes neutral. */}
       {hit.step > 1 && (
-        <span className="pwt-cell-chevron-wrap bad">
+        <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "bad"}`}>
           <ChevronUp />
         </span>
       )}
       {hit.step > 0 && hit.step < 1 && (
-        <span className="pwt-cell-chevron-wrap good">
+        <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "good"}`}>
           <ChevronDown />
         </span>
       )}
@@ -223,7 +260,7 @@ export function ComingChip({ coming, who }: { coming: NonNullable<EnemyView["hit
         coming.step > 1 ? " (strong)" : coming.step < 1 ? " (weak)" : ""
       }, is usable ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn`}
     >
-      <Swords />
+      <ImpactMark />
       {coming.step === 0 ? <Ban /> : coming.n}
       <span className="pwt-hit-in">in {coming.turns}</span>
     </span>

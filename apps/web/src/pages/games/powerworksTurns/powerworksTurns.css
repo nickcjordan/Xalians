@@ -2049,3 +2049,166 @@
 /* Sized so three numbers with their tags still clear each other across an enemy row. */
 .pwt-float-num.hurt { font-size: 50px; gap: 6px; }
 .pwt-float-tag { font-size: 12.5px; padding: 1px 5px; }
+
+/* ==========================================================================================
+   UX pass 2, round 5: from 6 to 8
+   ========================================================================================== */
+
+/* --- 1. Knockout marks: the skull, as a fact, on an enemy's lethal hit and on a plaque --- */
+.pwt-impact { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-ink-2); }
+.pwt-hit-on-active .pwt-impact { color: var(--color-ink-2); }
+.pwt-hit-on-active.coming .pwt-impact { color: var(--color-ink-3); }
+.pwt-hit-on-active.lethal { border-color: var(--color-plague); }
+.pwt-hit-on-active .pwt-hit-skull { width: 12px; height: 12px; color: var(--color-plague); }
+.pwt-hit-on-active .pwt-cell-chevron-wrap.neutral { background: var(--color-s3); border: 1px solid var(--color-edge-strong); }
+.pwt-hit-on-active .pwt-cell-chevron-wrap.neutral svg { color: var(--color-ink-2); }
+.pwt-ko {
+  position: absolute;
+  top: -15px;
+  left: 4px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 14px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-plague);
+  color: var(--color-plague);
+}
+.pwt-ko svg { width: 10px; height: 10px; }
+.pwt-hit-before { color: var(--color-ink-2); }
+
+/* --- 6. Chips never clip: a plaque with more chips than fit wraps them to a second row --- */
+.pwt-marks { flex-wrap: wrap; overflow: visible; row-gap: 3px; }
+.pwt-chip, .pwt-hit-on-active { flex: 0 0 auto; min-width: auto; }
+/* --- 8. A shield that reads as a shield --- */
+.pwt-chip.shield svg { width: 13px; height: 13px; }
+.pwt-cell .pwt-cell-shield-note { display: flex; align-items: center; gap: 1px; font-size: 11px; font-weight: 700; line-height: 1; color: var(--color-el-ice); }
+.pwt-cell-shield-note svg { width: 16px; height: 16px; }
+.pwt-cell-shield-note b { font-weight: 700; }
+/* A hit is on the plate even while beats play. */
+.pwt[data-busy="true"] .pwt-hit-on-active { visibility: visible; }
+
+/* --- 5. A hindered or boosted companion's keys: full contrast, same cell height, the reason on the
+   key bar's first line --- */
+.pwt-cell .pwt-cell-hinder { flex-direction: row; gap: 3px; white-space: nowrap; }
+.pwt-cell .pwt-cell-hinder-icon { width: 15px; height: 15px; }
+.pwt-cell .pwt-cell-hinder-nums { gap: 2px; }
+.pwt-cell .pwt-cell-hinder .pwt-cell-num { font-size: 15px; }
+.pwt-cell .pwt-cell-hinder .pwt-cell-before,
+.pwt-cell .pwt-cell-hinder-nums .pwt-cell-before { font-size: 12.5px; color: var(--color-ink-2); }
+.pwt-cell .pwt-cell-hinder .pwt-cell-arrow { color: var(--color-ink-2); font-size: 12px; }
+.pwt-cell .pwt-cell-hinder-nums .pwt-cell-arrow { color: var(--color-ink-2); }
+.pwt-cell .pwt-cell-hinder.own { gap: 3px; }
+.pwt-keybar-statusline {
+  position: absolute;
+  top: 5px;
+  left: 20px;
+  right: 20px;
+  z-index: 1;
+  margin: 0;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pwt-keybar.has-status { padding-top: 26px; }
+
+/* --- 11. Teaching in place: a note beside the first occurrence, over nothing it explains --- */
+.pwt-key { position: relative; }
+.pwt-note {
+  position: absolute;
+  z-index: 8;
+  left: 6px;
+  bottom: calc(100% + 9px);
+  margin: 0;
+  width: max-content;
+  max-width: 262px;
+  padding: 6px 9px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-ink-2);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--color-ink);
+  pointer-events: none;
+  animation: pwt-wait-in 220ms var(--ease-out) both;
+}
+.pwt-note::after {
+  content: "";
+  position: absolute;
+  left: 30px;
+  top: 100%;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid var(--color-ink-2);
+}
+.pwt-briefing-mid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+.pwt-briefing-mid .pwt-briefing-squad { justify-content: center; gap: 14px; }
+.pwt-lesson { display: flex; align-items: center; gap: 14px; }
+.pwt-lesson .pwt-legend-sample { flex: 0 0 200px; }
+.pwt-lesson-key { flex: 1 1 auto; padding: 6px 8px 8px; box-shadow: none; }
+.pwt-lesson-key .pwt-cell { flex: 0 0 auto; width: 72px; }
+.pwt-lesson p { flex: 1 1 auto; font-size: var(--text-small); line-height: 1.4; }
+
+/* --- 2. End states are quiet --- */
+.pwt-banner.hold .pwt-banner-kicker { color: var(--color-ink); }
+.pwt-banner.hold .pwt-banner-who { color: var(--color-ink-2); }
+.pwt-keybar-wait.playing.hold .pwt-keybar-wait-kicker { color: var(--color-ink); }
+.pwt-rail-quiet { border-left: 1px solid var(--color-edge); -webkit-mask-image: none; mask-image: none; }
+.pwt-stage[data-hold="boss"] .pwt-hold-card { border-color: var(--color-ink); font-size: 36px; }
+
+/* --- 4. Camp: one row of actions, Retreat set apart and guarded --- */
+.pwt-panel.pwt-camp { width: 740px; }
+.pwt-camp-actions { flex-wrap: nowrap; }
+.pwt-camp-actions button { flex: 0 1 auto; min-width: 0; white-space: nowrap; }
+.pwt-camp-leave { display: flex; justify-content: flex-end; padding-top: 10px; border-top: 1px solid var(--color-edge); }
+.pwt-camp-leave .pwt-danger { display: inline-flex; align-items: center; gap: 6px; }
+.pwt-camp-leave svg { width: 15px; height: 15px; }
+.pwt-panel.pwt-camp.last .eyebrow { color: var(--color-ink); }
+.pwt-panel.pwt-confirm { width: 560px; }
+
+/* --- 10. Endings: mint only on victory --- */
+.pwt-panel .eyebrow.quiet { color: var(--color-ink-2); }
+.pwt-end.withdrew, .pwt-end.forced { border-color: var(--color-edge-strong); }
+.pwt-end.withdrew .pwt-end-unit .pwt-portrait-ring,
+.pwt-end.forced .pwt-end-unit .pwt-portrait-ring { filter: grayscale(0.6); opacity: 0.75; }
+.pwt-end.won .pwt-end-unit.down .pwt-portrait-ring { width: 112px; height: 112px; }
+.pwt-end-unit.down .pwt-end-hp { color: var(--color-plague); font-family: var(--font-legend); font-size: var(--text-tiny); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* --- 12. The Record: a side mark on each line --- */
+.pwt-panel .pwt-record-list p.pwt-rec-line { display: flex; gap: 8px; align-items: baseline; }
+.pwt-rec-side { flex: 0 0 44px; font-family: var(--font-legend); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-3); }
+.pwt-rec-line.enemy .pwt-rec-side { color: var(--color-ink-2); }
+
+/* --- Guide: the knockout mark's sample --- */
+.pwt-legend-ko-plaque { position: relative; display: inline-flex; align-items: center; margin-top: 16px; padding: 4px 8px; background: var(--color-glass); border: 1px solid var(--color-edge); }
+/* The short reason under the portrait is for the phone's column only; a desktop reads the sentence on the top line. */
+.pwt-keybar-status { display: none; }
+
+/* The portrait prompt: the phone on its side and an arrow that says turn it. */
+.pwt-rotate-art { display: inline-flex; align-items: center; gap: 12px; }
+.pwt-rotate .pwt-rotate-cue { width: 30px; height: 30px; color: var(--color-ink-2); }
+
+/* The Guide keeps two balanced columns with room for the round-5 rows. */
+.pwt-legend { column-fill: balance; }
+.pwt-legend-row { min-height: 34px; margin-bottom: 4px; gap: 12px; }
+.pwt-legend-sample { flex-basis: 176px; }
+.pwt-briefing-hp { white-space: nowrap; }
+.pwt-briefing-mid { grid-template-columns: 1.2fr 1fr; }
+.pwt-briefing-mid .pwt-briefing-unit { min-width: 0; }
+/* A button with an icon lays it beside its words (an icon is a block by default, so it wrapped). */
+.pwt-secondary, .pwt-danger { display: inline-flex; align-items: center; gap: 8px; }
+/* The Guide gives a little height back so the round-5 rows still fit at every size. */
+.pwt-panel.pwt-guide { padding: 14px 28px; gap: 8px; }
+.pwt-guide h2 { font-size: 24px; }
+.pwt-legend-row { min-height: 30px; margin-bottom: 3px; }
+.pwt-lesson-key .pwt-key-name { overflow: visible; }

@@ -12,7 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
-import type { Cell, KeyView, SquadView, SupportChip } from "./view";
+import type { Cell, KeyNote, KeyView, SquadView, SupportChip } from "./view";
 import { cellId, tapStep } from "./phone";
 
 /**
@@ -115,7 +115,9 @@ export function CellButton({
     : `${keyName} on ${cell.letter}, ${targetName}: ${
         cell.immune
           ? "no effect"
-          : `${cell.n} damage${marked ? ` (${cell.ownBefore} without the companion's own mark)` : ""}${word ? `, ${word}` : ""}${cell.finishes ? ", finishes" : ""}`
+          : `${cell.n} damage${marked ? ` (${cell.ownBefore} without the companion's own mark)` : ""}${word ? `, ${word}` : ""}${cell.finishes ? ", finishes" : ""}${
+              cell.absorbed > 0 ? `, its shield absorbs ${cell.absorbed} first` : ""
+            }`
       }`;
   return (
     <button
@@ -151,7 +153,7 @@ export function CellButton({
           <Ban className="pwt-cell-immune-icon" />
         </span>
       ) : marked ? (
-        <span className="pwt-cell-hinder">
+        <span className="pwt-cell-hinder own">
           <s className="pwt-cell-before">{cell.ownBefore}</s>
           <span className="pwt-cell-arrow">→</span>
           <span className={`pwt-cell-num own ${cell.n < cell.ownBefore! ? "down" : "up"}`}>{cell.n}</span>
@@ -174,8 +176,9 @@ export function CellButton({
         </span>
       )}
       {cell.absorbed > 0 && (
-        <span className="pwt-cell-shield-note" title={`${cell.absorbed} absorbed by shields`}>
+        <span className="pwt-cell-shield-note" title={`Its shield absorbs ${cell.absorbed} first`}>
           <Shield />
+          <b>{cell.absorbed}</b>
         </span>
       )}
     </button>
@@ -202,7 +205,8 @@ export function KeyCard({
   onAct,
   onHoverTarget,
   onHoverUnits,
-  litTarget = null,
+  litTargets = [],
+  note = null,
   twoTap = false,
   previewed = null,
   onPreview,
@@ -220,8 +224,11 @@ export function KeyCard({
   /** Hovering a key that lands on companions (a self-only key, or an ally cell) reports the
       units it affects so the stage rings them; null on leave. */
   onHoverUnits?: (ids: string[] | null) => void;
-  /** The enemy under the pointer (from any key or the stage): its cell lights in every key. */
-  litTarget?: string | null;
+  /** The enemies under the pointer (from any key or the stage; every enemy an area key reaches):
+      their cells light in every key. */
+  litTargets?: string[];
+  /** A first-occurrence note to show beside this key, or null (the page decides which key). */
+  note?: KeyNote | null;
   /** Touch on a phone: the first tap on a cell previews it, the second uses it (phone.ts). */
   twoTap?: boolean;
   /** The previewed cell's id across every key, or null. */
@@ -249,12 +256,20 @@ export function KeyCard({
   // does not read as a single target (blind readers took Water Sweep for one — paint
   // review round 4, item 2). The cells underneath stay individually clickable.
   const showAreaBand = keyView.area && keyView.aim === "enemy" && keyView.cells.length > 1;
+  // An area key lands on every enemy it reaches: pointing at any of its cells rings them all and
+  // lights every one of its cells, so the key never reads as aimed at one.
+  const areaIds = keyView.area && keyView.aim === "enemy" ? keyView.cells.map((c) => c.target) : null;
   return (
     <div
       className={`pwt-key ${keyView.state} ${keyView.signature ? "signature" : ""}`}
       role="group"
       aria-label={keyView.name}
     >
+      {note && (
+        <p className={`pwt-note ${note.id}`} role="note" data-note={note.id}>
+          {note.text}
+        </p>
+      )}
       <div className="pwt-key-head">
         <span className="pwt-key-index">{keyView.index + 1}</span>
         <span className="pwt-key-name">{keyView.name}</span>
@@ -318,17 +333,19 @@ export function KeyCard({
                   previewed={previewed === cellId(keyView.index, c.target)}
                   onPick={() =>
                     press(cellId(keyView.index, c.target), c.target, () =>
-                      keyView.aim === "enemy" ? onHoverTarget?.(c.target) : onHoverUnits?.([c.target])
+                      areaIds ? onHoverUnits?.(areaIds) : keyView.aim === "enemy" ? onHoverTarget?.(c.target) : onHoverUnits?.([c.target])
                     )
                   }
                   onHover={
-                    keyView.aim === "enemy"
+                    areaIds && onHoverUnits
+                      ? (id) => onHoverUnits(id ? areaIds : null)
+                      : keyView.aim === "enemy"
                       ? onHoverTarget
                       : onHoverUnits
                       ? (id) => onHoverUnits(id ? [id] : null)
                       : undefined
                   }
-                  columnLit={keyView.aim === "enemy" && litTarget === c.target}
+                  columnLit={keyView.aim === "enemy" && litTargets.includes(c.target)}
                 />
               );
             })}

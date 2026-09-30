@@ -456,3 +456,52 @@
 .pwt-console.phone .pwt-plaque { padding: 2px 2px 3px; }
 .pwt-console.phone .pwt-name { letter-spacing: 0; overflow-wrap: normal; }
 .pwt-console.phone .pwt-row { gap: 4px; }
+
+/* ==========================================================================================
+   Round 5 on the phone
+   ========================================================================================== */
+/* The reason is the column's first line: short words in the portrait row, no separate top line. */
+.pwt-console.phone .pwt-keybar-statusline { display: none; }
+.pwt-console.phone .pwt-keybar.has-status { padding-top: 4px; }
+.pwt-console.phone .pwt-keybar-status { display: flex; }
+/* Marks and notes. */
+.pwt-console.phone .pwt-ko { top: -18px; left: 2px; height: 16px; width: 22px; }
+.pwt-console.phone .pwt-ko svg { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-impact { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-hit-on-active .pwt-hit-skull { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-chip.shield svg { width: 13px; height: 13px; }
+.pwt-console.phone .pwt-cell .pwt-cell-shield-note { font-size: 12px; }
+.pwt-console.phone .pwt-cell-shield-note svg { width: 14px; height: 14px; }
+/* A first-occurrence note sits to the left of its key, over the stage's edge, never over the cells. */
+.pwt-console.phone .pwt-keybar { overflow: visible; }
+.pwt-console.phone .pwt-note {
+  left: auto;
+  right: calc(100% + 10px);
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 210px;
+  font-size: 12px;
+}
+.pwt-console.phone .pwt-note::after {
+  left: 100%;
+  top: 50%;
+  margin-top: -6px;
+  border-left: 7px solid var(--color-ink-2);
+  border-right: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+/* The briefing on a phone: the squad (portraits and names) and the lesson share one row. */
+.pwt-console.phone .pwt-briefing-mid { grid-template-columns: auto minmax(0, 1fr); gap: 14px; }
+.pwt-console.phone .pwt-briefing-mid .pwt-briefing-squad { gap: 8px; justify-content: flex-start; }
+.pwt-console.phone .pwt-briefing-mid .pwt-briefing-unit { min-width: 0; }
+.pwt-console.phone .pwt-briefing-hp { display: none; }
+.pwt-console.phone .pwt-briefing .pwt-portrait-ring.big { width: 40px; height: 40px; }
+.pwt-console.phone .pwt-lesson { gap: 8px; }
+.pwt-console.phone .pwt-lesson .pwt-legend-sample { flex: 0 0 150px; }
+.pwt-console.phone .pwt-lesson-key { padding: 2px 4px 4px; }
+.pwt-console.phone .pwt-lesson-key .pwt-cell { width: 44px; min-width: 40px; min-height: 40px; }
+.pwt-console.phone .pwt-lesson p { font-size: 12px; line-height: 1.25; }
+.pwt-console.phone .pwt-briefing-rules li { margin-bottom: 0; }

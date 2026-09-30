@@ -145,7 +145,14 @@ async function hover(page, target, keyIndex) {
   const [kind, who] = target.split(":");
   if (kind === "figure") {
     const el = await page.locator(`[data-unit] .pwt-figure`).all();
-    // Prefer a figure whose plate shows the matching letter or name.
+    // Prefer the figure whose letter tag matches, then one whose unit id starts with the name.
+    for (const f of el) {
+      const letter = ((await f.locator(".pwt-letter").first().textContent().catch(() => "")) || "").trim();
+      if (letter && letter.toUpperCase() === who.toUpperCase()) {
+        await (TOUCH ? f.tap() : f.hover());
+        return;
+      }
+    }
     for (const f of el) {
       const plate = await f.locator("xpath=ancestor::*[@data-unit][1]").first();
       const unitId = await plate.getAttribute("data-unit");

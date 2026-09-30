@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { ArrowLeft, ArrowRight, Cross, Heart, HeartCrack, LogOut, Timer, Trophy } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
+import { TurnLesson } from "./guide";
 import type { BriefingView, CampView, Ending, RecordEntry, RunSummary, SinceItem, SquadView, TitleCard, TurnView } from "./view";
 
 /** The screen before a new run's first turn: the goal, the sectors, the squad, the run rules. */
@@ -20,18 +21,21 @@ export function BriefingPanel({ briefing, onBegin }: { briefing: BriefingView; o
             </li>
           ))}
         </ol>
-        <div className="pwt-briefing-squad" aria-label="Your squad">
-          {briefing.squad.map((u) => (
-            <div key={u.id} className="pwt-briefing-unit">
-              <div className="pwt-portrait-ring big">
-                <Portrait u={{ species: u.art, element: u.element }} />
+        <div className="pwt-briefing-mid">
+          <div className="pwt-briefing-squad" aria-label="Your squad">
+            {briefing.squad.map((u) => (
+              <div key={u.id} className="pwt-briefing-unit">
+                <div className="pwt-portrait-ring big">
+                  <Portrait u={{ species: u.art, element: u.element }} />
+                </div>
+                <span className="pwt-name">{u.name}</span>
+                <span className="pwt-briefing-hp">
+                  {u.hp} / {u.max} health
+                </span>
               </div>
-              <span className="pwt-name">{u.name}</span>
-              <span className="pwt-briefing-hp">
-                {u.hp} / {u.max} health
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
+          <TurnLesson />
         </div>
         <ul className="pwt-briefing-rules">
           {briefing.rules.map((r) => (
@@ -84,13 +88,14 @@ export function CampPanel({
   revived: { id: string; to: number; words: string } | null;
   onRevive: (id: string) => void;
   onContinue: () => void;
+  /** Opens the retreat dialog; nothing ends until it is confirmed there. */
   onRetreat: () => void;
 }) {
   const offerRevive = camp.revives.length > 0;
   return (
     <div className="pwt-overlay">
-      <div className="pwt-panel" role="dialog" aria-label="Camp">
-        <p className="eyebrow">Sector cleared</p>
+      <div className={`pwt-panel pwt-camp ${camp.last ? "last" : ""}`} role="dialog" aria-label="Camp">
+        <p className="eyebrow">{camp.eyebrow}</p>
         <h2>Camp</h2>
         <p className="pwt-panel-total">
           +{view.xpGain} XP this sector · {view.xp} in all
@@ -122,7 +127,8 @@ export function CampPanel({
           </p>
         )}
         {!offerRevive && !revived && view.squad.some((u) => u.down) && <p>No revives left.</p>}
-        <div className="pwt-panel-actions">
+        {/* One row: the revives, then Continue. Retreat ends the run, so it sits apart below. */}
+        <div className="pwt-panel-actions pwt-camp-actions">
           {camp.revives.map((r, i) => (
             <button
               key={r.id}
@@ -142,11 +148,47 @@ export function CampPanel({
           >
             Continue <ArrowRight />
           </button>
-          <button type="button" className="pwt-secondary" onClick={onRetreat} title="Leave the expedition here and end the run">
+        </div>
+        {camp.unusedNote && <p className="pwt-panel-note">{camp.unusedNote}</p>}
+        <div className="pwt-camp-leave">
+          <button type="button" className="pwt-danger" onClick={onRetreat} title="Leave the expedition here and end the run">
+            <LogOut /> Retreat
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Retreat asks once, like Restart: Cancel first and the default, the danger action outlined. */
+export function RetreatPanel({
+  sectorText,
+  xp,
+  onConfirm,
+  onClose,
+}: {
+  /** "Sector 2 of 4": where the run ends. */
+  sectorText: string;
+  xp: number;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="pwt-overlay" onClick={onClose}>
+      <div className="pwt-panel pwt-confirm" role="dialog" aria-label="Retreat" onClick={(e) => e.stopPropagation()}>
+        <p className="eyebrow danger">Retreat</p>
+        <h2>Leave the expedition?</h2>
+        <p>
+          The run ends here, after {sectorText}. You keep the {xp} XP earned so far; the remaining sectors are not played.
+        </p>
+        <div className="pwt-panel-actions">
+          <button type="button" className="pwt-secondary" onClick={onClose} autoFocus>
+            Cancel
+          </button>
+          <button type="button" className="pwt-danger" onClick={onConfirm}>
             Retreat
           </button>
         </div>
-        {camp.unusedNote && <p className="pwt-panel-note">{camp.unusedNote}</p>}
       </div>
     </div>
   );
@@ -168,11 +210,12 @@ export function EndPanel({
 }) {
   const { kind, title, text } = ending;
   const Mark = END_MARK[kind];
-  const shown = kind === "won" ? squad.filter((u) => !u.down) : squad;
+  // Victory shows the whole squad, the fallen marked Down: nobody is left out of the ending.
+  const shown = squad;
   return (
     <div className="pwt-overlay">
       <div className={`pwt-panel pwt-end ${kind}`} role="dialog" aria-label="Expedition report">
-        <p className="eyebrow">Expedition report</p>
+        <p className={`eyebrow ${kind === "won" ? "" : "quiet"}`}>Expedition report</p>
         <h2>
           <span className="pwt-end-mark" aria-hidden="true">
             <Mark />
@@ -180,7 +223,7 @@ export function EndPanel({
           {title}
         </h2>
         <p>{text}</p>
-        <div className="pwt-end-squad" aria-label={kind === "won" ? "The surviving squad" : "The squad"}>
+        <div className="pwt-end-squad" aria-label="The squad">
           {shown.map((u) => (
             <div key={u.id} className={`pwt-end-unit ${u.down ? "down" : ""}`}>
               <div className="pwt-portrait-ring big">
@@ -220,19 +263,25 @@ export function RecordPanel({
   entries,
   roomNames,
   since,
+  squadIds,
   onClose,
 }: {
   entries: RecordEntry[];
   roomNames: string[];
   since: SinceItem[];
+  /** Whose lines are the squad's; every other actor is an enemy. */
+  squadIds: string[];
   onClose: () => void;
 }) {
-  const groups: { key: string; room: number; round: number; lines: string[] }[] = [];
-  for (const e of entries.slice().reverse()) {
+  // Rounds newest first; the lines inside a round in the order they were played.
+  const groups: { key: string; room: number; round: number; lines: { words: string; squad: boolean }[] }[] = [];
+  for (const e of entries) {
     const last = groups[groups.length - 1];
-    if (last && last.room === e.room && last.round === e.round) last.lines.push(e.words);
-    else groups.push({ key: `${e.room}-${e.round}-${groups.length}`, room: e.room, round: e.round, lines: [e.words] });
+    const line = { words: e.words, squad: squadIds.includes(e.actor) };
+    if (last && last.room === e.room && last.round === e.round) last.lines.push(line);
+    else groups.push({ key: `${e.room}-${e.round}-${groups.length}`, room: e.room, round: e.round, lines: [line] });
   }
+  groups.reverse();
   return (
     <div className="pwt-overlay" onClick={onClose}>
       <div className="pwt-panel" onClick={(e) => e.stopPropagation()}>
@@ -254,7 +303,10 @@ export function RecordPanel({
                 Sector {g.room + 1} · {roomNames[g.room] ?? ""} · Round {g.round}
               </h3>
               {g.lines.map((line, i) => (
-                <p key={i}>{line}</p>
+                <p key={i} className={`pwt-rec-line ${line.squad ? "squad" : "enemy"}`}>
+                  <span className="pwt-rec-side">{line.squad ? "Squad" : "Enemy"}</span>
+                  <span>{line.words}</span>
+                </p>
               ))}
             </section>
           ))}
@@ -270,13 +322,22 @@ export function RecordPanel({
 }
 
 /** Cancel is first and the default; Restart wears the danger style, never the forward color. */
-export function RestartPanel({ onConfirm, onClose }: { onConfirm: () => void; onClose: () => void }) {
+export function RestartPanel({
+  onConfirm,
+  onClose,
+  lost,
+}: {
+  onConfirm: () => void;
+  onClose: () => void;
+  /** What this run would lose, in its own numbers: "sector 2 of 4, 20 XP". Null at the briefing. */
+  lost: string | null;
+}) {
   return (
     <div className="pwt-overlay" onClick={onClose}>
       <div className="pwt-panel" role="dialog" aria-label="Restart" onClick={(e) => e.stopPropagation()}>
         <p className="eyebrow danger">Restart</p>
         <h2>Start a new expedition?</h2>
-        <p>Your current squad and progress will be lost.</p>
+        <p>{lost ? `This run ends and its progress is lost: ${lost}.` : "Your current squad and progress will be lost."}</p>
         <div className="pwt-panel-actions">
           <button type="button" className="pwt-secondary" onClick={onClose} autoFocus>
             Cancel

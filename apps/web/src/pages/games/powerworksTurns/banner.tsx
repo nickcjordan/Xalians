@@ -19,6 +19,7 @@ export function TurnBanner({
   onOpenRecord,
   round,
   readOnly = false,
+  ended = null,
 }: {
   actorSide: "squad" | "enemy";
   actorName: string;
@@ -30,9 +31,14 @@ export function TurnBanner({
   round: number;
   /** Phone: the line is plain text (it truncates to one line; the Record, in the menu, holds it all). */
   readOnly?: boolean;
+  /**
+    While the stage holds on a sector's, the Guardian's or the squad's fall there is no live turn:
+    the banner says what happened instead of whose turn it is ("Sector cleared", "Guardian down").
+  */
+  ended?: { kicker: string; who: string } | null;
 }) {
-  const kicker = actorSide === "squad" ? "Your turn" : "Enemy turn";
-  const who = `${actorName}${actorSide === "enemy" && actorLetter ? ` ${actorLetter}` : ""}`;
+  const kicker = ended ? ended.kicker : actorSide === "squad" ? "Your turn" : "Enemy turn";
+  const who = ended ? ended.who : `${actorName}${actorSide === "enemy" && actorLetter ? ` ${actorLetter}` : ""}`;
   const label = `${kicker} ${who}`;
   // The slide plays when the actor changes, never on a beat within the same actor's turn.
   const [slideKey, setSlideKey] = useState(label);
@@ -44,10 +50,15 @@ export function TurnBanner({
   }, [label]);
 
   return (
-    <div className={`pwt-banner ${actorSide}`} data-turn-banner="" data-side={actorSide} aria-live="polite">
+    <div className={`pwt-banner ${ended ? "hold" : actorSide}`} data-turn-banner="" data-side={ended ? "hold" : actorSide} aria-live="polite">
       <p className="pwt-banner-label" key={slideKey}>
         <span className="pwt-banner-kicker">
-          <span className="pwt-banner-round">Round {round}</span> · {kicker}
+          {!ended && (
+            <>
+              <span className="pwt-banner-round">Round {round}</span> ·{" "}
+            </>
+          )}
+          {kicker}
         </span>
         <span className="pwt-banner-who">{who}</span>
       </p>
@@ -67,7 +78,7 @@ export function TurnBanner({
           </p>
         )
       ) : (
-        <p className="pwt-banner-line empty">{actorSide === "squad" ? "Choose a move, then a target." : ""}</p>
+        <p className="pwt-banner-line empty">{actorSide === "squad" && !ended ? "Choose a move, then a target." : ""}</p>
       )}
     </div>
   );
