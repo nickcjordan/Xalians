@@ -49,14 +49,14 @@ const WORLDS: World[] = [
 const GENESIS: RGB = [150, 226, 140];
 /** A world every PER seconds, the first change at FIRST; each crosses into the next over CROSS. */
 const PER = 2.7;
-const FIRST = 1.6;
+const FIRST = 2.7;
 const CROSS = 0.5;
 
 function worldState(t: number) {
 	if (t < FIRST) return { cur: 0, prev: -1, k: 1, since: t - 0.6 };
 	const i = Math.floor((t - FIRST) / PER);
 	const e = t - FIRST - i * PER;
-	return { cur: (i + 1) % 4, prev: i % 4, k: ease(e / CROSS), since: e - CROSS * 0.3 };
+	return { cur: (i + 1) % 4, prev: i % 4, k: smooth(0, 1, e / CROSS), since: e - CROSS * 0.3 };
 }
 
 // Each world is three cached layers, far to near, wider than the frame so parallax can slide them: the far
@@ -991,7 +991,7 @@ function drawPatch(ctx: Ctx, wi: number, sec: number, a: number, lk: number) {
 	const p = worldPatch(wi);
 	if (!p) return;
 	ctx.save();
-	ctx.globalAlpha = a * 0.95;
+	ctx.globalAlpha = a * 0.95 * (1 - 0.75 * lk);
 	ctx.drawImage(p, 480 - PATCH.w / 2, PATCH.y0, PATCH.w, PATCH.h);
 	ctx.translate(480, GROUND + 6);
 	ctx.scale(1, 0.14);
@@ -1121,12 +1121,12 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	const reveal = y0 + size * build;
 	const rowH = 2;
 	// on a phone the image is sparser still: most rows are gaps, wide enough for the stars behind to show
-	const jitterStep = Math.floor(sec / 0.08);
-	const tearAt = Math.floor(sec / 0.9);
-	const tearing = sec % 0.9 < 0.14;
-	const tearRow = Math.floor(hash(tearAt, 5) * (size / rowH));
+	const jitterStep = Math.floor(sec / 0.4);
+	// the torn stretch slides steadily down the image, never popping in
+	const tearing = true;
+	const tearRow = Math.floor((((sec * 0.3) % 1.2) - 0.1) * (size / rowH));
 	// now and then the whole image rolls, as a picture held by a weak signal does
-	const roll = sec % 2 < 0.1 ? 8 : 0;
+	const roll = 8 * Math.exp(-Math.pow((sec % 2.6 - 0.2) / 0.22, 2));
 	const copy = (img: HTMLCanvasElement, alpha: number, dx: number, seedOff: number) => {
 		for (let r = 0, y = y0; y < y0 + size; r++, y += rowH) {
 			if (seedOff && r % 2) continue;
@@ -1140,8 +1140,8 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 			let off = (hash(r, jitterStep + seedOff) - 0.5) * 7 * (1 - build * 0.5);
 			if (tearing && r >= tearRow && r < tearRow + 7) off += 26 * (seedOff ? 1.3 : 1);
 			// a quarter of the rows run out past the edge of the image, some left, some right
-			const over = hash(r, Math.floor(sec / 0.25) + 60);
-			if (over < 0.15) off += (hash(r, 61) < 0.5 ? -1 : 1) * (8 + hash(r, Math.floor(sec / 0.25) + 62) * 12);
+			const over = hash(r, Math.floor(sec / 0.4) + 60);
+			if (over < 0.15) off += (hash(r, 61) < 0.5 ? -1 : 1) * (8 + hash(r, Math.floor(sec / 0.4) + 62) * 12);
 			ctx.drawImage(img, 0, Math.round((y - y0) * f), img.width, Math.max(1, Math.round(rowH * f)), x0 + off + dx, y + roll, size, rowH);
 		}
 	};
@@ -1380,8 +1380,15 @@ export function createGenerators(): Figure {
 			}
 			// what the machine has read: a world arrives, the ring reads it, then the life inside takes its form
 			const readT = ws.since;
-			const reading = (1 - v3) * smooth(-0.1, 0.1, readT) * (1 - smooth(1.2, 1.7, readT));
-			const adapt = t < FIRST ? smooth(0.2, 1.6, t) : smooth(0.05, 1.6, readT);
+			const reading = (1 - v3) * smooth(-0.1, 0.1, readT) * (1 - smooth(0.8, 1.15, readT));
+			// the old form starts coming apart with the gel's cross-fade; the ring reads; a pulse of light runs down the mast
+			// into the gel; the new seed grows from where it lands
+			const eT = readT + CROSS * 0.3;
+			const PULSE0 = 1.25;
+			const PULSE_LEN = 0.3;
+			const adapt = smooth(0, 1.0, eT) * 0.4 + smooth(PULSE0 + PULSE_LEN, 2.6, eT) * 0.6;
+			const pulseU = stage !== 1 ? ramp(PULSE0, PULSE0 + PULSE_LEN, eT) : 0;
+			const tickV = stage !== 1 && eT > PULSE0 ? Math.exp(-(eT - PULSE0) / 0.12) : 0;
 			let kindA: SeedKind = ws.prev >= 0 ? WORLDS[ws.prev].key : 'genesis';
 			let kindB: SeedKind = WORLDS[ws.cur].key;
 			let km = adapt;
@@ -1403,7 +1410,7 @@ export function createGenerators(): Figure {
 				const lk = v3 * smooth(LINK + m.order * 0.14 + 0.25, LINK + m.order * 0.14 + 0.7, t3);
 				const app = first ? 1 : v3 * smooth(0.8 + i * 0.12, 1.6 + i * 0.12, t3);
 				if (app <= 0.01) return;
-				const z = first ? mix(1, m.s, arrive) : m.s;
+				const z = first ? mix(L === COMPACT ? 1.15 : 1, m.s, arrive) : m.s;
 				const gy = first ? mix(GROUND, m.g, arrive) : m.g;
 				const wi = first ? w3 : (w3 + m.wOff) % 4;
 				ctx.save();
@@ -1427,11 +1434,14 @@ export function createGenerators(): Figure {
 					small: first && arrive > 0.9,
 					housing: first && !built ? smooth(0.3, 0.8, vis) : 1,
 					vat: first && !built ? smooth(0, 0.4, vis) : 1,
-					world: tintWorld,
+					world: !first && lk > 0.5 ? -1 : tintWorld,
 					world2: first && xfade ? ws.cur : -1,
 					wk: first && xfade ? ws.k : 0,
 					under: lavaW * (1 - lk * 0.6),
 					flash: fl,
+					pulse: first && pulseU > 0 && pulseU < 1 ? pulseU : undefined,
+					tick: first ? tickV : 0,
+					seedScale: L === COMPACT ? 1.35 : 1,
 					sec: sec + i * 1.7,
 					gel: mixRGB(own, mixRGB(own, [128, 104, 190], 0.78), lk),
 					light: mixRGB(first ? lightNow : worldSeam(wi), VIOLET, lk * 0.5),

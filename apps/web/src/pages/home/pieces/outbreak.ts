@@ -691,10 +691,10 @@ function hazePuff(v: number) {
 	const g = c?.getContext('2d');
 	if (!c || !g) return null;
 	const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-	grad.addColorStop(0, css([176, 32, 50], 1));
-	grad.addColorStop(0.4, css([176, 32, 50], 0.5));
-	grad.addColorStop(0.75, css([176, 32, 50], 0.14));
-	grad.addColorStop(1, css([176, 32, 50], 0));
+	grad.addColorStop(0, css([214, 46, 68], 1));
+	grad.addColorStop(0.4, css([214, 46, 68], 0.5));
+	grad.addColorStop(0.75, css([214, 46, 68], 0.14));
+	grad.addColorStop(1, css([214, 46, 68], 0));
 	g.fillStyle = grad;
 	g.fillRect(0, 0, 128, 128);
 	// grainy: the smoke is eaten by a fixed noise, so it reads as wisps and not as flat clouds
@@ -764,21 +764,20 @@ function scene() {
 	ground.addColorStop(1, css([28, 13, 21]));
 	g.fillStyle = ground;
 	g.fillRect(0, 394, W, H - 394);
-	// a foreground band of rock silhouettes, for depth: darkest, along the bottom and up at the edges
-	g.fillStyle = css([13, 7, 12]);
-	for (const [x0, x1, hgt, seed] of [[-20, 250, 118, 5], [740, 1020, 108, 6], [250, 740, 34, 7]] as [number, number, number, number][]) {
+	// foreground rocks for depth: a few dark silhouettes low left and low right, overlapping the ground line
+	g.fillStyle = css([12, 6, 11]);
+	for (const [cx, w, h, seed] of [[70, 130, 52, 5], [205, 96, 34, 6], [800, 110, 40, 7], [935, 120, 54, 8]] as [number, number, number, number][]) {
 		const rr = rng(seed);
+		const base = 512;
 		g.beginPath();
-		g.moveTo(x0, H);
-		let x = x0;
-		while (x < x1) {
-			const kx = Math.min(1, Math.abs(x - 500) / 500);
-			const top = H - hgt * (0.15 + 0.85 * Math.pow(kx, 1.5)) * (0.6 + 0.6 * rr());
-			g.lineTo(x, top);
-			x += 10 + rr() * 22;
-			g.lineTo(x - 4, top + (rr() - 0.3) * 14);
+		g.moveTo(cx - w / 2, base + 30);
+		const n = 7;
+		for (let k = 0; k <= n; k++) {
+			const u = k / n;
+			const hump = Math.sin(u * Math.PI);
+			g.lineTo(cx - w / 2 + u * w, base - h * (0.25 + 0.75 * hump) * (0.75 + 0.35 * rr()));
 		}
-		g.lineTo(x1, H);
+		g.lineTo(cx + w / 2, base + 30);
 		g.closePath();
 		g.fill();
 	}
@@ -800,13 +799,13 @@ const HAZES = (() => {
 	const r = rng(77);
 	return Array.from({ length: 40 }, (_, k) => {
 		const layer = k % 4; // 0 high and faint, 1 to 3 on the ground, nearer the viewer lower and larger
-		return { x: 60 + r() * 880, y: layer === 0 ? 352 + r() * 40 : 396 + layer * 22 + r() * 26, rx: 80 + r() * 150 + layer * 30, ry: layer === 0 ? 20 + r() * 22 : 20 + r() * 26 + layer * 6, a: layer === 0 ? 0.2 + r() * 0.12 : 0.34 + r() * 0.14, ph: r() * TAU, sp: 2 + r() * 4, v: k % 2 };
+		return { x: 60 + r() * 880, y: layer === 0 ? 352 + r() * 40 : 396 + layer * 22 + r() * 26, rx: 80 + r() * 150 + layer * 30, ry: layer === 0 ? 20 + r() * 22 : 20 + r() * 26 + layer * 6, a: layer === 0 ? 0.24 + r() * 0.12 : 0.42 + r() * 0.16, ph: r() * TAU, sp: 2 + r() * 4, v: k % 2 };
 	});
 })();
 // wisps that drift across the front of the machine
 const WISPS = (() => {
 	const r = rng(91);
-	return Array.from({ length: 8 }, (_, k) => ({ x: (k / 7 - 0.5) * 460 + (r() - 0.5) * 40, y: 318 + r() * 86, rx: 90 + r() * 70, ry: 22 + r() * 16, a: 0.32 + r() * 0.05, ph: r() * TAU, sp: 0.8 + r() * 1.2, v: k % 2 }));
+	return Array.from({ length: 8 }, (_, k) => ({ x: (k / 7 - 0.5) * 460 + (r() - 0.5) * 40, y: 318 + r() * 86, rx: 90 + r() * 70, ry: 22 + r() * 16, a: 0.4 + r() * 0.08, ph: r() * TAU, sp: 0.8 + r() * 1.2, v: k % 2 }));
 })();
 // the curl at the dome's edge: haze piled where it was pushed back
 const CURL = Array.from({ length: 18 }, (_, k) => ({ a: Math.PI + (k / 17) * Math.PI, r: 44 + ((k * 37) % 30), v: k % 2 }));
@@ -921,6 +920,12 @@ export function createOutbreak(): Figure {
 			const vy = sy[0];
 			// the direction the far bright point lies from the dark world (where the token comes from)
 			const vd = lin(VALLERON.x - TARGET.x, VALLERON.y - TARGET.y);
+			// Valleron stays in the sky of the dark world, in the direction it lies from it: the token falls from there
+			const vdl = Math.hypot(vd[0], vd[1]) || 1;
+			const nxv = vd[0] / vdl;
+			const nyv = vd[1] / vdl;
+			const starX = CX + (nxv < 0 ? -1 : 1) * Math.max(Math.abs(nxv) * 330, 230);
+			const starY = Math.min(CY + nyv * 200, 176);
 
 			ctx.save();
 			// bloom out of (and pull back into) the anchor
@@ -1096,7 +1101,9 @@ export function createOutbreak(): Figure {
 						gel: GENESIS,
 						light: lightBoost,
 						side: 0.55,
-						a: As * sceneA * smooth(1.8, 2.5, t1),
+						a: As * sceneA * smooth(1.8, 2.4, t1),
+						rimK: smooth(2.6, 3.3, t1),
+						rimEdge: true,
 						kindA: 'genesis',
 						kindB: 'genesis',
 						km: 1,
@@ -1149,6 +1156,17 @@ export function createOutbreak(): Figure {
 					}
 				}
 				ctx.restore();
+
+				// the machine stands deep in the red: a dense haze over its lower half, which the dome later clears
+				{
+					const hv = hazePuff(0);
+					if (hv) {
+						ctx.globalAlpha = clamp(sA * (1 - 0.96 * smooth(0, 0.85, domeOn)) * smooth(1.9, 2.6, t1) * 0.62);
+						ctx.drawImage(hv, CX - 280, py(GROUND - 60) - 110, 560, 220);
+						ctx.drawImage(hv, CX - 250, py(GROUND - 150) - 90, 500, 180);
+						ctx.drawImage(hv, CX - 320, GY - 40, 640, 90);
+					}
+				}
 
 				// the intake console in front of the pad, with a hexagonal socket in its top: where the token is set
 				const consoleA = sA * smooth(1.9, 2.6, t1);
@@ -1233,7 +1251,7 @@ export function createOutbreak(): Figure {
 					const inside = domeOn * (1 - smooth(0.8, 1.05, d));
 					let a = h.a * mix(1, 0.05, inside);
 					// nearer the machine's own face the haze lies thinner, so the console stays in view
-					if (Math.abs(x - CX) < 110 && h.y < 440) a *= 0.45;
+					if (Math.abs(x - CX) < 110 && h.y < 440) a *= 0.8;
 					if (a < 0.01) continue;
 					ctx.globalAlpha = clamp(a * sA);
 					ctx.drawImage(hp, x - h.rx, h.y - h.ry, h.rx * 2, h.ry * 2);
@@ -1288,15 +1306,15 @@ export function createOutbreak(): Figure {
 					dx /= dl;
 					const dyn = dy / dl;
 					const P2 = [CX, py(GROUND + 18)] as const;
-					const P0 = [P2[0] + dx * 380, P2[1] + dyn * 300 - 60] as const;
-					const P1 = [(P0[0] + P2[0]) / 2 + dyn * 40, (P0[1] + P2[1]) / 2 - 90] as const;
+					const P0 = [starX, starY] as const;
+					const P1 = [(P0[0] + P2[0]) / 2, Math.min(P0[1], P2[1]) - 20] as const;
 					const at = (q: number) => {
 						const k = 1 - q;
 						return [k * k * P0[0] + 2 * k * q * P1[0] + q * q * P2[0], k * k * P0[1] + 2 * k * q * P1[1] + q * q * P2[1]] as const;
 					};
 					const q = easeOut(arrive);
 					const head = at(q);
-					const facing = smooth(0.6, 1, arrive);
+					const facing = smooth(0, 0.35, arrive);
 					const seated = smooth(seatAt, seatAt + 0.15, t1);
 					const tex2 = chip();
 					const soft = chipBlur();
@@ -1311,11 +1329,17 @@ export function createOutbreak(): Figure {
 							ctx.globalCompositeOperation = 'source-over';
 						}
 						const size = (64 * s) / (CHIP_R * 1.732);
+						ctx.globalCompositeOperation = 'lighter';
+						const flB = Math.pow(Math.max(0, 1 - (t1 - seatAt) / 0.55), 0.7);
+						if (t1 >= seatAt && flB > 0) putS(spr(WHITE), P2[0], P2[1], 1.5 * 72 * s, 0.8 * flB);
+						const pulseSeat0 = mix(0.5, 0.8, Math.exp(-Math.max(0, t1 - seatAt) / 0.5));
+						putS(spr([255, 244, 226]), head[0], head[1] + 5 * seated * s, 48 * s, (arrive < 1 ? smooth(0.3, 0.9, arrive) * 0.55 : pulseSeat0));
+						ctx.globalCompositeOperation = 'source-over';
 						ctx.save();
 						ctx.translate(head[0], head[1] + 5 * seated * s);
-						ctx.rotate((1 - facing) * 0.8);
-						ctx.scale(size * (0.85 + 0.15 * facing), size * mix(0.3, 0.72, facing) * mix(1, 0.72, seated));
-						const sharp = smooth(0.2, 0.6, arrive);
+						ctx.rotate((1 - facing) * 0.25);
+						ctx.scale(size * (0.9 + 0.1 * facing), size * mix(0.5, 0.72, facing) * mix(1, 0.8, seated));
+						const sharp = smooth(0.05, 0.35, arrive);
 						ctx.globalAlpha = clamp(smooth(0, 0.1, arrive) * (1 - sharp) * sA);
 						ctx.drawImage(soft, -CHIP_CENTER.x, -CHIP_CENTER.y, CHIP_N, CHIP_N);
 						ctx.globalAlpha = clamp(sharp * sA);
@@ -1325,20 +1349,32 @@ export function createOutbreak(): Figure {
 						const br = 0.62 + 0.16 * Math.sin(sec * 1.4);
 						// a warm-white glint on it while it falls, then its own white core
 						putS(spr([255, 240, 214]), head[0], head[1], 24 * s, 0.9 * (1 - seated) * smooth(0, 0.2, arrive));
-						// seated, it stays lit: a warm-white core about 1.5 times its size, one pulse to 0.8, then steady at 0.5
-						const pulseSeat = mix(0.5, 0.8, Math.exp(-Math.max(0, t1 - seatAt) / 0.5));
-						const coreA = arrive < 1 ? smooth(0.3, 0.9, arrive) * 0.55 : pulseSeat * (0.94 + 0.06 * br);
-						putS(spr([255, 244, 226]), head[0], head[1] + 5 * seated * s, 48 * s, coreA);
-						putS(spr([255, 250, 240]), head[0], head[1] + 5 * seated * s, 20 * s, coreA * 0.8);
+						putS(spr([255, 250, 240]), head[0], head[1] + 5 * seated * s, 16 * s, 0.6 * smooth(0.3, 0.9, arrive) * (0.85 + 0.15 * br));
 						// the light it pools on the ground round the console
 						putS(spr([255, 214, 150]), CX, py(GROUND + 30), 150 * s, 0.32 * seated);
-						const fl = Math.pow(Math.max(0, 1 - (t1 - seatAt) / 0.55), 0.7);
-						if (t1 >= seatAt && fl > 0) putS(spr(WHITE), P2[0], P2[1], 1.5 * 72 * s, 0.8 * fl);
 						ctx.globalCompositeOperation = 'source-over';
 					}
 				}
 			}
 
+			// Valleron, a small bright point in the sky, with the ring of motes it has in 05
+			{
+				const sk = mk(ctx, vis * field * smooth(0.5, 1.1, t1));
+				if (t1 > 0.5) {
+					ctx.globalCompositeOperation = 'lighter';
+					const zsK = compact ? 1.5 : 1;
+					sk(spr([255, 214, 150]), starX, starY, 48 * zsK, 0.6);
+					sk(spr([255, 236, 200]), starX, starY, 14 * zsK, 0.9);
+					sk(spr(WHITE), starX, starY, 3.6 * zsK, 0.95);
+					for (let k = 0; k < 12; k++) {
+						const a2 = (k / 12) * TAU + sec * 0.22;
+						const rx = Math.cos(a2) * 22 * zsK;
+						const ry = Math.sin(a2) * 22 * zsK * 0.6;
+						sk(spr([255, 226, 176]), starX + rx * cr - ry * sr, starY + rx * sr + ry * cr, 1.7 * zsK, 0.5 + 0.4 * Math.sin(sec * 1.6 + k * 1.9));
+					}
+					ctx.globalCompositeOperation = 'source-over';
+				}
+			}
 			// the dive's darkening at the edges
 			if (A > 0.004 || As > 0.004) {
 				const vg = ctx.createRadialGradient(CX, CY, 170, CX, CY, 640);

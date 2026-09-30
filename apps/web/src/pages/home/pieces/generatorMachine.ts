@@ -208,6 +208,17 @@ export function paintMachine(g: Ctx) {
 	g.stroke();
 	g.fillStyle = css(BLACK, 0.3);
 	g.fillRect(MX - 176, GROUND + 14, 352, 6);
+	// a dark oil stain on the pad under the intake
+	g.save();
+	g.translate(MX + 128, GROUND + 8);
+	g.scale(1, 0.24);
+	const oil = g.createRadialGradient(0, 0, 0, 0, 0, 44);
+	oil.addColorStop(0, css([4, 4, 4], 0.7));
+	oil.addColorStop(0.6, css([4, 4, 4], 0.4));
+	oil.addColorStop(1, css([4, 4, 4], 0));
+	g.fillStyle = oil;
+	g.fillRect(-46, -46, 92, 92);
+	g.restore();
 	for (let k = 0; k < 7; k++) {
 		g.fillStyle = css([6, 8, 8]);
 		g.beginPath();
@@ -395,19 +406,19 @@ export function paintMachine(g: Ctx) {
 	g.clip();
 	for (const [x, y] of [[MX - 92, 232], [MX + 84, 334], [MX - 36, 372]] as [number, number][]) {
 		const st = g.createLinearGradient(0, y, 0, y + 25);
-		st.addColorStop(0, css([130, 66, 30], 0.3));
+		st.addColorStop(0, css([130, 66, 30], 0.35));
 		st.addColorStop(1, css([130, 66, 30], 0));
 		g.fillStyle = st;
-		g.fillRect(x - 1, y, 2, 25);
+		g.fillRect(x - 1.5, y, 3, 25);
 	}
 	g.fillStyle = css(BLACK, 0.4);
 	g.beginPath();
 	g.ellipse(MX + 74, 356, 5, 3, 0, 0, TAU);
 	g.fill();
-	g.strokeStyle = css([200, 206, 198], 0.45);
-	g.lineWidth = 1.2;
+	g.strokeStyle = css([214, 220, 210], 0.75);
+	g.lineWidth = 1.5;
 	g.beginPath();
-	g.ellipse(MX + 74, 356, 5.6, 3.6, 0, 0.15 * Math.PI, 0.85 * Math.PI);
+	g.ellipse(MX + 74, 356, 5.8, 3.8, 0, 0.1 * Math.PI, 0.9 * Math.PI);
 	g.stroke();
 	g.strokeStyle = css(BLACK, 0.14);
 	g.lineWidth = 10;
@@ -423,6 +434,12 @@ export function paintMachine(g: Ctx) {
 	g.save();
 	metal(g, MX - 72, 142, MX + 72, 172, 1.0, 71);
 	metal(g, MX - 80, 166, MX + 80, 176, 0.86, 72);
+	// light nicks along the cap's top edge
+	{
+		const nr2 = rng(64);
+		g.fillStyle = css([226, 230, 220], 0.55);
+		for (let k = 0; k < 14; k++) g.fillRect(MX - 70 + nr2() * 140, 142, 1 + Math.floor(nr2() * 3), 1);
+	}
 	g.fillStyle = css([10, 12, 13], 0.8);
 	for (let k = 0; k < 5; k++) g.fillRect(MX - 40 + k * 14, 150, 8, 3);
 	g.restore();
@@ -617,6 +634,16 @@ export type MachineLook = {
 	dormant?: number;
 	/** 0 to 1: how full of gel the vat is, from the bottom (default 1); the rest is dark glass. */
 	vatFill?: number;
+	/** 0 to 1: how far the edge lights have come up (the rim and wrap strokes), so a machine arriving from the dark gets its fills first (default 1). */
+	rimK?: number;
+	/** Light the sun-facing side edge only, fading out above the base, instead of tracing the housing's outline (default false). */
+	rimEdge?: boolean;
+	/** 0 to 1: a pulse of light running from the sensor ring down the mast, through the roof and into the gel, to where the new seed starts. */
+	pulse?: number;
+	/** 0 to 1: the readout's single tick as the pulse leaves the ring (decays by itself). */
+	tick?: number;
+	/** Seeds drawn this much larger (a phone keeps them near the size they have on a wide screen). */
+	seedScale?: number;
 	/** 0 to 1: how far the seeds have formed, each from a bright point in turn (default: all formed). */
 	seedBorn?: number;
 	/** False: leave out the painting's foreground strip over the pad (a world with no painting). */
@@ -737,22 +764,31 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.save();
 	ctx.globalCompositeOperation = 'lighter';
 	const rim = ctx.createLinearGradient(bx, 0, bx + (side < 0 ? 90 : -90), 0);
-	rim.addColorStop(0, css(mixRGB(light, WHITE, 0.25), 0.75 * Math.abs(side) * a));
+	const rk = S.rimK ?? 1;
+	rim.addColorStop(0, css(mixRGB(light, WHITE, 0.25), 0.75 * Math.abs(side) * a * rk));
 	rim.addColorStop(1, css(light, 0));
 	ctx.strokeStyle = rim;
 	ctx.lineWidth = 2.2;
-	bodyPath(ctx);
+	// a lit edge on the side facing the light and a dark base: the edge runs down the side and stops above the ground
+	const edgePath = () => {
+		ctx.beginPath();
+		ctx.moveTo(bx, BODY.top + BODY.r * 0.7);
+		ctx.lineTo(bx, BODY.bot - 70);
+	};
+	if (S.rimEdge) edgePath();
+	else bodyPath(ctx);
 	ctx.stroke();
 	// a wrap of the backdrop's brightness a few pixels deep on the lit edge
 	const wrap = ctx.createLinearGradient(bx, 0, bx + (side < 0 ? 24 : -24), 0);
-	wrap.addColorStop(0, css(light, 0.25 * Math.abs(side) * a));
+	wrap.addColorStop(0, css(light, 0.25 * Math.abs(side) * a * rk));
 	wrap.addColorStop(1, css(light, 0));
 	ctx.strokeStyle = wrap;
 	ctx.lineWidth = 7;
 	ctx.save();
 	bodyPath(ctx);
 	ctx.clip();
-	bodyPath(ctx);
+	if (S.rimEdge) edgePath();
+	else bodyPath(ctx);
 	ctx.stroke();
 	ctx.restore();
 	ctx.restore();
@@ -762,7 +798,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		ctx.globalCompositeOperation = 'lighter';
 		const skyRim = S.rim2 ?? mixRGB(light, [170, 190, 220], 0.6);
 		const cg = ctx.createLinearGradient(0, BODY.top, 0, BODY.top + 90);
-		cg.addColorStop(0, css(skyRim, (S.rim2 ? 0.5 : 0.28) * a));
+		cg.addColorStop(0, css(skyRim, (S.rim2 ? 0.4 : 0.28) * a * (S.rimK ?? 1)));
 		cg.addColorStop(1, css(skyRim, 0));
 		ctx.strokeStyle = cg;
 		ctx.lineWidth = 2;
@@ -780,7 +816,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.stroke();
 	for (let k = 0; k < 9; k++) {
 		const y = 318 + k * 12;
-		const rd = reading * (0.5 + 0.5 * Math.sin(sec * 6 - k * 0.7));
+		const rd = clamp(reading * (0.5 + 0.5 * Math.sin(sec * 6 - k * 0.7)) + (S.tick ?? 0) * (k % 2 ? 0.9 : 0.5));
 		ctx.fillStyle = css(mixRGB([22, 26, 26], dishCol, 0.7 * rd), rd * 0.9 * a);
 		ctx.fillRect(MX + 112, y, 32, 5);
 	}
@@ -873,7 +909,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const born = S.seedBorn === undefined ? 1 : clamp(S.seedBorn * 1.3 - k * 0.14);
 		if (born <= 0.001) return;
 		const form = born * mix(kmk < 0.5 ? mix(1, 0, smooth(0, 0.5, kmk)) : mix(0.2, 1, smooth(0.5, 1, kmk)), 1, apex);
-		const r = mix(s.r, 15, apex) * form * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
+		const r = mix(s.r, 15, apex) * form * (S.seedScale ?? 1) * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
 		const kindNow: SeedKind = kmk < 0.5 ? S.kindA : S.kindB;
 		const stormW = kindNow === 'storm' ? 1 - apex : 0;
 		const wall = kindNow === 'lava' ? 1 - apex : 0;
@@ -1007,8 +1043,15 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.restore();
 	lighter(ctx, () => glow(ctx, VX, (VY0 + VY1) / 2, 170, gel, 0.28 * a * lit));
 	// the glass's own rim, and the straps across it
-	ctx.strokeStyle = css(mixRGB(gel, WHITE, 0.6), 0.45 * a);
-	ctx.lineWidth = 1;
+	{
+		const rg = ctx.createLinearGradient(VX - VR, 0, VX + VR, 0);
+		const lo = css(mixRGB(gel, WHITE, 0.6), 0.14 * a);
+		const hi = css(mixRGB(gel, WHITE, 0.6), 0.75 * a);
+		rg.addColorStop(0, side < 0 ? hi : lo);
+		rg.addColorStop(1, side < 0 ? lo : hi);
+		ctx.strokeStyle = rg;
+	}
+	ctx.lineWidth = 1.4;
 	vatPath(ctx);
 	ctx.stroke();
 	if (fill < 1) {
@@ -1046,6 +1089,32 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.fill();
 		}
 	}
+	}
+	// the making: a pulse of light down the mast, through the roof and into the gel, landing where the new seed starts
+	if (S.pulse !== undefined && S.pulse > 0.001 && S.pulse < 1) {
+		const tgt = SEEDS[0];
+		const pts: [number, number][] = [[DISH.x, DISH.y + 4], [DISH.x, 142], [DISH.x, 172], [VX, VY0 + 6], [VX + tgt.x, tgt.y]];
+		const lens: number[] = [0];
+		for (let i = 1; i < pts.length; i++) lens.push(lens[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+		const at = (u: number): [number, number] => {
+			const d = clamp(u) * lens[lens.length - 1];
+			for (let i = 1; i < pts.length; i++)
+				if (d <= lens[i]) {
+					const f = (d - lens[i - 1]) / (lens[i] - lens[i - 1] || 1);
+					return [mix(pts[i - 1][0], pts[i][0], f), mix(pts[i - 1][1], pts[i][1], f)];
+				}
+			return pts[pts.length - 1];
+		};
+		const col = mixRGB(gel, WHITE, 0.6);
+		const env = smooth(0, 0.1, S.pulse) * (1 - smooth(0.9, 1, S.pulse));
+		lighter(ctx, () => {
+			for (let k = 0; k < 9; k++) {
+				const p = at(S.pulse! - k * 0.03);
+				glow(ctx, p[0], p[1], 12 - k * 0.9, col, (0.95 - k * 0.09) * env * a, 'core');
+			}
+			const h = at(S.pulse!);
+			glow(ctx, h[0], h[1], 24, col, 0.5 * env * a);
+		});
 	}
 	ctx.restore();
 }
