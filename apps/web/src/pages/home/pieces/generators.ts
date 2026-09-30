@@ -1121,10 +1121,10 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	const reveal = y0 + size * build;
 	const rowH = 2;
 	// on a phone the image is sparser still: most rows are gaps, wide enough for the stars behind to show
-	const jitterStep = Math.floor(sec / 0.4);
-	// the torn stretch slides steadily down the image, never popping in
-	const tearing = true;
-	const tearRow = Math.floor((((sec * 0.3) % 1.2) - 0.1) * (size / rowH));
+	const jitterStep = Math.floor(sec * 2);
+	// a tear in the image holds with everything else, and comes on at most one hold in three
+	const tearing = jitterStep % 3 === 0;
+	const tearRow = Math.floor(hash(jitterStep, 5) * (size / rowH));
 	// now and then the whole image rolls, as a picture held by a weak signal does
 	const roll = 8 * Math.exp(-Math.pow((sec % 2.6 - 0.2) / 0.22, 2));
 	// at most two bright rows at a time, travelling down the image
@@ -1144,8 +1144,8 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 			let off = (hash(r, jitterStep + seedOff) - 0.5) * 7 * (1 - build * 0.5);
 			if (tearing && r >= tearRow && r < tearRow + 7) off += 26 * (seedOff ? 1.3 : 1);
 			// a quarter of the rows run out past the edge of the image, some left, some right
-			const over = hash(r, Math.floor(sec / 0.4) + 60);
-			if (over < 0.15) off += (hash(r, 61) < 0.5 ? -1 : 1) * (8 + hash(r, Math.floor(sec / 0.4) + 62) * 12);
+			const over = hash(r, Math.floor(sec * 2) + 60);
+			if (over < 0.15) off += (hash(r, 61) < 0.5 ? -1 : 1) * (8 + hash(r, Math.floor(sec * 2) + 62) * 12);
 			ctx.drawImage(img, 0, Math.round((y - y0) * f), img.width, Math.max(1, Math.round(rowH * f)), x0 + off + dx, y + roll, size, rowH);
 		}
 	};
@@ -1453,6 +1453,7 @@ export function createGenerators(): Figure {
 					pulse: first && pulseU > 0 && pulseU < 1 ? pulseU : undefined,
 					growT: first && stage !== 1 && v3 < 0.5 ? growT : undefined,
 					tick: first ? tickV : 0,
+					ringFlash: first && stage !== 1 && eT > PULSE0 - 0.06 && eT < PULSE0 + 0.02 ? 1 : 0,
 					seedScale: L === COMPACT ? 1.35 : 1,
 					sec: sec + i * 1.7,
 					gel: mixRGB(own, mixRGB(own, [128, 104, 190], 0.78), lk),

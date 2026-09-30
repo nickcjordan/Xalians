@@ -595,7 +595,12 @@ export function seedR(kind: SeedKind, th: number, fins = true, v = 0) {
 		return mix((1.0 / Math.cos(q - Math.PI / 6)) * 0.9, 0.98, 0.55) * (1 + 0.11 * Math.cos(3 * th - v) + 0.06 * Math.cos(2 * th + 2 * v));
 	}
 	if (kind === 'ice') return 0.55 + 0.47 * Math.pow((1 + Math.cos(6 * th)) / 2, 5); // six spikes at 1.6 times the body
-	if (kind === 'sea') return Math.sin(th) < 0 ? 1 : Math.min(1.15, 0.45 / Math.max(0.22, Math.abs(Math.sin(th)))) * (1 + 0.12 * Math.abs(Math.sin(7 * th))); // a bell with a scalloped hem
+	if (kind === 'sea') {
+		// a bell: a domed top, and a hem with four scallops about 3 px deep cut into its lower edge
+		if (Math.sin(th) < 0) return 1;
+		const phi = th - Math.PI / 2;
+		return Math.min(1.15, 0.45 / Math.max(0.22, Math.abs(Math.sin(th)))) * (1 - 0.14 * (0.5 + 0.5 * Math.cos(8 * phi)) * smooth(0.25, 0.7, Math.sin(th)));
+	}
 	if (kind === 'apex') return 0.85; // all the same
 	return 1 + 0.1 * Math.cos(2 * th) - 0.16 * Math.sin(th); // Genesis: a plain oval seed
 }
@@ -662,6 +667,8 @@ export type MachineLook = {
 	rimEdge?: boolean;
 	/** 0 to 1: a pulse of light running from the sensor ring down the mast, through the roof and into the gel, to where the new seed starts. */
 	pulse?: number;
+	/** 0 to 1: a 60 ms flash on the sensor ring just before the pulse drops. */
+	ringFlash?: number;
 	/** 0 to 1: the readout's single tick as the pulse leaves the ring (decays by itself). */
 	tick?: number;
 	/** Seeds drawn this much larger (a phone keeps them near the size they have on a wide screen). */
@@ -873,6 +880,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	lighter(ctx, () => {
 		glow(ctx, DISH.x, DISH.y, 40, dishCol, 0.6 * a * (1 - dorm) * (0.4 + 0.6 * reading));
 		glow(ctx, DISH.x, DISH.y, 8, WHITE, a * (1 - dorm), 'core');
+		if ((S.ringFlash ?? 0) > 0.01) glow(ctx, DISH.x, DISH.y, 30, mixRGB(gel, WHITE, 0.5), 0.9 * S.ringFlash! * a);
 	});
 	if (reading > 0.02) {
 		ctx.lineWidth = 1.4;
@@ -989,7 +997,13 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			}
 			const path = shape(stormW === 0);
 			path();
-			ctx.fillStyle = fillC;
+			if (kindNow === 'sea' && apex < 0.5) {
+				const bc = mixRGB(tint, BLACK, 0.62 - 0.27 * apex);
+				const bg2 = ctx.createLinearGradient(0, y - r * 0.3, 0, y + r);
+				bg2.addColorStop(0, css(bc, (0.8 + 0.12 * apex) * a));
+				bg2.addColorStop(1, css(bc, 0.5 * (0.8 + 0.12 * apex) * a));
+				ctx.fillStyle = bg2;
+			} else ctx.fillStyle = fillC;
 			ctx.fill();
 			// a lighter rim just inside it
 			ctx.save();
@@ -1137,14 +1151,14 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		};
 		const total = lens[lens.length - 1];
 		const head = at(S.pulse);
-		const tail = at(S.pulse - 12 / total);
+		const tail = at(S.pulse - 16 / total);
 		// it fades as it enters the gel
 		const fade = smooth(0, 0.08, S.pulse) * (1 - smooth(VY0 - 6, VY0 + 30, head[1]));
 		ctx.save();
 		ctx.globalCompositeOperation = 'lighter';
 		ctx.lineCap = 'butt';
-		ctx.strokeStyle = css(mixRGB(gel, WHITE, 0.6), 0.95 * fade * a);
-		ctx.lineWidth = 2;
+		ctx.strokeStyle = css(mixRGB(gel, WHITE, 0.6), 0.9 * fade * a);
+		ctx.lineWidth = 3;
 		ctx.beginPath();
 		ctx.moveTo(tail[0], tail[1]);
 		ctx.lineTo(head[0], head[1]);

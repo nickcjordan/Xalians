@@ -1063,6 +1063,22 @@ export function createOutbreak(): Figure {
 				const px = (x: number) => CX + (x - MX) * s;
 				const py = (y: number) => GY + (y - GROUND) * s;
 				const lightBoost = mixRGB([190, 54, 66], [236, 170, 120], domeOn);
+				// the front on the ground: an edge with its radius varied about 10 percent, so it breaks
+				const Rf = rx * domeOn;
+				const frontY = py(GROUND + 18);
+				const fry = Rf * 0.3 + 30;
+				const frontPath = () => {
+					ctx.beginPath();
+					for (let k = 0; k <= 48; k++) {
+						const an2 = (k / 48) * TAU;
+						const nz = 1 + 0.1 * (0.5 * Math.sin(3 * an2 + 1) + 0.3 * Math.sin(5 * an2 + 2) + 0.2 * Math.sin(9 * an2 + 4));
+						const fx = CX + Math.cos(an2) * Rf * nz;
+						const fy = frontY + Math.sin(an2) * fry * nz;
+						if (k) ctx.lineTo(fx, fy);
+						else ctx.moveTo(fx, fy);
+					}
+					ctx.closePath();
+				};
 
 				// the sky behind the machine turns from red toward a dim violet-blue as the dome grows
 				if (domeOn > 0.01) {
@@ -1073,6 +1089,28 @@ export function createOutbreak(): Figure {
 					ctx.fillStyle = vg2;
 					ctx.fillRect(0, 0, W, HORIZON + 30);
 				}
+				// the cleared ground: warm dust (about #5a4636 near the pad), lit by the chip's pool and falling off toward the
+				// edge, never rising above the horizon
+				if (Rf > 2) {
+					ctx.save();
+					frontPath();
+					ctx.clip();
+					ctx.beginPath();
+					ctx.rect(0, HORIZON - 4, W, H);
+					ctx.clip();
+					ctx.translate(CX, frontY);
+					ctx.scale(1, fry / Rf);
+					const dg = ctx.createRadialGradient(0, 8, 0, 0, 8, Rf * 1.1);
+					dg.addColorStop(0, css([90, 70, 54], 0.95));
+					dg.addColorStop(0.6, css([86, 66, 52], 0.85));
+					dg.addColorStop(0.9, css([80, 60, 48], 0.4));
+					dg.addColorStop(1, css([80, 60, 48], 0));
+					ctx.globalAlpha = clamp(sA * domeOn);
+					ctx.fillStyle = dg;
+					ctx.fillRect(-Rf * 1.2, -Rf * 1.2, Rf * 2.4, Rf * 2.4);
+					ctx.restore();
+				}
+
 				// wisps behind the machine, at their own pace
 				{
 					const bp0 = hazePuff(0);
@@ -1207,14 +1245,12 @@ export function createOutbreak(): Figure {
 				const hp1 = hazePuff(1);
 				ctx.globalCompositeOperation = 'source-over';
 				// the front: an ellipse on the ground centered on the chip; the red ground band is outside it, warm dust inside
-				const Rf = rx * domeOn;
-				const frontY = py(GROUND + 18);
 				const drawHazes = (only: 'out' | 'in') => {
 					for (const h of HAZES) {
 						const hp = h.v ? hp1 : hp0;
 						if (!hp) continue;
 						const x = h.x + Math.sin(sec * 0.05 * h.sp + h.ph) * 14;
-						let a = only === 'in' ? h.a * 0.05 : h.a;
+						let a = only === 'in' ? h.a * 0.05 : h.a * (1 - 0.15 * domeOn);
 						// nearer the machine's own face the haze lies thinner, so the console stays in view
 						if (Math.abs(x - CX) < 110 && h.y < 440) a *= 0.8;
 						if (a < 0.01) continue;
@@ -1224,27 +1260,16 @@ export function createOutbreak(): Figure {
 				};
 				if (Rf < 2) drawHazes('out');
 				else {
-					const fry = Rf * 0.3 + 30;
 					ctx.save();
-					ctx.beginPath();
+					frontPath();
 					ctx.rect(0, 0, W, H);
-					ctx.ellipse(CX, frontY, Rf, fry, 0, 0, TAU);
 					ctx.clip('evenodd');
 					drawHazes('out');
 					ctx.restore();
 					ctx.save();
-					ctx.beginPath();
-					ctx.ellipse(CX, frontY, Rf, fry, 0, 0, TAU);
+					frontPath();
 					ctx.clip();
 					drawHazes('in');
-					// the ground behind the front turns to warm dust
-					ctx.globalCompositeOperation = 'lighter';
-					const dust = spr([206, 146, 100]);
-					if (dust) {
-						ctx.globalAlpha = clamp(0.7 * domeOn * sA);
-						ctx.drawImage(dust, CX - Rf, frontY - fry, Rf * 2, fry * 2);
-					}
-					ctx.globalCompositeOperation = 'source-over';
 					ctx.restore();
 					// the ripple of light that leads the front out from the chip along the ground
 					ctx.globalCompositeOperation = 'lighter';
