@@ -25,6 +25,53 @@ Nick does not list faults, so the pass finds them itself: cold readers and an in
 5. **Build and loop**: Sonnet builders implement; each round is recaptured and judged by fresh readers and a fresh critic until the bar holds.
 6. **Nick plays** the deployed build.
 
-## Findings
+## Findings, 2026-09-29
 
-(Filled in after step 3.)
+Capture: 47 sequences over 11 of 12 stages (no player retreat control exists to capture). Critic report and reader answers are kept outside the repo (scratchpad `ux2/answers/`); the summary is here.
+
+**Critic scores** (overall per stage; clarity, hierarchy, feedback, affordance, consistency, polish): S01 arrival 4, S02 first look 5, S03 reading options 5, S04 acting 5, S05 enemy turns 5, S06 encounter end 4, S07 camp 4, S08 defeat 4, S09 victory 4, S10 retreat and restart 3, S11 record and tools 4, S12 phone 2. No stage reaches 8. The turn cycle is the strongest part; everything around it is weak.
+
+**Cold readers**: three Opus readers each rated their own understanding 6 of 10. Shared top confusions: the enemy hit chip (it shows the hit on the companion now acting, with that companion's portrait, and readers took it as the enemy's target); a key row reading 0 everywhere with no reason (the player's own companion is hindered); "every enemy" on a single-target key against "ALL" on an area key; the stall rule that ends a run without warning; the "since your last turn" line and the Record leaving events out.
+
+**Ranked issues** (critic, confirmed by the readers):
+1. No arrival and no teaching: no goal, rules or start screen; the Guide is text only, never explains the marks, and says the turn strip is at the bottom.
+2. The screen misreports hard moments: the round label when a round opens on an enemy's turn; "Its next hit is weakened" naming the wrong unit; camp shows the XP total as the gain; a stall text on the retreat screen.
+3. The player's own status is invisible where it decides the turn: a hindered companion's keys read 0 with no reason; "since your last turn" nets health and hides heals, boosts, hinders and shields.
+4. Self-only keys look inert and ignored clicks (click fixed in PR #760; the look remains).
+5. Endings have no feedback: the last enemy, the boss and the last companion never visibly fall; victory looks like defeat; no summary, no exit.
+6. Camp hides its decision: revive is a small grey tile with no amount or count; the recovery station heals silently.
+7. The enemy hit chip implies an intent it does not have, and the boss's chip jumps (26 to 46) with no visible cause.
+8. One mark, several meanings: gold for finish, next, signature and round; crossed swords for a hit and a hinder; chevron colors differ between cells and chips; the shield icon also marks the recovery station.
+9. No way to leave or retreat; Restart wears the forward color.
+10. Phone is not playable: the portrait prompt is backwards and has no exit; landscape text is about 6 px.
+
+## Plan
+
+Four build rounds, each recaptured and judged by a fresh critic; readers again after rounds 2 and 4. Rules held from earlier rulings: numbers and words in place, no suggestions; no side colors beyond the turn banner; calm motion (no camera shake, no blur, no moving light); one fixed screen.
+
+### Round 1: say it truthfully
+
+1. **Round label**: a round that opens on an enemy's turn changes the banner, the rail divider and the hand-off at the moment that enemy acts.
+2. **Result sentences name both sides**: "and weakened Crystorn's next attack by 14", never a bare "its".
+3. **Camp XP** shows the gain of this sector, not the run total.
+4. **Since your last turn** lists every change that matters for the next choice, per unit: health (hits and heals separately when both happened), shields gained or lost, boosts, hinders. On the first turn of a room it is not shown. When nothing changed it says nothing rather than "no health changed".
+5. **Own status in the keys**: a hindered or boosted active companion's cells show the number before and after (the struck-number form enemy chips use) and the key row says why ("Crystorn is hindered by 14"). A row of zeros never appears without its reason.
+6. **One rule for identical cells**: a single-target key always shows one cell per enemy; only an area key uses the ALL band. "Every enemy" goes away.
+7. **Enemy hit chip**: no portrait; it reads as that enemy's strongest hit it can make on its next turn against the companion now acting, and when a stronger move is resting, the chip shows it coming ("46 in 1") so the number never jumps without a cause.
+8. **Record**: every beat's sentence, grouped by round and sector, newest first.
+9. **Retreat**: a Retreat action at camp (the engine's command), its own result text ("The squad withdrew"); the forced-out text stays for the stall and says what the stall rule is.
+10. **Phone portrait prompt**: "Turn your phone sideways to play" and a way back to Xalians.
+
+### Round 2: arrive, end and rest
+
+Briefing screen before the first turn (goal, the four sectors as a strip, the squad, health carries over, one revive; Begin). The Guide becomes a visual legend of every mark. A room title card on entering each sector. Knockouts hold: the last enemy, the boss and the last companion visibly fall before any panel; "Sector cleared". Victory and defeat get distinct layouts, a run summary (sectors, rounds, knockouts, XP, the enemy that decided it) and an exit. Camp: revive is the primary action when someone is down, with its amount and the revives left; the recovery station states its amount and plays it on arrival with deltas. Restart's confirmation uses the danger style with Cancel as default.
+
+### Round 3: one meaning per mark, and impact
+
+Gold only for finishes. Hinder cells read as "their hit 14 → 0", distinct from damage. Chevrons one color rule everywhere. The recovery station gets its own icon. Self-only keys become pressable cells like the others and ring their recipient on hover. Hovering an enemy lights its column in every key. Every unit shows its element. Hits land with a target flash, a short knockback, a larger number and a STRONG or WEAK tag in the matchup color. While beats play the key bar shows one "playing" state instead of the ghosted keys; speed is a labeled 1x/2x control.
+
+### Round 4: phone
+
+A landscape phone layout that uses the full width, drops plate chrome to name and bar, and keeps text at 12 px or more.
+
+Not adopted: a commit guard or undo (the answer keys already preview the outcome before the click); reopen if play shows misclicks.
