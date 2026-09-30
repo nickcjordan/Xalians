@@ -60,6 +60,17 @@ parser.add_argument('--swell-x', type=float, nargs=4, default=[.36, .50, .90, 1.
 parser.add_argument('--swell-z', type=float, nargs=4, default=[-.16, -.04, .36, .50], help='ramp in, full, ramp out start, out end')
 parser.add_argument('--swell-follow-low', type=float, nargs=2, default=None, help='the lower ramp follows the fan lower edge: weight rises from (lowest solid z at that x + first value) over the second value')
 parser.add_argument('--swell-y', type=float, nargs=2, default=[.08, .15], help='weight ramps from 0 to 1 between these y values')
+# Push: a heightfield extrusion of the rear of the fan, so the rear wall stands as deep as the skull dome instead of a thin sheet
+# with the dome sticking out behind it. The target depth is a wide blur of the rear floor (which fills the dome-to-wall corner)
+# plus a constant, ramped in x; the added depth rounds off toward the fan outline like a pillow.
+parser.add_argument('--push', type=float, default=0., help='extra rear depth of the fan wall, head-local (0 = off)')
+parser.add_argument('--push-x', type=float, nargs=4, default=[.22, .42, .85, 1.05], help='ramp in, full, ramp out start, out end')
+parser.add_argument('--push-sigma', type=float, default=.12, help='blur radius of the target depth envelope')
+parser.add_argument('--push-round', type=float, default=.08, help='distance inside the outline over which the added depth rounds off')
+parser.add_argument('--push-max', type=float, default=.17, help='largest depth added to any column')
+parser.add_argument('--push-fill', type=float, default=0., help='blur radius of a fill-only blur that closes the dome-to-wall corner (0 = off)')
+parser.add_argument('--push-fill-x', type=float, nargs=4, default=[.12, .22, .50, .65], help='ramp in, full, ramp out start, out end of the fill')
+parser.add_argument('--push-blend', type=float, default=.012, help='smooth union radius between the extrusion and the skin')
 # Row locks.
 parser.add_argument('--rings', type=float, nargs='*', default=[.36, .50, .64, .78, .92])
 parser.add_argument('--ring-spacing', type=float, default=.11)
@@ -85,6 +96,20 @@ parser.add_argument('--shingle-x-fade', type=float, nargs=2, default=[9., 10.], 
 parser.add_argument('--shingle-blend', type=float, default=.004, help='smooth union radius between the relief and the skin')
 parser.add_argument('--shingle-slope-max', type=float, default=9., help='relief fades out where the rear floor slope (rise per run) passes this')
 parser.add_argument('--shingle-taper', type=float, default=2.0, help='exponent of the width falloff toward the tip')
+# Cap shingles: the same relief leaves laid over the skull dome, on rings around a center on the midline, so the dome carries the
+# coat too. They need the rear floor from x = --floor-x0, which the fan-only default (.25) does not cover.
+parser.add_argument('--floor-x0', type=float, default=.25, help='smallest |x| of the rear floor grid (the default keeps earlier runs reproducible)')
+parser.add_argument('--cap-rings', type=float, nargs='*', default=[])
+parser.add_argument('--cap-center', type=float, nargs=2, default=[0., -.08])
+parser.add_argument('--cap-angle', type=float, nargs=2, default=[-100., 100.])
+parser.add_argument('--cap-spacing', type=float, default=.065)
+parser.add_argument('--cap-length', type=float, default=.15)
+parser.add_argument('--cap-width', type=float, default=.058)
+parser.add_argument('--cap-amp', type=float, default=.04)
+parser.add_argument('--cap-lattice', action='store_true', help='place cap shingles on a jittered lattice flowing down and out from the midline instead of on rings')
+parser.add_argument('--cap-ellipse', type=float, nargs=3, default=[.37, .08, .46], help='lattice sites lie inside this ellipse: half-width, center z, half-height')
+parser.add_argument('--push-smooth', type=float, default=.0, help='blur radius applied to the rounded-edge distance and the added depth (0 = the first, terraced version)')
+parser.add_argument('--cap-up', type=float, default=.1)
 # Fringe locks along the outline.
 parser.add_argument('--edge-spacing', type=float, default=.10, help='arc spacing of fringe locks along the outline (0 = off)')
 parser.add_argument('--edge-rows', type=int, default=2)
@@ -232,8 +257,70 @@ if args.swell > 0:
     swell_record['maximumWeight'] = float(weight.max())
     del weight
 
+
+# 2b. Push: rear extrusion of the fan wall.
+push_record = {'applied': args.push > 0}
+if args.push > 0:
+    ax = np.abs(X)
+    pr = np.where((Z > -.30) & (Z < .74))[0]
+    q0, q1 = pr[0], pr[-1]+1
+    psub = shaped[:, :, q0:q1]
+    psolid = psub < 0
+    phas = psolid.any(axis=1)
+    plast = len(Y)-1-np.argmax(psolid[:, ::-1, :], axis=1)
+    plast = np.clip(plast, 0, len(Y)-2)
+    p_in = np.take_along_axis(psub, plast[:, None, :], axis=1)[:, 0, :]
+    p_out = np.take_along_axis(psub, (plast+1)[:, None, :], axis=1)[:, 0, :]
+    p_t = np.clip(p_in/np.where(p_in != p_out, p_in-p_out, 1), 0, 1)
+    pfloor = np.where(phas, Y[plast]+p_t*(Y[plast+1]-Y[plast]), 0.0)
+    del psolid, p_in, p_out
+    sig = args.push_sigma/VS
+    base = gauss2d(pfloor*phas, sig)/np.maximum(gauss2d(phas.astype(np.float64), sig), 1e-6)
+    x0, x1, x2, x3 = args.push_x
+    wxp = smoothstep((ax-x0)/(x1-x0))*(1-smoothstep((ax-x2)/(x3-x2)))
+    target = base+args.push*wxp[:, None]
+    extra = np.clip(target-pfloor, 0, args.push_max)*wxp[:, None]
+    # distance inside the outline, by repeated erosion, for the rounded back edge
+    depth_p = np.zeros(phas.shape)
+    er = phas.copy()
+    for _ in range(int(math.ceil(args.push_round/VS))+1):
+        if not er.any():
+            break
+        depth_p += er
+        e2 = er.copy()
+        e2[1:] &= er[:-1]
+        e2[:-1] &= er[1:]
+        e2[:, 1:] &= er[:, :-1]
+        e2[:, :-1] &= er[:, 1:]
+        er = e2
+    if args.push_fill > 0:
+        gsum = pfloor+extra
+        sf = args.push_fill/VS
+        gb = gauss2d(gsum*phas, sf)/np.maximum(gauss2d(phas.astype(np.float64), sf), 1e-6)
+        f0, f1, f2, f3 = args.push_fill_x
+        wf = smoothstep((ax-f0)/(f1-f0))*(1-smoothstep((ax-f2)/(f3-f2)))
+        extra = np.maximum(extra, np.clip(gb-pfloor, 0, args.push_max)*wf[:, None])
+    if args.push_smooth > 0:
+        depth_p = gauss2d(depth_p, args.push_smooth/VS)
+    tt_p = np.clip(depth_p*VS/args.push_round, 0, 1)
+    extra = extra*np.sin(.5*np.pi*tt_p)*phas
+    extra = gauss2d(extra, (args.push_smooth*1.5 if args.push_smooth > 0 else .010)/VS)*phas
+    rows_p = np.where((extra > .0015).any(axis=1))[0]
+    pslab = np.full(shape, BAND, dtype=np.float32)
+    Ysub = Y[:, None]
+    for i in rows_p:
+        top = pfloor[i]+extra[i]
+        bottom = pfloor[i]-.03
+        dd = np.maximum(Ysub-top[None, :], bottom[None, :]-Ysub)
+        off = .03*(1-smoothstep(extra[i]/.008))  # pushes the slab away where the added depth vanishes, so no cliff edge
+        pslab[i, :, q0:q1] = np.where(phas[i][None, :], np.clip(dd+off[None, :], -BAND, BAND), BAND)
+    shaped = smin(shaped, pslab, args.push_blend).astype(np.float32)
+    del pslab
+    push_record.update({'maximumAdded': float(extra.max()), 'columns': int((extra > .0015).sum()),
+                        'meanAddedWhereApplied': float(extra[extra > .0015].mean()) if (extra > .0015).any() else 0.0})
+
 # 1. The floor: the rear surface of the fan, last solid met from behind (+y), per (x, z) column.
-cols = np.where((X > .25) & (X < 1.10))[0]
+cols = np.where((X > args.floor_x0-1e-6) & (X < 1.10))[0]
 rows = np.where((Z > -.24) & (Z < .72))[0]
 c0, c1, r0, r1 = cols[0], cols[-1]+1, rows[0], rows[-1]+1
 sub = shaped[c0:c1, :, r0:r1]
@@ -364,6 +451,43 @@ if not args.no_rows and args.rings:
             add_lock('row', px, pz, d2, length, args.ring_width*rng.uniform(.92, 1.1), args.ring_thickness,
                      args.ring_lift+ri*args.ring_lift_step)
 
+cap_placed = 0
+if args.cap_lattice and args.shingle_amp > 0:
+    rng_cap = np.random.default_rng(args.seed+1)
+    ea, ecz, eb = args.cap_ellipse
+    ddx, ddz = args.cap_spacing, args.cap_spacing*.8
+    for row, zc in enumerate(np.arange(ecz-eb, ecz+eb, ddz)):
+        for xc in np.arange(ddx*.5*(row % 2), ea, ddx):
+            px = xc+rng_cap.uniform(-.25, .25)*ddx
+            pz = zc+rng_cap.uniform(-.25, .25)*ddz
+            if px < 0 or (px/ea)**2+((pz-ecz)/eb)**2 >= 1 or at(depth_in, px, pz) < .02:
+                continue
+            wing, part = min(1.0, px/.40), min(1.0, px/.12)
+            d2 = np.array([part, -(.30+.6*(1-part))+.10*wing])
+            d2 /= np.linalg.norm(d2)
+            shingles.append((px, pz, float(d2[0]), float(d2[1]), args.cap_length*rng_cap.uniform(.9, 1.1),
+                             args.cap_width*rng_cap.uniform(.9, 1.1), args.cap_amp*rng_cap.uniform(.85, 1.1)))
+            cap_placed += 1
+elif args.cap_rings and args.shingle_amp > 0:
+    rng_cap = np.random.default_rng(args.seed+1)
+    ccx, ccz = args.cap_center
+    for ri, r in enumerate(args.cap_rings):
+        step = args.cap_spacing/r
+        theta = math.radians(args.cap_angle[0])+rng_cap.uniform(0, 1)*step*(.5+.5*(ri % 2))
+        while theta < math.radians(args.cap_angle[1]):
+            th = theta+rng_cap.uniform(-.15, .15)*step
+            px = ccx+r*math.cos(th)
+            pz = ccz+r*math.sin(th)
+            theta += step
+            if px < 0 or at(depth_in, px, pz) < .02:
+                continue
+            radial = np.array([math.cos(th), math.sin(th)])
+            d2 = radial*(1-args.cap_up)+np.array([0, 1.])*args.cap_up
+            d2 /= np.linalg.norm(d2)
+            shingles.append((px, pz, float(d2[0]), float(d2[1]), args.cap_length*rng_cap.uniform(.92, 1.08),
+                             args.cap_width*rng_cap.uniform(.92, 1.1), args.cap_amp*rng_cap.uniform(.85, 1.1)))
+            cap_placed += 1
+
 edge_record = {'applied': args.edge_spacing > 0, 'placed': 0}
 if args.edge_spacing > 0:
     cx, cz = args.edge_center
@@ -374,7 +498,7 @@ if args.edge_spacing > 0:
     for phi in np.arange(-180., 180., .25):
         cs, sn = math.cos(math.radians(phi)), math.sin(math.radians(phi))
         rs = np.arange(0., 1.2, VS)
-        ii = np.clip(np.round((np.abs(cx+rs*cs)-SX[0])/VS).astype(int), 0, len(SX)-1)
+        ii = np.clip(np.round((np.maximum(np.abs(cx+rs*cs), .25)-SX[0])/VS).astype(int), 0, len(SX)-1)
         kk = np.clip(np.round((cz+rs*sn-SZ[0])/VS).astype(int), 0, len(SZ)-1)
         leave = np.where(~has[ii, kk])[0]
         if not len(leave) or leave[0] == 0:
@@ -606,7 +730,7 @@ summary = {
     'approval': None, 'stageProvenanceSha256': provenance, 'sourceSha256': sha(args.scene),
     'scope': 'Ear fan rear: layered row and fringe locks on the back of the fan joined by a smooth union; face objects and the front of the fan preserved',
     'parameters': {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items() if k not in ('scene', 'out')},
-    'swell': swell_record, 'bevel': bevel_record, 'shingles': shingle_record, 'rim': rim_record, 'skinTopZ': {'before': top_before, 'after': top_after}, 'edge': edge_record,
+    'swell': swell_record, 'push': push_record, 'capShinglesPlaced': cap_placed, 'bevel': bevel_record, 'shingles': shingle_record, 'rim': rim_record, 'skinTopZ': {'before': top_before, 'after': top_after}, 'edge': edge_record,
     'lockCount': len(locks), 'lockSkipped': skipped, 'locks': locks,
     'removedFlecks': removed_flecks, 'removedFloatingPieces': removed_pieces, 'skinBefore': before, 'skinAfter': after,
     'deviationOutsideRearWindow': {'samples': int(len(outside)), 'maximum': float(outside.max()) if len(outside) else None,

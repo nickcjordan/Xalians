@@ -121,6 +121,26 @@ for side in (1, -1):
     record.setdefault('cheekSmooth', []).append({'side': side, 'maximumFieldChange': float(np.abs(change).max())})
 
 
+# 2b. Optional rear smoothing (round 16, R04): the rear extrusion of the ear fan leaves faint one-voxel terraces on its rounded
+# rim. The same weighted morph to a Gaussian-blurred field removes them. Absent from the spec, nothing happens.
+rs = spec.get('rear_smooth')
+if rs:
+    for side in (1, -1):
+        xs = sorted([side*rs['x'][0], side*rs['x'][1]])
+        pad = 3*rs['sigma']+rs['fade']
+        sl = box_slices([xs[0]-pad, rs['y'][0]-pad, rs['z'][0]-pad], [xs[1]+pad, rs['y'][1]+pad, rs['z'][1]+pad])
+        X, Y, Z = coordinates(sl)
+        native = field[sl].copy()
+        blurred = gaussian(native, rs['sigma'])
+        ax = np.abs(X)
+        w = (smoothstep((ax-rs['x'][0])/rs['fade'])*smoothstep((rs['x'][1]-ax)/rs['fade'])
+             * smoothstep((Z-rs['z'][0])/rs['fade'])*smoothstep((rs['z'][1]-Z)/rs['fade'])
+             * smoothstep((Y-rs['y'][0])/rs['fade'])*smoothstep((rs['y'][1]-Y)/rs['fade'])).astype(np.float32)
+        change = w*(blurred-native)
+        field[sl] = native+change
+        record.setdefault('rearSmooth', []).append({'side': side, 'maximumFieldChange': float(np.abs(change).max())})
+
+
 # 1. Muzzle pads and chin: outward offset by a smooth ellipsoidal bump.
 def inflate(center, radii, amplitude, mirror):
     centers = [np.array(center)]

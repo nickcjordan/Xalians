@@ -1,0 +1,113 @@
+{
+  "voxel": 0.0025,
+  "notes": "Head-local coordinates (the assembly places the head at scale .50). Right side (x>0) listed; the left is mirrored. Cheek lock roots are [x, z]: the root y comes from a ray cast onto the skin. Round 15: the chin bulge is a forward (y) advection so it does not lower or widen the jaw outline; pads and cheek locks as in round 14. Round 16 adds rear_smooth: a windowed Gaussian morph over the rear of the ear fan (head-local |x| .30 to 1.10, y .03 to .55, z -.30 to .62) that removes voxel terraces left by the rear extrusion in head-0203.",
+  "pads": {
+    "center": [
+      0.066,
+      -0.33,
+      -0.182
+    ],
+    "radii": [
+      0.058,
+      0.09,
+      0.036
+    ],
+    "amplitude": 0.017,
+    "blend": 0.014
+  },
+  "chin": {
+    "center": [
+      0.0,
+      -0.27,
+      -0.268
+    ],
+    "radii": [
+      0.07,
+      0.09,
+      0.05
+    ],
+    "amplitude": 0.034,
+    "mode": "advect"
+  },
+  "cheek_smooth": {
+    "x": [
+      0.13,
+      0.46
+    ],
+    "z": [
+      -0.34,
+      -0.14
+    ],
+    "z_fade": 0.03,
+    "x_fade": 0.04,
+    "y_max": 0.02,
+    "sigma": 0.011
+  },
+  "cheek_locks": [
+    {
+      "root": [
+        0.15,
+        -0.238
+      ],
+      "direction": [
+        0.75,
+        0.2,
+        -0.3
+      ],
+      "length": 0.08,
+      "width": 0.05,
+      "thickness": 0.022,
+      "lift": 0.006,
+      "round_tip": 2.6
+    },
+    {
+      "root": [
+        0.2,
+        -0.196
+      ],
+      "direction": [
+        0.85,
+        0.2,
+        -0.2
+      ],
+      "length": 0.072,
+      "width": 0.052,
+      "thickness": 0.022,
+      "lift": 0.006,
+      "round_tip": 2.6
+    },
+    {
+      "root": [
+        0.255,
+        -0.152
+      ],
+      "direction": [
+        0.95,
+        0.2,
+        -0.1
+      ],
+      "length": 0.07,
+      "width": 0.052,
+      "thickness": 0.022,
+      "lift": 0.006,
+      "round_tip": 2.6
+    }
+  ],
+  "lock_blend": 0.03,
+  "rear_smooth": {
+    "x": [
+      0.3,
+      1.1
+    ],
+    "y": [
+      0.03,
+      0.55
+    ],
+    "z": [
+      -0.3,
+      0.62
+    ],
+    "fade": 0.05,
+    "sigma": 0.007
+  }
+}
