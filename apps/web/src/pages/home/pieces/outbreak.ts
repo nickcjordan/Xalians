@@ -220,7 +220,7 @@ const GLINTS: { to: number; leave: number; fly: number }[] = (() => {
 				best = i;
 			}
 		});
-		if (best >= 0) out.push({ to: best, leave: 3.4 + q * 0.42, fly: 1.35 });
+		if (best >= 0) out.push({ to: best, leave: 2.9 + q * 0.42, fly: 1.35 });
 	}
 	return out;
 })();
@@ -347,13 +347,12 @@ function disk() {
 
 const HZ = 448;
 const hk = HZ / (2 * EXT);
-let hazeCv: HTMLCanvasElement | null = null;
-let hazeKey = -1;
+type HazeState = { cv: HTMLCanvasElement | null; key: number };
+let laneMask: HTMLCanvasElement | null = null;
 let eraser: HTMLCanvasElement | null = null;
 let softEraser: HTMLCanvasElement | null = null;
 let edgeMask: HTMLCanvasElement | null = null;
 let grainPat: CanvasPattern | null = null;
-let clearDark: HTMLCanvasElement | null = null;
 let clearEdge: HTMLCanvasElement | null = null;
 function makeHazeParts(g0: CanvasRenderingContext2D) {
 	// a clean-edged round: the haze is taken out of it, and true dark is laid in it
@@ -369,9 +368,8 @@ function makeHazeParts(g0: CanvasRenderingContext2D) {
 	};
 	eraser = round([[0, 'rgba(0,0,0,1)'], [0.88, 'rgba(0,0,0,1)'], [1, 'rgba(0,0,0,0)']]);
 	softEraser = round([[0, 'rgba(0,0,0,1)'], [0.4, 'rgba(0,0,0,0.75)'], [1, 'rgba(0,0,0,0)']]);
-	clearDark = round([[0, 'rgba(3,3,8,0.86)'], [0.9, 'rgba(3,3,8,0.86)'], [1, 'rgba(3,3,8,0)']]);
 	// where the haze curls back: a thin crimson edge
-	clearEdge = round([[0, 'rgba(176,48,58,0)'], [0.82, 'rgba(176,48,58,0)'], [0.9, 'rgba(176,48,58,0.36)'], [1, 'rgba(176,48,58,0)']]);
+	clearEdge = round([[0, 'rgba(176,48,58,0)'], [0.74, 'rgba(176,48,58,0)'], [0.9, 'rgba(176,48,58,0.22)'], [1, 'rgba(176,48,58,0)']]);
 	const m = canvasOf(HZ, HZ);
 	const mg = m?.getContext('2d');
 	if (m && mg) {
@@ -384,6 +382,24 @@ function makeHazeParts(g0: CanvasRenderingContext2D) {
 		mg.fillStyle = grad;
 		mg.fillRect(0, 0, HZ, HZ);
 		edgeMask = m;
+	}
+	// between the arms the haze is 40 percent thinner, so the galaxy stays readable as it dies
+	const lm = canvasOf(HZ, HZ);
+	const lg = lm?.getContext('2d');
+	const dot = spr([255, 255, 255]);
+	if (lm && lg && dot) {
+		lg.fillStyle = 'rgba(0,0,0,0.4)';
+		lg.fillRect(0, 0, HZ, HZ);
+		lg.globalCompositeOperation = 'destination-out';
+		for (const arm of ARMS)
+			for (let k = 0; k < 260; k++) {
+				const rr = 0.08 + 0.92 * (k / 260);
+				const a = armAngle(arm.off, rr);
+				const rad = 0.13 * hk;
+				lg.globalAlpha = 0.9;
+				lg.drawImage(dot, HZ / 2 + Math.cos(a) * rr * hk - rad, HZ / 2 + Math.sin(a) * rr * hk - rad, rad * 2, rad * 2);
+			}
+		laneMask = lm;
 	}
 	// a fixed grain the smoke is eaten by, so it reads as wisps and not as flat stickers
 	const n = canvasOf(96, 96);
@@ -401,17 +417,17 @@ function makeHazeParts(g0: CanvasRenderingContext2D) {
 
 /** The clear round's radius in the galaxy's plane: a thin thinning round Valleron in 05, then 06's widening ring. */
 const thinR = (t0: number) => 0.07 * smooth(WORLDS[0].it - 0.3, WORLDS[0].it + 2, t0);
-const ringR = (t1: number) => 0.1 * easeOut(ramp(2.0, 3.5, t1));
+const ringR = (t1: number) => 0.12 * easeOut(ramp(2.0, 3.5, t1));
 const clearR = (t0: number, t1: number) => thinR(t0) + ringR(t1);
 
 /**
  * The haze, in the galaxy's plane: soft grainy smoke from several sources at once, each a cloud of large
  * blobs that grows and drifts, thinned round Valleron and, in 06, drawn back from it in a widening clear ring.
  */
-function paintHaze(t0: number, t1: number) {
-	if (!hazeCv) hazeCv = canvasOf(HZ, HZ);
-	const g = hazeCv?.getContext('2d');
-	if (!hazeCv || !g) return null;
+function paintHaze(st: HazeState, t0: number, t1: number) {
+	if (!st.cv) st.cv = canvasOf(HZ, HZ);
+	const g = st.cv?.getContext('2d');
+	if (!st.cv || !g) return null;
 	if (!eraser) makeHazeParts(g);
 	g.setTransform(1, 0, 0, 1, 0, 0);
 	g.globalCompositeOperation = 'source-over';
@@ -446,6 +462,10 @@ function paintHaze(t0: number, t1: number) {
 		g.globalCompositeOperation = 'destination-in';
 		g.drawImage(edgeMask, 0, 0);
 	}
+	if (laneMask) {
+		g.globalCompositeOperation = 'destination-out';
+		g.drawImage(laneMask, 0, 0);
+	}
 	// eaten by the grain
 	if (grainPat) {
 		g.globalCompositeOperation = 'destination-out';
@@ -463,14 +483,29 @@ function paintHaze(t0: number, t1: number) {
 		g.globalAlpha = 0.85;
 		g.drawImage(softEraser, px - th * 1.7 * hk, py - th * 1.7 * hk, th * 3.4 * hk, th * 3.4 * hk);
 	}
-	const rr = clearR(t0, t1);
-	if (eraser && ringR(t1) > 0.004) {
+	// 06's clearing: the haze pushed back to almost nothing, with a soft, slightly uneven edge (not a hole)
+	if (ringR(t1) > 0.004) {
+		const R = clearR(t0, t1) * hk;
+		const grad = g.createRadialGradient(px, py, 0, px, py, R);
+		grad.addColorStop(0, 'rgba(0,0,0,0.88)');
+		grad.addColorStop(0.6, 'rgba(0,0,0,0.88)');
+		grad.addColorStop(0.92, 'rgba(0,0,0,0)');
+		g.fillStyle = grad;
 		g.globalAlpha = 1;
-		g.drawImage(eraser, px - rr * hk, py - rr * hk, rr * hk * 2, rr * hk * 2);
+		g.beginPath();
+		for (let k = 0; k <= 56; k++) {
+			const an = (k / 56) * TAU;
+			const nz = 0.5 * Math.sin(3 * an + 1) + 0.3 * Math.sin(5 * an + 2) + 0.2 * Math.sin(8 * an + 4);
+			const rad = R * (1 + 0.08 * nz);
+			if (k) g.lineTo(px + Math.cos(an) * rad, py + Math.sin(an) * rad);
+			else g.moveTo(px + Math.cos(an) * rad, py + Math.sin(an) * rad);
+		}
+		g.closePath();
+		g.fill();
 	}
 	g.globalAlpha = 1;
 	g.globalCompositeOperation = 'source-over';
-	return hazeCv;
+	return st.cv;
 }
 
 // deep space is never flat black: faint dust, a few far stars and a low grain, built once at low resolution
@@ -575,7 +610,7 @@ function chip() {
 		const b = outer[(k + 1) % 6];
 		const l = litOf((a[0] + b[0]) / 2 / CHIP_R, (a[1] + b[1]) / 2 / CHIP_R);
 		poly([a, b, mid[(k + 1) % 6], mid[k]]);
-		g.fillStyle = css(mixRGB([42, 40, 38], [201, 194, 180], clamp(l * 1.15)));
+		g.fillStyle = css(mixRGB([30, 28, 26], [201, 194, 180], clamp(l * 1.15)));
 		g.fill();
 	}
 	// the step down: the inner bevel, lit the other way, so it reads as a step and not a flat rim
@@ -595,13 +630,17 @@ function chip() {
 	grad.addColorStop(1, css([7, 10, 12]));
 	g.fillStyle = grad;
 	g.fill();
-	// the recess for the light, dark, with a thin worn lip
-	poly(Array.from({ length: 36 }, (_, k) => [Math.cos((k / 36) * TAU) * 34, Math.sin((k / 36) * TAU) * 34, 3] as V));
-	g.fillStyle = css([3, 5, 6]);
+	// one diagonal glint across the glass
+	g.save();
+	poly(face);
+	g.clip();
+	poly([[-70, 78, 2], [-42, 78, 2], [58, -46, 2], [30, -46, 2]]);
+	g.fillStyle = 'rgba(255,255,255,0.25)';
 	g.fill();
-	g.strokeStyle = css([110, 108, 100], 0.75);
-	g.lineWidth = 2.6;
-	g.stroke();
+	poly([[-30, 78, 2], [-18, 78, 2], [82, -46, 2], [70, -46, 2]]);
+	g.fillStyle = 'rgba(255,255,255,0.1)';
+	g.fill();
+	g.restore();
 	// wear: light and dark chips and scratches along the bevel
 	const mark = (x0: number, y0: number, x1: number, y1: number, col: string, w: number) => {
 		const a = P(x0, y0, 4);
@@ -620,7 +659,7 @@ function chip() {
 	mark(-60, -40, -20, -58, 'rgba(210,214,216,0.18)', 2);
 	mark(30, 40, 70, 22, 'rgba(210,214,216,0.14)', 2);
 	// the haze's rim light along the lower edge
-	g.strokeStyle = 'rgba(176,48,58,0.42)';
+	g.strokeStyle = 'rgba(176,48,58,0.45)';
 	g.lineWidth = 5;
 	for (let k = 0; k < 6; k++) {
 		const a = outer[k];
@@ -633,6 +672,17 @@ function chip() {
 		g.lineTo(pb[0], pb[1]);
 		g.stroke();
 	}
+	// a chipped corner
+	g.globalCompositeOperation = 'destination-out';
+	{
+		const v0 = outer[0];
+		const v1 = outer[1];
+		const v5 = outer[5];
+		const t = (a: V, b: V, f: number): V => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2]];
+		poly([v0, t(v0, v1, 0.16), t(v0, v5, 0.14)]);
+		g.fill();
+	}
+	g.globalCompositeOperation = 'source-over';
 	chipTex = c;
 	return c;
 }
@@ -665,6 +715,7 @@ export function createOutbreak(): Figure {
 	let t0 = 0;
 	/** 06's clock, from the moment it is entered; it winds back when Back runs 06 in reverse. */
 	let t1 = 0;
+	const haze: HazeState = { cv: null, key: -1 };
 	const zoomAt = () => ease(ramp(0, 2.0, t1));
 	// Valleron sits a little below the middle at the close-in, with the token above it
 	const VOFF = 24;
@@ -683,7 +734,7 @@ export function createOutbreak(): Figure {
 			field = 1;
 			t0 = s === 0 ? 0 : 9.5;
 			t1 = 0;
-			hazeKey = -1;
+			haze.key = -1;
 		},
 		settle(s) {
 			stage = s;
@@ -692,7 +743,7 @@ export function createOutbreak(): Figure {
 			field = 1;
 			t0 = s === 0 ? 8.8 : 9.5;
 			t1 = s === 1 ? 9 : 0;
-			hazeKey = -1;
+			haze.key = -1;
 		},
 		step(dt, s, isPresent) {
 			if (s !== stage && s >= 0) stage = s;
@@ -763,7 +814,7 @@ export function createOutbreak(): Figure {
 				ctx.drawImage(gr, CX - (W * gs) / 2, CY - (H * gs) / 2, W * gs, H * gs);
 			}
 
-			if (!eraser) paintHaze(t0, t1); // builds the clear-ring sprites before the first frame uses them
+			if (!eraser) paintHaze(haze, t0, t1); // builds the clear-ring sprites before the first frame uses them
 			const rr = clearR(t0, t1);
 			const ringOn = smooth(1.9, 2.6, t1);
 			// the disk (dust, arms, core), turned and tilted; its light fades a little as the haze takes it
@@ -774,19 +825,14 @@ export function createOutbreak(): Figure {
 				ctx.transform(m.a, m.b, m.c, m.d, m.ox, m.oy);
 				ctx.globalAlpha = A * (1 - 0.3 * cover);
 				ctx.drawImage(tex, -EXT, -EXT, EXT * 2, EXT * 2);
-				// inside the token's ring is the true dark of space
-				if (clearDark && ringOn > 0.01) {
-					ctx.globalAlpha = A * ringOn;
-					ctx.drawImage(clearDark, VALLERON.x - rr, VALLERON.y - rr, rr * 2, rr * 2);
-				}
 				ctx.restore();
 			}
 
 			// the haze, in the plane: grainy crimson smoke, drawn back from Valleron
 			ctx.globalCompositeOperation = 'source-over';
 			const key = Math.floor(t0 * 12) * 4096 + Math.floor(t1 * 20);
-			const hz = key === hazeKey && hazeCv ? hazeCv : paintHaze(t0, t1);
-			hazeKey = key;
+			const hz = key === haze.key && haze.cv ? haze.cv : paintHaze(haze, t0, t1);
+			haze.key = key;
 			if (hz && A > 0.004) {
 				ctx.save();
 				ctx.transform(m.a, m.b, m.c, m.d, m.ox, m.oy);
@@ -796,6 +842,12 @@ export function createOutbreak(): Figure {
 					ctx.globalAlpha = A * ringOn;
 					const er = rr * 1.1;
 					ctx.drawImage(clearEdge, VALLERON.x - er, VALLERON.y - er, er * 2, er * 2);
+					// the dust inside repainted toward gold: the galaxy warmed back, not a hole
+					ctx.globalCompositeOperation = 'lighter';
+					ctx.globalAlpha = A * ringOn * 0.5;
+					const gs = spr([217, 178, 122]);
+					if (gs) ctx.drawImage(gs, VALLERON.x - rr * 1.05, VALLERON.y - rr * 1.05, rr * 2.1, rr * 2.1);
+					ctx.globalCompositeOperation = 'source-over';
 				}
 				ctx.restore();
 			}
@@ -817,11 +869,21 @@ export function createOutbreak(): Figure {
 					col = mixRGB(mixRGB(w.hue, CRIMSON, smooth(0, 0.25, age)), EMBER, dim);
 					b = mix(b, 0.3 + 0.12 * e, dim) + 0.9 * flare;
 				}
+				// inside the clearing the worlds are lit again, warm
+				if (age > 0 && ringOn > 0.01) {
+					const k = ringOn * (1 - smooth(0.5, 0.95, dist(w.x, w.y, VALLERON.x, VALLERON.y) / Math.max(rr, 0.001)));
+					if (k > 0.01) {
+						col = mixRGB(col, GOLD, 0.7 * k);
+						b = mix(b, 0.8, k);
+						dim *= 1 - 0.6 * k;
+					}
+				}
 				const size = w.size * (1 + 0.9 * flare);
 				let haloR = mix(6 + size * 4.6, 3.4, dim);
 				let coreR = mix(1.7 + size * 1.2, 1.2, dim);
 				let greenA = 0;
 				let pop = 0;
+				let dustA = 0;
 				if (w.relit >= 0) {
 					// it lights again in its own warm white-gold, with a small Generator glow inside it
 					const ra = t1 - w.relit;
@@ -829,16 +891,18 @@ export function createOutbreak(): Figure {
 					col = mixRGB(col, GOLD, lit);
 					b = mix(b, 1.0, lit);
 					haloR = mix(haloR, 9, lit);
-					coreR = mix(coreR, 3.2, lit);
+					coreR = mix(coreR, 3, lit);
+					dustA = 0.3 * lit;
 					greenA = smooth(0.3, 0.8, ra);
 					pop = Math.exp(-Math.pow((ra - 0.75) / 0.3, 2));
 				}
-				put(spr(col), sx[i], sy[i], haloR * zs, 0.4 * b);
+				if (dustA > 0.01) put(spr([217, 178, 122]), sx[i], sy[i], 6.6 * zs, dustA);
+				put(spr(col), sx[i], sy[i], haloR * zs, (w.relit >= 0 ? 0.5 : 0.4) * b);
 				put(spr(mixRGB(col, WHITE, 0.45 * (1 - dim))), sx[i], sy[i], coreR * zs, Math.min(1, 0.95 * b));
 				if (greenA > 0.01) {
-					put(spr(GENESIS), sx[i], sy[i], 9 * zs * (1 + 0.5 * pop), 0.16 * greenA);
+					put(spr(GENESIS), sx[i], sy[i], 6 * zs * (1 + 0.5 * pop), 0.14 * greenA);
 					ctx.globalCompositeOperation = 'source-over';
-					put(spr(GENESIS), sx[i], sy[i], 2.6 * zs * (1 + 0.5 * pop), 0.85 * greenA);
+					put(spr(GENESIS), sx[i], sy[i], 1.7 * zs * (1 + 0.6 * pop), 0.9 * greenA);
 					ctx.globalCompositeOperation = 'lighter';
 				}
 			}
@@ -866,11 +930,21 @@ export function createOutbreak(): Figure {
 			putV(spr([255, 214, 150]), vx, vy, (30 + 30 * gather) * zs * (1 + 0.04 * Math.sin(sec * 1.3)), 0.3 + 0.3 * gather);
 			putV(spr([255, 236, 200]), vx, vy, (9 + 6 * gather) * zs, Math.min(1, 0.55 * vb));
 			putV(spr(WHITE), vx, vy, (3.2 + 1.4 * gather) * zs, 0.95);
+			// its own look, the same in 05 and at the centre of 06: a warm corona and a ring of motes gathering round it
+			{
+				const ringIn = smooth(1.4, 4.2, t0);
+				for (let k = 0; k < 12; k++) {
+					const an = (k / 12) * TAU + sec * 0.22;
+					const rx = Math.cos(an) * (17 + 7 * gather) * zs;
+					const ry = Math.sin(an) * (17 + 7 * gather) * zs * 0.6;
+					putV(spr([255, 226, 176]), vx + rx * cr - ry * sr, vy + rx * sr + ry * cr, 1.7 * zs, ringIn * (0.5 + 0.4 * Math.sin(sec * 1.6 + k * 1.9)));
+				}
+			}
 
 			// 06: the Scrambler Token grows out of that world's light, just above it
-			const S = compact ? 60 : 40;
+			const S = compact ? 110 : 64;
 			const cxp = vx;
-			const cyp = vy - (S * 0.85 + 16 * (compact ? 1.4 : 1));
+			const cyp = vy - (S * 0.85 + 18);
 			if (t1 > 1.2 && A > 0.004) {
 				// a line of white light rises from the world, then the shape, then the metal
 				const rise = easeOut(ramp(1.3, 1.9, t1));
@@ -901,7 +975,23 @@ export function createOutbreak(): Figure {
 					ctx.restore();
 				}
 				const form = smooth(1.8, 2.6, t1);
-				put(spr([255, 252, 246]), cxp, cyp, S * 2.6, 0.22 * form + 0.12 * smooth(1.5, 2.0, t1) * (1 - form));
+				put(spr([255, 252, 246]), cxp, cyp, S * 2.0, 0.16 * form + 0.1 * smooth(1.5, 2.0, t1) * (1 - form));
+				// a faint warm column down to the world, so the token hangs over it
+				if (form > 0.01) {
+					const cg = ctx.createLinearGradient(cxp, cyp, vx, vy);
+					cg.addColorStop(0, css([255, 226, 170], 0));
+					cg.addColorStop(0.3, css([255, 226, 170], 0.15));
+					cg.addColorStop(1, css([255, 226, 170], 0.15));
+					ctx.globalCompositeOperation = 'lighter';
+					ctx.globalAlpha = clamp(form * A);
+					ctx.strokeStyle = cg;
+					ctx.lineWidth = S * 0.22;
+					ctx.beginPath();
+					ctx.moveTo(cxp, cyp);
+					ctx.lineTo(vx, vy);
+					ctx.stroke();
+					ctx.globalCompositeOperation = 'source-over';
+				}
 			}
 
 			// tokens carried home: warm-white glints leave the token in arcs to nearby dim worlds, each with a trail
@@ -921,13 +1011,25 @@ export function createOutbreak(): Figure {
 					return [cxp + dx * k + nx * bb, cyp + dy * k + ny * bb] as const;
 				};
 				const env = smooth(0, 0.06, u) * (1 - smooth(0.94, 1, u));
-				for (let s2 = 16; s2 >= 1; s2--) {
-					const p = at(Math.max(0, u - s2 * 0.02));
-					put(spr([255, 226, 170]), p[0], p[1], (2.6 - s2 * 0.08) * zs, 0.5 * env * (1 - s2 / 17));
+				// a continuous curved streak that fades over about 0.6 s behind the head
+				const tail = 0.6 / gl.fly;
+				let last = at(Math.max(0, u - tail));
+				ctx.lineCap = 'butt';
+				for (let s2 = 1; s2 <= 26; s2++) {
+					const f = s2 / 26;
+					const p = at(Math.max(0, u - tail * (1 - f)));
+					ctx.globalAlpha = clamp(0.75 * env * f * f * A);
+					ctx.strokeStyle = css([255, 232, 184]);
+					ctx.lineWidth = (0.8 + 3 * f) * zs;
+					ctx.beginPath();
+					ctx.moveTo(last[0], last[1]);
+					ctx.lineTo(p[0], p[1]);
+					ctx.stroke();
+					last = p;
 				}
 				const p = at(u);
-				put(spr([255, 232, 180]), p[0], p[1], 8 * zs, 0.5 * env);
-				put(spr(WHITE), p[0], p[1], 2.6 * zs, env);
+				put(spr([255, 232, 180]), p[0], p[1], 13 * zs, 0.6 * env);
+				put(spr(WHITE), p[0], p[1], 3.8 * zs, env);
 			}
 			ctx.globalCompositeOperation = 'source-over';
 
@@ -961,7 +1063,7 @@ export function createOutbreak(): Figure {
 					ctx.globalCompositeOperation = 'lighter';
 					const br = 0.6 + 0.2 * Math.sin(sec * 1.4);
 					put(spr([255, 250, 242]), cxp, cyp, S * 0.62 * (0.92 + 0.12 * br), form * br * 0.7);
-					put(spr(WHITE), cxp, cyp, S * 0.2, form * 0.95);
+					put(spr(WHITE), cxp, cyp, S * 0.16, form * 0.6);
 					ctx.globalCompositeOperation = 'source-over';
 				}
 			}
