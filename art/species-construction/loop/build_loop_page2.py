@@ -12,7 +12,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from build_loop_page import A, EV, flat, uri, view_row
+from build_loop_page import A, EV, clip, flat, uri, view_row
 
 ROOT = Path(__file__).resolve().parents[3]
 LOOP = ROOT/'docs/design/species-construction/akinza/loop'
@@ -21,11 +21,6 @@ PACKETS = A/'loop/packets'
 
 def esc(text):
     return html.escape(str(text if text is not None else ''))
-
-
-def clip(text, n=420):
-    text = ' '.join(str(text or '').split())
-    return text if len(text) <= n else text[:n].rsplit(' ', 1)[0]+'…'
 
 
 def fmt(v):
@@ -151,7 +146,7 @@ td.target.up {{ background:var(--viable-tint); }} td.target.miss {{ color:var(--
   <header>
     <div class="eyebrow">Akinza construction loop · version 2</div>
     <h1>{'Round ' + str(last['round']) if last else 'Checklist baseline'}</h1>
-    <p class="muted">Rebuilt exactly from the lost files, then judged on a checklist of 61 concrete criteria. Head and body are worked in parallel; builders check their own silhouettes before the Opus critic judges. Follow-along only: this is not an approval request.</p>
+    <p class="muted">Rebuilt exactly from the lost files, then judged on a checklist of {sum(len(v) for v in rubric['regions'].values())} concrete criteria. Head and body are worked in parallel; builders check their own silhouettes before the Opus critic judges. Follow-along only: this is not an approval request.</p>
     <div class="status">{''.join(chips)}</div>
   </header>
   <section><h2>Latest</h2><div class="cards">{cards}</div></section>
