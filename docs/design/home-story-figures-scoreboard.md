@@ -136,3 +136,11 @@ Builder: 02's world budgeted so formed seeds own it (ring, dissolve, a pulse dow
 Generators critic: Glance 8, Lore 8.5 (clears), Subject 8, Setting 8.5 (clears), Motion 8, Changes 8, Finish 8, Phone 8. Remaining: the gel cross-fades through gray; seeds frozen in the hold; straps crossing seeds; the lattice still busy. Subject and Finish at the compositing ceiling (8) pending Nick.
 Outbreak critic: Glance 8, Lore 8 (the guide from the star stays drawn after landing, a beam, against the fact-check), Subject 8, Setting 8, Motion 8.5 (clears), Changes 8, Finish 7.5, Phone 8.
 Blind readers (fresh): 02 "the liquid in the capsule changes color, and so do the shapes floating in it ... they look like creatures or embryos" (medium); 06 "a glowing crystal at its base powers on, the capsule fills with green light, and dark rounded shapes like embryos or pods appear in it ... the red haze behind it grows brighter" (the red read as growing); 03 and 05 pass.
+
+### Round 12 (2026-09-29)
+
+Builder: 02's gel dims in the old color and relights in the new from the pulse (no gray); seeds breathe, drift and pulse; three seeds, one per bay; the lattice at 2 Hz; the vat rim lit from inside with a dark lip; in 06 no beam, and the red's retreat as its own beat behind a front from the chip.
+Generators critic: Glance 8.5 (clears), Lore 8.5, Setting 8.5, Motion 8.5, Phone 8.5 (all clear), Changes 8, Subject 8, Finish 8. Subject and Finish: the fourth time raised as a design decision for Nick (paint the machine, or waive in words).
+Outbreak critic: Lore 8.5, Motion 8.5 (clear), Glance 8, Subject 8, Changes 8, Setting 7.5, Finish 7.5, Phone 7.5. The cleared ground is darker than the red outside it, a black platter, so the red looks brighter.
+Blind readers (fresh): 02 "as if the machine is producing something different for each place" (medium): passes; 03 passes (high); 05 passes; 06 "a glowing hexagonal chip or token is set into the base of a tall machine ... the tank fills with glowing green liquid ... something is clearly being made or grown in the tank ... warm light spreads over the ground" (medium to high): passes on the chip and the life; the red's retreat still not named.
+Viewer (mine): the arrival tint held longer (0.76 s, 0.34 falling to 0.26 before it fades) so the violet carry into 04 shows in page frames.
