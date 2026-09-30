@@ -3,7 +3,7 @@ import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { getSpeciesTypeSymbol } from '../../../utils/svgUtil';
-import { InfoGlyph, HiddenGlyph, RoleGlyph, PIECE_RIM } from './reclamationGlyphs';
+import { InfoGlyph, HiddenGlyph, RoleGlyph, SortGlyph, PIECE_RIM } from './reclamationGlyphs';
 import { speciesLabel, roleSentence, rolePower, formatBlow, formatHold, formatHoldShown, matchupWords } from './reclamationNarration';
 import { elementOf } from './reclamationVocabulary';
 import { whyWords, factorText } from './reclamationInstruments';
@@ -143,17 +143,43 @@ function cellTitle(site, cell, facts, matchups) {
 	return parts.join('. ');
 }
 
-// the largest blow it would land on a rival at a world; null when none stands there (a sweep's lands include your own, which do not count)
-export function blowAt(view, record, site, you, role) {
+// the largest blow it would land on a rival at a world, and on whom; null when none stands there (a sweep's lands include your own, which do not count)
+export function blowTargetAt(view, record, site, you, role) {
 	if (role !== 'strike' && role !== 'sweep') {
 		return null;
 	}
 	const { lands } = blowsAt(view, record, site, you, view.players[you].sentCount);
-	const theirs = Object.values(lands).filter((l) => !l.mine).map((l) => l.power);
-	return theirs.length ? Math.max(...theirs) : null;
+	let best = null;
+	Object.entries(lands).forEach(([recordId, l]) => {
+		if (!l.mine && (!best || l.power > best.power)) {
+			best = { power: l.power, recordId };
+		}
+	});
+	if (!best) {
+		return null;
+	}
+	const theirs = flattenBoardRecord(view, site, best.recordId);
+	return { ...best, element: elementOf(theirs) };
 }
 
-function WorldCell({ site, cell, facts, matchups, scale, focus, role }) {
+// the record of a creature standing at a world (the blow's target), from the public board
+function flattenBoardRecord(view, site, recordId) {
+	const seats = (view.board && view.board[site.id]) || {};
+	for (const seat of Object.keys(seats)) {
+		const hit = (seats[seat] || []).find((e) => e.record && e.record.id === recordId);
+		if (hit) {
+			return hit.record;
+		}
+	}
+	return null;
+}
+
+export function blowAt(view, record, site, you, role) {
+	const t = blowTargetAt(view, record, site, you, role);
+	return t ? t.power : null;
+}
+
+function WorldCell({ site, cell, facts, matchups, scale, focus, role, target }) {
 	const el = site.world.element;
 	const classes = ['rec-squad-cell', `g-el-${el}`];
 	if (!facts) {
@@ -162,7 +188,8 @@ function WorldCell({ site, cell, facts, matchups, scale, focus, role }) {
 	}
 	if (facts.takes) classes.push('rec-squad-cell--takes');
 	if (facts.gain < -EPS) classes.push('rec-squad-cell--costs');
-	if (focus) classes.push(focus === site.id ? 'rec-squad-cell--focus' : 'rec-squad-cell--dim');
+	// PASS 76, round 4: the pointed world's column is tinted; the others keep their ink (greying them read as broken)
+	if (focus && focus === site.id) classes.push('rec-squad-cell--focus');
 	const s = scale > 0 ? scale : 24;
 	const fill = Math.max(0, Math.min(1, Math.max(0, facts.gain) / s));
 	const tick = facts.clear > EPS ? Math.max(0, Math.min(1, facts.clear / s)) : null;
@@ -180,11 +207,12 @@ function WorldCell({ site, cell, facts, matchups, scale, focus, role }) {
 			<span className="rec-squad-cell-read">
 				<b className="rec-squad-num g-mono">{shown}</b>
 				{facts.shift && <i className={`rec-squad-shift rec-squad-shift--${facts.shift}`} data-shift={facts.shift} aria-hidden="true">{facts.shift === 'up' ? '▲' : '▼'}</i>}
-				{/* the blow itself, not the factor: the creature's act glyph and the number it would land on a rival here, so it reads against the act column's number; the "+N" is the hold and does not include it */}
+				{/* PASS 76, round 4: the blow is drawn as the board draws it on a rival (pass 73's dashed chip): the creature's act glyph and the number it would land, then the badge of the rival it lands on, so it cannot be read as a second "+N". The "+N" is the hold and does not include it. */}
 				{facts.blow !== null && (
-					<span className={`rec-squad-chartrun rec-squad-chartrun--${facts.blowTone}`}>
+					<span className={`rec-squad-chartrun rec-squad-chartrun--${facts.blowTone}`} data-blow-on={target ? target.recordId : undefined}>
 						<RoleGlyph role={role} />
 						<i className="rec-squad-chart g-mono" data-chart={facts.chart || 1} data-blow={formatBlow(facts.blow)}>{formatBlow(facts.blow)}</i>
+						{target && target.element && <XalianTypeSymbolBadge size={10} type={target.element} classes="rec-squad-chart-target" />}
 					</span>
 				)}
 			</span>
@@ -264,8 +292,9 @@ function Row({ record, read, view, you, sites, fitRow, scale, focusSiteId, armed
 					}
 					const cell = fitRow ? fitRow[site.id] : null;
 					const matchups = cell ? matchupsAt(view, site, record, read.role, opponent) : [];
-					const blow = cell ? blowAt(view, record, site, you, read.role) : null;
-					return <WorldCell key={site.id} site={site} cell={cell} facts={cellFacts(cell, matchups, read.role, blow, read.power)} matchups={matchups} scale={scale} focus={kept ? null : focusSiteId} role={read.role} />;
+					const target = cell ? blowTargetAt(view, record, site, you, read.role) : null;
+					const blow = target ? target.power : null;
+					return <WorldCell key={site.id} site={site} cell={cell} facts={cellFacts(cell, matchups, read.role, blow, read.power)} matchups={matchups} scale={scale} focus={kept ? null : focusSiteId} role={read.role} target={target} />;
 				})}
 			</button>
 			<button type="button" className="rec-squad-read" onClick={(e) => { e.stopPropagation(); onInspect && onInspect(record); }} title="Read this creature's dossier" aria-label={`Read ${speciesLabel(record)}'s dossier`} data-read={record.id}>
@@ -294,8 +323,8 @@ function Header({ sites, sortSiteId, onSort }) {
 						data-squad-sort={site.id}
 					>
 						{getSpeciesTypeSymbol(site.world.element, true, 14, 'rec-squad-head-symbol')}
-						{/* a faint caret says the symbol sorts; it lights when the squad is sorted by this world */}
-						<i className="rec-squad-head-sorted" aria-hidden="true">{'▾'}</i>
+						{/* the sort icon (descending bars) says the symbol sorts; it lights when the squad is sorted by this world */}
+						<SortGlyph className="rec-squad-head-sorted" />
 					</button>
 				))}
 			</div>

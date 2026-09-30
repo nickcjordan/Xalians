@@ -11,7 +11,11 @@ A UI pass reaches Nick only once it clears a set bar, measured by readers who ha
 ## The bar
 
 A round passes only when all three of these hold:
-1. **Three fresh Opus readers each score the squad 8 of 10 or higher** for how quickly it lets them decide which creature to send where.
+1. **Three fresh Opus readers each give the squad 8 of 10 or higher on both scores:**
+   - **Finding:** how quickly they can find each fact they would weigh in choosing which creature to send where.
+   - **Intuitive:** how much of what the panel shows they understood without anyone explaining it.
+
+   Nick, 2026-09-30, after three rounds held at 6: "it should score how quickly it can find facts. Things should be intuitive". Rounds 1 to 3 scored how quickly the panel let a reader decide. Deciding is the player's own judgment, which pass 72 and the no-suggestions rule leave to them on purpose.
 2. **At least 9 in 10 of their factual answers are right,** checked against the engine's own numbers (see Ground truth).
 3. **No reader names the same confusion** a previous round already tried to fix. A repeated top finding is a design decision, and it goes to Nick as a question (see `svg-plate-review-loop` in memory: a repeated top finding means a composition decision).
 
@@ -60,7 +64,10 @@ A round passes only when all three of these hold:
 - "What happened to the rest?"
 - "What does a ▲ mean?"
 
-Each answer states how sure the reader is and quotes what on screen led to it. The last two items are a 1 to 10 score and the single thing that most slows the reader down.
+Each answer states how sure the reader is and quotes what on screen led to it. From round 4, the last items are:
+- the two 1 to 10 scores, Finding and Intuitive;
+- the single thing that most slows the reader's finding;
+- every mark the reader could not interpret.
 
 ## Ground truth
 
@@ -151,5 +158,32 @@ The orchestrator scores each factual answer right or wrong against that JSON. It
   - a mark on the best creature for each world (affordances: no suggestions).
 
   The score question asks how fast the panel lets a reader decide. Under these rules, deciding is the player's own judgment, so the score likely cannot pass 8 by changing how the facts are drawn. Per the bar's third condition, a repeated top finding is a design decision, so it goes to Nick.
+
+| 4 | 101 | Finding 6, 6, 7; Intuitive 5, 5, 5 | 36 of 36 (100%) | two look-alike numbers in a cell, with no sign of whom the hit lands on (3 of 3); the column sort caret, the rival tick and the grey cells while pointing, each unread by 3 of 3 | the hit is drawn as the board's dashed blow chip with its target's element badge; a sort icon; the tick gets a gauge cap; no grey cells, the pointed column is tinted |
+
+### Round 4 notes (seed 101, the new rubric)
+
+- **This round is the baseline for Nick's rubric** (Finding and Intuitive), on the round 3 build.
+- **Accuracy stayed at 100%.**
+- **Intuitive is the gap: 5 from all three readers.** Their lists of unread marks repeat each other:
+  - the header caret, unread in every round since pass 75;
+  - the rival tick;
+  - the grey cells while a world is pointed at;
+  - the head strip: the turn arrow, the pawn, "0/5" with its dots and flags, the "11/11" tally, and "STAKE ×2".
+- **The head strip is the side row of pass 65,** shared with the rival's row at the top of the table. It is left for its own pass if round 5 shows it is what holds Intuitive down.
+- **Budget:** about 1.07M of the 1.5M Opus cap is spent after this round, so round 5 is the last under the cap.
+
+| 5 | 113 | Finding 7, 7, 6; Intuitive 5, 5, 5 | 39 of 39 (100%) | the role symbols, the sort icon and the head strip's counters still need guessing (3 of 3); every guess was right | stopped: the Opus budget is spent (about 1.34M of 1.5M), and the question goes to Nick (below) |
+
+### Round 5 notes (seed 113)
+
+- **Finding rose to 7, 7, 6.** Every hit now reads as the board's blow chip. All three readers named its target, by the badge matching the rival's piece, and all found the three creatures whose bars pass the rival's tick.
+- **Intuitive held at 5 for all three,** as in round 4. Each reader guessed every symbol right, yet still listed them as marks they could not interpret, because nothing confirmed a guess:
+  - the role symbols (↗ strike, ✳ burst, the bolster's lift);
+  - the sort icon;
+  - ▲/▼;
+  - the tick;
+  - the head strip's turn arrow, pawn, "0/5" and "11/11".
+- **Intuitive likely needs confirmation, not a better symbol.** A symbol a reader decodes right but cannot confirm still scores as not self-evident. What could confirm them is the game's own legend, the "?" key a new player sees, or a word or two on the squad itself. Which of those is allowed is Nick's call, since the affordances rule says no labels on the board.
 
 - **Harness note: the fixed policy loses quickly.** Seeds 41, 43, 53, 61 and 67 ended at 1 to 5 worlds in round 2, before the round 3 capture, so the round 2 seed was 71.

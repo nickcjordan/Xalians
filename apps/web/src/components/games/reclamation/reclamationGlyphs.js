@@ -351,3 +351,13 @@ export function InstinctGlyph({ lane, className }) {
 		</svg>
 	);
 }
+
+// the sort key on a column head: bars of falling length beside a down arrow (a descending sort), as a reader knows it from any table
+export function SortGlyph({ className }) {
+	return (
+		<svg className={`rec-glyph rec-glyph--sort${className ? ` ${className}` : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+			<path d="M3 6h10" /><path d="M3 12h7" /><path d="M3 18h4" />
+			<path d="M18 5v14" /><path d="m14.5 15.5 3.5 3.5 3.5-3.5" />
+		</svg>
+	);
+}

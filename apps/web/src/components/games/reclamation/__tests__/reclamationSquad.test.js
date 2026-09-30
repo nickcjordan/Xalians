@@ -9,7 +9,7 @@ import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation'
 import { fitTable, fitScale } from '../reclamationFit';
 import { blowsAt } from '../reclamationPreview';
 import { formatBlow } from '../reclamationNarration';
-import ReclamationSquad, { SquadGone, squadOrder, cellFacts, blowAt, columnsFor, readOf, slotStateOf } from '../reclamationSquad';
+import ReclamationSquad, { SquadGone, squadOrder, cellFacts, blowAt, blowTargetAt, columnsFor, readOf, slotStateOf } from '../reclamationSquad';
 
 /*
 	PASS 75, THE SQUAD AS A ROSTER (docs/design/reclamation-squad-roster.md). The squad lists only
@@ -177,6 +177,12 @@ describe('the roster on a real game', () => {
 						expect(node).not.toBeNull();
 						expect(node.getAttribute('data-blow')).toBe(formatBlow(Math.max(...theirs)));
 						expect(blowAt(view, record, site, seat, role)).toBe(Math.max(...theirs));
+						// round 4: the chip carries the act glyph, the number and the badge of the rival it lands on
+						const chip = node.parentElement;
+						const target = blowTargetAt(view, record, site, seat, role);
+						expect(chip.querySelector(`.rec-glyph--role-${role}`)).not.toBeNull();
+						expect(chip.getAttribute('data-blow-on')).toBe(target.recordId);
+						if (target.element) expect(chip.querySelector('.rec-squad-chart-target')).not.toBeNull();
 						withBlow += 1;
 					} else {
 						expect(node).toBeNull();
@@ -225,6 +231,18 @@ describe('the roster on a real game', () => {
 		expect(order()).toEqual(before);
 		const reads = Object.fromEntries(match.players[seat].roster.map((r) => [r.id, readOf(r, view)]));
 		expect(before).toEqual(squadOrder(match.players[seat].roster, reads, fits, null).map((r) => r.id));
+	});
+
+	it('draws a sort icon on each column head, and no cell greys while a world is pointed at', () => {
+		const match = matchFor(13);
+		const view = getPublicState(match, match.turn);
+		const seat = match.turn;
+		const fits = fitTable(match, seat, match.players[seat].roster);
+		const site = view.frame.sites[1].id;
+		const { container } = render(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={fitScale(fits)} focusSiteId={site} onArm={() => {}} onHover={() => {}} />);
+		expect(container.querySelectorAll('[data-squad-sort] .rec-glyph--sort').length).toBe(container.querySelectorAll('[data-squad-sort]').length);
+		expect(container.querySelector('.rec-squad-cell--dim')).toBeNull();
+		expect(container.querySelector('.rec-squad-cell--focus')).not.toBeNull();
 	});
 
 	it('lifts a row on a press and keeps a reserve row from being lifted', () => {

@@ -8310,9 +8310,12 @@
 /* under the number: the bar, alone in its cell (pass 76: the factor moved up beside the number it multiplies) */
 .rec-console--match[data-terminal] .rec-squad-cell-foot { display: flex; align-items: center; min-width: 0; height: calc(4px * var(--rec-scale)); }
 /* the chart's factor, in the number's own run behind the creature's act glyph: "its attack x2" */
-.rec-console--match[data-terminal] .rec-squad-chartrun { display: inline-flex; align-items: baseline; gap: 0.1em; flex: 0 1 auto; min-width: 0; margin-left: 0.35em; font-size: 1.15em; line-height: 1; color: var(--g-ink-mid); }
+/* PASS 76, round 4: drawn as the board's blow chip (.rec-figure-blow): dashed outline, the act glyph, the number, then the rival it lands on */
+.rec-console--match[data-terminal] .rec-squad-chartrun { display: inline-flex; align-items: center; gap: 0.15em; flex: 0 1 auto; min-width: 0; margin-left: 0.3em; padding: 0.05em 0.25em; font-size: 0.95em; line-height: 1.15; color: var(--g-ink-mid); border: 1px dashed color-mix(in srgb, var(--rec-you) 70%, transparent); background: color-mix(in srgb, var(--g-hull-lo) 86%, transparent); }
+.rec-console--match[data-terminal] .rec-squad-chart-target { position: static !important; flex: 0 0 auto; display: inline-grid !important; place-items: center; width: 0.95em !important; height: 0.95em !important; border-radius: 50%; overflow: hidden; filter: none !important; }
+.rec-console--match[data-terminal] .rec-squad-chart-target svg { width: 78%; height: 78%; }
 .rec-console--match[data-terminal] .rec-squad-chartrun .rec-glyph { width: 0.85em; height: 0.85em; flex: 0 0 auto; align-self: center; }
-.rec-console--match[data-terminal] .rec-squad-chart { font-style: normal; font-size: 0.85em; line-height: 1; color: inherit; }
+.rec-console--match[data-terminal] .rec-squad-chart { font-style: normal; font-size: 0.9em; line-height: 1; color: inherit; }
 .rec-console--match[data-terminal] .rec-squad-chartrun--above { color: var(--g-ink); font-weight: 700; }
 .rec-console--match[data-terminal] .rec-squad-chartrun--below { color: var(--g-ink-mid); }
 .rec-console--match[data-terminal] .rec-squad-bar {
@@ -8331,18 +8334,30 @@
 	background: color-mix(in srgb, var(--g-el) 80%, transparent);
 }
 /* the rival's mark, as on the world's standing: pass it and you hold more there */
+/* the rival's mark, as on the world's standing: pass it and you hold more there. Its cap sits under
+   the bar, pointing up at the mark, so it never crosses the number above (pass 76, round 4) */
 .rec-console--match[data-terminal] .rec-squad-tick {
 	position: absolute;
 	top: -2px;
-	bottom: -2px;
+	bottom: -3px;
 	left: calc(var(--sq-tick, 0) * 100%);
 	width: 2px;
 	margin-left: -1px;
 	background: var(--g-ink);
 }
+.rec-console--match[data-terminal] .rec-squad-tick::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: -4px;
+	transform: translateX(-50%);
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+	border-bottom: 4px solid var(--g-ink);
+}
 .rec-console--match[data-terminal] .rec-squad-cell--takes .rec-squad-fill { background: var(--g-el); box-shadow: 0 0 6px color-mix(in srgb, var(--g-el) 60%, transparent); }
 .rec-console--match[data-terminal] .rec-squad-cell--costs .rec-squad-num { color: var(--rec-loss); }
-.rec-console--match[data-terminal] .rec-squad-cell--dim { opacity: 0.35; }
+.rec-console--match[data-terminal] .rec-squad-cell--focus { background: color-mix(in srgb, var(--g-el) 10%, transparent); }
 .rec-console--match[data-terminal] .rec-squad-cell--none { opacity: 0.2; }
 
 /* the dossier key */
@@ -8382,9 +8397,9 @@
 .rec-console--match[data-terminal] .rec-squad-head-world--on { opacity: 1; }
 .rec-console--match[data-terminal] .rec-squad-head-world--on { border-bottom-color: var(--g-el); }
 .rec-console--match[data-terminal] .rec-squad-head-symbol { width: calc(14px * var(--rec-scale)) !important; height: calc(14px * var(--rec-scale)) !important; }
-.rec-console--match[data-terminal] .rec-squad-head-sorted { font-style: normal; font-size: 0.75em; color: var(--g-ink-low); opacity: 0.6; }
-.rec-console--match[data-terminal] .rec-squad-head-world:hover .rec-squad-head-sorted { opacity: 1; }
-.rec-console--match[data-terminal] .rec-squad-head-world--on .rec-squad-head-sorted { color: var(--g-ink); opacity: 1; }
+.rec-console--match[data-terminal] .rec-squad-head-sorted { flex: 0 0 auto; width: calc(11px * var(--rec-scale)); height: calc(11px * var(--rec-scale)); color: var(--g-ink-mid); }
+.rec-console--match[data-terminal] .rec-squad-head-world:hover .rec-squad-head-sorted { color: var(--g-ink); }
+.rec-console--match[data-terminal] .rec-squad-head-world--on .rec-squad-head-sorted { color: var(--g-ink); }
 
 /* the creatures already used, small in the squad's head: on a world with its color under them, fallen crossed, spent plain */
 .rec-console--match[data-terminal] .rec-squad-gone {
@@ -8444,6 +8459,11 @@
 	.rec-console--match[data-terminal] .rec-squad-shift { grid-column: 2; grid-row: 1; align-self: baseline; }
 	.rec-console--match[data-terminal] .rec-squad-cell-foot { grid-column: 1 / -1; grid-row: 2; }
 	.rec-console--match[data-terminal] .rec-squad-chartrun { grid-column: 1 / -1; grid-row: 3; margin-left: 0; font-size: max(1.15em, 10px); overflow: hidden; }
+	/* the blow's chip sits right under the bar here, so the mark keeps to the bar and drops its cap */
+	.rec-console--match[data-terminal] .rec-squad-tick { top: -2px; bottom: -2px; }
+	.rec-console--match[data-terminal] .rec-squad-tick::before { display: none; }
+	/* a phone's chip has room for the act and the number only; the rival it lands on is on the world above */
+	.rec-console--match[data-terminal] .rec-squad-chart-target { display: none !important; }
 	.rec-console--match[data-terminal] .rec-squad-gone { display: none; }
 	/* every key a thumb can press stands 32 pixels: six rows of 32 fill a phone's squad, so the head of
 	   symbols gives way (the cells wear their worlds' colors in the worlds' order) and the dossier key
