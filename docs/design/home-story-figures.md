@@ -81,6 +81,12 @@ Beat 5, "Designed by APEX to target the genome", and beat 6, "The only way to sa
 - Draw time per frame, measured on the laptop profile (1366 by 640) in headed Chrome: under 8 ms on average and under 16 ms at the 95th percentile. Measure it with a round's harness page before shipping; never guess.
 - No new network requests: figures are drawn in code, nothing is fetched.
 
-## 10. The round harness (build first)
+## 10. The round harness
 
-Before round 1 of any figure: a standalone study page that runs one figure outside the site, for the graders and for Nick. `apps/web/dev/figureStudy.ts` bundles the figure module with a small stage (the same oval mask, the figure's beats as keys, Replay, a draw-time readout) into one HTML file (`node scripts/design/export-figure-study.cjs <figure>` writes `untracked/figure-study/<figure>.html`), which is what gets published as the round's artifact. Close frames and change sheets still come from the dev site (`scripts/design/snap-figure-close.cjs`, `scripts/design/snap-figures.cjs`), since the changes need the real viewer.
+A standalone study page runs one figure outside the site, for the graders, the builders and Nick (built 2026-09-29).
+
+- `apps/web/dev/figureStudy.ts` runs the figure on the stage the viewer gives it (the same oval fade, film rate while it only plays, full rate while it is on its way somewhere), at the wide place and the phone's compact place side by side, with its beats as keys (a later beat runs on, an earlier one or Replay enters afresh), Pull back, Settled (the reduced-motion frame), and a draw-time readout per place (average and 95th percentile over the last 120 frames; it reads one pixel back after each frame so the canvas work is inside the timing). The dev server also serves it at `/dev/figureStudy.html?figure=<key>`.
+- `node scripts/design/export-figure-study.cjs <figure>` bundles it into one file, `untracked/figure-study/<figure>.html`, with every round from `untracked/figure-study/<figure>/rounds.json` (scores against the bar, the blind reader's sentences, what changed, what is open, frames embedded as data URIs). That file is what a round publishes as its artifact.
+- `node scripts/design/snap-figure-study.cjs <figure> "<spec>"` draws stills from the exported page into a contact sheet: `beat@seconds` items joined by `;`, `>` runs on into the next beat without a reset, a leading `c` draws the compact layout (e.g. `0@4.2;0@9.6>1@2.6;c0@4.2`). `--each <dir>` writes one uncaptioned file per still instead, named `01.png` onward, for the blind reader.
+- Close frames and change sheets still come from the dev site (`scripts/design/snap-figure-close.cjs`, `scripts/design/snap-figures.cjs`), since the changes need the real viewer.
+- Draw time from the headless shell is software rendering and reads high; the budget in section 9 is measured in headed Chrome.
