@@ -19,6 +19,8 @@ type Round = {
 	reader?: string[];
 	changes?: string[];
 	open?: string[];
+	/** A decision the round needs from Nick: the question, then the options. */
+	decision?: { question: string; options: string[] };
 	frames?: { src: string; caption?: string }[];
 };
 type Study = { figure: FigureKey; title?: string; beats?: string[]; rounds?: Round[] };
@@ -92,7 +94,9 @@ body { margin: 0; font: 15px/1.5 'Atkinson Hyperlegible', system-ui, sans-serif;
 .scores td.n { font-family: 'Martian Mono', ui-monospace, monospace; }
 .scores td.ok { color: var(--mint); }
 .scores td.under { color: var(--under); }
-.round ul { margin: 0; padding-left: 20px; max-width: 72ch; }
+.round ul, .round ol { margin: 0; padding-left: 20px; max-width: 72ch; }
+.decision { border: 1px solid var(--mint); background: var(--panel); padding: 14px 16px; display: grid; gap: 8px; max-width: 76ch; }
+.decision p { margin: 0; }
 .round li { margin: 4px 0; }
 .frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; }
 .frames figure { margin: 0; }
@@ -291,6 +295,14 @@ function roundSection(r: Round) {
 	h.append(el('div', { class: 'kicker' }, r.date ? `${r.round}, ${r.date}` : r.round), el('h2', {}, r.round));
 	s.append(h);
 	if (r.summary) s.append(el('p', { class: 'lede' }, r.summary));
+	if (r.decision) {
+		const d = el('div', { class: 'decision' });
+		d.append(el('div', { class: 'kicker' }, 'Needs your call'), el('p', {}, r.decision.question));
+		const ol = el('ol');
+		for (const o of r.decision.options) ol.append(el('li', {}, o));
+		d.append(ol);
+		s.append(d);
+	}
 	if (r.scores) {
 		const t = el('table', { class: 'scores' });
 		const hr = el('tr');

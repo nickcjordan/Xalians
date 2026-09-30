@@ -208,7 +208,14 @@ function soften(o: HTMLCanvasElement, a: number) {
 const ART = ['zolton', 'magmuth', 'krystos', 'poseidas'];
 /** Where in each picture (rows of its 512) the crop starts, so the machine's feet land on the painted ground. */
 const ART_Y0 = [90, 70, 60, 60];
-type Pic = { c: HTMLCanvasElement; light: RGB; side: number };
+type Pic = { c: HTMLCanvasElement; light: RGB; side: number; amb: RGB; sky: RGB };
+/** Traces of building in the paintings (a derrick, an aqueduct, a gantry) that the story has not earned yet, in picture pixels: x, y, rx, ry. */
+const RUINS: [number, number, number, number][][] = [
+	[[55, 195, 55, 60], [125, 268, 40, 26], [42, 262, 30, 26], [495, 203, 18, 24], [578, 215, 14, 24]],
+	[[655, 322, 55, 40], [735, 235, 36, 52], [700, 330, 25, 20]],
+	[[80, 125, 80, 80], [215, 272, 100, 60], [195, 312, 80, 50], [335, 315, 28, 30], [660, 205, 100, 55], [430, 192, 60, 30], [530, 184, 40, 20], [470, 232, 26, 16], [215, 226, 25, 22]],
+	[[102, 138, 30, 36], [165, 148, 10, 10], [645, 150, 14, 18]],
+];
 const pics: (Pic | null)[] = [null, null, null, null];
 const worldSeam = (wi: number): RGB => pics[wi]?.light ?? WORLDS[wi].seam;
 const worldSide = (wi: number) => pics[wi]?.side ?? WORLDS[wi].side;
@@ -219,15 +226,45 @@ function buildPic(wi: number, img: HTMLImageElement) {
 	const g = o.g;
 	const sc = WWD / img.naturalWidth;
 	g.drawImage(img, 0, ART_Y0[wi], img.naturalWidth, PH / sc, 0, 0, WWD, PH);
-	// down to sit behind the machine: darker, a little grayer, softer, the middle held back
+	// paint the traces of building out with the ground round them
+	try {
+		for (const [px, py, rx, ry] of RUINS[wi]) {
+			const ux = px * sc;
+			const uy = (py - ART_Y0[wi]) * sc;
+			const pts = [[-1.5, 0], [1.5, 0], [0, -1.5], [0, 1.5]].map(([dx, dy]) => g.getImageData(clamp(Math.round(ux + dx * rx * sc), 0, WWD - 1), clamp(Math.round(uy + dy * ry * sc), 0, PH - 1), 1, 1).data);
+			const c: RGB = [0, 1, 2].map((k) => pts.reduce((acc, d) => acc + d[k] / 4, 0)) as RGB;
+			for (const kk of [1, 0.7]) {
+				g.save();
+				g.translate(ux, uy);
+				g.scale(1, ry / rx);
+				const bg = g.createRadialGradient(0, 0, 0, 0, 0, rx * sc * 1.25 * kk);
+				bg.addColorStop(0, css(c, 0.97));
+				bg.addColorStop(0.7, css(c, 0.85));
+				bg.addColorStop(1, css(c, 0));
+				g.fillStyle = bg;
+				g.fillRect(-rx * sc * 2, -rx * sc * 2, rx * sc * 4, rx * sc * 4);
+				g.restore();
+			}
+		}
+	} catch {
+		// leave the picture as it is
+	}
+	// pushed back behind the machine: about 2 px of blur, less contrast, darker, a haze over it, the middle held back
+	{
+		const t = offscreen(WWD / 2, PH / 2);
+		if (t) {
+			t.g.drawImage(o.c, 0, 0, t.c.width, t.c.height);
+			g.clearRect(0, 0, WWD, PH);
+			g.drawImage(t.c, 0, 0, WWD, PH);
+		}
+	}
 	g.save();
 	g.globalCompositeOperation = 'source-atop';
-	g.fillStyle = css([60, 64, 74], 0.14);
+	g.fillStyle = css([64, 68, 78], 0.2);
 	g.fillRect(0, 0, WWD, PH);
-	g.fillStyle = css(BLACK, 0.24);
+	g.fillStyle = css(BLACK, 0.22);
 	g.fillRect(0, 0, WWD, PH);
 	g.restore();
-	soften(o.c, 0.55);
 	const cg = g.createRadialGradient(WWD / 2, 300, 60, WWD / 2, 300, 380);
 	cg.addColorStop(0, css([4, 5, 8], 0.3));
 	cg.addColorStop(1, css([4, 5, 8], 0));
@@ -236,6 +273,8 @@ function buildPic(wi: number, img: HTMLImageElement) {
 	// the picture's own light, sampled once: its brightest color and which side it comes from
 	let light = WORLDS[wi].seam;
 	let side = WORLDS[wi].side;
+	let amb: RGB = mixRGB(WORLDS[wi].sky[0], WORLDS[wi].sky[1], 0.5);
+	let sky: RGB = WORLDS[wi].sky[0];
 	try {
 		const t = offscreen(16, 9);
 		if (t) {
@@ -248,6 +287,8 @@ function buildPic(wi: number, img: HTMLImageElement) {
 			const lum = (lo: number, hi: number) => cells.filter((c) => c.x >= lo && c.x < hi).reduce((a2, c) => a2 + c.l, 0);
 			const lft = lum(2, 8);
 			const rgt = lum(8, 14);
+			amb = [0, 1, 2].map((k) => cells.reduce((acc, c) => acc + c.c[k] / 144, 0)) as RGB;
+			sky = [0, 1, 2].map((k) => cells.slice(0, 32).reduce((acc, c) => acc + c.c[k] / 32, 0)) as RGB;
 			light = mixRGB(avg, WHITE, 0.15);
 			side = clamp(((rgt - lft) / (rgt + lft + 1)) * 4, -0.9, 0.9);
 			if (Math.abs(side) < 0.3) side = side < 0 ? -0.3 : 0.3;
@@ -255,7 +296,15 @@ function buildPic(wi: number, img: HTMLImageElement) {
 	} catch {
 		// keep the world's own light
 	}
-	pics[wi] = { c: o.c, light, side };
+	// the haze of the world's own sky between the painting and the machine
+	g.save();
+	g.globalCompositeOperation = 'source-atop';
+	g.fillStyle = css(sky, 0.15);
+	g.fillRect(0, 0, WWD, PH);
+	g.restore();
+	pics[wi] = { c: o.c, light, side, amb, sky };
+	tcache[wi] = undefined;
+	fcache[wi] = undefined;
 	pcache[wi] = undefined;
 }
 
@@ -282,6 +331,51 @@ function loadArt(): Promise<void> {
 		)
 	).then(() => undefined);
 	return artPromise;
+}
+
+/** Weather in front of the machine: rain and spray streak across it, embers and snow drift past. */
+function frontWeather(ctx: Ctx, wi: number, sec: number, a: number) {
+	if (a <= 0.01) return;
+	const key = WORLDS[wi].key;
+	if (key === 'storm') {
+		ctx.strokeStyle = css([200, 210, 230], 0.35 * a);
+		ctx.lineWidth = 1.2;
+		ctx.beginPath();
+		for (let k = 0; k < 22; k++) {
+			const y = ((sec * (520 + hash(k, 1) * 200) + hash(k, 2) * 600) % 600) - 30;
+			const x = hash(k, 3) * 1000 - 20 - y * 0.2;
+			ctx.moveTo(x, y);
+			ctx.lineTo(x - 5, y + 24);
+		}
+		ctx.stroke();
+	}
+	if (key === 'lava') {
+		lighter(ctx, () => {
+			for (let k = 0; k < 14; k++) {
+				const u = ((sec * (30 + hash(k) * 30) + hash(k, 2) * 500) % 500) / 500;
+				glow(ctx, hash(k, 3) * 960 + Math.sin(sec + k) * 14, GROUND + 80 - u * 520, 3 + hash(k, 4) * 3, [255, 150, 80], 0.8 * (1 - u) * a, 'core');
+			}
+		});
+	}
+	if (key === 'ice') {
+		lighter(ctx, () => {
+			for (let k = 0; k < 22; k++) {
+				const y = (sec * (30 + hash(k) * 40) + hash(k, 2) * 600) % 560;
+				glow(ctx, hash(k, 3) * 1000 - y * 0.12 + Math.sin(sec * 0.8 + k) * 12, y, 2.4 + hash(k, 4) * 2, [240, 248, 255], 0.4 * a, 'core');
+			}
+		});
+	}
+	if (key === 'sea') {
+		// spray thrown up along the ledge, some of it reaching the pad
+		ctx.fillStyle = css([226, 240, 242]);
+		for (let k = 0; k < 40; k++) {
+			const u = (sec * (0.6 + hash(k) * 0.6) + hash(k, 2) * 4) % 1.5;
+			if (u > 1) continue;
+			ctx.globalAlpha = 0.3 * Math.sin(u * Math.PI) * a;
+			ctx.fillRect(280 + hash(k, 3) * 400 + u * 10, GROUND + 22 - Math.sin(u * Math.PI) * (16 + hash(k, 4) * 26), 1.8, 1.8);
+		}
+		ctx.globalAlpha = 1;
+	}
 }
 
 type Painter = (f: Ctx, m: Ctx, n: Ctx) => void;
@@ -1062,12 +1156,12 @@ function paintMachine(g: Ctx) {
 	// contact shadow: soft, on the ground it stands on
 	g.save();
 	g.translate(MX, GROUND + 14);
-	g.scale(1, 0.13);
-	const sh = g.createRadialGradient(0, 0, 40, 0, 0, 220);
-	sh.addColorStop(0, css(BLACK, 0.75));
+	g.scale(1, 0.06);
+	const sh = g.createRadialGradient(0, 0, 60, 0, 0, 235);
+	sh.addColorStop(0, css(BLACK, 0.55));
 	sh.addColorStop(1, css(BLACK, 0));
 	g.fillStyle = sh;
-	g.fillRect(-230, -230, 460, 460);
+	g.fillRect(-240, -240, 480, 480);
 	g.restore();
 	// the pad: a worn slab with a lit top edge
 	g.fillStyle = css([16, 18, 19]);
@@ -1312,6 +1406,56 @@ function paintMachine(g: Ctx) {
 	g.stroke();
 }
 
+// The machine seen in a world's light: its cache tinted with that painting's ambient color, its darkest tones lifted
+// to sit with the painting's foreground. Built once per world, after the picture is in.
+const tcache: (HTMLCanvasElement | null | undefined)[] = [];
+function machineTinted(wi: number) {
+	const base = machineCache();
+	const P = wi >= 0 ? pics[wi] : null;
+	if (!base || !P) return base;
+	const hit = tcache[wi];
+	if (hit) return hit;
+	const o = offscreen(base.width, base.height);
+	if (!o) return base;
+	o.g.drawImage(base, 0, 0);
+	o.g.globalCompositeOperation = 'source-atop';
+	o.g.fillStyle = css(mixRGB(P.amb, [60, 66, 78], 0.4), 0.32);
+	o.g.fillRect(0, 0, base.width, base.height);
+	o.g.fillStyle = css([26, 27, 30], 0.12);
+	o.g.fillRect(0, 0, base.width, base.height);
+	return (tcache[wi] = o.c);
+}
+// A strip of the painting's own foreground laid over the pad's lower edge, feathered on top and at its ends.
+const fcache: (HTMLCanvasElement | null | undefined)[] = [];
+const FOOT = { x: MX - 200, y: GROUND + 6, w: 400, h: 24 };
+function footStrip(wi: number) {
+	const P = pics[wi];
+	if (!P) return null;
+	const hit = fcache[wi];
+	if (hit) return hit;
+	const o = offscreen(FOOT.w, FOOT.h);
+	if (!o) return null;
+	const g = o.g;
+	g.drawImage(P.c, FOOT.x - WX0, FOOT.y, FOOT.w, FOOT.h, 0, 0, FOOT.w, FOOT.h);
+	g.fillStyle = css(BLACK, 0.2);
+	g.fillRect(0, 0, FOOT.w, FOOT.h);
+	g.globalCompositeOperation = 'destination-in';
+	const v = g.createLinearGradient(0, 0, 0, FOOT.h);
+	v.addColorStop(0, css(WHITE, 0));
+	v.addColorStop(0.4, css(WHITE, 1));
+	v.addColorStop(1, css(WHITE, 1));
+	g.fillStyle = v;
+	g.fillRect(0, 0, FOOT.w, FOOT.h);
+	const h = g.createLinearGradient(0, 0, FOOT.w, 0);
+	h.addColorStop(0, css(WHITE, 0));
+	h.addColorStop(0.12, css(WHITE, 1));
+	h.addColorStop(0.88, css(WHITE, 1));
+	h.addColorStop(1, css(WHITE, 0));
+	g.fillStyle = h;
+	g.fillRect(0, 0, FOOT.w, FOOT.h);
+	return (fcache[wi] = o.c);
+}
+
 function machineCache() {
 	if (mcache !== undefined) return mcache;
 	const o = offscreen(MC.w * MQ, MC.h * MQ);
@@ -1325,7 +1469,7 @@ function machineCache() {
 type SeedKind = WorldKey | 'genesis' | 'apex';
 // A seed's outline, its radius at angle `th` (y down), for each kind of world. Every one stays a cell: soft,
 // closed, with no fins, limbs or points, only different in how it is proportioned.
-function seedR(kind: SeedKind, th: number, fins = true) {
+function seedR(kind: SeedKind, th: number, fins = true, v = 0) {
 	const w = (x: number) => Math.atan2(Math.sin(x), Math.cos(x));
 	if (kind === 'storm') {
 		// stretched about 2.2 to 1, two swept membranes trailing from the rear
@@ -1339,7 +1483,7 @@ function seedR(kind: SeedKind, th: number, fins = true) {
 		// six-sided, walled
 		// rounded corners, bowed edges: half hexagon, half circle
 		const q = ((th % (Math.PI / 3)) + Math.PI / 3) % (Math.PI / 3);
-		return mix((1.0 / Math.cos(q - Math.PI / 6)) * 0.9, 0.98, 0.55);
+		return mix((1.0 / Math.cos(q - Math.PI / 6)) * 0.9, 0.98, 0.55) * (1 + 0.11 * Math.cos(3 * th - v) + 0.06 * Math.cos(2 * th + 2 * v));
 	}
 	if (kind === 'ice') return 0.55 + 0.47 * Math.pow((1 + Math.cos(6 * th)) / 2, 5); // six spikes at 1.6 times the body
 	if (kind === 'sea') return Math.sin(th) < 0 ? 1 : Math.min(1.15, 0.45 / Math.max(0.22, Math.abs(Math.sin(th)))) * (1 + 0.12 * Math.abs(Math.sin(7 * th))); // a bell with a scalloped hem
@@ -1375,6 +1519,12 @@ type MachineLook = {
 	reading: number;
 	dishCol: RGB;
 	needle: number;
+	/** Which world's painting it stands in (its tint and ground), or -1. */
+	world: number;
+	/** 0 to 1: how much orange light comes up from below (lava). */
+	under: number;
+	/** 0 to 1: a lightning flash lifting it. */
+	flash: number;
 };
 
 const MEMBRANE_N = 30;
@@ -1391,10 +1541,12 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 		glow(ctx, side * 60, 0, 260, light, 0.16 * a);
 	});
 	ctx.restore();
-	const mc = machineCache();
+	const mc = machineTinted(S.world);
 	if (mc) {
 		ctx.globalAlpha = a;
 		ctx.drawImage(mc, MC.x, MC.y, MC.w, MC.h);
+		const fs2 = S.world >= 0 ? footStrip(S.world) : null;
+		if (fs2) ctx.drawImage(fs2, FOOT.x, FOOT.y, FOOT.w, FOOT.h);
 		ctx.globalAlpha = 1;
 	}
 	lighter(ctx, () => {
@@ -1412,6 +1564,17 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	wash.addColorStop(1, css(light, 0));
 	ctx.fillStyle = wash;
 	ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
+	if (S.under > 0.01) {
+		const ug = ctx.createLinearGradient(0, BODY.bot, 0, BODY.bot - 110);
+		ug.addColorStop(0, css([255, 120, 50], 0.38 * S.under * a));
+		ug.addColorStop(1, css([255, 120, 50], 0));
+		ctx.fillStyle = ug;
+		ctx.fillRect(BODY.x0, BODY.bot - 110, BODY.x1 - BODY.x0, 110);
+	}
+	if (S.flash > 0.01) {
+		ctx.fillStyle = css([200, 208, 255], 0.25 * S.flash * a);
+		ctx.fillRect(BODY.x0, BODY.top, BODY.x1 - BODY.x0, BODY.bot - BODY.top);
+	}
 	const spill = ctx.createRadialGradient(VX, 300, 20, VX, 300, 170);
 	spill.addColorStop(0, css(gel, 0.28 * a));
 	spill.addColorStop(1, css(gel, 0));
@@ -1427,6 +1590,18 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.lineWidth = 2.2;
 	bodyPath(ctx);
 	ctx.stroke();
+	// a wrap of the backdrop's brightness a few pixels deep on the lit edge
+	const wrap = ctx.createLinearGradient(bx, 0, bx + (side < 0 ? 24 : -24), 0);
+	wrap.addColorStop(0, css(light, 0.25 * Math.abs(side) * a));
+	wrap.addColorStop(1, css(light, 0));
+	ctx.strokeStyle = wrap;
+	ctx.lineWidth = 7;
+	ctx.save();
+	bodyPath(ctx);
+	ctx.clip();
+	bodyPath(ctx);
+	ctx.stroke();
+	ctx.restore();
 	ctx.restore();
 
 	// the gauge needle and the intake's readout, which glow with what the machine reads
@@ -1520,7 +1695,7 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 			const pts: [number, number][] = [];
 			for (let q = 0; q < MEMBRANE_N; q++) {
 				const th = (q / MEMBRANE_N) * TAU;
-				const rr = r * mix(seedR(kindNow, th, fins), seedR('apex', th), apex) * (1 + 0.02 * Math.sin(3 * th + sec * 1.1 + s.ph));
+				const rr = r * mix(seedR(kindNow, th, fins, s.ph), seedR('apex', th), apex) * (1 + 0.02 * Math.sin(3 * th + sec * 1.1 + s.ph));
 				pts.push([x + Math.cos(th + rot) * rr, y + Math.sin(th + rot) * rr * 0.9]);
 			}
 			return () => {
@@ -1550,22 +1725,42 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.lineWidth = 3 + 3.5 * wall;
 			ctx.stroke();
 			ctx.restore();
-			// the nucleus: a pale disc holding a dark dot, at a storm's head end; it swells with each beat
-			const nr = r * 0.34 * (1 + 0.15 * pulse);
-			const head = r * (0.12 + 0.6 * stormW);
-			const nx = x + Math.cos(rot) * head + Math.cos(s.ph + sec * 0.3) * r * 0.04;
-			const ny = y + Math.sin(rot) * head * 0.9 + Math.sin(s.ph + sec * 0.3) * r * 0.03;
-			ctx.fillStyle = css(mixRGB(tint, WHITE, 0.5), (0.5 + 0.2 * pulse) * a);
+			// the nucleus: a small dark body well off center (at a storm's head end), never a dot in a ring; it swells with each beat
+			const nr = r * 0.2 * (0.8 + 0.4 * hash(k, 11)) * (1 + 0.15 * pulse);
+			const away = s.ph + rot;
+			const off = r * (0.25 + 0.4 * stormW);
+			const nx = x + Math.cos(stormW > 0 ? rot : away) * off + Math.cos(s.ph + sec * 0.3) * r * 0.03;
+			const ny = y + Math.sin(stormW > 0 ? rot : away) * off * 0.9 + Math.sin(s.ph + sec * 0.3) * r * 0.03;
+			const ng = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr * 1.5);
+			ng.addColorStop(0, css(mixRGB(tint, BLACK, 0.85 - 0.3 * apex), 0.9 * a));
+			ng.addColorStop(0.65, css(mixRGB(tint, BLACK, 0.8 - 0.3 * apex), 0.7 * a));
+			ng.addColorStop(1, css(mixRGB(tint, BLACK, 0.8), 0));
+			ctx.fillStyle = ng;
 			ctx.beginPath();
-			ctx.arc(nx, ny, nr, 0, TAU);
+			ctx.arc(nx, ny, nr * 1.5, 0, TAU);
 			ctx.fill();
-			ctx.fillStyle = css(mixRGB(tint, BLACK, 0.8), 0.9 * a);
+			// and a lighter fleck on the far side
+			ctx.fillStyle = css(mixRGB(tint, WHITE, 0.6), 0.45 * a);
 			ctx.beginPath();
-			ctx.arc(nx, ny, nr * 0.46, 0, TAU);
+			ctx.arc(x - (nx - x) * 0.9 + r * 0.05, y - (ny - y) * 0.9, r * 0.07, 0, TAU);
 			ctx.fill();
 		}
 		halos.push([x, y, r, pulse]);
 		if (form < 0.5) sparks.push([x, y, 1 - form]);
+	});
+	// a feed line: tiny bright motes rising from the vat's base into the gel, and gathering into a seed that is forming
+	lighter(ctx, () => {
+		const mote = mixRGB(gel, WHITE, 0.7);
+		for (let m = 0; m < 14; m++) {
+			const u = (sec * (0.1 + hash(m) * 0.08) + hash(m, 2)) % 1;
+			glow(ctx, VX + (hash(m, 3) - 0.5) * 50 + Math.sin(sec + m) * 3, VY1 - 10 - u * (VY1 - VY0 - 40), 2.4, mote, 0.7 * (1 - u) * (1 - apex * 0.9) * a, 'core');
+		}
+		for (const [sx2, sy2, f] of sparks) {
+			for (let j = 0; j < 4; j++) {
+				const u = (sec * 1.3 + j / 4 + sx2 * 0.01) % 1;
+				glow(ctx, mix(VX + Math.sin(j * 2 + sec) * 12, sx2, easeOut(u)), mix(VY1 - 8, sy2, u), 2.2, mote, 0.85 * f * (1 - u * 0.3) * a, 'core');
+			}
+		}
 	});
 	// a faint glow of life round each, and the bright point a new seed starts as
 	lighter(ctx, () => {
@@ -1670,6 +1865,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 		g.lineWidth = Math.max(1.4, 1.5 / f);
 		ORB.e.forEach(([i, j], k) => {
 			if (hash(k, gapStep + 40) < 0.13) return;
+			if (f < 1.2 && hash(k, 77) < 0.3) return;
 			const d = (P[i][2] + P[j][2]) / 2;
 			const yn = ((P[i][1] + P[j][1]) / 2 - pad) / (2 * R);
 			const b1 = Math.exp(-Math.pow((yn - band1) / 0.07, 2));
@@ -1730,7 +1926,6 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	ctx.save();
 	ctx.globalCompositeOperation = 'lighter';
 	// its glow: a volume of light, faint, so the network reads as an image and not a solid
-	glow(ctx, cx, cy, R * 1.3, VIOLET, 0.16 * a);
 	if (mag) copy(mag, 0.8 * a, -4.5, 3);
 	if (cyan) copy(cyan, 0.8 * a, 4.5, 7);
 	copy(main, 1 * a, 0, 0);
@@ -1964,7 +2159,7 @@ export function createGenerators(): Figure {
 			let kindA: SeedKind = ws.prev >= 0 ? WORLDS[ws.prev].key : 'genesis';
 			let kindB: SeedKind = WORLDS[ws.cur].key;
 			let km = adapt;
-			let gel: RGB = ws.prev >= 0 ? mixRGB(WORLDS[ws.prev].gel, WORLDS[ws.cur].gel, adapt) : mixRGB(GENESIS, WORLDS[0].gel, adapt);
+			let gel: RGB = ws.prev >= 0 ? mixRGB(WORLDS[ws.prev].gel, WORLDS[ws.cur].gel, ws.k) : mixRGB(GENESIS, WORLDS[0].gel, smooth(0.2, 0.7, t));
 			if (v3 > 0.5 && stage === 1) {
 				if (!frozen) frozen = { kindA, kindB, km, gel };
 				({ kindA, kindB, km, gel } = frozen);
@@ -1994,7 +2189,13 @@ export function createGenerators(): Figure {
 					// the far machines keep a little light of their own, so none is lost in the dark
 					if (!first) lighter(ctx, () => glow(ctx, 480, 330, 240, mixRGB(own, VIOLET, lk * 0.7), 0.2 * app * vis));
 				const kind: SeedKind | null = first ? null : WORLDS[wi].key;
+				const tintWorld = first ? (stage === 1 ? w3 : ws.prev >= 0 && ws.k < 0.5 ? ws.prev : ws.cur) : wi;
+				const lavaW = first ? (kindA === 'lava' ? 1 - km : 0) + (kindB === 'lava' ? km : 0) : wi === 1 ? 1 : 0;
+				const fl = first && stage === 0 && WORLDS[ws.cur].key === 'storm' ? Math.max(lightning(ws.since, 0.7), lightning(ws.since, 1.9)) : 0;
 				drawMachine(ctx, {
+					world: tintWorld,
+					under: lavaW * (1 - lk * 0.6),
+					flash: fl,
 					sec: sec + i * 1.7,
 					gel: mixRGB(own, mixRGB(own, [128, 104, 190], 0.78), lk),
 					light: mixRGB(worldSeam(wi), VIOLET, lk * 0.5),
@@ -2012,6 +2213,19 @@ export function createGenerators(): Figure {
 				ctx.restore();
 				sensors.push({ x: m.x + (DISH.x - 480) * z, y: gy + (DISH.y - 4 - GROUND) * z, at: LINK + m.order * 0.14, a: app });
 			});
+			// weather crosses in front of the machine too
+			if (arrive < 0.6) {
+				ctx.save();
+				ctx.translate(480, 270);
+				ctx.scale(mix(1, 0.7, arrive), mix(1, 0.7, arrive));
+				ctx.translate(-480, -270);
+				const fa = worldIn * (1 - arrive / 0.6) * vis;
+				if (ws.prev >= 0 && ws.k < 1) {
+					frontWeather(ctx, ws.prev, sec, fa * (1 - ws.k));
+					frontWeather(ctx, ws.cur, sec, fa * ws.k);
+				} else frontWeather(ctx, ws.cur, sec, fa);
+				ctx.restore();
+			}
 			if (dip > 0.01) {
 				ctx.fillStyle = css(BLACK, dip);
 				ctx.fillRect(-40, -40, PW + 80, PH + 80);
