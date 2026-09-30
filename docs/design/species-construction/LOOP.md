@@ -22,6 +22,7 @@ Visual judgment stays on Opus. In an earlier test, Sonnet readers misread every 
    - the target region rises by at least 0.5;
    - no other region falls by 1 or more;
    - any proportion measurement the order targets moves toward the reference.
+   - the weighted mean rises by at least 0.025 (from round 5; added after round 3 kept a +0.5 target gain that cost another region 0.5).
 
    Otherwise the baseline stays. This ratchet means a round can fail, but the model never gets worse.
 5. The orchestrator picks the next order and persists the round.
@@ -65,6 +66,7 @@ A round is one Opus critique of about 16 images plus one Sonnet build session wi
 ## Files
 
 - `art/species-construction/loop/loop_tools.py`: assemble, render, check, packet, measure.
+- `art/species-construction/loop/loop_workflow.js`: the batch workflow script. `build_loop_page.py` replays its journals into the progress page after every round, starting from `<species>/loop/status-start.json`.
 - `<species>/loop/critic-brief.md`, `builder-brief.md`: the standing instructions each agent reads.
 - `<species>/loop/status.json`: regions, weights, current scores, attempt counters, parked regions, baseline, round history. It is data, so every batch resumes at the weakest region.
 - `<species>/loop/cameras/`: the closeup camera sets every packet uses.

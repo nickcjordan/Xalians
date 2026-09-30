@@ -8,7 +8,7 @@ Nick asked for an autonomous loop and check-ins only at very large milestones; p
 
 - System: `docs/design/species-construction/LOOP.md`; briefs, cameras and state in `docs/design/species-construction/akinza/loop/`; harness `art/species-construction/loop/loop_tools.py`. Branch `akinza/construction-loop`, no PRs.
 - Models, verified from agent logs: critic `claude-opus-5-5` (alias opus), builder `claude-sonnet-5-5` (alias sonnet).
-- Batch 1 is running as workflow run `wf_e861669f-6d1` from baseline assembled-0156 (packet `untracked/species-construction/akinza/loop/packets/assembled-0156`). The script is in the session's workflow scripts folder; resume with `resumeFromRunId`.
+- Batch 1 is running as workflow run `wf_e861669f-6d1` from baseline assembled-0156 (batch 1, done: rounds 1-3 kept, round 4 reverted, weighted 5.12 to 5.31; batch 2 follows from assembled-0163) (packet `untracked/species-construction/akinza/loop/packets/assembled-0156`). The script is in the session's workflow scripts folder; resume with `resumeFromRunId`.
 
 Next unfinished action, when the batch returns: write its returned `status` into `akinza/loop/status.json` and its `history` into the round log. Review parked regions and write any method changes. Refresh the review artifact from the new baseline packet. Commit, then launch the next batch with the updated status. Contact Nick only at the approval gate or the 16-round hard stop.
 

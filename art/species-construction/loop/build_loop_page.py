@@ -20,7 +20,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[3]
 A = ROOT/'untracked/species-construction/akinza'
 EV = ROOT/'docs/design/species-construction/akinza/evidence'
-STATUS = ROOT/'docs/design/species-construction/akinza/loop/status.json'
+STATUS = ROOT/'docs/design/species-construction/akinza/loop/status-start.json'
 VIEWS = ['front', 'front-left', 'left', 'back', 'right', 'front-right']
 
 
@@ -125,7 +125,14 @@ class Loop:
                            and r['baselineScore']-r['score'] >= L['regressionDrop']]
             entry.update(delta=delta, regressions=regressions, summary=critique.get('summary', ''),
                          candidate={r['id']: r['score'] for r in regions if 'id' in r})
-            entry['kept'] = delta >= L['keepGain'] and not regressions
+            weights = {i: S['regions'][i]['weight'] for i in self.ids}
+            def mean_of(key):
+                values = {r['id']: r.get(key) for r in regions if 'id' in r}
+                return sum(weights[i]*(values.get(i) if isinstance(values.get(i), (int, float)) else (S['regions'][i]['score'] or 0))
+                           for i in self.ids)/sum(weights.values())
+            entry['meanGain'] = round(mean_of('score')-mean_of('baselineScore'), 3)
+            need = L['meanGain'] if isinstance(L.get('meanGain'), (int, float)) and S['round'] >= L.get('meanGainFromRound', 0) else float('-inf')
+            entry['kept'] = delta >= L['keepGain'] and not regressions and entry['meanGain'] >= need
             if entry['kept']:
                 self.apply(critique)
                 S['baseline'] = {'head': build.get('head') or S['baseline']['head'],
@@ -133,6 +140,8 @@ class Loop:
                                  'assembly': build['assembly'], 'packet': build['packet']}
             elif regressions:
                 entry['reason'] = 'broke ' + ', '.join(f"{r['id']} {r['baselineScore']} to {r['score']}" for r in regressions)
+            elif delta >= L['keepGain']:
+                entry['reason'] = f'weighted score moved {entry["meanGain"]:+.2f}, needs +{L["meanGain"]:g}'
             else:
                 entry['reason'] = f'target moved {delta:+g}, needs +{L["keepGain"]}'
         if region['score']-region['anchorScore'] >= L['stallGain']:
