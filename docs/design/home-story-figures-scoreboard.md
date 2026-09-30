@@ -129,3 +129,10 @@ Generators critic: Glance 7.5, Lore 8.5 (clears), Subject 8, Setting 8.5 (clears
 Outbreak critic: Glance 8, Lore 8, Subject 7.5, Setting 8, Motion 8, Changes 8, Finish 7, Phone 7. Regressed: the red as a flat tint makes the dormant machine a see-through ghost and puts pink inside the vat (the plague inside the Generator, against the lore).
 Blind readers (fresh): 02 "the glow inside changes each time ... with sparks or bubbles rising" (no seeds seen); 06 "the machine switches on and starts growing something ... the small glowing hexagon at the machine's base: a key, a battery or an input?" (medium-high; the red held back never mentioned); 03 and 05 pass.
 Round 11 subtracts: formed seeds own each world, dark against the glow; an opaque machine; a clean green vat; one line from chip to vat.
+
+### Round 11 (2026-09-29)
+
+Builder: 02's world budgeted so formed seeds own it (ring, dissolve, a pulse down the mast, seeds growing dark, a 1.2 s hold); no white clipping; in 06 an opaque machine with light wisps only, a clean green vat, a lit line from the chip into the vat, a faint guide from Valleron's star, rocks dropped.
+Generators critic: Glance 8, Lore 8.5 (clears), Subject 8, Setting 8.5 (clears), Motion 8, Changes 8, Finish 8, Phone 8. Remaining: the gel cross-fades through gray; seeds frozen in the hold; straps crossing seeds; the lattice still busy. Subject and Finish at the compositing ceiling (8) pending Nick.
+Outbreak critic: Glance 8, Lore 8 (the guide from the star stays drawn after landing, a beam, against the fact-check), Subject 8, Setting 8, Motion 8.5 (clears), Changes 8, Finish 7.5, Phone 8.
+Blind readers (fresh): 02 "the liquid in the capsule changes color, and so do the shapes floating in it ... they look like creatures or embryos" (medium); 06 "a glowing crystal at its base powers on, the capsule fills with green light, and dark rounded shapes like embryos or pods appear in it ... the red haze behind it grows brighter" (the red read as growing); 03 and 05 pass.
