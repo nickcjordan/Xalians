@@ -670,3 +670,63 @@
 .pwt-console.phone .pwt-guide .pwt-panel-actions { background: var(--color-s1); z-index: 2; }
 /* The Guardian tag sits in its own row above the element tag on a phone too (they collided side by side). */
 .pwt-console.phone .pwt-guardian-tag { top: -37px; left: 2px; }
+
+/* =====================================================================================
+   Round 8 on the phone
+   ===================================================================================== */
+.pwt-console.phone .pwt-cell .pwt-cell-hinder-cap { font-size: 12px; line-height: 12px; }
+.pwt-console.phone .pwt-cell .pwt-cell-hinder-cap .pwt-cell-hinder-icon { position: static; width: 12px; height: 12px; }
+.pwt-console.phone .pwt-cell .pwt-cell-hinder { gap: 1px; }
+.pwt-console.phone .pwt-cell .pwt-cell-hinder .pwt-cell-num.hinder,
+.pwt-console.phone .pwt-cell .pwt-cell-hinder-nums .pwt-cell-before,
+.pwt-console.phone .pwt-cell .pwt-cell-hinder-nums .pwt-cell-arrow { font-size: 13px; }
+.pwt-console.phone .pwt-saved svg { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-hit-on,
+.pwt-console.phone .pwt-hit-then { font-size: 12px; line-height: 12px; }
+.pwt-console.phone .pwt-hit-on-active.pwt-hitbox { padding: 1px 3px; }
+.pwt-console.phone .pwt-keybar-wait-words { font-size: 13px; line-height: 1.25; max-width: 96%; }
+.pwt-console.phone .pwt-keybar-wait { gap: 4px; }
+/* The fold reads "+N more" in a small pill, so it is a count of hidden turns and not a boost. */
+.pwt-console.phone .pwt-rail-fold { width: 62px; flex: 0 0 62px; }
+.pwt-console.phone .pwt-rail-fold span { padding: 1px 6px; border: 1px solid var(--color-edge-strong); border-radius: 999px; background: var(--color-s2); color: var(--color-ink); white-space: nowrap; font-size: 12px; line-height: 14px; }
+.pwt-console.phone .pwt-camp .pwt-panel-squad { padding-top: 20px; }
+.pwt-console.phone .pwt-revived-num { top: -20px; }
+.pwt-console.phone .pwt-camp-status,
+.pwt-console.phone .pwt-camp-unused { min-height: 16px; font-size: 12px; }
+
+/* Item 2 on the shortest screens: the landing number is a little smaller so it fits in its own column between
+   the letter tag and the element tag. */
+@media (max-height: 400px) {
+  .pwt-console.phone .pwt-float-num.hurt { font-size: 30px; }
+}
+@media (max-height: 380px) {
+  .pwt-console.phone .pwt-float-num.hurt { font-size: 18px; gap: 0; }
+  .pwt-console.phone .pwt-float-num.hurt .pwt-float-tag { line-height: 12px; padding: 0 3px; border: 0; box-shadow: none; }
+  .pwt-console.phone .pwt-float-tag { padding: 0 3px; }
+}
+
+/* The camp on a phone: no room to spare, so the status lines keep their height at 16 px and the revive number
+   sits at the ring's right shoulder rather than in a band above it. */
+.pwt-console.phone .pwt-camp .pwt-panel-squad { padding-top: 0; }
+.pwt-console.phone .pwt-revived-num { top: 6px; left: 80%; }
+.pwt-console.phone .pwt-panel.pwt-camp { gap: 6px; }
+/* On a phone the status line and the note trade places at a revive (the note goes, the line arrives), so neither
+   keeps a reserved band: the panel holds its height without one. */
+.pwt-console.phone .pwt-camp-status,
+.pwt-console.phone .pwt-camp-unused { min-height: 0; }
+.pwt-console.phone .pwt-camp-status:empty,
+.pwt-console.phone .pwt-camp-unused:empty { display: none; }
+
+/* Item 2: on a phone the landing number stacks its matchup tag under it, so the pair is narrow enough to stand
+   inside its own target's column instead of straddling a neighbor. */
+.pwt-console.phone .pwt-float-num.hurt { flex-direction: column; align-items: center; gap: 1px; }
+.pwt-console.phone .pwt-float-num.hurt .pwt-float-tag { line-height: 13px; }
+.pwt-console.phone .pwt-revived-num { top: 8px; left: calc(50% + 40px); }
+/* Item 9 on a phone: the stage is full of plates, so the compact plaque is small and finds the one bare spot. */
+.pwt-console.phone .pwt-hold-card.compact,
+.pwt-console.phone .pwt-stage[data-hold="boss"] .pwt-hold-card.compact { font-size: 14px; padding: 2px 8px; letter-spacing: 0; box-shadow: none; border-width: 1px; }
+
+/* Item 7: the round divider is a thin line; its label hangs over the slots' tops, so the boundary and the first
+   slot of the next round fit even on the narrowest rail. */
+.pwt-console.phone .pwt-rail-divider { flex-basis: 24px; overflow: visible; }
+.pwt-console.phone .pwt-rail-divider span { position: absolute; left: 50%; top: 0; transform: translateX(-50%); white-space: nowrap; }

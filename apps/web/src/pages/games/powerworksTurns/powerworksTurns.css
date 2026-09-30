@@ -2480,3 +2480,123 @@
    ALL band) still holds its foot line inside its own box. */
 .pwt-console:not(.phone) .pwt-keybar { height: 170px; min-height: 170px; }
 .pwt-guide .pwt-legend-sample .pwt-cell:has(.pwt-cell-shield-note) { flex-basis: 78px; }
+
+
+/* =====================================================================================
+   Round 8 (UX pass 2): the ten from the round 7 critic.
+   ===================================================================================== */
+
+/* Items 1 and 4: a hinder cell leads with whose hit it changes ("their hit", swords glyph) and the struck pair;
+   its result is smaller than any damage number and plain ink, never a green "0" that reads as "does nothing". */
+.pwt-cell .pwt-cell-hinder { flex-direction: column; align-items: center; gap: 2px; white-space: nowrap; }
+.pwt-cell-hinder-cap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  line-height: 11px;
+  color: var(--color-ink-2);
+}
+.pwt-cell .pwt-cell-hinder-cap .pwt-cell-hinder-icon { width: 11px; height: 11px; color: var(--color-ink-2); position: static; }
+.pwt-cell .pwt-cell-hinder-nums { display: flex; align-items: center; justify-content: center; gap: 2px; font-size: 12px; }
+.pwt-cell .pwt-cell-hinder .pwt-cell-num.hinder { font-size: 13px; color: var(--color-ink); }
+.pwt-cell .pwt-cell-hinder-nums .pwt-cell-before { font-size: 12px; }
+/* A key whose every attack cell reads 0 because the companion is hindered draws calmly: the reason is the
+   status line's, said once. */
+.pwt-key.calm .pwt-cell-num.own,
+.pwt-key.calm .pwt-cell-num.own.down { color: var(--color-ink-2); }
+.pwt-key.calm .pwt-cell .pwt-cell-hinder.own .pwt-cell-before { color: var(--color-ink-3); }
+/* The skull with a stroke through it: the hit would knock the companion out, and this takes it below its health. */
+.pwt-saved { position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; color: var(--color-ink-2); }
+.pwt-saved svg { width: 11px; height: 11px; }
+.pwt-saved::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: calc(50% - 1px);
+  height: 2px;
+  background: var(--color-ink);
+  box-shadow: 0 0 0 1px var(--color-s1);
+  transform: rotate(-38deg);
+}
+.pwt-cell .pwt-cell-rider[data-saves] { gap: 3px; }
+
+/* Item 3: the echo and the hover are outer lines; a cell's own frame (the gold finish) is never replaced. */
+.pwt-cell.col-lit:not(:disabled) { border-color: var(--color-edge); box-shadow: 0 0 0 1px var(--color-ink-2); }
+.pwt-cell.hinder.col-lit:not(:disabled) { border-color: var(--color-edge-strong); }
+.pwt-cell.finish.col-lit:not(:disabled) { border-color: var(--color-caution); box-shadow: inset 0 0 0 1px var(--color-caution), 0 0 0 1px var(--color-ink-2); }
+.pwt-cell.finish:focus-visible:not(:disabled),
+.pwt-cell.finish.hot:not(:disabled),
+.pwt-cell.finish.previewed:not(:disabled),
+.pwt[data-pointer="live"] .pwt-cell.finish:hover:not(:disabled) {
+  border-color: var(--color-caution);
+  box-shadow: inset 0 0 0 1px var(--color-caution), 0 0 0 2px var(--color-viable);
+}
+.pwt-cell.hinder:focus-visible:not(:disabled),
+.pwt-cell.hinder.hot:not(:disabled),
+.pwt-cell.hinder.previewed:not(:disabled),
+.pwt[data-pointer="live"] .pwt-cell.hinder:hover:not(:disabled) { border-style: dashed; }
+
+/* Item 5: one chip with its subject: "on Avilily", the hit under it, the resting hit as its last line. */
+.pwt-marks.hit { margin-top: 1px; }
+.pwt-hit-on-active.pwt-hitbox { flex-direction: column; align-items: center; gap: 1px; padding: 2px 6px 2px; max-width: 100%; }
+.pwt-hit-body { display: inline-flex; align-items: center; gap: 2px; }
+.pwt-hit-on { font-family: var(--font-body); font-size: 10.5px; line-height: 11px; color: var(--color-ink-2); }
+.pwt-hit-then { font-family: var(--font-data); font-size: 10.5px; line-height: 11px; color: var(--color-ink-2); border-top: 1px dashed var(--color-edge-strong); padding-top: 1px; align-self: stretch; text-align: center; }
+.pwt-hit-on-active.pwt-hitbox.has-coming { border-style: solid; }
+.pwt-marks.reserved { min-height: 16px; }
+
+/* Item 6: numbers that land on an enemy are plain ink; color is the matchup tag's and a squad's health's. */
+.pwt-float-num.hurt.plain,
+.pwt-float-num.heal.plain { color: var(--color-ink); }
+.pwt-delta.plain.hurt,
+.pwt-delta.plain.heal { color: var(--color-ink); }
+
+/* Item 9: the band under a play-out says what just happened, in words. */
+.pwt-keybar-wait { flex-direction: column; gap: 6px; }
+.pwt-keybar-wait.playing .pwt-keybar-wait-kicker { font-size: 13px; }
+.pwt-keybar-wait-words {
+  margin: 0;
+  max-width: 68%;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 19px;
+  line-height: 1.25;
+  color: var(--color-ink);
+}
+.pwt-keybar-wait-next { font-size: 13px; }
+
+/* Item 10: the key bar keeps one height and one place: the status and note line has its room whether or not it speaks. */
+.pwt-console:not(.phone) .pwt-keybar { padding-top: 26px; }
+.pwt-key-foot-left { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.pwt-key-note-tag { margin-left: 0; }
+.pwt-key-name { flex: 0 1 auto; }
+/* The hinder amount sits in the foot's right side (like a rider), so the key's name keeps the head to itself. */
+.pwt-key-foot .pwt-key-hinder { margin-left: auto; padding: 0 4px; gap: 2px; }
+.pwt-key-foot .pwt-key-hinder svg { width: 10px; height: 10px; }
+
+/* Item 10: the camp holds still. The revive number floats above the portrait in room kept for it, and the status
+   and note lines keep their height whether or not they speak. */
+.pwt-camp .pwt-panel-squad { padding-top: 26px; }
+.pwt-revived-num { top: -26px; }
+@keyframes pwt-revive-num {
+  0% { transform: translate(-50%, 8px); opacity: 0; }
+  25% { transform: translate(-50%, 0); opacity: 1; }
+  100% { transform: translate(-50%, -2px); opacity: 1; }
+}
+.pwt-camp-status { min-height: 22px; }
+.pwt-camp-unused { min-height: 20px; }
+/* The struck pair on an attack cell that is only marked (not a hinder-only cell) stays one row. */
+.pwt-cell .pwt-cell-hinder.own { flex-direction: row; align-items: center; }
+.pwt-marks.reserved { min-height: 21px; }
+/* Item 9: when the gap between the rows is short the plaque takes a smaller size rather than covering a unit. */
+.pwt-hold-card.compact { font-size: 22px; padding: 5px 20px; }
+.pwt-stage[data-hold="boss"] .pwt-hold-card.compact { font-size: 24px; padding: 6px 24px; }
+/* The Down tag's row stays at the camp for every companion (empty for the standing), so a revive that lifts one
+   does not shorten the panel. */
+.pwt-down-tag.pwt-down-hold { visibility: hidden; }
+.pwt-camp-status,
+.pwt-camp-unused { min-height: 24px; }
+.pwt-camp-actions { min-height: 45px; align-items: center; }

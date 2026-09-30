@@ -99,7 +99,7 @@ export function KoMark({ from, name }: { from: string[]; name: string }) {
   );
 }
 
-function HealthBar({ hp, max, delta = 0 }: { hp: number; max: number; delta?: number }) {
+function HealthBar({ hp, max, delta = 0, plain = false }: { hp: number; max: number; delta?: number; plain?: boolean }) {
   const pct = max > 0 ? Math.max(0, Math.min(100, (hp / max) * 100)) : 0;
   return (
     <div className="pwt-health">
@@ -116,7 +116,7 @@ function HealthBar({ hp, max, delta = 0 }: { hp: number; max: number; delta?: nu
         />
       </div>
       <span className="pwt-health-num">{hp}</span>
-      {!!delta && <DeltaChip n={delta} />}
+      {!!delta && <DeltaChip n={delta} plain={plain} />}
     </div>
   );
 }
@@ -198,14 +198,44 @@ export function SquadPlate({
         {u.down ? (
           <span className="pwt-down-tag">Down</span>
         ) : (
-          hasMarks && (
-            <div className="pwt-marks">
-              <MarkChips marks={u} />
-            </div>
-          )
+          // The chip row is always there, empty or not, so a shield gained never lifts the plate (round 8, item 10).
+          <div className="pwt-marks reserved">{hasMarks && <MarkChips marks={u} />}</div>
         )}
       </div>
     </div>
+  );
+}
+
+/** The hit's own glyph, number, lethal skull and matchup chevron, shared by the Guide's chip and the plate's box. */
+function HitBody({ hit }: { hit: NonNullable<EnemyView["hitOnActive"]> }) {
+  return (
+    <span className="pwt-hit-body">
+        <ImpactMark />
+        {hit.before !== undefined && (
+            <>
+              <s className="pwt-hit-before">{hit.before}</s>
+              <span className="pwt-hit-arrow" aria-hidden="true">
+              →
+              </span>
+            </>
+        )}
+        {hit.step === 0 ? <Ban /> : hit.n}
+        {hit.lethal && <Skull className="pwt-hit-skull" />}
+        {/* The chevron's direction is the damage (more, less); its color is who that favors:
+            a strong hit on your companion is bad for you, a weak one is good (the same rule as
+            the key cells, where a strong hit on an enemy is good for you). A hit that knocks the
+            companion out is never dressed as good news: its chevron goes neutral. */}
+        {hit.step > 1 && (
+            <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "bad"}`}>
+              <ChevronUp />
+            </span>
+        )}
+        {hit.step > 0 && hit.step < 1 && (
+            <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "good"}`}>
+              <ChevronDown />
+            </span>
+        )}
+    </span>
   );
 }
 
@@ -229,31 +259,7 @@ export function HitChip({ hit, who, off = false }: { hit: NonNullable<EnemyView[
             }${hit.lethal ? `. That equals or exceeds ${who}'s health: it knocks ${who} out.` : ""}`
       }
     >
-      <ImpactMark />
-      {hit.before !== undefined && (
-        <>
-          <s className="pwt-hit-before">{hit.before}</s>
-          <span className="pwt-hit-arrow" aria-hidden="true">
-            →
-          </span>
-        </>
-      )}
-      {hit.step === 0 ? <Ban /> : hit.n}
-      {hit.lethal && <Skull className="pwt-hit-skull" />}
-      {/* The chevron's direction is the damage (more, less); its color is who that favors:
-          a strong hit on your companion is bad for you, a weak one is good (the same rule as
-          the key cells, where a strong hit on an enemy is good for you). A hit that knocks the
-          companion out is never dressed as good news: its chevron goes neutral. */}
-      {hit.step > 1 && (
-        <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "bad"}`}>
-          <ChevronUp />
-        </span>
-      )}
-      {hit.step > 0 && hit.step < 1 && (
-        <span className={`pwt-cell-chevron-wrap ${hit.lethal ? "neutral" : "good"}`}>
-          <ChevronDown />
-        </span>
-      )}
+      <HitBody hit={hit} />
     </span>
   );
 }
@@ -271,6 +277,47 @@ export function ComingChip({ coming, who, off = false }: { coming: NonNullable<E
       <ImpactMark />
       {coming.step === 0 ? <Ban /> : coming.n}
       <span className="pwt-hit-in">in {coming.turns}</span>
+    </span>
+  );
+}
+
+/**
+  The enemy's forecast, one chip with its subject (round 8, item 5): a small "on Avilily" caption names whose health the
+  hit is on, the strongest ready hit sits under it, and the stronger hit that is resting folds in as a last line
+  ("then 64 in 2", turns counted after its next turn). One box, so a plate carries one hit chip and never two.
+*/
+export function EnemyHit({
+  hit,
+  coming,
+  who,
+  off = false,
+}: {
+  hit: EnemyView["hitOnActive"];
+  coming: EnemyView["hitComing"];
+  who: string;
+  off?: boolean;
+}) {
+  const label = [
+    hit
+      ? hit.step === 0
+        ? `hits ${who} for no effect`
+        : `hits ${who} for ${hit.n}${hit.before !== undefined ? `, weakened from ${hit.before}` : ""}${hit.step > 1 ? ", strong" : hit.step < 1 ? ", weak" : ""}${
+            hit.lethal ? `, knocks ${who} out` : ""
+          }`
+      : "",
+    coming ? `a stronger hit on ${who}, ${coming.n}, is resting: ready ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn` : "",
+  ]
+    .filter(Boolean)
+    .join("; ");
+  return (
+    <span className={`pwt-hit-on-active pwt-hitbox ${hit?.lethal ? "lethal" : ""} ${coming ? "has-coming" : ""} ${off ? "off" : ""}`} aria-label={label} title={label}>
+      <span className="pwt-hit-on">on {who}</span>
+      {hit && <HitBody hit={hit} />}
+      {coming && (
+        <span className="pwt-hit-then">
+          then {coming.step === 0 ? "no effect" : coming.n} in {coming.turns}
+        </span>
+      )}
     </span>
   );
 }
@@ -322,7 +369,6 @@ export function EnemyPlate({
   // chip row collapses: no empty well under the name (round 7, item 8).
   const showHit = !!hit && !u.down && !forecastOff;
   const showComing = !!coming && !u.down && !forecastOff;
-  const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0 || showHit || showComing;
   return (
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
@@ -344,13 +390,16 @@ export function EnemyPlate({
         <span className="pwt-name">
           {u.letter} · {u.name}
         </span>
-        <HealthBar hp={u.hp} max={u.max} delta={delta} />
+        <HealthBar hp={u.hp} max={u.max} delta={delta} plain />
         {u.down && <span className="pwt-down-tag">Down</span>}
-        {hasMarks && !u.down && (
+        {(u.shield > 0 || u.boost > 0 || u.hinder > 0) && !u.down && (
           <div className="pwt-marks">
             <MarkChips marks={u} />
-            {showHit && <HitChip hit={hit!} who={who} off={forecastOff} />}
-            {showComing && <ComingChip coming={coming!} who={who} off={forecastOff} />}
+          </div>
+        )}
+        {(showHit || showComing) && (
+          <div className="pwt-marks hit">
+            <EnemyHit hit={showHit ? hit : null} coming={showComing ? coming : null} who={who} off={forecastOff} />
           </div>
         )}
       </div>

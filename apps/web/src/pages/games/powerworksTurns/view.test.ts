@@ -560,7 +560,7 @@ describe("result sentences name the unit they land on (item 2)", () => {
     ];
     const words = momentWords(beats, units);
     expect(words).toContain(`boosted ${foe2.name} B's next attack by 12`);
-    expect(words).toContain(`shielded ${foe.name} A for 5`);
+    expect(words).toContain("shielded itself for 5");
     expect(words).toContain(`healed ${foe2.name} B for 7`);
   });
 
@@ -584,7 +584,8 @@ describe("result sentences name the unit they land on (item 2)", () => {
   });
 
   it("the weakened-hit note names the enemy whose hit it was, and counts hinders landed earlier in the command", () => {
-    expect(weakenedWords("Central guardian A", 10)).toBe("Central guardian A's hit was weakened by 10.");
+    expect(weakenedWords("Central guardian A", 10)).toBe("Central guardian A's hit was cut by 10 by a hinder.");
+    expect(weakenedWords("Central guardian A", 10, "your hinder")).toBe("Central guardian A's hit was cut by 10 by your hinder.");
     const early = mk({ kind: "hinder", actor: ally.id, target: foe.id, move: "Blinding Shot", amount: 10 });
     expect(hinderOnAttack({}, [early], foe.id)).toBe(10);
     expect(hinderOnAttack({ [foe.id]: 4 }, [], foe.id)).toBe(4);
@@ -635,7 +636,7 @@ describe("since your last turn (item 4)", () => {
       entry({ kind: "boost", actor: foe.id, target: foe.id, move: "M", amount: 12 }), // the enemy carries none in this state
     ];
     const sv = sinceView(entries, tv);
-    expect(sv.items[0].text).toBe(`${active.name} hindered 14`);
+    expect(sv.items[0].text).toBe(`${active.name} hindered 14 by ${foe.letter}`);
     const m = sv.items.find((i) => i.id === mate.id)!;
     expect(m.text).toContain("shield +10");
     expect(m.text).toContain("shield -3");
@@ -665,11 +666,31 @@ describe("since your last turn (item 4)", () => {
     expect(sinceView([own], v).items).toEqual([]);
   });
 
+  it("round 8, item 6: numbers that land on an enemy are plain ink; a squad's health keeps its color", () => {
+    const e = { kind: "hit", actor: "x", target: "y", move: "M", amount: 6, absorbed: 0, step: 1.5, fell: false } as never;
+    expect(floatWords(e, true)).toMatchObject({ text: "-6", plain: true, tag: { word: "Strong", tone: "good" } });
+    expect(floatWords(e, false)?.plain).toBeUndefined();
+    expect(floatWords({ kind: "heal", actor: "x", target: "y", move: "M", amount: 14 } as never, true)).toMatchObject({ text: "+14", plain: true });
+    expect(floatWords({ kind: "heal", actor: "x", target: "y", move: "M", amount: 14 } as never, false)?.plain).toBeUndefined();
+  });
+
+  it("round 8, item 8: a unit that shields, heals or boosts itself says so", () => {
+    const self = (kind: "shield" | "heal" | "boost") => eventWords(s, { kind, actor: mate.id, target: mate.id, move: "M", amount: 10 } as never);
+    expect(self("shield")).toBe(`${mate.name} shielded itself for 10.`);
+    expect(self("heal")).toBe(`${mate.name} healed itself for 10.`);
+    expect(self("boost")).toBe(`${mate.name} boosted its own next attack by 10.`);
+  });
+
   it("round 7, item 6: a hit a hinder cut to nothing reads blocked; the weakened clause is one sentence", () => {
     const words = eventWords(s, { kind: "hit", actor: foe.id, target: mate.id, move: "M", amount: 0, absorbed: 0, step: 0.5, fell: false });
-    expect(words).toMatch(/was blocked\.$/);
+    expect(words).toMatch(/was blocked by your hinder\.$/);
     expect(eventWords(s, { kind: "hit", actor: foe.id, target: mate.id, move: "M", amount: 0, absorbed: 0, step: 0, fell: false })).toMatch(/had no effect\.$/);
-    expect(withWeakened("A hit B for 8 (weak matchup).", 6)).toBe("A hit B for 8 (weak matchup), weakened by 6.");
+    expect(withWeakened("A hit B for 8 (weak matchup).", 6, "your hinder")).toBe("A hit B for 8 (weak matchup, cut by 6 by your hinder).");
+    // Round 8, item 8: the cut is said inside the hit's clause, never as a second weakening after the rider.
+    expect(withWeakened("A's Clamp hit Crystorn for 16 and weakened Crystorn's next attack by 14.", 10, "your hinder")).toBe(
+      "A's Clamp hit Crystorn for 16 (cut by 10 by your hinder) and weakened Crystorn's next attack by 14."
+    );
+    expect(withWeakened("A's Sweep hit B, C for 6, 7.", 4, "your hinder")).toBe("A's Sweep hit B, C for 6, 7 (each cut by 4 by your hinder).");
     expect(withWeakened("A hit B for 8.", undefined)).toBe("A hit B for 8.");
   });
 
@@ -688,7 +709,7 @@ describe("since your last turn (item 4)", () => {
     rec.forEach((r, i) => {
       expect(r.room).toBe(3);
       expect(r.round).toBe(beats[i].round);
-      expect(r.words).toBe(beats[i].weakenedText ? `${beats[i].words} ${beats[i].weakenedText}` : beats[i].words);
+      expect(r.words).toBe(beats[i].weakenedText && !/blocked by/.test(beats[i].words) ? `${beats[i].words} ${beats[i].weakenedText}` : beats[i].words);
     });
   });
 });
@@ -1124,7 +1145,7 @@ describe("round 5: first-occurrence notes (item 11)", () => {
     const s = freshState(1);
     const base = turnView(s);
     const cell = (over: Partial<Cell>): Cell => ({ target: "x", letter: "A", n: 5, step: 1, immune: false, finishes: false, absorbed: 0, ...over });
-    const key = (index: number, over: object) => ({ index, name: "K", signature: false, rests: 0, state: "ready" as const, restLeft: 0, kind: "attack" as const, area: false, aim: "enemy" as const, cells: [cell({})], supports: [], riderKept: false, ...over });
+    const key = (index: number, over: object) => ({ index, name: "K", signature: false, rests: 0, state: "ready" as const, restLeft: 0, kind: "attack" as const, area: false, aim: "enemy" as const, cells: [cell({})], supports: [], riderKept: false, calm: false, ...over });
     const v = {
       ...base,
       keys: [
@@ -1285,6 +1306,35 @@ describe("round 6: the forecast agrees with the result", () => {
       a.moves[0] = { ...a.moves[0], parts: [] };
       for (const c of turnView(s).keys[0].cells) expect(c.rider).toBeUndefined();
     });
+    it("round 8, item 4: a rider that takes a lethal hit below the companion's health marks the cell saves; a hinder-only cell too", () => {
+      const { s, a } = riderWorld();
+      for (const foe of s.enemies) foe.moves[0] = { ...foe.moves[0], power: 48 };
+      a.hp = 46;
+      const cell = turnView(s).keys[0].cells.find((c) => !c.finishes)!;
+      expect(cell.saves).toBe(true);
+      // Not lethal to begin with: nothing to save.
+      a.hp = 400;
+      expect(turnView(s).keys[0].cells.find((c) => !c.finishes)!.saves).toBeUndefined();
+      // Still lethal after the rider: not saved.
+      a.hp = 30;
+      for (const foe of s.enemies) foe.moves[0] = { ...foe.moves[0], power: 48 };
+      expect(turnView(s).keys[0].cells.find((c) => !c.finishes)!.saves).toBeUndefined();
+      const t = riderWorld();
+      for (const foe of t.s.enemies) foe.moves[0] = { ...foe.moves[0], power: 48 };
+      t.a.hp = 46;
+      t.a.moves[0] = { ...t.a.moves[0], power: 0 };
+      expect(turnView(t.s).keys[0].cells[0].saves).toBe(true);
+    });
+
+    it("round 8, item 4: a key whose every attack cell reads 0 because the companion is hindered is calm", () => {
+      const { s, a } = riderWorld();
+      expect(turnView(s).keys[0].calm).toBe(false);
+      a.hinder = 9999;
+      expect(turnView(s).keys[0].calm).toBe(true);
+      // Some cells not reading 0 (a boost on top of nothing here): not calm.
+      const u = riderWorld();
+      expect(turnView(u.s).keys[0].calm).toBe(false);
+    });
   });
 
   describe("item 10: the hinder number is on the cell and the rider stays when the attack reads 0", () => {
@@ -1343,7 +1393,7 @@ describe("round 6: the forecast agrees with the result", () => {
       foe.hinder = 10;
       const hit = (target: string, amount: number) => ({ kind: "hit" as const, actor: foe.id, target, move: "Sweep", amount, absorbed: 0, step: 1, fell: false });
       const beats = playback(s, [hit(t0.id, 0), hit(t1.id, 4)]);
-      expect(beats[0]).toMatchObject({ weakened: 10, weakenedText: `${foe.name} A's hit was weakened by 10.` });
+      expect(beats[0]).toMatchObject({ weakened: 10, weakenedText: `${foe.name} A's hit was cut by 10 by your hinder.` });
       expect(beats[1].weakened).toBe(10);
       expect(beats[1].weakenedText).toBeUndefined();
       // The player's hinder lands earlier in the command: it counts, and an attack spends it.
@@ -1363,9 +1413,9 @@ describe("round 6: the forecast agrees with the result", () => {
       const s = structuredClone(freshState(1));
       const foe = s.enemies[0];
       foe.hinder = 10;
-      const beats = playback(s, [{ kind: "hit", actor: foe.id, target: s.team[0].id, move: "Sweep", amount: 0, absorbed: 0, step: 1, fell: false }]);
+      const beats = playback(s, [{ kind: "hit", actor: foe.id, target: s.team[0].id, move: "Sweep", amount: 4, absorbed: 0, step: 1, fell: false }]);
       const [entry] = recordEntries(0, beats);
-      expect(entry.words).toContain("was weakened by 10");
+      expect(entry.words).toContain("was cut by 10 by your hinder");
       expect(entry.weakened).toBe(10);
     });
 
@@ -1384,9 +1434,9 @@ describe("round 6: the forecast agrees with the result", () => {
         event: { kind: "hit", actor: foe.id, target: other.id, move: "M", amount, absorbed: 0, step: 1, fell: false },
       });
       const blocked = sinceView([entry(0, 14)], v);
-      expect(blocked.items.find((i) => i.id === foe.id)!.text).toBe(`${foe.name} ${foe.letter} hit blocked`);
+      expect(blocked.items.find((i) => i.id === foe.id)!.text).toBe(`${foe.name} ${foe.letter}'s hit blocked by your hinder`);
       const reduced = sinceView([entry(4, 6)], v);
-      expect(reduced.items.find((i) => i.id === foe.id)!.short).toBe(`${foe.letter} hit weakened 6`);
+      expect(reduced.items.find((i) => i.id === foe.id)!.short).toBe(`${foe.letter}'s hit cut by 6 by your hinder`);
       expect(reduced.items.find((i) => i.id === other.id)!.text).toContain("-4");
       // No hinder, no note.
       expect(sinceView([entry(4, 0)], v).items.find((i) => i.id === foe.id)).toBeUndefined();

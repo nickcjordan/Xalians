@@ -45,7 +45,9 @@ export function TurnBanner({
   note?: string | null;
   noteId?: string;
 }) {
-  const kicker = ended ? ended.kicker : actorSide === "squad" ? "Your turn" : "Enemy turn";
+  // While the stage holds on a fall its one plaque says what happened; the banner only keeps the round and the sector
+  // (round 8, item 9: the same words were on the banner, the stage and the key bar).
+  const kicker = ended ? `Round ${round}` : actorSide === "squad" ? "Your turn" : "Enemy turn";
   const who = ended ? ended.who : `${actorName}${actorSide === "enemy" && actorLetter ? ` ${actorLetter}` : ""}`;
   const label = `${kicker} ${who}`;
   // The slide plays when the actor changes, never on a beat within the same actor's turn.
@@ -140,11 +142,11 @@ export function PlaybackTools({
 
 /** A "-7" or "+5" delta chip on a plate whose health changed since the player's previous
     turn (storyboard item "what just happened"). `data-delta` is the harness's stable hook. */
-export function DeltaChip({ n }: { n: number }) {
+export function DeltaChip({ n, plain = false }: { n: number; plain?: boolean }) {
   if (!n) return null;
   const heal = n > 0;
   return (
-    <span className={`pwt-delta ${heal ? "heal" : "hurt"}`} data-delta={n} aria-label={`${heal ? "gained" : "lost"} ${Math.abs(n)} health since your last turn`}>
+    <span className={`pwt-delta ${heal ? "heal" : "hurt"}${plain ? " plain" : ""}`} data-delta={n} aria-label={`${heal ? "gained" : "lost"} ${Math.abs(n)} health since your last turn`}>
       {heal ? "+" : "-"}
       {Math.abs(n)}
     </span>

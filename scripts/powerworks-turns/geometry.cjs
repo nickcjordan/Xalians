@@ -189,6 +189,18 @@ async function riderProblems(page) {
     return out;
   });
 }
+/** Round 8, item 7: on a phone the rail always keeps the round divider and at least one next-round slot after it. */
+async function railProblems(page) {
+  return page.evaluate(() => {
+    const ol = document.querySelector(".pwt-rail[data-rail]");
+    if (!ol || !ol.querySelector("[data-slot]")) return [];
+    const kids = [...ol.children];
+    const d = kids.findIndex((k) => k.classList.contains("pwt-rail-divider"));
+    if (d < 0) return ["phone rail lost its round divider"];
+    if (!kids.slice(d + 1).some((k) => k.hasAttribute("data-slot"))) return ["phone rail has a divider and no next-round slot"];
+    return [];
+  });
+}
 async function floatProblems(page) {
   return page.evaluate(() => {
     const out = [];
@@ -206,7 +218,43 @@ async function floatProblems(page) {
       stage.querySelectorAll(".pwt-el, .pwt-letter, .pwt-plaque, .pwt-guardian-tag, .pwt-ko").forEach((a) => {
         if (hit(r, a.getBoundingClientRect())) out.push(`landing number "${f.textContent.trim()}" sits on ${a.className.split(" ")[0]}`);
       });
+      // Round 8, item 2: the number's horizontal center lies within its own target's plate.
+      const plate = stage.querySelector(`[data-unit="${f.dataset.target}"]`);
+      if (plate) {
+        const pr = plate.getBoundingClientRect();
+        const cx = (r.left + r.right) / 2;
+        if (cx < pr.left - 0.5 || cx > pr.right + 0.5)
+          out.push(`landing number "${f.textContent.trim()}" is outside its target's column (center ${cx | 0}, plate ${pr.left | 0} to ${pr.right | 0})`);
+        // The pair reads as landing on its target only if the big number itself is over that plate too.
+        const num = f.querySelector(".pwt-float-num");
+        if (num) {
+          const nr = num.firstChild && num.firstChild.nodeType === 3 ? (() => { const rg = document.createRange(); rg.selectNodeContents(num.firstChild); return rg.getBoundingClientRect(); })() : num.getBoundingClientRect();
+          const ncx = (nr.left + nr.right) / 2;
+          if (ncx < pr.left - 0.5 || ncx > pr.right + 0.5) out.push(`landing digits "${f.textContent.trim()}" are over a neighbor (digits center ${ncx | 0}, plate ${pr.left | 0} to ${pr.right | 0})`);
+        }
+      }
     });
+    // Round 8, item 9: the one plaque of an end hold covers no plate: no plaque, letter or tag, and no painted figure
+    // (the art's own bounds inside its box, at its natural proportions).
+    const card = stage.querySelector(".pwt-hold-card");
+    if (card) {
+      const cr = card.getBoundingClientRect();
+      stage.querySelectorAll(".pwt-plaque, .pwt-letter, .pwt-el, .pwt-guardian-tag").forEach((a) => {
+        if (hit(cr, a.getBoundingClientRect())) out.push(`hold plaque "${card.textContent.trim()}" covers ${a.className.split(" ")[0]}`);
+      });
+      stage.querySelectorAll(".pwt-figure").forEach((f) => {
+        const fr = f.getBoundingClientRect();
+        const img = f.querySelector("img");
+        let ar = fr;
+        if (img && img.naturalWidth && img.naturalHeight) {
+          const k = Math.min(fr.width / img.naturalWidth, fr.height / img.naturalHeight);
+          const w = img.naturalWidth * k;
+          const h = img.naturalHeight * k;
+          ar = { left: fr.left + (fr.width - w) / 2, right: fr.left + (fr.width + w) / 2, top: fr.bottom - h, bottom: fr.bottom };
+        }
+        if (hit(cr, ar)) out.push(`hold plaque "${card.textContent.trim()}" covers a figure`);
+      });
+    }
     return out;
   });
 }
@@ -344,6 +392,14 @@ async function floatProblems(page) {
           probs.forEach((m) => console.log(`[${tag}] FAIL phone: ${m}`));
         } else console.log(`[${tag}] phone checks ok (12px text, 40px controls, nothing clipped or outside)`);
       }
+      if (phone) {
+        const probs = await railProblems(page);
+        checks++;
+        if (probs.length) {
+          failures += probs.length;
+          probs.forEach((m) => console.log(`[${tag}] FAIL ${m}`));
+        }
+      }
       {
         const probs = await riderProblems(page);
         checks++;
@@ -366,8 +422,9 @@ async function floatProblems(page) {
 
       // Round 7: play the first ready cell out and check, on every frame that settles, the landing
       // numbers (inside the stage, off tags and plaques) and the banner sentence (never cut).
-      if (["first", "before-enemy-phase", "power-hippochamp", "checkpoint-graviclaw"].includes(scen.name) && !(phone && scen.name === "first")) {
-        const cell = page.locator(".pwt-key .pwt-cell:not([disabled])").first();
+      if (["first", "before-enemy-phase", "power-hippochamp", "checkpoint-graviclaw", "final-blow", "last-blow", "last-stand"].includes(scen.name) && !(phone && scen.name === "first")) {
+        const finisher = page.locator(".pwt-key .pwt-cell.finish:not([disabled])").first();
+        const cell = ["final-blow", "last-blow", "last-stand"].includes(scen.name) && (await finisher.count()) ? finisher : page.locator(".pwt-key .pwt-cell:not([disabled])").first();
         if (await cell.count()) {
           if (phone) {
             await cell.tap();
@@ -383,6 +440,7 @@ async function floatProblems(page) {
             const b = await page.evaluate(() => document.querySelector("[data-busy]")?.getAttribute("data-busy"));
             (await floatProblems(page)).forEach((m) => seen.add(m));
             (await riderProblems(page)).forEach((m) => seen.add(m));
+            if (phone && b === "true") (await railProblems(page)).forEach((m) => seen.add(m));
             if (b !== "true" && i > 3) break;
             await page.waitForTimeout(250);
           }
@@ -465,6 +523,8 @@ async function floatProblems(page) {
       await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
       await page.waitForTimeout(500);
     }
+    const keybarBox = () => page.evaluate(() => { const k = document.querySelector(".pwt-keybar"); if (!k) return null; const r = k.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map((n) => Math.round(n)).join(","); });
+    const keybarBefore = await keybarBox();
     await openTool(page, phone, "Guide");
     await page.waitForTimeout(300);
     steps.push([".pwt-guide", await panelProblems(page, ".pwt-guide", phone)]);
@@ -481,6 +541,8 @@ async function floatProblems(page) {
     await openTool(page, phone, "Restart");
     await page.waitForTimeout(200);
     steps.push([".pwt-panel restart", await panelProblems(page, ".pwt-panel")]);
+    // Round 8, item 10: nothing behind a dialog moves; the key bar keeps its place and size under it.
+    steps.push(["key bar stays put under the dialog", (await keybarBox()) === keybarBefore ? [] : [`key bar moved: ${keybarBefore} -> ${await keybarBox()}`]]);
     for (const [name, probs] of steps) {
       checks++;
       if (!probs) {

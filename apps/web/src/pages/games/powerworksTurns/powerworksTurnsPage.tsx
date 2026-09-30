@@ -559,7 +559,8 @@ export default function PowerworksTurnsPage() {
   // the moment has moved on.
   const holding = busy && beatPhase === "hold";
   // First-occurrence teaching notes: one at a time, never over a panel or while beats play.
-  const shownNote = !busy && !panel && !briefing && view.phase === "turn" ? keyNote(view, seenNotes) : null;
+  // It stays while a dialog is open, so nothing behind the dialog changes (round 8, item 10).
+  const shownNote = !busy && !briefing && view.phase === "turn" ? keyNote(view, seenNotes) : null;
   const spotlightId = holding ? null : busy ? actorId ?? null : view.active?.id ?? null;
   const spotlightSide: "squad" | "enemy" = actorIsEnemy ? "enemy" : "squad";
   const showImpact = busy && beatPhase === "impact";
@@ -677,7 +678,7 @@ export default function PowerworksTurnsPage() {
   const beatWords =
     busy && moment
       ? landed
-        ? withWeakened(momentWords(moment.beats, [...view.squad, ...view.enemies]), weakenedBy)
+        ? withWeakened(momentWords(moment.beats, [...view.squad, ...view.enemies]), weakenedBy, actorIsEnemy ? "your hinder" : "an enemy's hinder")
         : approachWords(moment, [...view.squad, ...view.enemies])
       : "";
 
@@ -730,7 +731,7 @@ export default function PowerworksTurnsPage() {
         .filter((f): f is FloatItem => !!f);
       const main = all.filter((f) => f.kind === "hurt" || f.kind === "heal");
       const items = main.length ? main : all;
-      if (top && items.length) floats.push({ id: t, x: top.x + 44, y: top.y, items });
+      if (top && items.length) floats.push({ id: t, x: top.x, y: top.y, items });
     }
     let lunge: { x: number; y: number } | null = null;
     const first = targets.find((t) => t !== moment.actor);
@@ -756,12 +757,18 @@ export default function PowerworksTurnsPage() {
     const W = stage.offsetWidth;
     const avoid = [...stage.querySelectorAll<HTMLElement>(".pwt-plaque, .pwt-el, .pwt-letter, .pwt-guardian-tag, .pwt-ko, .pwt-plate-name")].map((a) => {
       const r = a.getBoundingClientRect();
-      const pad = 5; // a figure is knocked back a little as the number lands; keep clear of where its tags settle
+      const pad = stage.offsetHeight < 300 ? 2 : 5; // a figure is knocked back a little as the number lands; keep clear of where its tags settle (less room on the shortest stage)
       return { l: (r.left - box.left) / z - pad, r: (r.right - box.left) / z + pad, t: (r.top - box.top) / z - pad, b: (r.bottom - box.top) / z + pad };
     });
     stage.querySelectorAll<HTMLElement>(".pwt-float").forEach((el) => {
       el.style.marginLeft = "0px";
       el.style.marginTop = "0px";
+      // Round 8, item 2: the number's center stays inside its target's own column (the plate's span), so on a
+      // crowded stage it is never read as landing on the neighbor.
+      const plate = stage.querySelector<HTMLElement>(`[data-unit="${el.dataset.target}"]`);
+      const pr = plate?.getBoundingClientRect();
+      const colL = pr ? (pr.left - box.left) / z + 4 : -Infinity;
+      const colR = pr ? (pr.right - box.left) / z - 4 : Infinity;
       const w = el.offsetWidth;
       const h = el.offsetHeight;
       const left = parseFloat(el.style.left) || 0;
@@ -771,6 +778,8 @@ export default function PowerworksTurnsPage() {
       const H = stage.offsetHeight;
       // How much of the tags and plaques a position would cover (0 is clear); off the stage is out.
       const covered = (dx: number, dy: number) => {
+        const cx = x0 + dx + w / 2;
+        if (cx < colL || cx > colR) return Infinity;
         const l = x0 + dx;
         const t = y0 + dy;
         if (l < 4 || l + w > W - 4 || t < 2 || t + h > H - 2) return Infinity;
@@ -800,7 +809,9 @@ export default function PowerworksTurnsPage() {
         }
       }
       if (best === Infinity) {
-        dx = Math.max(4 - x0, Math.min(W - 4 - w - x0, 0));
+        // No clear place inside the column: stay centered on it and only nudge back inside the stage.
+        const mid = pr ? ((colL + colR) / 2) : x0 + w / 2;
+        dx = Math.max(4 - x0, Math.min(W - 4 - w - x0, mid - w / 2 - x0));
         dy = Math.max(2 - y0, 0);
       }
       if (dx) el.style.marginLeft = `${dx}px`;
@@ -812,6 +823,68 @@ export default function PowerworksTurnsPage() {
     const timer = window.setTimeout(place, 650);
     return () => window.clearTimeout(timer);
   }, [marks.floats, beatIndex, landed, holding]);
+
+  // Round 8, item 9: the one plaque of an end hold covers no plate. It is placed, in the stage's own units, where it
+  // touches no plaque, tag, letter or painted figure (the art's own bounds, not its box), nearest the gap between
+  // the rows; on a stage too crowded for that it sits beside the rows and takes its compact size before it covers a unit.
+  const [holdAt, setHoldAt] = useState<{ left: number; top: number } | null>(null);
+  const [holdCompact, setHoldCompact] = useState(false);
+  useLayoutEffect(() => {
+    const stage = stageRef.current;
+    if (!holding || !hold || !stage) {
+      setHoldAt(null);
+      setHoldCompact(false);
+      return;
+    }
+    const card = stage.querySelector<HTMLElement>("[data-hold-card]");
+    if (!card) return;
+    const box = stage.getBoundingClientRect();
+    const z = box.width / stage.offsetWidth || 1;
+    const W = stage.offsetWidth;
+    const H = stage.offsetHeight;
+    const rel = (r: DOMRect) => ({ l: (r.left - box.left) / z, r: (r.right - box.left) / z, t: (r.top - box.top) / z, b: (r.bottom - box.top) / z });
+    const obstacles: { l: number; r: number; t: number; b: number }[] = [];
+    stage.querySelectorAll<HTMLElement>(".pwt-plaque, .pwt-letter, .pwt-el, .pwt-guardian-tag, .pwt-ko").forEach((e) => obstacles.push(rel(e.getBoundingClientRect())));
+    // A painted figure sits bottom-centered in its box at its natural proportions: its own bounds are the obstacle.
+    stage.querySelectorAll<HTMLElement>(".pwt-figure").forEach((f) => {
+      const fr = f.getBoundingClientRect();
+      const img = f.querySelector("img");
+      if (img && img.naturalWidth && img.naturalHeight) {
+        const k = Math.min(fr.width / img.naturalWidth, fr.height / img.naturalHeight);
+        const w = img.naturalWidth * k;
+        const h = img.naturalHeight * k;
+        obstacles.push(rel(new DOMRect(fr.left + (fr.width - w) / 2, fr.bottom - h, w, h)));
+      } else obstacles.push(rel(fr));
+    });
+    let above = 0;
+    stage.querySelectorAll<HTMLElement>(".pwt-row.enemies .pwt-plaque").forEach((e) => (above = Math.max(above, rel(e.getBoundingClientRect()).b)));
+    let below = H;
+    stage.querySelectorAll<HTMLElement>(".pwt-row.squad .pwt-figure").forEach((e) => (below = Math.min(below, rel(e.getBoundingClientRect()).t)));
+    const prefY = below > above ? (above + below) / 2 : above + 20;
+    const w = card.offsetWidth;
+    const h = card.offsetHeight;
+    let best = { cost: Infinity, left: W / 2, top: prefY, overlap: Infinity };
+    for (let top = 6 + h / 2; top <= H - 6 - h / 2; top += 4) {
+      for (let dx = 0; Math.abs(dx) <= W / 2 - w / 2 - 8; dx = dx <= 0 ? -dx + 12 : -dx) {
+        const l = W / 2 + dx - w / 2;
+        const t = top - h / 2;
+        let overlap = 0;
+        for (const o of obstacles) {
+          const ow = Math.min(l + w, o.r) - Math.max(l, o.l);
+          const oh = Math.min(t + h, o.b) - Math.max(t, o.t);
+          if (ow > 0 && oh > 0) overlap += ow * oh;
+        }
+        const cost = overlap * 1000 + Math.abs(dx) * 3 + Math.abs(top - prefY);
+        if (cost < best.cost) best = { cost, left: W / 2 + dx, top, overlap };
+      }
+    }
+    if (best.overlap > 0 && !holdCompact) {
+      setHoldCompact(true);
+      return;
+    }
+    setHoldAt({ left: Math.round(best.left), top: Math.round(best.top) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [holding, hold?.kind, holdCompact]);
 
   // Targeting hover (storyboard "choosing" step): hovering a key cell rings its enemy target
   // and draws a faint aim line from the active companion.
@@ -1021,9 +1094,9 @@ export default function PowerworksTurnsPage() {
           </div>
           {landed && !holding &&
             marks.floats.map((f) => (
-              <span key={`float-${beatIndex}-${f.id}`} className="pwt-float" style={{ left: f.x, top: f.y }} aria-hidden="true">
+              <span key={`float-${beatIndex}-${f.id}`} className="pwt-float" data-target={f.id} style={{ left: f.x, top: f.y }} aria-hidden="true">
                 {f.items.map((it, i) => (
-                  <span key={i} className={`pwt-float-num ${it.kind}`}>
+                  <span key={i} className={`pwt-float-num ${it.kind}${it.plain ? " plain" : ""}`}>
                     {it.text}
                     {it.tag && <span className={`pwt-float-tag ${it.tag.tone}`}>{it.tag.word}</span>}
                   </span>
@@ -1032,7 +1105,7 @@ export default function PowerworksTurnsPage() {
             ))}
           {card && !briefing && <TitleCardView card={card} key={`${card.kicker}-${card.name}`} />}
           {holding && hold && (
-            <div className={`pwt-hold-card ${hold.kind}`} role="status" aria-live="polite" data-hold-card="">
+            <div className={`pwt-hold-card ${hold.kind}${holdCompact ? " compact" : ""}`} role="status" aria-live="polite" data-hold-card="" style={holdAt ? { left: holdAt.left, top: holdAt.top } : undefined}>
               {hold.text}
             </div>
           )}
@@ -1119,7 +1192,13 @@ export default function PowerworksTurnsPage() {
                 data-playing=""
               >
                 {!ended && roundOpened && beatNow && <span className="pwt-keybar-wait-round">Round {beatNow.round}</span>}
-                <span className="pwt-keybar-wait-kicker">{ended ? ended.kicker : actorIsEnemy ? "Enemy turn" : "Playing out"}</span>
+                {!ended && <span className="pwt-keybar-wait-kicker">{actorIsEnemy ? "Enemy turn" : "Playing out"}</span>}
+                {/* The band is where the eye rests while beats play: it says what just happened (round 8, item 9). */}
+                {beatWords && (
+                  <p className="pwt-keybar-wait-words" data-beat-words="">
+                    {beatWords}
+                  </p>
+                )}
                 {!ended && nextMine && (
                   <span className="pwt-keybar-wait-next">
                     <span className="pwt-keybar-wait-portrait">
