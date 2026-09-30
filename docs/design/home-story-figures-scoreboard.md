@@ -4,8 +4,8 @@ The running record of every grading round for the home story's figures (`home-st
 
 ## Standing state (2026-09-29)
 
-- **Generators (beats 2 and 3):** live since PR #751, **below the bar**. Last critic scores 6 to 6.5 (round 0b); a third set of fixes shipped in #751 after that review and has not been graded. Next: build the round harness (`home-story-figures.md` section 10), then round 1 on branch `figure/generators-polish`, starting with the weakest lines: Subject, Setting, Finish.
-- **Outbreak (beats 5 and 6):** not started. Plan in `home-story-figures.md` section 7. Next: after the harness, a first build on branch `figure/outbreak`, then rounds.
+- **Generators (beats 2 and 3):** live since PR #751, **below the bar**. Last critic scores 6 to 6.5 (round 0b); a third set of fixes shipped in #751 after that review and has not been graded. The round harness is built (`home-story-figures.md` section 10). Round 1 is under way on branch `figure/generators-polish`, starting with the weakest lines: Subject, Setting, Finish, and the seeds reading as living (see the baseline blind reader below).
+- **Outbreak (beats 5 and 6):** not started. Plan in `home-story-figures.md` section 7. Next: a first build on branch `figure/outbreak`, then rounds.
 - **Order of work (Nick, 2026-09-29):** set up the system, then run it on the Generators and on the outbreak to round out the small beats. Delegate drawing to Sonnet where it makes sense.
 
 ## Open findings, Generators (from round 0b, not yet regraded)
@@ -29,4 +29,10 @@ Critic (Opus): machine 6.5, worlds 6, seeds and vat 6, 02 glance 6, APEX arrival
 
 Fact-check (Sonnet), on the labels and descriptions: 3 supported, 5 paraphrase, 7 unsupported, 2 contradicted, 7 depiction. Fixed before shipping: "each world had its own Generator", "every Generator", links between Generators, "stops reading its world" stated as fact, "five Generators" as a count.
 
-Blind reader: not yet run. Round 1 runs it first.
+Blind reader: not run in round 0.
+
+### Round 1 baseline blind reader (2026-09-29, the build live from PR #751)
+
+Opus, six stills from the study page, no captions.
+- 02: "One tall machine with a lit, pill-shaped window stays in the same place while its surroundings change... The inside always matches the place." Medium to high confidence. Half a pass: it saw the contents change to suit each world, but not that they are life ("fish- or bird-shaped things", "rocks or embers", "star or crystal shapes").
+- 03: "The view pulls back to five of these machines in a row, each in its own colored dome... Dotted lines then run from the sphere down to every machine... and the machines lose their own colors and go dim gray and purple." High confidence. Near a pass: the link and the loss of each machine's own color read; "takes control" is implied, not said. It could not tell whether the vats had been emptied, and did not know what the end domes were (the snow-globe finding).
