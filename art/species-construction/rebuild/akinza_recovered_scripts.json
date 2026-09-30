@@ -1,0 +1,122 @@
+{
+  "description": "Snapshot rules for the Akinza rebuild plan: one rule per step whose script version was never committed.",
+  "baseCommit": "414f48af",
+  "start": "2026-09-28T17:35:18Z",
+  "end": "2026-09-29T02:00:00Z",
+  "rollouts": [
+    "C:\\Users\\njord\\.codex\\sessions\\2026\\09\\27\\rollout-2026-09-27T12-42-03-01a0e3f5-ad0c-7980-905a-1595945478d8.jsonl",
+    "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
+    "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T12-29-50-01a0e910-d631-7990-8d6f-dd97b1df28d2.jsonl",
+    "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T20-19-35-01a0eabe-e7d4-7de3-a235-fb9fe4b863ec.jsonl"
+  ],
+  "snapshots": [
+    {
+      "step": "B02",
+      "match": "--out\\s+\\S*akinza/body-reconstruction-0028/attempt-01(?![\\w/.-])",
+      "files": [
+        "art/species-construction/reconstruct_shape.py"
+      ],
+      "expect": [
+        "0ee5b2d287aec35965ab01ee278e102cfe2f7cea647cb9a521f85afca8d4e1b2"
+      ]
+    },
+    {
+      "step": "B04",
+      "match": "--out\\s+\\S*akinza/paw-reconstruction-0041/attempt-01(?![\\w/.-])",
+      "files": [
+        "art/species-construction/reconstruct_shape.py"
+      ],
+      "expect": [
+        "dbf322ed5e78cb41c38032dd6ed64bd4e71a6555b2502ff07f4a7011ec4de946"
+      ]
+    },
+    {
+      "step": "S02",
+      "match": "reconstruct_shape\\.py.*--out\\s+\\S*akinza/head-full-0058(?![\\w/.-])",
+      "files": [
+        "art/species-construction/reconstruct_shape.py"
+      ],
+      "expect": [
+        "35aa04f0dcb83edb35ae33d52a6965bdb0808993bb568811328b2420c107ee20"
+      ]
+    },
+    {
+      "step": "B05",
+      "match": "--out\\s+\\S*akinza/body-0072/attempt-02(?![\\w/.-])",
+      "files": [
+        "art/species-construction/refine_reconstructed_body.py"
+      ],
+      "expect": [
+        "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad"
+      ]
+    },
+    {
+      "step": "B07",
+      "match": "--out\\s+\\S*akinza/body-0086/attempt-03(?![\\w/.-])",
+      "files": [
+        "art/species-construction/integrate_reconstructed_paws.py",
+        "art/species-construction/blender_blockout.py"
+      ],
+      "expect": [
+        "f5943d9d29552d447a4c063da4d829f293b7ff7a4efc7b47508d665e5ebe67f0",
+        "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a"
+      ]
+    },
+    {
+      "step": "B08",
+      "match": "--out\\s+\\S*akinza/body-0100/attempt-02(?![\\w/.-])",
+      "files": [
+        "art/species-construction/fair_reconstruction_joints.py",
+        "art/species-construction/blender_blockout.py"
+      ],
+      "expect": [
+        "588a276ee6e4fd5c0ab397106f62cd207e7594716e3a875bec7537851e41ba8f",
+        "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a"
+      ]
+    },
+    {
+      "step": "S05",
+      "match": "--out\\s+\\S*akinza/head-0095(?![\\w/.-])",
+      "files": [
+        "art/species-construction/refine_reconstructed_head.py",
+        "art/species-construction/blender_blockout.py"
+      ],
+      "expect": [
+        "14b45dab83edb80aaf82852d41bbd23296c1f77fc6762e52aca54c38d06ae901",
+        "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a"
+      ]
+    },
+    {
+      "step": "S06",
+      "match": "--out\\s+\\S*akinza/head-0100(?![\\w/.-])",
+      "files": [
+        "art/species-construction/transplant_reconstructed_muzzle.py",
+        "art/species-construction/blender_blockout.py"
+      ],
+      "expect": [
+        "4f79af4a5b9a283750c48e0c4ee7d6d961a1e4788055bc9f22e5b3cedc1b2341",
+        "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a"
+      ]
+    },
+    {
+      "step": "S07",
+      "match": "--out\\s+\\S*akinza/head-0109(?![\\w/.-])",
+      "files": [
+        "art/species-construction/refine_reconstructed_coat.py"
+      ],
+      "expect": [
+        "3eef4fefecbfb5105dfdda6924f485d84d85e6e25d0d612729a1069d342b29d5"
+      ]
+    },
+    {
+      "step": "S08",
+      "match": "--python\\s+\\S*recover_0109_flakes\\.py",
+      "files": [
+        "untracked/species-construction/akinza/recover_0109_flakes.py"
+      ],
+      "expect": [
+        "e7ca2554c40869fc7d4d8ba97af8933f5c56b10aceac47f33ccd54032acc0300"
+      ]
+    }
+  ]
+}

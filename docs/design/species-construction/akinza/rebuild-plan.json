@@ -106,7 +106,7 @@
       "The replay reproduces all 52 distinct run-time script hashes recorded in the committed records and printed in the rollouts for this window, with no mismatch (for example 20 refine_reconstructed_head.py versions for head-0025 to head-0076, reconstruct_shape.py 0ee5b2d2, dbf322ed, 35aa04f0 and e50d8508, refine_reconstructed_body.py a068b52f, integrate_reconstructed_paws.py 20ed73ba and f5943d9d, transplant_reconstructed_muzzle.py 634da89e and 4f79af4a, and nine assemble_reconstructed_creature.py versions).",
       "stage-start.json hashes recomputed from the replayed hashes match the records for body-0072/attempt-02, body-0073, body-0100/attempt-02, head-0100, head-0110/attempt-02, head-0110/cranial-volume and head-0110/lower-ear-taper."
     ],
-    "tool": "The replay used for this plan was a scratch script (codex_replay.py) in the session scratchpad and is not committed. Commit it, and the recovered script versions, before the rollouts are lost too (see gaps).",
+    "tool": "art/species-construction/rebuild/replay_codex_edits.py with the rules in art/species-construction/rebuild/akinza_recovered_scripts.json. It writes docs/design/species-construction/akinza/rebuild/recovered-scripts/<step>/<script> and fails unless every file matches its expected sha256. The recovered files are committed, so the rebuild no longer depends on the rollouts; each affected step names its files in recoveredScript.",
     "loopAndMainSession": "For the Claude transcripts, the same kind of simulation (Write, Edit, heredoc, sed -i and Python edits applied to the parent commit) shows each loop and main-session run used exactly the content of the commit named in scriptCommit."
   },
   "gaps": [
@@ -154,7 +154,7 @@
         "S08"
       ],
       "gap": "Ten entry-script versions and two blender_blockout.py versions (d861ad5b... and b22f1565...) exist only as edits in the Codex rollouts.",
-      "proposal": "Commit the replay tool and the recovered files (for example docs/design/species-construction/akinza/recovered-sources/<name>@<sha12>.py) so the rebuild no longer depends on the rollout files."
+      "proposal": "Done: the replay tool is committed under art/species-construction/rebuild/ and the recovered files under docs/design/species-construction/akinza/rebuild/recovered-scripts/ (see the README.md in that folder). The rollouts remain the primary evidence; keep them."
     },
     {
       "id": "G5",
@@ -426,6 +426,14 @@
           "quote": "\"scriptSha256\": \"0ee5b2d2...\", \"outputSha256\": \"35fdef14...\""
         }
       ],
+      "recoveredScript": {
+        "reconstruct_shape.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B02/reconstruct_shape.py",
+          "sha256": "0ee5b2d287aec35965ab01ee278e102cfe2f7cea647cb9a521f85afca8d4e1b2",
+          "originalPath": "art/species-construction/reconstruct_shape.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "B01"
       ]
@@ -495,6 +503,14 @@
           "quote": "\"scriptSha256\": \"dbf322ed...\", \"cpuOffload\": true, \"outputSha256\": \"4ed599c4...\""
         }
       ],
+      "recoveredScript": {
+        "reconstruct_shape.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B04/reconstruct_shape.py",
+          "sha256": "dbf322ed5e78cb41c38032dd6ed64bd4e71a6555b2502ff07f4a7011ec4de946",
+          "originalPath": "art/species-construction/reconstruct_shape.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "B03"
       ]
@@ -568,6 +584,14 @@
           "quote": "head-full-0058/shape.glb sha256 935675ed..."
         }
       ],
+      "recoveredScript": {
+        "reconstruct_shape.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S02/reconstruct_shape.py",
+          "sha256": "35aa04f0dcb83edb35ae33d52a6965bdb0808993bb568811328b2420c107ee20",
+          "originalPath": "art/species-construction/reconstruct_shape.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "S01"
       ]
@@ -718,6 +742,14 @@
           "quote": "\"option\": \"--omit-tails\""
         }
       ],
+      "recoveredScript": {
+        "refine_reconstructed_body.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B05/refine_reconstructed_body.py",
+          "sha256": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad",
+          "originalPath": "art/species-construction/refine_reconstructed_body.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "B02"
       ]
@@ -809,7 +841,8 @@
         "blender_blockout.py": {
           "commit": null,
           "sha256AtRun": "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a",
-          "note": "Intermediate blender_blockout.py version, not in git; replay-recovered and equal to the stage-start record"
+          "note": "Intermediate blender_blockout.py version, not in git; replay-recovered and equal to the stage-start record",
+          "recoveredPath": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B07/blender_blockout.py"
         },
         "blender_probe.py": {
           "commit": "b2a850ee",
@@ -864,6 +897,19 @@
           "quote": "body-0086/attempt-03/shape.glb 158d9570..."
         }
       ],
+      "recoveredScript": {
+        "integrate_reconstructed_paws.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B07/integrate_reconstructed_paws.py",
+          "sha256": "f5943d9d29552d447a4c063da4d829f293b7ff7a4efc7b47508d665e5ebe67f0",
+          "originalPath": "art/species-construction/integrate_reconstructed_paws.py"
+        },
+        "blender_blockout.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B07/blender_blockout.py",
+          "sha256": "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a",
+          "originalPath": "art/species-construction/blender_blockout.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "B04",
         "B06"
@@ -888,7 +934,8 @@
         "blender_blockout.py": {
           "commit": null,
           "sha256AtRun": "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a",
-          "note": "Intermediate version, not in git; equal to the hash recorded in head-0100 stage-start.json"
+          "note": "Intermediate version, not in git; equal to the hash recorded in head-0100 stage-start.json",
+          "recoveredPath": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B08/blender_blockout.py"
         },
         "blender_probe.py": {
           "commit": "b2a850ee",
@@ -939,6 +986,19 @@
           "quote": "\"option\": \"--tail-free-input\", shape.glb 4bf34b95..., fairing.json 742c938b..."
         }
       ],
+      "recoveredScript": {
+        "fair_reconstruction_joints.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B08/fair_reconstruction_joints.py",
+          "sha256": "588a276ee6e4fd5c0ab397106f62cd207e7594716e3a875bec7537851e41ba8f",
+          "originalPath": "art/species-construction/fair_reconstruction_joints.py"
+        },
+        "blender_blockout.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B08/blender_blockout.py",
+          "sha256": "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a",
+          "originalPath": "art/species-construction/blender_blockout.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "B07"
       ]
@@ -962,7 +1022,8 @@
         "blender_blockout.py": {
           "commit": null,
           "sha256AtRun": "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a",
-          "note": "same intermediate version recorded for body-0086/attempt-03"
+          "note": "same intermediate version recorded for body-0086/attempt-03",
+          "recoveredPath": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S05/blender_blockout.py"
         },
         "blender_probe.py": {
           "commit": "b2a850ee",
@@ -988,7 +1049,7 @@
         "log": "After eye aperture: -1 1114470 vertices; After eye aperture: 1 1089597 vertices"
       },
       "certainty": "reconstructed",
-      "certaintyNote": "Command verbatim. Inferred: the script bytes, taken from the replay because no hash of this version was recorded. Checked only by the output head.blend hash, which may not reproduce byte-for-byte.",
+      "certaintyNote": "Command verbatim. Inferred: the script bytes, taken from the replay because no hash of this version was recorded. Supporting evidence: the recovered file is 18,767 bytes, the size of head-0095/refine_source.py (the run-time copy) in a directory listing at 2026-09-29T00:24:43Z. Otherwise checked only by the output head.blend hash, which may not reproduce byte-for-byte.",
       "evidence": [
         {
           "source": "C:\\Users\\njord\\.codex\\archived_sessions\\rollout-2026-09-28T10-36-38-01a0e8a9-3304-7602-99af-8b00f91acd6e.jsonl",
@@ -1001,6 +1062,19 @@
           "quote": "refine_reconstructed_head.py, output head-0095/head.blend c63e52fe..."
         }
       ],
+      "recoveredScript": {
+        "refine_reconstructed_head.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S05/refine_reconstructed_head.py",
+          "sha256": "14b45dab83edb80aaf82852d41bbd23296c1f77fc6762e52aca54c38d06ae901",
+          "originalPath": "art/species-construction/refine_reconstructed_head.py"
+        },
+        "blender_blockout.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S05/blender_blockout.py",
+          "sha256": "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a",
+          "originalPath": "art/species-construction/blender_blockout.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "S02"
       ]
@@ -1024,7 +1098,8 @@
         "blender_blockout.py": {
           "commit": null,
           "sha256AtRun": "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a",
-          "note": "intermediate version, not in git"
+          "note": "intermediate version, not in git",
+          "recoveredPath": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S06/blender_blockout.py"
         },
         "blender_probe.py": {
           "commit": "b2a850ee",
@@ -1076,6 +1151,19 @@
           "quote": "head-0100/head.blend 499e1483..."
         }
       ],
+      "recoveredScript": {
+        "transplant_reconstructed_muzzle.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S06/transplant_reconstructed_muzzle.py",
+          "sha256": "4f79af4a5b9a283750c48e0c4ee7d6d961a1e4788055bc9f22e5b3cedc1b2341",
+          "originalPath": "art/species-construction/transplant_reconstructed_muzzle.py"
+        },
+        "blender_blockout.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S06/blender_blockout.py",
+          "sha256": "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a",
+          "originalPath": "art/species-construction/blender_blockout.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "S04",
         "S05"
@@ -1143,6 +1231,14 @@
           "quote": "2. head-0109/recovered-02/head.blend: broad rear reconstruction and explicit removal of two measured, negligible-volume remesh flakes. The original guard failure is preserved."
         }
       ],
+      "recoveredScript": {
+        "refine_reconstructed_coat.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S07/refine_reconstructed_coat.py",
+          "sha256": "3eef4fefecbfb5105dfdda6924f485d84d85e6e25d0d612729a1069d342b29d5",
+          "originalPath": "art/species-construction/refine_reconstructed_coat.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "S06"
       ]
@@ -1211,6 +1307,14 @@
           "quote": "\"baseSha256\": \"df37df1f...\""
         }
       ],
+      "recoveredScript": {
+        "recover_0109_flakes.py": {
+          "path": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S08/recover_0109_flakes.py",
+          "sha256": "e7ca2554c40869fc7d4d8ba97af8933f5c56b10aceac47f33ccd54032acc0300",
+          "originalPath": "untracked/species-construction/akinza/recover_0109_flakes.py"
+        }
+      },
+      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
       "dependsOn": [
         "S07"
       ]
