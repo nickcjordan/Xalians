@@ -49,10 +49,13 @@ function Row({ sample, children, wide }: { sample: React.ReactNode; children: Re
 
 export function GuidePanel({
   onClose,
+  touch = false,
   squadArt,
   enemyArt,
 }: {
   onClose: () => void;
+  /** A touch screen: the sentences that mention hover say tap instead. */
+  touch?: boolean;
   squadArt?: { art: string; element: string };
   enemyArt?: { art: string; element: string };
 }) {
@@ -134,7 +137,9 @@ export function GuidePanel({
               </Cells>
             }
           >
-            A move with no target is a cell too: press it to use it. Hover it and the units it affects are ringed.
+            {touch
+              ? "A move with no target is a cell too. Tap it once and the units it affects are ringed; tap it again to use it."
+              : "A move with no target is a cell too: press it to use it. Hover it and the units it affects are ringed."}
           </Row>
           <Row
             sample={
@@ -230,7 +235,11 @@ export function GuidePanel({
             A change on a plate: health lost or gained since your last turn.
           </Row>
         </ul>
-        <p className="pwt-panel-note">Keyboard: 1 to 4 picks a key, A to F an enemy cell, 1 to 4 a squadmate cell, Escape backs out, P passes.</p>
+        <p className="pwt-panel-note">
+          {touch
+            ? "Touch: tap a cell once to see who it lands on, tap it again to use it. Tap Pass to end a turn without acting."
+            : "Keyboard: 1 to 4 picks a key, A to F an enemy cell, 1 to 4 a squadmate cell, Escape backs out, P passes."}
+        </p>
         <div className="pwt-panel-actions">
           <button type="button" className="pwt-secondary" onClick={onClose} autoFocus>
             Close

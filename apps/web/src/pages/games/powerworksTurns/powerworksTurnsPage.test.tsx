@@ -295,3 +295,89 @@ describe("Powerworks turn by turn", () => {
     });
   });
 });
+
+/** UX pass 2, round 4: the phone. jsdom has no layout, so these check the mode and its behavior. */
+describe("Powerworks on a landscape phone", () => {
+  const size = (w: number, h: number, noHover: boolean) => {
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: w });
+    Object.defineProperty(window, "innerHeight", { configurable: true, value: h });
+    window.matchMedia = ((q: string) => ({
+      matches: noHover && q.includes("hover: none"),
+      media: q,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    })) as unknown as typeof window.matchMedia;
+  };
+  const restore = () => {
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1024 });
+    Object.defineProperty(window, "innerHeight", { configurable: true, value: 768 });
+    // @ts-expect-error the stub is removed again
+    delete window.matchMedia;
+  };
+  const enemyCells = (c: HTMLElement) =>
+    Array.from(c.querySelectorAll<HTMLButtonElement>(".pwt-key .pwt-cell")).filter((b) => / on [A-F], /.test(b.getAttribute("aria-label") || "") && !b.disabled);
+
+  it("composes the console at the screen's own size, and a desktop keeps the scaled console", () => {
+    size(844, 390, true);
+    const { container, unmount } = mount();
+    const phone = container.querySelector(".pwt-console")!;
+    expect(phone.className).toContain("phone");
+    expect((phone as HTMLElement).style.width).toBe("844px");
+    expect((phone as HTMLElement).style.height).toBe("390px");
+    expect(phone.getAttribute("style") ?? "").not.toContain("zoom");
+    unmount();
+    restore();
+    const desk = mount().container.querySelector(".pwt-console") as HTMLElement;
+    expect(desk.className).not.toContain("phone");
+    expect(desk.style.width).toBe("1280px");
+    restore();
+  });
+
+  it("folds Guide, Record and Restart into one Menu, and the banner line becomes plain text", async () => {
+    size(844, 390, true);
+    const { container } = mount();
+    expect(container.querySelector(".pwt-banner-line.since")).toBeNull();
+    const menu = container.querySelector<HTMLButtonElement>(".pwt-menu-btn")!;
+    expect(screen.queryByRole("menuitem")).toBeNull();
+    fireEvent.click(menu);
+    expect(screen.getAllByRole("menuitem").map((n) => n.textContent?.trim())).toEqual(["Guide", "Record", "Restart"]);
+    fireEvent.click(screen.getByRole("menuitem", { name: /guide/i }));
+    expect(screen.queryByRole("menuitem")).toBeNull();
+    expect(screen.getByRole("dialog", { name: "Guide" })).toBeInTheDocument();
+    // The Guide says tap, not hover, on a touch screen.
+    expect(screen.getByText(/tap it once and the units it affects are ringed/i)).toBeInTheDocument();
+    restore();
+  });
+
+  it("the first tap on a key cell previews it and rings its enemy, the second uses the move", async () => {
+    size(844, 390, true);
+    const { container } = mount();
+    const cell = enemyCells(container as HTMLElement)[0];
+    fireEvent.click(cell);
+    expect(container.querySelector("[data-busy]")!.getAttribute("data-busy")).toBe("false");
+    expect(container.querySelectorAll(".pwt-cell.previewed").length).toBe(1);
+    expect(container.querySelectorAll(".pwt-plate.targeted").length).toBe(1);
+    expect(container.querySelector(".pwt-key-foot-words")).toBeTruthy();
+    expect(screen.getByText("tap again to use")).toBeInTheDocument();
+    // A different cell moves the preview; nothing has been used yet.
+    const other = enemyCells(container as HTMLElement).find((c) => c !== cell && c.getAttribute("aria-label") !== cell.getAttribute("aria-label"))!;
+    fireEvent.click(other);
+    expect(container.querySelectorAll(".pwt-cell.previewed").length).toBe(1);
+    expect(container.querySelector("[data-busy]")!.getAttribute("data-busy")).toBe("false");
+    await act(async () => {
+      fireEvent.click(container.querySelector<HTMLButtonElement>(".pwt-cell.previewed")!);
+    });
+    expect(container.querySelector("[data-busy]")!.getAttribute("data-busy")).toBe("true");
+    restore();
+  });
+
+  it("with a mouse (a phone-sized window that can hover) one click still uses the move", async () => {
+    size(844, 390, false);
+    const { container } = mount();
+    await act(async () => {
+      fireEvent.click(enemyCells(container as HTMLElement)[0]);
+    });
+    expect(container.querySelector("[data-busy]")!.getAttribute("data-busy")).toBe("true");
+    restore();
+  });
+});

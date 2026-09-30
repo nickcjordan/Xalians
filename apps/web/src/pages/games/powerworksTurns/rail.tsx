@@ -5,6 +5,7 @@ import type { RailSlot } from "./view";
 
 /** How many acted slots stay on the rail before NOW: enough to see who just went. */
 const DONE_SHOWN = 8;
+const PHONE_DONE_SHOWN = 1;
 
 /**
   The turn rail (UX pass, 2026-09-29, "what happens next"): one time axis, left to right,
@@ -16,10 +17,11 @@ const DONE_SHOWN = 8;
   marks where the next round starts. `data-rail`, `data-slot` and `data-state` are the
   harness's hooks.
 */
-export function TurnRail({ rail, round }: { rail: RailSlot[]; round: number }) {
+export function TurnRail({ rail, round, compact = false }: { rail: RailSlot[]; round: number; compact?: boolean }) {
   if (!rail.length) return null;
   const now = rail.findIndex((r) => r.state === "now");
-  const from = now < 0 ? 0 : Math.max(0, now - DONE_SHOWN);
+  // Phone: the rail is short, so only the last slot to have acted stays before NOW.
+  const from = now < 0 ? 0 : Math.max(0, now - (compact ? PHONE_DONE_SHOWN : DONE_SHOWN));
   // A fallen unit leaves the order: its plate already says Down.
   const shown = rail.slice(from).filter((r) => r.state !== "down");
   // The order after NOW, counted on the slots still to act (NOW is 1, NEXT is 2, then 3, 4...).

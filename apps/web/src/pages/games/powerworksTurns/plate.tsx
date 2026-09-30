@@ -241,6 +241,7 @@ export function EnemyPlate({
   impactTarget = false,
   struck = false,
   onHover,
+  onTap,
 }: {
   u: EnemyView;
   lit?: boolean;
@@ -259,6 +260,8 @@ export function EnemyPlate({
   /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
   struck?: boolean;
   onHover?: (hovering: boolean) => void;
+  /** Touch on a phone: tapping the plate rings it and lights its cell in every key. */
+  onTap?: () => void;
 }) {
   const hit = u.hitOnActive;
   const who = activeName ?? "the active companion";
@@ -274,6 +277,7 @@ export function EnemyPlate({
       data-unit={u.id}
       onMouseEnter={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
+      onClick={onTap}
     >
       <div className="pwt-body">
         {spotlit && <SpotlightMarks />}

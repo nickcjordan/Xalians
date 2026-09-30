@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import type { Cell, KeyView, SquadView, SupportChip } from "./view";
+import { cellId, tapStep } from "./phone";
 
 /**
   One icon per support kind, so a key's effect reads at a glance beside its number. Hinder
@@ -83,6 +84,7 @@ export function CellButton({
   onPick,
   onHover,
   columnLit = false,
+  previewed = false,
 }: {
   cell: Cell;
   kind: KeyView["kind"];
@@ -97,6 +99,8 @@ export function CellButton({
   /** Its enemy is under the pointer somewhere else (a plate, or the same column in another
       key): the cell lights like a hovered one, so an enemy reads down every key at once. */
   columnLit?: boolean;
+  /** Touch: this cell has had its first tap and waits for the second (phone mode). */
+  previewed?: boolean;
 }) {
   const hinderOnly = kind === "support" && cell.before !== undefined;
   // The companion's own hinder or boost changed this attack's number: show the struck plain
@@ -116,7 +120,7 @@ export function CellButton({
   return (
     <button
       type="button"
-      className={`pwt-cell ${cell.finishes ? "finish" : ""} ${hinderOnly ? "hinder" : ""} ${columnLit ? "col-lit" : ""}`}
+      className={`pwt-cell ${cell.finishes ? "finish" : ""} ${hinderOnly ? "hinder" : ""} ${columnLit ? "col-lit" : ""} ${previewed ? "previewed" : ""}`}
       onClick={onPick}
       onMouseEnter={onHover ? () => onHover(cell.target) : undefined}
       onMouseLeave={onHover ? () => onHover(null) : undefined}
@@ -199,6 +203,9 @@ export function KeyCard({
   onHoverTarget,
   onHoverUnits,
   litTarget = null,
+  twoTap = false,
+  previewed = null,
+  onPreview,
 }: {
   keyView: KeyView;
   /** The active companion's standing squadmates, for ally cells' portraits. */
@@ -215,9 +222,26 @@ export function KeyCard({
   onHoverUnits?: (ids: string[] | null) => void;
   /** The enemy under the pointer (from any key or the stage): its cell lights in every key. */
   litTarget?: string | null;
+  /** Touch on a phone: the first tap on a cell previews it, the second uses it (phone.ts). */
+  twoTap?: boolean;
+  /** The previewed cell's id across every key, or null. */
+  previewed?: string | null;
+  onPreview?: (id: string | null) => void;
 }) {
   const armed = keyView.state === "ready" && !disabled;
-  const foot = footWords(keyView);
+  // A cell answers a tap by previewing (who it lands on is ringed on the stage) or, when it is
+  // the one already previewed, by acting. Off touch, and off phone, every press acts at once.
+  const press = (id: string, target: string, preview: () => void) => {
+    if (tapStep(twoTap, previewed, id) === "preview") {
+      onPreview?.(id);
+      preview();
+      return;
+    }
+    onPreview?.(null);
+    onAct(target);
+  };
+  const previewedHere = !!previewed && previewed.startsWith(`${keyView.index}:`);
+  const foot = previewedHere ? "tap again to use" : footWords(keyView);
   // The units a self-only key lands on: the user, or the whole standing squad.
   const nowIds = keyView.supports[0]?.all ? [activeId, ...squad.map((u) => u.id)].filter((x): x is string => !!x) : activeId ? [activeId] : [];
   // One rule for every enemy-aimed key: a cell per standing enemy, even when the numbers match.
@@ -245,9 +269,11 @@ export function KeyCard({
           <div className="pwt-cells">
             <button
               type="button"
-              className="pwt-cell now"
+              className={`pwt-cell now ${previewed === cellId(keyView.index, "now") ? "previewed" : ""}`}
               disabled={!armed}
-              onClick={() => onAct(keyView.cells[0]?.target ?? "")}
+              onClick={() =>
+                press(cellId(keyView.index, "now"), keyView.cells[0]?.target ?? "", () => onHoverUnits?.(nowIds))
+              }
               onMouseEnter={onHoverUnits ? () => onHoverUnits(nowIds) : undefined}
               onMouseLeave={onHoverUnits ? () => onHoverUnits(null) : undefined}
               onFocus={onHoverUnits ? () => onHoverUnits(nowIds) : undefined}
@@ -289,7 +315,12 @@ export function KeyCard({
                   targetName={ally?.name ?? c.letter ?? "target"}
                   ally={ally}
                   armed={armed}
-                  onPick={() => onAct(c.target)}
+                  previewed={previewed === cellId(keyView.index, c.target)}
+                  onPick={() =>
+                    press(cellId(keyView.index, c.target), c.target, () =>
+                      keyView.aim === "enemy" ? onHoverTarget?.(c.target) : onHoverUnits?.([c.target])
+                    )
+                  }
                   onHover={
                     keyView.aim === "enemy"
                       ? onHoverTarget
