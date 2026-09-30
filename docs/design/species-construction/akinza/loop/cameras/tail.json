@@ -1,0 +1,75 @@
+{
+  "resolution": 800,
+  "views": [
+    {
+      "name": "tail-root-back",
+      "offset": [
+        0,
+        6,
+        0
+      ],
+      "orthoScale": 0.55,
+      "target": [
+        0,
+        0.13,
+        -0.08
+      ]
+    },
+    {
+      "name": "tail-root-oblique",
+      "offset": [
+        3,
+        6,
+        1
+      ],
+      "orthoScale": 0.7,
+      "target": [
+        0.12,
+        0.18,
+        -0.1
+      ]
+    },
+    {
+      "name": "tail-root-opposite",
+      "offset": [
+        -3,
+        6,
+        1
+      ],
+      "orthoScale": 0.7,
+      "target": [
+        0.08,
+        0.15,
+        -0.07
+      ]
+    },
+    {
+      "name": "tail-fan-back",
+      "offset": [
+        0,
+        6,
+        0
+      ],
+      "orthoScale": 0.95,
+      "target": [
+        0.32,
+        0.29,
+        -0.25
+      ]
+    },
+    {
+      "name": "shin-profile",
+      "offset": [
+        6,
+        0,
+        0
+      ],
+      "orthoScale": 0.68,
+      "target": [
+        0.3,
+        0,
+        -0.68
+      ]
+    }
+  ]
+}

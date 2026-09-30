@@ -1,0 +1,206 @@
+{
+ "schemaVersion": 1,
+ "approval": null,
+ "loop": "docs/design/species-construction/LOOP.md",
+ "limits": {
+  "passBar": 8,
+  "cooldownRounds": 2,
+  "stallAttempts": 3,
+  "stallGain": 1,
+  "keepGain": 0.5,
+  "regressionDrop": 1,
+  "roundsPerBatch": 4,
+  "hardStopRounds": 16,
+  "gate": {
+   "minRegion": 7,
+   "weightedMean": 8,
+   "identityRegions": [
+    "R02",
+    "R03",
+    "R10"
+   ],
+   "identityMin": 8
+  }
+ },
+ "baseline": {
+  "head": "head-0152",
+  "body": "body-0155",
+  "assembly": "assembled-0156",
+  "packet": "untracked/species-construction/akinza/loop/packets/assembled-0156"
+ },
+ "round": 0,
+ "lastOrders": [],
+ "regions": {
+  "R01": {
+   "name": "Head silhouette",
+   "weight": 3,
+   "criteria": [
+    "C02"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R02": {
+   "name": "Face",
+   "weight": 3,
+   "criteria": [
+    "C03",
+    "C04",
+    "C05"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R03": {
+   "name": "Ear fan front",
+   "weight": 3,
+   "criteria": [
+    "C07",
+    "C08"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R04": {
+   "name": "Ear fan rear and profile",
+   "weight": 2.5,
+   "criteria": [
+    "C06",
+    "C09"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R05": {
+   "name": "Neck and shoulders",
+   "weight": 2,
+   "criteria": [
+    "C10"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R06": {
+   "name": "Torso and pelvis",
+   "weight": 2,
+   "criteria": [
+    "C11"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R07": {
+   "name": "Arms and forepaws",
+   "weight": 1.5,
+   "criteria": [
+    "C12",
+    "C13"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R08": {
+   "name": "Legs",
+   "weight": 2,
+   "criteria": [
+    "C14",
+    "C15",
+    "C16"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R09": {
+   "name": "Hind paws",
+   "weight": 1.5,
+   "criteria": [
+    "C17"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R10": {
+   "name": "Tails",
+   "weight": 3,
+   "criteria": [
+    "C18"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R11": {
+   "name": "Tail root and pelvis",
+   "weight": 2,
+   "criteria": [
+    "C19"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  },
+  "R12": {
+   "name": "Whole-form coherence",
+   "weight": 2,
+   "criteria": [
+    "C01",
+    "C20"
+   ],
+   "score": null,
+   "issues": [],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null
+  }
+ },
+ "decisionsForNick": [
+  {
+   "topic": "Tail tips",
+   "state": "Applied: tips curl up and out per accepted back study 0018; the first sheet droops. Reverting is one controls file."
+  }
+ ],
+ "history": []
+}
