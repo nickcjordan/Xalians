@@ -796,7 +796,7 @@ const WISPS_BACK = (() => {
 	return Array.from({ length: 6 }, (_, k) => ({ x: (k / 5 - 0.5) * 520 + (r() - 0.5) * 60, y: 300 + r() * 80, rx: 110 + r() * 80, ry: 24 + r() * 18, a: 0.3 + r() * 0.08, ph: r() * TAU, sp: 0.4 + r() * 0.5, v: (k + 1) % 2 }));
 })();
 // the curl at the dome's edge: haze piled where it was pushed back
-const CURL = Array.from({ length: 18 }, (_, k) => ({ a: Math.PI + (k / 17) * Math.PI, r: 44 + ((k * 37) % 30), v: k % 2 }));
+const CURL = Array.from({ length: 12 }, (_, k) => ({ side: k % 2 ? 1 : -1, dy: (Math.floor(k / 2) - 2.5) * 6, r: 46 + ((k * 37) % 26), v: k % 2 }));
 
 type PutFn = (s: HTMLCanvasElement | null, x: number, y: number, r: number, a: number) => void;
 
@@ -1053,11 +1053,11 @@ export function createOutbreak(): Figure {
 				const link = ramp(seatAt, seatAt + 0.35, t1);
 				const fill = easeOut(ramp(3.55, 5.25, t1));
 				const awake = smooth(3.9, 5.1, t1);
-				const domeOn = easeOut(ramp(5.0, 6.5, t1));
+				const domeOn = easeOut(ramp(6.0, 7.5, t1));
 				const pulse = 0.94 + 0.06 * Math.sin(sec * 1.2);
 				const s = compact ? 1.08 : 0.88;
 				const MH = 370 * s; // the machine's height on the stage
-				const rx = 290;
+				const rx = 250;
 				const ry = 1.2 * MH;
 				// stage position of a point in the machine's own units
 				const px = (x: number) => CX + (x - MX) * s;
@@ -1206,18 +1206,55 @@ export function createOutbreak(): Figure {
 				const hp0 = hazePuff(0);
 				const hp1 = hazePuff(1);
 				ctx.globalCompositeOperation = 'source-over';
-				for (const h of HAZES) {
-					const hp = h.v ? hp1 : hp0;
-					if (!hp) continue;
-					const x = h.x + Math.sin(sec * 0.05 * h.sp + h.ph) * 14;
-					const d = Math.hypot((x - CX) / rx, (h.y - GY) / ry);
-					const inside = domeOn * (1 - smooth(0.8, 1.05, d));
-					let a = h.a * mix(1, 0.05, inside);
-					// nearer the machine's own face the haze lies thinner, so the console stays in view
-					if (Math.abs(x - CX) < 110 && h.y < 440) a *= 0.8;
-					if (a < 0.01) continue;
-					ctx.globalAlpha = clamp(a * sA);
-					ctx.drawImage(hp, x - h.rx, h.y - h.ry, h.rx * 2, h.ry * 2);
+				// the front: an ellipse on the ground centered on the chip; the red ground band is outside it, warm dust inside
+				const Rf = rx * domeOn;
+				const frontY = py(GROUND + 18);
+				const drawHazes = (only: 'out' | 'in') => {
+					for (const h of HAZES) {
+						const hp = h.v ? hp1 : hp0;
+						if (!hp) continue;
+						const x = h.x + Math.sin(sec * 0.05 * h.sp + h.ph) * 14;
+						let a = only === 'in' ? h.a * 0.05 : h.a;
+						// nearer the machine's own face the haze lies thinner, so the console stays in view
+						if (Math.abs(x - CX) < 110 && h.y < 440) a *= 0.8;
+						if (a < 0.01) continue;
+						ctx.globalAlpha = clamp(a * sA);
+						ctx.drawImage(hp, x - h.rx, h.y - h.ry, h.rx * 2, h.ry * 2);
+					}
+				};
+				if (Rf < 2) drawHazes('out');
+				else {
+					const fry = Rf * 0.3 + 30;
+					ctx.save();
+					ctx.beginPath();
+					ctx.rect(0, 0, W, H);
+					ctx.ellipse(CX, frontY, Rf, fry, 0, 0, TAU);
+					ctx.clip('evenodd');
+					drawHazes('out');
+					ctx.restore();
+					ctx.save();
+					ctx.beginPath();
+					ctx.ellipse(CX, frontY, Rf, fry, 0, 0, TAU);
+					ctx.clip();
+					drawHazes('in');
+					// the ground behind the front turns to warm dust
+					ctx.globalCompositeOperation = 'lighter';
+					const dust = spr([206, 146, 100]);
+					if (dust) {
+						ctx.globalAlpha = clamp(0.7 * domeOn * sA);
+						ctx.drawImage(dust, CX - Rf, frontY - fry, Rf * 2, fry * 2);
+					}
+					ctx.globalCompositeOperation = 'source-over';
+					ctx.restore();
+					// the ripple of light that leads the front out from the chip along the ground
+					ctx.globalCompositeOperation = 'lighter';
+					ctx.strokeStyle = css([255, 226, 170]);
+					ctx.lineWidth = 3;
+					ctx.globalAlpha = clamp(0.55 * (1 - smooth(0.55, 1, domeOn)) * sA);
+					ctx.beginPath();
+					ctx.ellipse(CX, frontY, Rf * 1.02, fry * 1.02, 0, 0, TAU);
+					ctx.stroke();
+					ctx.globalCompositeOperation = 'source-over';
 				}
 				// wisps drifting across the front of the machine: it stands in the red, until the dome pushes them out
 				if (hp0 && hp1) {
@@ -1248,13 +1285,13 @@ export function createOutbreak(): Figure {
 					}
 					ctx.restore();
 				}
-				// the curl: haze piled at the dome's edge as it is pushed out
+				// the curl: haze piled on the ground where the front stops
 				if (domeOn > 0.02 && hp0 && hp1) {
 					for (const c of CURL) {
-						const cx = CX + Math.cos(c.a) * rx * domeOn;
-						const cy = GY + Math.sin(c.a) * ry * domeOn * 0.85;
-						ctx.globalAlpha = clamp(0.45 * sA * Math.min(1, domeOn * 2));
-						ctx.drawImage(c.v ? hp1 : hp0, cx - c.r, cy - c.r * 0.8, c.r * 2, c.r * 1.6);
+						const cx = CX + c.side * Rf;
+						const cy = frontY + c.dy * (0.4 + Rf * 0.1);
+						ctx.globalAlpha = clamp(0.4 * sA * Math.min(1, domeOn * 2));
+						ctx.drawImage(c.v ? hp1 : hp0, cx - c.r, cy - c.r * 0.45, c.r * 2, c.r * 0.9);
 					}
 				}
 				// warm light on the ground under the machine and through the cleared haze
@@ -1300,28 +1337,12 @@ export function createOutbreak(): Figure {
 					const tex2 = chip();
 					const soft = chipBlur();
 					if (tex2 && soft) {
-						// a line from Valleron's star to the chip, seen for about 0.3 s as it comes in
-						const sl = smooth(0.62, 0.72, arrive) * (1 - smooth(0.96, 1, arrive));
-						if (sl > 0.01) {
-							const lg2 = ctx.createLinearGradient(starX, starY, head[0], head[1]);
-							lg2.addColorStop(0, css([255, 226, 170], 0));
-							lg2.addColorStop(1, css([255, 236, 200], 0.5));
-							ctx.globalCompositeOperation = 'lighter';
-							ctx.globalAlpha = clamp(sl * sA);
-							ctx.strokeStyle = lg2;
-							ctx.lineWidth = 1.6;
-							ctx.beginPath();
-							ctx.moveTo(starX, starY);
-							ctx.lineTo(head[0], head[1]);
-							ctx.stroke();
-							ctx.globalCompositeOperation = 'source-over';
-						}
 						// a short bright trail behind it, about 30 px
 						if (arrive < 0.98) {
 							ctx.globalCompositeOperation = 'lighter';
 							for (let k = 1; k <= 10; k++) {
 								const p = at(Math.max(0, q - k * 0.0064));
-								putS(spr([255, 232, 180]), p[0], p[1], 8 - k * 0.6, 0.85 * (1 - k / 11));
+								putS(spr([255, 232, 180]), p[0], p[1], 8 - k * 0.6, 0.4 * (1 - k / 11));
 							}
 							ctx.globalCompositeOperation = 'source-over';
 						}

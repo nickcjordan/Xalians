@@ -19,7 +19,7 @@
 // Drawn in its own units, 960 by 540, scaled onto the stage (W by H). No state but the figure's clocks.
 // Everything static (the worlds' layers, the machine's plating and wear, the painted surface) is drawn once
 // into offscreen canvases on first use; a frame only composes them and draws what moves.
-import { blot, clamp, css, easeOut, glow, grain, H, lighter, mix, mixRGB, ramp, rng, smooth, W, type Ctx, type RGB } from './stage';
+import { scaleRGB, blot, clamp, css, easeOut, glow, grain, H, lighter, mix, mixRGB, ramp, rng, smooth, W, type Ctx, type RGB } from './stage';
 import { assetUrl, type Figure } from './figures';
 import { BLACK, BODY, DISH, FOOT, GROUND, MC, MX, PH, PW, TAU, VIOLET, VR, VX, VY0, VY1, WHITE, WX0, drawMachine, ease, hash, machineCache, machineSmall, machineTinted, offscreen, resetMachineWorld, pics, seedR, soften, type MachineLook, type Pic, type SeedKind, type WorldKey } from './generatorMachine';
 
@@ -1106,7 +1106,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 		return c;
 	};
 	// the lattice itself is redrawn at 12 a second, not every frame: the rows torn and jittered from it move faster
-	const step = Math.floor(sec * 4);
+	const step = Math.floor(sec * 2);
 	const fresh = lattice.step !== step || lattice.px !== px;
 	lattice.step = step;
 	lattice.px = px;
@@ -1127,6 +1127,10 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	const tearRow = Math.floor((((sec * 0.3) % 1.2) - 0.1) * (size / rowH));
 	// now and then the whole image rolls, as a picture held by a weak signal does
 	const roll = 8 * Math.exp(-Math.pow((sec % 2.6 - 0.2) / 0.22, 2));
+	// at most two bright rows at a time, travelling down the image
+	const rowsN = Math.floor(size / rowH);
+	const c1 = (((sec * 0.25) % 1) * 1.3 - 0.15) * rowsN;
+	const c2 = ((((sec * 0.25) + 0.5) % 1) * 1.3 - 0.15) * rowsN;
 	const copy = (img: HTMLCanvasElement, alpha: number, dx: number, seedOff: number) => {
 		for (let r = 0, y = y0; y < y0 + size; r++, y += rowH) {
 			if (seedOff && r % 2) continue;
@@ -1136,7 +1140,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 			const keep = hash(r, jitterStep * 3 + 1 + seedOff) > 0.55 * Math.pow(edge, 2);
 			if (!keep) continue;
 			// interference: the rows brighten and dim in bands that travel down the image
-			ctx.globalAlpha = alpha * (0.55 + 0.45 * Math.sin(r * 0.55 - sec * 5 + seedOff));
+			ctx.globalAlpha = alpha * (0.42 + 0.58 * Math.max(Math.exp(-Math.pow((r - c1) / 2.2, 2)), Math.exp(-Math.pow((r - c2) / 2.2, 2))));
 			let off = (hash(r, jitterStep + seedOff) - 0.5) * 7 * (1 - build * 0.5);
 			if (tearing && r >= tearRow && r < tearRow + 7) off += 26 * (seedOff ? 1.3 : 1);
 			// a quarter of the rows run out past the edge of the image, some left, some right
@@ -1394,7 +1398,12 @@ export function createGenerators(): Figure {
 			let kindA: SeedKind = ws.prev >= 0 ? WORLDS[ws.prev].key : 'genesis';
 			let kindB: SeedKind = WORLDS[ws.cur].key;
 			let km = adapt;
-			let gel: RGB = ws.prev >= 0 ? mixRGB(WORLDS[ws.prev].gel, WORLDS[ws.cur].gel, ws.k) : mixRGB(GENESIS, WORLDS[0].gel, smooth(0.2, 0.7, t));
+			// the gel does not cross-fade through gray: it dims in its old color while the old seeds come apart, the
+			// machine goes quiet and reads the world, and the pulse lights the new life in the new color
+			const oldGel: RGB = ws.prev >= 0 ? WORLDS[ws.prev].gel : GENESIS;
+			const newGel: RGB = WORLDS[ws.cur].gel;
+			const gelLevel = eT < 0.8 ? mix(1, 0.45, smooth(0, 0.4, eT)) : mix(0.45, 1, smooth(0.8, 1.1, eT));
+			let gel: RGB = scaleRGB(eT < 0.8 ? oldGel : newGel, gelLevel);
 			if (v3 > 0.5 && stage === 1) {
 				if (!frozen) frozen = { kindA, kindB, km, gel };
 				({ kindA, kindB, km, gel } = frozen);

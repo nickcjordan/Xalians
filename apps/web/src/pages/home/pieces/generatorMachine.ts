@@ -405,11 +405,11 @@ export function paintMachine(g: Ctx) {
 	bodyPath(g);
 	g.clip();
 	for (const [x, y] of [[MX - 92, 232], [MX + 84, 334], [MX - 36, 372]] as [number, number][]) {
-		const st = g.createLinearGradient(0, y, 0, y + 25);
-		st.addColorStop(0, css([130, 66, 30], 0.35));
+		const st = g.createLinearGradient(0, y, 0, y + 32);
+		st.addColorStop(0, css([140, 70, 30], 0.42));
 		st.addColorStop(1, css([130, 66, 30], 0));
 		g.fillStyle = st;
-		g.fillRect(x - 1.5, y, 3, 25);
+		g.fillRect(x - 2, y, 4, 32);
 	}
 	g.fillStyle = css(BLACK, 0.4);
 	g.beginPath();
@@ -599,7 +599,9 @@ export function seedR(kind: SeedKind, th: number, fins = true, v = 0) {
 	if (kind === 'apex') return 0.85; // all the same
 	return 1 + 0.1 * Math.cos(2 * th) - 0.16 * Math.sin(th); // Genesis: a plain oval seed
 }
-export const SEEDS = Array.from({ length: 4 }, (_, k) => ({ x: (hash(k, 1) - 0.5) * 18, y: VY0 + 48 + k * 49 + (hash(k, 2) - 0.5) * 6, r: 24 * (0.9 + hash(k, 3) * 0.2), ph: hash(k, 4) * TAU, sp: 0.6 + hash(k, 5) * 0.5, tilt: (hash(k, 6) - 0.5) * 0.5, hb: 0.5 + hash(k, 7) * 0.25 }));
+/** Where the seeds sit: one in each bay between the straps (270 and 340) and the vat's ends. */
+export const SEED_Y = [232, 305, 372];
+export const SEEDS = Array.from({ length: 3 }, (_, k) => ({ x: (hash(k, 1) - 0.5) * 14, y: SEED_Y[k] + (hash(k, 2) - 0.5) * 3, r: 21.5 * (0.92 + hash(k, 3) * 0.16), ph: hash(k, 4) * TAU, sp: 0.6 + hash(k, 5) * 0.5, tilt: (hash(k, 6) - 0.5) * 0.5, hb: 0.5 + hash(k, 7) * 0.25 }));
 
 export function ecg(ph: number) {
 	const p = ((ph % 1) + 1) % 1;
@@ -928,7 +930,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const dx = Math.sin(sec * s.sp + s.ph) * 5 * free;
 		const dy = Math.cos(sec * s.sp * 0.8 + s.ph) * 4 * free;
 		const x = mix(VX + s.x + dx, VX, apex);
-		const y = mix(s.y + dy, VY0 + 48 + k * 49, apex);
+		const y = mix(s.y + dy, SEED_Y[k], apex);
 		// a slow drift of about 6 degrees, and a breath of 4 percent every 1.8 s, out of step from one seed to the next
 		const rot = mix(s.tilt + Math.sin(sec * 0.5 + s.ph) * 0.105, 0, apex);
 		const own = ((sec * s.hb + s.ph / TAU) % 1 + 1) % 1;
@@ -938,7 +940,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		const born = S.seedBorn === undefined ? 1 : clamp(S.seedBorn * 1.3 - k * 0.14);
 		if (born <= 0.001) return;
 		const form = born * mix(kmk < 0.5 ? mix(1, 0, smooth(0, 0.5, kmk)) : mix(0.2, 1, smooth(0.5, 1, kmk)), 1, apex);
-		const r = mix(s.r, 15, apex) * form * (S.seedScale ?? 1) * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
+		const r = mix(s.r, 15, apex) * form * (S.seedScale ?? 1) * (1 + 0.05 * Math.sin((sec * TAU) / 1.6 + s.ph) + 0.06 * pulse);
 		const kindNow: SeedKind = kmk < 0.5 ? S.kindA : S.kindB;
 		const stormW = kindNow === 'storm' ? 1 - apex : 0;
 		const wall = kindNow === 'lava' ? 1 - apex : 0;
@@ -1005,8 +1007,9 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			const nx = x + Math.cos(away) * off + Math.cos(s.ph + sec * 0.3) * r * 0.03;
 			const ny = y + Math.sin(away) * off * 0.9 + Math.sin(s.ph + sec * 0.3) * r * 0.03;
 			const ng = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr * 1.5);
-			ng.addColorStop(0, css(mixRGB(tint, BLACK, 0.85 - 0.3 * apex), 0.9 * a));
-			ng.addColorStop(0.65, css(mixRGB(tint, BLACK, 0.8 - 0.3 * apex), 0.7 * a));
+			const nb = 1 + 0.15 * Math.sin(sec * 2.4 + s.ph * 3);
+			ng.addColorStop(0, css(mixRGB(tint, BLACK, 0.85 - 0.3 * apex), clamp(0.9 * a * nb)));
+			ng.addColorStop(0.65, css(mixRGB(tint, BLACK, 0.8 - 0.3 * apex), clamp(0.7 * a * nb)));
 			ng.addColorStop(1, css(mixRGB(tint, BLACK, 0.8), 0));
 			ctx.fillStyle = ng;
 			ctx.beginPath();
@@ -1067,17 +1070,20 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.restore();
 	lighter(ctx, () => glow(ctx, VX, (VY0 + VY1) / 2, 170, gel, 0.14 * a * lit));
 	// the glass's own rim, and the straps across it
-	{
-		const rg = ctx.createLinearGradient(VX - VR, 0, VX + VR, 0);
-		const lo = css(mixRGB(gel, WHITE, 0.6), 0.14 * a);
-		const hi = css(mixRGB(gel, WHITE, 0.6), 0.75 * a);
-		rg.addColorStop(0, side < 0 ? hi : lo);
-		rg.addColorStop(1, side < 0 ? lo : hi);
-		ctx.strokeStyle = rg;
-	}
-	ctx.lineWidth = 1.4;
+	// a dark outer lip, and the rim lit from inside by the gel
+	ctx.strokeStyle = css([4, 6, 6], 0.6 * a);
+	ctx.lineWidth = 4;
 	vatPath(ctx);
 	ctx.stroke();
+	ctx.save();
+	vatPath(ctx);
+	ctx.clip();
+	ctx.globalCompositeOperation = 'lighter';
+	ctx.strokeStyle = css(mixRGB(gel, WHITE, 0.3), 0.5 * a * lit * fill);
+	ctx.lineWidth = 5;
+	vatPath(ctx);
+	ctx.stroke();
+	ctx.restore();
 	if (fill < 1) {
 		// unlit glass shows a lit rim
 		ctx.strokeStyle = css([176, 196, 204], 0.4 * (1 - fill) * a);
