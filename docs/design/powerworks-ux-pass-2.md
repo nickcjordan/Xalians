@@ -45,6 +45,8 @@ Capture: 47 sequences over 11 of 12 stages (no player retreat control exists to 
 9. No way to leave or retreat; Restart wears the forward color.
 10. Phone is not playable: the portrait prompt is backwards and has no exit; landscape text is about 6 px.
 
+**Graded readers** (answers checked against the engine's record, 112 items each): 94.6%, 93.3% and 92.0%, combined 93.3%. The turn cycle reads; the losses are the forced-out screen (70%, its text describes a stall for a retreat), the restart dialog (Cancel looks like a restart), camp (XP total read as the gain, revives left unknown) and the rail's order (two rows read top first).
+
 ## Plan
 
 Four build rounds, each recaptured and judged by a fresh critic; readers again after rounds 2 and 4. Rules held from earlier rulings: numbers and words in place, no suggestions; no side colors beyond the turn banner; calm motion (no camera shake, no blur, no moving light); one fixed screen.
@@ -62,13 +64,28 @@ Four build rounds, each recaptured and judged by a fresh critic; readers again a
 9. **Retreat**: a Retreat action at camp (the engine's command), its own result text ("The squad withdrew"); the forced-out text stays for the stall and says what the stall rule is.
 10. **Phone portrait prompt**: "Turn your phone sideways to play" and a way back to Xalians.
 
+**Built (2026-09-29, branch feat/powerworks-ux-2-r1):**
+
+1. Round label: `playback()` replays the clocks act by act and gives every beat the engine's `round` and its own `rail`; the banner, rail (divider included) and the enemy-turn card read the beat being played, so a round that opens on an enemy's turn is the new round from that enemy's first beat (the enemy-turn card also shows "Round n" once it differs from the round the command began in). The cause was that the page held the pre-command view and only remapped the rail slots. The hand-off card is unchanged: it already fires on the settled state.
+2. Result sentences: `momentWords` moved into `view.ts`; every heal, shield, boost, hinder and delay clause names its target ("hit Crystorn for 26 and weakened Crystorn's next attack by 14"), and `weakenedWords` names the enemy whose hit was weakened.
+3. Camp XP: `xpGain` (this sector's +10, the final +30) is the headline; the running total is a quiet line under it.
+4. Since your last turn: `sinceView` reads the Record's beats since the active companion's last act in this room; per unit (active companion, squad, enemies) it lists hits, heals, fell, shield gained or lost, and a boost or hinder only while still carried; nothing changed says nothing; first turn of a room shows nothing. The banner takes whole items up to about 92 characters then "+N more"; the Record panel shows the full list on top.
+5. Own status: an attack cell of a hindered or boosted companion shows the struck plain number, an arrow and the marked one; the key bar's portrait column says why once ("hindered by 14", full sentence as its title).
+6. Identical cells: the collapsed "every enemy" layout is gone; single-target keys always show one cell per enemy; only an area key draws ALL.
+7. Enemy hit chip: no portrait; it is the enemy's strongest hit at its next turn on the acting companion; a stronger resting attack appears as a second quieter chip "46 in 1". Definition: cooldowns decrement at the start of a unit's own turn, so a move with cooldown c acts on its c-th turn from now, and "in N" is c minus 1 (the turns after its next one).
+8. Record: every beat's sentence, grouped by sector and round, newest first, kept in the save (last 800 lines).
+9. Retreat: a Retreat button at camp (the only phase the engine accepts `retreat` in), a "Squad withdrew" result, and the forced-out result now states the stall rule. The engine gains a `WITHDREW_LOG` line on a chosen retreat so the two endings can be told apart.
+10. Phone portrait: "Turn your phone sideways to play", the icon turned on its side, and a Back to Xalians link.
+
+Not done or different: Retreat has no confirmation step (the doc did not ask for one). The stall ending is still unreachable in seeded play, so its paint is covered by a unit test only. Enemy turns that play silently before a room's first companion turn (the advance command) are still not recorded.
+
 ### Round 2: arrive, end and rest
 
-Briefing screen before the first turn (goal, the four sectors as a strip, the squad, health carries over, one revive; Begin). The Guide becomes a visual legend of every mark. A room title card on entering each sector. Knockouts hold: the last enemy, the boss and the last companion visibly fall before any panel; "Sector cleared". Victory and defeat get distinct layouts, a run summary (sectors, rounds, knockouts, XP, the enemy that decided it) and an exit. Camp: revive is the primary action when someone is down, with its amount and the revives left; the recovery station states its amount and plays it on arrival with deltas. Restart's confirmation uses the danger style with Cancel as default.
+Briefing screen before the first turn (goal, the four sectors as a strip, the squad, health carries over, one revive; Begin). The Guide becomes a visual legend of every mark. A room title card on entering each sector. Knockouts hold: the last enemy, the boss and the last companion visibly fall before any panel; "Sector cleared". Victory and defeat get distinct layouts, a run summary (sectors, rounds, knockouts, XP, the enemy that decided it) and an exit. Camp: revive is the primary action when someone is down, with its amount and the revives left; the recovery station states its amount and plays it on arrival with deltas. Restart's confirmation uses the danger style with Cancel as default. Cancelling it leaves a visible trace (graded readers could not tell Cancel from a restart).
 
 ### Round 3: one meaning per mark, and impact
 
-Gold only for finishes. Hinder cells read as "their hit 14 → 0", distinct from damage. Chevrons one color rule everywhere. The recovery station gets its own icon. Self-only keys become pressable cells like the others and ring their recipient on hover. Hovering an enemy lights its column in every key. Every unit shows its element. Hits land with a target flash, a short knockback, a larger number and a STRONG or WEAK tag in the matchup color. While beats play the key bar shows one "playing" state instead of the ghosted keys; speed is a labeled 1x/2x control.
+Gold only for finishes. Hinder cells read as "their hit 14 → 0", distinct from damage. Chevrons one color rule everywhere. The recovery station gets its own icon. Self-only keys become pressable cells like the others and ring their recipient on hover. Hovering an enemy lights its column in every key. Every unit shows its element. Hits land with a target flash, a short knockback, a larger number and a STRONG or WEAK tag in the matchup color. The turn rail reads in one pass: graded readers read its enemy row before its squad row and got the order wrong in 12 of 20 folders, so order must not depend on reading two rows by horizontal position alone. While beats play the key bar shows one "playing" state instead of the ghosted keys; speed is a labeled 1x/2x control.
 
 ### Round 4: phone
 

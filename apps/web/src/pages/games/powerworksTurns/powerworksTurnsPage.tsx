@@ -18,7 +18,18 @@ import {
   type TCommand,
 } from "@xalians/rules/dungeon/pillars";
 
-import { turnView, playback, hpSnapshot, turnDeltas, type TurnView, type Beat, type SinceLastTurn } from "./view";
+import {
+  turnView,
+  playback,
+  momentWords,
+  hinderOnAttack,
+  weakenedWords,
+  recordEntries,
+  roomNamesOf,
+  sinceView,
+  type Beat,
+  type RecordEntry,
+} from "./view";
 import { Portrait } from "../powerworksVisuals";
 import { EnemyPlate, SquadPlate } from "./plate";
 import { KeyCard } from "./keys";
@@ -85,28 +96,6 @@ function approachWords(m: Moment, units: { id: string; name: string; letter?: st
   return `${actor} uses ${move} on ${list}.`;
 }
 
-/** One line for a moment: the beat's own words, or, when one move touches several units, who used what on whom. */
-function momentWords(m: Moment, units: { id: string; name: string; letter?: string }[]): string {
-  if (m.beats.length === 1) return m.words;
-  const name = (id: string) => {
-    const u = units.find((x) => x.id === id);
-    return u ? (u.letter ? u.name + " " + u.letter : u.name) : id;
-  };
-  const join = (xs: string[]) => (xs.length > 1 ? xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1] : xs[0]);
-  const hits = m.beats.filter((b) => b.event.kind === "hit").map((b) => b.event as { target: string; amount: number });
-  const hinders = m.beats.filter((b) => b.event.kind === "hinder").map((b) => b.event as { amount: number });
-  const move = moveOf(m.beats[0]) ?? "a move";
-  const short = (id: string) => units.find((x) => x.id === id)?.letter ?? name(id);
-  let words = hits.length
-    ? `${name(m.actor)}'s ${move} hit ${join(hits.map((h) => short(h.target)))} for ${join(hits.map((h) => String(h.amount)))}.`
-    : `${name(m.actor)} used ${move} on ${join(targetsOf(m).map(name))}.`;
-  if (hinders.length) {
-    const n = hinders[0].amount;
-    words += hinders.length > 1 ? ` Their next hits are weakened by ${n}.` : ` Its next hit is weakened by ${n}.`;
-  }
-  return words;
-}
-
 const SAVE_KEY = "xalians.powerworks.turns.v1";
 const CONSOLE = { width: 1280, height: 720 } as const;
 const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: ENEMY_HP_FACTOR };
@@ -148,25 +137,30 @@ function readSeed(): number {
   return Number.isFinite(n) ? n : 1;
 }
 
-function boot(): TRun {
+/** The saved run and its Record (a save without one starts the Record empty). */
+function boot(): { state: TRun; record: RecordEntry[] } {
   try {
     const params = new URLSearchParams(window.location.search);
     if (!params.get("seed")) {
       const raw = localStorage.getItem(SAVE_KEY);
       if (raw) {
         const saved = JSON.parse(raw);
-        if (saved && saved.version === PILLAR_SAVE_VERSION && saved.state) return saved.state as TRun;
+        if (saved && saved.version === PILLAR_SAVE_VERSION && saved.state)
+          return { state: saved.state as TRun, record: Array.isArray(saved.record) ? (saved.record as RecordEntry[]) : [] };
       }
     }
   } catch {
     /* A bad or unavailable save starts fresh. */
   }
-  return createTurnRun(readSeed(), "starter", RULES).state;
+  return { state: createTurnRun(readSeed(), "starter", RULES).state, record: [] };
 }
 
-function save(state: TRun) {
+/** The Record keeps this many of the newest lines. */
+const RECORD_CAP = 800;
+
+function save(state: TRun, record: RecordEntry[]) {
   try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state }));
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state, record }));
   } catch {
     /* Storage unavailable: play continues without a save. */
   }
@@ -175,7 +169,9 @@ function save(state: TRun) {
 type Panel = "guide" | "record" | "restart" | null;
 
 export default function PowerworksTurnsPage() {
-  const [run, setRun] = useState<TRun>(boot);
+  const [booted] = useState(boot);
+  const [run, setRun] = useState<TRun>(booted.state);
+  const [record, setRecord] = useState<RecordEntry[]>(booted.record);
   const [pendingBeats, setPendingBeats] = useState<Beat[] | null>(null);
   const [beatIndex, setBeatIndex] = useState(0);
   const [beatPhase, setBeatPhase] = useState<BeatPhase>("approach");
@@ -190,14 +186,10 @@ export default function PowerworksTurnsPage() {
   // applying it earlier flips view.phase out from under the still-animating keybar/camp
   // block and orphans the Playback component mid-beat (paint review round 2 follow-up).
   const nextRun = useRef<TRun | null>(null);
-  // The HP snapshot taken at the start of the player's current turn (item 6, "since your last
-  // turn"): held until the player acts again, then replaced by the fresh one after that
-  // hand-off completes, so the deltas and the "since your last turn" list stay visible
-  // through the whole of the player's turn rather than clearing the instant playback ends.
-  const snapshotRef = useRef<Record<string, number>>(hpSnapshot(run));
-  const [since, setSince] = useState<SinceLastTurn>({ deltas: {}, lines: [] });
-
   const view = useMemo(() => turnView(run), [run]);
+  // "Since your last turn": every change since the active companion last acted in this room,
+  // read from the Record's beats (view.ts owns the words and numbers).
+  const since = useMemo(() => sinceView(record, view), [record, view]);
   const busy = !!pendingBeats;
   // The hand-off moment (storyboard step 1): when the enemies finish and a companion's turn
   // begins, "Your turn" is announced over the stage for a moment, so the change is seen, not
@@ -221,8 +213,8 @@ export default function PowerworksTurnsPage() {
   }, [busy, run]);
 
   useEffect(() => {
-    save(run);
-  }, [run]);
+    save(run, record);
+  }, [run, record]);
 
   useEffect(() => {
     const old = document.title;
@@ -257,14 +249,8 @@ export default function PowerworksTurnsPage() {
   }
 
   function finishPlayback(beats: Beat[]) {
-    // "Since your last turn" (item 6): fold this command's beats into the running deltas and
-    // lines, keyed off the snapshot taken at the player's last hand-off, so an enemy phase
-    // that follows the player's own action still accumulates onto the same window.
-    setSince((prev) => {
-      const merged = turnDeltas(snapshotRef.current, beats);
-      const lines = [...prev.lines, ...merged.lines].slice(-4);
-      return { deltas: { ...prev.deltas, ...merged.deltas }, lines };
-    });
+    // Every beat's sentence joins the Record, filed under the sector it was played in.
+    setRecord((prev) => [...prev, ...recordEntries(run.room, beats)].slice(-RECORD_CAP));
     if (nextRun.current) {
       setRun(nextRun.current);
       nextRun.current = null;
@@ -274,26 +260,16 @@ export default function PowerworksTurnsPage() {
     setSkipPlayback(false);
   }
 
-  // The player acting is the moment "since your last turn" clears (item 6): the snapshot
-  // advances to right now, and the accumulated deltas/lines reset, so the beats about to play
-  // (this action, then the enemy phase that follows) start a fresh window.
-  function clearSince() {
-    snapshotRef.current = hpSnapshot(run);
-    setSince({ deltas: {}, lines: [] });
-  }
-
   function act(index: number, target: string) {
     if (busy) return;
     setArmedAlly(null);
     setHoverTarget(null);
-    clearSince();
     // A key that only acts on its user has no cell to name a target: the user is the target.
     dispatch({ kind: "act", order: { move: index, target: target || view.active?.id || "" } });
   }
 
   function pass() {
     if (busy || !view.active) return;
-    clearSince();
     dispatch({ kind: "act", order: { move: -2, target: view.active.id } });
   }
 
@@ -305,11 +281,6 @@ export default function PowerworksTurnsPage() {
   function skipToHandoff() {
     if (pendingBeats) setSkipPlayback(true);
   }
-
-  // The snapshot only advances once the player themselves acts (see act()/pass() below),
-  // not on every hand-off: the deltas and "since your last turn" list must stay visible
-  // through the whole of the player's own turn (item 6: "kept through your turn and cleared
-  // when you act"), including a hand-off that lands on a different companion than last time.
 
   // Space or Enter during playback skips to the next hand-off (storyboard: same action as
   // the banner's Skip button). Kept separate from the main handler below, which returns
@@ -376,8 +347,7 @@ export default function PowerworksTurnsPage() {
     setRun(next);
     setPendingBeats(null);
     setPanel(null);
-    snapshotRef.current = hpSnapshot(next);
-    setSince({ deltas: {}, lines: [] });
+    setRecord([]);
     try {
       localStorage.removeItem(SAVE_KEY);
     } catch {
@@ -386,6 +356,7 @@ export default function PowerworksTurnsPage() {
   }
 
   const roomName = view.roomName;
+  const roomNames = useMemo(() => roomNamesOf(run), [run]);
   // Beats are played as moments: one actor's one move, however many targets it touches (an
   // area attack and its rider land together, as one strike), so the playback shows one
   // action per actor rather than a string of separate hits.
@@ -440,26 +411,13 @@ export default function PowerworksTurnsPage() {
     return out;
   };
 
-  // The rail during playback: view.rail describes the moment before this command, so while
-  // busy each slot is remapped relative to the current actor: everything before it is done,
-  // it is now, the slot after it is next, the rest later.
-  const rail = useMemo(() => {
-    if (!busy || !spotlightId) return view.rail;
-    const spotIndex = view.rail.findIndex((r) => r.id === spotlightId && r.state !== "down");
-    if (spotIndex < 0) return view.rail;
-    let labeledNext = false;
-    return view.rail.map((r, i) => {
-      if (r.state === "down") return r;
-      if (i < spotIndex) return { ...r, state: "done" as const };
-      if (i === spotIndex) return { ...r, state: "now" as const };
-      if (!labeledNext) {
-        labeledNext = true;
-        return { ...r, state: "next" as const };
-      }
-      return { ...r, state: "later" as const };
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [busy, spotlightId, view.rail]);
+  // The round and the rail during playback come from the beat being played: playback() replays
+  // the clocks act by act, so a round that opens on an enemy's turn is the new round (banner,
+  // rail divider and the enemy-turn card) from the moment that enemy acts.
+  const beatNow = busy && moment ? moment.beats[0] : null;
+  const shownRound = beatNow ? beatNow.round : view.round;
+  const rail = beatNow ? beatNow.rail : view.rail;
+  const roundOpened = !!beatNow && beatNow.round !== view.round;
 
   // Whose turn is yours next, for the key bar while the enemies act.
   const nextMine = useMemo(() => {
@@ -475,46 +433,23 @@ export default function PowerworksTurnsPage() {
     : view.active;
   const bannerName = bannerActor?.name ?? view.active?.name ?? "";
   const bannerLetter = actorIsEnemy && bannerActor && "letter" in bannerActor ? bannerActor.letter : undefined;
-  // An enemy that carried a hinder into its attack: say what it cost, in the result line.
+  // An enemy that carried a hinder into its attack: say what it cost, naming the enemy.
   const weakenedNote = useMemo(() => {
     if (!busy || !moment || !actorIsEnemy) return "";
     if (!moment.beats.some((b) => b.event.kind === "hit")) return "";
-    const priorIndex = beatIndex - 1;
-    let hinder = view.enemies.find((e) => e.id === moment.actor)?.hinder ?? 0;
-    for (const m of moments.slice(0, Math.max(0, priorIndex + 1))) {
-      if (m.actor === moment.actor && m.beats.some((b) => b.event.kind === "hit")) hinder = 0;
-      for (const b of m.beats) {
-        const e = b.event as { kind: string; target?: string; amount?: number };
-        if (e.kind === "hinder" && e.target === moment.actor) hinder = Math.max(hinder, e.amount ?? 0);
-      }
-    }
-    return hinder > 0 ? ` Its hit was weakened by ${hinder}.` : "";
+    const start = Object.fromEntries(view.enemies.map((e) => [e.id, e.hinder]));
+    const prior = moments.slice(0, beatIndex).flatMap((m) => m.beats);
+    const n = hinderOnAttack(start, prior, moment.actor);
+    const foe = view.enemies.find((e) => e.id === moment.actor);
+    return n > 0 && foe ? ` ${weakenedWords(`${foe.name} ${foe.letter}`, n)}` : "";
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [busy, moment, actorIsEnemy, beatIndex, moments, view.enemies]);
   const beatWords =
     busy && moment
       ? showImpact
-        ? momentWords(moment, [...view.squad, ...view.enemies]) + weakenedNote
+        ? momentWords(moment.beats, [...view.squad, ...view.enemies]) + weakenedNote
         : approachWords(moment, [...view.squad, ...view.enemies])
       : "";
-
-  // "Since your last turn": what the squad lost or gained, and any enemy that healed, in a
-  // few words; the full sentences stay in the Record.
-  const sinceText = useMemo(() => {
-    if (!since.lines.length) return "";
-    const parts: string[] = [];
-    const sign = (d: number) => `${d > 0 ? "+" : "-"}${Math.abs(d)}`;
-    for (const u of view.squad) {
-      const d = since.deltas[u.id];
-      if (d) parts.push(`${u.name} ${sign(d)}${u.down ? " (down)" : ""}`);
-    }
-    for (const e of view.enemies) {
-      const d = since.deltas[e.id];
-      if (d) parts.push(`${e.name} ${e.letter} ${sign(d)}${e.down ? " (down)" : ""}`);
-    }
-    return parts.length ? parts.join(", ") : "no health changed";
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [since, view.squad, view.enemies]);
 
   // Where each target's figure sits on the stage, for the strike lines and the rising
   // numbers. Measured against the stage box so it survives the console zoom.
@@ -621,12 +556,12 @@ export default function PowerworksTurnsPage() {
                 actorSide={spotlightSide}
                 actorName={bannerName}
                 actorLetter={bannerLetter}
-                line={beatWords || (busy ? "" : sinceText)}
-                lineIsSince={!beatWords && !busy && !!sinceText}
+                line={beatWords || (busy ? "" : since.text)}
+                lineIsSince={!beatWords && !busy && !!since.text}
                 onOpenRecord={() => setPanel("record")}
-                round={view.round}
+                round={shownRound}
               />
-              <TurnRail rail={rail} round={view.round} />
+              <TurnRail rail={rail} round={shownRound} />
             </>
           ) : (
             <div className="pwt-top-fill" />
@@ -688,7 +623,6 @@ export default function PowerworksTurnsPage() {
                   u={withHp(e)}
                   lit={busy && actorId === e.id}
                   activeName={view.active?.name}
-                  activeArt={view.active ? { species: view.active.art, element: view.active.element } : undefined}
                   spotlit={spotlightId === e.id}
                   dimmed={!!spotlightId && spotlightId !== e.id}
                   delta={since.deltas[e.id] ?? 0}
@@ -731,6 +665,13 @@ export default function PowerworksTurnsPage() {
                 <Portrait u={{ species: view.active.art, element: view.active.element }} />
               </span>
               <span className={`pwt-keybar-who el-${view.active.element}`}>{view.active.name}</span>
+              {view.activeStatus && (
+                <span className="pwt-keybar-status" title={view.activeStatus.sentence} aria-label={view.activeStatus.sentence}>
+                  {view.activeStatus.parts.map((p) => (
+                    <span key={p}>{p}</span>
+                  ))}
+                </span>
+              )}
             </div>
             {view.keys.map((k) => (
               <KeyCard
@@ -764,6 +705,7 @@ export default function PowerworksTurnsPage() {
             )}
             {busy && actorIsEnemy && (
               <div className="pwt-keybar-wait" aria-live="polite">
+                {roundOpened && beatNow && <span className="pwt-keybar-wait-round">Round {beatNow.round}</span>}
                 <span className="pwt-keybar-wait-kicker">Enemy turn</span>
                 {nextMine && (
                   <span className="pwt-keybar-wait-next">
@@ -796,21 +738,26 @@ export default function PowerworksTurnsPage() {
             view={view}
             onRevive={(id) => dispatch({ kind: "revive", id })}
             onContinue={() => dispatch({ kind: "advance" })}
+            onRetreat={() => dispatch({ kind: "retreat" })}
           />
         )}
-        {(view.phase === "won" || view.phase === "lost" || view.phase === "retreated") && !busy && (
-          <EndPanel phase={view.phase} onPlayAgain={restart} />
-        )}
+        {view.ending && !busy && <EndPanel ending={view.ending} onPlayAgain={restart} />}
 
         {panel === "guide" && <GuidePanel onClose={() => setPanel(null)} />}
-        {panel === "record" && <RecordPanel log={run.log} onClose={() => setPanel(null)} />}
+        {panel === "record" && (
+          <RecordPanel entries={record} roomNames={roomNames} since={since.items} onClose={() => setPanel(null)} />
+        )}
         {panel === "restart" && (
           <RestartPanel onConfirm={restart} onClose={() => setPanel(null)} />
         )}
       </div>
       <div className="pwt-rotate">
-        <Smartphone />
-        <p>Turn your screen upright to play.</p>
+        <Smartphone className="pwt-rotate-icon" />
+        <p>Turn your phone sideways to play</p>
+        <Link to="/" className="pwt-rotate-back">
+          <ArrowLeft size={14} />
+          <span>Back to Xalians</span>
+        </Link>
       </div>
     </main>
   );

@@ -9,7 +9,12 @@
 */
 import {
   allShare,
+  ENCOUNTER_XP,
+  FINAL_ENCOUNTER_XP,
+  STALLED_LOG,
+  STALL_TURNS_PER_UNIT,
   attackOn,
+  interval,
   landedOn,
   legalTargets,
   roomsFor,
@@ -69,6 +74,14 @@ export type EnemyView = Marks & {
     active or it has no ready attack.
   */
   hitOnActive: { n: number; step: number; before?: number } | null;
+  /**
+    A stronger attack on the active companion that is resting now: its health, the element
+    step, and how many of the enemy's own turns after its next one it waits (cooldowns
+    decrement at the start of a unit's own turn, so a move with cooldown c can act on the
+    unit's c-th turn from now; `turns` is c - 1, so the chip reads "46 in 1"). null when no
+    resting attack beats the ready one.
+  */
+  hitComing: { n: number; step: number; turns: number } | null;
 };
 
 /** One target cell on a key: what this key does to that one target. */
@@ -84,6 +97,12 @@ export type Cell = {
   n: number;
   /** Hinder-only cells: the enemy's hit on the active companion before the hinder. */
   before?: number;
+  /**
+    Attack cells of a hindered or boosted companion: the health this attack would land
+    without the companion's own mark, struck through beside `n` (the same form the enemy
+    chips use). Undefined when the mark changes nothing here.
+  */
+  ownBefore?: number;
   /** Attack cells: the element step against this target. 1 otherwise. */
   step: number;
   /** Attack cells: the chart gives 0, so the attack does nothing here. */
@@ -118,8 +137,6 @@ export type KeyView = {
   aim: "enemy" | "ally" | "now";
   /** One per legal target in row order; empty for "now". */
   cells: Cell[];
-  /** Every cell shows the same n, step 1, not immune, no finish: the key can show one number. */
-  same: boolean;
   /** The move's supports, n already reduced for "all" (allShare). */
   supports: SupportChip[];
 };
@@ -176,7 +193,18 @@ export type TurnView = {
   nextId: string | null;
   revivalLeft: number;
   xp: number;
+  /** Practice XP this sector gave: the camp's headline. 0 outside camp and the final win. */
+  xpGain: number;
+  /**
+    Why the active companion's numbers differ from its moves' plain ones, said once for the
+    key bar ("Crystorn is hindered by 14 on its next attack"). null when it carries no mark.
+  */
+  activeStatus: { sentence: string; parts: string[] } | null;
+  /** How the run ended, in words; null while it is still going. */
+  ending: Ending | null;
 };
+
+export type Ending = { kind: "won" | "lost" | "withdrew" | "forced"; title: string; text: string };
 
 /** One step of the playback after a command: the event, its words, and every unit's health once it lands. */
 export type Beat = {
@@ -185,6 +213,10 @@ export type Beat = {
   /** Whose action this is, for the highlight. */
   actor: string;
   hp: Record<string, number>;
+  /** The engine's round when this beat's actor acts (roundOf at that moment). */
+  round: number;
+  /** The turn rail as it stands when this beat's actor acts, its round divider included. */
+  rail: RailSlot[];
 };
 
 /** Painted art borrowed by the role enemies (roles.json has no paintings of its own). */
@@ -209,43 +241,58 @@ function squadView(s: TRun, u: Fighter): SquadView {
 }
 
 /**
-  Will this enemy move be usable at the enemy's own next turn? `ready()` reads cooldown === 0,
-  which is right for the active companion (its cooldowns were already decremented at the start of
-  its turn), but wrong for an enemy mid-round: an enemy that has already acted this round carries
-  cooldown = rests + 1 (1 for a rests-0 move) until its own next turn's start decrements it, so
-  `ready()` reads false for every one of its moves right after it acts. The enemy chip is judging
-  "what will this enemy do to me next", so the right test is cooldown <= 1 (it will be 0 or less
-  by the time its turn comes), not cooldown === 0 right now.
+  When can this enemy move next be used, in the enemy's own turns from now (0: at its next
+  turn)? Cooldowns decrement at the start of a unit's own turn, so a move with cooldown c can
+  act on the unit's c-th turn from now (its next turn is the 1st): c <= 1 means "at its next
+  turn". `ready()` reads cooldown === 0, which is right for the active companion (already
+  decremented at the start of its turn) but wrong for an enemy that has just acted: it carries
+  rests + 1 until its own next turn starts. null when the move cannot be used at all (fallen,
+  a spent signature, or inert).
 */
-function willBeReady(e: Fighter, i: number): boolean {
+function turnsToReady(e: Fighter, i: number): number | null {
   const m = e.moves[i];
-  return e.hp > 0 && e.cooldowns[i] <= 1 && !(m.signature && e.signatureSpent) && (m.power > 0 || m.parts.length > 0);
+  if (e.hp <= 0 || (m.signature && e.signatureSpent) || !(m.power > 0 || m.parts.length > 0)) return null;
+  return Math.max(0, e.cooldowns[i] - 1);
 }
 
-/** An enemy's strongest attack on the active companion, judged as it will be at the enemy's own
-    next turn (see willBeReady): health it would take after the companion's own shields, and the
-    matchup step. null with no active companion or no such attack.
-    `withHinder` lets a hinder-only cell ask "what would this be with the hinder applied", since
-    the engine's hinder is max(current, n), not additive (support() in engine.ts). */
-function hitOnActive(s: TRun, e: Fighter, withHinder?: number): { n: number; step: number } | null {
+/**
+  An enemy's attacks on the active companion, judged as they will be at the enemy's own turns:
+  `ready` is the strongest it can use at its next turn (health it would take after the
+  companion's own shields, and the matchup step); `coming` is the soonest stronger attack that
+  is resting now, with the turns it waits after that next turn. Both null with no active
+  companion or no such attack.
+  `withHinder` lets a hinder-only cell ask "what would this be with the hinder applied", since
+  the engine's hinder is max(current, n), not additive (support() in engine.ts).
+*/
+function threatOnActive(
+  s: TRun,
+  e: Fighter,
+  withHinder?: number
+): { ready: { n: number; step: number } | null; coming: { n: number; step: number; turns: number } | null } {
   const active = s.team.find((t) => t.id === s.active);
-  if (!active || e.hp <= 0) return null;
+  if (!active || e.hp <= 0) return { ready: null, coming: null };
   const attacker = withHinder === undefined ? e : { ...e, hinder: Math.max(e.hinder, withHinder) };
-  let best: { n: number; step: number } | null = null;
+  let ready: { n: number; step: number } | null = null;
+  const resting: { n: number; step: number; turns: number }[] = [];
   e.moves.forEach((m, i) => {
-    if (m.power <= 0 || !willBeReady(e, i)) return;
-    const n = landedOn(attacker, m, active);
+    const wait = turnsToReady(e, i);
+    if (m.power <= 0 || wait === null) return;
+    const n = landedOn(wait === 0 ? attacker : { ...e, boost: 0, hinder: 0 }, m, active);
     const st = step(m.element, active.element);
-    if (!best || n > best.n) best = { n, step: st };
+    if (wait === 0) {
+      if (!ready || n > ready.n) ready = { n, step: st };
+    } else resting.push({ n, step: st, turns: wait });
   });
-  return best;
+  // The soonest resting attack that beats the ready one (ties: the strongest).
+  const better = resting.filter((r) => !ready || r.n > ready.n).sort((a, b) => a.turns - b.turns || b.n - a.n);
+  return { ready, coming: better[0] ?? null };
 }
 
 /** The hit on the active companion, and, when a hinder lowers it, the hit without the hinder. */
 function withBefore(s: TRun, u: Fighter): EnemyView["hitOnActive"] {
-  const hit = hitOnActive(s, u);
+  const hit = threatOnActive(s, u).ready;
   if (!hit || u.hinder <= 0) return hit;
-  const clean = hitOnActive(s, { ...u, hinder: 0 });
+  const clean = threatOnActive(s, { ...u, hinder: 0 }).ready;
   return clean && clean.n > hit.n ? { ...hit, before: clean.n } : hit;
 }
 
@@ -262,6 +309,7 @@ function enemyView(s: TRun, u: Fighter): EnemyView {
     max: u.max,
     down: u.hp <= 0,
     hitOnActive: withBefore(s, u),
+    hitComing: threatOnActive(s, u).coming,
   };
 }
 
@@ -292,13 +340,24 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
       const n = landedOn(u, m, t);
       const st = step(m.element, t.element);
       const shieldAbsorbed = Math.min(shieldSum(t), attackOn(u, m, t));
-      return { target: t.id, letter, n, step: st, immune: st === 0, finishes: n >= t.hp && n > 0, absorbed: shieldAbsorbed };
+      // The companion's own hinder or boost: what this attack would land without it.
+      const clean = u.hinder > 0 || u.boost > 0 ? landedOn({ ...u, boost: 0, hinder: 0 }, m, t) : n;
+      return {
+        target: t.id,
+        letter,
+        n,
+        ...(clean !== n ? { ownBefore: clean } : {}),
+        step: st,
+        immune: st === 0,
+        finishes: n >= t.hp && n > 0,
+        absorbed: shieldAbsorbed,
+      };
     }
     // Hinder-only: before is the enemy's current hit on the active companion; after applies this
     // hinder on top of whatever it already carries (engine's hinder is max(current, n), not additive).
-    const before = hitOnActive(s, t)?.n ?? 0;
+    const before = threatOnActive(s, t).ready?.n ?? 0;
     const hinderN = hinderPart ? (hinderPart.all ? allShare(hinderPart.n) : hinderPart.n) : 0;
-    const n = hitOnActive(s, t, hinderN)?.n ?? 0;
+    const n = threatOnActive(s, t, hinderN).ready?.n ?? 0;
     return { target: t.id, letter, n, before, step: 1, immune: false, finishes: false, absorbed: 0 };
   });
 }
@@ -314,15 +373,6 @@ function allyCells(u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
     }
     return { target: t.id, n, step: 1, immune: false, finishes: false, absorbed: 0 };
   });
-}
-
-function sameAcross(cells: Cell[]): boolean {
-  if (!cells.length) return false;
-  // Hinder-only cells carry `before`: the point is comparing before/after per enemy, so they
-  // never collapse to one number even when every enemy's after-hinder hit happens to match.
-  if (cells.some((c) => c.before !== undefined)) return false;
-  const n = cells[0].n;
-  return cells.every((c) => c.n === n && c.step === 1 && !c.immune && !c.finishes);
 }
 
 function keyView(s: TRun, u: Fighter, i: number): KeyView {
@@ -345,7 +395,6 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
     area: m.area,
     aim,
     cells,
-    same: sameAcross(cells),
     supports: m.parts.map(supportChip),
   };
 }
@@ -353,6 +402,11 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
 /** Strips the "1. " style ordinal prefix a room's display name carries. */
 function bareRoomName(name: string): string {
   return name.replace(/^\d+\.\s*/, "");
+}
+
+/** Every sector's display name, in order, for the Record's headings. */
+export function roomNamesOf(s: TRun): string[] {
+  return roomsFor(s.rules).map((r) => bareRoomName(r.name));
 }
 
 function stripState(s: TRun, unit: Fighter, done: boolean): StripSlot["state"] {
@@ -450,7 +504,35 @@ export function turnView(s: TRun): TurnView {
     nextId: nextIdFrom(rail),
     revivalLeft: s.revival,
     xp: s.xp,
+    xpGain: s.phase === "camp" ? ENCOUNTER_XP : s.phase === "won" ? FINAL_ENCOUNTER_XP : 0,
+    activeStatus: active && activeReady ? statusWords(active) : null,
+    ending: endingOf(s),
   };
+}
+
+/** Why the active companion's numbers differ from its moves' plain ones (see TurnView.activeStatus). */
+function statusWords(u: Fighter): TurnView["activeStatus"] {
+  const parts: string[] = [];
+  if (u.boost > 0) parts.push(`boosted by ${u.boost}`);
+  if (u.hinder > 0) parts.push(`hindered by ${u.hinder}`);
+  return parts.length ? { sentence: `${u.name} is ${parts.join(" and ")} on its next attack`, parts } : null;
+}
+
+/**
+  How a finished run ended, in words. The engine calls both a chosen retreat and a stall's forced
+  exit "retreated"; the last log line tells them apart (WITHDREW_LOG / STALLED_LOG).
+*/
+export function endingOf(s: TRun): Ending | null {
+  if (s.phase === "won") return { kind: "won", title: "Powerworks silenced", text: "The defense network falls silent. Your squad made it through." };
+  if (s.phase === "lost") return { kind: "lost", title: "Squad fallen", text: "Your squad could not continue. A fresh attempt restores everyone." };
+  if (s.phase !== "retreated") return null;
+  if (s.log[s.log.length - 1] === STALLED_LOG)
+    return {
+      kind: "forced",
+      title: "Forced out",
+      text: `Neither side reached a new low in total health for ${STALL_TURNS_PER_UNIT} turns for each unit still standing, so the squad is forced out.`,
+    };
+  return { kind: "withdrew", title: "Squad withdrew", text: "You withdrew at camp. A fresh attempt restores everyone." };
 }
 
 /** Display name for the words: an enemy carries its letter, since two can share a name. */
@@ -483,55 +565,204 @@ export function eventWords(s: TRun, e: PEvent): string {
   return `${actor} slowed ${target}'s next turn.`;
 }
 
-/** The beats of a command's events, health replayed from the state before it. */
+const moveOf = (e: PEvent): string | null => ("move" in e ? e.move : null);
+
+/** Does this event open a new act (one unit's one action) rather than continue the last one? */
+function opensAct(prev: PEvent | null, e: PEvent): boolean {
+  if (!prev || prev.actor !== e.actor) return true;
+  if (prev.kind === "pass" || prev.kind === "lapsed" || e.kind === "pass" || e.kind === "lapsed") return true;
+  const a = moveOf(prev);
+  const b = moveOf(e);
+  return !!a && !!b && a !== b;
+}
+
+/**
+  The beats of a command's events, health replayed from the state before it. Each beat also
+  carries the engine's round and the turn rail as they stand when its actor acts: the clocks
+  are replayed act by act (the actor's own clock rises by its interval after it acts, and a
+  delay pushes its target back), so a round that opens on an enemy's turn is already the new
+  round for that enemy's beats.
+*/
 export function playback(before: TRun, events: PEvent[]): Beat[] {
   const hp: Record<string, number> = {};
   for (const u of [...before.team, ...before.enemies]) hp[u.id] = u.hp;
+  const clock = { ...before.clock };
+  const delays: Record<string, number> = {};
+  const unit = (id: string) => [...before.team, ...before.enemies].find((u) => u.id === id)!;
   const beats: Beat[] = [];
+  let prev: PEvent | null = null;
+  let at: { round: number; rail: RailSlot[] } = { round: roundOf(before), rail: [] };
   for (const e of events) {
+    if (opensAct(prev, e)) {
+      if (prev) {
+        // The previous act ends: its actor's clock rises, then any delay lands on its target.
+        clock[prev.actor] += interval(before, unit(prev.actor));
+        for (const [id, amount] of Object.entries(delays)) clock[id] += (amount / 100) * interval(before, unit(id));
+        for (const id of Object.keys(delays)) delete delays[id];
+      }
+      const here: TRun = {
+        ...before,
+        clock: { ...clock },
+        active: e.actor,
+        team: before.team.map((u) => ({ ...u, hp: hp[u.id] })),
+        enemies: before.enemies.map((u) => ({ ...u, hp: hp[u.id] })),
+      };
+      at = { round: roundOf(here), rail: railFor(here) };
+    }
     if (e.kind === "hit") hp[e.target] = Math.max(0, (hp[e.target] ?? 0) - e.amount);
     else if (e.kind === "heal") hp[e.target] = (hp[e.target] ?? 0) + e.amount;
-    beats.push({ event: e, words: eventWords(before, e), actor: e.actor, hp: { ...hp } });
+    else if (e.kind === "delay") delays[e.target] = Math.max(delays[e.target] ?? 0, e.amount);
+    beats.push({ event: e, words: eventWords(before, e), actor: e.actor, hp: { ...hp }, round: at.round, rail: at.rail });
+    prev = e;
   }
   return beats;
 }
 
-/**
-  "What happened since your last turn" (UX pass, 2026-09-29, storyboard item "what just
-  happened"): per-unit health deltas since the health snapshot the page took at the player's
-  previous hand-off, plus a short list of lines from the beats played since. Pure over its
-  inputs so the page's snapshot (taken once per hand-off, cleared once the player acts) is
-  the only state involved; view.ts still computes every number.
-*/
-export type SinceLastTurn = {
-  /** Health change per unit id since the snapshot: negative for damage, positive for healing.
-      Absent (or 0) units carry no chip. */
-  deltas: Record<string, number>;
-  /** 2 to 4 short lines, oldest first, of what happened since. */
-  lines: string[];
+/** A unit as the words name it: enemies carry their letter. */
+export type Named = { id: string; name: string; letter?: string };
+const labelOf = (units: Named[], id: string): string => {
+  const u = units.find((x) => x.id === id);
+  return u ? (u.letter ? `${u.name} ${u.letter}` : u.name) : id;
 };
+const joinWords = (xs: string[]): string => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}` : xs[0]);
 
-const MAX_SINCE_LINES = 4;
-
-export function turnDeltas(snapshot: Record<string, number>, beatsSince: Beat[]): SinceLastTurn {
-  const deltas: Record<string, number> = {};
-  for (const [id, before] of Object.entries(snapshot)) {
-    const beat = [...beatsSince].reverse().find((b) => id in b.hp);
-    if (!beat) continue;
-    const after = beat.hp[id];
-    const delta = after - before;
-    if (delta !== 0) deltas[id] = delta;
+/**
+  One line for a moment (one actor's one move, however many units it touches). A lone beat keeps
+  its own words; several become "X's Move hit A, B for 6, 7 and weakened Crystorn's next attack
+  by 14", every support clause naming the unit it lands on (never a bare "its").
+*/
+export function momentWords(beats: Beat[], units: Named[]): string {
+  if (beats.length === 1) return beats[0].words;
+  const events = beats.map((b) => b.event);
+  const first = events[0];
+  const move = moveOf(first);
+  if (!move) return beats.map((b) => b.words).join(" ");
+  const actor = labelOf(units, first.actor);
+  const short = (id: string) => units.find((x) => x.id === id)?.letter ?? labelOf(units, id);
+  const clauses: string[] = [];
+  const hits = events.filter((e): e is Extract<PEvent, { kind: "hit" }> => e.kind === "hit");
+  if (hits.length) clauses.push(`hit ${joinWords(hits.map((h) => short(h.target)))} for ${joinWords(hits.map((h) => String(h.amount)))}`);
+  type Support = Extract<PEvent, { kind: "heal" | "shield" | "boost" | "hinder" | "delay" }>;
+  for (const kind of ["heal", "shield", "boost", "hinder", "delay"] as const) {
+    const ofKind = events.filter((e): e is Support => e.kind === kind);
+    const amounts = [...new Set(ofKind.map((e) => e.amount))];
+    for (const n of amounts) {
+      const names = ofKind.filter((e) => e.amount === n).map((e) => labelOf(units, e.target));
+      const many = names.length > 1;
+      const owned = joinWords(names.map((x) => `${x}'s`));
+      if (kind === "heal") clauses.push(`healed ${joinWords(names)} for ${n}`);
+      else if (kind === "shield") clauses.push(`shielded ${joinWords(names)} for ${n}`);
+      else if (kind === "boost") clauses.push(`boosted ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
+      else if (kind === "hinder") clauses.push(`weakened ${owned} next ${many ? "attacks" : "attack"} by ${n}`);
+      else clauses.push(`slowed ${owned} next ${many ? "turns" : "turn"}`);
+    }
   }
-  const lines = beatsSince
-    .filter((b) => b.event.kind !== "pass" && b.event.kind !== "lapsed")
-    .map((b) => b.words)
-    .slice(-MAX_SINCE_LINES);
-  return { deltas, lines };
+  let words = `${actor}'s ${move} ${joinWords(clauses)}.`;
+  for (const h of hits) if (h.fell) words += ` ${labelOf(units, h.target)} fell.`;
+  return words;
 }
 
-/** A snapshot of every unit's current health, for the page to hold across a hand-off. */
-export function hpSnapshot(s: TRun): Record<string, number> {
-  const snap: Record<string, number> = {};
-  for (const u of [...s.team, ...s.enemies]) snap[u.id] = Math.max(0, u.hp);
-  return snap;
+/**
+  How much an acting enemy's hit was weakened: the hinder it carried at the start of the command
+  (`start`, by unit id), raised by every hinder on it in the beats before this one, and spent by
+  an attack of its own in between.
+*/
+export function hinderOnAttack(start: Record<string, number>, priorBeats: Beat[], actor: string): number {
+  let hinder = start[actor] ?? 0;
+  for (const b of priorBeats) {
+    const e = b.event;
+    if (e.kind === "hit" && e.actor === actor) hinder = 0;
+    else if (e.kind === "hinder" && e.target === actor) hinder = Math.max(hinder, e.amount);
+  }
+  return hinder;
+}
+
+/** "Central guardian A's hit was weakened by 10." Names the unit whose hit it was. */
+export const weakenedWords = (name: string, n: number): string => `${name}'s hit was weakened by ${n}.`;
+
+/** One line of the Record: a beat's sentence, filed under its sector and round. */
+export type RecordEntry = { room: number; round: number; actor: string; words: string; event: PEvent };
+
+export function recordEntries(room: number, beats: Beat[]): RecordEntry[] {
+  return beats.map((b) => ({ room, round: b.round, actor: b.actor, words: b.words, event: b.event }));
+}
+
+/** What changed for one unit since the active companion's last turn. */
+export type SinceItem = { id: string; name: string; enemy: boolean; text: string };
+export type SinceView = {
+  /** Squad then enemies, the active companion first; only units something happened to. */
+  items: SinceItem[];
+  /** Net health change per unit id, for the plates' delta chips. */
+  deltas: Record<string, number>;
+  /** The banner's line: as many whole items as fit, then "+N more" for the rest. */
+  text: string;
+};
+
+/** How many characters of the summary the banner's two lines hold before "+N more". */
+const SINCE_BUDGET = 92;
+
+/**
+  "Since your last turn" (UX pass 2, round 1): every change that matters for the next choice,
+  per unit, from the beats since the active companion last acted in this room (every beat of the
+  room when it has not acted yet). Health hits and heals are listed separately; a shield gained
+  or lost, a boost or a hinder appear only while the unit still carries it; nothing changed
+  means nothing is said. The active companion's own line comes first, then its squadmates,
+  then the enemies in row order, so the banner drops the least decision-relevant first.
+*/
+export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
+  const empty: SinceView = { items: [], deltas: {}, text: "" };
+  if (!v.active) return empty;
+  const inRoom = entries.filter((e) => e.room === v.room);
+  let last = -1;
+  inRoom.forEach((e, i) => {
+    if (e.actor === v.active!.id) last = i;
+  });
+  const window = inRoom.slice(last + 1);
+  type Seen = { lost: number; healed: number; fell: boolean; shieldUp: number; shieldDown: number; boosted: boolean; hindered: boolean };
+  const seen: Record<string, Seen> = {};
+  const of = (id: string): Seen => (seen[id] ??= { lost: 0, healed: 0, fell: false, shieldUp: 0, shieldDown: 0, boosted: false, hindered: false });
+  for (const { event: e } of window) {
+    if (e.kind === "hit") {
+      const u = of(e.target);
+      u.lost += e.amount;
+      u.shieldDown += e.absorbed;
+      if (e.fell) u.fell = true;
+    } else if (e.kind === "heal") of(e.target).healed += e.amount;
+    else if (e.kind === "shield") of(e.target).shieldUp += e.amount;
+    else if (e.kind === "boost") of(e.target).boosted = true;
+    else if (e.kind === "hinder") of(e.target).hindered = true;
+  }
+  const active = v.active;
+  const order = [
+    ...v.squad.filter((u) => u.id === active.id).map((u) => ({ u, enemy: false, name: u.name })),
+    ...v.squad.filter((u) => u.id !== active.id).map((u) => ({ u, enemy: false, name: u.name })),
+    ...v.enemies.map((u) => ({ u, enemy: true, name: `${u.name} ${u.letter}` })),
+  ];
+  const items: SinceItem[] = [];
+  const deltas: Record<string, number> = {};
+  for (const { u, enemy, name } of order) {
+    const c = seen[u.id];
+    if (!c) continue;
+    const parts: string[] = [];
+    if (c.lost) parts.push(`-${c.lost}`);
+    if (c.healed) parts.push(`+${c.healed}`);
+    if (c.fell) parts.push("fell");
+    if (c.shieldUp) parts.push(`shield +${c.shieldUp}`);
+    if (c.shieldDown) parts.push(`shield -${c.shieldDown}`);
+    if (c.boosted && u.boost > 0) parts.push(`boosted ${u.boost}`);
+    if (c.hindered && u.hinder > 0) parts.push(`hindered ${u.hinder}`);
+    if (!parts.length) continue;
+    if (c.healed - c.lost) deltas[u.id] = c.healed - c.lost;
+    items.push({ id: u.id, name, enemy, text: `${name} ${parts.join(", ")}` });
+  }
+  let text = "";
+  let shown = 0;
+  for (const it of items) {
+    const next = text ? `${text}; ${it.text}` : it.text;
+    if (shown > 0 && next.length > SINCE_BUDGET) break;
+    text = next;
+    shown++;
+  }
+  if (shown < items.length) text += ` +${items.length - shown} more`;
+  return { items, deltas, text };
 }

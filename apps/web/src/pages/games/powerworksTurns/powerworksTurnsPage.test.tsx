@@ -93,4 +93,52 @@ describe("Powerworks turn by turn", () => {
     });
     await waitFor(() => expect(root.getAttribute("data-busy")).toBe("false"));
   });
+
+  it("offers Retreat at camp and ends with its own 'withdrew' text, not the stall text", async () => {
+    let { state } = createTurnRun(1, "starter", RULES);
+    state = { ...state, phase: "camp" as const };
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state }));
+    mount();
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /^retreat$/i }));
+    });
+    expect(screen.getByText("Squad withdrew")).toBeInTheDocument();
+    expect(screen.queryByText(/new low/i)).toBeNull();
+  });
+
+  it("shows this sector's XP at camp, not the run total", () => {
+    let { state } = createTurnRun(1, "starter", RULES);
+    state = { ...state, phase: "camp" as const, xp: 30 };
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state }));
+    mount();
+    expect(screen.getByText("+10 XP")).toBeInTheDocument();
+  });
+
+  it("tells a portrait phone to turn sideways and offers a way back to Xalians", () => {
+    mount();
+    expect(screen.getByText("Turn your phone sideways to play")).toBeInTheDocument();
+    const back = screen.getByRole("link", { name: /back to xalians/i });
+    expect(back.getAttribute("href")).toBe("/");
+  });
+
+  it("never collapses a key into an 'every enemy' cell", () => {
+    mount();
+    expect(screen.queryByText(/every enemy/i)).toBeNull();
+  });
+
+  it("the Record lists every beat under its sector and round after a turn is played", async () => {
+    mount();
+    const cells = screen.getAllByRole("button").filter((b) => / on [A-F], /.test(b.getAttribute("aria-label") || ""));
+    await act(async () => {
+      fireEvent.click(cells[0]);
+    });
+    await act(async () => {
+      fireEvent.click(await screen.findByRole("button", { name: /skip to your next turn/i }));
+    });
+    await waitFor(() => expect(document.querySelector('[data-busy]')!.getAttribute("data-busy")).toBe("false"));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /record/i }));
+    });
+    expect(screen.getAllByLabelText(/^Sector 1, round \d+$/).length).toBeGreaterThan(0);
+  });
 });

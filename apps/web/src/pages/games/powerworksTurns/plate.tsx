@@ -159,7 +159,6 @@ export function EnemyPlate({
   u,
   lit = false,
   activeName,
-  activeArt,
   spotlit = false,
   dimmed = false,
   delta = 0,
@@ -171,8 +170,6 @@ export function EnemyPlate({
   lit?: boolean;
   /** The active companion's name, for the hit chip's words (paint review round 4, item 6). */
   activeName?: string;
-  /** The active companion's portrait, drawn small in the hit chip: whom the number is about. */
-  activeArt?: { species: string; element: string };
   /** This unit is the spotlit actor (UX pass): brighter, a floor ring, a head pointer. */
   spotlit?: boolean;
   /** Someone else is spotlit right now: this plate steps one notch dimmer. */
@@ -187,8 +184,10 @@ export function EnemyPlate({
 }) {
   const hit = u.hitOnActive;
   const who = activeName ?? "the active companion";
+  const coming = u.hitComing;
   const showHit = !!hit && !u.down;
-  const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0 || showHit;
+  const showComing = !!coming && !u.down;
+  const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0 || showHit || showComing;
   return (
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
@@ -224,8 +223,8 @@ export function EnemyPlate({
                 }
                 title={
                   hit!.step === 0
-                    ? `Hits ${who} for no effect`
-                    : `Hits ${who} for ${hit!.n}${
+                    ? `Its strongest hit on ${who} at its next turn does no effect`
+                    : `Its strongest hit on ${who} at its next turn: ${hit!.n}${
                         hit!.step > 1 ? " (strong)" : hit!.step < 1 ? " (weak)" : ""
                       }`
                 }
@@ -235,11 +234,19 @@ export function EnemyPlate({
                 {hit!.step === 0 ? <Ban /> : hit!.n}
                 {hit!.step > 1 && <ChevronUp className="up" />}
                 {hit!.step > 0 && hit!.step < 1 && <ChevronDown className="down" />}
-                {activeArt && (
-                  <span className="pwt-hit-who" aria-hidden="true">
-                    <Portrait u={activeArt} small />
-                  </span>
-                )}
+              </span>
+            )}
+            {showComing && (
+              <span
+                className="pwt-hit-on-active coming"
+                aria-label={`a stronger hit on ${who}, ${coming!.n}, is resting: ready ${coming!.turns} ${coming!.turns === 1 ? "turn" : "turns"} after its next turn`}
+                title={`Resting: its stronger hit on ${who}, ${coming!.n}${
+                  coming!.step > 1 ? " (strong)" : coming!.step < 1 ? " (weak)" : ""
+                }, is usable ${coming!.turns} ${coming!.turns === 1 ? "turn" : "turns"} after its next turn`}
+              >
+                <Swords />
+                {coming!.step === 0 ? <Ban /> : coming!.n}
+                <span className="pwt-hit-in">in {coming!.turns}</span>
               </span>
             )}
           </div>
