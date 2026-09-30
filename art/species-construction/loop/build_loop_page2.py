@@ -125,7 +125,10 @@ p {{ margin:0; max-width:74ch; }}
 .chip.ok {{ border-color:var(--viable); color:var(--viable); background:var(--viable-tint); }}
 section {{ display:grid; gap:14px; }}
 .cards {{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }}
-.card {{ background:var(--panel); border:1px solid var(--rule); padding:14px 16px; display:grid; gap:8px; }}
+.card {{ background:var(--panel); border:1px solid var(--rule); padding:14px 16px; display:grid; gap:8px; min-width:0; }}
+.card .num {{ white-space:normal; }}
+.cards > p {{ grid-column:1 / -1; }}
+th {{ white-space:nowrap; }}
 .mat {{ background:var(--mat); border:1px solid var(--rule); }}
 .mat img {{ display:block; width:100%; height:auto; }}
 .label {{ font:500 11px/1 var(--data); letter-spacing:.06em; text-transform:uppercase; color:#58625d; padding:10px 12px 0; }}
