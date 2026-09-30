@@ -1,0 +1,81 @@
+{
+  "voxel": 0.0025,
+  "notes": "Round 1, R01, build 5 (last). As build 4 (head-0221) except the nape pull: head-0221 squashed the neck stem to half its depth, so the old nape_pull is replaced by nape_pull_gentle (zero at the stem, slope below 1) and the forehead pull is eased to .03.",
+  "top_smooth": {
+    "half_width": 0.42,
+    "y": [
+      -0.3,
+      0.32
+    ],
+    "z": [
+      0.3,
+      0.75
+    ],
+    "fade": [
+      0.16,
+      0.14,
+      0.14
+    ],
+    "sigma": 0.02,
+    "passes": 1,
+    "quintic": true
+  },
+  "rear_smooth": {
+    "half_width": 0.8,
+    "y": [
+      0.1,
+      0.5
+    ],
+    "z": [
+      -0.3,
+      0.75
+    ],
+    "fade": [
+      0.3,
+      0.14,
+      0.22
+    ],
+    "sigma": 0.045,
+    "passes": 2,
+    "quintic": true
+  },
+  "skulls": [
+    {
+      "center": [
+        0,
+        0.07,
+        0.157
+      ],
+      "radii": [
+        0.38,
+        0.305,
+        0.295
+      ],
+      "blend": 0.05
+    },
+    {
+      "center": [
+        0,
+        0.12,
+        0.0
+      ],
+      "radii": [
+        0.3,
+        0.26,
+        0.3
+      ],
+      "blend": 0.05
+    }
+  ],
+  "warp": {
+    "tilt_left": 0.09,
+    "tilt_left_low": 0.0675,
+    "front_pull": 0.2,
+    "rear_low_pull": 0.06,
+    "wing_recess": 0.01,
+    "forehead_pull": 0.03,
+    "inner_rim_lower": 0.03,
+    "inner_rim_lower_left": 0.03,
+    "nape_pull_gentle": 0.1
+  }
+}
