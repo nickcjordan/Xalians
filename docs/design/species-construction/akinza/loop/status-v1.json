@@ -1,0 +1,1057 @@
+{
+  "schemaVersion": 1,
+  "approval": null,
+  "loop": "docs/design/species-construction/LOOP.md",
+  "limits": {
+    "passBar": 8,
+    "cooldownRounds": 2,
+    "stallAttempts": 3,
+    "stallGain": 1,
+    "keepGain": 0.5,
+    "regressionDrop": 1,
+    "roundsPerBatch": 4,
+    "hardStopRounds": 16,
+    "gate": {
+      "minRegion": 7,
+      "weightedMean": 8,
+      "identityRegions": [
+        "R02",
+        "R03",
+        "R10"
+      ],
+      "identityMin": 8
+    },
+    "meanGain": 0.025,
+    "meanGainFromRound": 5
+  },
+  "baseline": {
+    "head": "head-0204",
+    "body": "body-0195",
+    "assembly": "assembled-0205",
+    "packet": "untracked/species-construction/akinza/loop/packets/assembled-0205"
+  },
+  "round": 16,
+  "lastOrders": [
+    "R05",
+    "R01",
+    "R03",
+    "R04",
+    "R04",
+    "R10",
+    "R12",
+    "R12",
+    "R03",
+    "R03",
+    "R04",
+    "R04",
+    "R06",
+    "R02",
+    "R02",
+    "R04"
+  ],
+  "regions": {
+    "R01": {
+      "name": "Head silhouette",
+      "weight": 3,
+      "criteria": [
+        "C02"
+      ],
+      "score": 6,
+      "issues": [
+        {
+          "summary": "Head plus fan reads as a wide wedge with the skull swallowed by the fan, and no rounded crown rises between the fan roots",
+          "evidence": "m02 front and m04 head-front: the top of the skull sits level with the inner rim of the fan. m01 front shows a round crown rising between the ear roots.",
+          "fix": "Raise the skull crown about .01 of figure height between the ear roots and lower the inner fan rim near the midline",
+          "fixability": 0.6
+        },
+        {
+          "summary": "No head mass can be read from behind",
+          "evidence": "m02 back and m04 head-back: the rear wall of the fan covers the whole skull. r03 shows a round furred head mass centred in the fan.",
+          "fix": "Let a soft rounded head mass about .10 of figure height wide bulge about .01 behind the fan wall at the midline, blended in with no rim line",
+          "fixability": 0.5
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": 6,
+      "parked": false,
+      "parkReason": null
+    },
+    "R02": {
+      "name": "Face",
+      "weight": 3,
+      "criteria": [
+        "C03",
+        "C04",
+        "C05"
+      ],
+      "score": 6.5,
+      "issues": [
+        {
+          "summary": "The eyes are round discs with thick outlines sitting on the surface, not tall ovals set into the head",
+          "evidence": "m05 eyes-front compared with r01",
+          "fix": "Stretch the eye whites vertically about 10 percent and sink them about .003 of figure height into shallow sockets",
+          "fixability": 0.6
+        },
+        {
+          "summary": "The muzzle and chin are lumpy, with a small knob under the mouth",
+          "evidence": "m05 nose-front and nose-below",
+          "fix": "Smooth the chin knob flush and merge the two muzzle pads into one soft w-shaped mass",
+          "fixability": 0.7
+        }
+      ],
+      "attempts": 2,
+      "anchorScore": 6,
+      "parked": false,
+      "parkReason": null
+    },
+    "R03": {
+      "name": "Ear fan front",
+      "weight": 3,
+      "criteria": [
+        "C07",
+        "C08"
+      ],
+      "score": 6.5,
+      "issues": [
+        {
+          "summary": "The fan's clumps read as small scalloped shingles along a hard rim, not large shaggy locks",
+          "evidence": "m04 head-front and m02 front, compared with m01 and r04",
+          "fix": "Replace the rim scallops with about 8 to 10 larger pointed locks per side, each about .03 to .05 of figure height long",
+          "fixability": 0.5
+        },
+        {
+          "summary": "The cupped inner ear is a shallow dished panel that barely reads",
+          "evidence": "m04 head-front compared with m01 front",
+          "fix": "Deepen the inner ear cup by about .008 of figure height and give it a pointed upper tip rim",
+          "fixability": 0.6
+        }
+      ],
+      "attempts": 1,
+      "anchorScore": 6,
+      "parked": false,
+      "parkReason": null
+    },
+    "R04": {
+      "name": "Ear fan rear and profile",
+      "weight": 2.5,
+      "criteria": [
+        "C06",
+        "C09"
+      ],
+      "score": 6.5,
+      "issues": [
+        {
+          "summary": "The rear reads as a hard-rimmed bowl covered in a regular chevron lattice of petal shingles, like an artichoke or lotus centrepiece",
+          "evidence": "m04 head-back centre: pointed petals are stacked in a chevron pattern, with a faint arc outline above them and a curved crease inside each wing. The back in r03 is one soft shaggy mass with no centrepiece.",
+          "fix": "Remove the cap lattice, or cut its amplitude from .04 to about .01 head-local. Replace it with a few long soft locks flowing down and outward from a crown tuft, and smooth out the arc outline and the two wing creases.",
+          "fixability": 0.7
+        },
+        {
+          "summary": "From above and behind, the flat top and lip ridge read as a tray",
+          "evidence": "m03 turn-135 and turn-225, and m05 head-rear-oblique, compared with the rising spiky top edge and crown tuft in r03 and the m01 back view",
+          "fix": "Dome the top of the rear surface up about .01 of figure height toward the midline and add a crown tuft of 4 to 6 locks about .02 of figure height tall",
+          "fixability": 0.6
+        },
+        {
+          "summary": "The profile has a vertical seam studded with pins that look like thumbtacks, and no swept-back cavity",
+          "evidence": "m04 head-side: a row of small cone pins with disc bases runs down the front edge of the rear mass. In r04 right, the fan sweeps up and back as a curved shell with a visible cavity.",
+          "fix": "Delete the pin row and blend the seam. Sweep the upper fan about .02 of figure height back behind the skull so the cavity shows in profile. Profile depth already matches (.188 against .187), so shift mass up and back rather than adding depth.",
+          "fixability": 0.6
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": 6.5,
+      "parked": false,
+      "parkReason": null
+    },
+    "R05": {
+      "name": "Neck and shoulders",
+      "weight": 2,
+      "criteria": [
+        "C10"
+      ],
+      "score": 6,
+      "issues": [
+        {
+          "summary": "The underside where the head meets the neck is an abrupt pinch that reads like a stem",
+          "evidence": "m06 neck-front and neck-rear. Neck width is .054 of figure height against .053 in the reference.",
+          "fix": "Soften the transition with a fillet about .01 of figure height under the jaw and at the nape",
+          "fixability": 0.7
+        },
+        {
+          "summary": "Shoulder width is right (.298 against .296), but the shoulder caps are soft and undefined",
+          "evidence": "m06 shoulders-front",
+          "fix": "Add a slight deltoid cap about .005 of figure height at each shoulder",
+          "fixability": 0.6
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": 5.5,
+      "parked": false,
+      "parkReason": null
+    },
+    "R06": {
+      "name": "Torso and pelvis",
+      "weight": 2,
+      "criteria": [
+        "C11"
+      ],
+      "score": 5.5,
+      "issues": [
+        {
+          "summary": "The waist is too wide, which makes the torso read as a tube",
+          "evidence": "Front waist is .169 of figure height against .132 in the reference (ratio 1.28). See m06 trunk-front.",
+          "fix": "Narrow the waist from .169 to about .135 of figure height",
+          "fixability": 0.7
+        },
+        {
+          "summary": "The chest has too little forward volume compared with the waist",
+          "evidence": "m06 trunk-front and the m02 left view, compared with the m01 left view",
+          "fix": "Add about .01 of figure height of forward chest volume between .30 and .34 of figure height from the top",
+          "fixability": 0.6
+        }
+      ],
+      "attempts": 1,
+      "anchorScore": 5,
+      "parked": false,
+      "parkReason": null
+    },
+    "R07": {
+      "name": "Arms and forepaws",
+      "weight": 1.5,
+      "criteria": [
+        "C12",
+        "C13"
+      ],
+      "score": 5,
+      "issues": [
+        {
+          "summary": "The forepaw is a mitten with claws sticking out below it and no toe lobes",
+          "evidence": "m07 forepaw-front compared with r02",
+          "fix": "Split the paw into four toe lobes of about .008 of figure height each, with claws coming out of their tips",
+          "fixability": 0.6
+        },
+        {
+          "summary": "The arm is a tube with no elbow or wrist definition",
+          "evidence": "m07 forearm-front and forearm-profile",
+          "fix": "Narrow the wrist about 15 percent and add an elbow point of about .004 of figure height",
+          "fixability": 0.6
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": null,
+      "parked": false,
+      "parkReason": null
+    },
+    "R08": {
+      "name": "Legs",
+      "weight": 2,
+      "criteria": [
+        "C14",
+        "C15",
+        "C16"
+      ],
+      "score": 6,
+      "issues": [
+        {
+          "summary": "A low bulge on the shin reads as a lump",
+          "evidence": "m08 hindleg-front and shin-profile",
+          "fix": "Move the calf mass up the lower leg and smooth the low bulge by about .005 of figure height",
+          "fixability": 0.6
+        },
+        {
+          "summary": "The thighs are slightly thin next to the reference's strong hind legs",
+          "evidence": "The m02 left view compared with the m01 left view",
+          "fix": "Add about .005 of figure height to the front of the upper thigh",
+          "fixability": 0.6
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": null,
+      "parked": false,
+      "parkReason": null
+    },
+    "R09": {
+      "name": "Hind paws",
+      "weight": 1.5,
+      "criteria": [
+        "C17"
+      ],
+      "score": 6,
+      "issues": [
+        {
+          "summary": "The toes are four even round beads in a straight row",
+          "evidence": "m09 hindpaw-front compared with r02",
+          "fix": "Arch the toe row so the middle two toes lead by about .005 of figure height",
+          "fixability": 0.7
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": null,
+      "parked": false,
+      "parkReason": null
+    },
+    "R10": {
+      "name": "Tails",
+      "weight": 3,
+      "criteria": [
+        "C18"
+      ],
+      "score": 6.5,
+      "issues": [
+        {
+          "summary": "The tails are slim leaves with tips pointing down and out, not full crescents curling up",
+          "evidence": "The m02 back view and m10 tail-fan-back, compared with r03",
+          "fix": "Thicken each tail's middle about 30 percent and bend the last third of each tail up about 40 degrees",
+          "fixability": 0.5
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": 6.5,
+      "parked": false,
+      "parkReason": null
+    },
+    "R11": {
+      "name": "Tail root and pelvis",
+      "weight": 2,
+      "criteria": [
+        "C19"
+      ],
+      "score": 5,
+      "issues": [
+        {
+          "summary": "The tails come out of one side of the pelvis, not from a single root at the base of the spine that overlaps both rear sides",
+          "evidence": "m10 tail-root-back and tail-root-opposite, compared with r03",
+          "fix": "Move the root to the spine midline and widen the fused base about .03 of figure height so it overlaps both buttocks",
+          "fixability": 0.5
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": null,
+      "parked": false,
+      "parkReason": null
+    },
+    "R12": {
+      "name": "Whole-form coherence",
+      "weight": 2,
+      "criteria": [
+        "C01",
+        "C20"
+      ],
+      "score": 6,
+      "issues": [
+        {
+          "summary": "The head fan is heavily ornamented while the body is smooth clay",
+          "evidence": "m02 and m03",
+          "fix": "Reduce the head relief amplitude by about half so it matches the body's level of development",
+          "fixability": 0.6
+        },
+        {
+          "summary": "Stray pin-like cones run along the seam in profile",
+          "evidence": "m04 head-side and m06 neck-profile",
+          "fix": "Delete the pin row",
+          "fixability": 0.9
+        }
+      ],
+      "attempts": 0,
+      "anchorScore": 6,
+      "parked": false,
+      "parkReason": null
+    }
+  },
+  "decisionsForNick": [
+    {
+      "topic": "Tail tips",
+      "state": "Applied: tips curl up and out per accepted back study 0018; the first sheet droops. Reverting is one controls file."
+    }
+  ],
+  "history": [
+    {
+      "batch": 1,
+      "run": "wf_e861669f-6d1",
+      "round": 0,
+      "kind": "baseline critique",
+      "assembly": "assembled-0156",
+      "scores": {
+        "R01": 5,
+        "R02": 6,
+        "R03": 5,
+        "R04": 4.5,
+        "R05": 4,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 5,
+        "R11": 5,
+        "R12": 5
+      },
+      "summary": "First scored round for assembled-0156; no baseline packet, so no change report. Weighted mean 5.12. What holds: ear span (.532 against .521), head height and leg length. Worst: neck too thick (.075 against .053 in front, .068 against .042 in profile; R05 at 4); rear and profile of the ear fan (a thorny bowl that swallows the skull, and a tall crest in profile; R04 at 4.5); waist too thick (about .20 against .14). Tails are the right count (three), but they are straight petals in a radial starburst from a pinched knot, where the reference has crescents curling up from a broad fused root (R10 and R11 at 5). The front of the fan has no readable cupped inner ear, and the lobes stay fat at the outer ends (R03 at 5). Suggested next order by weight x gap x fixability: R05 neck, then R01, R03, R10 and R06. Written to C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0156\\critique.json"
+    },
+    {
+      "batch": 1,
+      "run": "wf_e861669f-6d1",
+      "round": 1,
+      "order": {
+        "region": "R05",
+        "priority": 7.2,
+        "issues": [
+          "Neck far too thick in both views",
+          "Shoulders broad and high, with a trapezius shelf and a neck-base crease"
+        ]
+      },
+      "scoreBefore": 4,
+      "build": {
+        "assembly": "assembled-0159",
+        "head": "head-0158",
+        "packet": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0159",
+        "changes": "R05 (neck and shoulders) was narrowed with a smooth vertex warp: new art/species-construction/neck_warp.py and warp_neck_field.py, committed as 691ddddd. No remesh, so no new seams. I built body-0157 (from body-0155) and head-0158 (from head-0152), then assembled-0159. That is two of four component builds and the one assembly.\n\nTechnical check passes: 1 component, 0 nonmanifold edges, no height or ground spread.\n\nSilhouette ratios to the reference, before to after:\n\n| Measure | Before | After |\n|---|---|---|\n| Front neck | 1.42 | 1.04 |\n| Profile neck | 1.59 | 1.09 |\n| Front shoulders | 1.11 | 1.00 |\n\nIn world units, the neck at z .457 went from half-width .069 to .051 and depth .125 to .083. Central widths at 0.28, 0.30, 0.32 and 0.34 now match the reference within about .002. Everything outside R05 moved under .001, except the arm tops and upper chest (see side effects).\n\nKnown defects in this candidate, both diagnosed but not fixed:\n- **Shoulder lip:** a small lip remains at each shoulder top (x about .12 to .17, z .40 to .41). The old trapezius shelf is a horizontal surface at about z .406, and an x-scale cannot remove that.\n- **Chest band:** a faint horizontal shading band crosses the chest and upper back near z .27 to .34, from slope kinks in the depth table.\n\nThe neck-base crease at z .425, where the loft joins body and head, was not separately smoothed.\n\nI did not fix these because assembled-0159 used the round's one assembly. A follow-up R05 round should add a z-lowering term g(x)=clip(.474*(x-.14),0,.035), faded by smoothstep((z-.27)/.10). It should also use table smoothing near sigma .015. The details are in build.json under couldNotDo.\n\nSide effects:\n- Both arm tops move inward by up to about .04 at the deltoid, because the shoulder line narrows.\n- Depth is reduced on the upper chest and back down to z .27.\n- Tail points at y > .25 moved at most .01.\n\nI did not update the progress artifact; I had no artifact URL in this task.",
+        "commit": "691ddddd"
+      },
+      "targetDelta": 1.5,
+      "regressions": [],
+      "critique": "This round targeted R05 (neck and shoulders), and the weighted mean rose to 5.23 from 5.12 for baseline 0156. R05 improved from 4 to 5.5. The neck now measures .055 of figure height in front and .046 in profile, against the reference's .0525 and .042. Front shoulder widths at 0.28-0.34 now match the reference (.199/.237/.296 against .202/.239/.296). The same pass slimmed chest depth to match the reference, but R06 holds at 5 because the waist is still .20 against .13. The narrowing left new faults: pointed lips at both shoulder tops, a squared coat-hanger yoke, a ridge across the upper back, a dent at the side of the neck base, and a horizontal step band across the chest at about 0.30-0.32. These keep R05 below 6. No other region changed visibly; its closeups match the baseline. The weakest region is R04 (4.5). R01, R03, R10 and R11 are at 5. By weight x (8 - score) x fixability, R03 or R10 is the next order; a quick R05 cleanup of the lips, band and dent is cheap and highly fixable. The full critique is at C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0159\\critique.json.",
+      "kept": true,
+      "scoresAfter": {
+        "R01": 5,
+        "R02": 6,
+        "R03": 5,
+        "R04": 4.5,
+        "R05": 5.5,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 5,
+        "R11": 5,
+        "R12": 5
+      },
+      "weightedMean": 5.23
+    },
+    {
+      "batch": 1,
+      "run": "wf_e861669f-6d1",
+      "round": 2,
+      "order": {
+        "region": "R01",
+        "priority": 6.3,
+        "issues": [
+          "Profile head reads as a tall narrow helmet crest instead of a round skull under a round halo of fan",
+          "Lower head and cheeks too wide; the face does not taper to a small chin"
+        ]
+      },
+      "scoreBefore": 5,
+      "build": {
+        "assembly": "assembled-0161",
+        "head": "head-0160",
+        "packet": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0161",
+        "changes": "Round 2, R01 head silhouette. Built head-0160 from head-0158 with a smooth vertex warp and no remesh (new art/species-construction/head_warp.py and warp_head_field.py, committed as d2987690). It does two things. It adds rear depth to the skull and fan (up to .07 world at z .83, tapering to zero at the face and below the jaw), so the profile becomes a round dome. It also tapers the jaw and lower fan tips toward a small chin (k .32 at z .531), leaving the mouth, nose and eye-level width alone. Measured against the first sheet, left-view widths at 0.04, 0.06, 0.08 and 0.10 of figure height went from .109, .124, .147, .161 to .144, .157, .174, .180 (reference .138, .160, .174, .177). Front width at 0.20 went from .217 to .141 (reference .132), and at 0.18 from .330 to .256 (reference .269). The ear span is unchanged in the front view and left-view earSpan moved from .901 to .994 of the reference. Technical check passes: one component, 0 nonmanifold edges. Side effect: the assembly removed 5 tiny lock-tip specks against 1 in the baseline. Not done: the fan's lower edge was not raised at the centre. A lobe lift shrank the front silhouette below the reference and sheared the mesh, so only the jaw taper narrows the back of the skull. The dark ear cup in profile and the slight forward lean of the fan's front crest remain. Used 1 of 4 component builds, plus scratch previews and a numpy silhouette overlay, which were not numbered components. The user asked for the progress artifact to be updated each round; I did not touch it, so the orchestrator should add round 2 to it from the packet.",
+        "commit": "d2987690"
+      },
+      "targetDelta": 1,
+      "regressions": [],
+      "critique": "This round targeted R01 (head silhouette), and R01 rose from 5 to 6. In profile, the head's front-to-back widths now match the first sheet to within about .01 of figure height at every row from 0.02 to 0.18, and the back of the head reads as a rounded dome, not a thin crest. The lower face now narrows toward the chin: front width at 0.20 is .141, down from .217 (reference .132).\n\nThree R01 faults remain:\n- From behind, the fan still funnels into the neck and no round back of the skull shows.\n- In profile, the fan still has a forward crest over a gouged cavity.\n- The warp left a new bump between two notches at the nape.\n\nThe nape bump lowers R05 from 5.5 to 5. The taper also left torn lock stubs on the lower cheeks, and assembly removed 5 detached fragments this round against 1 last round. R04 now has the right profile depth, but its thorny bowl and cavity keep it at 4.5. No other region changed: the renders of the body, tails and paws match the baseline pixel for pixel.\n\nWeighted mean is 5.300, against 5.227 for the baseline. The cheapest next step is smoothing the nape (fixability .85), which restores R05 and cleans up R01. The biggest remaining gains are R03 (cupped inner ear, lobe tips that taper), R10 (crescent tails) and R04 (rear fan). The full critique is in C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0161\\critique.json.",
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 5,
+        "R04": 4.5,
+        "R05": 5,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 5,
+        "R11": 5,
+        "R12": 5
+      },
+      "weightedMean": 5.3
+    },
+    {
+      "batch": 1,
+      "run": "wf_e861669f-6d1",
+      "round": 3,
+      "order": {
+        "region": "R03",
+        "priority": 6.3,
+        "issues": [
+          "No cupped inner ear readable from the front",
+          "Lobes stay fat at the outer end instead of tapering to a point that flares up and out"
+        ]
+      },
+      "scoreBefore": 5,
+      "build": {
+        "assembly": "assembled-0163",
+        "head": "head-0162",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0163",
+        "changes": "R03 (Ear fan front), round 3. Built head-0162 from head-0160 with a new field-space script (art/species-construction/shape_ear_front_field.py plus ear_warp.py), one component build, one assembly (assembled-0163, body-0157 unchanged). Three changes on each lobe. (1) Lobe-height warp: the lower outer edge now climbs toward the tip. Measured lower-edge fractions of figure height at |x| .14 to .26: reference .161/.158/.148/.127/.107/.092/.076, before .176/.168/.159/.147/.132/.112/.069, after .163/.152/.141/.126/.111/.094/.058. Front ear span went from .5324 to .5209 against the reference .5207. (2) Cup: the spikes standing in front of the skull and plate surface inside a leaf outline taken from the first sheet's inner ear are cut off flush, leftover fins are opened away, and the cut surface is blurred, so the forward thorn clusters are gone and a clean pocket opens beside each side of the skull. In the studio-lit head-front render it reads as a shadowed cup. (3) Leaf locks: 29 flat leaf-shaped locks (14-15 per lobe, half-width .05-.08, length .16-.30) are laid across the front of the fan plate in overlapping rows that radiate from the ear root, replacing the thorn field there. Technical check passes (1 component, 0 nonmanifold edges, no height or ground spread). Body region unchanged: assembled-0161 and 0163 renders differ by 12-60 pixels below the head. Deviation outside the lobe window is at most .0086 head-local (p99 .0016). Limits: the roof and crown spikes and the lower outer fringe tips still read as spikes; a small cone stub remains at the pocket bottom; the cup follows the reference measurement (about .095 x .098 of figure height) rather than the order's .04 x .06; about eleven scratch previews were run outside the numbered outputs while iterating the method. Baseline body was body-0157 (the body inside assembled-0161), not the order's body-0155. I did not update the review artifact; the loop page builder replays the workflow journal, which only the orchestrator has. Committed as 26c906f9.",
+        "commit": "26c906f93a5ac3221910f87a51c3914c0b14b5ba"
+      },
+      "targetDelta": 0.5,
+      "regressions": [],
+      "critique": "Round 0163 against 0161 targeted R03. The front view now shows a recessed inner-ear hollow under each fan rim, the first cup that reads from the front, so R03 moves from 5 to 5.5. The fix is partial. The hollow is filled with scale-like shingled plates and sits out on the lobe instead of forming a smooth triangular cup beside the skull. The fan underside was lifted too far: front width at .16 of figure height is .289 against the reference .344. The second ordered issue, outer ends tapering to an upturned point, is not addressed. Span now matches the reference (.521). R04 slips from 4.5 to 4 because the plates fill the profile cavity seen in the side views. Every other region is pixel-identical to the baseline outside the ear fan and keeps its score. The full critique is in C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0163\\critique.json.",
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 5.5,
+        "R04": 4,
+        "R05": 5,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 5,
+        "R11": 5,
+        "R12": 5
+      },
+      "weightedMean": 5.31
+    },
+    {
+      "batch": 1,
+      "run": "wf_e861669f-6d1",
+      "round": 4,
+      "order": {
+        "region": "R04",
+        "priority": 6,
+        "issues": [
+          "Rear surface is one flat textured slab with no separate crown and no visible ear roots",
+          "Profile cavity is now filled with shingled plates; m01 left shows the cup open"
+        ]
+      },
+      "scoreBefore": 4,
+      "build": {
+        "assembly": "assembled-0168",
+        "head": "head-0167",
+        "packet": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0168",
+        "changes": "Round 4 (R04): built head-0167 from head-0165 with a rear warp, assembled with body-0157 as assembled-0168. head-0165 is head-0160 rebuilt with shape_ear_front_field.py's new --cup-lock-clear .08, which drops the leaf locks in and around the cup. The cup interior is now smooth plate, but only from the front-view previews; the side-view previews still show plates on the wall in front of the ear. The warp (new ear_rear_warp.py and warp_ear_rear.py) moves and squeezes each lobe's rear wall forward. The skull and crown keep full depth and read as a rounded dome with a lobe rooted on each side. The wall is now about .07 to .08 head-local thick at |x| .5, against about .13 to .19 before. The target was .074. A four-image head preview sheet and the m04 packet image confirm the crown read; I did not compare the side-view cup to the baseline in a side-by-side, and I did not confirm the profile cup at packet resolution. The technical check passes (1 component, 0 nonmanifold edges, no height or ground spread). Silhouette ratios are unchanged from assembled-0163. The body is unchanged. Not done: no extra cup recess was carved, the lobe roof is still thick in profile, and the rear-center dip was not changed. I used all four component builds: head-0164 (too few locks removed), head-0165, head-0166 (straight crease, replaced), head-0167. Code committed as 46765f03. I did not update the progress artifact; that is for the orchestrator.",
+        "commit": "46765f03"
+      },
+      "targetDelta": 0,
+      "regressions": [],
+      "critique": "A pixel diff confirms that only the ear fan changed between 0163 and 0168; m07 to m10 are identical, and the other images differ only in the head band. R04 changed visibly but did not improve. In profile (m04 head-side, m02 left and right) the shingles behind the rim were removed, and a bald, smooth, convex shell with a hard vertical seam replaced them. The cup is still not an open hollow as it is in m01 left and the r04 profile, and the rear half lost its shaggy clumps. From behind (m04 head-back) the fan is still one textured slab. The additions there are two faint vertical smoothing bands that read as seams, not ear roots, and a crease in m05 head-rear-oblique. The only real gain is a rounded crown mound on the rear edge in m04 head-top, which does not show in the rear elevation, where r03 has a distinct round skull between the fans. R04 stays at 4. All other regions have unchanged geometry, and their scores are held. Full critique: C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0168\\critique.json",
+      "kept": false,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 5.5,
+        "R04": 4,
+        "R05": 5,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 5,
+        "R11": 5,
+        "R12": 5
+      },
+      "weightedMean": 5.31
+    },
+    {
+      "batch": 2,
+      "run": "wf_c9319feb-367",
+      "round": 5,
+      "order": {
+        "region": "R04",
+        "priority": 6,
+        "issues": [
+          "Rear surface is one flat textured slab with no separate crown and no visible ear roots",
+          "Profile cavity is now filled with shingled plates; m01 left shows the cup open"
+        ]
+      },
+      "scoreBefore": 4,
+      "build": {
+        "assembly": "assembled-0171",
+        "head": "head-0170",
+        "body": "body-0157",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0171",
+        "changes": "R04 candidate built. New script art/species-construction/shape_ear_rear_field.py and a dome option in ear_rear_warp.py (defaults unchanged). It does three things. (1) Rear dome warp: the lobes' rear wall moves forward about .10 head-local and is squeezed, with the step starting on a round dome outline, so the back shows a rounded skull with the lobes stepping down behind it. Wall thickness at |x| .4 to .7 is now about .07 to .10 (target .074). (2) Dome de-coat in an OpenVDB field: the skull is smooth against the coated lobes. (3) Cup: shingled plates stripped from the cup interior and the floor recessed .03 head-local. Two of four component builds used (head-0169 superseded, head-0170 candidate), one assembly. Technical check passes: 1 component, 0 nonmanifold edges, no height or ground spread. Pixel diff against 0163: m07 to m10 are identical, m06 differs only in the head band. Limits: the cup recess is .008 of figure height, not .015, because deeper would cut through the thinned wall. Roof clumps and the plates outside the cup outline are unchanged. The cup change also alters the R03 front view (fewer shingles, smoother floor). Left ear-span ratio moved .994 to .986. Committed 17a683c5. untracked/species-construction/akinza/loop/packets/assembled-0171/build.json has every command and parameter.",
+        "commit": "17a683c5"
+      },
+      "targetDelta": 1,
+      "regressions": [],
+      "critique": "Round 0171 against 0163 targeted R04. The only geometry change is at the back of the head. A rounded crown mass now sits between the two fan lobes in the rear views (m02 back, m04 head-back, m05 head-rear-oblique, m03 turn-135 to turn-225). The back therefore reads as a skull seated between two lobes, the arrangement r03 and m01 show, where the baseline had one flat textured slab. R04 moves from 4 to 5. The fix is partial and crude. The crown is a smooth, bald sphere set into the fan with a hard raised ring where it meets the lobes, and m05 rear-oblique shows a darker vertical seam band down its right side. It reads as a separate ball stuck on, not a fused furred skull. The ear roots are still hidden. In profile (m02 left and right, m04 head-side) the back of the head is now a smooth domed shell, and the shingled plates still fill the profile cavity: the ordered second issue was not addressed. Everything else is unchanged: the pixel differences in m02 body views are one-pixel edge shifts from reframing, and m07 to m10 are pixel-identical. Measurements move by under .005 except the left view at .04 of height (.144 to .127, reference .138). The other regions keep their scores. Full critique written to C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0171\\critique.json.",
+      "meanGain": 0.091,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 5.5,
+        "R04": 5,
+        "R05": 5,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 5,
+        "R11": 5,
+        "R12": 5
+      },
+      "weightedMean": 5.4
+    },
+    {
+      "batch": 2,
+      "run": "wf_c9319feb-367",
+      "round": 6,
+      "order": {
+        "region": "R10",
+        "priority": 5.4,
+        "issues": [
+          "Tails are fat almond or leaf shapes; the tails in r03 are crescents whose tips curl up and out",
+          "Tails spread too far and hang too low"
+        ]
+      },
+      "scoreBefore": 5,
+      "build": {
+        "assembly": "assembled-0174",
+        "head": "head-0170",
+        "body": "body-0173",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0174",
+        "changes": "R10 (Tails), round 6. I rebuilt the three tails as flattened scythe blades placed on the tips and outlines I traced from r03, in fractions of figure height. Two component builds and one assembly were used.\n\n**What I changed.** `rebuild_body_field.py` has a new optional `sweepFlatten` value, read from the tail-controls file. It squeezes the sweep cross-section along the blade normal, so a tail is a blade instead of a tube. The default is 1.0, so earlier runs reproduce. The new controls are in `docs/design/species-construction/akinza/tail-controls-blades.json`, with `sweepFlatten` at .62. Rows 0 and 1 of each tail keep the accepted root junction, except tail 1 row 1, which sits at z -.005 (was -.027). Each blade is widest about 40 percent along, tapers to a pointed tip and has a concave lower edge.\n\n**Builds.** `body-0172` is the tail rebuild from `body-0100`. `body-0173` re-applies the accepted neck and shoulder warp, the same step that made `body-0157` from `body-0155`. `head-0170` is unchanged. The assembly is `assembled-0174`.\n\n**Technical check.** It passes: 1 component, 0 nonmanifold edges, no height or ground spread. The tail rebuild moved surface outside the edited region by at most .00028.\n\n**Measurements against the order.** The baseline tails were too wide, but they were too high, not too low.\n\n| Tail | Reference tip (x from center, z from floor) | Baseline tip | Baseline error |\n|---|---|---|---|\n| 1 | .27, .48 | .33, .65 | .06 wider, .17 higher |\n| 2 | .27, .30 | .35, .47 | .08 wider, .17 higher |\n| 3 | .19, .19 | .255, .28 | .065 wider, .09 higher |\n\nThe reference's lowest tip sits at about mid-calf, so the suggestion to raise the lowest tail is not supported. I placed tails 1 and 2 on the reference tips. I put tail 3's tip at about .22 of figure height, which is above the reference tip and about knee level. That is a compromise with the order's \"above knee\" request. Leftmost tail extent was .314 of figure height at baseline, is .290 now, and is .281 in the reference. `build.json` records this.\n\n**Crescent shape.** In r03 the tips hook down and slightly back toward the body with the concave side below, not up. The suggested 40 degree upward curl does not match r03, so I followed r03. The tips are pointed.\n\n**Side effects.**\n- The front and profile hips-row silhouette ratios fell (.962 to .825 front, 1.013 to .827 profile) because that row used to include tail mass. The pelvis itself is unchanged.\n- The render framing follows the bounding box, so whole-figure pixel diffs against `assembled-0171` show framing shift, not geometry changes.\n\n**Not done.** Tail 3's downward hook is about .03 of figure height short of r03, and there are no fur locks on the tails.\n\nCommitted as d8b37f08.",
+        "commit": "d8b37f08"
+      },
+      "targetDelta": 1.5,
+      "regressions": [],
+      "critique": "R10 (Tails) improved from 5 to 6.5. The fat almond and leaf tails are now tapering crescents with sharp tips, close to the r03 silhouette. The spread tightened: the front-view full width across the tail band went from about 0.62 to 0.556 (reference 0.50), and the left-view span went from 0.36-0.76 to 0.42-0.78 of figure height (reference 0.40-0.81). The count is three. What still departs: the tails splay apart like fingers from near the root instead of lying as a shingled stack, the tips end in abrupt downward hooks, and the lowest tail hangs close to vertical along the thigh. No other region changed; the pixel differences in m04 to m09 are only the tails in the background. The weakest regions are still R04 (ear fan rear and profile), R05, R06 (front waist 0.20 against 0.13 to 0.15), R07, R11 (crease at the root, no overlap onto the far rear side) and R12, all at 5. Full critique written to C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0174\\critique.json.",
+      "meanGain": 0.164,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 5.5,
+        "R04": 5,
+        "R05": 5,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 5
+      },
+      "weightedMean": 5.56
+    },
+    {
+      "batch": 2,
+      "run": "wf_c9319feb-367",
+      "round": 7,
+      "order": {
+        "region": "R12",
+        "priority": 4.8,
+        "issues": [
+          "Level of development is uneven: a noisy shard-covered head fan over a smooth, plain body",
+          "Shading seams on the chest and upper arm"
+        ]
+      },
+      "scoreBefore": 5,
+      "build": {
+        "assembly": "assembled-0178",
+        "head": "head-0170",
+        "body": "body-0177",
+        "packet": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0178",
+        "changes": "R12 round 7. I added smooth_torso_field.py, which smooths the body in field space (level set, weighted Gaussian morph, one meshing). The shoulder-tip ledges and the shoulder-crest dent are gone. The stripes on the upper arm are slightly softer. The chest band and the bright upper-arm facet are essentially unchanged, and the uneven head-fan versus body detail was not touched. The technical check passes, so an R12 rise of 0.5 is uncertain. The chest band is a flat 37-degree chest plane inherited from the accepted R05 warp, not a normals seam. Blurring only softened its edge slightly (chest luminance step 210 to 169 barely moved). Removing it needs a chest depth-profile change that belongs to R05/R06. The bright arm facet ends where the upper arm's own outward slope ends at the elbow, so smoothing left it alone. Three body builds were made: body-0175 (isotropic blurs, superseded), body-0176 (anisotropic, superseded) and body-0177 (candidate). One scratch trial (chest sigma z .085) was written to C:/tmp/r7/try1 and dropped. Deviation from body-0173 outside the edit regions is at most .0012 (p99 .00012); inside, at most .0083. Head, tails, legs and paws are unchanged. Code is committed as 330692bd: art/species-construction/smooth_torso_field.py and docs/design/species-construction/akinza/torso-smooth-regions-r7.json. Details are in build.json in the packet folder.",
+        "commit": "330692bd"
+      },
+      "targetDelta": 0,
+      "regressions": [],
+      "critique": "R12 did not improve. The only visible change from 0174 is at the shoulders: the tip ledges and the crest dent are gone. That raises R05 from 5 to 5.5. The chest band is as strong as before, and the upper-arm facet is unchanged apart from slightly softer stripes. The shard-covered fan over a plain body was not touched. The chest band is a real flat tilted plane, so it needs the chest depth profile reshaped rather than smoothing. The fan needs its own order. Measurements are unchanged: waist 0.201 against 0.132 in the reference. Critique written to C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0178\\critique.json.",
+      "meanGain": 0.036,
+      "kept": false,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 5.5,
+        "R04": 5,
+        "R05": 5,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 5
+      },
+      "weightedMean": 5.56
+    },
+    {
+      "batch": 2,
+      "run": "wf_c9319feb-367",
+      "round": 8,
+      "order": {
+        "region": "R12",
+        "priority": 4.8,
+        "issues": [
+          "Level of development is uneven: a noisy shard-covered head fan over a smooth, plain body",
+          "Shading seams on the chest and upper arm"
+        ]
+      },
+      "scoreBefore": 5,
+      "build": {
+        "assembly": "assembled-0184",
+        "head": "head-0182",
+        "body": "body-0183",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0184",
+        "changes": "R12 candidate assembled-0184, technical check passes. Head: the fan and crown skin (new art/species-construction/simplify_fan_field.py) is field-space closed (8 voxels), opened (3) and blurred (3) inside a weighted window, so the shingled cup plates and rim spikes merge into fewer, larger locks with a calmer rear rim. Front ear span is 1.006, the outline is essentially unchanged, and the face objects did not move. Body: body-0177's shoulder-shelf and arm-ripple smoothing is kept, and the upper-chest light band is removed by easing the chest front profile (new --chest-ease option in smooth_torso_field.py). The profile between z .10 and .38 is replaced by a quintic curve matched to the measured slope at each end, peak shift .012. No crease remains in m02 front or m06 shoulders-front and trunk-front. Not fixed: the bright upper-arm facet is a real 20 to 30 degree slope and is unchanged, and the fan is calmer but still leaf-shaped rather than the first sheet's feathered locks. Side effect: left-view shoulder-row depth ratio fell from .994 to .936 (chest recedes up to .012). Build budget used all four: body-0180 crashed, body-0181 was rejected for a new crease at the anchor and pectoral lumps, body-0183 and head-0182 are the candidates. Scratch field trials in C:/tmp/r8 are listed in build.json. Committed 20d0887b (scripts plus chest-ease-r8.json and torso-smooth-none.json); untracked/ not committed.",
+        "commit": "20d0887b"
+      },
+      "targetDelta": 1,
+      "regressions": [],
+      "critique": "The R12 round partly worked. In m02 front, m06 shoulders-front and trunk-front, the light horizontal band across the upper chest is gone, and so are the small ledges at both shoulder tips. No new crease appeared. On the ear fan, the jagged shards and rim spikes are merged into fewer, rounder lumps, and the flakes on the rear of the fan are gone. The fan now sits closer to the body's level of development. Front ear span is unchanged at 0.524 of figure height (reference 0.521). Three things still hurt coherence. First, the bright flat rectangular facet on the upper arm, with a hard lower edge, is unchanged in m02 left and m07 forearm-profile, so half of the order's seam issue remains. Second, the smooth skull disc with its circular rim still shows from behind. Third, the fan is calmer but reads as amorphous cauliflower lumps rather than m01's tapered feathered locks. One side effect: left-view depth at the 0.34 to 0.38 rows fell from about 0.148 to 0.140 to 0.145 of figure height (reference 0.149 to 0.176, partly the posed arm). Regions that changed: R05 rose from 5 to 6 (shoulder ledges and chest band gone) and R12 from 5 to 6. R03 and R04 changed visibly (less noise) but hold their scores, because lock structure and rear depth are still missing. R01's crown softening is within noise. R08 to R11 are identical apart from render noise. The weakest regions are still R03, R04, R06 (front waist 0.20 against 0.13 to 0.15), R07 and R11. The full critique is at C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0184\\critique.json.",
+      "meanGain": 0.145,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 5.5,
+        "R04": 5,
+        "R05": 6,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 5.71
+    },
+    {
+      "batch": 3,
+      "run": "wf_fbef00fa-e7e",
+      "round": 9,
+      "order": {
+        "region": "R03",
+        "priority": 4.5,
+        "issues": [
+          "Fan reads as amorphous rounded lumps, not the feathered locks in m01",
+          "Fan outline is too level and lacks the upward V tilt"
+        ]
+      },
+      "scoreBefore": 5.5,
+      "build": {
+        "assembly": "assembled-0186",
+        "head": "head-0185",
+        "body": "body-0183",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0186",
+        "changes": "R03 (ear fan front): head-0185 replaces the rounded lumps on the fan with two staggered layers of tapered, pointed locks (14 per side) on the roof front face, adds a few row locks on the outer wall, smooths the cup bowl and its wall so the cup reads as a clean leaf-shaped hollow, and raises the outer fan with a smooth shear to give the upward V. The skin is one closed component with 0 nonmanifold edges, and the technical check passes. Known defect, my error: the shear made the silhouette about 3 percent taller (the round's height-fraction rows shift: left-view neck 1.05 to 1.29, shoulders .94 to .76, front shoulders 1.01 to .86, hips .83 to .72, ear span .524 to .508) although the body is unchanged, so the critic may read false regressions in R05, R06 and R09. I found this after assembling, which spent the one assembly, and I did not assemble again. A corrected recipe (sink the middle of the roof and cap the tips so the top is .523 against the baseline .5307) was verified as a scratch head only and is written in build.json and committed as options of art/species-construction/author_fan_locks_field.py. Code and a LESSONS note are committed as 790f21b7. Files: C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\art\\species-construction\\author_fan_locks_field.py, C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0186\\build.json.",
+        "commit": "790f21b7"
+      },
+      "targetDelta": 0.5,
+      "regressions": [],
+      "critique": "R03 improved partly, from 5.5 to 6. That half point is at the noise threshold, but two visible changes support it. First, along the top rim the rounded lumps are now two staggered rows of tapered, pointed leaf locks that overlap like shingles, in the clay idiom of r04 (m04 head-front, m05 head-three-quarter). Second, the cup wall is smoothed into a clean leaf-shaped bowl that reads from the front. The V tilt was overcorrected. On the m02 front silhouette, the crown now sits 0.068 of figure height below the tips; the baseline sat 0.033 below and m01 about 0.02 to 0.03 below. The rise is packed into the outer fifth of each side, so the tips read as upturned horns. The locks cover only the top rim, while the lower and outer fan wall stays a smooth sheet. From behind, the rim locks show as a comb of thin, disconnected fins above the smooth rear sheet (m04 head-back, m05 head-rear-oblique). Measurement caveat: raising the tips made the figure about 3 percent taller, so every harness row samples a different body height (front shoulders 1.01 to 0.86, hips 0.825 to 0.718, left neck 1.052 to 1.29). The body component (body-0183) is unchanged, m07 to m10 are pixel-identical and m06 differs only in the head, so body scores hold. The only region whose score changed is R03. The weakest regions are still R04, R06 (front waist 0.20 against 0.13 to 0.15), R07 and R11. Next for R03: reduce the crown dip to about 0.03 without growing figure height (the builder's capped recipe), and extend the locks down the outer and lower wall. Full critique at C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0186\\critique.json.",
+      "meanGain": 0.055,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 6,
+        "R04": 5,
+        "R05": 6,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 5.76
+    },
+    {
+      "batch": 3,
+      "run": "wf_fbef00fa-e7e",
+      "round": 10,
+      "order": {
+        "region": "R03",
+        "priority": 4.8,
+        "issues": [
+          "V tilt overcorrected: the tips read as upturned horns",
+          "Locks cover only the top rim; the lower and outer wall is a smooth sheet"
+        ]
+      },
+      "scoreBefore": 6,
+      "build": {
+        "assembly": "assembled-0188",
+        "head": "head-0187",
+        "body": "body-0183",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0188",
+        "changes": "R03 rebuilt as head-0187 (fan-lock stage on head-0182, one component build). The V tilt is now even, with the crown to tip rise about 0.02 of figure height, and the skin top is .526 against the baseline .5307, so figure height does not grow. That comes from sinking the mid roof by .055 and lifting only the outer 20 percent by .06. Rim locks are rotated outward to 42 to 28 degrees, from 76 to 52, so they lie along the fan axis. Seven edge locks per side in two staggered rows fringe the outer and lower outline. Row-lock tips may now stand up to .03 past the outline. The technical check passed: one component, 0 nonmanifold edges. Harness rows are back near the pre-round-9 values (front shoulders 1.02, hips .831, left neck 1.019). Body is body-0183, unchanged. Scratch trials a1 to a5 in C:/tmp/r10 were not component directories and not assembled. Two or three outer-wall edge locks still read as spikes, and the locks are still smooth leaves on a smooth wall, not fur. Code committed as 58b5a28e (art/species-construction/author_fan_locks_field.py); build.json written in the packet.",
+        "commit": "58b5a28e"
+      },
+      "targetDelta": 0.5,
+      "regressions": [],
+      "critique": "R03 improved from 6 to 6.5. That half point is at the noise threshold, but both issues in the work order show visible change.\n\nThe horned V is gone. On the m02 front top edge, the crown now dips about 0.03 of figure height below the tips; the baseline dipped 0.07, and m01 measures 0.02 to 0.03. Figure height fell back by about 3 percent (485 px against 500 px). Edge locks now run along the outer and lower fan outline, where the baseline had a smooth wall.\n\nThree new departures keep R03 below 7:\n- The rim locks, rotated outward, read from the front as rounded knobs, close to the old cauliflower lumps.\n- The new edge locks read as thin thorn spikes, not layered locks.\n- The outer tips are blunt, square ends. At the outermost column the model's top edge sits 0.01 below the top, against 0.05 for m01.\n\nFrom behind, the baseline's fin comb is mostly gone. The rear is still a thin sheet and now reads as a flat tray, so R04 holds at 5.\n\nThe body (body-0183) is unchanged: m07 to m10 differ from the baseline by at most 5 grey levels, and m06 differs only at the head. All other scores hold, and no region besides R03 moved by more than half a point. The weakest regions are still R04, R06 (front waist 0.199 against 0.13 to 0.15), R07 and R11. The critique is at C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0188\\critique.json.",
+      "meanGain": 0.055,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 6.5,
+        "R04": 5,
+        "R05": 6,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 5.82
+    },
+    {
+      "batch": 3,
+      "run": "wf_fbef00fa-e7e",
+      "round": 11,
+      "order": {
+        "region": "R04",
+        "priority": 4.5,
+        "issues": [
+          "Fan rear is a thin flat sheet with no layered lock depth",
+          "Profile is a broken cavity of slabs, not a rounded lock mass around a cupped ear"
+        ]
+      },
+      "scoreBefore": 5,
+      "build": {
+        "assembly": "assembled-0192",
+        "head": "head-0191",
+        "body": "body-0183",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0192",
+        "changes": "Added art/species-construction/author_rear_locks_field.py and used it on head-0187 to build head-0191. It thickens the rear wall of the ear fan by a bounded field-space dilation of 0.06 head-local. It then lays 11 rings of overlapping pointed row locks plus 2 fringe rows along the whole outline, so the rear rim breaks into tips. Tip height is capped at 0.490 inner to 0.524 outer, so the skin top is 0.5260 against the baseline 0.5261 and figure height does not grow. The face, the front of the fan, the skull dome, the body and the tails are unchanged. Deviation from head-0187 outside the rear window is at most 0.0023 head-local.\n\nTechnical check passes: 1 component, 0 nonmanifold edges, no removed fragments, height and ground spread 0. Only the front ear span moved (1.006 to 1.036), because the fringe tips stand about 0.015 beyond the outline. Neck, shoulders, waist and hips are unchanged.\n\nBudget:\n- Component builds: 2 of 4 (head-0189 was replaced because its locks read as a comb from the side; head-0191 is the candidate).\n- Assemblies: one assembly, assembled-0190 (head-0189), was stopped during detail rendering. It has no check or packet and is not a candidate.\n- The only completed assembly is assembled-0192. It is reported in build.json.\n\nNot done: the profile issue is only partly addressed. The rear wall is thicker and scalloped, but the inner-ear cup and the front row locks (R03 territory, seen edge-on as sticks in the head-side view) were not touched. In pure profile the rear locks still read as a fringe of leaf edges, not a smooth rounded mass. The rear rim rise is about 0.009 of figure height against the 0.02 target, held back by the figure-height cap. The locks are laurel-like leaves on a smooth wall, not soft fur. Code committed as 9189de94; nothing pushed.\n\nFull record: untracked/species-construction/akinza/loop/packets/assembled-0192/build.json",
+        "commit": "9189de94"
+      },
+      "targetDelta": 0,
+      "regressions": [],
+      "critique": "Only the ear fan changed this round; pixel diffs show m07 to m10 identical and the body in m02/m06 unchanged. The fan rear (m04 head-back, m05 head-rear-oblique) is no longer a flat sheet: it now carries stepped, overlapping leaf clumps with visible relief, which addresses the first R04 issue. But the profile got worse. In m04 head-side and m06 neck-profile, the smooth rounded rear dome behind the ear in 0188 has been replaced by a column of thin vertical plates like a picket fence. The side silhouette is now ragged, where r04 and m01 show one rounded lock mass arching back over the crown around a single cupped ear. The top of the fan is still a level tray lip, and the bald skull sphere still sits exposed in the middle of the rear. The rear gain and the profile loss roughly cancel, so R04 holds at 5 and the target did not improve. In front, the lower fan now fills out closer to the reference (at 0.12 of figure height, 0.458 against a reference 0.444 and a baseline 0.394), but the outer ends read squarer, so R03 holds at 6.5. No other region changed. The full critique is in C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0192\\critique.json.",
+      "meanGain": 0,
+      "kept": false,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 6.5,
+        "R04": 5,
+        "R05": 6,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 5.82
+    },
+    {
+      "batch": 3,
+      "run": "wf_fbef00fa-e7e",
+      "round": 12,
+      "order": {
+        "region": "R04",
+        "priority": 4.5,
+        "issues": [
+          "Fan rear is a thin flat sheet with no layered lock depth",
+          "Profile is a broken cavity of slabs, not a rounded lock mass around a cupped ear"
+        ]
+      },
+      "scoreBefore": 5,
+      "build": {
+        "assembly": "assembled-0194",
+        "head": "head-0193",
+        "body": "body-0183",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0194",
+        "changes": "R04 round 12. New head-0193 (from head-0187, one component build, rear coat stage extended) with body-0183 unchanged, assembled as assembled-0194. Round 11's protruding rear locks read as a picket from the side, so layering is now shallow leaf-shaped relief laid on the rear wall (a slab merged into the skin), plus a thicker rear wall (swell .11 that follows the fan's lower edge), a bevel of the rear top edge, and 6 pointed rim tips per side rising toward the outer end (.015 to .04). An edge fringe of 7 tips per side was also added. Figure height is unchanged (skin top .5261 before and after). Technical check passes (1 component, 0 nonmanifold edges, height and ground spread 0). Side effects: front ear span ratio rose from 1.006 to 1.031; the assembly removed 1 tiny fragment (baseline 0); the front-view pixel diff against head-0187 is about 1,080 pixels, from rim and fringe tips. Not done: a rebuilt inner-ear cup and a fully rounded side arc, and the bare skull disc (R01/R12). Code committed as a8820276 (art/species-construction/author_rear_locks_field.py); build.json is in the packet.",
+        "commit": "a8820276"
+      },
+      "targetDelta": 0.5,
+      "regressions": [],
+      "critique": "R04 moved from 5 to 5.5, which is at the noise threshold. Only the first of the order's two issues shows visible change. In m04 head-back, m05 head-rear-oblique and m03 turn-180, the outer third of each fan's rear face now has low-relief lock ridges, and a shingled row of lock tiles runs along the rear top rim. But the central half of the rear, either side of the skull disc, is still a smooth thin sheet. The ridges stand only about 0.005 of figure height proud, against the 0.02 asked for. The rim row reads as regimented square teeth, not r03's pointed fringe. The profile issue is essentially unchanged: m04 head-side and m02 left still show vertical slabs and spikes beside the skull, with no rounded lock mass and no cupped inner ear. Front span grew from 0.524 to 0.537 of figure height, against a reference of 0.521, a 3 percent overshoot. The front view otherwise matches the baseline, and R03 holds at 6.5. m07 to m10 are identical to the baseline within 2 grey levels, and m06 differs only at the head, so every body region holds. The m02 differences below the head are edge shifts from reframing. No region other than R04 moved. The weakest regions are still R04, R06 (front waist 0.199 against 0.13 to 0.15), R07 and R11. The next R04 step is to rebuild the profile as one rounded lock mass with a cupped inner ear. Then carry the rear locks across the central half and turn the rim teeth into pointed fringe tips. Full critique: C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0194\\critique.json",
+      "meanGain": 0.045,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 6.5,
+        "R04": 5.5,
+        "R05": 6,
+        "R06": 5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 5.86
+    },
+    {
+      "batch": 4,
+      "run": "wf_7cbaa78e-d15",
+      "round": 13,
+      "order": {
+        "region": "R06",
+        "priority": 4.2,
+        "issues": [
+          "Front-view waist is too wide",
+          "Torso is a smooth tube with little chest or rib definition"
+        ]
+      },
+      "scoreBefore": 5,
+      "build": {
+        "assembly": "assembled-0196",
+        "head": "head-0193",
+        "body": "body-0195",
+        "packet": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0196",
+        "changes": "Added art/species-construction/warp_waist_field.py, an x-only field-space warp of body-0183. It narrows the front waist and tapers the ribcage into it, and the torso flank moves inward by about .044. Side depth and the arms are unchanged. The spec is docs/design/species-construction/akinza/waist-warp-r13.json. Front waist central run at row .40 fell from .2006 to .1676 of figure height, against a reference of .153, so the waist ratio went from 1.517 to 1.268. Left-view depth, neck, shoulders, hips and ear span ratios are unchanged. Deviation outside the warp box is at most .00055. body-0195 is one closed component with 0 nonmanifold edges. Technical check on assembled-0196 passes with 1 removed fragment, the same as the baseline. Side effect: front central-run rows .42 to .50 fall about .02. Not done: no separate chest plane was added, and a faint shading band remains near the hip end of the waist. Commit a658bc9d.",
+        "commit": "a658bc9d"
+      },
+      "targetDelta": 0.5,
+      "regressions": [],
+      "critique": "Only the trunk changed this round. The pixel diff is confined to torso rows in m02, m03 and m06; m05 is identical and m04, m08 and m09 differ negligibly. R06 improved on its main issue: the front waist narrowed from 0.2006 to 0.1676 of figure height (reference 0.1322, ratio 1.52 to 1.27), and m06 trunk-front now reads as a slim waist instead of a straight tube. The gain is held to half a point because the pinch sits high (row 0.40) and flares abruptly to 0.2736 by row 0.42, leaving a visible horizontal shelf at the top of the pelvis, and the chest and rib definition issue was not addressed. Every other region is unchanged within noise. Weakest regions remain R07 forepaws, R11 tail root and R06. Full critique written to C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0196\\critique.json.",
+      "meanGain": 0.036,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 6.5,
+        "R04": 5.5,
+        "R05": 6,
+        "R06": 5.5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 5.9
+    },
+    {
+      "batch": 4,
+      "run": "wf_7cbaa78e-d15",
+      "round": 14,
+      "order": {
+        "region": "R02",
+        "priority": 4.2,
+        "issues": [
+          "Muzzle pads and chin are underbuilt compared with the soft rounded muzzle in r01",
+          "Cheek tufts read as small jagged spikes instead of broad soft cheek masses"
+        ]
+      },
+      "scoreBefore": 6,
+      "build": {
+        "assembly": "assembled-0198",
+        "head": "head-0197",
+        "body": "body-0195",
+        "packet": "C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0198",
+        "changes": "Round 14, R02 (Face). New script art/species-construction/shape_face_field.py with spec docs/design/species-construction/akinza/face-r14.json. It works in field space on head-0193 and meshes once. (1) Two plump muzzle pads (about .0046 of figure height proud) sit either side of the philtrum, plus a rounded chin bulge. The mouth curves follow the surface by up to .002; eyes and nose are unchanged. (2) The jaw-corner serrations are blurred away, with the window kept clear of the eye sockets. (3) Three broad rounded cheek masses per side replace the teeth. A first scratch trial with pointed locks read as fangs and was rejected. Two scratch trials plus the real build head-0197 gave three builds; there was one assembly. head-0197 is one closed component with 0 nonmanifold edges. assembled-0198 passes the technical check (1 component, 0 nonmanifold edges, height and ground spread 0). Silhouette ratios are unchanged apart from a jaw widening of about .012 of figure height at front rows .10 to .12. Limits: the cheek masses read as smooth mounds, not combed locks, and a faint crease remains where each meets the jaw. Committed as b7cfc5fb (code and spec only).",
+        "commit": "b7cfc5fb"
+      },
+      "targetDelta": 0.5,
+      "regressions": [],
+      "critique": "Only the lower face changed this round. The pixel diff is confined to the head in m02 to m06, and m07 to m10 are pixel-identical. R02 (the face) improved on both targeted issues. In m05 nose-front and nose-below there are now two plump muzzle pads either side of the philtrum and a rounded chin bulge. The nose-profile shows a projecting muzzle and chin instead of a flat plane. The serrated cheek spikes at the jaw corners (m05 eyes-front, m06 neck-front) are replaced by broad rounded cheek masses. R02 rises from 6 to 6.5. The cost is the head silhouette, because the new cheek and chin volume squared the jaw. Front width at row 0.22 grew from 0.0917 to 0.1203 of figure height (reference 0.0685), row 0.20 grew from 0.1404 to 0.149 (reference 0.1322), and left-view row 0.22 grew from 0.0974 to 0.1032 (reference 0.0832). In m04 head-front the lower head now has near-vertical sides and a flat base, where m01 and r04 taper to a soft rounded U. R01 drops from 6 to 5.5. Every other region is unchanged. The weakest regions are still R07 (forepaws) and R11 (tail root), then R01, R04 and R06. Full output: C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0198\\critique.json",
+      "meanGain": 0,
+      "kept": false,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6,
+        "R03": 6.5,
+        "R04": 5.5,
+        "R05": 6,
+        "R06": 5.5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 5.9
+    },
+    {
+      "batch": 4,
+      "run": "wf_7cbaa78e-d15",
+      "round": 15,
+      "order": {
+        "region": "R02",
+        "priority": 4.2,
+        "issues": [
+          "Muzzle pads and chin are underbuilt compared with the soft rounded muzzle in r01",
+          "Cheek tufts read as small jagged spikes instead of broad soft cheek masses"
+        ]
+      },
+      "scoreBefore": 6,
+      "build": {
+        "assembly": "assembled-0200",
+        "head": "head-0199",
+        "body": "body-0195",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0200",
+        "changes": "Round 15, R02 (Face). Built head-0199 from head-0193 with shape_face_field.py and docs/design/species-construction/akinza/face-r15.json; the body is unchanged, so head-0199 and body-0195 were assembled into assembled-0200. Round 14's version (head-0197) also fixed both issues but squared off the jaw and lowered R01. It widened front rows .20 to .22 by up to .03 of figure height, because the chin bulge and the lowest cheek lock extended the jaw outline down and out. This round keeps the round-14 muzzle pads and cheek smoothing. The chin bulge is now a forward push along y (new optional chin mode 'advect'), so it does not lower or widen the jaw. The three broad rounded cheek locks per side are shorter and rooted higher and more inboard, with a softer blend. Head-local silhouette widths at the jaw now match head-0193 within .004. Front row .20 is .1318 against the reference .1322 (was .1404). Ear span, neck, shoulders, waist and hips ratios are identical to the baseline. Technical check passes: 1 component, 0 nonmanifold edges, height and ground spread 0. Not fully fixed: the cheek masses read as soft overlapping mounds rather than combed locks. Faint crease lines and a small nub remain at the lock edges. Left-view chin depth at row .22 grew from .0974 to .1046 (reference .0832) because the chin now projects forward. Budget: 3 of 4 component builds (two scratch trials plus head-0199) and one assembly. Code committed as 09753430, with no trailer; the untracked outputs were not committed.",
+        "commit": "09753430"
+      },
+      "targetDelta": 0.5,
+      "regressions": [],
+      "critique": "Only the lower face changed this round. The pixel diff is confined to the face in m05 and m06 and to the head rows of m02, m03 and m04; m07 to m10 are pixel-identical. R02 improved on both ordered issues. Two rounded muzzle pads and a small chin bulge now read in m05 nose-front, nose-below and m06 neck-front, and the serrated spikes at the jaw corners are gone, replaced by a smooth rounded jowl outline. The gain is held to half a point because the new cheek locks are so low in relief that they barely register and never break the face outline the way the cheek fur does in r01 and r04. In profile the upper-lip pad now bulges forward to about the nose tip, giving a slightly snouty muzzle. Front width at row .20 moved from .1404 to .1318 of figure height (reference .1322). Left depth at row .22 grew from .0974 to .1046 (reference .0832), so the chin push deepened the jaw in profile, away from the reference. That is too small to change R01. Every other region is unchanged. The weakest regions remain R07 forepaws, R11 tail root and R06 torso. Full critique written to C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0200\\critique.json.",
+      "meanGain": 0.055,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6.5,
+        "R03": 6.5,
+        "R04": 5.5,
+        "R05": 6,
+        "R06": 5.5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 5.95
+    },
+    {
+      "batch": 4,
+      "run": "wf_7cbaa78e-d15",
+      "round": 16,
+      "order": {
+        "region": "R04",
+        "priority": 3.75,
+        "issues": [
+          "Back of the skull reads as a separate round disc outlined against the fan",
+          "Profile fan is a tall column of spiky flakes with no rounded mass behind the head"
+        ]
+      },
+      "scoreBefore": 5.5,
+      "build": {
+        "assembly": "assembled-0205",
+        "head": "head-0204",
+        "body": "body-0195",
+        "packet": "untracked/species-construction/akinza/loop/packets/assembled-0205",
+        "changes": "Round 16 R04. Head-slice and rear-floor maps showed the skull dome reaching y .30 to .35 behind the midline while the fan's rear wall sat at y .15 to .16. That step is the \"disc\" seen from behind and the thin strip seen in profile. author_rear_locks_field.py gained opt-in options, all default off. --push extrudes the fan's rear wall backward with a fill-only blur that closes the dome-to-wall corner and a rounded back edge. --cap-lattice lays shingle relief over the dome, flowing down and out from the midline. --floor-x0 extends the rear floor grid to the midline. shape_face_field.py gained an optional rear_smooth block, used in face-r16.json, that removes voxel terraces left on the pushed rim. head-0203 is the rear stage, built on head-0187. head-0204 re-runs the round-15 face spec on it, so the face is regenerated, plus the rear smoothing. Assembled as assembled-0205. Technical check passes: 1 component, 0 nonmanifold edges, height and ground spread 0. Skin top is +.0006 world. Silhouette measurements differ from assembled-0200 only in front ear span (.533 to .523, reference .52) and the left-view span and shoulder ratios. In m04 the disc and rim are gone and the dome is covered by overlapping shingles. In profile the fan reads as a rounded mass. The rear wall is about .07 world deeper than the baseline, more than the .03 figure-height suggestion. All four component builds were used: head-0201 and head-0202 were discarded trials. build.json is in the packet and the code is committed as 2f8505d5, with no push.",
+        "commit": "2f8505d5"
+      },
+      "targetDelta": 1,
+      "regressions": [],
+      "critique": "Round 16 changed only the back of the head (head-0204). The body is still body-0195, and m07 to m10 match the baseline pixel for pixel. Both issues named for R04 are visibly smaller. From behind (m04 head-back, m02 back, m03 turn-180), the outlined round skull disc is gone and the rear of the fan now runs across the midline as one bowl-shaped mass. In profile (m04 head-side), the column of spiky flakes is replaced by a rounded mass of coat behind the head. R04 rises from 5.5 to 6.5. Still missing: the rear reads as a hard-rimmed bowl covered in a regular chevron lattice of petal shingles, like an artichoke or lotus, not the soft shaggy fan with a rounded head mass and crown tuft in r03 and m01. From above and behind, the flat top and lip ridge read as a tray (m03 turn-135 and turn-225). The profile has a vertical seam studded with pins that look like thumbtacks, and no swept-back cavity like the one in r04. No other region changed by more than noise. The full critique is in C:\\Users\\njord\\.codex\\worktrees\\1d07\\Xalians\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0205\\critique.json.",
+      "meanGain": 0.091,
+      "kept": true,
+      "scoresAfter": {
+        "R01": 6,
+        "R02": 6.5,
+        "R03": 6.5,
+        "R04": 6.5,
+        "R05": 6,
+        "R06": 5.5,
+        "R07": 5,
+        "R08": 6,
+        "R09": 6,
+        "R10": 6.5,
+        "R11": 5,
+        "R12": 6
+      },
+      "weightedMean": 6.05
+    }
+  ],
+  "milestone": "hard stop after 16 rounds (2026-09-30)"
+}
