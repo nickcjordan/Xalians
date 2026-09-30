@@ -169,6 +169,11 @@ function blades(g: Ctx, xs: number[], col: RGB, seed: number, hmin: number, hmax
 // fallback until its picture has loaded.
 const ART = ['zolton', 'magmuth', 'krystos', 'poseidas'];
 /** Where in each picture (rows of its 512) the crop starts, so the machine's feet land on the painted ground. */
+/** How far each picture is scaled up and how far down it sits (so its near ground lies under the machine and out to both sides, its horizon and distance behind the machine's upper half). */
+const PIC_K = [1.32, 1.3, 1.32, 1.3];
+const PIC_DY = [0, 0, 0, 0];
+/** Sideways, so a picture's own outcrop or shelf lies under the machine. */
+const PIC_DX = [0, 0, 0, 230];
 const ART_Y0 = [130, 70, -22, 60];
 /** Traces of building in the paintings (a derrick, an aqueduct, a gantry) that the story has not earned yet, in picture pixels: x, y, rx, ry. */
 const RUINS: [number, number, number, number][][] = [
@@ -754,7 +759,9 @@ function drawWorld(ctx: Ctx, wi: number, shift: number, sec: number, a: number, 
 		// the painted world: one picture, drifting slowly across its pass, with only weather laid over it
 		ctx.save();
 		ctx.globalAlpha = a;
-		ctx.drawImage(P.c, WX0 + shift * 0.7 + 30 - clamp(lt, -0.5, 6) * 14, 0, WWD, PH);
+		const pk = PIC_K[wi];
+		const pcx = WX0 + shift * 0.7 + 30 - clamp(lt, -0.5, 6) * 14 + WWD / 2 + PIC_DX[wi];
+		ctx.drawImage(P.c, pcx - (WWD * pk) / 2, PH - PH * pk + PIC_DY[wi], WWD * pk, PH * pk);
 		ctx.globalAlpha = 1;
 		if (w.key === 'storm') {
 			rain(ctx, sec, near, a, 0.6, [190, 200, 220]);
@@ -991,7 +998,7 @@ function drawPatch(ctx: Ctx, wi: number, sec: number, a: number, lk: number) {
 	const p = worldPatch(wi);
 	if (!p) return;
 	ctx.save();
-	ctx.globalAlpha = a * 0.95 * (1 - 0.75 * lk);
+	ctx.globalAlpha = a * 0.5 * (1 - 0.75 * lk);
 	ctx.drawImage(p, 480 - PATCH.w / 2, PATCH.y0, PATCH.w, PATCH.h);
 	ctx.translate(480, GROUND + 6);
 	ctx.scale(1, 0.14);
@@ -1422,8 +1429,8 @@ export function createGenerators(): Figure {
 				const lk = v3 * smooth(LINK + m.order * 0.14 + 0.25, LINK + m.order * 0.14 + 0.7, t3);
 				const app = first ? 1 : v3 * smooth(0.8 + i * 0.12, 1.6 + i * 0.12, t3);
 				if (app <= 0.01) return;
-				const z = first ? mix(L === COMPACT ? 1.15 : 1, m.s, arrive) : m.s;
-				const gy = first ? mix(GROUND, m.g, arrive) : m.g;
+				const z = first ? mix(L === COMPACT ? 0.98 : 0.86, m.s, arrive) : m.s;
+				const gy = first ? mix(GROUND - 112, m.g, arrive) : m.g;
 				const wi = first ? w3 : (w3 + m.wOff) % 4;
 				ctx.save();
 				ctx.translate(m.x, gy);
@@ -1436,7 +1443,7 @@ export function createGenerators(): Figure {
 					}
 					const own = first ? gel : WORLDS[wi].gel;
 					// the far machines keep a little light of their own, so none is lost in the dark
-					if (!first) lighter(ctx, () => glow(ctx, 480, 330, 300, mixRGB(own, VIOLET, lk * 0.7), 0.34 * app * vis));
+					if (!first) lighter(ctx, () => glow(ctx, 480, 330, 300, mixRGB(own, VIOLET, lk * 0.7), 0.14 * app * vis));
 				const kind: SeedKind | null = first ? null : WORLDS[wi].key;
 				const tintWorld = first ? (xfade ? ws.prev : w3) : wi;
 				const lavaW = first ? underNow : wi === 1 ? 1 : 0;

@@ -681,7 +681,7 @@ function chipBlur() {
 // the haze, the machine, the token and the life it brings are drawn over it each frame.
 
 let GY = 410; // where the machine's feet stand, in stage units (a little lower in compact, where the machine is larger)
-const HORIZON = 396; // where the limb of the world flattens to
+const HORIZON = 372; // where the limb of the world flattens to
 let sceneBg: HTMLCanvasElement | null = null;
 let dustCv: HTMLCanvasElement | null = null;
 /** The lobes the warm ground's irregular edge is made of: centers and reaches as fractions of the front's radius. */
@@ -726,7 +726,7 @@ function scene() {
 	}
 	// a faint red sun, low toward the horizon: a firmer disc under a veil of haze
 	const sunX = 735;
-	const sunY = 338;
+	const sunY = 316;
 	const sd = g.createRadialGradient(sunX, sunY, 0, sunX, sunY, 24);
 	sd.addColorStop(0, css([204, 78, 62], 0.5));
 	sd.addColorStop(0.86, css([190, 64, 54], 0.42));
@@ -753,20 +753,20 @@ function scene() {
 		g.fillStyle = css(col);
 		g.fill();
 	};
-	ridge(352, 26, [50, 18, 32], 1);
-	ridge(378, 18, [26, 11, 21], 2);
+	ridge(330, 26, [50, 18, 32], 1);
+	ridge(356, 18, [26, 11, 21], 2);
 	// a soft haze band lying between them
-	const band = g.createLinearGradient(0, 340, 0, 396);
+	const band = g.createLinearGradient(0, 318, 0, 372);
 	band.addColorStop(0, css([150, 34, 48], 0));
 	band.addColorStop(0.7, css([150, 34, 48], 0.22));
 	band.addColorStop(1, css([150, 34, 48], 0));
 	g.fillStyle = band;
-	g.fillRect(0, 340, W, 56);
-	const ground = g.createLinearGradient(0, 394, 0, H);
-	ground.addColorStop(0, css([34, 15, 24]));
-	ground.addColorStop(1, css([28, 13, 21]));
+	g.fillRect(0, 318, W, 56);
+	const ground = g.createLinearGradient(0, 370, 0, H);
+	ground.addColorStop(0, css([54, 22, 32]));
+	ground.addColorStop(1, css([44, 18, 27]));
 	g.fillStyle = ground;
-	g.fillRect(0, 394, W, H - 394);
+	g.fillRect(0, 370, W, H - 370);
 	// low noise so the flat darks are not flat
 	const img = g.getImageData(0, 0, W, H);
 	const nr = rng(3);
@@ -872,7 +872,7 @@ export function createOutbreak(): Figure {
 		draw(ctx, sec, opts) {
 			if (vis <= 0.005) return;
 			const compact = !!opts?.compact;
-			GY = compact ? 426 : 410;
+			GY = compact ? 384 : 380;
 			// 06's pieces are built one at a time while 05 plays, so none of them costs a frame when the dive needs it
 			if (stage === 0 && t1 === 0) {
 				if (t0 > 3 && !chipTex) chip();
@@ -1078,8 +1078,9 @@ export function createOutbreak(): Figure {
 				const awake = smooth(3.9, 5.1, t1);
 				const domeOn = easeOut(ramp(6.0, 7.5, t1));
 				const pulse = 0.94 + 0.06 * Math.sin(sec * 1.2);
-				const s = compact ? 1.08 : 0.88;
+				const s = compact ? 0.98 : 0.88;
 				const ck = compact ? 1.3 : 1; // the chip and its intake, larger on a phone
+				const cofs = compact ? 34 : 66; // the intake stands on the ground in front of the foundation, not on it
 				const MH = 370 * s; // the machine's height on the stage
 				const rx = 250;
 				const ry = 1.2 * MH;
@@ -1089,7 +1090,7 @@ export function createOutbreak(): Figure {
 				const lightBoost = mixRGB([190, 54, 66], [236, 170, 120], domeOn);
 				// the front on the ground: an edge with its radius varied about 10 percent, so it breaks
 				const Rf = rx * domeOn;
-				const frontY = py(GROUND + 18 * ck);
+				const frontY = py(GROUND + (18 + cofs) * ck);
 				const fry = Rf * 0.3 + 30;
 				const frontPath = () => {
 					ctx.beginPath();
@@ -1168,7 +1169,7 @@ export function createOutbreak(): Figure {
 				ctx.save();
 				// it rises out of the dark ground
 				ctx.beginPath();
-				ctx.rect(0, 0, W, GY + 16);
+				ctx.rect(0, 0, W, GY + 130);
 				ctx.clip();
 				ctx.translate(CX, GY + (1 - rise) * 110);
 				ctx.scale(s, s);
@@ -1204,6 +1205,7 @@ export function createOutbreak(): Figure {
 						vatFill: fill,
 						seedBorn: ramp(4.5, 6.0, t1),
 						foot: false,
+						shelf: false,
 						ringHalo: true,
 						seedVary: true,
 						rim2: [120, 150, 196],
@@ -1211,7 +1213,7 @@ export function createOutbreak(): Figure {
 					// the link: a bright line from the chip up into the base of the vat over 0.35 s (a 3 px core, an 8 px glow),
 					// warm white turning green as it climbs; it then holds lit at 0.5, and the green rises from where it enters
 					if (link > 0.005) {
-						const y0 = GROUND + 14;
+						const y0 = GROUND + (18 + cofs) * ck;
 						const yh = mix(y0, VY1, easeOut(link));
 						const hold = mix(1, 0.5, smooth(0.9, 1, link));
 						const lg = ctx.createLinearGradient(0, y0, 0, VY1);
@@ -1235,7 +1237,7 @@ export function createOutbreak(): Figure {
 				// the intake console in front of the pad, with a hexagonal socket in its top: where the token is set
 				const consoleA = sA * smooth(1.9, 2.6, t1);
 				{
-					const cy = (g: number) => py(GROUND + g * ck);
+					const cy = (g: number) => py(GROUND + (g + cofs) * ck);
 					ctx.globalAlpha = consoleA;
 					ctx.beginPath();
 					ctx.moveTo(CX - 52 * s * ck, cy(8));
@@ -1415,7 +1417,7 @@ export function createOutbreak(): Figure {
 					const dl = Math.hypot(dx, dy) || 1;
 					dx /= dl;
 					const dyn = dy / dl;
-					const P2 = [CX, py(GROUND + 18 * ck)] as const;
+					const P2 = [CX, py(GROUND + (18 + cofs) * ck)] as const;
 					const P0 = [starX, starY] as const;
 					const P1 = [(P0[0] + P2[0]) / 2, Math.min(P0[1], P2[1]) - 20] as const;
 					const at = (q: number) => {
@@ -1461,7 +1463,7 @@ export function createOutbreak(): Figure {
 						putS(spr([255, 240, 214]), head[0], head[1], 24 * s, 0.9 * (1 - seated) * smooth(0, 0.2, arrive));
 						putS(spr([255, 250, 240]), head[0], head[1] + 5 * seated * s, 16 * s, 0.6 * smooth(0.3, 0.9, arrive) * (0.85 + 0.15 * br));
 						// the light it pools on the ground round the console
-						putS(spr([255, 214, 150]), CX, py(GROUND + 30), 150 * s, 0.32 * seated);
+						putS(spr([255, 214, 150]), CX, py(GROUND + 30 + cofs), 150 * s, 0.32 * seated);
 						ctx.globalCompositeOperation = 'source-over';
 					}
 				}

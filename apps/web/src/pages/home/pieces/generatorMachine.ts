@@ -181,33 +181,6 @@ export const MC = { x: MX - 214, y: 70, w: 428, h: GROUND + 46 - 70 };
 export let mcache: HTMLCanvasElement | null | undefined;
 
 export function paintMachine(g: Ctx) {
-	// contact shadow: soft, on the ground it stands on
-	g.save();
-	g.translate(MX, GROUND + 14);
-	g.scale(1, 0.06);
-	const sh = g.createRadialGradient(0, 0, 60, 0, 0, 235);
-	sh.addColorStop(0, css(BLACK, 0.55));
-	sh.addColorStop(1, css(BLACK, 0));
-	g.fillStyle = sh;
-	g.fillRect(-240, -240, 480, 480);
-	g.restore();
-	// the pad: a worn slab with a lit top edge
-	g.fillStyle = css([16, 18, 19]);
-	g.beginPath();
-	g.moveTo(MX - 180, GROUND + 20);
-	g.lineTo(MX - 152, GROUND - 2);
-	g.lineTo(MX + 152, GROUND - 2);
-	g.lineTo(MX + 180, GROUND + 20);
-	g.closePath();
-	g.fill();
-	g.strokeStyle = css([150, 156, 150], 0.3);
-	g.lineWidth = 1.2;
-	g.beginPath();
-	g.moveTo(MX - 152, GROUND - 1.5);
-	g.lineTo(MX + 152, GROUND - 1.5);
-	g.stroke();
-	g.fillStyle = css(BLACK, 0.3);
-	g.fillRect(MX - 176, GROUND + 14, 352, 6);
 	// a dark oil stain on the pad under the intake
 	g.save();
 	g.translate(MX + 128, GROUND + 8);
@@ -692,6 +665,8 @@ export type MachineLook = {
 	rimEdge?: boolean;
 	/** 0 to 1: a pulse of light running from the sensor ring down the mast, through the roof and into the gel, to where the new seed starts. */
 	pulse?: number;
+	/** False: no shelf of the world's ground (the outbreak's 06 has its own ground); the foundation is always drawn. */
+	shelf?: boolean;
 	/** Instead of the reading rings, one soft halo round the sensor ring (about 2.5x its size, 0.25, a slow pulse of 0.05). */
 	ringHalo?: boolean;
 	/** Seeds differ in size, tilt, darkness and drift, so they read as grown and not stamped. */
@@ -712,6 +687,406 @@ export type MachineLook = {
 
 export const MEMBRANE_N = 48;
 
+// ---- what the machine stands on: a heavy stepped foundation sunk into the ground, and a shelf of that world's own
+// ground round and in front of it. Both are drawn once per world into offscreen canvases; only the light on them
+// (the vat's glow, a flash, embers, spray) is drawn each frame.
+
+type Pal = { top: RGB; bot: RGB; stone: RGB; lit: RGB };
+const GROUND_PAL: Record<number, Pal> = {
+	0: { top: [56, 62, 78], bot: [18, 20, 28], stone: [46, 50, 60], lit: [190, 202, 232] }, // storm: dark wet rock
+	1: { top: [72, 42, 32], bot: [20, 11, 10], stone: [44, 34, 30], lit: [255, 160, 90] }, // lava: basalt
+	2: { top: [190, 208, 222], bot: [112, 130, 148], stone: [74, 82, 92], lit: [236, 246, 255] }, // ice: packed snow
+	3: { top: [54, 80, 98], bot: [16, 28, 40], stone: [38, 50, 58], lit: [160, 218, 230] }, // sea: wet rock
+	4: { top: [62, 28, 38], bot: [24, 11, 17], stone: [50, 30, 36], lit: [230, 110, 110] }, // the red world of 06
+	[-1]: { top: [64, 60, 84], bot: [22, 20, 32], stone: [44, 42, 58], lit: [180, 150, 240] }, // a machine APEX holds
+};
+const palOf = (wi: number): Pal => GROUND_PAL[wi] ?? GROUND_PAL[-1];
+
+/** The puddles on the storm's shelf, in machine units: x, y, rx, ry. */
+const PUDDLES: [number, number, number, number][] = [[MX - 250, GROUND + 58, 34, 6], [MX + 236, GROUND + 66, 44, 7], [MX - 120, GROUND + 84, 40, 7], [MX + 96, GROUND + 94, 30, 5], [MX + 320, GROUND + 50, 26, 5]];
+/** Where the lava's cracks run, each a polyline in machine units. */
+const CRACKS: [number, number][][] = [
+	[[MX - 300, GROUND + 50], [MX - 262, GROUND + 60], [MX - 240, GROUND + 78], [MX - 196, GROUND + 84]],
+	[[MX + 210, GROUND + 60], [MX + 250, GROUND + 74], [MX + 300, GROUND + 70], [MX + 330, GROUND + 90]],
+	[[MX - 90, GROUND + 78], [MX - 40, GROUND + 92], [MX + 30, GROUND + 90], [MX + 76, GROUND + 104]],
+];
+
+const SHELF = { x: MX - 360, y: GROUND - 34, w: 720, h: 170 };
+const shelfCache: (HTMLCanvasElement | null | undefined)[] = [];
+function shelfFor(wi: number) {
+	const key = wi + 1;
+	const hit = shelfCache[key];
+	if (hit) return hit;
+	const o = offscreen(SHELF.w, SHELF.h);
+	if (!o) return null;
+	const g = o.g;
+	const pal = palOf(wi);
+	g.translate(-SHELF.x, -SHELF.y);
+	const r = rng(900 + wi);
+	// the surface: lighter where it recedes toward the horizon, darker toward us
+	const base = g.createLinearGradient(0, GROUND - 30, 0, GROUND + 130);
+	base.addColorStop(0, css(scale3(pal.top, 1.25)));
+	base.addColorStop(1, css(mixRGB(pal.top, pal.bot, 0.5)));
+	g.fillStyle = base;
+	g.fillRect(SHELF.x, SHELF.y, SHELF.w, SHELF.h);
+	// the world's light falls on the ground round the foundation
+	g.save();
+	g.translate(MX, GROUND + 56);
+	g.scale(1, 0.24);
+	const lp = g.createRadialGradient(0, 0, 40, 0, 0, 330);
+	lp.addColorStop(0, css(pal.lit, 0.34));
+	lp.addColorStop(1, css(pal.lit, 0));
+	g.fillStyle = lp;
+	g.fillRect(-340, -340, 680, 680);
+	g.restore();
+	// slabs and strata: broad bands across it, each a little different
+	for (let k = 0; k < 26; k++) {
+		const y = GROUND - 20 + Math.pow(r(), 1.3) * 140;
+		const h = 3 + (y - GROUND) * 0.06 + r() * 6;
+		g.fillStyle = css(r() < 0.5 ? BLACK : pal.lit, 0.05 + r() * 0.07);
+		g.fillRect(SHELF.x + r() * 200, y, 240 + r() * 400, h);
+	}
+	// rubble: small stones, larger and darker toward us
+	for (let k = 0; k < 190; k++) {
+		const y = GROUND - 12 + Math.pow(r(), 1.2) * 132;
+		const x = SHELF.x + r() * SHELF.w;
+		const s = 1.5 + (y - GROUND + 20) * 0.045 * (0.5 + r());
+		g.fillStyle = css(r() < 0.6 ? scale3(pal.stone, 0.3 + r() * 0.3) : scale3(pal.stone, 0.9 + r() * 0.3), 0.55 + r() * 0.3);
+		g.beginPath();
+		g.moveTo(x - s, y + s * 0.4);
+		g.lineTo(x - s * 0.4, y - s * 0.6);
+		g.lineTo(x + s * 0.7, y - s * 0.4);
+		g.lineTo(x + s, y + s * 0.5);
+		g.closePath();
+		g.fill();
+		g.fillStyle = css(pal.lit, 0.12);
+		g.fillRect(x - s * 0.4, y - s * 0.6, s, 1);
+	}
+	if (wi === 0) {
+		// wet: dark puddles with a paler rim, catching the sky
+		for (const [x, y, rx, ry] of PUDDLES) {
+			g.fillStyle = css([6, 8, 12], 0.85);
+			g.beginPath();
+			g.ellipse(x, y, rx, ry, 0, 0, TAU);
+			g.fill();
+			g.strokeStyle = css([150, 166, 196], 0.28);
+			g.lineWidth = 1;
+			g.beginPath();
+			g.ellipse(x, y - 0.5, rx, ry, 0, Math.PI * 1.05, Math.PI * 1.95);
+			g.stroke();
+		}
+	}
+	if (wi === 1) {
+		// a cooled crust with cracks that show what is under it
+		for (const pts of CRACKS) {
+			g.lineJoin = 'round';
+			g.strokeStyle = css([255, 110, 40], 0.18);
+			g.lineWidth = 6;
+			g.beginPath();
+			pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+			g.stroke();
+			g.strokeStyle = css([255, 150, 70], 0.7);
+			g.lineWidth = 1.4;
+			g.stroke();
+		}
+	}
+	if (wi === 2) {
+		// packed snow: drifts and pressure ridges, the shadows blue
+		for (let k = 0; k < 16; k++) {
+			const x = SHELF.x + r() * SHELF.w;
+			const y = GROUND + 4 + r() * 110;
+			const rx = 40 + r() * 90;
+			g.fillStyle = css([236, 244, 250], 0.03);
+			g.beginPath();
+			g.ellipse(x, y, rx, rx * 0.06, 0, 0, TAU);
+			g.fill();
+			g.fillStyle = css([70, 100, 140], 0.12);
+			g.beginPath();
+			g.ellipse(x + rx * 0.1, y + 3, rx * 0.9, rx * 0.08, 0, 0, TAU);
+			g.fill();
+		}
+	}
+	if (wi === 3) {
+		// a rock outcrop: dark ledges, wet, with white foam along its seaward (right) edge
+		for (let k = 0; k < 9; k++) {
+			const x = SHELF.x + 120 + r() * 480;
+			const y = GROUND + 10 + r() * 100;
+			const w = 60 + r() * 100;
+			g.fillStyle = css([6, 12, 16], 0.5);
+			g.beginPath();
+			g.moveTo(x - w, y + 6);
+			g.lineTo(x - w * 0.5, y - 6);
+			g.lineTo(x + w * 0.6, y - 4);
+			g.lineTo(x + w, y + 7);
+			g.closePath();
+			g.fill();
+			g.strokeStyle = css([150, 200, 210], 0.14);
+			g.lineWidth = 1;
+			g.beginPath();
+			g.moveTo(x - w * 0.5, y - 6);
+			g.lineTo(x + w * 0.6, y - 4);
+			g.stroke();
+		}
+		for (let k = 0; k < 30; k++) {
+			const y = GROUND - 8 + r() * 130;
+			const x = MX + 210 + Math.pow(r(), 0.6) * 140 + (y - GROUND) * 0.3;
+			g.fillStyle = css([216, 236, 240], 0.1 + r() * 0.18);
+			g.beginPath();
+			g.ellipse(x, y, 10 + r() * 16, 1.6 + r() * 2, 0, 0, TAU);
+			g.fill();
+		}
+	}
+	// the surface reaches back into the painting and out toward us, fading at both ends and at its sides
+	g.globalCompositeOperation = 'destination-in';
+	const mv = g.createLinearGradient(0, SHELF.y, 0, SHELF.y + SHELF.h);
+	mv.addColorStop(0, 'rgba(0,0,0,0)');
+	mv.addColorStop(0.16, 'rgba(0,0,0,0.95)');
+	mv.addColorStop(0.78, 'rgba(0,0,0,0.9)');
+	mv.addColorStop(1, 'rgba(0,0,0,0)');
+	g.fillStyle = mv;
+	g.fillRect(SHELF.x, SHELF.y, SHELF.w, SHELF.h);
+	const mh = g.createLinearGradient(SHELF.x, 0, SHELF.x + SHELF.w, 0);
+	mh.addColorStop(0, 'rgba(0,0,0,0)');
+	mh.addColorStop(0.2, 'rgba(0,0,0,1)');
+	mh.addColorStop(0.8, 'rgba(0,0,0,1)');
+	mh.addColorStop(1, 'rgba(0,0,0,0)');
+	g.fillStyle = mh;
+	g.fillRect(SHELF.x, SHELF.y, SHELF.w, SHELF.h);
+	return (shelfCache[key] = o.c);
+}
+
+const FND = { x: MX - 270, y: GROUND - 24, w: 540, h: 150 };
+const fndCache: (HTMLCanvasElement | null | undefined)[] = [];
+/**
+ * The foundation, solid mass all the way down: a top slab (a lit, receding top face and a short front), then a wider
+ * lower course directly beneath it with no gap, its foot buried in the ground (soil, rubble and drifts heaped over it),
+ * squat buttresses at the ends, and cables that lie against the slab's face and go into the ground in front of it.
+ */
+function foundationFor(wi: number) {
+	const key = wi + 1;
+	const hit = fndCache[key];
+	if (hit) return hit;
+	const o = offscreen(FND.w * 2, FND.h * 2);
+	if (!o) return null;
+	const g = o.g;
+	g.setTransform(2, 0, 0, 2, -FND.x * 2, -FND.y * 2);
+	const pal = palOf(wi);
+	const st = pal.stone;
+	const quad = (pts: [number, number][], fill: string | CanvasGradient) => {
+		g.beginPath();
+		pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+		g.closePath();
+		g.fillStyle = fill;
+		g.fill();
+	};
+	const SLAB_F = GROUND + 34; // where the slab's top face ends and its front begins
+	const SLAB_B = GROUND + 48; // the bottom of the slab's front, where the lower course begins
+	const FOOT = GROUND + 92; // the buried foot of the lower course
+	// ambient occlusion on the ground round its foot
+	g.save();
+	g.translate(MX, FOOT);
+	g.scale(1, 0.1);
+	const ao = g.createRadialGradient(0, 0, 100, 0, 0, 270);
+	ao.addColorStop(0, css(BLACK, 0.7));
+	ao.addColorStop(1, css(BLACK, 0));
+	g.fillStyle = ao;
+	g.fillRect(-270, -270, 540, 540);
+	g.restore();
+	// the lower course: wider than the slab, solid, running right down into the ground
+	{
+		const lg = g.createLinearGradient(0, SLAB_B, 0, FOOT);
+		lg.addColorStop(0, css(scale3(st, 0.34)));
+		lg.addColorStop(1, css(scale3(st, 0.2)));
+		quad([[MX - 202, SLAB_B - 2], [MX + 202, SLAB_B - 2], [MX + 208, FOOT], [MX - 208, FOOT]], lg);
+		// the overhang of the slab throws a shadow down its face
+		const sg = g.createLinearGradient(0, SLAB_B - 2, 0, SLAB_B + 16);
+		sg.addColorStop(0, css(BLACK, 0.5));
+		sg.addColorStop(1, css(BLACK, 0));
+		g.fillStyle = sg;
+		g.fillRect(MX - 202, SLAB_B - 2, 404, 18);
+		g.strokeStyle = css(BLACK, 0.35);
+		g.lineWidth = 1;
+		g.beginPath();
+		for (const x of [-150, -74, 4, 82, 156]) {
+			g.moveTo(MX + x, SLAB_B);
+			g.lineTo(MX + x + 1, FOOT);
+		}
+		g.stroke();
+		g.fillStyle = css(pal.lit, 0.1);
+		g.fillRect(MX - 202, SLAB_B - 1, 404, 1);
+	}
+	// squat buttresses at the ends, standing on the lower course and sloping up to the slab
+	for (const sg of [-1, 1]) {
+		const xi = MX + sg * 186;
+		const xo = MX + sg * 222;
+		quad([[xi, GROUND + 6], [xo, GROUND + 22], [xo + sg * 2, FOOT + 2], [xi, FOOT + 2]], css(scale3(st, 0.3)));
+		quad([[xi, GROUND + 4], [xo - sg * 6, GROUND + 4], [xo, GROUND + 22], [xi, GROUND + 10]], css(scale3(st, 0.62)));
+		g.fillStyle = css(pal.lit, 0.12);
+		g.fillRect(Math.min(xi, xo - sg * 6), GROUND + 3.5, Math.abs(xo - sg * 6 - xi), 1);
+	}
+	// the top slab: the top face lit only by the vat and the key light, a short shadowed front
+	{
+		const tg = g.createLinearGradient(0, GROUND - 4, 0, SLAB_F);
+		tg.addColorStop(0, css(scale3(st, 0.7)));
+		tg.addColorStop(1, css(scale3(st, 0.95)));
+		quad([[MX - 168, GROUND - 4], [MX + 168, GROUND - 4], [MX + 186, SLAB_F], [MX - 186, SLAB_F]], tg);
+		const fg = g.createLinearGradient(0, SLAB_F, 0, SLAB_B);
+		fg.addColorStop(0, css(scale3(st, 0.5)));
+		fg.addColorStop(1, css(scale3(st, 0.3)));
+		quad([[MX - 186, SLAB_F], [MX + 186, SLAB_F], [MX + 188, SLAB_B], [MX - 188, SLAB_B]], fg);
+		g.fillStyle = css(pal.lit, 0.16);
+		g.fillRect(MX - 186, SLAB_F - 0.5, 372, 1.2);
+		g.strokeStyle = css(BLACK, 0.4);
+		g.lineWidth = 1;
+		g.beginPath();
+		for (const x of [-110, -36, 42, 118]) {
+			g.moveTo(MX + x, SLAB_F);
+			g.lineTo(MX + x + 1, SLAB_B);
+		}
+		g.stroke();
+		for (let k = -5; k <= 5; k++) {
+			const bx = MX + k * 33;
+			g.fillStyle = css([8, 8, 9], 0.85);
+			g.beginPath();
+			g.arc(bx, SLAB_F + 7, 2.4, 0, TAU);
+			g.fill();
+			g.fillStyle = css(pal.lit, 0.16);
+			g.beginPath();
+			g.arc(bx - 0.6, SLAB_F + 6.4, 0.9, 0, TAU);
+			g.fill();
+		}
+		// wear: streaks down the face, chipped edges
+		const wr = rng(31 + wi);
+		for (let k = 0; k < 16; k++) {
+			const x = MX - 180 + wr() * 360;
+			const sg2 = g.createLinearGradient(0, SLAB_F, 0, FOOT);
+			sg2.addColorStop(0, css(BLACK, 0.34));
+			sg2.addColorStop(1, css(BLACK, 0));
+			g.fillStyle = sg2;
+			g.fillRect(x, SLAB_F, 1.2 + wr() * 2, 14 + wr() * 40);
+		}
+		for (let k = 0; k < 18; k++) {
+			const x = MX - 184 + wr() * 368;
+			g.fillStyle = css(pal.lit, 0.14);
+			g.fillRect(x, SLAB_F - 1, 1 + wr() * 3, 1);
+			g.fillStyle = css(BLACK, 0.3);
+			g.fillRect(x + 1, SLAB_F, 2 + wr() * 4, 1 + wr() * 2);
+		}
+	}
+	// the cables: they run from the machine's base over the top face, lie against the slab's face and the lower course,
+	// each throwing a small shadow, and go into the ground in front of the foot
+	for (const [x0, dx] of [[MX - 118, -16], [MX + 112, 16], [MX - 34, -4]] as [number, number][]) {
+		g.fillStyle = css(BLACK, 0.3);
+		g.fillRect(x0 + 4, SLAB_F, 4, FOOT - SLAB_F + 4);
+		pipe(g, [[x0, GROUND - 4], [x0, SLAB_F], [x0, FOOT - 4], [x0 + dx, FOOT + 8]], 7);
+		// where it enters the ground: a heap of soil over it
+		g.fillStyle = css(scale3(palOf(wi).bot, 1.4), 0.9);
+		g.beginPath();
+		g.ellipse(x0 + dx, FOOT + 9, 15, 5, 0, 0, TAU);
+		g.fill();
+	}
+	// what has drifted or settled against the foot of the lower course
+	const r = rng(7 + wi);
+	if (wi === 2) {
+		// snow banked against it: soft irregular mounds, the snow's own value, lit from the left (the key light side)
+		const snow = palOf(2).top;
+		for (let k = 0; k < 14; k++) {
+			const x = MX - 226 + (k / 13) * 452 + (r() - 0.5) * 16;
+			const w = 26 + r() * 52;
+			const h = 12 + Math.pow(r(), 1.5) * 38;
+			const baseY = FOOT + 2 + r() * 8;
+			const grd = g.createLinearGradient(x - w, 0, x + w, 0);
+			grd.addColorStop(0, css(scale3(snow, 0.92)));
+			grd.addColorStop(0.55, css(scale3(snow, 0.78)));
+			grd.addColorStop(1, css(scale3(snow, 0.52)));
+			g.fillStyle = grd;
+			g.beginPath();
+			g.moveTo(x - w, baseY);
+			g.bezierCurveTo(x - w * 0.6, baseY - h * (0.7 + r() * 0.5), x - w * 0.1, baseY - h * (1 + r() * 0.3), x + w * 0.3, baseY - h * (0.7 + r() * 0.4));
+			g.bezierCurveTo(x + w * 0.7, baseY - h * 0.4, x + w * 0.9, baseY - h * 0.1, x + w, baseY);
+			g.closePath();
+			g.fill();
+		}
+	} else {
+		// soil, rubble and crust heaped over the foot, so it reads as sunk in
+		for (let k = 0; k < 110; k++) {
+			const x = MX - 226 + r() * 452;
+			g.fillStyle = css(scale3(palOf(wi).bot, 1.1 + r() * 1.8), 0.7 + r() * 0.3);
+			g.beginPath();
+			g.ellipse(x, FOOT - 5 + r() * 14, 5 + r() * 12, 3 + r() * 4.5, 0, 0, TAU);
+			g.fill();
+		}
+		for (let k = 0; k < 16; k++) {
+			const x = MX - 220 + r() * 440;
+			const s2 = 2 + r() * 3.5;
+			g.fillStyle = css(scale3(st, 0.5 + r() * 0.5), 0.9);
+			g.beginPath();
+			g.moveTo(x - s2, FOOT + 8);
+			g.lineTo(x - s2 * 0.4, FOOT + 8 - s2 * 1.4);
+			g.lineTo(x + s2 * 0.7, FOOT + 8 - s2);
+			g.lineTo(x + s2, FOOT + 8);
+			g.closePath();
+			g.fill();
+		}
+	}
+	return (fndCache[key] = o.c);
+}
+
+/** Draw the ground under a machine: the shelf, then the foundation. `a` is the machine's alpha. */
+function drawGround(ctx: Ctx, wi: number, a: number, S: MachineLook, shelf: boolean) {
+	if (shelf) {
+		const sh = shelfFor(wi);
+		if (sh) {
+			ctx.globalAlpha = a * 0.5;
+			ctx.drawImage(sh, SHELF.x, SHELF.y, SHELF.w, SHELF.h);
+			ctx.globalAlpha = 1;
+		}
+	}
+	const fd = foundationFor(wi);
+	if (fd) {
+		ctx.globalAlpha = a;
+		ctx.drawImage(fd, FND.x, FND.y, FND.w, FND.h);
+		ctx.globalAlpha = 1;
+	}
+}
+/** The light that plays on the ground: the vat's glow, a strike on the puddles, embers, spray. */
+function groundLight(ctx: Ctx, wi: number, a: number, S: MachineLook, lit: number) {
+	const { sec, gel } = S;
+	ctx.save();
+	// the vat lights the shelf in front of the machine
+	ctx.translate(VX, GROUND + 58);
+	ctx.scale(1, 0.16);
+	lighter(ctx, () => glow(ctx, 0, 0, 250, gel, 0.34 * a * lit));
+	ctx.restore();
+	ctx.save();
+	ctx.translate(VX, GROUND + 16);
+	ctx.scale(1, 0.12);
+	lighter(ctx, () => glow(ctx, 0, 0, 170, gel, 0.4 * a * lit));
+	ctx.restore();
+	if (wi === 0 && S.flash > 0.01)
+		lighter(ctx, () => {
+			for (const [x, y, rx] of PUDDLES) glow(ctx, x, y, rx * 1.4, [214, 222, 255], 0.55 * S.flash * a);
+		});
+	if (wi === 1)
+		lighter(ctx, () => {
+			for (const pts of CRACKS) {
+				const p = pts[1];
+				glow(ctx, p[0], p[1], 40, [255, 120, 50], (0.16 + 0.06 * Math.sin(sec * 1.3 + p[0])) * a);
+			}
+			for (let k = 0; k < 7; k++) {
+				const u = (sec * (0.05 + hash(k, 40) * 0.04) + hash(k, 41)) % 1;
+				glow(ctx, MX - 300 + hash(k, 42) * 600 + Math.sin(sec + k) * 6, GROUND + 90 - u * 110, 2.4, [255, 170, 90], 0.9 * (1 - u) * a, 'core');
+			}
+		});
+	if (wi === 3)
+		lighter(ctx, () => {
+			for (let k = 0; k < 8; k++) {
+				const u = (sec * (0.35 + hash(k, 50) * 0.3) + hash(k, 51)) % 1;
+				glow(ctx, MX + 240 + hash(k, 52) * 120 + u * 30, GROUND + 30 + hash(k, 53) * 70 - u * 44, 7 + u * 9, [216, 236, 240], 0.32 * (1 - u) * a);
+			}
+		});
+}
+
 export function drawMachine(ctx: Ctx, S: MachineLook) {
 	const { sec, gel, light, apex, beatPulse, reading, dishCol, side } = S;
 	const lit = S.lit ?? 1;
@@ -719,6 +1094,10 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 	const fill = S.vatFill ?? 1;
 	const a = S.a * S.housing;
 	ctx.save();
+	// the ground it stands on: a shelf of the world's own ground, and the foundation sunk into it
+	drawGround(ctx, S.world, a, S, S.shelf !== false);
+	if (S.wk > 0.01 && S.world2 >= 0 && !S.lite) drawGround(ctx, S.world2, a * S.wk, S, S.shelf !== false);
+	if (S.shelf !== false && !S.lite) groundLight(ctx, S.world, a, S, lit);
 	// the vat's glow on the ground in front of it
 	ctx.save();
 	ctx.translate(VX, GROUND + 12);
@@ -748,7 +1127,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.globalAlpha = a;
 		}
 		const fw = S.wk > 0.5 && S.world2 >= 0 ? S.world2 : S.world;
-		const fs2 = fw >= 0 && S.foot !== false ? footStrip(fw) : null;
+		const fs2 = fw >= 0 && S.foot === true ? footStrip(fw) : null;
 		if (fs2) ctx.drawImage(fs2, FOOT.x, FOOT.y, FOOT.w, FOOT.h);
 		ctx.globalAlpha = 1;
 	}
