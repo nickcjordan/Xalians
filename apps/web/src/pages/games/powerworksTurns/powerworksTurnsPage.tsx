@@ -41,7 +41,7 @@ import {
   type RecordEntry,
 } from "./view";
 import { Portrait } from "../powerworksVisuals";
-import { EnemyPlate, SquadPlate } from "./plate";
+import { ElementBadge, EnemyPlate, SquadPlate } from "./plate";
 import { KeyCard } from "./keys";
 import { TurnRail } from "./rail";
 import { TurnBanner, PlaybackTools } from "./banner";
@@ -52,9 +52,20 @@ import { PowerworksEnvironment } from "../powerworksEnvironment";
 import "./powerworksTurns.css";
 
 /** The number that rises over a beat's target: damage, healing, or the support it received. */
-function floatOf(beat: Beat): { text: string; kind: string } | null {
+function floatOf(beat: Beat, targetIsEnemy = false): FloatItem | null {
   const e = beat.event;
-  if (e.kind === "hit") return e.absorbed > 0 && e.amount === 0 ? { text: `shield took ${e.absorbed}`, kind: "shield" } : { text: `-${e.amount}`, kind: "hurt" };
+  if (e.kind === "hit") {
+    if (e.absorbed > 0 && e.amount === 0) return { text: `shield took ${e.absorbed}`, kind: "shield" };
+    // A STRONG or WEAK tag in the matchup color: color says who it favors (a strong hit on an
+    // enemy is good for you, a strong hit on your companion is bad), the word says which way.
+    const tag =
+      e.step > 1
+        ? { word: "Strong", good: targetIsEnemy }
+        : e.step > 0 && e.step < 1
+        ? { word: "Weak", good: !targetIsEnemy }
+        : undefined;
+    return { text: `-${e.amount}`, kind: "hurt", tag };
+  }
   if (e.kind === "heal") return { text: `+${e.amount}`, kind: "heal" };
   if (e.kind === "shield") return { text: `shield ${e.amount}`, kind: "shield" };
   if (e.kind === "boost") return { text: `next attack +${e.amount}`, kind: "boost" };
@@ -62,9 +73,10 @@ function floatOf(beat: Beat): { text: string; kind: string } | null {
   return null;
 }
 
+type FloatItem = { text: string; kind: string; tag?: { word: string; good: boolean } };
 type Moment = { actor: string; beats: Beat[]; words: string };
 type StrikeLine = { id: string; x1: number; y1: number; x2: number; y2: number };
-type FloatMark = { id: string; x: number; y: number; items: { text: string; kind: string }[] };
+type FloatMark = { id: string; x: number; y: number; items: FloatItem[] };
 
 const moveOf = (b: Beat) => ("move" in b.event ? (b.event as { move: string }).move : null);
 
@@ -190,6 +202,9 @@ export default function PowerworksTurnsPage() {
   const [panel, setPanel] = useState<Panel>(null);
   const [armedAlly, setArmedAlly] = useState<{ index: number } | null>(null);
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
+  // Units a hovered key lands on (a self-only key, an ally cell): the stage rings them.
+  const [hoverUnits, setHoverUnits] = useState<string[]>([]);
+  const ringed = (id: string) => !busy && (hoverTarget === id || hoverUnits.includes(id));
   const [speed, setSpeed] = useState<1 | 2>(1);
   // Round 2: the briefing before a new run's first turn (a saved run in progress skips it); the
   // sector title card; the knockout hold; the camp's revive line; the recovery station's heal;
@@ -327,6 +342,7 @@ export default function PowerworksTurnsPage() {
     if (busy) return;
     setArmedAlly(null);
     setHoverTarget(null);
+    setHoverUnits([]);
     // A key that only acts on its user has no cell to name a target: the user is the target.
     dispatch({ kind: "act", order: { move: index, target: target || view.active?.id || "" } });
   }
@@ -445,6 +461,11 @@ export default function PowerworksTurnsPage() {
   const landed = busy && beatPhase !== "approach";
   const targets = useMemo(() => (moment ? targetsOf(moment) : []), [moment]);
   const impactTargets = showImpact ? targets : [];
+  // The units a hit (not a heal, shield or mark) lands on: they flash and are knocked back.
+  const struckIds = useMemo(
+    () => (showImpact && moment ? moment.beats.filter((b) => b.event.kind === "hit").map((b) => (b.event as { target: string }).target) : []),
+    [showImpact, moment]
+  );
   // Health changes shown with a green delta: the recovery station's arrival heal, until you act.
   const deltaOf = (id: string) => station?.deltas[id] ?? since.deltas[id] ?? 0;
   const knockouts = useMemo(() => moments.map((m) => beatsFell(m.beats)), [moments]);
@@ -570,11 +591,11 @@ export default function PowerworksTurnsPage() {
       const top = at(t, 0.25);
       const all = moment.beats
         .filter((b) => "target" in b.event && (b.event as { target: string }).target === t)
-        .map(floatOf)
-        .filter((f): f is { text: string; kind: string } => !!f);
+        .map((b) => floatOf(b, enemyIds.has(t)))
+        .filter((f): f is FloatItem => !!f);
       const main = all.filter((f) => f.kind === "hurt" || f.kind === "heal");
       const items = main.length ? main : all;
-      if (top && items.length) floats.push({ id: t, x: top.x + 22, y: top.y, items });
+      if (top && items.length) floats.push({ id: t, x: top.x + 44, y: top.y, items });
     }
     let lunge: { x: number; y: number } | null = null;
     const first = targets.find((t) => t !== moment.actor);
@@ -707,8 +728,9 @@ export default function PowerworksTurnsPage() {
                   spotlit={spotlightId === e.id}
                   dimmed={!!spotlightId && spotlightId !== e.id}
                   delta={deltaOf(e.id)}
-                  targeted={hoverTarget === e.id}
+                  targeted={ringed(e.id)}
                   impactTarget={impactTargets.includes(e.id)}
+                  struck={struckIds.includes(e.id)}
                   onHover={(hovering) => setHoverTarget(hovering ? e.id : null)}
                 />
               ))}
@@ -722,7 +744,9 @@ export default function PowerworksTurnsPage() {
                   spotlit={spotlightId === u.id}
                   dimmed={!!spotlightId && spotlightId !== u.id}
                   delta={deltaOf(u.id)}
+                  targeted={ringed(u.id)}
                   impactTarget={impactTargets.includes(u.id)}
+                  struck={struckIds.includes(u.id)}
                 />
               ))}
             </div>
@@ -733,6 +757,7 @@ export default function PowerworksTurnsPage() {
                 {f.items.map((it, i) => (
                   <span key={i} className={`pwt-float-num ${it.kind}`}>
                     {it.text}
+                    {it.tag && <span className={`pwt-float-tag ${it.tag.good ? "good" : "bad"}`}>{it.tag.word}</span>}
                   </span>
                 ))}
               </span>
@@ -752,6 +777,7 @@ export default function PowerworksTurnsPage() {
                 <Portrait u={{ species: view.active.art, element: view.active.element }} />
               </span>
               <span className={`pwt-keybar-who el-${view.active.element}`}>{view.active.name}</span>
+              <ElementBadge element={view.active.element} className="pwt-el-static" />
               {view.activeStatus && (
                 <span className="pwt-keybar-status" title={view.activeStatus.sentence} aria-label={view.activeStatus.sentence}>
                   {view.activeStatus.parts.map((p) => (
@@ -765,9 +791,12 @@ export default function PowerworksTurnsPage() {
                 key={k.index}
                 keyView={k}
                 squad={view.squad.filter((s) => s.id !== view.active!.id && !s.down)}
+                activeId={view.active!.id}
                 disabled={busy}
                 onAct={(target) => act(k.index, target)}
                 onHoverTarget={(id) => setHoverTarget(id)}
+                onHoverUnits={(ids) => setHoverUnits(ids ?? [])}
+                litTarget={busy ? null : hoverTarget}
               />
             ))}
             <button type="button" className="pwt-pass" disabled={busy} onClick={pass}>
@@ -777,7 +806,7 @@ export default function PowerworksTurnsPage() {
               <div className="pwt-keybar-play">
                 <PlaybackTools
                   speed={speed}
-                  onSpeedToggle={() => setSpeed((v) => (v === 1 ? 2 : 1))}
+                  onSpeed={setSpeed}
                   onSkip={skipToHandoff}
                   skipDisabled={!busy}
                 />
@@ -790,10 +819,10 @@ export default function PowerworksTurnsPage() {
                 <span className="pwt-keybar-wait-who">{handoff}</span>
               </div>
             )}
-            {busy && actorIsEnemy && (
-              <div className="pwt-keybar-wait" aria-live="polite">
+            {busy && (
+              <div className={`pwt-keybar-wait playing ${actorIsEnemy ? "enemy" : "squad"}`} aria-live="polite" data-playing="">
                 {roundOpened && beatNow && <span className="pwt-keybar-wait-round">Round {beatNow.round}</span>}
-                <span className="pwt-keybar-wait-kicker">Enemy turn</span>
+                <span className="pwt-keybar-wait-kicker">{actorIsEnemy ? "Enemy turn" : "Playing out"}</span>
                 {nextMine && (
                   <span className="pwt-keybar-wait-next">
                     <span className="pwt-keybar-wait-portrait">

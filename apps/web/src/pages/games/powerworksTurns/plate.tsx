@@ -50,6 +50,20 @@ export function MarkChips({ marks }: { marks: Marks }) {
   );
 }
 
+/**
+  A small element tag on every unit (UX pass 2, round 3): the element's own hue through the
+  `el-<element>` scope, a dot and the word. Small on purpose: the chevrons stay the matchup
+  signal, this only teaches which element the unit is so the lesson carries to the next room.
+*/
+export function ElementBadge({ element, className = "" }: { element: string; className?: string }) {
+  return (
+    <span className={`pwt-el el-${element} ${className}`} title={`Element: ${element}`} data-element={element}>
+      <i aria-hidden="true" />
+      {element}
+    </span>
+  );
+}
+
 function HealthBar({ hp, max, delta = 0 }: { hp: number; max: number; delta?: number }) {
   const pct = max > 0 ? Math.max(0, Math.min(100, (hp / max) * 100)) : 0;
   return (
@@ -106,6 +120,7 @@ export function SquadPlate({
   delta = 0,
   targeted = false,
   impactTarget = false,
+  struck = false,
   onHover,
 }: {
   u: SquadView;
@@ -121,6 +136,8 @@ export function SquadPlate({
   targeted?: boolean;
   /** This unit is the current beat's target, at the impact phase: flash and recoil. */
   impactTarget?: boolean;
+  /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
+  struck?: boolean;
   onHover?: (hovering: boolean) => void;
 }) {
   const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0;
@@ -128,7 +145,7 @@ export function SquadPlate({
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${u.active ? "active" : ""} ${lit ? "lit" : ""} ${
         spotlit ? "spotlit" : ""
-      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""}`}
+      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""}`}
       data-unit={u.id}
       onMouseEnter={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
@@ -139,6 +156,7 @@ export function SquadPlate({
         <span className="pwt-ground" aria-hidden="true" />
       </div>
       <div className="pwt-plaque">
+        <ElementBadge element={u.element} />
         <span className="pwt-name">{u.name}</span>
         <HealthBar hp={u.hp} max={u.max} delta={delta} />
         {u.down ? (
@@ -178,8 +196,19 @@ export function HitChip({ hit, who }: { hit: NonNullable<EnemyView["hitOnActive"
       <Swords />
       {hit.before !== undefined && <s className="pwt-hit-before">{hit.before}</s>}
       {hit.step === 0 ? <Ban /> : hit.n}
-      {hit.step > 1 && <ChevronUp className="up" />}
-      {hit.step > 0 && hit.step < 1 && <ChevronDown className="down" />}
+      {/* The chevron's direction is the damage (more, less); its color is who that favors:
+          a strong hit on your companion is bad for you, a weak one is good (the same rule as
+          the key cells, where a strong hit on an enemy is good for you). */}
+      {hit.step > 1 && (
+        <span className="pwt-cell-chevron-wrap bad">
+          <ChevronUp />
+        </span>
+      )}
+      {hit.step > 0 && hit.step < 1 && (
+        <span className="pwt-cell-chevron-wrap good">
+          <ChevronDown />
+        </span>
+      )}
     </span>
   );
 }
@@ -210,6 +239,7 @@ export function EnemyPlate({
   delta = 0,
   targeted = false,
   impactTarget = false,
+  struck = false,
   onHover,
 }: {
   u: EnemyView;
@@ -226,6 +256,8 @@ export function EnemyPlate({
   targeted?: boolean;
   /** This unit is the current beat's target, at the impact phase: flash and recoil. */
   impactTarget?: boolean;
+  /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
+  struck?: boolean;
   onHover?: (hovering: boolean) => void;
 }) {
   const hit = u.hitOnActive;
@@ -238,7 +270,7 @@ export function EnemyPlate({
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
         dimmed ? "dimmed" : ""
-      } ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""}`}
+      } ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""}`}
       data-unit={u.id}
       onMouseEnter={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
@@ -249,6 +281,7 @@ export function EnemyPlate({
         <span className="pwt-ground" aria-hidden="true" />
       </div>
       <div className="pwt-plaque">
+        <ElementBadge element={u.element} />
         <span className="pwt-name">
           {u.letter} · {u.name}
         </span>

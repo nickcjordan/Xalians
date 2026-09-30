@@ -9,6 +9,7 @@ import {
   Link2,
   Swords,
   Ban,
+  Star,
 } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import type { Cell, KeyView, SquadView, SupportChip } from "./view";
@@ -81,6 +82,7 @@ export function CellButton({
   armed,
   onPick,
   onHover,
+  columnLit = false,
 }: {
   cell: Cell;
   kind: KeyView["kind"];
@@ -92,6 +94,9 @@ export function CellButton({
   /** Hovering this cell rings its target on the stage (storyboard "choosing" step). Enemy
       cells only: an ally cell's target already sits in the squad row below the key bar. */
   onHover?: (targetId: string | null) => void;
+  /** Its enemy is under the pointer somewhere else (a plate, or the same column in another
+      key): the cell lights like a hovered one, so an enemy reads down every key at once. */
+  columnLit?: boolean;
 }) {
   const hinderOnly = kind === "support" && cell.before !== undefined;
   // The companion's own hinder or boost changed this attack's number: show the struck plain
@@ -111,7 +116,7 @@ export function CellButton({
   return (
     <button
       type="button"
-      className={`pwt-cell ${cell.finishes ? "finish" : ""}`}
+      className={`pwt-cell ${cell.finishes ? "finish" : ""} ${hinderOnly ? "hinder" : ""} ${columnLit ? "col-lit" : ""}`}
       onClick={onPick}
       onMouseEnter={onHover ? () => onHover(cell.target) : undefined}
       onMouseLeave={onHover ? () => onHover(null) : undefined}
@@ -131,9 +136,11 @@ export function CellButton({
       {hinderOnly ? (
         <span className="pwt-cell-hinder">
           <Swords className="pwt-cell-hinder-icon" />
-          <span className="pwt-cell-before">{cell.before}</span>
-          <span className="pwt-cell-arrow">→</span>
-          <span className="pwt-cell-num hinder">{cell.n}</span>
+          <span className="pwt-cell-hinder-nums">
+            <s className="pwt-cell-before">{cell.before}</s>
+            <span className="pwt-cell-arrow">→</span>
+            <span className="pwt-cell-num hinder">{cell.n}</span>
+          </span>
         </span>
       ) : cell.immune ? (
         <span className="pwt-cell-immune-wrap">
@@ -153,12 +160,12 @@ export function CellButton({
         </span>
       )}
       {!hinderOnly && !cell.immune && cell.step > 1 && (
-        <span className="pwt-cell-chevron-wrap up">
+        <span className="pwt-cell-chevron-wrap good">
           <ChevronUp />
         </span>
       )}
       {!hinderOnly && !cell.immune && cell.step > 0 && cell.step < 1 && (
-        <span className="pwt-cell-chevron-wrap down">
+        <span className="pwt-cell-chevron-wrap bad">
           <ChevronDown />
         </span>
       )}
@@ -186,9 +193,12 @@ function footWords(keyView: KeyView): string {
 export function KeyCard({
   keyView,
   squad,
+  activeId,
   disabled,
   onAct,
   onHoverTarget,
+  onHoverUnits,
+  litTarget = null,
 }: {
   keyView: KeyView;
   /** The active companion's standing squadmates, for ally cells' portraits. */
@@ -198,9 +208,18 @@ export function KeyCard({
   /** Hovering an enemy-aimed cell (or its letter, in the "same" layout) reports the target id,
       or null on leave (storyboard "choosing" step: ring the enemy, draw the aim line). */
   onHoverTarget?: (targetId: string | null) => void;
+  /** The active companion, so a self-only key can ring the unit it affects. */
+  activeId?: string;
+  /** Hovering a key that lands on companions (a self-only key, or an ally cell) reports the
+      units it affects so the stage rings them; null on leave. */
+  onHoverUnits?: (ids: string[] | null) => void;
+  /** The enemy under the pointer (from any key or the stage): its cell lights in every key. */
+  litTarget?: string | null;
 }) {
   const armed = keyView.state === "ready" && !disabled;
   const foot = footWords(keyView);
+  // The units a self-only key lands on: the user, or the whole standing squad.
+  const nowIds = keyView.supports[0]?.all ? [activeId, ...squad.map((u) => u.id)].filter((x): x is string => !!x) : activeId ? [activeId] : [];
   // One rule for every enemy-aimed key: a cell per standing enemy, even when the numbers match.
   // Only an area attack draws the ALL band across them: a visible band labeled ALL, so it
   // does not read as a single target (blind readers took Water Sweep for one — paint
@@ -215,27 +234,42 @@ export function KeyCard({
       <div className="pwt-key-head">
         <span className="pwt-key-index">{keyView.index + 1}</span>
         <span className="pwt-key-name">{keyView.name}</span>
+        {keyView.signature && (
+          <span className="pwt-key-star" title="Signature: once per fight" aria-label="Signature move">
+            <Star />
+          </span>
+        )}
       </div>
       {keyView.aim === "now" ? (
-        <button
-          type="button"
-          className="pwt-key-now"
-          disabled={!armed}
-          onClick={() => onAct(keyView.cells[0]?.target ?? "")}
-          aria-label={`${keyView.name}: ${keyView.supports
-            .map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`)
-            .join(", ")}, ${keyView.supports[0]?.all ? "whole squad" : "on itself"}`}
-        >
-          {keyView.supports.map((s) => (
-            <span key={`${s.kind}-${s.aim}`} className={`pwt-key-now-chip ${s.kind}`}>
-              <SupportIcon kind={s.kind} />
-              {s.n}
-            </span>
-          ))}
-          <span className="pwt-key-now-label">
-            {keyView.supports[0]?.all ? "whole squad" : "on itself"}
-          </span>
-        </button>
+        <div className="pwt-cells-wrap">
+          <div className="pwt-cells">
+            <button
+              type="button"
+              className="pwt-cell now"
+              disabled={!armed}
+              onClick={() => onAct(keyView.cells[0]?.target ?? "")}
+              onMouseEnter={onHoverUnits ? () => onHoverUnits(nowIds) : undefined}
+              onMouseLeave={onHoverUnits ? () => onHoverUnits(null) : undefined}
+              onFocus={onHoverUnits ? () => onHoverUnits(nowIds) : undefined}
+              onBlur={onHoverUnits ? () => onHoverUnits(null) : undefined}
+              aria-label={`${keyView.name}: ${keyView.supports
+                .map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`)
+                .join(", ")}, ${keyView.supports[0]?.all ? "whole squad" : "on itself"}`}
+            >
+              <span className="pwt-key-now-chips">
+                {keyView.supports.map((s) => (
+                  <span key={`${s.kind}-${s.aim}`} className={`pwt-key-now-chip ${s.kind}`}>
+                    <SupportIcon kind={s.kind} />
+                    {s.n}
+                  </span>
+                ))}
+              </span>
+              <span className="pwt-key-now-label">
+                {keyView.supports[0]?.all ? "whole squad" : "on itself"}
+              </span>
+            </button>
+          </div>
+        </div>
       ) : (
         <div className={`pwt-cells-wrap ${showAreaBand ? "area" : ""}`}>
           {showAreaBand && (
@@ -256,7 +290,14 @@ export function KeyCard({
                   ally={ally}
                   armed={armed}
                   onPick={() => onAct(c.target)}
-                  onHover={keyView.aim === "enemy" ? onHoverTarget : undefined}
+                  onHover={
+                    keyView.aim === "enemy"
+                      ? onHoverTarget
+                      : onHoverUnits
+                      ? (id) => onHoverUnits(id ? [id] : null)
+                      : undefined
+                  }
+                  columnLit={keyView.aim === "enemy" && litTarget === c.target}
                 />
               );
             })}

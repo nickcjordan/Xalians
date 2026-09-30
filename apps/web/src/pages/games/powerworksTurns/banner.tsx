@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Gauge, SkipForward } from "lucide-react";
+import { SkipForward } from "lucide-react";
 import type { EnemyView, SquadView } from "./view";
 
 /**
@@ -63,29 +63,42 @@ export function TurnBanner({
   );
 }
 
-/** Playback speed and skip, beside the banner. Skip jumps to your next turn, never past it. */
+/**
+  Playback speed and skip, at the right of the key bar while beats play. Speed is a labeled
+  two-part control (1x | 2x) with the current one pressed, not a status-looking "1X" (UX pass 2,
+  round 3). Skip jumps to your next turn, never past it.
+*/
 export function PlaybackTools({
   speed,
-  onSpeedToggle,
+  onSpeed,
   onSkip,
   skipDisabled,
 }: {
   speed: 1 | 2;
-  onSpeedToggle: () => void;
+  onSpeed: (s: 1 | 2) => void;
   onSkip: () => void;
   skipDisabled: boolean;
 }) {
   return (
     <div className="pwt-playtools">
-      <button
-        type="button"
-        onClick={onSpeedToggle}
-        aria-label={speed === 1 ? "Switch to 2x speed" : "Switch to 1x speed"}
-        title={speed === 1 ? "Playback at 1x. Click for 2x." : "Playback at 2x. Click for 1x."}
-      >
-        <Gauge /> {speed}x
-      </button>
-      <button type="button" onClick={onSkip} disabled={skipDisabled} aria-label="Skip to your next turn" title="Skip to your next turn">
+      <div className="pwt-speed" role="group" aria-label="Playback speed">
+        <span className="pwt-speed-label">Speed</span>
+        <div className="pwt-speed-seg">
+          {([1, 2] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              className={speed === v ? "on" : ""}
+              aria-pressed={speed === v}
+              onClick={() => onSpeed(v)}
+              title={`Play at ${v}x`}
+            >
+              {v}x
+            </button>
+          ))}
+        </div>
+      </div>
+      <button type="button" className="pwt-skip" onClick={onSkip} disabled={skipDisabled} aria-label="Skip to your next turn" title="Skip to your next turn">
         <SkipForward /> Skip
       </button>
     </div>
