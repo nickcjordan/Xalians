@@ -155,3 +155,9 @@ Builder: warm lit ground in 06, clipped at the horizon, the red outside dimmed; 
 Generators critic: Glance 8.5, Lore 8.5, Setting 8.5, Motion 8.5, Changes 8.5, Phone 8.5 (six clear); Subject 8, Finish 8 (the ceiling; Nick's decision).
 Outbreak critic: Lore 8.5, Motion 8.5 (clear); Glance 8, Subject 8, Changes 8, Phone 8; Setting 7.5, Finish 7.5 (the lit ground reads as a mesa; the ripple is a stroked line). Recommends Nick accept "a chip powers the machine, life grows, warm light spreads" as meeting 06's glance line.
 Blind readers (fresh): 02 "the window color and the shapes inside change to match each place" (medium); 03 passes (high); 05 passes (high); 06 "a glowing hexagonal object sits at its base ... it seems to power the machine, since a beam runs up from it ... the tank fills with glowing green liquid, then dark blob shapes appear" (high on the machine starting up).
+
+### Round 14 (2026-09-29)
+
+Builder: 06's lit ground built from feathered lobes fading into the distant red, no horizon clip; the ripple as a soft warm band pushing the red wisps ahead; sea seeds with clipped scallops; the lattice's tear counter tied to the arrival. Generators not regraded (the changes were small and its open lines wait on Nick).
+Outbreak critic: Lore, Motion, Setting clear (8.5); Glance 8 (Nick's ruling), Subject 8, Changes 8, Finish 8, Phone 8. Remaining: a wear pass, the ripple's thin core line, the dive's world as a black disc, the chip small on the phone.
+Blind reader (fresh): 05 passes (medium-high); 06 "a small hexagonal object at its base glows and sends a beam up into it. The dark window fills with glowing green liquid, and three dark shapes appear inside, like something being grown" (medium).
