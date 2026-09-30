@@ -114,3 +114,10 @@ Builder: 06 wisps then a dome with a crimson curl, relit ground and a violet-blu
 Outbreak critic: Glance 8, Lore 8.5, Subject 7.5, Setting 8, Motion 7.5, Changes 8, Finish 7.5, Phone 7. Remaining work is finish, not design: the chip is still the darkest thing on screen; the dome's edge lands on the oval's fade and reads as a vignette.
 Generators critic: Glance 8 (03 at 8.5), Lore 8.5, Subject 7.5, Setting 8, Motion 7.5, Changes 8 (the violet carry verified), Finish 7.5, Phone 7.5. Storm fins read as flat cards; lightning lifts the machine and not the world. Subject and Finish still at the compositing ceiling pending Nick.
 Blind readers (fresh): 02 "a pod or incubator that makes something to suit each world. That it's making something is a guess" (medium): the idea, hedged; 03 passes (high); 05 passes; 06 "something dark and six-sided appears on the ground in front of it, then the machine switches on and fills with glowing green liquid" (medium): the chip as the cause, the red not mentioned.
+
+### Round 9 (2026-09-29)
+
+Builder: the chip lit (about 2.6 times its surroundings at 1@5), a ground conduit, the flash at 3.2 s; the dome kept inside the oval; the compact machine larger; storm fins as crescents; lightning lifting the world and only the machine's lit edge; old seeds dissolving into motes, new ones growing in place; contact shadows and a softened edge.
+Generators critic: Glance 8, Lore 8.5 (clears), Subject 8, Setting 8.5 (clears), Motion 8 (the strips show a real lead and follow), Changes 8, Finish 8, Phone 7.5. Subject and Finish at this path's ceiling (8); 8.5 needs a painted machine or Nick's waiver.
+Outbreak critic: Glance 8.5 (pending the reader), Lore 8.5 (clears), Subject 7.5, Setting 8, Motion 8, Changes 8, Finish 7.5, Phone 7.5.
+Blind readers (fresh): 02 "the tanks glow a matching color and hold something small growing inside" (medium): the best 02 read yet; 03 passes (one tank still orange at 6 s: a bug); 05 passes; 06 "its tall glass window lights up green, a small lamp in front of it comes on ... things growing in a tank" (medium): the red pulled back not seen, so Glance stays at 8 until a reader sees it.
