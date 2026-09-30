@@ -2115,7 +2115,6 @@
 
 /* Round 7, item 1: the key bar is 10 px taller on a desktop so a key whose cells carry a rider line (and an
    ALL band) still holds its foot line inside its own box. */
-.pwt-console:not(.phone) .pwt-keybar { height: 170px; min-height: 170px; }
 
 /* =====================================================================================
    Round 8 (UX pass 2): the ten from the round 7 critic.

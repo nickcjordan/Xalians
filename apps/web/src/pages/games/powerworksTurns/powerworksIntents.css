@@ -340,7 +340,6 @@
 .pwt-row.enemies .pwt-figure.boss { height: 110px; }
 .pwt-console:not(.phone) .pwt-rows { padding-bottom: 4px; }
 /* A key is one button now, not a row of cells: the key bar gives the height back to the stage. */
-.pwt-console:not(.phone) .pwt-keybar { height: 132px; min-height: 132px; }
 /* The guardian's plaque carries its own tag row above the element badge: its preview sits above that. */
 .pwt-plate.boss .pwt-preview { bottom: 39px; left: calc(50% + 8px); }
 .pwt-banner-open { display: inline-block; width: 12px; height: 12px; vertical-align: -2px; margin-left: 4px; color: var(--color-ink-3); }

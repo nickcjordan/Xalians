@@ -22,6 +22,37 @@ function footWords(keyView: KeyView): string {
   return "";
 }
 
+/** The on-stage card's state word, as short as it can be said: "rests 1", "used", "ready in 2". */
+function menuFootWords(keyView: KeyView): string {
+  if (keyView.state === "resting") return `ready in ${keyView.restLeft}`;
+  if (keyView.state === "spent") return "used";
+  if (keyView.signature) return "once";
+  if (keyView.rests > 0) return `rests ${keyView.rests}`;
+  return "";
+}
+
+/**
+  The hover tip's sentence for a move (desktop menu, decision 7): its power before any matchup, its shape, what it
+  costs afterward, each as a fact. Nothing shows at rest; this is the detail the card leaves out.
+*/
+export function keyDetail(k: KeyView): string {
+  const parts: string[] = [];
+  if (k.kind === "attack") {
+    parts.push(`Attack power ${k.power} before the matchup`);
+    if (k.powerNow !== undefined && k.ownMark) parts.push(`${k.ownMark.kind === "boost" ? "boosted" : "hindered"} by ${k.ownMark.n} to ${k.powerNow} on its next attack`);
+    parts.push(k.area ? "hits every enemy" : "hits one enemy");
+  } else {
+    parts.push(k.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}${s.all ? ", whole squad" : ""}`).join(", "));
+    parts.push(aimWords(k));
+  }
+  for (const s of k.kind === "attack" ? k.supports : []) parts.push(`${SUPPORT_WORD[s.kind]} ${s.n}${s.aim === "enemy" && k.area ? " each" : ""}`);
+  if (k.state === "resting") parts.push(footWords(k));
+  else if (k.state === "spent") parts.push("used for this fight");
+  else if (k.signature) parts.push("once per fight");
+  else if (k.rests > 0) parts.push(`rests ${k.rests} ${k.rests === 1 ? "turn" : "turns"} after use`);
+  return `${parts.map((x) => x.charAt(0).toUpperCase() + x.slice(1)).join(". ")}.`;
+}
+
 /** Who a key is aimed at, in words. */
 function aimWords(k: KeyView): string {
   if (k.aim === "now") return k.supports[0]?.all ? "whole squad" : "on itself";
@@ -40,6 +71,7 @@ export function KeyCard({
   armed,
   selected,
   noted = false,
+  menu = false,
   onPress,
   onHover,
   onFocusKey,
@@ -51,6 +83,8 @@ export function KeyCard({
   selected: boolean;
   /** A first-occurrence note is about this key (the note itself sits on the key bar's top line). */
   noted?: boolean;
+  /** The on-stage menu card (desktop): the same facts, small; state words are short and an empty foot line is not drawn. */
+  menu?: boolean;
   onPress: () => void;
   /** The pointer is on the key (true) or has left it (false). */
   onHover?: (on: boolean) => void;
@@ -60,7 +94,7 @@ export function KeyCard({
   const k = keyView;
   const isAttack = k.kind === "attack";
   // A chosen key that acts on its own (a touch screen selects first) says so; one that needs an enemy asks for it.
-  const foot = selected && k.state === "ready" ? (actsOnPress(k) ? "tap again to use" : "pick a target") : footWords(k);
+  const foot = selected && k.state === "ready" ? (actsOnPress(k) ? "tap again to use" : "pick a target") : menu ? menuFootWords(k) : footWords(k);
   const word = aimWords(k);
   const label = `${k.index + 1}. ${k.name}: ${
     isAttack ? `power ${k.power}${k.powerNow !== undefined ? `, ${k.ownMark?.kind === "boost" ? "boosted" : "hindered"} to ${k.powerNow}` : ""}${k.area ? ", hits every enemy" : ""}` : k.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ")
@@ -68,7 +102,7 @@ export function KeyCard({
   return (
     <button
       type="button"
-      className={`pwt-key ${k.state} ${k.signature ? "signature" : ""} ${noted ? "noted" : ""} ${selected ? "selected" : ""} ${isAttack ? "attack" : "support"}`}
+      className={`pwt-key ${menu ? "menu" : ""} ${k.state} ${k.signature ? "signature" : ""} ${noted ? "noted" : ""} ${selected ? "selected" : ""} ${isAttack ? "attack" : "support"}`}
       disabled={!armed}
       aria-pressed={selected}
       aria-label={label}
@@ -122,31 +156,34 @@ export function KeyCard({
           <>
             <SupportTags supports={k.supports} area={false} big />
             <span className="pwt-key-shape">
-              <span className="pwt-key-aim">{word}</span>
+              {/* A move for one enemy is the ordinary case: the card names only the shapes that are not (itself, squad, every enemy). */}
+              {!(menu && k.aim === "enemy" && !k.area) && <span className="pwt-key-aim">{word}</span>}
             </span>
           </>
         )}
       </span>
-      <span className="pwt-key-foot">
-        {noted && (
-          <span className="pwt-key-note-tag" title="The note above the keys is about this key">
-            <span className="pwt-note-full">Note</span>
-            <span className="pwt-note-short" aria-hidden="true">
-              i
+      {(!menu || foot) && (
+        <span className="pwt-key-foot">
+          {noted && !menu && (
+            <span className="pwt-key-note-tag" title="The note above the keys is about this key">
+              <span className="pwt-note-full">Note</span>
+              <span className="pwt-note-short" aria-hidden="true">
+                i
+              </span>
             </span>
-          </span>
-        )}
-        <span className="pwt-key-foot-words">
-          {foot === "once per fight" ? (
-            <>
-              <span className="pwt-foot-full">once per fight</span>
-              <span className="pwt-foot-short">once</span>
-            </>
-          ) : (
-            foot
           )}
+          <span className="pwt-key-foot-words">
+            {foot === "once per fight" ? (
+              <>
+                <span className="pwt-foot-full">once per fight</span>
+                <span className="pwt-foot-short">once</span>
+              </>
+            ) : (
+              foot
+            )}
+          </span>
         </span>
-      </span>
+      )}
     </button>
   );
 }

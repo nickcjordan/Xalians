@@ -1,0 +1,137 @@
+/* ==========================================================================================
+   Powerworks: the moves on the stage, above the acting creature (docs/design/powerworks-stage-moves.md)
+   ------------------------------------------------------------------------------------------
+   Desktop only (.pwt-console:not(.phone)); the phone keeps its column of keys. The row is placed by
+   moves.tsx from the acting companion's measured plate. A short fade in; no zoom, no scale on text.
+   ========================================================================================== */
+.pwt-moves {
+  position: absolute;
+  z-index: 5;
+  width: max-content;
+  animation: pwt-wait-in 160ms var(--ease-out) both;
+}
+.pwt-moves-row {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+  padding: 6px;
+  background: rgba(12, 11, 10, 0.72);
+  border: 1px solid var(--color-edge);
+  transition: border-color 200ms var(--ease-out);
+}
+/* The hand-off cue: the row's frame flashes the accent for a moment when the turn comes to you. */
+.pwt-moves.handing-off .pwt-moves-row { border-color: var(--color-viable); }
+.pwt-moves-row > button.pwt-key {
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  flex: 0 0 124px;
+  min-width: 0;
+  min-height: 56px;
+  padding: 5px 8px 4px;
+  gap: 0;
+  border: 1px solid var(--color-edge);
+  box-shadow: none;
+  transition: border-color 120ms var(--ease-out), background 120ms var(--ease-out), opacity 150ms var(--ease-out);
+}
+.pwt-moves-row > button.pwt-key:disabled { cursor: default; }
+.pwt-moves-row > button.pwt-key:hover:not(:disabled) { border-color: var(--color-ink-2); background: var(--color-s1); }
+.pwt-moves-row > button.pwt-key:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+.pwt-moves-row > button.pwt-key.selected {
+  border-color: var(--color-viable);
+  box-shadow: 0 0 0 1px var(--color-viable);
+  background: var(--color-s1);
+}
+.pwt-moves-row > button.pwt-key.selected .pwt-key-foot-words { color: var(--color-viable); }
+.pwt-moves-row > button.pwt-key.noted { border-color: var(--color-ink-2); }
+.pwt-moves-row > button.pwt-key .pwt-key-head { margin-bottom: 2px; align-items: flex-start; }
+.pwt-moves-row > button.pwt-key .pwt-key-name {
+  font-size: 12px;
+  line-height: 1.15;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+.pwt-moves-row > button.pwt-key .pwt-key-body { gap: 4px; }
+.pwt-moves-row > button.pwt-key .pwt-key-power { font-size: 24px; gap: 4px; }
+.pwt-moves-row > button.pwt-key .pwt-key-power .pwt-impact { width: 14px; height: 14px; }
+.pwt-moves-row > button.pwt-key .pwt-key-power-word { display: none; }
+.pwt-moves-row > button.pwt-key .pwt-key-power-was { font-size: 15px; }
+.pwt-moves-row > button.pwt-key .pwt-key-power-arrow { font-size: 14px; }
+.pwt-moves-row > button.pwt-key .pwt-tags.big .pwt-tag { font-size: 20px; }
+.pwt-moves-row > button.pwt-key .pwt-tags.big .pwt-tag svg { width: 16px; height: 16px; }
+.pwt-moves-row > button.pwt-key .pwt-key-shape { gap: 2px; }
+.pwt-moves-row > button.pwt-key .pwt-key-aim { font-size: 12px; }
+.pwt-moves-row > button.pwt-key .pwt-key-foot { min-height: 0; padding-top: 1px; }
+.pwt-moves-row > button.pwt-key .pwt-key-foot-words { font-size: 11px; }
+.pwt-moves-row > button.pwt-key .pwt-tag,
+.pwt-moves-row > button.pwt-key .pwt-key-own { font-size: 12px; padding: 0 4px; }
+.pwt-moves-row > button.pwt-key .pwt-key-own-words { display: none; }
+.pwt-moves-row > .pwt-pass {
+  flex: 0 0 62px;
+  min-height: 56px;
+  font-size: 12px;
+  transition: border-color 120ms var(--ease-out), color 120ms var(--ease-out);
+}
+/* The detail tip: beside the row (in the free band), only while a card is hovered or focused, never taking room at rest. */
+.pwt-moves-tip {
+  position: absolute;
+  top: 0;
+  width: max-content;
+  margin: 0;
+  padding: 5px 9px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-ink-2);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--color-ink);
+  pointer-events: none;
+  animation: pwt-wait-in 120ms var(--ease-out) both;
+}
+.pwt-moves-tip.right { left: calc(100% + 8px); }
+.pwt-moves-tip.left { right: calc(100% + 8px); }
+@media (prefers-reduced-motion: reduce) {
+  .pwt-moves, .pwt-moves-tip { animation: none; }
+}
+
+/* --- the banner carries what the bottom bar used to: the hindered reason, the first-use note, the next turn --- */
+.pwt-console:not(.phone) .pwt-banner { flex-basis: 450px; gap: 2px; }
+.pwt-banner-status {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pwt-console:not(.phone) .pwt-banner .pwt-note {
+  flex: 0 0 auto;
+  padding: 0 0 0 8px;
+  white-space: normal;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.pwt-banner-next {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--color-ink-2);
+}
+.pwt-banner-next b { color: var(--color-ink); font-weight: 700; }
+/* Speed and Skip in the top bar's right column. */
+/* While beats play the column becomes two: Speed over Skip, then the three tools, so nothing is pushed past the bar's 100 px. */
+.pwt-top-right.playing { flex-direction: row; align-items: center; justify-content: flex-end; gap: 10px; }
+.pwt-top-right.playing > .pwt-playtools { flex-direction: column; align-items: stretch; gap: 5px; }
+.pwt-top-right.playing .pwt-speed { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.pwt-top-right.playing .pwt-skip { justify-content: center; }

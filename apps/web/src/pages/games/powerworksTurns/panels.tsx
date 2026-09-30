@@ -7,7 +7,7 @@ import type { BriefingView, CampView, Ending, RecordEntry, RunSummary, SinceItem
 import { revivesLeftWords } from "./view";
 
 /** The screen before a new run's first turn: the goal, the sectors, the squad, the run rules. */
-export function BriefingPanel({ briefing, onBegin }: { briefing: BriefingView; onBegin: () => void }) {
+export function BriefingPanel({ briefing, onBegin, phone = false }: { briefing: BriefingView; onBegin: () => void; phone?: boolean }) {
   return (
     <div className="pwt-overlay pwt-briefing-overlay">
       <div className="pwt-panel pwt-briefing" role="dialog" aria-label="Briefing">
@@ -36,7 +36,7 @@ export function BriefingPanel({ briefing, onBegin }: { briefing: BriefingView; o
               </div>
             ))}
           </div>
-          <TurnLesson />
+          <TurnLesson phone={phone} />
         </div>
         <ul className="pwt-briefing-rules">
           {briefing.rules.map((r) => (

@@ -175,6 +175,12 @@ async function riderProblems(page) {
     // On a phone the banner clamps to two lines by design and the key column repeats the whole sentence while it plays.
     const isPhoneNow = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
     if (line && !isPhoneNow && line.scrollHeight > line.clientHeight + 1) out.push(`banner sentence truncated: "${line.textContent.trim().slice(0, 50)}"`);
+    if (!isPhoneNow) {
+      const note = document.querySelector(".pwt-banner .pwt-note");
+      if (note && note.scrollHeight > note.clientHeight + 1) out.push(`banner note cut short: "${note.textContent.trim().slice(0, 50)}"`);
+      const status = document.querySelector(".pwt-banner-status");
+      if (status && status.scrollWidth > status.clientWidth + 1) out.push(`banner status cut short: "${status.textContent.trim().slice(0, 50)}"`);
+    }
     document.querySelectorAll(".pwt-plate").forEach((pl) => {
       const m = pl.querySelector(".pwt-match");
       const k = pl.querySelector(".pwt-ko");
@@ -243,6 +249,59 @@ async function riderProblems(page) {
       });
     }
     return out;
+  });
+}
+
+/**
+  Moves on the stage (docs/design/powerworks-stage-moves.md, desktop): the row of moves above the acting
+  companion stays inside the stage, every card and Pass is at least 44 px tall, and the row (and the hover tip above
+  it) covers no enemy or squad plate part (plaque, letter, element tag, intent chip, matchup mark, "can fall" mark,
+  guardian tag, health change chip), no preview number, no painted figure and no active pointer. Returns the acting
+  companion's slot too, so a run can say which slots it covered.
+*/
+async function movesProblems(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const row = document.querySelector(".pwt-moves-row");
+    const stage = document.querySelector(".pwt-stage");
+    if (!row || !stage) return { out, slot: null };
+    const hit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
+    const sb = stage.getBoundingClientRect();
+    const inside = (r) => r.left >= sb.left - 0.5 && r.right <= sb.right + 0.5 && r.top >= sb.top - 0.5 && r.bottom <= sb.bottom + 0.5;
+    const mine = [["row", row.getBoundingClientRect()]];
+    const tip = document.querySelector(".pwt-moves-tip");
+    if (tip) mine.push(["tip", tip.getBoundingClientRect()]);
+    for (const [what, r] of mine) if (!inside(r)) out.push(`the moves ${what} leaves the stage (${r.left | 0},${r.top | 0},${r.right | 0},${r.bottom | 0})`);
+    row.querySelectorAll("button").forEach((b) => {
+      const r = b.getBoundingClientRect();
+      const z = r.width / b.offsetWidth || 1;
+      if (r.height / z < 43.5) out.push(`move card under 44 px tall (${(r.height / z).toFixed(1)}): "${(b.getAttribute("aria-label") || b.textContent).trim().slice(0, 24)}"`);
+      if (b.scrollWidth > b.clientWidth + 1) out.push(`move card content wider than the card: "${b.textContent.trim().slice(0, 24)}"`);
+    });
+    const parts = [...stage.querySelectorAll(".pwt-plaque, .pwt-letter, .pwt-el, .pwt-ko, .pwt-intent, .pwt-match, .pwt-guardian-tag, .pwt-delta, .pwt-preview, .pwt-spot-pointer, .pwt-float")];
+    const art = (f) => {
+      const fr = f.getBoundingClientRect();
+      const img = f.querySelector("img");
+      if (img && img.naturalWidth && img.naturalHeight) {
+        const k = Math.min(fr.width / img.naturalWidth, fr.height / img.naturalHeight);
+        const w = img.naturalWidth * k;
+        const h = img.naturalHeight * k;
+        return { left: fr.left + (fr.width - w) / 2, right: fr.left + (fr.width + w) / 2, top: fr.bottom - h, bottom: fr.bottom };
+      }
+      return fr;
+    };
+    for (const [what, r] of mine) {
+      for (const a of parts) {
+        const ar = a.getBoundingClientRect();
+        if (ar.width && hit(r, ar)) out.push(`the moves ${what} covers ${a.className.toString().split(" ")[0]} of ${a.closest("[data-unit]")?.getAttribute("data-unit") ?? "?"}`);
+      }
+      stage.querySelectorAll(".pwt-figure").forEach((f) => {
+        if (hit(r, art(f))) out.push(`the moves ${what} covers the figure of ${f.closest("[data-unit]")?.getAttribute("data-unit") ?? "?"}`);
+      });
+    }
+    const squad = [...stage.querySelectorAll(".pwt-row.squad [data-unit]")];
+    const slot = squad.findIndex((p) => p.classList.contains("active"));
+    return { out, slot };
   });
 }
 /** Round 8, item 7: on a phone the rail always keeps the round divider and at least one next-round slot after it. */
@@ -336,6 +395,7 @@ async function floatProblems(page) {
   const browser = await chromium.launch({ channel: "chrome" });
   let failures = 0;
   let checks = 0;
+  const slotsSeen = new Set();
 
   for (const scen of files) {
     for (const [w, h] of sizes) {
@@ -477,6 +537,17 @@ async function floatProblems(page) {
           }
         }
       }
+      if (!phone) {
+        const { out: mp, slot } = await movesProblems(page);
+        if (slot !== null) {
+          checks++;
+          slotsSeen.add(`${scen.name}:${slot + 1}`);
+          if (mp.length) {
+            failures += mp.length;
+            mp.forEach((m) => console.log(`[${tag}] FAIL moves (slot ${slot + 1}): ${m}`));
+          } else console.log(`[${tag}] moves row (slot ${slot + 1}) inside the stage, cards 44 px+, clear of plates, chips, numbers, letters ok`);
+        }
+      }
       await page.screenshot({ path: path.join(OUT, `${tag}.png`) });
 
       // Every ready key in turn, hovered (a desktop) or tapped (a phone): the previews on the plates sit where
@@ -499,6 +570,7 @@ async function floatProblems(page) {
           const previews = await page.locator("[data-preview]").count();
           if (!previews) seenKey.add(`key ${k}: no previews on any plate`);
           (await riderProblems(page)).forEach((m) => seenKey.add(`key ${k}: ${m}`));
+          if (!phone) (await movesProblems(page)).out.forEach((m) => seenKey.add(`key ${k}: ${m}`));
           if (phone) (await phoneProblems(page)).forEach((m) => seenKey.add(`key ${k}: ${m}`));
           if (k >= 1) await page.screenshot({ path: path.join(OUT, `${tag}-key${k}.png`) });
           if (phone) {
@@ -617,7 +689,7 @@ async function floatProblems(page) {
       await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
       await page.waitForTimeout(500);
     }
-    const keybarBox = () => page.evaluate(() => { const k = document.querySelector(".pwt-keybar"); if (!k) return null; const r = k.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map((n) => Math.round(n)).join(","); });
+    const keybarBox = () => page.evaluate(() => { const k = document.querySelector(".pwt-keybar, .pwt-moves"); if (!k) return null; const r = k.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map((n) => Math.round(n)).join(","); });
     const keybarBefore = await keybarBox();
     await openTool(page, phone, "Guide");
     await page.waitForTimeout(300);
@@ -650,6 +722,7 @@ async function floatProblems(page) {
     await close();
   }
   await browser.close();
+  console.log("moves row checked for acting slots: " + [...slotsSeen].sort().join(", "));
   console.log(`\n${checks} checks, ${failures} failures`);
   if (failures > 0) {
     console.log("GEOMETRY CHECK FAILED");

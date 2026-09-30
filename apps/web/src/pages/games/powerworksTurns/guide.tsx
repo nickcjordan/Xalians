@@ -85,7 +85,7 @@ function PreviewTile({ p }: { p: Preview }) {
   The turn in one picture, for the briefing: a key that shows one power number and, beside it, the
   number that lands on an enemy once the key is chosen. Inert, drawn by the play screen's own components.
 */
-export function TurnLesson() {
+export function TurnLesson({ phone = false }: { phone?: boolean }) {
   return (
     <div className="pwt-lesson" data-lesson="">
       <Sample>
@@ -97,7 +97,11 @@ export function TurnLesson() {
         </span>
         <PreviewTile p={preview({ n: 14, step: 1.5 })} />
       </Sample>
-      <p>Each key shows its power. Choose a key, then an enemy: each enemy shows what it would take, and whom it will hit next.</p>
+      {phone ? (
+        <p>Each key shows its power. Choose a key, then an enemy: each enemy shows what it would take, and whom it will hit next.</p>
+      ) : (
+        <p>Each move shows its power, in a row above the companion whose turn it is. Choose a move, then an enemy: each enemy shows what it would take, and whom it will hit next.</p>
+      )}
     </div>
   );
 }
@@ -105,10 +109,13 @@ export function TurnLesson() {
 export function GuidePanel({
   onClose,
   touch = false,
+  phone = false,
   squadArt,
   enemyArt,
 }: {
   onClose: () => void;
+  /** The phone layout: its moves are a column of keys on the right, not a row above the companion. */
+  phone?: boolean;
   /** A touch screen: the sentences that mention hover say tap instead. */
   touch?: boolean;
   squadArt?: { art: string; element: string };
@@ -130,7 +137,7 @@ export function GuidePanel({
         <div className="pwt-guide-cols">
           <div className="pwt-guide-col">
           <section className="pwt-legend-section">
-            <h3>Keys and targets</h3>
+            <h3>{phone ? "Keys and targets" : "Moves and targets"}</h3>
             <ul className="pwt-legend">
           <Row
             wide
@@ -140,7 +147,7 @@ export function GuidePanel({
               </span>
             }
           >
-            A move key shows its power once: the damage before the element matchup. ALL hits every enemy. Tags are what else it does; below, its rest. Hindered: power before and after.
+            {phone ? "A move key" : "A move"} shows its power once: the damage before the element matchup. ALL hits every enemy. Tags are what else it does; below, its rest. Hindered: power before and after.
           </Row>
           <Row
             sample={
@@ -150,7 +157,7 @@ export function GuidePanel({
               </span>
             }
           >
-            {touch ? "Tap a key" : "Hover or choose a key"} and each enemy shows what that move would take from it. Up chevron: strong matchup; down: weak; green favors you, raspberry the enemy. Shield mark: what its shield absorbs first.
+            {touch ? (phone ? "Tap a key" : "Tap a move") : phone ? "Hover or choose a key" : "Hover or choose a move"} and each enemy shows what that move would take from it. Up chevron: strong matchup; down: weak; green favors you, raspberry the enemy. Shield mark: what its shield absorbs first.
           </Row>
           <Row
             sample={
@@ -189,9 +196,13 @@ export function GuidePanel({
               </span>
             }
           >
-            {touch
-              ? "Acting takes two taps: a key, then an enemy. A move with no target to choose acts on the key alone (a second tap)."
-              : "Acting takes two presses: a key, then an enemy. A move with no target to choose acts on the key alone."}
+            {phone
+              ? touch
+                ? "Acting takes two taps: a key, then an enemy. A move with no target to choose acts on the key alone (a second tap)."
+                : "Acting takes two presses: a key, then an enemy. A move with no target to choose acts on the key alone."
+              : touch
+                ? "Acting takes two taps: a move from the row above your companion, then an enemy. A move with no target to choose acts on the move alone (a second tap)."
+                : "Acting takes two presses: a move from the row above your companion, then an enemy. A move with no target to choose acts on the move alone. Hover a move for its detail."}
           </Row>
             </ul>
           </section>
@@ -301,7 +312,7 @@ export function GuidePanel({
               </span>
             }
           >
-            While moves play, the key bar shows whose turn it is and your next one, with Speed and Skip.
+            {phone ? "While moves play, the key bar shows whose turn it is and your next one, with Speed and Skip." : "While moves play, the top bar shows whose turn it is and your next one, with Speed and Skip."}
           </Row>
           <Row
             sample={

@@ -23,7 +23,7 @@ const mount = () =>
   );
 
 /** The move keys the active companion can use now. */
-const keys = (c: HTMLElement) => Array.from(c.querySelectorAll<HTMLButtonElement>(".pwt-keybar button.pwt-key")).filter((b) => !b.disabled);
+const keys = (c: HTMLElement) => Array.from(c.querySelectorAll<HTMLButtonElement>(".pwt-moves button.pwt-key, .pwt-keybar button.pwt-key")).filter((b) => !b.disabled);
 /** The enemy plates the selected key can be used on. */
 const targets = (c: HTMLElement) => Array.from(c.querySelectorAll<HTMLElement>(".pwt-row.enemies .pwt-plate.pickable"));
 /** Use a key the way a player does: press it, then, when it waits for a target, an enemy plate. */
@@ -43,14 +43,52 @@ describe("Powerworks turn by turn", () => {
   it("renders the first turn with four move keys for the active companion", () => {
     const { container } = mount();
     // Four move keys plus Pass.
-    expect(container.querySelectorAll(".pwt-keybar button.pwt-key").length).toBe(4);
+    expect(container.querySelectorAll(".pwt-moves button.pwt-key, .pwt-keybar button.pwt-key").length).toBe(4);
     expect(screen.getByRole("button", { name: "Pass" })).toBeInTheDocument();
+  });
+
+  it("the moves stand on the stage above the acting companion; there is no bottom bar on a desktop", () => {
+    const { container } = mount();
+    const c = container as HTMLElement;
+    expect(c.querySelector(".pwt-keybar")).toBeNull();
+    const menu = c.querySelector(".pwt-stage .pwt-moves");
+    expect(menu).toBeTruthy();
+    expect(menu!.querySelectorAll("button.pwt-key").length).toBe(4);
+    expect(menu!.querySelector(".pwt-pass")).toBeTruthy();
+    // One menu, named for the acting companion.
+    expect(c.querySelectorAll(".pwt-moves").length).toBe(1);
+    expect(menu!.getAttribute("aria-label")).toMatch(/moves$/);
+  });
+
+  it("the menu is gone while the enemies act; Speed and Skip sit in the top bar", async () => {
+    const { container } = mount();
+    const c = container as HTMLElement;
+    fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    await useKey(c);
+    expect(c.querySelector(".pwt-moves")).toBeNull();
+    expect(c.querySelector(".pwt-top .pwt-playtools")).toBeTruthy();
+    expect(c.querySelector("[data-turn-banner]")!.hasAttribute("data-playing")).toBe(true);
+  });
+
+  it("a move card keeps its facts and a hover tip names the rest, nothing extra at rest", () => {
+    const { container } = mount();
+    const c = container as HTMLElement;
+    fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    expect(c.querySelector("[data-moves-tip]")).toBeNull();
+    const key = c.querySelector<HTMLButtonElement>(".pwt-moves button.pwt-key.attack, .pwt-keybar button.pwt-key.attack")!;
+    expect(key.classList.contains("menu")).toBe(true);
+    fireEvent.mouseMove(key);
+    const tip = c.querySelector("[data-moves-tip]");
+    expect(tip).toBeTruthy();
+    expect(tip!.textContent).toMatch(/power \d+/i);
+    fireEvent.mouseLeave(key);
+    expect(c.querySelector("[data-moves-tip]")).toBeNull();
   });
 
   it("a key shows one power number and no cell per enemy", () => {
     const { container } = mount();
     expect(container.querySelectorAll(".pwt-cell").length).toBe(0);
-    const attack = container.querySelector<HTMLElement>(".pwt-keybar button.pwt-key.attack .pwt-key-power")!;
+    const attack = container.querySelector<HTMLElement>(".pwt-moves button.pwt-key.attack .pwt-key-power, .pwt-keybar button.pwt-key.attack .pwt-key-power")!;
     expect(attack.getAttribute("data-power")).toMatch(/^\d+$/);
   });
 
@@ -86,7 +124,8 @@ describe("Powerworks turn by turn", () => {
     const plates = container.querySelectorAll(".pwt-plate");
     expect(plates.length).toBeGreaterThan(0);
     plates.forEach((pl) => expect(pl.querySelector(".pwt-el[data-element]")).toBeTruthy());
-    expect(container.querySelector(".pwt-keybar-portrait .pwt-el")).toBeTruthy();
+    // The acting companion is not repeated in a bar: its moves stand on the stage above it.
+    expect(container.querySelector(".pwt-keybar-portrait")).toBeNull();
     const laters = Array.from(container.querySelectorAll('[data-slot][data-state="later"] .pwt-rail-order')).map((n) => Number(n.textContent));
     // Counted from NOW (1) and NEXT (2): the first numbered slot is 3, then rising by one.
     if (laters.length) {
@@ -99,7 +138,7 @@ describe("Powerworks turn by turn", () => {
     const { container } = mount();
     const c = container as HTMLElement;
     fireEvent.click(screen.getByRole("button", { name: /begin/i }));
-    const key = c.querySelector<HTMLButtonElement>(".pwt-keybar button.pwt-key.attack")!;
+    const key = c.querySelector<HTMLButtonElement>(".pwt-moves button.pwt-key.attack, .pwt-keybar button.pwt-key.attack")!;
     fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
     fireEvent.mouseMove(key);
     const shown = c.querySelectorAll(".pwt-row.enemies [data-preview]");
@@ -109,7 +148,7 @@ describe("Powerworks turn by turn", () => {
     // Choosing it keeps the numbers and makes the enemy plates pressable.
     fireEvent.click(key);
     expect(key.getAttribute("aria-pressed")).toBe("true");
-    expect(c.querySelector(".pwt-banner-line")!.textContent).toBe("Now choose a target.");
+    expect(c.querySelector(".pwt-banner-line")!.textContent).toMatch(/^Now choose a target\./);
     expect(c.querySelectorAll(".pwt-row.enemies [data-preview]").length).toBeGreaterThan(0);
     expect(targets(c).length).toBeGreaterThan(0);
     // The pointer on a plate rings it; a unit the key cannot name steps back.
@@ -155,7 +194,7 @@ describe("Powerworks turn by turn", () => {
     fireEvent.click(screen.getByRole("button", { name: /begin/i }));
     const index = keys(c).find((k) => k.classList.contains("attack"))!.getAttribute("data-key")!;
     fireEvent.keyDown(window, { key: index });
-    expect(c.querySelector(`.pwt-keybar button.pwt-key[data-key="${index}"]`)!.getAttribute("aria-pressed")).toBe("true");
+    expect(c.querySelector(`.pwt-moves button.pwt-key[data-key="${index}"]`)!.getAttribute("aria-pressed")).toBe("true");
     await act(async () => {
       fireEvent.keyDown(window, { key: "a" });
     });
@@ -518,7 +557,7 @@ describe("Powerworks on a landscape phone", () => {
     const key = keys(c).find((k) => k.classList.contains("attack"))!;
     fireEvent.click(key);
     expect(c.querySelector("[data-busy]")!.getAttribute("data-busy")).toBe("false");
-    expect(c.querySelectorAll(".pwt-keybar button.pwt-key.selected").length).toBe(1);
+    expect(c.querySelectorAll(".pwt-moves button.pwt-key.selected, .pwt-keybar button.pwt-key.selected").length).toBe(1);
     expect(c.querySelectorAll(".pwt-row.enemies [data-preview]").length).toBeGreaterThan(0);
     expect(screen.getByText("pick a target")).toBeInTheDocument();
     // Another key moves the selection; nothing has been used yet.
@@ -619,7 +658,7 @@ describe("round 6: hand-off, holds and forecast chips", () => {
   };
   const card = (c: HTMLElement) => c.querySelector<HTMLElement>("[data-playing]")?.textContent ?? "";
   const bannerLine = (c: HTMLElement) => c.querySelector(".pwt-banner-line")?.textContent ?? "";
-  const hasTools = (c: HTMLElement) => !!c.querySelector(".pwt-keybar-play") || !!screen.queryByRole("button", { name: /skip to your next turn/i });
+  const hasTools = (c: HTMLElement) => !!c.querySelector(".pwt-top-right .pwt-playtools") || !!screen.queryByRole("button", { name: /skip to your next turn/i });
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -640,13 +679,13 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(container.querySelector('[data-busy]')!.getAttribute("data-busy")).toBe("false");
     // The hand-off frame: keys live, no card over them, the cue is a class on the bar.
     expect(container.querySelector(".pwt-keybar-wait")).toBeNull();
-    expect(container.querySelectorAll(".pwt-keybar .pwt-key").length).toBe(4);
+    expect(container.querySelectorAll(".pwt-key").length).toBe(4);
     expect(keys(container as HTMLElement).length).toBeGreaterThan(0);
-    expect(container.querySelector(".pwt-keybar")!.className).toContain("handing-off");
+    expect(container.querySelector(".pwt-moves")!.className).toContain("handing-off");
     await tick(1000);
-    expect(container.querySelector(".pwt-keybar")!.className).not.toContain("handing-off");
+    expect(container.querySelector(".pwt-moves")!.className).not.toContain("handing-off");
     expect(container.querySelector(".pwt-keybar-wait")).toBeNull();
-    expect(container.querySelectorAll(".pwt-keybar .pwt-key").length).toBe(4);
+    expect(container.querySelectorAll(".pwt-key").length).toBe(4);
   });
 
   it("item 5: a sector-clearing blow names no next turn, and the hold shows no turn text and no Speed or Skip", async () => {
@@ -733,7 +772,7 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.dim, .pwt-row.enemies .pwt-intent.lit").length).toBe(0);
   });
 
-  it("item 4: the sector card is a line along the stage's top edge and the first-use note sits on the key bar, never over a plate", async () => {
+  it("item 4: the sector card is a line along the stage's top edge and the first-use note sits in the banner, never over a plate", async () => {
     const { container } = mount();
     const c = container as HTMLElement;
     await act(async () => {
@@ -745,7 +784,7 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(title.className).toContain("pwt-titlecard");
     const note = c.querySelector(".pwt-note")!;
     expect(note).toBeTruthy();
-    expect(c.querySelector(".pwt-keybar")!.contains(note)).toBe(true);
+    expect(c.querySelector(".pwt-banner")!.contains(note)).toBe(true);
     expect(stage.contains(note)).toBe(false);
     // It names its key, and that key is marked.
     expect(note.querySelector("b")!.textContent!.length).toBeGreaterThan(0);
@@ -782,7 +821,7 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     });
     const shown = () => ({
       previews: c.querySelectorAll(".pwt-stage [data-preview]").length,
-      selected: c.querySelectorAll(".pwt-keybar button.pwt-key.selected").length,
+      selected: c.querySelectorAll(".pwt-moves button.pwt-key.selected, .pwt-keybar button.pwt-key.selected").length,
       rings: c.querySelectorAll(".pwt-plate.targeted").length,
     });
     const attack = () => keys(c).find((k) => k.classList.contains("attack"))!;
@@ -795,14 +834,14 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     fireEvent.mouseMove(attack());
     expect(c.querySelector("main")!.getAttribute("data-pointer")).toBe("live");
     expect(shown().previews).toBeGreaterThan(0);
-    const first = c.querySelector(".pwt-keybar-who")!.textContent;
+    const first = c.querySelector("[data-turn-banner] .pwt-banner-who")!.textContent;
     // Use the key with the pointer resting on it, then let the enemies finish: the next companion's keys
     // arrive under the same resting pointer.
     await useKey(c);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /skip to your next turn/i }));
     });
-    expect(c.querySelector(".pwt-keybar-who")!.textContent).not.toBe(first);
+    expect(c.querySelector("[data-turn-banner] .pwt-banner-who")!.textContent).not.toBe(first);
     expect(shown()).toEqual({ previews: 0, selected: 0, rings: 0 });
     expect(c.querySelector("main")!.getAttribute("data-pointer")).toBe("idle");
     // A stray move event under the resting pointer still does nothing.
@@ -817,6 +856,18 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(camp.querySelector("[data-next-sector]")!.textContent).toMatch(/^Next: sector 2, /);
   });
 
+  it("the desktop Guide and briefing say the moves stand above the companion, not in a key bar", () => {
+    mount();
+    // The briefing's lesson row.
+    expect(document.querySelector("[data-lesson]")!.textContent).toMatch(/row above the companion whose turn it is/);
+    fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    fireEvent.click(screen.getByRole("button", { name: /guide/i }));
+    const text = screen.getByRole("dialog", { name: "Guide" }).textContent!;
+    expect(text).toContain("Moves and targets");
+    expect(text).toMatch(/a move from the row above your companion, then an enemy/);
+    expect(text).not.toMatch(/key bar/);
+  });
+
   it("item 12: the Guide names Pass, Down, strike lines, the playing card, the Record and both color rules", () => {
     saveRun((s) => s);
     mount();
@@ -824,7 +875,7 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     const text = screen.getByRole("dialog", { name: "Guide" }).textContent!;
     expect(text).toMatch(/Pass ends a turn/);
     expect(text).toMatch(/Down:/);
-    expect(text).toMatch(/the key bar shows whose turn it is and your next one/);
+    expect(text).toMatch(/the top bar shows whose turn it is and your next one/);
     expect(text).toContain("The Record (top right)");
     expect(text).toContain("Squad health: raspberry is lost, green gained.");
     expect(text).toContain("green favors you, raspberry the enemy");

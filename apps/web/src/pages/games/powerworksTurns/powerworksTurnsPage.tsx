@@ -50,6 +50,7 @@ import {
 import { Portrait } from "../powerworksVisuals";
 import { ElementBadge, EnemyPlate, SquadPlate } from "./plate";
 import { KeyCard } from "./keys";
+import { StageMoves } from "./moves";
 import { TurnRail } from "./rail";
 import { TurnBanner, PlaybackTools } from "./banner";
 import { Playback, beatTiming, type BeatPhase } from "./playback";
@@ -59,6 +60,7 @@ import { isPhoneLandscape, keyPressStep } from "./phone";
 import { PowerworksEnvironment } from "../powerworksEnvironment";
 import "./powerworksTurns.css";
 import "./powerworksIntents.css";
+import "./powerworksMoves.css";
 import "./powerworksPhone.css";
 
 type Moment = { actor: string; beats: Beat[]; words: string };
@@ -939,9 +941,12 @@ export default function PowerworksTurnsPage() {
     const zoomFactor = stageBox.width / stage.offsetWidth || 1;
     const fromBox = from.getBoundingClientRect();
     const toBox = to.getBoundingClientRect();
+    // Desktop: the line leaves the top of the move row above the companion, so it never crosses the cards.
+    const menu = stage.querySelector<HTMLElement>(".pwt-moves-row");
+    const menuTop = menu ? (menu.getBoundingClientRect().top - stageBox.top) / zoomFactor : null;
     return {
       x1: (fromBox.left + fromBox.width / 2 - stageBox.left) / zoomFactor,
-      y1: (fromBox.top + fromBox.height / 2 - stageBox.top) / zoomFactor,
+      y1: menuTop !== null ? menuTop - 2 : (fromBox.top + fromBox.height / 2 - stageBox.top) / zoomFactor,
       x2: (toBox.left + toBox.width / 2 - stageBox.left) / zoomFactor,
       y2: (toBox.top + toBox.height / 2 - stageBox.top) / zoomFactor,
     };
@@ -979,11 +984,15 @@ export default function PowerworksTurnsPage() {
                 actorSide={spotlightSide}
                 actorName={bannerName}
                 actorLetter={bannerLetter}
-                line={ended ? "" : beatWords || (busy || phone ? "" : station?.text ?? since.text)}
+                line={ended && phone ? "" : beatWords || (ended || busy || phone ? "" : station?.text ?? since.text)}
                 lineIsSince={!ended && !beatWords && !busy && !station && !!since.text && !phone}
                 prompt={chosenKey ? (actsOnPress(chosenKey) ? "Tap again to use it." : "Now choose a target.") : "Choose a move."}
-                note={phone && shownNote ? shownNote.short : null}
-                noteId={phone && shownNote ? shownNote.id : undefined}
+                note={shownNote ? shownNote.short : null}
+                noteId={shownNote ? shownNote.id : undefined}
+                noteKey={!phone && shownNote ? shownNote.keyName : undefined}
+                status={!phone && !busy ? view.activeStatus?.sentence ?? null : null}
+                next={!phone && busy && !ended ? nextMine?.name ?? null : null}
+                playing={busy && !phone}
                 onOpenRecord={() => setPanel("record")}
                 round={shownRound}
                 readOnly={phone}
@@ -994,7 +1003,11 @@ export default function PowerworksTurnsPage() {
           ) : (
             <div className="pwt-top-fill" />
           )}
-          <div className="pwt-top-right">
+          <div className={`pwt-top-right${!phone && busy && !holding && view.phase === "turn" ? " playing" : ""}`}>
+            {/* Desktop: Speed and Skip sit here while beats play (the bottom bar is gone); the phone keeps them in its key column. */}
+            {!phone && busy && !holding && view.phase === "turn" && (
+              <PlaybackTools speed={speed} onSpeed={chooseSpeed} onSkip={skipToHandoff} skipDisabled={!busy} />
+            )}
             {notice && (
               <p className="pwt-notice" role="status" data-notice="">
                 {notice}
@@ -1154,9 +1167,43 @@ export default function PowerworksTurnsPage() {
               {hold.text}
             </div>
           )}
+          {!phone && !busy && view.phase === "turn" && view.active && (
+            <StageMoves
+              stageRef={stageRef}
+              activeId={view.active.id}
+              name={view.active.name}
+              keys={view.keys}
+              selectedKey={selectedKey}
+              notedKey={shownNote ? shownNote.keyIndex : null}
+              handingOff={!!handoff}
+              onPress={pressKey}
+              onPass={pass}
+              onHover={(index) => {
+                if (index === null) setHoverKey(null);
+                else if (liveRef.current || twoTap) setHoverKey(index);
+              }}
+              onFocusKey={setFocusKey}
+            />
+          )}
         </div>
 
-        {view.phase === "turn" && view.active && (
+        {!phone && pendingBeats && view.phase === "turn" && view.active && (
+          <Playback
+            beats={moments.map((m) => m.beats[m.beats.length - 1])}
+            speed={speed}
+            reducedMotion={reducedMotion}
+            skip={skipPlayback}
+            knockouts={knockouts}
+            holdMs={hold?.ms ?? 0}
+            onBeat={(i, phase) => {
+              setBeatIndex(i);
+              setBeatPhase(phase);
+            }}
+            onDone={() => finishPlayback(pendingBeats)}
+          />
+        )}
+
+        {phone && view.phase === "turn" && view.active && (
           <div className={`pwt-keybar ${busy ? "busy" : ""} ${handoff ? "handing-off" : ""} ${view.activeStatus || (shownNote && !phone) ? "has-status" : ""}`}>
             {(view.activeStatus || (shownNote && !phone)) && !busy && (
               <p className="pwt-keybar-statusline" data-status={view.activeStatus ? "" : undefined} title={view.activeStatus?.sentence}>
@@ -1282,6 +1329,7 @@ export default function PowerworksTurnsPage() {
           <GuidePanel
             onClose={() => setPanel(null)}
             touch={twoTap}
+            phone={phone}
             squadArt={view.squad[0] ? { art: view.squad[0].art, element: view.squad[0].element } : undefined}
             enemyArt={view.enemies[0] ? { art: view.enemies[0].art, element: view.enemies[0].element } : undefined}
           />
@@ -1316,7 +1364,7 @@ export default function PowerworksTurnsPage() {
             onClose={() => setPanel(null)}
           />
         )}
-        {briefing && <BriefingPanel briefing={briefingView(run)} onBegin={begin} />}
+        {briefing && <BriefingPanel briefing={briefingView(run)} onBegin={begin} phone={phone} />}
       </div>
       <div className="pwt-rotate">
         <span className="pwt-rotate-art" aria-hidden="true">
