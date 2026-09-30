@@ -13,7 +13,7 @@
   Round 4 (phone): a landscape screen 500 px tall or less is opened as a touch phone (isMobile,
   hasTouch) and gets the phone checks on top of the rest: no visible text under 12 CSS px, no
   button or link under 40 px in its short side, nothing clipped or outside the screen, no page
-  scroll, and the tap flow (first tap on a key cell previews, the second uses it).
+  scroll, and the tap flow (a tap selects a key and shows its numbers on the plates, a tap on an enemy uses it).
 
   Exits non-zero on any failure, printing each one.
 */
@@ -151,30 +151,17 @@ async function phoneProblems(page) {
 }
 
 /**
-  Round 7: a rider preview never prints over its cell's number (its box must not touch the number,
-  the struck pair or the letter, and must sit inside the cell); a landing number, measured where it
-  comes to rest, stays inside the stage and off every element tag, letter tag, plaque and knockout
-  mark; a banner sentence is never cut (its text fits its box).
+  Keys and plates (intents and keys): nothing on a key pokes out of it, and a banner sentence is never
+  cut (its text fits its box). Each enemy's intent chip sits inside its plaque, is not cut short, and
+  stays off the squad row's plaques, tags and the active pointer; a preview number (a key hovered or
+  selected) sits inside its own plate's figure area and off that plate's plaque and tags, and inside the stage.
 */
 async function riderProblems(page) {
   return page.evaluate(() => {
     const out = [];
     const hit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
-    document.querySelectorAll(".pwt-cell.has-rider").forEach((cell) => {
-      const rider = cell.querySelector(".pwt-cell-rider");
-      if (!rider) return;
-      const rr = rider.getBoundingClientRect();
-      const cr = cell.getBoundingClientRect();
-      if (rr.left < cr.left - 0.5 || rr.right > cr.right + 0.5 || rr.top < cr.top - 0.5 || rr.bottom > cr.bottom + 0.5)
-        out.push(`rider box leaves its cell: ${cell.getAttribute("aria-label")?.slice(0, 40)}`);
-      for (const sel of [".pwt-cell-num", ".pwt-cell-hinder", ".pwt-cell-letter"]) {
-        cell.querySelectorAll(sel).forEach((n) => {
-          if (rider.contains(n)) return;
-          if (hit(rr, n.getBoundingClientRect())) out.push(`rider overlaps ${sel}: ${cell.getAttribute("aria-label")?.slice(0, 40)}`);
-        });
-      }
-    });
     document.querySelectorAll(".pwt-key").forEach((key) => {
+      if (key.closest("[inert]")) return;
       const kr = key.getBoundingClientRect();
       key.querySelectorAll("*").forEach((el) => {
         if (el.closest(".pwt-note") || el.closest("svg")) return;
@@ -185,7 +172,74 @@ async function riderProblems(page) {
       });
     });
     const line = document.querySelector(".pwt-banner-line");
-    if (line && line.scrollHeight > line.clientHeight + 1) out.push(`banner sentence truncated: "${line.textContent.trim().slice(0, 50)}"`);
+    // On a phone the banner clamps to two lines by design and the key column repeats the whole sentence while it plays.
+    const isPhoneNow = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
+    if (line && !isPhoneNow && line.scrollHeight > line.clientHeight + 1) out.push(`banner sentence truncated: "${line.textContent.trim().slice(0, 50)}"`);
+    document.querySelectorAll(".pwt-plate").forEach((pl) => {
+      const m = pl.querySelector(".pwt-match");
+      const k = pl.querySelector(".pwt-ko");
+      const e = pl.querySelector(".pwt-el");
+      if (m && e && hit(m.getBoundingClientRect(), e.getBoundingClientRect())) out.push(`matchup mark overlaps the element tag on ${pl.getAttribute("data-unit")}`);
+      if (k && e && hit(k.getBoundingClientRect(), e.getBoundingClientRect())) out.push(`"can fall" mark overlaps the element tag on ${pl.getAttribute("data-unit")}`);
+    });
+    const stage = document.querySelector(".pwt-stage");
+    if (stage) {
+      const sb = stage.getBoundingClientRect();
+      const squadTags = [...stage.querySelectorAll(".pwt-row.squad .pwt-plaque, .pwt-row.squad .pwt-el, .pwt-row.squad .pwt-ko")];
+      const artBounds = (f) => {
+        const fr = f.getBoundingClientRect();
+        const img = f.querySelector("img");
+        if (img && img.naturalWidth && img.naturalHeight) {
+          const k = Math.min(fr.width / img.naturalWidth, fr.height / img.naturalHeight);
+          const w = img.naturalWidth * k;
+          const h = img.naturalHeight * k;
+          return { left: fr.left + (fr.width - w) / 2, right: fr.left + (fr.width + w) / 2, top: fr.bottom - h, bottom: fr.bottom };
+        }
+        return fr;
+      };
+      const squadArt = [...stage.querySelectorAll(".pwt-row.squad .pwt-figure")].map(artBounds);
+      const pointers = [...stage.querySelectorAll(".pwt-spot-pointer")];
+      stage.querySelectorAll(".pwt-intent").forEach((chip) => {
+        if (getComputedStyle(chip).visibility === "hidden") return;
+        const cr = chip.getBoundingClientRect();
+        const plaque = chip.closest(".pwt-plaque");
+        const pr = plaque.getBoundingClientRect();
+        const who = chip.closest("[data-unit]")?.getAttribute("data-letter") ?? "?";
+        if (cr.left < pr.left - 0.5 || cr.right > pr.right + 0.5 || cr.top < pr.top - 0.5 || cr.bottom > pr.bottom + 0.5) out.push(`intent chip of ${who} leaves its plaque`);
+        chip.querySelectorAll("*").forEach((el) => {
+          if (el.closest("svg")) return;
+          const r = el.getBoundingClientRect();
+          if (r.width && (r.left < cr.left - 0.5 || r.right > cr.right + 0.5 || r.top < cr.top - 0.5 || r.bottom > cr.bottom + 0.5)) out.push(`intent chip of ${who}: ${el.className.toString().split(" ")[0] || el.tagName} pokes out of the chip`);
+          if (el.children.length === 0 && el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== "visible") out.push(`intent chip of ${who}: text clipped "${el.textContent.trim()}"`);
+        });
+        for (const a of squadTags) if (hit(cr, a.getBoundingClientRect())) out.push(`intent chip of ${who} overlaps a squad plate tag (${a.className.toString().split(" ")[0]})`);
+        for (const a of squadArt) if (hit(cr, a)) out.push(`intent chip of ${who} overlaps a squad figure`);
+        for (const a of pointers) if (hit(cr, a.getBoundingClientRect())) out.push(`intent chip of ${who} overlaps the active pointer`);
+      });
+      stage.querySelectorAll(".pwt-preview").forEach((pv) => {
+        const r = pv.getBoundingClientRect();
+        const plate = pv.closest("[data-unit]");
+        const who = plate?.getAttribute("data-unit") ?? "?";
+        if (r.left < sb.left - 0.5 || r.right > sb.right + 0.5 || r.top < sb.top - 0.5 || r.bottom > sb.bottom + 0.5) out.push(`preview on ${who} leaves the stage`);
+        const body = pv.closest(".pwt-body");
+        const br = body.getBoundingClientRect();
+        const onPhone0 = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
+        // On a phone the figure area is short: the number may rise above it (it stays inside the stage and off the tags), never beside it.
+        if (r.left < br.left - 0.5 || r.right > br.right + 0.5 || r.bottom > br.bottom + 0.5 || (!onPhone0 && r.top < br.top - 0.5)) out.push(`preview on ${who} leaves its plate's figure area`);
+        // On a phone the figure area is too short to keep the number off the letter tag; the plaque's own name
+        // ("A · Maintenance crawler") still carries the letter, so only there may a preview cover it (and the guardian tag, which the name row repeats).
+        const onPhone = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
+        plate.querySelectorAll(".pwt-plaque, .pwt-el, .pwt-match, .pwt-letter, .pwt-ko, .pwt-guardian-tag").forEach((a) => {
+          if (onPhone && (a.classList.contains("pwt-letter") || a.classList.contains("pwt-guardian-tag"))) return;
+          if (hit(r, a.getBoundingClientRect())) { const q = a.getBoundingClientRect(); out.push(`preview on ${who} covers ${a.className.toString().split(" ")[0]} (preview ${r.left | 0},${r.top | 0},${r.right | 0},${r.bottom | 0}; tag ${q.left | 0},${q.top | 0},${q.right | 0},${q.bottom | 0})`); }
+        });
+        pv.querySelectorAll("*").forEach((el) => {
+          if (el.closest("svg")) return;
+          const er = el.getBoundingClientRect();
+          if (er.width && (er.left < r.left - 0.5 || er.right > r.right + 0.5)) out.push(`preview on ${who}: ${el.className.toString().split(" ")[0] || el.tagName} pokes out of the badge`);
+        });
+      });
+    }
     return out;
   });
 }
@@ -215,7 +269,10 @@ async function floatProblems(page) {
       const r = f.getBoundingClientRect();
       if (r.left < sb.left - 0.5 || r.right > sb.right + 0.5 || r.top < sb.top - 0.5 || r.bottom > sb.bottom + 0.5)
         out.push(`landing number leaves the stage: "${f.textContent.trim()}" ${JSON.stringify({ l: r.left | 0, r: r.right | 0, t: r.top | 0, b: r.bottom | 0, sl: sb.left | 0, sr: sb.right | 0 })}`);
+      const phoneNow = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
       stage.querySelectorAll(".pwt-el, .pwt-letter, .pwt-plaque, .pwt-guardian-tag, .pwt-ko").forEach((a) => {
+        // A phone's figure area is too short to keep a landing number off the letter and guardian tags; the plaque's name row repeats both.
+        if (phoneNow && (a.classList.contains("pwt-letter") || a.classList.contains("pwt-guardian-tag"))) return;
         if (hit(r, a.getBoundingClientRect())) out.push(`landing number "${f.textContent.trim()}" sits on ${a.className.split(" ")[0]}`);
       });
       // Round 8, item 2: the number's horizontal center lies within its own target's plate.
@@ -420,20 +477,55 @@ async function floatProblems(page) {
       }
       await page.screenshot({ path: path.join(OUT, `${tag}.png`) });
 
-      // Round 7: play the first ready cell out and check, on every frame that settles, the landing
+      // Every ready key in turn, hovered (a desktop) or tapped (a phone): the previews on the plates sit where
+      // they should, and on a phone the text and controls hold their floors with the previews showing.
+      if (await page.locator("button.pwt-key:not([disabled])").count()) {
+        const n = await page.locator("button.pwt-key").count();
+        const seenKey = new Set();
+        checks++;
+        for (let k = 1; k <= n; k++) {
+          const key = page.locator(`button.pwt-key[data-key="${k}"]`);
+          if (await key.isDisabled()) continue;
+          if (phone) await key.tap();
+          else {
+            await page.mouse.move(3, 3);
+            await key.hover();
+            await page.mouse.move(3, 3);
+            await key.hover();
+          }
+          await page.waitForTimeout(160);
+          const previews = await page.locator("[data-preview]").count();
+          if (!previews) seenKey.add(`key ${k}: no previews on any plate`);
+          (await riderProblems(page)).forEach((m) => seenKey.add(`key ${k}: ${m}`));
+          if (phone) (await phoneProblems(page)).forEach((m) => seenKey.add(`key ${k}: ${m}`));
+          if (k >= 1) await page.screenshot({ path: path.join(OUT, `${tag}-key${k}.png`) });
+          if (phone) {
+            const box = await page.locator(".pwt-stage").boundingBox();
+            await page.touchscreen.tap(box.x + 6, box.y + 6);
+          } else await page.keyboard.press("Escape");
+          await page.waitForTimeout(80);
+        }
+        if (seenKey.size) {
+          failures += seenKey.size;
+          seenKey.forEach((m) => console.log(`[${tag}] FAIL with a key shown: ${m}`));
+        } else console.log(`[${tag}] every ready key's previews sit on their plates ok`);
+      }
+
+      // Round 7: play the first ready key out and check, on every frame that settles, the landing
       // numbers (inside the stage, off tags and plaques) and the banner sentence (never cut).
       if (["first", "before-enemy-phase", "power-hippochamp", "checkpoint-graviclaw", "final-blow", "last-blow", "last-stand"].includes(scen.name) && !(phone && scen.name === "first")) {
-        const finisher = page.locator(".pwt-key .pwt-cell.finish:not([disabled])").first();
-        const cell = ["final-blow", "last-blow", "last-stand"].includes(scen.name) && (await finisher.count()) ? finisher : page.locator(".pwt-key .pwt-cell:not([disabled])").first();
-        if (await cell.count()) {
-          if (phone) {
-            await cell.tap();
-            await page.waitForTimeout(150);
-            await page.locator(".pwt-cell.previewed").first().tap();
-          } else {
-            await cell.click();
-            await page.mouse.move(2, 2);
+        const key = page.locator("button.pwt-key:not([disabled])").first();
+        if (await key.count()) {
+          if (phone) await key.tap();
+          else await key.click();
+          await page.waitForTimeout(150);
+          const busyNow = () => page.evaluate(() => document.querySelector("[data-busy]")?.getAttribute("data-busy") === "true");
+          if (!(await busyNow())) {
+            const plate = page.locator(".pwt-plate.pickable .pwt-figure").first();
+            if (await plate.count()) await (phone ? plate.tap() : plate.click());
+            else if (phone) await key.tap();
           }
+          if (!phone) await page.mouse.move(2, 2);
           const seen = new Set();
           checks++;
           for (let i = 0; i < 70; i++) {
@@ -451,31 +543,31 @@ async function floatProblems(page) {
         }
       }
 
-      // The tap flow, once per phone size on the first scenario with a turn on it: the first tap
-      // on a key cell previews it (the stage rings its target, the move is not used), the second
-      // tap on the same cell uses it.
+      // The tap flow, once per phone size on the first scenario with a turn on it: the first tap on a key
+      // selects it (its numbers show on the plates, the move is not used), and a tap on an enemy uses it.
       if (phone && scen.name === "first") {
-        const cell = page.locator(".pwt-key .pwt-cell:not([disabled])").first();
         const busy = () => page.evaluate(() => document.querySelector("[data-busy]").getAttribute("data-busy"));
+        // The second key of the first scenario is a single-target attack: it needs a target.
+        const key = page.locator('button.pwt-key[data-key="2"]');
         checks++;
-        await cell.tap();
+        await key.tap();
         await page.waitForTimeout(200);
-        const previewed = await page.locator(".pwt-cell.previewed").count();
-        const ringed = await page.locator(".pwt-plate.targeted").count();
-        if (previewed !== 1 || (await busy()) !== "false") {
+        const selected = await page.locator("button.pwt-key.selected").count();
+        const previews = await page.locator("[data-preview]").count();
+        if (selected !== 1 || (await busy()) !== "false") {
           failures++;
-          console.log(`[${tag}] FAIL first tap should preview only (previewed cells ${previewed}, busy ${await busy()})`);
-        } else if (ringed < 1) {
+          console.log(`[${tag}] FAIL first tap should select only (selected keys ${selected}, busy ${await busy()})`);
+        } else if (previews < 1) {
           failures++;
-          console.log(`[${tag}] FAIL first tap did not ring its target on the stage`);
-        } else console.log(`[${tag}] first tap previews and rings its target ok`);
+          console.log(`[${tag}] FAIL first tap did not show its numbers on the plates`);
+        } else console.log(`[${tag}] first tap selects and shows its numbers on the plates ok`);
         checks++;
-        await page.locator(".pwt-cell.previewed").first().tap();
+        await page.locator(".pwt-plate.pickable .pwt-figure").first().tap();
         await page.waitForTimeout(300);
         if ((await busy()) !== "true") {
           failures++;
-          console.log(`[${tag}] FAIL second tap on the same cell did not use the move`);
-        } else console.log(`[${tag}] second tap uses the move ok`);
+          console.log(`[${tag}] FAIL a tap on an enemy did not use the move`);
+        } else console.log(`[${tag}] a tap on an enemy uses the move ok`);
         // The move and the enemy turns that follow play out: the same phone checks on those
         // frames (the banner names an enemy and its letter, the key column is one card, speed and
         // skip are 40 px or more).

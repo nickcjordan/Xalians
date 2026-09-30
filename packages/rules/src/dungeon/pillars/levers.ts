@@ -71,8 +71,8 @@ export const FINAL_ENCOUNTER_XP = 30;
 /** Health the recovery station gives each standing companion (10 before HEALTH_SCALE). */
 export const RECOVERY_STATION_HP = 20;
 export const STALL_ROUNDS = 6;
-/** 2: the numbers pass rescaled health and power, so a version 1 run no longer means anything. */
-export const PILLAR_SAVE_VERSION = 2;
+/** 3: a run stores each enemy's committed intent (2: the numbers pass rescaled health and power). */
+export const PILLAR_SAVE_VERSION = 3;
 /**
   Turn-by-turn, speed timeline: a unit's interval between turns is TIMELINE_SCALE / (SPEED_BASE +
   speed). SPEED_BASE softens speed: at 0 a speed-72 creature acts 2.6 times as often as a

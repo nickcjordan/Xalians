@@ -24,7 +24,6 @@ import {
   roundStrip,
   standing,
   step,
-  stepDamage,
   upcoming,
   type Fighter,
   type PEvent,
@@ -78,30 +77,38 @@ export type EnemyView = Marks & {
   max: number;
   down: boolean;
   /**
-    Its strongest ready attack on the active companion: health it would take after the
-    companion's shields, and the element step (0, 0.5, 1, 1.5, 2). null when no companion is
-    active or it has no ready attack.
+    The element step of the acting companion's attacks against this enemy (0, 0.5, 1, 1.5, 2): every
+    attack takes its creature's element, so the matchup belongs to the pair and is said once per
+    enemy, not once per move. null when no companion is acting.
   */
-  hitOnActive: {
-    n: number;
-    step: number;
-    before?: number;
-    /** This hit equals or exceeds the acting companion's health: it would knock it out. */
-    lethal?: true;
-    /** The move's damage on this matchup less the companion's shield, before the enemy's own boost or
-        hinder and the health cap (`hitDuring` replays a boost or hinder that lands during playback). */
-    raw?: number;
-    /** The acting companion's health when this was read. */
-    cap?: number;
-  } | null;
-  /**
-    A stronger attack on the active companion that is resting now: its health, the element
-    step, and how many of the enemy's own turns after its next one it waits (cooldowns
-    decrement at the start of a unit's own turn, so a move with cooldown c can act on the
-    unit's c-th turn from now; `turns` is c - 1, so the chip reads "46 in 1"). null when no
-    resting attack beats the ready one.
-  */
-  hitComing: { n: number; step: number; turns: number } | null;
+  matchup: number | null;
+  /** What this enemy has committed to for its next turn (the engine's intent); null when it has none. */
+  intent: IntentView | null;
+};
+
+/**
+  An enemy's committed move and target, read at the state as it stands now. The number is what the
+  hit would land now on its target: the attack less the target's shields, never capped by health,
+  with the enemy's own boost and hinder in it. It changes as marks change; the move and the target
+  do not until the enemy has acted (or its target falls, and the enemy turns to the next companion).
+*/
+export type IntentView = {
+  move: string;
+  kind: "attack" | "support";
+  /** The attack reaches every companion (the number is the one on its named target). */
+  area: boolean;
+  /** Whom it is aimed at; for a support that acts on the enemy itself, the enemy itself. */
+  target: { id: string; name: string; art: string; element: string; ally: boolean; self: boolean };
+  /** Attack: the number it lands now; 0 on an immune matchup. Support: 0. */
+  n: number;
+  /** Attack: the element step against the target. */
+  step: number;
+  /** Attack: the number before this enemy's own hinder (struck beside n); absent without a hinder. */
+  before?: number;
+  /** Attack: the number equals or exceeds the target's health (a skull). */
+  lethal?: true;
+  /** The move's supports (a support intent's whole content, an attack's rider). */
+  supports: SupportChip[];
 };
 
 /** One target cell on a key: what this key does to that one target. */
@@ -115,8 +122,10 @@ export type Cell = {
     hit on the active companion after the hinder (see `before`).
   */
   n: number;
-  /** Hinder-only cells: the enemy's hit on the active companion before the hinder. */
+  /** Hinder-only cells: the enemy's committed hit before the hinder. */
   before?: number;
+  /** Hinder-only cells and riders: the name of the companion that committed hit is aimed at; absent when the enemy has no attack committed. */
+  hitOn?: string;
   /**
     Attack cells of a hindered or boosted companion: the health this attack would land
     without the companion's own mark, struck through beside `n` (the same form the enemy
@@ -173,17 +182,8 @@ export type KeyView = {
   cells: Cell[];
   /** The move's supports, n already reduced for "all" (allShare). */
   supports: SupportChip[];
-  /**
-    An attack key whose cells read 0 because the acting companion is hindered while a rider is still
-    on the key: the engine applies a move's supports whatever its attack deals (act() in turns.ts),
-    so the rider still lands.
-  */
-  riderKept: boolean;
-  /**
-    Round 8, item 4: every attack cell of this key reads 0 because the acting companion is hindered (none is an
-    immune matchup). The cells draw calmly, in neutral ink; the key bar's status line states the reason once.
-  */
-  calm: boolean;
+  /** The move's attack power before any matchup (0 for a support): the one number a key shows. */
+  power: number;
 };
 
 export type StripSlot = {
@@ -304,9 +304,9 @@ function squadView(s: TRun, u: Fighter): SquadView {
 
 /**
   The enemies that can knock this companion out before it next acts: an enemy in the timeline's
-  upcoming turns ahead of the companion's own next one whose strongest ready hit on it equals or
-  exceeds its health (the same computation the enemy's hit chip uses). For the companion acting
-  now, "next" is its turn after this one. Empty for a fallen companion or outside a companion's turn.
+  upcoming turns ahead of the companion's own next one whose committed attack, as it would land
+  now, equals or exceeds the companion's health (a lethal intent). For the companion acting now,
+  "next" is its turn after this one. Empty for a fallen companion or outside a companion's turn.
 */
 export function knockoutThreats(s: TRun, target: Fighter): { letter: Letter; n: number }[] {
   if (s.phase !== "turn" || target.hp <= 0) return [];
@@ -320,36 +320,14 @@ export function knockoutThreats(s: TRun, target: Fighter): { letter: Letter; n: 
   }
   const out: { letter: Letter; n: number }[] = [];
   for (const e of window) {
-    const hit = threatOn(s, e, target).ready;
-    if (hit && hit.n > 0 && hit.n >= target.hp && !out.some((o) => o.letter === letterFor(s, e.id))) out.push({ letter: letterFor(s, e.id)!, n: hit.n });
+    const hit = intentHit(s, e);
+    if (!hit || (hit.target.id !== target.id && !hit.move.area)) continue;
+    const n = hitUncapped(e, hit.move, target);
+    if (n > 0 && n >= target.hp && !out.some((o) => o.letter === letterFor(s, e.id))) out.push({ letter: letterFor(s, e.id)!, n });
   }
   return out;
 }
 
-/**
-  When can this enemy move next be used, in the enemy's own turns from now (0: at its next
-  turn)? Cooldowns decrement at the start of a unit's own turn, so a move with cooldown c can
-  act on the unit's c-th turn from now (its next turn is the 1st): c <= 1 means "at its next
-  turn". `ready()` reads cooldown === 0, which is right for the active companion (already
-  decremented at the start of its turn) but wrong for an enemy that has just acted: it carries
-  rests + 1 until its own next turn starts. null when the move cannot be used at all (fallen,
-  a spent signature, or inert).
-*/
-function turnsToReady(e: Fighter, i: number): number | null {
-  const m = e.moves[i];
-  if (e.hp <= 0 || (m.signature && e.signatureSpent) || !(m.power > 0 || m.parts.length > 0)) return null;
-  return Math.max(0, e.cooldowns[i] - 1);
-}
-
-/**
-  An enemy's attacks on the active companion, judged as they will be at the enemy's own turns:
-  `ready` is the strongest it can use at its next turn (health it would take after the
-  companion's own shields, and the matchup step); `coming` is the soonest stronger attack that
-  is resting now, with the turns it waits after that next turn. Both null with no active
-  companion or no such attack.
-  `withHinder` lets a hinder-only cell ask "what would this be with the hinder applied", since
-  the engine's hinder is max(current, n), not additive (support() in engine.ts).
-*/
 /**
   What an attack would deal to a target before its health caps it: the attack less the shields, never
   below 0. The engine's `landedOn` stops at the target's health; a forecast of an enemy's hit shows this
@@ -360,63 +338,45 @@ export function hitUncapped(u: Fighter, m: PMove, t: Fighter): number {
   return Math.max(0, attackOn(u, m, t) - shield);
 }
 
-function threatOn(
-  s: TRun,
-  e: Fighter,
-  target: Fighter | undefined,
-  withHinder?: number
-): { ready: { n: number; step: number; raw: number } | null; coming: { n: number; step: number; turns: number } | null } {
-  if (!target || e.hp <= 0) return { ready: null, coming: null };
+/** An enemy's committed attack: its move and target as they stand, or null when it has none or the intent is a support. */
+function intentHit(s: TRun, e: Fighter, withHinder?: number): { move: PMove; target: Fighter; n: number; step: number } | null {
+  const i = s.intents?.[e.id];
+  if (!i || e.hp <= 0) return null;
+  const move = e.moves[i.move];
+  const target = [...s.team, ...s.enemies].find((x) => x.id === i.target);
+  if (!move || !target || move.power <= 0) return null;
   const attacker = withHinder === undefined ? e : { ...e, hinder: Math.max(e.hinder, withHinder) };
-  let ready: { n: number; step: number; raw: number } | null = null;
-  const resting: { n: number; step: number; turns: number }[] = [];
-  e.moves.forEach((m, i) => {
-    const wait = turnsToReady(e, i);
-    if (m.power <= 0 || wait === null) return;
-    const n = hitUncapped(wait === 0 ? attacker : { ...e, boost: 0, hinder: 0 }, m, target);
-    const st = step(m.element, target.element);
-    if (wait === 0) {
-      if (!ready || n > ready.n) ready = { n, step: st, raw: st === 0 ? 0 : stepDamage(m.power, st) - shieldSum(target) };
-    } else resting.push({ n, step: st, turns: wait });
-  });
-  // The soonest resting attack that beats the ready one (ties: the strongest).
-  const better = resting.filter((r) => !ready || r.n > ready.n).sort((a, b) => a.turns - b.turns || b.n - a.n);
-  return { ready, coming: better[0] ?? null };
-}
-const threatOnActive = (s: TRun, e: Fighter, withHinder?: number) => threatOn(s, e, s.team.find((t) => t.id === s.active), withHinder);
-
-/** The hit on the active companion, and, when a hinder lowers it, the hit without the hinder. */
-function withBefore(s: TRun, u: Fighter): EnemyView["hitOnActive"] {
-  const active = s.team.find((t) => t.id === s.active);
-  const found = threatOnActive(s, u).ready;
-  if (!found || !active) return null;
-  const { n, step: st, raw } = found;
-  const hit: NonNullable<EnemyView["hitOnActive"]> = { n, step: st, raw, cap: active.hp, ...(n > 0 && n >= active.hp ? { lethal: true as const } : {}) };
-  if (u.hinder <= 0) return hit;
-  const clean = threatOnActive(s, { ...u, hinder: 0 }).ready;
-  return clean && clean.n > hit.n ? { ...hit, before: clean.n } : hit;
+  return { move, target, n: hitUncapped(attacker, move, target), step: step(move.element, target.element) };
 }
 
-/**
-  The enemy's hit chip while a command plays: the same hit re-read with the boost and hinder the
-  enemy carries at that point of the playback and the health the companion has then. A hinder that
-  lands during playback lowers it and shows the number it was as the struck one (only a live hinder
-  ever does; a spent boost just lowers the number); the lethal mark follows the health shown.
-  Returns the hit unchanged when it carries no replay data.
-*/
-export function hitDuring(hit: NonNullable<EnemyView["hitOnActive"]>, now: { boost: number; hinder: number; hp: number }): NonNullable<EnemyView["hitOnActive"]> {
-  if (hit.raw === undefined || hit.step === 0) return hit;
-  const plain = Math.max(0, hit.raw + now.boost);
-  const n = Math.max(0, hit.raw + now.boost - now.hinder);
-  const { lethal: _lethal, before: _before, ...rest } = hit;
-  const out: NonNullable<EnemyView["hitOnActive"]> = { ...rest, n, cap: now.hp, ...(n > 0 && n >= now.hp ? { lethal: true as const } : {}) };
-  // The struck number is a live hinder's and nothing else: a boost the enemy has just spent lowers
-  // the number without a struck form (UX pass 2, round 6, item 2).
-  if (now.hinder > 0 && n < plain) out.before = plain;
-  return out;
+/** What an enemy has committed to, with the number it would land now. */
+function intentView(s: TRun, e: Fighter): IntentView | null {
+  const i = s.intents?.[e.id];
+  if (!i || e.hp <= 0) return null;
+  const move = e.moves[i.move];
+  const t = [...s.team, ...s.enemies].find((x) => x.id === i.target);
+  if (!move || !t) return null;
+  // An ally of the enemy's own is read by its letter (its plate carries the name); a companion by its name.
+  const target = { id: t.id, name: t.enemy ? letterFor(s, t.id) ?? t.name : t.name, art: t.enemy ? ENEMY_ART[t.species] ?? t.species : t.species, element: t.element, ally: t.enemy === e.enemy, self: t.id === e.id };
+  const supports = move.parts.map(supportChip);
+  if (move.power <= 0) return { move: move.name, kind: "support", area: false, target, n: 0, step: 1, supports };
+  const hit = intentHit(s, e)!;
+  const clean = e.hinder > 0 ? intentHit(s, { ...e, hinder: 0 })!.n : hit.n;
+  return {
+    move: move.name,
+    kind: "attack",
+    area: move.area,
+    target,
+    n: hit.n,
+    step: hit.step,
+    ...(clean > hit.n ? { before: clean } : {}),
+    ...(hit.n > 0 && hit.n >= t.hp ? { lethal: true as const } : {}),
+    supports,
+  };
 }
 
 function enemyView(s: TRun, u: Fighter): EnemyView {
+  const active = s.phase === "turn" ? s.team.find((t) => t.id === s.active) : undefined;
   return {
     ...marksOf(u),
     id: u.id,
@@ -428,8 +388,8 @@ function enemyView(s: TRun, u: Fighter): EnemyView {
     hp: Math.max(0, u.hp),
     max: u.max,
     down: u.hp <= 0,
-    hitOnActive: withBefore(s, u),
-    hitComing: threatOnActive(s, u).coming,
+    matchup: active ? step(active.element, u.element) : null,
+    intent: s.phase === "turn" ? intentView(s, u) : null,
   };
 }
 
@@ -467,12 +427,15 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
       const finishes = n >= t.hp && n > 0;
       let rider: Cell["rider"];
       let saves = false;
+      let hitOn: string | undefined;
       if (riderN > 0 && !finishes) {
-        const before = threatOnActive(s, t).ready?.n ?? 0;
-        const after = threatOnActive(s, t, riderN).ready?.n ?? 0;
-        if (after < before) {
+        const now = intentHit(s, t);
+        const before = now?.n ?? 0;
+        const after = intentHit(s, t, riderN)?.n ?? 0;
+        if (now && after < before) {
           rider = { before, after };
-          saves = u.hp > 0 && before >= u.hp && after < u.hp;
+          hitOn = now.target.name;
+          saves = !now.target.enemy && now.target.hp > 0 && before >= now.target.hp && after < now.target.hp;
         }
       }
       return {
@@ -484,17 +447,18 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
         immune: st === 0,
         finishes,
         absorbed: shieldAbsorbed,
-        ...(rider ? { rider } : {}),
+        ...(rider ? { rider, hitOn } : {}),
         ...(saves ? { saves: true as const } : {}),
       };
     }
-    // Hinder-only: before is the enemy's current hit on the active companion; after applies this
-    // hinder on top of whatever it already carries (engine's hinder is max(current, n), not additive).
-    const before = threatOnActive(s, t).ready?.n ?? 0;
+    // Hinder-only: before is the enemy's committed hit as it stands; after applies this hinder on top
+    // of whatever it already carries (the engine's hinder is max(current, n), not additive).
     const hinderN = hinderPart ? (hinderPart.all ? allShare(hinderPart.n) : hinderPart.n) : 0;
-    const n = threatOnActive(s, t, hinderN).ready?.n ?? 0;
-    const saves = u.hp > 0 && before >= u.hp && n < u.hp;
-    return { target: t.id, letter, n, before, hinder: hinderN, step: 1, immune: false, finishes: false, absorbed: 0, ...(saves ? { saves: true as const } : {}) };
+    const now = intentHit(s, t);
+    const before = now?.n ?? 0;
+    const n = intentHit(s, t, hinderN)?.n ?? 0;
+    const saves = !!now && !now.target.enemy && now.target.hp > 0 && before >= now.target.hp && n < now.target.hp;
+    return { target: t.id, letter, n, before, hinder: hinderN, ...(now ? { hitOn: now.target.name } : {}), step: 1, immune: false, finishes: false, absorbed: 0, ...(saves ? { saves: true as const } : {}) };
   });
 }
 
@@ -520,8 +484,6 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
   const aimsAlly = !aimsEnemy && m.parts.some((p) => p.aim === "ally");
   const aim: KeyView["aim"] = aimsEnemy ? "enemy" : aimsAlly ? "ally" : "now";
   const cells = aim === "enemy" ? enemyCells(s, u, m, targets) : aim === "ally" ? allyCells(u, m, targets) : [];
-  const riderKept = kind === "attack" && aim === "enemy" && m.parts.length > 0 && cells.some((c) => c.ownBefore !== undefined && c.n === 0 && !c.immune);
-  const calm = kind === "attack" && aim === "enemy" && cells.length > 0 && cells.every((c) => c.n === 0 && !c.immune && c.ownBefore !== undefined);
   return {
     index: i,
     name: m.name,
@@ -534,8 +496,7 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
     aim,
     cells,
     supports: m.parts.map(supportChip),
-    riderKept,
-    calm,
+    power: m.power,
   };
 }
 
@@ -1245,6 +1206,51 @@ export function runSummary(s: TRun, v: TurnView, record: RecordEntry[]): RunSumm
 }
 
 /* ------------------------------------------------------------------------------------------
+   Intents and keys (docs/design/powerworks-intents-and-keys.md). A key shows one power number;
+   what it would land on each target is drawn on that target's plate while the key is hovered or
+   selected. The numbers are the key's cells (one per legal target), unchanged; only where they
+   are drawn moved.
+------------------------------------------------------------------------------------------ */
+
+/** What a hovered or selected key would do to one unit, drawn on that unit's plate. */
+export type Preview = Cell & {
+  /** What lands: an attack's health, a hinder's before and after, or a support's number. */
+  kind: "hit" | "hinder" | "heal" | "shield" | "boost" | "delay";
+  /** A self or whole-squad key: the key's supports, since it has no cells. */
+  chips?: SupportChip[];
+};
+
+/**
+  Every unit the key would change, by id, with the exact number it would land there. Attack and
+  hinder keys read on the enemies they can name (an area key on every enemy at once); a key aimed at
+  a squadmate reads on each squadmate it can name; a self or whole-squad key reads on the units it
+  reaches (`standingSquad` is every standing companion, the actor included).
+*/
+export function previewsOf(k: KeyView, activeId: string, standingSquad: string[]): Record<string, Preview> {
+  const out: Record<string, Preview> = {};
+  if (k.state !== "ready") return out;
+  if (k.aim === "now") {
+    const ids = k.supports[0]?.all ? standingSquad : [activeId];
+    for (const id of ids) out[id] = { target: id, kind: k.supports[0]?.kind ?? "heal", n: k.supports[0]?.n ?? 0, step: 1, immune: false, finishes: false, absorbed: 0, chips: k.supports };
+    return out;
+  }
+  for (const c of k.cells) {
+    if (k.aim === "ally") out[c.target] = { ...c, kind: k.supports.find((p) => p.aim === "ally")?.kind ?? "heal" };
+    else out[c.target] = { ...c, kind: k.kind === "attack" ? "hit" : c.before !== undefined ? "hinder" : "hit" };
+  }
+  return out;
+}
+
+/**
+  How a key is used: "now" (self or whole squad, and an area attack) acts on the key press alone; a
+  key with exactly one legal target does too (nothing to choose); otherwise the key arms and the
+  target is chosen next.
+*/
+export function actsOnPress(k: KeyView): boolean {
+  return k.aim === "now" || (k.area && k.aim === "enemy") || k.cells.length <= 1;
+}
+
+/* ------------------------------------------------------------------------------------------
    UX pass 2, round 5: teaching in place. A note appears once per browser, next to the first
    occurrence of a mark that has confused a cold reader, and goes at the first action.
 ------------------------------------------------------------------------------------------ */
@@ -1252,11 +1258,11 @@ export function runSummary(s: TRun, v: TurnView, record: RecordEntry[]): RunSumm
 export type NoteId = "hinder" | "shield" | "all";
 
 /**
-  A hinder's words, for the cell's label and the first-use note: it takes `by` off that enemy's next
-  hit whoever it strikes; the example is the acting companion, the one the number is computed on.
+  A hinder's words, for the preview's label and the first-use note: it takes `by` off that enemy's next
+  hit whoever it strikes; the example is the enemy's committed hit and the companion it is aimed at.
 */
 export function hinderWords(by: number, on: string, before: number, after: number): string {
-  return `that enemy's next hit, on whoever it strikes, falls by ${by} (on ${on}: ${before} to ${after})`;
+  return `that enemy's next hit, on whoever it strikes, falls by ${by}${on ? ` (its hit on ${on}: ${before} to ${after})` : ""}`;
 }
 export type KeyNote = { id: NoteId; keyIndex: number; /** The key the note is about, named so it needs no arrow to it. */ keyName: string; text: string; /** The same in fewer words, for a phone's two-line banner. */ short: string };
 
@@ -1267,23 +1273,22 @@ export type KeyNote = { id: NoteId; keyIndex: number; /** The key the note is ab
 */
 export function keyNote(v: TurnView, seen: readonly string[]): KeyNote | null {
   if (!v.active || v.phase !== "turn") return null;
-  const name = v.active.name;
   const ready = v.keys.filter((k) => k.state === "ready");
   if (!seen.includes("hinder")) {
     for (const k of ready) {
       const cell = k.kind === "support" && k.aim === "enemy" ? k.cells.find((c) => c.before !== undefined) : undefined;
-      if (cell) return { id: "hinder", keyIndex: k.index, keyName: k.name, text: `Hinder: ${hinderWords(cell.hinder ?? cell.before! - cell.n, name, cell.before!, cell.n)}.`, short: `Hinder: that enemy's next hit falls by ${cell.hinder ?? cell.before! - cell.n}.` };
+      if (cell) return { id: "hinder", keyIndex: k.index, keyName: k.name, text: `Hinder: ${hinderWords(cell.hinder ?? cell.before! - cell.n, cell.hitOn ?? "", cell.before!, cell.n)}.`, short: `Hinder: that enemy's next hit falls by ${cell.hinder ?? cell.before! - cell.n}.` };
     }
   }
   if (!seen.includes("shield")) {
     for (const k of ready) {
       const cell = k.aim === "enemy" && k.kind === "attack" ? k.cells.find((c) => c.absorbed > 0) : undefined;
-      if (cell) return { id: "shield", keyIndex: k.index, keyName: k.name, text: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The number is what is left.`, short: `Shield: absorbs ${cell.absorbed} first. Cell shows the rest.` };
+      if (cell) return { id: "shield", keyIndex: k.index, keyName: k.name, text: `Shield: that enemy's shield absorbs ${cell.absorbed} first. The preview is what is left.`, short: `Shield: absorbs ${cell.absorbed} first. Preview shows the rest.` };
     }
   }
   if (!seen.includes("all")) {
     for (const k of ready) {
-      if (k.area && k.aim === "enemy" && k.cells.length > 1) return { id: "all", keyIndex: k.index, keyName: k.name, text: "ALL: this move hits every enemy at once. Each cell is that enemy's number.", short: "ALL: hits every enemy. Each cell is that enemy's number." };
+      if (k.area && k.aim === "enemy" && k.cells.length > 1) return { id: "all", keyIndex: k.index, keyName: k.name, text: "ALL: this move hits every enemy at once. Each enemy's plate shows its own number.", short: "ALL: hits every enemy. Each enemy's plate shows its own number." };
     }
   }
   return null;

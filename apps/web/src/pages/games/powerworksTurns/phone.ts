@@ -12,16 +12,14 @@ export function isPhoneLandscape(width: number, height: number): boolean {
   return width > height && height <= PHONE_MAX_HEIGHT;
 }
 
-/** One key cell's identity, for the tap preview ("key index : target"). */
-export function cellId(keyIndex: number, target: string): string {
-  return `${keyIndex}:${target}`;
-}
-
 /**
-  On a touch screen there is no hover, so a key cell answers the first tap with its preview (the
-  stage rings who it lands on) and the second tap on the same cell uses it. A mouse or keyboard
-  press, or a cell already previewed, commits at once.
+  What pressing a key does. A key that needs a target (one enemy of several, one squadmate) is
+  selected, or unselected when it already is; the target is chosen next. A key that acts on the press
+  alone (on itself, the whole squad, every enemy, or the only target there is) acts at once on a mouse
+  or keyboard; on a touch screen, where there is no hover to look first, the first tap selects it (its
+  numbers show on the plates) and the second tap uses it.
 */
-export function tapStep(twoTap: boolean, previewed: string | null, id: string): "preview" | "commit" {
-  return twoTap && previewed !== id ? "preview" : "commit";
+export function keyPressStep(twoTap: boolean, selected: number | null, index: number, actsAtOnce: boolean): "select" | "unselect" | "act" {
+  if (!actsAtOnce) return selected === index ? "unselect" : "select";
+  return twoTap && selected !== index ? "select" : "act";
 }

@@ -72,17 +72,12 @@
    {
     "op": "hover",
     "key": 1,
-    "target": "cell:A"
-   },
-   {
-    "op": "hover",
-    "key": 1,
-    "target": "cell:C"
+    "target": "cell:*"
    },
    {
     "op": "hover",
     "key": 2,
-    "target": "cell:B"
+    "target": "cell:*"
    },
    {
     "op": "hover",
@@ -92,11 +87,19 @@
    {
     "op": "hover",
     "key": 4,
-    "target": "cell:A"
+    "target": "cell:*"
+   },
+   {
+    "op": "select",
+    "key": 2
    },
    {
     "op": "hover",
     "target": "figure:C"
+   },
+   {
+    "op": "key",
+    "key": "Escape"
    }
   ]
  },
@@ -114,23 +117,35 @@
    },
    {
     "op": "hover",
-    "key": 4,
-    "target": "cell:C"
-   },
-   {
-    "op": "hover",
     "key": 1,
-    "target": "cell:C"
-   },
-   {
-    "op": "hover",
-    "key": 3,
-    "target": "cell:A"
+    "target": "cell:*"
    },
    {
     "op": "hover",
     "key": 2,
-    "target": "cell:B"
+    "target": "cell:*"
+   },
+   {
+    "op": "hover",
+    "key": 3,
+    "target": "cell:*"
+   },
+   {
+    "op": "hover",
+    "key": 4,
+    "target": "cell:*"
+   },
+   {
+    "op": "select",
+    "key": 2
+   },
+   {
+    "op": "hover",
+    "target": "figure:C"
+   },
+   {
+    "op": "key",
+    "key": "Escape"
    }
   ]
  },
@@ -148,18 +163,35 @@
    },
    {
     "op": "hover",
-    "key": 3,
-    "target": "cell:B"
+    "key": 1,
+    "target": "cell:*"
    },
    {
     "op": "hover",
-    "key": 1,
-    "target": "cell:A"
+    "key": 2,
+    "target": "cell:*"
+   },
+   {
+    "op": "hover",
+    "key": 3,
+    "target": "cell:*"
    },
    {
     "op": "hover",
     "key": 4,
-    "target": "cell:C"
+    "target": "cell:*"
+   },
+   {
+    "op": "select",
+    "key": 2
+   },
+   {
+    "op": "hover",
+    "target": "figure:C"
+   },
+   {
+    "op": "key",
+    "key": "Escape"
    }
   ]
  },
@@ -287,7 +319,7 @@
    },
    {
     "op": "act",
-    "key": 2,
+    "key": "finish",
     "target": "B"
    },
    {
@@ -421,7 +453,7 @@
    },
    {
     "op": "act",
-    "key": 1,
+    "key": "finish",
     "target": "B"
    },
    {
@@ -535,7 +567,7 @@
   "steps": [
    {
     "op": "act",
-    "key": 3,
+    "key": "attack",
     "target": "A"
    },
    {
@@ -548,7 +580,8 @@
    {
     "op": "click",
     "text": "2x",
-    "settle": 500
+    "settle": 500,
+    "optional": true
    },
    {
     "op": "wait",
@@ -560,7 +593,8 @@
    {
     "op": "click",
     "text": "Skip",
-    "settle": 100
+    "settle": 100,
+    "optional": true
    },
    {
     "op": "frames",
@@ -586,6 +620,157 @@
    {
     "op": "wait",
     "ms": 1000
+   },
+   {
+    "op": "shot"
+   }
+  ]
+ },
+ {
+  "name": "S13a-intents-first-look",
+  "scenario": "first",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "hover",
+    "key": 2,
+    "target": "cell:*"
+   },
+   {
+    "op": "select",
+    "key": 2
+   },
+   {
+    "op": "hover",
+    "target": "figure:B"
+   },
+   {
+    "op": "key",
+    "key": "Escape"
+   },
+   {
+    "op": "select",
+    "key": 1
+   },
+   {
+    "op": "hover",
+    "target": "figure:A"
+   }
+  ]
+ },
+ {
+  "name": "S13b-intents-lethal",
+  "scenario": "lethal-intent",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "select",
+    "key": "attack"
+   },
+   {
+    "op": "key",
+    "key": "Escape"
+   }
+  ]
+ },
+ {
+  "name": "S13c-intents-support",
+  "scenario": "support-intent",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "select",
+    "key": 1
+   }
+  ]
+ },
+ {
+  "name": "S13d-intents-redirect",
+  "scenario": "redirect",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "act",
+    "key": 1,
+    "target": "A"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 300
+   }
+  ]
+ },
+ {
+  "name": "S13e-intents-execute",
+  "scenario": "before-enemy-phase",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "act",
+    "key": 3,
+    "target": "A"
+   },
+   {
+    "op": "framesUntilIdle",
+    "every": 300
+   }
+  ]
+ },
+ {
+  "name": "S13f-intents-camp",
+  "scenario": "camp-fallen",
+  "sizes": [
+   "1366x768",
+   "1920x1080",
+   "844x390"
+  ],
+  "steps": [
+   {
+    "op": "shot"
+   },
+   {
+    "op": "click",
+    "text": "Continue"
+   },
+   {
+    "op": "frames",
+    "ms": 2600,
+    "every": 650
    },
    {
     "op": "shot"

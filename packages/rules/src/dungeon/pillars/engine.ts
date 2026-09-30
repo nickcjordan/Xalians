@@ -138,12 +138,12 @@ export function enemyFighter(species: string, id: string, hp: number, rules: Rul
 }
 
 /** Can this move be used now (ready, signature unspent, does something)? */
-export function ready(u: Fighter, i: number): boolean {
+export function ready(u: Fighter, i: number, slack = 0): boolean {
   const m = u.moves[i];
-  return u.hp > 0 && u.cooldowns[i] === 0 && !(SIGNATURE_ONCE && m.signature && u.signatureSpent) && (m.power > 0 || m.parts.length > 0);
+  return u.hp > 0 && u.cooldowns[i] <= slack && !(SIGNATURE_ONCE && m.signature && u.signatureSpent) && (m.power > 0 || m.parts.length > 0);
 }
-export function legalMoves(u: Fighter): number[] {
-  return u.moves.map((_, i) => i).filter((i) => ready(u, i));
+export function legalMoves(u: Fighter, slack = 0): number[] {
+  return u.moves.map((_, i) => i).filter((i) => ready(u, i, slack));
 }
 export const foesOf = (s: Pick<PRun, "team" | "enemies">, u: Fighter) => (u.enemy ? s.team : s.enemies);
 export const matesOf = (s: Pick<PRun, "team" | "enemies">, u: Fighter) => (u.enemy ? s.enemies : s.team);
@@ -214,8 +214,12 @@ function prepare(s: PRun) {
     if (o) s.orders[u.id] = o;
   }
 }
-/** One enemy's choice for its next action, weighed in health against the board as it stands. */
-export function enemyChoice(s: Pick<PRun, "team" | "enemies" | "rng">, u: Fighter): Order | null {
+/**
+  One enemy's choice for its next action, weighed in health against the board as it stands.
+  slack: a move whose rest counter is at most this counts as ready (1 when the enemy is committing
+  to its next turn, because a rest counter ticks down at the start of the unit's own turn).
+*/
+export function enemyChoice(s: Pick<PRun, "team" | "enemies" | "rng">, u: Fighter, slack = 0): Order | null {
   const team = standing(s.team);
   const allies = standing(s.enemies);
   const hurt = [...allies].sort((a, b) => a.hp / a.max - b.hp / b.max)[0];
@@ -223,7 +227,7 @@ export function enemyChoice(s: Pick<PRun, "team" | "enemies" | "rng">, u: Fighte
   const threat = [...team].sort((a, b) => Math.max(...b.moves.map((m) => m.power)) - Math.max(...a.moves.map((m) => m.power)))[0];
   const pick = team.length ? pickTarget(s, team) : undefined;
   let best: { move: number; target: string; v: number } | null = null;
-  for (const i of legalMoves(u)) {
+  for (const i of legalMoves(u, slack)) {
     const m = u.moves[i];
     let v = 0;
     let target = pick?.id ?? u.id;
