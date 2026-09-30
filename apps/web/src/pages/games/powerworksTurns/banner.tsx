@@ -20,6 +20,8 @@ export function TurnBanner({
   round,
   readOnly = false,
   ended = null,
+  note = null,
+  noteId,
 }: {
   actorSide: "squad" | "enemy";
   actorName: string;
@@ -36,6 +38,12 @@ export function TurnBanner({
     the banner says what happened instead of whose turn it is ("Sector cleared", "Guardian down").
   */
   ended?: { kicker: string; who: string } | null;
+  /**
+    A first-occurrence note that takes the line's place while it shows (phone: the key column has no
+    room for it and the stage must not be covered, so the banner says it).
+  */
+  note?: string | null;
+  noteId?: string;
 }) {
   const kicker = ended ? ended.kicker : actorSide === "squad" ? "Your turn" : "Enemy turn";
   const who = ended ? ended.who : `${actorName}${actorSide === "enemy" && actorLetter ? ` ${actorLetter}` : ""}`;
@@ -62,7 +70,11 @@ export function TurnBanner({
         </span>
         <span className="pwt-banner-who">{who}</span>
       </p>
-      {line ? (
+      {note && !ended ? (
+        <p className="pwt-banner-line pwt-note" role="note" data-note={noteId}>
+          {note}
+        </p>
+      ) : line ? (
         lineIsSince && !readOnly ? (
           <button type="button" className="pwt-banner-line since" onClick={onOpenRecord} title="Open the full record">
             <span className="pwt-banner-line-label">Since your last turn</span> {line}
@@ -78,7 +90,7 @@ export function TurnBanner({
           </p>
         )
       ) : (
-        <p className="pwt-banner-line empty">{actorSide === "squad" && !ended ? "Choose a move, then a target." : ""}</p>
+        <p className="pwt-banner-line empty">{actorSide === "squad" && !ended ? "Pick a cell to act." : ""}</p>
       )}
     </div>
   );

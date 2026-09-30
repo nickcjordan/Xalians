@@ -22,8 +22,7 @@ import {
   turnView,
   playback,
   momentWords,
-  hinderOnAttack,
-  weakenedWords,
+  floatWords,
   recordEntries,
   roomNamesOf,
   sinceView,
@@ -37,6 +36,7 @@ import {
   revivedWords,
   hitDuring,
   keyNote,
+  type FloatItem,
   type Hold,
   type TitleCard,
   type Beat,
@@ -55,29 +55,6 @@ import { PowerworksEnvironment } from "../powerworksEnvironment";
 import "./powerworksTurns.css";
 import "./powerworksPhone.css";
 
-/** The number that rises over a beat's target: damage, healing, or the support it received. */
-function floatOf(beat: Beat, targetIsEnemy = false): FloatItem | null {
-  const e = beat.event;
-  if (e.kind === "hit") {
-    if (e.absorbed > 0 && e.amount === 0) return { text: `shield took ${e.absorbed}`, kind: "shield" };
-    // A STRONG or WEAK tag in the matchup color: color says who it favors (a strong hit on an
-    // enemy is good for you, a strong hit on your companion is bad), the word says which way.
-    const tag =
-      e.step > 1
-        ? { word: "Strong", good: targetIsEnemy }
-        : e.step > 0 && e.step < 1
-        ? { word: "Weak", good: !targetIsEnemy }
-        : undefined;
-    return { text: `-${e.amount}`, kind: "hurt", tag };
-  }
-  if (e.kind === "heal") return { text: `+${e.amount}`, kind: "heal" };
-  if (e.kind === "shield") return { text: `shield ${e.amount}`, kind: "shield" };
-  if (e.kind === "boost") return { text: `next attack +${e.amount}`, kind: "boost" };
-  if (e.kind === "hinder") return { text: `next hit -${e.amount}`, kind: "hinder" };
-  return null;
-}
-
-type FloatItem = { text: string; kind: string; tag?: { word: string; good: boolean } };
 type Moment = { actor: string; beats: Beat[]; words: string };
 type StrikeLine = { id: string; x1: number; y1: number; x2: number; y2: number };
 type FloatMark = { id: string; x: number; y: number; items: FloatItem[] };
@@ -232,6 +209,23 @@ function writeSeen(ids: string[]) {
   }
 }
 
+/** The chosen playback speed persists per browser (round 6, item 12). */
+const SPEED_KEY = "xalians.powerworks.speed.v1";
+function readSpeed(): 1 | 2 {
+  try {
+    return localStorage.getItem(SPEED_KEY) === "2" ? 2 : 1;
+  } catch {
+    return 1;
+  }
+}
+function writeSpeed(v: 1 | 2) {
+  try {
+    localStorage.setItem(SPEED_KEY, String(v));
+  } catch {
+    /* Storage unavailable: the speed lasts for this visit only. */
+  }
+}
+
 export default function PowerworksTurnsPage() {
   const [booted] = useState(boot);
   const [run, setRun] = useState<TRun>(booted.state);
@@ -246,7 +240,11 @@ export default function PowerworksTurnsPage() {
   // Units a hovered key lands on (a self-only key, an ally cell): the stage rings them.
   const [hoverUnits, setHoverUnits] = useState<string[]>([]);
   const ringed = (id: string) => !busy && (hoverTarget === id || hoverUnits.includes(id));
-  const [speed, setSpeed] = useState<1 | 2>(1);
+  const [speed, setSpeed] = useState<1 | 2>(readSpeed);
+  const chooseSpeed = (v: 1 | 2) => {
+    setSpeed(v);
+    writeSpeed(v);
+  };
   // Round 2: the briefing before a new run's first turn (a saved run in progress skips it); the
   // sector title card; the knockout hold; the camp's revive line; the recovery station's heal;
   // and the trace a cancelled restart leaves.
@@ -277,17 +275,14 @@ export default function PowerworksTurnsPage() {
   // The hand-off moment (storyboard step 1): when the enemies finish and a companion's turn
   // begins, "Your turn" is announced over the stage for a moment, so the change is seen, not
   // only read in the banner.
+  // The hand-off is signaled in the banner, the rail and the active companion's glow, with a brief
+  // edge cue on the key bar; the keys themselves are there at once, never covered (round 6, item 1).
   const [handoff, setHandoff] = useState<string | null>(null);
-  const [handoffRound, setHandoffRound] = useState<number | null>(null);
-  const handoffRoundRef = useRef(0);
   const wasBusy = useRef(false);
   useEffect(() => {
     const name = run.phase === "turn" ? run.team.find((t) => t.id === run.active)?.name : undefined;
     if (wasBusy.current && !busy && name) {
       setHandoff(name);
-      const r = view.round;
-      setHandoffRound(handoffRoundRef.current && r !== handoffRoundRef.current ? r : null);
-      handoffRoundRef.current = r;
       const t = window.setTimeout(() => setHandoff(null), 560);
       wasBusy.current = busy;
       return () => window.clearTimeout(t);
@@ -601,6 +596,9 @@ export default function PowerworksTurnsPage() {
   // An enemy's hit chip keeps showing while beats play, re-read with the boost and hinder the
   // enemy carries at this point of the playback and the health the companion has then: a hinder
   // that lands shows as the struck number on the chip.
+  // While an enemy acts they are hidden: the chip is a forecast for the companion who has just acted,
+  // and it would disagree with the beat beside it (round 6, item 2). The settled state brings the
+  // chips back, recomputed for the companion whose turn it is.
   const enemyShown = (e: (typeof view.enemies)[number]) => {
     const u = withHp(e);
     if (!busy || !u.hitOnActive || !view.active) return u;
@@ -620,10 +618,12 @@ export default function PowerworksTurnsPage() {
   const ended = holding && hold ? { kicker: hold.text, who: view.roomName } : null;
 
   // Whose turn is yours next, for the key bar while the enemies act.
+  // A command that ends the sector or the run has no next turn to name (round 6, item 5).
   const nextMine = useMemo(() => {
+    if (hold) return null;
     const now = rail.findIndex((r) => r.state === "now");
     return rail.slice(now + 1).find((r) => !r.enemy && r.state !== "down" && r.state !== "done") ?? null;
-  }, [rail]);
+  }, [rail, hold]);
 
   // The banner's actor name/letter and the moment's words.
   const bannerActor = busy
@@ -633,17 +633,11 @@ export default function PowerworksTurnsPage() {
     : view.active;
   const bannerName = bannerActor?.name ?? view.active?.name ?? "";
   const bannerLetter = actorIsEnemy && bannerActor && "letter" in bannerActor ? bannerActor.letter : undefined;
-  // An enemy that carried a hinder into its attack: say what it cost, naming the enemy.
+  // A hit its actor's hinder weakened: say what it cost, naming the unit (the beat carries it).
   const weakenedNote = useMemo(() => {
-    if (!busy || !moment || !actorIsEnemy) return "";
-    if (!moment.beats.some((b) => b.event.kind === "hit")) return "";
-    const start = Object.fromEntries(view.enemies.map((e) => [e.id, e.hinder]));
-    const prior = moments.slice(0, beatIndex).flatMap((m) => m.beats);
-    const n = hinderOnAttack(start, prior, moment.actor);
-    const foe = view.enemies.find((e) => e.id === moment.actor);
-    return n > 0 && foe ? ` ${weakenedWords(`${foe.name} ${foe.letter}`, n)}` : "";
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [busy, moment, actorIsEnemy, beatIndex, moments, view.enemies]);
+    const text = busy && moment ? moment.beats.find((b) => b.weakenedText)?.weakenedText : undefined;
+    return text ? ` ${text}` : "";
+  }, [busy, moment]);
   const beatWords =
     busy && moment
       ? landed
@@ -696,7 +690,7 @@ export default function PowerworksTurnsPage() {
       const top = at(t, enemyIds.has(t) ? 0.72 : 0.85);
       const all = moment.beats
         .filter((b) => "target" in b.event && (b.event as { target: string }).target === t)
-        .map((b) => floatOf(b, enemyIds.has(t)))
+        .map((b) => floatWords(b.event, enemyIds.has(t)))
         .filter((f): f is FloatItem => !!f);
       const main = all.filter((f) => f.kind === "hurt" || f.kind === "heal");
       const items = main.length ? main : all;
@@ -712,6 +706,23 @@ export default function PowerworksTurnsPage() {
     setMarks({ lines, floats, lunge });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [busy, moment, targets]);
+
+  // A landing number never clips at the stage's edge: one that would poke out is nudged back in
+  // (the rightmost companion's number on a phone).
+  useLayoutEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const box = stage.getBoundingClientRect();
+    const z = box.width / stage.offsetWidth || 1;
+    stage.querySelectorAll<HTMLElement>(".pwt-float").forEach((el) => {
+      el.style.marginLeft = "0px";
+      const r = el.getBoundingClientRect();
+      let shift = 0;
+      if (r.right > box.right - 4) shift = (box.right - 4 - r.right) / z;
+      else if (r.left < box.left + 4) shift = (box.left + 4 - r.left) / z;
+      if (shift) el.style.marginLeft = `${shift}px`;
+    });
+  }, [marks.floats, beatIndex, landed, holding]);
 
   // Targeting hover (storyboard "choosing" step): hovering a key cell rings its enemy target
   // and draws a faint aim line from the active companion.
@@ -761,7 +772,9 @@ export default function PowerworksTurnsPage() {
                 actorName={bannerName}
                 actorLetter={bannerLetter}
                 line={ended ? "" : beatWords || (busy ? "" : station?.text ?? since.text)}
-                lineIsSince={!ended && !beatWords && !busy && !station && !!since.text}
+                lineIsSince={!ended && !beatWords && !busy && !station && !!since.text && !(phone && shownNote)}
+                note={phone && shownNote ? shownNote.short : null}
+                noteId={phone && shownNote ? shownNote.id : undefined}
                 onOpenRecord={() => setPanel("record")}
                 round={shownRound}
                 readOnly={phone}
@@ -870,6 +883,7 @@ export default function PowerworksTurnsPage() {
                 <EnemyPlate
                   key={e.id}
                   u={enemyShown(e)}
+                  forecastOff={busy && actorIsEnemy}
                   lit={busy && actorId === e.id}
                   activeName={view.active?.name}
                   spotlit={spotlightId === e.id}
@@ -879,7 +893,16 @@ export default function PowerworksTurnsPage() {
                   impactTarget={impactTargets.includes(e.id)}
                   struck={struckIds.includes(e.id)}
                   onHover={(hovering) => setHoverTarget(hovering ? e.id : null)}
-                  onTap={twoTap ? () => setHoverTarget(e.id) : undefined}
+                  onTap={
+                    twoTap
+                      ? () => {
+                          // A tap on an enemy previews that enemy and drops any cell that was waiting for its second tap.
+                          setPreviewed(null);
+                          setHoverUnits([]);
+                          setHoverTarget(e.id);
+                        }
+                      : undefined
+                  }
                 />
               ))}
             </div>
@@ -905,7 +928,7 @@ export default function PowerworksTurnsPage() {
                 {f.items.map((it, i) => (
                   <span key={i} className={`pwt-float-num ${it.kind}`}>
                     {it.text}
-                    {it.tag && <span className={`pwt-float-tag ${it.tag.good ? "good" : "bad"}`}>{it.tag.word}</span>}
+                    {it.tag && <span className={`pwt-float-tag ${it.tag.tone}`}>{it.tag.word}</span>}
                   </span>
                 ))}
               </span>
@@ -919,10 +942,15 @@ export default function PowerworksTurnsPage() {
         </div>
 
         {view.phase === "turn" && view.active && (
-          <div className={`pwt-keybar ${busy ? "busy" : ""} ${handoff ? "handing-off" : ""} ${view.activeStatus ? "has-status" : ""}`}>
-            {view.activeStatus && !busy && (
-              <p className="pwt-keybar-statusline" data-status="" title={view.activeStatus.sentence}>
-                {view.activeStatus.sentence}
+          <div className={`pwt-keybar ${busy ? "busy" : ""} ${handoff ? "handing-off" : ""} ${view.activeStatus || (shownNote && !phone) ? "has-status" : ""}`}>
+            {(view.activeStatus || (shownNote && !phone)) && !busy && (
+              <p className="pwt-keybar-statusline" data-status={view.activeStatus ? "" : undefined} title={view.activeStatus?.sentence}>
+                {view.activeStatus && <span className="pwt-status-text">{view.activeStatus.sentence}</span>}
+                {shownNote && !phone && (
+                  <span className="pwt-note" role="note" data-note={shownNote.id}>
+                    <b>{shownNote.keyName}</b> {shownNote.text}
+                  </span>
+                )}
               </p>
             )}
             <div className="pwt-keybar-portrait">
@@ -954,28 +982,22 @@ export default function PowerworksTurnsPage() {
                 onPreview={setPreviewed}
                 onHoverTarget={(id) => setHoverTarget(id)}
                 onHoverUnits={(ids) => setHoverUnits(ids ?? [])}
-                litTargets={busy ? [] : [...(hoverTarget ? [hoverTarget] : []), ...hoverUnits]}
-                note={shownNote && shownNote.keyIndex === k.index ? shownNote : null}
+                litTargets={busy || !hoverTarget ? [] : [hoverTarget]}
+                noted={!!shownNote && shownNote.keyIndex === k.index}
+                activeName={view.active!.name}
               />
             ))}
             <button type="button" className="pwt-pass" disabled={busy} onClick={pass}>
               Pass
             </button>
-            {busy && (
+            {busy && !holding && (
               <div className="pwt-keybar-play">
                 <PlaybackTools
                   speed={speed}
-                  onSpeed={setSpeed}
+                  onSpeed={chooseSpeed}
                   onSkip={skipToHandoff}
                   skipDisabled={!busy}
                 />
-              </div>
-            )}
-            {!busy && handoff && (
-              <div className="pwt-keybar-wait handoff" aria-hidden="true" key={handoff}>
-                {handoffRound && <span className="pwt-keybar-wait-round">Round {handoffRound}</span>}
-                <span className="pwt-keybar-wait-kicker">Your turn</span>
-                <span className="pwt-keybar-wait-who">{handoff}</span>
               </div>
             )}
             {busy && (
