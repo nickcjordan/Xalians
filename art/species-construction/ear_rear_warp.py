@@ -25,6 +25,7 @@ YA, YB = .09, .31
 Z_FADE_LOW = (-.20, -.06)   # D is 0 at the first z and full at the second
 TOP_SHRINK = 0.0            # how far the ramp start moves toward the midline at the crown (0: a straight crease)
 TOP_RANGE = (0.0, .45)      # z span over which the ramp start moves; the skull edge curves in like a dome
+DOME = None                 # (a, zc, b): the ramp starts on an ellipse, half-width a at height zc, half-height b
 
 
 def _smoothstep(t):
@@ -33,10 +34,13 @@ def _smoothstep(t):
 
 
 def shift(points, x0=X0, width=WIDTH, dmax=DMAX, ya=YA, yb=YB, z_fade=Z_FADE_LOW,
-          top_shrink=TOP_SHRINK, top_range=TOP_RANGE):
+          top_shrink=TOP_SHRINK, top_range=TOP_RANGE, dome=DOME):
     """Forward shift (positive) of each head-local point."""
     p = np.asarray(points, dtype=np.float64)
     edge = x0-top_shrink*_smoothstep((p[:, 2]-top_range[0])/(top_range[1]-top_range[0]))
+    if dome is not None:
+        a, zc, b = dome
+        edge = a*np.sqrt(np.clip(1-((p[:, 2]-zc)/b)**2, 0, 1))
     d = dmax*_smoothstep((np.abs(p[:, 0])-edge)/width)*_smoothstep((p[:, 2]-z_fade[0])/(z_fade[1]-z_fade[0]))
     return d*_smoothstep((p[:, 1]-ya)/(yb-ya))
 
