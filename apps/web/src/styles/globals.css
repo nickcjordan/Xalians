@@ -305,8 +305,10 @@
 		opacity: 0;
 		pointer-events: none;
 	}
-	.story-box[data-arrival] .archive[data-screen="search"] .archive-arrival { animation: archive-arrival 400ms linear both; }
-	@keyframes archive-arrival { from { opacity: .2; } to { opacity: 0; } }
+	/* One animation across search and lock, so it runs on through the change of state instead of restarting. */
+	.story-box[data-arrival] .archive[data-screen="search"] .archive-arrival,
+	.story-box[data-arrival] .archive[data-screen="lock"] .archive-arrival { animation: archive-arrival 520ms ease-out both; }
+	@keyframes archive-arrival { from { opacity: .32; } to { opacity: 0; } }
 	.archive-glass {
 		position: absolute;
 		inset: 0;
