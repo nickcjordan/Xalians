@@ -15,14 +15,14 @@
     "unknown": "Something needed to rerun the step is missing."
   },
   "counts": {
-    "steps": 37,
-    "exact": 34,
+    "steps": 38,
+    "exact": 35,
     "reconstructed": 3,
     "unknown": 0,
     "kind:input-image": 4,
     "kind:hunyuan": 4,
     "kind:blender-script": 28,
-    "kind:python-script": 0,
+    "kind:python-script": 1,
     "kind:assemble": 1
   },
   "workingTree": {
@@ -73,6 +73,41 @@
           "config.yaml": "70bbfcdd18b9686ee56fe011c3a059b222eae1f5450f904577c50f0e107a8a53",
           "model.fp16.safetensors": "360bc281fc956d4acac0c3d36d5ec0ebf8cdddbf4b8892e894d12419388d479b"
         }
+      },
+      "checkoutCommit": "f8db63096c8282cb27354314d896feba5ba6ff8a",
+      "pipInstalls": [
+        [
+          "antlr4-python3-runtime==4.9.3",
+          "einops==0.8.2",
+          "imageio==2.38.0",
+          "lazy-loader==0.6",
+          "msvc-runtime==14.44.35112",
+          "ninja==1.13.2",
+          "omegaconf==2.3.1",
+          "pybind11==3.1.0",
+          "pymeshlab==2025.7.post1",
+          "scikit-image==0.26.0",
+          "scipy==1.18.1",
+          "tifffile==2026.9.20",
+          "trimesh==5.1.0"
+        ],
+        [
+          "--no-deps",
+          "torchvision==0.26.0",
+          "--index-url",
+          "https://download.pytorch.org/whl/cu128"
+        ],
+        [
+          "opencv-python-headless==5.0.0.93"
+        ]
+      ],
+      "pipInstallsSource": "The original pip commands were unpinned; these pins are the versions pip reported as \"Successfully installed\" in the main Codex rollout.",
+      "layoutNow": {
+        "checkout": "C:/dev/art-data/tools/Hunyuan3D-2",
+        "shapeEnv": "C:/dev/art-data/tools/shape-env",
+        "miniWeights": "C:/dev/art-data/tools/hunyuan-mini-weights/hunyuan3d-dit-v2-mini",
+        "fullWeights": "C:/dev/art-data/tools/hunyuan-full-weights/hunyuan3d-dit-v2-0",
+        "note": "Each step tree reaches these as untracked/tools/... through a junction to C:/dev/art-data/tools."
       },
       "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU",
       "evidence": [
@@ -196,6 +231,29 @@
       "proposal": "Treat provenance hashes as optional; geometry hashes and mesh statistics are the checks that matter."
     }
   ],
+  "openRisks": [
+    {
+      "id": "G8",
+      "steps": [
+        "S07",
+        "S08",
+        "S09"
+      ],
+      "risk": "S07 must reproduce its guard failure; if slightly different upstream geometry passes the guard, the runner stops at S07 because S08 needs geometry-failure.blend.",
+      "proposal": "Owner decides then: either use head-0109/head.blend as the S09 base (skipping S08) or treat the head branch as drifted from that point."
+    },
+    {
+      "id": "G9",
+      "steps": [
+        "S05",
+        "S06",
+        "S13",
+        "S18"
+      ],
+      "risk": "No recorded statistics, only output hashes (mostly .blend), so drift there is checked only at the next step with recorded statistics.",
+      "proposal": "Accept drift on those steps if the next recorded statistic matches."
+    }
+  ],
   "excludedLookalikes": [
     "body-0155 and body-0157 (the 0156 and round-1 bodies; body-0172 rebuilds from body-0100/attempt-02 instead)",
     "head-0164 to head-0167 (round 4, reverted)",
@@ -208,6 +266,35 @@
     "head-0132 and head-0142 (nose trials)",
     "assembled-0156 and every assembly except assembled-0205"
   ],
+  "execution": {
+    "runner": "art/species-construction/rebuild/run_rebuild.py",
+    "placeholders": {
+      "{TREE}": "C:/dev/art-data/rebuild/trees/<step>",
+      "{DATA}": "C:/dev/art-data/species-construction/akinza",
+      "{WSL_TREE}": "/mnt/c/dev/art-data/rebuild/trees/<step>",
+      "{WSL_DATA}": "/mnt/c/dev/art-data/species-construction/akinza",
+      "{TOOLS}": "C:/dev/art-data/tools",
+      "{WIN_BLENDER}": "toolchain.windowsBlender.path",
+      "{WSL_BLENDER}": "toolchain.wslLinuxBlender.path (run as wsl -e ...)",
+      "{SHAPE_PY}": "C:/dev/art-data/tools/shape-env/Scripts/python.exe",
+      "{SYSTEM_PY}": "the Python running run_rebuild.py (the system Python 3.14 that ran loop_tools.py and S03)",
+      "{LOG}": "C:/dev/art-data/rebuild/log"
+    },
+    "interpreters": {
+      "windows-blender": "argv[0] is the Windows Blender",
+      "wsl-blender": "argv is prefixed with wsl -e",
+      "shape-env-python": "Hunyuan environment python",
+      "system-python": "system Python",
+      "loop-tools": "system Python running the tree loop_tools.py, which launches the Windows Blender"
+    },
+    "wslJunctions": "Checked 2026-09-30: WSL follows NTFS junctions under /mnt/c (they appear as symlinks to /mnt/c/dev/art-data/...), so WSL steps could use either path; argv uses {WSL_DATA} directly.",
+    "verdicts": {
+      "match": "every expected hash matches and every statistic is exact",
+      "drift": "some hash differs, but statistics are within tolerance",
+      "fail": "unexpected exit code, a missing output or log pattern, or a statistic outside tolerance"
+    },
+    "tolerance": "Counts are exact when every upstream Hunyuan root reproduced its shape.glb bit for bit, else within 2 percent; flags (components, non-manifold edges, watertight, status) are always exact."
+  },
   "steps": [
     {
       "order": 1,
@@ -248,6 +335,48 @@
           "quote": "\"inputSha256\": \"3b3f560be93b607255eaa11a6f5212c515219e384ff7ac81e8e3d0d8c5489d4a\""
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "414f48af",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [
+            {
+              "path": "rebuild/S01_input.py",
+              "content": "from PIL import Image\nfrom scipy import ndimage\nimport numpy as np,json,hashlib\nfrom pathlib import Path\nsource=Path('docs/design/species-construction/akinza/evidence/head-clay-study-0021.png')\nout=Path('untracked/species-construction/akinza/head-0024');out.mkdir(exist_ok=False,parents=True)\nrect=(0,120,853,653)\nim=Image.open(source).convert('RGB').crop(rect)\na=np.asarray(im);white=a.min(axis=2)>240\nseed=np.zeros(white.shape,bool);seed[0,:]=white[0,:];seed[-1,:]=white[-1,:];seed[:,0]=white[:,0];seed[:,-1]=white[:,-1]\nbg=ndimage.binary_propagation(seed,mask=white)\nmask=(~bg).astype('uint8')*255\nim.putalpha(Image.fromarray(mask));im.save(out/'input.png')\nsha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()\n(out/'input.json').write_text(json.dumps({'source':source.as_posix(),'sourceSha256':sha(source),'cropBox':rect,'maskMethod':'Flood fill edge-connected pixels with all RGB channels >240; enclosed whites retained','inputSha256':sha(out/'input.png'),'scope':'Front head crop for local shape reconstruction; no image generation or painting'},indent=2)+'\\n')\n",
+              "origin": "verbatim here-string piped to \"& untracked/tools/shape-env/Scripts/python.exe -\""
+            }
+          ],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "shape-env-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0024/input.png",
+          "{DATA}/head-0024/input.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0024/input.png": "3b3f560be93b607255eaa11a6f5212c515219e384ff7ac81e8e3d0d8c5489d4a"
+        },
+        "checks": [],
+        "argv": [
+          "{SHAPE_PY}",
+          "{TREE}/rebuild/S01_input.py"
+        ],
+        "guard": [
+          "{DATA}/head-0024"
+        ],
+        "note": "The snippet uses repository-relative paths, so cwd is the tree; the evidence PNG comes from the archive and the output lands in {DATA} through the junction."
+      },
       "dependsOn": []
     },
     {
@@ -288,6 +417,48 @@
           "quote": "\"inputSha256\": \"6b2d46ac...\""
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "414f48af",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [
+            {
+              "path": "rebuild/B01_input.py",
+              "content": "from PIL import Image\nfrom scipy import ndimage\nimport numpy as np,json,hashlib\nfrom pathlib import Path\nsource=Path('docs/design/species-construction/akinza/evidence/body-study-0003.png')\nout=Path('untracked/species-construction/akinza/body-reconstruction-0028');out.mkdir(exist_ok=False,parents=True)\nrect=(0,0,650,810)\nim=Image.open(source).convert('RGB').crop(rect)\na=np.asarray(im);white=a.min(axis=2)>235\nseed=np.zeros(white.shape,bool);seed[0,:]=white[0,:];seed[-1,:]=white[-1,:];seed[:,0]=white[:,0];seed[:,-1]=white[:,-1]\nbg=ndimage.binary_propagation(seed,mask=white)\nlabels,n=ndimage.label(~bg);counts=np.bincount(labels.ravel());counts[0]=0\nmask=(labels==counts.argmax()).astype('uint8')*255\nim.putalpha(Image.fromarray(mask));im.save(out/'input.png')\nsha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()\n(out/'input.json').write_text(json.dumps({'source':source.as_posix(),'sourceSha256':sha(source),'cropBox':rect,'maskMethod':'Edge-connected RGB>235 removed, largest remaining component retained','inputSha256':sha(out/'input.png'),'scope':'Local torso and limb starting mesh, not a replacement reference','exclude':['Head to be replaced with separately refined head','Tail geometry and root superseded by accepted study-0018','Human fingers to be removed and animal paws rebuilt','Feet require accepted paw comparison','Shin shaft and ankle require straight-segment and joint audit'],'approval':None},indent=2)+'\\n')\n",
+              "origin": "verbatim here-string piped to \"& untracked/tools/shape-env/Scripts/python.exe -\""
+            }
+          ],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "shape-env-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-reconstruction-0028/input.png",
+          "{DATA}/body-reconstruction-0028/input.json"
+        ],
+        "hashes": {
+          "{DATA}/body-reconstruction-0028/input.png": "6b2d46ac62de678c82325e360df2ac29ca945aa9d3bd466393b80a364144874e"
+        },
+        "checks": [],
+        "argv": [
+          "{SHAPE_PY}",
+          "{TREE}/rebuild/B01_input.py"
+        ],
+        "guard": [
+          "{DATA}/body-reconstruction-0028"
+        ],
+        "note": "The snippet uses repository-relative paths, so cwd is the tree; the evidence PNG comes from the archive and the output lands in {DATA} through the junction."
+      },
       "dependsOn": []
     },
     {
@@ -328,6 +499,48 @@
           "quote": "\"outputSha256\": \"09cc0501...\""
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "414f48af",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [
+            {
+              "path": "rebuild/B03_input.py",
+              "content": "from PIL import Image\nfrom pathlib import Path\nimport numpy as np, scipy.ndimage as ndi, hashlib,json\nsrc=Path('docs/design/species-construction/akinza/evidence/paws-study-0020.png')\nout=Path('untracked/species-construction/akinza/paw-reconstruction-0041');out.mkdir(exist_ok=False)\nrect=(175,480,590,980)\nim=Image.open(src).convert('RGB').crop(rect)\na=np.asarray(im); white=(a.min(axis=2)>235)\nborder=np.zeros(white.shape,bool);border[0,:]=border[-1,:]=True;border[:,0]=border[:,-1]=True\nbg=ndi.binary_propagation(border&white,mask=white)\nlabels,n=ndi.label(~bg); sizes=np.bincount(labels.flat);sizes[0]=0;mask=labels==sizes.argmax()\nrgba=np.dstack((a,mask.astype('uint8')*255));Image.fromarray(rgba).save(out/'input.png')\nsha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()\n(out/'input.json').write_text(json.dumps({'source':str(src),'sourceSha256':sha(src),'crop':rect,'mask':'Edge-connected RGB>235 background removed, largest remaining foreground component','purpose':'Local geometry reconstruction of accepted animal hindpaw, no image synthesis','approval':None,'exclusions':'Uncalibrated scale and hidden topology remain proposals','outputSha256':sha(out/'input.png')},indent=2)+'\\n')\n",
+              "origin": "verbatim here-string piped to \"& untracked/tools/shape-env/Scripts/python.exe -\""
+            }
+          ],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "shape-env-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/paw-reconstruction-0041/input.png",
+          "{DATA}/paw-reconstruction-0041/input.json"
+        ],
+        "hashes": {
+          "{DATA}/paw-reconstruction-0041/input.png": "09cc0501c97af88f6e924e702f350c5aa5b83ebdb427ba6ff32acdd3af146a4a"
+        },
+        "checks": [],
+        "argv": [
+          "{SHAPE_PY}",
+          "{TREE}/rebuild/B03_input.py"
+        ],
+        "guard": [
+          "{DATA}/paw-reconstruction-0041"
+        ],
+        "note": "The snippet uses repository-relative paths, so cwd is the tree; the evidence PNG comes from the archive and the output lands in {DATA} through the junction."
+      },
       "dependsOn": []
     },
     {
@@ -359,6 +572,46 @@
           "quote": "src=Path('docs/design/species-construction/akinza/evidence/face-study-0010.png') ... if min(px[x,y][:3])<=240:continue"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "414f48af",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [
+            {
+              "path": "rebuild/S03_input.py",
+              "content": "import hashlib,json\nfrom pathlib import Path\nfrom collections import deque\nfrom PIL import Image\nsrc=Path('docs/design/species-construction/akinza/evidence/face-study-0010.png')\nout=Path('untracked/species-construction/akinza/face-source-0095')\nout.mkdir(exist_ok=False)\nim=Image.open(src).convert('RGBA');px=im.load();w,h=im.size\nqueue=deque([(x,y) for x in range(w) for y in [0,h-1]]+[(x,y) for y in range(h) for x in [0,w-1]])\nseen=set();count=0\nwhile queue:\n x,y=queue.popleft()\n if (x,y) in seen or not (0<=x<w and 0<=y<h):continue\n seen.add((x,y))\n if min(px[x,y][:3])<=240:continue\n px[x,y]=(*px[x,y][:3],0);count+=1\n queue.extend([(x-1,y),(x+1,y),(x,y-1),(x,y+1)])\nim.save(out/'input.png')\nsha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()\n(out/'input.json').write_text(json.dumps({'source':str(src),'sourceSha256':sha(src),'cropBox':[0,0,w,h],'maskMethod':'Flood fill edge-connected pixels with all RGB channels >240; enclosed whites retained','maskedPixelCount':count,'inputSha256':sha(out/'input.png'),'scope':'Geometry reconstruction of accepted face detail; no synthesis or painting'},indent=2)+'\\n')\n",
+              "origin": "verbatim here-string piped to \"python -\""
+            }
+          ],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "system-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/face-source-0095/input.png",
+          "{DATA}/face-source-0095/input.json"
+        ],
+        "hashes": {},
+        "checks": [],
+        "argv": [
+          "{SYSTEM_PY}",
+          "{TREE}/rebuild/S03_input.py"
+        ],
+        "guard": [
+          "{DATA}/face-source-0095"
+        ],
+        "note": "The snippet uses repository-relative paths, so cwd is the tree; the evidence PNG comes from the archive and the output lands in {DATA} through the junction. No input.png hash was ever recorded; S04 checks it indirectly."
+      },
       "dependsOn": []
     },
     {
@@ -433,7 +686,83 @@
           "originalPath": "art/species-construction/reconstruct_shape.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "414f48af",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B02/reconstruct_shape.py",
+              "to": "art/species-construction/reconstruct_shape.py",
+              "sha256": "0ee5b2d287aec35965ab01ee278e102cfe2f7cea647cb9a521f85afca8d4e1b2"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "shape-env-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-reconstruction-0028/attempt-01/shape.glb",
+          "{DATA}/body-reconstruction-0028/attempt-01/reconstruction.json"
+        ],
+        "hashes": {
+          "{DATA}/body-reconstruction-0028/attempt-01/shape.glb": "35fdef14a423942211b413956ca109d10271873d6941d56244283cef722b962c"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-reconstruction-0028/attempt-01/reconstruction.json",
+            "key": "vertices",
+            "expect": 319598,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-reconstruction-0028/attempt-01/reconstruction.json",
+            "key": "faces",
+            "expect": 639216,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-reconstruction-0028/attempt-01/reconstruction.json",
+            "key": "watertight",
+            "expect": false,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-reconstruction-0028/attempt-01/reconstruction.json",
+            "key": "status",
+            "expect": "mesh_exported",
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SHAPE_PY}",
+          "art/species-construction/reconstruct_shape.py",
+          "--source",
+          "untracked/tools/Hunyuan3D-2",
+          "--weights",
+          "untracked/tools/hunyuan-mini-weights",
+          "--input",
+          "untracked/species-construction/akinza/body-reconstruction-0028/input.png",
+          "--out",
+          "untracked/species-construction/akinza/body-reconstruction-0028/attempt-01"
+        ],
+        "guard": [
+          "{DATA}/body-reconstruction-0028/attempt-01/shape.glb",
+          "{DATA}/body-reconstruction-0028/attempt-01/reconstruction.json"
+        ],
+        "note": "Paths stay repository-relative because reconstruction.json records the --input argument verbatim; cwd is the tree and the junctions resolve them."
+      },
       "dependsOn": [
         "B01"
       ]
@@ -510,7 +839,88 @@
           "originalPath": "art/species-construction/reconstruct_shape.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "414f48af",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B04/reconstruct_shape.py",
+              "to": "art/species-construction/reconstruct_shape.py",
+              "sha256": "dbf322ed5e78cb41c38032dd6ed64bd4e71a6555b2502ff07f4a7011ec4de946"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "shape-env-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/paw-reconstruction-0041/attempt-01/shape.glb",
+          "{DATA}/paw-reconstruction-0041/attempt-01/reconstruction.json"
+        ],
+        "hashes": {
+          "{DATA}/paw-reconstruction-0041/attempt-01/shape.glb": "4ed599c4c24a1e5a83f1615a02f5f49238e9ab1063afb133bb21d50edbcd7fbb"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/paw-reconstruction-0041/attempt-01/reconstruction.json",
+            "key": "vertices",
+            "expect": 567390,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/paw-reconstruction-0041/attempt-01/reconstruction.json",
+            "key": "faces",
+            "expect": 1134734,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/paw-reconstruction-0041/attempt-01/reconstruction.json",
+            "key": "watertight",
+            "expect": false,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/paw-reconstruction-0041/attempt-01/reconstruction.json",
+            "key": "status",
+            "expect": "mesh_exported",
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SHAPE_PY}",
+          "art/species-construction/reconstruct_shape.py",
+          "--source",
+          "untracked/tools/Hunyuan3D-2",
+          "--weights",
+          "untracked/tools/hunyuan-full-weights",
+          "--subfolder",
+          "hunyuan3d-dit-v2-0",
+          "--model-id",
+          "tencent/Hunyuan3D-2",
+          "--cpu-offload",
+          "--input",
+          "untracked/species-construction/akinza/paw-reconstruction-0041/input.png",
+          "--out",
+          "untracked/species-construction/akinza/paw-reconstruction-0041/attempt-01"
+        ],
+        "guard": [
+          "{DATA}/paw-reconstruction-0041/attempt-01/shape.glb",
+          "{DATA}/paw-reconstruction-0041/attempt-01/reconstruction.json"
+        ],
+        "note": "Paths stay repository-relative because reconstruction.json records the --input argument verbatim; cwd is the tree and the junctions resolve them."
+      },
       "dependsOn": [
         "B03"
       ]
@@ -591,7 +1001,88 @@
           "originalPath": "art/species-construction/reconstruct_shape.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "414f48af",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S02/reconstruct_shape.py",
+              "to": "art/species-construction/reconstruct_shape.py",
+              "sha256": "35aa04f0dcb83edb35ae33d52a6965bdb0808993bb568811328b2420c107ee20"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "shape-env-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-full-0058/shape.glb",
+          "{DATA}/head-full-0058/reconstruction.json"
+        ],
+        "hashes": {
+          "{DATA}/head-full-0058/shape.glb": "935675ed55f78d0486df558d18121547e83726d4070b15f2a260c295fbeadf8a"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-full-0058/reconstruction.json",
+            "key": "vertices",
+            "expect": 272666,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-full-0058/reconstruction.json",
+            "key": "faces",
+            "expect": 545334,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-full-0058/reconstruction.json",
+            "key": "watertight",
+            "expect": false,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-full-0058/reconstruction.json",
+            "key": "status",
+            "expect": "mesh_exported",
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SHAPE_PY}",
+          "art/species-construction/reconstruct_shape.py",
+          "--source",
+          "untracked/tools/Hunyuan3D-2",
+          "--weights",
+          "untracked/tools/hunyuan-full-weights",
+          "--subfolder",
+          "hunyuan3d-dit-v2-0",
+          "--model-id",
+          "tencent/Hunyuan3D-2",
+          "--cpu-offload",
+          "--input",
+          "untracked/species-construction/akinza/head-0024/input.png",
+          "--out",
+          "untracked/species-construction/akinza/head-full-0058"
+        ],
+        "guard": [
+          "{DATA}/head-full-0058/shape.glb",
+          "{DATA}/head-full-0058/reconstruction.json"
+        ],
+        "note": "Paths stay repository-relative because reconstruction.json records the --input argument verbatim; cwd is the tree and the junctions resolve them."
+      },
       "dependsOn": [
         "S01"
       ]
@@ -663,6 +1154,81 @@
           "quote": "face-source-0095/reconstruction/shape.glb sha256 0b7e354e..."
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "ba7cd0e3",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "shape-env-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/face-source-0095/reconstruction/shape.glb",
+          "{DATA}/face-source-0095/reconstruction/reconstruction.json"
+        ],
+        "hashes": {
+          "{DATA}/face-source-0095/reconstruction/shape.glb": "0b7e354e7b00b4e50d378415e12e9a18c72b93356f9a87f830cfaa732caa1fec"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/face-source-0095/reconstruction/reconstruction.json",
+            "key": "vertices",
+            "expect": 472514,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/face-source-0095/reconstruction/reconstruction.json",
+            "key": "faces",
+            "expect": 945052,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/face-source-0095/reconstruction/reconstruction.json",
+            "key": "watertight",
+            "expect": false,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/face-source-0095/reconstruction/reconstruction.json",
+            "key": "status",
+            "expect": "mesh_exported",
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SHAPE_PY}",
+          "art/species-construction/reconstruct_shape.py",
+          "--source",
+          "untracked/tools/Hunyuan3D-2",
+          "--weights",
+          "untracked/tools/hunyuan-full-weights",
+          "--subfolder",
+          "hunyuan3d-dit-v2-0",
+          "--model-id",
+          "tencent/Hunyuan3D-2",
+          "--cpu-offload",
+          "--input",
+          "untracked/species-construction/akinza/face-source-0095/input.png",
+          "--out",
+          "untracked/species-construction/akinza/face-source-0095/reconstruction"
+        ],
+        "guard": [
+          "{DATA}/face-source-0095/reconstruction/shape.glb",
+          "{DATA}/face-source-0095/reconstruction/reconstruction.json"
+        ],
+        "note": "Paths stay repository-relative because reconstruction.json records the --input argument verbatim; cwd is the tree and the junctions resolve them."
+      },
       "dependsOn": [
         "S03"
       ]
@@ -749,7 +1315,80 @@
           "originalPath": "art/species-construction/refine_reconstructed_body.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "ba7cd0e3",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B05/refine_reconstructed_body.py",
+              "to": "art/species-construction/refine_reconstructed_body.py",
+              "sha256": "a068b52fc3b0278c7943558f14454b952a36e37a8cee91393a0ed488ef225cad"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "windows-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0072/attempt-02/shape.glb",
+          "{DATA}/body-0072/attempt-02/body.blend",
+          "{DATA}/body-0072/attempt-02/refinement.json"
+        ],
+        "hashes": {
+          "{DATA}/body-0072/attempt-02/shape.glb": "b49a73749f843b4758b5c7ffd634022e853c5fa8ab962e0570982ea2af7e3d53",
+          "{DATA}/body-0072/attempt-02/body.blend": "d2c440d90129080376afae733b671f45248e766d12cd777231f190b70d7e94ec"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-0072/attempt-02/refinement.json",
+            "key": "body.vertices",
+            "expect": 293408,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0072/attempt-02/refinement.json",
+            "key": "body.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0072/attempt-02/refinement.json",
+            "key": "body.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WIN_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{TREE}/art/species-construction/refine_reconstructed_body.py",
+          "--",
+          "--mesh",
+          "{DATA}/body-reconstruction-0028/attempt-01/shape.glb",
+          "--out",
+          "{DATA}/body-0072/attempt-02",
+          "--omit-tails"
+        ],
+        "guard": [
+          "{DATA}/body-0072/attempt-02"
+        ]
+      },
       "dependsOn": [
         "B02"
       ]
@@ -818,6 +1457,72 @@
           "quote": "\"scriptSha256\": \"7de62382...\", shape.glb 2c70de1d..."
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "ba7cd0e3",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "windows-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0073/shape.glb",
+          "{DATA}/body-0073/body.blend",
+          "{DATA}/body-0073/reconciliation.json"
+        ],
+        "hashes": {
+          "{DATA}/body-0073/shape.glb": "2c70de1ddd6d110e67a40e90e622749ccf4dcb92da2c335b7ac509b07015c3e9",
+          "{DATA}/body-0073/body.blend": "2724d1fe33113df042fe5c0465db818e11f33d294cdbc79d5cd81b66c4ef453d"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-0073/reconciliation.json",
+            "key": "body.vertices",
+            "expect": 276894,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0073/reconciliation.json",
+            "key": "body.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0073/reconciliation.json",
+            "key": "body.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WIN_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{TREE}/art/species-construction/reconcile_reconstructed_body.py",
+          "--",
+          "--mesh",
+          "{DATA}/body-0072/attempt-02/shape.glb",
+          "--out",
+          "{DATA}/body-0073"
+        ],
+        "guard": [
+          "{DATA}/body-0073"
+        ]
+      },
       "dependsOn": [
         "B05"
       ]
@@ -909,7 +1614,85 @@
           "originalPath": "art/species-construction/blender_blockout.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "ba7cd0e3",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B07/integrate_reconstructed_paws.py",
+              "to": "art/species-construction/integrate_reconstructed_paws.py",
+              "sha256": "f5943d9d29552d447a4c063da4d829f293b7ff7a4efc7b47508d665e5ebe67f0"
+            },
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B07/blender_blockout.py",
+              "to": "art/species-construction/blender_blockout.py",
+              "sha256": "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "windows-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0086/attempt-03/shape.glb",
+          "{DATA}/body-0086/attempt-03/body.blend",
+          "{DATA}/body-0086/attempt-03/integration.json"
+        ],
+        "hashes": {
+          "{DATA}/body-0086/attempt-03/shape.glb": "158d95705ac732f3c78baa8a00923f0173fdd60ea8818cace88b934acdb25a81",
+          "{DATA}/body-0086/attempt-03/body.blend": "17760f217090f67b6b57b070c4b9672f50f3b2b256f28e3472f3f205607737ef"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-0086/attempt-03/integration.json",
+            "key": "body.vertices",
+            "expect": 522150,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0086/attempt-03/integration.json",
+            "key": "body.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0086/attempt-03/integration.json",
+            "key": "body.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WIN_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python",
+          "{TREE}/art/species-construction/integrate_reconstructed_paws.py",
+          "--",
+          "--body",
+          "{DATA}/body-0073/shape.glb",
+          "--paw",
+          "{DATA}/paw-reconstruction-0041/attempt-01/shape.glb",
+          "--out",
+          "{DATA}/body-0086/attempt-03"
+        ],
+        "guard": [
+          "{DATA}/body-0086/attempt-03"
+        ],
+        "note": "The original command had no --python-exit-code, so a Python error still exits 0; the output and record checks catch it."
+      },
       "dependsOn": [
         "B04",
         "B06"
@@ -998,7 +1781,85 @@
           "originalPath": "art/species-construction/blender_blockout.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "ba7cd0e3",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B08/fair_reconstruction_joints.py",
+              "to": "art/species-construction/fair_reconstruction_joints.py",
+              "sha256": "588a276ee6e4fd5c0ab397106f62cd207e7594716e3a875bec7537851e41ba8f"
+            },
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/B08/blender_blockout.py",
+              "to": "art/species-construction/blender_blockout.py",
+              "sha256": "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "windows-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0100/attempt-02/shape.glb",
+          "{DATA}/body-0100/attempt-02/body.blend",
+          "{DATA}/body-0100/attempt-02/fairing.json"
+        ],
+        "hashes": {
+          "{DATA}/body-0100/attempt-02/shape.glb": "4bf34b95078d3a67cdd21261f7fdd9d47d4aa1c799e1a471747d5674a3287a60",
+          "{DATA}/body-0100/attempt-02/body.blend": "d097ae536a2ffecea0e6bde24052ae53f5a20ebf2c16a7a5cbcca22f768b086e"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-0100/attempt-02/fairing.json",
+            "key": "body.vertices",
+            "expect": 623412,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0100/attempt-02/fairing.json",
+            "key": "body.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0100/attempt-02/fairing.json",
+            "key": "body.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WIN_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{TREE}/art/species-construction/fair_reconstruction_joints.py",
+          "--",
+          "--mesh",
+          "{DATA}/body-0086/attempt-03/shape.glb",
+          "--out",
+          "{DATA}/body-0100/attempt-02",
+          "--tail-free-input"
+        ],
+        "guard": [
+          "{DATA}/body-0100/attempt-02"
+        ]
+      },
       "dependsOn": [
         "B07"
       ]
@@ -1074,7 +1935,67 @@
           "originalPath": "art/species-construction/blender_blockout.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "ba7cd0e3",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S05/refine_reconstructed_head.py",
+              "to": "art/species-construction/refine_reconstructed_head.py",
+              "sha256": "14b45dab83edb80aaf82852d41bbd23296c1f77fc6762e52aca54c38d06ae901"
+            },
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S05/blender_blockout.py",
+              "to": "art/species-construction/blender_blockout.py",
+              "sha256": "d861ad5bc615c25e34caf309c10d0b928cdeedde3d5490ef9d3d044dbaaa7f2a"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "wsl-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0095/shape.glb",
+          "{DATA}/head-0095/head.blend",
+          "{DATA}/head-0095/refinement.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0095/head.blend": "c63e52fec3d9fc8b204ebf1461ce20fa459cb9e9a7d8434a0c0bf9dfe712c1aa"
+        },
+        "checks": [],
+        "argv": [
+          "{WSL_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{WSL_TREE}/art/species-construction/refine_reconstructed_head.py",
+          "--",
+          "--mesh",
+          "{WSL_DATA}/head-full-0058/shape.glb",
+          "--out",
+          "{WSL_DATA}/head-0095"
+        ],
+        "guard": [
+          "{DATA}/head-0095"
+        ],
+        "expectLog": [
+          "After eye aperture"
+        ]
+      },
       "dependsOn": [
         "S02"
       ]
@@ -1163,7 +2084,67 @@
           "originalPath": "art/species-construction/blender_blockout.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "ba7cd0e3",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S06/transplant_reconstructed_muzzle.py",
+              "to": "art/species-construction/transplant_reconstructed_muzzle.py",
+              "sha256": "4f79af4a5b9a283750c48e0c4ee7d6d961a1e4788055bc9f22e5b3cedc1b2341"
+            },
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S06/blender_blockout.py",
+              "to": "art/species-construction/blender_blockout.py",
+              "sha256": "b22f1565e30d33c60bb97b1489b46ba4c8fad1de631badb4bcd5ee372a7d363a"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "wsl-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0100/shape.glb",
+          "{DATA}/head-0100/head.blend",
+          "{DATA}/head-0100/transplant.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0100/head.blend": "499e1483f0d78e59c1b9d29216f85860db108165dbfbd2171bc8ebebbfca95e7",
+          "{DATA}/head-0100/shape.glb": "bc2dbd752969732e3c89478d2723e688bb3a46b99fa5d4434236f6dfd56002b1"
+        },
+        "checks": [],
+        "argv": [
+          "{WSL_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{WSL_TREE}/art/species-construction/transplant_reconstructed_muzzle.py",
+          "--",
+          "--base",
+          "{WSL_DATA}/head-0095/head.blend",
+          "--donor",
+          "{WSL_DATA}/face-source-0095/reconstruction/shape.glb",
+          "--out",
+          "{WSL_DATA}/head-0100"
+        ],
+        "guard": [
+          "{DATA}/head-0100"
+        ]
+      },
       "dependsOn": [
         "S04",
         "S05"
@@ -1238,7 +2219,59 @@
           "originalPath": "art/species-construction/refine_reconstructed_coat.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "46dbc305",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S07/refine_reconstructed_coat.py",
+              "to": "art/species-construction/refine_reconstructed_coat.py",
+              "sha256": "3eef4fefecbfb5105dfdda6924f485d84d85e6e25d0d612729a1069d342b29d5"
+            }
+          ],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "wsl-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": "nonzero",
+        "outputs": [
+          "{DATA}/head-0109/geometry-failure.blend"
+        ],
+        "hashes": {},
+        "checks": [],
+        "argv": [
+          "{WSL_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{WSL_TREE}/art/species-construction/refine_reconstructed_coat.py",
+          "--",
+          "--mesh",
+          "{WSL_DATA}/head-0100/shape.glb",
+          "--out",
+          "{WSL_DATA}/head-0109"
+        ],
+        "guard": [
+          "{DATA}/head-0109"
+        ],
+        "expectLog": [
+          "expected one closed solid"
+        ],
+        "note": "Expected to fail its single-closed-mesh guard; the saved geometry-failure.blend is the input of S08."
+      },
       "dependsOn": [
         "S06"
       ]
@@ -1314,7 +2347,76 @@
           "originalPath": "untracked/species-construction/akinza/recover_0109_flakes.py"
         }
       },
-      "recoveredScriptUse": "Copy each recovered file over its originalPath in the build tree before running this step, then restore the committed version.",
+      "recoveredScriptUse": "run_rebuild.py overlays these files onto the step tree (run.tree.overlays), so nothing in the repository is overwritten.",
+      "run": {
+        "tree": {
+          "commit": "46dbc305",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [
+            {
+              "from": "docs/design/species-construction/akinza/rebuild/recovered-scripts/S08/recover_0109_flakes.py",
+              "to": "art/species-construction/recover_0109_flakes.py",
+              "sha256": "e7ca2554c40869fc7d4d8ba97af8933f5c56b10aceac47f33ccd54032acc0300"
+            }
+          ],
+          "edits": [
+            {
+              "file": "art/species-construction/recover_0109_flakes.py",
+              "find": "root=Path('/mnt/c/Users/njord/.codex/worktrees/1d07/Xalians')",
+              "replace": "root=Path('{WSL_TREE}')",
+              "count": 1,
+              "why": "The recovery script hardcodes the deleted worktree root; the tree (whose untracked junction WSL follows) replaces it."
+            }
+          ],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          },
+          "note": "recover_0109_flakes.py originally lived in untracked/species-construction/akinza; it goes into the tree at art/species-construction so the shared data folder stays clean."
+        },
+        "interpreter": "wsl-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0109/recovered-02/head.blend",
+          "{DATA}/head-0109/recovered-02/shape.glb",
+          "{DATA}/head-0109/recovered-02/recovery.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0109/recovered-02/head.blend": "df37df1fbf738a827271ec9ca616263ead49ab1fd3c0b1a15b47bbe336cd2c48"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0109/recovered-02/recovery.json",
+            "key": "after.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0109/recovered-02/recovery.json",
+            "key": "after.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WSL_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{WSL_TREE}/art/species-construction/recover_0109_flakes.py"
+        ],
+        "guard": [
+          "{DATA}/head-0109/recovered-02"
+        ]
+      },
       "dependsOn": [
         "S07"
       ]
@@ -1382,6 +2484,72 @@
           "quote": "\"stageProvenanceSha256\": \"c6d65413...\", \"head.blend\": \"b8c5a829...\", \"shape.glb\": \"009eed73...\""
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "46dbc305",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "wsl-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0110/attempt-02/shape.glb",
+          "{DATA}/head-0110/attempt-02/head.blend",
+          "{DATA}/head-0110/attempt-02/cheek-refinement.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0110/attempt-02/head.blend": "b8c5a8295f27aaf03325f9422e4d5cfc18937a715dba589c66a8d08e91b21bb2",
+          "{DATA}/head-0110/attempt-02/shape.glb": "009eed73c53aa43dc81cd1b81175494db8f32c558622ee373fa6c2fe4a35e299"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0110/attempt-02/cheek-refinement.json",
+            "key": "after.vertices",
+            "expect": 1022996,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0110/attempt-02/cheek-refinement.json",
+            "key": "after.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0110/attempt-02/cheek-refinement.json",
+            "key": "after.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WSL_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{WSL_TREE}/art/species-construction/refine_reconstructed_cheek.py",
+          "--",
+          "--base",
+          "{WSL_DATA}/head-0109/recovered-02/head.blend",
+          "--out",
+          "{WSL_DATA}/head-0110/attempt-02"
+        ],
+        "guard": [
+          "{DATA}/head-0110/attempt-02"
+        ]
+      },
       "dependsOn": [
         "S08"
       ]
@@ -1442,6 +2610,71 @@
           "quote": "cranial-volume record \"sourceSha256\": \"893d8448...\""
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "46dbc305",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "wsl-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0110/posterior-pass/shape.glb",
+          "{DATA}/head-0110/posterior-pass/head.blend",
+          "{DATA}/head-0110/posterior-pass/transition-fairing.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0110/posterior-pass/head.blend": "893d8448c9b68404e318c077267ea8b1992b2de844c8264a6a48b649e7f1d22e"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0110/posterior-pass/transition-fairing.json",
+            "key": "after.vertices",
+            "expect": 1022996,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0110/posterior-pass/transition-fairing.json",
+            "key": "after.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0110/posterior-pass/transition-fairing.json",
+            "key": "after.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WSL_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{WSL_TREE}/art/species-construction/fair_reconstructed_transitions.py",
+          "--",
+          "--base",
+          "{WSL_DATA}/head-0110/attempt-02/head.blend",
+          "--out",
+          "{WSL_DATA}/head-0110/posterior-pass"
+        ],
+        "guard": [
+          "{DATA}/head-0110/posterior-pass"
+        ]
+      },
       "dependsOn": [
         "S09"
       ]
@@ -1509,6 +2742,71 @@
           "quote": "\"stageProvenanceSha256\": \"a53c5151...\""
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "46dbc305",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "wsl-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0110/cranial-volume/shape.glb",
+          "{DATA}/head-0110/cranial-volume/head.blend",
+          "{DATA}/head-0110/cranial-volume/occiput-refinement.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0110/cranial-volume/head.blend": "ca5a4c81b7aa19bb8c83ed4a752ef6daac249106cba1af746d116ea1b3729fc9"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0110/cranial-volume/occiput-refinement.json",
+            "key": "after.vertices",
+            "expect": 1022996,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0110/cranial-volume/occiput-refinement.json",
+            "key": "after.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0110/cranial-volume/occiput-refinement.json",
+            "key": "after.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WSL_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{WSL_TREE}/art/species-construction/reshape_reconstructed_occiput.py",
+          "--",
+          "--base",
+          "{WSL_DATA}/head-0110/posterior-pass/head.blend",
+          "--out",
+          "{WSL_DATA}/head-0110/cranial-volume"
+        ],
+        "guard": [
+          "{DATA}/head-0110/cranial-volume"
+        ]
+      },
       "dependsOn": [
         "S10"
       ]
@@ -1583,6 +2881,72 @@
           "quote": "head-0110/lower-ear-taper/head.blend 1c49d8d0..."
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "46dbc305",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "wsl-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0110/lower-ear-taper/shape.glb",
+          "{DATA}/head-0110/lower-ear-taper/head.blend",
+          "{DATA}/head-0110/lower-ear-taper/lower-ear-refinement.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0110/lower-ear-taper/head.blend": "1c49d8d06cbb9df75ac020eda997f43fffd49b06da71ce8381db849646675136",
+          "{DATA}/head-0110/lower-ear-taper/shape.glb": "b43f02e15ef1b2b341ed619cc965e524cce0b42159293df723bef39da64a4c6b"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0110/lower-ear-taper/lower-ear-refinement.json",
+            "key": "after.vertices",
+            "expect": 1022996,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0110/lower-ear-taper/lower-ear-refinement.json",
+            "key": "after.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0110/lower-ear-taper/lower-ear-refinement.json",
+            "key": "after.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{WSL_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "{WSL_TREE}/art/species-construction/refine_lower_ear_web.py",
+          "--",
+          "--base",
+          "{WSL_DATA}/head-0110/cranial-volume/head.blend",
+          "--out",
+          "{WSL_DATA}/head-0110/lower-ear-taper"
+        ],
+        "guard": [
+          "{DATA}/head-0110/lower-ear-taper"
+        ]
+      },
       "dependsOn": [
         "S11"
       ]
@@ -1642,6 +3006,50 @@
           "quote": "\"note\": \"Eye finish method retained from 0112, applied to the retained head\", output 5596c79a..."
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "46dbc305",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "windows-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0131/shape.glb",
+          "{DATA}/head-0131/head.blend",
+          "{DATA}/head-0131/eye-refinement.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0131/head.blend": "5596c79a1e607ce9cf0ca191e0c84074626a44de5c3c0d8f0c0c41eed3062fdb"
+        },
+        "checks": [],
+        "argv": [
+          "{WIN_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python",
+          "{TREE}/art/species-construction/refine_reconstructed_eyes.py",
+          "--",
+          "--scene",
+          "{DATA}/head-0110/lower-ear-taper/head.blend",
+          "--out",
+          "{DATA}/head-0131"
+        ],
+        "guard": [
+          "{DATA}/head-0131"
+        ]
+      },
       "dependsOn": [
         "S12"
       ]
@@ -1708,6 +3116,76 @@
           "quote": "options identical; shape.glb ed47fbef..."
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "46dbc305",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [
+            {
+              "file": "art/species-construction/refine_reconstructed_nose.py",
+              "find": "if record['minimumFrontClearance'] < min(.0015, args.rim_height):",
+              "replace": "if record['minimumFrontClearance'] < .5*min(.0015, args.rim_height):",
+              "why": "The sed in the original command; 46dbc305 already contains it."
+            }
+          ],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "windows-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0146/shape.glb",
+          "{DATA}/head-0146/head.blend",
+          "{DATA}/head-0146/nose-refinement.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0146/shape.glb": "ed47fbefe092bbd8210ddb39cf161bd7926ddeaedf9248ef5fe27664fca8812e",
+          "{DATA}/head-0146/head.blend": "c168d2720898230a2cfd4f6e62da6e2caa381e1c89eb930fe61e6bfb0bc793d0"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0146/nose-refinement.json",
+            "key": "muzzleRecess.movedVertices",
+            "expect": 2650,
+            "kind": "count"
+          }
+        ],
+        "argv": [
+          "{WIN_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python",
+          "{TREE}/art/species-construction/refine_reconstructed_nose.py",
+          "--",
+          "--scene",
+          "{DATA}/head-0131/head.blend",
+          "--out",
+          "{DATA}/head-0146",
+          "--relax-native-relief",
+          "--method",
+          "conformal",
+          "--dome-height",
+          ".006",
+          "--rim-height",
+          ".0015",
+          "--recess-muzzle",
+          ".012",
+          "--lower-point-z",
+          "-.148"
+        ],
+        "guard": [
+          "{DATA}/head-0146"
+        ]
+      },
       "dependsOn": [
         "S13"
       ]
@@ -1782,6 +3260,76 @@
           "quote": "shape.glb f8211ca5..."
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "755e1d84",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "windows-blender",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0152/shape.glb",
+          "{DATA}/head-0152/head.blend",
+          "{DATA}/head-0152/rear-coat.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0152/shape.glb": "f8211ca58aa97670698d21f702f8698761975b07b47c4c6e60ee60777b3c808b",
+          "{DATA}/head-0152/head.blend": "45171153c42c392641ac4b8f818e666c3b445e8f985b1affd92935306d6075c2"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0152/rear-coat.json",
+            "key": "skinAfter.vertices",
+            "expect": 1039804,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0152/rear-coat.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0152/rear-coat.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0152/rear-coat.json",
+            "key": "lockCount",
+            "expect": 215,
+            "kind": "count"
+          }
+        ],
+        "argv": [
+          "{WIN_BLENDER}",
+          "-b",
+          "--factory-startup",
+          "--python",
+          "{TREE}/art/species-construction/add_rear_coat_field.py",
+          "--",
+          "--scene",
+          "{DATA}/head-0146/head.blend",
+          "--out",
+          "{DATA}/head-0152"
+        ],
+        "guard": [
+          "{DATA}/head-0152"
+        ]
+      },
       "dependsOn": [
         "S14"
       ]
@@ -1857,6 +3405,69 @@
           "quote": "I built body-0157 (from body-0155) and head-0158 (from head-0152), then assembled-0159"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "691ddddd",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0158/shape.glb",
+          "{DATA}/head-0158/head.blend",
+          "{DATA}/head-0158/neck-warp.json"
+        ],
+        "hashes": {},
+        "checks": [
+          {
+            "file": "{DATA}/head-0158/neck-warp.json",
+            "key": "skinAfter.vertices",
+            "expect": 1039804,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0158/neck-warp.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0158/neck-warp.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "art/species-construction/warp_neck_field.py",
+          "--",
+          "--scene",
+          "{DATA}/head-0152/head.blend",
+          "--kind",
+          "head",
+          "--out",
+          "{DATA}/head-0158"
+        ],
+        "guard": [
+          "{DATA}/head-0158"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "S15"
       ]
@@ -1927,6 +3538,76 @@
           "quote": "\"shape.glb\": \"87b7f0a5...\""
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "d2987690",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0160/shape.glb",
+          "{DATA}/head-0160/head.blend",
+          "{DATA}/head-0160/head-warp.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0160/head.blend": "8e80ab0acae2ff9fadb2b6480e206fc1039e7eb01d62e8bc6947b706f7553283",
+          "{DATA}/head-0160/shape.glb": "87b7f0a578d04d12c4def0ec7efcb258cbe72ee232d9a3a74b80309c334872eb"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0160/head-warp.json",
+            "key": "skinAfter.vertices",
+            "expect": 1039804,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0160/head-warp.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0160/head-warp.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0160/head-warp.json",
+            "key": "movedVertices",
+            "expect": 861889,
+            "kind": "count"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "art/species-construction/warp_head_field.py",
+          "--",
+          "--scene",
+          "{DATA}/head-0158/head.blend",
+          "--out",
+          "{DATA}/head-0160"
+        ],
+        "guard": [
+          "{DATA}/head-0160"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "S16"
       ]
@@ -1993,6 +3674,58 @@
           "quote": "--scene .../head-0160/head.blend --out .../head-0162"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "26c906f9",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [
+            {
+              "file": "art/species-construction/shape_ear_front_field.py",
+              "find": "parser.add_argument('--lock-spacing', type=float, default=.07)",
+              "replace": "parser.add_argument('--lock-spacing', type=float, default=.058)",
+              "why": "The sed in the original command; 26c906f9 already contains it."
+            }
+          ],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0162/shape.glb",
+          "{DATA}/head-0162/head.blend",
+          "{DATA}/head-0162/ear-front.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0162/head.blend": "f175ed35d3179d4b4d527f1ec482b31c37716d3a059a893fab61de4764c6da47",
+          "{DATA}/head-0162/shape.glb": "8773a50a88d5718a69f1038bfacaabe3376143fd30cc2b3284f639c0ce3875b2"
+        },
+        "checks": [],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "art/species-construction/shape_ear_front_field.py",
+          "--",
+          "--scene",
+          "{DATA}/head-0160/head.blend",
+          "--out",
+          "{DATA}/head-0162"
+        ],
+        "guard": [
+          "{DATA}/head-0162"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "S17"
       ]
@@ -2063,6 +3796,76 @@
           "quote": "--scene .../head-0162/head.blend --out .../head-0170 --dome .30 .10 .32 --dome-blur 6"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "17a683c5",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0170/shape.glb",
+          "{DATA}/head-0170/head.blend",
+          "{DATA}/head-0170/ear-rear-field.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0170/head.blend": "b378d39171927aead3f5890343560a327be944289cab68e699c5f4181e7440f3"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0170/ear-rear-field.json",
+            "key": "skinAfter.vertices",
+            "expect": 1004410,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0170/ear-rear-field.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0170/ear-rear-field.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "head-0170",
+          "art/species-construction/shape_ear_rear_field.py",
+          "--scene",
+          "{DATA}/head-0162/head.blend",
+          "--out",
+          "{DATA}/head-0170",
+          "--dome",
+          ".30",
+          ".10",
+          ".32",
+          "--dome-blur",
+          "6"
+        ],
+        "guard": [
+          "{DATA}/head-0170"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "S18"
       ]
@@ -2152,6 +3955,82 @@
           "quote": "`body-0172` is the tail rebuild from `body-0100`"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "d8b37f08",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0172/shape.glb",
+          "{DATA}/body-0172/body.blend",
+          "{DATA}/body-0172/field-rebuild.json",
+          "{DATA}/body-0172/fairing.json"
+        ],
+        "hashes": {
+          "{DATA}/body-0172/body.blend": "13ec39a4d9e66979b88b686d25f05a3c7be1751b2eccb9191d95eb7b47a6f91c",
+          "{DATA}/body-0172/fairing.json": "3a25f8d00d80b4da28923902976fd086fe930ee5c179600045715e765683a36f"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-0172/field-rebuild.json",
+            "key": "body.vertices",
+            "expect": 660910,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0172/field-rebuild.json",
+            "key": "body.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0172/field-rebuild.json",
+            "key": "body.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "body-0172",
+          "art/species-construction/rebuild_body_field.py",
+          "--body",
+          "{DATA}/body-0100/attempt-02/shape.glb",
+          "--tail-record",
+          "{DATA}/body-0100/attempt-02/fairing.json",
+          "--out",
+          "{DATA}/body-0172",
+          "--tail-controls",
+          "docs/design/species-construction/akinza/tail-controls-blades.json",
+          "--tail-free-body",
+          "{DATA}/body-0086/attempt-03/shape.glb",
+          "--tail-side-sigma",
+          ".05",
+          "--tail-sweep-sigma",
+          ".009"
+        ],
+        "guard": [
+          "{DATA}/body-0172"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "B07",
         "B08"
@@ -2218,6 +4097,76 @@
           "quote": "--scene $A/body-0172/body.blend --kind body --out $A/body-0173 --fairing $A/body-0172/fairing.json"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "d8b37f08",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0173/shape.glb",
+          "{DATA}/body-0173/body.blend",
+          "{DATA}/body-0173/neck-warp.json",
+          "{DATA}/body-0173/fairing.json"
+        ],
+        "hashes": {
+          "{DATA}/body-0173/body.blend": "d048db4e03612ef0a8c67b2982c185d0aa8bf1bafbaa0c49936584da2b3db5f7",
+          "{DATA}/body-0173/shape.glb": "956b30f9777d4a9d74852ae3e0dbb237a3a943bde3903c4678d1783c8dbffaed"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-0173/neck-warp.json",
+            "key": "skinAfter.vertices",
+            "expect": 660910,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0173/neck-warp.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0173/neck-warp.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "body-0173",
+          "art/species-construction/warp_neck_field.py",
+          "--scene",
+          "{DATA}/body-0172/body.blend",
+          "--kind",
+          "body",
+          "--out",
+          "{DATA}/body-0173",
+          "--fairing",
+          "{DATA}/body-0172/fairing.json"
+        ],
+        "guard": [
+          "{DATA}/body-0173"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "B09"
       ]
@@ -2302,6 +4251,76 @@
           "quote": "Body: body-0177's shoulder-shelf and arm-ripple smoothing is kept"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "330692bd",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0177/shape.glb",
+          "{DATA}/body-0177/body.blend",
+          "{DATA}/body-0177/torso-smooth.json",
+          "{DATA}/body-0177/fairing.json"
+        ],
+        "hashes": {
+          "{DATA}/body-0177/body.blend": "102cd8bc930311105f5313bc0e21c530a8e5562f9a8231d7ea26d9357a323678",
+          "{DATA}/body-0177/fairing.json": "b52d5440b9cc6d82ff4a3db14950c46eeeafdb4c9ce8a0a45b62886197df71fa"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-0177/torso-smooth.json",
+            "key": "skinAfter.vertices",
+            "expect": 648263,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0177/torso-smooth.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0177/torso-smooth.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "body-0177",
+          "art/species-construction/smooth_torso_field.py",
+          "--scene",
+          "{DATA}/body-0173/body.blend",
+          "--fairing",
+          "{DATA}/body-0173/fairing.json",
+          "--out",
+          "{DATA}/body-0177",
+          "--regions",
+          "docs/design/species-construction/akinza/torso-smooth-regions-r7.json"
+        ],
+        "guard": [
+          "{DATA}/body-0177"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction. The regions file was copied from C:/tmp/r7/regions177.json in the original command; the committed torso-smooth-regions-r7.json in 330692bd has the same bytes (c77c2865...)."
+      },
       "dependsOn": [
         "B10"
       ]
@@ -2372,6 +4391,80 @@
           "quote": "simplify_fan_field.py --scene .../head-0170/head.blend --out .../$H --close-steps 8 --open-steps 3 --blur 3 --crown-z .20 --crown-y-min -.34"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "20d0887b",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0182/shape.glb",
+          "{DATA}/head-0182/head.blend",
+          "{DATA}/head-0182/fan-simplify.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0182/head.blend": "d32cf5e2a0ddf5bc302978168f4d110a8b68f1a97a5a09510a61e25558a5ff7d"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0182/fan-simplify.json",
+            "key": "skinAfter.vertices",
+            "expect": 910284,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0182/fan-simplify.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0182/fan-simplify.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "head-0182",
+          "art/species-construction/simplify_fan_field.py",
+          "--scene",
+          "{DATA}/head-0170/head.blend",
+          "--out",
+          "{DATA}/head-0182",
+          "--close-steps",
+          "8",
+          "--open-steps",
+          "3",
+          "--blur",
+          "3",
+          "--crown-z",
+          ".20",
+          "--crown-y-min",
+          "-.34"
+        ],
+        "guard": [
+          "{DATA}/head-0182"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "S19"
       ]
@@ -2456,6 +4549,78 @@
           "quote": "\"smooth_torso_field.py\": \"ad99dc4f...\", \"chest-ease-r8.json\": \"1b03f03b...\""
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "20d0887b",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0183/shape.glb",
+          "{DATA}/body-0183/body.blend",
+          "{DATA}/body-0183/torso-smooth.json",
+          "{DATA}/body-0183/fairing.json"
+        ],
+        "hashes": {
+          "{DATA}/body-0183/shape.glb": "a2523de5eeb8ae941dcc6e24dc1bb2d04653c5815bbb620510c1a5e6d5e7a70e",
+          "{DATA}/body-0183/fairing.json": "b0b6d8b639e913a474e7dda2fac1760daabb78db1194f9212de7ce89594216e9"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/body-0183/torso-smooth.json",
+            "key": "skinAfter.vertices",
+            "expect": 647383,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0183/torso-smooth.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0183/torso-smooth.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "body-0183",
+          "art/species-construction/smooth_torso_field.py",
+          "--scene",
+          "{DATA}/body-0177/body.blend",
+          "--fairing",
+          "{DATA}/body-0177/fairing.json",
+          "--out",
+          "{DATA}/body-0183",
+          "--regions",
+          "docs/design/species-construction/akinza/torso-smooth-none.json",
+          "--chest-ease",
+          "docs/design/species-construction/akinza/chest-ease-r8.json"
+        ],
+        "guard": [
+          "{DATA}/body-0183"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction. chest-ease-r8.json was copied from C:/tmp/r8/ce.json; the committed file in 20d0887b has the bytes recorded in body-0183/stage-start.json (1b03f03b...)."
+      },
       "dependsOn": [
         "B11"
       ]
@@ -2537,6 +4702,148 @@
           "quote": "R03 rebuilt as head-0187 (fan-lock stage on head-0182, one component build)"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "58b5a28e",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0187/shape.glb",
+          "{DATA}/head-0187/head.blend",
+          "{DATA}/head-0187/fan-locks.json"
+        ],
+        "hashes": {
+          "{DATA}/head-0187/head.blend": "594635cd8037de46e88d88167b4654b0bcdc58922157ab521801381e7aedd08d"
+        },
+        "checks": [
+          {
+            "file": "{DATA}/head-0187/fan-locks.json",
+            "key": "skinAfter.vertices",
+            "expect": 961152,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0187/fan-locks.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0187/fan-locks.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0187/fan-locks.json",
+            "key": "lockCount",
+            "expect": 23,
+            "kind": "count"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "head-0187",
+          "art/species-construction/author_fan_locks_field.py",
+          "--scene",
+          "{DATA}/head-0182/head.blend",
+          "--out",
+          "{DATA}/head-0187",
+          "--tilt",
+          ".06",
+          "--tilt-x0",
+          ".80",
+          "--tilt-x1",
+          "1.0",
+          "--sink",
+          ".055",
+          "--sink-x",
+          ".40",
+          ".52",
+          ".62",
+          ".95",
+          "--rim-cap",
+          ".515",
+          "--lock-cap",
+          ".515",
+          "--tilt-low",
+          "0",
+          "--wall-blur",
+          "4",
+          "--cup-clean",
+          "5",
+          "--rim-x",
+          ".44",
+          ".52",
+          ".60",
+          ".68",
+          ".76",
+          ".84",
+          ".92",
+          "--rim-angle0",
+          "42",
+          "--rim-angle1",
+          "28",
+          "--rim-down",
+          ".05",
+          "--rim-ext0",
+          ".03",
+          "--rim-ext1",
+          ".04",
+          "--rim-lift",
+          "-.045",
+          "--rings",
+          ".50",
+          ".62",
+          ".74",
+          ".86",
+          "--ring-spacing",
+          ".085",
+          "--ring-length",
+          ".23",
+          "--ring-width",
+          ".05",
+          "--ring-thickness",
+          ".018",
+          "--ring-angle-min",
+          "28",
+          "--cup-clear",
+          ".012",
+          "--ring-tip-slack",
+          ".03",
+          "--edge-spacing",
+          ".13",
+          "--edge-rows",
+          "2",
+          "--edge-lift",
+          ".012",
+          "--edge-max-facing",
+          ".5",
+          "--edge-row-step",
+          ".08"
+        ],
+        "guard": [
+          "{DATA}/head-0187"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "S20"
       ]
@@ -2614,6 +4921,80 @@
           "quote": "--scene .../body-0183/body.blend ... --spec .../waist-warp-r13.json --out .../body-0195"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "a658bc9d",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [
+            {
+              "file": "docs/design/species-construction/akinza/waist-warp-r13.json",
+              "find": "\"zTop\": 0.22",
+              "replace": "\"zTop\": 0.24",
+              "why": "The sed in the original command; a658bc9d already contains it."
+            }
+          ],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/body-0195/shape.glb",
+          "{DATA}/body-0195/body.blend",
+          "{DATA}/body-0195/waist-warp.json",
+          "{DATA}/body-0195/fairing.json"
+        ],
+        "hashes": {},
+        "checks": [
+          {
+            "file": "{DATA}/body-0195/waist-warp.json",
+            "key": "skinAfter.vertices",
+            "expect": 646405,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/body-0195/waist-warp.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/body-0195/waist-warp.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "body-0195",
+          "art/species-construction/warp_waist_field.py",
+          "--scene",
+          "{DATA}/body-0183/body.blend",
+          "--fairing",
+          "{DATA}/body-0183/fairing.json",
+          "--spec",
+          "docs/design/species-construction/akinza/waist-warp-r13.json",
+          "--out",
+          "{DATA}/body-0195"
+        ],
+        "guard": [
+          "{DATA}/body-0195"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "B12"
       ]
@@ -2706,6 +5087,215 @@
           "quote": "bash $S/rear_cmd.sh head-0203 --floor-x0 -.005 --cap-lattice --cap-spacing .06 ... --push-blend .02"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "2f8505d5",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0203/shape.glb",
+          "{DATA}/head-0203/head.blend",
+          "{DATA}/head-0203/rear-locks.json"
+        ],
+        "hashes": {},
+        "checks": [
+          {
+            "file": "{DATA}/head-0203/rear-locks.json",
+            "key": "skinAfter.vertices",
+            "expect": 1128128,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0203/rear-locks.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0203/rear-locks.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0203/rear-locks.json",
+            "key": "capShinglesPlaced",
+            "expect": 82,
+            "kind": "count"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "head-0203",
+          "art/species-construction/author_rear_locks_field.py",
+          "--scene",
+          "{DATA}/head-0187/head.blend",
+          "--out",
+          "{DATA}/head-0203",
+          "--bevel",
+          ".03",
+          "--bevel-x",
+          ".42",
+          ".55",
+          ".76",
+          ".88",
+          "--swell",
+          ".11",
+          "--swell-x",
+          ".40",
+          ".58",
+          ".70",
+          ".84",
+          "--swell-z",
+          "-.15",
+          ".0",
+          ".28",
+          ".48",
+          "--swell-follow-low",
+          ".04",
+          ".12",
+          "--lock-cap",
+          ".520",
+          "--lock-cap-inner",
+          ".470",
+          "--tip-x-max",
+          ".975",
+          "--x-min",
+          ".38",
+          "--edge-x-min",
+          ".50",
+          "--shingle-amp",
+          ".03",
+          "--shingle-edge",
+          ".25",
+          "--shingle-base",
+          ".25",
+          "--shingle-fade",
+          ".05",
+          "--shingle-floor-min",
+          ".10",
+          "--shingle-slope-max",
+          ".5",
+          "--shingle-x-fade",
+          ".80",
+          ".90",
+          "--rings",
+          ".25",
+          ".32",
+          ".39",
+          ".46",
+          ".53",
+          ".60",
+          ".67",
+          ".74",
+          ".81",
+          ".88",
+          ".95",
+          "1.02",
+          "--ring-spacing",
+          ".065",
+          "--ring-length",
+          ".19",
+          "--ring-width",
+          ".06",
+          "--ring-up",
+          ".1",
+          "--ring-angle-min",
+          "10",
+          "--edge-spacing",
+          ".075",
+          "--edge-rows",
+          "1",
+          "--edge-inset",
+          ".06",
+          "--edge-lift",
+          ".008",
+          "--edge-width",
+          ".055",
+          "--edge-thickness",
+          ".02",
+          "--edge-out",
+          ".006",
+          "--edge-out-top",
+          ".05",
+          "--edge-top-ramp",
+          ".3",
+          "--edge-end-skip",
+          ".7",
+          "--rim-spacing",
+          ".08",
+          "--rim-x",
+          ".46",
+          ".92",
+          "--rim-rows",
+          "1",
+          "--rim-width",
+          ".06",
+          "--rim-thickness",
+          ".03",
+          "--rim-lift",
+          ".025",
+          "--rim-rise",
+          ".015",
+          ".04",
+          "--rim-inset",
+          ".045",
+          "--root-blend",
+          ".012",
+          "--floor-x0",
+          "-.005",
+          "--cap-lattice",
+          "--cap-spacing",
+          ".06",
+          "--cap-length",
+          ".15",
+          "--cap-width",
+          ".055",
+          "--cap-amp",
+          ".04",
+          "--push",
+          ".11",
+          "--push-x",
+          ".15",
+          ".34",
+          ".85",
+          "1.05",
+          "--push-fill",
+          ".09",
+          "--push-fill-x",
+          ".10",
+          ".20",
+          ".55",
+          ".70",
+          "--push-round",
+          ".10",
+          "--push-smooth",
+          ".012",
+          "--push-blend",
+          ".02"
+        ],
+        "guard": [
+          "{DATA}/head-0203"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "S21"
       ]
@@ -2788,6 +5378,70 @@
           "quote": "--scene $A/head-0203/head.blend --spec docs/design/species-construction/akinza/face-r16.json --out $A/head-0204"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "2f8505d5",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/head-0204/shape.glb",
+          "{DATA}/head-0204/head.blend",
+          "{DATA}/head-0204/face-shape.json"
+        ],
+        "hashes": {},
+        "checks": [
+          {
+            "file": "{DATA}/head-0204/face-shape.json",
+            "key": "skinAfter.vertices",
+            "expect": 1086260,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/head-0204/face-shape.json",
+            "key": "skinAfter.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/head-0204/face-shape.json",
+            "key": "skinAfter.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "blender",
+          "--log",
+          "head-0204",
+          "art/species-construction/shape_face_field.py",
+          "--scene",
+          "{DATA}/head-0203/head.blend",
+          "--spec",
+          "docs/design/species-construction/akinza/face-r16.json",
+          "--out",
+          "{DATA}/head-0204"
+        ],
+        "guard": [
+          "{DATA}/head-0204"
+        ],
+        "note": "loop_tools.py resolves its root from its own path, so it works on the tree; names and --log files land in {DATA} through the junction."
+      },
       "dependsOn": [
         "S22"
       ]
@@ -2863,7 +5517,9 @@
         },
         "weightedMean": 6.05,
         "silhouette": "front ear span .523 against reference .52 (loop status round 16)",
-        "note": "No output hash recorded; compare with loop_tools.py check and measure against the round-16 values."
+        "note": "No output hash recorded; compare with loop_tools.py check and measure against the round-16 values.",
+        "acceptanceFile": "docs/design/species-construction/akinza/rebuild/acceptance/assembled-0205.json",
+        "acceptanceNote": "Final acceptance runs in step X01 against that file (check, fixed-height measurement ratios, fit IoU per view and band, figure height, six-view image comparison)."
       },
       "certainty": "exact",
       "certaintyNote": "Command verbatim; placement constants are loop_tools.PLACEMENT at a894151c; --fragment-voxels uses the default 5.",
@@ -2884,10 +5540,160 @@
           "quote": "PLACEMENT = ['--head-scale', '.50', '--jaw-anchor-z', '.500', '--head-depth-offset', '-.020']"
         }
       ],
+      "run": {
+        "tree": {
+          "commit": "2f8505d5",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          }
+        },
+        "interpreter": "loop-tools",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{DATA}/assembled-0205/akinza.glb",
+          "{DATA}/assembled-0205/akinza.blend",
+          "{DATA}/assembled-0205/assembly.json",
+          "{DATA}/assembled-0205/render/geometry.json",
+          "{DATA}/assembled-0205/render/front.png",
+          "{DATA}/assembled-0205/render/left.png",
+          "{DATA}/assembled-0205/render/back.png"
+        ],
+        "hashes": {},
+        "checks": [
+          {
+            "file": "{DATA}/assembled-0205/assembly.json",
+            "key": "objects.*continuous*.vertices",
+            "expect": 727170,
+            "kind": "count"
+          },
+          {
+            "file": "{DATA}/assembled-0205/assembly.json",
+            "key": "objects.*continuous*.components",
+            "expect": 1,
+            "kind": "flag"
+          },
+          {
+            "file": "{DATA}/assembled-0205/assembly.json",
+            "key": "objects.*continuous*.nonManifoldEdges",
+            "expect": 0,
+            "kind": "flag"
+          }
+        ],
+        "argv": [
+          "{SYSTEM_PY}",
+          "art/species-construction/loop/loop_tools.py",
+          "assemble",
+          "head-0204",
+          "body-0195",
+          "assembled-0205"
+        ],
+        "guard": [
+          "{DATA}/assembled-0205"
+        ],
+        "note": "loop_tools.py at 2f8505d5 (content a894151c) assembles with PLACEMENT and --fragment-voxels 5, then renders the six views and detail sets. It has no slot lock of its own, so the runner holds one slot for the whole step."
+      },
       "dependsOn": [
         "B13",
         "S23"
       ]
+    },
+    {
+      "order": 38,
+      "id": "X01",
+      "output": "{LOG}/X01-fit and C:/dev/art-data/rebuild/log/X01.json",
+      "kind": "python-script",
+      "branch": "assembly",
+      "script": "art/species-construction/loop/loop_tools.py check, measure, fit (82e6d394) plus run_rebuild.acceptance()",
+      "scriptCommit": "82e6d394",
+      "command": "python art/species-construction/loop/loop_tools.py check assembled-0205; ... measure assembled-0205; ... fit assembled-0205 --out <log>/X01-fit",
+      "inputs": [
+        "untracked/species-construction/akinza/assembled-0205",
+        "docs/design/species-construction/akinza/rebuild/acceptance/assembled-0205.json"
+      ],
+      "expected": {
+        "acceptanceFile": "docs/design/species-construction/akinza/rebuild/acceptance/assembled-0205.json",
+        "sixViews": "docs/design/species-construction/akinza/rebuild/acceptance/assembled-0205-six-views.jpg",
+        "fitSheet": "docs/design/species-construction/akinza/rebuild/acceptance/assembled-0205-fit.png",
+        "previousBaselineSixViews": "docs/design/species-construction/akinza/rebuild/acceptance/assembled-0156-six-views.jpg"
+      },
+      "certainty": "exact",
+      "certaintyNote": "New acceptance step, not a historical stage. The commands exist at the named commit; the comparison is defined here.",
+      "evidence": [
+        {
+          "source": "docs/design/species-construction/akinza/rebuild/acceptance/assembled-0205.json",
+          "locator": "note",
+          "quote": "Values computed on 2026-09-30 from the original assembled-0205 renders, before the files were lost"
+        }
+      ],
+      "dependsOn": [
+        "A01"
+      ],
+      "run": {
+        "tree": {
+          "commit": "82e6d394",
+          "paths": [
+            "art/species-construction",
+            "docs/design/species-construction"
+          ],
+          "overlays": [],
+          "edits": [],
+          "files": [],
+          "junctions": {
+            "untracked/species-construction/akinza": "{DATA}",
+            "untracked/tools": "{TOOLS}"
+          },
+          "note": "HEAD of akinza/construction-loop before the rebuild commits; its loop_tools.py and build_loop_page.py equal 1d7cabf8, the version used for the acceptance values."
+        },
+        "interpreter": "system-python",
+        "cwd": "{TREE}",
+        "env": {},
+        "expectExit": 0,
+        "outputs": [
+          "{LOG}/X01-fit/fit.json",
+          "{LOG}/X01-fit/fit.png",
+          "{DATA}/assembled-0205/render/review.json"
+        ],
+        "hashes": {},
+        "checks": [],
+        "commands": [
+          [
+            "{SYSTEM_PY}",
+            "art/species-construction/loop/loop_tools.py",
+            "check",
+            "assembled-0205"
+          ],
+          [
+            "{SYSTEM_PY}",
+            "art/species-construction/loop/loop_tools.py",
+            "measure",
+            "assembled-0205"
+          ],
+          [
+            "{SYSTEM_PY}",
+            "art/species-construction/loop/loop_tools.py",
+            "fit",
+            "assembled-0205",
+            "--out",
+            "{LOG}/X01-fit"
+          ]
+        ],
+        "guard": [
+          "{LOG}/X01-fit"
+        ],
+        "note": "After the three commands the runner compares check, measurement ratios, fit IoU per view and band and figure height with the acceptance file (tolerances from that file), and compares the six views, cropped by build_loop_page.view_row and encoded like the review page (1800 px JPEG, quality 82), with assembled-0205-six-views.jpg.",
+        "internal": "acceptance",
+        "acceptanceFile": "docs/design/species-construction/akinza/rebuild/acceptance/assembled-0205.json"
+      }
     }
   ]
 }

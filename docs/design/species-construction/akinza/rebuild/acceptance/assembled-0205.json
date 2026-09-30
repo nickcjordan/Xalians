@@ -1,0 +1,60 @@
+{
+ "assembly": "assembled-0205",
+ "note": "Values computed on 2026-09-30 from the original assembled-0205 renders, before the files were lost, with loop_tools.py at commit 1d7cabf8 (fixed-height measurements). Use them to accept the rebuilt model.",
+ "check": {
+  "components": 1,
+  "nonManifoldEdges": 0,
+  "vertices": 727170,
+  "removedFragments": 0
+ },
+ "measurementRatios": {
+  "front": {
+   "earSpan": 1.004,
+   "neck": 1.036,
+   "shoulders": 1.006,
+   "waist": 1.279,
+   "hips": 0.822
+  },
+  "left": {
+   "earSpan": 1.005,
+   "neck": 1.047,
+   "shoulders": 0.922,
+   "waist": 1.095,
+   "hips": 0.816
+  }
+ },
+ "fit": {
+  "front": {
+   "all": 0.5661,
+   "head": 0.8501,
+   "trunk": 0.577,
+   "legs": 0.4119
+  },
+  "left": {
+   "all": 0.6596,
+   "head": 0.8764,
+   "trunk": 0.6684,
+   "legs": 0.5727
+  },
+  "back": {
+   "all": 0.6119,
+   "head": 0.8821,
+   "trunk": 0.623,
+   "legs": 0.4638
+  },
+  "back-r03": {
+   "all": 0.6284,
+   "head": 0.5679,
+   "trunk": 0.6782,
+   "legs": 0.6426
+  }
+ },
+ "figureHeight": 1.8557,
+ "sixViews": "assembled-0205-six-views.jpg: the six views as published on the review page (JPEG, cropped to a shared frame by build_loop_page.view_row)",
+ "tolerances": {
+  "measurementRatio": 0.01,
+  "fitIoU": 0.01,
+  "vertices": "within 2 percent unless the Hunyuan roots reproduced bit for bit, then exact",
+  "figureHeight": 0.002
+ }
+}
