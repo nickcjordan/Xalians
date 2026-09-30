@@ -988,33 +988,70 @@ function foundationFor(wi: number) {
 	// what has drifted or settled against the foot of the lower course
 	const r = rng(7 + wi);
 	if (wi === 2) {
-		// snow banked against it: soft irregular mounds, the snow's own value, lit from the left (the key light side)
-		const snow = palOf(2).top;
-		for (let k = 0; k < 14; k++) {
-			const x = MX - 226 + (k / 13) * 452 + (r() - 0.5) * 16;
-			const w = 26 + r() * 52;
-			const h = 12 + Math.pow(r(), 1.5) * 38;
-			const baseY = FOOT + 2 + r() * 8;
+		// snow banked against the foot: four or five irregular mounds in the snowfield's own value, highest against the
+		// lower course and tapering out into the ground, blue-gray in shadow on their far (right) sides
+		const snow: RGB = [132, 144, 158];
+		const xs = [-190, -96, 6, 112, 204];
+		xs.forEach((cx0, k) => {
+			const x = MX + cx0 + (r() - 0.5) * 30;
+			const w = 56 + r() * 60;
+			const h = 16 + r() * 22;
+			const baseY = FOOT + 6 + r() * 6;
+			const pk = x - w * (0.1 + r() * 0.2);
 			const grd = g.createLinearGradient(x - w, 0, x + w, 0);
-			grd.addColorStop(0, css(scale3(snow, 0.92)));
-			grd.addColorStop(0.55, css(scale3(snow, 0.78)));
-			grd.addColorStop(1, css(scale3(snow, 0.52)));
+			grd.addColorStop(0, css(scale3(snow, 1.0)));
+			grd.addColorStop(0.5, css(scale3(snow, 0.9)));
+			grd.addColorStop(1, css([66, 80, 102]));
 			g.fillStyle = grd;
 			g.beginPath();
-			g.moveTo(x - w, baseY);
-			g.bezierCurveTo(x - w * 0.6, baseY - h * (0.7 + r() * 0.5), x - w * 0.1, baseY - h * (1 + r() * 0.3), x + w * 0.3, baseY - h * (0.7 + r() * 0.4));
-			g.bezierCurveTo(x + w * 0.7, baseY - h * 0.4, x + w * 0.9, baseY - h * 0.1, x + w, baseY);
+			g.moveTo(x - w, baseY + 2);
+			g.bezierCurveTo(x - w * 0.7, baseY - h * 0.35, pk - w * 0.3, baseY - h * (0.9 + r() * 0.2), pk, baseY - h);
+			g.bezierCurveTo(pk + w * 0.4, baseY - h * 0.85, x + w * 0.7, baseY - h * 0.25, x + w, baseY + 3);
 			g.closePath();
+			g.fill();
+			// a soft taper of the same snow out into the ground, and a blue shadow below the far side
+			g.fillStyle = css(scale3(snow, 0.85), 0.5);
+			g.beginPath();
+			g.ellipse(x + (k % 2 ? 10 : -10), baseY + 4, w * 1.1, 4, 0, 0, TAU);
+			g.fill();
+			g.fillStyle = css([60, 74, 98], 0.35);
+			g.beginPath();
+			g.ellipse(x + w * 0.55, baseY + 5, w * 0.5, 3, 0, 0, TAU);
+			g.fill();
+		});
+		// a little snow lying on the slab's top face and ledges, and on the buttresses
+		g.fillStyle = css([164, 176, 190], 0.5);
+		for (let k = 0; k < 9; k++) {
+			const x = MX - 160 + r() * 320;
+			const y = GROUND - 2 + r() * 26;
+			g.beginPath();
+			g.ellipse(x, y, 18 + r() * 34, 1.6 + r() * 2.6, 0, 0, TAU);
+			g.fill();
+		}
+		g.fillStyle = css([176, 188, 200], 0.6);
+		g.fillRect(MX - 186, SLAB_F - 1.5, 372, 1.5);
+		for (const sg of [-1, 1]) {
+			g.beginPath();
+			g.ellipse(MX + sg * 204, GROUND + 4, 20, 3, 0, 0, TAU);
 			g.fill();
 		}
 	} else {
 		// soil, rubble and crust heaped over the foot, so it reads as sunk in
 		for (let k = 0; k < 110; k++) {
 			const x = MX - 226 + r() * 452;
-			g.fillStyle = css(scale3(palOf(wi).bot, 1.1 + r() * 1.8), 0.7 + r() * 0.3);
+			g.fillStyle = css(scale3(palOf(wi).bot, wi === 3 ? 0.7 + r() * 0.7 : 1.1 + r() * 1.8), 0.7 + r() * 0.3);
 			g.beginPath();
 			g.ellipse(x, FOOT - 5 + r() * 14, 5 + r() * 12, 3 + r() * 4.5, 0, 0, TAU);
 			g.fill();
+		}
+		if (wi === 3) {
+			// foam catching the light in a few places only
+			for (let k = 0; k < 4; k++) {
+				g.fillStyle = css([200, 226, 232], 0.3 + r() * 0.2);
+				g.beginPath();
+				g.ellipse(MX - 150 + k * 96 + r() * 30, FOOT + 4 + r() * 6, 8 + r() * 12, 1.6 + r() * 1.4, 0, 0, TAU);
+				g.fill();
+			}
 		}
 		for (let k = 0; k < 16; k++) {
 			const x = MX - 220 + r() * 440;
