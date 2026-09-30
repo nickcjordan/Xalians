@@ -61,6 +61,7 @@ parser.add_argument('--sink-x', type=float, nargs=4, default=[.35, .55, .65, .90
 parser.add_argument('--sink-z0', type=float, default=.20, help='sinking starts above this height')
 parser.add_argument('--sink-zw', type=float, default=.25)
 parser.add_argument('--rim-cap', type=float, default=None, help='no rim tip rises above this height')
+parser.add_argument('--lock-cap', type=float, default=None, help='same cap for the row and edge locks (default off)')
 # Rim locks: stations along the upper outline.
 parser.add_argument('--rim-x', type=float, nargs='+', default=[.52, .60, .68, .76, .84, .92])
 parser.add_argument('--rim-ext0', type=float, default=.05, help='how far a rim tip stands above the outline, inner station')
@@ -85,6 +86,22 @@ parser.add_argument('--ring-up', type=float, default=.25, help='blend of straigh
 parser.add_argument('--ring-angle-min', type=float, default=14.)
 parser.add_argument('--ring-angle-max', type=float, default=100.)
 parser.add_argument('--cup-clear', type=float, default=.025)
+parser.add_argument('--ring-tip-slack', type=float, default=0., help='a row lock tip may stand this far beyond the fan outline (0 = tips stay inside)')
+# Edge locks: a fringe along the outer and lower outline of the fan front, pointing outward and slightly down.
+parser.add_argument('--edge-spacing', type=float, default=0., help='arc spacing of edge locks along the fan outline (0 = off)')
+parser.add_argument('--edge-rows', type=int, default=1)
+parser.add_argument('--edge-inset', type=float, default=.13, help='root distance inside the outline, first row')
+parser.add_argument('--edge-row-step', type=float, default=.11, help='extra inset for each further row')
+parser.add_argument('--edge-out', type=float, default=.01, help='how far an edge lock tip stands beyond the outline')
+parser.add_argument('--edge-width', type=float, default=.05, help='half width')
+parser.add_argument('--edge-thickness', type=float, default=.018)
+parser.add_argument('--edge-lift', type=float, default=.02)
+parser.add_argument('--edge-down', type=float, default=.15, help='downward blend of the outward direction')
+parser.add_argument('--edge-radial', type=float, default=.35, help='blend of the flow away from the ear root into the outline normal')
+parser.add_argument('--edge-center', type=float, nargs=2, default=[.70, .15], help='point inside the fan (x, z) the outline is traced around')
+parser.add_argument('--edge-max-facing', type=float, default=1.0, help='skip an edge lock whose direction leaves the floor by more than this share of its length (1 = keep all)')
+parser.add_argument('--edge-x-min', type=float, default=.50)
+parser.add_argument('--edge-nz-max', type=float, default=.45, help='skip outline points whose outward normal points more upward than this (the rim locks cover them)')
 parser.add_argument('--wall-blur', type=float, default=0., help='blur sigma in voxels on the fan wall front before the locks (0 = off)')
 parser.add_argument('--wall-z', type=float, nargs=2, default=[-.10, .40])
 parser.add_argument('--wall-y-max', type=float, default=.11)
@@ -304,6 +321,9 @@ def add_lock(kind, x, z, direction2, length, width, thickness, lift):
         # Cap the real tip (after projection onto the floor's tangent plane and the lift), not the nominal one.
         reach = (args.rim_cap-z-normal[2]*lift)/d[2]
         length = min(length, max(reach, .05))
+    if not kind.startswith('rim') and args.lock_cap is not None and d[2] > 1e-6:
+        reach = (args.lock_cap-z-normal[2]*lift)/d[2]
+        length = min(length, max(reach, .05))
     locks.append({'kind': kind, 'root': [x, y, z], 'normal': normal.tolist(), 'direction': d.tolist(),
                   'length': float(length), 'width': float(width), 'thickness': float(thickness), 'lift': float(lift)})
 
@@ -353,11 +373,71 @@ if not args.no_rows and args.rings:
             d2 /= np.linalg.norm(d2)
             length = args.ring_length*rng.uniform(.92, 1.08)
             tip2 = np.array([px, pz])+d2*length
-            if at(depth_in, tip2[0], tip2[1]) <= 0 or polygon_sdf(np.array([tip2[0]]), np.array([tip2[1]]))[0] < 0:
+            probe = tip2-d2*args.ring_tip_slack
+            if at(depth_in, probe[0], probe[1]) <= 0 or polygon_sdf(np.array([tip2[0]]), np.array([tip2[1]]))[0] < 0:
                 skipped['tipOutside'] += 1
                 continue
             add_lock('row', px, pz, d2, length, args.ring_width*rng.uniform(.92, 1.1),
                      args.ring_thickness, args.ring_lift)
+
+edge_record = {'applied': args.edge_spacing > 0, 'placed': 0, 'skipped': {'insideCup': 0, 'tooShallow': 0}}
+if args.edge_spacing > 0:
+    cx, cz = args.edge_center
+    hm = gauss2d(has.astype(np.float64), .012/VS)
+    hgx = np.gradient(hm, VS, axis=0)
+    hgz = np.gradient(hm, VS, axis=1)
+    outline = []
+    for phi in np.arange(-180., 180., .25):
+        cs, sn = math.cos(math.radians(phi)), math.sin(math.radians(phi))
+        rs = np.arange(0., 1.2, VS)
+        ii = np.clip(np.round((np.abs(cx+rs*cs)-SX[0])/VS).astype(int), 0, len(SX)-1)
+        kk = np.clip(np.round((cz+rs*sn-SZ[0])/VS).astype(int), 0, len(SZ)-1)
+        inside_ray = has[ii, kk]
+        leave = np.where(~inside_ray)[0]
+        if not len(leave) or leave[0] == 0:
+            continue
+        rb = rs[leave[0]]
+        outline.append((cx+rb*cs, cz+rb*sn))
+    outline = np.array(outline)
+    # Arc-length sampling along the traced outline (a closed curve; only the lower and outer part is kept below).
+    seg = np.r_[0., np.cumsum(np.hypot(*np.diff(outline, axis=0).T))]
+    for row in range(args.edge_rows):
+        inset = args.edge_inset+row*args.edge_row_step
+        marks = np.arange(args.edge_spacing*(.5 if row == 0 else 1.0), seg[-1], args.edge_spacing)
+        for m in marks:
+            P = np.array([np.interp(m, seg, outline[:, 0]), np.interp(m, seg, outline[:, 1])])
+            if P[0] < args.edge_x_min:
+                continue
+            N = -np.array([at(hgx, P[0], P[1]), at(hgz, P[0], P[1])])
+            if np.linalg.norm(N) < 1e-9:
+                continue
+            N /= np.linalg.norm(N)
+            if N[1] > args.edge_nz_max:
+                continue
+            rad = P-np.array([rx, rz])
+            rad /= np.linalg.norm(rad)
+            d2 = N*(1-args.edge_radial)+rad*args.edge_radial+np.array([0., -args.edge_down])
+            d2 /= np.linalg.norm(d2)
+            root = P-N*inset
+            if polygon_sdf(np.array([root[0]]), np.array([root[1]]))[0] < args.cup_clear:
+                edge_record['skipped']['insideCup'] += 1
+                continue
+            if at(depth_in, root[0], root[1]) < .02:
+                edge_record['skipped']['tooShallow'] += 1
+                continue
+            fn = np.array([at(gxs, root[0], root[1]), -1.0, at(gzs, root[0], root[1])])
+            fn[0] = np.clip(fn[0], -1.2, 1.2)
+            fn[2] = np.clip(fn[2], -1.2, 1.2)
+            fn /= np.linalg.norm(fn)
+            facing = abs(float(np.array([d2[0], 0., d2[1]])@fn))
+            if facing > args.edge_max_facing:
+                edge_record['skipped']['leavesFloor'] = edge_record['skipped'].get('leavesFloor', 0)+1
+                continue
+            length = (inset+args.edge_out)/max(float(d2@N), .55)*rng.uniform(.95, 1.05)
+            add_lock('edge%d' % row, float(root[0]), float(root[1]), d2, length,
+                     args.edge_width*rng.uniform(.92, 1.08)*(1-.1*row), args.edge_thickness, args.edge_lift)
+            edge_record['placed'] += 1
+    edge_record['outlinePoints'] = int(len(outline))
 
 # 4. Lock field for both sides.
 lock_field = np.full(shape, BAND, dtype=np.float32)
@@ -499,7 +579,7 @@ summary = {
     'approval': None, 'stageProvenanceSha256': provenance, 'sourceSha256': sha(args.scene),
     'scope': 'Ear fan front: directional rim and row locks joined by a smooth union; face objects preserved',
     'parameters': {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items() if k not in ('scene', 'out')},
-    'tilt': tilt_record, 'skinTopZ': {'before': top_before, 'after': top_after}, 'lockCount': len(locks), 'lockSkipped': skipped, 'locks': locks,
+    'tilt': tilt_record, 'skinTopZ': {'before': top_before, 'after': top_after}, 'edge': edge_record, 'lockCount': len(locks), 'lockSkipped': skipped, 'locks': locks,
     'removedFlecks': removed_flecks, 'removedFloatingPieces': removed_pieces, 'skinBefore': before, 'skinAfter': after,
     'deviationOutsideFanWindow': {'samples': int(len(outside)), 'maximum': float(outside.max()) if len(outside) else None,
                                   'p99': float(np.percentile(outside, 99)) if len(outside) else None},
