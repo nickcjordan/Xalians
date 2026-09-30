@@ -20,7 +20,7 @@
 // Everything static (the worlds' layers, the machine's plating and wear, the painted surface) is drawn once
 // into offscreen canvases on first use; a frame only composes them and draws what moves.
 import { blot, clamp, css, easeOut, glow, grain, H, lighter, mix, mixRGB, ramp, rng, smooth, W, type Ctx, type RGB } from './stage';
-import type { Figure } from './figures';
+import { assetUrl, type Figure } from './figures';
 
 const PW = 960;
 const PH = 540;
@@ -200,6 +200,88 @@ function soften(o: HTMLCanvasElement, a: number) {
 	g.globalAlpha = a;
 	g.drawImage(t.c, 0, 0, o.width, o.height);
 	g.restore();
+}
+
+// The passing worlds paint from the site's own landscapes of them (no world is named on screen). Each is cropped
+// wide, graded down to sit behind the subject, softened, and cached once; the procedural world stays as the
+// fallback until its picture has loaded.
+const ART = ['zolton', 'magmuth', 'krystos', 'poseidas'];
+/** Where in each picture (rows of its 512) the crop starts, so the machine's feet land on the painted ground. */
+const ART_Y0 = [90, 70, 60, 60];
+type Pic = { c: HTMLCanvasElement; light: RGB; side: number };
+const pics: (Pic | null)[] = [null, null, null, null];
+const worldSeam = (wi: number): RGB => pics[wi]?.light ?? WORLDS[wi].seam;
+const worldSide = (wi: number) => pics[wi]?.side ?? WORLDS[wi].side;
+
+function buildPic(wi: number, img: HTMLImageElement) {
+	const o = offscreen(WWD, PH);
+	if (!o) return;
+	const g = o.g;
+	const sc = WWD / img.naturalWidth;
+	g.drawImage(img, 0, ART_Y0[wi], img.naturalWidth, PH / sc, 0, 0, WWD, PH);
+	// down to sit behind the machine: darker, a little grayer, softer, the middle held back
+	g.save();
+	g.globalCompositeOperation = 'source-atop';
+	g.fillStyle = css([60, 64, 74], 0.14);
+	g.fillRect(0, 0, WWD, PH);
+	g.fillStyle = css(BLACK, 0.24);
+	g.fillRect(0, 0, WWD, PH);
+	g.restore();
+	soften(o.c, 0.55);
+	const cg = g.createRadialGradient(WWD / 2, 300, 60, WWD / 2, 300, 380);
+	cg.addColorStop(0, css([4, 5, 8], 0.3));
+	cg.addColorStop(1, css([4, 5, 8], 0));
+	g.fillStyle = cg;
+	g.fillRect(0, 0, WWD, PH);
+	// the picture's own light, sampled once: its brightest color and which side it comes from
+	let light = WORLDS[wi].seam;
+	let side = WORLDS[wi].side;
+	try {
+		const t = offscreen(16, 9);
+		if (t) {
+			t.g.drawImage(o.c, 0, 0, 16, 9);
+			const d = t.g.getImageData(0, 0, 16, 9).data;
+			const cells: { l: number; c: RGB; x: number }[] = [];
+			for (let i = 0; i < 144; i++) cells.push({ l: d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11, c: [d[i * 4], d[i * 4 + 1], d[i * 4 + 2]], x: i % 16 });
+			const top = [...cells].sort((p, q) => q.l - p.l).slice(0, 20);
+			const avg = top.reduce((acc, c) => [acc[0] + c.c[0] / 20, acc[1] + c.c[1] / 20, acc[2] + c.c[2] / 20] as RGB, [0, 0, 0] as RGB);
+			const lum = (lo: number, hi: number) => cells.filter((c) => c.x >= lo && c.x < hi).reduce((a2, c) => a2 + c.l, 0);
+			const lft = lum(2, 8);
+			const rgt = lum(8, 14);
+			light = mixRGB(avg, WHITE, 0.15);
+			side = clamp(((rgt - lft) / (rgt + lft + 1)) * 4, -0.9, 0.9);
+			if (Math.abs(side) < 0.3) side = side < 0 ? -0.3 : 0.3;
+		}
+	} catch {
+		// keep the world's own light
+	}
+	pics[wi] = { c: o.c, light, side };
+	pcache[wi] = undefined;
+}
+
+let artPromise: Promise<void> | null = null;
+function loadArt(): Promise<void> {
+	if (artPromise) return artPromise;
+	if (typeof Image === 'undefined') return (artPromise = Promise.resolve());
+	artPromise = Promise.all(
+		ART.map(
+			(name, wi) =>
+				new Promise<void>((done) => {
+					const img = new Image();
+					img.onload = () => {
+						try {
+							buildPic(wi, img);
+						} catch {
+							// stay procedural
+						}
+						done();
+					};
+					img.onerror = () => done();
+					img.src = assetUrl(`/assets/img/planets/art/${name}-landscape-768.webp`);
+				})
+		)
+	).then(() => undefined);
+	return artPromise;
 }
 
 type Painter = (f: Ctx, m: Ctx, n: Ctx) => void;
@@ -603,6 +685,40 @@ function drawWorld(ctx: Ctx, wi: number, shift: number, sec: number, a: number, 
 	const far = shift * 0.3;
 	const mid = shift * 0.6;
 	const near = shift;
+	const P = pics[wi];
+	if (P) {
+		// the painted world: one picture, drifting slowly across its pass, with only weather laid over it
+		ctx.save();
+		ctx.globalAlpha = a;
+		ctx.drawImage(P.c, WX0 + shift * 0.7 + 30 - clamp(lt, -0.5, 6) * 14, 0, WWD, PH);
+		ctx.globalAlpha = 1;
+		if (w.key === 'storm') {
+			rain(ctx, sec, near, a, 0.6, [190, 200, 220]);
+			for (const [k, sx] of [[0.7, 0], [1.9, 1]] as const) {
+				const fl = lightning(lt, k);
+				if (fl <= 0) continue;
+				lighter(ctx, () => glow(ctx, 300 + hash(Math.floor(sec - lt), sx + 3) * 400, 120, 460, [200, 205, 255], 0.4 * fl * a));
+			}
+		}
+		if (w.key === 'lava') {
+			lighter(ctx, () => {
+				for (const p of LAYERS.embers) {
+					const u = ((sec * p.sp + p.ph) % 420) / 420;
+					glow(ctx, near * 0.8 + p.x + Math.sin(sec + p.ph) * 12, GROUND + 60 - u * 480, 2 + p.s * 2, [255, 150, 80], 0.7 * p.s * (1 - u) * a, 'core');
+				}
+			});
+		}
+		if (w.key === 'ice') {
+			lighter(ctx, () => {
+				for (const f of LAYERS.snow.slice(0, 40)) {
+					const y = (sec * f.sp + f.ph) % 540;
+					glow(ctx, near * (0.4 + f.d * 0.6) + f.x - y * 0.15 + Math.sin(sec * 0.8 + f.ph) * 8, y, 1.3 * f.s * (0.6 + f.d), [236, 246, 252], (0.25 + f.d * 0.3) * a, 'core');
+				}
+			});
+		}
+		ctx.restore();
+		return;
+	}
 	const L = worldLayers(wi);
 	ctx.save();
 	if (!L) {
@@ -752,6 +868,27 @@ function worldPatch(wi: number): HTMLCanvasElement | null {
 	if (!L || !o) return (pcache[wi] = null);
 	const g = o.g;
 	const sx = 480 - PATCH.w / 2 - WX0;
+	const P = pics[wi];
+	if (P) {
+		// a low strip of the painting round the machine's feet, faded at the sides and underfoot
+		g.drawImage(P.c, sx, PATCH.y0 - 20, PATCH.w, PATCH.h + 20, 0, 0, PATCH.w, PATCH.h);
+		g.globalCompositeOperation = 'destination-in';
+		const hm2 = g.createLinearGradient(0, 0, PATCH.w, 0);
+		hm2.addColorStop(0, css(WHITE, 0));
+		hm2.addColorStop(0.3, css(WHITE, 1));
+		hm2.addColorStop(0.7, css(WHITE, 1));
+		hm2.addColorStop(1, css(WHITE, 0));
+		g.fillStyle = hm2;
+		g.fillRect(0, 0, PATCH.w, PATCH.h);
+		const vm2 = g.createLinearGradient(0, 0, 0, PATCH.h);
+		vm2.addColorStop(0, css(WHITE, 0));
+		vm2.addColorStop(0.25, css(WHITE, 1));
+		vm2.addColorStop(0.68, css(WHITE, 1));
+		vm2.addColorStop(1, css(WHITE, 0));
+		g.fillStyle = vm2;
+		g.fillRect(0, 0, PATCH.w, PATCH.h);
+		return (pcache[wi] = o.c);
+	}
 	// the low light behind the silhouettes
 	const hg = g.createLinearGradient(0, 0, 0, PATCH.h - 44);
 	hg.addColorStop(0, css(WORLDS[wi].seam, 0));
@@ -785,7 +922,7 @@ function drawPatch(ctx: Ctx, wi: number, sec: number, a: number, lk: number) {
 	ctx.translate(480, GROUND + 6);
 	ctx.scale(1, 0.14);
 	lighter(ctx, () => {
-		glow(ctx, 0, 0, 280, WORLDS[wi].seam, (0.05 + 0.02 * Math.sin(sec * 0.9 + wi)) * a);
+		glow(ctx, 0, 0, 280, worldSeam(wi), (0.05 + 0.02 * Math.sin(sec * 0.9 + wi)) * a);
 		if (lk > 0.01) glow(ctx, 0, 0, 240, VIOLET, 0.16 * lk * a);
 	});
 	ctx.restore();
@@ -878,10 +1015,10 @@ function rivetAt(g: Ctx, x: number, y: number, rusty: boolean) {
 	g.fill();
 	if (rusty) {
 		// grime running down from it
-		const len = 12 + hash(x, y) * 6;
+		const len = 20 + hash(x, y) * 10;
 		const st = g.createLinearGradient(0, y, 0, y + len);
-		st.addColorStop(0, css([80, 48, 24], 0.15));
-		st.addColorStop(1, css([80, 48, 24], 0.04));
+		st.addColorStop(0, css([80, 48, 24], 0.3));
+		st.addColorStop(1, css([80, 48, 24], 0.05));
 		g.fillStyle = st;
 		g.fillRect(x - 1, y, 2, len);
 	}
@@ -927,7 +1064,7 @@ function paintMachine(g: Ctx) {
 	g.translate(MX, GROUND + 14);
 	g.scale(1, 0.13);
 	const sh = g.createRadialGradient(0, 0, 40, 0, 0, 220);
-	sh.addColorStop(0, css(BLACK, 0.62));
+	sh.addColorStop(0, css(BLACK, 0.75));
 	sh.addColorStop(1, css(BLACK, 0));
 	g.fillStyle = sh;
 	g.fillRect(-230, -230, 460, 460);
@@ -1089,6 +1226,16 @@ function paintMachine(g: Ctx) {
 		g.fillStyle = css(r() < 0.5 ? [220, 226, 216] : BLACK, 0.06 + r() * 0.06);
 		g.fillRect(BODY.x0 + r() * 212, BODY.top + r() * (BODY.bot - BODY.top), 1, 1);
 	}
+	// chipped corners: paint gone from a few plate corners
+	g.fillStyle = css([210, 214, 204], 0.3);
+	for (const [cx, cy] of [[MX - 106, 262], [MX + 106 - 3, 318], [MX - 66, 384], [MX + 66 - 4, 214], [MX - 106, BODY.bot - 8], [MX + 52, 262]] as const) {
+		g.beginPath();
+		g.moveTo(cx, cy);
+		g.lineTo(cx + 6, cy + 1);
+		g.lineTo(cx + 2, cy + 6);
+		g.closePath();
+		g.fill();
+	}
 	// the housing is round: dark falling away at both edges, a low light on the top shoulders
 	for (const [xa, xb] of [[BODY.x0, BODY.x0 + 30], [BODY.x1, BODY.x1 - 30]] as const) {
 		const eg = g.createLinearGradient(xa, 0, xb, 0);
@@ -1104,12 +1251,12 @@ function paintMachine(g: Ctx) {
 	g.fillRect(BODY.x0, BODY.top, 212, 70);
 	const foot = g.createLinearGradient(0, BODY.bot - 67, 0, BODY.bot);
 	foot.addColorStop(0, css([20, 14, 8], 0));
-	foot.addColorStop(1, css([20, 14, 8], 0.34));
+	foot.addColorStop(1, css([20, 14, 8], 0.4));
 	g.fillStyle = foot;
 	g.fillRect(BODY.x0, BODY.bot - 67, 212, 67);
 	g.restore();
 	const bev = g.createLinearGradient(BODY.x0, 0, BODY.x1, 0);
-	bev.addColorStop(0, css([40, 46, 46], 0.4));
+	bev.addColorStop(0, css([8, 10, 10], 0.6));
 	bev.addColorStop(0.5, css([10, 12, 12], 0.7));
 	bev.addColorStop(1, css([2, 3, 3], 0.98));
 	g.strokeStyle = bev;
@@ -1178,27 +1325,28 @@ function machineCache() {
 type SeedKind = WorldKey | 'genesis' | 'apex';
 // A seed's outline, its radius at angle `th` (y down), for each kind of world. Every one stays a cell: soft,
 // closed, with no fins, limbs or points, only different in how it is proportioned.
-function seedR(kind: SeedKind, th: number) {
+function seedR(kind: SeedKind, th: number, fins = true) {
 	const w = (x: number) => Math.atan2(Math.sin(x), Math.cos(x));
 	if (kind === 'storm') {
 		// stretched about 2.2 to 1, two swept membranes trailing from the rear
 		const a = 1.5;
 		const b = 0.68;
 		const lens = (a * b) / Math.sqrt(Math.pow(b * Math.cos(th), 2) + Math.pow(a * Math.sin(th), 2));
-		const fin = (d: number) => 0.5 * Math.exp(-Math.pow(d / 0.17, 2));
+		const fin = (d: number) => (fins ? 0.5 : 0) * Math.exp(-Math.pow(d / 0.17, 2));
 		return lens + fin(w(th - 2.6)) + fin(w(th - 3.68));
 	}
 	if (kind === 'lava') {
 		// six-sided, walled
+		// rounded corners, bowed edges: half hexagon, half circle
 		const q = ((th % (Math.PI / 3)) + Math.PI / 3) % (Math.PI / 3);
-		return 1.0 / Math.cos(q - Math.PI / 6) * 0.9;
+		return mix((1.0 / Math.cos(q - Math.PI / 6)) * 0.9, 0.98, 0.55);
 	}
-	if (kind === 'ice') return 0.62 + 0.42 * Math.pow(Math.abs(Math.cos(3 * th)), 7); // six spikes at 1.6 times the body
+	if (kind === 'ice') return 0.55 + 0.47 * Math.pow((1 + Math.cos(6 * th)) / 2, 5); // six spikes at 1.6 times the body
 	if (kind === 'sea') return Math.sin(th) < 0 ? 1 : Math.min(1.15, 0.45 / Math.max(0.22, Math.abs(Math.sin(th)))) * (1 + 0.12 * Math.abs(Math.sin(7 * th))); // a bell with a scalloped hem
 	if (kind === 'apex') return 0.85; // all the same
 	return 1 + 0.1 * Math.cos(2 * th) - 0.16 * Math.sin(th); // Genesis: a plain oval seed
 }
-const SEEDS = Array.from({ length: 5 }, (_, k) => ({ x: (hash(k, 1) - 0.5) * 22, y: VY0 + 38 + k * 40 + (hash(k, 2) - 0.5) * 6, r: 13.5 * (0.85 + hash(k, 3) * 0.3), ph: hash(k, 4) * TAU, sp: 0.6 + hash(k, 5) * 0.5, tilt: (hash(k, 6) - 0.5) * 0.5, hb: 0.5 + hash(k, 7) * 0.25 }));
+const SEEDS = Array.from({ length: 5 }, (_, k) => ({ x: (hash(k, 1) - 0.5) * 22, y: VY0 + 38 + k * 40 + (hash(k, 2) - 0.5) * 6, r: 16.5 * (0.88 + hash(k, 3) * 0.24), ph: hash(k, 4) * TAU, sp: 0.6 + hash(k, 5) * 0.5, tilt: (hash(k, 6) - 0.5) * 0.5, hb: 0.5 + hash(k, 7) * 0.25 }));
 
 function ecg(ph: number) {
 	const p = ((ph % 1) + 1) % 1;
@@ -1238,7 +1386,10 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	ctx.save();
 	ctx.translate(VX, GROUND + 12);
 	ctx.scale(1, 0.13);
-	lighter(ctx, () => glow(ctx, 0, 0, 200, gel, 0.4 * a));
+	lighter(ctx, () => {
+		glow(ctx, 0, 0, 200, gel, 0.4 * a);
+		glow(ctx, side * 60, 0, 260, light, 0.16 * a);
+	});
 	ctx.restore();
 	const mc = machineCache();
 	if (mc) {
@@ -1346,70 +1497,84 @@ function drawMachine(ctx: Ctx, S: MachineLook) {
 	}
 	// the seeds of life: cells, each with a membrane, a nucleus and a heartbeat of its own, drifting and shaped
 	// for the world; under APEX they line up and all beat together, brighter, in its violet
-	const cellsGlow: [number, number, number][] = [];
+	const halos: [number, number, number, number][] = [];
+	const sparks: [number, number, number][] = [];
 	SEEDS.forEach((s, k) => {
 		const free = 1 - apex;
 		const dx = Math.sin(sec * s.sp + s.ph) * 5 * free;
 		const dy = Math.cos(sec * s.sp * 0.8 + s.ph) * 4 * free;
 		const x = mix(VX + s.x + dx, VX, apex);
 		const y = mix(s.y + dy, VY0 + 38 + k * 40, apex);
-		const rot = mix(s.tilt + Math.sin(sec * 0.4 * s.sp + s.ph) * 0.3, 0, apex);
+		// a slow drift of about 6 degrees, and a breath of 4 percent every 1.8 s, out of step from one seed to the next
+		const rot = mix(s.tilt + Math.sin(sec * 0.5 + s.ph) * 0.105, 0, apex);
 		const own = ((sec * s.hb + s.ph / TAU) % 1 + 1) % 1;
 		const pulse = mix(Math.exp(-own * 5) * (own < 0.6 ? 1 : 0), beatPulse, apex);
-		const r = mix(s.r, 12, apex) * (1 + 0.05 * Math.sin(sec * 1.3 * s.sp + s.ph) + 0.09 * pulse);
-		const pts: [number, number][] = [];
-		for (let q = 0; q < MEMBRANE_N; q++) {
-			const th = (q / MEMBRANE_N) * TAU;
-			// from one form to the next through a plain round, never a stretched blend of the two
-			const through = S.km < 0.5 ? mix(seedR(S.kindA, th), 0.85, S.km * 2) : mix(0.85, seedR(S.kindB, th), S.km * 2 - 1);
-			const rr = r * mix(through, seedR('apex', th), apex) * (1 + 0.025 * Math.sin(3 * th + sec * 1.1 + s.ph));
-			pts.push([x + Math.cos(th + rot) * rr, y + Math.sin(th + rot) * rr * 0.9]);
-		}
-		const path = () => {
-			ctx.beginPath();
-			pts.forEach(([px, py], i) => (i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)));
-			ctx.closePath();
+		// a new seed forms: the old one is gone, a bright point swells into the new shape
+		const kmk = clamp(S.km * 1.25 - k * 0.06);
+		const form = mix(kmk < 0.5 ? mix(1, 0.06, smooth(0, 0.5, kmk)) : mix(0.06, 1, easeOut(ramp(0.5, 1, kmk))), 1, apex);
+		const r = mix(s.r, 12, apex) * form * (1 + 0.04 * Math.sin((sec * TAU) / 1.8 + s.ph) + 0.06 * pulse);
+		const kindNow: SeedKind = kmk < 0.5 ? S.kindA : S.kindB;
+		const stormW = kindNow === 'storm' ? 1 - apex : 0;
+		const wall = kindNow === 'lava' ? 1 - apex : 0;
+		const shape = (fins: boolean) => {
+			const pts: [number, number][] = [];
+			for (let q = 0; q < MEMBRANE_N; q++) {
+				const th = (q / MEMBRANE_N) * TAU;
+				const rr = r * mix(seedR(kindNow, th, fins), seedR('apex', th), apex) * (1 + 0.02 * Math.sin(3 * th + sec * 1.1 + s.ph));
+				pts.push([x + Math.cos(th + rot) * rr, y + Math.sin(th + rot) * rr * 0.9]);
+			}
+			return () => {
+				ctx.beginPath();
+				pts.forEach(([px, py], i) => (i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)));
+				ctx.closePath();
+			};
 		};
 		const tint = mixRGB(gel, VIOLET, apex * 0.7);
-		// a cell as seen through a lens: darker, grainy cytoplasm inside a bright membrane
-		const body = ctx.createRadialGradient(x - r * 0.2, y - r * 0.25, r * 0.1, x, y, r * 1.1);
-		body.addColorStop(0, css(mixRGB(tint, BLACK, 0.5 - 0.22 * apex), (0.82 + 0.1 * apex) * a));
-		body.addColorStop(1, css(mixRGB(tint, BLACK, 0.62 - 0.25 * apex), (0.9 + 0.05 * apex) * a));
-		path();
-		ctx.fillStyle = body;
-		ctx.fill();
-		const wall = (S.kindA === 'lava' ? 1 - S.km : 0) + (S.kindB === 'lava' ? S.km : 0);
-		ctx.strokeStyle = css(mixRGB(tint, BLACK, 0.7), (0.5 + 0.4 * wall) * a);
-		ctx.lineWidth = 2.2 + 3 * wall * (1 - apex);
-		ctx.stroke();
-		ctx.strokeStyle = css(mixRGB(tint, WHITE, 0.82), (0.25 + 0.5 * apex) * a);
-		ctx.lineWidth = 1.15;
-		ctx.stroke();
-		// granules in the cytoplasm, a slightly darker nucleus with a pale ring that swells with each beat
-		ctx.fillStyle = css(mixRGB(tint, WHITE, 0.65), 0.55 * a);
-		for (let j = 0; j < 4; j++) {
-			const ang = s.ph * 2 + j * 1.7 + rot + sec * 0.15;
+		const fillC = css(mixRGB(tint, BLACK, 0.62 - 0.27 * apex), (0.8 + 0.12 * apex) * a);
+		if (r > 0.6) {
+			// the membrane: the gel's own color darkened, so the seed sits dark in the glow; a storm's fins trail see-through
+			if (stormW > 0) {
+				shape(true)();
+				ctx.fillStyle = css(mixRGB(tint, BLACK, 0.55), 0.4 * a);
+				ctx.fill();
+			}
+			const path = shape(stormW === 0);
+			path();
+			ctx.fillStyle = fillC;
+			ctx.fill();
+			// a lighter rim just inside it
+			ctx.save();
+			path();
+			ctx.clip();
+			ctx.strokeStyle = css(mixRGB(tint, WHITE, 0.65), (0.35 + 0.35 * apex) * a);
+			ctx.lineWidth = 3 + 3.5 * wall;
+			ctx.stroke();
+			ctx.restore();
+			// the nucleus: a pale disc holding a dark dot, at a storm's head end; it swells with each beat
+			const nr = r * 0.34 * (1 + 0.15 * pulse);
+			const head = r * (0.12 + 0.6 * stormW);
+			const nx = x + Math.cos(rot) * head + Math.cos(s.ph + sec * 0.3) * r * 0.04;
+			const ny = y + Math.sin(rot) * head * 0.9 + Math.sin(s.ph + sec * 0.3) * r * 0.03;
+			ctx.fillStyle = css(mixRGB(tint, WHITE, 0.5), (0.5 + 0.2 * pulse) * a);
 			ctx.beginPath();
-			ctx.arc(x + Math.cos(ang) * r * 0.6, y + Math.sin(ang) * r * 0.46, r * 0.055, 0, TAU);
+			ctx.arc(nx, ny, nr, 0, TAU);
+			ctx.fill();
+			ctx.fillStyle = css(mixRGB(tint, BLACK, 0.8), 0.9 * a);
+			ctx.beginPath();
+			ctx.arc(nx, ny, nr * 0.46, 0, TAU);
 			ctx.fill();
 		}
-		const nr = r * 0.3 * (1 + 0.2 * pulse);
-		const nx = x + Math.cos(s.ph + rot) * r * 0.24 + Math.cos(s.ph + sec * 0.3) * r * 0.05;
-		const ny = y + Math.sin(s.ph + rot) * r * 0.18 + Math.sin(s.ph + sec * 0.3) * r * 0.04;
-		ctx.fillStyle = css(mixRGB(tint, BLACK, 0.62 - 0.25 * apex), 0.8 * a);
-		ctx.beginPath();
-		ctx.arc(nx, ny, nr, 0, TAU);
-		ctx.fill();
-		ctx.strokeStyle = css(mixRGB(tint, WHITE, 0.6), (0.4 + 0.4 * pulse) * a);
-		ctx.lineWidth = 0.8;
-		ctx.stroke();
-		ctx.fillStyle = css(mixRGB(tint, WHITE, 0.85), (0.55 + 0.4 * pulse) * a);
-		ctx.beginPath();
-		ctx.arc(nx - nr * 0.25, ny - nr * 0.25, nr * 0.22, 0, TAU);
-		ctx.fill();
-		if (apex > 0.05) cellsGlow.push([nx, ny, r * (1.3 + 0.7 * pulse)]);
+		halos.push([x, y, r, pulse]);
+		if (form < 0.5) sparks.push([x, y, 1 - form]);
 	});
-	if (cellsGlow.length) lighter(ctx, () => cellsGlow.forEach(([x, y, rr]) => glow(ctx, x, y, rr * 1.6, VIOLET, 0.5 * apex * a)));
+	// a faint glow of life round each, and the bright point a new seed starts as
+	lighter(ctx, () => {
+		for (const [x, y, r, p] of halos) glow(ctx, x, y, r * 2.2 + 3, apex > 0.05 ? mixRGB(gel, VIOLET, apex) : gel, (0.22 + 0.16 * p + 0.3 * apex) * a);
+		for (const [x, y, f] of sparks) {
+			glow(ctx, x, y, 7 + 10 * f, WHITE, 0.8 * f * a, 'core');
+			glow(ctx, x, y, 18 * f, mixRGB(gel, WHITE, 0.5), 0.5 * f * a);
+		}
+	});
 	// the glass's own sheen
 	ctx.fillStyle = css(WHITE, 0.18 * a);
 	ctx.fillRect(VX - VR + 7, VY0 + 26, 5, VY1 - VY0 - 52);
@@ -1502,7 +1667,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 		g.setTransform(1, 0, 0, 1, 0, 0);
 		g.clearRect(0, 0, px, px);
 		g.setTransform(f, 0, 0, f, 0, 0);
-		g.lineWidth = 1.4;
+		g.lineWidth = Math.max(1.4, 1.5 / f);
 		ORB.e.forEach(([i, j], k) => {
 			if (hash(k, gapStep + 40) < 0.13) return;
 			const d = (P[i][2] + P[j][2]) / 2;
@@ -1510,10 +1675,11 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 			const b1 = Math.exp(-Math.pow((yn - band1) / 0.07, 2));
 			const b2 = Math.exp(-Math.pow((yn - band2) / 0.1, 2));
 			const rr = Math.hypot((P[i][0] + P[j][0]) / 2 - pad - R, (P[i][1] + P[j][1]) / 2 - pad - R) / R;
-			const feather = 1 - 0.9 * smooth(0.82, 1, rr);
+			const feather = 1 - 0.9 * smooth(0.88, 1, rr);
 			const fl = Math.exp(-Math.pow(((sec * 1.3 + hash(k) * 11) % 3.1) - 0.1, 2) * 50) + beatPulse * 0.3;
 			const nb = (nodeB[i] + nodeB[j]) / 2;
-			const al = (0.3 + 0.6 * ((d + 1) / 2)) * (0.4 + 0.9 * nb) * (1 - 0.55 * b2) + 0.6 * b1 + 0.3 * fl;
+			let al = (0.45 + 0.6 * ((d + 1) / 2)) * (0.55 + 0.8 * nb) * (1 - 0.45 * b2) + 0.6 * b1 + 0.3 * fl;
+			if (f < 1.2) al = Math.max(al, 0.7 * feather);
 			g.strokeStyle = css(mixRGB(col, WHITE, Math.min(1, fl * 0.5 + b1 * 0.6)), Math.min(1, al * feather));
 			g.beginPath();
 			g.moveTo(P[i][0], P[i][1]);
@@ -1557,7 +1723,7 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 			if (tearing && r >= tearRow && r < tearRow + 7) off += 26 * (seedOff ? 1.3 : 1);
 			// a quarter of the rows run out past the edge of the image, some left, some right
 			const over = hash(r, Math.floor(sec / 0.25) + 60);
-			if (over < 0.25) off += (hash(r, 61) < 0.5 ? -1 : 1) * (8 + hash(r, Math.floor(sec / 0.25) + 62) * 12);
+			if (over < 0.15) off += (hash(r, 61) < 0.5 ? -1 : 1) * (8 + hash(r, Math.floor(sec / 0.25) + 62) * 12);
 			ctx.drawImage(img, 0, Math.round((y - y0) * f), img.width, Math.max(1, Math.round(rowH * f)), x0 + off + dx, y + roll, size, rowH);
 		}
 	};
@@ -1606,8 +1772,8 @@ function drawNet(ctx: Ctx, cx: number, cy: number, R: number, t3: number, a0: nu
 	const na = a0 * smooth(2.9, 3.4, t3);
 	if (na > 0.01) {
 		ctx.save();
-		ctx.globalAlpha = na * 0.85;
-		ctx.fillStyle = css(mixRGB(VIOLET, WHITE, 0.35));
+		ctx.globalAlpha = na * 0.5;
+		ctx.fillStyle = css(mixRGB(VIOLET, WHITE, 0.1));
 		ctx.font = `600 ${labelPx}px "Martian Mono", ui-monospace, monospace`;
 		ctx.textAlign = 'left';
 		ctx.textBaseline = 'middle';
@@ -1684,6 +1850,7 @@ const STARS = (() => {
 type Frozen = { kindA: SeedKind; kindB: SeedKind; km: number; gel: RGB };
 
 export function createGenerators(): Figure {
+	void loadArt();
 	let stage = 0;
 	let present = false;
 	let vis = 0;
@@ -1701,6 +1868,7 @@ export function createGenerators(): Figure {
 
 	return {
 		stages: 2,
+		ready: loadArt,
 		reset(s) {
 			stage = s;
 			vis = 0;
@@ -1792,7 +1960,7 @@ export function createGenerators(): Figure {
 			// what the machine has read: a world arrives, the ring reads it, then the life inside takes its form
 			const readT = ws.since;
 			const reading = (1 - v3) * smooth(-0.1, 0.1, readT) * (1 - smooth(1.2, 1.7, readT));
-			const adapt = t < FIRST ? smooth(0.3, 0.9, t) : smooth(0, 0.55, readT);
+			const adapt = t < FIRST ? smooth(0.2, 0.95, t) : smooth(0.05, 0.9, readT);
 			let kindA: SeedKind = ws.prev >= 0 ? WORLDS[ws.prev].key : 'genesis';
 			let kindB: SeedKind = WORLDS[ws.cur].key;
 			let km = adapt;
@@ -1801,7 +1969,7 @@ export function createGenerators(): Figure {
 				if (!frozen) frozen = { kindA, kindB, km, gel };
 				({ kindA, kindB, km, gel } = frozen);
 			}
-			const sideOf = (k: SeedKind) => (k === 'genesis' ? -0.4 : k === 'apex' ? 0 : WORLDS[WKEYS.indexOf(k)].side);
+			const sideOf = (k: SeedKind) => (k === 'genesis' ? -0.4 : k === 'apex' ? 0 : worldSide(WKEYS.indexOf(k)));
 				const sideNow = mix(sideOf(kindA), sideOf(kindB), km);
 				// the machines, each on its own world: ours first, the others coming into view as the view pulls back
 			const sensors: { x: number; y: number; at: number; a: number }[] = [];
@@ -1829,8 +1997,8 @@ export function createGenerators(): Figure {
 				drawMachine(ctx, {
 					sec: sec + i * 1.7,
 					gel: mixRGB(own, mixRGB(own, [128, 104, 190], 0.78), lk),
-					light: mixRGB(WORLDS[wi].seam, VIOLET, lk * 0.5),
-						side: first ? sideNow : WORLDS[wi].side * 0.7,
+					light: mixRGB(worldSeam(wi), VIOLET, lk * 0.5),
+						side: first ? sideNow : worldSide(wi) * 0.7,
 					a: Math.max(first ? 1 : 0.6 * app, app) * (1 - dip),
 					kindA: kind ?? kindA,
 					kindB: kind ?? kindB,

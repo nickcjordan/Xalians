@@ -123,22 +123,27 @@ if (framesSpec) {
 	root.append(grid);
 	const px = Number(q.get('w') || 1000);
 	const dt = 1 / 60;
-	for (const item of framesSpec.split(';').filter(Boolean)) {
-		const compact = item.startsWith('c');
-		const legs = (compact ? item.slice(1) : item).split('>').map((leg) => leg.split('@').map(Number) as [number, number]);
-		const fig = make();
-		fig.reset(legs[0][0]);
-		let sec = 0;
-		for (const [stage, secs] of legs) for (let t = 0; t < secs - 1e-6; t += dt, sec += dt) fig.step(dt, stage, true);
-		const c = el('canvas');
-		c.width = compact ? Math.round(px * 0.36) : px;
-		c.height = Math.round((c.width * H) / W);
-		paint(c, fig, sec, compact);
-		const f = el('figure');
-		f.append(c, el('figcaption', {}, `${study.figure} ${item}`));
-		grid.append(f);
-	}
-	(window as unknown as { __done: boolean }).__done = true;
+	const stills = async () => {
+		await make().ready?.();
+		for (const item of framesSpec.split(';').filter(Boolean)) {
+			const compact = item.startsWith('c');
+			const legs = (compact ? item.slice(1) : item).split('>').map((leg) => leg.split('@').map(Number) as [number, number]);
+			const fig = make();
+			await fig.ready?.();
+			fig.reset(legs[0][0]);
+			let sec = 0;
+			for (const [stage, secs] of legs) for (let t = 0; t < secs - 1e-6; t += dt, sec += dt) fig.step(dt, stage, true);
+			const c = el('canvas');
+			c.width = compact ? Math.round(px * 0.36) : px;
+			c.height = Math.round((c.width * H) / W);
+			paint(c, fig, sec, compact);
+			const f = el('figure');
+			f.append(c, el('figcaption', {}, `${study.figure} ${item}`));
+			grid.append(f);
+		}
+		(window as unknown as { __done: boolean }).__done = true;
+	};
+	void stills();
 } else {
 	buildStudy();
 }
