@@ -135,10 +135,37 @@ def inflate(center, radii, amplitude, mirror):
         field[sl] = field[sl]-np.float32(amplitude)*w
 
 
+def advect_forward(center, radii, amplitude, mirror):
+    """Push the surface toward -y by amplitude*w(p) (F'(x,y,z) = F(x,y+s,z)), so the front view's outline does not
+    grow the way a normal-direction offset does on a downward-facing part such as the chin."""
+    global field
+    centers = [np.array(center)]
+    if mirror:
+        centers.append(np.array([-center[0], center[1], center[2]]))
+    for c in centers:
+        r = np.array(radii)
+        margin = amplitude+2*VS
+        sl = box_slices(c-r-np.array([0, margin, 0]), c+r+np.array([0, margin, 0]))
+        X, Y, Z = coordinates(sl)
+        r2 = ((X-c[0])/r[0])**2+((Y-c[1])/r[1])**2+((Z-c[2])/r[2])**2
+        s = (amplitude*np.maximum(0, 1-r2)**2).astype(np.float32)
+        sub = field[sl].copy()
+        j = np.arange(sub.shape[1], dtype=np.float32)[None, :, None]+s/VS
+        j = np.clip(j, 0, sub.shape[1]-1)
+        j0 = np.minimum(np.floor(j).astype(np.int64), sub.shape[1]-2)
+        f = (j-j0).astype(np.float32)
+        a = np.take_along_axis(sub, j0, axis=1)
+        b = np.take_along_axis(sub, j0+1, axis=1)
+        field[sl] = a*(1-f)+b*f
+
+
 p = spec['pads']
 inflate(p['center'], p['radii'], p['amplitude'], True)
 c = spec['chin']
-inflate(c['center'], c['radii'], c['amplitude'], False)
+if c.get('mode', 'inflate') == 'advect':
+    advect_forward(c['center'], c['radii'], c['amplitude'], False)
+else:
+    inflate(c['center'], c['radii'], c['amplitude'], False)
 
 
 # 3. Broad cheek locks.
