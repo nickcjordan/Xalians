@@ -79,3 +79,9 @@ Blind reader (fresh): 06 "a tilted hexagonal frame, like a lens or a porthole ..
 Builder: option (b), the token as a hexagon of light lying on Valleron; the clearing and five glints leave from it. Headed Chrome: 0.7 ms script, 213 fps.
 Critic: Glance 7, Lore 8.5, Subject 5.5 as light (4 against the unchanged anchor), Setting 7.5, Motion 7, Changes 8, Finish 6.5, Phone 7.5. Built as a hard stroke it reads as a selection box; as layered light it could reach about 8.5 as light, never against the anchor.
 Blind reader (fresh): 06 "a white hexagon outline sits around the galaxy's glowing gold center ... It could be a shield, a building, a marker or a selection box". Fails for the fifth round. Stop rule: taken to Nick with three options.
+
+### Round 5, Generators (2026-09-29)
+
+Builder: the composited machine shaded as a cylinder and tinted by multiply on every part, lighting cross-fading with the world, storm seeds as lenses, four larger seeds, a brighter feed and a flash where each seed forms. Headed Chrome: 03 at 4.1 ms script, 61 fps.
+Critic: Glance 7.5, Lore 8, Subject 7.5, Setting 7.5, Motion 7.5, Changes 7, Finish 7.5, Phone 7. This path's ceiling now about 8 on Subject and Finish; one more round of small fixes, then only painting the machine reaches 8.5. Changes untouched since round 1.
+Blind reader (fresh): 02 "the things floating in the tank change with the setting ... I can't tell what the things in the tanks are: embryos, seeds, creatures or specimens" (medium); 03 "as if it is taking all of them over" (high). 03 passes; 02 half, the fifth round.
