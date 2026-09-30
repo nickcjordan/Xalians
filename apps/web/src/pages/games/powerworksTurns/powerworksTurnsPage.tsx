@@ -27,6 +27,16 @@ import {
   recordEntries,
   roomNamesOf,
   sinceView,
+  briefingView,
+  campView,
+  runSummary,
+  stationHeal,
+  titleCard,
+  knockoutHold,
+  beatsFell,
+  revivedWords,
+  type Hold,
+  type TitleCard,
   type Beat,
   type RecordEntry,
 } from "./view";
@@ -36,7 +46,8 @@ import { KeyCard } from "./keys";
 import { TurnRail } from "./rail";
 import { TurnBanner, PlaybackTools } from "./banner";
 import { Playback, beatTiming, type BeatPhase } from "./playback";
-import { CampPanel, EndPanel, GuidePanel, RecordPanel, RestartPanel } from "./panels";
+import { BriefingPanel, CampPanel, EndPanel, RecordPanel, RestartPanel, TitleCardView } from "./panels";
+import { GuidePanel } from "./guide";
 import { PowerworksEnvironment } from "../powerworksEnvironment";
 import "./powerworksTurns.css";
 
@@ -138,7 +149,7 @@ function readSeed(): number {
 }
 
 /** The saved run and its Record (a save without one starts the Record empty). */
-function boot(): { state: TRun; record: RecordEntry[] } {
+function boot(): { state: TRun; record: RecordEntry[]; fresh: boolean } {
   try {
     const params = new URLSearchParams(window.location.search);
     if (!params.get("seed")) {
@@ -146,13 +157,13 @@ function boot(): { state: TRun; record: RecordEntry[] } {
       if (raw) {
         const saved = JSON.parse(raw);
         if (saved && saved.version === PILLAR_SAVE_VERSION && saved.state)
-          return { state: saved.state as TRun, record: Array.isArray(saved.record) ? (saved.record as RecordEntry[]) : [] };
+          return { state: saved.state as TRun, record: Array.isArray(saved.record) ? (saved.record as RecordEntry[]) : [], fresh: false };
       }
     }
   } catch {
     /* A bad or unavailable save starts fresh. */
   }
-  return { state: createTurnRun(readSeed(), "starter", RULES).state, record: [] };
+  return { state: createTurnRun(readSeed(), "starter", RULES).state, record: [], fresh: true };
 }
 
 /** The Record keeps this many of the newest lines. */
@@ -180,6 +191,15 @@ export default function PowerworksTurnsPage() {
   const [armedAlly, setArmedAlly] = useState<{ index: number } | null>(null);
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
   const [speed, setSpeed] = useState<1 | 2>(1);
+  // Round 2: the briefing before a new run's first turn (a saved run in progress skips it); the
+  // sector title card; the knockout hold; the camp's revive line; the recovery station's heal;
+  // and the trace a cancelled restart leaves.
+  const [briefing, setBriefing] = useState(booted.fresh);
+  const [card, setCard] = useState<TitleCard | null>(null);
+  const [hold, setHold] = useState<Hold | null>(null);
+  const [revived, setRevived] = useState<{ id: string; to: number; words: string } | null>(null);
+  const [station, setStation] = useState<{ deltas: Record<string, number>; text: string } | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const zoom = useConsoleScale();
   const reducedMotion = useReducedMotion();
   // The command's settled state, applied only once playback finishes (finishPlayback):
@@ -213,8 +233,39 @@ export default function PowerworksTurnsPage() {
   }, [busy, run]);
 
   useEffect(() => {
+    if (briefing) return; // a run is saved once it has begun
     save(run, record);
-  }, [run, record]);
+  }, [run, record, briefing]);
+
+  // The sector title card: held briefly on entering each sector, then gone.
+  const cardTimer = useRef<number | null>(null);
+  function showCard(next: TitleCard) {
+    if (cardTimer.current) window.clearTimeout(cardTimer.current);
+    setCard(next);
+    cardTimer.current = window.setTimeout(() => setCard(null), 2400);
+  }
+  useEffect(() => () => {
+    if (cardTimer.current) window.clearTimeout(cardTimer.current);
+  }, []);
+  const lastRoom = useRef(booted.state.room);
+  useEffect(() => {
+    if (run.room === lastRoom.current) return;
+    lastRoom.current = run.room;
+    if (run.phase === "turn") showCard(titleCard(view, station?.text ?? null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [run.room]);
+
+  // A cancelled restart says so for a moment, so it cannot be mistaken for a restart.
+  useEffect(() => {
+    if (!notice) return;
+    const t = window.setTimeout(() => setNotice(null), 3500);
+    return () => window.clearTimeout(t);
+  }, [notice]);
+
+  function begin() {
+    setBriefing(false);
+    if (run.phase === "turn") showCard(titleCard(view));
+  }
 
   useEffect(() => {
     const old = document.title;
@@ -229,12 +280,23 @@ export default function PowerworksTurnsPage() {
     try {
       const before = run;
       const result = turnCommand(run, command);
+      if (command.kind === "advance") {
+        // The recovery station's heal plays on arrival: green deltas on the plates and a line.
+        setStation(stationHeal(before, result.state));
+        setRevived(null);
+      } else if (command.kind === "revive") {
+        const u = result.state.team.find((t) => t.id === command.id);
+        if (u) setRevived({ id: u.id, to: u.hp, words: revivedWords(u.name, u.hp, result.state.revival) });
+      } else if (command.kind === "act") {
+        setStation(null);
+      }
       if (command.kind === "act") {
         const beats = playback(before, result.events);
         if (beats.length) {
           // Hold the settled state until playback actually finishes (see nextRun above):
           // view.phase (and so the keybar/camp switch) must not change mid-animation.
           nextRun.current = result.state;
+          setHold(knockoutHold(result.state));
           setPendingBeats(beats);
           setBeatIndex(0);
           setBeatPhase("approach");
@@ -256,6 +318,7 @@ export default function PowerworksTurnsPage() {
       nextRun.current = null;
     }
     setPendingBeats(null);
+    setHold(null);
     setBeatIndex(0);
     setSkipPlayback(false);
   }
@@ -302,7 +365,7 @@ export default function PowerworksTurnsPage() {
   // squadmate cell; Escape backs out; P passes.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (busy || panel || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (busy || panel || briefing || e.altKey || e.ctrlKey || e.metaKey) return;
       const field = (e.target as Element | null)?.closest?.("input, textarea, select");
       if (field) return;
       if (e.key === "Escape") {
@@ -340,7 +403,7 @@ export default function PowerworksTurnsPage() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, busy, panel, armedAlly]);
+  }, [view, busy, panel, briefing, armedAlly]);
 
   function restart() {
     const next = createTurnRun((run.seed + 1) >>> 0, "starter", RULES).state;
@@ -348,6 +411,13 @@ export default function PowerworksTurnsPage() {
     setPendingBeats(null);
     setPanel(null);
     setRecord([]);
+    setBriefing(true);
+    setCard(null);
+    setHold(null);
+    setRevived(null);
+    setStation(null);
+    setNotice(null);
+    lastRoom.current = next.room;
     try {
       localStorage.removeItem(SAVE_KEY);
     } catch {
@@ -367,24 +437,30 @@ export default function PowerworksTurnsPage() {
   // The spotlit unit (storyboard item "whose turn"): the current moment's actor during
   // playback, or the active companion on its own turn. Never the unit that just acted once
   // the moment has moved on.
-  const spotlightId = busy ? actorId ?? null : view.active?.id ?? null;
+  const holding = busy && beatPhase === "hold";
+  const spotlightId = holding ? null : busy ? actorId ?? null : view.active?.id ?? null;
   const spotlightSide: "squad" | "enemy" = actorIsEnemy ? "enemy" : "squad";
   const showImpact = busy && beatPhase === "impact";
+  // The blow has landed (impact, settle or hold): health, marks and the rising numbers show it.
+  const landed = busy && beatPhase !== "approach";
   const targets = useMemo(() => (moment ? targetsOf(moment) : []), [moment]);
   const impactTargets = showImpact ? targets : [];
+  // Health changes shown with a green delta: the recovery station's arrival heal, until you act.
+  const deltaOf = (id: string) => station?.deltas[id] ?? since.deltas[id] ?? 0;
+  const knockouts = useMemo(() => moments.map((m) => beatsFell(m.beats)), [moments]);
 
   // Health during playback: the settled state is held until playback ends, so each plate
   // shows the health as of the moment being played; it drops when the blow lands.
   const shownHp = useMemo(() => {
     if (!busy) return null;
-    const upTo = showImpact ? beatIndex : beatIndex - 1;
+    const upTo = landed ? beatIndex : beatIndex - 1;
     if (upTo < 0) return null;
     const m = moments[Math.min(upTo, moments.length - 1)];
     return m ? m.beats[m.beats.length - 1].hp : null;
-  }, [busy, moments, beatIndex, showImpact]);
+  }, [busy, moments, beatIndex, landed]);
   const shownMarks = useMemo(() => {
     if (!busy) return null;
-    const upTo = showImpact ? beatIndex : beatIndex - 1;
+    const upTo = landed ? beatIndex : beatIndex - 1;
     if (upTo < 0) return null;
     const marksNow: Record<string, { shield: number; boost: number; hinder: number }> = {};
     for (const u of [...view.squad, ...view.enemies]) marksNow[u.id] = { shield: u.shield, boost: u.boost, hinder: u.hinder };
@@ -402,7 +478,7 @@ export default function PowerworksTurnsPage() {
       }
     }
     return marksNow;
-  }, [busy, moments, beatIndex, showImpact, view.squad, view.enemies]);
+  }, [busy, moments, beatIndex, landed, view.squad, view.enemies]);
   const withHp = <T extends { id: string; hp: number; down: boolean; shield: number; boost: number; hinder: number }>(u: T): T => {
     let out = u;
     if (shownHp && shownHp[u.id] !== undefined)
@@ -446,7 +522,7 @@ export default function PowerworksTurnsPage() {
   }, [busy, moment, actorIsEnemy, beatIndex, moments, view.enemies]);
   const beatWords =
     busy && moment
-      ? showImpact
+      ? landed
         ? momentWords(moment.beats, [...view.squad, ...view.enemies]) + weakenedNote
         : approachWords(moment, [...view.squad, ...view.enemies])
       : "";
@@ -556,8 +632,8 @@ export default function PowerworksTurnsPage() {
                 actorSide={spotlightSide}
                 actorName={bannerName}
                 actorLetter={bannerLetter}
-                line={beatWords || (busy ? "" : since.text)}
-                lineIsSince={!beatWords && !busy && !!since.text}
+                line={beatWords || (busy ? "" : notice ?? station?.text ?? since.text)}
+                lineIsSince={!beatWords && !busy && !notice && !station && !!since.text}
                 onOpenRecord={() => setPanel("record")}
                 round={shownRound}
               />
@@ -567,6 +643,11 @@ export default function PowerworksTurnsPage() {
             <div className="pwt-top-fill" />
           )}
           <div className="pwt-top-right">
+            {notice && (
+              <p className="pwt-notice" role="status" data-notice="">
+                {notice}
+              </p>
+            )}
             <nav className="pwt-top-tools" aria-label="Tools">
               <button type="button" onClick={() => setPanel("guide")}>
                 <BookOpen /> Guide
@@ -581,9 +662,9 @@ export default function PowerworksTurnsPage() {
           </div>
         </header>
 
-        <div className="pwt-stage" ref={stageRef} data-spotlight={spotlightId ?? ""}>
+        <div className="pwt-stage" ref={stageRef} data-spotlight={spotlightId ?? ""} data-hold={holding && hold ? hold.kind : ""}>
           <PowerworksEnvironment room={view.room} className="pw-environment" />
-          {marks.lines.length > 0 && (
+          {marks.lines.length > 0 && !holding && (
             <svg className="pwt-aim-svg" aria-hidden="true">
               <defs>
                 <marker id="pwt-strike-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -625,7 +706,7 @@ export default function PowerworksTurnsPage() {
                   activeName={view.active?.name}
                   spotlit={spotlightId === e.id}
                   dimmed={!!spotlightId && spotlightId !== e.id}
-                  delta={since.deltas[e.id] ?? 0}
+                  delta={deltaOf(e.id)}
                   targeted={hoverTarget === e.id}
                   impactTarget={impactTargets.includes(e.id)}
                   onHover={(hovering) => setHoverTarget(hovering ? e.id : null)}
@@ -640,13 +721,13 @@ export default function PowerworksTurnsPage() {
                   lit={busy && actorId === u.id}
                   spotlit={spotlightId === u.id}
                   dimmed={!!spotlightId && spotlightId !== u.id}
-                  delta={since.deltas[u.id] ?? 0}
+                  delta={deltaOf(u.id)}
                   impactTarget={impactTargets.includes(u.id)}
                 />
               ))}
             </div>
           </div>
-          {showImpact &&
+          {landed && !holding &&
             marks.floats.map((f) => (
               <span key={`float-${beatIndex}-${f.id}`} className="pwt-float" style={{ left: f.x, top: f.y }} aria-hidden="true">
                 {f.items.map((it, i) => (
@@ -656,6 +737,12 @@ export default function PowerworksTurnsPage() {
                 ))}
               </span>
             ))}
+          {card && !briefing && <TitleCardView card={card} key={`${card.kicker}-${card.name}`} />}
+          {holding && hold && (
+            <div className={`pwt-hold-card ${hold.kind}`} role="status" aria-live="polite" data-hold-card="">
+              {hold.text}
+            </div>
+          )}
         </div>
 
         {view.phase === "turn" && view.active && (
@@ -723,6 +810,8 @@ export default function PowerworksTurnsPage() {
                 speed={speed}
                 reducedMotion={reducedMotion}
                 skip={skipPlayback}
+                knockouts={knockouts}
+                holdMs={hold?.ms ?? 0}
                 onBeat={(i, phase) => {
                   setBeatIndex(i);
                   setBeatPhase(phase);
@@ -736,20 +825,37 @@ export default function PowerworksTurnsPage() {
         {view.phase === "camp" && !busy && (
           <CampPanel
             view={view}
+            camp={campView(run)}
+            revived={revived}
             onRevive={(id) => dispatch({ kind: "revive", id })}
             onContinue={() => dispatch({ kind: "advance" })}
             onRetreat={() => dispatch({ kind: "retreat" })}
           />
         )}
-        {view.ending && !busy && <EndPanel ending={view.ending} onPlayAgain={restart} />}
+        {view.ending && !busy && (
+          <EndPanel ending={view.ending} summary={runSummary(run, view, record)} squad={view.squad} onPlayAgain={restart} />
+        )}
 
-        {panel === "guide" && <GuidePanel onClose={() => setPanel(null)} />}
+        {panel === "guide" && (
+          <GuidePanel
+            onClose={() => setPanel(null)}
+            squadArt={view.squad[0] ? { art: view.squad[0].art, element: view.squad[0].element } : undefined}
+            enemyArt={view.enemies[0] ? { art: view.enemies[0].art, element: view.enemies[0].element } : undefined}
+          />
+        )}
         {panel === "record" && (
           <RecordPanel entries={record} roomNames={roomNames} since={since.items} onClose={() => setPanel(null)} />
         )}
         {panel === "restart" && (
-          <RestartPanel onConfirm={restart} onClose={() => setPanel(null)} />
+          <RestartPanel
+            onConfirm={restart}
+            onClose={() => {
+              setPanel(null);
+              setNotice("Restart cancelled. Your run continues.");
+            }}
+          />
         )}
+        {briefing && <BriefingPanel briefing={briefingView(run)} onBegin={begin} />}
       </div>
       <div className="pwt-rotate">
         <Smartphone className="pwt-rotate-icon" />

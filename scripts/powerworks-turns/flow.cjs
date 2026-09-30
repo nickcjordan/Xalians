@@ -359,7 +359,9 @@ async function main() {
       const scenarioDir = arg("scenario-dir", "");
       if (!scenarioDir) throw new Error("--plan requires --scenario-dir");
       const plan = readJson(planPath);
+      const only = arg("only", "").split(",").filter(Boolean);
       for (const entry of plan) {
+        if (only.length && !only.some((o) => (entry.name ?? entry.scenario).startsWith(o))) continue;
         const scenarioFile = entry.fresh ? null : path.join(scenarioDir, `${entry.scenario}.json`);
         if (scenarioFile && !fs.existsSync(scenarioFile)) {
           console.warn(`plan entry "${entry.name ?? entry.scenario}": missing scenario file ${scenarioFile}, skipping`);

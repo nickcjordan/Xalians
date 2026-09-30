@@ -11,6 +11,7 @@ import {
   allShare,
   ENCOUNTER_XP,
   FINAL_ENCOUNTER_XP,
+  RECOVERY_STATION_HP,
   STALLED_LOG,
   STALL_TURNS_PER_UNIT,
   attackOn,
@@ -765,4 +766,177 @@ export function sinceView(entries: RecordEntry[], v: TurnView): SinceView {
   }
   if (shown < items.length) text += ` +${items.length - shown} more`;
   return { items, deltas, text };
+}
+
+/* ------------------------------------------------------------------------------------------
+   UX pass 2, round 2: arrive, end and rest. Every word and number below comes from the engine
+   (the run, its rooms, its levers) or from the Record; nothing is invented.
+------------------------------------------------------------------------------------------ */
+
+export type BriefingView = {
+  goal: string;
+  /** Every sector in order; the last one holds the guardian and the recovery station. */
+  sectors: { n: number; name: string; guardian: boolean }[];
+  squad: { id: string; name: string; art: string; element: string; hp: number; max: number }[];
+  /** The run rules, one plain line each. */
+  rules: string[];
+};
+
+const plural = (n: number, one: string, many: string): string => (n === 1 ? one : many);
+
+/** The screen before a new run's first turn: the goal, the sectors, the squad, the run rules. */
+export function briefingView(s: TRun): BriefingView {
+  const names = roomNamesOf(s);
+  const count = names.length;
+  return {
+    goal: `Clear all ${count} sectors.`,
+    sectors: names.map((name, i) => ({ n: i + 1, name, guardian: i === count - 1 })),
+    squad: s.team.map((u) => ({ id: u.id, name: u.name, art: u.species, element: u.element, hp: u.hp, max: u.max })),
+    rules: [
+      "Health carries into the next sector.",
+      `You have ${s.revival} ${plural(s.revival, "revive", "revives")} for the run: at camp, a fallen companion returns at half health.`,
+      `The last sector has a recovery station: it restores ${RECOVERY_STATION_HP} health to each standing companion when you arrive.`,
+    ],
+  };
+}
+
+/** What the camp offers, from the engine's own numbers. */
+export type CampView = {
+  /** One per fallen companion while a revive is left. `to` is the engine's half health. */
+  revives: { id: string; name: string; to: number; text: string }[];
+  /** Said under Continue when a revive is being left unused; null otherwise. */
+  unusedNote: string | null;
+  /** The recovery station ahead, in numbers; null when the next sector has none. */
+  station: { amount: number; text: string } | null;
+};
+
+/** The revive button's words: the effect in numbers and how many revives are left. */
+export function reviveWords(name: string, to: number, left: number): string {
+  return `Revive ${name} to ${to} health · ${left} ${plural(left, "revive", "revives")} left`;
+}
+
+/** The line after a revive: what happened and that it is spent. */
+export function revivedWords(name: string, to: number, left: number): string {
+  return `${name} revived to ${to} health. ${left > 0 ? `${left} ${plural(left, "revive", "revives")} left.` : "No revives left."}`;
+}
+
+export function campView(s: TRun): CampView {
+  const fallen = s.team.filter((u) => u.hp <= 0);
+  const revives =
+    s.revival > 0
+      ? fallen.map((u) => {
+          const to = Math.ceil(u.max / 2);
+          return { id: u.id, name: u.name, to, text: reviveWords(u.name, to, s.revival) };
+        })
+      : [];
+  const beforeLast = s.room === roomsFor(s.rules).length - 2;
+  return {
+    revives,
+    unusedNote: revives.length ? "Continuing leaves the revive unused." : null,
+    station: beforeLast
+      ? {
+          amount: RECOVERY_STATION_HP,
+          text: `The next sector has a recovery station: it restores ${RECOVERY_STATION_HP} health to each standing companion.`,
+        }
+      : null,
+  };
+}
+
+/** Health the recovery station gave on arrival, per companion, and the banner line for it. */
+export function stationHeal(before: TRun, after: TRun): { deltas: Record<string, number>; text: string } | null {
+  if (after.room === before.room || after.room !== roomsFor(after.rules).length - 1) return null;
+  const deltas: Record<string, number> = {};
+  const parts: string[] = [];
+  for (const u of after.team) {
+    const was = before.team.find((b) => b.id === u.id);
+    if (!was || was.hp <= 0) continue;
+    const gain = u.hp - was.hp;
+    if (gain > 0) {
+      deltas[u.id] = gain;
+      parts.push(`${u.name} +${gain}`);
+    }
+  }
+  return parts.length ? { deltas, text: `Recovery station: ${parts.join(", ")} health.` } : null;
+}
+
+/** The card held over the stage on entering a sector. */
+export type TitleCard = {
+  kicker: string;
+  name: string;
+  guardian: boolean;
+  enemies: { letter: string; name: string }[];
+  /** The recovery station's effect on arrival, when it played. */
+  note: string | null;
+};
+
+export function titleCard(v: TurnView, note: string | null = null): TitleCard {
+  return {
+    kicker: `Sector ${v.room + 1} of ${v.roomCount}`,
+    name: v.roomName,
+    guardian: v.room === v.roomCount - 1,
+    enemies: v.enemies.map((e) => ({ letter: e.letter, name: e.name })),
+    note,
+  };
+}
+
+/** How long the stage holds after a command's last beat, and what it says over the stage. */
+export type Hold = { kind: "cleared" | "boss" | "fallen"; text: string; ms: number };
+
+/**
+  A sector's last enemy falling holds the stage on "Sector cleared" before the camp; the boss's fall
+  and the last companion's fall hold longer before the report. Null when the fight goes on.
+*/
+export function knockoutHold(next: TRun): Hold | null {
+  if (next.phase === "camp") return { kind: "cleared", text: "Sector cleared", ms: 1500 };
+  if (next.phase === "won") return { kind: "boss", text: "Sector cleared", ms: 2600 };
+  if (next.phase === "lost") return { kind: "fallen", text: "The squad has fallen", ms: 2600 };
+  return null;
+}
+
+/** Does any beat of this moment knock a unit out? */
+export const beatsFell = (beats: Beat[]): boolean => beats.some((b) => b.event.kind === "hit" && b.event.fell);
+
+export type RunSummary = {
+  sectors: number;
+  rounds: number;
+  knockouts: number;
+  xp: number;
+  /** The enemy (and its move) that dealt the last companion's final blow; null unless the run was lost that way. */
+  finalBlow: string | null;
+  rows: { label: string; value: string }[];
+};
+
+/**
+  The run in numbers. Sectors come from the engine's phase and room; rounds, knockouts and the final
+  blow from the Record (rounds are each sector's highest round, added up); XP is the engine's total.
+*/
+export function runSummary(s: TRun, v: TurnView, record: RecordEntry[]): RunSummary {
+  const ending = endingOf(s);
+  const count = v.roomCount;
+  const sectors = !ending ? v.room : ending.kind === "won" ? count : ending.kind === "withdrew" ? v.room + 1 : v.room;
+  const roundsBy: Record<number, number> = {};
+  for (const e of record) roundsBy[e.room] = Math.max(roundsBy[e.room] ?? 0, e.round);
+  const rounds = Object.values(roundsBy).reduce((a, b) => a + b, 0);
+  const squadIds = new Set(s.team.map((u) => u.id));
+  let knockouts = 0;
+  let blow: RecordEntry | null = null;
+  for (const e of record) {
+    if (e.event.kind !== "hit" || !e.event.fell) continue;
+    if (squadIds.has(e.event.target)) blow = e;
+    else knockouts++;
+  }
+  let finalBlow: string | null = null;
+  if (ending?.kind === "lost" && blow) {
+    const foe = v.enemies.find((e) => e.id === blow!.actor);
+    const move = "move" in blow.event ? (blow.event as { move: string }).move : "";
+    if (foe) finalBlow = `${foe.name} ${foe.letter}${move ? `, ${move}` : ""}`;
+  }
+  const rows = [
+    { label: "Sectors cleared", value: `${sectors} of ${count}` },
+    { label: "Rounds played", value: String(rounds) },
+    { label: "Enemies knocked out", value: String(knockouts) },
+    { label: "XP earned", value: String(s.xp) },
+  ];
+  if (finalBlow) rows.push({ label: "Final blow", value: finalBlow });
+  return { sectors, rounds, knockouts, xp: s.xp, finalBlow, rows };
 }

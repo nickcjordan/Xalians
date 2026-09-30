@@ -155,6 +155,52 @@ export function SquadPlate({
   );
 }
 
+/** The enemy's strongest ready hit on the acting companion at its next turn. */
+export function HitChip({ hit, who }: { hit: NonNullable<EnemyView["hitOnActive"]>; who: string }) {
+  return (
+    <span
+      className="pwt-hit-on-active"
+      aria-label={
+        hit.step === 0
+          ? `hits ${who} for no effect`
+          : `hits ${who} for ${hit.n}${hit.before !== undefined ? `, weakened from ${hit.before}` : ""}${
+              hit.step > 1 ? ", strong" : hit.step < 1 ? ", weak" : ""
+            }`
+      }
+      title={
+        hit.step === 0
+          ? `Its strongest hit on ${who} at its next turn does no effect`
+          : `Its strongest hit on ${who} at its next turn: ${hit.n}${
+              hit.step > 1 ? " (strong)" : hit.step < 1 ? " (weak)" : ""
+            }`
+      }
+    >
+      <Swords />
+      {hit.before !== undefined && <s className="pwt-hit-before">{hit.before}</s>}
+      {hit.step === 0 ? <Ban /> : hit.n}
+      {hit.step > 1 && <ChevronUp className="up" />}
+      {hit.step > 0 && hit.step < 1 && <ChevronDown className="down" />}
+    </span>
+  );
+}
+
+/** A stronger hit that is resting now, shown with the turns until it can act. */
+export function ComingChip({ coming, who }: { coming: NonNullable<EnemyView["hitComing"]>; who: string }) {
+  return (
+    <span
+      className="pwt-hit-on-active coming"
+      aria-label={`a stronger hit on ${who}, ${coming.n}, is resting: ready ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn`}
+      title={`Resting: its stronger hit on ${who}, ${coming.n}${
+        coming.step > 1 ? " (strong)" : coming.step < 1 ? " (weak)" : ""
+      }, is usable ${coming.turns} ${coming.turns === 1 ? "turn" : "turns"} after its next turn`}
+    >
+      <Swords />
+      {coming.step === 0 ? <Ban /> : coming.n}
+      <span className="pwt-hit-in">in {coming.turns}</span>
+    </span>
+  );
+}
+
 export function EnemyPlate({
   u,
   lit = false,
@@ -211,44 +257,8 @@ export function EnemyPlate({
         {hasMarks && !u.down && (
           <div className="pwt-marks">
             <MarkChips marks={u} />
-            {showHit && (
-              <span
-                className="pwt-hit-on-active"
-                aria-label={
-                  hit!.step === 0
-                    ? `hits ${who} for no effect`
-                    : `hits ${who} for ${hit!.n}${hit!.before !== undefined ? `, weakened from ${hit!.before}` : ""}${
-                        hit!.step > 1 ? ", strong" : hit!.step < 1 ? ", weak" : ""
-                      }`
-                }
-                title={
-                  hit!.step === 0
-                    ? `Its strongest hit on ${who} at its next turn does no effect`
-                    : `Its strongest hit on ${who} at its next turn: ${hit!.n}${
-                        hit!.step > 1 ? " (strong)" : hit!.step < 1 ? " (weak)" : ""
-                      }`
-                }
-              >
-                <Swords />
-                {hit!.before !== undefined && <s className="pwt-hit-before">{hit!.before}</s>}
-                {hit!.step === 0 ? <Ban /> : hit!.n}
-                {hit!.step > 1 && <ChevronUp className="up" />}
-                {hit!.step > 0 && hit!.step < 1 && <ChevronDown className="down" />}
-              </span>
-            )}
-            {showComing && (
-              <span
-                className="pwt-hit-on-active coming"
-                aria-label={`a stronger hit on ${who}, ${coming!.n}, is resting: ready ${coming!.turns} ${coming!.turns === 1 ? "turn" : "turns"} after its next turn`}
-                title={`Resting: its stronger hit on ${who}, ${coming!.n}${
-                  coming!.step > 1 ? " (strong)" : coming!.step < 1 ? " (weak)" : ""
-                }, is usable ${coming!.turns} ${coming!.turns === 1 ? "turn" : "turns"} after its next turn`}
-              >
-                <Swords />
-                {coming!.step === 0 ? <Ban /> : coming!.n}
-                <span className="pwt-hit-in">in {coming!.turns}</span>
-              </span>
-            )}
+            {showHit && <HitChip hit={hit!} who={who} />}
+            {showComing && <ComingChip coming={coming!} who={who} />}
           </div>
         )}
       </div>

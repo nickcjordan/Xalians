@@ -36,6 +36,36 @@ function within(inner, outer, slack = 0.5) {
   );
 }
 
+
+/**
+  Round 2 additions: a panel (briefing, camp, end of run, guide, restart) must fit the viewport, must
+  not scroll inside itself, and every element inside it must sit inside its box (text that could
+  overflow shows up as a child poking out, or a single-line text clipped by its own box).
+*/
+async function panelProblems(page, selector) {
+  return page.evaluate((sel) => {
+    const panel = document.querySelector(sel);
+    if (!panel) return null;
+    const pr = panel.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const out = [];
+    if (pr.left < -0.5 || pr.top < -0.5 || pr.right > vw + 0.5 || pr.bottom > vh + 0.5)
+      out.push(`panel outside the viewport: ${JSON.stringify({ l: pr.left, t: pr.top, r: pr.right, b: pr.bottom, vw, vh })}`);
+    if (panel.scrollHeight > panel.clientHeight + 1) out.push(`panel scrolls inside (scrollHeight ${panel.scrollHeight} > ${panel.clientHeight})`);
+    panel.querySelectorAll("*").forEach((el) => {
+      if (el.closest("[aria-hidden='true']") && el.closest(".pwt-legend-sample") === null) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      if (r.left < pr.left - 1 || r.right > pr.right + 1 || r.top < pr.top - 1 || r.bottom > pr.bottom + 1)
+        out.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]} pokes out of the panel`);
+      if (el.children.length === 0 && el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== "visible")
+        out.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]} text clipped`);
+    });
+    return out;
+  }, selector);
+}
+
 (async () => {
   if (!SCEN_DIR) {
     console.error("usage: node scripts/powerworks-turns/geometry.cjs --scenario-dir=<dir> [--base=...] [--sizes=...]");
@@ -149,9 +179,59 @@ function within(inner, outer, slack = 0.5) {
         console.log(`[${tag}] checked ${result.items.length} elements + ${result.squadPlaques.length} squad plaques, ok`);
       }
 
+      for (const sel of [".pwt-panel", ".pwt-titlecard", ".pwt-hold-card"]) {
+        const probs = await panelProblems(page, sel);
+        if (probs) {
+          checks++;
+          if (probs.length) {
+            failures += probs.length;
+            probs.forEach((m) => console.log(`[${tag}] FAIL ${sel}: ${m}`));
+          }
+        }
+      }
       await page.screenshot({ path: path.join(OUT, `${tag}.png`) });
       await page.close();
     }
+  }
+
+  // The arrival screens: the briefing, the sector title card, the legend and the restart dialog.
+  const first = files.find((f) => f.name === "first");
+  for (const [w, h] of sizes) {
+    const tag = `arrival-${w}x${h}`;
+    const page = await browser.newPage({ viewport: { width: w, height: h } });
+    await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
+    await page.evaluate(() => localStorage.clear());
+    await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(600);
+    const steps = [];
+    steps.push([".pwt-briefing", await panelProblems(page, ".pwt-briefing")]);
+    await page.click("button:has-text('Begin')");
+    await page.waitForTimeout(700);
+    steps.push([".pwt-titlecard", await panelProblems(page, ".pwt-titlecard")]);
+    if (first) {
+      await page.evaluate((s) => localStorage.setItem("xalians.powerworks.turns.v1", s), fs.readFileSync(first.file, "utf8"));
+      await page.goto(`${BASE}/powerworks`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(500);
+    }
+    await page.click("button:has-text('Guide')");
+    await page.waitForTimeout(300);
+    steps.push([".pwt-guide", await panelProblems(page, ".pwt-guide")]);
+    await page.screenshot({ path: path.join(OUT, `${tag}-guide.png`) });
+    await page.click("button:has-text('Close')");
+    await page.click("button:has-text('Restart')");
+    await page.waitForTimeout(200);
+    steps.push([".pwt-panel restart", await panelProblems(page, ".pwt-panel")]);
+    for (const [name, probs] of steps) {
+      checks++;
+      if (!probs) {
+        failures++;
+        console.log(`[${tag}] FAIL ${name} not found`);
+      } else if (probs.length) {
+        failures += probs.length;
+        probs.forEach((m) => console.log(`[${tag}] FAIL ${name}: ${m}`));
+      } else console.log(`[${tag}] ${name} ok`);
+    }
+    await page.close();
   }
   await browser.close();
   console.log(`\n${checks} checks, ${failures} failures`);

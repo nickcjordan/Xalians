@@ -111,11 +111,12 @@ describe("Powerworks turn by turn", () => {
     state = { ...state, phase: "camp" as const, xp: 30 };
     localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state }));
     mount();
-    expect(screen.getByText("+10 XP")).toBeInTheDocument();
+    expect(screen.getByText("+10 XP this sector · 30 in all")).toBeInTheDocument();
   });
 
   it("tells a portrait phone to turn sideways and offers a way back to Xalians", () => {
     mount();
+    fireEvent.click(screen.getByRole("button", { name: /begin/i }));
     expect(screen.getByText("Turn your phone sideways to play")).toBeInTheDocument();
     const back = screen.getByRole("link", { name: /back to xalians/i });
     expect(back.getAttribute("href")).toBe("/");
@@ -140,5 +141,117 @@ describe("Powerworks turn by turn", () => {
       fireEvent.click(screen.getByRole("button", { name: /record/i }));
     });
     expect(screen.getAllByLabelText(/^Sector 1, round \d+$/).length).toBeGreaterThan(0);
+  });
+  describe("round 2: arrive, end and rest", () => {
+    const saveRun = (mutate: (state: ReturnType<typeof createTurnRun>["state"]) => object) => {
+      const { state } = createTurnRun(1, "starter", RULES);
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ version: PILLAR_SAVE_VERSION, state: mutate(state) }));
+    };
+
+    it("shows the briefing on a new run and Begin dismisses it, showing the sector title card", () => {
+      const { container } = mount();
+      expect(screen.getByRole("dialog", { name: "Briefing" })).toBeInTheDocument();
+      expect(screen.getByText("Clear all 4 sectors.")).toBeInTheDocument();
+      expect(screen.getByText("Guardian")).toBeInTheDocument();
+      // A run is not saved until it has begun.
+      expect(localStorage.getItem(SAVE_KEY)).toBeNull();
+      fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+      expect(screen.queryByRole("dialog", { name: "Briefing" })).toBeNull();
+      expect(container.querySelector("[data-title-card]")).toBeTruthy();
+      expect(container.querySelector("[data-title-card]")!.textContent).toMatch(/Sector 1 of 4/);
+      expect(localStorage.getItem(SAVE_KEY)).not.toBeNull();
+    });
+
+    it("skips the briefing for a saved run in progress", () => {
+      saveRun((s) => s);
+      mount();
+      expect(screen.queryByRole("dialog", { name: "Briefing" })).toBeNull();
+    });
+
+    it("Restart's dialog puts Cancel first and default, and Restart in the danger style", async () => {
+      saveRun((s) => s);
+      const { container } = mount();
+      fireEvent.click(screen.getByRole("button", { name: /^restart$/i }));
+      const dialog = screen.getByRole("dialog", { name: "Restart" });
+      const buttons = Array.from(dialog.querySelectorAll("button"));
+      expect(buttons[0].textContent).toBe("Cancel");
+      expect(document.activeElement).toBe(buttons[0]);
+      const restart = buttons.find((b) => b.textContent === "Restart")!;
+      expect(restart.className).toContain("pwt-danger");
+      expect(restart.className).not.toContain("pwt-primary");
+      fireEvent.click(buttons[0]);
+      expect(screen.queryByRole("dialog", { name: "Restart" })).toBeNull();
+      expect(container.querySelector("[data-notice]")!.textContent).toMatch(/Restart cancelled/);
+      expect(screen.queryByRole("dialog", { name: "Briefing" })).toBeNull();
+    });
+
+    it("Restart brings the briefing back", () => {
+      saveRun((s) => s);
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: /^restart$/i }));
+      const dialog = screen.getByRole("dialog", { name: "Restart" });
+      fireEvent.click(Array.from(dialog.querySelectorAll("button")).find((b) => b.textContent === "Restart")!);
+      expect(screen.getByRole("dialog", { name: "Briefing" })).toBeInTheDocument();
+    });
+
+    it("at camp with a fallen companion the revive is the primary action and Continue is secondary with a note", () => {
+      saveRun((s) => ({ ...s, phase: "camp" as const, team: s.team.map((u, i) => (i === 0 ? { ...u, hp: 0 } : u)) }));
+      mount();
+      const camp = screen.getByRole("dialog", { name: "Camp" });
+      const revive = Array.from(camp.querySelectorAll("button")).find((b) => /^Revive /.test((b.textContent || "").trim()))!;
+      expect(revive.className).toContain("pwt-primary");
+      expect(revive.textContent).toMatch(/to \d+ health · 1 revive left/);
+      const cont = Array.from(camp.querySelectorAll("button")).find((b) => /^Continue/.test((b.textContent || "").trim()))!;
+      expect(cont.className).toContain("pwt-secondary");
+      expect(camp.textContent).toMatch(/leaves the revive unused/);
+      fireEvent.click(revive);
+      expect(screen.getByRole("status", { name: "" })).toBeTruthy();
+      expect(camp.textContent).toMatch(/No revives left\./);
+      // Nobody is down and no revive is left: Continue is the primary action again.
+      const cont2 = Array.from(camp.querySelectorAll("button")).find((b) => /^Continue/.test((b.textContent || "").trim()))!;
+      expect(cont2.className).toContain("pwt-primary");
+    });
+
+    it("the camp before the last sector states the recovery station's amount", () => {
+      saveRun((s) => ({ ...s, phase: "camp" as const, room: 2 }));
+      mount();
+      expect(screen.getByRole("dialog", { name: "Camp" }).textContent).toMatch(/restores 20 health to each standing companion/);
+    });
+
+    it("the Guide is a legend drawn with the real components", () => {
+      saveRun((s) => s);
+      const { container } = mount();
+      fireEvent.click(screen.getByRole("button", { name: /guide/i }));
+      const guide = screen.getByRole("dialog", { name: "Guide" });
+      expect(guide.querySelectorAll(".pwt-legend-row").length).toBeGreaterThanOrEqual(14);
+      expect(guide.querySelector(".pwt-cell.finish")).toBeTruthy();
+      expect(guide.querySelector(".pwt-area-band")).toBeTruthy();
+      expect(guide.querySelector(".pwt-hit-on-active.coming")).toBeTruthy();
+      expect(guide.querySelector("[data-rail]")).toBeTruthy();
+      expect(guide.textContent).toMatch(/along the top/);
+      expect(guide.textContent).not.toMatch(/along the bottom/);
+      expect(container).toBeTruthy();
+    });
+
+    it("a won run shows the surviving squad, the summary and a way out", () => {
+      saveRun((s) => ({ ...s, phase: "won" as const, room: 3, xp: 30, team: s.team.map((u, i) => (i === 0 ? { ...u, hp: 0 } : u)) }));
+      mount();
+      const end = screen.getByRole("dialog", { name: "Expedition report" });
+      expect(end.className).toContain("won");
+      expect(end.querySelectorAll(".pwt-end-unit").length).toBe(3);
+      expect(end.textContent).toMatch(/Sectors cleared4 of 4/);
+      expect(end.textContent).toMatch(/XP earned30/);
+      expect(screen.getAllByRole("link", { name: /back to xalians/i }).length).toBeGreaterThan(0);
+    });
+
+    it("a lost run shows the fallen squad and no X glyph as a control", () => {
+      saveRun((s) => ({ ...s, phase: "lost" as const, room: 1, team: s.team.map((u) => ({ ...u, hp: 0 })) }));
+      mount();
+      const end = screen.getByRole("dialog", { name: "Expedition report" });
+      expect(end.className).toContain("lost");
+      expect(end.querySelectorAll(".pwt-end-unit.down").length).toBe(4);
+      expect(end.querySelector(".pwt-end-mark")!.getAttribute("aria-hidden")).toBe("true");
+      expect(end.textContent).toMatch(/Sectors cleared1 of 4/);
+    });
   });
 });
