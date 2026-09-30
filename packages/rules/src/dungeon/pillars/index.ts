@@ -10,6 +10,7 @@ export type { Aim, SupportKind } from "./read.ts";
 export {
   activeOf,
   createTurnRun,
+  createTurnRunFrom,
   interval,
   legalOrder,
   roundOf,
@@ -20,3 +21,4 @@ export {
   type TPhase,
   type TRun,
 } from "./turns.ts";
+export { turnHardestHit, type TurnPolicy } from "./turnPolicy.ts";

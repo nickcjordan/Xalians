@@ -12,6 +12,7 @@ import {
   turnCommand,
   legalOrder,
   DEFAULT_RULES,
+  ENEMY_HP_FACTOR,
   PILLAR_SAVE_VERSION,
   type TRun,
   type TCommand,
@@ -108,7 +109,7 @@ function momentWords(m: Moment, units: { id: string; name: string; letter?: stri
 
 const SAVE_KEY = "xalians.powerworks.turns.v1";
 const CONSOLE = { width: 1280, height: 720 } as const;
-const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: 0.62 };
+const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: ENEMY_HP_FACTOR };
 
 /**
   Scale the fixed 1280x720 console to fit any landscape viewport, including below 1

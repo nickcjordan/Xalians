@@ -13,6 +13,7 @@ import {
   DELAY_SHARE,
   DISPLACE_POWER_FACTOR,
   POWER_DIVISOR,
+  MIN_POWER,
   PROLONGED_REST,
   REST_ROUNDS,
   SUPPORT_DIVISOR,
@@ -62,7 +63,8 @@ function part(e: MoveEffect, attacks: boolean, rules: Rules): Part | null {
   const all = e.recipient === "area";
   if (rules.tempo && e.recipient !== "self" && (e.group === "tempo" || e.support === "displace"))
     return { kind: "delay", n: Math.round(DELAY_SHARE * 100), aim: "enemy", all };
-  const n = Math.floor(intensity(e) / SUPPORT_DIVISOR);
+  const raw = intensity(e) / SUPPORT_DIVISOR;
+  const n = Math.round(raw);
   // A restore that requires the move's harm is a drain: it lands on the user.
   const onUser = e.recipient === "self" || (!!e.requires && attacks);
   const help = (kind: SupportKind): Part => ({ kind, n, aim: onUser ? "self" : "ally", all });
@@ -72,7 +74,7 @@ function part(e: MoveEffect, attacks: boolean, rules: Rules): Part | null {
   if (e.support === "bind" || HINDER_GROUPS.includes(e.group ?? "")) {
     if (e.recipient === "self") return null;
     const strong = e.support === "bind" || e.group === "binding";
-    return { kind: "hinder", n: Math.floor(n * (strong ? BINDING_HINDER_FACTOR : 1)), aim: "enemy", all };
+    return { kind: "hinder", n: Math.round(raw * (strong ? BINDING_HINDER_FACTOR : 1)), aim: "enemy", all };
   }
   return null;
 }
@@ -91,7 +93,7 @@ export function readMove(u: Unit, m: Move, rules: Rules, uniform?: number): PMov
   const attacks = raw > 0;
   const area = attacks && m.effects.some((e) => (e.support === "harm" || e.support === "displace") && e.recipient === "area");
   const base = uniform !== undefined && attacks ? uniform : raw;
-  const power = attacks ? Math.max(1, Math.floor(base * (area ? AREA_FACTOR : 1))) : 0;
+  const power = attacks ? Math.max(MIN_POWER, Math.round(base * (area ? AREA_FACTOR : 1))) : 0;
   const elemental = m.effects.some((e) => e.support === "harm" && e.mechanism === "elemental");
   const element = !attacks
     ? null
@@ -107,7 +109,7 @@ export function readMove(u: Unit, m: Move, rules: Rules, uniform?: number): PMov
     else parts.push(p);
   }
   const rests = Math.max(REST_ROUNDS[m.recovery], m.preparation === "prolonged" ? PROLONGED_REST : 0);
-  const rested = attacks && rules.restBonus ? Math.floor(power * (1 + rules.restBonus * rests)) : power;
+  const rested = attacks && rules.restBonus ? Math.round(power * (1 + rules.restBonus * rests)) : power;
   return { key: m.key, name: m.name, signature: m.signature, rests, power: rested, area, element, parts };
 }
 

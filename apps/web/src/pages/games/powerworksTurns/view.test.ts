@@ -5,10 +5,10 @@
   finish, shields absorbing, resting/spent keys).
 */
 import { describe, expect, it } from "vitest";
-import { DEFAULT_RULES, createTurnRun, legalTargets, turnCommand, type Fighter, type Order, type TRun } from "@xalians/rules/dungeon/pillars";
+import { DEFAULT_RULES, ENEMY_HP_FACTOR, createTurnRun, legalTargets, turnCommand, type Fighter, type Order, type TRun } from "@xalians/rules/dungeon/pillars";
 import { eventWords, hpSnapshot, playback, turnDeltas, turnView, type Beat, type Cell } from "./view.ts";
 
-const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: 0.62 };
+const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: ENEMY_HP_FACTOR };
 
 function freshState(seed: number): TRun {
   return createTurnRun(seed, "starter", RULES).state;
@@ -455,5 +455,20 @@ describe("playback", () => {
       expect(beat.hp).toEqual(expectedHp);
       expect(beat.actor).toBe(e.actor);
     });
+  });
+});
+
+describe("numbers pass on the keys", () => {
+  it("never reads 0 on an attack cell unless the matchup is immune, and a strong step reads above a weak one", () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      const v = turnView(freshState(seed));
+      for (const key of v.keys) {
+        const cells = key.cells.filter((c) => c.step !== 1 || key.kind === "attack");
+        for (const c of cells) if (key.kind === "attack" && !c.immune && c.absorbed === 0) expect(c.n).toBeGreaterThanOrEqual(1);
+        const strong = cells.filter((c) => c.step > 1).map((c) => c.n);
+        const weak = cells.filter((c) => c.step > 0 && c.step < 1).map((c) => c.n);
+        if (key.kind === "attack" && strong.length && weak.length) expect(Math.min(...strong)).toBeGreaterThan(Math.max(...weak));
+      }
+    }
   });
 });

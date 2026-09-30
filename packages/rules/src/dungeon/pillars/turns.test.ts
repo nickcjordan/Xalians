@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_RULES } from "./engine.ts";
 import { activeOf, createTurnRun, interval, legalTargets, roundOf, roundStrip, turnCommand, upcoming, type TRun } from "./turns.ts";
 import { turnPlanner } from "./turnPolicy.ts";
+import { HEALTH_SCALE } from "./levers.ts";
+import { squadUnits } from "../index.ts";
 
 const finish = (s: TRun) => {
   for (let k = 0; k < 2000 && (s.phase === "turn" || s.phase === "camp"); k++)
@@ -10,6 +12,11 @@ const finish = (s: TRun) => {
 };
 
 describe("turn by turn", () => {
+  it("builds both sides through the same doubled-health reading", () => {
+    const { state } = createTurnRun(1);
+    for (const u of squadUnits(1, "starter")) expect(state.team.find((t) => t.id === u.id)!.max).toBe(u.max * HEALTH_SCALE);
+    for (const e of state.enemies) expect(e.max % HEALTH_SCALE).toBe(0);
+  });
   it("stops on a companion's turn with enemies already played", () => {
     const { state } = createTurnRun(1);
     expect(state.phase).toBe("turn");
