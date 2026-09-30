@@ -1,0 +1,96 @@
+{
+  "voxel": 0.0025,
+  "notes": "Head-local coordinates (the assembly places the head at scale .50). Right side (x>0) listed; the left is mirrored. Cheek lock roots are [x, z]: the root y comes from a ray cast onto the skin.",
+  "pads": {
+    "center": [
+      0.066,
+      -0.33,
+      -0.182
+    ],
+    "radii": [
+      0.058,
+      0.09,
+      0.036
+    ],
+    "amplitude": 0.017,
+    "blend": 0.014
+  },
+  "chin": {
+    "center": [
+      0.0,
+      -0.27,
+      -0.272
+    ],
+    "radii": [
+      0.072,
+      0.09,
+      0.042
+    ],
+    "amplitude": 0.021
+  },
+  "cheek_smooth": {
+    "x": [
+      0.13,
+      0.46
+    ],
+    "z": [
+      -0.34,
+      -0.14
+    ],
+    "z_fade": 0.03,
+    "x_fade": 0.04,
+    "y_max": 0.02,
+    "sigma": 0.011
+  },
+  "cheek_locks": [
+    {
+      "root": [
+        0.17,
+        -0.255
+      ],
+      "direction": [
+        0.65,
+        0.15,
+        -0.55
+      ],
+      "length": 0.095,
+      "width": 0.055,
+      "thickness": 0.024,
+      "lift": 0.01,
+      "round_tip": 2.6
+    },
+    {
+      "root": [
+        0.225,
+        -0.215
+      ],
+      "direction": [
+        0.8,
+        0.2,
+        -0.45
+      ],
+      "length": 0.1,
+      "width": 0.06,
+      "thickness": 0.024,
+      "lift": 0.01,
+      "round_tip": 2.6
+    },
+    {
+      "root": [
+        0.285,
+        -0.17
+      ],
+      "direction": [
+        0.9,
+        0.2,
+        -0.3
+      ],
+      "length": 0.1,
+      "width": 0.06,
+      "thickness": 0.024,
+      "lift": 0.01,
+      "round_tip": 2.6
+    }
+  ],
+  "lock_blend": 0.02
+}
