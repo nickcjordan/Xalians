@@ -170,7 +170,7 @@ function builderPrompt(order, round, suffix) {
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it).\n` +
     `Your candidate recipe: ${candidateRecipe(round, order.id + (suffix || ''))}. ${scopeLine} Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
     `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break.\n` +
-    'Return the structured output with recipe set to your candidate recipe path, head and body set to the component directories your assembly used, assembly and packet set to yours, regionChange copied from diff.json (region to number), containment as one line (the largest foreign-region displacement and where), approach as one recognisable sentence, and reusable options you added.'
+    'Return the structured output with recipe set to your candidate recipe path, head and body set to the component directories your assembly used, assembly and packet set to yours, regionChange set to each region's diff.json regionChange magnitude (region id to number), containment as one line (the largest foreign-region displacement and where), approach as one recognisable sentence, and reusable options you added.'
 }
 function specPrompt(id) {
   return `Read the spec brief at ${BRIEF('spec-brief.md')} and follow it. Region: ${id} (${S.regions[id].name}).\n` +
@@ -203,7 +203,7 @@ function combinePrompt(a, b, round, baselinePacket) {
   return `Read the builder brief at ${BRIEF('builder-brief.md')} for the environment rules. Do not change geometry or scripts. ` +
     `Merge the two kept candidate recipes with python art/species-construction/loop/recipe.py merge ${abs(S.baseline.recipe)} ${abs(a.build.recipe)} ${abs(b.build.recipe)} ${candidateRecipe(round, 'combined')}, ` +
     `build it with recipe.py build, then run loop_tools.py check, packet into ${PACKETS}/<assembly>, and diff against the baseline packet ${abs(baselinePacket)}. ` +
-    'Return the structured output with failed, changes (one line), approach "combine", recipe, head, body, assembly, packet, regionChange and technicalPass.'
+    'Return the structured output with failed, changes (one line), approach "combine", recipe, head, body, assembly, packet, regionChange (each region's diff.json regionChange magnitude) and technicalPass.'
 }
 
 function recordPrompt(round, entry, suffix) {
