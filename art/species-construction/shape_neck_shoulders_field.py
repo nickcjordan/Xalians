@@ -15,6 +15,15 @@ The closed body skin becomes an OpenVDB level set. In a box over the neck base a
      between the bulge and the upper back. Weighted in by |x| and by z so the spine and the arm are untouched.
   3. Smoothing only where the field changed: a Gaussian blur weighted by how far it moved, so there is no seam.
 
+Opt-in options (defaults keep earlier runs reproducible):
+  cutEnable False     skip the silhouette cut (for a pass that only rounds or fills)
+  fill                fill-only blur min(field, blur(field)) in a weighted box: closes the concave groove between chest and cap
+  cutShift            world raise of the cut boundary (a re-cut of an already cut body loses about blend/4 at the crest)
+  round               convex rounding max(field, blur(field)) in a weighted box: melts the hard top-back and front-top
+                      edges of the shoulder plateau into a dome (radius about sigma) without a seam; `dilate` gives back the
+                      thickness the blur takes from convex limbs; `more` is a list of extra rounding boxes, each a dict
+                      of overrides of the first
+
 Nothing outside the box moves. Claws and every other object of the input file are carried unchanged. All numbers
 are in the NS dict (world units unless noted); --spec merges a JSON of overrides into it and the merged dict is
 written to shoulder-field.json. Akinza-specific construction, not a species-general backend.
@@ -48,6 +57,8 @@ NS = {
                 [.090, .271], [.100, .277], [.110, .285], [.120, .292], [.130, .298], [.140, .304],
                 [.150, .3135], [.153, .320], [.1558, .330], [.1595, .340], [.163, .350], [.168, .362],
                 [.176, .378], [.19, .40]],
+    'cutEnable': True,
+    'cutShift': 0.,     # world raise of the cut boundary (allows more material); offsets the smooth-max's inward bias on a re-cut
     'cutBlend': .012,
     # lift of the cut boundary toward the front and back faces (world): c at the faces, 0 within h0 of ym
     'lift': {'c': .02, 'ym': -.04, 'h0': .03, 'h1': .075, 'zFull': .41, 'zZero': .435},
@@ -56,6 +67,8 @@ NS = {
     # fill-only blur min(field, blur(field)) inside a weighted box: closes the groove between the chest and the cap
     # front without eroding convex forms; the box is in |x|, y, z world units
     'fill': {'enable': False, 'sigma': .02, 'x': [.09, .27], 'y': [-.13, -.03], 'z': [.27, .40], 'fade': .02},
+    # convex rounding max(field, blur(field)) inside a weighted box; `top` rounds only above the zTop line and leaves the arm tube
+    'round': {'enable': False, 'sigma': .02, 'x': [.05, .32], 'y': [-.16, .08], 'z': [.29, .45], 'fade': .02, 'dilate': 0.0},
     'blurSigma': .006,
     'blurPasses': 1,
     'changeScale': .01,
@@ -193,16 +206,20 @@ X, Y, Z = np.meshgrid(axes[0], axes[1], axes[2], indexing='ij', sparse=True)
 AX = np.abs(X)
 
 # 1. silhouette cut
-outline = [to_world(p) for p in NS['outline']]
-region = [(0., outline[0][1])]+outline+[(outline[-1][0], -.6), (0., -.6)]
-px = np.repeat(AX[:, 0, 0][:, None], shape[2], axis=1)
-pz = np.repeat(Z[0, 0, :][None, :], shape[0], axis=0)
-sdf2 = polygon_sdf(px, pz, region, len(outline)).reshape(shape[0], 1, shape[2])
-lf = NS['lift']
-lift_y = smooth((np.abs(Y-lf['ym'])-lf['h0'])/(lf['h1']-lf['h0']))
-lift_z = 1-smooth((Z-lf['zFull'])/(lf['zZero']-lf['zFull']))
-cut = sdf2-lf['c']*lift_y*lift_z
-edited = smax(native, cut, NS['cutBlend'])
+cut = sdf2 = None
+if NS['cutEnable']:
+    outline = [to_world(p) for p in NS['outline']]
+    region = [(0., outline[0][1])]+outline+[(outline[-1][0], -.6), (0., -.6)]
+    px = np.repeat(AX[:, 0, 0][:, None], shape[2], axis=1)
+    pz = np.repeat(Z[0, 0, :][None, :], shape[0], axis=0)
+    sdf2 = polygon_sdf(px, pz, region, len(outline)).reshape(shape[0], 1, shape[2])
+    lf = NS['lift']
+    lift_y = smooth((np.abs(Y-lf['ym'])-lf['h0'])/(lf['h1']-lf['h0']))
+    lift_z = 1-smooth((Z-lf['zFull'])/(lf['zZero']-lf['zFull']))
+    cut = sdf2-NS['cutShift']-lf['c']*lift_y*lift_z
+    edited = smax(native, cut, NS['cutBlend'])
+else:
+    edited = native.copy()
 
 # 2. back cut: the rearmost surface falls monotonically outward from the spine
 bk = NS['back']
@@ -228,13 +245,23 @@ if bk['enable']:
     back_report = {'rearAtProbe': {f'{axes[2][k]:.3f}': float(back_a[k]) for k in range(0, shape[2], 8)}}
 
 # 2b. front groove fill
+def band(coord, lo, hi, fade):
+    return smooth((coord-lo)/fade)*smooth((hi-coord)/fade)
+
+
 fl = NS['fill']
 if fl['enable']:
-    def band(coord, lo, hi):
-        return smooth((coord-lo)/fl['fade'])*smooth((hi-coord)/fl['fade'])
-    wf = band(AX, *fl['x'])*band(Y, *fl['y'])*band(Z, *fl['z'])
+    wf = band(AX, *fl['x'], fl['fade'])*band(Y, *fl['y'], fl['fade'])*band(Z, *fl['z'], fl['fade'])
     filled = np.minimum(edited, blur(edited, fl['sigma']))
     edited = edited+wf*(filled-edited)
+
+# 2c. convex rounding of the shoulder plateau edges
+rd = NS['round']
+for spec_r in ([rd]+[merge(copy.deepcopy({k: v for k, v in rd.items() if k != 'more'}), extra) for extra in rd.get('more', [])]
+               if rd['enable'] else []):
+    wr = band(AX, *spec_r['x'], spec_r['fade'])*band(Y, *spec_r['y'], spec_r['fade'])*band(Z, *spec_r['z'], spec_r['fade'])
+    rounded = np.maximum(edited, blur(edited, spec_r['sigma']))-spec_r['dilate']
+    edited = edited+wr*(rounded-edited)
 
 # 3. smoothing only where the field moved
 for _ in range(NS['blurPasses']):

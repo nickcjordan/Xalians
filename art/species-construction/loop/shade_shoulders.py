@@ -18,6 +18,7 @@ p.add_argument('--glb', type=Path, required=True)
 p.add_argument('--head', type=Path)
 p.add_argument('--out', type=Path, required=True)
 p.add_argument('--res', type=int, default=800)
+p.add_argument('--cavity', action='store_true', help='draw ridges and valleys (Workbench cavity) to expose creases')
 args = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=True)
@@ -43,7 +44,11 @@ sc.render.resolution_x = sc.render.resolution_y = args.res
 sc.display.shading.light = 'STUDIO'
 sc.display.shading.color_type = 'SINGLE'
 sc.display.shading.single_color = (.75, .75, .75)
-sc.display.shading.show_cavity = False
+sc.display.shading.show_cavity = args.cavity
+if args.cavity:
+    sc.display.shading.cavity_type = 'BOTH'
+    sc.display.shading.cavity_ridge_factor = 1.2
+    sc.display.shading.cavity_valley_factor = 1.2
 sc.render.film_transparent = False
 if sc.world is None:
     sc.world = bpy.data.worlds.new('w')
