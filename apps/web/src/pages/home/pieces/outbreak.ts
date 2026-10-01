@@ -51,7 +51,6 @@ const CRIMSON: RGB = [226, 52, 76];
 const EMBER: RGB = [214, 116, 80];
 const GENESIS: RGB = [150, 236, 140];
 const WHITE: RGB = [255, 250, 240];
-const SICK: RGB = [232, 54, 84];
 
 // ---- the worlds
 
@@ -869,8 +868,6 @@ export function createOutbreak(): Figure {
 		// the dive always plays through, even before its beat is live; so does running back out
 		busy: (s, isPresent) => Math.abs((isPresent ? 1 : 0) - vis) > 0.004 || (s === 1 && stage !== 1) || (s === 1 && isPresent && t1 < 2.4) || (s !== 1 && t1 > 0.01),
 		anchor,
-		// 05 pulls out in crimson; 06 leaves in a neutral warm white (nothing leaves a Generator, so nothing green)
-		light: (): RGB => (stage === 1 ? [255, 240, 222] : SICK),
 		draw(ctx, sec, opts) {
 			if (vis <= 0.005) return;
 			const compact = !!opts?.compact;
@@ -923,9 +920,9 @@ export function createOutbreak(): Figure {
 			const starY = Math.min(CY + nyv * 200, 176);
 
 			ctx.save();
-			// bloom out of (and pull back into) the anchor
+			// bloom out of (and pull back toward) the anchor: a short settle in scale under the fade, never down to a point
 			const an = anchor();
-			const bs = 0.12 + 0.88 * easeOut(vis);
+			const bs = 0.86 + 0.14 * easeOut(vis);
 			ctx.translate(an.x, an.y);
 			ctx.scale(bs, bs);
 			ctx.translate(-an.x, -an.y);

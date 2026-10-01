@@ -3,7 +3,7 @@
 // from one into the next instead of cutting; the viewer's figure stage (figureStage.tsx) draws it.
 import { createGenerators } from './generators';
 import { createOutbreak } from './outbreak';
-import type { Ctx, RGB } from './stage';
+import type { Ctx } from './stage';
 
 export interface Figure {
 	/** How many beats it carries, in order. */
@@ -18,17 +18,15 @@ export interface Figure {
 	settle(stage: number): void;
 	/**
 	 * Advance `dt` seconds. `stage`: which of its beats is shown. `present`: whether it is out (blooming in or
-	 * shown) or pulling back into its anchor.
+	 * shown) or fading back.
 	 */
 	step(dt: number, stage: number, present: boolean): void;
 	/** Whether any of it is on the screen. */
 	visible(): boolean;
 	/** Whether it is still on its way to what `stage` and `present` ask (blooming, pulling back, running on into a beat). */
 	busy(stage: number, present: boolean): boolean;
-	/** Where it blooms out of and pulls back into, in stage units (W by H). */
+	/** The center its bloom settles about, in stage units (W by H). */
 	anchor(): { x: number; y: number };
-	/** The color of the light that carries it to the next beat, or brings the last one to it. */
-	light(): RGB;
 	/** Draw it in stage units; `sec` only turns and drifts things. `compact`: its place is small (a phone), so it keeps fewer, larger things. */
 	draw(ctx: Ctx, sec: number, opts?: { compact?: boolean }): void;
 }
@@ -45,8 +43,8 @@ export function assetUrl(path: string) {
 export type FigureKey = 'generators' | 'outbreak';
 
 /**
- * The color of the light that leaves each figure's beat for a recording, which tints the first moments of that
- * screen tuning in (the viewer's --arrival). Kept equal to each figure's own `light()` at that stage.
+ * Each figure's light at each of its beats, which tints the first moments of the next recording's screen tuning
+ * in (the viewer's --arrival): Genesis green, APEX violet, the plague's crimson, the token's warm white.
  */
 export const FIGURE_LIGHT: Record<FigureKey, string[]> = {
 	generators: ['rgb(150 236 140)', 'rgb(172 124 255)'],

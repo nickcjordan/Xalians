@@ -19,10 +19,10 @@
 //            other (Nick, 2026-09-27: Next and Back phase through static into
 //            the next recording). The screen leaving holds its static as it goes.
 //   collapse the story moves on to a figure (docs/design/home-story-figures.md): the picture collapses to a
-//            bright line and then to a point, which the figure stage carries on to the figure; the glass
-//            is left dark and the screen goes with its beat.
-//   dark     the story is coming back from a figure: dark glass and no Play key, until the light from the
-//            figure reaches the screen and it tunes in (the viewer's FIGURE_TO_SCREEN_MS).
+//            bright line that fades where it is, while the figure blooms in its own place; the glass is
+//            left dark and the screen goes with its beat.
+//   dark     the story is coming back from a figure: dark glass and no Play key while the figure pulls
+//            back, then it tunes in (the viewer's FIGURE_TO_SCREEN_MS).
 //   on       playing: the picture, the readout's clock running.
 //   off      the viewer moved on: the picture collapses to a line and goes.
 //

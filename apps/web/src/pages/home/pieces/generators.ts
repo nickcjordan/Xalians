@@ -1344,18 +1344,13 @@ export function createGenerators(): Figure {
 		// APEX's arrival always plays through, even before its beat is live
 		busy: (s, isPresent) => Math.abs((isPresent ? 1 : 0) - vis) > 0.004 || Math.abs((s === 1 ? 1 : 0) - v3) > 0.004 || (s === 1 && stage !== 1) || (s === 1 && isPresent && t3 < 4.5),
 		anchor,
-		light(): RGB {
-			if (stage === 1) return VIOLET;
-			const ws = worldState(t2);
-			return t2 < FIRST ? GENESIS : WORLDS[ws.cur].gel;
-		},
 		draw(ctx, sec, opts) {
 			if (vis <= 0.005) return;
 			const L = opts?.compact ? COMPACT : WIDE;
 			ctx.save();
-			// bloom out of (and pull back into) the anchor
+			// bloom out of (and pull back toward) the anchor: a short settle in scale under the fade, never down to a point
 			const an = anchor();
-			const bs = 0.12 + 0.88 * easeOut(vis);
+			const bs = 0.86 + 0.14 * easeOut(vis);
 			ctx.translate(an.x, an.y);
 			ctx.scale(bs, bs);
 			ctx.translate(-an.x, -an.y);

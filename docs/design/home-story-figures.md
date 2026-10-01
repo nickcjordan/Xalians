@@ -11,7 +11,7 @@ Nick, 2026-09-28: the small pieces had been fitted into a mechanism built for fi
 | # | Assumption / Decision | Confidence | Supporting Evidence |
 |---|---|---|---|
 | 1 | Two kinds of beat: recordings (the painted scenes, on the archive screen) and figures (drawn on the page). A figure plays once and then stays alive in place; it does not loop back to its start. | 90%, Nick approved the prototype | conversation 2026-09-28 |
-| 2 | A change between two recordings keeps the archive rack (static out, slide, tune in). Any change with a figure on either side is a morph: the words cross-fade where they stand, and a point of light carries the story between the pictures. | 85%, from the approved prototype | `storyViewer.tsx` `go`, `figureStage.tsx` |
+| 2 | A change between two recordings keeps the archive rack (static out, slide, tune in). Any change with a figure on either side is a morph: the words cross-fade where they stand, and each picture goes and comes in its own place (Nick, 2026-09-30, dropped the point of light that used to carry the story between them: "the little dot blending between the animations I think is unneeded"). | 90%, from the approved prototype and Nick's ruling | `storyViewer.tsx` `go`, `figureStage.tsx` |
 | 3 | Every story animation passes the glance test: a casual visitor sees what is happening in the first moment; the mechanism belongs to the paragraph. Explainer animations (keys, pattern scans, counters) were rejected. | 95%, Nick's ruling | conversation 2026-09-28 |
 | 4 | Nothing leaves a Generator on screen. Life spreading out of a Generator belongs to the Floria scene alone, where it stands for the first, experimental machine. | 95%, Nick's ruling | conversation 2026-09-28 |
 | 5 | Beat 2 shows a later model of the Genesis Prototype: Floria's machine with the technology matured. The lore dates nothing between the prototype and the production Generators, so the design shows time passing without a number. | 85%, Nick's idea | conversation 2026-09-28; `planets.json` Floria history |
@@ -27,17 +27,17 @@ Nick, 2026-09-28: the small pieces had been fitted into a mechanism built for fi
 
 ## 3. How a change runs
 
-- **Recording to figure.** The screen's picture collapses to a bright line and then to a point (`collapse`, 0.42 s). The viewer cuts; the leaving screen's glass stays dark as its beat fades. The figure stage carries the point to where the figure stands (0.7 s) and the figure blooms out of it.
-- **Figure to figure.** One figure carrying both beats runs straight on into the next (the Generators' 02 to 03). Two different figures: the first pulls into a point, which flies to the second and blooms it.
-- **Figure to recording.** The figure pulls into its point, which flies to the recording's screen; the screen waits dark (`dark`) and tunes in as the light arrives (`FIGURE_TO_SCREEN_MS`, 0.9 s), searching briefly and locking on as any screen does.
+- **Recording to figure.** The screen's picture collapses to a bright line that fades where it is (`collapse`, 0.42 s). The viewer cuts; the leaving screen's glass stays dark as its beat fades, and the figure blooms in where it stands.
+- **Figure to figure.** One figure carrying both beats runs straight on into the next (the Generators' 02 to 03). Two different figures: the first fades back where it stands while the second blooms in where it stands.
+- **Figure to recording.** The figure fades back where it stands; the screen waits dark (`dark`) while it does and then tunes in (`FIGURE_TO_SCREEN_MS`, 0.38 s), searching briefly and locking on as any screen does, its first static tinted with the figure's light (`--arrival`).
 - **Recording to recording.** Unchanged: static out, the rack, search and lock.
-- **Not resting, reduced motion, a short window.** Not resting: the change is a plain cross-fade and the figure blooms without travelling light. Reduced motion: every change is a cut and each figure shows its beat's telling moment, still. A window too short for the box shows one beat at a time in the page, with no travel.
+- **Not resting, reduced motion, a short window.** Not resting: the change is a plain cross-fade and the figure blooms. Reduced motion: every change is a cut and each figure shows its beat's telling moment, still. A window too short for the box shows one beat at a time in the page, with no morph.
 
-A figure moves only while its beat is live (the viewer resting on it, on screen, in a visible tab), and always finishes what a change started (blooming in, pulling back, running on into its next beat, APEX's arrival). It draws at the plates' film rate while it only plays, and at the screen's rate while light travels.
+A figure moves only while its beat is live (the viewer resting on it, on screen, in a visible tab), and always finishes what a change started (blooming in, fading back, running on into its next beat, APEX's arrival). It draws at the plates' film rate while it only plays, and at the screen's rate while it blooms in or fades back.
 
 ## 4. How a figure is built
 
-- A figure implements `Figure` (`pages/home/pieces/figures.ts`): `reset`, `settle`, `step`, `busy`, `visible`, `anchor`, `light` and `draw`. It owns its clocks; the stage tells it which of its beats is shown and whether it is out or pulling back.
+- A figure implements `Figure` (`pages/home/pieces/figures.ts`): `reset`, `settle`, `step`, `busy`, `visible`, `anchor` and `draw`. It owns its clocks; the stage tells it which of its beats is shown and whether it is out or pulling back.
 - It draws in the pieces' stage units (`W` by `H`, `pieces/stage.ts`) with the shared glow sprites, `lighter` batches and film grain. The stage lays one oval mask over the whole figure, full to 55 percent of the way out and gone at its edge, so no part of it, tints and flashes included, ever shows the rectangle of its place.
 - Beat objects in `home.tsx` of kind `figure` name the figure and the beat (`stage`), and carry the label and the description like any piece.
 
@@ -61,10 +61,10 @@ Beat 5, "Designed by APEX to target the genome", and beat 6, "The only way to sa
 
 The concept went through the fact-check before a line was drawn (2026-09-29, Sonnet, `lore-factcheck` brief). It changed the first plan in six places: the sources name no world where the plague began and no route it took; Valleron is one planet, not a cluster, and no source places it in the galaxy (Telypso is at the center, Grimedes on the rim); no source says Valleron is untouched, only that "few planets are safe" and "most life forms have gathered" there; the plague ravaged the Vallerii and threatens the Xalians but emptied no world; tokens are carried home by those who win them and used at a Generator, not beamed out; and a token flying to the arena reverses the tournament, where tokens are the prize.
 
-- **Arrival (04 to 05).** The End Wars screen collapses to a point; the point flies to the heart of the galaxy, turning crimson on the way, and the galaxy blooms from it.
+- **Arrival (04 to 05).** The End Wars screen collapses to a line and goes; the galaxy blooms in where it stands.
 - **05.** A spiral galaxy of small warm lit worlds, seen at a tilt, turning very slowly. A crimson haze creeps in from several places at once (no single origin, no lanes) and spreads until it covers most of the galaxy; each world it reaches flares crimson and dims to an ember, most of them, not all. One world in the disk (Valleron, never named, not at the core) grows brighter as warm motes drift in to it from its neighbors before they dim: most life gathers there. The haze reaches it too and thins around it; it stays lit. Glance line: "a red sickness spreads across the worlds and puts their lights out."
 - **06 (runs on), as built after round 5.** The galaxy-scale token (a chip or a hexagon of light on Valleron) failed five blind readers: at that scale a token is too small to be an object, or reads as a marker. 06 now works at one Generator's scale (my recommendation, applied while Nick rules; the lore basis is the token entry: a token "can be used by a Xalian Generator to create new, unique Xalians that are immune to the Nemesis Plague"). The view dives from the galaxy into one dimmed world (a dark disc with a crimson limb toward Valleron's distant light, becoming the horizon). On it the Generator of beats 02 and 03 (the same drawing, `pieces/generatorMachine.ts`) stands idle under red haze, its vat empty. A small hexagonal chip arrives from the direction of that distant light, carried, never beamed, and seats in an intake at the machine's foot; light runs from it up into the vat, which fills with the Genesis green from its first pixel, and three seeds of life grow in it. A warm band of light goes out from the chip along the ground and the red keeps back from the new life, while beyond the machine the red remains: a beginning, not a cure. Nothing leaves the machine. Glance line: see section 8.
-- **Departure (06 to 07).** The whole figure pulls into a neutral warm-white point centered on it, which flies to the arena screen; nothing green leaves the vat and the token does not fly to the arena (tokens are the tournament's prize).
+- **Departure (06 to 07).** The whole figure fades back where it stands and the arena screen tunes in, its first static a neutral warm white; nothing green leaves the vat and the token does not go to the arena (tokens are the tournament's prize).
 - **Names and nods.** Nothing is named on screen. No first infected world and no cold tint (Krystos is where APEX designed the plague, not where it began).
 - **Captions, as fact-checked twice (2026-09-29):** 05 "The plague burns through the galaxy, and few worlds are safe; most life gathers on Valleron." 06 "Carried home from Valleron, where the Mercurius Machine prints them, a Scrambler Token lets a Generator make new Xalians immune to the plague."
 
@@ -79,7 +79,7 @@ The concept went through the fact-check before a line was drawn (2026-09-29, Son
 
 ## 9. Budgets
 
-- A figure draws at the plates' film rate (20 frames a second) while it only plays, and at the screen's rate only while light travels.
+- A figure draws at the plates' film rate (20 frames a second) while it only plays, and at the screen's rate only while it blooms in or fades back.
 - Draw time per frame, measured on the laptop profile (1366 by 640) in headed Chrome: under 8 ms on average and under 16 ms at the 95th percentile. Measure it with a round's harness page before shipping; never guess.
 - No new network requests: figures are drawn in code, nothing is fetched.
 
