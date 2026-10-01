@@ -1616,13 +1616,13 @@ function foundationFor(wi: number) {
 		const A: [number, number] = [MX - SLAB_X, SLAB_F];
 		const B: [number, number] = [A[0] + FDv.x, A[1] + FDv.y];
 		const D: [number, number] = [MX - LOW_X, GFOOT];
-		const C: [number, number] = [D[0] + FDv.x * 0.8, D[1] + FDv.y * 0.8];
+		const C: [number, number] = [D[0] + FDv.x, D[1] + FDv.y];
 		const yT = B[1];
 		const sgr = g.createLinearGradient(0, yT, 0, GFOOT);
 		const k0 = (GFOOT - 14 - yT) / (GFOOT - yT);
-		sgr.addColorStop(0, css(scale3(st, 0.24)));
-		sgr.addColorStop(k0, css(scale3(st, 0.15)));
-		sgr.addColorStop(1, css(scale3(st, 0.12), 0.05));
+		sgr.addColorStop(0, css(scale3(st, 0.42)));
+		sgr.addColorStop(k0, css(scale3(st, 0.3)));
+		sgr.addColorStop(1, css(scale3(st, 0.26), 0.05));
 		polyPath(g, [A, B, C, D]);
 		g.fillStyle = sgr;
 		g.fill();
@@ -1670,15 +1670,12 @@ function foundationFor(wi: number) {
 					g.moveTo(MX - 152, GROUND - 8);
 					g.quadraticCurveTo(MX - 168, ey + 6, ex, ey);
 					g.lineTo(ex - 1, SLAB_B + FDv.y * 0.5);
-					g.lineTo(ex - 14, GFOOT - 3 + FDv.y * 0.4);
-					g.quadraticCurveTo(ex - 22, GFOOT + 6, ex - 46, GFOOT + 7);
+					g.lineTo(ex - 8, GFOOT - 12 + FDv.y * 0.4);
 				} else {
 					const ex = MX + SLAB_X + FDv.x * 0.5;
 					const ey = SLAB_F + FDv.y * 0.5;
 					g.moveTo(MX + 152, GROUND - 8);
 					g.quadraticCurveTo(MX + 168, ey + 6, ex + 2, ey);
-					g.moveTo(MX + LOW_X + 2, GFOOT - 4);
-					g.quadraticCurveTo(MX + LOW_X + 14, GFOOT + 6, MX + LOW_X + 42, GFOOT + 7);
 				}
 				return;
 			}
@@ -1701,8 +1698,23 @@ function foundationFor(wi: number) {
 		g.strokeStyle = css([220, 226, 232], 0.2);
 		g.lineWidth = 1;
 		if (wi !== 4) g.stroke();
+		if (wi === 4) {
+			// a 1 px warm highlight along the run over the top face only
+			g.beginPath();
+			if (sg < 0) {
+				g.moveTo(MX - 152, GROUND - 9.2);
+				g.quadraticCurveTo(MX - 168, SLAB_F + FDv.y * 0.5 + 4.8, MX - SLAB_X + FDv.x * 0.5, SLAB_F + FDv.y * 0.5 - 1.2);
+			} else {
+				g.moveTo(MX + 152, GROUND - 9.2);
+				g.quadraticCurveTo(MX + 168, SLAB_F + FDv.y * 0.5 + 4.8, MX + SLAB_X + FDv.x * 0.5 + 2, SLAB_F + FDv.y * 0.5 - 1.2);
+			}
+			g.strokeStyle = css([210, 150, 120], 0.25);
+			g.lineWidth = 1;
+			g.stroke();
+		}
 		g.restore();
 		// the end goes under a low hump of the ground: a dark dome, lit on its top edge, underlit orange on lava
+		if (wi === 4) continue;
 		g.fillStyle = css([14, 12, 14], 0.97);
 		g.beginPath();
 		g.ellipse(xe, GFOOT + 7, 11, 6, 0, Math.PI, TAU);
@@ -2202,15 +2214,15 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			// and 15 percent darker than the front, so the side and the roof separate from the haze behind
 			ctx.globalAlpha = a * 0.15;
 			ctx.fillStyle = css(BLACK);
-			for (const q of [SIDE_FACE, ROOF_LID]) {
+			for (const q of [SIDE_FACE]) {
 				ctx.beginPath();
 				q.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
 				ctx.closePath();
 				ctx.fill();
 			}
 			// the shoulder's swept band takes the side face's tone, so the roof's left edge shows no pale seam
-			ctx.globalAlpha = a * 0.7;
-			for (const q of [SHOULDER]) {
+			ctx.globalAlpha = a * 0.3;
+			for (const q of [SHOULDER, ROOF_LID]) {
 				ctx.beginPath();
 				q.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
 				ctx.closePath();
