@@ -374,7 +374,9 @@ def cmd_packet(args):
     # Posed to the sheet (hands on hips): the only view in which arm, thigh, shin and
     # foot proportions can be compared with the sheet. See rig_akinza.py.
     if not (packet/'posed/posed-fit.json').exists():
-        cmd_posed(argparse.Namespace(assembly=args.name, out=str(packet/'posed'), refit=False, pose=None, joints=None))
+        # Refit the angles for each model: a pose fitted to one body's arm lengths does not put
+        # another body's paws on its hips (round 5: posed arm IoU fell .83 to .79 on shorter arms).
+        cmd_posed(argparse.Namespace(assembly=args.name, out=str(packet/'posed'), refit=True, pose=str(packet/'posed-pose.json'), joints=None))
     for name, description in [('posed-fit.png', 'Model posed to the sheet (hands on hips): silhouette overlay on the tail-free half of each view; grey both, blue model only, orange sheet only, greyed columns excluded'),
                               ('shaded-all.png', 'Model posed to the sheet, shaded front, left and back')]:
         if (packet/'posed'/name).exists():

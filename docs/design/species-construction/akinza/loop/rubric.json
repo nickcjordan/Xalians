@@ -37,7 +37,7 @@
    {
     "id": "R01.4",
     "kind": "visual",
-    "text": "From behind, a rounded head mass reads centred in the fan and blends into it, with no rim line, seam or separate disc",
+    "text": "From behind, a rounded head mass reads centred in the fan and meets it through a soft concave valley, with no convex rim, ridge, seam or separate disc (reworded 2026-10-01: \"blends into it\" led builders to blur the head into a bowl)",
     "images": [
      "m04 head-back",
      "m02 back",
@@ -645,18 +645,18 @@
    {
     "id": "R08.10",
     "kind": "measured",
-    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: thigh band IoU at least .90",
+    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: thigh band IoU at least .85 (the sheet places the leg about .03 apart between its front and back figures, so one 3D leg tops out near .85 to .90; R08 spec, 2026-10-01)",
     "source": "posed",
     "band": "thigh",
-    "min": 0.9
+    "min": 0.85
    },
    {
     "id": "R08.11",
     "kind": "measured",
-    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: shin band IoU at least .85",
+    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: shin band IoU at least .72 (same sheet inconsistency; an exact-spec leg reaches about .71 unshifted)",
     "source": "posed",
     "band": "shin",
-    "min": 0.85
+    "min": 0.72
    }
   ],
   "R09": [
