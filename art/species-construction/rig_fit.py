@@ -65,7 +65,10 @@ def reference(view):
 
 def model_center(view, posed=True):
     """Pixel column of the species' fixed centreline in this module's camera, or None (fan centring). The
-    posed model has its own centreline (the pose moves the head); the arms-down control uses the rest one."""
+    posed model has its own centreline (the pose moves the head); posed=False is the rest one, posed=None
+    centres on the ear fan as before (the controls that do not feed a criterion)."""
+    if posed is None:
+        return None
     line = lt.SPECIES['frame'].get('centerLinePosed' if posed else 'centerLine', {}).get(view)
     if line is None:
         return None

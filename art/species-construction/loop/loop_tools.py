@@ -979,9 +979,9 @@ def cmd_posed(args):
         ref = rf.reference(view)
         result['views'][view] = {'half': rf.scores(m, ref, view, True), 'full': rf.scores(m, ref, view, False)}
         pictures.append(rf.overlay_half(m, ref, view, f'{view} (posed)', True))
-    for view, (m, ref, sc) in rf.evaluate(posed, True).items():
+    for view, (m, ref, sc) in rf.evaluate(posed, True, posed=None).items():
         result['posedNumpy'][view] = sc
-    for view, (m, ref, sc) in rf.evaluate(skin, True, posed=False).items():
+    for view, (m, ref, sc) in rf.evaluate(skin, True, posed=None).items():
         result['armsDown'][view] = {'half': sc, 'full': rf.scores(m, ref, view, False)}
     bands = ['all', 'head', 'trunk', 'legs', 'neck', 'arm', 'thigh', 'shin', 'foot']
 
