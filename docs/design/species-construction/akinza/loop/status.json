@@ -10,7 +10,7 @@
   "keepGain": 0.5,
   "regressionDrop": 1,
   "roundsPerBatch": 4,
-  "hardStopRounds": 16,
+  "hardStopRounds": 32,
   "gate": {
    "minRegion": 7,
    "weightedMean": 8,
@@ -23,7 +23,10 @@
   },
   "meanGain": 0.025,
   "meanGainFromRound": 0,
-  "coverageRounds": 6
+  "coverageRounds": 6,
+  "plateauRounds": 3,
+  "plateauGain": 0.15,
+  "ordersPerRound": 2
  },
  "baseline": {
   "head": "head-0455",
@@ -868,7 +871,8 @@
   "2026-10-01: workflow stopped after round 11 to change the keep rule: a candidate the critic judges better, with no region losing credit, no invariant newly broken and no fall in the weighted mean, is kept even when none of its own criteria move. Round 11 R04 (assembled-0396) adopted under that rule; R07 stays reverted. Status rebuilt from the journal by replay_r10_r11.py.",
   "2026-10-01: workflow stopped at the start of round 14. Round 13 R03 (assembled-0419) was reverted only because the per-model pose refit moved a posed leg band on an identical body (R08 7.3 to 6.4); the judge now freezes the results of the component an order did not touch, and R03 is adopted. Note for later: the stalk neck lives at the head-body join, but R05 orders go to the body builder only, so it cannot be fixed as the loop is set up.",
   "2026-10-01: stopped at the start of round 15. Round 14 R08 (assembled-0428) was reverted against a stale frozen R08.10; measured results are now re-read from the adopted packet, the posed pose and joints are cached per body component (pose-cache/<body>), and R08 is adopted.",
-  "2026-10-01: hard stop after round 16. Final model assembled-0458 (head-0455, body-0448), weighted 5.447."
+  "2026-10-01: hard stop after round 16. Final model assembled-0458 (head-0455, body-0448), weighted 5.447.",
+  "2026-10-01: loop v3 starts at round 17 from assembled-0458 (LOOP-v3.md). New hard stop 32; plateau 3 rounds under .15 escalates to method review, a second plateau stops the batch. R10 and R11 are held (Nick: the tail is fine)."
  ],
  "decisionsForNick": [
   {
