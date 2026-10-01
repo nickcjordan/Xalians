@@ -131,10 +131,10 @@ export function HiddenGlyph({ className }) {
 	plinth, on the figure, in the dossier and in the report's world rows. 'none' draws
 	nothing, since a creature with no role does nothing at Resolve.
 
-	strike  a single point driven at one mark
-	sweep   a burst thrown out in every direction
-	bolster a hand lifting a bar
-	shield  a plate over what stands behind it
+	strike  a sword (one creature struck)
+	sweep   arrows thrown out from a point (every creature there)
+	bolster a heart with a plus (mends and lifts your own)
+	shield  a plate over what stands behind it (guards, never hits)
 */
 // pass 73: an armored creature, as overlapping plates (the shield role's outline is a different thing: an act)
 export function ArmorGlyph({ className }) {
@@ -151,33 +151,33 @@ export function RoleGlyph({ role, className }) {
 	const cls = `rec-glyph rec-glyph--role rec-glyph--role-${role}${className ? ` ${className}` : ''}`;
 	switch (role) {
 		case 'strike':
+			// a single sword on the diagonal, blade up and pointed (one creature struck); round 6: the first
+			// sword's point was an arrowhead, and at 12 pixels it read as an arrow again
 			return (
 				<svg className={cls} {...box}>
-					<path d="M4 20 17 7" /><path d="M13 4h7v7" /><path d="M14.5 9.5 20 4" />
+					<path d="M14.5 17.5 3 6V3h3l11.5 11.5" /><path d="m13 19 6-6" /><path d="m16 16 4 4" /><path d="m19 21 2-2" />
 				</svg>
 			);
 		case 'sweep':
+			// a blast: a jagged burst, the comic "boom" (every creature there is hit); round 6: four
+			// arrows out from a point read as a plus at 12 pixels
 			return (
 				<svg className={cls} {...box}>
-					<circle cx="12" cy="12" r="3" />
-					<path d="M12 6.5V3" /><path d="M12 17.5V21" />
-					<path d="M6.5 12H3" /><path d="M17.5 12H21" />
-					<path d="m8.1 8.1-2.5-2.5" /><path d="m15.9 15.9 2.5 2.5" />
-					<path d="m15.9 8.1 2.5-2.5" /><path d="m8.1 15.9-2.5 2.5" />
+					<path d="M12 2.5l1.9 5.2 5-2.5-2 5.1 5.1 1.8-5.1 1.9 2 5-5-2.4L12 21.5l-1.9-5-5 2.4 2-5L2 12.1l5.1-1.8-2-5.1 5 2.5z" />
 				</svg>
 			);
 		case 'bolster':
+			// a heart with a plus in it (mends and lifts your own)
 			return (
 				<svg className={cls} {...box}>
-					<path d="M4 20h16" /><path d="M12 16V5" /><path d="M7.5 9.5 12 5l4.5 4.5" />
-					<path d="M6 16h12" />
+					<path d="M12 20.5C5.5 16 3 12.2 3 8.8A4.6 4.6 0 0 1 12 7.4 4.6 4.6 0 0 1 21 8.8c0 3.4-2.5 7.2-9 11.7z" />
+					<path d="M12 9.6v5.6" /><path d="M9.2 12.4h5.6" />
 				</svg>
 			);
 		case 'shield':
 			return (
 				<svg className={cls} {...box}>
 					<path d="M12 3 5 6v5.5c0 4.2 2.9 7.6 7 9.5 4.1-1.9 7-5.3 7-9.5V6z" />
-					<path d="M9 12l2 2 4-4" />
 				</svg>
 			);
 		default:
@@ -348,6 +348,16 @@ export function InstinctGlyph({ lane, className }) {
 					<path d="M7 14.5 6 16.5M12 15v2.2M17 14.5l1 2" />
 				</>
 			)}
+		</svg>
+	);
+}
+
+// the sort key on a column head: bars of falling length beside a down arrow (a descending sort), as a reader knows it from any table
+export function SortGlyph({ className }) {
+	return (
+		<svg className={`rec-glyph rec-glyph--sort${className ? ` ${className}` : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+			<path d="M3 6h10" /><path d="M3 12h7" /><path d="M3 18h4" />
+			<path d="M18 5v14" /><path d="m14.5 15.5 3.5 3.5 3.5-3.5" />
 		</svg>
 	);
 }

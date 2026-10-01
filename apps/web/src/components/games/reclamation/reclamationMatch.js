@@ -11,7 +11,8 @@ import {
 	createRngState, nextRandom,
 } from '@xalians/rules/expedition/expeditionRules';
 import { chooseSend, chooseStake, rivalById, DEFAULT_RIVAL_ID } from '@xalians/rules/expedition/expeditionBot';
-import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
+import { prepare, strainMultiplierFor, targetMatchupMultiplier } from '@xalians/rules/expedition/creatureOnTable';
+import { slotStateOf, readOf, squadOrder, blowAt } from './reclamationSquad';
 import { SENDABLE, clinchFor, FRAMES_PER_MATCH } from '@xalians/rules/expedition/expeditionInterpretation';
 import {
 	speciesLabel, formatHold, formatHoldShown, formatBlow, classifyEvent, narrateEvent, cueForEvent, narrateSwiftMove, rolePower,
@@ -19,7 +20,7 @@ import {
 	verdictOf, rulingLine,
 } from './reclamationNarration';
 import { flattenBoard, prepareWithCompanions, siteHoldTotal, ghostPlanFor, strainCause, blowsAt, matchupsAt } from './reclamationPreview';
-import { fitTable, roundTrack, standingScale, elementOf } from './reclamationFit';
+import { fitTable, roundTrack, standingScale, elementOf, heldWorldsOf } from './reclamationFit';
 import { RoundTrack, SideRow, pennantsFor } from './reclamationInstruments';
 
 
@@ -533,16 +534,80 @@ class ReclamationMatch extends React.Component {
 				const fits = this.fitsFor();
 				const names = {};
 				(this.state.match.players[YOU].roster || []).forEach((r) => { names[r.id] = speciesLabel(r); });
+				/*
+					pass 76: the reader loop's answer key, from engine functions rather than the
+					squad's own derived values (docs/design/reclamation-squad-reader-loop.md). The
+					squad is the list the bench is given, so creatures already sent or spent count.
+				*/
+				const opponent = OTHER_SEAT[YOU];
+				const squadRecords = this.squad;
+				const sendsLeft = Math.max(0, (view.players[YOU].sendableCap || SENDABLE) - (view.players[YOU].sentCount || 0));
+				const reads = {};
+				const squad = squadRecords.map((record) => {
+					const slot = slotStateOf(record, view, YOU);
+					reads[record.id] = readOf(record, view);
+					return {
+						id: record.id,
+						name: speciesLabel(record),
+						state: slot.state,
+						siteId: slot.state === 'sent' ? slot.site.id : undefined,
+						reserve: slot.state === 'hand' && sendsLeft === 0 ? true : undefined,
+						role: reads[record.id].role,
+						power: reads[record.id].power,
+						speed: reads[record.id].speed,
+					};
+				});
+				const visibleRivals = (siteId) => ((view.board[siteId] && view.board[siteId][opponent]) || []).filter((e) => e.record && !e.hidden);
+				const rivals = {};
+				view.frame.sites.forEach((site) => {
+					rivals[site.id] = visibleRivals(site.id).map((e) => ({
+						recordId: e.recordId, name: speciesLabel(e.record), element: elementOf(e.record), role: e.role || null,
+					}));
+				});
+				const recordById = {};
+				squadRecords.forEach((r) => { recordById[r.id] = r; });
+				(this.state.match.players[YOU].roster || []).forEach((r) => { recordById[r.id] = r; });
+				const chartFor = (record, site) => {
+					const role = (reads[record.id] || readOf(record, view)).role;
+					if (role !== 'strike' && role !== 'sweep') {
+						return null;
+					}
+					let best = null;
+					visibleRivals(site.id).forEach((e) => {
+						const m = targetMatchupMultiplier(record, e.record, view.rules);
+						if (best === null || m > best) best = m;
+					});
+					return best;
+				};
+				const chartAllFor = (record, site) => {
+					const role = (reads[record.id] || readOf(record, view)).role;
+					return matchupsAt(view, site, record, role, opponent).map((m) => ({ rival: m.name, dealt: m.dealt, taken: m.taken }));
+				};
 				return {
 					worlds: view.frame.sites.map((site) => ({ siteId: site.id, planet: site.world.planet })),
 					forecastTotals: fits ? fits.base : null,
 					fits: fits ? Object.fromEntries(Object.entries(fits.fits).map(([id, row]) => [id, {
 						name: names[id],
-						sites: Object.fromEntries(Object.entries(row).map(([siteId, cell]) => [siteId, {
-							swing: cell.swing, gain: cell.gain, taken: cell.taken, clear: cell.clear, takes: cell.takes, deficit: cell.deficit, hold: cell.hold, isHome: cell.isHome, strainLevel: cell.strainLevel,
-						}])),
+						sites: Object.fromEntries(Object.entries(row).map(([siteId, cell]) => {
+							const site = view.frame.sites.find((s) => s.id === siteId);
+							const record = recordById[id];
+							return [siteId, {
+								swing: cell.swing, gain: cell.gain, taken: cell.taken, clear: cell.clear, takes: cell.takes, deficit: cell.deficit, hold: cell.hold, isHome: cell.isHome, strainLevel: cell.strainLevel,
+								own: cell.own, body: cell.body,
+								blow: site && record ? (() => { const b = blowAt(view, record, site, YOU, (reads[id] || readOf(record, view)).role); return b === null ? null : formatBlow(b); })() : null,
+								shift: (() => { const bar = Math.max(1, 0.1 * cell.body); return cell.own - cell.body >= bar ? 'up' : cell.body - cell.own >= bar ? 'down' : null; })(),
+								chart: site && record ? chartFor(record, site) : null,
+								chartAll: site && record ? chartAllFor(record, site) : [],
+							}];
+						})),
 					}])) : null,
-					sendsLeft: Math.max(0, (view.players[YOU].sendableCap || SENDABLE) - (view.players[YOU].sentCount || 0)),
+					sendsLeft,
+					squad,
+					rivals,
+					sortOrder: squadOrder(squadRecords.filter((r) => {
+						const st = slotStateOf(r, view, YOU).state;
+						return st === 'hand' || st === 'sent';
+					}), reads, null, null).map((r) => r.id),
 				};
 			},
 			format: formatHold,
@@ -2441,6 +2506,7 @@ class ReclamationMatch extends React.Component {
 									rivalBeat={this.rivalBeat()}
 									interactive={deployPanelOpen}
 									sideRow={mySide}
+									heldWorlds={heldWorldsOf(this.state.match.frames, this.state.playback ? view.resolutionLog : this.state.match.resolutionLog, this.seatInPlay())}
 								/>
 							)}
 

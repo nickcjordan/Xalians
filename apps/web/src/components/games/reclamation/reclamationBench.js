@@ -71,6 +71,8 @@ function ReclamationBench({
 	newsSiteId,
 	// pass 65: your side row (pointer, piece, pennants, sends), at the foot with your squad
 	sideRow,
+	// the world each creature of yours won and holds, for the used creatures in the head
+	heldWorlds,
 }) {
 	const me = view.players[you];
 	const yourTurn = interactive && view.turn === you && view.phase === 'deploy';
@@ -92,7 +94,7 @@ function ReclamationBench({
 				{/* pass 65: your side's row at your edge of the table, beside the squad it counts */}
 				<div className="rec-bench-side">{sideRow}</div>
 				{/* pass 75: the creatures already used, small, so the roster below is only what you can send */}
-				<SquadGone view={view} you={you} squad={squad} />
+				<SquadGone view={view} you={you} squad={squad} heldWorlds={heldWorlds} />
 				{/*
 					PASS 38. The head keeps only what is acted on: the act picker, the sends left and
 					the pass. "Your squad 12/12", the heading and the lead line repeated the top bar's

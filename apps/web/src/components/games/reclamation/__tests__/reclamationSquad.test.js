@@ -7,7 +7,9 @@ import { chooseSend } from '@xalians/rules/expedition/expeditionBot';
 import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { fitTable, fitScale } from '../reclamationFit';
-import ReclamationSquad, { SquadGone, squadOrder, cellFacts, columnsFor, readOf, slotStateOf } from '../reclamationSquad';
+import { blowsAt } from '../reclamationPreview';
+import { formatBlow } from '../reclamationNarration';
+import ReclamationSquad, { SquadGone, squadOrder, cellFacts, blowAt, blowTargetAt, columnsFor, readOf, slotStateOf } from '../reclamationSquad';
 
 /*
 	PASS 75, THE SQUAD AS A ROSTER (docs/design/reclamation-squad-roster.md). The squad lists only
@@ -52,10 +54,21 @@ describe('squadOrder', () => {
 });
 
 describe('cellFacts', () => {
-	it('says a lift or a cut against the normal hold, and nothing within half a point', () => {
-		expect(cellFacts({ gain: 15, own: 15, body: 12 }, [], 'strike').shift).toBe('up');
-		expect(cellFacts({ gain: 11, own: 11, body: 12 }, [], 'strike').shift).toBe('down');
-		expect(cellFacts({ gain: 12, own: 12.3, body: 12 }, [], 'strike').shift).toBe(null);
+	it('shows an arrow only for a lift or cut of a tenth of the normal hold and a whole point', () => {
+		expect(cellFacts({ gain: 22, own: 22, body: 20 }, [], 'strike').shift).toBe('up');
+		expect(cellFacts({ gain: 18, own: 18, body: 20 }, [], 'strike').shift).toBe('down');
+		// just under the threshold, and a small hold where a tenth is less than a point
+		expect(cellFacts({ gain: 21.9, own: 21.9, body: 20 }, [], 'strike').shift).toBe(null);
+		expect(cellFacts({ gain: 19.1, own: 19.1, body: 20 }, [], 'strike').shift).toBe(null);
+		expect(cellFacts({ gain: 13.1, own: 13.1, body: 12 }, [], 'strike').shift).toBe(null);
+		expect(cellFacts({ gain: 11, own: 11, body: 10 }, [], 'strike').shift).toBe('up');
+		expect(cellFacts({ gain: 10.7, own: 10.7, body: 12 }, [], 'strike').shift).toBe('down');
+	});
+	it('tones the blow against the act column number', () => {
+		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike', 28, 14).blowTone).toBe('above');
+		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike', 7, 14).blowTone).toBe('below');
+		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike', 14.3, 14).blowTone).toBe('even');
+		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike', null, 14).blow).toBe(null);
 	});
 	it('carries the chart\'s best factor for a creature that strikes, and none for one that never does', () => {
 		const matchups = [{ dealt: 0.5 }, { dealt: 2 }, { dealt: null, taken: 2 }];
@@ -105,11 +118,108 @@ describe('the roster on a real game', () => {
 			expect(nums.length).toBe(state === 'sent' ? 1 : 3);
 			nums.forEach((n) => expect(n).toMatch(/^[+−]?\d+$/));
 		});
+		// round 10: each column's head says how your side stands there as the sends stand, signed
+		container.querySelectorAll('[data-squad-margin]').forEach((m) => {
+			const siteId = m.closest('[data-squad-sort]').getAttribute('data-squad-sort');
+			const t = fits.base[siteId];
+			expect(Number(m.getAttribute('data-squad-margin'))).toBeCloseTo(t.mine - t.theirs, 1);
+		});
+		expect(container.querySelectorAll('[data-squad-margin]').length).toBeGreaterThan(0);
 		const gone = render(<SquadGone view={view} you="A" squad={all} />).container;
 		expect(gone.querySelectorAll('[data-gone]').length).toBe(states.filter((st) => st !== 'hand' && st !== 'sent').length);
 		// a round has been ruled and this one is under way: every kind of row is here
 		expect(states).toContain('sent');
 		expect(states.filter((st) => st !== 'hand' && st !== 'sent').length).toBeGreaterThan(0);
+	});
+
+	it("puts a chart factor in its cell's top line, behind the creature's act glyph", () => {
+		let found = null;
+		for (const seed of [7, 13, 29, 41, 5, 3]) {
+			// a few bot sends first, so there are rivals on the worlds for the chart to read against
+			let match = matchFor(seed);
+			for (let i = 0; i < 4 && match.phase === 'deploy'; i += 1) {
+				const action = chooseSend(getPublicState(match, match.turn), match.players[match.turn].roster, match.turn, { float: () => 0.5 }, null);
+				match = (action.type === 'send' ? send(match, match.turn, action.recordId, action.siteId) : null) || match;
+			}
+			const seat = match.turn;
+			const view = getPublicState(match, seat);
+			const fits = fitTable(match, seat, match.players[seat].roster);
+			const { container } = render(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={fitScale(fits)} onArm={() => {}} onHover={() => {}} />);
+			found = container.querySelector('[data-chart]');
+			if (found) break;
+		}
+		expect(found).not.toBeNull();
+		const read = found.closest('.rec-squad-cell-read');
+		expect(read).not.toBeNull();
+		expect(read.querySelector('.rec-squad-num')).not.toBeNull();
+		const role = found.closest('.rec-squad-row').querySelector('.rec-squad-act').getAttribute('data-role');
+		expect(found.parentElement.querySelector(`.rec-glyph--role-${role}`)).not.toBeNull();
+		// the bar stands alone in the foot
+		expect(found.closest('.rec-squad-cell').querySelector('.rec-squad-cell-foot [data-chart]')).toBeNull();
+	});
+
+	it('shows the blow at worlds with a rival, matching the engine, and none for bolsters or empty worlds', () => {
+		let withBlow = 0;
+		let without = 0;
+		for (const seed of [7, 13, 29, 41, 5, 3]) {
+			let match = matchFor(seed);
+			for (let i = 0; i < 4 && match.phase === 'deploy'; i += 1) {
+				const action = chooseSend(getPublicState(match, match.turn), match.players[match.turn].roster, match.turn, { float: () => 0.5 }, null);
+				match = (action.type === 'send' ? send(match, match.turn, action.recordId, action.siteId) : null) || match;
+			}
+			const seat = match.turn;
+			const view = getPublicState(match, seat);
+			const roster = match.players[seat].roster;
+			const fits = fitTable(match, seat, roster);
+			const { container } = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} scale={fitScale(fits)} onArm={() => {}} onHover={() => {}} />);
+			container.querySelectorAll('[data-slot-state="hand"]').forEach((row) => {
+				const record = roster.find((r) => r.id === row.getAttribute('data-slot'));
+				const role = row.querySelector('.rec-squad-act').getAttribute('data-role');
+				row.querySelectorAll('[data-fit-site]').forEach((cell) => {
+					const site = view.frame.sites.find((s) => s.id === cell.getAttribute('data-fit-site'));
+					const node = cell.querySelector('[data-blow]');
+					const { lands } = blowsAt(view, record, site, seat, view.players[seat].sentCount);
+					const theirs = Object.values(lands).filter((l) => !l.mine).map((l) => l.power);
+					if ((role === 'strike' || role === 'sweep') && theirs.length) {
+						expect(node).not.toBeNull();
+						expect(node.getAttribute('data-blow')).toBe(formatBlow(Math.max(...theirs)));
+						expect(blowAt(view, record, site, seat, role)).toBe(Math.max(...theirs));
+						// round 4: the chip carries the act glyph and the number it lands
+						const chip = node.parentElement;
+						const target = blowTargetAt(view, record, site, seat, role);
+						expect(chip.querySelector(`.rec-glyph--role-${role}`)).not.toBeNull();
+						expect(chip.getAttribute('data-blow-on')).toBe(target.recordId);
+						// round 9: the badge names the target only where two or more rivals could take the blow
+						if (target.element) expect(!!chip.querySelector('.rec-squad-chart-target')).toBe(target.among > 1);
+						withBlow += 1;
+					} else {
+						expect(node).toBeNull();
+						without += 1;
+					}
+				});
+			});
+		}
+		expect(withBlow).toBeGreaterThan(0);
+		expect(without).toBeGreaterThan(0);
+	});
+
+	it("gives a used creature its badge, and one holding a world its flag in that world's color", () => {
+		const match = playTo(7, 'A', 1);
+		const all = buildDraftPools(7, draftOptionsFromRules(DEFAULT_RULES)).poolA.slice(0, ROSTER_SIZE);
+		const view = getPublicState(match, 'A');
+		const target = all.find((r) => slotStateOf(r, view, 'A').state === 'away' || slotStateOf(r, view, 'A').state === 'holding' || slotStateOf(r, view, 'A').state === 'downed');
+		expect(target).toBeTruthy();
+		// make it a holder of a world the log named
+		const fake = { ...view, players: { ...view.players, A: { ...view.players.A, holding: [target.id], downed: [], roster: view.players.A.roster.filter((r) => r.id !== target.id) } } };
+		const { container } = render(<SquadGone view={fake} you="A" squad={[target]} heldWorlds={{ [target.id]: { element: 'fire', planet: 'Magmuth' } }} />);
+		const token = container.querySelector('[data-gone="holding"]');
+		expect(token).not.toBeNull();
+		expect(token.querySelector('[data-token-flag]')).not.toBeNull();
+		expect(token.querySelector('.rec-squad-token-disc')).not.toBeNull();
+		expect(token.className).toContain('g-el-fire');
+		const plain = render(<SquadGone view={{ ...fake, players: { ...fake.players, A: { ...fake.players.A, holding: [], downed: [target.id] } } }} you="A" squad={[target]} />).container;
+		expect(plain.querySelector('[data-gone="downed"] [data-token-flag]')).toBeNull();
+		expect(plain.querySelector('[data-gone="downed"] .rec-squad-token-disc')).not.toBeNull();
 	});
 
 	it('sorts by a world when its symbol is pressed, and back again', () => {
@@ -129,6 +239,18 @@ describe('the roster on a real game', () => {
 		expect(order()).toEqual(before);
 		const reads = Object.fromEntries(match.players[seat].roster.map((r) => [r.id, readOf(r, view)]));
 		expect(before).toEqual(squadOrder(match.players[seat].roster, reads, fits, null).map((r) => r.id));
+	});
+
+	it('draws a sort icon on each column head, and no cell greys while a world is pointed at', () => {
+		const match = matchFor(13);
+		const view = getPublicState(match, match.turn);
+		const seat = match.turn;
+		const fits = fitTable(match, seat, match.players[seat].roster);
+		const site = view.frame.sites[1].id;
+		const { container } = render(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={fitScale(fits)} focusSiteId={site} onArm={() => {}} onHover={() => {}} />);
+		expect(container.querySelectorAll('[data-squad-sort] .rec-glyph--sort').length).toBe(container.querySelectorAll('[data-squad-sort]').length);
+		expect(container.querySelector('.rec-squad-cell--dim')).toBeNull();
+		expect(container.querySelector('.rec-squad-cell--focus')).not.toBeNull();
 	});
 
 	it('lifts a row on a press and keeps a reserve row from being lifted', () => {
