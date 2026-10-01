@@ -1,7 +1,6 @@
 import React from 'react';
 import { SwiftGlyph } from './reclamationGlyphs';
 import { speciesLabel, roleSentence, roleWord } from './reclamationNarration';
-import { fitScale } from './reclamationFit';
 import { flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { SENDABLE } from '@xalians/rules/expedition/expeditionInterpretation';
 import ReclamationSquad, { SquadGone } from './reclamationSquad';
@@ -85,8 +84,6 @@ function ReclamationBench({
 	// assumption 20: a swift creature already on the table may move once a round, and it
 	// does not spend the turn. One button per creature that still may.
 	const movers = movable || [];
-	// pass 57: one scale for the whole squad, so a bar reads against the next row's
-	const stripScale = fitScale(fits);
 
 	return (
 		<section className={`rec-bench rec-bench--step-${step}${yourTurn && !me.passed ? ' rec-bench--active' : ''}`} aria-label="Your squad" data-deploy-step={step}>
@@ -192,7 +189,6 @@ function ReclamationBench({
 				you={you}
 				squad={squad}
 				fits={fits}
-				scale={stripScale}
 				armedRecordId={armedRecordId}
 				disabled={!yourTurn || me.passed || sendsLeft === 0}
 				reserve={sendsLeft === 0}

@@ -7685,8 +7685,13 @@
 }
 .rec-console--match[data-terminal] .rec-match[data-moment="lifted"] .rec-dock > .rec-bench { border-color: var(--g-seam); box-shadow: var(--g-relief), var(--g-drop); }
 .rec-console--match[data-terminal] .rec-match[data-moment="lifted"] .rec-plinth--armed { box-shadow: 0 0 0 2px var(--g-ink), 0 0 14px color-mix(in srgb, var(--g-ink) 30%, transparent); }
-.rec-console--match[data-terminal] .rec-site--targeted { box-shadow: var(--g-relief), 0 0 0 1px var(--g-ink), inset 0 0 24px color-mix(in srgb, var(--g-ink) 6%, transparent); }
-.rec-console--match[data-terminal] .rec-site--targeted:hover { box-shadow: var(--g-relief), 0 0 0 2px var(--g-ink), inset 0 0 32px color-mix(in srgb, var(--g-ink) 10%, transparent); }
+/* PASS 77, round 11: two of three readers could not tell which lifted-target world the mouse was over (1px against 2px), so the
+   tiles' "→ N" read as belonging to no world. The others stay faintly framed; the pointed one takes a heavy frame. */
+.rec-console--match[data-terminal] .rec-site--targeted { border-color: color-mix(in srgb, var(--g-ink) 35%, var(--g-seam)); box-shadow: var(--g-relief), 0 0 0 1px color-mix(in srgb, var(--g-ink) 30%, transparent), inset 0 0 24px color-mix(in srgb, var(--g-ink) 4%, transparent); }
+.rec-console--match[data-terminal] .rec-site--targeted.rec-site--hover,
+.rec-console--match[data-terminal] .rec-site--targeted:hover { border-color: var(--g-ink); box-shadow: var(--g-relief), 0 0 0 3px var(--g-ink), inset 0 0 32px color-mix(in srgb, var(--g-ink) 12%, transparent); }
+/* with nothing lifted, the world under the mouse is still framed, since the tiles' attack lines now name their blow there */
+.rec-console--match[data-terminal] .rec-match[data-moment="mine"] .rec-site--hover:not(.rec-site--targeted) { box-shadow: var(--g-relief), 0 0 0 2px color-mix(in srgb, var(--g-ink) 75%, transparent); }
 .rec-console--match[data-terminal] .rec-ghost-piece-art { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--g-ink) 30%, transparent)); }
 
 /* the rival's move: no frame on the worlds; the rival's half of each world breathes where its creature will land */
@@ -8176,88 +8181,106 @@
 .rec-console--match[data-terminal] .rec-reason-mark .rec-glyph--armor { width: 1em; height: 1em; }
 
 /*
-	PASS 75, THE SQUAD AS A ROSTER (docs/design/reclamation-squad-roster.md). The creatures you can
-	still send, a row each, in as many columns as the width allows; each column has its own head
-	with the three worlds' symbols over their cells, so the numbers line up down the squad. A
-	world's cell is a miniature of that world's bar: what the creature would add there, a thin bar
-	in the world's color on one scale for the squad, the rival's mark to pass, one arrow for what the
-	world did to its hold and one factor for the element chart. The rows share the squad's height,
-	so twelve fit in four rows at 1366 by 768 and fewer get more room; nothing scrolls.
+	PASS 77: the squad as health-first tiles (Nick, 2026-09-30). One tile per creature you can still
+	send, in a grid that shares the squad's height, so nothing scrolls. Each tile leads with its
+	health: three blocks, one per world, the "+N" it would add there in the world's color over a bar
+	on one scale for the squad, with a thin light tick at the creature's own natural health. The
+	attack rides small and quiet at the top right (the world's blow joins it while a world is
+	pointed at), the name under it, the dossier key in the corner. A tile sizes its contents from
+	its own height (container units), so a tall tile at 1440 by 900 and a short one at 1366 by 768
+	keep the same proportions.
 */
 .rec-console--match[data-terminal] .rec-squad {
 	min-height: 0;
 	display: grid;
-	grid-template-columns: repeat(var(--sq-cols, 3), minmax(0, calc(560px * var(--rec-scale))));
-	gap: 0 calc(14px * var(--rec-scale));
-	padding: calc(2px * var(--rec-scale)) calc(8px * var(--rec-scale)) calc(6px * var(--rec-scale));
+	grid-template-columns: repeat(var(--sq-cols, 6), minmax(0, 1fr));
+	grid-template-rows: repeat(var(--sq-rows, 2), minmax(0, 1fr));
+	gap: 6px;
+	padding: 8px;
 	overflow: hidden;
 }
-.rec-console--match[data-terminal] .rec-squad-col {
-	container-type: inline-size;
-	min-height: 0;
-	display: grid;
-	/* the head, then the column's rows sharing what is left, never taller than a comfortable row */
-	grid-template-rows: auto repeat(var(--sq-rows, 4), minmax(0, calc(44px * var(--rec-scale))));
-	align-content: start;
-	--sq-art: calc(26px * var(--rec-scale));
-	--sq-act: 6.4em;
-	--sq-info: calc(16px * var(--rec-scale));
-	--sq-gap: calc(6px * var(--rec-scale));
-	font-size: calc(12px * var(--rec-scale));
-}
 .rec-console--match[data-terminal] .rec-squad-row {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) var(--sq-info);
-	align-items: center;
-	gap: var(--sq-gap);
+	position: relative;
+	container-type: size;
+	min-width: 0;
 	min-height: 0;
-	padding: 0 calc(3px * var(--rec-scale));
-	border-bottom: 1px solid color-mix(in srgb, var(--g-seam) 55%, transparent);
+	background: color-mix(in srgb, var(--g-hull-lo) 70%, transparent);
+	border: 1px solid var(--g-seam);
+	overflow: hidden;
+	transition: transform 120ms ease, box-shadow 120ms ease;
 }
 .rec-console--match[data-terminal] .rec-squad-main {
 	all: unset;
 	box-sizing: border-box;
-	display: grid;
-	grid-template-columns: var(--sq-art) minmax(0, 1.5fr) var(--sq-act) repeat(3, minmax(0, 1fr));
-	align-items: center;
-	gap: var(--sq-gap);
-	height: 100%;
-	min-height: 0;
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
 	cursor: pointer;
+	font-size: 12px;
 }
-.rec-console--match[data-terminal] .rec-squad-row:not(.rec-squad-head):hover,
-.rec-console--match[data-terminal] .rec-squad-main:focus-visible { background: color-mix(in srgb, var(--g-ink) 6%, transparent); }
-.rec-console--match[data-terminal] .rec-squad-main:focus-visible { outline: 1px solid var(--g-ink-mid); outline-offset: -1px; }
-/* lifted: the row stands out in your side's own color, as the creature does on the worlds */
+.rec-console--match[data-terminal] .rec-squad-row:hover { background: color-mix(in srgb, var(--g-ink) 6%, var(--g-hull-lo)); }
+.rec-console--match[data-terminal] .rec-squad-main:focus-visible { outline: 1px solid var(--g-ink-mid); outline-offset: -2px; }
+/* lifted: the tile rises a little with a clear outline in your side's own color */
 .rec-console--match[data-terminal] .rec-squad-row--armed {
-	background: color-mix(in srgb, var(--rec-you) 16%, transparent);
-	box-shadow: inset 3px 0 0 var(--rec-you);
+	transform: translateY(-4px);
+	overflow: visible;
+	z-index: 2;
+	background: color-mix(in srgb, var(--rec-you) 14%, var(--g-hull-lo));
+	border-color: var(--rec-you);
+	box-shadow: 0 0 0 1px var(--rec-you), 0 8px 14px rgba(0, 0, 0, 0.55);
 }
-.rec-console--match[data-terminal] .rec-squad-row--armed .rec-squad-name { color: var(--g-ink); }
-.rec-console--match[data-terminal] .rec-squad-row--off .rec-squad-main { cursor: default; }
-.rec-console--match[data-terminal] .rec-squad-row--kept { opacity: 0.5; }
-/* sent this round: the row stays where it was until the round is ruled, quiet, its number in its world's cell */
-.rec-console--match[data-terminal] .rec-squad-row--sent { opacity: 0.5; }
+.rec-console--match[data-terminal] .rec-squad-row--armed .rec-squad-name { color: var(--g-ink-mid); }
+.rec-console--match[data-terminal] .rec-squad-row--off .rec-squad-main,
+.rec-console--match[data-terminal] .rec-squad-row--kept .rec-squad-main,
 .rec-console--match[data-terminal] .rec-squad-row--sent .rec-squad-main { cursor: default; }
-.rec-console--match[data-terminal] .rec-squad-row--sent:hover { background: none; }
-.rec-console--match[data-terminal] .rec-squad-row--kept .rec-squad-main { cursor: default; }
+.rec-console--match[data-terminal] .rec-squad-row--kept { opacity: 0.5; }
+/* sent this round: the tile stays where it was until the round is ruled, quiet, its number in its world's block */
+.rec-console--match[data-terminal] .rec-squad-row--sent { opacity: 0.5; }
+.rec-console--match[data-terminal] .rec-squad-row--sent:hover,
+.rec-console--match[data-terminal] .rec-squad-row--kept:hover { background: color-mix(in srgb, var(--g-hull-lo) 70%, transparent); }
 
-/* the creature: its silhouette with the element badge its piece wears, its name */
-.rec-console--match[data-terminal] .rec-squad-art { position: relative; width: var(--sq-art); height: var(--sq-art); max-height: 100%; }
+/* the top: the silhouette with its badge, then the attack line and the name */
+.rec-console--match[data-terminal] .rec-squad-top {
+	flex: 1 1 0;
+	min-height: 0;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 4px 0 6px;
+}
+.rec-console--match[data-terminal] .rec-squad-art {
+	position: relative;
+	flex: 0 0 auto;
+	height: 52cqh;
+	width: min(34cqw, 70px);
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	margin-left: 4px;
+}
 .rec-console--match[data-terminal] .rec-squad-art .rec-squad-img,
 .rec-console--match[data-terminal] .rec-squad-art > svg,
 .rec-console--match[data-terminal] .rec-squad-art > img { width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; }
 .rec-console--match[data-terminal] .rec-squad-disc {
 	position: absolute !important;
-	left: -3px;
-	bottom: -2px;
-	width: calc(12px * var(--rec-scale)) !important;
-	height: calc(12px * var(--rec-scale)) !important;
+	left: -4px;
+	bottom: -3px;
+	width: clamp(12px, 19cqh, 20px) !important;
+	height: clamp(12px, 19cqh, 20px) !important;
 	border-radius: 50%;
 	filter: none !important;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 .rec-console--match[data-terminal] .rec-squad-disc svg { width: 78%; height: 78%; }
+.rec-console--match[data-terminal] .rec-squad-id {
+	flex: 1 1 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 3px;
+}
 .rec-console--match[data-terminal] .rec-squad-name {
 	display: flex;
 	align-items: center;
@@ -8266,72 +8289,57 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	font-size: 0.92em;
-	font-weight: 700;
-	letter-spacing: 0.04em;
+	font-size: clamp(8px, 8.5cqh, 10px);
+	font-weight: 600;
+	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	color: var(--g-ink-mid);
+	color: var(--g-ink-low);
 }
 .rec-console--match[data-terminal] .rec-squad-hidden { display: inline-flex; width: 1em; height: 1em; flex: 0 0 auto; color: var(--g-ink-low); }
 .rec-console--match[data-terminal] .rec-squad-hidden svg { width: 100%; height: 100%; }
 
-/* its act and the number it carries: a strike's arrow and its blow, a bolster's mend, a shield's mark alone */
-.rec-console--match[data-terminal] .rec-squad-act { display: inline-flex; align-items: center; gap: 2px; min-width: 0; white-space: nowrap; }
-.rec-console--match[data-terminal] .rec-squad-act .rec-glyph { width: 1.05em; height: 1.05em; flex: 0 0 auto; }
-/* the act's name beside its glyph: the choice itself, in words (pass 76, round 7) */
-.rec-console--match[data-terminal] .rec-squad-act-word { font-size: 0.82em; font-weight: 600; letter-spacing: 0.02em; color: var(--g-ink-mid); margin: 0 0.25em 0 0.1em; }
-.rec-console--match[data-terminal] .rec-squad-act b { font-size: 1.05em; font-weight: 700; color: var(--g-ink); font-variant-numeric: tabular-nums; }
-.rec-console--match[data-terminal] .rec-squad-speed { font-style: normal; font-size: 0.8em; color: var(--g-ink-low); margin-left: 3px; }
-/* advanced mode's speed rides after the attack, so the act column is wider there */
-.rec-console--match[data-terminal] .rec-squad[data-squad-advanced] .rec-squad-row { --sq-act: 8.6em; }
-/* a narrow column keeps the attack and lets the speed go to the dossier */
-@container (max-width: 400px) {
-	.rec-console--match[data-terminal] .rec-squad[data-squad-advanced] .rec-squad-row { --sq-act: 5.8em; }
-	.rec-console--match[data-terminal] .rec-squad-row { --sq-act: 5.8em; }
-	.rec-console--match[data-terminal] .rec-squad-speed { display: none; }
-	/* the name gives way first, so a world's number, arrow and factor keep to their own cell */
-	.rec-console--match[data-terminal] .rec-squad-main { grid-template-columns: var(--sq-art) minmax(0, 1fr) var(--sq-act) repeat(3, minmax(0, 1.05fr)); }
-	.rec-console--match[data-terminal] .rec-squad-row { --sq-gap: 4px; }
-	.rec-console--match[data-terminal] .rec-squad-cell-read { gap: 1px; }
-	.rec-console--match[data-terminal] .rec-squad-chartrun { margin-left: 0.2em; letter-spacing: -0.06em; }
-	.rec-console--match[data-terminal] .rec-squad-shift { font-size: 0.55em; }
-	.rec-console--match[data-terminal] .rec-squad-name { letter-spacing: 0; font-size: 0.86em; }
-}
-.rec-console--match[data-terminal] .rec-squad-speed::before { content: "\21E7"; margin-right: 1px; }
-
-/* a world's cell: the number with its marks on top, the bar in the world's color under it */
-.rec-console--match[data-terminal] .rec-squad-cell {
-	display: grid;
-	grid-template-rows: auto auto;
-	align-content: center;
-	gap: 2px;
+/* its act and the number it carries, all one modest size and quiet: glyph, word, power, then the hit at a pointed world */
+.rec-console--match[data-terminal] .rec-squad-act {
+	display: flex;
+	align-items: center;
+	gap: 4px;
 	min-width: 0;
-	height: 100%;
-	transition: opacity 160ms ease;
+	white-space: nowrap;
+	font-size: clamp(10px, 12cqh, 13px);
+	color: var(--g-ink-mid);
 }
-.rec-console--match[data-terminal] .rec-squad-cell-read { display: flex; align-items: baseline; gap: 3px; min-width: 0; white-space: nowrap; }
-.rec-console--match[data-terminal] .rec-squad-num { font-size: 1.15em; font-weight: 700; line-height: 1; color: var(--g-ink); font-variant-numeric: tabular-nums; }
-.rec-console--match[data-terminal] .rec-squad-shift { font-style: normal; font-size: 0.62em; line-height: 1; }
-.rec-console--match[data-terminal] .rec-squad-shift--up { color: var(--g-ink); }
-.rec-console--match[data-terminal] .rec-squad-shift--down { color: var(--g-ink-low); }
-/* under the number: the bar, alone in its cell (pass 76: the factor moved up beside the number it multiplies) */
-.rec-console--match[data-terminal] .rec-squad-cell-foot { display: flex; align-items: center; min-width: 0; height: calc(4px * var(--rec-scale)); }
-/* the chart's factor, in the number's own run behind the creature's act glyph: "its attack x2" */
-/* PASS 76, round 4: drawn as the board's blow chip (.rec-figure-blow): dashed outline, the act glyph, the number, then the rival it lands on */
-.rec-console--match[data-terminal] .rec-squad-chartrun { display: inline-flex; align-items: center; gap: 0.15em; flex: 0 1 auto; min-width: 0; margin-left: 0.3em; padding: 0.05em 0.25em; font-size: 0.95em; line-height: 1.15; color: var(--g-ink-mid); border: 1px dashed color-mix(in srgb, var(--rec-you) 70%, transparent); background: color-mix(in srgb, var(--g-hull-lo) 86%, transparent); }
-.rec-console--match[data-terminal] .rec-squad-chart-onto { flex: 0 0 auto; width: 0.7em; height: 0.7em; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.rec-console--match[data-terminal] .rec-squad-chart-target { position: static !important; flex: 0 0 auto; display: inline-grid !important; place-items: center; width: 0.95em !important; height: 0.95em !important; border-radius: 50%; overflow: hidden; filter: none !important; }
-.rec-console--match[data-terminal] .rec-squad-chart-target svg { width: 78%; height: 78%; }
-.rec-console--match[data-terminal] .rec-squad-chartrun .rec-glyph { width: 0.85em; height: 0.85em; flex: 0 0 auto; align-self: center; }
-.rec-console--match[data-terminal] .rec-squad-chart { font-style: normal; font-size: 1.05em; font-weight: 700; line-height: 1; color: inherit; }
-.rec-console--match[data-terminal] .rec-squad-chartrun--above { color: var(--g-ink); font-weight: 700; }
-.rec-console--match[data-terminal] .rec-squad-chartrun--below { color: var(--g-ink-mid); }
-.rec-console--match[data-terminal] .rec-squad-bar {
-	position: relative;
+.rec-console--match[data-terminal] .rec-squad-act .rec-glyph { width: 1.1em; height: 1.1em; flex: 0 0 auto; }
+.rec-console--match[data-terminal] .rec-squad-act-word { font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--g-ink-low); }
+.rec-console--match[data-terminal] .rec-squad-act b { font-weight: 700; color: var(--g-ink-mid); font-variant-numeric: tabular-nums; }
+.rec-console--match[data-terminal] .rec-squad-speed { font-style: normal; color: var(--g-ink-low); }
+.rec-console--match[data-terminal] .rec-squad-speed::before { content: "\21E7"; margin-right: 1px; }
+.rec-console--match[data-terminal] .rec-squad-hover { display: inline-flex; align-items: center; gap: 4px; }
+.rec-console--match[data-terminal] .rec-squad-hover-to { font-style: normal; font-size: 0.85em; color: var(--g-ink-low); }
+.rec-console--match[data-terminal] .rec-squad-hover b { color: var(--g-el); }
+
+/* the health blocks: the number over its bar, one per world */
+.rec-console--match[data-terminal] .rec-squad-blocks {
+	flex: 0 0 auto;
+	display: flex;
+	padding: 0 8px clamp(4px, 8cqh, 9px);
+}
+.rec-console--match[data-terminal] .rec-squad-cell {
 	flex: 1 1 0;
 	min-width: 0;
-	height: calc(4px * var(--rec-scale));
-	background: color-mix(in srgb, var(--g-el) 16%, transparent);
+	display: flex;
+	flex-direction: column;
+	gap: clamp(2px, 3cqh, 3px);
+	padding: 0 6px;
+	transition: opacity 160ms ease;
+}
+.rec-console--match[data-terminal] .rec-squad-cell-read { display: flex; align-items: baseline; gap: 1px; min-width: 0; white-space: nowrap; line-height: 1; }
+.rec-console--match[data-terminal] .rec-squad-num { font-size: clamp(12px, 23cqh, 24px); font-weight: 700; line-height: 1; color: var(--g-el); font-variant-numeric: tabular-nums; }
+.rec-console--match[data-terminal] .rec-squad-shift { font-style: normal; font-size: clamp(7px, 11cqh, 12px); line-height: 1; color: var(--g-el); }
+.rec-console--match[data-terminal] .rec-squad-shift--down { opacity: 0.8; }
+.rec-console--match[data-terminal] .rec-squad-bar {
+	position: relative;
+	height: clamp(3px, 6cqh, 7px);
+	background: color-mix(in srgb, var(--g-ink) 11%, transparent);
 }
 .rec-console--match[data-terminal] .rec-squad-fill {
 	position: absolute;
@@ -8339,77 +8347,39 @@
 	top: 0;
 	bottom: 0;
 	width: calc(var(--sq-fill, 0) * 100%);
-	background: color-mix(in srgb, var(--g-el) 80%, transparent);
+	background: var(--g-el);
 }
-/* the rival's mark, as on the world's standing: pass it and you hold more there */
-/* the rival's mark, as on the world's standing: pass it and you hold more there. Its cap sits under
-   the bar, pointing up at the mark, so it never crosses the number above (pass 76, round 4) */
+/* the creature's own health on the same scale: a thin light tick, taller than the bar */
 .rec-console--match[data-terminal] .rec-squad-tick {
 	position: absolute;
-	top: -2px;
+	top: -3px;
 	bottom: -3px;
 	left: calc(var(--sq-tick, 0) * 100%);
-	width: 2px;
-	margin-left: -1px;
-	background: var(--g-ink);
+	width: 1.5px;
+	margin-left: -0.75px;
+	background: #efe8d4;
+	box-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
 }
-.rec-console--match[data-terminal] .rec-squad-tick::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	bottom: -4px;
-	transform: translateX(-50%);
-	border-left: 3px solid transparent;
-	border-right: 3px solid transparent;
-	border-bottom: 4px solid var(--g-ink);
-}
-.rec-console--match[data-terminal] .rec-squad-cell--takes .rec-squad-fill { background: var(--g-el); box-shadow: 0 0 6px color-mix(in srgb, var(--g-el) 60%, transparent); }
 .rec-console--match[data-terminal] .rec-squad-cell--costs .rec-squad-num { color: var(--rec-loss); }
-/* round 8: no tint on the pointed world's column; readers asked what it meant, and the world itself is lit on the board */
 .rec-console--match[data-terminal] .rec-squad-cell--none { opacity: 0.2; }
 
-/* the dossier key */
+/* the dossier key, small in the tile's top-right corner */
 .rec-console--match[data-terminal] .rec-squad-read {
 	all: unset;
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	z-index: 1;
 	display: grid;
 	place-items: center;
-	width: var(--sq-info);
-	height: var(--sq-info);
+	width: 16px;
+	height: 16px;
 	color: var(--g-ink-low);
 	cursor: pointer;
 }
 .rec-console--match[data-terminal] .rec-squad-read:hover,
 .rec-console--match[data-terminal] .rec-squad-read:focus-visible { color: var(--g-ink); }
 .rec-console--match[data-terminal] .rec-squad-read svg { width: 100%; height: 100%; }
-
-/* each column's head: the worlds' symbols over their cells, each a key that sorts by that world */
-.rec-console--match[data-terminal] .rec-squad-head {
-	height: calc(20px * var(--rec-scale));
-	border-bottom-color: var(--g-seam);
-}
-.rec-console--match[data-terminal] .rec-squad-head-main { cursor: default; }
-.rec-console--match[data-terminal] .rec-squad-head-tail { width: var(--sq-info); }
-.rec-console--match[data-terminal] .rec-squad-head-world {
-	all: unset;
-	box-sizing: border-box;
-	display: flex;
-	align-items: center;
-	gap: 2px;
-	height: 100%;
-	border-bottom: 2px solid color-mix(in srgb, var(--g-el) 70%, transparent);
-	cursor: pointer;
-	opacity: 0.75;
-}
-.rec-console--match[data-terminal] .rec-squad-head-world:hover,
-.rec-console--match[data-terminal] .rec-squad-head-world:focus-visible,
-.rec-console--match[data-terminal] .rec-squad-head-world--on { opacity: 1; }
-.rec-console--match[data-terminal] .rec-squad-head-world--on { border-bottom-color: var(--g-el); }
-.rec-console--match[data-terminal] .rec-squad-head-symbol { width: calc(14px * var(--rec-scale)) !important; height: calc(14px * var(--rec-scale)) !important; }
-.rec-console--match[data-terminal] .rec-squad-head-margin { font-size: 0.95em; font-weight: 700; line-height: 1; color: var(--g-ink); margin-left: 0.2em; font-variant-numeric: tabular-nums; }
-.rec-console--match[data-terminal] .rec-squad-head-margin--behind { color: var(--rec-loss); }
-.rec-console--match[data-terminal] .rec-squad-head-sorted { flex: 0 0 auto; width: calc(11px * var(--rec-scale)); height: calc(11px * var(--rec-scale)); color: var(--g-ink-mid); }
-.rec-console--match[data-terminal] .rec-squad-head-world:hover .rec-squad-head-sorted { color: var(--g-ink); }
-.rec-console--match[data-terminal] .rec-squad-head-world--on .rec-squad-head-sorted { color: var(--g-ink); }
 
 /* the creatures already used, small in the squad's head: on a world with its color under them, fallen crossed, spent plain */
 .rec-console--match[data-terminal] .rec-squad-gone {
@@ -8456,33 +8426,26 @@
 .rec-console--match[data-terminal] .rec-squad-token-x { position: absolute; inset: 15%; fill: none; stroke: var(--rec-loss); stroke-width: 3; }
 
 @media (max-width: 760px) {
-	.rec-console--match[data-terminal] .rec-squad { gap: 0 6px; padding: 2px 4px 4px; }
-	.rec-console--match[data-terminal] .rec-squad-col { font-size: 10px; --sq-art: 20px; --sq-act: 2.6em; --sq-info: 12px; --sq-gap: 3px; }
-	/* a phone's column is 180 pixels: the silhouette names the creature (its name is on its title and its dossier), and the numbers get the room */
+	.rec-console--match[data-terminal] .rec-squad { gap: 3px; padding: 3px; }
+	.rec-console--match[data-terminal] .rec-squad-top { gap: 3px; padding: 1px 2px 0 2px; }
+	.rec-console--match[data-terminal] .rec-squad-art { width: min(32cqw, 36px); margin-left: 2px; }
+	.rec-console--match[data-terminal] .rec-squad-disc { width: 11px !important; height: 11px !important; left: -3px; bottom: -2px; }
+	/* a phone tile is 119 pixels wide: the silhouette names the creature (its name is on its title and its dossier) */
 	.rec-console--match[data-terminal] .rec-squad-name { display: none; }
-	/* a phone's act column has room for the glyph and its number; the name is on the desktop column */
-	.rec-console--match[data-terminal] .rec-squad-act-word { display: none; }
-	.rec-console--match[data-terminal] .rec-squad .rec-squad-main { grid-template-columns: var(--sq-art) var(--sq-act) repeat(3, minmax(0, 1fr)); }
-	.rec-console--match[data-terminal] .rec-squad .rec-squad-row { --sq-act: 2.8em; }
-	/* the top line has no room for the factor here: the cell reads number, bar, then the factor on a line of its own */
-	.rec-console--match[data-terminal] .rec-squad-cell { grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto auto; column-gap: 1px; }
-	.rec-console--match[data-terminal] .rec-squad-cell-read { display: contents; }
-	.rec-console--match[data-terminal] .rec-squad-num { grid-column: 1; grid-row: 1; }
-	.rec-console--match[data-terminal] .rec-squad-shift { grid-column: 2; grid-row: 1; align-self: baseline; }
-	.rec-console--match[data-terminal] .rec-squad-cell-foot { grid-column: 1 / -1; grid-row: 2; }
-	.rec-console--match[data-terminal] .rec-squad-chartrun { grid-column: 1 / -1; grid-row: 3; margin-left: 0; font-size: max(1.15em, 10px); overflow: hidden; }
-	/* the blow's chip sits right under the bar here, so the mark keeps to the bar and drops its cap */
+	.rec-console--match[data-terminal] .rec-squad-act { gap: 2px; font-size: 8px; }
+	.rec-console--match[data-terminal] .rec-squad-act-word { font-size: 6.5px; }
+	.rec-console--match[data-terminal] .rec-squad-speed { display: none; }
+	.rec-console--match[data-terminal] .rec-squad-blocks { padding: 0 3px 3px; }
+	.rec-console--match[data-terminal] .rec-squad-cell { padding: 0 2px; gap: 2px; }
+	.rec-console--match[data-terminal] .rec-squad-num { font-size: 11.5px; }
+	.rec-console--match[data-terminal] .rec-squad-shift { font-size: 6px; }
+	.rec-console--match[data-terminal] .rec-squad-bar { height: 3.5px; }
 	.rec-console--match[data-terminal] .rec-squad-tick { top: -2px; bottom: -2px; }
-	.rec-console--match[data-terminal] .rec-squad-tick::before { display: none; }
-	/* a phone's chip has room for the act and the number only; the rival it lands on is on the world above */
-	.rec-console--match[data-terminal] .rec-squad-chart-target, .rec-console--match[data-terminal] .rec-squad-chart-onto { display: none !important; }
+	.rec-console--match[data-terminal] .rec-squad-hover { gap: 1px; }
+	/* a thumb can press every key 32 pixels tall: the key is a tall, narrow hit area with its small glyph at the top, over the tile's corner */
+	.rec-console--match[data-terminal] .rec-squad-read { top: 0; right: 0; width: 16px; height: 32px; place-items: start center; padding-top: 2px; box-sizing: border-box; }
+	.rec-console--match[data-terminal] .rec-squad-read svg { width: 12px; height: 12px; }
 	.rec-console--match[data-terminal] .rec-squad-gone { display: none; }
-	/* every key a thumb can press stands 32 pixels: six rows of 32 fill a phone's squad, so the head of
-	   symbols gives way (the cells wear their worlds' colors in the worlds' order) and the dossier key
-	   takes its row's full height */
-	.rec-console--match[data-terminal] .rec-squad-head { display: none; }
-	.rec-console--match[data-terminal] .rec-squad-col { grid-template-rows: repeat(var(--sq-rows, 6), minmax(32px, 1fr)); }
-	.rec-console--match[data-terminal] .rec-squad-read { height: 100%; min-height: 32px; }
 }
 
 /* pass 75: the log's head stuck below the log's top padding, so a long log scrolled its lines into

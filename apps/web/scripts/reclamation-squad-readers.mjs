@@ -111,29 +111,47 @@ for (const run of RUNS) {
 			const clip = { x, y, width: Math.min(width - x, box.width), height: Math.min(height - y, box.height) };
 			await page.screenshot({ path: `${output}/${name}-foot.png`, scale: 'device', clip });
 			const d = await debug();
-			// pass 76: the layout check, at every capture: a chart factor inside its own world's cell, no cell over its neighbor
+			// pass 77: the layout check, at every capture: each tile's blocks and hover blow inside the tile, no block over its neighbor, no tile over another, the squad never taller than its box
 			const bad = await page.evaluate(() => {
 				const out = [];
 				const T = 1;
-				document.querySelectorAll('.rec-squad-row').forEach((row) => {
-					const cells = [...row.querySelectorAll('.rec-squad-cell')];
+				const tiles = [...document.querySelectorAll('.rec-squad-row')];
+				tiles.forEach((tile) => {
+					const t = tile.getBoundingClientRect();
+					const cells = [...tile.querySelectorAll('.rec-squad-cell')];
 					cells.forEach((cell) => {
 						const c = cell.getBoundingClientRect();
-						cell.querySelectorAll('.rec-squad-chartrun, .rec-squad-chart').forEach((f) => {
-							const r = f.getBoundingClientRect();
-							if (r.left < c.left - T || r.right > c.right + T || r.top < c.top - T || r.bottom > c.bottom + T) {
-								out.push(`chart outside its cell (${cell.getAttribute('data-fit-site')}): ${JSON.stringify([r.left, r.right, r.top, r.bottom].map(Math.round))} vs ${JSON.stringify([c.left, c.right, c.top, c.bottom].map(Math.round))}`);
-							}
+						if (c.left < t.left - T || c.right > t.right + T || c.top < t.top - T || c.bottom > t.bottom + T) {
+							out.push(`block outside its tile (${cell.getAttribute('data-fit-site')})`);
+						}
+						[...cell.querySelectorAll('.rec-squad-num')].forEach((n) => {
+							if (n.scrollWidth > cell.clientWidth + T) out.push(`number wider than its block (${cell.getAttribute('data-fit-site')})`);
 						});
 					});
+					tile.querySelectorAll('.rec-squad-act, .rec-squad-hover').forEach((f) => {
+						const r = f.getBoundingClientRect();
+						if (r.right > t.right + T || r.left < t.left - T) out.push(`attack line outside its tile: ${Math.round(r.right)} vs ${Math.round(t.right)}`);
+					});
+					const act = tile.querySelector('.rec-squad-act');
+					const id = tile.querySelector('.rec-squad-id');
+					if (act && id && act.scrollWidth > id.clientWidth + T) out.push(`attack line wider than its column: ${act.scrollWidth} vs ${id.clientWidth}`);
 					for (let i = 0; i + 1 < cells.length; i++) {
 						const a = cells[i].getBoundingClientRect();
 						const b = cells[i + 1].getBoundingClientRect();
 						if (a.right > b.left + T && a.left < b.right - T && a.bottom > b.top + T && a.top < b.bottom - T) {
-							out.push(`cells overlap: ${cells[i].getAttribute('data-fit-site')} and ${cells[i + 1].getAttribute('data-fit-site')}`);
+							out.push(`blocks overlap: ${cells[i].getAttribute('data-fit-site')} and ${cells[i + 1].getAttribute('data-fit-site')}`);
 						}
 					}
 				});
+				for (let i = 0; i < tiles.length; i++) {
+					for (let j = i + 1; j < tiles.length; j++) {
+						const a = tiles[i].getBoundingClientRect();
+						const b = tiles[j].getBoundingClientRect();
+						if (a.right > b.left + 2 && a.left < b.right - 2 && a.bottom > b.top + 6 && a.top < b.bottom - 6) out.push('tiles overlap');
+					}
+				}
+				const root = document.documentElement;
+				if (root.scrollHeight > window.innerHeight + 1 || root.scrollWidth > window.innerWidth + 1) out.push(`page scrolls: ${root.scrollWidth}x${root.scrollHeight} in ${window.innerWidth}x${window.innerHeight}`);
 				return out;
 			});
 			if (bad.length) {
