@@ -29,6 +29,12 @@
       "back": -0.005920847901253568,
       "left": -0.012519104849256307,
       "right": -0.012519102337982507
+    },
+    "centerLinePosed": {
+      "note": "The same centreline for the posed model (hands on hips, rig_fit cameras): world coordinate of the posed figure's ear-fan centre in the rig front, left and back cameras, taken from the assembled-0458 posed masks. The pose moves the head and trunk, so the rest-pose centreline does not apply to it.",
+      "front": 0.028528,
+      "back": 0.032094,
+      "left": -0.026479
     }
   },
   "join": {

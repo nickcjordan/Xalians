@@ -63,9 +63,10 @@ def reference(view):
     return _REF[view]
 
 
-def model_center(view):
-    """Pixel column of the species' fixed centreline in this module's camera, or None (fan centring)."""
-    line = lt.SPECIES['frame'].get('centerLine', {}).get(view)
+def model_center(view, posed=True):
+    """Pixel column of the species' fixed centreline in this module's camera, or None (fan centring). The
+    posed model has its own centreline (the pose moves the head); the arms-down control uses the rest one."""
+    line = lt.SPECIES['frame'].get('centerLinePosed' if posed else 'centerLine', {}).get(view)
     if line is None:
         return None
     right, _ = cam_axes(view)
@@ -73,8 +74,8 @@ def model_center(view):
     return WIDTH/2+(line*right[axis]-CENTER@right)*PER_UNIT
 
 
-def model_canonical(mask, view=None):
-    return lt.canonical(mask, span(), model_center(view) if view else None)
+def model_canonical(mask, view=None, posed=True):
+    return lt.canonical(mask, span(), model_center(view, posed) if view else None)
 
 
 def half_columns(view):
@@ -123,11 +124,11 @@ def overlay_half(model, ref, view, label, half=True):
     return picture
 
 
-def evaluate(points, half=True):
+def evaluate(points, half=True, posed=True):
     """Canonical masks and scores for the three views from one posed point cloud."""
     res = {}
     for view in VIEWS:
-        m = model_canonical(raster(points, view), view)
+        m = model_canonical(raster(points, view), view, posed)
         res[view] = (m, reference(view), scores(m, reference(view), view, half))
     return res
 

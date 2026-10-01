@@ -20,7 +20,6 @@ assemblies and packets already built and only re-measures.
 """
 import argparse
 import json
-import shutil
 import sys
 import time
 from pathlib import Path
@@ -70,6 +69,7 @@ def main():
     parser.add_argument('species')
     parser.add_argument('baseline', help='baseline assembly name, e.g. assembled-0458')
     parser.add_argument('--resume', action='store_true', help='reuse variants already built under the shakedown folder')
+    parser.add_argument('--repacket', action='store_true', help='keep the assemblies, make new packets (after a change to a measuring tool)')
     parser.add_argument('--only', help='comma list of unchanged,head-swap,body-swap,broken')
     parser.add_argument('--head', help='older head for the head swap (default from species.json)')
     parser.add_argument('--body', help='older body for the body swap (default from species.json)')
@@ -99,15 +99,21 @@ def main():
     def build(name, head, body):
         """Assemble and packet one variant, unless an earlier run already did."""
         entry = state.get(name, {})
-        if entry.get('packet') and (Path(entry['packet'])/'measured.json').exists():
+        if entry.get('packet') and (Path(entry['packet'])/'measured.json').exists() and not args.repacket:
             return entry
-        entry = {'head': head, 'body': body}
-        assembly = entry['assembly'] = f'assembled-{lt.reserve_number()}'
-        state[name] = entry
-        save_state()
         t0 = time.time()
-        lt.cmd_assemble(argparse.Namespace(head=head, body=body, out=assembly, join=None, fragment_voxels=None))
-        packet = out/name/'packet'
+        built = entry.get('assembly') and (lt.work(entry['assembly'])/'render/geometry.json').exists()             and entry.get('head') == head and entry.get('body') == body
+        if not built:
+            entry = {'head': head, 'body': body}
+            entry['assembly'] = f'assembled-{lt.reserve_number()}'
+            state[name] = entry
+            save_state()
+            lt.cmd_assemble(argparse.Namespace(head=head, body=body, out=entry['assembly'], join=None, fragment_voxels=None))
+        assembly = entry['assembly']
+        number = 1
+        while (out/name/('packet' if number == 1 else f'packet-{number}')).exists():
+            number += 1
+        packet = out/name/('packet' if number == 1 else f'packet-{number}')
         lt.cmd_packet(argparse.Namespace(name=assembly, packet=str(packet)))
         entry['packet'] = str(packet)
         entry['minutes'] = round((time.time()-t0)/60, 1)
@@ -176,16 +182,12 @@ def main():
     if 'broken' in wanted:
         entry = state.get('broken', {})
         if not entry.get('body'):
-            cache = lt.WORK/'pose-cache'/base_body
+            cache = lt.WORK/'pose-cache'/lt.pose_cache_source(base_body)[0]
             new_body = f'body-{lt.reserve_number()}'
             lt.cmd_retarget(argparse.Namespace(body=base_body, out=new_body, scale=cfg['brokenBody']['scale'],
                                                joints=str(cache/'joints.json')))
-            # The retargeted body reuses the baseline body's pose: a refit would move the pose to fit the
-            # shortened arm and hide the break (the v2 refit drift).
-            new_cache = lt.WORK/'pose-cache'/new_body
-            new_cache.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(cache/'pose.json', new_cache/'pose.json')
-            shutil.copyfile(lt.WORK/new_body/'joints.json', new_cache/'joints.json')
+            # No cache is seeded: the packet inherits the baseline body's pose angles (and poses on the retargeted
+            # body's own joints), the same rule every replayed or rebuilt body follows.
             state['broken'] = {'body': new_body}
             save_state()
         entry = build('broken', base_head, state['broken']['body'])

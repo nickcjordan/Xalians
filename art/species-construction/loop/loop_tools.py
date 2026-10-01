@@ -414,6 +414,129 @@ def body_of(assembly):
     return names[0] if names else assembly
 
 
+def body_parent(name):
+    """The body directory a body was built from: the body component recorded as an input in its stage-start.json (shape.glb, body.blend or fairing.json), or, for a
+    `retarget` output (which records no stage), the body named in its fairing.json. None for a root."""
+    from pathlib import PureWindowsPath
+    stage = work(name)/'stage-start.json'
+    if stage.is_file():
+        for path in json.loads(stage.read_text(encoding='utf-8')).get('inputs', {}):
+            p = PureWindowsPath(path)
+            if p.parent.name.startswith('body-') and p.parent.name != name:
+                return p.parent.name
+    fairing = work(name)/'fairing.json'
+    if fairing.is_file():
+        origin = json.loads(fairing.read_text(encoding='utf-8')).get('retarget', {}).get('from')
+        if origin:
+            return origin
+    return None
+
+
+def body_lineage(name):
+    chain, seen = [name], {name}
+    while True:
+        parent = body_parent(chain[-1])
+        if not parent or parent in seen:
+            return chain
+        chain.append(parent)
+        seen.add(parent)
+
+
+def recipe_body_steps():
+    """(steps, root dir) of the species recipe's body component in order, or ([], None) without a recipe."""
+    path = DOCS/'recipe.json'
+    if not path.is_file():
+        return [], None
+    recipe = json.loads(path.read_text(encoding='utf-8'))
+    steps = [s for s in recipe['steps'] if s['component'] == 'body']
+    return steps, recipe['roots'].get('body-root', {}).get('dir')
+
+
+def has_pose_cache(name):
+    return (WORK/'pose-cache'/name/'pose.json').exists()
+
+
+def pose_cache_source(name):
+    """Which pose cache measures `name`. The posed fit must not depend on how a body came to exist (round 13:
+    a head-only change moved the thigh band when the pose was refitted; a replayed body has no cache of its
+    own and refitted differently from the original). In order:
+      1. the body's own cache;
+      2. the nearest ancestor with a cache (stage-start mesh input, or the body a retarget came from);
+      3. a replayed or rebuilt body is matched to its recipe step (recipe-cache.json, or by its distance from
+         a known recipe dir along its lineage), and the step's existing directory and that directory's
+         ancestors are searched the same way;
+      4. none: the caller refits (and writes the body's own cache).
+    Returns (cache_name or None, note dict)."""
+    note = {'body': name}
+    if has_pose_cache(name):
+        return name, {**note, 'cache': name, 'how': 'own'}
+    lineage = body_lineage(name)
+    for hop, ancestor in enumerate(lineage[1:], 1):
+        if has_pose_cache(ancestor):
+            return ancestor, {**note, 'cache': ancestor, 'how': 'ancestor', 'hops': hop, 'lineage': lineage[:hop+1]}
+    steps, root = recipe_body_steps()
+    if steps:
+        ids = [s['id'] for s in steps]
+        existing = {s['existing']: k for k, s in enumerate(steps) if s.get('existing')}
+        index = None
+        cache_file = WORK/'recipe-cache.json'
+        if cache_file.is_file():
+            for entry in json.loads(cache_file.read_text(encoding='utf-8')).get('steps', {}).values():
+                if entry.get('dir') == name and entry.get('step') in ids:
+                    index = ids.index(entry['step'])
+        if index is None:
+            for depth, d in enumerate(lineage):
+                if d in existing:
+                    index = existing[d]+depth
+                    break
+                if d == root:
+                    index = depth-1
+                    break
+        if index is not None and 0 <= index < len(steps):
+            for k in range(index, -1, -1):
+                original = steps[k].get('existing')
+                if not original:
+                    continue
+                for hop, candidate in enumerate(body_lineage(original)):
+                    if has_pose_cache(candidate):
+                        return candidate, {**note, 'cache': candidate, 'how': 'recipe', 'step': ids[index],
+                                           'stepDir': original, 'stepsBack': index-k, 'hops': hop}
+    return None, {**note, 'cache': None, 'how': 'none'}
+
+
+def posed_by_cache(assembly, out, scratch_pose):
+    """Pose an assembly with the cached pose and joints of its body (see pose_cache_source), and refit only
+    when no cache is reachable. One pose and joint set per body lineage: a pose fitted to one body's arm
+    lengths does not put another body's paws on its hips (round 5), but the greedy refit also moved with
+    the head (round 13: a head-only change moved the posed thigh band .853 to .829) and with how a body
+    was built (a replayed body-0448 refitted differently), so a body reuses its nearest cache."""
+    body = body_of(assembly)
+    cache_name, note = pose_cache_source(body)
+    out = Path(out)
+    if cache_name:
+        cache = WORK/'pose-cache'/cache_name
+        joints = cache/'joints.json'
+        own = work(body)/'joints.json'
+        fairing = work(body)/'fairing.json'
+        if (cache_name != body and own.is_file() and fairing.is_file()
+                and json.loads(fairing.read_text(encoding='utf-8')).get('retarget')):
+            # a retargeted body keeps its ancestor's pose angles but poses on its own joints
+            joints = own
+            note['joints'] = str(own)
+        cmd_posed(argparse.Namespace(assembly=assembly, out=str(out), refit=False, pose=str(cache/'pose.json'),
+                                     joints=str(joints), cache_note=note))
+        return note
+    note['refit'] = True
+    cmd_posed(argparse.Namespace(assembly=assembly, out=str(out), refit=True, pose=str(scratch_pose),
+                                 joints=None, cache_note=note))
+    cache = WORK/'pose-cache'/body
+    cache.mkdir(parents=True, exist_ok=True)
+    used = json.loads((out/'pose.json').read_text())
+    (cache/'pose.json').write_text(json.dumps({'bones': used['pose'], 'rootDepthShift': used['root'][1]}, indent=1)+'\n')
+    (cache/'joints.json').write_text((out/'joints.json').read_text())
+    return note
+
+
 def cmd_packet(args):
     out = work(args.name)
     # Resolved here: the posed step joins paths onto it, and a relative packet path
@@ -462,21 +585,7 @@ def cmd_packet(args):
     # Posed to the sheet (hands on hips): the only view in which arm, thigh, shin and
     # foot proportions can be compared with the sheet. See rig_akinza.py.
     if not (packet/'posed/posed-fit.json').exists():
-        # One pose and joint set per body component. A pose fitted to one body's arm lengths
-        # does not put another body's paws on its hips (round 5), so a new body is refitted;
-        # but the greedy refit also moved with the head (round 13: a head-only change moved
-        # the posed thigh band .853 to .829), so every assembly of the same body reuses it.
-        cache = WORK/'pose-cache'/body_of(args.name)
-        if (cache/'pose.json').exists():
-            cmd_posed(argparse.Namespace(assembly=args.name, out=str(packet/'posed'), refit=False,
-                                         pose=str(cache/'pose.json'), joints=str(cache/'joints.json')))
-        else:
-            cmd_posed(argparse.Namespace(assembly=args.name, out=str(packet/'posed'), refit=True,
-                                         pose=str(packet/'posed-pose.json'), joints=None))
-            cache.mkdir(parents=True, exist_ok=True)
-            used = json.loads((packet/'posed/pose.json').read_text())
-            (cache/'pose.json').write_text(json.dumps({'bones': used['pose'], 'rootDepthShift': used['root'][1]}, indent=1)+'\n')
-            (cache/'joints.json').write_text((packet/'posed/joints.json').read_text())
+        posed_by_cache(args.name, packet/'posed', packet/'posed-pose.json')
     for name, description in [('posed-fit.png', 'Model posed to the sheet (hands on hips): silhouette overlay on the tail-free half of each view; grey both, blue model only, orange sheet only, greyed columns excluded'),
                               ('shaded-all.png', 'Model posed to the sheet, shaded front, left and back')]:
         if (packet/'posed'/name).exists():
@@ -859,7 +968,7 @@ def cmd_posed(args):
                  '--joints', str(out/'joints.json'), '--weights', str(out/'weights.npz'), '--pose', str(out/'pose.json'),
                  '--out', str(out)], WORK/f'posed-{out.name}-rig.log')
     # scores: Blender masks for the posed model; numpy rasters for the arms-down control and as a cross-check
-    result = {'assembly': args.assembly,
+    result = {'assembly': args.assembly, 'poseCache': getattr(args, 'cache_note', None),
               'note': 'Halves exclude the reference tails: front image-left, back image-right, left in front of '
                       'canonical column %d. IoU per band over the kept columns.' % rf.LEFT_CUT,
               'views': {}, 'armsDown': {}, 'posedNumpy': {}}
@@ -872,7 +981,7 @@ def cmd_posed(args):
         pictures.append(rf.overlay_half(m, ref, view, f'{view} (posed)', True))
     for view, (m, ref, sc) in rf.evaluate(posed, True).items():
         result['posedNumpy'][view] = sc
-    for view, (m, ref, sc) in rf.evaluate(skin, True).items():
+    for view, (m, ref, sc) in rf.evaluate(skin, True, posed=False).items():
         result['armsDown'][view] = {'half': sc, 'full': rf.scores(m, ref, view, False)}
     bands = ['all', 'head', 'trunk', 'legs', 'neck', 'arm', 'thigh', 'shin', 'foot']
 
@@ -891,6 +1000,17 @@ def cmd_posed(args):
     (out/'proportions.json').write_text(json.dumps(prop, indent=1)+'\n')
     print(json.dumps({'posedHalf': result['mean']['posedHalf'], 'armsDownHalf': result['mean']['armsDownHalf'],
                       'overlay': str(out/'posed-fit.png')}))
+
+
+def cmd_posed_cli(args):
+    """posed: with --pose, --joints or --refit as before; with none of them, the body's cache (packet behaviour)."""
+    if args.pose or args.joints or args.refit:
+        return cmd_posed(args)
+    out = Path(args.out) if Path(args.out).is_absolute() else WORK/args.out
+    if out.exists():
+        sys.exit(f'{out} exists; use a new name')
+    note = posed_by_cache(args.assembly, out, out.parent/(out.name+'-pose.json'))
+    print(json.dumps({'poseCache': note}))
 
 
 def cmd_retarget(args):
@@ -987,7 +1107,7 @@ def main():
     p.set_defaults(func=cmd_fit)
     p = sub.add_parser('posed'); p.add_argument('assembly'); p.add_argument('--out', required=True)
     p.add_argument('--refit', action='store_true'); p.add_argument('--pose'); p.add_argument('--joints')
-    p.set_defaults(func=cmd_posed)
+    p.set_defaults(func=cmd_posed_cli)
     p = sub.add_parser('retarget'); p.add_argument('body'); p.add_argument('out'); p.add_argument('--scale', action='append')
     p.add_argument('--joints', required=True); p.set_defaults(func=cmd_retarget)
     p = sub.add_parser('diff'); p.add_argument('baseline'); p.add_argument('candidate'); p.set_defaults(func=cmd_diff)
