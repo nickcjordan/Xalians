@@ -38,7 +38,7 @@ Left and right are the figure's own sides. In the front view the figure's left i
 | `ankle_l` | same | left |
 | `heel_l`, `heel_r` | the rearmost point of the foot at the floor | left (heel_l), back where visible |
 | `toe_tip_l`, `toe_tip_r` | the front end of the foot's toes (claw tips excluded) at the floor | front, left (toe_tip_l) |
-| `tail_root_*` | where each of the five tails leaves the body or the neighbouring tail, named by tail from top to bottom as the sheet shows them: `tail_root_1` (uppermost) to `tail_root_5` (lowest); the centre of the join, on the visible tail surface | left, back |
+| `tail_root_*` | where each of the three tails leaves the body or the neighbouring tail, named by tail from top to bottom as the sheet shows them: `tail_root_1` (uppermost) to `tail_root_3` (lowest); the centre of the join, on the visible tail surface | left, back |
 
 If a tail's root cannot be told apart from the next, mark the point where its fur clearly becomes a separate mass and say so in `notes`.
 
@@ -62,7 +62,7 @@ If a tail's root cannot be told apart from the next, mark the point where its fu
     "left":  {"...": [x, y]},
     "back":  {"...": [x, y]}
   },
-  "uncertainty": {"front.nose_tip": 3, "back.tail_root_4": 12},
+  "uncertainty": {"front.nose_tip": 3, "back.tail_root_3": 12},
   "notes": "free text: moved after overlay, hidden, ambiguous"
 }
 ```
