@@ -27,11 +27,11 @@
  },
  "baseline": {
   "head": "head-0415",
-  "body": "body-0400",
-  "assembly": "assembled-0419",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-0419"
+  "body": "body-0426",
+  "assembly": "assembled-0428",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-0428"
  },
- "round": 13,
+ "round": 14,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -45,7 +45,8 @@
   "R02+R06",
   "R04+R07",
   "R03+R09",
-  "R03+R05"
+  "R03+R05",
+  "R08"
  ],
  "specs": {
   "R10": {
@@ -953,9 +954,9 @@
   "R08": {
    "name": "Legs",
    "weight": 2.5,
-   "score": 7.3,
+   "score": 6.8,
    "results": {
-    "R08.1": "partial",
+    "R08.1": "pass",
     "R08.2": "partial",
     "R08.3": "pass",
     "R08.4": "partial",
@@ -964,33 +965,33 @@
     "R08.7": "pass",
     "R08.8": "pass",
     "R08.9": "partial",
-    "R08.10": "pass",
+    "R08.10": "fail",
     "R08.11": "fail"
    },
    "issues": [
     {
      "region": "R08",
-     "summary": "In profile the calf is an angular corner over a straight vertical Achilles line ending in a square heel wall, and faint horizontal ripple bands cross the mid shin (R08.1, R08.4, R12.3).",
-     "evidence": "m08 shin-profile and hindleg-profile (3x, contrast-stretched); m09 hindpaw-profile against the r02 hind side view.",
-     "fix": "Round the calf back into a smooth belly peaking at about .80 of figure height, spreading the depth station over .77 to .84 and adding about .004 at the peak. Lean the back line forward by about .006 to .008 between .84 and .90 so the Achilles curves into a rounded heel. Raise scaleSmoothing from .03 to about .06 to clear the ripple bands.",
-     "fixability": 0.7
-    },
-    {
-     "region": "R08",
-     "summary": "The knee reads as a small knob with a shadow groove under it, and the inner outline steps in at the knee so the leg looks knock-kneed (R08.2, R08.9).",
-     "evidence": "m08 hindleg-front (3x knee crop) and m02 front.",
-     "fix": "Lower the kneePlane amplitude from .0035 to about .002 and broaden it vertically. Fill the groove under the kneecap by about .002, and fill the inner notch under the knee by about .004 to .006 so the inner outline runs in one smooth line from the thigh into the calf.",
-     "fixability": 0.7
-    },
-    {
-     "region": "R08",
-     "summary": "Posed thigh (.828 after the per-model refit, needs .85) and shin (.669, needs .72) still fail; thresholds were lowered to what the sheet's inconsistent leg placement allows.",
-     "evidence": "packet posed/posed-fit.json (refit).",
-     "fix": "Fill the outer thigh toward the sheet outline in the posed front half while keeping the slim lower leg; an outward shin rotation of about 2 degrees about the knee plus an outer calf about .004 fuller may help.",
+     "summary": "Posed shin band IoU .6301 (needs .72) and thigh band .8293 (needs .85): in the front half the lower leg sits medial of the sheet and the outer thigh inside it, in the back half the reverse; the side shin lost area to the slimmer calf",
+     "evidence": "measured.json R08.10, R08.11; posed/posed-fit.json halves: front thigh .655 (missing .321), front shin .558 (missing .325), back shin .483 (missing .391), left shin .850 (missing .105, was .077); posed/posed-fit.png legs at 2x: orange along the front outer thigh and knee and on the front inner thigh under the crotch, blue on the inner front shin; orange on the inner back shin, blue on its outer side",
+     "fix": "Restore side calf depth on the back line between about .80 and .85 of figure height by .003 to .005 while keeping the rounder corner (recovers the left shin half toward .877). Widen the front outer thigh outline by about .008 to .010 from .56 to .72 and fill the inner thigh just under the crotch by about .005. Then test a posed-only leg refit (hip abduction and knee angle) before more shape work, since the front and back figures misplace the shin in opposite directions by about .01 to .015 and no single shape fixes both.",
      "fixability": 0.4
+    },
+    {
+     "region": "R08",
+     "summary": "New faint horizontal crease with a small inward step in the back outline at each ankle top, and the heel is still a square near-vertical wall rather than a taper",
+     "evidence": "m08 shin-profile at 3x contrast stretched (line across the ankle just above the paw top, step on the back line at the same height); m09 hindpaw-profile; m02 left",
+     "fix": "Extend the bottom of the zBlur fade from about z -.86 to -.92 with a smooth falloff, or blend the band over .02, so the crease and the back-outline step disappear; then lean the heel back line forward by about .004 at the top of the heel (about .93 of figure height) and round the heel corner over about .015 so ankle and heel taper, keeping full sole contact.",
+     "fixability": 0.7
+    },
+    {
+     "region": "R08",
+     "summary": "The knee is a lit knob over a dark groove in the front view and a kneecap bump with a dip under it in profile, not a soft kneecap plane; the medial front outline dips just under it",
+     "evidence": "m08 hindleg-front and hindleg-profile at 3x contrast stretched; m02 front 4x crop of one leg",
+     "fix": "Lower the kneecap protrusion by about .002 to .003 and fill the infrapatellar groove and the medial dip under it by about .002 over about .02 of height, so the front plane runs flat from the lower thigh through the knee into the shin; keep the knee hollow at the back.",
+     "fixability": 0.6
     }
    ],
-   "attempts": 1,
+   "attempts": 2,
    "anchorScore": 6.4,
    "parked": false,
    "parkReason": null,
@@ -1030,9 +1031,29 @@
        "what": "Run loop_tools.py posed with --pose and --joints taken from the baseline packet (from the akinza folder). This avoids the heuristic joint and pose refit variance. The ear-fan framing jump (widest-row centring in loop_tools.canonical) can still shift the front view by about 2.5 px, so check the framing before reading posed IoU deltas."
       }
      ]
+    },
+    {
+     "round": 14,
+     "kept": true,
+     "approach": "Re-ran the round 8 leg reshape (smooth calf, soft kneecap plane, z-only ripple blur sigma .024) on body-0400 with the y pass masked behind the leg and the thigh x-warp fade moved below the thigh, so the tail dent and thigh band do not return.",
+     "reason": "kept after re-reading the baseline measurements from its own packet (R08.10 had been frozen as a pass)",
+     "reusable": [
+      {
+       "option": "reshape_legs_field.py spec key yMask {margin, fade}",
+       "what": "The y (depth) pass fades to the identity beyond the leg's measured back edge plus margin. Without it the y pass moves everything behind the leg by up to .012 and dents a tail tip that passes the leg's x range."
+      },
+      {
+       "option": "art/species-construction/specs/leg-reshape-r08-v11.json",
+       "what": "Leg spec that produced body-0426: v7 plus yMask, xTop [-.40,-.46], calf back line leaning forward, zBlur sigma .024."
+      },
+      {
+       "option": "art/species-construction/loop/r08_try.sh <spec> <number>",
+       "what": "Builds a leg reshape on body-0400, renders shaded closeups, dumps vertices and prints a mesh_delta neighbour check plus side-by-side comparison images."
+      }
+     ]
     }
    ],
-   "lastWorked": 8
+   "lastWorked": 14
   },
   "R09": {
    "name": "Hind paws",
@@ -1188,7 +1209,8 @@
   "2026-10-01: rounds 6 to 9 finished (27 agents, 5.3M subagent tokens, 6.3 hours). Kept: R04 fan rear and R09 hind paws (round 6), R03 fan front and R05 shoulders (round 7). Rounds 8 and 9 kept nothing: each candidate improved its own region but broke a neighbour (tail dent, crown dome lost, side waist thinned). Weighted 4.695 to 5.095. Builders now must check neighbouring regions before handing over.",
   "2026-10-01: R09.6 dropped and R09.7 replaced by back paw width at .96 (the side rows read the sheet's two staggered paws as one).",
   "2026-10-01: workflow stopped after round 11 to change the keep rule: a candidate the critic judges better, with no region losing credit, no invariant newly broken and no fall in the weighted mean, is kept even when none of its own criteria move. Round 11 R04 (assembled-0396) adopted under that rule; R07 stays reverted. Status rebuilt from the journal by replay_r10_r11.py.",
-  "2026-10-01: workflow stopped at the start of round 14. Round 13 R03 (assembled-0419) was reverted only because the per-model pose refit moved a posed leg band on an identical body (R08 7.3 to 6.4); the judge now freezes the results of the component an order did not touch, and R03 is adopted. Note for later: the stalk neck lives at the head-body join, but R05 orders go to the body builder only, so it cannot be fixed as the loop is set up."
+  "2026-10-01: workflow stopped at the start of round 14. Round 13 R03 (assembled-0419) was reverted only because the per-model pose refit moved a posed leg band on an identical body (R08 7.3 to 6.4); the judge now freezes the results of the component an order did not touch, and R03 is adopted. Note for later: the stalk neck lives at the head-body join, but R05 orders go to the body builder only, so it cannot be fixed as the loop is set up.",
+  "2026-10-01: stopped at the start of round 15. Round 14 R08 (assembled-0428) was reverted against a stale frozen R08.10; measured results are now re-read from the adopted packet, the posed pose and joints are cached per body component (pose-cache/<body>), and R08 is adopted."
  ],
  "decisionsForNick": [
   {

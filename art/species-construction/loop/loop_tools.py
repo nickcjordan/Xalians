@@ -325,6 +325,13 @@ def cmd_measure(args):
     print(json.dumps({v: result[v]['ratio'] for v in REFERENCE_PANELS}, indent=1))
 
 
+def body_of(assembly):
+    """The body component an assembly was built from, read from its assembly record."""
+    record = json.loads((work(assembly)/'assembly.json').read_text(encoding='utf-8'))
+    names = [Path(p).parent.name for p in record.get('inputs', {}) if Path(p).parent.name.startswith('body-')]
+    return names[0] if names else assembly
+
+
 def cmd_packet(args):
     out = work(args.name)
     # Resolved here: the posed step joins paths onto it, and a relative packet path
@@ -376,9 +383,21 @@ def cmd_packet(args):
     # Posed to the sheet (hands on hips): the only view in which arm, thigh, shin and
     # foot proportions can be compared with the sheet. See rig_akinza.py.
     if not (packet/'posed/posed-fit.json').exists():
-        # Refit the angles for each model: a pose fitted to one body's arm lengths does not put
-        # another body's paws on its hips (round 5: posed arm IoU fell .83 to .79 on shorter arms).
-        cmd_posed(argparse.Namespace(assembly=args.name, out=str(packet/'posed'), refit=True, pose=str(packet/'posed-pose.json'), joints=None))
+        # One pose and joint set per body component. A pose fitted to one body's arm lengths
+        # does not put another body's paws on its hips (round 5), so a new body is refitted;
+        # but the greedy refit also moved with the head (round 13: a head-only change moved
+        # the posed thigh band .853 to .829), so every assembly of the same body reuses it.
+        cache = WORK/'pose-cache'/body_of(args.name)
+        if (cache/'pose.json').exists():
+            cmd_posed(argparse.Namespace(assembly=args.name, out=str(packet/'posed'), refit=False,
+                                         pose=str(cache/'pose.json'), joints=str(cache/'joints.json')))
+        else:
+            cmd_posed(argparse.Namespace(assembly=args.name, out=str(packet/'posed'), refit=True,
+                                         pose=str(packet/'posed-pose.json'), joints=None))
+            cache.mkdir(parents=True, exist_ok=True)
+            used = json.loads((packet/'posed/pose.json').read_text())
+            (cache/'pose.json').write_text(json.dumps({'bones': used['pose'], 'rootDepthShift': used['root'][1]}, indent=1)+'\n')
+            (cache/'joints.json').write_text((packet/'posed/joints.json').read_text())
     for name, description in [('posed-fit.png', 'Model posed to the sheet (hands on hips): silhouette overlay on the tail-free half of each view; grey both, blue model only, orange sheet only, greyed columns excluded'),
                               ('shaded-all.png', 'Model posed to the sheet, shaded front, left and back')]:
         if (packet/'posed'/name).exists():
