@@ -121,12 +121,15 @@ if (framesSpec) {
 		await make().ready?.();
 		for (const item of framesSpec.split(';').filter(Boolean)) {
 			const compact = item.startsWith('c');
-			const legs = (compact ? item.slice(1) : item).split('>').map((leg) => leg.split('@').map(Number) as [number, number]);
+			// a trailing "!0.12" pulls the figure back for that many seconds after the legs (it fades out), to check a fade-back
+			const [body, leave] = (compact ? item.slice(1) : item).split('!');
+			const legs = body.split('>').map((leg) => leg.split('@').map(Number) as [number, number]);
 			const fig = make();
 			await fig.ready?.();
 			fig.reset(legs[0][0]);
 			let sec = 0;
 			for (const [stage, secs] of legs) for (let t = 0; t < secs - 1e-6; t += dt, sec += dt) fig.step(dt, stage, true);
+			if (leave) for (let t = 0; t < Number(leave) - 1e-6; t += dt, sec += dt) fig.step(dt, legs[legs.length - 1][0], false);
 			const c = el('canvas');
 			c.width = compact ? Math.round(px * 0.36) : px;
 			c.height = Math.round((c.width * H) / W);

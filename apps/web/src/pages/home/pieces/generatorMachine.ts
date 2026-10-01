@@ -677,7 +677,18 @@ export type MachineLook = {
 	foot?: boolean;
 	/** A cool rim along the housing's upper left edge, from the sky (default none). */
 	rim2?: RGB;
+	/** Paint over the small crescent dent in the plating right of the vat (06 only; default false: it stays in 02 and 03). */
+	patchDent?: boolean;
+	/** 0 to 1: indicator lights on the two cabinets, coming on one after another as it grows (06 only; default none). */
+	lamps?: number;
+	/** 0 to 1: a bright bead circling the sensor ring, and the ring's light pulsing (06 only; default none). */
+	ringSpin?: number;
+	/** A card slot low on the housing's front (the outbreak's 06 only; default none): `w` the mouth's width in machine units, `glow` 0 to 1 how lit its mouth is, `col` the light's color. */
+	slot?: { w: number; glow: number; col: RGB };
 };
+
+/** Where the card slot's lip lies, in machine units: the card is clipped above this line while it goes in. */
+export const SLOT_LIP = 443;
 
 export const MEMBRANE_N = 48;
 
@@ -1047,8 +1058,16 @@ function foundationFor(wi: number) {
 	// past the buttresses into the ground outside the slab
 	for (const sg of [-1, 1]) {
 		const x0 = MX + sg * 116;
-		const xe = MX + sg * 250;
+		const xe = wi === 4 ? MX + sg * 168 : MX + sg * 250;
 		const path = () => {
+			if (wi === 4) {
+				// down the face, a deep sag, and into the rubble in front of it: it never runs out onto the ground
+				g.beginPath();
+				g.moveTo(x0, GROUND - 4);
+				g.lineTo(x0, SLAB_F);
+				g.quadraticCurveTo(x0 + sg * 8, GFOOT + 6, xe, GFOOT - 8);
+				return;
+			}
 			g.beginPath();
 			g.moveTo(x0, GROUND - 4);
 			g.lineTo(x0, SLAB_F);
@@ -1058,14 +1077,14 @@ function foundationFor(wi: number) {
 		g.lineCap = 'round';
 		g.lineJoin = 'round';
 		path();
-		g.strokeStyle = css([20, 20, 22]);
-		g.lineWidth = 4.6;
+		g.strokeStyle = wi === 4 ? css([36, 22, 22]) : css([20, 20, 22]);
+		g.lineWidth = wi === 4 ? 3 : 4.6;
 		g.stroke();
 		g.save();
-		g.translate(-1, -1);
+		g.translate(wi === 4 ? 0 : -1, wi === 4 ? -1.1 : -1);
 		path();
-		g.strokeStyle = css([220, 226, 232], 0.2);
-		g.lineWidth = 1;
+		g.strokeStyle = wi === 4 ? css([150, 112, 92], 0.3) : css([220, 226, 232], 0.2);
+		g.lineWidth = wi === 4 ? 0.7 : 1;
 		g.stroke();
 		g.restore();
 	}
@@ -1178,6 +1197,58 @@ function foundationFor(wi: number) {
 			g.ellipse(MX + sg * 204, GROUND + 3, 20, 3, 0, 0, TAU);
 			g.fill();
 		}
+	} else if (wi === 4) {
+		// 06's ground: stones as irregular polygons with soft contact shadows on the unlit side (away from the middle), and
+		// soft heaps of dust, never flat ellipses or pasted shards
+		for (let k = 0; k < 60; k++) {
+			const x = MX - 232 + r() * 464;
+			if (Math.sin(x * 0.07 + 1) > 0.5) continue;
+			const rr = 5 + r() * 14;
+			const yy = GFOOT - 2 + r() * 12;
+			const dg = g.createRadialGradient(x, yy, 0, x, yy, rr);
+			dg.addColorStop(0, css([66, 40, 38], 0.34 * (0.5 + r() * 0.5)));
+			dg.addColorStop(1, css([66, 40, 38], 0));
+			g.fillStyle = dg;
+			g.beginPath();
+			g.ellipse(x, yy, rr, rr * 0.4, 0, 0, TAU);
+			g.fill();
+		}
+		const rock = (x: number, y: number, s2: number, tone: number) => {
+			const side = x > MX ? 1 : -1;
+			const sx0 = x + side * s2 * 0.8;
+			const sy0 = y + s2 * 0.3;
+			g.save();
+			g.translate(sx0, sy0);
+			g.scale(1, 0.34);
+			const sg = g.createRadialGradient(0, 0, 0, 0, 0, s2 * 1.9);
+			sg.addColorStop(0, css([4, 2, 5], 0.55));
+			sg.addColorStop(1, css([4, 2, 5], 0));
+			g.fillStyle = sg;
+			g.fillRect(-s2 * 2, -s2 * 2, s2 * 4, s2 * 4);
+			g.restore();
+			const n = 7;
+			const pts: [number, number][] = [];
+			for (let i = 0; i < n; i++) {
+				const an = (i / n) * TAU + (r() - 0.5) * 0.5;
+				const rd = s2 * (0.7 + r() * 0.5);
+				pts.push([x + Math.cos(an) * rd, y + Math.sin(an) * rd * 0.62]);
+			}
+			const gr = g.createLinearGradient(x, y - s2 * 0.7, x, y + s2 * 0.5);
+			gr.addColorStop(0, css(scale3([96, 58, 50], tone), 1));
+			gr.addColorStop(1, css(scale3([46, 28, 28], tone), 1));
+			g.fillStyle = gr;
+			g.beginPath();
+			g.moveTo(pts[0][0], pts[0][1]);
+			for (let i = 1; i < n; i++) g.lineTo(pts[i][0], pts[i][1]);
+			g.closePath();
+			g.fill();
+		};
+		for (let k = 0; k < 26; k++) {
+			const x = MX - 236 + r() * 472;
+			if (Math.sin(x * 0.05 + 2) > 0.45) continue;
+			rock(x, GFOOT + 4 + r() * 12, 1.6 + 5 * Math.pow(r(), 2), 0.7 + r() * 0.6);
+		}
+		for (let k = 0; k < 3; k++) rock(MX - 170 + k * 120 + r() * 60, GFOOT + 16 + r() * 6, 7 + r() * 4, 0.6 + r() * 0.3);
 	} else {
 		// soil, rubble and crust heaped over the foot, so it reads as sunk in: clumps with gaps, stones of very different sizes
 		for (let k = 0; k < 90; k++) {
@@ -1366,6 +1437,10 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.drawImage(mc2, MC.x, MC.y, MC.w, MC.h);
 			ctx.globalAlpha = a;
 		}
+		if (S.patchDent) {
+			// a clean piece of the same plate, copied over the dent
+			ctx.drawImage(mc, (MX + 88 - MC.x) * MQ, (344 - MC.y) * MQ, 16 * MQ, 28 * MQ, MX + 66, 344, 16, 28);
+		}
 		const fw = S.wk > 0.5 && S.world2 >= 0 ? S.world2 : S.world;
 		const fs2 = fw >= 0 && S.foot === true ? footStrip(fw) : null;
 		if (fs2) ctx.drawImage(fs2, FOOT.x, FOOT.y, FOOT.w, FOOT.h);
@@ -1528,6 +1603,46 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		if ((S.ringFlash ?? 0) > 0.01) glow(ctx, DISH.x, DISH.y, 30, mixRGB(gel, WHITE, 0.5), 0.9 * S.ringFlash! * a);
 	});
 	if (S.ringHalo) lighter(ctx, () => glow(ctx, DISH.x, DISH.y, 62, dishCol, (0.25 + 0.05 * Math.sin(sec * 1.1)) * a * (1 - dorm)));
+	if ((S.ringSpin ?? 0) > 0.01) {
+		const rs = S.ringSpin!;
+		const an = sec * 1.7;
+		lighter(ctx, () => {
+			// a bead and its short tail going round the ring, and the whole ring breathing
+			for (let k = 0; k < 6; k++) {
+				const aa = an - k * 0.2;
+				glow(ctx, DISH.x + Math.cos(aa) * 25, DISH.y + Math.sin(aa) * 10, 11 - k * 1.4, mixRGB(dishCol, WHITE, 0.55), (1 - k * 0.14) * rs * a);
+			}
+			glow(ctx, DISH.x, DISH.y, 44, dishCol, (0.2 + 0.1 * Math.sin(sec * 2.4)) * rs * a);
+			// the ring itself lit green: a lit tube round the whole ellipse
+			ctx.strokeStyle = css(dishCol, (0.7 + 0.15 * Math.sin(sec * 2.4)) * rs * a);
+			ctx.lineWidth = 3.6;
+			ctx.beginPath();
+			ctx.ellipse(DISH.x, DISH.y, 25, 10, 0, 0, TAU);
+			ctx.stroke();
+			ctx.strokeStyle = css(mixRGB(dishCol, WHITE, 0.5), 0.5 * rs * a);
+			ctx.lineWidth = 1.2;
+			ctx.stroke();
+		});
+	}
+	if ((S.lamps ?? 0) > 0.001) {
+		// small indicator lights on the cabinets, coming on one after another and then holding with a faint flicker
+		const LAMPS: [number, number, boolean][] = [[MX - 141, 311, false], [MX - 132, 311, true], [MX - 123, 311, false], [MX - 114, 311, true], [MX + 120, 257, false], [MX + 129, 257, true], [MX + 138, 257, false], [MX + 128, 307, true]];
+		LAMPS.forEach(([lx, ly, amber], k) => {
+			const on = smooth(k / LAMPS.length * 0.8, k / LAMPS.length * 0.8 + 0.2, S.lamps!);
+			if (on < 0.01) return;
+			const col: RGB = amber ? [255, 190, 100] : dishCol;
+			const fl = 0.85 + 0.15 * Math.sin(sec * (3 + k * 0.7) + k * 2);
+			ctx.fillStyle = css([8, 10, 10], 0.9 * a);
+			ctx.beginPath();
+			ctx.arc(lx, ly, 4.6, 0, TAU);
+			ctx.fill();
+			ctx.fillStyle = css(mixRGB(col, WHITE, 0.3), on * fl * a);
+			ctx.beginPath();
+			ctx.arc(lx, ly, 3.4, 0, TAU);
+			ctx.fill();
+			lighter(ctx, () => glow(ctx, lx, ly, 16, col, 0.7 * on * fl * a));
+		});
+	}
 	if (reading > 0.02 && !S.ringHalo) {
 		ctx.lineWidth = 1.4;
 		for (let k = 0; k < 3; k++) {
@@ -1775,6 +1890,7 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		}
 	}
 	}
+	if (S.slot) drawSlot(ctx, S.slot, a);
 	// the making: a pulse of light down the mast, through the roof and into the gel, landing where the new seed starts
 	if (S.pulse !== undefined && S.pulse > 0.001 && S.pulse < 1) {
 		const tgt = SEEDS[0];
@@ -1806,5 +1922,67 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 		ctx.stroke();
 		ctx.restore();
 	}
+	ctx.restore();
+}
+
+/** The card slot: a low intake block on the housing's front with a dark mouth, a thin lip and a lit seam (06 only). */
+function drawSlot(ctx: Ctx, sl: { w: number; glow: number; col: RGB }, a: number) {
+	const x0 = MX - sl.w / 2 - 7;
+	const x1 = MX + sl.w / 2 + 7;
+	const yT = 436; // the top face's back edge
+	const yL = 443.5; // its front edge (the lip) and the front face's top
+	const yB = 454;
+	ctx.save();
+	ctx.globalAlpha = a;
+	// the front face
+	const ff = ctx.createLinearGradient(0, yL, 0, yB);
+	ff.addColorStop(0, css([58, 64, 64]));
+	ff.addColorStop(1, css([20, 24, 25]));
+	ctx.fillStyle = ff;
+	ctx.fillRect(x0, yL, x1 - x0, yB - yL);
+	// the top face, a little narrower at the back
+	const tf = ctx.createLinearGradient(0, yT, 0, yL);
+	tf.addColorStop(0, css([34, 39, 40]));
+	tf.addColorStop(1, css([62, 69, 68]));
+	ctx.fillStyle = tf;
+	ctx.beginPath();
+	ctx.moveTo(x0 + 4, yT);
+	ctx.lineTo(x1 - 4, yT);
+	ctx.lineTo(x1, yL);
+	ctx.lineTo(x0, yL);
+	ctx.closePath();
+	ctx.fill();
+	// the mouth: a dark recess cut into the top face
+	const mx0 = MX - sl.w / 2;
+	const mx1 = MX + sl.w / 2;
+	ctx.fillStyle = css([2, 2, 4]);
+	ctx.beginPath();
+	ctx.moveTo(mx0 + 1.5, yT + 3);
+	ctx.lineTo(mx1 - 1.5, yT + 3);
+	ctx.lineTo(mx1, yL - 0.5);
+	ctx.lineTo(mx0, yL - 0.5);
+	ctx.closePath();
+	ctx.fill();
+	// the lit mouth: a thin line of light along the recess's back wall, and a glow spilling on the lip
+	const g = clamp(sl.glow);
+	ctx.globalCompositeOperation = 'lighter';
+	ctx.fillStyle = css(sl.col, 0.28 + 0.6 * g);
+	ctx.fillRect(mx0 + 2, yT + 3, sl.w - 4, 1.1);
+	ctx.fillStyle = css(sl.col, 0.1 + 0.3 * g);
+	ctx.fillRect(mx0 + 1, yL - 1.6, sl.w - 2, 1);
+	glow(ctx, MX, yT + 3.5, sl.w * 0.7, sl.col, (0.08 + 0.34 * g) * a);
+	ctx.globalCompositeOperation = 'source-over';
+	// the lip and its bevel, a light nick or two
+	ctx.fillStyle = css([210, 214, 204], 0.3);
+	ctx.fillRect(x0, yL, x1 - x0, 1);
+	ctx.fillStyle = css([0, 0, 0], 0.5);
+	ctx.fillRect(x0, yL + 1, x1 - x0, 1.6);
+	ctx.fillStyle = css([6, 7, 8]);
+	ctx.fillRect(x0, yB - 0.5, x1 - x0, 2);
+	rivetAt(ctx, x0 + 4, yL + 5, false);
+	rivetAt(ctx, x1 - 4, yL + 5, true);
+	ctx.strokeStyle = css([2, 3, 3], 0.8);
+	ctx.lineWidth = 1;
+	ctx.strokeRect(x0 + 0.5, yT + 0.5, x1 - x0 - 1, yB - yT - 1);
 	ctx.restore();
 }
