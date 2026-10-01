@@ -19,6 +19,8 @@ Edge measurement and smoothing parameters are in the spec too. Akinza-specific; 
 behavior of earlier runs. Opt-in spec keys added in round 2 attempt B: axisShift (lateral leg translation rows y, dx),
 depthAnchorFrac (depth scaled about front+frac*depth), scaleSmoothing (sigma in z for the depth ratio and anchor),
 kneePlane (x, z, halfX, halfZ, amplitude, yReach: a convex plane on the front of the knee).
+Opt-in in round 8: zBlur (sigma, top, bottom, xMin, xFade, yMax, yFade: a z-only field blur over each leg that removes the faint
+horizontal ripple bands the slice-wise warps leave; spec art/species-construction/specs/leg-reshape-r08-v7.json).
 """
 import argparse
 import copy
@@ -247,6 +249,32 @@ for side in (1, -1):
     final = (np.take_along_axis(warped, j0, axis=1)*(1-fy)+np.take_along_axis(warped, j0+1, axis=1)*fy).astype(np.float32)
     field[x0:x1, :, z0:z1] = final
     report[f'side{side:+d}']['minimumDsrcDy'] = float(dy.min())
+
+zb = spec.get('zBlur')
+if zb:
+    # opt-in (round 8): blur the field along z only, over each leg, to remove faint horizontal ripple bands left by the
+    # slice-wise warps. Keys: sigma (world), top/bottom (fade pairs in z like xTop), xMin (leg side |x| above which it
+    # applies) and xFade, yMax (+yFade) so the tails and the other leg are not touched. A z-only blur leaves a silhouette
+    # that varies slowly in z unchanged (shrinks it by about sigma^2/2R).
+    radius = int(math.ceil(3*zb['sigma']/VS))
+    kernel = np.exp(-.5*(np.arange(-radius, radius+1)*VS/zb['sigma'])**2)
+    kernel /= kernel.sum()
+    for side in (1, -1):
+        zi = np.where((zs <= zb['top'][0]) & (zs >= zb['bottom'][1]))[0]
+        z0, z1 = max(zi[0]-radius, 0), min(zi[-1]+1+radius, len(zs))
+        xi = np.where(side*xs > zb['xMin']-zb['xFade'])[0]
+        x0, x1 = xi[0], xi[-1]+1
+        block = field[x0:x1, :, z0:z1]
+        pad = np.pad(block, ((0, 0), (0, 0), (radius, radius)), mode='edge')
+        blurred = np.zeros_like(block)
+        for t, kv in enumerate(kernel):
+            blurred += kv*pad[:, :, t:t+block.shape[2]]
+        zz2 = zs[z0:z1]
+        wz = fade_z(zz2, zb['top'], zb['bottom'])
+        wx = smooth((side*xs[x0:x1]-(zb['xMin']-zb['xFade']))/zb['xFade'])
+        wy2 = 1-smooth((ys-zb['yMax'])/zb['yFade'])
+        weight = wx[:, None, None]*wy2[None, :, None]*wz[None, None, :]
+        field[x0:x1, :, z0:z1] = (block+weight*(blurred-block)).astype(np.float32)
 
 kp = spec.get('kneePlane')
 if kp:
