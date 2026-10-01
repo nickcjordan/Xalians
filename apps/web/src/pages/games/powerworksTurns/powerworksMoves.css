@@ -45,7 +45,6 @@
   background: var(--color-s1);
 }
 .pwt-moves-row > button.pwt-key.selected .pwt-key-foot-words { color: var(--color-viable); }
-.pwt-moves-row > button.pwt-key.noted { border-color: var(--color-ink-2); }
 .pwt-moves-row > button.pwt-key .pwt-key-head { margin-bottom: 2px; align-items: flex-start; }
 .pwt-moves-row > button.pwt-key .pwt-key-name {
   font-size: 12px;

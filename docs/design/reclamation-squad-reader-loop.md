@@ -257,3 +257,27 @@ The orchestrator scores each factual answer right or wrong against that JSON. It
   - The blow chip already shows its size; showing it against the target's hold would say "this one falls", which pass 72 removed on purpose.
 
 - **Harness note: the fixed policy loses quickly.** Seeds 41, 43, 53, 61 and 67 ended at 1 to 5 worlds in round 2, before the round 3 capture, so the round 2 seed was 71.
+
+## Pass 77: the tiles (`reclamation-squad-tiles.md`)
+
+Nick rejected the roster rows on 2026-09-30 and approved mockup F2, health-first tiles. The same bar and protocol apply. The question set was rewritten for tiles: twelve factual questions over the four states and the phone, and sixteen marks (M1 to M16) to explain with no help.
+
+| Round | Seed | Finding | Answers right | Marks | Top finding | Fix |
+|---|---|---|---|---|---|---|
+| 11 | 233 | 7, 8, 7; own Intuitive 6, 7, 6 | 36 of 36 (100%) | all 16 right by all three; the natural-health tick right but unsure (3 of 3) | with a creature lifted, all three worlds wore near-equal frames, so which world the tiles' "→ N" was for had to be worked out from the board (2 of 3) | the pointed world takes a heavy ink frame; the other lifted targets dim to a faint one; with nothing lifted the pointed world is framed too |
+| 12 | 233 | 7, 7, 8; own Intuitive 6, 6, 6 | 36 of 36 (100%) | all 16 right by all three; the tick again right but unsure | how the hit and the "+N" combine to decide the fight (2 of 3, and the third called them unrelated): pass 72's withheld outcome, ruled by Nick on 2026-09-30; the colors that tie numbers to worlds change every round (1 of 3, repeated from round 11) | none: both are repeats, so they go to Nick, and the tiles ship for his live read |
+
+### Round 11 notes (seed 233)
+
+- **Every answer and every mark read right** at the first sight of the tiles, including "→ N" as the hit at the pointed world and the tick as the creature's usual health.
+- **What slows finding:**
+  - which world is pointed at (2 of 3), fixed above;
+  - the three numbers tie to their worlds by color alone, and the colors change every round (2 of 3). Left for now: the order also matches the worlds, and a world label on every block is the clutter Nick has asked to avoid. If it repeats after the frame fix, it goes to Nick.
+- **Not the tiles:** "7 sends but 8 tiles" (one creature always stays back), STAKE ×2, the flags in Frackworm's chip.
+
+### Round 12 notes (seed 233, after the frame fix)
+
+- **The frame fix worked:** all three readers named the pointed world from its outline.
+- **Finding holds at 7 with one 8,** for the same reason as the roster's rounds 9 and 10: readers want to know whether a hit decides the fight, which Nick ruled stays hidden while sends are made ("things will change").
+- **The world colors** that tie each block to its world are the remaining finding the tiles own. A label on every block would add the words Nick asked to keep off the table, so it goes to him as a question.
+

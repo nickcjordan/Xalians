@@ -6,17 +6,16 @@ import { createMatch, send, pass, getPublicState, DEFAULT_RULES } from '@xalians
 import { chooseSend } from '@xalians/rules/expedition/expeditionBot';
 import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
-import { fitTable, fitScale } from '../reclamationFit';
+import { fitTable } from '../reclamationFit';
 import { blowsAt } from '../reclamationPreview';
 import { formatBlow } from '../reclamationNarration';
-import ReclamationSquad, { SquadGone, squadOrder, cellFacts, blowAt, blowTargetAt, columnsFor, readOf, slotStateOf } from '../reclamationSquad';
+import ReclamationSquad, { SquadGone, squadOrder, cellFacts, blowAt, blowTargetAt, tilesFor, squadScale, readOf, slotStateOf } from '../reclamationSquad';
 
 /*
-	PASS 75, THE SQUAD AS A ROSTER (docs/design/reclamation-squad-roster.md). The squad lists only
-	the creatures you can still send, a row each with a cell per world under that world's symbol;
-	it is ordered by act and attack, or by a world when its symbol is pressed; a cell carries what
-	the creature would add, one arrow for what the world did to it and one factor for the chart;
-	the used creatures sit small in the head.
+	PASS 77: THE SQUAD AS HEALTH-FIRST TILES. The squad lists only the creatures you can still send,
+	a tile each with a block per world (the "+N" it would add, its bar and its natural-health tick on
+	one scale for the squad); it is ordered by act and attack; pointing at a world adds the creature's
+	blow there to its attack line; the used creatures sit small in the head.
 */
 
 function matchFor(seed) {
@@ -45,11 +44,7 @@ describe('squadOrder', () => {
 	];
 	const reads = { a: { role: 'bolster', power: 5 }, b: { role: 'strike', power: 9 }, c: { role: 'strike', power: 14 }, d: { role: 'sweep', power: 6 } };
 	it('lists strikers first, strongest first, then sweepers, shields and bolsters', () => {
-		expect(squadOrder(recs, reads, null, null).map((r) => r.id)).toEqual(['c', 'b', 'd', 'a']);
-	});
-	it('orders by what each would add at a world once that world is chosen', () => {
-		const fits = { fits: { a: { w: { gain: 20 } }, b: { w: { gain: 3 } }, c: { w: { gain: 8 } }, d: { w: { gain: 8 } } } };
-		expect(squadOrder(recs, reads, fits, 'w').map((r) => r.id)).toEqual(['a', 'c', 'd', 'b']);
+		expect(squadOrder(recs, reads).map((r) => r.id)).toEqual(['c', 'b', 'd', 'a']);
 	});
 });
 
@@ -64,28 +59,28 @@ describe('cellFacts', () => {
 		expect(cellFacts({ gain: 11, own: 11, body: 10 }, [], 'strike').shift).toBe('up');
 		expect(cellFacts({ gain: 10.7, own: 10.7, body: 12 }, [], 'strike').shift).toBe('down');
 	});
-	it('tones the blow against the act column number', () => {
-		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike', 28, 14).blowTone).toBe('above');
-		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike', 7, 14).blowTone).toBe('below');
-		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike', 14.3, 14).blowTone).toBe('even');
-		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike', null, 14).blow).toBe(null);
-	});
-	it('carries the chart\'s best factor for a creature that strikes, and none for one that never does', () => {
-		const matchups = [{ dealt: 0.5 }, { dealt: 2 }, { dealt: null, taken: 2 }];
-		expect(cellFacts({ gain: 9, own: 9, body: 9 }, matchups, 'strike').chart).toBe(2);
-		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [{ dealt: 0.5 }], 'sweep').chart).toBe(0.5);
-		expect(cellFacts({ gain: 9, own: 9, body: 9 }, matchups, 'bolster').chart).toBe(null);
-		expect(cellFacts({ gain: 9, own: 9, body: 9 }, [], 'strike').chart).toBe(null);
+});
+
+describe('tilesFor', () => {
+	it('takes the fewest rows that leave every tile about 200 by 70, three columns on a phone', () => {
+		expect(tilesFor(1394, 247, 12)).toEqual({ cols: 6, rows: 2 });
+		expect(tilesFor(1320, 181, 8)).toEqual({ cols: 4, rows: 2 });
+		expect(tilesFor(1394, 100, 4)).toEqual({ cols: 4, rows: 1 });
+		expect(tilesFor(370, 246, 12)).toEqual({ cols: 3, rows: 4 });
+		expect(tilesFor(0, 0, 12)).toEqual({ cols: 3, rows: 4 });
+		// never more than three rows, even when nothing is tall enough
+		expect(tilesFor(1394, 120, 12).rows).toBeLessThanOrEqual(3);
 	});
 });
 
-describe('columnsFor', () => {
-	it('takes the fewest columns that keep every row readable, two on a phone', () => {
-		expect(columnsFor(1044, 248, 12)).toBe(2);
-		expect(columnsFor(970, 128, 12)).toBe(3);
-		expect(columnsFor(372, 201, 12)).toBe(2);
-		expect(columnsFor(970, 128, 4)).toBe(2);
-		expect(columnsFor(0, 0, 12)).toBe(2);
+describe('squadScale', () => {
+	it('is the largest gain or natural health across every listed creature and world', () => {
+		const recs = [{ id: 'a' }, { id: 'b' }];
+		const fits = { fits: { a: { w: { gain: 14, body: 12 }, x: { gain: 9, body: 25 } }, b: { w: { gain: 18, body: 7 } } } };
+		expect(squadScale(fits, recs)).toBe(25);
+		expect(squadScale(fits, [recs[1]])).toBe(18);
+		expect(squadScale({ fits: {} }, recs)).toBe(24);
+		expect(squadScale({ fits: fits.fits, forecast: { b: { hold: 30 } } }, recs)).toBe(30);
 	});
 });
 
@@ -105,7 +100,7 @@ describe('the roster on a real game', () => {
 		// the whole squad seat A drafted, as the table keeps it
 		const all = buildDraftPools(7, draftOptionsFromRules(DEFAULT_RULES)).poolA.slice(0, ROSTER_SIZE);
 		const fits = fitTable(match, 'A', match.players.A.roster);
-		const { container } = render(<ReclamationSquad view={view} you="A" squad={all} fits={fits} scale={fitScale(fits)} onArm={() => {}} onHover={() => {}} />);
+		const { container } = render(<ReclamationSquad view={view} you="A" squad={all} fits={fits} onArm={() => {}} onHover={() => {}} />);
 		const rows = [...container.querySelectorAll('[data-slot]')];
 		const states = all.map((r) => slotStateOf(r, view, 'A').state);
 		// in hand, and sent this round, whose rows stay until the round is ruled
@@ -118,13 +113,6 @@ describe('the roster on a real game', () => {
 			expect(nums.length).toBe(state === 'sent' ? 1 : 3);
 			nums.forEach((n) => expect(n).toMatch(/^[+−]?\d+$/));
 		});
-		// round 10: each column's head says how your side stands there as the sends stand, signed
-		container.querySelectorAll('[data-squad-margin]').forEach((m) => {
-			const siteId = m.closest('[data-squad-sort]').getAttribute('data-squad-sort');
-			const t = fits.base[siteId];
-			expect(Number(m.getAttribute('data-squad-margin'))).toBeCloseTo(t.mine - t.theirs, 1);
-		});
-		expect(container.querySelectorAll('[data-squad-margin]').length).toBeGreaterThan(0);
 		const gone = render(<SquadGone view={view} you="A" squad={all} />).container;
 		expect(gone.querySelectorAll('[data-gone]').length).toBe(states.filter((st) => st !== 'hand' && st !== 'sent').length);
 		// a round has been ruled and this one is under way: every kind of row is here
@@ -132,33 +120,27 @@ describe('the roster on a real game', () => {
 		expect(states.filter((st) => st !== 'hand' && st !== 'sent').length).toBeGreaterThan(0);
 	});
 
-	it("puts a chart factor in its cell's top line, behind the creature's act glyph", () => {
-		let found = null;
-		for (const seed of [7, 13, 29, 41, 5, 3]) {
-			// a few bot sends first, so there are rivals on the worlds for the chart to read against
-			let match = matchFor(seed);
-			for (let i = 0; i < 4 && match.phase === 'deploy'; i += 1) {
-				const action = chooseSend(getPublicState(match, match.turn), match.players[match.turn].roster, match.turn, { float: () => 0.5 }, null);
-				match = (action.type === 'send' ? send(match, match.turn, action.recordId, action.siteId) : null) || match;
-			}
-			const seat = match.turn;
-			const view = getPublicState(match, seat);
-			const fits = fitTable(match, seat, match.players[seat].roster);
-			const { container } = render(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={fitScale(fits)} onArm={() => {}} onHover={() => {}} />);
-			found = container.querySelector('[data-chart]');
-			if (found) break;
-		}
-		expect(found).not.toBeNull();
-		const read = found.closest('.rec-squad-cell-read');
-		expect(read).not.toBeNull();
-		expect(read.querySelector('.rec-squad-num')).not.toBeNull();
-		const role = found.closest('.rec-squad-row').querySelector('.rec-squad-act').getAttribute('data-role');
-		expect(found.parentElement.querySelector(`.rec-glyph--role-${role}`)).not.toBeNull();
-		// the bar stands alone in the foot
-		expect(found.closest('.rec-squad-cell').querySelector('.rec-squad-cell-foot [data-chart]')).toBeNull();
+	it('draws a bar and a natural-health tick in every block, on the squad scale', () => {
+		const match = matchFor(13);
+		const seat = match.turn;
+		const view = getPublicState(match, seat);
+		const roster = match.players[seat].roster;
+		const fits = fitTable(match, seat, roster);
+		const scale = squadScale(fits, roster);
+		const { container } = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} onArm={() => {}} onHover={() => {}} />);
+		const blocks = [...container.querySelectorAll('[data-slot-state="hand"] [data-fit-gain]')];
+		expect(blocks.length).toBe(roster.length * 3);
+		blocks.forEach((block) => {
+			const id = block.closest('[data-slot]').getAttribute('data-slot');
+			const cell = fits.fits[id][block.getAttribute('data-fit-site')];
+			expect(Number(block.style.getPropertyValue('--sq-fill'))).toBeCloseTo(Math.min(1, Math.max(0, cell.gain) / scale), 3);
+			expect(Number(block.style.getPropertyValue('--sq-tick'))).toBeCloseTo(Math.min(1, cell.body / scale), 3);
+			expect(Number(block.style.getPropertyValue('--sq-fill'))).toBeLessThanOrEqual(1);
+			expect(block.querySelector('.rec-squad-tick')).not.toBeNull();
+		});
 	});
 
-	it('shows the blow at worlds with a rival, matching the engine, and none for bolsters or empty worlds', () => {
+	it('adds the blow to the attack line only for the pointed world, and not for a mender or an empty world', () => {
 		let withBlow = 0;
 		let without = 0;
 		for (const seed of [7, 13, 29, 41, 5, 3]) {
@@ -171,36 +153,57 @@ describe('the roster on a real game', () => {
 			const view = getPublicState(match, seat);
 			const roster = match.players[seat].roster;
 			const fits = fitTable(match, seat, roster);
-			const { container } = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} scale={fitScale(fits)} onArm={() => {}} onHover={() => {}} />);
-			container.querySelectorAll('[data-slot-state="hand"]').forEach((row) => {
-				const record = roster.find((r) => r.id === row.getAttribute('data-slot'));
-				const role = row.querySelector('.rec-squad-act').getAttribute('data-role');
-				row.querySelectorAll('[data-fit-site]').forEach((cell) => {
-					const site = view.frame.sites.find((s) => s.id === cell.getAttribute('data-fit-site'));
-					const node = cell.querySelector('[data-blow]');
+			// nothing pointed at: no blow anywhere
+			const rest = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} onArm={() => {}} onHover={() => {}} />);
+			expect(rest.container.querySelector('[data-hover-blow]')).toBeNull();
+			rest.unmount();
+			view.frame.sites.forEach((site) => {
+				const { container, unmount } = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} focusSiteId={site.id} onArm={() => {}} onHover={() => {}} />);
+				container.querySelectorAll('[data-slot-state="hand"]').forEach((tile) => {
+					const record = roster.find((r) => r.id === tile.getAttribute('data-slot'));
+					const role = tile.querySelector('.rec-squad-act').getAttribute('data-role');
+					const node = tile.querySelector('[data-hover-blow]');
 					const { lands } = blowsAt(view, record, site, seat, view.players[seat].sentCount);
 					const theirs = Object.values(lands).filter((l) => !l.mine).map((l) => l.power);
 					if ((role === 'strike' || role === 'sweep') && theirs.length) {
 						expect(node).not.toBeNull();
-						expect(node.getAttribute('data-blow')).toBe(formatBlow(Math.max(...theirs)));
+						expect(node.getAttribute('data-hover-blow')).toBe(formatBlow(Math.max(...theirs)));
 						expect(blowAt(view, record, site, seat, role)).toBe(Math.max(...theirs));
-						// round 4: the chip carries the act glyph and the number it lands
-						const chip = node.parentElement;
-						const target = blowTargetAt(view, record, site, seat, role);
-						expect(chip.querySelector(`.rec-glyph--role-${role}`)).not.toBeNull();
-						expect(chip.getAttribute('data-blow-on')).toBe(target.recordId);
-						// round 9: the badge names the target only where two or more rivals could take the blow
-						if (target.element) expect(!!chip.querySelector('.rec-squad-chart-target')).toBe(target.among > 1);
+						// it rides on the attack line, in the pointed world's color
+						expect(tile.querySelector('.rec-squad-act').contains(node)).toBe(true);
+						expect(node.closest('.rec-squad-hover').className).toContain(`g-el-${site.world.element}`);
 						withBlow += 1;
 					} else {
 						expect(node).toBeNull();
 						without += 1;
 					}
 				});
+				unmount();
 			});
 		}
 		expect(withBlow).toBeGreaterThan(0);
 		expect(without).toBeGreaterThan(0);
+	});
+
+	it('shows a sent tile only at the world it went to, and keeps it in place', () => {
+		let match = playTo(7, 'A', 1);
+		const rec = match.players.A.roster[0];
+		const site = match.frames[match.frameIndex].sites[1];
+		match = send(match, 'A', rec.id, site.id) || match;
+		const view = getPublicState(match, 'A');
+		const all = buildDraftPools(7, draftOptionsFromRules(DEFAULT_RULES)).poolA.slice(0, ROSTER_SIZE);
+		const fits = fitTable(match, 'A', match.players.A.roster);
+		const { container } = render(<ReclamationSquad view={view} you="A" squad={all} fits={fits} onArm={() => {}} onHover={() => {}} />);
+		const tile = container.querySelector(`[data-slot="${rec.id}"]`);
+		expect(tile.getAttribute('data-slot-state')).toBe('sent');
+		const shown = [...tile.querySelectorAll('[data-fit-site] .rec-squad-num')];
+		expect(shown.length).toBe(1);
+		expect(shown[0].closest('[data-fit-site]').getAttribute('data-fit-site')).toBe(site.id);
+		expect(tile.querySelector('[data-fit-sent]')).not.toBeNull();
+		expect(tile.querySelector('[data-arm]')).toBeNull();
+		// pointing at a world adds no blow to a tile that has been sent
+		const pointed = render(<ReclamationSquad view={view} you="A" squad={all} fits={fits} focusSiteId={site.id} onArm={() => {}} onHover={() => {}} />).container;
+		expect(pointed.querySelector(`[data-slot="${rec.id}"] [data-hover-blow]`)).toBeNull();
 	});
 
 	it("gives a used creature its badge, and one holding a world its flag in that world's color", () => {
@@ -222,37 +225,6 @@ describe('the roster on a real game', () => {
 		expect(plain.querySelector('[data-gone="downed"] .rec-squad-token-disc')).not.toBeNull();
 	});
 
-	it('sorts by a world when its symbol is pressed, and back again', () => {
-		const match = matchFor(13);
-		const view = getPublicState(match, match.turn);
-		const seat = match.turn;
-		const fits = fitTable(match, seat, match.players[seat].roster);
-		const { container } = render(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={fitScale(fits)} onArm={() => {}} onHover={() => {}} />);
-		const order = () => [...container.querySelectorAll('[data-slot]')].map((row) => row.getAttribute('data-slot'));
-		const before = order();
-		const site = view.frame.sites[1].id;
-		fireEvent.click(container.querySelector(`[data-squad-sort="${site}"]`));
-		const gains = order().map((id) => fits.fits[id][site].gain);
-		// the columns read top to bottom, left to right
-		expect(gains).toEqual([...gains].sort((a, b) => b - a));
-		fireEvent.click(container.querySelector(`[data-squad-sort="${site}"]`));
-		expect(order()).toEqual(before);
-		const reads = Object.fromEntries(match.players[seat].roster.map((r) => [r.id, readOf(r, view)]));
-		expect(before).toEqual(squadOrder(match.players[seat].roster, reads, fits, null).map((r) => r.id));
-	});
-
-	it('draws a sort icon on each column head, and no cell greys while a world is pointed at', () => {
-		const match = matchFor(13);
-		const view = getPublicState(match, match.turn);
-		const seat = match.turn;
-		const fits = fitTable(match, seat, match.players[seat].roster);
-		const site = view.frame.sites[1].id;
-		const { container } = render(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={fitScale(fits)} focusSiteId={site} onArm={() => {}} onHover={() => {}} />);
-		expect(container.querySelectorAll('[data-squad-sort] .rec-glyph--sort').length).toBe(container.querySelectorAll('[data-squad-sort]').length);
-		expect(container.querySelector('.rec-squad-cell--dim')).toBeNull();
-		expect(container.querySelector('.rec-squad-cell--focus')).not.toBeNull();
-	});
-
 	it('lifts a row on a press and keeps a reserve row from being lifted', () => {
 		const match = matchFor(7);
 		const seat = match.turn;
@@ -260,12 +232,12 @@ describe('the roster on a real game', () => {
 		const fits = fitTable(match, seat, match.players[seat].roster);
 		const lifted = [];
 		const first = match.players[seat].roster[0].id;
-		const { container, rerender } = render(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={24} onArm={(id) => lifted.push(id)} onHover={() => {}} />);
+		const { container, rerender } = render(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} onArm={(id) => lifted.push(id)} onHover={() => {}} />);
 		fireEvent.click(container.querySelector(`[data-slot="${first}"] [data-arm]`));
 		expect(lifted).toEqual([first]);
-		rerender(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={24} armedRecordId={first} onArm={() => {}} onHover={() => {}} />);
+		rerender(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} armedRecordId={first} onArm={() => {}} onHover={() => {}} />);
 		expect(container.querySelector(`[data-slot="${first}"]`).className).toContain('rec-squad-row--armed');
-		rerender(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} scale={24} reserve onArm={(id) => lifted.push(id)} onHover={() => {}} />);
+		rerender(<ReclamationSquad view={view} you={seat} squad={match.players[seat].roster} fits={fits} reserve onArm={(id) => lifted.push(id)} onHover={() => {}} />);
 		expect(container.querySelectorAll('[data-arm]').length).toBe(0);
 		expect(container.querySelector('[data-slot-state="reserve"]')).not.toBeNull();
 	});

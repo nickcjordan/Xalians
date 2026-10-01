@@ -92,17 +92,29 @@ describe("Powerworks turn by turn", () => {
     expect(attack.getAttribute("data-power")).toMatch(/^\d+$/);
   });
 
-  it("each standing enemy shows its intent: the companion it will hit and the number, hidden only while enemies act", () => {
+  it("an enemy's committed hit is a tag on the companion it will land on, never a chip on the enemy", () => {
     const { container } = mount();
-    const enemies = container.querySelectorAll(".pwt-row.enemies .pwt-plate");
-    const chips = container.querySelectorAll(".pwt-row.enemies .pwt-intent");
-    expect(chips.length).toBe(enemies.length);
-    chips.forEach((chip) => {
-      expect(chip.getAttribute("aria-label")).toMatch(/^Next: /);
-      expect(chip.classList.contains("off")).toBe(false);
+    const c = container as HTMLElement;
+    const enemies = c.querySelectorAll(".pwt-row.enemies .pwt-plate");
+    // The old chip and the "can fall" mark are gone.
+    expect(c.querySelector(".pwt-intent")).toBeNull();
+    expect(c.querySelector(".pwt-ko")).toBeNull();
+    // Each standing enemy has a tag on a companion's plate; its words name the enemy's letter, the companion and the number.
+    const tags = Array.from(c.querySelectorAll<HTMLElement>(".pwt-row.squad .pwt-threat.attack"));
+    expect(tags.length).toBeGreaterThanOrEqual(enemies.length);
+    tags.forEach((tag) => {
+      expect(tag.getAttribute("aria-label")).toMatch(/^[A-F]'s next hit on .+: (\d+|no effect)/);
+      expect(tag.getAttribute("title")).toBe(tag.getAttribute("aria-label"));
+      // no visible words: a letter box, the impact glyph, the number
+      expect(tag.querySelector(".pwt-threat-letter")!.textContent).toMatch(/^[A-F]$/);
+      expect(tag.querySelector(".pwt-impact")).toBeTruthy();
     });
+    // An enemy's own plate names no companion.
+    const squadNames = Array.from(c.querySelectorAll(".pwt-row.squad .pwt-name")).map((n) => n.textContent!.trim());
+    c.querySelectorAll(".pwt-row.enemies .pwt-plaque").forEach((p) => squadNames.forEach((n) => expect(p.textContent).not.toContain(n)));
+    expect(c.querySelectorAll(".pwt-row.enemies .pwt-threat.attack").length).toBe(0);
     // The matchup is said once per enemy, against the acting companion.
-    expect(container.querySelectorAll(".pwt-row.enemies .pwt-match").length).toBeGreaterThan(0);
+    expect(c.querySelectorAll(".pwt-row.enemies .pwt-match").length).toBeGreaterThan(0);
   });
 
   it("acting is a key, then an enemy: it plays a turn and advances the round strip", async () => {
@@ -385,7 +397,7 @@ describe("Powerworks turn by turn", () => {
       // The lesson row shows a key's one power number and what it lands on an enemy once chosen.
       expect(document.querySelector("[data-lesson] button.pwt-key .pwt-key-power")).toBeTruthy();
       expect(document.querySelector("[data-lesson] [data-preview]")).toBeTruthy();
-      expect(document.querySelector("[data-lesson]")!.textContent).toMatch(/whom it will hit next/);
+      expect(document.querySelector("[data-lesson]")!.textContent).toMatch(/tags show its next hit/);
       // A run is not saved until it has begun.
       expect(localStorage.getItem(SAVE_KEY)).toBeNull();
       fireEvent.click(screen.getByRole("button", { name: /begin/i }));
@@ -462,7 +474,8 @@ describe("Powerworks turn by turn", () => {
       expect(guide.querySelector("button.pwt-key .pwt-key-power")).toBeTruthy();
       expect(guide.querySelector(".pwt-shape-all")).toBeTruthy();
       expect(guide.querySelector(".pwt-preview.finish")).toBeTruthy();
-      expect(guide.querySelector(".pwt-intent")).toBeTruthy();
+      expect(guide.querySelector(".pwt-threat")).toBeTruthy();
+      expect(guide.querySelector(".pwt-intent")).toBeNull();
       expect(guide.querySelector(".pwt-match")).toBeTruthy();
       expect(guide.querySelector("[data-rail]")).toBeTruthy();
       expect(guide.textContent).toMatch(/along the top/);
@@ -750,26 +763,238 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(hasTools(c)).toBe(false);
   });
 
-  it("item 2: intent chips stay while enemies act (the acting enemy's lit, the rest stepped back) and come back live at the settled hand-off", async () => {
+  it("item 2: threat tags stay while enemies act (the acting enemy's lit, the rest stepped back, its own gone once it has hit) and come back live at the settled hand-off", async () => {
     const { container } = mount();
     const c = container as HTMLElement;
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /begin/i }));
     });
-    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent").length).toBeGreaterThan(0);
-    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.dim, .pwt-row.enemies .pwt-intent.lit").length).toBe(0);
+    const live = c.querySelectorAll(".pwt-threat").length;
+    expect(live).toBeGreaterThan(0);
+    expect(c.querySelectorAll(".pwt-threat.dim, .pwt-threat.lit").length).toBe(0);
     await useKey(c);
-    // While beats play every chip stays (no plate looks empty); at most the acting enemy's is lit and the others are dim.
+    // While beats play every tag is lit (the acting enemy's) or stepped back (the rest).
     await tick(200);
-    const chips = c.querySelectorAll(".pwt-row.enemies .pwt-intent");
+    const chips = c.querySelectorAll(".pwt-threat");
     expect(chips.length).toBeGreaterThan(0);
     chips.forEach((chip) => expect(chip.classList.contains("dim") || chip.classList.contains("lit")).toBe(true));
-    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.lit").length).toBeLessThanOrEqual(1);
+    const litFrom = new Set(Array.from(c.querySelectorAll(".pwt-threat.lit")).map((x) => x.getAttribute("data-from-id")));
+    expect(litFrom.size).toBeLessThanOrEqual(1);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /skip to your next turn/i }));
     });
-    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent").length).toBeGreaterThan(0);
-    expect(c.querySelectorAll(".pwt-row.enemies .pwt-intent.dim, .pwt-row.enemies .pwt-intent.lit").length).toBe(0);
+    expect(c.querySelectorAll(".pwt-threat").length).toBeGreaterThan(0);
+    expect(c.querySelectorAll(".pwt-threat.dim, .pwt-threat.lit").length).toBe(0);
+  });
+
+  it("an enemy's tag goes once its hit has landed, while the rest stay", async () => {
+    const { container } = mount();
+    const c = container as HTMLElement;
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    });
+    const fromAtRest = new Set(Array.from(c.querySelectorAll(".pwt-threat")).map((x) => x.getAttribute("data-from-id")));
+    await useKey(c);
+    // Step the beats until a tag has gone (an enemy has hit) while another enemy's tag is still there.
+    let sawGone = false;
+    for (let i = 0; i < 40 && !sawGone; i++) {
+      await tick(150);
+      const now = new Set(Array.from(c.querySelectorAll(".pwt-threat")).map((x) => x.getAttribute("data-from-id")));
+      if (now.size > 0 && now.size < fromAtRest.size) sawGone = true;
+      if (c.querySelector("[data-busy]")!.getAttribute("data-busy") !== "true") break;
+    }
+    expect(sawGone).toBe(true);
+  });
+
+  it("when an enemy's target has fallen, its tag moves to the companion it turns to when its beat starts, and goes once its hit has landed", async () => {
+    saveRun((s) => {
+      const victim = s.team.find((u) => u.id !== s.active)!;
+      return {
+        ...s,
+        intents: Object.fromEntries(s.enemies.map((e) => [e.id, { move: Math.max(0, e.moves.findIndex((m) => m.power > 0)), target: victim.id }])),
+        team: s.team.map((u) => (u.id === victim.id ? { ...u, hp: 1, shields: [] } : u)),
+        enemies: s.enemies.map((e) => ({
+          ...e,
+          boost: 0,
+          hinder: 0,
+          cooldowns: e.moves.map(() => 0),
+          moves: e.moves.map((m) => (m.power > 0 ? { ...m, power: 5, rests: 0, parts: [], area: false } : m)),
+        })),
+      };
+    });
+    const { container } = mount();
+    const c = container as HTMLElement;
+    const victimId = JSON.parse(localStorage.getItem(SAVE_KEY)!).state.team.find((u: { id: string }) => u.id !== JSON.parse(localStorage.getItem(SAVE_KEY)!).state.active).id;
+    const plateOf = (tag: Element) => tag.closest("[data-unit]")!.getAttribute("data-unit");
+    // At rest every enemy's tag is on the victim's plate.
+    const rest = Array.from(c.querySelectorAll(".pwt-threat.attack"));
+    expect(rest.length).toBeGreaterThan(1);
+    rest.forEach((tag) => expect(plateOf(tag)).toBe(victimId));
+    await useKey(c);
+    let moved = false;
+    for (let i = 0; i < 80 && !moved; i++) {
+      await tick(150);
+      if (/turned from/.test(bannerLine(c))) {
+        const tags = Array.from(c.querySelectorAll(".pwt-threat.attack.lit"));
+        if (tags.length) {
+          moved = true;
+          // the tag of the enemy that turned is now on another companion's plate
+          tags.forEach((tag) => expect(plateOf(tag)).not.toBe(victimId));
+        }
+      }
+      if (c.querySelector("[data-busy]")!.getAttribute("data-busy") !== "true") break;
+    }
+    expect(moved).toBe(true);
+  });
+
+  it("during playback the tags follow the beat: a landed hinder lowers the enemy's tag to what will land now, so the later hit matches", async () => {
+    saveRun((s) => {
+      const victim = s.team.find((u) => u.id !== s.active)!;
+      return {
+        ...s,
+        intents: Object.fromEntries(s.enemies.map((e) => [e.id, { move: Math.max(0, e.moves.findIndex((m) => m.power > 0)), target: victim.id }])),
+        team: s.team.map((u) =>
+          u.id === s.active
+            ? { ...u, cooldowns: u.moves.map(() => 0), moves: u.moves.map((m, i) => (i === 0 ? { ...m, power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "hinder", n: 50, aim: "enemy", all: false }] } : m)) }
+            : u.id === victim.id
+              ? { ...u, hp: u.max, shields: [] }
+              : u
+        ),
+        enemies: s.enemies.map((e) => ({
+          ...e,
+          boost: 0,
+          hinder: 0,
+          cooldowns: e.moves.map(() => 0),
+          moves: e.moves.map((m) => (m.power > 0 ? { ...m, power: 9, element: null, rests: 0, parts: [], area: false } : m)),
+        })),
+      };
+    });
+    const { container } = mount();
+    const c = container as HTMLElement;
+    const keyOne = keys(c)[0];
+    const firstFoe = JSON.parse(localStorage.getItem(SAVE_KEY)!).state.enemies[0].id as string;
+    const nOf = (c2: HTMLElement) => {
+      const tag = c2.querySelector(`.pwt-threat.attack[data-from-id="${firstFoe}"]`);
+      return tag ? tag.querySelector(".pwt-threat-n")?.textContent ?? "0" : null;
+    };
+    expect(nOf(c)).toBe("9");
+    await act(async () => {
+      fireEvent.click(keyOne);
+    });
+    await act(async () => {
+      fireEvent.click(targets(c)[0]);
+    });
+    let afterHinder: string | null | undefined;
+    for (let i = 0; i < 80; i++) {
+      await tick(100);
+      if (/weakened/.test(bannerLine(c)) && afterHinder === undefined && c.querySelector(".pwt-float")) afterHinder = nOf(c);
+      if (c.querySelector("[data-busy]")!.getAttribute("data-busy") !== "true") break;
+    }
+    // the hinder of 50 takes the 9 to nothing before the enemy acts
+    expect(afterHinder).toBe("0");
+  });
+
+  it("hovering a tag draws one line from its enemy to the plate it lands on and rings both; a lethal tag rings in the danger tone", async () => {
+    saveRun((s) => ({
+      ...s,
+      team: s.team.map((u, i) => (i === 0 ? { ...u, hp: 3, shields: [] } : u)),
+      intents: Object.fromEntries(s.enemies.map((e) => [e.id, { move: Math.max(0, e.moves.findIndex((m) => m.power > 0)), target: s.team[0].id }])),
+    }));
+    const { container } = mount();
+    const c = container as HTMLElement;
+    expect(c.querySelector(".pwt-threat-line")).toBeNull();
+    const tag = c.querySelector<HTMLElement>(".pwt-row.squad .pwt-threat.attack")!;
+    await act(async () => {
+      fireEvent.mouseEnter(tag);
+    });
+    expect(c.querySelectorAll(".pwt-threat-line").length).toBeGreaterThan(0);
+    expect(c.querySelectorAll(".pwt-plate.ring-threat, .pwt-plate.ring-danger").length).toBe(2);
+    if (tag.classList.contains("lethal")) expect(c.querySelectorAll(".pwt-plate.ring-danger").length).toBe(2);
+    await act(async () => {
+      fireEvent.mouseLeave(tag);
+    });
+    expect(c.querySelector(".pwt-threat-line")).toBeNull();
+    expect(c.querySelectorAll(".pwt-plate.ring-threat, .pwt-plate.ring-danger").length).toBe(0);
+  });
+
+  it("a chosen single-target hinder leaves every tag plain until an enemy is hovered; then only that enemy's tags read old then new", async () => {
+    const { container } = mount();
+    const c = container as HTMLElement;
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /begin/i }));
+    });
+    expect(c.querySelectorAll(".pwt-threat-before").length).toBe(0);
+    let saw = false;
+    for (const key of keys(c)) {
+      await act(async () => {
+        fireEvent.click(key);
+      });
+      const tags = (id?: string) => Array.from(c.querySelectorAll(`.pwt-row.squad .pwt-threat s.pwt-threat-before`)).filter((x) => !id || x.closest(".pwt-threat")!.getAttribute("data-from-id") === id);
+      // chosen, nothing hovered: plain numbers
+      expect(tags().length).toBe(0);
+      const plate = targets(c)[0];
+      if (plate) {
+        await act(async () => {
+          fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
+        });
+        await act(async () => {
+          fireEvent.mouseMove(plate);
+        });
+        const hovered = plate.getAttribute("data-unit")!;
+        const struck = tags();
+        if (struck.length) {
+          saw = true;
+          // only the hovered enemy's tags are struck
+          struck.forEach((s) => expect(s.closest(".pwt-threat")!.getAttribute("data-from-id")).toBe(hovered));
+          // the changed tag is joined to the cursor's enemy by the link line, and the struck number carries the preview's arrow
+          expect(c.querySelectorAll(".pwt-threat-line").length).toBeGreaterThan(0);
+          expect(c.querySelector(".pwt-threat s.pwt-threat-before + .pwt-threat-arrow")).toBeTruthy();
+        }
+        await act(async () => {
+          fireEvent.mouseLeave(plate);
+        });
+        expect(tags().length).toBe(0);
+        expect(c.querySelector(".pwt-threat-line")).toBeNull();
+      }
+      if (key.getAttribute("aria-pressed") === "true")
+        await act(async () => {
+          fireEvent.click(key);
+        });
+      if (saw) break;
+    }
+    expect(saw).toBe(true);
+  });
+
+  it("a move that would finish an enemy strikes its tags through and steps them back", async () => {
+    // Enemy A is on 1 health and B is whole: two targets, so a key selects (and previews) rather than acting on the press.
+    saveRun((s) => ({ ...s, enemies: s.enemies.map((e, k) => (k === 0 ? { ...e, hp: 1 } : e)) }));
+    const { container } = mount();
+    const c = container as HTMLElement;
+    expect(c.querySelectorAll(".pwt-threat.cancelled").length).toBe(0);
+    expect(c.querySelectorAll(".pwt-threat").length).toBeGreaterThan(0);
+    let saw = false;
+    for (const key of keys(c).filter((k) => k.classList.contains("attack"))) {
+      await act(async () => {
+        fireEvent.click(key);
+      });
+      expect(c.querySelector(".pwt-threat.cancelled")).toBeNull(); // chosen, nothing hovered: plain
+      await act(async () => {
+        fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
+      });
+      await act(async () => {
+        fireEvent.mouseMove(c.querySelector<HTMLElement>(".pwt-row.enemies .pwt-plate")!);
+      });
+      if (c.querySelector(".pwt-threat.cancelled")) {
+        saw = true;
+        expect(c.querySelector(".pwt-threat.cancelled")!.getAttribute("aria-label")).toMatch(/will not come/);
+        break;
+      }
+      if (key.getAttribute("aria-pressed") === "true")
+        await act(async () => {
+          fireEvent.click(key);
+        });
+    }
+    expect(saw).toBe(true);
   });
 
   it("item 4: the sector card is a line along the stage's top edge and the first-use note sits in the banner, never over a plate", async () => {
@@ -879,7 +1104,7 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(text).toContain("The Record (top right)");
     expect(text).toContain("Squad health: raspberry is lost, green gained.");
     expect(text).toContain("green favors you, raspberry the enemy");
-    expect(text).toContain("committed move");
+    expect(text).toContain("next move, on the one it will land on");
     // The two hinders, and the two skulls a hinder can leave, are in the Guide.
     expect(text).toContain("Swords on an enemy: its next hit is cut");
     expect(text).toContain("Falling line on yours: its next attack is cut");

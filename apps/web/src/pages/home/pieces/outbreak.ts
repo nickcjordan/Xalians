@@ -1879,6 +1879,8 @@ export function createOutbreak(): Figure {
 						seedBorn: ramp(4.5, 6.0, t1),
 						foot: false,
 						shelf: false,
+						vatLight: 1,
+						seedScale: compact ? 0.78 : 0.7,
 						ringHalo: true,
 						seedVary: true,
 						rim2: [120, 150, 196],

@@ -607,7 +607,7 @@ class ReclamationMatch extends React.Component {
 					sortOrder: squadOrder(squadRecords.filter((r) => {
 						const st = slotStateOf(r, view, YOU).state;
 						return st === 'hand' || st === 'sent';
-					}), reads, null, null).map((r) => r.id),
+					}), reads).map((r) => r.id),
 				};
 			},
 			format: formatHold,
