@@ -1205,6 +1205,8 @@ export function createOutbreak(): Figure {
 						seedBorn: ramp(4.5, 6.0, t1),
 						foot: false,
 						shelf: false,
+						vatLight: 1,
+						seedScale: compact ? 0.78 : 0.7,
 						ringHalo: true,
 						seedVary: true,
 						rim2: [120, 150, 196],
@@ -1259,16 +1261,16 @@ export function createOutbreak(): Figure {
 					ctx.lineTo(CX - 64 * s * ck, cy(28));
 					ctx.closePath();
 					const tg = ctx.createLinearGradient(0, cy(8), 0, cy(28));
-					tg.addColorStop(0, css([46, 38, 42]));
-					tg.addColorStop(1, css([70, 60, 62]));
+					tg.addColorStop(0, css([26, 16, 19]));
+					tg.addColorStop(1, css([40, 26, 30]));
 					ctx.fillStyle = tg;
 					ctx.fill();
 					const fg = ctx.createLinearGradient(0, cy(28), 0, cy(54));
-					fg.addColorStop(0, css([34, 28, 32]));
-					fg.addColorStop(1, css([10, 8, 11]));
+					fg.addColorStop(0, css([22, 14, 17]));
+					fg.addColorStop(1, css([6, 4, 6]));
 					ctx.fillStyle = fg;
 					ctx.fillRect(CX - 64 * s * ck, cy(28), 128 * s * ck * ck, 26 * s * ck * ck);
-					ctx.fillStyle = css([190, 176, 160], 0.35);
+					ctx.fillStyle = css([210, 150, 110], 0.22);
 					ctx.fillRect(CX - 64 * s * ck, cy(28), 128 * s * ck * ck, 1.2);
 					ctx.fillStyle = css([6, 5, 8], 0.9);
 					for (const bx of [-56, 56]) {
@@ -1301,7 +1303,7 @@ export function createOutbreak(): Figure {
 						ctx.clip();
 						ctx.globalCompositeOperation = 'lighter';
 						const lit1 = mk(ctx, consoleA);
-						lit1(spr([236, 190, 130]), CX, cy(18), 70 * s * ck, 0.5);
+						lit1(spr([236, 190, 130]), CX, cy(18), 46 * s * ck, 0.42);
 						ctx.restore();
 					}
 					// the front face darkens toward the ground, and a 1 px shadow line where the box meets the pad

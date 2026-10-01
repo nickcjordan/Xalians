@@ -75,7 +75,7 @@ The concept went through the fact-check before a line was drawn (2026-09-29, Son
 | 02 | a machine makes life, and the life changes to suit each world it is shown in |
 | 03 | something (a network, an intelligence) takes control of many such machines |
 | 05 | a red sickness spreads across many worlds and puts their lights out |
-| 06 | a small bright object brings a dead machine back to life and something grows in it (proposed 2026-09-29 after the redesign, pending Nick; the earlier line asked a reader to name the sickness held back, which no reader has done in this staging) |
+| 06 | a small bright object brings a dead machine back to life and something grows in it (Nick approved 2026-09-30; the earlier line asked a reader to name the sickness held back, which no reader did in this staging, so the red keeping back from the new life is in the picture and the label but not in the glance test) |
 
 ## 9. Budgets
 
