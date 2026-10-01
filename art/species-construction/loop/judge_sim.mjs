@@ -150,7 +150,9 @@ export function report(sim) {
     out.push(`${String(r.round).padStart(3)}    ${(r.region + ' ' + r.component).padEnd(15)}  ${(r.assembly || '-').padEnd(14)}  ${rec.padEnd(8)}  ${String(r.sim).padEnd(9)}  ${num(r.gain).padEnd(7)}  ${r.meanBefore !== undefined ? r.meanBefore + ' > ' + r.meanAfter : ''}`.padEnd(100) + `  ${short(reasons, 70)}${r.carried && r.carried.length ? ' [carried ' + r.carried.join(',') + ']' : ''}${same === false ? '   <-- DIFFERS' : ''}`)
   }
   out.push(`agree ${agree} of ${total} orders`)
-  for (const d of diffs) out.push(`  r${d.round} ${d.region}: recorded ${d.recorded ? 'kept' : 'reverted'}, simulated ${d.sim}. ${MANUAL[d.round + ':' + d.region] || 'unexplained'}. recorded reason: ${short(d.recordedReason, 160)}; simulated: ${short((d.reasons || []).join('; '), 160)}`)
+  const firstDiff = diffs.length ? diffs[0].round : null
+  const why = d => MANUAL[d.round + ':' + d.region] || (d.round > firstDiff ? `downstream of the r${firstDiff} difference: the simulated baseline never adopted that build, while this candidate was built on it` : 'unexplained')
+  for (const d of diffs) out.push(`  r${d.round} ${d.region}: recorded ${d.recorded ? 'kept' : 'reverted'}, simulated ${d.sim}. ${why(d)}. recorded reason: ${short(d.recordedReason, 160)}; simulated: ${short((d.reasons || []).join('; '), 160)}`)
   for (const n of sim.notes) out.push('  note ' + n)
   out.push('means (sim)      ' + sim.means.join(' '))
   out.push('means (recorded) ' + [sim.rescore.mean, ...sim.recordedMeans].join(' '))
