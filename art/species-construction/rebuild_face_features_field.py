@@ -18,6 +18,10 @@ edit changes the field, and it is meshed once, so nothing is cut and smoothed af
                  on the dome with angle-dependent width (heavy upper outer, thin lower inner), and a thin iris lens.
   tufts          leaf-shaped cheek tufts (root on the cheek, lifted tip), joined by a smooth union.
   nose_pad       the separate nose shell is replaced by a thin conformal dark decal whose rim is buried in the skin.
+                 mode "inlay" (round 10): a shallow recess is cut into the skin field under the pad outline and a closed
+                 thin dark volume (top flush with the old surface, bottom buried behind the recess floor, walls along
+                 y) fills it, so there is no free edge, ledge or lit lip. Keys: recess_depth, recess_blend, shrink
+                 (recess smaller than the pad by this much so the pad walls overlap into the skin), top_lift, bury.
 
 The mouth curves follow the surface displacement in y, as in shape_face_field.py. Akinza-specific.
 """
@@ -426,6 +430,82 @@ if spec.get('tufts'):
     record['tufts'] = len(tuft_records)
 
 # ---------------------------------------------------------------------------------------------------------------
+# Nose inlay recess (round 10): cut a shallow recess in the skin field under the pad outline. The pad volume is built
+# after meshing from the pre-recess surface grid recorded here.
+inlay = None
+
+
+def rounded_triangle(P):
+    corners = np.array([(-P['half_width'], P['top_z']), (P['half_width'], P['top_z']), (0.0, P['apex_z'])])
+    sides_len = [np.linalg.norm(corners[(i+1) % 3]-corners[(i+2) % 3]) for i in range(3)]
+    incentre = sum(sides_len[i]*corners[i] for i in range(3))/sum(sides_len)
+    area = abs(np.cross(corners[1]-corners[0], corners[2]-corners[0]))/2
+    inradius = 2*area/sum(sides_len)
+    rc = P['corner_radius']
+    inner = incentre+(corners-incentre)*((inradius-rc)/inradius)
+    return inner, rc, incentre
+
+
+def sdf_triangle(px, pz, tri):
+    """Signed distance (negative inside) to a triangle in the x-z plane."""
+    d = np.full(px.shape, np.inf)
+    inside = np.ones(px.shape, dtype=bool)
+    a0, b0, c0 = tri
+    orient = np.sign((b0[0]-a0[0])*(c0[1]-a0[1])-(b0[1]-a0[1])*(c0[0]-a0[0]))
+    for i in range(3):
+        a, b = tri[i], tri[(i+1) % 3]
+        ex, ez = b[0]-a[0], b[1]-a[1]
+        wx, wz = px-a[0], pz-a[1]
+        t = np.clip((wx*ex+wz*ez)/(ex*ex+ez*ez), 0, 1)
+        d = np.minimum(d, np.hypot(wx-ex*t, wz-ez*t))
+        cross = ex*wz-ez*wx
+        inside &= cross*orient >= 0
+    return d*np.where(inside, -1.0, 1.0)
+
+
+if spec.get('nose_pad') and spec['nose_pad'].get('mode') == 'inlay':
+    P = spec['nose_pad']
+    inner, rc, incentre = rounded_triangle(P)
+    xr = P['half_width']+.03
+    z_lo, z_hi = P['apex_z']-.03, P['top_z']+.03
+    sl = box_slices([-xr, -.55, z_lo], [xr, -.2, z_hi])
+    X, Y, Z = coordinates(sl)
+    ys = Y[0, :, 0]
+    xs_axis, zs_axis = X[:, 0, 0], Z[0, 0, :]
+    sub = field[sl].copy()
+    inside = sub < 0
+    first = inside.argmax(axis=1)
+    assert inside.any(axis=1).all(), 'nose inlay surface grid: a column has no skin'
+    ii, kk = np.meshgrid(np.arange(sub.shape[0]), np.arange(sub.shape[2]), indexing='ij')
+    f1 = sub[ii, first, kk]
+    f0 = sub[ii, np.maximum(first-1, 0), kk]
+    y0 = ys[np.maximum(first-1, 0)]
+    ysurf = (y0+(0-f0)/np.where(f1 == f0, 1, f1-f0)*VS).astype(np.float64)
+    if P.get('surface_blur'):
+        # the grid is read from the field's linear interpolation; a small blur removes voxel-scale noise so the pad top is smooth
+        sig = P['surface_blur']
+        n = int(math.ceil(3*sig))
+        kern = np.exp(-.5*(np.arange(-n, n+1)/sig)**2)
+        kern /= kern.sum()
+        for axis in (0, 1):
+            padded = np.pad(ysurf, [(n, n) if a == axis else (0, 0) for a in range(2)], mode='edge')
+            acc = np.zeros_like(ysurf)
+            for k, wk in zip(range(-n, n+1), kern):
+                index = [slice(None)]*2
+                index[axis] = slice(n+k, n+k+ysurf.shape[axis])
+                acc += wk*padded[tuple(index)]
+            ysurf = acc
+    inlay = {'xs': xs_axis, 'zs': zs_axis, 'ysurf': ysurf}
+    sdf2d = sdf_triangle(X[:, 0, :], Z[:, 0, :], inner)-rc
+    floor_y = ysurf+P['recess_depth']
+    sdf_r = np.maximum(sdf2d[:, None, :]+P.get('shrink', .0005), Y-floor_y[:, None, :]).astype(np.float32)
+    native = field[sl].copy()
+    field[sl] = np.clip(-smin(-native, sdf_r, P.get('recess_blend', .0012)), -BAND, BAND).astype(np.float32)
+    record['noseRecess'] = {'maxChange': float(np.abs(field[sl]-native).max()),
+                            'surfaceYRange': [float(ysurf.min()), float(ysurf.max())]}
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # Mesh the field once.
 out_grid = vdb.FloatGrid()
 out_grid.background = BAND
@@ -619,7 +699,68 @@ if spec.get('eye'):
 
 # ---------------------------------------------------------------------------------------------------------------
 # Nose decal.
-if spec.get('nose_pad'):
+if spec.get('nose_pad') and spec['nose_pad'].get('mode') == 'inlay':
+    P = spec['nose_pad']
+    mat_nose = bpy.data.materials['Rounded animal nose']
+    if 'nose_finish' in scene_objects:
+        bpy.data.objects.remove(scene_objects['nose_finish'], do_unlink=True)
+    inner, rc, incentre = rounded_triangle(P)
+    cxn, czn = float(incentre[0]), float(incentre[1])
+    outline = []
+    for ang in np.linspace(0, 2*np.pi, P['outline_points'], endpoint=False):
+        direction = np.array([math.cos(ang), math.sin(ang)])
+        support = inner[int(np.argmax(inner@direction))]
+        outline.append(support+rc*direction)
+    outline = np.array(outline)
+    M_O = len(outline)
+    rings = P['rings']
+
+    def surf_y(x, z):
+        gx, gz, gy = inlay['xs'], inlay['zs'], inlay['ysurf']
+        fx = np.clip((x-gx[0])/VS, 0, len(gx)-1.001)
+        fz = np.clip((z-gz[0])/VS, 0, len(gz)-1.001)
+        i0, k0 = int(fx), int(fz)
+        tx, tz = fx-i0, fz-k0
+        return float((gy[i0, k0]*(1-tx)*(1-tz)+gy[i0+1, k0]*tx*(1-tz)+gy[i0, k0+1]*(1-tx)*tz+gy[i0+1, k0+1]*tx*tz))
+
+    top = [(cxn, surf_y(cxn, czn)-P['top_lift'], czn)]
+    for sc_ in [i/rings for i in range(1, rings+1)]:
+        for ox, oz in outline:
+            x, z = cxn+(ox-cxn)*sc_, czn+(oz-czn)*sc_
+            top.append((x, surf_y(x, z)-P['top_lift'], z))
+    bottom = [(x, surf_y(x, z)+P['recess_depth']+P['bury'], z) for x, _, z in top[-M_O:]]
+    bottom_centre = (cxn, surf_y(cxn, czn)+P['recess_depth']+P['bury'], czn)
+    verts = top+bottom+[bottom_centre]
+    nb = len(top)
+    faces_p = [(0, 1+j, 1+(j+1) % M_O) for j in range(M_O)]
+    for rg in range(rings-1):
+        for j in range(M_O):
+            j2 = (j+1) % M_O
+            a, b = 1+rg*M_O+j, 1+rg*M_O+j2
+            faces_p.append((a, b, b+M_O, a+M_O))
+    last = 1+(rings-1)*M_O
+    for j in range(M_O):
+        j2 = (j+1) % M_O
+        faces_p.append((last+j, last+j2, nb+j2, nb+j))
+        faces_p.append((nb+j, nb+j2, nb+M_O))
+    mesh_n = bpy.data.meshes.new('nose_finish')
+    mesh_n.from_pydata([tuple(float(c) for c in v) for v in verts], [], faces_p)
+    mesh_n.update()
+    bmn = bmesh.new(); bmn.from_mesh(mesh_n)
+    bmesh.ops.recalc_face_normals(bmn, faces=list(bmn.faces))
+    bmn.faces.ensure_lookup_table()
+    if bmn.faces[0].normal.y > 0:
+        bmesh.ops.reverse_faces(bmn, faces=list(bmn.faces))
+    bmn.to_mesh(mesh_n); bmn.free()
+    nose = bpy.data.objects.new('nose_finish', mesh_n)
+    bpy.context.scene.collection.objects.link(nose)
+    mesh_n.materials.append(mat_nose)
+    for poly in mesh_n.polygons:
+        poly.use_smooth = True
+    checks['nose'] = {'inlay': True, 'vertices': len(verts), 'outlinePoints': M_O,
+                      'outlineWidth': float(outline[:, 0].max()-outline[:, 0].min()),
+                      'outlineHeight': float(outline[:, 1].max()-outline[:, 1].min()), 'stats': mesh_stats(nose)}
+elif spec.get('nose_pad'):
     P = spec['nose_pad']
     mat_nose = bpy.data.materials['Rounded animal nose']
     if 'nose_finish' in scene_objects:
