@@ -110,6 +110,27 @@ parser.add_argument('--pale-smooth', type=int, default=3, help='majority-vote pa
 # Outline.
 parser.add_argument('--trim-pins', type=float, default=0., help='opening radius (figure heights) applied to the old field in the outer band before the locks; 0 = off')
 parser.add_argument('--trim-u0', type=float, default=.14, help='the opening applies from this |x| outward')
+parser.add_argument('--trim-y', type=float, nargs=2, default=None, help='round 12: the pin trim fades out with depth, full in front of the first head-local y and gone behind the second, so the R04 rear locks keep their tips')
+# Round 12 (R03): plate clip, lock forks, softer tuft.
+parser.add_argument('--plate-clip', type=float, default=None, help='round 12: cut the old fan body to the spec outline table (section 1, sheet top and bottom per column plus the tip points) inset by this much (figure heights), so the plate stops short of the lock tips; the cut fades with depth (--clip-y) and in from |x| --clip-u0')
+parser.add_argument('--clip-y', type=float, nargs=2, default=[.10, .18], help='head-local y where the plate clip is full and where it is gone')
+parser.add_argument('--clip-u0', type=float, nargs=2, default=[.14, .19], help='|x| (figure heights) where the plate clip starts and is full')
+parser.add_argument('--tip-wedge', action='store_true', help='round 12: cut each wing end, through every depth, to a pointed V (blunt vertical end -> point) before the locks are added; apex, start and top/bottom heights are the --wedge-* options')
+parser.add_argument('--wedge-u', type=float, nargs=2, default=[.225, .262], help='|x| where the V starts and its apex, figure heights')
+parser.add_argument('--wedge-apex-y', type=float, nargs=2, default=[.034, .062], help='apex y for L, R')
+parser.add_argument('--wedge-top-y', type=float, nargs=2, default=[-.01, .01], help='y of the V top edge at its start, L, R')
+parser.add_argument('--wedge-bottom-y', type=float, nargs=2, default=[.105, .12], help='y of the V bottom edge at its start, L, R')
+parser.add_argument('--pale-cup-margin', type=float, default=None, help='round 12: faces more than this far (figure heights) outside the cup polygon in the front view are not given the pale material (tuft tips buried under the coat otherwise mark streaks on it)')
+parser.add_argument('--tip-point', type=float, default=0., help='round 12: fraction of the lock length over which the tip-min floor fades to zero (a true point instead of a constant-width needle or a rounded knob); 0 = off')
+parser.add_argument('--fork', type=int, default=0, help='forks per primary lock (0 or 2): short side points that split each tip into three')
+parser.add_argument('--fork-angle', type=float, default=20.)
+parser.add_argument('--fork-len', type=float, default=.45, help='fork length over its parent lock length')
+parser.add_argument('--fork-from', type=float, default=.5, help='fraction along the parent axis where the forks root')
+parser.add_argument('--fork-families', default='P')
+parser.add_argument('--tuft-tip-min', type=float, nargs=2, default=None, help='tuft locks: smallest half width and thickness at a tip (default: --tip-min)')
+parser.add_argument('--tuft-section-p', type=float, default=None)
+parser.add_argument('--tuft-blur', type=float, default=0., help='Gaussian sigma (voxels) applied to the union of the tuft locks before it joins the skin: softens the serrated free edge into rounded clumps')
+parser.add_argument('--tuft-aim', type=float, default=0., help='tuft tips move this fraction of the way toward the cup upper tip, so the clumps converge on it')
 parser.add_argument('--bandwidth', type=int, default=14)
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
@@ -318,6 +339,8 @@ if args.trim_pins > 0:
         sub = field[c0:c1, :, r0:r1]
         xs = np.abs(X[c0:c1])/K
         wt = smoothstep((xs-args.trim_u0)/.02)[:, None, None].astype(np.float32)
+        if args.trim_y:
+            wt = wt*(1-smoothstep((Y-args.trim_y[0])/(args.trim_y[1]-args.trim_y[0])))[None, :, None].astype(np.float32)
         # opening of the solid: erode (grow the field) by r voxels, then dilate back; max/min filters via separable sliding windows
         def sliding(a, rr, fn):
             for ax_ in range(3):
@@ -335,6 +358,57 @@ if args.trim_pins > 0:
     trim_record['radiusVoxels'] = r
     maps = build_maps(field)
     print('pin trim done', flush=True)
+
+# ---------------------------------------------------------------------------------------------- 0b. optional plate clip (round 12)
+clip_record = {'applied': args.plate_clip is not None}
+if args.plate_clip is not None:
+    edge_rows = re.findall(r'^\|\s*([+-]\d*\.\d+)\s*\|\s*(\d*\.\d+)\s*\|\s*\d*\.\d+\s*\|\s*(\d*\.\d+)\s*\|\s*\d*\.\d+\s*\|', spec_text, re.M)
+    edge = {}
+    for xs_, top_, bot_ in edge_rows:
+        edge[round(float(xs_), 2)] = (float(top_), float(bot_))
+    TIPS = {1: (.276, .033), -1: (.273, .057)}
+    clip_poly = {}
+    for side in sides:
+        cols = sorted((c for c in edge if (c > 0) == (side > 0) and .10-1e-9 <= abs(c) <= .26+1e-9), key=abs)
+        tops = [(abs(c), edge[c][0]) for c in cols]
+        bots = [(abs(c), edge[c][1]) for c in cols]
+        poly = [(.06, -.05)]+tops+[TIPS[side]]+bots[::-1]+[(.06, .30)]
+        clip_poly[side] = np.array(poly)
+    for side in sides:
+        mp = maps[side]
+        c0, c1 = mp['c0'], mp['c1']
+        sub = field[c0:c1, :, r0:r1]
+        xf_ = np.abs(X[c0:c1])[:, None]/K*np.ones((1, len(SZ)))
+        yf_ = (Z0-SZ[None, :])/K*np.ones((c1-c0, 1))
+        sdf = polygon_sdf(xf_, yf_, clip_poly[side])                  # figure heights, negative inside
+        d_clip = (K*(sdf+args.plate_clip)).astype(np.float32)
+        wu = smoothstep((xf_-args.clip_u0[0])/(args.clip_u0[1]-args.clip_u0[0])).astype(np.float32)
+        wy = (1-smoothstep((Y-args.clip_y[0])/(args.clip_y[1]-args.clip_y[0]))).astype(np.float32)
+        wgt = wu[:, None, :]*wy[None, :, None]
+        field[c0:c1, :, r0:r1] = np.clip(sub+wgt*(np.maximum(sub, d_clip[:, None, :])-sub), -BAND, BAND).astype(np.float32)
+        del sub, sdf, d_clip, wgt
+    clip_record['inset'] = args.plate_clip
+    clip_record['polygons'] = {str(k): v.round(4).tolist() for k, v in clip_poly.items()}
+    maps = build_maps(field)
+    print('plate clip done', flush=True)
+
+if args.tip_wedge:
+    for side in sides:
+        k_ = 0 if side == 1 else 1
+        poly = np.array([(.15, -.10), (args.wedge_u[0], args.wedge_top_y[k_]), (args.wedge_u[1], args.wedge_apex_y[k_]),
+                         (args.wedge_u[0], args.wedge_bottom_y[k_]), (.15, .32)])
+        mp = maps[side]
+        c0, c1 = mp['c0'], mp['c1']
+        sub = field[c0:c1, :, r0:r1]
+        xf_ = np.abs(X[c0:c1])[:, None]/K*np.ones((1, len(SZ)))
+        yf_ = (Z0-SZ[None, :])/K*np.ones((c1-c0, 1))
+        d_w = (K*polygon_sdf(xf_, yf_, poly)).astype(np.float32)
+        wu = smoothstep((xf_-args.wedge_u[0]+.004)/.012).astype(np.float32)
+        field[c0:c1, :, r0:r1] = np.clip(sub+wu[:, None, :]*(np.maximum(sub, d_w[:, None, :])-sub), -BAND, BAND).astype(np.float32)
+        del sub, d_w
+    clip_record['tipWedge'] = {'u': args.wedge_u, 'apexY': args.wedge_apex_y, 'topY': args.wedge_top_y, 'bottomY': args.wedge_bottom_y}
+    maps = build_maps(field)
+    print('tip wedge done', flush=True)
 
 # ---------------------------------------------------------------------------------------------- 1. plan morph
 plan_record = {'applied': not args.no_plan}
@@ -464,8 +538,9 @@ def lock_axis(spec, curl, lift, root_extend=0., length_scale=1., depth_shift=0.,
     return ax, xy, L
 
 
-def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=False):
+def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=False, tip_min=None, section_p=None):
     ogive = args.ogive if ogive is None else ogive
+    tip_min = args.tip_min if tip_min is None else tip_min
     n = len(ax)
     seg = np.diff(ax, axis=0)
     arc = np.r_[0, np.cumsum(np.linalg.norm(seg, axis=1))]
@@ -478,16 +553,22 @@ def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=Fa
     bin_ = np.cross(tang, nrm)
     wm, wr = K*spec['width_mid']*wscale, K*spec['width_root']*wscale
     th = K*spec['thick']*tscale
-    hmin, tmin = args.tip_min[0]*K, args.tip_min[1]*K
+    hmin, tmin = tip_min[0]*K, tip_min[1]*K
+
+    def point_fade(t):
+        # round 12 --tip-point: the tip-min floor fades to zero over the last fraction of the length so the lock ends in a true point
+        if not args.tip_point:
+            return 1.
+        return np.maximum(smoothstep((1-t)/args.tip_point), .22)
 
     def half_width(t):
         ss = np.clip((t-.4)/.6, 0, 1)
         rise = np.where(t < .4, wr/2+(wm/2-wr/2)*smoothstep(t/.4), wm/2*np.clip(1-ss**ogive[0], 0, 1)**ogive[1])
-        return np.maximum(rise, hmin)
+        return np.maximum(rise, hmin*point_fade(t))
 
     def height(t):
         h = np.where(t < .4, th*(.75+.25*smoothstep(t/.4)), np.where(t < .9, th*(1-.6*(t-.4)/.5), th*(.4-.25*(t-.9)/.1)))
-        return np.maximum(h, tmin)
+        return np.maximum(h, tmin*point_fade(t))
 
     reach = wm/2+th+.03
     low = ax.min(axis=0)-reach
@@ -516,7 +597,7 @@ def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=Fa
     h = height(t).astype(np.float32)
     wh = half_width(t).astype(np.float32)
     crel = cc+h                                     # height above the base plane (crest at h)
-    pp = args.section_p
+    pp = args.section_p if section_p is None else section_p
     e = (np.abs(aa/wh)**pp+(np.maximum(crel, 0)/h)**pp)**(1./pp)
     e = np.sqrt(e**2+(np.maximum(length-L, 0)/np.maximum(wh, hmin*1.5))**2+(np.maximum(-length, 0)/(.02))**2
                 +(np.maximum(-crel-args.cap*K*np.clip(wh/(wm/2), 0, 1), 0)/(.02))**2)
@@ -560,9 +641,14 @@ for spec in spec_locks:
             o_, u_ = d_[0]*side_, -d_[1]
             o2, u2 = rot((o_, u_), ang_)
             spec = dict(spec, tip=(r_[0]+o2*side_, r_[1]-u2))
+        if args.tuft_aim:
+            side_ = spec['side']
+            aim_pt = cup_points[side_][4]+np.array([-.02*side_, .012])
+            wgt_ = (5-int(spec['name'][2:]))/4.
+            spec = dict(spec, tip=tuple(np.array(spec['tip'])+args.tuft_aim*wgt_*(aim_pt-np.array(spec['tip']))))
         ax, xy, L = lock_axis(spec, args.tuft_curl, args.tuft_lift, args.tuft_root_extend, args.tuft_length_scale,
                               args.tuft_depth_shift-args.tuft_stack*(int(spec['name'][2:])-1), args.tuft_root_sink)
-        r = lock_field(ax, spec, args.tuft_width_scale, args.tuft_thick_scale, ogive=args.tuft_ogive)
+        r = lock_field(ax, spec, args.tuft_width_scale, args.tuft_thick_scale, ogive=args.tuft_ogive, tip_min=args.tuft_tip_min, section_p=args.tuft_section_p)
         if r is None:
             continue
         sl, d = r
@@ -580,6 +666,28 @@ for spec in spec_locks:
         sl, d = r
         add_to(coat_field, sl, d, args.lock_blend)
         records.append({'name': spec['name'], 'axisRoot': [round(float(v), 4) for v in ax[0]], 'axisTip': [round(float(v), 4) for v in ax[-1]]})
+        if args.fork and fam in args.fork_families and spec['dir'] > -20:
+            side_ = spec['side']
+            r_, t_ = np.array(spec['root']), np.array(spec['tip'])
+            d_ = t_-r_
+            len_ = float(np.hypot(*d_))
+            mid_ = r_+d_*args.fork_from
+            o_, u_ = d_[0]*side_, -d_[1]
+            for sign_, tag_ in ((1, 'a'), (-1, 'b')):
+                o2, u2 = rot((o_, u_), sign_*args.fork_angle)
+                unit_ = np.array([o2*side_, -u2])/len_
+                tip_ = mid_+unit_*len_*args.fork_len
+                fork = {'name': f'{spec["name"]}{tag_}', 'side': side_, 'family': fam, 'root': tuple(mid_), 'tip': tuple(tip_),
+                        'length': len_*args.fork_len, 'width_root': spec['width_mid']*.5, 'width_mid': spec['width_mid']*.62,
+                        'thick': spec['thick']*.8, 'dir': spec['dir']+sign_*args.fork_angle,
+                        'depth_root': spec['depth_root']+(spec['depth_tip']-spec['depth_root'])*args.fork_from,
+                        'depth_tip': spec['depth_tip']+.002}
+                ax2, xy2, L2 = lock_axis(fork, args.curl, args.tip_lift, args.coat_root_extend, args.length_scale, tip_trim=args.tip_trim)
+                r2 = lock_field(ax2, fork, args.width_scale, args.thick_scale, cup_clip=args.cup_clear >= 0)
+                if r2 is None:
+                    continue
+                add_to(coat_field, r2[0], r2[1], args.lock_blend)
+                records.append({'name': fork['name'], 'axisRoot': [round(float(v), 4) for v in ax2[0]], 'axisTip': [round(float(v), 4) for v in ax2[-1]]})
 
 # Optional fluff: in-between tuft locks, shorter, set .004 behind their neighbours and turned a little more.
 if args.tuft_fluff > 0 and not args.no_tuft:
@@ -596,7 +704,7 @@ if args.tuft_fluff > 0 and not args.no_tuft:
                        'depth_tip': (a_['depth_tip']+b_['depth_tip'])/2+.001}
                 ax, xy, L = lock_axis(mid, args.tuft_curl+8, args.tuft_lift*1.4, args.tuft_root_extend, args.tuft_length_scale*1.0,
                                       args.tuft_depth_shift-args.tuft_stack*(int(a_['name'][2:])-.5), args.tuft_root_sink)
-                r = lock_field(ax, mid, args.tuft_width_scale, args.tuft_thick_scale, ogive=args.tuft_ogive)
+                r = lock_field(ax, mid, args.tuft_width_scale, args.tuft_thick_scale, ogive=args.tuft_ogive, tip_min=args.tuft_tip_min, section_p=args.tuft_section_p)
                 if r is None:
                     continue
                 sl, d = r
@@ -604,6 +712,27 @@ if args.tuft_fluff > 0 and not args.no_tuft:
                 tuft_boxes.append((sl, d))
                 records.append({'name': mid['name'], 'axisRoot': [round(float(v), 4) for v in ax[0]], 'axisTip': [round(float(v), 4) for v in ax[-1]]})
 print('locks built', len(records), flush=True)
+
+def gauss3d(a, sigma):
+    radius = int(math.ceil(3*sigma))
+    kernel = np.exp(-.5*(np.arange(-radius, radius+1)/sigma)**2)
+    kernel /= kernel.sum()
+    for axis in range(3):
+        moved = np.moveaxis(a, axis, 0)
+        padded = np.pad(moved, [(radius, radius)]+[(0, 0)]*(moved.ndim-1), mode='edge')
+        out = np.zeros_like(moved)
+        for k, w in enumerate(kernel):
+            out += w*padded[k:k+moved.shape[0]]
+        a = np.moveaxis(out, 0, axis)
+    return a
+
+
+if args.tuft_blur > 0 and tuft_boxes:
+    lo_i = [min(sl[a_].start for sl, _ in tuft_boxes) for a_ in range(3)]
+    hi_i = [max(sl[a_].stop for sl, _ in tuft_boxes) for a_ in range(3)]
+    reg = tuple(slice(max(0, lo_i[a_]-8), min(shape[a_], hi_i[a_]+8)) for a_ in range(3))
+    tuft_field[reg] = gauss3d(tuft_field[reg].astype(np.float32), args.tuft_blur).astype(np.float32)
+    print('tuft blurred', args.tuft_blur, flush=True)
 
 combined = np.minimum(smin(field, coat_field, args.blend), BAND) if args.keep else field
 del coat_field
@@ -696,6 +825,14 @@ if tuft_boxes:
                     wgt = (fr[:, 0] if dx else 1-fr[:, 0])*(fr[:, 1] if dy else 1-fr[:, 1])*(fr[:, 2] if dz else 1-fr[:, 2])
                     v += wgt*val[i0[:, 0]+dx, i0[:, 1]+dy, i0[:, 2]+dz]
         marked[ids[v <= args.pale_tol]] = True
+    if args.pale_cup_margin is not None:
+        xf_c = world[:, 0]/K
+        zf_c = (Z0-world[:, 2])/K
+        for side_c in (1, -1):
+            sel = (xf_c > 0) if side_c == 1 else (xf_c < 0)
+            sdf_c = polygon_sdf(xf_c[sel], zf_c[sel], cup_points[side_c])
+            idx_c = np.nonzero(sel)[0]
+            marked[idx_c[sdf_c > args.pale_cup_margin]] = False
     # Smooth the staircase boundary: majority vote over edge-adjacent faces.
     if args.pale_smooth > 0:
         mesh_ = head.data
@@ -729,7 +866,7 @@ summary = {
     'approval': None, 'stageProvenanceSha256': provenance, 'sourceSha256': sha(args.scene), 'specSha256': sha(args.spec),
     'scope': 'R03 ear fan front: plan morph (cut the rolled lip, fill the cup pit), 24 coat locks and 5 tuft locks per side as swept half-ellipse locks, pale tuft material',
     'parameters': {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items() if k not in ('scene', 'out')},
-    'plan': plan_record, 'trim': trim_record, 'skinTopZ': {'before': top_before, 'after': top_after},
+    'plan': plan_record, 'trim': trim_record, 'plateClip': clip_record, 'skinTopZ': {'before': top_before, 'after': top_after},
     'lockCount': len(records), 'paleFaces': pale_count, 'paleMaterialIndex': pale_index, 'locks': records,
     'removedFlecks': removed_flecks, 'removedFloatingPieces': removed_pieces, 'skinBefore': before, 'skinAfter': after,
     'outputs': {p.name: sha(p) for p in args.out.iterdir() if p.suffix in ['.glb', '.blend']},
