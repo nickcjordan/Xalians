@@ -16,7 +16,9 @@ resampled along x and then along y so the current edges land on the target edges
 
 Sampling maps are checked for monotonicity, the field is meshed once, and every parameter lives in the spec.
 Edge measurement and smoothing parameters are in the spec too. Akinza-specific; new options default to the
-behavior of earlier runs (there are none yet).
+behavior of earlier runs. Opt-in spec keys added in round 2 attempt B: axisShift (lateral leg translation rows y, dx),
+depthAnchorFrac (depth scaled about front+frac*depth), scaleSmoothing (sigma in z for the depth ratio and anchor),
+kneePlane (x, z, halfX, halfZ, amplitude, yReach: a convex plane on the front of the knee).
 """
 import argparse
 import copy
@@ -123,6 +125,10 @@ ax_x = np.interp(slice_z, axis[order, 0], axis[order, 1])
 slope = (axis[order[0], 1]-axis[order[1], 1])/(axis[order[0], 0]-axis[order[1], 0])
 below = slice_z < axis[order[0], 0]
 ax_x[below] = axis[order[0], 1]+slope*(slice_z[below]-axis[order[0], 0])
+if 'axisShift' in spec:
+    # optional lateral translation of the whole target leg (fit-unit rows: y, outward dx), eased by xTop/xBottom
+    sh = np.array(spec['axisShift'], dtype=np.float64)
+    ax_x = ax_x+np.interp(fit_y, sh[:, 0], sh[:, 1])*H
 t_hi = ax_x+np.interp(fit_y, st[:, 0], st[:, 1])*H
 t_lo = ax_x-np.interp(fit_y, st[:, 0], st[:, 2])*H
 t_depth = np.interp(fit_y, dt[:, 0], dt[:, 1])*H
@@ -172,7 +178,9 @@ for side in (1, -1):
         y_lo = np.where(below, yc-t_depth*ratio/2, y_lo)
         y_hi = np.where(below, yc+t_depth*ratio/2, y_hi)
     m_depth = y_hi-y_lo
-    y_center = (y_hi+y_lo)/2
+    # depthAnchorFrac (default .5, the center): the depth is scaled about y_lo+frac*depth, so a smaller fraction
+    # keeps the front edge nearer where it is and lets the back (calf) carry the change
+    y_center = y_lo+spec.get('depthAnchorFrac', .5)*m_depth
     report[f'side{side:+d}'] = {
         'z': slice_z.tolist(), 'measuredLo': m_lo.tolist(), 'measuredHi': m_hi.tolist(),
         'targetLo': t_lo.tolist(), 'targetHi': t_hi.tolist(),
@@ -216,6 +224,10 @@ for side in (1, -1):
     report[f'side{side:+d}']['minimumDsrcDx'] = float(d.min())
     # --- y pass about the leg's measured center, masked to the leg in x
     scale = m_depth/np.maximum(t_depth, 1e-4)
+    if spec.get('scaleSmoothing', 0) > 0:
+        # smooth the depth ratio and anchor along z so measurement noise does not print ripple bands on the shin
+        scale = gauss_smooth(scale, STEP, spec['scaleSmoothing'])
+        y_center = gauss_smooth(y_center, STEP, spec['scaleSmoothing'])
     scale_z = lerp_field_z(scale, zz)
     yc_z = lerp_field_z(y_center, zz)
     xm_lo, xm_hi = tlo-spec['yMaskMargin'], thi+spec['yMaskMargin']
@@ -235,6 +247,25 @@ for side in (1, -1):
     final = (np.take_along_axis(warped, j0, axis=1)*(1-fy)+np.take_along_axis(warped, j0+1, axis=1)*fy).astype(np.float32)
     field[x0:x1, :, z0:z1] = final
     report[f'side{side:+d}']['minimumDsrcDy'] = float(dy.min())
+
+kp = spec.get('kneePlane')
+if kp:
+    # a flat, slightly convex kneecap plane on the front of each knee: the field is lowered by a smooth bump
+    # (positive amplitude pushes the surface forward by about that many world units)
+    for side in (1, -1):
+        cx, cz = side*kp['x'], kp['z']
+        zz_i = np.where((zs > cz-3*kp['halfZ']) & (zs < cz+3*kp['halfZ']))[0]
+        xx_i = np.where((xs > cx-3*kp['halfX']) & (xs < cx+3*kp['halfX']))[0]
+        # the front surface y at the center, from the current mesh
+        near = (np.abs(points[:, 2]-cz) < .01) & (np.abs(points[:, 0]-cx) < .03)
+        front_y = float(points[near, 1].min())
+        wx = np.exp(-((xs[xx_i]-cx)/kp['halfX'])**4)
+        wz = np.exp(-((zs[zz_i]-cz)/kp['halfZ'])**4)
+        wy = np.exp(-((ys-front_y)/kp['yReach'])**2)
+        bump = kp['amplitude']*wx[:, None, None]*wy[None, :, None]*wz[None, None, :]
+        block = field[xx_i[0]:xx_i[-1]+1, :, zz_i[0]:zz_i[-1]+1]
+        field[xx_i[0]:xx_i[-1]+1, :, zz_i[0]:zz_i[-1]+1] = (block-bump).astype(np.float32)
+        report[f'kneePlane{side:+d}'] = {'frontY': front_y, 'center': [cx, cz]}
 
 edited = vdb.FloatGrid()
 edited.background = BAND
