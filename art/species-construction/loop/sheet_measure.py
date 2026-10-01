@@ -90,9 +90,9 @@ def simplify(points, tol):
     return np.vstack([first[:-1], second[:-1]])
 
 
-def outline(mask, span, tol=TOLERANCE):
+def outline(mask, span, tol=TOLERANCE, center=None):
     filled = lt.fill_small_holes(mask)
-    top, height, cx = row_measures.mask_frame(filled, span)
+    top, height, cx = row_measures.mask_frame(filled, span, center)
     pts, other = moore_outline(filled)
     unit = np.c_[(pts[:, 0]-cx)/height, (pts[:, 1]-top)/height]
     poly = simplify(unit, tol)
@@ -130,9 +130,10 @@ def stations(mask, frame, step=STEP):
     return [station_row(mask, frame, a) for a in np.round(np.arange(0, 1+1e-9, step), 4)]
 
 
-def view_record(mask, span, step, tol):
-    poly, info, filled = outline(mask, span, tol)
-    frame = row_measures.mask_frame(mask, span)
+def view_record(mask, span, step, tol, center=None):
+    # center: the model's fixed figure centreline (loop_tools.model_center), so a head change cannot shift body stations
+    poly, info, filled = outline(mask, span, tol, center)
+    frame = row_measures.mask_frame(mask, span, center)
     return {'frame': {**info, 'stationCx': float(frame[2])}, 'outline': np.round(poly, 5).tolist(),
             'bands': bands(filled, (info['top'], info['height'], info['cx'])),
             'stations': stations(mask, frame, step)}
@@ -238,7 +239,7 @@ def cmd_model(args):
         path = render/f"{view.split('-r03')[0]}.png"
         if not path.exists() or view not in sheet['views']:
             continue
-        rec = view_record(row_measures.load_mask(path), lt.model_span(render, path.stem), sheet['step'], TOLERANCE)
+        rec = view_record(row_measures.load_mask(path), lt.model_span(render, path.stem), sheet['step'], TOLERANCE, lt.model_center(render, path.stem))
         rec['differenceFromSheet'] = diff_tables(rec['stations'], sheet['views'][view]['stations'])
         record['views'][view] = rec
     out = Path(args.out) if args.out else (render.parent if render.name == 'render' else render)/'stations.json'
@@ -302,7 +303,7 @@ def cmd_check(args):
     for view in lt.FIT_VIEWS[:3]:
         mask_ref = lt.reference_figure(view)
         mask_model = row_measures.load_mask(render/f'{view}.png')
-        fr, fm = row_measures.mask_frame(mask_ref), row_measures.mask_frame(mask_model, lt.model_span(render, view))
+        fr, fm = row_measures.mask_frame(mask_ref), row_measures.mask_frame(mask_model, lt.model_span(render, view), lt.model_center(render, view))
         sheet_tables[view] = {s['at']: s for s in stations(mask_ref, fr, fine)}
         model_tables[view] = {s['at']: s for s in stations(mask_model, fm, fine)}
     rows, ok = [], True
