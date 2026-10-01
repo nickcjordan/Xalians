@@ -616,6 +616,19 @@ def claw_centroids(parts):
     return {'fore': fore} if len(fore) else None
 
 
+def recorded_arm_joints(assembly):
+    """armJoints from the fairing record of the body an assembly was built from, if the body wrote them."""
+    try:
+        record = json.loads((work(assembly)/'assembly.json').read_text())
+        for path in record['inputs']:
+            if Path(path).parent.name.startswith('body-'):
+                fairing = json.loads((Path(path).parent/'fairing.json').read_text())
+                return fairing.get('armJoints')
+    except (OSError, KeyError, ValueError):
+        pass
+    return None
+
+
 def cmd_posed(args):
     sys.path.insert(0, str(CONSTRUCTION))
     import rig_core as rc
@@ -630,6 +643,16 @@ def cmd_posed(args):
     dump_vertices(glb, out/'verts.npz', f'posed-{out.name}-dump.log')
     skin, parts, _ = load_dump(out/'verts.npz')
     joints = rc.load_json(args.joints) if args.joints else rc.derive_joints(skin, claw_centroids(parts))
+    if not args.joints:
+        recorded = recorded_arm_joints(args.assembly)
+        if recorded:
+            # the heuristic cannot find an elbow above z .02; a body that records its analytic arm joints
+            # (rebuild_arms_field.py) is posed on those. .R is the -x side; .L mirrors it.
+            for name, value in recorded.items():
+                joints[name] = list(value)
+                joints[name[:-1]+'L'] = [-value[0], value[1], value[2]]
+            joints['shoulder.L'][1] = joints['shoulder.R'][1]
+            print(f'arm joints taken from the body record: {sorted(recorded)}')
     (out/'joints.json').write_text(json.dumps(joints, indent=1)+'\n')
     idx, w = rc.compute_weights(skin, joints)
     idx = idx.astype(int)
