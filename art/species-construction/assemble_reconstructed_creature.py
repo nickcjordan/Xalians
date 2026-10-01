@@ -67,6 +67,8 @@ head_material_indices = [p.material_index for p in head.data.polygons]
 head_surface = BVHTree.FromPolygons([v.co for v in head.data.vertices],
                                    [list(p.vertices) for p in head.data.polygons])
 nose_material_indices = {i for i, mat in enumerate(head_materials) if 'nose' in mat.name.lower()}
+# A head may carry a pale inner-ear coat (author_fan_front_spec_field.py); it is transferred like the nose material.
+pale_material_indices = {i for i, mat in enumerate(head_materials) if 'pale inner-ear' in mat.name.lower()}
 separate_noses = [obj.name for obj in head_objects if obj != head
                   and any('nose' in mat.name.lower() for mat in obj.data.materials)]
 if not nose_material_indices and not separate_noses:
@@ -223,6 +225,11 @@ body.data.materials.clear()
 body.data.materials.append(material('Continuous construction clay', .38))
 if nose_material_indices:
     body.data.materials.append(head_materials[min(nose_material_indices)])
+pale_slot = None
+if pale_material_indices:
+    body.data.materials.append(head_materials[min(pale_material_indices)])
+    pale_slot = len(body.data.materials)-1
+pale_faces = 0
 body.data.update()
 for poly in body.data.polygons:
     poly.use_smooth = True
@@ -231,6 +238,12 @@ for poly in body.data.polygons:
         if (face_index is not None and distance < .0075
                 and head_material_indices[face_index] in nose_material_indices):
             poly.material_index = 1
+    if pale_slot is not None and poly.center.z > .60 and abs(poly.center.x) > .17:
+        _, _, face_index, distance = head_surface.find_nearest(poly.center)
+        if (face_index is not None and distance < .006
+                and head_material_indices[face_index] in pale_material_indices):
+            poly.material_index = pale_slot
+            pale_faces += 1
 body.name = 'akinza_continuous_construction'
 fragment_limit = args.fragment_voxels*body.data.remesh_voxel_size
 removed_fragments = remove_voxel_specks(body, max_extent=fragment_limit, min_z=.49)
@@ -246,6 +259,7 @@ bpy.ops.wm.save_as_mainfile(filepath=str(args.out/'akinza.blend'))
     'neckSections': [lower_inner_record, lower_record, upper_record, upper_inner_record],
     'seamWeldDistance': .000001,
     'noseMaterialTransfer': 'Nearest imported head polygon within .0075 world units after remesh',
+    'paleMaterialTransfer': {'slot': pale_slot, 'faces': pale_faces, 'rule': 'nearest imported head polygon within .006 world units, |x| above .17, z above .60'},
     'separateNoseObjectsPreserved': separate_noses,
     'tipCorrectionsAfterFinalRemesh': tip_corrections,
     'groundContactAfterFinalRemesh': contact_correction,
