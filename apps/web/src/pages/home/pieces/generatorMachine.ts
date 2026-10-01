@@ -2236,6 +2236,20 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.drawImage(mc2, MC.x, MC.y, MC.w, MC.h);
 			ctx.globalAlpha = a;
 		}
+		if (o6) {
+			// the shared machine's oil stains lie under the right cabinet's side: in 06 the foundation's top shows there instead, so no pale pad
+			const fnd = foundationFor(4);
+			if (fnd) {
+				ctx.save();
+				ctx.beginPath();
+				ctx.rect(MX + 100, GROUND, 140, 24);
+				ctx.clip();
+				ctx.globalAlpha = a;
+				ctx.drawImage(fnd, FND.x, FND.y, FND.w, FND.h);
+				topShadow(ctx, 4, a);
+				ctx.restore();
+			}
+		}
 		if (S.patchDent) {
 			// a clean piece of the same plate, copied over the dent
 			ctx.drawImage(mc, (MX + 88 - MC.x) * MQ, (344 - MC.y) * MQ, 16 * MQ, 28 * MQ, MX + 66, 344, 16, 28);
