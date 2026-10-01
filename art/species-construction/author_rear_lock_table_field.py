@@ -72,6 +72,21 @@ parser.add_argument('--taper-exp', type=float, default=1.4, help='exponent of th
 parser.add_argument('--cut-smooth', type=int, default=0, help='box-blur radius in voxels (3 passes) applied where the plate or dome cut changed the field; 0 = off')
 parser.add_argument('--t-scale', type=float, default=1., help='extra scale on the top-edge row (T) width and thickness')
 parser.add_argument('--samples', type=int, default=24, help='axis samples per lock')
+# round 8 options (all default to the earlier behaviour)
+parser.add_argument('--len-scale', default='', help='per-row lock length scale, e.g. B2=1.25,B3=1.35: the tip moves along the root-to-tip chord so tips cover the next row root')
+parser.add_argument('--len-jitter', type=float, default=0., help='extra deterministic length jitter (fraction, plus or minus) on rows T,B2,B3 so rows do not end on one line')
+parser.add_argument('--tip-sink', type=float, default=0., help='crest depth falls by this much (figure units) toward the tip of rows T,B2,B3, so tips dive into the surface instead of ending in a ledge')
+parser.add_argument('--sink-rows', default='T,B2,B3', help='rows that take --tip-sink')
+parser.add_argument('--tip-back', default='', help='per-row shift of the tip depth toward the rear (figure units), e.g. B1=.012,B2=.008; root-in is the matching shift of the root')
+parser.add_argument('--root-in', default='', help='per-row shift of the root depth toward the front (figure units), e.g. B2=.008')
+parser.add_argument('--tip-flat', type=float, default=0., help='B1 only: fraction of the spec tip-depth dive removed (1 keeps the tip at the root depth) so outer locks sweep rearward instead of pointing at a side camera')
+parser.add_argument('--row-width', default='', help='extra per-row width scale, e.g. C=1.4,D=1.25')
+parser.add_argument('--dome-setback', type=float, default=0., help='cut the head dome (|x| under --crown-width*1.4) back by this much at its rear (figure units) so dome-coat locks do not grow the profile rear')
+parser.add_argument('--depth-jitter', type=float, default=0., help='deterministic forward-only depth shift of rows T,B2,B3 locks, 0 to 2x this (figure units), so crests do not line up in a column in profile')
+parser.add_argument('--tip-point', type=float, default=0., help='fraction of the lock length over which the tip floor on half width decays to nothing, so tips end in a point instead of a rounded finger (0 = off)')
+parser.add_argument('--crown-lower', type=float, default=0., help='lower the rear half of the crown dome by this much at the centerline (figure units) so the crown tuft clears it')
+parser.add_argument('--crown-width', type=float, default=.06, help='half width of the crown lowering, figure units')
+parser.add_argument('--crown-df', type=float, nargs=2, default=[-.02, .01], help='crown lowering weight ramp in depth: 0 at the first value, 1 at the second')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=False)
@@ -187,6 +202,23 @@ if args.plate > 0 or args.dome_cut:
     print('cuts done', flush=True)
 
 
+if args.dome_setback > 0:
+    inside_ = field < 0
+    ny_ = inside_.shape[1]
+    yrear = np.where(inside_.any(axis=1), YS[ny_-1-inside_[:, ::-1, :].argmax(axis=1)], -9.).astype(np.float32)   # (nx, nz)
+    del inside_
+    u_ = np.abs(XS)[:, None]/S
+    zf_ = (Z0-ZS[None, :])/S                                  # figure y
+    wd = (smoothstep(1-u_/(args.crown_width*1.4))*smoothstep((zf_+.0)/.03)*smoothstep((.17-zf_)/.03)).astype(np.float32)
+    target = yrear-args.dome_setback*S*wd
+    gy = YS[None, :, None]-target[:, None, :]
+    slope = np.hypot(np.gradient(target, VS, axis=0), np.gradient(target, VS, axis=1))
+    gy = gy/np.sqrt(1+slope**2)[:, None, :]
+    field = np.where((wd > 1e-3)[:, None, :], np.maximum(field, gy.astype(np.float32)), field).astype(np.float32)
+    del gy
+    print('dome set back', flush=True)
+
+
 if args.cut_smooth:
     def box(a, r):
         for ax_ in range(3):
@@ -209,6 +241,27 @@ if args.cut_smooth:
         field[sl_] = sub+weight*(blur-sub)
     del changed
     print('cut smoothing done', flush=True)
+
+
+# ---- crown lowering: the model crown stands above the sheet's, so the tuft spikes would not clear it -----------------------
+def crown_weight(xb_u, df):
+    return smoothstep(1-xb_u/args.crown_width)*smoothstep((df-args.crown_df[0])/(args.crown_df[1]-args.crown_df[0]))
+
+
+if args.crown_lower > 0:
+    # Warp: the field is resampled so the crown dome moves down by crown_lower*S at the centerline, fading with |x|, with depth
+    # and with height above the crown base (no flat cut, so no stepping).
+    xu = np.abs(XS)[:, None]/S
+    dfy = (YS[None, :]-DF0)/S
+    wxy = crown_weight(xu, dfy).astype(np.float32)
+    nz = len(ZS)
+    zi = np.arange(nz, dtype=np.float32)
+    wz = smoothstep((ZS-(Z0-.075*S))/(.03*S)).astype(np.float32)
+    ix, iy = np.nonzero(wxy > 1e-3)
+    for a_, b_ in zip(ix, iy):
+        shift = args.crown_lower*S*wxy[a_, b_]*wz/VS            # voxels, per z
+        field[a_, b_, :] = np.interp(zi+shift, zi, field[a_, b_, :]).astype(np.float32)
+    print('crown lowered by warp', flush=True)
 
 
 # ---- front surface of the wing wall: wing locks never reach in front of it --------------------------------------------
@@ -245,7 +298,9 @@ def surface_depth(xb, yd):
 
 def surface_top(xb, df):
     hit, normal, _, _ = tree.ray_cast(Vector((-S*xb, S*df+DF0, 2.0)), Vector((0, 0, -1)))
-    return None if hit is None else float(hit.z)
+    if hit is None:
+        return None
+    return float(hit.z)-(args.crown_lower*S*float(crown_weight(abs(xb), df)) if args.crown_lower > 0 else 0.)
 
 
 def bezier(p0, p1, p2, p3, t):
@@ -253,8 +308,48 @@ def bezier(p0, p1, p2, p3, t):
     return (1-t)**3*p0+3*(1-t)**2*t*p1+3*(1-t)*t**2*p2+t**3*p3
 
 
+def row_opts(text):
+    out = {}
+    for part in text.split(','):
+        if part.strip():
+            k, v = part.split('=')
+            out[k.strip()] = float(v)
+    return out
+
+
+LEN_SCALE, TIP_BACK, ROOT_IN, ROW_WIDTH = row_opts(args.len_scale), row_opts(args.tip_back), row_opts(args.root_in), row_opts(args.row_width)
+
+
+def jitter_of(name):
+    import hashlib
+    return int(hashlib.md5(name.encode()).hexdigest()[:8], 16)/0xffffffff*2-1
+
+
+def adjust(l):
+    """Round 8 per-row changes to a table row: length, depth shifts, flat B1 tips."""
+    row = l['row']
+    l = dict(l)
+    k = LEN_SCALE.get(row, 1.)
+    if args.len_jitter and row in ('T', 'B2', 'B3'):
+        k *= 1+args.len_jitter*jitter_of(l['name'])
+    if k != 1.:
+        xr, yr = l['root']
+        xt, yt = l['tip']
+        l['tip'] = [xr+(xt-xr)*k, yr+(yt-yr)*k]
+    if row == 'B1' and args.tip_flat:
+        l['depthTip'] = l['depthTip']+args.tip_flat*(l['depthRoot']-l['depthTip'])
+    if args.depth_jitter and row in ('T', 'B2', 'B3'):
+        sh = -args.depth_jitter*(jitter_of(l['name']+'depth')+1)
+        l['depthTip'] += sh
+        l['depthRoot'] += sh
+    l['depthTip'] = l['depthTip']+TIP_BACK.get(row, 0.)
+    l['depthRoot'] = l['depthRoot']-ROOT_IN.get(row, 0.)
+    return l
+
+
 def lock_axis(l, n=None):
     n = n or args.samples
+    l = adjust(l)
     if l['row'] == 'D' and args.d_length != 1.:
         l = dict(l, tip=[l['root'][0]+(l['tip'][0]-l['root'][0])*args.d_length, l['root'][1]+(l['tip'][1]-l['root'][1])*args.d_length])
     """Axis samples in head-local space, arc length, frames. Positions in back-view figure units."""
@@ -277,6 +372,8 @@ def lock_axis(l, n=None):
     t = np.linspace(0, 1, n)
     xy = bezier(p0, p1, p2, p3, t)
     df = depth_root+(depth_tip-depth_root)*t
+    if args.tip_sink and row in args.sink_rows.split(','):
+        df = df-args.tip_sink*smoothstep((t-.45)/.55)
     return xy, df
 
 
@@ -288,7 +385,7 @@ def build_lock(l, lift_extra=0.):
         ys = [surface_depth(x, y) for x, y in xy]
         if any(v is None for v in ys):
             return None
-        df = (np.array(ys)-DF0)/S+args.d_lift
+        df = (np.array(ys)-DF0)/S+args.d_lift-args.dome_setback
     if row == 'C':
         # crown tuft: the six spikes grow out of the dome at the whorl; the root sits on the dome, the tip keeps the
         # height the spec gives it (no tip above the figure top)
@@ -325,6 +422,8 @@ def lock_field(sample, l, wscale, tscale):
 
     def half_width(t):
         rise = np.where(t < .4, wr/2+(wm/2-wr/2)*smoothstep(t/.4), wm/2*np.clip(1-(t-.4)/.6, 0, 1)**args.taper_exp)
+        if args.tip_point > 0:
+            return np.maximum(rise, hmin*np.clip((1-t)/args.tip_point, 0, 1)+.0004)
         return np.maximum(rise, hmin)
 
     def height(t):
@@ -385,7 +484,7 @@ for l in table:
         built.append({'name': l['name'], 'skipped': 'no surface'})
         continue
     ts = args.t_scale if l['row'] == 'T' else 1.
-    r = lock_field(ax, l, args.width_scale*ts, args.thick_scale*ts*(args.d_thick if l['row'] == 'D' else 1.))
+    r = lock_field(ax, l, args.width_scale*ts*ROW_WIDTH.get(l['row'], 1.), args.thick_scale*ts*(args.d_thick if l['row'] == 'D' else 1.))
     if r is None:
         continue
     sl, d = r
