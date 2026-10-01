@@ -12,6 +12,10 @@ The body becomes an OpenVDB level set. Two resampling passes, then one meshing:
           front edge the map is a shift that eases to the identity over frontFade, between the edges it is a linear
           stretch, behind the target back edge a shift that eases out over backFade. Weights in |x| (frontX, backX
           rows: y, full, end) keep the arms out of the map, and spec.yFade fades the whole pass in z.
+  smoothMap (spec.smoothMap true, round 4): the y map between the two edges is a smoothstep blend of the front and
+          back displacements instead of a piecewise linear stretch (no slope jump at the edges), and the
+          displacement tables dF, dB are densified and smoothed by spec.dispSigma (world units, applied twice) so
+          the table rows leave no ribbing. Without the key the round 3 behaviour is unchanged.
   optional beltBlur: a z-direction Gaussian blend over the belt line (zRange, sigma) within |x| xFull.
 
 Monotonicity of every map is checked, so the field never folds. Every parameter is in the spec.
@@ -128,8 +132,15 @@ Bm = gauss_smooth(fit_to_world_y(row_interp(edges, 2)), VS, sm)
 Ft = gauss_smooth(fit_to_world_y(row_interp(edges, 3)), VS, sm)
 Bt = gauss_smooth(fit_to_world_y(row_interp(edges, 4)), VS, sm)
 kz = smooth((fy-yf['topZero'])/(yf['topFull']-yf['topZero']))*smooth((yf['bottomZero']-fy)/(yf['bottomZero']-yf['bottomFull']))
-dF = (Fm-Ft)*kz      # source minus target at the front edge (negative y is forward)
-dB = (Bm-Bt)*kz
+dF = Fm-Ft           # source minus target at the front edge (negative y is forward)
+dB = Bm-Bt
+SMOOTH_MAP = bool(spec.get('smoothMap'))
+if SMOOTH_MAP and spec.get('dispSigma'):
+    for _ in range(2):          # smooth the raw difference first, fade after, so the ends of the slab stay at zero
+        dF = gauss_smooth(dF, VS, spec['dispSigma'])
+        dB = gauss_smooth(dB, VS, spec['dispSigma'])
+dF = dF*kz
+dB = dB*kz
 fx = np.array(spec['frontX']); bx = np.array(spec['backX'])
 xsm = spec.get('xSmoothing', 0)     # optional smoothing (world z) of the lateral weight tables
 full_f, end_f = (gauss_smooth(np.interp(fy, fx[:, 0], fx[:, c]), VS, xsm) for c in (1, 2))
@@ -142,6 +153,9 @@ if hw:
     rows = np.array(hw['rows'])
     M = np.interp(fy, rows[:, 0], rows[:, 1])*H
     T = np.interp(fy, rows[:, 0], rows[:, 2])*H
+    if hw.get('sigma'):         # smooth both tables so row corners do not print as bands (round 4)
+        M = gauss_smooth(M, VS, hw['sigma'])
+        T = gauss_smooth(T, VS, hw['sigma'])
     kx_z = smooth((fy-hw['fadeTop'][0])/(hw['fadeTop'][1]-hw['fadeTop'][0]))*smooth((hw['fadeBottom'][1]-fy)/(hw['fadeBottom'][1]-hw['fadeBottom'][0]))
     Lx = hw['lateralFade']
     sub = field[:, :, z0:z1].copy()
@@ -174,7 +188,11 @@ for k in range(sub.shape[2]):
     bm = bt+wb*dB[k]
     front = yy+(fm-ft)[:, None]*(1-smooth((ft-yy)/LF))
     back = yy+(bm-bt)[:, None]*(1-smooth((yy-bt)/LB))
-    mid = fm[:, None]+(yy-ft)*((bm-fm)/(bt-ft))[:, None]
+    if SMOOTH_MAP:
+        t = smooth((yy-ft)/(bt-ft))
+        mid = yy+(fm-ft)[:, None]*(1-t)+(bm-bt)[:, None]*t
+    else:
+        mid = fm[:, None]+(yy-ft)*((bm-fm)/(bt-ft))[:, None]
     src = np.where(yy < ft, front, np.where(yy <= bt, mid, back))
     d = np.diff(src, axis=1)/VS
     min_dy = min(min_dy, float(d.min()))
