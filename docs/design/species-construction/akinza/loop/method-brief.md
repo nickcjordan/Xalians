@@ -17,6 +17,10 @@ Write `methods.json` and `methods.md` in this folder. For every region:
 - `why`: the gap-audit rows and failing criteria this method closes that the current one cannot, in one or two sentences.
 - `failureLooks`: what this method produces when it goes wrong, so the critic and the builder recognise it.
 - `stallNext`: the method to switch to if this one parks.
+- `changed`: true when this method differs from the one the region's history shows. A parked region is unparked only when it is true.
+- `respec`: true when the region's current spec would mislead a builder using this method; the spec is then rewritten before the region's next order.
+
+Regions on hold by Nick's direction get the method `hold` and nothing else.
 
 Prefer a method that authors the region from parameters over one that warps the previous mesh, when the region's structure (counts, lengths, directions, cross sections) is wrong rather than its surface. Name an existing tool when one fits; when none does, say exactly what a new generator must take and produce, so the first order for that region builds the tool. Do not plan hair texture, color or fur strands below the scale of the coat masses; that is later work.
 
