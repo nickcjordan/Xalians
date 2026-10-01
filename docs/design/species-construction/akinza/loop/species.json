@@ -17,7 +17,19 @@
   "frame": {
     "note": "Figure units. Model rows are fixed in world space: floorZ is the floor, fixedHeight the loop-start figure's height (assembled-0156, floor -.957 to crown .9035). A row fraction 'at' runs from the crown (0) to the floor (1): z = floorZ + fixedHeight * (1 - at). Lateral coordinates are world x or y divided by fixedHeight.",
     "floorZ": -0.957,
-    "fixedHeight": 1.8605
+    "fixedHeight": 1.8605,
+    "render": {
+      "note": "Fixed camera frame of the whole-creature renders: the target (world point the cameras aim at) and the orthographic scale. These are the frame assembled-0458 had when auto-fitted to its bounds; fixing them stops a taller ear tip from rescaling and shifting every body pixel (shakedown head swap 2026-10-01: orthoScale 3.198 to 3.228 moved eleven body criteria). The figure must stay inside the frame; the renderer fails when it does not.",
+      "center": [0.028725504875183105, 0.16471073031425476, -0.03000742197036743],
+      "scale": 3.198124453425407
+    },
+    "centerLine": {
+      "note": "World coordinate of the figure centreline in each view, along the view's horizontal axis (x for front and back, y for left and right). The fit and the row measures centre the model on it instead of on the ear fan of each render, so a head change cannot shift the body measurements (shakedown head swap 2026-10-01: the fan centre moved 2.5 px). Values are the fan centres of assembled-0458, so the baseline measures as before.",
+      "front": -0.008585947081446645,
+      "back": -0.005920847901253568,
+      "left": -0.012519104849256307,
+      "right": -0.012519102337982507
+    }
   },
   "join": {
     "note": "Defaults of the assembly join (loop_tools.py assemble ... --join). These are today's placement and bridge parameters; a join JSON overrides any subset. For a retargeted body (retarget.json headShiftZ) the shift is added to jaw-anchor-z and body-trim.",

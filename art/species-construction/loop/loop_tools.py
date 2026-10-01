@@ -170,6 +170,14 @@ def cmd_blender(args):
     print(f'ok; log {log}')
 
 
+def frame_arguments():
+    """The species' fixed render frame as renderer options (empty: the renderer fits to the bounds)."""
+    frame = SPECIES['frame'].get('render')
+    if not frame:
+        return []
+    return ['--frame-center', ','.join(repr(v) for v in frame['center']), '--frame-scale', repr(frame['scale'])]
+
+
 def cmd_render(args):
     out = work(args.name)
     glb = out/GLB
@@ -178,7 +186,7 @@ def cmd_render(args):
     if not (out/'render').exists():
         run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'render_shape_study.py'), '--',
                      '--mesh', str(glb), '--out', str(out/'render'), '--preserve-materials', '--studio-fill',
-                     '--turntable'], WORK/f'{args.name}-render.log')
+                     '--turntable', *frame_arguments()], WORK/f'{args.name}-render.log')
     if not (out/'render/torso.json').exists():
         run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'torso_sections.py'), '--',
                      '--mesh', str(glb), '--out', str(out/'render/torso.json')], WORK/f'{args.name}-torso.log')
@@ -293,17 +301,19 @@ def six_views(render):
     return row
 
 
-def width_profile(mask, span=None):
-    """Widths per 2% row. span=(top, bottom) fixes the rows in pixels instead of the mask's bounding box."""
+def width_profile(mask, span=None, cx=None):
+    """Widths per 2% row. span=(top, bottom) fixes the rows in pixels instead of the mask's bounding box;
+    cx fixes the centreline column instead of the ear fan's."""
     rows = np.where(mask.any(axis=1))[0]
     top, bottom = span if span else (rows.min(), rows.max())
     height = bottom-top
     # Body centerline: midpoint of the widest row in the top fifth (the ear fan,
     # centered on the head). The topmost row is often one off-center tuft.
     band = range(max(top, rows.min()), int(top+.2*height))
-    widest = max(band, key=lambda r: np.ptp(np.where(mask[r])[0]) if mask[r].any() else -1)
-    cols = np.where(mask[widest])[0]
-    cx = (cols.min()+cols.max())/2
+    if cx is None:
+        widest = max(band, key=lambda r: np.ptp(np.where(mask[r])[0]) if mask[r].any() else -1)
+        cols = np.where(mask[widest])[0]
+        cx = (cols.min()+cols.max())/2
     table = []
     for fraction in np.round(np.arange(0, 1.0001, .02), 2):
         row = mask[min(mask.shape[0]-1, int(top+fraction*height))]
@@ -345,6 +355,24 @@ def model_span(render, view):
     return round(row(FLOOR_Z+FIXED_HEIGHT)), round(row(FLOOR_Z))
 
 
+def centerline_col(view, camera):
+    """Pixel column of the species' fixed figure centreline in a render camera, or None when the species
+    config has none (the fit then centres on the ear fan, which moves with the head)."""
+    line = SPECIES['frame'].get('centerLine', {}).get(view)
+    if line is None:
+        return None
+    width, height = camera['resolution']
+    matrix = np.array(camera['matrixWorld'], float)
+    right, origin = matrix[:3, 0], matrix[:3, 3]
+    axis = 0 if abs(right[0]) >= abs(right[1]) else 1
+    return width/2+(line*right[axis]-origin@right)*max(width, height)/camera['orthoScale']
+
+
+def model_center(render, view):
+    geometry = json.loads((render/'geometry.json').read_text(encoding='utf-8'))
+    return centerline_col(view, next(c for c in geometry['cameras'] if c['name'] == view))
+
+
 def measurements(name):
     render = work(name)/'render'
     reference = np.array(Image.open(SPECIES.docs/SPECIES['referenceSheet']).convert('L')) < 200
@@ -352,7 +380,8 @@ def measurements(name):
                    'central torso run can include arms at waist and hip rows.'}
     for view, (a, b) in REFERENCE_PANELS.items():
         ref = width_profile(reference[:, a:b])
-        model = width_profile(np.array(Image.open(render/f'{view}.png').getchannel('A')) > 20, model_span(render, view))
+        model = width_profile(np.array(Image.open(render/f'{view}.png').getchannel('A')) > 20, model_span(render, view),
+                              model_center(render, view))
         model_named = named(model)
         torso = render/'torso.json'
         if torso.exists():
@@ -502,15 +531,16 @@ def fill_small_holes(mask, limit=.004):
     return mask | np.isin(holes, small)
 
 
-def canonical(mask, span=None):
+def canonical(mask, span=None, cx=None):
     mask = fill_small_holes(mask)
     rows = np.where(mask.any(axis=1))[0]
     top, bottom = span if span else (rows.min(), rows.max())
     height = bottom-top
-    band = range(max(top, rows.min()), int(top+.2*height))
-    widest = max(band, key=lambda r: np.ptp(np.where(mask[r])[0]) if mask[r].any() else -1)
-    cols = np.where(mask[widest])[0]
-    cx = (cols.min()+cols.max())/2
+    if cx is None:
+        band = range(max(top, rows.min()), int(top+.2*height))
+        widest = max(band, key=lambda r: np.ptp(np.where(mask[r])[0]) if mask[r].any() else -1)
+        cols = np.where(mask[widest])[0]
+        cx = (cols.min()+cols.max())/2
     v = top+np.arange(FIT_GRID)[:, None]/FIT_GRID*height+np.zeros((1, FIT_GRID))
     u = cx+(np.arange(FIT_GRID)[None, :]-FIT_GRID/2)/FIT_GRID*height+np.zeros((FIT_GRID, 1))
     inside = (v >= 0) & (v < mask.shape[0]) & (u >= 0) & (u < mask.shape[1])
@@ -556,7 +586,8 @@ def cmd_fit(args):
         path = render/f"{view.split('-r03')[0]}.png"
         if not path.exists():
             continue
-        model = canonical(np.array(Image.open(path).getchannel('A')) > 20, model_span(render, path.stem))
+        model = canonical(np.array(Image.open(path).getchannel('A')) > 20, model_span(render, path.stem),
+                          model_center(render, path.stem))
         ref = canonical(reference_figure(view))
         result['views'][view] = fit_scores(model, ref)
         pictures.append(overlay(model, ref, view))
@@ -696,7 +727,7 @@ def row_value(criterion, assembly):
     render, view = work(assembly)/'render', criterion['view']
     model = row_measures.load_mask(render/f'{view}.png')
     ref = reference_figure(view)
-    return row_measures.evaluate(criterion, model, row_measures.mask_frame(model, model_span(render, view)),
+    return row_measures.evaluate(criterion, model, row_measures.mask_frame(model, model_span(render, view), model_center(render, view)),
                                  ref, row_measures.mask_frame(ref))
 
 
@@ -835,7 +866,7 @@ def cmd_posed(args):
     pictures = []
     for view in rf.VIEWS:
         mask = np.array(Image.open(out/f'{view}.png').getchannel('A')) > 20
-        m = rf.model_canonical(mask)
+        m = rf.model_canonical(mask, view)
         ref = rf.reference(view)
         result['views'][view] = {'half': rf.scores(m, ref, view, True), 'full': rf.scores(m, ref, view, False)}
         pictures.append(rf.overlay_half(m, ref, view, f'{view} (posed)', True))

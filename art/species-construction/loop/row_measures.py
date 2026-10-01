@@ -19,10 +19,12 @@ import numpy as np
 from PIL import Image
 
 
-def mask_frame(mask, span=None):
+def mask_frame(mask, span=None, cx=None):
     rows = np.where(mask.any(axis=1))[0]
     top, bottom = span if span else (rows.min(), rows.max())
     height = bottom-top
+    if cx is not None:
+        return top, height, cx
     band = range(max(top, rows.min()), int(top+.2*height))
     widest = max(band, key=lambda r: np.ptp(np.where(mask[r])[0]) if mask[r].any() else -1)
     cols = np.where(mask[widest])[0]

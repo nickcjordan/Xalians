@@ -63,8 +63,18 @@ def reference(view):
     return _REF[view]
 
 
-def model_canonical(mask):
-    return lt.canonical(mask, span())
+def model_center(view):
+    """Pixel column of the species' fixed centreline in this module's camera, or None (fan centring)."""
+    line = lt.SPECIES['frame'].get('centerLine', {}).get(view)
+    if line is None:
+        return None
+    right, _ = cam_axes(view)
+    axis = 0 if abs(right[0]) >= abs(right[1]) else 1
+    return WIDTH/2+(line*right[axis]-CENTER@right)*PER_UNIT
+
+
+def model_canonical(mask, view=None):
+    return lt.canonical(mask, span(), model_center(view) if view else None)
 
 
 def half_columns(view):
@@ -117,7 +127,7 @@ def evaluate(points, half=True):
     """Canonical masks and scores for the three views from one posed point cloud."""
     res = {}
     for view in VIEWS:
-        m = model_canonical(raster(points, view))
+        m = model_canonical(raster(points, view), view)
         res[view] = (m, reference(view), scores(m, reference(view), view, half))
     return res
 
@@ -126,7 +136,7 @@ def objective(points):
     """Higher is better: tail-free trunk and leg IoU, plus the whole half."""
     total = 0.
     for view in VIEWS:
-        m = model_canonical(raster(points, view))
+        m = model_canonical(raster(points, view), view)
         s = scores(m, reference(view), view, True)
         total += .2*s['all']['iou']+.25*s['trunk']['iou']+.25*s['legs']['iou']+.3*s['arm']['iou']
     return total/3
