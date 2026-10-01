@@ -353,3 +353,4 @@
 /* An enemy plate that carries tags (a support aimed at it) takes its preview number at the top of its figure area, clear of them. */
 .pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { bottom: auto; top: 2px; left: 50%; right: auto; transform: translateX(-50%); }
 .pwt-row.enemies .pwt-plate.boss:has(.pwt-threat) .pwt-preview { left: auto; right: 4px; transform: none; }
+.pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { left: auto; right: 4px; transform: none; }

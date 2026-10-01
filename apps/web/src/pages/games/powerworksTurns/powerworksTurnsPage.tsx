@@ -695,8 +695,9 @@ export default function PowerworksTurnsPage() {
     for (const m of moments.slice(0, beatIndex + 1)) for (const b of m.beats) if (b.event.kind === "redirect") turned.set(b.event.actor, (b.event as { to: string }).to);
     return restThreats.filter((x) => !acted.has(x.fromId)).map((x) => (turned.has(x.fromId) ? retargetThreat(run, x, turned.get(x.fromId)!) : x));
   }, [busy, shownKeyView, anyPreview, run, previews, restThreats, moments, beatIndex, landed]);
-  // While the stage holds on a fall there is no live turn, so no promises are shown.
-  const threatsOn = (id: string) => (holding ? [] : shownThreats.filter((x) => x.on === id));
+  // While the stage holds on a fall there is no live turn, so no promises are shown; on a short phone stage the tags of the plate a blow
+  // is landing on step aside for the landing number.
+  const threatsOn = (id: string) => (holding || (phone && landed && targets.includes(id)) ? [] : shownThreats.filter((x) => x.on === id));
   const threatMode = (fromId: string): ThreatMode => (!busy ? "live" : actorId === fromId ? "lit" : "dim");
   // The enemy whose line shows: a hovered tag, else the enemy under the pointer while no move is chosen.
   const focusEnemy = useMemo(() => {

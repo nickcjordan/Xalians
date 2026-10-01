@@ -705,8 +705,8 @@
 .pwt-console.phone .pwt-lesson-then { display: none; }
 .pwt-console.phone .pwt-lesson .pwt-legend-tile { width: 62px; height: 46px; }
 /* The enemy row takes more of the short stage, the squad row less. */
-.pwt-console.phone .pwt-row.enemies { height: 58%; }
-.pwt-console.phone .pwt-row.squad { height: 40%; }
+.pwt-console.phone .pwt-row.enemies { height: 50%; }
+.pwt-console.phone .pwt-row.squad { height: 48%; }
 .pwt-console.phone .pwt-plate.boss .pwt-preview { bottom: 19px; left: auto; right: 2px; transform: none; }
 /* The matchup mark is its icon alone on a phone plate (the plate is too narrow for the word beside the element tag). */
 .pwt-console.phone .pwt-match { width: 20px; height: 16px; padding: 0; justify-content: center; }
@@ -751,3 +751,6 @@
 /* The few cases a short phone plate cannot hold two things at its head: a previewed enemy's own tags step aside, and a companion's head pointer gives way to its tags (its green plaque still marks it). */
 .pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-preview) .pwt-tabs { visibility: hidden; }
 .pwt-console.phone .pwt-row.squad .pwt-plate:has(.pwt-threat) .pwt-spot-pointer { display: none; }
+.pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { top: 0; }
+/* The tags of the plate a blow is landing on step aside for the landing number (a short phone stage has no room for both). */
+.pwt-console.phone .pwt-plate.impact-target .pwt-tabs { visibility: hidden; }

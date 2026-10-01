@@ -234,6 +234,8 @@ async function riderProblems(page) {
         if (lunging || tg.closest(".pwt-plate.lit")) return;
         for (const a of covered) {
           if (!a.getBoundingClientRect().width) continue;
+          // On a phone the plaque's name row repeats the letter and the guardian tag, so a tag may ride over them there (as a preview number may).
+          if (phoneText && (a.classList.contains("pwt-letter") || a.classList.contains("pwt-guardian-tag"))) continue;
           if (hit(tr, a.getBoundingClientRect())) out.push(`threat tag ${who} covers ${a.className.toString().split(" ")[0]} of ${a.closest("[data-unit]")?.getAttribute("data-unit") ?? "?"}`);
         }
         if (movesRow && hit(tr, movesRow.getBoundingClientRect())) out.push(`threat tag ${who} covers the moves row`);
