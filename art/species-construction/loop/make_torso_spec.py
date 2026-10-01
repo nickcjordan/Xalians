@@ -42,6 +42,8 @@ for y in sorted(FRONT_T):
 spec['edges'] = edges
 
 anchors = {.40: .0816, .42: .0699, .44: .0640, .46: .0680, .48: .0765, .50: .0885, .52: .1030, .54: .1170, .56: .1300, .58: .1393, .60: .1445, .62: .1470}
+if '--hw-anchors' in sys.argv:   # round 10: 'y:val,y:val,...' replaces the target flank anchors (fit half widths)
+    anchors = {float(a.split(':')[0]): float(a.split(':')[1]) for a in sys.argv[sys.argv.index('--hw-anchors')+1].split(',')}
 pc = PchipInterpolator(list(anchors), list(anchors.values()))
 hw = []
 for y in np.round(np.arange(.40, .6201, .005), 3):
@@ -50,6 +52,16 @@ for y in np.round(np.arange(.40, .6201, .005), 3):
     hw.append([float(y), r['halfLeft'] if y <= .60 else t, t])
 spec['halfWidth'] = {'note': 'rows: y, measured model half width (left), target half width (fit); x pass about the midline; sigma smooths the tables (world)',
                      'rows': hw, 'fadeTop': [.41, .45], 'fadeBottom': [.57, .60], 'lateralFade': .08, 'sigmaM': SIGMA_M, 'sigmaT': SIGMA_T, 'sigmaRatio': SIGMA_R}
+if '--skip-y' in sys.argv:       # round 10: leave the y pass out (no resampling when only the flank is edited)
+    spec['skipYPass'] = True
+if '--y-weight' in sys.argv:     # round 10: 'full,zero' world y; the x map fades to the identity behind the trunk (tail root)
+    full, zero = (float(v) for v in sys.argv[sys.argv.index('--y-weight')+1].split(','))
+    spec['halfWidth']['yWeight'] = [full, zero]
+if '--auto-m' in sys.argv:       # round 10: measure the model half width from the (pre-blurred) field instead of the table column
+    spec['halfWidth']['autoM'] = True
+if '--pre-blur' in sys.argv:     # round 10: 'zTop,zBot,zFade,sigma,xPad,xFade' world; z blur of the flank before the x map
+    zt, zb, zf, sg, xp, xf = (float(v) for v in sys.argv[sys.argv.index('--pre-blur')+1].split(','))
+    spec['halfWidth']['preBlur'] = {'zRange': [zt, zb], 'zFade': zf, 'sigma': sg, 'xPad': xp, 'xFade': xf}
 spec['note'] = 'v6: model rows measured from the live body (trunk_measure.py), dense half width tables, sigma .02; lumbar hollow to the sheet depth.'
 spec.pop('beltBlur', None)
 if '--belt-blur' in sys.argv:   # z range world, fixed: the crease sits at fit .495 (z -.016) in body-0325

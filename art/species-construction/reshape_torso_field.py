@@ -18,6 +18,13 @@ The body becomes an OpenVDB level set. Two resampling passes, then one meshing:
           the table rows leave no ribbing. Without the key the round 3 behaviour is unchanged.
   halfWidth sigmaRatio (round 9): smooths the per-slice scale (source over target half width) that drives the x map.
   halfWidth sigmaM / sigmaT (round 9): smooth the measured model half width and the target separately (sigma sets both).
+  halfWidth yWeight (round 10): [full, zero] world y. The x map is blended to the identity behind y = full (zero weight at
+          y = zero), so a flank pass leaves the tail root, which sits behind the trunk, where it was.
+  halfWidth preBlur (round 10): a z-direction Gaussian blend of the flank BEFORE the x map: {zRange, zFade, sigma, xPad, xFade}
+          (world z; the weight is 1 inside the flank half width plus xPad and fades out over xFade, so the arms are not blurred).
+  halfWidth autoM (round 10): true measures the model half width per slice from the field itself (after preBlur) instead of
+          reading the table's model column: first exit from the midline along -x at every deep-inside y, widest.
+  spec.skipYPass (round 10): true leaves out the y pass (no resampling at all when only the flank is edited).
   optional beltBlur: a z-direction Gaussian blend over the belt line (zRange, sigma) within |x| xFull.
 
 Monotonicity of every map is checked, so the field never folds. Every parameter is in the spec.
@@ -164,17 +171,64 @@ if hw:
         T = gauss_smooth(T, VS, sig_t)
     kx_z = smooth((fy-hw['fadeTop'][0])/(hw['fadeTop'][1]-hw['fadeTop'][0]))*smooth((hw['fadeBottom'][1]-fy)/(hw['fadeBottom'][1]-hw['fadeBottom'][0]))
     Lx = hw['lateralFade']
+    pb = hw.get('preBlur')
+    if pb:
+        a_top, a_bot = pb['zRange']
+        blk_all = field[:, :, z0:z1]
+        radius = int(math.ceil(3*pb['sigma']/VS))
+        kern = np.exp(-.5*(np.arange(-radius, radius+1)*VS/pb['sigma'])**2)
+        kern /= kern.sum()
+        padded = np.pad(blk_all, ((0, 0), (0, 0), (radius, radius)), mode='edge')
+        blurred = np.zeros_like(blk_all)
+        for i, wk in enumerate(kern):
+            blurred += wk*padded[:, :, i:i+blk_all.shape[2]]
+        wz = smooth((a_top+pb['zFade']-zz)/pb['zFade'])*smooth((zz-(a_bot-pb['zFade']))/pb['zFade'])
+        wx = 1-smooth((ax[:, None]-(T[None, :]+pb['xPad']))/pb['xFade'])
+        wgt = (wx*wz[None, :])[:, None, :]
+        field[:, :, z0:z1] = (blk_all*(1-wgt)+blurred*wgt).astype(np.float32)
+        report['preBlur'] = {'zSlab': [float(zz[0]), float(zz[-1])]}
+    if hw.get('autoM'):
+        ix0 = int(np.argmin(np.abs(xs)))
+        Mauto = np.zeros(len(zz))
+        for k in range(len(zz)):
+            col = field[:, :, z0+k]
+            best = 0.
+            for j in np.where(col[ix0, :] < -.0125)[0]:
+                i = ix0
+                while i > 0 and col[i-1, j] < 0:
+                    i -= 1
+                # linear exit between voxel i-1 and i
+                a_, b_ = col[i-1, j], col[i, j]
+                xe = xs[i-1]+(xs[i]-xs[i-1])*(0-a_)/(b_-a_) if b_ != a_ else xs[i]
+                best = max(best, abs(xe))
+            Mauto[k] = best
+        M = gauss_smooth(Mauto, VS, sig_m) if sig_m else Mauto
+        report['autoM'] = {'zRange': [float(zz[0]), float(zz[-1])]}
     Mz = T+kx_z*(M-T)                           # source half width per slice (T when the weight is 0)
     if hw.get('sigmaRatio'):    # round 9: smooth the per-slice scale Mz/T, so the x map has no row-to-row wiggle (ripples)
         Mz = T*gauss_smooth(Mz/T, VS, hw['sigmaRatio'])
     sub = field[:, :, z0:z1].copy()
     mins = []
+    yw = hw.get('yWeight')
+    w_y = 1-smooth((ys-yw[0])/(yw[1]-yw[0])) if yw else None
     for k in range(sub.shape[2]):
         Mk = Mz[k]
         inside = ax*(Mk/T[k])
         outside = Mk+(ax-T[k])*(T[k]+Lx-Mk)/Lx
         srcx = np.where(ax >= T[k]+Lx, ax, np.where(ax >= T[k], outside, inside))
         srcx = np.where(xs < 0, -srcx, srcx)
+        if w_y is not None:
+            src2 = xs[:, None]+w_y[None, :]*(srcx-xs)[:, None]
+            d = np.diff(src2, axis=0)/VS
+            mins.append(float(d.min()))
+            if d.min() <= .1:
+                raise ValueError('x warp folds at slice %d' % k)
+            idx = np.clip((src2-xs[0])/VS, 0, len(xs)-1.000001)
+            i0 = np.floor(idx).astype(np.int64)
+            f = (idx-i0).astype(np.float32)
+            col = sub[:, :, k]
+            sub[:, :, k] = np.take_along_axis(col, i0, axis=0)*(1-f)+np.take_along_axis(col, i0+1, axis=0)*f
+            continue
         d = np.diff(srcx)/VS
         mins.append(float(d.min()))
         if d.min() <= .1:
@@ -186,35 +240,36 @@ if hw:
     field[:, :, z0:z1] = sub
     report['xPass'] = {'minDsrcDx': min(mins)}
 
-sub = field[:, :, z0:z1].copy()
-min_dy = 9.
-yy = np.broadcast_to(ys[None, :], (len(xs), len(ys)))
-for k in range(sub.shape[2]):
-    wf = 1-smooth((ax-full_f[k])/(end_f[k]-full_f[k]))
-    wb = 1-smooth((ax-full_b[k])/(end_b[k]-full_b[k]))
-    ft, bt = Ft[k], Bt[k]
-    fm = ft+wf*dF[k]                      # (x,) source front edge for each x
-    bm = bt+wb*dB[k]
-    front = yy+(fm-ft)[:, None]*(1-smooth((ft-yy)/LF))
-    back = yy+(bm-bt)[:, None]*(1-smooth((yy-bt)/LB))
-    if SMOOTH_MAP:
-        t = smooth((yy-ft)/(bt-ft))
-        mid = yy+(fm-ft)[:, None]*(1-t)+(bm-bt)[:, None]*t
-    else:
-        mid = fm[:, None]+(yy-ft)*((bm-fm)/(bt-ft))[:, None]
-    src = np.where(yy < ft, front, np.where(yy <= bt, mid, back))
-    d = np.diff(src, axis=1)/VS
-    min_dy = min(min_dy, float(d.min()))
-    if d.min() <= .1:
-        ix, iy = np.unravel_index(np.argmin(d), d.shape)
-        raise ValueError(f'y warp folds: dsrc/dy {d.min():.3f} at x={xs[ix]:.3f} y={ys[iy]:.3f} z={zz[k]:.3f}')
-    idy = np.clip((src-ys[0])/VS, 0, len(ys)-1.000001)
-    j0 = np.floor(idy).astype(np.int64)
-    f = (idy-j0).astype(np.float32)
-    col = sub[:, :, k]
-    sub[:, :, k] = np.take_along_axis(col, j0, axis=1)*(1-f)+np.take_along_axis(col, j0+1, axis=1)*f
-field[:, :, z0:z1] = sub
-report['yPass'] = {'minDsrcDy': min_dy, 'zSlices': int(z1-z0), 'zRange': [float(zz[0]), float(zz[-1])]}
+if not spec.get('skipYPass'):
+    sub = field[:, :, z0:z1].copy()
+    min_dy = 9.
+    yy = np.broadcast_to(ys[None, :], (len(xs), len(ys)))
+    for k in range(sub.shape[2]):
+        wf = 1-smooth((ax-full_f[k])/(end_f[k]-full_f[k]))
+        wb = 1-smooth((ax-full_b[k])/(end_b[k]-full_b[k]))
+        ft, bt = Ft[k], Bt[k]
+        fm = ft+wf*dF[k]                      # (x,) source front edge for each x
+        bm = bt+wb*dB[k]
+        front = yy+(fm-ft)[:, None]*(1-smooth((ft-yy)/LF))
+        back = yy+(bm-bt)[:, None]*(1-smooth((yy-bt)/LB))
+        if SMOOTH_MAP:
+            t = smooth((yy-ft)/(bt-ft))
+            mid = yy+(fm-ft)[:, None]*(1-t)+(bm-bt)[:, None]*t
+        else:
+            mid = fm[:, None]+(yy-ft)*((bm-fm)/(bt-ft))[:, None]
+        src = np.where(yy < ft, front, np.where(yy <= bt, mid, back))
+        d = np.diff(src, axis=1)/VS
+        min_dy = min(min_dy, float(d.min()))
+        if d.min() <= .1:
+            ix, iy = np.unravel_index(np.argmin(d), d.shape)
+            raise ValueError(f'y warp folds: dsrc/dy {d.min():.3f} at x={xs[ix]:.3f} y={ys[iy]:.3f} z={zz[k]:.3f}')
+        idy = np.clip((src-ys[0])/VS, 0, len(ys)-1.000001)
+        j0 = np.floor(idy).astype(np.int64)
+        f = (idy-j0).astype(np.float32)
+        col = sub[:, :, k]
+        sub[:, :, k] = np.take_along_axis(col, j0, axis=1)*(1-f)+np.take_along_axis(col, j0+1, axis=1)*f
+    field[:, :, z0:z1] = sub
+    report['yPass'] = {'minDsrcDy': min_dy, 'zSlices': int(z1-z0), 'zRange': [float(zz[0]), float(zz[-1])]}
 
 bb = spec.get('beltBlur')
 if bb:
