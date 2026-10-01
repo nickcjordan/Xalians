@@ -1181,7 +1181,7 @@ function surface() {
  * the side toward Valleron's light and falling away through a wide soft terminator into a deep crimson-brown night side with
  * ember lights; a thin crimson atmosphere hugging the whole limb, brightest on the lit side.
  */
-function drawPlanet(ctx: Ctx, cx: number, cy: number, R: number, L: readonly [number, number], a: number, o?: { sc: number; ax: number; ay: number; night: number; detail: number; foot: number; shift: number; fy: number }) {
+function drawPlanet(ctx: Ctx, cx: number, cy: number, R: number, L: readonly [number, number], a: number, o?: { sc: number; ax: number; ay: number; night: number; detail: number; foot: number; shift: number; fy: number; rim: number }) {
 	if (a < 0.004 || R < 1.5) return;
 	const Re = Math.min(R, 340);
 	// the frame of the visible cap: a planet of radius Re whose top is the limb
@@ -1195,9 +1195,11 @@ function drawPlanet(ctx: Ctx, cx: number, cy: number, R: number, L: readonly [nu
 	hg.addColorStop(0, css([214, 54, 68], 0.5));
 	hg.addColorStop(0.3, css([180, 42, 58], 0.2));
 	hg.addColorStop(1, css([180, 42, 58], 0));
-	ctx.globalAlpha = a;
+	const rk = o ? o.rim : 1;
+	ctx.globalAlpha = a * rk;
 	ctx.fillStyle = hg;
 	ctx.fillRect(cx - R - th, cy - R - th, (R + th) * 2, (R + th) * 2);
+	ctx.globalAlpha = a;
 	ctx.globalCompositeOperation = 'source-over';
 	// the body
 	ctx.save();
@@ -1279,12 +1281,14 @@ function drawPlanet(ctx: Ctx, cx: number, cy: number, R: number, L: readonly [nu
 	const wd = Math.min(R * 0.12, 60);
 	const ag = ctx.createRadialGradient(cx, cy, R - wd, cx, cy, R);
 	ag.addColorStop(0, css([200, 50, 66], 0));
-	ag.addColorStop(1, css([200, 50, 66], 0.4));
+	ag.addColorStop(1, css([200, 50, 66], 0.4 * (0.25 + 0.75 * rk)));
 	ctx.fillStyle = ag;
 	ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
 	ctx.restore();
 	// the rim: crimson all round, hot on the lit side (stacked arcs thinning to nothing)
 	const al = Math.atan2(L[1], L[0]);
+	ctx.save();
+	ctx.globalAlpha = rk;
 	ctx.lineWidth = Math.max(1, R * 0.008);
 	ctx.strokeStyle = css([210, 56, 70], 0.4);
 	ctx.beginPath();
@@ -1299,6 +1303,7 @@ function drawPlanet(ctx: Ctx, cx: number, cy: number, R: number, L: readonly [nu
 		ctx.stroke();
 	}
 	ctx.globalCompositeOperation = 'source-over';
+	ctx.restore();
 	// ember lights on the night side
 	if (R > 24) {
 		ctx.globalCompositeOperation = 'lighter';
@@ -1568,7 +1573,7 @@ export function createOutbreak(): Figure {
 					ctx.globalAlpha = A * texA;
 					ctx.drawImage(hz, -EXT, -EXT, EXT * 2, EXT * 2);
 					ctx.globalCompositeOperation = 'lighter';
-					ctx.globalAlpha = A * texA * (compact ? 0.32 : 0.5);
+					ctx.globalAlpha = A * texA * 0.32;
 					ctx.drawImage(haze.cv2, -EXT, -EXT, EXT * 2, EXT * 2);
 					ctx.restore();
 				}
@@ -1612,12 +1617,12 @@ export function createOutbreak(): Figure {
 								ctx.arc(sx[i], sy[i], (2 + 8 * easeOut(rt)) * zs, 0, TAU);
 								ctx.stroke();
 							}
-							put(spr([255, 110, 90]), sx[i], sy[i], (8 + 22 * flare) * zs * (compact ? 0.7 : 1), 0.6 * flare * (compact ? 0.8 : 1));
+							put(spr([255, 112, 92]), sx[i], sy[i], (8 + 15 * flare) * zs * (compact ? 0.7 : 0.85), 0.4 * flare * (compact ? 0.8 : 0.9));
 						}
 					}
 					const size = w.size * (1 + 1.3 * flare);
 					put(spr(col), sx[i], sy[i], mix(8 + size * 5.6, 3.2, dim) * zs, Math.min(0.55, 0.5 * b) * (compact ? 0.45 : 1) * (1 - 0.4 * Math.exp(-(w.x * w.x + w.y * w.y) / 0.12)));
-					put(spr(mixRGB(mixRGB(col, WHITE, 0.3 * (1 - dim)), [255, 140, 112], Math.min(1, flare * 1.4))), sx[i], sy[i], mix(1.9 + size * 1.3, 1.1, dim) * zs, Math.min(0.85, 0.95 * b) * (compact ? 0.5 : 1) * (1 - 0.4 * Math.exp(-(w.x * w.x + w.y * w.y) / 0.12)));
+					put(spr(mixRGB(mixRGB(col, WHITE, 0.3 * (1 - dim) * (1 - flare)), [255, 126, 100], Math.min(1, flare * 1.6))), sx[i], sy[i], mix(1.9 + size * 1.3, 1.1, dim) * zs, Math.min(0.85, 0.95 * b) * (compact ? 0.5 : 1) * (1 - 0.4 * Math.exp(-(w.x * w.x + w.y * w.y) / 0.12)));
 				}
 				if (t0 < 8 && t1 < 0.6) {
 					for (const i of NEIGHBORS) {
@@ -1635,8 +1640,8 @@ export function createOutbreak(): Figure {
 				const gather = smooth(1.4, 5.2, t0);
 				const vb = 1 + 1.5 * gather + 0.1 * Math.sin(sec * 0.8);
 				putV(spr([255, 206, 142]), vx, vy, (38 + 38 * gather) * zsV * (compact ? 0.85 : 1) * (1 + 0.04 * Math.sin(sec * 1.3)), 0.3 + 0.38 * gather);
-				putV(spr([255, 226, 178]), vx, vy, (11 + 8 * gather) * zsV * (compact ? 0.85 : 1), Math.min(0.88, 0.55 * vb));
-				putV(spr(WHITE), vx, vy, (3.2 + 1.4 * gather) * zsV, 0.95);
+				putV(spr([255, 226, 178]), vx, vy, (11 + 8 * gather) * zsV * (compact ? 0.85 : 1), Math.min(compact ? 0.7 : 0.88, 0.55 * vb));
+				putV(spr(WHITE), vx, vy, (3.2 + 1.4 * gather) * zsV * (compact ? 0.8 : 1), 0.95);
 				const ringIn = smooth(1.4, 4.2, t0);
 				for (let k = 0; k < 12; k++) {
 					const a2 = (k / 12) * TAU + sec * 0.22;
@@ -1660,12 +1665,12 @@ export function createOutbreak(): Figure {
 			const pcy = limbTop + Rp;
 			// the low cloud: it builds over the surface from the limb up to just above the horizon, then its front descends and the
 			// plain stands revealed above it, from the horizon down
-			const cTop = mix(limbTop, 98, smooth(1.22, 1.4, t1));
-			const front = t1 < 1.4 ? -100 : mix(98, 720, smooth(1.4, 1.74, t1));
-			const dens = smooth(1.26, 1.46, t1);
-			const thinC = 0.62 * (1 - smooth(1.58, 1.88, t1));
+			const cTop = mix(limbTop, 98, smooth(1.12, 1.3, t1));
+			const front = t1 < 1.3 ? -100 : mix(98, 720, smooth(1.3, 1.72, t1));
+			const dens = smooth(1.14, 1.32, t1);
+			const thinC = 0.3 * (1 - smooth(1.5, 1.8, t1));
 			// the scene (sky, horizon, plain) exists above the cloud's top and, once it descends, above its front
-			const sceneY = t1 < 1.4 ? Math.max(limbTop, 0) : front + 55;
+			const sceneY = t1 < 1.3 ? Math.max(limbTop, 0) : front + 55;
 			const planetA = As * smooth(5, 16, Rp);
 			if (As > 0.004 && t1 < 1.1 && sx[TARGET_I] > -50) {
 				const zc = compact ? 1.4 : 1;
@@ -1686,7 +1691,7 @@ export function createOutbreak(): Figure {
 				const ly0 = Math.min(vd[1], -0.3 * Math.abs(vd[0]) - 30);
 				const ll = Math.hypot(lx0, ly0) || 1;
 				const fields = kk > 0.01 ? landFields(sec, { top: cTop, front, dens, thin: thinC }) : null;
-				const surfO = t1 >= 1.0 ? { sc: (2 * Rp) / 512, ax: ptx, ay: pty, night: 1 - 0.85 * smooth(0.2, 0.8, kk), detail: 0.8 * smooth(0.1, 0.6, kk), shift: smooth(0.42, 0.9, kk), fy: compact ? 280 : 330, foot: 0.7 * smooth(0.02, 0.18, kk) * (1 - smooth(0.45, 0.8, kk)) } : undefined;
+				const surfO = t1 >= 1.0 ? { sc: (2 * Rp) / 512, ax: ptx, ay: pty, night: 1 - 0.85 * smooth(0.2, 0.8, kk), detail: 0.8 * smooth(0.1, 0.6, kk), shift: smooth(0.42, 0.9, kk), fy: compact ? 280 : 330, rim: 1 - smooth(1.14, 1.3, t1), foot: 0.7 * smooth(0.02, 0.18, kk) * (1 - smooth(0.45, 0.8, kk)) } : undefined;
 				drawPlanet(lg, ptx, pcy, Rp, [lx0 / ll, ly0 / ll], 1, surfO);
 				if (fields) {
 					// where the surface has become the plain it is gone
@@ -1780,9 +1785,9 @@ export function createOutbreak(): Figure {
 							dgx.scale(1, (fry * lb.k) / (Rf * lb.k));
 							const rr3 = Rf * lb.k;
 							const dg = dgx.createRadialGradient(0, 0, 0, 0, 0, rr3);
-							dg.addColorStop(0, css([90, 70, 54], 0.62));
-							dg.addColorStop(0.55, css([86, 66, 52], 0.5));
-							dg.addColorStop(0.85, css([80, 60, 48], 0.2));
+							dg.addColorStop(0, css([90, 70, 54], 0.4));
+							dg.addColorStop(0.55, css([86, 66, 52], 0.32));
+							dg.addColorStop(0.85, css([80, 60, 48], 0.13));
 							dg.addColorStop(1, css([80, 60, 48], 0));
 							dgx.fillStyle = dg;
 							dgx.fillRect(-rr3, -rr3, rr3 * 2, rr3 * 2);
@@ -1796,7 +1801,7 @@ export function createOutbreak(): Figure {
 						vg4.addColorStop(1, 'rgba(0,0,0,1)');
 						dgx.fillStyle = vg4;
 						dgx.fillRect(0, 0, W, dh);
-						ctx.globalAlpha = clamp(sA * domeOn * 1.4);
+						ctx.globalAlpha = clamp(sA * domeOn * 0.8);
 						ctx.drawImage(dustCv, 0, dy0);
 					}
 				}
@@ -1842,7 +1847,7 @@ export function createOutbreak(): Figure {
 				ctx.save();
 				// it rises out of the dark ground
 				ctx.beginPath();
-				ctx.rect(0, 0, W, t1 < 1.4 ? 0 : Math.min(GY + 130, front + 55));
+				ctx.rect(0, 0, W, t1 < 1.3 ? 0 : Math.min(GY + 130, front + 55));
 				ctx.clip();
 				ctx.translate(CX, GY + (1 - rise) * 110);
 				ctx.scale(s, s);
@@ -1853,7 +1858,7 @@ export function createOutbreak(): Figure {
 						gel: GENESIS,
 						light: lightBoost,
 						side: 0.55,
-						a: As * sceneA,
+						a: As * smooth(1.3, 1.34, t1),
 						emerge: 1,
 						rimK: 0.1,
 						rimEdge: true,
@@ -2194,6 +2199,20 @@ export function createOutbreak(): Figure {
 						};
 						const standing = 0.55 + 0.1 * Math.sin(sec * 1.3);
 						drawHelix(ctx, lit, 1);
+						// the rim and the ink keep their 2.8 s level while it goes in, until the first rung lights
+						const hold = smooth(2.85, 3.0, t1) * (1 - smooth(readAt - 0.02, readAt + 0.1, t1));
+						if (hold > 0.01) {
+							ctx.globalCompositeOperation = 'lighter';
+							cardPath(ctx);
+							ctx.globalAlpha = vis2 * hold;
+							ctx.strokeStyle = css([255, 206, 128], 0.7);
+							ctx.lineWidth = 1.3;
+							ctx.stroke();
+							ctx.globalAlpha = vis2 * hold * 0.7;
+							drawHelix(ctx, () => 0, 1);
+							ctx.globalAlpha = vis2;
+							ctx.globalCompositeOperation = 'source-over';
+						}
 						// seated, the helix's light stands softly on the card
 						if (slotRead > 0.01) {
 							ctx.globalCompositeOperation = 'lighter';
