@@ -188,7 +188,12 @@ function judge(order, build, critique) {
   for (const id of IDS) { const s = scoreFrom(results[id], id); after[id] = s === null ? before[id] : s }
   const target = order.id
   const pair = (critique.pairwise || []).find(p => p.region === target)
-  const drops = IDS.filter(id => after[id] !== null && before[id] !== null && after[id] < before[id])
+  // A side-effect loss of up to regressionDrop in one other region is allowed when the
+  // weighted mean still rises (round 2: a head build that took R01 from 2.5 to 6.9 was
+  // reverted for smoothing the cheek tufts, R02 3.3 to 2.5). The loss becomes the
+  // region's top issue so the next order repays it.
+  const lost = IDS.filter(id => after[id] !== null && before[id] !== null && after[id] < before[id])
+  const drops = lost.filter(id => id === order.id || before[id] - after[id] > L.regressionDrop || lost.length > 1)
   const baseInv = S.invariants || {}
   const broken = (critique.invariants || []).filter(i => !i.ok && baseInv[i.id] !== false).map(i => i.id)
   const gain = Math.round((meanOf(after) - meanOf(before)) * 1000) / 1000
@@ -198,7 +203,8 @@ function judge(order, build, critique) {
   if (drops.length) reasons.push('lost credit in ' + drops.map(id => `${id} ${before[id]} to ${after[id]}`).join(', '))
   if (broken.length) reasons.push('broke invariant ' + broken.join(', '))
   if (gain < L.meanGain) reasons.push(`weighted mean ${gain >= 0 ? '+' : ''}${gain}`)
-  return { kept: !reasons.length, reasons, results, after, gain, verdict: pair || null, invariants: critique.invariants || [] }
+  const debts = lost.filter(id => !drops.includes(id)).map(id => ({ region: id, before: before[id], after: after[id], by: target }))
+  return { kept: !reasons.length, reasons, results, after, gain, debts, verdict: pair || null, invariants: critique.invariants || [] }
 }
 function adopt(decision, build, critique, component) {
   for (const id of IDS) {
@@ -207,6 +213,10 @@ function adopt(decision, build, critique, component) {
   }
   for (const i of critique.issues || []) {
     if (S.regions[i.region]) S.regions[i.region].issues = (critique.issues || []).filter(x => x.region === i.region).slice(0, 3)
+  }
+  for (const d of decision.debts || []) {
+    const r = S.regions[d.region]
+    r.issues = [{ region: d.region, summary: `Repay a side-effect loss: the kept ${d.by} change took ${d.region} from ${d.before} to ${d.after}`, fix: `Restore the ${d.region} criteria that the ${d.by} change lost (see the critic evidence for that round) without undoing it`, fixability: 0.9 }, ...(r.issues || [])].slice(0, 3)
   }
   S.invariants = Object.fromEntries(decision.invariants.map(i => [i.id, i.ok]))
   S.baseline = {
