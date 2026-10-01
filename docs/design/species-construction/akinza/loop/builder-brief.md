@@ -37,9 +37,10 @@ Prefer field-space edits. Convert a closed mesh to an OpenVDB level set (Blender
 1. Read the work order, the rubric criteria it names, the spec if any, and the history card. Look at the baseline packet images for your region and at `m11`.
 2. Run the inner loop above. Budget: at most six component builds (failed ones count) and as many quick previews as you need.
 3. When satisfied, assemble your component with the baseline's other component: `loop_tools.py assemble <head> <body> assembled-NNNN`. Then `loop_tools.py check assembled-NNNN`, `loop_tools.py packet assembled-NNNN untracked/species-construction/akinza/loop/packets/assembled-NNNN`, and `loop_tools.py diff <baseline packet> <your packet>`. One assembly per round.
-4. Write `build.json` in the packet folder: the order, components and exact commands, parameters, the fit and measured values before and after, the technical check, and anything you could not do.
-5. Commit your code and document changes by name.
-6. In your structured output, give `approach` (one sentence someone can recognise next round), and `reusable`: each new opt-in option or script you added that a later round could reuse, with what it does.
+4. Check your neighbours before you hand over. `diff.json` lists every region whose images changed. Open the baseline and candidate images for each changed region other than yours and look for side effects: a dented tail, a lost crown dome, a thinned waist, new bands or spikes. In rounds 8 and 9 every candidate improved its own region and was reverted for breaking a neighbour. Fix any side effect inside your budget, or confine your edit so the neighbour's images do not change; if you cannot, say so in `build.json`.
+5. Write `build.json` in the packet folder: the order, components and exact commands, parameters, the fit and measured values before and after, the technical check, and anything you could not do.
+6. Commit your code and document changes by name.
+7. In your structured output, give `approach` (one sentence someone can recognise next round), and `reusable`: each new opt-in option or script you added that a later round could reuse, with what it does.
 
 If you run out of budget without a valid candidate, stop and report failure with the reason and what you learned. A clear failure is useful; a forced candidate is not.
 

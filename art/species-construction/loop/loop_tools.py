@@ -327,7 +327,9 @@ def cmd_measure(args):
 
 def cmd_packet(args):
     out = work(args.name)
-    packet = Path(args.packet)
+    # Resolved here: the posed step joins paths onto it, and a relative packet path
+    # was joined onto the akinza work folder instead of the caller's directory.
+    packet = Path(args.packet).resolve()
     packet.mkdir(parents=True, exist_ok=True)
     detail = lambda s, n: flat(out/f'details-{s}/{n}.png')
     sheets = {
