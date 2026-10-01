@@ -122,6 +122,7 @@ parser.add_argument('--wedge-top-y', type=float, nargs=2, default=[-.01, .01], h
 parser.add_argument('--wedge-bottom-y', type=float, nargs=2, default=[.105, .12], help='y of the V bottom edge at its start, L, R')
 parser.add_argument('--pale-cup-margin', type=float, default=None, help='round 12: faces more than this far (figure heights) outside the cup polygon in the front view are not given the pale material (tuft tips buried under the coat otherwise mark streaks on it)')
 parser.add_argument('--tip-point', type=float, default=0., help='round 12: fraction of the lock length over which the tip-min floor fades to zero (a true point instead of a constant-width needle or a rounded knob); 0 = off')
+parser.add_argument('--tip-floor', type=float, default=.22, help='round 13: lowest value of the --tip-point fade (fraction of the tip-min floor kept at the very tip); higher = a blunter, less needle-like point')
 parser.add_argument('--fork', type=int, default=0, help='forks per primary lock (0 or 2): short side points that split each tip into three')
 parser.add_argument('--fork-angle', type=float, default=20.)
 parser.add_argument('--fork-len', type=float, default=.45, help='fork length over its parent lock length')
@@ -131,6 +132,15 @@ parser.add_argument('--tuft-tip-min', type=float, nargs=2, default=None, help='t
 parser.add_argument('--tuft-section-p', type=float, default=None)
 parser.add_argument('--tuft-blur', type=float, default=0., help='Gaussian sigma (voxels) applied to the union of the tuft locks before it joins the skin: softens the serrated free edge into rounded clumps')
 parser.add_argument('--tuft-aim', type=float, default=0., help='tuft tips move this fraction of the way toward the cup upper tip, so the clumps converge on it')
+# Round 13 (R03): V tilt by a height warp, smooth cup clip.
+parser.add_argument('--crown-sink', type=float, default=0., help='round 13: lower the crown top by up to this much (figure heights) by a smooth z shear of the field (full for |x| below --sink-u, gone by --sink-u + --sink-ramp; fades out with depth in y between --sink-y): the V tilt of the fan top without raising the figure')
+parser.add_argument('--sink-u', type=float, default=.05)
+parser.add_argument('--sink-ramp', type=float, default=.07)
+parser.add_argument('--sink-y', type=float, nargs=2, default=[.03, .09], help='figure y (down from the crown) where the sink is full and where it is gone')
+parser.add_argument('--tilt-r', type=float, default=0., help='round 13: raise the R wing outer top by up to this much (figure heights), growing from |x| --tilt-u0 to --tilt-u1 and fading out downward between --tilt-y, the lower fan edge staying put; the R lock roots and tips move with it')
+parser.add_argument('--tilt-u', type=float, nargs=2, default=[.12, .26])
+parser.add_argument('--tilt-y', type=float, nargs=2, default=[.06, .13])
+parser.add_argument('--cup-clip-smooth', type=float, default=0., help='round 13: smooth maximum radius (figure heights) in the cup clip of the coat locks, so the cup rim is rounded off instead of a hard vertical wall; 0 = hard clip')
 parser.add_argument('--bandwidth', type=int, default=14)
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
@@ -410,6 +420,46 @@ if args.tip_wedge:
     maps = build_maps(field)
     print('tip wedge done', flush=True)
 
+
+# ---------------------------------------------------------------------------------------------- 0c. optional height warp (round 13)
+def lift_fn(xf_, yf_):
+    """Upward lift in figure heights at a figure-frame point: the R wing outer top rises (--tilt-r), the crown top sinks (--crown-sink)."""
+    u_ = np.abs(xf_)
+    out = np.zeros(np.broadcast(xf_, yf_).shape)
+    if args.crown_sink:
+        out = out-args.crown_sink*(1-smoothstep((u_-args.sink_u)/args.sink_ramp))*(1-smoothstep((yf_-args.sink_y[0])/(args.sink_y[1]-args.sink_y[0])))
+    if args.tilt_r:
+        out = out+args.tilt_r*(xf_ < 0)*smoothstep((u_-args.tilt_u[0])/(args.tilt_u[1]-args.tilt_u[0]))*(1-smoothstep((yf_-args.tilt_y[0])/(args.tilt_y[1]-args.tilt_y[0])))
+    return out
+
+
+warp_record = {'applied': bool(args.crown_sink or args.tilt_r)}
+if warp_record['applied']:
+    xf_ = X[:, None]/K*np.ones((1, len(SZ)))
+    yf_ = (Z0-SZ[None, :])/K*np.ones((len(X), 1))
+    dz_ = K*lift_fn(xf_, yf_)                                       # head-local, positive = material moves up
+    kk_ = np.arange(len(SZ))[None, :]-dz_/VS                        # source row of every destination row
+    kk_ = np.clip(kk_, 0, len(SZ)-1.001)
+    i0_ = np.floor(kk_).astype(int)
+    fr_ = (kk_-i0_).astype(np.float32)
+    sub_ = field[:, :, r0:r1]
+    ga_ = np.take_along_axis(sub_, i0_[:, None, :], axis=2)
+    gb_ = np.take_along_axis(sub_, (i0_+1)[:, None, :], axis=2)
+    field[:, :, r0:r1] = (ga_*(1-fr_[:, None, :])+gb_*fr_[:, None, :]).astype(np.float32)
+    del sub_, ga_, gb_
+    warp_record.update({'maxLiftUp': float(lift_fn(xf_, yf_).max()), 'maxSink': float(-lift_fn(xf_, yf_).min())})
+    maps = build_maps(field)
+    # lock roots and tips follow the warp (same lift at their own point)
+    moved_ = []
+    for sp_ in spec_locks:
+        if sp_['side'] not in sides:
+            continue
+        for key_ in ('root', 'tip'):
+            px_, py_ = sp_[key_]
+            sp_[key_] = (px_, py_-float(lift_fn(np.array(px_*1.), np.array(py_*1.))))
+        moved_.append(sp_['name'])
+    print('height warp done', warp_record, flush=True)
+
 # ---------------------------------------------------------------------------------------------- 1. plan morph
 plan_record = {'applied': not args.no_plan}
 BIGW = 1.0
@@ -559,7 +609,7 @@ def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=Fa
         # round 12 --tip-point: the tip-min floor fades to zero over the last fraction of the length so the lock ends in a true point
         if not args.tip_point:
             return 1.
-        return np.maximum(smoothstep((1-t)/args.tip_point), .22)
+        return np.maximum(smoothstep((1-t)/args.tip_point), args.tip_floor)
 
     def half_width(t):
         ss = np.clip((t-.4)/.6, 0, 1)
@@ -605,7 +655,11 @@ def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=Fa
     if cup_clip:
         # keep the cup interior free: coat material deeper than --cup-clear inside the cup polygon is removed (smooth distance, no steps)
         q = polygon_sdf(GX[:, 0, :]/K, (Z0-GZ[:, 0, :])/K, cup_points[spec['side']])*K          # head-local units, negative inside
-        d = np.maximum(d, np.broadcast_to((-q-args.cup_clear*K)[:, None, :], GX.shape).reshape(-1).astype(np.float32))
+        cut_ = np.broadcast_to((-q-args.cup_clear*K)[:, None, :], GX.shape).reshape(-1).astype(np.float32)
+        if args.cup_clip_smooth > 0:
+            d = -smin(-d, -cut_, args.cup_clip_smooth*K).astype(np.float32)
+        else:
+            d = np.maximum(d, cut_)
     if clip_rear:
         shp = tuple(s_.stop-s_.start for s_ in sl)
         lim = np.broadcast_to(rear_limit(GX, GZ), shp).reshape(-1)-args.rear_margin
@@ -866,7 +920,7 @@ summary = {
     'approval': None, 'stageProvenanceSha256': provenance, 'sourceSha256': sha(args.scene), 'specSha256': sha(args.spec),
     'scope': 'R03 ear fan front: plan morph (cut the rolled lip, fill the cup pit), 24 coat locks and 5 tuft locks per side as swept half-ellipse locks, pale tuft material',
     'parameters': {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items() if k not in ('scene', 'out')},
-    'plan': plan_record, 'trim': trim_record, 'plateClip': clip_record, 'skinTopZ': {'before': top_before, 'after': top_after},
+    'plan': plan_record, 'heightWarp': warp_record, 'trim': trim_record, 'plateClip': clip_record, 'skinTopZ': {'before': top_before, 'after': top_after},
     'lockCount': len(records), 'paleFaces': pale_count, 'paleMaterialIndex': pale_index, 'locks': records,
     'removedFlecks': removed_flecks, 'removedFloatingPieces': removed_pieces, 'skinBefore': before, 'skinAfter': after,
     'outputs': {p.name: sha(p) for p in args.out.iterdir() if p.suffix in ['.glb', '.blend']},
