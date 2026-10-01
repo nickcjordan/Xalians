@@ -16,7 +16,8 @@ The optional `warp` is a smooth vertex displacement of the skin after meshing (n
 `rear_low_pull` brings the lower rear in, `inner_rim_lower` and `inner_rim_lower_left` sink the roof beside the crown (top surface only), `forehead_pull` sets the brow back in y, `nape_pull` draws the lower back of
 the head in toward the neck (it also squashes the neck stem, head-0221: use `nape_pull_gentle`, which tapers to zero above the stem
 and keeps the surface slope under 1), `wing_recess` sets the fan wings back from the rear centre so the centre
-stands proud. Each is weighted to zero near the face; eyes, nose and mouth are untouched. Akinza-specific.
+stands proud. Round 2 adds `cut` (field space, see head_r01_ops.py) and the warps `rim_lift`, `front_set_back` and
+`rear_valley` and `underside_drop`. Each is weighted to zero near the face; eyes, nose and mouth are untouched. Akinza-specific.
 """
 import argparse
 import json
@@ -32,6 +33,7 @@ import openvdb as vdb
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from blender_blockout import mesh_stats, remove_voxel_specks, require_single_closed_mesh, sha
 from study_provenance import snapshot
+import head_r01_ops as ops
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--scene', type=Path, required=True)
@@ -156,6 +158,17 @@ for index, sk in enumerate(spec.get('skulls', [])):
     field[sl] = np.clip(smin(field[sl], distance, sk['blend']), -BAND, BAND).astype(np.float32)
     record.setdefault('skulls', []).append({'center': sk['center'], 'radii': sk['radii'], 'blend': sk['blend']})
 
+if spec.get('cut'):
+    # Round 2 (R01): remove the notch web under the wings, the nape wall and the chin bulge, then fillet with a smooth max.
+    cfg = spec['cut']
+    sl = box_slices([-.45, float(points[:, 1].min())-.05, float(points[:, 2].min())-.05], [.45, .45, cfg['shelf_z']+.05])
+    X, Y, Z = coordinates(sl)
+    g = ops.cut_distance(X, Y, Z, cfg).astype(np.float32)
+    k = cfg.get('blend', .03)
+    # max(field, -g) smoothly: smax(a, b) = -smin(-a, -b)
+    field[sl] = np.clip(-smin(-field[sl], g, k), -BAND, BAND).astype(np.float32)
+    record['cut'] = {'blend': k, 'voxelsTouched': int((g < k).sum())}
+
 out_grid = vdb.FloatGrid()
 out_grid.background = BAND
 out_grid.copyFromArray(field, ijk=(0, 0, 0))
@@ -207,7 +220,7 @@ def remove_small_components(obj, max_vertices, max_extent):
     return removed
 
 
-removed_flecks = remove_small_components(head, max_vertices=60, max_extent=.02)
+removed_flecks = remove_small_components(head, max_vertices=60, max_extent=spec.get('fleck_extent', .02))
 
 
 def sm(t):
@@ -238,6 +251,14 @@ def apply_warp(w):
     dy += -w.get('nape_pull', 0)*sm((y-.0)/.1)*sm((-.08-z)/.1)
     dy += -w.get('nape_pull_gentle', 0)*q5(y/.1)*q5((-.02-z)/.2)*(1-q5((-.18-z)/.14))
     dy += -w.get('wing_recess', 0)*sm((np.abs(x)-.3)/.25)*sm((y-.10)/.15)*sm((z+.1)/.2)*(1-sm((z-.4)/.15))
+    if w.get('underside_drop'):
+        dz += ops.underside_drop_dz(x, z, w['underside_drop'])
+    if w.get('rim_lift'):
+        dz += ops.rim_lift_dz(x, z, w['rim_lift'])
+    if w.get('front_set_back'):
+        dy += ops.front_set_back_dy(x, y, z, w['front_set_back'])
+    if w.get('rear_valley'):
+        dy += ops.rear_valley_dy(x, y, z, w['rear_valley'])
     moved = np.sqrt(dx**2+dy**2+dz**2)
     P[:, 0] += dx; P[:, 1] += dy; P[:, 2] += dz
     verts.foreach_set('co', P.astype(np.float32).ravel())
@@ -255,7 +276,7 @@ bpy.ops.wm.save_as_mainfile(filepath=str(args.out/'head.blend'))
     'approval': None, 'stageProvenanceSha256': provenance, 'sourceSha256': sha(args.scene),
     'scope': 'Crown and occiput skull ellipsoid, top and rear smoothing in field space, then a smooth vertex warp of the fan; eyes, nose and mouth preserved',
     'spec': spec, 'record': record, 'removedFlecks': removed_flecks,
-    'skinBefore': before, 'skinAfter': mesh_stats(head),
+    'matrixWorld': [list(r) for r in M], 'skinBefore': before, 'skinAfter': mesh_stats(head),
     'skinTopZBefore': before_top, 'skinTopZAfter': float(after_points[:, 2].max()),
     'outputs': {p.name: sha(p) for p in args.out.iterdir() if p.suffix in ['.glb', '.blend']},
 }, indent=2)+'\n')
