@@ -327,7 +327,7 @@ const BEATS: Array<Spread | FigureBeat> = [
 			title: 'The plague across Xalia',
 			text: 'The plague burns through the galaxy, and few worlds are safe; most life gathers on Valleron.',
 		},
-		alt: 'A spiral galaxy of small warm lights. A crimson haze spreads across it until it covers most of the galaxy, and the lights it reaches dim to embers. One light grows brighter as small lights drift in to it from its neighbors.',
+		alt: 'A spiral galaxy of warm golden lights. A crimson plague breaks out in several places at once and burns along its arms; each light it reaches flares and goes out, until most of the galaxy smolders dark red and only a few distant lights hold. One light stays brightest as small lights drift in to it from the dark around it.',
 	},
 	{
 		kind: 'figure',
@@ -341,7 +341,7 @@ const BEATS: Array<Spread | FigureBeat> = [
 			title: 'A Scrambler Token brought home',
 			text: 'Carried home from Valleron, where the Mercurius Machine prints them, a Scrambler Token lets a Generator make new Xalians immune to the plague.',
 		},
-		alt: 'The view dives from the galaxy to one dark world under a red haze, where a Generator stands idle, its vat empty. A small hexagonal chip arrives and is set into a console at the machine’s foot. Light runs from the chip up into the vat, which fills with green, and new seeds of life form in it. The red haze keeps back from the new life; beyond the machine, the red remains.',
+		alt: 'The view closes in on one darkened world and comes down through its red air to a plain where a Generator stands idle, its vat empty. A dark printed chip with a scrambled genome on its face is carried in and slid into a slot below the vat. The scrambled pattern on the chip lights up rung by rung, the vat fills with green, the machine’s lights come on, and new seeds of life form in it. Its light spreads over the ground, and the red haze drifts over the new life without touching it; beyond it, the red remains.',
 	},
 	{ kind: 'scene', art: ART.present, headline: 'Only the strongest factions will survive…', text: STORY[3], labelRoom: '9.5rem', phoneVideo: true, layout: 'side', aspect: 'aspect-video min-[720px]:aspect-[4/3]', ar: 4 / 3, position: 'object-[40%_center]' },
 ];
