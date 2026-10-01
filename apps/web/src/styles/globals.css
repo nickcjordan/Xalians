@@ -409,14 +409,14 @@
 	/* Leaving a recording for another: static rises over the picture until it is gone. */
 	.archive[data-screen="out"] .archive-static { animation: archive-static-rise 320ms linear both, archive-jitter 240ms steps(6) infinite; }
 	.archive[data-screen="out"] .archive-picture { animation: archive-sink 320ms linear both; }
-	/* Collapse: on to a figure. The picture flattens to a bright line, the line shrinks to a point, and the
-	   figure stage takes the point on from there (figureStage.tsx); the glass stays dark as the beat goes. */
+	/* Collapse: on to a figure. The picture flattens to a bright line and the line fades out where it is, while
+	   the figure blooms in its own place (figureStage.tsx); the glass stays dark as the beat goes. */
 	.archive[data-screen="collapse"] .archive-picture { animation: archive-collapse 420ms cubic-bezier(.55, 0, .75, .4) both; }
 	.archive[data-screen="collapse"] .archive-picture::after { animation: archive-collapse-flash 420ms linear both; }
 	.archive[data-screen="collapse"] .archive-static { opacity: 0; }
-	@keyframes archive-collapse { 0% { transform: scale(1, 1); } 52% { transform: scale(1, .006); } 100% { transform: scale(0, .006); } }
-	@keyframes archive-collapse-flash { 0% { opacity: 0; } 50% { opacity: .9; } 100% { opacity: 1; } }
-	/* Dark: waiting for the light coming back from a figure; nothing on the glass yet. */
+	@keyframes archive-collapse { 0% { transform: scale(1, 1); opacity: 1; } 52% { transform: scale(1, .006); opacity: 1; } 100% { transform: scale(1, .006); opacity: 0; } }
+	@keyframes archive-collapse-flash { 0% { opacity: 0; } 50% { opacity: .9; } 100% { opacity: .9; } }
+	/* Dark: back from a figure, the screen waits while the figure pulls back; nothing on the glass yet. */
 	.archive[data-screen="dark"] .archive-picture { opacity: 0; }
 	.archive[data-screen="dark"] .archive-static { opacity: 0; }
 	/* Off: the picture collapses to a line and goes. */

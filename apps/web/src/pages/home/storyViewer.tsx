@@ -26,9 +26,10 @@
 //
 // The small beats are figures (docs/design/home-story-figures.md): drawn in light on the page by the figure
 // stage (figureStage.tsx) rather than played on a screen. A change that touches a figure does not run the
-// rack: the words cross-fade where they stand, a recording collapses to a point that becomes the figure, a
-// figure runs on into its next beat or pulls into a point that switches the next screen on (Nick,
-// 2026-09-29: "the transition changes you made, I think, are great").
+// rack: the words cross-fade where they stand, a recording collapses to a line and goes as the figure blooms
+// in its own place, a figure runs on into its next beat or pulls back as the next screen tunes in (Nick,
+// 2026-09-29: "the transition changes you made, I think, are great"; 2026-09-30: no point of light travelling
+// between them).
 //
 // A window too short for the box (a small phone, a phone on its side) shows the
 // shown beat in the page at its natural height instead, with the same controls
@@ -390,10 +391,10 @@ export function StoryViewer({ id, title, beats, after }: { id: string; title: Re
 	// always does, the leaving screen holding its static as it fades. A screen standing by just cuts.
 	// Choices made during the rise take the last one.
 	//
-	// With a figure on either side it morphs instead. From a recording: the picture collapses to a point
-	// (`collapse`), then the viewer cuts and the figure stage carries the point to the figure. From a figure: the
-	// viewer cuts at once; to another figure's beat the stage runs on, and to a recording the next screen stands
-	// by until the light from the figure reaches it, then tunes in.
+	// With a figure on either side it morphs instead. From a recording: the picture collapses to a line
+	// (`collapse`), then the viewer cuts and the figure blooms. From a figure: the viewer cuts at once; to
+	// another figure's beat the stage runs on, and to a recording the next screen stays dark while the figure
+	// pulls back, then tunes in.
 	const pending = React.useRef<number | null>(null);
 	const toScreen = React.useRef(0);
 	const go = React.useCallback(
