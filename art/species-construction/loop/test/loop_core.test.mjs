@@ -227,31 +227,92 @@ test('loop_workflow.js is current (generated from loop_workflow.src.js and loop_
   assert.equal(readFileSync(join(loopDir, 'loop_workflow.js'), 'utf8').replace(/\r\n/g, '\n'), generate())
 })
 
-test('the generated workflow behaves exactly like the frozen v2 workflow on v2 args', { skip: !existsSync(P.status) }, async () => {
+// The v2 differential test (generated workflow equal to test/fixtures/loop_workflow.v2.js) held
+// until the v3 workflow changes landed on 2026-10-01; the fixture stays as the v2 record. These
+// tests pin the v3 behaviour with the same deterministic fake runtime.
+function v3Args(status, rub, over) {
+  for (const id of Object.keys(status.regions)) { if (!status.regions[id].hold) { status.regions[id].parked = false; status.regions[id].attempts = 0; status.regions[id].anchorScore = null } }
+  status.limits.hardStopRounds = 60
+  return { status, rubric: rub, rounds: 6, species: { key: 'akinza', sideEffectThreshold: 0.0005 }, pools: { head: ['R01', 'R02', 'R03', 'R04'], body: ['R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'R11'], join: ['R05'], both: ['R12'] }, ...over }
+}
+const okBuild = id => ({ failed: false, recipe: `recipes/r-${id}.json`, head: 'head-' + id, body: 'body-' + id, assembly: 'assembled-' + id, packet: 'p/' + id, technicalPass: true, approach: 'a', changes: 'c' })
+
+test('v3 prepare: methods planned once, missing specs written in one parallel pass, held regions never ordered', { skip: !existsSync(P.status) }, async () => {
   const status = readJson(P.status), rub = readJson(P.rubric)
-  const specs = JSON.parse(JSON.stringify(status.specs))
-  // un-park everything and open the batch so several rounds run: keeps, reverts, builder failures and combinations all occur
-  for (const id of Object.keys(status.regions)) { status.regions[id].parked = false; status.regions[id].attempts = 0; status.regions[id].anchorScore = null }
-  status.limits.hardStopRounds = 40
-  const v2 = readFileSync(join(here, 'fixtures', 'loop_workflow.v2.js'), 'utf8')
-  const v3 = generate()
-  let kept = 0, reverted = 0, combined = 0
-  for (const seed of ['a', 'b', 'c', 'd', 'e']) {
-    const args = { status: JSON.parse(JSON.stringify({ ...status, specs })), rubric: rub, rounds: 5 }
-    const x = await runWorkflow(v2, args, seed), y = await runWorkflow(v3, args, seed)
-    assert.deepEqual(y.ret, x.ret, 'result ' + seed)
-    assert.deepEqual(y.logs, x.logs, 'log ' + seed)
-    assert.deepEqual(y.calls, x.calls, 'agent calls and prompts ' + seed)
-    for (const l of x.logs) { kept += (l.match(/KEPT/g) || []).length; reverted += (l.match(/reverted/g) || []).length; if (/combine/.test(l)) combined++ }
-  }
-  assert.ok(kept > 0 && reverted > 0, `the fake runs should exercise both outcomes (kept ${kept}, reverted ${reverted}, combination notes ${combined})`)
+  status.methods = {}
+  for (const id of ['R10', 'R11']) status.regions[id].hold = true
+  const out = await runWorkflow(generate(), v3Args(status, rub), 'p')
+  const labels = out.calls.map(c => c.label)
+  assert.equal(labels.filter(l => l.startsWith('methods')).length, 1)
+  assert.ok(!labels.some(l => l.startsWith('audit')), 'an existing audit is not redone without freshAudit')
+  // R05 came back respec: its spec is rewritten in the prepare pass
+  assert.ok(labels.includes('spec: R05'))
+  assert.ok(!labels.some(l => /^(builder|spec).*R1[01]\b/.test(l)), 'held tails get no spec and no order')
+  assert.equal(out.ret.status.methods.R04, 'method R04')
+  assert.ok(out.logs.some(l => l.startsWith('Methods: ')))
 })
 
-test('v3 args with species pools run the generated workflow (join slot, default pools untouched)', { skip: !existsSync(P.status) }, async () => {
+test('v3 kickoff: a fresh audit logs the ranked gap list and returns it', { skip: !existsSync(P.status) }, async () => {
   const status = readJson(P.status), rub = readJson(P.rubric)
-  for (const id of Object.keys(status.regions)) { status.regions[id].parked = false }
-  status.limits.hardStopRounds = 40
-  const args = { status, rubric: rub, rounds: 2, pools: { head: ['R01', 'R02', 'R03', 'R04'], body: ['R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'R11'], join: ['R05'], both: ['R12'] } }
-  const out = await runWorkflow(generate(), args, 'j')
-  assert.ok(out.logs.some(l => /join R05/.test(l)) || out.logs.some(l => /Round 1/.test(l)))
+  const out = await runWorkflow(generate(), v3Args(status, rub, { freshAudit: true, rounds: 1 }), 'k')
+  assert.deepEqual(out.ret.kickoff.map(g => g.region), ['R05', 'R06'])
+  assert.ok(out.logs.some(l => l.startsWith('KICKOFF gaps')))
+  assert.equal(out.ret.status.audit, 'docs/audit.md')
+})
+
+test('v3 critic scope: only regions past the side-effect threshold are named', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R01: 'm' }
+  const change = Object.fromEntries(Object.keys(rub.regions).map(id => [id, 0.0001]))
+  change.R09 = 0.01
+  change.R03 = 0.01
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1 }), 's', label => {
+    if (label.startsWith('builder')) { const id = /: (R\d+)/.exec(label)[1]; return { ...okBuild(id), regionChange: { ...change, [id]: 0.02 } } }
+    return undefined
+  })
+  const critics = out.calls.filter(c => c.label.startsWith('critic r') && !c.label.includes('combined'))
+  assert.ok(critics.length > 0)
+  for (const c of critics) {
+    const body = !c.label.includes(' head:')
+    // R09 moved past the threshold: a body, join or whole-figure critic is told to judge it; a head order freezes the body, so a head critic is not
+    if (body) assert.match(c.prompt, /these other regions[^.]*R09/)
+    else assert.doesNotMatch(c.prompt, /these other regions[^.]*R09/)
+    // R12 moved below the threshold: nobody is asked to judge it
+    assert.doesNotMatch(c.prompt, /these other regions[^.]*R12/)
+  }
+})
+
+test('v3 plateau: flat rounds trigger one method review, a second plateau stops the batch', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R01: 'm' }
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 12 }), 'q', label => {
+    // every candidate fails its build: no round gains anything
+    if (label.startsWith('builder')) return { failed: true, reason: 'fake', changes: '', approach: '' }
+    return undefined
+  })
+  assert.ok(out.logs.some(l => /plateau/.test(l)), 'the plateau escalation is logged')
+  assert.ok(out.calls.some(c => c.label.startsWith('method review')))
+  assert.equal(out.ret.milestone, 'plateau')
+})
+
+test('v3 combine: two kept orders are merged by recipe, not by component directories', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R01: 'm' }
+  status.regions.R12.hold = true
+  let saw = null
+  for (const seed of ['c1', 'c2', 'c3', 'c4', 'c5', 'c6']) {
+    await runWorkflow(generate(), v3Args(status, rub, { rounds: 4 }), seed, (label, prompt) => {
+      if (label.startsWith('builder')) return okBuild(/: (R\d+)/.exec(label)[1])
+      if (label.startsWith('combine')) { saw = prompt; return { failed: true, reason: 'fake', changes: '', approach: 'combine' } }
+      if (label.startsWith('critic r')) {
+        // a clean candidate: the target's criteria all pass, nothing else is judged
+        const id = /Target region: (R\d+)/.exec(prompt)[1]
+        return { criteria: rub.regions[id].map(c => ({ id: c.id, result: 'pass', evidence: '' })), pairwise: [{ region: id, verdict: 'better', reason: '' }], invariants: [], issues: [], summary: '' }
+      }
+      return undefined
+    })
+    if (saw) break
+  }
+  assert.ok(saw, 'some fake run keeps two orders in one round')
+  assert.match(saw, /recipe\.py merge/)
 })

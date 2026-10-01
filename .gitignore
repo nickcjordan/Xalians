@@ -78,3 +78,6 @@ __pycache__/
 
 # Per-chat completion receipts, never shared or committed.
 .codex/audit-state/
+
+# Generated loop workflow arguments (loop_state.py args)
+docs/design/species-construction/*/loop/args.json

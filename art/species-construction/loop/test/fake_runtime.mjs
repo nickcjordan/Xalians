@@ -2,12 +2,13 @@
 // Run a workflow script the way the runtime does: top-level await and return, with args, agent, parallel, phase, log.
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 export function fnv(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0 } return h >>> 0 }
-export function fakeRuntime(args, seed) {
+export function fakeRuntime(args, seed, override) {
   const calls = [], logs = []
   const rub = args.rubric
   const agent = async (prompt, opts) => {
     const label = opts.label
     calls.push({ label, model: opts.model, effort: opts.effort, prompt })
+    if (override) { const v = override(label, prompt); if (v !== undefined) return v }
     const h = fnv(seed + label)
     if (label.startsWith('builder')) {
       if (h % 7 === 0) return { failed: true, reason: 'fake failure', changes: '', approach: '' }
@@ -16,6 +17,9 @@ export function fakeRuntime(args, seed) {
     }
     if (label.startsWith('combine')) { const n = 1000 + h % 1000; return { failed: h % 5 === 0, head: 'head-c' + n, body: 'body-c' + n, assembly: 'assembled-' + n, packet: 'p/assembled-' + n, technicalPass: true, approach: 'combine', changes: 'c' } }
     if (label.startsWith('spec')) return { path: 'specs/x.md', summary: 'spec' }
+    if (label.startsWith('audit')) return { path: 'docs/audit.md', gaps: [{ rank: 2, region: 'R06', gap: 'tube torso', structural: true }, { rank: 1, region: 'R05', gap: 'stalk neck', structural: true }] }
+    if (label.startsWith('methods')) return { path: 'methods.json', regions: Object.keys(rub.regions).map(r => ({ region: r, method: 'method ' + r, changed: r === 'R04', respec: r === 'R05' })) }
+    if (label.startsWith('method review')) return { region: 'R00', method: 'reviewed method', unpark: h % 2 === 0, respec: false }
     if (label.startsWith('record')) return 'done'
     if (label.startsWith('critic')) {
       const m = /Target region: (R\d+)/.exec(opts && prompt)
@@ -33,8 +37,8 @@ export function fakeRuntime(args, seed) {
   }
   return { agent, parallel: fns => Promise.all(fns.map(f => f())), phase: () => {}, log: m => logs.push(m), calls, logs }
 }
-export async function runWorkflow(text, args, seed) {
-  const rt = fakeRuntime(args, seed)
+export async function runWorkflow(text, args, seed, override) {
+  const rt = fakeRuntime(args, seed, override)
   const body = text.replace(/^export const meta =/m, 'const meta =')
   const fn = new AsyncFunction('args', 'agent', 'parallel', 'phase', 'log', body)
   const ret = await fn(JSON.parse(JSON.stringify(args)), rt.agent, rt.parallel, rt.phase, rt.log)

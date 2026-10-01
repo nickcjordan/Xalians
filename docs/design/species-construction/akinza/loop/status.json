@@ -811,7 +811,9 @@
    "parked": true,
    "parkReason": "Nick 2026-09-30: the tails are fine",
    "history": [],
-   "lastWorked": 1
+   "lastWorked": 1,
+   "hold": true,
+   "holdReason": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head"
   },
   "R11": {
    "name": "Tail root and pelvis",
@@ -829,7 +831,9 @@
    "parked": true,
    "parkReason": "Nick 2026-09-30: the tails are fine",
    "history": [],
-   "lastWorked": null
+   "lastWorked": null,
+   "hold": true,
+   "holdReason": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head"
   },
   "R12": {
    "name": "Whole-form coherence",
@@ -871,5 +875,6 @@
    "topic": "Tail tips",
    "state": "Applied: tips curl up and out per accepted back study 0018; the first sheet droops. Reverting is one controls file."
   }
- ]
+ ],
+ "audit": "docs/design/species-construction/akinza/loop/gap-audit-0226.md"
 }

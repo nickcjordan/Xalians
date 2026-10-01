@@ -65,7 +65,8 @@ export function plateau(state, limits) {
 
 export function priority(state, limits, id, round) {
   const r = state.regions[id]
-  if (r.parked || r.score === null || r.score >= limits.passBar) return null
+  // v3: a held region (Nick's direction, such as the tails on 2026-10-01) is never ordered.
+  if (r.parked || r.hold || r.score === null || r.score >= limits.passBar) return null
   const fix = Math.max(0.3, ...(r.issues || []).map(i => i.fixability || 0.5))
   let p = r.weight * (limits.passBar - r.score) * fix
   const idle = r.lastWorked === null ? round : round - r.lastWorked

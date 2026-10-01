@@ -126,6 +126,9 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
                'score': r.get('score'), 'results': r.get('results', {}),
                'attempts': r.get('attempts', 0), 'anchorScore': r.get('anchorScore'),
                'parked': bool(r.get('parked')), 'lastWorked': r.get('lastWorked')}
+        if r.get('hold'):
+            # held by Nick's direction: never ordered, whatever its score (the tails, 2026-10-01)
+            out['hold'] = True
         if r.get('parked'):
             # a parked region gets no orders: its issues stay in status.json (merge keeps them), which keeps args small
             out['parkReason'] = trim(r.get('parkReason', ''))
@@ -143,6 +146,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         'specs': {rid: {k: rel(v) for k, v in sp.items() if k in ('path', 'image')} for rid, sp in (status.get('specs') or {}).items()},
         'methods': methods, 'invariants': status.get('invariants', {}), 'regions': regions,
     }
+    if status.get('audit'):
+        slim['audit'] = rel(status['audit'])
     if rubric_texts:
         rub = {'regions': {rid: [{'id': c['id'], 'kind': c['kind'], 'text': c.get('text', '')} for c in cs] for rid, cs in rubric['regions'].items()}}
     else:
