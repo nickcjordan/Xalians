@@ -18,6 +18,7 @@ import {
   PILLAR_SAVE_VERSION,
   type TRun,
   type TCommand,
+  type Fighter,
 } from "@xalians/rules/dungeon/pillars";
 
 import {
@@ -41,6 +42,7 @@ import {
   previewsOf,
   previewThreats,
   retargetThreat,
+  threatsOf,
   actsOnPress,
   type FloatItem,
   type Threat,
@@ -687,14 +689,32 @@ export default function PowerworksTurnsPage() {
   // moves its tag to the companion it turned to when its beat starts.
   const stageRef = useRef<HTMLDivElement>(null);
   const restThreats = useMemo(() => [...view.squad, ...view.enemies].flatMap((u) => u.threats).sort((a, b) => a.order - b.order), [view]);
+  const atBeat = (u: Fighter): Fighter => {
+    const hp = shownHp?.[u.id];
+    const m = shownMarks?.[u.id];
+    return {
+      ...u,
+      ...(hp !== undefined ? { hp } : {}),
+      ...(m ? { boost: m.boost, hinder: m.hinder, shields: m.shield > 0 ? [{ n: m.shield, from: "beat" }] : [] } : {}),
+    };
+  };
   const shownThreats = useMemo<Threat[]>(() => {
     if (!busy) return shownKeyView && anyPreview ? previewThreats(run, shownKeyView, previews) : restThreats;
+    // The tags follow the same per-beat state the plates' health and marks follow: the run as it stood before the command, with each
+    // unit's health and marks as of the beat now showing, read through the same builder (a hinder that has landed lowers the number,
+    // a shield re-reads it, a heal can end lethality, a knockout takes the enemy's tags away).
+    const beatRun: TRun = {
+      ...run,
+      team: run.team.map((u) => atBeat(u)),
+      enemies: run.enemies.map((u) => atBeat(u)),
+    };
+    const live = threatsOf(beatRun);
     // A turn-away (the redirect beat) is not yet the hit: the tag moves to the new target and stays until the hit lands.
     const acted = new Set(moments.slice(0, beatIndex + (landed ? 1 : 0)).filter((m) => m.beats.some((b) => b.event.kind !== "redirect")).map((m) => m.actor));
     const turned = new Map<string, string>();
     for (const m of moments.slice(0, beatIndex + 1)) for (const b of m.beats) if (b.event.kind === "redirect") turned.set(b.event.actor, (b.event as { to: string }).to);
-    return restThreats.filter((x) => !acted.has(x.fromId)).map((x) => (turned.has(x.fromId) ? retargetThreat(run, x, turned.get(x.fromId)!) : x));
-  }, [busy, shownKeyView, anyPreview, run, previews, restThreats, moments, beatIndex, landed]);
+    return live.filter((x) => !acted.has(x.fromId)).map((x) => (turned.has(x.fromId) ? retargetThreat(beatRun, x, turned.get(x.fromId)!) : x));
+  }, [busy, shownKeyView, anyPreview, run, previews, restThreats, moments, beatIndex, landed, shownHp, shownMarks]);
   // While the stage holds on a fall there is no live turn, so no promises are shown; on a short phone stage the tags of the plate a blow
   // is landing on step aside for the landing number.
   const threatsOn = (id: string) => (holding || (phone && landed && targets.includes(id)) ? [] : shownThreats.filter((x) => x.on === id));

@@ -847,6 +847,53 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(moved).toBe(true);
   });
 
+  it("during playback the tags follow the beat: a landed hinder lowers the enemy's tag to what will land now, so the later hit matches", async () => {
+    saveRun((s) => {
+      const victim = s.team.find((u) => u.id !== s.active)!;
+      return {
+        ...s,
+        intents: Object.fromEntries(s.enemies.map((e) => [e.id, { move: Math.max(0, e.moves.findIndex((m) => m.power > 0)), target: victim.id }])),
+        team: s.team.map((u) =>
+          u.id === s.active
+            ? { ...u, cooldowns: u.moves.map(() => 0), moves: u.moves.map((m, i) => (i === 0 ? { ...m, power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "hinder", n: 50, aim: "enemy", all: false }] } : m)) }
+            : u.id === victim.id
+              ? { ...u, hp: u.max, shields: [] }
+              : u
+        ),
+        enemies: s.enemies.map((e) => ({
+          ...e,
+          boost: 0,
+          hinder: 0,
+          cooldowns: e.moves.map(() => 0),
+          moves: e.moves.map((m) => (m.power > 0 ? { ...m, power: 9, element: null, rests: 0, parts: [], area: false } : m)),
+        })),
+      };
+    });
+    const { container } = mount();
+    const c = container as HTMLElement;
+    const keyOne = keys(c)[0];
+    const firstFoe = JSON.parse(localStorage.getItem(SAVE_KEY)!).state.enemies[0].id as string;
+    const nOf = (c2: HTMLElement) => {
+      const tag = c2.querySelector(`.pwt-threat.attack[data-from-id="${firstFoe}"]`);
+      return tag ? tag.querySelector(".pwt-threat-n")?.textContent ?? "0" : null;
+    };
+    expect(nOf(c)).toBe("9");
+    await act(async () => {
+      fireEvent.click(keyOne);
+    });
+    await act(async () => {
+      fireEvent.click(targets(c)[0]);
+    });
+    let afterHinder: string | null | undefined;
+    for (let i = 0; i < 80; i++) {
+      await tick(100);
+      if (/weakened/.test(bannerLine(c)) && afterHinder === undefined && c.querySelector(".pwt-float")) afterHinder = nOf(c);
+      if (c.querySelector("[data-busy]")!.getAttribute("data-busy") !== "true") break;
+    }
+    // the hinder of 50 takes the 9 to nothing before the enemy acts
+    expect(afterHinder).toBe("0");
+  });
+
   it("hovering a tag draws one line from its enemy to the plate it lands on and rings both; a lethal tag rings in the danger tone", async () => {
     saveRun((s) => ({
       ...s,
