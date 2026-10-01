@@ -1611,6 +1611,46 @@ function foundationFor(wi: number) {
 	f.fillRect(MX - 240, GFOOT - 14, 480, 24);
 	f.globalCompositeOperation = 'source-over';
 	g.drawImage(ft.c, FND.x, FND.y, FND.w, FND.h);
+	if (wi === 4) {
+		// the left end is one shaded side face of stone, slab and lower course together, with the front's course joints carried round
+		const A: [number, number] = [MX - SLAB_X, SLAB_F];
+		const B: [number, number] = [A[0] + FDv.x, A[1] + FDv.y];
+		const D: [number, number] = [MX - LOW_X, GFOOT];
+		const C: [number, number] = [D[0] + FDv.x * 0.8, D[1] + FDv.y * 0.8];
+		const yT = B[1];
+		const sgr = g.createLinearGradient(0, yT, 0, GFOOT);
+		const k0 = (GFOOT - 14 - yT) / (GFOOT - yT);
+		sgr.addColorStop(0, css(scale3(st, 0.24)));
+		sgr.addColorStop(k0, css(scale3(st, 0.15)));
+		sgr.addColorStop(1, css(scale3(st, 0.12), 0.05));
+		polyPath(g, [A, B, C, D]);
+		g.fillStyle = sgr;
+		g.fill();
+		g.save();
+		polyPath(g, [A, B, C, D]);
+		g.clip();
+		const lerp2 = (p: [number, number], q: [number, number], t: number): [number, number] => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+		g.strokeStyle = css(BLACK, 0.5);
+		g.lineWidth = 1;
+		g.beginPath();
+		const m1 = lerp2(A, D, 0.45);
+		const m2 = lerp2(B, C, 0.45);
+		g.moveTo(m1[0], m1[1]);
+		g.lineTo(m2[0], m2[1]);
+		for (const u of [0.35, 0.7]) {
+			const t1p = lerp2(A, B, u);
+			const t2p = lerp2(m1, m2, u);
+			g.moveTo(t1p[0], t1p[1]);
+			g.lineTo(t2p[0], t2p[1]);
+		}
+		const u3 = 0.52;
+		const b1 = lerp2(m1, m2, u3);
+		const b2 = lerp2(D, C, u3);
+		g.moveTo(b1[0], b1[1]);
+		g.lineTo(b2[0], b2[1] - 6);
+		g.stroke();
+		g.restore();
+	}
 
 	// two cables: near black, 4 to 5 units thick, a 1 px highlight at 0.2. Each leaves the side of a box, sags onto the top face,
 	// crosses its front edge, hangs down the face and goes into the ground, ending in a small dark mound
@@ -1618,14 +1658,28 @@ function foundationFor(wi: number) {
 		const xs = MX + sg * 156;
 		const xt = MX + sg * 174;
 		const x0 = MX + sg * 116;
-		const xe = wi === 4 ? MX + sg * 172 : MX + sg * 236;
+		const xe = wi === 4 ? (sg < 0 ? MX - SLAB_X + FDv.x * 0.5 - 60 : MX + LOW_X + 42) : MX + sg * 236;
 		const path = () => {
 			if (wi === 4) {
-				// out of the cabinet's outer side, across the top face, over its front edge, flat down the face and into the ground
+				// out of the cabinet's outer side and across the top face to its side edge; on the left it goes down the side face and
+				// curves out onto the ground beside the foundation; on the right the edge hides it and it comes out at the ground
 				g.beginPath();
-				g.moveTo(MX + sg * 152, GROUND - 8);
-				g.quadraticCurveTo(MX + sg * 160, SLAB_F - 14, xe, SLAB_F - 1);
-				g.lineTo(xe, GFOOT - 4);
+				if (sg < 0) {
+					const ex = MX - SLAB_X + FDv.x * 0.5;
+					const ey = SLAB_F + FDv.y * 0.5;
+					g.moveTo(MX - 152, GROUND - 8);
+					g.quadraticCurveTo(MX - 168, ey + 6, ex, ey);
+					g.lineTo(ex - 1, SLAB_B + FDv.y * 0.5);
+					g.lineTo(ex - 14, GFOOT - 3 + FDv.y * 0.4);
+					g.quadraticCurveTo(ex - 22, GFOOT + 6, ex - 46, GFOOT + 7);
+				} else {
+					const ex = MX + SLAB_X + FDv.x * 0.5;
+					const ey = SLAB_F + FDv.y * 0.5;
+					g.moveTo(MX + 152, GROUND - 8);
+					g.quadraticCurveTo(MX + 168, ey + 6, ex + 2, ey);
+					g.moveTo(MX + LOW_X + 2, GFOOT - 4);
+					g.quadraticCurveTo(MX + LOW_X + 14, GFOOT + 6, MX + LOW_X + 42, GFOOT + 7);
+				}
 				return;
 			}
 			g.beginPath();
@@ -1638,15 +1692,15 @@ function foundationFor(wi: number) {
 		g.lineCap = 'round';
 		g.lineJoin = 'round';
 		path();
-		g.strokeStyle = wi === 4 ? css([46, 24, 30]) : css([20, 20, 22]);
+		g.strokeStyle = wi === 4 ? css([38, 20, 26]) : css([20, 20, 22]);
 		g.lineWidth = wi === 4 ? 2.8 : 4.6;
 		g.stroke();
 		g.save();
 		g.translate(wi === 4 ? 0 : -1, wi === 4 ? -1.2 : -1);
 		path();
-		g.strokeStyle = wi === 4 ? css([160, 112, 100], 0.4) : css([220, 226, 232], 0.2);
-		g.lineWidth = wi === 4 ? 0.8 : 1;
-		g.stroke();
+		g.strokeStyle = css([220, 226, 232], 0.2);
+		g.lineWidth = 1;
+		if (wi !== 4) g.stroke();
 		g.restore();
 		// the end goes under a low hump of the ground: a dark dome, lit on its top edge, underlit orange on lava
 		g.fillStyle = css([14, 12, 14], 0.97);
@@ -2093,6 +2147,8 @@ function groundLight(ctx: Ctx, wi: number, a: number, S: MachineLook, lit: numbe
 
 /** The roof's top plane, swept back along the depth: the housing's lid. */
 const ROOF_LID: [number, number][] = [[BODY.x0 + BODY.r, BODY.top], [BODY.x1 - BODY.r, BODY.top], [BODY.x1 - BODY.r + DEP.x, BODY.top + DEP.y], [BODY.x0 + BODY.r + DEP.x, BODY.top + DEP.y]];
+/** The left shoulder's swept band, between the roof lid and the side face. */
+const SHOULDER: [number, number][] = [[BODY.x0, BODY.top + BODY.r], [BODY.x0 + BODY.r * 0.3, BODY.top + BODY.r * 0.09], [BODY.x0 + BODY.r, BODY.top], [BODY.x0 + BODY.r + DEP.x, BODY.top + DEP.y], [BODY.x0 + BODY.r * 0.3 + DEP.x, BODY.top + BODY.r * 0.09 + DEP.y], [BODY.x0 + DEP.x, BODY.top + BODY.r + DEP.y]];
 export function drawMachine(ctx: Ctx, S: MachineLook) {
 	const { sec, gel, light, apex, beatPulse, reading, dishCol, side } = S;
 	const lit = S.lit ?? 1;
@@ -2147,6 +2203,14 @@ export function drawMachine(ctx: Ctx, S: MachineLook) {
 			ctx.globalAlpha = a * 0.15;
 			ctx.fillStyle = css(BLACK);
 			for (const q of [SIDE_FACE, ROOF_LID]) {
+				ctx.beginPath();
+				q.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+				ctx.closePath();
+				ctx.fill();
+			}
+			// the shoulder's swept band takes the side face's tone, so the roof's left edge shows no pale seam
+			ctx.globalAlpha = a * 0.7;
+			for (const q of [SHOULDER]) {
 				ctx.beginPath();
 				q.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
 				ctx.closePath();

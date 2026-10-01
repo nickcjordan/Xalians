@@ -1666,11 +1666,11 @@ export function createOutbreak(): Figure {
 			// the low cloud: it builds over the surface from the limb up to just above the horizon, then its front descends and the
 			// plain stands revealed above it, from the horizon down
 			const cTop = mix(limbTop, 98, smooth(1.12, 1.3, t1));
-			const front = t1 < 1.3 ? -100 : mix(98, 720, smooth(1.3, 1.72, t1));
+			const front = t1 < 1.25 ? -100 : mix(98, 720, Math.pow(smooth(1.25, 1.72, t1), 0.7));
 			const dens = smooth(1.14, 1.32, t1);
 			const thinC = 0.3 * (1 - smooth(1.5, 1.8, t1));
 			// the scene (sky, horizon, plain) exists above the cloud's top and, once it descends, above its front
-			const sceneY = t1 < 1.3 ? Math.max(limbTop, 0) : front + 55;
+			const sceneY = t1 < 1.25 ? Math.max(limbTop, 0) : front + 55;
 			const planetA = As * smooth(5, 16, Rp);
 			if (As > 0.004 && t1 < 1.1 && sx[TARGET_I] > -50) {
 				const zc = compact ? 1.4 : 1;
@@ -1801,7 +1801,7 @@ export function createOutbreak(): Figure {
 						vg4.addColorStop(1, 'rgba(0,0,0,1)');
 						dgx.fillStyle = vg4;
 						dgx.fillRect(0, 0, W, dh);
-						ctx.globalAlpha = clamp(sA * domeOn * 0.8);
+						ctx.globalAlpha = clamp(sA * domeOn * 0.62);
 						ctx.drawImage(dustCv, 0, dy0);
 					}
 				}
@@ -1847,7 +1847,7 @@ export function createOutbreak(): Figure {
 				ctx.save();
 				// it rises out of the dark ground
 				ctx.beginPath();
-				ctx.rect(0, 0, W, t1 < 1.3 ? 0 : Math.min(GY + 130, front + 55));
+				ctx.rect(0, 0, W, t1 < 1.25 ? 0 : Math.min(GY + 130, front + 55));
 				ctx.clip();
 				ctx.translate(CX, GY + (1 - rise) * 110);
 				ctx.scale(s, s);
@@ -1858,7 +1858,7 @@ export function createOutbreak(): Figure {
 						gel: GENESIS,
 						light: lightBoost,
 						side: 0.55,
-						a: As * smooth(1.3, 1.34, t1),
+						a: As * smooth(235, 290, front),
 						emerge: 1,
 						rimK: 0.1,
 						rimEdge: true,
