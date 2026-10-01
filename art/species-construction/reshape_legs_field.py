@@ -19,6 +19,9 @@ Edge measurement and smoothing parameters are in the spec too. Akinza-specific; 
 behavior of earlier runs. Opt-in spec keys added in round 2 attempt B: axisShift (lateral leg translation rows y, dx),
 depthAnchorFrac (depth scaled about front+frac*depth), scaleSmoothing (sigma in z for the depth ratio and anchor),
 kneePlane (x, z, halfX, halfZ, amplitude, yReach: a convex plane on the front of the knee).
+Opt-in in round 14: yMask (margin, fade: the y pass also fades to the identity beyond the leg's measured back edge plus margin,
+so a tail tip that passes the leg's x range is not stretched; without it the y pass moves everything behind the leg by up to
+.012 at z -.5, which printed a dent in the tail tip in round 8 and again on body-0420).
 Opt-in in round 8: zBlur (sigma, top, bottom, xMin, xFade, yMax, yFade: a z-only field blur over each leg that removes the faint
 horizontal ripple bands the slice-wise warps leave; spec art/species-construction/specs/leg-reshape-r08-v7.json).
 """
@@ -235,11 +238,17 @@ for side in (1, -1):
     xm_lo, xm_hi = tlo-spec['yMaskMargin'], thi+spec['yMaskMargin']
     srcy = np.empty(warped.shape, dtype=np.float32)
     Y = ys[None, :]
+    ym = spec.get('yMask')
+    yhi_z = lerp_field_z(y_hi, zz) if ym else None
     for k in range(warped.shape[2]):
         wxm = smooth((U-xm_lo[k])/spec['yMaskFade'])*(1-smooth((U-xm_hi[k])/spec['yMaskFade']))
         s = 1+ky[k]*(scale_z[k]-1)
         sy = yc_z[k]+(Y-yc_z[k])*s
-        srcy[:, :, k] = Y+wxm[:, None]*(sy-Y)
+        if ym:
+            wym = 1-smooth((ys-(yhi_z[k]+ym['margin']))/ym['fade'])
+            srcy[:, :, k] = Y+wxm[:, None]*wym[None, :]*(sy-Y)
+        else:
+            srcy[:, :, k] = Y+wxm[:, None]*(sy-Y)
     dy = np.diff(srcy, axis=1)/VS
     if dy.min() <= .1:
         raise ValueError(f'y warp folds: minimum dsrc/dy {dy.min():.3f} on side {side}')
