@@ -204,6 +204,11 @@ function judge(order, build, critique) {
   if (broken.length) reasons.push('broke invariant ' + broken.join(', '))
   if (gain < L.meanGain) reasons.push(`weighted mean ${gain >= 0 ? '+' : ''}${gain}`)
   const debts = lost.filter(id => !drops.includes(id)).map(id => ({ region: id, before: before[id], after: after[id], by: target }))
+  // A clean visible improvement is kept even when none of its criteria move (round 11:
+  // the fan rear lost its comb rows and seams with no side effect, and was reverted
+  // because the bowl outline kept every R04 result where it was).
+  const onVerdict = reasons.length && pair && pair.verdict === 'better' && !lost.length && !broken.length && gain >= 0
+  if (onVerdict) return { kept: true, keptOnVerdict: true, reasons: [], results, after, gain, debts: [], verdict: pair, invariants: critique.invariants || [] }
   return { kept: !reasons.length, reasons, results, after, gain, debts, verdict: pair || null, invariants: critique.invariants || [] }
 }
 function adopt(decision, build, critique, component) {
@@ -335,7 +340,7 @@ for (let i = 0; i < ROUNDS; i++) {
       assembly: o.build ? o.build.assembly : null, approach: o.build ? o.build.approach : null, changes: o.build ? o.build.changes : null,
       previews: o.build ? o.build.previews : null, componentBuilds: o.build ? o.build.componentBuilds : null,
       fitBefore: o.build ? o.build.fitBefore : null, fitAfter: o.build ? o.build.fitAfter : null,
-      kept, reason, verdict: o.decision ? o.decision.verdict : null, gain: o.decision ? o.decision.gain : null,
+      kept, keptOnVerdict: !!(o.decision && o.decision.keptOnVerdict), reason, verdict: o.decision ? o.decision.verdict : null, gain: o.decision ? o.decision.gain : null,
       after: o.decision ? o.decision.after : null, summary: o.critique ? o.critique.summary : null, parked: r.parked,
     })
   }
