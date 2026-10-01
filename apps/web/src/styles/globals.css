@@ -561,11 +561,14 @@
 	}
 	.story-box:not([data-boxed]) .story-scene { position: relative; inset: auto; transform: none; opacity: 1; }
 	/* A change with a figure in it does not run the rack (storyViewer.tsx, figureStage.tsx): the beats stay
-	   where they stand and cross-fade, and the light between the pictures does the travelling. */
+	   where they stand and cross-fade, each picture going and coming in its own place. */
 	.story-box[data-change="morph"] .story-scene[data-state="past"],
 	.story-box[data-change="morph"] .story-scene[data-state="future"] { transform: none; opacity: 0; }
 	.story-box[data-change="morph"] .story-scene[data-state="active"],
 	.story-box[data-change="morph"] .story-scene[data-leaving] { transition: opacity 520ms cubic-bezier(.2, .7, .2, 1); }
+	/* The beat leaving is gone before the words arriving are a third in, so two headings never read over each other
+	   where a phone stacks them at different heights. */
+	.story-box[data-change="morph"] .story-scene[data-leaving] { transition-duration: 240ms; }
 	/* The words arrive sooner than after the rack: nothing has to seat first, and the reading column is never left empty for long. */
 	.story-box[data-change="morph"] .story-scene[data-state="active"] .scene-read { transition-delay: 160ms; }
 	.story-box[data-change="morph"] .story-scene[data-state="active"] .scene-label { transition-delay: 260ms; }

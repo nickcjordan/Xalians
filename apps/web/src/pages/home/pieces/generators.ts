@@ -21,7 +21,7 @@
 // into offscreen canvases on first use; a frame only composes them and draws what moves.
 import { scaleRGB, blot, clamp, css, easeOut, glow, grain, H, lighter, mix, mixRGB, ramp, rng, smooth, W, type Ctx, type RGB } from './stage';
 import { assetUrl, type Figure } from './figures';
-import { BLACK, BODY, DISH, FOOT, GROUND, MC, MX, PH, PW, TAU, VIOLET, VR, VX, VY0, VY1, WHITE, WX0, drawMachine, ease, hash, machineCache, machineSmall, machineTinted, offscreen, resetMachineWorld, pics, seedR, soften, type MachineLook, type Pic, type SeedKind, type WorldKey } from './generatorMachine';
+import { backdrop, BLACK, BODY, DISH, FOOT, GROUND, MC, MX, PH, PW, TAU, VIOLET, VR, VX, VY0, VY1, WHITE, WX0, drawMachine, ease, hash, machineCache, machineSmall, machineTinted, offscreen, resetMachineWorld, pics, seedR, soften, type MachineLook, type Pic, type SeedKind, type WorldKey } from './generatorMachine';
 
 const vnoise = (x: number, s: number) => {
 	const i = Math.floor(x);
@@ -762,6 +762,10 @@ function drawWorld(ctx: Ctx, wi: number, shift: number, sec: number, a: number, 
 		const pk = PIC_K[wi];
 		const pcx = WX0 + shift * 0.7 + 30 - clamp(lt, -0.5, 6) * 14 + WWD / 2 + PIC_DX[wi];
 		ctx.drawImage(P.c, pcx - (WWD * pk) / 2, PH - PH * pk + PIC_DY[wi], WWD * pk, PH * pk);
+		if (wi === 3) {
+			// the machine's sea is this same picture drawn again over the rock's lower third: it needs the rect and transform used here
+			backdrop[3] = { x: pcx - (WWD * pk) / 2, y: PH - PH * pk + PIC_DY[wi], w: WWD * pk, h: PH * pk, t: ctx.getTransform() };
+		}
 		ctx.globalAlpha = 1;
 		if (w.key === 'storm') {
 			rain(ctx, sec, near, a, 0.6, [190, 200, 220]);
@@ -1410,6 +1414,11 @@ export function createGenerators(): Figure {
 			const gelLevel = eT < 0.8 ? mix(1, 0.45, smooth(0, 0.4, eT)) : mix(0.45, 1, smooth(0.8, 1.1, eT));
 			let gel: RGB = scaleRGB(eT < 0.8 ? oldGel : newGel, gelLevel);
 			if (v3 > 0.5 && stage === 1) {
+				// 03 began between worlds: the change in the gel finishes inside the power dip, so it never holds the old world's color
+				kindA = WORLDS[ws.cur].key;
+				kindB = kindA;
+				km = 1;
+				gel = newGel;
 				if (!frozen) frozen = { kindA, kindB, km, gel };
 				({ kindA, kindB, km, gel } = frozen);
 			}
@@ -1459,7 +1468,8 @@ export function createGenerators(): Figure {
 					growT: first && stage !== 1 && v3 < 0.5 ? growT : undefined,
 					tick: first ? tickV : 0,
 					ringFlash: first && stage !== 1 && eT > PULSE0 - 0.06 && eT < PULSE0 + 0.02 ? 1 : 0,
-					seedScale: L === COMPACT ? 1.35 : 1,
+					seedScale: L === COMPACT ? 1.15 : 1,
+					seaLive: first ? 1 - arrive : 0,
 					sec: sec + i * 1.7,
 					gel: mixRGB(own, mixRGB(own, [128, 104, 190], 0.78), lk),
 					light: mixRGB(first ? lightNow : worldSeam(wi), VIOLET, lk * 0.5),
