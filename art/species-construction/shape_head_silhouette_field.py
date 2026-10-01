@@ -17,7 +17,7 @@ The optional `warp` is a smooth vertex displacement of the skin after meshing (n
 the head in toward the neck (it also squashes the neck stem, head-0221: use `nape_pull_gentle`, which tapers to zero above the stem
 and keeps the surface slope under 1), `wing_recess` sets the fan wings back from the rear centre so the centre
 stands proud. Round 2 adds `cut` (field space, see head_r01_ops.py) and the warps `rim_lift`, `front_set_back` and
-`rear_valley` and `underside_drop`. Each is weighted to zero near the face; eyes, nose and mouth are untouched. Akinza-specific.
+`rear_valley`, `underside_drop` and (retry) `crown_lift`. Each is weighted to zero near the face; eyes, nose and mouth are untouched. Akinza-specific.
 """
 import argparse
 import json
@@ -255,6 +255,8 @@ def apply_warp(w):
         dz += ops.underside_drop_dz(x, z, w['underside_drop'])
     if w.get('rim_lift'):
         dz += ops.rim_lift_dz(x, z, w['rim_lift'])
+    if w.get('crown_lift'):
+        dz += ops.crown_lift_dz(x, z, w['crown_lift'])
     if w.get('front_set_back'):
         dy += ops.front_set_back_dy(x, y, z, w['front_set_back'])
     if w.get('rear_valley'):

@@ -12,6 +12,8 @@ z_local = .537 - 3.721 y_fig.
                                to zero below z0 so the face is untouched.
   front_set_back_dy(x, y, z, cfg)   moves the fan's front surface back beside the crown so the dome stands in front of
                                it. Applied only to the front half (y below cfg['y'][0]..cfg['y'][1] fade).
+  crown_lift_dz(x, z, cfg)     a gaussian lift of the crown top (retry of round 2): amp, sx (local), z0 and zf ramp. Lets the crown
+                               stand above the inner fan rims after rim_lift.
   rear_valley_dy(x, y, z, cfg) a soft concave valley in the rear surface along the crease where each wing root meets the
                                skull dome (moves only the rear-facing half toward the front).
 """
@@ -93,3 +95,10 @@ def underside_drop_dz(x, z, cfg):
     under = np.interp(a, [u[0] for u in cfg['under']], [u[1] for u in cfg['under']])
     weight = 1-smoothstep((z-under)/cfg['fade'])
     return -drop*fig*cfg.get('scale', 1.0)*weight
+
+
+def crown_lift_dz(x, z, cfg):
+    """Raise the crown between the ear roots by `amp` (head-local) with a gaussian across x of width `sx`, weighted to zero below
+    z0 over `zf`. Keep amp*0.86/sx under 0.3 so no ridge forms."""
+    wx = np.exp(-(x/cfg['sx'])**2)
+    return cfg['amp']*wx*smoothstep((z-cfg['z0'])/cfg['zf'])
