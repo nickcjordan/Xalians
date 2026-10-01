@@ -20,6 +20,10 @@ The table is read from art/species-construction/specs/r04_locks.json (made by lo
 spec's back-view fit units; the head is placed at scale .50 with offset (0, -.02, .635) so head-local = (-3.721 x, 3.721 df + .04,
 .537 - 3.721 y). Eyes, nose and mouth are separate objects and do not move.
 Akinza-specific. Every parameter is recorded in rear-lock-table.json.
+
+The field is meshed once, so every polygon of the result sits on material slot 0 and a per-polygon material of the input head
+(the pale inner-ear coat of the R03 tufts) is lost. Run carry_materials_field.py on the output (--scene <this output>
+--source <the input head>) before assembling when the input head carries one.
 """
 import argparse
 import json
@@ -99,6 +103,15 @@ parser.add_argument('--d-skip', default='', help='comma list of dome-coat lock n
 parser.add_argument('--c-tip-raise', type=float, default=0., help='figure units the crown tuft tips are raised (tip y smaller), so the tuft stands clear of the dome')
 parser.add_argument('--thin', default='', help='keep every k-th lock of a row (per wing), e.g. B3=2 keeps half; pair with --row-width and --len-scale to widen the survivors')
 parser.add_argument('--yaw', default='', help='per-row extra rearward lean: root depth moves forward by this much (figure units) and tip depth stays, so each lock sweeps back out of the surface, e.g. B2=.015,B3=.015,T=.01')
+# round 11 options (all default to the earlier behaviour)
+parser.add_argument('--jitter-rows', default='T,B2,B3', help='rows that take --len-jitter (round 8 default T,B2,B3); add B1 so the edge row tips do not end on one line')
+parser.add_argument('--dir-jitter', type=float, default=0., help='deterministic turn of each wing lock tip about its root, plus or minus this many degrees, so tips do not line up in a zipper')
+parser.add_argument('--dir-jitter-rows', default='T,B1,B2,B3', help='rows that take --dir-jitter')
+parser.add_argument('--edge-guard', type=float, default=0., help='lengthened or jittered wing lock tips (--len-scale, --len-jitter, --dir-jitter) are shortened back toward the spec tip until they lie this far inside the sheet outline (figure units); 0 = off. Rows listed in --guard-rows only')
+parser.add_argument('--guard-rows', default='T,B2,B3', help='rows the --edge-guard applies to (B1 tips make the outline, so they are left alone by default)')
+parser.add_argument('--row-len-jitter', default='', help='per-row length jitter that replaces --len-jitter for that row, e.g. B1=.15 (the edge row is otherwise left at the spec length)')
+parser.add_argument('--row-dir-jitter', default='', help='per-row tip turn in degrees that replaces --dir-jitter for that row, e.g. B1=3')
+parser.add_argument('--jitter-seed', default='', help='text added to the lock name before the jitter hash, to draw a different deterministic layout')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=False)
@@ -405,6 +418,7 @@ def row_opts(text):
 
 LEN_SCALE, TIP_BACK, ROOT_IN, ROW_WIDTH = row_opts(args.len_scale), row_opts(args.tip_back), row_opts(args.root_in), row_opts(args.row_width)
 THIN, YAW = row_opts(args.thin), row_opts(args.yaw)
+ROW_LEN_JITTER, ROW_DIR_JITTER = row_opts(args.row_len_jitter), row_opts(args.row_dir_jitter)
 D_SKIP = set(n.strip() for n in args.d_skip.split(',') if n.strip())
 
 
@@ -418,12 +432,31 @@ def adjust(l):
     row = l['row']
     l = dict(l)
     k = LEN_SCALE.get(row, 1.)
-    if args.len_jitter and row in ('T', 'B2', 'B3'):
-        k *= 1+args.len_jitter*jitter_of(l['name'])
+    if row in ROW_LEN_JITTER:
+        k *= 1+ROW_LEN_JITTER[row]*jitter_of(l['name']+args.jitter_seed)
+    elif args.len_jitter and row in args.jitter_rows.split(','):
+        k *= 1+args.len_jitter*jitter_of(l['name']+args.jitter_seed)
     if k != 1.:
         xr, yr = l['root']
         xt, yt = l['tip']
         l['tip'] = [xr+(xt-xr)*k, yr+(yt-yr)*k]
+    dj = ROW_DIR_JITTER[row] if row in ROW_DIR_JITTER else (args.dir_jitter if row in args.dir_jitter_rows.split(',') else 0.)
+    if dj:
+        xr, yr = l['root']
+        xt, yt = l['tip']
+        ang = math.radians(dj*jitter_of(l['name']+'dir'+args.jitter_seed))
+        dx, dy = xt-xr, yt-yr
+        l['tip'] = [xr+dx*math.cos(ang)-dy*math.sin(ang), yr+dx*math.sin(ang)+dy*math.cos(ang)]
+    if args.edge_guard > 0 and row in args.guard_rows.split(',') and l.get('side') in ('L', 'R'):
+        spec_tip = next((t['tip'] for t in table if t['name'] == l['name']), l['tip'])
+        xr, yr = l['root']
+        full = l['tip']
+        for f in np.linspace(1., 0., 21):
+            tip = [spec_tip[0]+(full[0]-spec_tip[0])*f, spec_tip[1]+(full[1]-spec_tip[1])*f]
+            u_, y_ = abs(tip[0]), tip[1]
+            if TOP[l['side']](u_)+args.edge_guard*.0 <= y_ and y_ <= BOTTOM[l['side']](u_)-args.edge_guard and u_ <= .279-args.edge_guard:
+                break
+        l['tip'] = tip
     if row == 'B1' and args.tip_flat:
         l['depthTip'] = l['depthTip']+args.tip_flat*(l['depthRoot']-l['depthTip'])
     if args.depth_jitter and row in ('T', 'B2', 'B3'):
