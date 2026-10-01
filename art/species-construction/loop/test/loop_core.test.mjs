@@ -316,3 +316,19 @@ test('v3 combine: two kept orders are merged by recipe, not by component directo
   assert.ok(saw, 'some fake run keeps two orders in one round')
   assert.match(saw, /recipe\.py merge/)
 })
+
+test('v3 effort trial: the first order gets a medium-effort twin, judged and recorded, never adopted', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R01: 'm' }
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 2, effortTrial: true }), 't', label => {
+    if (label.startsWith('builder')) { const id = /: (R\d+)/.exec(label)[1]; return { ...okBuild(id), assembly: 'assembled-' + id + (label.includes('trial') ? '-t' : '') } }
+    return undefined
+  })
+  const twins = out.calls.filter(c => c.label.includes('(medium trial)'))
+  assert.equal(twins.filter(c => c.label.startsWith('builder')).length, 1, 'one twin builder in the first round only')
+  assert.equal(twins.find(c => c.label.startsWith('builder')).effort, 'medium')
+  assert.match(twins.find(c => c.label.startsWith('builder')).prompt, /-medium\.json/)
+  const rec = out.calls.find(c => c.label === 'record r' + (status.round + 1))
+  assert.match(rec.prompt, /"effortTrial":\{"region":"R\d+","effort":"medium"/)
+  assert.ok(!/-t"/.test(JSON.stringify(out.ret.status.baseline)), 'the twin is never adopted')
+})

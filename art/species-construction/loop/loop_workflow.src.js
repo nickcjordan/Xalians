@@ -151,7 +151,7 @@ function historyCard(id) {
   return h.slice(-6).map(e => `Round ${e.round}: ${e.kept ? 'KEPT' : 'REVERTED'}. Approach: ${e.approach}. ${e.reason ? 'Reason: ' + e.reason + '. ' : ''}${e.reusable && e.reusable.length ? 'Reusable: ' + e.reusable.map(x => x.option + ' (' + x.what + ')').join('; ') : ''}`).join('\n')
 }
 const candidateRecipe = (round, id) => `${LOOPDIR}\\recipes\\r${String(round).padStart(2, '0')}-${id}.json`
-function builderPrompt(order, round) {
+function builderPrompt(order, round, suffix) {
   const r = S.regions[order.id]
   const spec = S.specs[order.id]
   const scopeLine = order.component === 'join'
@@ -168,7 +168,7 @@ function builderPrompt(order, round) {
     (S.audit ? `Gap audit (independent, ranked by how much each gap stops the model reading as the sheet): ${abs(S.audit)}. Read the rows for your region and fix the most visible gap first, not the easiest criterion. A structural gap (a wrong length, cross section, depth, joint position, or a part built the wrong way) is fixed by rebuilding that part, by a parameter of the step that authors it, or by the proportion levers named in the builder brief, never by stacking more surface warps on it.\n\n` : '') +
     `Shared sheet measurement: ${BRIEF('sheet.json')} (outlines, station tables, landmarks; overlay sheet.png). Compare against it with sheet_measure.py model rather than re-tracing the sheet.\n\n` +
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it).\n` +
-    `Your candidate recipe: ${candidateRecipe(round, order.id)}. ${scopeLine} Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
+    `Your candidate recipe: ${candidateRecipe(round, order.id + (suffix || ''))}. ${scopeLine} Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
     `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break.\n` +
     'Return the structured output with recipe set to your candidate recipe path, head and body set to the component directories your assembly used, assembly and packet set to yours, regionChange copied from diff.json (region to number), containment as one line (the largest foreign-region displacement and where), approach as one recognisable sentence, and reusable options you added.'
 }
@@ -289,6 +289,23 @@ for (let i = 0; i < ROUNDS; i++) {
   const baselineAtStart = JSON.parse(JSON.stringify(S.baseline))
   const parkedBefore = new Set(IDS.filter(id => S.regions[id].parked))
 
+  // Builder effort trial (args.effortTrial, first round of the batch only): the first order
+  // also runs a twin builder at medium effort on the same baseline, judged by its own critic
+  // and recorded, never adopted. Builders were 61 percent of the v2 tokens.
+  const trial = args.effortTrial && i === 0 ? orders[0] : null
+  const trialRun = trial ? (async () => {
+    const tb = await agent(builderPrompt(trial, round, '-medium') + ' This is an effort trial twin: build in your own new directories, never commit, and edit no committed script; put any script change in a new file named after the original with a -trial suffix.',
+      { label: `builder r${round} ${trial.component}: ${trial.id} (medium trial)`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'medium' })
+    if (!tb || tb.failed || !tb.packet || tb.technicalPass === false) return { failed: tb ? (tb.reason || 'technical check failed') : 'builder returned nothing' }
+    const frozenT = trial.component === 'head' ? [...POOLS.body, ...POOLS.join] : trial.component === 'body' ? POOLS.head : []
+    const scopeT = sideEffectRegions(tb.regionChange ? { regionChange: tb.regionChange } : null, trial.id, THRESHOLD, SP.regionImages, IDS).filter(id => !frozenT.includes(id))
+    const tc = await agent(criticPrompt(tb.packet, trial, 'candidate', scopeT),
+      { label: `critic r${round} ${trial.component}: ${tb.assembly} (medium trial)`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' })
+    if (!tc) return { failed: 'critic returned nothing', build: tb }
+    const d = judge(S, RUBRIC, L, trial, tb, tc, { pools: POOLS, regionChange: tb.regionChange || null, threshold: tb.regionChange ? THRESHOLD : null, regionImages: SP.regionImages })
+    return { build: tb, kept: d.kept, reasons: d.reasons, after: d.after, gain: d.gain, verdict: d.verdict }
+  })() : null
+
   const outcomes = await parallel(orders.map(order => async () => {
     const out = { order }
     if (!S.specs[order.id]) {
@@ -311,6 +328,7 @@ for (let i = 0; i < ROUNDS; i++) {
     return out
   }))
 
+  const trialOutcome = trialRun ? await trialRun : null
   const kept = outcomes.filter(o => o && o.decision && o.decision.kept)
   let combined = null
   if (kept.length === 2 && kept.every(o => o.build.recipe)) {
@@ -339,6 +357,7 @@ for (let i = 0; i < ROUNDS; i++) {
 
   const entry = recordEntry(S, L, round, outcomes, combined ? combined.build.assembly : null)
   entry.recipe = S.baseline.recipe || null
+  if (trialOutcome) entry.effortTrial = { region: trial.id, effort: 'medium', assembly: trialOutcome.build ? trialOutcome.build.assembly : null, kept: !!trialOutcome.kept, reasons: trialOutcome.reasons || [trialOutcome.failed], gain: trialOutcome.gain ?? null, verdict: trialOutcome.verdict || null }
   S.means.push(entry.mean)
   await agent(recordPrompt(round, entry), { label: `record r${round}`, phase: 'Rounds', model: 'haiku', effort: 'low' })
   log(`Round ${round}: ` + entry.orders.map(o => `${o.region} ${o.kept ? 'KEPT' : 'reverted'}`).join(' | ') + ` mean ${entry.mean}`)
