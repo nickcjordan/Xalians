@@ -85,6 +85,8 @@ parser.add_argument('--tip-trim', type=float, default=.009, help='coat locks who
 parser.add_argument('--trim-from', type=float, default=.2)
 parser.add_argument('--keep', default='PFMX', help='coat lock families to build')
 parser.add_argument('--skip', default='P1,F1,M1', help='comma separated lock names (without side letter) to skip, e.g. P1,F1,M1')
+parser.add_argument('--drop', default='', help='round 15: comma separated lock names WITHOUT the side letter (P1, F4, M3, T2 ...) that are really left out. --skip compares the digits only (name[2:]) and so never matched; it is kept as it was so earlier builds reproduce')
+parser.add_argument('--top-tip-floor', type=float, default=None, help='round 15: --tip-floor for the coat locks whose tip is on the top edge (tip y < .012): a blunter highest tip, so the figure top is the same pixel row in every view')
 parser.add_argument('--rear-margin', type=float, default=.004, help='coat locks stay this far in front of the old rear, head-local')
 parser.add_argument('--samples', type=int, default=24)
 # Tuft.
@@ -180,6 +182,7 @@ for side, label in ((1, 'L'), (-1, 'R')):
     if len(pts) < 8:
         raise ValueError('cup polygon not parsed')
 skip = {s.strip() for s in args.skip.split(',') if s.strip()}
+drop = {s.strip() for s in args.drop.split(',') if s.strip()}
 # Extra coat locks (opt-out with --no-extras): the spec's table leaves the outer top corner of each wing as bare plate, so one
 # filler lock per side runs from the F3/P4 roots to the envelope between P4 and F4 (tip on the edge table: L top .009 at x .24,
 # R top .034 at x -.243, the R wing sitting about .025 lower on the sheet).
@@ -588,7 +591,7 @@ def lock_axis(spec, curl, lift, root_extend=0., length_scale=1., depth_shift=0.,
     return ax, xy, L
 
 
-def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=False, tip_min=None, section_p=None):
+def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=False, tip_min=None, section_p=None, floor=None):
     ogive = args.ogive if ogive is None else ogive
     tip_min = args.tip_min if tip_min is None else tip_min
     n = len(ax)
@@ -609,7 +612,7 @@ def lock_field(ax, spec, wscale, tscale, clip_rear=True, ogive=None, cup_clip=Fa
         # round 12 --tip-point: the tip-min floor fades to zero over the last fraction of the length so the lock ends in a true point
         if not args.tip_point:
             return 1.
-        return np.maximum(smoothstep((1-t)/args.tip_point), args.tip_floor)
+        return np.maximum(smoothstep((1-t)/args.tip_point), args.tip_floor if floor is None else floor)
 
     def half_width(t):
         ss = np.clip((t-.4)/.6, 0, 1)
@@ -679,7 +682,7 @@ def add_to(target_field, sl, d, blend):
 
 tuft_specs = {s: [] for s in sides}
 for spec in spec_locks:
-    if spec['side'] not in sides or spec['name'][2:] in skip:
+    if spec['side'] not in sides or spec['name'][2:] in skip or spec['name'][1:] in drop:
         continue
     fam = spec['family']
     if fam == 'T':
@@ -714,7 +717,8 @@ for spec in spec_locks:
             continue
         ax, xy, L = lock_axis(spec, args.curl, args.tip_lift, args.coat_root_extend, args.length_scale, tip_trim=args.tip_trim)
         top_edge = spec['tip'][1] < .035 and abs(spec['tip'][0]) > .12
-        r = lock_field(ax, spec, args.width_scale*(args.drape_width if spec['dir'] < -20 else 1.)*(args.top_width if top_edge else 1.), args.thick_scale, cup_clip=args.cup_clear >= 0)
+        top_floor = args.top_tip_floor if (args.top_tip_floor is not None and spec['tip'][1] < .012) else None
+        r = lock_field(ax, spec, args.width_scale*(args.drape_width if spec['dir'] < -20 else 1.)*(args.top_width if top_edge else 1.), args.thick_scale, cup_clip=args.cup_clear >= 0, floor=top_floor)
         if r is None:
             continue
         sl, d = r
