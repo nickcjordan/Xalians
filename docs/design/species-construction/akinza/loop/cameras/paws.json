@@ -130,9 +130,9 @@
     {
       "name": "forepaw-front",
       "target": [
-        0.475,
-        -0.1,
-        -0.25
+        0.371,
+        -0.115,
+        -0.18
       ],
       "orthoScale": 0.25,
       "offset": [

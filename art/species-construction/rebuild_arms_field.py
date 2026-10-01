@@ -56,6 +56,10 @@ ARM = {
     'wristS': .205,           # distance of W from E along the lower axis
     'pawEndS': .2845,         # flat cut of the rod, inside the lobes
     'pawEndBlend': .010,
+    # upperRod: a single station rod from S to E in place of the two smin-joined capsules (their union leaves a
+    # faint ring of up to blend/4 at the joint). Stations are (fraction of S to E, ru, rv); radii are smoothed
+    # with `stationSmoothing` like the forearm's. None keeps the capsules (body-0303 and every earlier run).
+    'upperRod': None,
     'olecranon': {'back': .0270, 'radii': [.022, .020, .028]},
     'swell': {'s': .056, 'out': .004, 'back': .004, 'radii': [.0425, .0405, .090], 'blend': .030},
     'joinBlend': .014,
@@ -88,6 +92,19 @@ ARM = {
     'removeYFade': [.060, .090],  # weight 0 behind y .09 so tails are never touched,
     'removeYFadeZ': [.10, .14],   # but only below this height (above it the old arm's back must go too)
     'fillet': {'top': .09, 'low': .05, 'topZ': .30, 'lowZ': .22},
+    # keepNativeAbove [z0, z1]: add no material above z1 (blended in from z0). A body whose shoulders were
+    # reshaped after the first arm rebuild (neck and shoulder stage) keeps its caps and trapezius slopes;
+    # set `deltoid` to null at the same time. None keeps every earlier run exact.
+    'keepNativeAbove': None,
+    # fusionByRemoval: the union blend width follows the removal weight, so where the native arm was kept (above
+    # removeZ) the new arm fuses with a hard minimum and adds no fillet on top of the native one. None = off.
+    'fusionByRemoval': None,
+    # fusionBlend: true replaces the union by w*smin(trunk-only, arm, k) + (1-w)*min(native, arm) with w the removal
+    # weight. A smooth minimum of a partly removed native arm against the new arm (which lies on the same surface)
+    # raises a bump of k/4 all round the arm wherever w is between 0 and 1, which shows as a shading band at the
+    # top of the removal fade; this blend adds the fillet only where the trunk meets the arm. False = off.
+    # 'native' blends w*smin(trunk, arm, k) + (1-w)*native: where the native arm stays nothing is added at all.
+    'fusionBlend': False,
     'maxIslandVertices': 5000,
     'box': {'x': [.0, .55], 'y': [-.26, .13], 'z': [-.36, .42], 'fade': .02},
 }
@@ -381,12 +398,27 @@ for side in (1, -1):
     yw = 1-smooth((Y-y0)/(y1-y0))
     w = w*(yw+(1-yw)*smooth((Z-ARM['removeYFadeZ'][0])/(ARM['removeYFadeZ'][1]-ARM['removeYFadeZ'][0])))
     rm = (1-w)*native+w*trunk
-    del core, dist, opened, trunk, changed, tube
+    del core, dist, opened, changed, tube
 
     # 2. new arm
     ua = ARM['upperArm']
-    upper = smin(capsule(P, S, (S+E)/2, ua['S'], ua['mid'], [1, 0, 0]),
-                 capsule(P, (S+E)/2, E, ua['mid'], ua['E'], [1, 0, 0]), .006)
+    if ARM['upperRod']:
+        # one capped rod along S to E whose radius profile is smoothed (no capsule joint, no station kinks)
+        length1 = float(np.linalg.norm(E-S))
+        st = np.array(ARM['upperRod'], float)
+        us, uru, urv = st[:, 0]*length1, st[:, 1], st[:, 2]
+        if ARM['stationSmoothing'] > 0:
+            us, uru, urv = smooth_profile(us, uru, urv, sigma=ARM['stationSmoothing'])
+        t1 = (Xp-S[0])*a1[0]+(Y-S[1])*a1[1]+(Z-S[2])*a1[2]
+        qu1 = (Xp-S[0])*u1[0]+(Y-S[1])*u1[1]+(Z-S[2])*u1[2]
+        qv1 = (Xp-S[0])*v1[0]+(Y-S[1])*v1[1]+(Z-S[2])*v1[2]
+        tc1 = np.clip(t1, 0, length1)
+        ru1 = np.interp(tc1, us, uru)
+        rv1 = np.interp(tc1, us, urv)
+        upper = ellipse_distance(qu1, qv1, t1-tc1, ru1, rv1, .5*(ru1+rv1))
+    else:
+        upper = smin(capsule(P, S, (S+E)/2, ua['S'], ua['mid'], [1, 0, 0]),
+                     capsule(P, (S+E)/2, E, ua['mid'], ua['E'], [1, 0, 0]), .006)
     t_axis = (Xp-E[0])*a2[0]+(Y-E[1])*a2[1]+(Z-E[2])*a2[2]
     qu = (Xp-E[0])*u2[0]+(Y-E[1])*u2[1]+(Z-E[2])*u2[2]
     qv = (Xp-E[0])*v2[0]+(Y-E[1])*v2[1]+(Z-E[2])*v2[2]
@@ -421,13 +453,26 @@ for side in (1, -1):
     lower = smin(lower, lobes, ARM['lobeToRod'])
     arm = smin(upper, lower, ARM['joinBlend'])
     dl = ARM['deltoid']
-    deltoid = ellipsoid(P, S+np.array(dl['offset']), (np.array([1., 0, 0]), np.array([0, 1., 0]), np.array([0, 0, 1.])), dl['radii'])
-    arm = smin(arm, deltoid, dl['blend'])
+    if dl:
+        deltoid = ellipsoid(P, S+np.array(dl['offset']), (np.array([1., 0, 0]), np.array([0, 1., 0]), np.array([0, 0, 1.])), dl['radii'])
+        arm = smin(arm, deltoid, dl['blend'])
 
     # 3. union with the trunk-only field
     fz = smooth((Z-ARM['fillet']['lowZ'])/(ARM['fillet']['topZ']-ARM['fillet']['lowZ']))
     k = ARM['fillet']['low']+(ARM['fillet']['top']-ARM['fillet']['low'])*fz
-    merged = smin(rm, arm, k)
+    if ARM['fusionByRemoval'] is not None:
+        k = ARM['fusionByRemoval']+(k-ARM['fusionByRemoval'])*w
+    if ARM['fusionBlend'] == 'native':
+        # nothing is added where the native arm stays (a shoulder that was reshaped after the first rebuild)
+        merged = w*smin(trunk, arm, k)+(1-w)*native
+    elif ARM['fusionBlend']:
+        merged = w*smin(trunk, arm, k)+(1-w)*np.minimum(native, arm)
+    else:
+        merged = smin(rm, arm, k)
+    if ARM['keepNativeAbove']:
+        c0, c1 = ARM['keepNativeAbove']
+        keep = smooth((Z-c0)/(c1-c0))
+        merged = merged+keep*(np.maximum(merged, native)-merged)
     # blend to the untouched field at the box faces
     fade = box['fade']
     window = np.ones(shape)
@@ -440,7 +485,7 @@ for side in (1, -1):
     grid.copyFromArray(final, ijk=tuple(int(v) for v in lo_idx))
     report['sides'][f'{side:+d}'] = {'box': [low.tolist(), high.tolist()], 'shape': list(shape),
                                      'maxChange': float(np.max(np.abs(final-native.astype(np.float32))))}
-    del native, rm, arm, merged, final, window, upper, lower, lobes, rod, swell, ole, deltoid
+    del native, rm, trunk, arm, merged, final, window, upper, lower, lobes, rod, swell, ole
 
     # claws: base inside each lobe tip on the palm side, aimed along the paw axis, curling palmward
     palm = -u2
