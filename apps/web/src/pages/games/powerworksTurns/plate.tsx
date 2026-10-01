@@ -2,8 +2,8 @@ import React from "react";
 import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap, HeartPulse, TrendingDown } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import { DeltaChip, SpotlightMarks } from "./banner";
-import { SupportIcon, SUPPORT_WORD, INTENT_VERB } from "./support";
-import type { EnemyView, IntentView, Marks, Preview, SquadView } from "./view";
+import { SupportIcon, SUPPORT_WORD } from "./support";
+import type { EnemyView, Marks, Preview, SquadView, Threat } from "./view";
 
 /**
   The enemy hit's own glyph (UX pass 2, round 5): a jagged burst, an impact. The swords stay the
@@ -87,22 +87,6 @@ export function ElementBadge({ element, className = "" }: { element: string; cla
   );
 }
 
-/**
-  The knockout mark on a companion's plaque (UX pass 2, round 5): an enemy that acts before this
-  companion's next turn has a ready hit that equals or exceeds its health. The same skull the
-  player's finishing cells carry, as a fact.
-*/
-export function KoMark({ from, name }: { from: string[]; name: string }) {
-  const who = from.length > 1 ? `${from.join(" and ")} each have` : `${from[0]} has`;
-  const words = `${who} a ready hit that knocks ${name} out before its next turn`;
-  return (
-    <span className="pwt-ko" title={words} aria-label={words} data-ko={from.join("")}>
-      <Skull />
-      <span className="pwt-ko-words">can fall</span>
-    </span>
-  );
-}
-
 function HealthBar({ hp, max, delta = 0, plain = false }: { hp: number; max: number; delta?: number; plain?: boolean }) {
   const pct = max > 0 ? Math.max(0, Math.min(100, (hp / max) * 100)) : 0;
   return (
@@ -158,9 +142,13 @@ export function SquadPlate({
   dimmed = false,
   delta = 0,
   targeted = false,
+  ring = "",
   impactTarget = false,
   struck = false,
   onHover,
+  threats,
+  threatMode,
+  onThreat,
   preview,
   previewKey = "",
   offTarget = false,
@@ -177,11 +165,17 @@ export function SquadPlate({
   /** Hovering an enemy key cell that targets this squadmate (not used by squad plates today,
       kept for symmetry with EnemyPlate's targeting ring). */
   targeted?: boolean;
+  /** A tag is hovered: this plate is the enemy it comes from or the plate it lands on (the danger tone when the hit knocks it out). */
+  ring?: "" | "threat" | "danger";
   /** This unit is the current beat's target, at the impact phase: flash and recoil. */
   impactTarget?: boolean;
   /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
   struck?: boolean;
   onHover?: (hovering: boolean) => void;
+  /** The threats on this companion, as the page reads them (preview and playback applied); u.threats when absent. */
+  threats?: Threat[];
+  threatMode?: (fromId: string) => ThreatMode;
+  onThreat?: (fromId: string | null) => void;
   /** What the hovered or selected key would land here (a heal, a shield, a boost). */
   preview?: Preview;
   previewKey?: string;
@@ -195,7 +189,7 @@ export function SquadPlate({
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${u.active ? "active" : ""} ${lit ? "lit" : ""} ${
         spotlit ? "spotlit" : ""
-      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""}`}
+      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""}`}
       data-unit={u.id}
       onMouseMove={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
@@ -222,7 +216,7 @@ export function SquadPlate({
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
-        {u.koFrom && !u.down && <KoMark from={u.koFrom} name={u.name} />}
+        {!u.down && <ThreatTabs threats={threats ?? u.threats} onCompanion modeOf={threatMode} onHover={onThreat} />}
         <span className="pwt-name">{u.name}</span>
         <HealthBar hp={u.hp} max={u.max} delta={delta} />
         {u.down ? (
@@ -286,89 +280,142 @@ export function MatchupMark({ step, who }: { step: number | null; who?: string }
 }
 
 /**
-  What an enemy has committed to (its intent), on its plate: the companion it is aimed at (portrait and
-  name), then the number it would land now, a skull when that is lethal. The move's name is on hover. A
-  support intent shows its kind and its recipient. Numbers and words in place, stated as facts.
+  Threat tags (docs/design/powerworks-threat-tags.md): an enemy's committed move, shown on the plate it
+  lands on. The tag carries the enemy's letter (the box its figure wears), the impact glyph and the number
+  it would land now; a skull and the danger border when that knocks the plate out. A support carries its
+  icon and number. No words are drawn: they are the hover title and the accessible name.
 */
-export type IntentMode = "live" | "lit" | "dim";
+export type ThreatMode = "live" | "lit" | "dim";
 
-export function IntentChip({
-  intent,
-  mode = "live",
-  turnedTo,
-}: {
-  intent: IntentView;
-  /** While beats play: the acting enemy's chip stays lit, the others step back; "live" outside playback. */
-  mode?: IntentMode;
-  /** The acting enemy turned from its committed target to this one (its target fell): the old one is struck. */
-  turnedTo?: { name: string; art: string; element: string };
-}) {
-  const t = intent.target;
-  const who = t.self ? "itself" : t.name;
-  const isAttack = intent.kind === "attack";
-  const kind = isAttack ? "hit" : intent.supports[0]?.kind ?? "heal";
-  const verb = INTENT_VERB[kind];
-  const words = isAttack
-    ? intent.step === 0
-      ? `${intent.move} on ${who}: no effect`
-      : `${intent.move} on ${intent.area ? `${who} and every companion` : who}: ${intent.n}${intent.before !== undefined ? `, cut from ${intent.before} by its hinder` : ""}${
-          intent.step > 1 ? ", strong" : intent.step < 1 ? ", weak" : ""
-        }${intent.lethal ? `, knocks ${who} out` : ""}`
-    : `${intent.move} on ${who}: ${intent.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ")}`;
-  const turned = turnedTo ? `; turned from ${who} to ${turnedTo.name}` : "";
+const SUPPORT_TAG_WORD: Record<string, string> = {
+  heal: "heals",
+  shield: "shields",
+  boost: "boosts the next attack by",
+  hinder: "weakens the next attack by",
+  delay: "slows the next turn by",
+};
+
+/** The tag's words, for its title and accessible name: "A's next hit on Avilily: 14, knocks Avilily out". */
+export function threatWords(t: Threat, selfPlate = false): string {
+  const who = selfPlate ? "itself" : t.onName;
+  if (t.kind === "attack") {
+    if (t.step === 0) return `${t.from}'s next hit on ${who}: no effect`;
+    const cut = t.before !== undefined ? `, from ${t.before}` : "";
+    const area = t.area ? " (it hits every companion)" : "";
+    const matchup = t.step > 1 ? ", strong matchup" : t.step < 1 ? ", weak matchup" : "";
+    const ko = t.lethal ? `, knocks ${who} out` : "";
+    const gone = t.cancelled ? ", will not come: the move finishes it" : "";
+    return `${t.from}'s next hit on ${who}: ${t.n}${cut}${matchup}${ko}${area}${gone}`;
+  }
+  const parts = t.parts.map((p) => `${SUPPORT_TAG_WORD[p.kind]} ${p.n}`).join(", ");
+  return `${t.from}'s next move on ${who}: ${parts}${t.cancelled ? ", will not come: the move finishes it" : ""}`;
+}
+
+export function ThreatTag({ t, mode = "live", onCompanion = false, onHover }: { t: Threat; mode?: ThreatMode; onCompanion?: boolean; onHover?: (fromId: string | null) => void }) {
+  const self = t.kind === "support" && t.on === t.fromId;
+  const words = threatWords(t, self);
+  const cls = `pwt-threat ${t.kind}${t.before !== undefined ? " struck" : ""}${t.lethal && !t.cancelled ? " lethal" : ""}${t.cancelled ? " cancelled" : ""} ${mode}`;
   return (
-    <span className={`pwt-intent ${isAttack ? "attack" : "support"} ${intent.lethal ? "lethal" : ""} ${mode}`} aria-label={`Next: ${words}${turned}`} title={`Next: ${words}${turned}`} data-intent={intent.move} data-mode={mode}>
-      <span className="pwt-intent-to">
-        {t.self ? (
-          <span className="pwt-intent-self">itself</span>
-        ) : (
-          <>
-            <span className={`pwt-intent-portrait${turnedTo ? " struck" : ""}`} aria-hidden="true">
-              <Portrait u={{ species: t.art, element: t.element }} small />
-            </span>
-            {turnedTo ? (
-              <>
-                <span className="pwt-intent-arrow" aria-hidden="true">
-                  →
-                </span>
-                <span className="pwt-intent-portrait" aria-hidden="true">
-                  <Portrait u={{ species: turnedTo.art, element: turnedTo.element }} small />
-                </span>
-              </>
-            ) : (
-              <span className="pwt-intent-name">{t.name}</span>
-            )}
-          </>
-        )}
+    <span
+      className={cls}
+      title={words}
+      aria-label={words}
+      role="img"
+      data-threat=""
+      data-from={t.from}
+      data-from-id={t.fromId}
+      data-on={t.on}
+      data-mode={mode}
+      onMouseEnter={onHover ? () => onHover(t.fromId) : undefined}
+      onMouseLeave={onHover ? () => onHover(null) : undefined}
+    >
+      <span className="pwt-threat-letter" aria-hidden="true">
+        {t.from}
       </span>
-      <span className="pwt-intent-what">
-        <span className="pwt-intent-verb" aria-hidden="true">{verb}</span>
-        {isAttack ? (
-          <>
-            <ImpactMark />
-            {intent.before !== undefined && (
-              <>
-                <s className="pwt-hit-before">{intent.before}</s>
-                <span className="pwt-hit-arrow" aria-hidden="true">
-                  →
-                </span>
-              </>
-            )}
-            {intent.step === 0 ? <Ban /> : intent.n}
-            {intent.lethal && <Skull className="pwt-hit-skull" />}
-            {intent.area && <span className="pwt-intent-all">ALL</span>}
-          </>
-        ) : (
-          intent.supports.map((s) => (
-            <span key={`${s.kind}-${s.aim}`} className={`pwt-intent-support ${s.kind}`}>
-              <SupportIcon kind={s.kind} onCompanion={!t.ally} />
-              {s.kind === "hinder" || s.kind === "delay" ? "-" : s.kind === "boost" ? "+" : ""}
-              {s.n}
+      {t.kind === "attack" ? (
+        <span className="pwt-threat-what" aria-hidden="true">
+          <ImpactMark />
+          {t.before !== undefined && (
+            <>
+              <s className="pwt-threat-before">{t.before}</s>
+              <span className="pwt-threat-arrow">→</span>
+            </>
+          )}
+          {t.step === 0 ? <Ban /> : <span className="pwt-threat-n">{t.n}</span>}
+          {t.lethal && <Skull className="pwt-threat-skull" />}
+        </span>
+      ) : (
+        <span className="pwt-threat-what" aria-hidden="true">
+          {t.parts.map((p) => (
+            <span key={p.kind} className={`pwt-threat-part ${p.kind}`}>
+              <SupportIcon kind={p.kind} onCompanion={onCompanion} />
+              <span className="pwt-threat-n">
+                {p.kind === "hinder" || p.kind === "delay" ? "-" : p.kind === "boost" || p.kind === "heal" ? "+" : ""}
+                {p.n}
+              </span>
             </span>
-          ))
-        )}
-      </span>
+          ))}
+        </span>
+      )}
     </span>
+  );
+}
+
+/**
+  The tab row on a plaque's top edge, left side: the enemy's matchup mark first (when it has one), then
+  the threat tags in the order the enemies act. A row that would run into the element tag rides one row higher, above it.
+*/
+export function ThreatTabs({
+  threats,
+  modeOf,
+  onHover,
+  onCompanion = false,
+}: {
+  threats: Threat[];
+  modeOf?: (fromId: string) => ThreatMode;
+  onHover?: (fromId: string | null) => void;
+  onCompanion?: boolean;
+}) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [raised, setRaised] = React.useState(false);
+  const signature = threats.map((x) => `${x.fromId}${x.on}${x.before ?? ""}${x.n}${x.lethal ? "k" : ""}${x.parts.length}`).join("|");
+  // A row that would run into the element tag beside it rides one row higher, above that tag. The width of the row does not
+  // depend on the row it rides on, so this settles in one pass. The height it takes (from the plaque's top edge) is handed to
+  // the plate, so a preview number rises over the tags and never onto them.
+  React.useLayoutEffect(() => {
+    const el = ref.current;
+    const plate = el?.closest<HTMLElement>("[data-unit]");
+    if (!el || !plate) return;
+    const tag = plate.querySelector<HTMLElement>(".pwt-el");
+    const boss = plate.classList.contains("boss");
+    const need = threats.length > 0 && (boss || (!!tag && el.offsetLeft + el.offsetWidth > tag.offsetLeft - 3));
+    // An enemy's matchup tab sits to the right of its incoming tags when there is room, else one row up.
+    const match = plate.querySelector<HTMLElement>(".pwt-match");
+    if (match) {
+      match.style.left = "";
+      match.style.top = "";
+      if (threats.length > 0 && !need) {
+        const right = el.offsetLeft + el.offsetWidth + 3;
+        if (tag && right + match.offsetWidth < tag.offsetLeft - 3) match.style.left = `${right}px`;
+        else match.style.top = `${el.offsetTop - match.offsetHeight - 1}px`;
+      }
+    }
+    if (need !== raised) {
+      setRaised(need);
+      return;
+    }
+    if (threats.length > 0) plate.style.setProperty("--tags-h", `${-el.offsetTop}px`);
+    else plate.style.removeProperty("--tags-h");
+    return () => {
+      plate.style.removeProperty("--tags-h");
+    };
+  });
+  return (
+    <div ref={ref} className={`pwt-tabs${raised ? " raised" : ""}${onCompanion ? " squad" : ""}`} data-tabs="" data-sig={signature}>
+      {threats.map((t) => (
+        <ThreatTag key={`${t.fromId}-${t.on}-${t.kind}`} t={t} mode={modeOf ? modeOf(t.fromId) : "live"} onCompanion={onCompanion} onHover={onHover} />
+      ))}
+    </div>
   );
 }
 
@@ -496,11 +543,13 @@ export function EnemyPlate({
   dimmed = false,
   delta = 0,
   targeted = false,
+  ring = "",
   impactTarget = false,
   struck = false,
   onHover,
-  intentMode = "live",
-  turnedTo,
+  threats,
+  threatMode,
+  onThreat,
   preview,
   previewKey = "",
   offTarget = false,
@@ -518,18 +567,18 @@ export function EnemyPlate({
   delta?: number;
   /** The pointer is on this enemy while a key waits for a target: it is ringed. */
   targeted?: boolean;
+  ring?: "" | "threat" | "danger";
   /** This unit is the current beat's target, at the impact phase: flash and recoil. */
   impactTarget?: boolean;
   /** The blow that lands is a hit (not a heal or a mark): the flash comes with a knockback. */
   struck?: boolean;
   onHover?: (hovering: boolean) => void;
-  /**
-    While the enemies act the chips stay (a promise, read beside what happens): the acting enemy's is lit,
-    the others step back. Outside playback every chip is "live".
-  */
-  intentMode?: IntentMode;
-  /** The acting enemy turned from its committed target to this companion (the old target fell). */
-  turnedTo?: { name: string; art: string; element: string };
+  /** The supports committed to this enemy, as the page reads them (preview and playback applied); u.threats when absent. */
+  threats?: Threat[];
+  /** While the enemies act: the acting enemy's tags are lit, the others step back. */
+  threatMode?: (fromId: string) => ThreatMode;
+  /** The pointer is on one of this plate's tags (the enemy it comes from), or left it. */
+  onThreat?: (fromId: string | null) => void;
   /** What the hovered or selected key would land here (the number, drawn big on the plate). */
   preview?: Preview;
   previewKey?: string;
@@ -538,14 +587,12 @@ export function EnemyPlate({
   /** The plate is a legal target of the selected key: pressing it uses the key on it. */
   onPick?: () => void;
 }) {
-  const intent = u.intent;
-  const showIntent = !!intent && !u.down;
   const who = activeName;
   return (
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
         dimmed ? "dimmed" : ""
-      } ${targeted ? "targeted" : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""} ${isBoss(u.species) ? "boss" : ""}`}
+      } ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""} ${isBoss(u.species) ? "boss" : ""}`}
       data-unit={u.id}
       data-letter={u.letter}
       onMouseMove={onHover ? () => onHover(true) : undefined}
@@ -573,6 +620,7 @@ export function EnemyPlate({
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
+        {!u.down && <ThreatTabs threats={threats ?? u.threats} modeOf={threatMode} onHover={onThreat} />}
         {!u.down && <MatchupMark step={u.matchup} who={who} />}
         {isBoss(u.species) && <span className="pwt-guardian-tag">Guardian</span>}
         <span className="pwt-name">
@@ -583,11 +631,6 @@ export function EnemyPlate({
         {(u.shield > 0 || u.boost > 0 || u.hinder > 0) && !u.down && (
           <div className="pwt-marks">
             <MarkChips marks={u} side="enemy" />
-          </div>
-        )}
-        {showIntent && (
-          <div className="pwt-marks intent">
-            <IntentChip intent={intent!} mode={intentMode} turnedTo={turnedTo} />
           </div>
         )}
       </div>

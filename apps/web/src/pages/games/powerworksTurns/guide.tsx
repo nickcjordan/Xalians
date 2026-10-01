@@ -1,10 +1,10 @@
 import React from "react";
 import { ScrollText } from "lucide-react";
 import { KeyCard } from "./keys";
-import { IntentChip, MarkChips, MatchupMark, ElementBadge, KoMark, PreviewBadge } from "./plate";
+import { ThreatTag, MarkChips, MatchupMark, ElementBadge, PreviewBadge } from "./plate";
 import { TurnRail } from "./rail";
 import { DeltaChip } from "./banner";
-import type { Cell, IntentView, KeyView, Preview, RailSlot } from "./view";
+import type { Cell, KeyView, Preview, RailSlot, Threat } from "./view";
 
 /**
   The Guide as a legend: every mark a player meets, drawn by the same component the play screen uses,
@@ -41,14 +41,18 @@ const sampleKey = (over: Partial<KeyView>): KeyView => ({
   ...over,
 });
 
-const sampleIntent = (over: Partial<IntentView>): IntentView => ({
-  move: "A move",
+const sampleThreat = (over: Partial<Threat>): Threat => ({
+  from: "A",
+  fromId: "a",
+  fromName: "Enemy",
+  on: "c",
+  onName: "the companion",
   kind: "attack",
-  area: false,
-  target: { id: "t", name: "Companion", art: "shield", element: "metal", ally: false, self: false },
+  move: "A move",
   n: 14,
   step: 1,
-  supports: [],
+  parts: [],
+  order: 0,
   ...over,
 });
 
@@ -98,9 +102,9 @@ export function TurnLesson({ phone = false }: { phone?: boolean }) {
         <PreviewTile p={preview({ n: 14, step: 1.5 })} />
       </Sample>
       {phone ? (
-        <p>Each key shows its power. Choose a key, then an enemy: each enemy shows what it would take, and whom it will hit next.</p>
+        <p>Each key shows its power. Choose a key, then an enemy: each enemy shows what it would take; tags show its next hit.</p>
       ) : (
-        <p>Each move shows its power, in a row above the companion whose turn it is. Choose a move, then an enemy: each enemy shows what it would take, and whom it will hit next.</p>
+        <p>Each move shows its power, in a row above the companion whose turn it is. Choose a move, then an enemy: each enemy shows what it would take; tags show its next hit.</p>
       )}
     </div>
   );
@@ -224,20 +228,12 @@ export function GuidePanel({
           <Row
             sample={
               <span className="pwt-legend-chips">
-                <IntentChip intent={sampleIntent({ n: 18, step: 0.5, lethal: true })} />
+                <ThreatTag t={sampleThreat({ n: 14 })} />
+                <ThreatTag t={sampleThreat({ from: "B", n: 18, lethal: true })} />
               </span>
             }
           >
-            An enemy&apos;s chip is its committed move: the target, what it does (hits, heals, shields, weakens, boosts) and the number it would land now. A skull: that knocks the companion out.
-          </Row>
-          <Row
-            sample={
-              <span className="pwt-legend-chips">
-                <IntentChip intent={sampleIntent({ kind: "support", n: 0, supports: [{ kind: "heal", n: 9, aim: "ally", all: false }] })} />
-              </span>
-            }
-          >
-            A support shows its kind, number and whom it is for. If the target falls first, an attack turns to the next companion and a support picks another ally.
+            A tag on a plate is an enemy&apos;s next move, on the one it will land on: the enemy&apos;s letter and the number it would land now. A skull and a red edge: that knocks it out. Hover a tag to see which enemy it comes from.
           </Row>
           <Row
             sample={
@@ -249,18 +245,6 @@ export function GuidePanel({
             }
           >
             The mark on an enemy is the matchup for the companion acting now: its multiplier, green when strong, raspberry when weak.
-          </Row>
-          <Row
-            sample={
-              <span className="pwt-legend-chips pwt-legend-ko">
-                <span className="pwt-legend-ko-plaque">
-                  <KoMark from={["A"]} name="the companion" />
-                  <span className="pwt-name">Companion</span>
-                </span>
-              </span>
-            }
-          >
-            A skull on a plate: an enemy acting first has committed to a hit that knocks it out.
           </Row>
           <Row
             sample={

@@ -152,9 +152,11 @@ async function phoneProblems(page) {
 
 /**
   Keys and plates (intents and keys): nothing on a key pokes out of it, and a banner sentence is never
-  cut (its text fits its box). Each enemy's intent chip sits inside its plaque, is not cut short, and
-  stays off the squad row's plaques, tags and the active pointer; a preview number (a key hovered or
-  selected) sits inside its own plate's figure area and off that plate's plaque and tags, and inside the stage.
+  cut (its text fits its box). Every threat tag (an enemy's committed hit or support, on the plate it lands
+  on) sits inside its plate's horizontal extent and the stage, is not cut short, and stays off every letter,
+  element tag, matchup tab, guardian tag, health chip, preview number, the moves row, the active pointer and
+  every other tag; on a phone its text is at least 12 CSS px. A preview number (a key hovered or selected) sits
+  inside its own plate's figure area and off that plate's plaque and tags, and inside the stage.
 */
 async function riderProblems(page) {
   return page.evaluate(() => {
@@ -183,15 +185,12 @@ async function riderProblems(page) {
     }
     document.querySelectorAll(".pwt-plate").forEach((pl) => {
       const m = pl.querySelector(".pwt-match");
-      const k = pl.querySelector(".pwt-ko");
       const e = pl.querySelector(".pwt-el");
       if (m && e && hit(m.getBoundingClientRect(), e.getBoundingClientRect())) out.push(`matchup mark overlaps the element tag on ${pl.getAttribute("data-unit")}`);
-      if (k && e && hit(k.getBoundingClientRect(), e.getBoundingClientRect())) out.push(`"can fall" mark overlaps the element tag on ${pl.getAttribute("data-unit")}`);
     });
     const stage = document.querySelector(".pwt-stage");
     if (stage) {
       const sb = stage.getBoundingClientRect();
-      const squadTags = [...stage.querySelectorAll(".pwt-row.squad .pwt-plaque, .pwt-row.squad .pwt-el, .pwt-row.squad .pwt-ko")];
       const artBounds = (f) => {
         const fr = f.getBoundingClientRect();
         const img = f.querySelector("img");
@@ -205,24 +204,42 @@ async function riderProblems(page) {
       };
       const squadArt = [...stage.querySelectorAll(".pwt-row.squad .pwt-figure")].map(artBounds);
       const pointers = [...stage.querySelectorAll(".pwt-spot-pointer")];
-      stage.querySelectorAll(".pwt-intent").forEach((chip) => {
-        if (getComputedStyle(chip).visibility === "hidden") return;
-        const cr = chip.getBoundingClientRect();
-        const plaque = chip.closest(".pwt-plaque");
-        const pr = plaque.getBoundingClientRect();
-        const who = chip.closest("[data-unit]")?.getAttribute("data-letter") ?? "?";
-        if (cr.left < pr.left - 0.5 || cr.right > pr.right + 0.5 || cr.top < pr.top - 0.5 || cr.bottom > pr.bottom + 0.5) out.push(`intent chip of ${who} leaves its plaque`);
-        chip.querySelectorAll("*").forEach((el) => {
-          if (el.closest("svg")) return;
+      // Threat tags: each inside its plate's horizontal extent and the stage, whole, and clear of everything it could cover.
+      const phoneText = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
+      const tags = [...stage.querySelectorAll(".pwt-threat")].filter((tg) => getComputedStyle(tg).visibility !== "hidden" && tg.getBoundingClientRect().width);
+      const lunging = !!stage.querySelector(".pwt-rows")?.style.getPropertyValue("--lunge-x");
+      const movesRow = stage.querySelector(".pwt-moves-row");
+      const covered = [...stage.querySelectorAll(".pwt-letter, .pwt-el, .pwt-match, .pwt-guardian-tag, .pwt-delta, .pwt-preview, .pwt-health, .pwt-spot-pointer, .pwt-name")];
+      tags.forEach((tg) => {
+        const tr = tg.getBoundingClientRect();
+        const plate = tg.closest("[data-unit]");
+        const pr = plate.getBoundingClientRect();
+        const who = `${tg.getAttribute("data-from")} on ${plate.getAttribute("data-unit")}`;
+        if (tr.left < pr.left - 0.5 || tr.right > pr.right + 0.5) out.push(`threat tag ${who} leaves its plate's horizontal extent`);
+        if (tr.left < sb.left - 0.5 || tr.right > sb.right + 0.5 || tr.top < sb.top - 0.5 || tr.bottom > sb.bottom + 0.5) out.push(`threat tag ${who} leaves the stage`);
+        tg.querySelectorAll("*").forEach((el) => {
+          if (el.closest("svg") && el.tagName.toLowerCase() !== "svg") return;
           const r = el.getBoundingClientRect();
-          if (r.width && (r.left < cr.left - 0.5 || r.right > cr.right + 0.5 || r.top < cr.top - 0.5 || r.bottom > cr.bottom + 0.5)) out.push(`intent chip of ${who}: ${el.className.toString().split(" ")[0] || el.tagName} pokes out of the chip`);
-          if (el.children.length === 0 && el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== "visible") out.push(`intent chip of ${who}: text clipped "${el.textContent.trim()}"`);
+          if (r.width && (r.left < tr.left - 0.5 || r.right > tr.right + 0.5 || r.top < tr.top - 0.5 || r.bottom > tr.bottom + 0.5)) out.push(`threat tag ${who}: ${el.className.toString().split(" ")[0] || el.tagName} pokes out of the tag`);
         });
-        // While a beat plays the acting unit lunges toward its target (the enemy's chip stays lit): a lunge may cross the other row, so chips are not held to it then.
-        const lunging = !!chip.closest(".pwt-plate.lit") || !!stage.querySelector(".pwt-rows")?.style.getPropertyValue("--lunge-x");
-        for (const a of squadTags) if (!lunging && hit(cr, a.getBoundingClientRect())) out.push(`intent chip of ${who} overlaps a squad plate tag (${a.className.toString().split(" ")[0]})`);
-        for (const a of squadArt) if (!lunging && hit(cr, a)) out.push(`intent chip of ${who} overlaps a squad figure`);
-        for (const a of pointers) if (hit(cr, a.getBoundingClientRect())) out.push(`intent chip of ${who} overlaps the active pointer`);
+        if (tg.scrollWidth > tg.clientWidth + 1) out.push(`threat tag ${who} is cut short`);
+        if (phoneText) {
+          const fs = (el) => parseFloat(getComputedStyle(el).fontSize);
+          if (fs(tg) < 12 - 0.01) out.push(`threat tag ${who} text under 12 px (${fs(tg)})`);
+          tg.querySelectorAll(".pwt-threat-letter, .pwt-threat-n, .pwt-threat-before").forEach((el) => {
+            if (fs(el) < 12 - 0.01) out.push(`threat tag ${who}: ${el.className.toString().split(" ")[0]} under 12 px (${fs(el)})`);
+          });
+        }
+        // While a beat plays the acting unit lunges toward its target: a lunge may cross the other row, so cross-plate checks wait for rest.
+        if (lunging || tg.closest(".pwt-plate.lit")) return;
+        for (const a of covered) {
+          if (!a.getBoundingClientRect().width) continue;
+          // On a phone the plaque's name row repeats the letter and the guardian tag, so a tag may ride over them there (as a preview number may).
+          if (phoneText && (a.classList.contains("pwt-letter") || a.classList.contains("pwt-guardian-tag"))) continue;
+          if (hit(tr, a.getBoundingClientRect())) out.push(`threat tag ${who} covers ${a.className.toString().split(" ")[0]} of ${a.closest("[data-unit]")?.getAttribute("data-unit") ?? "?"}`);
+        }
+        if (movesRow && hit(tr, movesRow.getBoundingClientRect())) out.push(`threat tag ${who} covers the moves row`);
+        for (const o of tags) if (o !== tg && hit(tr, o.getBoundingClientRect())) out.push(`threat tag ${who} overlaps threat tag ${o.getAttribute("data-from")} on ${o.closest("[data-unit]").getAttribute("data-unit")}`);
       });
       stage.querySelectorAll(".pwt-preview").forEach((pv) => {
         const r = pv.getBoundingClientRect();
@@ -237,8 +254,9 @@ async function riderProblems(page) {
         // On a phone the figure area is too short to keep the number off the letter tag; the plaque's own name
         // ("A · Maintenance crawler") still carries the letter, so only there may a preview cover it (and the guardian tag, which the name row repeats).
         const onPhone = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
-        plate.querySelectorAll(".pwt-plaque, .pwt-el, .pwt-match, .pwt-letter, .pwt-ko, .pwt-guardian-tag").forEach((a) => {
+        plate.querySelectorAll(".pwt-plaque, .pwt-el, .pwt-match, .pwt-letter, .pwt-threat, .pwt-guardian-tag").forEach((a) => {
           if (onPhone && (a.classList.contains("pwt-letter") || a.classList.contains("pwt-guardian-tag"))) return;
+          if (getComputedStyle(a).visibility === "hidden") return; // a previewed enemy's tags step aside on a phone
           if (hit(r, a.getBoundingClientRect())) { const q = a.getBoundingClientRect(); out.push(`preview on ${who} covers ${a.className.toString().split(" ")[0]} (preview ${r.left | 0},${r.top | 0},${r.right | 0},${r.bottom | 0}; tag ${q.left | 0},${q.top | 0},${q.right | 0},${q.bottom | 0})`); }
         });
         pv.querySelectorAll("*").forEach((el) => {
@@ -255,7 +273,7 @@ async function riderProblems(page) {
 /**
   Moves on the stage (docs/design/powerworks-stage-moves.md, desktop): the row of moves above the acting
   companion stays inside the stage, every card and Pass is at least 44 px tall, and the row (and the hover tip above
-  it) covers no enemy or squad plate part (plaque, letter, element tag, intent chip, matchup mark, "can fall" mark,
+  it) covers no enemy or squad plate part (plaque, letter, element tag, threat tag, matchup mark,
   guardian tag, health change chip), no preview number, no painted figure and no active pointer. Returns the acting
   companion's slot too, so a run can say which slots it covered.
 */
@@ -278,7 +296,7 @@ async function movesProblems(page) {
       if (r.height / z < 43.5) out.push(`move card under 44 px tall (${(r.height / z).toFixed(1)}): "${(b.getAttribute("aria-label") || b.textContent).trim().slice(0, 24)}"`);
       if (b.scrollWidth > b.clientWidth + 1) out.push(`move card content wider than the card: "${b.textContent.trim().slice(0, 24)}"`);
     });
-    const parts = [...stage.querySelectorAll(".pwt-plaque, .pwt-letter, .pwt-el, .pwt-ko, .pwt-intent, .pwt-match, .pwt-guardian-tag, .pwt-delta, .pwt-preview, .pwt-spot-pointer, .pwt-float")];
+    const parts = [...stage.querySelectorAll(".pwt-plaque, .pwt-letter, .pwt-el, .pwt-threat, .pwt-match, .pwt-guardian-tag, .pwt-delta, .pwt-preview, .pwt-spot-pointer, .pwt-float")];
     const art = (f) => {
       const fr = f.getBoundingClientRect();
       const img = f.querySelector("img");
@@ -331,7 +349,7 @@ async function floatProblems(page) {
       if (r.left < sb.left - 0.5 || r.right > sb.right + 0.5 || r.top < sb.top - 0.5 || r.bottom > sb.bottom + 0.5)
         out.push(`landing number leaves the stage: "${f.textContent.trim()}" ${JSON.stringify({ l: r.left | 0, r: r.right | 0, t: r.top | 0, b: r.bottom | 0, sl: sb.left | 0, sr: sb.right | 0 })}`);
       const phoneNow = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
-      stage.querySelectorAll(".pwt-el, .pwt-letter, .pwt-plaque, .pwt-guardian-tag, .pwt-ko").forEach((a) => {
+      stage.querySelectorAll(".pwt-el, .pwt-letter, .pwt-plaque, .pwt-guardian-tag, .pwt-threat").forEach((a) => {
         // A phone's figure area is too short to keep a landing number off the letter and guardian tags; the plaque's name row repeats both.
         if (phoneNow && (a.classList.contains("pwt-letter") || a.classList.contains("pwt-guardian-tag"))) return;
         if (hit(r, a.getBoundingClientRect())) out.push(`landing number "${f.textContent.trim()}" sits on ${a.className.split(" ")[0]}`);

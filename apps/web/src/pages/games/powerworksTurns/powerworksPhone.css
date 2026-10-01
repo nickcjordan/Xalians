@@ -412,8 +412,8 @@
 .pwt-console.phone .pwt-keybar.has-status { padding-top: 4px; }
 .pwt-console.phone .pwt-keybar-status { display: flex; }
 /* Marks and notes. */
-.pwt-console.phone .pwt-ko { top: -18px; left: 2px; height: 16px; width: 22px; }
-.pwt-console.phone .pwt-ko svg { width: 12px; height: 12px; }
+
+
 .pwt-console.phone .pwt-impact { width: 12px; height: 12px; }
 .pwt-console.phone .pwt-chip.shield svg { width: 13px; height: 13px; }
 /* A first-occurrence note sits to the left of its key, over the stage's edge, never over the cells. */
@@ -471,8 +471,8 @@
   font-size: 12px;
 }
 .pwt-console.phone .pwt-note::after { display: none; }
-.pwt-console.phone .pwt-ko { top: -19px; left: 2px; height: 18px; width: auto; padding: 0 4px; }
-.pwt-console.phone .pwt-ko-words { font-size: 12px; }
+
+
 .pwt-console.phone .pwt-guardian-tag { top: -19px; left: 2px; font-size: 12px; }
 .pwt-console.phone .pwt-guardian-tag { font-size: 12px; padding: 0 3px; letter-spacing: 0; }
 /* The note takes the banner's two lines exactly; it never grows the top bar. */
@@ -494,7 +494,7 @@
 /* Round 6 phone fixes */
 .pwt-console.phone .pwt-banner-kicker { line-height: 12px; }
 .pwt-console.phone .pwt-banner-line, .pwt-console.phone .pwt-banner-line.pwt-note { height: 28px; line-height: 14px; }
-.pwt-console.phone .pwt-hit-arrow { font-size: 12px; }
+
 .pwt-console.phone .pwt-camp-carry { display: none; }
 .pwt-console.phone .pwt-camp-next { font-size: 12px; }
 .pwt-console.phone .pwt-banner-kicker span { display: inline-block; line-height: 12px; }
@@ -669,16 +669,14 @@
 
 .pwt-console.phone .pwt-match { font-size: 12px; height: 16px; top: -18px; left: 2px; padding: 0 4px; letter-spacing: 0.04em; gap: 2px; }
 .pwt-console.phone .pwt-match svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-intent { font-size: 12px; padding: 1px 3px 2px; gap: 0; }
-.pwt-console.phone .pwt-intent-name,
-.pwt-console.phone .pwt-intent-self { font-size: 12px; letter-spacing: 0; }
-.pwt-console.phone .pwt-intent-portrait { width: 16px; height: 16px; }
-.pwt-console.phone .pwt-intent-what { font-size: 15px; gap: 2px; }
-.pwt-console.phone .pwt-intent-what svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-intent-what .pwt-hit-before,
-.pwt-console.phone .pwt-intent-what .pwt-hit-arrow { font-size: 12px; }
-.pwt-console.phone .pwt-intent-all { font-size: 12px; padding: 0 2px; }
-.pwt-console.phone .pwt-marks.intent { flex-wrap: nowrap; }
+
+
+
+
+
+
+
+
 
 .pwt-console.phone .pwt-preview { bottom: 19px; padding: 1px 6px 2px; min-width: 44px; }
 .pwt-console.phone .pwt-preview-num { font-size: 21px; gap: 2px; }
@@ -706,9 +704,9 @@
 .pwt-console.phone .pwt-lesson-key .pwt-key-shape { display: none; }
 .pwt-console.phone .pwt-lesson-then { display: none; }
 .pwt-console.phone .pwt-lesson .pwt-legend-tile { width: 62px; height: 46px; }
-/* The enemy plaques carry an intent chip: the enemy row takes more of the short stage, the squad row less. */
-.pwt-console.phone .pwt-row.enemies { height: 58%; }
-.pwt-console.phone .pwt-row.squad { height: 40%; }
+/* The enemy row takes more of the short stage, the squad row less. */
+.pwt-console.phone .pwt-row.enemies { height: 50%; }
+.pwt-console.phone .pwt-row.squad { height: 48%; }
 .pwt-console.phone .pwt-plate.boss .pwt-preview { bottom: 19px; left: auto; right: 2px; transform: none; }
 /* The matchup mark is its icon alone on a phone plate (the plate is too narrow for the word beside the element tag). */
 .pwt-console.phone .pwt-match { width: 20px; height: 16px; padding: 0; justify-content: center; }
@@ -724,7 +722,7 @@
 .pwt-console.phone .pwt-match:not(.immune) { width: auto; min-width: 20px; padding: 0 4px; gap: 0; }
 .pwt-console.phone .pwt-match .pwt-match-x { font-size: 12px; }
 .pwt-console.phone .pwt-match svg { width: 13px; height: 13px; }
-.pwt-console.phone .pwt-intent-verb { font-size: 12px; letter-spacing: 0; }
+
 .pwt-console.phone .pwt-key-power-word,
 .pwt-console.phone .pwt-key-own-words { display: none; }
 .pwt-console.phone .pwt-key-power-was { font-size: 14px; }
@@ -733,5 +731,30 @@
 .pwt-console.phone .pwt-legend-keys > .pwt-key { min-width: 118px; }
 /* A long final-blow line (an enemy and its move by name) wraps to three lines on the smallest phone: a step smaller keeps the report on one screen. */
 .pwt-console.phone .pwt-summary > div:last-child dd { font-size: 15px; line-height: 1.25; }
-/* The "can fall" mark rides above the element tag on a phone plate, not beside it (a narrow plate cannot hold both on one line). */
-.pwt-console.phone .pwt-ko { top: -40px; left: 2px; }
+
+
+/* Threat tags on a phone: the same tags, 12 px text, no line (the letters carry the link). */
+.pwt-console.phone .pwt-tabs { left: 2px; gap: 2px; }
+.pwt-console.phone .pwt-tabs.raised { bottom: calc(100% + 19px); }
+.pwt-console.phone .pwt-plate.boss .pwt-tabs.raised { bottom: calc(100% + 41px); }
+.pwt-console.phone .pwt-threat { font-size: 12px; height: 18px; gap: 2px; padding: 0 3px 0 1px; }
+.pwt-console.phone .pwt-threat-letter { font-size: 12px; width: 14px; height: 14px; }
+.pwt-console.phone .pwt-threat-what svg { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-threat-what .pwt-threat-skull { width: 13px; height: 13px; }
+/* A companion's tags leave the head pointer room: the pointer rides the right corner and the tags stop short of it. */
+.pwt-console.phone .pwt-row.squad .pwt-tabs { max-width: calc(100% - 22px); }
+.pwt-console.phone .pwt-row.squad .pwt-spot-pointer { left: auto; right: 4px; transform: none; }
+.pwt-console.phone .pwt-row.squad .pwt-plate .pwt-preview { bottom: calc(19px + var(--tags-h, 0px)); }
+.pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { bottom: auto; top: 2px; left: 50%; right: auto; transform: translateX(-50%); }
+/* A struck number on a narrow phone plate: the glyph gives its room to the numbers (the letter and the words still say it is a hit). */
+.pwt-console.phone .pwt-threat.struck .pwt-impact { display: none; }
+/* The few cases a short phone plate cannot hold two things at its head: a previewed enemy's own tags step aside, and a companion's head pointer gives way to its tags (its green plaque still marks it). */
+.pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-preview) .pwt-tabs { visibility: hidden; }
+.pwt-console.phone .pwt-row.squad .pwt-plate:has(.pwt-threat) .pwt-spot-pointer { display: none; }
+.pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { top: 0; }
+/* The tags of the plate a blow is landing on step aside for the landing number (a short phone stage has no room for both). */
+.pwt-console.phone .pwt-plate.impact-target .pwt-tabs { visibility: hidden; }
+/* The narrowest phones (667 wide) cannot hold a struck number, its arrow, the new number and a skull on one plate: the arrow gives way there. */
+@media (max-width: 720px) {
+  .pwt-console.phone .pwt-threat.struck .pwt-threat-arrow { display: none; }
+}

@@ -1,5 +1,7 @@
 # Powerworks: enemy intents, and keys that show power
 
+> Superseded in part (2026-09-30): the intent chip on the enemy plate (decision 2's "intent chip") is replaced by threat tags on the plate each hit lands on. See [powerworks-threat-tags.md](powerworks-threat-tags.md). The engine side (intents committed and redirected) stands.
+
 ## Context
 
 Nick, 2026-09-30, after the UX pass: the move keys show one result cell per enemy, and in practice that crowds the screen ("A and B both show that it's going to hit for six points"). He wants the choice more direct: look at which attacks have the most power, look at which enemy is the most desirable target (least health, a shield, a matchup), and send the attack there. He is wary of making every attack land the same on every enemy, because target choice is part of the fun. He also approved enemy intents: the UX pass's readers put the enemy hit chip first in every round, because it is a what-if computed on whichever companion is acting, and only a committed intent can make it a fact.
