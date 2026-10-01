@@ -361,6 +361,23 @@ if spec.get('eye'):
         native = field[sl].copy()
         field[sl] = np.clip(-smin(-native, cutter, E['rim_blend']), -BAND, BAND).astype(np.float32)
         eye_state[side]['socket'] = {'maxChange': float(np.abs(field[sl]-native).max())}
+        ss = E.get('socket_smooth')
+        if ss:
+            # Optional (round 4): blur an annulus around the cut rim so the lid edge is one soft lip, not a stepped
+            # crescent. r = [start, full, full_end, end] in units of the aperture ellipse.
+            pad = 3*ss['sigma']
+            r4 = ss['r']
+            sl2 = box_slices([cx-asemi[0]*r4[3]-pad, -.5, cz-asemi[1]*r4[3]-pad],
+                             [cx+asemi[0]*r4[3]+pad, E['fill_y_max'], cz+asemi[1]*r4[3]+pad])
+            X2, Y2, Z2 = coordinates(sl2)
+            ro2 = np.sqrt(((X2-cx)/asemi[0])**2+((Z2-cz)/asemi[1])**2)
+            w2 = (smoothstep((ro2-r4[0])/(r4[1]-r4[0]))*smoothstep((r4[3]-ro2)/(r4[3]-r4[2]))).astype(np.float32)
+            base = field[sl2].copy()
+            blurred = base
+            for _ in range(ss.get('passes', 1)):
+                blurred = gaussian(blurred, ss['sigma'])
+            field[sl2] = base+w2*(blurred-base)
+            eye_state[side]['socketSmooth'] = {'maxChange': float(np.abs(field[sl2]-base).max())}
 
 # ---------------------------------------------------------------------------------------------------------------
 # Tufts.
