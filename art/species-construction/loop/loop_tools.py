@@ -3,13 +3,13 @@
 Every candidate goes through the same commands, so the critic always sees the
 same views, crops and measurements:
 
-  python art/species-construction/loop/loop_tools.py assemble <head-dir> <body-dir> <out-name>
+  python art/species-construction/loop/loop_tools.py assemble <head-dir> <body-dir> <out-name> [--join join.json]
   python art/species-construction/loop/loop_tools.py render <assembly-name>
   python art/species-construction/loop/loop_tools.py check <assembly-name>
   python art/species-construction/loop/loop_tools.py packet <assembly-name> <packet-dir>
   python art/species-construction/loop/loop_tools.py measure <assembly-name>
   python art/species-construction/loop/loop_tools.py blender <script.py> [script args...]
-  python art/species-construction/loop/loop_tools.py next-number
+  python art/species-construction/loop/loop_tools.py next-number [--reserve]
   python art/species-construction/loop/loop_tools.py quick <head-dir> <body-dir> <preview-dir> [--baseline fit.json]
   python art/species-construction/loop/loop_tools.py fit <assembly-name|preview-dir> [--out DIR] [--baseline fit.json]
   python art/species-construction/loop/loop_tools.py posed <assembly-name> --out DIR [--refit] [--pose FILE] [--joints FILE]
@@ -17,9 +17,11 @@ same views, crops and measurements:
   python art/species-construction/loop/loop_tools.py diff <baseline-packet> <candidate-packet>
   python art/species-construction/loop/loop_tools.py measured <packet>
 
-Names are directories under untracked/species-construction/akinza. Blender is
+Names are directories under the species work folder (untracked/species-construction/<species>).
+Every command takes --species (default akinza); the species-specific constants live in
+docs/design/species-construction/<species>/loop/species.json (see species.py). Blender is
 found from XALIANS_BLENDER or the local art tools install. See
-docs/design/species-construction/LOOP.md.
+docs/design/species-construction/LOOP.md and LOOP-v3.md.
 """
 import argparse
 import json
@@ -32,19 +34,44 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import species as species_config  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[3]
-WORK = ROOT/'untracked/species-construction/akinza'
 CONSTRUCTION = ROOT/'art/species-construction'
-DOCS = ROOT/'docs/design/species-construction/akinza'
-CAMERAS = DOCS/'loop/cameras'
-EVIDENCE = DOCS/'evidence'
 DEFAULT_BLENDER = Path(r'C:\Users\njord\AppData\Local\Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local'
                        r'\XaliansArtTools\blender-5.2.2-windows-x64\blender.exe')
-PLACEMENT = ['--head-scale', '.50', '--jaw-anchor-z', '.500', '--head-depth-offset', '-.020']
-VIEWS = ['front', 'front-left', 'left', 'back', 'right', 'front-right']
-CAMERA_SETS = ['face', 'head', 'neck', 'regions', 'tail', 'paws']
-# Column ranges of the front and left figures in the preferred first sheet.
-REFERENCE_PANELS = {'front': (0, 375), 'left': (759, 1024)}
+
+SPECIES = None
+
+
+def configure(key):
+    """Load a species config into the module constants every command reads. Other scripts that
+    `import loop_tools as lt` get the akinza config unless they call configure()."""
+    global SPECIES, WORK, DOCS, CAMERAS, EVIDENCE, VIEWS, CAMERA_SETS, REFERENCE_PANELS
+    global FLOOR_Z, FIXED_HEIGHT, FIT_VIEWS, FIT_BANDS, REGION_IMAGES, RUBRIC, RIG, SHEET_POSE, GLB, JOIN_DEFAULTS
+    SPECIES = s = species_config.load(key)
+    WORK, DOCS, CAMERAS, EVIDENCE = s.work, s.docs, s.cameras, s.evidence
+    VIEWS, CAMERA_SETS = list(s['views']), list(s['cameraSets'])
+    REFERENCE_PANELS = {k: tuple(v) for k, v in s['referencePanels'].items() if k != 'note'}
+    FLOOR_Z, FIXED_HEIGHT = s.floor_z, s.fixed_height
+    FIT_VIEWS, FIT_BANDS = list(s['fitViews']), {k: tuple(v) for k, v in s['fitBands'].items()}
+    REGION_IMAGES = {k: list(v) for k, v in s['regionImages'].items() if k != 'note'}
+    RUBRIC, RIG, SHEET_POSE, GLB = s.rubric, s.rig_dir, s.sheet_pose, s['glb']
+    JOIN_DEFAULTS = {k: v for k, v in s['join'].items() if k != 'note'}
+
+
+def _early_species():
+    argv = sys.argv
+    for k, a in enumerate(argv):
+        if a == '--species' and k+1 < len(argv):
+            return argv[k+1]
+        if a.startswith('--species='):
+            return a.split('=', 1)[1]
+    return 'akinza'
+
+
+configure(_early_species())
 
 
 def blender_path():
@@ -145,9 +172,9 @@ def cmd_blender(args):
 
 def cmd_render(args):
     out = work(args.name)
-    glb = out/'akinza.glb'
+    glb = out/GLB
     if not glb.is_file():
-        sys.exit(f'No akinza.glb in {out}')
+        sys.exit(f'No {GLB} in {out}')
     if not (out/'render').exists():
         run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'render_shape_study.py'), '--',
                      '--mesh', str(glb), '--out', str(out/'render'), '--preserve-materials', '--studio-fill',
@@ -165,6 +192,37 @@ def cmd_render(args):
     print(f'rendered {out}')
 
 
+# Assembler options a join JSON may set, in the assembler's own spelling (--name value).
+JOIN_KEYS = ['head-scale', 'jaw-anchor-z', 'head-depth-offset', 'body-trim', 'fragment-voxels', 'bridge-rings',
+             'fusion-iterations', 'fusion-factor', 'head-trim-offset', 'neck-inner-offset', 'section-segments',
+             'tangent-limit', 'voxel-size', 'min-neck-length', 'fusion-x-extent', 'fusion-y-extent',
+             'fusion-z-below', 'fusion-z-above', 'head-anchor-local-z']
+
+
+def join_parameters(join_file=None, body=None, fragment_voxels=None):
+    """Assembly join parameters: species defaults, then a join JSON, then (when the body was retargeted
+    with a changed neck length) the head shift added to jaw-anchor-z and body-trim. Returns (params,
+    shift). A join JSON holds unshifted values; the shift is a property of the body."""
+    params = dict(JOIN_DEFAULTS)
+    if join_file:
+        given = json.loads(Path(join_file).read_text(encoding='utf-8'))
+        unknown = sorted(k for k in given if k not in JOIN_KEYS and k != 'note')
+        if unknown:
+            sys.exit(f'Unknown join parameters {unknown}; known: {JOIN_KEYS}')
+        params.update({k: v for k, v in given.items() if k != 'note'})
+    if fragment_voxels is not None:
+        params['fragment-voxels'] = fragment_voxels
+    shift = 0.0
+    record = body/'retarget.json' if body else None
+    if record is not None and record.is_file():
+        # a body from `retarget` with a changed neck length: the head and the neck cut rise with it
+        shift = json.loads(record.read_text()).get('headShiftZ', 0.0)
+        if shift:
+            params['jaw-anchor-z'] = round(params['jaw-anchor-z']+shift, 5)
+            params['body-trim'] = round(params['body-trim']+shift, 5)
+    return params, shift
+
+
 def cmd_assemble(args):
     head, body = work(args.head), work(args.body)
     for path in [head/'shape.glb', body/'shape.glb', body/'fairing.json']:
@@ -173,27 +231,22 @@ def cmd_assemble(args):
     out = work(args.out)
     if out.exists():
         sys.exit(f'{out} exists; use a new name')
-    placement, extra = list(PLACEMENT), []
-    record = body/'retarget.json'
-    if record.is_file():
-        # a body from `retarget` with a changed neck length: the head and the neck cut rise with it
-        shift = json.loads(record.read_text()).get('headShiftZ', 0.0)
-        if shift:
-            placement[placement.index('--jaw-anchor-z')+1] = f'{.500+shift:.5f}'
-            extra = ['--body-trim', f'{.425+shift:.5f}']
+    params, _ = join_parameters(args.join, body, args.fragment_voxels)
+    options = []
+    for k, v in params.items():
+        options += [f'--{k}', str(v)]
     run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'assemble_reconstructed_creature.py'), '--',
                  '--body', str(body/'shape.glb'), '--head', str(head/'shape.glb'),
-                 '--tail-record', str(body/'fairing.json'), '--out', str(out), *placement, *extra,
-                 '--fragment-voxels', str(args.fragment_voxels)], WORK/f'{args.out}.log')
+                 '--tail-record', str(body/'fairing.json'), '--out', str(out), *options], WORK/f'{args.out}.log')
     cmd_render(argparse.Namespace(name=args.out))
 
 
 def cmd_check(args):
     out = work(args.name)
     record = json.loads((out/'assembly.json').read_text())
-    skin = next(v for k, v in record['objects'].items() if 'continuous' in k)
+    skin = next(v for k, v in record['objects'].items() if 'continuous' in k)  # the assembler names the skin '<species>_continuous_construction'
     subprocess.run([sys.executable, str(CONSTRUCTION/'review_shape_study.py'), str(out/'render'),
-                    '--label', f'Akinza {args.name}', '--reference', str(EVIDENCE/'identity-run-0001.png')],
+                    '--label', f"{SPECIES['label']} {args.name}", '--reference', str(SPECIES.docs/SPECIES['referenceSheet'])],
                    check=True, capture_output=True, cwd=ROOT)
     review = json.loads((out/'render/review.json').read_text())
     result = {'assembly': args.name, 'components': skin['components'],
@@ -294,7 +347,7 @@ def model_span(render, view):
 
 def measurements(name):
     render = work(name)/'render'
-    reference = np.array(Image.open(EVIDENCE/'identity-run-0001.png').convert('L')) < 200
+    reference = np.array(Image.open(SPECIES.docs/SPECIES['referenceSheet']).convert('L')) < 200
     out = {'note': 'Widths are fractions of figure height; for the model that is a fixed world height (the loop-start figure, 1.8605 from the floor), so raising an ear tip does not rescale the body. The reference poses hands on hips, so its '
                    'central torso run can include arms at waist and hip rows.'}
     for view, (a, b) in REFERENCE_PANELS.items():
@@ -341,7 +394,7 @@ def cmd_packet(args):
     detail = lambda s, n: flat(out/f'details-{s}/{n}.png')
     sheets = {
         'm01.png': ('Reference: preferred first sheet, views front, front-left, left, back, right, front-right',
-                    Image.open(EVIDENCE/'identity-run-0001.png').convert('RGB')),
+                    Image.open(SPECIES.docs/SPECIES['referenceSheet']).convert('RGB')),
         'm02.png': ('Model: six views in the same order, one shared scale', six_views(out/'render')),
         'm03.png': ('Model: eight elevated turntable views', labelled_grid(
             [(p.stem, flat(p)) for p in sorted((out/'render').glob('turn-*.png'))], 4, 360)),
@@ -362,12 +415,9 @@ def cmd_packet(args):
             [(n, detail('paws', n)) for n in ['hindpaw-front', 'hindpaw-profile', 'hindpaw-oblique', 'hindpaw-underside']], 4)),
         'm10.png': ('Model tails: root back, root oblique, root opposite, whole fan from behind', labelled_grid(
             [(n, detail('tail', n)) for n in ['tail-root-back', 'tail-root-oblique', 'tail-root-opposite', 'tail-fan-back']], 4)),
-        'r01.png': ('Accepted reference: eyes and expression', Image.open(EVIDENCE/'face-study-0010.png').convert('RGB')),
-        'r02.png': ('Accepted reference: animal paws', Image.open(EVIDENCE/'paws-study-0020.png').convert('RGB')),
-        'r03.png': ('Accepted reference: tail shape, junction and positioning', Image.open(EVIDENCE/'back-study-0018.png').convert('RGB')),
-        'r04.png': ('Supporting reference: rounded head and coat masses (its inward gaze is excluded)',
-                    Image.open(EVIDENCE/'head-clay-study-0021.png').convert('RGB')),
     }
+    for file, (image, description) in SPECIES['packetReferences'].items():
+        sheets[file] = (description, Image.open(SPECIES.docs/image).convert('RGB'))
     index = {}
     for file, (description, image) in sheets.items():
         image = image.copy()
@@ -422,23 +472,20 @@ def cmd_quick(args):
 # Silhouette fit: model masks against the reference figures, both mapped into
 # one frame (floor at the bottom, figure height 1, centred on the ear fan).
 # back-r03 compares the back view with the accepted back study, which governs the tails.
-FIT_VIEWS = ['front', 'left', 'back', 'back-r03']
-FIT_BANDS = {'head': (0, .24), 'trunk': (.24, .56), 'legs': (.56, 1.0)}
 FIT_GRID = 500
 
 
 def reference_figure(view):
     """Mask of one figure in the first sheet. Neighbouring figures touch, so the
     split column changes with height: ear fans are wide, tails reach sideways."""
-    if view == 'back-r03':
-        study = np.array(Image.open(EVIDENCE/'back-study-0018.png').convert('L')) < 200
-        study[1400:] = False
+    study_cfg = SPECIES['backStudy']
+    if view == study_cfg['view']:
+        study = np.array(Image.open(SPECIES.docs/study_cfg['image']).convert('L')) < 200
+        study[study_cfg['clearRowsFrom']:] = False
         return study
-    sheet = np.array(Image.open(EVIDENCE/'identity-run-0001.png').convert('L')) < 200
+    sheet = np.array(Image.open(SPECIES.docs/SPECIES['referenceSheet']).convert('L')) < 200
     mask = np.zeros_like(sheet)
-    splits = {'front': [(0, 250, 0, 375), (250, None, 0, 418)],
-              'left': [(0, None, 759, 1024)],
-              'back': [(0, 250, 1040, 1520), (250, None, 1040, 1420)]}[view]
+    splits = SPECIES['referenceSplits'][view]
     for r0, r1, c0, c1 in splits:
         mask[r0:r1, c0:c1] = sheet[r0:r1, c0:c1]
     return mask
@@ -532,13 +579,6 @@ def cmd_fit(args):
     return result
 
 
-# Which packet images show which regions. A region whose images all match the
-# baseline packet keeps its score without being judged again.
-REGION_IMAGES = {'R01': ['m04'], 'R02': ['m05'], 'R03': ['m04'], 'R04': ['m04', 'm05'], 'R05': ['m06'],
-                 'R06': ['m06'], 'R07': ['m07'], 'R08': ['m08'], 'R09': ['m09'], 'R10': ['m10'], 'R11': ['m10'],
-                 'R12': ['m02', 'm03']}
-
-
 def image_change(a, b):
     x = np.asarray(Image.open(a).convert('L'), np.int16)
     y = np.asarray(Image.open(b).convert('L'), np.int16)
@@ -547,20 +587,107 @@ def image_change(a, b):
     return float((np.abs(x-y) > 12).mean())
 
 
+SIL_GRID = 500
+
+
+def world_mask(render, view):
+    """The view's silhouette (alpha) resampled into a world-fixed frame: rows are the figure's row
+    fraction from the crown (0) to the floor (1), columns the world coordinate along the view's
+    horizontal axis in figure heights, -.5 to .5 about world zero. Unlike the fit frame it does not
+    re-centre on the ear fan, so a head change cannot shift the body's silhouette. Returns
+    (mask, axis) with axis 0 for a view along x (front, back) and 1 for a view along y."""
+    geometry = json.loads((render/'geometry.json').read_text(encoding='utf-8'))
+    camera = next(c for c in geometry['cameras'] if c['name'] == view)
+    width, height = camera['resolution']
+    per_unit = max(width, height)/camera['orthoScale']
+    matrix = np.array(camera['matrixWorld'], float)
+    right, origin = matrix[:3, 0], matrix[:3, 3]
+    axis = 0 if abs(right[0]) >= abs(right[1]) else 1
+    alpha = np.array(Image.open(render/f'{view}.png').getchannel('A')) > 20
+    at = (np.arange(SIL_GRID)+.5)/SIL_GRID
+    rows = np.round(height/2-(FLOOR_Z+FIXED_HEIGHT*(1-at)-origin[2])*per_unit).astype(int)
+    world = ((np.arange(SIL_GRID)+.5)/SIL_GRID-.5)*FIXED_HEIGHT
+    cols = np.round(width/2+(np.sign(right[axis])*world-origin@right)*per_unit).astype(int)
+    ok = ((rows >= 0) & (rows < height))[:, None] & ((cols >= 0) & (cols < width))[None, :]
+    mask = alpha[np.clip(rows, 0, height-1)[:, None], np.clip(cols, 0, width-1)[None, :]] & ok
+    return mask, axis
+
+
+def region_crop(region, axis):
+    """Boolean grid of the region's crop in the world-fixed silhouette frame, or None for the whole figure."""
+    zone = SPECIES.zone(region)
+    if zone is None:
+        return None
+    at = (np.arange(SIL_GRID)+.5)/SIL_GRID
+    w = (np.arange(SIL_GRID)+.5)/SIL_GRID-.5
+    rows = (at >= zone['at'][0]) & (at <= zone['at'][1])
+    if axis == 0:
+        lo, hi = zone['x']
+        cols = (np.abs(w) >= lo) & (np.abs(w) <= hi) if zone['symmetricX'] else (w >= lo) & (w <= hi)
+    else:
+        lo, hi = zone['y']
+        cols = (w >= lo) & (w <= hi)
+    return rows[:, None] & cols[None, :]
+
+
+def silhouette_xor(base_assembly, cand_assembly):
+    """Per region, the largest silhouette XOR fraction over the silhouette views inside the region's
+    crop: changed pixels over the union of the two silhouettes in the crop (0 identical, 1 disjoint).
+    None for every region when a render is missing."""
+    views = SPECIES['silhouetteViews']
+    out = {r: 0.0 for r in SPECIES['components']['head']+SPECIES['components']['body']+SPECIES['components']['both']}
+    for view in views:
+        try:
+            a, axis = world_mask(work(base_assembly)/'render', view)
+            b, _ = world_mask(work(cand_assembly)/'render', view)
+        except (OSError, StopIteration, KeyError, ValueError):
+            return {r: None for r in out}
+        for region in out:
+            crop = region_crop(region, axis)
+            x, u = (a ^ b), (a | b)
+            if crop is not None:
+                x, u = x & crop, u & crop
+            out[region] = max(out[region], float(x.sum()/max(1, u.sum())))
+    return out
+
+
+def region_change(images, base_assembly, cand_assembly, resized=()):
+    """The side-effect magnitude of a candidate against its baseline, per region: the largest
+    changed-pixel fraction over the region's packet images, the silhouette XOR fraction inside the
+    region's crop, and their maximum (what the side-effect threshold is compared with). An image whose
+    size changed (the six-view row is cropped to the figure's extent) counts as fully changed in the
+    plain diff but is left out here when the silhouette XOR can speak for the region instead."""
+    xor = silhouette_xor(base_assembly, cand_assembly) if base_assembly and cand_assembly else {}
+    result = {}
+    for region, names in REGION_IMAGES.items():
+        sil = xor.get(region)
+        usable = [m for m in names if sil is None or m not in resized] or names
+        pixel = max(images[m] for m in usable)
+        result[region] = {'changedPixel': round(pixel, 5), 'silhouetteXor': None if sil is None else round(sil, 5),
+                          'magnitude': round(max(pixel, sil or 0.0), 5)}
+    return result
+
+
+def packet_assembly(packet):
+    try:
+        return json.loads((Path(packet)/'index.json').read_text())['assembly']
+    except (OSError, KeyError, ValueError):
+        return None
+
+
 def cmd_diff(args):
     base, cand = Path(args.baseline), Path(args.candidate)
     images = {f'm{k:02d}': round(image_change(base/f'm{k:02d}.png', cand/f'm{k:02d}.png'), 5) for k in range(2, 11)}
     changed = {m for m, v in images.items() if v > .0005}
+    resized = {m for m in images if Image.open(base/f'{m}.png').size != Image.open(cand/f'{m}.png').size}
     regions = {r: any(m in changed for m in ms) for r, ms in REGION_IMAGES.items()}
     result = {'baseline': str(base), 'candidate': str(cand), 'changedPixelFraction': images,
               'changedRegions': sorted(r for r, c in regions.items() if c),
-              'unchangedRegions': sorted(r for r, c in regions.items() if not c)}
+              'unchangedRegions': sorted(r for r, c in regions.items() if not c),
+              'regionChange': region_change(images, packet_assembly(base), packet_assembly(cand), resized)}
     (cand/'diff.json').write_text(json.dumps(result, indent=1)+'\n')
     print(json.dumps(result))
     return result
-
-
-RUBRIC = DOCS/'loop/rubric.json'
 
 
 def row_value(criterion, assembly):
@@ -614,8 +741,6 @@ def cmd_measured(args):
 
 
 # ---- posed measurement: rig the assembly, pose it like the reference sheet, fit tail-free halves.
-RIG = CONSTRUCTION/'rig'
-SHEET_POSE = RIG/'akinza-sheet-pose.json'
 
 
 def dump_vertices(glb, out_npz, log):
@@ -656,9 +781,9 @@ def cmd_posed(args):
     sys.path.insert(0, str(CONSTRUCTION))
     import rig_core as rc
     import rig_fit as rf
-    glb = work(args.assembly)/'akinza.glb'
+    glb = work(args.assembly)/GLB
     if not glb.is_file():
-        sys.exit(f'No akinza.glb in {work(args.assembly)}')
+        sys.exit(f'No {GLB} in {work(args.assembly)}')
     out = Path(args.out) if Path(args.out).is_absolute() else WORK/args.out
     if out.exists():
         sys.exit(f'{out} exists; use a new name')
@@ -788,23 +913,42 @@ def cmd_retarget(args):
     print(json.dumps({'out': str(out), **record}))
 
 
-def cmd_next_number(args):
+def next_number():
     numbers = [int(m.group(1)) for p in WORK.iterdir() if (m := re.match(r'^[a-z-]+-(\d{4})', p.name))]
-    print(f'{max(numbers)+1:04d}')
+    return max(numbers)+1
+
+
+def reserve_number():
+    """Take the next number atomically: a marker file reserved-NNNN.txt makes next-number skip it, so
+    two agents that both ask before either builds never share a number."""
+    while True:
+        n = next_number()
+        try:
+            fd = os.open(WORK/f'reserved-{n:04d}.txt', os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            continue
+        os.close(fd)
+        return f'{n:04d}'
+
+
+def cmd_next_number(args):
+    print(reserve_number() if args.reserve else f'{next_number():04d}')
 
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--species', default='akinza', help='species config under docs/design/species-construction/<species>/loop')
     sub = parser.add_subparsers(dest='command', required=True)
     p = sub.add_parser('assemble'); p.add_argument('head'); p.add_argument('body'); p.add_argument('out')
-    p.add_argument('--fragment-voxels', type=float, default=5); p.set_defaults(func=cmd_assemble)
+    p.add_argument('--join', help='JSON of join parameters (placement and bridge); defaults come from species.json')
+    p.add_argument('--fragment-voxels', type=float, default=None); p.set_defaults(func=cmd_assemble)
     p = sub.add_parser('render'); p.add_argument('name'); p.set_defaults(func=cmd_render)
     p = sub.add_parser('check'); p.add_argument('name'); p.set_defaults(func=cmd_check)
     p = sub.add_parser('packet'); p.add_argument('name'); p.add_argument('packet'); p.set_defaults(func=cmd_packet)
     p = sub.add_parser('measure'); p.add_argument('name'); p.set_defaults(func=cmd_measure)
     p = sub.add_parser('blender'); p.add_argument('script'); p.add_argument('--log')
     p.add_argument('rest', nargs=argparse.REMAINDER); p.set_defaults(func=cmd_blender)
-    p = sub.add_parser('next-number'); p.set_defaults(func=cmd_next_number)
+    p = sub.add_parser('next-number'); p.add_argument('--reserve', action='store_true'); p.set_defaults(func=cmd_next_number)
     p = sub.add_parser('quick'); p.add_argument('head'); p.add_argument('body'); p.add_argument('out')
     p.add_argument('--views', default='front,left,back'); p.add_argument('--baseline')
     p.set_defaults(func=cmd_quick)
@@ -817,7 +961,10 @@ def main():
     p.add_argument('--joints', required=True); p.set_defaults(func=cmd_retarget)
     p = sub.add_parser('diff'); p.add_argument('baseline'); p.add_argument('candidate'); p.set_defaults(func=cmd_diff)
     p = sub.add_parser('measured'); p.add_argument('packet'); p.set_defaults(func=cmd_measured)
+    for sp in sub.choices.values():
+        sp.add_argument('--species', default=argparse.SUPPRESS)
     args = parser.parse_args()
+    configure(args.species)
     args.func(args)
 
 

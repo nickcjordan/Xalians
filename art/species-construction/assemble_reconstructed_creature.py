@@ -29,6 +29,25 @@ parser.add_argument('--body-trim', type=float, default=.425)
 # Largest removable remesh flake above the neck, in voxels. Removed pieces are
 # recorded with their bounds; anything larger still fails the closed-solid gate.
 parser.add_argument('--fragment-voxels', type=float, default=4)
+# Neck bridge and fusion shape. Every default is the value that was hard-coded, so a run without these options
+# is byte-for-byte today's output. loop_tools.py assemble --join passes them from a join JSON.
+parser.add_argument('--head-trim-offset', type=float, default=.048, help='head cut sits this far below the jaw anchor')
+parser.add_argument('--neck-inner-offset', type=float, default=.010, help='spacing of the tangent-sampling sections beside each cut')
+parser.add_argument('--section-segments', type=int, default=128, help='samples per measured neck outline')
+parser.add_argument('--tangent-limit', type=float, default=3, help='endpoint tangents are bounded to this multiple of the loft slope')
+parser.add_argument('--bridge-rings', type=int, default=31, help='interior rings of the neck loft')
+parser.add_argument('--min-neck-length', type=float, default=.015, help='smallest allowed span between the body and head cuts')
+parser.add_argument('--voxel-size', type=float, default=.0028, help='remesh voxel size of the fused body')
+parser.add_argument('--fusion-iterations', type=int, default=90, help='smoothing iterations of the neck fusion')
+parser.add_argument('--fusion-factor', type=float, default=.6, help='smoothing factor of the neck fusion')
+parser.add_argument('--fusion-x-extent', type=float, default=.16, help='half width (x) of the neck fusion region')
+parser.add_argument('--fusion-y-extent', type=float, default=.15, help='half depth (y) of the neck fusion region')
+parser.add_argument('--fusion-z-below', type=float, default=.03, help='fusion region reaches this far below the body cut')
+parser.add_argument('--fusion-z-above', type=float, default=.025, help='fusion region reaches this far above the head cut')
+parser.add_argument('--fusion-fade-x', type=float, default=.045)
+parser.add_argument('--fusion-fade-y', type=float, default=.035)
+parser.add_argument('--fusion-fade-z', type=float, default=.025)
+parser.add_argument('--head-anchor-local-z', type=float, default=.27, help='height of the jaw anchor above the head origin, per unit head scale')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=False)
@@ -59,7 +78,7 @@ def load(path, label, scale=1, offset=(0, 0, 0)):
 
 body, body_objects = load(args.body, 'body')
 require_single_closed_mesh(body, args.out, 'Imported body after seam welding')
-head_offset = (0, args.head_depth_offset, args.jaw_anchor_z+.27*args.head_scale)
+head_offset = (0, args.head_depth_offset, args.jaw_anchor_z+args.head_anchor_local_z*args.head_scale)
 head, head_objects = load(args.head, 'head', args.head_scale, head_offset)
 require_single_closed_mesh(head, args.out, 'Imported head after seam welding')
 head_materials = list(head.data.materials)
@@ -75,7 +94,7 @@ if not nose_material_indices and not separate_noses:
     raise ValueError('Imported head does not identify its nose material')
 
 
-def horizontal_section(obj, height, segments=128):
+def horizontal_section(obj, height, segments=args.section_segments):
     """Sample the actual closed neck outline in a horizontal cutting plane."""
     vertices = np.empty(len(obj.data.vertices)*3, dtype=np.float32)
     obj.data.vertices.foreach_get('co', vertices)
@@ -102,30 +121,31 @@ def horizontal_section(obj, height, segments=128):
                      'maximumXY': points[:, :2].max(axis=0).tolist()}
 
 
-body_trim, head_trim = args.body_trim, args.jaw_anchor_z-.048
-if head_trim-body_trim < .015:
+body_trim, head_trim = args.body_trim, args.jaw_anchor_z-args.head_trim_offset
+if head_trim-body_trim < args.min_neck_length:
     raise ValueError('Jaw anchor leaves insufficient space for the measured neck transition')
-lower_inner, lower_inner_record = horizontal_section(body, body_trim-.010)
+inner = args.neck_inner_offset
+lower_inner, lower_inner_record = horizontal_section(body, body_trim-inner)
 lower, lower_record = horizontal_section(body, body_trim)
 upper, upper_record = horizontal_section(head, head_trim)
-upper_inner, upper_inner_record = horizontal_section(head, head_trim+.010)
+upper_inner, upper_inner_record = horizontal_section(head, head_trim+inner)
 length = head_trim-body_trim
 slope = (upper-lower)/length
-start_tangent = (lower-lower_inner)/.010
-end_tangent = (upper_inner-upper)/.010
+start_tangent = (lower-lower_inner)/inner
+end_tangent = (upper_inner-upper)/inner
 # Bound endpoint tangents componentwise so interpolation cannot bulge past the
 # measured outlines. The former tilted sweep projected in front of the jaw.
 for tangent in [start_tangent, end_tangent]:
     tangent[:] = np.where(tangent*slope <= 0, 0,
-                          np.sign(slope)*np.minimum(np.abs(tangent), 3*np.abs(slope)))
+                          np.sign(slope)*np.minimum(np.abs(tangent), args.tangent_limit*np.abs(slope)))
 bridge_rings = []
-for outline, height in [(lower_inner, body_trim-.010), (lower, body_trim)]:
+for outline, height in [(lower_inner, body_trim-inner), (lower, body_trim)]:
     bridge_rings.append([(float(x), float(y), height) for x, y in outline])
-for t in np.linspace(0, 1, 33)[1:-1]:
+for t in np.linspace(0, 1, args.bridge_rings+2)[1:-1]:
     outline = ((2*t**3-3*t*t+1)*lower+(t**3-2*t*t+t)*length*start_tangent
                +(-2*t**3+3*t*t)*upper+(t**3-t*t)*length*end_tangent)
     bridge_rings.append([(float(x), float(y), body_trim+t*length) for x, y in outline])
-for outline, height in [(upper, head_trim), (upper_inner, head_trim+.010)]:
+for outline, height in [(upper, head_trim), (upper_inner, head_trim+inner)]:
     bridge_rings.append([(float(x), float(y), height) for x, y in outline])
 bridge_vertices = [point for ring in bridge_rings for point in ring]
 count = len(lower)
@@ -169,7 +189,7 @@ head.select_set(True)
 bridge.select_set(True)
 bpy.context.view_layer.objects.active = body
 bpy.ops.object.join()
-body.data.remesh_voxel_size = .0028
+body.data.remesh_voxel_size = args.voxel_size
 bpy.ops.object.voxel_remesh()
 neck = body.vertex_groups.new(name='Neck fusion')
 def fade(value, low, high):
@@ -178,14 +198,15 @@ def fade(value, low, high):
 
 for v in body.data.vertices:
     x, y, z = v.co
-    weight = (fade(.16-abs(x), 0, .045)*fade(y+.15, 0, .035)
-              *fade(.15-y, 0, .035)*fade(z-(body_trim-.03), 0, .025)*fade(head_trim+.025-z, 0, .025))
+    weight = (fade(args.fusion_x_extent-abs(x), 0, args.fusion_fade_x)*fade(y+args.fusion_y_extent, 0, args.fusion_fade_y)
+              *fade(args.fusion_y_extent-y, 0, args.fusion_fade_y)*fade(z-(body_trim-args.fusion_z_below), 0, args.fusion_fade_z)
+              *fade(head_trim+args.fusion_z_above-z, 0, args.fusion_fade_z))
     if weight > 0:
         neck.add([v.index], weight, 'REPLACE')
 mod = body.modifiers.new('Blend head and neck', 'SMOOTH')
 mod.vertex_group = neck.name
-mod.iterations = 90
-mod.factor = .6
+mod.iterations = args.fusion_iterations
+mod.factor = args.fusion_factor
 bpy.ops.object.modifier_apply(modifier=mod.name)
 tip_corrections=[]
 contact_correction=None
@@ -254,8 +275,10 @@ bpy.ops.wm.save_as_mainfile(filepath=str(args.out/'akinza.blend'))
     'approval': None, 'stageProvenanceSha256': provenance_sha, 'scope': 'Internal whole-creature reconciliation, not animation topology',
     'inputs': {str(args.head): sha(args.head), str(args.body): sha(args.body)},
     'headTransform': {'scale': args.head_scale, 'translation': list(head_offset), 'neckTrimZ': head_trim,
-                      'jawAnchor': {'headLocalZ': -.27, 'worldZ': args.jaw_anchor_z}},
+                      'jawAnchor': {'headLocalZ': -args.head_anchor_local_z, 'worldZ': args.jaw_anchor_z}},
     'neck': 'Native horizontal sections joined by bounded Hermite loft and locally relaxed',
+    'join': {k: (v if not isinstance(v, Path) else str(v)) for k, v in vars(args).items()
+             if k not in ('body', 'head', 'out', 'tail_record')},
     'neckSections': [lower_inner_record, lower_record, upper_record, upper_inner_record],
     'seamWeldDistance': .000001,
     'noseMaterialTransfer': 'Nearest imported head polygon within .0075 world units after remesh',
