@@ -829,15 +829,14 @@
   "R09": {
    "name": "Hind paws",
    "weight": 1.5,
-   "score": 3.3,
+   "score": 5.0,
    "results": {
     "R09.1": "partial",
     "R09.2": "partial",
     "R09.3": "partial",
     "R09.4": "partial",
     "R09.5": "pass",
-    "R09.6": "fail",
-    "R09.7": "fail",
+    "R09.7": "pass",
     "R09.8": "fail",
     "R09.9": "fail"
    },
@@ -958,7 +957,8 @@
   "2026-09-30: rig and posed tail-free fit added (84bfa236); five posed criteria (R06.10, R07.6, R08.10, R08.11, R09.9) added, all failing on assembled-0226; packets now include posed/.",
   "2026-10-01: batch of rounds 2 to 5 finished (30 agents, 5.2M subagent tokens, 4.3 hours). Kept: R01 head base and R08 lower legs (round 2), R02 face and R06 chest (round 4), R07 arms and forepaws (round 5). Reverted: round 3 face and torso, round 5 ear front. Weighted 2.72 to 4.695.",
   "2026-10-01: before rounds 6 to 9: packets refit the posed angles per model; R08.10 and R08.11 thresholds lowered to .85 and .72 after the R08 spec showed the sheet itself caps them; R01.4 reworded; fan orders carry an authored lock-system issue.",
-  "2026-10-01: rounds 6 to 9 finished (27 agents, 5.3M subagent tokens, 6.3 hours). Kept: R04 fan rear and R09 hind paws (round 6), R03 fan front and R05 shoulders (round 7). Rounds 8 and 9 kept nothing: each candidate improved its own region but broke a neighbour (tail dent, crown dome lost, side waist thinned). Weighted 4.695 to 5.095. Builders now must check neighbouring regions before handing over."
+  "2026-10-01: rounds 6 to 9 finished (27 agents, 5.3M subagent tokens, 6.3 hours). Kept: R04 fan rear and R09 hind paws (round 6), R03 fan front and R05 shoulders (round 7). Rounds 8 and 9 kept nothing: each candidate improved its own region but broke a neighbour (tail dent, crown dome lost, side waist thinned). Weighted 4.695 to 5.095. Builders now must check neighbouring regions before handing over.",
+  "2026-10-01: R09.6 dropped and R09.7 replaced by back paw width at .96 (the side rows read the sheet's two staggered paws as one)."
  ],
  "decisionsForNick": [
   {

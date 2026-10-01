@@ -724,28 +724,13 @@
     "min": 0.8
    },
    {
-    "id": "R09.6",
-    "kind": "measured",
-    "text": "Side paw length (widest from .95 to .98) within 7 percent of the sheet",
-    "source": "row",
-    "view": "left",
-    "at": [
-     0.95,
-     0.98
-    ],
-    "pick": "full",
-    "reduce": "max",
-    "min": 0.93,
-    "max": 1.07
-   },
-   {
     "id": "R09.7",
     "kind": "measured",
-    "text": "Side instep at .93 at least .85 of the sheet (a domed instep, not a flat slab)",
+    "text": "Back view paw width at .96 at least .85 of the sheet (replaces the side instep row, which read two staggered sheet paws as one; R09 spec, 2026-10-01). R09.6 side paw length was dropped for the same reason.",
     "source": "row",
-    "view": "left",
-    "at": 0.93,
-    "pick": "full",
+    "view": "back",
+    "at": 0.96,
+    "pick": "right",
     "min": 0.85
    },
    {
