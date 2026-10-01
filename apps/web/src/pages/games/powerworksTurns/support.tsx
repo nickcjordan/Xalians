@@ -17,15 +17,6 @@ export function SupportIcon({ kind, onCompanion = false }: { kind: SupportChip["
   return onCompanion ? <TrendingDown /> : <Swords />; // hinder
 }
 
-/** An intent chip's verb: what the enemy's committed move does, in a word before its target. */
-export const INTENT_VERB: Record<"hit" | SupportChip["kind"], string> = {
-  hit: "hits",
-  heal: "heals",
-  shield: "shields",
-  boost: "boosts",
-  hinder: "weakens",
-  delay: "slows",
-};
 export const SUPPORT_WORD: Record<SupportChip["kind"], string> = {
   heal: "heal",
   shield: "shield",

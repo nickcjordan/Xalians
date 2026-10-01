@@ -99,78 +99,76 @@
 .pwt-key.resting .pwt-key-power,
 .pwt-key.spent .pwt-key-power { color: var(--color-ink-3); }
 
-/* --- the enemy's intent, on its plate --- */
-.pwt-marks.intent { margin-top: 1px; max-width: 100%; overflow: visible; }
-.pwt-intent {
-  width: 100%;
+/* --- threat tags (docs/design/powerworks-threat-tags.md): an enemy's committed move, on the plate it lands on ---
+   A tab row on the plaque's top edge, left side: the letter box its enemy's figure wears, the impact glyph and
+   the number it would land now; the skull and the danger border when that knocks the plate out. Ink only: the
+   danger tone is the plague raspberry, never the mint (mint is the player's forward action). */
+.pwt-tabs {
+  position: absolute;
+  left: 4px;
+  bottom: 100%;
+  z-index: 3;
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 1px;
-  padding: 2px 4px 2px;
+  flex-wrap: wrap-reverse;
+  align-items: flex-end;
+  gap: 3px;
+  max-width: calc(100% - 8px);
+  pointer-events: none;
+}
+.pwt-tabs.raised { bottom: calc(100% + 17px); }
+.pwt-plate.boss .pwt-tabs.raised { bottom: calc(100% + 40px); }
+.pwt-tabs > * { pointer-events: auto; }
+.pwt-tabs .pwt-match { position: static; }
+.pwt-threat {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 18px;
+  padding: 0 4px 0 1px;
   background: var(--color-s2);
   border: 1px solid var(--color-edge-strong);
-  font-family: var(--font-data);
-  font-size: 11px;
   color: var(--color-ink);
-}
-.pwt-intent.lethal { border-color: var(--color-plague); }
-.pwt-intent { transition: opacity 150ms var(--ease-out), border-color 150ms var(--ease-out); }
-/* While beats play: the acting enemy's promise stays lit, every other chip steps back (none is hidden, so no plate looks empty). */
-.pwt-intent.dim { opacity: 0.45; }
-.pwt-intent.lit { border-color: var(--color-ink-2); }
-.pwt-intent.lit.lethal { border-color: var(--color-plague); }
-.pwt-intent-to { display: flex; align-items: center; gap: 4px; min-width: 0; }
-/* The verb is the intent's own grammar: a word before its target, in ink, never a status glyph or a side color. */
-.pwt-intent-verb { flex: 0 0 auto; font-family: var(--font-legend); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-ink-3); }
-.pwt-intent-arrow { flex: 0 0 auto; color: var(--color-ink-3); font-size: 12px; }
-.pwt-intent-portrait.struck { opacity: 0.45; position: relative; }
-.pwt-intent-portrait.struck::after { content: ""; position: absolute; left: -2px; right: -2px; top: 50%; border-top: 2px solid var(--color-ink); transform: rotate(-35deg); }
-.pwt-intent-portrait {
-  flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
-  display: block;
-  overflow: hidden;
-  border: 1px solid var(--color-edge-strong);
-  background: var(--color-s3);
-}
-.pwt-intent-portrait .pw-portrait,
-.pwt-intent-portrait .pw-portrait img,
-.pwt-intent-portrait .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
-.pwt-intent-name,
-.pwt-intent-self {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
   white-space: nowrap;
-  font-family: var(--font-legend);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  transition: opacity 150ms var(--ease-out), border-color 150ms var(--ease-out);
 }
-.pwt-intent-what { display: flex; align-items: center; justify-content: center; gap: 3px; white-space: nowrap; font-size: 14px; font-weight: 700; line-height: 1.1; }
-.pwt-intent-what svg { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-ink-2); }
-.pwt-intent-what .pwt-hit-skull { width: 14px; height: 14px; color: var(--color-plague); }
-.pwt-intent-what .pwt-hit-before { font-size: 12px; font-weight: 400; color: var(--color-ink-3); margin-right: 0; }
-.pwt-intent-what .pwt-hit-arrow { color: var(--color-ink-3); font-size: 12px; font-weight: 400; }
-.pwt-intent-all { font-family: var(--font-legend); font-size: 10px; letter-spacing: 0.08em; border: 1px solid var(--color-ink-3); padding: 0 3px; font-weight: 700; }
-.pwt-intent-support { display: inline-flex; align-items: center; gap: 2px; }
-/* An enemy's heal or shield favors the enemy: neutral ink, never the green that means "good for you". */
-.pwt-intent .pwt-cell-chevron-wrap {
-  display: inline-flex;
+.pwt-threat.lethal { border-color: var(--color-plague); }
+/* While beats play: the acting enemy's tags stay lit, every other tag steps back. */
+.pwt-threat.lit { border-color: var(--color-ink-2); }
+.pwt-threat.lit.lethal { border-color: var(--color-plague); }
+.pwt-threat.dim { opacity: 0.45; }
+/* A previewed move finishes the enemy: the tag is struck through and steps back (the hit will not come). */
+.pwt-threat.cancelled { opacity: 0.5; }
+.pwt-threat.cancelled::after { content: ""; position: absolute; left: -1px; right: -1px; top: 50%; border-top: 2px solid var(--color-ink); }
+.pwt-threat-letter {
+  flex: 0 0 auto;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 14px;
   height: 14px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  font-size: 11px;
+  color: var(--color-ink);
 }
-.pwt-intent .pwt-cell-chevron-wrap svg { width: 11px; height: 11px; }
-.pwt-intent .pwt-cell-chevron-wrap.good { background: var(--color-viable); }
-.pwt-intent .pwt-cell-chevron-wrap.good svg { color: var(--color-viable-ink); }
-.pwt-intent .pwt-cell-chevron-wrap.bad { background: var(--color-plague); }
-.pwt-intent .pwt-cell-chevron-wrap.bad svg { color: var(--color-plague-ink); }
-.pwt-intent .pwt-cell-chevron-wrap.neutral { background: var(--color-s3); border: 1px solid var(--color-edge-strong); }
-.pwt-intent .pwt-cell-chevron-wrap.neutral svg { color: var(--color-ink-2); }
+.pwt-threat-what { display: inline-flex; align-items: center; gap: 2px; }
+.pwt-threat-what svg { width: 11px; height: 11px; flex: 0 0 auto; color: var(--color-ink-2); }
+.pwt-threat-what .pwt-threat-skull { width: 13px; height: 13px; color: var(--color-plague); }
+.pwt-threat-before { font-weight: 400; color: var(--color-ink-3); }
+.pwt-threat-part { display: inline-flex; align-items: center; gap: 1px; }
+/* The tag's link to its two ends, while a tag (or an enemy plate with no move chosen) is hovered: both ends ringed, one thin still line. */
+.pwt-plate .pwt-plaque { transition: box-shadow 150ms var(--ease-out); }
+.pwt-plate.ring-threat .pwt-plaque { box-shadow: 0 0 0 2px var(--color-ink-2); }
+.pwt-plate.ring-danger .pwt-plaque { box-shadow: 0 0 0 2px var(--color-plague); }
+.pwt-threat-line { stroke: var(--color-ink-2); stroke-width: 1.5px; animation: pwt-threat-fade 150ms var(--ease-out) both; }
+.pwt-threat-line.lethal { stroke: var(--color-plague); }
+@keyframes pwt-threat-fade { from { opacity: 0; } to { opacity: 0.85; } }
+.pwt-legend-chips .pwt-threat { flex: 0 0 auto; }
 
 /* --- the matchup mark, on the plaque's top edge --- */
 .pwt-match {
@@ -326,7 +324,7 @@
 .pwt-legend-tile .pwt-preview { bottom: auto; top: 50%; transform: translate(-50%, -50%); min-width: 0; padding: 1px 4px; }
 .pwt-legend-tile .pwt-preview-num { font-size: 20px; }
 .pwt-legend-tile .pwt-preview-note { font-size: 11px; }
-.pwt-legend .pwt-intent { width: 130px; }
+
 .pwt-legend-chips .pwt-match { position: static; }
 .pwt-guide .pwt-legend-sample { flex: 0 0 172px; }
 .pwt-guide .pwt-legend-sample.wide { flex-basis: 172px; }
@@ -334,7 +332,7 @@
 .pwt-lesson-key { flex: 0 0 158px; display: flex; }
 .pwt-lesson-then { font-family: var(--font-legend); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ink-3); }
 
-/* --- the stage gives room to the plaques: an enemy plaque carries an intent chip, so the figures give back height --- */
+/* --- the stage gives room to the plaques: the plaques give back the room a plaque's chip row took, figures keep their height --- */
 .pwt-row.enemies { padding-top: 10px; }
 .pwt-row.enemies .pwt-figure:not(.boss) { height: 98px; }
 .pwt-row.enemies .pwt-figure.boss { height: 110px; }
@@ -349,3 +347,9 @@
 .pwt-preview.knocks .pwt-preview-num svg { width: 15px; height: 15px; }
 .pwt-plate.boss .pwt-preview.knocks { left: 50%; }
 .pwt-preview-notes { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0 8px; }
+.pwt-threat-before { margin-right: 3px; }
+/* A preview number rises over the plate's own tags, never onto them (--tags-h is the height they take above the plaque). */
+.pwt-row.squad .pwt-plate .pwt-preview { bottom: calc(15px + var(--tags-h, 0px)); }
+/* An enemy plate that carries tags (a support aimed at it) takes its preview number at the top of its figure area, clear of them. */
+.pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { bottom: auto; top: 2px; left: 50%; right: auto; transform: translateX(-50%); }
+.pwt-row.enemies .pwt-plate.boss:has(.pwt-threat) .pwt-preview { left: auto; right: 4px; transform: none; }

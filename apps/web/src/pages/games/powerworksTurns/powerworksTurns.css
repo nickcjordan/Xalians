@@ -1326,7 +1326,7 @@
 .pwt-plate.dimmed:not(.spotlit) .pwt-figure { filter: brightness(0.6) saturate(0.7) drop-shadow(0 4px 1px #07101e); }
 
 /* --- flow review round 3 (2026-09-29) --- */
-.pwt-hit-before { color: var(--color-ink-3); margin-right: 2px; }
+
 /* While beats play, speed and skip take the Pass key's place instead of sitting on it. */
 .pwt-keybar.busy .pwt-pass { visibility: hidden; }
 .pwt-keybar-play { right: 28px; }
@@ -1783,24 +1783,8 @@
    UX pass 2, round 5: from 6 to 8
    ========================================================================================== */
 
-/* --- 1. Knockout marks: the skull, as a fact, on an enemy's lethal hit and on a plaque --- */
+/* --- 1. The impact glyph (an enemy's hit) --- */
 .pwt-impact { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-ink-2); }
-.pwt-ko {
-  position: absolute;
-  top: -15px;
-  left: 4px;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 14px;
-  background: var(--color-s3);
-  border: 1px solid var(--color-plague);
-  color: var(--color-plague);
-}
-.pwt-ko svg { width: 10px; height: 10px; }
-.pwt-hit-before { color: var(--color-ink-2); }
 
 /* --- 6. Chips never clip: a plaque with more chips than fit wraps them to a second row --- */
 .pwt-marks { flex-wrap: wrap; overflow: visible; row-gap: 3px; }
@@ -1897,8 +1881,6 @@
 .pwt-rec-side { flex: 0 0 44px; font-family: var(--font-legend); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-3); }
 .pwt-rec-line.enemy .pwt-rec-side { color: var(--color-ink-2); }
 
-/* --- Guide: the knockout mark's sample --- */
-.pwt-legend-ko-plaque { position: relative; display: inline-flex; align-items: center; margin-top: 16px; padding: 4px 8px; background: var(--color-glass); border: 1px solid var(--color-edge); }
 /* The short reason under the portrait is for the phone's column only; a desktop reads the sentence on the top line. */
 .pwt-keybar-status { display: none; }
 
@@ -1936,8 +1918,6 @@
   from { box-shadow: inset 0 3px 0 var(--color-viable); }
   to { box-shadow: inset 0 3px 0 transparent; }
 }
-
-.pwt-hit-arrow { color: var(--color-ink-3); margin: 0 2px; font-size: 11px; }
 
 /* --- 3. Two color rules: a health number is raspberry lost, green gained; a matchup tag is green when
    it favors you and raspberry when it favors the enemy. KO and blocked are neither. --- */
@@ -2002,9 +1982,7 @@
 .pwt-key.noted { border-color: var(--color-ink-2); }
 
 /* --- 9. Marks readable where they are used --- */
-.pwt-ko { width: auto; height: 18px; padding: 0 5px; gap: 4px; top: -19px; }
-.pwt-ko svg { width: 12px; height: 12px; }
-.pwt-ko-words { font-family: var(--font-legend); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; }
+
 .pwt-guardian-tag {
   /* Its own row above the element badge: side by side they collide on a narrow plaque. */
   position: absolute;
@@ -2098,7 +2076,7 @@
 .pwt-guide .pwt-legend-sample.wide { flex-basis: 150px; }
 .pwt-guide .pwt-legend-row:has(.pwt-legend-rail) .pwt-legend-sample { flex-basis: 200px; }
 .pwt-guide .pwt-legend-rail { width: 200px; height: 78px; }
-.pwt-guide .pwt-legend-ko-plaque { margin-top: 20px; margin-left: 4px; }
+
 .pwt-guide .pwt-panel-note { margin: 2px 0 0; }
 .pwt-revives-short { display: none; }
 .pwt-note-short { display: none; }
@@ -2107,7 +2085,7 @@
 .pwt-guide-foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 2px; }
 .pwt-guide-foot .pwt-panel-note { margin: 0; flex: 1 1 auto; }
 .pwt-guide-foot .pwt-panel-actions { margin: 0; flex: 0 0 auto; }
-.pwt-guide .pwt-ko, .pwt-guide .pwt-ko-words { white-space: nowrap; }
+
 .pwt-guide .pwt-legend-row { min-height: 36px; }
 .pwt-panel.pwt-guide { padding: 7px 32px 7px; gap: 6px; }
 .pwt-guide h2 { font-size: 22px; margin: 0; }

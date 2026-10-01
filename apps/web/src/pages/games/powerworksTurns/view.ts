@@ -15,14 +15,18 @@ import {
   STALLED_LOG,
   STALL_TURNS_PER_UNIT,
   attackOn,
+  clone,
   enemyFighter,
+  foesOf,
   interval,
   landedOn,
   legalTargets,
   roomsFor,
   roundOf,
+  resolveIntent,
   roundStrip,
   standing,
+  support as engineSupport,
   step,
   upcoming,
   type Fighter,
@@ -47,12 +51,8 @@ export type Marks = {
 };
 
 export type SquadView = Marks & {
-  /**
-    Enemies (by letter) that act before this companion's next turn and whose strongest ready hit
-    would knock it out: the hit equals or exceeds its health. Absent when none can. A fact about
-    the present state, not advice.
-  */
-  koFrom?: Letter[];
+  /** The enemy hits and supports committed against this companion, in the order those enemies act (see Threat). */
+  threats: Threat[];
   id: string;
   name: string;
   species: string;
@@ -82,33 +82,44 @@ export type EnemyView = Marks & {
     enemy, not once per move. null when no companion is acting.
   */
   matchup: number | null;
-  /** What this enemy has committed to for its next turn (the engine's intent); null when it has none. */
-  intent: IntentView | null;
+  /** The supports committed to this enemy (an ally's heal, its own shield), in the order those enemies act. */
+  threats: Threat[];
 };
 
 /**
-  An enemy's committed move and target, read at the state as it stands now. The number is what the
-  hit would land now on its target: the attack less the target's shields, never capped by health,
-  with the enemy's own boost and hinder in it. It changes as marks change; the move and the target
-  do not until the enemy has acted (or its target falls, and the enemy turns to the next companion).
+  A threat tag (docs/design/powerworks-threat-tags.md): one enemy's committed move, as it lands on one
+  plate. An attack shows on every companion it reaches with that companion's own number (the number
+  it would land now: the attack less the target's shields, never capped by health, with the enemy's
+  own boost and hinder in it). A support shows on its recipient with the engine's own amounts.
+  Built from the intents the engine holds; a previewed key changes `n`, `lethal` and `cancelled`
+  through the same builders (previewThreats).
 */
-export type IntentView = {
-  move: string;
+export type Threat = {
+  /** The enemy it comes from. */
+  from: Letter;
+  fromId: string;
+  fromName: string;
+  /** The plate it lands on (a companion for an attack, a hinder or a slow; an ally enemy or the enemy itself for the rest). */
+  on: string;
+  onName: string;
   kind: "attack" | "support";
-  /** The attack reaches every companion (the number is the one on its named target). */
-  area: boolean;
-  /** Whom it is aimed at; for a support that acts on the enemy itself, the enemy itself. */
-  target: { id: string; name: string; art: string; element: string; ally: boolean; self: boolean };
-  /** Attack: the number it lands now; 0 on an immune matchup. Support: 0. */
+  move: string;
+  /** Attack: the number it lands now on `on` (0 on an immune matchup). Support: 0 (see parts). */
   n: number;
-  /** Attack: the element step against the target. */
+  /** Attack: the element step against `on`. */
   step: number;
-  /** Attack: the number before this enemy's own hinder (struck beside n); absent without a hinder. */
-  before?: number;
-  /** Attack: the number equals or exceeds the target's health (a skull). */
+  /** Support: each amount the engine would apply to `on`, in the move's order. */
+  parts: { kind: SupportKind; n: number }[];
+  /** The attack reaches every companion. */
+  area?: true;
+  /** Attack: the number equals or exceeds the plate's health. */
   lethal?: true;
-  /** The move's supports (a support intent's whole content, an attack's rider). */
-  supports: SupportChip[];
+  /** Previewed: the number before the previewed key (struck beside n). */
+  before?: number;
+  /** Previewed: the previewed key finishes this enemy (or the enemy it lands on), so the hit will not come. */
+  cancelled?: true;
+  /** Position in the timeline (0 acts first); the tags on a plate are ordered by it. */
+  order: number;
 };
 
 /** One target cell on a key: what this key does to that one target. */
@@ -299,8 +310,7 @@ function letterFor(s: TRun, id: string): Letter | undefined {
 const shieldSum = (u: Fighter) => u.shields.reduce((a, b) => a + b.n, 0);
 const marksOf = (u: Fighter): Marks => ({ shield: shieldSum(u), boost: u.boost, hinder: u.hinder });
 
-function squadView(s: TRun, u: Fighter): SquadView {
-  const ko = s.phase === "turn" ? knockoutThreats(s, u) : [];
+function squadView(s: TRun, u: Fighter, threats: Threat[]): SquadView {
   return {
     ...marksOf(u),
     id: u.id,
@@ -312,34 +322,8 @@ function squadView(s: TRun, u: Fighter): SquadView {
     max: u.max,
     down: u.hp <= 0,
     active: s.active === u.id,
-    ...(ko.length ? { koFrom: ko.map((k) => k.letter) } : {}),
+    threats: u.hp > 0 ? threats.filter((x) => x.on === u.id) : [],
   };
-}
-
-/**
-  The enemies that can knock this companion out before it next acts: an enemy in the timeline's
-  upcoming turns ahead of the companion's own next one whose committed attack, as it would land
-  now, equals or exceeds the companion's health (a lethal intent). For the companion acting now,
-  "next" is its turn after this one. Empty for a fallen companion or outside a companion's turn.
-*/
-export function knockoutThreats(s: TRun, target: Fighter): { letter: Letter; n: number }[] {
-  if (s.phase !== "turn" || target.hp <= 0) return [];
-  const standingCount = standing([...s.team, ...s.enemies]).length;
-  const order = upcoming(s, standingCount * 2 + 2);
-  const first = s.active === target.id ? 1 : 0;
-  const window: Fighter[] = [];
-  for (let i = first; i < order.length; i++) {
-    if (order[i].id === target.id) break;
-    if (order[i].enemy) window.push(order[i]);
-  }
-  const out: { letter: Letter; n: number }[] = [];
-  for (const e of window) {
-    const hit = intentHit(s, e);
-    if (!hit || (hit.target.id !== target.id && !hit.move.area)) continue;
-    const n = hitUncapped(e, hit.move, target);
-    if (n > 0 && n >= target.hp && !out.some((o) => o.letter === letterFor(s, e.id))) out.push({ letter: letterFor(s, e.id)!, n });
-  }
-  return out;
 }
 
 /**
@@ -363,33 +347,137 @@ function intentHit(s: TRun, e: Fighter, withHinder?: number): { move: PMove; tar
   return { move, target, n: hitUncapped(attacker, move, target), step: step(move.element, target.element) };
 }
 
-/** What an enemy has committed to, with the number it would land now. */
-function intentView(s: TRun, e: Fighter): IntentView | null {
-  const i = s.intents?.[e.id];
-  if (!i || e.hp <= 0) return null;
-  const move = e.moves[i.move];
-  const t = [...s.team, ...s.enemies].find((x) => x.id === i.target);
-  if (!move || !t) return null;
-  // An ally of the enemy's own is read by its letter (its plate carries the name); a companion by its name.
-  const target = { id: t.id, name: t.enemy ? letterFor(s, t.id) ?? t.name : t.name, art: t.enemy ? ENEMY_ART[t.species] ?? t.species : t.species, element: t.element, ally: t.enemy === e.enemy, self: t.id === e.id };
-  const supports = move.parts.map(supportChip);
-  if (move.power <= 0) return { move: move.name, kind: "support", area: false, target, n: 0, step: 1, supports };
-  const hit = intentHit(s, e)!;
-  const clean = e.hinder > 0 ? intentHit(s, { ...e, hinder: 0 })!.n : hit.n;
-  return {
-    move: move.name,
-    kind: "attack",
-    area: move.area,
-    target,
-    n: hit.n,
-    step: hit.step,
-    ...(clean > hit.n ? { before: clean } : {}),
-    ...(hit.n > 0 && hit.n >= t.hp ? { lethal: true as const } : {}),
-    supports,
+/**
+  Every standing enemy's committed move, as threats on the plates it lands on, in the order the
+  enemies act (the timeline's own order). An attack tags every companion it reaches with that
+  companion's number; a support tags its recipient with the amounts the engine would apply (the
+  engine's own `support`, run on a copy, so the recipient and the numbers are never a second copy of
+  its rules). When the committed target has already fallen the tag is on the companion the enemy
+  will turn to (the engine's own redirect).
+*/
+export function threatsOf(s: TRun): Threat[] {
+  if (s.phase !== "turn") return [];
+  const order = upcoming(s, standing([...s.team, ...s.enemies]).length * 2 + 2);
+  const rank = (id: string) => {
+    const i = order.findIndex((o) => o.id === id);
+    return i < 0 ? 999 : i;
   };
+  const everyone = [...s.team, ...s.enemies];
+  const out: Threat[] = [];
+  for (const e of s.enemies) {
+    if (e.hp <= 0 || !s.intents?.[e.id]) continue;
+    const meant = s.intents[e.id];
+    const target = everyone.find((x) => x.id === meant.target);
+    // The engine's redirect when the committed target has fallen (on a copy: choosing afresh may draw).
+    const chosen = target && target.hp > 0 ? meant : resolveIntent({ ...s }, e) ?? meant;
+    const move = e.moves[chosen.move];
+    const aimed = everyone.find((x) => x.id === chosen.target);
+    if (!move || !aimed) continue;
+    const base = { from: letterFor(s, e.id)!, fromId: e.id, fromName: e.name, move: move.name, order: rank(e.id) };
+    if (move.power > 0) {
+      const reach = move.area ? standing(foesOf(s, e)) : [aimed];
+      for (const r of reach) {
+        const n = hitUncapped(e, move, r);
+        out.push({
+          ...base,
+          on: r.id,
+          onName: r.name,
+          kind: "attack",
+          n,
+          step: step(move.element, r.element),
+          parts: [],
+          ...(move.area ? { area: true as const } : {}),
+          ...(n > 0 && n >= r.hp ? { lethal: true as const } : {}),
+        });
+      }
+      continue;
+    }
+    // A support: the engine's own routing and amounts, run on a copy.
+    const copy = clone({ team: s.team, enemies: s.enemies });
+    const ce = copy.enemies.find((x) => x.id === e.id)!;
+    const ct = [...copy.team, ...copy.enemies].find((x) => x.id === aimed.id)!;
+    const byTarget = new Map<string, { kind: SupportKind; n: number }[]>();
+    for (const p of move.parts)
+      engineSupport(copy, ce, move, p, ct, (ev) => {
+        if (ev.kind !== "heal" && ev.kind !== "shield" && ev.kind !== "boost" && ev.kind !== "hinder" && ev.kind !== "delay") return;
+        if (ev.amount <= 0) return;
+        byTarget.set(ev.target, [...(byTarget.get(ev.target) ?? []), { kind: ev.kind, n: ev.amount }]);
+      });
+    for (const [id, parts] of byTarget) {
+      const r = everyone.find((x) => x.id === id)!;
+      out.push({ ...base, on: id, onName: r.name, kind: "support", n: 0, step: 1, parts });
+    }
+  }
+  return out.sort((a, b) => a.order - b.order);
 }
 
-function enemyView(s: TRun, u: Fighter): EnemyView {
+/**
+  An enemy whose committed target has fallen turns to the next companion when its beat starts: its
+  single-target attack tag moves to that companion with that companion's number (read at the state
+  the run holds). An area hit and a support stay where they are.
+*/
+export function retargetThreat(s: TRun, t: Threat, toId: string): Threat {
+  if (t.kind !== "attack" || t.area || t.on === toId) return t;
+  const e = s.enemies.find((x) => x.id === t.fromId);
+  const r = s.team.find((x) => x.id === toId);
+  const move = e?.moves.find((m) => m.name === t.move);
+  if (!e || !r || !move) return t;
+  const n = hitUncapped(e, move, r);
+  const { lethal: _was, before: _b, ...plain } = t;
+  return { ...plain, on: r.id, onName: r.name, n, step: step(move.element, r.element), ...(n > 0 && n >= r.hp ? { lethal: true as const } : {}) };
+}
+
+type Patch = { hinder: Record<string, number>; shield: Record<string, number>; heal: Record<string, number> };
+
+/** The state with a previewed key's marks laid on the units it reaches (a copy; the run is untouched). */
+function patchedRun(s: TRun, p: Patch): TRun {
+  const fix = (f: Fighter): Fighter => {
+    let o = f;
+    if (p.hinder[f.id]) o = { ...o, hinder: Math.max(o.hinder, p.hinder[f.id]) };
+    if (p.shield[f.id]) o = { ...o, shields: [...o.shields, { n: p.shield[f.id], from: "preview" }] };
+    if (p.heal[f.id]) o = { ...o, hp: Math.min(o.max, o.hp + p.heal[f.id]) };
+    return o;
+  };
+  return { ...s, team: s.team.map(fix), enemies: s.enemies.map(fix) };
+}
+
+/**
+  The threats as the hovered or chosen key would leave them, computed from the same per-target
+  forecast the previews carry (`previews` is previewsOf's result): a hinder (or an attack's hinder
+  rider) on an enemy re-reads that enemy's hits with the same builders; a key whose preview finishes
+  an enemy cancels that enemy's tags; a shield or heal on a companion re-reads the tags that land on
+  it. A changed number carries its old one in `before`.
+*/
+export function previewThreats(s: TRun, key: KeyView, previews: Record<string, Preview>): Threat[] {
+  const rest = threatsOf(s);
+  if (!rest.length) return rest;
+  const patch: Patch = { hinder: {}, shield: {}, heal: {} };
+  const fall = new Set<string>();
+  const riderN = key.supports.find((x) => x.kind === "hinder" && x.aim === "enemy")?.n ?? 0;
+  for (const [id, p] of Object.entries(previews)) {
+    if (s.enemies.some((e) => e.id === id)) {
+      if (p.finishes) fall.add(id);
+      else if (p.hinder) patch.hinder[id] = p.hinder;
+      else if (p.rider) patch.hinder[id] = riderN;
+      continue;
+    }
+    const chips: SupportChip[] = p.chips ?? [{ kind: p.kind as SupportKind, n: p.n, aim: "ally", all: false }];
+    for (const c of chips) {
+      if (c.kind === "shield") patch.shield[id] = (patch.shield[id] ?? 0) + c.n;
+      if (c.kind === "heal") patch.heal[id] = (patch.heal[id] ?? 0) + c.n;
+    }
+  }
+  const after = threatsOf(patchedRun(s, patch));
+  return rest.map((t) => {
+    if (fall.has(t.fromId) || fall.has(t.on)) return { ...t, cancelled: true as const };
+    const a = after.find((x) => x.fromId === t.fromId && x.on === t.on && x.kind === t.kind);
+    if (!a || t.kind !== "attack") return t;
+    const { lethal: _was, ...plain } = t;
+    return { ...plain, n: a.n, ...(a.n !== t.n ? { before: t.n } : {}), ...(a.lethal ? { lethal: true as const } : {}) };
+  });
+}
+
+function enemyView(s: TRun, u: Fighter, threats: Threat[]): EnemyView {
   const active = s.phase === "turn" ? s.team.find((t) => t.id === s.active) : undefined;
   return {
     ...marksOf(u),
@@ -403,7 +491,7 @@ function enemyView(s: TRun, u: Fighter): EnemyView {
     max: u.max,
     down: u.hp <= 0,
     matchup: active ? step(active.element, u.element) : null,
-    intent: s.phase === "turn" ? intentView(s, u) : null,
+    threats: u.hp > 0 ? threats.filter((x) => x.on === u.id) : [],
   };
 }
 
@@ -619,15 +707,16 @@ export function turnView(s: TRun): TurnView {
   const active = s.team.find((t) => t.id === s.active) ?? null;
   const activeReady = s.phase === "turn" && !!active;
   const rail = s.phase === "turn" ? railFor(s) : [];
+  const threats = threatsOf(s);
   return {
     phase: s.phase,
     round: roundOf(s),
     room: s.room,
     roomName: bareRoomName(roomsFor(s.rules)[s.room].name),
     roomCount: roomsFor(s.rules).length,
-    active: active ? squadView(s, active) : null,
-    squad: s.team.map((u) => squadView(s, u)),
-    enemies: s.enemies.map((u) => enemyView(s, u)),
+    active: active ? squadView(s, active, threats) : null,
+    squad: s.team.map((u) => squadView(s, u, threats)),
+    enemies: s.enemies.map((u) => enemyView(s, u, threats)),
     keys: activeReady ? active!.moves.map((_, i) => keyView(s, active!, i)) : [],
     strip: roundStrip(s).map(({ unit, done }) => stripSlot(s, unit, done)),
     rail,

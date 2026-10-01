@@ -44,6 +44,9 @@ import {
   hitUncapped,
   actsOnPress,
   previewsOf,
+  previewThreats,
+  retargetThreat,
+  threatsOf,
   keyNote,
   momentWords,
   playback,
@@ -55,6 +58,7 @@ import {
   type Beat,
   type Cell,
   type RecordEntry,
+  type Threat,
 } from "./view.ts";
 
 const RULES = { ...DEFAULT_RULES, rooms: "roles" as const, timeline: "round" as const, enemyHpFactor: ENEMY_HP_FACTOR };
@@ -180,22 +184,25 @@ describe("turnView", () => {
     expect(v.keys[0].state).toBe("spent");
   });
 
-  it("gives every standing enemy an intent after it has acted this round, and none to a fallen one", () => {
+  it("gives every standing enemy a threat tag somewhere after it has acted this round, and none to a fallen one", () => {
     let s = freshState(1);
     for (let k = 0; k < 40 && s.phase === "turn"; k++) {
       s = turnCommand(s, { kind: "act", order: firstLegalOrder(s) }).state;
       if (s.phase !== "turn") break;
-      for (const e of turnView(s).enemies) {
-        if (e.down) expect(e.intent).toBeNull();
+      const v = turnView(s);
+      const tags = [...v.squad, ...v.enemies].flatMap((u) => u.threats);
+      for (const e of v.enemies) {
+        if (e.down) expect(tags.some((x) => x.fromId === e.id)).toBe(false);
         else {
-          expect(e.intent).not.toBeNull();
-          expect(e.intent!.move.length).toBeGreaterThan(0);
+          const mine = tags.filter((x) => x.fromId === e.id);
+          expect(mine.length).toBeGreaterThan(0);
+          expect(mine.every((x) => x.from === e.letter && x.move.length > 0)).toBe(true);
         }
       }
     }
   });
 
-  describe("an enemy's intent", () => {
+  describe("an enemy's threat tag", () => {
     function foeWith(move: object, target?: (s: TRun) => Fighter): { s: TRun; foe: Fighter; aim: Fighter } {
       const s = structuredClone(stateWithActiveAttacker());
       const foe = s.enemies.find((e) => e.hp > 0)!;
@@ -210,16 +217,21 @@ describe("turnView", () => {
       commit(s, foe, 0, aim.id);
       return { s, foe, aim };
     }
-    const read = (s: TRun, foe: Fighter) => turnView(s).enemies.find((e) => e.id === foe.id)!.intent!;
+    const read = (s: TRun, foe: Fighter, on?: string): Threat => threatsOf(s).find((x) => x.fromId === foe.id && (on === undefined || x.on === on))!;
 
-    it("names the move, the companion it is aimed at, and the number it would land now, uncapped by health", () => {
+    it("sits on the companion it will land on, with the enemy's letter, its move and the number it would land now, uncapped by health", () => {
       const { s, foe, aim } = foeWith({ power: 18 });
       aim.hp = 10;
       const i = read(s, foe);
-      expect(i).toMatchObject({ kind: "attack", area: false, n: 18, step: 1, lethal: true });
+      expect(i).toMatchObject({ kind: "attack", from: "A", fromId: foe.id, on: aim.id, onName: aim.name, n: 18, step: 1, lethal: true });
+      expect(i.area).toBeUndefined();
       expect(i.move).toBe(foe.moves[0].name);
-      expect(i.target).toMatchObject({ id: aim.id, name: aim.name, self: false });
       expect(hitUncapped(foe, foe.moves[0], aim)).toBe(18);
+      // the plate it lands on carries it; no other plate does, and the enemy's own plate names no companion
+      const v = turnView(s);
+      expect(v.squad.find((u) => u.id === aim.id)!.threats.map((x) => x.fromId)).toEqual([foe.id]);
+      expect(v.squad.filter((u) => u.id !== aim.id).every((u) => u.threats.every((x) => x.fromId !== foe.id))).toBe(true);
+      expect(v.enemies.every((e) => e.threats.every((x) => x.fromId !== foe.id))).toBe(true);
     });
 
     it("marks it lethal when it equals or exceeds the companion's health, exactly equal included, and counts the shield", () => {
@@ -234,15 +246,14 @@ describe("turnView", () => {
       expect(read(s, foe).lethal).toBeUndefined();
     });
 
-    it("shows the number before the enemy's own hinder struck, and its own boost with no struck form", () => {
+    it("reads the enemy's own hinder and boost in the number, with no struck form (a tag shows only what lands now)", () => {
       const { s, foe } = foeWith({ power: 20 });
       foe.hinder = 6;
-      expect(read(s, foe)).toMatchObject({ n: 14, before: 20 });
+      expect(read(s, foe)).toMatchObject({ n: 14 });
+      expect(read(s, foe).before).toBeUndefined();
       foe.hinder = 0;
       foe.boost = 12;
-      const boosted = read(s, foe);
-      expect(boosted.n).toBe(32);
-      expect(boosted.before).toBeUndefined();
+      expect(read(s, foe).n).toBe(32);
     });
 
     it("reads an immune matchup as no effect (step 0) and a strong one as more", () => {
@@ -253,32 +264,77 @@ describe("turnView", () => {
       expect(read(s, foe).step).toBeGreaterThan(1);
     });
 
-    it("an area attack says so, and a support says its kind and recipient, not a number", () => {
-      const { s, foe } = foeWith({ power: 9, area: true });
-      expect(read(s, foe).area).toBe(true);
-      const t = foeWith({ power: 0, parts: [{ kind: "heal", n: 9, aim: "ally", all: false }] }, (x) => x.enemies.find((e) => e.hp > 0)!);
-      t.s.enemies.forEach((e) => (e.hp = Math.max(1, e.hp)));
-      const i = read(t.s, t.foe);
-      expect(i.kind).toBe("support");
-      expect(i.supports).toEqual([{ kind: "heal", n: 9, aim: "ally", all: false }]);
-      expect(i.target.self).toBe(true);
+    it("an area attack tags every standing companion with that companion's own number, and not the fallen", () => {
+      const { s, foe } = foeWith({ power: 20, area: true });
+      s.team[1].shields = [{ n: 5, from: "x" }];
+      s.team[2].hp = 0;
+      const mine = threatsOf(s).filter((x) => x.fromId === foe.id);
+      expect(mine.map((x) => x.on).sort()).toEqual(s.team.filter((u) => u.hp > 0).map((u) => u.id).sort());
+      expect(mine.every((x) => x.area === true)).toBe(true);
+      expect(mine.find((x) => x.on === s.team[1].id)!.n).toBe(read(s, foe, s.team[0].id).n - 5);
     });
 
-    it("reads an enemy ally by its letter, and a companion by its name", () => {
+    it("a support tags its recipient with the engine's own amount: an enemy's own plate for a shield on itself, an ally's for a heal", () => {
+      const own = foeWith({ power: 0, parts: [{ kind: "shield", n: 5, aim: "self", all: false }] });
+      const v = turnView(own.s);
+      expect(v.enemies.find((e) => e.id === own.foe.id)!.threats.filter((x) => x.fromId === own.foe.id)).toMatchObject([{ kind: "support", from: "A", on: own.foe.id, parts: [{ kind: "shield", n: 5 }] }]);
+      expect(v.squad.every((u) => u.threats.every((x) => x.fromId !== own.foe.id))).toBe(true);
       const s = structuredClone(stateWithActiveAttacker());
       const [a, b] = s.enemies;
-      a.moves = [{ ...a.moves[0], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "shield", n: 5, aim: "ally", all: false } as never] }];
+      a.moves = [{ ...a.moves[0], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "heal", n: 9, aim: "ally", all: false } as never] }];
       a.cooldowns = [0];
+      b.hp = b.max - 4;
       commit(s, a, 0, b.id);
-      expect(turnView(s).enemies[0].intent!.target).toMatchObject({ id: b.id, name: "B", ally: true, self: false });
+      expect(turnView(s).enemies[1].threats.filter((x) => x.fromId === a.id)).toMatchObject([{ kind: "support", from: "A", fromId: a.id, on: b.id, parts: [{ kind: "heal", n: 4 }] }]);
     });
 
-    it("is null while a fallen enemy stands nowhere, and outside a fight", () => {
+    it("a hinder aimed at a companion is a tag on that companion with its number", () => {
+      const { s, foe, aim } = foeWith({ power: 0, parts: [{ kind: "hinder", n: 8, aim: "enemy", all: false }] });
+      expect(read(s, foe)).toMatchObject({ kind: "support", on: aim.id, parts: [{ kind: "hinder", n: 8 }] });
+    });
+
+    it("orders the tags on a plate by when their enemies act", () => {
+      const s = structuredClone(stateWithActiveAttacker());
+      const [a, b] = s.enemies;
+      const t0 = s.team.find((u) => u.id === s.active)!;
+      for (const foe of [a, b]) {
+        foe.moves = [{ ...foe.moves[0], power: 5, rests: 0, signature: false, area: false, parts: [] }];
+        foe.cooldowns = [0];
+        commit(s, foe, 0, t0.id);
+      }
+      for (const [first, second] of [[a, b], [b, a]]) {
+        s.clock[first.id] = 0.1;
+        s.clock[second.id] = 0.2;
+        expect(turnView(s).squad.find((u) => u.id === t0.id)!.threats.map((x) => x.fromId)).toEqual([first.id, second.id]);
+      }
+    });
+
+    it("when the committed target has fallen the tag is on the companion the engine will turn to", () => {
+      const { s, foe, aim } = foeWith({ power: 18 });
+      aim.hp = 0;
+      const t = read(s, foe);
+      expect(t.on).not.toBe(aim.id);
+      expect(s.team.find((u) => u.id === t.on)!.hp).toBeGreaterThan(0);
+    });
+
+    it("retargetThreat moves a single-target tag to another companion with that companion's number; area and support stay", () => {
+      const { s, foe, aim } = foeWith({ power: 18 });
+      const other = s.team.find((u) => u.id !== aim.id)!;
+      other.shields = [{ n: 3, from: "x" }];
+      const moved = retargetThreat(s, read(s, foe), other.id);
+      expect(moved).toMatchObject({ on: other.id, n: 15 });
+      const area = foeWith({ power: 18, area: true });
+      const t0 = read(area.s, area.foe, area.aim.id);
+      expect(retargetThreat(area.s, t0, other.id)).toBe(t0);
+    });
+
+    it("is absent for a fallen enemy, and outside a fight", () => {
       const s = structuredClone(stateWithActiveAttacker());
       s.enemies[0].hp = 0;
-      expect(turnView(s).enemies[0].intent).toBeNull();
+      const tags = [...turnView(s).squad, ...turnView(s).enemies].flatMap((u) => u.threats);
+      expect(tags.some((x) => x.fromId === s.enemies[0].id)).toBe(false);
       const camp = { ...structuredClone(s), phase: "camp" as const };
-      expect(turnView(camp).enemies.every((e) => e.intent === null)).toBe(true);
+      expect(threatsOf(camp)).toEqual([]);
     });
 
     it("carries the matchup of the acting companion's element against each enemy, once per enemy", () => {
@@ -1071,7 +1127,7 @@ describe("round 2: briefing, camp, title card, holds and the run summary", () =>
   });
 });
 
-describe("round 5: knockout warnings from lethal intents", () => {
+describe("threat tags: a lethal hit shows as a skull on the plate it lands on", () => {
   /** A state where every enemy is committed to a lethal-on-anything area attack, the squad unshielded. */
   function lethalWorld(): TRun {
     const s = structuredClone(stateWithActiveAttacker());
@@ -1088,48 +1144,149 @@ describe("round 5: knockout warnings from lethal intents", () => {
     return s;
   }
 
-  it("names, on every squad plate, the enemies that act before its next turn and are committed to a hit that knocks it out", () => {
+  it("puts a lethal tag from every enemy on every squad plate, in the order those enemies act", () => {
     const s = lethalWorld();
     const [t0, t1, t2] = s.team;
     const [a, b] = s.enemies;
     s.active = t0.id;
-    // One timeline: t0, A, t1, B, t2, then everyone else. Every unit's next turn comes a round later.
     const order = [t0, a, t1, b, t2, ...s.team.slice(3), ...s.enemies.slice(2)];
-    const at: [string, number][] = order.map((u, i) => [u.id, 0.05 * (i + 1)]);
-    s.clock = Object.fromEntries(at);
+    s.clock = Object.fromEntries(order.map((u, i) => [u.id, 0.05 * (i + 1)]));
     expect(upcoming(s, order.length).map((u) => u.id)).toEqual(order.map((u) => u.id));
     const v = turnView(s);
-    const ko = (id: string) => v.squad.find((u) => u.id === id)!.koFrom;
-    expect(ko(t0.id)).toEqual(s.enemies.map((_, i) => String.fromCharCode(65 + i))); // acting now: every enemy acts before its next turn
-    expect(ko(t1.id)).toEqual(["A"]);
-    expect(ko(t2.id)).toEqual(["A", "B"]);
+    for (const id of [t0.id, t1.id, t2.id]) {
+      const tags = v.squad.find((u) => u.id === id)!.threats;
+      expect(tags.map((x) => x.from)).toEqual(s.enemies.map((_, i) => String.fromCharCode(65 + i)));
+      expect(tags.every((x) => x.lethal === true)).toBe(true);
+    }
   });
 
-  it("a single-target intent threatens only the companion it is aimed at", () => {
+  it("a single-target intent tags only the companion it is aimed at", () => {
     const s = lethalWorld();
     for (const foe of s.enemies) {
       foe.moves[0] = { ...foe.moves[0], area: false };
       commit(s, foe, 0, s.team[1].id);
     }
     const v = turnView(s);
-    expect(v.squad[1].koFrom).toBeDefined();
-    expect(v.squad.filter((u, i) => i !== 1).every((u) => u.koFrom === undefined)).toBe(true);
+    expect(v.squad[1].threats.length).toBe(s.enemies.length);
+    expect(v.squad.filter((u, i) => i !== 1).every((u) => u.threats.length === 0)).toBe(true);
   });
 
-  it("marks nobody when no committed hit reaches a companion's health, and nobody who is down", () => {
+  it("marks nothing lethal when no committed hit reaches a companion's health, and tags nobody who is down", () => {
     const s = lethalWorld();
     for (const foe of s.enemies) foe.moves[0] = { ...foe.moves[0], power: 1 };
     for (const u of s.team) u.hp = u.max;
-    expect(turnView(s).squad.every((u) => u.koFrom === undefined)).toBe(true);
+    const v = turnView(s);
+    expect(v.squad.every((u) => u.threats.length > 0 && u.threats.every((x) => x.lethal === undefined))).toBe(true);
     const t = lethalWorld();
     t.team[1].hp = 0;
-    expect(turnView(t).squad[1].koFrom).toBeUndefined();
+    expect(turnView(t).squad[1].threats).toEqual([]);
   });
 
-  it("an enemy committed to a support move is no threat", () => {
+  it("an enemy committed to a support move is never a lethal tag on a companion", () => {
     const s = lethalWorld();
     for (const foe of s.enemies) foe.moves[0] = { ...foe.moves[0], power: 0, area: false, parts: [{ kind: "shield", n: 5, aim: "self", all: false } as never] };
-    expect(turnView(s).squad.every((u) => u.koFrom === undefined)).toBe(true);
+    expect(turnView(s).squad.every((u) => u.threats.length === 0)).toBe(true);
+  });
+});
+
+describe("threat tags through a previewed key (previewThreats)", () => {
+  /** Every enemy committed to a 30-power single-target hit on the active companion, whose first move carries a hinder rider of 10. */
+  function world(): { s: TRun; a: Fighter } {
+    const s = structuredClone(stateWithActiveAttacker());
+    const a = s.team.find((t) => t.id === s.active)!;
+    const base = a.moves.find((m) => m.power > 0)!;
+    a.moves[0] = { ...base, power: 2, rests: 0, signature: false, area: false, parts: [{ kind: "hinder", n: 10, aim: "enemy", all: false } as never] };
+    a.moves[1] = { ...a.moves[1], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "hinder", n: 12, aim: "enemy", all: false } as never] };
+    a.moves[2] = { ...a.moves[2], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "shield", n: 8, aim: "ally", all: false } as never] };
+    a.moves[3] = { ...a.moves[3], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "heal", n: 50, aim: "ally", all: false } as never] };
+    a.cooldowns = a.moves.map(() => 0);
+    a.signatureSpent = false;
+    a.hinder = 0;
+    a.boost = 0;
+    a.shields = [];
+    // The enemies are committed to a squadmate (the heal and shield keys name squadmates, not their user).
+    const o = s.team.find((u) => u.id !== a.id)!;
+    o.hp = 30;
+    o.shields = [];
+    for (const foe of s.enemies) {
+      const fb = foe.moves.find((m) => m.power > 0) ?? foe.moves[0];
+      foe.moves = [{ ...fb, power: 30, element: null as never, rests: 0, signature: false, parts: [], area: false }];
+      foe.cooldowns = [0];
+      foe.signatureSpent = false;
+      foe.boost = 0;
+      foe.hinder = 0;
+      commit(s, foe, 0, o.id);
+    }
+    return { s, a: o };
+  }
+  const key = (s: TRun, i: number) => {
+    const v = turnView(s);
+    const k = v.keys[i];
+    return { k, previews: previewsOf(k, v.active!.id, v.squad.filter((u) => !u.down).map((u) => u.id)) };
+  };
+  const tagsOf = (list: Threat[], fromId: string) => list.filter((x) => x.fromId === fromId);
+
+  it("a hinder on enemy X shows X's tag as the old number struck and the lower one; the other enemy's tag is unchanged", () => {
+    const { s } = world();
+    const { k, previews } = key(s, 1);
+    const out = previewThreats(s, k, previews);
+    for (const foe of s.enemies) expect(tagsOf(out, foe.id)[0]).toMatchObject({ before: 30, n: 18 });
+    // the same builder the cell uses: the cell's own after number is the tag's
+    expect(k.cells[0].n).toBe(18);
+  });
+
+  it("an attack's hinder rider reads the same, and a lethal hit it brings under the companion's health loses its skull", () => {
+    const { s, a } = world();
+    expect(threatsOf(s)[0].lethal).toBe(true); // 30 against 30 health
+    const { k, previews } = key(s, 0);
+    const out = previewThreats(s, k, previews);
+    const one = tagsOf(out, s.enemies[0].id)[0];
+    expect(one).toMatchObject({ before: 30, n: 20 });
+    expect(one.lethal).toBeUndefined();
+    expect(a.hp).toBe(30);
+  });
+
+  it("a move whose preview finishes an enemy cancels that enemy's tags and only that enemy's", () => {
+    const { s } = world();
+    s.enemies[0].hp = 1;
+    const { k, previews } = key(s, 0);
+    const out = previewThreats(s, k, previews);
+    expect(tagsOf(out, s.enemies[0].id).every((x) => x.cancelled === true)).toBe(true);
+    expect(tagsOf(out, s.enemies[1].id).some((x) => x.cancelled)).toBe(false);
+  });
+
+  it("a shield on a companion re-reads the tags that land on it: the number after the shield, the skull only if still lethal", () => {
+    const { s, a } = world();
+    const other = s.team.find((u) => u.id === s.active)!;
+    const { k, previews } = key(s, 2);
+    expect(Object.keys(previews)).toContain(a.id);
+    const out = previewThreats(s, k, previews);
+    for (const foe of s.enemies) {
+      const t = tagsOf(out, foe.id).find((x) => x.on === a.id)!;
+      expect(t).toMatchObject({ n: 22, before: 30 });
+      expect(t.lethal).toBeUndefined();
+    }
+    expect(other.id).not.toBe(a.id);
+  });
+
+  it("a heal that lifts the companion above the hit takes the skull away; a heal that does not leaves it", () => {
+    const { s, a } = world();
+    const { k, previews } = key(s, 3);
+    const out = previewThreats(s, k, previews);
+    for (const foe of s.enemies) {
+      const t = tagsOf(out, foe.id).find((x) => x.on === a.id)!;
+      expect(t.n).toBe(30);
+      expect(t.before).toBeUndefined();
+      expect(t.lethal).toBeUndefined();
+    }
+    a.max = 30;
+    expect(previewThreats(s, k, key(s, 3).previews).every((x) => x.lethal === true)).toBe(true);
+  });
+
+  it("leaves the tags as they are when nothing previewed reaches them", () => {
+    const { s } = world();
+    const { k } = key(s, 0);
+    expect(previewThreats(s, k, {})).toEqual(threatsOf(s));
   });
 });
 
@@ -1299,7 +1456,7 @@ describe("round 6: the forecast agrees with the result", () => {
       const { s, a } = riderWorld();
       a.hp = 30; // the enemy's 30 equals it: lethal; the rider's 10 takes it to 20
       const foe = turnView(s).enemies.find((e) => !e.down)!;
-      expect(foe.intent).toMatchObject({ n: 30, lethal: true });
+      expect(threatsOf(s).find((x) => x.fromId === foe.id)).toMatchObject({ n: 30, lethal: true });
       expect(turnView(s).keys[0].cells[0].rider).toEqual({ before: 30, after: 20 });
     });
 
@@ -1328,7 +1485,7 @@ describe("round 6: the forecast agrees with the result", () => {
       a.hp = 46;
       const view = turnView(s);
       const foe = view.enemies.find((e) => !e.down)!;
-      expect(foe.intent).toMatchObject({ n: 48, lethal: true });
+      expect(threatsOf(s).find((x) => x.fromId === foe.id)).toMatchObject({ n: 48, lethal: true });
       const cell = view.keys[0].cells.find((c) => !c.finishes)!;
       expect(cell.rider).toEqual({ before: 48, after: 38 });
       // the hinder is visibly its stated size
