@@ -278,7 +278,7 @@
   "R03": {
    "name": "Ear fan front",
    "weight": 3,
-   "score": 5,
+   "score": 5.0,
    "results": {
     "R03.1": "pass",
     "R03.2": "pass",
@@ -385,7 +385,7 @@
   "R05": {
    "name": "Neck and shoulders",
    "weight": 2,
-   "score": 5,
+   "score": 5.0,
    "results": {
     "R05.1": "pass",
     "R05.2": "pass",
@@ -427,7 +427,7 @@
   "R06": {
    "name": "Torso and pelvis",
    "weight": 2.5,
-   "score": 4,
+   "score": 4.0,
    "results": {
     "R06.1": "pass",
     "R06.2": "pass",
@@ -748,7 +748,7 @@
   "R12": {
    "name": "Whole-form coherence",
    "weight": 2,
-   "score": 1,
+   "score": 1.0,
    "results": {
     "R12.1": "fail",
     "R12.2": "fail",
