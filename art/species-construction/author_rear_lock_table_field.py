@@ -87,6 +87,18 @@ parser.add_argument('--tip-point', type=float, default=0., help='fraction of the
 parser.add_argument('--crown-lower', type=float, default=0., help='lower the rear half of the crown dome by this much at the centerline (figure units) so the crown tuft clears it')
 parser.add_argument('--crown-width', type=float, default=.06, help='half width of the crown lowering, figure units')
 parser.add_argument('--crown-df', type=float, nargs=2, default=[-.02, .01], help='crown lowering weight ramp in depth: 0 at the first value, 1 at the second')
+# round 9 options (all default to the earlier behaviour)
+parser.add_argument('--shave-dome', type=int, default=0, help='remove old dome shards: the rear surface of the head dome is blurred (masked box blur, this radius in voxels, 2 passes) and anything proud of the blurred surface minus --shave-off is cut away; the D coat and the crown tuft then lie on the shaved surface')
+parser.add_argument('--plate-outer', type=float, default=0., help='fraction by which the plate depth is reduced toward the wing tips (ramp u .17 to .24), so a deep plate does not pierce the thin outer wall')
+parser.add_argument('--shave-ymax', type=float, default=.172, help='figure y where the dome shave has faded out toward the nape')
+parser.add_argument('--shave-replace', action='store_true', help='with --shave-dome: the dome rear becomes the blurred surface everywhere (no min with the old surface), so no voxel terraces from the old rear survive; use with --shave-fill')
+parser.add_argument('--shave-fill', action='store_true', help='with --shave-dome: also fill the valleys of the dome rear up to the blurred surface')
+parser.add_argument('--shave-off', type=float, default=.002, help='figure units the shaved dome lies behind its blurred surface')
+parser.add_argument('--d-ymax', type=float, default=9., help='drop dome-coat locks whose root is lower than this figure y (the nape)')
+parser.add_argument('--d-skip', default='', help='comma list of dome-coat lock names to drop, e.g. D03,D07')
+parser.add_argument('--c-tip-raise', type=float, default=0., help='figure units the crown tuft tips are raised (tip y smaller), so the tuft stands clear of the dome')
+parser.add_argument('--thin', default='', help='keep every k-th lock of a row (per wing), e.g. B3=2 keeps half; pair with --row-width and --len-scale to widen the survivors')
+parser.add_argument('--yaw', default='', help='per-row extra rearward lean: root depth moves forward by this much (figure units) and tip depth stays, so each lock sweeps back out of the surface, e.g. B2=.015,B3=.015,T=.01')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=False)
@@ -174,7 +186,8 @@ if args.plate > 0 or args.dome_cut:
             df = (y-DF0)/S                         # (1,ny,1)
             sl = field[chunk]
             if args.plate > 0:
-                plan = plan_rear(u, yf, side)-args.plate        # (nx,1,nz)
+                plate_d = args.plate*(1-args.plate_outer*smoothstep((u-.17)/.07))
+                plan = plan_rear(u, yf, side)-plate_d        # (nx,1,nz)
                 plate_y = (plan*S+DF0).astype(np.float32)
                 # weight: fade in from the crease, and not below the wing's lower edge
                 w = smoothstep((u-CREASE(np.clip(yf, .05, .175))-args.plate_fade[0])/(args.plate_fade[1]-args.plate_fade[0]))
@@ -217,6 +230,52 @@ if args.dome_setback > 0:
     field = np.where((wd > 1e-3)[:, None, :], np.maximum(field, gy.astype(np.float32)), field).astype(np.float32)
     del gy
     print('dome set back', flush=True)
+
+
+def box2d_masked(val, valid, r, passes=2):
+    """Masked box blur of a 2D array: only valid cells count (so empty columns do not drag the surface down)."""
+    num = np.where(valid, val, 0.).astype(np.float64)
+    den = valid.astype(np.float64)
+    for _ in range(passes):
+        for ax_ in (0, 1):
+            n_ = num.shape[ax_]
+            for arr_name in ('num', 'den'):
+                a = num if arr_name == 'num' else den
+                c = np.cumsum(np.pad(a, [(r+1, r) if i == ax_ else (0, 0) for i in range(2)], mode='edge'), axis=ax_)
+                b = np.take(c, np.arange(2*r+1, n_+2*r+1), axis=ax_)-np.take(c, np.arange(0, n_), axis=ax_)
+                if arr_name == 'num':
+                    num = b
+                else:
+                    den = b
+    return np.where(den > 1e-6, num/np.maximum(den, 1e-6), np.nan)
+
+
+if args.shave_dome > 0:
+    inside_ = field < 0
+    ny_ = inside_.shape[1]
+    has_ = inside_.any(axis=1)
+    yrear = YS[ny_-1-inside_[:, ::-1, :].argmax(axis=1)].astype(np.float64)
+    del inside_
+    blur_ = box2d_masked(yrear, has_, args.shave_dome)
+    u_ = np.abs(XS)[:, None]/S
+    zf_ = (Z0-ZS[None, :])/S
+    crease_ = CREASE(np.clip(zf_, .05, .175))
+    wd = (smoothstep((crease_-.006-u_)/.015)*smoothstep((zf_+.03)/.03)*smoothstep((args.shave_ymax-zf_)/.025)).astype(np.float32)
+    smooth_ = np.where(np.isnan(blur_), yrear, blur_)-args.shave_off*S
+    target = (smooth_ if args.shave_replace else np.minimum(yrear, smooth_)).astype(np.float32)
+    gy = YS[None, :, None]-target[:, None, :]
+    slope = np.hypot(np.gradient(target, VS, axis=0), np.gradient(target, VS, axis=1))
+    gy = gy/np.sqrt(1+slope**2)[:, None, :]
+    cut_ = np.maximum(field, gy.astype(np.float32))
+    if args.shave_fill:
+        # close the valleys too: a slab from just behind the old rear up to the target surface is unioned in, so the dome
+        # rear becomes the blurred surface (peaks cut, valleys filled)
+        slab_ = np.maximum(gy.astype(np.float32), (yrear.astype(np.float32)-.03*S)[:, None, :]-YS[None, :, None])
+        cut_ = np.minimum(cut_, slab_)
+        del slab_
+    field = np.where(((wd > 1e-3) & has_)[:, None, :], field+wd[:, None, :]*(cut_-field), field).astype(np.float32)
+    del gy, cut_
+    print('dome shaved', flush=True)
 
 
 if args.cut_smooth:
@@ -284,6 +343,28 @@ for _ in range(400):
 front2d[~fill] = 0.
 print('front surface heightfield built', flush=True)
 
+# rear and top heightfields of the (cut, shaved) field: the dome coat and the crown tuft lie on this surface, not on the old skin
+_in = field < 0
+_has = _in.any(axis=1)
+rear2d = np.where(_has, YS[_in.shape[1]-1-_in[:, ::-1, :].argmax(axis=1)], np.nan).astype(np.float32)      # (nx, nz)
+_hz = _in.any(axis=2)
+top2d = np.where(_hz, ZS[_in.shape[2]-1-_in[:, :, ::-1].argmax(axis=2)], np.nan).astype(np.float32)        # (nx, ny)
+del _in
+if args.shave_dome > 0:
+    # sub-voxel terraces of the argmax heightfield would print as fine ribs under the dome coat: smooth them
+    rear2d = box2d_masked(rear2d.astype(np.float64), ~np.isnan(rear2d), 4, 2).astype(np.float32)
+    top2d = box2d_masked(top2d.astype(np.float64), ~np.isnan(top2d), 4, 2).astype(np.float32)
+
+
+def hf_sample(arr, a, b, axes):
+    """Nearest-cell sample of a heightfield at head-local coordinates a (axis axes[0]) and b (axes[1])."""
+    ia = int(round(a/VS-lo[axes[0]]))
+    ib = int(round(b/VS-lo[axes[1]]))
+    if not (0 <= ia < arr.shape[0] and 0 <= ib < arr.shape[1]):
+        return None
+    v = arr[ia, ib]
+    return None if np.isnan(v) else float(v)
+
 
 # ---- locks ------------------------------------------------------------------------------------------------------------
 def to_local(xb, yd, df):
@@ -291,12 +372,17 @@ def to_local(xb, yd, df):
 
 
 def surface_depth(xb, yd):
-    """Head-local y of the original skin's rear surface at a back-view point (ray from behind)."""
+    """Head-local y of the original skin's rear surface at a back-view point (ray from behind); with --shave-dome the
+    shaved field's rear surface instead."""
+    if args.shave_dome > 0:
+        return hf_sample(rear2d, -S*xb, Z0-S*yd, (0, 2))
     hit, normal, _, _ = tree.ray_cast(Vector((-S*xb, 3.0, Z0-S*yd)), Vector((0, -1, 0)))
     return None if hit is None else float(hit.y)
 
 
 def surface_top(xb, df):
+    if args.shave_dome > 0:
+        return hf_sample(top2d, -S*xb, S*df+DF0, (0, 1))
     hit, normal, _, _ = tree.ray_cast(Vector((-S*xb, S*df+DF0, 2.0)), Vector((0, 0, -1)))
     if hit is None:
         return None
@@ -318,6 +404,8 @@ def row_opts(text):
 
 
 LEN_SCALE, TIP_BACK, ROOT_IN, ROW_WIDTH = row_opts(args.len_scale), row_opts(args.tip_back), row_opts(args.root_in), row_opts(args.row_width)
+THIN, YAW = row_opts(args.thin), row_opts(args.yaw)
+D_SKIP = set(n.strip() for n in args.d_skip.split(',') if n.strip())
 
 
 def jitter_of(name):
@@ -343,7 +431,9 @@ def adjust(l):
         l['depthTip'] += sh
         l['depthRoot'] += sh
     l['depthTip'] = l['depthTip']+TIP_BACK.get(row, 0.)
-    l['depthRoot'] = l['depthRoot']-ROOT_IN.get(row, 0.)
+    l['depthRoot'] = l['depthRoot']-ROOT_IN.get(row, 0.)-YAW.get(row, 0.)
+    if row == 'C' and args.c_tip_raise:
+        l['tip'] = [l['tip'][0], l['tip'][1]-args.c_tip_raise]
     return l
 
 
@@ -474,9 +564,17 @@ def lock_field(sample, l, wscale, tscale):
 
 lock_field_arr = np.full(shape, BAND, dtype=np.float32)
 built = []
+row_count = {}
 for l in table:
     if l['row'] not in rows:
         continue
+    if l['row'] == 'D' and (l['root'][1] > args.d_ymax or l['name'] in D_SKIP):
+        continue
+    if l['row'] in THIN:
+        key_ = (l['row'], l['side'])
+        row_count[key_] = row_count.get(key_, -1)+1
+        if row_count[key_] % int(THIN[l['row']]) != 0:
+            continue
     if args.only_side and l['side'] and l['side'] != args.only_side:
         continue
     ax = build_lock(l)
