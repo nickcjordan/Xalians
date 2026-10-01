@@ -1,593 +1,595 @@
 {
-  "schemaVersion": 2,
-  "approval": null,
-  "loop": "docs/design/species-construction/LOOP.md",
-  "v1": "status-v1.json (16 rounds, weighted 5.12 to 6.05 on the 0 to 10 scale)",
-  "limits": {
-    "passBar": 8,
-    "cooldownRounds": 2,
-    "stallAttempts": 3,
-    "stallGain": 1,
-    "keepGain": 0.5,
-    "regressionDrop": 1,
-    "roundsPerBatch": 4,
-    "hardStopRounds": 16,
-    "gate": {
-      "minRegion": 7,
-      "weightedMean": 8,
-      "identityRegions": [
-        "R02",
-        "R03",
-        "R10"
-      ],
-      "identityMin": 8
-    },
-    "meanGain": 0.025,
-    "meanGainFromRound": 0,
-    "coverageRounds": 6
+ "schemaVersion": 2,
+ "approval": null,
+ "loop": "docs/design/species-construction/LOOP.md",
+ "v1": "status-v1.json (16 rounds, weighted 5.12 to 6.05 on the 0 to 10 scale)",
+ "limits": {
+  "passBar": 8,
+  "cooldownRounds": 2,
+  "stallAttempts": 3,
+  "stallGain": 1,
+  "keepGain": 0.5,
+  "regressionDrop": 1,
+  "roundsPerBatch": 4,
+  "hardStopRounds": 16,
+  "gate": {
+   "minRegion": 7,
+   "weightedMean": 8,
+   "identityRegions": [
+    "R01",
+    "R02",
+    "R03"
+   ],
+   "identityMin": 8
   },
-  "baseline": {
-    "head": "head-0223",
-    "body": "body-0212",
-    "assembly": "assembled-0226",
-    "packet": "untracked/species-construction/akinza/loop/packets/assembled-0226"
-  },
-  "round": 1,
-  "lastOrders": [
-    "R01+R10"
-  ],
-  "specs": {
-    "R10": {
-      "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R10.md",
-      "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R10.png",
-      "summary": "I wrote the R10 spec and its annotated image and committed both by name on akinza/construction-loop (54b80062, plain message, no trailer). I traced the three tails in the accepted back study (r03) from an edge map in the loop fit frame. I then fitted Catmull-Rom tail controls to them, in the builder's own [x, y, z, inPlaneRadius, depthRadius] format, and converted them to world units through the back camera. The fit reaches IoU .93 to .98 per tail, and the combined tail footprint against r03 goes from .78 to .93. Depth comes from the first sheet's profile tips, and sweepFlatten is .9 so the tails are round, not plates. The measurements locate the failure at the root. Beyond x -.11, tails 1 and 2 already match r03 within about .01. The baseline roots sit together at one high point (world z -.03 to -.085), so each tail's top edge falls away from the root and the three splay like fingers. In r03 the roots are stacked down one column at x 0 to .03, y .52 to .67 (across the midline), which gives the crescent arch. The spec therefore sets stacked roots, a hidden shingle band under each upper tail with the upper tail in front, background gaps that open only past x -.13 and -.14, a longer tail 3 lying on the buttock, and an even taper with no kink at the tip. It also shows that the baseline's shingle order is reversed: the lower tails sit in front. The spec includes an edge table at ten columns (r03, baseline and target) and the acceptance values. It flags three points for the orchestrator. First, R10.1 and R10.2 cannot pass on the tails alone: even exact r03 tails give trunk .700 and legs .709, and these controls predict about .68 and .70, because the rest of the gap is the arms, torso and legs. Second, in r03 every tail tip points out and down (47, 75 and 79 degrees below horizontal), so R10.4's 'tip curls up and out' should be reworded. Third, r03's back-view widths also peak at 40 to 50 percent of length, so 'full near the root' has to be measured as round cross-sections plus stacked roots with no gaps.",
-      "round": 1
-    }
-  },
-  "invariants": {
-    "I01": true,
-    "I02": true,
-    "I03": true,
-    "I04": true,
-    "I05": false,
-    "I06": true,
-    "I07": true,
-    "I08": true,
-    "I09": true
-  },
-  "regions": {
-    "R01": {
-      "name": "Head silhouette",
-      "weight": 3,
-      "score": 6,
-      "results": {
-        "R01.1": "fail",
-        "R01.2": "pass",
-        "R01.3": "partial",
-        "R01.4": "partial",
-        "R01.5": "pass"
-      },
-      "issues": [
-        {
-          "region": "R01",
-          "summary": "From behind no head mass reads, and a lit lens now sits at the nape",
-          "fix": "Model a vertical rounded head oval about .12 of figure height wide, centred in the fan, that continues about .02 to .03 below the fan's underside into the neck, as in r03 and m01 back, and blend the bowl underside into it. Spread the nape pull over about .02 of height so the lens under the bowl disappears.",
-          "fixability": 0.5,
-          "evidence": "m04 head-back (contrast-stretched), m02 back, m06 neck-rear, r03"
-        },
-        {
-          "region": "R01",
-          "summary": "Crown dome barely rises above the inner rims, level on the right",
-          "fix": "Raise the crown's front face by about .01 of figure height, keeping it in front of the fan's back rim so the silhouette top does not change. Sink the right inner rim beside the crown by the same .03 head-local already used on the left.",
-          "fixability": 0.6,
-          "evidence": "m04 head-front, m02 front, m01 front"
-        },
-        {
-          "region": "R01",
-          "summary": "Front head IoU .874: rim bands uncovered on both fans, cheek overshoot on right",
-          "fix": "Lift the left fan's upper rim inboard of the tip by about .005 of figure height (ease tilt_left from .09 toward .07). Extend the right fan's outer lower edge about .008 outward, and pull the right lower cheek under the fan in by about .005.",
-          "fixability": 0.6,
-          "evidence": "m11 front (orange top-left and right edges, blue right cheek); fit.json front head missing .0969, extra .0328"
-        }
-      ],
-      "attempts": 1,
-      "anchorScore": 6,
-      "parked": false,
-      "parkReason": null,
-      "history": [
-        {
-          "round": 1,
-          "kept": true,
-          "approach": "Melt the rear shingle disc into a rounded skull and occiput with a field-space blur and smooth-union ellipsoids, then tilt the fan and sink the roof beside the crown with a stem-safe smooth vertex warp.",
-          "reason": "",
-          "reusable": [
-            {
-              "option": "shape_head_silhouette_field.py: skulls[] (center, radii, blend)",
-              "what": "Smooth-unions an ellipsoid into the head field to give a rounded crown or occiput. Keep the ellipsoid distance unclamped: clamping it to the field band shifts the whole box and leaves box-edge creases."
-            },
-            {
-              "option": "shape_head_silhouette_field.py: top_smooth and rear_smooth (half_width, y, z, per-axis fade, sigma, passes, quintic)",
-              "what": "A windowed Gaussian morph with a C2 ramp over the crown or rear centre that melts relief into one surface. The fade must be at least about 10 times the relief change or the window edge shows as a crease."
-            },
-            {
-              "option": "shape_head_silhouette_field.py: warp{} (tilt_left, tilt_left_low, front_pull, rear_low_pull, wing_recess, forehead_pull, inner_rim_lower, inner_rim_lower_left, nape_pull_gentle)",
-              "what": "Smooth vertex displacements applied after meshing, with no resampling and weighted to zero near the face. Keep each slope under 1 (amplitude times 1.875 divided by ramp width) or a shelf appears. The old nape_pull squashes the neck stem; use nape_pull_gentle."
-            },
-            {
-              "option": "Silhouette predictor (outside the repo: splat head vertices into the fit frame)",
-              "what": "It predicts front, left and back head-band IoU within about .005 from a vertex array, so warp parameters can be tuned without a Blender build. It is worth adding to loop_tools if more rounds need it."
-            }
-          ]
-        }
-      ],
-      "lastWorked": 1
-    },
-    "R02": {
-      "name": "Face",
-      "weight": 3,
-      "score": 4,
-      "results": {
-        "R02.1": "fail",
-        "R02.2": "partial",
-        "R02.3": "partial",
-        "R02.4": "partial",
-        "R02.5": "partial"
-      },
-      "issues": [
-        {
-          "region": "R02",
-          "summary": "Eyes are near-round proud lenses with thick raised rims",
-          "fix": "Stretch the whites to tall ovals (height about 1.2x width), sink them 30 to 40 percent into shallow sockets so the profile sits behind brow and cheek, and cut the rim to a thin lid line under half its current thickness.",
-          "fixability": 0.7,
-          "evidence": "m05 eyes-front, nose-profile"
-        },
-        {
-          "region": "R02",
-          "summary": "Nose is a bead projecting ahead of the muzzle in profile",
-          "fix": "Seat the nose pad into the muzzle tip, cut its forward projection by about half and blend its base.",
-          "fixability": 0.8,
-          "evidence": "m05 nose-profile"
-        },
-        {
-          "region": "R02",
-          "summary": "Knob under the mouth; cheek tufts too faint",
-          "fix": "Smooth the chin knob into the muzzle; build two or three broad cheek tufts per side projecting about .01 of figure height beyond the lower face outline.",
-          "fixability": 0.7,
-          "evidence": "m05 nose-front, m06 neck-front, r01"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R03": {
-      "name": "Ear fan front",
-      "weight": 3,
-      "score": 5,
-      "results": {
-        "R03.1": "pass",
-        "R03.2": "fail",
-        "R03.3": "partial",
-        "R03.4": "fail",
-        "R03.5": "partial",
-        "R03.6": "pass"
-      },
-      "issues": [
-        {
-          "region": "R03",
-          "summary": "Fan front is knobs, shingles and thorns, not shaggy pointed locks",
-          "fix": "Replace the rim lumps and side thorns with 8 to 10 large pointed locks per side radiating from the ear root, each tapering to a tip.",
-          "fixability": 0.5,
-          "evidence": "m04 head-front, m05 head-three-quarter"
-        },
-        {
-          "region": "R03",
-          "summary": "Fan tips are blunt and flat-topped",
-          "fix": "Taper each tip to an up-flared point; the .02 row width should fall from .52 toward the reference .28, which also covers the missing .086 of fan area.",
-          "fixability": 0.6,
-          "evidence": "measurements.json front .02, m02 front"
-        },
-        {
-          "region": "R03",
-          "summary": "Inner ear cup is shallow with a broken rim",
-          "fix": "Deepen the cup beside the skull by about .01 of figure height, clean its rim and pull its top into a point.",
-          "fixability": 0.7,
-          "evidence": "m04 head-front, m01"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R04": {
-      "name": "Ear fan rear and profile",
-      "weight": 2.5,
-      "score": 2,
-      "results": {
-        "R04.1": "fail",
-        "R04.2": "pass",
-        "R04.3": "fail",
-        "R04.4": "fail",
-        "R04.5": "fail"
-      },
-      "issues": [
-        {
-          "region": "R04",
-          "summary": "Rear fan is a bowl with tiles and an arc seam",
-          "fix": "Rebuild the back as locks flowing down and out from a central crown tuft; delete the scale tiles, beaded rim and arc seam.",
-          "fixability": 0.4,
-          "evidence": "m04 head-back, m05 head-rear-oblique, r03"
-        },
-        {
-          "region": "R04",
-          "summary": "Pins and slabs down the fan side in profile",
-          "fix": "Remove the pin row; shape the side as a curved shell of locks sweeping up and back around a visible cavity, trimming side extra from .10 to under .06.",
-          "fixability": 0.5,
-          "evidence": "m04 head-side"
-        },
-        {
-          "region": "R04",
-          "summary": "Top edge reads as a flat tray",
-          "fix": "Dome the crown and raise spiky lock tips toward the outer ends so the top edge climbs about .02 of figure height from crown to tip.",
-          "fixability": 0.5,
-          "evidence": "m03 turn-135, turn-225"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R05": {
-      "name": "Neck and shoulders",
-      "weight": 2,
-      "score": 7,
-      "results": {
-        "R05.1": "pass",
-        "R05.2": "pass",
-        "R05.3": "pass",
-        "R05.4": "fail",
-        "R05.5": "partial"
-      },
-      "issues": [
-        {
-          "region": "R05",
-          "summary": "Nape notch and stem pinch where head meets neck",
-          "fix": "Fill the nape notch and add a furred ruff under the jaw and at the nape, widening the transition over about .02 of figure height while keeping mid-neck width near .054.",
-          "fixability": 0.7,
-          "evidence": "m06 neck-profile, neck-rear"
-        },
-        {
-          "region": "R05",
-          "summary": "Upper back reads as a square yoke with a ledge band",
-          "fix": "Round the rear shoulder corners and smooth the horizontal band across the upper back.",
-          "fixability": 0.8,
-          "evidence": "m06 neck-rear, m02 back"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R06": {
-      "name": "Torso and pelvis",
-      "weight": 2,
-      "score": 7,
-      "results": {
-        "R06.1": "pass",
-        "R06.2": "pass",
-        "R06.3": "partial",
-        "R06.4": "partial",
-        "R06.5": "partial"
-      },
-      "issues": [
-        {
-          "region": "R06",
-          "summary": "Front waist too wide",
-          "fix": "Narrow the front waist from .169 to about .145 of figure height.",
-          "fixability": 0.8,
-          "evidence": "measured.json R06.1 1.279"
-        },
-        {
-          "region": "R06",
-          "summary": "Horizontal shelf across the pelvis",
-          "fix": "Smooth the belt-like hip line so the waist flows into the hips without a step.",
-          "fixability": 0.8,
-          "evidence": "m02 front-left, m06 trunk-front"
-        },
-        {
-          "region": "R06",
-          "summary": "Chest is a tube with little rib cage volume",
-          "fix": "Add a soft forward chest plane and about .005 to .01 of figure height of rib cage fullness in profile.",
-          "fixability": 0.7,
-          "evidence": "m02 left, m06 trunk-front"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R07": {
-      "name": "Arms and forepaws",
-      "weight": 1.5,
-      "score": 5,
-      "results": {
-        "R07.1": "fail",
-        "R07.2": "partial",
-        "R07.3": "partial",
-        "R07.4": "pass"
-      },
-      "issues": [
-        {
-          "region": "R07",
-          "summary": "Flat facet down the outer upper arm",
-          "fix": "Round the upper arm cross-section and remove the flat lit plane.",
-          "fixability": 0.8,
-          "evidence": "m07 forearm-profile, m02 left"
-        },
-        {
-          "region": "R07",
-          "summary": "Forepaw claws are tiny straight pins under the lobes",
-          "fix": "Move a short curved claw to each digit lobe tip, about 1.5x current length, curving down.",
-          "fixability": 0.8,
-          "evidence": "m07 forepaw-profile, r02"
-        },
-        {
-          "region": "R07",
-          "summary": "Elbow barely readable",
-          "fix": "Add a slight elbow point and a narrowing above the forearm swell.",
-          "fixability": 0.8,
-          "evidence": "m07 forearm-front, m02 front"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R08": {
-      "name": "Legs",
-      "weight": 2,
-      "score": 6.3,
-      "results": {
-        "R08.1": "partial",
-        "R08.2": "partial",
-        "R08.3": "pass",
-        "R08.4": "partial"
-      },
-      "issues": [
-        {
-          "region": "R08",
-          "summary": "Double swell on the lower leg",
-          "fix": "Merge the low ankle bulge into one calf swell high on the shin.",
-          "fixability": 0.7,
-          "evidence": "m08 hindleg-front, m02 back"
-        },
-        {
-          "region": "R08",
-          "summary": "Thick squared heel",
-          "fix": "Taper ankle and heel by about 15 to 20 percent toward the r02 profile.",
-          "fixability": 0.7,
-          "evidence": "m09 hindpaw-profile, r02"
-        },
-        {
-          "region": "R08",
-          "summary": "Knee reads as a knob from the front",
-          "fix": "Flatten the knee into a soft plane.",
-          "fixability": 0.8,
-          "evidence": "m08 hindleg-front"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R09": {
-      "name": "Hind paws",
-      "weight": 1.5,
-      "score": 5,
-      "results": {
-        "R09.1": "fail",
-        "R09.2": "partial",
-        "R09.3": "pass",
-        "R09.4": "partial"
-      },
-      "issues": [
-        {
-          "region": "R09",
-          "summary": "Four equal toe beads in a straight row",
-          "fix": "Arch the row so the two middle toes lead by about a third of a toe length and shrink the outer toes by about 20 percent.",
-          "fixability": 0.8,
-          "evidence": "m09 hindpaw-front, r02"
-        },
-        {
-          "region": "R09",
-          "summary": "Claws read as straight spikes from the front",
-          "fix": "Curve the claws down out of the toe tips and seat their bases in the toe.",
-          "fixability": 0.8,
-          "evidence": "m09 hindpaw-front"
-        },
-        {
-          "region": "R09",
-          "summary": "Paws small against the leg",
-          "fix": "Lengthen and widen the paw by about 10 to 15 percent.",
-          "fixability": 0.7,
-          "evidence": "m02 front, r02"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R10": {
-      "name": "Tails",
-      "weight": 3,
-      "score": 5,
-      "results": {
-        "R10.1": "fail",
-        "R10.2": "fail",
-        "R10.3": "pass",
-        "R10.4": "partial",
-        "R10.5": "pass",
-        "R10.6": "partial"
-      },
-      "issues": [
-        {
-          "region": "R10",
-          "summary": "In profile the top tail reads as a bulb on a narrow neck with a hooked beak",
-          "fix": "Thicken the top tail's root third so its profile depth is at least its depth at mid-length (about +.01 of figure height at the root). Flatten the mid-length bulb by about the same amount so depth tapers steadily from root to tip.",
-          "fixability": 0.7,
-          "evidence": "m02 left/right (2x), m03 turn-090/turn-270"
-        },
-        {
-          "region": "R10",
-          "summary": "The tips end in downturned barbs, and the lower tip points straight down",
-          "fix": "Straighten the last 10 to 15 percent of each tail along the arc's tangent to remove the barb, then turn that tip segment up about 20 to 30 degrees so the concave underside sweeps into the point, most on the lower tail. Before that, make the rubric and I05 wording agree with r03, whose tips run out and slightly down, so the builder has one target.",
-          "fixability": 0.6,
-          "evidence": "m10 tail-fan-back (2x), r03, build.json notes"
-        },
-        {
-          "region": "R10",
-          "summary": "Both measured bands still fail: trunk .673 of .74, legs .705 of .72",
-          "fix": "Raise tail 1's root crest by about .02 to .03 fit units to cover the rump patch above it in r03, the only orange area in the tail zone of m11 back-r03. The rest of both gaps is torso and arm width and leg placement outside the tails, so tail-only edits cannot reach .74. The threshold or the region's scope should be reconsidered.",
-          "fixability": 0.4,
-          "evidence": "m11 back-r03 (2x), fit.json back-r03, build.json notes"
-        }
-      ],
-      "attempts": 1,
-      "anchorScore": 5,
-      "parked": false,
-      "parkReason": null,
-      "history": [
-        {
-          "round": 1,
-          "kept": true,
-          "approach": "Rebuilt the three tails from the R10 spec's stacked-root crescent controls (roots stacked down one column, round sections at sweepFlatten .9) onto body-0195 with a new tails-only field rebuild, leaving paws, claws, limbs and the old tail-root fillet untouched.",
-          "reason": "",
-          "reusable": [
-            {
-              "option": "rebuild_body_field.py --tails-only",
-              "what": "Runs only the tail rebuild on an existing body. Paws, claws, limb smoothing and the tail-root fillet are left exactly as the input has them, so a later round can re-tail any finished body without redoing the other regions."
-            },
-            {
-              "option": "docs/design/species-construction/akinza/tail-controls-stack.json (and -b, -c)",
-              "what": "Tail controls from the R10 spec: stacked roots, sweepFlatten .9. -b (chosen) raises and thickens tail 1's root third by about .012 and .005, and -c raises it further with no gain. Pass one with --tail-controls, together with --tail-free-body body-0086/attempt-03/shape.glb."
-            }
-          ]
-        }
-      ],
-      "lastWorked": 1
-    },
-    "R11": {
-      "name": "Tail root and pelvis",
-      "weight": 2,
-      "score": 3.8,
-      "results": {
-        "R11.1": "partial",
-        "R11.2": "partial",
-        "R11.3": "partial",
-        "R11.4": "fail"
-      },
-      "issues": [
-        {
-          "region": "R11",
-          "summary": "No shared root sheath",
-          "fix": "Build one furred root sheath about .05 of figure height long before the tails split.",
-          "fixability": 0.6,
-          "evidence": "m10 tail-root-oblique, r03"
-        },
-        {
-          "region": "R11",
-          "summary": "V fold and crease at the root",
-          "fix": "Fill the V between the top and lower tails and blend the root into the body.",
-          "fixability": 0.7,
-          "evidence": "m10 tail-root-back"
-        },
-        {
-          "region": "R11",
-          "summary": "Root biased left; right rear side uncovered",
-          "fix": "Centre the root on the sacrum and spread its base over both rear sides.",
-          "fixability": 0.6,
-          "evidence": "m10 tail-root-back, tail-root-opposite"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    },
-    "R12": {
-      "name": "Whole-form coherence",
-      "weight": 2,
-      "score": 1.3,
-      "results": {
-        "R12.1": "fail",
-        "R12.2": "fail",
-        "R12.3": "fail",
-        "R12.4": "partial"
-      },
-      "issues": [
-        {
-          "region": "R12",
-          "summary": "Head fan detailed, body bare: mismatched development",
-          "fix": "Add broad coat masses at cheek, chest, forearm and calf, or simplify the fan to the body's level.",
-          "fixability": 0.5,
-          "evidence": "m02, m03"
-        },
-        {
-          "region": "R12",
-          "summary": "Three coat idioms",
-          "fix": "Use one pointed-lock idiom on fan front, fan rear and body.",
-          "fixability": 0.4,
-          "evidence": "m04, m05"
-        },
-        {
-          "region": "R12",
-          "summary": "Stray pins, seams, facets and shelves",
-          "fix": "Remove the fan side pins, rear arc seam, hip shelf, nape notch and upper-arm facet.",
-          "fixability": 0.7,
-          "evidence": "m04 head-side, head-back; m02; m06; m07"
-        }
-      ],
-      "attempts": 0,
-      "anchorScore": null,
-      "parked": false,
-      "parkReason": null,
-      "history": [],
-      "lastWorked": null
-    }
-  },
-  "decisionsForNick": [
+  "meanGain": 0.025,
+  "meanGainFromRound": 0,
+  "coverageRounds": 6
+ },
+ "baseline": {
+  "head": "head-0223",
+  "body": "body-0212",
+  "assembly": "assembled-0226",
+  "packet": "untracked/species-construction/akinza/loop/packets/assembled-0226"
+ },
+ "round": 1,
+ "lastOrders": [
+  "R01+R10"
+ ],
+ "specs": {
+  "R10": {
+   "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R10.md",
+   "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R10.png",
+   "summary": "I wrote the R10 spec and its annotated image and committed both by name on akinza/construction-loop (54b80062, plain message, no trailer). I traced the three tails in the accepted back study (r03) from an edge map in the loop fit frame. I then fitted Catmull-Rom tail controls to them, in the builder's own [x, y, z, inPlaneRadius, depthRadius] format, and converted them to world units through the back camera. The fit reaches IoU .93 to .98 per tail, and the combined tail footprint against r03 goes from .78 to .93. Depth comes from the first sheet's profile tips, and sweepFlatten is .9 so the tails are round, not plates. The measurements locate the failure at the root. Beyond x -.11, tails 1 and 2 already match r03 within about .01. The baseline roots sit together at one high point (world z -.03 to -.085), so each tail's top edge falls away from the root and the three splay like fingers. In r03 the roots are stacked down one column at x 0 to .03, y .52 to .67 (across the midline), which gives the crescent arch. The spec therefore sets stacked roots, a hidden shingle band under each upper tail with the upper tail in front, background gaps that open only past x -.13 and -.14, a longer tail 3 lying on the buttock, and an even taper with no kink at the tip. It also shows that the baseline's shingle order is reversed: the lower tails sit in front. The spec includes an edge table at ten columns (r03, baseline and target) and the acceptance values. It flags three points for the orchestrator. First, R10.1 and R10.2 cannot pass on the tails alone: even exact r03 tails give trunk .700 and legs .709, and these controls predict about .68 and .70, because the rest of the gap is the arms, torso and legs. Second, in r03 every tail tip points out and down (47, 75 and 79 degrees below horizontal), so R10.4's 'tip curls up and out' should be reworded. Third, r03's back-view widths also peak at 40 to 50 percent of length, so 'full near the root' has to be measured as round cross-sections plus stacked roots with no gaps.",
+   "round": 1
+  }
+ },
+ "invariants": {
+  "I01": true,
+  "I02": true,
+  "I03": true,
+  "I04": true,
+  "I05": false,
+  "I06": true,
+  "I07": true,
+  "I08": true,
+  "I09": true
+ },
+ "regions": {
+  "R01": {
+   "name": "Head silhouette",
+   "weight": 3,
+   "score": 6,
+   "results": {
+    "R01.1": "fail",
+    "R01.2": "pass",
+    "R01.3": "partial",
+    "R01.4": "partial",
+    "R01.5": "pass"
+   },
+   "issues": [
     {
-      "topic": "Tail tips",
-      "state": "Applied: tips curl up and out per accepted back study 0018; the first sheet droops. Reverting is one controls file."
+     "region": "R01",
+     "summary": "From behind no head mass reads, and a lit lens now sits at the nape",
+     "fix": "Model a vertical rounded head oval about .12 of figure height wide, centred in the fan, that continues about .02 to .03 below the fan's underside into the neck, as in r03 and m01 back, and blend the bowl underside into it. Spread the nape pull over about .02 of height so the lens under the bowl disappears.",
+     "fixability": 0.5,
+     "evidence": "m04 head-back (contrast-stretched), m02 back, m06 neck-rear, r03"
+    },
+    {
+     "region": "R01",
+     "summary": "Crown dome barely rises above the inner rims, level on the right",
+     "fix": "Raise the crown's front face by about .01 of figure height, keeping it in front of the fan's back rim so the silhouette top does not change. Sink the right inner rim beside the crown by the same .03 head-local already used on the left.",
+     "fixability": 0.6,
+     "evidence": "m04 head-front, m02 front, m01 front"
+    },
+    {
+     "region": "R01",
+     "summary": "Front head IoU .874: rim bands uncovered on both fans, cheek overshoot on right",
+     "fix": "Lift the left fan's upper rim inboard of the tip by about .005 of figure height (ease tilt_left from .09 toward .07). Extend the right fan's outer lower edge about .008 outward, and pull the right lower cheek under the fan in by about .005.",
+     "fixability": 0.6,
+     "evidence": "m11 front (orange top-left and right edges, blue right cheek); fit.json front head missing .0969, extra .0328"
     }
-  ],
-  "notes": [
-    "2026-09-30: torso widths (neck, shoulders, waist, hips) now come from mesh sections (torso_sections.py). The silhouette method had merged an arm or tail into the torso row, so the cold baseline failed R06.1 falsely (waist 1.279); by sections the waist is 1.008 in both assembled-0205 and assembled-0226. The R06 rise from 5 to 7 in round 1 is that correction, not a change to the model."
-  ]
+   ],
+   "attempts": 1,
+   "anchorScore": 6,
+   "parked": false,
+   "parkReason": null,
+   "history": [
+    {
+     "round": 1,
+     "kept": true,
+     "approach": "Melt the rear shingle disc into a rounded skull and occiput with a field-space blur and smooth-union ellipsoids, then tilt the fan and sink the roof beside the crown with a stem-safe smooth vertex warp.",
+     "reason": "",
+     "reusable": [
+      {
+       "option": "shape_head_silhouette_field.py: skulls[] (center, radii, blend)",
+       "what": "Smooth-unions an ellipsoid into the head field to give a rounded crown or occiput. Keep the ellipsoid distance unclamped: clamping it to the field band shifts the whole box and leaves box-edge creases."
+      },
+      {
+       "option": "shape_head_silhouette_field.py: top_smooth and rear_smooth (half_width, y, z, per-axis fade, sigma, passes, quintic)",
+       "what": "A windowed Gaussian morph with a C2 ramp over the crown or rear centre that melts relief into one surface. The fade must be at least about 10 times the relief change or the window edge shows as a crease."
+      },
+      {
+       "option": "shape_head_silhouette_field.py: warp{} (tilt_left, tilt_left_low, front_pull, rear_low_pull, wing_recess, forehead_pull, inner_rim_lower, inner_rim_lower_left, nape_pull_gentle)",
+       "what": "Smooth vertex displacements applied after meshing, with no resampling and weighted to zero near the face. Keep each slope under 1 (amplitude times 1.875 divided by ramp width) or a shelf appears. The old nape_pull squashes the neck stem; use nape_pull_gentle."
+      },
+      {
+       "option": "Silhouette predictor (outside the repo: splat head vertices into the fit frame)",
+       "what": "It predicts front, left and back head-band IoU within about .005 from a vertex array, so warp parameters can be tuned without a Blender build. It is worth adding to loop_tools if more rounds need it."
+      }
+     ]
+    }
+   ],
+   "lastWorked": 1
+  },
+  "R02": {
+   "name": "Face",
+   "weight": 3,
+   "score": 4,
+   "results": {
+    "R02.1": "fail",
+    "R02.2": "partial",
+    "R02.3": "partial",
+    "R02.4": "partial",
+    "R02.5": "partial"
+   },
+   "issues": [
+    {
+     "region": "R02",
+     "summary": "Eyes are near-round proud lenses with thick raised rims",
+     "fix": "Stretch the whites to tall ovals (height about 1.2x width), sink them 30 to 40 percent into shallow sockets so the profile sits behind brow and cheek, and cut the rim to a thin lid line under half its current thickness.",
+     "fixability": 0.7,
+     "evidence": "m05 eyes-front, nose-profile"
+    },
+    {
+     "region": "R02",
+     "summary": "Nose is a bead projecting ahead of the muzzle in profile",
+     "fix": "Seat the nose pad into the muzzle tip, cut its forward projection by about half and blend its base.",
+     "fixability": 0.8,
+     "evidence": "m05 nose-profile"
+    },
+    {
+     "region": "R02",
+     "summary": "Knob under the mouth; cheek tufts too faint",
+     "fix": "Smooth the chin knob into the muzzle; build two or three broad cheek tufts per side projecting about .01 of figure height beyond the lower face outline.",
+     "fixability": 0.7,
+     "evidence": "m05 nose-front, m06 neck-front, r01"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  },
+  "R03": {
+   "name": "Ear fan front",
+   "weight": 3,
+   "score": 5,
+   "results": {
+    "R03.1": "pass",
+    "R03.2": "fail",
+    "R03.3": "partial",
+    "R03.4": "fail",
+    "R03.5": "partial",
+    "R03.6": "pass"
+   },
+   "issues": [
+    {
+     "region": "R03",
+     "summary": "Fan front is knobs, shingles and thorns, not shaggy pointed locks",
+     "fix": "Replace the rim lumps and side thorns with 8 to 10 large pointed locks per side radiating from the ear root, each tapering to a tip.",
+     "fixability": 0.5,
+     "evidence": "m04 head-front, m05 head-three-quarter"
+    },
+    {
+     "region": "R03",
+     "summary": "Fan tips are blunt and flat-topped",
+     "fix": "Taper each tip to an up-flared point; the .02 row width should fall from .52 toward the reference .28, which also covers the missing .086 of fan area.",
+     "fixability": 0.6,
+     "evidence": "measurements.json front .02, m02 front"
+    },
+    {
+     "region": "R03",
+     "summary": "Inner ear cup is shallow with a broken rim",
+     "fix": "Deepen the cup beside the skull by about .01 of figure height, clean its rim and pull its top into a point.",
+     "fixability": 0.7,
+     "evidence": "m04 head-front, m01"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  },
+  "R04": {
+   "name": "Ear fan rear and profile",
+   "weight": 2.5,
+   "score": 2,
+   "results": {
+    "R04.1": "fail",
+    "R04.2": "pass",
+    "R04.3": "fail",
+    "R04.4": "fail",
+    "R04.5": "fail"
+   },
+   "issues": [
+    {
+     "region": "R04",
+     "summary": "Rear fan is a bowl with tiles and an arc seam",
+     "fix": "Rebuild the back as locks flowing down and out from a central crown tuft; delete the scale tiles, beaded rim and arc seam.",
+     "fixability": 0.4,
+     "evidence": "m04 head-back, m05 head-rear-oblique, r03"
+    },
+    {
+     "region": "R04",
+     "summary": "Pins and slabs down the fan side in profile",
+     "fix": "Remove the pin row; shape the side as a curved shell of locks sweeping up and back around a visible cavity, trimming side extra from .10 to under .06.",
+     "fixability": 0.5,
+     "evidence": "m04 head-side"
+    },
+    {
+     "region": "R04",
+     "summary": "Top edge reads as a flat tray",
+     "fix": "Dome the crown and raise spiky lock tips toward the outer ends so the top edge climbs about .02 of figure height from crown to tip.",
+     "fixability": 0.5,
+     "evidence": "m03 turn-135, turn-225"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  },
+  "R05": {
+   "name": "Neck and shoulders",
+   "weight": 2,
+   "score": 7,
+   "results": {
+    "R05.1": "pass",
+    "R05.2": "pass",
+    "R05.3": "pass",
+    "R05.4": "fail",
+    "R05.5": "partial"
+   },
+   "issues": [
+    {
+     "region": "R05",
+     "summary": "Nape notch and stem pinch where head meets neck",
+     "fix": "Fill the nape notch and add a furred ruff under the jaw and at the nape, widening the transition over about .02 of figure height while keeping mid-neck width near .054.",
+     "fixability": 0.7,
+     "evidence": "m06 neck-profile, neck-rear"
+    },
+    {
+     "region": "R05",
+     "summary": "Upper back reads as a square yoke with a ledge band",
+     "fix": "Round the rear shoulder corners and smooth the horizontal band across the upper back.",
+     "fixability": 0.8,
+     "evidence": "m06 neck-rear, m02 back"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  },
+  "R06": {
+   "name": "Torso and pelvis",
+   "weight": 2.5,
+   "score": 7,
+   "results": {
+    "R06.1": "pass",
+    "R06.2": "pass",
+    "R06.3": "partial",
+    "R06.4": "partial",
+    "R06.5": "partial"
+   },
+   "issues": [
+    {
+     "region": "R06",
+     "summary": "Front waist too wide",
+     "fix": "Narrow the front waist from .169 to about .145 of figure height.",
+     "fixability": 0.8,
+     "evidence": "measured.json R06.1 1.279"
+    },
+    {
+     "region": "R06",
+     "summary": "Horizontal shelf across the pelvis",
+     "fix": "Smooth the belt-like hip line so the waist flows into the hips without a step.",
+     "fixability": 0.8,
+     "evidence": "m02 front-left, m06 trunk-front"
+    },
+    {
+     "region": "R06",
+     "summary": "Chest is a tube with little rib cage volume",
+     "fix": "Add a soft forward chest plane and about .005 to .01 of figure height of rib cage fullness in profile.",
+     "fixability": 0.7,
+     "evidence": "m02 left, m06 trunk-front"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  },
+  "R07": {
+   "name": "Arms and forepaws",
+   "weight": 2,
+   "score": 5,
+   "results": {
+    "R07.1": "fail",
+    "R07.2": "partial",
+    "R07.3": "partial",
+    "R07.4": "pass"
+   },
+   "issues": [
+    {
+     "region": "R07",
+     "summary": "Flat facet down the outer upper arm",
+     "fix": "Round the upper arm cross-section and remove the flat lit plane.",
+     "fixability": 0.8,
+     "evidence": "m07 forearm-profile, m02 left"
+    },
+    {
+     "region": "R07",
+     "summary": "Forepaw claws are tiny straight pins under the lobes",
+     "fix": "Move a short curved claw to each digit lobe tip, about 1.5x current length, curving down.",
+     "fixability": 0.8,
+     "evidence": "m07 forepaw-profile, r02"
+    },
+    {
+     "region": "R07",
+     "summary": "Elbow barely readable",
+     "fix": "Add a slight elbow point and a narrowing above the forearm swell.",
+     "fixability": 0.8,
+     "evidence": "m07 forearm-front, m02 front"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  },
+  "R08": {
+   "name": "Legs",
+   "weight": 2.5,
+   "score": 6.3,
+   "results": {
+    "R08.1": "partial",
+    "R08.2": "partial",
+    "R08.3": "pass",
+    "R08.4": "partial"
+   },
+   "issues": [
+    {
+     "region": "R08",
+     "summary": "Double swell on the lower leg",
+     "fix": "Merge the low ankle bulge into one calf swell high on the shin.",
+     "fixability": 0.7,
+     "evidence": "m08 hindleg-front, m02 back"
+    },
+    {
+     "region": "R08",
+     "summary": "Thick squared heel",
+     "fix": "Taper ankle and heel by about 15 to 20 percent toward the r02 profile.",
+     "fixability": 0.7,
+     "evidence": "m09 hindpaw-profile, r02"
+    },
+    {
+     "region": "R08",
+     "summary": "Knee reads as a knob from the front",
+     "fix": "Flatten the knee into a soft plane.",
+     "fixability": 0.8,
+     "evidence": "m08 hindleg-front"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  },
+  "R09": {
+   "name": "Hind paws",
+   "weight": 1.5,
+   "score": 5,
+   "results": {
+    "R09.1": "fail",
+    "R09.2": "partial",
+    "R09.3": "pass",
+    "R09.4": "partial"
+   },
+   "issues": [
+    {
+     "region": "R09",
+     "summary": "Four equal toe beads in a straight row",
+     "fix": "Arch the row so the two middle toes lead by about a third of a toe length and shrink the outer toes by about 20 percent.",
+     "fixability": 0.8,
+     "evidence": "m09 hindpaw-front, r02"
+    },
+    {
+     "region": "R09",
+     "summary": "Claws read as straight spikes from the front",
+     "fix": "Curve the claws down out of the toe tips and seat their bases in the toe.",
+     "fixability": 0.8,
+     "evidence": "m09 hindpaw-front"
+    },
+    {
+     "region": "R09",
+     "summary": "Paws small against the leg",
+     "fix": "Lengthen and widen the paw by about 10 to 15 percent.",
+     "fixability": 0.7,
+     "evidence": "m02 front, r02"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  },
+  "R10": {
+   "name": "Tails",
+   "weight": 3,
+   "score": 5,
+   "results": {
+    "R10.1": "fail",
+    "R10.2": "fail",
+    "R10.3": "pass",
+    "R10.4": "partial",
+    "R10.5": "pass",
+    "R10.6": "partial"
+   },
+   "issues": [
+    {
+     "region": "R10",
+     "summary": "In profile the top tail reads as a bulb on a narrow neck with a hooked beak",
+     "fix": "Thicken the top tail's root third so its profile depth is at least its depth at mid-length (about +.01 of figure height at the root). Flatten the mid-length bulb by about the same amount so depth tapers steadily from root to tip.",
+     "fixability": 0.7,
+     "evidence": "m02 left/right (2x), m03 turn-090/turn-270"
+    },
+    {
+     "region": "R10",
+     "summary": "The tips end in downturned barbs, and the lower tip points straight down",
+     "fix": "Straighten the last 10 to 15 percent of each tail along the arc's tangent to remove the barb, then turn that tip segment up about 20 to 30 degrees so the concave underside sweeps into the point, most on the lower tail. Before that, make the rubric and I05 wording agree with r03, whose tips run out and slightly down, so the builder has one target.",
+     "fixability": 0.6,
+     "evidence": "m10 tail-fan-back (2x), r03, build.json notes"
+    },
+    {
+     "region": "R10",
+     "summary": "Both measured bands still fail: trunk .673 of .74, legs .705 of .72",
+     "fix": "Raise tail 1's root crest by about .02 to .03 fit units to cover the rump patch above it in r03, the only orange area in the tail zone of m11 back-r03. The rest of both gaps is torso and arm width and leg placement outside the tails, so tail-only edits cannot reach .74. The threshold or the region's scope should be reconsidered.",
+     "fixability": 0.4,
+     "evidence": "m11 back-r03 (2x), fit.json back-r03, build.json notes"
+    }
+   ],
+   "attempts": 1,
+   "anchorScore": 5,
+   "parked": true,
+   "parkReason": "Nick 2026-09-30: the tails are fine; stop working them and put the effort into the legs, body, arms, face and head",
+   "history": [
+    {
+     "round": 1,
+     "kept": true,
+     "approach": "Rebuilt the three tails from the R10 spec's stacked-root crescent controls (roots stacked down one column, round sections at sweepFlatten .9) onto body-0195 with a new tails-only field rebuild, leaving paws, claws, limbs and the old tail-root fillet untouched.",
+     "reason": "",
+     "reusable": [
+      {
+       "option": "rebuild_body_field.py --tails-only",
+       "what": "Runs only the tail rebuild on an existing body. Paws, claws, limb smoothing and the tail-root fillet are left exactly as the input has them, so a later round can re-tail any finished body without redoing the other regions."
+      },
+      {
+       "option": "docs/design/species-construction/akinza/tail-controls-stack.json (and -b, -c)",
+       "what": "Tail controls from the R10 spec: stacked roots, sweepFlatten .9. -b (chosen) raises and thickens tail 1's root third by about .012 and .005, and -c raises it further with no gain. Pass one with --tail-controls, together with --tail-free-body body-0086/attempt-03/shape.glb."
+      }
+     ]
+    }
+   ],
+   "lastWorked": 1
+  },
+  "R11": {
+   "name": "Tail root and pelvis",
+   "weight": 2,
+   "score": 3.8,
+   "results": {
+    "R11.1": "partial",
+    "R11.2": "partial",
+    "R11.3": "partial",
+    "R11.4": "fail"
+   },
+   "issues": [
+    {
+     "region": "R11",
+     "summary": "No shared root sheath",
+     "fix": "Build one furred root sheath about .05 of figure height long before the tails split.",
+     "fixability": 0.6,
+     "evidence": "m10 tail-root-oblique, r03"
+    },
+    {
+     "region": "R11",
+     "summary": "V fold and crease at the root",
+     "fix": "Fill the V between the top and lower tails and blend the root into the body.",
+     "fixability": 0.7,
+     "evidence": "m10 tail-root-back"
+    },
+    {
+     "region": "R11",
+     "summary": "Root biased left; right rear side uncovered",
+     "fix": "Centre the root on the sacrum and spread its base over both rear sides.",
+     "fixability": 0.6,
+     "evidence": "m10 tail-root-back, tail-root-opposite"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": true,
+   "parkReason": "Nick 2026-09-30: the tails are fine; stop working them and put the effort into the legs, body, arms, face and head",
+   "history": [],
+   "lastWorked": null
+  },
+  "R12": {
+   "name": "Whole-form coherence",
+   "weight": 2,
+   "score": 1.3,
+   "results": {
+    "R12.1": "fail",
+    "R12.2": "fail",
+    "R12.3": "fail",
+    "R12.4": "partial"
+   },
+   "issues": [
+    {
+     "region": "R12",
+     "summary": "Head fan detailed, body bare: mismatched development",
+     "fix": "Add broad coat masses at cheek, chest, forearm and calf, or simplify the fan to the body's level.",
+     "fixability": 0.5,
+     "evidence": "m02, m03"
+    },
+    {
+     "region": "R12",
+     "summary": "Three coat idioms",
+     "fix": "Use one pointed-lock idiom on fan front, fan rear and body.",
+     "fixability": 0.4,
+     "evidence": "m04, m05"
+    },
+    {
+     "region": "R12",
+     "summary": "Stray pins, seams, facets and shelves",
+     "fix": "Remove the fan side pins, rear arc seam, hip shelf, nape notch and upper-arm facet.",
+     "fixability": 0.7,
+     "evidence": "m04 head-side, head-back; m02; m06; m07"
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": null,
+   "parked": false,
+   "parkReason": null,
+   "history": [],
+   "lastWorked": null
+  }
+ },
+ "decisionsForNick": [
+  {
+   "topic": "Tail tips",
+   "state": "Applied: tips curl up and out per accepted back study 0018; the first sheet droops. Reverting is one controls file."
+  }
+ ],
+ "notes": [
+  "2026-09-30: torso widths (neck, shoulders, waist, hips) now come from mesh sections (torso_sections.py). The silhouette method had merged an arm or tail into the torso row, so the cold baseline failed R06.1 falsely (waist 1.279); by sections the waist is 1.008 in both assembled-0205 and assembled-0226. The R06 rise from 5 to 7 in round 1 is that correction, not a change to the model.",
+  "2026-09-30: Nick said the effort was going to the wrong place: the tails are fine, while the legs, body, arms, face and head are still very wrong. Tails parked (R10, R11 held at their scores). The checklist scores for R05 to R08 were inflated: the arms-down construction pose made body silhouettes unmeasurable and the criteria were local details that a model can pass while reading wrong. Next: an independent gestalt gap audit, a rig with a pose-matched (hands on hips) tail-free fit, proportion levers, and gestalt criteria added to every region.",
+  "2026-09-30: weights raised for the parts Nick named: R06 torso 2 to 2.5, R07 arms 1.5 to 2, R08 legs 2 to 2.5. Rubric revised to 80 criteria (gestalt plus fixed-row measurements); a cold re-score of assembled-0226 follows."
+ ]
 }

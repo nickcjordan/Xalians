@@ -11,14 +11,16 @@ export const meta = {
 const S = JSON.parse(JSON.stringify(args.status))
 const RUBRIC = args.rubric
 const L = S.limits
-const ROUNDS = args.rounds || L.roundsPerBatch
+const ROUNDS = args.rounds ?? L.roundsPerBatch
 const REPO = 'C:\\dev\\src\\xalians-akinza-loop'
 const LOOPDIR = REPO + '\\docs\\design\\species-construction\\akinza\\loop'
 const BRIEF = name => LOOPDIR + '\\' + name
 const IDS = Object.keys(S.regions)
 const HEAD = ['R01', 'R02', 'R03', 'R04']
 const BODY = ['R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'R11']
-const SPEC_REGIONS = ['R03', 'R04', 'R10', 'R11']
+// Every worked region gets a spec before its first build (round 1: the unspecced head build took 61 minutes, the specced tail build 18).
+const SPEC_REGIONS = ['R01', 'R02', 'R03', 'R04', 'R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'R11']
+const AUDIT = LOOPDIR + '\\gap-audit-0226.md'
 const abs = p => p.includes(':') ? p : REPO + '\\' + p.split('/').join('\\')
 S.specs = S.specs || {}
 for (const id of IDS) {
@@ -166,6 +168,7 @@ function builderPrompt(order, round) {
     `Critic issues, most damaging first (suggestions to verify, not measurements): ${JSON.stringify(r.issues || [])}\n\n` +
     (spec ? `Target spec: ${spec.path}${spec.image ? ' with image ' + spec.image : ''}. Implement its structure table.\n\n` : '') +
     `History card for this region:\n${historyCard(order.id)}\n\n` +
+    `Gap audit (independent, ranked by how much each gap stops the model reading as the sheet): ${AUDIT}. Read the rows for your region and fix the most visible gap first, not the easiest criterion. A structural gap (a wrong length, cross section, depth, joint position, or a part built the wrong way) is fixed by rebuilding that part or by the proportion levers named in the builder brief, never by stacking more surface warps on it.\n\n` +
     `Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it). ` +
     (order.component === 'both' ? 'You may change both components.' : `Change only the ${order.component}; assemble with the baseline ${order.component === 'head' ? 'body ' + S.baseline.body : 'head ' + S.baseline.head}.`) + '\n' +
     `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break.\n` +
@@ -174,6 +177,7 @@ function builderPrompt(order, round) {
 function specPrompt(order) {
   return `Read the spec brief at ${BRIEF('spec-brief.md')} and follow it. Region: ${order.id} (${S.regions[order.id].name}).\n` +
     `Criteria:\n${criteriaText(order.id)}\n\nHistory card:\n${historyCard(order.id)}\n\n` +
+    `Gap audit: ${AUDIT}. The spec must close this region's rows in it, most visible first, and say for each whether it is structural (rebuild or proportion lever) or a local surface fix.\n\n` +
     `Current baseline packet: ${abs(S.baseline.packet)}. Write ${LOOPDIR}\\specs\\${order.id}.md and ${LOOPDIR}\\specs\\${order.id}.png, commit them by name on branch akinza/construction-loop with a plain message and no Co-Authored-By trailer, and return the structured output.`
 }
 
@@ -211,10 +215,10 @@ function adopt(decision, build, critique, component) {
     assembly: build.assembly, packet: build.packet,
   }
 }
-function recordPrompt(round, entry) {
+function recordPrompt(round, entry, suffix) {
   return `Write one file exactly, byte for byte, with the Write tool. Do not reformat, summarise or change anything.
 ` +
-    `File: ${LOOPDIR}\\rounds\\round-${String(round).padStart(2, '0')}.json
+    `File: ${LOOPDIR}\\rounds\\round-${String(round).padStart(2, '0')}${suffix || ''}.json
 Content:
 ${JSON.stringify(entry)}
 
@@ -233,8 +237,10 @@ if (args.coldBaseline || IDS.some(id => S.regions[id].score === null)) {
     S.regions[id].issues = (critique.issues || []).filter(i => i.region === id).slice(0, 3)
   }
   S.invariants = Object.fromEntries((critique.invariants || []).map(i => [i.id, i.ok]))
-  const entry = { round: S.round, kind: 'baseline', assembly: S.baseline.assembly, scores: scoresNow(), mean: meanOf(scoresNow()), summary: critique.summary }
-  await agent(recordPrompt(S.round, entry), { label: 'record: baseline', phase: 'Baseline', model: 'haiku', effort: 'low' })
+  // A cold re-score after round 0 (a rubric change) is recorded beside that round, never over it.
+  const kind = S.round > 0 ? 'rescore' : 'baseline'
+  const entry = { round: S.round, kind, assembly: S.baseline.assembly, scores: scoresNow(), mean: meanOf(scoresNow()), summary: critique.summary }
+  await agent(recordPrompt(S.round, entry, kind === 'rescore' ? '-rescore' : ''), { label: 'record: baseline', phase: 'Baseline', model: 'haiku', effort: 'low' })
   log(`Cold baseline ${S.baseline.assembly}: mean ${entry.mean} ${JSON.stringify(entry.scores)}`)
 }
 

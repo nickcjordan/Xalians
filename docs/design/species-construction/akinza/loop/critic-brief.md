@@ -6,7 +6,9 @@ You are the critic in the construction loop described in `docs/design/species-co
 
 Akinza is an upright, slender, fur-covered biped. It has a round head with very large forward-looking oval eyes, a small dark triangular nose and a closed "w" mouth. Its very wide shaggy ear fan is hair clumps around cupped inner ears. It has a slim torso, strong but not rabbit-like hind legs, and compact animal paws with no human fingers or thumb. It has exactly three full tails. They fuse at one body-level root at the base of the spine, fan to one side and overlap part of both rear sides.
 
-Judge large and medium form, including broad coat masses such as ear locks and cheek tufts. Do not judge fine fur strands, texture or colour. The model's neutral arms-down stance is an accepted difference from the reference's hands-on-hips pose.
+Judge large and medium form, including broad coat masses such as ear locks and cheek tufts. Do not judge fine fur strands, texture or colour. The model's neutral arms-down stance is an accepted difference from the reference's hands-on-hips pose, and only the pose: it never excuses a wrong limb length, thickness, cross section, joint position or attachment, or a part that reads as something else. Judge those as if the arms were posed.
+
+Gestalt criteria (marked "Gestalt" in the rubric) ask whether a part reads as the sheet at a glance. Pass one only when a designer looking at the named image for a second would agree without a closer look; give partial only when the part reads right with one visible flaw. Earlier rounds scored the torso and neck 7 while the model read as an ape on a stalk neck; a result like that is the failure this checklist exists to prevent. When in doubt between two results, take the lower one.
 
 Where references disagree: tail shape, junction and positioning follow `r03` (back study 0018), including crescent tails whose tips curl up and out. Eyes and expression follow `r01`. Paws follow `r02`. Everything else follows the first sheet, `m01`.
 

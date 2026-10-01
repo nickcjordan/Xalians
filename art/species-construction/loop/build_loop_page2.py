@@ -29,13 +29,13 @@ def fmt(v):
 
 def page(records, rubric, running):
     base = next((r for r in records if r.get('kind') == 'baseline'), None)
-    rounds = [r for r in records if r.get('kind') != 'baseline']
+    rounds = [r for r in records if r.get('kind') not in ('baseline', 'rescore')]
     last = rounds[-1] if rounds else None
+    latest = records[-1] if records else None
+    rescored = latest if latest and latest.get('kind') == 'rescore' else None
     current = (last or {}).get('baseline') or {}
     best = current.get('assembly') or (base or {}).get('assembly') or 'assembled-0205'
-    names = {k: k for k in rubric['regions']}
-    scores = (last or base or {}).get('scores', {})
-    mean = (last or base or {}).get('mean')
+    mean = (latest or {}).get('mean')
 
     figures = [f'<div class="labelled mat"><div class="label">Reference · first grayscale sheet</div><img src="{uri(Image.open(EV/"identity-run-0001.png").convert("RGB"), 1800)}" alt="Reference sheet"></div>',
                f'<div class="labelled mat"><div class="label">Current best · {esc(best)}</div><img src="{uri(view_row(A/best/"render"), 1800)}" alt="Current best model, six views"></div>']
@@ -48,7 +48,11 @@ def page(records, rubric, running):
                 figures.append(f'<div class="labelled mat"><div class="label">Round {last["round"]} {esc(o["region"])} candidate, reverted · {esc(o["assembly"])}</div><img src="{uri(view_row(A/o["assembly"]/"render"), 1800)}" alt="Reverted candidate"></div>')
 
     cards = ''
-    if last:
+    if rescored:
+        cards = (f'<div class="card"><h3>Re-scored {esc(rescored["assembly"])} on the revised checklist</h3>'
+                 f'<p>{esc(clip(rescored.get("summary"), 700))}</p>'
+                 '<p class="muted">The checklist gained a glance test per part and fixed-height measurements (ankles, shins, side waist, head base, paws) after the earlier scores proved too generous. The tails are parked as fine.</p></div>')
+    elif last:
         for o in last['orders']:
             verdict = o.get('verdict') or {}
             state = '<span class="ok-t">Kept</span>' if o.get('kept') else '<span class="warn-t">Reverted</span>'
@@ -64,7 +68,8 @@ def page(records, rubric, running):
     else:
         cards = '<p>The critic is scoring the starting model against the checklist.</p>'
 
-    cols = [('Start', base)] + [(f'R{r["round"]}', r) for r in rounds]
+    cols = [('Start' if r.get('kind') == 'baseline' else f'R{r["round"]} re-scored' if r.get('kind') == 'rescore' else f'R{r["round"]}', r)
+            for r in records]
     head = ''.join(f'<th class="num">{c}</th>' for c, _ in cols)
     rows = ''
     for rid in rubric['regions']:

@@ -521,6 +521,16 @@ def cmd_diff(args):
 RUBRIC = DOCS/'loop/rubric.json'
 
 
+def row_value(criterion, assembly):
+    """Fixed-row criteria (see row_measures.py): model against the sheet by the same code."""
+    import row_measures
+    render, view = work(assembly)/'render', criterion['view']
+    model = row_measures.load_mask(render/f'{view}.png')
+    ref = reference_figure(view)
+    return row_measures.evaluate(criterion, model, row_measures.mask_frame(model, model_span(render, view)),
+                                 ref, row_measures.mask_frame(ref))
+
+
 def evaluate_measured(packet, assembly):
     """Measured rubric criteria, computed from the packet's fit.json and
     measurements.json. The critic copies these results; it never re-judges them."""
@@ -532,12 +542,16 @@ def evaluate_measured(packet, assembly):
         for c in criteria:
             if c['kind'] != 'measured':
                 continue
+            extra = {}
             if c['source'] == 'fit':
                 value = fit['views'][c['view']][c['band']][c['metric']]
+            elif c['source'] in ('row', 'rowratio', 'edge'):
+                model, sheet, value = row_value(c, assembly)
+                extra = {'model': model and round(model, 4), 'sheet': sheet and round(sheet, 4)}
             else:
                 value = measure[c['view']]['ratio'][c['key']]
             ok = value is not None and c.get('min', -1e9) <= value <= c.get('max', 1e9)
-            results[c['id']] = {'region': region, 'value': value, 'min': c.get('min'), 'max': c.get('max'),
+            results[c['id']] = {'region': region, 'value': value, 'min': c.get('min'), 'max': c.get('max'), **extra,
                                 'result': 'pass' if ok else 'fail'}
     bounds = json.loads((work(assembly)/'render/geometry.json').read_text())['bounds']
     height = bounds[1][2]-bounds[0][2]
