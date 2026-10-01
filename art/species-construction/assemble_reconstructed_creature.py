@@ -23,6 +23,9 @@ parser.add_argument('--tail-record', type=Path)
 parser.add_argument('--head-scale', type=float, default=.60)
 parser.add_argument('--jaw-anchor-z', type=float, default=.538)
 parser.add_argument('--head-depth-offset', type=float, default=-.045)
+# Where the body is cut for the neck bridge. loop_tools raises it with the jaw anchor when a body was
+# retargeted with a different neck length (retarget.json headShiftZ).
+parser.add_argument('--body-trim', type=float, default=.425)
 # Largest removable remesh flake above the neck, in voxels. Removed pieces are
 # recorded with their bounds; anything larger still fails the closed-solid gate.
 parser.add_argument('--fragment-voxels', type=float, default=4)
@@ -97,7 +100,7 @@ def horizontal_section(obj, height, segments=128):
                      'maximumXY': points[:, :2].max(axis=0).tolist()}
 
 
-body_trim, head_trim = .425, args.jaw_anchor_z-.048
+body_trim, head_trim = args.body_trim, args.jaw_anchor_z-.048
 if head_trim-body_trim < .015:
     raise ValueError('Jaw anchor leaves insufficient space for the measured neck transition')
 lower_inner, lower_inner_record = horizontal_section(body, body_trim-.010)
@@ -174,7 +177,7 @@ def fade(value, low, high):
 for v in body.data.vertices:
     x, y, z = v.co
     weight = (fade(.16-abs(x), 0, .045)*fade(y+.15, 0, .035)
-              *fade(.15-y, 0, .035)*fade(z-.395, 0, .025)*fade(head_trim+.025-z, 0, .025))
+              *fade(.15-y, 0, .035)*fade(z-(body_trim-.03), 0, .025)*fade(head_trim+.025-z, 0, .025))
     if weight > 0:
         neck.add([v.index], weight, 'REPLACE')
 mod = body.modifiers.new('Blend head and neck', 'SMOOTH')

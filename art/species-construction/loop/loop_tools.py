@@ -12,6 +12,8 @@ same views, crops and measurements:
   python art/species-construction/loop/loop_tools.py next-number
   python art/species-construction/loop/loop_tools.py quick <head-dir> <body-dir> <preview-dir> [--baseline fit.json]
   python art/species-construction/loop/loop_tools.py fit <assembly-name|preview-dir> [--out DIR] [--baseline fit.json]
+  python art/species-construction/loop/loop_tools.py posed <assembly-name> --out DIR [--refit] [--pose FILE] [--joints FILE]
+  python art/species-construction/loop/loop_tools.py retarget <body-dir> <out-body-dir> --joints FILE [--scale forearm=0.9 ...]
   python art/species-construction/loop/loop_tools.py diff <baseline-packet> <candidate-packet>
   python art/species-construction/loop/loop_tools.py measured <packet>
 
@@ -171,9 +173,17 @@ def cmd_assemble(args):
     out = work(args.out)
     if out.exists():
         sys.exit(f'{out} exists; use a new name')
+    placement, extra = list(PLACEMENT), []
+    record = body/'retarget.json'
+    if record.is_file():
+        # a body from `retarget` with a changed neck length: the head and the neck cut rise with it
+        shift = json.loads(record.read_text()).get('headShiftZ', 0.0)
+        if shift:
+            placement[placement.index('--jaw-anchor-z')+1] = f'{.500+shift:.5f}'
+            extra = ['--body-trim', f'{.425+shift:.5f}']
     run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'assemble_reconstructed_creature.py'), '--',
                  '--body', str(body/'shape.glb'), '--head', str(head/'shape.glb'),
-                 '--tail-record', str(body/'fairing.json'), '--out', str(out), *PLACEMENT,
+                 '--tail-record', str(body/'fairing.json'), '--out', str(out), *placement, *extra,
                  '--fragment-voxels', str(args.fragment_voxels)], WORK/f'{args.out}.log')
     cmd_render(argparse.Namespace(name=args.out))
 
@@ -567,6 +577,159 @@ def cmd_measured(args):
     print(json.dumps(evaluate_measured(packet, assembly)))
 
 
+
+# ---- posed measurement: rig the assembly, pose it like the reference sheet, fit tail-free halves.
+RIG = CONSTRUCTION/'rig'
+SHEET_POSE = RIG/'akinza-sheet-pose.json'
+
+
+def dump_vertices(glb, out_npz, log):
+    run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'rig_dump.py'), '--', '--glb', str(glb),
+                 '--out', str(out_npz)], WORK/log)
+
+
+def load_dump(npz):
+    d = np.load(npz)
+    names = list(d['names'])
+    counts = d['counts']
+    verts = d['verts'].astype(np.float64)
+    off = np.r_[0, np.cumsum(counts)]
+    skin = int(np.argmax(counts))
+    parts = {n: verts[off[i]:off[i+1]] for i, n in enumerate(names)}
+    return verts[off[skin]:off[skin+1]], parts, names[skin]
+
+
+def claw_centroids(parts):
+    fore = np.array([p.mean(0) for n, p in parts.items() if 'fore claw' in n.lower() and p.mean(0)[0] < 0])
+    return {'fore': fore} if len(fore) else None
+
+
+def cmd_posed(args):
+    sys.path.insert(0, str(CONSTRUCTION))
+    import rig_core as rc
+    import rig_fit as rf
+    glb = work(args.assembly)/'akinza.glb'
+    if not glb.is_file():
+        sys.exit(f'No akinza.glb in {work(args.assembly)}')
+    out = Path(args.out) if Path(args.out).is_absolute() else WORK/args.out
+    if out.exists():
+        sys.exit(f'{out} exists; use a new name')
+    out.mkdir(parents=True)
+    dump_vertices(glb, out/'verts.npz', f'posed-{out.name}-dump.log')
+    skin, parts, _ = load_dump(out/'verts.npz')
+    joints = rc.load_json(args.joints) if args.joints else rc.derive_joints(skin, claw_centroids(parts))
+    (out/'joints.json').write_text(json.dumps(joints, indent=1)+'\n')
+    idx, w = rc.compute_weights(skin, joints)
+    idx = idx.astype(int)
+    np.savez(out/'weights.npz', idx=idx, w=w)
+    pose_path = Path(args.pose) if args.pose else SHEET_POSE
+    if args.refit or not pose_path.exists():
+        sel = np.arange(0, len(skin), 5)
+        vec, shift, best = rf.fit_pose(skin[sel], idx[sel], w[sel], joints)
+        pose_path.parent.mkdir(parents=True, exist_ok=True)
+        pose_path.write_text(json.dumps({
+            'note': 'Bone rotations (degrees) matching the reference sheet pose: hands on hips, wide stance, '
+                    'S-curve. Rotations about the world axes through each bone head (R = Rz Ry Rx), applied in '
+                    'the parent frame; .R bones mirror .L (y and z negate). Found by rig_fit.fit_pose against '
+                    'the tail-free halves of the sheet; angles only, never lengths. rootShift is [dx, dy] in '
+                    'model units; the ground drop is recomputed per model.',
+            'fitObjective': round(best, 4), 'bones': rf.build_pose(vec), 'rootShift': list(shift)}, indent=1)+'\n')
+        print(f'fitted pose {pose_path} objective {best:.4f}')
+    pose = rc.load_json(pose_path)
+    root_dy = pose.get('rootDepthShift', 0.0)
+    posed = rf.pose_points(skin, idx, w, joints, pose['bones'], root_dy)
+    raw = rc.skin_points(skin, idx, w, rc.bone_transforms(joints, pose['bones'], root_translate=(0, root_dy, 0)))
+    dz = rc.ground_offset(raw)
+    (out/'pose.json').write_text(json.dumps({'pose': pose['bones'], 'root': [0, root_dy, dz]}, indent=1)+'\n')
+    run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'rig_akinza.py'), '--', '--glb', str(glb),
+                 '--joints', str(out/'joints.json'), '--weights', str(out/'weights.npz'), '--pose', str(out/'pose.json'),
+                 '--out', str(out)], WORK/f'posed-{out.name}-rig.log')
+    # scores: Blender masks for the posed model; numpy rasters for the arms-down control and as a cross-check
+    result = {'assembly': args.assembly,
+              'note': 'Halves exclude the reference tails: front image-left, back image-right, left in front of '
+                      'canonical column %d. IoU per band over the kept columns.' % rf.LEFT_CUT,
+              'views': {}, 'armsDown': {}, 'posedNumpy': {}}
+    pictures = []
+    for view in rf.VIEWS:
+        mask = np.array(Image.open(out/f'{view}.png').getchannel('A')) > 20
+        m = rf.model_canonical(mask)
+        ref = rf.reference(view)
+        result['views'][view] = {'half': rf.scores(m, ref, view, True), 'full': rf.scores(m, ref, view, False)}
+        pictures.append(rf.overlay_half(m, ref, view, f'{view} (posed)', True))
+    for view, (m, ref, sc) in rf.evaluate(posed, True).items():
+        result['posedNumpy'][view] = sc
+    for view, (m, ref, sc) in rf.evaluate(skin, True).items():
+        result['armsDown'][view] = {'half': sc, 'full': rf.scores(m, ref, view, False)}
+    bands = ['all', 'head', 'trunk', 'legs', 'neck', 'arm', 'thigh', 'shin', 'foot']
+
+    def mean(key, mode):
+        src = result['views'] if key == 'posed' else result['armsDown']
+        return {b: round(float(np.mean([src[v][mode][b]['iou'] for v in rf.VIEWS])), 4) for b in bands}
+    result['mean'] = {'posedHalf': mean('posed', 'half'), 'armsDownHalf': mean('down', 'half'),
+                      'posedFull': mean('posed', 'full'), 'armsDownFull': mean('down', 'full')}
+    (out/'posed-fit.json').write_text(json.dumps(result, indent=1)+'\n')
+    sheet = Image.new('RGB', (FIT_GRID*len(pictures), FIT_GRID), 'white')
+    for k, picture in enumerate(pictures):
+        sheet.paste(picture, (k*FIT_GRID, 0))
+    sheet.save(out/'posed-fit.png')
+    prop = {'unit': 'fraction of the fixed figure height 1.8605', 'assembly': args.assembly,
+            'lengths': rc.proportions(joints), 'jointsFile': str(out/'joints.json')}
+    (out/'proportions.json').write_text(json.dumps(prop, indent=1)+'\n')
+    print(json.dumps({'posedHalf': result['mean']['posedHalf'], 'armsDownHalf': result['mean']['armsDownHalf'],
+                      'overlay': str(out/'posed-fit.png')}))
+
+
+def cmd_retarget(args):
+    """Rewrite a body component with per-bone length scales, still in the arms-down construction pose."""
+    sys.path.insert(0, str(CONSTRUCTION))
+    import hashlib
+    import rig_core as rc
+    body = work(args.body)
+    out = Path(args.out) if Path(args.out).is_absolute() else WORK/args.out
+    if out.exists():
+        sys.exit(f'{out} exists; use a new name')
+    scales = {}
+    for item in args.scale or []:
+        k, v = item.split('=')
+        scales[k] = float(v)
+    out.mkdir(parents=True)
+    joints = rc.load_json(args.joints)
+    dump_vertices(body/'shape.glb', out/'verts.npz', f'retarget-{out.name}-dump.log')
+    skin, parts, skin_name = load_dump(out/'verts.npz')
+    idx, w = rc.compute_weights(skin, joints)
+    T = rc.bone_transforms(joints, None, scales)
+    new = {skin_name: rc.skin_points(skin, idx.astype(int), w, T)}
+    for name, pts in parts.items():
+        if name == skin_name:
+            continue
+        side = 'L' if pts.mean(0)[0] > 0 else 'R'
+        low = name.lower()
+        bone = f'hand.{side}' if 'fore claw' in low else f'foot.{side}' if 'hind claw' in low else 'pelvis'
+        R, t = T[bone]
+        new[name] = pts@R.T+t
+    np.savez(out/'new-verts.npz', names=np.array(list(new)), **{f'v{i}': v for i, v in enumerate(new.values())})
+    run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'rig_write_glb.py'), '--', '--glb', str(body/'shape.glb'),
+                 '--verts', str(out/'new-verts.npz'), '--out', str(out/'shape.glb')], WORK/f'retarget-{out.name}-write.log')
+    fair = json.loads((body/'fairing.json').read_text())
+    Rt, tt = T['tail']
+    fair['tailControls'] = [[[*map(float, Rt@np.array(c[:3])+tt), *c[3:]] for c in tail] for tail in fair['tailControls']]
+    fair['outputs']['shape.glb'] = hashlib.sha256((out/'shape.glb').read_bytes()).hexdigest()
+    fair['retarget'] = {'from': args.body, 'scales': scales, 'joints': args.joints}
+    (out/'fairing.json').write_text(json.dumps(fair, indent=2)+'\n')
+    owner = {}
+    for name, _, head, _ in rc.BONES:
+        owner.setdefault(head, name)
+    for name, _, _, tail in rc.BONES:
+        owner.setdefault(tail, name)
+    new_joints = {k: (list(map(float, T[owner.get(k, 'pelvis')][0]@np.array(v)+T[owner.get(k, 'pelvis')][1]))
+                      if not k.startswith('_') else v) for k, v in joints.items()}
+    record = {'scales': scales, 'proportions': rc.proportions(new_joints),
+              'headShiftZ': new_joints['head_base'][2]-joints['head_base'][2]}
+    (out/'joints.json').write_text(json.dumps(new_joints, indent=1)+'\n')
+    (out/'retarget.json').write_text(json.dumps(record, indent=1)+'\n')
+    print(json.dumps({'out': str(out), **record}))
+
+
 def cmd_next_number(args):
     numbers = [int(m.group(1)) for p in WORK.iterdir() if (m := re.match(r'^[a-z-]+-(\d{4})', p.name))]
     print(f'{max(numbers)+1:04d}')
@@ -589,6 +752,11 @@ def main():
     p.set_defaults(func=cmd_quick)
     p = sub.add_parser('fit'); p.add_argument('source'); p.add_argument('--out'); p.add_argument('--baseline')
     p.set_defaults(func=cmd_fit)
+    p = sub.add_parser('posed'); p.add_argument('assembly'); p.add_argument('--out', required=True)
+    p.add_argument('--refit', action='store_true'); p.add_argument('--pose'); p.add_argument('--joints')
+    p.set_defaults(func=cmd_posed)
+    p = sub.add_parser('retarget'); p.add_argument('body'); p.add_argument('out'); p.add_argument('--scale', action='append')
+    p.add_argument('--joints', required=True); p.set_defaults(func=cmd_retarget)
     p = sub.add_parser('diff'); p.add_argument('baseline'); p.add_argument('candidate'); p.set_defaults(func=cmd_diff)
     p = sub.add_parser('measured'); p.add_argument('packet'); p.set_defaults(func=cmd_measured)
     args = parser.parse_args()
