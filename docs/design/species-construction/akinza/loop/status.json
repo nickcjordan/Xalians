@@ -26,12 +26,12 @@
   "coverageRounds": 6
  },
  "baseline": {
-  "head": "head-0415",
-  "body": "body-0426",
-  "assembly": "assembled-0428",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-0428"
+  "head": "head-0455",
+  "body": "body-0448",
+  "assembly": "assembled-0458",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-0458"
  },
- "round": 14,
+ "round": 16,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -46,67 +46,69 @@
   "R04+R07",
   "R03+R09",
   "R03+R05",
-  "R08"
+  "R08",
+  "R03+R06",
+  "R03+R07"
  ],
  "specs": {
   "R10": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R10.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R10.png",
-   "summary": "R10 tail spec.",
+   "summary": "R10 spec.",
    "round": 1
   },
   "R01": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R01.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R01.png",
-   "summary": "R01 head silhouette spec.",
+   "summary": "R01 spec.",
    "round": 2
   },
   "R08": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R08.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R08.png",
-   "summary": "R08 leg spec.",
+   "summary": "R08 spec.",
    "round": 2
   },
   "R02": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R02.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R02.png",
-   "summary": "R02 face spec.",
+   "summary": "R02 spec.",
    "round": 3
   },
   "R06": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R06.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R06.png",
-   "summary": "R06 torso spec.",
+   "summary": "R06 spec.",
    "round": 3
   },
   "R07": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R07.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R07.png",
-   "summary": "R07 arm spec.",
+   "summary": "R07 spec.",
    "round": 5
   },
   "R03": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R03.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R03.png",
-   "summary": "R03 ear fan front spec (lock tables and cup polygons).",
+   "summary": "R03 spec.",
    "round": 5
   },
   "R09": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R09.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R09.png",
-   "summary": "I wrote the R09 hind paw spec and its nine-panel image and committed both by name on akinza/construction-loop (d84388d5, plain message, no trailer). Everything was measured against assembled-0305 in Python on the canonical masks. From the side, the model's paw is already the length of the sheet's single paw: the toe lobes reach V -.089 from the ankle center, against the sheet's -.088. What's wrong is the toe front, a blunt vertical bead face, and the claws, which stick out .015 horizontally. From the front, the lateral half of the paw is .011 too low (top .963 against .952) and ends .022 short (lateral U .066 against .0875 at .98). The four toes are identical beads at one height, with tips spread only .020 world. The spec gives two traced target outlines: 18 points front and back (front and back agree within .004) and 19 points side. It adds row and top-line tables against the model and a parameter set for the builder's HIND paw frame. That set has four graded toes (middle tips at V -.166, toe 1 at -.152, toe 4 splayed 14 degrees at -.134; the outer toes .76 to .93 of the middle toes' height), a new lateral instep mass, a new dorsum slope, a round heel ball and new claws. Each claw is sheathed at the top of its toe tip, pitched 42 degrees down and ends on the toe's front face, .008 fit above the floor. A field built from those numbers with the script's own smin, ellipsoid and capsule functions hits the outline within .005 on the top lines and .010 on the rows. The build itself is structural: a hind-paw-only rebuild that must morph below R08's freeze at about z -.838 to -.872 and leave the forepaws and tails alone. The heel rounding is a local fix inside that rebuild. Predictions: R09.5 goes to about .98 and R09.1 to R09.4 and R09.8 pass by construction. R09.6 and R09.7 cannot pass as written, because in the sheet's left view those rows span two staggered paws (.155 and .094), while the arms-down model's two feet line up in profile; the single sheet paw is about .116 long. That is the same two-leg misreading R08 corrected for ankle depth, and it also explains two of the gap audit's rank-6 numbers. I propose replacing R09.7 with the paw width at .96 in the front and back views: now .60 and .69, predicted .83 and .93. R09.6 should become a single-paw length against .116, or be dropped. R09.9 is set by the shared pose, which rolls each foot 15 degrees and lifts one edge of the sole. Pasting the sheet's own paws at the posed ankles scores only front .59 and back .76, so the realistic result is about .72 to .78. Further friction notes in the spec: the sheet's paws are turned out 20 to 30 degrees, but the spec builds them straight and leaves the turnout to the pose; the model's ankle is still .051 deep against the sheet's .032, which is R08's; and R09.2 (\"short\" claws) and R09.8 (\"long\" claws) are read together as long against the toe tip and short against the paw.",
+   "summary": "R09 spec.",
    "round": 6
   },
   "R04": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R04.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R04.png",
-   "summary": "The R04 spec (fan rear and profile, written against assembled-0305 / head-0281) is committed on akinza/construction-loop as 5fdaa73f. In the back view the model's outline already matches the sheet (R04.1 .921, R04.6 1.036). What fails is what is inside the outline. The rear is one smooth face at df .063 to .070 from wing to wing, and the back outline has 4 lock tips against the sheet's 36. Every section of the fan's top has its high point on a front lip at df -.03, with a flat band and rims behind it, so it reads as a tray. Profile tracing confirms this: the model's top line has dips of .006 to .009 where the sheet has one dome peaking at df .02 to .03. The spec uses the same lock idiom as R03, taken from the sheet: a stroke-direction field measured on the back figure (median residual 6.6 degrees) and the outline tips found by an opening test. It lays out 41 locks per wing in four rows radiating from the ear-root crease (T on the top dome, B1 edge row on the measured tips, B2, B3), 26 dome-coat locks flowing down into the neck, and a 6-spike crown tuft. Each lock is tabled with root, tip, length, widths, thickness, direction and curl, plus a rear depth for root and tip from a depth plan. That plan bows each wing forward .011 and keeps the R01 crest as the rearmost point. A section rule (crest df .020 to .028, top falling 15 (df - c)^2 behind it) reproduces the sheet's profile top within .004. The profile shell (top band sweeping up and back, vertical rear band, cavity crescent of area .0021) is measured and assigned to rows. Footprint checks: wing coverage .898 and .891, no bare patch wider than .020, predicted back head IoU .923, 14 and 9 serrated points per wing. In order of visibility, the gap-audit rows are: rank 1 on the fan back (structural lock rebuild), the tray top (structural proportion lever on the top section), the rank 19 profile shell (structural, shared with R03), lower-edge teeth and the doubled edge (structural, one lock set), the flat rear (proportion lever), the dome coat and tuft (local surface on R01's dome), and R04.6 (keep). Friction for the orchestrator: (1) R03's LP1, LP2 and LF1 tips sit too far forward and would bring back the front lip in profile; (2) the R03 and R04 edge locks must be one merged set, or each fills the other's notches and the edge drops to 4 or 5 serrations per side, which moves R03's lower-edge tips by up to .02; (3) on the sheet the fan's top is deep, not thin; (4) two measured rows are proposed for R04.4 and R04.5; (5) the dome coat depends on R01's skull.",
+   "summary": "R04 spec.",
    "round": 6
   },
   "R05": {
    "path": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R05.md",
    "image": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\specs\\R05.png",
-   "summary": "I wrote the R05 neck and shoulders spec and its annotated image, and committed both by name on akinza/construction-loop (ae780257, plain message, no trailer). Method: the sheet's front, back and left figures were traced at 1500 cells per figure height, and the traced points sit within 1 px of the drawn edge. These were compared with the assembled-0320 renders, the 800 px neck detail crops and the rest vertex dump. The sheet's character-right shoulder is raised and its arms are akimbo, so the sheet sets the neck, the neck base, the trapezius slope and the acromion line. Below y .30 the target is an arms-down cap centered on R07's shoulder joint S (.128, .325), radius .024. Six faults explain the three failing visual criteria. (1) A lit collar ring at the head base from behind. It is a rear lip on the head's neck stub at world z .465 to .477, where neck_warp.HEAD's depth factor ramps from .66 to 1.0 over only .014. This is a local seam fix: lengthen that ramp and the width ramp, and translate the stub instead of compressing it. (2) A nape step and throat notch in profile. The neck column sits .007 to .008 behind the sheet on both edges at y .235 to .25, though its depth is right. This is structural: move the neck forward. (3) A trumpet web at the neck base. The base is .009 to .010 too wide at .25 to .255 and .011 to .013 too narrow at .265 to .27, probably from the assembly's seam smoothing. This is a proportion lever. (4) A square yoke. The top line rises as a straight 17 degree ramp to d .15, then drops down a vertical wall. The BODY x factor jumps from .70 to 1.0 at z .40 to .41. The target lowers the outer shoulder by .008 to .017 at d .11 to .153 and rounds the corner. This is structural, a proportion lever plus a cap rebuild. (5) Dark pockets behind the caps and a cap spike in profile. The caps stand .03 to .04 world behind the back, because the BODY depth window stops at x .22 to .32. The target has the back surface falling off monotonically from the spine, with the cap's rear at most +.012 world. This is structural: rebuild each cap as a deltoid ball. (6) A ledge across the back of the shoulders, which goes with the cap rebuild. The spec gives the front and back half-width table, the top-line table, the profile table and the shoulder back-section table, each as sheet against model against target with world values. It also gives nine masses, the overcorrections to avoid, and a construction plan that spans the head stub, the body and the assembly seam. Predicted measured values: R05.1 about 1.06, R05.2 1.04 to 1.08, R05.3 about 1.05. Friction for the orchestrator. First, R05.1's sheet value reads about .002 low. Second, R07's hung-arm row at .34 would push R05.3 to 1.08, so this spec holds .156 there. Third, R01's chin underside and nape rows need to agree with this spec at y .225 to .228. Fourth, a body-only round cannot pass R05.4 or R05.6. Fifth, R06's model-now rows .24 to .30 are stale. Sixth, the gap audit's two measured R05 proposals already pass (armpit at .355, back edge within .004 of the sheet) and are worth keeping as guard criteria. Scripts and raw tables are in untracked/species-construction/akinza/loop/spec-r05-scripts/.",
+   "summary": "R05 spec.",
    "round": 7
   }
  },
@@ -139,24 +141,21 @@
    "issues": [
     {
      "region": "R01",
-     "summary": "Back view: the fan centre is one continuous flat slab from tip to tip and the head reads only as a bulb hanging under the fan's underside shelf, not as a dome inside the fan (R01.4, R01.8).",
-     "fix": "Raise a vertical head oval through the fan back: about .13 to .14 of figure height wide (well under the wing span), standing about .015 to .02 proud of the fan rear surface, with its top about .01 to .02 above the wing roots and its lower half carried continuously down through the shelf into the existing bulb, so the shelf underside is broken at the centre and the oval and bulb read as one head.",
-     "fixability": 0.5,
-     "evidence": "m04 head-back and m02 back against r03, whose head oval rises through the fan and continues into the neck."
+     "summary": "Back view: the fan centre reads as a slab and the head only as a bulb under the fan's underside shelf (R01.4).",
+     "fix": "Raise a vertical head oval through the fan back about .13 to .14 of figure height wide, standing about .015 to .02 proud of the fan rear surface, carried continuously down into the bulb so the shelf underside is broken at the centre.",
+     "fixability": 0.5
     },
     {
      "region": "R01",
-     "summary": "New rim lines on the back: a flat horizontal underside band at the shelf height, two vertical crease lines from the rear valley, and a lit lip where the bulb meets the neck (R01.4, also R04.3 and R05.4).",
-     "fix": "Widen the cut blend from .045 to about .08 so the shelf underside rounds over; drop the valley crease polyline or soften it to a gaussian with sigma about .03 so no edge reads; fair the bulb into the neck over about .03 of figure height so the ring disappears.",
-     "fixability": 0.6,
-     "evidence": "m04 head-back (2x crop) and m06 neck-rear."
+     "summary": "Rim lines on the back: a flat underside band at the shelf height and a lit lip where the bulb meets the neck (R01.4).",
+     "fix": "Widen the cut blend from .045 to about .08 so the shelf underside rounds over; fair the bulb into the neck over about .03 of figure height so the ring disappears.",
+     "fixability": 0.6
     },
     {
      "region": "R01",
-     "summary": "Front: the crown clears the inner fan rims only by a hair and its top is lumpy; the jaw also still pinches into a narrow stem under the chin (R01.3, R01.5).",
-     "fix": "Raise crown_lift from amp .026 to about .04 with a narrower sx (.17 to about .12) and smooth the crown surface, targeting a round crown top about .015 of figure height above the inner rims; ease the under-chin curve by widening the chin table half width at z -.282 to -.319 by about .01 to .015 so the jaw flows into the neck without a concave hook.",
-     "fixability": 0.7,
-     "evidence": "m04 head-front (3x crown crop) and m06 neck-front against m01 front."
+     "summary": "Front: the crown clears the inner fan rims only by a hair and its top is lumpy; the jaw still pinches into a narrow stem under the chin (R01.3, R01.5).",
+     "fix": "Raise crown_lift to about .04 amp with a narrower sx and smooth the crown, targeting a round crown top about .015 of figure height above the inner rims; widen the chin table half width at z -.282 to -.319 by about .01 to .015 so the jaw flows into the neck.",
+     "fixability": 0.7
     }
    ],
    "attempts": 0,
@@ -171,32 +170,20 @@
      "reason": "",
      "reusable": [
       {
-       "option": "shape_head_silhouette_field.py: skulls[] (center, radii, blend)",
-       "what": "Smooth-unions an ellipsoid into the head field to give a rounded crown or occiput. Keep the ellipsoid distance unclamped."
-      },
-      {
-       "option": "shape_head_silhouette_field.py: top_smooth and rear_smooth",
-       "what": "A windowed Gaussian morph with a C2 ramp over the crown or rear centre that melts relief into one surface. The fade must be at least about 10 times the relief change or the window edge shows as a crease."
-      },
-      {
-       "option": "shape_head_silhouette_field.py: warp{}",
-       "what": "Smooth vertex displacements applied after meshing, weighted to zero near the face. Keep each slope under 1 or a shelf appears. Use nape_pull_gentle, not nape_pull."
+       "option": "shape_head_silhouette_field.py: skulls[], top_smooth, rear_smooth, warp{}",
+       "what": "Smooth-union ellipsoids, windowed Gaussian morphs and smooth vertex warps for skull and occiput."
       }
      ]
     },
     {
      "round": 2,
      "kept": true,
-     "approach": "Re-cut the round 2 field-space notch, nape and chin with the chin left clear of the mouth wire and wider cheeks, then add a gaussian crown lift, a lower inner rim lift and a wider, deeper rear valley so the dome reads as a lobe.",
+     "approach": "Re-cut the field-space notch, nape and chin with the chin clear of the mouth wire and wider cheeks, then a gaussian crown lift, a lower inner rim lift and a wider, deeper rear valley.",
      "reason": "",
      "reusable": [
       {
-       "option": "shape_head_silhouette_field.py: warp.crown_lift (amp, sx, z0, zf)",
-       "what": "Gaussian lift of the crown between the ear roots, zero below z0. Keep amp*0.86/sx under 0.3 so no ridge forms."
-      },
-      {
-       "option": "shape_head_silhouette_field.py: cut{} with chin, head_base_half and nape tables, plus warp rim_lift, front_set_back, rear_valley and underside_drop (helpers in head_r01_ops.py)",
-       "what": "Field-space removal of the notch web, nape wall and chin below the ear shelf with a smooth max. Keep the chin table well clear of the mouth wire at z -.207 to -.226."
+       "option": "shape_head_silhouette_field.py: warp.crown_lift and cut{} tables",
+       "what": "Gaussian crown lift (keep amp*0.86/sx under 0.3) and field-space removal of the notch web, nape wall and chin; keep the chin table clear of the mouth wire at z -.207 to -.226."
       }
      ]
     }
@@ -218,23 +205,20 @@
    "issues": [
     {
      "region": "R02",
-     "summary": "Cheek locks read as flat hard-ridged wedge plates (a flat fin in profile) and barely break the lower face outline; the lower lock is faint",
-     "evidence": "m05 eyes-front 3x cheek crops, m06 neck-front 2x, m05 nose-profile and m06 neck-profile 3x, against r04 front view",
-     "fix": "Give each lock a rounded lens cross-section instead of a flat slab (thickness_exponent .9 to about .5; thick_root .017 to about .022 on the upper lock and .014 to about .02 on the lower), soften the ridge (blend .03 to about .045), and carry each tip outward about .012 head-local (about .006 of figure height) past the current face outline so it breaks the jaw line as a soft rounded point, as in r04.",
+     "summary": "Cheek locks read as flat hard-ridged wedge plates and barely break the lower face outline; the lower lock is faint.",
+     "fix": "Give each lock a rounded lens cross-section (thickness_exponent .9 to about .5; thick_root about .022 upper and .02 lower), soften the ridge (blend about .045), and carry each tip outward about .012 head-local past the outline.",
      "fixability": 0.6
     },
     {
      "region": "R02",
-     "summary": "In profile the nose pad is a thin sliver high on the bridge slope with a bead at its upper corner; the skin bulb below it forms the nose tip",
-     "evidence": "m05 nose-profile 4x crop and m05 nose-below: the dark sliver ends above the grey nose tip; from below only a thin dark arc shows",
-     "fix": "Seat the pad on the wedge tip itself: wrap its lower third over the tip onto the underside by about .006 head-local along the surface (follow the surface rather than lowering apex_z, which hooked under the overhang), give it a soft proud dome of about .003 to .004, and bury the upper corners (top_lift .0003 to 0, corners blended) so no bead stands; round the two flared top corners toward the broad rounded top of r01.",
+     "summary": "In profile the nose pad is a thin sliver high on the bridge slope with a bead at its upper corner; the skin bulb below forms the nose tip.",
+     "fix": "Seat the pad on the wedge tip: wrap its lower third over the tip onto the underside by about .006 head-local along the surface, give it a soft proud dome of about .003 to .004, and bury the upper corners.",
      "fixability": 0.5
     },
     {
      "region": "R02",
-     "summary": "A pinhole-sized dark fleck sits at the philtrum top under the nose",
-     "evidence": "m05 nose-front (2x, centre below the pad) and m05 nose-below (2x, centre above the mouth)",
-     "fix": "Remove the fleck: fill the hole or delete the stray dark polygon at the philtrum top (near philtrum_top_z -.178) and smooth the skin field over it.",
+     "summary": "A pinhole-sized dark fleck sits at the philtrum top under the nose.",
+     "fix": "Fill the hole or delete the stray dark polygon at the philtrum top (near philtrum_top_z -.178) and smooth the skin field over it.",
      "fixability": 0.9
     }
    ],
@@ -244,54 +228,34 @@
    "parkReason": null,
    "history": [
     {
-     "round": 3,
-     "kept": false,
-     "approach": "Fill the old eye pocket with a fitted face surface, cut a shallow undercut socket by smooth max, set a shallow dome eye with a tapered dark lid band into it, push the bridge and nose out to the sheet profile as one rounded wedge with a buried decal pad, and union three soft leaf tufts per side.",
-     "reason": "critic verdict same; R02 checklist 4.2 to 4.2; weighted mean +0",
-     "reusable": [
-      {
-       "option": "rebuild_face_features_field.py: eye, bridge, tufts, nose_pad, lower_smooth, chin_smooth",
-       "what": "Field-space face rebuild: fitted eye pocket fill and socket, bridge advection from a profile table, leaf cheek tufts, a conformal nose decal, and windowed smoothing of the lower face and chin."
-      }
-     ]
-    },
-    {
      "round": 4,
      "kept": true,
-     "approach": "Round 3's field-space face rebuild re-tuned: larger eyes in a shallower blurred-rim socket, a short rounded-triangle nose decal with no drip, and broad soft cheek lobes.",
+     "approach": "Field-space face rebuild re-tuned: larger eyes in a shallower blurred-rim socket, a short rounded-triangle nose decal, broad soft cheek lobes.",
      "reason": "",
      "reusable": [
       {
-       "option": "rebuild_face_features_field.py: eye.socket_smooth (sigma, r, passes)",
-       "what": "Blurs an annulus around the cut socket rim in the field so the lid edge is one soft lip."
-      },
-      {
-       "option": "face-features-spec-r4c.json parameter set (untracked, copied into the packet)",
-       "what": "Working values for the round 4 face: aperture center [.1887,.0218] semi [.105,.136], edge_behind [.0055,.0025], apex_proud .013, shear .3, nose_pad apex_z -.160 / corner_radius .013, tufts blend .034 / tip_radius .0065 / lift about .001."
-      },
-      {
-       "option": "scratch headshots.py (not committed)",
-       "what": "Renders the face closeups of a head shape.glb placed at the assembly transform in about 15 s per render."
+       "option": "rebuild_face_features_field.py: eye.socket_smooth",
+       "what": "Blurs an annulus around the socket rim in the field so the lid edge is one soft lip."
       }
      ]
     },
     {
      "round": 10,
      "kept": true,
-     "approach": "Rerun the round 4 field-space face rebuild on the pre-face head-0260 with a taller aperture, less shear, an inlaid wider nose pad and two broad cheek locks, then graft that face into head-0333 by a field blend inside a face window, carrying per-polygon materials, so the rear and fan stages are kept.",
+     "approach": "Rerun the field-space face rebuild on head-0260 with a taller aperture, less shear, an inlaid wider nose pad and two broad cheek locks, then graft that face into head-0333 by a field blend inside a face window.",
      "reason": "",
      "reusable": [
       {
-       "option": "rebuild_face_features_field.py nose_pad.mode=\"inlay\" (recess_depth, recess_blend, shrink, top_lift, bury, surface_blur)",
-       "what": "Cuts a shallow recess in the skin field under the pad outline and builds a closed thin dark volume flush with the old surface, with its bottom buried, so there is no free edge or lit lip; keep the pad on the sloped front face above the wedge tip."
+       "option": "rebuild_face_features_field.py nose_pad.mode=\"inlay\"",
+       "what": "Cuts a shallow recess under the pad outline and builds a closed thin dark volume flush with the old surface."
       },
       {
-       "option": "graft_face_field.py --base <later head.blend> --donor <face-rebuilt head.blend> [--spec window.json]",
-       "what": "Blends the donor skin field into the base skin field inside a smooth face window (default |x| .30 to .335, z -.30 to .30, front of y .02 to .06), meshes once, keeps the donor eyes, nose and mouth objects and carries the base per-polygon materials (pale inner-ear coat), so a face rebuilt on an old head moves into a later head without replaying the rear and fan stages."
+       "option": "graft_face_field.py --base <head.blend> --donor <face head.blend>",
+       "what": "Blends the donor face into a later head inside a smooth face window, carrying per-polygon materials."
       },
       {
        "option": "specs/face-features-r10e.json",
-       "what": "Round 10 face parameter set (aperture center [.1887,.0291] semi [.105,.1433], shear .1, inlay nose pad, two broad tufts per side) for the face script run on head-0260."
+       "what": "Round 10 face parameter set (aperture center [.1887,.0291] semi [.105,.1433], shear .1, inlay nose pad, two broad tufts per side)."
       }
      ]
     }
@@ -314,146 +278,106 @@
    "issues": [
     {
      "region": "R03",
-     "summary": "The fan front locks are smooth, flat ogive leaves in even overlapping rings. They read as artichoke or pine-cone scales, not shaggy locks.",
-     "evidence": "m04 head-front and m05 head-three-quarter at 3x, against m01 and r04",
-     "fix": "Cut the rim to about 8 to 10 larger locks per side, radiating from the ear root, with lengths varied from .04 to .09 of figure height. Give each lock a convex cross section, about .006 thick with a central ridge, and split each tip into two or three sub-points so the edge breaks up. Stagger the rows so no two neighbours share a tip line.",
+     "summary": "Fan front coat still reads as flat overlapping leaves: the image-right (character left) outer wing is a pine-cone stack of flat ogive leaves with centre seams, and the image-left outer wing is now three or four broad smooth lobes; neither reads as shaggy locks",
+     "evidence": "m02 front 7x wing crops and m04 head-front against m01 and r04",
+     "fix": "Keep about 10 primaries per side but break the even overlap: vary lock lengths from about .05 to .09 of figure height in an irregular order, twist each lock 15 to 25 degrees about its axis so neighbours are not coplanar, give the section a raised spine with falling sides (section-p about 1.4 instead of 1.8), and split the two or three broadest image-left outer lobes into a pointed lock plus one shorter overlapping lock so each lobe ends in a free tip; keep front head missing under .05 while doing it.",
      "fixability": 0.5
     },
     {
      "region": "R03",
-     "summary": "The cup tuft is one smooth pale slab with creases. Pale streak fragments lie on both cup walls and a crinkled serrated seam runs along the lower right cup rim. The cup rims are straight with square corners, and a box ledge sits over the right cup.",
-     "evidence": "m04 head-front at 3x and m05 head-three-quarter",
-     "fix": "Replace the slab with four to six pale pointed locks, about .05 to .06 long, fanning from the cup base toward the upper outer corner, with tips reaching about .005 past the rim. Delete the streak fragments and the zigzag seam. Reshape each cup's upper rim to slope up to a pointed tip at the upper outer corner instead of running as a horizontal ledge.",
-     "fixability": 0.6
+     "summary": "Crinkled serrated seams remain along the lower image-right tuft locks and down both inner cup walls beside the skull, and the image-left tuft is still a stiff vertical stack of five smooth chevrons pointing outward like saw teeth",
+     "evidence": "m04 head-front 6x crops of each cup and m05 head-three-quarter, against r04 cup tufts",
+     "fix": "The builder traced the seams to voxel junctions, so widen the unions rather than the pale material: raise --tuft-blend from .003 to about .008 and --tuft-skull-blend from .02 to about .035, or remesh the tuft and coat union at a finer voxel (.0015) before smoothing; re-aim the image-left tuft locks so they fan from the cup base toward the upper outer corner, about 10 to 15 degrees apart, lengths varying .04 to .06, with overlapping roots so they no longer read as teeth.",
+     "fixability": 0.55
     },
     {
      "region": "R03",
-     "summary": "The wing ends are rounded lobes (the right one a smooth circular arc), not up-flared points, and the right side is slightly over-tilted.",
-     "evidence": "m02 front at 4x against m01: right tip top at .000 to .006 and left at .014, against a crown at .036 to .046",
-     "fix": "Over the outer .03 of each wing, raise the top edge by about .008 into a point at the upper outer corner, and undercut the outer edge below it so it tapers. Lower the right wing top by about .005 so both sides sit .02 to .03 above the crown.",
+     "summary": "The image-left (character right) wing end is still a rounded lobe and its tops sit only about .01 to .02 above the crown, while the image-right side now meets the .02 to .03 tilt; the image-right cup upper rim is still a straight ledge",
+     "evidence": "m02 front top-silhouette scan (crown .032 to .038, image-left tops .012 to .028, image-right tops .002 to .008) and 7x tip crops; m04 head-front image-right cup",
+     "fix": "Mirror the wing-end wedge that worked on the image-right end onto the image-left end, raising its upper outer corner by about .008 to .01 into an up-flared point and undercutting the outer edge below it; lift the image-left wing top run by about .01 so it sits .025 to .03 above the crown (this lowers no spec row, unlike lowering the other wing); slope the image-right cup upper rim up toward its outer corner by about .01 so it ends in the dark pointed pocket already there.",
      "fixability": 0.6
     }
    ],
-   "attempts": 0,
+   "attempts": 2,
    "anchorScore": 6.4,
    "parked": false,
    "parkReason": null,
    "history": [
     {
-     "round": 5,
-     "kept": false,
-     "approach": "Rebuild the ear fan front in field space from the R03 spec tables: parse the 58 lock rows and cup polygons, cut the old fan to the spec depth plan with a cup-masked fill, add 24 pointed coat locks and 5 pale tuft locks per side as soft-lens leaves, and back any silhouette column the cut emptied with a thin plate slab.",
-     "reason": "critic verdict worse; R03 checklist 5 to 4.3; tuft panel filled the cup hollow flush with a cut seam at the skull, tuft read as a ribbed plate, thorn row stayed",
-     "reusable": [
-      {
-       "option": "art/species-construction/author_fan_front_spec_field.py",
-       "what": "Parses the lock tables and cup polygons from specs/R03.md and builds the fan front in field space (many options: plate offset, plan, fill depth, blends, scales, tuft controls, backing slab)."
-      },
-      {
-       "option": "art/species-construction/loop/shade_head_fan.py",
-       "what": "Head-only Workbench shaded views for the inner loop, with --mark-pale to colour the pale inner-ear material red. Run through loop_tools.py blender with --log before the script path."
-      },
-      {
-       "option": "assemble_reconstructed_creature.py pale material transfer",
-       "what": "If the head carries a material named Pale inner-ear coat, the assembly transfers it to the remeshed skin and records paleMaterialTransfer."
-      }
-     ]
-    },
-    {
-     "round": 7,
-     "kept": true,
-     "approach": "Rebuild the ear fan front as one authored lock system in field space: a smooth plan morph, swept tapered pointed coat and tuft locks, a cup clipped clean of coat, and a pale tuft material.",
-     "reason": "",
-     "reusable": [
-      {
-       "option": "art/species-construction/author_fan_front_lock_system_field.py (whole script)",
-       "what": "Parses the R03 spec tables and rebuilds the fan front as a plan morph plus swept lock tubes. Options: --plate-offset, --floor-shift, --cup-clear (clip coat locks out of the cup polygon), --top-line (profile top-line depth clamp), --tip-trim and --trim-from (keep the ear span), --coat-root-extend, --jitter, --top-width, --drape-width, --ogive, --section-p, --tuft-* (width, fan, stack, root sink, fluff, ogive), --pale-gray, --pale-tol, --pale-smooth, --skip, --no-extras, --trim-pins. Every default reproduces head-0333."
-      },
-      {
-       "option": "art/species-construction/loop/render_head_clay.py",
-       "what": "Cycles clay views of a head blend lit like the packet's m04 head views, with front-L, front-R, cup-L, cup-R, outer-L, outer-R, q-L and side views for the inner loop, keeping the head's materials so the pale coat shows."
-      },
-      {
-       "option": "art/species-construction/loop/measure_fan_front.py",
-       "what": "Reports, per side, how much of the spec's cup polygon the pale material covers in the front view and the pale area in profile."
-      },
-      {
-       "option": "earSpan check on a quick preview",
-       "what": "The quick preview reproduces the packet's earSpan (1.030 against 1.032), so check R03.1 on a preview before assembling. Pass a packet path as an absolute path: a relative one makes the posed step write under the work folder."
-      }
-     ]
-    },
-    {
      "round": 12,
      "kept": true,
-     "approach": "Re-run the R03 lock system on the baseline head with fewer, larger point-faded primary locks, the plate cut back to the spec outline, each wing end cut to a pointed V, and the pale tuft rebuilt as five blurred rounded clumps that fill the cup.",
+     "approach": "Re-run the R03 lock system on the baseline head with fewer, larger point-faded primary locks, the plate cut back to the spec outline, each wing end cut to a pointed V, and the pale tuft rebuilt as five blurred rounded clumps.",
      "reason": "kept on the critic verdict (better), no region lost credit",
      "reusable": [
       {
-       "option": "--plate-clip INSET (with --clip-y, --clip-u0)",
-       "what": "Cuts the old fan body to the spec's outline table inset by INSET, fading with depth, so the plate stops short of the lock tips."
-      },
-      {
-       "option": "--tip-wedge (--wedge-u, --wedge-apex-y, --wedge-top-y, --wedge-bottom-y)",
-       "what": "Cuts each wing end through every depth to a pointed V before the locks go on. Replaces the blunt vertical end."
-      },
-      {
-       "option": "--tip-point FRAC",
-       "what": "Fades the lock tip-min floor to a true point over the last FRAC of the lock length. Fixes needle pins and knob tips."
-      },
-      {
-       "option": "--tuft-blur SIGMA, --tuft-tip-min, --tuft-section-p, --tuft-aim",
-       "what": "Blurs the union of the tuft locks into rounded clumps, gives the tuft its own tip floor and section, and aims the tips at the cup's upper tip."
-      },
-      {
-       "option": "--pale-cup-margin M",
-       "what": "Keeps the pale material off faces more than M outside the cup polygon, so tuft tips buried under the coat leave no streaks."
-      },
-      {
-       "option": "--trim-y Y0 Y1",
-       "what": "Fades the --trim-pins opening out with depth so the rear locks keep their tips."
-      },
-      {
-       "option": "--fork 2 (--fork-angle, --fork-len, --fork-from)",
-       "what": "Adds two short side points to each primary lock. They read as thorns at current sizes, so this is not recommended."
+       "option": "--plate-clip INSET, --tip-wedge, --tip-point FRAC",
+       "what": "Cut the old fan body to the outline inset, cut each wing end to a pointed V, and fade lock tips to true points."
       }
      ]
     },
     {
      "round": 13,
      "kept": true,
-     "approach": "Re-run the R03 lock system on head-0395 with broad pointed leaf locks and no needle tips, F8 restored, the pin locks skipped, three merged tuft locks blurred into one pale mass, a rounded cup rim, and a height warp that sinks the crown and raises the R wing top for the V tilt.",
-     "reason": "kept after freezing the untouched body regions (the pose refit had moved R08.10 on an identical body)",
+     "approach": "Re-run the R03 lock system on head-0395 with broad pointed leaf locks and no needle tips, the pin locks skipped, three merged tuft locks blurred into one pale mass, a rounded cup rim, and a height warp that sinks the crown so the V tilt reads.",
+     "reason": "kept after freezing the untouched body regions",
      "reusable": [
       {
-       "option": "--crown-sink S (--sink-u, --sink-ramp, --sink-y)",
-       "what": "Lowers the crown top by up to S figure heights with a smooth z shear of the field (fades out with depth in y). Locks follow the warp. Gives the V tilt without raising the figure."
+       "option": "--crown-sink S, --tilt-r LIFT, --cup-clip-smooth R",
+       "what": "Lower the crown by a smooth z shear, raise one wing's outer top, and round the cup rim."
+      }
+     ]
+    },
+    {
+     "round": 15,
+     "kept": true,
+     "approach": "Rebuilt the R03 lock system on head-0395 with broad pointed ridged leaf locks and sub-point forks, about 19 coat locks per side after a real --drop of the fill and rim locks, five separate unblurred pale pointed tuft locks, a steeper tip wedge, and blunt top tips so the figure height is stable across views.",
+     "reason": "",
+     "reusable": [
+      {
+       "option": "--drop NAMES",
+       "what": "Really leaves out the named locks, written without the side letter (P1, F4, M3, T2). The old --skip compares the digits only and never matched, so rounds 12 to 14 built every lock in the table. --skip is unchanged so older builds reproduce."
       },
       {
-       "option": "--tilt-r LIFT (--tilt-u, --tilt-y)",
-       "what": "Raises the R wing outer top by up to LIFT, growing from |x| .12 to .26 and fading out downward so the lower fan edge stays put. R lock roots and tips move with it."
+       "option": "--top-tip-floor V",
+       "what": "Tip-floor override for coat locks whose tip is on the top edge (tip y below .012). 1.0 gives a blunt, at least 1 px highest tip, so the figure top rasterizes the same row in every view. Sharp top tips made the check fail on height spread."
       },
       {
-       "option": "--cup-clip-smooth R",
-       "what": "Smooth maximum radius in the coat locks' cup clip. Rounds the cup rim instead of a hard vertical wall."
+       "option": "art/species-construction/loop/r03_lock_try.py NNNN key=value",
+       "what": "Rebuilds head-NNNN from head-0395 with head-0415's lock-system parameters plus JSON overrides, and writes the exact command to scratch-r15/cmdNNNN.json."
       },
       {
-       "option": "--tip-floor F",
-       "what": "Lowest value of the --tip-point fade. Together with a small --tip-min (.0015) and --ogive 1.35 .85 it gives broad pointed leaf locks with no needle tip."
+       "option": "parameter set (head-0440)",
+       "what": "ogive 1.2 1.0, section-p 1.8, width-scale 1.4, thick-scale 1.0, fork 2 with fork-len .3 and fork-angle 25, tuft-blur 0, tuft-width-scale 1.35, tuft-thick-scale .9, tuft-ogive 1.4 .8, tuft-fan 12, drop F1,F4,F5,F6,F7,M1,M3, top-tip-floor 1.0. It gives leaf locks with sub-points and a pale tuft of five separate pointed locks. Jitter .35 length made the fan too long (front head extra .063)."
+      }
+     ]
+    },
+    {
+     "round": 16,
+     "kept": true,
+     "approach": "Rebuilt the R03 lock system without forks or fill and rim locks (about ten broad, sharply pointed primaries per side) with a wider tuft fan and narrower top blades.",
+     "reason": "",
+     "reusable": [
+      {
+       "option": "R03_BASE and R03_SCRATCH env vars for art/species-construction/loop/r03_lock_try.py",
+       "what": "R03_BASE=0440 starts a lock-system build from that head's recorded parameters instead of head-0415; R03_SCRATCH names the log and command folder (for example scratch-r16). Each build can then chain from the previous head with only key=value overrides."
       },
       {
-       "option": "--skip with tuft names (T2,T4) plus --tuft-stack 0 --tuft-blur 2 --tuft-aim .25 --pale-smooth 8",
-       "what": "Three merged tuft locks that read as one soft pale mass converging on the cup's upper tip (cup cover about .8)."
+       "option": "art/species-construction/loop/top_scan.py PREVIEW_DIR...",
+       "what": "Scans the front-view silhouette of a quick preview: top-edge depth below the figure top per column (-.28 to .28 in figure heights), plus the figure height and ear span. Use it to read the crown, wing tops and tip heights without the critic."
+      },
+      {
+       "option": "parameter set (head-0455)",
+       "what": "fork 0, width-scale 1.45, ogive 1.3 1.5, tip-point .4, top-width .95, length-scale 1.04, wedge-u .2 .264, wedge-top-y -.01 .024, tuft-fan 24, tuft-aim .45, pale-cup-margin .011, drop F1..F9 and M1..M5. It gives about ten sharp leaf primaries per side with separate lower-edge points. Length 1.08 pushed the span to 1.025 of the sheet's; widths of 1.6 or more with a plain ogive blur the tips into smooth lobes."
       }
      ]
     }
    ],
-   "lastWorked": 13
+   "lastWorked": 16
   },
   "R04": {
    "name": "Ear fan rear and profile",
    "weight": 2.5,
-   "score": 5.0,
+   "score": 5,
    "results": {
     "R04.1": "pass",
     "R04.2": "pass",
@@ -463,167 +387,12 @@
     "R04.6": "pass",
     "R04.7": "fail"
    },
-   "issues": [
-    {
-     "region": "R04",
-     "summary": "The crown dome is a smooth shard-tiled cap with crease seams and no crown tuft, a smooth area several locks wide at the centre of the back view (R04.3, R04.7, R01.4)",
-     "evidence": "m04 head-back and m05 head-rear-oblique at 2x: the central cap spans about a quarter of the back width with vertical creases at its sides; r03 shows a spiky crown tuft at top centre with locks flowing down and out over the whole head mass.",
-     "fix": "Replace the dome tiles with 6 to 8 thin overlapping locks (about .003 to .004 of figure height thick, .03 to .05 long) that start at a small crown tuft at top centre and lie down and outward over the dome into the wing roots. Keep them flat to the surface and win back side-band area by trimming the profile slab ladder, so R04.2 stays under .06 (the thicker D coat in 0390 broke it).",
-     "fixability": 0.5
-    },
-    {
-     "region": "R04",
-     "summary": "The profile still reads as a front slab ladder with a rear column of cone tips, not a curved shell of locks around a cavity (R04.5)",
-     "evidence": "m04 head-side and m02 left at 2x: vertical slabs stand ahead of a picket of cone tips from the B1 edge row, slightly more prominent than in 0377; m01 left shows one curved shell sweeping up and back around a cupped hollow.",
-     "fix": "Rebuild the B1 edge row so its locks lie along the shell surface and follow the up-and-back sweep, with tips bent back about 30 to 45 degrees instead of standing out. Merge the front slabs into one continuous curved outer wall about .01 thick, and open the inner cavity so a dark hollow reads in profile over roughly a third of the fan height.",
-     "fixability": 0.4
-    },
-    {
-     "region": "R04",
-     "summary": "The back outline reads as a basin or mushroom cap: an even convex lower arc edged by a regular row of cone teeth (R04.3, R04.7)",
-     "evidence": "m02 back and m04 head-back against r03 and m01 back: the model's lower edge is one smooth arc from tip to neck lined with similar short cones; the references show wings that rise outward from the head, a waisted lower edge where they meet the head mass, and varied pointed locks along the rim.",
-     "fix": "Lift the wings' lower edge near the head so it rises about .02 to .03 of figure height from the head base toward the tips, leaving a visible notch where each wing meets the head dome. Replace the uniform cones with lock points of varied length (.01 to .02) that point down and out, and keep the back width at .20 within 1.15x (now 1.048).",
-     "fixability": 0.5
-    }
-   ],
+   "issues": [],
    "attempts": 3,
    "anchorScore": 5,
    "parked": true,
    "parkReason": "3 rounds without a net gain of 1",
-   "history": [
-    {
-     "round": 6,
-     "kept": true,
-     "approach": "The ear fan's rear is rebuilt as the R04 spec's 114-lock table (T, B1, B2, B3 per wing, dome coat D, crown tuft C) swept as tapered half-lens tubes over a rear plate cut to the depth plan and a section-dome cut of the front lip, all smooth-unioned in one OpenVDB field.",
-     "reason": "",
-     "reusable": [
-      {
-       "option": "art/species-construction/loop/r04_table.py",
-       "what": "Parses the lock tables of specs/R04.md into art/species-construction/specs/r04_locks.json (114 rows: root, tip, length, widths, thickness, directions, depths) so a rebuilt spec regenerates the table without hand copying."
-      },
-      {
-       "option": "author_rear_lock_table_field.py (base run, --plate N --dome-cut)",
-       "what": "Field-space builder that turns the lock table into the fan's rear: plate cut to the spec depth plan minus N (faded in from the ear-root crease), section-dome cut of the front lip and rim, then every lock as a tapered half-lens on a cubic axis, one smooth union, one meshing, single-solid gate."
-      },
-      {
-       "option": "--front-margin M (default .012)",
-       "what": "Clips wing locks (T, B1, B2, B3) behind the wall's front surface, read from the field as a heightfield with outside columns filled from the nearest wall; stops lock bases poking out of the cup front and edges as slabs (the cause of the ladder in profile)."
-      },
-      {
-       "option": "--cap, --tip-taper, --taper-exp, --tip-min",
-       "what": "Lock base reach tapered to nothing at the tip, thickness tied to width so tips are not blades, width-fall exponent (1.0 straight blade, spec 1.4), and the smallest tip half width and thickness; these shape how soft the locks read."
-      },
-      {
-       "option": "--width-scale, --thick-scale, --t-scale, --d-thick, --d-length, --d-lift, --c-lift, --lock-blend, --blend",
-       "what": "Per-row scales and blends: global lock width and thickness, extra scale on the top-edge row T, dome coat thickness, length and relief, crown tuft root raise; 1.3x width with blend .010 fused locks into scalloped leaves (head-0317), 1.12x with .006 kept them as locks (head-0318)."
-      },
-      {
-       "option": "--cut-smooth R",
-       "what": "Box blur (3 passes, radius R voxels) applied only where the plate or dome cut changed the field, so cut surfaces are not flat planes with wood-grain voxel stepping."
-      },
-      {
-       "option": "--max-island N",
-       "what": "Removes closed islands of at most N vertices before the single-solid gate and records them in rear-lock-table.json."
-      },
-      {
-       "option": "loop/shade_head_views.py",
-       "what": "Custom-camera orthographic shaded head views (--view name:target:scale:offset), for oblique looks at the fan's rear, outer end and top that shade_head_fan.py's fixed set lacks."
-      }
-     ]
-    },
-    {
-     "round": 8,
-     "kept": false,
-     "approach": "Rebuild the R04 rear lock table straight onto head-0333 (R03 front kept, no dome cut) with longer staggered point-ended locks that sink into the next row, a lowered crown dome under a raised tuft, and a dome coat set back so the profile rear does not grow.",
-     "reason": "lost credit in R01 8.1 to 6.9; weighted mean -0.064",
-     "reusable": [
-      {
-       "option": "author_rear_lock_table_field.py --len-scale ROW=k,... and --len-jitter f",
-       "what": "Lengthen the tips of whole rows (for example B2=1.25,B3=1.3,C=1.2) so tips cover the next row's roots, and add deterministic per-lock length jitter on rows T, B2 and B3 so rows do not end on one line."
-      },
-      {
-       "option": "--tip-sink S (with --sink-rows) and --depth-jitter J",
-       "what": "Dive the crest of inner-row locks toward their tips so they dissolve into the surface instead of ending in a ledge, and shift T, B2 and B3 locks forward by 0 to 2J (never rearward) so crests do not stack in a column in profile."
-      },
-      {
-       "option": "--tip-point F, --tip-flat, --tip-back ROW=v, --root-in ROW=v, --row-width ROW=k",
-       "what": "Make tips true points over the last fraction F of length instead of rounded needles. Flatten or shift B1 tip and root depths (--tip-flat, --tip-back, --root-in), and scale width per row (--row-width), for example D=1.2,C=1.3."
-      },
-      {
-       "option": "--crown-lower L, --crown-width, --crown-df, --dome-setback S",
-       "what": "Lower the crown dome by warping the field in z, with no flat cut and no stepping, so the tuft clears it. The crown tuft root follows the lowered dome. --dome-setback cuts the rear dome back by S and lowers dome-coat locks by the same amount, so coat relief does not grow the profile rear. The fit centers each view on its widest head row, so a one-pixel rear change can swing left head IoU by .015."
-      },
-      {
-       "option": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/scratch/r8/try.sh, s1b.sh, views.sh",
-       "what": "Untracked harness: a head-0333-based coarse (.005 voxel) build plus quick silhouette numbers in about 45 s (try.sh); the head-0281-based rear build (s1b.sh, SRC= selects the base); and six fixed shaded head views (views.sh). Useful for tuning R04 parameters before a five-minute full-resolution build."
-      }
-     ]
-    },
-    {
-     "round": 9,
-     "kept": false,
-     "approach": "Rebuilt the R04 rear on head-0333 after removing the old head-0318 crease and dome locks (plate cut held full inside the crease, dome rear replaced by a blurred valley-filled surface), then longer staggered point-ended locks rooted deeper and leaning back, a thinned wide B3 row, and a sparse rounded dome coat.",
-     "reason": "R04 checklist 5 to 5; lost credit in R01 8.1 to 6.9; weighted mean -0.047",
-     "reusable": [
-      {
-       "option": "--plate-fade A B with A below the crease (for example -.03 -.003)",
-       "what": "Makes the plate cut reach full weight just inside the crease, so old rear locks left in the fade zone are removed. This was the source of the profile zipper of teeth. It was an existing option; the value is new."
-      },
-      {
-       "option": "--shave-dome R with --shave-fill, --shave-replace, --shave-off, --shave-ymax",
-       "what": "Replaces the head dome's rear with a masked box blur (radius R in voxels, so 24 at .0025 and 12 at .005) of its own rear heightfield, filling valleys and cutting peaks. It removes old dome shards and leaves no voxel terraces. The D coat and crown tuft then lie on the smoothed, sub-voxel-smoothed surface. --shave-off sets how far behind the blurred surface it sits (figure units). --shave-ymax sets where it fades out toward the nape."
-      },
-      {
-       "option": "--plate-outer F",
-       "what": "Reduces the plate depth toward the wing tips (ramp u .17 to .24) by fraction F, so a deep plate (.024) does not pierce the thin outer wall."
-      },
-      {
-       "option": "--thin ROW=k (for example B3=2,D=2) with --row-width and --len-scale",
-       "what": "Keeps every k-th lock of a row per wing, so the survivors can be widened or lengthened to read as larger shingles."
-      },
-      {
-       "option": "--yaw ROW=v (for example B2=.012,B3=.012,T=.008)",
-       "what": "Moves the root of each lock forward by v (figure units) while the tip stays, so locks sweep back out of the plate. This replaces the blunt rectangular profile teeth with shingles."
-      },
-      {
-       "option": "--d-ymax, --d-skip, --c-tip-raise",
-       "what": "Drop dome-coat locks below a figure y or by name (the nape spikes and holes of round 8). Raise the crown tuft tips (figure units). The tuft costs silhouette IoU, so keep the raise small."
-      },
-      {
-       "option": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/scratch/r9/try.sh, s1b.sh, views.sh, grid.py, c13.txt",
-       "what": "Untracked harness: a head-0333-based coarse build (--voxel .005) plus quick silhouette numbers including front missing in about 50 s. Fixed six-view shaded renders, a montage tool, and the final parameter set. full_params3.txt holds the exact parameters of head-0363."
-      }
-     ]
-    },
-    {
-     "round": 11,
-     "kept": true,
-     "approach": "Re-cut the ear fan's rear plate on the baseline head outside the crease and rebuild only the T, B1, B2, B3 wing locks from the R04 table as longer, staggered, point-ended locks that rise out of the plate, with an outline guard, leaving the baseline dome coat, crown and neck untouched, then restore the baseline's per-polygon pale-ear materials.",
-     "reason": "kept on the critic verdict (better) with no region losing credit; no R04 criterion moved",
-     "reusable": [
-      {
-       "option": "author_rear_lock_table_field.py --dir-jitter DEG --dir-jitter-rows ROWS",
-       "what": "Turns each listed wing lock's tip about its root by a deterministic angle within plus or minus DEG, so tips do not line up in a zipper."
-      },
-      {
-       "option": "author_rear_lock_table_field.py --jitter-rows ROWS, --row-len-jitter ROW=f, --row-dir-jitter ROW=deg, --jitter-seed TEXT",
-       "what": "Chooses which rows take the length jitter, sets per-row jitter amplitudes (for example B1=.2) and draws a different deterministic layout."
-      },
-      {
-       "option": "author_rear_lock_table_field.py --edge-guard D --guard-rows ROWS",
-       "what": "Retreats lengthened or jittered lock tips toward the spec tip until they lie D inside the sheet outline. Without it, B2 at 1.2x length and B1 jitter dropped front head IoU to .8885 and back to .9089."
-      },
-      {
-       "option": "carry_materials_field.py --scene <rebuilt head.blend> --source <earlier head.blend> --out <dir>",
-       "what": "Copies per-polygon materials from an earlier head onto a field-rebuilt skin by nearest polygon without changing geometry. Run it after any field stage on a head that carries the pale inner-ear coat, or the tufts go grey."
-      },
-      {
-       "option": "Lesson for the rear lock script",
-       "what": "With plate .014, a yaw or tip-back larger than about .010 buries the lock under the plate. tip-sink and depth-jitter push crests forward of the wall clip and leave flat slabs and rectangular teeth in profile. A thicker D coat with a raised C tuft grows the side band past R04.2."
-      }
-     ]
-    }
-   ],
+   "history": [],
    "lastWorked": 11
   },
   "R05": {
@@ -641,24 +410,21 @@
    "issues": [
     {
      "region": "R05",
-     "summary": "Neck is still a pinched stem under the jaw with a lit collar ring at the head base and a step at the nape (R05.4 and the rear half of R05.6 fail).",
-     "evidence": "m06 neck-front, neck-profile, neck-rear (2x): unchanged from 0320; build.json notDone says these sit in the head stub (neck_warp.HEAD depth ramp) and the assembly seam window, which a body-only round cannot reach.",
-     "fix": "Run a head-component round: remove the depth-ramp step at z .465 to .477 by blending the head stub into the body neck over about .03 world, ease the under-jaw curve so it meets the neck with a radius of about .03 of figure height instead of a sharp inward hook (neck about .01 wider each side at the jaw line), and shift the neck column forward about .007 world in profile so the nape step closes.",
-     "fixability": 0.55
+     "summary": "Neck is still a pinched stem under the jaw with a lit collar ring at the head base and a step at the nape (R05.4, R05.6); this sits at the head-body join, which a body-only order cannot reach.",
+     "fix": "From the body side only: widen the body neck top at the join by about .01 each side and fill the nape step so the head stub meets a fuller neck; do not cut the shoulders again.",
+     "fixability": 0.45
     },
     {
      "region": "R05",
-     "summary": "From behind the shoulders still read as a square yoke: flat top, near right-angle corners and a horizontal crease ledge across both shoulders at cap base.",
-     "evidence": "m02 back (3x) and m03 turn-180 (4x): the dark pockets of 0320 are gone but a crease line now runs across the back below the flat top from cap to cap.",
-     "fix": "Fair the back top from the neck base to each cap as one convex falling arc: drop the outer back corner about .01 to .015 of figure height at |x| .20 to .24 and fill the crease with a wider blur (sigma about .02 instead of .012) across |x| .12 to .24, from the arm root to about .03 above it.",
-     "fixability": 0.7
+     "summary": "From behind the shoulders still read as a square yoke: flat top, near right-angle corners and a horizontal crease ledge across both shoulders.",
+     "fix": "Fair the back top from the neck base to each cap as one convex falling arc: drop the outer back corner about .01 to .015 of figure height at |x| .20 to .24 and fill the crease with a wider blur (sigma about .02) across |x| .12 to .24. Round 13's roof cut added ledges and nubs on the upper arms; avoid cutting.",
+     "fixability": 0.6
     },
     {
      "region": "R05",
      "summary": "In profile the shoulder cap is a flat-topped pale slab with a square front-top corner rather than a rounded cap.",
-     "evidence": "m06 neck-profile (2x) and m02 left: the pointed rear knob is gone, but the cap top is a level plateau ending in a hard corner at the front.",
-     "fix": "Round the cap top in profile into a dome of radius about .035 of figure height, lowering the front-top corner about .008 and blending its front face into the chest plane over about .02.",
-     "fixability": 0.7
+     "fix": "Round the cap top in profile into a dome of radius about .035 of figure height with the convex rounding max(field, blur(field)), lowering the front-top corner about .008 and blending its front face into the chest plane over about .02.",
+     "fixability": 0.6
     }
    ],
    "attempts": 2,
@@ -669,48 +435,28 @@
     {
      "round": 7,
      "kept": true,
-     "approach": "Planed the shoulders with a signed-distance cut of the sheet's neck-to-cap outline (domed across depth) plus a monotone back plane that shaves the cap's rear bulge, then blurred only where the field moved and meshed once.",
+     "approach": "Planed the shoulders with a signed-distance cut of the sheet's neck-to-cap outline plus a monotone back plane that shaves the cap's rear bulge, then blurred only where the field moved and meshed once.",
      "reason": "",
      "reusable": [
       {
-       "option": "art/species-construction/shape_neck_shoulders_field.py (new script; --spec overrides NS keys outline, cutBlend, lift, back, fill, blurSigma, blurPasses, changeScale, box)",
-       "what": "Field-space neck and shoulder reshape. A target outline polygon (fit units) is converted to a world (|x|, z) region and everything above it is removed by a smooth-max with its signed distance, extruded through depth. lift domes the cut across depth. back plane shaves rear bulges so the rearmost surface falls outward from the spine. fill is a fill-only blur box. A blur weighted by how far the field moved removes any crease. Outline points, blends and lifts are all options, so later rounds can move the top line or neck base without rewriting it."
+       "option": "art/species-construction/shape_neck_shoulders_field.py",
+       "what": "Field-space neck and shoulder reshape from a target outline polygon."
       },
       {
        "option": "art/species-construction/loop/shade_shoulders.py",
-       "what": "Body-only (optionally with the head placed as the assembly does) Workbench renders of the shoulders and neck from front, back, left, rear three-quarter, neck-rear, neck-profile and neck-q, each with a grazing pass. Used to read caps, ledges and pockets before assembling."
+       "what": "Body-only Workbench renders of the shoulders and neck."
       }
      ]
     },
     {
      "round": 13,
      "kept": false,
-     "approach": "Re-cut the shoulder plateau of body-0400 in field space with a roof (the cut boundary falls .03 to .045 toward the front and back faces while a cutShift keeps the crest at the sheet outline), then fill the chest-to-cap groove and round the remaining convex edges with a small blur, so the shoulder top is a dome from behind and in profile instead of a flat plate with a hard rear edge.",
-     "reason": "critic verdict worse: the neck ring, nape step and stem pinch untouched; new ledge and corner nubs on the upper arms; R05 5.8 to 5",
+     "approach": "Re-cut the shoulder plateau in field space with a roof, then filled the chest-to-cap groove and rounded the caps.",
+     "reason": "critic verdict worse: neck untouched; new ledge and corner nubs on the upper arms; R05 5.8 to 5",
      "reusable": [
       {
-       "option": "shape_neck_shoulders_field.py --spec {\"lift\":{\"c\":negative}, \"cutShift\":...}",
-       "what": "A negative lift c turns the cut's lift into a roof: the allowed top falls toward the front and back faces, so the plateau becomes a dome from behind and in profile. cutShift (world, default 0) raises the whole cut boundary to offset the smooth-max's inward bias (about blend/4) when re-cutting an already cut body, so the crest stays on the outline."
-      },
-      {
-       "option": "shape_neck_shoulders_field.py --spec {\"cutEnable\":false}",
-       "what": "Skips the silhouette cut so a pass can only fill or round (back.enable false likewise skips the back plane). Defaults keep earlier runs reproducible."
-      },
-      {
-       "option": "shape_neck_shoulders_field.py --spec {\"round\":{\"enable\":true,\"sigma\":..,\"x\":..,\"y\":..,\"z\":..,\"fade\":..,\"dilate\":..,\"more\":[..]}}",
-       "what": "Convex rounding max(field, blur(field)) inside a weighted box: melts hard edges into a dome of radius about sigma without a seam. dilate gives back the thickness the blur takes from convex limbs; more is a list of extra rounding boxes. A second, wider box at the cap corner (body-0414) made a squared step and is not recommended."
-      },
-      {
-       "option": "shape_neck_shoulders_field.py --spec {\"fill\":{\"enable\":true,...}}",
-       "what": "Existing fill-only blur min(field, blur(field)) now shares a band helper; used here at sigma .02 over |x| .09 to .27, y -.13 to -.03, z .27 to .40 to close the chest-to-cap groove."
-      },
-      {
-       "option": "loop/shade_shoulders.py --cavity",
-       "what": "Adds Workbench cavity (ridges and valleys) to the shoulder and neck shade renders to expose creases."
-      },
-      {
-       "option": "loop_tools.py posed <assembly> --out <packet>/posed --pose <baseline posed-pose.json> (no --refit), then packet",
-       "what": "Measures a packet on the baseline's pose when the fit refit lands in a worse optimum on an unchanged region; the refit noise on this model is about .03 on R08.10 and .05 on the head band."
+       "option": "shape_neck_shoulders_field.py --spec {\"cutEnable\":false} and {\"round\":{...}}",
+       "what": "Skip the silhouette cut so a pass only fills or rounds; convex rounding max(field, blur(field)) inside a weighted box melts hard edges into a dome without a seam."
       }
      ]
     }
@@ -736,125 +482,74 @@
    "issues": [
     {
      "region": "R06",
-     "summary": "In profile the trunk has almost no rib-cage-to-waist depth change: side chest over waist 1.097 against the sheet 1.539 (R06.7 .713), waist run 1.267x the sheet (R06.6), so R06.9 fails.",
-     "fix": "Deepen the rib cage at .30 to .36 of figure height mainly on the back (dorsal swell about .010 to .012) plus at most .005 forward so R06.8 (now -.0006, limit .01) stays in band, taking side chest depth at .32 from about .113 to .128; with R07, carry the hanging arm about .02 forward at .42 to .44 so the waist run measures the trunk (section depth .0927), not the arm.",
-     "fixability": 0.5,
-     "evidence": "measured.json R06.6, R06.7, R06.8; m02 left crop; build.json notPassed."
+     "summary": "In profile the trunk has almost no rib-cage-to-waist depth change: side chest over waist 1.097 against the sheet 1.539 (R06.7), waist run 1.267x the sheet (R06.6), so R06.9 fails.",
+     "fix": "Deepen the rib cage at .30 to .36 of figure height mainly on the back (dorsal swell about .010 to .012) plus at most .005 forward so R06.8 stays in band, taking side chest depth at .32 from about .113 to .128.",
+     "fixability": 0.5
     },
     {
      "region": "R06",
-     "summary": "A faint horizontal band still crosses the lower belly at the old pelvis ledge height in the front and side views (R06.9 belt line, R06.3 flaw, R12.3).",
+     "summary": "A faint horizontal band still crosses the lower belly at the old pelvis ledge height in the front and side views (R06.9, R06.3).",
      "fix": "Smooth the front and flank surface over a band about .03 of figure height centred on the old ledge (fit about .47 to .48) with a gaussian of sigma about .01, keeping the half-width anchors.",
-     "fixability": 0.7,
-     "evidence": "m06 trunk-front and m02 left, contrast stretched at 2x to 5x."
+     "fixability": 0.7
     },
     {
      "region": "R06",
-     "summary": "From the front the waist pinches into a sharp hourglass and the rib cage and hips read narrow beside the sheet: posed front trunk half IoU .746 with .21 missing, orange strips along the chest flank and outer hip in posed-fit.png.",
-     "fix": "Keep the waist at .131 but soften the pinch: widen the lower rib cage at .34 to .40 by about .005 per side and the outer hip and upper thigh at .50 to .56 by about .008 to .01 per side, so the waist-to-hip curve spans about .08 of height instead of .05.",
-     "fixability": 0.6,
-     "evidence": "posed/posed-fit.png front, posed/posed-fit.json front half trunk, measurements.json front hips .73, m06 trunk-front against m01 front."
+     "summary": "From the front the waist pinches into a sharp hourglass and the rib cage and hips read narrow beside the sheet (posed front trunk half IoU .746).",
+     "fix": "Keep the waist width but soften the pinch: widen the lower rib cage at .34 to .40 by about .005 per side and the outer hip and upper thigh at .50 to .56 by about .008 to .01 per side.",
+     "fixability": 0.6
     }
    ],
-   "attempts": 2,
+   "attempts": 3,
    "anchorScore": 4,
-   "parked": false,
-   "parkReason": null,
+   "parked": true,
+   "parkReason": "3 rounds without a net gain of 1",
    "history": [
-    {
-     "round": 3,
-     "kept": false,
-     "approach": "Field-space resample of the trunk onto the R06 side station table plus a flank half-width resample and a belt blur, via the new reshape_torso_field.py.",
-     "reason": "critic verdict worse (new horizontal bands)",
-     "reusable": [
-      {
-       "option": "art/species-construction/reshape_torso_field.py",
-       "what": "Field-space trunk reshape from a station table (y pass, x pass, optional beltBlur)."
-      },
-      {
-       "option": "art/species-construction/loop/r06_rows.py",
-       "what": "Prints R06.6 to R06.8 and per-row left-view trunk rows beside the sheet and the spec target from a preview or render."
-      }
-     ]
-    },
-    {
-     "round": 4,
-     "kept": true,
-     "approach": "Redo round 3's field-space trunk reshape with the banding sources removed: a smoothstep y map between the edges, smoothed displacement tables faded after smoothing, a gentler rump table, no wide belt blur, and a smoothed x pass.",
-     "reason": "",
-     "reusable": [
-      {
-       "option": "reshape_torso_field.py spec.smoothMap + spec.dispSigma + spec.halfWidth.sigma",
-       "what": "Smoothstep blend and smoothed displacement and half-width tables, which removed round 3's bands. Off by default."
-      },
-      {
-       "option": "art/species-construction/specs/torso-reshape-r06-v5.json",
-       "what": "Working spec for body-0288."
-      },
-      {
-       "option": "art/species-construction/loop/shade_torso.py and trunk_profile.py",
-       "what": "Grazing-light trunk renders and a ray-cast profile difference tool that find bands and steps before assembling."
-      }
-     ]
-    },
     {
      "round": 9,
      "kept": false,
-     "approach": "Re-ran the field-space trunk reshape three times on body-0325 with model rows measured live by ray casts (a lumbar-hollow y pass, then two x-only passes with a smoothed per-slice scale and a narrow belt blur) so the waist-to-hip shelf becomes one continuous flank.",
-     "reason": "R06 checklist 4 to 3.5; lost credit in R06 4 to 3.5, R10 4.2 to 3.3; weighted mean -0.136",
+     "approach": "Re-ran the field-space trunk reshape three times with ray-cast model rows (a lumbar-hollow y pass, two x-only passes and a narrow belt blur).",
+     "reason": "R06 4 to 3.5 (side waist thinned); tail dent R10 4.2 to 3.3",
      "reusable": [
       {
-       "option": "art/species-construction/loop/trunk_measure.py",
-       "what": "Blender script that ray-casts a body.blend and writes, per fit row, the x=0 front and back edge, the tail-free strip front and back, and the left and right trunk half width. It gives live model rows so a reshape spec does not depend on a stale measurement."
-      },
-      {
-       "option": "art/species-construction/loop/make_torso_spec.py",
-       "what": "Writes a reshape_torso_field spec from a trunk_measure JSON: dense measured model rows, edge targets in the ray frame (silhouette frame is about .0035 forward of it), and a monotone-cubic flank target. Flags: --sigma-m, --sigma-t, --sigma-r, --x-only (y pass becomes the identity), --belt-blur."
-      },
-      {
-       "option": "reshape_torso_field.py halfWidth.sigmaM / sigmaT / sigmaRatio",
-       "what": "Opt-in keys on the x pass. sigmaM and sigmaT smooth the model and target half width separately; sigmaRatio smooths the per-slice scale (source over target half width), which removes the horizontal ripple bands a sharp measured table produces. Defaults keep earlier specs reproducible."
-      },
-      {
-       "option": "art/species-construction/specs/torso-reshape-r06-v6.json, v6a, v6b and v6c",
-       "what": "The working specs: v6a is the first pass with the hollow, v6b and v6c are x-only second and third passes. v6c adds beltBlur at fit .495 (z -.005 to -.035, sigma .012). Run x-only from body-0325 for the shelf fix without touching the back edge."
+       "option": "art/species-construction/loop/trunk_measure.py and make_torso_spec.py",
+       "what": "Ray-cast trunk rows and a reshape spec generated from them."
       }
      ]
     },
     {
      "round": 10,
      "kept": true,
-     "approach": "Flank-only x pass on body-0325 (no y pass, back edge untouched): a short z blur at the pelvis ledge, then the half width is re-measured from the field and mapped onto a smooth waist-to-hip ramp, faded out behind the trunk so the tail root stays put.",
+     "approach": "Flank-only x pass on body-0325 (no y pass, back edge untouched): a short z blur at the pelvis ledge, then the half width re-measured from the field and mapped onto a smooth waist-to-hip ramp, faded out behind the trunk so the tail root stays put.",
      "reason": "",
      "reusable": [
       {
-       "option": "reshape_torso_field.py spec.skipYPass",
-       "what": "Leaves out the y pass so a flank-only edit does no resampling at all."
+       "option": "reshape_torso_field.py spec.skipYPass, halfWidth.yWeight, halfWidth.preBlur, halfWidth.autoM",
+       "what": "Flank-only edits with no resampling, faded out behind the trunk so the tail root stays put; use zFade .07 on preBlur."
+      }
+     ]
+    },
+    {
+     "round": 15,
+     "kept": false,
+     "approach": "Small-delta field-space trunk reshape on body-0426: a dorsal swell and slight forward chest plane on the rib cage (y pass, rows .26 to .40, waist untouched), a hip flare (x pass, rows .46 to .62) and a short lower-belly z blur.",
+     "reason": "critic verdict same; R06 checklist 4.5 to 4.5; weighted mean +0",
+     "reusable": [
+      {
+       "option": "art/species-construction/loop/make_torso_spec_r15.py",
+       "what": "Writes a reshape_torso_field.py spec from two trunk_measure.py outputs of the live body, applying only small per-row deltas (back and front edge deltas for the rib cage, hip half-width deltas for the flank), so rows with no delta stay unchanged. Edit the BACK, FRONT and HIP tables to rerun."
       },
       {
-       "option": "reshape_torso_field.py halfWidth.yWeight [full, zero]",
-       "what": "Fades the x map to the identity behind a world y so a flank pass leaves the tail root where it was."
+       "option": "art/species-construction/specs/torso-reshape-r06-v8.json",
+       "what": "Spec for the delta approach on body-0426 (y pass with smoothMap, rows .26 to .42 faded out by .43, autoM flank pass fading in at .46 to .49 and out at .58 to .61, preBlur at the lower belly)."
       },
       {
-       "option": "reshape_torso_field.py halfWidth.preBlur {zRange, zFade, sigma, xPad, xFade}",
-       "what": "A z Gaussian blend of the flank before the x map, weighted so it stops short of the arms. Use a wide zFade (.07 world); .02 left thin lines at the blur edges."
-      },
-      {
-       "option": "reshape_torso_field.py halfWidth.autoM",
-       "what": "Measures the model half width per slice from the field itself (after preBlur) instead of the table's model column, so a stale ray measurement cannot mismatch."
-      },
-      {
-       "option": "make_torso_spec.py --skip-y --y-weight --auto-m --pre-blur --hw-anchors",
-       "what": "Flags that write those options and a custom flank target into a spec."
-      },
-      {
-       "option": "art/species-construction/specs/torso-reshape-r06-v7d.json",
-       "what": "The working spec for body-0369; v7, v7b and v7c record the rejected variants."
+       "option": "pose-cache copy",
+       "what": "To reuse the baseline pose in 'loop_tools.py packet' for a new body, copy untracked/species-construction/akinza/pose-cache/<baseline body>/ to pose-cache/<new body>/ before running packet, so the greedy refit is skipped."
       }
      ]
     }
    ],
-   "lastWorked": 10
+   "lastWorked": 15
   },
   "R07": {
    "name": "Arms and forepaws",
@@ -871,27 +566,27 @@
    "issues": [
     {
      "region": "R07",
-     "summary": "From the front the forepaw is only as wide as the wrist, and its claws show as one stacked needle, so it still reads as a small knob (R07.5 and R07.3 partial).",
-     "evidence": "m02 front silhouette: paw 18 to 19 px against a 17 to 18 px wrist. m07 forepaw-profile (5x): straight conical claws off-centre under the fronts of the lobes.",
-     "fix": "Thicken the paw edge-on from about .032 to .036 fit (lobeThickRadius .0295 to about .033 world, tip .0265 to about .031), hold that to 85 percent of the paw length and end in one round. Move each claw base onto its lobe's tip axis (insetS .006 to about .002), raise the claw bend from .45 to about .8, and fan the lobe tips about .004 apart so claw tips separate in the front view.",
-     "fixability": 0.7
+     "summary": "In the front view the claws sit in one vertical column on the inner corner and read as a single serrated hook. In profile they are thin straight needles under the lobes, and the edge-on lobes show as horizontal bands (R07.3, R07.5).",
+     "evidence": "m07 forepaw-front at 2x (three hooks stacked on the inner edge, two horizontal bands across the lower paw); m07 forepaw-profile at 2x (four straight needles angled down and back); r02 forepaw outer and side views (claws spread across the tip, each a thick curved hook)",
+     "fix": "Fan the lobe tips sideways as well as palmward: add about .005 to .007 of lateral offset between neighbouring lobe tips (outer lobe outward, inner lobe inward), so the four tips spread across about .03 of the front-view paw width instead of lying front to back. Thicken each claw base from needle width to about .004 and shorten it to about .010 to .012, with the bend raised from .8 to about 1.2, so it reads as a curved hook in profile. Widen the lobe-groove blend on the back of the paw so the grooves stop showing as horizontal bands edge-on.",
+     "fixability": 0.6
     },
     {
      "region": "R07",
-     "summary": "The upper arm and forearm carry horizontal shading rings at the rod stations, and the forearm swell reads as a separate bump from behind.",
-     "evidence": "m07 forearm-profile: two rings on the upper arm and one above the elbow; m02 left, back and right show the same banding.",
-     "fix": "Build with stationSmoothing on (a C1 radius spline through the rod stations). Lower the forearm swell from .004 to about .002 each side and widen its blend from .03 to about .045.",
-     "fixability": 0.8
+     "summary": "The top of the upper arm is still a pale flat-topped slab with a straight front edge and a square top corner where it meets the shoulder cap (R07.1).",
+     "evidence": "m02 left at 7x, contrast stretched; m06 neck-profile (the same slab); build.json notDone: the native cap and its flat top were left untouched",
+     "fix": "Round the upper arm top in profile into a dome of radius about .035 of figure height: lower the front-top corner about .008, blend the arm's front face into the chest plane over about .02, and carry the round upper-rod section up into the cap so no straight vertical edge remains above about .26 of figure height. Coordinate with R05, which owns the cap.",
+     "fixability": 0.6
     },
     {
      "region": "R07",
-     "summary": "R07.6 posed arm band still fails (.846 after the per-model refit), and the m07 forepaw-front camera still aims at the old paw position.",
-     "evidence": "packet posed/posed-fit.json (refit); posed-fit.png front: the sheet's elbow and forearm are not covered. m07 forepaw-front: the paw is cut off at the frame edge.",
-     "fix": "Set the arms-down elbow further out so the posed elbow reaches the sheet's (front x about -.189 at y .39): upper arm from 22 to about 26 degrees from vertical. Re-aim the forepaw-front camera in docs/design/species-construction/akinza/loop/cameras at the new paw (world about .371, -.119, -.208).",
-     "fixability": 0.5
+     "summary": "R07.6 posed arm band .8699 against .90 is held back by the front half (.767, missing .194): the sheet's elbow sits further out and its forearm fills more of the arm loop.",
+     "evidence": "posed/posed-fit.json halves: front .767, left .923, back .919. posed/posed-fit.png front: orange along the outer upper arm and elbow and inside the arm loop along the forearm, blue on the inner upper arm",
+     "fix": "Raising the upper arm to 26 degrees lost fit (body-0446 .8597), so test a posed-only refit first: about 4 to 6 degrees more shoulder abduction, with the elbow flexed a few degrees further in the sheet pose, moving the posed elbow about .01 outward. If the front half still misses, thicken the forearm by about .003 per side between the elbow and mid forearm, as the orange inside the loop suggests.",
+     "fixability": 0.4
     }
    ],
-   "attempts": 1,
+   "attempts": 2,
    "anchorScore": 5.8,
    "parked": false,
    "parkReason": null,
@@ -899,57 +594,53 @@
     {
      "round": 5,
      "kept": true,
-     "approach": "Field-space arm rebuild: opening-based trunk-only removal of the native arm, then an analytic round limb with an olecranon, forearm swell, wrist taper and a four-lobe mitten paw with claws from the lobe tips, joined to the trunk by a smooth-min fillet and a deltoid cap.",
+     "approach": "Field-space arm rebuild: trunk-only removal of the native arm, then an analytic round limb with an olecranon, forearm swell, wrist taper and a four-lobe mitten paw with claws from the lobe tips.",
      "reason": "",
      "reusable": [
       {
        "option": "art/species-construction/rebuild_arms_field.py (ARM dict, --spec overrides)",
-       "what": "Rebuilds both arms and forepaws in field space from S, E, W, T chain parameters and records armJoints in fairing.json."
-      },
-      {
-       "option": "ARM.stationSmoothing (default 0)",
-       "what": "Gaussian-smooths the forearm and paw radius profile to remove shading rings. Untested end to end."
-      },
-      {
-       "option": "loop_tools.py cmd_posed reads armJoints from the body's fairing record",
-       "what": "Poses on the body's analytic arm joints instead of derive_joints."
-      },
-      {
-       "option": "art/species-construction/loop/shade_arms.py",
-       "what": "Workbench arm and forepaw closeups from a body glb or blend."
+       "what": "Rebuilds both arms and forepaws in field space and records armJoints in fairing.json."
       }
      ]
     },
     {
      "round": 11,
      "kept": false,
-     "approach": "Re-ran the field-space arm rebuild on body-0369 with a single smoothed station rod for the upper arm, a thicker mitten paw with curved claws re-based onto the lobe tips, and the native shoulder and armpit kept untouched.",
-     "reason": "critic verdict same; R07 checklist 5.8 to 5.8; posed arm band .874 to .8445 and new pits between the forepaw lobes",
+     "approach": "Re-ran the arm rebuild with a single smoothed station rod for the upper arm, a thicker mitten paw with curved claws re-based onto the lobe tips, and the native shoulder kept untouched.",
+     "reason": "critic verdict same; posed arm band .874 to .8445 and new pits between the forepaw lobes",
      "reusable": [
       {
        "option": "rebuild_arms_field.py upperRod",
-       "what": "Single capped station rod from S to E whose radius profile is smoothed by stationSmoothing. It replaces the two smin-joined capsules, whose joint left a faint ring."
+       "what": "Single capped station rod from S to E smoothed by stationSmoothing; removes the station rings."
       },
       {
-       "option": "rebuild_arms_field.py deltoid null, removeZ fade, keepNativeAbove, fusionByRemoval, fusionBlend (true or 'native')",
-       "what": "Rebuild an arm on a body whose shoulders were reshaped after the first arm rebuild, without adding material at the shoulder. 'native' blends w*smin(trunk, arm, k) + (1-w)*native, with w the removal weight. The shipped recipe is specs/arms-r07-v7.json."
+       "option": "loop/posed_arm_quick.py and loop/mesh_delta.py",
+       "what": "Posed arm IoU without assembling, and a check that an arm rebuild moved nothing outside the arm."
+      }
+     ]
+    },
+    {
+     "round": 16,
+     "kept": true,
+     "approach": "Re-ran the field-space arm rebuild on body-0426 with the smoothed single upper-arm rod and native shoulder kept, a thicker mitten forepaw with softened lobe grooves, and four claws based on each lobe's tip axis and fanned palmward so their tips separate in the front view.",
+     "reason": "",
+     "reusable": [
+      {
+       "option": "rebuild_arms_field.py ARM['clawEach'] (per-claw tiltDeg, length, bend, baseOutward)",
+       "what": "Per-claw lists that tilt each forepaw claw palmward from the paw axis and change its length, bend and base offset, so the four claw tips separate in the front view; None keeps earlier runs exact."
       },
       {
-       "option": "loop/posed_arm_quick.py",
-       "what": "Posed arm, trunk and thigh band IoU for a body component in about 2.5 minutes without assembling (baseline joints and head). It tracks the packet within about .01 plus pose-refit noise."
+       "option": "art/species-construction/loop/arm_measure.py <verts.npz>",
+       "what": "Prints the front-view arm outer and inner edges, paw edge-on width by row and the flat span of the outer upper-arm face from a body vertex dump, without assembling."
       },
       {
-       "option": "loop/mesh_delta.py",
-       "what": "Largest distance between two body vertex dumps per coarse cell. It confirms an arm rebuild moved nothing outside the arm."
-      },
-      {
-       "option": "loop/render_arm_swap.py",
-       "what": "Cycles renders of the packet arm and paw cameras for a candidate body inside the baseline assembly's study scene. It shows shading rings before assembling."
+       "option": "art/species-construction/specs/arms-r07-v10.json",
+       "what": "Round 16 arm spec on top of v7: thicker knuckle rod stations, lobe width .0135 and blend .014, lobe tip T fan, claws at the lobe tip axis with clawEach tilts. Use with --body body-0426."
       }
      ]
     }
    ],
-   "lastWorked": 11
+   "lastWorked": 16
   },
   "R08": {
    "name": "Legs",
@@ -971,23 +662,20 @@
    "issues": [
     {
      "region": "R08",
-     "summary": "Posed shin band IoU .6301 (needs .72) and thigh band .8293 (needs .85): in the front half the lower leg sits medial of the sheet and the outer thigh inside it, in the back half the reverse; the side shin lost area to the slimmer calf",
-     "evidence": "measured.json R08.10, R08.11; posed/posed-fit.json halves: front thigh .655 (missing .321), front shin .558 (missing .325), back shin .483 (missing .391), left shin .850 (missing .105, was .077); posed/posed-fit.png legs at 2x: orange along the front outer thigh and knee and on the front inner thigh under the crotch, blue on the inner front shin; orange on the inner back shin, blue on its outer side",
-     "fix": "Restore side calf depth on the back line between about .80 and .85 of figure height by .003 to .005 while keeping the rounder corner (recovers the left shin half toward .877). Widen the front outer thigh outline by about .008 to .010 from .56 to .72 and fill the inner thigh just under the crotch by about .005. Then test a posed-only leg refit (hip abduction and knee angle) before more shape work, since the front and back figures misplace the shin in opposite directions by about .01 to .015 and no single shape fixes both.",
+     "summary": "Posed shin band IoU .6301 (needs .72) and thigh band .8293 (needs .85): in the front half the lower leg sits medial of the sheet and the outer thigh inside it.",
+     "fix": "Restore side calf depth on the back line between about .80 and .85 of figure height by .003 to .005 while keeping the rounder corner. Widen the front outer thigh outline by about .008 to .010 from .56 to .72 and fill the inner thigh just under the crotch.",
      "fixability": 0.4
     },
     {
      "region": "R08",
-     "summary": "New faint horizontal crease with a small inward step in the back outline at each ankle top, and the heel is still a square near-vertical wall rather than a taper",
-     "evidence": "m08 shin-profile at 3x contrast stretched (line across the ankle just above the paw top, step on the back line at the same height); m09 hindpaw-profile; m02 left",
-     "fix": "Extend the bottom of the zBlur fade from about z -.86 to -.92 with a smooth falloff, or blend the band over .02, so the crease and the back-outline step disappear; then lean the heel back line forward by about .004 at the top of the heel (about .93 of figure height) and round the heel corner over about .015 so ankle and heel taper, keeping full sole contact.",
+     "summary": "New faint horizontal crease with a small inward step in the back outline at each ankle top, and the heel is still a square near-vertical wall rather than a taper.",
+     "fix": "Extend the bottom of the zBlur fade from about z -.86 to -.92 with a smooth falloff so the crease and the back-outline step disappear; then lean the heel back line forward by about .004 at the top of the heel and round the heel corner.",
      "fixability": 0.7
     },
     {
      "region": "R08",
-     "summary": "The knee is a lit knob over a dark groove in the front view and a kneecap bump with a dip under it in profile, not a soft kneecap plane; the medial front outline dips just under it",
-     "evidence": "m08 hindleg-front and hindleg-profile at 3x contrast stretched; m02 front 4x crop of one leg",
-     "fix": "Lower the kneecap protrusion by about .002 to .003 and fill the infrapatellar groove and the medial dip under it by about .002 over about .02 of height, so the front plane runs flat from the lower thigh through the knee into the shin; keep the knee hollow at the back.",
+     "summary": "The knee is a lit knob over a dark groove in the front view and a kneecap bump with a dip under it in profile, not a soft kneecap plane.",
+     "fix": "Lower the kneecap protrusion by about .002 to .003 and fill the infrapatellar groove and the medial dip under it by about .002 over about .02 of height, so the front plane runs flat from the lower thigh through the knee into the shin.",
      "fixability": 0.6
     }
    ],
@@ -997,38 +685,14 @@
    "parkReason": null,
    "history": [
     {
-     "round": 2,
-     "kept": true,
-     "approach": "Field-space resample of body-0212's hind legs onto the R08 station table (ankle .035 wide, one medial calf swell), with a deeper side profile than the spec, a smoothed depth ratio and a soft kneecap plane.",
-     "reason": "",
-     "reusable": [
-      {
-       "option": "reshape_legs_field.py spec keys scaleSmoothing, depthAnchorFrac, kneePlane, axisShift",
-       "what": "Leg reshape controls: z smoothing of the depth ratio, depth anchor, a soft kneecap plane, and a lateral leg shift (the +.012 shift was rejected)."
-      },
-      {
-       "option": "art/species-construction/specs/leg-reshape-r08-v5.json",
-       "what": "The full spec that produced body-0263."
-      }
-     ]
-    },
-    {
      "round": 8,
      "kept": false,
-     "approach": "Re-ran the field-space leg station reshape on the baseline body with a smoother calf and a softer kneecap plane, and added a z-only field blur (zBlur) that removes the shin ripple bands.",
-     "reason": "R08 checklist 6.4 to 6.4; weighted mean -0.093",
+     "approach": "Re-ran the leg station reshape with a smoother calf and a softer kneecap plane, and added a z-only field blur (zBlur) that removes the shin ripple bands.",
+     "reason": "R08 checklist unchanged; weighted mean -0.093 (tail kink and thigh band)",
      "reusable": [
       {
-       "option": "reshape_legs_field.py spec key zBlur {sigma, top, bottom, xMin, xFade, yMax, yFade}",
-       "what": "Blurs the distance field along z only, over each leg, weighted by a z fade, an x mask and a y mask. It removes faint horizontal ripple bands on the shin and calf left by slice-wise warps, without moving the silhouette. Default off; used in art/species-construction/specs/leg-reshape-r08-v7.json with sigma .012 over z -.44 to -.86."
-      },
-      {
-       "option": "art/species-construction/specs/leg-reshape-r08-v7.json",
-       "what": "The full leg spec that produced body-0340: one smooth calf, softer kneecap plane, filled knee notch, forward-leaning back line into the ankle, and zBlur."
-      },
-      {
-       "option": "Posed measurement with fixed pose and joints",
-       "what": "Run loop_tools.py posed with --pose and --joints taken from the baseline packet (from the akinza folder). This avoids the heuristic joint and pose refit variance. The ear-fan framing jump (widest-row centring in loop_tools.canonical) can still shift the front view by about 2.5 px, so check the framing before reading posed IoU deltas."
+       "option": "reshape_legs_field.py spec key zBlur",
+       "what": "Blurs the field along z only over each leg; removes faint horizontal ripple bands on the shin."
       }
      ]
     },
@@ -1036,11 +700,11 @@
      "round": 14,
      "kept": true,
      "approach": "Re-ran the round 8 leg reshape (smooth calf, soft kneecap plane, z-only ripple blur sigma .024) on body-0400 with the y pass masked behind the leg and the thigh x-warp fade moved below the thigh, so the tail dent and thigh band do not return.",
-     "reason": "kept after re-reading the baseline measurements from its own packet (R08.10 had been frozen as a pass)",
+     "reason": "kept after re-reading the baseline measurements from its own packet",
      "reusable": [
       {
        "option": "reshape_legs_field.py spec key yMask {margin, fade}",
-       "what": "The y (depth) pass fades to the identity beyond the leg's measured back edge plus margin. Without it the y pass moves everything behind the leg by up to .012 and dents a tail tip that passes the leg's x range."
+       "what": "The y (depth) pass fades to the identity beyond the leg's measured back edge plus margin, so nothing behind the leg moves."
       },
       {
        "option": "art/species-construction/specs/leg-reshape-r08-v11.json",
@@ -1048,7 +712,7 @@
       },
       {
        "option": "art/species-construction/loop/r08_try.sh <spec> <number>",
-       "what": "Builds a leg reshape on body-0400, renders shaded closeups, dumps vertices and prints a mesh_delta neighbour check plus side-by-side comparison images."
+       "what": "Builds a leg reshape on body-0400, renders shaded closeups, dumps vertices and prints a mesh_delta neighbour check."
       }
      ]
     }
@@ -1072,23 +736,20 @@
    "issues": [
     {
      "region": "R09",
-     "summary": "The paw is a low slipper with no domed instep. Its front height is about .027 of figure height against about .04 on the sheet, and the top is a straight ramp down to low toes (R09.3, R09.4, R09.8).",
-     "evidence": "m02 front and left at 4x against m01 front and left, and m09 hindpaw-profile: the top of the paw runs straight from the ankle to the toe tips. The r02 side view shows the toes rising into a convex domed knuckle mass, with a concave curve up to the ankle front.",
-     "fix": "Raise the toes and knuckle mass so the paw front stands about .04 of figure height, up from about .027. In profile, the top line should rise in a convex arc from the claw roots to a crest about a third of the paw length back, then curve concavely into the ankle front. Keep the sole flat and the back-view width unchanged (R09.7 is .946). Round the near-vertical heel wall into a slight backward taper.",
+     "summary": "The paw is a low slipper with no domed instep: front height about .027 of figure height against about .04 on the sheet, with a straight ramp down to low toes (R09.3, R09.8).",
+     "fix": "Raise the toes and knuckle mass so the paw front stands about .04 of figure height. In profile the top line should rise in a convex arc from the claw roots to a crest about a third of the paw length back, then curve concavely into the ankle front. Keep the sole flat.",
      "fixability": 0.5
     },
     {
      "region": "R09",
-     "summary": "In the front view the claws read as straight cones with pearl-like heads laid on the toe faces, not slim curved claws coming out of the toe tips (R09.2, R09.8).",
-     "evidence": "m09 hindpaw-front at 8x: each claw has a bright round root on the toe face at mid-height and tapers straight down to the ground line. In r02 front three-quarter, the claws come out from under the fur at the toe tips and curve down and out past the toe.",
-     "fix": "Remove the round root. Sink the claw base into the toe tip, flattened, with a base width of about .005 to .006 of figure height. Start each claw at the front-lower tip of its toe instead of halfway up. Let it extend about .008 to .012 beyond the toe outline and curve down, so the front view shows a short curved claw past the toe instead of a pin on its face.",
+     "summary": "In the front view the claws read as straight cones with pearl-like heads on the toe faces (R09.2, R09.8).",
+     "fix": "Remove the round root. Sink the claw base into the toe tip with a base width of about .005 to .006 of figure height, start each claw at the front-lower tip of its toe, and let it extend about .008 to .012 beyond the toe outline and curve down.",
      "fixability": 0.6
     },
     {
      "region": "R09",
-     "summary": "New dark pits and a knot appear in the front view where the toes part (a side effect that also counts against R12.3).",
-     "evidence": "m09 hindpaw-front at 8x: a dark pit where the left outer and middle toes part, and a small knot between the two middle toes, where the cut-back pad meets the toes.",
-     "fix": "Fill each gap between toes with a soft fillet of radius about .002 to .003 of figure height, so the toes part through a smooth groove. Check every gap in m09 front and oblique at 8x.",
+     "summary": "New dark pits and a knot appear in the front view where the toes part.",
+     "fix": "Fill each gap between toes with a soft fillet of radius about .002 to .003 of figure height, so the toes part through a smooth groove.",
      "fixability": 0.8
     }
    ],
@@ -1100,40 +761,32 @@
     {
      "round": 6,
      "kept": true,
-     "approach": "Field-space hind-paw rebuild: graded four-lobe toe arch with the middle toes leading, domed instep, round heel and flat sole on an ankle column measured from the R08 leg, with thick hook claws placed on the toe fronts from the toe surface.",
+     "approach": "Field-space hind-paw rebuild: graded four-lobe toe arch, domed instep, round heel and flat sole on an ankle column measured from the leg, with thick hook claws on the toe fronts.",
      "reason": "",
      "reusable": [
       {
-       "option": "art/species-construction/rebuild_hind_paws_field.py (--body, --fairing, --out, optional --spec JSON merged into the PAW dict)",
-       "what": "Paw-only pass: ankle column measured from the input leg at z -.83, graded toes with yaw, instep, dorsum, heel, floor sole, morph band -.838 to -.872. Leaves forepaws, tails, tail root and the leg above the band untouched. Replaces only the hind claws. Writes hind-paw-field.json."
-      },
-      {
-       "option": "PAW['claws'] fields rootZ and shift",
-       "what": "Places each claw root on its toe's own front surface at rootZ and moves it shift along the toe's forward axis (negative is inside). The spec's explicit bases buried the claws; an explicit base is still accepted."
-      },
-      {
-       "option": "art/species-construction/loop/paw_closeup.py (via loop_tools.py blender, --glb, --out as an absolute path, --side)",
-       "what": "Shaded clay closeups of one hind paw (front, left, back, three-quarter, underside) from a body shape.glb, with no assembly needed."
+       "option": "art/species-construction/rebuild_hind_paws_field.py",
+       "what": "Paw-only pass on an ankle column measured from the input leg; morph band -.838 to -.872."
       }
      ]
     },
     {
      "round": 12,
      "kept": true,
-     "approach": "Rerun the hind-paw-only field pass on body-0369 with the pad cut back behind the toe bases so graded toe lobes crown in the middle, a higher dorsum and instep dome, a wider morph band, and new Bezier hook claws rooted at each toe's equator that run forward then curve down onto the toe face.",
+     "approach": "Rerun the hind-paw pass with the pad cut back behind the toe bases so graded toe lobes crown in the middle, a higher dorsum and instep, a wider morph band, and Bezier hook claws rooted at each toe's equator.",
      "reason": "",
      "reusable": [
       {
-       "option": "rebuild_hind_paws_field.py claws[i] tip mode (rootZ, shift, run, runZ, tipZ, tipAhead, radius, flat)",
-       "what": "Quadratic Bezier hook claw: root sheathed in the toe's front face, out along the toe's forward axis by run, then down to a tip tipAhead in front of the toe face at tipZ. Replaces the pitch/bend cone path when tipZ is given."
+       "option": "rebuild_hind_paws_field.py claws[i] tip mode",
+       "what": "Quadratic Bezier hook claw from the toe front face, forward then down to a tip ahead of the toe."
       },
       {
        "option": "art/species-construction/loop/posed_foot_quick.py",
-       "what": "Numpy posed IoU for foot, shin and thigh bands of a body component without assembling, using the baseline posed joints and the sheet pose; also writes posed-fit.png."
+       "what": "Posed foot, shin and thigh band IoU of a body component without assembling."
       },
       {
        "option": "body-0400/paw-spec-v3.json",
-       "what": "Spec overrides for the hind-paw pass: regraded toes, shorter pad, higher dorsum and instep, morph -.83 to -.89, columnBottomZ -.925, tip-mode claws."
+       "what": "Spec overrides for the hind-paw pass (regraded toes, shorter pad, higher dorsum, morph -.83 to -.89, tip-mode claws)."
       }
      ]
     }
@@ -1181,7 +834,7 @@
   "R12": {
    "name": "Whole-form coherence",
    "weight": 2,
-   "score": 1.0,
+   "score": 1,
    "results": {
     "R12.1": "fail",
     "R12.2": "fail",
@@ -1210,7 +863,8 @@
   "2026-10-01: R09.6 dropped and R09.7 replaced by back paw width at .96 (the side rows read the sheet's two staggered paws as one).",
   "2026-10-01: workflow stopped after round 11 to change the keep rule: a candidate the critic judges better, with no region losing credit, no invariant newly broken and no fall in the weighted mean, is kept even when none of its own criteria move. Round 11 R04 (assembled-0396) adopted under that rule; R07 stays reverted. Status rebuilt from the journal by replay_r10_r11.py.",
   "2026-10-01: workflow stopped at the start of round 14. Round 13 R03 (assembled-0419) was reverted only because the per-model pose refit moved a posed leg band on an identical body (R08 7.3 to 6.4); the judge now freezes the results of the component an order did not touch, and R03 is adopted. Note for later: the stalk neck lives at the head-body join, but R05 orders go to the body builder only, so it cannot be fixed as the loop is set up.",
-  "2026-10-01: stopped at the start of round 15. Round 14 R08 (assembled-0428) was reverted against a stale frozen R08.10; measured results are now re-read from the adopted packet, the posed pose and joints are cached per body component (pose-cache/<body>), and R08 is adopted."
+  "2026-10-01: stopped at the start of round 15. Round 14 R08 (assembled-0428) was reverted against a stale frozen R08.10; measured results are now re-read from the adopted packet, the posed pose and joints are cached per body component (pose-cache/<body>), and R08 is adopted.",
+  "2026-10-01: hard stop after round 16. Final model assembled-0458 (head-0455, body-0448), weighted 5.447."
  ],
  "decisionsForNick": [
   {
