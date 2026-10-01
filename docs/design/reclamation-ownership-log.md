@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 76, 2026-09-30)
+## Standing state (after pass 77, 2026-09-30)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -40,7 +40,7 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`), updated by pass 65's critic.
 
-0. **Resume here: Nick's live read of the squad (pass 76).** The reader loop (`reclamation-squad-reader-loop.md`) ran ten rounds. Round 10: Finding 7, 7, 7 (bar 8), every mark explained right by all three readers, 100% of answers right. Finding holds at 7 because readers want what a blow does to the rival's count, which pass 72 withholds during placement. Nick could not judge that trade without seeing the screen, so pass 76 shipped for his live read. His call: keep it at 7, or reopen pass 72 to show a blow against its target.
+0. **Resume here: Nick's live read of the squad tiles (pass 77).** The roster rows are gone; the squad is health-first tiles (`reclamation-squad-tiles.md`), chosen by Nick from mockups. Rounds 11 and 12: Finding 7, 8, 7 then 7, 7, 8, every answer and every mark right. Open with Nick: whether the colors alone may tie each tile's three numbers to their worlds (readers relearn them every round), and his read of the tiles live. Pass 72 stands (the hit's effect on the count stays hidden).
 
 1. **The Clash is short to watch** (critic 4, up from 3; pass 64 readers 3). Each blow is drawn and told in two beats (pass 64). What is left is the fight itself:
    - one blow per world. Since pass 72 the outcome is no longer forecast while sends are made, so the Clash is where the fight is first seen;
@@ -1621,4 +1621,24 @@ What changed on the table:
 - the send meter shows only the sends left, and no cell is dimmed.
 
 Scores: Finding went 6 to 7 and held at 7 for rounds 9 and 10; factual answers 95 to 100% from round 2 on; all marks right in rounds 8 to 10. The remaining point is pass 72's withheld outcome (see open item 0). All five table checks and 271 tests pass.
+
+### Pass 77 (2026-09-30): the squad as health-first tiles
+
+Nick read the pass 76 roster live and rejected it: "I hate the way you have the creatures laid out in stacked rows, redesign that." Mockups came first this time, drawn over the real screen with real numbers. The path from Lineup to Tiles to the approved F2 is in `reclamation-squad-tiles.md`. Along the way he ruled:
+- every fact shows at rest, with no pointing;
+- health outranks attack on the tile;
+- the dashed hit box shows only while a world is pointed at, beside the attack value.
+
+**What changed:**
+- **A tile per creature,** 6 by 2 at 1440, 4 by 2 at 1366 in round 3, and 3 across on a phone.
+- **Health leads:** three "+N" numbers in the worlds' colors over bars on one squad scale, with a tick at the creature's natural health.
+- **The attack is one quiet line.** Pointing at a world adds "→ N", the hit there.
+- **Removed:** the column head (sort and signed margin), the always-on hit chip, and the rival's tick.
+- **The pointed world** takes a heavy frame, while the other lifted targets dim (round 11's finding).
+
+**Checked:**
+- web tests;
+- the five table checks;
+- captures at 1440, 1366 and 390;
+- readers in rounds 11 and 12 (`reclamation-squad-reader-loop.md`).
 
