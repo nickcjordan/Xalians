@@ -468,6 +468,14 @@
      "m06 trunk-front",
      "m01"
     ]
+   },
+   {
+    "id": "R06.10",
+    "kind": "measured",
+    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: trunk band IoU at least .90",
+    "source": "posed",
+    "band": "trunk",
+    "min": 0.9
    }
   ],
   "R07": [
@@ -517,6 +525,14 @@
      "m07 forepaw-front",
      "r02"
     ]
+   },
+   {
+    "id": "R07.6",
+    "kind": "measured",
+    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: arm band IoU at least .90 (upper arm and forearm lengths and thickness)",
+    "source": "posed",
+    "band": "arm",
+    "min": 0.9
    }
   ],
   "R08": [
@@ -625,6 +641,22 @@
      "m08 hindleg-front",
      "m01"
     ]
+   },
+   {
+    "id": "R08.10",
+    "kind": "measured",
+    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: thigh band IoU at least .90",
+    "source": "posed",
+    "band": "thigh",
+    "min": 0.9
+   },
+   {
+    "id": "R08.11",
+    "kind": "measured",
+    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: shin band IoU at least .85",
+    "source": "posed",
+    "band": "shin",
+    "min": 0.85
    }
   ],
   "R09": [
@@ -727,6 +759,14 @@
      "m09 hindpaw-profile",
      "r02"
     ]
+   },
+   {
+    "id": "R09.9",
+    "kind": "measured",
+    "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: foot band IoU at least .85",
+    "source": "posed",
+    "band": "foot",
+    "min": 0.85
    }
   ],
   "R10": [

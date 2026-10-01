@@ -298,7 +298,7 @@
   "R06": {
    "name": "Torso and pelvis",
    "weight": 2.5,
-   "score": 2.8,
+   "score": 2.5,
    "results": {
     "R06.1": "pass",
     "R06.2": "pass",
@@ -308,7 +308,8 @@
     "R06.6": "fail",
     "R06.7": "fail",
     "R06.8": "fail",
-    "R06.9": "fail"
+    "R06.9": "fail",
+    "R06.10": "fail"
    },
    "issues": [
     {
@@ -334,7 +335,7 @@
     }
    ],
    "attempts": 0,
-   "anchorScore": 2.8,
+   "anchorScore": 2.5,
    "parked": false,
    "parkReason": null,
    "history": [],
@@ -343,13 +344,14 @@
   "R07": {
    "name": "Arms and forepaws",
    "weight": 2,
-   "score": 3.0,
+   "score": 2.5,
    "results": {
     "R07.1": "fail",
     "R07.2": "partial",
     "R07.3": "partial",
     "R07.4": "partial",
-    "R07.5": "fail"
+    "R07.5": "fail",
+    "R07.6": "fail"
    },
    "issues": [
     {
@@ -375,7 +377,7 @@
     }
    ],
    "attempts": 0,
-   "anchorScore": 3.0,
+   "anchorScore": 2.5,
    "parked": false,
    "parkReason": null,
    "history": [],
@@ -384,7 +386,7 @@
   "R08": {
    "name": "Legs",
    "weight": 2.5,
-   "score": 1.7,
+   "score": 1.4,
    "results": {
     "R08.1": "fail",
     "R08.2": "partial",
@@ -394,7 +396,9 @@
     "R08.6": "fail",
     "R08.7": "fail",
     "R08.8": "fail",
-    "R08.9": "fail"
+    "R08.9": "fail",
+    "R08.10": "fail",
+    "R08.11": "fail"
    },
    "issues": [
     {
@@ -420,7 +424,7 @@
     }
    ],
    "attempts": 0,
-   "anchorScore": 1.7,
+   "anchorScore": 1.4,
    "parked": false,
    "parkReason": null,
    "history": [],
@@ -429,7 +433,7 @@
   "R09": {
    "name": "Hind paws",
    "weight": 1.5,
-   "score": 1.2,
+   "score": 1.1,
    "results": {
     "R09.1": "fail",
     "R09.2": "partial",
@@ -438,7 +442,8 @@
     "R09.5": "fail",
     "R09.6": "fail",
     "R09.7": "fail",
-    "R09.8": "fail"
+    "R09.8": "fail",
+    "R09.9": "fail"
    },
    "issues": [
     {
@@ -464,7 +469,7 @@
     }
    ],
    "attempts": 0,
-   "anchorScore": 1.2,
+   "anchorScore": 1.1,
    "parked": false,
    "parkReason": null,
    "history": [],
@@ -605,8 +610,8 @@
    ],
    "attempts": 0,
    "anchorScore": 1.0,
-   "parked": false,
-   "parkReason": null,
+   "parked": true,
+   "parkReason": "2026-09-30: whole-form coherence follows the part fixes; reopen when the head, face, arms, torso and legs reach 5",
    "history": [],
    "lastWorked": null
   }
@@ -620,6 +625,7 @@
  "notes": [
   "2026-09-30: torso widths (neck, shoulders, waist, hips) now come from mesh sections (torso_sections.py). The silhouette method had merged an arm or tail into the torso row, so the cold baseline failed R06.1 falsely (waist 1.279); by sections the waist is 1.008 in both assembled-0205 and assembled-0226. The R06 rise from 5 to 7 in round 1 is that correction, not a change to the model.",
   "2026-09-30: Nick said the effort was going to the wrong place: the tails are fine, while the legs, body, arms, face and head are still very wrong. Tails parked (R10, R11 held at their scores). The checklist scores for R05 to R08 were inflated: the arms-down construction pose made body silhouettes unmeasurable and the criteria were local details that a model can pass while reading wrong. Next: an independent gestalt gap audit, a rig with a pose-matched (hands on hips) tail-free fit, proportion levers, and gestalt criteria added to every region.",
-  "2026-09-30: weights raised for the parts Nick named: R06 torso 2 to 2.5, R07 arms 1.5 to 2, R08 legs 2 to 2.5. Rubric revised to 80 criteria (gestalt plus fixed-row measurements); a cold re-score of assembled-0226 follows."
+  "2026-09-30: weights raised for the parts Nick named: R06 torso 2 to 2.5, R07 arms 1.5 to 2, R08 legs 2 to 2.5. Rubric revised to 80 criteria (gestalt plus fixed-row measurements); a cold re-score of assembled-0226 follows.",
+  "2026-09-30: rig and posed tail-free fit added (84bfa236); five posed criteria (R06.10, R07.6, R08.10, R08.11, R09.9) added, all failing on assembled-0226; packets now include posed/."
  ]
 }

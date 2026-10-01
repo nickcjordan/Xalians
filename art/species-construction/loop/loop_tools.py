@@ -371,6 +371,15 @@ def cmd_packet(args):
     index['m11.png'] = ('Silhouette fit: model against the reference figure in front, left and back, one frame; '
                         'grey is both, blue is model only, orange is reference only. The reference arms are on the hips.')
     index['fit.json'] = 'Silhouette overlap (IoU) per view and band (head, trunk, legs), with extra and missing area'
+    # Posed to the sheet (hands on hips): the only view in which arm, thigh, shin and
+    # foot proportions can be compared with the sheet. See rig_akinza.py.
+    if not (packet/'posed/posed-fit.json').exists():
+        cmd_posed(argparse.Namespace(assembly=args.name, out=str(packet/'posed'), refit=False, pose=None, joints=None))
+    for name, description in [('posed-fit.png', 'Model posed to the sheet (hands on hips): silhouette overlay on the tail-free half of each view; grey both, blue model only, orange sheet only, greyed columns excluded'),
+                              ('shaded-all.png', 'Model posed to the sheet, shaded front, left and back')]:
+        if (packet/'posed'/name).exists():
+            index['posed/'+name] = description
+    index['posed/proportions.json'] = 'Bone lengths of the model in figure heights (neck, upper arm, forearm, hand, thigh, shin, foot, shoulder and hip spacing, crotch height)'
     evaluate_measured(packet, args.name)
     index['measured.json'] = 'Measured rubric criteria and invariant I09, computed from fit.json and measurements.json; copy, do not re-judge'
     index['measurements.json'] = 'Silhouette widths as fractions of figure height, model against reference'
@@ -555,6 +564,9 @@ def evaluate_measured(packet, assembly):
             extra = {}
             if c['source'] == 'fit':
                 value = fit['views'][c['view']][c['band']][c['metric']]
+            elif c['source'] == 'posed':
+                posed = json.loads((packet/'posed/posed-fit.json').read_text())
+                value = posed['mean']['posedHalf'][c['band']]
             elif c['source'] in ('row', 'rowratio', 'edge'):
                 model, sheet, value = row_value(c, assembly)
                 extra = {'model': model and round(model, 4), 'sheet': sheet and round(sheet, 4)}
