@@ -112,7 +112,13 @@
     "headSwap": "head-0440",
     "bodySwap": "body-0426",
     "brokenBody": {"scale": ["forearm.L=0.8", "forearm.R=0.8"], "region": "R07"},
-    "tolerance": 0.002
+    "tolerance": 0.002,
+    "allow": {
+      "note": "Criteria that may move in a check although they belong to another component, with the reason. A criterion listed here is reported as movedAllowed, not as a failure.",
+      "broken": {
+        "R10.2": "The fit band 'legs' starts at row .56 and the arms-down forearm and paw hang from .58 to .61, so shortening the forearm changes the back view's legs band by about .004"
+      }
+    }
   },
   "sheet": "docs/design/species-construction/akinza/loop/sheet.json"
 }

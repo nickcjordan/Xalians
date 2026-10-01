@@ -129,7 +129,7 @@ def main():
         rows = compare(baseline, variant, tol)
         lt.cmd_diff(argparse.Namespace(baseline=str(base_packet), candidate=str(packet)))
         change = load(packet/'diff.json')['regionChange']
-        wrong, expected = [], []
+        wrong, expected, allowed_moves = [], [], []
         for r in rows:
             comp = component_of(r['region'], pools) if not r['id'].startswith('I') else 'invariant'
             if expect == 'none':
@@ -138,13 +138,16 @@ def main():
                 must_hold = r['region'] != expect[1] and comp not in ('invariant',)
             else:
                 must_hold = comp == expect
-            if must_hold and r['moved']:
+            allowed = cfg.get('allow', {}).get(name, {}).get(r['id'])
+            if must_hold and r['moved'] and allowed:
+                allowed_moves.append({**r, 'reason': allowed})
+            elif must_hold and r['moved']:
                 wrong.append(r)
             elif r['moved']:
                 expected.append(r)
         record = {'assembly': entry['assembly'], 'head': entry['head'], 'body': entry['body'], 'packet': str(packet),
                   'expect': expect if isinstance(expect, str) else {'region': expect[1], 'drop': True},
-                  'movedWrongly': wrong, 'movedAsExpected': expected,
+                  'movedWrongly': wrong, 'movedAsExpected': expected, 'movedAllowed': allowed_moves,
                   'largestRegionChange': max(v['magnitude'] for v in change.values()),
                   'regionChange': {r: v['magnitude'] for r, v in change.items()}}
         if isinstance(expect, tuple):
