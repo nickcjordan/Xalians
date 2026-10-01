@@ -59,8 +59,8 @@ Built by two Sonnet agents against this contract (data layer: `turns.ts` `roundO
 
 ## Open, for play
 
-- **Numbers.** Avilily's two pecks land for 1 (intensity 10 to 19 reads as power 1 under `POWER_DIVISOR` 10), and one of them rests; her kit's value is Hinder 9 and 7, which cancels a crawler's hit outright. A lever case for the numbers pass, not for this screen.
-- **Difficulty.** Enemy health factor 0.62 comes from the simulator; tune it with Nick's play.
+- **Numbers.** Addressed by the numbers pass (2026-09-29, `powerworks-pillars.md`). Avilily's pecks were 1 with intensity 10 to 19 under `POWER_DIVISOR` 10; at 5 they read power 4 (Piercing Peck, which rests 1 turn) and 3 (Slashing Peck). Against the enemy elements she meets: sand (crawler, mender, warden) and light (drone) are strong, so 6 and 5; electric (discharge, jammer, guardian, rallier) is neutral, so 4 and 3. Her Hinders read 21 (Blossoming Ambuscade) and 14 (Binding Rake), against enemy hits that also doubled.
+- **Difficulty.** Enemy health factor 0.76 (retuned in the numbers pass so the hardest-hit rule and the random player on the preset squad land within 3 points of the old 0.62 figures) comes from the simulator; tune it with Nick's play.
 
 ## UX pass, 2026-09-29
 
@@ -107,4 +107,4 @@ Built against the storyboard above and judged in motion: a capture harness (`scr
 
 What changed on the way, in the order the reviews asked for it: the top bar became place, banner (round, whose turn, the moment's sentence or what changed since your last turn), turn rail (one time axis, enemies above the track and the squad below, NOW and NEXT pills, the next round's start) and tools; beats became moments (one actor's one move, however many targets), with strike lines from actor to target, a lunge, a rising number, health that drops when the blow lands, and a knockout that sinks after it lands; the key bar shows "Enemy turn · Your next turn: X" while enemies act and "Round n · Your turn · X" at the hand-off; each plate keeps its change since your last turn beside its health; an enemy's hit chip shows whom it is about and what a weakening took off; the rail's next-round peek repeated the round's last unit (an off-by-one, fixed with a test).
 
-Still open, for play: a round change that opens on an enemy's turn has no captured sequence; "strong matchup" on a hit of 1 reads as a contradiction (the numbers pass, Avilily's pecks); the hover ring only appears once the pointer moves onto a cell.
+Still open, for play: a round change that opens on an enemy's turn has no captured sequence; the hover ring only appears once the pointer moves onto a cell.

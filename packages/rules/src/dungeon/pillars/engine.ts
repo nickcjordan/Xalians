@@ -1,7 +1,8 @@
 /*
   Powerworks on the pillars (docs/design/powerworks-pillars.md): one resolver for both sides.
 
-    - Element both ways: an attack's damage on a target is floor(power x step), the step read
+    - Element both ways: an attack's damage on a target is round(power x step) (at least 1
+      unless immune), the step read
       from the shared chart (typeEffectivenessMatrix.json); physical attacks are x1.
     - Supports in health: Heal N now; Shield N absorbs the next N damage and holds until used
       or until its caster's next turn; Boost +N on the ally's next attack; Hinder -N on the
@@ -26,6 +27,8 @@ import {
   ENEMY_SHIELD_BELOW,
   ENEMY_NOISE,
   FINAL_ENCOUNTER_XP,
+  HEALTH_FLOOR,
+  HEALTH_SCALE,
   RECOVERY_STATION_HP,
   SIGNATURE_ONCE,
   STALL_ROUNDS,
@@ -116,8 +119,9 @@ export function fighter(u: Unit, rules: Rules): Fighter {
     species: u.species,
     element: u.element,
     enemy: u.enemy,
-    hp: u.hp,
-    max: u.max,
+    // Companions keep at least HEALTH_FLOOR; enemies are authored and keep their own health.
+    max: u.enemy ? u.max * HEALTH_SCALE : Math.max(HEALTH_FLOOR, u.max * HEALTH_SCALE),
+    hp: u.enemy ? u.hp * HEALTH_SCALE : Math.max(HEALTH_FLOOR, u.max * HEALTH_SCALE) - (u.max - u.hp) * HEALTH_SCALE,
     speed: u.speed,
     moves,
     cooldowns: moves.map(() => 0),
@@ -134,12 +138,12 @@ export function enemyFighter(species: string, id: string, hp: number, rules: Rul
 }
 
 /** Can this move be used now (ready, signature unspent, does something)? */
-export function ready(u: Fighter, i: number): boolean {
+export function ready(u: Fighter, i: number, slack = 0): boolean {
   const m = u.moves[i];
-  return u.hp > 0 && u.cooldowns[i] === 0 && !(SIGNATURE_ONCE && m.signature && u.signatureSpent) && (m.power > 0 || m.parts.length > 0);
+  return u.hp > 0 && u.cooldowns[i] <= slack && !(SIGNATURE_ONCE && m.signature && u.signatureSpent) && (m.power > 0 || m.parts.length > 0);
 }
-export function legalMoves(u: Fighter): number[] {
-  return u.moves.map((_, i) => i).filter((i) => ready(u, i));
+export function legalMoves(u: Fighter, slack = 0): number[] {
+  return u.moves.map((_, i) => i).filter((i) => ready(u, i, slack));
 }
 export const foesOf = (s: Pick<PRun, "team" | "enemies">, u: Fighter) => (u.enemy ? s.team : s.enemies);
 export const matesOf = (s: Pick<PRun, "team" | "enemies">, u: Fighter) => (u.enemy ? s.enemies : s.team);
@@ -162,12 +166,20 @@ export function turnOrder(s: PRun): Fighter[] {
     .sort((a, b) => b.u.speed - a.u.speed || a.k - b.k)
     .map((x) => x.u);
 }
-/** What an attack deals to one target before shields: 0 on an immune matchup, otherwise floor(power x step) plus the user's boost less its hinder. */
+/** Power at an element step: 0 when immune, otherwise round half up and never below 1, so a weak step still lands. */
+export function stepDamage(power: number, x: number): number {
+  return power <= 0 || x === 0 ? 0 : Math.max(1, Math.round(power * x));
+}
+/** A support number aimed at everyone: its share, at least 1. */
+export function allShare(n: number): number {
+  return Math.max(1, Math.round(n * ALL_SUPPORT_FACTOR));
+}
+/** What an attack deals to one target before shields: 0 on an immune matchup, otherwise stepDamage plus the user's boost less its hinder. */
 export function attackOn(u: Fighter, m: PMove, t: Fighter): number {
   if (m.power <= 0) return 0;
   const x = step(m.element, t.element);
   if (x === 0) return 0;
-  return Math.max(0, Math.floor(m.power * x) + u.boost - u.hinder);
+  return Math.max(0, stepDamage(m.power, x) + u.boost - u.hinder);
 }
 /** Health the target would lose: the attack less the shields it carries. */
 export function landedOn(u: Fighter, m: PMove, t: Fighter): number {
@@ -202,8 +214,12 @@ function prepare(s: PRun) {
     if (o) s.orders[u.id] = o;
   }
 }
-/** One enemy's choice for its next action, weighed in health against the board as it stands. */
-export function enemyChoice(s: Pick<PRun, "team" | "enemies" | "rng">, u: Fighter): Order | null {
+/**
+  One enemy's choice for its next action, weighed in health against the board as it stands.
+  slack: a move whose rest counter is at most this counts as ready (1 when the enemy is committing
+  to its next turn, because a rest counter ticks down at the start of the unit's own turn).
+*/
+export function enemyChoice(s: Pick<PRun, "team" | "enemies" | "rng">, u: Fighter, slack = 0): Order | null {
   const team = standing(s.team);
   const allies = standing(s.enemies);
   const hurt = [...allies].sort((a, b) => a.hp / a.max - b.hp / b.max)[0];
@@ -211,11 +227,11 @@ export function enemyChoice(s: Pick<PRun, "team" | "enemies" | "rng">, u: Fighte
   const threat = [...team].sort((a, b) => Math.max(...b.moves.map((m) => m.power)) - Math.max(...a.moves.map((m) => m.power)))[0];
   const pick = team.length ? pickTarget(s, team) : undefined;
   let best: { move: number; target: string; v: number } | null = null;
-  for (const i of legalMoves(u)) {
+  for (const i of legalMoves(u, slack)) {
     const m = u.moves[i];
     let v = 0;
     let target = pick?.id ?? u.id;
-    if (m.power > 0 && pick) v += Math.floor(m.power * step(m.element, pick.element));
+    if (m.power > 0 && pick) v += stepDamage(m.power, step(m.element, pick.element));
     for (const p of m.parts) {
       if (p.kind === "heal") {
         const t = p.aim === "self" ? u : hurt;
@@ -286,7 +302,7 @@ export function createPillarRun(seed = 1, squad: Squad = "starter", rules: Rules
 
 /** Give one support part to its recipients. */
 export function support(s: Pick<PRun, "team" | "enemies">, u: Fighter, m: PMove, p: Part, target: Fighter, emit: (e: PEvent) => void) {
-  const n = p.all ? Math.max(1, Math.floor(p.n * ALL_SUPPORT_FACTOR)) : p.n;
+  const n = p.all ? allShare(p.n) : p.n;
   const pool = p.aim === "enemy" ? standing(foesOf(s, u)) : standing(matesOf(s, u));
   const to = p.aim === "self" ? [u] : p.all ? pool : [p.aim === "enemy" ? target : target.enemy === u.enemy ? target : u];
   for (const t of to) {

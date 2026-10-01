@@ -2,11 +2,16 @@
 // rather than played back on the archive screen. One figure can carry several beats in a row, running on
 // from one into the next instead of cutting; the viewer's figure stage (figureStage.tsx) draws it.
 import { createGenerators } from './generators';
+import { createOutbreak } from './outbreak';
 import type { Ctx, RGB } from './stage';
 
 export interface Figure {
 	/** How many beats it carries, in order. */
 	readonly stages: number;
+	/** Resolves once any pictures it paints from have loaded (it draws a fallback until then). Optional. */
+	ready?(): Promise<void>;
+	/** How long the lower half of the oval stays solid before it fades (see `ovalFade`); 0.55 when absent. */
+	readonly groundHold?: number;
 	/** Enter afresh at `stage`: nothing shown yet, its clocks at the stage's start. */
 	reset(stage: number): void;
 	/** Jump to `stage`'s telling moment, fully shown (reduced motion, or no time to play it in). */
@@ -28,8 +33,27 @@ export interface Figure {
 	draw(ctx: Ctx, sec: number, opts?: { compact?: boolean }): void;
 }
 
-export type FigureKey = 'generators';
+/**
+ * Where a figure loads a picture from: the site path, unless a study page has handed it the picture inline
+ * (scripts/design/export-figure-study.cjs puts `window.__FIGURE_ASSETS__` there).
+ */
+export function assetUrl(path: string) {
+	const inline = typeof window !== 'undefined' ? (window as unknown as { __FIGURE_ASSETS__?: Record<string, string> }).__FIGURE_ASSETS__ : undefined;
+	return inline?.[path] ?? path;
+}
+
+export type FigureKey = 'generators' | 'outbreak';
+
+/**
+ * The color of the light that leaves each figure's beat for a recording, which tints the first moments of that
+ * screen tuning in (the viewer's --arrival). Kept equal to each figure's own `light()` at that stage.
+ */
+export const FIGURE_LIGHT: Record<FigureKey, string[]> = {
+	generators: ['rgb(150 236 140)', 'rgb(172 124 255)'],
+	outbreak: ['rgb(232 54 84)', 'rgb(255 240 222)'],
+};
 
 export const FIGURES: Record<FigureKey, () => Figure> = {
 	generators: createGenerators,
+	outbreak: createOutbreak,
 };

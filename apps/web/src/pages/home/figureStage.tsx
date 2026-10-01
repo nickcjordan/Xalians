@@ -16,7 +16,7 @@
 import * as React from 'react';
 import { FILM_FPS } from '@/components/plates/livePlate';
 import { FIGURES, type Figure, type FigureKey } from './pieces/figures';
-import { clamp, glow, H, lighter, mixRGB, W, type RGB } from './pieces/stage';
+import { clamp, glow, H, lighter, mixRGB, ovalFade, W, type RGB } from './pieces/stage';
 
 export type StageBeat = { key: string; figure?: { key: FigureKey; stage: number } };
 
@@ -175,19 +175,7 @@ export function FigureStage({ beats, index, boxRef, live, motion }: { beats: Sta
 			oc.setTransform(ow / W, 0, 0, oh / H, 0, 0);
 			f.fig.draw(oc, sec, { compact: s.w < 520 });
 			// suspended on the page: an oval that fades out well before the edges of its place, never a box
-			oc.globalCompositeOperation = 'destination-in';
-			oc.globalAlpha = 1;
-			oc.save();
-			oc.translate(W / 2, H / 2);
-			oc.scale(1, (0.46 * H) / (0.48 * W));
-			const m = oc.createRadialGradient(0, 0, 0, 0, 0, 0.48 * W);
-			m.addColorStop(0, 'rgba(0,0,0,1)');
-			m.addColorStop(0.55, 'rgba(0,0,0,1)');
-			m.addColorStop(1, 'rgba(0,0,0,0)');
-			oc.fillStyle = m;
-			oc.fillRect(-W, -W, 2 * W, 2 * W);
-			oc.restore();
-			oc.globalCompositeOperation = 'source-over';
+			ovalFade(oc, f.fig.groundHold);
 			ctx.drawImage(o, Math.round(s.x * p), Math.round(s.y * p));
 		}
 		const fl = flight.current;

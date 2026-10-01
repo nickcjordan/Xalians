@@ -1,0 +1,351 @@
+/* ==========================================================================================
+   Powerworks: enemy intents and keys that show power (docs/design/powerworks-intents-and-keys.md)
+   ------------------------------------------------------------------------------------------
+   A move key is one pressable surface with ONE number (its power) and its shape. What a key would
+   land on each target is a big number on that target's plate while the key is hovered or selected.
+   Each enemy carries its committed move and target as a chip on its plate. Imported after
+   powerworksTurns.css; the phone's own rules follow in the block at the foot (scoped to .phone).
+   ========================================================================================== */
+
+/* --- the key: one button --- */
+.pwt-keybar > button.pwt-key {
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  gap: 0;
+  padding: 8px 10px 6px;
+  border: 1px solid var(--color-edge);
+  transition: border-color 120ms var(--ease-out), background 120ms var(--ease-out), opacity 150ms var(--ease-out);
+}
+.pwt-keybar > button.pwt-key:disabled { cursor: default; }
+.pwt-keybar > button.pwt-key:hover:not(:disabled) { border-color: var(--color-ink-2); background: var(--color-s1); }
+.pwt-keybar > button.pwt-key:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+/* The chosen key waits for its target: the strong frame is the one forward action. */
+.pwt-keybar > button.pwt-key.selected {
+  border-color: var(--color-viable);
+  box-shadow: 0 0 0 1px var(--color-viable), var(--thickness-key) var(--thickness-key) 0 rgba(0, 0, 0, 0.35);
+  background: var(--color-s1);
+}
+.pwt-keybar > button.pwt-key.selected .pwt-key-foot-words { color: var(--color-viable); }
+.pwt-key-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.pwt-key-power {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-data);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-ink);
+}
+.pwt-key-power .pwt-impact { width: 22px; height: 22px; color: var(--color-ink-3); }
+.pwt-key-shape {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.pwt-shape-all {
+  font-family: var(--font-legend);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-ink);
+  border: 1px solid var(--color-ink-2);
+  padding: 1px 6px;
+  line-height: 1.2;
+}
+.pwt-tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+.pwt-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-data);
+  font-size: 13px;
+  line-height: 1.2;
+  padding: 1px 5px;
+  border: 1px solid var(--color-edge-strong);
+  background: var(--color-s2);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.pwt-tag svg { width: 12px; height: 12px; flex: 0 0 auto; }
+.pwt-tag.heal { color: var(--color-viable); }
+.pwt-tag.shield { color: var(--color-el-ice); }
+.pwt-tag-each { font-family: var(--font-body); font-size: 12px; margin-left: 2px; color: var(--color-ink-3); }
+.pwt-tags.big { justify-content: flex-start; gap: 8px; }
+.pwt-tags.big .pwt-tag { font-size: 26px; font-weight: 700; padding: 0; border: 0; background: transparent; gap: 4px; }
+.pwt-tags.big .pwt-tag svg { width: 22px; height: 22px; }
+.pwt-key-aim { font-family: var(--font-body); font-size: 12px; color: var(--color-ink-3); text-align: right; }
+.pwt-key-head { display: flex; margin-bottom: 4px; }
+.pwt-key-foot { margin-top: 0; min-height: 16px; justify-content: flex-start; }
+.pwt-key-power-word { font-family: var(--font-body); font-size: 12px; font-weight: 400; color: var(--color-ink-3); align-self: flex-end; padding-bottom: 3px; }
+.pwt-key-power-was { font-size: 20px; font-weight: 400; color: var(--color-ink-3); }
+.pwt-key-power-arrow { font-size: 18px; font-weight: 400; color: var(--color-ink-3); }
+/* The companion's own mark on an attack key, beside the number it changed. */
+.pwt-key-own { display: inline-flex; align-items: center; gap: 3px; font-family: var(--font-data); font-size: 13px; line-height: 1.2; padding: 1px 5px; border: 1px solid var(--color-edge-strong); background: var(--color-s2); color: var(--color-ink-2); white-space: nowrap; }
+.pwt-key-own svg { width: 12px; height: 12px; flex: 0 0 auto; }
+.pwt-key-own-words { font-family: var(--font-body); font-size: 12px; }
+.pwt-key.resting .pwt-key-power,
+.pwt-key.spent .pwt-key-power { color: var(--color-ink-3); }
+
+/* --- the enemy's intent, on its plate --- */
+.pwt-marks.intent { margin-top: 1px; max-width: 100%; overflow: visible; }
+.pwt-intent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1px;
+  padding: 2px 4px 2px;
+  background: var(--color-s2);
+  border: 1px solid var(--color-edge-strong);
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--color-ink);
+}
+.pwt-intent.lethal { border-color: var(--color-plague); }
+.pwt-intent { transition: opacity 150ms var(--ease-out), border-color 150ms var(--ease-out); }
+/* While beats play: the acting enemy's promise stays lit, every other chip steps back (none is hidden, so no plate looks empty). */
+.pwt-intent.dim { opacity: 0.45; }
+.pwt-intent.lit { border-color: var(--color-ink-2); }
+.pwt-intent.lit.lethal { border-color: var(--color-plague); }
+.pwt-intent-to { display: flex; align-items: center; gap: 4px; min-width: 0; }
+/* The verb is the intent's own grammar: a word before its target, in ink, never a status glyph or a side color. */
+.pwt-intent-verb { flex: 0 0 auto; font-family: var(--font-legend); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-ink-3); }
+.pwt-intent-arrow { flex: 0 0 auto; color: var(--color-ink-3); font-size: 12px; }
+.pwt-intent-portrait.struck { opacity: 0.45; position: relative; }
+.pwt-intent-portrait.struck::after { content: ""; position: absolute; left: -2px; right: -2px; top: 50%; border-top: 2px solid var(--color-ink); transform: rotate(-35deg); }
+.pwt-intent-portrait {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--color-edge-strong);
+  background: var(--color-s3);
+}
+.pwt-intent-portrait .pw-portrait,
+.pwt-intent-portrait .pw-portrait img,
+.pwt-intent-portrait .pw-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.pwt-intent-name,
+.pwt-intent-self {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-legend);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.pwt-intent-what { display: flex; align-items: center; justify-content: center; gap: 3px; white-space: nowrap; font-size: 14px; font-weight: 700; line-height: 1.1; }
+.pwt-intent-what svg { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-ink-2); }
+.pwt-intent-what .pwt-hit-skull { width: 14px; height: 14px; color: var(--color-plague); }
+.pwt-intent-what .pwt-hit-before { font-size: 12px; font-weight: 400; color: var(--color-ink-3); margin-right: 0; }
+.pwt-intent-what .pwt-hit-arrow { color: var(--color-ink-3); font-size: 12px; font-weight: 400; }
+.pwt-intent-all { font-family: var(--font-legend); font-size: 10px; letter-spacing: 0.08em; border: 1px solid var(--color-ink-3); padding: 0 3px; font-weight: 700; }
+.pwt-intent-support { display: inline-flex; align-items: center; gap: 2px; }
+/* An enemy's heal or shield favors the enemy: neutral ink, never the green that means "good for you". */
+.pwt-intent .pwt-cell-chevron-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+}
+.pwt-intent .pwt-cell-chevron-wrap svg { width: 11px; height: 11px; }
+.pwt-intent .pwt-cell-chevron-wrap.good { background: var(--color-viable); }
+.pwt-intent .pwt-cell-chevron-wrap.good svg { color: var(--color-viable-ink); }
+.pwt-intent .pwt-cell-chevron-wrap.bad { background: var(--color-plague); }
+.pwt-intent .pwt-cell-chevron-wrap.bad svg { color: var(--color-plague-ink); }
+.pwt-intent .pwt-cell-chevron-wrap.neutral { background: var(--color-s3); border: 1px solid var(--color-edge-strong); }
+.pwt-intent .pwt-cell-chevron-wrap.neutral svg { color: var(--color-ink-2); }
+
+/* --- the matchup mark, on the plaque's top edge --- */
+.pwt-match {
+  position: absolute;
+  top: -15px;
+  left: 4px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+  padding: 0 4px;
+  background: var(--color-s3);
+  border: 1px solid var(--color-edge-strong);
+  font-family: var(--font-legend);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.pwt-match svg { width: 10px; height: 10px; flex: 0 0 auto; }
+.pwt-match.strong { color: var(--color-viable-ink); background: var(--color-viable); border-color: var(--color-viable); }
+.pwt-match.weak { color: var(--color-plague-ink); background: var(--color-plague); border-color: var(--color-plague); }
+.pwt-match.immune { color: var(--color-ink-3); }
+.pwt-match:not(.immune) { padding: 0 3px; gap: 1px; letter-spacing: 0; }
+.pwt-match-x { font-family: var(--font-data); letter-spacing: 0; font-size: 10px; }
+/* The tab is the chevron and its multiplier (the word is on hover and in the Guide): a plate's width holds it beside the element tag. */
+.pwt-match .pwt-match-word { display: none; }
+.pwt-match.immune .pwt-match-word { display: inline; }
+
+/* --- the preview: what the hovered or selected key would land on this unit, always in the same place --- */
+.pwt-preview {
+  position: absolute;
+  left: 50%;
+  bottom: 15px;
+  transform: translateX(-50%);
+  z-index: 5;
+  min-width: 52px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 2px 8px 2px;
+  background: rgba(8, 12, 18, 0.88);
+  border: 1px solid var(--color-edge-strong);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  color: var(--color-ink);
+  pointer-events: none;
+  animation: pwt-preview-in 120ms var(--ease-out) both;
+}
+@keyframes pwt-preview-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pwt-preview { animation: none; }
+}
+.pwt-preview-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-data);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+.pwt-preview-num svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.pwt-preview-num.plain { font-size: 15px; gap: 5px; color: var(--color-ink-2); }
+.pwt-preview-num.plain svg { width: 16px; height: 16px; }
+.pwt-preview-word { font-family: var(--font-body); font-size: 13px; font-weight: 400; }
+.pwt-preview-before { font-size: 18px; font-weight: 400; color: var(--color-ink-3); }
+.pwt-preview-arrow { font-size: 16px; font-weight: 400; color: var(--color-ink-3); }
+.pwt-preview.finish { border-color: var(--color-caution); }
+.pwt-preview.finish .pwt-preview-num { color: var(--color-caution); }
+.pwt-preview.finish .pwt-preview-num svg { color: var(--color-caution); }
+.pwt-preview.heal .pwt-preview-num { color: var(--color-viable); }
+.pwt-preview.shield .pwt-preview-num svg { color: var(--color-el-ice); }
+.pwt-preview .pwt-preview-num svg.saved { color: var(--color-ink-3); }
+/* A skull that stays after a hinder: the hit still knocks the companion out. */
+.pwt-preview .pwt-preview-num svg.live,
+.pwt-preview-note svg.live { color: var(--color-plague); }
+.pwt-preview-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-data);
+  font-size: 12px;
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.pwt-preview-note svg { width: 12px; height: 12px; flex: 0 0 auto; }
+.pwt-preview-note s { color: var(--color-ink-3); }
+.pwt-preview-chips { display: inline-flex; align-items: center; gap: 8px; }
+.pwt-preview-chip { display: inline-flex; align-items: center; gap: 3px; font-family: var(--font-data); font-size: 24px; font-weight: 700; line-height: 1; }
+.pwt-preview-chip svg { width: 18px; height: 18px; }
+.pwt-preview-chip.heal { color: var(--color-viable); }
+.pwt-preview .pwt-cell-chevron-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+.pwt-preview .pwt-cell-chevron-wrap svg { width: 13px; height: 13px; }
+.pwt-preview .pwt-cell-chevron-wrap.good { background: var(--color-viable); }
+.pwt-preview .pwt-cell-chevron-wrap.good svg { color: var(--color-viable-ink); }
+.pwt-preview .pwt-cell-chevron-wrap.bad { background: var(--color-plague); }
+.pwt-preview .pwt-cell-chevron-wrap.bad svg { color: var(--color-plague-ink); }
+
+/* A key is hovered or selected: units it cannot name step back; the ones it can are pressable. */
+.pwt-plate.off-target { opacity: 0.5; }
+.pwt-plate.pickable { cursor: pointer; }
+.pwt-plate.pickable:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+.pwt-plate { transition: transform 120ms var(--ease-out), opacity 150ms var(--ease-out); }
+
+/* --- legend samples (Guide, briefing) --- */
+.pwt-legend-keys { display: flex; gap: 8px; }
+.pwt-legend-keys > .pwt-key,
+.pwt-lesson-key > .pwt-key {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 4px 8px 3px;
+  background: var(--color-glass);
+  border: 1px solid var(--color-edge);
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: default;
+}
+.pwt-legend-keys > .pwt-key.selected { border-color: var(--color-viable); }
+.pwt-legend-keys .pwt-key-power,
+.pwt-lesson-key .pwt-key-power { font-size: 26px; }
+.pwt-legend-keys .pwt-key-foot,
+.pwt-lesson-key .pwt-key-foot { min-height: 0; }
+.pwt-legend-keys .pwt-key-head,
+.pwt-lesson-key .pwt-key-head { margin-bottom: 0; }
+.pwt-legend-tiles { display: flex; gap: 6px; }
+.pwt-legend-tile {
+  position: relative;
+  width: 80px;
+  height: 52px;
+  display: block;
+  background: linear-gradient(#141b24, #0b1017);
+  border: 1px solid var(--color-edge);
+}
+.pwt-legend-tile .pwt-preview { bottom: auto; top: 50%; transform: translate(-50%, -50%); min-width: 0; padding: 1px 4px; }
+.pwt-legend-tile .pwt-preview-num { font-size: 20px; }
+.pwt-legend-tile .pwt-preview-note { font-size: 11px; }
+.pwt-legend .pwt-intent { width: 130px; }
+.pwt-legend-chips .pwt-match { position: static; }
+.pwt-guide .pwt-legend-sample { flex: 0 0 172px; }
+.pwt-guide .pwt-legend-sample.wide { flex-basis: 172px; }
+.pwt-lesson .pwt-legend-sample { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.pwt-lesson-key { flex: 0 0 158px; display: flex; }
+.pwt-lesson-then { font-family: var(--font-legend); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ink-3); }
+
+/* --- the stage gives room to the plaques: an enemy plaque carries an intent chip, so the figures give back height --- */
+.pwt-row.enemies { padding-top: 10px; }
+.pwt-row.enemies .pwt-figure:not(.boss) { height: 98px; }
+.pwt-row.enemies .pwt-figure.boss { height: 110px; }
+.pwt-console:not(.phone) .pwt-rows { padding-bottom: 4px; }
+/* A key is one button now, not a row of cells: the key bar gives the height back to the stage. */
+/* The guardian's plaque carries its own tag row above the element badge: its preview sits above that. */
+.pwt-plate.boss .pwt-preview { bottom: 39px; left: calc(50% + 8px); }
+.pwt-banner-open { display: inline-block; width: 12px; height: 12px; vertical-align: -2px; margin-left: 4px; color: var(--color-ink-3); }
+.pwt-preview.knocks .pwt-preview-num { font-size: 20px; gap: 2px; }
+.pwt-preview.knocks .pwt-preview-before,
+.pwt-preview.knocks .pwt-preview-arrow { font-size: 15px; }
+.pwt-preview.knocks .pwt-preview-num svg { width: 15px; height: 15px; }
+.pwt-plate.boss .pwt-preview.knocks { left: 50%; }
+.pwt-preview-notes { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0 8px; }

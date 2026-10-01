@@ -15,6 +15,10 @@ import {
   type PRun,
 } from "./engine.ts";
 import { plannerPolicy } from "./policy.ts";
+import { squadUnits } from "../index.ts";
+import { HEALTH_SCALE } from "./levers.ts";
+import { roomsFor, stepDamage } from "./engine.ts";
+import chart from "@xalians/content/typeEffectivenessMatrix.json";
 
 const attack = (power: number, element: string | null, extra: Partial<PMove> = {}): PMove => ({
   key: "a",
@@ -153,5 +157,45 @@ describe("pillar rules", () => {
   it("lets a helping move name a squadmate", () => {
     const s = arena([{ moves: [attack(0, null, { parts: [{ kind: "heal", n: 5, aim: "ally", all: false }] })] }, {}], [{}]);
     expect(legalTargets(s, s.team[0], 0).map((t) => t.id)).toEqual(["T1"]);
+  });
+
+  describe("numbers pass", () => {
+    const grid = chart as Record<string, Record<string, number>>;
+    /** An element pair (attack, defend) the shared chart gives this step. */
+    const pairFor = (x: number): [string, string] => {
+      for (const a of Object.keys(grid)) for (const d of Object.keys(grid[a])) if (grid[a][d] === x) return [a.toLowerCase(), d.toLowerCase()];
+      throw new Error(`no pair at ${x}`);
+    };
+    it("makes every element step visible on the smallest attack: power 2 deals 1 / 2 / 3 / 4, and 0 when immune", () => {
+      const dealt = [0.5, 1, 1.5, 2, 0].map((x) => {
+        const [a, d] = pairFor(x);
+        const s = arena([{ element: a, moves: [attack(2, a)] }], [{ element: d }]);
+        return attackOn(s.team[0], s.team[0].moves[0], s.enemies[0]);
+      });
+      expect(dealt).toEqual([1, 2, 3, 4, 0]);
+    });
+    it("never deals 0 to a non-immune target before a hinder, and rounds half up", () => {
+      for (const power of [1, 2, 3, 5, 7])
+        for (const x of [0.5, 1, 1.5, 2]) expect(stepDamage(power, x)).toBeGreaterThanOrEqual(1);
+      expect(stepDamage(3, 0.5)).toBe(2);
+      expect(stepDamage(5, 1.5)).toBe(8);
+      expect(stepDamage(4, 0)).toBe(0);
+      const s = arena([{ element: "water", moves: [attack(1, "water")] }], [{ element: "water" }]);
+      const hindered = { ...s.team[0], hinder: 5 };
+      expect(attackOn(hindered, hindered.moves[0], s.enemies[0])).toBe(0);
+    });
+    it("doubles health on both sides: the record's health times HEALTH_SCALE", () => {
+      expect(HEALTH_SCALE).toBe(2);
+      const s = createPillarRun(1);
+      for (const u of squadUnits(1, "starter")) {
+        const f = s.team.find((t) => t.id === u.id)!;
+        expect(f.max).toBe(u.max * HEALTH_SCALE);
+        expect(f.hp).toBe(f.max);
+      }
+      for (const row of roomsFor(s.rules)[0].enemies) {
+        const f = s.enemies.find((e) => e.id === String(row[1]))!;
+        expect(f.max).toBe(Math.round(Number(row[2]) * s.rules.enemyHpFactor) * HEALTH_SCALE);
+      }
+    });
   });
 });

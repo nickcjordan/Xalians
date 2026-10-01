@@ -17,14 +17,36 @@ export const ELEMENT_SOURCE: ElementSource = "creature";
   the sim measures both.
 */
 export const UNIFORM_POWER = false;
-/** An attack's power is floor(intensity / POWER_DIVISOR), summed over its damaging effects. */
-export const POWER_DIVISOR = 10;
+/**
+  An attack's power is round(intensity / POWER_DIVISOR), summed over its damaging effects. 5, not
+  10 (numbers pass, 2026-09-29): at 10, one attack in eight had power 1, where a strong step
+  changed nothing and a weak step floored to 0. Every amount rounds half up.
+*/
+export const POWER_DIVISOR = 5;
+/**
+  Every unit's health, companion and enemy alike, is its record health times this (applied once,
+  in fighter()). It pairs with the halved divisors above so the time to knock a unit out is
+  unchanged while the smallest attack is power 2 or more and every element step is visible.
+*/
+export const HEALTH_SCALE = 2;
+/**
+  A companion's health is never below this (sample set, 2026-09-29): creatures rated near 10 read
+  16 to 20 health and fell to one enemy blow from full health (the strongest blow is 36). It only
+  reaches creatures the catalog does not have yet; enemies are authored and keep their own health.
+*/
+export const HEALTH_FLOOR = 40;
+/**
+  An attack's power is never below this (sample set, 2026-09-29): at power 1 a weak step (x0.5)
+  rounds up to the neutral number, so the matchup is invisible. It reaches attacks under
+  intensity 8 and the weakest area attacks.
+*/
+export const MIN_POWER = 2;
 /** A pull or push deals its impact at this share of its intensity. */
 export const DISPLACE_POWER_FACTOR = 0.6;
 /** An area attack hits every standing enemy with its power times this. */
 export const AREA_FACTOR = 0.6;
-/** A support's number is floor(intensity / SUPPORT_DIVISOR); a status with no intensity reads DEFAULT_INTENSITY. */
-export const SUPPORT_DIVISOR = 10;
+/** A support's number is round(intensity / SUPPORT_DIVISOR); a status with no intensity reads DEFAULT_INTENSITY. */
+export const SUPPORT_DIVISOR = 5;
 export const DEFAULT_INTENSITY = 50;
 /** Binding is Hinder's strong form: its number is multiplied by this. */
 export const BINDING_HINDER_FACTOR = 1.4;
@@ -35,8 +57,8 @@ export const REST_ROUNDS = { repeatable: 0, brief: 1, prolonged: 2 } as const;
 export const PROLONGED_REST = 2;
 /** The signature is usable once per encounter. */
 export const SIGNATURE_ONCE = true;
-/** Every enemy's HP is its row HP times this, rounded (the facility's one difficulty lever). */
-export const ENEMY_HP_FACTOR = 0.62;
+/** Every enemy's HP is its row HP times this, rounded, before HEALTH_SCALE (the facility's one difficulty lever). */
+export const ENEMY_HP_FACTOR = 0.76;
 /** An enemy picks whom to hit weighted by max HP raised to this power (0: uniform). */
 export const TARGET_SIZE_WEIGHT = 1;
 /** An enemy values a shield in full on an ally below this share of its max HP, and at 0.4 otherwise. */
@@ -46,9 +68,11 @@ export const ENEMY_NOISE = 0.3;
 /** Run structure, unchanged from the prototype. */
 export const ENCOUNTER_XP = 10;
 export const FINAL_ENCOUNTER_XP = 30;
-export const RECOVERY_STATION_HP = 10;
+/** Health the recovery station gives each standing companion (10 before HEALTH_SCALE). */
+export const RECOVERY_STATION_HP = 20;
 export const STALL_ROUNDS = 6;
-export const PILLAR_SAVE_VERSION = 1;
+/** 3: a run stores each enemy's committed intent (2: the numbers pass rescaled health and power). */
+export const PILLAR_SAVE_VERSION = 3;
 /**
   Turn-by-turn, speed timeline: a unit's interval between turns is TIMELINE_SCALE / (SPEED_BASE +
   speed). SPEED_BASE softens speed: at 0 a speed-72 creature acts 2.6 times as often as a
@@ -58,6 +82,11 @@ export const TIMELINE_SCALE = 1000;
 export const SPEED_BASE = 100;
 /** A delay pushes the target's next turn back by this share of its interval (the turn-order layer). */
 export const DELAY_SHARE = 0.3;
-/** Turn-by-turn: this many turns in a row without anyone losing health force the squad out. */
+/**
+  Turn-by-turn: this many turns per standing unit in a row without either side's total health
+  reaching a new low for the encounter force the squad out. A new low, not any loss: a healer
+  undoing each chip kept health moving forever (sample set, 2026-09-29, 4% of sample squads and 2%
+  of drafted squads never finished).
+*/
 export const STALL_TURNS_PER_UNIT = 6;
 

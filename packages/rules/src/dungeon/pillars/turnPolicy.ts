@@ -5,7 +5,8 @@
   shield or hinder keeps off, and for the turn-order layer the share of a threat a delay pushes
   past this companion's next turn.
 */
-import { attackOn, legalMoves, legalTargets, step, type Fighter, type Order } from "./engine.ts";
+import { HEALTH_SCALE } from "./levers.ts";
+import { allShare, attackOn, legalMoves, legalTargets, step, stepDamage, type Fighter, type Order } from "./engine.ts";
 import { activeOf, actsBeforeMyNext, turnCommand, type TRun } from "./turns.ts";
 
 export type TurnPolicy = (s: TRun, rand: () => number) => Order;
@@ -14,7 +15,7 @@ const PASS = (u: Fighter): Order => ({ move: -2, target: u.id });
 function blow(e: Fighter, on: Fighter): number {
   let best = 0;
   e.moves.forEach((m, i) => {
-    if (m.power > 0 && e.cooldowns[i] <= 1) best = Math.max(best, Math.floor(m.power * step(m.element, on.element)));
+    if (m.power > 0 && e.cooldowns[i] <= 1) best = Math.max(best, stepDamage(m.power, step(m.element, on.element)));
   });
   return Math.max(0, best - e.hinder);
 }
@@ -46,7 +47,7 @@ export function turnWorth(s: TRun, u: Fighter, i: number, target: Fighter): numb
       if (dealt >= t.hp) v += threat(s, t) * (actsBeforeMyNext(s, u, t) ? 1.5 : 0.8);
     }
   for (const p of m.parts) {
-    const n = p.all ? Math.floor(p.n * 0.6) : p.n;
+    const n = p.all ? allShare(p.n) : p.n;
     const allies = p.aim === "self" ? [u] : p.all ? s.team.filter((t) => t.hp > 0) : [target.enemy ? u : target];
     const enemies = p.all ? s.enemies.filter((e) => e.hp > 0) : [target];
     if (p.kind === "heal") v += allies.reduce((a, t) => a + Math.min(n, t.max - t.hp) * 0.9, 0);
@@ -100,9 +101,9 @@ export const turnHardestHit: TurnPolicy = (s) => best(s, true);
 
 function position(s: TRun): number {
   if (s.phase === "lost") return -1000;
-  const team = s.team.reduce((a, u) => a + Math.max(0, u.hp), 0) + 25 * s.team.filter((u) => u.hp > 0).length;
+  const team = s.team.reduce((a, u) => a + Math.max(0, u.hp), 0) + 25 * HEALTH_SCALE * s.team.filter((u) => u.hp > 0).length;
   const foes = s.phase === "turn" ? s.enemies.reduce((a, e) => a + Math.max(0, e.hp), 0) : 0;
-  return team - 1.2 * foes + (s.phase === "camp" || s.phase === "won" ? 60 : 0);
+  return team - 1.2 * foes + (s.phase === "camp" || s.phase === "won" ? 60 * HEALTH_SCALE : 0);
 }
 /**
   The look-ahead: tries the planner's top options, plays each forward a number of the squad's

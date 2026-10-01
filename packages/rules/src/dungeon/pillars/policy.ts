@@ -3,7 +3,8 @@
   before it lands, health restored, damage a shield or hinder is expected to keep off.
   Presentation never reads these; the sim uses them to measure how much the choices matter.
 */
-import { actsBefore, attackOn, legalMoves, legalTargets, step, turnOrder, type Fighter, type Order, type PMove, type PRun } from "./engine.ts";
+import { HEALTH_SCALE } from "./levers.ts";
+import { actsBefore, allShare, attackOn, legalMoves, legalTargets, step, stepDamage, turnOrder, type Fighter, type Order, type PMove, type PRun } from "./engine.ts";
 
 /** A small seeded stream for sim choices, apart from the run's rng. */
 export function stream(seed: number) {
@@ -14,7 +15,7 @@ export function stream(seed: number) {
 function blow(e: Fighter, on: Fighter): number {
   let best = 0;
   e.moves.forEach((m, i) => {
-    if (m.power > 0 && e.cooldowns[i] === 0) best = Math.max(best, Math.floor(m.power * step(m.element, on.element)));
+    if (m.power > 0 && e.cooldowns[i] === 0) best = Math.max(best, stepDamage(m.power, step(m.element, on.element)));
   });
   return Math.max(0, best - e.hinder);
 }
@@ -55,7 +56,7 @@ export function worth(s: PRun, u: Fighter, i: number, target: Fighter, hp: Recor
     }
   }
   for (const p of m.parts) {
-    const n = p.all ? Math.floor(p.n * 0.6) : p.n;
+    const n = p.all ? allShare(p.n) : p.n;
     const allies = p.aim === "self" ? [u] : p.all ? s.team.filter((t) => t.hp > 0) : [target.enemy ? u : target];
     const enemies = p.all ? s.enemies.filter((e) => (hp[e.id] ?? e.hp) > 0) : [target];
     if (p.kind === "heal") v += allies.reduce((a, t) => a + Math.min(n, t.max - t.hp) * 0.9, 0);
@@ -144,9 +145,9 @@ import { pillarCommand } from "./engine.ts";
 /** A position's worth for the look-ahead: squad health kept against enemy health left, and the outcome. */
 function position(s: PRun): number {
   if (s.phase === "lost") return -1000;
-  const team = s.team.reduce((a, u) => a + Math.max(0, u.hp), 0) + 25 * s.team.filter((u) => u.hp > 0).length;
+  const team = s.team.reduce((a, u) => a + Math.max(0, u.hp), 0) + 25 * HEALTH_SCALE * s.team.filter((u) => u.hp > 0).length;
   const foes = s.phase === "planning" ? s.enemies.reduce((a, e) => a + Math.max(0, e.hp), 0) : 0;
-  return team - 1.2 * foes + (s.phase === "camp" || s.phase === "won" ? 60 : 0);
+  return team - 1.2 * foes + (s.phase === "camp" || s.phase === "won" ? 60 * HEALTH_SCALE : 0);
 }
 /** Play the planner forward a few rounds from a state; the encounter's end stops it. */
 function rollout(s: PRun, horizon: number): number {

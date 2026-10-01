@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Gauge, SkipForward } from "lucide-react";
+import { ScrollText, SkipForward } from "lucide-react";
 import type { EnemyView, SquadView } from "./view";
 
 /**
@@ -18,6 +18,15 @@ export function TurnBanner({
   lineIsSince,
   onOpenRecord,
   round,
+  readOnly = false,
+  ended = null,
+  note = null,
+  noteId,
+  noteKey,
+  status = null,
+  next = null,
+  playing = false,
+  prompt = "Choose a move.",
 }: {
   actorSide: "squad" | "enemy";
   actorName: string;
@@ -27,9 +36,34 @@ export function TurnBanner({
   lineIsSince: boolean;
   onOpenRecord: () => void;
   round: number;
+  /** Phone: the line is plain text (it truncates to one line; the Record, in the menu, holds it all). */
+  readOnly?: boolean;
+  /**
+    While the stage holds on a sector's, the Guardian's or the squad's fall there is no live turn:
+    the banner says what happened instead of whose turn it is ("Sector cleared", "Guardian down").
+  */
+  ended?: { kicker: string; who: string } | null;
+  /**
+    A first-occurrence note that takes the line's place while it shows (phone: the key column has no
+    room for it and the stage must not be covered, so the banner says it).
+  */
+  note?: string | null;
+  noteId?: string;
+  /** Desktop: the move the note is about, named in bold at the start of the note (there is no key bar to point at it). */
+  noteKey?: string;
+  /** Desktop: the hindered (or boosted) reason for the acting companion, a fact in one sentence under the name. */
+  status?: string | null;
+  /** Desktop: while the enemies act, the companion whose turn is next (the key bar that used to say it is gone). */
+  next?: string | null;
+  /** The enemies and the beats are playing out (the harness's hook for "a turn is playing"). */
+  playing?: boolean;
+  /** What the empty line says on your turn: "Choose a move.", or "Now choose a target." once a key waits for one. */
+  prompt?: string;
 }) {
-  const kicker = actorSide === "squad" ? "Your turn" : "Enemy turn";
-  const who = `${actorName}${actorSide === "enemy" && actorLetter ? ` ${actorLetter}` : ""}`;
+  // While the stage holds on a fall its one plaque says what happened; the banner only keeps the round and the sector
+  // (round 8, item 9: the same words were on the banner, the stage and the key bar).
+  const kicker = ended ? `Round ${round}` : actorSide === "squad" ? "Your turn" : "Enemy turn";
+  const who = ended ? ended.who : `${actorName}${actorSide === "enemy" && actorLetter ? ` ${actorLetter}` : ""}`;
   const label = `${kicker} ${who}`;
   // The slide plays when the actor changes, never on a beat within the same actor's turn.
   const [slideKey, setSlideKey] = useState(label);
@@ -41,51 +75,95 @@ export function TurnBanner({
   }, [label]);
 
   return (
-    <div className={`pwt-banner ${actorSide}`} data-turn-banner="" data-side={actorSide} aria-live="polite">
+    <div className={`pwt-banner ${ended ? "hold" : actorSide}`} data-turn-banner="" data-side={ended ? "hold" : actorSide} data-playing={playing ? "" : undefined} aria-live="polite">
       <p className="pwt-banner-label" key={slideKey}>
         <span className="pwt-banner-kicker">
-          <span className="pwt-banner-round">Round {round}</span> · {kicker}
+          {!ended && (
+            <>
+              <span className="pwt-banner-round">Round {round}</span> ·{" "}
+            </>
+          )}
+          {kicker}
         </span>
         <span className="pwt-banner-who">{who}</span>
       </p>
-      {line ? (
-        lineIsSince ? (
+      {status && !ended && !playing && (
+        <p className="pwt-banner-status" data-status="">
+          {status}
+        </p>
+      )}
+      {note && !ended ? (
+        // The instruction stays; the note is one more sentence after it (a note about a mark, never the prompt's replacement).
+        <p className="pwt-banner-line pwt-note" role="note" data-note={noteId}>
+          {actorSide === "squad" && <span className="pwt-banner-prompt">{prompt} </span>}
+          {noteKey && <b>{noteKey} </b>}
+          {note}
+        </p>
+      ) : line ? (
+        lineIsSince && !readOnly ? (
           <button type="button" className="pwt-banner-line since" onClick={onOpenRecord} title="Open the full record">
             <span className="pwt-banner-line-label">Since your last turn</span> {line}
+            {/* The line is cut to what fits; the whole of it is in the Record, and the icon says the line opens it. */}
+            <ScrollText className="pwt-banner-open" aria-hidden="true" />
           </button>
         ) : (
-          <p className="pwt-banner-line">{line}</p>
+          <p className="pwt-banner-line">
+            {lineIsSince && (
+              <>
+                <span className="pwt-banner-line-label">Since your last turn</span>{" "}
+              </>
+            )}
+            {line}
+          </p>
         )
       ) : (
-        <p className="pwt-banner-line empty">{actorSide === "squad" ? "Choose a move, then a target." : ""}</p>
+        <p className="pwt-banner-line empty">{actorSide === "squad" && !ended ? prompt : ""}</p>
+      )}
+      {next && !ended && (
+        <p className="pwt-banner-next">
+          Your next turn: <b>{next}</b>
+        </p>
       )}
     </div>
   );
 }
 
-/** Playback speed and skip, beside the banner. Skip jumps to your next turn, never past it. */
+/**
+  Playback speed and skip, at the right of the key bar while beats play. Speed is a labeled
+  two-part control (1x | 2x) with the current one pressed, not a status-looking "1X" (UX pass 2,
+  round 3). Skip jumps to your next turn, never past it.
+*/
 export function PlaybackTools({
   speed,
-  onSpeedToggle,
+  onSpeed,
   onSkip,
   skipDisabled,
 }: {
   speed: 1 | 2;
-  onSpeedToggle: () => void;
+  onSpeed: (s: 1 | 2) => void;
   onSkip: () => void;
   skipDisabled: boolean;
 }) {
   return (
     <div className="pwt-playtools">
-      <button
-        type="button"
-        onClick={onSpeedToggle}
-        aria-label={speed === 1 ? "Switch to 2x speed" : "Switch to 1x speed"}
-        title={speed === 1 ? "Playback at 1x. Click for 2x." : "Playback at 2x. Click for 1x."}
-      >
-        <Gauge /> {speed}x
-      </button>
-      <button type="button" onClick={onSkip} disabled={skipDisabled} aria-label="Skip to your next turn" title="Skip to your next turn">
+      <div className="pwt-speed" role="group" aria-label="Playback speed">
+        <span className="pwt-speed-label">Speed</span>
+        <div className="pwt-speed-seg">
+          {([1, 2] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              className={speed === v ? "on" : ""}
+              aria-pressed={speed === v}
+              onClick={() => onSpeed(v)}
+              title={`Play at ${v}x`}
+            >
+              {v}x
+            </button>
+          ))}
+        </div>
+      </div>
+      <button type="button" className="pwt-skip" onClick={onSkip} disabled={skipDisabled} aria-label="Skip to your next turn" title="Skip to your next turn">
         <SkipForward /> Skip
       </button>
     </div>
@@ -94,11 +172,11 @@ export function PlaybackTools({
 
 /** A "-7" or "+5" delta chip on a plate whose health changed since the player's previous
     turn (storyboard item "what just happened"). `data-delta` is the harness's stable hook. */
-export function DeltaChip({ n }: { n: number }) {
+export function DeltaChip({ n, plain = false }: { n: number; plain?: boolean }) {
   if (!n) return null;
   const heal = n > 0;
   return (
-    <span className={`pwt-delta ${heal ? "heal" : "hurt"}`} data-delta={n} aria-label={`${heal ? "gained" : "lost"} ${Math.abs(n)} health since your last turn`}>
+    <span className={`pwt-delta ${heal ? "heal" : "hurt"}${plain ? " plain" : ""}`} data-delta={n} aria-label={`${heal ? "gained" : "lost"} ${Math.abs(n)} health since your last turn`}>
       {heal ? "+" : "-"}
       {Math.abs(n)}
     </span>
