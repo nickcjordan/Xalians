@@ -8357,7 +8357,7 @@
 	left: calc(var(--sq-tick, 0) * 100%);
 	width: 1.5px;
 	margin-left: -0.75px;
-	background: #efe8d4;
+	background: var(--g-ink);
 	box-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
 }
 .rec-console--match[data-terminal] .rec-squad-cell--costs .rec-squad-num { color: var(--rec-loss); }
