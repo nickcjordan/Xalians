@@ -157,9 +157,17 @@
 .pwt-threat.lit .pwt-threat-what svg { color: var(--color-s1); }
 .pwt-threat.lit .pwt-threat-before { color: var(--color-s1); }
 .pwt-threat.dim { opacity: 0.4; }
-/* A previewed move finishes the enemy: the tag is crossed out and steps back (the hit will not come). */
-.pwt-threat.cancelled { opacity: 0.6; }
-.pwt-threat.cancelled::after { content: ""; position: absolute; left: -1px; right: -1px; top: 50%; margin-top: -1px; border-top: 2px solid currentColor; }
+/* A previewed move finishes the enemy: the whole tag is crossed out (a 2 px ink strike, letter box through number) and only its number dims. */
+.pwt-threat.cancelled::after { content: ""; position: absolute; left: -2px; right: -2px; top: 50%; margin-top: -1px; border-top: 2px solid var(--color-ink); z-index: 1; }
+.pwt-threat.cancelled .pwt-threat-n,
+.pwt-threat.cancelled .pwt-threat-what svg { opacity: 0.5; }
+/* A lethal tag is the loudest thing on the row: a 2 px raspberry edge, a solid skull and the number in raspberry (this is real danger). */
+.pwt-threat.lethal { border-width: 2px; }
+.pwt-threat.lethal .pwt-threat-n { color: var(--color-plague); }
+.pwt-threat.lethal .pwt-threat-what .pwt-threat-skull { fill: var(--color-plague); stroke: var(--color-s2); stroke-width: 2.2; }
+.pwt-threat.lit.lethal .pwt-threat-what .pwt-threat-skull { stroke: var(--color-ink); }
+.pwt-threat-arrow { font-weight: 400; color: var(--color-ink-3); }
+.pwt-threat.lit .pwt-threat-arrow { color: var(--color-s1); }
 .pwt-threat-letter {
   flex: 0 0 auto;
   display: flex;

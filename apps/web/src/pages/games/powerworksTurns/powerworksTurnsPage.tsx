@@ -735,36 +735,40 @@ export default function PowerworksTurnsPage() {
     if (tagHover) return tagHover;
     return shownKey === null && hoverTarget && view.enemies.some((e) => e.id === hoverTarget) ? hoverTarget : null;
   }, [busy, phone, tagHover, shownKey, hoverTarget, view.enemies]);
-  const focusThreats = useMemo(() => (focusEnemy ? shownThreats.filter((x) => x.fromId === focusEnemy && !x.cancelled) : []), [focusEnemy, shownThreats]);
+  // The tags the link line joins to their enemy: a hovered tag's (or a hovered enemy's, with no move chosen); or, with a move chosen
+  // and a target hovered, every tag that preview re-reads (a hinder's struck number, a finish's crossed-out tag).
+  const previewLink = !busy && !phone && !tagHover && shownKey !== null && !!hoverTarget && Object.keys(threatPreviews).length > 0;
+  const focusThreats = useMemo(
+    () => (previewLink ? shownThreats.filter((x) => x.before !== undefined || x.cancelled) : focusEnemy ? shownThreats.filter((x) => x.fromId === focusEnemy && !x.cancelled) : []),
+    [previewLink, focusEnemy, shownThreats]
+  );
   const ringOf = (id: string): "" | "threat" | "danger" => {
-    if (!focusEnemy) return "";
-    const lethal = focusThreats.some((x) => x.lethal);
-    if (id === focusEnemy) return lethal ? "danger" : "threat";
-    const hit = focusThreats.find((x) => x.on === id);
-    return hit ? (hit.lethal ? "danger" : "threat") : "";
+    if (!focusThreats.length) return "";
+    const mine = focusThreats.filter((x) => x.fromId === id || x.on === id);
+    if (!mine.length) return "";
+    return !previewLink && mine.some((x) => x.lethal) ? "danger" : "threat";
   };
-  // The link: one 2 px line from the enemy's figure to the threat tag it matches (not to the figure's head), drawn beneath the moves row.
+  // The link: one 2 px line from each tag's enemy to the tag (not to the figure's head), drawn beneath the moves row.
   const threatLines = useMemo(() => {
     const stage = stageRef.current;
     const none = { lines: [] as { id: string; x1: number; y1: number; x2: number; y2: number; lethal: boolean }[], hole: null as { x: number; y: number; w: number; h: number } | null };
-    if (!stage || !focusEnemy) return none;
-    const from = stage.querySelector<HTMLElement>(`[data-unit="${focusEnemy}"] .pwt-figure`);
-    if (!from) return none;
+    if (!stage || !focusThreats.length) return none;
     const box = stage.getBoundingClientRect();
     const z = box.width / stage.offsetWidth || 1;
-    const fb = from.getBoundingClientRect();
-    const fx = (fb.left + fb.width / 2 - box.left) / z;
-    const fy = (fb.top + fb.height * 0.6 - box.top) / z;
     const out = { ...none, lines: [] as typeof none.lines };
     for (const th of focusThreats) {
-      const tag = stage.querySelector<HTMLElement>(`.pwt-threat[data-from-id="${focusEnemy}"][data-on="${th.on}"]`);
-      if (!tag || th.on === focusEnemy) continue;
+      const from = stage.querySelector<HTMLElement>(`[data-unit="${th.fromId}"] .pwt-figure`);
+      const tag = stage.querySelector<HTMLElement>(`.pwt-threat[data-from-id="${th.fromId}"][data-on="${th.on}"]`);
+      if (!from || !tag || th.on === th.fromId) continue;
+      const fb = from.getBoundingClientRect();
+      const fx = (fb.left + fb.width / 2 - box.left) / z;
+      const fy = (fb.top + fb.height * 0.6 - box.top) / z;
       const tb = tag.getBoundingClientRect();
       const tx = (tb.left + tb.width / 2 - box.left) / z;
       const ty = (tb.top - box.top) / z - 1;
       const len = Math.hypot(tx - fx, ty - fy) || 1;
       const pad = Math.min(30, len / 3);
-      out.lines.push({ id: th.on, x1: fx + ((tx - fx) / len) * pad, y1: fy + ((ty - fy) / len) * pad, x2: tx, y2: ty, lethal: !!th.lethal });
+      out.lines.push({ id: `${th.fromId}-${th.on}`, x1: fx + ((tx - fx) / len) * pad, y1: fy + ((ty - fy) / len) * pad, x2: tx, y2: ty, lethal: !previewLink && !!th.lethal });
     }
     const row = stage.querySelector<HTMLElement>(".pwt-moves-row");
     if (row) {
@@ -773,7 +777,7 @@ export default function PowerworksTurnsPage() {
     }
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focusEnemy, focusThreats, view]);
+  }, [focusThreats, view]);
 
   const beatNow = busy && moment ? moment.beats[0] : null;
   const shownRound = beatNow ? beatNow.round : view.round;

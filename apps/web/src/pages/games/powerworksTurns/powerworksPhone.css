@@ -754,3 +754,7 @@
 .pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { top: 0; }
 /* The tags of the plate a blow is landing on step aside for the landing number (a short phone stage has no room for both). */
 .pwt-console.phone .pwt-plate.impact-target .pwt-tabs { visibility: hidden; }
+/* The narrowest phones (667 wide) cannot hold a struck number, its arrow, the new number and a skull on one plate: the arrow gives way there. */
+@media (max-width: 720px) {
+  .pwt-console.phone .pwt-threat.struck .pwt-threat-arrow { display: none; }
+}

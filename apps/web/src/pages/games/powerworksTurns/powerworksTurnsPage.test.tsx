@@ -946,11 +946,15 @@ describe("round 6: hand-off, holds and forecast chips", () => {
           saw = true;
           // only the hovered enemy's tags are struck
           struck.forEach((s) => expect(s.closest(".pwt-threat")!.getAttribute("data-from-id")).toBe(hovered));
+          // the changed tag is joined to the cursor's enemy by the link line, and the struck number carries the preview's arrow
+          expect(c.querySelectorAll(".pwt-threat-line").length).toBeGreaterThan(0);
+          expect(c.querySelector(".pwt-threat s.pwt-threat-before + .pwt-threat-arrow")).toBeTruthy();
         }
         await act(async () => {
           fireEvent.mouseLeave(plate);
         });
         expect(tags().length).toBe(0);
+        expect(c.querySelector(".pwt-threat-line")).toBeNull();
       }
       if (key.getAttribute("aria-pressed") === "true")
         await act(async () => {

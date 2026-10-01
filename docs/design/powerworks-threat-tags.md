@@ -69,3 +69,11 @@ Frames are in the session scratchpad under `threats\final3\` (1366x768 and 1920x
 8. Lit tags are solid light with dark text, stepped-back tags are at 40%. Frame: `f7c-lit-1366x768/004-2615.png` (A's tag lit, B's stepped back).
 9. The banner's first-use note names the chosen move or is absent: while another key is hovered or chosen it steps aside. Frames: `f3-chosen-nohover-1366x768`, `f4-finish-nohover-1366x768` (banner carries no hinder note while Slashing Peck is chosen).
 10. The first card's light border was the first-use note's "noted" frame, not focus; it is removed (the note in the banner names the key). Frame: `f1-rest-1366x768/000-0.png`.
+
+## Round 3 (2026-09-30): last pass
+
+Frames are under `threats\final4\` (1366x768 unless named 844x390); the lethal frames after the skull fix are the `FINAL-*` files in `f5-lethal-rest-1366x768` and `f8-phone-lethal-844x390`.
+
+1. A cancelled tag reads as crossed out: full opacity, a 2 px ink strike across the whole tag (letter box through number), only the number dims. While a target is hovered with a move chosen, the existing link line (neutral, beneath the moves row) joins that enemy to every tag its preview re-reads, in the hinder and the finishing case. Frames: `f4-finish-hoverA-1366x768` (A's crossed-out tag joined to A) and `f3-chosen-hoverB-1366x768` (B's struck tag joined to B). Test: the single-target hinder page test now asserts the line while hovered and none after.
+2. A lethal tag is the loudest thing on its row: a 2 px raspberry border, the number in raspberry and a solid raspberry skull (its features cut in the tag's own dark so it still reads as a skull). Frames: `f5-lethal-rest-1366x768/FINAL-*.png` and `f8-phone-lethal-844x390/FINAL-*.png`.
+3. The hinder re-read takes the preview's form on the tag: struck old number, an arrow, the new number ("14 to 0"). Frame: `f3-chosen-hoverB-1366x768`. Test: the same page test checks the arrow follows the struck number.

@@ -335,7 +335,12 @@ export function ThreatTag({ t, mode = "live", onCompanion = false, onHover }: { 
       {t.kind === "attack" ? (
         <span className="pwt-threat-what" aria-hidden="true">
           <ImpactMark />
-          {t.before !== undefined && <s className="pwt-threat-before">{t.before}</s>}
+          {t.before !== undefined && (
+            <>
+              <s className="pwt-threat-before">{t.before}</s>
+              <span className="pwt-threat-arrow">→</span>
+            </>
+          )}
           {t.step === 0 ? <Ban /> : <span className="pwt-threat-n">{t.n}</span>}
           {t.lethal && <Skull className="pwt-threat-skull" />}
         </span>
