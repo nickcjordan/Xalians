@@ -16,6 +16,8 @@ The body becomes an OpenVDB level set. Two resampling passes, then one meshing:
           back displacements instead of a piecewise linear stretch (no slope jump at the edges), and the
           displacement tables dF, dB are densified and smoothed by spec.dispSigma (world units, applied twice) so
           the table rows leave no ribbing. Without the key the round 3 behaviour is unchanged.
+  halfWidth sigmaRatio (round 9): smooths the per-slice scale (source over target half width) that drives the x map.
+  halfWidth sigmaM / sigmaT (round 9): smooth the measured model half width and the target separately (sigma sets both).
   optional beltBlur: a z-direction Gaussian blend over the belt line (zRange, sigma) within |x| xFull.
 
 Monotonicity of every map is checked, so the field never folds. Every parameter is in the spec.
@@ -153,15 +155,22 @@ if hw:
     rows = np.array(hw['rows'])
     M = np.interp(fy, rows[:, 0], rows[:, 1])*H
     T = np.interp(fy, rows[:, 0], rows[:, 2])*H
-    if hw.get('sigma'):         # smooth both tables so row corners do not print as bands (round 4)
-        M = gauss_smooth(M, VS, hw['sigma'])
-        T = gauss_smooth(T, VS, hw['sigma'])
+    # smooth both tables so row corners do not print as bands (round 4); round 9: sigmaM and sigmaT set them apart, so a
+    # measured model table can stay sharp (a smoothed M no longer matches a shelf, and the shelf survives the map)
+    sig_m, sig_t = hw.get('sigmaM', hw.get('sigma', 0)), hw.get('sigmaT', hw.get('sigma', 0))
+    if sig_m:
+        M = gauss_smooth(M, VS, sig_m)
+    if sig_t:
+        T = gauss_smooth(T, VS, sig_t)
     kx_z = smooth((fy-hw['fadeTop'][0])/(hw['fadeTop'][1]-hw['fadeTop'][0]))*smooth((hw['fadeBottom'][1]-fy)/(hw['fadeBottom'][1]-hw['fadeBottom'][0]))
     Lx = hw['lateralFade']
+    Mz = T+kx_z*(M-T)                           # source half width per slice (T when the weight is 0)
+    if hw.get('sigmaRatio'):    # round 9: smooth the per-slice scale Mz/T, so the x map has no row-to-row wiggle (ripples)
+        Mz = T*gauss_smooth(Mz/T, VS, hw['sigmaRatio'])
     sub = field[:, :, z0:z1].copy()
     mins = []
     for k in range(sub.shape[2]):
-        Mk = T[k]+kx_z[k]*(M[k]-T[k])           # source half width at this slice (T when the weight is 0)
+        Mk = Mz[k]
         inside = ax*(Mk/T[k])
         outside = Mk+(ax-T[k])*(T[k]+Lx-Mk)/Lx
         srcx = np.where(ax >= T[k]+Lx, ax, np.where(ax >= T[k], outside, inside))
