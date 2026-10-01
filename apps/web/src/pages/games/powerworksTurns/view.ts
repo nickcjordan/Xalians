@@ -683,7 +683,7 @@ function railFor(s: TRun): RailSlot[] {
   // on the next round's own order.
   // The unit acting now has not finished its turn either, so it counts as still to act.
   const stillToAct = slots.filter((r) => r.state === "now" || r.state === "next" || r.state === "later").length;
-  const peek = upcoming(s, stillToAct + 3).slice(stillToAct);
+  const peek = upcoming(s, stillToAct + standing([...s.team, ...s.enemies]).length).slice(stillToAct);
   peek.forEach((unit, i) => {
     let state: RailSlot["state"] = "later";
     if (!labeledNext) {

@@ -1189,6 +1189,17 @@ describe("threat tags: a lethal hit shows as a skull on the plate it lands on", 
   });
 });
 
+describe("the turn rail reaches every standing unit's next turn", () => {
+  it("after the divider it lists each standing enemy again, so a tag's letter has a when", () => {
+    const s = freshState(1);
+    const rail = turnView(s).rail;
+    const d = rail.findIndex((r) => r.roundStart !== undefined);
+    expect(d).toBeGreaterThan(0);
+    const next = rail.slice(d).map((r) => r.id);
+    for (const e of s.enemies.filter((x) => x.hp > 0)) expect(next).toContain(e.id);
+  });
+});
+
 describe("threat tags through a previewed key (previewThreats)", () => {
   /** Every enemy committed to a 30-power single-target hit on the active companion, whose first move carries a hinder rider of 10. */
   function world(): { s: TRun; a: Fighter } {

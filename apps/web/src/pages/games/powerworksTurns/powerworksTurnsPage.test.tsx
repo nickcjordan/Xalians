@@ -917,7 +917,7 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     expect(c.querySelectorAll(".pwt-plate.ring-threat, .pwt-plate.ring-danger").length).toBe(0);
   });
 
-  it("a chosen hinder shows the enemy's tag as the old number struck and the new one; backing out puts it back", async () => {
+  it("a chosen single-target hinder leaves every tag plain until an enemy is hovered; then only that enemy's tags read old then new", async () => {
     const { container } = mount();
     const c = container as HTMLElement;
     await act(async () => {
@@ -929,7 +929,29 @@ describe("round 6: hand-off, holds and forecast chips", () => {
       await act(async () => {
         fireEvent.click(key);
       });
-      if (c.querySelector(".pwt-row.squad .pwt-threat s.pwt-threat-before")) saw = true;
+      const tags = (id?: string) => Array.from(c.querySelectorAll(`.pwt-row.squad .pwt-threat s.pwt-threat-before`)).filter((x) => !id || x.closest(".pwt-threat")!.getAttribute("data-from-id") === id);
+      // chosen, nothing hovered: plain numbers
+      expect(tags().length).toBe(0);
+      const plate = targets(c)[0];
+      if (plate) {
+        await act(async () => {
+          fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
+        });
+        await act(async () => {
+          fireEvent.mouseMove(plate);
+        });
+        const hovered = plate.getAttribute("data-unit")!;
+        const struck = tags();
+        if (struck.length) {
+          saw = true;
+          // only the hovered enemy's tags are struck
+          struck.forEach((s) => expect(s.closest(".pwt-threat")!.getAttribute("data-from-id")).toBe(hovered));
+        }
+        await act(async () => {
+          fireEvent.mouseLeave(plate);
+        });
+        expect(tags().length).toBe(0);
+      }
       if (key.getAttribute("aria-pressed") === "true")
         await act(async () => {
           fireEvent.click(key);
@@ -937,7 +959,6 @@ describe("round 6: hand-off, holds and forecast chips", () => {
       if (saw) break;
     }
     expect(saw).toBe(true);
-    expect(c.querySelectorAll(".pwt-threat-before").length).toBe(0);
   });
 
   it("a move that would finish an enemy strikes its tags through and steps them back", async () => {
@@ -951,6 +972,13 @@ describe("round 6: hand-off, holds and forecast chips", () => {
     for (const key of keys(c).filter((k) => k.classList.contains("attack"))) {
       await act(async () => {
         fireEvent.click(key);
+      });
+      expect(c.querySelector(".pwt-threat.cancelled")).toBeNull(); // chosen, nothing hovered: plain
+      await act(async () => {
+        fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
+      });
+      await act(async () => {
+        fireEvent.mouseMove(c.querySelector<HTMLElement>(".pwt-row.enemies .pwt-plate")!);
       });
       if (c.querySelector(".pwt-threat.cancelled")) {
         saw = true;

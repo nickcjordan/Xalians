@@ -345,7 +345,7 @@ export function ThreatTag({ t, mode = "live", onCompanion = false, onHover }: { 
             <span key={p.kind} className={`pwt-threat-part ${p.kind}`}>
               <SupportIcon kind={p.kind} onCompanion={onCompanion} />
               <span className="pwt-threat-n">
-                {p.kind === "hinder" || p.kind === "delay" ? "-" : p.kind === "boost" ? "+" : ""}
+                {p.kind === "hinder" || p.kind === "delay" ? "-" : p.kind === "boost" || p.kind === "heal" ? "+" : ""}
                 {p.n}
               </span>
             </span>
@@ -365,13 +365,11 @@ export function ThreatTabs({
   modeOf,
   onHover,
   onCompanion = false,
-  children,
 }: {
   threats: Threat[];
   modeOf?: (fromId: string) => ThreatMode;
   onHover?: (fromId: string | null) => void;
   onCompanion?: boolean;
-  children?: React.ReactNode;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [raised, setRaised] = React.useState(false);
@@ -384,7 +382,19 @@ export function ThreatTabs({
     const plate = el?.closest<HTMLElement>("[data-unit]");
     if (!el || !plate) return;
     const tag = plate.querySelector<HTMLElement>(".pwt-el");
-    const need = threats.length > 0 && !!tag && el.offsetLeft + el.offsetWidth > tag.offsetLeft - 3;
+    const boss = plate.classList.contains("boss");
+    const need = threats.length > 0 && (boss || (!!tag && el.offsetLeft + el.offsetWidth > tag.offsetLeft - 3));
+    // An enemy's matchup tab sits to the right of its incoming tags when there is room, else one row up.
+    const match = plate.querySelector<HTMLElement>(".pwt-match");
+    if (match) {
+      match.style.left = "";
+      match.style.top = "";
+      if (threats.length > 0 && !need) {
+        const right = el.offsetLeft + el.offsetWidth + 3;
+        if (tag && right + match.offsetWidth < tag.offsetLeft - 3) match.style.left = `${right}px`;
+        else match.style.top = `${el.offsetTop - match.offsetHeight - 1}px`;
+      }
+    }
     if (need !== raised) {
       setRaised(need);
       return;
@@ -397,7 +407,6 @@ export function ThreatTabs({
   });
   return (
     <div ref={ref} className={`pwt-tabs${raised ? " raised" : ""}${onCompanion ? " squad" : ""}`} data-tabs="" data-sig={signature}>
-      {children}
       {threats.map((t) => (
         <ThreatTag key={`${t.fromId}-${t.on}-${t.kind}`} t={t} mode={modeOf ? modeOf(t.fromId) : "live"} onCompanion={onCompanion} onHover={onHover} />
       ))}
@@ -606,11 +615,8 @@ export function EnemyPlate({
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
-        {!u.down && (
-          <ThreatTabs threats={threats ?? u.threats} modeOf={threatMode} onHover={onThreat}>
-            <MatchupMark step={u.matchup} who={who} />
-          </ThreatTabs>
-        )}
+        {!u.down && <ThreatTabs threats={threats ?? u.threats} modeOf={threatMode} onHover={onThreat} />}
+        {!u.down && <MatchupMark step={u.matchup} who={who} />}
         {isBoss(u.species) && <span className="pwt-guardian-tag">Guardian</span>}
         <span className="pwt-name">
           {u.letter} · {u.name}

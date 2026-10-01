@@ -111,7 +111,7 @@
 }
 .pwt-banner.squad .pwt-banner-kicker,
 .pwt-banner.squad .pwt-banner-who { color: var(--color-viable); }
-.pwt-banner.enemy .pwt-banner-kicker { color: var(--color-plague); }
+.pwt-banner.enemy .pwt-banner-kicker { color: var(--color-ink-2); }
 .pwt-banner.enemy .pwt-banner-who { color: var(--color-ink); }
 .pwt-banner-label.round .pwt-banner-kicker {
   font-size: 26px;
@@ -947,9 +947,9 @@
   stroke-dashoffset: 600;
   animation: pwt-strike-draw 380ms var(--ease-out) forwards;
 }
-.pwt-strike-line.enemy { stroke: var(--color-plague); }
+.pwt-strike-line.enemy { stroke: var(--color-ink-2); }
 .pwt-strike-line.squad { stroke: var(--color-viable); }
-.pwt-strike-head.enemy { fill: var(--color-plague); }
+.pwt-strike-head.enemy { fill: var(--color-ink-2); }
 .pwt-strike-head.squad { fill: var(--color-viable); }
 @keyframes pwt-strike-draw {
   to { stroke-dashoffset: 0; }
@@ -1221,12 +1221,12 @@
 /* Strike lines run under the plates, so they never cross a name. */
 .pwt-stage > .pwt-aim-svg { z-index: 0; }
 .pwt-rows { z-index: 1; }
-/* An acting enemy is ringed in the danger color, never the accent that means yours. */
-.pwt-row.enemies .pwt-plate.spotlit .pwt-spot-ring { border-color: var(--color-plague); box-shadow: 0 0 14px var(--color-plague); }
-.pwt-row.enemies .pwt-plate.spotlit .pwt-spot-pointer { border-top-color: var(--color-plague); }
-.pwt-row.enemies .pwt-plate.spotlit .pwt-ground { background: var(--color-plague-tint); box-shadow: 0 0 16px var(--color-plague-tint); }
-.pwt-row.enemies .pwt-plate.spotlit .pwt-figure { filter: drop-shadow(0 0 16px var(--color-plague-tint)) drop-shadow(0 4px 1px #07101e); }
-.pwt-row.enemies .pwt-plate.spotlit .pwt-plaque { border-color: var(--color-plague); }
+/* An acting enemy is ringed in neutral ink: sides are by position, and danger is for danger (a lethal hit, a landed damage number). */
+.pwt-row.enemies .pwt-plate.spotlit .pwt-spot-ring { border-color: var(--color-ink-2); box-shadow: 0 0 14px rgba(217, 210, 192, 0.4); }
+.pwt-row.enemies .pwt-plate.spotlit .pwt-spot-pointer { border-top-color: var(--color-ink-2); }
+.pwt-row.enemies .pwt-plate.spotlit .pwt-ground { background: rgba(217, 210, 192, 0.16); box-shadow: 0 0 16px rgba(217, 210, 192, 0.18); }
+.pwt-row.enemies .pwt-plate.spotlit .pwt-figure { filter: drop-shadow(0 0 16px rgba(217, 210, 192, 0.3)) drop-shadow(0 4px 1px #07101e); }
+.pwt-row.enemies .pwt-plate.spotlit .pwt-plaque { border-color: var(--color-ink-2); }
 /* Your companion keeps its lit plaque through its own action. */
 .pwt-row.squad .pwt-plate.spotlit .pwt-plaque { border-color: var(--color-viable); }
 .pwt-row.squad .pwt-plate.spotlit .pwt-name { color: var(--color-viable); }
@@ -1979,7 +1979,6 @@
 }
 .pwt-note::after { display: none; }
 .pwt-note b { font-weight: 700; }
-.pwt-key.noted { border-color: var(--color-ink-2); }
 
 /* --- 9. Marks readable where they are used --- */
 
@@ -2040,7 +2039,6 @@
   padding: 12px 36px;
 }
 /* The first-use note is a small tag in its key's head; the key itself is not outlined (it read as preselected). */
-.pwt-key.noted { border-color: var(--color-edge); }
 .pwt-key-note-tag {
   flex: 0 0 auto;
   margin-left: 6px;

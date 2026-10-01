@@ -449,8 +449,8 @@ export default function PowerworksTurnsPage() {
 
   /** Any action dismisses the first-occurrence note on screen, for good in this browser. */
   function dismissNote() {
-    if (!shownNote) return;
-    const next = [...seenNotes, shownNote.id];
+    if (!rawNote) return;
+    const next = [...seenNotes, rawNote.id];
     setSeenNotes(next);
     writeSeen(next);
   }
@@ -586,7 +586,10 @@ export default function PowerworksTurnsPage() {
   const holding = busy && beatPhase === "hold";
   // First-occurrence teaching notes: one at a time, never over a panel or while beats play.
   // It stays while a dialog is open, so nothing behind the dialog changes (round 8, item 10).
-  const shownNote = !busy && !briefing && view.phase === "turn" ? keyNote(view, seenNotes) : null;
+  // The note is about one key: while another key is hovered or chosen it steps aside rather than name the wrong move.
+  const noteKey = hoverKey ?? focusKey ?? selectedKey;
+  const rawNote = !busy && !briefing && view.phase === "turn" ? keyNote(view, seenNotes) : null;
+  const shownNote = rawNote && (noteKey === null || rawNote.keyIndex === noteKey) ? rawNote : null;
   const spotlightId = holding ? null : busy ? actorId ?? null : view.active?.id ?? null;
   const spotlightSide: "squad" | "enemy" = actorIsEnemy ? "enemy" : "squad";
   const showImpact = busy && beatPhase === "impact";
@@ -689,6 +692,13 @@ export default function PowerworksTurnsPage() {
   // moves its tag to the companion it turned to when its beat starts.
   const stageRef = useRef<HTMLDivElement>(null);
   const restThreats = useMemo(() => [...view.squad, ...view.enemies].flatMap((u) => u.threats).sort((a, b) => a.order - b.order), [view]);
+  // A single-target move re-reads only the tags of the target under the pointer (none while no target is hovered); an area, self or
+  // whole-squad move reaches every tag it reaches.
+  const singleTarget = !!shownKeyView && shownKeyView.aim !== "now" && !(shownKeyView.area && shownKeyView.aim === "enemy");
+  const threatPreviews = useMemo(
+    () => (singleTarget ? (hoverTarget && previews[hoverTarget] ? { [hoverTarget]: previews[hoverTarget] } : {}) : previews),
+    [singleTarget, hoverTarget, previews]
+  );
   const atBeat = (u: Fighter): Fighter => {
     const hp = shownHp?.[u.id];
     const m = shownMarks?.[u.id];
@@ -699,7 +709,7 @@ export default function PowerworksTurnsPage() {
     };
   };
   const shownThreats = useMemo<Threat[]>(() => {
-    if (!busy) return shownKeyView && anyPreview ? previewThreats(run, shownKeyView, previews) : restThreats;
+    if (!busy) return shownKeyView && Object.keys(threatPreviews).length > 0 ? previewThreats(run, shownKeyView, threatPreviews) : restThreats;
     // The tags follow the same per-beat state the plates' health and marks follow: the run as it stood before the command, with each
     // unit's health and marks as of the beat now showing, read through the same builder (a hinder that has landed lowers the number,
     // a shield re-reads it, a heal can end lethality, a knockout takes the enemy's tags away).
@@ -714,7 +724,7 @@ export default function PowerworksTurnsPage() {
     const turned = new Map<string, string>();
     for (const m of moments.slice(0, beatIndex + 1)) for (const b of m.beats) if (b.event.kind === "redirect") turned.set(b.event.actor, (b.event as { to: string }).to);
     return live.filter((x) => !acted.has(x.fromId)).map((x) => (turned.has(x.fromId) ? retargetThreat(beatRun, x, turned.get(x.fromId)!) : x));
-  }, [busy, shownKeyView, anyPreview, run, previews, restThreats, moments, beatIndex, landed, shownHp, shownMarks]);
+  }, [busy, shownKeyView, threatPreviews, run, restThreats, moments, beatIndex, landed, shownHp, shownMarks]);
   // While the stage holds on a fall there is no live turn, so no promises are shown; on a short phone stage the tags of the plate a blow
   // is landing on step aside for the landing number.
   const threatsOn = (id: string) => (holding || (phone && landed && targets.includes(id)) ? [] : shownThreats.filter((x) => x.on === id));
@@ -733,30 +743,35 @@ export default function PowerworksTurnsPage() {
     const hit = focusThreats.find((x) => x.on === id);
     return hit ? (hit.lethal ? "danger" : "threat") : "";
   };
+  // The link: one 2 px line from the enemy's figure to the threat tag it matches (not to the figure's head), drawn beneath the moves row.
   const threatLines = useMemo(() => {
     const stage = stageRef.current;
-    if (!stage || !focusEnemy) return [];
+    const none = { lines: [] as { id: string; x1: number; y1: number; x2: number; y2: number; lethal: boolean }[], hole: null as { x: number; y: number; w: number; h: number } | null };
+    if (!stage || !focusEnemy) return none;
     const from = stage.querySelector<HTMLElement>(`[data-unit="${focusEnemy}"] .pwt-figure`);
-    if (!from) return [];
+    if (!from) return none;
     const box = stage.getBoundingClientRect();
     const z = box.width / stage.offsetWidth || 1;
     const fb = from.getBoundingClientRect();
     const fx = (fb.left + fb.width / 2 - box.left) / z;
     const fy = (fb.top + fb.height * 0.6 - box.top) / z;
-    const lines: { id: string; x1: number; y1: number; x2: number; y2: number; lethal: boolean }[] = [];
+    const out = { ...none, lines: [] as typeof none.lines };
     for (const th of focusThreats) {
-      const to = stage.querySelector<HTMLElement>(`[data-unit="${th.on}"] .pwt-figure`);
-      if (!to || th.on === focusEnemy) continue;
-      const tb = to.getBoundingClientRect();
+      const tag = stage.querySelector<HTMLElement>(`.pwt-threat[data-from-id="${focusEnemy}"][data-on="${th.on}"]`);
+      if (!tag || th.on === focusEnemy) continue;
+      const tb = tag.getBoundingClientRect();
       const tx = (tb.left + tb.width / 2 - box.left) / z;
-      const ty = (tb.top + tb.height * 0.5 - box.top) / z;
+      const ty = (tb.top - box.top) / z - 1;
       const len = Math.hypot(tx - fx, ty - fy) || 1;
-      const ux = (tx - fx) / len;
-      const uy = (ty - fy) / len;
-      const pad = Math.min(36, len / 3);
-      lines.push({ id: th.on, x1: fx + ux * pad, y1: fy + uy * pad, x2: tx - ux * pad, y2: ty - uy * pad, lethal: !!th.lethal });
+      const pad = Math.min(30, len / 3);
+      out.lines.push({ id: th.on, x1: fx + ((tx - fx) / len) * pad, y1: fy + ((ty - fy) / len) * pad, x2: tx, y2: ty, lethal: !!th.lethal });
     }
-    return lines;
+    const row = stage.querySelector<HTMLElement>(".pwt-moves-row");
+    if (row) {
+      const rb = row.getBoundingClientRect();
+      out.hole = { x: (rb.left - box.left) / z, y: (rb.top - box.top) / z, w: rb.width / z, h: rb.height / z };
+    }
+    return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusEnemy, focusThreats, view]);
 
@@ -1163,11 +1178,19 @@ export default function PowerworksTurnsPage() {
               ))}
             </svg>
           )}
-          {threatLines.length > 0 && (
+          {threatLines.lines.length > 0 && (
             <svg className="pwt-aim-svg" aria-hidden="true">
-              {threatLines.map((l) => (
-                <line key={l.id} className={`pwt-threat-line${l.lethal ? " lethal" : ""}`} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} />
-              ))}
+              {threatLines.hole && (
+                <mask id="pwt-threat-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+                  <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                  <rect x={threatLines.hole.x} y={threatLines.hole.y} width={threatLines.hole.w} height={threatLines.hole.h} fill="black" />
+                </mask>
+              )}
+              <g mask={threatLines.hole ? "url(#pwt-threat-mask)" : undefined}>
+                {threatLines.lines.map((l) => (
+                  <line key={l.id} className={`pwt-threat-line${l.lethal ? " lethal" : ""}`} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} />
+                ))}
+              </g>
             </svg>
           )}
           {aimLine && (

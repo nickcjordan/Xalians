@@ -3,8 +3,8 @@ import { Check, Skull } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import type { RailSlot } from "./view";
 
-/** How many acted slots stay on the rail before NOW: enough to see who just went. */
-const DONE_SHOWN = 8;
+/** How many acted slots stay on the rail before NOW: none on a desktop (the banner says what just happened); the room goes to what comes next (each enemy's next turn gives a threat tag's letter its "when"). */
+const DONE_SHOWN = 0;
 const PHONE_DONE_SHOWN = 0;
 
 /**
@@ -80,9 +80,8 @@ function RailRow({ shown, round, compact, onRoom }: { shown: RailSlot[]; round: 
         return;
       }
     }
-    // A round divider that would be the last thing shown goes with the slot it introduces.
+    // The divider is drawn with the slot that starts the next round, so a cut at that slot takes both away; one that falls after it keeps both.
     // On a phone the first slot of the next round is the point of the rail, so it stays even as the last one shown.
-    if (!compact) while (cut > 0 && shown[cut - 1]?.roundStart !== undefined) cut--;
     if (cut !== limit) setLimit(cut);
     // The room this measure was made in: if the row's width changes later, measure again from every slot.
     const made = ol.clientWidth;

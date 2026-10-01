@@ -118,8 +118,8 @@
 .pwt-tabs.raised { bottom: calc(100% + 17px); }
 .pwt-plate.boss .pwt-tabs.raised { bottom: calc(100% + 40px); }
 .pwt-tabs > * { pointer-events: auto; }
-.pwt-tabs .pwt-match { position: static; }
 .pwt-threat {
+  --tag-edge: var(--color-edge-strong);
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -127,23 +127,39 @@
   height: 18px;
   padding: 0 4px 0 1px;
   background: var(--color-s2);
-  border: 1px solid var(--color-edge-strong);
+  border: 1px solid var(--tag-edge);
   color: var(--color-ink);
   font-family: var(--font-data);
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
-  transition: opacity 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  transition: opacity 150ms var(--ease-out), border-color 150ms var(--ease-out), background-color 150ms var(--ease-out);
 }
-.pwt-threat.lethal { border-color: var(--color-plague); }
-/* While beats play: the acting enemy's tags stay lit, every other tag steps back. */
-.pwt-threat.lit { border-color: var(--color-ink-2); }
-.pwt-threat.lit.lethal { border-color: var(--color-plague); }
-.pwt-threat.dim { opacity: 0.45; }
-/* A previewed move finishes the enemy: the tag is struck through and steps back (the hit will not come). */
-.pwt-threat.cancelled { opacity: 0.5; }
-.pwt-threat.cancelled::after { content: ""; position: absolute; left: -1px; right: -1px; top: 50%; border-top: 2px solid var(--color-ink); }
+/* The future cue: a notch on the bottom edge, pointing down into the plate the hit will land on. */
+.pwt-threat::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--tag-edge);
+}
+.pwt-threat.lethal { --tag-edge: var(--color-plague); }
+/* While beats play: the acting enemy's tags are solid light (dark text), every other tag steps well back. */
+.pwt-threat.lit { --tag-edge: var(--color-ink); background: var(--color-ink); color: var(--color-s1); }
+.pwt-threat.lit.lethal { --tag-edge: var(--color-plague); }
+.pwt-threat.lit .pwt-threat-letter { background: var(--color-s1); color: var(--color-ink); border-color: var(--color-s1); }
+.pwt-threat.lit .pwt-threat-what svg { color: var(--color-s1); }
+.pwt-threat.lit .pwt-threat-before { color: var(--color-s1); }
+.pwt-threat.dim { opacity: 0.4; }
+/* A previewed move finishes the enemy: the tag is crossed out and steps back (the hit will not come). */
+.pwt-threat.cancelled { opacity: 0.6; }
+.pwt-threat.cancelled::after { content: ""; position: absolute; left: -1px; right: -1px; top: 50%; margin-top: -1px; border-top: 2px solid currentColor; }
 .pwt-threat-letter {
   flex: 0 0 auto;
   display: flex;
@@ -165,7 +181,7 @@
 .pwt-plate .pwt-plaque { transition: box-shadow 150ms var(--ease-out); }
 .pwt-plate.ring-threat .pwt-plaque { box-shadow: 0 0 0 2px var(--color-ink-2); }
 .pwt-plate.ring-danger .pwt-plaque { box-shadow: 0 0 0 2px var(--color-plague); }
-.pwt-threat-line { stroke: var(--color-ink-2); stroke-width: 1.5px; animation: pwt-threat-fade 150ms var(--ease-out) both; }
+.pwt-threat-line { stroke: var(--color-ink-2); stroke-width: 2px; animation: pwt-threat-fade 150ms var(--ease-out) both; }
 .pwt-threat-line.lethal { stroke: var(--color-plague); }
 @keyframes pwt-threat-fade { from { opacity: 0; } to { opacity: 0.85; } }
 .pwt-legend-chips .pwt-threat { flex: 0 0 auto; }
