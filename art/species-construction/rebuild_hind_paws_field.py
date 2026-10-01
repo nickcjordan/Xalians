@@ -20,7 +20,9 @@ measured on the input at z -.805):
 
 Eight pale claws (four per foot) leave the toe tips: root sheathed inside the toe, pitched down
 along the toe's yaw, curving down along its front face. The old hind claws are replaced; the forepaw claws stay.
-All numbers are in the PAW dict (world units); --spec merges a JSON of overrides into it and the merged dict is
+A claw may use `tip` mode (round 12): a quadratic Bezier from a root sheathed in the toe's front face, out along
+the toe's forward axis by `run`, then down to a tip `tipAhead` in front of the toe face at height `tipZ`; the hook
+hugs the toe instead of standing clear of it. All numbers are in the PAW dict (world units); --spec merges a JSON of overrides into it and the merged dict is
 written to hind-paw-field.json. Akinza-specific construction, not a species-general backend.
 """
 import argparse
@@ -185,22 +187,34 @@ def build_claw(spec, material_):
     base = Vector(spec['base']); forward = Vector(spec['forward']).normalized()
     curl = Vector(spec['curl']).normalized()
     curl = (curl-forward*curl.dot(forward)).normalized()
-    length, bend = spec['length'], spec['bend']
+    length, bend = spec.get('length', 0), spec.get('bend', 0)
     centers, tangents = [], []
+    bez = [Vector(p) for p in spec['bezier']] if 'bezier' in spec else None
     for j in range(rings+1):
         t = j/rings
+        if bez:
+            centers.append((1-t)**2*bez[0]+2*(1-t)*t*bez[1]+t*t*bez[2])
+            tangents.append((2*(1-t)*(bez[1]-bez[0])+2*t*(bez[2]-bez[1])).normalized())
+            continue
         centers.append(base+forward*length*t*(1-.35*bend*t)+curl*length*bend*.55*t*t)
         tangents.append((forward*(1-.7*bend*t)+curl*length*bend*1.1*t/length).normalized())
+    if bez:
+        curl = (bez[1]-bez[0]).cross(bez[2]-bez[1]).normalized()   # plane normal; the claw is flattened across it
+        flat = spec.get('flat', .8)
+    else:
+        flat = .8
     verts, faces = [], []
     for j, (c, tangent) in enumerate(zip(centers, tangents)):
-        side_axis = tangent.cross(curl).normalized()
+        side_axis = (curl if bez else tangent.cross(curl)).normalized()
+        if bez:
+            side_axis = curl
         up_axis = side_axis.cross(tangent).normalized()
         radius = spec['radius']*(1-j/rings)**.85
         if j == rings:
             verts.append(tuple(c)); break
         for i in range(segments):
             a = math.tau*i/segments
-            verts.append(tuple(c+side_axis*radius*.8*math.cos(a)+up_axis*radius*math.sin(a)))
+            verts.append(tuple(c+side_axis*radius*flat*math.cos(a)+up_axis*radius*math.sin(a)))
     tip = len(verts)-1
     for j in range(rings-1):
         for i in range(segments):
@@ -314,6 +328,23 @@ for side in (1, -1):
             cx, cy, cz = toe['center']; rx, ry, rz = toe['radii']
             face = ry*math.sqrt(max(0., 1-((c['rootZ']-cz)/rz)**2))
             base_uv = [cx+math.sin(yaw)*(face+c['shift']), cy-math.cos(yaw)*(face+c['shift']), c['rootZ']]
+        if 'tipZ' in c:
+            cx, cy, cz = toe['center']; rx, ry, rz = toe['radii']
+            fw = (math.sin(yaw), -math.cos(yaw))
+            def face_len(z):
+                return ry*math.sqrt(max(0., 1-((z-cz)/rz)**2))
+            fl0 = face_len(c['rootZ'])+c['shift']
+            p0 = (cx+fw[0]*fl0, cy+fw[1]*fl0, c['rootZ'])
+            p1 = (p0[0]+fw[0]*c['run'], p0[1]+fw[1]*c['run'], c['rootZ']+c.get('runZ', 0.))
+            fl2 = face_len(c['tipZ'])+c['tipAhead']
+            p2 = (cx+fw[0]*fl2, cy+fw[1]*fl2, c['tipZ'])
+            def world(p):
+                return [ax+side*p[0], ay+p[1], p[2]]
+            claw_specs.append({
+                'name': f'Curved hind claw {side:+d} {i+1}', 'base': world(p0), 'forward': [0, -1, 0], 'curl': [0, 0, -1],
+                'bezier': [world(p0), world(p1), world(p2)], 'radius': c['radius'], 'flat': c.get('flat', .8),
+                'length': 0, 'bend': 0})
+            continue
         pitch = math.radians(c['pitch'])
         forward_uv = (math.sin(yaw)*math.cos(pitch), -math.cos(yaw)*math.cos(pitch), -math.sin(pitch))
         claw_specs.append({
