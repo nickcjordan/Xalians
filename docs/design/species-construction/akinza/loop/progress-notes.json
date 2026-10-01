@@ -1,0 +1,24 @@
+[
+ {
+  "title": "Loop v3 kickoff: what the fresh audit says is most wrong (assembled-0458)",
+  "lede": "2026-10-01. The v3 loop started from assembled-0458 with a fresh independent audit, ranked by how much each gap stops the model reading as the sheet. The rounds started without waiting; reply if the order looks wrong and I will change course. The tails are held, as you asked.",
+  "items": [
+   "R04 (structural): Back and rear oblique: the fan's back is crumpled shards and thorns on a smooth shell, with a continuous pale rim along the lower edge and flat cut end planes, so it reads as a crumpled-paper bowl or nest with the head dome sunk behind seams. The outline already fits, so this is all construction.",
+   "R03 (structural): Front and three-quarter: the fan front is hard shards with serrated thorn edges and flat leaf facets. The inner tufts are white faceted blades with dark empty slots behind them, not one soft volume of pointed locks with a fluffy pale cup.",
+   "R02 (structural): Side and three-quarter: the eye shows as a narrow slanted slit pinched by a hard cheek and brow ridge, which looks angry or squinting. The sheet's profile eye is a tall oval about a third of head height (visible eye over head height about 0.15 vs 0.33, estimate).",
+   "R12: All views: a hard, jagged, high-frequency fan sits on a completely smooth bare vinyl body with no cheek, chest, forearm or calf coat masses, so the model mixes two levels and two idioms of construction against the sheet's one soft coat.",
+   "R06 (structural): Side view: the trunk is a straight vertical plank with no S curve or rib cage volume. Chest depth at .36 is 0.131 vs 0.168H, waist depth 0.106 vs 0.082H (1.30x), chest over waist 1.07 vs 1.54.",
+   "R03 (structural): Side view: the ear is a ragged column of shards with a row of tooth-like spikes down its back edge, and no pale inner cup is visible. The sheet shows a round shaggy disc with the cup opening forward and outward.",
+   "R07 (structural): Front and side: the forepaw is a small closed fist about as wide as the wrist, with fused digits and short spikes on its underside. The sheet's paw is about 0.6x wider than the model's (about 0.033 vs 0.055H, estimate) with separate digits and long claws from the tips. Posed arm IoU .867 fails.",
+   "R01 (structural): Front: the face is a broad block, with a flat forehead running straight between the ear roots, a square jaw and no skull dome rising between the ears (crown above the inner rim about 0.0 vs 0.02H, estimate).",
+   "R02: Front at full figure scale: the eyes read as near-round discs (height over width about 1.2 vs 1.5) with an even ring and a small centred pupil, so they stare like googly eyes. The sheet has tall ovals, a heavier upper lid and a large iris glancing to one side.",
+   "R05: Back and neck rear: a flat horizontal shoulder yoke with knobbed corners, a raised ledge across the shoulder blades and a collar ring at the top of the neck read athletic. The outline heights already match the sheet's sloped shoulders, so this is sculpt.",
+   "R09 (structural): Front: four near-equal toe beads in a straight row on a flat slab. Side: a low slipper with a vertical cliff heel and no domed instep, with the claws standing on the toe fronts instead of curving out of the tips. Posed foot IoU .647 fails.",
+   "R08: Side and front: a second swell on the back of the shin just above the heel and a knob at the knee. The widths now pass, but the posed shin IoU (.643) and thigh IoU (.830) fail.",
+   "R07: Side: the shoulder cap juts as a box and the outer upper arm carries a hard-edged flat lit strip, instead of a round arm blending into a rounded shoulder.",
+   "R02: Front and profile: a crust of small lumps rings the lower face, and a large flat cheek plate with hard edges sits behind the muzzle in profile, where the sheet has a smooth face with soft cheek tufts.",
+   "R06 (structural): Side and back: the rump barely projects behind the thigh line and the visible buttock has no fold. The tails partly hide this, so it needs a check with the tails hidden.",
+   "R08 (structural): Front rest pose: the feet are much wider apart than the sheet's (foot centre spacing at .98 is 0.44 vs 0.31H), giving a wider A stance. The posed fit mostly corrects it."
+  ]
+ }
+]

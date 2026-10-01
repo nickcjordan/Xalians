@@ -27,7 +27,7 @@ def fmt(v):
     return '·' if v is None else f'{v:g}'
 
 
-def page(records, rubric, running):
+def page(records, rubric, running, notes=None):
     base = next((r for r in records if r.get('kind') == 'baseline'), None)
     rounds = [r for r in records if r.get('kind') not in ('baseline', 'rescore')]
     last = rounds[-1] if rounds else None
@@ -99,7 +99,12 @@ def page(records, rubric, running):
     log = (f'<div class="tablewrap"><table><thead><tr><th>Round</th><th>Order</th><th>Approach</th><th>Result</th></tr></thead><tbody>{log}</tbody></table></div>'
            if log else '<p class="muted">No rounds finished yet.</p>')
 
-    chips = [f'<span class="chip">Loop v2 · round {last["round"] if last else 0}</span>']
+    loopv = 'v3' if last and last['round'] >= 17 or notes else 'v2'
+    chips = [f'<span class="chip">Loop {loopv} · round {last["round"] if last else 0}</span>']
+    notes_html = ''
+    for n in notes or []:
+        items = ''.join(f'<li>{esc(x)}</li>' for x in n.get('items', []))
+        notes_html += f'<section><h2>{esc(n["title"])}</h2>' + (f'<p class="muted">{esc(n["lede"])}</p>' if n.get('lede') else '') + f'<ol class="notes">{items}</ol></section>'
     if mean is not None:
         chips.append(f'<span class="chip">Weighted checklist {mean:g} · gate needs 8</span>')
     chips.append('<span class="chip not">Not ready for approval</span>')
@@ -133,6 +138,7 @@ section {{ display:grid; gap:14px; }}
 .card {{ background:var(--panel); border:1px solid var(--rule); padding:14px 16px; display:grid; gap:8px; min-width:0; }}
 .card .num {{ white-space:normal; }}
 .cards > p {{ grid-column:1 / -1; }}
+ol.notes {{ margin:0; padding-left:22px; display:grid; gap:6px; max-width:80ch; }}
 th {{ white-space:nowrap; }}
 .mat {{ background:var(--mat); border:1px solid var(--rule); }}
 .mat img {{ display:block; width:100%; height:auto; }}
@@ -157,6 +163,7 @@ td.target.up {{ background:var(--viable-tint); }} td.target.miss {{ color:var(--
     <p class="muted">Rebuilt exactly from the lost files, then judged on a checklist of {sum(len(v) for v in rubric['regions'].values())} concrete criteria. Head and body are worked in parallel; builders check their own silhouettes before the Opus critic judges. Follow-along only: this is not an approval request.</p>
     <div class="status">{''.join(chips)}</div>
   </header>
+  {notes_html}
   <section><h2>Latest</h2><div class="cards">{cards}</div></section>
   <section><h2>Model against your sheet</h2><div class="stack">{''.join(figures)}</div>
     <p class="muted">The arms-down stance is a neutral construction pose. Fur strands and texture are a later stage.</p></section>
@@ -170,10 +177,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--out', required=True)
     parser.add_argument('--running')
+    parser.add_argument('--notes', help='JSON list of {title, lede, items} progress notes shown under the header')
     args = parser.parse_args()
     records = [json.loads(p.read_text(encoding='utf-8')) for p in sorted((LOOP/'rounds').glob('round-*.json'))]
     rubric = json.loads((LOOP/'rubric.json').read_text(encoding='utf-8'))
-    Path(args.out).write_text(page(records, rubric, args.running), encoding='utf-8')
+    notes = json.loads(Path(args.notes).read_text(encoding='utf-8')) if args.notes else None
+    Path(args.out).write_text(page(records, rubric, args.running, notes), encoding='utf-8')
     print(json.dumps({'records': len(records), 'sizeMB': round(Path(args.out).stat().st_size/1e6, 2)}))
 
 
