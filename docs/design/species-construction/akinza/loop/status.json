@@ -26,12 +26,12 @@
   "coverageRounds": 6
  },
  "baseline": {
-  "head": "head-0395",
-  "body": "body-0369",
-  "assembly": "assembled-0396",
-  "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-0396"
+  "head": "head-0415",
+  "body": "body-0400",
+  "assembly": "assembled-0419",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-0419"
  },
- "round": 11,
+ "round": 13,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -43,7 +43,9 @@
   "R04+R08",
   "R04+R06",
   "R02+R06",
-  "R04+R07"
+  "R04+R07",
+  "R03+R09",
+  "R03+R05"
  ],
  "specs": {
   "R10": {
@@ -298,11 +300,11 @@
   "R03": {
    "name": "Ear fan front",
    "weight": 3,
-   "score": 5.7,
+   "score": 6.4,
    "results": {
     "R03.1": "pass",
     "R03.2": "pass",
-    "R03.3": "fail",
+    "R03.3": "partial",
     "R03.4": "partial",
     "R03.5": "partial",
     "R03.6": "pass",
@@ -311,28 +313,28 @@
    "issues": [
     {
      "region": "R03",
-     "summary": "The outer fan envelope was not touched: both tips are still rounded blunt ends carrying the old needle pins, and the lower outer edge keeps its thin thorn pins, so R03.3 and the edge half of R03.7 fail exactly as in the baseline.",
-     "fix": "Reshape the last .03 of each wing so the column height falls from about .055 to under .035 within .008 of the tip and the point rises about 25 degrees above the wing midline (roughly .012 of figure height up at the tip), carried by the outermost primary locks; then delete every residual pin thinner than about .004 of figure height along the tips and the lower outer edge (about 8 to 12 per side).",
-     "fixability": 0.6,
-     "evidence": "m02 front 6x tip crops: tip outline identical to assembled-0320, needle pins on both ends; the top-outline profile matches the baseline column by column."
+     "summary": "The fan front locks are smooth, flat ogive leaves in even overlapping rings. They read as artichoke or pine-cone scales, not shaggy locks.",
+     "evidence": "m04 head-front and m05 head-three-quarter at 3x, against m01 and r04",
+     "fix": "Cut the rim to about 8 to 10 larger locks per side, radiating from the ear root, with lengths varied from .04 to .09 of figure height. Give each lock a convex cross section, about .006 thick with a central ridge, and split each tip into two or three sub-points so the edge breaks up. Stagger the rows so no two neighbours share a tip line.",
+     "fixability": 0.5
     },
     {
      "region": "R03",
-     "summary": "The front locks are too many, too thin and too stiff: about 20 or more narrow smooth blades per side with needle tips, overlapping like shingles, instead of 8 to 10 large shaggy pointed locks.",
-     "fix": "Merge the coat and filler locks into 8 to 10 primaries per side with root widths about .03 to .04 of figure height; raise the tip minimum thickness from .0012 to about .004 and give each lock a softer rounded crest; break each tip into two or three short sub-points instead of one needle so the edge reads shaggy rather than spiked.",
-     "fixability": 0.5,
-     "evidence": "m04 head-front 4x wing crops and m05 head-three-quarter: dense blade stack, needle tips, scale-like overlap."
+     "summary": "The cup tuft is one smooth pale slab with creases. Pale streak fragments lie on both cup walls and a crinkled serrated seam runs along the lower right cup rim. The cup rims are straight with square corners, and a box ledge sits over the right cup.",
+     "evidence": "m04 head-front at 3x and m05 head-three-quarter",
+     "fix": "Replace the slab with four to six pale pointed locks, about .05 to .06 long, fanning from the cup base toward the upper outer corner, with tips reaching about .005 past the rim. Delete the streak fragments and the zigzag seam. Reshape each cup's upper rim to slope up to a pointed tip at the upper outer corner instead of running as a horizontal ledge.",
+     "fixability": 0.6
     },
     {
      "region": "R03",
-     "summary": "The inner tuft reads as a feather-blade stack with a crinkled zigzag free edge, and the cup's upper corner is a notch (image-left) or a flat-topped dark trapezoid (image-right) rather than a clean point, so R03.5 and the tuft half of R03.7 stay short.",
-     "fix": "Rebuild each tuft as 5 to 7 soft rounded clumps converging toward the cup's upper tip, smooth the serrated free edge, and leave a visible dark hollow of about a quarter of the cup on the outer side (cover near .7 rather than .8); close the image-right cup's flat top into a point by bringing the rim's top edge to meet the outer wall about .01 of figure height higher.",
-     "fixability": 0.6,
-     "evidence": "m04 head-front 4x crops and m05 head-three-quarter: zigzag tuft edge, stitched seam along the skull side, squared cup corner; fan-measure.json cover .82 and .77."
+     "summary": "The wing ends are rounded lobes (the right one a smooth circular arc), not up-flared points, and the right side is slightly over-tilted.",
+     "evidence": "m02 front at 4x against m01: right tip top at .000 to .006 and left at .014, against a crown at .036 to .046",
+     "fix": "Over the outer .03 of each wing, raise the top edge by about .008 into a point at the upper outer corner, and undercut the outer edge below it so it tapers. Lower the right wing top by about .005 so both sides sit .02 to .03 above the crown.",
+     "fixability": 0.6
     }
    ],
-   "attempts": 1,
-   "anchorScore": 5,
+   "attempts": 0,
+   "anchorScore": 6.4,
    "parked": false,
    "parkReason": null,
    "history": [
@@ -379,9 +381,73 @@
        "what": "The quick preview reproduces the packet's earSpan (1.030 against 1.032), so check R03.1 on a preview before assembling. Pass a packet path as an absolute path: a relative one makes the posed step write under the work folder."
       }
      ]
+    },
+    {
+     "round": 12,
+     "kept": true,
+     "approach": "Re-run the R03 lock system on the baseline head with fewer, larger point-faded primary locks, the plate cut back to the spec outline, each wing end cut to a pointed V, and the pale tuft rebuilt as five blurred rounded clumps that fill the cup.",
+     "reason": "kept on the critic verdict (better), no region lost credit",
+     "reusable": [
+      {
+       "option": "--plate-clip INSET (with --clip-y, --clip-u0)",
+       "what": "Cuts the old fan body to the spec's outline table inset by INSET, fading with depth, so the plate stops short of the lock tips."
+      },
+      {
+       "option": "--tip-wedge (--wedge-u, --wedge-apex-y, --wedge-top-y, --wedge-bottom-y)",
+       "what": "Cuts each wing end through every depth to a pointed V before the locks go on. Replaces the blunt vertical end."
+      },
+      {
+       "option": "--tip-point FRAC",
+       "what": "Fades the lock tip-min floor to a true point over the last FRAC of the lock length. Fixes needle pins and knob tips."
+      },
+      {
+       "option": "--tuft-blur SIGMA, --tuft-tip-min, --tuft-section-p, --tuft-aim",
+       "what": "Blurs the union of the tuft locks into rounded clumps, gives the tuft its own tip floor and section, and aims the tips at the cup's upper tip."
+      },
+      {
+       "option": "--pale-cup-margin M",
+       "what": "Keeps the pale material off faces more than M outside the cup polygon, so tuft tips buried under the coat leave no streaks."
+      },
+      {
+       "option": "--trim-y Y0 Y1",
+       "what": "Fades the --trim-pins opening out with depth so the rear locks keep their tips."
+      },
+      {
+       "option": "--fork 2 (--fork-angle, --fork-len, --fork-from)",
+       "what": "Adds two short side points to each primary lock. They read as thorns at current sizes, so this is not recommended."
+      }
+     ]
+    },
+    {
+     "round": 13,
+     "kept": true,
+     "approach": "Re-run the R03 lock system on head-0395 with broad pointed leaf locks and no needle tips, F8 restored, the pin locks skipped, three merged tuft locks blurred into one pale mass, a rounded cup rim, and a height warp that sinks the crown and raises the R wing top for the V tilt.",
+     "reason": "kept after freezing the untouched body regions (the pose refit had moved R08.10 on an identical body)",
+     "reusable": [
+      {
+       "option": "--crown-sink S (--sink-u, --sink-ramp, --sink-y)",
+       "what": "Lowers the crown top by up to S figure heights with a smooth z shear of the field (fades out with depth in y). Locks follow the warp. Gives the V tilt without raising the figure."
+      },
+      {
+       "option": "--tilt-r LIFT (--tilt-u, --tilt-y)",
+       "what": "Raises the R wing outer top by up to LIFT, growing from |x| .12 to .26 and fading out downward so the lower fan edge stays put. R lock roots and tips move with it."
+      },
+      {
+       "option": "--cup-clip-smooth R",
+       "what": "Smooth maximum radius in the coat locks' cup clip. Rounds the cup rim instead of a hard vertical wall."
+      },
+      {
+       "option": "--tip-floor F",
+       "what": "Lowest value of the --tip-point fade. Together with a small --tip-min (.0015) and --ogive 1.35 .85 it gives broad pointed leaf locks with no needle tip."
+      },
+      {
+       "option": "--skip with tuft names (T2,T4) plus --tuft-stack 0 --tuft-blur 2 --tuft-aim .25 --pale-smooth 8",
+       "what": "Three merged tuft locks that read as one soft pale mass converging on the cup's upper tip (cup cover about .8)."
+      }
+     ]
     }
    ],
-   "lastWorked": 7
+   "lastWorked": 13
   },
   "R04": {
    "name": "Ear fan rear and profile",
@@ -594,7 +660,7 @@
      "fixability": 0.7
     }
    ],
-   "attempts": 1,
+   "attempts": 2,
    "anchorScore": 5,
    "parked": false,
    "parkReason": null,
@@ -614,9 +680,41 @@
        "what": "Body-only (optionally with the head placed as the assembly does) Workbench renders of the shoulders and neck from front, back, left, rear three-quarter, neck-rear, neck-profile and neck-q, each with a grazing pass. Used to read caps, ledges and pockets before assembling."
       }
      ]
+    },
+    {
+     "round": 13,
+     "kept": false,
+     "approach": "Re-cut the shoulder plateau of body-0400 in field space with a roof (the cut boundary falls .03 to .045 toward the front and back faces while a cutShift keeps the crest at the sheet outline), then fill the chest-to-cap groove and round the remaining convex edges with a small blur, so the shoulder top is a dome from behind and in profile instead of a flat plate with a hard rear edge.",
+     "reason": "critic verdict worse: the neck ring, nape step and stem pinch untouched; new ledge and corner nubs on the upper arms; R05 5.8 to 5",
+     "reusable": [
+      {
+       "option": "shape_neck_shoulders_field.py --spec {\"lift\":{\"c\":negative}, \"cutShift\":...}",
+       "what": "A negative lift c turns the cut's lift into a roof: the allowed top falls toward the front and back faces, so the plateau becomes a dome from behind and in profile. cutShift (world, default 0) raises the whole cut boundary to offset the smooth-max's inward bias (about blend/4) when re-cutting an already cut body, so the crest stays on the outline."
+      },
+      {
+       "option": "shape_neck_shoulders_field.py --spec {\"cutEnable\":false}",
+       "what": "Skips the silhouette cut so a pass can only fill or round (back.enable false likewise skips the back plane). Defaults keep earlier runs reproducible."
+      },
+      {
+       "option": "shape_neck_shoulders_field.py --spec {\"round\":{\"enable\":true,\"sigma\":..,\"x\":..,\"y\":..,\"z\":..,\"fade\":..,\"dilate\":..,\"more\":[..]}}",
+       "what": "Convex rounding max(field, blur(field)) inside a weighted box: melts hard edges into a dome of radius about sigma without a seam. dilate gives back the thickness the blur takes from convex limbs; more is a list of extra rounding boxes. A second, wider box at the cap corner (body-0414) made a squared step and is not recommended."
+      },
+      {
+       "option": "shape_neck_shoulders_field.py --spec {\"fill\":{\"enable\":true,...}}",
+       "what": "Existing fill-only blur min(field, blur(field)) now shares a band helper; used here at sigma .02 over |x| .09 to .27, y -.13 to -.03, z .27 to .40 to close the chest-to-cap groove."
+      },
+      {
+       "option": "loop/shade_shoulders.py --cavity",
+       "what": "Adds Workbench cavity (ridges and valleys) to the shoulder and neck shade renders to expose creases."
+      },
+      {
+       "option": "loop_tools.py posed <assembly> --out <packet>/posed --pose <baseline posed-pose.json> (no --refit), then packet",
+       "what": "Measures a packet on the baseline's pose when the fit refit lands in a worse optimum on an unchanged region; the refit noise on this model is about .03 on R08.10 and .05 on the head band."
+      }
+     ]
     }
    ],
-   "lastWorked": 7
+   "lastWorked": 13
   },
   "R06": {
    "name": "Torso and pelvis",
@@ -855,7 +953,7 @@
   "R08": {
    "name": "Legs",
    "weight": 2.5,
-   "score": 6.4,
+   "score": 7.3,
    "results": {
     "R08.1": "partial",
     "R08.2": "partial",
@@ -866,7 +964,7 @@
     "R08.7": "pass",
     "R08.8": "pass",
     "R08.9": "partial",
-    "R08.10": "fail",
+    "R08.10": "pass",
     "R08.11": "fail"
    },
    "issues": [
@@ -939,9 +1037,9 @@
   "R09": {
    "name": "Hind paws",
    "weight": 1.5,
-   "score": 5.0,
+   "score": 5.6,
    "results": {
-    "R09.1": "partial",
+    "R09.1": "pass",
     "R09.2": "partial",
     "R09.3": "partial",
     "R09.4": "partial",
@@ -953,28 +1051,28 @@
    "issues": [
     {
      "region": "R09",
-     "summary": "From the front and the oblique view the toe lobes merge into one flat, low, level band, so the plan arch and the smaller outer toes do not show (R09.1, R09.8).",
-     "evidence": "m09 hindpaw-underside shows the middle toes leading and outer lobes about 50 to 55 px wide against 70 to 80 px. But m09 hindpaw-front shows four evenly spaced claws at one height, and the oblique shows a straight row with the near outer toe the largest. In r02 the middle pair is larger, taller and ahead.",
-     "fix": "Raise the tops of the middle toe lobes by about .006 to .008 fit and lower the outer lobes by the same amount, so the row crowns in the middle from the front. Shrink the outer lobes another 10 to 15 percent. Cut the dorsal clefts about .005 deeper so four lobes read as separate toes.",
+     "summary": "The paw is a low slipper with no domed instep. Its front height is about .027 of figure height against about .04 on the sheet, and the top is a straight ramp down to low toes (R09.3, R09.4, R09.8).",
+     "evidence": "m02 front and left at 4x against m01 front and left, and m09 hindpaw-profile: the top of the paw runs straight from the ankle to the toe tips. The r02 side view shows the toes rising into a convex domed knuckle mass, with a concave curve up to the ankle front.",
+     "fix": "Raise the toes and knuckle mass so the paw front stands about .04 of figure height, up from about .027. In profile, the top line should rise in a convex arc from the claw roots to a crest about a third of the paw length back, then curve concavely into the ankle front. Keep the sole flat and the back-view width unchanged (R09.7 is .946). Round the near-vertical heel wall into a slight backward taper.",
+     "fixability": 0.5
+    },
+    {
+     "region": "R09",
+     "summary": "In the front view the claws read as straight cones with pearl-like heads laid on the toe faces, not slim curved claws coming out of the toe tips (R09.2, R09.8).",
+     "evidence": "m09 hindpaw-front at 8x: each claw has a bright round root on the toe face at mid-height and tapers straight down to the ground line. In r02 front three-quarter, the claws come out from under the fur at the toe tips and curve down and out past the toe.",
+     "fix": "Remove the round root. Sink the claw base into the toe tip, flattened, with a base width of about .005 to .006 of figure height. Start each claw at the front-lower tip of its toe instead of halfway up. Let it extend about .008 to .012 beyond the toe outline and curve down, so the front view shows a short curved claw past the toe instead of a pin on its face.",
      "fixability": 0.6
     },
     {
      "region": "R09",
-     "summary": "The claws are straight white cones laid flat on the toe faces and pointing straight down, instead of curved claws leaving the toe tips (R09.2, R09.8).",
-     "evidence": "m09 hindpaw-front and m02 front: vertical cones on the toe fronts. m09 hindpaw-profile: the claws hug the toe face with the tips tucked under. In r02 each claw leaves the toe tip, stands a little proud and arcs forward and down.",
-     "fix": "Root each claw at the toe's forward-most point, at about half the lobe height. Carry it .010 to .012 forward before the bend, then curve it about 40 degrees down so the tip lands about .004 ahead of the toe. Splay the outer claws 8 to 10 degrees outward.",
-     "fixability": 0.7
-    },
-    {
-     "region": "R09",
-     "summary": "In profile the paw is a low slipper, with a step where it meets the ankle and a heel bulb with a notch above it, not a domed instep (R09.3, R09.8, R09.7).",
-     "evidence": "m09 hindpaw-profile and m08 shin-profile at 2x: a kink on the front line at the morph band (z -.838 to -.872), and the heel swells past the ankle back line. measurements.json left: depth is .0675 at .94 and .0876 at .96 against .1178 at .98. R09.9 fell from .678 to .631 with the same pose.",
-     "fix": "Raise the dorsum between .94 and .97 by about .010 to .012 fit to make one dome. Widen the morph blend to about z -.83 to -.89 so no step is left. Pull the heel bulb in about .004. Settle the measurement friction on R09.6, R09.7 and R09.9 (two staggered sheet paws, posed foot roll) before more rounds chase those numbers.",
-     "fixability": 0.55
+     "summary": "New dark pits and a knot appear in the front view where the toes part (a side effect that also counts against R12.3).",
+     "evidence": "m09 hindpaw-front at 8x: a dark pit where the left outer and middle toes part, and a small knot between the two middle toes, where the cut-back pad meets the toes.",
+     "fix": "Fill each gap between toes with a soft fillet of radius about .002 to .003 of figure height, so the toes part through a smooth groove. Check every gap in m09 front and oblique at 8x.",
+     "fixability": 0.8
     }
    ],
    "attempts": 0,
-   "anchorScore": 3.3,
+   "anchorScore": 5.6,
    "parked": false,
    "parkReason": null,
    "history": [
@@ -997,9 +1095,29 @@
        "what": "Shaded clay closeups of one hind paw (front, left, back, three-quarter, underside) from a body shape.glb, with no assembly needed."
       }
      ]
+    },
+    {
+     "round": 12,
+     "kept": true,
+     "approach": "Rerun the hind-paw-only field pass on body-0369 with the pad cut back behind the toe bases so graded toe lobes crown in the middle, a higher dorsum and instep dome, a wider morph band, and new Bezier hook claws rooted at each toe's equator that run forward then curve down onto the toe face.",
+     "reason": "",
+     "reusable": [
+      {
+       "option": "rebuild_hind_paws_field.py claws[i] tip mode (rootZ, shift, run, runZ, tipZ, tipAhead, radius, flat)",
+       "what": "Quadratic Bezier hook claw: root sheathed in the toe's front face, out along the toe's forward axis by run, then down to a tip tipAhead in front of the toe face at tipZ. Replaces the pitch/bend cone path when tipZ is given."
+      },
+      {
+       "option": "art/species-construction/loop/posed_foot_quick.py",
+       "what": "Numpy posed IoU for foot, shin and thigh bands of a body component without assembling, using the baseline posed joints and the sheet pose; also writes posed-fit.png."
+      },
+      {
+       "option": "body-0400/paw-spec-v3.json",
+       "what": "Spec overrides for the hind-paw pass: regraded toes, shorter pad, higher dorsum and instep, morph -.83 to -.89, columnBottomZ -.925, tip-mode claws."
+      }
+     ]
     }
    ],
-   "lastWorked": 6
+   "lastWorked": 12
   },
   "R10": {
    "name": "Tails",
@@ -1069,7 +1187,8 @@
   "2026-10-01: before rounds 6 to 9: packets refit the posed angles per model; R08.10 and R08.11 thresholds lowered to .85 and .72 after the R08 spec showed the sheet itself caps them; R01.4 reworded; fan orders carry an authored lock-system issue.",
   "2026-10-01: rounds 6 to 9 finished (27 agents, 5.3M subagent tokens, 6.3 hours). Kept: R04 fan rear and R09 hind paws (round 6), R03 fan front and R05 shoulders (round 7). Rounds 8 and 9 kept nothing: each candidate improved its own region but broke a neighbour (tail dent, crown dome lost, side waist thinned). Weighted 4.695 to 5.095. Builders now must check neighbouring regions before handing over.",
   "2026-10-01: R09.6 dropped and R09.7 replaced by back paw width at .96 (the side rows read the sheet's two staggered paws as one).",
-  "2026-10-01: workflow stopped after round 11 to change the keep rule: a candidate the critic judges better, with no region losing credit, no invariant newly broken and no fall in the weighted mean, is kept even when none of its own criteria move. Round 11 R04 (assembled-0396) adopted under that rule; R07 stays reverted. Status rebuilt from the journal by replay_r10_r11.py."
+  "2026-10-01: workflow stopped after round 11 to change the keep rule: a candidate the critic judges better, with no region losing credit, no invariant newly broken and no fall in the weighted mean, is kept even when none of its own criteria move. Round 11 R04 (assembled-0396) adopted under that rule; R07 stays reverted. Status rebuilt from the journal by replay_r10_r11.py.",
+  "2026-10-01: workflow stopped at the start of round 14. Round 13 R03 (assembled-0419) was reverted only because the per-model pose refit moved a posed leg band on an identical body (R08 7.3 to 6.4); the judge now freezes the results of the component an order did not touch, and R03 is adopted. Note for later: the stalk neck lives at the head-body join, but R05 orders go to the body builder only, so it cannot be fixed as the loop is set up."
  ],
  "decisionsForNick": [
   {

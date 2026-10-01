@@ -184,6 +184,11 @@ function specPrompt(order) {
 function judge(order, build, critique) {
   const before = scoresNow()
   const results = resultsAfter(critique, baseResults())
+  // A component the order did not touch keeps its results: round 13's head-only fan
+  // build was reverted because the per-model pose refit moved a posed leg band and
+  // took R08 from 7.3 to 6.4 on an identical body.
+  const frozen = order.component === 'head' ? BODY : order.component === 'body' ? HEAD : []
+  for (const id of frozen) results[id] = { ...S.regions[id].results }
   const after = {}
   for (const id of IDS) { const s = scoreFrom(results[id], id); after[id] = s === null ? before[id] : s }
   const target = order.id
