@@ -78,6 +78,11 @@ ARM = {
     'lobeToRod': .010,
     # claws
     'claw': {'length': .021, 'bend': .45, 'radius': .0042, 'insetS': .006, 'palmFraction': .25},
+    # clawEach (round 16): optional per-claw lists that override the single claw dict, so the four claw tips can
+    # separate in the front view. tiltDeg turns the claw's forward axis from the paw axis toward the palm,
+    # length and bend replace the shared values, baseOutward moves the base along t (outward positive) from the
+    # lobe tip centre. None keeps every earlier run exact.
+    'clawEach': None,
     # removal and union
     'openRadius': .065,
     'stationSmoothing': 0.0,   # sigma (world) for the rod radius profile; 0 = piecewise linear as in body-0303
@@ -493,13 +498,18 @@ for side in (1, -1):
         s_tip = ARM['lobeTipS'][i]
         t_tip = ARM['lobeTipT'][i]
         c = ARM['claw']
-        local_base = (s_tip-c['insetS'], t_tip-c['palmFraction']*2*ARM['lobeThickRadius'], ARM['lobeR'][i])
+        each = ARM['clawEach'] or {}
+        local_base = (s_tip-c['insetS'], t_tip-c['palmFraction']*2*ARM['lobeThickRadius']+(each.get('baseOutward') or [0]*4)[i],
+                      ARM['lobeR'][i])
         base = W+a2*local_base[0]+u2*local_base[1]+v2*local_base[2]
+        tilt = math.radians((each.get('tiltDeg') or [0]*4)[i])
+        forward = a2*math.cos(tilt)+palm*math.sin(tilt)
         claw_specs.append({
             'name': f'Curved fore claw {side:+d} {i+1}',
             'base': [side*base[0], base[1], base[2]],
-            'forward': [side*a2[0], a2[1], a2[2]], 'curl': [side*palm[0], palm[1], palm[2]],
-            'length': c['length'], 'bend': c['bend'], 'radius': c['radius']})
+            'forward': [side*forward[0], forward[1], forward[2]], 'curl': [side*palm[0], palm[1], palm[2]],
+            'length': (each.get('length') or [c['length']]*4)[i], 'bend': (each.get('bend') or [c['bend']]*4)[i],
+            'radius': c['radius']})
 
 # ---- mesh once ---------------------------------------------------------------------------------------
 vertices, tris, quads = grid.convertToPolygons(isovalue=0.0, adaptivity=0.0)
