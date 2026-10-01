@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "written": "2026-10-01",
+  "baseline": "assembled-0458 (head-0455, body-0448)",
+  "inputs": [
+    "docs/design/species-construction/akinza/loop/method-brief.md",
+    "docs/design/species-construction/akinza/loop/gap-audit-0458.md",
+    "docs/design/species-construction/akinza/loop/status.json",
+    "docs/design/species-construction/akinza/loop/rounds/round-01.json to round-16.json",
+    "docs/design/species-construction/akinza/recipe.json",
+    "docs/design/species-construction/akinza/lineage-0458.md",
+    "docs/design/species-construction/akinza/loop/specs/R01.md to R10.md",
+    "docs/design/species-construction/LOOP-v3.md",
+    "docs/design/species-construction/LESSONS.md"
+  ],
+  "sharedTools": {
+    "author_fan_clumps_field.py": {
+      "status": "new; the first R03 or R04 order writes it",
+      "path": "art/species-construction/author_fan_clumps_field.py",
+      "runner": "blender",
+      "args": "--scene <head.blend> --spec <fan-clumps-<part>.json> --part front|rear --out <dir>",
+      "spec": {
+        "envelope": "the sheet fan outline per view from sheet.json (front, back, left) plus a depth plan of the fan's front and rear surfaces on a (u, y) grid in fit units; the outline that already passes is the target",
+        "strip": "the field zone to clear before growing: everything of the old fan in front of (part front) or behind (part rear) the fan mid-surface, outside a protected skull mask (the R01 skull ellipsoids plus .006) and outside the face window of graft_face_field.py; the cleared zone is replaced by an inner core inset .010 to .015 from the envelope so no clump gap shows through",
+        "roots": "root band polylines: the ear-root crease (R01 spec masses 3 and 4), the cup rim (R03), and for the rear the crown line and rear root band",
+        "clumps": "list of {id, root (x, y, df), path (3 to 5 control points, or direction, length, curl and droop), section {widthRoot, widthMid, thickMid, roundness 1.0 to 1.8}, twistDeg, taperExp, tipRadius, layer, material}",
+        "cup": "{polygon, floor depth table, opening normal (yaw out from forward, pitch), rim radius}; carved after the coat clumps, before the tuft",
+        "tuft": "pale clumps inside the cup, same fields as clumps, material 'Pale inner-ear coat'",
+        "blend": "smooth-union radii per layer and a light per-clump field blur before fusing (LESSONS: short tapered cones leave ribs)"
+      },
+      "outputs": "head.blend, shape.glb, fan-clumps.json (per clump length, section and tip stats, envelope missing and extra area per view, cup and tuft coverage, skinTopZ, skinAfter components and nonManifoldEdges), source-snapshot/",
+      "invariants": "one closed component; skinTopZ no higher than the baseline's (LESSONS: cap the figure height); no geometry change outside the fan zone (recipe.py contain)",
+      "recipe": "two steps after H33: the R04 rear step first, then the R03 front step, so the front unions last. Once both pass, H27, H28, H31, H32 and H33 build geometry that is stripped again and can be dropped in a later recipe cleanup, with H30 rebased on H26."
+    }
+  },
+  "regions": {
+    "R01": {
+      "name": "Head silhouette",
+      "method": "Skull and jaw authored as smooth-union ellipsoids (skulls[] plus the chin and cut tables) in shape_head_silhouette_field.py at step H25, raising the crown dome between the ear roots from its own ellipsoid rather than the crown_lift surface warp.",
+      "steps": ["H25"],
+      "why": "Closes gap rank 8 (flat forehead band and square jaw; R01.3 and R01.5 partial): crown height and jaw section are structure, and a skull ellipsoid sets them from parameters where round 2's crown_lift only warped the existing roof by a hair. The back-view dome sunk behind seams (rank 1, R01.4) is left to the fan rebuild, which strips the shell around the skull.",
+      "failureLooks": "Crown nubs or a bald bulb poking above the fan top (figure height grows; check skinTopZ); a window-edge crease ring around the lifted dome; a chin knob or a pinched stem under a narrowed jaw; the fan top edge pulled down beside the crown (the sunk roof).",
+      "stallNext": "Author the skull and head base as one lofted section stack from the R01 head base table and sheet.json head stations (a new head-base generator), morphed into the native field below the fan root band.",
+      "changed": false,
+      "respec": false
+    },
+    "R02": {
+      "name": "Face",
+      "method": "Field-space face rebuild with rebuild_face_features_field.py at step H29, grafted into the fan head by graft_face_field.py at H30, extended with an orbit opening that removes the cheek and brow mass lateral to the globe and brings the globe forward, so the eye shows large in profile while brow and nose still lead.",
+      "steps": ["H29", "H30"],
+      "newOptions": "an 'orbit' spec block in rebuild_face_features_field.py (lateral opening axis, opening angle, depth, rim radius) plus iris size and gaze offset keys, each defaulting to a no-op so earlier runs reproduce, as rebuild_arms_field.py clawEach did",
+      "why": "Closes gap rank 3 (profile slit: visible eye height over head height about .15 against .33), with ranks 9 (front stare) and 14 (cheek crust and plate). The face tool already authors the eye from parameters and carried R02 to 8.3; what it does not control is the socket's lateral wall, which today is the cheek plate wrapping the globe.",
+      "failureLooks": "A bulging bug eye with the globe edge proud of the rim; a dark hole or old socket ring behind the opened wall; brow and nose no longer in front of the eye (R02.6 regresses); a scowl from a heavy lid overhang; the graft window showing as a vertical crease at the face edge.",
+      "stallNext": "A separate eye-and-orbit part generator (globe, lid fold, orbit rim and cheek plane authored analytically in head-local units) morphed into the head inside an orbit mask after the graft, so the face no longer has to be rebuilt on head-0260.",
+      "changed": false,
+      "respec": true,
+      "respecReason": "The spec sets the eye back (frontmost point at least .010 behind the brow-to-nose line) and has no profile visibility target, which is what produced the slit; the iris (.52 of the eye width, .003 convergence) is smaller and more centered than the audit's .6 and quarter-width glance."
+    },
+    "R03": {
+      "name": "Ear fan front",
+      "method": "Coat clump volume: guide curves grown from the ear-root crease and cup rim into the sheet's fan envelope, each swept as a thick tapering clump of rounded section, converted to OpenVDB level sets and smooth-unioned over a small inset core, with the ear cup carved to open forward and outward and filled with pale tuft clumps, by a new author_fan_clumps_field.py --part front.",
+      "steps": "new: author_fan_clumps_field.py (see sharedTools), step added after H33 and after the R04 rear step when that exists; the first order writes the script",
+      "why": "Closes gap ranks 2 and 6 (shards, thorns and leaf facets on the front; no cup or tuft from the side) and the failing R03.3, R03.4, R03.5 and R03.7. Rounds 12, 13, 15 and 16 retuned the plate-plus-flat-lens lock system four times and moved one criterion (R03.3 to partial), because a flat lens lying on a plate reads as a leaf or scale whatever its numbers; round-section clumps on their own 3D paths with no plate change the construction while keeping the outline that already passes.",
+      "failureLooks": "Sea urchin or porcupine (clumps radiating from one point, too thin and straight); spaghetti or a pile of sausages (even round tubes with blunt ends); dark gaps where the core shows; crinkled seams at clump roots from too small a union blend; a blob with no lock read from too much blur; the outline shrinking inside the envelope (R03.1 or R03.2 fall) or tips leaving it (figure height grows); a cup that still faces only forward, so the side view shows no pale.",
+      "stallNext": "Envelope plus lock relief: author the fan as one closed envelope surface from the sheet outline and depth plan, then displace it by a procedural clump relief that follows a flow field (strips that part, overlap and taper to the tips), so solidity and outline are guaranteed and only the relief is tuned.",
+      "changed": true,
+      "respec": true,
+      "respecReason": "The spec is a plate-plus-lens table: a fan body plate under 24 locks per side whose back faces lie flat on the plate, width over thickness 2.4 to 2.6. That is the leaf construction being replaced. The clump method needs root, path, round section and layer per clump, the cup opening direction for the side view, and the envelope from sheet.json."
+    },
+    "R04": {
+      "name": "Ear fan rear and profile",
+      "method": "The same clump volume from the rear: author_fan_clumps_field.py --part rear strips the old rear shell, plate and lock rows in field space, then grows clumps from the crown line and rear root band flowing outward and down into two tapering wings, each overlapping several neighbors, with the crown tuft as a few pointed clumps and the head dome left as a soft center.",
+      "steps": "new: author_fan_clumps_field.py --part rear (see sharedTools), step added after H33 and before the R03 front step",
+      "why": "Closes gap rank 1 (crumpled shard bowl from behind with a continuous pale lower rim and flat end planes) and R04.3, R04.4, R04.5 and R04.7. The rear lock table over a cut plate (rounds 6, 8, 9 and 11) parked after three rounds without a net gain: each pass traded combs for spools and shard tiles because the locks are decals on a displaced shell that keeps its rim and cut ends; a volume of clumps has no shell edge to make either.",
+      "failureLooks": "The R03 failures plus: a nest or basket weave from crossing clump paths; a hairline rim where clump ends meet the core along the lower edge; the dome swallowed into the wings (R01.4 and R01.8 regress, as in round 8); nape spikes from clumps rooted too low; a ladder or picket of clump ends down the profile's back edge.",
+      "stallNext": "Envelope plus lock relief for the rear wings, as for R03: a closed rear envelope from the back and side outlines displaced by flow-field clump relief that runs from the crown outward and down.",
+      "changed": true,
+      "respec": true,
+      "respecReason": "The spec is the 114-row lock table (T, B1, B2, B3, D, C) over a plate cut and a dome cut; a builder following it rebuilds the decal construction. The clump method needs the wing flow (root band, path, droop and taper per clump), the dome as a protected soft center and the rule that no clump end lies on the lower edge."
+    },
+    "R05": {
+      "name": "Neck and shoulders",
+      "method": "Assembly join parameters through loop_tools.py assemble --join at step J: lower head-trim-offset from .048 to about .02 so the head cut sits above the stub's lip at world z .465 to .477 and the bridge loft replaces it, set bridge-rings, tangent-limit and min-neck-length for a straight column, and window the fusion smoothing below z .44; then, as a separate body order, round the yoke with shape_neck_shoulders_field.py at B-19 with cutEnable false and the convex round block, no new cut.",
+      "steps": ["J", "B-19"],
+      "why": "Closes gap rank 10 (collar ring under the fan, ledge and corner knobs from behind; R05.4, R05.5, R05.6). The ring is the head stub's depth-ramp lip, which body-only orders could never reach (round 13 left it pixel-identical); the join step now owns the seam, and the shoulder outline already matches within about .01 of figure height, so the yoke needs fill-only rounding rather than another cut.",
+      "failureLooks": "A neck that grows taller or shorter so the head rides up (check figure height and R05.1); a trumpet flare or a thin stem at the bridge from over-smoothing; a new horizontal seam where the loft meets the head; bottle shoulders or dropped caps from rounding too far; upper-arm ledges and corner nubs as in round 13.",
+      "stallNext": "A neck-and-yoke generator run on the joined skin after assembly: an analytic column and trapezius loft from the R05 section tables morphed in over the seam window, so the neck is authored once across both components.",
+      "changed": true,
+      "respec": true,
+      "respecReason": "The spec's recommended construction routes the neck fix through warp_neck_field.py on the head stub and a body-only forward shift, neither of which a join order can touch, and it still asks for a cap rebuild by cutting. It needs the join parameter targets (trim heights, bridge length, fusion window) and a fill-only rule for the yoke."
+    },
+    "R06": {
+      "name": "Torso and pelvis",
+      "method": "Author the trunk from parameters: a new author_trunk_sections_field.py lofts superellipse sections from a station table read from sheet.json (side front and back edges and front half widths every .02 of figure height from y .26 to .62) and weighted-morphs the native trunk toward that field inside a trunk mask that excludes the arms, the neck above .26, the thighs below the hip freeze and the held tail root.",
+      "steps": "new: art/species-construction/author_trunk_sections_field.py, runner blender, args --body <shape.glb> --fairing <fairing.json> --spec <trunk-sections.json> --out <dir>; spec: stations [{y, front, back, halfWidth, expFront, expBack}], mask {armRadius from fairing armJoints, neckTop, hipFreeze, tailRootZone from species.json zones}, morph fade (at least ten times the relief change); outputs body.blend, shape.glb, fairing.json with a trunkSections record (per station target and achieved front, back and half width), source-snapshot/. Step inserted after B-20 and before B-21, so the arm rebuild B-23 fillets onto the new trunk.",
+      "why": "Closes gap rank 5 (plank profile: side chest depth .131 against .168, waist 1.30x, chest over waist 1.07 against 1.54; R06.6, R06.7, R06.9) and rank 15 (rump depth). reshape_torso_field.py parked after three rounds because it maps the measured edges of the previous mesh, so every depth change also carried its belts and ledges into new bands or thinned the waist (rounds 3, 9, 15); a lofted section stack sets depth and cross section directly and a weighted morph leaves no ring (LESSONS, field-space corrections).",
+      "failureLooks": "A lathe-turned vase or tube with too-regular sections; belt lines at the morph mask edges; a crater or shelf at the armpit, deltoid or thigh root where the mask ends; a dent at the tail root (R10 and R11 are held and must not move); a pigeon breast that breaks R06.8; hips widening off the posed front band (R06.10).",
+      "stallNext": "Generate the trunk on the tail-free root (body-0086/attempt-03) with rebuild_body_field.py driven by a trunk spline and section radii, then rerun the downstream body steps, so the trunk is built rather than morphed.",
+      "changed": true,
+      "respec": true,
+      "respecReason": "The spec recommends a y and x resample of the kind reshape_legs_field.py does, which is the stalled method, and its side depth table (peak .129 at .34 to .36) disagrees with the audit's sheet reading of .168 at .36; the station table must be re-read from sheet.json in the loft's format before the next order."
+    },
+    "R07": {
+      "name": "Arms and forepaws",
+      "method": "Analytic arm and forepaw rebuild with rebuild_arms_field.py at step B-23, enlarging the paw to about 1.5 wrist widths with four separately grooved digit lobes and claws leaving each tip at about a third of the digit length, and authoring the deltoid cap from the ARM dict instead of keeping the native shoulder.",
+      "steps": ["B-23"],
+      "why": "Closes gap rank 7 (closed fist at about .6x the sheet's paw width, fused digits, short claws; R07.3, R07.5, R07.6) and rank 13 (box shoulder cap and flat lit strip; R07.1). The tool already builds the paw from parameters; the gaps come from the spec's paw size cap and from keeping the native shoulder in rounds 11 and 16, both parameter choices, so the method stays and the targets change.",
+      "failureLooks": "A human hand (long splayed fingers or a thumb); a swollen mitten past the sheet's hip outline in the posed front (R07.6 falls); pits between lobes (round 11); a crater or ledge where the new deltoid meets the trunk or R05's cap; claws stuck on the front face rather than out of the tips.",
+      "stallNext": "A digit-chain forepaw generator: a palm pad plus four jointed digit capsule chains, each ending in its own claw sheath, swapped in at the wrist by a weighted field morph, keeping the arm from rebuild_arms_field.py.",
+      "changed": false,
+      "respec": true,
+      "respecReason": "The spec caps the paw (dorsum at most .046, 1.35 wrist widths; front-view thickness .032 to .036), sets claws at .011 and asks for lobes that stay joined as one mitten, against the audit's .055 paw, 1.5 wrist widths, separate lobes and claws about .35 of the digit length."
+    },
+    "R08": {
+      "name": "Legs",
+      "method": "Station-table resample with reshape_legs_field.py at step B-22 (yMask and zBlur kept) for the remaining sculpt: one calf swell into a slim Achilles line, a soft kneecap plane, the ankle-top crease removed, and the outer thigh and lateral shin lines moved out to the posed bands.",
+      "steps": ["B-22"],
+      "why": "Closes gap rank 12 (double calf swell and knee knob; R08.10 thigh band .830, R08.11 shin band .643) now that the widths pass; these are outline and surface adjustments on correct structure, which a resample does. Rank 16 (rest stance .44 against .31) is a joint position the posed fit already corrects and stays a refinement.",
+      "failureLooks": "Horizontal ripple bands or a crease at the morph edges (ankle top, thigh root); a tail dent from the depth pass if the yMask slips; the calf back line thinning off the posed shin band (round 14); a bowed shin path.",
+      "stallNext": "Loft the lower leg along the knee-to-ankle axis from the R08 section table (the spec's own recommended construction) in a new lower-leg generator, morphed in between y .74 and .925.",
+      "changed": false,
+      "respec": false
+    },
+    "R09": {
+      "name": "Hind paws",
+      "method": "Analytic hind-paw rebuild with rebuild_hind_paws_field.py at step B-21, replacing the straight dorsum capsule with a profile-curve instep (a convex dome rising from the claw roots to the ankle) and a heel rounded into the sole, with graded toe lobes and claws rooted inside the toe tips.",
+      "steps": ["B-21"],
+      "newOptions": "a PAW key for the side top-line curve (control points from the claw roots to the ankle front) with a default that keeps earlier runs exact",
+      "why": "Closes gap rank 11 (slipper with a vertical heel cliff and no instep; beads in a row; claws on the toe faces; R09.9 foot band .647, R09.3, R09.8). The paw is already authored from parameters; the ellipsoid table's straight dorsum slope is what builds the ramp, and a curve-driven top line closes what the table cannot.",
+      "failureLooks": "A clog or club foot (instep too high, toes buried); a heel bulb or ankle step at the morph band; pits between toes; pearl-headed claws; the sole lifting off the floor contact.",
+      "stallNext": "Rebuild the paw as a lofted section stack along the paw axis from a side profile curve and a front arch curve, with the toes as separate lobes unioned on top.",
+      "changed": false,
+      "respec": true,
+      "respecReason": "The spec's mass 7 makes the dorsum one straight capsule slope from the ankle front to the toe bases and builds the instep as a separate ellipsoid, which is the ramp the audit names; the new top line is a convex arc with its crest about a third of the paw length back."
+    },
+    "R10": {
+      "method": "hold"
+    },
+    "R11": {
+      "method": "hold"
+    },
+    "R12": {
+      "name": "Whole-form coherence",
+      "method": "Coat masses from the fan's clump primitive: a new body step author_coat_masses_field.py after B-23 reuses the clump sweep module of author_fan_clumps_field.py to add broad, low, soft coat masses at the sternum, forearms and calves, with one shared set of section and taper settings for the fan, the face tufts and the body, so the whole figure reads as one fur.",
+      "steps": "new: art/species-construction/author_coat_masses_field.py, runner blender, args --body <shape.glb> --fairing <fairing.json> --spec <coat-masses.json> --out <dir>; spec: masses [{id, region zone, root, path, section, relief at most .004 of figure height}] plus the shared idiom file; outputs body.blend, shape.glb, fairing.json with a coatMasses record; written only after the fan clump module exists",
+      "why": "Closes gap rank 4 (a hard jagged fan on a bare vinyl body; R12.1, R12.2). It depends on the fan clumps existing and passing, so R12 stays parked until R03 and R04 land on the clump method and the parts reach 5, as its park reason says.",
+      "failureLooks": "Fur collars or ruffs the R05 spec forbids; locks on the legs against R08's surface rule; lumps that break measured outlines; a body coat in a different idiom (scales, leaves) from the fan.",
+      "stallNext": "Unify the idiom on the fan and face tufts only and leave body coat masses to the later surface pass.",
+      "changed": false,
+      "respec": false
+    }
+  },
+  "friction": [
+    "R06: the spec's side depth table (peak .129 at .34 to .36) and the gap audit's sheet reading (.168 at .36) disagree by about 30 percent; the respec must re-measure from sheet.json before any number is used.",
+    "R07: the spec's 'oversized paw' cap (dorsum at most .046) contradicts the audit's measured sheet paw (.055 in the posed front, 1.5 wrist widths); the audit read the paw on the hip in the posed view, the spec in the arms-down view, so the respec should state which view each number belongs to.",
+    "R12 against R05 and R08: the audit asks for chest, forearm and calf coat masses, while the R05 spec forbids any ruff and the R08 spec forbids fur locks or tufts on the leg. The coat masses planned for R12 are broad low relief, not locks, but the specs need one shared rule before R12 unparks."
+  ]
+}
