@@ -1,0 +1,79 @@
+{
+ "region": "R06",
+ "script": "art/species-construction/author_trunk_sections_field.py",
+ "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R06.json",
+ "step": "B-20T (inserted after B-20 and before B-21; B-23 refillets the arm root on the new trunk)",
+ "spec": "art/species-construction/specs/trunk-sections-r06-v1.json",
+ "helper": "art/species-construction/trunk_stations_from_sheet.py (reads the station table from loop/sheet.json and lists it beside the spec)",
+ "parameters": [
+  {
+   "name": "spec:stations.<i>.front",
+   "default": "specs/R06.md table (e.g. .32 -.0850, .34 -.0950, .36 -.1005, .38 -.1015)",
+   "what": "side view front edge at the midline, fit units, negative forward; stations.3 to 6 are the chest plane (.32 to .38). The sweep moves the quick silhouette with it."
+  },
+  {
+   "name": "spec:stations.<i>.back",
+   "default": "e.g. .32 +.036, .34 +.038, .44 -.012",
+   "what": "side view back edge at the midline; stations.9 is the waist (.44) and stations.2 to 5 the upper back. At .44 the quick silhouette is the hanging arm, so a sweep cannot rank it (spec friction 1); read the mesh (trunkSections record) instead."
+  },
+  {
+   "name": "spec:stations.<i>.halfWidth",
+   "default": "held at the model's flank widths (.0655 at .44, .0930 at .50); null above .26",
+   "what": "front view half width; at .28 to .38 the loft section only matters inside the lateral band, so the flank there stays native."
+  },
+  {
+   "name": "spec:stations.<i>.expFront / expBack / split",
+   "default": "front 2.1 chest, 1.95 waist; back 2.0 upper back, 2.4 to 2.5 waist; split .58",
+   "what": "superellipse exponents of the front and back halves and where the widest line sits between the edges (1.7 keel, 2 ellipse, 2.5 boxy): the section shape, which is what the loft changes besides depth."
+  },
+  {
+   "name": "spec:stations.<i>.fitNative",
+   "default": "true at .52 to .62",
+   "what": "rump rows: exponents and split fitted by least squares to the native section outside the arm and tail masks (fitNative.expRange [1.6, 2.8], splitRange [.5, .65]); the fit rms is recorded per row."
+  },
+  {
+   "name": "spec:weights.y.top / bottom",
+   "default": "[.26, .32] / [.50, .58]",
+   "what": "smoothstep ramps of the loft's vertical weight; R05 owns above the top ramp, R08 the thigh below the bottom one."
+  },
+  {
+   "name": "spec:weights.lateral.inner / outer",
+   "default": "[[.36,.06],[.40,.30]] / [[.36,.10],[.40,.34]]",
+   "what": "[y, |x|] tables (fit units, linear in y): full weight inside inner, none beyond outer, so the shoulders and arm root keep the native field above .36 and the whole trunk is free from .40."
+  },
+  {
+   "name": "spec:weights.arm.radius / zeroMargin / fullMargin",
+   "default": ".04 / .01 / .07 (world)",
+   "what": "no loft within radius + zeroMargin of each arm's shoulder-elbow-wrist polyline, full beyond radius + fullMargin."
+  },
+  {
+   "name": "spec:weights.tail.zeroWithin / fullAt / segments",
+   "default": ".10 / .17 (world) / 2",
+   "what": "no loft within zeroWithin of the first `segments` control points of each tail (a tube along the polyline for 2 or more), full beyond fullAt. The spec's .09 and one point let the loft dent the tails by up to .015 world in a dev run; .10, .17 and two points hold every tail vertex within .003 world."
+  },
+  {
+   "name": "spec:weights.reach",
+   "default": "[.03, .09] (world)",
+   "what": "the loft weighs 1 within reach[0] of the loft surface and 0 beyond reach[1] (in-slice distance), so it never replaces material that is not trunk with 'outside'."
+  },
+  {
+   "name": "spec:measure / smoothness",
+   "default": "stripFromY .51, stripX [-.13, -.04], lines [.05, .10], smoothness window 9 at .005 spacing, limit .0002",
+   "what": "how the record reads back the achieved front, back, depth and half width, and the profile smoothness check of specs/R06.md section 3."
+  },
+  {
+   "name": "--voxel",
+   "default": ".0025",
+   "what": "field voxel size, world units."
+  }
+ ],
+ "checks": {
+  "build": "recipe.py build tool-R06.json built B-20T as body-2141 and the chain to body-2144 and assembled-2146 (head-0455 + body-2144). loop_tools.py check assembled-2146: pass, one component, 0 non-manifold edges, height and ground spread 0 (assembled-0458 reads the same).",
+  "contain": "recipe.py contain tool-R06.json B-20T: worst foreign region R05 max .00166 figure heights (p95 .00125; R05 shares y .26 to .30 by spec); every other foreign region and outside all zones at most .00106; tail vertices within .003 world. Owned R06 max .0096.",
+  "quick": "loop_tools.py quick head-0455 body-2144 preview-2147 --baseline fit-0458-r06tool/fit.json: trunk +.0013, all +.0008, head -.0003, legs +.0005. Left rows against the spec targets: front -.085/-.095/-.101 and back +.037/+.039/+.034 at .32/.34/.36 (spec -.085/-.095/-.1005 and +.036/+.038/+.033).",
+  "seam": "seam_check against assembled-0458 (run by quick): nothing flagged at any joint.",
+  "achieved": "trunkSections record in body-2141/fairing.json, target against achieved (front, back, depth), fit units: .32 -.0850/+.0360/.121 reads -.0852/+.0360/.1213; .34 depth .133 reads .1332 (native .1261); .36 .1335 reads .1333 (native .1287); .44 waist depth .0855 reads .0855 (native .0927); .50 .116 reads .1151.",
+  "sweep": "recipe.py sweep tool-R06.json --step B-20T --grid spec:stations.9.back=-0.0048,-0.012,-0.030 --grid spec:stations.5.front=-0.0978,-0.115 --region R06 (6 variants, 1358 s wall with other agents' Blender running). The recorded geometry follows both parameters exactly (waist back -.0048/-.0120/-.0300, chest front -.0979/-.1150). The sweep score separates only the chest front (fitIou .68079 against .67966, silhouetteChange .425 against 1.46 percent) and cannot see the waist back, because the quick left silhouette at .44 is the hanging arm; read the waist from the record or the torso sections."
+ },
+ "notes": "Reused: the OpenVDB level-set pipeline, spec merging, provenance snapshot, island removal, record layout and closed-solid check from rebuild_hind_paws_field.py; the station table, mask rules and every number in the starter spec from specs/R06.md (section 2 JSON block, its lateralBand folded into weights.lateral); the sheet frame and station tables from loop/sheet.json. Not reused: reshape_torso_field.py (the stalled edge-mapping method) and trunk_measure.py (the tool reads its own record instead). Starter values equal the R06 spec, except weights.tail (.10, .17, two points; the spec's .09 and one point let the loft dent the tails) and the fitNative ranges (exponents 1.6 to 2.8, because unbounded fits at .54 and .56 ran to the grid edge with rms .09 to .16). Known limits: (1) the loft's distance is a first-order estimate; the in-slice distance drives the reach weight and the full gradient drives the merge, since a section parameter that changes fast with z (the rump rows) makes the full distance small far from the surface. (2) The spec's rump rows .52 to .56 are the buttock strip; at the midline the tails own the back, so those rows are read from x -.13 to -.04 and the loft is weighted down by the tail mask there. (3) The half width at .28 to .38 is measured with the arm mask flagged (armOrTailMaskHit): the armpit flare belongs to B-23's fillet (spec friction 5). The smoothness line halfWidth@.05behindFront reads .0022 at y .365 for that reason (native .0005), and the front-edge lines read .0004 to .0005 at .32 where the native reads .0003, both above the spec's .0002 floor, which is near the voxel noise; the check reports and does not fail the build. (4) The gluteal fold and the spine groove (spec section 3 local steps) are not built; R11 is on hold. (5) trunk_stations_from_sheet.py lists the sheet's own table beside the spec: the sheet's trunk back edge at .32 to .38 is the akimbo arm (spec section 0), so the spec's hidden-row values differ from it on purpose."
+}
