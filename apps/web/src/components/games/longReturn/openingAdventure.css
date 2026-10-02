@@ -1,0 +1,78 @@
+.lr-corridor-map { margin: 0; min-height: 0; color: var(--color-ink); background: var(--color-s0); }
+.lr-corridor-map figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 16px; }
+.lr-corridor-map svg { width: 100%; height: 100%; }
+.lr-corridor-map svg text { fill: var(--color-ink-2); font: 16px var(--g-font-body); text-anchor: middle; }
+.lr-corridor-wall { fill: var(--color-s1); stroke: var(--color-edge-strong); stroke-width: 3; }
+.lr-corridor-landing { fill: var(--color-s0); stroke: var(--color-ink-3); stroke-width: 3; }
+.lr-corridor-route { stroke: var(--color-ink-3); stroke-width: 8; fill: none; }
+.lr-corridor-route.is-selected { stroke: var(--color-viable); }
+.lr-corridor-support { stroke: var(--color-ink-3); stroke-width: 3; fill: none; }
+.lr-corridor-break { stroke: var(--color-caution); stroke-width: 3; fill: none; }
+.lr-corridor-swim { stroke: var(--color-ink-3); stroke-width: 3; stroke-dasharray: 8 10; fill: none; }
+.lr-corridor-swim.is-selected { stroke: var(--color-viable); stroke-width: 5; }
+.lr-corridor-current { stroke: #648e8a; stroke-width: 3; fill: none; }
+.lr-corridor-cable { stroke: var(--color-caution); stroke-width: 4; fill: none; }
+.lr-corridor-charge path { stroke: var(--color-caution); stroke-width: 5; fill: none; }
+.lr-corridor-map .lr-corridor-charge text { fill: var(--color-caution); }
+.lr-corridor-bypass { stroke: var(--color-viable); stroke-width: 8; fill: none; }
+.lr-corridor-report { stroke: var(--color-viable); stroke-width: 4; fill: none; stroke-dasharray: 5 10; animation: lr-corridor-report 1.5s linear infinite; }
+.lr-corridor-creature { transition: transform 1.4s ease-in-out; }
+.lr-corridor-creature circle { fill: var(--color-viable); stroke: var(--color-s0); stroke-width: 3; }
+.lr-corridor-map .lr-corridor-creature text { fill: var(--color-viable-ink); font-weight: 700; }
+.lr-corridor-creature .lr-corridor-sensing { fill: none; stroke: var(--color-viable); stroke-width: 2; animation: lr-corridor-sense 1.5s ease-out infinite; }
+[data-corridor-signal] rect { fill: var(--color-ink-3); }
+[data-corridor-signal] circle { fill: var(--color-viable); }
+.lr-corridor-lamp { animation: lr-corridor-sense 2s ease-in-out infinite; }
+.lr-corridor-key { display: flex; gap: 16px; flex-wrap: wrap; padding: 12px 16px; font-size: 13px; }
+.lr-corridor-key b { color: var(--color-viable); }
+.lr-opening-adventure .lr-field-map-resources { height: 72px; flex-shrink: 0; }
+.lr-opening-account { display: grid; grid-template-rows: auto minmax(0,1fr) auto; height: 100%; min-height: 0; background: var(--color-s0); padding: 18px; font-family: var(--g-font-body); }
+.lr-opening-account > header { padding-bottom: 12px; border-bottom: 1px solid var(--color-edge-strong); }
+.lr-opening-tools { display: flex; gap: 16px; margin-top: 8px; }
+.lr-opening-tools button { padding: 4px 0; font-size: 12px; color: var(--color-ink-2); }
+.lr-opening-scroll { min-height: 0; overflow-y: auto; scrollbar-gutter: stable; overscroll-behavior: contain; padding-right: 8px; }
+.lr-opening-orientation { color: var(--color-ink-2); font-size: 14px; line-height: 1.5; }
+.lr-opening-account article { padding: 12px 0; border-bottom: 1px solid var(--color-edge); }
+.lr-opening-account h3 { font: 700 17px/1.35 var(--g-font-body); margin: 8px 0; text-transform: none; letter-spacing: 0; }
+.lr-opening-account p { font: 400 14px/1.5 var(--g-font-body); color: var(--color-ink-2); }
+.lr-opening-account details { margin: 12px 0; }
+.lr-opening-account details summary { cursor: pointer; font-size: 13px; }
+.lr-opening-account footer { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid var(--color-edge-strong); }
+.lr-opening-account footer button { flex: 1; padding: 8px; min-height: 44px; font: 600 14px/1.3 var(--g-font-body); border: 1px solid var(--color-edge-strong); color: var(--color-ink); }
+.lr-opening-account footer button:last-child { border-color: var(--color-viable); color: var(--color-viable); }
+.lr-opening-account button:disabled { opacity: .5; cursor: default; }
+.lr-opening-account :focus-visible { outline: 2px solid var(--color-viable); outline-offset: 2px; }
+.lr-opening-account .lr-creature-action-grid { grid-template-columns: minmax(0,1fr); }
+.lr-opening-account .lr-scout-portrait { width: 42px; height: 42px; }
+.lr-opening-account [data-scout-choice] { grid-template-columns: 42px minmax(0,1fr) 16px; align-items: start; }
+.lr-opening-account .lr-scout-intention-copy { font-size: 14px; line-height: 1.45; gap: 4px; }
+.lr-opening-account .lr-scout-intentions { margin-bottom: 12px; }
+.lr-opening-comparison { color: var(--color-ink-3); }
+.lr-opening-shell .lr-modal-backdrop { inset: 62px 0 0; }
+.lr-opening-shell .lr-detail-modal { max-height: calc(100dvh - 110px); }
+@keyframes lr-corridor-report { to { stroke-dashoffset: -30; } }
+@keyframes lr-corridor-sense { 50% { opacity: .25; } }
+@media (min-width: 768px) and (max-width: 1023px) {
+  .lr-opening-adventure .lr-corridor-map svg text { font-size: 28px; }
+  .lr-opening-adventure .lr-corridor-key { display: none; }
+  .lr-opening-adventure .lr-corridor-map figcaption { padding: 8px; font-size: 12px; }
+  .lr-opening-adventure .lr-field-map-resources { height: 64px; }
+}
+@media (max-width: 767px) {
+  .lr-opening-adventure .lr-field-record[data-stable-layout] { grid-template-rows: auto 220px minmax(0,1fr); }
+  .lr-opening-adventure .lr-field-map-panel [data-expedition-map] > svg { height: 100% !important; max-height: none !important; min-height: 0; flex: 1; }
+  .lr-opening-adventure .lr-field-map-panel [data-expedition-map] { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .lr-opening-adventure .lr-corridor-map figcaption { padding: 4px 8px; font-size: 11px; }
+  .lr-opening-adventure .lr-corridor-key { display: none; }
+  .lr-opening-adventure .lr-corridor-map svg text { font-size: 32px; }
+  .lr-opening-adventure .lr-corridor-creature circle:not(.lr-corridor-sensing) { r: 20px; }
+  .lr-opening-adventure .lr-field-map-resources { height: 64px; }
+  .lr-opening-account { padding: 10px; }
+  .lr-opening-account footer { padding-top: 8px; }
+  .lr-opening-account footer button { font-size: 12px; }
+  .lr-opening-shell .lr-detail-modal { max-height: calc(100dvh - 78px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lr-corridor-creature { transition: none; }
+  .lr-corridor-report, .lr-corridor-sensing, .lr-corridor-lamp { animation: none !important; }
+}

@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "id": "long-return-continuous-opening",
+  "outcome": "Refine visual storytelling and routine flow in the existing Long Return opening into one continuous map-led adventure; implement, verify, and deploy without expanding the concept.",
+  "authorizedScope": "Nick agreed to focus on the first two deficiencies before adding content, requested this goal, and previously authorized experiments, fixes, verification, and deployment without repeated check-ins. Existing encounters, routes, mechanics, creature facts, and platform rules stay outside expansion scope. Technical evidence does not establish subjective endorsement.",
+  "workRecord": "docs/design/long-return-active-work.md",
+  "evidence": {
+    "scene": {
+      "path": "apps/web/src/components/games/longReturn/FloodedCorridorScene.js",
+      "sha256": "9f595cb186c6e3f4f2a4639e1faceb074946f82adf906b59604091878fac0269"
+    },
+    "flow": {
+      "path": "apps/web/src/components/games/longReturn/OpeningAdventure.js",
+      "sha256": "04e58ccf3ab3e350e6e5a2f1f8591c5ce4caa066bcd05ebc53f18375eb6662ce"
+    },
+    "checks": {
+      "path": "apps/web/src/components/games/longReturn/OpeningAdventure.test.js",
+      "sha256": "ee54b808301caea3d2122ea6faec7ae3419bf8b625a76af5c585c932a49b885e"
+    },
+    "record": {
+      "path": "docs/design/long-return-active-work.md",
+      "sha256": "d32d63ad9b02bcdc9b57cc6cbe9e647b99dfd89e2edcc08469ceeed2a5ad3747"
+    },
+    "help-before": {
+      "path": ".codex/audit-state/opening-help-before.jpg",
+      "sha256": "05d2ed42f31702ba83cb59b1762ed0a97a301d16244739cf315be69769b37a99"
+    },
+    "regression-log": {
+      "path": ".codex/audit-state/long-return-opening/opening-release-regressions.txt",
+      "sha256": "eea1629ed4cb1e0dae0d2f8540548a196486fe1dc0dffc89867bf876eacf8b80"
+    },
+    "focus-log": {
+      "path": ".codex/audit-state/long-return-opening/opening-final-focus-tests.txt",
+      "sha256": "2425c1f3e091d756e4c32cd0e759d3bff05fc158796e6bacab5a43cc53b6a7f1"
+    },
+    "build-log": {
+      "path": ".codex/audit-state/long-return-opening/opening-release-build.txt",
+      "sha256": "4ee3e8c48fee8020461ceefb6f1988b972dd8ac04746360cabb3c46c6f4219b7"
+    },
+    "typecheck-log": {
+      "path": ".codex/audit-state/long-return-opening/opening-final-typecheck.txt",
+      "sha256": "e245d61dcbe16430cf6fac3697f57225a59f5af9bd7c3b9b9f6a8ad38c20ebfa"
+    },
+    "desktop": {
+      "path": ".codex/audit-state/opening-desktop.jpg",
+      "sha256": "e59ae100168581dded17a3d73236864d45d8047fc9db099fdc488b9cc92fe509"
+    },
+    "phone": {
+      "path": ".codex/audit-state/opening-phone.jpg",
+      "sha256": "7cf5565f89665db8a3e1243181e72f938f37ba41624346c4be238d4fc57ab8ac"
+    },
+    "styles": {
+      "path": "apps/web/src/components/games/longReturn/openingAdventure.css",
+      "sha256": "33e9afa5c61705de05f2a42dbdb9c42ee3a3dde7f595093998a141ebf1760848"
+    },
+    "integration": {
+      "path": "apps/web/src/components/games/longReturn/longReturnGame.js",
+      "sha256": "99be19fc95fd515deda0f7421361f97116925f17c8d544cc83c3ad3d4f638bcd"
+    }
+  },
+  "criteria": [
+    {
+      "id": "visual-story",
+      "expectation": "One persistent map shows scouting, reporting, return, route traversal, discovered hazards, and physical crossing consequences.",
+      "status": "pass",
+      "assessment": "Inspected automatic remote-report climbing and isolated-scout return/intake runs. The same map persists through both decisions and distinct landings; brine remains hidden until communicated or encountered. Responsive checks at 320x568, 390x600, 820x900, 1280x720, and 1600x1000; 2519px desktop bounds were also measured.",
+      "evidence": [
+        "flow",
+        "scene",
+        "styles",
+        "integration",
+        "checks",
+        "record",
+        "regression-log",
+        "focus-log",
+        "phone"
+      ]
+    },
+    {
+      "id": "continuous-flow",
+      "expectation": "Readable automatic narration leads into decisions without redundant report/result acknowledgement; retain earlier text, pause, skip, and meaningful choices.",
+      "status": "pass",
+      "assessment": "Reports and crossings advance automatically into available decisions after reading time. Prior text persists, pause holds, skip remains optional, and no extra report/result acknowledgement is required. Map/account/footer bounds stayed identical through the verified runs. Reading focus is preserved; obsolete playback control focus moves to the next decision.",
+      "evidence": [
+        "flow",
+        "scene",
+        "styles",
+        "integration",
+        "checks",
+        "record",
+        "regression-log",
+        "focus-log",
+        "phone"
+      ]
+    },
+    {
+      "id": "preservation",
+      "expectation": "Preserve costs, concealed findings, techniques, commands, discoveries, field work, checkpoint resume, withdrawal, and next-room handoff.",
+      "status": "pass",
+      "assessment": "352 Long Return tests passed, followed by all nine final default-opening cases after the last focus adjustment. Actual paid return, intake repair, resource exchange, checkpoint resume, next-room arrival, and help/log closure inspected in the browser. Commands, techniques, warnings, signal investigation, costs, and withdrawal use existing handlers. No engine or checkpoint-format change.",
+      "evidence": [
+        "flow",
+        "scene",
+        "styles",
+        "integration",
+        "checks",
+        "record",
+        "regression-log",
+        "focus-log",
+        "phone"
+      ]
+    },
+    {
+      "id": "release",
+      "expectation": "Required CI passes, change merges and deploys, and the live opening is directly inspected.",
+      "status": "pending",
+      "assessment": "Final local production build passed. PR, required CI, deployment, and live inspection remain executable.",
+      "evidence": [
+        "record"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "visual-story",
+      "status": "resolved",
+      "observation": "Short-phone map labels and crew numbers were too small, and resources were hidden by utility styles.",
+      "resolution": "Labels and markers are enlarged on smaller screens with nonoverlapping crew spacing, resources explicitly retained, and a fixed reserve area. Phone panels and footer retained their recorded bounds through return and crossing.",
+      "resolutionEvidence": [
+        "flow",
+        "styles",
+        "integration",
+        "checks",
+        "focus-log",
+        "record",
+        "phone"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "continuous-flow",
+      "status": "resolved",
+      "observation": "A returned scout could move back ahead when the final report cleared, and automatic completion needed reading-focus preservation.",
+      "resolution": "Returned scouts remain with the crew; findings wait for completed return. Automatic handoff preserves account reading focus and removes focus from changing playback buttons. Final focused cases pass.",
+      "resolutionEvidence": [
+        "flow",
+        "styles",
+        "integration",
+        "checks",
+        "focus-log",
+        "record",
+        "phone"
+      ]
+    },
+    {
+      "id": "F003",
+      "criterion": "release",
+      "status": "open",
+      "observation": "The implementation is local and undeployed.",
+      "nextAction": "Complete checks, open and attach the PR, merge through CI, and inspect the deployed opening."
+    },
+    {
+      "id": "F004",
+      "criterion": "preservation",
+      "status": "resolved",
+      "observation": "At 320 by 568, the help close button overlapped the persistent navigation menu; clicking it opened navigation instead of closing help.",
+      "resolution": "Opening help and log overlays now begin below the persistent navigation and fit the viewport. Actual 320x568 help/log close clicks succeeded and restored Rules/Log focus; integration tests pass.",
+      "resolutionEvidence": [
+        "flow",
+        "styles",
+        "integration",
+        "checks",
+        "focus-log",
+        "record",
+        "phone"
+      ]
+    }
+  ],
+  "audit": {
+    "reviewer": "Primary agent",
+    "comparison": "Direct desktop and phone playthroughs against the stated opening criteria, without treating passing tests as subjective approval.",
+    "regressions": "Existing full-mission comparisons exercise the previous opening; new integration tests exercise the default continuous opening and next-room handoff.",
+    "scopeCheck": "No content catalog, route, encounter, mechanic, creature contract, or platform cutover was added.",
+    "sessionId": "01a0d4f0-4983-7cd2-ac79-796f77f28c39",
+    "requestId": "282079bf-b82a-4f6a-94ff-47ed4f5b0887",
+    "performedAt": "2026-10-02T22:36:11.067343+00:00"
+  },
+  "stop": {
+    "kind": "continue"
+  }
+}

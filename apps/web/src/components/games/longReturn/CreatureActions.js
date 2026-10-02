@@ -5,7 +5,7 @@ import { planApproachExplanation } from './methodProvenance';
 import './creatureActions.css';
 
 // Keep the physical intention, actor, and commitment in the same scene.
-export default function CreatureActions({ scene, plans, choices, selectedId, onSelect, onChange, onCommit, companion, stakes, map, knownHazards = [], nativeKnown = false, commands, useCommand, onCommand }) {
+export default function CreatureActions({ scene, plans, choices, selectedId, onSelect, onChange, onCommit, companion, stakes, map, knownHazards = [], nativeKnown = false, commands, useCommand, onCommand, hideCommit = false }) {
   return <section className="lr-creature-actions" aria-label="Choose a creature action">
     <header><h3>{scene.id === 'archive-vestibule' ? 'How will you open the door?' : scene.objective ? 'How will you recover the Index?' : scene.optional ? 'How will you recover what remains?' : 'How will the crew get through?'}</h3></header>
     {map}
@@ -51,7 +51,7 @@ export default function CreatureActions({ scene, plans, choices, selectedId, onS
           <p>Crew score {plan.teamScore} against target {plan.difficulty}.</p>
         </details></>}
         {selected && !plan.naturalReaction && commands > 0 && <label><span><input type="checkbox" checked={useCommand} onChange={event => onCommand(event.target.checked)} /> Guide the response</span><small>Use 1 command to preserve 1 annex stability.</small></label>}
-        {selected && <button type="button" className="g-btn g-btn--primary" onClick={() => onCommit(plan)}>Go with {plan.lead.species}<span>{plan.method.label}</span></button>}
+        {selected && !hideCommit && <button type="button" className="g-btn g-btn--primary" onClick={() => onCommit(plan)}>Go with {plan.lead.species}<span>{plan.method.label}</span></button>}
       </article>;
     })}</div>
   </section>;

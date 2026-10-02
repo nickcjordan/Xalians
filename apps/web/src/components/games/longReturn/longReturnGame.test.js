@@ -190,7 +190,8 @@ describe('Long Return Simple mode', () => {
   function renderGame(experiments = false) {
     if (!root) root = createRoot(container);
     act(() => {
-      root.render(<LongReturnGame initialExperiments={experiments} />);
+      // These comparisons exercise the previous opening and the full mission.
+      root.render(<LongReturnGame initialExperiments={experiments} initialOpeningScene={false} />);
     });
   }
 
