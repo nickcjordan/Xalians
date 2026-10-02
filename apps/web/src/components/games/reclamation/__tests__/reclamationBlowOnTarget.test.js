@@ -111,19 +111,37 @@ describe('blowsAt', () => {
 describe('the blow on a target', () => {
 	const record = { id: 'g', species: 'graviclaw', traits: [] };
 
-	it('draws the blow dashed in the stage corner, the chart beside it, the plates where it is armored', () => {
+	it('draws the landed blow, colored by its change against the attacker own power, dashed in the stage corner, the plates where it is armored', () => {
 		const { container } = render(<ReclamationFigure record={record} seat="B" you="A" facing="down" hold={13} blowIn={{ power: 9, chart: 2, armored: true, mine: false, by: 'Tizzie', role: 'strike', base: 6, byElement: 'psychic', toElement: 'dark' }} />);
 		const chip = container.querySelector('[data-blow-in]');
+		// round 13: the chip prints the blow it lands (a signed change on a rival read as damage); the change against 6 colors it
 		expect(chip.getAttribute('data-blow-in')).toBe('9');
+		expect(chip.getAttribute('data-blow-adjust')).toBe('3');
 		expect(chip.querySelector('b').textContent).toBe('9');
-		expect(chip.querySelector('.rec-figure-blow-x').textContent).toBe('×2');
+		expect(chip.className).toContain('rec-figure-blow--up');
+		expect(chip.style.getPropertyValue('--sq-tint')).toBe('35%');
+		// the factor text is gone from the chip, kept in the title
+		expect(chip.querySelector('.rec-figure-blow-x')).toBeNull();
 		expect(chip.querySelector('.rec-glyph--armor')).not.toBeNull();
 		expect(chip.className).not.toContain('--on-mine');
-		// no minus sign: a minus read as the reader's own loss (pass 58)
-		expect(chip.textContent).not.toMatch(/[-−]/);
-		expect(chip.getAttribute('title')).toBe('Each Tizzie strike lands 9 on Graviclaw at full strength (6, psychic on dark ×2, armored ×0.75). A creature already hurt lands less, and a guard takes a quarter off.');
+		expect(chip.getAttribute('title')).toBe('Each Tizzie strike lands 9 on Graviclaw at full strength (6, psychic on dark ×2, armored ×0.75). Its own attack is 6, so this lands +3 against it. A creature already hurt lands less, and a guard takes a quarter off.');
 		// it sits on the stage, not in the plate's hold
 		expect(chip.closest('.rec-piece-stage')).not.toBeNull();
+	});
+
+	it('colors a weaker blow red in depth by size, and leaves an even blow quiet', () => {
+		const at = (power, base) => render(<ReclamationFigure record={record} seat="B" you="A" facing="down" hold={13} blowIn={{ power, chart: 1, armored: false, mine: false, by: 'Tizzie', role: 'strike', base }} />).container.querySelector('[data-blow-in]');
+		const down = at(5, 6);
+		expect(down.getAttribute('data-blow-adjust')).toBe('-1');
+		expect(down.querySelector('b').textContent).toBe('5');
+		expect(down.className).toContain('rec-figure-blow--down');
+		expect(down.style.getPropertyValue('--sq-tint')).toBe('15%');
+		expect(at(4, 6).style.getPropertyValue('--sq-tint')).toBe('25%');
+		expect(at(2, 6).style.getPropertyValue('--sq-tint')).toBe('35%');
+		const even = at(6.2, 6);
+		expect(even.getAttribute('data-blow-adjust')).toBe('0');
+		expect(even.querySelector('b').textContent).toBe('6');
+		expect(even.className).toContain('rec-figure-blow--zero');
 	});
 
 	it('marks a sweep\'s blow on your own creature, leaves an even chart bare, and gives way to the Clash\'s own number', () => {

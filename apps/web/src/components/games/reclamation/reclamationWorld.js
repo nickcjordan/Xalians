@@ -297,7 +297,7 @@ function ReclamationWorld({
 								&& theirs.length === 0 && !(hiddenEnemyCount > 0),
 							// pass 73: the blow the creature pointed at would land on this one, at full strength
 							blowIn: ghost && ghost.lands && ghost.lands[entry.recordId]
-								? { ...ghost.lands[entry.recordId], by: speciesLabel(ghost.record), role: ghost.role, base: ghost.power, byElement: elementOf(ghost.record), toElement: elementOf(entry.record) }
+								? { ...ghost.lands[entry.recordId], by: speciesLabel(ghost.record), role: ghost.role, base: typeof ghost.basePower === 'number' ? ghost.basePower : ghost.power, byElement: elementOf(ghost.record), toElement: elementOf(entry.record) }
 								: null,
 							forecast: after,
 							// pass 69: a support creature's sentence carries its mend

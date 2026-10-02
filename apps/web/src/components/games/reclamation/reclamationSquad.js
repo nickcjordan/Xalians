@@ -7,7 +7,7 @@ import { speciesLabel, roleSentence, rolePower, formatBlow, formatHold, formatHo
 import { elementOf } from './reclamationVocabulary';
 import { whyWords, factorText } from './reclamationInstruments';
 import { matchupsAt, blowsAt } from './reclamationPreview';
-import { prepare, speedOf } from '@xalians/rules/expedition/creatureOnTable';
+import { prepare, speedOf, baseHold } from '@xalians/rules/expedition/creatureOnTable';
 
 /*
 	PASS 75, THE SQUAD AS A ROSTER (docs/design/reclamation-squad-roster.md). Nick, 2026-09-29:
@@ -96,27 +96,35 @@ export function squadOrder(records, reads) {
 }
 
 /*
-	cellFacts(cell) -> what one world's block draws:
-		gain    what your side there would gain, the ghost's "+N"
-		body    the creature's natural health, the tick on the bar's scale
-		shift   'up' where the world lifted its hold above its normal hold, 'down' where it cut it
-		takes   whether the send alone would give you more there than the rival
+	PASS 78: the number a segment of the world strip prints. The tile's big number is the creature's
+	natural health, shown rounded as a hold is; a world's segment is what that world makes of it,
+	both rounded the same way so the figures on the tile add up: health 11 and a segment of -1 is
+	10 at that world. `own` is its hold at the world, `body` its natural health.
 */
-export function cellFacts(cell) {
-	if (!cell) {
-		return null;
-	}
-	const own = cell.own || 0;
-	const body = typeof cell.body === 'number' ? cell.body : own;
-	// an arrow only for a lift or cut that matters: a tenth of the normal hold and a whole point
-	const bar = Math.max(1, 0.1 * body);
-	const shift = own - body >= bar ? 'up' : body - own >= bar ? 'down' : null;
-	return { gain: cell.gain, body, shift, takes: !!cell.takes };
+export function adjustOf(own, body) {
+	return Math.round(own || 0) - Math.round(body || 0);
+}
+
+// the tint depth of a segment by size of the change: 15% at 1, 25% at 2, 35% at 3 or more (shared with the chip on a rival)
+export function tintFor(n) {
+	const m = Math.abs(n);
+	return m === 0 ? 0 : m === 1 ? 15 : m === 2 ? 25 : 35;
+}
+
+// "+3", "\u22122" with a real minus, or "0"
+export function signedAdjust(n) {
+	return n > 0 ? `+${n}` : n < 0 ? `\u2212${-n}` : '0';
+}
+
+// the creature's natural health, the big number on its tile: what it holds at a world that neither favors nor strains it
+export function healthOf(record, view) {
+	return baseHold(record, view && view.rules);
 }
 
 // the words behind a cell, for its title: what it adds, what the world did, the chart there
-function cellTitle(site, cell, facts, matchups) {
-	const parts = [`${site.world.planet}: adds ${formatHold(Math.max(0, facts.gain))}${facts.gain < -EPS ? `, costs your creatures there ${formatHold(-facts.gain)}` : ''}`];
+function cellTitle(site, cell, n, matchups) {
+	const gain = cell.gain || 0;
+	const parts = [`${site.world.planet}: ${n === 0 ? 'holds its natural health' : n > 0 ? `lifts its hold by ${n}` : `cuts its hold by ${-n}`}; sent here it adds ${formatHold(Math.max(0, gain))}${gain < -EPS ? `, costs your creatures there ${formatHold(-gain)}` : ''}`];
 	const why = whyWords(cell);
 	if (why.length) parts.push(why.join('; '));
 	(matchups || []).filter((m) => m.dealt).forEach((m) => parts.push(`its blows land ${factorText(m.dealt)} on ${m.name} (${matchupWords(m.dealt, null, null) || ''})`.replace(' ()', '')));
@@ -163,64 +171,58 @@ export function blowAt(view, record, site, you, role) {
 }
 
 /*
-	PASS 77: the squad as health-first tiles (Nick, 2026-09-30). One tile per creature you can still
-	send. Health leads: three blocks, one per world in the frame's order, each the "+N" the creature
-	would add there in the world's color with its bar under it on one scale for the whole squad, and
-	a thin light tick at the creature's own natural health on that scale. The attack rides small and
-	quiet on the tile's top line. Pointing at a world adds the creature's blow there to that line.
+	PASS 78 (Nick, 2026-10-02, mockup H): the squad as tiles of two big numbers and a world strip.
+	Left, the silhouette with its element badge and its name; right, side by side, the creature's
+	natural health (with a bar against the largest in the squad) and its attack (the act's mark, the
+	power, the act's word under it). Along the tile's foot, three segments, one per world in the
+	frame's order: the signed change that world makes to its health, "-1" in red, "+4" in green, a
+	quiet "0" where it makes none, the tint deeper for a bigger change. Pointing at a world outlines
+	its segment on every tile. The attack's own change at a world rides on the rival creatures there.
 */
-function WorldBlock({ site, cell, facts, matchups, scale, focus }) {
-	const classes = ['rec-squad-cell', `g-el-${site.world.element}`];
-	if (!facts) {
+function hueStyle(n) {
+	return n === 0 ? undefined : { '--sq-hue': n > 0 ? 'var(--color-viable)' : 'var(--g-lamp-red)', '--sq-tint': `${tintFor(n)}%` };
+}
+
+function WorldSegment({ site, cell, matchups, health, focus }) {
+	const classes = ['rec-squad-cell'];
+	if (focus && focus === site.id) classes.push('rec-squad-cell--focus');
+	if (!cell) {
 		classes.push('rec-squad-cell--none');
 		return <span className={classes.join(' ')} data-fit-site={site.id} />;
 	}
-	if (facts.takes) classes.push('rec-squad-cell--takes');
-	if (facts.gain < -EPS) classes.push('rec-squad-cell--costs');
-	if (focus && focus === site.id) classes.push('rec-squad-cell--focus');
-	const s = scale > 0 ? scale : 24;
-	const fill = Math.max(0, Math.min(1, Math.max(0, facts.gain) / s));
-	const tick = Math.max(0, Math.min(1, facts.body / s));
-	// signed as the creature pointed at prints it on the world ("+12"): what it would add there, not a strength of its own
-	const shown = facts.gain < -0.5 ? `−${formatHoldShown(-facts.gain)}` : `+${formatHoldShown(Math.max(0, facts.gain))}`;
+	const n = adjustOf(cell.own, health);
+	classes.push(n === 0 ? 'rec-squad-cell--zero' : n > 0 ? 'rec-squad-cell--up' : 'rec-squad-cell--down');
 	return (
 		<span
 			className={classes.join(' ')}
 			data-fit-site={site.id}
-			data-fit-gain={facts.gain.toFixed(2)}
-			data-fit-takes={facts.takes ? '' : undefined}
-			title={cellTitle(site, cell, facts, matchups)}
-			style={{ '--sq-fill': fill.toFixed(4), '--sq-tick': tick.toFixed(4) }}
+			data-fit-gain={(cell.gain || 0).toFixed(2)}
+			data-adjust={n}
+			data-fit-takes={cell.takes ? '' : undefined}
+			title={cellTitle(site, cell, n, matchups)}
+			style={hueStyle(n)}
 		>
-			<span className="rec-squad-cell-read">
-				<b className="rec-squad-num g-mono">{shown}</b>
-				{facts.shift && <i className={`rec-squad-shift rec-squad-shift--${facts.shift}`} data-shift={facts.shift} aria-hidden="true">{facts.shift === 'up' ? '▲' : '▼'}</i>}
-			</span>
-			<span className="rec-squad-bar" aria-hidden="true">
-				<span className="rec-squad-fill" />
-				<span className="rec-squad-tick" />
-			</span>
+			<b className="rec-squad-num g-mono">{signedAdjust(n)}</b>
 		</span>
 	);
 }
 
 /*
 	A creature sent this round keeps its tile until the round is ruled, so a send moves nothing on
-	the table (pass 36's rule): the tile goes quiet, and only the block of the world it went to
-	carries its number, what it holds there as the sends stack. The roster closes up between rounds.
+	the table (pass 36's rule): the tile goes quiet, and only the segment of the world it went to
+	shows what it holds there as the sends stand, as a change against its health.
 */
-function SentBlock({ site, hold, scale }) {
-	const s = scale > 0 ? scale : 24;
-	const fill = Math.max(0, Math.min(1, (hold || 0) / s));
+function SentSegment({ site, hold, health, focus }) {
+	const n = adjustOf(hold, health);
+	const klass = n === 0 ? 'zero' : n > 0 ? 'up' : 'down';
 	return (
-		<span className={`rec-squad-cell rec-squad-cell--sent g-el-${site.world.element}`} data-fit-site={site.id} data-fit-sent={(hold || 0).toFixed(1)} title={`On ${site.world.planet} this round, holding ${formatHold(hold || 0)} as the sends stand`} style={{ '--sq-fill': fill.toFixed(4) }}>
-			<span className="rec-squad-cell-read"><b className="rec-squad-num g-mono">{formatHoldShown(hold || 0)}</b></span>
-			<span className="rec-squad-bar" aria-hidden="true"><span className="rec-squad-fill" /></span>
+		<span className={`rec-squad-cell rec-squad-cell--sent rec-squad-cell--${klass}`} data-fit-site={site.id} data-fit-sent={(hold || 0).toFixed(1)} data-adjust={n} title={`On ${site.world.planet} this round, holding ${formatHold(hold || 0)} as the sends stand`} style={hueStyle(n)}>
+			<b className="rec-squad-num g-mono">{signedAdjust(n)}</b>
 		</span>
 	);
 }
 
-function Tile({ record, read, view, you, sites, fitRow, scale, focusSiteId, armed, disabled, kept, sentSite, sentHold, advanced, onArm, onInspect, onHover }) {
+function Tile({ record, read, view, you, sites, fitRow, health, maxHealth, focusSiteId, armed, disabled, kept, sentSite, sentHold, advanced, onArm, onInspect, onHover }) {
 	const el = elementOf(record);
 	const opponent = you === 'A' ? 'B' : 'A';
 	const roleLine = roleSentence(read.role, read.power);
@@ -230,9 +232,7 @@ function Tile({ record, read, view, you, sites, fitRow, scale, focusSiteId, arme
 	if (kept) classes.push('rec-squad-row--kept');
 	if (sentSite) classes.push('rec-squad-row--sent');
 	const active = !kept && !disabled && !sentSite;
-	// pointing at a world adds this creature's blow there to its attack line; a mender or an empty world adds nothing
-	const hoverSite = !kept && !sentSite ? sites.find((s) => s.id === focusSiteId) : null;
-	const hoverBlow = hoverSite ? blowAt(view, record, hoverSite, you, read.role) : null;
+	const barFill = maxHealth > 0 ? Math.max(0, Math.min(1, health / maxHealth)) : 1;
 	return (
 		<div className={classes.join(' ')} role="listitem" data-slot={record.id} data-slot-state={sentSite ? 'sent' : kept ? 'reserve' : 'hand'}>
 			<button
@@ -253,26 +253,28 @@ function Tile({ record, read, view, you, sites, fitRow, scale, focusSiteId, arme
 						: `${speciesLabel(record)}${armed ? ', lifted: press a world to send it there, or press it again to set it down' : ': press to lift it, then press a world'}. ${roleLine}.`}
 			>
 				<span className="rec-squad-top">
-					<span className="rec-squad-art" aria-hidden="true">
-						<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 28)} moreClasses="rec-squad-img" />
-						{el && <XalianTypeSymbolBadge size={12} type={el} classes="rec-squad-disc" />}
-					</span>
-					<span className="rec-squad-id">
-						<span className="rec-squad-act" title={roleLine} data-role={read.role}>
-							<RoleGlyph role={read.role} />
-							<span className="rec-squad-act-word" data-act-word={read.role}>{ACT_WORDS[read.role] || ''}</span>
-							{typeof read.power === 'number' && <b className="g-mono" data-plinth-power={formatBlow(read.power)}>{formatBlow(read.power)}</b>}
-							{advanced && <i className="rec-squad-speed g-mono" title="Speed: the faster attacks land first when the worlds resolve">{Math.round(read.speed)}</i>}
-							{hoverSite && hoverBlow !== null && (
-								<span className={`rec-squad-hover g-el-${hoverSite.world.element}`}>
-									<i className="rec-squad-hover-to" aria-hidden="true">→</i>
-									<b className="g-mono" data-hover-blow={formatBlow(hoverBlow)}>{formatBlow(hoverBlow)}</b>
-								</span>
-							)}
+					<span className="rec-squad-left">
+						<span className="rec-squad-art" aria-hidden="true">
+							<XalianImage variant="token" speciesName={record.species} primaryType={el} padding="0px" fill="black" filter={pieceShadowFilter(PIECE_RIM, 28)} moreClasses="rec-squad-img" />
+							{el && <XalianTypeSymbolBadge size={12} type={el} classes="rec-squad-disc" />}
 						</span>
 						<span className="rec-squad-name">
 							{speciesLabel(record)}
 							{read.stealthy && <span className="rec-squad-hidden" title="Stealthy: arrives hidden"><HiddenGlyph /></span>}
+						</span>
+					</span>
+					<span className="rec-squad-id">
+						<span className="rec-squad-stat rec-squad-health" title="Natural health: what it holds at a world that neither favors nor strains it">
+							<b className="rec-squad-big g-mono" data-tile-health={Math.round(health)}>{formatHoldShown(health)}</b>
+							<span className="rec-squad-hbar" aria-hidden="true"><span className="rec-squad-hfill" style={{ width: `${(barFill * 100).toFixed(1)}%` }} /></span>
+						</span>
+						<span className="rec-squad-stat rec-squad-attack" title={roleLine}>
+							<span className="rec-squad-act" data-role={read.role}>
+								<RoleGlyph role={read.role} />
+								{typeof read.power === 'number' && <b className="rec-squad-big g-mono" data-plinth-power={formatBlow(read.power)}>{formatBlow(read.power)}</b>}
+								{advanced && <i className="rec-squad-speed g-mono" title="Speed: the faster attacks land first when the worlds resolve">{Math.round(read.speed)}</i>}
+							</span>
+							<span className="rec-squad-act-word" data-act-word={read.role}>{ACT_WORDS[read.role] || ''}</span>
 						</span>
 					</span>
 				</span>
@@ -280,12 +282,12 @@ function Tile({ record, read, view, you, sites, fitRow, scale, focusSiteId, arme
 					{sites.map((site) => {
 						if (sentSite) {
 							return site.id === sentSite.id
-								? <SentBlock key={site.id} site={site} hold={sentHold} scale={scale} />
-								: <span key={site.id} className={`rec-squad-cell rec-squad-cell--none g-el-${site.world.element}`} data-fit-site={site.id} />;
+								? <SentSegment key={site.id} site={site} hold={sentHold} health={health} />
+								: <span key={site.id} className="rec-squad-cell rec-squad-cell--none" data-fit-site={site.id} />;
 						}
 						const cell = fitRow ? fitRow[site.id] : null;
 						const matchups = cell ? matchupsAt(view, site, record, read.role, opponent) : [];
-						return <WorldBlock key={site.id} site={site} cell={cell} facts={cellFacts(cell)} matchups={matchups} scale={scale} focus={kept ? null : focusSiteId} />;
+						return <WorldSegment key={site.id} site={site} cell={cell} matchups={matchups} health={health} focus={kept ? null : focusSiteId} />;
 					})}
 				</span>
 			</button>
@@ -294,28 +296,6 @@ function Tile({ record, read, view, you, sites, fitRow, scale, focusSiteId, arme
 			</button>
 		</div>
 	);
-}
-
-/*
-	squadScale(fits, records) -> the one scale for the whole squad: the largest of every listed
-	creature's gain and natural health across all worlds, so no bar or tick overruns its track.
-	A creature sent this round counts at what it holds as the sends stand.
-*/
-export function squadScale(fits, records) {
-	let top = 0;
-	(records || []).forEach((record) => {
-		const row = fits && fits.fits ? fits.fits[record.id] : null;
-		Object.values(row || {}).forEach((cell) => {
-			if (cell) {
-				top = Math.max(top, cell.gain || 0, typeof cell.body === 'number' ? cell.body : cell.own || 0);
-			}
-		});
-		const sent = fits && fits.forecast ? fits.forecast[record.id] : null;
-		if (sent && typeof sent.hold === 'number') {
-			top = Math.max(top, sent.hold);
-		}
-	});
-	return top > 0 ? top : 24;
 }
 
 /*
@@ -382,7 +362,9 @@ export default function ReclamationSquad({ view, you, squad, fits, armedRecordId
 	listed.forEach((record) => { reads[record.id] = readOf(record, view); });
 	const ordered = squadOrder(listed, reads);
 	const { cols, rows } = tilesFor(box.w, box.h, ordered.length);
-	const scale = squadScale(fits, listed);
+	const healths = {};
+	listed.forEach((record) => { healths[record.id] = healthOf(record, view); });
+	const maxHealth = Math.max(0, ...Object.values(healths));
 	return (
 		<div className="rec-squad" ref={ref} role="list" data-squad data-squad-cols={cols} data-squad-rows={rows} data-squad-advanced={advanced ? '' : undefined} style={{ '--sq-cols': cols, '--sq-rows': rows }}>
 			{ordered.map((record) => (
@@ -394,7 +376,8 @@ export default function ReclamationSquad({ view, you, squad, fits, armedRecordId
 					you={you}
 					sites={sites}
 					fitRow={fits && fits.fits ? fits.fits[record.id] : null}
-					scale={scale}
+					health={healths[record.id]}
+					maxHealth={maxHealth}
 					focusSiteId={focusSiteId}
 					armed={armedRecordId === record.id}
 					disabled={disabled}

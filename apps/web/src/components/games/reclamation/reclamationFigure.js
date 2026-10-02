@@ -6,6 +6,7 @@ import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { getSpeciesTemplate } from '@xalians/rules/generator';
 import { HoldBar, WhyMarks, factorText } from './reclamationInstruments';
+import { tintFor, signedAdjust } from './reclamationSquad';
 
 /*
 	ReclamationFigure — one creature standing at a site.
@@ -238,18 +239,32 @@ function ReclamationFigure({
 					stage, off the art and off the element badge, and gives way to the Clash's own number,
 					which lands at the stage's heart.
 				*/}
-				{blowIn && !flash && (
-					<span
-						className={`rec-figure-blow${blowIn.mine ? ' rec-figure-blow--on-mine' : ''}`}
-						data-blow-in={formatBlow(blowIn.power)}
-						data-blow-chart={blowIn.chart !== 1 ? blowIn.chart : undefined}
-						title={blowTitle(blowIn, name)}
-					>
-						<b className="g-mono">{formatBlow(blowIn.power)}</b>
-						{Math.abs((blowIn.chart || 1) - 1) > 1e-9 && <i className="rec-figure-blow-x g-mono">{factorText(blowIn.chart)}</i>}
-						{blowIn.armored && <ArmorGlyph className="rec-figure-blow-armor" />}
-					</span>
-				)}
+				{blowIn && !flash && (() => {
+					/*
+						PASS 78: on a rival the chip prints the blow it would land, colored in the world strip's
+						language by how it compares with the attacker's own power on its tile: green above it, red
+						below it, quiet when even, with a light tint of the same color that deepens with the gap.
+						Round 13: a signed change on a rival ("-7", "0") read as damage dealt to it, so a "0" read
+						as no harm at all (3 of 3), as pass 58 had warned. Your own creature, nicked by a sweep,
+						keeps the blow itself in the loss red.
+					*/
+					const n = !blowIn.mine && typeof blowIn.base === 'number' ? Number(formatBlow(blowIn.power)) - Number(formatBlow(blowIn.base)) : null;
+					const style = n ? { '--sq-hue': n > 0 ? 'var(--color-viable)' : 'var(--g-lamp-red)', '--sq-tint': `${tintFor(n)}%` } : undefined;
+					return (
+						<span
+							className={`rec-figure-blow${blowIn.mine ? ' rec-figure-blow--on-mine' : ''}${n === null ? '' : n === 0 ? ' rec-figure-blow--zero' : n > 0 ? ' rec-figure-blow--up' : ' rec-figure-blow--down'}`}
+							data-blow-in={formatBlow(blowIn.power)}
+							data-blow-adjust={n === null ? undefined : n}
+							data-blow-chart={blowIn.chart !== 1 ? blowIn.chart : undefined}
+							title={blowTitle(blowIn, name)}
+							style={style}
+						>
+							<b className="g-mono">{formatBlow(blowIn.power)}</b>
+							{n === null && Math.abs((blowIn.chart || 1) - 1) > 1e-9 && <i className="rec-figure-blow-x g-mono">{factorText(blowIn.chart)}</i>}
+							{blowIn.armored && <ArmorGlyph className="rec-figure-blow-armor" />}
+						</span>
+					);
+				})()}
 			</span>
 			{/*
 				pass 32: a plate that is acting or being hit carries the engine step as its key,
@@ -327,7 +342,10 @@ function blowTitle(blowIn, name) {
 	if (blowIn.armored) parts.push(`armored \u00d70.75`);
 	const made = parts.length > 1 ? ` (${parts.join(', ')})` : '';
 	const whose = blowIn.mine ? `your ${name}` : name;
-	return `Each ${who} ${verb} lands ${formatBlow(blowIn.power)} on ${whose} at full strength${made}. A creature already hurt lands less, and a guard takes a quarter off.`;
+	const change = !blowIn.mine && typeof blowIn.base === 'number'
+		? ` Its own attack is ${formatBlow(blowIn.base)}, so this lands ${signedAdjust(Number(formatBlow(blowIn.power)) - Number(formatBlow(blowIn.base)))} against it.`
+		: '';
+	return `Each ${who} ${verb} lands ${formatBlow(blowIn.power)} on ${whose} at full strength${made}.${change} A creature already hurt lands less, and a guard takes a quarter off.`;
 }
 
 /*

@@ -21,9 +21,9 @@ export const LEGEND_ITEMS = [
 	{ key: 'world', selector: '[data-site-id]', fallbackFor: 'standing', text: 'A world goes to whoever holds more of it after the Clash. The rival stands above the seam, you below.' },
 	{ key: 'bar', selector: '[data-rank] .rec-figure-foot', text: 'A creature’s hold, in its world’s color, with its number.' },
 	{ key: 'squad', selector: '[data-squad-sort]', text: 'Your squad, the creatures you can still send. Each world’s symbol heads its column; press one to order the squad by what each would add there.' },
-	{ key: 'fit', selector: '[data-slot-state="hand"] .rec-squad-cell', text: 'What it would add at this world if you sent it now, its bar in the world’s color. The light mark on the bar is its own health, so a bar past the mark is a world that lifts it. ▲ the world lifts it, ▼ the world cuts it; hover for why. Point at a world and each creature’s attack shows the blow it would land there.' },
+	{ key: 'fit', selector: '[data-slot-state="hand"] .rec-squad-cell', text: 'What each world does to its health. Red is a world that cuts its hold, green a world that lifts it, a faint 0 a world that leaves it, the tint deeper for a bigger change; hover for why. Point at a world and its segment is outlined on every tile. While you point at a creature, each rival creature it could hit carries the same change for its blow, against the attack on its tile.' },
 	{ key: 'climate', selector: '[data-site-id] .rec-env-scale', text: 'The world’s temperature band. Point at a creature and its own band lies over it: where the two miss, the world strains it.' },
-	{ key: 'role', selector: '[data-slot-state="hand"] .rec-squad-act', text: 'Its role in the Clash (strike one, sweep all, shield, or bolster), and beside it what one blow lands on a creature the element chart leaves even, or what a bolster mends.' },
+	{ key: 'role', selector: '[data-slot-state="hand"] .rec-squad-act', text: 'Its attack: the role in the Clash (strike one, sweep all, shield, or bolster) and, beside the mark, what one blow lands on a creature the element chart leaves even, or what a bolster mends. The big number beside it is its natural health.' },
 	{ key: 'stake', selector: '[data-stake-mode]', text: 'Once a game: make one world count two.' },
 ];
 

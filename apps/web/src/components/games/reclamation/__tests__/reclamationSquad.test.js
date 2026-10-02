@@ -7,15 +7,14 @@ import { chooseSend } from '@xalians/rules/expedition/expeditionBot';
 import { getWorlds } from '@xalians/rules/expedition/sites';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { fitTable } from '../reclamationFit';
-import { blowsAt } from '../reclamationPreview';
-import { formatBlow } from '../reclamationNarration';
-import ReclamationSquad, { SquadGone, squadOrder, cellFacts, blowAt, blowTargetAt, tilesFor, squadScale, readOf, slotStateOf } from '../reclamationSquad';
+import { formatHoldShown } from '../reclamationNarration';
+import ReclamationSquad, { SquadGone, squadOrder, adjustOf, tintFor, signedAdjust, healthOf, tilesFor, readOf, slotStateOf } from '../reclamationSquad';
 
 /*
-	PASS 77: THE SQUAD AS HEALTH-FIRST TILES. The squad lists only the creatures you can still send,
-	a tile each with a block per world (the "+N" it would add, its bar and its natural-health tick on
-	one scale for the squad); it is ordered by act and attack; pointing at a world adds the creature's
-	blow there to its attack line; the used creatures sit small in the head.
+	PASS 78: THE SQUAD AS TILES OF TWO BIG NUMBERS AND A WORLD STRIP. The squad lists only the
+	creatures you can still send, a tile each: natural health (with a bar against the largest), the
+	attack, and a segment per world with what that world does to its health; it is ordered by act
+	and attack; pointing at a world outlines that segment; the used creatures sit small in the head.
 */
 
 function matchFor(seed) {
@@ -48,16 +47,19 @@ describe('squadOrder', () => {
 	});
 });
 
-describe('cellFacts', () => {
-	it('shows an arrow only for a lift or cut of a tenth of the normal hold and a whole point', () => {
-		expect(cellFacts({ gain: 22, own: 22, body: 20 }, [], 'strike').shift).toBe('up');
-		expect(cellFacts({ gain: 18, own: 18, body: 20 }, [], 'strike').shift).toBe('down');
-		// just under the threshold, and a small hold where a tenth is less than a point
-		expect(cellFacts({ gain: 21.9, own: 21.9, body: 20 }, [], 'strike').shift).toBe(null);
-		expect(cellFacts({ gain: 19.1, own: 19.1, body: 20 }, [], 'strike').shift).toBe(null);
-		expect(cellFacts({ gain: 13.1, own: 13.1, body: 12 }, [], 'strike').shift).toBe(null);
-		expect(cellFacts({ gain: 11, own: 11, body: 10 }, [], 'strike').shift).toBe('up');
-		expect(cellFacts({ gain: 10.7, own: 10.7, body: 12 }, [], 'strike').shift).toBe('down');
+describe('adjustOf', () => {
+	it('is the rounded hold at a world less the rounded natural health, so the figures on a tile add up', () => {
+		expect(adjustOf(10, 11)).toBe(-1);
+		expect(adjustOf(15, 11)).toBe(4);
+		expect(adjustOf(11, 11)).toBe(0);
+		// rounded as each is shown: 10.6 reads 11 and 11.4 reads 11
+		expect(adjustOf(10.6, 11.4)).toBe(0);
+		expect(adjustOf(9.4, 11.4)).toBe(-2);
+		expect(adjustOf(0, 11)).toBe(-11);
+	});
+	it('tints deeper with size, 15 at one, 25 at two, 35 from three, and prints a real minus', () => {
+		expect([0, 1, -1, 2, -2, 3, -3, 9].map(tintFor)).toEqual([0, 15, 15, 25, 25, 35, 35, 35]);
+		expect([3, -3, 0].map(signedAdjust)).toEqual(['+3', '\u22123', '0']);
 	});
 });
 
@@ -70,17 +72,6 @@ describe('tilesFor', () => {
 		expect(tilesFor(0, 0, 12)).toEqual({ cols: 3, rows: 4 });
 		// never more than three rows, even when nothing is tall enough
 		expect(tilesFor(1394, 120, 12).rows).toBeLessThanOrEqual(3);
-	});
-});
-
-describe('squadScale', () => {
-	it('is the largest gain or natural health across every listed creature and world', () => {
-		const recs = [{ id: 'a' }, { id: 'b' }];
-		const fits = { fits: { a: { w: { gain: 14, body: 12 }, x: { gain: 9, body: 25 } }, b: { w: { gain: 18, body: 7 } } } };
-		expect(squadScale(fits, recs)).toBe(25);
-		expect(squadScale(fits, [recs[1]])).toBe(18);
-		expect(squadScale({ fits: {} }, recs)).toBe(24);
-		expect(squadScale({ fits: fits.fits, forecast: { b: { hold: 30 } } }, recs)).toBe(30);
 	});
 });
 
@@ -120,69 +111,62 @@ describe('the roster on a real game', () => {
 		expect(states.filter((st) => st !== 'hand' && st !== 'sent').length).toBeGreaterThan(0);
 	});
 
-	it('draws a bar and a natural-health tick in every block, on the squad scale', () => {
+	it('prints the natural health with a bar against the largest, and a segment per world whose number is its change against it', () => {
 		const match = matchFor(13);
 		const seat = match.turn;
 		const view = getPublicState(match, seat);
 		const roster = match.players[seat].roster;
 		const fits = fitTable(match, seat, roster);
-		const scale = squadScale(fits, roster);
 		const { container } = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} onArm={() => {}} onHover={() => {}} />);
-		const blocks = [...container.querySelectorAll('[data-slot-state="hand"] [data-fit-gain]')];
-		expect(blocks.length).toBe(roster.length * 3);
-		blocks.forEach((block) => {
-			const id = block.closest('[data-slot]').getAttribute('data-slot');
-			const cell = fits.fits[id][block.getAttribute('data-fit-site')];
-			expect(Number(block.style.getPropertyValue('--sq-fill'))).toBeCloseTo(Math.min(1, Math.max(0, cell.gain) / scale), 3);
-			expect(Number(block.style.getPropertyValue('--sq-tick'))).toBeCloseTo(Math.min(1, cell.body / scale), 3);
-			expect(Number(block.style.getPropertyValue('--sq-fill'))).toBeLessThanOrEqual(1);
-			expect(block.querySelector('.rec-squad-tick')).not.toBeNull();
+		const tiles = [...container.querySelectorAll('[data-slot-state="hand"]')];
+		expect(tiles.length).toBe(roster.length);
+		const top = Math.max(...roster.map((r) => healthOf(r, view)));
+		const seen = { up: 0, down: 0, zero: 0 };
+		tiles.forEach((tile) => {
+			const record = roster.find((r) => r.id === tile.getAttribute('data-slot'));
+			const health = healthOf(record, view);
+			expect(tile.querySelector('[data-tile-health]').textContent).toBe(formatHoldShown(health));
+			const fill = tile.querySelector('.rec-squad-hfill');
+			expect(parseFloat(fill.style.width)).toBeCloseTo((health / top) * 100, 0);
+			const segments = [...tile.querySelectorAll('[data-fit-gain]')];
+			expect(segments.length).toBe(3);
+			segments.forEach((seg, i) => {
+				expect(seg.getAttribute('data-fit-site')).toBe(view.frame.sites[i].id);
+				const cell = fits.fits[record.id][seg.getAttribute('data-fit-site')];
+				const n = adjustOf(cell.own, health);
+				expect(seg.getAttribute('data-adjust')).toBe(String(n));
+				expect(seg.querySelector('.rec-squad-num').textContent).toBe(signedAdjust(n));
+				expect(seg.className).toContain(n === 0 ? 'rec-squad-cell--zero' : n > 0 ? 'rec-squad-cell--up' : 'rec-squad-cell--down');
+				if (n !== 0) expect(seg.style.getPropertyValue('--sq-tint')).toBe(`${tintFor(n)}%`);
+				seen[n === 0 ? 'zero' : n > 0 ? 'up' : 'down'] += 1;
+				// the ghost's number on the world still reads the same gain
+				expect(Number(seg.getAttribute('data-fit-gain'))).toBeCloseTo(cell.gain, 2);
+			});
+			// nothing of the old tile is left
+			expect(tile.querySelector('.rec-squad-tick, .rec-squad-shift, .rec-squad-bar, [data-hover-blow]')).toBeNull();
 		});
+		expect(seen.down + seen.up).toBeGreaterThan(0);
 	});
 
-	it('adds the blow to the attack line only for the pointed world, and not for a mender or an empty world', () => {
-		let withBlow = 0;
-		let without = 0;
-		for (const seed of [7, 13, 29, 41, 5, 3]) {
-			let match = matchFor(seed);
-			for (let i = 0; i < 4 && match.phase === 'deploy'; i += 1) {
-				const action = chooseSend(getPublicState(match, match.turn), match.players[match.turn].roster, match.turn, { float: () => 0.5 }, null);
-				match = (action.type === 'send' ? send(match, match.turn, action.recordId, action.siteId) : null) || match;
-			}
-			const seat = match.turn;
-			const view = getPublicState(match, seat);
-			const roster = match.players[seat].roster;
-			const fits = fitTable(match, seat, roster);
-			// nothing pointed at: no blow anywhere
-			const rest = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} onArm={() => {}} onHover={() => {}} />);
-			expect(rest.container.querySelector('[data-hover-blow]')).toBeNull();
-			rest.unmount();
-			view.frame.sites.forEach((site) => {
-				const { container, unmount } = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} focusSiteId={site.id} onArm={() => {}} onHover={() => {}} />);
-				container.querySelectorAll('[data-slot-state="hand"]').forEach((tile) => {
-					const record = roster.find((r) => r.id === tile.getAttribute('data-slot'));
-					const role = tile.querySelector('.rec-squad-act').getAttribute('data-role');
-					const node = tile.querySelector('[data-hover-blow]');
-					const { lands } = blowsAt(view, record, site, seat, view.players[seat].sentCount);
-					const theirs = Object.values(lands).filter((l) => !l.mine).map((l) => l.power);
-					if ((role === 'strike' || role === 'sweep') && theirs.length) {
-						expect(node).not.toBeNull();
-						expect(node.getAttribute('data-hover-blow')).toBe(formatBlow(Math.max(...theirs)));
-						expect(blowAt(view, record, site, seat, role)).toBe(Math.max(...theirs));
-						// it rides on the attack line, in the pointed world's color
-						expect(tile.querySelector('.rec-squad-act').contains(node)).toBe(true);
-						expect(node.closest('.rec-squad-hover').className).toContain(`g-el-${site.world.element}`);
-						withBlow += 1;
-					} else {
-						expect(node).toBeNull();
-						without += 1;
-					}
-				});
-				unmount();
-			});
-		}
-		expect(withBlow).toBeGreaterThan(0);
-		expect(without).toBeGreaterThan(0);
+	it("outlines the pointed world's segment on every active tile and changes nothing else, with no blow added to the attack", () => {
+		const match = matchFor(7);
+		const seat = match.turn;
+		const view = getPublicState(match, seat);
+		const roster = match.players[seat].roster;
+		const fits = fitTable(match, seat, roster);
+		const rest = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} onArm={() => {}} onHover={() => {}} />);
+		expect(rest.container.querySelector('.rec-squad-cell--focus')).toBeNull();
+		const before = rest.container.querySelector('[data-slot]').textContent;
+		rest.unmount();
+		view.frame.sites.forEach((site) => {
+			const { container, unmount } = render(<ReclamationSquad view={view} you={seat} squad={roster} fits={fits} focusSiteId={site.id} onArm={() => {}} onHover={() => {}} />);
+			const focused = [...container.querySelectorAll('.rec-squad-cell--focus')];
+			expect(focused.length).toBe(roster.length);
+			focused.forEach((f) => expect(f.getAttribute('data-fit-site')).toBe(site.id));
+			expect(container.querySelector('[data-slot]').textContent).toBe(before);
+			expect(container.querySelector('[data-hover-blow]')).toBeNull();
+			unmount();
+		});
 	});
 
 	it('shows a sent tile only at the world it went to, and keeps it in place', () => {
@@ -199,11 +183,18 @@ describe('the roster on a real game', () => {
 		const shown = [...tile.querySelectorAll('[data-fit-site] .rec-squad-num')];
 		expect(shown.length).toBe(1);
 		expect(shown[0].closest('[data-fit-site]').getAttribute('data-fit-site')).toBe(site.id);
-		expect(tile.querySelector('[data-fit-sent]')).not.toBeNull();
+		const sent = tile.querySelector('[data-fit-sent]');
+		expect(sent).not.toBeNull();
+		// it keeps its two big numbers, and the segment is what it holds there against its health
+		const health = healthOf(rec, view);
+		expect(tile.querySelector('[data-tile-health]').textContent).toBe(formatHoldShown(health));
+		expect(tile.querySelector('[data-plinth-power]')).not.toBeNull();
+		expect(sent.getAttribute('data-adjust')).toBe(String(adjustOf(Number(sent.getAttribute('data-fit-sent')), health)));
+		expect(tile.querySelectorAll('.rec-squad-cell--none').length).toBe(2);
 		expect(tile.querySelector('[data-arm]')).toBeNull();
-		// pointing at a world adds no blow to a tile that has been sent
+		// pointing at a world outlines nothing on a tile that has been sent
 		const pointed = render(<ReclamationSquad view={view} you="A" squad={all} fits={fits} focusSiteId={site.id} onArm={() => {}} onHover={() => {}} />).container;
-		expect(pointed.querySelector(`[data-slot="${rec.id}"] [data-hover-blow]`)).toBeNull();
+		expect(pointed.querySelector(`[data-slot="${rec.id}"] .rec-squad-cell--focus`)).toBeNull();
 	});
 
 	it("gives a used creature its badge, and one holding a world its flag in that world's color", () => {

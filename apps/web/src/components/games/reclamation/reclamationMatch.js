@@ -598,6 +598,14 @@ class ReclamationMatch extends React.Component {
 								shift: (() => { const bar = Math.max(1, 0.1 * cell.body); return cell.own - cell.body >= bar ? 'up' : cell.body - cell.own >= bar ? 'down' : null; })(),
 								chart: site && record ? chartFor(record, site) : null,
 								chartAll: site && record ? chartAllFor(record, site) : [],
+								// pass 78: every blow it would land there, one per creature, and its act's power as the world leaves it
+								...(site && record ? (() => {
+									const b = blowsAt(view, record, site, YOU, view.players[YOU].sentCount);
+									return {
+										powerHere: typeof b.power === 'number' ? Number(b.power.toFixed(2)) : null,
+										lands: Object.entries(b.lands).map(([recordId, l]) => ({ recordId, name: (() => { const u = flattenBoard(view).find((x) => x.recordId === recordId); return u && u.record ? speciesLabel(u.record) : recordId; })(), power: Number(l.power.toFixed(2)), chart: l.chart, armored: l.armored, mine: l.mine })),
+									};
+								})() : {}),
 							}];
 						})),
 					}])) : null,
@@ -1835,6 +1843,8 @@ class ReclamationMatch extends React.Component {
 				// pass 73: one full-strength blow on each creature it could hit here, drawn on that creature
 				lands: blows.lands,
 				power: blows.power,
+				// pass 78: the act's power on no world, the number its squad tile prints; a rival's chip is the blow's change against it
+				basePower: rolePower(prepare(record, null, null, 0, { rules: view.rules, chosenRole: (id === armedRecordId ? this.state.armedRole : null) || undefined }), view.rules),
 				lines: plan.lines,
 				effect: plan.effect,
 				recordId: record.id,

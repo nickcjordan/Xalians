@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 77, 2026-09-30)
+## Standing state (after pass 78, 2026-10-02)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -40,7 +40,11 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`), updated by pass 65's critic.
 
-0. **Resume here: Nick's live read of the squad tiles (pass 77).** The roster rows are gone; the squad is health-first tiles (`reclamation-squad-tiles.md`), chosen by Nick from mockups. Rounds 11 and 12: Finding 7, 8, 7 then 7, 7, 8, every answer and every mark right. Open with Nick: whether the colors alone may tie each tile's three numbers to their worlds (readers relearn them every round), and his read of the tiles live. Pass 72 stands (the hit's effect on the count stays hidden).
+0. **Resume here: Nick's live read of the pass 78 tiles.**
+   - **The tile:** base health and attack are the two big numbers, and a strip of three segments shows what each world does to health.
+   - **The rival chip:** the attack's effect on each rival is a chip on that rival.
+   - **Readers:** round 14 met the bar (Finding 8, 8 and 8; every answer and mark right).
+   - **Open:** nothing is waiting on Nick except his live read.
 
 1. **The Clash is short to watch** (critic 4, up from 3; pass 64 readers 3). Each blow is drawn and told in two beats (pass 64). What is left is the fight itself:
    - one blow per world. Since pass 72 the outcome is no longer forecast while sends are made, so the Clash is where the fight is first seen;
@@ -1641,4 +1645,23 @@ Nick read the pass 76 roster live and rejected it: "I hate the way you have the 
 - the five table checks;
 - captures at 1440, 1366 and 390;
 - readers in rounds 11 and 12 (`reclamation-squad-reader-loop.md`).
+
+### Pass 78 (2026-10-02): base stats, a world strip, and the attack on the rivals
+
+Nick read the pass 77 tiles live. He ruled that natural health and attack are the values that matter, and that the worlds only adjust them. He asked for the spirit of that, not a literal build. Mockups G, H and H2, and his three rulings, are in `reclamation-squad-tiles.md` (pass 78 section).
+
+**The tile:**
+- natural health, with a bar under it, and the attack as two equal big numbers;
+- a three-segment strip in the worlds' order: a quiet 0, or a green or red change, deeper for a larger change;
+- pointing at a world outlines its segment on every tile.
+
+**The attack's change moved onto each rival.** When a creature is pointed at or lifted, each rival's dashed chip prints the blow it would land. It is green when that beats the attack on the tile, red when it falls short, quiet when even.
+- **First version:** the chip printed the signed change. Round 13 read a "0" on a rival as "no harm" (3 of 3), which is pass 58's lesson again.
+- **Comparison base:** the chip compares against the tile's own unstrained power, through a new `basePower` on the ghost. It used to compare against the power after the world had worn it down.
+
+**Checked:**
+- web tests and the design system test;
+- the five table checks;
+- captures at three sizes;
+- readers in rounds 13 and 14. Round 14 met the bar.
 
