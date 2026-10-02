@@ -1,0 +1,97 @@
+{
+ "scope": "The trunk side profile of the first sheet, left view, in fit units (x forward-negative, fractions of figure height). The front edge is the sheet.json run start (the trunk is the frontmost run at every row from .26 to .50). The back edge is the run end where a gap separates trunk from the akimbo arm or forearm, and the R06 spec estimate (range in backLow, backHigh, mid in back) where the arm covers it. The .168 chest depth in gap-audit-0458.md is the arm: sheet.json runs end at +.043 to +.079 over .32 to .38, which is the upper arm, not the trunk (.1194 to .1303 deep).",
+ "generatedBy": "python art/species-construction/loop/trunk_edges.py sheet",
+ "rows": {
+  "0.26": {
+   "front": -0.03532,
+   "back": 0.01805,
+   "backLow": 0.01805,
+   "backHigh": 0.01805,
+   "backSource": "sheet.json first run end (above .31 the arm has not started, from .40 a white gap follows)"
+  },
+  "0.28": {
+   "front": -0.05416,
+   "back": 0.02747,
+   "backLow": 0.02747,
+   "backHigh": 0.02747,
+   "backSource": "sheet.json first run end (above .31 the arm has not started, from .40 a white gap follows)"
+  },
+  "0.30": {
+   "front": -0.06829,
+   "back": 0.03218,
+   "backLow": 0.03218,
+   "backHigh": 0.03218,
+   "backSource": "sheet.json first run end (above .31 the arm has not started, from .40 a white gap follows)"
+  },
+  "0.32": {
+   "front": -0.08242,
+   "back": 0.037,
+   "backLow": 0.034,
+   "backHigh": 0.04,
+   "backSource": "estimate: specs/R06.md section 1 hidden-edge range"
+  },
+  "0.34": {
+   "front": -0.09184,
+   "back": 0.0385,
+   "backLow": 0.035,
+   "backHigh": 0.042,
+   "backSource": "estimate: specs/R06.md section 1 hidden-edge range"
+  },
+  "0.36": {
+   "front": -0.09655,
+   "back": 0.0335,
+   "backLow": 0.03,
+   "backHigh": 0.037,
+   "backSource": "estimate: specs/R06.md section 1 hidden-edge range"
+  },
+  "0.38": {
+   "front": -0.09655,
+   "back": 0.02,
+   "backLow": 0.016,
+   "backHigh": 0.024,
+   "backSource": "estimate: specs/R06.md section 1 hidden-edge range"
+  },
+  "0.40": {
+   "front": -0.09655,
+   "back": 0.00549,
+   "backLow": 0.00549,
+   "backHigh": 0.00549,
+   "backSource": "sheet.json first run end (above .31 the arm has not started, from .40 a white gap follows)"
+  },
+  "0.42": {
+   "front": -0.09655,
+   "back": -0.00549,
+   "backLow": -0.00549,
+   "backHigh": -0.00549,
+   "backSource": "sheet.json first run end (above .31 the arm has not started, from .40 a white gap follows)"
+  },
+  "0.44": {
+   "front": -0.09498,
+   "back": -0.01334,
+   "backLow": -0.01334,
+   "backHigh": -0.01334,
+   "backSource": "sheet.json first run end (above .31 the arm has not started, from .40 a white gap follows)"
+  },
+  "0.46": {
+   "front": -0.09341,
+   "back": -0.00392,
+   "backLow": -0.00392,
+   "backHigh": -0.00392,
+   "backSource": "sheet.json first run end (above .31 the arm has not started, from .40 a white gap follows)"
+  },
+  "0.48": {
+   "front": -0.09498,
+   "back": 0.006,
+   "backLow": 0.004,
+   "backHigh": 0.008,
+   "backSource": "estimate: specs/R06.md section 1 hidden-edge range"
+  },
+  "0.50": {
+   "front": -0.09655,
+   "back": 0.01648,
+   "backLow": 0.01648,
+   "backHigh": 0.01648,
+   "backSource": "sheet.json first run end (above .31 the arm has not started, from .40 a white gap follows)"
+  }
+ }
+}

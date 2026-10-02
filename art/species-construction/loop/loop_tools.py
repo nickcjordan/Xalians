@@ -911,6 +911,19 @@ def row_value(criterion, assembly):
                                  ref, row_measures.mask_frame(ref))
 
 
+def trunk_value(criterion, assembly):
+    """Trunk side-profile criteria (see trunk_edges.py): the trunk's own front and back edges from mesh sections,
+    against the sheet's trunk profile. The section dump is made on first use and kept in the render folder."""
+    import trunk_edges
+    render = work(assembly)/'render'
+    dump = render/'trunk-profile.json'
+    if not dump.exists():
+        run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'trunk_edge_sections.py'), '--',
+                     '--mesh', str(work(assembly)/GLB), '--out', str(dump)], WORK/f'{assembly}-trunk-profile.log')
+    model = trunk_edges.load_model(dump, SPECIES['frame']['centerLine']['left'], FIXED_HEIGHT)
+    return trunk_edges.evaluate(criterion, model, trunk_edges.sheet_table(DOCS/'loop/trunk-profile-sheet.json'))
+
+
 def evaluate_measured(packet, assembly):
     """Measured rubric criteria, computed from the packet's fit.json and
     measurements.json. The critic copies these results; it never re-judges them."""
@@ -930,6 +943,9 @@ def evaluate_measured(packet, assembly):
                 value = posed['mean']['posedHalf'][c['band']]
             elif c['source'] in ('row', 'rowratio', 'edge'):
                 model, sheet, value = row_value(c, assembly)
+                extra = {'model': model and round(model, 4), 'sheet': sheet and round(sheet, 4)}
+            elif c['source'] == 'trunk':
+                model, sheet, value = trunk_value(c, assembly)
                 extra = {'model': model and round(model, 4), 'sheet': sheet and round(sheet, 4)}
             else:
                 value = measure[c['view']]['ratio'][c['key']]

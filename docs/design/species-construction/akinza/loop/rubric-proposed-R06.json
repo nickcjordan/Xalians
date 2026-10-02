@@ -1,0 +1,105 @@
+[
+ {
+  "id": "R06.11",
+  "kind": "measured",
+  "text": "Trunk side depth over the upper chest (mean of .32 and .34, mesh section, arms excluded) within .97 to 1.10 of the sheet's trunk depth there (.125 of figure height)",
+  "source": "trunk",
+  "metric": "depth",
+  "at": [
+   0.32,
+   0.34
+  ],
+  "reduce": "mean",
+  "min": 0.97,
+  "max": 1.1
+ },
+ {
+  "id": "R06.12",
+  "kind": "measured",
+  "text": "Trunk side depth at the waist (smallest of .42, .44 and .46, mesh section) within .95 to 1.08 of the sheet's trunk depth (.0816 of figure height), no wasp waist and no plank",
+  "source": "trunk",
+  "metric": "depth",
+  "at": [
+   0.42,
+   0.44,
+   0.46
+  ],
+  "reduce": "min",
+  "min": 0.95,
+  "max": 1.08
+ },
+ {
+  "id": "R06.13",
+  "kind": "measured",
+  "text": "Trunk chest depth (deeper of .34 and .36) over trunk waist depth (smallest of .42 to .46) within .93 to 1.08 of the sheet's ratio (1.60), the rib cage clearly deeper than the waist",
+  "source": "trunk",
+  "metric": "depthratio",
+  "num": {
+   "at": [
+    0.34,
+    0.36
+   ],
+   "reduce": "max"
+  },
+  "den": {
+   "at": [
+    0.42,
+    0.44,
+    0.46
+   ],
+   "reduce": "min"
+  },
+  "min": 0.93,
+  "max": 1.08
+ },
+ {
+  "id": "R06.14",
+  "kind": "measured",
+  "text": "Dorsal S curve, upper half: the trunk's back edge swings forward from the rib cage (.34) to the lumbar hollow (.44) by at least .9 of the sheet's swing (.052 of figure height)",
+  "source": "trunk",
+  "metric": "swing",
+  "edge": "back",
+  "a": {
+   "at": 0.34
+  },
+  "b": {
+   "at": 0.44
+  },
+  "min": 0.9,
+  "max": 1.15
+ },
+ {
+  "id": "R06.15",
+  "kind": "measured",
+  "text": "Dorsal S curve, lower half: the trunk's back edge swings back from the lumbar hollow (.44) to the rump (.50) by at least .85 of the sheet's swing (.030 of figure height)",
+  "source": "trunk",
+  "metric": "swing",
+  "edge": "back",
+  "a": {
+   "at": 0.5
+  },
+  "b": {
+   "at": 0.44
+  },
+  "min": 0.85,
+  "max": 1.25
+ },
+ {
+  "id": "R06.16",
+  "kind": "measured",
+  "text": "Belly front line: the trunk's front edge from .40 to .48 departs from the straight line between .38 and .50 by no more than .004 of figure height more than the sheet's does (no pouch, no band, no pigeon breast)",
+  "source": "trunk",
+  "metric": "straight",
+  "edge": "front",
+  "from": 0.38,
+  "to": 0.5,
+  "at": [
+   0.4,
+   0.42,
+   0.44,
+   0.46,
+   0.48
+  ],
+  "max": 0.004
+ }
+]
