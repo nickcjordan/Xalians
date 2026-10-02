@@ -72,7 +72,17 @@
       "vertices": 1042717
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/shape_head_silhouette_field_r01.py": "fa9f86fe80b217c36e7a5627af8963c01cd0f4d217123ad9aa963f3461d89304",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33",
+    "docs/design/species-construction/akinza/head-silhouette-0223.json": "036a27a91fd5089c3813afef3b6ae71fcbe1a3ee8cda1b49ee1be1812d2bf550"
+   },
+   "minutes": 3.7
   },
   {
    "id": "H25",
@@ -120,7 +130,18 @@
       "vertices": 931540
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/head_r01_ops.py": "291fec9275d81cc18c8f5037557124f999df6fb68b2d1673a88efbd4f7c58d87",
+    "art/species-construction/shape_head_silhouette_field.py": "844a1c8547f508fd3c7cd9ac53d13457eb46351898044fda54312937208e19ba",
+    "art/species-construction/specs/silhouette-r01-0260.json": "38ca2a92d1e72f194ea45a9e8fa14fe5e7f1d8dd706e0a44dbf7ea481695d0f1",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.8
   },
   {
    "id": "H26",
@@ -168,7 +189,17 @@
       "vertices": 955425
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/rebuild_face_features_field_r04.py": "519917a841109eaf1ccb4521951790820db8bf921119ca80d06508be000112b4",
+    "art/species-construction/specs/face-features-r04c.json": "7d603d791d494910954cc764513b37cf0340a330dea4a13a42fd0fbaefd89587",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.6
   },
   {
    "id": "H27",
@@ -246,7 +277,17 @@
       "vertices": 971439
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/author_rear_lock_table_field_r06.py": "b33a06d45a17999ec0184b9c40951c7152b120778afaa0784c5dd6617fb0f48e",
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/specs/r04_locks.json": "4cdfc90b0c20f2f41f129f5849cba0125ef7b1793dc8f985b8be1d5d613704c2",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 4.9
   },
   {
    "id": "H28",
@@ -294,7 +335,17 @@
       "vertices": 985282
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/author_fan_front_lock_system_field_r07.py": "28d9b431a8a22b1e78e0dbbbad90040b4b67bc7bccaa7587543d6b6b8efbe585",
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/specs/R03-locks-r4e0b9dc8.md": "8e427846014885f06a1479a6b29b655cacfd640d8135f679dd704de63435f0cb",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 4.6
   },
   {
    "id": "H29",
@@ -342,7 +393,17 @@
       "vertices": 954308
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/rebuild_face_features_field.py": "e84a9b5ca355dc8e1f7b0e8690b1da50133277747c5d6e2790b476809a629af9",
+    "art/species-construction/specs/face-features-r10e.json": "8f91eb77a1b77444c51a59d0dafb5d58c945041030e7ab1bc7f0424cad6a0a3f",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.7
   },
   {
    "id": "H30",
@@ -391,7 +452,16 @@
       "vertices": 977667
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/graft_face_field.py": "11f2513008ff0ce3c5dfb1860d3d20d88c847464f05183a6c9881a403db7d74e",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.7
   },
   {
    "id": "H31",
@@ -481,7 +551,17 @@
       "vertices": 979949
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/author_rear_lock_table_field_r11.py": "e4672062a4db2b1b9a949ec4a80b0e5a9de9bf6e732aa09421f4f499ae3f4356",
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/specs/r04_locks.json": "4cdfc90b0c20f2f41f129f5849cba0125ef7b1793dc8f985b8be1d5d613704c2",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 5.5
   },
   {
    "id": "H32",
@@ -521,7 +601,16 @@
       0.381774
      ]
     ]
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/carry_materials_field.py": "6d8222801647e6bf8db24d31898032fab38e22a73474c198a4475267b8597666",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.2
   },
   {
    "id": "H33",
@@ -659,7 +748,17 @@
       "vertices": 936725
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/author_fan_front_lock_system_field.py": "b03eb913428e821d53a76ddc9e9d02bc3a2d445ff2b1d92edd516f741596d3c3",
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/specs/R03-locks-r4e0b9dc8.md": "8e427846014885f06a1479a6b29b655cacfd640d8135f679dd704de63435f0cb",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 4.6
   },
   {
    "id": "B-14",
@@ -715,7 +814,17 @@
       "vertices": 690254
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/rebuild_body_field.py": "dcdc651e98de527db96368f9073628bd3f58ae474d3fc0da0e369fb8b6f3c56f",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33",
+    "docs/design/species-construction/akinza/tail-controls-stack-b.json": "c7a482ad84784ad1066086622dfd734c630853e240f72b0324cf4cf1cc1cd0e6"
+   },
+   "minutes": 1.0
   },
   {
    "id": "B-15",
@@ -765,7 +874,17 @@
       "vertices": 670579
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/reshape_legs_field_r02.py": "23213b7937a6ec418e7a7776385b91bb68dd4de7bfc2de4ca3f7c3b9bcc12b35",
+    "art/species-construction/specs/leg-reshape-r08-v5.json": "b4309096846745391fabe77c2c21a9ba53e562e038c14e7bc3a1b2f4c32f8e0f",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.7
   },
   {
    "id": "B-16",
@@ -815,7 +934,17 @@
       "vertices": 670945
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/reshape_torso_field_r04.py": "f5db0960dccbea5a15a3f31d14e1d902ec9d09f06ef1661f5ed40f5d459bfdaa",
+    "art/species-construction/specs/torso-reshape-r06-v5.json": "2d1a6570eb49c56da5a5fbc67f271dbfcfe0a271de1e4c55b16d168ae4204ed2",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.4
   },
   {
    "id": "B-17",
@@ -863,7 +992,16 @@
       "vertices": 642828
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/rebuild_arms_field_r05.py": "1a2ea3a7cb6008bcc6b602b65a4844e31696b56cf6d025cd236b846539e2b355",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 1.2
   },
   {
    "id": "B-18",
@@ -911,7 +1049,16 @@
       "vertices": 643284
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/rebuild_hind_paws_field_r06.py": "79d3b5d1847659ea4ac55dde6dc896136c65d21c47d99a69b0f548ab36274676",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.3
   },
   {
    "id": "B-19",
@@ -961,7 +1108,17 @@
       "vertices": 637610
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/shape_neck_shoulders_field_r07.py": "74945209c333c99dbd25c57947d972ca8694d11e549a5bfd8576c0691e0aa9e7",
+    "art/species-construction/specs/neck-shoulders-r05-0325.json": "0a49e3d860f61b84e889d6b30360cf6d329194ed6da6217aceaf36e3ef6302d3",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.4
   },
   {
    "id": "B-20",
@@ -1011,7 +1168,17 @@
       "vertices": 635488
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/reshape_torso_field.py": "bf00b4d062b2d7afc31cb1e19ad20779eb9bdfb8c8708fda8ca674d30ac862ea",
+    "art/species-construction/specs/torso-reshape-r06-v7d.json": "e8e3bb59f05804cc7ce2b44408bf2bef853447460193e0705dc44c7397004e46",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.5
   },
   {
    "id": "B-21",
@@ -1061,7 +1228,17 @@
       "vertices": 635786
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/rebuild_hind_paws_field_r12.py": "dc21a6479e7115720ad51c2cf71896a63dc87097190023cfb17a60b8c0bbb8de",
+    "art/species-construction/specs/paw-spec-r09-v3.json": "8aa9109238b8b91a432b3109bf5dc13f122fa0fa1af38b6b5ea3268e3e3bee68",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.4
   },
   {
    "id": "B-22",
@@ -1111,7 +1288,17 @@
       "vertices": 632533
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/reshape_legs_field.py": "de25392564126938480f1af121848c8cf9f36583fca43da55b598f49f3512bca",
+    "art/species-construction/specs/leg-reshape-r08-v11.json": "53ce2afa6769822958d7a7dbe10a61bdefb4f1620f34c50413dafa2c164bd532",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 0.5
   },
   {
    "id": "B-23",
@@ -1161,7 +1348,17 @@
       "vertices": 635761
      }
     }
-   }
+   },
+   "pins": {
+    "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+    "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+    "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+    "art/species-construction/rebuild_arms_field.py": "06dea7202f18366ee314cbb5e514a3edb4952107a4fd5f3e051b6dbfad6349d1",
+    "art/species-construction/specs/arms-r07-v10.json": "3be55161cc5b16ba1ee925fe5fe5e4f8370bc9052d974a7f10a20c33c81efce0",
+    "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+    "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+   },
+   "minutes": 1.3
   }
  ],
  "assembly": {
@@ -1186,6 +1383,15 @@
    ".11"
   ],
   "note": "assemble_reconstructed_creature.py through loop_tools assemble; the placement constants of loop_tools PLACEMENT; round 19 R05 join (kept): head trim offset .038, fusion window raised",
-  "existing": "assembled-2180"
+  "existing": "assembled-2180",
+  "pins": {
+   "art/species-construction/assemble_reconstructed_creature.py": "e025ea131f37d9b16440bdd2e66af0708ee8d127d6e80afdb5f7019750ac1f55",
+   "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+   "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+   "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+   "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+   "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+  },
+  "minutes": 5.2
  }
 }
