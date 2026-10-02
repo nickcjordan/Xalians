@@ -30,11 +30,12 @@
  },
  "baseline": {
   "head": "head-0455",
-  "body": "body-0448",
-  "assembly": "assembled-0458",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-0458"
+  "body": "body-2118",
+  "assembly": "assembled-2180",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2180",
+  "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
- "round": 18,
+ "round": 19,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -53,7 +54,8 @@
   "R03+R06",
   "R03+R07",
   "R04+R09",
-  "R03+R09"
+  "R03+R09",
+  "R01+R05"
  ],
  "specs": {
   "R10": {
@@ -164,9 +166,8 @@
     }
    ],
    "attempts": 0,
-   "anchorScore": 6.3,
+   "anchorScore": 8.1,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 1,
@@ -191,9 +192,28 @@
        "what": "Gaussian crown lift (keep amp*0.86/sx under 0.3) and field-space removal of the notch web, nape wall and chin; keep the chin table clear of the mouth wire at z -.207 to -.226."
       }
      ]
+    },
+    {
+     "round": 19,
+     "kept": false,
+     "approach": "Raise the crown and occiput from a smooth-union skull ellipsoid in the H25 spec (crown_lift removed, chin half-widths raised) so the dome stands above the inner fan rims.",
+     "reason": "critic verdict same; R01 checklist 8.1 to 8.1; weighted mean +0",
+     "reusable": [
+      {
+       "option": "art/species-construction/specs/silhouette-r01-r19g.json",
+       "what": "H25 spec with a skulls[] crown and occiput ellipsoid (center 0,.125,.12, radii .26,.24,.37, blend .04) in place of crown_lift, plus widened chin half-widths. A larger ellipsoid (half width .27, rear y .38) moved vertices .0135 outside all zones, so stay at or under these radii."
+      },
+      {
+       "option": "art/species-construction/specs/R03-locks-r4e0b9dc8.md",
+       "what": "Frozen copy of the pre-respec R03 spec (58 lock rows). Point H28 and H33 at it with recipe.py set --spec; reproduces head-0333 exactly. Any candidate that rebuilds H28 needs it because the current R03.md no longer parses."
+      }
+     ],
+     "verdict": "same",
+     "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\r19-R01.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 2
+   "lastWorked": 19
   },
   "R02": {
    "name": "Face",
@@ -230,7 +250,6 @@
    "attempts": 1,
    "anchorScore": 7.5,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 4,
@@ -306,7 +325,6 @@
    "attempts": 2,
    "anchorScore": 6.4,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 12,
@@ -396,7 +414,6 @@
    "attempts": 1,
    "anchorScore": 5,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 17,
@@ -427,27 +444,30 @@
    "issues": [
     {
      "region": "R05",
-     "summary": "Neck is still a pinched stem under the jaw with a lit collar ring at the head base and a step at the nape (R05.4, R05.6); this sits at the head-body join, which a body-only order cannot reach.",
-     "fix": "From the body side only: widen the body neck top at the join by about .01 each side and fill the nape step so the head stub meets a fuller neck; do not cut the shoulders again.",
-     "fixability": 0.45
-    },
-    {
-     "region": "R05",
-     "summary": "From behind the shoulders still read as a square yoke: flat top, near right-angle corners and a horizontal crease ledge across both shoulders.",
-     "fix": "Fair the back top from the neck base to each cap as one convex falling arc: drop the outer back corner about .01 to .015 of figure height at |x| .20 to .24 and fill the crease with a wider blur (sigma about .02) across |x| .12 to .24. Round 13's roof cut added ledges and nubs on the upper arms; avoid cutting.",
+     "summary": "From behind, the shoulders are a flat horizontal yoke with knobbed outer corners and a raised ledge band across the shoulder blades (audit row 10); this alone keeps R05.5 partial and R05.6 fail.",
+     "evidence": "m02 back (3x crop) and the lower band of m06 neck-rear; m01 back shows shoulders sloping from the neck to soft caps with no ledge.",
+     "fix": "Body step, not a join order: drop the shoulder top from the neck base to the caps by about .02 to .03 of figure height so it slopes about 20 to 25 degrees as in m01 back, round the corner caps to a radius of about .02, and sand the scapular ledge relief (about .005 proud) flush; keep R05.3 shoulder width within 7 percent.",
      "fixability": 0.6
     },
     {
      "region": "R05",
-     "summary": "In profile the shoulder cap is a flat-topped pale slab with a square front-top corner rather than a rounded cap.",
-     "fix": "Round the cap top in profile into a dome of radius about .035 of figure height with the convex rounding max(field, blur(field)), lowering the front-top corner about .008 and blending its front face into the chest plane over about .02.",
-     "fixability": 0.6
+     "summary": "In profile a re-entrant kink remains at the nape: the back of the skull steps in, then the neck steps out again below it.",
+     "evidence": "m06 neck-profile 4x crop near x 685, y 200: softer than 0458 but still an inward notch with an outward lip under it.",
+     "fix": "Fill the nape setback by about .005 to .008 of figure height so the back of the head runs in one convex-to-straight line into the neck; widen the fusion window behind the neck (fusion_y_extent beyond .11, or a nape-only offset) rather than raising the trim further.",
+     "fixability": 0.7
+    },
+    {
+     "region": "R05",
+     "summary": "Front and rear, the neck is still a tight-radius hourglass stem between jaw and shoulders, against the sheet's near-straight short column.",
+     "evidence": "m06 neck-front and neck-rear: deep concave curves meeting the jaw and the trapezius; m01 front and back show a column that flares gently into the shoulders.",
+     "fix": "Keep the narrowest width (R05.1 already 1.07 of sheet, max 1.10) but open the curvature: soften the jaw-to-neck fillet from a radius of about .01 to about .025 of figure height and start the trapezius flare about .01 higher, so the outline reads as a column, not a waist.",
+     "fixability": 0.5
     }
    ],
-   "attempts": 2,
+   "attempts": 3,
    "anchorScore": 5,
-   "parked": false,
-   "parkReason": null,
+   "parked": true,
+   "parkReason": "3 rounds without a net gain of 1",
    "history": [
     {
      "round": 7,
@@ -476,9 +496,19 @@
        "what": "Skip the silhouette cut so a pass only fills or rounds; convex rounding max(field, blur(field)) inside a weighted box melts hard edges into a dome without a seam."
       }
      ]
+    },
+    {
+     "round": 19,
+     "kept": true,
+     "approach": "Moved the join's head cut up to z .462 (offset .038, not .020) and raised the fusion window to z .497 with a tighter y extent so the smoothing melts the head-stub lip that formed the collar ring.",
+     "reason": "",
+     "reusable": [],
+     "verdict": "better",
+     "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\r19-R05.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 13
+   "lastWorked": 19
   },
   "R06": {
    "name": "Torso and pelvis",
@@ -519,7 +549,6 @@
    "attempts": 0,
    "anchorScore": 4.5,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 9,
@@ -607,7 +636,6 @@
    "attempts": 2,
    "anchorScore": 5.8,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 5,
@@ -700,7 +728,6 @@
    "attempts": 2,
    "anchorScore": 6.4,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 8,
@@ -774,7 +801,6 @@
    "attempts": 2,
    "anchorScore": 5.6,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 6,
@@ -917,7 +943,8 @@
   "2026-10-01: stopped at the start of round 15. Round 14 R08 (assembled-0428) was reverted against a stale frozen R08.10; measured results are now re-read from the adopted packet, the posed pose and joints are cached per body component (pose-cache/<body>), and R08 is adopted.",
   "2026-10-01: hard stop after round 16. Final model assembled-0458 (head-0455, body-0448), weighted 5.447.",
   "2026-10-01: loop v3 starts at round 17 from assembled-0458 (LOOP-v3.md). New hard stop 32; plateau 3 rounds under .15 escalates to method review, a second plateau stops the batch. R10 and R11 are held (Nick: the tail is fine).",
-  "2026-10-01: v3 batch 1 paused by Nick during round 18 (R03 builder interrupted). Prepare (audit 0458, method plan, six specs) and rounds 17 and 18 folded in by fold_r17_r18.mjs; nothing kept, mean 5.447."
+  "2026-10-01: v3 batch 1 paused by Nick during round 18 (R03 builder interrupted). Prepare (audit 0458, method plan, six specs) and rounds 17 and 18 folded in by fold_r17_r18.mjs; nothing kept, mean 5.447.",
+  "2026-10-01: round 19 (v3.1, one round by Nick's request) merged from the round record's state snapshot: R05 join kept on the critic verdict, R01 reverted."
  ],
  "decisionsForNick": [
   {
@@ -999,5 +1026,19 @@
    "gap": "Side and front: a second swell on the back of the shin just above the heel and a knob at the knee. The widths now pass, but the posed shin IoU (.643) and thigh IoU (.830) fail.",
    "structural": false
   }
- ]
+ ],
+ "tools": {
+  "R03": {
+   "script": "art/species-construction/author_fan_clumps_field.py",
+   "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json"
+  },
+  "R06": {
+   "script": "art/species-construction/author_trunk_sections_field.py",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\tool-R06.json"
+  },
+  "R04": {
+   "script": "art/species-construction/author_fan_clumps_field.py",
+   "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04.json"
+  }
+ }
 }
