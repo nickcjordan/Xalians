@@ -512,3 +512,35 @@ test('gate: held regions do not block it', () => {
   S.regions.R10.hold = true; S.regions.R11.hold = true
   assert.equal(core.gateMet(S, LIMITS), true)
 })
+
+test('split builder: planner, one runner, three blind readers pick the candidate, the scoped critic grades it on the lean agent type', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R06: 'm' }
+  for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
+  status.regions.R06.history = []
+  status.lastOrders = []
+  status.tools = {}
+  status.limits.auditRefreshKept = 0
+  status.limits.builderMode = 'split'
+  status.limits.verdictKeep = true
+  const cand = (n, side) => ({ name: 'v' + n, recipe: `plans/v${n}.json`, head: 'head-x', body: 'body-' + n, assembly: 'assembled-90' + n, packet: 'p/assembled-90' + n, technicalPass: true, regionChange: {}, seams: '', measured: '', pack: `p/assembled-90${n}/reader-pack`, keys: { R06: side } })
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1 }), 's', (label, prompt) => {
+    if (label.startsWith('planner')) return { plan: 'plans/r21-R06.json', variants: 4, approach: 'loft sweep', needsCode: false }
+    if (label.startsWith('runner')) return { ok: true, candidates: [cand(1, 'A'), cand(2, 'B')] }
+    // every reader prefers candidate 2 (on side B) and finds candidate 1 the same as the baseline
+    if (label.startsWith('reader')) return { packs: [
+      { pack: 'p/assembled-901/reader-pack', region: 'R06', choice: 'same', reason: 'flat' },
+      { pack: 'p/assembled-902/reader-pack', region: 'R06', choice: 'B', reason: 'S curve reads' }] }
+    if (label.startsWith('critic r')) return { criteria: rub.regions.R06.filter(c => c.kind === 'visual').map(c => ({ id: c.id, result: 'pass', evidence: '' })), pairwise: [{ region: 'R06', verdict: 'same', reason: 'critic unsure' }], invariants: [], issues: [], summary: '' }
+    return undefined
+  })
+  const labels = out.calls.map(c => c.label)
+  assert.equal(labels.filter(l => l.startsWith('planner')).length, 1)
+  assert.equal(labels.filter(l => l.startsWith('runner')).length, 1)
+  assert.equal(labels.filter(l => l.startsWith('reader')).length, 3)
+  assert.ok(!labels.some(l => l.startsWith('builder')), 'no code builder when the plan needs no code')
+  const critic = out.calls.find(c => c.label.startsWith('critic r'))
+  assert.match(critic.label, /assembled-902/, 'the readers chose candidate 2')
+  assert.match(critic.prompt, /p[\\/]assembled-902/)
+  assert.equal(out.ret.status.baseline.assembly, 'assembled-902', 'the readers decide, so it is kept although the critic said same')
+})

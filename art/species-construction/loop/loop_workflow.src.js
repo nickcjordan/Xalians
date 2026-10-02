@@ -257,6 +257,70 @@ function combinePrompt(a, b, round, baselinePacket) {
     'Return the structured output with failed, changes (one line), approach "combine", recipe, head, body, assembly, packet, regionChange (the magnitude of every region in diff.json regionChange) and technicalPass.'
 }
 
+// ---- v3.4: plan, execute, select (audit 2026-10-02 recommendations 8 and 11) -------------
+// The builder is split: a planner writes a plan of recipe variants, a cheap runner executes it
+// with one blocking command (recipe.py run-plan) and makes blind reader packs, three blind
+// readers pick the candidate that reads most like the reference, and only then does the scoped
+// critic grade the chosen one. Lean agent type for every role that does not edit code: each
+// turn of the default type re-reads about 61K tokens of project instructions it does not need.
+const LEAN = L.leanAgentType === undefined ? 'Explore' : L.leanAgentType
+const leanOpts = o => LEAN ? { ...o, agentType: LEAN } : o
+const PLAN_OUT = { type: 'object', properties: { plan: { type: 'string' }, variants: { type: 'number' }, approach: { type: 'string' }, needsCode: { type: 'boolean' }, codeTask: { type: 'string' } }, required: ['approach', 'needsCode'] }
+const RUN_OUT = {
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' }, reason: { type: 'string' },
+    candidates: { type: 'array', items: { type: 'object', properties: {
+      name: { type: 'string' }, recipe: { type: 'string' }, head: { type: 'string' }, body: { type: 'string' }, assembly: { type: 'string' }, packet: { type: 'string' },
+      technicalPass: { type: 'boolean' }, regionChange: { type: 'object', additionalProperties: { type: 'number' } }, seams: { type: 'string' }, measured: { type: 'string' }, pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
+    }, required: ['assembly', 'packet'] } },
+  },
+  required: ['ok', 'candidates'],
+}
+const READ_OUT = { type: 'object', properties: { packs: { type: 'array', items: { type: 'object', properties: { pack: { type: 'string' }, region: { type: 'string' }, choice: { type: 'string', enum: ['A', 'B', 'same'] }, reason: { type: 'string' }, remaining: { type: 'string' } }, required: ['pack', 'region', 'choice', 'reason'] } } }, required: ['packs'] }
+
+function plannerPrompt(order, round, refine) {
+  return `Read the planner brief at ${BRIEF('planner-brief.md')} and the plan format at ${BRIEF('plan-schema.md')}, and follow them.\n\n` +
+    builderPrompt(order, round).replace(/^Read the builder brief[^\n]*\n\n/, '') +
+    `\n\nWrite the plan to ${LOOPDIR}\\plans\\r${String(round).padStart(2, '0')}-${order.id}${refine ? '-refine' : ''}.json. Do not build anything yourself.` +
+    (refine ? `\n\nThis is the refine pass. The first plan's results: ${refine}. Plan variants that fix what the readers and measurements said.` : '')
+}
+function runnerPrompt(plan, order, round) {
+  const seed = `r${round}-${order.id}`
+  return `You run one command and report its result. Start it with the Bash tool and run_in_background true, then wait for its completion notice; do not poll, sleep or tail logs while it runs.\n` +
+    `Command: python art/species-construction/loop/recipe.py run-plan ${plan} --top ${L.planTop ?? 3}\n` +
+    `Working directory: ${REPO}. When it finishes, read plan-result.json beside the plan. For each top candidate that has a packet, run python art/species-construction/loop/reader_pack.py ${abs(S.baseline.packet)} <candidate packet> --regions ${[order.id, ...(order.with || [])].join(',')} --out <candidate packet>\\reader-pack --seed ${seed}-<candidate name>, and set its pack to that folder and its keys to the side the candidate is on for each region, from the pack key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.\n` +
+    'Return the structured output: ok, and per candidate its name, recipe, head, body, assembly, packet, technicalPass, regionChange (region to magnitude, from candidate.json), seams and measured as one line each from candidate.json, and pack. If the command failed, ok false and the reason.'
+}
+function readerPrompt(packs, order, k) {
+  return `Read the reader brief at ${BRIEF('reader-brief.md')} and follow it. You are reader ${k + 1} of three; you work alone.\n` +
+    `Packs to judge (each folder holds pack.json and its panels): ${packs.join(' ; ')}.\n` +
+    `For every pack and every region it lists, say which of A and B reads more like the Reference, or same. Return the structured output.`
+}
+// Majority of three readers per candidate, mapped back to better, same or worse against the baseline.
+function readerVerdicts(cands, reads, regions) {
+  const out = []
+  for (const c of cands) {
+    const per = {}
+    for (const rid of regions) {
+      let better = 0, worse = 0
+      const reasons = []
+      for (const r of reads) {
+        const norm = s => String(s || '').replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase()
+        const e = r && (r.packs || []).find(p => c.pack && p.pack && p.region === rid && (norm(c.pack).endsWith(norm(p.pack)) || norm(p.pack).endsWith(norm(c.pack))))
+        if (!e) continue
+        // the candidate's side in the pack comes from the runner's key; the pack folder records it as key.json, read by the runner into c.keys
+        const side = (c.keys || {})[rid] || 'B'
+        if (e.choice === side) better++; else if (e.choice !== 'same') worse++
+        reasons.push(e.reason)
+      }
+      per[rid] = { verdict: better >= 2 ? 'better' : worse >= 2 ? 'worse' : 'same', better, worse, reason: reasons.join(' | ') }
+    }
+    out.push({ cand: c, per, score: Object.values(per).reduce((t, v) => t + v.better - v.worse, 0) })
+  }
+  return out.sort((a, b) => b.score - a.score)
+}
+
 function recordPrompt(round, entry, suffix) {
   return `Write one file exactly, byte for byte, with the Write tool. Do not reformat, summarise or change anything.
 ` +
@@ -404,8 +468,38 @@ for (let i = 0; i < ROUNDS; i++) {
       const spec = await agent(specPrompt(order.id), { label: `spec r${round}: ${order.id}`, phase: 'Rounds', schema: SPEC, model: 'opus', effort: 'high' })
       if (spec) { S.specs[order.id] = { path: spec.path, image: spec.image, summary: spec.summary, round }; out.spec = spec }
     }
-    out.build = await agent(builderPrompt(order, round),
-      { label: `builder r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' })
+    if (L.builderMode === 'split') {
+      const plan = await agent(plannerPrompt(order, round), leanOpts({ label: `planner r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
+      if (plan && plan.needsCode) {
+        // a plan that needs a script change goes to the code builder, which builds one candidate itself
+        out.build = await agent(builderPrompt(order, round) + `\n\nThe planner asked for this code change first: ${plan.codeTask}`,
+          { label: `builder r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' })
+      } else if (plan && plan.plan) {
+        let picked = null
+        for (let pass = 0; pass <= (L.refinePasses ?? 1) && !picked; pass++) {
+          const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), leanOpts({ label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
+          if (!thePlan || !thePlan.plan) break
+          const run = await agent(runnerPrompt(thePlan.plan, order, round), leanOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'haiku', effort: 'low' }))
+          const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
+          if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built') : 'runner returned nothing'; continue }
+          const regions = [order.id, ...(order.with || [])]
+          const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
+          const ranked = readerVerdicts(cands, reads.filter(Boolean), regions)
+          out.readers = ranked.map(x => ({ assembly: x.cand.assembly, per: x.per }))
+          const best = ranked[0]
+          if (best && regions.some(rid => best.per[rid].verdict === 'better') && !regions.some(rid => best.per[rid].verdict === 'worse')) picked = best
+          else out.firstPass = JSON.stringify(ranked.map(x => ({ candidate: x.cand.name, per: x.per })))
+        }
+        if (picked) {
+          out.build = { failed: false, recipe: picked.cand.recipe, head: picked.cand.head, body: picked.cand.body, assembly: picked.cand.assembly, packet: picked.cand.packet, technicalPass: true,
+            approach: plan.approach, changes: plan.approach, regionChange: picked.cand.regionChange }
+          out.readerVerdict = picked.per
+        } else out.build = { failed: true, reason: 'no candidate read better than the baseline: ' + (out.firstPass || '').slice(0, 300), changes: '', approach: plan.approach }
+      } else out.build = { failed: true, reason: 'planner returned no plan', changes: '', approach: '' }
+    } else {
+      out.build = await agent(builderPrompt(order, round),
+        { label: `builder r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' })
+    }
     const b = out.build
     if (!b || b.failed || !b.packet || b.technicalPass === false) { out.failed = b ? (b.reason || 'technical check failed') : 'builder returned nothing'; return out }
     // The critic looks at the target and at regions whose images moved past the threshold;
@@ -420,8 +514,12 @@ for (let i = 0; i < ROUNDS; i++) {
       .filter(id => !frozen.includes(id) && !targetsHere.includes(id) && !S.regions[id].hold)
       .sort((x, y) => (mag[y] ?? 1) - (mag[x] ?? 1)).slice(0, L.criticScopeMax ?? 2)
     out.critique = await agent(criticPrompt(b.packet, order, 'candidate', scope),
-      { label: `critic r${round} ${order.component}: ${b.assembly}`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' })
+      leanOpts({ label: `critic r${round} ${order.component}: ${b.assembly}`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' }))
     if (!out.critique) { out.failed = 'critic returned nothing'; return out }
+    if (out.readerVerdict) {
+      const rv = Object.entries(out.readerVerdict).map(([region, v]) => ({ region, verdict: v.verdict, reason: 'readers ' + v.better + ' better, ' + v.worse + ' worse: ' + v.reason.slice(0, 400) }))
+      out.critique = { ...out.critique, criticPairwise: out.critique.pairwise, pairwise: rv }
+    }
     out.decision = judge(S, RUBRIC, L, order, b, out.critique,
       { pools: POOLS, regionChange: b.regionChange || null, threshold: b.regionChange ? THRESHOLD : null, regionImages: SP.regionImages })
     return out
@@ -468,7 +566,7 @@ for (let i = 0; i < ROUNDS; i++) {
   // The state after this round rides in the record, so a stopped batch resumes with
   // loop_state.py merge <round file> instead of a journal replay.
   entry.state = snapshot()
-  await agent(recordPrompt(round, entry), { label: `record r${round}`, phase: 'Rounds', model: 'haiku', effort: 'low' })
+  await agent(recordPrompt(round, entry), leanOpts({ label: `record r${round}`, phase: 'Rounds', model: 'haiku', effort: 'low' }))
   log(`Round ${round}: ` + entry.orders.map(o => `${o.region} ${o.kept ? 'KEPT' : 'reverted'}`).join(' | ') + ` mean ${entry.mean}`)
 
   // Method review: a region that parked this round gets one new method per batch, and
