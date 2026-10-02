@@ -1,166 +1,623 @@
 {
-  "schemaVersion": 1,
-  "species": "akinza",
-  "label": "Akinza",
-  "note": "Every species-specific constant of the loop tools. Paths are relative to the repository root. loop_tools.py reads this file through species.py; a second creature needs its own copy of this file, not code changes.",
-  "paths": {
-    "work": "untracked/species-construction/akinza",
-    "docs": "docs/design/species-construction/akinza",
-    "cameras": "docs/design/species-construction/akinza/loop/cameras",
-    "evidence": "docs/design/species-construction/akinza/evidence",
-    "rubric": "docs/design/species-construction/akinza/loop/rubric.json",
-    "rigDir": "art/species-construction/rig",
-    "sheetPose": "art/species-construction/rig/akinza-sheet-pose.json",
-    "rigScript": "art/species-construction/rig_akinza.py"
+ "schemaVersion": 1,
+ "species": "akinza",
+ "label": "Akinza",
+ "note": "Every species-specific constant of the loop tools. Paths are relative to the repository root. loop_tools.py reads this file through species.py; a second creature needs its own copy of this file, not code changes.",
+ "paths": {
+  "work": "untracked/species-construction/akinza",
+  "docs": "docs/design/species-construction/akinza",
+  "cameras": "docs/design/species-construction/akinza/loop/cameras",
+  "evidence": "docs/design/species-construction/akinza/evidence",
+  "rubric": "docs/design/species-construction/akinza/loop/rubric.json",
+  "rigDir": "art/species-construction/rig",
+  "sheetPose": "art/species-construction/rig/akinza-sheet-pose.json",
+  "rigScript": "art/species-construction/rig_akinza.py"
+ },
+ "glb": "akinza.glb",
+ "frame": {
+  "note": "Figure units. Model rows are fixed in world space: floorZ is the floor, fixedHeight the loop-start figure's height (assembled-0156, floor -.957 to crown .9035). A row fraction 'at' runs from the crown (0) to the floor (1): z = floorZ + fixedHeight * (1 - at). Lateral coordinates are world x or y divided by fixedHeight.",
+  "floorZ": -0.957,
+  "fixedHeight": 1.8605,
+  "render": {
+   "note": "Fixed camera frame of the whole-creature renders: the target (world point the cameras aim at) and the orthographic scale. These are the frame assembled-0458 had when auto-fitted to its bounds; fixing them stops a taller ear tip from rescaling and shifting every body pixel (shakedown head swap 2026-10-01: orthoScale 3.198 to 3.228 moved eleven body criteria). The figure must stay inside the frame; the renderer fails when it does not.",
+   "center": [
+    0.028725504875183105,
+    0.16471073031425476,
+    -0.03000742197036743
+   ],
+   "scale": 3.198124453425407
   },
-  "glb": "akinza.glb",
-  "frame": {
-    "note": "Figure units. Model rows are fixed in world space: floorZ is the floor, fixedHeight the loop-start figure's height (assembled-0156, floor -.957 to crown .9035). A row fraction 'at' runs from the crown (0) to the floor (1): z = floorZ + fixedHeight * (1 - at). Lateral coordinates are world x or y divided by fixedHeight.",
-    "floorZ": -0.957,
-    "fixedHeight": 1.8605,
-    "render": {
-      "note": "Fixed camera frame of the whole-creature renders: the target (world point the cameras aim at) and the orthographic scale. These are the frame assembled-0458 had when auto-fitted to its bounds; fixing them stops a taller ear tip from rescaling and shifting every body pixel (shakedown head swap 2026-10-01: orthoScale 3.198 to 3.228 moved eleven body criteria). The figure must stay inside the frame; the renderer fails when it does not.",
-      "center": [0.028725504875183105, 0.16471073031425476, -0.03000742197036743],
-      "scale": 3.198124453425407
-    },
-    "centerLine": {
-      "note": "World coordinate of the figure centreline in each view, along the view's horizontal axis (x for front and back, y for left and right). The fit and the row measures centre the model on it instead of on the ear fan of each render, so a head change cannot shift the body measurements (shakedown head swap 2026-10-01: the fan centre moved 2.5 px). Values are the fan centres of assembled-0458, so the baseline measures as before.",
-      "front": -0.008585947081446645,
-      "back": -0.005920847901253568,
-      "left": -0.012519104849256307,
-      "right": -0.012519102337982507
-    },
-    "centerLinePosed": {
-      "note": "The same centreline for the posed model (hands on hips, rig_fit cameras): world coordinate of the posed figure's ear-fan centre in the rig front, left and back cameras, taken from the assembled-0458 posed masks. The pose moves the head and trunk, so the rest-pose centreline does not apply to it.",
-      "front": 0.028528,
-      "back": 0.032094,
-      "left": -0.026479
-    }
+  "centerLine": {
+   "note": "World coordinate of the figure centreline in each view, along the view's horizontal axis (x for front and back, y for left and right). The fit and the row measures centre the model on it instead of on the ear fan of each render, so a head change cannot shift the body measurements (shakedown head swap 2026-10-01: the fan centre moved 2.5 px). Values are the fan centres of assembled-0458, so the baseline measures as before.",
+   "front": -0.008585947081446645,
+   "back": -0.005920847901253568,
+   "left": -0.012519104849256307,
+   "right": -0.012519102337982507
   },
-  "join": {
-    "note": "Defaults of the assembly join (loop_tools.py assemble ... --join). These are today's placement and bridge parameters; a join JSON overrides any subset. For a retargeted body (retarget.json headShiftZ) the shift is added to jaw-anchor-z and body-trim.",
-    "head-scale": 0.5,
-    "jaw-anchor-z": 0.5,
-    "head-depth-offset": -0.02,
-    "body-trim": 0.425,
-    "fragment-voxels": 5,
-    "bridge-rings": 31,
-    "fusion-iterations": 90,
-    "fusion-factor": 0.6
-  },
-  "views": ["front", "front-left", "left", "back", "right", "front-right"],
-  "cameraSets": ["face", "head", "neck", "regions", "tail", "paws"],
-  "referenceSheet": "evidence/identity-run-0001.png",
-  "referencePanels": {
-    "note": "Column ranges of the front and left figures in the preferred first sheet.",
-    "front": [0, 375],
-    "left": [759, 1024]
-  },
-  "referenceSplits": {
-    "note": "Neighbouring figures touch, so the split column changes with height: [row0, row1 (null = end), col0, col1].",
-    "front": [[0, 250, 0, 375], [250, null, 0, 418]],
-    "left": [[0, null, 759, 1024]],
-    "back": [[0, 250, 1040, 1520], [250, null, 1040, 1420]]
-  },
-  "backStudy": {
-    "note": "back-r03 compares the back view with the accepted back study, which governs the tails.",
-    "view": "back-r03",
-    "image": "evidence/back-study-0018.png",
-    "clearRowsFrom": 1400
-  },
-  "packetReferences": {
-    "r01.png": ["evidence/face-study-0010.png", "Accepted reference: eyes and expression"],
-    "r02.png": ["evidence/paws-study-0020.png", "Accepted reference: animal paws"],
-    "r03.png": ["evidence/back-study-0018.png", "Accepted reference: tail shape, junction and positioning"],
-    "r04.png": ["evidence/head-clay-study-0021.png", "Supporting reference: rounded head and coat masses (its inward gaze is excluded)"]
-  },
-  "fitViews": ["front", "left", "back", "back-r03"],
-  "fitBands": {"head": [0, 0.24], "trunk": [0.24, 0.56], "legs": [0.56, 1.0]},
-  "regionImages": {
-    "note": "Which packet images show which regions. A region whose images all match the baseline packet keeps its score without being judged again.",
-    "R01": ["m04"], "R02": ["m05"], "R03": ["m04"], "R04": ["m04", "m05"], "R05": ["m06"],
-    "R06": ["m06"], "R07": ["m07"], "R08": ["m08"], "R09": ["m09"], "R10": ["m10"], "R11": ["m10"],
-    "R12": ["m02", "m03"]
-  },
-  "components": {
-    "note": "Order pools for pickOrders. head and body are the regions a head or body order may target. join is the assembly step (neck join), worked alone beside a body order. both holds regions that belong to no single component. R05 stays in the body pool as well as the join pool because the body neck tool (the neck section of the body build) still exists.",
-    "head": ["R01", "R02", "R03", "R04"],
-    "body": ["R05", "R06", "R07", "R08", "R09", "R10", "R11"],
-    "join": ["R05"],
-    "both": ["R12"]
-  },
-  "zones": {
-    "note": "Where each region lives in the canonical figure frame, for containment (does a step move vertices outside the regions it owns) and for the silhouette crop of regionChange. at is the row band from the crown (0) to the floor (1). x is world x divided by fixedHeight; symmetricX true means the band applies to |x| (both sides); otherwise the range is signed (the tails stack on +x, the figure's left). y is world depth divided by fixedHeight, front is negative. A region without a zone (R12) is the whole figure. Zones may overlap; a step is judged by the union of its own regions' zones. Derived on 2026-10-01 from the rubric: each region's row criteria and fit bands set the at band (head band 0 to .24 of the fit; ear span window 0 to .2, back row .2, left row .22; neck window .18 to .30; shoulders .26 to .34; chest row .32; waist .36 to .48 and .42 to .46; hips .46 to .56; thigh row .68; ankle rows .86 to .94 and .85; paw rows .96 to .99), then widened by .02 where the mesh continues past the criterion's row, and the x and y extents read from the vertices of assembled-0458 (world x, y per .04 band of at) and the eye, mouth and nose objects (at .09 to .21, |x| below .16). Margins are deliberate: containment flags real bleed, not a vertex at the boundary.",
-    "unit": "figureHeight",
-    "R01": {"at": [0.0, 0.26], "x": [0.0, 0.29], "symmetricX": true, "y": [-0.12, 0.09]},
-    "R02": {"at": [0.06, 0.24], "x": [0.0, 0.18], "symmetricX": true, "y": [-0.12, 0.0]},
-    "R03": {"at": [0.0, 0.2], "x": [0.05, 0.3], "symmetricX": true, "y": [-0.12, -0.01]},
-    "R04": {"at": [0.0, 0.22], "x": [0.0, 0.3], "symmetricX": true, "y": [-0.02, 0.09]},
-    "R05": {"at": [0.17, 0.36], "x": [0.0, 0.2], "symmetricX": true, "y": [-0.12, 0.05]},
-    "R06": {"at": [0.28, 0.58], "x": [0.0, 0.22], "symmetricX": true, "y": [-0.12, 0.3]},
-    "R07": {"at": [0.28, 0.62], "x": [0.1, 0.24], "symmetricX": true, "y": [-0.12, 0.05]},
-    "R08": {"at": [0.52, 0.95], "x": [0.0, 0.22], "symmetricX": true, "y": [-0.1, 0.25]},
-    "R09": {"at": [0.94, 1.0], "x": [0.04, 0.28], "symmetricX": true, "y": [-0.1, 0.05]},
-    "R10": {"at": [0.36, 0.84], "x": [-0.05, 0.32], "symmetricX": false, "y": [0.08, 0.32]},
-    "R11": {"at": [0.38, 0.56], "x": [-0.12, 0.18], "symmetricX": false, "y": [0.0, 0.24]}
-  },
-  "sideEffectThreshold": 0.0005,
-  "sideEffectThresholdNote": "Placeholder (the existing changed-image cutoff) until shakedown.py sets it to three times the largest unchanged change, floored at 0.0005.",
-  "silhouetteViews": ["front", "left", "back"],
-  "shakedown": {
-    "note": "Older parts the shakedown swaps in, the retarget used for the broken part, and the move tolerance for a measured value.",
-    "headSwap": "head-0440",
-    "bodySwap": "body-0426",
-    "brokenBody": {"scale": ["forearm.L=0.8", "forearm.R=0.8"], "region": "R07"},
-    "tolerance": 0.0001,
-    "toleranceNote": "Measured values are deterministic (the unchanged re-assembly reproduces every value exactly), and after the 2026-10-01 frame and centreline fixes a head swap moves no body criterion and a body swap no head criterion by any amount, so the tolerance is rounding only.",
-    "allow": {
-      "note": "Criteria that may move in a check although they belong to another component, with the reason. A criterion listed here is reported as movedAllowed, not as a failure.",
-      "broken": {
-        "R10.2": "The fit band 'legs' starts at row .56 and the arms-down forearm and paw hang from .58 to .61, so shortening the forearm changes the back view's legs band by about .004",
-        "R10.1": "The fit band 'trunk' (.24 to .56) contains the arm; shortening the forearm changes the back-r03 trunk band by about .0015",
-        "R06.10": "The posed trunk band (.24 to .56) contains the posed arm; shortening the forearm changes it by about .0015"
-      }
-    }
-  },
-  "sheet": "docs/design/species-construction/akinza/loop/sheet.json",
-  "blender": {
-    "note": "Concurrent Blender processes, enforced by loop_tools.acquire_slot under one lock. The first process always starts. A second starts only while at least minFreeGb of memory is free, a third only while thirdSlotFreeGb is free (a build peaks at roughly 5 to 7 GB, so the third needs the headroom of two more builds), and no process starts within settleSeconds of the previous start, because its memory is not taken yet when the free figure is read. maxSlots is the hard cap; recipe.py sweep reads it.",
-    "maxSlots": 3,
-    "minFreeGb": 9,
-    "thirdSlotFreeGb": 14,
-    "settleSeconds": 15
-  },
-  "seams": {
-    "note": "Joints for seam_check.py. at is the row from the crown (0) to the floor (1) in the fixed figure frame, the mean y of the sheet landmarks named in landmarks (sheet.json, same frame) over the views that have them; the neck base lies between the chin (.2245) and the shoulder (.315), the ear-fan root where the fan leaves the head (the fan's lower outer edge, between the outer extent at .03 to .06 and the eyes at .145). band is the half-height of the zone scored, context the half-height of the outline traced (a bump is measured against the local mean over bumpWindow, a kink over kinkSpan), all in figure heights.",
-    "views": ["front", "left", "back"],
-    "band": 0.03,
-    "context": 0.065,
-    "kinkSpan": 0.012,
-    "bumpWindow": 0.04,
-    "joints": {
-      "neckBase": {"at": 0.275, "views": ["front", "left", "back"], "landmarks": ["chin", "shoulder_l", "shoulder_r"]},
-      "shoulder": {"at": 0.315, "views": ["front", "left", "back"], "landmarks": ["shoulder_l", "shoulder_r"]},
-      "elbow": {"at": 0.402, "views": ["front", "left", "back"], "landmarks": ["elbow_l", "elbow_r"]},
-      "wrist": {"at": 0.476, "views": ["front", "left", "back"], "landmarks": ["wrist_l", "wrist_r"]},
-      "hip": {"at": 0.605, "views": ["front", "left", "back"], "landmarks": ["hip_l", "hip_r"]},
-      "knee": {"at": 0.769, "views": ["front", "left", "back"], "landmarks": ["knee_l", "knee_r"]},
-      "ankle": {"at": 0.914, "band": [0.03, 0.04], "views": ["front", "left", "back"], "landmarks": ["ankle_l", "ankle_r"]},
-      "tailRoot": {"at": 0.575, "band": 0.06, "views": ["left", "back"], "landmarks": ["tail_root_1", "tail_root_2", "tail_root_3"]},
-      "earFanRoot": {"at": 0.07, "band": [0.07, 0.06], "views": ["front", "back"], "landmarks": ["ear_fan_l_outer", "ear_fan_r_outer", "eye_centre_l"]}
-    },
-    "thresholds": {
-      "note": "Calibrated 2026-10-01 on 20 recorded candidates (art/species-construction/loop/seam_calibrate.py, results in seam-calibration.json beside this file). change is the rise over the baseline (the useful signal; clean outlines move at most kink .26, bump .0012, wbump .0011, step .0017, needle 7 outside the fan, and an unchanged re-assembly moves nothing); the defects at joints reach kink .75, step .0073, wbump .0029 (ankle collars of assembled-2112 and 2078), crease 53 to 103 samples. absolute applies without a baseline and is only a gross-damage floor: the figure's own elbow outline reads kink 4.8, bump .022, so a standalone score cannot tell a new defect from the old shape; always give a baseline. Units: kink is a slope change (dimensionless), bump, wbump and step are figure heights, needle and crease are samples of the 700-per-figure-height grid. The ear fan, ragged by design, and the tail root have their own entries under joints.",
-      "change": {"kink": 0.3, "bump": 0.0008, "wbump": 0.0012, "step": 0.002, "needle": 10, "crease": 30},
-      "changeLegacy": {"kink": 0.4, "bump": 0.003, "wbump": 0.0035, "step": 0.004, "needle": 15, "crease": 40},
-      "absolute": {"kink": 7, "bump": 0.04, "wbump": 0.04, "step": 0.03, "needle": 400},
-      "joints": {
-        "earFanRoot": {
-          "change": {"kink": 1.2, "bump": 0.007, "wbump": 0.007, "step": 0.01, "needle": 150, "crease": 700},
-          "changeLegacy": {"kink": 1.2, "bump": 0.007, "wbump": 0.007, "step": 0.01, "needle": 150, "crease": 700}
-        },
-        "tailRoot": {"change": {"crease": 250}, "changeLegacy": {"crease": 250}}
-      }
-    }
+  "centerLinePosed": {
+   "note": "The same centreline for the posed model (hands on hips, rig_fit cameras): world coordinate of the posed figure's ear-fan centre in the rig front, left and back cameras, taken from the assembled-0458 posed masks. The pose moves the head and trunk, so the rest-pose centreline does not apply to it.",
+   "front": 0.028528,
+   "back": 0.032094,
+   "left": -0.026479
   }
+ },
+ "join": {
+  "note": "Defaults of the assembly join (loop_tools.py assemble ... --join). These are today's placement and bridge parameters; a join JSON overrides any subset. For a retargeted body (retarget.json headShiftZ) the shift is added to jaw-anchor-z and body-trim.",
+  "head-scale": 0.5,
+  "jaw-anchor-z": 0.5,
+  "head-depth-offset": -0.02,
+  "body-trim": 0.425,
+  "fragment-voxels": 5,
+  "bridge-rings": 31,
+  "fusion-iterations": 90,
+  "fusion-factor": 0.6
+ },
+ "views": [
+  "front",
+  "front-left",
+  "left",
+  "back",
+  "right",
+  "front-right"
+ ],
+ "cameraSets": [
+  "face",
+  "head",
+  "neck",
+  "regions",
+  "tail",
+  "paws"
+ ],
+ "referenceSheet": "evidence/identity-run-0001.png",
+ "referencePanels": {
+  "note": "Column ranges of the front and left figures in the preferred first sheet.",
+  "front": [
+   0,
+   375
+  ],
+  "left": [
+   759,
+   1024
+  ]
+ },
+ "referenceSplits": {
+  "note": "Neighbouring figures touch, so the split column changes with height: [row0, row1 (null = end), col0, col1].",
+  "front": [
+   [
+    0,
+    250,
+    0,
+    375
+   ],
+   [
+    250,
+    null,
+    0,
+    418
+   ]
+  ],
+  "left": [
+   [
+    0,
+    null,
+    759,
+    1024
+   ]
+  ],
+  "back": [
+   [
+    0,
+    250,
+    1040,
+    1520
+   ],
+   [
+    250,
+    null,
+    1040,
+    1420
+   ]
+  ]
+ },
+ "backStudy": {
+  "note": "back-r03 compares the back view with the accepted back study, which governs the tails.",
+  "view": "back-r03",
+  "image": "evidence/back-study-0018.png",
+  "clearRowsFrom": 1400
+ },
+ "packetReferences": {
+  "r01.png": [
+   "evidence/face-study-0010.png",
+   "Accepted reference: eyes and expression"
+  ],
+  "r02.png": [
+   "evidence/paws-study-0020.png",
+   "Accepted reference: animal paws"
+  ],
+  "r03.png": [
+   "evidence/back-study-0018.png",
+   "Accepted reference: tail shape, junction and positioning"
+  ],
+  "r04.png": [
+   "evidence/head-clay-study-0021.png",
+   "Supporting reference: rounded head and coat masses (its inward gaze is excluded)"
+  ]
+ },
+ "fitViews": [
+  "front",
+  "left",
+  "back",
+  "back-r03"
+ ],
+ "fitBands": {
+  "head": [
+   0,
+   0.24
+  ],
+  "trunk": [
+   0.24,
+   0.56
+  ],
+  "legs": [
+   0.56,
+   1.0
+  ]
+ },
+ "regionImages": {
+  "note": "Which packet images show which regions. A region whose images all match the baseline packet keeps its score without being judged again.",
+  "R01": [
+   "m04"
+  ],
+  "R02": [
+   "m05"
+  ],
+  "R03": [
+   "m04"
+  ],
+  "R04": [
+   "m04",
+   "m05"
+  ],
+  "R05": [
+   "m06"
+  ],
+  "R06": [
+   "m06"
+  ],
+  "R07": [
+   "m07"
+  ],
+  "R08": [
+   "m08"
+  ],
+  "R09": [
+   "m09"
+  ],
+  "R10": [
+   "m10"
+  ],
+  "R11": [
+   "m10"
+  ],
+  "R12": [
+   "m02",
+   "m03"
+  ]
+ },
+ "components": {
+  "note": "Order pools for pickOrders. head and body are the regions a head or body order may target. join is the assembly step (neck join), worked alone beside a body order. both holds regions that belong to no single component. R05 stays in the body pool as well as the join pool because the body neck tool (the neck section of the body build) still exists.",
+  "head": [
+   "R01",
+   "R02",
+   "R03",
+   "R04"
+  ],
+  "body": [
+   "R05",
+   "R06",
+   "R07",
+   "R08",
+   "R09",
+   "R10",
+   "R11"
+  ],
+  "join": [
+   "R05"
+  ],
+  "both": [
+   "R12"
+  ]
+ },
+ "zones": {
+  "note": "Where each region lives in the canonical figure frame, for containment (does a step move vertices outside the regions it owns) and for the silhouette crop of regionChange. at is the row band from the crown (0) to the floor (1). x is world x divided by fixedHeight; symmetricX true means the band applies to |x| (both sides); otherwise the range is signed (the tails stack on +x, the figure's left). y is world depth divided by fixedHeight, front is negative. A region without a zone (R12) is the whole figure. Zones may overlap; a step is judged by the union of its own regions' zones. Derived on 2026-10-01 from the rubric: each region's row criteria and fit bands set the at band (head band 0 to .24 of the fit; ear span window 0 to .2, back row .2, left row .22; neck window .18 to .30; shoulders .26 to .34; chest row .32; waist .36 to .48 and .42 to .46; hips .46 to .56; thigh row .68; ankle rows .86 to .94 and .85; paw rows .96 to .99), then widened by .02 where the mesh continues past the criterion's row, and the x and y extents read from the vertices of assembled-0458 (world x, y per .04 band of at) and the eye, mouth and nose objects (at .09 to .21, |x| below .16). Margins are deliberate: containment flags real bleed, not a vertex at the boundary. R03 y widened to +.07 on 2026-10-01 from the R03 toolsmith finding: the front fan clump volume lies at depth -.07 to +.04 and its cup wall smooths the old rear face out to +.066.",
+  "unit": "figureHeight",
+  "R01": {
+   "at": [
+    0.0,
+    0.26
+   ],
+   "x": [
+    0.0,
+    0.29
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.12,
+    0.09
+   ]
+  },
+  "R02": {
+   "at": [
+    0.06,
+    0.24
+   ],
+   "x": [
+    0.0,
+    0.18
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.12,
+    0.0
+   ]
+  },
+  "R03": {
+   "at": [
+    0.0,
+    0.2
+   ],
+   "x": [
+    0.05,
+    0.3
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.12,
+    0.07
+   ]
+  },
+  "R04": {
+   "at": [
+    0.0,
+    0.22
+   ],
+   "x": [
+    0.0,
+    0.3
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.02,
+    0.09
+   ]
+  },
+  "R05": {
+   "at": [
+    0.17,
+    0.36
+   ],
+   "x": [
+    0.0,
+    0.2
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.12,
+    0.05
+   ]
+  },
+  "R06": {
+   "at": [
+    0.28,
+    0.58
+   ],
+   "x": [
+    0.0,
+    0.22
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.12,
+    0.3
+   ]
+  },
+  "R07": {
+   "at": [
+    0.28,
+    0.62
+   ],
+   "x": [
+    0.1,
+    0.24
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.12,
+    0.05
+   ]
+  },
+  "R08": {
+   "at": [
+    0.52,
+    0.95
+   ],
+   "x": [
+    0.0,
+    0.22
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.1,
+    0.25
+   ]
+  },
+  "R09": {
+   "at": [
+    0.94,
+    1.0
+   ],
+   "x": [
+    0.04,
+    0.28
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.1,
+    0.05
+   ]
+  },
+  "R10": {
+   "at": [
+    0.36,
+    0.84
+   ],
+   "x": [
+    -0.05,
+    0.32
+   ],
+   "symmetricX": false,
+   "y": [
+    0.08,
+    0.32
+   ]
+  },
+  "R11": {
+   "at": [
+    0.38,
+    0.56
+   ],
+   "x": [
+    -0.12,
+    0.18
+   ],
+   "symmetricX": false,
+   "y": [
+    0.0,
+    0.24
+   ]
+  }
+ },
+ "sideEffectThreshold": 0.0005,
+ "sideEffectThresholdNote": "Placeholder (the existing changed-image cutoff) until shakedown.py sets it to three times the largest unchanged change, floored at 0.0005.",
+ "silhouetteViews": [
+  "front",
+  "left",
+  "back"
+ ],
+ "shakedown": {
+  "note": "Older parts the shakedown swaps in, the retarget used for the broken part, and the move tolerance for a measured value.",
+  "headSwap": "head-0440",
+  "bodySwap": "body-0426",
+  "brokenBody": {
+   "scale": [
+    "forearm.L=0.8",
+    "forearm.R=0.8"
+   ],
+   "region": "R07"
+  },
+  "tolerance": 0.0001,
+  "toleranceNote": "Measured values are deterministic (the unchanged re-assembly reproduces every value exactly), and after the 2026-10-01 frame and centreline fixes a head swap moves no body criterion and a body swap no head criterion by any amount, so the tolerance is rounding only.",
+  "allow": {
+   "note": "Criteria that may move in a check although they belong to another component, with the reason. A criterion listed here is reported as movedAllowed, not as a failure.",
+   "broken": {
+    "R10.2": "The fit band 'legs' starts at row .56 and the arms-down forearm and paw hang from .58 to .61, so shortening the forearm changes the back view's legs band by about .004",
+    "R10.1": "The fit band 'trunk' (.24 to .56) contains the arm; shortening the forearm changes the back-r03 trunk band by about .0015",
+    "R06.10": "The posed trunk band (.24 to .56) contains the posed arm; shortening the forearm changes it by about .0015"
+   }
+  }
+ },
+ "sheet": "docs/design/species-construction/akinza/loop/sheet.json",
+ "blender": {
+  "note": "Concurrent Blender processes, enforced by loop_tools.acquire_slot under one lock. The first process always starts. A second starts only while at least minFreeGb of memory is free, a third only while thirdSlotFreeGb is free (a build peaks at roughly 5 to 7 GB, so the third needs the headroom of two more builds), and no process starts within settleSeconds of the previous start, because its memory is not taken yet when the free figure is read. maxSlots is the hard cap; recipe.py sweep reads it.",
+  "maxSlots": 3,
+  "minFreeGb": 9,
+  "thirdSlotFreeGb": 14,
+  "settleSeconds": 15
+ },
+ "seams": {
+  "note": "Joints for seam_check.py. at is the row from the crown (0) to the floor (1) in the fixed figure frame, the mean y of the sheet landmarks named in landmarks (sheet.json, same frame) over the views that have them; the neck base lies between the chin (.2245) and the shoulder (.315), the ear-fan root where the fan leaves the head (the fan's lower outer edge, between the outer extent at .03 to .06 and the eyes at .145). band is the half-height of the zone scored, context the half-height of the outline traced (a bump is measured against the local mean over bumpWindow, a kink over kinkSpan), all in figure heights.",
+  "views": [
+   "front",
+   "left",
+   "back"
+  ],
+  "band": 0.03,
+  "context": 0.065,
+  "kinkSpan": 0.012,
+  "bumpWindow": 0.04,
+  "joints": {
+   "neckBase": {
+    "at": 0.275,
+    "views": [
+     "front",
+     "left",
+     "back"
+    ],
+    "landmarks": [
+     "chin",
+     "shoulder_l",
+     "shoulder_r"
+    ]
+   },
+   "shoulder": {
+    "at": 0.315,
+    "views": [
+     "front",
+     "left",
+     "back"
+    ],
+    "landmarks": [
+     "shoulder_l",
+     "shoulder_r"
+    ]
+   },
+   "elbow": {
+    "at": 0.402,
+    "views": [
+     "front",
+     "left",
+     "back"
+    ],
+    "landmarks": [
+     "elbow_l",
+     "elbow_r"
+    ]
+   },
+   "wrist": {
+    "at": 0.476,
+    "views": [
+     "front",
+     "left",
+     "back"
+    ],
+    "landmarks": [
+     "wrist_l",
+     "wrist_r"
+    ]
+   },
+   "hip": {
+    "at": 0.605,
+    "views": [
+     "front",
+     "left",
+     "back"
+    ],
+    "landmarks": [
+     "hip_l",
+     "hip_r"
+    ]
+   },
+   "knee": {
+    "at": 0.769,
+    "views": [
+     "front",
+     "left",
+     "back"
+    ],
+    "landmarks": [
+     "knee_l",
+     "knee_r"
+    ]
+   },
+   "ankle": {
+    "at": 0.914,
+    "band": [
+     0.03,
+     0.04
+    ],
+    "views": [
+     "front",
+     "left",
+     "back"
+    ],
+    "landmarks": [
+     "ankle_l",
+     "ankle_r"
+    ]
+   },
+   "tailRoot": {
+    "at": 0.575,
+    "band": 0.06,
+    "views": [
+     "left",
+     "back"
+    ],
+    "landmarks": [
+     "tail_root_1",
+     "tail_root_2",
+     "tail_root_3"
+    ]
+   },
+   "earFanRoot": {
+    "at": 0.07,
+    "band": [
+     0.07,
+     0.06
+    ],
+    "views": [
+     "front",
+     "back"
+    ],
+    "landmarks": [
+     "ear_fan_l_outer",
+     "ear_fan_r_outer",
+     "eye_centre_l"
+    ]
+   }
+  },
+  "thresholds": {
+   "note": "Calibrated 2026-10-01 on 20 recorded candidates (art/species-construction/loop/seam_calibrate.py, results in seam-calibration.json beside this file). change is the rise over the baseline (the useful signal; clean outlines move at most kink .26, bump .0012, wbump .0011, step .0017, needle 7 outside the fan, and an unchanged re-assembly moves nothing); the defects at joints reach kink .75, step .0073, wbump .0029 (ankle collars of assembled-2112 and 2078), crease 53 to 103 samples. absolute applies without a baseline and is only a gross-damage floor: the figure's own elbow outline reads kink 4.8, bump .022, so a standalone score cannot tell a new defect from the old shape; always give a baseline. Units: kink is a slope change (dimensionless), bump, wbump and step are figure heights, needle and crease are samples of the 700-per-figure-height grid. The ear fan, ragged by design, and the tail root have their own entries under joints.",
+   "change": {
+    "kink": 0.3,
+    "bump": 0.0008,
+    "wbump": 0.0012,
+    "step": 0.002,
+    "needle": 10,
+    "crease": 30
+   },
+   "changeLegacy": {
+    "kink": 0.4,
+    "bump": 0.003,
+    "wbump": 0.0035,
+    "step": 0.004,
+    "needle": 15,
+    "crease": 40
+   },
+   "absolute": {
+    "kink": 7,
+    "bump": 0.04,
+    "wbump": 0.04,
+    "step": 0.03,
+    "needle": 400
+   },
+   "joints": {
+    "earFanRoot": {
+     "change": {
+      "kink": 1.2,
+      "bump": 0.007,
+      "wbump": 0.007,
+      "step": 0.01,
+      "needle": 150,
+      "crease": 700
+     },
+     "changeLegacy": {
+      "kink": 1.2,
+      "bump": 0.007,
+      "wbump": 0.007,
+      "step": 0.01,
+      "needle": 150,
+      "crease": 700
+     }
+    },
+    "tailRoot": {
+     "change": {
+      "crease": 250
+     },
+     "changeLegacy": {
+      "crease": 250
+     }
+    }
+   }
+  }
+ }
 }

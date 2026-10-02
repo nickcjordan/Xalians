@@ -458,7 +458,7 @@ function toolLine(id) {
 function toolPrompt(t) {
   return `Read the toolsmith brief at ${BRIEF('toolsmith-brief.md')} and follow it. Region ${t.region} (${S.regions[t.region].name}). The method plan (${BRIEF('methods.md')}, ${BRIEF('methods.json')}) needs a tool that does not exist yet: ${t.script}. Method: ${S.methods[t.region] || ''}\n` +
     (S.specs[t.region] ? `Region spec: ${abs(S.specs[t.region].path)}.\n` : '') +
-    `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline packet: ${abs(S.baseline.packet)}. Write the starter recipe to ${LOOPDIR}\recipes\tool-${t.region}.json and the ready record to ${LOOPDIR}\tools\${t.region}.json, commit by name on branch ${BRANCH} with a plain message and no Co-Authored-By trailer, and return the structured output.`
+    `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline packet: ${abs(S.baseline.packet)}. Write the starter recipe to ${LOOPDIR}\\recipes\\tool-${t.region}.json and the ready record to ${LOOPDIR}\\tools\\${t.region}.json, commit by name on branch ${BRANCH} with a plain message and no Co-Authored-By trailer, and return the structured output.`
 }
 function auditLines(id) {
   if (!featuresOn()) return ''
