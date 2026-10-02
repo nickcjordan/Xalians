@@ -1,0 +1,596 @@
+{
+ "order": {
+  "round": 21,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+ "start": {
+  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-fast.json"
+ },
+ "variants": [
+  {
+   "name": "tool starter as is",
+   "why": "control: the R03 clump-volume front (H36: 18 coat clumps and 5 pale tuft clumps per side, cup carved) grown on the current head sink head-2271; shows whether the new construction alone beats the slab and chevron front (gap-audit rows 1 and 2, R03.4, R03.7)",
+   "edits": []
+  },
+  {
+   "name": "soft unions",
+   "why": "crinkled serrated seams along the lower tuft locks and down the cup walls (critic issue 2, audit serrated chevrons): widen every union radius, box-blur each clump field twice, round the sections to ellipses (p 2.0), blunt the tip floor slightly and fillet the cup rim; targets R03.4 and R03.7 (no crinkled rim) without changing the lock count",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.layer_blend",
+     "value": [
+      0.005,
+      0.005,
+      0.004
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.blur",
+     "value": 2
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_width",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_thick",
+     "value": 0.0016
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.core_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_floor_blend",
+     "value": 0.004
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.04
+    }
+   ]
+  },
+  {
+   "name": "thick shaggy mass",
+   "why": "audit row 1: flat slabs instead of a thick soft volume of locks; fuller leaf taper (.6), thicker rounder sections (thick 1.3, p 2.0), wider locks (1.1) and chunkier lower pins so the coat reads as masses with fewer seams; targets R03.4",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.width_scale",
+     "value": 1.1
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.thick_scale",
+     "value": 1.3
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.taper_scale",
+     "value": 0.6
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.s_length",
+     "value": 0.95
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.lower_scale",
+     "value": [
+      1.4,
+      1.3
+     ]
+    }
+   ]
+  },
+  {
+   "name": "deep outward cup, wide fluffy tuft",
+   "why": "audit row 2 and R04.5: no pale cup or hollow from the side; a cup floor that yaws harder outward and sits deeper (slope .95, max .044, bowl .014), a filleted rim running into the skull, secondaries set further back (s_back .014) so they leave the cup window clear, and a wider, larger tuft with softer unions so it reads as a fluffy mass, not a washboard; targets R03.5, R03.7, R04.5",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_slope",
+     "value": 0.95
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_max",
+     "value": 0.044
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_bowl",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.s_back",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_scale",
+     "value": 1.12
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_width_scale",
+     "value": 1.3
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_blend",
+     "value": 0.006
+    }
+   ]
+  },
+  {
+   "name": "irregular locks",
+   "why": "critic issue 1 (even pine-cone overlap): alternate width and thickness on the primaries, thinner under-fur secondaries, alternate the curl of the top locks by 16 degrees, and vary the drape tips on the lower edge by about 10 percent; outer wing-end locks and every top-edge tip stay as in the table so earSpan (R03.1) and the ceiling hold; targets R03.4",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:clumps",
+     "value": {
+      "LP1": {
+       "widthMid": 0.0471,
+       "thick": 0.0276,
+       "curl": -34
+      },
+      "LP2": {
+       "widthMid": 0.0333,
+       "thick": 0.0189,
+       "curl": -18
+      },
+      "LP3": {
+       "widthMid": 0.0403,
+       "thick": 0.024,
+       "curl": -34
+      },
+      "LP4": {
+       "widthMid": 0.036,
+       "thick": 0.0207,
+       "curl": -18
+      },
+      "LP7": {
+       "widthMid": 0.0506,
+       "thick": 0.0299
+      },
+      "LP8": {
+       "widthMid": 0.0306,
+       "thick": 0.0171,
+       "tip": [
+        0.198,
+        0.1593,
+        0.016
+       ]
+      },
+      "LP9": {
+       "widthMid": 0.0297,
+       "thick": 0.0172,
+       "tip": [
+        0.1422,
+        0.1767,
+        0.002
+       ]
+      },
+      "LS1": {
+       "thick": 0.0164,
+       "widthMid": 0.0294
+      },
+      "LS2": {
+       "thick": 0.0148,
+       "widthMid": 0.0294
+      },
+      "LS3": {
+       "thick": 0.0148,
+       "widthMid": 0.0294,
+       "tip": [
+        0.2126,
+        0.1332,
+        0.022
+       ]
+      },
+      "LS4": {
+       "thick": 0.0139,
+       "widthMid": 0.0267,
+       "tip": [
+        0.1704,
+        0.1741,
+        0.01
+       ]
+      },
+      "LS5": {
+       "thick": 0.009,
+       "widthMid": 0.0175
+      },
+      "LS6": {
+       "thick": 0.0172,
+       "widthMid": 0.034,
+       "curl": -18
+      },
+      "LS7": {
+       "thick": 0.0172,
+       "widthMid": 0.0331,
+       "curl": -34
+      },
+      "LS8": {
+       "thick": 0.0172,
+       "widthMid": 0.034,
+       "curl": -18
+      },
+      "RP1": {
+       "widthMid": 0.0437,
+       "thick": 0.0264,
+       "curl": -34
+      },
+      "RP2": {
+       "widthMid": 0.036,
+       "thick": 0.0207,
+       "curl": -18
+      },
+      "RP3": {
+       "widthMid": 0.0494,
+       "thick": 0.03,
+       "curl": -34
+      },
+      "RP4": {
+       "widthMid": 0.0414,
+       "thick": 0.0234,
+       "curl": -18
+      },
+      "RP7": {
+       "widthMid": 0.0506,
+       "thick": 0.0299
+      },
+      "RP8": {
+       "widthMid": 0.0414,
+       "thick": 0.0234,
+       "tip": [
+        -0.222,
+        0.1574,
+        0.016
+       ]
+      },
+      "RP9": {
+       "widthMid": 0.0429,
+       "thick": 0.0253,
+       "tip": [
+        -0.1688,
+        0.1823,
+        0.002
+       ]
+      },
+      "RS2": {
+       "thick": 0.0148,
+       "widthMid": 0.0294
+      },
+      "RS3": {
+       "thick": 0.0148,
+       "widthMid": 0.0294,
+       "tip": [
+        -0.2313,
+        0.1288,
+        0.022
+       ]
+      },
+      "RS4": {
+       "thick": 0.0148,
+       "widthMid": 0.0294,
+       "tip": [
+        -0.2036,
+        0.1728,
+        0.01
+       ]
+      },
+      "RS5": {
+       "thick": 0.0115,
+       "widthMid": 0.023
+      },
+      "RS6": {
+       "thick": 0.0172,
+       "widthMid": 0.034,
+       "curl": -18
+      },
+      "RS7": {
+       "thick": 0.0172,
+       "widthMid": 0.034,
+       "curl": -34
+      },
+      "RS8": {
+       "thick": 0.0172,
+       "widthMid": 0.034,
+       "curl": -18
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "primaries only",
+   "why": "structure count test (R03.4 asks for roughly 8 to 10 large locks per side, the starter has 18 coat clumps): drop all secondaries and the skull-side pin, widen the 9 primaries (width 1.25) and thicken them (1.15) so each lock reads as one large pointed shaggy mass; the risk is core showing through gaps, which the silhouette score will flag",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skip",
+     "value": "S1,S2,S3,S4,S5,S6,S7,S8,D1"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.width_scale",
+     "value": 1.25
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.thick_scale",
+     "value": 1.15
+    }
+   ]
+  },
+  {
+   "name": "dome valley soft (rear)",
+   "why": "R04 issue 2 and audit row 6: a continuous crease ledge outlines the head dome and a bead sits at the top centre; widen the skin blend to .012, strip smoothing 6, no K root crossing and a heavier dome blur so the wing locks dive into a soft valley; the front is the starter (a rear step edit rebuilds H34, H35 and H36)",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "6"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-root-shift",
+     "value": "0"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "10"
+    }
+   ]
+  },
+  {
+   "name": "crown tuft dropped (rear)",
+   "why": "R04 issue 3 and R03.3: the crown tuft spikes and rear top locks stand above the front fan and flatten the V tilt; remove the C row (--rows K,I,M,T,E) so the K ridge and top row carry the crown and the front tips can stand above it; the front is the starter",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    }
+   ]
+  },
+  {
+   "name": "combined soft, cup, dome, crown",
+   "why": "bet on independent fixes adding up (paired order: the combined score must rise): soft unions plus the deep cup and wide tuft on the front, and the dome valley plus no crown spikes on the rear",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.layer_blend",
+     "value": [
+      0.005,
+      0.005,
+      0.004
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.blur",
+     "value": 2
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_width",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_thick",
+     "value": 0.0016
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.core_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_floor_blend",
+     "value": 0.004
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_slope",
+     "value": 0.95
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_max",
+     "value": 0.044
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_bowl",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.s_back",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_scale",
+     "value": 1.12
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_width_scale",
+     "value": 1.3
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "6"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-root-shift",
+     "value": "0"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "10"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "step": "H36",
+   "grid": {
+    "spec:params.width_scale": [
+     0.75,
+     1.15,
+     1.35
+    ]
+   },
+   "why": "the parameter I am least sure of: lock width sets how much of the fan reads as separate locks against one mass and how much core shows; wide range because quick previews only rank silhouette changes above about one percent of figure height"
+  }
+ ],
+ "region": "R03",
+ "top": 5
+}
