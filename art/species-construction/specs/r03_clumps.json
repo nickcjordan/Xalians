@@ -1,0 +1,1085 @@
+{
+ "source": "docs/design/species-construction/akinza/loop/specs/R03.md section 2",
+ "clumps": [
+  {
+   "name": "LP1",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.12,
+    0.071,
+    -0.027
+   ],
+   "tip": [
+    0.09,
+    0.012,
+    -0.016
+   ],
+   "length": 0.066,
+   "dir": 117.0,
+   "curl": -26.0,
+   "widthRoot": 0.027,
+   "widthMid": 0.041,
+   "thick": 0.023,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .02"
+  },
+  {
+   "name": "LS6",
+   "side": "L",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    0.133,
+    0.068,
+    -0.018
+   ],
+   "tip": [
+    0.121,
+    0.007,
+    -0.006
+   ],
+   "length": 0.062,
+   "dir": 101.0,
+   "curl": -26.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.037,
+   "thick": 0.021,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .08"
+  },
+  {
+   "name": "LP2",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.145,
+    0.065,
+    -0.009
+   ],
+   "tip": [
+    0.15,
+    0.006,
+    0.004
+   ],
+   "length": 0.06,
+   "dir": 86.0,
+   "curl": -26.0,
+   "widthRoot": 0.024,
+   "widthMid": 0.037,
+   "thick": 0.021,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .14"
+  },
+  {
+   "name": "LS7",
+   "side": "L",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    0.157,
+    0.061,
+    -0.001
+   ],
+   "tip": [
+    0.175,
+    0.006,
+    0.014
+   ],
+   "length": 0.058,
+   "dir": 72.0,
+   "curl": -26.0,
+   "widthRoot": 0.022,
+   "widthMid": 0.036,
+   "thick": 0.021,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .20"
+  },
+  {
+   "name": "LP3",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.17,
+    0.055,
+    0.008
+   ],
+   "tip": [
+    0.199,
+    0.006,
+    0.02
+   ],
+   "length": 0.057,
+   "dir": 60.0,
+   "curl": -26.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.035,
+   "thick": 0.02,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .26"
+  },
+  {
+   "name": "LS8",
+   "side": "L",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    0.182,
+    0.051,
+    0.014
+   ],
+   "tip": [
+    0.222,
+    0.007,
+    0.022
+   ],
+   "length": 0.059,
+   "dir": 48.0,
+   "curl": -26.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.037,
+   "thick": 0.021,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .31"
+  },
+  {
+   "name": "LP4",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.194,
+    0.05,
+    0.014
+   ],
+   "tip": [
+    0.244,
+    0.009,
+    0.024
+   ],
+   "length": 0.064,
+   "dir": 39.0,
+   "curl": -26.0,
+   "widthRoot": 0.026,
+   "widthMid": 0.04,
+   "thick": 0.023,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .36"
+  },
+  {
+   "name": "LP5",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.196,
+    0.063,
+    0.032
+   ],
+   "tip": [
+    0.276,
+    0.033,
+    0.018
+   ],
+   "length": 0.086,
+   "dir": 20.0,
+   "curl": 12.0,
+   "widthRoot": 0.034,
+   "widthMid": 0.051,
+   "thick": 0.029,
+   "taper": 1.4,
+   "rootOn": "lateral rim, s .43"
+  },
+  {
+   "name": "LS1",
+   "side": "L",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    0.192,
+    0.075,
+    0.032
+   ],
+   "tip": [
+    0.273,
+    0.051,
+    0.02
+   ],
+   "length": 0.084,
+   "dir": 16.0,
+   "curl": 4.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.032,
+   "thick": 0.02,
+   "taper": 1.5,
+   "rootOn": "lateral rim, s .48"
+  },
+  {
+   "name": "LP6",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.182,
+    0.086,
+    0.032
+   ],
+   "tip": [
+    0.26,
+    0.077,
+    0.022
+   ],
+   "length": 0.078,
+   "dir": 7.0,
+   "curl": -4.0,
+   "widthRoot": 0.03,
+   "widthMid": 0.046,
+   "thick": 0.026,
+   "taper": 1.5,
+   "rootOn": "lateral rim, s .54"
+  },
+  {
+   "name": "LS2",
+   "side": "L",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    0.171,
+    0.096,
+    0.027
+   ],
+   "tip": [
+    0.249,
+    0.097,
+    0.026
+   ],
+   "length": 0.078,
+   "dir": -1.0,
+   "curl": -6.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.032,
+   "thick": 0.018,
+   "taper": 1.5,
+   "rootOn": "lateral rim, s .60"
+  },
+  {
+   "name": "LP7",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.16,
+    0.101,
+    0.019
+   ],
+   "tip": [
+    0.236,
+    0.119,
+    0.024
+   ],
+   "length": 0.078,
+   "dir": -14.0,
+   "curl": -8.0,
+   "widthRoot": 0.03,
+   "widthMid": 0.046,
+   "thick": 0.026,
+   "taper": 1.5,
+   "rootOn": "lateral rim, s .66"
+  },
+  {
+   "name": "LS3",
+   "side": "L",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    0.155,
+    0.108,
+    0.001
+   ],
+   "tip": [
+    0.219,
+    0.136,
+    0.022
+   ],
+   "length": 0.07,
+   "dir": -24.0,
+   "curl": -10.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.032,
+   "thick": 0.018,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .72"
+  },
+  {
+   "name": "LP8",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.151,
+    0.119,
+    -0.001
+   ],
+   "tip": [
+    0.193,
+    0.155,
+    0.016
+   ],
+   "length": 0.055,
+   "dir": -41.0,
+   "curl": -10.0,
+   "widthRoot": 0.022,
+   "widthMid": 0.034,
+   "thick": 0.019,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .77"
+  },
+  {
+   "name": "LS4",
+   "side": "L",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    0.144,
+    0.129,
+    -0.006
+   ],
+   "tip": [
+    0.168,
+    0.17,
+    0.01
+   ],
+   "length": 0.047,
+   "dir": -60.0,
+   "curl": -10.0,
+   "widthRoot": 0.021,
+   "widthMid": 0.029,
+   "thick": 0.017,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .82"
+  },
+  {
+   "name": "LP9",
+   "side": "L",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    0.135,
+    0.138,
+    -0.012
+   ],
+   "tip": [
+    0.143,
+    0.181,
+    0.002
+   ],
+   "length": 0.043,
+   "dir": -80.0,
+   "curl": -12.0,
+   "widthRoot": 0.018,
+   "widthMid": 0.027,
+   "thick": 0.015,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .87"
+  },
+  {
+   "name": "LS5",
+   "side": "L",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    0.125,
+    0.15,
+    -0.02
+   ],
+   "tip": [
+    0.119,
+    0.18,
+    -0.008
+   ],
+   "length": 0.03,
+   "dir": -101.0,
+   "curl": -12.0,
+   "widthRoot": 0.013,
+   "widthMid": 0.019,
+   "thick": 0.011,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .93"
+  },
+  {
+   "name": "LD1",
+   "side": "L",
+   "family": "D",
+   "layer": 1,
+   "root": [
+    0.107,
+    0.162,
+    -0.032
+   ],
+   "tip": [
+    0.104,
+    0.185,
+    -0.014
+   ],
+   "length": 0.023,
+   "dir": -99.0,
+   "curl": -10.0,
+   "widthRoot": 0.01,
+   "widthMid": 0.014,
+   "thick": 0.01,
+   "taper": 1.5,
+   "rootOn": "skull side"
+  },
+  {
+   "name": "LT1",
+   "side": "L",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    0.11,
+    0.08,
+    -0.028
+   ],
+   "tip": [
+    0.18,
+    0.054,
+    0.032
+   ],
+   "length": 0.075,
+   "dir": 20.0,
+   "curl": 6.0,
+   "widthRoot": 0.019,
+   "widthMid": 0.032,
+   "thick": 0.018,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "LT2",
+   "side": "L",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    0.11,
+    0.095,
+    -0.028
+   ],
+   "tip": [
+    0.178,
+    0.072,
+    0.031
+   ],
+   "length": 0.072,
+   "dir": 19.0,
+   "curl": 6.0,
+   "widthRoot": 0.019,
+   "widthMid": 0.032,
+   "thick": 0.018,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "LT3",
+   "side": "L",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    0.11,
+    0.111,
+    -0.028
+   ],
+   "tip": [
+    0.171,
+    0.093,
+    0.026
+   ],
+   "length": 0.064,
+   "dir": 16.0,
+   "curl": 6.0,
+   "widthRoot": 0.018,
+   "widthMid": 0.03,
+   "thick": 0.017,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "LT4",
+   "side": "L",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    0.11,
+    0.127,
+    -0.027
+   ],
+   "tip": [
+    0.158,
+    0.114,
+    0.017
+   ],
+   "length": 0.05,
+   "dir": 15.0,
+   "curl": 6.0,
+   "widthRoot": 0.016,
+   "widthMid": 0.026,
+   "thick": 0.015,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "LT5",
+   "side": "L",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    0.11,
+    0.143,
+    -0.025
+   ],
+   "tip": [
+    0.14,
+    0.135,
+    0.005
+   ],
+   "length": 0.031,
+   "dir": 15.0,
+   "curl": 6.0,
+   "widthRoot": 0.012,
+   "widthMid": 0.02,
+   "thick": 0.013,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "RP1",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.107,
+    0.091,
+    -0.03
+   ],
+   "tip": [
+    -0.095,
+    0.031,
+    -0.016
+   ],
+   "length": 0.061,
+   "dir": 101.0,
+   "curl": -26.0,
+   "widthRoot": 0.025,
+   "widthMid": 0.038,
+   "thick": 0.022,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .02"
+  },
+  {
+   "name": "RS6",
+   "side": "R",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    -0.119,
+    0.089,
+    -0.022
+   ],
+   "tip": [
+    -0.123,
+    0.026,
+    -0.006
+   ],
+   "length": 0.063,
+   "dir": 86.0,
+   "curl": -26.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.037,
+   "thick": 0.021,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .08"
+  },
+  {
+   "name": "RP2",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.129,
+    0.085,
+    -0.015
+   ],
+   "tip": [
+    -0.15,
+    0.024,
+    0.004
+   ],
+   "length": 0.065,
+   "dir": 71.0,
+   "curl": -26.0,
+   "widthRoot": 0.026,
+   "widthMid": 0.04,
+   "thick": 0.023,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .14"
+  },
+  {
+   "name": "RS7",
+   "side": "R",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    -0.138,
+    0.081,
+    -0.008
+   ],
+   "tip": [
+    -0.173,
+    0.025,
+    0.014
+   ],
+   "length": 0.066,
+   "dir": 58.0,
+   "curl": -26.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.037,
+   "thick": 0.021,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .20"
+  },
+  {
+   "name": "RP3",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.149,
+    0.076,
+    -0.001
+   ],
+   "tip": [
+    -0.196,
+    0.025,
+    0.02
+   ],
+   "length": 0.07,
+   "dir": 47.0,
+   "curl": -26.0,
+   "widthRoot": 0.028,
+   "widthMid": 0.043,
+   "thick": 0.025,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .26"
+  },
+  {
+   "name": "RS8",
+   "side": "R",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    -0.159,
+    0.072,
+    0.006
+   ],
+   "tip": [
+    -0.214,
+    0.026,
+    0.022
+   ],
+   "length": 0.072,
+   "dir": 40.0,
+   "curl": -26.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.037,
+   "thick": 0.021,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .31"
+  },
+  {
+   "name": "RP4",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.169,
+    0.07,
+    0.013
+   ],
+   "tip": [
+    -0.232,
+    0.029,
+    0.024
+   ],
+   "length": 0.075,
+   "dir": 33.0,
+   "curl": -26.0,
+   "widthRoot": 0.03,
+   "widthMid": 0.046,
+   "thick": 0.026,
+   "taper": 1.25,
+   "rootOn": "upper rim, s .36"
+  },
+  {
+   "name": "RP5",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.171,
+    0.082,
+    0.032
+   ],
+   "tip": [
+    -0.273,
+    0.057,
+    0.018
+   ],
+   "length": 0.105,
+   "dir": 14.0,
+   "curl": 12.0,
+   "widthRoot": 0.034,
+   "widthMid": 0.051,
+   "thick": 0.029,
+   "taper": 1.4,
+   "rootOn": "lateral rim, s .43"
+  },
+  {
+   "name": "RP6",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.162,
+    0.103,
+    0.027
+   ],
+   "tip": [
+    -0.268,
+    0.08,
+    0.022
+   ],
+   "length": 0.108,
+   "dir": 12.0,
+   "curl": -2.0,
+   "widthRoot": 0.03,
+   "widthMid": 0.046,
+   "thick": 0.026,
+   "taper": 1.5,
+   "rootOn": "lateral rim, s .54"
+  },
+  {
+   "name": "RS2",
+   "side": "R",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    -0.156,
+    0.112,
+    0.022
+   ],
+   "tip": [
+    -0.258,
+    0.096,
+    0.026
+   ],
+   "length": 0.103,
+   "dir": 9.0,
+   "curl": -6.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.032,
+   "thick": 0.018,
+   "taper": 1.5,
+   "rootOn": "lateral rim, s .60"
+  },
+  {
+   "name": "RP7",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.15,
+    0.119,
+    0.018
+   ],
+   "tip": [
+    -0.246,
+    0.115,
+    0.024
+   ],
+   "length": 0.096,
+   "dir": 2.0,
+   "curl": -8.0,
+   "widthRoot": 0.03,
+   "widthMid": 0.046,
+   "thick": 0.026,
+   "taper": 1.5,
+   "rootOn": "lateral rim, s .66"
+  },
+  {
+   "name": "RS3",
+   "side": "R",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    -0.144,
+    0.127,
+    0.0
+   ],
+   "tip": [
+    -0.241,
+    0.129,
+    0.022
+   ],
+   "length": 0.097,
+   "dir": -1.0,
+   "curl": -10.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.032,
+   "thick": 0.018,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .72"
+  },
+  {
+   "name": "RP8",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.138,
+    0.135,
+    -0.004
+   ],
+   "tip": [
+    -0.213,
+    0.155,
+    0.016
+   ],
+   "length": 0.077,
+   "dir": -15.0,
+   "curl": -10.0,
+   "widthRoot": 0.03,
+   "widthMid": 0.046,
+   "thick": 0.026,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .77"
+  },
+  {
+   "name": "RS4",
+   "side": "R",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    -0.131,
+    0.142,
+    -0.009
+   ],
+   "tip": [
+    -0.197,
+    0.17,
+    0.01
+   ],
+   "length": 0.072,
+   "dir": -23.0,
+   "curl": -10.0,
+   "widthRoot": 0.023,
+   "widthMid": 0.032,
+   "thick": 0.018,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .82"
+  },
+  {
+   "name": "RP9",
+   "side": "R",
+   "family": "P",
+   "layer": 2,
+   "root": [
+    -0.122,
+    0.149,
+    -0.015
+   ],
+   "tip": [
+    -0.174,
+    0.186,
+    0.002
+   ],
+   "length": 0.064,
+   "dir": -35.0,
+   "curl": -12.0,
+   "widthRoot": 0.026,
+   "widthMid": 0.039,
+   "thick": 0.022,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .87"
+  },
+  {
+   "name": "RS5",
+   "side": "R",
+   "family": "S",
+   "layer": 1,
+   "root": [
+    -0.112,
+    0.158,
+    -0.023
+   ],
+   "tip": [
+    -0.147,
+    0.184,
+    -0.006
+   ],
+   "length": 0.044,
+   "dir": -36.0,
+   "curl": -12.0,
+   "widthRoot": 0.018,
+   "widthMid": 0.025,
+   "thick": 0.014,
+   "taper": 1.5,
+   "rootOn": "lower rim, s .93"
+  },
+  {
+   "name": "RD1",
+   "side": "R",
+   "family": "D",
+   "layer": 1,
+   "root": [
+    -0.097,
+    0.166,
+    -0.032
+   ],
+   "tip": [
+    -0.115,
+    0.185,
+    -0.014
+   ],
+   "length": 0.026,
+   "dir": -47.0,
+   "curl": -10.0,
+   "widthRoot": 0.011,
+   "widthMid": 0.016,
+   "thick": 0.01,
+   "taper": 1.5,
+   "rootOn": "skull side"
+  },
+  {
+   "name": "RT1",
+   "side": "R",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    -0.096,
+    0.097,
+    -0.032
+   ],
+   "tip": [
+    -0.163,
+    0.074,
+    0.027
+   ],
+   "length": 0.071,
+   "dir": 19.0,
+   "curl": 6.0,
+   "widthRoot": 0.018,
+   "widthMid": 0.03,
+   "thick": 0.017,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "RT2",
+   "side": "R",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    -0.096,
+    0.11,
+    -0.032
+   ],
+   "tip": [
+    -0.165,
+    0.09,
+    0.029
+   ],
+   "length": 0.072,
+   "dir": 16.0,
+   "curl": 6.0,
+   "widthRoot": 0.018,
+   "widthMid": 0.03,
+   "thick": 0.017,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "RT3",
+   "side": "R",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    -0.096,
+    0.124,
+    -0.032
+   ],
+   "tip": [
+    -0.16,
+    0.106,
+    0.025
+   ],
+   "length": 0.066,
+   "dir": 16.0,
+   "curl": 6.0,
+   "widthRoot": 0.017,
+   "widthMid": 0.028,
+   "thick": 0.016,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "RT4",
+   "side": "R",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    -0.096,
+    0.138,
+    -0.031
+   ],
+   "tip": [
+    -0.148,
+    0.124,
+    0.017
+   ],
+   "length": 0.054,
+   "dir": 15.0,
+   "curl": 6.0,
+   "widthRoot": 0.014,
+   "widthMid": 0.024,
+   "thick": 0.015,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  },
+  {
+   "name": "RT5",
+   "side": "R",
+   "family": "T",
+   "layer": 3,
+   "root": [
+    -0.096,
+    0.152,
+    -0.029
+   ],
+   "tip": [
+    -0.128,
+    0.144,
+    0.003
+   ],
+   "length": 0.033,
+   "dir": 14.0,
+   "curl": 6.0,
+   "widthRoot": 0.011,
+   "widthMid": 0.018,
+   "thick": 0.013,
+   "taper": 1.3,
+   "rootOn": "inner edge"
+  }
+ ]
+}

@@ -1,0 +1,798 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "note": "Replayable recipe for assembled-0458 (head-0455 + body-0448). Roots are the trunk outputs of the 2026-09-30 replay (head-0204, body-0195) pinned by sha256; the recipe starts there and does not rebuild the Hunyuan trunk. Built from lineage-0458.md. Every script is pinned to the bytes that ran: where the working copy later changed, the run-time file is committed beside it under an _rNN name. tailfree-root is the tail-free torso body-0086/attempt-03 that B-14 fuses the tails onto.",
+  "roots": {
+    "head-root": {
+      "dir": "head-0204",
+      "files": {
+        "head.blend": "3aa0d5360faecb0dbea45c084ad7e3f7e8a60d940e4f26b3de0d606e5e0936da",
+        "shape.glb": "e4762cda0267f3a5e7915bbe04280178c3b2b8a29a9bc12ab73a9a6e9a3d8931"
+      }
+    },
+    "body-root": {
+      "dir": "body-0195",
+      "files": {
+        "body.blend": "3fe7fd0f206d323634b158f2329e48b0f8ce722a02c05044ed2fc833cab785aa",
+        "shape.glb": "fe14f93c8716bd3815ea61143583e0de785ce3b5ff9c61460a9bf83de43c5fce",
+        "fairing.json": "6e324a1de5d422e688887a2878a77d6ee5b5731392accff6e106b5bed694d05e"
+      }
+    },
+    "tailfree-root": {
+      "dir": "body-0086/attempt-03",
+      "files": {
+        "shape.glb": "618e46bc5abcf8aa56f90ee409168ae50f7621ba968478596e281476251e9b4c"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "H24",
+      "component": "head",
+      "regions": ["R01"],
+      "kind": "head",
+      "script": "art/species-construction/shape_head_silhouette_field_r01.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "head-root"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/docs/design/species-construction/akinza/head-silhouette-0223.json",
+        "--out", "{out}"
+      ],
+      "existing": "head-0223",
+      "note": "loop round 1, R01 head silhouette (script as run in round 1)",
+      "expect": {
+        "vertices": 1094807,
+        "faces": 2185686,
+        "bounds": [[-0.976403, -0.528674, -0.356305], [0.977591, 0.527254, 0.357699]],
+        "record": {
+          "file": "silhouette-shape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 1042717
+          }
+        }
+      }
+    },
+    {
+      "id": "H25",
+      "component": "head",
+      "regions": ["R01"],
+      "kind": "head",
+      "script": "art/species-construction/shape_head_silhouette_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H24"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/silhouette-r01-0260.json",
+        "--out", "{out}"
+      ],
+      "existing": "head-0260",
+      "note": "loop round 2 retry, R01; spec re-extracted from the data dir (identical to the copy embedded in head-0260/silhouette-shape.json); the helper head_r01_ops.py is today's file, which the run did not hash",
+      "expect": {
+        "vertices": 983630,
+        "faces": 1963400,
+        "bounds": [[-0.97634, -0.528606, -0.356134], [0.977525, 0.534433, 0.357628]],
+        "record": {
+          "file": "silhouette-shape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 931540
+          }
+        }
+      }
+    },
+    {
+      "id": "H26",
+      "component": "head",
+      "regions": ["R02"],
+      "kind": "head",
+      "script": "art/species-construction/rebuild_face_features_field_r04.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H25"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/face-features-r04c.json",
+        "--out", "{out}"
+      ],
+      "existing": "head-0281",
+      "note": "loop round 4, R02 face features (script as run in round 4); spec re-extracted from the data dir (identical to the embedded copy)",
+      "expect": {
+        "vertices": 974174,
+        "faces": 1946586,
+        "bounds": [[-0.976359, -0.528731, -0.356256], [0.977621, 0.534415, 0.382993]],
+        "record": {
+          "file": "face-features.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 955425
+          }
+        }
+      }
+    },
+    {
+      "id": "H27",
+      "component": "head",
+      "regions": ["R04"],
+      "kind": "head",
+      "script": "art/species-construction/author_rear_lock_table_field_r06.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H26"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_locks.json",
+        "--blend", "0.01",
+        "--lock-blend", "0.006",
+        "--plate", "0.014",
+        "--dome-cut",
+        "--thick-scale", "0.85",
+        "--width-scale", "1.12",
+        "--d-lift", "0.002",
+        "--tip-min", "0.0022", "0.0022",
+        "--max-island", "5000",
+        "--tip-taper", "0.7",
+        "--d-thick", "0.6",
+        "--d-length", "1.5",
+        "--taper-exp", "1.0",
+        "--cut-smooth", "2",
+        "--t-scale", "1.4"
+      ],
+      "existing": "head-0318",
+      "note": "loop round 6, R04 rear lock table with dome cut (script as run in round 6); flags derived from the recorded namespace in rear-lock-table.json",
+      "expect": {
+        "vertices": 990188,
+        "faces": 1978602,
+        "bounds": [[-1.021064, -0.528723, -0.363855], [1.043223, 0.537555, 0.382993]],
+        "record": {
+          "file": "rear-lock-table.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 971439
+          }
+        }
+      }
+    },
+    {
+      "id": "H28",
+      "component": "head",
+      "regions": ["R03"],
+      "kind": "head",
+      "script": "art/species-construction/author_fan_front_lock_system_field_r07.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H27"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/docs/design/species-construction/akinza/loop/specs/R03.md"
+      ],
+      "existing": "head-0333",
+      "note": "loop round 7, R03 fan front lock system, all defaults (script as run in round 7)",
+      "expect": {
+        "vertices": 1005909,
+        "faces": 2006304,
+        "bounds": [[-1.020615, -0.528712, -0.36384], [1.042789, 0.537516, 0.382993]],
+        "record": {
+          "file": "fan-front-lock-system.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 985282
+          }
+        }
+      }
+    },
+    {
+      "id": "H29",
+      "component": "head",
+      "regions": ["R02"],
+      "kind": "head",
+      "script": "art/species-construction/rebuild_face_features_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H25"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/face-features-r10e.json",
+        "--out", "{out}"
+      ],
+      "existing": "loop/scratch/r10/x-e",
+      "note": "scratch donor of round 10, R02 (iteration e of five); branches from head-0260, not 0281; a scratch dir in the original run, a head-NNNN here",
+      "expect": {
+        "vertices": 973538,
+        "faces": 1945404,
+        "bounds": [[-0.976228, -0.528601, -0.356126], [0.977512, 0.534283, 0.382247]],
+        "record": {
+          "file": "face-features.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 954308
+          }
+        }
+      }
+    },
+    {
+      "id": "H30",
+      "component": "head",
+      "regions": ["R02"],
+      "kind": "head",
+      "script": "art/species-construction/graft_face_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H28",
+        "donor": "H29"
+      },
+      "args": [
+        "--base", "{base}/head.blend",
+        "--donor", "{donor}/head.blend",
+        "--out", "{out}"
+      ],
+      "existing": "head-0375",
+      "note": "loop round 10, R02 graft of the donor face into the fan-front head; default window",
+      "expect": {
+        "vertices": 998805,
+        "faces": 1992118,
+        "bounds": [[-1.020337, -0.528703, -0.363824], [1.042573, 0.53746, 0.382015]],
+        "record": {
+          "file": "graft.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 977667
+          }
+        }
+      }
+    },
+    {
+      "id": "H31",
+      "component": "head",
+      "regions": ["R04"],
+      "kind": "head",
+      "script": "art/species-construction/author_rear_lock_table_field_r11.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H30"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_locks.json",
+        "--blend", "0.01",
+        "--lock-blend", "0.006",
+        "--rows", "T,B1,B2,B3",
+        "--plate", "0.014",
+        "--plate-fade", "-0.002", "0.016",
+        "--thick-scale", "0.85",
+        "--width-scale", "1.12",
+        "--tip-min", "0.003", "0.003",
+        "--max-island", "5000",
+        "--tip-taper", "0.7",
+        "--taper-exp", "1.2",
+        "--cut-smooth", "2",
+        "--t-scale", "1.2",
+        "--len-scale", "B2=1.15,B3=1.25",
+        "--len-jitter", "0.3",
+        "--tip-point", "0.5",
+        "--yaw", "T=.006,B2=.010,B3=.008",
+        "--dir-jitter", "6.0",
+        "--dir-jitter-rows", "B2,B3",
+        "--edge-guard", "0.006"
+      ],
+      "existing": "head-0387",
+      "note": "loop round 11, R04 rear lock table, rows T,B1,B2,B3 (script exists only as head-0387/source-snapshot, committed as _r11); flags derived from the recorded namespace",
+      "expect": {
+        "vertices": 999179,
+        "faces": 1996682,
+        "bounds": [[-1.005866, -0.528694, -0.363807], [1.030136, 0.537686, 0.381774]],
+        "record": {
+          "file": "rear-lock-table.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 979949
+          }
+        }
+      }
+    },
+    {
+      "id": "H32",
+      "component": "head",
+      "regions": ["R04"],
+      "kind": "head",
+      "script": "art/species-construction/carry_materials_field.py",
+      "runner": "blender",
+      "inputs": {
+        "scene": "H31",
+        "source": "H30"
+      },
+      "args": [
+        "--scene", "{scene}/head.blend",
+        "--source", "{source}/head.blend",
+        "--out", "{out}"
+      ],
+      "existing": "head-0395",
+      "note": "loop round 11, R04 carry the pale coat materials from head-0375 onto head-0387",
+      "expect": {
+        "vertices": 1001093,
+        "faces": 1996682,
+        "bounds": [[-1.005866, -0.528694, -0.363807], [1.030136, 0.537686, 0.381774]]
+      }
+    },
+    {
+      "id": "H33",
+      "component": "head",
+      "regions": ["R03"],
+      "kind": "head",
+      "script": "art/species-construction/author_fan_front_lock_system_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H32"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/docs/design/species-construction/akinza/loop/specs/R03.md",
+        "--length-scale", "1.04",
+        "--width-scale", "1.45",
+        "--thick-scale", "1.0",
+        "--curl", "6.0",
+        "--ogive", "1.3", "1.5",
+        "--section-p", "1.8",
+        "--tip-min", "0.0015", "0.0015",
+        "--jitter", "8.0", "0.25", "10.0",
+        "--drape-width", "1.9",
+        "--top-width", "0.95",
+        "--keep", "PXF",
+        "--skip", "P1,P10,F1,F2,F3,F4,F5,F6,F7,F9,M1,T2,T4",
+        "--drop", "F1,F2,F3,F4,F5,F6,F7,F8,F9,M1,M2,M3,M4,M5",
+        "--top-tip-floor", "1.0",
+        "--tuft-width-scale", "1.35",
+        "--tuft-length-scale", "1.05",
+        "--tuft-thick-scale", "0.9",
+        "--tuft-ogive", "1.4", "0.8",
+        "--tuft-fan", "24.0",
+        "--tuft-fluff", "0",
+        "--pale-tol", "0.005",
+        "--pale-smooth", "14",
+        "--trim-pins", "0.006",
+        "--trim-y", "0.08", "0.16",
+        "--plate-clip", "0.01",
+        "--tip-wedge",
+        "--wedge-u", "0.2", "0.264",
+        "--wedge-apex-y", "0.034", "0.05",
+        "--wedge-top-y", "-0.01", "0.024",
+        "--wedge-bottom-y", "0.105", "0.115",
+        "--pale-cup-margin", "0.011",
+        "--tip-point", "0.4",
+        "--tip-floor", "0.12",
+        "--fork-angle", "25.0",
+        "--fork-len", "0.3",
+        "--tuft-tip-min", "0.002", "0.002",
+        "--tuft-section-p", "2.2",
+        "--tuft-aim", "0.45",
+        "--crown-sink", "0.01",
+        "--cup-clip-smooth", "0.008"
+      ],
+      "existing": "head-0455",
+      "note": "loop round 16, R03 final fan front (chain 0443 to 0455 inherited parameters only; the geometry always starts from head-0395); flags from the recorded namespace, equal to scratch-r16/cmd0455.json",
+      "expect": {
+        "vertices": 958497,
+        "faces": 1910226,
+        "bounds": [[-0.98832, -0.528686, -0.363787], [1.035765, 0.524132, 0.381548]],
+        "record": {
+          "file": "fan-front-lock-system.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 936725
+          }
+        }
+      }
+    },
+    {
+      "id": "H36",
+      "component": "head",
+      "regions": ["R03"],
+      "kind": "head",
+      "script": "art/species-construction/author_fan_clumps_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H33"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--part", "front",
+        "--front-table", "{repo}/art/species-construction/specs/r03_clumps.json",
+        "--envelope", "{repo}/art/species-construction/specs/r03_envelope.npz",
+        "--p", "s_back=0.008",
+        "--p", "s_length=0.85",
+        "--p", "skull_ramp=0.028",
+        "--p", "layer_blend=[0.0015,0.0015,0.0012]",
+        "--p", "core_blend=0.004",
+        "--p", "taper_scale=0.7",
+        "--p", "thick_taper_scale=1.3",
+        "--p", "width_scale=0.9",
+        "--p", "tip_half_width=0.0015",
+        "--p", "tuft_tip_half_width=0.0012",
+        "--p", "core_inset=0.0",
+        "--p", "length_scale=0.95",
+        "--p", "pull_from_y=0.07",
+        "--p", "strip_bias=0.008",
+        "--p", "samples=90",
+        "--p", "lower_scale=[1.6,1.3]"
+      ],
+      "note": "loop round 18, R03 ear fan front as a clump volume: strip behind the mid-surface plus a bias, core, 18 coat clumps and 5 pale tuft clumps per side, cup carve (specs/R03.md)"
+    },
+    {
+      "id": "B-14",
+      "component": "body",
+      "regions": ["R10"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_body_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "body-root",
+        "tailfree": "tailfree-root"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--tail-record", "{base}/fairing.json",
+        "--tails-only",
+        "--tail-controls", "{repo}/docs/design/species-construction/akinza/tail-controls-stack-b.json",
+        "--tail-free-body", "{tailfree}/shape.glb",
+        "--tail-sweep-sigma", ".009",
+        "--out", "{out}"
+      ],
+      "existing": "body-0212",
+      "note": "loop round 1, R10 stacked crescent tails",
+      "expect": {
+        "vertices": 697950,
+        "faces": 1395836,
+        "bounds": [[-0.517996, -0.95699, -0.530232], [0.556054, 0.459983, 0.204267]],
+        "record": {
+          "file": "field-rebuild.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 690254
+          }
+        }
+      }
+    },
+    {
+      "id": "B-15",
+      "component": "body",
+      "regions": ["R08"],
+      "kind": "body",
+      "script": "art/species-construction/reshape_legs_field_r02.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-14"
+      },
+      "args": [
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/leg-reshape-r08-v5.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0263",
+      "note": "loop round 2, R08 leg reshape v5 (script as run in round 2)",
+      "expect": {
+        "vertices": 678275,
+        "faces": 1356486,
+        "bounds": [[-0.517947, -0.956989, -0.530121], [0.555975, 0.459983, 0.204238]],
+        "record": {
+          "file": "leg-reshape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 670579
+          }
+        }
+      }
+    },
+    {
+      "id": "B-16",
+      "component": "body",
+      "regions": ["R06"],
+      "kind": "body",
+      "script": "art/species-construction/reshape_torso_field_r04.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-15"
+      },
+      "args": [
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/torso-reshape-r06-v5.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0288",
+      "note": "loop round 4, R06 torso reshape v5 (script as run in round 4)",
+      "expect": {
+        "vertices": 678641,
+        "faces": 1357218,
+        "bounds": [[-0.5179, -0.956987, -0.53006], [0.555895, 0.459982, 0.200103]],
+        "record": {
+          "file": "torso-reshape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 670945
+          }
+        }
+      }
+    },
+    {
+      "id": "B-17",
+      "component": "body",
+      "regions": ["R07"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_arms_field_r05.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-16"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0303",
+      "note": "loop round 5, R07 arm rebuild with the default ARM dict (script exists only as body-0303/source-snapshot, committed as _r05)",
+      "expect": {
+        "vertices": 650524,
+        "faces": 1300984,
+        "bounds": [[-0.453504, -0.956985, -0.530026], [0.555818, 0.459981, 0.20008]],
+        "record": {
+          "file": "arm-field.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 642828
+          }
+        }
+      }
+    },
+    {
+      "id": "B-18",
+      "component": "body",
+      "regions": ["R09"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_hind_paws_field_r06.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-17"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0310",
+      "note": "loop round 6, R09 hind paw rebuild with the default PAW dict (script as run in round 6)",
+      "expect": {
+        "vertices": 650980,
+        "faces": 1301896,
+        "bounds": [[-0.498451, -0.957, -0.530008], [0.555778, 0.459981, 0.200062]],
+        "record": {
+          "file": "hind-paw-field.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 643284
+          }
+        }
+      }
+    },
+    {
+      "id": "B-19",
+      "component": "body",
+      "regions": ["R05"],
+      "kind": "body",
+      "script": "art/species-construction/shape_neck_shoulders_field_r07.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-18"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/neck-shoulders-r05-0325.json"
+      ],
+      "existing": "body-0325",
+      "note": "loop round 7, R05 neck and shoulders (script as run in round 7); spec re-extracted from the data dir (spec-0325.json, hash equals the recorded input)",
+      "expect": {
+        "vertices": 645306,
+        "faces": 1290548,
+        "bounds": [[-0.498367, -0.957, -0.530002], [0.555739, 0.45998, 0.200047]],
+        "record": {
+          "file": "shoulder-field.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 637610
+          }
+        }
+      }
+    },
+    {
+      "id": "B-20",
+      "component": "body",
+      "regions": ["R06"],
+      "kind": "body",
+      "script": "art/species-construction/reshape_torso_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-19"
+      },
+      "args": [
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/torso-reshape-r06-v7d.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0369",
+      "note": "loop round 10, R06 torso reshape v7d",
+      "expect": {
+        "vertices": 643184,
+        "faces": 1286304,
+        "bounds": [[-0.498282, -0.957, -0.529718], [0.5557, 0.459979, 0.200034]],
+        "record": {
+          "file": "torso-reshape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 635488
+          }
+        }
+      }
+    },
+    {
+      "id": "B-21",
+      "component": "body",
+      "regions": ["R09"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_hind_paws_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-20"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/paw-spec-r09-v3.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0400",
+      "note": "loop round 12, R09 hind paw spec v3; spec re-extracted from loop/scratch/r12/v3.json (identical to body-0400/paw-spec-v3.json)",
+      "expect": {
+        "vertices": 643482,
+        "faces": 1286900,
+        "bounds": [[-0.498295, -0.957, -0.52951], [0.555629, 0.459979, 0.200022]],
+        "record": {
+          "file": "hind-paw-field.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 635786
+          }
+        }
+      }
+    },
+    {
+      "id": "B-22",
+      "component": "body",
+      "regions": ["R08"],
+      "kind": "body",
+      "script": "art/species-construction/reshape_legs_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-21"
+      },
+      "args": [
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/leg-reshape-r08-v11.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0426",
+      "note": "loop round 14, R08 leg reshape v11",
+      "expect": {
+        "vertices": 640229,
+        "faces": 1280394,
+        "bounds": [[-0.498208, -0.957, -0.529365], [0.555591, 0.459978, 0.200015]],
+        "record": {
+          "file": "leg-reshape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 632533
+          }
+        }
+      }
+    },
+    {
+      "id": "B-23",
+      "component": "body",
+      "regions": ["R07"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_arms_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-22"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/arms-r07-v10.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0448",
+      "note": "loop round 16, R07 arms v10 (clawEach)",
+      "expect": {
+        "vertices": 643457,
+        "faces": 1286850,
+        "bounds": [[-0.49812, -0.957, -0.529193], [0.555524, 0.459977, 0.200008]],
+        "record": {
+          "file": "arm-field.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 635761
+          }
+        }
+      }
+    }
+  ],
+  "assembly": {
+    "id": "J",
+    "regions": ["R05"],
+    "head": "H36",
+    "body": "B-23",
+    "args": [
+      "--head-scale", ".50",
+      "--jaw-anchor-z", ".500",
+      "--head-depth-offset", "-.020"
+    ],
+    "existing": "assembled-0458",
+    "note": "assemble_reconstructed_creature.py through loop_tools assemble; the placement constants of loop_tools PLACEMENT"
+  }
+}
