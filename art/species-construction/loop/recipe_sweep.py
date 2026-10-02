@@ -368,7 +368,10 @@ def total_score(term, base, contain_excess, tool_ref=None):
         parts['tool'] = TOOL_WEIGHT*(term['toolScore']-tool_ref)
     seam = term.get('seam')
     if isinstance(seam, dict) and 'worstRatio' in seam:
-        parts['seam'] = -SEAM_WEIGHT*seam['worstRatio']
+        # below the seam check's flag threshold (1.0) the charge falls off as the square: an unflagged half-threshold bump
+        # cost 2.5 points and pushed every planned R06 idea under near copies of the baseline in round 21
+        ratio = seam['worstRatio']
+        parts['seam'] = -SEAM_WEIGHT*(ratio if ratio >= 1 else ratio*ratio)
     return round(sum(parts.values()), 3), {k: round(v, 3) for k, v in parts.items()}
 
 

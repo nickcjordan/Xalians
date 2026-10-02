@@ -302,7 +302,7 @@ def dry_run(rc, base, plan, variants, notes, start_data, cache, top, slots):
           f"scoring about {wall:.1f} min wall on {slots} slots"
           + (f' (no recorded time for {", ".join(sorted(unknown))})' if unknown else ''))
     print(f'then the top {top} through candidate: about {per_candidate:.1f} min each, {waves} wave(s) of {slots}; total about {wall+waves*per_candidate:.1f} min')
-    print('start it with run_in_background; it is one wait, not a poll' if wall+waves*per_candidate > 9 else 'short enough to run in the foreground')
+    print('run it as a job: plan_job.py start, then plan_job.py wait until done' if wall+waves*per_candidate > 9 else 'short enough to run in the foreground')
 
 
 # ---------------------------------------------------------------- packet images for the contact sheet
@@ -461,6 +461,18 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
         surface_stats = None
     measurer = sw.Measurer(lt, sm, row_measures, zone, sheet, seam)
     measure_lock = threading.Lock()
+    import quick_criteria as qc
+    crit_regions = [region]+[r for r in ((plan.get('order') or {}).get('with') or []) if r != region]
+    packet_measured = json.loads((baseline_packet/'measured.json').read_text(encoding='utf-8')) if (baseline_packet/'measured.json').is_file() else {}
+    crit_cache, crit_lock = {}, threading.Lock()
+
+    def crit_of(quick):
+        # quick criteria of one quick folder, once per folder (the baseline is shared by every variant)
+        key = quick['dir']
+        with crit_lock:
+            if key not in crit_cache:
+                crit_cache[key] = qc.evaluate(lt, quick['dir'], work/quick['body'], crit_regions)
+            return crit_cache[key]
     namer = rc.Namer(work)
     sched = sw.Scheduler(slots, rc.say)
     base_plan, _ = rc.make_plan(base, cache)
@@ -566,6 +578,8 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
                 base_quick = results[('quick', 'baseline')]
                 bt = measurer.measure(base_quick['dir'])
                 terms = measurer.measure(quick['dir'], base_quick['dir'])
+            terms['criteria'] = crit_of(quick)
+            crit_of(base_quick)
             total, _ = sw.total_score({**terms, 'toolScore': None}, bt, contained['worst']['excess'])
             rc.say(f"{vid} {name}: fit {terms['fitIou']} (base {bt['fitIou']}) stations {terms['stationDiff']} "
                    f"contain {contained['worst']['max']} {contained['worst']['region'] or ''} total {total:+.2f} (before tool score)")
@@ -599,9 +613,13 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
                 tool_by_step.setdefault(sid, []).append(record[0])
     tool_ref = {}
     for sid, scores in tool_by_step.items():
-        existing = base.byid[sid].get('existing') if sid in base.byid else None
+        # the baseline's own output of the step (cached or existing); the worst variant only when the base lacks the step,
+        # since a reference taken from the variants credits every variant for not being the worst (round 21, B-20T)
+        existing = (base_plan.get(sid) or {}).get('dir') or (base.byid[sid].get('existing') if sid in base.byid else None)
         record = sw.tool_record(work/existing) if existing else None
         tool_ref[sid] = record[0] if record else min(scores)
+        if not record:
+            rc.say(f'tool score of {sid}: the base has no output of it; reference is the lowest variant score')
 
     for v in variants:
         vid = v['id']
@@ -629,12 +647,32 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
                     parts_total = round(parts_total+parts['surface'], 3)
             except Exception as error:
                 terms['surface'] = {'error': str(error)}
-        v.update(built=True, terms=terms, parts=parts, total=parts_total, quick=quick['dir'],
+        base_crit = crit_cache.get(base_quick['dir']) or {}
+        estimate = {}
+        for cid, c in (terms.get('criteria') or {}).items():
+            b, p0 = base_crit.get(cid), packet_measured.get(cid)
+            if c.get('value') is None or not b or b.get('value') is None:
+                continue
+            # the packet's baseline value moved by the quick change: quick renders carry a constant offset for some rows
+            ref = p0 if p0 and isinstance(p0.get('value'), (int, float)) else b
+            value = ref['value']+(c['value']-b['value'])
+            ok = c.get('min', None) is None or value >= c['min']
+            ok = ok and (c.get('max', None) is None or value <= c['max'])
+            estimate[cid] = {**c, 'value': round(value, 5), 'result': 'pass' if ok else 'fail'}
+        base_est = {cid: (packet_measured[cid] if cid in packet_measured and isinstance(packet_measured[cid].get('value'), (int, float))
+                          else base_crit[cid]) for cid in estimate}
+        points, detail = qc.progress(base_est, estimate)
+        parts['progress'] = points
+        parts_total = round(parts_total+points, 3)
+        terms['progress'] = detail
+        near_noop = not detail['moved'] and (terms.get('silhouetteChange') or 0) < .0005
+        v.update(built=True, terms=terms, parts=parts, total=parts_total, quick=quick['dir'], nearNoop=near_noop,
                  head=quick['head'], body=quick['body'], contain=contained['steps'],
                  noop=(quick['head'] == base_quick['head'] and quick['body'] == base_quick['body']))
         v['rebuilt'] = {sid: results[v['_keys'][sid]]['dir'] for sid in v['_cand'].byid
                         if not v['_plan'][sid]['dir'] and v['_keys'][sid] in results}
-    ranked = sorted((v for v in variants if v.get('total') is not None), key=lambda v: -v['total'])
+    # a variant that moves no criterion of the order and no silhouette shows readers a copy of the baseline: rank it last
+    ranked = sorted((v for v in variants if v.get('total') is not None), key=lambda v: (bool(v.get('nearNoop') or v.get('noop')), -v['total']))
     for k, v in enumerate(ranked, 1):
         v['rank'] = k
     chosen = ranked[:top]
@@ -692,7 +730,7 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
         'base': str(base.path), 'baselinePacket': str(baseline_packet), 'startNotes': notes, 'top': top_entries,
         'baseline': {'head': base_head, 'body': base_body, 'quick': base_quick['dir'], 'terms': base_terms},
         'variants': [{k: v[k] for k in ('id', 'name', 'why', 'source', 'edits', 'built', 'error', 'recipe', 'warnings', 'changedSteps',
-                                        'total', 'parts', 'terms', 'rank', 'noop', 'rebuilt', 'contain', 'quick', 'head', 'body') if k in v}
+                                        'total', 'parts', 'terms', 'rank', 'noop', 'nearNoop', 'rebuilt', 'contain', 'quick', 'head', 'body') if k in v}
                      for v in variants],
         'scoringSeconds': scoring_seconds, 'wallMinutes': wall_minutes, 'surfaceStats': surface_stats is not None,
         'created': datetime.datetime.now().isoformat(timespec='seconds')}
@@ -710,7 +748,8 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
         'wallMinutes': wall_minutes, 'resultFiles': result['resultFiles'], 'sheet': size,
         'variants': [{'id': v['id'], 'name': v['name'][:48], 'built': bool(v.get('built')), 'rank': v.get('rank'), 'total': v.get('total'),
                       **({'parts': v['parts']} if v.get('built') else {'error': (v.get('error') or '').splitlines()[0][:160] if v.get('error') else None}),
-                      **({'noop': True} if v.get('noop') else {})} for v in variants],
+                      **({'noop': True} if v.get('noop') else {}), **({'nearNoop': True} if v.get('nearNoop') else {}),
+                      **({'progress': v['terms']['progress']['rows']} if v.get('built') and v['terms'].get('progress') else {})} for v in variants],
         'top': [{'rank': e['rank'], 'id': e['id'], 'ok': e['ok'], 'assembly': e['assembly'], 'packet': e['packet'],
                  'check': (e['check'] or {}).get('pass') if e['check'] else None, 'failure': e['failure'],
                  'measuredChanged': [f"{c['id']} {c['before']}->{c['after']} {c['result'][0]}->{c['result'][1]}" for c in (e['measuredChanged'] or [])],
