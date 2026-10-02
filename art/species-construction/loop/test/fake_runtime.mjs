@@ -17,6 +17,7 @@ export function fakeRuntime(args, seed, override) {
     }
     if (label.startsWith('combine')) { const n = 1000 + h % 1000; return { failed: h % 5 === 0, head: 'head-c' + n, body: 'body-c' + n, assembly: 'assembled-' + n, packet: 'p/assembled-' + n, technicalPass: true, approach: 'combine', changes: 'c' } }
     if (label.startsWith('spec')) return { path: 'specs/x.md', summary: 'spec' }
+    if (label.startsWith('tool:')) { const r = label.split(': ')[1]; return { region: r, script: 'tool_' + r + '.py', recipe: 'recipes/tool-' + r + '.json', ready: true, notes: '' } }
     if (label.startsWith('audit')) return { path: 'docs/audit.md', gaps: [{ rank: 2, region: 'R06', gap: 'tube torso', structural: true }, { rank: 1, region: 'R05', gap: 'stalk neck', structural: true }] }
     if (label.startsWith('methods')) return { path: 'methods.json', regions: Object.keys(rub.regions).map(r => ({ region: r, method: 'method ' + r, changed: r === 'R04', respec: r === 'R05' })) }
     if (label.startsWith('method review')) return { region: 'R00', method: 'reviewed method', unpark: h % 2 === 0, respec: false }

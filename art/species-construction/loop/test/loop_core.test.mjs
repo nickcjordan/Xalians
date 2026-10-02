@@ -348,6 +348,7 @@ test('v3 branch: a reverted candidate judged better is handed to the next order 
   status.methods = { R01: 'm' }
   for (const id of Object.keys(status.regions)) if (id !== 'R04') status.regions[id].hold = true
   status.auditGaps = [{ rank: 1, region: 'R04', gap: 'crumpled paper bowl from behind', structural: true }]
+  status.regions.R04.history = []
   const prompts = []
   await runWorkflow(generate(), v3Args(status, rub, { rounds: 3 }), 'b', (label, prompt) => {
     if (label.startsWith('builder')) { prompts.push(prompt); return { ...okBuild('R04'), recipe: `recipes/r${prompts.length}-R04.json` } }
@@ -359,4 +360,19 @@ test('v3 branch: a reverted candidate judged better is handed to the next order 
   assert.doesNotMatch(prompts[0], /Promising branch/)
   assert.match(prompts[1], /Promising branch: round \d+'s candidate .*r1-R04\.json was judged better/)
   assert.match(prompts[0], /Independent audit rows for R04 \(rank: gap\): 1: crumpled paper bowl/)
+})
+
+test('v3 tools: a needed generator is built by a toolsmith before the rounds and handed to the order for its region; every round record carries the state', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R06: 'author the trunk from sections' }
+  for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
+  status.regions.R06.history = []
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, tools: [{ region: 'R06', script: 'author_trunk_sections_field.py', ready: false }, { region: 'R11', script: 'x.py', ready: false }] }), 'w')
+  const labels = out.calls.map(c => c.label)
+  assert.deepEqual(labels.filter(l => l.startsWith('tool:')), ['tool: R06'], 'only the workable region gets a toolsmith')
+  assert.ok(labels.indexOf('tool: R06') < labels.findIndex(l => l.startsWith('builder')), 'the tool comes before the first order')
+  const b = out.calls.find(c => c.label.startsWith('builder') && c.label.includes('R06'))
+  assert.match(b.prompt, /Tool for this method: tool_R06\.py.*tool-R06\.json/)
+  const rec = out.calls.find(c => c.label.startsWith('record r'))
+  assert.match(rec.prompt, /"state":\{"round":\d+,"baseline"/)
 })

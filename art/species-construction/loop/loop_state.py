@@ -109,6 +109,29 @@ def method_lines(loop_dir):
     return out
 
 
+def tool_list(loop_dir):
+    """Tools the method plan needs: a methods.json steps entry 'new: <script> ...'. Ready when
+    loop/tools/<region>.json exists (a toolsmith wrote it), with its starter recipe."""
+    p = loop_dir / 'methods.json'
+    if not p.exists():
+        return []
+    data = read_json(p)
+    data = data.get('regions', data) if isinstance(data, dict) else {}
+    out = []
+    for rid, v in sorted(data.items()):
+        steps = v.get('steps') if isinstance(v, dict) else None
+        if not isinstance(steps, str) or not steps.strip().startswith('new'):
+            continue
+        m = re.search(r'([\w/.-]+\.py)', steps)
+        rec = loop_dir / 'tools' / f'{rid}.json'
+        entry = {'region': rid, 'script': m.group(1) if m else steps[:120], 'ready': rec.exists()}
+        if rec.exists():
+            r = read_json(rec)
+            entry.update({k: r[k] for k in ('script', 'recipe') if r.get(k)})
+        out.append(entry)
+    return out
+
+
 def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path=None):
     d = species_dirs(species)
     status = read_json(status_path or d['loop'] / 'status.json')
@@ -149,6 +172,11 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
     }
     if status.get('audit'):
         slim['audit'] = rel(status['audit'])
+    tools = tool_list(d['loop'])
+    if tools:
+        slim_tools = tools
+    else:
+        slim_tools = None
     if status.get('auditGaps'):
         slim['auditGaps'] = [{'rank': g['rank'], 'region': g['region'], 'gap': trim(g['gap'], 220), 'structural': bool(g.get('structural'))} for g in status['auditGaps']]
     if rubric_texts:
@@ -160,6 +188,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         cfg.update({'label': config.get('label'), 'sideEffectThreshold': config.get('sideEffectThreshold'),
                     'regionImages': {k: v for k, v in (config.get('regionImages') or {}).items() if re.fullmatch(r'R\d+', k)}})
     args = {'species': cfg, 'pools': pools, 'rubric': rub, 'status': slim}
+    if slim_tools:
+        args['tools'] = slim_tools
     if rounds is not None:
         args['rounds'] = rounds
     if cold:
@@ -244,7 +274,8 @@ def write_status(S, path):
 def cmd_merge(a):
     d = species_dirs(a.species)
     result = read_json(a.result)
-    returned = result.get('status', result)
+    # a workflow result ({status}) or a round record ({state}, written every round since v3)
+    returned = result.get('status') or result.get('state') or result
     status_path = Path(a.status) if a.status else d['loop'] / 'status.json'
     S = merge_status(read_json(status_path), returned, d, a.species)
     if a.note:

@@ -34,6 +34,7 @@ const THRESHOLD = Math.min(SP.sideEffectThreshold ?? 0.0005, 0.0015)
 const abs = p => !p ? p : p.includes(':') ? p : REPO + '\\' + p.split('/').join('\\')
 S.specs = S.specs || {}
 S.methods = S.methods || {}
+S.tools = S.tools || {}
 S.means = S.means || []
 for (const id of IDS) {
   const r = S.regions[id]
@@ -109,6 +110,7 @@ const METHOD = {
   },
   required: ['region', 'method', 'changed', 'respec'],
 }
+const TOOL = { type: 'object', properties: { region: { type: 'string' }, script: { type: 'string' }, recipe: { type: 'string' }, ready: { type: 'boolean' }, notes: { type: 'string' } }, required: ['region', 'ready', 'notes'] }
 const METHODS = { type: 'object', properties: { path: { type: 'string' }, regions: { type: 'array', items: METHOD } }, required: ['path', 'regions'] }
 const REVIEW = { type: 'object', properties: { ...METHOD.properties, unpark: { type: 'boolean' } }, required: ['region', 'method', 'unpark', 'respec'] }
 
@@ -163,6 +165,18 @@ function branchLine(id) {
 }
 // The audit's rows for a region, in the builder and critic prompts: the checklist can pass a
 // part the independent audit still ranks as a top gap.
+// A tool the method plan needed, built by a toolsmith before the rounds: its starter recipe
+// adds the new step, and the region's first order tunes it instead of writing it.
+function toolLine(id) {
+  const t = S.tools[id]
+  if (!t || !t.recipe) return ''
+  return `Tool for this method: ${t.script || 'see the starter recipe'}, built and smoke-tested by a toolsmith before the rounds. Its starter recipe ${abs(t.recipe)} adds the step to the baseline. Start from it (unless a promising branch is listed above), tune its parameters, and change the script only to fix what tuning cannot reach.\n\n`
+}
+function toolPrompt(t) {
+  return `Read the toolsmith brief at ${BRIEF('toolsmith-brief.md')} and follow it. Region ${t.region} (${S.regions[t.region].name}). The method plan (${BRIEF('methods.md')}, ${BRIEF('methods.json')}) needs a tool that does not exist yet: ${t.script}. Method: ${S.methods[t.region] || ''}\n` +
+    (S.specs[t.region] ? `Region spec: ${abs(S.specs[t.region].path)}.\n` : '') +
+    `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline packet: ${abs(S.baseline.packet)}. Write the starter recipe to ${LOOPDIR}\recipes\tool-${t.region}.json and the ready record to ${LOOPDIR}\tools\${t.region}.json, commit by name on branch ${BRANCH} with a plain message and no Co-Authored-By trailer, and return the structured output.`
+}
 function auditLines(id) {
   if (!featuresOn()) return ''
   const rows = (S.auditGaps || []).filter(g => g.region === id)
@@ -190,9 +204,11 @@ function builderPrompt(order, round, suffix) {
     (spec ? `Target spec: ${abs(spec.path)}${spec.image ? ' with image ' + abs(spec.image) : ''}. Implement its structure table.\n\n` : '') +
     `History card for this region:\n${historyCard(order.id)}\n\n` +
     branchLine(order.id) +
+    toolLine(order.id) +
     auditLines(order.id) +
     (S.audit ? `Gap audit (independent, ranked by how much each gap stops the model reading as the sheet): ${abs(S.audit)}. Read the rows for your region and fix the most visible gap first, not the easiest criterion. A structural gap (a wrong length, cross section, depth, joint position, or a part built the wrong way) is fixed by rebuilding that part, by a parameter of the step that authors it, or by the proportion levers named in the builder brief, never by stacking more surface warps on it.\n\n` : '') +
     `Shared sheet measurement: ${BRIEF('sheet.json')} (outlines, station tables, landmarks; overlay sheet.png). Compare against it with sheet_measure.py model rather than re-tracing the sheet.\n\n` +
+    'Search parameters with recipe.py sweep (many values in one call, scored automatically) rather than one build per turn, and read the seam check (loop_tools.py quick --baseline prints it; the packet has seams.json) before you hand over: a new crease, collar or step at a joint is the side effect that reverted the last two promising candidates.\n\n' +
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it).\n` +
     `Your candidate recipe: ${candidateRecipe(round, order.id + (suffix || ''))}. ${scopeLine} Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
     `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break.\n` +
@@ -203,7 +219,7 @@ function specPrompt(id) {
     (S.methods[id] ? `Method chosen for this region (${BRIEF('methods.md')}): ${S.methods[id]}. Write the spec so a builder can implement it with that method.\n` : '') +
     `Criteria:\n${criteriaText(id)}\n\nHistory card:\n${historyCard(id)}\n\n` +
     (S.audit ? `Gap audit: ${abs(S.audit)}. The spec must close this region's rows in it, most visible first, and say for each whether it is structural (rebuild or proportion lever) or a local surface fix.\n\n` : '') +
-    `Measure against the shared sheet measurement ${BRIEF('sheet.json')} (outlines, station tables and landmarks in the fit frame) instead of re-tracing the sheet, so every spec uses the same numbers.\n\n` +
+    `Start from the generated targets: run python art/species-construction/loop/spec_targets.py ${SP.key} ${id} --baseline ${S.baseline.assembly} (it writes specs/${id}-targets.md, .json and .png: the zone's sheet station rows against the model, the landmarks and the measured criteria). Take every measurement from it or from ${BRIEF('sheet.json')}; spend your own effort on the structure table, cross sections and failure looks, not on re-measuring.\n\n` +
     `Current baseline packet: ${abs(S.baseline.packet)}. Write ${LOOPDIR}\\specs\\${id}.md and ${LOOPDIR}\\specs\\${id}.png, commit them by name on branch ${BRANCH} with a plain message and no Co-Authored-By trailer, and return the structured output.`
 }
 function auditPrompt() {
@@ -240,6 +256,14 @@ Content:
 ${JSON.stringify(entry)}
 
 Reply with the word done.`
+}
+function snapshot() {
+  const regions = {}
+  for (const id of IDS) {
+    const r = S.regions[id]
+    regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, issues: r.issues || [], history: r.history.slice(-2) }
+  }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -299,6 +323,16 @@ if (toSpec.length) {
   const specs = await parallel(toSpec.map(id => () => agent(specPrompt(id), { label: `spec: ${id}`, phase: 'Prepare', schema: SPEC, model: 'opus', effort: 'high' })))
   specs.forEach((spec, i) => { if (spec) S.specs[toSpec[i]] = { path: spec.path, image: spec.image, summary: spec.summary, round: S.round } })
 }
+// Tools: a method that needs a new generator gets it from a toolsmith before any order, so
+// rounds tune parameters instead of writing generators inside a six-build budget (round 18's
+// fan front builder spent 77 minutes writing its generator and never handed over).
+const toBuild = (args.tools || []).filter(t => !t.ready && S.regions[t.region] && workable(t.region) && !S.regions[t.region].parked && !S.tools[t.region])
+if (toBuild.length) {
+  const built = await parallel(toBuild.map(t => () => agent(toolPrompt(t), { label: `tool: ${t.region}`, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })))
+  built.forEach((r, i) => { if (r && r.ready) S.tools[toBuild[i].region] = { script: r.script || toBuild[i].script, recipe: r.recipe } })
+  log('Tools: ' + toBuild.map((t, i) => `${t.region} ${built[i] && built[i].ready ? 'ready' : 'not ready'}`).join(', '))
+}
+for (const t of args.tools || []) if (t.ready && t.recipe && !S.tools[t.region]) S.tools[t.region] = { script: t.script, recipe: t.recipe }
 
 phase('Rounds')
 let milestone = null
@@ -389,6 +423,9 @@ for (let i = 0; i < ROUNDS; i++) {
   entry.recipe = S.baseline.recipe || null
   if (trialOutcome) entry.effortTrial = { region: trial.id, effort: 'medium', assembly: trialOutcome.build ? trialOutcome.build.assembly : null, kept: !!trialOutcome.kept, reasons: trialOutcome.reasons || [trialOutcome.failed], gain: trialOutcome.gain ?? null, verdict: trialOutcome.verdict || null }
   S.means.push(entry.mean)
+  // The state after this round rides in the record, so a stopped batch resumes with
+  // loop_state.py merge <round file> instead of a journal replay.
+  entry.state = snapshot()
   await agent(recordPrompt(round, entry), { label: `record r${round}`, phase: 'Rounds', model: 'haiku', effort: 'low' })
   log(`Round ${round}: ` + entry.orders.map(o => `${o.region} ${o.kept ? 'KEPT' : 'reverted'}`).join(' | ') + ` mean ${entry.mean}`)
 

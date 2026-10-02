@@ -34,7 +34,7 @@
   "assembly": "assembled-0458",
   "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-0458"
  },
- "round": 16,
+ "round": 18,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -51,7 +51,9 @@
   "R03+R05",
   "R08",
   "R03+R06",
-  "R03+R07"
+  "R03+R07",
+  "R04+R09",
+  "R03+R09"
  ],
  "specs": {
   "R10": {
@@ -391,12 +393,24 @@
     "R04.7": "fail"
    },
    "issues": [],
-   "attempts": 3,
+   "attempts": 1,
    "anchorScore": 5,
-   "parked": true,
-   "parkReason": "3 rounds without a net gain of 1",
-   "history": [],
-   "lastWorked": 11
+   "parked": false,
+   "parkReason": null,
+   "history": [
+    {
+     "round": 17,
+     "kept": false,
+     "approach": "Strip the old rear shell behind the mid-surface and regrow it as 69 table-driven coat clumps (K, I, M, T, E, C) with a core slab and a blurred dome, in one field-space remesh.",
+     "reason": "R04 checklist 5 to 5; weighted mean -0.073",
+     "reusable": [],
+     "verdict": "better",
+     "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
+    }
+   ],
+   "lastWorked": 17,
+   "methodChanged": 16
   },
   "R05": {
    "name": "Neck and shoulders",
@@ -502,10 +516,10 @@
      "fixability": 0.6
     }
    ],
-   "attempts": 3,
-   "anchorScore": 4,
-   "parked": true,
-   "parkReason": "3 rounds without a net gain of 1",
+   "attempts": 0,
+   "anchorScore": 4.5,
+   "parked": false,
+   "parkReason": null,
    "history": [
     {
      "round": 9,
@@ -552,7 +566,8 @@
      ]
     }
    ],
-   "lastWorked": 15
+   "lastWorked": 15,
+   "methodChanged": 16
   },
   "R07": {
    "name": "Arms and forepaws",
@@ -756,7 +771,7 @@
      "fixability": 0.8
     }
    ],
-   "attempts": 0,
+   "attempts": 2,
    "anchorScore": 5.6,
    "parked": false,
    "parkReason": null,
@@ -792,9 +807,38 @@
        "what": "Spec overrides for the hind-paw pass (regraded toes, shorter pad, higher dorsum, morph -.83 to -.89, tip-mode claws)."
       }
      ]
+    },
+    {
+     "round": 17,
+     "kept": false,
+     "approach": "Analytic hind-paw rebuild at B-21 with a smoothed topLine dome (instep crest a third back), upright flared ankle column, rounded heel, four graded toe lobes and Bezier claws sheathed in the toe tips, morph band confined to z -.842 to -.868.",
+     "reason": "critic verdict same; R09 checklist 5.6 to 5.6; weighted mean +0",
+     "reusable": [],
+     "verdict": "same",
+     "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R09.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
+    },
+    {
+     "round": 18,
+     "kept": false,
+     "approach": "Analytic hind-paw rebuild at B-21 with the top-line dome kept, but the ankle column back at native size and its back cut by a forward-leaning columnBackLine, with a rounder heel, larger edge blends and longer hooked claws sheathed in the toe tips.",
+     "reason": "weighted mean -0.042",
+     "reusable": [
+      {
+       "option": "rebuild_hind_paws_field.py columnBackLine {z, V, blend}",
+       "what": "Cuts the ankle column's back with a smooth plane V <= line(z), interpolated linearly from the z and V nodes in the paw frame, so the heel back leans forward going down; default off."
+      },
+      {
+       "option": "specs/paw-spec-r09-v10.json",
+       "what": "The full round 18 hind-paw spec: native-size column, driftStopZ -.85, columnBackLine, rounder heel, floor blend .009, dome blend .022 with a .42 and n 2.6, and hooked claws. It is a starting point for later R09 rounds."
+      }
+     ],
+     "verdict": "better",
+     "recipe": "docs/design/species-construction/akinza/loop/recipes/r18-R09.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 12
+   "lastWorked": 18
   },
   "R10": {
    "name": "Tails",
@@ -872,7 +916,8 @@
   "2026-10-01: workflow stopped at the start of round 14. Round 13 R03 (assembled-0419) was reverted only because the per-model pose refit moved a posed leg band on an identical body (R08 7.3 to 6.4); the judge now freezes the results of the component an order did not touch, and R03 is adopted. Note for later: the stalk neck lives at the head-body join, but R05 orders go to the body builder only, so it cannot be fixed as the loop is set up.",
   "2026-10-01: stopped at the start of round 15. Round 14 R08 (assembled-0428) was reverted against a stale frozen R08.10; measured results are now re-read from the adopted packet, the posed pose and joints are cached per body component (pose-cache/<body>), and R08 is adopted.",
   "2026-10-01: hard stop after round 16. Final model assembled-0458 (head-0455, body-0448), weighted 5.447.",
-  "2026-10-01: loop v3 starts at round 17 from assembled-0458 (LOOP-v3.md). New hard stop 32; plateau 3 rounds under .15 escalates to method review, a second plateau stops the batch. R10 and R11 are held (Nick: the tail is fine)."
+  "2026-10-01: loop v3 starts at round 17 from assembled-0458 (LOOP-v3.md). New hard stop 32; plateau 3 rounds under .15 escalates to method review, a second plateau stops the batch. R10 and R11 are held (Nick: the tail is fine).",
+  "2026-10-01: v3 batch 1 paused by Nick during round 18 (R03 builder interrupted). Prepare (audit 0458, method plan, six specs) and rounds 17 and 18 folded in by fold_r17_r18.mjs; nothing kept, mean 5.447."
  ],
  "decisionsForNick": [
   {
@@ -880,5 +925,79 @@
    "state": "Applied: tips curl up and out per accepted back study 0018; the first sheet droops. Reverting is one controls file."
   }
  ],
- "audit": "docs/design/species-construction/akinza/loop/gap-audit-0226.md"
+ "audit": "docs/design/species-construction/akinza/loop/gap-audit-0458.md",
+ "auditGaps": [
+  {
+   "rank": 1,
+   "region": "R04",
+   "gap": "Back and rear oblique: the fan's back is crumpled shards and thorns on a smooth shell, with a continuous pale rim along the lower edge and flat cut end planes, so it reads as a crumpled-paper bowl or nest with the head dome sunk behind seams. The outline already fits, so this is all construction.",
+   "structural": true
+  },
+  {
+   "rank": 2,
+   "region": "R03",
+   "gap": "Front and three-quarter: the fan front is hard shards with serrated thorn edges and flat leaf facets. The inner tufts are white faceted blades with dark empty slots behind them, not one soft volume of pointed locks with a fluffy pale cup.",
+   "structural": true
+  },
+  {
+   "rank": 3,
+   "region": "R02",
+   "gap": "Side and three-quarter: the eye shows as a narrow slanted slit pinched by a hard cheek and brow ridge, which looks angry or squinting. The sheet's profile eye is a tall oval about a third of head height (visible eye over head height about 0.15 vs 0.33, estimate).",
+   "structural": true
+  },
+  {
+   "rank": 4,
+   "region": "R12",
+   "gap": "All views: a hard, jagged, high-frequency fan sits on a completely smooth bare vinyl body with no cheek, chest, forearm or calf coat masses, so the model mixes two levels and two idioms of construction against the sheet's one soft coat.",
+   "structural": false
+  },
+  {
+   "rank": 5,
+   "region": "R06",
+   "gap": "Side view: the trunk is a straight vertical plank with no S curve or rib cage volume. Chest depth at .36 is 0.131 vs 0.168H, waist depth 0.106 vs 0.082H (1.30x), chest over waist 1.07 vs 1.54.",
+   "structural": true
+  },
+  {
+   "rank": 6,
+   "region": "R03",
+   "gap": "Side view: the ear is a ragged column of shards with a row of tooth-like spikes down its back edge, and no pale inner cup is visible. The sheet shows a round shaggy disc with the cup opening forward and outward.",
+   "structural": true
+  },
+  {
+   "rank": 7,
+   "region": "R07",
+   "gap": "Front and side: the forepaw is a small closed fist about as wide as the wrist, with fused digits and short spikes on its underside. The sheet's paw is about 0.6x wider than the model's (about 0.033 vs 0.055H, estimate) with separate digits and long claws from the tips. Posed arm IoU .867 fails.",
+   "structural": true
+  },
+  {
+   "rank": 8,
+   "region": "R01",
+   "gap": "Front: the face is a broad block, with a flat forehead running straight between the ear roots, a square jaw and no skull dome rising between the ears (crown above the inner rim about 0.0 vs 0.02H, estimate).",
+   "structural": true
+  },
+  {
+   "rank": 9,
+   "region": "R02",
+   "gap": "Front at full figure scale: the eyes read as near-round discs (height over width about 1.2 vs 1.5) with an even ring and a small centred pupil, so they stare like googly eyes. The sheet has tall ovals, a heavier upper lid and a large iris glancing to one side.",
+   "structural": false
+  },
+  {
+   "rank": 10,
+   "region": "R05",
+   "gap": "Back and neck rear: a flat horizontal shoulder yoke with knobbed corners, a raised ledge across the shoulder blades and a collar ring at the top of the neck read athletic. The outline heights already match the sheet's sloped shoulders, so this is sculpt.",
+   "structural": false
+  },
+  {
+   "rank": 11,
+   "region": "R09",
+   "gap": "Front: four near-equal toe beads in a straight row on a flat slab. Side: a low slipper with a vertical cliff heel and no domed instep, with the claws standing on the toe fronts instead of curving out of the tips. Posed foot IoU .647 fails.",
+   "structural": true
+  },
+  {
+   "rank": 12,
+   "region": "R08",
+   "gap": "Side and front: a second swell on the back of the shin just above the heel and a knob at the knee. The widths now pass, but the posed shin IoU (.643) and thigh IoU (.830) fail.",
+   "structural": false
+  }
+ ]
 }
