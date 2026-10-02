@@ -2,7 +2,7 @@
 
 Status: the running state of the game under ownership (brief: `reclamation-ownership-brief.md`). This file is the resume point. Any reset reads this first and continues at the weakest thing named below, never from scratch. Each pass appends its own section; the standing state at the top is rewritten in place.
 
-## Standing state (after pass 78, 2026-10-02)
+## Standing state (after pass 79, 2026-10-02)
 
 Pass 62 rewrote this section; it had said "after pass 31" through passes 32 to 61 (`reclamation-audit-2026-09-26.md`, "What was wrong with how I work"). Each pass ends by rewriting it.
 
@@ -40,7 +40,7 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`), updated by pass 65's critic.
 
-0. **Resume here: Nick's live read of the pass 78 tiles.**
+0. **Resume here: Nick's live read of the pass 79 tiles.** Pass 79 makes the tile fill its room and changes the rival chip to "−7". Round 15 met the bar (8, 8, 8; every answer and mark right). Pass 78's points are below.
    - **The tile:** base health and attack are the two big numbers, and a strip of three segments shows what each world does to health.
    - **The rival chip:** the attack's effect on each rival is a chip on that rival.
    - **Readers:** round 14 met the bar (Finding 8, 8 and 8; every answer and mark right).
@@ -1664,4 +1664,21 @@ Nick read the pass 77 tiles live. He ruled that natural health and attack are th
 - the five table checks;
 - captures at three sizes;
 - readers in rounds 13 and 14. Round 14 met the bar.
+
+### Pass 79 (2026-10-02): the tile fills its room, and the chip prints the blow taken
+
+Nick read pass 78 live and raised two points:
+- the number on a rival did not say whether it was the result or what is applied;
+- the tile had been left with unused space.
+
+**What changed:**
+- **The tile's top is three zones across the full width.** Its numbers scale with the room.
+- **A new layout check** measures fill and centering, not just overlap.
+- **The chip prints "−7".** An act glyph was tried first and read as the rival's own strike.
+
+**Checked:**
+- the tests;
+- the five table checks;
+- captures at three sizes;
+- round 15 of the readers (`reclamation-squad-reader-loop.md`).
 

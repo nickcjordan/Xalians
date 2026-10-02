@@ -259,7 +259,9 @@ function ReclamationFigure({
 							title={blowTitle(blowIn, name)}
 							style={style}
 						>
-							<b className="g-mono">{formatBlow(blowIn.power)}</b>
+							{/* pass 79: the blow is printed as what it takes off this creature, "−7", so it reads as applied and not as what is left (Nick, 2026-10-02).
+							   An act glyph was tried first and dropped: the creature's own plate wears its own act glyph just above, so "⚔7" read as its own strike. */}
+							<b className="g-mono">−{formatBlow(blowIn.power)}</b>
 							{n === null && Math.abs((blowIn.chart || 1) - 1) > 1e-9 && <i className="rec-figure-blow-x g-mono">{factorText(blowIn.chart)}</i>}
 							{blowIn.armored && <ArmorGlyph className="rec-figure-blow-armor" />}
 						</span>

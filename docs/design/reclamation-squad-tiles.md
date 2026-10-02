@@ -80,3 +80,8 @@ He asked for the spirit rather than a literal build. Mockups G, H and H2 followe
 
 **Round 13 changed the rival chip.** The chip first printed the blow's change ("−7", "0"). All three readers took a number on a rival as harm done to it, so "0" read as "no damage". This was pass 58's lesson again. The chip now prints the blow it would land ("7", "14"), and its color carries the adjustment: green when it beats the attack on your tile, red when it falls short, quiet when even, deeper with the gap.
 
+## Pass 79: the tile fills its room, and the chip prints the blow taken (Nick, 2026-10-02)
+
+- **The tile's top area is three zones in one row: art, health, attack.** Health and attack split the room after the art equally and center their content. The big numbers scale with the zone, the smaller of about 35 percent of the top area's height and 15 percent of the tile's width. At 1366 in round 3 (wide, short tiles) the right half no longer stands empty.
+- **The rival chip prints "−7".** That is what the blow would take off the creature, so it reads as applied, not as what is left. Its color still says how it compares with the attack on your tile. The rival's remaining health is still not shown (pass 72, re-ruled 2026-09-30).
+

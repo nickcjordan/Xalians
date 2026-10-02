@@ -312,3 +312,20 @@ The questions were rewritten for the new tile. They cover:
   - **Position alone ties each segment to its world.** Nick ruled position is enough.
   - **Phone tiles carry no names.** The names were unreadably small there, and the art identifies the creature.
 
+## Pass 79: the tile fills its room, and the rival chip prints the blow taken
+
+Nick, 2026-10-02, on pass 78 live:
+- **The rival chip:** "The number you put on the enemy still needs to work because it doesn't show if that's the number that it's resulting in or the number that's being applied."
+- **The tile:** "you adjusted some things within the creature tile and left a bunch of unused space."
+
+| Round | Seed | Finding | Answers right | Marks | Top finding | Fix |
+|---|---|---|---|---|---|---|
+| 15 | 233 | 8, 8, 8; own Intuitive 6, 6, 7 | 36 of 36 (100%) | all 16 right by all three; the "−7" read as the damage taken, red as weakened, plain "−14" as full strength (3 of 3) | the strip's segments tie to worlds by position only, and the phone has no names (3 of 3, both ruled or accepted earlier) | none: the bar is met |
+
+### Round 15 notes
+
+- **The chip prints "−7", what the blow takes off the rival.** An act glyph ("⚔7") was tried first and dropped: the rival's own plate wears its own act glyph just above, so the chip read as its own strike.
+- **The tile's top is three zones across the full width:** art, health and attack.
+  - The numbers scale with the zone's room.
+  - A new layout check in `reclamation-squad-readers.mjs` measures fill (the zones span at least 92 percent), centering, and the number's height against the zone.
+

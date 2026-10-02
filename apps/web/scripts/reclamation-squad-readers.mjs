@@ -135,6 +135,33 @@ for (const run of RUNS) {
 					const act = tile.querySelector('.rec-squad-act');
 					const id = tile.querySelector('.rec-squad-id');
 					if (act && id && act.scrollWidth > id.clientWidth + T) out.push(`attack line wider than its column: ${act.scrollWidth} vs ${id.clientWidth}`);
+					// pass 79: the zones fill the tile: each number zone's content centered in it, the three zones spanning the tile, the big number tall enough
+					const left = tile.querySelector('.rec-squad-left');
+					const stats = [...tile.querySelectorAll('.rec-squad-stat')];
+					const top = tile.querySelector('.rec-squad-top');
+					if (left && stats.length === 2 && top) {
+						const tr = top.getBoundingClientRect();
+						const lr = left.getBoundingClientRect();
+						const sr = stats.map((z) => z.getBoundingClientRect());
+						const span = (Math.max(lr.right, sr[0].right, sr[1].right) - Math.min(lr.left, sr[0].left, sr[1].left)) / t.width;
+						let off = 0;
+						const tag = tile.getAttribute('data-slot');
+						stats.forEach((z, i) => {
+							const zr = sr[i];
+							const kids = [...z.querySelectorAll('b.rec-squad-big, .rec-squad-hbar, .rec-squad-hfill, .rec-squad-act, .rec-squad-act-word')];
+							const l = Math.min(...kids.map((k) => k.getBoundingClientRect().left));
+							const r = Math.max(...kids.map((k) => k.getBoundingClientRect().right));
+							const o = Math.abs((l + r) / 2 - (zr.left + zr.right) / 2) / zr.width;
+							off = Math.max(off, o);
+							if (o > 0.15) out.push(`zone content off center by ${(o * 100).toFixed(0)}% (${i ? 'attack' : 'health'}, ${tag})`);
+						});
+						const big = tile.querySelector('b.rec-squad-big');
+						const bigH = big ? big.getBoundingClientRect().height / tr.height : 0;
+						if (span < 0.92) out.push(`zones span only ${(span * 100).toFixed(0)}% of the tile (${tag})`);
+						if (bigH < 0.35) out.push(`big number only ${(bigH * 100).toFixed(0)}% of the top area (${tag})`);
+						window.__layoutStats = window.__layoutStats || [];
+						window.__layoutStats.push({ w: Math.round(t.width), h: Math.round(t.height), span: +span.toFixed(3), bigH: +bigH.toFixed(3), off: +off.toFixed(3), fs: big ? Math.round(parseFloat(getComputedStyle(big).fontSize)) : 0 });
+					}
 					for (let i = 0; i + 1 < cells.length; i++) {
 						const a = cells[i].getBoundingClientRect();
 						const b = cells[i + 1].getBoundingClientRect();
@@ -154,6 +181,12 @@ for (const run of RUNS) {
 				if (root.scrollHeight > window.innerHeight + 1 || root.scrollWidth > window.innerWidth + 1) out.push(`page scrolls: ${root.scrollWidth}x${root.scrollHeight} in ${window.innerWidth}x${window.innerHeight}`);
 				return out;
 			});
+			const stats = await page.evaluate(() => { const x = window.__layoutStats || []; window.__layoutStats = []; return x; });
+			if (stats.length) {
+				const mm = (k, f) => Math[f](...stats.map((x) => x[k]));
+				entry.layoutStats = { tiles: stats.length, w: stats[0].w, h: stats[0].h, fs: stats[0].fs, minSpan: mm('span', 'min'), minBigH: mm('bigH', 'min'), maxOff: mm('off', 'max') };
+				console.log(`${name}: layout ${JSON.stringify(entry.layoutStats)}`);
+			}
 			if (bad.length) {
 				entry.layout = bad;
 				failures++;

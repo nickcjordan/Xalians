@@ -117,12 +117,14 @@ describe('the blow on a target', () => {
 		// round 13: the chip prints the blow it lands (a signed change on a rival read as damage); the change against 6 colors it
 		expect(chip.getAttribute('data-blow-in')).toBe('9');
 		expect(chip.getAttribute('data-blow-adjust')).toBe('3');
-		expect(chip.querySelector('b').textContent).toBe('9');
+		expect(chip.querySelector('b').textContent).toBe('−9');
 		expect(chip.className).toContain('rec-figure-blow--up');
 		expect(chip.style.getPropertyValue('--sq-tint')).toBe('35%');
 		// the factor text is gone from the chip, kept in the title
 		expect(chip.querySelector('.rec-figure-blow-x')).toBeNull();
 		expect(chip.querySelector('.rec-glyph--armor')).not.toBeNull();
+		// pass 79: no act mark (the target's own plate wears its act glyph just above); the minus says the blow is taken off it
+		expect(chip.querySelector('.rec-glyph--role-strike')).toBeNull();
 		expect(chip.className).not.toContain('--on-mine');
 		expect(chip.getAttribute('title')).toBe('Each Tizzie strike lands 9 on Graviclaw at full strength (6, psychic on dark ×2, armored ×0.75). Its own attack is 6, so this lands +3 against it. A creature already hurt lands less, and a guard takes a quarter off.');
 		// it sits on the stage, not in the plate's hold
@@ -133,14 +135,14 @@ describe('the blow on a target', () => {
 		const at = (power, base) => render(<ReclamationFigure record={record} seat="B" you="A" facing="down" hold={13} blowIn={{ power, chart: 1, armored: false, mine: false, by: 'Tizzie', role: 'strike', base }} />).container.querySelector('[data-blow-in]');
 		const down = at(5, 6);
 		expect(down.getAttribute('data-blow-adjust')).toBe('-1');
-		expect(down.querySelector('b').textContent).toBe('5');
+		expect(down.querySelector('b').textContent).toBe('−5');
 		expect(down.className).toContain('rec-figure-blow--down');
 		expect(down.style.getPropertyValue('--sq-tint')).toBe('15%');
 		expect(at(4, 6).style.getPropertyValue('--sq-tint')).toBe('25%');
 		expect(at(2, 6).style.getPropertyValue('--sq-tint')).toBe('35%');
 		const even = at(6.2, 6);
 		expect(even.getAttribute('data-blow-adjust')).toBe('0');
-		expect(even.querySelector('b').textContent).toBe('6');
+		expect(even.querySelector('b').textContent).toBe('−6');
 		expect(even.className).toContain('rec-figure-blow--zero');
 	});
 
@@ -148,6 +150,7 @@ describe('the blow on a target', () => {
 		const mine = render(<ReclamationFigure record={record} seat="A" you="A" facing="up" hold={13} blowIn={{ power: 4, chart: 1, armored: false, mine: true, by: 'Kosanos', role: 'sweep', base: 4 }} />);
 		const chip = mine.container.querySelector('[data-blow-in]');
 		expect(chip.className).toContain('rec-figure-blow--on-mine');
+		expect(chip.querySelector('b').textContent).toBe('−4');
 		expect(chip.querySelector('.rec-figure-blow-x')).toBeNull();
 		expect(chip.getAttribute('title')).toBe('Each Kosanos sweep lands 4 on your Graviclaw at full strength. A creature already hurt lands less, and a guard takes a quarter off.');
 		const clash = render(<ReclamationFigure record={record} seat="B" you="A" facing="down" hold={13} hit flash={{ kind: 'stagger', text: '-5' }} beat={2} blowIn={{ power: 9, chart: 2, mine: false }} />);
