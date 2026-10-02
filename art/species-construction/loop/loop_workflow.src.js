@@ -272,7 +272,7 @@ function snapshot() {
     const r = S.regions[id]
     regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
   }
-  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, regions }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -411,7 +411,14 @@ for (let i = 0; i < ROUNDS; i++) {
     // The critic looks at the target and at regions whose images moved past the threshold;
     // a component the order did not touch is frozen by the judge, so it is not judged either.
     const frozen = order.component === 'head' ? [...POOLS.body, ...POOLS.join] : order.component === 'body' ? POOLS.head : []
-    const scope = sideEffectRegions(b.regionChange ? { regionChange: b.regionChange } : null, order.id, THRESHOLD, SP.regionImages, IDS).filter(id => !frozen.includes(id))
+    // At most the two regions that moved most past the threshold (audit 2026-10-02: a 0.0005
+    // threshold exempted almost nothing, so every critique graded 54 to 79 criteria); the
+    // measured criteria and the seam check guard the rest.
+    const targetsHere = [order.id, ...(order.with || [])]
+    const mag = regionMagnitude(b.regionChange ? { regionChange: b.regionChange } : null, SP.regionImages)
+    const scope = sideEffectRegions(b.regionChange ? { regionChange: b.regionChange } : null, order.id, THRESHOLD, SP.regionImages, IDS)
+      .filter(id => !frozen.includes(id) && !targetsHere.includes(id) && !S.regions[id].hold)
+      .sort((x, y) => (mag[y] ?? 1) - (mag[x] ?? 1)).slice(0, L.criticScopeMax ?? 2)
     out.critique = await agent(criticPrompt(b.packet, order, 'candidate', scope),
       { label: `critic r${round} ${order.component}: ${b.assembly}`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' })
     if (!out.critique) { out.failed = 'critic returned nothing'; return out }

@@ -71,7 +71,8 @@ test('merge: a slim workflow result folds back into the full status without losi
   assert.equal(merged.v1, full.v1)
   assert.deepEqual(merged.decisionsForNick, full.decisionsForNick)
   assert.deepEqual(merged.specs.R01.summary, full.specs.R01.summary)
-  assert.ok(!('means' in merged))
+  // means persist since v3.4 (the plateau window must survive a merge)
+  assert.ok(Array.isArray(merged.means))
 })
 
 const J14 = join(DEFAULT_JOURNALS, 'wf_507975db-01a', 'journal.jsonl')

@@ -47,7 +47,9 @@ export const baseResults = state => Object.fromEntries(Object.keys(state.regions
 
 export function gateMet(state, limits) {
   const g = limits.gate
-  const ids = Object.keys(state.regions)
+  // v3: a region held by Nick's direction (the tails) cannot block the gate (audit 2026-10-02:
+  // with the tails at 4.2 and 1.3 the gate was unreachable).
+  const ids = Object.keys(state.regions).filter(id => !state.regions[id].hold)
   return ids.every(id => (state.regions[id].score || 0) >= g.minRegion) && meanOf(state, scoresNow(state)) >= g.weightedMean
     && g.identityRegions.every(id => (state.regions[id].score || 0) >= g.identityMin)
 }
@@ -82,6 +84,7 @@ export function priority(state, limits, id, round) {
     const ranks = (state.auditGaps || []).filter(g => g.region === id).map(g => g.rank)
     if (ranks.length) p += (limits.auditWeight ?? 2) * Math.max(0, 13 - Math.min(...ranks))
     if (state.tools && state.tools[id] && !r.toolUsed) p += limits.toolBonus ?? 20
+    if (limits.gate && limits.gate.identityRegions.includes(id)) p += limits.identityBonus ?? 0
     p += Math.min(idle, 20) * 0.05
   } else if (idle >= limits.coverageRounds) p += 100 + idle  // coverage: a region idle this long goes next
   return Math.round(p * 100) / 100
@@ -219,6 +222,32 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   // may (one other region losing up to regressionDrop), within a small mean loss. Rounds 17 to
   // 19 had four better verdicts with no criterion moving; two were reverted for one small side
   // loss each (the fan back's needles cost the fan front a step; the paw's cuff cost the legs).
+  // v3.4 (limits.verdictKeep, audit 2026-10-02 recommendation 4): the reader or critic verdict
+  // decides, guarded by the measured criteria and the invariants. A held region's losses never
+  // count (round 8's tail kink sat in a region Nick holds as fine). No measured criterion in a
+  // workable region may lose credit; one workable non-target region may lose visual credit
+  // within regressionDrop as a debt; no target may lose; no invariant may newly break.
+  if (limits.verdictKeep) {
+    const held = new Set(ids.filter(id => state.regions[id].hold))
+    const lostW = lost.filter(id => !held.has(id))
+    const dropsW = lostW.filter(id => targets.includes(id) || before[id] - after[id] > limits.regressionDrop || lostW.length > 1)
+    const measuredLoss = []
+    for (const id of ids) {
+      if (held.has(id)) continue
+      for (const c of rubric.regions[id]) {
+        if (c.kind !== 'measured') continue
+        const b = state.regions[id].results[c.id], a = results[id][c.id]
+        if (b && a && credit(a) < credit(b)) measuredLoss.push(`${c.id} ${b} to ${a}`)
+      }
+    }
+    const rs = []
+    if (!pair || pair.verdict !== 'better') rs.push(`verdict ${pair ? pair.verdict : 'missing'}`)
+    if (dropsW.length) rs.push('lost credit in ' + dropsW.map(id => `${id} ${before[id]} to ${after[id]}`).join(', '))
+    if (measuredLoss.length) rs.push('measured regression ' + measuredLoss.join(', '))
+    if (broken.length) rs.push('broke invariant ' + broken.join(', '))
+    const dW = lostW.filter(id => !dropsW.includes(id)).map(id => ({ region: id, before: before[id], after: after[id], by: targets.join('+') }))
+    return { kept: !rs.length, keptOnVerdict: !rs.length, reasons: rs, results, after, gain, debts: rs.length ? [] : dW, verdict: pair || null, invariants: critique.invariants || [], ...extra }
+  }
   const vd = limits.verdictDebt
   const debtKeep = vd && reasons.length && pair && pair.verdict === 'better' && !targets.some(t => after[t] < before[t]) && !drops.length && lost.length <= (vd.maxRegions ?? 1) && !broken.length && gain >= (vd.minGain ?? -0.1)
   if (debtKeep) return { kept: true, keptOnVerdict: true, keptWithDebt: true, reasons: [], results, after, gain, debts, verdict: pair, invariants: critique.invariants || [], ...extra }

@@ -480,3 +480,35 @@ test('audit rows: a kept candidate that resolves a row removes it; enough kept o
   const crit1 = out.calls.find(c => c.label.startsWith('critic r'))
   assert.match(crit1.prompt, /return auditRows with its rank/)
 })
+
+test('verdictKeep: a better verdict keeps without a checklist rise; measured regressions, target losses and invariants still revert; held regions never block', () => {
+  const L4 = { ...LIMITS, verdictKeep: true }
+  const S = mkState()
+  setResults(S, 'R04', R(4)); setResults(S, 'R03', R(7)); setResults(S, 'R10', R(5))
+  S.regions.R10.hold = true
+  const ord = { id: 'R04', component: 'head' }
+  // no criterion moves, verdict better: kept
+  assert.equal(core.judge(S, rubric, L4, ord, {}, crit({ R04: R(4) }, { pairwise: better('R04') })).kept, true)
+  // a held region loses a lot: still kept
+  assert.equal(core.judge(S, rubric, L4, ord, {}, crit({ R04: R(4), R10: R(1) }, { pairwise: better('R04') })).kept, true)
+  // a measured criterion (the last two of each region) loses credit: reverted
+  const m = R(7); m[6] = 'fail'
+  const r1 = core.judge(S, rubric, L4, ord, {}, crit({ R04: R(4), R03: m }, { pairwise: better('R04') }))
+  assert.equal(r1.kept, false); assert.match(r1.reasons.join(' '), /measured regression R03\.7/)
+  // one visual step lost in a workable neighbour: kept with a debt
+  const v = ['pass', 'pass', 'pass', 'pass', 'pass', 'partial', 'pass', 'fail']
+  const r2 = core.judge(S, rubric, L4, ord, {}, crit({ R04: R(4), R03: v }, { pairwise: better('R04') }))
+  assert.equal(r2.kept, true); assert.deepEqual(r2.debts.map(d => d.region), ['R03'])
+  // the target loses: reverted; verdict same: reverted
+  assert.equal(core.judge(S, rubric, L4, ord, {}, crit({ R04: R(3, 1) }, { pairwise: better('R04') })).kept, false)
+  assert.equal(core.judge(S, rubric, L4, ord, {}, crit({ R04: R(6) }, { pairwise: [{ region: 'R04', verdict: 'same', reason: '' }] })).kept, false)
+})
+
+test('gate: held regions do not block it', () => {
+  const S = mkState()
+  setScores(S, { R10: 4.2, R11: 1.3 })
+  for (const id of IDS12) if (!['R10', 'R11'].includes(id)) S.regions[id].score = 9
+  assert.equal(core.gateMet(S, LIMITS), false)
+  S.regions.R10.hold = true; S.regions.R11.hold = true
+  assert.equal(core.gateMet(S, LIMITS), true)
+})

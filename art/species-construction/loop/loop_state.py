@@ -168,7 +168,7 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         baseline.setdefault('recipe', rel(d['recipe']))
     slim = {
         'schemaVersion': status.get('schemaVersion'), 'limits': status['limits'], 'baseline': baseline,
-        'round': status['round'], 'lastOrders': status['lastOrders'], 'means': means_from_rounds(d['loop']),
+        'round': status['round'], 'lastOrders': status['lastOrders'], 'means': status.get('means') or means_from_rounds(d['loop']),
         'specs': {rid: {k: rel(v) for k, v in sp.items() if k in ('path', 'image')} for rid, sp in (status.get('specs') or {}).items()},
         'methods': methods, 'invariants': status.get('invariants', {}), 'regions': regions,
     }
@@ -223,7 +223,7 @@ def cmd_args(a):
 # ---- merge ------------------------------------------------------------------------------------
 
 REGION_FIELDS = ('score', 'results', 'attempts', 'anchorScore', 'lastWorked', 'toolUsed')
-DROP_KEYS = {'means', 'methods'}
+DROP_KEYS = {'methods'}
 
 
 def merge_status(full, returned, d, species):
@@ -270,7 +270,7 @@ def merge_status(full, returned, d, species):
             b.setdefault('recipe', S.get('baseline', {}).get('recipe', canon))
         S['baseline'] = b
     # state the workflow changes round to round: the returned value always wins
-    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants'):
+    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means'):
         if k in returned:
             S[k] = returned[k]
     for k, v in returned.items():
