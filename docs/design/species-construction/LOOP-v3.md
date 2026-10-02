@@ -181,6 +181,20 @@ It writes `shakedown.json` with a pass or fail per check and the criteria that m
 7. **Plateau stop** ends the batch with an escalation note in the result.
 8. **Recorder** stays (Haiku, one file per round); the orchestrator can always rebuild from the journal with `loop_state.py replay`.
 
+## Additions after round 17 (v3.1, 2026-10-01)
+
+Round 17 and half of round 18 ran live, kept nothing, and showed where the time and the reverts came from. These went in before round 19:
+
+- **Promising branches.** A reverted candidate the critic judged better is the next order's starting recipe for that region (history entries carry `verdict`, `recipe` and `base`).
+- **Audit reopen.** A region at or above the pass bar with a structural gap in the audit's top ten is ordered again, at one point below the bar, and the builder and the critic see the audit's rows; the critic may not pass a criterion those rows show failing (the face scored 8.3 while the audit ranked its slit profile eye third).
+- **Toolsmiths.** A method that needs a new generator (`methods.json` steps `new: <script>`) gets it built and smoke-tested in Prepare by a Sonnet toolsmith (`toolsmith-brief.md`), recorded in `loop/tools/<region>.json` with a starter recipe; orders then tune it.
+- **Sweeps.** `recipe.py sweep` builds up to 12 variants of one step and ranks them on region overlap, station difference, containment and seams, with a contact sheet. Quick silhouettes cannot rank changes under about 1 percent of figure height.
+- **Seam check.** `seam_check.py` flags new outline kinks, collars, steps and needles at nine joints against the baseline, in `quick --baseline` and in the packet's `seams.json`. It caught 6 of 11 recorded defects with no false flag on clean candidates; it is a pointer, not a verdict.
+- **Generated spec targets.** `spec_targets.py <species> <region>` writes the measurement half of a spec in under a second; spec writers take numbers from it.
+- **Third Blender slot** when at least 14 GB is free.
+- **State in every round record** (`entry.state`), so `loop_state.py merge <round file>` resumes a stopped batch without a journal replay.
+- **Effort trial result.** One sample: a medium-effort builder used about 30 percent fewer tokens and was judged worse; builders stay at high effort.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

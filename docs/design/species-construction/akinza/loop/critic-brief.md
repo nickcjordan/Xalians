@@ -39,3 +39,5 @@ A region's score is 10 x its credited fraction (pass 1, partial 0.5); the orches
 - List up to three issues for the target region, as above, so the next order starts from your findings.
 
 Write the same content to `critique.json` in the candidate's packet folder, then return the structured output.
+
+The packet's `seams.json` lists outline kinks, collars, steps and needles at the joints that changed against the baseline. Use it to find where to look, then judge from the images: it misses some defects and flags some intended changes, so it never decides a criterion by itself.
