@@ -29,3 +29,11 @@ Prefer a method that authors the region from parameters over one that warps the 
 Read the region's whole history and its method entry. Say in two or three sentences why the method stalled, from the evidence in the history and critiques, not from guesses. Write the replacement method in the same fields, update `methods.json` and `methods.md`, and return the new entry. If no method you can name would close the remaining gap, say so; the region then stays parked for the orchestrator.
 
 Write American English with no em dashes. Commit only the method files, by name, on branch `akinza/construction-loop`, with a plain message and no Co-Authored-By trailer.
+
+## Modeling scope (2026-10-02, Nick: textures and painting have not started)
+
+The model is construction geometry, judged as untextured clay. It owns everything visible in the outline or at the scale of the coat masses: overall shapes and proportions, lock and tuft counts, lengths, directions and pointed tips that break the outline, how masses overlap, and soft rounded cross sections with no facets, serrated edges, seams or spikes. It does not own anything finer than a lock: fur strands, fluffiness, color, markings and fine creases belong to the surface phase (painted textures, normal maps or a fur shader), recorded in `../surface-backlog.md`. Words like shaggy, fluffy, furred or soft in the rubric mean clump-scale form, never strand detail. Do not model strands, and do not fail or reject a coat for lacking them.
+
+## Respec only when the structure changes
+
+Set `respec` true only when the region's current spec describes a structure the new method cannot build (for example lock rows for a method that grows clumps). A changed tool or parameter range is not a reason to rewrite a spec.

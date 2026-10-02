@@ -234,6 +234,8 @@ test('loop_workflow.js is current (generated from loop_workflow.src.js and loop_
 function v3Args(status, rub, over) {
   for (const id of Object.keys(status.regions)) { if (!status.regions[id].hold) { status.regions[id].parked = false; status.regions[id].attempts = 0; status.regions[id].anchorScore = null } }
   status.limits.hardStopRounds = 60
+  // the classic single builder unless a test asks for the split one
+  status.limits.builderMode = over && over.split ? 'split' : 'single'
   return { status, rubric: rub, rounds: 6, species: { key: 'akinza', sideEffectThreshold: 0.0005 }, pools: { head: ['R01', 'R02', 'R03', 'R04'], body: ['R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'R11'], join: ['R05'], both: ['R12'] }, ...over }
 }
 const okBuild = id => ({ failed: false, recipe: `recipes/r-${id}.json`, head: 'head-' + id, body: 'body-' + id, assembly: 'assembled-' + id, packet: 'p/' + id, technicalPass: true, approach: 'a', changes: 'c' })
@@ -352,6 +354,7 @@ test('v3 branch: a reverted candidate judged better is handed to the next order 
   status.regions.R04.history = []
   status.lastOrders = []
   status.limits.auditRefreshKept = 0
+  status.limits.verdictKeep = false
   const prompts = []
   await runWorkflow(generate(), v3Args(status, rub, { rounds: 3 }), 'b', (label, prompt) => {
     if (label.startsWith('builder')) { prompts.push(prompt); return { ...okBuild('R04'), recipe: `recipes/r${prompts.length}-R04.json` } }
@@ -521,10 +524,9 @@ test('split builder: planner, one runner, three blind readers pick the candidate
   status.lastOrders = []
   status.tools = {}
   status.limits.auditRefreshKept = 0
-  status.limits.builderMode = 'split'
   status.limits.verdictKeep = true
   const cand = (n, side) => ({ name: 'v' + n, recipe: `plans/v${n}.json`, head: 'head-x', body: 'body-' + n, assembly: 'assembled-90' + n, packet: 'p/assembled-90' + n, technicalPass: true, regionChange: {}, seams: '', measured: '', pack: `p/assembled-90${n}/reader-pack`, keys: { R06: side } })
-  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1 }), 's', (label, prompt) => {
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 's', (label, prompt) => {
     if (label.startsWith('planner')) return { plan: 'plans/r21-R06.json', variants: 4, approach: 'loft sweep', needsCode: false }
     if (label.startsWith('runner')) return { ok: true, candidates: [cand(1, 'A'), cand(2, 'B')] }
     // every reader prefers candidate 2 (on side B) and finds candidate 1 the same as the baseline

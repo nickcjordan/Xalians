@@ -14,3 +14,11 @@ Read first: `docs/design/species-construction/LOOP-v3.md`, `art/species-construc
 Budget: at most eight component builds plus sweeps. If the method cannot be built as stated, write `ready: false` with the reason and what would work instead; that goes to the method review.
 
 Never edit references, evidence, acceptance files, the rubric, invariants, specs or other regions' steps. Never edit a shared helper module. Plain commit messages, no Co-Authored-By trailer, American English, no em dashes.
+
+## Modeling scope (2026-10-02, Nick: textures and painting have not started)
+
+The model is construction geometry, judged as untextured clay. It owns everything visible in the outline or at the scale of the coat masses: overall shapes and proportions, lock and tuft counts, lengths, directions and pointed tips that break the outline, how masses overlap, and soft rounded cross sections with no facets, serrated edges, seams or spikes. It does not own anything finer than a lock: fur strands, fluffiness, color, markings and fine creases belong to the surface phase (painted textures, normal maps or a fur shader), recorded in `../surface-backlog.md`. Words like shaggy, fluffy, furred or soft in the rubric mean clump-scale form, never strand detail. Do not model strands, and do not fail or reject a coat for lacking them.
+
+## Long commands
+
+Start any command that can take more than a minute (`recipe.py build`, `candidate`, `sweep`, `run-plan`, a packet) with the Bash tool's `run_in_background` and wait for its completion notice. Never `sleep`, poll, tail logs or open a Monitor while it runs: every turn re-reads the whole conversation (the 2026-10-02 audit counted 254 sleeps and 168 monitors, about 11 wasted turns per builder). `recipe.py candidate <recipe> --baseline <baseline packet>` runs build, check, packet, measured, diff, seams and containment in one call and prints one summary line; use it instead of chaining them.

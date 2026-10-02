@@ -29,9 +29,16 @@
   "ordersPerRound": 2,
   "priorityV3": true,
   "auditWeight": 2,
-  "toolBonus": 20,
+  "toolBonus": 5,
   "keptResetsStall": true,
-  "auditRefreshKept": 3
+  "auditRefreshKept": 3,
+  "builderMode": "split",
+  "verdictKeep": true,
+  "identityBonus": 5,
+  "criticScopeMax": 2,
+  "refinePasses": 1,
+  "planTop": 3,
+  "leanAgentType": "Explore"
  },
  "baseline": {
   "head": "head-2271",
@@ -1053,7 +1060,8 @@
   "2026-10-01: round 19 (v3.1, one round by Nick's request) merged from the round record's state snapshot: R05 join kept on the critic verdict, R01 reverted.",
   "2026-10-02: v3.2 limits: priorityV3 (audit rank leads, unused tool +20, idle only a tie-break), keptResetsStall. verdictDebt was simulated on all 34 recorded orders and left off: it would have kept the round 8 leg build that kinked the tails and lowered the simulated mean to 5.333.",
   "2026-10-02: round 20 (v3.2, one round) merged from the round record: R04 rear fan clump branch and R06 trunk loft both kept and combined as assembled-2278; mean 5.447 to 5.495.",
-  "2026-10-02: rubric R06.11 to R06.14 and R06.16 added (measured trunk side profile); R06 re-scored on assembled-2278 from 4.5 to 4.3. The 0458 audit row 5 chest depth (0.131 vs 0.168) measured the akimbo arm, not the trunk: the trunk chest depth matches the sheet; the real faults are waist depth, chest over waist and the dorsal S-curve."
+  "2026-10-02: rubric R06.11 to R06.14 and R06.16 added (measured trunk side profile); R06 re-scored on assembled-2278 from 4.5 to 4.3. The 0458 audit row 5 chest depth (0.131 vs 0.168) measured the akimbo arm, not the trunk: the trunk chest depth matches the sheet; the real faults are waist depth, chest over waist and the dorsal S-curve.",
+  "2026-10-02: v3.4 limits after the independent audit: split builder (planner, runner, three blind readers, scoped critic), verdict keep with measured guards (held regions never block), tool bonus 5, identity bonus 5, critic scope at most two side-effect regions, lean agent type for judging and mechanical roles, four-round batches, plateau window persisted. Modeling scope: no strands or texture in construction (surface-backlog.md)."
  ],
  "decisionsForNick": [
   {

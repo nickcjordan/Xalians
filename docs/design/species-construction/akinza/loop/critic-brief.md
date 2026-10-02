@@ -41,3 +41,7 @@ A region's score is 10 x its credited fraction (pass 1, partial 0.5); the orches
 Write the same content to `critique.json` in the candidate's packet folder, then return the structured output.
 
 The packet's `seams.json` lists outline kinks, collars, steps and needles at the joints that changed against the baseline. Use it to find where to look, then judge from the images: it misses some defects and flags some intended changes, so it never decides a criterion by itself.
+
+## Modeling scope (2026-10-02, Nick: textures and painting have not started)
+
+The model is construction geometry, judged as untextured clay. It owns everything visible in the outline or at the scale of the coat masses: overall shapes and proportions, lock and tuft counts, lengths, directions and pointed tips that break the outline, how masses overlap, and soft rounded cross sections with no facets, serrated edges, seams or spikes. It does not own anything finer than a lock: fur strands, fluffiness, color, markings and fine creases belong to the surface phase (painted textures, normal maps or a fur shader), recorded in `../surface-backlog.md`. Words like shaggy, fluffy, furred or soft in the rubric mean clump-scale form, never strand detail. Do not model strands, and do not fail or reject a coat for lacking them.

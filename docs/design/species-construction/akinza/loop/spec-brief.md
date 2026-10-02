@@ -24,3 +24,11 @@ Write `docs/design/species-construction/akinza/loop/specs/<region>.md` and an an
 5. **Acceptance.** Which rubric criteria this spec serves, and the target values of the measured ones.
 
 Draw the annotated image with PIL over the reference crops: the traced outline, and each mass's root-to-tip line and number. Check that your coordinates land where you meant; if they do not, fix them before you finish. Write American English with no em dashes. Return a one-paragraph summary of the spec.
+
+## Modeling scope (2026-10-02, Nick: textures and painting have not started)
+
+The model is construction geometry, judged as untextured clay. It owns everything visible in the outline or at the scale of the coat masses: overall shapes and proportions, lock and tuft counts, lengths, directions and pointed tips that break the outline, how masses overlap, and soft rounded cross sections with no facets, serrated edges, seams or spikes. It does not own anything finer than a lock: fur strands, fluffiness, color, markings and fine creases belong to the surface phase (painted textures, normal maps or a fur shader), recorded in `../surface-backlog.md`. Words like shaggy, fluffy, furred or soft in the rubric mean clump-scale form, never strand detail. Do not model strands, and do not fail or reject a coat for lacking them.
+
+## Keep specs short (2026-10-02 audit: six regenerated specs cost about 108M tokens and fewer than half the builders opened one)
+
+Take every measurement from the generated targets (`spec_targets.py`); write only the structure table, the cross sections and the failure looks. Rewrite an existing spec only when its structure contradicts the region's method. Return the structure table itself (at most about 40 lines) as `structure` in your structured output: the planner and builder get it inline in their order.

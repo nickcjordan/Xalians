@@ -96,7 +96,7 @@ const BUILD = {
   },
   required: ['failed', 'changes', 'approach'],
 }
-const SPEC = { type: 'object', properties: { path: { type: 'string' }, image: { type: 'string' }, summary: { type: 'string' } }, required: ['path', 'summary'] }
+const SPEC = { type: 'object', properties: { path: { type: 'string' }, image: { type: 'string' }, summary: { type: 'string' }, structure: { type: 'string' } }, required: ['path', 'summary'] }
 const AUDIT_SCHEMA = {
   type: 'object',
   properties: {
@@ -210,7 +210,7 @@ function builderPrompt(order, round, suffix) {
     (S.methods[order.id] ? `Method for this region (${BRIEF('methods.md')}): ${S.methods[order.id]}\n` : '') +
     `Rubric criteria with the baseline's current results. Turn failing or partial criteria into passes without breaking passing ones:\n${criteriaText(order.id)}\n\n` +
     `Critic issues, most damaging first (suggestions to verify, not measurements): ${r.issues ? JSON.stringify(r.issues) : 'read this region\'s issues in ' + BRIEF('status.json')}\n\n` +
-    (spec ? `Target spec: ${abs(spec.path)}${spec.image ? ' with image ' + abs(spec.image) : ''}. Implement its structure table.\n\n` : '') +
+    (spec ? `Target spec: ${abs(spec.path)}${spec.image ? ' with image ' + abs(spec.image) : ''}. Implement its structure table.\n` + (spec.structure ? `Structure table from the spec:\n${spec.structure}\n` : '') + '\n' : '') +
     `History card for this region:\n${historyCard(order.id)}\n\n` +
     branchLine(order.id) +
     toolLine(order.id) +
@@ -394,7 +394,7 @@ if (replanned) S.means = [meanOf(S, scoresNow(S))]
 const toSpec = IDS.filter(id => workable(id) && !S.specs[id] && !S.regions[id].parked && (S.regions[id].score ?? 0) < L.passBar)
 if (toSpec.length) {
   const specs = await parallel(toSpec.map(id => () => agent(specPrompt(id), { label: `spec: ${id}`, phase: 'Prepare', schema: SPEC, model: 'opus', effort: 'high' })))
-  specs.forEach((spec, i) => { if (spec) S.specs[toSpec[i]] = { path: spec.path, image: spec.image, summary: spec.summary, round: S.round } })
+  specs.forEach((spec, i) => { if (spec) S.specs[toSpec[i]] = { path: spec.path, image: spec.image, summary: spec.summary, structure: spec.structure, round: S.round } })
 }
 // Tools: a method that needs a new generator gets it from a toolsmith before any order, so
 // rounds tune parameters instead of writing generators inside a six-build budget (round 18's
@@ -462,11 +462,11 @@ for (let i = 0; i < ROUNDS; i++) {
     const out = { order }
     for (const w of order.with || []) if (!S.specs[w]) {
       const ws = await agent(specPrompt(w), { label: `spec r${round}: ${w}`, phase: 'Rounds', schema: SPEC, model: 'opus', effort: 'high' })
-      if (ws) S.specs[w] = { path: ws.path, image: ws.image, summary: ws.summary, round }
+      if (ws) S.specs[w] = { path: ws.path, image: ws.image, summary: ws.summary, structure: ws.structure, round }
     }
     if (!S.specs[order.id]) {
       const spec = await agent(specPrompt(order.id), { label: `spec r${round}: ${order.id}`, phase: 'Rounds', schema: SPEC, model: 'opus', effort: 'high' })
-      if (spec) { S.specs[order.id] = { path: spec.path, image: spec.image, summary: spec.summary, round }; out.spec = spec }
+      if (spec) { S.specs[order.id] = { path: spec.path, image: spec.image, summary: spec.summary, structure: spec.structure, round }; out.spec = spec }
     }
     if (L.builderMode === 'split') {
       const plan = await agent(plannerPrompt(order, round), leanOpts({ label: `planner r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
