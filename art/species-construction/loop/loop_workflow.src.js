@@ -151,7 +151,8 @@ ${criteriaText(w)}
       (scope && scope.length ? `Then judge the visual criteria of these other regions, whose images changed more than the side-effect threshold: ${scope.join(', ')}. Leave every other region's visual criteria out; their images did not move enough to judge. ` : 'No other region\'s images moved more than the side-effect threshold, so judge no other region\'s visual criteria. ') +
       'Copy measured criteria for all regions. Report every invariant. List up to three issues for the target region.\n'
   }
-  t += 'Write your full output to critique.json in the packet folder, then return the structured output.'
+  // the loop keeps every critique in its journal; the candidate critic runs on the read-only lean type
+  t += 'Do not write any file. Return the structured output; the loop records it.'
   return t
 }
 function historyCard(id) {
@@ -469,7 +470,7 @@ for (let i = 0; i < ROUNDS; i++) {
       if (spec) { S.specs[order.id] = { path: spec.path, image: spec.image, summary: spec.summary, structure: spec.structure, round }; out.spec = spec }
     }
     if (L.builderMode === 'split') {
-      const plan = await agent(plannerPrompt(order, round), leanOpts({ label: `planner r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
+      const plan = await agent(plannerPrompt(order, round), { label: `planner r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' })
       if (plan && plan.needsCode) {
         // a plan that needs a script change goes to the code builder, which builds one candidate itself
         out.build = await agent(builderPrompt(order, round) + `\n\nThe planner asked for this code change first: ${plan.codeTask}`,
@@ -477,9 +478,9 @@ for (let i = 0; i < ROUNDS; i++) {
       } else if (plan && plan.plan) {
         let picked = null
         for (let pass = 0; pass <= (L.refinePasses ?? 1) && !picked; pass++) {
-          const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), leanOpts({ label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
+          const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), { label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' })
           if (!thePlan || !thePlan.plan) break
-          const run = await agent(runnerPrompt(thePlan.plan, order, round), leanOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'haiku', effort: 'low' }))
+          const run = await agent(runnerPrompt(thePlan.plan, order, round), { label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'haiku', effort: 'low' })
           const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
           if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built') : 'runner returned nothing'; continue }
           const regions = [order.id, ...(order.with || [])]
@@ -566,7 +567,7 @@ for (let i = 0; i < ROUNDS; i++) {
   // The state after this round rides in the record, so a stopped batch resumes with
   // loop_state.py merge <round file> instead of a journal replay.
   entry.state = snapshot()
-  await agent(recordPrompt(round, entry), leanOpts({ label: `record r${round}`, phase: 'Rounds', model: 'haiku', effort: 'low' }))
+  await agent(recordPrompt(round, entry), { label: `record r${round}`, phase: 'Rounds', model: 'haiku', effort: 'low' })
   log(`Round ${round}: ` + entry.orders.map(o => `${o.region} ${o.kept ? 'KEPT' : 'reverted'}`).join(' | ') + ` mean ${entry.mean}`)
 
   // Method review: a region that parked this round gets one new method per batch, and
