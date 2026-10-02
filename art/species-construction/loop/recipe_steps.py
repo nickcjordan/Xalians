@@ -88,6 +88,135 @@ def closure_hash(script):
     return {rel: sha256_bytes(lf((ROOT/rel).read_bytes())) for rel in closure(script)}
 
 
+# ---------------------------------------------------------------- pins: every file a step reads
+
+FROZEN_STEM = re.compile(r'^(?P<stem>.+?)(?:_p[0-9a-f]{8}|-p[0-9a-f]{8})$')
+
+
+def pin_key(path, root=None):
+    """The key a file has in a step's `pins` map: repo-relative posix, or absolute posix outside the repository."""
+    root = Path(root) if root else ROOT
+    path = Path(path)
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def pin_path(key, root=None):
+    root = Path(root) if root else ROOT
+    return Path(key) if Path(key).is_absolute() else root/key
+
+
+def arg_files(args, root=None):
+    """{pin key: position of the argument} for every `{repo}/...` argument that names an existing file, and every absolute
+    path outside the repository that does (a candidate's own spec)."""
+    root = Path(root) if root else ROOT
+    out = {}
+    for k, a in enumerate(args):
+        if a.startswith('{repo}/'):
+            path = root/a[len('{repo}/'):]
+        elif a[:1] not in ('{', '-') and Path(a).is_absolute():
+            path = Path(a)
+        else:
+            continue
+        if path.is_file():
+            out[pin_key(path, root)] = k
+    return out
+
+
+def read_files(script, args, root=None):
+    """Every file a step reads: {pin key: kind} with kind 'script' (the step's own script), 'module' (a local module the
+    cache key covers) or 'file' (a file argument)."""
+    out = {}
+    for rel in closure(script):
+        out[rel] = 'module'
+    out[pin_key((Path(root) if root else ROOT)/script, root)] = 'script'
+    for key in arg_files(args, root):
+        out.setdefault(key, 'file')
+    return out
+
+
+def pin_hash(key, root=None):
+    return file_hash(pin_path(key, root))
+
+
+def pins_now(script, args, root=None):
+    """{pin key: sha256 (LF form for text files)} of every file a step reads, as the bytes are now."""
+    return {key: pin_hash(key, root) for key in sorted(read_files(script, args, root))}
+
+
+def check_pins(pins, files=None, root=None):
+    """Differences between a step's recorded pins and the files now: [(key, 'CHANGED' | 'MISSING' | 'UNPINNED')].
+    `files` (the keys the step reads now) adds UNPINNED for a file the step reads that has no pin."""
+    out = []
+    for key, want in (pins or {}).items():
+        path = pin_path(key, root)
+        if not path.is_file():
+            out.append((key, 'MISSING'))
+        elif file_hash(path) != want:
+            out.append((key, 'CHANGED'))
+    if files is not None:
+        out += [(key, 'UNPINNED') for key in sorted(files) if key not in (pins or {})]
+    return out
+
+
+def frozen_name(path, sha):
+    """Where the frozen copy of a file goes: scripts <name>_p<sha8>.py (so imports resolve), others <stem>-p<sha8><ext>."""
+    path = Path(path)
+    m = FROZEN_STEM.match(path.stem)
+    stem = m.group('stem') if m else path.stem
+    joiner = '_' if path.suffix == '.py' else '-'
+    return path.with_name(f'{stem}{joiner}p{sha[:8]}{path.suffix}')
+
+
+# ---------------------------------------------------------------- git history search for the bytes a run used
+
+def git(root, *argv):
+    import subprocess
+    result = subprocess.run(['git', *argv], cwd=root, capture_output=True)
+    if result.returncode:
+        raise RuntimeError(f"git {' '.join(argv)}: {result.stderr.decode(errors='replace').strip()}")
+    return result.stdout
+
+
+def history_blobs(root, relpaths):
+    """Unique blob ids a set of paths has had in any commit of any ref, newest first: [(blob id, path, commit)]."""
+    seen, out = set(), []
+    for rel in relpaths:
+        raw = git(root, 'log', '--all', '--format=%x01%H', '--raw', '--no-abbrev', '--', rel).decode(errors='replace')
+        commit = None
+        for line in raw.splitlines():
+            if line.startswith(''):
+                commit = line[1:]
+            elif line.startswith(':'):
+                parts = line.split('	')
+                blob = parts[0].split()[3]
+                if set(blob) != {'0'} and blob not in seen:
+                    seen.add(blob)
+                    out.append((blob, parts[-1], commit))
+    return out
+
+
+def find_in_history(root, relpaths, wanted):
+    """The git blob (bytes, path, commit) whose raw, LF or CRLF form hashes to one of `wanted` (a set of sha256),
+    searching the history of each path in relpaths; None when no commit ever held those bytes."""
+    for blob, path, commit in history_blobs(root, relpaths):
+        data = git(root, 'cat-file', 'blob', blob)
+        if wanted & {sha256_bytes(data), sha256_bytes(lf(data)), sha256_bytes(crlf(data))}:
+            return data, path, commit
+    return None
+
+
+def history_paths_named(root, names):
+    """Repo paths any commit ever had under these base names (a renamed or relocated copy of the bytes a run used)."""
+    out = []
+    for name in names:
+        raw = git(root, 'log', '--all', '--format=', '--name-only', '--', f':(glob)**/{name}', name).decode(errors='replace')
+        out += [line.strip() for line in raw.splitlines() if line.strip()]
+    return sorted(set(out))
+
+
 # ---------------------------------------------------------------- glb statistics and vertices
 
 GLB_JSON, GLB_BIN = 0x4E4F534A, 0x004E4942

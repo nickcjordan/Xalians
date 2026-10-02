@@ -10,7 +10,9 @@ both of which take the shared slot lock. No variant is assembled or packeted.
 Per variant: the candidate recipe is written into the sweep folder; the edited step and its descendants
 in the same component are built (a step key with a cache entry costs nothing, a key shared by two variants
 is built once); `loop_tools.py quick` renders head and body three views; four terms are measured and
-combined into `total` (see TERMS below and RECIPE.md, "Sweeps").
+combined into `total` (see TERMS below and RECIPE.md, "Sweeps"). A step that writes a top-level `sweepScore` (higher is
+better, plus an optional `sweepTerms` dict) into a JSON record of its output directory adds a fifth term: the tool reads
+what the quick silhouette cannot see (the R06 trunk tool scores achieved against target sections, so the waist counts).
 """
 import copy
 import datetime
@@ -33,6 +35,7 @@ SHEET_STEP = .02            # station spacing of loop/sheet.json
 MISSING_PICK = .1           # figure heights charged when only the model or only the sheet has a run at a station
 SEAM_WEIGHT = 5             # total points per 1.0 of seam ratio (1.0 = the seam check's flag threshold)
 CONTAIN_TOL = .004          # figure heights of foreign displacement allowed before the total is charged
+TOOL_WEIGHT = 100           # total points per 1.0 (a figure height) of the step's own sweepScore
 VIEWS = ('front', 'left', 'back')
 BASELINE = 'baseline'
 WINDOW_PAD = .03           # fitIou: figure heights of margin around the zone's x extent (front and back views)
@@ -40,12 +43,16 @@ CELL_PAD = .06              # contact sheet: figure heights of margin around the
 
 TERMS = '''total = 100*(fitIou - baseline.fitIou)
         - 100*(stationDiff - baseline.stationDiff)
-        - 100*max(0, containMax - containTol)
+        - 100*containExcess
+        + 100*(toolScore - baseline.toolScore)  # only when the edited step's output records a sweepScore
         - 5*seam.worstRatio                     # only when seam_check.py exists
 fitIou      mean over front, left, back of the model-vs-reference silhouette IoU over the region's zone rows, and in the front and back views only the columns of the zone's x extent (higher is better)
 stationDiff mean |width difference| + |centre difference| of the model's station table against sheet.json over the zone rows,
             per left/right/central pick and view, in figure heights; a pick present in only one table costs 0.1 (lower is better)
-containMax  worst foreign-region nearest-vertex displacement of the edited step (recipe.py contain), figure heights (lower is better)
+containMax  worst foreign-region nearest-vertex displacement of the edited step (recipe.py contain), figure heights (lower is better);
+            the charge is containExcess: the worst foreign region's displacement above max(containTol, its allowance), where the
+            allowance is max(.002, 1.5 x the displacement the baseline version of the step gave that region)
+toolScore   the step's own sweepScore (higher is better); the baseline's is read from the baseline step's output, else the worst variant's
 seam        worst ratio of any joint's rise (against the baseline quick) in any seam_check metric to that metric's flag threshold: 0 nothing new, 1 or more flagged (lower is better)'''
 
 
@@ -319,15 +326,36 @@ class Measurer:
                 'stationDiff': self.station_diff(out), 'seam': self.seam_score(out, base_out)}
 
 
-def total_score(term, base, contain_max, tol):
-    """The ranking score; None terms drop out."""
+def tool_record(directory):
+    """(score, terms, file name) from the first JSON record in a step's output directory with a top-level numeric `sweepScore`
+    (higher is better; `sweepTerms` is an optional dict of its parts), else None."""
+    if not directory or not Path(directory).is_dir():
+        return None
+    for path in sorted(Path(directory).glob('*.json')):
+        if path.name == 'stage-start.json':
+            continue
+        try:
+            doc = json.loads(path.read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        score = doc.get('sweepScore') if isinstance(doc, dict) else None
+        if isinstance(score, (int, float)) and not isinstance(score, bool):
+            terms = doc.get('sweepTerms')
+            return float(score), terms if isinstance(terms, dict) else None, path.name
+    return None
+
+
+def total_score(term, base, contain_excess, tool_ref=None):
+    """The ranking score; None terms drop out. contain_excess is already the charge (figure heights above the allowance)."""
     parts = {}
     if term['fitIou'] is not None and base['fitIou'] is not None:
         parts['fit'] = 100*(term['fitIou']-base['fitIou'])
     if term['stationDiff'] is not None and base['stationDiff'] is not None:
         parts['station'] = -100*(term['stationDiff']-base['stationDiff'])
-    if contain_max is not None:
-        parts['contain'] = -100*max(0.0, contain_max-tol)
+    if contain_excess is not None:
+        parts['contain'] = -100*max(0.0, contain_excess)
+    if term.get('toolScore') is not None and tool_ref is not None:
+        parts['tool'] = TOOL_WEIGHT*(term['toolScore']-tool_ref)
     seam = term.get('seam')
     if isinstance(seam, dict) and 'worstRatio' in seam:
         parts['seam'] = -SEAM_WEIGHT*seam['worstRatio']
@@ -529,10 +557,14 @@ def run(args, rc):
             ref = s['inputs']['base' if 'base' in s['inputs'] else next(iter(s['inputs']))]
             base_dir = input_path(cand, ref, results, keys, chain, base)
             report = rc.compute_containment(cand, s, results[keys[args.step]]['dir'], base_dir, zones, species)
+            reference, note = rc.containment_reference(cand, s, zones, species)
+            rc.apply_reference(report, reference, note)
             (sweep_dir/f'contain-{vid}.json').write_bytes((json.dumps(report, indent=1)+'\n').encode('utf-8'))
             worst = max(report['foreign'].items(), key=lambda kv: kv[1]['max'], default=(None, {'max': 0.0}))
+            excess = max([0.0]+[e['max']-max(args.contain_tol, e['allowance']) for e in report['foreign'].values()])
             return {'max': worst[1]['max'], 'region': worst[0], 'outsideAllZonesMax': report['outsideAllZones']['max'],
-                    'ownedMax': report['ownedMax'], 'seconds': 0.0}
+                    'ownedMax': report['ownedMax'], 'excess': round(excess, 5), 'relativeFlagged': report['verdict']['relative'],
+                    'reference': report['rule']['referenceStep'], 'seconds': 0.0}
         sched.add(('contain', vid), [edited_key], contain, f'{vid} contain')
         if component == 'body':
             quick_node(('quick', vid), [sink_key], lambda r: base_head, lambda r, sk=sink_key: r[sk]['dir'])
@@ -547,6 +579,7 @@ def run(args, rc):
     if not base_quick:
         rc.fail(f"baseline quick failed: {errors.get(('quick', BASELINE))}")
     base_terms = measurer.measure(base_quick['dir'])
+    base_tool = tool_record(recipe.work/base[args.step]) if args.step in base else None
     rows = []
     for record in info:
         vid = record['id']
@@ -564,10 +597,19 @@ def run(args, rc):
         entry['quick'] = quick['dir']
         terms = measurer.measure(quick['dir'], base_quick['dir'])
         contain = results[('contain', vid)]
+        tool = tool_record(recipe.work/results[record['nodeKeys'][args.step]]['dir'])
         entry['terms'] = {**terms, 'containMax': contain['max'], 'containRegion': contain['region'],
-                          'containOutsideZones': contain['outsideAllZonesMax']}
-        entry['total'], entry['parts'] = total_score(terms, base_terms, contain['max'], args.contain_tol)
+                          'containOutsideZones': contain['outsideAllZonesMax'], 'containExcess': contain['excess'],
+                          'containRelativeFlagged': contain['relativeFlagged'], 'containReference': contain['reference'],
+                          'toolScore': tool[0] if tool else None, 'toolTerms': tool[1] if tool else None,
+                          'toolRecord': tool[2] if tool else None}
         rows.append(entry)
+    # the tool score is judged against the baseline step's own record; when that output predates the score, against the worst variant
+    scores = [r['terms']['toolScore'] for r in rows if r.get('terms') and r['terms']['toolScore'] is not None]
+    tool_ref = base_tool[0] if base_tool else (min(scores) if scores else None)
+    for entry in rows:
+        if entry.get('terms'):
+            entry['total'], entry['parts'] = total_score(entry['terms'], base_terms, entry['terms']['containExcess'], tool_ref)
     ranked = sorted(rows, key=lambda r: (r['total'] is None, -(r['total'] or 0)))
     for k, r in enumerate(ranked, 1):
         r['rank'] = k
@@ -575,8 +617,10 @@ def run(args, rc):
 
     report = {'schemaVersion': 1, 'sweep': name, 'recipe': str(recipe.path), 'step': args.step, 'component': component,
               'region': region, 'zone': zone, 'containTol': args.contain_tol, 'seamTerm': has_seam, 'scoring': TERMS,
+              'toolScore': {'reference': tool_ref, 'baseline': base_tool[0] if base_tool else None,
+                            'referenceIs': 'baseline step record' if base_tool else ('worst variant' if scores else None)},
               'baseline': {'head': base_head, 'body': base_body, 'quick': base_quick['dir'], 'terms': base_terms,
-                           'quickSeconds': base_quick['seconds']},
+                           'quickSeconds': base_quick['seconds'], 'toolTerms': base_tool[1] if base_tool else None},
               'seconds': elapsed, 'variants': ranked, 'best': best['id'] if best else None,
               'bestRecipe': best['recipe'] if best else None,
               'created': datetime.datetime.now().isoformat(timespec='seconds')}
@@ -588,6 +632,7 @@ def run(args, rc):
         t = r['terms']
         sheet_rows.append(([f"#{r['rank']} {r['id']}  total {r['total']:+.2f}", r['label'][:52],
                             f"iou {t['fitIou']}  stn {t['stationDiff']}", f"contain {t['containMax']} ({t['containRegion']})"]
+                           + ([f"tool {t['toolScore']:.5f}"] if t.get('toolScore') is not None else [])
                            + ([f"seam {t['seam']['worstRatio']} {t['seam']['at'] or ''}"] if isinstance(t.get('seam'), dict) and 'worstRatio' in t['seam'] else []), r['quick']))
     bt = base_terms
     sheet_rows.append(([f'baseline {base_body}', 'recipe as is', f"iou {bt['fitIou']}  stn {bt['stationDiff']}"], base_quick['dir']))
@@ -596,20 +641,23 @@ def run(args, rc):
     # compact table
     print(f"\nsweep {name}  step {args.step}  region {region}  baseline iou {bt['fitIou']}  station {bt['stationDiff']}  "
           f"({elapsed:.0f}s wall, {len(variants)} variants)")
-    cols = ['rank', 'id', 'params', 'fitIou', 'station', 'contain', 'seam', 'changed', 'total', 'build s', 'quick s']
+    cols = ['rank', 'id', 'params', 'fitIou', 'station', 'contain', 'tool', 'seam', 'changed', 'total', 'build s', 'quick s']
     table = [cols]
     for r in ranked:
         if r['total'] is None:
-            table.append(['-', r['id'], r['label'], 'ERROR', r.get('error', '')[:60], '', '', '', '', '', ''])
+            table.append(['-', r['id'], r['label'], 'ERROR', r.get('error', '')[:60], '', '', '', '', '', '', ''])
             continue
         t = r['terms']
         built = sum(r['seconds']['steps'].values())
         table.append([r['rank'], r['id'], r['label'], t['fitIou'], t['stationDiff'], f"{t['containMax']} {t['containRegion'] or ''}".strip(),
+                      (f"{t['toolScore']:.5f}" if t.get('toolScore') is not None else '-'),
                       (t['seam'].get('worstRatio', 'err') if isinstance(t['seam'], dict) else '-'), t['silhouetteChange'], f"{r['total']:+.2f}", f'{built:.0f}', r['seconds']['quick']])
     widths = [max(len(str(row[c])) for row in table) for c in range(len(cols))]
     for row in table:
         print('  '.join(str(v).ljust(w) for v, w in zip(row, widths)))
-    print(f"baseline: iou {bt['fitIou']} station {bt['stationDiff']} (quick {base_quick['seconds']}s)")
+    print(f"baseline: iou {bt['fitIou']} station {bt['stationDiff']}"
+          + (f" tool {tool_ref:.5f} ({report['toolScore']['referenceIs']})" if tool_ref is not None else '')
+          + f" (quick {base_quick['seconds']}s)")
     print(f'report {sweep_dir/"sweep.json"}\ncontact sheet {sweep_dir/"sweep.png"}' + ('' if drawn else ' (none drawn)'))
     if best:
         print(f"best {best['id']}: candidate recipe {best['recipe']}\n  build it with: python art/species-construction/loop/recipe.py build {best['recipe']}")

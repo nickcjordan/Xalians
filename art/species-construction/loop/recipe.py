@@ -1,13 +1,15 @@
 """A creature is a replayable recipe: pinned roots, a DAG of build steps, one assembly.
 
-  python art/species-construction/loop/recipe.py build <recipe.json> [--assembly NAME] [--from STEP] [--no-cache] [--dry-run]
+  python art/species-construction/loop/recipe.py build <recipe.json> [--assembly NAME] [--from STEP] [--no-cache] [--dry-run] [--allow-changed]
   python art/species-construction/loop/recipe.py status <recipe.json>
-  python art/species-construction/loop/recipe.py seed <recipe.json> [--write-expect] [--strict]
+  python art/species-construction/loop/recipe.py pin <recipe.json> [--write]
+  python art/species-construction/loop/recipe.py minutes <recipe.json> [--write]
+  python art/species-construction/loop/recipe.py seed <recipe.json> [--write-expect] [--loose]
   python art/species-construction/loop/recipe.py set <recipe.json> <out.json> <step id> <arg> <value> [<arg> <value> ...]
   python art/species-construction/loop/recipe.py add <recipe.json> <out.json> --after <step id> --step <step.json> [--rewire STEP:INPUT ...]
   python art/species-construction/loop/recipe.py merge <base.json> <a.json> <b.json> <out.json>
   python art/species-construction/loop/recipe.py verify <recipe.json> [--no-cache] [--no-packet]
-  python art/species-construction/loop/recipe.py contain <recipe.json> <step id> [--out-dir NAME] [--zones FILE]
+  python art/species-construction/loop/recipe.py contain <recipe.json> <step id> [--out-dir NAME] [--zones FILE] [--no-reference]
   python art/species-construction/loop/recipe.py sweep <recipe.json> --step <id> --grid <arg>=<v1>,<v2> [--grid ...] [--variants file.json] [--max 12] [--region Rxx] [--out NAME]
 
 See RECIPE.md beside this file for the format, the cache key and how orders edit a recipe.
@@ -38,6 +40,9 @@ BOUNDS_TOLERANCE_HEIGHTS = 1e-4
 FIGURE_HEIGHT = 1.8605
 NUMBER = re.compile(r'^[a-z-]+-(\d{4})')
 LOCK = threading.RLock()
+FLAT_ALLOWANCE = .002     # figure heights of foreign displacement that is always tolerated (the remesh noise floor)
+REFERENCE_FACTOR = 1.5    # a foreign region may move 1.5 x as far as the baseline version of the step moved it
+BLENDER_SLOTS = 2
 
 
 def say(text):
@@ -98,8 +103,16 @@ class Recipe:
         return out
 
 
-def dump(data, path):
+def dump(data, path, like=None):
+    """Write a recipe. With like (an existing file), keep that file's layout when it is plain json.dumps(indent=1), so
+    rewriting a recipe in place changes only the lines that changed; otherwise the recipe layout (one flag per line)."""
     Path(path).parent.mkdir(parents=True, exist_ok=True)
+    if like and Path(like).is_file():
+        text = Path(like).read_bytes().decode('utf-8')
+        body = text.rstrip('\n')
+        if '\r' not in text and body == json.dumps(json.loads(text), indent=1):
+            Path(path).write_bytes((json.dumps(data, indent=1)+text[len(body):]).encode('utf-8'))
+            return
     Path(path).write_bytes((rs.dump_recipe(data)+'\n').encode('utf-8'))
 
 
@@ -186,29 +199,132 @@ class Namer:
 
 # ---------------------------------------------------------------- planning
 
+def pin_state(recipe):
+    """{step id or 'assembly': {'changed': [(key, 'CHANGED'|'MISSING')], 'unpinned': [key]}}: each step's recorded `pins`
+    against the files it reads now. A step with no `pins` map has every file unpinned."""
+    def state(files, pins):
+        bad = rs.check_pins(pins, files)
+        return {'changed': [(k, s) for k, s in bad if s != 'UNPINNED'], 'unpinned': [k for k, s in bad if s == 'UNPINNED']}
+    out = {s['id']: state(rs.read_files(s['script'], s['args']), s.get('pins')) for s in recipe.order}
+    out['assembly'] = state(rs.read_files(ASSEMBLER, []), recipe.assembly.get('pins'))
+    return out
+
+
+def seeded_mismatch(recipe, step, entry, dirs):
+    """[(file key, 'DIFFERS' | 'LOOSE')] for a cache entry that came from `seed` (not from a build of this key): the files the
+    step reads now against the bytes its output recorded. A hit that failed this is a mapping seed should never have made."""
+    if entry.get('loose'):
+        return [(step['script'], 'LOOSE')]
+    analysis = analyze_files(step['script'], step['args'], recipe.work/entry['dir'], input_dirs(recipe, step, dirs), recipe.work)
+    return [(k, 'DIFFERS') for k, v in analysis.items() if v['status'] == 'differs']
+
+
 def make_plan(recipe, cache, force_from=None, no_cache=False):
+    """The build plan. A step is not a cache hit when a pinned input changed (CHANGED), when its seeded output was built from
+    other bytes than the step reads now (DIFFERS), or when anything upstream of it is not a hit."""
     keys = compute_keys(recipe)
     if force_from and force_from not in recipe.byid:
         fail(f'--from {force_from}: no such step')
     forced = set(recipe.byid) if no_cache else (recipe.descendants(force_from) if force_from else set())
-    plan = {}
+    pins = pin_state(recipe)
+    plan, blocked, dirs = {}, set(), {}
     for step in recipe.order:
-        hit = None if step['id'] in forced else cache.get('steps', keys[step['id']])
-        plan[step['id']] = {'key': keys[step['id']], 'dir': hit['dir'] if hit else None}
+        sid = step['id']
+        reasons = list(pins[sid]['changed'])
+        upstream = any(r in blocked for r in step['inputs'].values())
+        hit = None
+        if sid not in forced and not reasons and not upstream:
+            hit = cache.get('steps', keys[sid])
+            if hit and (hit.get('seeded') or hit.get('loose')):
+                reasons = seeded_mismatch(recipe, step, hit, dirs)
+                hit = None if reasons else hit
+        if reasons or upstream:
+            blocked.add(sid)
+        if hit:
+            dirs[sid] = recipe.work/hit['dir']
+        plan[sid] = {'key': keys[sid], 'dir': hit['dir'] if hit else None, 'changed': reasons,
+                     'unpinned': pins[sid]['unpinned'], 'upstreamChanged': upstream}
     rebuilt_head_or_body = any(plan[recipe.assembly[s]]['dir'] is None for s in ('head', 'body'))
-    asm_hit = None if (no_cache or rebuilt_head_or_body) else cache.get('assemblies', keys['assembly'])
-    plan['assembly'] = {'key': keys['assembly'], 'dir': asm_hit['dir'] if asm_hit else None}
+    asm_changed = list(pins['assembly']['changed'])
+    asm_hit = None
+    if not (no_cache or rebuilt_head_or_body or asm_changed):
+        asm_hit = cache.get('assemblies', keys['assembly'])
+        if asm_hit and (asm_hit.get('seeded') or asm_hit.get('loose')):
+            analysis = analyze_files(ASSEMBLER, [], recipe.work/asm_hit['dir'], {}, recipe.work)
+            asm_changed = [(k, 'DIFFERS') for k, v in analysis.items() if v['status'] == 'differs'] or (
+                [(ASSEMBLER, 'LOOSE')] if asm_hit.get('loose') else [])
+            asm_hit = None if asm_changed else asm_hit
+    plan['assembly'] = {'key': keys['assembly'], 'dir': asm_hit['dir'] if asm_hit else None, 'changed': asm_changed,
+                        'unpinned': pins['assembly']['unpinned'], 'upstreamChanged': False}
     return plan, keys
 
 
-def print_plan(recipe, plan):
-    rows = [(s['id'], plan[s['id']]['dir'] or '-> build', plan[s['id']]['key'][:12]) for s in recipe.order]
-    rows.append(('assembly', plan['assembly']['dir'] or '-> build', plan['assembly']['key'][:12]))
+def plan_changed(plan):
+    """[(step id, file key, state)] for every pinned input whose bytes changed."""
+    return [(sid, key, state) for sid, entry in plan.items() for key, state in entry['changed']]
+
+
+def step_minutes(recipe, cache, step_id):
+    """Recorded build minutes of a step (`minutes`), else the seconds of the newest cache entry that built it, else None."""
+    holder = recipe.assembly if step_id == 'assembly' else recipe.byid[step_id]
+    if holder.get('minutes') is not None:
+        return float(holder['minutes'])
+    kind = 'assemblies' if step_id == 'assembly' else 'steps'
+    entries = [e for e in cache._load()[kind].values()
+               if (kind == 'assemblies' or e.get('step') == step_id) and e.get('seconds') and not e.get('seeded')]
+    entries.sort(key=lambda e: e.get('built', ''))
+    return entries[-1]['seconds']/60 if entries else None
+
+
+def estimate(recipe, cache, plan, slots=BLENDER_SLOTS):
+    """Minutes the plan's rebuilds would take: the serial sum and the wall time of a greedy schedule on `slots` Blender
+    slots in dependency order, then the assembly. `unknown` lists rebuilt steps with no recorded or measured time."""
+    todo = [s for s in recipe.order if not plan[s['id']]['dir']]
+    mins = {s['id']: step_minutes(recipe, cache, s['id']) for s in todo}
+    unknown = [sid for sid, m in mins.items() if m is None]
+    free, finish = [0.0]*slots, {}
+    for s in todo:
+        ready = max([finish[r] for r in s['inputs'].values() if r in finish] or [0.0])
+        k = min(range(slots), key=lambda i: free[i])
+        start = max(free[k], ready)
+        finish[s['id']] = free[k] = start+(mins[s['id']] or 0.0)
+    wall = max(finish.values(), default=0.0)
+    serial = sum(m for m in mins.values() if m)
+    asm = None
+    if not plan['assembly']['dir']:
+        asm = step_minutes(recipe, cache, 'assembly')
+        if asm is None:
+            unknown.append('assembly')
+        else:
+            wall += asm
+            serial += asm
+    return {'steps': mins, 'serialMinutes': round(serial, 1), 'wallMinutes': round(wall, 1), 'assemblyMinutes': asm,
+            'unknown': unknown}
+
+
+def print_plan(recipe, plan, cache=None):
+    rows = [(s['id'], plan[s['id']]) for s in recipe.order]+[('assembly', plan['assembly'])]
     width = max(len(r[0]) for r in rows)
-    for sid, state, key in rows:
-        print(f'  {sid:<{width}}  {key}  {state}')
-    todo = [r[0] for r in rows if r[1] == '-> build']
+    for sid, entry in rows:
+        state = entry['dir'] or '-> build'
+        notes = [f'{s} {k}' for k, s in entry['changed']]
+        if entry.get('upstreamChanged'):
+            notes.append('upstream pinned input changed')
+        if not entry['dir'] and cache is not None:
+            m = step_minutes(recipe, cache, sid)
+            notes.append(f'~{m:.1f} min' if m is not None else '~? min')
+        if entry['unpinned']:
+            notes.append(f"{len(entry['unpinned'])} unpinned")
+        print(f"  {sid:<{width}}  {entry['key'][:12]}  {state}"+(f"  [{'; '.join(notes)}]" if notes else ''))
+    todo = [sid for sid, entry in rows if not entry['dir']]
     print('builds: '+(', '.join(todo) if todo else 'nothing'))
+    if todo and cache is not None:
+        est = estimate(recipe, cache, plan)
+        text = (f"estimated rebuild: about {est['wallMinutes']} min wall on {BLENDER_SLOTS} slots "
+                f"({est['serialMinutes']} min serial)")
+        if est['unknown']:
+            text += f"; no recorded time for {', '.join(est['unknown'])}"
+        print(text)
 
 
 # ---------------------------------------------------------------- running steps
@@ -399,18 +515,37 @@ def cmd_status(args):
             elif rs.file_hash(path, normalise=False) != want:
                 problems.append(f'{fname} hash differs')
         print(f"root {name}: {root['dir']} {'ok' if not problems else '; '.join(problems)}")
-    print_plan(recipe, plan)
+    print_plan(recipe, plan, cache)
     stale = [s['id'] for s in recipe.order if not plan[s['id']]['dir']]
     print(f"{len(recipe.order)-len(stale)} of {len(recipe.order)} steps cached"
           f"{'; assembly '+plan['assembly']['dir'] if plan['assembly']['dir'] else '; assembly not built'}")
+    changed = plan_changed(plan)
+    for sid, key, state in changed:
+        why = ('a pinned input has other bytes than the pin' if state in ('CHANGED', 'MISSING')
+               else 'the cached output was built from other bytes than the step reads now')
+        print(f'CHANGED {key}  ({state} in {sid}: {why}; the step is not cached)')
+    unpinned = sorted({sid for sid, e in plan.items() if e['unpinned']})
+    if unpinned:
+        print(f"unpinned inputs in {', '.join(unpinned)}; run: recipe.py pin {args.recipe} --write")
+    if changed:
+        sys.exit(1)
 
 
 def cmd_build(args):
     recipe = load(args.recipe)
     cache = Cache(recipe)
     plan, keys = make_plan(recipe, cache, args.start, args.no_cache)
-    print_plan(recipe, plan)
+    print_plan(recipe, plan, cache)
+    changed = plan_changed(plan)
+    for sid, key, state in changed:
+        print(f'CHANGED {key}  ({state}; pinned by {sid})')
+    if changed and not args.allow_changed and not args.dry_run:
+        fail('a pinned input changed after its output was built; outputs are immutable and so are the files they were built from. '
+             'Copy the new bytes to a new name and point the step at it (recipe.py set R OUT STEP script <new.py> or a --spec <new.json>), '
+             'or restore the pinned bytes. --allow-changed rebuilds anyway (recovery only).')
     if args.dry_run:
+        if changed and not args.allow_changed:
+            print('build would refuse: CHANGED inputs (see above)')
         return
     built, assembly_name, head, body, _ = execute(recipe, plan, keys, cache, assembly_name=args.assembly)
     print(json.dumps({'head': head, 'body': body, 'assembly': assembly_name}))
@@ -453,12 +588,256 @@ def input_coverage(recipe, step, dirs):
     return {'recordedNotFed': missing, 'fedNotRecorded': extra}
 
 
+def output_dirs(recipe, cache, keys):
+    """{step id: Path or None}: the step's `existing` directory, else the cache entry under today's key."""
+    out = {}
+    for step in recipe.order:
+        existing = step.get('existing')
+        if existing and (recipe.work/existing).is_dir():
+            out[step['id']] = recipe.work/existing
+        else:
+            hit = cache.get('steps', keys[step['id']])
+            out[step['id']] = recipe.work/hit['dir'] if hit else None
+    return out
+
+
+def input_dirs(recipe, step, outs):
+    """{input name: directory} of the outputs a step was fed (roots, and the output directories of earlier steps)."""
+    dirs = {}
+    for name, ref in step['inputs'].items():
+        path = recipe.work/recipe.roots[ref]['dir'] if ref in recipe.roots else outs.get(ref)
+        if path is not None:
+            dirs[name] = path
+    return dirs
+
+
+def analyze_files(script, args, directory, fed_dirs, work):
+    """How each file a step reads compares with the bytes its output recorded in stage-start.json.
+    Returns {pin key: {'kind', 'status': 'ok' | 'differs' | 'unrecorded', 'wanted': [recorded sha256], 'names': [recorded names]}}.
+    'differs': the file exists but its bytes are not what the run used (the recorded hash belongs to this file by name, or is
+    the only recorded hash left unexplained for this kind of file); 'unrecorded': nothing to compare (no output, no record)."""
+    files = rs.read_files(script, args)
+    record = Path(directory)/'stage-start.json' if directory else None
+    if record is None or not record.is_file():
+        why = 'no output directory' if directory is None else 'no stage-start.json'
+        return {k: {'kind': kind, 'status': 'unrecorded', 'wanted': [], 'names': [], 'why': why} for k, kind in files.items()}
+    doc = json.loads(record.read_text(encoding='utf-8'))
+    sources, inputs = doc.get('sources', {}), doc.get('inputs', {})
+    variants = {k: rs.hash_variants(rs.pin_path(k)) for k in files}
+    fed = [rs.hash_variants(Path(resolve(a, fed_dirs, work/'__out__'))) for a in args
+           if Path(resolve(a, fed_dirs, work/'__out__')).is_file()]
+    fed_all = set().union(*fed) if fed else set()
+    code = {k for k, kind in files.items() if kind != 'file'}
+    source_left = {n: s for n, s in sources.items() if not any(s in variants[k] for k in code)}
+    input_left = {p: s for p, s in inputs.items() if s not in fed_all and not any(s in variants[k] for k in files if files[k] == 'file')}
+    result = {}
+    for key, kind in files.items():
+        entry = {'kind': kind, 'status': 'unrecorded', 'wanted': [], 'names': []}
+        base, suffix = Path(key).name, Path(key).suffix
+        if kind != 'file':
+            matched = [n for n, s in sources.items() if s in variants[key]]
+            if matched:
+                entry['status'] = 'ok'
+            elif base in sources:
+                entry.update(status='differs', wanted=[sources[base]], names=[base])
+            elif kind == 'script' and len(source_left) == 1:
+                name, sha = next(iter(source_left.items()))
+                entry.update(status='differs', wanted=[sha], names=[name])
+        else:
+            if any(s in variants[key] for s in inputs.values()):
+                entry['status'] = 'ok'
+            else:
+                same = {p: s for p, s in input_left.items() if Path(p.replace('\\', '/')).suffix == suffix}
+                named = {p: s for p, s in same.items() if Path(p.replace('\\', '/')).name == base}
+                pick = named or (same if len(same) == 1 else {})
+                if pick:
+                    entry.update(status='differs', wanted=sorted(set(pick.values())),
+                                 names=sorted({Path(p.replace('\\', '/')).name for p in pick}))
+        result[key] = entry
+    return result
+
+
+def freeze(key, wanted, names, write=True):
+    """Write the frozen copy of the bytes a run used and return the repo-relative path, or raise RuntimeError.
+    The copy sits beside the original (scripts <name>_p<sha8>.py, other files <stem>-p<sha8><ext>); an existing copy
+    with the same name is reused after its hash is checked. With write=False nothing is written (the report only)."""
+    paths = [key] if not Path(key).is_absolute() else []
+    paths += rs.history_paths_named(ROOT, {Path(key).name, *names})
+    found = rs.find_in_history(ROOT, list(dict.fromkeys(paths)), set(wanted))
+    if not found:
+        raise RuntimeError('no commit of any ref ever held those bytes (the file lived only in the data directory); '
+                           'commit a copy of the run-time bytes by hand under a versioned name')
+    data, from_path, commit = found
+    text = Path(key).suffix.lower() in rs.TEXT_SUFFIXES
+    body = rs.lf(data) if text else data
+    sha = rs.sha256_bytes(body)
+    target = rs.frozen_name(rs.pin_path(key), sha)
+    if target.is_file():
+        if rs.file_hash(target) != sha:
+            raise RuntimeError(f'{target} exists with other bytes')
+    elif write:
+        target.write_bytes(body)
+    return rs.pin_key(target), f'{from_path}@{commit[:8]}'
+
+
+def pin_step(label, holder, script, args, directory, fed_dirs, work, write, report):
+    """Pin one step (or the assembly): freeze and repoint what differs, then record `pins` from the bytes it will read.
+    Returns the list of problems that stay open."""
+    open_problems = []
+    analysis = analyze_files(script, args, directory, fed_dirs, work)
+    repointed = False
+    gone = {k for k, s in rs.check_pins(holder.get('pins')) if s in ('CHANGED', 'MISSING')}
+    for key, res in analysis.items():
+        if res['status'] == 'unrecorded':
+            report.append(f"  {label}: {key} unverified ({res.get('why', 'not in the output record')})")
+            if key in gone:
+                open_problems.append(f'{label}: {key} changed since it was pinned and there is no output record to say which bytes the '
+                                     'step used; restore the pinned bytes or copy the new ones to a new name')
+        elif res['status'] == 'ok' and key in gone:
+            report.append(f'  {label}: {key} differs from its recorded pin but equals what the output used; the pin is re-recorded')
+        elif res['status'] == 'differs':
+            if res['kind'] == 'module' or (label == 'assembly' and res['kind'] == 'script'):
+                open_problems.append(f"{label}: {key} is not the bytes the output used and cannot be repointed ({res['kind']}"
+                                     f"{' read by the assembler' if label == 'assembly' else ' imported by the step script'}); "
+                                     'restore the run-time bytes or accept the drift by hand')
+                continue
+            try:
+                new_key, source = freeze(key, res['wanted'], res['names'], write)
+            except RuntimeError as error:
+                open_problems.append(f'{label}: {key}: {error}')
+                continue
+            report.append(f"  {label}: {key} differs from the bytes the output used; {'frozen copy' if write else 'would freeze'} {new_key} (from {source})")
+            if write:
+                if res['kind'] == 'script':
+                    holder['script'] = new_key
+                    script = new_key
+                else:
+                    position = rs.arg_files(args)[key]
+                    token = args[position]
+                    args[position] = ('{repo}/'+new_key) if token.startswith('{repo}/') else str(rs.pin_path(new_key))
+                repointed = True
+            else:
+                open_problems.append(f'{label}: {key} would be repointed to {new_key}')
+    if write:
+        holder['pins'] = rs.pins_now(script, args)
+    return open_problems, repointed
+
+
+def cmd_pin(args):
+    recipe = load(args.recipe)
+    cache = Cache(recipe)
+    keys = compute_keys(recipe)
+    outs = output_dirs(recipe, cache, keys)
+    report, problems, repointed, pending = [], [], [], 0
+    data = copy.deepcopy(recipe.data)
+    by = {s['id']: s for s in data['steps']}
+    for step in recipe.order:
+        holder = by[step['id']]
+        fed = input_dirs(recipe, step, outs)
+        before = dict(holder.get('pins') or {})
+        open_, moved = pin_step(step['id'], holder, holder['script'], holder['args'], outs[step['id']], fed, recipe.work, args.write, report)
+        problems += open_
+        if moved:
+            repointed.append(step['id'])
+        now = rs.pins_now(holder['script'], holder['args'])
+        if before != now:
+            pending += 1
+            report.append(f"  {step['id']}: {len(now)} pins "+('written' if args.write and not open_ else 'to write'))
+    asm_holder = data['assembly']
+    asm_dir = None
+    if recipe.assembly.get('existing') and (recipe.work/recipe.assembly['existing']).is_dir():
+        asm_dir = recipe.work/recipe.assembly['existing']
+    else:
+        hit = cache.get('assemblies', keys['assembly'])
+        asm_dir = recipe.work/hit['dir'] if hit else None
+    before = dict(asm_holder.get('pins') or {})
+    open_, _ = pin_step('assembly', asm_holder, ASSEMBLER, [], asm_dir, {}, recipe.work, args.write, report)
+    problems += open_
+    now = rs.pins_now(ASSEMBLER, [])
+    if before != now:
+        pending += 1
+        report.append(f"  assembly: {len(now)} pins "+('written' if args.write and not open_ else 'to write'))
+    for line in report:
+        print(line)
+    for line in problems:
+        print('OPEN '+line)
+    todo = bool(pending or problems)
+    if args.write:
+        if problems:
+            print(f'not writing {recipe.path}: {len(problems)} problem(s) above')
+            sys.exit(1)
+        if data != recipe.data:
+            dump(data, recipe.path, like=recipe.path)
+            say(f'wrote pins into {recipe.path}')
+            if repointed:
+                say('steps were repointed; re-mapping their keys to the existing outputs (strict seed)')
+                seed_args = argparse.Namespace(recipe=str(recipe.path), write_expect=False, loose=False, strict=True)
+                cmd_seed(seed_args)
+        else:
+            print('nothing to pin')
+        return
+    print(('pin: nothing to pin' if not todo else f'pin: work to do ({len(problems)} open problem(s)); run with --write'))
+    if todo:
+        sys.exit(1)
+
+
+def minutes_of(directory, product='shape.glb', settle=120):
+    """Build minutes of an output directory: stage-start.json's mtime (written before the mesh import) to the last file the
+    build wrote. The build's own files all land within `settle` seconds of its product (shape.glb; for an assembly akinza.glb
+    and its renders); a file added to the directory much later (a spec copied in, a containment report) is not build time."""
+    directory = Path(directory)
+    start = directory/'stage-start.json'
+    if not start.is_file():
+        return None
+    begin = start.stat().st_mtime
+    made = (directory/product).stat().st_mtime if (directory/product).is_file() else None
+    end = begin
+    for path in directory.rglob('*'):
+        if path.is_file() and 'containment' not in path.name:
+            mtime = path.stat().st_mtime
+            if made is None or mtime <= made+settle:
+                end = max(end, mtime)
+    return round((end-begin)/60, 1)
+
+
+def cmd_minutes(args):
+    recipe = load(args.recipe)
+    cache = Cache(recipe)
+    keys = compute_keys(recipe)
+    outs = output_dirs(recipe, cache, keys)
+    data = copy.deepcopy(recipe.data)
+    by = {s['id']: s for s in data['steps']}
+    rows = []
+    for step in recipe.order:
+        m = minutes_of(outs[step['id']]) if outs[step['id']] else None
+        rows.append((step['id'], outs[step['id']].name if outs[step['id']] else '-', m))
+        if m is not None:
+            by[step['id']]['minutes'] = m
+    asm = recipe.assembly
+    asm_dir = recipe.work/asm['existing'] if asm.get('existing') and (recipe.work/asm['existing']).is_dir() else None
+    m = minutes_of(asm_dir, 'akinza.glb', 600) if asm_dir else None
+    rows.append(('assembly', asm_dir.name if asm_dir else '-', m))
+    if m is not None:
+        data['assembly']['minutes'] = m
+    for sid, name, m in rows:
+        print(f'  {sid:<9} {name:<24} {m if m is not None else "?"} min')
+    print(f"total {round(sum(m for _, _, m in rows if m), 1)} min over {sum(1 for r in rows if r[2] is not None)} outputs")
+    if args.write:
+        dump(data, recipe.path, like=recipe.path)
+        say(f'wrote minutes into {recipe.path}')
+
+
 def cmd_seed(args):
+    """Map each step's `existing` directory to its key without building. Strict (the default): a step is mapped only
+    when every file it reads is the bytes its output recorded (script and modules by stage-start sources, file arguments
+    by stage-start inputs) and every recorded input is a file the recipe feeds; anything else is refused and the exit
+    status is 1. --loose maps anyway (explicit recovery; the cache entry is marked loose)."""
     recipe = load(args.recipe)
     cache = Cache(recipe)
     keys = compute_keys(recipe)
     dirs = {s['id']: s['existing'] for s in recipe.steps if s.get('existing')}
-    problems, rows = 0, []
+    outs = {sid: recipe.work/d for sid, d in dirs.items() if (recipe.work/d).is_dir()}
+    problems, rows, refused = 0, [], set()
     for name, root in recipe.roots.items():
         for fname, want in root['files'].items():
             path = recipe.work/root['dir']/fname
@@ -475,33 +854,54 @@ def cmd_seed(args):
             problems += 1
             print(f"{step['id']}: {existing} is missing")
             continue
-        cache.put('steps', keys[step['id']], {'dir': existing, 'step': step['id'], 'seeded': True,
-                                              'built': datetime.datetime.now().isoformat(timespec='seconds')})
         pin = script_pin(step, directory)
         cover = input_coverage(recipe, step, dirs)
-        if 'MISMATCH' in pin or (cover and cover['recordedNotFed']):
-            problems += 1
-        rows.append((step['id'], existing, keys[step['id']][:12], pin, cover))
+        analysis = analyze_files(step['script'], step['args'], directory, input_dirs(recipe, step, outs), recipe.work)
+        drift = [k for k, v in analysis.items() if v['status'] == 'differs']
+        upstream = [r for r in step['inputs'].values() if r in refused]
+        bad = 'MISMATCH' in pin or bool(cover and cover['recordedNotFed']) or bool(drift) or bool(upstream)
+        problems += bad
+        if upstream:
+            pin += f"; upstream {', '.join(upstream)} refused"
+        if bad and not args.loose:
+            refused.add(step['id'])
+            pin += '; REFUSED (not mapped)'
+        else:
+            entry = {'dir': existing, 'step': step['id'], 'seeded': True, 'built': datetime.datetime.now().isoformat(timespec='seconds')}
+            if bad:
+                entry['loose'] = True
+            cache.put('steps', keys[step['id']], entry)
+        rows.append((step['id'], existing, keys[step['id']], pin, cover, drift))
         if args.write_expect:
             step['expect'] = measure_output(directory)
     asm = recipe.assembly
     if asm.get('existing') and (recipe.work/asm['existing']).is_dir():
-        cache.put('assemblies', keys['assembly'], {'dir': asm['existing'], 'head': dirs[asm['head']], 'body': dirs[asm['body']],
-                                                   'seeded': True, 'built': datetime.datetime.now().isoformat(timespec='seconds')})
-        rows.append(('assembly', asm['existing'], keys['assembly'][:12], '-', None))
+        asm_analysis = analyze_files(ASSEMBLER, [], recipe.work/asm['existing'], {}, recipe.work)
+        asm_drift = [k for k, v in asm_analysis.items() if v['status'] == 'differs']
+        asm_drift = asm_drift or (['upstream refused'] if {asm['head'], asm['body']} & refused else [])
+        problems += bool(asm_drift)
+        if not asm_drift or args.loose:
+            cache.put('assemblies', keys['assembly'], {'dir': asm['existing'], 'head': dirs.get(asm['head']), 'body': dirs.get(asm['body']),
+                                                       'seeded': True, 'built': datetime.datetime.now().isoformat(timespec='seconds'),
+                                                       **({'loose': True} if asm_drift else {})})
+        rows.append(('assembly', asm['existing'], keys['assembly'], '-' if not asm_drift else 'DRIFT '+', '.join(asm_drift)+'; REFUSED', None, asm_drift))
         if args.write_expect:
             asm['expect'] = assembly_summary(recipe.work/asm['existing'])
     if args.write_expect:
         recipe.data['steps'] = recipe.steps
-        dump(recipe.data, recipe.path)
+        dump(recipe.data, recipe.path, like=recipe.path)
         say(f'wrote expect blocks into {recipe.path}')
-    for sid, existing, key, pin, cover in rows:
+    for sid, existing, key, pin, cover, drift in rows:
         extra = ''
         if cover is not None:
             extra = f" inputs: recorded-not-fed {cover['recordedNotFed'] or 'none'}, fed-not-recorded {cover['fedNotRecorded'] or 'none'}"
-        print(f'{sid:<9} {existing:<22} {key}  script {pin};{extra}')
-    print(f'seeded {len(rows)} entries into {cache.path}; problems: {problems}')
-    if args.strict and problems:
+        if drift:
+            extra += f' files differ from the run: {", ".join(Path(k).name for k in drift)}'
+        print(f'{sid:<9} {existing:<22} {key[:12]}  script {pin};{extra}')
+    mapped = sum(1 for r in rows if 'REFUSED' not in r[3])
+    print(f'seeded {mapped} of {len(rows)} entries into {cache.path}; problems: {problems}'
+          +(' (loose: mapped anyway)' if args.loose and problems else ''))
+    if problems and not args.loose:
         sys.exit(1)
 
 
@@ -559,8 +959,16 @@ def set_path(doc, dotted, value):
         node[last] = value
 
 
+def refresh_pins(step, before):
+    """Pins of an edited step: carried forward for every file it still reads (an unchanged input keeps its recorded sha, so a
+    file edited in place stays CHANGED), recorded from the bytes now for a file it reads for the first time."""
+    old = before.get('pins') or {}
+    step['pins'] = {key: old.get(key) or rs.pin_hash(key) for key in sorted(rs.read_files(step['script'], step['args']))}
+
+
 def apply_edits(data, step_id, pairs, spec_path, keep_same=False):
-    """Edit one step of a recipe dict in place: pairs is [(arg, value)], each a --flag or spec:<dotted.path>.
+    """Edit one step of a recipe dict in place: pairs is [(arg, value)], each a --flag, spec:<dotted.path> or script (the
+    step's script path, to point it at a new versioned copy).
     spec_path(spec_doc) returns the file the edited spec is written to. With keep_same, a spec edit that
     leaves the document unchanged keeps the original path (so the step key equals the baseline's).
     Returns the spec file written, or None."""
@@ -568,8 +976,13 @@ def apply_edits(data, step_id, pairs, spec_path, keep_same=False):
     if step is None:
         fail(f'no step {step_id}')
     spec_doc, original = None, None
+    before = copy.deepcopy(step)
     for key, value in pairs:
-        if key.startswith('--'):
+        if key == 'script':
+            if not (ROOT/value).is_file():
+                fail(f'script {value}: no such file under the repository')
+            step['script'] = value
+        elif key.startswith('--'):
             set_cli_arg(step, key, value)
         elif key.startswith('spec:'):
             if spec_doc is None:
@@ -584,7 +997,7 @@ def apply_edits(data, step_id, pairs, spec_path, keep_same=False):
                 parsed = value
             set_path(spec_doc, key[len('spec:'):], parsed)
         else:
-            fail(f'{key}: an argument is a --flag or spec:<dotted.path>')
+            fail(f'{key}: an argument is a --flag, spec:<dotted.path> or script')
     spec_file = None
     if spec_doc is not None and not (keep_same and spec_doc == original):
         spec_file = Path(spec_path(spec_doc))
@@ -595,6 +1008,7 @@ def apply_edits(data, step_id, pairs, spec_path, keep_same=False):
             step['args'][index] = '{repo}/'+spec_file.relative_to(ROOT).as_posix()
         except ValueError:  # a candidate outside the repository keeps an absolute path
             step['args'][index] = spec_file.as_posix()
+    refresh_pins(step, before)
     drop_expect(data, [step_id])
     return spec_file
 
@@ -609,9 +1023,10 @@ def cmd_set(args):
                 lambda doc: out.with_name(f'{out.stem}.{args.step}.spec.json'))
     dump(data, out)
     candidate = load(out)
-    plan, _ = make_plan(candidate, Cache(candidate))
+    cache = Cache(candidate)
+    plan, _ = make_plan(candidate, cache)
     say(f'wrote {out}')
-    print_plan(candidate, plan)
+    print_plan(candidate, plan, cache)
 
 
 def cmd_add(args):
@@ -638,13 +1053,15 @@ def cmd_add(args):
     for sink in ('head', 'body'):
         if data['assembly'][sink] == args.after and new.get('kind') == sink:
             data['assembly'][sink] = new['id']
+    refresh_pins(new, new)
     drop_expect(data, [new['id']])
     out = Path(args.out).resolve()
     dump(data, out)
     candidate = load(out)  # validates the DAG
-    plan, _ = make_plan(candidate, Cache(candidate))
+    cache = Cache(candidate)
+    plan, _ = make_plan(candidate, cache)
     say(f'wrote {out}')
-    print_plan(candidate, plan)
+    print_plan(candidate, plan, cache)
 
 
 def cmd_merge(args):
@@ -700,9 +1117,10 @@ def cmd_merge(args):
     drop_expect(out, [s['id'] for s in steps if s != base_s.get(s['id'])])
     dump(out, Path(args.out))
     candidate = load(args.out)
-    plan, _ = make_plan(candidate, Cache(candidate))
+    cache = Cache(candidate)
+    plan, _ = make_plan(candidate, cache)
     say(f'wrote {args.out}')
-    print_plan(candidate, plan)
+    print_plan(candidate, plan, cache)
 
 
 def cmd_verify(args):
@@ -816,7 +1234,7 @@ def in_zone(points, zone, floor, height):
             & (y >= zone['y'][0]) & (y <= zone['y'][1]))
 
 
-def compute_containment(recipe, step, out_name, base_dir, zones, species):
+def compute_containment(recipe, step, out_name, base_dir, zones, species, owned=None):
     """Nearest-vertex displacement between a step's input (base_dir) and its output (out_name), per
     foreign region. Pure computation: nothing is written."""
     import numpy as np
@@ -833,7 +1251,7 @@ def compute_containment(recipe, step, out_name, base_dir, zones, species):
     d_cb, _ = cKDTree(base).query(cand)
     d_bc, _ = cKDTree(cand).query(base)
     points, dist = np.concatenate([cand, base]), np.concatenate([d_cb, d_bc])/height
-    owned = [r for r in step.get('regions', [])]
+    owned = list(owned if owned is not None else step.get('regions', []))
     if any(r not in zones for r in owned):
         fail(f"step {step['id']} owns a region with no zone ({owned}); the whole figure is its zone")
     own_mask = np.zeros(len(points), bool)
@@ -860,6 +1278,88 @@ def compute_containment(recipe, step, out_name, base_dir, zones, species):
     return report
 
 
+def existing_chain_dir(recipe, ref):
+    """The directory the baseline run of a step's input used: a root's directory, or the input step's `existing` output."""
+    if ref in recipe.roots:
+        return recipe.work/recipe.roots[ref]['dir']
+    existing = recipe.byid[ref].get('existing')
+    return recipe.work/existing if existing and (recipe.work/existing).is_dir() else None
+
+
+def reference_step(recipe, step):
+    """The baseline version of a step: the step itself when it has an `existing` output, else the nearest earlier step of the
+    same component that owns one of its regions and has one (a tool step added in place of the method it replaces is judged
+    against that method's own footprint)."""
+    def has_output(s):
+        return bool(s.get('existing')) and (recipe.work/s['existing']/'shape.glb').is_file()
+    if has_output(step):
+        return step
+    own, seen, queue = set(step.get('regions', [])), {step['id']}, [step]
+    while queue:
+        current = queue.pop(0)
+        for ref in current['inputs'].values():
+            if ref in recipe.byid and ref not in seen:
+                seen.add(ref)
+                ancestor = recipe.byid[ref]
+                if has_output(ancestor) and ancestor['component'] == step['component'] and own & set(ancestor.get('regions', [])):
+                    return ancestor
+                queue.append(ancestor)
+    return None
+
+
+def containment_reference(recipe, step, zones, species):
+    """(report, note): the displacement per region the baseline version of a step produced, its `existing` output against
+    its input, measured over the same zones and the same owned regions as the candidate and cached under
+    <work>/contain-ref/. report is None with a note when the step has no baseline version."""
+    ref = reference_step(recipe, step)
+    if ref is None:
+        return None, 'no baseline version of this step (no existing output of it or of an earlier step owning the same region)'
+    primary = 'base' if 'base' in ref['inputs'] else next(iter(ref['inputs']))
+    base_dir = existing_chain_dir(recipe, ref['inputs'][primary])
+    if base_dir is None or not (base_dir/'shape.glb').is_file():
+        return None, f"the baseline input of {ref['id']} has no output to compare against"
+    owned = list(step.get('regions', []))
+    digest = rs.sha256_bytes(json.dumps({'zones': zones, 'frame': species.get('frame'), 'join': species.get('join'), 'owned': owned},
+                                        sort_keys=True).encode())[:8]
+    name = f"{ref['id']}-{ref['existing'].replace('/', '_')}-{base_dir.name.replace('/', '_')}-{'_'.join(owned)}-{digest}.json"
+    cached = recipe.work/'contain-ref'/name
+    with LOCK:
+        if cached.is_file():
+            report = json.loads(cached.read_text(encoding='utf-8'))
+        else:
+            report = compute_containment(recipe, ref, ref['existing'], base_dir, zones, species, owned=owned)
+            cached.parent.mkdir(exist_ok=True)
+            tmp = cached.with_suffix('.tmp')
+            tmp.write_bytes((json.dumps(report, indent=1)+'\n').encode('utf-8'))
+            os.replace(tmp, cached)
+    report['cacheFile'] = cached.as_posix()
+    return report, None
+
+
+def apply_reference(report, reference, note=None):
+    """Add the relative rule to a containment report: per foreign region the baseline version's displacement (`reference`), the
+    allowance max(FLAT_ALLOWANCE, REFERENCE_FACTOR x reference max), the excess over it and whether it is flagged. The absolute
+    numbers stay; `flaggedAbsolute` is the old flat rule. Without a reference the allowance is the flat one."""
+    def one(entry, ref_entry):
+        ref_max = ref_entry['max'] if ref_entry else None
+        allowance = max(FLAT_ALLOWANCE, REFERENCE_FACTOR*ref_max) if ref_max is not None else FLAT_ALLOWANCE
+        entry.update(reference=({'p95': ref_entry['p95'], 'max': ref_entry['max']} if ref_entry else None),
+                     allowance=round(allowance, 5), excess=round(entry['max']-allowance, 5),
+                     flagged=entry['max'] > allowance, flaggedAbsolute=entry['max'] > FLAT_ALLOWANCE)
+    ref_foreign = reference.get('foreign', {}) if reference else {}
+    for region, entry in report['foreign'].items():
+        one(entry, ref_foreign.get(region))
+    one(report['outsideAllZones'], reference.get('outsideAllZones') if reference else None)
+    rows = {**report['foreign'], 'outsideAllZones': report['outsideAllZones']}
+    report['rule'] = {'allowance': f'max({FLAT_ALLOWANCE}, {REFERENCE_FACTOR} x the displacement the baseline version of the step gave the region)',
+                      'referenceStep': reference['step'] if reference else None,
+                      'referenceOutput': reference['output'] if reference else None,
+                      'referenceInput': reference['baseline'] if reference else None, 'note': note}
+    report['verdict'] = {'absolute': sorted(r for r, e in rows.items() if e['flaggedAbsolute']),
+                         'relative': sorted(r for r, e in rows.items() if e['flagged'])}
+    return report
+
+
 def cmd_contain(args):
     recipe = load(args.recipe)
     cache = Cache(recipe)
@@ -878,11 +1378,23 @@ def cmd_contain(args):
     if not (base_dir/'shape.glb').is_file():
         fail(f'baseline {base_dir}/shape.glb not found (input {ref} is not built)')
     report = compute_containment(recipe, step, out_name, base_dir, zones, species)
+    if not args.no_reference:
+        reference, note = containment_reference(recipe, step, zones, species)
+        apply_reference(report, reference, note)
     target = recipe.work/out_name/'containment.json' if not entry.get('seeded') else recipe.work/f'{out_name}.containment.json'
+    number = 1
+    while target.exists():  # outputs are immutable: a second report goes beside the first, never over it
+        number += 1
+        target = recipe.work/f'{out_name.replace("/", "_")}.containment-{number}.json'
     target.write_bytes((json.dumps(report, indent=1)+'\n').encode('utf-8'))
     worst = max(report['foreign'].items(), key=lambda kv: kv[1]['max'], default=(None, {'max': 0}))
-    print(json.dumps({'written': str(target), 'worstForeign': worst[0], 'max': worst[1]['max'],
-                      'outsideAllZonesMax': report['outsideAllZones']['max']}))
+    summary = {'written': str(target), 'worstForeign': worst[0], 'max': worst[1]['max'],
+               'outsideAllZonesMax': report['outsideAllZones']['max']}
+    if 'verdict' in report:
+        ref_step = report['rule']['referenceStep']
+        summary.update(flaggedAbsolute=report['verdict']['absolute'], flaggedRelative=report['verdict']['relative'],
+                       reference=f"{ref_step} ({report['rule']['referenceOutput']})" if ref_step else None)
+    print(json.dumps(summary))
 
 
 def cmd_sweep(args):
@@ -897,10 +1409,18 @@ def main():
     sub = parser.add_subparsers(dest='command', required=True)
     p = sub.add_parser('build'); p.add_argument('recipe'); p.add_argument('--assembly')
     p.add_argument('--from', dest='start'); p.add_argument('--no-cache', action='store_true')
-    p.add_argument('--dry-run', action='store_true'); p.set_defaults(func=cmd_build)
+    p.add_argument('--dry-run', action='store_true')
+    p.add_argument('--allow-changed', action='store_true', help='rebuild even though a pinned input changed (recovery only)')
+    p.set_defaults(func=cmd_build)
     p = sub.add_parser('status'); p.add_argument('recipe'); p.set_defaults(func=cmd_status)
+    p = sub.add_parser('pin', help='freeze and pin every file each step reads')
+    p.add_argument('recipe'); p.add_argument('--write', action='store_true'); p.set_defaults(func=cmd_pin)
+    p = sub.add_parser('minutes', help='record the build minutes of each step from its existing output')
+    p.add_argument('recipe'); p.add_argument('--write', action='store_true'); p.set_defaults(func=cmd_minutes)
     p = sub.add_parser('seed'); p.add_argument('recipe'); p.add_argument('--write-expect', action='store_true')
-    p.add_argument('--strict', action='store_true'); p.set_defaults(func=cmd_seed)
+    p.add_argument('--strict', action='store_true', help='accepted and ignored: strict is the default')
+    p.add_argument('--loose', action='store_true', help='map keys to outputs whose recorded bytes do not match (explicit recovery)')
+    p.set_defaults(func=cmd_seed)
     p = sub.add_parser('set'); p.add_argument('recipe'); p.add_argument('out'); p.add_argument('step')
     p.add_argument('pairs', nargs=argparse.REMAINDER); p.set_defaults(func=cmd_set)
     p = sub.add_parser('add'); p.add_argument('recipe'); p.add_argument('out'); p.add_argument('--after', required=True)
@@ -910,7 +1430,9 @@ def main():
     p = sub.add_parser('verify'); p.add_argument('recipe'); p.add_argument('--no-cache', action='store_true')
     p.add_argument('--no-packet', action='store_true'); p.set_defaults(func=cmd_verify)
     p = sub.add_parser('contain'); p.add_argument('recipe'); p.add_argument('step'); p.add_argument('--out-dir')
-    p.add_argument('--zones'); p.set_defaults(func=cmd_contain)
+    p.add_argument('--zones')
+    p.add_argument('--no-reference', action='store_true', help='skip the baseline-relative allowance (flat .002 only)')
+    p.set_defaults(func=cmd_contain)
     p = sub.add_parser('sweep', help='try several values of one step parameters; build, quick, score and rank them')
     p.add_argument('recipe'); p.add_argument('--step', required=True)
     p.add_argument('--grid', action='append', help='<arg>=<v1>,<v2>,...; a --flag or spec:<dotted.path>; several grids form a product')

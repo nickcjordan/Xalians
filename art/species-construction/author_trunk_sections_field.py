@@ -635,6 +635,32 @@ for i, s in enumerate(stations):
         row['deltaFromNative'] = {k: (None if achieved[k] is None or before[k] is None else achieved[k]-before[k])
                                   for k in ('front', 'back', 'depth', 'halfWidth')}
     report_stations.append(row)
+# Sweep score (recipe.py sweep reads a top-level sweepScore, higher is better): the negative weighted RMS of achieved minus
+# target over the station rows and the quantities the spec targets (front, back, depth, half width), in fit units, each row
+# weighted by its loft weight weightY (a row the loft does not touch, weight 0, cannot be achieved and is left out; the rump
+# rows .58 to .62 sit .06 to .12 off their targets by construction and would swamp the rest). The quick silhouette cannot see
+# the waist (the hanging arm is the side edge there), so the score reads the mesh instead.
+# Achieved minus target measures how well the build realizes the table, so it ranks changes to weights, exponents, reach
+# and voxel size. A sweep that moves the targets themselves moves the yardstick with them: give the spec an optional
+# `sweepReference` ({"<y>": {"front": .., "back": .., "depth": .., "halfWidth": ..}}, fit units) and the score measures
+# achieved against that fixed table instead, for the quantities it names.
+sweep_ref = {float(k): v for k, v in (SPEC.get('sweepReference') or {}).items()}
+sweep_sums = {k: [0.0, 0.0] for k in ('front', 'back', 'depth', 'halfWidth')}  # [weighted squared error, weight]
+for row in report_stations:
+    w = float(row['weightY'])
+    if w <= 0:
+        continue
+    for k, acc in sweep_sums.items():
+        want = (sweep_ref.get(float(row['y'])) or {}).get(k, row['target'].get(k))
+        got = (row['achieved'] or {}).get(k)
+        if want is not None and got is not None:
+            acc[0] += w*(got-want)**2
+            acc[1] += w
+sweep_total, sweep_weight = sum(a[0] for a in sweep_sums.values()), sum(a[1] for a in sweep_sums.values())
+sweep_score = -float(np.sqrt(sweep_total/sweep_weight)) if sweep_weight else None
+sweep_terms = {f'rms_{k}': (float(np.sqrt(a[0]/a[1])) if a[1] else None) for k, a in sweep_sums.items()}
+sweep_terms['weight'] = sweep_weight
+sweep_terms['against'] = 'sweepReference where named, else the spec targets' if sweep_ref else 'the spec targets'
 smooth_before, smooth_after = smoothness(native), smoothness(final)
 limit = SPEC['smoothness']['limit']
 smooth_report = {'limit': limit, 'native': smooth_before, 'final': smooth_after,
@@ -697,6 +723,7 @@ bpy.ops.wm.save_as_mainfile(filepath=str(args.out/'body.blend'))
 
 summary = {
     'approval': None, 'stageProvenanceSha256': provenance,
+    'sweepScore': sweep_score, 'sweepTerms': sweep_terms,
     'scope': 'Trunk authored from a station table: lofted superellipse sections weighted-morphed into the native field; one meshing',
     'voxel': VS, 'source': source_stats, 'body': after, 'spec': SPEC, 'removedIslands': removed,
     'fitNative': fit_report, 'stations': report_stations, 'flips': flip_report, 'smoothness': smooth_report,
