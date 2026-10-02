@@ -34,6 +34,15 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import recipe_steps as rs  # noqa: E402
 
+# No console window for child processes on Windows: a detached plan job has no console, so
+# every child would otherwise open its own window. Output is captured or logged already.
+_NO_WINDOW = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}
+
+
+def _run(*a, **k):
+    return subprocess.run(*a, **{**_NO_WINDOW, **k})
+
+
 ROOT = rs.ROOT
 LOOP_TOOLS = HERE/'loop_tools.py'
 ASSEMBLER = 'art/species-construction/assemble_reconstructed_creature.py'
@@ -352,7 +361,7 @@ def run_step(recipe, step, input_dirs, name):
     else:
         fail(f"step {step['id']}: runner {runner!r} is not supported here (blender-wsl steps belong to run_rebuild.py)")
     started = time.time()
-    result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    result = _run(cmd, cwd=ROOT, capture_output=True, text=True)
     if result.returncode or not out.is_dir():
         tail = '\n'.join((result.stdout+result.stderr).splitlines()[-25:])
         fail(f"step {step['id']} failed ({name}); log {recipe.work/(name+'.log')}\n{tail}")
@@ -374,7 +383,7 @@ def assemble(recipe, head_dir, body_dir, name):
         join.write_bytes((json.dumps(numeric, indent=1)+'\n').encode('utf-8'))
         cmd += ['--join', str(join)]
     started = time.time()
-    result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    result = _run(cmd, cwd=ROOT, capture_output=True, text=True)
     out = recipe.work/name
     if result.returncode or not (out/'assembly.json').is_file():
         tail = '\n'.join((result.stdout+result.stderr).splitlines()[-25:])
@@ -1386,7 +1395,7 @@ def cmd_verify(args):
 
 
 def tool(*argv):
-    result = subprocess.run([sys.executable, str(LOOP_TOOLS), *argv], cwd=ROOT, capture_output=True, text=True)
+    result = _run([sys.executable, str(LOOP_TOOLS), *argv], cwd=ROOT, capture_output=True, text=True)
     if result.returncode:
         fail(f"loop_tools {' '.join(argv)} failed\n"+'\n'.join((result.stdout+result.stderr).splitlines()[-20:]))
     return result.stdout

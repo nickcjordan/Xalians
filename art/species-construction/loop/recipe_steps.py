@@ -11,6 +11,17 @@ import struct
 from pathlib import Path
 
 import numpy as np
+import os
+import subprocess
+
+# No console window for child processes on Windows: a detached plan job has no console, so
+# every child would otherwise open its own window. Output is captured or logged already.
+_NO_WINDOW = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}
+
+
+def _run(*a, **k):
+    return subprocess.run(*a, **{**_NO_WINDOW, **k})
+
 
 ROOT = Path(__file__).resolve().parents[3]
 CONSTRUCTION = ROOT/'art/species-construction'
@@ -174,7 +185,7 @@ def frozen_name(path, sha):
 
 def git(root, *argv):
     import subprocess
-    result = subprocess.run(['git', *argv], cwd=root, capture_output=True)
+    result = _run(['git', *argv], cwd=root, capture_output=True)
     if result.returncode:
         raise RuntimeError(f"git {' '.join(argv)}: {result.stderr.decode(errors='replace').strip()}")
     return result.stdout

@@ -37,6 +37,15 @@ from PIL import Image, ImageDraw
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import species as species_config  # noqa: E402
 
+# No console window for child processes on Windows: a detached plan job has no console, so
+# every child would otherwise open its own window. Output is captured or logged already.
+_NO_WINDOW = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}
+
+
+def _run(*a, **k):
+    return subprocess.run(*a, **{**_NO_WINDOW, **k})
+
+
 ROOT = Path(__file__).resolve().parents[3]
 CONSTRUCTION = ROOT/'art/species-construction'
 DEFAULT_BLENDER = Path(r'C:\Users\njord\AppData\Local\Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local'
@@ -187,7 +196,7 @@ def run_blender(arguments, log):
     slot = acquire_slot()
     try:
         with open(log, 'w', encoding='utf-8', errors='replace') as handle:
-            result = subprocess.run(command, stdout=handle, stderr=subprocess.STDOUT, cwd=ROOT)
+            result = _run(command, stdout=handle, stderr=subprocess.STDOUT, cwd=ROOT)
     finally:
         slot.unlink(missing_ok=True)
     text = Path(log).read_text(encoding='utf-8', errors='replace')
@@ -292,7 +301,7 @@ def cmd_check(args):
     out = work(args.name)
     record = json.loads((out/'assembly.json').read_text())
     skin = next(v for k, v in record['objects'].items() if 'continuous' in k)  # the assembler names the skin '<species>_continuous_construction'
-    subprocess.run([sys.executable, str(CONSTRUCTION/'review_shape_study.py'), str(out/'render'),
+    _run([sys.executable, str(CONSTRUCTION/'review_shape_study.py'), str(out/'render'),
                     '--label', f"{SPECIES['label']} {args.name}", '--reference', str(SPECIES.docs/SPECIES['referenceSheet'])],
                    check=True, capture_output=True, cwd=ROOT)
     review = json.loads((out/'render/review.json').read_text())

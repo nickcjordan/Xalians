@@ -28,6 +28,16 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+import os
+
+# No console window for child processes on Windows: a detached plan job has no console, so
+# every child would otherwise open its own window. Output is captured or logged already.
+_NO_WINDOW = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}
+
+
+def _run(*a, **k):
+    return subprocess.run(*a, **{**_NO_WINDOW, **k})
+
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -378,7 +388,7 @@ def compose_sheet(rc, rs_mod, region, zone, species, rows, top_entries, baseline
 # ---------------------------------------------------------------- the command
 
 def reserve(rc):
-    return subprocess.run([sys.executable, str(rc.LOOP_TOOLS), 'next-number', '--reserve'], cwd=rc.ROOT,
+    return _run([sys.executable, str(rc.LOOP_TOOLS), 'next-number', '--reserve'], cwd=rc.ROOT,
                           capture_output=True, text=True, check=True).stdout.strip()
 
 
@@ -475,7 +485,7 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
             began = time.time()
             cmd = [sys.executable, str(rc.LOOP_TOOLS), 'quick', *rc.species_flags(base), head, body, str(out)]
             for attempt in (1, 2):
-                proc = subprocess.run(cmd, cwd=rc.ROOT, capture_output=True, text=True)
+                proc = _run(cmd, cwd=rc.ROOT, capture_output=True, text=True)
                 if not proc.returncode and (out/'fit.json').is_file():
                     break
                 if attempt == 2:
@@ -635,7 +645,7 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
         cmd = [sys.executable, str(HERE/'recipe.py'), 'candidate', v['recipe'], '--baseline', str(baseline_packet), '--region', region,
                '--base', str(base.path), '--assembly-name', asm]
         rc.say(f"candidate {v['id']} #{v['rank']} -> {asm}")
-        proc = subprocess.run(cmd, cwd=rc.ROOT, capture_output=True, text=True)
+        proc = _run(cmd, cwd=rc.ROOT, capture_output=True, text=True)
         summary = None
         for line in reversed(proc.stdout.splitlines()):
             if line.startswith('{'):

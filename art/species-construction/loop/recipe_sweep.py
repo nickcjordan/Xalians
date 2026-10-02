@@ -27,6 +27,16 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
+import os
+
+# No console window for child processes on Windows: a detached plan job has no console, so
+# every child would otherwise open its own window. Output is captured or logged already.
+_NO_WINDOW = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}
+
+
+def _run(*a, **k):
+    return subprocess.run(*a, **{**_NO_WINDOW, **k})
+
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -452,7 +462,7 @@ def run(args, rc):
             rc.fail(f'{work/name} already exists; outputs are immutable, pick another --out')
         (work/name).mkdir(parents=True)
     else:
-        number = subprocess.run([sys.executable, str(rc.LOOP_TOOLS), 'next-number', '--reserve'], cwd=rc.ROOT,
+        number = _run([sys.executable, str(rc.LOOP_TOOLS), 'next-number', '--reserve'], cwd=rc.ROOT,
                                 capture_output=True, text=True, check=True).stdout.strip()
         name = f'sweep-{number}'
         (work/name).mkdir(parents=True)
@@ -483,7 +493,7 @@ def run(args, rc):
             started = time.time()
             cmd = [sys.executable, str(rc.LOOP_TOOLS), 'quick', *rc.species_flags(recipe), head, body, str(out)]
             for attempt in (1, 2):  # a second try covers loop_tools.py being edited by another agent mid-run
-                result = subprocess.run(cmd, cwd=rc.ROOT, capture_output=True, text=True)
+                result = _run(cmd, cwd=rc.ROOT, capture_output=True, text=True)
                 if not result.returncode and (out/'fit.json').is_file():
                     break
                 if attempt == 2:
