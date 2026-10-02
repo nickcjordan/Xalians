@@ -647,9 +647,13 @@ function plannerPrompt(order, round, refine) {
 }
 function runnerPrompt(plan, order, round) {
   const seed = `r${round}-${order.id}`
-  return `You run one command and report its result. Start it with the Bash tool and run_in_background true, then wait for its completion notice; do not poll, sleep or tail logs while it runs.\n` +
-    `Command: python art/species-construction/loop/recipe.py run-plan ${plan} --top ${L.planTop ?? 3}\n` +
-    `Working directory: ${REPO}. When it finishes, read plan-result.json beside the plan. For each top candidate that has a packet, run python art/species-construction/loop/reader_pack.py ${abs(S.baseline.packet)} <candidate packet> --regions ${[order.id, ...(order.with || [])].join(',')} --out <candidate packet>\\reader-pack --seed ${seed}-<candidate name>, and set its pack to that folder and its keys to the side the candidate is on for each region, from the pack key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.\n` +
+  // round 21: a runner that waited on a background run-plan gave up after 15 minutes of an
+  // 89-minute plan and its build died with it; plan_job.py runs the plan detached and waits in
+  // bounded blocking calls
+  return `You run one plan job and report its result. A plan can take one to two hours; that is normal. Do not give up while it runs.\n` +
+    `1. Run, in the foreground: python art/species-construction/loop/plan_job.py start ${plan} --top ${L.planTop ?? 3}\n` +
+    `2. Then run, in the foreground, as many times as needed: python art/species-construction/loop/plan_job.py wait ${plan} --timeout 560 . Each call blocks up to about nine minutes and prints one line. On "running", call it again at once. On "done", go on. On "failed", report the reason and the log lines it printed. Never sleep, poll other files or open a monitor.\n` +
+    `Working directory: ${REPO}. When it is done, read the plan result file it names (beside the plan). For each top candidate that has a packet, run python art/species-construction/loop/reader_pack.py ${abs(S.baseline.packet)} <candidate packet> --regions ${[order.id, ...(order.with || [])].join(',')} --out <candidate packet>\\reader-pack --seed ${seed}-<candidate name>, and set its pack to that folder and its keys to the side the candidate is on for each region, from the pack key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.\n` +
     'Return the structured output: ok, and per candidate its name, recipe, head, body, assembly, packet, technicalPass, regionChange (region to magnitude, from candidate.json), seams and measured as one line each from candidate.json, and pack. If the command failed, ok false and the reason.'
 }
 function readerPrompt(packs, order, k) {
@@ -839,7 +843,7 @@ for (let i = 0; i < ROUNDS; i++) {
         for (let pass = 0; pass <= (L.refinePasses ?? 1) && !picked; pass++) {
           const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), { label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' })
           if (!thePlan || !thePlan.plan) break
-          const run = await agent(runnerPrompt(thePlan.plan, order, round), { label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'haiku', effort: 'low' })
+          const run = await agent(runnerPrompt(thePlan.plan, order, round), { label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' })
           const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
           if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built') : 'runner returned nothing'; continue }
           const regions = [order.id, ...(order.with || [])]
