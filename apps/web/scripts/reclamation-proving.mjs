@@ -354,11 +354,12 @@ for (const view of ['simple', 'advanced']) {
 							if (ghostNum.getAttribute('data-ghost-gain') !== col.getAttribute('data-fit-gain')) {
 								out.push(`${id}: the ghost's number is not its card's`);
 							}
-							const card = ((col.querySelector('.rec-squad-num') || {}).textContent || '').trim().replace(/^\+/, '');
-							const ghostText = ghostNum.textContent.trim().replace(/^\+/, '');
-							if (card !== ghostText) {
-								out.push(`${id}: the card prints ${card} and the ghost ${ghostNum.textContent.trim()}`);
+							// pass 78: the card's segment prints the change against its health (data-adjust), the ghost the gain; the gain is compared through data-fit-gain above
+							const card = ((col.querySelector('.rec-squad-num') || {}).textContent || '').trim().replace('−', '-').replace(/^\+/, '');
+							if (card !== String(Number(col.getAttribute('data-adjust')))) {
+								out.push(`${id}: the card prints ${card} and its adjustment is ${col.getAttribute('data-adjust')}`);
 							}
+							const ghostText = ghostNum.textContent.trim().replace(/^\+/, '');
 							// pass 59: what it arrives with, less what the Clash takes, is the ghost's number
 							const chain = document.querySelector(`[data-ghost-piece="${id}"] [data-ghost-chain]`);
 							if (chain && chain.querySelector('.rec-ghost-piece-going')) {

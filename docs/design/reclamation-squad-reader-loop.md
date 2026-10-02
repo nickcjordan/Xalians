@@ -281,3 +281,34 @@ Nick rejected the roster rows on 2026-09-30 and approved mockup F2, health-first
 - **Finding holds at 7 with one 8,** for the same reason as the roster's rounds 9 and 10: readers want to know whether a hit decides the fight, which Nick ruled stays hidden while sends are made ("things will change").
 - **The world colors** that tie each block to its world are the remaining finding the tiles own. A label on every block would add the words Nick asked to keep off the table, so it goes to him as a question.
 
+## Pass 78: base stats and a world strip (`reclamation-squad-tiles.md`, pass 78 section)
+
+The questions were rewritten for the new tile. They cover:
+- the two big numbers;
+- the world strip, where the reader adds a change to the health;
+- the rival chips;
+- the sixteen marks, M1 to M16.
+
+| Round | Seed | Finding | Answers right | Marks | Top finding | Fix |
+|---|---|---|---|---|---|---|
+| 13 | 233 | 7, 8, 8; own Intuitive 6, 6, 6 | 33 of 36 (92%) | 15 of 16 right by all three. M11, the rival chip, was read as damage dealt, so its "0" read as "no harm" (3 of 3). | The rival chip printed the blow's change ("−7", "0"). On a rival, a minus reads as harm done to it, as pass 58 found. | The chip prints the blow it would land ("7", "14"). Green or red says whether that beats or falls short of the attack on your tile; quiet means even. |
+| 14 | 233 | 8, 8, 8; own Intuitive 6, 7, 6 | 36 of 36 (100%) | all 16 right by all three; the chip read as the blow landed, red as weakened, plain as full | the strip's segments tie to worlds by position only (2 of 3, ruled enough by Nick), and on the phone the tiles have no names | none: the bar is met |
+
+### Round 13 notes (seed 233)
+
+- **The tile read right at first sight.** Readers got:
+  - health and attack;
+  - the strip as each world's change to health, with the deeper red read as a bigger loss;
+  - the segment outline as the pointed world.
+- **What slows finding:**
+  - adding the strip's change to the health in your head (2 of 3). This is the cost of Nick's base-plus-adjustment choice, made knowingly.
+  - which segment is which world, by position alone (1 of 3, repeated from rounds 11 and 12 in its color form). Nick ruled position is enough ("people can visually align it to the worlds above it").
+
+### Round 14 notes (seed 233, after the chip fix)
+
+- **The bar is met for the first time:** Finding 8, 8 and 8, every answer right, and every mark explained right by all three readers.
+- **The chip fix read right 3 of 3.** The red 7 read as "Crystorn's 14 halved against sand" and the plain 14 as "full strength".
+- **Left as they are:**
+  - **Position alone ties each segment to its world.** Nick ruled position is enough.
+  - **Phone tiles carry no names.** The names were unreadably small there, and the art identifies the creature.
+

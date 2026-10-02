@@ -48,3 +48,35 @@ Nick's order of factors is element, health at each world, then attack. The tile'
 - the column head: world symbols, sort, and signed margin. The world panels above carry each world's standing.
 - the rival's mark on each bar.
 - the always-on dashed hit chip.
+
+## Pass 78: base stats and a world strip (Nick, 2026-10-02)
+
+After reading the pass 77 tiles live, Nick:
+
+> what I'm now realizing is that the standard health is the important value, not the resulting value of the health ... the strike of 11 and the health of 10 [should be] the two big things shown in the tile, and then there's a three-part adjustment value ... so that way it's not showing you a bunch of different numbers like 7, 8, 9, and 14 all across the tile
+
+He asked for the spirit rather than a literal build. Mockups G, H and H2 followed.
+
+**G: two big numbers and adjustments.** The creature's natural health and its attack became the two big numbers, and each world showed only its adjustment.
+
+**H: a strip with no icons.** The adjustments became a strip of three segments, ordered like the worlds above. Nick: "I also don't know if it would be necessarily helpful to have the icon aligning to the planet ... people can visually align it to the worlds above it."
+
+**H2: the attack moved off the tile.** H2 tried one chip per rival on the tile, because one attack change cannot hold when two rivals stand at a world. Nick took it off the tile:
+
+> I think you should just not show the affordance on the character tile for attack and instead for each creature, you can just put a little something showing how the attack would affect them
+
+**The tile now:**
+- **Health:** the natural health in big type, with a short bar under it, like the creatures' health bars on the worlds.
+- **Attack:** the act glyph, the power and the act word, at the same size as health.
+- **The world strip:** three segments in the worlds' order, each showing how much that world changes the creature's health. No change is a quiet segment with a faint 0. A gain is green and a loss is red, and the tint deepens with the size of the change.
+- **Pointing at a world** outlines its segment on every tile.
+- **Removed:** the per-world "+N", its bars and tick, ▲/▼, and the hit beside the attack.
+
+**The attack's change sits on each rival.** When you point at one of your creatures or pick it up, every rival on the board shows how much harder or softer that creature's attack lands on it, in the strip's green and red. With two rivals at a world, each shows its own change.
+
+**Why attack and health are shown differently:**
+- **Health:** the change is a fact of the creature and the world (home ground, temperature, air, water). It is the same whoever stands there, so it belongs on the tile.
+- **Attack:** the world's strain cuts the attack too, but the larger part of its change is the element chart against each rival there. That changes as rivals arrive and differs per rival, so it belongs on the rivals.
+
+**Round 13 changed the rival chip.** The chip first printed the blow's change ("−7", "0"). All three readers took a number on a rival as harm done to it, so "0" read as "no damage". This was pass 58's lesson again. The chip now prints the blow it would land ("7", "14"), and its color carries the adjustment: green when it beats the attack on your tile, red when it falls short, quiet when even, deeper with the gap.
+
