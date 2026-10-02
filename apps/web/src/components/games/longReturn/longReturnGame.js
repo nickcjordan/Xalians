@@ -53,6 +53,7 @@ import { BRIEFING_ART, sceneArtFor } from './sceneArt';
 import { playGameSound, readSoundEnabled, writeSoundEnabled } from './gameAudio';
 import { encounterChoicePresentation } from './encounterPresentation';
 import BiIcon from './BiIcon';
+import OpeningAdventure from './OpeningAdventure';
 
 
 const initialCrew = ['graviclaw-213', 'chromocat-088', 'hippochamp-041'];
@@ -697,8 +698,9 @@ function MissionTrack({ sceneIndex, objectiveReached }) {
   );
 }
 
-function LongReturnGame({ initialExperiments = true } = {}) {
+function LongReturnGame({ initialExperiments = true, initialOpeningScene = true } = {}) {
   const [experiments, setExperiments] = useState(initialExperiments);
+  const [openingScene, setOpeningScene] = useState(initialOpeningScene);
   const sceneRef = React.useRef(null);
   const memoryTriggerRef = React.useRef(null);
   const rulesTriggerRef = React.useRef(null);
@@ -1395,6 +1397,27 @@ function LongReturnGame({ initialExperiments = true } = {}) {
   const optionalScenesRemaining = MISSION.scenes.slice(sceneIndex + 1).filter((entry) => entry.optional);
   const optionalSalvagePotential = optionalScenesRemaining.reduce((total, entry) => total + Math.max(...entry.routes.map((entryRoute) => entryRoute.salvage)), 0);
   const wizardViewKey = `${scene.id}-${phase}-${phase === 'assign' ? choosingLead ? 'lead' : 'route' : ''}`;
+  if (openingScene && experiments && guidanceLevel === 'simple' && scene.id === 'service-throat') return <main className="lr-opening-shell">
+    <OpeningAdventure scene={scene} phase={phase} crew={crew} scout={scanScout} scoutOptions={simpleScoutOptions} unavailableScouts={unavailableScouts} scoutId={scoutId}
+      onScoutSelect={setScoutId} onScout={performScan} onStayTogether={proceedBlind} scan={scan} action={displayedAction}
+      onPlaybackComplete={() => { setActionTransition(null); if (phase === 'scan-result' && scan?.returned) advanceToRoutes(); }}
+      plans={comparisonPlans} choices={actionChoices} selectedId={routeId} onSelect={chooseRoute}
+      onChange={plan => { chooseRoute(plan.route.id); setSimpleLeadChoice({ sceneId: scene.id, routeId: plan.route.id, leadId: plan.lead.id, methodId: plan.method.id }); }}
+      onCommit={commit} stakes={comparisonPlans.map(plan => planStakes(plan, crew, strain, pressure, companion))}
+      commands={commands} useCommand={useCommand} onCommand={checked => { setUseCommand(checked); setSimpleLeadChoices(current => ({ ...current, [`${scene.id}/${routeId}`]: { ...current[`${scene.id}/${routeId}`], useCommand: checked } })); }}
+      strain={strain} pressure={pressure} flags={runFlags} lastResult={lastResult} missionCannotContinue={missionCannotContinue}
+      onReturn={recoverScout} onContinue={continueRun} onAbort={extract} workshop={fieldWorkshop}
+      onSignal={() => {
+        if (runFlags.includes(SIGNAL_READ)) return;
+        setRunFlags(flags => [...flags, SIGNAL_READ]);
+        setPressure(value => Math.min(MAX_INSTABILITY, value + 1));
+        setJournal(entries => entries.map(entry => entry.id === scene.id ? { ...entry, discovery: [entry.discovery, `${discoveryAccount(runFlags)} Waiting cost 1 stability.`].filter(Boolean).join('\n\n') } : entry));
+      }}
+      soundEnabled={soundEnabled} onSound={() => { const next = !soundEnabled; setSoundEnabled(next); writeSoundEnabled(next); }}
+      onHelp={openMechanics} onJournal={event => { memoryTriggerRef.current = event.currentTarget; setMemoryOpen(true); }} onCompare={() => setOpeningScene(false)} />
+    <MechanicsModal open={mechanicsOpen} onClose={closeMechanics} />
+    <MissionMemoryModal open={memoryOpen} onClose={() => { setMemoryOpen(false); requestAnimationFrame(() => memoryTriggerRef.current?.focus()); }} entries={journal} runFlags={runFlags} companion={companion} salvage={salvage} pressure={pressure} objectiveReached={objectiveReached} />
+  </main>;
   return (
     <main className={`lr-shell lr-play-shell lr-mode-${guidanceLevel}${actionExperiment && phase === 'assign' ? ' lr-action-experiment' : ''}${simpleCustomizing ? ' lr-is-customizing' : ''}`}>
       {actionTransition && (actionTransition.type === 'scout' || actionTransition.type === 'scout-return'

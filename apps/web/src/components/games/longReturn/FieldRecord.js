@@ -28,7 +28,7 @@ function changedTarget(before, after) {
   return after.scout && !before ? 'scout' : 'crew';
 }
 
-export default function FieldRecord({ scene, title, label, map, mapFocusLabel, animateInitialTravel = false, resources, children, stableLayout = false }) {
+export default function FieldRecord({ scene, title, label, map, mapFocusLabel, animateInitialTravel = false, resources, children, stableLayout = false, alwaysShowResources = false }) {
   const art = sceneArtFor(scene);
   const previousMap = useRef(null);
   const [focus, setFocus] = useState(null);
@@ -50,7 +50,7 @@ export default function FieldRecord({ scene, title, label, map, mapFocusLabel, a
       <div className={`lr-field-map-panel ${focus ? 'is-focused' : ''}`}>
         <div className="lr-field-map-head" aria-hidden={!focus}><span>Site position update</span><strong>{focus ? mapFocusLabel || title : '\u00a0'}</strong></div>
         {React.cloneElement(map, { attentionTarget: focus?.target, attentionKey: focus?.signature, initialTravel: !!(focus?.initial && animateInitialTravel) })}
-        <div className={`lr-field-map-resources hidden flex-wrap gap-3 pt-4 ${stableLayout ? 'lg:flex' : 'md:flex'}`}>{resources}</div>
+        <div className={`lr-field-map-resources flex-wrap gap-3 ${alwaysShowResources ? 'flex pt-1 lg:pt-4' : `hidden pt-4 ${stableLayout ? 'lg:flex' : 'md:flex'}`}`}>{resources}</div>
       </div>
     </div>
     <div className="lr-field-story-stage min-h-0">{children}</div>

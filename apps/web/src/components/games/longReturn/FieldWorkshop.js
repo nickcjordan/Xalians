@@ -5,7 +5,7 @@ import BiIcon from './BiIcon';
 import FieldExchange from './FieldExchange';
 import ExpeditionReserves from './ExpeditionReserves';
 
-export default function FieldWorkshop({ crew, strain, pressure, salvage, commands, used, receipt, openRequest = 0, onChoose, onAdvance }) {
+export default function FieldWorkshop({ crew, strain, pressure, salvage, commands, used, receipt, openRequest = 0, onChoose, onAdvance, hideAdvance = false }) {
   const [selected, setSelected] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const [receiptDismissed, setReceiptDismissed] = useState(false);
@@ -42,7 +42,7 @@ export default function FieldWorkshop({ crew, strain, pressure, salvage, command
     <p className="lr-field-work-story">{fieldWorkStory(receipt).split(/(?<=\.)\s+/).slice(0, 2).join(' ')}</p>
     <FieldExchange option={receipt} salvageBefore={salvage + receipt.cost} energyBefore={MAX_STRAIN - (strain[receipt.creature.id] || 0) + receipt.energy} settled />
     <details className="lr-field-repair-detail"><summary>Read the full repair account</summary><p>{fieldWorkStory(receipt)}</p><p>{receipt.result}</p></details>
-    <button type="button" className="g-btn g-btn--primary lr-field-repair-next" onClick={onAdvance || (() => setReceiptDismissed(true))}>{onAdvance ? 'Continue mission' : 'Choose whether to leave'} <BiIcon cls="bi-arrow-right" /></button>
+    {!hideAdvance && <button type="button" className="g-btn g-btn--primary lr-field-repair-next" onClick={onAdvance || (() => setReceiptDismissed(true))}>{onAdvance ? 'Continue mission' : 'Choose whether to leave'} <BiIcon cls="bi-arrow-right" /></button>}
   </section>;
   if (!options.length) return null;
   return <details className="lr-workshop" open={expanded}>

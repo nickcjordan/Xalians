@@ -20,7 +20,12 @@ export function storyPages(message, compact) {
 
 export function trapSequenceFocus(event) {
   if (event.key !== 'Tab') return;
-  const targets = [...event.currentTarget.querySelectorAll('button:not(:disabled), [tabindex="0"]')];
+  const targets = [...event.currentTarget.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), summary, a[href], [tabindex="0"]')].filter(target => {
+    for (let parent = target.parentElement; parent && parent !== event.currentTarget; parent = parent.parentElement) {
+      if (parent.hidden || parent.tagName === 'DETAILS' && !parent.open && parent.querySelector(':scope > summary') !== target) return false;
+    }
+    return !target.hidden;
+  });
   const first = targets[0];
   const last = targets[targets.length - 1];
   if (event.shiftKey && (document.activeElement === first || !targets.includes(document.activeElement))) {
