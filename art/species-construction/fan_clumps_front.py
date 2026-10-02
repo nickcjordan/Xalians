@@ -78,6 +78,8 @@ DEFAULTS = {
     'tuft_width_scale': 1.0,
     'ceiling': None,                    # head-local z above which nothing stands (the baseline skin top)
     'skip': '',
+    'rear_clip': None,                  # None = off; else new clump and tuft material is cut off this far behind the old rear face (figure heights; negative = in front of it)
+    'cups': None,                       # {'L': [(x, y), ...], 'R': [...]} cup polygons in the fit frame (None = CUPS above)
 }
 
 
@@ -400,7 +402,7 @@ def build_wing(F, lo, vs, side, clumps, env, params=None, log=print):
     tuft = [c for c in mine if c['family'] == 'T']
 
     # --- cup ------------------------------------------------------------------------------------------------------------------
-    cup = [(x+(p['cup_shift']*sg), y) for x, y in CUPS[side]]
+    cup = [(x+(p['cup_shift']*sg), y) for x, y in (p['cups'] or CUPS)[side]]
     sdf_cup = polygon_sdf(XF, YF, cup).astype(np.float32)
     fl = floor_df(U, YF, sdf_cup, p).astype(np.float32)               # figure heights
 
@@ -495,6 +497,15 @@ def build_wing(F, lo, vs, side, clumps, env, params=None, log=print):
         cur = tgt[sl]
         tgt[sl] = np.where(cur >= BAND*.9, np.minimum(cur, d), smin(cur, d, k)).astype(np.float32)
         built.append({'name': c['name'], 'layer': c['layer'], 'length': round(g['L'], 4), 'thickTip': round(float(g['thick'][-2]), 4)})
+    if p['rear_clip'] is not None:
+        Yrc = ((rear_fill+p['rear_clip'])*S+DF0).astype(np.float32)
+        slope_rc = (1/np.sqrt(1+np.gradient(Yrc, vs, axis=0)**2+np.gradient(Yrc, vs, axis=1)**2)).astype(np.float32)
+        no_rc = np.isnan(y_rear0)[:, None, :]
+        clip = lambda chunk: np.where(no_rc[chunk], -BAND, np.clip((Y3-Yrc[chunk][:, None, :])*slope_rc[chunk][:, None, :], -BAND, BAND))
+        for chunk in np.array_split(np.arange(nx), max(1, nx//40)):
+            c3 = clip(chunk)
+            L1[chunk] = np.maximum(L1[chunk], c3)
+            L2[chunk] = np.maximum(L2[chunk], c3)
     F = np.minimum(smin(F, L1, kc), BAND).astype(np.float32)
     del L1
     F = np.minimum(smin(F, L2, k12), BAND).astype(np.float32)
@@ -541,6 +552,9 @@ def build_wing(F, lo, vs, side, clumps, env, params=None, log=print):
             sl, d = r
             cur = tuft_sdf[sl]
             tuft_sdf[sl] = np.where(cur >= BAND*.9, np.minimum(cur, d), smin(cur, d, kt)).astype(np.float32)
+        if p['rear_clip'] is not None:
+            for chunk in np.array_split(np.arange(nx), max(1, nx//40)):
+                tuft_sdf[chunk] = np.maximum(tuft_sdf[chunk], clip(chunk))
         F = np.minimum(smin(F, tuft_sdf, p['tuft_floor_blend']*S), BAND).astype(np.float32)
         info['tuft'] = [c['name'] for c, _ in tgeoms]
 

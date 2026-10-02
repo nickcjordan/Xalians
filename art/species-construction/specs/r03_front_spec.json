@@ -1,0 +1,169 @@
+{
+ "schemaVersion": 1,
+ "note": "R03 ear fan front, levers of author_fan_clumps_field.py --part front. params start at the values the round 18 builder tuned (head-2114); the defaults of fan_clumps_front.DEFAULTS are the specs/R03.md values. cups are the specs/R03.md cup polygons (fit frame). clumps edits rows of the clump table by name or pattern.",
+ "voxel": 0.0025,
+ "params": {
+  "strip_u": [
+   0.085,
+   0.1
+  ],
+  "strip_y_blend": [
+   0.035,
+   0.055
+  ],
+  "strip_ramp": 0.008,
+  "strip_bottom": 0.195,
+  "strip_bias": 0.008,
+  "mid_blur": 0.01,
+  "core_inset": 0.0,
+  "core_depth": 0.012,
+  "core_valley": 0.0,
+  "valley_reach": 0.015,
+  "core_back": 0.012,
+  "core_blend": 0.004,
+  "layer_blend": [
+   0.0015,
+   0.0015,
+   0.0012
+  ],
+  "s_length": 0.85,
+  "s_back": 0.008,
+  "skull_ramp": 0.028,
+  "section_p": 2.2,
+  "blur": 1,
+  "samples": 90,
+  "tip_half_width": 0.0015,
+  "tip_half_thick": 0.0012,
+  "rear_margin": 0.004,
+  "camber": 0.016,
+  "width_scale": 0.9,
+  "lower_scale": [
+   1.6,
+   1.3
+  ],
+  "thick_taper_scale": 1.3,
+  "taper_scale": 0.7,
+  "thick_scale": 1.0,
+  "length_scale": 0.95,
+  "top_lift": 0.0,
+  "pull_from_y": 0.07,
+  "root_cap": 0.02,
+  "cup_shift": 0.0,
+  "cup_fillet": 0.005,
+  "floor_slope": 0.7,
+  "floor_start": -0.016,
+  "floor_max": 0.036,
+  "floor_bowl": 0.008,
+  "tuft_blend": 0.004,
+  "tuft_floor_blend": 0.002,
+  "tuft_tip_half_width": 0.0012,
+  "tuft_scale": 1.0,
+  "tuft_width_scale": 1.0,
+  "skip": "",
+  "rear_clip": -0.001
+ },
+ "cups": {
+  "L": [
+   [
+    0.107,
+    0.066
+   ],
+   [
+    0.12,
+    0.062
+   ],
+   [
+    0.153,
+    0.053
+   ],
+   [
+    0.192,
+    0.041
+   ],
+   [
+    0.206,
+    0.043
+   ],
+   [
+    0.201,
+    0.071
+   ],
+   [
+    0.18,
+    0.097
+   ],
+   [
+    0.162,
+    0.111
+   ],
+   [
+    0.148,
+    0.134
+   ],
+   [
+    0.132,
+    0.147
+   ],
+   [
+    0.111,
+    0.17
+   ],
+   [
+    0.107,
+    0.168
+   ]
+  ],
+  "R": [
+   [
+    -0.093,
+    0.087
+   ],
+   [
+    -0.106,
+    0.084
+   ],
+   [
+    -0.14,
+    0.07
+   ],
+   [
+    -0.172,
+    0.061
+   ],
+   [
+    -0.179,
+    0.063
+   ],
+   [
+    -0.178,
+    0.09
+   ],
+   [
+    -0.166,
+    0.113
+   ],
+   [
+    -0.154,
+    0.13
+   ],
+   [
+    -0.137,
+    0.146
+   ],
+   [
+    -0.1,
+    0.171
+   ],
+   [
+    -0.093,
+    0.166
+   ]
+  ]
+ },
+ "clumps": {},
+ "pale": {
+  "tol": 0.0015,
+  "gray": 0.58,
+  "smooth": 3
+ }
+}

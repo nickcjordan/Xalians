@@ -5,6 +5,24 @@ fan_clumps_front.build_wing, writes the crops back, meshes the whole level set o
 faces next to the pale tuft clumps with the `Pale inner-ear coat` material (assignment only; the skin stays one mesh).
 Nothing outside the two wing crops is edited (the strip, core and clumps all fade to nothing at the crop edges).
 Every parameter is recorded in fan-clumps-front.json.
+
+Interface (through author_fan_clumps_field.py --part front):
+  --scene <head.blend> --out <new dir> --front-table <clump table json> --envelope <envelope npz> --spec <spec json>
+  [--p key=value ...] [--sides L,R] [--voxel .0025] [--ceiling .0004]
+  --front-table  art/species-construction/specs/r03_clumps.json, made from the clump tables of specs/R03.md by loop/r03_clump_table.py
+  --envelope     art/species-construction/specs/r03_envelope.npz, the sheet fan outline as signed distance fields (loop/r03_envelope.py)
+  --spec         the levers, one JSON document (a recipe `set`/`sweep` edits it as spec:<dotted.path>):
+      params   every fan_clumps_front.DEFAULTS key (strip, core, blend radii, section, scales, cup floor, tuft); values here
+               replace the defaults. A --p key=value on the command line replaces both.
+      cups     {"L": [[x, y], ...], "R": [...]} cup polygons in the fit frame (front view x, y down from the crown)
+      clumps   per-clump edits applied to the table rows: {"LP5": {"tip": [x, y, df], "widthMid": .05}, "*S": {"thick": .02}}.
+               A key is a clump name or an fnmatch pattern ("L*", "*P5", "*T*"); the fields are those of the table rows (root, tip,
+               curl, widthRoot, widthMid, thick, taper, layer, family). Patterns apply first (in file order), then exact names.
+      pale     {"tol": .0015, "gray": .58, "smooth": 3}: the pale tuft material (face distance to a tuft field, base colour value,
+               majority-vote passes)
+      voxel    grid size in head-local units (default .0025)
+  Outputs: head.blend, shape.glb, fan-clumps-front.json (resolved parameters, per clump stats, plan and coat cover, cup floor,
+  skinTopZ, skinAfter, paleFaces, hashes), source-snapshot/. One closed component; skinTopZ at or below the baseline plus .0004.
 """
 import ast
 import hashlib
@@ -44,19 +62,49 @@ def trilinear(arr, lo, vs, pts):
     return np.where(ok, v, fcf.BAND)
 
 
+def apply_clump_edits(table, edits):
+    """Per-clump edits of the spec: patterns first (file order), then exact names. Returns new rows; the table file is not touched."""
+    import fnmatch
+    rows = [dict(c) for c in table]
+    names = {c['name'] for c in rows}
+    for pattern, change in edits.items():
+        if pattern in names:
+            continue
+        hit = [c for c in rows if fnmatch.fnmatchcase(c['name'], pattern)]
+        if not hit:
+            raise SystemExit(f'spec clumps: {pattern} matches no clump')
+        for c in hit:
+            c.update(change)
+    for name, change in edits.items():
+        if name in names:
+            next(c for c in rows if c['name'] == name).update(change)
+    return rows
+
+
 def run(args):
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
     table_path = Path(args.front_table).resolve()
     env_path = Path(args.envelope).resolve()
-    provenance = snapshot(out, Path(args.entry), [args.scene, table_path, env_path])
+    provenance = snapshot(out, Path(args.entry), [args.scene, table_path, env_path] + ([Path(args.spec)] if getattr(args, 'spec', None) else []))
     for name in ('fan_clumps_front.py', 'fan_clumps_front_run.py'):
         shutil.copyfile(HERE/name, out/'source-snapshot'/name)
-    params = {}
+    spec = json.loads(Path(args.spec).read_text()) if getattr(args, 'spec', None) else {}
+    unknown = sorted(set(spec) - {'params', 'cups', 'clumps', 'pale', 'voxel', 'note', 'schemaVersion'})
+    if unknown:
+        raise SystemExit(f'unknown spec keys {unknown}')
+    params = dict(spec.get('params', {}))
+    if spec.get('cups'):
+        params['cups'] = {k: [tuple(pt) for pt in v] for k, v in spec['cups'].items()}
+    if 'voxel' in spec:
+        args.voxel = spec['voxel']
+    for k, v in spec.get('pale', {}).items():
+        setattr(args, 'pale_' + k, v)
     for item in args.p or []:
         k, v = item.split('=', 1)
         params[k] = ast.literal_eval(v)
     table = json.loads(table_path.read_text())['clumps']
+    table = apply_clump_edits(table, spec.get('clumps', {}))
     env = dict(np.load(env_path))
 
     bpy.ops.wm.open_mainfile(filepath=str(args.scene.resolve()))
@@ -186,7 +234,8 @@ def run(args):
     bpy.ops.wm.save_as_mainfile(filepath=str(out/'head.blend'))
     record = {
         'approval': None, 'stageProvenanceSha256': provenance, 'sourceSha256': sha(args.scene),
-        'tableSha256': sha(table_path), 'envelopeSha256': sha(env_path),
+        'tableSha256': sha(table_path), 'envelopeSha256': sha(env_path), 'spec': spec or None,
+        'specSha256': sha(Path(args.spec)) if getattr(args, 'spec', None) else None,
         'moduleSha256': {n: hashlib.sha256((HERE/n).read_bytes()).hexdigest() for n in ('fan_clumps_front.py', 'fan_clumps_front_run.py')},
         'scope': 'R03: ear fan front stripped in front of its mid-surface and regrown as a clump volume (coat P, S, D; tuft T), cup carved, field space; rear half and face untouched',
         'parameters': {**{k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()}, 'resolved': {k: v for k, v in p.items()}},
