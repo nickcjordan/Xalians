@@ -12,6 +12,7 @@
   python art/species-construction/loop/recipe.py verify <recipe.json> [--no-cache] [--no-packet]
   python art/species-construction/loop/recipe.py contain <recipe.json> <step id> [--out-dir NAME] [--zones FILE] [--no-reference]
   python art/species-construction/loop/recipe.py sweep <recipe.json> --step <id> --grid <arg>=<v1>,<v2> [--grid ...] [--variants file.json] [--max 12] [--region Rxx] [--out NAME]
+  python art/species-construction/loop/recipe.py run-plan <plan.json> [--top K] [--dry-run]
 
 See RECIPE.md beside this file for the format, the cache key and how orders edit a recipe.
 Output directories are immutable: every build writes into a new head-NNNN, body-NNNN or assembled-NNNN name.
@@ -1031,32 +1032,37 @@ def cmd_set(args):
     print_plan(candidate, plan, cache)
 
 
-def cmd_add(args):
-    recipe = load(args.recipe)
-    data = copy.deepcopy(recipe.data)
-    new = json.loads(Path(args.step).read_text(encoding='utf-8'))
+def add_step(data, after, new, rewire=()):
+    """Insert a step into a recipe dict after `after`: consumers of `after` that read it through the same input name as the new step,
+    and the assembly sink, are rewired to it (plus any (step id, input name) pairs in `rewire`). Records the step's pins from today's
+    bytes and drops the recorded statistics downstream."""
     ids = [s['id'] for s in data['steps']]
     if new['id'] in ids:
         fail(f"step id {new['id']} already exists")
-    if args.after not in ids:
-        fail(f'no step {args.after}')
-    slots = [name for name, ref in new['inputs'].items() if ref == args.after]
-    position = ids.index(args.after)+1
-    data['steps'].insert(position, new)
-    rewire = [tuple(x.split(':')) for x in args.rewire or []]
+    if after not in ids:
+        fail(f'no step {after}')
+    slots = [name for name, ref in new['inputs'].items() if ref == after]
+    data['steps'].insert(ids.index(after)+1, new)
     for step in data['steps']:
         if step['id'] == new['id']:
             continue
         for name, ref in list(step['inputs'].items()):
-            if ref == args.after:
+            if ref == after:
                 same_slot = name in slots and step.get('kind') == new.get('kind')
                 if same_slot or (step['id'], name) in rewire:
                     step['inputs'][name] = new['id']
     for sink in ('head', 'body'):
-        if data['assembly'][sink] == args.after and new.get('kind') == sink:
+        if data['assembly'][sink] == after and new.get('kind') == sink:
             data['assembly'][sink] = new['id']
     refresh_pins(new, new)
     drop_expect(data, [new['id']])
+
+
+def cmd_add(args):
+    recipe = load(args.recipe)
+    data = copy.deepcopy(recipe.data)
+    new = json.loads(Path(args.step).read_text(encoding='utf-8'))
+    add_step(data, args.after, new, [tuple(x.split(':')) for x in args.rewire or []])
     out = Path(args.out).resolve()
     stamp_derived(data, recipe.data, recipe.path)
     dump(data, out)
@@ -1619,6 +1625,11 @@ def cmd_candidate(args):
     recipe_candidate.run(args, sys.modules[__name__])
 
 
+def cmd_run_plan(args):
+    import recipe_plan
+    recipe_plan.run(args, sys.modules[__name__])
+
+
 # ---------------------------------------------------------------- main
 
 def main():
@@ -1668,6 +1679,10 @@ def main():
     p.add_argument('--base', help='base recipe the candidate was cut from (default: its derivedFrom block, else the live recipe.json)')
     p.add_argument('--dry-run', action='store_true')
     p.set_defaults(func=cmd_candidate)
+    p = sub.add_parser('run-plan', help='execute a plan.json: variants and sweeps, built, scored, the top K taken through candidate; one blocking command')
+    p.add_argument('plan'); p.add_argument('--top', type=int, help='candidates taken through the full candidate path (default: top in the plan, else 3)')
+    p.add_argument('--dry-run', action='store_true', help='write the candidate recipes to a temporary folder and print what would build and the estimated minutes')
+    p.set_defaults(func=cmd_run_plan)
     args = parser.parse_args()
     args.func(args)
 

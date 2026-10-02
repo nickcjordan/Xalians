@@ -21,6 +21,7 @@ Run everything from the repository root: `python art/species-construction/loop/r
 | `contain R STEP [--out-dir NAME] [--zones FILE] [--no-reference]` | Nearest-vertex displacement between the step's input and output, per foreign region, in figure heights (95th percentile and maximum), judged against the footprint of the step's own baseline version (section Containment). Zones come from `species.json`. Writes `containment.json` in the output directory; for a seeded (historical) directory, or when a report already exists, it writes `<dir>.containment[-N].json` beside it instead, because outputs are immutable. |
 | `sweep R --step ID --grid ARG=v1,v2 [--grid ...] [--variants f.json] [--max 12] [--region Rxx] [--out NAME] [--top 6] [--contain-tol .004]` | Tries many values of one step's parameters in one call, builds only what changed, runs `quick`, scores and ranks the variants (section Sweeps). |
 | `candidate R --baseline PACKET [--region Rxx] [--assembly-name auto] [--base RECIPE] [--dry-run]` | One call per candidate: build, check, packet, measured, diff, seams, contain, then one JSON summary (section Candidate). |
+| `run-plan PLAN [--top K] [--dry-run]` | A planner's plan (variants, sweeps, optional start) in one blocking call: build, quick, score, then the top K through `candidate`; writes `plan-result.json` and `plan-result.png` (section Plans). |
 
 ## How an order edits a recipe
 
@@ -174,3 +175,29 @@ Summary fields: `assembly`, `packet`, `componentDirs` (head, body and each chang
 4. `recipe.py pin <recipe>` with nothing left to pin or freeze;
 5. `recipe.py status <recipe>` with every step cached, the assembly built, no `CHANGED` input and nothing unpinned;
 6. `loop_state.py args <species>`, with the arguments written to `--args-out` (default: the species loop folder's `args.json`).
+
+## Plans: one command from a planner's plan to scored candidates
+
+`recipe.py run-plan` is the runner's whole job: a planner agent writes a plan file, one blocking command builds, scores and packets it, and reviewers pick among the results. Schema for planners: `docs/design/species-construction/akinza/loop/plan-schema.md`.
+
+```
+python art/species-construction/loop/recipe.py run-plan <plan.json> [--top K] [--dry-run]
+```
+
+A plan is `{"order": {"round", "region", "with": [...]}, "base": "<baseline recipe>", "baselinePacket": "<packet dir>", "start": <optional>, "variants": [...], "sweeps": [...], "region": "R07", "top": 3}`. Up to 16 variants plus sweep points, 24 builds in all (more is an error before anything runs). `region` (else `order.region`) is the zone every variant is scored over; a step an edit touches that is tagged neither with it nor with `order.with` is reported as a warning.
+
+- **variants**: `{"name", "why", "edits": [...]}`. An edit is `{"op": "set", "step", "arg", "value"}` (`arg` as in `set`: a `--flag`, `spec:<dotted.path>` or `script`; a value may be a JSON list), `{"op": "script", "step", "script"}` (point a step at a new versioned script) or `{"op": "add", "after", "step": {...full step...}, "rewire": ["STEP:INPUT"]}` (as `add`). Edits apply in order to the starting recipe; consecutive `set`s of one step write one spec file. An empty `edits` list is the starting recipe itself (a control, or the tool starter as it is).
+- **sweeps**: `{"step", "grid": {"arg": [values]}, "why"}`; the product of the lists becomes variants named `sweep <step> arg=value`.
+- **start**: a recipe path (a branch or tool starter cut from an older base) or `{"recipe": path, "attachAfter": "<step>", "live": false}`. It is rebased onto `base` as `rebase` does. With `attachAfter`, the case the R03 tool starter hit (the starter added H36 after the old head sink H33, the new base added H34 and H35 after the same step, so both sides changed the head sink): every step the start added that reads the start's old sink (a step of its original recipe that nothing of that recipe reads) is re-parented onto `attachAfter`, the start's tip becomes the assembly sink, and the added steps are placed after `attachAfter`. Without it such a clash is the usual `rebase` refusal. A script that changed since the start was committed is frozen under `_p<sha8>` as `rebase` does (`"live": true` pins today's bytes instead); commit the frozen copy with the plan.
+
+What it does, in order, blocking until done (progress lines go to stdout, the compact JSON is the last line):
+
+1. Each variant gets its own recipe `plan-NNNN/vNN.json` in the species work folder (`derivedFrom` is the base, as `set` records it). A variant that cannot be prepared (bad step, bad arg, pinned input changed) is reported and skipped.
+2. Every step without a cache hit is built once per distinct key (two variants with one key share the build) through `run_step`: the Blender slot lock, a memory-error retry after 45 s, outputs under fresh numbers. Nothing is assembled yet.
+3. `quick` renders the variant's component with the baseline's other one; the sweep scorer ranks it against the baseline quick: silhouette overlap and station diff over the region's zone, the worst containment excess of the steps the variant edited, the tool's own `sweepScore` when its output records one, seam change, and `surface_stats.plan_terms(variant=, baseline=, region=, zone=)` when that module exists and defines it (`{"score": float}`, added to the total). The weights are those of section Sweeps.
+4. The top K by total (`--top`, else the plan's `top`, else 3) run the full `recipe.py candidate` path (assembly, check, packet, measured, diff, seams, contain) in parallel up to the slot limit, each under an assembly number reserved with `next-number --reserve`.
+5. `plan-result.json` (every variant's score parts, built or error, rebuilt steps, contained steps; each top candidate's summary fields from its `candidate.json`) and `plan-result.png` (every variant's front, left and back fit overlay over the region's rows, baseline first, in columns, then the packet region image of the baseline and of each top candidate side by side) are written to the run folder and beside the plan (`plan.json` gives `plan-result.json`; any other name `<stem>-plan-result.json`, so two plans in one folder do not collide). One compact JSON line is printed last: per variant `built`, `rank`, `total` and score `parts`, per top candidate `assembly`, `packet`, `check`, `measuredChanged`, `seamsNew`, `containment` and `verdict`.
+
+Fail soft: a failing variant or candidate is reported and the rest continue; the exit status is 0 when at least one top candidate has a packet. `--dry-run` writes the candidate recipes to a temporary folder (deleted afterwards), prints each variant's changed steps, the steps it would build with their minutes and the estimated wall time, and builds nothing; for a `start` it also prints the rebased recipe's plan.
+
+A runner agent needs two tool calls: start the command with `run_in_background` (a plan takes 10 to 25 minutes), then read the notice and `plan-result.json`. A foreground call times out at 10 minutes.

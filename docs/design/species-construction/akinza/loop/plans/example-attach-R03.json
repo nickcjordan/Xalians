@@ -1,0 +1,11 @@
+{
+  "order": {"round": 0, "region": "R03", "with": ["R04"]},
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+  "start": {"recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-pinned.json", "attachAfter": "H35"},
+  "variants": [
+    {"name": "tool starter as is", "why": "the R03 tool starter re-parented onto the current head sink, no further edits", "edits": []}
+  ],
+  "region": "R03",
+  "top": 1
+}

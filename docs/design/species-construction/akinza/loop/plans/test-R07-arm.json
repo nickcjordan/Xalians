@@ -1,0 +1,23 @@
+{
+  "order": {"round": 0, "region": "R07", "with": []},
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+  "variants": [
+    {"name": "wider lobes", "why": "front view: the paw reads narrow; widen each lobe and its blend",
+     "edits": [
+       {"op": "set", "step": "B-23", "arg": "spec:lobeWidthRadius", "value": 0.0175},
+       {"op": "set", "step": "B-23", "arg": "spec:lobeBlend", "value": 0.02}]},
+    {"name": "thicker lobes", "why": "profile: the mitten paw is thin; raise the lobe thickness radii",
+     "edits": [
+       {"op": "set", "step": "B-23", "arg": "spec:lobeThickRadius", "value": 0.042},
+       {"op": "set", "step": "B-23", "arg": "spec:lobeTipThickRadius", "value": 0.04}]},
+    {"name": "long claws", "why": "claws are short stubs against the sheet; lengthen all four",
+     "edits": [
+       {"op": "set", "step": "B-23", "arg": "spec:clawEach.length", "value": [0.034, 0.034, 0.034, 0.034]}]}
+  ],
+  "sweeps": [
+    {"step": "B-23", "grid": {"spec:lobeToRod": [0.006, 0.02]}, "why": "how far the lobes sit from the rod end"}
+  ],
+  "region": "R07",
+  "top": 2
+}
