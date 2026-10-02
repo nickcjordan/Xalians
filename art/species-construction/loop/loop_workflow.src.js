@@ -288,13 +288,17 @@ function plannerPrompt(order, round, refine) {
 }
 function runnerPrompt(plan, order, round) {
   const seed = `r${round}-${order.id}`
+  // the runner's shell is bash, which strips backslashes from an unquoted Windows path (round 21
+  // started two plan jobs on file names with the separators gone), so its paths use forward slashes
+  const fwd = p => !p ? p : String(p).split('\\').join('/')
+  plan = fwd(plan)
   // round 21: a runner that waited on a background run-plan gave up after 15 minutes of an
   // 89-minute plan and its build died with it; plan_job.py runs the plan detached and waits in
   // bounded blocking calls
   return `You run one plan job and report its result. A plan can take one to two hours; that is normal. Do not give up while it runs.\n` +
     `1. Run, in the foreground: python art/species-construction/loop/plan_job.py start ${plan} --top ${L.planTop ?? 3}\n` +
     `2. Then run, in the foreground, as many times as needed: python art/species-construction/loop/plan_job.py wait ${plan} --timeout 560 . Each call blocks up to about nine minutes and prints one line. On "running", call it again at once. On "done", go on. On "failed", report the reason and the log lines it printed. Never sleep, poll other files or open a monitor.\n` +
-    `Working directory: ${REPO}. When it is done, read the plan result file it names (beside the plan). For each top candidate that has a packet, run python art/species-construction/loop/reader_pack.py ${abs(S.baseline.packet)} <candidate packet> --regions ${[order.id, ...(order.with || [])].join(',')} --out <candidate packet>\\reader-pack --seed ${seed}-<candidate name>, and set its pack to that folder and its keys to the side the candidate is on for each region, from the pack key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.\n` +
+    `Working directory: ${fwd(REPO)}. Your shell is bash: write every path with forward slashes (a Windows path with backslashes loses them and names no file). When it is done, read the plan result file it names (beside the plan). For each top candidate that has a packet, run python art/species-construction/loop/reader_pack.py ${fwd(abs(S.baseline.packet))} <candidate packet> --regions ${[order.id, ...(order.with || [])].join(',')} --out <candidate packet>/reader-pack --seed ${seed}-<candidate name>, and set its pack to that folder and its keys to the side the candidate is on for each region, from the pack key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.\n` +
     'Return the structured output: ok, and per candidate its name, recipe, head, body, assembly, packet, technicalPass, regionChange (region to magnitude, from candidate.json), seams and measured as one line each from candidate.json, and pack. If the command failed, ok false and the reason.'
 }
 function readerPrompt(packs, order, k) {
