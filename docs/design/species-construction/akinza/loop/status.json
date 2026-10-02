@@ -577,7 +577,7 @@
   "R06": {
    "name": "Torso and pelvis",
    "weight": 2.5,
-   "score": 4.5,
+   "score": 4.3,
    "results": {
     "R06.1": "pass",
     "R06.2": "pass",
@@ -588,7 +588,12 @@
     "R06.7": "fail",
     "R06.8": "pass",
     "R06.9": "fail",
-    "R06.10": "fail"
+    "R06.10": "fail",
+    "R06.11": "pass",
+    "R06.12": "fail",
+    "R06.13": "fail",
+    "R06.14": "fail",
+    "R06.16": "pass"
    },
    "issues": [
     {
@@ -1047,7 +1052,8 @@
   "2026-10-01: v3 batch 1 paused by Nick during round 18 (R03 builder interrupted). Prepare (audit 0458, method plan, six specs) and rounds 17 and 18 folded in by fold_r17_r18.mjs; nothing kept, mean 5.447.",
   "2026-10-01: round 19 (v3.1, one round by Nick's request) merged from the round record's state snapshot: R05 join kept on the critic verdict, R01 reverted.",
   "2026-10-02: v3.2 limits: priorityV3 (audit rank leads, unused tool +20, idle only a tie-break), keptResetsStall. verdictDebt was simulated on all 34 recorded orders and left off: it would have kept the round 8 leg build that kinked the tails and lowered the simulated mean to 5.333.",
-  "2026-10-02: round 20 (v3.2, one round) merged from the round record: R04 rear fan clump branch and R06 trunk loft both kept and combined as assembled-2278; mean 5.447 to 5.495."
+  "2026-10-02: round 20 (v3.2, one round) merged from the round record: R04 rear fan clump branch and R06 trunk loft both kept and combined as assembled-2278; mean 5.447 to 5.495.",
+  "2026-10-02: rubric R06.11 to R06.14 and R06.16 added (measured trunk side profile); R06 re-scored on assembled-2278 from 4.5 to 4.3. The 0458 audit row 5 chest depth (0.131 vs 0.168) measured the akimbo arm, not the trunk: the trunk chest depth matches the sheet; the real faults are waist depth, chest over waist and the dorsal S-curve."
  ],
  "decisionsForNick": [
   {

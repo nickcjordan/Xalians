@@ -63,8 +63,9 @@ test('the cold rescore of assembled-0226 scores as recorded (needs the untracked
   const m = JSON.parse(readFileSync(join(P.packets, 'assembled-0226', 'measured.json'), 'utf8'))
   const res = core.resultsAfter(S, core.overlayMeasured(rub, c, m), Object.fromEntries(Object.keys(S.regions).map(i => [i, {}])))
   const r1 = readJson(join(P.rounds, 'round-01-rescore.json'))
-  // R09 and R11 differ by a later rubric revision (R09.6 and R09.7), so they are left out
-  for (const id of ['R01', 'R02', 'R03', 'R04', 'R05', 'R06', 'R07', 'R08', 'R10', 'R12']) assert.equal(core.scoreFrom(rub, res[id], id), r1.scores[id], id)
+  // R09 and R11 differ by a later rubric revision (R09.6 and R09.7), and R06 by the 2026-10-02 trunk
+  // profile criteria (R06.11 to R06.16), so they are left out
+  for (const id of ['R01', 'R02', 'R03', 'R04', 'R05', 'R07', 'R08', 'R10', 'R12']) assert.equal(core.scoreFrom(rub, res[id], id), r1.scores[id], id)
 })
 
 test('round 2 debt: a side-effect loss within regressionDrop is kept when the mean rises, and becomes an issue', () => {
@@ -350,6 +351,7 @@ test('v3 branch: a reverted candidate judged better is handed to the next order 
   status.auditGaps = [{ rank: 1, region: 'R04', gap: 'crumpled paper bowl from behind', structural: true }]
   status.regions.R04.history = []
   status.lastOrders = []
+  status.limits.auditRefreshKept = 0
   const prompts = []
   await runWorkflow(generate(), v3Args(status, rub, { rounds: 3 }), 'b', (label, prompt) => {
     if (label.startsWith('builder')) { prompts.push(prompt); return { ...okBuild('R04'), recipe: `recipes/r${prompts.length}-R04.json` } }
