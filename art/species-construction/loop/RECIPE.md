@@ -20,10 +20,11 @@ Run everything from the repository root: `python art/species-construction/loop/r
 | `verify R [--no-cache] [--no-packet]` | Replays every step and the assembly into fresh directories (the cache index is left alone), compares each step with its `expect` block, then runs `loop_tools.py check`, `packet` and `measured` on the replayed assembly and compares its `measured.json` with the original's. Writes `recipe-verify-NNNN.json` in the work folder. About 45 minutes of Blender plus the packet. |
 | `contain R STEP [--out-dir NAME] [--zones FILE] [--no-reference]` | Nearest-vertex displacement between the step's input and output, per foreign region, in figure heights (95th percentile and maximum), judged against the footprint of the step's own baseline version (section Containment). Zones come from `species.json`. Writes `containment.json` in the output directory; for a seeded (historical) directory, or when a report already exists, it writes `<dir>.containment[-N].json` beside it instead, because outputs are immutable. |
 | `sweep R --step ID --grid ARG=v1,v2 [--grid ...] [--variants f.json] [--max 12] [--region Rxx] [--out NAME] [--top 6] [--contain-tol .004]` | Tries many values of one step's parameters in one call, builds only what changed, runs `quick`, scores and ranks the variants (section Sweeps). |
+| `candidate R --baseline PACKET [--region Rxx] [--assembly-name auto] [--base RECIPE] [--dry-run]` | One call per candidate: build, check, packet, measured, diff, seams, contain, then one JSON summary (section Candidate). |
 
 ## How an order edits a recipe
 
-An order never builds by hand. The builder copies the baseline recipe to its candidate path (`docs/design/species-construction/<species>/loop/recipes/r<round>-<region>.json`), edits only steps its region owns with `set` (or `add`s a step tagged with the region), runs `build`, then `contain` on each new component output, then `quick` and `fit`. A step's `regions` field says which orders may touch it. `set` and `add` drop the `expect` block of the changed step and everything downstream, because the recorded counts no longer describe them. `build` on a candidate rebuilds exactly the steps whose key changed and the assembly.
+An order never builds by hand. The builder copies the baseline recipe to its candidate path (`docs/design/species-construction/<species>/loop/recipes/r<round>-<region>.json`), edits only steps its region owns with `set` (or `add`s a step tagged with the region), runs `candidate` (one call: build, check, packet, measured, diff, seams, contain; section Candidate), or `build`, `contain`, `quick` and `fit` by hand. A step's `regions` field says which orders may touch it. `set` and `add` drop the `expect` block of the changed step and everything downstream, because the recorded counts no longer describe them. `build` on a candidate rebuilds exactly the steps whose key changed and the assembly.
 
 ## Cache key
 
@@ -140,6 +141,28 @@ All terms are measured on the quick render (front, left, back) against the basel
 ### Tool scores (`sweepScore`)
 
 The quick silhouette cannot see everything a tool changes (at the waist the side edge is the hanging arm, so a sweep of the R06 trunk tool was blind to the waist). A step script can therefore record its own score: a top-level `sweepScore` (a number, higher is better) and an optional `sweepTerms` dict in any JSON record it writes to its output directory. `recipe_sweep.py` reads the first such record of the edited step's output for every variant and of the baseline step, and adds `100 x (variant - baseline)` to `total` (`parts.tool`; the table shows a `tool` column and the contact sheet a `tool` line). `author_trunk_sections_field.py` writes it into `trunk-sections.json`: the negative weighted RMS of achieved minus target over the station rows (front, back, depth, half width, in fit units), each row weighted by its loft weight so rows the loft does not touch drop out. It ranks changes to how the build realizes the table (loft weights, exponents, reach, voxel size). A sweep that moves the targets themselves moves the yardstick with them (achieved tracks target, the score stays flat); add `sweepReference` to the spec (`{"<y>": {"back": -.012, ...}}`) and the score measures achieved against that fixed table for the quantities it names, which is how a waist sweep ranks, e.g. `--variants` entries `{"spec:stations.9.back": -0.0048, "spec:sweepReference": {"0.44": {"back": -0.012}}}`.
+
+## Candidate: one call per candidate
+
+A builder makes one call per candidate instead of chaining build, check, packet, measured, diff, seams and contain by hand:
+
+```
+python art/species-construction/loop/recipe.py candidate <candidate recipe> --baseline <baseline packet dir> [--region R03] [--assembly-name auto] [--base <recipe>] [--dry-run]
+```
+
+It blocks until done and prints a few progress lines (`build: ...`, `done H36 -> head-NNNN in Ns`, `check`, `packet`, `diff`, `contain`), then **one compact JSON line, always the last line of output** (the same JSON, indented, is `candidate.json` in the packet). Never poll Blender yourself: the command holds the Blender slots, waits for a free one and retries a memory-killed field build once.
+
+Stages, in order:
+
+1. **build**: refuses (exit 2, `failure` names the file) while a pinned input is `CHANGED`; otherwise builds exactly the steps whose key changed, then assembles under the next number (`--assembly-name NAME` to choose one).
+2. **check**: `loop_tools.py check`. A failing technical check stops the run (exit 3) with the reasons (components, non-manifold edges, height or ground spread); the build results are still written.
+3. **packet** into `untracked/species-construction/<species>/loop/packets/<assembly>`. `packet` already computes `measured.json` and `seams.json`; the seam check is run against the baseline packet's render (`--baseline` is passed through), so `seams.json` holds changes, not absolute scores. A packet that already has `index.json` and `seams.json` is reused.
+4. **diff** against the baseline packet (`diff.json`).
+5. **contain** for every step the candidate changed or added relative to the base it was cut from: its `derivedFrom` block, else `--base`, else the species' live `recipe.json`. An output that already has a containment report reuses it (outputs are immutable); otherwise the report is written as `contain` does, judged by the relative rule.
+
+Summary fields: `assembly`, `packet`, `componentDirs` (head, body and each changed step's output), `changedSteps`, `build.rebuilt` (step, directory, minutes), `check` (`pass`, `reasons`), `measuredChanged` (every criterion whose value or result differs from the baseline packet: `id`, `region`, `before`, `after`, `bound`, `result` as [before, after]), `measuredFailing`, `seamsNew` (`joint`, `view`, `kind`, `value`, `where`), `regionChange` (magnitude per region from `diff.json`), `containment` (per changed step: `flaggedRelative`, and `worst`, the three worst regions with `max`, `allowance`, `excess`, `flagged`), `warnings` (a changed step not tagged with `--region`), `wallMinutes` and `verdict`, a one-line hint that only counts what moved ("R03 measured: 2 changed (1 newly passing); no new seams flagged; containment within allowance"). It is not a visual judgment: open the packet images for that. On failure `ok` is false, `stage` and `failure` say where, and everything gathered so far is still written (to the packet, or to `packets/unbuilt-<recipe>-<time>/` when nothing was built).
+
+`--dry-run` prints the plan, the steps that would be contained and the estimated minutes (build from the recorded step times, plus fixed allowances for check, packet and diff) and builds nothing. A foreground Bash call times out at 10 minutes: when the estimate is above about 9, start it with `run_in_background` and wait for the completion notice (it is one wait, not a poll).
 
 ## Preflight
 

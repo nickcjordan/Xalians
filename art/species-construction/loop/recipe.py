@@ -1614,6 +1614,11 @@ def cmd_sweep(args):
     recipe_sweep.run(args, sys.modules[__name__])
 
 
+def cmd_candidate(args):
+    import recipe_candidate
+    recipe_candidate.run(args, sys.modules[__name__])
+
+
 # ---------------------------------------------------------------- main
 
 def main():
@@ -1657,6 +1662,12 @@ def main():
     p.add_argument('--top', type=int, default=6, help='variants shown in sweep.png')
     p.add_argument('--contain-tol', type=float, default=.004, help='foreign displacement (figure heights) tolerated before the total is charged')
     p.set_defaults(func=cmd_sweep)
+    p = sub.add_parser('candidate', help='one call per candidate: build, check, packet, measured, diff, seams, contain; prints one JSON summary')
+    p.add_argument('recipe'); p.add_argument('--baseline', required=True, help='baseline packet directory (or its assembly name)')
+    p.add_argument('--region'); p.add_argument('--assembly-name', default='auto')
+    p.add_argument('--base', help='base recipe the candidate was cut from (default: its derivedFrom block, else the live recipe.json)')
+    p.add_argument('--dry-run', action='store_true')
+    p.set_defaults(func=cmd_candidate)
     args = parser.parse_args()
     args.func(args)
 
