@@ -283,6 +283,8 @@
 .pwt-health.previewing .pwt-health-track { flex: 1 1 18px; min-width: 18px; }
 .pwt-before { font-weight: 400; color: var(--color-ink-3); }
 .pwt-health-num.changing .pwt-before { text-decoration: line-through; }
+.pwt-health-arrow { font-weight: 400; color: var(--color-ink-3); }
+.pwt-health-after { font-size: 15px; font-weight: 800; line-height: 1; }
 .pwt-health-skull { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-caution); }
 .pwt-health-num.skull { color: var(--color-caution); }
 .pwt-health[data-health-preview="gain"] .pwt-health-num.changing { color: var(--color-viable); }
@@ -330,9 +332,10 @@
 }
 .pwt-next-part { display: inline-flex; align-items: center; gap: 1px; }
 /* A finishing move crosses the row out (a 2 px ink strike); only the number dims. */
-.pwt-next.cancelled .pwt-next-what::after { content: ""; position: absolute; left: -3px; right: -3px; top: 50%; margin-top: -1px; border-top: 2px solid var(--color-ink); }
+.pwt-next.cancelled .pwt-next-what::after { content: ""; position: absolute; left: -3px; right: -3px; top: 50%; margin-top: -1px; border-top: 2px solid var(--color-ink); z-index: 1; }
+.pwt-next.cancelled .pwt-next-ptr { display: none; }
 .pwt-next.cancelled .pwt-next-n,
-.pwt-next.cancelled .pwt-next-what svg { opacity: 0.5; }
+.pwt-next.cancelled .pwt-next-what svg { opacity: 0.6; }
 /* While beats play, the acting enemy's row stays full and the others step back, as their tags do. */
 .pwt-next.dim { opacity: 0.4; }
 

@@ -683,3 +683,6 @@
 .pwt-console.phone .pwt-lesson-key .pwt-key { min-height: 40px; }
 .pwt-console.phone .pwt-lesson-key .pwt-key-foot { display: none; }
 .pwt-console.phone .pwt-lesson { gap: 8px; }
+.pwt-console.phone .pwt-health-after { font-size: 12px; }
+.pwt-console.phone .pwt-health-num.changing { gap: 1px; }
+.pwt-console.phone .pwt-health.previewing { gap: 2px; }

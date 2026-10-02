@@ -1217,7 +1217,7 @@ describe("one number, one meaning, one place (docs/design/powerworks-one-number-
       const to = Number(num.getAttribute("data-to"));
       expect(from).toBeGreaterThan(to);
       expect(text(num.querySelector("s"))).toBe(String(from));
-      expect(text(num)).toBe(`${from}${to}`);
+      expect(text(num)).toBe(`${from}→${to}`);
       expect(health.querySelector(".pwt-health-seg.lost")).toBeTruthy();
       // The enemy's next act is unchanged by a plain strike, and the matchup tab, when there is one, is the lit factor.
       expect(text(plate.querySelector(".pwt-next-n"))).toBe("14");
@@ -1286,7 +1286,7 @@ describe("one number, one meaning, one place (docs/design/powerworks-one-number-
     const a = c.querySelector(`.pwt-row.enemies [data-unit="${enemies[0]}"]`)!;
     expect(a.querySelector(".pwt-next.cancelled")).toBeTruthy();
     expect(a.querySelector(".pwt-health-num.skull .pwt-health-skull")).toBeTruthy();
-    expect(text(a.querySelector(".pwt-health-num"))).toBe("30");
+    expect(text(a.querySelector(".pwt-health-num"))).toBe("3→0");
     const b = c.querySelector(`.pwt-row.enemies [data-unit="${enemies[1]}"]`)!;
     expect(b.querySelector(".pwt-next.cancelled")).toBeNull();
   });
@@ -1299,7 +1299,7 @@ describe("one number, one meaning, one place (docs/design/powerworks-one-number-
     await hover(card(c, 4));
     const health = plate.querySelector<HTMLElement>(".pwt-health")!;
     expect(health.getAttribute("data-health-preview")).toBe("gain");
-    expect(text(health.querySelector(".pwt-health-num"))).toBe("6069");
+    expect(text(health.querySelector(".pwt-health-num"))).toBe("60→69");
     expect(health.querySelector(".pwt-health-seg.gain")).toBeTruthy();
     expect(c.querySelector(".pwt-preview, [data-preview]")).toBeNull();
     // Enemy rows do not move for a mend.

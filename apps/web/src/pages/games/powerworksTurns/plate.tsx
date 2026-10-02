@@ -134,7 +134,8 @@ export function HealthBar({ hp, max, delta = 0, plain = false, preview }: { hp: 
       {preview ? (
         <span className={`pwt-health-num changing${preview.skull ? " skull" : ""}`} data-from={preview.from} data-to={preview.to}>
           <s className="pwt-before">{preview.from}</s>
-          {preview.to}
+          <span className="pwt-health-arrow" aria-hidden="true">→</span>
+          <span className="pwt-health-after">{preview.to}</span>
           {preview.skull && <Skull className="pwt-health-skull" aria-label="knocked out" />}
         </span>
       ) : (
