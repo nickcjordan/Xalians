@@ -332,3 +332,31 @@ test('v3 effort trial: the first order gets a medium-effort twin, judged and rec
   assert.match(rec.prompt, /"effortTrial":\{"region":"R\d+","effort":"medium"/)
   assert.ok(!/-t"/.test(JSON.stringify(out.ret.status.baseline)), 'the twin is never adopted')
 })
+
+test('reopen: a region above the pass bar is ordered only when the audit reopened it, one point below the bar', () => {
+  const S = mkState()
+  setScores(S, { R02: 8.3, R03: 6.4 })
+  S.regions.R02.issues = [{ fixability: 0.9 }]
+  S.regions.R02.lastWorked = 16
+  assert.equal(core.priority(S, LIMITS, 'R02', 17), null)
+  S.regions.R02.reopen = true
+  assert.equal(core.priority(S, LIMITS, 'R02', 17), Math.round(S.regions.R02.weight * 1 * 0.9 * 100) / 100)
+})
+
+test('v3 branch: a reverted candidate judged better is handed to the next order for its region, with the audit rows', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R01: 'm' }
+  for (const id of Object.keys(status.regions)) if (id !== 'R04') status.regions[id].hold = true
+  status.auditGaps = [{ rank: 1, region: 'R04', gap: 'crumpled paper bowl from behind', structural: true }]
+  const prompts = []
+  await runWorkflow(generate(), v3Args(status, rub, { rounds: 3 }), 'b', (label, prompt) => {
+    if (label.startsWith('builder')) { prompts.push(prompt); return { ...okBuild('R04'), recipe: `recipes/r${prompts.length}-R04.json` } }
+    // better on the target, but a neighbour loses a criterion: reverted, a promising branch
+    if (label.startsWith('critic r')) return { criteria: [{ id: 'R03.1', result: 'fail', evidence: '' }], pairwise: [{ region: 'R04', verdict: 'better', reason: '' }], invariants: [], issues: [], summary: '' }
+    return undefined
+  })
+  assert.ok(prompts.length >= 2)
+  assert.doesNotMatch(prompts[0], /Promising branch/)
+  assert.match(prompts[1], /Promising branch: round \d+'s candidate .*r1-R04\.json was judged better/)
+  assert.match(prompts[0], /Independent audit rows for R04 \(rank: gap\): 1: crumpled paper bowl/)
+})

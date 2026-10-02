@@ -134,7 +134,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
             out['parkReason'] = trim(r.get('parkReason', ''))
         else:
             out['issues'] = [trim_issue(i) for i in (r.get('issues') or [])[:3]]
-        out['history'] = [{'round': h['round'], 'kept': h['kept'], 'approach': trim(h.get('approach', ''), HISTORY_APPROACH_TRIM), 'reason': trim(h.get('reason', ''), HISTORY_REASON_TRIM)}
+        out['history'] = [{'round': h['round'], 'kept': h['kept'], 'approach': trim(h.get('approach', ''), HISTORY_APPROACH_TRIM), 'reason': trim(h.get('reason', ''), HISTORY_REASON_TRIM),
+                           **{k: h[k] for k in ('verdict', 'recipe', 'base') if h.get(k)}}
                           for h in (r.get('history') or [])[-4:]]
         regions[rid] = out
     baseline = dict(status['baseline'])
@@ -148,6 +149,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
     }
     if status.get('audit'):
         slim['audit'] = rel(status['audit'])
+    if status.get('auditGaps'):
+        slim['auditGaps'] = [{'rank': g['rank'], 'region': g['region'], 'gap': trim(g['gap'], 220), 'structural': bool(g.get('structural'))} for g in status['auditGaps']]
     if rubric_texts:
         rub = {'regions': {rid: [{'id': c['id'], 'kind': c['kind'], 'text': c.get('text', '')} for c in cs] for rid, cs in rubric['regions'].items()}}
     else:

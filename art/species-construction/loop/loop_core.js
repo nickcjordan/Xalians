@@ -66,9 +66,13 @@ export function plateau(state, limits) {
 export function priority(state, limits, id, round) {
   const r = state.regions[id]
   // v3: a held region (Nick's direction, such as the tails on 2026-10-01) is never ordered.
-  if (r.parked || r.hold || r.score === null || r.score >= limits.passBar) return null
+  if (r.parked || r.hold || r.score === null) return null
+  // v3: a region the independent audit ranks among its top structural gaps is reopened even
+  // above the pass bar, and counts as one point below it (round 17: the face scored 8.3
+  // while the audit ranked its slit profile eye third).
+  if (r.score >= limits.passBar && !r.reopen) return null
   const fix = Math.max(0.3, ...(r.issues || []).map(i => i.fixability || 0.5))
-  let p = r.weight * (limits.passBar - r.score) * fix
+  let p = r.weight * (r.score >= limits.passBar ? 1 : limits.passBar - r.score) * fix
   const idle = r.lastWorked === null ? round : round - r.lastWorked
   if (idle >= limits.coverageRounds) p += 100 + idle  // coverage: a region idle this long goes next
   return Math.round(p * 100) / 100
@@ -250,13 +254,18 @@ export function adoptBest(state, kept) {
 
 // The round record: updates each worked region's history and stall bookkeeping (mutates
 // state) and returns the entry the recorder writes to rounds/round-NN.json.
-export function recordEntry(state, limits, round, outcomes, combinedAssembly) {
+// baseRecipe (v3) is the baseline recipe the round's orders started from; with each
+// candidate recipe and verdict it lets a later order resume a promising reverted branch.
+export function recordEntry(state, limits, round, outcomes, combinedAssembly, baseRecipe) {
   const entry = { round, orders: [], baseline: state.baseline, scores: scoresNow(state), mean: meanOf(state, scoresNow(state)), combined: combinedAssembly || null }
   for (const o of outcomes.filter(Boolean)) {
     const r = state.regions[o.order.id]
     const kept = !!(o.decision && o.decision.kept)
     const reason = o.failed || (o.decision ? o.decision.reasons.join('; ') : '')
-    r.history.push({ round, kept, approach: o.build ? o.build.approach : '(no build)', reason, reusable: o.build ? o.build.reusable || [] : [] })
+    const h = { round, kept, approach: o.build ? o.build.approach : '(no build)', reason, reusable: o.build ? o.build.reusable || [] : [] }
+    if (o.decision && o.decision.verdict) h.verdict = o.decision.verdict.verdict
+    if (o.build && o.build.recipe) { h.recipe = o.build.recipe; if (baseRecipe) h.base = baseRecipe }
+    r.history.push(h)
     updateStall(r, round, limits)
     entry.orders.push({
       region: o.order.id, component: o.order.component, priority: o.order.priority, spec: o.spec ? o.spec.path : null,

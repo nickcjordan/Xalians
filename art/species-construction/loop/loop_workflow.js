@@ -183,9 +183,13 @@ function plateau(state, limits) {
 function priority(state, limits, id, round) {
   const r = state.regions[id]
   // v3: a held region (Nick's direction, such as the tails on 2026-10-01) is never ordered.
-  if (r.parked || r.hold || r.score === null || r.score >= limits.passBar) return null
+  if (r.parked || r.hold || r.score === null) return null
+  // v3: a region the independent audit ranks among its top structural gaps is reopened even
+  // above the pass bar, and counts as one point below it (round 17: the face scored 8.3
+  // while the audit ranked its slit profile eye third).
+  if (r.score >= limits.passBar && !r.reopen) return null
   const fix = Math.max(0.3, ...(r.issues || []).map(i => i.fixability || 0.5))
-  let p = r.weight * (limits.passBar - r.score) * fix
+  let p = r.weight * (r.score >= limits.passBar ? 1 : limits.passBar - r.score) * fix
   const idle = r.lastWorked === null ? round : round - r.lastWorked
   if (idle >= limits.coverageRounds) p += 100 + idle  // coverage: a region idle this long goes next
   return Math.round(p * 100) / 100
@@ -367,13 +371,18 @@ function adoptBest(state, kept) {
 
 // The round record: updates each worked region's history and stall bookkeeping (mutates
 // state) and returns the entry the recorder writes to rounds/round-NN.json.
-function recordEntry(state, limits, round, outcomes, combinedAssembly) {
+// baseRecipe (v3) is the baseline recipe the round's orders started from; with each
+// candidate recipe and verdict it lets a later order resume a promising reverted branch.
+function recordEntry(state, limits, round, outcomes, combinedAssembly, baseRecipe) {
   const entry = { round, orders: [], baseline: state.baseline, scores: scoresNow(state), mean: meanOf(state, scoresNow(state)), combined: combinedAssembly || null }
   for (const o of outcomes.filter(Boolean)) {
     const r = state.regions[o.order.id]
     const kept = !!(o.decision && o.decision.kept)
     const reason = o.failed || (o.decision ? o.decision.reasons.join('; ') : '')
-    r.history.push({ round, kept, approach: o.build ? o.build.approach : '(no build)', reason, reusable: o.build ? o.build.reusable || [] : [] })
+    const h = { round, kept, approach: o.build ? o.build.approach : '(no build)', reason, reusable: o.build ? o.build.reusable || [] : [] }
+    if (o.decision && o.decision.verdict) h.verdict = o.decision.verdict.verdict
+    if (o.build && o.build.recipe) { h.recipe = o.build.recipe; if (baseRecipe) h.base = baseRecipe }
+    r.history.push(h)
     updateStall(r, round, limits)
     entry.orders.push({
       region: o.order.id, component: o.order.component, priority: o.order.priority, spec: o.spec ? o.spec.path : null,
@@ -412,6 +421,7 @@ function criticPrompt(packet, order, mode, scope) {
     t += `This is a candidate request. Target region: ${order.id} (${S.regions[order.id].name}). Its criteria and current baseline results:
 ${criteriaText(order.id)}
 `
+    if ((S.auditGaps || []).some(g => g.region === order.id)) t += auditLines(order.id) + 'Check each audit row against the images yourself. A criterion that one of these rows shows failing in both models cannot pass.\n'
     t += 'Judge the target region\'s visual criteria and give the pairwise verdict for it. ' +
       (scope && scope.length ? `Then judge the visual criteria of these other regions, whose images changed more than the side-effect threshold: ${scope.join(', ')}. Leave every other region's visual criteria out; their images did not move enough to judge. ` : 'No other region\'s images moved more than the side-effect threshold, so judge no other region\'s visual criteria. ') +
       'Copy measured criteria for all regions. Report every invariant. List up to three issues for the target region.\n'
@@ -423,6 +433,22 @@ function historyCard(id) {
   const h = S.regions[id].history
   if (!h.length) return 'No earlier attempts are recorded for this region under the checklist.'
   return h.slice(-6).map(e => `Round ${e.round}: ${e.kept ? 'KEPT' : 'REVERTED'}. Approach: ${e.approach}. ${e.reason ? 'Reason: ' + e.reason + '. ' : ''}${e.reusable && e.reusable.length ? 'Reusable: ' + e.reusable.map(x => x.option + ' (' + x.what + ')').join('; ') : ''}`).join('\n')
+}
+// A reverted candidate the critic judged better is a promising branch: the region's next
+// order starts from it instead of from scratch (round 17: the rear fan clump volume was
+// judged better but reverted for a small side loss, and a method change rarely flips its
+// criteria on the first build).
+function branchLine(id) {
+  const last = S.regions[id].history.slice(-1)[0]
+  if (!last || last.kept || last.verdict !== 'better' || !last.recipe) return ''
+  return `Promising branch: round ${last.round}'s candidate ${abs(last.recipe)} was judged better but reverted (${last.reason}). Start from it: carry its changed steps onto the current baseline recipe (recipe.py merge ${last.base ? abs(last.base) : '<that round\'s baseline recipe>'} <current baseline recipe> <that candidate> <your candidate>, or set and add by hand when the merge refuses), then fix what it was reverted for.\n\n`
+}
+// The audit's rows for a region, in the builder and critic prompts: the checklist can pass a
+// part the independent audit still ranks as a top gap.
+function auditLines(id) {
+  const rows = (S.auditGaps || []).filter(g => g.region === id)
+  if (!rows.length) return ''
+  return `Independent audit rows for ${id} (rank: gap): ${rows.map(g => `${g.rank}: ${g.gap}`).join(' | ')}\n\n`
 }
 const candidateRecipe = (round, id) => `${LOOPDIR}\\recipes\\r${String(round).padStart(2, '0')}-${id}.json`
 function builderPrompt(order, round, suffix) {
@@ -439,6 +465,8 @@ function builderPrompt(order, round, suffix) {
     `Critic issues, most damaging first (suggestions to verify, not measurements): ${r.issues ? JSON.stringify(r.issues) : 'read this region\'s issues in ' + BRIEF('status.json')}\n\n` +
     (spec ? `Target spec: ${abs(spec.path)}${spec.image ? ' with image ' + abs(spec.image) : ''}. Implement its structure table.\n\n` : '') +
     `History card for this region:\n${historyCard(order.id)}\n\n` +
+    branchLine(order.id) +
+    auditLines(order.id) +
     (S.audit ? `Gap audit (independent, ranked by how much each gap stops the model reading as the sheet): ${abs(S.audit)}. Read the rows for your region and fix the most visible gap first, not the easiest criterion. A structural gap (a wrong length, cross section, depth, joint position, or a part built the wrong way) is fixed by rebuilding that part, by a parameter of the step that authors it, or by the proportion levers named in the builder brief, never by stacking more surface warps on it.\n\n` : '') +
     `Shared sheet measurement: ${BRIEF('sheet.json')} (outlines, station tables, landmarks; overlay sheet.png). Compare against it with sheet_measure.py model rather than re-tracing the sheet.\n\n` +
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it).\n` +
@@ -526,10 +554,13 @@ if (!S.audit || args.freshAudit) {
   if (audit) {
     S.audit = audit.path
     kickoff = audit.gaps.slice().sort((a, b) => a.rank - b.rank).slice(0, 12)
+    S.auditGaps = kickoff.map(g => ({ rank: g.rank, region: g.region, gap: g.gap, structural: !!g.structural }))
     // The kickoff check: the orchestrator sends this list to Nick as a progress note; the rounds do not wait for him.
     log('KICKOFF gaps ' + JSON.stringify(kickoff))
   }
 }
+// Reopen: a region above the pass bar with a structural gap in the audit's top ten is worked again.
+for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
 let replanned = false
 if (!Object.keys(S.methods).length || args.replan) {
   const plan = await agent(methodPrompt(), { label: 'methods ' + S.baseline.assembly, phase: 'Prepare', schema: METHODS, model: 'opus', effort: 'high' })
@@ -629,7 +660,7 @@ for (let i = 0; i < ROUNDS; i++) {
     adoptBest(S, kept)
   }
 
-  const entry = recordEntry(S, L, round, outcomes, combined ? combined.build.assembly : null)
+  const entry = recordEntry(S, L, round, outcomes, combined ? combined.build.assembly : null, baselineAtStart.recipe || null)
   entry.recipe = S.baseline.recipe || null
   if (trialOutcome) entry.effortTrial = { region: trial.id, effort: 'medium', assembly: trialOutcome.build ? trialOutcome.build.assembly : null, kept: !!trialOutcome.kept, reasons: trialOutcome.reasons || [trialOutcome.failed], gain: trialOutcome.gain ?? null, verdict: trialOutcome.verdict || null }
   S.means.push(entry.mean)
