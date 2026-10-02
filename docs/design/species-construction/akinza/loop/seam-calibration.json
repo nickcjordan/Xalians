@@ -1,0 +1,1117 @@
+[
+ {
+  "candidate": "assembled-2112",
+  "baseline": "assembled-0458",
+  "defect": "boot-cuff collar and side crease at the ankle",
+  "joints": [
+   "ankle"
+  ],
+  "source": "round 18 R09",
+  "peak": {
+   "bump": [
+    0.0037,
+    "ankle",
+    "left"
+   ],
+   "wbump": [
+    0.0043,
+    "ankle",
+    "left"
+   ],
+   "step": [
+    0.0004,
+    "ankle",
+    "front"
+   ],
+   "crease": [
+    31,
+    "ankle",
+    "left"
+   ],
+   "kink": [
+    1.0642,
+    "ankle",
+    "left"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "ankle",
+    "view": "front",
+    "metrics": [
+     "wbump"
+    ]
+   },
+   {
+    "joint": "ankle",
+    "view": "left",
+    "metrics": [
+     "kink",
+     "bump",
+     "wbump",
+     "crease"
+    ]
+   },
+   {
+    "joint": "ankle",
+    "view": "back",
+    "metrics": [
+     "wbump"
+    ]
+   }
+  ]
+ },
+ {
+  "candidate": "assembled-2078",
+  "baseline": "assembled-0458",
+  "defect": "ankle collar and heel knob",
+  "joints": [
+   "ankle"
+  ],
+  "source": "round 17 R09",
+  "peak": {
+   "kink": [
+    1.0789,
+    "ankle",
+    "left"
+   ],
+   "bump": [
+    0.0036,
+    "ankle",
+    "left"
+   ],
+   "wbump": [
+    0.0051,
+    "ankle",
+    "front"
+   ],
+   "step": [
+    0.0009,
+    "ankle",
+    "back"
+   ],
+   "needle": [
+    33,
+    "ankle",
+    "front"
+   ],
+   "crease": [
+    32,
+    "ankle",
+    "left"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "ankle",
+    "view": "front",
+    "metrics": [
+     "kink",
+     "bump",
+     "wbump",
+     "needle"
+    ]
+   },
+   {
+    "joint": "ankle",
+    "view": "left",
+    "metrics": [
+     "kink",
+     "bump",
+     "wbump",
+     "crease"
+    ]
+   },
+   {
+    "joint": "ankle",
+    "view": "back",
+    "metrics": [
+     "kink",
+     "bump",
+     "wbump",
+     "needle"
+    ]
+   }
+  ]
+ },
+ {
+  "candidate": "assembled-2075",
+  "baseline": "assembled-0458",
+  "defect": "needles at the rear fan edge",
+  "joints": [
+   "earFanRoot",
+   "neckBase"
+  ],
+  "source": "round 17 R04",
+  "peak": {
+   "bump": [
+    0.0,
+    "neckBase",
+    "front"
+   ],
+   "wbump": [
+    0.0019,
+    "earFanRoot",
+    "front"
+   ],
+   "kink": [
+    0.5554,
+    "earFanRoot",
+    "front"
+   ],
+   "step": [
+    0.0072,
+    "earFanRoot",
+    "front"
+   ],
+   "needle": [
+    178,
+    "earFanRoot",
+    "front"
+   ],
+   "crease": [
+    964,
+    "earFanRoot",
+    "back"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "earFanRoot",
+    "view": "front",
+    "metrics": [
+     "needle"
+    ]
+   },
+   {
+    "joint": "earFanRoot",
+    "view": "back",
+    "metrics": [
+     "needle",
+     "crease"
+    ]
+   }
+  ]
+ },
+ {
+  "candidate": "assembled-0358",
+  "baseline": "assembled-0336",
+  "defect": "dented the upper tail",
+  "joints": [
+   "hip"
+  ],
+  "source": "round 9 R06",
+  "peak": {
+   "step": [
+    0.0002,
+    "wrist",
+    "left"
+   ],
+   "needle": [
+    6,
+    "earFanRoot",
+    "back"
+   ],
+   "kink": [
+    0.1181,
+    "wrist",
+    "left"
+   ],
+   "bump": [
+    0.0005,
+    "wrist",
+    "left"
+   ],
+   "wbump": [
+    0.0004,
+    "wrist",
+    "left"
+   ],
+   "crease": [
+    10,
+    "tailRoot",
+    "left"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0418",
+  "baseline": "assembled-0408",
+  "defect": "ledge and corner nubs on each upper arm, corner kinks at the caps",
+  "joints": [
+   "shoulder",
+   "elbow"
+  ],
+  "source": "round 13 R05",
+  "peak": {
+   "step": [
+    0.0004,
+    "tailRoot",
+    "back"
+   ],
+   "needle": [
+    3,
+    "earFanRoot",
+    "front"
+   ],
+   "crease": [
+    90,
+    "shoulder",
+    "back"
+   ],
+   "kink": [
+    0.0049,
+    "wrist",
+    "back"
+   ],
+   "bump": [
+    0.0,
+    "wrist",
+    "back"
+   ],
+   "wbump": [
+    0.0004,
+    "earFanRoot",
+    "back"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "shoulder",
+    "view": "front",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "neckBase",
+    "view": "back",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "shoulder",
+    "view": "back",
+    "metrics": [
+     "crease"
+    ]
+   }
+  ]
+ },
+ {
+  "candidate": "assembled-0342",
+  "baseline": "assembled-0336",
+  "defect": "tail kink and thigh band",
+  "joints": [
+   "hip",
+   "knee"
+  ],
+  "source": "round 8 R08",
+  "peak": {
+   "step": [
+    0.0003,
+    "ankle",
+    "front"
+   ],
+   "kink": [
+    0.0912,
+    "ankle",
+    "front"
+   ],
+   "bump": [
+    0.0004,
+    "ankle",
+    "back"
+   ],
+   "wbump": [
+    0.0009,
+    "ankle",
+    "front"
+   ],
+   "needle": [
+    3,
+    "ankle",
+    "back"
+   ],
+   "crease": [
+    9,
+    "knee",
+    "back"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0274",
+  "baseline": "assembled-0265",
+  "defect": "belt lines on the trunk, knob on the top tail root",
+  "joints": [
+   "hip",
+   "shoulder"
+  ],
+  "source": "round 3 R06",
+  "peak": {
+   "step": [
+    0.0025,
+    "tailRoot",
+    "left"
+   ],
+   "crease": [
+    514,
+    "tailRoot",
+    "left"
+   ],
+   "wbump": [
+    0.0025,
+    "wrist",
+    "left"
+   ],
+   "kink": [
+    0.5613,
+    "wrist",
+    "left"
+   ],
+   "bump": [
+    0.0036,
+    "neckBase",
+    "left"
+   ],
+   "needle": [
+    22,
+    "wrist",
+    "left"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "hip",
+    "view": "front",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "neckBase",
+    "view": "left",
+    "metrics": [
+     "bump",
+     "crease"
+    ]
+   },
+   {
+    "joint": "elbow",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "wrist",
+    "view": "left",
+    "metrics": [
+     "kink",
+     "needle"
+    ]
+   },
+   {
+    "joint": "hip",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "tailRoot",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "wrist",
+    "view": "back",
+    "metrics": [
+     "crease"
+    ]
+   }
+  ]
+ },
+ {
+  "candidate": "assembled-0345",
+  "baseline": "assembled-0336",
+  "defect": "nape spikes and holes",
+  "joints": [
+   "neckBase",
+   "earFanRoot"
+  ],
+  "source": "round 8 R04",
+  "peak": {
+   "kink": [
+    0.0161,
+    "tailRoot",
+    "left"
+   ],
+   "bump": [
+    0.0001,
+    "tailRoot",
+    "left"
+   ],
+   "wbump": [
+    0.0001,
+    "ankle",
+    "back"
+   ],
+   "step": [
+    0.0012,
+    "tailRoot",
+    "back"
+   ],
+   "needle": [
+    6,
+    "ankle",
+    "back"
+   ],
+   "crease": [
+    222,
+    "earFanRoot",
+    "back"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0303",
+  "baseline": "assembled-0291",
+  "defect": "box and gap artifacts on the fan top",
+  "joints": [
+   "earFanRoot"
+  ],
+  "source": "round 5 R03",
+  "peak": {
+   "kink": [
+    0.0666,
+    "earFanRoot",
+    "back"
+   ],
+   "bump": [
+    0.0,
+    "wrist",
+    "left"
+   ],
+   "wbump": [
+    0.0017,
+    "earFanRoot",
+    "front"
+   ],
+   "step": [
+    0.0051,
+    "earFanRoot",
+    "front"
+   ],
+   "needle": [
+    56,
+    "earFanRoot",
+    "front"
+   ],
+   "crease": [
+    483,
+    "earFanRoot",
+    "front"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0428",
+  "baseline": "assembled-0419",
+  "defect": "faint crease with a small back-outline step at each ankle top (kept)",
+  "joints": [
+   "ankle"
+  ],
+  "source": "round 14 R08",
+  "peak": {
+   "needle": [
+    7,
+    "ankle",
+    "front"
+   ],
+   "kink": [
+    0.2088,
+    "ankle",
+    "front"
+   ],
+   "bump": [
+    0.0009,
+    "ankle",
+    "front"
+   ],
+   "wbump": [
+    0.0019,
+    "ankle",
+    "front"
+   ],
+   "step": [
+    0.0002,
+    "ankle",
+    "left"
+   ],
+   "crease": [
+    1,
+    "earFanRoot",
+    "back"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-2055",
+  "baseline": "assembled-0458",
+  "defect": null,
+  "joints": [],
+  "source": "unchanged re-assembly",
+  "peak": {},
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0450",
+  "baseline": "assembled-0442",
+  "defect": null,
+  "joints": [],
+  "source": "round 16 R07 (smooth arms, no defect named)",
+  "peak": {
+   "step": [
+    0.001,
+    "tailRoot",
+    "back"
+   ],
+   "kink": [
+    0.0431,
+    "elbow",
+    "front"
+   ],
+   "bump": [
+    0.0011,
+    "tailRoot",
+    "back"
+   ],
+   "wbump": [
+    0.0032,
+    "tailRoot",
+    "back"
+   ],
+   "crease": [
+    27,
+    "hip",
+    "front"
+   ],
+   "needle": [
+    1,
+    "neckBase",
+    "back"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0457",
+  "baseline": "assembled-0442",
+  "defect": null,
+  "joints": [],
+  "source": "round 16 R03 (fan locks, no seam defect)",
+  "peak": {
+   "bump": [
+    0.0037,
+    "earFanRoot",
+    "front"
+   ],
+   "step": [
+    0.0018,
+    "earFanRoot",
+    "back"
+   ],
+   "kink": [
+    0.2416,
+    "earFanRoot",
+    "front"
+   ],
+   "wbump": [
+    0.0037,
+    "earFanRoot",
+    "front"
+   ],
+   "needle": [
+    115,
+    "earFanRoot",
+    "back"
+   ],
+   "crease": [
+    48,
+    "earFanRoot",
+    "back"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0371",
+  "baseline": "assembled-0336",
+  "defect": null,
+  "joints": [],
+  "source": "round 10 R06 (pelvis shelf removed)",
+  "peak": {
+   "step": [
+    0.0022,
+    "tailRoot",
+    "left"
+   ],
+   "kink": [
+    0.0083,
+    "elbow",
+    "back"
+   ],
+   "bump": [
+    0.0,
+    "elbow",
+    "back"
+   ],
+   "wbump": [
+    0.0001,
+    "shoulder",
+    "front"
+   ],
+   "needle": [
+    2,
+    "hip",
+    "front"
+   ],
+   "crease": [
+    2,
+    "wrist",
+    "left"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0396",
+  "baseline": "assembled-0377",
+  "defect": null,
+  "joints": [],
+  "source": "round 11 R04 (wing locks, no seam defect)",
+  "peak": {
+   "needle": [
+    5,
+    "elbow",
+    "back"
+   ],
+   "kink": [
+    0.0118,
+    "knee",
+    "back"
+   ],
+   "bump": [
+    0.0001,
+    "wrist",
+    "front"
+   ],
+   "wbump": [
+    0.0002,
+    "ankle",
+    "back"
+   ],
+   "step": [
+    0.0011,
+    "tailRoot",
+    "back"
+   ],
+   "crease": [
+    368,
+    "earFanRoot",
+    "back"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0442",
+  "baseline": "assembled-0428",
+  "defect": null,
+  "joints": [],
+  "source": "round 15 R03 (tuft locks, no seam defect)",
+  "peak": {
+   "kink": [
+    0.6206,
+    "earFanRoot",
+    "back"
+   ],
+   "bump": [
+    0.002,
+    "earFanRoot",
+    "back"
+   ],
+   "wbump": [
+    0.0005,
+    "tailRoot",
+    "back"
+   ],
+   "step": [
+    0.0026,
+    "earFanRoot",
+    "back"
+   ],
+   "needle": [
+    38,
+    "earFanRoot",
+    "front"
+   ],
+   "crease": [
+    164,
+    "earFanRoot",
+    "front"
+   ]
+  },
+  "flagged": []
+ },
+ {
+  "candidate": "assembled-0402",
+  "baseline": "assembled-0396",
+  "defect": null,
+  "joints": [],
+  "source": "round 12 R09 (graded toes, no seam defect named)",
+  "peak": {
+   "kink": [
+    0.1475,
+    "ankle",
+    "left"
+   ],
+   "step": [
+    0.0002,
+    "ankle",
+    "left"
+   ],
+   "bump": [
+    0.0,
+    "shoulder",
+    "back"
+   ],
+   "wbump": [
+    0.0003,
+    "ankle",
+    "front"
+   ],
+   "needle": [
+    21,
+    "ankle",
+    "back"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "ankle",
+    "view": "front",
+    "metrics": [
+     "needle"
+    ]
+   },
+   {
+    "joint": "ankle",
+    "view": "back",
+    "metrics": [
+     "needle"
+    ]
+   }
+  ]
+ },
+ {
+  "candidate": "assembled-0305",
+  "baseline": "assembled-0291",
+  "defect": "pointed shoulder cap corner, dark pockets behind the caps",
+  "joints": [
+   "shoulder"
+  ],
+  "source": "round 5 R07",
+  "peak": {
+   "step": [
+    0.0023,
+    "shoulder",
+    "front"
+   ],
+   "crease": [
+    799,
+    "shoulder",
+    "back"
+   ],
+   "kink": [
+    0.654,
+    "shoulder",
+    "left"
+   ],
+   "bump": [
+    0.0032,
+    "elbow",
+    "left"
+   ],
+   "wbump": [
+    0.0057,
+    "shoulder",
+    "back"
+   ],
+   "needle": [
+    20,
+    "hip",
+    "front"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "neckBase",
+    "view": "front",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "shoulder",
+    "view": "front",
+    "metrics": [
+     "kink",
+     "wbump",
+     "crease"
+    ]
+   },
+   {
+    "joint": "wrist",
+    "view": "front",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "hip",
+    "view": "front",
+    "metrics": [
+     "needle",
+     "crease"
+    ]
+   },
+   {
+    "joint": "neckBase",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "shoulder",
+    "view": "left",
+    "metrics": [
+     "kink",
+     "crease"
+    ]
+   },
+   {
+    "joint": "elbow",
+    "view": "left",
+    "metrics": [
+     "kink",
+     "bump",
+     "crease"
+    ]
+   },
+   {
+    "joint": "wrist",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "hip",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "tailRoot",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "neckBase",
+    "view": "back",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "shoulder",
+    "view": "back",
+    "metrics": [
+     "kink",
+     "wbump",
+     "crease"
+    ]
+   },
+   {
+    "joint": "elbow",
+    "view": "back",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "hip",
+    "view": "back",
+    "metrics": [
+     "needle"
+    ]
+   },
+   {
+    "joint": "tailRoot",
+    "view": "back",
+    "metrics": [
+     "kink",
+     "needle"
+    ]
+   }
+  ]
+ },
+ {
+  "candidate": "assembled-0327",
+  "baseline": "assembled-0320",
+  "defect": null,
+  "joints": [],
+  "source": "round 7 R05 (rear deltoid knob removed, caps rounded)",
+  "peak": {
+   "step": [
+    0.0003,
+    "neckBase",
+    "back"
+   ],
+   "needle": [
+    8,
+    "neckBase",
+    "back"
+   ],
+   "kink": [
+    0.0093,
+    "elbow",
+    "front"
+   ],
+   "wbump": [
+    0.0,
+    "wrist",
+    "back"
+   ],
+   "bump": [
+    0.0,
+    "elbow",
+    "back"
+   ],
+   "crease": [
+    130,
+    "shoulder",
+    "back"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "neckBase",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "shoulder",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "shoulder",
+    "view": "back",
+    "metrics": [
+     "crease"
+    ]
+   }
+  ]
+ },
+ {
+  "candidate": "assembled-0290",
+  "baseline": "assembled-0265",
+  "defect": null,
+  "joints": [],
+  "source": "round 4 R06 (chest smoothed)",
+  "peak": {
+   "step": [
+    0.0027,
+    "tailRoot",
+    "left"
+   ],
+   "crease": [
+    179,
+    "tailRoot",
+    "left"
+   ],
+   "kink": [
+    0.7039,
+    "wrist",
+    "left"
+   ],
+   "bump": [
+    0.0035,
+    "wrist",
+    "left"
+   ],
+   "wbump": [
+    0.0033,
+    "wrist",
+    "left"
+   ],
+   "needle": [
+    12,
+    "wrist",
+    "left"
+   ]
+  },
+  "flagged": [
+   {
+    "joint": "neckBase",
+    "view": "left",
+    "metrics": [
+     "bump",
+     "crease"
+    ]
+   },
+   {
+    "joint": "elbow",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   },
+   {
+    "joint": "wrist",
+    "view": "left",
+    "metrics": [
+     "kink",
+     "bump"
+    ]
+   },
+   {
+    "joint": "hip",
+    "view": "left",
+    "metrics": [
+     "crease"
+    ]
+   }
+  ]
+ }
+]

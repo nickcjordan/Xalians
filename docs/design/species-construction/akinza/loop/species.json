@@ -123,5 +123,44 @@
       }
     }
   },
-  "sheet": "docs/design/species-construction/akinza/loop/sheet.json"
+  "sheet": "docs/design/species-construction/akinza/loop/sheet.json",
+  "blender": {
+    "note": "Concurrent Blender processes, enforced by loop_tools.acquire_slot under one lock. The first process always starts. A second starts only while at least minFreeGb of memory is free, a third only while thirdSlotFreeGb is free (a build peaks at roughly 5 to 7 GB, so the third needs the headroom of two more builds), and no process starts within settleSeconds of the previous start, because its memory is not taken yet when the free figure is read. maxSlots is the hard cap; recipe.py sweep reads it.",
+    "maxSlots": 3,
+    "minFreeGb": 9,
+    "thirdSlotFreeGb": 14,
+    "settleSeconds": 15
+  },
+  "seams": {
+    "note": "Joints for seam_check.py. at is the row from the crown (0) to the floor (1) in the fixed figure frame, the mean y of the sheet landmarks named in landmarks (sheet.json, same frame) over the views that have them; the neck base lies between the chin (.2245) and the shoulder (.315), the ear-fan root where the fan leaves the head (the fan's lower outer edge, between the outer extent at .03 to .06 and the eyes at .145). band is the half-height of the zone scored, context the half-height of the outline traced (a bump is measured against the local mean over bumpWindow, a kink over kinkSpan), all in figure heights.",
+    "views": ["front", "left", "back"],
+    "band": 0.03,
+    "context": 0.065,
+    "kinkSpan": 0.012,
+    "bumpWindow": 0.04,
+    "joints": {
+      "neckBase": {"at": 0.275, "views": ["front", "left", "back"], "landmarks": ["chin", "shoulder_l", "shoulder_r"]},
+      "shoulder": {"at": 0.315, "views": ["front", "left", "back"], "landmarks": ["shoulder_l", "shoulder_r"]},
+      "elbow": {"at": 0.402, "views": ["front", "left", "back"], "landmarks": ["elbow_l", "elbow_r"]},
+      "wrist": {"at": 0.476, "views": ["front", "left", "back"], "landmarks": ["wrist_l", "wrist_r"]},
+      "hip": {"at": 0.605, "views": ["front", "left", "back"], "landmarks": ["hip_l", "hip_r"]},
+      "knee": {"at": 0.769, "views": ["front", "left", "back"], "landmarks": ["knee_l", "knee_r"]},
+      "ankle": {"at": 0.914, "band": [0.03, 0.04], "views": ["front", "left", "back"], "landmarks": ["ankle_l", "ankle_r"]},
+      "tailRoot": {"at": 0.575, "band": 0.06, "views": ["left", "back"], "landmarks": ["tail_root_1", "tail_root_2", "tail_root_3"]},
+      "earFanRoot": {"at": 0.07, "band": [0.07, 0.06], "views": ["front", "back"], "landmarks": ["ear_fan_l_outer", "ear_fan_r_outer", "eye_centre_l"]}
+    },
+    "thresholds": {
+      "note": "Calibrated 2026-10-01 on 20 recorded candidates (art/species-construction/loop/seam_calibrate.py, results in seam-calibration.json beside this file). change is the rise over the baseline (the useful signal; clean outlines move at most kink .26, bump .0012, wbump .0011, step .0017, needle 7 outside the fan, and an unchanged re-assembly moves nothing); the defects at joints reach kink .75, step .0073, wbump .0029 (ankle collars of assembled-2112 and 2078), crease 53 to 103 samples. absolute applies without a baseline and is only a gross-damage floor: the figure's own elbow outline reads kink 4.8, bump .022, so a standalone score cannot tell a new defect from the old shape; always give a baseline. Units: kink is a slope change (dimensionless), bump, wbump and step are figure heights, needle and crease are samples of the 700-per-figure-height grid. The ear fan, ragged by design, and the tail root have their own entries under joints.",
+      "change": {"kink": 0.3, "bump": 0.0008, "wbump": 0.0012, "step": 0.002, "needle": 10, "crease": 30},
+      "changeLegacy": {"kink": 0.4, "bump": 0.003, "wbump": 0.0035, "step": 0.004, "needle": 15, "crease": 40},
+      "absolute": {"kink": 7, "bump": 0.04, "wbump": 0.04, "step": 0.03, "needle": 400},
+      "joints": {
+        "earFanRoot": {
+          "change": {"kink": 1.2, "bump": 0.007, "wbump": 0.007, "step": 0.01, "needle": 150, "crease": 700},
+          "changeLegacy": {"kink": 1.2, "bump": 0.007, "wbump": 0.007, "step": 0.01, "needle": 150, "crease": 700}
+        },
+        "tailRoot": {"change": {"crease": 250}, "changeLegacy": {"crease": 250}}
+      }
+    }
+  }
 }

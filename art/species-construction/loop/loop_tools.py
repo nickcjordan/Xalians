@@ -42,6 +42,12 @@ CONSTRUCTION = ROOT/'art/species-construction'
 DEFAULT_BLENDER = Path(r'C:\Users\njord\AppData\Local\Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local'
                        r'\XaliansArtTools\blender-5.2.2-windows-x64\blender.exe')
 
+# Blender process slots (species.json "blender"): the first process always starts; a second needs
+# MIN_FREE_GB of free memory, a third THIRD_SLOT_FREE_GB; a new process also waits SLOT_SETTLE_S after
+# the previous start so that its memory is counted before the next decision. BLENDER_SLOTS is the
+# most that can run at once (recipe_sweep.py reads it).
+BLENDER_SLOTS, MIN_FREE_GB, THIRD_SLOT_FREE_GB, SLOT_SETTLE_S = 3, 9, 14, 15
+
 SPECIES = None
 
 
@@ -59,6 +65,12 @@ def configure(key):
     REGION_IMAGES = {k: list(v) for k, v in s['regionImages'].items() if k != 'note'}
     RUBRIC, RIG, SHEET_POSE, GLB = s.rubric, s.rig_dir, s.sheet_pose, s['glb']
     JOIN_DEFAULTS = {k: v for k, v in s['join'].items() if k != 'note'}
+    global BLENDER_SLOTS, MIN_FREE_GB, THIRD_SLOT_FREE_GB, SLOT_SETTLE_S
+    blender = s.get('blender', {})
+    BLENDER_SLOTS = blender.get('maxSlots', 3)
+    MIN_FREE_GB = blender.get('minFreeGb', 9)
+    THIRD_SLOT_FREE_GB = blender.get('thirdSlotFreeGb', 14)
+    SLOT_SETTLE_S = blender.get('settleSeconds', 15)
 
 
 def _early_species():
@@ -81,8 +93,6 @@ def blender_path():
     return path
 
 
-BLENDER_SLOTS = 2
-MIN_FREE_GB = 9
 
 
 def free_memory_gb():
@@ -110,36 +120,65 @@ def pid_alive(pid):
     return code.value == 259
 
 
+def free_needed(held):
+    """Free memory (GB) required to start another Blender process while `held` are running: nothing for
+    the first, MIN_FREE_GB for the second, THIRD_SLOT_FREE_GB for the third (and later), None when
+    BLENDER_SLOTS are already running."""
+    if held >= BLENDER_SLOTS:
+        return None
+    return 0 if held == 0 else (MIN_FREE_GB if held == 1 else THIRD_SLOT_FREE_GB)
+
+
 def acquire_slot():
-    """Head and body builders run in parallel. At most two Blender processes run
-    at once, and a second starts only while enough memory is free."""
+    """Blender processes run in parallel under one lock: at most BLENDER_SLOTS at once, a second only
+    while MIN_FREE_GB is free and a third only while THIRD_SLOT_FREE_GB is free, and none starts within
+    SLOT_SETTLE_S of the previous start (its memory is not yet taken when the free figure is read).
+    The decision and the claim happen under a short-lived gate file, so concurrent waiters cannot both
+    pass on the same free-memory reading. Returns the lock file to unlink when the process ends."""
     import time
     slots = WORK/'.blender-slots'
     slots.mkdir(parents=True, exist_ok=True)
+    gate = slots/'gate.lock'
     while True:
-        held = []
-        for k in range(BLENDER_SLOTS):
-            lock = slots/f'slot-{k}.lock'
-            if lock.exists():
-                try:
-                    pid = int(lock.read_text().strip() or 0)
-                except (OSError, ValueError):
-                    pid = 0
-                if pid and not pid_alive(pid):
-                    lock.unlink(missing_ok=True)
-                else:
-                    held.append(k)
-        if not held or free_memory_gb() >= MIN_FREE_GB:
+        try:
+            fd = os.open(gate, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.close(fd)
+        except FileExistsError:
+            try:
+                if time.time()-gate.stat().st_mtime > 30:   # a waiter died inside the gate
+                    gate.unlink(missing_ok=True)
+            except OSError:
+                pass
+            time.sleep(.05)
+            continue
+        try:
+            held = []
             for k in range(BLENDER_SLOTS):
-                if k in held:
-                    continue
-                try:
-                    fd = os.open(slots/f'slot-{k}.lock', os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-                except FileExistsError:
-                    continue
-                os.write(fd, str(os.getpid()).encode())
-                os.close(fd)
-                return slots/f'slot-{k}.lock'
+                lock = slots/f'slot-{k}.lock'
+                if lock.exists():
+                    try:
+                        pid = int(lock.read_text().strip() or 0)
+                    except (OSError, ValueError):
+                        pid = 0
+                    if pid and not pid_alive(pid):
+                        lock.unlink(missing_ok=True)
+                    else:
+                        held.append(k)
+            need = free_needed(len(held))
+            settled = all(time.time()-(slots/f'slot-{k}.lock').stat().st_mtime >= SLOT_SETTLE_S for k in held if (slots/f'slot-{k}.lock').exists())
+            if need is not None and settled and (need == 0 or free_memory_gb() >= need):
+                for k in range(BLENDER_SLOTS):
+                    if k in held:
+                        continue
+                    try:
+                        fd = os.open(slots/f'slot-{k}.lock', os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                    except FileExistsError:
+                        continue
+                    os.write(fd, str(os.getpid()).encode())
+                    os.close(fd)
+                    return slots/f'slot-{k}.lock'
+        finally:
+            gate.unlink(missing_ok=True)
         time.sleep(3)
 
 
@@ -537,6 +576,26 @@ def posed_by_cache(assembly, out, scratch_pose):
     return note
 
 
+def seam_report(source, baseline=None):
+    """Seam check (seam_check.py) of a render directory or assembly against a baseline given as a fit.json,
+    packet directory, assembly name or render directory; absolute scores only without a baseline."""
+    sys.modules.setdefault('loop_tools', sys.modules[__name__])
+    import seam_check
+    return seam_check.check(source, baseline), seam_check
+
+
+def packet_baseline(packet, given):
+    """The baseline a packet is compared with: the --baseline argument, else the baseline assembly the
+    builder recorded in the build.json in the packet, else None."""
+    if given:
+        return given
+    try:
+        recorded = json.loads((Path(packet)/'build.json').read_text(encoding='utf-8'))['baseline']['assembly']
+        return recorded if (work(recorded)/'render/geometry.json').exists() else None
+    except (OSError, KeyError, ValueError, TypeError):
+        return None
+
+
 def cmd_packet(args):
     out = work(args.name)
     # Resolved here: the posed step joins paths onto it, and a relative packet path
@@ -592,6 +651,13 @@ def cmd_packet(args):
             index['posed/'+name] = description
     index['posed/proportions.json'] = 'Bone lengths of the model in figure heights (neck, upper arm, forearm, hand, thigh, shin, foot, shoulder and hip spacing, crotch height)'
     evaluate_measured(packet, args.name)
+    seams, seam_check = seam_report(args.name, packet_baseline(packet, getattr(args, 'baseline', None)))
+    (packet/'seams.json').write_text(json.dumps(seams, indent=1)+'\n')
+    index['seams.json'] = ('Seam check: per joint (neck base, shoulder, elbow, wrist, hip, knee, ankle, tail root, ear-fan root) and view, '
+                           'outline kink, ledge, collar, step, needle and new tonal creases, as the change against the baseline when '
+                           f"one is named (here: {'the baseline ' + (Path(seams['baseline']).parent.name if Path(seams['baseline']).name == 'render' else Path(seams['baseline']).name) if seams['baseline'] else 'none, absolute scores'}); "
+                           'flagged lists the joints over the thresholds in species.json')
+    print('\n'.join(seam_check.summary_lines(seams)))
     index['measured.json'] = 'Measured rubric criteria and invariant I09, computed from fit.json and measurements.json; copy, do not re-judge'
     index['measurements.json'] = 'Silhouette widths as fractions of figure height, model against reference'
     (packet/'index.json').write_text(json.dumps({'assembly': args.name, 'files': index}, indent=1)+'\n')
@@ -604,7 +670,12 @@ def cmd_quick(args):
     run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'quick_silhouette.py'), '--',
                  '--head', str(head/'shape.glb'), '--body', str(body/'shape.glb'), '--out', str(out),
                  '--views', args.views], WORK/f'quick-{out.name}.log')
-    return cmd_fit(argparse.Namespace(source=str(out), out=None, baseline=args.baseline))
+    result = cmd_fit(argparse.Namespace(source=str(out), out=None, baseline=args.baseline))
+    if args.baseline:
+        seams, seam_check = seam_report(str(out), args.baseline)
+        print('\n'.join(seam_check.summary_lines(seams)))
+        (out/'seams.json').write_text(json.dumps(seams, indent=1)+'\n')
+    return result
 
 
 # Silhouette fit: model masks against the reference figures, both mapped into
@@ -1095,7 +1166,9 @@ def main():
     p.add_argument('--fragment-voxels', type=float, default=None); p.set_defaults(func=cmd_assemble)
     p = sub.add_parser('render'); p.add_argument('name'); p.set_defaults(func=cmd_render)
     p = sub.add_parser('check'); p.add_argument('name'); p.set_defaults(func=cmd_check)
-    p = sub.add_parser('packet'); p.add_argument('name'); p.add_argument('packet'); p.set_defaults(func=cmd_packet)
+    p = sub.add_parser('packet'); p.add_argument('name'); p.add_argument('packet')
+    p.add_argument('--baseline', help='baseline for seams.json: packet directory, fit.json or assembly name; default the baseline in the build.json in the packet, else absolute scores')
+    p.set_defaults(func=cmd_packet)
     p = sub.add_parser('measure'); p.add_argument('name'); p.set_defaults(func=cmd_measure)
     p = sub.add_parser('blender'); p.add_argument('script'); p.add_argument('--log')
     p.add_argument('rest', nargs=argparse.REMAINDER); p.set_defaults(func=cmd_blender)
