@@ -88,6 +88,11 @@ PAW = {
     #   topLine.smoothSigma: Gaussian width (world) applied along V to the h, uc and w tables so linear nodes
     #     leave no creases.
     'driftStopZ': None, 'driftStopBlend': None, 'columnFlare': None, 'columnDepthTaper': None, 'topLine': None,
+    # Round 18 option (off by default): columnBackLine {'z': [...], 'V': [...], 'blend': k} cuts the column's back
+    #   with a plane V <= line(z) (linear nodes, V in the paw frame, world units, smooth maximum of width `blend`),
+    #   so the heel's back leans forward going down instead of standing as a vertical wall that overhangs the
+    #   rounded heel (the knob behind the ankle). The heel and dome masses fill in below.
+    'columnBackLine': None,
 }
 
 
@@ -316,6 +321,11 @@ for side in (1, -1):
         half_u_z = half_u-m/2
     column = ellipse_distance(U-cu, V-cv, np.zeros_like(Z+U), half_u_z, half_v_z, .5*(half_u_z+half_v_z))
     column = smax(column, PAW['columnBottomZ']-Z, PAW['columnBottomBlend'])
+    back = PAW['columnBackLine']
+    if back:
+        order_ = np.argsort(back['z'])
+        zs_ = np.asarray(back['z'], float)[order_]; vs_ = np.asarray(back['V'], float)[order_]
+        column = smax(column, V-np.interp(Z, zs_, vs_), back.get('blend', .012))
 
     # 2. paw
     blend = PAW['blend']
