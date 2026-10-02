@@ -74,6 +74,20 @@ PAW = {
         {'toe': 3, 'rootZ': -.9085, 'shift': -.004, 'length': .040, 'radius': .0095, 'bend': 1.0, 'pitch': 36},
     ],
     'box': {'U': [-.10, .26], 'V': [-.30, .16], 'z': [-.98, -.82], 'fade': .012},
+    # Round 17 options (all off by default, so earlier specs reproduce):
+    #   body / instep / dorsum may be set to null to drop that mass.
+    #   driftStopZ: the column centre stops drifting below this z (the front stands upright instead of leaning
+    #     forward into a ramp).
+    #   columnFlare: {'z': [z0, z1], 'medialU': [0, m]} moves the column's medial edge by a linear amount from 0
+    #     at z0 to m at z1 (lateral edge stays), filling the medial pinch.
+    #   topLine: a dome of one lofted mass from a V table: V, h (height above floor of the mid-line), uc (mid-line
+    #     U), w (plan half width), n and a (cross-section falls to 1-a of h at the plan edge as t^n), blend.
+    #   driftStopBlend: smooth-maximum width for driftStopZ (a hard max leaves a crease at the stop).
+    #   columnDepthTaper: {'z': [z0, z1]}: the column's depth scale runs from 1 at z0 to columnDepthScale at z1
+    #     (a flat scale leaves a shelf where the leg meets the column).
+    #   topLine.smoothSigma: Gaussian width (world) applied along V to the h, uc and w tables so linear nodes
+    #     leave no creases.
+    'driftStopZ': None, 'driftStopBlend': None, 'columnFlare': None, 'columnDepthTaper': None, 'topLine': None,
 }
 
 
@@ -278,9 +292,29 @@ for side in (1, -1):
     U, V = side*(X-ax), Y-ay
 
     # 1. ankle column, centre drifting with z, elliptical section
-    cu = col_u0+drift_u*(Z-PAW['columnZ'])
-    cv = col_v0+drift_v*(Z-PAW['columnZ'])
-    column = ellipse_distance(U-cu, V-cv, np.zeros_like(Z+U), half_u, half_v, .5*(half_u+half_v))
+    if PAW['driftStopZ'] is None:
+        Zd = Z
+    elif PAW['driftStopBlend']:
+        Zd = smax(Z, PAW['driftStopZ'], PAW['driftStopBlend'])
+    else:
+        Zd = np.maximum(Z, PAW['driftStopZ'])
+    cu = col_u0+drift_u*(Zd-PAW['columnZ'])
+    cv = col_v0+drift_v*(Zd-PAW['columnZ'])
+    half_u_z = half_u
+    half_v_z = half_v
+    taper = PAW['columnDepthTaper']
+    if taper:
+        tz0, tz1 = taper['z']
+        tw = smooth((Z-tz0)/(tz1-tz0))   # 1 at z0 (native depth), 0 at z1 (scaled depth)
+        half_v_z = half_v/PAW['columnDepthScale']*(PAW['columnDepthScale']+(taper.get('topScale', 1.0)-PAW['columnDepthScale'])*tw)
+    flare = PAW['columnFlare']
+    if flare:
+        fz0, fz1 = flare['z']
+        fw_ = np.clip((Z-fz0)/(fz1-fz0), 0, 1)
+        m = flare['medialU'][0]+(flare['medialU'][1]-flare['medialU'][0])*fw_
+        cu = cu+m/2
+        half_u_z = half_u-m/2
+    column = ellipse_distance(U-cu, V-cv, np.zeros_like(Z+U), half_u_z, half_v_z, .5*(half_u_z+half_v_z))
     column = smax(column, PAW['columnBottomZ']-Z, PAW['columnBottomBlend'])
 
     # 2. paw
@@ -290,12 +324,43 @@ for side in (1, -1):
         value = yaw_ellipsoid(U, V, Z, toe['center'], toe['radii'], toe['yaw'])
         toes = value if toes is None else smin(toes, value, blend['toeToToe'])
     b, ins, dors, heel = PAW['body'], PAW['instep'], PAW['dorsum'], PAW['heel']
-    pad = yaw_ellipsoid(U, V, Z, b['center'], b['radii'], 0)
-    instep = yaw_ellipsoid(U, V, Z, ins['center'], ins['radii'], 0)
-    dorsum = segment_capsule(U, V, Z, dors['a'], dors['b'], dors['ra'], dors['rb'])
     heel_f = yaw_ellipsoid(U, V, Z, heel['center'], heel['radii'], 0)
-    mass = smin(smin(smin(smin(column, heel_f, blend['paw']), dorsum, blend['paw']), pad, blend['paw']),
-                instep, blend['paw'])
+    mass = smin(column, heel_f, blend['paw'])
+    if dors is not None:
+        mass = smin(mass, segment_capsule(U, V, Z, dors['a'], dors['b'], dors['ra'], dors['rb']), blend['paw'])
+    if b is not None:
+        mass = smin(mass, yaw_ellipsoid(U, V, Z, b['center'], b['radii'], 0), blend['paw'])
+    if ins is not None:
+        mass = smin(mass, yaw_ellipsoid(U, V, Z, ins['center'], ins['radii'], 0), blend['paw'])
+    tl = PAW['topLine']
+    if tl:
+        nodes = np.asarray(tl['V'], float)
+        sigma = tl.get('smoothSigma')
+        if sigma:
+            fine = np.arange(nodes[0]-6*sigma, nodes[-1]+6*sigma+1e-9, .0005)
+            kern = np.exp(-.5*(np.arange(-int(4*sigma/.0005), int(4*sigma/.0005)+1)*.0005/sigma)**2)
+            kern /= kern.sum()
+            def table(values):
+                line = np.interp(fine, nodes, values)
+                pad_ = len(kern)//2
+                padded = np.concatenate([np.full(pad_, line[0]), line, np.full(pad_, line[-1])])
+                return np.convolve(padded, kern, mode='valid')
+            h = np.interp(V, fine, table(tl['h'])); uc = np.interp(V, fine, table(tl['uc']))
+            w_ = np.interp(V, fine, table(tl['w']))
+        else:
+            h = np.interp(V, nodes, tl['h']); uc = np.interp(V, nodes, tl['uc']); w_ = np.interp(V, nodes, tl['w'])
+        t_ = np.minimum(np.abs(U-uc)/w_, 1.0)
+        top = FLOOR+h*(1-tl.get('a', .3)*t_**tl.get('n', 3.0))
+        top = top+0*U+0*V
+        gu = np.gradient(top, VS, axis=0)
+        gv = np.gradient(top, VS, axis=1)
+        dtop = (Z-top)/np.sqrt(1+gu*gu+gv*gv)
+        dside = np.abs(U-uc)-w_
+        k_ = tl.get('blend', .012)
+        dome = smax(dtop, dside, k_)
+        dome = smax(dome, np.maximum(nodes[0]-V, V-nodes[-1]), k_)
+        mass = smin(mass, dome, blend['paw'])
+        del dome, dtop, top, gu, gv
     paw = smin(mass, toes, blend['toeToPad'])
     paw = smax(paw, FLOOR-Z, blend['floor'])
     paw = np.minimum(paw, BAND)
@@ -316,7 +381,7 @@ for side in (1, -1):
         'column': {'centerUV': [col_u0, col_v0], 'half': [half_u, half_v], 'drift': [drift_u, drift_v]},
         'box': [low.tolist(), high.tolist()], 'shape': list(shape),
         'maxChange': float(np.max(np.abs(final-native.astype(np.float32))))}
-    del native, column, toes, pad, instep, dorsum, heel_f, mass, paw, merged, final, window
+    del native, column, toes, heel_f, mass, paw, merged, final, window
 
     # claws, in the toe's own forward direction, root sheathed in the toe tip
     for i, c in enumerate(PAW['claws']):
