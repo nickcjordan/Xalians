@@ -195,6 +195,17 @@ Round 17 and half of round 18 ran live, kept nothing, and showed where the time 
 - **State in every round record** (`entry.state`), so `loop_state.py merge <round file>` resumes a stopped batch without a journal replay.
 - **Effort trial result.** One sample: a medium-effort builder used about 30 percent fewer tokens and was judged worse; builders stay at high effort.
 
+## Additions after round 19 (v3.2, 2026-10-02)
+
+Round 19 kept the first neck join and showed four more faults, all fixed before round 20:
+
+- **Order priority is audit-led** (`limits.priorityV3`): the base priority plus 2 per audit rank step (rank 1 adds 24, rank 12 adds 2), plus 20 for a region whose toolsmith tool no order has used yet, plus idle rounds only as a tie-break (0.05 each). The v2 coverage bonus (+100 after six idle rounds) had sent the head and neck (audit ranks 8 and 10) ahead of the fan and torso (ranks 1, 2 and 5) whose tools had just been built.
+- **A kept order resets the stall count** (`limits.keptResetsStall`): the neck was kept on a better verdict and parked in the same round.
+- **Verdict debt, simulated and left off.** A rule letting a better verdict carry one small neighbour loss as a debt was run on all 34 recorded orders: it would have kept round 8's leg build that kinked the tails, and the simulated mean fell to 5.333. Better-but-reverted work is carried forward by the branch rule instead. The code stays behind `limits.verdictDebt`.
+- **Recipe inputs are pinned** (`recipe.py pin`, strict `seed`): a step may only read files whose bytes match what its output used; changed files are frozen as versioned copies and the step repointed. Containment compares a step with its own baseline footprint, so overlapping parts stop reading as side effects. Sweeps add a tool's own `sweepScore`. Dry runs print rebuild minutes, and builders are told to edit late in the chain.
+- **Preflight** (`loop_preflight.py`): tests, the workflow build check, pins, recipe status and args, run before every batch.
+- **Prompt sanity test**: no control characters, and every brief a prompt names exists.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.
