@@ -38,7 +38,9 @@
     "R01": {
       "name": "Head silhouette",
       "method": "Skull and jaw authored as smooth-union ellipsoids (skulls[] plus the chin and cut tables) in shape_head_silhouette_field.py at step H25, raising the crown dome between the ear roots from its own ellipsoid rather than the crown_lift surface warp.",
-      "steps": ["H25"],
+      "steps": [
+        "H25"
+      ],
       "why": "Closes gap rank 8 (flat forehead band and square jaw; R01.3 and R01.5 partial): crown height and jaw section are structure, and a skull ellipsoid sets them from parameters where round 2's crown_lift only warped the existing roof by a hair. The back-view dome sunk behind seams (rank 1, R01.4) is left to the fan rebuild, which strips the shell around the skull.",
       "failureLooks": "Crown nubs or a bald bulb poking above the fan top (figure height grows; check skinTopZ); a window-edge crease ring around the lifted dome; a chin knob or a pinched stem under a narrowed jaw; the fan top edge pulled down beside the crown (the sunk roof).",
       "stallNext": "Author the skull and head base as one lofted section stack from the R01 head base table and sheet.json head stations (a new head-base generator), morphed into the native field below the fan root band.",
@@ -48,7 +50,10 @@
     "R02": {
       "name": "Face",
       "method": "Field-space face rebuild with rebuild_face_features_field.py at step H29, grafted into the fan head by graft_face_field.py at H30, extended with an orbit opening that removes the cheek and brow mass lateral to the globe and brings the globe forward, so the eye shows large in profile while brow and nose still lead.",
-      "steps": ["H29", "H30"],
+      "steps": [
+        "H29",
+        "H30"
+      ],
       "newOptions": "an 'orbit' spec block in rebuild_face_features_field.py (lateral opening axis, opening angle, depth, rim radius) plus iris size and gaze offset keys, each defaulting to a no-op so earlier runs reproduce, as rebuild_arms_field.py clawEach did",
       "why": "Closes gap rank 3 (profile slit: visible eye height over head height about .15 against .33), with ranks 9 (front stare) and 14 (cheek crust and plate). The face tool already authors the eye from parameters and carried R02 to 8.3; what it does not control is the socket's lateral wall, which today is the cheek plate wrapping the globe.",
       "failureLooks": "A bulging bug eye with the globe edge proud of the rim; a dark hole or old socket ring behind the opened wall; brow and nose no longer in front of the eye (R02.6 regresses); a scowl from a heavy lid overhang; the graft window showing as a vertical crease at the face edge.",
@@ -81,14 +86,33 @@
     },
     "R05": {
       "name": "Neck and shoulders",
-      "method": "Assembly join parameters through loop_tools.py assemble --join at step J: lower head-trim-offset from .048 to about .02 so the head cut sits above the stub's lip at world z .465 to .477 and the bridge loft replaces it, set bridge-rings, tangent-limit and min-neck-length for a straight column, and window the fusion smoothing below z .44; then, as a separate body order, round the yoke with shape_neck_shoulders_field.py at B-19 with cutEnable false and the convex round block, no new cut.",
-      "steps": ["J", "B-19"],
-      "why": "Closes gap rank 10 (collar ring under the fan, ledge and corner knobs from behind; R05.4, R05.5, R05.6). The ring is the head stub's depth-ramp lip, which body-only orders could never reach (round 13 left it pixel-identical); the join step now owns the seam, and the shoulder outline already matches within about .01 of figure height, so the yoke needs fill-only rounding rather than another cut.",
-      "failureLooks": "A neck that grows taller or shorter so the head rides up (check figure height and R05.1); a trumpet flare or a thin stem at the bridge from over-smoothing; a new horizontal seam where the loft meets the head; bottle shoulders or dropped caps from rounding too far; upper-arm ledges and corner nubs as in round 13.",
-      "stallNext": "A neck-and-yoke generator run on the joined skin after assembly: an analytic column and trapezius loft from the R05 section tables morphed in over the seam window, so the neck is authored once across both components.",
+      "method": "Authored neck column at step J: extend assemble_reconstructed_creature.py with a --neck-sections table so the bridge loft is built from sheet-derived ellipse sections (front, back, half width per world z from .424 to .497) instead of the measured stub sections, and the head and body stubs inside the fusion window are morphed radially onto that column before remeshing; in the same order add B-19r, the specified fill-only convex round of the yoke with shape_neck_shoulders_field.py (cutEnable false, back and fill off, round block, two passes), which no round has built yet.",
+      "steps": [
+        "J (assembler extension)",
+        "B-19r (new, after B-19)"
+      ],
+      "why": "Round 19 showed the join parameters are exhausted: moving the cut and the fusion window removed the collar ring, but the score did not move because what keeps R05.4 failing is the column's position and shape (back .007 fit behind the sheet over the whole column in both stubs, the nape kink, the tight hourglass fillets), which the spec itself says no join parameter or body round can reach, and R05.5 and R05.6 are held by the yoke plate edge and scapular ledge, whose fill-only round (B-19r) was specified but never built. An authored column across the seam sets the neck's position and fillet radii from parameters in the one step that sees both components, and B-19r closes the yoke half.",
+      "failureLooks": "The head appearing to ride forward or back because the morph reached the skull or chin (check the chin front at z .48 to .50 and the fan root unchanged); a lathe-turned cylinder or bottle neck with no throat corner; a visible band where the morph window fades (z .424 or .497); a new nape bump if the back target runs behind the head's own nape; R05.1 above 1.08 or R05.2 above 1.12; from B-19r, bottle shoulders out of the hold band or ledges and nubs on the upper arms as in round 13.",
+      "stallNext": "Rebuild the neck as part of the head: author the head's neck stub from the same section table in a head step after H33 and the body neck top in a body step after B-23, so each component arrives at the cut already on the column and the join only bridges a .01 gap.",
       "changed": true,
       "respec": true,
-      "respecReason": "The spec's recommended construction routes the neck fix through warp_neck_field.py on the head stub and a body-only forward shift, neither of which a join order can touch, and it still asks for a cap rebuild by cutting. It needs the join parameter targets (trim heights, bridge length, fusion window) and a fill-only rule for the yoke."
+      "respecReason": "The spec's section 0 item 5 and friction 2 declare the .007 nape setback, the nape kink and the stem fillets out of reach and set R05.4 at partial at best; under this method they are the target. The spec must supply the authored section table (world front, back and half width per z .424 to .497, from sheet.json), the morph window and caps, the fillet radii, and the check against the chin and the fan root; its J table (offset .038, fusion window to .497) and its B-19r block stay as written.",
+      "previous": {
+        "method": "Assembly join parameters through loop_tools.py assemble --join at step J: lower head-trim-offset from .048 to about .02 so the head cut sits above the stub's lip at world z .465 to .477 and the bridge loft replaces it, set bridge-rings, tangent-limit and min-neck-length for a straight column, and window the fusion smoothing below z .44; then, as a separate body order, round the yoke with shape_neck_shoulders_field.py at B-19 with cutEnable false and the convex round block, no new cut.",
+        "steps": [
+          "J",
+          "B-19"
+        ],
+        "why": "Closes gap rank 10 (collar ring under the fan, ledge and corner knobs from behind; R05.4, R05.5, R05.6). The ring is the head stub's depth-ramp lip, which body-only orders could never reach (round 13 left it pixel-identical); the join step now owns the seam, and the shoulder outline already matches within about .01 of figure height, so the yoke needs fill-only rounding rather than another cut.",
+        "failureLooks": "A neck that grows taller or shorter so the head rides up (check figure height and R05.1); a trumpet flare or a thin stem at the bridge from over-smoothing; a new horizontal seam where the loft meets the head; bottle shoulders or dropped caps from rounding too far; upper-arm ledges and corner nubs as in round 13.",
+        "stallNext": "A neck-and-yoke generator run on the joined skin after assembly: an analytic column and trapezius loft from the R05 section tables morphed in over the seam window, so the neck is authored once across both components."
+      },
+      "interface": "assemble_reconstructed_creature.py gains --neck-sections <json> (passed through loop_tools assemble --join as neck-sections): {\"rows\": [{\"z\", \"front\", \"back\", \"halfWidth\", \"exp\"}] in world units, \"morph\": {\"zBelow\", \"zAbove\", \"fade\", \"maxShift\"}, \"fillet\": {\"jawRadius\", \"baseRadius\"}}. Without the flag the assembler behaves exactly as now. With it: (1) the loft rings are superellipses from the table, interpolated in z; (2) every stub vertex inside the window moves along its horizontal ray from the column axis to the authored section at its z, weighted by a smooth z and angle falloff, capped at maxShift; (3) the jaw-to-neck and neck-to-trapezius fillets are blended at the given radii; then the existing remesh and fusion smoothing run. The record adds neckSections with target and achieved front, back and half width per row. The builder writes the table from sheet.json through the spec frame (world y = 1.8605 x - .011), the back edge running .0133 fit at the nape to .0188 at y .26.",
+      "review": {
+        "round": 19,
+        "parkReason": "3 rounds without a net gain of 1",
+        "diagnosis": "The J half of the method worked as far as it can (ring gone, R05.1 1.070, R05.2 1.083) and reached the limit the spec predicted; the remaining neck faults are position and shape of the stubs, not the seam. The yoke half was never ordered, so the shoulder criteria could not move."
+      }
     },
     "R06": {
       "name": "Torso and pelvis",
@@ -104,7 +128,9 @@
     "R07": {
       "name": "Arms and forepaws",
       "method": "Analytic arm and forepaw rebuild with rebuild_arms_field.py at step B-23, enlarging the paw to about 1.5 wrist widths with four separately grooved digit lobes and claws leaving each tip at about a third of the digit length, and authoring the deltoid cap from the ARM dict instead of keeping the native shoulder.",
-      "steps": ["B-23"],
+      "steps": [
+        "B-23"
+      ],
       "why": "Closes gap rank 7 (closed fist at about .6x the sheet's paw width, fused digits, short claws; R07.3, R07.5, R07.6) and rank 13 (box shoulder cap and flat lit strip; R07.1). The tool already builds the paw from parameters; the gaps come from the spec's paw size cap and from keeping the native shoulder in rounds 11 and 16, both parameter choices, so the method stays and the targets change.",
       "failureLooks": "A human hand (long splayed fingers or a thumb); a swollen mitten past the sheet's hip outline in the posed front (R07.6 falls); pits between lobes (round 11); a crater or ledge where the new deltoid meets the trunk or R05's cap; claws stuck on the front face rather than out of the tips.",
       "stallNext": "A digit-chain forepaw generator: a palm pad plus four jointed digit capsule chains, each ending in its own claw sheath, swapped in at the wrist by a weighted field morph, keeping the arm from rebuild_arms_field.py.",
@@ -115,7 +141,9 @@
     "R08": {
       "name": "Legs",
       "method": "Station-table resample with reshape_legs_field.py at step B-22 (yMask and zBlur kept) for the remaining sculpt: one calf swell into a slim Achilles line, a soft kneecap plane, the ankle-top crease removed, and the outer thigh and lateral shin lines moved out to the posed bands.",
-      "steps": ["B-22"],
+      "steps": [
+        "B-22"
+      ],
       "why": "Closes gap rank 12 (double calf swell and knee knob; R08.10 thigh band .830, R08.11 shin band .643) now that the widths pass; these are outline and surface adjustments on correct structure, which a resample does. Rank 16 (rest stance .44 against .31) is a joint position the posed fit already corrects and stays a refinement.",
       "failureLooks": "Horizontal ripple bands or a crease at the morph edges (ankle top, thigh root); a tail dent from the depth pass if the yMask slips; the calf back line thinning off the posed shin band (round 14); a bowed shin path.",
       "stallNext": "Loft the lower leg along the knee-to-ankle axis from the R08 section table (the spec's own recommended construction) in a new lower-leg generator, morphed in between y .74 and .925.",
@@ -125,7 +153,9 @@
     "R09": {
       "name": "Hind paws",
       "method": "Analytic hind-paw rebuild with rebuild_hind_paws_field.py at step B-21, replacing the straight dorsum capsule with a profile-curve instep (a convex dome rising from the claw roots to the ankle) and a heel rounded into the sole, with graded toe lobes and claws rooted inside the toe tips.",
-      "steps": ["B-21"],
+      "steps": [
+        "B-21"
+      ],
       "newOptions": "a PAW key for the side top-line curve (control points from the claw roots to the ankle front) with a default that keeps earlier runs exact",
       "why": "Closes gap rank 11 (slipper with a vertical heel cliff and no instep; beads in a row; claws on the toe faces; R09.9 foot band .647, R09.3, R09.8). The paw is already authored from parameters; the ellipsoid table's straight dorsum slope is what builds the ramp, and a curve-driven top line closes what the table cannot.",
       "failureLooks": "A clog or club foot (instep too high, toes buried); a heel bulb or ankle step at the morph band; pits between toes; pearl-headed claws; the sole lifting off the floor contact.",

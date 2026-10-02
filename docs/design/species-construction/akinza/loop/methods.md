@@ -42,7 +42,7 @@ loop_tools.py blender art/species-construction/author_fan_clumps_field.py -- \
 | R02 Face | Face rebuild plus graft, with a new orbit opening block | H29, H30 | no | yes |
 | R03 Ear fan front | Coat clump volume, `author_fan_clumps_field.py --part front` | new | yes | yes |
 | R04 Ear fan rear | Coat clump volume, `author_fan_clumps_field.py --part rear` | new | yes (unparks) | yes |
-| R05 Neck and shoulders | Assembly join parameters, then fill-only yoke rounding | J, B-19 | yes | yes |
+| R05 Neck and shoulders | Authored neck column at the join (`--neck-sections`), plus the fill-only yoke round B-19r (review, round 19) | J, B-19r | yes (unparks) | yes |
 | R06 Torso and pelvis | Authored superellipse section loft, `author_trunk_sections_field.py` | new | yes (unparks) | yes |
 | R07 Arms and forepaws | Arm and paw rebuild with new paw targets and an authored deltoid | B-23 | no | yes |
 | R08 Legs | Station-table resample for the remaining sculpt | B-22 | no | no |
@@ -90,6 +90,13 @@ loop_tools.py blender art/species-construction/author_fan_clumps_field.py -- \
 - **Failure looks.** A taller or shorter neck that lifts the head; a trumpet flare or thin stem; a new seam at the loft top; bottle shoulders; ledges and nubs on the upper arms (round 13).
 - **If it stalls.** A neck-and-yoke generator on the joined skin after assembly, morphed in over the seam window.
 - **Respec.** The spec routes the neck fix through `warp_neck_field.py` on the head stub and a body-only shift, which a join order cannot touch, and still asks for a cap cut.
+
+- **Method review, round 19 (parked: 3 rounds without a net gain of 1).** The J half did what the join can do: cut at offset .038 and the fusion window to z .497 melted the collar ring and kept R05.1 1.070 and R05.2 1.083, but no visual result moved, because R05.4 is held by the column's position and shape (back .007 fit behind the sheet in both stubs, the nape kink, tight hourglass fillets), which the spec itself puts beyond any join parameter, and R05.5 and R05.6 are held by the yoke plate edge and scapular ledge, whose B-19r round was specified and never ordered. The join parameters are exhausted; the stub geometry is the gap.
+- **New method.** Authored neck column at J: `assemble_reconstructed_creature.py` gains `--neck-sections <json>` (through `loop_tools.py assemble --join` as `neck-sections`). The loft rings become superellipses from a sheet-derived table (world front, back, half width, exponent per z from .424 to .497), and stub vertices inside the window move along their horizontal ray from the column axis onto the authored section, weighted by a smooth z and angle falloff and capped by `maxShift`, with jaw and base fillet radii set in the table; then the existing remesh and fusion smoothing run. No flag, no change in behavior. The record gains `neckSections` (target and achieved per row). The same order adds B-19r exactly as the spec's section 4 block.
+- **Why.** It sets the neck's position, nape line and fillet radii from parameters in the one step that sees both components, so the setback and kink become targets instead of friction, and B-19r closes the yoke half.
+- **Failure looks.** Chin or fan root dragged by the morph (check chin front at z .48 to .50 against 0458); a lathe cylinder with no throat corner; a band at the window edges z .424 or .497; a nape bump from a back target behind the head's own nape; R05.1 above 1.08 or R05.2 above 1.12; bottle shoulders or round 13's upper-arm nubs from B-19r.
+- **If it stalls.** Author the neck stub from the same table in a head step after H33 and the body neck top in a body step after B-23, so both arrive on the column and the join only bridges.
+- **Respec.** Section 0 item 5 and friction 2 call the setback out of reach; the spec must add the section table, morph window, caps, fillet radii and the chin and fan-root check. The J table and the B-19r block stay.
 
 ### R06 Torso and pelvis
 
