@@ -1,5 +1,14 @@
 [
  {
+  "title": "Round 20 (v3.2): fan back and torso both kept and combined, mean 5.447 to 5.495",
+  "lede": "2026-10-02. The first real gain since round 13. The round took 65 minutes and about 73M tokens, both kept orders combined cleanly by recipe merge in 6 minutes.",
+  "items": [
+   "R04 fan back (audit gap 1): the round 17 clump branch, rebased onto the current model, replaced the crumpled shard bowl with overlapping pointed locks flowing out and down from a crown tuft, and the profile picket of cones with a band of leaf locks. R04 5.0 to 6.4. Its crown tuft spikes show in the front view and cost the fan front one step (R03 6.4 to 5.7), carried as a debt for the next fan front order.",
+   "R06 torso (audit gap 5), built with the new section loft: the belly band and belt crease are gone, the waist pinch is softer and the chest a little deeper. Kept on a better verdict, but no torso criterion moved: in profile it is still close to a plank.",
+   "The audit-led order picker chose the two top-ranked regions with ready tools, as intended. Both builders used the sweep, the seam check and the rebase."
+  ]
+ },
+ {
   "title": "Round 19 (one round after the v3.1 system changes): neck join kept, head reverted",
   "lede": "2026-10-02. Weighted mean stays 5.447; the neck was kept on the critic verdict without a criterion moving. Round 19 cost about 90M tokens in 2 h 21 min, 51M of it the two toolsmiths.",
   "items": [
