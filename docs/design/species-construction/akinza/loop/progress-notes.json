@@ -1,5 +1,16 @@
 [
  {
+  "title": "Round 17: two orders, both reverted; the system learned two things",
+  "lede": "Weighted mean stays 5.447.",
+  "items": [
+   "R04 ear fan rear, rebuilt as a clump volume (the new method): the critic judged it better, since the shard tiles and tooth rim became clumps flowing outward and down, but no R04 criterion moved and the rear needles cost the fan front one criterion, so the ratchet reverted it.",
+   "R09 hind paws: domed instep and claws from the toe tips, but the claws shrank to pin dots and an ankle collar appeared; the critic called it the same, so it was reverted.",
+   "Builder effort trial: the medium-effort twin of the R04 order used about 30 percent fewer tokens and was judged worse (it flattened the fan top into a shelf). One sample, so builders stay at high effort for now.",
+   "System change from this round: a reverted candidate the critic judged better becomes the starting point of the next order for that region, so a new method is not thrown away after one build.",
+   "System change from this round: the face scored 8.3 on the checklist while the audit ranked its slit profile eye third, so regions above the pass bar with a top-ten structural audit gap are now reopened, and the critic is shown the audit rows. Both changes start at round 19."
+  ]
+ },
+ {
   "title": "Loop v3 kickoff: what the fresh audit says is most wrong (assembled-0458)",
   "lede": "2026-10-01. The v3 loop started from assembled-0458 with a fresh independent audit, ranked by how much each gap stops the model reading as the sheet. The rounds started without waiting; reply if the order looks wrong and I will change course. The tails are held, as you asked.",
   "items": [
