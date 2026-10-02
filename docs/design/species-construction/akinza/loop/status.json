@@ -30,7 +30,8 @@
   "priorityV3": true,
   "auditWeight": 2,
   "toolBonus": 20,
-  "keptResetsStall": true
+  "keptResetsStall": true,
+  "auditRefreshKept": 3
  },
  "baseline": {
   "head": "head-2271",
@@ -1142,5 +1143,6 @@
    "script": "art/species-construction/author_fan_clumps_field.py",
    "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04-pinned.json"
   }
- }
+ },
+ "keptSinceAudit": 2
 }

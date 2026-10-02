@@ -93,7 +93,7 @@ export function priority(state, limits, id, round) {
 // (a join order runs beside a head or body order, never with both). A region that sits in
 // two pools (the neck is in body and join) is worked once: the join slot takes it first
 // and the body slot picks its best of the rest.
-export function pickOrders(state, limits, round, pools) {
+export function pickOrders(state, limits, round, pools, pairs) {
   const P = pools || defaultPools()
   const last = state.lastOrders.slice(-limits.cooldownRounds)
   const cooled = id => last.length === limits.cooldownRounds && last.every(x => x.split('+').includes(id))
@@ -105,9 +105,20 @@ export function pickOrders(state, limits, round, pools) {
   const slots = [head && { ...head, component: 'head' }, body && { ...body, component: 'body' }, join && { ...join, component: 'join' }].filter(Boolean)
   if (both && both.priority > Math.max(0, ...slots.map(s => s.priority))) return [{ ...both, component: 'both' }]
   const cap = limits.ordersPerRound ?? 2
-  if (slots.length <= cap) return slots
-  const keep = new Set(slots.slice().sort((a, b) => b.priority - a.priority).slice(0, cap).map(s => s.component))
-  return slots.filter(s => keep.has(s.component))
+  const chosen = slots.length <= cap ? slots : (() => {
+    const keep = new Set(slots.slice().sort((a, b) => b.priority - a.priority).slice(0, cap).map(s => s.component))
+    return slots.filter(s => keep.has(s.component))
+  })()
+  // v3: a region in a pair (species.json "pairs") is ordered with its partner when the partner
+  // is in the same pool and workable, so one builder tunes the shared tool for both.
+  for (const s of chosen) {
+    const pr = (pairs || []).find(p => p.includes(s.id))
+    if (!pr) continue
+    const pool = P[s.component] || []
+    const partners = pr.filter(x => x !== s.id && pool.includes(x) && priority(state, limits, x, round) !== null)
+    if (partners.length) s.with = partners
+  }
+  return chosen
 }
 
 // v3: the regions whose images moved more than threshold, excluding the target. diff is a
@@ -169,23 +180,35 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   const after = {}
   for (const id of ids) { const s = scoreFrom(rubric, results[id], id); after[id] = s === null ? before[id] : s }
   const target = order.id
-  const pair = (critique.pairwise || []).find(p => p.region === target)
+  // v3: an order may cover a pair of regions that one tool builds (order.with, such as the
+  // fan front and back: rounds 17 and 20 each improved one and cost the other a step).
+  // Every target needs a verdict of better or same, at least one better; no target may lose;
+  // and their weighted sum must rise.
+  const targets = [target, ...(order.with || [])]
+  const verdicts = targets.map(t => (critique.pairwise || []).find(p => p.region === t) || null)
+  const single = targets.length === 1
+  const pair = single ? verdicts[0] : {
+    region: targets.join('+'),
+    verdict: verdicts.some(v => v && v.verdict === 'worse') ? 'worse' : verdicts.some(v => v && v.verdict === 'better') ? 'better' : 'same',
+    reason: verdicts.map((v, i) => `${targets[i]}: ${v ? v.verdict + ' ' + v.reason : 'no verdict'}`).join(' | '),
+  }
+  const wsum = sc => targets.reduce((t, id) => t + state.regions[id].weight * (sc[id] || 0), 0)
   // A side-effect loss of up to regressionDrop in one other region is allowed when the
   // weighted mean still rises (round 2: a head build that took R01 from 2.5 to 6.9 was
   // reverted for smoothing the cheek tufts, R02 3.3 to 2.5). The loss becomes the
   // region's top issue so the next order repays it.
   const lost = ids.filter(id => after[id] !== null && before[id] !== null && after[id] < before[id])
-  const drops = lost.filter(id => id === order.id || before[id] - after[id] > limits.regressionDrop || lost.length > 1)
+  const drops = lost.filter(id => targets.includes(id) || before[id] - after[id] > limits.regressionDrop || lost.length > 1)
   const baseInv = state.invariants || {}
   const broken = (critique.invariants || []).filter(i => !i.ok && baseInv[i.id] !== false).map(i => i.id)
   const gain = Math.round((meanOf(state, after) - meanOf(state, before)) * 1000) / 1000
   const reasons = []
   if (!pair || pair.verdict !== 'better') reasons.push(`critic verdict ${pair ? pair.verdict : 'missing'}`)
-  if (!(after[target] > before[target])) reasons.push(`${target} checklist ${before[target]} to ${after[target]}`)
+  if (single ? !(after[target] > before[target]) : !(wsum(after) > wsum(before))) reasons.push(targets.map(t => `${t} checklist ${before[t]} to ${after[t]}`).join(', '))
   if (drops.length) reasons.push('lost credit in ' + drops.map(id => `${id} ${before[id]} to ${after[id]}`).join(', '))
   if (broken.length) reasons.push('broke invariant ' + broken.join(', '))
   if (gain < limits.meanGain) reasons.push(`weighted mean ${gain >= 0 ? '+' : ''}${gain}`)
-  const debts = lost.filter(id => !drops.includes(id)).map(id => ({ region: id, before: before[id], after: after[id], by: target }))
+  const debts = lost.filter(id => !drops.includes(id)).map(id => ({ region: id, before: before[id], after: after[id], by: targets.join('+') }))
   // A clean visible improvement is kept even when none of its criteria move (round 11:
   // the fan rear lost its comb rows and seams with no side effect, and was reverted
   // because the bowl outline kept every R04 result where it was).
@@ -197,7 +220,7 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   // 19 had four better verdicts with no criterion moving; two were reverted for one small side
   // loss each (the fan back's needles cost the fan front a step; the paw's cuff cost the legs).
   const vd = limits.verdictDebt
-  const debtKeep = vd && reasons.length && pair && pair.verdict === 'better' && !(after[target] < before[target]) && !drops.length && lost.length <= (vd.maxRegions ?? 1) && !broken.length && gain >= (vd.minGain ?? -0.1)
+  const debtKeep = vd && reasons.length && pair && pair.verdict === 'better' && !targets.some(t => after[t] < before[t]) && !drops.length && lost.length <= (vd.maxRegions ?? 1) && !broken.length && gain >= (vd.minGain ?? -0.1)
   if (debtKeep) return { kept: true, keptOnVerdict: true, keptWithDebt: true, reasons: [], results, after, gain, debts, verdict: pair, invariants: critique.invariants || [], ...extra }
   return { kept: !reasons.length, reasons, results, after, gain, debts, verdict: pair || null, invariants: critique.invariants || [], ...extra }
 }
@@ -280,6 +303,11 @@ export function recordEntry(state, limits, round, outcomes, combinedAssembly, ba
   for (const o of outcomes.filter(Boolean)) {
     const r = state.regions[o.order.id]
     const kept = !!(o.decision && o.decision.kept)
+    for (const w of o.order.with || []) {
+      const rw = state.regions[w]
+      rw.history.push({ round, kept, approach: '(paired with ' + o.order.id + ') ' + (o.build ? o.build.approach : '(no build)'), reason: o.failed || (o.decision ? o.decision.reasons.join('; ') : '') })
+      updateStall(rw, round, limits, kept)
+    }
     const reason = o.failed || (o.decision ? o.decision.reasons.join('; ') : '')
     const h = { round, kept, approach: o.build ? o.build.approach : '(no build)', reason, reusable: o.build ? o.build.reusable || [] : [] }
     if (o.decision && o.decision.verdict) h.verdict = o.decision.verdict.verdict

@@ -244,7 +244,7 @@ test('v3 prepare: methods planned once, missing specs written in one parallel pa
   const out = await runWorkflow(generate(), v3Args(status, rub), 'p')
   const labels = out.calls.map(c => c.label)
   assert.equal(labels.filter(l => l.startsWith('methods')).length, 1)
-  assert.ok(!labels.some(l => l.startsWith('audit')), 'an existing audit is not redone without freshAudit')
+  assert.ok(!labels.some(l => l.startsWith('audit assembled')), 'an existing audit is not redone in Prepare without freshAudit')
   // R05 came back respec: its spec is rewritten in the prepare pass
   assert.ok(labels.includes('spec: R05'))
   assert.ok(!labels.some(l => /^(builder|spec).*R1[01]\b/.test(l)), 'held tails get no spec and no order')
@@ -349,6 +349,7 @@ test('v3 branch: a reverted candidate judged better is handed to the next order 
   for (const id of Object.keys(status.regions)) if (id !== 'R04') status.regions[id].hold = true
   status.auditGaps = [{ rank: 1, region: 'R04', gap: 'crumpled paper bowl from behind', structural: true }]
   status.regions.R04.history = []
+  status.lastOrders = []
   const prompts = []
   await runWorkflow(generate(), v3Args(status, rub, { rounds: 3 }), 'b', (label, prompt) => {
     if (label.startsWith('builder')) { prompts.push(prompt); return { ...okBuild('R04'), recipe: `recipes/r${prompts.length}-R04.json` } }
@@ -429,4 +430,51 @@ test('prompts carry no control characters and name brief files that exist (round
       assert.ok(existsSync(join(here, '..', '..', '..', '..', 'docs', 'design', 'species-construction', 'akinza', 'loop', m[1])), `${c.label} names ${m[1]}, which does not exist`)
     }
   }
+})
+
+test('pairs: pickOrders orders a pair partner with its region; the judge needs both targets safe and their sum up', () => {
+  const S = mkState()
+  setScores(S, { R03: 5.7, R04: 6.4 })
+  for (const id of ['R03', 'R04']) { S.regions[id].issues = [{ fixability: 0.6 }]; S.regions[id].lastWorked = 18 }
+  const orders = core.pickOrders(S, LIMITS, 21, null, [['R03', 'R04']])
+  const head = orders.find(o => o.component === 'head')
+  assert.ok(head && head.with && head.with.length === 1)
+  assert.deepEqual([head.id, ...head.with].sort(), ['R03', 'R04'])
+  // judge: R04 better and up, R03 same and unchanged: kept
+  const S2 = mkState()
+  setResults(S2, 'R03', R(4)); setResults(S2, 'R04', R(3))
+  const order = { id: 'R04', component: 'head', with: ['R03'] }
+  const ok = crit({ R03: R(4), R04: R(5) }, { pairwise: [{ region: 'R04', verdict: 'better', reason: '' }, { region: 'R03', verdict: 'same', reason: '' }] })
+  assert.equal(core.judge(S2, rubric, LIMITS, order, {}, ok).kept, true)
+  // R04 up but R03 loses a step: a target loss reverts, even within regressionDrop
+  const lose = crit({ R03: R(3, 1), R04: R(5) }, { pairwise: [{ region: 'R04', verdict: 'better', reason: '' }, { region: 'R03', verdict: 'same', reason: '' }] })
+  const d = core.judge(S2, rubric, LIMITS, order, {}, lose)
+  assert.equal(d.kept, false)
+  assert.match(d.reasons.join(' '), /lost credit in R03/)
+  // a worse verdict on the partner reverts
+  const worse = crit({ R03: R(4), R04: R(5) }, { pairwise: [{ region: 'R04', verdict: 'better', reason: '' }, { region: 'R03', verdict: 'worse', reason: '' }] })
+  assert.equal(core.judge(S2, rubric, LIMITS, order, {}, worse).kept, false)
+  // single-region orders behave as before
+  assert.equal(core.judge(S2, rubric, LIMITS, { id: 'R04', component: 'head' }, {}, lose).kept, true, 'without the pair the R03 loss is a debt')
+})
+
+test('audit rows: a kept candidate that resolves a row removes it; enough kept orders refresh the audit', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R01: 'm' }
+  for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
+  status.regions.R06.history = []
+  status.lastOrders = []
+  status.tools = {}
+  status.auditGaps = [{ rank: 5, region: 'R06', gap: 'plank torso', structural: true }, { rank: 7, region: 'R07', gap: 'fist paw', structural: true }]
+  status.limits.auditRefreshKept = 1
+  status.keptSinceAudit = 0
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 2 }), 'a', (label, prompt) => {
+    if (label.startsWith('builder')) return okBuild('R06')
+    if (label.startsWith('critic r')) return { criteria: rub.regions.R06.map(c => ({ id: c.id, result: 'pass', evidence: '' })), pairwise: [{ region: 'R06', verdict: 'better', reason: '' }], invariants: [], issues: [], auditRows: [{ rank: 5, resolved: true }], summary: '' }
+    return undefined
+  })
+  assert.ok(out.logs.some(l => /audit rows resolved by kept work: 5/.test(l)))
+  assert.ok(out.calls.some(c => /^audit r\d+:/.test(c.label)), 'the second round starts with a refreshed audit')
+  const crit1 = out.calls.find(c => c.label.startsWith('critic r'))
+  assert.match(crit1.prompt, /return auditRows with its rank/)
 })

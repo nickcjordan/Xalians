@@ -29,6 +29,8 @@ const BRIEF = name => LOOPDIR + '\\' + name
 const IDS = Object.keys(S.regions)
 // Order pools: the species config's (args.pools), else v2's head R01-R04, body R05-R11, whole figure R12.
 const POOLS = defaultPools(args.pools)
+// Pairs of regions one tool builds together (species.json "pairs"), ordered as one job.
+const PAIRS = SP.pairs || []
 // The side-effect carry threshold. The judge simulator found a real defect (round 8: a tail
 // dent, R10 4.2 to 3.3) at an image change of .0023, so the threshold is capped below it
 // whatever the shakedown calibrates.
@@ -74,6 +76,7 @@ const CRITIC = {
       items: { type: 'object', properties: { id: { type: 'string' }, ok: { type: 'boolean' }, evidence: { type: 'string' } }, required: ['id', 'ok', 'evidence'] },
     },
     issues: { type: 'array', items: ISSUE },
+    auditRows: { type: 'array', items: { type: 'object', properties: { rank: { type: 'number' }, resolved: { type: 'boolean' }, evidence: { type: 'string' } }, required: ['rank', 'resolved'] } },
     readyForDesigner: { type: 'boolean' },
     summary: { type: 'string' },
   },
@@ -212,7 +215,7 @@ function priority(state, limits, id, round) {
 // (a join order runs beside a head or body order, never with both). A region that sits in
 // two pools (the neck is in body and join) is worked once: the join slot takes it first
 // and the body slot picks its best of the rest.
-function pickOrders(state, limits, round, pools) {
+function pickOrders(state, limits, round, pools, pairs) {
   const P = pools || defaultPools()
   const last = state.lastOrders.slice(-limits.cooldownRounds)
   const cooled = id => last.length === limits.cooldownRounds && last.every(x => x.split('+').includes(id))
@@ -224,9 +227,20 @@ function pickOrders(state, limits, round, pools) {
   const slots = [head && { ...head, component: 'head' }, body && { ...body, component: 'body' }, join && { ...join, component: 'join' }].filter(Boolean)
   if (both && both.priority > Math.max(0, ...slots.map(s => s.priority))) return [{ ...both, component: 'both' }]
   const cap = limits.ordersPerRound ?? 2
-  if (slots.length <= cap) return slots
-  const keep = new Set(slots.slice().sort((a, b) => b.priority - a.priority).slice(0, cap).map(s => s.component))
-  return slots.filter(s => keep.has(s.component))
+  const chosen = slots.length <= cap ? slots : (() => {
+    const keep = new Set(slots.slice().sort((a, b) => b.priority - a.priority).slice(0, cap).map(s => s.component))
+    return slots.filter(s => keep.has(s.component))
+  })()
+  // v3: a region in a pair (species.json "pairs") is ordered with its partner when the partner
+  // is in the same pool and workable, so one builder tunes the shared tool for both.
+  for (const s of chosen) {
+    const pr = (pairs || []).find(p => p.includes(s.id))
+    if (!pr) continue
+    const pool = P[s.component] || []
+    const partners = pr.filter(x => x !== s.id && pool.includes(x) && priority(state, limits, x, round) !== null)
+    if (partners.length) s.with = partners
+  }
+  return chosen
 }
 
 // v3: the regions whose images moved more than threshold, excluding the target. diff is a
@@ -288,23 +302,35 @@ function judge(state, rubric, limits, order, build, critique, opts) {
   const after = {}
   for (const id of ids) { const s = scoreFrom(rubric, results[id], id); after[id] = s === null ? before[id] : s }
   const target = order.id
-  const pair = (critique.pairwise || []).find(p => p.region === target)
+  // v3: an order may cover a pair of regions that one tool builds (order.with, such as the
+  // fan front and back: rounds 17 and 20 each improved one and cost the other a step).
+  // Every target needs a verdict of better or same, at least one better; no target may lose;
+  // and their weighted sum must rise.
+  const targets = [target, ...(order.with || [])]
+  const verdicts = targets.map(t => (critique.pairwise || []).find(p => p.region === t) || null)
+  const single = targets.length === 1
+  const pair = single ? verdicts[0] : {
+    region: targets.join('+'),
+    verdict: verdicts.some(v => v && v.verdict === 'worse') ? 'worse' : verdicts.some(v => v && v.verdict === 'better') ? 'better' : 'same',
+    reason: verdicts.map((v, i) => `${targets[i]}: ${v ? v.verdict + ' ' + v.reason : 'no verdict'}`).join(' | '),
+  }
+  const wsum = sc => targets.reduce((t, id) => t + state.regions[id].weight * (sc[id] || 0), 0)
   // A side-effect loss of up to regressionDrop in one other region is allowed when the
   // weighted mean still rises (round 2: a head build that took R01 from 2.5 to 6.9 was
   // reverted for smoothing the cheek tufts, R02 3.3 to 2.5). The loss becomes the
   // region's top issue so the next order repays it.
   const lost = ids.filter(id => after[id] !== null && before[id] !== null && after[id] < before[id])
-  const drops = lost.filter(id => id === order.id || before[id] - after[id] > limits.regressionDrop || lost.length > 1)
+  const drops = lost.filter(id => targets.includes(id) || before[id] - after[id] > limits.regressionDrop || lost.length > 1)
   const baseInv = state.invariants || {}
   const broken = (critique.invariants || []).filter(i => !i.ok && baseInv[i.id] !== false).map(i => i.id)
   const gain = Math.round((meanOf(state, after) - meanOf(state, before)) * 1000) / 1000
   const reasons = []
   if (!pair || pair.verdict !== 'better') reasons.push(`critic verdict ${pair ? pair.verdict : 'missing'}`)
-  if (!(after[target] > before[target])) reasons.push(`${target} checklist ${before[target]} to ${after[target]}`)
+  if (single ? !(after[target] > before[target]) : !(wsum(after) > wsum(before))) reasons.push(targets.map(t => `${t} checklist ${before[t]} to ${after[t]}`).join(', '))
   if (drops.length) reasons.push('lost credit in ' + drops.map(id => `${id} ${before[id]} to ${after[id]}`).join(', '))
   if (broken.length) reasons.push('broke invariant ' + broken.join(', '))
   if (gain < limits.meanGain) reasons.push(`weighted mean ${gain >= 0 ? '+' : ''}${gain}`)
-  const debts = lost.filter(id => !drops.includes(id)).map(id => ({ region: id, before: before[id], after: after[id], by: target }))
+  const debts = lost.filter(id => !drops.includes(id)).map(id => ({ region: id, before: before[id], after: after[id], by: targets.join('+') }))
   // A clean visible improvement is kept even when none of its criteria move (round 11:
   // the fan rear lost its comb rows and seams with no side effect, and was reverted
   // because the bowl outline kept every R04 result where it was).
@@ -316,7 +342,7 @@ function judge(state, rubric, limits, order, build, critique, opts) {
   // 19 had four better verdicts with no criterion moving; two were reverted for one small side
   // loss each (the fan back's needles cost the fan front a step; the paw's cuff cost the legs).
   const vd = limits.verdictDebt
-  const debtKeep = vd && reasons.length && pair && pair.verdict === 'better' && !(after[target] < before[target]) && !drops.length && lost.length <= (vd.maxRegions ?? 1) && !broken.length && gain >= (vd.minGain ?? -0.1)
+  const debtKeep = vd && reasons.length && pair && pair.verdict === 'better' && !targets.some(t => after[t] < before[t]) && !drops.length && lost.length <= (vd.maxRegions ?? 1) && !broken.length && gain >= (vd.minGain ?? -0.1)
   if (debtKeep) return { kept: true, keptOnVerdict: true, keptWithDebt: true, reasons: [], results, after, gain, debts, verdict: pair, invariants: critique.invariants || [], ...extra }
   return { kept: !reasons.length, reasons, results, after, gain, debts, verdict: pair || null, invariants: critique.invariants || [], ...extra }
 }
@@ -399,6 +425,11 @@ function recordEntry(state, limits, round, outcomes, combinedAssembly, baseRecip
   for (const o of outcomes.filter(Boolean)) {
     const r = state.regions[o.order.id]
     const kept = !!(o.decision && o.decision.kept)
+    for (const w of o.order.with || []) {
+      const rw = state.regions[w]
+      rw.history.push({ round, kept, approach: '(paired with ' + o.order.id + ') ' + (o.build ? o.build.approach : '(no build)'), reason: o.failed || (o.decision ? o.decision.reasons.join('; ') : '') })
+      updateStall(rw, round, limits, kept)
+    }
     const reason = o.failed || (o.decision ? o.decision.reasons.join('; ') : '')
     const h = { round, kept, approach: o.build ? o.build.approach : '(no build)', reason, reusable: o.build ? o.build.reusable || [] : [] }
     if (o.decision && o.decision.verdict) h.verdict = o.decision.verdict.verdict
@@ -442,7 +473,10 @@ function criticPrompt(packet, order, mode, scope) {
     t += `This is a candidate request. Target region: ${order.id} (${S.regions[order.id].name}). Its criteria and current baseline results:
 ${criteriaText(order.id)}
 `
-    if (featuresOn() && (S.auditGaps || []).some(g => g.region === order.id)) t += auditLines(order.id) + 'Check each audit row against the images yourself. A criterion that one of these rows shows failing in both models cannot pass.\n'
+    for (const w of order.with || []) t += `Paired target region (one order builds both; judge it and give its own pairwise verdict exactly like the target): ${w} (${S.regions[w].name}). Its criteria and current baseline results:
+${criteriaText(w)}
+` + auditLines(w)
+    if (featuresOn() && (S.auditGaps || []).some(g => g.region === order.id)) t += auditLines(order.id) + 'Check each audit row against the images yourself. A criterion that one of these rows shows failing in both models cannot pass. For every audit row listed for the target (and any paired target), return auditRows with its rank and resolved true only when this candidate no longer shows the problem the row describes.\n'
     t += 'Judge the target region\'s visual criteria and give the pairwise verdict for it. ' +
       (scope && scope.length ? `Then judge the visual criteria of these other regions, whose images changed more than the side-effect threshold: ${scope.join(', ')}. Leave every other region's visual criteria out; their images did not move enough to judge. ` : 'No other region\'s images moved more than the side-effect threshold, so judge no other region\'s visual criteria. ') +
       'Copy measured criteria for all regions. Report every invariant. List up to three issues for the target region.\n'
@@ -499,8 +533,10 @@ function builderPrompt(order, round, suffix) {
     ? 'This is a join order: change only the recipe\'s assembly step (its args, through the --join parameters of loop_tools.py assemble). Do not change any head or body step.'
     : order.component === 'both' ? 'You may change head and body steps.'
     : `Change only ${order.component} steps whose regions include ${order.id}, or add a ${order.component} step tagged with ${order.id}.`
+  const partners = (order.with || []).map(w => `Paired region ${w} (${S.regions[w].name}), built by the same tool and judged with this order: neither region may lose credit and their combined score must rise.\nIts criteria:\n${criteriaText(w)}\nIts issues: ${S.regions[w].issues ? JSON.stringify(S.regions[w].issues) : 'see status.json'}\n` + branchLine(w) + auditLines(w)).join('\n')
   return `Read the builder brief at ${BRIEF('builder-brief.md')} and follow it, including its recipe section.\n\n` +
-    `Round ${round} work order for the ${order.component === 'both' ? 'head and body' : order.component} component: region ${order.id} (${r.name}).\n` +
+    `Round ${round} work order for the ${order.component === 'both' ? 'head and body' : order.component} component: region ${order.id} (${r.name})${order.with ? ' together with ' + order.with.join(', ') : ''}.\n` +
+    (partners ? partners + '\n' : '') +
     (S.methods[order.id] ? `Method for this region (${BRIEF('methods.md')}): ${S.methods[order.id]}\n` : '') +
     `Rubric criteria with the baseline's current results. Turn failing or partial criteria into passes without breaking passing ones:\n${criteriaText(order.id)}\n\n` +
     `Critic issues, most damaging first (suggestions to verify, not measurements): ${r.issues ? JSON.stringify(r.issues) : 'read this region\'s issues in ' + BRIEF('status.json')}\n\n` +
@@ -566,7 +602,7 @@ function snapshot() {
     const r = S.regions[id]
     regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
   }
-  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, regions }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -647,11 +683,26 @@ for (let i = 0; i < ROUNDS; i++) {
   const round = S.round + 1
   roundNow = round
   // Reopen: a region above the pass bar with a structural gap in the audit's top ten is worked again.
-  if (featuresOn()) for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
-  const orders = pickOrders(S, L, round, POOLS)
+  // Audit refresh: after limits.auditRefreshKept kept orders, a fresh audit re-ranks the gaps,
+  // so a region the loop has fixed stops carrying its old rank (round 20: the fan back kept
+  // its rank 1 bonus after its shard bowl was gone).
+  if (L.auditRefreshKept && (S.keptSinceAudit || 0) >= L.auditRefreshKept) {
+    const fresh = await agent(auditPrompt(), { label: `audit r${round}: ${S.baseline.assembly}`, phase: 'Rounds', schema: AUDIT_SCHEMA, model: 'opus', effort: 'high' })
+    if (fresh) {
+      S.audit = fresh.path
+      S.auditGaps = fresh.gaps.slice().sort((a, b) => a.rank - b.rank).slice(0, 12).map(g => ({ rank: g.rank, region: g.region, gap: g.gap, structural: !!g.structural }))
+      S.keptSinceAudit = 0
+      log(`Round ${round}: audit refreshed: ` + S.auditGaps.map(g => g.rank + ' ' + g.region).join(', '))
+    }
+  }
+  if (featuresOn()) {
+    for (const id of IDS) S.regions[id].reopen = false
+    for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
+  }
+  const orders = pickOrders(S, L, round, POOLS, PAIRS)
   if (!orders.length) { milestone = 'no eligible region'; break }
   S.round = round
-  S.lastOrders.push(orders.map(o => o.id).join('+'))
+  S.lastOrders.push(orders.map(o => [o.id, ...(o.with || [])].join('+')).join('+'))
   log(`Round ${round}: ` + orders.map(o => `${o.component} ${o.id} ${S.regions[o.id].name} (score ${S.regions[o.id].score}, priority ${o.priority})`).join(' | '))
   const baselineAtStart = JSON.parse(JSON.stringify(S.baseline))
   const parkedBefore = new Set(IDS.filter(id => S.regions[id].parked))
@@ -675,6 +726,10 @@ for (let i = 0; i < ROUNDS; i++) {
 
   const outcomes = await parallel(orders.map(order => async () => {
     const out = { order }
+    for (const w of order.with || []) if (!S.specs[w]) {
+      const ws = await agent(specPrompt(w), { label: `spec r${round}: ${w}`, phase: 'Rounds', schema: SPEC, model: 'opus', effort: 'high' })
+      if (ws) S.specs[w] = { path: ws.path, image: ws.image, summary: ws.summary, round }
+    }
     if (!S.specs[order.id]) {
       const spec = await agent(specPrompt(order.id), { label: `spec r${round}: ${order.id}`, phase: 'Rounds', schema: SPEC, model: 'opus', effort: 'high' })
       if (spec) { S.specs[order.id] = { path: spec.path, image: spec.image, summary: spec.summary, round }; out.spec = spec }
@@ -721,6 +776,13 @@ for (let i = 0; i < ROUNDS; i++) {
   if (!combined && kept.length) {
     adoptBest(S, kept)
   }
+  const adopted = combined ? kept : kept.filter(o => o.decision.kept)
+  const resolved = new Set(adopted.flatMap(o => (o.critique.auditRows || []).filter(a => a.resolved).map(a => a.rank)))
+  if (resolved.size) {
+    log(`Round ${round}: audit rows resolved by kept work: ${[...resolved].join(', ')}`)
+    S.auditGaps = (S.auditGaps || []).filter(g => !resolved.has(g.rank))
+  }
+  S.keptSinceAudit = (S.keptSinceAudit || 0) + adopted.length
 
   const entry = recordEntry(S, L, round, outcomes, combined ? combined.build.assembly : null, baselineAtStart.recipe || null)
   entry.recipe = S.baseline.recipe || null

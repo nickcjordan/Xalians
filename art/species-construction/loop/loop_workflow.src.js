@@ -27,6 +27,8 @@ const BRIEF = name => LOOPDIR + '\\' + name
 const IDS = Object.keys(S.regions)
 // Order pools: the species config's (args.pools), else v2's head R01-R04, body R05-R11, whole figure R12.
 const POOLS = defaultPools(args.pools)
+// Pairs of regions one tool builds together (species.json "pairs"), ordered as one job.
+const PAIRS = SP.pairs || []
 // The side-effect carry threshold. The judge simulator found a real defect (round 8: a tail
 // dent, R10 4.2 to 3.3) at an image change of .0023, so the threshold is capped below it
 // whatever the shakedown calibrates.
@@ -72,6 +74,7 @@ const CRITIC = {
       items: { type: 'object', properties: { id: { type: 'string' }, ok: { type: 'boolean' }, evidence: { type: 'string' } }, required: ['id', 'ok', 'evidence'] },
     },
     issues: { type: 'array', items: ISSUE },
+    auditRows: { type: 'array', items: { type: 'object', properties: { rank: { type: 'number' }, resolved: { type: 'boolean' }, evidence: { type: 'string' } }, required: ['rank', 'resolved'] } },
     readyForDesigner: { type: 'boolean' },
     summary: { type: 'string' },
   },
@@ -140,7 +143,10 @@ function criticPrompt(packet, order, mode, scope) {
     t += `This is a candidate request. Target region: ${order.id} (${S.regions[order.id].name}). Its criteria and current baseline results:
 ${criteriaText(order.id)}
 `
-    if (featuresOn() && (S.auditGaps || []).some(g => g.region === order.id)) t += auditLines(order.id) + 'Check each audit row against the images yourself. A criterion that one of these rows shows failing in both models cannot pass.\n'
+    for (const w of order.with || []) t += `Paired target region (one order builds both; judge it and give its own pairwise verdict exactly like the target): ${w} (${S.regions[w].name}). Its criteria and current baseline results:
+${criteriaText(w)}
+` + auditLines(w)
+    if (featuresOn() && (S.auditGaps || []).some(g => g.region === order.id)) t += auditLines(order.id) + 'Check each audit row against the images yourself. A criterion that one of these rows shows failing in both models cannot pass. For every audit row listed for the target (and any paired target), return auditRows with its rank and resolved true only when this candidate no longer shows the problem the row describes.\n'
     t += 'Judge the target region\'s visual criteria and give the pairwise verdict for it. ' +
       (scope && scope.length ? `Then judge the visual criteria of these other regions, whose images changed more than the side-effect threshold: ${scope.join(', ')}. Leave every other region's visual criteria out; their images did not move enough to judge. ` : 'No other region\'s images moved more than the side-effect threshold, so judge no other region\'s visual criteria. ') +
       'Copy measured criteria for all regions. Report every invariant. List up to three issues for the target region.\n'
@@ -197,8 +203,10 @@ function builderPrompt(order, round, suffix) {
     ? 'This is a join order: change only the recipe\'s assembly step (its args, through the --join parameters of loop_tools.py assemble). Do not change any head or body step.'
     : order.component === 'both' ? 'You may change head and body steps.'
     : `Change only ${order.component} steps whose regions include ${order.id}, or add a ${order.component} step tagged with ${order.id}.`
+  const partners = (order.with || []).map(w => `Paired region ${w} (${S.regions[w].name}), built by the same tool and judged with this order: neither region may lose credit and their combined score must rise.\nIts criteria:\n${criteriaText(w)}\nIts issues: ${S.regions[w].issues ? JSON.stringify(S.regions[w].issues) : 'see status.json'}\n` + branchLine(w) + auditLines(w)).join('\n')
   return `Read the builder brief at ${BRIEF('builder-brief.md')} and follow it, including its recipe section.\n\n` +
-    `Round ${round} work order for the ${order.component === 'both' ? 'head and body' : order.component} component: region ${order.id} (${r.name}).\n` +
+    `Round ${round} work order for the ${order.component === 'both' ? 'head and body' : order.component} component: region ${order.id} (${r.name})${order.with ? ' together with ' + order.with.join(', ') : ''}.\n` +
+    (partners ? partners + '\n' : '') +
     (S.methods[order.id] ? `Method for this region (${BRIEF('methods.md')}): ${S.methods[order.id]}\n` : '') +
     `Rubric criteria with the baseline's current results. Turn failing or partial criteria into passes without breaking passing ones:\n${criteriaText(order.id)}\n\n` +
     `Critic issues, most damaging first (suggestions to verify, not measurements): ${r.issues ? JSON.stringify(r.issues) : 'read this region\'s issues in ' + BRIEF('status.json')}\n\n` +
@@ -264,7 +272,7 @@ function snapshot() {
     const r = S.regions[id]
     regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
   }
-  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, regions }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -345,11 +353,26 @@ for (let i = 0; i < ROUNDS; i++) {
   const round = S.round + 1
   roundNow = round
   // Reopen: a region above the pass bar with a structural gap in the audit's top ten is worked again.
-  if (featuresOn()) for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
-  const orders = pickOrders(S, L, round, POOLS)
+  // Audit refresh: after limits.auditRefreshKept kept orders, a fresh audit re-ranks the gaps,
+  // so a region the loop has fixed stops carrying its old rank (round 20: the fan back kept
+  // its rank 1 bonus after its shard bowl was gone).
+  if (L.auditRefreshKept && (S.keptSinceAudit || 0) >= L.auditRefreshKept) {
+    const fresh = await agent(auditPrompt(), { label: `audit r${round}: ${S.baseline.assembly}`, phase: 'Rounds', schema: AUDIT_SCHEMA, model: 'opus', effort: 'high' })
+    if (fresh) {
+      S.audit = fresh.path
+      S.auditGaps = fresh.gaps.slice().sort((a, b) => a.rank - b.rank).slice(0, 12).map(g => ({ rank: g.rank, region: g.region, gap: g.gap, structural: !!g.structural }))
+      S.keptSinceAudit = 0
+      log(`Round ${round}: audit refreshed: ` + S.auditGaps.map(g => g.rank + ' ' + g.region).join(', '))
+    }
+  }
+  if (featuresOn()) {
+    for (const id of IDS) S.regions[id].reopen = false
+    for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
+  }
+  const orders = pickOrders(S, L, round, POOLS, PAIRS)
   if (!orders.length) { milestone = 'no eligible region'; break }
   S.round = round
-  S.lastOrders.push(orders.map(o => o.id).join('+'))
+  S.lastOrders.push(orders.map(o => [o.id, ...(o.with || [])].join('+')).join('+'))
   log(`Round ${round}: ` + orders.map(o => `${o.component} ${o.id} ${S.regions[o.id].name} (score ${S.regions[o.id].score}, priority ${o.priority})`).join(' | '))
   const baselineAtStart = JSON.parse(JSON.stringify(S.baseline))
   const parkedBefore = new Set(IDS.filter(id => S.regions[id].parked))
@@ -373,6 +396,10 @@ for (let i = 0; i < ROUNDS; i++) {
 
   const outcomes = await parallel(orders.map(order => async () => {
     const out = { order }
+    for (const w of order.with || []) if (!S.specs[w]) {
+      const ws = await agent(specPrompt(w), { label: `spec r${round}: ${w}`, phase: 'Rounds', schema: SPEC, model: 'opus', effort: 'high' })
+      if (ws) S.specs[w] = { path: ws.path, image: ws.image, summary: ws.summary, round }
+    }
     if (!S.specs[order.id]) {
       const spec = await agent(specPrompt(order.id), { label: `spec r${round}: ${order.id}`, phase: 'Rounds', schema: SPEC, model: 'opus', effort: 'high' })
       if (spec) { S.specs[order.id] = { path: spec.path, image: spec.image, summary: spec.summary, round }; out.spec = spec }
@@ -419,6 +446,13 @@ for (let i = 0; i < ROUNDS; i++) {
   if (!combined && kept.length) {
     adoptBest(S, kept)
   }
+  const adopted = combined ? kept : kept.filter(o => o.decision.kept)
+  const resolved = new Set(adopted.flatMap(o => (o.critique.auditRows || []).filter(a => a.resolved).map(a => a.rank)))
+  if (resolved.size) {
+    log(`Round ${round}: audit rows resolved by kept work: ${[...resolved].join(', ')}`)
+    S.auditGaps = (S.auditGaps || []).filter(g => !resolved.has(g.rank))
+  }
+  S.keptSinceAudit = (S.keptSinceAudit || 0) + adopted.length
 
   const entry = recordEntry(S, L, round, outcomes, combined ? combined.build.assembly : null, baselineAtStart.recipe || null)
   entry.recipe = S.baseline.recipe || null

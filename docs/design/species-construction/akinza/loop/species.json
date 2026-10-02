@@ -619,5 +619,12 @@
     }
    }
   }
- }
+ },
+ "pairs": [
+  [
+   "R03",
+   "R04"
+  ]
+ ],
+ "pairsNote": "Regions one tool builds together, ordered as one job (2026-10-02: the fan front and back share author_fan_clumps_field.py; rounds 17 and 20 each improved one and cost the other a step)."
 }

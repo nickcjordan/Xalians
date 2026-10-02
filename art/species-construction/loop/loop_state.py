@@ -181,6 +181,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         slim_tools = None
     if status.get('tools'):
         slim['tools'] = status['tools']
+    if status.get('keptSinceAudit'):
+        slim['keptSinceAudit'] = status['keptSinceAudit']
     if status.get('auditGaps'):
         slim['auditGaps'] = [{'rank': g['rank'], 'region': g['region'], 'gap': trim(g['gap'], 220), 'structural': bool(g.get('structural'))} for g in status['auditGaps']]
     if rubric_texts:
@@ -189,6 +191,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         rub = {'regions': {rid: [{'id': c['id'], 'kind': c['kind']} for c in cs] for rid, cs in rubric['regions'].items()}}
     cfg = {'key': species}
     if config:
+        if config.get('pairs'):
+            cfg['pairs'] = config['pairs']
         cfg.update({'label': config.get('label'), 'sideEffectThreshold': config.get('sideEffectThreshold'),
                     'regionImages': {k: v for k, v in (config.get('regionImages') or {}).items() if re.fullmatch(r'R\d+', k)}})
     args = {'species': cfg, 'pools': pools, 'rubric': rub, 'status': slim}
@@ -265,6 +269,10 @@ def merge_status(full, returned, d, species):
         if 'recipe' in b or 'recipe' in S.get('baseline', {}):
             b.setdefault('recipe', S.get('baseline', {}).get('recipe', canon))
         S['baseline'] = b
+    # state the workflow changes round to round: the returned value always wins
+    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants'):
+        if k in returned:
+            S[k] = returned[k]
     for k, v in returned.items():
         if k not in S and k not in DROP_KEYS and k not in ('regions', 'baseline', 'specs'):
             S[k] = v
