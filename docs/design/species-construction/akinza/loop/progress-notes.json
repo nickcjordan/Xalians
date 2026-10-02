@@ -1,5 +1,15 @@
 [
  {
+  "title": "Round 19 (one round after the v3.1 system changes): neck join kept, head reverted",
+  "lede": "2026-10-02. Weighted mean stays 5.447; the neck was kept on the critic verdict without a criterion moving. Round 19 cost about 90M tokens in 2 h 21 min, 51M of it the two toolsmiths.",
+  "items": [
+   "R05 neck, worked at the head-body join for the first time: the head cut moved up and the fusion window raised, so the collar ring at the top of the neck melted away and the nape notch got shallower. Kept on a better verdict. It took 8 minutes and 3M tokens with no component rebuild, the cheapest order the loop has run.",
+   "R01 head shape: a skull ellipsoid raised the crown, but the dome barely clears the fan rims and the chin turned broad; judged the same and reverted after 81 minutes.",
+   "Toolsmiths built the fan front clump tool (R03) and the trunk section loft (R06) before the round, both smoke-tested and ready, but neither region was ordered this round.",
+   "Found and fixed tonight: recipe steps that pointed at files later rewritten (the R03 spec and the hind paw script), a containment zone too shallow for the fan front, and mangled paths in the toolsmith prompt."
+  ]
+ },
+ {
   "title": "Round 17: two orders, both reverted; the system learned two things",
   "lede": "Weighted mean stays 5.447.",
   "items": [

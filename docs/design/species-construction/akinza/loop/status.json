@@ -464,10 +464,10 @@
      "fixability": 0.5
     }
    ],
-   "attempts": 3,
-   "anchorScore": 5,
-   "parked": true,
-   "parkReason": "3 rounds without a net gain of 1",
+   "attempts": 0,
+   "anchorScore": 5.8,
+   "parked": false,
+   "parkReason": null,
    "history": [
     {
      "round": 7,
@@ -508,7 +508,8 @@
      "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 19
+   "lastWorked": 19,
+   "methodChanged": 19
   },
   "R06": {
    "name": "Torso and pelvis",
