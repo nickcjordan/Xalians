@@ -207,6 +207,22 @@ Round 19 kept the first neck join and showed four more faults, all fixed before 
 - **Rebase** (`recipe.py rebase <new base> <candidate> <out>`): branches and toolsmith starters move onto a moved baseline by the `derivedFrom` fingerprints that `set`, `add`, `merge` and `sweep` now record.
 - **Prompt sanity test**: no control characters, and every brief a prompt names exists.
 
+## Additions after the independent audit (v3.4, 2026-10-02)
+
+An independent Fable audit (`LOOP-audit-2026-10-02.md`) found the loop four times more expensive per gain in v3 than in v2's late rounds and identified where. Applied:
+
+- **Lean agents.** Judging and mechanical roles (critic, readers, planner, runner, recorder) run on a lean agent type without the project instructions; the default type re-read about 61K tokens of instructions on every turn, about a third of all tokens.
+- **Split builder.** A planner writes a plan of variants (`plan-schema.md`); a Haiku runner executes it with one blocking `recipe.py run-plan` and builds blind reader packs; three blind Opus readers (`reader-brief.md`) pick the candidate that reads most like the reference; the scoped critic grades only that one. A plan that needs a script change goes to the code builder. One refine pass.
+- **Verdict keep with measured guards** (`limits.verdictKeep`): the readers' majority decides; no measured criterion in a workable region may lose credit, no target may lose, one neighbour may lose visual credit within regressionDrop as a debt, and held regions never block. Simulated on 36 orders: four more keeps, final checklist mean about the same.
+- **Critic scope** is the target plus at most the two regions that moved most.
+- **No polling.** Long commands run in the background and agents wait for the completion notice; `recipe.py candidate` replaces the seven-command chain.
+- **Specs** are short: measurements come from `spec_targets.py`; the spec returns its structure table, which goes inline into the order; specs are rewritten only when the structure changes.
+- **Gate and plateau.** Held regions do not block the gate; `means` persists across merges so the plateau rule can fire; four-round batches.
+- **Priority** keeps the audit rank first, with a smaller tool bonus (5) and an identity bonus (5) for the face, head and fan front.
+- **Modeling scope.** Construction owns the outline and the coat masses (clump shapes, tips, overlaps, rounded sections); strands, fur texture, color and fine creases belong to the surface phase (`akinza/surface-backlog.md`). Readers and critics never judge strand detail.
+- **Cost accounting.** `loop_costs.py` counts usage once per message id; earlier figures in this document and in the progress notes summed duplicated transcript lines and are about 1.8 times too high.
+- **Independent audits.** A fresh auditor on a different model reviews the loop after every two batches, from the raw records and without the orchestrator's conclusions.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.
