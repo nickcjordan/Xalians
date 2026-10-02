@@ -421,7 +421,7 @@ function criticPrompt(packet, order, mode, scope) {
     t += `This is a candidate request. Target region: ${order.id} (${S.regions[order.id].name}). Its criteria and current baseline results:
 ${criteriaText(order.id)}
 `
-    if ((S.auditGaps || []).some(g => g.region === order.id)) t += auditLines(order.id) + 'Check each audit row against the images yourself. A criterion that one of these rows shows failing in both models cannot pass.\n'
+    if (featuresOn() && (S.auditGaps || []).some(g => g.region === order.id)) t += auditLines(order.id) + 'Check each audit row against the images yourself. A criterion that one of these rows shows failing in both models cannot pass.\n'
     t += 'Judge the target region\'s visual criteria and give the pairwise verdict for it. ' +
       (scope && scope.length ? `Then judge the visual criteria of these other regions, whose images changed more than the side-effect threshold: ${scope.join(', ')}. Leave every other region's visual criteria out; their images did not move enough to judge. ` : 'No other region\'s images moved more than the side-effect threshold, so judge no other region\'s visual criteria. ') +
       'Copy measured criteria for all regions. Report every invariant. List up to three issues for the target region.\n'
@@ -439,6 +439,7 @@ function historyCard(id) {
 // judged better but reverted for a small side loss, and a method change rarely flips its
 // criteria on the first build).
 function branchLine(id) {
+  if (!featuresOn()) return ''
   const last = S.regions[id].history.slice(-1)[0]
   if (!last || last.kept || last.verdict !== 'better' || !last.recipe) return ''
   return `Promising branch: round ${last.round}'s candidate ${abs(last.recipe)} was judged better but reverted (${last.reason}). Start from it: carry its changed steps onto the current baseline recipe (recipe.py merge ${last.base ? abs(last.base) : '<that round\'s baseline recipe>'} <current baseline recipe> <that candidate> <your candidate>, or set and add by hand when the merge refuses), then fix what it was reverted for.\n\n`
@@ -446,10 +447,16 @@ function branchLine(id) {
 // The audit's rows for a region, in the builder and critic prompts: the checklist can pass a
 // part the independent audit still ranks as a top gap.
 function auditLines(id) {
+  if (!featuresOn()) return ''
   const rows = (S.auditGaps || []).filter(g => g.region === id)
   if (!rows.length) return ''
   return `Independent audit rows for ${id} (rank: gap): ${rows.map(g => `${g.rank}: ${g.gap}`).join(' | ')}\n\n`
 }
+// args.featuresFrom: the first round that uses the round 17 additions (branches, audit rows,
+// reopen), so a run started before them resumes from the journal with every earlier agent cached.
+const FEATURES_FROM = args.featuresFrom ?? 0
+let roundNow = 0
+const featuresOn = () => roundNow >= FEATURES_FROM
 const candidateRecipe = (round, id) => `${LOOPDIR}\\recipes\\r${String(round).padStart(2, '0')}-${id}.json`
 function builderPrompt(order, round, suffix) {
   const r = S.regions[order.id]
@@ -559,8 +566,6 @@ if (!S.audit || args.freshAudit) {
     log('KICKOFF gaps ' + JSON.stringify(kickoff))
   }
 }
-// Reopen: a region above the pass bar with a structural gap in the audit's top ten is worked again.
-for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
 let replanned = false
 if (!Object.keys(S.methods).length || args.replan) {
   const plan = await agent(methodPrompt(), { label: 'methods ' + S.baseline.assembly, phase: 'Prepare', schema: METHODS, model: 'opus', effort: 'high' })
@@ -586,6 +591,9 @@ for (let i = 0; i < ROUNDS; i++) {
   if (gateMet(S, L)) break
   if (S.round >= L.hardStopRounds) { milestone = 'hard stop'; break }
   const round = S.round + 1
+  roundNow = round
+  // Reopen: a region above the pass bar with a structural gap in the audit's top ten is worked again.
+  if (featuresOn()) for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
   const orders = pickOrders(S, L, round, POOLS)
   if (!orders.length) { milestone = 'no eligible region'; break }
   S.round = round
