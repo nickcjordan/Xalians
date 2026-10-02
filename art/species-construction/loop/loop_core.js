@@ -74,7 +74,16 @@ export function priority(state, limits, id, round) {
   const fix = Math.max(0.3, ...(r.issues || []).map(i => i.fixability || 0.5))
   let p = r.weight * (r.score >= limits.passBar ? 1 : limits.passBar - r.score) * fix
   const idle = r.lastWorked === null ? round : round - r.lastWorked
-  if (idle >= limits.coverageRounds) p += 100 + idle  // coverage: a region idle this long goes next
+  if (limits.priorityV3) {
+    // v3 (after round 19): the independent audit's ranking leads, then a tool built for the
+    // region and not yet used, and idle time only breaks ties. Round 19's coverage bonus
+    // (+100 for six idle rounds) sent the head (audit rank 8) and the neck (rank 10) ahead
+    // of the fan and torso (ranks 1, 2 and 5) whose new tools had just been built.
+    const ranks = (state.auditGaps || []).filter(g => g.region === id).map(g => g.rank)
+    if (ranks.length) p += (limits.auditWeight ?? 2) * Math.max(0, 13 - Math.min(...ranks))
+    if (state.tools && state.tools[id] && !r.toolUsed) p += limits.toolBonus ?? 20
+    p += Math.min(idle, 20) * 0.05
+  } else if (idle >= limits.coverageRounds) p += 100 + idle  // coverage: a region idle this long goes next
   return Math.round(p * 100) / 100
 }
 
@@ -183,6 +192,13 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   const onVerdict = reasons.length && pair && pair.verdict === 'better' && !lost.length && !broken.length && gain >= 0
   const extra = carried.length ? { carried } : {}
   if (onVerdict) return { kept: true, keptOnVerdict: true, reasons: [], results, after, gain, debts: [], verdict: pair, invariants: critique.invariants || [], ...extra }
+  // v3 (limits.verdictDebt): a better verdict may also carry the same kind of debt a score gain
+  // may (one other region losing up to regressionDrop), within a small mean loss. Rounds 17 to
+  // 19 had four better verdicts with no criterion moving; two were reverted for one small side
+  // loss each (the fan back's needles cost the fan front a step; the paw's cuff cost the legs).
+  const vd = limits.verdictDebt
+  const debtKeep = vd && reasons.length && pair && pair.verdict === 'better' && !(after[target] < before[target]) && !drops.length && lost.length <= (vd.maxRegions ?? 1) && !broken.length && gain >= (vd.minGain ?? -0.1)
+  if (debtKeep) return { kept: true, keptOnVerdict: true, keptWithDebt: true, reasons: [], results, after, gain, debts, verdict: pair, invariants: critique.invariants || [], ...extra }
   return { kept: !reasons.length, reasons, results, after, gain, debts, verdict: pair || null, invariants: critique.invariants || [], ...extra }
 }
 
@@ -213,11 +229,14 @@ export function adopt(state, decision, build, critique, component) {
 
 // Mutates the region: the stall-park bookkeeping of one worked order. A region parks when
 // stallAttempts orders in a row fail to lift it stallGain above its anchor score.
-export function updateStall(region, round, limits) {
+export function updateStall(region, round, limits, kept) {
   region.lastWorked = round
   region.attempts = (region.attempts || 0) + 1
   if (region.anchorScore === null || region.anchorScore === undefined) region.anchorScore = region.score
   if (region.score - region.anchorScore >= limits.stallGain) { region.anchorScore = region.score; region.attempts = 0 }
+  // v3: a kept order is progress even when no criterion moved (round 19: the neck join was
+  // kept on a better verdict and parked in the same breath, three attempts without +1).
+  else if (kept && limits.keptResetsStall) region.attempts = 0
   else if (region.attempts >= limits.stallAttempts) { region.parked = true; region.parkReason = `${region.attempts} rounds without a net gain of ${limits.stallGain}` }
   return region
 }
@@ -266,7 +285,7 @@ export function recordEntry(state, limits, round, outcomes, combinedAssembly, ba
     if (o.decision && o.decision.verdict) h.verdict = o.decision.verdict.verdict
     if (o.build && o.build.recipe) { h.recipe = o.build.recipe; if (baseRecipe) h.base = baseRecipe }
     r.history.push(h)
-    updateStall(r, round, limits)
+    updateStall(r, round, limits, kept)
     entry.orders.push({
       region: o.order.id, component: o.order.component, priority: o.order.priority, spec: o.spec ? o.spec.path : null,
       assembly: o.build ? o.build.assembly : null, approach: o.build ? o.build.approach : null, changes: o.build ? o.build.changes : null,

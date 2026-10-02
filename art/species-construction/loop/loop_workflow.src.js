@@ -170,6 +170,7 @@ function branchLine(id) {
 function toolLine(id) {
   const t = S.tools[id]
   if (!t || !t.recipe) return ''
+  S.regions[id].toolUsed = true
   return `Tool for this method: ${t.script || 'see the starter recipe'}, built and smoke-tested by a toolsmith before the rounds. Its starter recipe ${abs(t.recipe)} adds the step to the baseline. Start from it (unless a promising branch is listed above), tune its parameters, and change the script only to fix what tuning cannot reach.\n\n`
 }
 function toolPrompt(t) {
@@ -210,7 +211,7 @@ function builderPrompt(order, round, suffix) {
     `Shared sheet measurement: ${BRIEF('sheet.json')} (outlines, station tables, landmarks; overlay sheet.png). Compare against it with sheet_measure.py model rather than re-tracing the sheet.\n\n` +
     'Search parameters with recipe.py sweep (many values in one call, scored automatically) rather than one build per turn, and read the seam check (loop_tools.py quick --baseline prints it; the packet has seams.json) before you hand over: a new crease, collar or step at a joint is the side effect that reverted the last two promising candidates.\n\n' +
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it).\n` +
-    `Your candidate recipe: ${candidateRecipe(round, order.id + (suffix || ''))}. ${scopeLine} Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
+    `Your candidate recipe: ${candidateRecipe(round, order.id + (suffix || ''))}. ${scopeLine} Run recipe.py build --dry-run first: it prints what rebuilds and the minutes it costs. An early head step rebuilds the chain after it (about 25 minutes per build), so prefer changing or adding a step as late in the chain as the region allows. Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
     `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break.\n` +
     'Return the structured output with recipe set to your candidate recipe path, head and body set to the component directories your assembly used, assembly and packet set to yours, regionChange set to the magnitude of every region in diff.json regionChange (region id to number), containment as one line (the largest foreign-region displacement and where), approach as one recognisable sentence, and reusable options you added.'
 }
@@ -261,7 +262,7 @@ function snapshot() {
   const regions = {}
   for (const id of IDS) {
     const r = S.regions[id]
-    regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, issues: r.issues || [], history: r.history.slice(-2) }
+    regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
   }
   return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, regions }
 }

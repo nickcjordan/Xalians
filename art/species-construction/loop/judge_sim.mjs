@@ -79,6 +79,8 @@ export function simulate(species, rules, opts) {
   const idx = indexJournal(readJournals(o.journals || DEFAULT_JOURNALS))
   const S = initialState(species, rubric, status, P.packets, rescore)
   const L = S.limits
+  // rules.limits overrides limits for a proposed rule (for example verdictDebt or keptResetsStall)
+  Object.assign(L, rules.limits || {})
   const means = [rescore.mean]
   const rows = [], notes = []
   let plateauAt = null

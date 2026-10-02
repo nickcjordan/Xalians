@@ -149,6 +149,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
                'score': r.get('score'), 'results': r.get('results', {}),
                'attempts': r.get('attempts', 0), 'anchorScore': r.get('anchorScore'),
                'parked': bool(r.get('parked')), 'lastWorked': r.get('lastWorked')}
+        if r.get('toolUsed'):
+            out['toolUsed'] = True
         if r.get('hold'):
             # held by Nick's direction: never ordered, whatever its score (the tails, 2026-10-01)
             out['hold'] = True
@@ -177,6 +179,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         slim_tools = tools
     else:
         slim_tools = None
+    if status.get('tools'):
+        slim['tools'] = status['tools']
     if status.get('auditGaps'):
         slim['auditGaps'] = [{'rank': g['rank'], 'region': g['region'], 'gap': trim(g['gap'], 220), 'structural': bool(g.get('structural'))} for g in status['auditGaps']]
     if rubric_texts:
@@ -214,7 +218,7 @@ def cmd_args(a):
 
 # ---- merge ------------------------------------------------------------------------------------
 
-REGION_FIELDS = ('score', 'results', 'attempts', 'anchorScore', 'lastWorked')
+REGION_FIELDS = ('score', 'results', 'attempts', 'anchorScore', 'lastWorked', 'toolUsed')
 DROP_KEYS = {'means', 'methods'}
 
 

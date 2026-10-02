@@ -248,7 +248,7 @@ test('v3 prepare: methods planned once, missing specs written in one parallel pa
   // R05 came back respec: its spec is rewritten in the prepare pass
   assert.ok(labels.includes('spec: R05'))
   assert.ok(!labels.some(l => /^(builder|spec).*R1[01]\b/.test(l)), 'held tails get no spec and no order')
-  assert.equal(out.ret.status.methods.R04, 'method R04')
+  assert.ok(out.logs.some(l => /^Methods: .*R04 NEW/.test(l)), 'the plan marks R04 new')
   assert.ok(out.logs.some(l => l.startsWith('Methods: ')))
 })
 
@@ -365,6 +365,7 @@ test('v3 branch: a reverted candidate judged better is handed to the next order 
 test('v3 tools: a needed generator is built by a toolsmith before the rounds and handed to the order for its region; every round record carries the state', { skip: !existsSync(P.status) }, async () => {
   const status = readJson(P.status), rub = readJson(P.rubric)
   status.methods = { R06: 'author the trunk from sections' }
+  status.tools = {}
   for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
   status.regions.R06.history = []
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, tools: [{ region: 'R06', script: 'author_trunk_sections_field.py', ready: false }, { region: 'R11', script: 'x.py', ready: false }] }), 'w')
@@ -375,4 +376,57 @@ test('v3 tools: a needed generator is built by a toolsmith before the rounds and
   assert.match(b.prompt, /Tool for this method: tool_R06\.py.*tool-R06\.json/)
   const rec = out.calls.find(c => c.label.startsWith('record r'))
   assert.match(rec.prompt, /"state":\{"round":\d+,"baseline"/)
+})
+
+test('priorityV3: the audit rank leads, an unused tool adds, idle time only breaks ties', () => {
+  const S = mkState()
+  setScores(S, { R03: 6.4, R04: 5, R01: 8.1, R05: 5.8 })
+  for (const id of ['R01', 'R03', 'R04', 'R05']) { S.regions[id].issues = [{ fixability: 0.6 }]; S.regions[id].lastWorked = 2 }
+  S.regions.R01.reopen = true
+  S.auditGaps = [{ rank: 1, region: 'R04' }, { rank: 2, region: 'R03' }, { rank: 8, region: 'R01' }, { rank: 10, region: 'R05' }]
+  const L3 = { ...LIMITS, priorityV3: true }
+  const p = id => core.priority(S, L3, id, 19)
+  assert.ok(p('R04') > p('R01') && p('R03') > p('R01'), 'audit ranks 1 and 2 beat a long-idle rank 8')
+  S.tools = { R03: { recipe: 'r' } }
+  const before = p('R03')
+  assert.equal(Math.round((before - p('R04')) * 100) / 100 > 0, true, 'an unused tool lifts its region')
+  S.regions.R03.toolUsed = true
+  assert.ok(p('R03') < before)
+  // v2 limits keep the coverage bonus
+  assert.ok(core.priority(S, LIMITS, 'R05', 19) > 100)
+})
+
+test('keptResetsStall: a kept order with no criterion moving does not park the region', () => {
+  const r = { score: 5.8, anchorScore: 5, attempts: 2, lastWorked: 13 }
+  core.updateStall(r, 19, { ...LIMITS, keptResetsStall: true }, true)
+  assert.equal(r.parked, undefined); assert.equal(r.attempts, 0)
+  const r2 = { score: 5.8, anchorScore: 5, attempts: 2, lastWorked: 13 }
+  core.updateStall(r2, 19, LIMITS, true)
+  assert.equal(r2.parked, true)
+})
+
+test('verdictDebt: a better verdict carrying one small neighbour loss is kept, and the loss becomes a debt', () => {
+  const S = mkState()
+  setResults(S, 'R04', R(4)); setResults(S, 'R03', R(5))
+  const c = crit({ R04: R(4), R03: R(4, 1) }, { pairwise: better('R04') })
+  const L3 = { ...LIMITS, verdictDebt: { maxRegions: 1, minGain: -0.1 } }
+  const d = core.judge(S, rubric, L3, { id: 'R04', component: 'head' }, {}, c)
+  assert.equal(d.kept, true); assert.equal(d.keptWithDebt, true)
+  assert.deepEqual(d.debts.map(x => x.region), ['R03'])
+  assert.equal(core.judge(S, rubric, LIMITS, { id: 'R04', component: 'head' }, {}, c).kept, false, 'without the rule it reverts')
+  const c2 = crit({ R04: R(4), R03: R(3) }, { pairwise: better('R04') })
+  assert.equal(core.judge(S, rubric, L3, { id: 'R04', component: 'head' }, {}, c2).kept, false, 'a loss beyond regressionDrop still reverts')
+})
+
+test('prompts carry no control characters and name brief files that exist (round 19: a tab in a path)', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.tools = {}
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 2, freshAudit: true, replan: true, tools: [{ region: 'R06', script: 'x.py', ready: false }] }), 'z')
+  for (const c of out.calls) {
+    assert.doesNotMatch(c.prompt, /[\u0000-\u0008\u000b-\u001f]/, 'control character in the prompt of ' + c.label)
+    for (const m of c.prompt.matchAll(/akinza\\loop\\([\w-]+\.(?:md|json))/g)) {
+      if (/^(?:round|r\d|tool-|gap-audit-\d)/.test(m[1])) continue
+      assert.ok(existsSync(join(here, '..', '..', '..', '..', 'docs', 'design', 'species-construction', 'akinza', 'loop', m[1])), `${c.label} names ${m[1]}, which does not exist`)
+    }
+  }
 })

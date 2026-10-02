@@ -26,7 +26,11 @@
   "coverageRounds": 6,
   "plateauRounds": 3,
   "plateauGain": 0.15,
-  "ordersPerRound": 2
+  "ordersPerRound": 2,
+  "priorityV3": true,
+  "auditWeight": 2,
+  "toolBonus": 20,
+  "keptResetsStall": true
  },
  "baseline": {
   "head": "head-0455",
@@ -945,7 +949,8 @@
   "2026-10-01: hard stop after round 16. Final model assembled-0458 (head-0455, body-0448), weighted 5.447.",
   "2026-10-01: loop v3 starts at round 17 from assembled-0458 (LOOP-v3.md). New hard stop 32; plateau 3 rounds under .15 escalates to method review, a second plateau stops the batch. R10 and R11 are held (Nick: the tail is fine).",
   "2026-10-01: v3 batch 1 paused by Nick during round 18 (R03 builder interrupted). Prepare (audit 0458, method plan, six specs) and rounds 17 and 18 folded in by fold_r17_r18.mjs; nothing kept, mean 5.447.",
-  "2026-10-01: round 19 (v3.1, one round by Nick's request) merged from the round record's state snapshot: R05 join kept on the critic verdict, R01 reverted."
+  "2026-10-01: round 19 (v3.1, one round by Nick's request) merged from the round record's state snapshot: R05 join kept on the critic verdict, R01 reverted.",
+  "2026-10-02: v3.2 limits: priorityV3 (audit rank leads, unused tool +20, idle only a tie-break), keptResetsStall. verdictDebt was simulated on all 34 recorded orders and left off: it would have kept the round 8 leg build that kinked the tails and lowered the simulated mean to 5.333."
  ],
  "decisionsForNick": [
   {
