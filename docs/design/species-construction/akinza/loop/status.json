@@ -426,7 +426,7 @@
      "reason": "R04 checklist 5 to 5; weighted mean -0.073",
      "reusable": [],
      "verdict": "better",
-     "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04.json",
+     "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04-pinned.json",
      "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
@@ -865,7 +865,7 @@
       }
      ],
      "verdict": "better",
-     "recipe": "docs/design/species-construction/akinza/loop/recipes/r18-R09.json",
+     "recipe": "docs/design/species-construction/akinza/loop/recipes/r18-R09-pinned.json",
      "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],

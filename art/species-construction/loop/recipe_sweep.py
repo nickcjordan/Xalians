@@ -506,6 +506,7 @@ def run(args, rc):
 
         rc.apply_edits(data, args.step, pairs, spec_path, keep_same=True)
         candidate_path = sweep_dir/f'{vid}.json'
+        rc.stamp_derived(data, recipe.data, recipe.path)
         rc.dump(data, candidate_path)
         cand = rc.Recipe(candidate_path)
         keys = rc.compute_keys(cand)

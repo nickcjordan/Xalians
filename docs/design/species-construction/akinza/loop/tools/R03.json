@@ -1,7 +1,7 @@
 {
  "region": "R03",
  "script": "art/species-construction/author_fan_clumps_field.py",
- "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
+ "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-pinned.json",
  "step": "H36 (after H33; the assembly head is rewired to it)",
  "spec": "art/species-construction/specs/r03_front_spec.json",
  "parameters": [

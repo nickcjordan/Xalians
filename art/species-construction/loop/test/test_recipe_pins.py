@@ -235,5 +235,89 @@ class DumpStyle(unittest.TestCase):
             self.assertEqual(path.read_bytes().decode('utf-8'), json.dumps({'a': {'b': [1, 2]}, 'c': 1}, indent=1))
 
 
+class Rebase(unittest.TestCase):
+    def step(self, sid, base, **extra):
+        return {'id': sid, 'component': 'body', 'regions': ['R06'], 'kind': 'body', 'script': SCRIPT, 'runner': 'blender',
+                'inputs': {'base': base}, 'args': ['--out', '{out}'], 'existing': f'body-{sid}', 'expect': {'vertices': 1}, **extra}
+
+    def recipe(self, *steps, head='H', body=None, existing='assembled-1'):
+        return {'schemaVersion': 1, 'species': 'x', 'roots': {'r': {}}, 'steps': list(steps),
+                'assembly': {'id': 'J', 'head': head, 'body': body or steps[-1]['id'], 'args': ['--head-scale', '.5'], 'existing': existing}}
+
+    def base(self):
+        return self.recipe(self.step('A', 'r'), self.step('B', 'A'), self.step('C', 'B'))
+
+    def test_takes_candidate_changes_over_the_new_base_and_drops_what_it_invalidates(self):
+        old = self.base()
+        new = self.base()
+        new['steps'][1]['script'] = 'art/species-construction/loop/recipe_steps.py'   # the new base repointed B's script
+        new['assembly']['args'] = ['--head-scale', '.6']                              # and changed the join
+        cand = self.base()
+        cand['steps'][1]['args'] = ['--spec', 'nope.json', '--out', '{out}']          # the candidate changed B's args
+        out = rc.rebase_recipes(rc.derived_block(old, 'recipe.json'), new, cand, None, [])
+        b = {s['id']: s for s in out['steps']}
+        self.assertEqual(b['B']['args'], cand['steps'][1]['args'])
+        self.assertEqual(b['B']['script'], new['steps'][1]['script'])
+        self.assertNotIn('existing', b['B'])
+        self.assertNotIn('expect', b['C'])      # downstream of a changed step
+        self.assertIn('existing', b['A'])       # untouched steps are the new base's, outputs included
+        self.assertEqual(set(b['B']['pins']), set(rs.read_files(b['B']['script'], b['B']['args'])))
+        self.assertEqual(out['assembly']['args'], ['--head-scale', '.6'])
+        self.assertNotIn('existing', out['assembly'])
+
+    def test_same_field_changed_differently_is_refused(self):
+        old, new, cand = self.base(), self.base(), self.base()
+        new['steps'][1]['args'] = ['--a', '1']
+        cand['steps'][1]['args'] = ['--a', '2']
+        with self.assertRaises(SystemExit) as raised:
+            rc.rebase_recipes(rc.derived_block(old, 'recipe.json'), new, cand, None, [])
+        self.assertIn('B.args', str(raised.exception))
+
+    def test_the_same_change_on_both_sides_is_not_a_conflict(self):
+        old, new, cand = self.base(), self.base(), self.base()
+        new['steps'][1]['args'] = cand['steps'][1]['args'] = ['--a', '1']
+        out = rc.rebase_recipes(rc.derived_block(old, 'recipe.json'), new, cand, None, [])
+        self.assertEqual(out['steps'][1]['args'], ['--a', '1'])
+
+    def test_added_steps_keep_their_position_and_the_assembly_takes_a_changed_sink(self):
+        old = self.base()
+        new = self.base()
+        new['assembly']['existing'] = 'assembled-9'
+        cand = self.recipe(self.step('A', 'r'), self.step('B', 'A'), self.step('B2', 'B'), self.step('C', 'B2'))
+        cand['assembly']['body'] = 'C'
+        out = rc.rebase_recipes(rc.derived_block(old, 'recipe.json'), new, cand, None, [])
+        self.assertEqual([s['id'] for s in out['steps']], ['A', 'B', 'B2', 'C'])
+        self.assertEqual(out['steps'][3]['inputs'], {'base': 'B2'})  # C was rewired by the candidate
+        self.assertNotIn('existing', out['steps'][2])
+        self.assertNotIn('existing', out['assembly'])
+
+    def test_assembly_inputs_unchanged_keeps_its_output(self):
+        old, new = self.base(), self.base()
+        new['assembly']['existing'] = 'assembled-9'
+        cand = self.base()
+        out = rc.rebase_recipes(rc.derived_block(old, 'recipe.json'), new, cand, None, [])
+        self.assertEqual(out['assembly']['existing'], 'assembled-9')
+
+    def test_derived_from_replaces_the_old_base(self):
+        old, new = self.base(), self.base()
+        cand = self.base()
+        cand['steps'][2]['args'] = ['--x', '1']
+        rc.stamp_derived(cand, old, Path('docs/x/recipes/cand.json'))
+        self.assertEqual(set(cand['derivedFrom']['steps']), {'A', 'B', 'C'})
+        out = rc.rebase_recipes(None, new, cand, None, [])
+        self.assertEqual(out['steps'][2]['args'], ['--x', '1'])
+
+    def test_a_candidate_of_a_candidate_keeps_the_original_base_and_the_live_recipe_is_always_a_base(self):
+        base, cand = self.base(), self.base()
+        rc.stamp_derived(cand, base, Path('docs/x/recipe.json'))
+        first = json.dumps(cand['derivedFrom'], sort_keys=True)
+        second = self.base()
+        second['steps'][0]['args'] = ['--changed']
+        rc.stamp_derived(second, cand, Path('docs/x/loop/recipes/c1.json'))
+        self.assertEqual(json.dumps(second['derivedFrom'], sort_keys=True), first)
+        rc.stamp_derived(second, cand, Path('docs/x/recipe.json'))   # a promoted candidate is a base again
+        self.assertEqual(second['derivedFrom']['steps']['A'], rc.step_fingerprint(cand['steps'][0]))
+
+
 if __name__ == '__main__':
     unittest.main()

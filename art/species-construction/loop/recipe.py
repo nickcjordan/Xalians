@@ -7,6 +7,7 @@
   python art/species-construction/loop/recipe.py seed <recipe.json> [--write-expect] [--loose]
   python art/species-construction/loop/recipe.py set <recipe.json> <out.json> <step id> <arg> <value> [<arg> <value> ...]
   python art/species-construction/loop/recipe.py add <recipe.json> <out.json> --after <step id> --step <step.json> [--rewire STEP:INPUT ...]
+  python art/species-construction/loop/recipe.py rebase [<old base>] <new base> <candidate> <out> [--live]
   python art/species-construction/loop/recipe.py merge <base.json> <a.json> <b.json> <out.json>
   python art/species-construction/loop/recipe.py verify <recipe.json> [--no-cache] [--no-packet]
   python art/species-construction/loop/recipe.py contain <recipe.json> <step id> [--out-dir NAME] [--zones FILE] [--no-reference]
@@ -1021,6 +1022,7 @@ def cmd_set(args):
     out = Path(args.out).resolve()
     apply_edits(data, args.step, list(zip(args.pairs[0::2], args.pairs[1::2])),
                 lambda doc: out.with_name(f'{out.stem}.{args.step}.spec.json'))
+    stamp_derived(data, recipe.data, recipe.path)
     dump(data, out)
     candidate = load(out)
     cache = Cache(candidate)
@@ -1056,6 +1058,7 @@ def cmd_add(args):
     refresh_pins(new, new)
     drop_expect(data, [new['id']])
     out = Path(args.out).resolve()
+    stamp_derived(data, recipe.data, recipe.path)
     dump(data, out)
     candidate = load(out)  # validates the DAG
     cache = Cache(candidate)
@@ -1115,12 +1118,221 @@ def cmd_merge(args):
     out['steps'] = steps
     out['assembly'] = a['assembly'] if a['assembly'] != base['assembly'] else b['assembly']
     drop_expect(out, [s['id'] for s in steps if s != base_s.get(s['id'])])
+    stamp_derived(out, base, args.base)
     dump(out, Path(args.out))
     candidate = load(args.out)
     cache = Cache(candidate)
     plan, _ = make_plan(candidate, cache)
     say(f'wrote {args.out}')
     print_plan(candidate, plan, cache)
+
+
+# ---------------------------------------------------------------- derivedFrom and rebase
+
+FP_FIELDS = ('script', 'args', 'inputs', 'regions', 'runner', 'kind', 'component')
+
+
+def _fp(value):
+    return rs.sha256_bytes(json.dumps(value, sort_keys=True).encode())
+
+
+def step_fingerprint(step):
+    """{field: hash} of the fields of a step that say what it builds."""
+    return {f: _fp(step.get(f)) for f in FP_FIELDS}
+
+
+def assembly_fingerprint(asm):
+    return {f: _fp(asm.get(f)) for f in ('head', 'body', 'args')}
+
+
+def derived_block(data, path):
+    """What a candidate records about the base it was cut from: the base file's sha256 (LF form) and a per-field fingerprint of
+    every base step and of the assembly, so `rebase` can tell what the candidate changed without finding the old base."""
+    path = Path(path)
+    try:
+        shown = path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        shown = path.as_posix()
+    return {'recipe': shown, 'sha256': rs.file_hash(path, normalise=True) if path.is_file() else None,
+            'steps': {s['id']: step_fingerprint(s) for s in data['steps']},
+            'assembly': assembly_fingerprint(data['assembly'])}
+
+
+def stamp_derived(cand_data, base_data, base_path):
+    """Record `derivedFrom` in a candidate cut from base_data. A candidate of a candidate keeps the original base's block; the live
+    recipe.json (which moves every kept round, and may carry a promoted candidate's stale block) is always the base itself."""
+    if Path(base_path).name != 'recipe.json' and base_data.get('derivedFrom'):
+        cand_data['derivedFrom'] = copy.deepcopy(base_data['derivedFrom'])
+    else:
+        cand_data['derivedFrom'] = derived_block(base_data, base_path)
+
+
+def candidate_commit(path):
+    """The commit a committed, unmodified candidate file is at; None when it is untracked, modified or outside the repository."""
+    try:
+        rel = Path(path).resolve().relative_to(ROOT).as_posix()
+        if rs.git(ROOT, 'status', '--porcelain', '--', rel).strip():
+            return None
+        commit = rs.git(ROOT, 'log', '-1', '--format=%H', '--', rel).decode().strip()
+        return commit or None
+    except (ValueError, RuntimeError):
+        return None
+
+
+def freeze_candidate_bytes(key, commit, notes):
+    """The repo-relative path a candidate's file argument or script should name: the file itself when its bytes are what they were at
+    the candidate's commit (or it has no such history), else a frozen copy of the candidate-time bytes."""
+    if commit is None or Path(key).is_absolute() or not (ROOT/key).is_file():
+        return key
+    try:
+        blob = rs.git(ROOT, 'show', f'{commit}:{key}')
+    except RuntimeError:
+        return key
+    text = Path(key).suffix.lower() in rs.TEXT_SUFFIXES
+    body = rs.lf(blob) if text else blob
+    sha = rs.sha256_bytes(body)
+    if sha == rs.file_hash(ROOT/key):
+        return key
+    target = rs.frozen_name(ROOT/key, sha)
+    if not target.is_file():
+        target.write_bytes(body)
+    notes.append(f'{key} has changed since the candidate was committed ({commit[:8]}); frozen the candidate-time bytes as {rs.pin_key(target)}')
+    return rs.pin_key(target)
+
+
+def rebase_recipes(old, new, cand, commit, notes):
+    """The rebased recipe dict: the new base, plus every step the candidate added or changed (field by field, against the old base's
+    fingerprints), with fresh pins. Raises SystemExit naming every field both sides changed differently."""
+    block = old if old is not None else cand.get('derivedFrom')
+    base_steps = block['steps']
+    base_asm = block['assembly']
+    out = copy.deepcopy(new)
+    by = {s['id']: s for s in out['steps']}
+    new_ids = {s['id'] for s in new['steps']}
+    conflicts, changed, added, taken = [], set(), [], {}
+    cand_ids = {s['id'] for s in cand['steps']}
+    for cs in cand['steps']:
+        sid = cs['id']
+        if sid not in base_steps:
+            if sid in by:
+                if step_fingerprint(by[sid]) != step_fingerprint(cs):
+                    conflicts.append(f'step {sid}: added by the candidate and by the new base, differently')
+            else:
+                added.append(cs)
+            continue
+        fp_old, fp_cand = base_steps[sid], step_fingerprint(cs)
+        fields = [f for f in FP_FIELDS if fp_cand[f] != fp_old[f]]
+        if not fields:
+            continue
+        if sid not in by:
+            conflicts.append(f'step {sid}: the candidate changed {", ".join(fields)} and the new base removed the step')
+            continue
+        fp_new = step_fingerprint(by[sid])
+        for f in fields:
+            if fp_new[f] != fp_old[f] and fp_new[f] != fp_cand[f]:
+                conflicts.append(f'step {sid}.{f}: changed by the candidate and by the new base, differently')
+        if any(c.startswith(f'step {sid}.') for c in conflicts):
+            continue
+        for f in fields:
+            if f in cs:
+                by[sid][f] = copy.deepcopy(cs[f])
+            else:
+                by[sid].pop(f, None)
+        if 'note' in cs:
+            by[sid]['note'] = cs['note']
+        changed.add(sid)
+        taken[sid] = fields
+    for sid in base_steps:
+        if sid not in cand_ids and sid in by:
+            if step_fingerprint(by[sid]) == base_steps[sid] or sid not in new_ids:
+                out['steps'].remove(by.pop(sid))
+                changed.add(sid)
+            else:
+                conflicts.append(f'step {sid}: removed by the candidate and changed by the new base')
+    asm_fields = {}
+    for f in ('head', 'body'):
+        fp_cand = _fp(cand['assembly'].get(f))
+        if fp_cand != base_asm[f]:
+            if _fp(new['assembly'].get(f)) not in (base_asm[f], fp_cand):
+                conflicts.append(f'assembly.{f}: changed by the candidate and by the new base, differently')
+            else:
+                asm_fields[f] = cand['assembly'][f]
+    if conflicts:
+        fail('cannot rebase: '+'; '.join(conflicts))
+    if _fp(cand['assembly'].get('args')) != base_asm['args'] and cand['assembly'].get('args') != new['assembly'].get('args'):
+        notes.append('the candidate changed the assembly args; the new base args are kept')
+    # added steps keep their position: after the nearest earlier candidate step that is in the result
+    order = [s['id'] for s in cand['steps']]
+    for cs in added:
+        k = order.index(cs['id'])
+        prev = next((order[j] for j in range(k-1, -1, -1) if order[j] in by or order[j] in {a['id'] for a in added[:added.index(cs)]}), None)
+        position = 0
+        if prev is not None:
+            position = next(i for i, s in enumerate(out['steps']) if s['id'] == prev)+1
+        out['steps'].insert(position, copy.deepcopy(cs))
+        by[cs['id']] = out['steps'][position]
+        changed.add(cs['id'])
+        taken[cs['id']] = list(FP_FIELDS)
+    asm = out['assembly']
+    asm.update(copy.deepcopy(asm_fields))
+    # existing, expect and minutes describe an output the step no longer produces; fresh pins of the bytes it names
+    for sid in changed:
+        step = by.get(sid)
+        if step is None:
+            continue
+        for key in ('existing', 'expect', 'minutes'):
+            step.pop(key, None)
+        if 'script' in taken[sid]:
+            step['script'] = freeze_candidate_bytes(step['script'], commit, notes)
+        if 'args' in taken[sid]:
+            for key, position in rs.arg_files(step['args']).items():
+                moved = freeze_candidate_bytes(key, commit, notes)
+                if moved != key:
+                    step['args'][position] = ('{repo}/'+moved) if step['args'][position].startswith('{repo}/') else str(rs.pin_path(moved))
+        step['pins'] = rs.pins_now(step['script'], step['args'])
+    affected = set()
+    for sid in changed:
+        if sid in by:
+            affected |= descendants_of(out, sid)
+    for step in out['steps']:
+        if step['id'] in affected:
+            step.pop('expect', None)
+    if asm_fields or asm['head'] in affected or asm['body'] in affected:
+        for key in ('existing', 'expect'):
+            asm.pop(key, None)
+    return out
+
+
+def cmd_rebase(args):
+    paths = args.paths
+    if len(paths) == 4:
+        old_path, new_path, cand_path, out_path = paths
+        old = derived_block(json.loads(Path(old_path).read_text(encoding='utf-8')), old_path)
+    elif len(paths) == 3:
+        new_path, cand_path, out_path = paths
+        old = None
+    else:
+        fail('usage: rebase <new base> <candidate> <out>   or   rebase <old base> <new base> <candidate> <out>')
+    new = json.loads(Path(new_path).read_text(encoding='utf-8'))
+    cand = json.loads(Path(cand_path).read_text(encoding='utf-8'))
+    if old is None and not cand.get('derivedFrom'):
+        fail(f'{cand_path} has no derivedFrom block (it predates it); give the old base: rebase <old base> <new base> <candidate> <out>')
+    notes = []
+    out = rebase_recipes(old, new, cand, None if args.live else candidate_commit(cand_path), notes)
+    out['derivedFrom'] = derived_block(new, new_path)
+    out['rebasedFrom'] = {'candidate': rs.pin_key(Path(cand_path).resolve()), 'candidateSha256': rs.file_hash(cand_path, normalise=True)}
+    dump(out, Path(out_path).resolve(), like=new_path)
+    result = load(out_path)
+    cache = Cache(result)
+    plan, _ = make_plan(result, cache)
+    say(f'wrote {out_path}')
+    for note in notes:
+        print('note: '+note)
+    print_plan(result, plan, cache)
+    if plan_changed(plan):
+        for sid, key, state in plan_changed(plan):
+            print(f'{state} {key} ({sid})')
+        sys.exit(1)
 
 
 def cmd_verify(args):
@@ -1425,6 +1637,10 @@ def main():
     p.add_argument('pairs', nargs=argparse.REMAINDER); p.set_defaults(func=cmd_set)
     p = sub.add_parser('add'); p.add_argument('recipe'); p.add_argument('out'); p.add_argument('--after', required=True)
     p.add_argument('--step', required=True); p.add_argument('--rewire', action='append'); p.set_defaults(func=cmd_add)
+    p = sub.add_parser('rebase', help='re-cut a candidate onto a newer base recipe')
+    p.add_argument('paths', nargs='+', help='<new base> <candidate> <out>, or <old base> <new base> <candidate> <out>')
+    p.add_argument('--live', action='store_true', help='pin the candidate files as they are now instead of freezing candidate-time bytes (a tool script improved since the candidate was committed)')
+    p.set_defaults(func=cmd_rebase)
     p = sub.add_parser('merge'); p.add_argument('base'); p.add_argument('a'); p.add_argument('b'); p.add_argument('out')
     p.set_defaults(func=cmd_merge)
     p = sub.add_parser('verify'); p.add_argument('recipe'); p.add_argument('--no-cache', action='store_true')

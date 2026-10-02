@@ -1,7 +1,7 @@
 {
  "region": "R06",
  "script": "art/species-construction/author_trunk_sections_field.py",
- "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R06.json",
+ "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R06-pinned.json",
  "step": "B-20T (inserted after B-20 and before B-21; B-23 refillets the arm root on the new trunk)",
  "spec": "art/species-construction/specs/trunk-sections-r06-v1.json",
  "helper": "art/species-construction/trunk_stations_from_sheet.py (reads the station table from loop/sheet.json and lists it beside the spec)",
