@@ -33,13 +33,13 @@
   "keptResetsStall": true
  },
  "baseline": {
-  "head": "head-0455",
-  "body": "body-2118",
-  "assembly": "assembled-2180",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2180",
+  "head": "head-2271",
+  "body": "body-2276",
+  "assembly": "assembled-2278",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2278",
   "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
- "round": 19,
+ "round": 20,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -59,7 +59,8 @@
   "R03+R07",
   "R04+R09",
   "R03+R09",
-  "R01+R05"
+  "R01+R05",
+  "R04+R06"
  ],
  "specs": {
   "R10": {
@@ -217,7 +218,8 @@
      "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 19
+   "lastWorked": 19,
+   "toolUsed": false
   },
   "R02": {
    "name": "Face",
@@ -288,16 +290,17 @@
      ]
     }
    ],
-   "lastWorked": 10
+   "lastWorked": 10,
+   "toolUsed": false
   },
   "R03": {
    "name": "Ear fan front",
    "weight": 3,
-   "score": 6.4,
+   "score": 5.7,
    "results": {
     "R03.1": "pass",
     "R03.2": "pass",
-    "R03.3": "partial",
+    "R03.3": "fail",
     "R03.4": "partial",
     "R03.5": "partial",
     "R03.6": "pass",
@@ -399,24 +402,47 @@
      ]
     }
    ],
-   "lastWorked": 16
+   "lastWorked": 16,
+   "toolUsed": false
   },
   "R04": {
    "name": "Ear fan rear and profile",
    "weight": 2.5,
-   "score": 5,
+   "score": 6.4,
    "results": {
     "R04.1": "pass",
     "R04.2": "pass",
-    "R04.3": "fail",
+    "R04.3": "partial",
     "R04.4": "partial",
     "R04.5": "fail",
     "R04.6": "pass",
-    "R04.7": "fail"
+    "R04.7": "partial"
    },
-   "issues": [],
-   "attempts": 1,
-   "anchorScore": 5,
+   "issues": [
+    {
+     "region": "R04",
+     "summary": "Profile: the R03 front slabs still fill the cavity window and the rear lock band stands as a straight vertical stack of leaves, so no curved shell around a cup reads (R04.5).",
+     "evidence": "m04 head-side and m02 left 3x crops; m01 left and r04 show a pale tuft, a dark cavity at x_side .035 to .055 and a shaggy shell band behind at .055 to .097.",
+     "fix": "Apply the spec's depth plan: sweep the outer L wing (u .20 to .28) back in plan from df .004 to .046 to about df .044 to .086 so it reads end on as the shell band, curve the E band in profile so its top leans back by about .015 over its height, and with an R03 respec clear the front slabs out of x_side .035 to .055 (y .04 to .14) so the cup hollow shows.",
+     "fixability": 0.4
+    },
+    {
+     "region": "R04",
+     "summary": "A continuous thin crease ledge outlines the smooth head dome from behind, with a bead at the top centre, so the head reads as a separate shield set into the wings (R04.3, R04.7, R01.4).",
+     "evidence": "m04 head-back 3x crop of the dome and m02 back.",
+     "fix": "Bury the I roots the spec's .006 below the envelope and widen the skin blend from .006 to about .012 with strip smoothing raised from 3 to 5 or 6 along the crease, so the wing locks dive into a soft concave valley about .01 wide; drop the K roots' crossing of the parting (k-root-shift .006 to 0) or round it so the top-centre bead goes.",
+     "fixability": 0.6
+    },
+    {
+     "region": "R04",
+     "summary": "The crown tuft spikes and rear top locks rise above the front fan, flattening the front V tilt and blunting the image-right tip (R03.3 regression), while the rear top edge itself is a smooth run of leaf backs rather than spiky locks rising to the tips (R04.4); the locks are hard-edged leaves with a needle fringe on the lower edge.",
+     "evidence": "m02 front and m04 head-front 3x crops (crown .016 below the right tip and level on the left, against .032 and .018 in 2180); m03 turn-135 and turn-225.",
+     "fix": "Lower the C tuft spike tips by about .01 so they stay behind the front crown in the front view; keep the T row tips .014 inside the top outline except in the final fifth and raise the outermost T and E tips by about .01 to .015 so the top edge climbs to up-flared points; lift lock roundness from 1.2 to about 1.4 to soften the leaf edge line and raise the E tip radius from .0015 to about .002 to remove the needle fringe.",
+     "fixability": 0.65
+    }
+   ],
+   "attempts": 0,
+   "anchorScore": 6.4,
    "parked": false,
    "history": [
     {
@@ -428,10 +454,42 @@
      "verdict": "better",
      "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04-pinned.json",
      "base": "docs/design/species-construction/akinza/recipe.json"
+    },
+    {
+     "round": 20,
+     "kept": true,
+     "approach": "Rear ear fan regrown as 69 overlapping leaf-shaped locks (convex taper .55 with ellipse sections, no needle tips) with a K crown ridge swept down and out, carried from the round 17 branch onto the current baseline.",
+     "reason": "",
+     "reusable": [
+      {
+       "option": "author_fan_clumps_field.py --tip-rows ROW=value,...",
+       "what": "Sets a per-row tip radius (K, I, M, T, E, C) in figure units, so one row can be blunted without touching the crown tuft."
+      },
+      {
+       "option": "author_fan_clumps_field.py --k-sweep DEG and --k-root-shift",
+       "what": "Turns the K crown clumps downward and outward about their roots by DEG degrees, and moves the roots toward and past the centerline by the given figure-unit distance."
+      },
+      {
+       "option": "author_fan_clumps_field.py --k-flat-root",
+       "what": "Makes the K root as wide as its widest point, so the two crown clumps fuse into one ridge instead of two beads."
+      },
+      {
+       "option": "author_fan_clumps_field.py --section-p P",
+       "what": "Sets one superellipse exponent for every clump section; 2 is a plain ellipse, which removes the boxy facets of the table's 2.4 to 2.6 on I, M, T and E rows."
+      },
+      {
+       "option": "existing flags --taper-exp .55 --thick-exp .6 --samples 90",
+       "what": "A convex taper gives leaf-shaped locks with a short point and no long needle; 90 samples remove the polygon faceting."
+      }
+     ],
+     "verdict": "better",
+     "recipe": "docs/design/species-construction/akinza/loop/recipes/r20-R04.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 17,
-   "methodChanged": 16
+   "lastWorked": 20,
+   "methodChanged": 16,
+   "toolUsed": true
   },
   "R05": {
    "name": "Neck and shoulders",
@@ -471,7 +529,6 @@
    "attempts": 0,
    "anchorScore": 5.8,
    "parked": false,
-   "parkReason": null,
    "history": [
     {
      "round": 7,
@@ -513,7 +570,8 @@
     }
    ],
    "lastWorked": 19,
-   "methodChanged": 19
+   "methodChanged": 19,
+   "toolUsed": false
   },
   "R06": {
    "name": "Torso and pelvis",
@@ -534,21 +592,24 @@
    "issues": [
     {
      "region": "R06",
-     "summary": "In profile the trunk has almost no rib-cage-to-waist depth change: side chest over waist 1.097 against the sheet 1.539 (R06.7), waist run 1.267x the sheet (R06.6), so R06.9 fails.",
-     "fix": "Deepen the rib cage at .30 to .36 of figure height mainly on the back (dorsal swell about .010 to .012) plus at most .005 forward so R06.8 stays in band, taking side chest depth at .32 from about .113 to .128.",
-     "fixability": 0.5
+     "summary": "In profile the trunk is a straight vertical plank: no forward chest plane, no waist recess, no rump fill (audit row 5).",
+     "evidence": "m02 left 4x against m01 left; measurements.json left profile: depth .1347 at .34 to .36 against the sheet's .149 to .166, .1246 at .38 against .176, waist .109 to .115 at .42 to .46 against .082; R06.7 .727, R06.6 1.334.",
+     "fix": "Push the chest front forward by about .015 to .02 of figure height at .34 to .38 (depth to about .155 to .165) and pull the waist in front and back by about .01 each at .42 to .46 (depth to about .088), keeping R06.2's mesh-section waist depth at or above .9 of the sheet; let the back swell out again at .50 to .54 for the rump. R06.8 must stay within .01, so move the chest front at .36 together with the chin line.",
+     "fixability": 0.55
     },
     {
      "region": "R06",
-     "summary": "A faint horizontal band still crosses the lower belly at the old pelvis ledge height in the front and side views (R06.9, R06.3).",
-     "fix": "Smooth the front and flank surface over a band about .03 of figure height centred on the old ledge (fit about .47 to .48) with a gaussian of sigma about .01, keeping the half-width anchors.",
-     "fixability": 0.7
-    },
-    {
-     "region": "R06",
-     "summary": "From the front the waist pinches into a sharp hourglass and the rib cage and hips read narrow beside the sheet (posed front trunk half IoU .746).",
-     "fix": "Keep the waist width but soften the pinch: widen the lower rib cage at .34 to .40 by about .005 per side and the outer hip and upper thigh at .50 to .56 by about .008 to .01 per side.",
+     "summary": "From the front the trunk is still a pinched hourglass with broad square shoulders and a quick hip flare, against the sheet's slim, near-straight column.",
+     "evidence": "m02 front and m06 trunk-front against m01 front at equal height: the taper starts right under the armpits, the waist is a tight concave run and the hips flare out fast below it.",
+     "fix": "Hold the rib cage width nearer its armpit value down to about .38, then taper in one long gentle curve to the waist at .44 (front waist already 1.056, keep it under 1.10), and soften the hip flare at .46 to .52 by about .005 to .01 per side; check that R06.10 (trunk IoU .852) does not drop.",
      "fixability": 0.6
+    },
+    {
+     "region": "R06",
+     "summary": "The new trunk build adds small surface defects from behind: a soft dent on the image-right rear flank and dark dimples at the inner shoulder-blade corners.",
+     "evidence": "m02 back 6x crop near x 1222, y 280 (about .55 of figure height): a dark oval dent absent in 2180; m02 back near x 1105 and 1180, y 145, and the lower corners of m06 neck-rear: dark dimples.",
+     "fix": "Sand the flank dent flush (about .003 to .005 deep) and blend the back swell (+.002 at .32 to .36) into the scapulae so no dimple forms at the inner blade corners; likely from the lateral weight ramp or back_swell in trunk-r20-v2.",
+     "fixability": 0.8
     }
    ],
    "attempts": 0,
@@ -598,10 +659,38 @@
        "what": "To reuse the baseline pose in 'loop_tools.py packet' for a new body, copy untracked/species-construction/akinza/pose-cache/<baseline body>/ to pose-cache/<new body>/ before running packet, so the greedy refit is skipped."
       }
      ]
+    },
+    {
+     "round": 20,
+     "kept": true,
+     "approach": "Trunk lofted from a station table with the back edge held at the waist, the lateral weight ramp widened so no chest crease forms, and the section parameters Gaussian-smoothed after PCHIP (smoothSigma .008) to remove station banding.",
+     "reason": "",
+     "reusable": [
+      {
+       "option": "author_trunk_sections_field_r20.py: spec smoothSigma (fit units, default 0 = plain PCHIP)",
+       "what": "Gaussian-smooths the station-parameter curves after PCHIP, removing the faint band that grazing light reads at each station height; .008 is clean, .012 rounds the waist more."
+      },
+      {
+       "option": "art/species-construction/loop/shade_trunk.py",
+       "what": "Quick Workbench front, left and three-quarter trunk renders (studio and grazing matcap) of any body shape.glb, to see bands, crease and chest or waist volume in about 20 seconds."
+      },
+      {
+       "option": "art/species-construction/loop/make_trunk_spec_r20.py",
+       "what": "Writes trunk spec variants from the v1 table (native_hw, hold_back, exp_front/exp_back, lat=wide, smooth_front, hw_soft, back_swell) for recipe.py sweep --variants with a --spec entry."
+      },
+      {
+       "option": "weights.lateral inner/outer tables in the trunk spec (.30 to .46 ramp)",
+       "what": "A wide, slow lateral weight ramp removes the horizontal chest crease the v1 .36 to .40 ramp made."
+      }
+     ],
+     "verdict": "better",
+     "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\r20-R06.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 15,
-   "methodChanged": 16
+   "lastWorked": 20,
+   "methodChanged": 16,
+   "toolUsed": true
   },
   "R07": {
    "name": "Arms and forepaws",
@@ -691,7 +780,8 @@
      ]
     }
    ],
-   "lastWorked": 16
+   "lastWorked": 16,
+   "toolUsed": false
   },
   "R08": {
    "name": "Legs",
@@ -767,7 +857,8 @@
      ]
     }
    ],
-   "lastWorked": 14
+   "lastWorked": 14,
+   "toolUsed": false
   },
   "R09": {
    "name": "Hind paws",
@@ -869,7 +960,8 @@
      "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 18
+   "lastWorked": 18,
+   "toolUsed": false
   },
   "R10": {
    "name": "Tails",
@@ -891,7 +983,8 @@
    "history": [],
    "lastWorked": 1,
    "hold": true,
-   "holdReason": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head"
+   "holdReason": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head",
+   "toolUsed": false
   },
   "R11": {
    "name": "Tail root and pelvis",
@@ -911,7 +1004,8 @@
    "history": [],
    "lastWorked": null,
    "hold": true,
-   "holdReason": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head"
+   "holdReason": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head",
+   "toolUsed": false
   },
   "R12": {
    "name": "Whole-form coherence",
@@ -930,7 +1024,8 @@
    "parked": true,
    "parkReason": "Coherence follows the part fixes; reopen when parts reach 5",
    "history": [],
-   "lastWorked": null
+   "lastWorked": null,
+   "toolUsed": false
   }
  },
  "v1": "status-v1.json (16 rounds, weighted 5.12 to 6.05 on the 0 to 10 scale)",
@@ -950,7 +1045,8 @@
   "2026-10-01: loop v3 starts at round 17 from assembled-0458 (LOOP-v3.md). New hard stop 32; plateau 3 rounds under .15 escalates to method review, a second plateau stops the batch. R10 and R11 are held (Nick: the tail is fine).",
   "2026-10-01: v3 batch 1 paused by Nick during round 18 (R03 builder interrupted). Prepare (audit 0458, method plan, six specs) and rounds 17 and 18 folded in by fold_r17_r18.mjs; nothing kept, mean 5.447.",
   "2026-10-01: round 19 (v3.1, one round by Nick's request) merged from the round record's state snapshot: R05 join kept on the critic verdict, R01 reverted.",
-  "2026-10-02: v3.2 limits: priorityV3 (audit rank leads, unused tool +20, idle only a tie-break), keptResetsStall. verdictDebt was simulated on all 34 recorded orders and left off: it would have kept the round 8 leg build that kinked the tails and lowered the simulated mean to 5.333."
+  "2026-10-02: v3.2 limits: priorityV3 (audit rank leads, unused tool +20, idle only a tie-break), keptResetsStall. verdictDebt was simulated on all 34 recorded orders and left off: it would have kept the round 8 leg build that kinked the tails and lowered the simulated mean to 5.333.",
+  "2026-10-02: round 20 (v3.2, one round) merged from the round record: R04 rear fan clump branch and R06 trunk loft both kept and combined as assembled-2278; mean 5.447 to 5.495."
  ],
  "decisionsForNick": [
   {

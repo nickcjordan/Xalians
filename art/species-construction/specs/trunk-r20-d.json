@@ -1,0 +1,230 @@
+{
+ "units": "fit; front/back side-view x (negative forward), world y = -0.0125 + 1.8605 x; halfWidth front view about world x 0, world = 1.8605 x; world z = -0.957 + 1.8605 (1 - y)",
+ "description": "R06 round 20 variant hold_back=1 exp_front=1.9 exp_back=1.9 lat=wide smooth_front=1 hw_soft=1",
+ "figureHeight": 1.8605,
+ "floorZ": -0.957,
+ "sideOffset": -0.0125,
+ "centerX": 0.0,
+ "interpolate": "pchip",
+ "stations": [
+  {
+   "y": 0.26,
+   "front": -0.038,
+   "back": 0.0224,
+   "halfWidth": null,
+   "split": 0.58,
+   "expFront": null,
+   "expBack": null
+  },
+  {
+   "y": 0.28,
+   "front": -0.0524,
+   "back": 0.026,
+   "halfWidth": 0.085,
+   "split": 0.58,
+   "expFront": 1.9,
+   "expBack": 1.9
+  },
+  {
+   "y": 0.3,
+   "front": -0.069,
+   "back": 0.031,
+   "halfWidth": 0.095,
+   "split": 0.58,
+   "expFront": 1.9,
+   "expBack": 1.9
+  },
+  {
+   "y": 0.32,
+   "front": -0.085,
+   "back": 0.036,
+   "halfWidth": 0.1,
+   "split": 0.58,
+   "expFront": 1.9,
+   "expBack": 1.9
+  },
+  {
+   "y": 0.34,
+   "front": -0.095,
+   "back": 0.038,
+   "halfWidth": 0.104,
+   "split": 0.58,
+   "expFront": 1.9,
+   "expBack": 1.9
+  },
+  {
+   "y": 0.36,
+   "front": -0.1005,
+   "back": 0.033,
+   "halfWidth": 0.1072,
+   "split": 0.58,
+   "expFront": 1.9,
+   "expBack": 1.9
+  },
+  {
+   "y": 0.38,
+   "front": -0.1015,
+   "back": 0.021,
+   "halfWidth": 0.0988,
+   "split": 0.58,
+   "expFront": 2.05,
+   "expBack": 2.0
+  },
+  {
+   "y": 0.4,
+   "front": -0.1005,
+   "back": 0.0123,
+   "halfWidth": 0.0855,
+   "split": 0.58,
+   "expFront": 2.0,
+   "expBack": 2.05
+  },
+  {
+   "y": 0.42,
+   "front": -0.0995,
+   "back": 0.0013,
+   "halfWidth": 0.07450000000000001,
+   "split": 0.58,
+   "expFront": 1.95,
+   "expBack": 2.2
+  },
+  {
+   "y": 0.44,
+   "front": -0.099,
+   "back": -0.0048,
+   "halfWidth": 0.069,
+   "split": 0.59,
+   "expFront": 1.95,
+   "expBack": 2.4
+  },
+  {
+   "y": 0.46,
+   "front": -0.099,
+   "back": -0.0034,
+   "halfWidth": 0.07150000000000001,
+   "split": 0.59,
+   "expFront": 1.95,
+   "expBack": 2.5
+  },
+  {
+   "y": 0.48,
+   "front": -0.099,
+   "back": 0.0035,
+   "halfWidth": 0.0805,
+   "split": 0.58,
+   "expFront": 1.95,
+   "expBack": 2.5
+  },
+  {
+   "y": 0.5,
+   "front": -0.0995,
+   "back": 0.0165,
+   "halfWidth": 0.0945,
+   "split": 0.55,
+   "expFront": 1.85,
+   "expBack": 2.4
+  },
+  {
+   "y": 0.52,
+   "front": -0.0995,
+   "back": 0.0315,
+   "halfWidth": 0.1054,
+   "fitNative": true
+  },
+  {
+   "y": 0.54,
+   "front": -0.0962,
+   "back": 0.0505,
+   "halfWidth": 0.1177,
+   "fitNative": true
+  },
+  {
+   "y": 0.56,
+   "front": -0.0925,
+   "back": 0.0635,
+   "halfWidth": 0.1295,
+   "fitNative": true
+  },
+  {
+   "y": 0.58,
+   "front": -0.0954,
+   "back": 0.064,
+   "halfWidth": 0.1387,
+   "fitNative": true
+  },
+  {
+   "y": 0.6,
+   "front": -0.0992,
+   "back": 0.0693,
+   "halfWidth": 0.1446,
+   "fitNative": true
+  },
+  {
+   "y": 0.62,
+   "front": -0.1008,
+   "back": 0.0766,
+   "halfWidth": 0.1492,
+   "fitNative": true
+  }
+ ],
+ "weights": {
+  "y": {
+   "top": [
+    0.26,
+    0.32
+   ],
+   "bottom": [
+    0.5,
+    0.58
+   ]
+  },
+  "lateral": {
+   "inner": [
+    [
+     0.3,
+     0.06
+    ],
+    [
+     0.46,
+     0.3
+    ]
+   ],
+   "outer": [
+    [
+     0.3,
+     0.1
+    ],
+    [
+     0.46,
+     0.34
+    ]
+   ]
+  },
+  "arm": {
+   "radius": 0.04,
+   "zeroMargin": 0.01,
+   "fullMargin": 0.07
+  },
+  "tail": {
+   "zeroWithin": 0.1,
+   "fullAt": 0.17,
+   "segments": 2
+  },
+  "reach": [
+   0.03,
+   0.09
+  ]
+ },
+ "fitNative": {
+  "expRange": [
+   1.6,
+   2.8
+  ],
+  "expStep": 0.1,
+  "splitRange": [
+   0.5,
+   0.65
+  ],
+  "splitStep": 0.025
+ }
+}
