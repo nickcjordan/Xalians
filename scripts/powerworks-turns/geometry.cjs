@@ -166,7 +166,7 @@ async function riderProblems(page) {
       if (key.closest("[inert]")) return;
       const kr = key.getBoundingClientRect();
       key.querySelectorAll("*").forEach((el) => {
-        if (el.closest(".pwt-note") || el.closest("svg")) return;
+        if (el.closest("svg")) return;
         const r = el.getBoundingClientRect();
         if (!r.width || !r.height) return;
         if (r.left < kr.left - 1 || r.right > kr.right + 1 || r.top < kr.top - 1 || r.bottom > kr.bottom + 1)
@@ -178,10 +178,8 @@ async function riderProblems(page) {
     const isPhoneNow = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
     if (line && !isPhoneNow && line.scrollHeight > line.clientHeight + 1) out.push(`banner sentence truncated: "${line.textContent.trim().slice(0, 50)}"`);
     if (!isPhoneNow) {
-      const note = document.querySelector(".pwt-banner .pwt-note");
-      if (note && note.scrollHeight > note.clientHeight + 1) out.push(`banner note cut short: "${note.textContent.trim().slice(0, 50)}"`);
-      const status = document.querySelector(".pwt-banner-status");
-      if (status && status.scrollWidth > status.clientWidth + 1) out.push(`banner status cut short: "${status.textContent.trim().slice(0, 50)}"`);
+      // The banner keeps only its prompt and the since line: no note, no status (one-number-one-meaning, rule 5).
+      if (document.querySelector(".pwt-banner .pwt-note, .pwt-banner-status, .pwt-moves-tip, .pwt-preview")) out.push("a removed element is on screen (note, status, tip or preview badge)");
     }
     document.querySelectorAll(".pwt-plate").forEach((pl) => {
       const m = pl.querySelector(".pwt-match");
@@ -209,7 +207,7 @@ async function riderProblems(page) {
       const tags = [...stage.querySelectorAll(".pwt-threat")].filter((tg) => getComputedStyle(tg).visibility !== "hidden" && tg.getBoundingClientRect().width);
       const lunging = !!stage.querySelector(".pwt-rows")?.style.getPropertyValue("--lunge-x");
       const movesRow = stage.querySelector(".pwt-moves-row");
-      const covered = [...stage.querySelectorAll(".pwt-letter, .pwt-el, .pwt-match, .pwt-guardian-tag, .pwt-delta, .pwt-preview, .pwt-health, .pwt-spot-pointer, .pwt-name")];
+      const covered = [...stage.querySelectorAll(".pwt-letter, .pwt-el, .pwt-match, .pwt-guardian-tag, .pwt-delta, .pwt-health, .pwt-spot-pointer, .pwt-name")];
       tags.forEach((tg) => {
         const tr = tg.getBoundingClientRect();
         const plate = tg.closest("[data-unit]");
@@ -241,29 +239,44 @@ async function riderProblems(page) {
         if (movesRow && hit(tr, movesRow.getBoundingClientRect())) out.push(`threat tag ${who} covers the moves row`);
         for (const o of tags) if (o !== tg && hit(tr, o.getBoundingClientRect())) out.push(`threat tag ${who} overlaps threat tag ${o.getAttribute("data-from")} on ${o.closest("[data-unit]").getAttribute("data-unit")}`);
       });
-      stage.querySelectorAll(".pwt-preview").forEach((pv) => {
-        const r = pv.getBoundingClientRect();
-        const plate = pv.closest("[data-unit]");
-        const who = plate?.getAttribute("data-unit") ?? "?";
-        if (r.left < sb.left - 0.5 || r.right > sb.right + 0.5 || r.top < sb.top - 0.5 || r.bottom > sb.bottom + 0.5) out.push(`preview on ${who} leaves the stage`);
-        const body = pv.closest(".pwt-body");
-        const br = body.getBoundingClientRect();
-        const onPhone0 = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
-        // On a phone the figure area is short: the number may rise above it (it stays inside the stage and off the tags), never beside it.
-        if (r.left < br.left - 0.5 || r.right > br.right + 0.5 || r.bottom > br.bottom + 0.5 || (!onPhone0 && r.top < br.top - 0.5)) out.push(`preview on ${who} leaves its plate's figure area`);
-        // On a phone the figure area is too short to keep the number off the letter tag; the plaque's own name
-        // ("A · Maintenance crawler") still carries the letter, so only there may a preview cover it (and the guardian tag, which the name row repeats).
-        const onPhone = window.innerWidth > window.innerHeight && window.innerHeight <= 500;
-        plate.querySelectorAll(".pwt-plaque, .pwt-el, .pwt-match, .pwt-letter, .pwt-threat, .pwt-guardian-tag").forEach((a) => {
-          if (onPhone && (a.classList.contains("pwt-letter") || a.classList.contains("pwt-guardian-tag"))) return;
-          if (getComputedStyle(a).visibility === "hidden") return; // a previewed enemy's tags step aside on a phone
-          if (hit(r, a.getBoundingClientRect())) { const q = a.getBoundingClientRect(); out.push(`preview on ${who} covers ${a.className.toString().split(" ")[0]} (preview ${r.left | 0},${r.top | 0},${r.right | 0},${r.bottom | 0}; tag ${q.left | 0},${q.top | 0},${q.right | 0},${q.bottom | 0})`); }
+      // Rows that carry numbers (one-number-one-meaning): an enemy's next-act row stays inside its plaque and is never cut short; a
+      // health row (previewed or not) is never cut short and its number stays inside it; on a phone their text is 12 px or more.
+      const fs = (el) => parseFloat(getComputedStyle(el).fontSize);
+      stage.querySelectorAll(".pwt-row.enemies .pwt-plate:not(.down) .pwt-next").forEach((row) => {
+        const who = row.closest("[data-unit]").getAttribute("data-unit");
+        const rr = row.getBoundingClientRect();
+        const pq = row.closest(".pwt-plaque").getBoundingClientRect();
+        if (rr.left < pq.left - 0.5 || rr.right > pq.right + 0.5 || rr.top < pq.top - 0.5 || rr.bottom > pq.bottom + 0.5) out.push(`next-act row of ${who} leaves its plaque`);
+        if (row.scrollWidth > row.clientWidth + 1 || row.scrollHeight > row.clientHeight + 1) out.push(`next-act row of ${who} is cut short`);
+        const what = row.querySelector(".pwt-next-what");
+        if (what) {
+          const wr = what.getBoundingClientRect();
+          if (wr.left < rr.left - 0.5 || wr.right > rr.right + 0.5) out.push(`next-act content of ${who} is wider than its row`);
+        }
+        const hr = row.closest(".pwt-plaque").querySelector(".pwt-health")?.getBoundingClientRect();
+        if (hr && rr.top < hr.bottom - 0.5) out.push(`next-act row of ${who} overlaps its health row`);
+        if (phoneText) row.querySelectorAll(".pwt-next-n, .pwt-next-all, .pwt-next-to, .pwt-before").forEach((el) => { if (fs(el) < 12 - 0.01) out.push(`next-act row of ${who}: ${el.className.toString().split(" ")[0]} under 12 px (${fs(el)})`); });
+      });
+      stage.querySelectorAll(".pwt-plate:not(.down) .pwt-health").forEach((h) => {
+        const who = h.closest("[data-unit]").getAttribute("data-unit");
+        const hr = h.getBoundingClientRect();
+        const pq = h.closest(".pwt-plaque").getBoundingClientRect();
+        if (hr.left < pq.left - 0.5 || hr.right > pq.right + 0.5) out.push(`health row of ${who} leaves its plaque`);
+        if (h.scrollWidth > h.clientWidth + 1) out.push(`health row of ${who} is cut short`);
+        h.querySelectorAll(".pwt-health-num").forEach((n) => {
+          const nr = n.getBoundingClientRect();
+          if (nr.right > hr.right + 0.5 || nr.left < hr.left - 0.5) out.push(`health number of ${who} pokes out of its row`);
+          if (n.scrollWidth > n.clientWidth + 1) out.push(`health number of ${who} is cut short`);
+          if (phoneText && fs(n) < 12 - 0.01) out.push(`health number of ${who} under 12 px (${fs(n)})`);
         });
-        pv.querySelectorAll("*").forEach((el) => {
-          if (el.closest("svg")) return;
-          const er = el.getBoundingClientRect();
-          if (er.width && (er.left < r.left - 0.5 || er.right > r.right + 0.5)) out.push(`preview on ${who}: ${el.className.toString().split(" ")[0] || el.tagName} pokes out of the badge`);
-        });
+        const track = h.querySelector(".pwt-health-track")?.getBoundingClientRect();
+        if (track && h.classList.contains("previewing") && track.width < 16) out.push(`health bar of ${who} squeezed under 16 px (${track.width | 0})`);
+      });
+      // A previewed marks chip stays whole inside its plaque.
+      stage.querySelectorAll(".pwt-chip.preview").forEach((c) => {
+        const pq = c.closest(".pwt-plaque").getBoundingClientRect();
+        const cr = c.getBoundingClientRect();
+        if (cr.right > pq.right + 0.5 || cr.left < pq.left - 0.5) out.push(`previewed chip leaves its plaque on ${c.closest("[data-unit]").getAttribute("data-unit")}`);
       });
     }
     return out;
@@ -287,8 +300,6 @@ async function movesProblems(page) {
     const sb = stage.getBoundingClientRect();
     const inside = (r) => r.left >= sb.left - 0.5 && r.right <= sb.right + 0.5 && r.top >= sb.top - 0.5 && r.bottom <= sb.bottom + 0.5;
     const mine = [["row", row.getBoundingClientRect()]];
-    const tip = document.querySelector(".pwt-moves-tip");
-    if (tip) mine.push(["tip", tip.getBoundingClientRect()]);
     for (const [what, r] of mine) if (!inside(r)) out.push(`the moves ${what} leaves the stage (${r.left | 0},${r.top | 0},${r.right | 0},${r.bottom | 0})`);
     row.querySelectorAll("button").forEach((b) => {
       const r = b.getBoundingClientRect();
@@ -296,7 +307,7 @@ async function movesProblems(page) {
       if (r.height / z < 43.5) out.push(`move card under 44 px tall (${(r.height / z).toFixed(1)}): "${(b.getAttribute("aria-label") || b.textContent).trim().slice(0, 24)}"`);
       if (b.scrollWidth > b.clientWidth + 1) out.push(`move card content wider than the card: "${b.textContent.trim().slice(0, 24)}"`);
     });
-    const parts = [...stage.querySelectorAll(".pwt-plaque, .pwt-letter, .pwt-el, .pwt-threat, .pwt-match, .pwt-guardian-tag, .pwt-delta, .pwt-preview, .pwt-spot-pointer, .pwt-float")];
+    const parts = [...stage.querySelectorAll(".pwt-plaque, .pwt-letter, .pwt-el, .pwt-threat, .pwt-match, .pwt-guardian-tag, .pwt-delta, .pwt-spot-pointer, .pwt-float")];
     const art = (f) => {
       const fr = f.getBoundingClientRect();
       const img = f.querySelector("img");
@@ -585,8 +596,8 @@ async function floatProblems(page) {
             await key.hover();
           }
           await page.waitForTimeout(160);
-          const previews = await page.locator("[data-preview]").count();
-          if (!previews) seenKey.add(`key ${k}: no previews on any plate`);
+          const previews = await page.locator("[data-health-preview], .pwt-chip.preview, .pwt-next.struck, .pwt-next.cancelled, .pwt-match.lit").count();
+          if (!previews && !(await page.locator(`button.pwt-key[data-key="${k}"] [data-verb=slow], button.pwt-key[data-key="${k}"] .pwt-act.main .pwt-act-n[data-n="0"]`).count())) seenKey.add(`key ${k}: no previews on any plate`);
           (await riderProblems(page)).forEach((m) => seenKey.add(`key ${k}: ${m}`));
           if (!phone) (await movesProblems(page)).out.forEach((m) => seenKey.add(`key ${k}: ${m}`));
           if (phone) (await phoneProblems(page)).forEach((m) => seenKey.add(`key ${k}: ${m}`));
@@ -645,7 +656,7 @@ async function floatProblems(page) {
         await key.tap();
         await page.waitForTimeout(200);
         const selected = await page.locator("button.pwt-key.selected").count();
-        const previews = await page.locator("[data-preview]").count();
+        const previews = await page.locator("[data-health-preview], .pwt-chip.preview, .pwt-next.struck, .pwt-next.cancelled, .pwt-match.lit").count();
         if (selected !== 1 || (await busy()) !== "false") {
           failures++;
           console.log(`[${tag}] FAIL first tap should select only (selected keys ${selected}, busy ${await busy()})`);

@@ -84,6 +84,32 @@ export type EnemyView = Marks & {
   matchup: number | null;
   /** The supports committed to this enemy (an ally's heal, its own shield), in the order those enemies act. */
   threats: Threat[];
+  /** This enemy's own next act, shown under its health (docs/design/powerworks-one-number-one-meaning.md, decision 1); null when it has none. */
+  next: NextAct | null;
+};
+
+/**
+  An enemy's next act as its own plate says it: the number it would land (an attack), or the support it will give
+  and to whom. Read from the same threats the companion plates carry, so the two always agree; the plate never
+  names a companion. A previewed key changes `n` (the old number rides in `before`) or cancels it.
+*/
+export type NextAct = {
+  from: Letter;
+  kind: "attack" | "support";
+  /** Attack: the number it would land now (the largest, when an area hit reaches companions with different shields). */
+  n: number;
+  /** Previewed: the number before the previewed key (struck beside n). */
+  before?: number;
+  /** Attack: it reaches every companion. */
+  area?: true;
+  /** Previewed: the key finishes this enemy (or the ally it was to support), so the act will not come. */
+  cancelled?: true;
+  /** Support: each amount, in the move's order. */
+  parts: { kind: SupportKind; n: number }[];
+  /** Support: the letters of the ally enemies it lands on (never a companion's name). */
+  toLetters: Letter[];
+  /** Support: it lands on this enemy itself. */
+  self: boolean;
 };
 
 /**
@@ -102,6 +128,8 @@ export type Threat = {
   /** The plate it lands on (a companion for an attack, a hinder or a slow; an ally enemy or the enemy itself for the rest). */
   on: string;
   onName: string;
+  /** The letter of the plate it lands on, when that is an enemy. */
+  onLetter?: Letter;
   kind: "attack" | "support";
   move: string;
   /** Attack: the number it lands now on `on` (0 on an immune matchup). Support: 0 (see parts). */
@@ -135,14 +163,6 @@ export type Cell = {
   n: number;
   /** Hinder-only cells: the enemy's committed hit before the hinder. */
   before?: number;
-  /** Hinder-only cells and riders: the name of the companion that committed hit is aimed at; absent when the enemy has no attack committed. */
-  hitOn?: string;
-  /**
-    Attack cells of a hindered or boosted companion: the health this attack would land
-    without the companion's own mark, struck through beside `n` (the same form the enemy
-    chips use). Undefined when the mark changes nothing here.
-  */
-  ownBefore?: number;
   /** Attack cells: the element step against this target. 1 otherwise. */
   step: number;
   /** Attack cells: the chart gives 0, so the attack does nothing here. */
@@ -159,18 +179,6 @@ export type Cell = {
     attack finishes the enemy (a fallen enemy takes no rider) or the rider changes nothing.
   */
   rider?: { before: number; after: number };
-  /**
-    Round 8, item 4: the enemy's hit on the acting companion (before the rider or hinder) equals or exceeds
-    its health, and after the rider or hinder it does not: the cell shows a struck skull, the "can fall" mark
-    taken away.
-  */
-  saves?: true;
-  /**
-    The enemy's committed hit on a companion equals or exceeds that companion's health after the rider or
-    hinder too: the cell shows a live skull on the after number (the hit still knocks it out). Never set
-    together with `saves`.
-  */
-  knocks?: true;
 };
 
 export type SupportChip = { kind: SupportKind; n: number; aim: Aim; all: boolean };
@@ -199,17 +207,21 @@ export type KeyView = {
   cells: Cell[];
   /** The move's supports, n already reduced for "all" (allShare). */
   supports: SupportChip[];
-  /** The move's attack power before any matchup (0 for a support): the one number a key shows. */
+  /** The move's attack power before any matchup (0 for a support). */
   power: number;
-  /**
-    An attack by a hindered or boosted companion: the power as its next attack would carry it (the
-    power less the hinder, plus the boost, never below 0), shown after the plain one on the key
-    ("4 to 0"). Absent when the companion carries neither or the number does not move.
-  */
-  powerNow?: number;
-  /** Why `powerNow` differs: the companion's own mark, in health ("hindered" or "boosted"). */
-  ownMark?: { kind: "hinder" | "boost"; n: number };
+  /** What the card says: the main act first, then its riders (docs/design/powerworks-one-number-one-meaning.md, decision 3). */
+  acts: ActLine[];
 };
+
+/** The words a card is made of: what the player does. */
+export type Verb = "strike" | "sweep" | "mend" | "guard" | "boost" | "weaken" | "slow";
+export const VERB_OF: Record<SupportKind, Verb> = { heal: "mend", shield: "guard", boost: "boost", hinder: "weaken", delay: "slow" };
+
+/**
+  One act on a card: a verb and its number. `was` is the number before the actor's own boost or hinder
+  (an attack only), struck beside `n`. `all` says the act reaches everyone it can (every enemy for a sweep, the whole squad for a support).
+*/
+export type ActLine = { verb: Verb; n: number; was?: number; all?: true };
 
 export type StripSlot = {
   id: string;
@@ -265,11 +277,6 @@ export type TurnView = {
   xp: number;
   /** Practice XP this sector gave: the camp's headline. 0 outside camp and the final win. */
   xpGain: number;
-  /**
-    Why the active companion's numbers differ from its moves' plain ones, said once for the
-    key bar ("Crystorn is hindered by 14 on its next attack"). null when it carries no mark.
-  */
-  activeStatus: { sentence: string; parts: string[] } | null;
   /** How the run ended, in words; null while it is still going. */
   ending: Ending | null;
 };
@@ -405,7 +412,7 @@ export function threatsOf(s: TRun): Threat[] {
       });
     for (const [id, parts] of byTarget) {
       const r = everyone.find((x) => x.id === id)!;
-      out.push({ ...base, on: id, onName: r.name, kind: "support", n: 0, step: 1, parts });
+      out.push({ ...base, on: id, onName: r.name, ...(r.enemy ? { onLetter: letterFor(s, id) } : {}), kind: "support", n: 0, step: 1, parts });
     }
   }
   return out.sort((a, b) => a.order - b.order);
@@ -477,7 +484,7 @@ export function previewThreats(s: TRun, key: KeyView, previews: Record<string, P
   });
 }
 
-function enemyView(s: TRun, u: Fighter, threats: Threat[]): EnemyView {
+function enemyView(s: TRun, u: Fighter, threats: Threat[], next: NextAct | null): EnemyView {
   const active = s.phase === "turn" ? s.team.find((t) => t.id === s.active) : undefined;
   return {
     ...marksOf(u),
@@ -492,7 +499,34 @@ function enemyView(s: TRun, u: Fighter, threats: Threat[]): EnemyView {
     down: u.hp <= 0,
     matchup: active ? step(active.element, u.element) : null,
     threats: u.hp > 0 ? threats.filter((x) => x.on === u.id) : [],
+    next: u.hp > 0 ? next : null,
   };
+}
+
+/**
+  Every standing enemy's next act, from its threats (the tags the companion plates carry, previewed or as the
+  beat now showing reads them): one entry per enemy that has one. An attack's number is the largest among the
+  companions it reaches; a support names the ally enemies it lands on by letter, or itself.
+*/
+export function nextActsOf(threats: Threat[]): Record<string, NextAct> {
+  const out: Record<string, NextAct> = {};
+  for (const t of threats) {
+    const seen = out[t.fromId];
+    if (t.kind === "attack") {
+      if (!seen) out[t.fromId] = { from: t.from, kind: "attack", n: t.n, ...(t.before !== undefined ? { before: t.before } : {}), ...(t.area ? { area: true as const } : {}), ...(t.cancelled ? { cancelled: true as const } : {}), parts: [], toLetters: [], self: false };
+      else if (t.n > seen.n) {
+        seen.n = t.n;
+        if (t.before !== undefined) seen.before = t.before;
+        else delete seen.before;
+      }
+      continue;
+    }
+    if (!seen) out[t.fromId] = { from: t.from, kind: "support", n: 0, parts: t.parts, toLetters: [], self: false, ...(t.cancelled ? { cancelled: true as const } : {}) };
+    const act = out[t.fromId];
+    if (t.on === t.fromId) act.self = true;
+    else if (t.onLetter && !act.toLetters.includes(t.onLetter)) act.toLetters.push(t.onLetter);
+  }
+  return out;
 }
 
 /** A move that does nothing at all (no attack, no supports): treated as inert, shown as "spent". */
@@ -524,36 +558,23 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
       const n = landedOn(u, m, t);
       const st = step(m.element, t.element);
       const shieldAbsorbed = Math.min(shieldSum(t), attackOn(u, m, t));
-      // The companion's own hinder or boost: what this attack would land without it.
-      const clean = u.hinder > 0 || u.boost > 0 ? landedOn({ ...u, boost: 0, hinder: 0 }, m, t) : n;
       const finishes = n >= t.hp && n > 0;
       let rider: Cell["rider"];
-      let saves = false;
-      let knocks = false;
-      let hitOn: string | undefined;
       if (riderN > 0 && !finishes) {
         const now = intentHit(s, t);
         const before = now?.n ?? 0;
         const after = intentHit(s, t, riderN)?.n ?? 0;
-        if (now && after < before) {
-          rider = { before, after };
-          hitOn = now.target.name;
-          saves = !now.target.enemy && now.target.hp > 0 && before >= now.target.hp && after < now.target.hp;
-          knocks = !now.target.enemy && now.target.hp > 0 && after >= now.target.hp;
-        }
+        if (now && after < before) rider = { before, after };
       }
       return {
         target: t.id,
         letter,
         n,
-        ...(clean !== n ? { ownBefore: clean } : {}),
         step: st,
         immune: st === 0,
         finishes,
         absorbed: shieldAbsorbed,
-        ...(rider ? { rider, hitOn } : {}),
-        ...(saves ? { saves: true as const } : {}),
-        ...(knocks ? { knocks: true as const } : {}),
+        ...(rider ? { rider } : {}),
       };
     }
     // Hinder-only: before is the enemy's committed hit as it stands; after applies this hinder on top
@@ -562,9 +583,7 @@ function enemyCells(s: TRun, u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
     const now = intentHit(s, t);
     const before = now?.n ?? 0;
     const n = intentHit(s, t, hinderN)?.n ?? 0;
-    const saves = !!now && !now.target.enemy && now.target.hp > 0 && before >= now.target.hp && n < now.target.hp;
-    const knocks = !!now && !now.target.enemy && now.target.hp > 0 && n >= now.target.hp;
-    return { target: t.id, letter, n, before, hinder: hinderN, ...(now ? { hitOn: now.target.name } : {}), step: 1, immune: false, finishes: false, absorbed: 0, ...(saves ? { saves: true as const } : {}), ...(knocks ? { knocks: true as const } : {}) };
+    return { target: t.id, letter, n, before, hinder: hinderN, step: 1, immune: false, finishes: false, absorbed: 0 };
   });
 }
 
@@ -603,18 +622,26 @@ function keyView(s: TRun, u: Fighter, i: number): KeyView {
     cells,
     supports: m.parts.map(supportChip),
     power: m.power,
-    ...ownPower(u, m),
+    acts: actsOf(u, m),
   };
 }
 
-/** A hindered or boosted companion's attack, before and after its own mark (the key's "4 to 0"). */
-function ownPower(u: Fighter, m: PMove): Pick<KeyView, "powerNow" | "ownMark"> {
-  if (m.power <= 0 || (u.hinder <= 0 && u.boost <= 0)) return {};
-  const now = Math.max(0, m.power + u.boost - u.hinder);
-  if (now === m.power) return {};
-  // The engine keeps both marks at once; the key names the larger pull (a hinder wins a tie, since it is the one that costs).
-  const ownMark = u.hinder >= u.boost ? { kind: "hinder" as const, n: u.hinder } : { kind: "boost" as const, n: u.boost };
-  return { powerNow: now, ownMark };
+/**
+  What the card says, from the move itself: the main act is the attack (a strike on one enemy, a sweep on
+  all) or, for a support, its first part; every other part follows as a rider. A hindered or boosted
+  companion's attack carries its own number before and after ("strike 3, now 1").
+*/
+function actsOf(u: Fighter, m: PMove): ActLine[] {
+  const parts = m.parts.map(supportChip);
+  const support = (c: SupportChip, rider: boolean): ActLine => ({ verb: VERB_OF[c.kind], n: c.n, ...(c.all && !rider && c.aim !== "enemy" ? { all: true as const } : {}) });
+  if (m.power > 0) {
+    const now = Math.max(0, m.power + u.boost - u.hinder);
+    return [
+      { verb: m.area ? "sweep" : "strike", n: now, ...(now !== m.power ? { was: m.power } : {}), ...(m.area ? { all: true as const } : {}) },
+      ...parts.map((c) => support(c, true)),
+    ];
+  }
+  return parts.map((c, i) => support(c, i > 0));
 }
 
 /** Strips the "1. " style ordinal prefix a room's display name carries. */
@@ -708,6 +735,7 @@ export function turnView(s: TRun): TurnView {
   const activeReady = s.phase === "turn" && !!active;
   const rail = s.phase === "turn" ? railFor(s) : [];
   const threats = threatsOf(s);
+  const nextActs = nextActsOf(threats);
   return {
     phase: s.phase,
     round: roundOf(s),
@@ -716,7 +744,7 @@ export function turnView(s: TRun): TurnView {
     roomCount: roomsFor(s.rules).length,
     active: active ? squadView(s, active, threats) : null,
     squad: s.team.map((u) => squadView(s, u, threats)),
-    enemies: s.enemies.map((u) => enemyView(s, u, threats)),
+    enemies: s.enemies.map((u) => enemyView(s, u, threats, nextActs[u.id] ?? null)),
     keys: activeReady ? active!.moves.map((_, i) => keyView(s, active!, i)) : [],
     strip: roundStrip(s).map(({ unit, done }) => stripSlot(s, unit, done)),
     rail,
@@ -724,17 +752,8 @@ export function turnView(s: TRun): TurnView {
     revivalLeft: s.revival,
     xp: s.xp,
     xpGain: s.phase === "camp" ? ENCOUNTER_XP : s.phase === "won" ? FINAL_ENCOUNTER_XP : 0,
-    activeStatus: active && activeReady ? statusWords(active) : null,
     ending: endingOf(s),
   };
-}
-
-/** Why the active companion's numbers differ from its moves' plain ones (see TurnView.activeStatus). */
-function statusWords(u: Fighter): TurnView["activeStatus"] {
-  const parts: string[] = [];
-  if (u.boost > 0) parts.push(`boosted by ${u.boost}`);
-  if (u.hinder > 0) parts.push(`hindered by ${u.hinder}`);
-  return parts.length ? { sentence: `${u.name} is ${parts.join(" and ")} on its next attack`, parts } : null;
 }
 
 /**
@@ -819,10 +838,8 @@ export function floatWords(e: PEvent, targetIsEnemy = false): FloatItem | null {
       : undefined;
     return { text: `-${e.amount}`, kind: "hurt", tag, ...(targetIsEnemy ? { plain: true as const } : {}) };
   }
-  if (e.kind === "heal") return { text: `+${e.amount}`, kind: "heal", ...(targetIsEnemy ? { plain: true as const } : {}) };
-  if (e.kind === "shield") return { text: `shield ${e.amount}`, kind: "shield" };
-  if (e.kind === "boost") return { text: `next attack +${e.amount}`, kind: "boost" };
-  if (e.kind === "hinder") return { text: `next hit -${e.amount}`, kind: "hinder" };
+  // Every other event changes a number in its own home (a heal on the health row, a shield, boost or hinder on the marks
+  // and the next-act row), so nothing floats for it: only a landed blow does (docs/design/powerworks-one-number-one-meaning.md, decision 8).
   return null;
 }
 
@@ -1357,9 +1374,10 @@ export function previewsOf(k: KeyView, activeId: string, standingSquad: string[]
     for (const id of ids) out[id] = { target: id, kind: k.supports[0]?.kind ?? "heal", n: k.supports[0]?.n ?? 0, step: 1, immune: false, finishes: false, absorbed: 0, chips: k.supports };
     return out;
   }
+  const hinders = k.supports.some((p) => p.kind === "hinder" && p.aim === "enemy");
   for (const c of k.cells) {
     if (k.aim === "ally") out[c.target] = { ...c, kind: k.supports.find((p) => p.aim === "ally")?.kind ?? "heal" };
-    else out[c.target] = { ...c, kind: k.kind === "attack" ? "hit" : c.before !== undefined ? "hinder" : "hit" };
+    else out[c.target] = { ...c, kind: k.kind === "attack" ? "hit" : hinders ? "hinder" : "delay" };
   }
   return out;
 }
@@ -1374,47 +1392,47 @@ export function actsOnPress(k: KeyView): boolean {
 }
 
 /* ------------------------------------------------------------------------------------------
-   UX pass 2, round 5: teaching in place. A note appears once per browser, next to the first
-   occurrence of a mark that has confused a cold reader, and goes at the first action.
+   One number, one meaning, one place (docs/design/powerworks-one-number-one-meaning.md). A hovered or
+   chosen key changes the numbers a plate already carries, before and after, in the row that carries
+   them; it never puts a new kind of number somewhere else. These are those changes for one plate.
 ------------------------------------------------------------------------------------------ */
 
-export type NoteId = "hinder" | "shield" | "all";
+/** How a previewed key would change one plate's own numbers (the enemy's next-act row is `NextAct`, read through previewThreats). */
+export type PlatePreview = {
+  /** The health row: `to` below `from` is health lost (the segment between is lit), above is gained; a skull when it reaches 0. */
+  health?: { from: number; to: number; skull?: true };
+  /** The shield chip in the marks row: a guard on an ally, or what an enemy's shield would absorb first. */
+  shield?: { from: number; to: number };
+  /** The boost chip in the marks row. */
+  boost?: { from: number; to: number };
+  /** An attack: the matchup tab on this plate (its multiplier) is what turns the key's number into the lost health. */
+  matchup?: true;
+};
 
 /**
-  A hinder's words, for the first-use note: what the mark does, never which enemy or companion it is
-  about and never a number from the live state (the plates carry those, in place).
+  What a preview changes on the plate it lands on, from the per-target forecast alone (the cells previewsOf
+  carries): an attack takes health (and a shield's share first), a mend gives it, a guard or a boost adds a chip.
+  A hinder and a slow change no number on the target's own rows (the hinder is read on the next-act row), so they return null.
 */
-export function hinderWords(): string {
-  return "takes health off that enemy's next hit, on whoever it strikes";
-}
-export type KeyNote = { id: NoteId; keyIndex: number; /** The key the note is about, named so it needs no arrow to it. */ keyName: string; text: string; /** The same in fewer words, for a phone's two-line banner. */ short: string };
-
-/**
-  The first-occurrence note to show on this companion's keys, or null. `seen` holds the ids already
-  shown in this browser. Priority: hinder, then shield, then ALL; the note attaches to the first key
-  where the mark appears. It explains the mark only: it never names an enemy or a companion and never
-  carries a number from the live state (round 2 of the intents pass: a note that worked an example
-  against an arbitrary target read as advice).
-*/
-export function keyNote(v: TurnView, seen: readonly string[]): KeyNote | null {
-  if (!v.active || v.phase !== "turn") return null;
-  const ready = v.keys.filter((k) => k.state === "ready");
-  if (!seen.includes("hinder")) {
-    for (const k of ready) {
-      const cell = k.kind === "support" && k.aim === "enemy" ? k.cells.find((c) => c.before !== undefined) : undefined;
-      if (cell) return { id: "hinder", keyIndex: k.index, keyName: k.name, text: `Hinder: ${hinderWords()}. The plate shows that hit before and after.`, short: "Hinder: cuts that enemy's next hit." };
+export function platePreviewOf(p: Preview | undefined, u: { hp: number; max: number; shield: number; boost: number }): PlatePreview | null {
+  if (!p) return null;
+  const out: PlatePreview = {};
+  if (p.chips) {
+    let gain = 0;
+    for (const c of p.chips) {
+      if (c.kind === "heal") gain += c.n;
+      else if (c.kind === "shield") out.shield = { from: u.shield, to: (out.shield?.to ?? u.shield) + c.n };
+      else if (c.kind === "boost") out.boost = { from: u.boost, to: (out.boost?.to ?? u.boost) + c.n };
     }
-  }
-  if (!seen.includes("shield")) {
-    for (const k of ready) {
-      const cell = k.aim === "enemy" && k.kind === "attack" ? k.cells.find((c) => c.absorbed > 0) : undefined;
-      if (cell) return { id: "shield", keyIndex: k.index, keyName: k.name, text: "Shield: a shield absorbs damage first. The plate shows what is left.", short: "Shield: absorbs damage first." };
-    }
-  }
-  if (!seen.includes("all")) {
-    for (const k of ready) {
-      if (k.area && k.aim === "enemy" && k.cells.length > 1) return { id: "all", keyIndex: k.index, keyName: k.name, text: "ALL: this move hits every enemy at once. Each enemy's plate shows its own number.", short: "ALL: hits every enemy." };
-    }
-  }
-  return null;
+    if (gain > 0 && u.hp < u.max) out.health = { from: u.hp, to: Math.min(u.max, u.hp + gain) };
+  } else if (p.kind === "hit") {
+    if (p.immune) return { matchup: true };
+    if (p.n > 0) out.health = { from: u.hp, to: Math.max(0, u.hp - p.n), ...(p.finishes ? { skull: true as const } : {}) };
+    if (p.absorbed > 0) out.shield = { from: u.shield, to: Math.max(0, u.shield - p.absorbed) };
+    out.matchup = true;
+  } else if (p.kind === "heal") {
+    if (p.n > 0) out.health = { from: u.hp, to: Math.min(u.max, u.hp + p.n) };
+  } else if (p.kind === "shield") out.shield = { from: u.shield, to: u.shield + p.n };
+  else if (p.kind === "boost") out.boost = { from: u.boost, to: u.boost + p.n };
+  return Object.keys(out).length ? out : null;
 }

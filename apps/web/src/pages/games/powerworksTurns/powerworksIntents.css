@@ -1,10 +1,11 @@
 /* ==========================================================================================
-   Powerworks: enemy intents and keys that show power (docs/design/powerworks-intents-and-keys.md)
+   Powerworks: moves as a verb and a number, and the numbers they change in place
+   (docs/design/powerworks-one-number-one-meaning.md; earlier: docs/design/powerworks-intents-and-keys.md)
    ------------------------------------------------------------------------------------------
-   A move key is one pressable surface with ONE number (its power) and its shape. What a key would
-   land on each target is a big number on that target's plate while the key is hovered or selected.
-   Each enemy carries its committed move and target as a chip on its plate. Imported after
-   powerworksTurns.css; the phone's own rules follow in the block at the foot (scoped to .phone).
+   A move key is one pressable surface: its name, then what the player does (a verb and its number).
+   What it would change on each target is drawn in the row of that target's plate that already
+   carries the number (health, next act, marks), before and after. Imported after powerworksTurns.css;
+   the phone's own rules follow in powerworksPhone.css (scoped to .phone).
    ========================================================================================== */
 
 /* --- the key: one button --- */
@@ -29,75 +30,10 @@
   background: var(--color-s1);
 }
 .pwt-keybar > button.pwt-key.selected .pwt-key-foot-words { color: var(--color-viable); }
-.pwt-key-body {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.pwt-key-power {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-data);
-  font-size: 38px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--color-ink);
-}
-.pwt-key-power .pwt-impact { width: 22px; height: 22px; color: var(--color-ink-3); }
-.pwt-key-shape {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-.pwt-shape-all {
-  font-family: var(--font-legend);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-ink);
-  border: 1px solid var(--color-ink-2);
-  padding: 1px 6px;
-  line-height: 1.2;
-}
-.pwt-tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
-.pwt-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font-family: var(--font-data);
-  font-size: 13px;
-  line-height: 1.2;
-  padding: 1px 5px;
-  border: 1px solid var(--color-edge-strong);
-  background: var(--color-s2);
-  color: var(--color-ink-2);
-  white-space: nowrap;
-}
-.pwt-tag svg { width: 12px; height: 12px; flex: 0 0 auto; }
-.pwt-tag.heal { color: var(--color-viable); }
-.pwt-tag.shield { color: var(--color-el-ice); }
-.pwt-tag-each { font-family: var(--font-body); font-size: 12px; margin-left: 2px; color: var(--color-ink-3); }
-.pwt-tags.big { justify-content: flex-start; gap: 8px; }
-.pwt-tags.big .pwt-tag { font-size: 26px; font-weight: 700; padding: 0; border: 0; background: transparent; gap: 4px; }
-.pwt-tags.big .pwt-tag svg { width: 22px; height: 22px; }
-.pwt-key-aim { font-family: var(--font-body); font-size: 12px; color: var(--color-ink-3); text-align: right; }
+
 .pwt-key-head { display: flex; margin-bottom: 4px; }
 .pwt-key-foot { margin-top: 0; min-height: 16px; justify-content: flex-start; }
-.pwt-key-power-word { font-family: var(--font-body); font-size: 12px; font-weight: 400; color: var(--color-ink-3); align-self: flex-end; padding-bottom: 3px; }
-.pwt-key-power-was { font-size: 20px; font-weight: 400; color: var(--color-ink-3); }
-.pwt-key-power-arrow { font-size: 18px; font-weight: 400; color: var(--color-ink-3); }
-/* The companion's own mark on an attack key, beside the number it changed. */
-.pwt-key-own { display: inline-flex; align-items: center; gap: 3px; font-family: var(--font-data); font-size: 13px; line-height: 1.2; padding: 1px 5px; border: 1px solid var(--color-edge-strong); background: var(--color-s2); color: var(--color-ink-2); white-space: nowrap; }
-.pwt-key-own svg { width: 12px; height: 12px; flex: 0 0 auto; }
-.pwt-key-own-words { font-family: var(--font-body); font-size: 12px; }
-.pwt-key.resting .pwt-key-power,
-.pwt-key.spent .pwt-key-power { color: var(--color-ink-3); }
+
 
 /* --- threat tags (docs/design/powerworks-threat-tags.md): an enemy's committed move, on the plate it lands on ---
    A tab row on the plaque's top edge, left side: the letter box its enemy's figure wears, the impact glyph and
@@ -226,87 +162,6 @@
 .pwt-match .pwt-match-word { display: none; }
 .pwt-match.immune .pwt-match-word { display: inline; }
 
-/* --- the preview: what the hovered or selected key would land on this unit, always in the same place --- */
-.pwt-preview {
-  position: absolute;
-  left: 50%;
-  bottom: 15px;
-  transform: translateX(-50%);
-  z-index: 5;
-  min-width: 52px;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  padding: 2px 8px 2px;
-  background: rgba(8, 12, 18, 0.88);
-  border: 1px solid var(--color-edge-strong);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  color: var(--color-ink);
-  pointer-events: none;
-  animation: pwt-preview-in 120ms var(--ease-out) both;
-}
-@keyframes pwt-preview-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .pwt-preview { animation: none; }
-}
-.pwt-preview-num {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--font-data);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.05;
-  white-space: nowrap;
-}
-.pwt-preview-num svg { width: 18px; height: 18px; flex: 0 0 auto; }
-.pwt-preview-num.plain { font-size: 15px; gap: 5px; color: var(--color-ink-2); }
-.pwt-preview-num.plain svg { width: 16px; height: 16px; }
-.pwt-preview-word { font-family: var(--font-body); font-size: 13px; font-weight: 400; }
-.pwt-preview-before { font-size: 18px; font-weight: 400; color: var(--color-ink-3); }
-.pwt-preview-arrow { font-size: 16px; font-weight: 400; color: var(--color-ink-3); }
-.pwt-preview.finish { border-color: var(--color-caution); }
-.pwt-preview.finish .pwt-preview-num { color: var(--color-caution); }
-.pwt-preview.finish .pwt-preview-num svg { color: var(--color-caution); }
-.pwt-preview.heal .pwt-preview-num { color: var(--color-viable); }
-.pwt-preview.shield .pwt-preview-num svg { color: var(--color-el-ice); }
-.pwt-preview .pwt-preview-num svg.saved { color: var(--color-ink-3); }
-/* A skull that stays after a hinder: the hit still knocks the companion out. */
-.pwt-preview .pwt-preview-num svg.live,
-.pwt-preview-note svg.live { color: var(--color-plague); }
-.pwt-preview-note {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-family: var(--font-data);
-  font-size: 12px;
-  color: var(--color-ink-2);
-  white-space: nowrap;
-}
-.pwt-preview-note svg { width: 12px; height: 12px; flex: 0 0 auto; }
-.pwt-preview-note s { color: var(--color-ink-3); }
-.pwt-preview-chips { display: inline-flex; align-items: center; gap: 8px; }
-.pwt-preview-chip { display: inline-flex; align-items: center; gap: 3px; font-family: var(--font-data); font-size: 24px; font-weight: 700; line-height: 1; }
-.pwt-preview-chip svg { width: 18px; height: 18px; }
-.pwt-preview-chip.heal { color: var(--color-viable); }
-.pwt-preview .pwt-cell-chevron-wrap {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-}
-.pwt-preview .pwt-cell-chevron-wrap svg { width: 13px; height: 13px; }
-.pwt-preview .pwt-cell-chevron-wrap.good { background: var(--color-viable); }
-.pwt-preview .pwt-cell-chevron-wrap.good svg { color: var(--color-viable-ink); }
-.pwt-preview .pwt-cell-chevron-wrap.bad { background: var(--color-plague); }
-.pwt-preview .pwt-cell-chevron-wrap.bad svg { color: var(--color-plague-ink); }
-
 /* A key is hovered or selected: units it cannot name step back; the ones it can are pressable. */
 .pwt-plate.off-target { opacity: 0.5; }
 .pwt-plate.pickable { cursor: pointer; }
@@ -330,30 +185,20 @@
   cursor: default;
 }
 .pwt-legend-keys > .pwt-key.selected { border-color: var(--color-viable); }
-.pwt-legend-keys .pwt-key-power,
-.pwt-lesson-key .pwt-key-power { font-size: 26px; }
+
 .pwt-legend-keys .pwt-key-foot,
 .pwt-lesson-key .pwt-key-foot { min-height: 0; }
 .pwt-legend-keys .pwt-key-head,
 .pwt-lesson-key .pwt-key-head { margin-bottom: 0; }
 .pwt-legend-tiles { display: flex; gap: 6px; }
-.pwt-legend-tile {
-  position: relative;
-  width: 80px;
-  height: 52px;
-  display: block;
-  background: linear-gradient(#141b24, #0b1017);
-  border: 1px solid var(--color-edge);
-}
-.pwt-legend-tile .pwt-preview { bottom: auto; top: 50%; transform: translate(-50%, -50%); min-width: 0; padding: 1px 4px; }
-.pwt-legend-tile .pwt-preview-num { font-size: 20px; }
-.pwt-legend-tile .pwt-preview-note { font-size: 11px; }
 
 .pwt-legend-chips .pwt-match { position: static; }
 .pwt-guide .pwt-legend-sample { flex: 0 0 172px; }
 .pwt-guide .pwt-legend-sample.wide { flex-basis: 172px; }
 .pwt-lesson .pwt-legend-sample { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
-.pwt-lesson-key { flex: 0 0 158px; display: flex; }
+.pwt-lesson-key { flex: 0 0 118px; display: flex; }
+.pwt-lesson .pwt-legend-plaque { width: 100px; }
+.pwt-lesson .pwt-legend-plaque .pwt-health-track { min-width: 14px; }
 .pwt-lesson-then { font-family: var(--font-legend); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ink-3); }
 
 /* --- the stage gives room to the plaques: the plaques give back the room a plaque's chip row took, figures keep their height --- */
@@ -361,20 +206,142 @@
 .pwt-row.enemies .pwt-figure:not(.boss) { height: 98px; }
 .pwt-row.enemies .pwt-figure.boss { height: 110px; }
 .pwt-console:not(.phone) .pwt-rows { padding-bottom: 4px; }
-/* A key is one button now, not a row of cells: the key bar gives the height back to the stage. */
-/* The guardian's plaque carries its own tag row above the element badge: its preview sits above that. */
-.pwt-plate.boss .pwt-preview { bottom: 39px; left: calc(50% + 8px); }
+
 .pwt-banner-open { display: inline-block; width: 12px; height: 12px; vertical-align: -2px; margin-left: 4px; color: var(--color-ink-3); }
-.pwt-preview.knocks .pwt-preview-num { font-size: 20px; gap: 2px; }
-.pwt-preview.knocks .pwt-preview-before,
-.pwt-preview.knocks .pwt-preview-arrow { font-size: 15px; }
-.pwt-preview.knocks .pwt-preview-num svg { width: 15px; height: 15px; }
-.pwt-plate.boss .pwt-preview.knocks { left: 50%; }
-.pwt-preview-notes { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0 8px; }
+
 .pwt-threat-before { margin-right: 3px; }
-/* A preview number rises over the plate's own tags, never onto them (--tags-h is the height they take above the plaque). */
-.pwt-row.squad .pwt-plate .pwt-preview { bottom: calc(15px + var(--tags-h, 0px)); }
-/* An enemy plate that carries tags (a support aimed at it) takes its preview number at the top of its figure area, clear of them. */
-.pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { bottom: auto; top: 2px; left: 50%; right: auto; transform: translateX(-50%); }
-.pwt-row.enemies .pwt-plate.boss:has(.pwt-threat) .pwt-preview { left: auto; right: 4px; transform: none; }
-.pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { left: auto; right: 4px; transform: none; }
+
+/* --- the card: a verb and its number, two sizes of one line --- */
+.pwt-key-acts {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2px;
+}
+.pwt-act {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 5px;
+  line-height: 1;
+  color: var(--color-ink);
+}
+.pwt-act-verb {
+  font-family: var(--font-legend);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+}
+.pwt-act-n {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  font-family: var(--font-data);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-ink);
+}
+.pwt-act-was { font-size: 18px; font-weight: 400; color: var(--color-ink-3); }
+.pwt-act-all {
+  align-self: center;
+  font-family: var(--font-legend);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-ink);
+  border: 1px solid var(--color-ink-2);
+  padding: 1px 4px;
+  line-height: 1.1;
+}
+/* A rider follows the main act, after a dot, smaller. */
+.pwt-act.rider::before { content: "\00B7"; align-self: center; color: var(--color-ink-3); font-weight: 700; }
+.pwt-act.rider .pwt-act-verb { font-size: 12px; }
+.pwt-act.rider .pwt-act-n { font-size: 18px; }
+.pwt-key.resting .pwt-act-n,
+.pwt-key.spent .pwt-act-n { color: var(--color-ink-3); }
+
+/* --- the health row, changing in place: the old number struck, the new one; the bar segment that goes (or comes) is lit --- */
+.pwt-health-seg { position: absolute; top: 0; bottom: 0; pointer-events: none; }
+.pwt-health-seg.lost { background: var(--color-ink); }
+.pwt-health-seg.gain { background: var(--color-viable); opacity: 0.6; outline: 1px solid var(--color-viable); outline-offset: -1px; }
+.pwt-health-num.changing {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  min-width: 0;
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+.pwt-health.previewing .pwt-health-track { flex: 1 1 18px; min-width: 18px; }
+.pwt-before { font-weight: 400; color: var(--color-ink-3); }
+.pwt-health-num.changing .pwt-before { text-decoration: line-through; }
+.pwt-health-skull { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-caution); }
+.pwt-health-num.skull { color: var(--color-caution); }
+.pwt-health[data-health-preview="gain"] .pwt-health-num.changing { color: var(--color-viable); }
+
+/* --- an enemy's next act, one row under its health: the hit and its number, a pointer toward the squad --- */
+.pwt-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  min-height: 18px;
+  font-family: var(--font-data);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-ink);
+  transition: opacity 150ms var(--ease-out);
+}
+.pwt-next-what { position: relative; display: inline-flex; align-items: center; gap: 3px; }
+.pwt-next .pwt-impact { width: 13px; height: 13px; color: var(--color-ink-2); }
+.pwt-next-what svg { width: 13px; height: 13px; flex: 0 0 auto; color: var(--color-ink-2); }
+.pwt-next-ptr {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--color-ink-2);
+  margin-left: 1px;
+}
+.pwt-next-arrow { font-weight: 400; color: var(--color-ink-3); }
+.pwt-next-all,
+.pwt-next-to {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-legend);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--color-ink);
+  border: 1px solid var(--color-edge-strong);
+  background: var(--color-s3);
+  padding: 1px 3px;
+  line-height: 1;
+}
+.pwt-next-part { display: inline-flex; align-items: center; gap: 1px; }
+/* A finishing move crosses the row out (a 2 px ink strike); only the number dims. */
+.pwt-next.cancelled .pwt-next-what::after { content: ""; position: absolute; left: -3px; right: -3px; top: 50%; margin-top: -1px; border-top: 2px solid var(--color-ink); }
+.pwt-next.cancelled .pwt-next-n,
+.pwt-next.cancelled .pwt-next-what svg { opacity: 0.5; }
+/* While beats play, the acting enemy's row stays full and the others step back, as their tags do. */
+.pwt-next.dim { opacity: 0.4; }
+
+/* A previewed shield, guard or boost chip is lit: it is the number about to change. */
+.pwt-chip.preview { border-color: var(--color-ink); background: var(--color-s3); color: var(--color-ink); }
+.pwt-chip .pwt-before { margin-right: 2px; text-decoration: line-through; }
+/* The matchup tab on a plate a previewed attack lands on: lit, so the key's number and the lost health read with the factor between them. */
+.pwt-match.lit { box-shadow: 0 0 0 2px var(--color-ink); }
+
+/* --- legend samples: a plaque's own rows, inert --- */
+.pwt-legend-plaque { display: flex; flex: 0 0 auto; width: 132px; margin-top: 0; }
+.pwt-legend-plaque .pwt-match { position: static; align-self: flex-start; }
