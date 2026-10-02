@@ -19,7 +19,7 @@
     },
     "record": {
       "path": "docs/design/long-return-active-work.md",
-      "sha256": "d32d63ad9b02bcdc9b57cc6cbe9e647b99dfd89e2edcc08469ceeed2a5ad3747"
+      "sha256": "9a3281c3dcdf83a97d4d10f89be4429f94ed6a57fde23d34a1e9c271095b860a"
     },
     "help-before": {
       "path": ".codex/audit-state/opening-help-before.jpg",
@@ -56,6 +56,18 @@
     "integration": {
       "path": "apps/web/src/components/games/longReturn/longReturnGame.js",
       "sha256": "99be19fc95fd515deda0f7421361f97116925f17c8d544cc83c3ad3d4f638bcd"
+    },
+    "ci-log": {
+      "path": ".codex/audit-state/long-return-opening/opening-ci-full.txt",
+      "sha256": "9277c00b3ee544d371a98c5f7238077a352cdbe8ec1861d99b21320e6c5509b2"
+    },
+    "deploy-log": {
+      "path": ".codex/audit-state/long-return-opening/opening-deploy.txt",
+      "sha256": "564dc22f625e9035143d87a1d79209036d87c02ca982e7bd38e07976d7cf9861"
+    },
+    "live": {
+      "path": ".codex/audit-state/opening-live.jpg",
+      "sha256": "1f25de0ea1afb8631a8334505c4fc5b4246cc805ffcb21338ea1dd9ebe6d7b9d"
     }
   },
   "criteria": [
@@ -113,10 +125,14 @@
     {
       "id": "release",
       "expectation": "Required CI passes, change merges and deploys, and the live opening is directly inspected.",
-      "status": "pending",
-      "assessment": "Final local production build passed. PR, required CI, deployment, and live inspection remain executable.",
+      "status": "pass",
+      "assessment": "PR #780 merged as 69aa1587c2169587d4ee46ea052dafd196ec3b59 after all required checks, including 2029 frontend tests. Deployment 37073827418 succeeded. Direct live verification covered automatic reporting and crossing handoff, retained narration, crew at the landing, cable/quiet consequences, signal cost and discovery, and next-room travel with no console errors.",
       "evidence": [
-        "record"
+        "record",
+        "ci-log",
+        "deploy-log",
+        "live",
+        "integration"
       ]
     }
   ],
@@ -156,9 +172,15 @@
     {
       "id": "F003",
       "criterion": "release",
-      "status": "open",
+      "status": "resolved",
       "observation": "The implementation is local and undeployed.",
-      "nextAction": "Complete checks, open and attach the PR, merge through CI, and inspect the deployed opening."
+      "resolution": "Merged through required CI, deployed through the frontend workflow, and directly inspected the live default opening and next-room handoff. Release evidence is saved in the work record and screenshot.",
+      "resolutionEvidence": [
+        "record",
+        "ci-log",
+        "deploy-log",
+        "live"
+      ]
     },
     {
       "id": "F004",
@@ -179,14 +201,14 @@
   ],
   "audit": {
     "reviewer": "Primary agent",
-    "comparison": "Direct desktop and phone playthroughs against the stated opening criteria, without treating passing tests as subjective approval.",
-    "regressions": "Existing full-mission comparisons exercise the previous opening; new integration tests exercise the default continuous opening and next-room handoff.",
+    "comparison": "Compared the default live opening with the actual target: the map carries action and visible consequences, reports and crossings automatically reach decisions, and earlier narration remains accessible. Contrasting local remote/climbing and physical-return/swimming runs preserve their distinct knowledge and outcomes. This supports the bounded opening behavior, not subjective endorsement or whole-game completion.",
+    "regressions": "Final required CI passed 2029 frontend tests plus content/integrity checks and build. Direct inspections covered paid return, optional signal, repair exchange, keyboard focus, saved landing, desktop/phone bounds, and next-room handoff. Existing full-mission comparisons remain explicit previous-presentation tests; nine cases exercise the new default opening.",
     "scopeCheck": "No content catalog, route, encounter, mechanic, creature contract, or platform cutover was added.",
     "sessionId": "01a0d4f0-4983-7cd2-ac79-796f77f28c39",
     "requestId": "282079bf-b82a-4f6a-94ff-47ed4f5b0887",
-    "performedAt": "2026-10-02T22:36:11.067343+00:00"
+    "performedAt": "2026-10-02T22:54:09.735086+00:00"
   },
   "stop": {
-    "kind": "continue"
+    "kind": "complete"
   }
 }
