@@ -161,7 +161,7 @@ function branchLine(id) {
   if (!featuresOn()) return ''
   const last = S.regions[id].history.slice(-1)[0]
   if (!last || last.kept || last.verdict !== 'better' || !last.recipe) return ''
-  return `Promising branch: round ${last.round}'s candidate ${abs(last.recipe)} was judged better but reverted (${last.reason}). Start from it: carry its changed steps onto the current baseline recipe (recipe.py merge ${last.base ? abs(last.base) : '<that round\'s baseline recipe>'} <current baseline recipe> <that candidate> <your candidate>, or set and add by hand when the merge refuses), then fix what it was reverted for.\n\n`
+  return `Promising branch: round ${last.round}'s candidate ${abs(last.recipe)} was judged better but reverted (${last.reason}). Start from it: carry its changes onto the current baseline with recipe.py rebase <current baseline recipe> <that candidate> <your candidate> (it reads the candidate's derivedFrom block; a candidate made before that block was added needs the old base as a first argument, from git), then fix what it was reverted for.\n\n`
 }
 // The audit's rows for a region, in the builder and critic prompts: the checklist can pass a
 // part the independent audit still ranks as a top gap.
@@ -171,7 +171,7 @@ function toolLine(id) {
   const t = S.tools[id]
   if (!t || !t.recipe) return ''
   S.regions[id].toolUsed = true
-  return `Tool for this method: ${t.script || 'see the starter recipe'}, built and smoke-tested by a toolsmith before the rounds. Its starter recipe ${abs(t.recipe)} adds the step to the baseline. Start from it (unless a promising branch is listed above), tune its parameters, and change the script only to fix what tuning cannot reach.\n\n`
+  return `Tool for this method: ${t.script || 'see the starter recipe'}, built and smoke-tested by a toolsmith before the rounds. Its starter recipe ${abs(t.recipe)} adds the step to the baseline (rebase it with recipe.py rebase <current baseline recipe> <starter> <your candidate> if the baseline has moved). Start from it (unless a promising branch is listed above), tune its parameters, and change the script only to fix what tuning cannot reach.\n\n`
 }
 function toolPrompt(t) {
   return `Read the toolsmith brief at ${BRIEF('toolsmith-brief.md')} and follow it. Region ${t.region} (${S.regions[t.region].name}). The method plan (${BRIEF('methods.md')}, ${BRIEF('methods.json')}) needs a tool that does not exist yet: ${t.script}. Method: ${S.methods[t.region] || ''}\n` +

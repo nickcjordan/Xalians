@@ -1036,15 +1036,15 @@
  "tools": {
   "R03": {
    "script": "art/species-construction/author_fan_clumps_field.py",
-   "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json"
+   "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-pinned.json"
   },
   "R06": {
    "script": "art/species-construction/author_trunk_sections_field.py",
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\tool-R06.json"
+   "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R06-pinned.json"
   },
   "R04": {
    "script": "art/species-construction/author_fan_clumps_field.py",
-   "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04.json"
+   "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04-pinned.json"
   }
  }
 }

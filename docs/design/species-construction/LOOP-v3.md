@@ -204,6 +204,7 @@ Round 19 kept the first neck join and showed four more faults, all fixed before 
 - **Verdict debt, simulated and left off.** A rule letting a better verdict carry one small neighbour loss as a debt was run on all 34 recorded orders: it would have kept round 8's leg build that kinked the tails, and the simulated mean fell to 5.333. Better-but-reverted work is carried forward by the branch rule instead. The code stays behind `limits.verdictDebt`.
 - **Recipe inputs are pinned** (`recipe.py pin`, strict `seed`): a step may only read files whose bytes match what its output used; changed files are frozen as versioned copies and the step repointed. Containment compares a step with its own baseline footprint, so overlapping parts stop reading as side effects. Sweeps add a tool's own `sweepScore`. Dry runs print rebuild minutes, and builders are told to edit late in the chain.
 - **Preflight** (`loop_preflight.py`): tests, the workflow build check, pins, recipe status and args, run before every batch.
+- **Rebase** (`recipe.py rebase <new base> <candidate> <out>`): branches and toolsmith starters move onto a moved baseline by the `derivedFrom` fingerprints that `set`, `add`, `merge` and `sweep` now record.
 - **Prompt sanity test**: no control characters, and every brief a prompt names exists.
 
 ## Proof
