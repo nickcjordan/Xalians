@@ -75,6 +75,11 @@ parser.add_argument('--thick-exp', type=float, default=1.1)
 parser.add_argument('--rows', default='K,I,M,T,E,C')
 parser.add_argument('--skip', default='', help='comma list of clump names to drop')
 parser.add_argument('--tip-min', type=float, default=.0012, help='smallest tip half width and half thickness (figure units)')
+parser.add_argument('--tip-rows', default='', help='per-row tip radius (figure units) as ROW=value comma list, e.g. T=.004,E=.004; rows not named keep the default (C .0012, T and E .0015, others .002), then --tip-min applies')
+parser.add_argument('--k-sweep', type=float, default=0., help='K row (crown line): turn each clump about its root, in the back view, this many degrees downward (0 = the table as authored)')
+parser.add_argument('--k-root-shift', type=float, default=0., help='K row: move each root this far toward and past the centerline (figure units) so the two clumps fuse across the crown parting')
+parser.add_argument('--k-flat-root', action='store_true', help='K row: the root is as wide as the widest point, so the two crown clumps read as one ridge instead of two beads')
+parser.add_argument('--section-p', type=float, default=0., help='superellipse exponent of every clump section (0 = the table rule: 2.0 K and C, 2.4 T and E, 2.6 I and M; 2 is a plain ellipse)')
 parser.add_argument('--ceiling', type=float, default=.0004, help='nothing rises above the baseline skin top plus this (head-local)')
 parser.add_argument('--max-island', type=int, default=5000)
 # --part front (R03; the implementation is fan_clumps_front.py and fan_clumps_front_run.py, the interface is documented there)
@@ -98,6 +103,7 @@ provenance = snapshot(args.out, __file__, [args.scene, args.table])
 table = json.loads(args.table.read_text())['clumps']
 rows = set(args.rows.split(','))
 skip = set(n.strip() for n in args.skip.split(',') if n.strip())
+tip_rows = {kv.split('=')[0].strip(): float(kv.split('=')[1]) for kv in args.tip_rows.split(',') if '=' in kv}
 
 bpy.ops.wm.open_mainfile(filepath=str(args.scene.resolve()))
 head = max((o for o in bpy.context.scene.objects if o.type == 'MESH'), key=lambda o: len(o.data.vertices))
@@ -349,8 +355,25 @@ def rear_normal(xb, y):
     return n/np.linalg.norm(n)
 
 
+def clump_path(c):
+    path = np.array(c['path'], float)
+    if c['row'] == 'K' and (args.k_sweep or args.k_root_shift):
+        sg = 1. if path[-1, 0] > 0 else -1.
+        if args.k_root_shift:
+            path[:, 0] -= sg*args.k_root_shift
+        if args.k_sweep:
+            a = math.radians(args.k_sweep)
+            r = path[1:, :2]-path[0, :2]
+            ca, sa = math.cos(a), math.sin(a)
+            # rotate (outward, down) coordinates: outward = sg*dx, down = dy
+            out, dn = sg*r[:, 0], r[:, 1]
+            path[1:, 0] = path[0, 0]+sg*(out*ca-dn*sa)
+            path[1:, 1] = path[0, 1]+(out*sa+dn*ca)
+    return path
+
+
 def clump_field(c):
-    ps = catmull(c['path'])
+    ps = catmull(clump_path(c))
     ps = resample(ps, args.samples)
     ax = np.stack([-S*ps[:, 0], S*ps[:, 2]+DF0, Z0-S*ps[:, 1]], axis=1)
     seg = np.linalg.norm(np.diff(ax, axis=0), axis=1)
@@ -368,10 +391,12 @@ def clump_field(c):
     bin_ = np.cross(tang, nrm)
     row = c['row']
     tipr = (.0012 if row == 'C' else (.0015 if row in 'TE' else .002))
-    tipr = max(tipr, args.tip_min)*S
+    tipr = max(tip_rows.get(row, tipr), args.tip_min)*S
     wm, wr = c['widthMid']*S*args.width_scale, c['widthRoot']*S*args.width_scale
     thm = c['thick']*S*args.thick_scale
-    p = 2*(1.0 if row in 'KC' else (1.2 if row in 'TE' else 1.3))
+    p = args.section_p if args.section_p > 0 else 2*(1.0 if row in 'KC' else (1.2 if row in 'TE' else 1.3))
+    if args.k_flat_root and row == 'K':
+        wr = wm
     tw = math.radians(8*abs(jitter_of(c['name'])))
 
     def half_width(t):
