@@ -39,8 +39,16 @@ def alive(pid):
         return False
 
 
+def missing(plan):
+    # A Windows path passed through bash loses its backslashes and names no file; say so plainly.
+    print(json.dumps({'status': 'failed', 'reason': f'no plan file at {plan}; pass the path with forward slashes'}))
+    return 2
+
+
 def cmd_start(a):
     plan, result, job, log = paths(a.plan)
+    if not plan.exists():
+        return missing(plan)
     if job.exists():
         j = json.loads(job.read_text())
         if alive(j['pid']) and not result.exists():
@@ -72,6 +80,8 @@ def tail(log, n=5):
 
 def cmd_wait(a):
     plan, result, job, log = paths(a.plan)
+    if not plan.exists():
+        return missing(plan)
     if not job.exists() and not result.exists():
         print(json.dumps({'status': 'failed', 'reason': 'no job started for this plan; run plan_job.py start first'}))
         return 2
