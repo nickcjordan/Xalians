@@ -8,6 +8,7 @@
   python art/species-construction/loop/recipe.py merge <base.json> <a.json> <b.json> <out.json>
   python art/species-construction/loop/recipe.py verify <recipe.json> [--no-cache] [--no-packet]
   python art/species-construction/loop/recipe.py contain <recipe.json> <step id> [--out-dir NAME] [--zones FILE]
+  python art/species-construction/loop/recipe.py sweep <recipe.json> --step <id> --grid <arg>=<v1>,<v2> [--grid ...] [--variants file.json] [--max 12] [--region Rxx] [--out NAME]
 
 See RECIPE.md beside this file for the format, the cache key and how orders edit a recipe.
 Output directories are immutable: every build writes into a new head-NNNN, body-NNNN or assembled-NNNN name.
@@ -558,26 +559,25 @@ def set_path(doc, dotted, value):
         node[last] = value
 
 
-def cmd_set(args):
-    recipe = load(args.recipe)
-    data = copy.deepcopy(recipe.data)
-    step = next((s for s in data['steps'] if s['id'] == args.step), None)
+def apply_edits(data, step_id, pairs, spec_path, keep_same=False):
+    """Edit one step of a recipe dict in place: pairs is [(arg, value)], each a --flag or spec:<dotted.path>.
+    spec_path(spec_doc) returns the file the edited spec is written to. With keep_same, a spec edit that
+    leaves the document unchanged keeps the original path (so the step key equals the baseline's).
+    Returns the spec file written, or None."""
+    step = next((s for s in data['steps'] if s['id'] == step_id), None)
     if step is None:
-        fail(f'no step {args.step}')
-    if len(args.pairs) % 2:
-        fail('arguments after the step id come in pairs: <arg> <value>')
-    out = Path(args.out).resolve()
-    spec_doc, spec_file = None, None
-    for key, value in zip(args.pairs[0::2], args.pairs[1::2]):
+        fail(f'no step {step_id}')
+    spec_doc, original = None, None
+    for key, value in pairs:
         if key.startswith('--'):
             set_cli_arg(step, key, value)
         elif key.startswith('spec:'):
             if spec_doc is None:
                 if '--spec' not in step['args']:
-                    fail(f'step {args.step} has no --spec argument')
+                    fail(f'step {step_id} has no --spec argument')
                 source = step['args'][step['args'].index('--spec')+1]
                 spec_doc = json.loads(Path(resolve(source, {}, Path('.'))).read_text(encoding='utf-8'))
-                spec_file = out.with_name(f'{out.stem}.{args.step}.spec.json')
+                original = copy.deepcopy(spec_doc)
             try:
                 parsed = json.loads(value)
             except ValueError:
@@ -585,14 +585,28 @@ def cmd_set(args):
             set_path(spec_doc, key[len('spec:'):], parsed)
         else:
             fail(f'{key}: an argument is a --flag or spec:<dotted.path>')
-    if spec_doc is not None:
+    spec_file = None
+    if spec_doc is not None and not (keep_same and spec_doc == original):
+        spec_file = Path(spec_path(spec_doc))
+        spec_file.parent.mkdir(parents=True, exist_ok=True)
         spec_file.write_bytes((json.dumps(spec_doc, indent=1)+'\n').encode('utf-8'))
         index = step['args'].index('--spec')+1
         try:
             step['args'][index] = '{repo}/'+spec_file.relative_to(ROOT).as_posix()
         except ValueError:  # a candidate outside the repository keeps an absolute path
             step['args'][index] = spec_file.as_posix()
-    drop_expect(data, [args.step])
+    drop_expect(data, [step_id])
+    return spec_file
+
+
+def cmd_set(args):
+    recipe = load(args.recipe)
+    data = copy.deepcopy(recipe.data)
+    if len(args.pairs) % 2:
+        fail('arguments after the step id come in pairs: <arg> <value>')
+    out = Path(args.out).resolve()
+    apply_edits(data, args.step, list(zip(args.pairs[0::2], args.pairs[1::2])),
+                lambda doc: out.with_name(f'{out.stem}.{args.step}.spec.json'))
     dump(data, out)
     candidate = load(out)
     plan, _ = make_plan(candidate, Cache(candidate))
@@ -802,27 +816,13 @@ def in_zone(points, zone, floor, height):
             & (y >= zone['y'][0]) & (y <= zone['y'][1]))
 
 
-def cmd_contain(args):
+def compute_containment(recipe, step, out_name, base_dir, zones, species):
+    """Nearest-vertex displacement between a step's input (base_dir) and its output (out_name), per
+    foreign region. Pure computation: nothing is written."""
     import numpy as np
     from scipy.spatial import cKDTree
-    recipe = load(args.recipe)
-    cache = Cache(recipe)
-    step = recipe.byid.get(args.step)
-    if step is None:
-        fail(f'no step {args.step}')
-    zones, species = load_zones(recipe, args.zones)
     frame = species.get('frame', {})
     floor, height = frame.get('floorZ', -.957), frame.get('fixedHeight', FIGURE_HEIGHT)
-    plan, keys = make_plan(recipe, cache)
-    out_name = args.out_dir or plan[args.step]['dir']
-    if not out_name:
-        fail(f'step {args.step} is not built; build it first or pass --out-dir')
-    entry = next((e for e in cache._load()['steps'].values() if e['dir'] == out_name), {})
-    primary = 'base' if 'base' in step['inputs'] else next(iter(step['inputs']))
-    ref = step['inputs'][primary]
-    base_dir = recipe.work/(recipe.roots[ref]['dir'] if ref in recipe.roots else plan[ref]['dir'] or '')
-    if not (base_dir/'shape.glb').is_file():
-        fail(f'baseline {base_dir}/shape.glb not found (input {ref} is not built)')
     cand = rs.glb_vertices(recipe.work/out_name/'shape.glb')
     base = rs.glb_vertices(base_dir/'shape.glb')
     if step.get('kind') == 'head':
@@ -835,7 +835,7 @@ def cmd_contain(args):
     points, dist = np.concatenate([cand, base]), np.concatenate([d_cb, d_bc])/height
     owned = [r for r in step.get('regions', [])]
     if any(r not in zones for r in owned):
-        fail(f'step {args.step} owns a region with no zone ({owned}); the whole figure is its zone')
+        fail(f"step {step['id']} owns a region with no zone ({owned}); the whole figure is its zone")
     own_mask = np.zeros(len(points), bool)
     for r in owned:
         own_mask |= in_zone(points, zones[r], floor, height)
@@ -851,17 +851,43 @@ def cmd_contain(args):
         foreign[r] = ({'vertices': int(sel.sum()), 'p95': round(float(np.percentile(dist[sel], 95)), 5),
                        'max': round(float(dist[sel].max()), 5)} if sel.any() else {'vertices': 0, 'p95': 0.0, 'max': 0.0})
     loose = ~any_zone
-    report = {'step': args.step, 'output': out_name, 'baseline': base_dir.name, 'ownedRegions': owned, 'unit': 'figureHeight',
+    report = {'step': step['id'], 'output': out_name, 'baseline': base_dir.name, 'ownedRegions': owned, 'unit': 'figureHeight',
               'note': 'nearest-vertex displacement both ways, as in mesh_delta.py; a remeshed field has a noise floor near .002',
               'foreign': foreign,
               'outsideAllZones': ({'vertices': int(loose.sum()), 'p95': round(float(np.percentile(dist[loose], 95)), 5),
                                    'max': round(float(dist[loose].max()), 5)} if loose.any() else {'vertices': 0, 'p95': 0.0, 'max': 0.0}),
               'ownedMax': round(float(dist[own_mask].max()), 5) if own_mask.any() else 0.0}
+    return report
+
+
+def cmd_contain(args):
+    recipe = load(args.recipe)
+    cache = Cache(recipe)
+    step = recipe.byid.get(args.step)
+    if step is None:
+        fail(f'no step {args.step}')
+    zones, species = load_zones(recipe, args.zones)
+    plan, keys = make_plan(recipe, cache)
+    out_name = args.out_dir or plan[args.step]['dir']
+    if not out_name:
+        fail(f'step {args.step} is not built; build it first or pass --out-dir')
+    entry = next((e for e in cache._load()['steps'].values() if e['dir'] == out_name), {})
+    primary = 'base' if 'base' in step['inputs'] else next(iter(step['inputs']))
+    ref = step['inputs'][primary]
+    base_dir = recipe.work/(recipe.roots[ref]['dir'] if ref in recipe.roots else plan[ref]['dir'] or recipe.byid[ref].get('existing') or '')
+    if not (base_dir/'shape.glb').is_file():
+        fail(f'baseline {base_dir}/shape.glb not found (input {ref} is not built)')
+    report = compute_containment(recipe, step, out_name, base_dir, zones, species)
     target = recipe.work/out_name/'containment.json' if not entry.get('seeded') else recipe.work/f'{out_name}.containment.json'
     target.write_bytes((json.dumps(report, indent=1)+'\n').encode('utf-8'))
-    worst = max(foreign.items(), key=lambda kv: kv[1]['max'], default=(None, {'max': 0}))
+    worst = max(report['foreign'].items(), key=lambda kv: kv[1]['max'], default=(None, {'max': 0}))
     print(json.dumps({'written': str(target), 'worstForeign': worst[0], 'max': worst[1]['max'],
                       'outsideAllZonesMax': report['outsideAllZones']['max']}))
+
+
+def cmd_sweep(args):
+    import recipe_sweep
+    recipe_sweep.run(args, sys.modules[__name__])
 
 
 # ---------------------------------------------------------------- main
@@ -885,6 +911,14 @@ def main():
     p.add_argument('--no-packet', action='store_true'); p.set_defaults(func=cmd_verify)
     p = sub.add_parser('contain'); p.add_argument('recipe'); p.add_argument('step'); p.add_argument('--out-dir')
     p.add_argument('--zones'); p.set_defaults(func=cmd_contain)
+    p = sub.add_parser('sweep', help='try several values of one step parameters; build, quick, score and rank them')
+    p.add_argument('recipe'); p.add_argument('--step', required=True)
+    p.add_argument('--grid', action='append', help='<arg>=<v1>,<v2>,...; a --flag or spec:<dotted.path>; several grids form a product')
+    p.add_argument('--variants', help='JSON file: a list of {arg: value} dicts')
+    p.add_argument('--max', type=int, default=12); p.add_argument('--region'); p.add_argument('--out')
+    p.add_argument('--top', type=int, default=6, help='variants shown in sweep.png')
+    p.add_argument('--contain-tol', type=float, default=.004, help='foreign displacement (figure heights) tolerated before the total is charged')
+    p.set_defaults(func=cmd_sweep)
     args = parser.parse_args()
     args.func(args)
 
