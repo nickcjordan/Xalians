@@ -287,6 +287,15 @@ def merge_status(full, returned, d, species):
                 b['recipe'] = canon
         if 'recipe' in b or 'recipe' in S.get('baseline', {}):
             b.setdefault('recipe', S.get('baseline', {}).get('recipe', canon))
+        # the head and body come from the assembly's own record: round 23's runner left them out, and the
+        # kept torso's baseline still named the old body
+        record = d['packets'].parent.parent / b.get('assembly', '') / 'assembly.json'
+        if b.get('assembly') and record.is_file():
+            for path in read_json(record).get('inputs', {}):
+                for part in ('head', 'body'):
+                    m = re.search(rf'\b({part}-\d+)\b', path.replace('\\', '/'))
+                    if m:
+                        b[part] = m.group(1)
         S['baseline'] = b
     # state the workflow changes round to round: the returned value always wins
     for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means'):

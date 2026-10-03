@@ -1,0 +1,530 @@
+{
+ "order": {
+  "round": 23,
+  "region": "R06",
+  "with": [
+   "R07"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+ "start": null,
+ "variants": [
+  {
+   "name": "sheet waist, lowered arm fillet",
+   "why": "The method's joint order (methods.md R06): B-20T back edge at the sheet's waist (-.014 at .44, depth about .0865) takes R06.12, R06.13 and R06.14 from fail to pass (round 21 v01 measured 1.064, .968, .992), and B-23 fillet.low .05 to .03 with lowZ .22 to .25 stops the armpit flare from making the front hourglass (R06.3, R06.5). Both edits are the last two body steps: about 3 to 4 minutes. Edits B-23, tagged R07, as the method names it; R07.6 posed arm IoU is the thing to watch.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.09,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    }
+   ]
+  },
+  {
+   "name": "sheet waist only",
+   "why": "Isolates the loft: the same back edge table with B-23 untouched, so the readers and R06.10, R06.9 show what the waist alone does in the posed side view, and a bad armpit in variant 1 can be blamed on the fillet and not the waist.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.005
+    }
+   ]
+  },
+  {
+   "name": "lowered fillet only",
+   "why": "Isolates the fillet: B-23 fillet.low .03, lowZ .25 on the unchanged trunk. The method says the fillet, not the loft, sets the front pinch (spec H5), so R06.3 and R06.5 partials should move here if that is true. One-minute rebuild.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.09,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    }
+   ]
+  },
+  {
+   "name": "sheet waist, chest forward and deeper",
+   "why": "Critic issue 1 (profile is a plank, no forward chest plane) and R06.4: front edge .0055 ahead at .36 and .38 (-.1055, inside R06.8's .01 slack: about -.0075) and .0045 ahead at .34, back edge +.0045 at .34 and +.004 at .36, so the mesh chest depth rises from .128 to about .136 (R06.11 ceiling .1375) over the sheet waist. The belly line from .40 down is untouched, so R06.16 stays near its pass. A bigger shape change than round 21's .005, aimed at what a reader sees in the posed side.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0995
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.1055
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.1055
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0445
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.039
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.024
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.09,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    }
+   ]
+  },
+  {
+   "name": "sheet waist, long front taper",
+   "why": "Critic issue 2 and R06.3: from the front the trunk is a pinched hourglass with a quick hip flare. Half width held near the armpit value to .38 (.101) and then one long curve to the waist (.40 .0925, .42 .082, .44 .0705, .46 .073, .48 .081), waist only .0015 wider so R06.1 stays about 1.08 (bound 1.10). Over the sheet waist and the lowered fillet, so the flank below .38 is the loft's and the armpit is B-23's.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.101
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0925
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.082
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.0705
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.073
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.081
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.09,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    }
+   ]
+  },
+  {
+   "name": "sheet waist, broad chest section",
+   "why": "A different structure idea: the section shape, not the edges. Front exponent 2.3 and the widest line at .55 of the depth over .32 to .38 make the rib cage a broad egg with a flat chest plane (spec mass 2) that light reads without any depth change, aimed at R06.4 and the shaded front. Round 20 dropped to 1.9 to avoid a chest crease; the widened lateral ramp from that round is kept, so the seam check decides.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.split",
+     "value": 0.55
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.split",
+     "value": 0.55
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.split",
+     "value": 0.55
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.split",
+     "value": 0.55
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.09,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    }
+   ]
+  },
+  {
+   "name": "combined: chest, taper, dent cleanup",
+   "why": "The best guess at the finished trunk: sheet waist, chest forward and deeper, long front taper, the lowered fillet, plus critic issue 3 (soft flank dent and back-swell blemishes from behind): arm mask ramp lengthened (fullMargin .11) and section smoothing .012. Interactions between the ideas are the point; round 21's combined variants all rebuilt cleanly. Judged on posed/shaded-left and shaded-front.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0995
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.1055
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.1055
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0445
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.039
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.024
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.101
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0925
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.082
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.0705
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.073
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.081
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.arm.fullMargin",
+     "value": 0.11
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:smoothSigma",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.09,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "step": "B-23",
+   "grid": {
+    "spec:fillet": [
+     {
+      "top": 0.09,
+      "low": 0.02,
+      "topZ": 0.3,
+      "lowZ": 0.27
+     },
+     {
+      "top": 0.09,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.27
+     },
+     {
+      "top": 0.09,
+      "low": 0.04,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    ]
+   },
+   "why": "The arm-root fillet is the lever I am least sure of: how low and how high the small fillet can sit before the armpit opens a crater (the failure the method names). Points span low .02 to .04 and lowZ .25 to .27 against the baseline .05 and .22, on the unchanged trunk so the front pinch it sets can be read apart from the loft. Quick previews cannot rank under 1 percent, so these go to the packet."
+  }
+ ],
+ "region": "R06",
+ "top": 3
+}

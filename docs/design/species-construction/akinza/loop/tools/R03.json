@@ -1,7 +1,7 @@
 {
  "region": "R03",
  "ready": true,
- "readerCheck": "pending: round 23 second fix pass; the one-variant plan plans/tool-check-R03.json must be rerun on this starter (head-2578, assembly assembled-2579) so three blind readers compare it with the baseline",
+ "readerCheck": "better: A's inner ears are smooth, pale, cupped fans of soft feathered locks like the reference, while B's inner ears are built from hard, angular faceted shards that read as crystals rather than fur. | A's inner ears read as one soft, pale, cupped wedge of layered pointed locks like the reference, while B'",
  "script": "art/species-construction/author_fan_lock_sweeps_v3.py",
  "modules": [
   "art/species-construction/fan_lock_sweeps_v3.py (numpy only; v1 and v2 stay pinned by older recipes)",

@@ -1,7 +1,7 @@
 {
  "schemaVersion": 1,
  "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02.json",
- "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2556",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2514",
  "order": {
   "round": 22,
   "region": "R02",
@@ -16,28 +16,54 @@
    "rank": 1,
    "id": "v01",
    "name": "tool as built",
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2556\\v01.json",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2514\\v01.json",
    "ok": true,
    "stage": "done",
    "failure": null,
-   "assembly": "assembled-2523",
-   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2523",
+   "assembly": "assembled-2502",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2502",
    "check": {
     "pass": true,
     "reasons": [],
     "components": 1,
     "nonManifoldEdges": 0,
-    "vertices": 708408,
+    "vertices": 708410,
     "removedFragments": 1,
     "heightSpread": 0.0,
     "groundSpread": 0.0
    },
    "measuredChanged": [
     {
+     "id": "R01.2",
+     "region": "R01",
+     "before": 0.9315,
+     "after": 0.9313,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
      "id": "R03.2",
      "region": "R03",
      "before": 0.0354,
      "after": 0.0353,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.2",
+     "region": "R04",
+     "before": 0.0459,
+     "after": 0.0462,
      "bound": {
       "max": 0.06
      },
@@ -99,20 +125,20 @@
     }
    },
    "regionChange": {
-    "R01": 0.00163,
-    "R02": 0.01457,
-    "R03": 0.00163,
-    "R04": 0.01457,
-    "R05": 0.00309,
-    "R06": 0.00309,
+    "R01": 0.00172,
+    "R02": 0.01611,
+    "R03": 0.00172,
+    "R04": 0.01611,
+    "R05": 0.00333,
+    "R06": 0.00333,
     "R07": 0.0,
     "R08": 0.0,
     "R09": 0.0,
     "R10": 0.0,
     "R11": 0.0,
-    "R12": 0.00097
+    "R12": 0.00101
    },
-   "verdict": "R03 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0146, R04 0.0146, R05 0.0031",
+   "verdict": "R01 measured: 1 changed; R03 measured: 1 changed; R04 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0161, R04 0.0161, R05 0.0033",
    "wallMinutes": 0.1
   }
  ],
@@ -142,7 +168,7 @@
    "source": "variant",
    "edits": [],
    "built": true,
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2556\\v01.json",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2514\\v01.json",
    "warnings": [],
    "changedSteps": [
     "F-bulk",
@@ -190,15 +216,15 @@
    "nearNoop": true,
    "rebuilt": {},
    "contain": [],
-   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2522__body-2276",
-   "head": "head-2522",
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2501__body-2276",
+   "head": "head-2501",
    "body": "body-2276"
   }
  ],
- "scoringSeconds": 34.3,
- "wallMinutes": 1.1,
+ "scoringSeconds": 1.7,
+ "wallMinutes": 0.4,
  "surfaceStats": true,
- "created": "2026-10-03T08:35:29",
+ "created": "2026-10-03T00:40:55",
  "resultFiles": [
   "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02-plan-result.json",
   "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02-plan-result.png"
