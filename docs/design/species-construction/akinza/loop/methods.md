@@ -44,7 +44,7 @@ loop_tools.py blender art/species-construction/author_fan_clumps_field.py -- \
 | R04 Ear fan rear | Coat clump volume, `author_fan_clumps_field.py --part rear` | new | yes (unparks) | yes |
 | R05 Neck and shoulders | Authored neck column at the join (`--neck-sections`), plus the fill-only yoke round B-19r (review, round 19) | J, B-19r | yes (unparks) | yes |
 | R06 Torso and pelvis | Sheet-waist loft plus B-23 arm-root fillet, judged posed (review 2026-10-02) | B-20T, B-23 fillet | yes (unparks once H1, H2, H4 land) | no |
-| R07 Arms and forepaws | Arm and paw rebuild with new paw targets and an authored deltoid | B-23 | no | yes |
+| R07 Arms and forepaws | Digit-chain forepaw (palm pad, four fanned digit chains, claw sheaths, rolled paw frame) in `rebuild_arms_field.py`, arm rod and authored deltoid kept (method review, round 22) | B-23 | yes | no |
 | R08 Legs | Station-table resample for the remaining sculpt | B-22 | no | no |
 | R09 Hind paws | Hind-paw rebuild with a profile-curve instep | B-21 | no | yes |
 | R10 Tails | hold | | | |
@@ -132,6 +132,14 @@ loop_tools.py blender art/species-construction/author_fan_clumps_field.py -- \
 - **Failure looks.** A human hand; a mitten past the hip outline in the posed front; pits between lobes; a ledge at the new deltoid; claws on the front face.
 - **If it stalls.** A digit-chain forepaw generator swapped in at the wrist by a weighted morph.
 - **Respec.** The spec caps the dorsum at .046 and the claws at .011 and asks for joined lobes, against the audit's .055 paw and separate lobes.
+
+- **Method review, round 22 (parked: 3 rounds without a net gain of 1).** The lobe paw stalled on its representation, not its numbers. Its lobes are parallel capsules on fixed lateral offsets with one width radius from root to tip, and the paw frame is never rolled, so the spec's structural keys (`lobeTipWidthRadius`, `pawRollDeg`) do not exist in the tool. Round 22 could only use existing keys: it shrank and sharpened the mitten (paw over wrist 1.2 against 1.5), which read as a closed human fist in profile (R07.4 pass to partial), and left the same single claw column in front (R07.5); round 11's pits and round 16's needle claws came from the same capsule saddle and edge-on frame.
+- **New method.** A digit-chain forepaw in field space inside `rebuild_arms_field.py` at B-23. `ARM['paw']` gains `mode` (`'lobes'` default keeps every earlier run exact, `'digits'` new), `rollDeg` (15 to 25, applied to the paw frame and faded into the rod over the wrist +-.02), `palm` (s, radii, dome offset, blend), four `digits` (root s and r, lateral `yawDeg` fanning the outer digits outward, `pitchDeg`, two `segLen`, width and thickness radii at root, joint and tip, two `curlDeg`), `digitBlend`, `grooveBlend`, and a `claw` sheath per digit (length, base radius, bend, inset) that follows the last segment. The paw unions with the arm rod by smin at the wrist. It writes the paw joints into `fairing.json` armJoints and the achieved paw over wrist, tip arch over knuckles, front-view claw-tip spread and claw visible length into `arm-field.json`. The arm keeps round 22's thinner forearm and wrist, which all three readers preferred, and the ARM-dict deltoid.
+- **Why.** Fanned, tapered digit chains in a rolled frame build the tip arch, the claw spread across the paw end and the curved claw in profile directly (R07.3, R07.4, R07.5, audit rank 7); the deltoid closes R07.1. R07.6 is not closed by any arm: the spec measures the sheet's front and back disagreeing on the right side by .028 (best reachable mean .867 to .871), so it needs the spec's per-view registration or a .87 floor from the orchestrator.
+- **Failure looks.** A human hand or starfish (free digits past .03 fit, gaps between digits, splay wider than the knuckles); pits or creases where the chains meet the palm; a bead chain at the digit joints; claws on the dorsum instead of out of the tips; a twist band at the wrist from the roll; the posed front paw past the hip outline; R07.6 below .862.
+- **If it stalls.** One closed forepaw implicit from a sheet-traced dorsum and edge outline pair (two orthographic profile curves intersected and rounded), claws as local cones; failing that, park R07 for Nick with the R07.6 frame question.
+- **Respec.** No. The spec's counted structure (paw body, four digit lobes, four claws, deltoid, thin forearm and wrist, 15 to 25 degree roll, tip arch .80 to .85 of the knuckles) is what the chains build; only the tool keys change.
+- **Previous method.** Lobe paw retuned through existing `rebuild_arms_field.py` keys (rounds 5, 11, 16, 22).
 
 ### R08 Legs
 

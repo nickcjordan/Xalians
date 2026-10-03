@@ -167,16 +167,23 @@
     },
     "R07": {
       "name": "Arms and forepaws",
-      "method": "Analytic arm and forepaw rebuild with rebuild_arms_field.py at step B-23, enlarging the paw to about 1.5 wrist widths with four separately grooved digit lobes and claws leaving each tip at about a third of the digit length, and authoring the deltoid cap from the ARM dict instead of keeping the native shoulder.",
+      "method": "Digit-chain forepaw built in field space inside rebuild_arms_field.py at B-23 (new paw mode 'digits'): a domed palm pad plus four two-segment digit capsule chains, each with its own root, lateral fan yaw, palmward pitch, tapering radii and curl, ending in a claw sheath that follows the last segment, all in a paw frame rolled by pawRollDeg about the wrist axis, unioned with the arm rod by smin at the wrist; the arm rod keeps round 22's thinner forearm and wrist and the ARM-dict deltoid.",
       "steps": [
-        "B-23"
+        "B-23",
+        "new (first order builds it): rebuild_arms_field.py gains ARM['paw'] = {'mode': 'lobes' (default, every earlier run exact) | 'digits', 'rollDeg': 15 to 25 (applied to the paw frame and faded into the rod over wrist +-.02), 'palm': {'s', 'radii': [ru, rv, rs], 'domeOffset', 'blend'}, 'digits': list of 4 {'rootS', 'rootR', 'yawDeg' (lateral fan, outer digits outward), 'pitchDeg', 'segLen': [2], 'radii': [root, joint, tip] as (width, thickness), 'curlDeg': [2]}, 'digitBlend', 'grooveBlend', 'claw': {'length', 'baseRadius', 'bend', 'inset'} with optional per-digit overrides}; it writes paw joints (palm center, each digit root, joint, tip and claw tip) into fairing.json armJoints and the achieved paw over wrist width, tip arch over knuckle width, front-view claw-tip spread and claw visible length into arm-field.json. Inputs and outputs otherwise unchanged (--body, --fairing, --spec, --out)."
       ],
-      "why": "Closes gap rank 7 (closed fist at about .6x the sheet's paw width, fused digits, short claws; R07.3, R07.5, R07.6) and rank 13 (box shoulder cap and flat lit strip; R07.1). The tool already builds the paw from parameters; the gaps come from the spec's paw size cap and from keeping the native shoulder in rounds 11 and 16, both parameter choices, so the method stays and the targets change.",
-      "failureLooks": "A human hand (long splayed fingers or a thumb); a swollen mitten past the sheet's hip outline in the posed front (R07.6 falls); pits between lobes (round 11); a crater or ledge where the new deltoid meets the trunk or R05's cap; claws stuck on the front face rather than out of the tips.",
-      "stallNext": "A digit-chain forepaw generator: a palm pad plus four jointed digit capsule chains, each ending in its own claw sheath, swapped in at the wrist by a weighted field morph, keeping the arm from rebuild_arms_field.py.",
-      "changed": false,
-      "respec": true,
-      "respecReason": "The spec caps the paw (dorsum at most .046, 1.35 wrist widths; front-view thickness .032 to .036), sets claws at .011 and asks for lobes that stay joined as one mitten, against the audit's .055 paw, 1.5 wrist widths, separate lobes and claws about .35 of the digit length."
+      "why": "The lobe paw stalled on its representation, not its numbers: lobes are parallel capsules on fixed lateral offsets with one width radius root to tip and the paw frame is unrolled, so the spec's own structural keys (lobeTipWidthRadius, pawRollDeg) do not exist in the tool and round 22 could only shrink and sharpen the mitten, giving paw over wrist 1.2 instead of 1.5, a closed human fist in profile (R07.4 pass to partial) and the same single claw column in front (R07.5); round 11's pits and round 16's needle claws came from the same capsule saddle and edge-on frame. Separate fanned, tapered digit chains with their own claw sheaths in a rolled frame build the arch, the tip spread and the curved claw directly (R07.3, R07.4, R07.5, audit rank 7), while keeping round 22's slimmer forearm, which all three readers preferred, and the authored deltoid (R07.1). R07.6 is not closed by any arm: the spec measures the sheet's front and back disagreeing on the right side by .028 (best reachable mean .867 to .871), so it needs the spec's proposed per-view registration or a .87 floor from the orchestrator.",
+      "failureLooks": "A human hand or starfish (free digits past .03 fit, visible gaps between digits, splay wider than the knuckles); pits or creases where digit chains meet the palm; a lumpy bead chain at the digit joints; claws stuck to the dorsum instead of leaving the tips; a twist band across the wrist from the roll; the posed front paw outside the hip outline; R07.6 below .862.",
+      "stallNext": "Sculpt the forepaw as one closed implicit from a sheet-traced dorsum and edge outline pair (two orthographic profile curves intersected and rounded, as the hind-paw profile-curve instep), with claws added as local cones; if that also stalls, park R07 for Nick with the R07.6 frame question.",
+      "changed": true,
+      "respec": false,
+      "respecReason": "The spec's counted structure (paw body, four digit lobes, four claws, deltoid, thin forearm and wrist, roll of 15 to 25 degrees, tip arch .80 to .85 of the knuckles) is what the digit chains build; only the tool keys change, which is not a reason to rewrite it.",
+      "previous": "Analytic arm and forepaw rebuild with rebuild_arms_field.py at step B-23, enlarging the paw to about 1.5 wrist widths with four separately grooved digit lobes and claws leaving each tip at about a third of the digit length, and authoring the deltoid cap from the ARM dict instead of keeping the native shoulder.",
+      "review": {
+        "round": 22,
+        "reason": "parked: 3 rounds without a net gain of 1",
+        "whyStalled": "The lobe generator cannot express the spec's arch, roll or tip taper (no such keys), so the planner shrank the mitten with existing keys and got a closed fist with one claw column."
+      }
     },
     "R08": {
       "name": "Legs",
