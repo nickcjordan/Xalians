@@ -1189,7 +1189,6 @@ describe("one number, one meaning, one place (docs/design/powerworks-one-number-
       const row = plate.querySelector(".pwt-plaque .pwt-health + .pwt-next")!;
       expect(row).toBeTruthy();
       expect(row.querySelector(".pwt-impact")).toBeTruthy();
-      expect(row.querySelector(".pwt-next-ptr")).toBeTruthy();
       expect(text(row.querySelector(".pwt-next-n"))).toBe("14");
       expect(row.getAttribute("aria-label")).toMatch(/^[A-F]'s next hit: 14$/);
       const tag = c.querySelector(`[data-unit="${victim}"] .pwt-threat[data-from-id="${plate.getAttribute("data-unit")}"] .pwt-threat-n`);
@@ -1321,6 +1320,40 @@ describe("one number, one meaning, one place (docs/design/powerworks-one-number-
     expect(tags.length).toBeGreaterThan(0);
     for (const t of tags) expect(text(t.querySelector(".pwt-threat-n"))).toBe("8");
     for (const t of tags) expect(text(t.querySelector("s.pwt-threat-before"))).toBe("14");
+  });
+
+  it("glance-test fixes: no caret on the next-act row, no dotted aim line, and the matchup tab opens with the acting companion's element dot", async () => {
+    arrange();
+    const { container } = mount();
+    const c = container as HTMLElement;
+    expect(c.querySelector(".pwt-next-ptr")).toBeNull();
+    const active = c.querySelector(".pwt-row.squad .pwt-plate.active .pwt-el")!.getAttribute("data-element")!;
+    const tab = c.querySelector(".pwt-row.enemies .pwt-match")!;
+    expect(tab.querySelector("i.pwt-match-dot")!.className).toContain(`el-${active}`);
+    expect(tab.firstElementChild!.classList.contains("pwt-match-dot")).toBe(true);
+    await act(async () => {
+      fireEvent.click(card(c, 2));
+    });
+    await hover(c.querySelector(".pwt-row.enemies .pwt-plate")!);
+    expect(c.querySelector(".pwt-aim-line")).toBeNull();
+  });
+
+  it("glance-test fixes: with a single-target move chosen and one candidate pointed at, the other candidates' previews step back; with none pointed, all stay full; an area move dims none", async () => {
+    const { enemies } = arrange();
+    const { container } = mount();
+    const c = container as HTMLElement;
+    const plate = (id: string) => c.querySelector(`.pwt-row.enemies [data-unit="${id}"]`)!;
+    await act(async () => {
+      fireEvent.click(card(c, 2));
+    });
+    expect(c.querySelectorAll(".pwt-plate.preview-dim").length).toBe(0);
+    await hover(plate(enemies[1]));
+    expect(plate(enemies[0]).classList.contains("preview-dim")).toBe(true);
+    expect(plate(enemies[1]).classList.contains("preview-dim")).toBe(false);
+    await act(async () => {
+      fireEvent.mouseLeave(plate(enemies[1]));
+    });
+    expect(c.querySelectorAll(".pwt-plate.preview-dim").length).toBe(0);
   });
 
   it("decision 7: no banner note, no tip, no preview badge or chevron, no 'its hit' caption, in any state", async () => {

@@ -686,3 +686,6 @@
 .pwt-console.phone .pwt-health-after { font-size: 12px; }
 .pwt-console.phone .pwt-health-num.changing { gap: 1px; }
 .pwt-console.phone .pwt-health.previewing { gap: 2px; }
+/* The element dot on the matchup tab, small enough that the tab clears the element tag beside it on the narrowest plates. */
+.pwt-console.phone .pwt-match .pwt-match-dot { width: 6px; height: 6px; box-shadow: 0 0 0 1px var(--color-s1); }
+.pwt-console.phone .pwt-match:not(.immune) { gap: 2px; padding: 0 3px; left: 0; }

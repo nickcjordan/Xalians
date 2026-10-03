@@ -189,6 +189,7 @@ export function SquadPlate({
   preview,
   previewKey = "",
   offTarget = false,
+  previewDim = false,
   onPick,
 }: {
   u: SquadView;
@@ -218,6 +219,8 @@ export function SquadPlate({
   previewKey?: string;
   /** A key is hovered or selected and this unit is not one it can name: the plate steps back. */
   offTarget?: boolean;
+  /** A target is pointed at with a single-target move chosen: this plate's previewed change steps back, since it is not the one being aimed at. */
+  previewDim?: boolean;
   /** The plate is a legal target of the selected key: pressing it uses the key on it. */
   onPick?: () => void;
 }) {
@@ -226,7 +229,7 @@ export function SquadPlate({
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${u.active ? "active" : ""} ${lit ? "lit" : ""} ${
         spotlit ? "spotlit" : ""
-      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""}`}
+      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${previewDim ? "preview-dim" : ""} ${onPick ? "pickable" : ""}`}
       data-unit={u.id}
       onMouseMove={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
@@ -270,7 +273,7 @@ export function SquadPlate({
   The matchup mark on an enemy's plaque: the acting companion's element against this enemy's, said once
   per enemy (every attack takes its creature's element). Nothing on a neutral matchup.
 */
-export function MatchupMark({ step, who, lit = false }: { step: number | null; who?: string; /** A previewed attack is showing on this plate: this multiplier is why the lost health is more or less than the key's number. */ lit?: boolean }) {
+export function MatchupMark({ step, who, lit = false, element }: { step: number | null; who?: string; /** The acting companion's element: its dot opens the tab, so the tab reads as that companion's bonus or penalty. */ element?: string; /** A previewed attack is showing on this plate: this multiplier is why the lost health is more or less than the key's number. */ lit?: boolean }) {
   if (step === null || step === 1) return null;
   const by = who ? ` for ${who}` : "";
   if (step === 0)
@@ -291,6 +294,7 @@ export function MatchupMark({ step, who, lit = false }: { step: number | null; w
       aria-label={`${strong ? "strong" : "weak"} matchup${by}, attacks land ${times}`}
       data-match={strong ? "strong" : "weak"}
     >
+      {element && <i className={`pwt-match-dot el-${element}`} aria-hidden="true" />}
       {strong ? <ChevronUp /> : <ChevronDown />}
       <span className="pwt-match-word">{strong ? "strong" : "weak"}</span>
       <span className="pwt-match-x">{times}</span>
@@ -460,7 +464,6 @@ export function NextActRow({ next, mode = "live" }: { next: NextAct | null; mode
             </>
           )}
           <span className="pwt-next-n">{next.n}</span>
-          <span className="pwt-next-ptr" />
           {next.area && <span className="pwt-next-all">ALL</span>}
         </span>
       ) : (
@@ -485,6 +488,7 @@ export function EnemyPlate({
   u,
   lit = false,
   activeName,
+  activeElement,
   spotlit = false,
   dimmed = false,
   delta = 0,
@@ -499,12 +503,15 @@ export function EnemyPlate({
   preview,
   previewKey = "",
   offTarget = false,
+  previewDim = false,
   onPick,
 }: {
   u: EnemyView;
   lit?: boolean;
   /** The active companion's name, for the matchup mark's words. */
   activeName?: string;
+  /** The active companion's element, shown as the dot that opens the matchup tab. */
+  activeElement?: string;
   /** This unit is the spotlit actor (UX pass): brighter, a floor ring, a head pointer. */
   spotlit?: boolean;
   /** Someone else is spotlit right now: this plate steps one notch dimmer. */
@@ -530,6 +537,8 @@ export function EnemyPlate({
   previewKey?: string;
   /** A key is hovered or selected and this unit is not one it can name: the plate steps back. */
   offTarget?: boolean;
+  /** A target is pointed at with a single-target move chosen: this plate's previewed change steps back, since it is not the one being aimed at. */
+  previewDim?: boolean;
   /** The plate is a legal target of the selected key: pressing it uses the key on it. */
   onPick?: () => void;
 }) {
@@ -538,7 +547,7 @@ export function EnemyPlate({
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
         dimmed ? "dimmed" : ""
-      } ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""} ${isBoss(u.species) ? "boss" : ""}`}
+      } ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${previewDim ? "preview-dim" : ""} ${onPick ? "pickable" : ""} ${isBoss(u.species) ? "boss" : ""}`}
       data-unit={u.id}
       data-letter={u.letter}
       onMouseMove={onHover ? () => onHover(true) : undefined}
@@ -566,7 +575,7 @@ export function EnemyPlate({
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
         {!u.down && <ThreatTabs threats={threats ?? u.threats} modeOf={threatMode} onHover={onThreat} />}
-        {!u.down && <MatchupMark step={u.matchup} who={who} lit={!!preview?.matchup} />}
+        {!u.down && <MatchupMark step={u.matchup} who={who} lit={!!preview?.matchup} element={activeElement} />}
         {isBoss(u.species) && <span className="pwt-guardian-tag">Guardian</span>}
         <span className="pwt-name">
           {u.letter} · {u.name}

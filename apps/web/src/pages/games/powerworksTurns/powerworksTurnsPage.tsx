@@ -651,6 +651,8 @@ export default function PowerworksTurnsPage() {
   const previewFor = (u: { id: string; hp: number; max: number; shield: number; boost: number }) => (shownKeyView && !busy ? platePreviewOf(previews[u.id], u) : null);
   // The unit acting is never stepped back: it is the one using the key, not a unit the key cannot reach.
   const offTarget = (id: string, down: boolean) => !busy && anyPreview && !previews[id] && !down && id !== view.active?.id;
+  // With a single-target move chosen and a candidate pointed at, every other candidate's preview steps back (it is not the one aimed at).
+  const previewDimOf = (id: string) => !busy && singleTarget && !!hoverTarget && !!previews[hoverTarget] && hoverTarget !== id && !!previews[id];
   const pickFor = (id: string) => (chosenKey && pickable[id] ? () => act(chosenKey.index, id) : undefined);
 
   // The threat tags every plate carries (docs/design/powerworks-threat-tags.md). At rest they are the engine's
@@ -1000,31 +1002,6 @@ export default function PowerworksTurnsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [holding, hold?.kind, holdCompact]);
 
-  // Targeting hover (storyboard "choosing" step): hovering a key cell rings its enemy target
-  // and draws a faint aim line from the active companion.
-  const aimLine = useMemo(() => {
-    if (!hoverTarget || !view.active || busy || !pickable[hoverTarget]) return null;
-    const stage = stageRef.current;
-    if (!stage) return null;
-    const from = stage.querySelector<HTMLElement>(`[data-unit="${view.active.id}"] .pwt-figure`);
-    const to = stage.querySelector<HTMLElement>(`[data-unit="${hoverTarget}"] .pwt-figure`);
-    if (!from || !to) return null;
-    const stageBox = stage.getBoundingClientRect();
-    const zoomFactor = stageBox.width / stage.offsetWidth || 1;
-    const fromBox = from.getBoundingClientRect();
-    const toBox = to.getBoundingClientRect();
-    // Desktop: the line leaves the top of the move row above the companion, so it never crosses the cards.
-    const menu = stage.querySelector<HTMLElement>(".pwt-moves-row");
-    const menuTop = menu ? (menu.getBoundingClientRect().top - stageBox.top) / zoomFactor : null;
-    return {
-      x1: (fromBox.left + fromBox.width / 2 - stageBox.left) / zoomFactor,
-      y1: menuTop !== null ? menuTop - 2 : (fromBox.top + fromBox.height / 2 - stageBox.top) / zoomFactor,
-      x2: (toBox.left + toBox.width / 2 - stageBox.left) / zoomFactor,
-      y2: (toBox.top + toBox.height / 2 - stageBox.top) / zoomFactor,
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hoverTarget, view.active?.id, busy, pickable]);
-
   return (
     <main className="pwt" data-tier="immersive" id="main" data-busy={busy ? "true" : "false"} data-pointer={pointerLive ? "live" : "idle"}>
       <div
@@ -1170,11 +1147,6 @@ export default function PowerworksTurnsPage() {
               </g>
             </svg>
           )}
-          {aimLine && (
-            <svg className="pwt-aim-svg" aria-hidden="true">
-              <line className="pwt-aim-line" x1={aimLine.x1} y1={aimLine.y1} x2={aimLine.x2} y2={aimLine.y2} />
-            </svg>
-          )}
           <div
             className="pwt-rows"
             style={
@@ -1194,6 +1166,7 @@ export default function PowerworksTurnsPage() {
                   ring={ringOf(e.id)}
                   lit={busy && actorId === e.id}
                   activeName={view.active?.name}
+                  activeElement={view.active?.element}
                   spotlit={spotlightId === e.id}
                   dimmed={!!spotlightId && spotlightId !== e.id}
                   delta={deltaOf(e.id)}
@@ -1203,6 +1176,7 @@ export default function PowerworksTurnsPage() {
                   preview={previewFor(enemyShown(e))}
                   previewKey={shownKeyView?.name ?? ""}
                   offTarget={offTarget(e.id, e.down)}
+                  previewDim={previewDimOf(e.id)}
                   onPick={pickFor(e.id)}
                   onHover={(hovering) => {
                     if (!hovering) setHoverTarget(null);
@@ -1230,6 +1204,7 @@ export default function PowerworksTurnsPage() {
                   preview={previewFor(withHp(u))}
                   previewKey={shownKeyView?.name ?? ""}
                   offTarget={offTarget(u.id, u.down)}
+                  previewDim={previewDimOf(u.id)}
                   onPick={pickFor(u.id)}
                   onHover={(hovering) => {
                     if (!hovering) setHoverTarget(null);

@@ -307,14 +307,6 @@
 .pwt-next-what { position: relative; display: inline-flex; align-items: center; gap: 3px; }
 .pwt-next .pwt-impact { width: 13px; height: 13px; color: var(--color-ink-2); }
 .pwt-next-what svg { width: 13px; height: 13px; flex: 0 0 auto; color: var(--color-ink-2); }
-.pwt-next-ptr {
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid var(--color-ink-2);
-  margin-left: 1px;
-}
 .pwt-next-arrow { font-weight: 400; color: var(--color-ink-3); }
 .pwt-next-all,
 .pwt-next-to {
@@ -333,7 +325,6 @@
 .pwt-next-part { display: inline-flex; align-items: center; gap: 1px; }
 /* A finishing move crosses the row out (a 2 px ink strike); only the number dims. */
 .pwt-next.cancelled .pwt-next-what::after { content: ""; position: absolute; left: -3px; right: -3px; top: 50%; margin-top: -1px; border-top: 2px solid var(--color-ink); z-index: 1; }
-.pwt-next.cancelled .pwt-next-ptr { display: none; }
 .pwt-next.cancelled .pwt-next-n,
 .pwt-next.cancelled .pwt-next-what svg { opacity: 0.6; }
 /* While beats play, the acting enemy's row stays full and the others step back, as their tags do. */
@@ -348,3 +339,12 @@
 /* --- legend samples: a plaque's own rows, inert --- */
 .pwt-legend-plaque { display: flex; flex: 0 0 auto; width: 132px; margin-top: 0; }
 .pwt-legend-plaque .pwt-match { position: static; align-self: flex-start; }
+/* The acting companion's element dot opens the matchup tab: whose bonus or penalty it is. */
+.pwt-match-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--el); box-shadow: 0 0 0 2px var(--color-s1); flex: 0 0 auto; }
+.pwt-console.phone .pwt-match .pwt-match-dot { width: 8px; height: 8px; }
+/* A pointed target with a single-target move chosen: the other candidates' previewed changes step back. */
+.pwt-plate.preview-dim .pwt-health.previewing,
+.pwt-plate.preview-dim .pwt-next.struck,
+.pwt-plate.preview-dim .pwt-next.cancelled,
+.pwt-plate.preview-dim .pwt-chip.preview,
+.pwt-plate.preview-dim .pwt-match.lit { opacity: 0.4; }
