@@ -1,5 +1,9 @@
 # Xalian Creature Expansion Framework
 
+The target-selection method and portable encounter requirements below remain useful, but the template, catalog and generation details were written for v4. Follow the [current v5 creature contract](./creature-model-current.md) and its executable schemas for new species instead of the retired trait, archetype, affinity and action-pool instructions below.
+
+For current v5 authoring and substantive edits, use the [species ability audit](../species-templates/ABILITY-AUDIT.md) before treating a creature as complete. Inventory all source-supported anatomy, channels, processes and capabilities, then review applicable delivery and outcome families, including support and automatic effects. Aim for logically exhaustive permissions within the shared vocabulary and evidence. Do not stop at a signature plus enough ordinary options to fill four generated action slots, omit an independently capable part because another part has the same outcome category, or narrow the pool for a cleaner presentation. Record concrete exclusions and unresolved decisions. The generated four-action selection and the species-level permission set are different things.
+
 ## Purpose
 
 New creatures are selected from demonstrated universe needs, not from an isolated concept backlog. The system separates four questions that are easy to blur together:
@@ -10,6 +14,8 @@ New creatures are selected from demonstrated universe needs, not from an isolate
 4. **Game balance:** What happens when a generated creature is interpreted by an actual game?
 
 Every playable design also obeys a **common encounter envelope**: it must sustain ordinary encounter-length activity in gas and assume a visually credible unsupported pose with basic movement on solid ground. This is a bioengineering constraint, not a claim that every creature thrives everywhere. Native environments may remain necessary for long-term life, feeding, travel, or peak mobility. Truly medium-bound organisms may exist as fauna, but they do not enter the cross-game playable roster without an explicit product-level decision.
+
+Poseidas adds a world-specific amphibious baseline. Every playable species generated for Poseidas must be designed as either aquatic-primary with encounter-length gas respiration and credible solid-surface movement, or land-primary with encounter-length liquid respiration and credible movement in water. Both forms therefore breathe and tolerate gas and liquid, but the secondary medium does not need to support equal speed, comfort, feeding, sustained travel or long-term habitation. This follows from deliberate Generator design on a world containing oceans, islands, rigs and submerged cities; it is not a claim that an evolved animal automatically fits both environments.
 
 Within that envelope, every design obeys a **portable moveset baseline**: environmental specialization may govern where a creature lives comfortably, but it may not make the creature's moveset conditional on a home-world event. Every generated ability and signature must retain a complete, lore-valid baseline anywhere the creature itself can participate. A home biome, storm, resource, structure, allied species, or other external condition may amplify the effect or change its presentation, but may never be required to invoke it.
 
@@ -94,6 +100,8 @@ Before any name, silhouette, or lore paragraph is proposed, write a one-page tar
 
 A target is strong when two to four deficits collapse into one coherent identity. A design that exists only to tick unrelated boxes is rejected before prose or art work begins.
 
+Across successive creatures, review the range of engineered purposes, ecological roles and present-day behaviors. Do not default to a familiar narrative role merely because a new body or element makes it appear novel. Repetition is valid when the world and the creature justify it, but the design must express a meaningful distinction beyond its label or silhouette.
+
 ## Designing the template
 
 Build in dependency order so later choices cannot quietly contradict earlier ones:
@@ -130,6 +138,7 @@ At every step, compare the draft to its contrast set and record the coverage del
 - Traits follow from ratified facts and do not duplicate raw fields.
 - Lore, data, and art describe the same silhouette and central act.
 - Every ability instrument and the signature's complete baseline remain usable wherever the creature can participate; environmental bonuses are explicitly secondary.
+- For v5, the per-species ability audit accounts for every plausible source-backed mechanism/delivery/outcome family, including excluded and equivalent candidates with concrete reasons. Passing compilation or producing four actions is necessary for validity but not sufficient for coverage.
 
 ### Gate C: Population
 

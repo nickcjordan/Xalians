@@ -29,6 +29,13 @@ it('generates the full resolved model without traits, archetypes or implicit phy
   expect(generateCreatureDraft(compiled, 'whole-creature')).toEqual(creature);
   expect(CreatureDataSchema.safeParse(creature).success).toBe(true);
   expect(creature.attributes.strength).toBeGreaterThanOrEqual(150);
+  expect(creature.physiology.massKg).toBeGreaterThanOrEqual(source.physiology.size.massKg[0]);
+  expect(creature.physiology.massKg).toBeLessThanOrEqual(source.physiology.size.massKg[1]);
+  const heightScale = (creature.physiology.heightCm! - source.physiology.size.heightCm[0]) /
+    (source.physiology.size.heightCm[1] - source.physiology.size.heightCm[0]);
+  const massScale = (creature.physiology.massKg - source.physiology.size.massKg[0]) /
+    (source.physiology.size.massKg[1] - source.physiology.size.massKg[0]);
+  expect(heightScale).toBeCloseTo(massScale, 12);
   expect(creature).not.toHaveProperty('traits');
   expect(creature).not.toHaveProperty('archetype');
   expect(creature.physiology).not.toHaveProperty('corporeality');

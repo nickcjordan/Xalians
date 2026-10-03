@@ -24,6 +24,11 @@ it('constructs every staged species with guaranteed identity and distinct ordina
       expect(new Set(creature.actions.map(abilityIdentity)).size).toBe(4);
       variants.add(creature.actions.map(abilityIdentity).sort().join('|'));
       expect(generateCreatureDraft(compiled, seed)).toEqual(creature);
+      if (source.key === 'frackworm') {
+        expect(creature.physiology.heightCm).toBeUndefined();
+        expect(creature.physiology.lengthCm).toBeGreaterThanOrEqual(900);
+        expect(creature.physiology.lengthCm).toBeLessThanOrEqual(1500);
+      }
       if (source.key === 'bioflim') {
         expect(creature.signature.type).toBe('passive');
         expect(creature.passives.some(passive => passive.effects.some(effect => effect.type === 'restore'))).toBe(true);

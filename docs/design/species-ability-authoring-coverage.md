@@ -51,7 +51,7 @@ The review should contain:
 
 Completion means all candidate families in the declared scope have been reviewed and no unresolved issue affecting the permitted pool is hidden. It does not require filling every matrix cell. Unsupported mechanics should be rejected, not added to satisfy a quota.
 
-Pool breadth and per-individual ability count are separate: a species can have a broad option pool while each creature receives a small selection. Weights must not silently make supposedly available approved options unreachable.
+Pool breadth and per-individual ability count are separate: a species can have a broad option pool while each creature receives a small selection. The four-action output limit is not an authoring quota. Similar effects from independently capable anatomy sources remain candidates for separate permissions; exclude one only for an actual physical, semantic, or generator-equivalence reason, not to keep the pool tidy. Weights must not silently make supposedly available approved options unreachable.
 
 ## Required authoring outcome
 

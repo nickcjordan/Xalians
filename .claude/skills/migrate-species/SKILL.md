@@ -1,6 +1,6 @@
 ---
 name: migrate-species
-description: Author or re-author a Xalian species from its lore, anatomy, physiology and art, including mechanism permissions and a systematic ability coverage audit. Use for new species and migrations of existing creature templates.
+description: Author a new Xalian species or edit, audit, or migrate an existing one's defining lore, anatomy, physiology, or abilities, including logically exhaustive mechanism-permission coverage.
 ---
 
 # Author or migrate a species
@@ -27,13 +27,13 @@ Preserve the user's teaser verbatim as `lore.description`. Distinguish explicit 
 
 ## Authoring workflow
 
-1. Inventory anatomy, channels, materials, senses and evidenced processes. Complete the mechanism/delivery/outcome coverage audit, including healing, protection, removal and other support where supported. Consider all relevant registered possibilities; do not stop after the first examples.
+1. Inventory anatomy, channels, materials, senses and evidenced processes from the sources, including parts that look primarily locomotor or sensory. Complete a logically exhaustive review of source-supported mechanism, delivery and outcome families within the current shared vocabulary, including healing, protection, removal and other support where supported. Consider each independently capable source even when another part can produce a similar outcome. Record evidence and concrete exclusions; do not stop after the first examples or omit a plausible source to keep the pool compact.
 2. Put essential identity into the fixed signature and other guaranteed properties/capabilities. Automatic processes belong in passives or physiology. Pure support is valid.
-3. Author ordinary mechanism permissions over catalog values with the supported nested relationships. No complete-move whitelist, extra whole-ability template catalog, arbitrary predicates, or independent trait rolls. All inherent effects remain present; status application likelihood can vary.
+3. Author all justified ordinary mechanism permissions over catalog values with the supported nested relationships. The four generated action slots are not a species-level permission quota. No complete-move whitelist, extra whole-ability template catalog, arbitrary predicates, or independent trait rolls. All inherent effects remain present; status application likelihood can vary.
 4. Keep signature structure fixed. Prefer justified numeric bands to fixed output values; omit status intensity overrides unless source evidence warrants deviation from the catalog default of 50.
 5. Derive source permissions from each mechanism or guaranteed capability. Do not restore template `instruments`, `conduits`, element adjacency grants or a second permission matrix. Validate physical instruments against anatomy and requirements over the entire physiological band.
-6. Run `npm run check:creature-model -- docs/species-templates/v5/<key>.json`. This invokes the shared compiler and proves four distinct actions can be selected. Resolve failures in authoring permissions, not by truncating, padding or adding generation retries.
-7. Write `<key>.ability-audit.md` beside the staged template. Record included/excluded mechanism families, source evidence, retired powers and genuine remaining questions. A schema pass alone does not demonstrate creative completeness.
+6. Run `npm run check:creature-model -- docs/species-templates/v5/<key>.json`. This invokes the shared compiler and proves four distinct actions can be selected. Resolve failures without trimming justified permissions, padding or adding generation retries; report a real model limitation if one prevents coherent coverage.
+7. Write or update `<key>.ability-audit.md` beside the staged template. Record all reviewed mechanism/delivery/outcome families, included permissions, concrete exclusion or equivalence reasons, source evidence, retired powers and genuine remaining questions. For an existing species, trace changed facts through the prior coverage decision and reopen affected families. Revisit the inventory after compiling to catch omissions. A schema pass or a four-action sample does not demonstrate creative completeness.
 8. Update the species walkthrough and encyclopedia when the authorized task includes those changes. Report the actual migration/release status. Do not add a new approval checkpoint where the user has already authorized the change.
 
 ## Invariants to preserve

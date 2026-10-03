@@ -33,13 +33,16 @@ export function generateCreatureDraft(compiled: CompiledSpecies, seed: string): 
   const roll = (band: [number, number], label: string) => band[0] + Number(draw(BigInt(band[1]) - BigInt(band[0]) + 1n, label));
   const ratings = <T extends Record<string, [number, number]>>(bands: T, prefix: string) =>
     Object.fromEntries(Object.entries(bands).map(([key, band]) => [key, roll(band, `${prefix}/${key}`)])) as { [K in keyof T]: number };
-  const physical = (band: [number, number], label: string) => band[0] + (band[1] - band[0]) * makeRng(seed).fork(label).float();
   const { size, genome, capabilities, senses, ...facts } = species.physiology;
+  const sizeScale = makeRng(seed).fork('size/scale').float();
+  const physical = (band: [number, number]) => band[0] + (band[1] - band[0]) * sizeScale;
+  const dimensions = Object.fromEntries((['heightCm', 'lengthCm', 'widthCm'] as const).flatMap(key =>
+    size[key] ? [[key, physical(size[key])]] : []));
   return {
     species: species.key, element: species.element,
     physiology: {
       ...JSON.parse(JSON.stringify(facts)),
-      heightCm: physical(size.heightCm, 'size/height'), weightKg: physical(size.weightKg, 'size/weight'),
+      ...dimensions, massKg: physical(size.massKg),
       genome: { chirality: genome.chirality === 'achiral' ? 'achiral' : draw(2n, 'chirality') === 0n ? 'levo' : 'dextro' },
       capabilities: ratings(capabilities, 'capability'),
       senses: { sight: roll(senses.sight, 'sense/sight'), hearing: roll(senses.hearing, 'sense/hearing'),

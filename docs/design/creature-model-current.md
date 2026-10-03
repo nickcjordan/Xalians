@@ -1,6 +1,6 @@
 # Creature model: current agreed contract
 
-Updated 2026-09-21. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the deployed games and canonical species bundle still use v4.
+Updated 2026-09-22. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the deployed games and canonical species bundle still use v4.
 
 ## Canonical roster audit decisions
 
@@ -12,7 +12,7 @@ The species template describes physiology, attribute and temperament bands, guar
 
 ```text
 Species                         Generated creature
-schemaVersion: 5.0.0             id / provenance / appearance (release envelope)
+schemaVersion: 5.1.0             id / provenance / appearance (release envelope)
 key / name / nameOrigin          species
 element                         element
 homePlanet / generatorPlanets
@@ -34,6 +34,14 @@ mechanisms: permitted domains   (generation permissions are not copied)
 - The agreed references are 0 absent, 25 limited, 50 standard reference, 75 strong, 100 exceptional, with values above 100 allowed. [Rating guidance](creature-rating-benchmarks.md) and the shared `benchmarks.ts` catalog define field-specific authoring anchors. These are not automatically applied game formulas.
 - Temperament's five axes remain bounded 0–100 and independently authored. Physical measurements retain units. No trait/archetype nudges.
 - `lowlight` joins the special senses. It does not grant zero-light vision, heat sensing, or a combat bonus.
+
+## Canonical description and visual interpretation
+
+The ratified species data is the canonical creature description. No portrait, token, animation, model or game rendering is the single canonical snapshot of a species. A visual implementation must satisfy every applicable fixed fact, band, anatomical relationship, appearance statement and resolved individual value in the data. Within facts the data does not specify, implementations may vary in pose, incidental detail, exact contour, expression, surface treatment and style.
+
+Author the data as completely as the creature warrants, but do not fill every possible visual choice merely to eliminate interpretation. An unspecified fact is legitimate implementation space, not permission to contradict a specified fact. If visual work suggests a better design, approve and record the design change before treating the new visual as valid evidence.
+
+Physical measurement authoring remains deliberately small. Schema 5.1 uses `massKg` rather than weight and supports applicable overall `heightCm`, `lengthCm` and `widthCm` so different body plans are not forced into height alone. Mass and at least one overall linear dimension are required; authors add the other overall dimensions only when they materially clarify scale. Per-appendage dimensions and structured anatomy instances are not part of this change. Counts, attachment relationships, relative proportions and other primarily visual constraints belong in the canonical appearance description. Generated measurements share one size percentile so an individual does not independently roll a small height and a large mass. Frackworm's established 900–1500 cm band is now represented as length rather than height. These changes are staged for the next release and do not alter the frozen `generation-0.6.0-1` archive.
 
 ## Actions, passives and signature
 
@@ -130,6 +138,8 @@ Removal matches explicit method intersections: cooling, smothering, warming, cle
 
 Mechanisms describe source-supported processes, not a whitelist of named finished moves. Each mechanism owns its instrument, optional element, targeting, continuity/timing domains, delivery-specific range/area permissions, and inherent effects. An effect's recipient is a scalar or a delivery-keyed set of permitted recipients. Likelihood is an authored domain; intensity is a value/band. Every semantic value comes from the shared catalog.
 
+The species-level authoring pass must cover all justified mechanism, delivery and outcome families. Four generated action slots are a per-individual output rule, not a reason to keep authored permissions compact. Distinct anatomical sources may each support a similar effect; review each on its own evidence and exclude only true semantic duplicates or unsupported uses.
+
 The compiler partitions by delivery and whether/which first effect uses area. It groups each independent effect with its dependents so recipient choices obey `requires` constructively; other categorical domains remain factored. It validates supported field relationships at authoring time, checks physical source anatomy and gaze support across the full sight band, and proves enough distinct actions can be selected. Voice does not imply vocal communication or respiration. At runtime it selects unused structure indices directly, removes equivalent representations across mechanisms, and then rolls output. It does not enumerate a species' entire move universe, evaluate lore per individual, or generate/reject/retry creatures.
 
 The current validator's domain proof relies on the bounded schema: recipient groups enforce dependency relationships; remaining variable constraints span at most two dimensions within a recipient partition. Future higher-order relationships require extending that proof and its tests. This is not a general predicate engine. Overlapping mechanisms preserve authored sampling weight; selection is not advertised as uniform over unique semantic structures. Effect alias matching can be combinatorially expensive for many overlapping effect entries; consolidate redundant authoring and benchmark representative canonical species before release. The [relationship audit](creature-relationship-audit.md) records checked cases, fixes and remaining boundaries.
@@ -143,7 +153,7 @@ npm run check:creature-model -- path/to/species.json
 npm run check:creature-model -- packages/content/src/creature/fixtures/support-species.json --example
 ```
 
-The fixture is deliberately noncanonical. Its 14 possible ordinary structures come from compact permissions, not 14 authored moves.
+The fixture is deliberately noncanonical. Its 14 possible ordinary structures come from factored permissions, not 14 authored moves. That small test fixture is not a target size for canonical species permissions.
 
 ## Species decisions retained for the migration
 
@@ -163,7 +173,7 @@ The fixture is deliberately noncanonical. Its 14 possible ordinary structures co
 
 Implemented and tested: strict redesigned species/ability/record schemas; updated semantic catalog; mechanism compiler; constructive four-action selection; fixed signature output rolling; resolved physiology/attributes/temperament generation; protection/removal helpers; authoring validation CLI.
 
-The v5 framework has no known unresolved design or implementation decision within its agreed scope. Its complete 32-species roster is frozen as `generation-0.6.0-1`. This is a readiness statement about the creature contract, not a claim that every conceivable future power is representable. The expressly deferred mechanics listed above require a new shared design decision and release if later adopted. Games may now adapt to this frozen contract without waiting for further creature-framework work; they still own encounter scheduling, numeric balance, geometric resolution, status lifetimes and their handling of unsupported capabilities.
+The ability framework has no known unresolved design or implementation decision within its agreed scope. The complete 32-species schema-5.0 roster remains frozen as `generation-0.6.0-1`. Schema 5.1 is the active source candidate for the next release and contains the agreed minimal scale revision. This is a readiness statement about the creature contract, not a claim that every conceivable future power is representable. The expressly deferred mechanics listed above require a new shared design decision and release if later adopted. Games still own encounter scheduling, numeric balance, geometric resolution, status lifetimes and their handling of unsupported capabilities.
 
 Canonical v5 ability-design and roster gates:
 

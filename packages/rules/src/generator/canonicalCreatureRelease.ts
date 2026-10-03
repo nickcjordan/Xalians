@@ -1,4 +1,4 @@
-/** Frozen v5 candidate roster. Games continue to use the current v4 entry point. */
+/** Next schema candidate roster. Games continue to use the current v4 entry point. */
 import akinza from '../../../../docs/species-templates/v5/akinza.json';
 import avilily from '../../../../docs/species-templates/v5/avilily.json';
 import bioflim from '../../../../docs/species-templates/v5/bioflim.json';
@@ -35,7 +35,7 @@ import { createCreatureRelease, GENERATOR_VERSION, SCHEMA_VERSION } from './crea
 export { CreatureRecordSchema } from '@xalians/content/creature';
 export { GENERATOR_VERSION, SCHEMA_VERSION };
 
-const release = createCreatureRelease('generation-0.6.0-1', [
+const release = createCreatureRelease('generation-0.7.0-1', [
   akinza, avilily, bioflim, chromocat, codazzo, crystorn, drilltail, dromeus,
   ectoghoul, figzy, foromeer, frackworm, graviclaw, hippochamp, hypnopet, imprit,
   kosanos, luceras, neph, newtapede, scalatto, shuntara, smokat, sonalloy,

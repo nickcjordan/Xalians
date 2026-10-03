@@ -76,6 +76,23 @@ describe('redesigned ability contract', () => {
 });
 
 describe('author once, construct valid combinations', () => {
+  it('accepts fins as an authored instrument only when fins are in the species anatomy', () => {
+    const species = template();
+    species.mechanisms[0].instrument = 'fins';
+    expect(SpeciesSchema.safeParse(species).success).toBe(false);
+    species.physiology.anatomy.push('fins');
+    expect(SpeciesSchema.safeParse(species).success).toBe(true);
+  });
+  it('requires mass and at least one applicable overall dimension', () => {
+    const species = template();
+    expect(SpeciesSchema.safeParse(species).success).toBe(true);
+    delete species.physiology.size.heightCm;
+    expect(SpeciesSchema.safeParse(species).success).toBe(false);
+    species.physiology.size.lengthCm = [100,200];
+    expect(SpeciesSchema.safeParse(species).success).toBe(true);
+    expect(SpeciesSchema.safeParse({ ...species, physiology: { ...species.physiology,
+      size: { lengthCm: [100,200] } } }).success).toBe(false);
+  });
   it('always returns four distinct actions, including pure support', () => {
     const compiled = compileSpecies(fixture);
     for (let offset = 0n; offset < 30n; offset++) {

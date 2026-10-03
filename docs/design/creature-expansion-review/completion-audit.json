@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "creature-expansion-krystos-concept",
+  "outcome": "Continue the creature expansion pipeline with a current-roster, lore-grounded fourth creature, preserving user review of defining identity and avoiding repeated low silhouettes. The larger creature pipeline is not complete.",
+  "authorizedScope": "Develop the provisional Krystos concept and its anatomy/capability coverage. Preserve Fathomaw's accepted art direction. Do not ratify subjective identity, publish a new species, or change lore to excuse art without agreement.",
+  "workRecord": "docs/design/creature-expansion-review/active-work.md",
+  "evidence": {
+    "concept": {"path": "docs/design/creature-expansion-review/krystos-vent-grazer.md", "sha256": "592f5bcbe5c980724b3e2127628538a394248a243fcfc2ffc1f5c1651f711ca1"},
+    "abilities": {"path": "docs/design/creature-expansion-review/krystos-vent-grazer.ability-audit.md", "sha256": "3f31f1eebe4ad4441dec9b6ec880c23673619248b0253dd91bef626555cdeda4"},
+    "work": {"path": "docs/design/creature-expansion-review/active-work.md", "sha256": "56261e601470ea868ed58d3723ab1ec93df4215fdb2e4129a5f84ac43b6f9e7d"},
+    "diagram": {"path": "docs/design/creature-expansion-review/krystos-body-study.html", "sha256": "026acfcbd114c51e4ecfa02af49063a2f345acf8f0405f62d7099efce6de81c5"}
+  },
+  "criteria": [
+    {"id": "reviewable-identity", "expectation": "Present a concrete provisional body and ecological identity for the user's consequential review, without claiming canonical approval.", "status": "pass", "assessment": "Raised shoulders, four support limbs, scoop muzzle, grazing and breathing routes, excavation limits, and a functional signature candidate are specified. Constant-length limb study rendered and directly inspected; not a finished portrait or biomechanics proof.", "evidence": ["concept", "diagram"]},
+    {"id": "coverage-and-continuity", "expectation": "Keep full creature-design scope and ability coverage visible rather than silently reducing to a compact move list or erasing unfinished production work.", "status": "pass", "assessment": "Provisional source ledger includes physical damage, protection, restraint, displacement, support, elemental/signal and automatic families. Foot vocabulary gap, unapproved physiology, and future compiler verification are explicit. Fathomaw art remains recorded, not called finished. Checks of inventory script and whitespace passed in the actual working tree.", "evidence": ["abilities", "work"]}
+  ],
+  "findings": [
+    {"id": "F001", "criterion": "reviewable-identity", "status": "resolved", "observation": "Earlier construction placed the digging head below the surface and extended hind feet in the supposedly tucked swim pose.", "resolution": "Reused the same head geometry under trunk rotation and moved swim endpoints beside the trunk while preserving limb segment lengths. Re-rendered and inspected all three poses.", "resolutionEvidence": ["diagram"]},
+    {"id": "F002", "criterion": "coverage-and-continuity", "status": "resolved", "observation": "Initial provisional ledger treated feet as an existing instrument and omitted body compression coverage.", "resolution": "Checked actual acts.ts rows. Added compression strike/crush and recorded padded feet as an explicit vocabulary gap, not an invented enum or hooves mapping.", "resolutionEvidence": ["abilities"]},
+    {"id": "F003", "criterion": "coverage-and-continuity", "status": "out_of_scope", "observation": "The final species template, full compiler-backed audit, canonical measurements, naming, and official portrait are not yet authored.", "rationale": "These remain part of the ongoing pipeline, contingent on the user's choice of defining identity. This stop asks that actual subjective question and does not claim the creature is complete.", "scopeSource": "AGENTS.md explicit agreement before treating a proposal as settled; active work record keeps defining facts open for Nick's approval."},
+    {"id": "F004", "criterion": "coverage-and-continuity", "status": "out_of_scope", "observation": "Faithful production Fathomaw portrait and token remain unfinished.", "rationale": "Preserved as a separate outstanding art-delivery task in the work record; this Krystos identity review neither replaces nor closes it.", "scopeSource": "Current continuation in creature expansion active work record separates Fathomaw production art from the fourth-creature concept."}
+  ],
+  "audit": {
+    "reviewer": "Primary agent direct source and rendered construction review",
+    "comparison": "Compared with the user's request for concrete design work, posture variety, functional ecology, intentional character, and logically exhaustive permissions. Re-inspected the final rendered three poses and actual instrument tables. Review snapshots are copied from the isolated working tree so the primary-checkout hook can bind their content without modifying concurrent work.",
+    "regressions": "No canonical species, games, generator, or published art changed. All anatomy is provisional. Constant segment lengths and separate attachment paths preserved; schematic overlap is not represented as fused anatomy or finished portrait quality.",
+    "scopeCheck": "The broader pipeline remains unfinished. No user agreement fabricated; no compact permission pool, implicit ice power, equal-water-throwing claim, or production-art completion claim. The sole stop is the identity decision already surfaced to Nick.",
+    "sessionId": "01a08c31-ecbd-7ac3-a70f-5404b4a26d84",
+    "requestId": "ef78ca02-ee63-4586-9e6b-1eeda0b31f53",
+    "performedAt": "2026-09-30T14:48:19Z"
+  },
+  "stop": {
+    "kind": "approval",
+    "question": "Does this raised, scoop-faced amphibious grazer feel like the identity you want to develop?",
+    "requiredBy": "Explicit agreement on proposed defining creature identity is required before calling it settled, per AGENTS.md and the active work record.",
+    "decisionNeeded": "Keep or revise the raised scoop-faced grazer identity, which determines subsequent anatomy, dentition, physiology, signature, naming, and art.",
+    "evidence": ["concept", "diagram", "abilities", "work"]
+  }
+}

@@ -2,7 +2,7 @@
 
 Author species permissions over catalog values and machine-readable relationships, allowing the generator to assemble valid abilities. Do not author a whitelist of complete moves. The implemented contract and migration status are in [the current specification](../design/creature-model-current.md). Configuration examples are coverage evidence, not the universe of allowed outputs. Compile permissions before generation; never evaluate/retry each generated creature.
 
-Use for every newly authored species and every substantive re-authoring or ability audit. Policy and scope: [coverage guidance](../design/species-ability-authoring-coverage.md).
+Use for every newly authored species and every edit to an existing species' defining lore, anatomy, physiology, or abilities. Recheck affected families against the full mechanism inventory rather than treating the changed field in isolation. Pure spelling or formatting fixes need not repeat an unchanged creative review. Policy and scope: [coverage guidance](../design/species-ability-authoring-coverage.md).
 
 Create or update `docs/species-templates/v5/<key>.ability-audit.md` using the sections below. This is species-level review evidence, not part of generated creature data. Mark items complete only with evidence; mark genuine non-applicability with a reason. Do not treat a passing schema validator as proof of creative coverage.
 
@@ -34,6 +34,7 @@ Keep redesigned species in `docs/species-templates/v5/`. The complete roster is 
 - [ ] Consider deliberate actions, automatic continuous processes, and the supported event-triggered responses.
 - [ ] Review meaningful compound effects and actual outcome dependencies without inferring incidental effects.
 - [ ] Explore reasonable creative applications beyond moves literally named in the source.
+- [ ] Recheck locomotor, support, sensory, and other seemingly noncombat anatomy for independently justified actions or automatic capabilities; do not assume a body part is mechanically inert because its first described purpose is movement.
 - [ ] Do not treat source silence as an ability to synthesize any substance or perform any elemental process.
 - [ ] Flag meaningful ideas requiring new registered keys rather than omitting them silently or using private keys.
 
@@ -48,10 +49,10 @@ Use the ledger to show the reviewed mechanism/delivery/outcome coverage. Group c
 Dispositions:
 - Included: a supported family covered by authored mechanism permissions.
 - Excluded: a concrete incompatibility or lack of a necessary mechanism.
-- Equivalent: already covered by identified permissions or numeric/naming variation.
+- Equivalent: the same source and behavior are already covered by identified permissions or numeric/naming variation. A different capable body part is not equivalent merely because its effect category matches.
 - Decision needed: proposed species addition, unresolved meaning, or required registry/schema extension.
 
-No fixed quota of options. Account for every plausible candidate family in the declared registry/mechanism scope. A merely short list of examples is not a completed pass.
+No fixed quota of options. Account for every plausible candidate family in the declared registry/mechanism scope. A merely short list of examples is not a completed pass. The four generated action slots do not cap the species-level permission pool. Do not remove an evidenced anatomy source or outcome merely to make the set compact; distinguish genuinely equivalent configurations from different body parts that can independently perform a similar action.
 
 ## 4. Author mechanism permissions
 
@@ -69,7 +70,7 @@ No fixed quota of options. Account for every plausible candidate family in the d
 ## 5. Verify completeness and validity
 
 - [ ] Revisit each source mechanism and effect family to catch overlooked support or alternative uses.
-- [ ] Consolidate genuinely redundant permissions without losing meaningful behavior differences.
+- [ ] Consolidate only genuinely redundant permissions without losing independently supported anatomical sources, deliveries, outcomes, or meaningful behavior differences.
 - [ ] Review source/registry changes for newly possible or newly invalid configurations.
 - [ ] During an audit, account for previous options: retained, revised, consolidated, removed with rationale, or decision needed.
 - [ ] Check mechanical prerequisites over full numeric bands and permitted selection paths before generation.

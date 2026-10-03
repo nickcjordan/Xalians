@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "key": "support-example",
   "name": "Support Example",
   "nameOrigin": "Noncanonical test species for the redesigned authoring contract.",
@@ -20,7 +20,7 @@
     "bodyPlan": "amorphous",
     "anatomy": ["body"],
     "covering": "bare",
-    "size": {"heightCm": [50, 80], "weightKg": [30, 45]},
+    "size": {"heightCm": [50, 80], "massKg": [30, 45]},
     "lifespan": "standard",
     "genome": {"chirality": "rolled"},
     "diet": "omnivore",

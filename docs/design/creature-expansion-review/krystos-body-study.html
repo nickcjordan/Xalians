@@ -1,0 +1,53 @@
+<div id="krystos-body-study">
+  <h3>Krystos body study</h3>
+  <div class="text-small">Construction only, not portrait art. Solid limbs: near side. Dashed limbs: far side.</div>
+  <section><h4>Standing: chest carried clear of the surface</h4><svg data-pose="standing" role="img" aria-label="Raised shoulders, four separately attached limbs, broad hands and feet"></svg></section>
+  <section><h4>Excavating: forelimbs open a seam; brow lifts loose ice</h4><svg data-pose="digging" role="img" aria-label="The same limb lengths folded into a digging posture, mouth reaching the surface"></svg></section>
+  <section><h4>Swimming: limbs tuck between strokes</h4><svg data-pose="swimming" role="img" aria-label="The same four limbs folded beside the trunk in water"></svg></section>
+</div>
+<style>
+  #krystos-body-study section {margin-top:20px}
+  #krystos-body-study h4 {font-weight:500;margin-bottom:4px}
+  #krystos-body-study svg {display:block;width:100%;height:auto;color:var(--foreground)}
+  #krystos-body-study .body {fill:var(--muted);stroke:currentColor;stroke-width:2}
+  #krystos-body-study .limb {fill:none;stroke:currentColor;stroke-width:13;stroke-linecap:round;stroke-linejoin:round}
+  #krystos-body-study .far {stroke-width:5;stroke-dasharray:7 6}
+  #krystos-body-study .joint {fill:var(--background);stroke:currentColor;stroke-width:2}
+  #krystos-body-study .surface {fill:none;stroke:var(--border);stroke-width:2}
+</style>
+<script>
+(() => {
+  const root = document.getElementById('krystos-body-study');
+  const ns = 'http://www.w3.org/2000/svg';
+  const poses = {
+    standing:{angle:0,offset:[0,0],feet:[[128,199],[140,194],[285,199],[316,194]],head:'M145 74 Q105 67 88 106 L49 111 L47 122 L88 127 Q111 121 150 106 Z'},
+    digging:{angle:-0.26,offset:[0,28],feet:[[73,199],[103,194],[273,199],[303,194]],head:'M145 74 Q105 67 88 106 L49 111 L47 122 L88 127 Q111 121 150 106 Z'},
+    swimming:{angle:0,offset:[0,17],feet:[[230,133],[230,117],[273,140],[300,139]],head:'M145 74 Q105 67 88 106 L49 111 L47 122 L88 127 Q111 121 150 106 Z'}
+  };
+  function el(tag,attrs,parent){const node=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,v);parent.appendChild(node);return node;}
+  function joint(a,b,l1,l2,side){
+    const dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy);
+    if(d>l1+l2 || d<Math.abs(l1-l2))throw new Error('Unreachable limb endpoint');
+    const along=(l1*l1-l2*l2+d*d)/(2*d),height=Math.sqrt(Math.max(0,l1*l1-along*along));
+    return [a[0]+along*dx/d-side*height*dy/d,a[1]+along*dy/d+side*height*dx/d];
+  }
+  for(const svg of root.querySelectorAll('svg')){
+    const name=svg.dataset.pose,p=poses[name];svg.setAttribute('viewBox','20 15 365 205');
+    const transform=point=>{const x=point[0]-235,y=point[1]-105,c=Math.cos(p.angle),s=Math.sin(p.angle);return [235+x*c-y*s+p.offset[0],105+x*s+y*c+p.offset[1]];};
+    const starts=[[157,94],[166,88],[278,113],[289,107]].map(transform);
+    const limbs=starts.map((start,i)=>{const lengths=i<2?[52,58]:[44,50];const bend=joint(start,p.feet[i],...lengths,i<2?-1:1);return {start,bend,end:p.feet[i],lengths};});
+    function drawLimb(i){const l=limbs[i];el('path',{d:`M${l.start} L${l.bend} L${l.end}`,class:`limb ${i%2?'far':''}`},svg);el('circle',{cx:l.start[0],cy:l.start[1],r:4,class:'joint'},svg);if(i%2===0){el('ellipse',{cx:l.end[0],cy:l.end[1],rx:i<2?18:22,ry:5,class:'body'},svg);}}
+    drawLimb(1);drawLimb(3);
+    const body=el('g',{transform:`translate(${p.offset}) rotate(${p.angle*180/Math.PI} 235 105)`},svg);
+    el('path',{d:'M131 90 Q147 36 197 45 Q257 51 287 85 Q307 100 298 122 Q270 149 192 140 Q155 137 131 113 Z',class:'body'},body);
+    el('path',{d:p.head,class:'body'},body);
+    el('circle',{cx:100,cy:108,r:3,fill:'currentColor'},body);
+    el('path',{d:'M62 124 L88 126',stroke:'currentColor','stroke-width':2},body);
+    drawLimb(0);drawLimb(2);
+    if(name!=='swimming')el('path',{d:'M25 205 H380',class:'surface'},svg);
+    else el('path',{d:'M25 30 Q60 24 95 30 T165 30 T235 30 T305 30 T375 30',class:'surface'},svg);
+    svg.dataset.limbCount=limbs.length;
+    svg.dataset.segmentLengths=JSON.stringify(limbs.map(l=>l.lengths));
+  }
+})();
+</script>

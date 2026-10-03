@@ -1,15 +1,19 @@
 # Species art system
 
-Status: art presentation direction updated with Nick's agreement on 2026-09-18. The current site implementation still has two SVG variants. Their existence does not limit the number of presentation forms the art library may use.
+Status: art presentation direction updated with Nick's agreement through 2026-09-22. The current site implementation still has two SVG variants. Their existence does not limit the number of presentation forms the art library may use.
 
 ## Presentation direction
 
-- **Agreed:** Keep the existing portrait as a visual reference baseline for each species. The ratified species template and lore remain the authority if a portrait conflicts with them.
+- **Agreed:** Keep the existing portrait as one approved visual interpretation and useful reference for each species. It is not the canonical snapshot. The ratified species data remains the authority if any visual conflicts with it.
 - **Agreed:** An animated stage performance is an approved additional presentation role. More roles may be added where a real use case calls for them.
 - **Deferred:** The current compact SVG art remains in use, but its future form is outside this animation study. If a compact species representation becomes a production requirement, it applies across the species library.
 - **Open:** The final stage style, required views, and universal clip set are not selected. The three-species cutout pilot is a working implementation, not a permanent visual standard.
 
 The current review concerns animated stage performances: how a creature moves, how its defining action reads, and how editable motion becomes a reusable game asset.
+
+The species data is an exhaustive-as-warranted constraint set, not an instruction that all presentations must reproduce one image. Every presentation must preserve applicable anatomy, counts, attachment relationships, measurements, material facts, covering, defining markings and behavior. A generated individual's resolved facts also constrain art intended to depict that individual. Where the data is silent, games and presentation formats may interpret pose, incidental markings, exact curvature, expression, rendering style and other unspecified detail differently.
+
+Compact art may simplify specified detail for legibility, but it may not replace it with contradictory anatomy. A token can omit interior detail while retaining the defining silhouette; an animation can change pose while retaining attachment and movement logic; a game can stylize proportions only within the applicable authored ranges and relationships.
 
 ## Current site forms
 

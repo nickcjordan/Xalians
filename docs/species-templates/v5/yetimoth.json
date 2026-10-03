@@ -64,7 +64,7 @@
       90
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "physiology": {
     "composition": {
       "primary": "flesh",
@@ -84,7 +84,7 @@
         205,
         255
       ],
-      "weightKg": [
+      "massKg": [
         330,
         470
       ]

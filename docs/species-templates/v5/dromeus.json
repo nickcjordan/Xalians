@@ -45,7 +45,7 @@
         88,
         112
       ],
-      "weightKg": [
+      "massKg": [
         38,
         56
       ]
@@ -161,7 +161,7 @@
       46
     ]
   },
-  "schemaVersion": "5.0.0",
+  "schemaVersion": "5.1.0",
   "temperament": {
     "boldness": [
       45,

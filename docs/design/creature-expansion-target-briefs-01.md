@@ -6,6 +6,8 @@ These are proposed design targets, not creature concepts and not ratified specie
 
 Target 1 was completed by Sonalloy, ratified as species 00031 on 2026-09-11. Target 2 was completed by Shuntara, ratified as species 00032 on 2026-09-15 after its current-routing direction was revised to exclude entanglement and external storms as moveset prerequisites. Target 3 is now the active brief.
 
+The Poseidas target below was written against the retired v4 trait, archetype, action and instrument-permission model. Use it for world and ecological intent, not as a v5 template specification. The current, unratified anatomy proposal and its v5 corrections are in [Poseidas deep-route concept](./creature-proposals/poseidas-deep-route.md). The [current creature contract](./creature-model-current.md) governs new authoring.
+
 The ranking applies the [expansion framework](./xalian-creature-expansion-framework.md) to the current [coverage ledger](./CREATURE-EXPANSION-COVERAGE.md). It favors a coherent cluster of needs over the raw number of empty registry cells.
 
 ## Recommended sequence
@@ -127,7 +129,7 @@ A native of Poseidas's stable deep layer whose defining competence is navigating
 
 - **World and element:** Poseidas; Water.
 - **Body plan:** `piscine`. This is the brief's clearest morphological requirement, not a suggestion to copy an Earth fish.
-- **Environmental fit:** breathes and tolerates both liquid and gas for ordinary activity; sustained activity stays inside Poseidas's -2 to 40 C habitable band. Pressure is expressed through lore, `hardened`, and the central act because pressure itself is not a separate record field. Gas tolerance supports temporary deployment and does not make dry land its ecological home.
+- **Environmental fit:** follows Poseidas's agreed amphibious baseline by breathing and tolerating both liquid and gas for ordinary encounter-length activity. This species is aquatic-primary, so gas tolerance and solid-surface movement do not make dry land its ecological home. Sustained activity stays inside Poseidas's -2 to 40 C habitable band. Pressure is expressed through lore and the body design because pressure itself is not a separate record field.
 - **Capabilities:** swim must dominate. Sprint and climb should remain genuinely weak rather than being raised to make the template broadly capable, but the body must still support slow deliberate movement on solid ground.
 - **Sense:** echolocation is the preferred special sense for deep navigation. Its visible or behavioral mechanism must be established without importing an Earth-animal silhouette wholesale.
 - **Trait foundation:** `hardened` is required if the species normally operates at crush depth. `perceptive` is not automatically required merely because echolocation is present.

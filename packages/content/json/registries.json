@@ -872,6 +872,11 @@
       "nature": "Wings used for flight, striking, gusts, or shrouding."
     },
     {
+      "key": "fins",
+      "name": "Fins",
+      "nature": "Water-control appendages that may also brace, push, or strike when their structure supports it."
+    },
+    {
       "key": "tail",
       "name": "Tail",
       "nature": "A tail or trailing section of the body used as a natural weapon."
@@ -1182,6 +1187,10 @@
       "shove",
       "hurl",
       "ward"
+    ],
+    "fins": [
+      "strike",
+      "shove"
     ],
     "tail": [
       "strike",
