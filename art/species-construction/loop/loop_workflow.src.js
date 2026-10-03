@@ -188,7 +188,20 @@ function toolPrompt(t) {
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline packet: ${abs(S.baseline.packet)}. Write the starter recipe to ${LOOPDIR}\\recipes\\tool-${t.region}.json and the ready record to ${LOOPDIR}\\tools\\${t.region}.json. ` +
     `Also write a one-variant check plan to ${LOOPDIR}\\plans\\tool-check-${t.region}.json (plan-schema.md: order {round ${S.round + 1}, region ${t.region}}, region ${t.region}, base the baseline recipe, start your starter recipe, baselinePacket the baseline packet, one variant "tool as built" with no edits) and return its path as checkPlan: three blind readers compare that candidate with the baseline before the tool counts as ready. ` +
     `Commit by name on branch ${BRANCH} with a plain message and no Co-Authored-By trailer, and return the structured output.` +
-    (t.rejected ? `\n\nThe readers rejected the tool's first candidate against the baseline: ${t.rejected}. Find the fault they describe in the script (a new versioned file, never a pinned one), rebuild the starter, keep the check plan pointing at it, and return the structured output again.` : '')
+    (t.rejected ? `\n\nThe readers rejected the tool's first candidate against the baseline: ${t.rejected}. Find the fault they describe in the script (a new versioned file, never a pinned one), rebuild the starter, keep the check plan pointing at it, and return the structured output again.` : '') +
+    // round 22: one toolsmith ran 406 turns with its context grown to 674K tokens, every turn
+    // re-reading all of it; sessions with notes bound that without losing the work
+    (L.toolSessions ? `\n\nWork in sessions of at most about ${L.toolSessionCalls ?? 80} tool calls. If you reach that and are not done, write what you built, what works, what is left and your next step to ${LOOPDIR}\\tools\\${t.region}-notes.md, commit it, and return ready false with notes starting with the word continue; a fresh session then picks up from your notes. Keep command output short: pipe build logs through tail -n 20, never print whole scripts, records or JSON files you wrote, and read images at the crops you need.` +
+      (t.session ? ` This is session ${t.session + 1}: read ${LOOPDIR}\\tools\\${t.region}-notes.md first and continue from it.` : '') : '')
+}
+// A toolsmith in bounded sessions: a session that returns notes starting with "continue" hands over to a fresh one.
+async function toolsmith(t, label) {
+  let r = null
+  for (let k = 0; k < Math.max(1, L.toolSessions || 1); k++) {
+    r = await agent(toolPrompt({ ...t, session: k }), workerOpts({ label: k ? `${label} session ${k + 1}` : label, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' }))
+    if (!r || r.ready || !/^continue/i.test(String(r.notes || '').trim())) return r
+  }
+  return r
 }
 function auditLines(id) {
   if (!featuresOn()) return ''
@@ -271,6 +284,10 @@ function combinePrompt(a, b, round, baselinePacket) {
 // turn of the default type re-reads about 61K tokens of project instructions it does not need.
 const LEAN = L.leanAgentType === undefined ? 'Explore' : L.leanAgentType
 const leanOpts = o => LEAN ? { ...o, agentType: LEAN } : o
+// v3.6 (round 22: toolsmiths spent 156M of 168M tokens): roles that write files (planner, runner,
+// builder, toolsmith, combine, recorder) run on a slim worker type when limits.workerAgentType is set,
+// whose preamble is about 36K tokens against the default type's 69K, re-read on every turn
+const workerOpts = o => L.workerAgentType ? { ...o, agentType: L.workerAgentType } : o
 const PLAN_OUT = { type: 'object', properties: { plan: { type: 'string' }, variants: { type: 'number' }, approach: { type: 'string' }, needsCode: { type: 'boolean' }, codeTask: { type: 'string' } }, required: ['approach', 'needsCode'] }
 const RUN_OUT = {
   type: 'object',
@@ -366,7 +383,7 @@ async function codeBuild(order, round, task) {
   const seed = `r${round}-${order.id}-code`
   const b = await agent(builderPrompt(order, round) + `\n\n${task}\n\n` +
     `When your candidate is packeted, run python art/species-construction/loop/reader_pack.py ${abs(S.baseline.packet).split('\\').join('/')} <your packet> --regions ${regions.join(',')} --out <your packet>/reader-pack --seed ${seed} (forward slashes, your shell is bash), and return pack set to that folder and keys set to the side your candidate is on per region, from its key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.`,
-    { label: `builder r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' })
+    workerOpts({ label: `builder r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' }))
   if (!b || b.failed || !b.packet || b.technicalPass === false || !b.pack) return b
   const cand = { name: 'code builder candidate', pack: b.pack, keys: b.keys || {}, assembly: b.assembly }
   const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt([b.pack], order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id} code`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
@@ -377,7 +394,7 @@ async function codeBuild(order, round, task) {
 // Before a new tool counts as ready, its starter's candidate faces the three blind readers.
 async function toolCheck(region, checkPlan) {
   const order = { id: region, with: [], component: POOLS.head.includes(region) ? 'head' : POOLS.join.includes(region) ? 'join' : 'body' }
-  const run = await agent(runnerPrompt(checkPlan, order, S.round + 1), { label: `runner tool check: ${region}`, phase: 'Prepare', schema: RUN_OUT, model: 'sonnet', effort: 'low' })
+  const run = await agent(runnerPrompt(checkPlan, order, S.round + 1), workerOpts({ label: `runner tool check: ${region}`, phase: 'Prepare', schema: RUN_OUT, model: 'sonnet', effort: 'low' }))
   const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
   if (!cands.length) return { verdict: 'worse', reason: run ? (run.reason || 'the starter built no candidate') : 'runner returned nothing' }
   const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} tool check: ${region}`, phase: 'Prepare', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
@@ -425,7 +442,7 @@ if (args.coldBaseline || IDS.some(id => S.regions[id].score === null)) {
   // A cold re-score after round 0 (a rubric change) is recorded beside that round, never over it.
   const kind = S.round > 0 ? 'rescore' : 'baseline'
   const entry = { round: S.round, kind, assembly: S.baseline.assembly, scores: scoresNow(S), mean: meanOf(S, scoresNow(S)), summary: critique.summary }
-  await agent(recordPrompt(S.round, entry, kind === 'rescore' ? '-rescore' : ''), { label: 'record: baseline', phase: 'Baseline', model: 'haiku', effort: 'low' })
+  await agent(recordPrompt(S.round, entry, kind === 'rescore' ? '-rescore' : ''), workerOpts({ label: 'record: baseline', phase: 'Baseline', model: 'haiku', effort: 'low' }))
   S.means = [entry.mean]
   log(`Cold baseline ${S.baseline.assembly}: mean ${entry.mean} ${JSON.stringify(entry.scores)}`)
 }
@@ -472,14 +489,14 @@ if (toBuild.length) {
     // a tool already built but not yet passed by the readers is checked, not rebuilt; one the readers
     // rejected before starts with its fix pass
     let r = t.built && t.checkPlan && L.toolReaderCheck
-      ? (t.rejected ? await agent(toolPrompt(t), { label: `tool: ${t.region} fix`, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })
+      ? (t.rejected ? await toolsmith(t, `tool: ${t.region} fix`)
         : { region: t.region, script: t.script, recipe: t.recipe, ready: true, checkPlan: t.checkPlan, notes: 'built earlier; reader check only' })
-      : await agent(toolPrompt(t), { label: `tool: ${t.region}`, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })
+      : await toolsmith(t, `tool: ${t.region}`)
     if (!r || !r.ready || !L.toolReaderCheck) return r
     if (!r.checkPlan) return { ...r, ready: false, notes: 'no check plan: ' + (r.notes || '') }
     let check = await toolCheck(t.region, r.checkPlan)
     if (check.verdict === 'worse') {
-      r = await agent(toolPrompt({ ...t, rejected: check.reason }), { label: `tool: ${t.region} fix`, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })
+      r = await toolsmith({ ...t, rejected: check.reason }, `tool: ${t.region} fix`)
       if (!r || !r.ready || !r.checkPlan) return r ? { ...r, ready: false } : r
       check = await toolCheck(t.region, r.checkPlan)
     }
@@ -533,7 +550,7 @@ for (let i = 0; i < ROUNDS; i++) {
   const trial = args.effortTrial && i === 0 ? orders[0] : null
   const trialRun = trial ? (async () => {
     const tb = await agent(builderPrompt(trial, round, '-medium') + ' This is an effort trial twin: build in your own new directories, never commit, and edit no committed script; put any script change in a new file named after the original with a -trial suffix.',
-      { label: `builder r${round} ${trial.component}: ${trial.id} (medium trial)`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'medium' })
+      workerOpts({ label: `builder r${round} ${trial.component}: ${trial.id} (medium trial)`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'medium' }))
     if (!tb || tb.failed || !tb.packet || tb.technicalPass === false) return { failed: tb ? (tb.reason || 'technical check failed') : 'builder returned nothing' }
     const frozenT = trial.component === 'head' ? [...POOLS.body, ...POOLS.join] : trial.component === 'body' ? POOLS.head : []
     const scopeT = sideEffectRegions(tb.regionChange ? { regionChange: tb.regionChange } : null, trial.id, THRESHOLD, SP.regionImages, IDS).filter(id => !frozenT.includes(id))
@@ -555,7 +572,7 @@ for (let i = 0; i < ROUNDS; i++) {
       if (spec) { S.specs[order.id] = { path: spec.path, image: spec.image, summary: spec.summary, structure: spec.structure, round }; out.spec = spec }
     }
     if (L.builderMode === 'split') {
-      const plan = await agent(plannerPrompt(order, round), { label: `planner r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' })
+      const plan = await agent(plannerPrompt(order, round), workerOpts({ label: `planner r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
       if (plan && plan.needsCode) {
         // a plan that needs a script change goes to the code builder, which builds one candidate itself
         out.build = await codeBuild(order, round, `The planner asked for this code change first: ${plan.codeTask}`)
@@ -563,9 +580,9 @@ for (let i = 0; i < ROUNDS; i++) {
       } else if (plan && plan.plan) {
         let picked = null, tieCand = null
         for (let pass = 0; pass <= (L.refinePasses ?? 1) && !picked; pass++) {
-          const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), { label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' })
+          const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
           if (!thePlan || !thePlan.plan) break
-          const run = await agent(runnerPrompt(thePlan.plan, order, round), { label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' })
+          const run = await agent(runnerPrompt(thePlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' }))
           const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
           if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built') : 'runner returned nothing'; continue }
           const regions = [order.id, ...(order.with || [])]
@@ -602,7 +619,7 @@ for (let i = 0; i < ROUNDS; i++) {
       } else out.build = { failed: true, reason: 'planner returned no plan', changes: '', approach: '' }
     } else {
       out.build = await agent(builderPrompt(order, round),
-        { label: `builder r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' })
+        workerOpts({ label: `builder r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' }))
     }
     const b = out.build
     if (!b || b.failed || !b.packet || b.technicalPass === false) { out.failed = b ? (b.reason || 'technical check failed') : 'builder returned nothing'; return out }
@@ -635,7 +652,7 @@ for (let i = 0; i < ROUNDS; i++) {
   if (kept.length === 2 && kept.every(o => o.build.recipe)) {
     const [a, b] = kept
     const combine = await agent(combinePrompt(a, b, round, baselineAtStart.packet),
-      { label: `combine r${round}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'medium' })
+      workerOpts({ label: `combine r${round}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'medium' }))
     if (combine && !combine.failed && combine.packet && combine.technicalPass !== false) {
       const merged = mergeCritiques(a, b)
       const check = await agent(
@@ -670,7 +687,7 @@ for (let i = 0; i < ROUNDS; i++) {
   // The state after this round rides in the record, so a stopped batch resumes with
   // loop_state.py merge <round file> instead of a journal replay.
   entry.state = snapshot()
-  await agent(recordPrompt(round, entry), { label: `record r${round}`, phase: 'Rounds', model: 'haiku', effort: 'low' })
+  await agent(recordPrompt(round, entry), workerOpts({ label: `record r${round}`, phase: 'Rounds', model: 'haiku', effort: 'low' }))
   log(`Round ${round}: ` + entry.orders.map(o => `${o.region} ${o.kept ? 'KEPT' : 'reverted'}`).join(' | ') + ` mean ${entry.mean}`)
 
   // Method review: a region that parked this round gets one new method per batch, and

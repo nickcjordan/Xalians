@@ -7,7 +7,7 @@ export function fakeRuntime(args, seed, override) {
   const rub = args.rubric
   const agent = async (prompt, opts) => {
     const label = opts.label
-    calls.push({ label, model: opts.model, effort: opts.effort, prompt })
+    calls.push({ label, model: opts.model, effort: opts.effort, prompt, opts })
     if (override) { const v = override(label, prompt); if (v !== undefined) return v }
     const h = fnv(seed + label)
     if (label.startsWith('builder')) {

@@ -655,3 +655,22 @@ test('tools: a tool built but not yet passed by the readers is checked without a
   assert.match(out.ret.status.toolChecks.R06, /^better/, 'a reader naming the region in words still counts')
   assert.equal(out.ret.status.tools.R06.recipe, 'recipes/tool-R06.json')
 })
+
+test('v3.6: write roles run on the worker agent type, and a toolsmith that returns continue hands over to a fresh session that reads its notes', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.tools = {}
+  status.lastOrders = []
+  for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
+  status.limits = { ...status.limits, toolReaderCheck: false, workerAgentType: 'loop-worker', toolSessions: 3, toolSessionCalls: 80 }
+  let n = 0
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 0, tools: [{ region: 'R06', script: 's.py', ready: false }] }), 'w', (label, prompt) => {
+    if (label.startsWith('tool:')) { n++; return n < 2 ? { region: 'R06', ready: false, notes: 'continue: loft written, smoke test next' } : { region: 'R06', script: 's.py', recipe: 'recipes/tool-R06.json', ready: true, notes: 'done' } }
+    return undefined
+  })
+  const tools = out.calls.filter(c => c.label.startsWith('tool:'))
+  assert.deepEqual(tools.map(c => c.label), ['tool: R06', 'tool: R06 session 2'])
+  assert.match(tools[0].prompt, /sessions of at most about 80 tool calls/)
+  assert.match(tools[1].prompt, /This is session 2: read .*R06-notes\.md first/)
+  assert.ok(tools.every(c => c.opts && c.opts.agentType === 'loop-worker'), JSON.stringify(tools.map(c => c.opts)))
+  assert.equal(out.ret.status.tools.R06.recipe, 'recipes/tool-R06.json')
+})

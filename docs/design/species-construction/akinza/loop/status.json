@@ -41,7 +41,10 @@
   "leanAgentType": "Explore",
   "rejectToCode": true,
   "measuredTieKeep": true,
-  "toolReaderCheck": true
+  "toolReaderCheck": true,
+  "workerAgentType": "loop-worker",
+  "toolSessions": 3,
+  "toolSessionCalls": 80
  },
  "baseline": {
   "head": "head-2271",

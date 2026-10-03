@@ -28,6 +28,13 @@ WORKER = textwrap.dedent('''
     lt.free_memory_gb = lambda: {free}
     lt.SLOT_SETTLE_S = {settle}
     log = {log!r}
+    # barrier: contend only once every waiter has imported (under load an import took longer than
+    # HOLD, so the third waiter started after the first had ended and the overlap test flaked)
+    Path({work!r}, 'ready-%s' % os.getpid()).touch()
+    t0 = time.time()
+    while len(list(Path({work!r}).glob('ready-*'))) < {count} and time.time()-t0 < 120:
+        time.sleep(0.05)
+    time.sleep({stagger_me})
     slot = lt.acquire_slot()
     with open(log, 'a') as f:
         f.write('start %s %.3f %s\\n' % (os.getpid(), time.time(), slot.name))
@@ -41,11 +48,10 @@ WORKER = textwrap.dedent('''
 def run_waiters(count, free, settle=0.0, stagger=0.0):
     work = tempfile.mkdtemp(prefix='slots-')
     log = str(Path(work)/'log.txt')
-    source = WORKER.format(loop=str(LOOP), work=work, free=free, settle=settle, log=log, hold=HOLD)
     procs = []
-    for _ in range(count):
+    for k in range(count):
+        source = WORKER.format(loop=str(LOOP), work=work, free=free, settle=settle, log=log, hold=HOLD, count=count, stagger_me=k*stagger)
         procs.append(subprocess.Popen([sys.executable, '-c', source], stdout=subprocess.PIPE, stderr=subprocess.PIPE))
-        time.sleep(stagger)
     for p in procs:
         out, err = p.communicate(timeout=240)
         assert p.returncode == 0, err.decode()

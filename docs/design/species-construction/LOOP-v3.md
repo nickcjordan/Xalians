@@ -242,6 +242,14 @@ Round 21 kept nothing and showed four ways the loop spent its time on the wrong 
 - **Tool checks persist.** Each reader check is written into `tools/<region>.json`; a tool with a check plan is ready only after a same or better check, and a built but unverified tool is checked without a rebuild (or starts with its fix pass when the readers rejected it).
 - **Reader regions are read by id**, so "R02 face: eyes, nose" counts as R02.
 
+## Cost bounds after round 22 (v3.6, 2026-10-03)
+
+Round 22 spent 168M tokens, 156M of them in four toolsmith runs (one ran 406 turns with its context grown to 674K tokens, every turn re-reading all of it).
+
+- **Worker agent type** (`limits.workerAgentType`, `~/.claude/agents/loop-worker.md`): planner, runner, builder, toolsmith, combine and recorder run on a slim type with six tools, whose preamble is about 36K tokens against the default type's 69K. Readers and critics stay on the read-only lean type.
+- **Toolsmith sessions** (`limits.toolSessions`, `toolSessionCalls`): a toolsmith works in sessions of about 80 tool calls; one that is not done writes `tools/<region>-notes.md` and returns `continue`, and a fresh session continues from the notes, so context stops growing without losing the work. Output hygiene: logs through tail, no printing of files it wrote.
+- **Slot test barrier**: the Blender slot test's waiters start contending only after all of them have imported, which removes its flake under load.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.
