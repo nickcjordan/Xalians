@@ -43,7 +43,7 @@ loop_tools.py blender art/species-construction/author_fan_clumps_field.py -- \
 | R03 Ear fan front | Layered lock sweeps at mesh precision, `author_fan_lock_sweeps.py` (review, round 21) | new, replaces H36 | yes (unparks) | yes |
 | R04 Ear fan rear | Coat clump volume, `author_fan_clumps_field.py --part rear` | new | yes (unparks) | yes |
 | R05 Neck and shoulders | Authored neck column at the join (`--neck-sections`), plus the fill-only yoke round B-19r (review, round 19) | J, B-19r | yes (unparks) | yes |
-| R06 Torso and pelvis | Authored superellipse section loft, `author_trunk_sections_field.py` | new | yes (unparks) | yes |
+| R06 Torso and pelvis | Sheet-waist loft plus B-23 arm-root fillet, judged posed (review 2026-10-02) | B-20T, B-23 fillet | yes (unparks once H1, H2, H4 land) | no |
 | R07 Arms and forepaws | Arm and paw rebuild with new paw targets and an authored deltoid | B-23 | no | yes |
 | R08 Legs | Station-table resample for the remaining sculpt | B-22 | no | no |
 | R09 Hind paws | Hind-paw rebuild with a profile-curve instep | B-21 | no | yes |
@@ -108,12 +108,14 @@ loop_tools.py blender art/species-construction/author_fan_clumps_field.py -- \
 
 ### R06 Torso and pelvis
 
-- **Method.** New `author_trunk_sections_field.py`: superellipse sections lofted from a station table read from `sheet.json` (side front and back edges, front half widths, every .02 from y .26 to .62), weighted-morphed into the native trunk inside a mask that excludes the arms, the neck above .26, the thighs below the hip freeze and the held tail root.
-- **Interface.** `--body <shape.glb> --fairing <fairing.json> --spec <trunk-sections.json> --out <dir>`; spec `stations` [{y, front, back, halfWidth, expFront, expBack}], `mask` (arm radius from the fairing's arm joints, neck top, hip freeze, tail-root zone from `species.json`), `fade` at least ten times the relief change. Outputs `body.blend`, `shape.glb`, `fairing.json` with a `trunkSections` record of target and achieved values per station. Inserted after B-20, before B-21.
-- **Why.** Gap rank 5 (side chest .131 against .168, waist 1.30x, chest over waist 1.07 against 1.54; R06.6, R06.7, R06.9) and rank 15 (rump). `reshape_torso_field.py` parked because it maps the previous mesh's edges, carrying belts and ledges into new bands or thinning the waist (rounds 3, 9, 15).
-- **Failure looks.** A lathe-turned vase; belt lines at the mask edges; a crater or shelf at the armpit, deltoid or thigh root; a tail-root dent; a pigeon breast; hips off the posed front band.
-- **If it stalls.** Generate the trunk on the tail-free root with `rebuild_body_field.py` driven by a trunk spline and section radii, then rerun the downstream body steps.
-- **Respec.** The spec recommends the stalled resample, and its side depth table (peak .129) disagrees with the audit's sheet reading (.168 at .36); re-read the stations from `sheet.json` in the loft's format.
+- **Method (method review 2026-10-02, after round 21).** One joint order: the B-20T `author_trunk_sections_field.py` loft set to the sheet waist (back edge -.014 at .44, waist depth about .085, the round 21 v01 or v08 table) and the B-23 `rebuild_arms_field.py` fillet lowered (`fillet.low` about .03, `lowZ` about .25) so the armpit flare stops making the front hourglass, accepted on `posed/shaded-left.png` and `posed/shaded-front.png` (hands on hips, tail free).
+- **Prerequisite.** Land the rubric repoints in `specs/R06.md` section 5 first: H1 (R06.6 and R06.7 read the model side from `render/torso.json` mesh sections), H2 (R06.2 compares with the sheet's leftmost run over .40 to .48, .0816, or is retired) and H4 (R06.9 adds `posed/shaded-left.png`; R06.3 and R06.5 add `posed/shaded-front.png`). Without them the region stays parked.
+- **Why it stalled.** Rounds 15, 20 and 21 moved the trunk measurably the right way (round 21 v01: R06.12 1.163 to 1.064, R06.13 .885 to .968, R06.14 .836 to .992), but every candidate read "same": the critic judges `m02 left`, where the hanging arm covers the lumbar hollow (picture change .007 to .02), and R06.2 and R06.6 measure the sheet's depth at .40 and the arm, so the best trunk loses a pass for each it gains. The spec named these frictions on 2026-10-01 and they were never landed.
+- **Why this closes it.** The loft already builds the sheet's waist; the posed frame lets the critic see it, the repoints stop the contradiction, and the fillet is the lever that actually sets the front pinch (spec H5). Closes gap rank 4 and the R06 half of rank 8.
+- **Failure looks.** The posed side still a plank because the akimbo forearm hides .47 to .49; a crater at the armpit where the lower fillet leaves the held half widths at .36 to .38 bare; R07.6 posed arm IoU dropping; a wasp waist past -.014; R06.1 over 1.10 if half widths rise to soften the hourglass.
+- **If it stalls.** The remaining gap is the dorsal S and rump under the tails: build the rump and lumbar sway from the tail-free root (body-0086/attempt-03) with `rebuild_body_field.py` driven by a trunk spline, rerun the downstream body steps, and judge with tails hidden.
+- **Respec.** No. The section loft structure in `specs/R06.md` stands; only the rubric repoints its own section 5 already proposes are needed.
+- **Previous method.** Retune the B-20T station table alone (rounds 20 and 21).
 
 ### R07 Arms and forepaws
 
