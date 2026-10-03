@@ -550,7 +550,7 @@ prize.append('<circle cx="%s" cy="%s" r="12" fill="url(#lamp-gold)"/><circle cx=
 # Machine is where the prize comes from; every half turn of the token a bright pulse runs down it and the card brightens as it arrives
 TOK_TURN, TOK_PH = 16.37, 3.513
 PULSE = TOK_TURN / 2
-PULSE_PH = TOK_PH - 1.003  # the pulse reaches the card about a second after clash two
+PULSE_PH = TOK_PH - 2.503  # the pulse sets off after clash two's roar and reaches the card about 5.9 s
 fil = 'M%s %s Q%s %s %s %s' % (f(CX - 18), f(CROWN_Y + 4), f(980), f(350), f(TOK_CX + TOK_W / 2 + 1), f(TOK_CY - 6))
 prize.append('<!-- the Machine\'s thread --><path d="%s" fill="none" stroke="%s" stroke-width="12" opacity=".35" filter="url(#soft4)"/><path d="%s" fill="none" stroke="%s" stroke-width="4" opacity=".75"/><path d="%s" fill="none" stroke="%s" stroke-width="1.2" opacity=".9"/>' % (fil, GOLD, fil, GOLD, fil, GOLD_HOT))
 stub_x = '%s;%s;%s' % (f(TOK_CX + TOK_W / 2 + 1), f(TOK_CX + TOK_W * .3), f(TOK_CX + TOK_W / 2 + 1))
@@ -804,12 +804,24 @@ for (x_, y_, g_, sw) in [(lx, ly, 'lamp-elec', E_SWELL), (rx2, ry2, 'lamp-fire',
 elec = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-elec)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', E_SWELL[0], FP, PH, E_SWELL[1], spline=True),
         '<path d="M-13 0 L-4 -100 L4 -100 L13 0 Z" fill="url(#elecCol)" stroke="#1e5a8a" stroke-width="1.6" opacity=".75" filter="url(#soft2)"/>',
         '<path d="M-4 0 L-1 -96 L1 -96 L4 0 Z" fill="#f6fdff" opacity=".4" filter="url(#soft2)"/>',
-        '<path d="%s" stroke="#dff4ff" stroke-width="1.8" fill="none" opacity=".6" filter="url(#glow2)"/>' % jag_path(-2, -2, 3, -94, 9, 7, 61),
+        '<path d="%s" stroke="#dff4ff" stroke-width="3" fill="none" opacity=".8" filter="url(#glow2)"/>' % jag_path(-2, -2, 3, -94, 9, 7, 61),
         '<path d="%s" stroke="#dff4ff" stroke-width="1.8" fill="none" opacity="0" filter="url(#glow2)">%s</path>' % (jag_path(2, -2, -3, -90, 9, 8, 62), anim('opacity', '0;.7;0', .287, .041, '0;.5;1', calc='discrete'))]
+def hop(y0, length, bow, seed):
+    """An arc hopping along the column: from a point on it, bowing out to one side, back onto it higher up."""
+    r = random.Random(seed)
+    p = []
+    for i in range(10):
+        u = i / 9
+        y = y0 - length * u + r.uniform(-2, 2) * math.sin(math.pi * u)
+        p.append((bow * math.sin(math.pi * u) + (-1) ** i * r.uniform(3, 6) * math.sin(math.pi * u), y))
+    return 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p)
+
+
+HOPS = [(-8, 34, 14), (-30, 40, -15), (-52, 30, 12), (-20, 44, 16), (-62, 28, -13)]  # (start height, length, bow)
 for j in range(5):
-    x0 = (-1) ** j * (6 + 4 * j)
-    d = jag_path(x0 * 1.4, -2, (-1) ** (j + 1) * (11 + 4 * j), -74 - 10 * j, 7, 12, 70 + j)
-    elec.append('<path d="%s" stroke="#eaf8ff" stroke-width="2.2" fill="none" filter="url(#glow2)" opacity="0">%s</path>' % (d, anim('opacity', '0;1;0;0;.9;0;0', .731 + j * .193, .113 + j * .237, '0;.06;.14;.45;.5;.58;1', calc='discrete')))
+    y0_, len_, bow_ = HOPS[j]
+    d = hop(y0_, len_, bow_, 70 + j)
+    elec.append('<path d="%s" stroke="#eaf8ff" stroke-width="1.7" stroke-linejoin="bevel" fill="none" filter="url(#glow2)" opacity="0">%s</path>' % (d, anim('opacity', '0;1;0;0;.9;0;0', .731 + j * .193, .113 + j * .237, '0;.06;.14;.45;.5;.58;1', calc='discrete')))
 fight.append('<!-- the electric power --><g transform="translate(%s %s) scale(%s)"><g>%s%s</g></g>' % (f(lx), f(ly), f(PS), rot(E_LEAN, FP, PH, E_LEAN_T, spline=True), ''.join(elec)))
 # the fire power: a column of flame, tongues licking up from a hot base, leaning in as it winds up
 fire = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-fire)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', F_SWELL[0], FP, PH, F_SWELL[1], spline=True)]
@@ -819,8 +831,8 @@ for j, (dx, hgt, per, ph) in enumerate([(-19, 80, .9, .1), (0, 114, 1.1, .5), (1
     fire.append('<g transform="translate(%s 0)"><g>%s%s</g></g>' % (f(dx), trans('1 1;.92 1.18;1.06 .88;1 1', per, ph, '0;.22;.6;1', typ='scale', spline=True), sway))
 # wisps of flame breaking off the top, rising and fading, on their own clocks
 for j, (dx, per, ph) in enumerate([(-6, .53, .07), (9, .61, .29), (2, .71, .43)]):
-    fire.append('<g opacity="0">%s<g>%s<ellipse rx="7" ry="11" fill="%s" filter="url(#soft2)"/></g></g>' % (
-        anim('opacity', '0;.85;0;0', per, ph, '0;.15;.8;1'), trans('%s %s;%s %s;%s %s' % (f(dx), f(-100), f(dx + 4), f(-128), f(dx + 4), f(-128)), per, ph, '0;.8;1'), '#ffb050'))
+    fire.append('<g opacity="0">%s<g>%s<path d="M0 -9 Q3 -1 2.4 3 Q0 6 -2.4 3 Q-3 -1 0 -9 Z" fill="%s" filter="url(#soft2)"/></g></g>' % (
+        anim('opacity', '0;.5;0;0', per, ph, '0;.12;.5;1'), trans('%s %s;%s %s;%s %s' % (f(dx * .4), f(-112), f(dx * .4 + 3), f(-136), f(dx * .4 + 3), f(-136)), per, ph, '0;.8;1'), '#ffb050'))
 fire.append('<ellipse cx="0" cy="-4" rx="22" ry="8" fill="#fff4d0" opacity=".9" filter="url(#soft2)"/>')
 fight.append('<!-- the fire power --><g transform="translate(%s %s) scale(%s)"><g>%s%s</g></g>' % (f(rx2), f(ry2), f(PS), rot(F_LEAN, FP, PH, F_LEAN_T, spline=True), ''.join(fire)))
 
@@ -882,7 +894,7 @@ fight.append('<!-- the fireball --><g opacity="0">%s<g>%s<g>%s<ellipse cx="22" r
     anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.22;.221;.32;.325;1', calc='discrete'),
     trans('%s %s;%s %s;%s %s;%s %s' % (f(fb0[0]), f(fb0[1]), f(fb0[0]), f(fb0[1]), f(mx + 8), f(my), f(mx + 8), f(my)), FP, PH, '0;.25;.32;1'),
     trans('0 0;0 0;1 1;1 1', FP, PH, '0;.22;.25;1', typ='scale')))
-fight.append('<!-- the answering bolt -->' + bolt(jag_pts(lx + 12 * PS, ly - 60 * PS, mx - 12, my, 12, 9, 93, bow=0), .307, .37, '0;1;.35;1;.5;1;.6;.25;0;0'))
+fight.append('<!-- the answering bolt -->' + bolt(jag_pts(lx + 4 * PS, ly - 96 * PS, mx - 12, my, 12, 9, 93, bow=0), .307, .37, '0;1;.35;1;.5;1;.6;.25;0;0'))
 fight += clash(.32, 'one')
 # exchange two: the lightning strikes at the fire, the fire answers with a jet of flame; they meet in the middle
 fight.append('<!-- the lightning strike -->' + bolt(jag_pts(lx + 14 * PS, ly - 74 * PS, mx - 6, my - 4, 13, 10, 97, bow=8), .79, .86, '0;1;.4;1;.5;1;.6;.25;0;0'))

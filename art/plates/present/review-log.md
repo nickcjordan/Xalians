@@ -99,3 +99,11 @@ Round 6's fixes confirmed. Gate not passed. What was done:
 6. A ship's nose dipped into the deck rim: each ship is level before its last descent.
 7. The page text left out the thread and its pulse: one sentence added to each note.
 8. Lines through the flame: covered by the denser flame.
+
+## Round 8 (fresh reviewer, cold gate): 8.5
+
+Round 7's fixes confirmed. Gate not passed: the lightning power read as a glowing stick figure (crossing idle arcs made splayed legs and raised arms, and the answering bolt left from mid-height like an arm), and the fire's round wisps read as a head. That breaks the no-creature ruling, so it is the most important catch of the loop. Added to the owner checklist. What was done:
+1. The electric arcs are short jagged hops that start and end on the column, bowing at most about 16 units out, never crossing from one side of the base to the other side of the top; the permanent core arc is thicker; the answering bolt leaves from the column's tip.
+2. The fire's wisps are thin teardrops from the tallest tongue's tip, at half strength, gone before they rise far.
+3. The thread's pulse sets off after clash two's roar and reaches the card about t 5.9 s.
+4. The jet's first 0.1 s and ships fading on their decks: invisible at site size, left.

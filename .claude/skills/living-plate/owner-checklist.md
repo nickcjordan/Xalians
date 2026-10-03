@@ -36,3 +36,6 @@ Every item here is something Nick had to point out by hand on the End Wars plate
 ## Page
 17. Does the source page's own text (kicker, pass label, notes) match the current plate? (The review page said "Twenty-fourth pass" long after.)
 21. On the live home page, does the reduced-motion still show the plate's composed t=0 frame rather than bare resting values? Check `home-reduced-<era>.png`. (Found on Accords: the page paused the plate before SMIL ever sampled it, so every animated element sat at opacity 0. `livePlate.tsx` now seeks to 0 after injection.)
+
+## Story rules (added on Present, 2026-10-03)
+22. Does any light, power or effect read as a figure or creature at site size? The story draws no creatures (Nick, 2026-09-27). (On Present, crossing arcs on the lightning column made a stick figure with arms and legs, and a round wisp over the flame read as a head; a cold reviewer caught it in round 8.)
