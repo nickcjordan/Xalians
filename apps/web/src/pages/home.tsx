@@ -109,6 +109,7 @@ const ART = {
 		alt: 'Night on Valleron. A packed arena glows under floodlights in a crowded city of spires, and on its floor a power of lightning and a power of fire strike at each other and clash in a flash while the crowd flares. Above the floor hangs the prize, a Scrambler Token shown in gold light. Beyond the arena rises King Kozrak’s citadel with the Mercurius Machine glowing gold at its crown, its searchlights sweeping the sky, and ships come down out of a sky where the galaxy still smolders red.',
 		// The living version: Kozrak's arena on Valleron, a fight seen only as light, and the token as the prize.
 		live: '/assets/plates/present/live.html',
+		still: { src: '/assets/plates/present/poster.jpg', small: '/assets/plates/present/poster-768.jpg' },
 	},
 	krystos: {
 		src: '/assets/img/planets/art/krystos-landscape.webp',

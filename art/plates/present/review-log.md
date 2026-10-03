@@ -20,3 +20,19 @@ Blocked in from the words in eight builder passes, judged on full-frame and time
 - Pass 5: the Machine was a clock face; redrawn as a gyroscope (a gold core in a level ring and a turning upright ring) at the citadel's apex.
 - Pass 6 to 7: a larger floor and fewer tiers so the fight reads at site size; the powers scaled up about 1.4 times; lattice floodlight towers with lamp banks and faint cones; the king's box on the far rim hung with crimson; faction pennants on the rim; the near deck and a docked faction ship moved to the bottom right, away from the record label; a starburst instead of crosshair rays at the clash.
 - Bake: the 3012 dev server had to be restarted to serve the new plate's pictures; every clock detuned off the film's 50 ms frames (discrete flickers landing exactly on a frame differed between SMIL and script). Bake passes: baked vs export 0.17% at worst, culled vs uncut 0.004%.
+
+## Round 1 (reviewer, fresh): 5.5
+
+Findings and what was done:
+1. Reduced-motion still showed a Generator over the plate. Traced on the page, it was not the old painting: it was beat 06's figure left drawn on the figure canvas, because `figureStage.tsx` returned early under reduced motion without dismissing the figure being left. The live site has the same bug (checked on www.xalians.com). Fixed in `figureStage.tsx`; the posters are baked (`poster.jpg`, `poster-768.jpg`) and `still` is set on the entry.
+2. Token read as a rooftop billboard: raised into open sky (center y 330, bottom edge about 400), projected now from a lens on the king's box roof with a visible gold cone; the floor projector and its column are gone.
+3. Fight idle 64% of the cycle: two exchanges per clock (fire throws a fireball and lightning answers at u .47; lightning strikes and fire answers with a jet of flame at u .82), each power leaning in as it winds up.
+4. Fireball popped in and the bolt was a thin still line: the fireball is born at the flame's top and grows over 0.2 s; bolts are a 14-unit glow with a 5-unit core, flickering; the starburst is 1.5 times larger.
+5. Beacon floating on the citadel: the first far-spire loop now keeps clear of the citadel.
+6. Roar invisible: 45% of the crowd in the overlay at 1.4 times the size, and a warm band of light around the tiers after each clash.
+7. Ships read as flares: pale hulls, trails cut to a third and fainter, each levels out, settles on its deck, holds, and fades.
+8. Factions unreadable: six long element-colored banners hang from the far rim; the docked ship is painted in its faction's green with a lit open hatch.
+9. Searchlights only swept the sky: both now sweep the city (left across the arena's far side, right down across the right side of the city).
+10. Smolder invisible: patches 1.5 times larger, peak opacity .85.
+11. Banner sigil read as a letter: it is the Machine's gyroscope now.
+12. Page text: concept, piece list and notes rewritten to the plate; kicker "Pass 2". Deviation: the live beat-07 copy is not changed here. The story's words are waiting on Nick's decisions (the headline, the visitor line), so this plate ships beside the current copy.

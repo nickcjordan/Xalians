@@ -76,6 +76,13 @@ export function FigureStage({ beats, index, boxRef, live, motion }: { beats: Sta
 			}
 		}
 		if (from === index || reduced()) {
+			// under reduced motion a figure left for another beat goes at once; without this the last figure stayed drawn over the
+			// next beat's screen (06's Generator over the 07 plate)
+			if (from !== index && A && (!B || A.key !== B.key)) {
+				const a = figureOf(A.key);
+				a.present = false;
+				a.fig.reset(A.stage);
+			}
 			kick.current();
 			return;
 		}
