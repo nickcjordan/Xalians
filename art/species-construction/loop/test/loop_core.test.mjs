@@ -373,6 +373,7 @@ test('v3 tools: a needed generator is built by a toolsmith before the rounds and
   status.methods = { R06: 'author the trunk from sections' }
   status.tools = {}
   status.lastOrders = []  // the real status may hold R06 in cooldown
+  status.limits.toolReaderCheck = false  // the reader check has its own test
   for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
   status.regions.R06.history = []
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, tools: [{ region: 'R06', script: 'author_trunk_sections_field.py', ready: false }, { region: 'R11', script: 'x.py', ready: false }] }), 'w')
@@ -635,4 +636,22 @@ test('tools: with toolReaderCheck a new tool is ready only when three readers fi
   const good = await go(['same'])
   assert.ok(good.logs.some(l => /R06 ready \(readers same\)/.test(l)), JSON.stringify(good.logs))
   assert.ok(!good.calls.some(c => c.label === 'tool: R06 fix'))
+})
+
+test('tools: a tool built but not yet passed by the readers is checked without a toolsmith, and its check is returned for its record', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.tools = {}
+  status.lastOrders = []
+  for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
+  status.limits.toolReaderCheck = true
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 0, tools: [{ region: 'R06', script: 's.py', recipe: 'recipes/tool-R06.json', ready: false, built: true, checkPlan: 'plans/tool-check-R06.json' }] }), 'w', (label, prompt) => {
+    if (label.startsWith('runner tool check')) return { ok: true, candidates: [{ name: 'tool as built', assembly: 'assembled-991', packet: 'p/assembled-991', technicalPass: true, pack: 'p/assembled-991/reader-pack', keys: { R06: 'A' } }] }
+    if (label.startsWith('reader') && label.includes('tool check')) return { packs: [{ pack: 'assembled-991', region: 'R06 trunk and pelvis', choice: 'A', reason: 'clean' }] }
+    return undefined
+  })
+  const labels = out.calls.map(c => c.label)
+  assert.ok(!labels.some(l => l.startsWith('tool:')), 'no toolsmith for a built tool')
+  assert.equal(labels.filter(l => l.startsWith('runner tool check')).length, 1)
+  assert.match(out.ret.status.toolChecks.R06, /^better/, 'a reader naming the region in words still counts')
+  assert.equal(out.ret.status.tools.R06.recipe, 'recipes/tool-R06.json')
 })

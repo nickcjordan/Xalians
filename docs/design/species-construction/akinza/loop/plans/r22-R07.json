@@ -1,0 +1,1559 @@
+{
+ "order": {
+  "round": 22,
+  "region": "R07",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+ "start": null,
+ "variants": [
+  {
+   "name": "v11 paw and deltoid",
+   "why": "the spec's full structure table with existing keys: forearm and wrist thinned so the paw is about 1.5 wrists and wider than the forearm, four wider lobes on a tighter spacing with grooves over the last 40 percent, shorter less bent claws, and an authored deltoid replacing the native flat cap (audit rank 7, R07.1, R07.3, R07.5)",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0,
+       0.04,
+       0.0425
+      ],
+      [
+       0.056,
+       0.038,
+       0.0372
+      ],
+      [
+       0.1116,
+       0.033,
+       0.0325
+      ],
+      [
+       0.167,
+       0.0298,
+       0.0298
+      ],
+      [
+       0.205,
+       0.027,
+       0.0284
+      ],
+      [
+       0.2329,
+       0.0295,
+       0.0335
+      ],
+      [
+       0.2608,
+       0.0315,
+       0.0385
+      ],
+      [
+       0.2887,
+       0.032,
+       0.0405
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell",
+     "value": {
+      "s": 0.05,
+      "out": 0.003,
+      "back": 0.004,
+      "radii": [
+       0.034,
+       0.032,
+       0.08
+      ],
+      "blend": 0.02
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndS",
+     "value": 0.27
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndBlend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeRootS",
+     "value": 0.06
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipS",
+     "value": [
+      0.104,
+      0.117,
+      0.119,
+      0.108
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeR",
+     "value": [
+      -0.0275,
+      -0.0092,
+      0.0092,
+      0.0275
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeWidthRadius",
+     "value": 0.0165
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeThickRadius",
+     "value": 0.031
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipThickRadius",
+     "value": 0.027
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeCap",
+     "value": 0.0183
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipT",
+     "value": [
+      -0.006,
+      -0.006,
+      -0.006,
+      -0.006
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeBlend",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:claw",
+     "value": {
+      "length": 0.019,
+      "bend": 0.5,
+      "radius": 0.0045,
+      "insetS": 0.003,
+      "palmFraction": 0.15
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach",
+     "value": {
+      "tiltDeg": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "length": [
+       0.019,
+       0.019,
+       0.019,
+       0.019
+      ],
+      "bend": [
+       0.5,
+       0.5,
+       0.5,
+       0.5
+      ]
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:deltoid",
+     "value": {
+      "offset": [
+       0.002,
+       -0.004,
+       0.01
+      ],
+      "radii": [
+       0.042,
+       0.05,
+       0.052
+      ],
+      "blend": 0.025
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:removeZ",
+     "value": [
+      0.335,
+      0.385
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.06,
+      "low": 0.05,
+      "topZ": 0.3,
+      "lowZ": 0.22
+     }
+    }
+   ]
+  },
+  {
+   "name": "v11 plus claw fan",
+   "why": "critic 1: claws sit in one column on the inner corner in the front view; the paw is edge-on so move each claw base laterally (along t) by .007 per lobe so the four tips separate across the paw end (R07.5)",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0,
+       0.04,
+       0.0425
+      ],
+      [
+       0.056,
+       0.038,
+       0.0372
+      ],
+      [
+       0.1116,
+       0.033,
+       0.0325
+      ],
+      [
+       0.167,
+       0.0298,
+       0.0298
+      ],
+      [
+       0.205,
+       0.027,
+       0.0284
+      ],
+      [
+       0.2329,
+       0.0295,
+       0.0335
+      ],
+      [
+       0.2608,
+       0.0315,
+       0.0385
+      ],
+      [
+       0.2887,
+       0.032,
+       0.0405
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell",
+     "value": {
+      "s": 0.05,
+      "out": 0.003,
+      "back": 0.004,
+      "radii": [
+       0.034,
+       0.032,
+       0.08
+      ],
+      "blend": 0.02
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndS",
+     "value": 0.27
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndBlend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeRootS",
+     "value": 0.06
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipS",
+     "value": [
+      0.104,
+      0.117,
+      0.119,
+      0.108
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeR",
+     "value": [
+      -0.0275,
+      -0.0092,
+      0.0092,
+      0.0275
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeWidthRadius",
+     "value": 0.0165
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeThickRadius",
+     "value": 0.031
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipThickRadius",
+     "value": 0.027
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeCap",
+     "value": 0.0183
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipT",
+     "value": [
+      -0.006,
+      -0.006,
+      -0.006,
+      -0.006
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeBlend",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:claw",
+     "value": {
+      "length": 0.019,
+      "bend": 0.5,
+      "radius": 0.0045,
+      "insetS": 0.003,
+      "palmFraction": 0.15
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach",
+     "value": {
+      "tiltDeg": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "length": [
+       0.019,
+       0.019,
+       0.019,
+       0.019
+      ],
+      "bend": [
+       0.5,
+       0.5,
+       0.5,
+       0.5
+      ]
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:deltoid",
+     "value": {
+      "offset": [
+       0.002,
+       -0.004,
+       0.01
+      ],
+      "radii": [
+       0.042,
+       0.05,
+       0.052
+      ],
+      "blend": 0.025
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:removeZ",
+     "value": [
+      0.335,
+      0.385
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.06,
+      "low": 0.05,
+      "topZ": 0.3,
+      "lowZ": 0.22
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach.baseOutward",
+     "value": [
+      -0.0105,
+      -0.0035,
+      0.0035,
+      0.0105
+     ]
+    }
+   ]
+  },
+  {
+   "name": "v11 plus claw fan reversed",
+   "why": "sign test of the fan: which way the tips step across the paw end reads as a natural fan in m02 front and forepaw-front; also longer claws .022 to keep at least .008 fit visible beyond the fur",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0,
+       0.04,
+       0.0425
+      ],
+      [
+       0.056,
+       0.038,
+       0.0372
+      ],
+      [
+       0.1116,
+       0.033,
+       0.0325
+      ],
+      [
+       0.167,
+       0.0298,
+       0.0298
+      ],
+      [
+       0.205,
+       0.027,
+       0.0284
+      ],
+      [
+       0.2329,
+       0.0295,
+       0.0335
+      ],
+      [
+       0.2608,
+       0.0315,
+       0.0385
+      ],
+      [
+       0.2887,
+       0.032,
+       0.0405
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell",
+     "value": {
+      "s": 0.05,
+      "out": 0.003,
+      "back": 0.004,
+      "radii": [
+       0.034,
+       0.032,
+       0.08
+      ],
+      "blend": 0.02
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndS",
+     "value": 0.27
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndBlend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeRootS",
+     "value": 0.06
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipS",
+     "value": [
+      0.104,
+      0.117,
+      0.119,
+      0.108
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeR",
+     "value": [
+      -0.0275,
+      -0.0092,
+      0.0092,
+      0.0275
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeWidthRadius",
+     "value": 0.0165
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeThickRadius",
+     "value": 0.031
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipThickRadius",
+     "value": 0.027
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeCap",
+     "value": 0.0183
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipT",
+     "value": [
+      -0.006,
+      -0.006,
+      -0.006,
+      -0.006
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeBlend",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:claw",
+     "value": {
+      "length": 0.019,
+      "bend": 0.5,
+      "radius": 0.0045,
+      "insetS": 0.003,
+      "palmFraction": 0.15
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach",
+     "value": {
+      "tiltDeg": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "length": [
+       0.019,
+       0.019,
+       0.019,
+       0.019
+      ],
+      "bend": [
+       0.5,
+       0.5,
+       0.5,
+       0.5
+      ]
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:deltoid",
+     "value": {
+      "offset": [
+       0.002,
+       -0.004,
+       0.01
+      ],
+      "radii": [
+       0.042,
+       0.05,
+       0.052
+      ],
+      "blend": 0.025
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:removeZ",
+     "value": [
+      0.335,
+      0.385
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.06,
+      "low": 0.05,
+      "topZ": 0.3,
+      "lowZ": 0.22
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach",
+     "value": {
+      "tiltDeg": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "length": [
+       0.022,
+       0.022,
+       0.022,
+       0.022
+      ],
+      "bend": [
+       0.5,
+       0.5,
+       0.5,
+       0.5
+      ]
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach.baseOutward",
+     "value": [
+      0.0105,
+      0.0035,
+      -0.0035,
+      -0.0105
+     ]
+    }
+   ]
+  },
+  {
+   "name": "v11 paw only",
+   "why": "isolates the fist rebuild from the deltoid: keeps the native shoulder cap so R05 stays untouched while R07.3, R07.5 and audit rank 7 are tested alone",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0,
+       0.04,
+       0.0425
+      ],
+      [
+       0.056,
+       0.038,
+       0.0372
+      ],
+      [
+       0.1116,
+       0.033,
+       0.0325
+      ],
+      [
+       0.167,
+       0.0298,
+       0.0298
+      ],
+      [
+       0.205,
+       0.027,
+       0.0284
+      ],
+      [
+       0.2329,
+       0.0295,
+       0.0335
+      ],
+      [
+       0.2608,
+       0.0315,
+       0.0385
+      ],
+      [
+       0.2887,
+       0.032,
+       0.0405
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell",
+     "value": {
+      "s": 0.05,
+      "out": 0.003,
+      "back": 0.004,
+      "radii": [
+       0.034,
+       0.032,
+       0.08
+      ],
+      "blend": 0.02
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndS",
+     "value": 0.27
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndBlend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeRootS",
+     "value": 0.06
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipS",
+     "value": [
+      0.104,
+      0.117,
+      0.119,
+      0.108
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeR",
+     "value": [
+      -0.0275,
+      -0.0092,
+      0.0092,
+      0.0275
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeWidthRadius",
+     "value": 0.0165
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeThickRadius",
+     "value": 0.031
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipThickRadius",
+     "value": 0.027
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeCap",
+     "value": 0.0183
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipT",
+     "value": [
+      -0.006,
+      -0.006,
+      -0.006,
+      -0.006
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeBlend",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:claw",
+     "value": {
+      "length": 0.019,
+      "bend": 0.5,
+      "radius": 0.0045,
+      "insetS": 0.003,
+      "palmFraction": 0.15
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach",
+     "value": {
+      "tiltDeg": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "length": [
+       0.019,
+       0.019,
+       0.019,
+       0.019
+      ],
+      "bend": [
+       0.5,
+       0.5,
+       0.5,
+       0.5
+      ]
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach.baseOutward",
+     "value": [
+      -0.0105,
+      -0.0035,
+      0.0035,
+      0.0105
+     ]
+    }
+   ]
+  },
+  {
+   "name": "deltoid dome only",
+   "why": "critic 2 and audit rank 13: the upper arm top is a flat slab with a square corner; authored dome of about .035 of figure height radius (larger radii .044 .052 .056) on the v10 arm, to see whether the cap alone fixes R07.1 without arm change",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:deltoid",
+     "value": {
+      "offset": [
+       0.002,
+       -0.004,
+       0.012
+      ],
+      "radii": [
+       0.044,
+       0.052,
+       0.056
+      ],
+      "blend": 0.03
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:removeZ",
+     "value": [
+      0.335,
+      0.385
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.06,
+      "low": 0.05,
+      "topZ": 0.3,
+      "lowZ": 0.22
+     }
+    }
+   ]
+  },
+  {
+   "name": "v11 with fallback opening",
+   "why": "spec friction 3: if removeZ .335 to .385 rounds off the trapezius corner and R05.3 regresses, open only to .320 to .360 and raise the deltoid vertical radius to .056",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0,
+       0.04,
+       0.0425
+      ],
+      [
+       0.056,
+       0.038,
+       0.0372
+      ],
+      [
+       0.1116,
+       0.033,
+       0.0325
+      ],
+      [
+       0.167,
+       0.0298,
+       0.0298
+      ],
+      [
+       0.205,
+       0.027,
+       0.0284
+      ],
+      [
+       0.2329,
+       0.0295,
+       0.0335
+      ],
+      [
+       0.2608,
+       0.0315,
+       0.0385
+      ],
+      [
+       0.2887,
+       0.032,
+       0.0405
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell",
+     "value": {
+      "s": 0.05,
+      "out": 0.003,
+      "back": 0.004,
+      "radii": [
+       0.034,
+       0.032,
+       0.08
+      ],
+      "blend": 0.02
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndS",
+     "value": 0.27
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndBlend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeRootS",
+     "value": 0.06
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipS",
+     "value": [
+      0.104,
+      0.117,
+      0.119,
+      0.108
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeR",
+     "value": [
+      -0.0275,
+      -0.0092,
+      0.0092,
+      0.0275
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeWidthRadius",
+     "value": 0.0165
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeThickRadius",
+     "value": 0.031
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipThickRadius",
+     "value": 0.027
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeCap",
+     "value": 0.0183
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipT",
+     "value": [
+      -0.006,
+      -0.006,
+      -0.006,
+      -0.006
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeBlend",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:claw",
+     "value": {
+      "length": 0.019,
+      "bend": 0.5,
+      "radius": 0.0045,
+      "insetS": 0.003,
+      "palmFraction": 0.15
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach",
+     "value": {
+      "tiltDeg": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "length": [
+       0.019,
+       0.019,
+       0.019,
+       0.019
+      ],
+      "bend": [
+       0.5,
+       0.5,
+       0.5,
+       0.5
+      ]
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:deltoid",
+     "value": {
+      "offset": [
+       0.002,
+       -0.004,
+       0.012
+      ],
+      "radii": [
+       0.042,
+       0.05,
+       0.056
+      ],
+      "blend": 0.025
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:removeZ",
+     "value": [
+      0.32,
+      0.36
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.06,
+      "low": 0.05,
+      "topZ": 0.3,
+      "lowZ": 0.22
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach.baseOutward",
+     "value": [
+      -0.0105,
+      -0.0035,
+      0.0035,
+      0.0105
+     ]
+    }
+   ]
+  },
+  {
+   "name": "v11 bigger arched paw",
+   "why": "audit rank 7 small closed fist: the tip arch should be .80 to .85 of the knuckle width and the dorsum about 1.5 wrists; lobes spread wider and shorter at the outer two with a deeper tip notch, no tip taper key needed",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0,
+       0.04,
+       0.0425
+      ],
+      [
+       0.056,
+       0.038,
+       0.0372
+      ],
+      [
+       0.1116,
+       0.033,
+       0.0325
+      ],
+      [
+       0.167,
+       0.0298,
+       0.0298
+      ],
+      [
+       0.205,
+       0.027,
+       0.0284
+      ],
+      [
+       0.2329,
+       0.0295,
+       0.0335
+      ],
+      [
+       0.2608,
+       0.0315,
+       0.0385
+      ],
+      [
+       0.2887,
+       0.032,
+       0.0405
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell",
+     "value": {
+      "s": 0.05,
+      "out": 0.003,
+      "back": 0.004,
+      "radii": [
+       0.034,
+       0.032,
+       0.08
+      ],
+      "blend": 0.02
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndS",
+     "value": 0.27
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawEndBlend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeRootS",
+     "value": 0.06
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipS",
+     "value": [
+      0.104,
+      0.117,
+      0.119,
+      0.108
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeR",
+     "value": [
+      -0.0275,
+      -0.0092,
+      0.0092,
+      0.0275
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeWidthRadius",
+     "value": 0.0165
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeThickRadius",
+     "value": 0.031
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipThickRadius",
+     "value": 0.027
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeCap",
+     "value": 0.0183
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipT",
+     "value": [
+      -0.006,
+      -0.006,
+      -0.006,
+      -0.006
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeBlend",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:claw",
+     "value": {
+      "length": 0.019,
+      "bend": 0.5,
+      "radius": 0.0045,
+      "insetS": 0.003,
+      "palmFraction": 0.15
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach",
+     "value": {
+      "tiltDeg": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "length": [
+       0.019,
+       0.019,
+       0.019,
+       0.019
+      ],
+      "bend": [
+       0.5,
+       0.5,
+       0.5,
+       0.5
+      ]
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipS",
+     "value": [
+      0.1,
+      0.117,
+      0.119,
+      0.104
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeR",
+     "value": [
+      -0.0295,
+      -0.0098,
+      0.0098,
+      0.0295
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeWidthRadius",
+     "value": 0.0175
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipT",
+     "value": [
+      -0.008,
+      -0.006,
+      -0.006,
+      -0.008
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:deltoid",
+     "value": {
+      "offset": [
+       0.002,
+       -0.004,
+       0.01
+      ],
+      "radii": [
+       0.042,
+       0.05,
+       0.052
+      ],
+      "blend": 0.025
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:removeZ",
+     "value": [
+      0.335,
+      0.385
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.06,
+      "low": 0.05,
+      "topZ": 0.3,
+      "lowZ": 0.22
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach.baseOutward",
+     "value": [
+      -0.0105,
+      -0.0035,
+      0.0035,
+      0.0105
+     ]
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "step": "B-23",
+   "grid": {
+    "spec:clawEach.baseOutward": [
+     [
+      -0.006,
+      -0.002,
+      0.002,
+      0.006
+     ],
+     [
+      -0.0105,
+      -0.0035,
+      0.0035,
+      0.0105
+     ],
+     [
+      -0.015,
+      -0.005,
+      0.005,
+      0.015
+     ]
+    ]
+   },
+   "why": "claw fan amplitude on the v10 arm alone (control for the column): .004, .007 and .010 per lobe, to find how far the bases may spread before they leave the lobe tips"
+  }
+ ],
+ "region": "R07",
+ "top": 3
+}

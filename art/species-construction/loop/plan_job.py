@@ -39,6 +39,25 @@ def alive(pid):
         return False
 
 
+def inputs_mtime(plan):
+    """Newest of the plan and the recipes it names. Round 22: a toolsmith's fix pass rewrote its starter
+    recipe but not the check plan, so the recheck read the first check's stale result and a tool was
+    judged on the candidate it had already replaced."""
+    times = [plan.stat().st_mtime]
+    try:
+        data = json.loads(plan.read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return times[0]
+    start = data.get('start')
+    refs = [data.get('base'), start.get('recipe') if isinstance(start, dict) else start]
+    for ref in refs:
+        if isinstance(ref, str) and ref:
+            p = Path(ref) if Path(ref).is_absolute() else ROOT/ref
+            if p.is_file():
+                times.append(p.stat().st_mtime)
+    return max(times)
+
+
 def missing(plan):
     # A Windows path passed through bash loses its backslashes and names no file; say so plainly.
     print(json.dumps({'status': 'failed', 'reason': f'no plan file at {plan}; pass the path with forward slashes'}))
@@ -54,9 +73,12 @@ def cmd_start(a):
         if alive(j['pid']) and not result.exists():
             print(json.dumps({'status': 'running', 'pid': j['pid'], 'log': str(log), 'note': 'already started'}))
             return 0
-    if result.exists() and result.stat().st_mtime >= plan.stat().st_mtime:
+    if result.exists() and result.stat().st_mtime >= inputs_mtime(plan):
         print(json.dumps({'status': 'done', 'result': str(result), 'note': 'result already exists'}))
         return 0
+    if result.exists():
+        # older than its inputs: keep it under another name so wait cannot report it as this run's
+        result.replace(result.with_name(result.stem+f'-stale-{int(result.stat().st_mtime)}.json'))
     cmd = [sys.executable, str(ROOT/'art/species-construction/loop/recipe.py'), 'run-plan', str(plan)]
     if a.top:
         cmd += ['--top', str(a.top)]

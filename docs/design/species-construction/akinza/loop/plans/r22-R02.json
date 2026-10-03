@@ -1,0 +1,687 @@
+{
+ "order": {
+  "round": 22,
+  "region": "R02",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+ "start": "docs/design/species-construction/akinza/loop/recipes/tool-R02.json",
+ "variants": [
+  {
+   "name": "three rounded locks",
+   "why": "R02.5 and critic issue 1: cheek locks read as flat ridged wedge plates. Three locks per side at the R02.md table positions (head-local conversion of the fit roots and tips), lens section rounded (thicknessExponent .9 to .5, thickRoot .022/.019/.016), union blend .03 to .015 so each lock keeps its own outline instead of merging into one plate. Face parts only, F-parts is the last head step so about 1 min plus assembly.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.045,
+       "thickRoot": 0.022,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.04,
+       "thickRoot": 0.019,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.034,
+       "thickRoot": 0.016,
+       "lift": 0.0004
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.blend",
+     "value": 0.015
+    }
+   ]
+  },
+  {
+   "name": "two rounded locks",
+   "why": "R02.5: same rounding as the three-lock variant on the r10e positions (two per side, kept by readers in round 10), thicker (.024/.020), exponent .5, blend .02. Tests whether the count or the section is what reads as plates.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.246,
+        -0.106
+       ],
+       "tip": [
+        0.3,
+        -0.158
+       ],
+       "length": 0.075,
+       "widthRoot": 0.055,
+       "thickRoot": 0.024,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.212,
+        -0.176
+       ],
+       "tip": [
+        0.236,
+        -0.232
+       ],
+       "length": 0.06,
+       "widthRoot": 0.045,
+       "thickRoot": 0.02,
+       "lift": 0.0004
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.blend",
+     "value": 0.02
+    }
+   ]
+  },
+  {
+   "name": "pad on the tip",
+   "why": "R02.3 and critic issue 2: the pad is a thin sliver high on the bridge slope with a bead at its upper corner. Move the inlay down to the R02.md rows (top z -.125, apex -.172, head-local, spanning the wedge tip at -.155), half width .038 (.020 fit wide), corner radius .005, topLift .0006 so it stays proud of the skin by a visible hair. Control for the pad alone, locks stay r10e.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    }
+   ]
+  },
+  {
+   "name": "locks3 plus pad",
+   "why": "R02.3 and R02.5 together: the three rounded locks and the pad on the tip. The expected keeper for the critic's two nearest issues; eyes untouched so R02.1, R02.2, R02.6 keep passing.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.045,
+       "thickRoot": 0.022,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.04,
+       "thickRoot": 0.019,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.034,
+       "thickRoot": 0.016,
+       "lift": 0.0004
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.blend",
+     "value": 0.015
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    }
+   ]
+  },
+  {
+   "name": "locks3 pad plus spec eye",
+   "why": "Gap audit rank 10 (front stare) and rank 3: add the R02.md eye (aperture .093 by .1265 centered .1767, .0123, height over width 1.36, gap over width .90) and a larger iris (.056 by .084, offset toward the nose and down), no lateral opening. Tests the eye size and gaze alone against the previous variant.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.045,
+       "thickRoot": 0.022,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.04,
+       "thickRoot": 0.019,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.034,
+       "thickRoot": 0.016,
+       "lift": 0.0004
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.blend",
+     "value": 0.015
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.aperture.semi",
+     "value": [
+      0.093,
+      0.1265
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.aperture.center",
+     "value": [
+      0.1767,
+      0.0123
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.056,
+      0.084
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.02,
+      -0.007
+     ]
+    }
+   ]
+  },
+  {
+   "name": "locks3 pad eye plus open wall",
+   "why": "Gap audit rank 3: in profile the eye is a wedge because the socket's lateral wall cuts the globe. Add orbit.lateralShear .4 (the tool's value for opening the lateral wall) to the spec eye variant so the profile shows a fuller oval with the iris forward. Risk: R02.6 (brow and nose must still lead) and a dark gap at the rim.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.045,
+       "thickRoot": 0.022,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.04,
+       "thickRoot": 0.019,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.034,
+       "thickRoot": 0.016,
+       "lift": 0.0004
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.blend",
+     "value": 0.015
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.aperture.semi",
+     "value": [
+      0.093,
+      0.1265
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.aperture.center",
+     "value": [
+      0.1767,
+      0.0123
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.056,
+      0.084
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.02,
+      -0.007
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.orbit.lateralShear",
+     "value": 0.4
+    }
+   ]
+  },
+  {
+   "name": "gaze iris open wall",
+   "why": "Rank 3 and 10 without resizing the aperture (the baseline's R02.1 passes at the current size): keep the r10e aperture, enlarge the iris (.062 by .098) and move it .026 toward the nose and .008 down for the glance, open the wall .3, with the three locks and the pad.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.045,
+       "thickRoot": 0.022,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.04,
+       "thickRoot": 0.019,
+       "lift": 0.0004
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.034,
+       "thickRoot": 0.016,
+       "lift": 0.0004
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.blend",
+     "value": 0.015
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.062,
+      0.098
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.026,
+      -0.008
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.orbit.lateralShear",
+     "value": 0.3
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "step": "F-parts",
+   "grid": {
+    "spec:eye.orbit.lateralShear": [
+     0.2,
+     0.45,
+     0.9
+    ]
+   },
+   "why": "Least sure parameter: how far the lateral wall must open before the profile eye reads as a closed oval. Wide range on the r10e control (everything else as built) so the profile effect is isolated; the tool notes say about .4 opens it, .9 is the overshoot check."
+  },
+  {
+   "step": "F-parts",
+   "grid": {
+    "spec:nosePad.topZ": [
+     -0.135,
+     -0.12
+    ],
+    "spec:nosePad.apexZ": [
+     -0.168,
+     -0.182
+    ]
+   },
+   "why": "Where the pad sits on the wedge tip (the nose tip is at z -.155 head-local): top and apex rows of the inlay, four corners around the R02.md target (-.129, -.174), on the r10e control."
+  }
+ ],
+ "region": "R02",
+ "top": 3
+}

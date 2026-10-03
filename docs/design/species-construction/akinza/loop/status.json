@@ -50,7 +50,7 @@
   "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2278",
   "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
- "round": 21,
+ "round": 22,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -72,7 +72,8 @@
   "R03+R09",
   "R01+R05",
   "R04+R06",
-  "R03+R04+R06"
+  "R03+R04+R06",
+  "R02+R07"
  ],
  "specs": {
   "R10": {
@@ -265,7 +266,7 @@
      "fixability": 0.9
     }
    ],
-   "attempts": 1,
+   "attempts": 2,
    "anchorScore": 7.5,
    "parked": false,
    "history": [
@@ -300,10 +301,20 @@
        "what": "Round 10 face parameter set (aperture center [.1887,.0291] semi [.105,.1433], shear .1, inlay nose pad, two broad tufts per side)."
       }
      ]
+    },
+    {
+     "round": 22,
+     "kept": false,
+     "approach": "Start from the R02 face-parts tool starter and vary F-parts only: three rounded cheek locks per side, the nose pad moved down onto the wedge tip, and in later variants the spec-size eye with a larger glancing iris and an opened lateral wall, plus sweeps of the lateral wall and the pad position (14 builds, about 35 min estimated).",
+     "reason": "lost credit in R02 8.3 to 5.8",
+     "reusable": [],
+     "verdict": "better",
+     "recipe": "v01.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 10,
-   "toolUsed": false
+   "lastWorked": 22,
+   "toolUsed": true
   },
   "R03": {
    "name": "Ear fan front",
@@ -767,7 +778,7 @@
      "fixability": 0.4
     }
    ],
-   "attempts": 2,
+   "attempts": 0,
    "anchorScore": 5.8,
    "parked": false,
    "history": [
@@ -818,9 +829,19 @@
        "what": "Round 16 arm spec on top of v7: thicker knuckle rod stations, lobe width .0135 and blend .014, lobe tip T fan, claws at the lobe tip axis with clawEach tilts. Use with --body body-0426."
       }
      ]
+    },
+    {
+     "round": 22,
+     "kept": false,
+     "approach": "Rebuild the arm and forepaw at B-23 from the spec's structure table (thin forearm and wrist, wide four-lobe paw, short claws, authored deltoid dome) with existing spec keys, plus a lateral claw fan to break the single claw column.",
+     "reason": "lost credit in R07 5.8 to 5",
+     "reusable": [],
+     "verdict": "better",
+     "recipe": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/plan-2524/v04.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 16,
+   "lastWorked": 22,
    "toolUsed": false
   },
   "R08": {
@@ -1089,7 +1110,8 @@
   "2026-10-02: round 20 (v3.2, one round) merged from the round record: R04 rear fan clump branch and R06 trunk loft both kept and combined as assembled-2278; mean 5.447 to 5.495.",
   "2026-10-02: rubric R06.11 to R06.14 and R06.16 added (measured trunk side profile); R06 re-scored on assembled-2278 from 4.5 to 4.3. The 0458 audit row 5 chest depth (0.131 vs 0.168) measured the akimbo arm, not the trunk: the trunk chest depth matches the sheet; the real faults are waist depth, chest over waist and the dorsal S-curve.",
   "2026-10-02: v3.4 limits after the independent audit: split builder (planner, runner, three blind readers, scoped critic), verdict keep with measured guards (held regions never block), tool bonus 5, identity bonus 5, critic scope at most two side-effect regions, lean agent type for judging and mechanical roles, four-round batches, plateau window persisted. Modeling scope: no strands or texture in construction (surface-backlog.md).",
-  "round 21: R03+R04 and R06 reverted; plateau method review for R02, R03, R06; reader verdicts recounted after the match fix"
+  "round 21: R03+R04 and R06 reverted; plateau method review for R02, R03, R06; reader verdicts recounted after the match fix",
+  "round 22: R02 and R07 reverted (readers better, critic checklist worse); tool checks R02 ready and R03 not ready, both rechecks read a stale plan result"
  ],
  "decisionsForNick": [
   {
@@ -1102,25 +1124,25 @@
   {
    "rank": 1,
    "region": "R03",
-   "gap": "Front and three-quarter (m04 head-front, m05 head-three-quarter): the fan front is built from flat pointed slabs and serrated chevrons, with white faceted blades as inner tufts, a dark slot above the image-right tuft, and a row of thorn spikes along the top edge and crown; it reads as a crown of leaves and thorns, not the sheet's soft shaggy locks.",
+   "gap": "Front and three-quarter (m04 head-front, m05 head-three-quarter): the fan front is built from flat pointed slabs and serrated chevrons, with white faceted blades as inner tufts, a dark slot above the image-right tuft, a~",
    "structural": true
   },
   {
    "rank": 2,
    "region": "R03",
-   "gap": "Side (m02 left, m04 head-side): the ear is a vertical column of crumpled shard slabs with a straight leaf stack on its back edge; no pale inner cup or hollow shows, where the sheet shows a round shaggy mop with a large pale cup opening forward.",
+   "gap": "Side (m02 left, m04 head-side): the ear is a vertical column of crumpled shard slabs with a straight leaf stack on its back edge; no pale inner cup or hollow shows, where the sheet shows a round shaggy mop with a large ~",
    "structural": true
   },
   {
    "rank": 3,
    "region": "R02",
-   "gap": "Side and three-quarter (render/left.png 6x crop, m05 head-three-quarter): the profile eye is a wedge tapering to a point below with a wavy lid and the iris a thin front sliver (width over height about 0.35 / 0.55, iris about 0.2 / 0.5 of eye width, estimates); in three-quarter small centred pupils under a pinched brow look startled instead of gentle.",
+   "gap": "Side and three-quarter (render/left.png 6x crop, m05 head-three-quarter): the profile eye is a wedge tapering to a point below with a wavy lid and the iris a thin front sliver (width over height about 0.35 / 0.55, iris ~",
    "structural": true
   },
   {
    "rank": 4,
    "region": "R06",
-   "gap": "Side (m02 left): the trunk is a straight plank; chest depth now passes but the waist is as deep as the chest and the lumbar sway is shallow (R06.6 0.109 / 0.082, R06.12 0.095 / 0.082, R06.7 1.12 / 1.54, R06.14 0.043 / 0.052, all fail).",
+   "gap": "Side (m02 left): the trunk is a straight plank; chest depth now passes but the waist is as deep as the chest and the lumbar sway is shallow (R06.6 0.109 / 0.082, R06.12 0.095 / 0.082, R06.7 1.12 / 1.54, R06.14 0.043 / 0~",
    "structural": true
   },
   {
@@ -1132,51 +1154,47 @@
   {
    "rank": 6,
    "region": "R04",
-   "gap": "Back and rear oblique (m04 head-back, m05 head-rear-oblique): the wings now read as locks, but the head dome is a smooth shield outlined by a continuous crease ledge, the locks are hard-edged leaves, and each wing's lower edge ends in a fringe of needle tips with a thorn row on the crown.",
+   "gap": "Back and rear oblique (m04 head-back, m05 head-rear-oblique): the wings now read as locks, but the head dome is a smooth shield outlined by a continuous crease ledge, the locks are hard-edged leaves, and each wing's low~",
    "structural": true
   },
   {
    "rank": 7,
    "region": "R07",
-   "gap": "Front and side (m07 forepaw-front, m07 forepaw-profile, m02 front): the forepaw is a closed fist with fused digits and three needle claws in one column on the inner corner (paw over wrist about 1.2 / 1.5), not four separate lobes each with a curved claw from its tip; posed arm IoU .872 fails.",
+   "gap": "Front and side (m07 forepaw-front, m07 forepaw-profile, m02 front): the forepaw is a closed fist with fused digits and three needle claws in one column on the inner corner (paw over wrist about 1.2 / 1.5), not four sepa~",
    "structural": true
   },
   {
    "rank": 8,
    "region": "R05",
-   "gap": "Front and back (m02 front, m02 back, m06 neck-rear): square shoulders with deltoid caps over a pinched waist and flared hips read as an athletic hourglass, and from behind triceps relief, a ledge across the shoulder blades with knobbed corners and two dark dimples; the sheet is a slim straight lithe column with sloped shoulders. Widths pass, so the read comes from relief.",
+   "gap": "Front and back (m02 front, m02 back, m06 neck-rear): square shoulders with deltoid caps over a pinched waist and flared hips read as an athletic hourglass, and from behind triceps relief, a ledge across the shoulder bla~",
    "structural": false
   },
   {
    "rank": 9,
    "region": "R01",
-   "gap": "Front (m04 head-front, m02 front): the forehead is a flat band between the ear roots topped by a row of thorn spikes and the jaw is square, so the face reads as a block; the sheet's crown rises about 0.02H above the inner fan rim into a soft tuft and tapers to a small round chin.",
+   "gap": "Front (m04 head-front, m02 front): the forehead is a flat band between the ear roots topped by a row of thorn spikes and the jaw is square, so the face reads as a block; the sheet's crown rises about 0.02H above the inn~",
    "structural": true
   },
   {
    "rank": 10,
    "region": "R02",
-   "gap": "Front (m02 front, m05 eyes-front): near-round white discs with a small pupil dead centre stare; the sheet's eyes are taller ovals (about 1.3 / 1.5 height over width) with a heavier upper lid and a large iris offset into a glance.",
+   "gap": "Front (m02 front, m05 eyes-front): near-round white discs with a small pupil dead centre stare; the sheet's eyes are taller ovals (about 1.3 / 1.5 height over width) with a heavier upper lid and a large iris offset into~",
    "structural": false
   },
   {
    "rank": 11,
    "region": "R09",
-   "gap": "Front and side (m09): four near-equal beads in a straight row with straight needle claws standing on the toe fronts, and in profile a low slipper with a vertical heel face and no domed instep; posed foot IoU .647 fails. Unchanged since 0458.",
+   "gap": "Front and side (m09): four near-equal beads in a straight row with straight needle claws standing on the toe fronts, and in profile a low slipper with a vertical heel face and no domed instep; posed foot IoU .647 fails.~",
    "structural": true
   },
   {
    "rank": 12,
    "region": "R08",
-   "gap": "Front and side (m08 hindleg-front, hindleg-profile): the knee is a lit band over a groove with a dip on the inner shin under it, not one smooth calf swell and a soft kneecap plane; posed thigh .829 and shin .643 IoU fail.",
+   "gap": "Side and front: the knee is a lit band over a groove with a dip on the inner shin under it, not one smooth calf swell and a soft kneecap plane; posed thigh .829 and shin .643 IoU fai~",
    "structural": false
   }
  ],
  "tools": {
-  "R03": {
-   "script": "art/species-construction/author_fan_clumps_field.py",
-   "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-pinned.json"
-  },
   "R06": {
    "script": "art/species-construction/author_trunk_sections_field.py",
    "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R06-pinned.json"
@@ -1184,10 +1202,16 @@
   "R04": {
    "script": "art/species-construction/author_fan_clumps_field.py",
    "recipe": "docs/design/species-construction/akinza/loop/recipes/r17-R04-pinned.json"
+  },
+  "R02": {
+   "script": "art/species-construction/author_face_parts_v2.py",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\tool-R02.json",
+   "readerCheck": "same: B's nose is a soft, rounded triangular pad like the accepted study's nose, while A's nose is a hard, flat-edged sharp triangle. | A's eyes carry a thicker dark rim around the eye, closer to the Reference's bold eye outline, while B's rim is only a thin line."
   }
  },
  "keptSinceAudit": 0,
  "means": [
-  5.478
+  5.478,
+  5.503
  ]
 }

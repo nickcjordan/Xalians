@@ -36,6 +36,7 @@ const THRESHOLD = Math.min(SP.sideEffectThreshold ?? 0.0005, 0.0015)
 const abs = p => !p ? p : p.includes(':') ? p : REPO + '\\' + p.split('/').join('\\')
 S.specs = S.specs || {}
 S.methods = S.methods || {}
+S.toolChecks = {}  // this run's tool reader checks, written into each tools/<region>.json by loop_state merge
 S.tools = S.tools || {}
 S.means = S.means || []
 for (const id of IDS) {
@@ -329,7 +330,9 @@ function readerVerdicts(cands, reads, regions) {
         const norm = s => String(s || '').replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase()
         const asm = s => (norm(s).match(/assembled-\d+/g) || []).pop() || null
         const same = (a, b) => a && b && (asm(a) && asm(a) === asm(b) || norm(a).endsWith(norm(b)) || norm(b).endsWith(norm(a)))
-        const e = r && (r.packs || []).find(p => p.region === rid && same(c.pack, p.pack))
+        // round 22: a reader wrote its region as "R02 face: eyes, nose, muzzle and cheeks"; read the id from it
+        const regionId = s => (String(s || '').match(/R\d+/) || [''])[0]
+        const e = r && (r.packs || []).find(p => regionId(p.region) === rid && same(c.pack, p.pack))
         if (!e) continue
         // the candidate's side in the pack comes from the runner's key; the pack folder records it as key.json, read by the runner into c.keys
         const side = (c.keys || {})[rid] || 'B'
@@ -397,7 +400,7 @@ function snapshot() {
     const r = S.regions[id]
     regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
   }
-  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, regions }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, toolChecks: S.toolChecks, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -466,7 +469,12 @@ if (toBuild.length) {
   // current model, so with toolReaderCheck a tool is ready only after its starter's candidate reads
   // no worse than the baseline to three blind readers; a rejected tool gets one fix pass with the reasons
   const built = await parallel(toBuild.map(t => async () => {
-    let r = await agent(toolPrompt(t), { label: `tool: ${t.region}`, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })
+    // a tool already built but not yet passed by the readers is checked, not rebuilt; one the readers
+    // rejected before starts with its fix pass
+    let r = t.built && t.checkPlan && L.toolReaderCheck
+      ? (t.rejected ? await agent(toolPrompt(t), { label: `tool: ${t.region} fix`, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })
+        : { region: t.region, script: t.script, recipe: t.recipe, ready: true, checkPlan: t.checkPlan, notes: 'built earlier; reader check only' })
+      : await agent(toolPrompt(t), { label: `tool: ${t.region}`, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })
     if (!r || !r.ready || !L.toolReaderCheck) return r
     if (!r.checkPlan) return { ...r, ready: false, notes: 'no check plan: ' + (r.notes || '') }
     let check = await toolCheck(t.region, r.checkPlan)
@@ -477,7 +485,10 @@ if (toBuild.length) {
     }
     return { ...r, ready: check.verdict !== 'worse', readerCheck: `${check.verdict}: ${String(check.reason || '').slice(0, 300)}` }
   }))
-  built.forEach((r, i) => { if (r && r.ready) S.tools[toBuild[i].region] = { script: r.script || toBuild[i].script, recipe: r.recipe, readerCheck: r.readerCheck || null } })
+  built.forEach((r, i) => {
+    if (r && r.readerCheck) S.toolChecks[toBuild[i].region] = r.readerCheck
+    if (r && r.ready) S.tools[toBuild[i].region] = { script: r.script || toBuild[i].script, recipe: r.recipe, readerCheck: r.readerCheck || null }
+  })
   log('Tools: ' + toBuild.map((t, i) => `${t.region} ${built[i] && built[i].ready ? 'ready' : 'not ready'}${built[i] && built[i].readerCheck ? ' (readers ' + built[i].readerCheck.split(':')[0] + ')' : ''}`).join(', '))
 }
 for (const t of args.tools || []) if (t.ready && t.recipe && !S.tools[t.region]) S.tools[t.region] = { script: t.script, recipe: t.recipe }

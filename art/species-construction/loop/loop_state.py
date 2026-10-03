@@ -135,7 +135,16 @@ def tool_list(loop_dir):
                 entry['ready'] = False
                 entry['replaces'] = r['script']
             else:
-                entry.update({k: r[k] for k in ('script', 'recipe', 'readerCheck') if r.get(k)})
+                entry.update({k: r[k] for k in ('script', 'recipe', 'readerCheck', 'checkPlan') if r.get(k)})
+                # v3.5: a tool with a check plan is ready only once three readers found its candidate no
+                # worse than the baseline; until then it is built but unverified, and the loop checks it
+                # without rebuilding it (round 22's rechecks read stale results, so nothing passed then)
+                check = str(r.get('readerCheck') or '')
+                if r.get('checkPlan') and not check.startswith(('same', 'better')):
+                    entry['ready'] = False
+                    entry['built'] = True
+                    if check.startswith('worse'):
+                        entry['rejected'] = check[len('worse'):].lstrip(': ')[:800]
         out.append(entry)
     return out
 
@@ -189,7 +198,7 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         slim_tools = None
     if status.get('tools'):
         # drop a carried tool the method plan has replaced, so the toolsmith builds the new one
-        replaced = {t['region'] for t in (tools or []) if t.get('replaces')}
+        replaced = {t['region'] for t in (tools or []) if t.get('replaces') or t.get('built')}
         slim['tools'] = {rid: t for rid, t in status['tools'].items() if rid not in replaced}
     if status.get('keptSinceAudit'):
         slim['keptSinceAudit'] = status['keptSinceAudit']
@@ -283,8 +292,16 @@ def merge_status(full, returned, d, species):
     for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means'):
         if k in returned:
             S[k] = returned[k]
+    # v3.5: each tool's reader check goes into its record, which the next args reads for readiness
+    for rid, check in (returned.get('toolChecks') or {}).items():
+        rec = d['loop'] / 'tools' / f'{rid}.json'
+        if rec.exists() and check:
+            r = read_json(rec)
+            if r.get('readerCheck') != check:
+                r['readerCheck'] = check
+                rec.write_text(json.dumps(r, indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
     for k, v in returned.items():
-        if k not in S and k not in DROP_KEYS and k not in ('regions', 'baseline', 'specs'):
+        if k not in S and k not in DROP_KEYS and k not in ('regions', 'baseline', 'specs', 'toolChecks'):
             S[k] = v
     return S
 

@@ -1,7 +1,7 @@
 {
  "region": "R03",
  "ready": true,
- "readerCheck": "pending (fix pass 1): round 22 readers rejected the first candidate (assembled-2496) because its pale tuft read as one smooth swollen slab; v2 rebuilt it as separate pointed blades. Three blind readers compare the candidate of plans/tool-check-R03.json (assembled-2512, packet loop/packets/assembled-2512) with the baseline assembled-2278",
+ "readerCheck": "pending: the round 22 recheck after the fix pass read the first check's stale plan result, so the fixed tool was never shown to the readers",
  "script": "art/species-construction/author_fan_lock_sweeps_v2.py",
  "modules": [
   "art/species-construction/fan_lock_sweeps_v2.py (numpy only; v1 fan_lock_sweeps.py stays pinned by older recipes)",
