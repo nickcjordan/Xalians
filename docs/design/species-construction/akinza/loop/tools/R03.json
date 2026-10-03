@@ -1,295 +1,309 @@
 {
  "region": "R03",
- "script": "art/species-construction/author_fan_clumps_field_fast_v2.py",
- "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-fast-v2.json",
- "step": "H36 (after H35; the assembly head is rewired to it) and H34 on the same fast script",
- "spec": "art/species-construction/specs/r03_front_spec.json",
+ "ready": true,
+ "readerCheck": "pending: three blind readers compare the candidate of plans/tool-check-R03.json (assembled-2496, packet loop/packets/assembled-2496) with the baseline assembled-2278",
+ "script": "art/species-construction/author_fan_lock_sweeps.py",
+ "modules": [
+  "art/species-construction/fan_lock_sweeps.py (numpy only: solids, plans, backing, strip, cup, tuft, prune, diagnostics)",
+  "art/species-construction/fan_clumps_front_fast_v2.py and fan_clumps_fast_common.py (imported, not edited: Wing, surfaces, strip_weight, polygon_sdf, floor_df, fill_nan, blur_masked, box, labels, build_mesh, clean_and_check)"
+ ],
+ "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
+ "step": "H36 (after H35, the assembly head is rewired to it); replaces the field-space clump step of the earlier tool (recipes tool-R03-fast-v2.json and older stay as they are)",
+ "spec": "art/species-construction/specs/r03_sweeps.json",
+ "inputs": [
+  "art/species-construction/specs/r03_clumps.json (clump table, unchanged)",
+  "art/species-construction/specs/r03_envelope.npz (sheet envelope, unchanged)"
+ ],
+ "interface": "blender art/species-construction/author_fan_lock_sweeps.py -- --scene <H35 head.blend> --out <dir> --table specs/r03_clumps.json --envelope specs/r03_envelope.npz --spec specs/r03_sweeps.json [--p section.spine=.3 ...] [--sides L,R] [--debug-owner] [--export-locks f.blend]. Outputs head.blend, shape.glb, fan-sweeps.json (resolved levers, per lock length, tip radius, standoff, joined voxels, backing, tip clearance, envelope missing and extra, cup yaw, pale area front and side, pruned fragments, skinTopZ, components, nonManifoldEdges, hashes), sections.npz, source-snapshot/.",
  "parameters": [
   {
-   "name": "spec:params.strip_u",
+   "name": "spec:voxel",
+   "default": 0.0025,
+   "what": "grid size in head-local units (.0025 is .00067 figure heights, finer than the .0008 the method asks for)"
+  },
+  {
+   "name": "spec:strip.u",
    "default": [
     0.085,
     0.1
    ],
-   "what": "|u| from which the old front is stripped: above y .045, and below it (figure heights)"
+   "what": "|u| from which the old front coat is stripped: above y .045, and below it (figure heights)"
   },
   {
-   "name": "spec:params.strip_y_blend",
+   "name": "spec:strip.yBlend",
    "default": [
     0.035,
     0.055
    ],
-   "what": "rows over which strip_u switches"
+   "what": "rows over which strip.u switches"
   },
   {
-   "name": "spec:params.strip_ramp",
+   "name": "spec:strip.ramp",
    "default": 0.008,
    "what": "width of the strip edge in u"
   },
   {
-   "name": "spec:params.strip_bottom",
+   "name": "spec:strip.rampIn",
+   "default": 0.03,
+   "what": "width of the strip edge toward the skull (a slope, not a wall)"
+  },
+  {
+   "name": "spec:strip.bottom",
    "default": 0.195,
    "what": "no strip below this row"
   },
   {
-   "name": "spec:params.strip_bias",
-   "default": 0.008,
-   "what": "the strip cuts this much (figure heights) behind the mid-surface"
+   "name": "spec:strip.maxDepth",
+   "default": 0.08,
+   "what": "the cut sinks at most this far behind the old front face"
   },
   {
-   "name": "spec:params.mid_blur",
+   "name": "spec:strip.depthRamp",
+   "default": 0.04,
+   "what": "the cut sinks from the old front to the backing over this much"
+  },
+  {
+   "name": "spec:strip.midBlur",
    "default": 0.01,
-   "what": "box blur of the fan mid-surface (figure heights)"
+   "what": "box blur of the old mid-surface"
   },
   {
-   "name": "spec:params.core_inset",
-   "default": 0.0,
-   "what": "core outline inset from the closed sheet outline (figure heights)"
+   "name": "spec:backing.shift",
+   "default": 0.006,
+   "what": "the backing front is at least this far behind the old mid-surface"
   },
   {
-   "name": "spec:params.core_depth",
-   "default": 0.012,
-   "what": "core front lies this far behind the coat plan front"
+   "name": "spec:backing.depthBehindDeepest",
+   "default": 0.014,
+   "what": "the backing front lies this far behind the deepest layer rear faces (spec .015 does not fit the thin fan)"
   },
   {
-   "name": "spec:params.core_valley",
-   "default": 0.0,
-   "what": "the core front drops back this much (figure heights) away from the clumps"
+   "name": "spec:backing.minThickness",
+   "default": 0.01,
+   "what": "never closer than this to the old rear face"
   },
   {
-   "name": "spec:params.valley_reach",
-   "default": 0.015,
-   "what": "valley_reach"
-  },
-  {
-   "name": "spec:params.core_back",
-   "default": 0.012,
-   "what": "core rear lies this far in front of the old rear face"
-  },
-  {
-   "name": "spec:params.core_blend",
-   "default": 0.004,
-   "what": "core to skin smooth union"
-  },
-  {
-   "name": "spec:params.layer_blend",
-   "default": [
-    0.0015,
-    0.0015,
-    0.0012
-   ],
-   "what": "within layer 1, within layer 2, layer 2 onto layer 1 (figure heights)"
-  },
-  {
-   "name": "spec:params.s_length",
-   "default": 0.85,
-   "what": "secondaries (S) are this fraction of their table length (their tips then hide behind the primaries)"
-  },
-  {
-   "name": "spec:params.s_back",
+   "name": "spec:backing.blur",
    "default": 0.008,
-   "what": "secondaries (S) lie this much further back than their table front (figure heights)"
+   "what": "smoothing of the backing surface"
   },
   {
-   "name": "spec:params.skull_ramp",
-   "default": 0.028,
-   "what": "the cup carve runs this far into the skull side and meets the old front surface"
+   "name": "spec:layers.0.standoff",
+   "default": 0.014,
+   "what": "layer 1 (S, D) is set back this far toward the tips, so each primary tip stands clear of the secondary beneath"
   },
   {
-   "name": "spec:params.section_p",
-   "default": 2.2,
-   "what": "superellipse exponent of the clump section (2.2 = spec)"
+   "name": "spec:layers.0.undercut",
+   "default": 0.85,
+   "what": "back half width as a fraction of the front (below 1 tucks the back under)"
   },
   {
-   "name": "spec:params.blur",
-   "default": 1,
-   "what": "box blur radius in voxels of each clump field"
+   "name": "spec:layers.1.undercut",
+   "default": 0.85,
+   "what": "same for layer 2"
   },
   {
-   "name": "spec:params.samples",
-   "default": 90,
-   "what": "axis samples per clump"
+   "name": "spec:layers.1.shingle",
+   "default": 0.012,
+   "what": "every second primary lies this far behind its neighbours so each flank stands as an edge"
   },
   {
-   "name": "spec:params.tip_half_width",
-   "default": 0.0015,
-   "what": "floor of the half width near a tip; wider tips cost R03.2 fit and raise seam needles"
+   "name": "spec:section.p",
+   "default": 2.4,
+   "what": "superellipse exponent of the section"
   },
   {
-   "name": "spec:params.tip_half_thick",
-   "default": 0.0012,
-   "what": "floor of the half thickness near a tip"
+   "name": "spec:section.spine",
+   "default": 0.45,
+   "what": "extra front height along the center line, fraction of the half thickness"
   },
   {
-   "name": "spec:params.rear_margin",
-   "default": 0.004,
-   "what": "thickness clamp margin before the old rear face"
+   "name": "spec:section.rollDeg",
+   "default": 14.0,
+   "what": "constant lean about the axis, alternating sign lock to lock"
   },
   {
-   "name": "spec:params.camber",
-   "default": 0.016,
-   "what": "forward camber of the clump front at mid length"
+   "name": "spec:section.twistDeg",
+   "default": 6.0,
+   "what": "peak twist about the axis, deterministic sign per lock"
   },
   {
-   "name": "spec:params.width_scale",
+   "name": "spec:section.widthScale",
    "default": 0.9,
-   "what": "multiplies every coat clump width (spec 1.0; round 18 used .9)"
+   "what": "width of every coat lock against the table"
   },
   {
-   "name": "spec:params.lower_scale",
+   "name": "spec:section.thickScale",
+   "default": 0.8,
+   "what": "thickness of every coat lock against the table"
+  },
+  {
+   "name": "spec:section.camber",
+   "default": 0.016,
+   "what": "forward camber of the front face at mid length"
+  },
+  {
+   "name": "spec:section.lowerScale",
    "default": [
-    1.6,
-    1.3
+    1.5,
+    1.25
    ],
-   "what": "width and thickness scale of the small lower locks (tip row .17 or lower), which are pins at table size"
+   "what": "width and thickness scale of the small lower locks"
   },
   {
-   "name": "spec:params.thick_taper_scale",
-   "default": 1.3,
-   "what": "multiplies the thickness fall exponent"
+   "name": "spec:section.rings",
+   "default": 56,
+   "what": "rings along a lock"
   },
   {
-   "name": "spec:params.taper_scale",
-   "default": 0.7,
-   "what": "multiplies the width taper exponents (below 1 = fuller, blunter points)"
+   "name": "spec:section.around",
+   "default": 28,
+   "what": "points around a ring"
   },
   {
-   "name": "spec:params.thick_scale",
+   "name": "spec:tips.minHalfWidth",
+   "default": 0.003,
+   "what": "half width of the last ring (figure heights); at least 2 voxels"
+  },
+  {
+   "name": "spec:tips.minHalfThick",
+   "default": 0.003,
+   "what": "half thickness of the last ring"
+  },
+  {
+   "name": "spec:tips.length",
+   "default": 0.005,
+   "what": "the apex vertex stands this far past the last ring"
+  },
+  {
+   "name": "spec:tips.taperScale",
    "default": 1.0,
-   "what": "multiplies every coat clump thickness"
+   "what": "multiplies the table taper exponents"
   },
   {
-   "name": "spec:params.length_scale",
-   "default": 0.95,
-   "what": "multiplies clump length, only for tip rows at or below pull_from_y"
+   "name": "spec:union.rootBand",
+   "default": 0.035,
+   "what": "smooth union only within this distance of a lock root"
   },
   {
-   "name": "spec:params.top_lift",
-   "default": 0.0,
-   "what": "top-edge tips stand this much higher"
-  },
-  {
-   "name": "spec:params.pull_from_y",
-   "default": 0.07,
-   "what": "length_scale applies only to clumps whose tip row is at least this (the table pushes the lower edge tips out)"
-  },
-  {
-   "name": "spec:params.root_cap",
+   "name": "spec:union.rootRamp",
    "default": 0.02,
-   "what": "how far a clump is carried behind its root"
+   "what": "fade of the root band"
   },
   {
-   "name": "spec:params.cup_shift",
-   "default": 0.0,
-   "what": "moves the cup polygon in x"
+   "name": "spec:union.rootBlend",
+   "default": 0.004,
+   "what": "smooth union radius in the root band"
   },
   {
-   "name": "spec:params.cup_fillet",
+   "name": "spec:union.rootCap",
+   "default": 0.02,
+   "what": "a lock is carried this far behind its root, into the head"
+  },
+  {
+   "name": "spec:union.stemRadius",
+   "default": 0.45,
+   "what": "radius of the rod from a coat lock root back into the backing, as a fraction of the root half width (what joins a lock whose root side the cup carve removes)"
+  },
+  {
+   "name": "spec:union.stemInto",
+   "default": 0.006,
+   "what": "the stem ends this far inside the backing (figure heights)"
+  },
+  {
+   "name": "spec:union.rearMargin",
+   "default": 0.004,
+   "what": "thickness clamp keeps the lock back this far in front of the old rear face"
+  },
+  {
+   "name": "spec:union.rearClip",
+   "default": -0.001,
+   "what": "new material is cut off this far behind the old rear face"
+  },
+  {
+   "name": "spec:union.seamBlur",
+   "default": 3,
+   "what": "box blur radius (voxels) in the strip-edge and cup-rim seam bands"
+  },
+  {
+   "name": "spec:tuft.standoff",
+   "default": 0.008,
+   "what": "a tuft tip stands this far in front of the floor"
+  },
+  {
+   "name": "spec:tuft.widthScale",
+   "default": 1.2,
+   "what": "tuft clump width scale"
+  },
+  {
+   "name": "spec:tuft.thickScale",
+   "default": 1.5,
+   "what": "tuft clump thickness scale"
+  },
+  {
+   "name": "spec:tuft.rootBand",
+   "default": 0.03,
+   "what": "tuft clumps merge within this distance of their roots"
+  },
+  {
+   "name": "spec:tuft.rootBlend",
+   "default": 0.008,
+   "what": "smooth union radius of the merged root"
+  },
+  {
+   "name": "spec:pale.tol",
+   "default": 0.004,
+   "what": "faces within this distance of a tuft solid get the pale material"
+  },
+  {
+   "name": "spec:cup.yawDeg",
+   "default": 35.0,
+   "what": "the opening yaw outward from straight forward (floor slope tan of it)"
+  },
+  {
+   "name": "spec:cup.floorStart",
+   "default": -0.016,
+   "what": "floor depth at u .100"
+  },
+  {
+   "name": "spec:cup.floorMax",
+   "default": 0.036,
+   "what": "deepest floor"
+  },
+  {
+   "name": "spec:cup.bowl",
+   "default": 0.008,
+   "what": "extra depth toward the middle of the polygon"
+  },
+  {
+   "name": "spec:cup.dish",
+   "default": 0.018,
+   "what": "carve depth rises to the coat surface over this much inside the rim"
+  },
+  {
+   "name": "spec:cup.fillet",
    "default": 0.005,
    "what": "rim fillet radius"
   },
   {
-   "name": "spec:params.floor_slope",
-   "default": 0.7,
-   "what": "cup floor slope in df per u; .70 is the 35 degree yaw"
-  },
-  {
-   "name": "spec:params.floor_start",
-   "default": -0.016,
-   "what": "cup floor df at u .100"
-  },
-  {
-   "name": "spec:params.floor_max",
-   "default": 0.036,
-   "what": "deepest cup floor df"
-  },
-  {
-   "name": "spec:params.floor_bowl",
-   "default": 0.008,
-   "what": "extra concave depth toward the polygon middle"
-  },
-  {
-   "name": "spec:params.tuft_blend",
-   "default": 0.004,
-   "what": "tuft clump to clump smooth union"
-  },
-  {
-   "name": "spec:params.tuft_floor_blend",
-   "default": 0.002,
-   "what": "tuft to floor smooth union"
-  },
-  {
-   "name": "spec:params.tuft_tip_half_width",
-   "default": 0.0012,
-   "what": "tuft clumps use this tip floor (figure heights) instead of tip_half_width; None = same"
-  },
-  {
-   "name": "spec:params.tuft_scale",
-   "default": 1.0,
-   "what": "tuft thickness scale"
-  },
-  {
-   "name": "spec:params.tuft_width_scale",
-   "default": 1.0,
-   "what": "tuft width scale"
-  },
-  {
-   "name": "spec:params.skip",
-   "default": "",
-   "what": "comma list of clump names or families to drop"
-  },
-  {
-   "name": "spec:params.rear_clip",
-   "default": -0.001,
-   "what": "new clump and tuft material is cut off this far behind the old rear face (negative = in front); keeps the rear fan (R04) unchanged"
-  },
-  {
-   "name": "spec:cups.L / spec:cups.R",
-   "default": "specs/R03.md polygons",
-   "what": "cup polygons in the fit frame; move with the face if R01 or R02 recenters it"
-  },
-  {
-   "name": "spec:clumps.<name or pattern>",
-   "default": {},
-   "what": "per-clump edits of the table rows (root, tip, curl, widthRoot, widthMid, thick, taper, layer), e.g. spec:clumps.LP5.widthMid=.05 or spec:clumps.*S.thick=.02"
-  },
-  {
-   "name": "spec:pale.tol / gray / smooth",
-   "default": {
-    "tol": 0.0015,
-    "gray": 0.58,
-    "smooth": 3
-   },
-   "what": "pale tuft material: face distance to a tuft field, base colour, majority-vote passes"
-  },
-  {
-   "name": "spec:voxel",
-   "default": 0.0025,
-   "what": "field grid size (head-local)"
-  },
-  {
-   "name": "--front-table",
-   "default": "art/species-construction/specs/r03_clumps.json",
-   "what": "clump table (loop/r03_clump_table.py makes it from specs/R03.md section 2); a table edit is a new file passed with recipe.py set"
-  },
-  {
-   "name": "--envelope",
-   "default": "art/species-construction/specs/r03_envelope.npz",
-   "what": "sheet fan outline signed distance fields (loop/r03_envelope.py)"
+   "name": "spec:clumps",
+   "default": "see specs/r03_sweeps.json",
+   "what": "per-clump table edits by name or fnmatch pattern (the shipped spec re-fans the tuft rows)"
   }
  ],
  "checks": {
-  "build": "H36 -> head-2138 (round 18 head-2114 parameters, reproduced vertex for vertex: 977860), then head-2140 with rear_clip -.001 (973827 vertices), about 177 s each; one closed component, nonManifoldEdges 0, skinTopZ .52010 under the ceiling .52453; assembled-2145 built from head-2140 + body-2118",
-  "loop_tools check": "assembled-2139 and assembled-2145: pass, one component, nonManifoldEdges 0",
-  "contain": "stock zones read R01 .0256, R02 .0236, R04 .0256, R05 .0142 because the R03 zone stops at df -.01 and the fan front is at df -.07 to +.04. With tools/R03.zones.json (R03 y to +.07) the worst foreign max is .00078 (R01), p95 under .0004. Use: recipe.py contain <recipe> H36 --zones docs/design/species-construction/akinza/loop/tools/R03.zones.json",
-  "quick": "head-2140 + body-0448 against the assembled-0458 fit: head band IoU change -.0036, all +.0001, trunk +.0011, legs +.0006. The silhouette changes little by design (the outline already passes); the change is inside the outline: pale faces 90031, coat cover .767 (L) and .822 (R) against .80 and .83 asked",
-  "seam_check": "earFanRoot needle +129 (front, under the flag) and +184 (back, FLAG). The needles are the serrated tips the spec asks for (12 to 16 points per side); wider tips raise them (tip_half_width .0025: +222 and +284, .0035: +314 and +380) and cost fit. No other joint flagged. The first order should settle this with the critic and with R04's tips.",
-  "sweep": "sweep-r03-tool: spec:params.width_scale .8, .9, 1.05 by spec:params.core_inset 0, .006 moved fitIou .9107 to .9131 and silhouetteChange up to .29; width_scale is the strong lever, core_inset is weak. sweep-r03-tip: spec:params.tip_half_width .0025, .0035 lowered fitIou .9123 to .9109 and .9094 and raised station .1376 to .1543 and .1552. The sweep scores contain with the stock zones (about .0256 for every variant), so its total is a constant penalty; read fitIou, station and changed."
+  "build": "H36 -> head-2495 (about 0.7 min with the cache warm), assembled-2496 from head-2495 + body-2276; one closed component, nonManifoldEdges 0, skinTopZ .51729 under the ceiling .52493. 27 loose slivers of the old rear coat are removed as islands by clean_and_check (the strip leaves some behind the backing; the earlier tool removed 11), plus prune_thin_fragments (pieces joined by a neck under 2 voxels).",
+  "loop_tools check": "assembled-2496: pass, one component, nonManifoldEdges 0, removedFragments 3. The assembly remeshes at .0028 world and refuses a second solid: the first two builds failed there (thin lock tips and a clipped sliver of the old rear coat fell off), which is why tips.minHalfWidth and minHalfThick are .003 figure heights and prune_thin_fragments exists.",
+  "contain": "recipe.py contain (stock zones and tools/R03.zones.json read the same): relative rule against H33, nothing flagged (R01 and R04 max .0036 absolute with p95 at most .0001 and allowance .0151; R05 .00045, R06 .00038, R02 .00035). The absolute flags on R01 and R04 are a handful of vertices at the strip edge beside the skull and in the R04 rear slivers.",
+  "quick": "head-2482 (same code as 2495 before the stem rods) + body-2276 against the assembled-2278 fit: head band IoU change -.0024, trunk +.0008, legs +.0005. The silhouette changes little by design; the change is inside the outline. Candidate measured: R03.1 1.021 -> 1.029 (bound .97 to 1.03, only .001 of margin; tips.length and section.widthScale lower it), R03.2 .0354 -> .0326 (better), R01.1 .906 -> .902, R01.6 1.108 -> 1.025, R04.1 .9275 -> .9168, R04.2 .0459 -> .041, all pass.",
+  "seam_check": "earFanRoot needle +243 front and +249 back against the baseline's 307 and 314 (flagged as new in the candidate summary; the quick preview flagged only the back, +167). The needles are the pointed lock tips the spec asks for; the earlier tool gave +129 and +184 with fewer tips. No other joint flagged.",
+  "sweep": "recipe.py sweep sweep-r03-lock-tool2 on spec:section.widthScale 0.8, 1.0 by spec:layers.0.standoff 0.008, 0.02 (use JSON numbers: .8 without a leading zero is read as a string and the build fails): fitIou .91642 to .91930 (baseline .91668), station .13499 to .14324, so widthScale is the strong silhouette lever (.8 raises station by .008 and costs R03.2 margin) and standoff barely changes the silhouette (it changes the shading and the undercut; judge it by the images).",
+  "images": "clay renders of head-2495 (loop/scratch/r03tool) and packet m02 and m04 of assembled-2496 beside assembled-2278: a shaggy fan of 18 pointed, leaning, layered locks per side, a pale pointed tuft fan in a cup yawed 35 degrees (a pale leaf shape also reads in the side view, x_side -.025 to +.034, centroid +.002 L and -.001 R, area .0021 per side), and no straight cut line, flat plane, box edge, ladder of slabs or floating piece found in m02 to m05. Weaker than the baseline: the lateral wing locks read as soft overlapping masses, not crisp blades (relief between neighbours is only the shingle .012 and the lean), the pale tuft is less white than the baseline's blades, thin dark slits show at the wing roots in head-top, and the eyes read with a darker rim in m02 (R02 picture change .048, probably shadow from the changed wing)."
  },
- "notes": "The tool already existed as the round 18 builder's WIP (author_fan_clumps_field.py --part front, fan_clumps_front.py, fan_clumps_front_run.py, specs/r03_clumps.json, r03_envelope.npz, loop/r03_*.py; head-2114 was its last build). All of it is reused. Added: --spec JSON (params, cups, per-clump edits, pale, voxel) so recipe.py set and sweep reach every lever as spec:<path>; a rear_clip parameter that cuts new material off at the old rear face (containment max .0054 to .0033 before the zone fix); the interface in the fan_clumps_front_run.py docstring. Starter parameters are the round 18 builder's tuned values (strip_bias .008, s_length .85, s_back .008, skull_ramp .028, core_inset 0, width_scale .9, length_scale .95 below row .07, taper_scale .7, lower_scale 1.6 and 1.3), not the specs/R03.md numbers (core_inset .006, width_scale 1, length_scale 1), which are fan_clumps_front.DEFAULTS. R03.2 is the binding limit (spec friction 1). author_fan_clumps_field.py is also the R04 rear step's script, so its bytes changed again and the round 17 R04 step rebuilds under a new key. Quick and sweep compare against body-0448; the recipe cache maps B-23 to body-2118 (the assembled-2145 body). Speed (2026-10-02): the clump builders were the slow part of every R03 and R04 plan (H36 about 4.4 min, H34 about 5.5 min per build on an idle machine, far more when Blender slots compete), so a 12 variant plan took about 90 minutes. art/species-construction/author_fan_clumps_field_fast.py (with fan_clumps_front_fast.py, fan_clumps_front_run_fast.py and fan_clumps_fast_common.py) is the same builder with the same arguments, spec and levers, about 4 times quicker (H34 about 1.4 min, H36 about 1.0 min): the nearest axis sample comes from a matrix product inside provably relevant tiles, voxels already at the band skip the rest of the arithmetic, each clump is blurred and unioned only over the box that holds it, and the mesh counts, speck and island removal and vertex transforms are numpy instead of Python loops over bmesh vertices. Equivalence against the slow builds (art/species-construction/fan_clumps_compare.py): H34 against head-2261 vertices 1035843 against 1035845, mean surface distance 2e-8 figure heights, max 3.9e-4; H36 against head-2279 identical vertex and face counts, mean 0, max 1.5e-5, same pale faces. The slow script and the starters tool-R03-pinned.json and r17-R04-pinned.json stay as they are (pinned to the bytes that built the baseline); use tool-R03-fast.json, which carries both H34 and H36 on the fast script, for new plans.",
- "speed": "Speed (2026-10-02): the clump builders were the slow part of every R03 and R04 plan (H36 about 4.4 min, H34 about 5.5 min per build on an idle machine, far more when Blender slots compete), so a 12 variant plan took about 90 minutes. art/species-construction/author_fan_clumps_field_fast.py (with fan_clumps_front_fast.py, fan_clumps_front_run_fast.py and fan_clumps_fast_common.py) is the same builder with the same arguments, spec and levers, about 4 times quicker (H34 about 1.4 min, H36 about 1.0 min): the nearest axis sample comes from a matrix product inside provably relevant tiles, voxels already at the band skip the rest of the arithmetic, each clump is blurred and unioned only over the box that holds it, and the mesh counts, speck and island removal and vertex transforms are numpy instead of Python loops over bmesh vertices. Equivalence against the slow builds (art/species-construction/fan_clumps_compare.py): H34 against head-2261 vertices 1035843 against 1035845, mean surface distance 2e-8 figure heights, max 3.9e-4; H36 against head-2279 identical vertex and face counts, mean 0, max 1.5e-5, same pale faces. The slow script and the starters tool-R03-pinned.json and r17-R04-pinned.json stay as they are (pinned to the bytes that built the baseline); use tool-R03-fast.json, which carries both H34 and H36 on the fast script, for new plans.",
- "slowScript": "art/species-construction/author_fan_clumps_field.py (pinned by recipes/tool-R03-pinned.json; unchanged)",
- "readerCheck": "pending",
- "v2Reason": "Round 21 reader check rejected every H36 candidate 3 to 0 for straight cut planes (flat rectangular plates beside each eye in the front view, a ladder of slabs along the fan's back edge in the side view). Cause: not the speed-up (the slow builder, author_fan_clumps_field.py, on the same H35 makes the same planes; head-2465 vs head-2386 look alike). In fan_clumps_front_fast.py build_wing the strip cut a vertical wall at the strip inner edge (strip_weight ramp .008 against a cut at the mid-surface, around line 240), the core was a slab with hard outline walls (sd2 at ~line 455) filled front to back by column so it left flat rungs between the rear spikes, and the cup carve (~line 520) cut a vertical rim wall around the polygon. Fix (new versioned files, originals untouched): author_fan_clumps_field_fast_v2.py, fan_clumps_front_run_fast_v2.py, fan_clumps_front_fast_v2.py (fan_clumps_fast_common.py unchanged): strip_ramp_in, strip_depth_ramp, strip_max_depth; core thinned to nothing at its outline and away from the coat (core_feather, core_cover_reach, core_rear_overlap, core_inset .03 passed by --p); cup_dish (carve depth rises to nothing at the rim); seam_blur bands at the strip edge and cup rim; ceiling_blend bevel; H34 gets --core-feather .03. Starter: recipes/tool-R03-fast-v2.json (assembled-2475, packet loop/packets/assembled-2475, one solid). Not fully clean: a thin dark crevice along each wing in head-top and one flat tip plate in the side view remain, the pale tufts read softer and less cupped than the baseline's, and the old front-fan root band beside the eyes shows a faint L crease. A reader check has to confirm before use.",
- "slowScriptSuperseded": "author_fan_clumps_field_fast.py (v1, pinned by recipes/tool-R03-fast.json) makes the cut planes; do not use it for new plans"
+ "notes": "Method as in methods.md R03 (layered lock sweeps), built as: each lock is a closed triangle mesh (numpy: Bezier guide from the clump table, superellipse section p 2.4 with a raised spine and a narrower back, width and thickness tapering to an apex vertex, twist and alternating lean), voxelized with OpenVDB createLevelSetFromPolygons at the head grid (voxel .0025 head-local = .00067 figure heights, finer than the .0008 asked) and unioned with a hard minimum, so locks keep their own creases; a smooth union of .004 only within .035 of the lock root; a stem rod from each coat root back into the backing joins locks whose root side the cup carve removes (without it LS7 and RS8 floated and were deleted as islands). Layer 1 (S, D) is set back .014 toward its tips behind layer 2 (P); every second P lies .012 behind its neighbours; the backing is the old fan stripped (the v2 strip with its ramps, so no cut wall) down to .014 behind the deepest layer's rear faces, at least .006 behind the old mid-surface and .010 in front of the old rear face (the spec's .015 does not fit the .09 deep fan). There is no envelope core. The cup is a bowl (polygon, yawed floor tan(35 degrees), concave bowl, dish at the rim, fillet) carved before the tuft goes in; the tuft rows of the table are re-fanned in the spec (roots clustered at the skull line y .118 to .146, tips spread up and out) because the table's parallel rows read as a stack of horizontal rods (the venetian blind of round 21). Departures from the specs/R03.md numbers, all levers: width x .9, thickness x .8, spine .45, p 2.4, lean 14 degrees, tip half width .003 (assembly remesh), the tuft re-fan, tuft width x 1.2 and thickness x 1.5, pale tolerance .004. Reused: the table, envelope, strip, cup floor and polygon helpers and mesh cleaning of the earlier tool (fan_clumps_front_fast_v2.py, fan_clumps_fast_common.py), the R03 zones file, loop/render_head_clay.py for the images. Not done: the exact mesh boolean option (the level-set union is used); tip standoff measured on the voxel fields (tipClearance is a column check and its median is -.004, so the secondaries are not fully clear of the primaries where the old rear face stops them sinking); tips thinner than .003 (the assembly remesh removes them).",
+ "debug": "--debug-owner paints faces within a voxel of a layer 1 solid and a layer 2 solid in two grays (materials 1 and 2); --export-locks writes every solid as its own object; sections.npz holds four constant-height slices of each wing field. Run through loop_tools.py blender with the flags directly after the script name (no leading --). A Python syntax error does not print Traceback, so check that the output directory has head.blend.",
+ "head": "head-2495",
+ "assembly": "assembled-2496",
+ "packet": "untracked/species-construction/akinza/loop/packets/assembled-2496",
+ "checkPlan": "docs/design/species-construction/akinza/loop/plans/tool-check-R03.json"
 }

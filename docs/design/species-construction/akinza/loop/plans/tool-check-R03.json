@@ -1,0 +1,19 @@
+{
+  "order": {
+    "round": 22,
+    "region": "R03",
+    "with": []
+  },
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2278",
+  "start": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
+  "variants": [
+    {
+      "name": "tool as built",
+      "why": "the layered lock sweeps starter as it stands, no edits: three blind readers compare it with the baseline before the tool counts as ready",
+      "edits": []
+    }
+  ],
+  "region": "R03",
+  "top": 1
+}
