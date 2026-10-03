@@ -36,3 +36,13 @@ Findings and what was done:
 10. Smolder invisible: patches 1.5 times larger, peak opacity .85.
 11. Banner sigil read as a letter: it is the Machine's gyroscope now.
 12. Page text: concept, piece list and notes rewritten to the plate; kicker "Pass 2". Deviation: the live beat-07 copy is not changed here. The story's words are waiting on Nick's decisions (the headline, the visitor line), so this plate ships beside the current copy.
+
+## Round 2 (same reviewer): 7.5
+
+All twelve round 1 findings confirmed fixed or nearly. Remaining, and what was done:
+1. A blinking far-spire beacon sat on the token's corner: spires near the token carry no beacon now (30 units clear of its box).
+2. The idle gap was uneven (2.5 s and 4.7 s): exchange one moved earlier (clash at u .32), so the clashes are half a clock apart, about 3.6 s each way. The still frame (t=0, u .307) now shows the fireball and the answering bolt about to meet.
+3. The hatch read as a window and no ramp showed: the hatch is an opening at the hull's foot with a lit ramp down to the deck and its light pooled there.
+4. The page's alt text was stale: rewritten from the plate.
+5. Exchange two's bolt waited for the jet: the jet leaves 0.14 s sooner and meets the bolt.
+6. The Machine's ring rocked: it turns at an even rate now (rx follows |cos| of a steady turn).
