@@ -1,20 +1,20 @@
 {
  "region": "R03",
  "ready": true,
- "readerCheck": "pending: three blind readers compare the candidate of plans/tool-check-R03.json (assembled-2496, packet loop/packets/assembled-2496) with the baseline assembled-2278",
- "script": "art/species-construction/author_fan_lock_sweeps.py",
+ "readerCheck": "pending (fix pass 1): round 22 readers rejected the first candidate (assembled-2496) because its pale tuft read as one smooth swollen slab; v2 rebuilt it as separate pointed blades. Three blind readers compare the candidate of plans/tool-check-R03.json (assembled-2512, packet loop/packets/assembled-2512) with the baseline assembled-2278",
+ "script": "art/species-construction/author_fan_lock_sweeps_v2.py",
  "modules": [
-  "art/species-construction/fan_lock_sweeps.py (numpy only: solids, plans, backing, strip, cup, tuft, prune, diagnostics)",
-  "art/species-construction/fan_clumps_front_fast_v2.py and fan_clumps_fast_common.py (imported, not edited: Wing, surfaces, strip_weight, polygon_sdf, floor_df, fill_nan, blur_masked, box, labels, build_mesh, clean_and_check)"
+  "art/species-construction/fan_lock_sweeps_v2.py (numpy only; v1 fan_lock_sweeps.py stays pinned by older recipes)",
+  "art/species-construction/fan_clumps_front_fast_v2.py and fan_clumps_fast_common.py (imported, not edited)"
  ],
  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
- "step": "H36 (after H35, the assembly head is rewired to it); replaces the field-space clump step of the earlier tool (recipes tool-R03-fast-v2.json and older stay as they are)",
- "spec": "art/species-construction/specs/r03_sweeps.json",
+ "step": "H36 (after H35, the assembly head is rewired to it); starter recipe recipes/tool-R03.json now points at the v2 script and spec r03_sweeps_v2c.json",
+ "spec": "art/species-construction/specs/r03_sweeps_v2c.json (v2.json and v2b.json are the two earlier fix-pass trials, kept because built heads pin them)",
  "inputs": [
   "art/species-construction/specs/r03_clumps.json (clump table, unchanged)",
   "art/species-construction/specs/r03_envelope.npz (sheet envelope, unchanged)"
  ],
- "interface": "blender art/species-construction/author_fan_lock_sweeps.py -- --scene <H35 head.blend> --out <dir> --table specs/r03_clumps.json --envelope specs/r03_envelope.npz --spec specs/r03_sweeps.json [--p section.spine=.3 ...] [--sides L,R] [--debug-owner] [--export-locks f.blend]. Outputs head.blend, shape.glb, fan-sweeps.json (resolved levers, per lock length, tip radius, standoff, joined voxels, backing, tip clearance, envelope missing and extra, cup yaw, pale area front and side, pruned fragments, skinTopZ, components, nonManifoldEdges, hashes), sections.npz, source-snapshot/.",
+ "interface": "blender art/species-construction/author_fan_lock_sweeps_v2.py -- --scene <H35 head.blend> --out <dir> --table specs/r03_clumps.json --envelope specs/r03_envelope.npz --spec specs/r03_sweeps_v2c.json [--p section.spine=.3 ...] [--sides L,R] [--debug-owner] [--export-locks f.blend]. Outputs head.blend, shape.glb, fan-sweeps.json (resolved levers, per lock length, tip radius, standoff, joined voxels, backing, tip clearance, envelope missing and extra, cup yaw, pale area front and side, pruned fragments, skinTopZ, components, nonManifoldEdges, hashes), sections.npz, source-snapshot/.",
  "parameters": [
   {
    "name": "spec:voxel",
@@ -227,27 +227,27 @@
   },
   {
    "name": "spec:tuft.standoff",
-   "default": 0.008,
-   "what": "a tuft tip stands this far in front of the floor"
+   "default": 0.02,
+   "what": "a tuft blade tip stands this far in front of the cup floor; the strongest lever for how separate and proud the blades read (.012 flush leaf, .03 wing-like)"
   },
   {
    "name": "spec:tuft.widthScale",
-   "default": 1.2,
-   "what": "tuft clump width scale"
+   "default": 0.72,
+   "what": "tuft blade width scale against the table row; v2 uses it alone (v1 also multiplied section.widthScale and tuft width came out .035 on a .006 root spacing, melting five clumps into a slab)"
   },
   {
    "name": "spec:tuft.thickScale",
-   "default": 1.5,
-   "what": "tuft clump thickness scale"
+   "default": 1.3,
+   "what": "tuft blade thickness scale against the table (v2: alone, not times section.thickScale)"
   },
   {
    "name": "spec:tuft.rootBand",
-   "default": 0.03,
+   "default": 0.02,
    "what": "tuft clumps merge within this distance of their roots"
   },
   {
    "name": "spec:tuft.rootBlend",
-   "default": 0.008,
+   "default": 0.003,
    "what": "smooth union radius of the merged root"
   },
   {
@@ -288,22 +288,43 @@
   {
    "name": "spec:clumps",
    "default": "see specs/r03_sweeps.json",
-   "what": "per-clump table edits by name or fnmatch pattern (the shipped spec re-fans the tuft rows)"
+   "what": "per-clump table edits by name or fnmatch pattern (the v2 spec has none)"
+  },
+  {
+   "name": "spec:tuft.shingle",
+   "default": 0.012,
+   "what": "every second tuft blade stands this much further off the floor so neighbours overlap as layers, not a slab"
+  },
+  {
+   "name": "spec:tuft.rollDeg",
+   "default": 14.0,
+   "what": "alternating lean of the tuft blades about their axes"
+  },
+  {
+   "name": "spec:tuft.liftFrom",
+   "default": 0.08,
+   "what": "fraction of blade length where the lift off the floor starts"
+  },
+  {
+   "name": "spec:addClumps",
+   "default": "16 rows (LT11 to LT18, RT11 to RT18)",
+   "what": "v2: whole table rows appended to the table; the spec skips the table tufts (skip T1..T5) and fans eight narrow pale blades per side from the skull-side root line to the cup rim"
   }
  ],
  "checks": {
-  "build": "H36 -> head-2495 (about 0.7 min with the cache warm), assembled-2496 from head-2495 + body-2276; one closed component, nonManifoldEdges 0, skinTopZ .51729 under the ceiling .52493. 27 loose slivers of the old rear coat are removed as islands by clean_and_check (the strip leaves some behind the backing; the earlier tool removed 11), plus prune_thin_fragments (pieces joined by a neck under 2 voxels).",
+  "build": "H36 -> head-2510 (1.9 min), assembled-2512; check pass, one component, nonManifoldEdges 0, removedFragments 3.",
   "loop_tools check": "assembled-2496: pass, one component, nonManifoldEdges 0, removedFragments 3. The assembly remeshes at .0028 world and refuses a second solid: the first two builds failed there (thin lock tips and a clipped sliver of the old rear coat fell off), which is why tips.minHalfWidth and minHalfThick are .003 figure heights and prune_thin_fragments exists.",
-  "contain": "recipe.py contain (stock zones and tools/R03.zones.json read the same): relative rule against H33, nothing flagged (R01 and R04 max .0036 absolute with p95 at most .0001 and allowance .0151; R05 .00045, R06 .00038, R02 .00035). The absolute flags on R01 and R04 are a handful of vertices at the strip edge beside the skull and in the R04 rear slivers.",
-  "quick": "head-2482 (same code as 2495 before the stem rods) + body-2276 against the assembled-2278 fit: head band IoU change -.0024, trunk +.0008, legs +.0005. The silhouette changes little by design; the change is inside the outline. Candidate measured: R03.1 1.021 -> 1.029 (bound .97 to 1.03, only .001 of margin; tips.length and section.widthScale lower it), R03.2 .0354 -> .0326 (better), R01.1 .906 -> .902, R01.6 1.108 -> 1.025, R04.1 .9275 -> .9168, R04.2 .0459 -> .041, all pass.",
-  "seam_check": "earFanRoot needle +243 front and +249 back against the baseline's 307 and 314 (flagged as new in the candidate summary; the quick preview flagged only the back, +167). The needles are the pointed lock tips the spec asks for; the earlier tool gave +129 and +184 with fewer tips. No other joint flagged.",
-  "sweep": "recipe.py sweep sweep-r03-lock-tool2 on spec:section.widthScale 0.8, 1.0 by spec:layers.0.standoff 0.008, 0.02 (use JSON numbers: .8 without a leading zero is read as a string and the build fails): fitIou .91642 to .91930 (baseline .91668), station .13499 to .14324, so widthScale is the strong silhouette lever (.8 raises station by .008 and costs R03.2 margin) and standoff barely changes the silhouette (it changes the shading and the undercut; judge it by the images).",
-  "images": "clay renders of head-2495 (loop/scratch/r03tool) and packet m02 and m04 of assembled-2496 beside assembled-2278: a shaggy fan of 18 pointed, leaning, layered locks per side, a pale pointed tuft fan in a cup yawed 35 degrees (a pale leaf shape also reads in the side view, x_side -.025 to +.034, centroid +.002 L and -.001 R, area .0021 per side), and no straight cut line, flat plane, box edge, ladder of slabs or floating piece found in m02 to m05. Weaker than the baseline: the lateral wing locks read as soft overlapping masses, not crisp blades (relief between neighbours is only the shingle .012 and the lean), the pale tuft is less white than the baseline's blades, thin dark slits show at the wing roots in head-top, and the eyes read with a darker rim in m02 (R02 picture change .048, probably shadow from the changed wing)."
+  "contain": "recipe.py candidate: relative containment, nothing flagged (R05 .00045, R06 .00038).",
+  "quick": "measured: R03.1 1.021 -> 1.029 and R03.2 .0354 -> .0326, R01 and R04 criteria pass (same as v1: the tuft change does not move the outline).",
+  "seam_check": "earFanRoot needle front 243 and back 249 (same as v1, below the baseline's 307 and 314; flagged as new by the summary). No other joint.",
+  "sweep": "recipe.py sweep sweep-r03-lock-tool3 on spec:tuft.widthScale .6,.85 by spec:tuft.standoff .012,.028 (heads 2516 to 2519): silhouette terms identical (fitIou .91668, station .13517) because the pale tuft lies inside the outline; the levers change only relief and shading inside the cup (compare pack images of assembled-2504 with standoff .03 and width .5, wing-like and proud, against assembled-2512).",
+  "images": "packet m04 and reader pack of assembled-2512 beside 2278: the cup holds a fan of eight separate pointed pale blades per side, overlapping like layered feathers, no slab, flat plane or floating piece. Weaker than the baseline: the fan is narrower than the baseline's broad leaf blades and sits slightly proud of the cup; the pale tone is the same low-contrast gray.",
+  "readerFault": "Round 22 readers (assembled-2496 vs 2278): the candidate's pale inner ear read as a single smooth swollen slab, not a lock fan. Cause in fan_lock_sweeps.py section_profiles: tufts were sized by section.widthScale (.9) times tuft.widthScale (1.2) and thickness .8 x 1.5, so each of only five clumps was about .035 wide on a .006 root spacing and a .008 smooth union melted them with the floor. v2 sizes blades by tuft levers alone, uses eight blades per side (addClumps) with tips spread along the cup rim, narrower, lifted .02 off the floor, shingled .012, with a .003 root blend."
  },
- "notes": "Method as in methods.md R03 (layered lock sweeps), built as: each lock is a closed triangle mesh (numpy: Bezier guide from the clump table, superellipse section p 2.4 with a raised spine and a narrower back, width and thickness tapering to an apex vertex, twist and alternating lean), voxelized with OpenVDB createLevelSetFromPolygons at the head grid (voxel .0025 head-local = .00067 figure heights, finer than the .0008 asked) and unioned with a hard minimum, so locks keep their own creases; a smooth union of .004 only within .035 of the lock root; a stem rod from each coat root back into the backing joins locks whose root side the cup carve removes (without it LS7 and RS8 floated and were deleted as islands). Layer 1 (S, D) is set back .014 toward its tips behind layer 2 (P); every second P lies .012 behind its neighbours; the backing is the old fan stripped (the v2 strip with its ramps, so no cut wall) down to .014 behind the deepest layer's rear faces, at least .006 behind the old mid-surface and .010 in front of the old rear face (the spec's .015 does not fit the .09 deep fan). There is no envelope core. The cup is a bowl (polygon, yawed floor tan(35 degrees), concave bowl, dish at the rim, fillet) carved before the tuft goes in; the tuft rows of the table are re-fanned in the spec (roots clustered at the skull line y .118 to .146, tips spread up and out) because the table's parallel rows read as a stack of horizontal rods (the venetian blind of round 21). Departures from the specs/R03.md numbers, all levers: width x .9, thickness x .8, spine .45, p 2.4, lean 14 degrees, tip half width .003 (assembly remesh), the tuft re-fan, tuft width x 1.2 and thickness x 1.5, pale tolerance .004. Reused: the table, envelope, strip, cup floor and polygon helpers and mesh cleaning of the earlier tool (fan_clumps_front_fast_v2.py, fan_clumps_fast_common.py), the R03 zones file, loop/render_head_clay.py for the images. Not done: the exact mesh boolean option (the level-set union is used); tip standoff measured on the voxel fields (tipClearance is a column check and its median is -.004, so the secondaries are not fully clear of the primaries where the old rear face stops them sinking); tips thinner than .003 (the assembly remesh removes them).",
+ "notes": "FIX PASS 1 (v2): Method as in methods.md R03 (layered lock sweeps), built as: each lock is a closed triangle mesh (numpy: Bezier guide from the clump table, superellipse section p 2.4 with a raised spine and a narrower back, width and thickness tapering to an apex vertex, twist and alternating lean), voxelized with OpenVDB createLevelSetFromPolygons at the head grid (voxel .0025 head-local = .00067 figure heights, finer than the .0008 asked) and unioned with a hard minimum, so locks keep their own creases; a smooth union of .004 only within .035 of the lock root; a stem rod from each coat root back into the backing joins locks whose root side the cup carve removes (without it LS7 and RS8 floated and were deleted as islands). Layer 1 (S, D) is set back .014 toward its tips behind layer 2 (P); every second P lies .012 behind its neighbours; the backing is the old fan stripped (the v2 strip with its ramps, so no cut wall) down to .014 behind the deepest layer's rear faces, at least .006 behind the old mid-surface and .010 in front of the old rear face (the spec's .015 does not fit the .09 deep fan). There is no envelope core. The cup is a bowl (polygon, yawed floor tan(35 degrees), concave bowl, dish at the rim, fillet) carved before the tuft goes in; the tuft rows of the table are re-fanned in the spec (roots clustered at the skull line y .118 to .146, tips spread up and out) because the table's parallel rows read as a stack of horizontal rods (the venetian blind of round 21). Departures from the specs/R03.md numbers, all levers: width x .9, thickness x .8, spine .45, p 2.4, lean 14 degrees, tip half width .003 (assembly remesh), the tuft re-fan, tuft width x 1.2 and thickness x 1.5, pale tolerance .004. Reused: the table, envelope, strip, cup floor and polygon helpers and mesh cleaning of the earlier tool (fan_clumps_front_fast_v2.py, fan_clumps_fast_common.py), the R03 zones file, loop/render_head_clay.py for the images. Not done: the exact mesh boolean option (the level-set union is used); tip standoff measured on the voxel fields (tipClearance is a column check and its median is -.004, so the secondaries are not fully clear of the primaries where the old rear face stops them sinking); tips thinner than .003 (the assembly remesh removes them). Fix pass: the tuft is rebuilt as eight narrow blades per side (v2 script, fan_lock_sweeps_v2.py, specs/r03_sweeps_v2c.json), see checks.readerFault. The coat locks are unchanged from v1.",
  "debug": "--debug-owner paints faces within a voxel of a layer 1 solid and a layer 2 solid in two grays (materials 1 and 2); --export-locks writes every solid as its own object; sections.npz holds four constant-height slices of each wing field. Run through loop_tools.py blender with the flags directly after the script name (no leading --). A Python syntax error does not print Traceback, so check that the output directory has head.blend.",
- "head": "head-2495",
- "assembly": "assembled-2496",
- "packet": "untracked/species-construction/akinza/loop/packets/assembled-2496",
+ "head": "head-2510",
+ "assembly": "assembled-2512",
+ "packet": "untracked/species-construction/akinza/loop/packets/assembled-2512",
  "checkPlan": "docs/design/species-construction/akinza/loop/plans/tool-check-R03.json"
 }
