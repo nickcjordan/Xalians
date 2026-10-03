@@ -40,6 +40,8 @@ Pass 65's read: 6, 6, 4, 5, 5, 6, 5, 7. Pass 68 skipped its due critic, so this 
 
 **Nick's steer, 2026-09-19: the priority is whether the game is mechanically deep and fun, not how two people play it.** The ranking is the audit's (`reclamation-audit-2026-09-26.md`), updated by pass 65's critic.
 
+0. **Resume here: the one-number rules (`reclamation-one-number.md`, proposed 2026-10-03).** Nick settled the squad display (pass 79) and turned to gameplay: two numbers per creature, each finely adjusted, made moves impossible to judge. Approved direction: hold is the only number (2 to 6), acts have fixed hits (strike 2, sweep 1 to all, mend 1, guard stops one), world fit and element are one step each. Next: build it as a rules variant, simulate and validate against the current rules, then a playable mode.
+
 0. **Resume here: Nick's live read of the pass 79 tiles.** Pass 79 makes the tile fill its room and changes the rival chip to "−7". Round 15 met the bar (8, 8, 8; every answer and mark right). Pass 78's points are below.
    - **The tile:** base health and attack are the two big numbers, and a strip of three segments shows what each world does to health.
    - **The rival chip:** the attack's effect on each rival is a chip on that rival.
