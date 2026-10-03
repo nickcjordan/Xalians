@@ -302,15 +302,15 @@ const RUN_OUT = {
 }
 const READ_OUT = { type: 'object', properties: { packs: { type: 'array', items: { type: 'object', properties: { pack: { type: 'string' }, region: { type: 'string' }, choice: { type: 'string', enum: ['A', 'B', 'same'] }, reason: { type: 'string' }, remaining: { type: 'string' } }, required: ['pack', 'region', 'choice', 'reason'] } } }, required: ['packs'] }
 
-function plannerPrompt(order, round, refine) {
+function plannerPrompt(order, round, refine, repair) {
   // round 21: planners spent 53 percent of the round's tokens, mostly finding which steps carry the
   // region, what their parameters are called and what was tried; the digest lists all of that
   const digest = `python art/species-construction/loop/planner_digest.py ${SP.key} ${order.id}${(order.with || []).length ? ' --with ' + order.with.join(',') : ''} --round ${round}`
   return `Read the planner brief at ${BRIEF('planner-brief.md')} and the plan format at ${BRIEF('plan-schema.md')}, and follow them.\n` +
     `Then run ${digest} (forward slashes, your shell is bash) and read the digest it writes first: the region's steps with their scripts, args and rebuild minutes, the tool's parameters, the measured criteria now, and what earlier orders and plans tried, with their results. Open RECIPE.md, scripts or old plan files only for what the digest lacks.\n\n` +
     builderPrompt(order, round).replace(/^Read the builder brief[^\n]*\n\n/, '') +
-    `\n\nWrite the plan to ${LOOPDIR}\\plans\\r${String(round).padStart(2, '0')}-${order.id}${refine ? '-refine' : ''}.json. Do not build anything yourself.` +
-    (refine ? `\n\nThis is the refine pass. The first plan's results: ${refine}. Plan variants that fix what the readers and measurements said.` : '')
+    `\n\nWrite the plan to ${LOOPDIR}\\plans\\r${String(round).padStart(2, '0')}-${order.id}${repair ? '-repair' : refine ? '-refine' : ''}.json. Do not build anything yourself.` +
+    (repair ? `\n\n${repair}` : refine ? `\n\nThis is the refine pass. The first plan's results: ${refine}. Plan variants that fix what the readers and measurements said.` : '')
 }
 function runnerPrompt(plan, order, round) {
   const seed = `r${round}-${order.id}`
@@ -390,6 +390,44 @@ async function codeBuild(order, round, task) {
   const [v] = readerVerdicts([cand], reads.filter(Boolean), regions)
   if (v && regions.some(r => v.per[r].verdict === 'better') && !regions.some(r => v.per[r].verdict === 'worse')) return { ...b, readerVerdict: v.per }
   return { ...b, failed: true, reason: 'the code builder candidate did not read better than the baseline: ' + JSON.stringify(v ? v.per : null).slice(0, 400) }
+}
+// Target criteria that lost credit in a reverted decision, as "id before to after".
+function lostCriteria(order, decision) {
+  const out = []
+  for (const t of [order.id, ...(order.with || [])]) for (const c of RUBRIC.regions[t] || []) {
+    const b = S.regions[t].results[c.id], a = decision.results && decision.results[t] && decision.results[t][c.id]
+    if (a && b && credit(a) < credit(b)) out.push(`${c.id} ${b} to ${a}`)
+  }
+  return out
+}
+// The repair pass: a plan from the reader-picked candidate aimed at what the critic counted against it.
+async function repairOrder(order, round, out, b, frozen, targetsHere) {
+  const regions = targetsHere
+  const liked = Object.entries(out.readerVerdict).map(([r, v]) => `${r}: ${v.reason}`).join(' | ').slice(0, 800)
+  const issues = (out.critique.issues || []).filter(i => regions.includes(i.region)).map(i => `${i.summary} Fix: ${i.fix}`).join(' | ').slice(0, 1200)
+  const task = `This is the repair pass. Start the plan from the readers' candidate recipe ${b.recipe} (set it as start, no attachAfter) and include it unchanged as a control variant ("control": true). Three blind readers preferred it to the baseline: ${liked}. ` +
+    `The judge reverted it: ${out.decision.reasons.join('; ')}. Criteria it lost: ${lostCriteria(order, out.decision).join(', ') || 'see the reasons'}. The critic's issues for these regions: ${issues || 'see the critic packet'}. ` +
+    'Keep what the readers liked and fix only what the critic counted against it; do not redesign the region.'
+  const plan = await agent(plannerPrompt(order, round, null, task), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} repair`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
+  if (!plan || !plan.plan) return null
+  const run = await agent(runnerPrompt(plan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id} repair`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' }))
+  const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
+  if (!cands.length) return { repair: run ? (run.reason || 'no candidate built') : 'runner returned nothing' }
+  const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id} repair`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
+  const best = readerVerdicts(cands, reads.filter(Boolean), regions)[0]
+  if (!best || !regions.some(r => best.per[r].verdict === 'better') || regions.some(r => best.per[r].verdict === 'worse')) return { repair: 'no repaired candidate read better than the baseline' }
+  const rb = { failed: false, recipe: best.cand.recipe, head: best.cand.head, body: best.cand.body, assembly: best.cand.assembly, packet: best.cand.packet, technicalPass: true,
+    approach: 'repair: ' + plan.approach, changes: plan.approach, regionChange: best.cand.regionChange }
+  const mag = regionMagnitude(rb.regionChange ? { regionChange: rb.regionChange } : null, SP.regionImages)
+  const scope = sideEffectRegions(rb.regionChange ? { regionChange: rb.regionChange } : null, order.id, THRESHOLD, SP.regionImages, IDS)
+    .filter(id => !frozen.includes(id) && !targetsHere.includes(id) && !S.regions[id].hold)
+    .sort((x, y) => (mag[y] ?? 1) - (mag[x] ?? 1)).slice(0, L.criticScopeMax ?? 2)
+  let critique = await agent(criticPrompt(rb.packet, order, 'candidate', scope), leanOpts({ label: `critic r${round} ${order.component}: ${rb.assembly} repair`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' }))
+  if (!critique) return { repair: 'critic returned nothing' }
+  const rv = Object.entries(best.per).map(([region, v]) => ({ region, verdict: v.verdict, reason: 'readers ' + v.better + ' better, ' + v.worse + ' worse: ' + v.reason.slice(0, 400) }))
+  critique = { ...critique, criticPairwise: critique.pairwise, pairwise: rv }
+  const decision = judge(S, RUBRIC, L, order, rb, critique, { pools: POOLS, regionChange: rb.regionChange || null, threshold: rb.regionChange ? THRESHOLD : null, regionImages: SP.regionImages })
+  return decision.kept ? { build: rb, critique, decision, readerVerdict: best.per, repaired: true } : { repair: 'repair candidate reverted: ' + decision.reasons.join('; ') }
 }
 // Before a new tool counts as ready, its starter's candidate faces the three blind readers.
 async function toolCheck(region, checkPlan) {
@@ -645,6 +683,14 @@ for (let i = 0; i < ROUNDS; i++) {
     }
     out.decision = judge(S, RUBRIC, L, order, b, out.critique,
       { pools: POOLS, regionChange: b.regionChange || null, threshold: b.regionChange ? THRESHOLD : null, regionImages: SP.regionImages, measuredTie: !!out.tie })
+    // round 24: all three readers preferred the fan candidate for its inner ears and the critic reverted
+    // it for a torn outer rim the readers also named; the candidate had the right half. With repairPass,
+    // a reader-picked candidate the judge reverts gets one plan that starts from it and fixes only the
+    // critic's losses, judged the same way
+    if (L.repairPass && L.builderMode === 'split' && out.readerVerdict && !out.decision.kept && b.recipe && !out.tie) {
+      const repair = await repairOrder(order, round, out, b, frozen, targetsHere)
+      if (repair) Object.assign(out, repair)
+    }
     return out
   }))
 

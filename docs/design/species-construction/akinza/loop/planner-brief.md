@@ -27,3 +27,7 @@ Return the structured output: the plan path, the number of variants, the approac
 ## Modeling scope (2026-10-02, Nick: textures and painting have not started)
 
 The model is construction geometry, judged as untextured clay. It owns everything visible in the outline or at the scale of the coat masses: overall shapes and proportions, lock and tuft counts, lengths, directions and pointed tips that break the outline, how masses overlap, and soft rounded cross sections with no facets, serrated edges, seams or spikes. It does not own anything finer than a lock: fur strands, fluffiness, color, markings and fine creases belong to the surface phase (painted textures, normal maps or a fur shader), recorded in `../surface-backlog.md`. Words like shaggy, fluffy, furred or soft in the rubric mean clump-scale form, never strand detail. Do not model strands, and do not fail or reject a coat for lacking them.
+
+## Repair pass (2026-10-03, after round 24)
+
+If the order says this is the repair pass, the readers already preferred one candidate and the judge reverted it for specific criteria the critic counted against it. Start the plan from that candidate's recipe, include it unchanged as the control (`"control": true`), and vary only what fixes the named losses (for example a torn rim or a hard edge). Keep everything the readers praised; do not redesign the region.

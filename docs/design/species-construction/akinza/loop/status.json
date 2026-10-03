@@ -44,7 +44,9 @@
   "toolReaderCheck": true,
   "workerAgentType": "loop-worker",
   "toolSessions": 3,
-  "toolSessionCalls": 80
+  "toolSessionCalls": 80,
+  "repairPass": true,
+  "freezeHeld": true
  },
  "baseline": {
   "head": "head-2271",

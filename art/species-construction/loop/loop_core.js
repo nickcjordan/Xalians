@@ -167,6 +167,9 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   // took R08 from 7.3 to 6.4 on an identical body.
   const frozen = order.component === 'head' ? [...pools.body, ...pools.join] : order.component === 'body' ? pools.head : []
   for (const id of frozen) if (state.regions[id]) results[id] = { ...state.regions[id].results }
+  // limits.freezeHeld (after round 24): a region Nick holds keeps its results, so a side effect on it can
+  // neither help nor hurt the mean (round 24's torso keep showed +.165, all of it the held tails' rescore)
+  if (limits.freezeHeld) for (const id of ids) if (state.regions[id].hold) results[id] = { ...state.regions[id].results }
   // v3 side-effect carry: a non-target region whose images moved less than the threshold
   // keeps its visual results (the critic did not look at it); measured criteria are still
   // the critic's copies of measured.json.

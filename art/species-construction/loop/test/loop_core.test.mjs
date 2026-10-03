@@ -675,3 +675,39 @@ test('v3.6: write roles run on the worker agent type, and a toolsmith that retur
   assert.ok(tools.every(c => c.opts && c.opts.agentType === 'loop-worker'), JSON.stringify(tools.map(c => c.opts)))
   assert.equal(out.ret.status.tools.R06.recipe, 'recipes/tool-R06.json')
 })
+
+test('v3.8: a reader-picked candidate the judge reverts gets one repair plan from it, judged the same way', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  status.limits.repairPass = true
+  status.limits.refinePasses = 0
+  const visual = rub.regions.R06.filter(c => c.kind === 'visual').map(c => c.id)
+  let critics = 0
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 's', (label, prompt) => {
+    if (label.startsWith('planner') && label.endsWith('repair')) return { plan: 'plans/r24-R06-repair.json', variants: 3, approach: 'fix the rim', needsCode: false }
+    if (label.startsWith('planner')) return { plan: 'plans/r24-R06.json', variants: 3, approach: 'inner ears', needsCode: false }
+    if (label.startsWith('runner') && label.endsWith('repair')) return { ok: true, candidates: [splitCand(5, 'A')] }
+    if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A')] }
+    if (label.startsWith('reader')) return { packs: [{ pack: label.endsWith('repair') ? 'assembled-905' : 'assembled-901', region: 'R06', choice: 'A', reason: 'soft cupped' }] }
+    if (label.startsWith('critic r')) {
+      critics++
+      // the first critique loses a target criterion; the repair's does not
+      return { criteria: visual.map((id, k) => ({ id, result: critics === 1 && k === 0 ? 'fail' : (status.regions.R06.results[id] || 'partial'), evidence: '' })), pairwise: [{ region: 'R06', verdict: 'better', reason: '' }], invariants: [], issues: [{ region: 'R06', summary: 'torn rim', fix: 'close the rim', fixability: .6 }], summary: '' }
+    }
+    return undefined
+  })
+  const repairPlanner = out.calls.find(c => c.label.endsWith('repair') && c.label.startsWith('planner'))
+  assert.ok(repairPlanner, 'a repair plan was asked for')
+  assert.match(repairPlanner.prompt, /repair pass\. Start the plan from the readers' candidate recipe plans\/v1\.json/)
+  assert.match(repairPlanner.prompt, /torn rim/)
+  assert.equal(out.ret.status.baseline.assembly, 'assembled-905')
+})
+
+test('freezeHeld: a held region keeps its results whatever the critic says', () => {
+  const S = mkState()
+  S.regions.R10.hold = true
+  const before = JSON.stringify(S.regions.R10.results)
+  const ord = { id: 'R06', component: 'body' }
+  const crit = { criteria: rubric.regions.R10.map(c => ({ id: c.id, result: 'pass', evidence: '' })), pairwise: [{ region: 'R06', verdict: 'better', reason: '' }], invariants: [], issues: [] }
+  const d = core.judge(S, rubric, { ...LIMITS, freezeHeld: true }, ord, {}, crit)
+  assert.equal(JSON.stringify(d.results.R10), before)
+})

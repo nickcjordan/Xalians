@@ -261,6 +261,14 @@ Round 23 kept the torso (5.503 to 5.719) at 25M tokens, but reverted the fan bec
 - **Failed steps report their cause** (round 23's "Blender quit" were two geometry check failures: three components and 550 non-manifold edges in swept-back wings).
 - **Merge reads the baseline head and body from the assembly record.**
 
+## Repair pass after round 24 (v3.8, 2026-10-03)
+
+Round 24 kept the torso again, but its +.165 was all the held tails' rescore, and the fan lost a candidate all three readers preferred (soft cupped inner ears) to the critic's checklist (a torn outer rim the readers also named).
+
+- **Repair pass** (`limits.repairPass`): a reader-picked candidate the judge reverts gets one plan that starts from it, keeps it as the control, and fixes only the criteria and issues the critic counted against it; the repaired candidate faces the readers, the critic and the judge again.
+- **Held regions frozen** (`limits.freezeHeld`): a region Nick holds keeps its results through any order, so side effects on it neither raise nor lower the mean.
+- **Control marking**: a plan variant marked `"control": true` (or named as the tool as built) keeps its reader slot even with one shared edit.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

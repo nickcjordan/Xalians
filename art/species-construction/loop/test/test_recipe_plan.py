@@ -52,6 +52,10 @@ def var(i, rank, progress=0.0, source='variant', edits=True):
 
 
 class ChooseTests(unittest.TestCase):
+    def test_marked_control_with_one_edit_keeps_its_slot(self):
+        ranked = [var(2, 1, 0), var(3, 2, 0), var(4, 3, 0), {**var(1, 6, 0), 'control': True}]
+        self.assertIn('v01', [v['id'] for v in rp.choose_candidates(ranked, 3, True)])
+
     def test_control_keeps_a_slot_and_one_per_sweep(self):
         ranked = [var(11, 1, 1, 'sweep 1'), var(10, 2, 1, 'sweep 1'), var(3, 3, 1), var(1, 6, 0, edits=False), var(2, 4, .5)]
         picks = rp.choose_candidates(ranked, 3, True)

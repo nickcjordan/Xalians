@@ -85,7 +85,7 @@ def load_plan(rc, path):
             rc.fail(f'plan: variant {number} needs an "edits" list')
         for e in v['edits']:
             check_edit(rc, number, e)
-        variants.append({'name': v.get('name') or f'variant {number}', 'why': v.get('why', ''), 'edits': v['edits'], 'from': 'variant'})
+        variants.append({'name': v.get('name') or f'variant {number}', 'why': v.get('why', ''), 'edits': v['edits'], 'from': 'variant', 'control': bool(v.get('control'))})
     if len(variants) > MAX_VARIANTS:
         rc.fail(f'plan: {len(variants)} variants exceed the limit of {MAX_VARIANTS}')
     for k, sweep in enumerate(plan.get('sweeps') or [], 1):
@@ -224,7 +224,7 @@ def make_variants(rc, base, start_data, plan, run_dir, cache):
     spec_dir = base.work/'sweep_specs'
     for number, v in enumerate(plan['_variants'], 1):
         vid = f'v{number:02d}'
-        entry = {'id': vid, 'name': v['name'], 'why': v['why'], 'source': v['from'], 'edits': v['edits'], 'built': False}
+        entry = {'id': vid, 'name': v['name'], 'why': v['why'], 'source': v['from'], 'edits': v['edits'], 'built': False, 'control': bool(v.get('control'))}
         out.append(entry)
         try:
             data = copy.deepcopy(start_data)
@@ -283,7 +283,11 @@ def choose_candidates(ranked, top, has_start, say=lambda s: None):
     - when no variant moves a measured criterion of the order (every progress term zero), the totals are
       noise, so the picks are spread over different groups rather than taken in score order."""
     picks, groups = [], set()
-    control = next((v for v in ranked if not v.get('edits') and not v.get('noop')), None) if has_start else None
+    # round 24: the planner's control carried one shared edit ("crown lowered, tool otherwise as built"),
+    # so the no-edit rule missed it; a variant marked "control" in the plan, or named as the tool as built,
+    # also counts
+    is_control = lambda v: not v.get('edits') or v.get('control') or 'as built' in str(v.get('name', '')).lower()
+    control = next((v for v in ranked if is_control(v) and not v.get('noop')), None) if has_start else None
     if control:
         picks.append(control)
         groups.add(edit_group(control))
