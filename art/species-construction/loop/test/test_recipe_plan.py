@@ -47,5 +47,25 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(rp.as_value(0.5), '0.5')
 
 
+def var(i, rank, progress=0.0, source='variant', edits=True):
+    return {'id': f'v{i:02d}', 'rank': rank, 'source': source, 'edits': [{'op': 'set'}] if edits else [], 'parts': {'progress': progress}}
+
+
+class ChooseTests(unittest.TestCase):
+    def test_control_keeps_a_slot_and_one_per_sweep(self):
+        ranked = [var(11, 1, 1, 'sweep 1'), var(10, 2, 1, 'sweep 1'), var(3, 3, 1), var(1, 6, 0, edits=False), var(2, 4, .5)]
+        picks = rp.choose_candidates(ranked, 3, True)
+        self.assertEqual([v['id'] for v in picks], ['v11', 'v03', 'v01'])
+
+    def test_blind_ranking_takes_the_planners_order(self):
+        ranked = [var(11, 1, 0, 'sweep 1'), var(10, 2, 0, 'sweep 1'), var(4, 3), var(2, 4), var(3, 5)]
+        picks = rp.choose_candidates(ranked, 3, False)
+        self.assertEqual(sorted(v['id'] for v in picks), ['v02', 'v03', 'v04'])
+
+    def test_no_start_no_control_slot(self):
+        ranked = [var(2, 1, 1), var(1, 2, 0, edits=False), var(3, 3, 1)]
+        self.assertEqual([v['id'] for v in rp.choose_candidates(ranked, 2, False)], ['v02', 'v01'])
+
+
 if __name__ == '__main__':
     unittest.main()

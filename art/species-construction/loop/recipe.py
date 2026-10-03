@@ -363,8 +363,11 @@ def run_step(recipe, step, input_dirs, name):
     started = time.time()
     result = _run(cmd, cwd=ROOT, capture_output=True, text=True)
     if result.returncode or not out.is_dir():
-        tail = '\n'.join((result.stdout+result.stderr).splitlines()[-25:])
-        fail(f"step {step['id']} failed ({name}); log {recipe.work/(name+'.log')}\n{tail}")
+        lines = (result.stdout+result.stderr).splitlines()
+        tail = '\n'.join(lines[-25:])
+        # the cause first: round 23's plan reported two geometry check failures as "Blender quit"
+        cause = next((x.strip() for x in reversed(lines) if 'Error' in x and ':' in x), None)
+        fail(f"step {step['id']} failed ({name})" + (f': {cause}' if cause else '') + f"; log {recipe.work/(name+'.log')}\n{tail}")
     return round(time.time()-started, 1)
 
 

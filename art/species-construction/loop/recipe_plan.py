@@ -46,6 +46,7 @@ MAX_VARIANTS = 16
 MAX_BUILDS = 24
 DEFAULT_TOP = 3
 QUICK_MINUTES = 0.8          # --dry-run estimate of one quick render (3 views, head plus body)
+SECTION_MINUTES = 1.2        # --dry-run estimate of the two mesh-section dumps of a new body (quick criteria)
 ASSEMBLY_MINUTES = 5.2       # the recipe's assembly; check, packet and diff are added by recipe_candidate's constants
 SHEET_ROWS_PER_COLUMN = 6
 
@@ -266,6 +267,48 @@ def schedule(nodes, slots):
     return max(finish.values(), default=0.0)
 
 
+def edit_group(v):
+    """Variants of one sweep share a group (the readers learn little from two points of one sweep);
+    every other variant is its own group."""
+    src = str(v.get('source') or '')
+    return src if src.startswith('sweep') else 'variant '+v['id']
+
+
+def choose_candidates(ranked, top, has_start, say=lambda s: None):
+    """The top K for the readers, round 23's lessons applied:
+    - a plan that starts from a tool starter keeps a slot for its control variant (no edits), the build the
+      tool's reader check already compared with the baseline; round 23 ranked it sixth and the readers
+      never saw it, while the three picks they did see all read worse;
+    - at most one variant per sweep, so the readers compare different ideas;
+    - when no variant moves a measured criterion of the order (every progress term zero), the totals are
+      noise, so the picks are spread over different groups rather than taken in score order."""
+    picks, groups = [], set()
+    control = next((v for v in ranked if not v.get('edits') and not v.get('noop')), None) if has_start else None
+    if control:
+        picks.append(control)
+        groups.add(edit_group(control))
+    blind = all(not (v.get('parts') or {}).get('progress') for v in ranked)
+    # blind: the planner's own order (ideas before sweeps, most believed first) beats a noise ranking
+    order = sorted(ranked, key=lambda v: v['id']) if blind else ranked
+    for v in order:
+        if len(picks) >= top:
+            break
+        if v in picks or edit_group(v) in groups:
+            continue
+        picks.append(v)
+        groups.add(edit_group(v))
+    for v in ranked:  # fill from the ranking if the groups ran out
+        if len(picks) >= top:
+            break
+        if v not in picks:
+            picks.append(v)
+    if control:
+        say(f"candidate slot kept for the start's control variant {control['id']} (rank {control['rank']})")
+    if blind:
+        say("no variant moved a measured criterion of the order; candidates taken in the planner's order, one per idea")
+    return sorted(picks, key=lambda v: v['rank'])
+
+
 def candidate_minutes(plan_dir):
     """Median wall minutes of past top-K candidates (assemble, packet, posed fit, measures), from the plan
     results beside this plan. They ran while the other component's plan shared the Blender slots, which
@@ -295,6 +338,10 @@ def dry_run(rc, base, plan, variants, notes, start_data, cache, top, slots):
         print('start recipe after the rebase:')
         rc.print_plan(cand, cplan, cache)
     nodes, unknown = {}, set()
+    import loop_tools as lt
+    import quick_criteria as qc
+    regions = [plan['region']]+list((plan.get('order') or {}).get('with') or [])
+    sections = any(c['source'] == 'trunk' or (c['source'] == 'measure' and c.get('key') in qc.BODY_MEASURE_KEYS) for _, c in qc.criteria(lt, regions))
     for v in variants:
         if 'error' in v:
             print(f"  {v['id']} {v['name']}: ERROR {v['error'].splitlines()[0]}")
@@ -308,6 +355,9 @@ def dry_run(rc, base, plan, variants, notes, start_data, cache, top, slots):
             nodes[keys[s['id']]] = ([keys[r] for r in s['inputs'].values() if r in keys and not cplan[r]['dir']], m)
         sinks = [cand.assembly['head'], cand.assembly['body']]
         nodes[('quick', v['id'])] = ([keys[s] for s in sinks if not cplan[s]['dir']], QUICK_MINUTES)
+        if sections and not cplan[cand.assembly['body']]['dir']:
+            # a new body is sliced twice (trunk and torso sections) for the quick criteria
+            nodes[('sections', v['id'])] = ([('quick', v['id'])], SECTION_MINUTES)
         mins = ', '.join(f"{s['id']} ~{rc.step_minutes(cand, cache, s['id']) or 0:.1f}" for s in todo)
         print(f"  {v['id']} {v['name']}: changed {', '.join(v['changedSteps']) or 'nothing'}; builds {mins or 'nothing (all cached)'}")
         for w in v.get('warnings', []):
@@ -484,15 +534,26 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
     import quick_criteria as qc
     crit_regions = [region]+[r for r in ((plan.get('order') or {}).get('with') or []) if r != region]
     packet_measured = json.loads((baseline_packet/'measured.json').read_text(encoding='utf-8')) if (baseline_packet/'measured.json').is_file() else {}
-    crit_cache, crit_lock = {}, threading.Lock()
+    crit_cache, crit_locks, crit_lock = {}, {}, threading.Lock()
 
     def crit_of(quick):
-        # quick criteria of one quick folder, once per folder (the baseline is shared by every variant)
+        # quick criteria of one quick folder, once per folder (the baseline is shared by every variant).
+        # Round 23: one lock around every evaluation ran the mesh-section dumps (two Blender runs per
+        # body) one at a time, and the torso plan's scoring took 79 minutes; now one lock per body, so
+        # different bodies run in parallel and two quick folders on one body never dump it twice at once
         key = quick['dir']
         with crit_lock:
-            if key not in crit_cache:
-                crit_cache[key] = qc.evaluate(lt, quick['dir'], work/quick['body'], crit_regions)
-            return crit_cache[key]
+            if key in crit_cache:
+                return crit_cache[key]
+            body_lock = crit_locks.setdefault(quick['body'], threading.Lock())
+        with body_lock:
+            with crit_lock:
+                if key in crit_cache:
+                    return crit_cache[key]
+            value = qc.evaluate(lt, quick['dir'], work/quick['body'], crit_regions)
+            with crit_lock:
+                crit_cache[key] = value
+            return value
     namer = rc.Namer(work)
     sched = sw.Scheduler(slots, rc.say)
     base_plan, _ = rc.make_plan(base, cache)
@@ -695,7 +756,7 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
     ranked = sorted((v for v in variants if v.get('total') is not None), key=lambda v: (bool(v.get('nearNoop') or v.get('noop')), -v['total']))
     for k, v in enumerate(ranked, 1):
         v['rank'] = k
-    chosen = ranked[:top]
+    chosen = choose_candidates(ranked, top, bool(plan.get('start')), rc.say)
 
     # the full candidate path for the top K, in parallel up to the slot limit
     def candidate(v):

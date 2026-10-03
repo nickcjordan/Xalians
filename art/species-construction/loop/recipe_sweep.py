@@ -198,7 +198,9 @@ class Scheduler:
                     try:
                         results[nid] = future.result()
                     except BaseException as error:  # SystemExit from recipe.fail included
-                        errors[nid] = (str(error).strip().splitlines() or [repr(error)])[-1]
+                        lines = str(error).strip().splitlines() or [repr(error)]
+                        # the first line names the step and its cause; the last is often only "Blender quit"
+                        errors[nid] = lines[0] if lines[0].startswith('recipe: step') else lines[-1]
                         self.say(f"FAILED {self.nodes[nid]['label'] or nid[:12]}: {errors[nid]}")
         return results, errors
 

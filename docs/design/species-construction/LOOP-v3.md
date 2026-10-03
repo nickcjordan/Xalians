@@ -250,6 +250,17 @@ Round 22 spent 168M tokens, 156M of them in four toolsmith runs (one ran 406 tur
 - **Toolsmith sessions** (`limits.toolSessions`, `toolSessionCalls`): a toolsmith works in sessions of about 80 tool calls; one that is not done writes `tools/<region>-notes.md` and returns `continue`, and a fresh session continues from the notes, so context stops growing without losing the work. Output hygiene: logs through tail, no printing of files it wrote.
 - **Slot test barrier**: the Blender slot test's waiters start contending only after all of them have imported, which removes its flake under load.
 
+## Candidate choice after round 23 (v3.7, 2026-10-03)
+
+Round 23 kept the torso (5.503 to 5.719) at 25M tokens, but reverted the fan because the reader-verified "tool as built" variant ranked sixth of thirteen and never reached the readers; every fan variant scored zero progress, so the ranking was noise.
+
+- **The start's control variant keeps a reader slot** when a plan starts from a tool starter (`recipe_plan.choose_candidates`).
+- **One variant per sweep** among the reader candidates, so the readers compare different ideas.
+- **Blind rankings use the planner's order**: when no variant moves a measured criterion of the order, the picks follow the plan's variant order, one per idea.
+- **Quick criteria run in parallel** with one lock per body instead of one lock for all (the torso plan's scoring took 79 minutes), and the dry run counts the section dumps.
+- **Failed steps report their cause** (round 23's "Blender quit" were two geometry check failures: three components and 550 non-manifold edges in swept-back wings).
+- **Merge reads the baseline head and body from the assembly record.**
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

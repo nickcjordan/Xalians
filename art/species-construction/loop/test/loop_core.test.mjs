@@ -593,6 +593,7 @@ test('split builder: with measuredTieKeep a clean candidate the readers call the
   status.limits.refinePasses = 0
   const trunk = rub.regions.R06.filter(c => c.source === 'trunk').map(c => c.id)
   for (const id of trunk) status.regions.R06.results[id] = 'fail'
+  status.regions.R06.score = core.scoreFrom(rub, status.regions.R06.results, 'R06')  // the real status may hold these as passes
   const run = { ok: true, candidates: [splitCand(1, 'A', { measured: 'R06 measured: 3 changed (1 newly passing, 0 newly failing)' }),
     splitCand(2, 'B', { measured: 'R06 measured: 3 changed (2 newly passing, 0 newly failing)' }),
     splitCand(3, 'B', { measured: 'R06 measured: 3 changed (3 newly passing, 0 newly failing)', seams: 'new seams flagged: elbow/back crease' })] }
