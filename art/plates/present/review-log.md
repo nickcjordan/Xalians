@@ -138,3 +138,14 @@ All round 10 fixes confirmed. Each squad still read as one clump at site size, a
 4. Water's beam read as a laser: it lobs a globe of water that splashes.
 5. Ice is a clear icy blue.
 6. Beat 06's ground hold eased to 0.79, still keeping the token whole.
+
+## Round 12 (fresh reviewer, cold gate): 8, the fade passes
+
+Nick's ask is met in substance; three things were still visible at site size. What was done:
+1. Lobs flew through the king's box: lobs rise half as high, staying well under it.
+2. Rock looked like a second storm and faded into the tiers: rock is a dark umber.
+3. The roar was drawn over the creatures: it is inserted at the front of the fight layer, under them.
+4. The stone was hard to see: a darker body with the pale top edge kept.
+5. Middle-row throws started inside the front creatures: plant and water throw up from above their own heads.
+6. The notes' timing: "about every second and a quarter".
+7. Beat 06's token contacts half dimmed on the phone: left; polish, the card reads whole.
