@@ -46,3 +46,18 @@ All twelve round 1 findings confirmed fixed or nearly. Remaining, and what was d
 4. The page's alt text was stale: rewritten from the plate.
 5. Exchange two's bolt waited for the jet: the jet leaves 0.14 s sooner and meets the bolt.
 6. The Machine's ring rocked: it turns at an even rate now (rx follows |cos| of a steady turn).
+
+## Round 3 (fresh reviewer, cold eyes): 6
+
+A fresh reviewer judged at true site size (about 372 pixels on a laptop, the phone crop) and found what the resumed reviewer had stopped seeing. What was done:
+1. On a phone the fight sat under the record label: the fight moved up to the floor's far half (ground line y 822, both bases above y 840, pools above 862).
+2. The fight was too small at laptop size: both powers 1.4 times larger, the electric column with a soft white core and a deep blue rim, the floor a quarter darker and its floodlight pool fainter.
+3. Nothing tied the Machine to the token: a fine gold thread runs from the Machine's core across the sky to the token, and once a turn of the token a pulse runs down it and the token flares as it arrives. The king's box still projects the token (the Machine makes it, the king shows it).
+4. Ship 2 appeared on the token: it now enters from the top edge and stays left of the card.
+5. The jet of flame read as a rod: a ragged tongue from the top of the flame, narrow at the root and swelling at the head, a yellow core, its edges flickering between two shapes, growing from the root over 0.15 s.
+6. The galaxy read as a fourth searchlight: wider, softer dust, a brighter bulge with a denser star field; the left searchlight sweeps down into the city.
+7. The docked ship was lost: lighter hull and green paint, a brighter hatch, and the deck and ship lifted 60 units so the ramp's light lands inside the phone crop.
+8. The citadel's point ran through the Machine: the spire ends at a collar under the Machine with struts to its level ring; the needle rises from the core.
+9. The bolt held still in mid-air: bolts strike in two steps (half, then full length, about 0.05 s apart) straight from the column toward what they meet, arriving with it.
+10. The left searchlight crossed the token: its sweep is 156 to 166 degrees, below the token and its cone.
+11. The even roar: noted, left as it is.

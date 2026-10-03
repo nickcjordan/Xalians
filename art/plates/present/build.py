@@ -214,23 +214,24 @@ for i in range(34):
     t = i / 33
     x, y = GAL(t)
     ang = math.degrees(math.atan2(-430, 1780))
-    w = gr.uniform(160, 300)
-    gal.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#galDust)" transform="rotate(%s %s %s)" opacity="%s"/>' % (f(x + gr.uniform(-30, 30)), f(y + gr.uniform(-25, 25)), f(w), f(gr.uniform(28, 60)), f(ang), f(x), f(y), f(gr.uniform(.35, .75))))
+    w = gr.uniform(180, 320)
+    gal.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#galDust)" transform="rotate(%s %s %s)" opacity="%s"/>' % (f(x + gr.uniform(-30, 30)), f(y + gr.uniform(-25, 25)), f(w), f(gr.uniform(48, 92)), f(ang), f(x), f(y), f(gr.uniform(.3, .6))))
 # the core, left of the citadel, where the band is brightest
-gal.append('<ellipse cx="560" cy="300" rx="260" ry="80" fill="url(#galCore)" transform="rotate(-12 560 300)" opacity=".6"/>')
+gal.append('<ellipse cx="540" cy="300" rx="300" ry="120" fill="url(#galCore)" transform="rotate(-12 540 300)" opacity=".75"/>')
+gal.append('<ellipse cx="540" cy="300" rx="130" ry="52" fill="url(#galCore)" transform="rotate(-12 540 300)" opacity=".7"/>')
 # dust lanes: darker streaks along the band
 for i in range(10):
     t = gr.uniform(.05, .95)
     x, y = GAL(t)
     gal.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s" opacity="%s" transform="rotate(-13 %s %s)" filter="url(#soft8)"/>' % (f(x), f(y + gr.uniform(-6, 10)), f(gr.uniform(60, 140)), f(gr.uniform(5, 10)), SKY_MID, f(gr.uniform(.35, .6)), f(x), f(y)))
 # star dust: fine points along the band
-for _ in range(700):
-    t = gr.random()
+for _ in range(1100):
+    t = gr.random() if gr.random() < .7 else gr.gauss(.36, .07)
     x, y = GAL(t)
-    d = gr.gauss(0, 34)
+    d = gr.gauss(0, 46)
     gal.append('<circle cx="%s" cy="%s" r="%s" fill="%s" opacity="%s"/>' % (f(x + gr.uniform(-40, 40)), f(y + d), f(gr.uniform(.4, 1.1)), gr.choice(['#fff4dc', '#ffe0b0', '#f0e8ff']), f(gr.uniform(.2, .7) * math.exp(-(d / 50) ** 2))))
-sky.append('<!-- the galaxy: a band of gold dust with a brighter core --><g filter="url(#soft2)">%s</g>' % ''.join(gal[:-700]))
-sky.append('<g>%s</g>' % ''.join(gal[-700:]))
+sky.append('<!-- the galaxy: a band of gold dust with a brighter core --><g filter="url(#soft2)">%s</g>' % ''.join(gal[:-1100]))
+sky.append('<g>%s</g>' % ''.join(gal[-1100:]))
 # the plague's smolder in the arms (static base; it breathes in skyfx)
 SMOLDER = [(.12, 0, 120, 30), (.28, -14, 90, 22), (.47, 18, 70, 18), (.78, -10, 110, 26), (.9, 12, 80, 20)]
 sm = []
@@ -288,7 +289,7 @@ def ship(scale, hue):
 
 
 # arriving ships: (start, pad, scale, faction, period, phase). Each glides in, levels out, settles on its landing deck, holds, and fades.
-ARRIVALS = [((-100, 250), (236, 466), 1.8, 0, 22.13, 3.07), ((660, 260), (318, 478), 1.3, 1, 27.31, 14.11), ((-100, 400), (138, 481), 1.5, 2, 19.37, 9.23), ((1660, 380), (1470, 489), 1.4, 3, 24.19, 18.29)]
+ARRIVALS = [((-100, 250), (236, 466), 1.8, 0, 22.13, 3.07), ((420, -60), (318, 478), 1.3, 1, 27.31, 14.11), ((-100, 400), (138, 481), 1.5, 2, 19.37, 9.23), ((1660, 380), (1470, 489), 1.4, 3, 24.19, 18.29)]
 for (p0, p1, s, fac, per, ph) in ARRIVALS:
     nose_left = p1[0] < p0[0]
     flip = '' if nose_left else ' transform="scale(-1 1)"'
@@ -479,13 +480,16 @@ CIT_BY, CIT_H, CIT_HW = 704, 520, 118
 FLANK = [(988, 700, 300, 46, False), (1318, 704, 270, 42, True)]  # (x, base, height, half width, mirrored)
 for (x_, by_, h_, hw_, fl_) in FLANK:
     city.append('<!-- a flanking spire -->' + spire(x_, by_, h_, hw_, 'mid', mast=False, flip=fl_))
-city.append('<!-- the citadel -->' + spire(CX, CIT_BY, CIT_H, CIT_HW, 'cit', mast=False))
+CROWN_Y = CIT_BY - CIT_H + 60  # the Machine's center
+defs.append('<clipPath id="citClip"><rect x="0" y="%s" width="%d" height="%d"/></clipPath>' % (f(CROWN_Y + 26), W, H))
+city.append('<!-- the citadel, its point ending at a collar under the Machine --><g clip-path="url(#citClip)">' + spire(CX, CIT_BY, CIT_H, CIT_HW, 'cit', mast=False) + '</g>'
+            + '<ellipse cx="%s" cy="%s" rx="38" ry="7" fill="#2e2622"/><path d="M%s %s A38 7 0 0 1 %s %s" fill="none" stroke="%s" stroke-width="1.4" opacity=".8"/>' % (f(CX), f(CROWN_Y + 27), f(CX - 38), f(CROWN_Y + 27), f(CX + 38), f(CROWN_Y + 27), GOLD)
+            + '<path d="M%s %s L%s %s M%s %s L%s %s" stroke="#2a2420" stroke-width="4"/>' % (f(CX - 30), f(CROWN_Y + 26), f(CX - 52), f(CROWN_Y + 20), f(CX + 30), f(CROWN_Y + 26), f(CX + 52), f(CROWN_Y + 20)))
 # warm uplight from the arena on the citadel's foot
 city.append('<polygon points="%s" fill="url(#%s)"/>' % (pts([(CX - CIT_HW * 1.26, CIT_BY), (CX - CIT_HW * .4, CIT_BY - 230), (CX + CIT_HW * .4, CIT_BY - 230), (CX + CIT_HW * 1.26, CIT_BY)]), lin([(0, '#e0a868', .28), (1, '#e0a868', 0)], 0, 1, 0, 0)))
-# the citadel's needle: rises through the Machine's ring to a gold beacon
-CROWN_Y = CIT_BY - CIT_H + 60  # the Machine's center, just below the apex
-city.append('<path d="M%s %s L%s %s" stroke="#16141a" stroke-width="4"/>' % (f(CX), f(CIT_BY - CIT_H), f(CX), f(CIT_BY - CIT_H - 90)))
-city.append('<circle cx="%s" cy="%s" r="14" fill="url(#lamp-gold)"/><circle cx="%s" cy="%s" r="2" fill="%s"/>' % (f(CX), f(CIT_BY - CIT_H - 92), f(CX), f(CIT_BY - CIT_H - 92), GOLD_HOT))
+# the citadel's needle: rises from the Machine's core to a gold beacon
+city.append('<path d="M%s %s L%s %s" stroke="#16141a" stroke-width="4"/>' % (f(CX), f(CROWN_Y - 20), f(CX), f(CROWN_Y - 128)))
+city.append('<circle cx="%s" cy="%s" r="14" fill="url(#lamp-gold)"/><circle cx="%s" cy="%s" r="2" fill="%s"/>' % (f(CX), f(CROWN_Y - 130), f(CX), f(CROWN_Y - 130), GOLD_HOT))
 
 # the banners: two long crimson banners with the gold ring sigil, hanging on the citadel's foot either side of its lit spine
 for bx in (CX - 62, CX + 38):
@@ -528,7 +532,7 @@ cityfx.append('<!-- the upright ring --><ellipse cx="%s" cy="%s" rx="64" ry="%s"
 cityfx.append(MACHINE_FRONT)
 # searchlights from the citadel's shoulders: soft beams that sweep slowly, never in step
 g_beam = lin([(0, '#e8f0ff', .5), (.5, '#e8f0ff', .16), (1, '#e8f0ff', 0)], 0, 0, 1, 0, id='beam')
-for (x, y, a0, a1, per, ph, ln) in [(988, 404, 158, 176, 26.13, 4.07, 820), (1318, 438, 14, 56, 31.17, 19.03, 700)]:
+for (x, y, a0, a1, per, ph, ln) in [(988, 404, 156, 166, 26.13, 4.07, 820), (1318, 438, 14, 56, 31.17, 19.03, 700)]:
     beam = '<polygon points="0,-4 %s,-46 %s,46 0,4" fill="url(#beam)" filter="url(#soft8)"/><polygon points="0,-1.5 %s,-12 %s,12 0,1.5" fill="url(#beam)" opacity=".7" filter="url(#soft2)"/>' % (f(ln), f(ln), f(ln * .8), f(ln * .8))
     cityfx.append('<!-- a searchlight --><g transform="translate(%s %s)"><g>%s%s</g><circle r="6" fill="#f4f6ff"/></g>' % (
         f(x), f(y), rot('%s;%s;%s' % (f(a0), f(a1), f(a0)), per, ph, '0;.5;1', spline=True), beam))
@@ -541,6 +545,15 @@ prize = []
 prize.append('<!-- the projection cone --><polygon points="%s" fill="url(#projCol)" filter="url(#soft4)"/>' % pts([(TOK_CX - TOK_W * .44, col_top), (TOK_CX + TOK_W * .44, col_top), (LENS[0] + 5, LENS[1]), (LENS[0] - 5, LENS[1])]))
 prize.append('<path d="M%s %s L%s %s M%s %s L%s %s" stroke="%s" stroke-width="1" opacity=".35"/>' % (f(LENS[0] - 3), f(LENS[1]), f(TOK_CX - TOK_W * .44), f(col_top), f(LENS[0] + 3), f(LENS[1]), f(TOK_CX + TOK_W * .44), f(col_top), GOLD_HOT))
 prize.append('<circle cx="%s" cy="%s" r="12" fill="url(#lamp-gold)"/><circle cx="%s" cy="%s" r="3" fill="%s"/>' % (f(LENS[0]), f(LENS[1]), f(LENS[0]), f(LENS[1]), GOLD_HOT))
+# the Machine's thread: a fine filament of gold from the Machine's core to the token, sagging across the sky, the mark that the
+# Machine is where the prize comes from; once a turn of the token a bright pulse runs down it and the token flares as it arrives
+TOK_TURN, TOK_PH = 16.37, 3.513
+fil = 'M%s %s Q%s %s %s %s' % (f(CX - 18), f(CROWN_Y + 4), f(960), f(352), f(TOK_CX + 62), f(TOK_CY - 6))
+prize.append('<!-- the Machine\'s thread --><path d="%s" fill="none" stroke="%s" stroke-width="5" opacity=".14" filter="url(#soft2)"/><path d="%s" fill="none" stroke="%s" stroke-width="1.1" opacity=".55"/>' % (fil, GOLD, fil, GOLD_HOT))
+prize.append('<!-- the pulse down the thread --><g opacity="0">%s<circle r="16" fill="url(#lamp-gold)"/><circle r="3.4" fill="%s"/><animateMotion path="%s" keyPoints="0;0;1;1" keyTimes="0;.62;.7;1" calcMode="linear" dur="%ss" begin="-%ss" repeatCount="indefinite"/></g>' % (
+    anim('opacity', '0;0;1;1;0;0', TOK_TURN, TOK_PH, '0;.615;.625;.695;.705;1'), GOLD_HOT, fil, f(TOK_TURN), f(TOK_PH)))
+prize.append('<!-- the token flares as the pulse arrives --><circle cx="%s" cy="%s" r="%s" fill="url(#lamp-gold)" opacity="0">%s</circle>' % (
+    f(TOK_CX), f(TOK_CY), f(TOK_W * .7), anim('opacity', '0;0;.55;0;0', TOK_TURN, TOK_PH, '0;.695;.71;.8;1', spline=True)))
 
 # the token, the prize: the beat 06 card drawn in light, a projection rather than an object
 TW = TOK_W
@@ -676,12 +689,13 @@ arena.append('<!-- the crowd -->' + '<g>%s</g>' % ''.join(crowd))
 # and the two fighters' marks (scuffed ground where each power stands)
 fe = ell(1)
 defs.append('<filter id="sand" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9 2.2" numOctaves="2" seed="4" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .42  0 0 0 0 .36  0 0 0 0 .28  0 0 0 -1.1 .9"/><feComposite in2="SourceGraphic" operator="in"/></filter>')
-arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#%s)"/>' % (f(fe[0]), f(fe[1]), f(fe[2]), f(fe[3]), rad([(0, '#b49a72', 1), (.55, '#8e7858', 1), (1, '#4a3e32', 1)], id='floor')))
+arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#%s)"/>' % (f(fe[0]), f(fe[1]), f(fe[2]), f(fe[3]), rad([(0, '#877356', 1), (.55, '#6a5a42', 1), (1, '#382e26', 1)], id='floor')))
 arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#000" filter="url(#sand)" opacity=".5"/>' % (f(fe[0]), f(fe[1]), f(fe[2]), f(fe[3])))
 arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="none" stroke="#6a5840" stroke-width="2.2" opacity=".8"/>' % (f(fe[0]), f(fe[1]), f(fe[2] * .66), f(fe[3] * .66)))
 for (dx, dy, rx_, ry_) in [(-200, 26, 40, 11), (190, -30, 34, 9), (40, 52, 26, 7), (-60, -48, 22, 6)]:
     arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#2a1e18" opacity=".45" filter="url(#soft4)"/>' % (f(FCX + dx), f(FCY + dy), f(rx_), f(ry_)))
-FL, FR = (FCX - 190, FCY + 12), (FCX + 190, FCY - 10)  # where the two powers stand
+FY = 822  # the fight's ground line: the floor's far half, above the record label on a phone
+FL, FR = (FCX - 170, FY + 12), (FCX + 170, FY - 4)  # where the two powers stand
 for (x_, y_) in (FL, FR):
     arena.append('<ellipse cx="%s" cy="%s" rx="26" ry="8" fill="#2a1e18" opacity=".5" filter="url(#soft2)"/>' % (f(x_), f(y_)))
 
@@ -731,7 +745,7 @@ for a in MASTS:
                                                                             lin([(0, '#f4f2ff', .16), (1, '#f4f2ff', .02)], bx, top_y, FCX, FCY, units=True))
     arena.append('<!-- a floodlight mast -->' + cone + ''.join(lat) + bank + glow)
 # the floodlights' light pooled on the floor
-arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lamp-flood)" opacity=".22"/>' % (f(FCX), f(FCY), f(FLOOR_RX * 1.05), f(FLOOR_RY * 1.2)))
+arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lamp-flood)" opacity=".14"/>' % (f(FCX), f(FCY), f(FLOOR_RX * 1.05), f(FLOOR_RY * 1.2)))
 
 # ------------------------------------------------------------------ fight layer (animated): the clash, the dust, the roar
 fight = []
@@ -756,41 +770,65 @@ def jag_path(x0, y0, x1, y1, n, amp, seed):
 
 
 (lx, ly), (rx2, ry2) = FL, FR
-mx, my = FCX, FCY - 6
+mx, my = FCX, FY - 10  # where the attacks meet, on the floor's far half (clear of the phone crop's record label)
+PS = 1.4  # the powers' scale: they must be the brightest marks in the bowl at site size
 g_fcol = lin([(0, '#fff2c8', .95), (.25, '#ffb050', .85), (.7, FIRE, .45), (1, FIRE, 0)], 0, 1, 0, 0, id='flameCol')
 g_ecol = lin([(0, '#f2fbff', .95), (.3, ELEC, .8), (1, ELEC, 0)], 0, 1, 0, 0, id='elecCol')
-# The fight's clock holds two exchanges. In the first (u .12 to .74) the fire leans in and throws a fireball and the lightning
-# answers it in the middle; in the second (u .62 to .99) the lightning leans in and strikes and the fire answers with a jet of flame.
-# Each power leans toward the other as it winds up, so every frame shows an attack building, in flight, or landing.
+# The fight's clock holds two exchanges, half a clock apart. In the first the fire leans in and throws a fireball and the
+# lightning answers it in the middle (clash at u .32); in the second the lightning leans in and strikes and the fire answers
+# with a jet of flame (clash at u .82). Each power leans toward the other as it winds up.
 E_LEAN = '0;0;6;0;0;10;10;0;0'
 E_LEAN_T = '0;.15;.3;.37;.62;.76;.8;.88;1'
 F_LEAN = '0;0;-10;-12;0;0;-6;0;0'
 F_LEAN_T = '0;.02;.22;.26;.35;.78;.82;.9;1'
+E_SWELL = ('.4;.4;.95;.4;.4;.95;1;.4;.4', '0;.15;.31;.39;.62;.78;.84;.92;1')
+F_SWELL = ('.4;.4;.95;1;.4;.4;.9;.4;.4', '0;.02;.21;.26;.37;.78;.84;.92;1')
 # the two powers where they stand: a pool of their light on the ground (it does not lean) and a column of it that does
-for (x_, y_, g_, sw_v, sw_t) in [(lx, ly, 'lamp-elec', '.4;.4;.95;.4;.4;.95;1;.4;.4', '0;.15;.31;.39;.62;.78;.84;.92;1'), (rx2, ry2, 'lamp-fire', '.4;.4;.95;1;.4;.4;.9;.4;.4', '0;.02;.21;.26;.37;.78;.84;.92;1')]:
+for (x_, y_, g_, sw) in [(lx, ly, 'lamp-elec', E_SWELL), (rx2, ry2, 'lamp-fire', F_SWELL)]:
     fight.append('<!-- a power\'s pool of light -->'
-                 '<ellipse cx="%s" cy="%s" rx="78" ry="23" fill="url(#%s)" opacity=".4">%s</ellipse>' % (f(x_), f(y_), g_, anim('opacity', sw_v, FP, PH, sw_t, spline=True)))
-# the electric power: a crackling column with arcs flicking up and around it, leaning in as it winds up
-elec = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-elec)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', '.4;.4;.9;.4;.4;.95;1;.4;.4', FP, PH, '0;.15;.31;.39;.62;.78;.84;.92;1', spline=True),
-        '<path d="M-13 0 L-4 -100 L4 -100 L13 0 Z" fill="url(#elecCol)" opacity=".55" filter="url(#soft2)"/>']
+                 '<ellipse cx="%s" cy="%s" rx="108" ry="28" fill="url(#%s)" opacity=".4">%s</ellipse>' % (f(x_), f(y_), g_, anim('opacity', sw[0], FP, PH, sw[1], spline=True)))
+# the electric power: a crackling column with a white-hot core and a deep blue rim, arcs flicking up and around it
+elec = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-elec)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', E_SWELL[0], FP, PH, E_SWELL[1], spline=True),
+        '<path d="M-13 0 L-4 -100 L4 -100 L13 0 Z" fill="url(#elecCol)" stroke="#1e5a8a" stroke-width="1.6" opacity=".75" filter="url(#soft2)"/>',
+        '<path d="M-4 0 L-1 -96 L1 -96 L4 0 Z" fill="#f6fdff" opacity=".4" filter="url(#soft2)"/>']
 for j in range(5):
     x0 = (-1) ** j * (6 + 4 * j)
     d = jag_path(x0 * 1.4, -2, (-1) ** (j + 1) * (11 + 4 * j), -74 - 10 * j, 7, 12, 70 + j)
     elec.append('<path d="%s" stroke="#eaf8ff" stroke-width="2.2" fill="none" filter="url(#glow2)" opacity="0">%s</path>' % (d, anim('opacity', '0;1;0;0;.9;0;0', .731 + j * .193, .113 + j * .237, '0;.06;.14;.45;.5;.58;1', calc='discrete')))
-fight.append('<!-- the electric power --><g transform="translate(%s %s)"><g>%s%s</g></g>' % (f(lx), f(ly), rot(E_LEAN, FP, PH, E_LEAN_T, spline=True), ''.join(elec)))
+fight.append('<!-- the electric power --><g transform="translate(%s %s) scale(%s)"><g>%s%s</g></g>' % (f(lx), f(ly), f(PS), rot(E_LEAN, FP, PH, E_LEAN_T, spline=True), ''.join(elec)))
 # the fire power: a column of flame, tongues licking up from a hot base, leaning in as it winds up
-fire = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-fire)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', '.4;.4;.95;1;.4;.4;.9;.4;.4', FP, PH, '0;.02;.21;.26;.37;.78;.84;.92;1', spline=True)]
+fire = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-fire)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', F_SWELL[0], FP, PH, F_SWELL[1], spline=True)]
 for j, (dx, hgt, per, ph) in enumerate([(-19, 80, .9, .1), (0, 114, 1.1, .5), (18, 88, .8, .3), (-7, 64, .7, .65), (11, 56, .95, .2)]):
     tongue = '<path d="M-15 0 Q-19 %s 1 %s Q16 %s 15 0 Z" fill="url(#flameCol)" opacity=".85" filter="url(#soft2)"/>' % (f(-hgt * .5), f(-hgt), f(-hgt * .45))
     fire.append('<g transform="translate(%s 0)"><g>%s%s</g></g>' % (f(dx), trans('1 1;.92 1.18;1.06 .88;1 1', per, ph, '0;.22;.6;1', typ='scale', spline=True), tongue))
 fire.append('<ellipse cx="0" cy="-4" rx="22" ry="8" fill="#fff4d0" opacity=".9" filter="url(#soft2)"/>')
-fight.append('<!-- the fire power --><g transform="translate(%s %s)"><g>%s%s</g></g>' % (f(rx2), f(ry2), rot(F_LEAN, FP, PH, F_LEAN_T, spline=True), ''.join(fire)))
+fight.append('<!-- the fire power --><g transform="translate(%s %s) scale(%s)"><g>%s%s</g></g>' % (f(rx2), f(ry2), f(PS), rot(F_LEAN, FP, PH, F_LEAN_T, spline=True), ''.join(fire)))
 
 
-def bolt(d, times, values):
-    """A bolt of lightning: a wide soft blue glow and a white-hot core, flickering on and off as it holds."""
-    return ('<path d="%s" stroke="%s" stroke-width="14" fill="none" opacity="0" filter="url(#soft4)">%s</path>' % (d, ELEC, anim('opacity', values, FP, PH, times, calc='discrete'))
-            + '<path d="%s" stroke="#f2fbff" stroke-width="5" stroke-linejoin="bevel" fill="none" opacity="0" filter="url(#glow2)">%s</path>' % (d, anim('opacity', values, FP, PH, times, calc='discrete')))
+def jag_pts(x0, y0, x1, y1, n, amp, seed, bow=0.0):
+    """Points of a bolt from (x0, y0) to (x1, y1), jagged, arcing by `bow` (positive bows upward)."""
+    r = random.Random(seed)
+    p = [(x0, y0)]
+    for i in range(1, n):
+        u = i / n
+        p.append((lerp(x0, x1, u) + r.uniform(-amp, amp) * .3, lerp(y0, y1, u) + r.uniform(-amp, amp) - bow * math.sin(math.pi * u)))
+    p.append((x1, y1))
+    return p
+
+
+def bolt(p, u_on, u_end, values):
+    """A bolt of lightning that strikes in two steps (its first half, then its full length, about 0.05 s apart), then holds,
+    flickering, until u_end: a wide soft blue glow and a white-hot core."""
+    half = len(p) // 2
+    d1 = 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p[:half + 1])
+    d2 = 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p[half:])
+    k1 = '0;%s;%s;%s;%s;%s;%s;1' % (f(u_on), f(u_on + .012), f(u_on + .02), f(u_on + .028), f(u_on + .036), f(u_end))
+    k2 = '0;%s;%s;%s;%s;%s;%s;1' % (f(u_on + .007), f(u_on + .012), f(u_on + .02), f(u_on + .028), f(u_on + .036), f(u_end))
+    o = ''
+    for d, k in ((d1, k1), (d2, k2)):
+        o += '<path d="%s" stroke="%s" stroke-width="14" fill="none" opacity="0" filter="url(#soft4)">%s</path>' % (d, ELEC, anim('opacity', values, FP, PH, k, calc='discrete'))
+        o += '<path d="%s" stroke="#f2fbff" stroke-width="5" stroke-linejoin="bevel" stroke-linecap="round" fill="none" opacity="0" filter="url(#glow2)">%s</path>' % (d, anim('opacity', values, FP, PH, k, calc='discrete'))
+    return o
 
 
 def clash(u, tag):
@@ -803,38 +841,48 @@ def clash(u, tag):
     o.append(light(mx + 30, my, 90, 'lamp-fire', '0;0;.9;0;0', k(-.005, .005, .15), PH))
     rays = ''.join('<polygon points="0,-4 %s,0 0,4" transform="rotate(%s)" fill="#fff8e8"/>' % (f(L), f(ang)) for ang, L in [(i * 45 + (i % 2) * 8, 96 if i % 2 == 0 else 60) for i in range(8)])
     o.append('<g transform="translate(%s %s) scale(1 .6)"><g opacity="0" filter="url(#glow2)">%s<g>%s%s</g></g></g>' % (f(mx), f(my), anim('opacity', '0;0;1;0;0', FP, PH, k(-.005, .005, .06)), trans('.3 .3;.3 .3;1.25 1.25;1.25 1.25', FP, PH, k(-.005, .06), typ='scale'), rays))
-    o.append(light(mx, FCY, 300, 'lamp-flood', '0;0;.4;0;0', k(-.005, .01, .13), PH, ' transform="translate(%s %s) scale(1 .36) translate(%s %s)"' % (f(mx), f(FCY), f(-mx), f(-FCY))))
+    o.append(light(mx, FY, 300, 'lamp-flood', '0;0;.4;0;0', k(-.005, .01, .13), PH, ' transform="translate(%s %s) scale(1 .36) translate(%s %s)"' % (f(mx), f(FY), f(-mx), f(-FY))))
     o.append('<ellipse cx="%s" cy="%s" rx="10" ry="4" fill="none" stroke="#d8c8a8" stroke-width="6" opacity="0" filter="url(#soft2)">%s%s%s</ellipse>' % (
-        f(mx), f(FCY), anim('rx', '10;10;230;290;290', FP, PH, k(.005, .1, .16)), anim('ry', '4;4;72;92;92', FP, PH, k(.005, .1, .16)), anim('opacity', '0;0;.75;0;0', FP, PH, k(.005, .04, .16))))
+        f(mx), f(FY), anim('rx', '10;10;230;290;290', FP, PH, k(.005, .1, .16)), anim('ry', '4;4;72;92;92', FP, PH, k(.005, .1, .16)), anim('opacity', '0;0;.75;0;0', FP, PH, k(.005, .04, .16))))
     o.append('<ellipse cx="%s" cy="%s" rx="30" ry="16" fill="#c8b898" opacity="0" filter="url(#soft8)">%s%s%s</ellipse>' % (
         f(mx), f(my - 6), anim('opacity', '0;0;.55;0;0', FP, PH, k(.01, .06, .16)), anim('cy', '%s;%s;%s;%s' % (f(my - 6), f(my - 6), f(my - 46), f(my - 46)), FP, PH, k(.01, .16)), anim('rx', '30;30;70;70', FP, PH, k(.01, .16))))
     sp = random.Random(4 + int(u * 100))
     for j in range(6):
         c = 'lamp-elec' if j % 2 == 0 else 'lamp-fire'
         t0 = sp.uniform(.03, .1)
-        o.append(light(mx + sp.uniform(-90, 90), FCY + sp.uniform(-20, 20), 10, c, '0;0;.9;0;0', k(t0, t0 + .015, t0 + .06), PH))
+        o.append(light(mx + sp.uniform(-90, 90), FY + sp.uniform(-16, 16), 10, c, '0;0;.9;0;0', k(t0, t0 + .015, t0 + .06), PH))
     return o
 
 
 # exchange one: the fire throws a fireball, born at the top of its column and growing as it leaves, flying at constant speed;
-# the lightning answers with a bolt that flickers as it holds; they meet in the middle
-fb0 = (rx2 - 30, ry2 - 92)  # the column's top, leaning in
+# the lightning answers: its bolt arcs from the column's head straight at the fireball and meets it as it arrives
+fb0 = (rx2 - 30 * PS, ry2 - 92 * PS)  # the column's top, leaning in
 fight.append('<!-- the fireball --><g opacity="0">%s<g>%s<g>%s<ellipse cx="22" rx="36" ry="12" fill="url(#lamp-fire)" opacity=".8"/><circle r="46" fill="url(#lamp-fire)"/><circle r="17" fill="#ff9a40" opacity=".9" filter="url(#soft2)"/><circle r="8" fill="#ffe6b0"/></g></g></g>' % (
     anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.22;.221;.32;.325;1', calc='discrete'),
     trans('%s %s;%s %s;%s %s;%s %s' % (f(fb0[0]), f(fb0[1]), f(fb0[0]), f(fb0[1]), f(mx + 8), f(my), f(mx + 8), f(my)), FP, PH, '0;.25;.32;1'),
     trans('0 0;0 0;1 1;1 1', FP, PH, '0;.22;.25;1', typ='scale')))
-fight.append('<!-- the answering bolt -->' + bolt(jag_path(lx + 16, ly - 70, mx - 10, my, 12, 7, 93), '0;.29;.30;.31;.32;.33;.34;.37;1', '0;1;.35;1;.5;1;0;0;0'))
+fight.append('<!-- the answering bolt -->' + bolt(jag_pts(lx + 12 * PS, ly - 60 * PS, mx - 12, my, 12, 9, 93, bow=0), .307, .37, '0;1;.35;1;.5;1;0;0'))
 fight += clash(.32, 'one')
 # exchange two: the lightning strikes at the fire, the fire answers with a jet of flame; they meet in the middle
-fight.append('<!-- the lightning strike -->' + bolt(jag_path(lx + 18, ly - 96, mx - 6, my - 4, 13, 8, 97), '0;.79;.795;.8;.81;.82;.83;.86;1', '0;1;.4;1;.5;1;.7;0;0'))
-jl = math.hypot(mx + 10 - (rx2 - 24), my - (ry2 - 60))
-ja = math.degrees(math.atan2(my - (ry2 - 60), (mx + 10) - (rx2 - 24)))
-g_jet = lin([(0, '#fff4d8', .95), (.35, '#ffb050', .9), (.8, FIRE, .6), (1, '#c8401a', 0)], 0, 0, 1, 0, id='jetFill')
-# the jet: narrow where it leaves the flame, widening and cooling toward its tip, a hot core along its axis
-jet = ('<path d="M0 -6 C%s -10 %s -24 %s -16 Q%s 0 %s 16 C%s 24 %s 10 0 6 Z" fill="url(#jetFill)" filter="url(#soft4)"/>' % (f(jl * .4), f(jl * .8), f(jl * 1.02), f(jl * 1.1), f(jl * 1.02), f(jl * .8), f(jl * .4))
-       + '<path d="M0 -2 Q%s -3 %s 0 Q%s 3 0 2 Z" fill="#fff2d0" opacity=".9" filter="url(#soft2)"/>' % (f(jl * .5), f(jl * .85), f(jl * .5)))
+fight.append('<!-- the lightning strike -->' + bolt(jag_pts(lx + 14 * PS, ly - 74 * PS, mx - 6, my - 4, 13, 10, 97, bow=8), .79, .86, '0;1;.4;1;.5;1;0;0'))
+j0 = (rx2 - 16 * PS, ry2 - 92 * PS)  # the jet leaves from the top of the flame
+jl = math.hypot(mx + 12 - j0[0], my - j0[1])
+ja = math.degrees(math.atan2(my - j0[1], (mx + 12) - j0[0]))
+g_jet = lin([(0, '#ffe08a', .95), (.35, '#ffb050', .9), (.75, FIRE, .7), (1, '#c8401a', 0)], 0, 0, 1, 0, id='jetFill')
+
+
+def jet_shape(seed):
+    """A tongue of flame: narrow at its root, swelling and ragged toward its head."""
+    r = random.Random(seed)
+    top = [(0, -3)] + [(jl * u, -(3 + 22 * u ** .8) + r.uniform(-5, 5) * u) for u in (.2, .4, .6, .75, .88)] + [(jl * 1.02, -10 + r.uniform(-4, 4)), (jl * 1.08, r.uniform(-4, 4))]
+    bot = [(jl * 1.02, 10 + r.uniform(-4, 4))] + [(jl * u, (3 + 22 * u ** .8) + r.uniform(-5, 5) * u) for u in (.88, .75, .6, .4, .2)] + [(0, 3)]
+    return 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in top + bot) + ' Z'
+
+
+core = '<path d="M0 -1.5 Q%s -5 %s 0 Q%s 5 0 1.5 Z" fill="#ffd060" opacity=".9" filter="url(#soft2)"/>' % (f(jl * .5), f(jl * .8), f(jl * .5))
+jet = ''.join('<path d="%s" fill="url(#jetFill)" filter="url(#soft2)" opacity="%s">%s</path>' % (jet_shape(80 + i), '1' if i == 0 else '0', anim('opacity', '1;0;1' if i == 0 else '0;1;0', .157 + .041 * i, .03 * i, '0;.5;1', calc='discrete')) for i in range(2)) + core
 fight.append('<!-- the jet of flame --><g transform="translate(%s %s) rotate(%s)"><g opacity="0">%s<g>%s%s</g></g></g>' % (
-    f(rx2 - 24), f(ry2 - 60), f(ja), anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.765;.775;.83;.86;1'), trans('0 1;0 1;1 1;1 1', FP, PH, '0;.765;.8;1', typ='scale'), jet))
+    f(j0[0]), f(j0[1]), f(ja), anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.777;.778;.83;.86;1', calc='discrete'), trans('0 1;0 1;1 1;1 1', FP, PH, '0;.777;.799;1', typ='scale'), jet))
 fight += clash(.82, 'two')
 # the crowd's roar after each clash: the crowd's lights swell and a warm band of light runs around the tiers, then settle
 fight.append('<!-- the roar --><g opacity="0">%s%s</g>' % (anim('opacity', '0;0;.9;.3;0;0;.9;.3;0;0', FP, PH, '0;.33;.38;.47;.57;.83;.88;.95;.99;1'), ''.join(crowd_roar)))
@@ -853,8 +901,10 @@ for (x0, y0, x1, y1) in roofs:
     for _ in range(6):
         near.append('<rect x="%s" y="%s" width="4" height="6" fill="%s" opacity="%s"/>' % (f(nr.uniform(x0 + 8, x1 - 12)), f(nr.uniform(y0 + 24, 1140)), WIN, f(nr.uniform(.4, .8))))
 near.append('<!-- a roof mast --><path d="M64 976 L64 880" stroke="#121016" stroke-width="4"/><circle cx="64" cy="878" r="2.5" fill="#ff5a4a"/>')
-# the landing deck: a high platform coming in from the right edge, its rim lit
-deck = [(1600, 1000), (1196, 1036), (1120, 1160), (1600, 1160)]
+# the landing deck: a high platform coming in from the right edge, its rim lit. The deck and its ship are drawn at their old
+# place and lifted 60 units as one, so the ramp's light lands inside the phone crop.
+DOCK0 = len(near)
+deck = [(1600, 1000), (1196, 1036), (1100, 1230), (1600, 1230)]
 near.append('<!-- the landing deck --><polygon points="%s" fill="url(#%s)"/>' % (pts(deck), lin([(0, '#262229', 1), (1, '#0c0b10', 1)], 0, 1000, 0, 1152, units=True)))
 near.append('<path d="M1600 1000 L1196 1036 L1120 1160" fill="none" stroke="#6a5e58" stroke-width="2.4"/>')
 for i in range(10):
@@ -865,19 +915,19 @@ for i in range(10):
 SHIP_C = '#8be08a'
 hull = [(1160, 1004), (1198, 984), (1290, 971), (1420, 967), (1482, 975), (1508, 990), (1504, 1012), (1472, 1022), (1222, 1025)]
 near.append('<!-- the docked faction ship -->'
-            '<polygon points="%s" fill="url(#%s)"/>' % (pts(hull), lin([(0, '#4a4a58', 1), (.45, '#24242e', 1), (1, '#0e0e14', 1)], 0, 967, 0, 1025, units=True)))
-near.append('<polygon points="%s" fill="#2a2a34"/>' % pts([(1396, 968), (1438, 944), (1462, 946), (1452, 969)]))
+            '<polygon points="%s" fill="url(#%s)"/>' % (pts(hull), lin([(0, '#80849c', 1), (.45, '#4e5266', 1), (1, '#262838', 1)], 0, 967, 0, 1025, units=True)))
+near.append('<polygon points="%s" fill="#4a4e60"/>' % pts([(1396, 968), (1438, 944), (1462, 946), (1452, 969)]))
 near.append('<path d="M1160 1004 L1198 984 L1290 971 L1420 967 L1482 975" fill="none" stroke="#9a9aae" stroke-width="1.4" opacity=".6"/>')
 near.append('<path d="M1300 972 L1300 1024 M1360 969 L1360 1024 M1430 968 L1430 1022" stroke="#14141a" stroke-width="1.2" opacity=".8"/>')
 near.append('<polygon points="%s" fill="#bfe8ff" opacity=".55"/>' % pts([(1186, 993), (1212, 980), (1252, 977), (1244, 992)]))
 near.append('<polygon points="%s" fill="#ffffff" opacity=".25"/>' % pts([(1200, 986), (1214, 980), (1236, 979), (1226, 984)]))
 near.append('<path d="M1236 1002 L1478 996" stroke="%s" stroke-width="2.4" opacity=".9"/>' % SHIP_C)
 # its faction's paint: the upper hull panels and the fin in the faction's green, so the ship reads as theirs
-near.append('<polygon points="%s" fill="%s" opacity=".55"/>' % (pts([(1300, 972), (1420, 968), (1480, 976), (1478, 986), (1300, 988)]), '#3e7a46'))
-near.append('<polygon points="%s" fill="%s" opacity=".8"/>' % (pts([(1400, 967), (1438, 945), (1460, 947), (1450, 968)]), '#3e7a46'))
+near.append('<polygon points="%s" fill="%s" opacity=".55"/>' % (pts([(1300, 972), (1420, 968), (1480, 976), (1478, 986), (1300, 988)]), '#5aa864'))
+near.append('<polygon points="%s" fill="%s" opacity=".8"/>' % (pts([(1400, 967), (1438, 945), (1460, 947), (1450, 968)]), '#5aa864'))
 # an open hatch above the lowered ramp, lit from inside: the ship is waiting to load
 near.append('<ellipse cx="1322" cy="1052" rx="46" ry="9" fill="url(#lamp-win)" opacity=".7"/>'
-            '<rect x="1320" y="1006" width="32" height="18" fill="#ffe2a8"/><rect x="1316" y="1003" width="40" height="4" fill="#2a2a34"/>'
+            '<rect x="1320" y="1006" width="32" height="18" fill="#fff2d0"/><rect x="1316" y="1003" width="40" height="4" fill="#2a2a34"/>'
             '<polygon points="1320,1024 1352,1024 1338,1050 1298,1050" fill="#c8a878"/><polygon points="1320,1024 1352,1024 1346,1032 1316,1032" fill="#ffe2a8" opacity=".8"/>'
             '<path d="M1298 1050 L1320 1024 M1338 1050 L1352 1024" stroke="#3a3226" stroke-width="1.4"/>')
 for (ex, ey) in [(1506, 988), (1504, 1008)]:
@@ -887,10 +937,14 @@ for (x0, x1) in [(1250, 1242), (1450, 1458)]:
     near.append('<path d="M%s 1022 L%s 1046" stroke="#15141a" stroke-width="5"/><path d="M%s 1046 L%s 1046" stroke="#15141a" stroke-width="4"/>' % (f(x0), f(x1), f(x1 - 8), f(x1 + 8)))
 # a deck floodlight on a pole at the deck's corner
 near.append('<path d="M1560 1004 L1560 930" stroke="#141218" stroke-width="4"/><rect x="1544" y="922" width="22" height="9" fill="#222028"/><ellipse cx="1550" cy="930" rx="26" ry="12" fill="url(#lamp-win)" opacity=".7"/>')
+import re as _re
+for i_ in range(DOCK0, len(near)):
+    m_ = _re.match(r'(\s*<!--.*?-->)?(.*)', near[i_], _re.S)
+    near[i_] = (m_.group(1) or '') + '<g transform="translate(0 -60)">' + m_.group(2) + '</g>'
 
 # ------------------------------------------------------------------ nearfx layer (animated): the ship's engines idle, the roof beacon blinks
 nearfx = []
-for k_, (ex, ey) in enumerate([(1506, 988), (1504, 1008)]):
+for k_, (ex, ey) in enumerate([(1506, 928), (1504, 948)]):
     nearfx.append('<circle cx="%s" cy="%s" r="16" fill="url(#lamp-fac3)" opacity=".5">%s</circle><circle cx="%s" cy="%s" r="3.2" fill="#eaffea" opacity=".9"/>' % (
         f(ex + 4), f(ey), anim('opacity', '.35;.7;.45;.65;.35', 2.3 + k_ * .4, k_ * .7, '0;.3;.55;.8;1', spline=True), f(ex + 2), f(ey)))
 nearfx.append('<circle cx="64" cy="878" r="10" fill="url(#lamp-red)" opacity="0">%s</circle>' % anim('opacity', '0;1;1;0;0', 2.6, .4, '0;.06;.2;.3;1'))
