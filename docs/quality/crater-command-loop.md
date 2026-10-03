@@ -574,3 +574,45 @@ so plainly. A run should not claim completion just because tests pass.
   All 375 rules and 1,354 web tests passed, along with both typechecks and the
   production build. The first full web run hit an unrelated authored-portrait
   lazy-load timeout while tests ran concurrently; the complete rerun passed.
+
+### 2026-10-02: Tactical duel milestone
+
+- The milestone is a duel with several meaningful exchanges, useful defensive
+  choices, and phone aiming that remains connected to the battlefield. This is
+  a tested iteration, not a claim that player acceptance or overall art quality
+  is complete.
+- Hull damage is paced separately from excavation. Duel damage uses a 0.55
+  multiplier instead of 0.82; practice and the five-round trial retain 0.82.
+  Rampart supplies a 40-damage reserve that lasts across hits. Tractor strips
+  cover when it pulls a rig, while Sunspike still bypasses half the reserve.
+  Standard opponents correct range more effectively and recognize cover as a
+  reason to use Tractor. Their first shot remains imperfect rather than exact.
+- Selecting Rampart or Foam loads a close construction lob. Returning to an
+  attack restores the previous attack settings, including when construction
+  ammunition runs out. This makes utility rounds usable without silently
+  leaving an attack weapon on construction settings.
+- Phone controls put aim and Fire ahead of the weapon rack, retain direct
+  weapon selection, and use larger adjustment and thrust targets. Containing
+  hidden shortcut labels fixes document overflow when the rack is scrolled.
+  Camera frames retain the viewport ratio throughout zooms, removing blank
+  letterbox strips. Existing planet artwork is more visible; terrain gains
+  clipped stone grain and Tractor gets a tether tied to actual displacement.
+- Completed browser trials: Standard Stonera phone duel, 15 total shots,
+  victory with 25 hull and six weapon types; Standard Magmuth desktop duel,
+  11 total shots, victory with 61 hull and five weapon types. The desktop trial
+  included Foam changing the surface, a ridge requiring a higher arc, enemy
+  Rampart, and Tractor removing its cover before a follow-up Comet. These are
+  two actual playthroughs, not aggregate evidence of universal balance.
+- A 30-field coarse aiming simulation changed Standard from 3.3 to 6.9 player
+  attacks on average. A separate 100-seed solver comparison changed its median
+  from five to 11 total shots. These are pacing proxies, not proof of fun.
+- At a 390-by-844 browser viewport, the page content and available width both
+  measured 375 pixels before and after paging/selecting Foam. Both sliders and
+  Fire fit in the first screen. Physical-device testing remains deferred.
+- Checks include the complete 712-test rules suite, the complete web suite,
+  40 focused artillery component tests, both typechecks, the production build,
+  setup screenshots at desktop and phone widths, and camera aspect regressions.
+- Remaining work: authored rig/material art, more purposeful map scenarios,
+  and deeper opponent use of repair and mobility. Expanded weapon completion
+  validation is tracked separately in GitHub issue #784 for an explicit game
+  integration cutover; this iteration does not alter platform reward policy.

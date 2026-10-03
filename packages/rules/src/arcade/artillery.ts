@@ -80,10 +80,11 @@ export type ArtilleryState = {
 export const ARTILLERY_WIDTH = 300;
 export const ARTILLERY_HEIGHT = 110;
 export const ARTILLERY_MAX_INTEGRITY = 100;
-const ARTILLERY_HULL_DAMAGE_SCALE = 0.82;
+const ARTILLERY_HULL_DAMAGE_SCALE = 0.55;
+const ARTILLERY_PRACTICE_DAMAGE_SCALE = 0.82;
 export const ARTILLERY_MAX_DRIVE_FUEL = 100;
 export const ARTILLERY_MAX_JET_FUEL = 100;
-export const ARTILLERY_RAMPART_GUARD = 24;
+export const ARTILLERY_RAMPART_GUARD = 40;
 export const ARTILLERY_MAX_TRACTION = ARTILLERY_MAX_DRIVE_FUEL;
 export const ARTILLERY_MAX_JET_CHARGES = ARTILLERY_MAX_JET_FUEL;
 export const ARTILLERY_MOVE_DISTANCE = 22;
@@ -640,7 +641,8 @@ export function applyArtilleryShot(
   const rawFallDamage = terrainShift < -3 ? Math.min(24, Math.round((-terrainShift - 3) * 4)) : 0;
   const fallDamage = rawFallDamage;
   const pressureMultiplier = Math.min(1.6, 1 + Math.max(0, state.turn - 9) * 0.12);
-  // Three meaningful hits leave room for cover, recovery, and weapon choice.
+  // Duels need several exchanges without reducing the physical crater size.
+  // Practice and the five-round trial keep their original scoring balance.
   // Terrain deformation keeps its full force; only damage to the rig is paced.
   // Starfall covers the widest area, so its combined blast and collapse must
   // not also be the most lethal single volley.
@@ -648,10 +650,12 @@ export function applyArtilleryShot(
     ? Math.min(60, simulated.blastDamage + fallDamage)
     : simulated.blastDamage + fallDamage;
   const rawDamage = Math.min(ARTILLERY_MAX_INTEGRITY,
-    Math.round(combinedDamage * pressureMultiplier * ARTILLERY_HULL_DAMAGE_SCALE));
+    Math.round(combinedDamage * pressureMultiplier * (state.mode === 'range' || state.mode === 'challenge'
+      ? ARTILLERY_PRACTICE_DAMAGE_SCALE : ARTILLERY_HULL_DAMAGE_SCALE)));
+  const targetGuard = rigDisplacement !== 0 ? 0 : state.guard[targetSide];
   const guardAbsorbed = Math.min(shot.payload === 'lance'
-    ? Math.ceil(state.guard[targetSide] / 2)
-    : state.guard[targetSide], rawDamage);
+    ? Math.ceil(targetGuard / 2)
+    : targetGuard, rawDamage);
   const damage = rawDamage - guardAbsorbed;
   const forwardCover = simulated.impact &&
     (state.current === 'left' ? 1 : -1) * (simulated.impact.x - movedX);
@@ -695,9 +699,9 @@ export function applyArtilleryShot(
       systemCharges: state.systemCharges,
       guard: {
         ...state.guard,
-        // A miss does not break cover. Any actual hit spends the emplacement,
-        // including a Sunspike hit that bypasses part of its protection.
-        [targetSide]: rawDamage > 0 ? 0 : state.guard[targetSide],
+        // Cover absorbs its remaining budget, not an arbitrary whole hit.
+        // Pulling a rig out of its emplacement bypasses that protection.
+        [targetSide]: Math.max(0, targetGuard - guardAbsorbed),
         [state.current]: Math.max(tractionSpent ? 0 : state.guard[state.current], coverGranted),
       },
       current: winner || state.mode === 'range' || state.mode === 'challenge' ? state.current : targetSide,
@@ -718,7 +722,7 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   const draw = nextRandom(state.rngState ^ (state.turn + 1));
   const profile = {
     rookie: { angleError: 4.2, powerError: 9, specialChance: 0.18, angleCorrection: 7, powerCorrection: 10 },
-    standard: { angleError: 2.3, powerError: 5.8, specialChance: 0.36, angleCorrection: 8, powerCorrection: 12 },
+    standard: { angleError: 1.6, powerError: 3.8, specialChance: 0.55, angleCorrection: 10, powerCorrection: 15 },
     expert: { angleError: 0.65, powerError: 1.6, specialChance: 0.72, angleCorrection: 60, powerCorrection: 80 },
   }[state.difficulty];
   const recentMiss = state.lastImpact?.shooter === 'left'
@@ -734,13 +738,14 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   const targetX = state.tanks.left.x;
   const firstRangingShot = state.botPrevious === null && state.difficulty !== 'expert';
   const surveyDraw = nextRandom(nextRandom(draw.state).state);
-  const surveySpread = state.difficulty === 'rookie' ? { near: 24, far: 52 } : { near: 16, far: 38 };
+  const surveySpread = state.difficulty === 'rookie' ? { near: 24, far: 52 } : { near: 9, far: 22 };
   const surveyedX = targetX + (surveyDraw.value < 0.5 ? -1 : 1)
     * (surveySpread.near + Math.abs(surveyDraw.value - 0.5) * 2 * (surveySpread.far - surveySpread.near));
   const targetCrater = Math.max(terrainHeight(state.terrain, targetX - 8), terrainHeight(state.terrain, targetX + 8))
     - terrainHeight(state.terrain, targetX);
   const frontRidge = terrainHeight(state.terrain, targetX + 13) - terrainHeight(state.terrain, targetX);
-  const special: ArtillerySpecialPayload | null = state.guard.left > 0 && state.payloads.right.lance > 0 ? 'lance'
+  const special: ArtillerySpecialPayload | null = state.guard.left > 0 && state.payloads.right.tractor > 0 ? 'tractor'
+    : state.guard.left > 0 && state.payloads.right.lance > 0 ? 'lance'
     : frontRidge > 6 && state.payloads.right.mole > 0 ? 'mole'
       : targetCrater > 5 && state.payloads.right.bore > 0 ? 'bore'
       : miss <= 8 && state.tanks.left.integrity <= 65 && state.payloads.right.lance > 0 ? 'lance'
@@ -753,7 +758,7 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
   const best = (payload: ArtilleryPayload): Solution => {
     let solution: Solution = { angle: 44, power: 70, score: -Infinity, damage: 0, payload };
     const previous = state.botPrevious?.shot;
-    const lostRange = miss > 80 || move !== 0;
+    const lostRange = miss > 32 || move !== 0;
     const angleCorrection = profile.angleCorrection + (lostRange ? 7 : 0);
     const powerCorrection = profile.powerCorrection + (lostRange ? 8 : 0);
     for (let angle = 16; angle <= 76; angle += 3) {
@@ -761,7 +766,8 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
       for (let power = 20; power <= 100; power += 2) {
         if (previous && Math.abs(power - previous.power) > powerCorrection) continue;
         const outcome = simulateArtilleryShot(state, { angle, power, payload, move });
-        const guard = payload === 'lance' ? Math.ceil(state.guard.left / 2) : state.guard.left;
+        const guard = payload === 'tractor' && outcome.impact && Math.abs(outcome.impact.x - targetX) > 2 && Math.abs(outcome.impact.x - targetX) <= 31
+          ? 0 : payload === 'lance' ? Math.ceil(state.guard.left / 2) : state.guard.left;
         const pressure = Math.min(1.6, 1 + Math.max(0, state.turn - 9) * 0.12);
         const damage = Math.max(0, Math.round(outcome.damage * pressure * ARTILLERY_HULL_DAMAGE_SCALE) - guard);
         const landingError = outcome.impact ? Math.abs(outcome.impact.x - targetX) : state.terrain.length;
@@ -784,6 +790,7 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
       : special === 'mole' && frontRidge > 6 ? 19
     : special === 'barb' && miss > 9 ? 16
       : special === 'bore' && targetCrater > 5 ? 17
+        : special === 'tractor' && state.guard.left > 0 ? 35
         : special === 'lance' && state.guard.left > 0 ? 15 : 4;
   let solution = firstRangingShot
     ? specialized ?? core
@@ -791,9 +798,9 @@ export function chooseArtilleryBotShot(state: ArtilleryState): ArtilleryShot {
       ? specialized : core;
   // Rampart spends the attack turn. Use it to survive a credible next hit,
   // never as an automatic response to crossing an arbitrary hull threshold.
-  const critical = state.tanks.right.integrity <= 28;
+  const critical = state.tanks.right.integrity <= 38;
   const wantsCover = threatened && recentMiss <= 11 && state.guard.right === 0
-    && state.payloads.right.bloom > 0 && state.tanks.right.integrity <= 45
+    && state.payloads.right.bloom > 0 && state.tanks.right.integrity <= 55
     && solution.damage < state.tanks.left.integrity
     && (critical || draw.value < profile.specialChance);
   if (wantsCover) {
