@@ -111,3 +111,20 @@ Round 7's fixes confirmed. Gate not passed: the lightning power read as a glowin
 ## Round 9 (fresh reviewer, cold gate): 9, "Nothing worth a round"
 
 Gate passed: checklist clean (all 22 items), audit with no failing piece, score 9. Round 8's fixes confirmed: the arcs stay on the column, the bolt leaves from its tip, the wisps are teardrops, nothing reads as a figure at site size. Left as the reviewer found them, all invisible at site size: in clash two the jet leaves about 90 ms before the bolt it answers; the flash comes about 0.12 s after contact; the jet's first frame is a small detached chip. The beat-07 page copy still waits on Nick's decisions on the words.
+
+## Nick, 2026-10-03: the figure fade and the fight
+
+Nick reviewed the live plate: "a good start", but the two element powers were not what he wanted. "Have two sides where there's a few abstract blobs on each side that represent a creature... just kind of show a grouping of creatures doing little attack moves like you have here with the fireball and lightning." He also asked for the story's figure beats to fade in a rounded rectangle instead of the tight oval. Built: two squads of three abstract creatures (storm, plant, ice against fire, water, rock) trading six small attacks and one big exchange on a 9.6 s clock; the figure mask is a superellipse filling most of the figure's place. Owner checklist item 22 now allows abstract blobs and forbids creature art.
+
+## Round 10 (fresh reviewer): 6, the fade passes
+
+The creatures read as pebbles, bowls and helmets at site size (a dark underside made each a bowl, the rim stroke and eye made a letter on two). What was done:
+1. Each creature is an upright bean of a body on two stubby legs, a round head set apart on the side it faces with one bright eye, the rim light on its back only, its body tinted strongly in its element's color.
+2. Creatures about 1.4 times larger and spread wider, each clear of its neighbors; rock a sandy ochre and water a deep blue so each side's colors separate.
+3. Darts, shards and stone about 2.5 times larger with fading trails; the stone a filled, lit chunk.
+4. The storm's bolt passed through the fire creature: it strikes water now, jagged.
+5. The water jet read as a searchlight: an even stream with a broken white core and a splash at its head.
+6. The hit flash read as a glass dome: the body takes the attacker's color for a moment and squashes.
+7. The still frame showed half a bolt: it sits where the whole great bolt is drawn; the great fireball is larger with a tail.
+8. Lunges 24 units and recoils 18 (they were invisible); every hit burst carries a comment.
+9. The fade: the token on beat 06 dissolved at the lower left; 06's ground hold is 0.82.
