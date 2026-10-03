@@ -1411,7 +1411,7 @@ export function createOutbreak(): Figure {
 	const self: Figure = {
 		stages: 2,
 		// 06 stands on ground: the oval holds its lower half longer so the ground recedes rather than ends
-		groundHold: 0.82,
+		groundHold: 0.79,
 		reset(s) {
 			stage = s;
 			vis = 0;

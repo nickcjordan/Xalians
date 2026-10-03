@@ -128,3 +128,13 @@ The creatures read as pebbles, bowls and helmets at site size (a dark underside 
 7. The still frame showed half a bolt: it sits where the whole great bolt is drawn; the great fireball is larger with a tail.
 8. Lunges 24 units and recoils 18 (they were invisible); every hit burst carries a comment.
 9. The fade: the token on beat 06 dissolved at the lower left; 06's ground hold is 0.82.
+
+## Round 11 (same reviewer): 7.5, the fade passes
+
+All round 10 fixes confirmed. Each squad still read as one clump at site size, and back-row attacks passed through front-row creatures. What was done:
+1. Squads in two staggered rows toward the middle: storm and fire in front facing each other, ice and rock behind on the outside, plant and water lower in the middle row, every creature clear of its neighbors.
+2. Clear lines: the front pair strike each other directly (storm's bolt at fire, the great exchange); everything else is lobbed high over the front row (fire's fireball at ice, plant's darts at water, water's globe at plant, ice's shards at rock, rock's stone at storm).
+3. The stone is a lumpy gray rock that tumbles.
+4. Water's beam read as a laser: it lobs a globe of water that splashes.
+5. Ice is a clear icy blue.
+6. Beat 06's ground hold eased to 0.79, still keeping the token whole.
