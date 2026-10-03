@@ -149,3 +149,12 @@ Nick's ask is met in substance; three things were still visible at site size. Wh
 5. Middle-row throws started inside the front creatures: plant and water throw up from above their own heads.
 6. The notes' timing: "about every second and a quarter".
 7. Beat 06's token contacts half dimmed on the phone: left; polish, the card reads whole.
+
+## Round 13 (fresh reviewer, cold gate): 8.5, the fade passes
+
+Round 12's fixes held, but the lower lobs brought two attacks back through bystanders. What was done:
+1. Plant's darts flew through fire to reach water: plant's darts go to rock, lobbed over fire's head.
+2. Water's globe passed through storm's head to reach plant: water's globe goes to ice, over storm.
+3. Ice's shards grazed fire's head: the shards rise higher.
+4. The figure fade: a faint line showed at the top of beat 03 on a laptop (the backdrop's edge where the mask had not reached zero): the fall-off is steeper (exponent 3).
+5. Comment timing aligned; ice and water both blue: left (opposite sides).

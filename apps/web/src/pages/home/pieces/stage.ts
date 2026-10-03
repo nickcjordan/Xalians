@@ -289,7 +289,7 @@ function ovalMask(w: number, h: number, hold: number) {
 			const r = Math.pow(Math.pow(Math.abs(dx), ROUND) + ay, 1 / ROUND);
 			const f = r <= inner ? 0 : r >= 1 ? 1 : (r - inner) / (1 - inner);
 			// eased: most of the fall-off happens early, and the last stretch is a long faint tail
-			const a = Math.pow(1 - f, 2.2);
+			const a = Math.pow(1 - f, 3);
 			mi.data[(y * w + x) * 4 + 3] = Math.round(a * 255);
 		}
 	}

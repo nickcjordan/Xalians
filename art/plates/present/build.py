@@ -66,8 +66,8 @@ gold over the arena; the rest is blue night lit warm from below by the city.
   a smaller head on the side it faces, a rim and a pool of light in its element's color, a soft light on
   its back): storm, ice and plant at left; fire, water and rock at right. They bob as they wait, lunge as
   they attack and recoil, flashing white, when hit.
-- the attack moves, one about every 1.3 s: storm's bolt at fire, fire's fireball at ice, plant's volley of
-  darts at water, water's globe of water at plant, ice's shards at rock, rock's thrown stone at storm; each lands with
+- the attack moves, one about every 1.25 s: storm's bolt at fire, fire's fireball at ice, plant's volley of
+  darts at rock, water's globe of water at ice, ice's shards at rock, rock's thrown stone at storm; each lands with
   a glow of its element and a spray of sparks.
 - the big exchange: fire's great fireball and storm's great bolt meet in the middle: a white-hot flash with
   both colors, a starburst, the floor lit, a ring of dust, a puff of dust, sparks.
@@ -814,8 +814,8 @@ for k_, c_ in SQUAD.items():
 
 # Each attack: (attacker, target, kind, u at launch, u at hit). The big exchange (fire's fireball against storm's bolt meeting
 # in the middle) is handled apart, at u .80.
-ATTACKS = [('storm', 'fire', 'bolt', .03, .05), ('fire', 'ice', 'ball', .16, .23), ('plant', 'water', 'darts', .3, .36),
-           ('water', 'plant', 'glob', .43, .5), ('ice', 'rock', 'shards', .56, .62), ('rock', 'storm', 'stone', .66, .73)]
+ATTACKS = [('storm', 'fire', 'bolt', .03, .05), ('fire', 'ice', 'ball', .16, .23), ('plant', 'rock', 'darts', .3, .36),
+           ('water', 'ice', 'glob', .43, .5), ('ice', 'rock', 'shards', .56, .62), ('rock', 'storm', 'stone', .66, .73)]
 LOB = 160  # the control height of a lob from or over the back row (the arc's top is half this above the line)
 BIG = (.74, .80)  # fire and storm wind up, then their attacks meet in the middle
 
@@ -950,7 +950,7 @@ for (a, t_, kind, ul, uh) in ATTACKS:
     elif kind == 'shards':
         for j in range(3):
             d = .007 * j
-            fight.append(tag + missile((p0[0], p0[1] + 5 * j - 5), (p1[0], p1[1] + 6 * j - 6), ul + d, uh + d, '<ellipse cx="%s" rx="22" ry="3" fill="#d8f2ff" opacity=".45"/><polygon points="-18,0 0,-8 18,0 0,8" fill="#f2fbff"/><ellipse rx="26" ry="11" fill="url(#lamp-ice)"/>' % f(-SQUAD[a]['side'] * 18), arc=LOB - 10 + 8 * j))
+            fight.append(tag + missile((p0[0], p0[1] + 5 * j - 5), (p1[0], p1[1] + 6 * j - 6), ul + d, uh + d, '<ellipse cx="%s" rx="22" ry="3" fill="#d8f2ff" opacity=".45"/><polygon points="-18,0 0,-8 18,0 0,8" fill="#f2fbff"/><ellipse rx="26" ry="11" fill="url(#lamp-ice)"/>' % f(-SQUAD[a]['side'] * 18), arc=LOB + 30 + 8 * j))
     elif kind == 'stone':
         fight.append(tag + missile(p0, p1, ul, uh, '<ellipse rx="34" ry="18" fill="url(#lamp-rock)" opacity=".5"/><g>%s<polygon points="-21,-6 -14,-19 -2,-23 13,-18 22,-6 19,9 7,20 -9,18 -20,9" fill="#4a3e34"/><path d="M-12 -12 Q-4 -18 6 -15" stroke="#e0d0b0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="6" cy="6" r="3" fill="#5a4c3e"/></g>' % rot('0;0;400;400', FP, PH, ku(ul, uh)), arc=LOB))
     elif kind == 'glob':
