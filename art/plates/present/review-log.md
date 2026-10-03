@@ -107,3 +107,7 @@ Round 7's fixes confirmed. Gate not passed: the lightning power read as a glowin
 2. The fire's wisps are thin teardrops from the tallest tongue's tip, at half strength, gone before they rise far.
 3. The thread's pulse sets off after clash two's roar and reaches the card about t 5.9 s.
 4. The jet's first 0.1 s and ships fading on their decks: invisible at site size, left.
+
+## Round 9 (fresh reviewer, cold gate): 9, "Nothing worth a round"
+
+Gate passed: checklist clean (all 22 items), audit with no failing piece, score 9. Round 8's fixes confirmed: the arcs stay on the column, the bolt leaves from its tip, the wisps are teardrops, nothing reads as a figure at site size. Left as the reviewer found them, all invisible at site size: in clash two the jet leaves about 90 ms before the bolt it answers; the flash comes about 0.12 s after contact; the jet's first frame is a small detached chip. The beat-07 page copy still waits on Nick's decisions on the words.
