@@ -111,3 +111,63 @@ Round 7's fixes confirmed. Gate not passed: the lightning power read as a glowin
 ## Round 9 (fresh reviewer, cold gate): 9, "Nothing worth a round"
 
 Gate passed: checklist clean (all 22 items), audit with no failing piece, score 9. Round 8's fixes confirmed: the arcs stay on the column, the bolt leaves from its tip, the wisps are teardrops, nothing reads as a figure at site size. Left as the reviewer found them, all invisible at site size: in clash two the jet leaves about 90 ms before the bolt it answers; the flash comes about 0.12 s after contact; the jet's first frame is a small detached chip. The beat-07 page copy still waits on Nick's decisions on the words.
+
+## Nick, 2026-10-03: the figure fade and the fight
+
+Nick reviewed the live plate: "a good start", but the two element powers were not what he wanted. "Have two sides where there's a few abstract blobs on each side that represent a creature... just kind of show a grouping of creatures doing little attack moves like you have here with the fireball and lightning." He also asked for the story's figure beats to fade in a rounded rectangle instead of the tight oval. Built: two squads of three abstract creatures (storm, plant, ice against fire, water, rock) trading six small attacks and one big exchange on a 9.6 s clock; the figure mask is a superellipse filling most of the figure's place. Owner checklist item 22 now allows abstract blobs and forbids creature art.
+
+## Round 10 (fresh reviewer): 6, the fade passes
+
+The creatures read as pebbles, bowls and helmets at site size (a dark underside made each a bowl, the rim stroke and eye made a letter on two). What was done:
+1. Each creature is an upright bean of a body on two stubby legs, a round head set apart on the side it faces with one bright eye, the rim light on its back only, its body tinted strongly in its element's color.
+2. Creatures about 1.4 times larger and spread wider, each clear of its neighbors; rock a sandy ochre and water a deep blue so each side's colors separate.
+3. Darts, shards and stone about 2.5 times larger with fading trails; the stone a filled, lit chunk.
+4. The storm's bolt passed through the fire creature: it strikes water now, jagged.
+5. The water jet read as a searchlight: an even stream with a broken white core and a splash at its head.
+6. The hit flash read as a glass dome: the body takes the attacker's color for a moment and squashes.
+7. The still frame showed half a bolt: it sits where the whole great bolt is drawn; the great fireball is larger with a tail.
+8. Lunges 24 units and recoils 18 (they were invisible); every hit burst carries a comment.
+9. The fade: the token on beat 06 dissolved at the lower left; 06's ground hold is 0.82.
+
+## Round 11 (same reviewer): 7.5, the fade passes
+
+All round 10 fixes confirmed. Each squad still read as one clump at site size, and back-row attacks passed through front-row creatures. What was done:
+1. Squads in two staggered rows toward the middle: storm and fire in front facing each other, ice and rock behind on the outside, plant and water lower in the middle row, every creature clear of its neighbors.
+2. Clear lines: the front pair strike each other directly (storm's bolt at fire, the great exchange); everything else is lobbed high over the front row (fire's fireball at ice, plant's darts at water, water's globe at plant, ice's shards at rock, rock's stone at storm).
+3. The stone is a lumpy gray rock that tumbles.
+4. Water's beam read as a laser: it lobs a globe of water that splashes.
+5. Ice is a clear icy blue.
+6. Beat 06's ground hold eased to 0.79, still keeping the token whole.
+
+## Round 12 (fresh reviewer, cold gate): 8, the fade passes
+
+Nick's ask is met in substance; three things were still visible at site size. What was done:
+1. Lobs flew through the king's box: lobs rise half as high, staying well under it.
+2. Rock looked like a second storm and faded into the tiers: rock is a dark umber.
+3. The roar was drawn over the creatures: it is inserted at the front of the fight layer, under them.
+4. The stone was hard to see: a darker body with the pale top edge kept.
+5. Middle-row throws started inside the front creatures: plant and water throw up from above their own heads.
+6. The notes' timing: "about every second and a quarter".
+7. Beat 06's token contacts half dimmed on the phone: left; polish, the card reads whole.
+
+## Round 13 (fresh reviewer, cold gate): 8.5, the fade passes
+
+Round 12's fixes held, but the lower lobs brought two attacks back through bystanders. What was done:
+1. Plant's darts flew through fire to reach water: plant's darts go to rock, lobbed over fire's head.
+2. Water's globe passed through storm's head to reach plant: water's globe goes to ice, over storm.
+3. Ice's shards grazed fire's head: the shards rise higher.
+4. The figure fade: a faint line showed at the top of beat 03 on a laptop (the backdrop's edge where the mask had not reached zero): the fall-off is steeper (exponent 3).
+5. Comment timing aligned; ice and water both blue: left (opposite sides).
+
+## Round 14 (fresh reviewer, cold gate): 9
+
+Every lob was measured against every bystander and the king's box: all clear. The gate failed only on stale text: the plate's built-in screen-reader description still said "two powers clash". What was done:
+1. The description now names the two squads of creatures and their leaders' attacks meeting; the stale comment in home.tsx too.
+2. Water throws from above its own head, not rock's.
+3. A faint streak rises from each middle-row thrower's head to where its lob begins, so the darts and the globe no longer appear from nowhere.
+4. The stone aims higher on storm.
+5. The great fireball over fire's head for 0.2 s: left; it reads as fire charging up.
+
+## Round 15 (fresh reviewer, cold gate): 9, "Nothing worth a round"
+
+Gate passed: clean checklist (22 items), no failing piece, score 9; the figure fade passes. Every lob clears its bystanders and the king's box. Left as found, all invisible at site size: the throw streaks lean away from their targets before each lob turns back (reads as a wind-up); the globe passes about 12 units over fire's head; water's head overlaps fire's lower body in the staggered rows; the great fireball rests over fire's head for 0.2 s; the great bolt lingers about 0.5 s as it fades.

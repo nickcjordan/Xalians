@@ -252,15 +252,18 @@ export function loopFade(t: number, period: number, inS = 0.6, outS = 0.8) {
 }
 
 /**
- * Fade what is drawn to the oval every figure is suspended in (docs/design/home-story-figures.md, ruling 11):
- * nothing shows a box, and the edge fades out to transparent, into whatever the page is (Nick, 2026-09-30: no
- * gray or black rim, it fades out). `hold` is how far out, as a share of the radius, the lower half stays solid
- * before it fades; a figure standing on ground holds its lower half longer, so the ground recedes instead of
- * ending under the thing standing on it. The upper half holds to 0.5, the hold eases between the two so the oval
- * has no seam, and the fall-off is eased so dark edges thin out gradually instead of leaving a band. The mask is
- * built once per canvas size and hold.
+ * Fade what is drawn to the rounded rectangle every figure is suspended in (docs/design/home-story-figures.md, ruling 11):
+ * nothing shows a box's hard edge, and the edge fades out to transparent, into whatever the page is (Nick, 2026-09-30: no
+ * gray or black rim, it fades out). Nick, 2026-10-03: the oval was too tight around the Generator; the shape is now a
+ * rounded rectangle (a superellipse) that fills more of the figure's place, so more of the scene shows, and it still fades.
+ * `hold` is how far out the lower half stays solid before it fades; a figure standing on ground holds its lower half longer,
+ * so the ground recedes instead of ending under the thing standing on it. The upper half holds to UPPER, the hold eases
+ * between the two so the shape has no seam, and the fall-off is eased so dark edges thin out gradually instead of leaving a
+ * band. The mask is built once per canvas size and hold.
  */
 const MASKS = new Map<string, HTMLCanvasElement>();
+const ROUND = 4.2; // the superellipse's exponent: 2 is the old oval, higher is squarer
+const UPPER = 0.66; // how far out the upper half stays solid, as a share of the half size
 function ovalMask(w: number, h: number, hold: number) {
 	const key = `${w}x${h}@${hold}`;
 	let mask = MASKS.get(key);
@@ -271,19 +274,22 @@ function ovalMask(w: number, h: number, hold: number) {
 	mask.height = h;
 	const mc = mask.getContext('2d')!;
 	const mi = mc.createImageData(w, h);
-	const rx = 0.48 * w;
-	const ry = (0.46 * H * h) / H;
+	const rx = 0.5 * w;
+	const ry = 0.5 * h;
+	// the old oval held its lower half to `hold` (0.5 to 0.72); the same holds map onto the larger shape
+	const lower = Math.min(0.9, UPPER + (hold - 0.5) * 0.9);
 	for (let y = 0; y < h; y++) {
 		const dy = (y + 0.5 - h / 2) / ry;
-		// 0.5 above the middle, easing to `hold` by halfway down
+		// UPPER above the middle, easing to `lower` by halfway down
 		const k = dy <= 0 ? 0 : Math.min(1, dy / 0.5);
-		const inner = 0.5 + (hold - 0.5) * (k * k * (3 - 2 * k));
+		const inner = UPPER + (lower - UPPER) * (k * k * (3 - 2 * k));
+		const ay = Math.pow(Math.abs(dy), ROUND);
 		for (let x = 0; x < w; x++) {
 			const dx = (x + 0.5 - w / 2) / rx;
-			const r = Math.sqrt(dx * dx + dy * dy);
+			const r = Math.pow(Math.pow(Math.abs(dx), ROUND) + ay, 1 / ROUND);
 			const f = r <= inner ? 0 : r >= 1 ? 1 : (r - inner) / (1 - inner);
 			// eased: most of the fall-off happens early, and the last stretch is a long faint tail
-			const a = Math.pow(1 - f, 2.2);
+			const a = Math.pow(1 - f, 3);
 			mi.data[(y * w + x) * 4 + 3] = Math.round(a * 255);
 		}
 	}
