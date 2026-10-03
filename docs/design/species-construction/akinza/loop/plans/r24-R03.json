@@ -1,0 +1,521 @@
+{
+ "order": {
+  "round": 24,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2631",
+ "start": {
+  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
+  "attachAfter": "H35"
+ },
+ "variants": [
+  {
+   "name": "crown lowered, tool otherwise as built",
+   "why": "R04 issue 3 and R03.3 (V tilt): the C crown tuft spikes rise above the front fan; same lowered-tip table that scored best in round 23; every other variant below carries this same H34 edit, so the H34 and H35 builds are shared and cost one build; control for the H36 tool itself",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    }
+   ]
+  },
+  {
+   "name": "primaries lead, secondaries tuck",
+   "why": "R03.4, R03.7 (flat leaf plane): over layer 1.15 wide with a .03 stagger and under layer at .80 length so the visible edge is the nine big points and the secondaries only fill between; this was the best fit of round 23 (fit -0.72 against -1.08)",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:layers.1.widthScale",
+     "value": 1.15
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:layers.1.shingle",
+     "value": 0.03
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:layers.0.lengthScale",
+     "value": 0.8
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:layers.0.widthScale",
+     "value": 0.9
+    }
+   ]
+  },
+  {
+   "name": "soft wide unions, rounder section",
+   "why": "critic issue 2 and R03.7 (crinkled seams on the inner cup walls and lower tuft locks): the seams are voxel junctions, so widen the unions (root blend .007, band .05, seam blur 5, tuft and cup fillets up, section exponent 2.1) rather than the pale material",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:union.rootBlend",
+     "value": 0.007
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:union.rootBand",
+     "value": 0.05
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:union.seamBlur",
+     "value": 5
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:tuft.rootBlend",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:tuft.floorBlend",
+     "value": 0.004
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:cup.fillet",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:section.p",
+     "value": 2.1
+    }
+   ]
+  },
+  {
+   "name": "right wing up-flare",
+   "why": "R03.3 and critic issue 3: the character-right wing end is a rounded lobe with its top .01 to .02 over the crown; raise RP3 and RP4 tips about .006 to .008, push the RP5 tip out .006 and up .011 with a sharper taper, keep span inside R03.1; H36 only",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "RP3": {
+       "tip": [
+        -0.196,
+        0.021,
+        0.02
+       ]
+      },
+      "RP4": {
+       "tip": [
+        -0.236,
+        0.021,
+        0.024
+       ],
+       "widthMid": 0.048
+      },
+      "RP5": {
+       "tip": [
+        -0.279,
+        0.046,
+        0.018
+       ],
+       "widthMid": 0.047,
+       "taper": 1.7
+      },
+      "RP6": {
+       "tip": [
+        -0.272,
+        0.074,
+        0.022
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "wings swept back in plan",
+   "why": "R04.5 and R04 issue 1 (profile): the outer wing stands as a straight vertical band that fills the cavity window; sweep both wings' outer tips back to df .032 to .044 (spec depth plan) so the profile reads as a curved shell; front outline unchanged because only df moves. Round 23 built this variant twice and Blender quit both times, so it is untested",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "LP4": {
+       "tip": [
+        0.244,
+        0.009,
+        0.032
+       ]
+      },
+      "LP5": {
+       "tip": [
+        0.276,
+        0.033,
+        0.04
+       ]
+      },
+      "LS1": {
+       "tip": [
+        0.273,
+        0.051,
+        0.04
+       ]
+      },
+      "LP6": {
+       "tip": [
+        0.26,
+        0.077,
+        0.044
+       ]
+      },
+      "LS2": {
+       "tip": [
+        0.249,
+        0.097,
+        0.044
+       ]
+      },
+      "LP7": {
+       "tip": [
+        0.236,
+        0.119,
+        0.042
+       ]
+      },
+      "RP4": {
+       "tip": [
+        -0.232,
+        0.029,
+        0.032
+       ]
+      },
+      "RP5": {
+       "tip": [
+        -0.273,
+        0.057,
+        0.04
+       ]
+      },
+      "RP6": {
+       "tip": [
+        -0.268,
+        0.08,
+        0.044
+       ]
+      },
+      "RS2": {
+       "tip": [
+        -0.258,
+        0.096,
+        0.044
+       ]
+      },
+      "RP7": {
+       "tip": [
+        -0.246,
+        0.115,
+        0.042
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "profile pair: deep cup and swept wings",
+   "why": "R04.5 and audit rank 2 (ear in profile): cup opens 48 degrees outward, floor .044 deep, tuft stands .028 off the floor so pale blades show from the side, plus the swept wings; tests whether the two profile ideas add or fight",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:cup.yawDeg",
+     "value": 48.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:cup.floorMax",
+     "value": 0.044
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:tuft.standoff",
+     "value": 0.028
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "LP4": {
+       "tip": [
+        0.244,
+        0.009,
+        0.032
+       ]
+      },
+      "LP5": {
+       "tip": [
+        0.276,
+        0.033,
+        0.04
+       ]
+      },
+      "LS1": {
+       "tip": [
+        0.273,
+        0.051,
+        0.04
+       ]
+      },
+      "LP6": {
+       "tip": [
+        0.26,
+        0.077,
+        0.044
+       ]
+      },
+      "LS2": {
+       "tip": [
+        0.249,
+        0.097,
+        0.044
+       ]
+      },
+      "LP7": {
+       "tip": [
+        0.236,
+        0.119,
+        0.042
+       ]
+      },
+      "RP4": {
+       "tip": [
+        -0.232,
+        0.029,
+        0.032
+       ]
+      },
+      "RP5": {
+       "tip": [
+        -0.273,
+        0.057,
+        0.04
+       ]
+      },
+      "RP6": {
+       "tip": [
+        -0.268,
+        0.08,
+        0.044
+       ]
+      },
+      "RS2": {
+       "tip": [
+        -0.258,
+        0.096,
+        0.044
+       ]
+      },
+      "RP7": {
+       "tip": [
+        -0.246,
+        0.115,
+        0.042
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "combined front: uneven, up-flare, soft, deep cup",
+   "why": "the four independent front ideas that do not fight (uneven lengths, right wing up-flare, soft unions, deeper cup); round 23's combined variant lost because its rear dome edits hurt fit, not its front edits, so this one leaves the dome alone",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:union.rootBlend",
+     "value": 0.007
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:union.rootBand",
+     "value": 0.05
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:union.seamBlur",
+     "value": 5
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:tuft.rootBlend",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:tuft.floorBlend",
+     "value": 0.004
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:cup.fillet",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:section.p",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:cup.yawDeg",
+     "value": 48.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:cup.floorMax",
+     "value": 0.044
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:tuft.standoff",
+     "value": 0.028
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "?P1": {
+       "lengthScale": 0.8
+      },
+      "?P2": {
+       "lengthScale": 1.05
+      },
+      "?P3": {
+       "lengthScale": 0.86
+      },
+      "?P4": {
+       "lengthScale": 1.04
+      },
+      "?P6": {
+       "lengthScale": 0.9
+      },
+      "?P7": {
+       "lengthScale": 1.05
+      },
+      "?P8": {
+       "lengthScale": 0.88
+      },
+      "?P9": {
+       "lengthScale": 1.0
+      },
+      "RP4": {
+       "tip": [
+        -0.236,
+        0.021,
+        0.024
+       ],
+       "widthMid": 0.048
+      },
+      "RP5": {
+       "tip": [
+        -0.279,
+        0.046,
+        0.018
+       ],
+       "widthMid": 0.047,
+       "taper": 1.7
+      },
+      "RP6": {
+       "tip": [
+        -0.272,
+        0.074,
+        0.022
+       ]
+      }
+     }
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R03",
+ "top": 3
+}

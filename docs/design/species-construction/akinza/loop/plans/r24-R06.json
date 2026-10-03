@@ -1,0 +1,279 @@
+{
+ "order": {
+  "round": 24,
+  "region": "R06",
+  "with": [
+   "R07"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2631",
+ "start": null,
+ "variants": [
+  {
+   "name": "loft reaches the flanks, deeper hollow",
+   "why": "Critic issue 1: the hollow exists only at the midline because the arm mask (zero within .05 world, full at .11 of each arm polyline) leaves the native flank and paraspinal mass at the waist where the arms hang beside the trunk. Mask tightened to radius .035, zero margin .004, full margin .04 so the waist section carries out to the flanks; the deeper hollow table of variant 1 on top so the carried depth is visible. Watch the arm root crease (R07.6, seams) and the dent the mask guards.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.arm",
+     "value": {
+      "radius": 0.035,
+      "zeroMargin": 0.004,
+      "fullMargin": 0.04
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.004
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.0085
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0195
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.0105
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.002
+    }
+   ]
+  },
+  {
+   "name": "hip and rump widened to the posed sheet",
+   "why": "Critic issue 3 and R06.10: the posed front trunk band IoU is .771 (missing .169, extra .077), and the orange strip in posed-fit.png runs along the whole outer hip from .50 to .58 about .012 to .016 of figure height. Flank half widths +.003 at .48 rising to +.016 from .56 down (waist untouched, so R06.1 holds), bottom ramp moved to [.54,.62] so the loft still holds at .56 to .58, reach [.05,.12] so the widening is not rejected as non-trunk. Risk is R06.5 restrained rear and the R08 thigh root seam.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.084
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.12.halfWidth",
+     "value": 0.1025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.13.halfWidth",
+     "value": 0.1184
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.14.halfWidth",
+     "value": 0.1327
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.15.halfWidth",
+     "value": 0.1455
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.16.halfWidth",
+     "value": 0.1547
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.17.halfWidth",
+     "value": 0.1606
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.18.halfWidth",
+     "value": 0.1652
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.y.bottom",
+     "value": [
+      0.54,
+      0.62
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.reach",
+     "value": [
+      0.05,
+      0.12
+     ]
+    }
+   ]
+  },
+  {
+   "name": "combined: flanks, hollow, taper, hip",
+   "why": "The best guess at the finished trunk: tight arm mask, deeper hollow, long rib cage taper and the widened hip, all B-20T parameters. Interactions are the point; judged on posed shaded-left, posed shaded-front and posed-fit.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.arm",
+     "value": {
+      "radius": 0.035,
+      "zeroMargin": 0.004,
+      "fullMargin": 0.04
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.004
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.0085
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0195
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.0105
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.1035
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0975
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0845
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.084
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.12.halfWidth",
+     "value": 0.1025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.13.halfWidth",
+     "value": 0.1184
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.14.halfWidth",
+     "value": 0.1327
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.15.halfWidth",
+     "value": 0.1455
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.16.halfWidth",
+     "value": 0.1547
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.17.halfWidth",
+     "value": 0.1606
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.18.halfWidth",
+     "value": 0.1652
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.y.bottom",
+     "value": [
+      0.54,
+      0.62
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.reach",
+     "value": [
+      0.05,
+      0.12
+     ]
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "step": "B-20T",
+   "grid": {
+    "spec:weights.arm": [
+     {
+      "radius": 0.03,
+      "zeroMargin": 0.0,
+      "fullMargin": 0.03
+     }
+    ]
+   },
+   "why": "The arm mask is the parameter I am least sure of: how close to the arms the loft can reach before the arm root dents or creases. This is the far end (radius .03, no zero margin, full at .06 world against .04, .01, .07 now) on the unchanged table; variant 1 holds the middle setting (.035, .004, .04), so the pair brackets it and the waist depth freed at the flanks reads apart from the table changes."
+  }
+ ],
+ "region": "R06",
+ "top": 3
+}

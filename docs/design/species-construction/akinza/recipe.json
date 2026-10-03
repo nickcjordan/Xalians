@@ -895,12 +895,12 @@
       "args": [
         "--body", "{base}/shape.glb",
         "--fairing", "{base}/fairing.json",
-        "--spec", "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-7e59ead38dc3.json",
+        "--spec", "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json",
         "--out", "{out}"
       ],
       "note": "R06 trunk sections tool (toolsmith starter): lofted superellipse sections morphed into the native trunk, between the R06 reshape B-20 and the hind paw rebuild B-21",
       "pins": {
-        "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/sweep_specs/B-20T-7e59ead38dc3.json": "29e9c489339f8a388109f49297932edf4f8c61e0816fb3196a593dbf0d722299",
+        "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json": "b6531fe17f771fc54e9c8931a87b4412dff1698a853cde05327123c20c0a0603",
         "art/species-construction/author_trunk_sections_field_r20.py": "a54e29a5e3f3f8f22219924abfc1e8738f8adf2a50f92f378d7c86b95cd36622",
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
@@ -1021,7 +1021,7 @@
   },
   "derivedFrom": {
     "recipe": "docs/design/species-construction/akinza/recipe.json",
-    "sha256": "f966759e00f09e6fd2734db5a55f07c95317154ec86d456cbf98d823f78e2198",
+    "sha256": "cd541c6e01d4a949b837d6c5ab900c6c2112236a815a9fcd5577e7ab6a4b5935",
     "steps": {
       "H24": {
         "script": "feef615941aa2a663965ab1db366f0cf85e9669291bacb2aa28d0c523ffa375a",
@@ -1196,7 +1196,7 @@
       },
       "B-20T": {
         "script": "1987fb74842aee9548b72cc9c17acf4715924396628e3bfddbbf8114b4ee3f50",
-        "args": "a399ecabf2fc38ce7c381f2f45c5ff2f91da0a12847a04be9d030372d494bb14",
+        "args": "e400f60d12d471b8716fe76c9ac80f905eff8e9ae4fdb832b8648c95475c2535",
         "inputs": "f4a22d1d3bce9a4f32ce32af6a1296fe0e36964650dcd09fb0a4334e03a8bb42",
         "regions": "aaf52846a8a819b58c0cfddbfae91f59c8e226f1e28a42489e2da3b2ad57624c",
         "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
@@ -1223,7 +1223,7 @@
       },
       "B-23": {
         "script": "2d684fb5010fbe2bd550db8b632672f87adf2746cc335b05104b5d381473ac25",
-        "args": "6458ec107c9c6e9197e36e3c248664446859f5be89ba672873108f6849db98fd",
+        "args": "51f6a98eb45822c7e22a605cba5caf7a1aa933cc7fd0a02105058b2e7586f70e",
         "inputs": "ab58835c1f226dcb7cfa85dae32a72655925b7bba827a43544ff1ff03cc4bad6",
         "regions": "34febf2c62117e25eba7549b56d3a600524fc9da8358160309d15374da3091e9",
         "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
