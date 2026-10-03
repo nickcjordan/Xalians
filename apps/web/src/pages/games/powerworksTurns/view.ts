@@ -163,6 +163,8 @@ export type Cell = {
   n: number;
   /** Hinder-only cells: the enemy's committed hit before the hinder. */
   before?: number;
+  /** Mend cells: how much of the key's heal would spill past full health (the cell's `n` is capped, so the card's number and the gain differ by this). */
+  over?: number;
   /** Attack cells: the element step against this target. 1 otherwise. */
   step: number;
   /** Attack cells: the chart gives 0, so the attack does nothing here. */
@@ -596,7 +598,8 @@ function allyCells(u: Fighter, m: PMove, targets: Fighter[]): Cell[] {
       if (p.kind === "heal") n = Math.min(p.n, t.max - t.hp);
       else n = p.n;
     }
-    return { target: t.id, n, step: 1, immune: false, finishes: false, absorbed: 0 };
+    const over = p?.kind === "heal" && p.n > n ? p.n - n : 0;
+    return { target: t.id, n, ...(over ? { over } : {}), step: 1, immune: false, finishes: false, absorbed: 0 };
   });
 }
 
@@ -1400,7 +1403,7 @@ export function actsOnPress(k: KeyView): boolean {
 /** How a previewed key would change one plate's own numbers (the enemy's next-act row is `NextAct`, read through previewThreats). */
 export type PlatePreview = {
   /** The health row: `to` below `from` is health lost (the segment between is lit), above is gained; a skull when it reaches 0. */
-  health?: { from: number; to: number; skull?: true };
+  health?: { from: number; to: number; skull?: true; /** A mend: the part of the key's heal that would spill past full health. */ over?: number };
   /** The shield chip in the marks row: a guard on an ally, or what an enemy's shield would absorb first. */
   shield?: { from: number; to: number };
   /** The boost chip in the marks row. */
@@ -1424,14 +1427,17 @@ export function platePreviewOf(p: Preview | undefined, u: { hp: number; max: num
       else if (c.kind === "shield") out.shield = { from: u.shield, to: (out.shield?.to ?? u.shield) + c.n };
       else if (c.kind === "boost") out.boost = { from: u.boost, to: (out.boost?.to ?? u.boost) + c.n };
     }
-    if (gain > 0 && u.hp < u.max) out.health = { from: u.hp, to: Math.min(u.max, u.hp + gain) };
+    if (gain > 0 && u.hp < u.max) {
+      const to = Math.min(u.max, u.hp + gain);
+      out.health = { from: u.hp, to, ...(gain > to - u.hp ? { over: gain - (to - u.hp) } : {}) };
+    }
   } else if (p.kind === "hit") {
     if (p.immune) return { matchup: true };
     if (p.n > 0) out.health = { from: u.hp, to: Math.max(0, u.hp - p.n), ...(p.finishes ? { skull: true as const } : {}) };
     if (p.absorbed > 0) out.shield = { from: u.shield, to: Math.max(0, u.shield - p.absorbed) };
     out.matchup = true;
   } else if (p.kind === "heal") {
-    if (p.n > 0) out.health = { from: u.hp, to: Math.min(u.max, u.hp + p.n) };
+    if (p.n > 0) out.health = { from: u.hp, to: Math.min(u.max, u.hp + p.n), ...(p.over ? { over: p.over } : {}) };
   } else if (p.kind === "shield") out.shield = { from: u.shield, to: u.shield + p.n };
   else if (p.kind === "boost") out.boost = { from: u.boost, to: u.boost + p.n };
   return Object.keys(out).length ? out : null;

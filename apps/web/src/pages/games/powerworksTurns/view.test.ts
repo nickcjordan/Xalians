@@ -1752,7 +1752,10 @@ describe("one number, one meaning, one place (docs/design/powerworks-one-number-
     o.max = 60;
     const mend = keyOf(s, 3);
     const unit = mend.v.squad.find((u) => u.id === o.id)!;
-    expect(platePreviewOf(mend.previews[o.id], unit)).toEqual({ health: { from: 40, to: 60 } });
+    // The key heals 50 but only 20 fits: the spill is carried so the plate can show it.
+    expect(platePreviewOf(mend.previews[o.id], unit)).toEqual({ health: { from: 40, to: 60, over: 30 } });
+    o.hp = 40;
+    expect(platePreviewOf({ ...mend.previews[o.id], over: undefined, n: 9 }, unit)!.health!.over).toBeUndefined();
     const guard = keyOf(s, 2);
     expect(platePreviewOf(guard.previews[o.id], unit)).toEqual({ shield: { from: 0, to: 8 } });
     expect(platePreviewOf(keyOf(s, 2).previews[o.id], { ...unit, shield: 3 })).toEqual({ shield: { from: 3, to: 11 } });

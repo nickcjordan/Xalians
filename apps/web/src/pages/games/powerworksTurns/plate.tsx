@@ -1,5 +1,5 @@
 import React from "react";
-import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap, TrendingDown } from "lucide-react";
+import { Shield, Swords, Ban, Skull, Zap, TrendingDown } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import { DeltaChip, SpotlightMarks } from "./banner";
 import { SupportIcon } from "./support";
@@ -118,7 +118,7 @@ export function HealthBar({ hp, max, delta = 0, plain = false, preview }: { hp: 
   return (
     <div className={`pwt-health${preview ? " previewing" : ""}`} data-health-preview={preview ? (preview.to > preview.from ? "gain" : "lost") : undefined}>
       <div
-        className="pwt-health-track"
+        className={`pwt-health-track${preview?.over ? " capped" : ""}`}
         role="meter"
         aria-valuemin={0}
         aria-valuemax={max}
@@ -130,6 +130,9 @@ export function HealthBar({ hp, max, delta = 0, plain = false, preview }: { hp: 
           style={{ width: `${pct}%` }}
         />
         {seg && <span className={`pwt-health-seg ${seg.gain ? "gain" : "lost"}`} data-seg="" style={{ left: `${seg.left}%`, width: `${seg.width}%` }} />}
+        {/* A mend that would spill past full: the bar's end cap lights, and the part that spills is a short dim sliver beyond the end. */}
+        {preview?.over ? <span className="pwt-health-cap" data-cap="" /> : null}
+        {preview?.over ? <span className="pwt-health-over" data-over={preview.over} /> : null}
       </div>
       {preview ? (
         <span className={`pwt-health-num changing${preview.skull ? " skull" : ""}`} data-from={preview.from} data-to={preview.to}>
@@ -295,7 +298,6 @@ export function MatchupMark({ step, who, lit = false, element }: { step: number 
       data-match={strong ? "strong" : "weak"}
     >
       {element && <i className={`pwt-match-dot el-${element}`} aria-hidden="true" />}
-      {strong ? <ChevronUp /> : <ChevronDown />}
       <span className="pwt-match-word">{strong ? "strong" : "weak"}</span>
       <span className="pwt-match-x">{times}</span>
     </span>

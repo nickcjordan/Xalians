@@ -94,9 +94,9 @@
 .pwt-threat.lit .pwt-threat-before { color: var(--color-s1); }
 .pwt-threat.dim { opacity: 0.4; }
 /* A previewed move finishes the enemy: the whole tag is crossed out (a 2 px ink strike, letter box through number) and only its number dims. */
-.pwt-threat.cancelled::after { content: ""; position: absolute; left: -2px; right: -2px; top: 50%; margin-top: -1px; border-top: 2px solid var(--color-ink); z-index: 1; }
-.pwt-threat.cancelled .pwt-threat-n,
-.pwt-threat.cancelled .pwt-threat-what svg { opacity: 0.5; }
+.pwt-threat.cancelled::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; margin-top: -1px; border-top: 2px solid var(--color-ink); z-index: 1; }
+.pwt-threat.cancelled > .pwt-threat-letter,
+.pwt-threat.cancelled > .pwt-threat-what { opacity: 0.6; }
 /* A lethal tag is the loudest thing on the row: a 2 px raspberry edge, a solid skull and the number in raspberry (this is real danger). */
 .pwt-threat.lethal { border-width: 2px; }
 .pwt-threat.lethal .pwt-threat-n { color: var(--color-plague); }
@@ -153,9 +153,13 @@
   white-space: nowrap;
 }
 .pwt-match svg { width: 10px; height: 10px; flex: 0 0 auto; }
-.pwt-match.strong { color: var(--color-viable-ink); background: var(--color-viable); border-color: var(--color-viable); }
-.pwt-match.weak { color: var(--color-plague-ink); background: var(--color-plague); border-color: var(--color-plague); }
+/* Quiet at rest: a dark fill, the multiplier in ink, the good or bad tone only in a thin border. It fills in its tone while an attack preview is showing on the plate. */
+.pwt-match.strong { color: var(--color-ink); background: var(--color-s3); border-color: var(--color-viable); }
+.pwt-match.weak { color: var(--color-ink); background: var(--color-s3); border-color: var(--color-plague); }
 .pwt-match.immune { color: var(--color-ink-3); }
+.pwt-match.strong.lit { color: var(--color-viable-ink); background: var(--color-viable); }
+.pwt-match.weak.lit { color: var(--color-plague-ink); background: var(--color-plague); }
+.pwt-match.immune.lit { color: var(--color-ink); border-color: var(--color-ink); }
 .pwt-match:not(.immune) { padding: 0 3px; gap: 1px; letter-spacing: 0; }
 .pwt-match-x { font-family: var(--font-data); letter-spacing: 0; font-size: 10px; }
 /* The tab is the chevron and its multiplier (the word is on hover and in the Guide): a plate's width holds it beside the element tag. */
@@ -285,8 +289,11 @@
 .pwt-health-num.changing .pwt-before { text-decoration: line-through; }
 .pwt-health-arrow { font-weight: 400; color: var(--color-ink-3); }
 .pwt-health-after { font-size: 15px; font-weight: 800; line-height: 1; }
-.pwt-health-skull { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-caution); }
-.pwt-health-num.skull { color: var(--color-caution); }
+.pwt-health-skull { width: 12px; height: 12px; flex: 0 0 auto; color: var(--color-ink); }
+/* A capped mend: the track lets its sliver show past the end; the end cap is lit mint, the spill a short dim mint sliver beyond. */
+.pwt-health-track.capped { overflow: visible; }
+.pwt-health-cap { position: absolute; right: 0; top: 0; bottom: 0; width: 3px; background: var(--color-viable); }
+.pwt-health-over { position: absolute; left: 100%; top: 0; bottom: 0; width: 4px; margin-left: 1px; background: var(--color-viable); opacity: 0.4; }
 .pwt-health[data-health-preview="gain"] .pwt-health-num.changing { color: var(--color-viable); }
 
 /* --- an enemy's next act, one row under its health: the hit and its number, a pointer toward the squad --- */
@@ -334,13 +341,12 @@
 .pwt-chip.preview { border-color: var(--color-ink); background: var(--color-s3); color: var(--color-ink); }
 .pwt-chip .pwt-before { margin-right: 2px; text-decoration: line-through; }
 /* The matchup tab on a plate a previewed attack lands on: lit, so the key's number and the lost health read with the factor between them. */
-.pwt-match.lit { box-shadow: 0 0 0 2px var(--color-ink); }
 
 /* --- legend samples: a plaque's own rows, inert --- */
 .pwt-legend-plaque { display: flex; flex: 0 0 auto; width: 132px; margin-top: 0; }
 .pwt-legend-plaque .pwt-match { position: static; align-self: flex-start; }
 /* The acting companion's element dot opens the matchup tab: whose bonus or penalty it is. */
-.pwt-match-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--el); box-shadow: 0 0 0 2px var(--color-s1); flex: 0 0 auto; }
+.pwt-match-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--el); box-shadow: 0 0 0 1px var(--color-ink); flex: 0 0 auto; }
 .pwt-console.phone .pwt-match .pwt-match-dot { width: 8px; height: 8px; }
 /* A pointed target with a single-target move chosen: the other candidates' previewed changes step back. */
 .pwt-plate.preview-dim .pwt-health.previewing,

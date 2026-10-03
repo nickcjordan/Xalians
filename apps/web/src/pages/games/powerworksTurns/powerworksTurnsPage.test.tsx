@@ -1356,6 +1356,43 @@ describe("one number, one meaning, one place (docs/design/powerworks-one-number-
     expect(c.querySelectorAll(".pwt-plate.preview-dim").length).toBe(0);
   });
 
+  it("critic fixes: a capped mend lights the bar's end cap and draws the spill beyond it; an uncapped one does not", async () => {
+    const { victim } = arrange();
+    const { container } = mount();
+    const c = container as HTMLElement;
+    const plate = c.querySelector(`.pwt-row.squad [data-unit="${victim}"]`)!;
+    await hover(card(c, 4)); // mend 9 on 60 of 126: no cap
+    expect(plate.querySelector(".pwt-health-cap, .pwt-health-over")).toBeNull();
+    const saved = JSON.parse(localStorage.getItem(SAVE_KEY)!);
+    saved.state.team.find((u: { id: string }) => u.id === victim).hp = 121; // 5 missing, 9 heals: 4 spill
+    localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
+    cleanup();
+    const again = mount().container as HTMLElement;
+    const p2 = again.querySelector(`.pwt-row.squad [data-unit="${victim}"]`)!;
+    await hover(card(again, 4));
+    expect(p2.querySelector(".pwt-health-track.capped .pwt-health-cap")).toBeTruthy();
+    expect(p2.querySelector(".pwt-health-over")!.getAttribute("data-over")).toBe("4");
+    expect(text(p2.querySelector(".pwt-health-num"))).toBe("121→126");
+  });
+
+  it("critic fixes: the matchup tab is quiet (no lit class) at rest and for weaken, and lit only while an attack preview shows; no caret; the kill preview carries no amber", async () => {
+    arrange();
+    const { container } = mount();
+    const c = container as HTMLElement;
+    const tabs = () => Array.from(c.querySelectorAll(".pwt-row.enemies .pwt-match"));
+    expect(tabs().length).toBeGreaterThan(0);
+    expect(tabs().every((t) => !t.classList.contains("lit"))).toBe(true);
+    expect(c.querySelector(".pwt-match svg")).toBeNull();
+    await hover(card(c, 2));
+    expect(tabs().every((t) => !t.classList.contains("lit"))).toBe(true);
+    await act(async () => {
+      fireEvent.mouseLeave(card(c, 2));
+    });
+    await hover(card(c, 1));
+    expect(tabs().every((t) => t.classList.contains("lit"))).toBe(true);
+    expect(c.querySelector(".pwt-match .pwt-match-dot")).toBeTruthy();
+  });
+
   it("decision 7: no banner note, no tip, no preview badge or chevron, no 'its hit' caption, in any state", async () => {
     arrange();
     const { container } = mount();
