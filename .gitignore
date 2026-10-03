@@ -81,3 +81,7 @@ __pycache__/
 
 # Generated loop workflow arguments (loop_state.py args)
 docs/design/species-construction/*/loop/args.json
+
+# plan job bookkeeping (pid and log of a detached run-plan)
+docs/design/species-construction/akinza/loop/plans/*.job.json
+docs/design/species-construction/akinza/loop/plans/*.job.log

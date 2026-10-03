@@ -1,0 +1,848 @@
+{
+ "order": {
+  "round": 21,
+  "region": "R06",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+ "start": null,
+ "variants": [
+  {
+   "name": "rib cage deeper, R06.2 kept (promoted)",
+   "why": "Round 1's variant 2 never reached the readers: it ranked sixth and only the top three (two waist sweeps and the sheet waist, all the same trade) were read. Measured it is the only candidate with no loss: R06.13 .885 to .941 and R06.14 .836 to .924 newly pass, R06.2 .907, R06.11, R06.1 and R06.16 stay passing. Back swell +.0425 at .34 for the rib cage, front .0025 forward at .36 to .38 (R06.8 -.004, inside +-.01). Critic issue 1 (no chest mass in profile). B-20T only, about 1 minute.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0425
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.0365
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.011
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.0005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0075
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0985
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.103
+    }
+   ]
+  },
+  {
+   "name": "rib cage deeper with long front taper",
+   "why": "Critic issue 2 (front view still a pinched hourglass, square shoulders, quick hip flare). On top of the promoted rib cage, hold the flank near the armpit value to .38 and taper in one long curve: half width .38 .1010, .40 .0925, .42 .0815, .44 .0700, .46 .0720, .48 .0805 (the old table dropped to .0855, .0745, .069 over the same rows). Round 1's version of this raised the front fit .6396 to .6447 and kept R06.1 at 1.09; the waist is held at .0700 here so R06.1 stays near 1.08 against the 1.10 ceiling.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0425
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.0365
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.011
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.0005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0075
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0985
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.101
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0925
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0815
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.07
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.072
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.0805
+    }
+   ]
+  },
+  {
+   "name": "chest plane forward at .30 to .34",
+   "why": "Critic issue 1 asked for the chest forward by .015 to .02; R06.8 (chest front at .36 within .01 of the sheet, now -.004 with the promoted table) forbids moving .36 further than about .0055, but R06.8 does not read .30 to .34. So the plane is advanced there: front .30 -.071, .32 -.0885, .34 -.100 (at most .005 ahead of now, the spec's pigeon-breast limit), with .36 and .38 at -.103 as in the promoted table, so the plane tilts forward smoothly over .30 to .36 (slopes .0175, .0115, .0035 per .02, no step: round 1's -.101/-.1055 table flagged a shoulder bump). Depth .1265 at .32 and .1425 at .34 keeps R06.11 near 1.06 against the 1.10 ceiling.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0425
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.0365
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.011
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.0005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0075
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0985
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.2.front",
+     "value": -0.071
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.front",
+     "value": -0.0885
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.1
+    }
+   ]
+  },
+  {
+   "name": "sheet waist with rib cage and taper",
+   "why": "The trade branch, made structural instead of a .008 nudge (round 1's three waist-only variants all read the same). R06.2 and R06.12 cannot both pass (R06.2 reads the minimum mesh depth over .36 to .48 and needs at least .0918, R06.12 the minimum over .42 to .46 and needs at most .0881, specs/R06.md H2), so this one gives up R06.2 for R06.12, R06.13 and R06.14 at once, and adds the rib cage and the long front taper so the profile and the front change together: sheet back edge .40 .006, .42 -.005, .44 -.014, .46 -.006, .48 .005, front waist held at the baseline -.099. Expected R06.1 about 1.07, R06.12 about 1.07, R06.13 about 1.0, R06.14 about 1.0. The readers and the critic decide whether three passes for one is a better trunk.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0425
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.0365
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.006
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0985
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.101
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0925
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0815
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.07
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.072
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.0805
+    }
+   ]
+  },
+  {
+   "name": "promoted rib cage, rear flank ramps eased",
+   "why": "Critic issue 3 (soft dent on the image-right rear flank at about .55 in the back view, fixability .8). .55 sits where the loft weight is still falling (y ramp .50 to .58) and the tail-root mask is ramping (zero within .10, full at .17 world). Ease both so no ramp ends on the flank: y bottom ramp [.48, .55] (the loft leaves the rump rows sooner) and tail fullAt .21. Round 1's cleanup widened the arm margin and the smoothing instead and lost R06.13 and R06.14, so the stations stay as the promoted table. The contain check watches R10 and R11.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0425
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.0365
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.011
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.0005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0075
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0985
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.tail.fullAt",
+     "value": 0.21
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.y.bottom",
+     "value": [
+      0.48,
+      0.55
+     ]
+    }
+   ]
+  },
+  {
+   "name": "promoted rib cage, broad flat chest section",
+   "why": "R06.4 (soft forward plane, not a tube): the spec named the front exponent as the main chest lever, and round 20 held it at 1.9 to avoid a chest crease. Raise the front exponent over the rib cage to 2.2 to 2.3 (the spec's pigeon-breast ceiling is 2.5) and the back to 2.1, ramped by at most .1 per .02 so no lathe-turned column: .28 2.1, .30 2.2, .32 to .36 2.3, .38 2.25. The midline front stays where the table puts it; the fullness at the front corners makes the plane.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0425
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.0365
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.011
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.0005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0075
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0985
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.1.expFront",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.2.expFront",
+     "value": 2.2
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.expFront",
+     "value": 2.25
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.expBack",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.expBack",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.expBack",
+     "value": 2.1
+    }
+   ]
+  },
+  {
+   "name": "combined, nothing given up",
+   "why": "Everything that kept the passing criteria in one build, since single small changes read the same: the promoted rib cage, the broad chest section, the long taper, the waist moved forward with a deeper lumbar hollow at the same depth (front -.1015 at .42 to .48, back -.0095 at .44, station depth .092 so R06.2 stays near .91) and the eased rear flank ramps. Expected R06.2, R06.1, R06.11, R06.13 and R06.14 passing, R06.12 failing. The waist sweep below shows how far the hollow can go.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0985
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.103
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.front",
+     "value": -0.1025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.front",
+     "value": -0.1015
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.front",
+     "value": -0.1015
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.front",
+     "value": -0.1015
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.front",
+     "value": -0.1015
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.12.front",
+     "value": -0.1005
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.0425
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.0365
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.back",
+     "value": 0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.0105
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.0025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.0065
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": 0.0025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0095
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.101
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0925
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0815
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.07
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.072
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.0805
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.1.expFront",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.2.expFront",
+     "value": 2.2
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.expFront",
+     "value": 2.3
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.expFront",
+     "value": 2.25
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.expBack",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.expBack",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.expBack",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.tail.fullAt",
+     "value": 0.21
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:weights.y.bottom",
+     "value": [
+      0.48,
+      0.55
+     ]
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "step": "B-20T",
+   "grid": {
+    "spec:stations.4.front": [
+     -0.0985
+    ],
+    "spec:stations.5.front": [
+     -0.103
+    ],
+    "spec:stations.6.front": [
+     -0.103
+    ],
+    "spec:stations.7.front": [
+     -0.1025
+    ],
+    "spec:stations.8.front": [
+     -0.1015
+    ],
+    "spec:stations.9.front": [
+     -0.1015
+    ],
+    "spec:stations.10.front": [
+     -0.1015
+    ],
+    "spec:stations.11.front": [
+     -0.1015
+    ],
+    "spec:stations.12.front": [
+     -0.1005
+    ],
+    "spec:stations.4.back": [
+     0.0425
+    ],
+    "spec:stations.5.back": [
+     0.0365
+    ],
+    "spec:stations.6.back": [
+     0.0225
+    ],
+    "spec:stations.7.back": [
+     0.0105
+    ],
+    "spec:stations.8.back": [
+     -0.0025
+    ],
+    "spec:stations.10.back": [
+     -0.0065
+    ],
+    "spec:stations.11.back": [
+     0.0025
+    ],
+    "spec:stations.9.back": [
+     -0.0075,
+     -0.0115
+    ]
+   },
+   "why": "The lever the first plan could not settle: the waist hollow depth at .44 with the front held forward at -.1015 and the rib cage as in the promoted table, so the station depth is .094 (control) and .090 (the combined variant covers .092). Measured depth runs about .001 above the station value, so R06.2 (at least .0918) should hold at .094 and fail near .090 while the swing R06.14 (back .34 minus back .44) rises from .050 to .054; the sweep shows where R06.2 breaks and how much swing the fixed depth buys."
+  }
+ ],
+ "region": "R06",
+ "top": 6
+}

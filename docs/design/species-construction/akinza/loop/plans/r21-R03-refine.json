@@ -1,0 +1,703 @@
+{
+ "order": {
+  "round": 21,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+ "start": {
+  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-fast.json"
+ },
+ "variants": [
+  {
+   "name": "soft control, no skull plate",
+   "why": "control for the refine pass. Round 21's combined variant read the same as the baseline and its front showed a flat boxed plate between the eye and the cup (about .036 wide, the same as the skull_ramp .04 it set) plus one flat white slab for the tuft. This keeps the cached soft rear (skin blend .012, strip smoothing 6, no K root shift, dome blur 10: the only rear edit that scored well) and the floater-safe soft front, but sets skull_ramp to .012 so the cup meets the skull in a fillet instead of a plate; every other front lever stays at the starter, so later variants read against it (R03.5, R03.7)",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "6"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-root-shift",
+     "value": "0"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "10"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.blur",
+     "value": 2
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_width",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_thick",
+     "value": 0.0016
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.layer_blend",
+     "value": [
+      0.005,
+      0.005,
+      0.004
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.core_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "--max-island",
+     "value": "40000"
+    }
+   ]
+  },
+  {
+   "name": "separate tuft leaves",
+   "why": "R03.7 and R03.5: the combined variant widened the tuft (width 1.3, blend .008) and it merged into one flat white slab with a torn edge. Go the other way: narrower tuft locks (width .7) that are longer (scale 1.15), tight unions (.0025, floor .0015) and a sharper tip floor so the five pale locks stay five soft pointed leaves fanning toward the cup tip, with a slightly deeper bowl behind them",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "6"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-root-shift",
+     "value": "0"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "10"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.blur",
+     "value": 2
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_width",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_thick",
+     "value": 0.0016
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.layer_blend",
+     "value": [
+      0.005,
+      0.005,
+      0.004
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.core_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "--max-island",
+     "value": "40000"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_width_scale",
+     "value": 0.7
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_scale",
+     "value": 1.15
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_blend",
+     "value": 0.0025
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_floor_blend",
+     "value": 0.0015
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tuft_tip_half_width",
+     "value": 0.0015
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_bowl",
+     "value": 0.012
+    }
+   ]
+  },
+  {
+   "name": "deep outward cup",
+   "why": "R03.5 and R04.5: no real hollow reads from the front or the side. Yaw the cup floor harder outward (slope .95), sink it deeper (max .044, bowl .014), set the secondaries .014 behind the primaries so the cup window is clear, and fillet the rim (.012); tuft stays at the starter so this isolates the cup depth",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "6"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-root-shift",
+     "value": "0"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "10"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.blur",
+     "value": 2
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_width",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_thick",
+     "value": 0.0016
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.layer_blend",
+     "value": [
+      0.005,
+      0.005,
+      0.004
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.core_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "--max-island",
+     "value": "40000"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_slope",
+     "value": 0.95
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_max",
+     "value": 0.044
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.floor_bowl",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.s_back",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.012
+    }
+   ]
+  },
+  {
+   "name": "ten big locks",
+   "why": "R03.4 asks for about 8 to 10 large locks per side and the starter has 18 coat clumps whose overlap makes serrated chevrons (audit row 1). Drop every secondary and the drape and widen and thicken the nine primaries (1.25 and 1.15), with the soft unions so no floater or hairline gap remains; round 21's plain primaries-only variant had the lowest seam penalty of the front variants but was never read",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "6"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-root-shift",
+     "value": "0"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "10"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.blur",
+     "value": 2
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_width",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_thick",
+     "value": 0.0016
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.layer_blend",
+     "value": [
+      0.005,
+      0.005,
+      0.004
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.core_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "--max-island",
+     "value": "40000"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skip",
+     "value": "S1,S2,S3,S4,S5,S6,S7,S8,D1"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.width_scale",
+     "value": 1.25
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.thick_scale",
+     "value": 1.15
+    }
+   ]
+  },
+  {
+   "name": "low crown, high wing ends",
+   "why": "R03.3 (V tilt) and R04 issue 3: the crown spikes (C row) and K ridge stand level with or above the front tips, flattening the V. Rear: drop the C row, blunt the crown and top rows (tip radius C .004, T and I and M .003, E .0025) and turn the K ridge down 30 degrees (was 20, about .01 lower at the crown). Front: raise the top-edge tips by .012 and pull the L wing-end tips up into an up-flared point (LP5 tip y .021 with curl +18, LS1 and LP4 up .006 to .008, x unchanged so earSpan holds). Needs the rear rebuild (H34, H35, H36)",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "6"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-root-shift",
+     "value": "0"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "10"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-sweep",
+     "value": "30"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--tip-rows",
+     "value": "C=.004,T=.003,I=.003,M=.003,E=.0025"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.blur",
+     "value": 2
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_width",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_thick",
+     "value": 0.0016
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.layer_blend",
+     "value": [
+      0.005,
+      0.005,
+      0.004
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.core_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "--max-island",
+     "value": "40000"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.top_lift",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:clumps",
+     "value": {
+      "LP5": {
+       "tip": [
+        0.275,
+        0.021,
+        0.018
+       ],
+       "curl": 18,
+       "widthMid": 0.047
+      },
+      "LS1": {
+       "tip": [
+        0.273,
+        0.043,
+        0.02
+       ]
+      },
+      "LP4": {
+       "tip": [
+        0.244,
+        0.003,
+        0.024
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "merged rear shell",
+   "why": "R04.5 and R04.3 (profile and back): from the side the rear E and I rows stack as a washboard of horizontal ledges and from behind each wing ends in a fringe of needle tips. Raise the rear clump union to .008 and the per-clump blur to 2 so neighbouring locks merge into one curved shell with a soft flank, and blunt the tip radii (C .004, T .003, I .003, M .003, E .003) so the fringe reads as rounded lock ends; front is the soft control. Needs the rear rebuild",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "6"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--k-root-shift",
+     "value": "0"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "10"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--clump-blend",
+     "value": "0.008"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--blur",
+     "value": "2"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--tip-rows",
+     "value": "C=.004,T=.003,I=.003,M=.003,E=.003"
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.blur",
+     "value": 2
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_width",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.tip_half_thick",
+     "value": 0.0016
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.section_p",
+     "value": 2.0
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.layer_blend",
+     "value": [
+      0.005,
+      0.005,
+      0.004
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.core_blend",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.skull_ramp",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "spec:params.cup_fillet",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H36",
+     "arg": "--max-island",
+     "value": "40000"
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R03",
+ "top": 3
+}

@@ -9,7 +9,8 @@
  "base": "docs/design/species-construction/akinza/recipe.json",
  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
  "start": {
-  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-fast.json"
+  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03-pinned.json",
+  "attachAfter": "H35"
  },
  "variants": [
   {
