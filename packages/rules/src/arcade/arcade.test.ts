@@ -507,7 +507,7 @@ describe('Arcade deterministic rules', () => {
     const unguarded = applyArtilleryShot({ ...state, guard: { ...state.guard, right: 0 } }, shot);
     expect(pierced.outcome.guardAbsorbed).toBe(12);
     expect(unguarded.outcome.damage - pierced.outcome.damage).toBe(12);
-    expect(pierced.state.guard.right).toBe(0);
+    expect(pierced.state.guard.right).toBe(12);
   });
 
   it('keeps the default Sunspike shot inside Stonera maps with a near-Comet arc', () => {
@@ -526,7 +526,7 @@ describe('Arcade deterministic rules', () => {
     }
   });
 
-  it('makes a forward Rampart protect the next incoming shot, then spends its guard', () => {
+  it('makes forward Rampart absorb damage across hits and lose protection on movement', () => {
     const state = createArtilleryState('rampart-defense');
     let coverShot: { angle: number; power: number; payload: 'bloom' } | null = null;
     for (let angle = 10; angle <= 70 && !coverShot; angle += 2) {
@@ -541,11 +541,11 @@ describe('Arcade deterministic rules', () => {
     expect(coverShot).not.toBeNull();
     if (!coverShot) return;
     const fortified = applyArtilleryShot(state, coverShot);
-    expect(fortified.outcome.coverGranted).toBe(24);
-    expect(fortified.state.guard.left).toBe(24);
+    expect(fortified.outcome.coverGranted).toBe(40);
+    expect(fortified.state.guard.left).toBe(40);
     const miss = applyArtilleryShot(fortified.state, { angle: 10, power: 15 });
     expect(miss.outcome.damage).toBe(0);
-    expect(miss.state.guard.left).toBe(24);
+    expect(miss.state.guard.left).toBe(40);
     const displaced = applyArtilleryMove({ ...fortified.state, current: 'left' }, 1, 'jet', 2);
     expect(displaced.distance).toBeGreaterThan(0);
     expect(displaced.state.guard.left).toBe(0);
@@ -567,7 +567,7 @@ describe('Arcade deterministic rules', () => {
     expect(defended.outcome.guardAbsorbed).toBeGreaterThan(0);
     expect(defended.outcome.damage).toBeLessThan(exposed.outcome.damage);
     expect(defended.state.tanks.left.integrity).toBeGreaterThan(exposed.state.tanks.left.integrity);
-    expect(defended.state.guard.left).toBe(0);
+    expect(defended.state.guard.left).toBe(40 - defended.outcome.guardAbsorbed);
   });
 
   it('does not consume mobility fuel when the rig cannot leave the sector', () => {
@@ -667,9 +667,9 @@ describe('Arcade deterministic rules', () => {
     const afterPlayer = applyArtilleryShot(initial, { angle: 45, power: 71, payload: 'shell' }).state;
     const botShot = chooseArtilleryBotShot(afterPlayer);
     const outcome = applyArtilleryShot(afterPlayer, botShot).outcome;
-    expect(botShot.payload).toBe('shell');
     expect(outcome.impact).not.toBeNull();
-    expect(outcome.damage).toBe(0);
+    expect(outcome.damage).toBeLessThan(40);
+    expect(chooseArtilleryBotShot(afterPlayer)).toEqual(botShot);
   });
 
   it('fortifies only when a nearby shot leaves the bot in lethal danger', () => {
@@ -717,6 +717,42 @@ describe('Arcade deterministic rules', () => {
     expect(normal.outcome.pressureMultiplier).toBe(1);
     expect(pressured.outcome.pressureMultiplier).toBeGreaterThan(1);
     expect(pressured.outcome.damage).toBeGreaterThan(normal.outcome.damage);
+  });
+
+  it('paces duel damage without shrinking craters or changing practice scoring', () => {
+    const duel = createArtilleryState('tactical-damage', 'local');
+    for (const payload of ARTILLERY_PAYLOADS) {
+      let best = { angle: 45, power: 70, damage: -1 };
+      for (let angle = 16; angle <= 76; angle += 3) {
+        for (let power = 20; power <= 100; power += 2) {
+          const applied = applyArtilleryShot(duel, { angle, power, payload });
+          if (applied.outcome.damage > best.damage) best = { angle, power, damage: applied.outcome.damage };
+        }
+      }
+      expect(best.damage).toBeLessThan(50);
+      const actual = applyArtilleryShot(duel, { ...best, payload });
+      const practice = applyArtilleryShot({ ...duel, mode: 'range' }, { ...best, payload });
+      expect(practice.state.terrain).toEqual(actual.state.terrain);
+      expect(practice.outcome.damage).toBeGreaterThanOrEqual(actual.outcome.damage);
+    }
+  });
+
+  it('makes Tractor strip a pulled rig out of cover rather than spend the turn on negligible shielded damage', () => {
+    const base = createArtilleryState('tractor-counter', 'local');
+    const state = { ...base, guard: { left: 0, right: 40 } };
+    let shot = null;
+    for (let angle = 16; angle <= 76 && !shot; angle += 3) {
+      for (let power = 20; power <= 100; power += 2) {
+        const candidate = { angle, power, payload: 'tractor' as const };
+        if (applyArtilleryShot(state, candidate).outcome.rigDisplacement !== 0) { shot = candidate; break; }
+      }
+    }
+    expect(shot).not.toBeNull();
+    const result = applyArtilleryShot(state, shot!);
+    expect(result.state.guard.right).toBe(0);
+    expect(result.outcome.guardAbsorbed).toBe(0);
+    expect(result.outcome.damage).toBeGreaterThan(0);
+    expect(base.guard.right).toBe(0);
   });
 
   it('keeps range practice on the player rig and ends after six calibration shots', () => {

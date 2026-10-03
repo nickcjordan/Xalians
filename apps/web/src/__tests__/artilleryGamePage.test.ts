@@ -209,7 +209,7 @@ describe('Crater Command aim feedback', () => {
     expect(flight[2]).toBeLessThan(360);
     const impact = artilleryCinematicCamera(360, false, 'impact', 300, 82).split(' ').map(Number);
     expect(impact[2]).toBe(230);
-    expect(impact[3]).toBe(112);
+    expect(impact[2] / impact[3]).toBeCloseTo(360 / 148);
     expect(artilleryCinematicCamera(360, false, 'settle', 300, 82, 0.2)).toBe(artilleryCinematicCamera(360, false, 'impact', 300, 82));
     expect(artilleryCinematicCamera(360, false, 'settle', 300, 82, 1)).toBe('0 -38 360 148');
   });
@@ -231,7 +231,7 @@ describe('Crater Command aim feedback', () => {
     });
     expect(artilleryShotVerdict({ ...baseline, coverGranted: 24 }, 50, 310)).toEqual({
       title: 'Cover forged',
-      detail: '24 guard until you move or take a hit',
+      detail: '24 damage protection · moving leaves cover',
     });
     expect(artilleryShotVerdict({ ...baseline, damage: 0, guardAbsorbed: 17 }, 50, 310).title).toBe('Cover held');
     expect(artilleryShotVerdict({ ...baseline, impact: { x: 54, y: 25 } }, 50, 310)).toEqual({
@@ -328,6 +328,53 @@ describe('Crater Command aim feedback', () => {
     expect(screen.getByRole('img', { name: /Two mobile range rigs on Stonera/i })).toHaveAttribute('viewBox', '0 -38 360 148');
     expect(screen.getByRole('button', { name: /Enable artillery audio/i })).toBeInTheDocument();
     expect(screen.queryByText(/Codazzo|Terragoyle|creature ability/i)).not.toBeInTheDocument();
+  });
+
+  it('keeps the viewport ratio through every camera phase without exposed letterbox bands', () => {
+    for (const aspect of [0.85, 2.7, 3.2]) {
+      for (const phase of ['charge', 'flight', 'impact', 'settle'] as const) {
+        for (const progress of [0, 0.2, 0.65, 1]) {
+          const [x, , width, height] = artilleryCinematicCamera(360, aspect < 1, phase, 310, 70, progress, 80, 60, aspect).split(' ').map(Number);
+          expect(width / height).toBeCloseTo(aspect, 2);
+          expect(x).toBeGreaterThanOrEqual(0);
+          expect(x + width).toBeLessThanOrEqual(360.01);
+        }
+      }
+    }
+  });
+
+  it('loads a nearby construction lob and restores the attack aim when switching back', () => {
+    render(createElement(ArtilleryBoard, {
+      seed: 'construction-aim', mode: 'local', difficulty: 'standard', mapSize: 'standard', world: 'stonera',
+      onStatus: vi.fn(), onComplete: vi.fn(), onRematch: vi.fn(),
+    }));
+    fireEvent.change(screen.getByRole('slider', { name: /Power/i }), { target: { value: '79' } });
+    fireEvent.click(screen.getByRole('button', { name: /^Rampart 1/i }));
+    expect(screen.getByRole('slider', { name: /Barrel/i })).toHaveValue('74');
+    expect(screen.getByRole('slider', { name: /Power/i })).toHaveValue('22');
+    expect(screen.getByTestId('artillery-selected-weapon')).toHaveTextContent('Close lob loaded');
+    fireEvent.click(screen.getByRole('button', { name: /^Foam 2/i }));
+    expect(screen.getByRole('slider', { name: /Power/i })).toHaveValue('22');
+    fireEvent.click(screen.getByRole('button', { name: /^Comet/i }));
+    expect(screen.getByRole('slider', { name: /Power/i })).toHaveValue('79');
+    expect(screen.getByRole('slider', { name: /Barrel/i })).toHaveValue('45');
+  });
+
+  it('restores the ranged attack when the last construction charge is spent', () => {
+    vi.useFakeTimers();
+    try {
+      render(createElement(ArtilleryBoard, {
+        seed: 'construction-exhausted', mode: 'range', difficulty: 'standard', mapSize: 'standard', world: 'stonera',
+        onStatus: vi.fn(), onComplete: vi.fn(), onRematch: vi.fn(),
+      }));
+      fireEvent.change(screen.getByRole('slider', { name: /Power/i }), { target: { value: '79' } });
+      fireEvent.click(screen.getByRole('button', { name: /^Rampart 1/i }));
+      fireEvent.click(screen.getByRole('button', { name: /Fire Rampart/i }));
+      act(() => vi.advanceTimersByTime(15_000));
+      expect(screen.getByRole('slider', { name: /Power/i })).toHaveValue('79');
+      expect(screen.getByRole('slider', { name: /Barrel/i })).toHaveValue('45');
+      expect(screen.getByRole('button', { name: /^Comet/i })).toHaveAttribute('aria-pressed', 'true');
+    } finally { vi.useRealTimers(); }
   });
 
   it('explains Sunspike range and warns before a shot leaves the sector', () => {
