@@ -1,0 +1,127 @@
+{
+ "region": "R02",
+ "script": "art/species-construction/author_face_parts.py",
+ "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R02.json",
+ "step": "F-bulk and F-parts, added after H35 (the assembly head is rewired to F-parts); F-bulk is rebuild_face_features_field.py on H25 with specs/face-bulk-r10e.json and is only read for its skin",
+ "spec": "art/species-construction/specs/r02_face_parts.json",
+ "donorSpec": "art/species-construction/specs/face-bulk-r10e.json",
+ "parameters": [
+  {
+   "name": "spec:voxel",
+   "default": "0.001",
+   "what": "fine voxel (head-local). .001 builds F-parts in about 1.1 min and adds about 0.55M vertices; .0008 about 2.5 min; .0006 for a final. NOTE the assembly voxel-remeshes the whole creature at .0028 world (.0056 head-local), so skin edits finer than about .01 head-local alias at the assembly (see notes)."
+  },
+  {
+   "name": "spec:window.x / z / yCut",
+   "default": "0.33 / [-0.29, 0.215] / -0.05",
+   "what": "rectangle of the old face skin that is replaced (head-local); outside it nothing moves. Keep it inside the face: the old fan front starts at |x| about .34, and tufts and their blend (.03) must end inside z -0.29 plus margin plus fade."
+  },
+  {
+   "name": "spec:window.margin / fade",
+   "default": "0.006 / 0.025",
+   "what": "the new skin equals the old one at margin from the window edge and takes over fully by margin plus fade"
+  },
+  {
+   "name": "spec:window.faceSmooth",
+   "default": "3",
+   "what": "cells (.002) of box smoothing, 2 passes, applied to the donor face height used for the dome front, the orbit floor and the fold"
+  },
+  {
+   "name": "spec:eye.aperture.center",
+   "default": "[0.1887, 0.0291]",
+   "what": "aperture centre of the left eye (x outward, z up); the right eye mirrors. R02.md target centre is (.1767, .0123) for a smaller eye"
+  },
+  {
+   "name": "spec:eye.aperture.semi",
+   "default": "[0.105, 0.1433]",
+   "what": "aperture semi axes. R02.md asks .0930 by .1265 (height over width 1.36, gap over width .90)"
+  },
+  {
+   "name": "spec:eye.globe.kind",
+   "default": "conformal",
+   "what": "conformal = donor face surface plus the r10e dome profile (edge a little behind the rim, apex proud); ellipsoid = analytic ellipsoid fitted to the aperture (yaw and pitch from the face plane, depth semi, curvature from a quadratic fit). The ellipsoid leaves rim depth errors of +-.03 on this face, use it only with a lateral opening or a smaller eye"
+  },
+  {
+   "name": "spec:eye.globe.apexProud / edgeBehindTopBottom",
+   "default": "0.013 / [0.0045, 0.0028]",
+   "what": "conformal dome profile: apex height proud of the rim plane and the edge depth behind the skin (top, bottom). R02.md wants the apex .012 to .016 proud and the frontmost eye point at least .010 (fit) behind the brow to nose line"
+  },
+  {
+   "name": "spec:eye.globe.depthSemi / margin / yawDeg / pitchDeg / mode",
+   "default": "0.06 / 1.0 / auto / auto / edge",
+   "what": "ellipsoid kind only"
+  },
+  {
+   "name": "spec:eye.orbit.shear",
+   "default": "0.1",
+   "what": "vertical shear of the opening with depth: the upper rim overhangs the globe (lid fold overhang)"
+  },
+  {
+   "name": "spec:eye.orbit.lateralShear",
+   "default": "0.0",
+   "what": "the opening moves outward with depth by this much per unit depth (lateral wall opening); about .4 opens the lateral wall"
+  },
+  {
+   "name": "spec:eye.orbit.floorBehind / floorBlend / rimBlend",
+   "default": "0.0025 / 0.008 / 0.012",
+   "what": "floor depth behind the globe and the two smooth radii; rimBlend .012 and floorBlend .008 are larger than the r10e values (.005, .004) because the assembly remesh aliases a sharper rim into notches"
+  },
+  {
+   "name": "spec:eye.orbit.extraCutters",
+   "default": "[]",
+   "what": "list of {center [x,y,z canonical], semi, yawDeg, blend} ellipsoids subtracted from the skin: the orbit mask that opens the cheek or brow wall for the profile oval"
+  },
+  {
+   "name": "spec:eye.lid.bandPercent",
+   "default": "r10e table",
+   "what": "angle table of the dark band width as percent of eye width (a material zone on the globe)"
+  },
+  {
+   "name": "spec:eye.lid.fold.height / width / center / blend",
+   "default": "[] (off)",
+   "what": "swept lens on the aperture curve, half buried in the skin: angle tables [[deg, value]] of its height above the face plane and width; a raised lid fold"
+  },
+  {
+   "name": "spec:eye.iris.offset / semi / pupil / lensFront",
+   "default": "[-0.0111,-0.0055] / [0.0555,0.094] / [0.0305,0.0414] / 0.005",
+   "what": "gaze offset toward the nose and down, iris and pupil size, lens thickness"
+  },
+  {
+   "name": "spec:tufts.list",
+   "default": "two per side (r10e)",
+   "what": "one entry per tuft per side (mirrored): root [x,z], tip [x,z], length, widthRoot, thickRoot, lift; append entries for the three tufts of R02.md"
+  },
+  {
+   "name": "spec:tufts.blend / bury / taperPower / tipRadius / taperExponent / thicknessExponent",
+   "default": "0.03 / 0.003 / 1.15 / 0.0035 / 0.85 / 0.9",
+   "what": "tuft union radius and lens section; blend .03 is the r10e value and is what makes the plates read wide and flat"
+  },
+  {
+   "name": "spec:nosePad.topZ / apexZ / halfWidth / cornerRadius",
+   "default": "-0.11 / -0.148 / 0.043 / 0.006",
+   "what": "outline of the rounded triangle in x, z; R02.md asks .020 wide (half .0372) top .179 apex .191 fit"
+  },
+  {
+   "name": "spec:nosePad.wrapUnder / lift / dome / sinkRim / bury / buryStart / feather",
+   "default": "0.0 / 0.0006 / 0.0 / 0.0015 / 0.0015 / 0.82 / auto",
+   "what": "wrapUnder extends the apex down so the shell wraps over the wedge tip onto the underside; lift and dome are the visible height; sinkRim sinks the rim into the skin"
+  },
+  {
+   "name": "spec:maxIsland",
+   "default": "3000",
+   "what": "vertices: free fragments up to this size are removed and recorded in face-parts.json (islandsRemoved)"
+  }
+ ],
+ "ready": true,
+ "checks": {
+  "build": "F-bulk -> head-2492 (0.7 min); F-parts -> head-2501 (1.1 min idle, 2.4 min with other builds running) at voxel .001; assembled-2502 from head-2501 + body-2276 (7.4 min, almost all of it the assembly remesh). Earlier starter assembled-2494 (rimBlend .005) built the same way.",
+  "loop_tools check": "assembled-2502: pass, one component, nonManifoldEdges 0, heightSpread 0, groundSpread 0; the head skin before the assembly is one closed solid (face-parts.json skinAfter components 1, nonManifoldEdges 0, 1.35M vertices against 1.02M)",
+  "contain": "recipe.py contain on F-parts (head-2501): no foreign region flagged under the relative rule (reference H30). F-bulk is flagged R01, R03, R04 at .0057 under the flat rule only because it is the H29 field rebuild of H25 (the old fan), and its output never enters the assembly; ignore that line",
+  "quick/measured": "assembled-2502 against assembled-2278: measured criteria unchanged but R01.2 .9315 to .9313, R03.2 .0354 to .0353, R04.2 .0459 to .0462, all passing; seams_new none; regionChange R02 .0161. The starter is the r10e control, so the silhouette is meant not to move",
+  "direction": "recipe.py sweep (sweep-r02-tool, 8 variants of eye.aperture.semi.0, eye.aperture.semi.1 and nosePad.wrapUnder) moves the tool score and the face metrics the way the spec asks: semi [.093,.1265] gives eye width .0500 and height .0680 fit (R02.md .050 by .068, height over width 1.36); the gap over width then reads 1.03 until the aperture centre also moves to x .1767 (spec .90). fitIou and stations do not move (the face is inside the outline); wrapUnder moves the pad shell only and is read from the images",
+  "imageCheck": "m02 to m05 of assembled-2502 beside assembled-2278: no straight cut line, flat plane, box edge, ladder or floating piece anywhere in the region; the nose pad, the lid band, the cheek plates and the profile read as the baseline does. The one visible difference is a slightly heavier dark lid ring and a faintly rippled rim in eyes-front (voxel remesh of the assembly, see notes). assembled-2494 (rimBlend .005) had a visibly notched rim and is the reason for the softer defaults",
+  "readerCheck": "pending: three blind readers compare the plan candidate with the baseline (plans/tool-check-R02.json)"
+ },
+ "notes": "Built: art/species-construction/author_face_parts.py (about 1100 lines, one Blender step) and its starter spec specs/r02_face_parts.json, a bulk donor spec specs/face-bulk-r10e.json, two recipe steps (F-bulk, F-parts after H35). Reused: rebuild_face_features_field.py unchanged for the donor (H29's TPS fill of the old pocket, bridge, lower smooth and chin smooth; the new spec gives the aperture a point size and the blends 1e-6 so no socket is cut, and omits tufts and the pad); the r10e eye, band, iris and nose-outline code and numbers ported from it; fan_clumps_fast_common.py for mesh stats and island removal (unchanged); the study_provenance and blender_blockout helpers (unchanged). Why a donor and not the graft: graft_face_field.py remeshes the whole head at .0025, which would re-voxel the fan tips on H35; this step never touches a vertex outside the window (the scene skin's polygons outside it are copied by index). How: the face window (x +-.33, z -.29 to .215, in front of y -.05) is rebuilt from the donor's coarse level set, interpolated to the fine lattice in tiles written into one sparse OpenVDB grid and meshed once (no tile seams); the new field fades back to the scene skin's own field over margin .006 plus fade .025 so the two meet to within .00002 (fine loop to old skin mean 1.5e-5, max 2.2e-4); the ring between the old hole and the new patch is bridged with a minimum-rung-length dynamic programming zipper (a greedy zipper drifts around the window and folded 40 percent of the band). Pinch holes in the iso-surface are fan filled; free fragments up to 3000 vertices are removed and recorded. KEY FINDING FOR THE METHOD REVIEW: assemble_reconstructed_creature.py joins head, bridge and body and voxel-remeshes the whole creature at --voxel-size .0028 world, which is .0056 head-local, so the head skin the critic sees is resampled at 5.6 times this tool's default voxel (and 2.2 times H29's). Skin edits finer than about .01 head-local alias at the assembly: with the r10e carve radii (.005, .004) the rim came out notched in assembled-2494. The starter uses rimBlend .012 and floorBlend .008, which match the baseline's softness (its socket_smooth blur). Separate objects keep full precision (globes, irises, nose shell, mouth lines), so lid fold, pad dome and anything sharp should be separate parts or the assembly join needs a finer voxel size (R05 owns the join); a finer tuft tip or sharper rim in the skin will not survive as it stands. Limits: tufts and the pad shell reproduce r10e (blend .03 makes the wide flat plates the critic dislikes; that is a lever, tufts.blend). The ellipsoid globe (eye.globe.kind ellipsoid) misses the donor face by +-.03 at the rim, so conformal is the default; ellipsoid is for a lateral opening or a smaller eye. The lid band is a material zone on the globe (not geometry); eye.lid.fold builds a raised swept lid but is off. The lateral wall opening is eye.orbit.lateralShear plus eye.orbit.extraCutters; both default to nothing and were smoke tested (variant1: ellipsoid kind, lateralShear .4, an opening ellipsoid, a fold, wrapUnder .012, a third tuft) and build one closed solid. Cost: F-parts about 1.1 min at .001 (60 s of it the zipper DP and the 1.3M-face mesh surgery), .0008 about 2.5 min (+0.9M vertices, shape.glb 93 MB), so a 12 variant plan is about 15 min; the seam band holds 13 to 30 sliver triangles whose normal flips against the old skin (0.3 percent), visible only at 20 times zoom. Do not edit author_face_parts.py in place: the starter pins its bytes (copy to a new name and use recipe.py set script).",
+ "checkPlan": "docs/design/species-construction/akinza/loop/plans/tool-check-R02.json"
+}

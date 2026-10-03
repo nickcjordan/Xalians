@@ -1,0 +1,257 @@
+{
+ "voxel": 0.0025,
+ "notes": "R02 tool: bulk face donor. Round 10 r10e bridge, lower_smooth, chin_smooth and the old-pocket fill only: no socket (aperture is a point and the cut blends are 1e-6), no tufts, no nose pad. author_face_parts.py adds the face parts to this skin.",
+ "bridge": {
+  "table": [
+   [
+    0.128,
+    null
+   ],
+   [
+    0.0905,
+    -0.344
+   ],
+   [
+    0.053,
+    -0.3477
+   ],
+   [
+    0.016,
+    -0.3477
+   ],
+   [
+    -0.021,
+    -0.3495
+   ],
+   [
+    -0.058,
+    -0.344
+   ],
+   [
+    -0.095,
+    -0.3402
+   ],
+   [
+    -0.118,
+    -0.344
+   ],
+   [
+    -0.133,
+    -0.3626
+   ],
+   [
+    -0.155,
+    -0.388
+   ],
+   [
+    -0.1737,
+    -0.3626
+   ],
+   [
+    -0.19,
+    null
+   ]
+  ],
+  "profile_sigma": 0.006,
+  "lateral": {
+   "upper": [
+    0.045,
+    0.095
+   ],
+   "lower": [
+    0.018,
+    0.06
+   ],
+   "z": [
+    -0.1,
+    -0.125
+   ]
+  }
+ },
+ "lower_smooth": {
+  "x": [
+   0.06,
+   0.4
+  ],
+  "y": [
+   -0.6,
+   0.02
+  ],
+  "z": [
+   -0.34,
+   -0.15
+  ],
+  "fade": 0.03,
+  "sigma": 0.008
+ },
+ "chin_smooth": {
+  "half_width": 0.11,
+  "y": [
+   -0.6,
+   0.0
+  ],
+  "z": [
+   -0.33,
+   -0.21
+  ],
+  "fade": 0.03,
+  "sigma": 0.015,
+  "strength": 0.8
+ },
+ "eye": {
+  "old": {
+   "center": [
+    0.2018,
+    0.035
+   ],
+   "semi": [
+    0.1148,
+    0.147
+   ]
+  },
+  "ring": [
+   1.06,
+   1.6
+  ],
+  "ring_count": 6,
+  "ring_angles": 144,
+  "lambda": 1e-07,
+  "fill_reach": 1.65,
+  "fill_y_max": 0.0,
+  "fill_fade": [
+   1.1,
+   1.55
+  ],
+  "aperture": {
+   "center": [
+    0.1887,
+    0.0291
+   ],
+   "semi": [
+    0.0001,
+    0.0001
+   ]
+  },
+  "edge_behind": [
+   0.0045,
+   0.0028
+  ],
+  "apex_proud": 0.013,
+  "floor_behind": 0.0025,
+  "shear": 0.1,
+  "floor_blend": 1e-06,
+  "rim_blend": 1e-06,
+  "angular": 160,
+  "radial": [
+   20,
+   3,
+   3
+  ],
+  "hidden_radius": 1.1,
+  "dome_back": 0.012,
+  "dome_back_centre": 0.01,
+  "band_percent": [
+   [
+    0,
+    6.5
+   ],
+   [
+    30,
+    7.3
+   ],
+   [
+    60,
+    6.6
+   ],
+   [
+    90,
+    4.2
+   ],
+   [
+    120,
+    3.5
+   ],
+   [
+    150,
+    2.8
+   ],
+   [
+    180,
+    2.3
+   ],
+   [
+    -150,
+    1.5
+   ],
+   [
+    -120,
+    1.4
+   ],
+   [
+    -90,
+    2.9
+   ],
+   [
+    -60,
+    3.7
+   ],
+   [
+    -30,
+    5.0
+   ]
+  ],
+  "iris": {
+   "center": [
+    0.1776,
+    0.0236
+   ],
+   "semi": [
+    0.0555,
+    0.094
+   ],
+   "pupil": [
+    0.0305,
+    0.0414
+   ]
+  },
+  "lens_front": 0.005,
+  "lens_edge_behind": 0.0008,
+  "lens_back": 0.008,
+  "rim_probe": 0.03,
+  "blend_blur": {
+   "sigma": 0.008,
+   "r": [
+    1.08,
+    1.2,
+    1.5,
+    1.7
+   ],
+   "passes": 2
+  }
+ },
+ "profile_probe_z": [
+  0.128,
+  0.0905,
+  0.053,
+  0.016,
+  -0.021,
+  -0.058,
+  -0.095,
+  -0.118,
+  -0.133,
+  -0.155,
+  -0.1737,
+  -0.19,
+  -0.21
+ ],
+ "outline_probe_fit_y": [
+  0.175,
+  0.178,
+  0.183,
+  0.19,
+  0.195,
+  0.201,
+  0.206,
+  0.21
+ ]
+}
