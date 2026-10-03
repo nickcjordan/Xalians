@@ -87,3 +87,15 @@ Gate not passed: the end of each exchange cut out in one frame. What was done:
 2. Ships stopped dead on their decks: the approach eases out as each ship settles.
 3. Between crackles the electric power was a smooth blue cone: a faint jagged arc stays on its column at all times, with a second one flickering over it, under the flicking arcs.
 4. Two warm glows in the near city with no visible source, and the jet appearing 0.08 s before the strike it answers: invisible at site size, left.
+
+## Round 7 (fresh reviewer, cold gate): 8.5
+
+Round 6's fixes confirmed. Gate not passed. What was done:
+1. The fire looked like a still lamp when idle (its moving tips faded to nothing): the flame's color holds almost to the tips, each tongue sways as well as stretching, and wisps break off the top and rise.
+2. Arriving ships were drawn behind the far city's spires: they moved to the start of the layer in front of the far city and its decks.
+3. Ship 2 merged with a floodlight bank in the still: it is high in the sky at t=0.
+4. The near deck was a black void: a faint amber landing ring and lamps along its left edge.
+5. A ship crawled over its deck trailing a full-strength trail: trails fade while the ships are still fast.
+6. A ship's nose dipped into the deck rim: each ship is level before its last descent.
+7. The page text left out the thread and its pulse: one sentence added to each note.
+8. Lines through the flame: covered by the denser flame.

@@ -289,18 +289,19 @@ def ship(scale, hue):
 
 
 # arriving ships: (start, pad, scale, faction, period, phase). Each glides in, levels out, settles on its landing deck, holds, and fades.
-ARRIVALS = [((-100, 250), (236, 466), 1.8, 0, 22.13, 3.07), ((420, -60), (318, 478), 1.3, 1, 27.31, 14.11), ((-100, 400), (138, 481), 1.5, 2, 19.37, 9.23), ((1660, 380), (1470, 489), 1.4, 3, 24.19, 18.29)]
+ARRIVING = []  # drawn at the start of cityfx, in front of the far city and its decks
+ARRIVALS = [((-100, 250), (236, 466), 1.8, 0, 22.13, 3.07), ((420, -60), (318, 478), 1.3, 1, 27.31, 6.97), ((-100, 400), (138, 481), 1.5, 2, 19.37, 9.23), ((1660, 380), (1470, 489), 1.4, 3, 24.19, 18.29)]
 for (p0, p1, s, fac, per, ph) in ARRIVALS:
     nose_left = p1[0] < p0[0]
     flip = '' if nose_left else ' transform="scale(-1 1)"'
     ang = math.degrees(math.atan2(p1[1] - p0[1], p1[0] - p0[0]))
     tilt = (ang - 180) if nose_left else ang
     tilt = max(-45, min(45, tilt * .8))
-    trail = '<polygon points="%s,%s %s,0 %s,%s" fill="url(#trail-fac%d)">%s</polygon>' % (f(20 * s), f(-2 * s), f(46 * s), f(20 * s), f(2 * s), fac, anim('opacity', '1;1;0;0', per, ph, '0;.48;.58;1'))
-    skyfx.append('<!-- an arriving ship --><g opacity="0">%s<g>%s<g>%s<g%s>%s%s</g></g></g></g>' % (
+    trail = '<polygon points="%s,%s %s,0 %s,%s" fill="url(#trail-fac%d)">%s</polygon>' % (f(20 * s), f(-2 * s), f(46 * s), f(20 * s), f(2 * s), fac, anim('opacity', '1;1;0;0', per, ph, '0;.3;.45;1'))
+    ARRIVING.append('<!-- an arriving ship --><g opacity="0">%s<g>%s<g>%s<g%s>%s%s</g></g></g></g>' % (
         anim('opacity', '0;1;1;0;0', per, ph, '0;.06;.7;.76;1'),
         trans('%s %s;%s %s;%s %s' % (f(p0[0]), f(p0[1]), f(p1[0]), f(p1[1]), f(p1[0]), f(p1[1])), per, ph, '0;.6;1').replace('repeatCount', 'calcMode="spline" keySplines=".25 .1 .4 1;0 0 1 1" repeatCount'),
-        rot('%s;%s;0;0' % (f(tilt), f(tilt)), per, ph, '0;.45;.6;1'),
+        rot('%s;%s;0;0' % (f(tilt), f(tilt)), per, ph, '0;.42;.55;1'),
         flip, trail, ship(s, 'fac%d' % fac)))
 
 # ------------------------------------------------------------------ city layer (static): the far city, landing towers, the citadel
@@ -520,7 +521,7 @@ city.append('<!-- the Mercurius Machine -->' + ''.join(mm))
 city.append('<!-- the near city: blocks and lit streets on the ground in front of the citadel -->' + ''.join(city_blocks(704.0, H + 60, 42)))
 
 # ------------------------------------------------------------------ cityfx layer (animated)
-cityfx = []
+cityfx = list(ARRIVING)
 # obstruction beacons on the far spires: a few of them blink, each on its own clock
 for k_, (x_, y_) in enumerate(BEACONS[::2]):
     cityfx.append('<circle cx="%s" cy="%s" r="8" fill="url(#lamp-red)" opacity="0">%s</circle>' % (f(x_), f(y_), anim('opacity', '0;1;1;0;0', 2.2 + k_ * .37, k_ * .9, '0;.06;.22;.32;1')))
@@ -784,7 +785,7 @@ def jag_path(x0, y0, x1, y1, n, amp, seed):
 (lx, ly), (rx2, ry2) = FL, FR
 mx, my = FCX, FY - 10  # where the attacks meet, on the floor's far half (clear of the phone crop's record label)
 PS = 1.4  # the powers' scale: they must be the brightest marks in the bowl at site size
-g_fcol = lin([(0, '#fff2c8', .95), (.25, '#ffb050', .85), (.7, FIRE, .45), (1, FIRE, 0)], 0, 1, 0, 0, id='flameCol')
+g_fcol = lin([(0, '#fff2c8', .95), (.3, '#ffb050', .9), (.9, FIRE, .75), (1, FIRE, 0)], 0, 1, 0, 0, id='flameCol')
 g_ecol = lin([(0, '#f2fbff', .95), (.3, ELEC, .8), (1, ELEC, 0)], 0, 1, 0, 0, id='elecCol')
 # The fight's clock holds two exchanges, half a clock apart. In the first the fire leans in and throws a fireball and the
 # lightning answers it in the middle (clash at u .32); in the second the lightning leans in and strikes and the fire answers
@@ -814,7 +815,12 @@ fight.append('<!-- the electric power --><g transform="translate(%s %s) scale(%s
 fire = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-fire)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', F_SWELL[0], FP, PH, F_SWELL[1], spline=True)]
 for j, (dx, hgt, per, ph) in enumerate([(-19, 80, .9, .1), (0, 114, 1.1, .5), (18, 88, .8, .3), (-7, 64, .7, .65), (11, 56, .95, .2)]):
     tongue = '<path d="M-15 0 Q-19 %s 1 %s Q16 %s 15 0 Z" fill="url(#flameCol)" opacity=".85" filter="url(#soft2)"/>' % (f(-hgt * .5), f(-hgt), f(-hgt * .45))
-    fire.append('<g transform="translate(%s 0)"><g>%s%s</g></g>' % (f(dx), trans('1 1;.92 1.18;1.06 .88;1 1', per, ph, '0;.22;.6;1', typ='scale', spline=True), tongue))
+    sway = '<g>%s%s</g>' % (trans('%s;%s;%s;%s' % (f(-7), f(8), f(-4), f(-7)), per * 1.37, ph + .11, '0;.3;.7;1', typ='skewX', spline=True), tongue)
+    fire.append('<g transform="translate(%s 0)"><g>%s%s</g></g>' % (f(dx), trans('1 1;.92 1.18;1.06 .88;1 1', per, ph, '0;.22;.6;1', typ='scale', spline=True), sway))
+# wisps of flame breaking off the top, rising and fading, on their own clocks
+for j, (dx, per, ph) in enumerate([(-6, .53, .07), (9, .61, .29), (2, .71, .43)]):
+    fire.append('<g opacity="0">%s<g>%s<ellipse rx="7" ry="11" fill="%s" filter="url(#soft2)"/></g></g>' % (
+        anim('opacity', '0;.85;0;0', per, ph, '0;.15;.8;1'), trans('%s %s;%s %s;%s %s' % (f(dx), f(-100), f(dx + 4), f(-128), f(dx + 4), f(-128)), per, ph, '0;.8;1'), '#ffb050'))
 fire.append('<ellipse cx="0" cy="-4" rx="22" ry="8" fill="#fff4d0" opacity=".9" filter="url(#soft2)"/>')
 fight.append('<!-- the fire power --><g transform="translate(%s %s) scale(%s)"><g>%s%s</g></g>' % (f(rx2), f(ry2), f(PS), rot(F_LEAN, FP, PH, F_LEAN_T, spline=True), ''.join(fire)))
 
@@ -920,10 +926,15 @@ near.append('<!-- a roof mast --><path d="M64 976 L64 880" stroke="#121016" stro
 # the landing deck: a high platform coming in from the right edge, its rim lit. The deck and its ship are drawn at their old
 # place and lifted 60 units as one, so the ramp's light lands inside the phone crop.
 DOCK0 = len(near)
+DECK_RING = True
 deck = [(1720, 989), (1196, 1036), (1100, 1230), (1720, 1230)]
 near.append('<!-- the landing deck --><polygon points="%s" fill="url(#%s)"/>' % (pts(deck), lin([(0, '#262229', 1), (1, '#0c0b10', 1)], 0, 1000, 0, 1152, units=True)))
 near.append('<polygon points="1720,989 1196,1036 1196,1024 1720,977" fill="#1c1a22"/><path d="M1720 977 L1196 1024" stroke="#8a7e72" stroke-width="1.6"/>')
 near.append('<path d="M1720 989 L1196 1036 L1120 1160" fill="none" stroke="#6a5e58" stroke-width="2.4"/>')
+near.append('<!-- the deck\'s landing ring --><ellipse cx="1420" cy="1124" rx="170" ry="40" fill="none" stroke="#ffb860" stroke-width="3" opacity=".3"/><ellipse cx="1420" cy="1124" rx="120" ry="28" fill="none" stroke="#ffb860" stroke-width="1.4" opacity=".2"/>')
+for i in range(5):
+    x_, y_ = lerp(1192, 1112, i / 4), lerp(1044, 1206, i / 4)
+    near.append('<circle cx="%s" cy="%s" r="7" fill="url(#lamp-win)" opacity=".55"/><circle cx="%s" cy="%s" r="1.6" fill="#ffd0a0"/>' % (f(x_), f(y_), f(x_), f(y_)))
 for i in range(10):
     x_ = lerp(1700, 1200, i / 9)
     y_ = lerp(991, 1035, i / 9)
@@ -995,8 +1006,8 @@ def layer(id_, body, role=False):
     return head + body + '\n</svg>\n'
 
 
-NOTES_WHAT = ("The present day, on Valleron. King Kozrak's citadel, the greatest of the Vallerii spires, rises over a crowded city with the Mercurius Machine burning gold at its apex, the only machine that prints Scrambler Tokens. Below it, one of his arenas is packed to the rim under floodlights and hung with the banners of factions from across Xalia, and a fight is on: a power of lightning and a power of fire, seen only as light. Over the arena, projected from the king's box, hangs the prize, the same printed genome card that was carried home in beat 06. Ships come down out of a sky where the plague still smolders in the galaxy's arms and settle on the city's landing decks, and a faction's ship waits on a deck in the foreground with its hatch open.")
-NOTES_HOW = ("Twice on every seven-second clock the powers trade blows: the fire leans in and throws a fireball and the lightning answers, then the lightning strikes and the fire answers with a jet of flame. Each clash flashes, rings dust across the floor and sets the crowd roaring. The token turns slowly with scan lines running through it, the searchlights sweep the city out of step, ships glide in and settle on the decks, the Machine's ring turns, and the plague breathes in the galaxy. Every animation starts mid-cycle, so the still frame shows the fireball and the answering bolt about to meet.")
+NOTES_WHAT = ("The present day, on Valleron. King Kozrak's citadel, the greatest of the Vallerii spires, rises over a crowded city with the Mercurius Machine burning gold at its apex, the only machine that prints Scrambler Tokens. Below it, one of his arenas is packed to the rim under floodlights and hung with the banners of factions from across Xalia, and a fight is on: a power of lightning and a power of fire, seen only as light. Over the arena, projected from the king's box, hangs the prize, the same printed genome card that was carried home in beat 06, and a thread of gold runs to it from the Machine that makes it. Ships come down out of a sky where the plague still smolders in the galaxy's arms and settle on the city's landing decks, and a faction's ship waits on a deck in the foreground with its hatch open.")
+NOTES_HOW = ("Twice on every seven-second clock the powers trade blows: the fire leans in and throws a fireball and the lightning answers, then the lightning strikes and the fire answers with a jet of flame. Each clash flashes, rings dust across the floor and sets the crowd roaring. The token turns slowly with scan lines running through it, and every eight seconds a pulse runs down the Machine's thread and the card brightens as it arrives; the searchlights sweep the city out of step, ships glide in and settle on the decks, the Machine's ring turns, and the plague breathes in the galaxy. Every animation starts mid-cycle, so the still frame shows the fireball and the answering bolt about to meet.")
 
 svg_defs = '<svg class="defs" id="layer-defs" width="0" height="0" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">\n<defs>\n%s\n</defs>\n</svg>\n' % (W, H, '\n'.join(defs))
 piece_comment = '<!--\n' + CONCEPT + '\n\n' + PIECES.replace('--', '-') + '\n-->\n'
