@@ -315,8 +315,13 @@ function readerVerdicts(cands, reads, regions) {
       let better = 0, worse = 0
       const reasons = []
       for (const r of reads) {
+        // match on the assembly name: readers name a pack by its assembly ("assembled-2412") while the
+        // runner records the pack folder (".../assembled-2412/reader-pack"), so a path-suffix match
+        // found nothing in round 21 and every reader verdict was recorded as same with no reason
         const norm = s => String(s || '').replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase()
-        const e = r && (r.packs || []).find(p => c.pack && p.pack && p.region === rid && (norm(c.pack).endsWith(norm(p.pack)) || norm(p.pack).endsWith(norm(c.pack))))
+        const asm = s => (norm(s).match(/assembled-\d+/g) || []).pop() || null
+        const same = (a, b) => a && b && (asm(a) && asm(a) === asm(b) || norm(a).endsWith(norm(b)) || norm(b).endsWith(norm(a)))
+        const e = r && (r.packs || []).find(p => p.region === rid && same(c.pack, p.pack))
         if (!e) continue
         // the candidate's side in the pack comes from the runner's key; the pack folder records it as key.json, read by the runner into c.keys
         const side = (c.keys || {})[rid] || 'B'

@@ -531,8 +531,9 @@ test('split builder: planner, one runner, three blind readers pick the candidate
     if (label.startsWith('runner')) return { ok: true, candidates: [cand(1, 'A'), cand(2, 'B')] }
     // every reader prefers candidate 2 (on side B) and finds candidate 1 the same as the baseline
     if (label.startsWith('reader')) return { packs: [
-      { pack: 'p/assembled-901/reader-pack', region: 'R06', choice: 'same', reason: 'flat' },
-      { pack: 'p/assembled-902/reader-pack', region: 'R06', choice: 'B', reason: 'S curve reads' }] }
+      // readers name a pack by its assembly, not by the folder the runner recorded (round 21)
+      { pack: 'assembled-901', region: 'R06', choice: 'same', reason: 'flat' },
+      { pack: 'assembled-902', region: 'R06', choice: 'B', reason: 'S curve reads' }] }
     if (label.startsWith('critic r')) return { criteria: rub.regions.R06.filter(c => c.kind === 'visual').map(c => ({ id: c.id, result: 'pass', evidence: '' })), pairwise: [{ region: 'R06', verdict: 'same', reason: 'critic unsure' }], invariants: [], issues: [], summary: '' }
     return undefined
   })
