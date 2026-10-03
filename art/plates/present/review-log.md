@@ -167,3 +167,7 @@ Every lob was measured against every bystander and the king's box: all clear. Th
 3. A faint streak rises from each middle-row thrower's head to where its lob begins, so the darts and the globe no longer appear from nowhere.
 4. The stone aims higher on storm.
 5. The great fireball over fire's head for 0.2 s: left; it reads as fire charging up.
+
+## Round 15 (fresh reviewer, cold gate): 9, "Nothing worth a round"
+
+Gate passed: clean checklist (22 items), no failing piece, score 9; the figure fade passes. Every lob clears its bystanders and the king's box. Left as found, all invisible at site size: the throw streaks lean away from their targets before each lob turns back (reads as a wind-up); the globe passes about 12 units over fire's head; water's head overlaps fire's lower body in the staggered rows; the great fireball rests over fire's head for 0.2 s; the great bolt lingers about 0.5 s as it fades.
