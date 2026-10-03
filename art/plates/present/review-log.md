@@ -61,3 +61,13 @@ A fresh reviewer judged at true site size (about 372 pixels on a laptop, the pho
 9. The bolt held still in mid-air: bolts strike in two steps (half, then full length, about 0.05 s apart) straight from the column toward what they meet, arriving with it.
 10. The left searchlight crossed the token: its sweep is 156 to 166 degrees, below the token and its cone.
 11. The even roar: noted, left as it is.
+
+## Round 4 (round 3's reviewer, resumed): 7
+
+Round 3's findings confirmed fixed apart from the thread (invisible at site size) and the docked ship on the phone. What was done:
+1. The jet strobed to a thin line when neither of its two shapes was on: one shape stays on and the second flickers over it.
+2. The thread was invisible at 372 pixels: a 4-unit core in a 12-unit gold glow; the pulse is a real glow and runs every half turn of the token (8.2 s); the whole card brightens for about 0.4 s as it arrives.
+3. The front of the floor was an empty dark disc: a warm floodlight pool on the front half and faint scorch from earlier clashes.
+4. The galaxy's bulge sat beside the token: it moved right of the Machine (about 1340, 156), so the card is the brightest thing on its side of the sky.
+5. On the phone the docked ship sat under the panel's cut corner: the deck and ship moved 120 units left.
+6. The left searchlight ending near the city: noted, left as it is.

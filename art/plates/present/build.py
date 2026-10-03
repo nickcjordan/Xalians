@@ -217,8 +217,8 @@ for i in range(34):
     w = gr.uniform(180, 320)
     gal.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#galDust)" transform="rotate(%s %s %s)" opacity="%s"/>' % (f(x + gr.uniform(-30, 30)), f(y + gr.uniform(-25, 25)), f(w), f(gr.uniform(48, 92)), f(ang), f(x), f(y), f(gr.uniform(.3, .6))))
 # the core, left of the citadel, where the band is brightest
-gal.append('<ellipse cx="540" cy="300" rx="300" ry="120" fill="url(#galCore)" transform="rotate(-12 540 300)" opacity=".75"/>')
-gal.append('<ellipse cx="540" cy="300" rx="130" ry="52" fill="url(#galCore)" transform="rotate(-12 540 300)" opacity=".7"/>')
+gal.append('<ellipse cx="1340" cy="156" rx="260" ry="104" fill="url(#galCore)" transform="rotate(-14 1340 156)" opacity=".7"/>')
+gal.append('<ellipse cx="1340" cy="156" rx="110" ry="44" fill="url(#galCore)" transform="rotate(-14 1340 156)" opacity=".65"/>')
 # dust lanes: darker streaks along the band
 for i in range(10):
     t = gr.uniform(.05, .95)
@@ -226,7 +226,7 @@ for i in range(10):
     gal.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s" opacity="%s" transform="rotate(-13 %s %s)" filter="url(#soft8)"/>' % (f(x), f(y + gr.uniform(-6, 10)), f(gr.uniform(60, 140)), f(gr.uniform(5, 10)), SKY_MID, f(gr.uniform(.35, .6)), f(x), f(y)))
 # star dust: fine points along the band
 for _ in range(1100):
-    t = gr.random() if gr.random() < .7 else gr.gauss(.36, .07)
+    t = gr.random() if gr.random() < .7 else gr.gauss(.82, .06)
     x, y = GAL(t)
     d = gr.gauss(0, 46)
     gal.append('<circle cx="%s" cy="%s" r="%s" fill="%s" opacity="%s"/>' % (f(x + gr.uniform(-40, 40)), f(y + d), f(gr.uniform(.4, 1.1)), gr.choice(['#fff4dc', '#ffe0b0', '#f0e8ff']), f(gr.uniform(.2, .7) * math.exp(-(d / 50) ** 2))))
@@ -545,15 +545,16 @@ prize = []
 prize.append('<!-- the projection cone --><polygon points="%s" fill="url(#projCol)" filter="url(#soft4)"/>' % pts([(TOK_CX - TOK_W * .44, col_top), (TOK_CX + TOK_W * .44, col_top), (LENS[0] + 5, LENS[1]), (LENS[0] - 5, LENS[1])]))
 prize.append('<path d="M%s %s L%s %s M%s %s L%s %s" stroke="%s" stroke-width="1" opacity=".35"/>' % (f(LENS[0] - 3), f(LENS[1]), f(TOK_CX - TOK_W * .44), f(col_top), f(LENS[0] + 3), f(LENS[1]), f(TOK_CX + TOK_W * .44), f(col_top), GOLD_HOT))
 prize.append('<circle cx="%s" cy="%s" r="12" fill="url(#lamp-gold)"/><circle cx="%s" cy="%s" r="3" fill="%s"/>' % (f(LENS[0]), f(LENS[1]), f(LENS[0]), f(LENS[1]), GOLD_HOT))
-# the Machine's thread: a fine filament of gold from the Machine's core to the token, sagging across the sky, the mark that the
-# Machine is where the prize comes from; once a turn of the token a bright pulse runs down it and the token flares as it arrives
+# the Machine's thread: a filament of gold from the Machine's core to the token, sagging across the sky, the mark that the
+# Machine is where the prize comes from; every half turn of the token a bright pulse runs down it and the card brightens as it arrives
 TOK_TURN, TOK_PH = 16.37, 3.513
+PULSE = TOK_TURN / 2
 fil = 'M%s %s Q%s %s %s %s' % (f(CX - 18), f(CROWN_Y + 4), f(960), f(352), f(TOK_CX + 62), f(TOK_CY - 6))
-prize.append('<!-- the Machine\'s thread --><path d="%s" fill="none" stroke="%s" stroke-width="5" opacity=".14" filter="url(#soft2)"/><path d="%s" fill="none" stroke="%s" stroke-width="1.1" opacity=".55"/>' % (fil, GOLD, fil, GOLD_HOT))
-prize.append('<!-- the pulse down the thread --><g opacity="0">%s<circle r="16" fill="url(#lamp-gold)"/><circle r="3.4" fill="%s"/><animateMotion path="%s" keyPoints="0;0;1;1" keyTimes="0;.62;.7;1" calcMode="linear" dur="%ss" begin="-%ss" repeatCount="indefinite"/></g>' % (
-    anim('opacity', '0;0;1;1;0;0', TOK_TURN, TOK_PH, '0;.615;.625;.695;.705;1'), GOLD_HOT, fil, f(TOK_TURN), f(TOK_PH)))
-prize.append('<!-- the token flares as the pulse arrives --><circle cx="%s" cy="%s" r="%s" fill="url(#lamp-gold)" opacity="0">%s</circle>' % (
-    f(TOK_CX), f(TOK_CY), f(TOK_W * .7), anim('opacity', '0;0;.55;0;0', TOK_TURN, TOK_PH, '0;.695;.71;.8;1', spline=True)))
+prize.append('<!-- the Machine\'s thread --><path d="%s" fill="none" stroke="%s" stroke-width="12" opacity=".35" filter="url(#soft4)"/><path d="%s" fill="none" stroke="%s" stroke-width="4" opacity=".75"/><path d="%s" fill="none" stroke="%s" stroke-width="1.2" opacity=".9"/>' % (fil, GOLD, fil, GOLD, fil, GOLD_HOT))
+prize.append('<!-- the pulse down the thread --><g opacity="0">%s<circle r="30" fill="url(#lamp-gold)"/><circle r="7" fill="%s"/><animateMotion path="%s" keyPoints="0;0;1;1" keyTimes="0;.7;.847;1" calcMode="linear" dur="%ss" begin="-%ss" repeatCount="indefinite"/></g>' % (
+    anim('opacity', '0;0;1;1;0;0', PULSE, TOK_PH, '0;.695;.705;.842;.852;1'), GOLD_HOT, fil, f(PULSE), f(TOK_PH)))
+prize.append('<!-- the token\'s glow swells as the pulse arrives --><circle cx="%s" cy="%s" r="%s" fill="url(#lamp-gold)" opacity="0">%s</circle>' % (
+    f(TOK_CX), f(TOK_CY), f(TOK_W * .75), anim('opacity', '0;0;.7;0;0', PULSE, TOK_PH, '0;.845;.865;.93;1', spline=True)))
 
 # the token, the prize: the beat 06 card drawn in light, a projection rather than an object
 TW = TOK_W
@@ -570,6 +571,9 @@ tok = []
 tok.append('<path d="%s" fill="%s" opacity=".1"/>' % (card_outline(), GOLD))
 tok.append('<path d="%s" fill="none" stroke="%s" stroke-width=".9" filter="url(#glow2)"/>' % (card_outline(), GOLD_HOT))
 tok.append('<path d="%s" fill="none" stroke="%s" stroke-width=".3" opacity=".55"/>' % (card_outline(2.6), GOLD))
+# the card brightens when the Machine's pulse reaches it: a fuller fill and a heavier rim, for about 0.4 s
+tok.append('<g opacity="0">%s<path d="%s" fill="%s" opacity=".3"/><path d="%s" fill="none" stroke="%s" stroke-width="2" filter="url(#glow2)"/></g>' % (
+    anim('opacity', '0;0;1;0;0', TOK_TURN / 2, 3.513, '0;.845;.86;.9;1', spline=True), card_outline(), GOLD, card_outline(), GOLD_HOT))
 # the contacts along the bottom edge: drawn as lit outlines with a faint fill
 for i in range(12):
     tok.append('<rect x="%s" y="38.4" width="4.4" height="6.4" fill="%s" fill-opacity=".28" stroke="%s" stroke-width=".35"/>' % (f(4.2 + i * 5.5), GOLD, GOLD_HOT))
@@ -699,6 +703,9 @@ FL, FR = (FCX - 170, FY + 12), (FCX + 170, FY - 4)  # where the two powers stand
 for (x_, y_) in (FL, FR):
     arena.append('<ellipse cx="%s" cy="%s" rx="26" ry="8" fill="#2a1e18" opacity=".5" filter="url(#soft2)"/>' % (f(x_), f(y_)))
 
+arena.append('<!-- the near floodlights\' pool on the front of the floor --><ellipse cx="%s" cy="%s" rx="270" ry="62" fill="url(#lamp-win)" opacity=".34"/>' % (f(AX), f(FLOOR_CY + 34)))
+for (dx, dy, rx_, ry_) in [(-110, 40, 46, 12), (90, 54, 38, 10), (10, 70, 60, 14)]:
+    arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#24180f" opacity=".28" filter="url(#soft4)"/>' % (f(FCX + dx), f(FCY + dy), f(rx_), f(ry_)))
 # the floor wall: the low wall between the floor and the first tier
 arena.append('<path d="%s" fill="none" stroke="#2a2422" stroke-width="5"/>' % ('M' + ' L'.join('%s %s' % (f(x_), f(y_)) for x_, y_ in arc_pts(fe, 0, 2 * math.pi, 100)) + ' Z'))
 # haze over the bowl: the floodlights light the air above the arena
@@ -880,7 +887,8 @@ def jet_shape(seed):
 
 
 core = '<path d="M0 -1.5 Q%s -5 %s 0 Q%s 5 0 1.5 Z" fill="#ffd060" opacity=".9" filter="url(#soft2)"/>' % (f(jl * .5), f(jl * .8), f(jl * .5))
-jet = ''.join('<path d="%s" fill="url(#jetFill)" filter="url(#soft2)" opacity="%s">%s</path>' % (jet_shape(80 + i), '1' if i == 0 else '0', anim('opacity', '1;0;1' if i == 0 else '0;1;0', .157 + .041 * i, .03 * i, '0;.5;1', calc='discrete')) for i in range(2)) + core
+jet = ('<path d="%s" fill="url(#jetFill)" filter="url(#soft2)"/>' % jet_shape(80)
+       + '<path d="%s" fill="url(#jetFill)" filter="url(#soft2)" opacity="0">%s</path>' % (jet_shape(81), anim('opacity', '0;.6;0', .157, .03, '0;.5;1', calc='discrete')) + core)
 fight.append('<!-- the jet of flame --><g transform="translate(%s %s) rotate(%s)"><g opacity="0">%s<g>%s%s</g></g></g>' % (
     f(j0[0]), f(j0[1]), f(ja), anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.777;.778;.83;.86;1', calc='discrete'), trans('0 1;0 1;1 1;1 1', FP, PH, '0;.777;.799;1', typ='scale'), jet))
 fight += clash(.82, 'two')
@@ -904,12 +912,12 @@ near.append('<!-- a roof mast --><path d="M64 976 L64 880" stroke="#121016" stro
 # the landing deck: a high platform coming in from the right edge, its rim lit. The deck and its ship are drawn at their old
 # place and lifted 60 units as one, so the ramp's light lands inside the phone crop.
 DOCK0 = len(near)
-deck = [(1600, 1000), (1196, 1036), (1100, 1230), (1600, 1230)]
+deck = [(1720, 989), (1196, 1036), (1100, 1230), (1720, 1230)]
 near.append('<!-- the landing deck --><polygon points="%s" fill="url(#%s)"/>' % (pts(deck), lin([(0, '#262229', 1), (1, '#0c0b10', 1)], 0, 1000, 0, 1152, units=True)))
-near.append('<path d="M1600 1000 L1196 1036 L1120 1160" fill="none" stroke="#6a5e58" stroke-width="2.4"/>')
+near.append('<path d="M1720 989 L1196 1036 L1120 1160" fill="none" stroke="#6a5e58" stroke-width="2.4"/>')
 for i in range(10):
-    x_ = lerp(1580, 1200, i / 9)
-    y_ = lerp(1002, 1035, i / 9)
+    x_ = lerp(1700, 1200, i / 9)
+    y_ = lerp(991, 1035, i / 9)
     near.append('<circle cx="%s" cy="%s" r="6" fill="url(#lamp-win)" opacity=".55"/><circle cx="%s" cy="%s" r="1.5" fill="#ffd0a0"/>' % (f(x_), f(y_), f(x_), f(y_)))
 # the docked faction ship: a long hull, nose toward the arena, its cockpit lit, its faction's running stripe and engines idling green
 SHIP_C = '#8be08a'
@@ -940,11 +948,11 @@ near.append('<path d="M1560 1004 L1560 930" stroke="#141218" stroke-width="4"/><
 import re as _re
 for i_ in range(DOCK0, len(near)):
     m_ = _re.match(r'(\s*<!--.*?-->)?(.*)', near[i_], _re.S)
-    near[i_] = (m_.group(1) or '') + '<g transform="translate(0 -60)">' + m_.group(2) + '</g>'
+    near[i_] = (m_.group(1) or '') + '<g transform="translate(-120 -60)">' + m_.group(2) + '</g>'
 
 # ------------------------------------------------------------------ nearfx layer (animated): the ship's engines idle, the roof beacon blinks
 nearfx = []
-for k_, (ex, ey) in enumerate([(1506, 928), (1504, 948)]):
+for k_, (ex, ey) in enumerate([(1386, 928), (1384, 948)]):
     nearfx.append('<circle cx="%s" cy="%s" r="16" fill="url(#lamp-fac3)" opacity=".5">%s</circle><circle cx="%s" cy="%s" r="3.2" fill="#eaffea" opacity=".9"/>' % (
         f(ex + 4), f(ey), anim('opacity', '.35;.7;.45;.65;.35', 2.3 + k_ * .4, k_ * .7, '0;.3;.55;.8;1', spline=True), f(ex + 2), f(ey)))
 nearfx.append('<circle cx="64" cy="878" r="10" fill="url(#lamp-red)" opacity="0">%s</circle>' % anim('opacity', '0;1;1;0;0', 2.6, .4, '0;.06;.2;.3;1'))
