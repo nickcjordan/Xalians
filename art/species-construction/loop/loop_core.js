@@ -240,13 +240,23 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
         if (b && a && credit(a) < credit(b)) measuredLoss.push(`${c.id} ${b} to ${a}`)
       }
     }
+    // limits.measuredTieKeep (after round 21): when the readers call a clean candidate the same and
+    // the order's own measured criteria gain on net, the measured gain decides, under every guard
+    // below (no target loses visual credit, no measured criterion anywhere loses, no invariant breaks)
+    let measuredNet = 0
+    for (const t of targets) for (const c of rubric.regions[t]) {
+      if (c.kind !== 'measured') continue
+      const b = state.regions[t].results[c.id], a = results[t][c.id]
+      if (a && b) measuredNet += credit(a) - credit(b)
+    }
+    const onMeasured = !!(o.measuredTie && limits.measuredTieKeep && pair && pair.verdict === 'same' && measuredNet > 0)
     const rs = []
-    if (!pair || pair.verdict !== 'better') rs.push(`verdict ${pair ? pair.verdict : 'missing'}`)
+    if (!pair || (pair.verdict !== 'better' && !onMeasured)) rs.push(`verdict ${pair ? pair.verdict : 'missing'}${o.measuredTie ? `, measured net ${measuredNet}` : ''}`)
     if (dropsW.length) rs.push('lost credit in ' + dropsW.map(id => `${id} ${before[id]} to ${after[id]}`).join(', '))
     if (measuredLoss.length) rs.push('measured regression ' + measuredLoss.join(', '))
     if (broken.length) rs.push('broke invariant ' + broken.join(', '))
     const dW = lostW.filter(id => !dropsW.includes(id)).map(id => ({ region: id, before: before[id], after: after[id], by: targets.join('+') }))
-    return { kept: !rs.length, keptOnVerdict: !rs.length, reasons: rs, results, after, gain, debts: rs.length ? [] : dW, verdict: pair || null, invariants: critique.invariants || [], ...extra }
+    return { kept: !rs.length, keptOnVerdict: !rs.length && !onMeasured, keptOnMeasured: !rs.length && onMeasured, reasons: rs, results, after, gain, debts: rs.length ? [] : dW, verdict: pair || null, invariants: critique.invariants || [], ...extra }
   }
   const vd = limits.verdictDebt
   const debtKeep = vd && reasons.length && pair && pair.verdict === 'better' && !targets.some(t => after[t] < before[t]) && !drops.length && lost.length <= (vd.maxRegions ?? 1) && !broken.length && gain >= (vd.minGain ?? -0.1)

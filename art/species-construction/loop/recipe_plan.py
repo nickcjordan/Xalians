@@ -266,7 +266,26 @@ def schedule(nodes, slots):
     return max(finish.values(), default=0.0)
 
 
+def candidate_minutes(plan_dir):
+    """Median wall minutes of past top-K candidates (assemble, packet, posed fit, measures), from the plan
+    results beside this plan. They ran while the other component's plan shared the Blender slots, which
+    is how a round runs them, so they already carry that contention."""
+    vals = []
+    for f in Path(plan_dir).glob('*plan-result*.json'):
+        try:
+            r = json.loads(f.read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        vals += [e['wallMinutes'] for e in r.get('top') or [] if isinstance(e.get('wallMinutes'), (int, float))]
+    vals.sort()
+    return vals[len(vals)//2] if len(vals) >= 3 else None
+
+
 def dry_run(rc, base, plan, variants, notes, start_data, cache, top, slots):
+    # round 21: estimates of 27 and 17 minutes ran 63 and 90, because a round runs the head and the
+    # body plan at once on the same slots and a candidate took 20 to 50 minutes, not 7. Schedule on
+    # half the slots and price a candidate by the measured median.
+    shared = max(1, round(slots/2))
     print(f"plan {plan['_path'].name}: base {Path(plan['base']).name}, region {plan['region']}, {len(variants)} variants, top {top}")
     for note in notes:
         print('start: '+note)
@@ -294,14 +313,15 @@ def dry_run(rc, base, plan, variants, notes, start_data, cache, top, slots):
         for w in v.get('warnings', []):
             print(f'    warning: {w}')
     nodes[('quick', 'baseline')] = ([], QUICK_MINUTES)
-    wall = schedule(nodes, slots)
+    wall = schedule(nodes, shared)
     from recipe_candidate import CHECK_MINUTES, DIFF_MINUTES, PACKET_MINUTES
-    per_candidate = ASSEMBLY_MINUTES+CHECK_MINUTES+PACKET_MINUTES+DIFF_MINUTES
-    waves = -(-top//slots)
+    measured = candidate_minutes(plan['_path'].parent)
+    per_candidate = measured or ASSEMBLY_MINUTES+CHECK_MINUTES+PACKET_MINUTES+DIFF_MINUTES
+    waves = -(-top//slots)  # run-plan starts up to `slots` candidates at once; the median was measured that way
     print(f"builds: {sum(1 for k in nodes if isinstance(k, str))} distinct steps and {sum(1 for k in nodes if isinstance(k, tuple))} quick renders; "
-          f"scoring about {wall:.1f} min wall on {slots} slots"
+          f"scoring about {wall:.1f} min wall on {shared} of {slots} slots (the other component's plan shares them)"
           + (f' (no recorded time for {", ".join(sorted(unknown))})' if unknown else ''))
-    print(f'then the top {top} through candidate: about {per_candidate:.1f} min each, {waves} wave(s) of {slots}; total about {wall+waves*per_candidate:.1f} min')
+    print(f"then the top {top} through candidate: about {per_candidate:.1f} min each ({'median of past candidates' if measured else 'nominal'}), {waves} wave(s) of {slots}; total about {wall+waves*per_candidate:.1f} min")
     print('run it as a job: plan_job.py start, then plan_job.py wait until done' if wall+waves*per_candidate > 9 else 'short enough to run in the foreground')
 
 

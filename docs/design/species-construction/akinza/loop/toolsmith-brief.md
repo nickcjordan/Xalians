@@ -22,3 +22,10 @@ The model is construction geometry, judged as untextured clay. It owns everythin
 ## Long commands
 
 Start any command that can take more than a minute (`recipe.py build`, `candidate`, `sweep`, `run-plan`, a packet) with the Bash tool's `run_in_background` and wait for its completion notice. Never `sleep`, poll, tail logs or open a Monitor while it runs: every turn re-reads the whole conversation (the 2026-10-02 audit counted 254 sleeps and 168 monitors, about 11 wasted turns per builder). `recipe.py candidate <recipe> --baseline <baseline packet>` runs build, check, packet, measured, diff, seams and containment in one call and prints one summary line; use it instead of chaining them.
+
+## Reader check before ready (2026-10-02, after round 21)
+
+A smoke test on its own is not enough. Round 21's fan clump tool passed its smoke test, then lost 3 to 0 to the baseline in every candidate a round built with it, because its front step left straight cut lines boxing the face once it was stacked on the current model. Before you return ready:
+
+- Build your starter on the current baseline recipe, packet it, and look at m02 to m05 beside the baseline packet's. A straight cut line, a flat plane, a box edge, a ladder of slabs or a floating piece anywhere in the region fails the tool; fix it before you return.
+- Write the one-variant check plan the work order names. Three blind readers compare its candidate with the baseline; the tool counts as ready only if they find it no worse. If they reject it, you get their reasons and one fix pass.

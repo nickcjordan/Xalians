@@ -223,6 +223,19 @@ An independent Fable audit (`LOOP-audit-2026-10-02.md`) found the loop four time
 - **Cost accounting.** `loop_costs.py` counts usage once per message id; earlier figures in this document and in the progress notes summed duplicated transcript lines and are about 1.8 times too high.
 - **Independent audits.** A fresh auditor on a different model reviews the loop after every two batches, from the raw records and without the orchestrator's conclusions.
 
+## Additions after rounds 21 and 22 (v3.5, 2026-10-02)
+
+Round 21 kept nothing and showed four ways the loop spent its time on the wrong thing. Applied (Nick: implement them as long as quality is not traded for speed):
+
+- **Plan ranking counts the order's criteria.** `quick_criteria.py` measures the order's fit, row, edge, trunk, waist and ear-span criteria on every quick render (trunk and waist from the body sink's mesh sections, equal to the assembly's to 1e-5); a progress term rewards criteria that start passing and distance closed to their bounds; near copies of the baseline rank last; a step's tool score is referenced to the baseline's own output. Before this, a near copy of the torso ranked first.
+- **Reader verdicts match packs by assembly name.** Readers name a pack by its assembly and the runner recorded the folder; every round 21 verdict was stored as same with no reason, and the refine planners never saw the readers' reasons.
+- **A unanimous rejection goes to the code builder** (`limits.rejectToCode`). When every candidate of a plan reads worse with no reader preferring it, the refine plan is skipped and the code builder gets the readers' reasons to fix the tool. Its candidate faces the same three readers.
+- **Tools pass a reader check before they count as ready** (`limits.toolReaderCheck`). The toolsmith writes a one-variant check plan; three readers compare its candidate with the baseline; a rejected tool gets one fix pass. A tool record for another script than the method names no longer counts as ready.
+- **Measured tie-break** (`limits.measuredTieKeep`). When the readers call a clean candidate (no new seam) the same and the order's own measured criteria gain on net, the candidate goes to the critic, and the judge may keep it on the measured gain under every verdict-keep guard. Simulated on the five earlier orders with a same verdict: none had a target measured gain, so the rule changes no past decision.
+- **Criteria that measured the wrong thing are retired** (R06.2, R06.6 and R06.7, per specs/R06.md H1 and H2: they read the hanging arm or arm-covered sheet rows, and R06.2 could not pass together with R06.12). R06.12 and R06.13 measure the same depths from mesh sections. R06.3, R06.5 and R06.9 also read the hands-on-hips posed renders (H4). R06 recomputed from 4.3 to 4.6 with no geometry change.
+- **Honest plan estimates.** The dry run schedules on the slots a plan really gets while the other component's plan runs, and prices a candidate by the median of past candidates (about 22 minutes, not 7). The plan budget is about 60 minutes and holds for refine plans.
+- **Planner digest.** `planner_digest.py` writes one page per order from the loop's own files (the region's steps, scripts, args and rebuild minutes, the tool's parameters, the measured criteria now, what earlier orders and plans tried); planners read it before exploring.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

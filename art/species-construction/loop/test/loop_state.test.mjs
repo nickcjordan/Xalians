@@ -25,13 +25,13 @@ test('args: under 20 KB, byte-identical across runs, slim shape', { skip: !haveP
   assert.equal(r1.status, 0, r1.stderr); assert.equal(r2.status, 0, r2.stderr)
   const x = readFileSync(join(a, 'args.json')), y = readFileSync(join(b, 'args.json'))
   assert.ok(x.equals(y), 'args.json differs between runs')
-  assert.ok(x.length < 32768  /* v2 sent about 48 KB; the method lines (about 3 KB) arrived with v3 */, `args.json is ${x.length} bytes`)
+  assert.ok(x.length < 40960  /* v2 sent about 48 KB; the method lines arrived with v3 and grew to about 6 KB after the round 21 method review */, `args.json is ${x.length} bytes`)
   const args = JSON.parse(x.toString('utf8'))
   assert.deepEqual(Object.keys(args.status.regions.R01).sort().slice(0, 4), ['anchorScore', 'attempts', 'component', 'history'])
   assert.ok(args.status.regions.R01.history.length <= 4)
   assert.ok(Object.values(args.rubric.regions).flat().every(c => Object.keys(c).join() === 'id,kind'))
   assert.ok(args.status.baseline.recipe, 'baseline carries the recipe path')
-  assert.ok(Array.isArray(args.status.means) && args.status.means.length > 1)
+  assert.ok(Array.isArray(args.status.means) && args.status.means.length >= 1)  // a method review restarts the window at one mean
   assert.deepEqual(args.pools.join, ['R05'])
 })
 

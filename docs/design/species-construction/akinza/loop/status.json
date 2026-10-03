@@ -38,7 +38,10 @@
   "criticScopeMax": 2,
   "refinePasses": 1,
   "planTop": 3,
-  "leanAgentType": "Explore"
+  "leanAgentType": "Explore",
+  "rejectToCode": true,
+  "measuredTieKeep": true,
+  "toolReaderCheck": true
  },
  "baseline": {
   "head": "head-2271",
@@ -600,15 +603,12 @@
   "R06": {
    "name": "Torso and pelvis",
    "weight": 2.5,
-   "score": 4.3,
+   "score": 4.6,
    "results": {
     "R06.1": "pass",
-    "R06.2": "pass",
     "R06.3": "partial",
     "R06.4": "partial",
     "R06.5": "partial",
-    "R06.6": "fail",
-    "R06.7": "fail",
     "R06.8": "pass",
     "R06.9": "fail",
     "R06.10": "fail",
@@ -727,7 +727,10 @@
    ],
    "lastWorked": 21,
    "methodChanged": 16,
-   "toolUsed": true
+   "toolUsed": true,
+   "notes": [
+    "2026-10-02: score recomputed after R06.2, R06.6 and R06.7 were retired (rubric.json retired); no geometry change"
+   ]
   },
   "R07": {
    "name": "Arms and forepaws",

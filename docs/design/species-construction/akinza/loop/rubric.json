@@ -371,22 +371,13 @@
     "max": 1.1
    },
    {
-    "id": "R06.2",
-    "kind": "measured",
-    "text": "Side waist depth within 15 percent of the first sheet",
-    "source": "measure",
-    "view": "left",
-    "key": "waist",
-    "min": 0.9,
-    "max": 1.15
-   },
-   {
     "id": "R06.3",
     "kind": "visual",
     "text": "The trunk tapers smoothly from rib cage to waist to hips, with no shelf or abrupt flare",
     "images": [
      "m06 trunk-front",
-     "m02 front"
+     "m02 front",
+     "posed/front.png (hands on hips, silhouette)"
     ]
    },
    {
@@ -405,42 +396,9 @@
     "text": "The figure reads slim, not athletic, with a restrained rear",
     "images": [
      "m02",
-     "m01"
+     "m01",
+     "posed/front.png (hands on hips, silhouette)"
     ]
-   },
-   {
-    "id": "R06.6",
-    "kind": "measured",
-    "text": "Side waist depth (narrowest front run from .42 to .46) at most 1.1x the sheet",
-    "source": "row",
-    "view": "left",
-    "at": [
-     0.42,
-     0.46
-    ],
-    "pick": "left",
-    "reduce": "min",
-    "max": 1.1
-   },
-   {
-    "id": "R06.7",
-    "kind": "measured",
-    "text": "Side chest depth at .32 over side waist depth at least .9 of the sheet's ratio (the rib cage clearly deeper than the waist)",
-    "source": "rowratio",
-    "view": "left",
-    "num": {
-     "at": 0.32,
-     "pick": "left"
-    },
-    "den": {
-     "at": [
-      0.42,
-      0.46
-     ],
-     "pick": "left",
-     "reduce": "min"
-    },
-    "min": 0.9
    },
    {
     "id": "R06.8",
@@ -466,7 +424,8 @@
     "images": [
      "m02 left",
      "m06 trunk-front",
-     "m01"
+     "m01",
+     "posed/left.png (hands on hips, silhouette)"
     ]
    },
    {
@@ -993,5 +952,57 @@
    }
   ]
  },
- "revised": "2026-09-30: gestalt and fixed-row criteria added after Nick said the effort was on the wrong parts; see loop/gap-audit-0226.md; 2026-10-02: R06.11 to R06.14 and R06.16 added (trunk side profile from mesh sections, source trunk); R06.15 left out because it double-counts the lumbar hollow"
+ "revised": "2026-09-30: gestalt and fixed-row criteria added after Nick said the effort was on the wrong parts; see loop/gap-audit-0226.md; 2026-10-02: R06.11 to R06.14 and R06.16 added (trunk side profile from mesh sections, source trunk); R06.15 left out because it double-counts the lumbar hollow; 2026-10-02 (after round 21): R06.2, R06.6 and R06.7 retired as measuring the arm or the wrong sheet rows, superseded by R06.12 and R06.13 (method review prerequisite H1 and H2); R06.3, R06.5 and R06.9 also read the posed renders (H4)",
+ "retired": [
+  {
+   "id": "R06.2",
+   "kind": "measured",
+   "text": "Side waist depth within 15 percent of the first sheet",
+   "source": "measure",
+   "view": "left",
+   "key": "waist",
+   "min": 0.9,
+   "max": 1.15,
+   "retiredOn": "2026-10-02",
+   "why": "compared the trunk waist with the sheet's depth at .40 (the .102 central run minimum includes akimbo-arm rows); it and R06.12 cannot both pass for any trunk (specs/R06.md section 5, H2). R06.12 measures the waist against the sheet's trunk run (.0816) from mesh sections."
+  },
+  {
+   "id": "R06.6",
+   "kind": "measured",
+   "text": "Side waist depth (narrowest front run from .42 to .46) at most 1.1x the sheet",
+   "source": "row",
+   "view": "left",
+   "at": [
+    0.42,
+    0.46
+   ],
+   "pick": "left",
+   "reduce": "min",
+   "max": 1.1,
+   "retiredOn": "2026-10-02",
+   "why": "read the leftmost run of the arms-down silhouette at .42 to .46, which is the hanging arm, so no trunk could pass (specs/R06.md H1). Superseded by R06.12, the same depth from mesh sections."
+  },
+  {
+   "id": "R06.7",
+   "kind": "measured",
+   "text": "Side chest depth at .32 over side waist depth at least .9 of the sheet's ratio (the rib cage clearly deeper than the waist)",
+   "source": "rowratio",
+   "view": "left",
+   "num": {
+    "at": 0.32,
+    "pick": "left"
+   },
+   "den": {
+    "at": [
+     0.42,
+     0.46
+    ],
+    "pick": "left",
+    "reduce": "min"
+   },
+   "min": 0.9,
+   "retiredOn": "2026-10-02",
+   "why": "chest over waist from the same arm-covered silhouette rows (specs/R06.md H1). Superseded by R06.13, the same ratio from mesh sections."
+  }
+ ]
 }

@@ -127,7 +127,15 @@ def tool_list(loop_dir):
         entry = {'region': rid, 'script': m.group(1) if m else steps[:120], 'ready': rec.exists()}
         if rec.exists():
             r = read_json(rec)
-            entry.update({k: r[k] for k in ('script', 'recipe') if r.get(k)})
+            # a record for another script is an older tool: round 21's method review moved R03 to
+            # author_fan_lock_sweeps.py while tools/R03.json still described the clump builder,
+            # which would have skipped the toolsmith
+            have, want = Path(r.get('script') or '').stem, Path(m.group(1)).stem if m else ''
+            if want and have and not (have.startswith(want) or want.startswith(have)):  # _fast and _v2 copies count
+                entry['ready'] = False
+                entry['replaces'] = r['script']
+            else:
+                entry.update({k: r[k] for k in ('script', 'recipe', 'readerCheck') if r.get(k)})
         out.append(entry)
     return out
 
@@ -180,7 +188,9 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
     else:
         slim_tools = None
     if status.get('tools'):
-        slim['tools'] = status['tools']
+        # drop a carried tool the method plan has replaced, so the toolsmith builds the new one
+        replaced = {t['region'] for t in (tools or []) if t.get('replaces')}
+        slim['tools'] = {rid: t for rid, t in status['tools'].items() if rid not in replaced}
     if status.get('keptSinceAudit'):
         slim['keptSinceAudit'] = status['keptSinceAudit']
     if status.get('auditGaps'):

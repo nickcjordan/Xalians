@@ -372,6 +372,7 @@ test('v3 tools: a needed generator is built by a toolsmith before the rounds and
   const status = readJson(P.status), rub = readJson(P.rubric)
   status.methods = { R06: 'author the trunk from sections' }
   status.tools = {}
+  status.lastOrders = []  // the real status may hold R06 in cooldown
   for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
   status.regions.R06.history = []
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, tools: [{ region: 'R06', script: 'author_trunk_sections_field.py', ready: false }, { region: 'R11', script: 'x.py', ready: false }] }), 'w')
@@ -546,4 +547,92 @@ test('split builder: planner, one runner, three blind readers pick the candidate
   assert.match(critic.label, /assembled-902/, 'the readers chose candidate 2')
   assert.match(critic.prompt, /p[\\/]assembled-902/)
   assert.equal(out.ret.status.baseline.assembly, 'assembled-902', 'the readers decide, so it is kept although the critic said same')
+})
+
+function splitStatus() {
+  const status = readJson(P.status)
+  status.methods = { R06: 'm' }
+  for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
+  status.regions.R06.history = []
+  status.lastOrders = []
+  status.tools = {}
+  status.limits.auditRefreshKept = 0
+  status.limits.verdictKeep = true
+  return status
+}
+const splitCand = (n, side, extra) => ({ name: 'v' + n, recipe: `plans/v${n}.json`, head: 'head-x', body: 'body-' + n, assembly: 'assembled-90' + n, packet: 'p/assembled-90' + n, technicalPass: true, regionChange: {}, seams: 'no new seams flagged', measured: '', pack: `p/assembled-90${n}/reader-pack`, keys: { R06: side }, ...(extra || {}) })
+
+test('split builder: a plan the readers reject unanimously goes to the code builder with their reasons, and its candidate faces the readers too', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  status.limits.rejectToCode = true
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 's', (label, prompt) => {
+    if (label.startsWith('planner')) return { plan: 'plans/r22-R06.json', variants: 4, approach: 'loft sweep', needsCode: false }
+    if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A'), splitCand(2, 'B')] }
+    if (label.startsWith('builder')) return { failed: false, recipe: 'r.json', head: 'head-x', body: 'body-9', assembly: 'assembled-909', packet: 'p/assembled-909', technicalPass: true, approach: 'fixed the box edge', changes: '', pack: 'p/assembled-909/reader-pack', keys: { R06: 'A' } }
+    if (label.startsWith('reader') && label.endsWith('code')) return { packs: [{ pack: 'assembled-909', region: 'R06', choice: 'A', reason: 'no box edge' }] }
+    if (label.startsWith('reader')) return { packs: [
+      { pack: 'assembled-901', region: 'R06', choice: 'B', reason: 'cut box beside the eyes' },
+      { pack: 'assembled-902', region: 'R06', choice: 'A', reason: 'ladder of slabs' }] }
+    if (label.startsWith('critic r')) return { criteria: rub.regions.R06.filter(c => c.kind === 'visual').map(c => ({ id: c.id, result: 'pass', evidence: '' })), pairwise: [{ region: 'R06', verdict: 'better', reason: '' }], invariants: [], issues: [], summary: '' }
+    return undefined
+  })
+  const labels = out.calls.map(c => c.label)
+  assert.equal(labels.filter(l => l.startsWith('planner')).length, 1, 'no refine plan after a unanimous rejection')
+  const builder = out.calls.find(c => c.label.startsWith('builder'))
+  assert.ok(builder, 'the code builder runs')
+  assert.match(builder.prompt, /cut box beside the eyes/)
+  assert.match(builder.prompt, /reader_pack\.py/)
+  assert.equal(labels.filter(l => l.startsWith('reader') && l.endsWith('code')).length, 3)
+  assert.equal(out.ret.status.baseline.assembly, 'assembled-909')
+})
+
+test('split builder: with measuredTieKeep a clean candidate the readers call the same is kept on its measured gain', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  status.limits.measuredTieKeep = true
+  status.limits.refinePasses = 0
+  const trunk = rub.regions.R06.filter(c => c.source === 'trunk').map(c => c.id)
+  for (const id of trunk) status.regions.R06.results[id] = 'fail'
+  const run = { ok: true, candidates: [splitCand(1, 'A', { measured: 'R06 measured: 3 changed (1 newly passing, 0 newly failing)' }),
+    splitCand(2, 'B', { measured: 'R06 measured: 3 changed (2 newly passing, 0 newly failing)' }),
+    splitCand(3, 'B', { measured: 'R06 measured: 3 changed (3 newly passing, 0 newly failing)', seams: 'new seams flagged: elbow/back crease' })] }
+  const go = limits => runWorkflow(generate(), v3Args({ ...status, limits: { ...status.limits, ...limits } }, rub, { rounds: 1, split: true }), 's', (label, prompt) => {
+    if (label.startsWith('planner')) return { plan: 'plans/r22-R06.json', variants: 3, approach: 'waist sweep', needsCode: false }
+    if (label.startsWith('runner')) return run
+    if (label.startsWith('reader')) return { packs: [1, 2, 3].map(n => ({ pack: 'assembled-90' + n, region: 'R06', choice: 'same', reason: 'no visible change' })) }
+    if (label.startsWith('critic r')) return { criteria: [...rub.regions.R06.filter(c => c.kind === 'visual').map(c => ({ id: c.id, result: status.regions.R06.results[c.id] || 'partial', evidence: '' })),
+      ...trunk.slice(0, 2).map(id => ({ id, result: 'pass', evidence: 'measured.json' }))], pairwise: [{ region: 'R06', verdict: 'same', reason: '' }], invariants: [], issues: [], summary: '' }
+    return undefined
+  })
+  const out = await go({})
+  const critic = out.calls.find(c => c.label.startsWith('critic r'))
+  assert.match(critic.label, /assembled-902/, 'the clean candidate with the larger measured gain, not the one with a new seam')
+  assert.equal(out.ret.status.baseline.assembly, 'assembled-902')
+  const off = await go({ measuredTieKeep: false })
+  assert.ok(!off.calls.some(c => c.label.startsWith('critic r')), 'without the lever a same verdict ends the order')
+})
+
+test('tools: with toolReaderCheck a new tool is ready only when three readers find its starter no worse than the baseline; a rejected tool gets one fix pass', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R06: 'author the trunk from sections' }
+  status.tools = {}
+  status.lastOrders = []
+  for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
+  status.regions.R06.history = []
+  status.limits.toolReaderCheck = true
+  const go = verdicts => {
+    let check = 0
+    return runWorkflow(generate(), v3Args(status, rub, { rounds: 0, tools: [{ region: 'R06', script: 'author_trunk_sections_field.py', ready: false }] }), 'w', (label, prompt) => {
+      if (label.startsWith('tool:')) return { region: 'R06', script: 'author_trunk_sections_field.py', recipe: 'recipes/tool-R06.json', ready: true, checkPlan: 'plans/tool-check-R06.json', notes: '' }
+      if (label.startsWith('runner tool check')) { check++; return { ok: true, candidates: [{ name: 'tool as built', assembly: 'assembled-990', packet: 'p/assembled-990', technicalPass: true, pack: 'p/assembled-990/reader-pack', keys: { R06: 'B' } }] } }
+      if (label.startsWith('reader') && label.includes('tool check')) return { packs: [{ pack: 'assembled-990', region: 'R06', choice: verdicts[check - 1], reason: verdicts[check - 1] === 'A' ? 'cut box' : 'fine' }] }
+      return undefined
+    })
+  }
+  const bad = await go(['A', 'A'])
+  assert.deepEqual(bad.calls.map(c => c.label).filter(l => l.startsWith('tool:')), ['tool: R06', 'tool: R06 fix'])
+  assert.match(bad.calls.find(c => c.label === 'tool: R06 fix').prompt, /cut box/)
+  assert.ok(bad.logs.some(l => /R06 not ready \(readers worse\)/.test(l)), JSON.stringify(bad.logs))
+  const good = await go(['same'])
+  assert.ok(good.logs.some(l => /R06 ready \(readers same\)/.test(l)), JSON.stringify(good.logs))
+  assert.ok(!good.calls.some(c => c.label === 'tool: R06 fix'))
 })
