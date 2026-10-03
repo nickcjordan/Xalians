@@ -549,12 +549,17 @@ prize.append('<circle cx="%s" cy="%s" r="12" fill="url(#lamp-gold)"/><circle cx=
 # Machine is where the prize comes from; every half turn of the token a bright pulse runs down it and the card brightens as it arrives
 TOK_TURN, TOK_PH = 16.37, 3.513
 PULSE = TOK_TURN / 2
-fil = 'M%s %s Q%s %s %s %s' % (f(CX - 18), f(CROWN_Y + 4), f(960), f(352), f(TOK_CX + 62), f(TOK_CY - 6))
+PULSE_PH = TOK_PH - 1.003  # the pulse reaches the card about a second after clash two
+fil = 'M%s %s Q%s %s %s %s' % (f(CX - 18), f(CROWN_Y + 4), f(980), f(350), f(TOK_CX + TOK_W / 2 + 1), f(TOK_CY - 6))
 prize.append('<!-- the Machine\'s thread --><path d="%s" fill="none" stroke="%s" stroke-width="12" opacity=".35" filter="url(#soft4)"/><path d="%s" fill="none" stroke="%s" stroke-width="4" opacity=".75"/><path d="%s" fill="none" stroke="%s" stroke-width="1.2" opacity=".9"/>' % (fil, GOLD, fil, GOLD, fil, GOLD_HOT))
+stub_x = '%s;%s;%s' % (f(TOK_CX + TOK_W / 2 + 1), f(TOK_CX + TOK_W * .3), f(TOK_CX + TOK_W / 2 + 1))
+prize.append('<!-- the thread\'s end, following the card\'s edge as it turns -->' + ''.join(
+    '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s" opacity="%s"%s>%s</line>' % (f(TOK_CX + TOK_W / 2 + 1), f(TOK_CY - 6), f(TOK_CX + TOK_W / 2 + 1), f(TOK_CY - 6), c_, w_, o_, fl_, anim('x2', stub_x, TOK_TURN, TOK_PH, '0;.5;1', spline=True))
+    for (c_, w_, o_, fl_) in [(GOLD, '12', '.35', ' filter="url(#soft4)"'), (GOLD, '4', '.75', ''), (GOLD_HOT, '1.2', '.9', '')]))
 prize.append('<!-- the pulse down the thread --><g opacity="0">%s<circle r="30" fill="url(#lamp-gold)"/><circle r="7" fill="%s"/><animateMotion path="%s" keyPoints="0;0;1;1" keyTimes="0;.7;.847;1" calcMode="linear" dur="%ss" begin="-%ss" repeatCount="indefinite"/></g>' % (
-    anim('opacity', '0;0;1;1;0;0', PULSE, TOK_PH, '0;.695;.705;.842;.852;1'), GOLD_HOT, fil, f(PULSE), f(TOK_PH)))
+    anim('opacity', '0;0;1;1;0;0', PULSE, PULSE_PH, '0;.695;.705;.842;.852;1'), GOLD_HOT, fil, f(PULSE), f(PULSE_PH)))
 prize.append('<!-- the token\'s glow swells as the pulse arrives --><circle cx="%s" cy="%s" r="%s" fill="url(#lamp-gold)" opacity="0">%s</circle>' % (
-    f(TOK_CX), f(TOK_CY), f(TOK_W * .75), anim('opacity', '0;0;.7;0;0', PULSE, TOK_PH, '0;.845;.865;.93;1', spline=True)))
+    f(TOK_CX), f(TOK_CY), f(TOK_W * .75), anim('opacity', '0;0;.7;0;0', PULSE, PULSE_PH, '0;.845;.865;.93;1', spline=True)))
 
 # the token, the prize: the beat 06 card drawn in light, a projection rather than an object
 TW = TOK_W
@@ -573,7 +578,7 @@ tok.append('<path d="%s" fill="none" stroke="%s" stroke-width=".9" filter="url(#
 tok.append('<path d="%s" fill="none" stroke="%s" stroke-width=".3" opacity=".55"/>' % (card_outline(2.6), GOLD))
 # the card brightens when the Machine's pulse reaches it: a fuller fill and a heavier rim, for about 0.4 s
 tok.append('<g opacity="0">%s<path d="%s" fill="%s" opacity=".3"/><path d="%s" fill="none" stroke="%s" stroke-width="2" filter="url(#glow2)"/></g>' % (
-    anim('opacity', '0;0;1;0;0', TOK_TURN / 2, 3.513, '0;.845;.86;.9;1', spline=True), card_outline(), GOLD, card_outline(), GOLD_HOT))
+    anim('opacity', '0;0;1;0;0', PULSE, PULSE_PH, '0;.845;.86;.9;1', spline=True), card_outline(), GOLD, card_outline(), GOLD_HOT))
 # the contacts along the bottom edge: drawn as lit outlines with a faint fill
 for i in range(12):
     tok.append('<rect x="%s" y="38.4" width="4.4" height="6.4" fill="%s" fill-opacity=".28" stroke="%s" stroke-width=".35"/>' % (f(4.2 + i * 5.5), GOLD, GOLD_HOT))
@@ -914,6 +919,7 @@ near.append('<!-- a roof mast --><path d="M64 976 L64 880" stroke="#121016" stro
 DOCK0 = len(near)
 deck = [(1720, 989), (1196, 1036), (1100, 1230), (1720, 1230)]
 near.append('<!-- the landing deck --><polygon points="%s" fill="url(#%s)"/>' % (pts(deck), lin([(0, '#262229', 1), (1, '#0c0b10', 1)], 0, 1000, 0, 1152, units=True)))
+near.append('<polygon points="1720,989 1196,1036 1196,1024 1720,977" fill="#1c1a22"/><path d="M1720 977 L1196 1024" stroke="#8a7e72" stroke-width="1.6"/>')
 near.append('<path d="M1720 989 L1196 1036 L1120 1160" fill="none" stroke="#6a5e58" stroke-width="2.4"/>')
 for i in range(10):
     x_ = lerp(1700, 1200, i / 9)
@@ -923,18 +929,18 @@ for i in range(10):
 SHIP_C = '#8be08a'
 hull = [(1160, 1004), (1198, 984), (1290, 971), (1420, 967), (1482, 975), (1508, 990), (1504, 1012), (1472, 1022), (1222, 1025)]
 near.append('<!-- the docked faction ship -->'
-            '<polygon points="%s" fill="url(#%s)"/>' % (pts(hull), lin([(0, '#80849c', 1), (.45, '#4e5266', 1), (1, '#262838', 1)], 0, 967, 0, 1025, units=True)))
+            '<polygon points="%s" fill="url(#%s)"/>' % (pts(hull), lin([(0, '#a4aac2', 1), (.45, '#70758e', 1), (1, '#3c4056', 1)], 0, 967, 0, 1025, units=True)))
 near.append('<polygon points="%s" fill="#4a4e60"/>' % pts([(1396, 968), (1438, 944), (1462, 946), (1452, 969)]))
 near.append('<path d="M1160 1004 L1198 984 L1290 971 L1420 967 L1482 975" fill="none" stroke="#9a9aae" stroke-width="1.4" opacity=".6"/>')
 near.append('<path d="M1300 972 L1300 1024 M1360 969 L1360 1024 M1430 968 L1430 1022" stroke="#14141a" stroke-width="1.2" opacity=".8"/>')
 near.append('<polygon points="%s" fill="#bfe8ff" opacity=".55"/>' % pts([(1186, 993), (1212, 980), (1252, 977), (1244, 992)]))
 near.append('<polygon points="%s" fill="#ffffff" opacity=".25"/>' % pts([(1200, 986), (1214, 980), (1236, 979), (1226, 984)]))
-near.append('<path d="M1236 1002 L1478 996" stroke="%s" stroke-width="2.4" opacity=".9"/>' % SHIP_C)
+near.append('<path d="M1236 1002 L1478 996" stroke="#b8f8b8" stroke-width="2.8"/>')
 # its faction's paint: the upper hull panels and the fin in the faction's green, so the ship reads as theirs
-near.append('<polygon points="%s" fill="%s" opacity=".55"/>' % (pts([(1300, 972), (1420, 968), (1480, 976), (1478, 986), (1300, 988)]), '#5aa864'))
-near.append('<polygon points="%s" fill="%s" opacity=".8"/>' % (pts([(1400, 967), (1438, 945), (1460, 947), (1450, 968)]), '#5aa864'))
+near.append('<polygon points="%s" fill="%s" opacity=".55"/>' % (pts([(1300, 972), (1420, 968), (1480, 976), (1478, 986), (1300, 988)]), '#7ed08a'))
+near.append('<polygon points="%s" fill="%s" opacity=".8"/>' % (pts([(1400, 967), (1438, 945), (1460, 947), (1450, 968)]), '#7ed08a'))
 # an open hatch above the lowered ramp, lit from inside: the ship is waiting to load
-near.append('<ellipse cx="1322" cy="1052" rx="46" ry="9" fill="url(#lamp-win)" opacity=".7"/>'
+near.append('<ellipse cx="1322" cy="1052" rx="52" ry="10" fill="url(#lamp-win)"/>'
             '<rect x="1320" y="1006" width="32" height="18" fill="#fff2d0"/><rect x="1316" y="1003" width="40" height="4" fill="#2a2a34"/>'
             '<polygon points="1320,1024 1352,1024 1338,1050 1298,1050" fill="#c8a878"/><polygon points="1320,1024 1352,1024 1346,1032 1316,1032" fill="#ffe2a8" opacity=".8"/>'
             '<path d="M1298 1050 L1320 1024 M1338 1050 L1352 1024" stroke="#3a3226" stroke-width="1.4"/>')
@@ -948,11 +954,11 @@ near.append('<path d="M1560 1004 L1560 930" stroke="#141218" stroke-width="4"/><
 import re as _re
 for i_ in range(DOCK0, len(near)):
     m_ = _re.match(r'(\s*<!--.*?-->)?(.*)', near[i_], _re.S)
-    near[i_] = (m_.group(1) or '') + '<g transform="translate(-120 -60)">' + m_.group(2) + '</g>'
+    near[i_] = (m_.group(1) or '') + '<g transform="translate(-120 -90)">' + m_.group(2) + '</g>'
 
 # ------------------------------------------------------------------ nearfx layer (animated): the ship's engines idle, the roof beacon blinks
 nearfx = []
-for k_, (ex, ey) in enumerate([(1386, 928), (1384, 948)]):
+for k_, (ex, ey) in enumerate([(1386, 898), (1384, 918)]):
     nearfx.append('<circle cx="%s" cy="%s" r="16" fill="url(#lamp-fac3)" opacity=".5">%s</circle><circle cx="%s" cy="%s" r="3.2" fill="#eaffea" opacity=".9"/>' % (
         f(ex + 4), f(ey), anim('opacity', '.35;.7;.45;.65;.35', 2.3 + k_ * .4, k_ * .7, '0;.3;.55;.8;1', spline=True), f(ex + 2), f(ey)))
 nearfx.append('<circle cx="64" cy="878" r="10" fill="url(#lamp-red)" opacity="0">%s</circle>' % anim('opacity', '0;1;1;0;0', 2.6, .4, '0;.06;.2;.3;1'))

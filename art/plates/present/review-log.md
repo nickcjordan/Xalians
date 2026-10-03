@@ -71,3 +71,11 @@ Round 3's findings confirmed fixed apart from the thread (invisible at site size
 4. The galaxy's bulge sat beside the token: it moved right of the Machine (about 1340, 156), so the card is the brightest thing on its side of the sky.
 5. On the phone the docked ship sat under the panel's cut corner: the deck and ship moved 120 units left.
 6. The left searchlight ending near the city: noted, left as it is.
+
+## Round 5 (same reviewer): 8
+
+Every round 4 finding confirmed fixed at site size. Polish:
+1. The docked ship was a dim sliver on the phone: hull a third brighter, green panels, stripe and hatch light brighter, deck and ship lifted another 30 units.
+2. The thread's end crossed the card's face when the card was wide: it now stops at the card's widest edge, and a stub that follows the card's turn carries it in to the edge when the card is narrow.
+3. The deck's back edge crossed the lower tiers: a low parapet along its back edge makes it a raised platform in front of the arena.
+4. The token's flare landed on clash two: the pulse now arrives about a second later (about t 4.4 s).
