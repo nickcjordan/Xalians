@@ -586,7 +586,7 @@
       "component": "head",
       "regions": ["R03"],
       "kind": "head",
-      "script": "art/species-construction/author_fan_lock_sweeps_v2.py",
+      "script": "art/species-construction/author_fan_lock_sweeps_v3.py",
       "runner": "blender",
       "inputs": {
         "base": "H35"
@@ -596,20 +596,20 @@
         "--out", "{out}",
         "--table", "{repo}/art/species-construction/specs/r03_clumps.json",
         "--envelope", "{repo}/art/species-construction/specs/r03_envelope.npz",
-        "--spec", "{repo}/art/species-construction/specs/r03_sweeps_v2c.json"
+        "--spec", "{repo}/art/species-construction/specs/r03_sweeps_v3h.json"
       ],
-      "note": "R03 ear fan front as layered lock sweeps (author_fan_lock_sweeps_v2.py + fan_lock_sweeps_v2.py, levers in art/species-construction/specs/r03_sweeps_v2c.json): the old front coat stripped to a backing, 18 coat locks and 8 narrow pale tuft blades per side (v2 fix pass: v1 melted five fat tuft clumps into one smooth slab) each a separate closed swept solid (Bezier guide, superellipse section with spine and undercut, twist and alternating lean, apex tip) in two layers with tip standoff, hard-unioned and joined only in a root band, the cup a yawed bowl carved before the tuft fan goes in. Round 22 toolsmith starter; see loop/tools/R03.json.",
+      "note": "R03 ear fan front as layered lock sweeps (author_fan_lock_sweeps_v3.py + fan_lock_sweeps_v3.py, levers in specs/r03_sweeps_v3.json): old front coat stripped to a backing, coat locks as separate closed swept solids that close in convex leaf tips (v3 fix pass: v2 locks ended in needles), pale tuft as separate blades, cup a yawed bowl. Round 23 toolsmith starter; see loop/tools/R03.json.",
       "pins": {
-        "art/species-construction/author_fan_lock_sweeps_v2.py": "dbb801bdda5ea49704053eceb0df849ef02e5b9094d371bec31f79f2d12404bf",
+        "art/species-construction/author_fan_lock_sweeps_v3.py": "05586d7ede7cca01fd2a98ed6f993bf45298ffb48e10a72b8554f892bddbbdd4",
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
         "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
         "art/species-construction/fan_clumps_fast_common.py": "7a4d3b179bed2adbe92709eb2ae4812fec414340f06c88d51af3d978ac973414",
         "art/species-construction/fan_clumps_front_fast_v2.py": "e6195c0e5a9262d7737f216ac51c638032001edbfcee57af98b4993fa4d2ba96",
-        "art/species-construction/fan_lock_sweeps_v2.py": "efd32d13ed3aa67f0718d5868ad87598c9a1def6f49b0b32ec063b5ac6dfc7c1",
+        "art/species-construction/fan_lock_sweeps_v3.py": "db20d9dea6d419cef23a72823fc011d733ae1c76835a46118ea7d81b037ceb34",
         "art/species-construction/specs/r03_clumps.json": "5ef883d39e0a5c0cd12f70fd53db5911540859f66daee9a3a888447d4e211107",
         "art/species-construction/specs/r03_envelope.npz": "40d65086667b54ded66c80239ace0b846fd3ccb839c979d64b06ac4e4d9b094d",
-        "art/species-construction/specs/r03_sweeps_v2c.json": "8f7791c4abb43cf802a01fb588468da817e84c589364af2e5050034e7326e745",
+        "art/species-construction/specs/r03_sweeps_v3h.json": "3879eb4c0639131fd25a035495d0933f3a6ec2d55d2a129883fb9e384e16a1eb",
         "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
         "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
       }
