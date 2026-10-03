@@ -17,10 +17,10 @@ CONCEPT = """The present day. The one machine that prints Scrambler Tokens, the 
 on Valleron, and King Kozrak holds it: his citadel, the greatest of the Vallerii spires, rises over the
 city with the Machine burning gold at its apex, and his searchlights sweep the city. He has called a
 galactic tournament. Below the citadel, one of his arenas is packed to the rim under floodlights, hung
-with the banners of the factions that have come from across Xalia, and a fight is on its floor, seen
-only as light (no creature is drawn in the story; Nick's ruling): a power of lightning and a power of
-fire trade blows, each leaning in as it winds up, and every clash flashes, rings dust over the floor and
-sets the crowd roaring. Above the arena, projected from the king's box, hangs the prize: a Scrambler
+with the banners of the factions that have come from across Xalia, and a fight is on its floor: two
+squads of creatures, shown only as abstract blobs in their elements' colors (Nick, 2026-10-03: at this
+distance they need no detail), trade little attack moves, and when their leaders' great attacks meet in
+the middle it flashes, rings dust over the floor and sets the crowd roaring. Above the arena, projected from the king's box, hangs the prize: a Scrambler
 Token, the same printed genome card carried home in beat 06. Ships from across Xalia come down out of
 a sky where the plague still smolders in the galaxy's arms and settle on the city's landing decks, and a
 faction's ship waits on a deck in the foreground, its hatch open, to carry a token home."""
@@ -62,12 +62,17 @@ gold over the arena; the rest is blue night lit warm from below by the city.
 - floodlight masts: lattice towers on the rim, each with a bank of lamps tipped toward the floor and a
   soft cone of light onto it; the lit haze over the bowl.
 - the floor: sand under the floodlights, a ring marked on it, scorch marks from earlier fights.
-- the fight: a power of lightning at left (a crackling column) and a power of fire at right (a column of
-  flame). Twice a cycle: the fire leans in and throws a fireball, the lightning answers with a bolt, they
-  meet in the middle; then the lightning leans in and strikes, the fire answers with a jet of flame.
-  Each clash: a white-hot flash with both colors, a starburst, the floor lit, a ring of dust spreading,
-  a puff of dust rising, sparks of both colors.
-- the crowd's roar: after each clash the crowd's lights swell and a warm band of light runs round the tiers.
+- the squads: two sides of three creatures each on the floor's far half, abstract blobs (a rounded body,
+  a smaller head on the side it faces, a rim and a pool of light in its element's color, a soft light on
+  its back): storm, ice and plant at left; fire, water and rock at right. They bob as they wait, lunge as
+  they attack and recoil, flashing white, when hit.
+- the attack moves, one about every 1.3 s: storm's bolt at rock, fire's fireball at ice, plant's volley of
+  darts at water, water's jet at storm, ice's shards at fire, rock's thrown stone at plant; each lands with
+  a glow of its element and a spray of sparks.
+- the big exchange: fire's great fireball and storm's great bolt meet in the middle: a white-hot flash with
+  both colors, a starburst, the floor lit, a ring of dust, a puff of dust, sparks.
+- the crowd's roar: a swell after the volley lands and a great one after the big exchange; the crowd's lights
+  swell and a warm band of light runs round the tiers.
 - near roofs: dark rooftops in the foreground at left with a mast and a blinking beacon (under the
   archive screen's record label).
 - the landing deck: in the foreground at right, a high deck with lit edge lamps and a floodlight pole;
@@ -705,9 +710,6 @@ arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="none" stroke="#6a58
 for (dx, dy, rx_, ry_) in [(-200, 26, 40, 11), (190, -30, 34, 9), (40, 52, 26, 7), (-60, -48, 22, 6)]:
     arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#2a1e18" opacity=".45" filter="url(#soft4)"/>' % (f(FCX + dx), f(FCY + dy), f(rx_), f(ry_)))
 FY = 822  # the fight's ground line: the floor's far half, above the record label on a phone
-FL, FR = (FCX - 170, FY + 12), (FCX + 170, FY - 4)  # where the two powers stand
-for (x_, y_) in (FL, FR):
-    arena.append('<ellipse cx="%s" cy="%s" rx="26" ry="8" fill="#2a1e18" opacity=".5" filter="url(#soft2)"/>' % (f(x_), f(y_)))
 
 arena.append('<!-- the near floodlights\' pool on the front of the floor --><ellipse cx="%s" cy="%s" rx="270" ry="62" fill="url(#lamp-win)" opacity=".34"/>' % (f(AX), f(FLOOR_CY + 34)))
 for (dx, dy, rx_, ry_) in [(-110, 40, 46, 12), (90, 54, 38, 10), (10, 70, 60, 14)]:
@@ -762,14 +764,12 @@ arena.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lamp-flood)" o
 
 # ------------------------------------------------------------------ fight layer (animated): the clash, the dust, the roar
 fight = []
-FP = 7.213  # the fight's clock (no clock here lands on the film's 50 ms frames exactly)
+FP = 9.613  # the fight's clock (no clock here lands on the film's 50 ms frames exactly)
+PH = 7.591  # where in the clock the still frame sits: the fireball and the bolt about to meet in the middle (u .79)
 
 
 def light(cx, cy, r, grad, values, keyTimes, phase, extra=''):
     return '<circle cx="%s" cy="%s" r="%s" fill="url(#%s)" opacity="0"%s>%s</circle>' % (f(cx), f(cy), f(r), grad, extra, anim('opacity', values, FP, phase, keyTimes))
-
-
-PH = 2.217  # where in the clock the still frame sits: both powers gathering
 
 
 def jag_path(x0, y0, x1, y1, n, amp, seed):
@@ -782,63 +782,7 @@ def jag_path(x0, y0, x1, y1, n, amp, seed):
     return 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p)
 
 
-(lx, ly), (rx2, ry2) = FL, FR
-mx, my = FCX, FY - 10  # where the attacks meet, on the floor's far half (clear of the phone crop's record label)
-PS = 1.4  # the powers' scale: they must be the brightest marks in the bowl at site size
-g_fcol = lin([(0, '#fff2c8', .95), (.3, '#ffb050', .9), (.9, FIRE, .75), (1, FIRE, 0)], 0, 1, 0, 0, id='flameCol')
-g_ecol = lin([(0, '#f2fbff', .95), (.3, ELEC, .8), (1, ELEC, 0)], 0, 1, 0, 0, id='elecCol')
-# The fight's clock holds two exchanges, half a clock apart. In the first the fire leans in and throws a fireball and the
-# lightning answers it in the middle (clash at u .32); in the second the lightning leans in and strikes and the fire answers
-# with a jet of flame (clash at u .82). Each power leans toward the other as it winds up.
-E_LEAN = '0;0;6;0;0;10;10;0;0'
-E_LEAN_T = '0;.15;.3;.37;.62;.76;.8;.88;1'
-F_LEAN = '0;0;-10;-12;0;0;-6;0;0'
-F_LEAN_T = '0;.02;.22;.26;.35;.78;.82;.9;1'
-E_SWELL = ('.4;.4;.95;.4;.4;.95;1;.4;.4', '0;.15;.31;.39;.62;.78;.84;.92;1')
-F_SWELL = ('.4;.4;.95;1;.4;.4;.9;.4;.4', '0;.02;.21;.26;.37;.78;.84;.92;1')
-# the two powers where they stand: a pool of their light on the ground (it does not lean) and a column of it that does
-for (x_, y_, g_, sw) in [(lx, ly, 'lamp-elec', E_SWELL), (rx2, ry2, 'lamp-fire', F_SWELL)]:
-    fight.append('<!-- a power\'s pool of light -->'
-                 '<ellipse cx="%s" cy="%s" rx="108" ry="28" fill="url(#%s)" opacity=".4">%s</ellipse>' % (f(x_), f(y_), g_, anim('opacity', sw[0], FP, PH, sw[1], spline=True)))
-# the electric power: a crackling column with a white-hot core and a deep blue rim, arcs flicking up and around it
-elec = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-elec)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', E_SWELL[0], FP, PH, E_SWELL[1], spline=True),
-        '<path d="M-13 0 L-4 -100 L4 -100 L13 0 Z" fill="url(#elecCol)" stroke="#1e5a8a" stroke-width="1.6" opacity=".75" filter="url(#soft2)"/>',
-        '<path d="M-4 0 L-1 -96 L1 -96 L4 0 Z" fill="#f6fdff" opacity=".4" filter="url(#soft2)"/>',
-        '<path d="%s" stroke="#dff4ff" stroke-width="3" fill="none" opacity=".8" filter="url(#glow2)"/>' % jag_path(-2, -2, 3, -94, 9, 7, 61),
-        '<path d="%s" stroke="#dff4ff" stroke-width="1.8" fill="none" opacity="0" filter="url(#glow2)">%s</path>' % (jag_path(2, -2, -3, -90, 9, 8, 62), anim('opacity', '0;.7;0', .287, .041, '0;.5;1', calc='discrete'))]
-def hop(y0, length, bow, seed):
-    """An arc hopping along the column: from a point on it, bowing out to one side, back onto it higher up."""
-    r = random.Random(seed)
-    p = []
-    for i in range(10):
-        u = i / 9
-        y = y0 - length * u + r.uniform(-2, 2) * math.sin(math.pi * u)
-        p.append((bow * math.sin(math.pi * u) + (-1) ** i * r.uniform(3, 6) * math.sin(math.pi * u), y))
-    return 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p)
-
-
-HOPS = [(-8, 34, 14), (-30, 40, -15), (-52, 30, 12), (-20, 44, 16), (-62, 28, -13)]  # (start height, length, bow)
-for j in range(5):
-    y0_, len_, bow_ = HOPS[j]
-    d = hop(y0_, len_, bow_, 70 + j)
-    elec.append('<path d="%s" stroke="#eaf8ff" stroke-width="1.7" stroke-linejoin="bevel" fill="none" filter="url(#glow2)" opacity="0">%s</path>' % (d, anim('opacity', '0;1;0;0;.9;0;0', .731 + j * .193, .113 + j * .237, '0;.06;.14;.45;.5;.58;1', calc='discrete')))
-fight.append('<!-- the electric power --><g transform="translate(%s %s) scale(%s)"><g>%s%s</g></g>' % (f(lx), f(ly), f(PS), rot(E_LEAN, FP, PH, E_LEAN_T, spline=True), ''.join(elec)))
-# the fire power: a column of flame, tongues licking up from a hot base, leaning in as it winds up
-fire = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-fire)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', F_SWELL[0], FP, PH, F_SWELL[1], spline=True)]
-for j, (dx, hgt, per, ph) in enumerate([(-19, 80, .9, .1), (0, 114, 1.1, .5), (18, 88, .8, .3), (-7, 64, .7, .65), (11, 56, .95, .2)]):
-    tongue = '<path d="M-15 0 Q-19 %s 1 %s Q16 %s 15 0 Z" fill="url(#flameCol)" opacity=".85" filter="url(#soft2)"/>' % (f(-hgt * .5), f(-hgt), f(-hgt * .45))
-    sway = '<g>%s%s</g>' % (trans('%s;%s;%s;%s' % (f(-7), f(8), f(-4), f(-7)), per * 1.37, ph + .11, '0;.3;.7;1', typ='skewX', spline=True), tongue)
-    fire.append('<g transform="translate(%s 0)"><g>%s%s</g></g>' % (f(dx), trans('1 1;.92 1.18;1.06 .88;1 1', per, ph, '0;.22;.6;1', typ='scale', spline=True), sway))
-# wisps of flame breaking off the top, rising and fading, on their own clocks
-for j, (dx, per, ph) in enumerate([(-6, .53, .07), (9, .61, .29), (2, .71, .43)]):
-    fire.append('<g opacity="0">%s<g>%s<path d="M0 -9 Q3 -1 2.4 3 Q0 6 -2.4 3 Q-3 -1 0 -9 Z" fill="%s" filter="url(#soft2)"/></g></g>' % (
-        anim('opacity', '0;.5;0;0', per, ph, '0;.12;.5;1'), trans('%s %s;%s %s;%s %s' % (f(dx * .4), f(-112), f(dx * .4 + 3), f(-136), f(dx * .4 + 3), f(-136)), per, ph, '0;.8;1'), '#ffb050'))
-fire.append('<ellipse cx="0" cy="-4" rx="22" ry="8" fill="#fff4d0" opacity=".9" filter="url(#soft2)"/>')
-fight.append('<!-- the fire power --><g transform="translate(%s %s) scale(%s)"><g>%s%s</g></g>' % (f(rx2), f(ry2), f(PS), rot(F_LEAN, FP, PH, F_LEAN_T, spline=True), ''.join(fire)))
-
-
 def jag_pts(x0, y0, x1, y1, n, amp, seed, bow=0.0):
-    """Points of a bolt from (x0, y0) to (x1, y1), jagged, arcing by `bow` (positive bows upward)."""
     r = random.Random(seed)
     p = [(x0, y0)]
     for i in range(1, n):
@@ -848,20 +792,157 @@ def jag_pts(x0, y0, x1, y1, n, amp, seed, bow=0.0):
     return p
 
 
+def ku(*xs):
+    """keyTimes from a list of clock fractions, 0 and 1 added."""
+    return ';'.join(['0'] + [f(x) for x in xs] + ['1'])
+
+
+# ---- the squads. Nick, 2026-10-03: two sides, each a few abstract blobs that stand for creatures (at this distance they need
+# no detail), trading little attack moves. Each creature is a dark rounded body with a smaller blob for a head on the side it
+# faces, rimmed and pooled in its element's color. Left squad: storm, ice, plant. Right squad: fire, water, rock.
+mx, my = FCX, FY - 14  # the middle of the floor's far half, where the big exchange meets
+SQUAD = {
+    'storm': dict(x=FCX - 168, y=FY + 2, c='#ffe066', s=1.45, side=1, bw=20, bh=17, hy=-30),
+    'ice': dict(x=FCX - 226, y=FY + 28, c='#9fdcff', s=1.25, side=1, bw=25, bh=13, hy=-22),
+    'plant': dict(x=FCX - 116, y=FY + 32, c='#8be08a', s=1.2, side=1, bw=18, bh=19, hy=-34),
+    'fire': dict(x=FCX + 170, y=FY - 2, c='#ff8a3a', s=1.45, side=-1, bw=21, bh=18, hy=-32),
+    'water': dict(x=FCX + 120, y=FY + 30, c='#4ac0c8', s=1.25, side=-1, bw=26, bh=12, hy=-20),
+    'rock': dict(x=FCX + 232, y=FY + 22, c='#c8a070', s=1.4, side=-1, bw=24, bh=17, hy=-28),
+}
+for k_, c_ in SQUAD.items():
+    rad([(0, c_['c'], 1), (.3, c_['c'], .5), (1, c_['c'], 0)], id='lamp-' + k_)
+
+# Each attack: (attacker, target, kind, u at launch, u at hit). The big exchange (fire's fireball against storm's bolt meeting
+# in the middle) is handled apart, at u .80.
+ATTACKS = [('storm', 'rock', 'bolt', .03, .05), ('fire', 'ice', 'ball', .16, .23), ('plant', 'water', 'darts', .3, .36),
+           ('water', 'storm', 'jet', .43, .48), ('ice', 'fire', 'shards', .56, .62), ('rock', 'plant', 'stone', .66, .72)]
+BIG = (.74, .80)  # fire and storm wind up, then their attacks meet in the middle
+
+
+def front(k):
+    """Where a creature's attacks leave from: the front of its head."""
+    c = SQUAD[k]
+    return (c['x'] + c['side'] * 20 * c['s'], c['y'] - 26 * c['s'])
+
+
+def body_of(k):
+    c = SQUAD[k]
+    s, sd, col, bw, bh, hy = c['s'], c['side'], c['c'], c['bw'], c['bh'], c['hy']
+    body = mix('#1c1a22', col, .22)
+    head = mix('#24212a', col, .3)
+    return ('<ellipse cx="0" cy="%s" rx="%s" ry="%s" fill="%s"/>' % (f(-bh), f(bw), f(bh), body)
+            + '<ellipse cx="%s" cy="%s" rx="12" ry="10" fill="%s"/>' % (f(sd * (bw * .6)), f(hy + 4), head)
+            + '<path d="M%s %s Q0 %s %s %s" fill="none" stroke="%s" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>' % (f(-bw * .9), f(-bh * 1.4), f(-bh * 2.2), f(sd * (bw * .6 + 9)), f(hy), col)
+            + '<circle cx="%s" cy="%s" r="2.4" fill="%s"/>' % (f(sd * (bw * .6 + 5)), f(hy + 2), col)
+            # its underside in shadow, and a soft light on its back from the floodlights above
+            + '<ellipse cx="0" cy="%s" rx="%s" ry="%s" fill="#0e0c12" opacity=".55"/>' % (f(-bh * .45), f(bw * .9), f(bh * .45))
+            + '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#ffffff" opacity=".1"/>' % (f(-sd * bw * .2), f(-bh * 1.55), f(bw * .55), f(bh * .35)))
+
+
+# each creature's motion: a lunge toward its opponents when it attacks, a recoil away when it is hit, an idle bob
+moves = {k: [] for k in SQUAD}
+for (a, t_, kind, ul, uh) in ATTACKS:
+    moves[a].append((ul - .02, 0)); moves[a].append((ul, 10)); moves[a].append((ul + .035, 0))
+    moves[t_].append((uh - .004, 0)); moves[t_].append((uh + .006, -9)); moves[t_].append((uh + .05, 0))
+for k in ('fire', 'storm'):
+    moves[k].append((BIG[0] - .02, 0)); moves[k].append((BIG[0] + .03, 12)); moves[k].append((BIG[1] + .02, 0))
+hits = {k: [] for k in SQUAD}
+for (a, t_, kind, ul, uh) in ATTACKS:
+    hits[t_].append(uh)
+for k, c in SQUAD.items():
+    pts_ = sorted(moves[k])
+    times, vals = [0.0], [0.0]
+    for (u, dx) in pts_:
+        if u <= times[-1] + .002:
+            continue
+        times.append(u)
+        vals.append(dx * c['side'])
+    if times[-1] < .998:
+        times.append(1.0)
+        vals.append(0.0)
+    tr = trans(';'.join('%s 0' % f(v) for v in vals), FP, PH, ';'.join(f(u) for u in times))
+    bob = trans('1 1;1.04 .96;.98 1.04;1 1', .9 + .13 * len(k), .07 * len(k), '0;.3;.7;1', typ='scale', spline=True)
+    # the flash of a hit: the body lights in white for a moment
+    flash = ''
+    for uh in hits[k]:
+        flash += '<g opacity="0">%s<ellipse cx="0" cy="-17" rx="24" ry="18" fill="#fff6e8" opacity=".75" filter="url(#soft2)"/></g>' % anim('opacity', '0;0;1;0;0', FP, PH, ku(uh, uh + .006, uh + .04))
+    fight.append('<!-- a creature (%s) --><ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lamp-%s)" opacity=".55"/>' % (k, f(c['x']), f(c['y']), f(34 * c['s']), f(11 * c['s']), k)
+                 + '<g transform="translate(%s %s) scale(%s)"><g>%s<g>%s%s%s</g></g></g>' % (f(c['x']), f(c['y']), f(c['s']), tr, bob, body_of(k), flash))
+
+
 def bolt(p, u_on, u_end, values):
-    """A bolt of lightning that strikes in two steps (its first half, then its full length, about 0.05 s apart), then holds,
-    flickering, until u_end: a wide soft blue glow and a white-hot core."""
+    """A bolt of lightning that strikes in two steps (its first half, then its full length), holds flickering, and dies in a flicker."""
     half = len(p) // 2
     d1 = 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p[:half + 1])
     d2 = 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p[half:])
-    tail = '%s;%s;%s;1' % (f(u_end), f(u_end + .008), f(u_end + .016))  # it dies in a flicker: .6, .25, then out
-    k1 = '0;%s;%s;%s;%s;%s;%s' % (f(u_on), f(u_on + .012), f(u_on + .02), f(u_on + .028), f(u_on + .036), tail)
-    k2 = '0;%s;%s;%s;%s;%s;%s' % (f(u_on + .007), f(u_on + .012), f(u_on + .02), f(u_on + .028), f(u_on + .036), tail)
+    tail = '%s;%s;%s;1' % (f(u_end), f(u_end + .006), f(u_end + .012))
+    k1 = '0;%s;%s;%s;%s;%s;%s' % (f(u_on), f(u_on + .009), f(u_on + .015), f(u_on + .021), f(u_on + .027), tail)
+    k2 = '0;%s;%s;%s;%s;%s;%s' % (f(u_on + .005), f(u_on + .009), f(u_on + .015), f(u_on + .021), f(u_on + .027), tail)
     o = ''
     for d, k in ((d1, k1), (d2, k2)):
-        o += '<path d="%s" stroke="%s" stroke-width="14" fill="none" opacity="0" filter="url(#soft4)">%s</path>' % (d, ELEC, anim('opacity', values, FP, PH, k, calc='discrete'))
-        o += '<path d="%s" stroke="#f2fbff" stroke-width="5" stroke-linejoin="bevel" stroke-linecap="round" fill="none" opacity="0" filter="url(#glow2)">%s</path>' % (d, anim('opacity', values, FP, PH, k, calc='discrete'))
+        o += '<path d="%s" stroke="%s" stroke-width="11" fill="none" opacity="0" filter="url(#soft4)">%s</path>' % (d, '#ffe066', anim('opacity', values, FP, PH, k, calc='discrete'))
+        o += '<path d="%s" stroke="#fffbe6" stroke-width="4" stroke-linejoin="bevel" stroke-linecap="round" fill="none" opacity="0" filter="url(#glow2)">%s</path>' % (d, anim('opacity', values, FP, PH, k, calc='discrete'))
     return o
+
+
+BOLT_V = '0;1;.35;1;.5;1;.6;.25;0;0'
+
+
+def missile(p0, p1, u0, u1, body, arc=0.0, grow=.01):
+    """Something thrown from p0 to p1 between u0 and u1 at constant speed along a shallow arc, born small at the thrower."""
+    mid = ((p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2 - arc)
+    a = lambda t: (lerp(lerp(p0[0], mid[0], t), lerp(mid[0], p1[0], t), t), lerp(lerp(p0[1], mid[1], t), lerp(mid[1], p1[1], t), t))
+    ts = [i / 4 for i in range(5)]
+    pos = [a(t) for t in ts]
+    times = ku(*([u0] + [lerp(u0, u1, t) for t in ts[1:]]))
+    vals = ';'.join('%s %s' % (f(x), f(y)) for x, y in [pos[0], pos[0]] + pos[1:] + [pos[-1]])
+    return '<g opacity="0">%s<g>%s<g>%s%s</g></g></g>' % (
+        anim('opacity', '0;0;1;1;0;0', FP, PH, ku(u0, u0 + .001, u1, u1 + .004), calc='discrete'),
+        trans(vals, FP, PH, times), trans('0 0;0 0;1 1;1 1', FP, PH, ku(u0, u0 + grow), typ='scale'), body)
+
+
+def hit_burst(k, u, grad):
+    """Where an attack lands on a creature: a glow of the attack's element and a small spray of sparks."""
+    c = SQUAD[k]
+    x, y = c['x'], c['y'] - 18 * c['s']
+    o = light(x, y, 44, grad, '0;0;1;0;0', ku(u, u + .004, u + .05), PH)
+    r = random.Random(int(u * 1000))
+    for j in range(5):
+        ang = r.uniform(-math.pi, 0)
+        dx, dy = math.cos(ang) * r.uniform(18, 30), math.sin(ang) * r.uniform(12, 24)
+        o += '<circle r="2.4" fill="#fff4dc" opacity="0">%s%s</circle>' % (anim('opacity', '0;0;1;0;0', FP, PH, ku(u, u + .003, u + .03)),
+                                                                           trans('%s %s;%s %s;%s %s;%s %s' % (f(x), f(y), f(x), f(y), f(x + dx), f(y + dy), f(x + dx), f(y + dy)), FP, PH, ku(u, u + .03)))
+    return o
+
+
+g_jetw = lin([(0, '#e8fbff', .95), (.4, '#4ac0c8', .9), (1, '#2a7a90', 0)], 0, 0, 1, 0, id='jetWater')
+for (a, t_, kind, ul, uh) in ATTACKS:
+    p0, c_t = front(a), SQUAD[t_]
+    p1 = (c_t['x'] - c_t['side'] * 4, c_t['y'] - 20 * c_t['s'])
+    tag = '<!-- %s: %s at %s -->' % (kind, a, t_)
+    if kind == 'bolt':
+        fight.append(tag + bolt(jag_pts(p0[0], p0[1], p1[0], p1[1], 14, 6, 93), ul, uh + .02, BOLT_V))
+    elif kind == 'ball':
+        fight.append(tag + missile(p0, p1, ul, uh, '<ellipse cx="%s" rx="26" ry="9" fill="url(#lamp-fire)" opacity=".8"/><circle r="30" fill="url(#lamp-fire)"/><circle r="11" fill="#ff9a40" opacity=".9" filter="url(#soft2)"/><circle r="5" fill="#ffe6b0"/>' % f(-SQUAD[a]['side'] * 16), arc=30))
+    elif kind == 'darts':
+        for j in range(3):
+            d = .008 * j
+            fight.append(tag + missile((p0[0], p0[1] + 6 * j - 6), (p1[0], p1[1] + 5 * j - 5), ul + d, uh + d, '<ellipse rx="7" ry="2.4" fill="#c8f0b8"/><ellipse rx="12" ry="5" fill="url(#lamp-plant)"/>', arc=14 + 6 * j))
+    elif kind == 'shards':
+        for j in range(3):
+            d = .007 * j
+            fight.append(tag + missile((p0[0], p0[1] + 5 * j - 5), (p1[0], p1[1] + 6 * j - 6), ul + d, uh + d, '<polygon points="-8,0 0,-3.4 8,0 0,3.4" fill="#eaf8ff"/><ellipse rx="12" ry="5" fill="url(#lamp-ice)"/>', arc=10 + 5 * j))
+    elif kind == 'stone':
+        fight.append(tag + missile(p0, p1, ul, uh, '<polygon points="-9,-5 -2,-10 8,-6 10,3 2,9 -8,6" fill="#8a7050" stroke="#d8b888" stroke-width="1.4"/><ellipse rx="18" ry="9" fill="url(#lamp-rock)" opacity=".6"/>', arc=60))
+    elif kind == 'jet':
+        jl_ = math.hypot(p1[0] - p0[0], p1[1] - p0[1])
+        ja_ = math.degrees(math.atan2(p1[1] - p0[1], p1[0] - p0[0]))
+        jw = ('<path d="M0 -5 C%s -12 %s -22 %s -14 Q%s 0 %s 14 C%s 22 %s 12 0 5 Z" fill="url(#jetWater)" filter="url(#soft2)"/>' % (f(jl_ * .4), f(jl_ * .8), f(jl_ * 1.0), f(jl_ * 1.08), f(jl_ * 1.0), f(jl_ * .8), f(jl_ * .4))
+              + ''.join('<circle cx="%s" cy="%s" r="%s" fill="#dff8ff" opacity=".8"/>' % (f(jl_ * u), f(((-1) ** i) * 8 * u), f(2 + 2 * u)) for i, u in enumerate((.35, .55, .7, .85, .95))))
+        fight.append(tag + '<g transform="translate(%s %s) rotate(%s)"><g opacity="0">%s<g>%s%s</g></g></g>' % (
+            f(p0[0]), f(p0[1]), f(ja_), anim('opacity', '0;0;1;1;0;0', FP, PH, ku(ul, ul + .001, uh + .02, uh + .05)),
+            trans('0 1;0 1;1 1;1 1;.4 1;.4 1', FP, PH, ku(ul, uh, uh + .02, uh + .05), typ='scale'), jw))
+    fight.append(hit_burst(t_, uh, 'lamp-' + a))
 
 
 def clash(u, tag):
@@ -869,60 +950,37 @@ def clash(u, tag):
     over the floor, a puff of dust rising and thinning, sparks of both colors."""
     k = lambda *xs: ';'.join(['0'] + [f(u + x) for x in xs] + ['1'])
     o = []
-    o.append('<!-- the clash %s -->' % tag + light(mx, my, 130, 'lamp-flood', '0;0;1;.45;0;0', k(-.005, .005, .03, .09), PH))
-    o.append(light(mx - 30, my, 90, 'lamp-elec', '0;0;.9;0;0', k(-.005, .005, .13), PH))
-    o.append(light(mx + 30, my, 90, 'lamp-fire', '0;0;.9;0;0', k(-.005, .005, .15), PH))
+    o.append('<!-- the clash %s -->' % tag + light(mx, my, 130, 'lamp-flood', '0;0;1;.45;0;0', k(-.004, .004, .025, .07), PH))
+    o.append(light(mx - 30, my, 90, 'lamp-storm', '0;0;.9;0;0', k(-.004, .004, .1), PH))
+    o.append(light(mx + 30, my, 90, 'lamp-fire', '0;0;.9;0;0', k(-.004, .004, .11), PH))
     rays = ''.join('<polygon points="0,-4 %s,0 0,4" transform="rotate(%s)" fill="#fff8e8"/>' % (f(L), f(ang)) for ang, L in [(i * 45 + (i % 2) * 8, 96 if i % 2 == 0 else 60) for i in range(8)])
-    o.append('<g transform="translate(%s %s) scale(1 .6)"><g opacity="0" filter="url(#glow2)">%s<g>%s%s</g></g></g>' % (f(mx), f(my), anim('opacity', '0;0;1;0;0', FP, PH, k(-.005, .005, .06)), trans('.3 .3;.3 .3;1.25 1.25;1.25 1.25', FP, PH, k(-.005, .06), typ='scale'), rays))
-    o.append(light(mx, FY, 300, 'lamp-flood', '0;0;.4;0;0', k(-.005, .01, .13), PH, ' transform="translate(%s %s) scale(1 .36) translate(%s %s)"' % (f(mx), f(FY), f(-mx), f(-FY))))
+    o.append('<g transform="translate(%s %s) scale(1 .6)"><g opacity="0" filter="url(#glow2)">%s<g>%s%s</g></g></g>' % (f(mx), f(my), anim('opacity', '0;0;1;0;0', FP, PH, k(-.004, .004, .045)), trans('.3 .3;.3 .3;1.25 1.25;1.25 1.25', FP, PH, k(-.004, .045), typ='scale'), rays))
+    o.append(light(mx, FY, 300, 'lamp-flood', '0;0;.4;0;0', k(-.004, .008, .1), PH, ' transform="translate(%s %s) scale(1 .36) translate(%s %s)"' % (f(mx), f(FY), f(-mx), f(-FY))))
     o.append('<ellipse cx="%s" cy="%s" rx="10" ry="4" fill="none" stroke="#d8c8a8" stroke-width="6" opacity="0" filter="url(#soft2)">%s%s%s</ellipse>' % (
-        f(mx), f(FY), anim('rx', '10;10;230;290;290', FP, PH, k(.005, .1, .16)), anim('ry', '4;4;72;92;92', FP, PH, k(.005, .1, .16)), anim('opacity', '0;0;.75;0;0', FP, PH, k(.005, .04, .16))))
+        f(mx), f(FY), anim('rx', '10;10;230;290;290', FP, PH, k(.004, .08, .13)), anim('ry', '4;4;72;92;92', FP, PH, k(.004, .08, .13)), anim('opacity', '0;0;.75;0;0', FP, PH, k(.004, .03, .13))))
     o.append('<ellipse cx="%s" cy="%s" rx="30" ry="16" fill="#c8b898" opacity="0" filter="url(#soft8)">%s%s%s</ellipse>' % (
-        f(mx), f(my - 6), anim('opacity', '0;0;.55;0;0', FP, PH, k(.01, .06, .16)), anim('cy', '%s;%s;%s;%s' % (f(my - 6), f(my - 6), f(my - 46), f(my - 46)), FP, PH, k(.01, .16)), anim('rx', '30;30;70;70', FP, PH, k(.01, .16))))
+        f(mx), f(my - 6), anim('opacity', '0;0;.55;0;0', FP, PH, k(.008, .05, .13)), anim('cy', '%s;%s;%s;%s' % (f(my - 6), f(my - 6), f(my - 46), f(my - 46)), FP, PH, k(.008, .13)), anim('rx', '30;30;70;70', FP, PH, k(.008, .13))))
     sp = random.Random(4 + int(u * 100))
     for j in range(6):
-        c = 'lamp-elec' if j % 2 == 0 else 'lamp-fire'
-        t0 = sp.uniform(.03, .1)
-        o.append(light(mx + sp.uniform(-90, 90), FY + sp.uniform(-16, 16), 10, c, '0;0;.9;0;0', k(t0, t0 + .015, t0 + .06), PH))
+        c = 'lamp-storm' if j % 2 == 0 else 'lamp-fire'
+        t0 = sp.uniform(.02, .08)
+        o.append(light(mx + sp.uniform(-90, 90), FY + sp.uniform(-16, 16), 10, c, '0;0;.9;0;0', k(t0, t0 + .012, t0 + .05), PH))
     return o
 
 
-# exchange one: the fire throws a fireball, born at the top of its column and growing as it leaves, flying at constant speed;
-# the lightning answers: its bolt arcs from the column's head straight at the fireball and meets it as it arrives
-fb0 = (rx2 - 30 * PS, ry2 - 92 * PS)  # the column's top, leaning in
-fight.append('<!-- the fireball --><g opacity="0">%s<g>%s<g>%s<ellipse cx="22" rx="36" ry="12" fill="url(#lamp-fire)" opacity=".8"/><circle r="46" fill="url(#lamp-fire)"/><circle r="17" fill="#ff9a40" opacity=".9" filter="url(#soft2)"/><circle r="8" fill="#ffe6b0"/></g></g></g>' % (
-    anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.22;.221;.32;.325;1', calc='discrete'),
-    trans('%s %s;%s %s;%s %s;%s %s' % (f(fb0[0]), f(fb0[1]), f(fb0[0]), f(fb0[1]), f(mx + 8), f(my), f(mx + 8), f(my)), FP, PH, '0;.25;.32;1'),
-    trans('0 0;0 0;1 1;1 1', FP, PH, '0;.22;.25;1', typ='scale')))
-fight.append('<!-- the answering bolt -->' + bolt(jag_pts(lx + 4 * PS, ly - 96 * PS, mx - 12, my, 12, 9, 93, bow=0), .307, .37, '0;1;.35;1;.5;1;.6;.25;0;0'))
-fight += clash(.32, 'one')
-# exchange two: the lightning strikes at the fire, the fire answers with a jet of flame; they meet in the middle
-fight.append('<!-- the lightning strike -->' + bolt(jag_pts(lx + 14 * PS, ly - 74 * PS, mx - 6, my - 4, 13, 10, 97, bow=8), .79, .86, '0;1;.4;1;.5;1;.6;.25;0;0'))
-j0 = (rx2 - 16 * PS, ry2 - 92 * PS)  # the jet leaves from the top of the flame
-jl = math.hypot(mx + 12 - j0[0], my - j0[1])
-ja = math.degrees(math.atan2(my - j0[1], (mx + 12) - j0[0]))
-g_jet = lin([(0, '#ffe08a', .95), (.35, '#ffb050', .9), (.75, FIRE, .7), (1, '#c8401a', 0)], 0, 0, 1, 0, id='jetFill')
-
-
-def jet_shape(seed):
-    """A tongue of flame: narrow at its root, swelling and ragged toward its head."""
-    r = random.Random(seed)
-    top = [(0, -3)] + [(jl * u, -(3 + 22 * u ** .8) + r.uniform(-5, 5) * u) for u in (.2, .4, .6, .75, .88)] + [(jl * 1.02, -10 + r.uniform(-4, 4)), (jl * 1.08, r.uniform(-4, 4))]
-    bot = [(jl * 1.02, 10 + r.uniform(-4, 4))] + [(jl * u, (3 + 22 * u ** .8) + r.uniform(-5, 5) * u) for u in (.88, .75, .6, .4, .2)] + [(0, 3)]
-    return 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in top + bot) + ' Z'
-
-
-core = '<path d="M0 -1.5 Q%s -5 %s 0 Q%s 5 0 1.5 Z" fill="#ffd060" opacity=".9" filter="url(#soft2)"/>' % (f(jl * .5), f(jl * .8), f(jl * .5))
-jet = ('<path d="%s" fill="url(#jetFill)" filter="url(#soft2)"/>' % jet_shape(80)
-       + '<path d="%s" fill="url(#jetFill)" filter="url(#soft2)" opacity="0">%s</path>' % (jet_shape(81), anim('opacity', '0;.6;0', .157, .03, '0;.5;1', calc='discrete')) + core)
-fight.append('<!-- the jet of flame --><g transform="translate(%s %s) rotate(%s)"><g opacity="0">%s<g>%s%s</g></g></g>' % (
-    f(j0[0]), f(j0[1]), f(ja), anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.777;.778;.835;.875;1'), trans('0 1;0 1;1 1;1 1;.5 1;.5 1', FP, PH, '0;.777;.799;.835;.875;1', typ='scale'), jet))
-fight += clash(.82, 'two')
-# the crowd's roar after each clash: the crowd's lights swell and a warm band of light runs around the tiers, then settle
-fight.append('<!-- the roar --><g opacity="0">%s%s</g>' % (anim('opacity', '0;0;.9;.3;0;0;.9;.3;0;0', FP, PH, '0;.33;.38;.47;.57;.83;.88;.95;.99;1'), ''.join(crowd_roar)))
+# the big exchange: the fire creature throws a great fireball and the storm creature answers with a great bolt; they meet in
+# the middle of the floor with a flash, a ring of dust and the crowd's roar
+fp0, sp0 = front('fire'), front('storm')
+fight.append('<!-- the great fireball -->' + missile(fp0, (mx + 8, my), BIG[0] + .02, BIG[1], '<ellipse cx="22" rx="36" ry="12" fill="url(#lamp-fire)" opacity=".8"/><circle r="46" fill="url(#lamp-fire)"/><circle r="17" fill="#ff9a40" opacity=".9" filter="url(#soft2)"/><circle r="8" fill="#ffe6b0"/>', arc=26, grow=.02))
+fight.append('<!-- the great bolt -->' + bolt(jag_pts(sp0[0], sp0[1], mx - 12, my, 14, 7, 97), BIG[1] - .013, BIG[1] + .04, BOLT_V))
+fight += clash(BIG[1], 'great')
+# the crowd's roar: a swell after the plant's volley lands, and a great one after the big exchange; the crowd's lights swell and a
+# warm band of light runs round the tiers, then settle
+ROAR_V, ROAR_T = '0;0;.5;0;0;.9;.3;0;0', '0;.36;.4;.47;.8;.84;.9;.97;1'
+fight.append('<!-- the roar --><g opacity="0">%s%s</g>' % (anim('opacity', ROAR_V, FP, PH, ROAR_T), ''.join(crowd_roar)))
 band = rad([(0, '#ffe2b0', 0), (.62, '#ffe2b0', 0), (.8, '#ffe2b0', .45), (1, '#ffe2b0', 0)], id='roarBand')
 fight.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#roarBand)" opacity="0">%s</ellipse>' % (
-    f(AX), f((RIM_CY + FLOOR_CY) / 2), f(RIM_RX * 1.02), f(RIM_RY * 1.12), anim('opacity', '0;0;.8;.2;0;0;.8;.2;0;0', FP, PH, '0;.33;.38;.47;.57;.83;.88;.95;.99;1')))
+    f(AX), f((RIM_CY + FLOOR_CY) / 2), f(RIM_RX * 1.02), f(RIM_RY * 1.12), anim('opacity', ROAR_V.replace('.9', '.8'), FP, PH, ROAR_T)))
 
 # ------------------------------------------------------------------ near layer (static): roofs at left, the landing deck and a faction ship at right
 near = []
@@ -1018,8 +1076,8 @@ def layer(id_, body, role=False):
     return head + body + '\n</svg>\n'
 
 
-NOTES_WHAT = ("The present day, on Valleron. King Kozrak's citadel, the greatest of the Vallerii spires, rises over a crowded city with the Mercurius Machine burning gold at its apex, the only machine that prints Scrambler Tokens. Below it, one of his arenas is packed to the rim under floodlights and hung with the banners of factions from across Xalia, and a fight is on: a power of lightning and a power of fire, seen only as light. Over the arena, projected from the king's box, hangs the prize, the same printed genome card that was carried home in beat 06, and a thread of gold runs to it from the Machine that makes it. Ships come down out of a sky where the plague still smolders in the galaxy's arms and settle on the city's landing decks, and a faction's ship waits on a deck in the foreground with its hatch open.")
-NOTES_HOW = ("Twice on every seven-second clock the powers trade blows: the fire leans in and throws a fireball and the lightning answers, then the lightning strikes and the fire answers with a jet of flame. Each clash flashes, rings dust across the floor and sets the crowd roaring. The token turns slowly with scan lines running through it, and every eight seconds a pulse runs down the Machine's thread and the card brightens as it arrives; the searchlights sweep the city out of step, ships glide in and settle on the decks, the Machine's ring turns, and the plague breathes in the galaxy. Every animation starts mid-cycle, so the still frame shows the fireball and the answering bolt about to meet.")
+NOTES_WHAT = ("The present day, on Valleron. King Kozrak's citadel, the greatest of the Vallerii spires, rises over a crowded city with the Mercurius Machine burning gold at its apex, the only machine that prints Scrambler Tokens. Below it, one of his arenas is packed to the rim under floodlights and hung with the banners of factions from across Xalia, and a fight is on: two squads of creatures, abstract blobs in their elements' colors, trading attacks. Over the arena, projected from the king's box, hangs the prize, the same printed genome card that was carried home in beat 06, and a thread of gold runs to it from the Machine that makes it. Ships come down out of a sky where the plague still smolders in the galaxy's arms and settle on the city's landing decks, and a faction's ship waits on a deck in the foreground with its hatch open.")
+NOTES_HOW = ("On a ten-second clock the squads trade an attack about every second and a half (a bolt, a fireball, a volley of darts, a jet of water, ice shards, a thrown stone), each creature lunging as it attacks and recoiling as it is hit; then the two leaders' great attacks meet in the middle with a flash, a ring of dust and the crowd's roar. The token turns slowly with scan lines running through it, and every eight seconds a pulse runs down the Machine's thread and the card brightens as it arrives; the searchlights sweep the city out of step, ships glide in and settle on the decks, the Machine's ring turns, and the plague breathes in the galaxy. Every animation starts mid-cycle, so the still frame shows the great fireball and bolt about to meet.")
 
 svg_defs = '<svg class="defs" id="layer-defs" width="0" height="0" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">\n<defs>\n%s\n</defs>\n</svg>\n' % (W, H, '\n'.join(defs))
 piece_comment = '<!--\n' + CONCEPT + '\n\n' + PIECES.replace('--', '-') + '\n-->\n'
