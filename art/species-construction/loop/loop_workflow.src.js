@@ -607,7 +607,9 @@ for (let i = 0; i < ROUNDS; i++) {
         }
         if (!picked && !out.rejected && tieCand) { picked = tieCand; out.tie = true }
         if (!picked && out.rejected) {
-          if (S.tools[order.id]) S.tools[order.id] = { ...S.tools[order.id], readerCheck: `failed r${round}: ${out.rejected.slice(0, 300)}` }
+          // the plan's variants were rejected, not the tool's reader-checked build (round 23: the tool's own
+          // control variant had read better), so this is recorded as the plan's rejection, not the tool's
+          if (S.tools[order.id]) S.tools[order.id] = { ...S.tools[order.id], planRejected: `r${round}: ${out.rejected.slice(0, 300)}` }
           out.build = await codeBuild(order, round, `Three blind readers judged every candidate of this round's plan worse than the baseline, unanimously. Their reasons: ${out.rejected}\n` +
             'That is a fault in the tool the plan used, not in its parameters (the plan tried many). Find what the readers describe in the script, fix it in a new versioned file (never a pinned one), and build one candidate with the fix.')
           if (out.build && out.build.readerVerdict) out.readerVerdict = out.build.readerVerdict

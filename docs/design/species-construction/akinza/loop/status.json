@@ -1246,7 +1246,8 @@
   "R03": {
    "script": "art/species-construction/author_fan_lock_sweeps_v3.py",
    "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
-   "readerCheck": "failed r23: rear crown tuft dropped: A's inner ears read as pale cupped wedges with a mostly closed, continuous fan edge, while B's fan breaks into ragged torn slabs with dark gaps and see-through slits around the inner ears. | A's inner ears read as pale cupped tufts set into the fan, while B's are thin flat w"
+   "planRejected": "r23: rear crown tuft dropped: A's inner ears read as pale cupped wedges with a mostly closed, continuous fan edge, while B's fan breaks into ragged torn slabs with dark gaps and see-through slits around the inner ears. | A's inner ears read as pale cupped tufts set into the fan, while B's are thin flat w",
+   "readerCheck": "better: A's inner ears are smooth, pale, cupped fans of soft feathered locks like the reference, while B's inner ears are built from hard, angular faceted shards that read as crystals rather than fur. | A's inner ears read as one soft, pale, cupped wedge of layered pointed locks like the reference, while B'"
   }
  },
  "keptSinceAudit": 1,
