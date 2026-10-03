@@ -20,6 +20,7 @@ import {
   activeOf,
   attackOn,
   createTurnRun,
+  createTurnRunFrom,
   roundOf,
   roundStrip,
   standing,
@@ -30,6 +31,8 @@ import {
   type TRun,
 } from "../index.ts";
 import { turnHardestHit, turnRandom, type TurnPolicy } from "../turnPolicy.ts";
+import { COMPANION_KEYS, COMPANION_RECORDS } from "../../index.ts";
+import { sampleCreatures } from "../../../samples/index.ts";
 
 const arg = (k: string, d: string) => process.argv.find((a) => a.startsWith(`--${k}=`))?.split("=")[1] ?? d;
 const OUT = arg("out", "");
@@ -399,3 +402,42 @@ function scenarioRedirect() {
 scenarioLethalIntent();
 scenarioSupportIntent();
 scenarioRedirect();
+
+// ---- mend-ally and guard-ally (docs/design/powerworks-one-number-one-meaning.md, storyboard step 6). The starters have no ally heal or
+// shield, so these are squads of three starters and one sample creature (docs/design/creature-sample-set.md), reached by playing real turns:
+// a companion's turn where the active companion has a ready mend (an ally heal) and a squadmate is hurt, or a ready guard (an ally
+// shield) and an enemy has committed a hit on a squadmate other than itself. ----
+function readyAllyPart(s: TRun, kind: "heal" | "shield"): boolean {
+  if (s.phase !== "turn" || !s.active) return false;
+  const u = activeOf(s)!;
+  return u.moves.some((m, i) => u.cooldowns[i] <= 0 && !(m.signature && u.signatureSpent) && m.power <= 0 && m.parts.some((p) => p.kind === kind && p.aim === "ally"));
+}
+function searchSamples(name: string, probe: (s: TRun) => boolean, guard = 60): TRun | null {
+  const samples = sampleCreatures();
+  for (let i = 0; i < samples.length; i++) {
+    const skip = i % COMPANION_KEYS.length;
+    const starters = COMPANION_KEYS.filter((_, k) => k !== skip).map((k) => COMPANION_RECORDS[k]);
+    const seed = i + 1;
+    let s = createTurnRunFrom(seed, [...starters, samples[i]], RULES).state;
+    const rand = stream(seed * 7919 + 3);
+    for (let k = 0; k < guard && (s.phase === "turn" || s.phase === "camp"); k++) {
+      if (probe(s)) {
+        console.log(`${name}: found with sample ${samples[i].species} (index ${i}), policy random, after ${k} steps`);
+        return s;
+      }
+      s = turnCommand(s, s.phase === "camp" ? { kind: "advance" } : { kind: "act", order: turnRandom(s, rand) }).state;
+    }
+  }
+  console.warn(`${name}: NOT FOUND`);
+  return null;
+}
+function scenarioMendAlly() {
+  const s = searchSamples("mend-ally", (s) => readyAllyPart(s, "heal") && s.team.some((u) => u.id !== s.active && u.hp > 0 && u.hp <= u.max - 20));
+  if (s) write("mend-ally", s);
+}
+function scenarioGuardAlly() {
+  const s = searchSamples("guard-ally", (s) => readyAllyPart(s, "shield") && s.enemies.some((e) => e.hp > 0 && s.intents[e.id] && e.moves[s.intents[e.id].move].power > 0 && s.intents[e.id].target !== s.active && s.team.some((u) => u.id === s.intents[e.id].target && u.hp > 0)));
+  if (s) write("guard-ally", s);
+}
+scenarioMendAlly();
+scenarioGuardAlly();

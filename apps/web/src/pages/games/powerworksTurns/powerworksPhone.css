@@ -182,9 +182,7 @@
 .pwt-console.phone .pwt-letter { font-size: 13px; width: 20px; height: 20px; top: 0; left: 2px; }
 .pwt-console.phone .pwt-spot-pointer { top: -14px; border-left-width: 7px; border-right-width: 7px; border-top-width: 10px; }
 .pwt-console.phone .pwt-float-num.hurt { font-size: 34px; }
-.pwt-console.phone .pwt-float-num.shield,
-.pwt-console.phone .pwt-float-num.boost,
-.pwt-console.phone .pwt-float-num.hinder { font-size: 14px; }
+.pwt-console.phone .pwt-float-num.shield { font-size: 14px; }
 .pwt-console.phone .pwt-float-tag { font-size: 12px; padding: 0 4px; }
 .pwt-console.phone .pwt-hold-card { font-size: 22px; padding: 6px 18px; }
 .pwt-console.phone .pwt-titlecard { min-width: 0; width: min(420px, 82%); padding: 10px 16px; }
@@ -226,19 +224,7 @@
 .pwt-console.phone .pwt-keybar-portrait-img { grid-row: 1 / 3; grid-column: 1; width: 36px; height: 36px; border-width: 2px; }
 .pwt-console.phone .pwt-keybar-who { grid-row: 1; grid-column: 2; font-size: 12px; text-align: left; }
 .pwt-console.phone .pwt-el.pwt-el-static { grid-row: 1; grid-column: 3; margin: 0; height: 16px; padding: 0; }
-.pwt-console.phone .pwt-keybar-status {
-  grid-row: 2;
-  grid-column: 2 / 4;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0 6px;
-  align-items: flex-start;
-  font-size: 12px;
-  line-height: 1.2;
-  text-align: left;
-  border-top: 0;
-  padding-top: 0;
-}
+
 .pwt-console.phone .pwt-pass {
   grid-row: 1;
   grid-column: 2;
@@ -263,7 +249,6 @@
 .pwt-console.phone .pwt-key-name { font-size: 12px; line-height: 15px; }
 .pwt-console.phone .pwt-key-foot { grid-area: 1 / 2; margin: 0; padding: 0; min-height: 0; min-width: 0; gap: 6px; justify-content: flex-end; }
 .pwt-console.phone .pwt-key-foot-words { font-family: var(--font-body); font-size: 12px; line-height: 15px; white-space: nowrap; }
-.pwt-console.phone .pwt-cell-chevron-wrap svg { width: 12px; height: 12px; }
 
 /* The tapped cell waits for a second tap; the words in the key's head say so. */
 
@@ -408,34 +393,13 @@
    Round 5 on the phone
    ========================================================================================== */
 /* The reason is the column's first line: short words in the portrait row, no separate top line. */
-.pwt-console.phone .pwt-keybar-statusline { display: none; }
-.pwt-console.phone .pwt-keybar.has-status { padding-top: 4px; }
-.pwt-console.phone .pwt-keybar-status { display: flex; }
-/* Marks and notes. */
 
+/* Marks and notes. */
 
 .pwt-console.phone .pwt-impact { width: 12px; height: 12px; }
 .pwt-console.phone .pwt-chip.shield svg { width: 13px; height: 13px; }
 /* A first-occurrence note sits to the left of its key, over the stage's edge, never over the cells. */
 .pwt-console.phone .pwt-keybar { overflow: visible; }
-.pwt-console.phone .pwt-note {
-  left: auto;
-  right: calc(100% + 10px);
-  bottom: auto;
-  top: 50%;
-  transform: translateY(-50%);
-  max-width: 210px;
-  font-size: 12px;
-}
-.pwt-console.phone .pwt-note::after {
-  left: 100%;
-  top: 50%;
-  margin-top: -6px;
-  border-left: 7px solid var(--color-ink-2);
-  border-right: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-}
 
 /* The briefing on a phone: the squad (portraits and names) and the lesson share one row. */
 .pwt-console.phone .pwt-briefing-mid { grid-template-columns: auto minmax(0, 1fr); gap: 14px; }
@@ -460,32 +424,10 @@
 .pwt-console.phone .pwt-titlecard-tag,
 .pwt-console.phone .pwt-titlecard-note { display: none; }
 /* A first-use note takes the banner's line: the key column has no room and the stage stays clear. */
-.pwt-console.phone .pwt-note {
-  position: static;
-  right: auto;
-  top: auto;
-  transform: none;
-  max-width: none;
-  white-space: normal;
-  overflow: visible;
-  font-size: 12px;
-}
-.pwt-console.phone .pwt-note::after { display: none; }
-
 
 .pwt-console.phone .pwt-guardian-tag { top: -19px; left: 2px; font-size: 12px; }
 .pwt-console.phone .pwt-guardian-tag { font-size: 12px; padding: 0 3px; letter-spacing: 0; }
 /* The note takes the banner's two lines exactly; it never grows the top bar. */
-.pwt-console.phone .pwt-banner-line.pwt-note {
-  height: 30px;
-  min-height: 0;
-  line-height: 15px;
-  padding-left: 6px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 
 /* Rail: slots folded before a round boundary read "+N". */
 .pwt-console.phone .pwt-rail-fold { display: flex; align-items: center; justify-content: center; width: 26px; flex: 0 0 26px; font-family: var(--font-data); font-size: 12px; color: var(--color-ink-2); }
@@ -493,13 +435,13 @@
 .pwt-console.phone .pwt-banner-who { white-space: nowrap; }
 /* Round 6 phone fixes */
 .pwt-console.phone .pwt-banner-kicker { line-height: 12px; }
-.pwt-console.phone .pwt-banner-line, .pwt-console.phone .pwt-banner-line.pwt-note { height: 28px; line-height: 14px; }
+.pwt-console.phone .pwt-banner-line { height: 28px; line-height: 14px; }
 
 .pwt-console.phone .pwt-camp-carry { display: none; }
 .pwt-console.phone .pwt-camp-next { font-size: 12px; }
 .pwt-console.phone .pwt-banner-kicker span { display: inline-block; line-height: 12px; }
-.pwt-console.phone .pwt-banner-line, .pwt-console.phone .pwt-banner-line.pwt-note { height: 27px; line-height: 13.5px; }
-.pwt-console.phone .pwt-banner-line, .pwt-console.phone .pwt-banner-line.pwt-note { height: 26px; line-height: 13px; }
+.pwt-console.phone .pwt-banner-line { height: 27px; line-height: 13.5px; }
+.pwt-console.phone .pwt-banner-line { height: 26px; line-height: 13px; }
 .pwt-console.phone .pwt-banner-who { line-height: 14px; }
 /* The banner already names the round; the rail spends that room on the round boundary. */
 .pwt-console.phone .pwt-rail-round { display: none; }
@@ -513,7 +455,7 @@
 .pwt-console.phone .pwt-banner { width: clamp(200px, 36%, 300px); justify-content: center; }
 .pwt-console.phone .pwt-banner-kicker { line-height: 14px; }
 .pwt-console.phone .pwt-banner-who { line-height: 15px; }
-.pwt-console.phone .pwt-banner-line, .pwt-console.phone .pwt-banner-line.pwt-note { height: 28px; line-height: 14px; padding-top: 0; }
+.pwt-console.phone .pwt-banner-line { height: 28px; line-height: 14px; padding-top: 0; }
 /* "Since your last turn" and the recovery line have their own place: the key column's first block, under the name. */
 .pwt-console.phone .pwt-keybar-lines {
   grid-row: 2;
@@ -524,7 +466,7 @@
   min-width: 0;
   text-align: left;
 }
-.pwt-console.phone .pwt-keybar-lines .pwt-keybar-status { grid-row: auto; grid-column: auto; }
+
 .pwt-console.phone .pwt-keybar-since {
   font-family: var(--font-body);
   font-size: 12px;
@@ -541,7 +483,7 @@
 .pwt-console.phone .pwt-keybar { grid-auto-rows: minmax(min-content, 1fr); }
 .pwt-console.phone .pwt-revives { grid-column: 2; font-size: 12px; line-height: 13px; }
 .pwt-console.phone .pwt-where { row-gap: 0; grid-template-rows: auto auto auto; }
-.pwt-console.phone .pwt-key-note-tag { font-size: 12px; line-height: 15px; padding: 0 3px; letter-spacing: 0.04em; }
+
 .pwt-console.phone .pwt-stage[data-hold="boss"] .pwt-hold-card { font-size: 22px; padding: 6px 20px; }
 .pwt-console.phone .pwt-guide-cols { grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 760px) {
@@ -568,16 +510,13 @@
 .pwt-console.phone .pwt-keybar { padding: 3px 4px 4px 4px; gap: 3px; }
 .pwt-console.phone .pwt-keybar-portrait { min-height: 44px; padding-bottom: 3px; }
 /* The note's tag is an "i" in the key's head on a phone: a word would push the move's name off its line. */
-.pwt-console.phone .pwt-key-note-tag { width: 16px; height: 16px; padding: 0; margin-left: 4px; display: inline-flex; align-items: center; justify-content: center; }
-.pwt-console.phone .pwt-note-full { display: none; }
-.pwt-console.phone .pwt-note-short { display: inline; font-family: var(--font-data); font-size: 12px; line-height: 1; text-transform: none; letter-spacing: 0; }
 
 /* The shortest phones (375 px tall): the top bar and the key column give back a few pixels so four keys, one with a
    rider line, still fit with every cell 40 px. */
 @media (max-height: 380px) {
   .pwt-console.phone { grid-template-rows: 60px minmax(0, 1fr); }
   .pwt-console.phone .pwt-top { height: 60px; }
-  .pwt-console.phone .pwt-banner-line, .pwt-console.phone .pwt-banner-line.pwt-note { height: 26px; line-height: 13px; }
+  .pwt-console.phone .pwt-banner-line { height: 26px; line-height: 13px; }
   .pwt-console.phone .pwt-banner-who, .pwt-console.phone .pwt-banner-kicker { line-height: 13px; }
   .pwt-console.phone .pwt-keybar { padding: 2px 4px 3px 4px; gap: 2px; }
   .pwt-console.phone .pwt-keybar-portrait { min-height: 38px; padding-bottom: 2px; }
@@ -654,60 +593,31 @@
    ========================================================================================== */
 .pwt-console.phone .pwt-key { align-items: stretch; text-align: left; }
 .pwt-console.phone .pwt-key .pwt-key-head { grid-area: 1 / 1; }
-.pwt-console.phone .pwt-key .pwt-key-body { grid-area: 2 / 1 / 3 / 3; min-height: 0; gap: 6px; }
+
 .pwt-console.phone .pwt-key .pwt-key-foot { grid-area: 1 / 2; }
-.pwt-console.phone .pwt-key-power { font-size: 26px; gap: 4px; }
-.pwt-console.phone .pwt-key-power .pwt-impact { width: 16px; height: 16px; }
-.pwt-console.phone .pwt-shape-all { font-size: 12px; padding: 0 5px; }
-.pwt-console.phone .pwt-tag { font-size: 12px; padding: 0 4px; }
-.pwt-console.phone .pwt-tag svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-tags.big .pwt-tag { font-size: 22px; }
-.pwt-console.phone .pwt-tags.big .pwt-tag svg { width: 18px; height: 18px; }
-.pwt-console.phone .pwt-key-aim { font-size: 12px; }
+
 .pwt-console.phone .pwt-key-foot-words { font-size: 12px; }
-.pwt-console.phone .pwt-key-body { align-items: center; }
 
 .pwt-console.phone .pwt-match { font-size: 12px; height: 16px; top: -18px; left: 2px; padding: 0 4px; letter-spacing: 0.04em; gap: 2px; }
 .pwt-console.phone .pwt-match svg { width: 12px; height: 12px; }
 
-
-
-
-
-
-
-
-
-.pwt-console.phone .pwt-preview { bottom: 19px; padding: 1px 6px 2px; min-width: 44px; }
-.pwt-console.phone .pwt-preview-num { font-size: 21px; gap: 2px; }
-.pwt-console.phone .pwt-preview-num svg { width: 16px; height: 16px; }
-.pwt-console.phone .pwt-preview-word { font-size: 12px; }
-.pwt-console.phone .pwt-preview-before,
-.pwt-console.phone .pwt-preview-arrow { font-size: 14px; }
-.pwt-console.phone .pwt-preview-note { font-size: 12px; }
-.pwt-console.phone .pwt-preview-note svg { width: 12px; height: 12px; }
-.pwt-console.phone .pwt-preview-chip { font-size: 18px; }
-.pwt-console.phone .pwt-preview-chip svg { width: 14px; height: 14px; }
-.pwt-console.phone .pwt-preview .pwt-cell-chevron-wrap { width: 14px; height: 14px; }
-.pwt-console.phone .pwt-preview .pwt-cell-chevron-wrap svg { width: 12px; height: 12px; }
 .pwt-console.phone .pwt-row.enemies { padding-top: 14px; }
 .pwt-console.phone .pwt-row.enemies .pwt-figure:not(.boss) { height: auto; }
 .pwt-console.phone .pwt-row.enemies .pwt-figure.boss { height: auto; }
 /* The preview may rise a little above a short figure area (it stays inside the stage and off the tags). */
-.pwt-console.phone .pwt-plate.boss .pwt-preview { bottom: 41px; left: 50%; }
+
 .pwt-console.phone .pwt-spot-pointer { top: 0; }
-.pwt-console.phone .pwt-preview-notes { gap: 0 6px; }
+
 .pwt-console.phone .pwt-lesson .pwt-legend-sample { flex: 0 0 auto; gap: 4px; }
 .pwt-console.phone .pwt-lesson-key { flex: 0 0 112px; padding: 0; }
 .pwt-console.phone .pwt-lesson-key > .pwt-key { min-height: 0; padding: 2px 5px 2px; }
-.pwt-console.phone .pwt-lesson-key .pwt-key-power { font-size: 22px; }
-.pwt-console.phone .pwt-lesson-key .pwt-key-shape { display: none; }
+
 .pwt-console.phone .pwt-lesson-then { display: none; }
-.pwt-console.phone .pwt-lesson .pwt-legend-tile { width: 62px; height: 46px; }
+
 /* The enemy row takes more of the short stage, the squad row less. */
 .pwt-console.phone .pwt-row.enemies { height: 50%; }
 .pwt-console.phone .pwt-row.squad { height: 48%; }
-.pwt-console.phone .pwt-plate.boss .pwt-preview { bottom: 19px; left: auto; right: 2px; transform: none; }
+
 /* The matchup mark is its icon alone on a phone plate (the plate is too narrow for the word beside the element tag). */
 .pwt-console.phone .pwt-match { width: 20px; height: 16px; padding: 0; justify-content: center; }
 .pwt-console.phone .pwt-match .pwt-match-word { display: none; }
@@ -723,15 +633,10 @@
 .pwt-console.phone .pwt-match .pwt-match-x { font-size: 12px; }
 .pwt-console.phone .pwt-match svg { width: 13px; height: 13px; }
 
-.pwt-console.phone .pwt-key-power-word,
-.pwt-console.phone .pwt-key-own-words { display: none; }
-.pwt-console.phone .pwt-key-power-was { font-size: 14px; }
-.pwt-console.phone .pwt-key-own { font-size: 12px; padding: 0 3px; }
 .pwt-console.phone .pwt-legend-chips .pwt-match { position: static; }
 .pwt-console.phone .pwt-legend-keys > .pwt-key { min-width: 118px; }
 /* A long final-blow line (an enemy and its move by name) wraps to three lines on the smallest phone: a step smaller keeps the report on one screen. */
 .pwt-console.phone .pwt-summary > div:last-child dd { font-size: 15px; line-height: 1.25; }
-
 
 /* Threat tags on a phone: the same tags, 12 px text, no line (the letters carry the link). */
 .pwt-console.phone .pwt-tabs { left: 2px; gap: 2px; }
@@ -744,17 +649,43 @@
 /* A companion's tags leave the head pointer room: the pointer rides the right corner and the tags stop short of it. */
 .pwt-console.phone .pwt-row.squad .pwt-tabs { max-width: calc(100% - 22px); }
 .pwt-console.phone .pwt-row.squad .pwt-spot-pointer { left: auto; right: 4px; transform: none; }
-.pwt-console.phone .pwt-row.squad .pwt-plate .pwt-preview { bottom: calc(19px + var(--tags-h, 0px)); }
-.pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { bottom: auto; top: 2px; left: 50%; right: auto; transform: translateX(-50%); }
+
 /* A struck number on a narrow phone plate: the glyph gives its room to the numbers (the letter and the words still say it is a hit). */
 .pwt-console.phone .pwt-threat.struck .pwt-impact { display: none; }
 /* The few cases a short phone plate cannot hold two things at its head: a previewed enemy's own tags step aside, and a companion's head pointer gives way to its tags (its green plaque still marks it). */
-.pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-preview) .pwt-tabs { visibility: hidden; }
+
 .pwt-console.phone .pwt-row.squad .pwt-plate:has(.pwt-threat) .pwt-spot-pointer { display: none; }
-.pwt-console.phone .pwt-row.enemies .pwt-plate:has(.pwt-threat) .pwt-preview { top: 0; }
+
 /* The tags of the plate a blow is landing on step aside for the landing number (a short phone stage has no room for both). */
 .pwt-console.phone .pwt-plate.impact-target .pwt-tabs { visibility: hidden; }
 /* The narrowest phones (667 wide) cannot hold a struck number, its arrow, the new number and a skull on one plate: the arrow gives way there. */
 @media (max-width: 720px) {
   .pwt-console.phone .pwt-threat.struck .pwt-threat-arrow { display: none; }
 }
+
+/* --- the card's verb and number on a phone (text 12 px or more) --- */
+.pwt-console.phone .pwt-key-acts { grid-area: 2 / 1 / 3 / -1; gap: 0; min-width: 0; justify-content: flex-start; }
+.pwt-console.phone .pwt-act { column-gap: 4px; }
+.pwt-console.phone .pwt-act-verb,
+.pwt-console.phone .pwt-act.rider .pwt-act-verb { font-size: 12px; }
+.pwt-console.phone .pwt-act-n { font-size: 22px; gap: 4px; }
+.pwt-console.phone .pwt-act-was { font-size: 14px; }
+.pwt-console.phone .pwt-act.rider .pwt-act-n { font-size: 14px; }
+.pwt-console.phone .pwt-act-all { font-size: 12px; padding: 0 3px; }
+/* The health row's change and the enemy's next-act row, at phone size. */
+.pwt-console.phone .pwt-health-num.changing { font-size: 12px; gap: 2px; }
+.pwt-console.phone .pwt-health-skull { width: 12px; height: 12px; }
+.pwt-console.phone .pwt-next { min-height: 16px; font-size: 12px; }
+.pwt-console.phone .pwt-next-all,
+.pwt-console.phone .pwt-next-to { font-size: 12px; padding: 0 2px; }
+/* The briefing lesson on a short phone: the sample card and plaque take a line less. */
+.pwt-console.phone .pwt-lesson-key .pwt-act-n { font-size: 18px; }
+.pwt-console.phone .pwt-lesson-key .pwt-key { min-height: 40px; }
+.pwt-console.phone .pwt-lesson-key .pwt-key-foot { display: none; }
+.pwt-console.phone .pwt-lesson { gap: 8px; }
+.pwt-console.phone .pwt-health-after { font-size: 12px; }
+.pwt-console.phone .pwt-health-num.changing { gap: 1px; }
+.pwt-console.phone .pwt-health.previewing { gap: 2px; }
+/* The element dot on the matchup tab, small enough that the tab clears the element tag beside it on the narrowest plates. */
+.pwt-console.phone .pwt-match .pwt-match-dot { width: 6px; height: 6px; }
+.pwt-console.phone .pwt-match:not(.immune) { gap: 2px; padding: 0 3px; left: 0; }

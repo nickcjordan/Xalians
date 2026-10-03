@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { KeyCard, keyDetail } from "./keys";
+import { KeyCard } from "./keys";
 import type { KeyView } from "./view";
 
 /**
@@ -8,7 +8,8 @@ import type { KeyView } from "./view";
   bar. The row is placed from the companion's measured figure (like the strike lines), centered on it
   and clamped inside the stage, sitting above the active pointer and therefore never on the creature's
   feet or body. During enemy turns and playback it is not drawn at all. Nothing here zooms or scales.
-  The phone keeps its column of keys (decision 6); this component is the desktop's alone.
+  The phone keeps its column of keys (decision 6); this component is the desktop's alone. The row says
+  each move as a verb and a number and nothing else: no tip beside it (one-number-one-meaning, rule 5).
 */
 export function StageMoves({
   stageRef,
@@ -16,7 +17,6 @@ export function StageMoves({
   name,
   keys,
   selectedKey,
-  notedKey,
   handingOff,
   onPress,
   onPass,
@@ -28,7 +28,6 @@ export function StageMoves({
   name: string;
   keys: KeyView[];
   selectedKey: number | null;
-  notedKey: number | null;
   handingOff: boolean;
   onPress: (k: KeyView) => void;
   onPass: () => void;
@@ -36,9 +35,7 @@ export function StageMoves({
   onFocusKey: (index: number | null) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
-  const [at, setAt] = useState<{ left: number; bottom: number; side: "left" | "right"; room: number } | null>(null);
-  // The card whose detail is shown in the tip beside the row (pointer or keyboard focus on it).
-  const [tipKey, setTipKey] = useState<number | null>(null);
+  const [at, setAt] = useState<{ left: number; bottom: number } | null>(null);
 
   // Measured against the stage box, so it survives the console zoom. Measured again once the plate's own
   // lift (it rises a few pixels when it becomes the active one) has settled.
@@ -61,14 +58,8 @@ export function StageMoves({
       const left = Math.max(8, Math.min(W - 8 - w, cx - w / 2));
       // The row rests above the active pointer (it hangs 14 px over the body), with a little air.
       const bottom = Math.round(H - (top - 22));
-      // The detail tip stands beside the row, in the free band between the enemy row and the squad row (above the row the
-      // lane is too short for it when a guardian's tall plaque hangs over it), on the side with more room.
-      const roomRight = W - 8 - (left + w) - 8;
-      const roomLeft = left - 8 - 8;
-      const side: "left" | "right" = roomRight >= roomLeft ? "right" : "left";
-      const room = Math.floor(Math.max(roomRight, roomLeft));
-      const next = { left: Math.round(left), bottom, side, room };
-      setAt((prev) => (prev && prev.left === next.left && prev.bottom === next.bottom && prev.side === next.side && prev.room === next.room ? prev : next));
+      const next = { left: Math.round(left), bottom };
+      setAt((prev) => (prev && prev.left === next.left && prev.bottom === next.bottom ? prev : next));
     };
     place();
     timer = window.setTimeout(place, 200);
@@ -79,7 +70,6 @@ export function StageMoves({
     };
   }, [stageRef, activeId, keys.length]);
 
-  const tipFor = tipKey !== null ? keys.find((k) => k.index === tipKey) : undefined;
   return (
     <div
       ref={box}
@@ -90,11 +80,6 @@ export function StageMoves({
       data-placed={at ? "true" : "false"}
       style={at ? { left: at.left, bottom: at.bottom } : { left: "50%", bottom: "30%" }}
     >
-      {tipFor && (
-        <p className={`pwt-moves-tip ${at?.side ?? "right"}`} data-moves-tip="" style={{ maxWidth: Math.min(300, at?.room ?? 300) }}>
-          {keyDetail(tipFor)}
-        </p>
-      )}
       <div className="pwt-moves-row">
         {keys.map((k) => (
           <KeyCard
@@ -103,16 +88,9 @@ export function StageMoves({
             menu
             armed={k.state === "ready"}
             selected={selectedKey === k.index}
-            noted={notedKey === k.index}
             onPress={() => onPress(k)}
-            onHover={(on) => {
-              onHover(on ? k.index : null);
-              setTipKey(on ? k.index : null);
-            }}
-            onFocusKey={(on) => {
-              onFocusKey(on ? k.index : null);
-              setTipKey(on ? k.index : null);
-            }}
+            onHover={(on) => onHover(on ? k.index : null)}
+            onFocusKey={(on) => onFocusKey(on ? k.index : null)}
           />
         ))}
         <button type="button" className="pwt-pass" onClick={onPass}>

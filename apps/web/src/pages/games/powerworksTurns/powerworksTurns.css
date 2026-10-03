@@ -651,12 +651,6 @@
   height: 100%;
   pointer-events: none;
 }
-.pwt-aim-line {
-  stroke: var(--color-viable);
-  stroke-width: 2px;
-  stroke-dasharray: 4 6;
-  opacity: 0.5;
-}
 
 /* --- plaque --- */
 .pwt-plaque {
@@ -876,17 +870,6 @@
 
 /* Chevrons are a primary signal (paint review round 1): sized and colored to read
    next to the number, not a faint decoration. */
-.pwt-cell-chevron-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-}
-.pwt-cell-chevron-wrap svg { width: 13px; height: 13px; }
-.pwt-cell-chevron-wrap.good { color: var(--color-viable-ink); background: var(--color-viable); }
-.pwt-cell-chevron-wrap.bad { color: var(--color-plague-ink); background: var(--color-plague); }
 
 .pwt-pass {
   flex: 0 0 90px;
@@ -923,10 +906,8 @@
   color: var(--color-plague);
   text-shadow: 0 2px 0 #000, 0 0 10px #000;
 }
-.pwt-float-num.heal { color: var(--color-viable); }
-.pwt-float-num.shield,
-.pwt-float-num.boost,
-.pwt-float-num.hinder {
+
+.pwt-float-num.shield {
   font-family: var(--font-legend);
   font-size: 20px;
   text-transform: uppercase;
@@ -1335,7 +1316,6 @@
 /* The acting enemy's sprite never covers its own plate title. */
 .pwt-plaque { position: relative; z-index: 2; }
 
-.pwt-cell-chevron-wrap svg { width: 14px; height: 14px; }
 /* Deltas never make a plate taller. */
 .pwt-health { height: 14px; }
 .pwt-health .pwt-delta { line-height: 12px; padding: 0 3px; font-size: 11.5px; }
@@ -1393,19 +1373,6 @@
 /* One rule for identical cells: no collapsed "every enemy" layout any more (see keys.tsx). */
 
 /* Why the numbers differ, once, under the companion's name at the left of the key bar. */
-.pwt-keybar-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  font-family: var(--font-body);
-  font-size: 10.5px;
-  line-height: 1.15;
-  text-align: center;
-  color: var(--color-ink);
-  border-top: 1px solid var(--color-edge);
-  padding-top: 3px;
-}
 
 /* The Record: sector and round headings, newest first. */
 .pwt-record-list h3 {
@@ -1792,56 +1759,9 @@
 /* --- 8. A shield that reads as a shield --- */
 .pwt-chip.shield svg { width: 13px; height: 13px; }
 
-.pwt-keybar-statusline {
-  position: absolute;
-  top: 5px;
-  left: 20px;
-  right: 20px;
-  z-index: 1;
-  margin: 0;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  font-family: var(--font-body);
-  font-size: 12px;
-  line-height: 1;
-  color: var(--color-ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pwt-keybar.has-status { padding-top: 26px; }
-
 /* --- 11. Teaching in place: a note beside the first occurrence, over nothing it explains --- */
 .pwt-key { position: relative; }
-.pwt-note {
-  position: absolute;
-  z-index: 8;
-  left: 6px;
-  bottom: calc(100% + 9px);
-  margin: 0;
-  width: max-content;
-  max-width: 262px;
-  padding: 6px 9px;
-  background: var(--color-s3);
-  border: 1px solid var(--color-ink-2);
-  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
-  font-family: var(--font-body);
-  font-size: 12px;
-  line-height: 1.3;
-  color: var(--color-ink);
-  pointer-events: none;
-  animation: pwt-wait-in 220ms var(--ease-out) both;
-}
-.pwt-note::after {
-  content: "";
-  position: absolute;
-  left: 30px;
-  top: 100%;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 7px solid var(--color-ink-2);
-}
+
 .pwt-briefing-mid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
 .pwt-briefing-mid .pwt-briefing-squad { justify-content: center; gap: 14px; }
 .pwt-lesson { display: flex; align-items: center; gap: 14px; }
@@ -1882,7 +1802,6 @@
 .pwt-rec-line.enemy .pwt-rec-side { color: var(--color-ink-2); }
 
 /* The short reason under the portrait is for the phone's column only; a desktop reads the sentence on the top line. */
-.pwt-keybar-status { display: none; }
 
 /* The portrait prompt: the phone on its side and an arrow that says turn it. */
 .pwt-rotate-art { display: inline-flex; align-items: center; gap: 12px; }
@@ -1955,30 +1874,6 @@
 .pwt-titlecard-kicker { font-size: 13px; }
 
 /* --- 4. A first-use note is a line on the key bar's top row, its key named in bold and outlined --- */
-.pwt-keybar-statusline { gap: 18px; }
-.pwt-status-text { flex: 0 0 auto; }
-.pwt-note {
-  position: static;
-  z-index: auto;
-  flex: 1 1 0;
-  min-width: 0;
-  width: auto;
-  max-width: none;
-  margin: 0;
-  padding: 0 0 0 10px;
-  background: none;
-  border: 0;
-  border-left: 2px solid var(--color-ink-2);
-  box-shadow: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--color-ink);
-}
-.pwt-note::after { display: none; }
-.pwt-note b { font-weight: 700; }
 
 /* --- 9. Marks readable where they are used --- */
 
@@ -2039,18 +1934,6 @@
   padding: 12px 36px;
 }
 /* The first-use note is a small tag in its key's head; the key itself is not outlined (it read as preselected). */
-.pwt-key-note-tag {
-  flex: 0 0 auto;
-  margin-left: 6px;
-  padding: 0 4px;
-  border: 1px solid var(--color-ink-2);
-  font-family: var(--font-legend);
-  font-size: 10px;
-  line-height: 14px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-ink-2);
-}
 
 /* Round 7, item 7: the Guide in three sections over two columns (reading keys; reading plates, then
    turn and tools), with margins clear of the console edge at 1366 and 1920. */
@@ -2077,7 +1960,7 @@
 
 .pwt-guide .pwt-panel-note { margin: 2px 0 0; }
 .pwt-revives-short { display: none; }
-.pwt-note-short { display: none; }
+
 .pwt-foot-short { display: none; }
 .pwt-float { transition: margin 180ms var(--ease-out); }
 .pwt-guide-foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 2px; }
@@ -2099,8 +1982,7 @@
 .pwt-marks.reserved { min-height: 16px; }
 
 /* Item 6: numbers that land on an enemy are plain ink; color is the matchup tag's and a squad's health's. */
-.pwt-float-num.hurt.plain,
-.pwt-float-num.heal.plain { color: var(--color-ink); }
+.pwt-float-num.hurt.plain { color: var(--color-ink); }
 .pwt-delta.plain.hurt,
 .pwt-delta.plain.heal { color: var(--color-ink); }
 
@@ -2120,8 +2002,7 @@
 
 /* Item 10: the key bar keeps one height and one place: the status and note line has its room whether or not it speaks. */
 .pwt-console:not(.phone) .pwt-keybar { padding-top: 26px; }
-.pwt-key-foot-left { display: flex; align-items: center; gap: 6px; min-width: 0; }
-.pwt-key-note-tag { margin-left: 0; }
+
 .pwt-key-name { flex: 0 1 auto; }
 
 /* Item 10: the camp holds still. The revive number floats above the portrait in room kept for it, and the status

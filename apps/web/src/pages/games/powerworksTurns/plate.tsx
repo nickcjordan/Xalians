@@ -1,9 +1,9 @@
 import React from "react";
-import { Shield, ChevronUp, ChevronDown, Swords, Ban, Skull, Zap, HeartPulse, TrendingDown } from "lucide-react";
+import { Shield, Swords, Ban, Skull, Zap, TrendingDown } from "lucide-react";
 import { Portrait } from "../powerworksVisuals";
 import { DeltaChip, SpotlightMarks } from "./banner";
-import { SupportIcon, SUPPORT_WORD } from "./support";
-import type { EnemyView, Marks, Preview, SquadView, Threat } from "./view";
+import { SupportIcon } from "./support";
+import type { EnemyView, Marks, NextAct, PlatePreview, SquadView, Threat } from "./view";
 
 /**
   The enemy hit's own glyph (UX pass 2, round 5): a jagged burst, an impact. The swords stay the
@@ -38,23 +38,32 @@ export function ImpactMark({ className = "" }: { className?: string }) {
   to a second row and pushes the plate taller than its fixed figure band (paint review
   round 5, item 1).
 */
-export function MarkChips({ marks, side = "squad" }: { marks: Marks; side?: "squad" | "enemy" }) {
-  if (!marks.shield && !marks.boost && !marks.hinder) return null;
+export function MarkChips({ marks, side = "squad", preview }: { marks: Marks; side?: "squad" | "enemy"; preview?: Pick<PlatePreview, "shield" | "boost"> | null }) {
+  const shield = preview?.shield;
+  const boost = preview?.boost;
+  if (!marks.shield && !marks.boost && !marks.hinder && !shield && !boost) return null;
   return (
     <>
-      {marks.shield > 0 && (
-        <span className="pwt-chip shield" aria-label={`shield ${marks.shield}`} title={`Shield ${marks.shield}`}>
+      {(marks.shield > 0 || shield) && (
+        <span
+          className={`pwt-chip shield${shield ? " preview" : ""}`}
+          aria-label={shield ? `shield ${shield.from}, would be ${shield.to}` : `shield ${marks.shield}`}
+          title={shield ? `Shield ${shield.from} to ${shield.to}` : `Shield ${marks.shield}`}
+          data-preview-chip={shield ? "shield" : undefined}
+        >
           <Shield />
-          {marks.shield}
+          {shield ? <Before from={shield.from} to={shield.to} /> : marks.shield}
         </span>
       )}
-      {marks.boost > 0 && (
+      {(marks.boost > 0 || boost) && (
         <span
-          className="pwt-chip"
-          aria-label={`next attack +${marks.boost}`}
-          title={`Next attack +${marks.boost}`}
+          className={`pwt-chip${boost ? " preview" : ""}`}
+          aria-label={boost ? `next attack +${boost.from}, would be +${boost.to}` : `next attack +${marks.boost}`}
+          title={boost ? `Next attack +${boost.from} to +${boost.to}` : `Next attack +${marks.boost}`}
+          data-preview-chip={boost ? "boost" : undefined}
         >
-          <Zap />+{marks.boost}
+          <Zap />
+          {boost ? <Before from={boost.from} to={boost.to} plus /> : <>+{marks.boost}</>}
         </span>
       )}
       {marks.hinder > 0 &&
@@ -73,6 +82,18 @@ export function MarkChips({ marks, side = "squad" }: { marks: Marks; side?: "squ
   );
 }
 
+/** A number changing in its own row: the old one struck when there was one, then the new one ("34 29"). */
+function Before({ from, to, plus = false }: { from: number; to: number; plus?: boolean }) {
+  const sign = plus ? "+" : "";
+  return (
+    <>
+      {from > 0 && <s className="pwt-before">{sign}{from}</s>}
+      {sign}
+      {to}
+    </>
+  );
+}
+
 /**
   A small element tag on every unit (UX pass 2, round 3): the element's own hue through the
   `el-<element>` scope, a dot and the word. Small on purpose: the chevrons stay the matchup
@@ -87,24 +108,43 @@ export function ElementBadge({ element, className = "" }: { element: string; cla
   );
 }
 
-function HealthBar({ hp, max, delta = 0, plain = false }: { hp: number; max: number; delta?: number; plain?: boolean }) {
+/**
+  The health row: the bar and its number. A previewed key changes it in place (rule 2): the old number struck and the new
+  one, the bar segment that would go lit (or the segment a mend would add), a skull when it reaches 0.
+*/
+export function HealthBar({ hp, max, delta = 0, plain = false, preview }: { hp: number; max: number; delta?: number; plain?: boolean; preview?: PlatePreview["health"] | null }) {
   const pct = max > 0 ? Math.max(0, Math.min(100, (hp / max) * 100)) : 0;
+  const seg = preview && max > 0 ? { left: (Math.min(preview.from, preview.to) / max) * 100, width: (Math.abs(preview.to - preview.from) / max) * 100, gain: preview.to > preview.from } : null;
   return (
-    <div className="pwt-health">
+    <div className={`pwt-health${preview ? " previewing" : ""}`} data-health-preview={preview ? (preview.to > preview.from ? "gain" : "lost") : undefined}>
       <div
-        className="pwt-health-track"
+        className={`pwt-health-track${preview?.over ? " capped" : ""}`}
         role="meter"
         aria-valuemin={0}
         aria-valuemax={max}
         aria-valuenow={hp}
+        aria-label={preview ? `health ${preview.from}, would be ${preview.to}` : undefined}
       >
         <span
           className={`pwt-health-fill ${hp / Math.max(1, max) < 0.3 ? "critical" : ""}`}
           style={{ width: `${pct}%` }}
         />
+        {seg && <span className={`pwt-health-seg ${seg.gain ? "gain" : "lost"}`} data-seg="" style={{ left: `${seg.left}%`, width: `${seg.width}%` }} />}
+        {/* A mend that would spill past full: the bar's end cap lights, and the part that spills is a short dim sliver beyond the end. */}
+        {preview?.over ? <span className="pwt-health-cap" data-cap="" /> : null}
+        {preview?.over ? <span className="pwt-health-over" data-over={preview.over} /> : null}
       </div>
-      <span className="pwt-health-num">{hp}</span>
-      {!!delta && <DeltaChip n={delta} plain={plain} />}
+      {preview ? (
+        <span className={`pwt-health-num changing${preview.skull ? " skull" : ""}`} data-from={preview.from} data-to={preview.to}>
+          <s className="pwt-before">{preview.from}</s>
+          <span className="pwt-health-arrow" aria-hidden="true">→</span>
+          <span className="pwt-health-after">{preview.to}</span>
+          {preview.skull && <Skull className="pwt-health-skull" aria-label="knocked out" />}
+        </span>
+      ) : (
+        <span className="pwt-health-num">{hp}</span>
+      )}
+      {!!delta && !preview && <DeltaChip n={delta} plain={plain} />}
     </div>
   );
 }
@@ -152,6 +192,7 @@ export function SquadPlate({
   preview,
   previewKey = "",
   offTarget = false,
+  previewDim = false,
   onPick,
 }: {
   u: SquadView;
@@ -176,20 +217,22 @@ export function SquadPlate({
   threats?: Threat[];
   threatMode?: (fromId: string) => ThreatMode;
   onThreat?: (fromId: string | null) => void;
-  /** What the hovered or selected key would land here (a heal, a shield, a boost). */
-  preview?: Preview;
+  /** What the hovered or selected key would change here, in the rows that carry those numbers (a mend, a guard, a boost). */
+  preview?: PlatePreview | null;
   previewKey?: string;
   /** A key is hovered or selected and this unit is not one it can name: the plate steps back. */
   offTarget?: boolean;
+  /** A target is pointed at with a single-target move chosen: this plate's previewed change steps back, since it is not the one being aimed at. */
+  previewDim?: boolean;
   /** The plate is a legal target of the selected key: pressing it uses the key on it. */
   onPick?: () => void;
 }) {
-  const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0;
+  const hasMarks = u.shield > 0 || u.boost > 0 || u.hinder > 0 || !!preview?.shield || !!preview?.boost;
   return (
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${u.active ? "active" : ""} ${lit ? "lit" : ""} ${
         spotlit ? "spotlit" : ""
-      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""}`}
+      } ${dimmed ? "dimmed" : ""} ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${previewDim ? "preview-dim" : ""} ${onPick ? "pickable" : ""}`}
       data-unit={u.id}
       onMouseMove={onHover ? () => onHover(true) : undefined}
       onMouseLeave={onHover ? () => onHover(false) : undefined}
@@ -212,51 +255,33 @@ export function SquadPlate({
         {spotlit && <SpotlightMarks />}
         <Figure art={u.art} element={u.element} />
         <span className="pwt-ground" aria-hidden="true" />
-        {preview && <PreviewBadge p={preview} keyName={previewKey} />}
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
         {!u.down && <ThreatTabs threats={threats ?? u.threats} onCompanion modeOf={threatMode} onHover={onThreat} />}
         <span className="pwt-name">{u.name}</span>
-        <HealthBar hp={u.hp} max={u.max} delta={delta} />
+        <HealthBar hp={u.hp} max={u.max} delta={delta} preview={preview?.health} />
         {u.down ? (
           <span className="pwt-down-tag">Down</span>
         ) : (
           // The chip row is always there, empty or not, so a shield gained never lifts the plate (round 8, item 10).
-          <div className="pwt-marks reserved">{hasMarks && <MarkChips marks={u} />}</div>
+          <div className="pwt-marks reserved">{hasMarks && <MarkChips marks={u} preview={preview} />}</div>
         )}
       </div>
     </div>
   );
 }
 
-/** The matchup chevron beside a number: up is more damage, down is less; the color says who that favors. */
-function Chevron({ step, tone }: { step: number; tone: "you" | "them" | "neutral" }) {
-  if (step > 1)
-    return (
-      <span className={`pwt-cell-chevron-wrap ${tone === "you" ? "good" : tone === "them" ? "bad" : "neutral"}`}>
-        <ChevronUp />
-      </span>
-    );
-  if (step > 0 && step < 1)
-    return (
-      <span className={`pwt-cell-chevron-wrap ${tone === "you" ? "bad" : tone === "them" ? "good" : "neutral"}`}>
-        <ChevronDown />
-      </span>
-    );
-  return null;
-}
-
 /**
   The matchup mark on an enemy's plaque: the acting companion's element against this enemy's, said once
   per enemy (every attack takes its creature's element). Nothing on a neutral matchup.
 */
-export function MatchupMark({ step, who }: { step: number | null; who?: string }) {
+export function MatchupMark({ step, who, lit = false, element }: { step: number | null; who?: string; /** The acting companion's element: its dot opens the tab, so the tab reads as that companion's bonus or penalty. */ element?: string; /** A previewed attack is showing on this plate: this multiplier is why the lost health is more or less than the key's number. */ lit?: boolean }) {
   if (step === null || step === 1) return null;
   const by = who ? ` for ${who}` : "";
   if (step === 0)
     return (
-      <span className="pwt-match immune" title={`No effect${by}: the element chart gives 0`} aria-label={`no effect${by}`} data-match="immune">
+      <span className={`pwt-match immune${lit ? " lit" : ""}`} title={`No effect${by}: the element chart gives 0`} aria-label={`no effect${by}`} data-match="immune">
         <Ban />
         <span className="pwt-match-word">no effect</span>
       </span>
@@ -267,12 +292,12 @@ export function MatchupMark({ step, who }: { step: number | null; who?: string }
   const times = `×${String(step).replace(/^0\./, ".")}`;
   return (
     <span
-      className={`pwt-match ${strong ? "strong" : "weak"}`}
+      className={`pwt-match ${strong ? "strong" : "weak"}${lit ? " lit" : ""}`}
       title={`${strong ? "Strong" : "Weak"} matchup${by}: attacks land ${times}`}
       aria-label={`${strong ? "strong" : "weak"} matchup${by}, attacks land ${times}`}
       data-match={strong ? "strong" : "weak"}
     >
-      {strong ? <ChevronUp /> : <ChevronDown />}
+      {element && <i className={`pwt-match-dot el-${element}`} aria-hidden="true" />}
       <span className="pwt-match-word">{strong ? "strong" : "weak"}</span>
       <span className="pwt-match-x">{times}</span>
     </span>
@@ -380,8 +405,7 @@ export function ThreatTabs({
   const [raised, setRaised] = React.useState(false);
   const signature = threats.map((x) => `${x.fromId}${x.on}${x.before ?? ""}${x.n}${x.lethal ? "k" : ""}${x.parts.length}`).join("|");
   // A row that would run into the element tag beside it rides one row higher, above that tag. The width of the row does not
-  // depend on the row it rides on, so this settles in one pass. The height it takes (from the plaque's top edge) is handed to
-  // the plate, so a preview number rises over the tags and never onto them.
+  // depend on the row it rides on, so this settles in one pass.
   React.useLayoutEffect(() => {
     const el = ref.current;
     const plate = el?.closest<HTMLElement>("[data-unit]");
@@ -400,15 +424,7 @@ export function ThreatTabs({
         else match.style.top = `${el.offsetTop - match.offsetHeight - 1}px`;
       }
     }
-    if (need !== raised) {
-      setRaised(need);
-      return;
-    }
-    if (threats.length > 0) plate.style.setProperty("--tags-h", `${-el.offsetTop}px`);
-    else plate.style.removeProperty("--tags-h");
-    return () => {
-      plate.style.removeProperty("--tags-h");
-    };
+    if (need !== raised) setRaised(need);
   });
   return (
     <div ref={ref} className={`pwt-tabs${raised ? " raised" : ""}${onCompanion ? " squad" : ""}`} data-tabs="" data-sig={signature}>
@@ -419,119 +435,54 @@ export function ThreatTabs({
   );
 }
 
-/**
-  What the hovered or selected key would land on this unit, big and in the same place on every plate:
-  the number, a skull when it finishes, "no effect" when the chart gives 0. A hinder shows the enemy's
-  committed hit before and after; a support shows its number.
-*/
-export function PreviewBadge({ p, keyName }: { p: Preview; keyName: string }) {
-  let body: React.ReactNode;
-  let words: string;
-  let cls = "";
-  if (p.chips) {
-    body = (
-      <span className="pwt-preview-chips">
-        {p.chips.map((s) => (
-          <span key={`${s.kind}-${s.aim}`} className={`pwt-preview-chip ${s.kind}`}>
-            <SupportIcon kind={s.kind} />
-            {s.kind === "hinder" || s.kind === "delay" ? "-" : s.kind === "boost" ? "+" : ""}
-            {s.n}
-          </span>
-        ))}
-      </span>
-    );
-    words = p.chips.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ");
-  } else if (p.kind === "hit") {
-    if (p.immune) {
-      cls = "immune";
-      body = (
-        <span className="pwt-preview-num plain">
-          <Ban />
-          <span className="pwt-preview-word">no effect</span>
-        </span>
-      );
-      words = "no effect";
-    } else {
-      cls = p.finishes ? "finish" : "";
-      body = (
-        <>
-          <span className="pwt-preview-num">
-            {p.finishes && <Skull />}
-            {p.ownBefore !== undefined && (
-              <>
-                <s className="pwt-preview-before">{p.ownBefore}</s>
-                <span className="pwt-preview-arrow">→</span>
-              </>
-            )}
-            {p.n}
-            <Chevron step={p.step} tone="you" />
-          </span>
-          {(p.absorbed > 0 || p.rider) && (
-            <span className="pwt-preview-notes">
-              {p.absorbed > 0 && (
-                <span className="pwt-preview-note" title={`Its shield absorbs ${p.absorbed} first`}>
-                  <Shield />
-                  {p.absorbed}
-                </span>
-              )}
-              {p.rider && (
-                <span className="pwt-preview-note rider" data-saves={p.saves ? "" : undefined}>
-                  {p.saves ? <Skull /> : <Swords />}
-                  <s>{p.rider.before}</s>
-                  <span className="pwt-preview-arrow">→</span>
-                  {p.rider.after}
-                  {p.knocks && <Skull className="live" />}
-                </span>
-              )}
-            </span>
-          )}
-        </>
-      );
-      words = `${p.n} damage${p.finishes ? ", finishes" : ""}${p.step > 1 ? ", strong" : p.step < 1 ? ", weak" : ""}${p.absorbed > 0 ? `, its shield absorbs ${p.absorbed} first` : ""}${
-        p.rider ? `; its committed hit on ${p.hitOn ?? "a companion"} falls from ${p.rider.before} to ${p.rider.after}${p.saves ? ", no longer knocking out" : p.knocks ? ", still knocking out" : ""}` : ""
-      }`;
-    }
-  } else if (p.kind === "hinder") {
-    cls = p.knocks ? "hinder knocks" : "hinder";
-    const nothing = p.before === 0 && !p.hitOn;
-    body = nothing ? (
-      <span className="pwt-preview-num plain">
-        <Swords />
-        <span className="pwt-preview-word">no hit to cut</span>
-      </span>
-    ) : (
-      <>
-        <span className="pwt-preview-num">
-          {p.saves && <Skull className="saved" />}
-          <s className="pwt-preview-before">{p.before}</s>
-          <span className="pwt-preview-arrow">→</span>
-          {p.n}
-          {p.knocks && <Skull className="live" />}
-        </span>
-        <span className="pwt-preview-note" title={`Its committed hit${p.hitOn ? ` on ${p.hitOn}` : ""}`}>
-          <Swords />
-          its hit
-        </span>
-      </>
-    );
-    words = nothing ? "it has no attack committed for this to cut" : `its committed hit falls from ${p.before} to ${p.n}${p.saves ? ", no longer knocking out" : p.knocks ? ", still knocking out" : ""}`;
-  } else {
-    cls = p.kind;
-    body = (
-      <span className="pwt-preview-num">
-        {p.kind === "heal" && <HeartPulse />}
-        {p.kind === "shield" && <Shield />}
-        {p.kind === "boost" && <Zap />}
-        {p.kind === "heal" || p.kind === "boost" ? "+" : ""}
-        {p.n}
-      </span>
-    );
-    words = p.kind === "heal" ? `heals ${p.n}` : p.kind === "shield" ? `shield ${p.n}` : `next attack +${p.n}`;
+/** The enemy's next act in words, for the title and the accessible name (the plate itself never names a companion). */
+export function nextActWords(n: NextAct): string {
+  if (n.kind === "attack") {
+    const gone = n.cancelled ? ", will not come: the move finishes it" : "";
+    return `${n.from}'s next hit: ${n.n}${n.before !== undefined ? `, from ${n.before}` : ""}${n.area ? ", hits every companion" : ""}${gone}`;
   }
+  const parts = n.parts.map((p) => `${SUPPORT_TAG_WORD[p.kind]} ${p.n}`).join(", ");
+  const who = n.self ? " on itself" : n.toLetters.length ? ` on ${n.toLetters.join(", ")}` : "";
+  return `${n.from}'s next move${who}: ${parts}${n.cancelled ? ", will not come: the move finishes it" : ""}`;
+}
+
+/**
+  An enemy's next act, said on its own plate, one row under its health (docs/design/powerworks-one-number-one-meaning.md,
+  decision 1): the hit glyph and the number it would land, with a small pointer toward the squad; ALL for an area hit; a support's
+  icon, its number and the ally it lands on. A previewed weaken changes the number in this row (old struck, new); a finishing move crosses it out.
+*/
+export function NextActRow({ next, mode = "live" }: { next: NextAct | null; mode?: ThreatMode }) {
+  if (!next) return <div className="pwt-next reserved" data-next-act="" data-empty="" />;
+  const words = nextActWords(next);
   return (
-    <span className={`pwt-preview ${cls}`} data-preview="" aria-label={`${keyName}: ${words}`}>
-      {body}
-    </span>
+    <div className={`pwt-next ${next.kind}${next.before !== undefined ? " struck" : ""}${next.cancelled ? " cancelled" : ""} ${mode}`} data-next-act="" data-from={next.from} title={words} aria-label={words} role="img">
+      {next.kind === "attack" ? (
+        <span className="pwt-next-what" aria-hidden="true">
+          <ImpactMark />
+          {next.before !== undefined && (
+            <>
+              <s className="pwt-before">{next.before}</s>
+              <span className="pwt-next-arrow">→</span>
+            </>
+          )}
+          <span className="pwt-next-n">{next.n}</span>
+          {next.area && <span className="pwt-next-all">ALL</span>}
+        </span>
+      ) : (
+        <span className="pwt-next-what" aria-hidden="true">
+          {next.parts.map((p) => (
+            <span key={p.kind} className={`pwt-next-part ${p.kind}`}>
+              <SupportIcon kind={p.kind} onCompanion={!next.self && next.toLetters.length === 0} />
+              <span className="pwt-next-n">
+                {p.kind === "hinder" || p.kind === "delay" ? "-" : p.kind === "boost" || p.kind === "heal" ? "+" : ""}
+                {p.n}
+              </span>
+            </span>
+          ))}
+          {next.toLetters.length > 0 && <span className="pwt-next-to">{next.toLetters.length > 1 ? "ALL" : next.toLetters[0]}</span>}
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -539,6 +490,7 @@ export function EnemyPlate({
   u,
   lit = false,
   activeName,
+  activeElement,
   spotlit = false,
   dimmed = false,
   delta = 0,
@@ -553,12 +505,15 @@ export function EnemyPlate({
   preview,
   previewKey = "",
   offTarget = false,
+  previewDim = false,
   onPick,
 }: {
   u: EnemyView;
   lit?: boolean;
   /** The active companion's name, for the matchup mark's words. */
   activeName?: string;
+  /** The active companion's element, shown as the dot that opens the matchup tab. */
+  activeElement?: string;
   /** This unit is the spotlit actor (UX pass): brighter, a floor ring, a head pointer. */
   spotlit?: boolean;
   /** Someone else is spotlit right now: this plate steps one notch dimmer. */
@@ -579,11 +534,13 @@ export function EnemyPlate({
   threatMode?: (fromId: string) => ThreatMode;
   /** The pointer is on one of this plate's tags (the enemy it comes from), or left it. */
   onThreat?: (fromId: string | null) => void;
-  /** What the hovered or selected key would land here (the number, drawn big on the plate). */
-  preview?: Preview;
+  /** What the hovered or selected key would change here, in the rows that carry those numbers (health, shield). */
+  preview?: PlatePreview | null;
   previewKey?: string;
   /** A key is hovered or selected and this unit is not one it can name: the plate steps back. */
   offTarget?: boolean;
+  /** A target is pointed at with a single-target move chosen: this plate's previewed change steps back, since it is not the one being aimed at. */
+  previewDim?: boolean;
   /** The plate is a legal target of the selected key: pressing it uses the key on it. */
   onPick?: () => void;
 }) {
@@ -592,7 +549,7 @@ export function EnemyPlate({
     <div
       className={`pwt-plate ${u.down ? "down" : ""} ${lit ? "lit" : ""} ${spotlit ? "spotlit" : ""} ${
         dimmed ? "dimmed" : ""
-      } ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${onPick ? "pickable" : ""} ${isBoss(u.species) ? "boss" : ""}`}
+      } ${targeted ? "targeted" : ""} ${ring ? `ring-${ring}` : ""} ${impactTarget ? "impact-target" : ""} ${struck ? "struck" : ""} ${offTarget ? "off-target" : ""} ${previewDim ? "preview-dim" : ""} ${onPick ? "pickable" : ""} ${isBoss(u.species) ? "boss" : ""}`}
       data-unit={u.id}
       data-letter={u.letter}
       onMouseMove={onHover ? () => onHover(true) : undefined}
@@ -616,21 +573,21 @@ export function EnemyPlate({
         {spotlit && <SpotlightMarks />}
         <Figure art={u.art} element={u.element} letter={u.letter} />
         <span className="pwt-ground" aria-hidden="true" />
-        {preview && <PreviewBadge p={preview} keyName={previewKey} />}
       </div>
       <div className="pwt-plaque">
         <ElementBadge element={u.element} />
         {!u.down && <ThreatTabs threats={threats ?? u.threats} modeOf={threatMode} onHover={onThreat} />}
-        {!u.down && <MatchupMark step={u.matchup} who={who} />}
+        {!u.down && <MatchupMark step={u.matchup} who={who} lit={!!preview?.matchup} element={activeElement} />}
         {isBoss(u.species) && <span className="pwt-guardian-tag">Guardian</span>}
         <span className="pwt-name">
           {u.letter} · {u.name}
         </span>
-        <HealthBar hp={u.hp} max={u.max} delta={delta} plain />
+        <HealthBar hp={u.hp} max={u.max} delta={delta} plain preview={preview?.health} />
         {u.down && <span className="pwt-down-tag">Down</span>}
+        {!u.down && <NextActRow next={u.next} mode={threatMode ? threatMode(u.id) : "live"} />}
         {(u.shield > 0 || u.boost > 0 || u.hinder > 0) && !u.down && (
           <div className="pwt-marks">
-            <MarkChips marks={u} side="enemy" />
+            <MarkChips marks={u} side="enemy" preview={preview} />
           </div>
         )}
       </div>

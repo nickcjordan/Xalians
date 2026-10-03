@@ -1,8 +1,5 @@
 import React from "react";
-import { ImpactMark } from "./plate";
-import { SUPPORT_WORD, SupportTags } from "./support";
-import { TrendingDown, Zap } from "lucide-react";
-import { actsOnPress, type KeyView } from "./view";
+import { actsOnPress, type ActLine, type KeyView } from "./view";
 
 /** Keyboard focus only: a mouse press also focuses a button, and that must not keep a key's previews up after it is used. */
 function keyboardFocused(el: HTMLElement): boolean {
@@ -31,46 +28,38 @@ function menuFootWords(keyView: KeyView): string {
   return "";
 }
 
+/** One act in words, for the accessible name: "strike 3", "weaken 14", "sweep 6, all". */
+export function actWords(a: ActLine): string {
+  return `${a.verb} ${a.was !== undefined ? `${a.was}, now ${a.n}` : a.n}${a.all ? ", all" : ""}`;
+}
+
 /**
-  The hover tip's sentence for a move (desktop menu, decision 7): its power before any matchup, its shape, what it
-  costs afterward, each as a fact. Nothing shows at rest; this is the detail the card leaves out.
+  One act on a card: the verb and its number, two sizes of one line ("STRIKE 3"). The player's own boost
+  or hinder shows as the plain number struck and the number it now carries ("STRIKE 3 1"); ALL says the act
+  reaches everyone it can.
 */
-export function keyDetail(k: KeyView): string {
-  const parts: string[] = [];
-  if (k.kind === "attack") {
-    parts.push(`Attack power ${k.power} before the matchup`);
-    if (k.powerNow !== undefined && k.ownMark) parts.push(`${k.ownMark.kind === "boost" ? "boosted" : "hindered"} by ${k.ownMark.n} to ${k.powerNow} on its next attack`);
-    parts.push(k.area ? "hits every enemy" : "hits one enemy");
-  } else {
-    parts.push(k.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}${s.all ? ", whole squad" : ""}`).join(", "));
-    parts.push(aimWords(k));
-  }
-  for (const s of k.kind === "attack" ? k.supports : []) parts.push(`${SUPPORT_WORD[s.kind]} ${s.n}${s.aim === "enemy" && k.area ? " each" : ""}`);
-  if (k.state === "resting") parts.push(footWords(k));
-  else if (k.state === "spent") parts.push("used for this fight");
-  else if (k.signature) parts.push("once per fight");
-  else if (k.rests > 0) parts.push(`rests ${k.rests} ${k.rests === 1 ? "turn" : "turns"} after use`);
-  return `${parts.map((x) => x.charAt(0).toUpperCase() + x.slice(1)).join(". ")}.`;
-}
-
-/** Who a key is aimed at, in words. */
-function aimWords(k: KeyView): string {
-  if (k.aim === "now") return k.supports[0]?.all ? "whole squad" : "on itself";
-  if (k.aim === "ally") return "on a squadmate";
-  if (k.area) return "every enemy";
-  return "on an enemy";
+export function Act({ a, main = false }: { a: ActLine; main?: boolean }) {
+  return (
+    <span className={`pwt-act ${main ? "main" : "rider"} ${a.verb}`} data-verb={a.verb}>
+      <span className="pwt-act-verb">{a.verb}</span>
+      <span className="pwt-act-n" data-n={a.n}>
+        {a.was !== undefined && <s className="pwt-act-was">{a.was}</s>}
+        {a.n}
+      </span>
+      {a.all && <span className="pwt-act-all">ALL</span>}
+    </span>
+  );
 }
 
 /**
-  One move key: its name, ONE power number (an attack's power before any matchup, or a support's
-  own number) and its shape. What it would land on each target is drawn on that target's plate
-  while the key is hovered or selected, so the key never repeats a number per enemy.
+  One move key (docs/design/powerworks-one-number-one-meaning.md, rule 4): its name, then what the player does
+  as a verb and its number. What it would change on each target is drawn on that target's plate, in the rows
+  that carry those numbers, while the key is hovered or selected; the card never repeats a number per target.
 */
 export function KeyCard({
   keyView,
   armed,
   selected,
-  noted = false,
   menu = false,
   onPress,
   onHover,
@@ -81,8 +70,6 @@ export function KeyCard({
   armed: boolean;
   /** The key is the one chosen and waits for its target. */
   selected: boolean;
-  /** A first-occurrence note is about this key (the note itself sits on the key bar's top line). */
-  noted?: boolean;
   /** The on-stage menu card (desktop): the same facts, small; state words are short and an empty foot line is not drawn. */
   menu?: boolean;
   onPress: () => void;
@@ -92,17 +79,13 @@ export function KeyCard({
   onFocusKey?: (on: boolean) => void;
 }) {
   const k = keyView;
-  const isAttack = k.kind === "attack";
   // A chosen key that acts on its own (a touch screen selects first) says so; one that needs an enemy asks for it.
   const foot = selected && k.state === "ready" ? (actsOnPress(k) ? "tap again to use" : "pick a target") : menu ? menuFootWords(k) : footWords(k);
-  const word = aimWords(k);
-  const label = `${k.index + 1}. ${k.name}: ${
-    isAttack ? `power ${k.power}${k.powerNow !== undefined ? `, ${k.ownMark?.kind === "boost" ? "boosted" : "hindered"} to ${k.powerNow}` : ""}${k.area ? ", hits every enemy" : ""}` : k.supports.map((s) => `${SUPPORT_WORD[s.kind]} ${s.n}`).join(", ")
-  }, ${word}${footWords(k) ? `, ${footWords(k)}` : ""}`;
+  const label = `${k.index + 1}. ${k.name}: ${k.acts.map(actWords).join(", ")}${footWords(k) ? `, ${footWords(k)}` : ""}`;
   return (
     <button
       type="button"
-      className={`pwt-key ${menu ? "menu" : ""} ${k.state} ${k.signature ? "signature" : ""} ${noted ? "noted" : ""} ${selected ? "selected" : ""} ${isAttack ? "attack" : "support"}`}
+      className={`pwt-key ${menu ? "menu" : ""} ${k.state} ${k.signature ? "signature" : ""} ${selected ? "selected" : ""} ${k.kind === "attack" ? "attack" : "support"}`}
       disabled={!armed}
       aria-pressed={selected}
       aria-label={label}
@@ -117,61 +100,13 @@ export function KeyCard({
         <span className="pwt-key-index">{k.index + 1}</span>
         <span className="pwt-key-name">{k.name}</span>
       </span>
-      <span className="pwt-key-body">
-        {isAttack ? (
-          <>
-            <span className="pwt-key-power" data-power={k.power} data-power-now={k.powerNow} title={`Attack power ${k.power} before the matchup${k.ownMark ? `; ${k.ownMark.kind === "boost" ? "boosted" : "hindered"} by ${k.ownMark.n} on its next attack` : ""}`}>
-              <ImpactMark />
-              {k.powerNow !== undefined ? (
-                <>
-                  <s className="pwt-key-power-was">{k.power}</s>
-                  <span className="pwt-key-power-arrow" aria-hidden="true">
-                    →
-                  </span>
-                  {k.powerNow}
-                </>
-              ) : (
-                k.power
-              )}
-              <span className="pwt-key-power-word">power</span>
-            </span>
-            <span className="pwt-key-shape">
-              {k.ownMark && (
-                <span className={`pwt-key-own ${k.ownMark.kind}`} data-own={k.ownMark.kind}>
-                  {k.ownMark.kind === "hinder" ? <TrendingDown /> : <Zap />}
-                  <span className="pwt-key-own-words">{k.ownMark.kind === "hinder" ? "hindered" : "boosted"}</span>
-                  {k.ownMark.kind === "hinder" ? "-" : "+"}
-                  {k.ownMark.n}
-                </span>
-              )}
-              {k.area && (
-                <span className="pwt-shape-all" title="Hits every enemy at once">
-                  ALL
-                </span>
-              )}
-              <SupportTags supports={k.supports} area={k.area} />
-            </span>
-          </>
-        ) : (
-          <>
-            <SupportTags supports={k.supports} area={false} big />
-            <span className="pwt-key-shape">
-              {/* A move for one enemy is the ordinary case: the card names only the shapes that are not (itself, squad, every enemy). */}
-              {!(menu && k.aim === "enemy" && !k.area) && <span className="pwt-key-aim">{word}</span>}
-            </span>
-          </>
-        )}
+      <span className="pwt-key-acts">
+        {k.acts.map((a, i) => (
+          <Act key={`${a.verb}-${i}`} a={a} main={i === 0} />
+        ))}
       </span>
       {(!menu || foot) && (
         <span className="pwt-key-foot">
-          {noted && !menu && (
-            <span className="pwt-key-note-tag" title="The note above the keys is about this key">
-              <span className="pwt-note-full">Note</span>
-              <span className="pwt-note-short" aria-hidden="true">
-                i
-              </span>
-            </span>
-          )}
           <span className="pwt-key-foot-words">
             {foot === "once per fight" ? (
               <>

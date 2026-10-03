@@ -1,10 +1,10 @@
 import React from "react";
 import { ScrollText } from "lucide-react";
 import { KeyCard } from "./keys";
-import { ThreatTag, MarkChips, MatchupMark, ElementBadge, PreviewBadge } from "./plate";
+import { ThreatTag, MarkChips, MatchupMark, ElementBadge, HealthBar, NextActRow } from "./plate";
 import { TurnRail } from "./rail";
 import { DeltaChip } from "./banner";
-import type { Cell, KeyView, Preview, RailSlot, Threat } from "./view";
+import type { ActLine, Cell, KeyView, NextAct, PlatePreview, RailSlot, Threat } from "./view";
 
 /**
   The Guide as a legend: every mark a player meets, drawn by the same component the play screen uses,
@@ -12,20 +12,9 @@ import type { Cell, KeyView, Preview, RailSlot, Threat } from "./view";
   show the form; the sentence says what the form means.
 */
 
-const preview = (over: Partial<Preview>): Preview => ({
-  target: "sample",
-  kind: "hit",
-  n: 14,
-  step: 1,
-  immune: false,
-  finishes: false,
-  absorbed: 0,
-  ...over,
-});
-
 const previewCell = (letter: string): Cell => ({ target: letter, letter: letter as Cell["letter"], n: 0, step: 1, immune: false, finishes: false, absorbed: 0 });
 
-const sampleKey = (over: Partial<KeyView>): KeyView => ({
+const sampleKey = (over: Partial<KeyView> & { acts: ActLine[] }): KeyView => ({
   index: 0,
   name: "A move",
   signature: false,
@@ -40,6 +29,25 @@ const sampleKey = (over: Partial<KeyView>): KeyView => ({
   power: 12,
   ...over,
 });
+
+const sampleNext = (over: Partial<NextAct>): NextAct => ({ from: "A", kind: "attack", n: 14, parts: [], toLetters: [], self: false, ...over });
+
+/** A sample plaque: the plate's own rows (name, health, next act, marks) drawn by the play screen's components, inert. */
+function PlaqueSample({ name, hp, max, health, next, marks, shield, matchup }: { name: string; hp: number; max: number; health?: PlatePreview["health"]; next?: NextAct | null; marks?: { shield: number; boost: number; hinder: number }; shield?: PlatePreview["shield"]; matchup?: number }) {
+  return (
+    <span className="pwt-legend-plaque pwt-plaque">
+      {matchup !== undefined && <MatchupMark step={matchup} lit />}
+      <span className="pwt-name">{name}</span>
+      <HealthBar hp={hp} max={max} plain preview={health} />
+      {next !== undefined && <NextActRow next={next} />}
+      {(marks || shield) && (
+        <div className="pwt-marks">
+          <MarkChips marks={marks ?? { shield: 0, boost: 0, hinder: 0 }} preview={shield ? { shield } : null} />
+        </div>
+      )}
+    </span>
+  );
+}
 
 const sampleThreat = (over: Partial<Threat>): Threat => ({
   from: "A",
@@ -76,35 +84,26 @@ function Row({ sample, children, wide }: { sample: React.ReactNode; children: Re
   );
 }
 
-/** A preview drawn where it sits on a plate: on a small dark stage tile, the same badge the plates carry. */
-function PreviewTile({ p }: { p: Preview }) {
-  return (
-    <span className="pwt-legend-tile">
-      <PreviewBadge p={p} keyName="Move" />
-    </span>
-  );
-}
-
 /**
-  The turn in one picture, for the briefing: a key that shows one power number and, beside it, the
-  number that lands on an enemy once the key is chosen. Inert, drawn by the play screen's own components.
+  The turn in one picture, for the briefing: a move that is a verb and a number and, beside it, the enemy's health row
+  changing in place once the move is chosen. Inert, drawn by the play screen's own components.
 */
 export function TurnLesson({ phone = false }: { phone?: boolean }) {
   return (
     <div className="pwt-lesson" data-lesson="">
       <Sample>
         <div className="pwt-lesson-key">
-          <KeyCard keyView={sampleKey({})} armed selected={false} onPress={noop} />
+          <KeyCard keyView={sampleKey({ name: "Peck", acts: [{ verb: "strike", n: 3 }] })} armed selected={false} onPress={noop} />
         </div>
         <span className="pwt-lesson-then" aria-hidden="true">
           then
         </span>
-        <PreviewTile p={preview({ n: 14, step: 1.5 })} />
+        <PlaqueSample name="A · Crawler" hp={34} max={34} health={{ from: 34, to: 29 }} />
       </Sample>
       {phone ? (
-        <p>Each key shows its power. Choose a key, then an enemy: each enemy shows what it would take; tags show its next hit.</p>
+        <p>A key is a verb and a number. Choose one: each enemy shows its health before and after.</p>
       ) : (
-        <p>Each move shows its power, in a row above the companion whose turn it is. Choose a move, then an enemy: each enemy shows what it would take; tags show its next hit.</p>
+        <p>Each move is a verb and a number, in a row above the companion whose turn it is. Choose one: each enemy it could hit shows its health before and after.</p>
       )}
     </div>
   );
@@ -147,56 +146,53 @@ export function GuidePanel({
             wide
             sample={
               <span className="pwt-legend-keys">
-                <KeyCard keyView={sampleKey({ name: "Sweep", power: 7, area: true, supports: [{ kind: "hinder", n: 6, aim: "enemy", all: true }] })} armed selected={false} onPress={noop} />
+                <KeyCard keyView={sampleKey({ name: "Peck", acts: [{ verb: "strike", n: 3 }] })} armed selected={false} onPress={noop} />
+                <KeyCard keyView={sampleKey({ name: "Sweep", area: true, acts: [{ verb: "sweep", n: 6, all: true }, { verb: "weaken", n: 6 }] })} armed selected={false} onPress={noop} />
               </span>
             }
           >
-            {phone ? "A move key" : "A move"} shows its power once: the damage before the element matchup. ALL hits every enemy. Tags are what else it does; below, its rest. Hindered: power before and after.
+            {phone ? "A key" : "A move"} is what you do and its number: Strike hits one enemy, Sweep hits all of them (ALL), Weaken cuts an enemy&apos;s next hit, Mend and Guard help a companion, Boost raises a companion&apos;s next attack, Slow delays a turn. What follows the dot is a rider. Below, its rest.
           </Row>
           <Row
             sample={
               <span className="pwt-legend-tiles">
-                <PreviewTile p={preview({ n: 14, step: 1.5 })} />
-                <PreviewTile p={preview({ n: 7, step: 0.5, absorbed: 4 })} />
+                <PlaqueSample name="A · Crawler" hp={34} max={34} health={{ from: 34, to: 29 }} matchup={1.5} />
               </span>
             }
           >
-            {touch ? (phone ? "Tap a key" : "Tap a move") : phone ? "Hover or choose a key" : "Hover or choose a move"} and each enemy shows what that move would take from it. Up chevron: strong matchup; down: weak; green favors you, raspberry the enemy. Shield mark: what its shield absorbs first.
+            {touch ? (phone ? "Tap a key" : "Tap a move") : phone ? "Hover or choose a key" : "Hover or choose a move"} and each plate it would change shows the change in the row that already carries that number: before, then after. A Strike of 3 on a strong matchup takes 5: the lit part of the bar is what goes, and the lit tab (x1.5) is why.
           </Row>
           <Row
             sample={
               <span className="pwt-legend-tiles">
-                <PreviewTile p={preview({ n: 20, finishes: true })} />
-                <PreviewTile p={preview({ immune: true, n: 0 })} />
+                <PlaqueSample name="A · Crawler" hp={1} max={34} health={{ from: 1, to: 0, skull: true }} />
               </span>
             }
           >
-            A gold number with a skull: this move knocks that enemy out. No effect: the element chart gives 0.
+            A skull after the number: the move knocks that enemy out, and its next act is crossed out. The matchup tab reads NO EFFECT when the element chart gives 0.
           </Row>
           <Row
             sample={
               <span className="pwt-legend-tiles">
-                <PreviewTile p={preview({ kind: "hinder", before: 14, n: 0, saves: true, hitOn: "Companion" })} />
-                <PreviewTile p={preview({ kind: "hinder", before: 30, n: 20, knocks: true, hitOn: "Companion" })} />
+                <PlaqueSample name="A · Crawler" hp={34} max={34} next={sampleNext({ n: 0, before: 14 })} />
               </span>
             }
           >
-            A hinder: that enemy&apos;s committed hit falls by that much (14 to 0). A grey skull: it would have knocked a companion out, and now does not. A red skull: it still does.
+            Weaken changes the enemy&apos;s next-act row: its next hit before, then after (14 to 0). The tag on the companion it was aimed at reads the same way when you point at that enemy.
           </Row>
           <Row
             sample={
               <span className="pwt-legend-tiles">
-                <PreviewTile p={preview({ kind: "heal", n: 9 })} />
-                <PreviewTile p={preview({ kind: "shield", n: 10 })} />
+                <PlaqueSample name="Companion" hp={72} max={126} health={{ from: 72, to: 81 }} shield={{ from: 0, to: 6 }} />
               </span>
             }
           >
-            A move for your squad shows its number on each squadmate it can reach.
+            Mend adds to a companion&apos;s health, shown as the lit part of its bar; Guard puts a shield chip in its marks row. A guarded companion&apos;s threat tags read again after the shield.
           </Row>
           <Row
             sample={
               <span className="pwt-legend-keys">
-                <KeyCard keyView={sampleKey({ name: "Choose", power: 12, cells: [previewCell("A"), previewCell("B")] })} armed selected onPress={noop} />
+                <KeyCard keyView={sampleKey({ name: "Choose", acts: [{ verb: "strike", n: 3 }], cells: [previewCell("A"), previewCell("B")] })} armed selected onPress={noop} />
               </span>
             }
           >
@@ -206,7 +202,7 @@ export function GuidePanel({
                 : "Acting takes two presses: a key, then an enemy. A move with no target to choose acts on the key alone."
               : touch
                 ? "Acting takes two taps: a move from the row above your companion, then an enemy. A move with no target to choose acts on the move alone (a second tap)."
-                : "Acting takes two presses: a move from the row above your companion, then an enemy. A move with no target to choose acts on the move alone. Hover a move for its detail."}
+                : "Acting takes two presses: a move from the row above your companion, then an enemy. A move with no target to choose acts on the move alone."}
           </Row>
             </ul>
           </section>
@@ -227,13 +223,22 @@ export function GuidePanel({
           </Row>
           <Row
             sample={
+              <span className="pwt-legend-tiles">
+                <PlaqueSample name="A · Crawler" hp={34} max={34} next={sampleNext({ n: 14 })} />
+              </span>
+            }
+          >
+            The row under an enemy&apos;s health is its next act: the hit and the number it would land, ALL when it hits every companion, a heart and a letter when it heals that ally.
+          </Row>
+          <Row
+            sample={
               <span className="pwt-legend-chips">
                 <ThreatTag t={sampleThreat({ n: 14 })} />
                 <ThreatTag t={sampleThreat({ from: "B", n: 18, lethal: true })} />
               </span>
             }
           >
-            A tag on a plate is an enemy&apos;s next move, on the one it will land on: the enemy&apos;s letter and the number it would land now. A skull and a red edge: that knocks it out. Hover a tag to see which enemy it comes from.
+            The same hit, on the companion it will land on, with the letter of the enemy that throws it. A skull and a red edge: that knocks it out. Hover a tag to see which enemy it comes from.
           </Row>
           <Row
             sample={
@@ -317,7 +322,7 @@ export function GuidePanel({
         <p className="pwt-panel-note">
             {touch
               ? "Touch: tap a key to see what it would land on each enemy, then tap an enemy to use it. Tap Pass to end a turn without acting."
-              : "Keyboard: 1 to 4 picks a key, then A to F an enemy (1 to 4 for a squadmate), Escape backs out, P passes."}
+              : "Keyboard: 1 to 4 picks a move, then A to F an enemy (1 to 4 for a squadmate), Escape backs out, P passes."}
           </p>
           <div className="pwt-panel-actions">
             <button type="button" className="pwt-secondary" onClick={onClose} autoFocus>

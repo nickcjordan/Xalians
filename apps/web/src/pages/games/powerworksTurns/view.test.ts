@@ -40,14 +40,14 @@ import {
   eventWords,
   floatWords,
   hinderOnAttack,
-  hinderWords,
   hitUncapped,
   actsOnPress,
   previewsOf,
   previewThreats,
   retargetThreat,
   threatsOf,
-  keyNote,
+  nextActsOf,
+  platePreviewOf,
   momentWords,
   playback,
   recordEntries,
@@ -830,8 +830,11 @@ describe("since your last turn (item 4)", () => {
     const e = { kind: "hit", actor: "x", target: "y", move: "M", amount: 6, absorbed: 0, step: 1.5, fell: false } as never;
     expect(floatWords(e, true)).toMatchObject({ text: "-6", plain: true, tag: { word: "Strong", tone: "good" } });
     expect(floatWords(e, false)?.plain).toBeUndefined();
-    expect(floatWords({ kind: "heal", actor: "x", target: "y", move: "M", amount: 14 } as never, true)).toMatchObject({ text: "+14", plain: true });
-    expect(floatWords({ kind: "heal", actor: "x", target: "y", move: "M", amount: 14 } as never, false)?.plain).toBeUndefined();
+  });
+
+  it("decision 8: only a landed blow floats; a heal, shield, boost, hinder or slow changes its own row in place", () => {
+    for (const kind of ["heal", "shield", "boost", "hinder", "delay"] as const)
+      expect(floatWords({ kind, actor: "x", target: "y", move: "M", amount: 14 } as never, true)).toBeNull();
   });
 
   it("round 8, item 8: a unit that shields, heals or boosts itself says so", () => {
@@ -884,19 +887,17 @@ describe("own status in the keys (item 5)", () => {
   it("shows the struck plain number and the hindered one, and says why once", () => {
     const { s, i } = attacker();
     const plain = turnView(s);
-    expect(plain.activeStatus).toBeNull();
+    expect(plain.keys[i].acts[0].was).toBeUndefined();
     const t = structuredClone(s);
     const a = t.team.find((u) => u.id === t.active)!;
     a.hinder = 3;
     const v = turnView(t);
-    expect(v.activeStatus).toEqual({ sentence: `${a.name} is hindered by 3 on its next attack`, parts: ["hindered by 3"] });
-    const marked = v.keys[i].cells.filter((c) => c.ownBefore !== undefined);
+    // The card says it as a verb and a number, the plain power struck beside the one it now carries.
+    expect(v.keys[i].acts[0]).toMatchObject({ n: Math.max(0, plain.keys[i].power - 3), was: plain.keys[i].power });
+    // The cells carry the number that lands with the mark in it (the health row's after number).
+    const marked = v.keys[i].cells.filter((c) => !c.immune && plain.keys[i].cells.find((x) => x.target === c.target)!.n > 0);
     expect(marked.length).toBeGreaterThan(0);
-    for (const c of marked) {
-      expect(c.n).toBeLessThan(c.ownBefore!);
-      const base = plain.keys[i].cells.find((x) => x.target === c.target)!;
-      expect(c.ownBefore).toBe(base.n);
-    }
+    for (const c of marked) expect(c.n).toBeLessThan(plain.keys[i].cells.find((x) => x.target === c.target)!.n);
   });
 
   it("a hinder that swallows the whole attack reads 0 with its before number and its reason", () => {
@@ -907,11 +908,8 @@ describe("own status in the keys (item 5)", () => {
     const v = turnView(t);
     const cells = v.keys[i].cells.filter((c) => !c.immune);
     expect(cells.length).toBeGreaterThan(0);
-    for (const c of cells) {
-      expect(c.n).toBe(0);
-      expect(c.ownBefore).toBeGreaterThan(0);
-    }
-    expect(v.activeStatus?.sentence).toContain("hindered by 9999");
+    for (const c of cells) expect(c.n).toBe(0);
+    expect(v.keys[i].acts[0]).toMatchObject({ n: 0, was: v.keys[i].power });
   });
 
   it("a boost shows the plain number struck under the raised one", () => {
@@ -920,9 +918,9 @@ describe("own status in the keys (item 5)", () => {
     const a = t.team.find((u) => u.id === t.active)!;
     a.boost = 5;
     const v = turnView(t);
-    expect(v.activeStatus?.parts).toEqual(["boosted by 5"]);
+    expect(v.keys[i].acts[0]).toMatchObject({ n: v.keys[i].power + 5, was: v.keys[i].power });
     const c = v.keys[i].cells.find((x) => !x.immune)!;
-    expect(c.n).toBeGreaterThan(c.ownBefore!);
+    expect(c.n).toBeGreaterThan(turnView(s).keys[i].cells.find((x) => x.target === c.target)!.n);
   });
 });
 
@@ -1366,41 +1364,6 @@ describe("round 5: end states, camp and small fixes", () => {
   });
 });
 
-describe("round 5: first-occurrence notes (item 11)", () => {
-  it("names the first hinder key with its numbers, then the shield, then ALL, each only while unseen", () => {
-    const s = freshState(1);
-    const base = turnView(s);
-    const cell = (over: Partial<Cell>): Cell => ({ target: "x", letter: "A", n: 5, step: 1, immune: false, finishes: false, absorbed: 0, ...over });
-    const key = (index: number, over: object) => ({ index, name: "K", signature: false, rests: 0, state: "ready" as const, restLeft: 0, kind: "attack" as const, area: false, aim: "enemy" as const, cells: [cell({})], supports: [], power: 5, ...over });
-    const v = {
-      ...base,
-      keys: [
-        key(0, { cells: [cell({ absorbed: 4 })] }),
-        key(1, { kind: "support", cells: [cell({ before: 14, n: 0, hitOn: "Avilily" })] }),
-        key(2, { area: true, cells: [cell({}), cell({ letter: "B" })] }),
-      ],
-    } as typeof base;
-    const first = keyNote(v, [])!;
-    expect(first).toMatchObject({ id: "hinder", keyIndex: 1 });
-    expect(first.text).toBe(`Hinder: ${hinderWords()}. The plate shows that hit before and after.`);
-    // A note explains the mark only: no target's name and no number from the live state (they read as advice).
-    for (const id of [[], ["hinder"], ["hinder", "shield"]]) {
-      const n = keyNote(v, id)!;
-      expect(n.text).not.toMatch(/\d/);
-      expect(n.short).not.toMatch(/\d/);
-      expect(n.text).not.toMatch(/Avilily/);
-    }
-    expect(first.keyName).toBe("K");
-    expect(keyNote(v, ["hinder"])).toMatchObject({ id: "shield", keyIndex: 0 });
-    expect(keyNote(v, ["hinder", "shield"])).toMatchObject({ id: "all", keyIndex: 2 });
-    expect(keyNote(v, ["hinder", "shield", "all"])).toBeNull();
-    // Nothing is said about a mark that is not on this companion's keys.
-    expect(keyNote({ ...v, keys: [key(0, {})] } as typeof base, [])).toBeNull();
-    // A resting key is not offered a note.
-    expect(keyNote({ ...v, keys: [key(1, { kind: "support", state: "resting", cells: [cell({ before: 14, n: 0 })] })] } as typeof base, [])).toBeNull();
-  });
-});
-
 describe("round 6: the forecast agrees with the result", () => {
   /** A state with one attack key carrying a hinder rider, and enemies whose one ready hit is 30. */
   function riderWorld(): { s: TRun; a: Fighter } {
@@ -1440,7 +1403,6 @@ describe("round 6: the forecast agrees with the result", () => {
     it("a health number is health lost: one kind, whoever loses it", () => {
       expect(floatWords(hit({}), true)).toMatchObject({ text: "-9", kind: "hurt" });
       expect(floatWords(hit({}), false)).toMatchObject({ text: "-9", kind: "hurt" });
-      expect(floatWords({ kind: "heal", actor: "a", target: "b", move: "M", amount: 5 })).toMatchObject({ text: "+5", kind: "heal" });
     });
 
     it("a hit that knocks a unit out carries KO in place of a matchup tag, neutral", () => {
@@ -1460,7 +1422,7 @@ describe("round 6: the forecast agrees with the result", () => {
       const { s, a } = riderWorld();
       const cells = turnView(s).keys[0].cells;
       expect(cells.length).toBeGreaterThan(0);
-      for (const c of cells) if (!c.finishes) expect(c).toMatchObject({ rider: { before: 30, after: 20 }, hitOn: a.name });
+      for (const c of cells) if (!c.finishes) expect(c).toMatchObject({ rider: { before: 30, after: 20 } });
     });
 
     it("shows a lethal hit taken below the companion's health", () => {
@@ -1518,24 +1480,18 @@ describe("round 6: the forecast agrees with the result", () => {
       for (const c of turnView(s).keys[0].cells) expect(c.rider).toBeUndefined();
     });
 
-    it("round 8, item 4: a rider that takes a lethal hit below the companion's health marks the cell saves; a hinder-only cell too", () => {
+    it("a rider's lethal hit taken below the companion's health reads through the tags (the skull goes), not on the cell", () => {
       const { s, a } = riderWorld();
       for (const foe of s.enemies) foe.moves[0] = { ...foe.moves[0], power: 48 };
       a.hp = 46;
-      const cell = turnView(s).keys[0].cells.find((c) => !c.finishes)!;
-      expect(cell.saves).toBe(true);
-      // Not lethal to begin with: nothing to save.
-      a.hp = 400;
-      expect(turnView(s).keys[0].cells.find((c) => !c.finishes)!.saves).toBeUndefined();
-      // Still lethal after the rider: not saved.
-      a.hp = 30;
-      for (const foe of s.enemies) foe.moves[0] = { ...foe.moves[0], power: 48 };
-      expect(turnView(s).keys[0].cells.find((c) => !c.finishes)!.saves).toBeUndefined();
-      const t = riderWorld();
-      for (const foe of t.s.enemies) foe.moves[0] = { ...foe.moves[0], power: 48 };
-      t.a.hp = 46;
-      t.a.moves[0] = { ...t.a.moves[0], power: 0 };
-      expect(turnView(t.s).keys[0].cells[0].saves).toBe(true);
+      const k = turnView(s).keys[0];
+      const previews = previewsOf(k, a.id, [a.id]);
+      const lethalBefore = threatsOf(s).filter((x) => x.lethal);
+      expect(lethalBefore.length).toBeGreaterThan(0);
+      // Each enemy's preview carries the rider, so its tag on the companion is re-read lower and no longer lethal.
+      const after = previewThreats(s, k, previews);
+      expect(after.filter((x) => x.lethal && x.before !== undefined)).toEqual([]);
+      expect(after.some((x) => x.before !== undefined && x.n < x.before)).toBe(true);
     });
   });
 
@@ -1545,37 +1501,39 @@ describe("round 6: the forecast agrees with the result", () => {
       a.moves[0] = { ...a.moves[0], power: 0, parts: [{ kind: "hinder", n: 21, aim: "enemy", all: false } as never] };
       const key = turnView(s).keys[0];
       expect(key.kind).toBe("support");
-      for (const c of key.cells) expect(c).toMatchObject({ hinder: 21, before: 30, n: 9, hitOn: a.name });
+      for (const c of key.cells) expect(c).toMatchObject({ hinder: 21, before: 30, n: 9 });
     });
 
-    it("the hinder words say what the mark does and name no target and no number", () => {
-      expect(hinderWords()).toBe("takes health off that enemy's next hit, on whoever it strikes");
-    });
-
-    it("a hinder that leaves the hit lethal says so: knocks is set when the after number still meets the health, saves when it does not", () => {
-      const { s, a } = riderWorld();
-      a.moves[0] = { ...a.moves[0], power: 0, parts: [{ kind: "hinder", n: 10, aim: "enemy", all: false } as never] };
-      a.hp = 20; // each enemy's committed hit is 30: 30 -> 20 still meets 20
-      const still = turnView(s).keys[0].cells;
-      for (const c of still) expect(c).toMatchObject({ before: 30, n: 20, knocks: true });
-      for (const c of still) expect(c.saves).toBeUndefined();
-      a.hp = 25; // 30 >= 25 but 20 < 25: the hinder saves
-      const saved = turnView(s).keys[0].cells;
-      for (const c of saved) expect(c).toMatchObject({ saves: true });
-      for (const c of saved) expect(c.knocks).toBeUndefined();
-    });
-
-    it("a hindered companion's attack keys show the power before and after its own mark, and why", () => {
+    it("a hindered companion's attack card reads the plain power struck and the number it now carries", () => {
       const { s, a } = riderWorld();
       a.moves[0] = { ...a.moves[0], power: 4, parts: [] };
       a.hinder = 14;
-      const k = turnView(s).keys[0];
-      expect(k).toMatchObject({ power: 4, powerNow: 0, ownMark: { kind: "hinder", n: 14 } });
+      expect(turnView(s).keys[0].acts).toEqual([{ verb: "strike", n: 0, was: 4 }]);
       a.hinder = 0;
       a.boost = 6;
-      expect(turnView(s).keys[0]).toMatchObject({ power: 4, powerNow: 10, ownMark: { kind: "boost", n: 6 } });
+      expect(turnView(s).keys[0].acts).toEqual([{ verb: "strike", n: 10, was: 4 }]);
       a.boost = 0;
-      expect(turnView(s).keys[0].powerNow).toBeUndefined();
+      expect(turnView(s).keys[0].acts).toEqual([{ verb: "strike", n: 4 }]);
+    });
+
+    it("decision 3: a card is a verb and a number; an area attack is a sweep with ALL; a rider follows the main act", () => {
+      const { s, a } = riderWorld();
+      const act = (m: object) => {
+        a.moves[0] = { ...a.moves[0], ...m } as never;
+        return turnView(s).keys[0].acts;
+      };
+      expect(act({ power: 7, area: false, parts: [] })).toEqual([{ verb: "strike", n: 7 }]);
+      expect(act({ power: 6, area: true, parts: [{ kind: "hinder", n: 6, aim: "enemy", all: false }] })).toEqual([
+        { verb: "sweep", n: 6, all: true },
+        { verb: "weaken", n: 6 },
+      ]);
+      expect(act({ power: 0, area: false, parts: [{ kind: "hinder", n: 14, aim: "enemy", all: false }] })).toEqual([{ verb: "weaken", n: 14 }]);
+      expect(act({ power: 0, area: false, parts: [{ kind: "heal", n: 9, aim: "ally", all: false }, { kind: "shield", n: 5, aim: "ally", all: false }] })).toEqual([
+        { verb: "mend", n: 9 },
+        { verb: "guard", n: 5 },
+      ]);
+      expect(act({ power: 0, area: false, parts: [{ kind: "boost", n: 4, aim: "self", all: false }] })).toEqual([{ verb: "boost", n: 4 }]);
+      expect(act({ power: 0, area: false, parts: [{ kind: "delay", n: 1, aim: "enemy", all: false }] })).toEqual([{ verb: "slow", n: 1 }]);
     });
   });
 
@@ -1679,5 +1637,142 @@ describe("round 6: the forecast agrees with the result", () => {
       expect(last.guardian).toBe(true);
       expect(campView({ ...s, room: 3 }).next).toBeNull();
     });
+  });
+});
+
+describe("one number, one meaning, one place (docs/design/powerworks-one-number-one-meaning.md)", () => {
+  /** Every enemy committed to a 30-power single-target hit on a squadmate; the active companion's moves are a strike, a weaken, a guard and a mend. */
+  function world(): { s: TRun; a: Fighter; o: Fighter } {
+    const s = structuredClone(stateWithActiveAttacker());
+    const a = s.team.find((t) => t.id === s.active)!;
+    const base = a.moves.find((m) => m.power > 0)!;
+    a.moves[0] = { ...base, power: 3, rests: 0, signature: false, area: false, parts: [] };
+    a.moves[1] = { ...a.moves[1], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "hinder", n: 12, aim: "enemy", all: false } as never] };
+    a.moves[2] = { ...a.moves[2], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "shield", n: 8, aim: "ally", all: false } as never] };
+    a.moves[3] = { ...a.moves[3], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "heal", n: 50, aim: "ally", all: false } as never] };
+    a.cooldowns = a.moves.map(() => 0);
+    a.signatureSpent = false;
+    a.hinder = 0;
+    a.boost = 0;
+    a.shields = [];
+    const o = s.team.find((u) => u.id !== a.id)!;
+    o.hp = 30;
+    o.max = Math.max(o.max, 60);
+    o.shields = [];
+    for (const foe of s.enemies) {
+      const fb = foe.moves.find((m) => m.power > 0) ?? foe.moves[0];
+      foe.moves = [{ ...fb, power: 30, element: null as never, rests: 0, signature: false, parts: [], area: false }];
+      foe.cooldowns = [0];
+      foe.signatureSpent = false;
+      foe.boost = 0;
+      foe.hinder = 0;
+      commit(s, foe, 0, o.id);
+    }
+    return { s, a, o };
+  }
+  const keyOf = (s: TRun, i: number) => {
+    const v = turnView(s);
+    const k = v.keys[i];
+    return { v, k, previews: previewsOf(k, v.active!.id, v.squad.filter((u) => !u.down).map((u) => u.id)) };
+  };
+
+  it("decision 1: an enemy's plate carries its own next act (the number and ALL), the same number its tag on the companion carries, and names no companion", () => {
+    const { s, o } = world();
+    const v = turnView(s);
+    for (const e of v.enemies) {
+      expect(e.next).toMatchObject({ kind: "attack", n: 30, from: e.letter });
+      expect(e.next!.area).toBeUndefined();
+      expect(JSON.stringify(e.next)).not.toContain(o.name);
+      expect(v.squad.find((u) => u.id === o.id)!.threats.find((t) => t.fromId === e.id)!.n).toBe(e.next!.n);
+    }
+    // An area hit says ALL, with the largest of the numbers it lands (shields differ per companion).
+    const foe = s.enemies[0];
+    foe.moves = [{ ...foe.moves[0], area: true }];
+    const front = s.team.find((u) => u.hp > 0)!;
+    front.shields = [{ n: 6, from: "x" }];
+    expect(turnView(s).enemies[0].next).toMatchObject({ kind: "attack", n: 30, area: true });
+    // A fallen enemy has none.
+    foe.hp = 0;
+    expect(turnView(s).enemies[0].next).toBeNull();
+  });
+
+  it("decision 1: a support names its recipient by letter (an ally enemy), an icon and number for itself, and never a companion", () => {
+    const s = structuredClone(stateWithActiveAttacker());
+    const [a, b] = s.enemies;
+    a.moves = [{ ...a.moves[0], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "heal", n: 9, aim: "ally", all: false } as never] }];
+    a.cooldowns = [0];
+    b.hp = b.max - 20;
+    commit(s, a, 0, b.id);
+    expect(turnView(s).enemies[0].next).toMatchObject({ kind: "support", from: "A", toLetters: ["B"], self: false, parts: [{ kind: "heal", n: 9 }] });
+    b.moves = [{ ...b.moves[0], power: 0, rests: 0, signature: false, area: false, parts: [{ kind: "shield", n: 5, aim: "self", all: false } as never] }];
+    b.cooldowns = [0];
+    commit(s, b, 0, b.id);
+    expect(turnView(s).enemies[1].next).toMatchObject({ kind: "support", from: "B", self: true, toLetters: [], parts: [{ kind: "shield", n: 5 }] });
+  });
+
+  it("decision 5: a weaken reads the enemy's next act before and after on every enemy it can name, and a finishing strike crosses it out", () => {
+    const { s } = world();
+    const { k, previews } = keyOf(s, 1);
+    const enemyOnly = Object.fromEntries(Object.entries(previews).filter(([id]) => s.enemies.some((e) => e.id === id)));
+    const acts = nextActsOf(previewThreats(s, k, enemyOnly));
+    for (const e of s.enemies) expect(acts[e.id]).toMatchObject({ kind: "attack", before: 30, n: 18 });
+    // A strike that finishes enemy A crosses out its act and leaves B's alone.
+    s.enemies[0].hp = 1;
+    const strike = keyOf(s, 0);
+    const out = nextActsOf(previewThreats(s, strike.k, strike.previews));
+    expect(out[s.enemies[0].id]).toMatchObject({ cancelled: true });
+    expect(out[s.enemies[1].id].cancelled).toBeUndefined();
+    expect(out[s.enemies[1].id].before).toBeUndefined();
+  });
+
+  it("decision 4: an attack's preview is the target's health before and after (landedOn, shield first), with the lost segment and the matchup lit", () => {
+    const { s } = world();
+    const { v, previews } = keyOf(s, 0);
+    for (const e of v.enemies) {
+      const pp = platePreviewOf(previews[e.id], e)!;
+      const cell = previews[e.id];
+      expect(pp.health).toEqual({ from: e.hp, to: Math.max(0, e.hp - cell.n) });
+      expect(pp.matchup).toBe(true);
+    }
+    // Reaching 0 is a skull; a shield takes its share first and its chip reads before and after.
+    const e0 = s.enemies[0];
+    e0.hp = 2;
+    e0.shields = [{ n: 1, from: "x" }];
+    const again = keyOf(s, 0);
+    const pe = platePreviewOf(again.previews[e0.id], again.v.enemies[0])!;
+    expect(pe.health).toMatchObject({ to: 0, skull: true });
+    expect(pe.shield).toEqual({ from: 1, to: 0 });
+    // An immune matchup changes no health and still lights the tab.
+    expect(platePreviewOf({ ...again.previews[e0.id], immune: true, n: 0, finishes: false }, again.v.enemies[0])).toEqual({ matchup: true });
+  });
+
+  it("decision 6: a mend is a gain on the health row (capped by max), a guard and a boost are chips; a weaken and a slow change no row of the target's own", () => {
+    const { s, o } = world();
+    o.hp = 40;
+    o.max = 60;
+    const mend = keyOf(s, 3);
+    const unit = mend.v.squad.find((u) => u.id === o.id)!;
+    // The key heals 50 but only 20 fits: the spill is carried so the plate can show it.
+    expect(platePreviewOf(mend.previews[o.id], unit)).toEqual({ health: { from: 40, to: 60, over: 30 } });
+    o.hp = 40;
+    expect(platePreviewOf({ ...mend.previews[o.id], over: undefined, n: 9 }, unit)!.health!.over).toBeUndefined();
+    const guard = keyOf(s, 2);
+    expect(platePreviewOf(guard.previews[o.id], unit)).toEqual({ shield: { from: 0, to: 8 } });
+    expect(platePreviewOf(keyOf(s, 2).previews[o.id], { ...unit, shield: 3 })).toEqual({ shield: { from: 3, to: 11 } });
+    const boost = { target: o.id, kind: "boost" as const, n: 4, step: 1, immune: false, finishes: false, absorbed: 0 };
+    expect(platePreviewOf(boost, { ...unit, boost: 0 })).toEqual({ boost: { from: 0, to: 4 } });
+    const weaken = keyOf(s, 1);
+    for (const e of weaken.v.enemies) expect(platePreviewOf(weaken.previews[e.id], e)).toBeNull();
+    expect(platePreviewOf(undefined, unit)).toBeNull();
+    // A self or whole-squad key reads each of its chips on the units it reaches.
+    const chips = { target: o.id, kind: "heal" as const, n: 9, step: 1, immune: false, finishes: false, absorbed: 0, chips: [{ kind: "heal" as const, n: 9, aim: "self" as const, all: false }, { kind: "shield" as const, n: 5, aim: "self" as const, all: false }] };
+    expect(platePreviewOf(chips, { ...unit, hp: 50, max: 60, shield: 0 })).toEqual({ health: { from: 50, to: 59 }, shield: { from: 0, to: 5 } });
+  });
+
+  it("a slow on an enemy is a delay preview, not a hit: nothing about it is read on a health row", () => {
+    const { s, a } = world();
+    a.moves[1] = { ...a.moves[1], parts: [{ kind: "delay", n: 1, aim: "enemy", all: false } as never] };
+    const { previews } = keyOf(s, 1);
+    for (const p of Object.values(previews)) expect(p.kind).toBe("delay");
   });
 });

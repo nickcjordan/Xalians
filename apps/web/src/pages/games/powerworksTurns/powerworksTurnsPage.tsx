@@ -38,9 +38,11 @@ import {
   beatsFell,
   revivedWords,
   withWeakened,
-  keyNote,
   previewsOf,
   previewThreats,
+  platePreviewOf,
+  nextActsOf,
+  type NextAct,
   retargetThreat,
   threatsOf,
   actsOnPress,
@@ -203,25 +205,6 @@ function save(state: TRun, record: RecordEntry[]) {
 
 type Panel = "guide" | "record" | "restart" | "retreat" | null;
 
-/** First-occurrence notes already shown in this browser (view.ts keyNote), kept in localStorage. */
-const NOTES_KEY = "xalians.powerworks.notes.v1";
-function readSeen(): string[] {
-  try {
-    const raw = localStorage.getItem(NOTES_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : [];
-  } catch {
-    return [];
-  }
-}
-function writeSeen(ids: string[]) {
-  try {
-    localStorage.setItem(NOTES_KEY, JSON.stringify(ids));
-  } catch {
-    /* Storage unavailable: the note may show again; play is unaffected. */
-  }
-}
-
 /** The chosen playback speed persists per browser (round 6, item 12). */
 const SPEED_KEY = "xalians.powerworks.speed.v1";
 function readSpeed(): 1 | 2 {
@@ -285,7 +268,6 @@ export default function PowerworksTurnsPage() {
   const liveRef = useRef(false);
   const pointerAt = useRef<{ x: number; y: number } | null>(null);
   const idleAt = useRef<{ x: number; y: number } | null>(null);
-  const [seenNotes, setSeenNotes] = useState<string[]>(readSeen);
   const [menuOpen, setMenuOpen] = useState(false);
   const reducedMotion = useReducedMotion();
   // The command's settled state, applied only once playback finishes (finishPlayback):
@@ -447,17 +429,8 @@ export default function PowerworksTurnsPage() {
     setSkipPlayback(false);
   }
 
-  /** Any action dismisses the first-occurrence note on screen, for good in this browser. */
-  function dismissNote() {
-    if (!rawNote) return;
-    const next = [...seenNotes, rawNote.id];
-    setSeenNotes(next);
-    writeSeen(next);
-  }
-
   function act(index: number, target: string) {
     if (busy) return;
-    dismissNote();
     setSelectedKey(null);
     setHoverKey(null);
     setHoverTarget(null);
@@ -481,7 +454,6 @@ export default function PowerworksTurnsPage() {
 
   function pass() {
     if (busy || !view.active) return;
-    dismissNote();
     dispatch({ kind: "act", order: { move: -2, target: view.active.id } });
   }
 
@@ -584,12 +556,6 @@ export default function PowerworksTurnsPage() {
   // playback, or the active companion on its own turn. Never the unit that just acted once
   // the moment has moved on.
   const holding = busy && beatPhase === "hold";
-  // First-occurrence teaching notes: one at a time, never over a panel or while beats play.
-  // It stays while a dialog is open, so nothing behind the dialog changes (round 8, item 10).
-  // The note is about one key: while another key is hovered or chosen it steps aside rather than name the wrong move.
-  const noteKey = hoverKey ?? focusKey ?? selectedKey;
-  const rawNote = !busy && !briefing && view.phase === "turn" ? keyNote(view, seenNotes) : null;
-  const shownNote = rawNote && (noteKey === null || rawNote.keyIndex === noteKey) ? rawNote : null;
   const spotlightId = holding ? null : busy ? actorId ?? null : view.active?.id ?? null;
   const spotlightSide: "squad" | "enemy" = actorIsEnemy ? "enemy" : "squad";
   const showImpact = busy && beatPhase === "impact";
@@ -661,7 +627,7 @@ export default function PowerworksTurnsPage() {
   // has landed, and moves to a new companion when its beat starts with a redirect (see shownThreats below).
   // The settled state brings the enemies' freshly committed intents.
   // The matchup mark is for the companion whose turn it is; while beats play there is none, so it is not drawn.
-  const enemyShown = (e: (typeof view.enemies)[number]) => ({ ...withHp(e), matchup: busy ? null : e.matchup });
+  const enemyShown = (e: (typeof view.enemies)[number]) => ({ ...withHp(e), matchup: busy ? null : e.matchup, next: enemyNext[e.id] ?? null });
 
   // The round and the rail during playback come from the beat being played: playback() replays
   // the clocks act by act, so a round that opens on an enemy's turn is the new round (banner,
@@ -681,9 +647,12 @@ export default function PowerworksTurnsPage() {
     () => (chosenKey && chosenKey.aim !== "now" && view.active ? previewsOf(chosenKey, view.active.id, standingSquad) : {}),
     [chosenKey, view.active, standingSquad]
   );
-  const previewFor = (id: string) => (shownKeyView && !busy ? previews[id] : undefined);
+  // What the key would change on a plate, in the rows that carry those numbers (health, shield, boost, the matchup tab).
+  const previewFor = (u: { id: string; hp: number; max: number; shield: number; boost: number }) => (shownKeyView && !busy ? platePreviewOf(previews[u.id], u) : null);
   // The unit acting is never stepped back: it is the one using the key, not a unit the key cannot reach.
   const offTarget = (id: string, down: boolean) => !busy && anyPreview && !previews[id] && !down && id !== view.active?.id;
+  // With a single-target move chosen and a candidate pointed at, every other candidate's preview steps back (it is not the one aimed at).
+  const previewDimOf = (id: string) => !busy && singleTarget && !!hoverTarget && !!previews[hoverTarget] && hoverTarget !== id && !!previews[id];
   const pickFor = (id: string) => (chosenKey && pickable[id] ? () => act(chosenKey.index, id) : undefined);
 
   // The threat tags every plate carries (docs/design/powerworks-threat-tags.md). At rest they are the engine's
@@ -725,6 +694,16 @@ export default function PowerworksTurnsPage() {
     for (const m of moments.slice(0, beatIndex + 1)) for (const b of m.beats) if (b.event.kind === "redirect") turned.set(b.event.actor, (b.event as { to: string }).to);
     return live.filter((x) => !acted.has(x.fromId)).map((x) => (turned.has(x.fromId) ? retargetThreat(beatRun, x, turned.get(x.fromId)!) : x));
   }, [busy, shownKeyView, threatPreviews, run, restThreats, moments, beatIndex, landed, shownHp, shownMarks]);
+  // Each enemy's next-act row (one number, one place): at rest the engine's committed act; with a key hovered or chosen, every enemy the
+  // key can name re-reads its own row (a weaken's old number struck and the new, a finishing move crossing it out), read through the same
+  // previewThreats the tags use, with only the enemies' own previews so a guard on a companion never moves an enemy's number; while the
+  // enemies act, the row follows the beat now showing, as the tags do.
+  const enemyPreviews = useMemo(() => Object.fromEntries(Object.entries(previews).filter(([id]) => run.enemies.some((e) => e.id === id))), [previews, run.enemies]);
+  const enemyNext = useMemo<Record<string, NextAct>>(() => {
+    if (busy) return holding ? {} : nextActsOf(shownThreats);
+    if (shownKeyView && Object.keys(enemyPreviews).length > 0) return nextActsOf(previewThreats(run, shownKeyView, enemyPreviews));
+    return nextActsOf(restThreats);
+  }, [busy, holding, shownThreats, shownKeyView, enemyPreviews, run, restThreats]);
   // While the stage holds on a fall there is no live turn, so no promises are shown; on a short phone stage the tags of the plate a blow
   // is landing on step aside for the landing number.
   const threatsOn = (id: string) => (holding || (phone && landed && targets.includes(id)) ? [] : shownThreats.filter((x) => x.on === id));
@@ -1023,31 +1002,6 @@ export default function PowerworksTurnsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [holding, hold?.kind, holdCompact]);
 
-  // Targeting hover (storyboard "choosing" step): hovering a key cell rings its enemy target
-  // and draws a faint aim line from the active companion.
-  const aimLine = useMemo(() => {
-    if (!hoverTarget || !view.active || busy || !pickable[hoverTarget]) return null;
-    const stage = stageRef.current;
-    if (!stage) return null;
-    const from = stage.querySelector<HTMLElement>(`[data-unit="${view.active.id}"] .pwt-figure`);
-    const to = stage.querySelector<HTMLElement>(`[data-unit="${hoverTarget}"] .pwt-figure`);
-    if (!from || !to) return null;
-    const stageBox = stage.getBoundingClientRect();
-    const zoomFactor = stageBox.width / stage.offsetWidth || 1;
-    const fromBox = from.getBoundingClientRect();
-    const toBox = to.getBoundingClientRect();
-    // Desktop: the line leaves the top of the move row above the companion, so it never crosses the cards.
-    const menu = stage.querySelector<HTMLElement>(".pwt-moves-row");
-    const menuTop = menu ? (menu.getBoundingClientRect().top - stageBox.top) / zoomFactor : null;
-    return {
-      x1: (fromBox.left + fromBox.width / 2 - stageBox.left) / zoomFactor,
-      y1: menuTop !== null ? menuTop - 2 : (fromBox.top + fromBox.height / 2 - stageBox.top) / zoomFactor,
-      x2: (toBox.left + toBox.width / 2 - stageBox.left) / zoomFactor,
-      y2: (toBox.top + toBox.height / 2 - stageBox.top) / zoomFactor,
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hoverTarget, view.active?.id, busy, pickable]);
-
   return (
     <main className="pwt" data-tier="immersive" id="main" data-busy={busy ? "true" : "false"} data-pointer={pointerLive ? "live" : "idle"}>
       <div
@@ -1082,10 +1036,6 @@ export default function PowerworksTurnsPage() {
                 line={ended && phone ? "" : beatWords || (ended || busy || phone ? "" : station?.text ?? since.text)}
                 lineIsSince={!ended && !beatWords && !busy && !station && !!since.text && !phone}
                 prompt={chosenKey ? (actsOnPress(chosenKey) ? "Tap again to use it." : "Now choose a target.") : "Choose a move."}
-                note={shownNote ? shownNote.short : null}
-                noteId={shownNote ? shownNote.id : undefined}
-                noteKey={!phone && shownNote ? shownNote.keyName : undefined}
-                status={!phone && !busy ? view.activeStatus?.sentence ?? null : null}
                 next={!phone && busy && !ended ? nextMine?.name ?? null : null}
                 playing={busy && !phone}
                 onOpenRecord={() => setPanel("record")}
@@ -1197,11 +1147,6 @@ export default function PowerworksTurnsPage() {
               </g>
             </svg>
           )}
-          {aimLine && (
-            <svg className="pwt-aim-svg" aria-hidden="true">
-              <line className="pwt-aim-line" x1={aimLine.x1} y1={aimLine.y1} x2={aimLine.x2} y2={aimLine.y2} />
-            </svg>
-          )}
           <div
             className="pwt-rows"
             style={
@@ -1221,15 +1166,17 @@ export default function PowerworksTurnsPage() {
                   ring={ringOf(e.id)}
                   lit={busy && actorId === e.id}
                   activeName={view.active?.name}
+                  activeElement={view.active?.element}
                   spotlit={spotlightId === e.id}
                   dimmed={!!spotlightId && spotlightId !== e.id}
                   delta={deltaOf(e.id)}
                   targeted={ringed(e.id)}
                   impactTarget={impactTargets.includes(e.id)}
                   struck={struckIds.includes(e.id)}
-                  preview={previewFor(e.id)}
+                  preview={previewFor(enemyShown(e))}
                   previewKey={shownKeyView?.name ?? ""}
                   offTarget={offTarget(e.id, e.down)}
+                  previewDim={previewDimOf(e.id)}
                   onPick={pickFor(e.id)}
                   onHover={(hovering) => {
                     if (!hovering) setHoverTarget(null);
@@ -1254,9 +1201,10 @@ export default function PowerworksTurnsPage() {
                   targeted={ringed(u.id)}
                   impactTarget={impactTargets.includes(u.id)}
                   struck={struckIds.includes(u.id)}
-                  preview={previewFor(u.id)}
+                  preview={previewFor(withHp(u))}
                   previewKey={shownKeyView?.name ?? ""}
                   offTarget={offTarget(u.id, u.down)}
+                  previewDim={previewDimOf(u.id)}
                   onPick={pickFor(u.id)}
                   onHover={(hovering) => {
                     if (!hovering) setHoverTarget(null);
@@ -1290,7 +1238,6 @@ export default function PowerworksTurnsPage() {
               name={view.active.name}
               keys={view.keys}
               selectedKey={selectedKey}
-              notedKey={shownNote ? shownNote.keyIndex : null}
               handingOff={!!handoff}
               onPress={pressKey}
               onPass={pass}
@@ -1320,17 +1267,7 @@ export default function PowerworksTurnsPage() {
         )}
 
         {phone && view.phase === "turn" && view.active && (
-          <div className={`pwt-keybar ${busy ? "busy" : ""} ${handoff ? "handing-off" : ""} ${view.activeStatus || (shownNote && !phone) ? "has-status" : ""}`}>
-            {(view.activeStatus || (shownNote && !phone)) && !busy && (
-              <p className="pwt-keybar-statusline" data-status={view.activeStatus ? "" : undefined} title={view.activeStatus?.sentence}>
-                {view.activeStatus && <span className="pwt-status-text">{view.activeStatus.sentence}</span>}
-                {shownNote && !phone && (
-                  <span className="pwt-note" role="note" data-note={shownNote.id}>
-                    <b>{shownNote.keyName}</b> {shownNote.text}
-                  </span>
-                )}
-              </p>
-            )}
+          <div className={`pwt-keybar ${busy ? "busy" : ""} ${handoff ? "handing-off" : ""}`}>
             <div className="pwt-keybar-portrait">
               <span className="pwt-keybar-portrait-img">
                 <Portrait u={{ species: view.active.art, element: view.active.element }} />
@@ -1339,21 +1276,12 @@ export default function PowerworksTurnsPage() {
               <ElementBadge element={view.active.element} className="pwt-el-static" />
               {/* On a phone the column's first line is the portrait row, so the short reason sits there;
                   on a desktop the full sentence runs along the key bar's top line above the keys. */}
-              {(view.activeStatus || (phone && !busy && (station?.text ?? since.text))) && (
+              {phone && !busy && (station?.text ?? since.text) && (
                 <span className="pwt-keybar-lines">
-                  {view.activeStatus && (
-                    <span className="pwt-keybar-status" aria-hidden="true">
-                      {view.activeStatus.parts.map((p) => (
-                        <span key={p}>{p}</span>
-                      ))}
-                    </span>
-                  )}
-                  {phone && !busy && (station?.text ?? since.text) && (
-                    <span className="pwt-keybar-since" data-since="">
-                      {station?.text ? null : <b>Since your last turn </b>}
-                      {station?.text ?? since.text}
-                    </span>
-                  )}
+                  <span className="pwt-keybar-since" data-since="">
+                    {station?.text ? null : <b>Since your last turn </b>}
+                    {station?.text ?? since.text}
+                  </span>
                 </span>
               )}
             </div>
@@ -1369,7 +1297,6 @@ export default function PowerworksTurnsPage() {
                   else if (liveRef.current || twoTap) setHoverKey(k.index);
                 }}
                 onFocusKey={(on) => setFocusKey(on ? k.index : null)}
-                noted={!!shownNote && shownNote.keyIndex === k.index}
               />
             ))}
             <button type="button" className="pwt-pass" disabled={busy} onClick={pass}>

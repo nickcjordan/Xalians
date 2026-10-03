@@ -54,72 +54,24 @@
   text-overflow: clip;
   overflow-wrap: anywhere;
 }
-.pwt-moves-row > button.pwt-key .pwt-key-body { gap: 4px; }
-.pwt-moves-row > button.pwt-key .pwt-key-power { font-size: 24px; gap: 4px; }
-.pwt-moves-row > button.pwt-key .pwt-key-power .pwt-impact { width: 14px; height: 14px; }
-.pwt-moves-row > button.pwt-key .pwt-key-power-word { display: none; }
-.pwt-moves-row > button.pwt-key .pwt-key-power-was { font-size: 15px; }
-.pwt-moves-row > button.pwt-key .pwt-key-power-arrow { font-size: 14px; }
-.pwt-moves-row > button.pwt-key .pwt-tags.big .pwt-tag { font-size: 20px; }
-.pwt-moves-row > button.pwt-key .pwt-tags.big .pwt-tag svg { width: 16px; height: 16px; }
-.pwt-moves-row > button.pwt-key .pwt-key-shape { gap: 2px; }
-.pwt-moves-row > button.pwt-key .pwt-key-aim { font-size: 12px; }
+
 .pwt-moves-row > button.pwt-key .pwt-key-foot { min-height: 0; padding-top: 1px; }
 .pwt-moves-row > button.pwt-key .pwt-key-foot-words { font-size: 11px; }
-.pwt-moves-row > button.pwt-key .pwt-tag,
-.pwt-moves-row > button.pwt-key .pwt-key-own { font-size: 12px; padding: 0 4px; }
-.pwt-moves-row > button.pwt-key .pwt-key-own-words { display: none; }
+
 .pwt-moves-row > .pwt-pass {
   flex: 0 0 62px;
   min-height: 56px;
   font-size: 12px;
   transition: border-color 120ms var(--ease-out), color 120ms var(--ease-out);
 }
-/* The detail tip: beside the row (in the free band), only while a card is hovered or focused, never taking room at rest. */
-.pwt-moves-tip {
-  position: absolute;
-  top: 0;
-  width: max-content;
-  margin: 0;
-  padding: 5px 9px;
-  background: var(--color-s3);
-  border: 1px solid var(--color-ink-2);
-  font-family: var(--font-body);
-  font-size: 12.5px;
-  line-height: 1.3;
-  color: var(--color-ink);
-  pointer-events: none;
-  animation: pwt-wait-in 120ms var(--ease-out) both;
-}
-.pwt-moves-tip.right { left: calc(100% + 8px); }
-.pwt-moves-tip.left { right: calc(100% + 8px); }
+
 @media (prefers-reduced-motion: reduce) {
-  .pwt-moves, .pwt-moves-tip { animation: none; }
+  .pwt-moves { animation: none; }
 }
 
-/* --- the banner carries what the bottom bar used to: the hindered reason, the first-use note, the next turn --- */
+/* --- the banner carries what the bottom bar used to: the next turn --- */
 .pwt-console:not(.phone) .pwt-banner { flex-basis: 450px; gap: 2px; }
-.pwt-banner-status {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: 12.5px;
-  line-height: 1.3;
-  color: var(--color-ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pwt-console:not(.phone) .pwt-banner .pwt-note {
-  flex: 0 0 auto;
-  padding: 0 0 0 8px;
-  white-space: normal;
-  overflow: hidden;
-  font-size: 12.5px;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
+
 .pwt-banner-next {
   margin: 0;
   font-family: var(--font-body);
@@ -134,3 +86,12 @@
 .pwt-top-right.playing > .pwt-playtools { flex-direction: column; align-items: stretch; gap: 5px; }
 .pwt-top-right.playing .pwt-speed { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .pwt-top-right.playing .pwt-skip { justify-content: center; }
+
+/* The menu card: the same verb and number, a size down. */
+.pwt-moves-row > button.pwt-key .pwt-key-acts { gap: 1px; }
+.pwt-moves-row > button.pwt-key .pwt-act-verb { font-size: 12px; }
+.pwt-moves-row > button.pwt-key .pwt-act-n { font-size: 26px; gap: 4px; }
+.pwt-moves-row > button.pwt-key .pwt-act-was { font-size: 16px; }
+.pwt-moves-row > button.pwt-key .pwt-act.rider .pwt-act-verb { font-size: 11px; }
+.pwt-moves-row > button.pwt-key .pwt-act.rider .pwt-act-n { font-size: 16px; }
+.pwt-moves-row > button.pwt-key .pwt-act-all { font-size: 10px; padding: 0 3px; }
