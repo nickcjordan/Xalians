@@ -905,7 +905,7 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 	pool.forEach((record: any) => {
 		const key = record.species || 'unknown';
 		holdBySpecies[key] = holdBySpecies[key] || [];
-		holdBySpecies[key].push(baseHold(record));
+		holdBySpecies[key].push(baseHold(record, args.rules && args.rules.combat === 'plain' ? (args.rules as any) : undefined));
 	});
 	const speciesMeanHolds = Object.keys(holdBySpecies).map((key: any) => ({
 		species: key,

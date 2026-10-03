@@ -1312,6 +1312,15 @@ describe('rules ablation switches', () => {
 			supportSteadies: SUPPORT_STEADIES,
 			supportMend: SUPPORT_MEND,
 			worldsPerFrame: WORLDS_PER_FRAME,
+			combat: 'graded',
+			plainHoldDivisor: 3,
+			plainHoldMin: 2,
+			plainHoldMax: 6,
+			plainStrike: 2,
+			plainSweep: 1,
+			plainMend: 1,
+			plainExchanges: 4,
+			plainElementStep: 1,
 		});
 		// assumption 20 cut the catch-up send, so the shipped default is zero
 		expect(state.rules.trailingBonus).toBe(0);

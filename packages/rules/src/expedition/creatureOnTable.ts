@@ -40,6 +40,13 @@ import {
 	SWIFT_SPEED,
 	presenceScaleOf,
 	SUPPORT_MEND,
+	PLAIN_HOLD_DIVISOR,
+	PLAIN_HOLD_MIN,
+	PLAIN_HOLD_MAX,
+	PLAIN_STRIKE,
+	PLAIN_SWEEP,
+	PLAIN_MEND,
+	PLAIN_ELEMENT_STEP,
 } from './expeditionInterpretation.ts';
 import type {
 	Act, ActClass, AuthoredSite, Conduct, FrameSite, HoldResult, PrepareOptions,
@@ -97,6 +104,55 @@ export function worldElementFactor(record: XalianRecord, worldElement: string | 
 		return 1;
 	}
 	return typeEffectivenessMultiplier(worldElement, recordElement(record).primary) > 1 ? penalty : 1;
+}
+
+/*
+	THE PLAIN VARIANT (docs/design/reclamation-one-number.md). Everything the plain rules read
+	about a creature lives here, so the engine, the previews and the bot all ask one place.
+
+	plainOn(rules): whether the match plays the plain rules (rules.combat === 'plain').
+	plainHitOf(role, rules): what an act does per exchange before the element moves it: a
+	strike's, a sweep's, a mend's fixed number, and 0 for anything else.
+	plainElementTier(actor, target, rules): -1, 0 or +1 off the existing chart, the attacker's
+	element against the target's (1.5 or more is strong, 0.5 or less is weak).
+	plainHitAgainst(actor, role, target, rules): the hit one rival takes from this creature's
+	act, the fixed number moved one step by the tier and never below 0. A mend and a guard
+	hit nobody, so they answer 0.
+*/
+export function plainOn(rules?: Partial<Rules> | { combat?: string } | null): boolean {
+	return !!rules && (rules as { combat?: string }).combat === 'plain';
+}
+
+export function plainHitOf(role: Role | string, rules?: Partial<Rules> | null): number {
+	if (role === ROLE.STRIKE) {
+		return rules && typeof rules.plainStrike === 'number' ? rules.plainStrike : PLAIN_STRIKE;
+	}
+	if (role === ROLE.SWEEP) {
+		return rules && typeof rules.plainSweep === 'number' ? rules.plainSweep : PLAIN_SWEEP;
+	}
+	if (role === ROLE.BOLSTER) {
+		return rules && typeof rules.plainMend === 'number' ? rules.plainMend : PLAIN_MEND;
+	}
+	return 0;
+}
+
+export function plainElementTier(actorRecord: XalianRecord, targetRecord: XalianRecord, rules?: Partial<Rules> | null): -1 | 0 | 1 {
+	const chart = targetMatchupMultiplier(actorRecord, targetRecord, rules);
+	if (chart >= 1.5) {
+		return 1;
+	}
+	if (chart <= 0.5) {
+		return -1;
+	}
+	return 0;
+}
+
+export function plainHitAgainst(actorRecord: XalianRecord, role: Role | string, targetRecord: XalianRecord, rules?: Partial<Rules> | null): number {
+	if (role !== ROLE.STRIKE && role !== ROLE.SWEEP) {
+		return 0;
+	}
+	const step = rules && typeof rules.plainElementStep === 'number' ? rules.plainElementStep : PLAIN_ELEMENT_STEP;
+	return Math.max(0, plainHitOf(role, rules) + step * plainElementTier(actorRecord, targetRecord, rules));
 }
 
 // pass 71: what a creature holds on its home world (rules.homeGround)
@@ -330,7 +386,15 @@ export function baseHold(record: XalianRecord, rules?: Partial<Rules> | null): n
 	const ceiling = rules && typeof rules.holdCeiling === 'number' ? rules.holdCeiling : HOLD_CEILING;
 	const span = RAW_ATTRIBUTE_MAX - RAW_ATTRIBUTE_MIN;
 	const value = floor + ((raw - RAW_ATTRIBUTE_MIN) * (ceiling - floor)) / span;
-	return wholeHoldsOn(rules) ? Math.round(value) : value;
+	const graded = wholeHoldsOn(rules) ? Math.round(value) : value;
+	if (plainOn(rules)) {
+		// plain: the graded base hold over the divisor, as a whole number held to the plain range
+		const divisor = rules && typeof rules.plainHoldDivisor === 'number' ? rules.plainHoldDivisor : PLAIN_HOLD_DIVISOR;
+		const lowest = rules && typeof rules.plainHoldMin === 'number' ? rules.plainHoldMin : PLAIN_HOLD_MIN;
+		const highest = rules && typeof rules.plainHoldMax === 'number' ? rules.plainHoldMax : PLAIN_HOLD_MAX;
+		return Math.min(highest, Math.max(lowest, Math.round(graded / divisor)));
+	}
+	return graded;
 }
 
 /*
@@ -352,6 +416,29 @@ export function holdAtSite(
 	const world = worldOfSite(site, worldArg);
 	const rules = opts.rules as Partial<Rules> | undefined;
 	const base = baseHold(record, rules);
+	if (plainOn(rules)) {
+		/*
+			PLAIN: the base hold and one world-fit step. Home suits it (+1); severe strain, which
+			includes a medium it cannot breathe, is hostile (-1, never below 1); everything else,
+			mild strain included, is neutral. No world element penalty, willpower, bolster relief,
+			pack-bonded or solitary.
+		*/
+		const homeOrigin = record && record.provenance && record.provenance.origin;
+		const atHome = !!homeOrigin && !!(world && world.planet) && String(homeOrigin).toLowerCase() === String(world.planet).toLowerCase();
+		const plainStrain = strainOf(record, site, world).level;
+		const fit = atHome ? 1 : plainStrain === 'severe' ? -1 : 0;
+		return {
+			value: Math.max(1, base + fit),
+			level: plainStrain,
+			heldLevel: plainStrain,
+			effectiveLevel: plainStrain,
+			willful: false,
+			bolstered: false,
+			isHome: atHome,
+			matchup: 1,
+			fit,
+		};
+	}
 	// pass 71: a world's element touches a creature only where it is a bad place for it
 	const matchup = worldElementFactor(record, world && world.element, rules);
 	const origin = record && record.provenance && record.provenance.origin;
@@ -424,6 +511,10 @@ export function speedOf(record: XalianRecord): number {
 export const initiativeOf = speedOf;
 
 export function isSwift(record: XalianRecord, rules?: Partial<Rules> | null): boolean {
+	// plain: speed no longer matters, so nothing moves swiftly
+	if (plainOn(rules)) {
+		return false;
+	}
 	if (rules && rules.swiftMove === false) {
 		return false;
 	}
@@ -535,6 +626,10 @@ export function round1(value: number): number {
 	buildActs(), so this only adds the target matchup.
 */
 export function magnitudeAgainst(actorRecord: XalianRecord, act: Act, targetRecord: XalianRecord, rules?: Partial<Rules> | null): number {
+	// plain: a fixed hit moved one step by the element, by the act's own word
+	if (plainOn(rules) && (act.action === 'strike' || act.action === 'sweep')) {
+		return plainHitAgainst(actorRecord, act.action, targetRecord, rules);
+	}
 	const matchup = targetMatchupMultiplier(actorRecord, targetRecord, rules);
 	return round1(Math.max(0.1, act.magnitude * matchup));
 }
@@ -901,7 +996,10 @@ export function prepare(
 	const role = chosen && flippableRolesOf(record, rules).includes(chosen as Role)
 		? (chosen as Role)
 		: natural;
-	const blow = blowActOf(record, acts, role);
+	const gradedBlow = blowActOf(record, acts, role);
+	// plain: a blow is what the act does, a fixed number, not the record's magnitude
+	const plain = plainOn(rules);
+	const blow = plain && gradedBlow ? { ...gradedBlow, magnitude: plainHitOf(role, rules) } : gradedBlow;
 
 	return {
 		record,
@@ -935,7 +1033,9 @@ export function prepare(
 		blowMagnitude: blow ? blow.magnitude : 0,
 		blowIsFallback: !!(blow && blow.fallback),
 		// pass 69: the number it mends for at its turn, charisma and rules.supportMend in
-		mendMagnitude: role === ROLE.BOLSTER
+		mendMagnitude: role === ROLE.BOLSTER && plain
+			? plainHitOf(ROLE.BOLSTER, rules)
+			: role === ROLE.BOLSTER
 			? round1(mendMagnitudeOf(acts) * (rules && typeof rules.supportMend === 'number' ? rules.supportMend : SUPPORT_MEND) * presenceScaleOf(record, rules))
 			: 0,
 		conduct: conductOf(record),
