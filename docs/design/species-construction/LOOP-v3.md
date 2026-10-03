@@ -223,7 +223,7 @@ An independent Fable audit (`LOOP-audit-2026-10-02.md`) found the loop four time
 - **Cost accounting.** `loop_costs.py` counts usage once per message id; earlier figures in this document and in the progress notes summed duplicated transcript lines and are about 1.8 times too high.
 - **Independent audits.** A fresh auditor on a different model reviews the loop after every two batches, from the raw records and without the orchestrator's conclusions.
 
-## Additions after rounds 21 and 22 (v3.5, 2026-10-02)
+## Additions after round 21 (v3.5, 2026-10-02)
 
 Round 21 kept nothing and showed four ways the loop spent its time on the wrong thing. Applied (Nick: implement them as long as quality is not traded for speed):
 
@@ -235,6 +235,12 @@ Round 21 kept nothing and showed four ways the loop spent its time on the wrong 
 - **Criteria that measured the wrong thing are retired** (R06.2, R06.6 and R06.7, per specs/R06.md H1 and H2: they read the hanging arm or arm-covered sheet rows, and R06.2 could not pass together with R06.12). R06.12 and R06.13 measure the same depths from mesh sections. R06.3, R06.5 and R06.9 also read the hands-on-hips posed renders (H4). R06 recomputed from 4.3 to 4.6 with no geometry change.
 - **Honest plan estimates.** The dry run schedules on the slots a plan really gets while the other component's plan runs, and prices a candidate by the median of past candidates (about 22 minutes, not 7). The plan budget is about 60 minutes and holds for refine plans.
 - **Planner digest.** `planner_digest.py` writes one page per order from the loop's own files (the region's steps, scripts, args and rebuild minutes, the tool's parameters, the measured criteria now, what earlier orders and plans tried); planners read it before exploring.
+
+## Fixes after round 22 (v3.5.1, 2026-10-03)
+
+- **Plan jobs rerun when their recipes change.** A toolsmith's fix pass rewrote its starter recipe but not its check plan, so both rechecks read the first check's saved result and the fixes were never shown to the readers; `plan_job.py` now compares the result with the plan and the recipes it names, and sets a stale result aside.
+- **Tool checks persist.** Each reader check is written into `tools/<region>.json`; a tool with a check plan is ready only after a same or better check, and a built but unverified tool is checked without a rebuild (or starts with its fix pass when the readers rejected it).
+- **Reader regions are read by id**, so "R02 face: eyes, nose" counts as R02.
 
 ## Proof
 
