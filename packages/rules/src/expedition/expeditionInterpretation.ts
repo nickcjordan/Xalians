@@ -1306,3 +1306,23 @@ export function typeEffectivenessMultiplier(attackerElement: string | null | und
 		return 1;
 	}
 }
+
+/*
+	THE PLAIN VARIANT (docs/design/reclamation-one-number.md), 2026-10-03. Nick: the game keeps
+	too many variables at play for a player to know whether a move is good. Under
+	rules.combat === 'plain' hold is the only number and every hit is fixed, so these are the
+	levers that variant is made of. Each travels as a rules key so a batch can move it.
+
+	- PLAIN_HOLD_DIVISOR / MIN / MAX: a creature's hold is clamp(round(graded base hold / 3), 2, 6).
+	- PLAIN_STRIKE / PLAIN_SWEEP / PLAIN_MEND: what each act does per exchange, fixed.
+	- PLAIN_EXCHANGES: the most simultaneous exchanges a world's fight runs.
+	- PLAIN_ELEMENT_STEP: how far the element chart moves a hit, up for strong, down for weak.
+*/
+export const PLAIN_HOLD_DIVISOR = 3;
+export const PLAIN_HOLD_MIN = 2;
+export const PLAIN_HOLD_MAX = 6;
+export const PLAIN_STRIKE = 2;
+export const PLAIN_SWEEP = 1;
+export const PLAIN_MEND = 1;
+export const PLAIN_EXCHANGES = 4;
+export const PLAIN_ELEMENT_STEP = 1;

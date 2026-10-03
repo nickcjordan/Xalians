@@ -46,7 +46,7 @@ import {
 import type { StatusEffectReading } from './recordReading.ts';
 import {
 	prepare, magnitudeAgainst, holdAtSite, targetMatchupMultiplier, traitKeywordsOf, isFieldable,
-	roleOf, round1, isSwift, speedOf, flippableRolesOf,
+	roleOf, round1, isSwift, speedOf, flippableRolesOf, plainOn, plainHitAgainst, plainHitOf,
 } from './creatureOnTable.ts';
 import {
 	ROSTER_SIZE,
@@ -100,6 +100,14 @@ import {
 	STAKE_BOTH_VALUE,
 	DRAFT_POOL_SIZE,
 	DRAFT_DISTINCT_SPECIES,
+	PLAIN_HOLD_DIVISOR,
+	PLAIN_HOLD_MIN,
+	PLAIN_HOLD_MAX,
+	PLAIN_STRIKE,
+	PLAIN_SWEEP,
+	PLAIN_MEND,
+	PLAIN_EXCHANGES,
+	PLAIN_ELEMENT_STEP,
 } from './expeditionInterpretation.ts';
 import type {
 	Act, Board, BoardEntry, Conduct, Frame, FrameSite, LogEvent, MatchState, PlayerState,
@@ -382,7 +390,24 @@ export const DEFAULT_RULES: Rules = {
 	supportSteadies: SUPPORT_STEADIES,
 	supportMend: SUPPORT_MEND,
 	worldsPerFrame: WORLDS_PER_FRAME,
+	// The plain variant (docs/design/reclamation-one-number.md); 'graded' is the game as shipped
+	combat: 'graded',
+	plainHoldDivisor: PLAIN_HOLD_DIVISOR,
+	plainHoldMin: PLAIN_HOLD_MIN,
+	plainHoldMax: PLAIN_HOLD_MAX,
+	plainStrike: PLAIN_STRIKE,
+	plainSweep: PLAIN_SWEEP,
+	plainMend: PLAIN_MEND,
+	plainExchanges: PLAIN_EXCHANGES,
+	plainElementStep: PLAIN_ELEMENT_STEP,
 };
+
+/*
+	The plain variant as a RulesInput: hold is the only number, hits are fixed, the element and
+	the world each move things one step, and a fight is simultaneous exchanges. Every other
+	lever stays at its default, so the frames, sends, stake, clinch and tiebreak are unchanged.
+*/
+export const RULES_PLAIN: RulesInput = { combat: 'plain' };
 
 // merges a caller's partial rules over the defaults, so a batch only names what it moves
 function normalizeRules(rules: RulesInput | null | undefined): Rules {
@@ -449,6 +474,15 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 		supportSteadies: r.supportSteadies !== undefined ? !!r.supportSteadies : DEFAULT_RULES.supportSteadies,
 		supportMend: num(r.supportMend, DEFAULT_RULES.supportMend),
 		worldsPerFrame: num(r.worldsPerFrame, DEFAULT_RULES.worldsPerFrame),
+		combat: r.combat === 'plain' ? 'plain' : 'graded',
+		plainHoldDivisor: num(r.plainHoldDivisor, DEFAULT_RULES.plainHoldDivisor),
+		plainHoldMin: num(r.plainHoldMin, DEFAULT_RULES.plainHoldMin),
+		plainHoldMax: num(r.plainHoldMax, DEFAULT_RULES.plainHoldMax),
+		plainStrike: num(r.plainStrike, DEFAULT_RULES.plainStrike),
+		plainSweep: num(r.plainSweep, DEFAULT_RULES.plainSweep),
+		plainMend: num(r.plainMend, DEFAULT_RULES.plainMend),
+		plainExchanges: Math.max(1, Math.floor(num(r.plainExchanges, DEFAULT_RULES.plainExchanges))),
+		plainElementStep: num(r.plainElementStep, DEFAULT_RULES.plainElementStep),
 	};
 }
 
@@ -679,7 +713,7 @@ function recomputeHoldsAtSite(state: MatchState, site: FrameSite): void {
 			entry.damage = round1(entry.damage || 0);
 			entry.currentHold = round1(entry.fullHold - entry.damage);
 			entry.role = roleOfEntry(state, entry);
-			entry.bolstered = bolsterAtSite(state, site, entry.player);
+			entry.bolstered = !plainOn(rulesOf(state)) && bolsterAtSite(state, site, entry.player);
 			// "hurt" is only the word for a creature hit and still standing
 			// (assumption 6); it is derived, never stored as a status
 			entry.hurt = entry.damage > 0 && entry.currentHold > 0;
@@ -1839,7 +1873,7 @@ function resolve(state: MatchState): MatchState {
 	tickStatuses(s);
 	currentFrame(s).sites.forEach((site) => recomputeHoldsAtSite(s, site));
 
-	currentFrame(s).sites.forEach((site) => resolveBattle(s, site));
+	currentFrame(s).sites.forEach((site) => (plainOn(rulesOf(s)) ? resolvePlainBattle(s, site) : resolveBattle(s, site)));
 
 	return s;
 }
@@ -1887,6 +1921,215 @@ function resolveBattle(state: MatchState, site: FrameSite): void {
 	}
 }
 
+/*
+	THE PLAIN FIGHT (docs/design/reclamation-one-number.md). One world's Clash under
+	rules.combat === 'plain'.
+
+	Simultaneous exchanges, up to rules.plainExchanges. In each one every creature standing at
+	the start declares against the board as it stood at that start, the guards cancel, every
+	hit lands together, and only then do the creatures at or below nothing leave the world, so
+	two creatures can down each other. The fight stops early when one side is empty or nobody
+	standing can hit (strike or sweep).
+
+	What a creature does is fixed by its act and moved one element step at most:
+	- strike: plainStrike off one rival, chosen uniformly at random among those standing;
+	- sweep: plainSweep off every rival (never its own side);
+	- bolster (mend): plainMend back to the most hurt ally, never above its full hold;
+	- shield (guard): cancels entirely the first hit aimed at its side this exchange, one hit
+	  per guard. "First" is the declaration order (the earlier send, then the record id), because
+	  nothing else orders a simultaneous exchange. A sweep is one hit aimed at a side, so one
+	  guard cancels that sweep's whole effect on the guard's side.
+	The element chart's tier, the attacker against the target, moves a strike or sweep hit up
+	one for strong and down one for weak, never below 0.
+
+	A strike's target is drawn from a stream labelled by the match seed, the frame, the world,
+	the exchange and the striker, so a replay repeats it whatever else the match does.
+	Statuses, armor, attrition, pins, the sweep discount, hurt-attacks-less and the bolster
+	guard are all off.
+*/
+function plainStrikeTarget(state: MatchState, site: FrameSite, exchange: number, strikerId: string, rivals: BoardEntry[]): BoardEntry | null {
+	if (rivals.length === 0) {
+		return null;
+	}
+	// a labelled fork of the match's seed; the first draw is spent so near labels do not correlate
+	const label = `${String(state.seed)}|plain|${state.frameIndex}|${site.id}|${exchange}|${strikerId}`;
+	const first = nextRandom(createRngState(label));
+	const { value } = nextRandom(first.nextState);
+	return rivals[Math.min(rivals.length - 1, Math.floor(value * rivals.length))];
+}
+
+interface PlainHit {
+	victim: BoardEntry;
+	amount: number;
+	matchup: number;
+	guarded: boolean;
+}
+
+interface PlainAttack {
+	attacker: BoardEntry;
+	role: Role;
+	// one entry per rival it hits: a strike has one, a sweep every rival standing
+	hits: PlainHit[];
+	cancelled: boolean;
+}
+
+function resolvePlainBattle(state: MatchState, site: FrameSite): void {
+	const rules = rulesOf(state);
+	const most = Math.max(1, Math.floor(rules.plainExchanges || 1));
+	for (let exchange = 1; exchange <= most; exchange++) {
+		if (exchange > 1) {
+			if (!canStillFight(state, site)) {
+				break;
+			}
+			logEvent(state, { type: 'exchange', site: site.id, exchange });
+		}
+		plainExchange(state, site, exchange);
+	}
+}
+
+function plainExchange(state: MatchState, site: FrameSite, exchange: number): void {
+	const rules = rulesOf(state);
+	const standing = (['A', 'B'] as Seat[]).reduce<BoardEntry[]>((all, seat) => all.concat(state.board[site.id][seat].filter(isAlive)), []);
+	if (standing.length === 0) {
+		return;
+	}
+	// the declaration order: the earlier send first, then the record id
+	const declared = standing.slice().sort((x, y) => (x.sentIndex - y.sentIndex) || (x.recordId < y.recordId ? -1 : x.recordId > y.recordId ? 1 : 0));
+	const attacks: PlainAttack[] = [];
+	const menders: BoardEntry[] = [];
+	const guards: BoardEntry[] = [];
+	declared.forEach((entry) => {
+		const role = prepareEntry(state, entry).role;
+		const rivals = standing.filter((e) => e.player !== entry.player);
+		if (role === ROLE.STRIKE) {
+			const target = plainStrikeTarget(state, site, exchange, entry.recordId, rivals);
+			attacks.push({
+				attacker: entry,
+				role,
+				hits: target
+					? [{ victim: target, amount: plainHitAgainst(entry.record, role, target.record, rules), matchup: targetMatchupMultiplier(entry.record, target.record, rules), guarded: false }]
+					: [],
+				cancelled: false,
+			});
+		} else if (role === ROLE.SWEEP) {
+			attacks.push({
+				attacker: entry,
+				role,
+				hits: rivals.map((victim) => ({ victim, amount: plainHitAgainst(entry.record, role, victim.record, rules), matchup: targetMatchupMultiplier(entry.record, victim.record, rules), guarded: false })),
+				cancelled: false,
+			});
+		} else if (role === ROLE.BOLSTER) {
+			menders.push(entry);
+		} else if (role === ROLE.SHIELD) {
+			guards.push(entry);
+		}
+	});
+
+	// ---- guard: each guard cancels the first uncancelled hit aimed at its side ----
+	guards.forEach((guard) => {
+		const aimed = attacks.find((a) => !a.cancelled && a.hits.some((h) => h.victim.player === guard.player && h.amount > 0));
+		if (!aimed) {
+			logEvent(state, { type: 'shield', recordId: guard.recordId, site: site.id, cancelled: null, amount: 0, fraction: 0, selfDamage: 0 });
+			return;
+		}
+		aimed.cancelled = true;
+		// a sweep is cancelled on the guard's own side only; the other side still takes it
+		aimed.hits.forEach((h) => {
+			if (h.victim.player === guard.player) {
+				h.guarded = true;
+			}
+		});
+		logEvent(state, {
+			type: 'shield', recordId: guard.recordId, site: site.id, cancelled: aimed.attacker.recordId,
+			amount: plainHitOf(aimed.role, rules), fraction: 1, selfDamage: 0,
+		});
+	});
+
+	// ---- mends: the most hurt ally as the exchange began, never above its full hold ----
+	const mended = new Map<string, { amount: number; by: string }>();
+	menders.forEach((mender) => {
+		const pending = (e: BoardEntry) => (mended.get(e.recordId)?.amount || 0);
+		const hurt = standing.filter((e) => e.player === mender.player && (e.damage || 0) - pending(e) > 0);
+		if (!hurt.length) {
+			return;
+		}
+		const target = hurt.reduce((best, e) => {
+			const hold = (e.currentHold ?? 0) + pending(e);
+			const bestHold = (best.currentHold ?? 0) + pending(best);
+			if (hold !== bestHold) {
+				return hold < bestHold ? e : best;
+			}
+			return (e.damage || 0) > (best.damage || 0) ? e : best;
+		});
+		const amount = Math.min(plainHitOf(ROLE.BOLSTER, rules), (target.damage || 0) - pending(target));
+		if (amount > 0) {
+			mended.set(target.recordId, { amount: pending(target) + amount, by: mender.recordId });
+		}
+	});
+
+	// ---- land: every hit together, then the fallen leave ----
+	const lastHit = new Map<string, LogEvent>();
+	attacks.forEach((attack) => {
+		if (attack.role === ROLE.SWEEP) {
+			logEvent(state, {
+				type: 'sweep', recordId: attack.attacker.recordId, role: ROLE.SWEEP, site: site.id,
+				power: attack.hits.reduce((most, h) => Math.max(most, h.amount), 0),
+				hitCount: attack.hits.length, hidden: false, cancelled: attack.cancelled,
+				cancelledAgainst: attack.cancelled
+					? Array.from(new Set(attack.hits.filter((h) => h.guarded).map((h) => h.victim.player)))
+					: [],
+			});
+		}
+		if (attack.role === ROLE.STRIKE && attack.hits.length === 0) {
+			logEvent(state, { type: 'attack', recordId: attack.attacker.recordId, role: ROLE.STRIKE, site: site.id, target: null, power: 0, remaining: null, outcome: 'no-target', hidden: false, cancelled: false });
+			return;
+		}
+		attack.hits.forEach((hit) => {
+			const victim = hit.victim;
+			const matchup = hit.matchup !== 1 ? { matchup: hit.matchup } : {};
+			if (hit.guarded || hit.amount <= 0) {
+				logEvent(state, {
+					type: 'attack', recordId: attack.attacker.recordId, role: attack.role, site: site.id, target: victim.recordId,
+					power: 0, remaining: null, outcome: hit.guarded ? 'cancelled' : 'glanced', hidden: false, cancelled: hit.guarded, ...matchup,
+				});
+				return;
+			}
+			victim.damage = round1((victim.damage || 0) + hit.amount);
+			victim.currentHold = round1(victim.fullHold - victim.damage);
+			victim.hurt = true;
+			const event: LogEvent = {
+				type: 'attack', recordId: attack.attacker.recordId, role: attack.role, site: site.id, target: victim.recordId,
+				power: hit.amount, remaining: Math.max(0, victim.currentHold), outcome: 'hurt', hidden: false, cancelled: false, ...matchup,
+			};
+			logEvent(state, event);
+			lastHit.set(victim.recordId, event);
+		});
+	});
+	mended.forEach(({ amount, by }, recordId) => {
+		const target = standing.find((e) => e.recordId === recordId);
+		if (!target) {
+			return;
+		}
+		target.damage = round1(Math.max(0, (target.damage || 0) - amount));
+		target.currentHold = round1(target.fullHold - target.damage);
+		target.hurt = target.damage > 0 && target.currentHold > 0;
+		logEvent(state, { type: 'recover', recordId, site: site.id, bolster: by, amount, remaining: Math.max(0, target.currentHold), mend: true });
+	});
+	// the fallen leave together, after every hit has landed
+	standing.forEach((entry) => {
+		if (entry.downed || entry.currentHold > 0) {
+			return;
+		}
+		const event = lastHit.get(entry.recordId);
+		if (event) {
+			event.outcome = 'downed';
+			event.remaining = 0;
+		}
+		downEntry(state, entry);
+	});
+	recomputeHoldsAtSite(state, site);
+}
+
 // both sides have someone standing, and someone standing can attack
 function canStillFight(state: MatchState, site: FrameSite): boolean {
 	const alive = (seat: Seat) => state.board[site.id][seat].filter(isAlive);
@@ -1920,6 +2163,10 @@ function battleFingerprint(state: MatchState, site: FrameSite): string {
 	and its captive swings again next round.
 */
 function tickStatuses(state: MatchState, onlySite?: FrameSite): void {
+	// plain: statuses are off, so nothing bites, mends or ages
+	if (plainOn(rulesOf(state))) {
+		return;
+	}
 	const standing = new Set(allBoardEntries(state).filter(isAlive).map((e) => e.recordId));
 	// pass 56: between exchanges only the world still fighting ticks
 	allBoardEntries(state).filter((entry) => !onlySite || entry.siteId === onlySite.id).forEach((entry) => {
@@ -2613,6 +2860,10 @@ function downEntry(state: MatchState, entry: BoardEntry): void {
 */
 function applyBolsterRecovery(state: MatchState, onlySite?: FrameSite): void {
 	const rules = rulesOf(state);
+	// plain: a mend is the act's own hit in the exchange; nothing recovers at the Ruling
+	if (plainOn(rules)) {
+		return;
+	}
 	const share = typeof rules.bolsterRecovery === 'number' ? rules.bolsterRecovery : 0;
 	if (share <= 0) {
 		return;

@@ -1,0 +1,1847 @@
+{
+  "meta": {
+    "matches": 50,
+    "completedMatches": 50,
+    "seed": 7,
+    "mirror": false,
+    "random": null
+  },
+  "rivals": {
+    "A": {
+      "id": "proctor",
+      "name": "Court proctor"
+    },
+    "B": {
+      "id": "proctor",
+      "name": "Court proctor"
+    },
+    "sideAWinRate": {
+      "p": 0.44,
+      "n": 50,
+      "lo": 0.3024085584056915,
+      "hi": 0.5775914415943085
+    }
+  },
+  "seatFairness": {
+    "starterWinRate": {
+      "p": 0.46,
+      "n": 50,
+      "lo": 0.3218512801362242,
+      "hi": 0.5981487198637758
+    },
+    "perWorldStarterSiteWinRate": {
+      "0": {
+        "p": 0.49333333333333335,
+        "n": 150,
+        "lo": 0.4133237813109978,
+        "hi": 0.5733428853556689
+      },
+      "1": {
+        "p": 0.46,
+        "n": 150,
+        "lo": 0.3802397993984469,
+        "hi": 0.5397602006015532
+      },
+      "2": {
+        "p": 0.4318181818181818,
+        "n": 132,
+        "lo": 0.34731691222425665,
+        "hi": 0.516319451412107
+      }
+    },
+    "finalPasserWinRate": {
+      "p": 0.4444444444444444,
+      "n": 9,
+      "lo": 0.11980050104447498,
+      "hi": 0.7690883878444139
+    },
+    "swiftMovesPerMatch": 0.34,
+    "starterWinRateWithSwiftMove": {
+      "p": 0.7857142857142857,
+      "n": 14,
+      "lo": 0.5707724331122389,
+      "hi": 1
+    },
+    "starterWinRateWithoutSwiftMove": {
+      "p": 0.3333333333333333,
+      "n": 36,
+      "lo": 0.1793411898749296,
+      "hi": 0.487325476791737
+    },
+    "swiftMoveFlipRate": {
+      "p": 0.058823529411764705,
+      "n": 17,
+      "lo": 0,
+      "hi": 0.1706752529579324
+    },
+    "mirrorMode": false
+  },
+  "stake": {
+    "stakesPerMatch": 0,
+    "matchesWithAStake": {
+      "p": 0,
+      "n": 50,
+      "lo": 0,
+      "hi": 0
+    },
+    "byTrailingSide": null,
+    "stakerWinsStakedWorld": null,
+    "stakerWinsUnstakedWorlds": null,
+    "byRound": [
+      {
+        "round": 1,
+        "count": 0
+      },
+      {
+        "round": 2,
+        "count": 0
+      },
+      {
+        "round": 3,
+        "count": 0
+      }
+    ]
+  },
+  "matchShape": {
+    "worldsPlayedCounts": {
+      "2": 6,
+      "3": 44
+    },
+    "endReasonCounts": {
+      "clinched": 49,
+      "frames-exhausted": 1
+    },
+    "finalScoreCounts": {
+      "5-1": 6,
+      "7-2": 3,
+      "6-3": 18,
+      "5-4": 22,
+      "4-4": 1
+    },
+    "comebackWinRate": {
+      "p": 0.24,
+      "n": 50,
+      "lo": 0.12161859605495463,
+      "hi": 0.35838140394504536
+    },
+    "decisionsPerMatch": 25.62
+  },
+  "siteEconomy": {
+    "sitesWonPerMatch": {
+      "A": 4.08,
+      "B": 4.54
+    },
+    "tieToCourtRate": {
+      "p": 0.0023148148148148147,
+      "n": 432,
+      "lo": 0,
+      "hi": 0.006846597609166126
+    },
+    "uncontestedRate": {
+      "p": 0.12731481481481483,
+      "n": 432,
+      "lo": 0.09588205811354644,
+      "hi": 0.1587475715160832
+    },
+    "emptyRate": {
+      "p": 0,
+      "n": 432,
+      "lo": 0,
+      "hi": 0
+    },
+    "contestedMarginMedian": 10,
+    "contestedMarginQ1": 6,
+    "contestedMarginQ3": 16,
+    "resolveMatteredRate": {
+      "p": 0.3125,
+      "n": 416,
+      "lo": 0.2679578918433527,
+      "hi": 0.3570421081566473
+    },
+    "perWorldPosition": {
+      "0": {
+        "sends": 393,
+        "tieRate": {
+          "p": 0,
+          "n": 150,
+          "lo": 0,
+          "hi": 0
+        },
+        "contestedRate": {
+          "p": 0.94,
+          "n": 150,
+          "lo": 0.901994189917856,
+          "hi": 0.9780058100821439
+        }
+      },
+      "1": {
+        "sends": 402,
+        "tieRate": {
+          "p": 0,
+          "n": 150,
+          "lo": 0,
+          "hi": 0
+        },
+        "contestedRate": {
+          "p": 0.9466666666666667,
+          "n": 150,
+          "lo": 0.9107076051702413,
+          "hi": 0.982625728163092
+        }
+      },
+      "2": {
+        "sends": 265,
+        "tieRate": {
+          "p": 0.007575757575757576,
+          "n": 132,
+          "lo": 0,
+          "hi": 0.02236789123481378
+        },
+        "contestedRate": {
+          "p": 0.7121212121212122,
+          "n": 132,
+          "lo": 0.6348796764370359,
+          "hi": 0.7893627478053884
+        }
+      }
+    }
+  },
+  "rosterEconomy": {
+    "sentPerWorldPositionPerSide": {
+      "0": {
+        "A": 196,
+        "B": 197
+      },
+      "1": {
+        "A": 204,
+        "B": 198
+      },
+      "2": {
+        "A": 130,
+        "B": 135
+      }
+    },
+    "unsentAtMatchEnd": {
+      "A": 1.4,
+      "B": 1.4
+    },
+    "speciesHoldSpread": {
+      "lowest": {
+        "species": "avilily",
+        "meanHold": 7
+      },
+      "highest": {
+        "species": "yetimoth",
+        "meanHold": 14
+      },
+      "ratio": 2,
+      "rows": [
+        {
+          "species": "avilily",
+          "meanHold": 7
+        },
+        {
+          "species": "hypnopet",
+          "meanHold": 7
+        },
+        {
+          "species": "ectoghoul",
+          "meanHold": 7.333333333333333
+        },
+        {
+          "species": "vespersyn",
+          "meanHold": 7.5
+        },
+        {
+          "species": "figzy",
+          "meanHold": 8
+        },
+        {
+          "species": "smokat",
+          "meanHold": 8
+        },
+        {
+          "species": "tizzie",
+          "meanHold": 8
+        },
+        {
+          "species": "akinza",
+          "meanHold": 8.666666666666666
+        },
+        {
+          "species": "imprit",
+          "meanHold": 9
+        },
+        {
+          "species": "chromocat",
+          "meanHold": 9.333333333333334
+        },
+        {
+          "species": "newtapede",
+          "meanHold": 9.666666666666666
+        },
+        {
+          "species": "codazzo",
+          "meanHold": 10
+        },
+        {
+          "species": "dromeus",
+          "meanHold": 10
+        },
+        {
+          "species": "luceras",
+          "meanHold": 10
+        },
+        {
+          "species": "thirstaserp",
+          "meanHold": 10
+        },
+        {
+          "species": "drilltail",
+          "meanHold": 10.333333333333334
+        },
+        {
+          "species": "neph",
+          "meanHold": 10.666666666666666
+        },
+        {
+          "species": "venemist",
+          "meanHold": 11
+        },
+        {
+          "species": "foromeer",
+          "meanHold": 11.333333333333334
+        },
+        {
+          "species": "hippochamp",
+          "meanHold": 11.666666666666666
+        },
+        {
+          "species": "sonalloy",
+          "meanHold": 12
+        },
+        {
+          "species": "shuntara",
+          "meanHold": 12.5
+        },
+        {
+          "species": "voltish",
+          "meanHold": 12.5
+        },
+        {
+          "species": "xylum",
+          "meanHold": 12.5
+        },
+        {
+          "species": "crystorn",
+          "meanHold": 12.666666666666666
+        },
+        {
+          "species": "graviclaw",
+          "meanHold": 13.333333333333334
+        },
+        {
+          "species": "kosanos",
+          "meanHold": 13.333333333333334
+        },
+        {
+          "species": "scalatto",
+          "meanHold": 13.5
+        },
+        {
+          "species": "bioflim",
+          "meanHold": 13.666666666666666
+        },
+        {
+          "species": "fathomaw",
+          "meanHold": 13.666666666666666
+        },
+        {
+          "species": "frackworm",
+          "meanHold": 14
+        },
+        {
+          "species": "terragoyle",
+          "meanHold": 14
+        },
+        {
+          "species": "yetimoth",
+          "meanHold": 14
+        }
+      ]
+    }
+  },
+  "combat": {
+    "outcomeHistogram": {
+      "downed": 435,
+      "no-target": 64,
+      "hurt": 1243,
+      "lapsed": 272,
+      "pinned": 45,
+      "cancelled": 74
+    },
+    "perRole": {
+      "strike": {
+        "sends": 474,
+        "sendShare": {
+          "p": 0.44716981132075473,
+          "n": 1060,
+          "lo": 0.4172378446954152,
+          "hi": 0.47710177794609426
+        },
+        "keeperWinRate": {
+          "p": 0.6617336152219874,
+          "n": 473,
+          "lo": 0.619095645156782,
+          "hi": 0.7043715852871928
+        },
+        "meanPowerPerAttack": 7.774859550561815,
+        "downsDealt": 302
+      },
+      "sweep": {
+        "sends": 445,
+        "sendShare": {
+          "p": 0.419811320754717,
+          "n": 1060,
+          "lo": 0.39010048716725776,
+          "hi": 0.44952215434217624
+        },
+        "keeperWinRate": {
+          "p": 0.4786516853932584,
+          "n": 445,
+          "lo": 0.43223759443089593,
+          "hi": 0.5250657763556209
+        },
+        "meanPowerPerAttack": 3.0097308488612837,
+        "downsDealt": 133
+      },
+      "bolster": {
+        "sends": 82,
+        "sendShare": {
+          "p": 0.07735849056603773,
+          "n": 1060,
+          "lo": 0.06127524744229121,
+          "hi": 0.09344173368978426
+        },
+        "keeperWinRate": {
+          "p": 0.6463414634146342,
+          "n": 82,
+          "lo": 0.5428576971108173,
+          "hi": 0.749825229718451
+        },
+        "meanPowerPerAttack": 0,
+        "downsDealt": 0
+      },
+      "shield": {
+        "sends": 59,
+        "sendShare": {
+          "p": 0.05566037735849057,
+          "n": 1060,
+          "lo": 0.04185843154534739,
+          "hi": 0.06946232317163376
+        },
+        "keeperWinRate": {
+          "p": 0.4827586206896552,
+          "n": 58,
+          "lo": 0.3541548435853036,
+          "hi": 0.6113623977940068
+        },
+        "meanPowerPerAttack": 0,
+        "downsDealt": 0
+      },
+      "none": {
+        "sends": 0,
+        "sendShare": {
+          "p": 0,
+          "n": 1060,
+          "lo": 0,
+          "hi": 0
+        },
+        "keeperWinRate": null,
+        "meanPowerPerAttack": 0,
+        "downsDealt": 0
+      }
+    },
+    "attackStats": {
+      "attacksPerMatch": 42.66,
+      "downsPerMatch": 8.7,
+      "meanPower": 5.0316448152562545,
+      "cancelledShare": {
+        "p": 0.11345522737927802,
+        "n": 2133,
+        "lo": 0.09999590375812631,
+        "hi": 0.12691455100042973
+      },
+      "noTargetShare": {
+        "p": 0.030004688232536336,
+        "n": 2133,
+        "lo": 0.0227646639881067,
+        "hi": 0.03724471247696597
+      },
+      "lapsedShare": {
+        "p": 0.1275199249882794,
+        "n": 2133,
+        "lo": 0.11336435286809797,
+        "hi": 0.14167549710846086
+      },
+      "hiddenAttackShare": {
+        "p": 0,
+        "n": 2133,
+        "lo": 0,
+        "hi": 0
+      },
+      "fallbackAttackShare": {
+        "p": 0,
+        "n": 1060,
+        "lo": 0,
+        "hi": 0
+      }
+    },
+    "shieldStats": {
+      "shieldSendsPerMatch": 1.18,
+      "cancelsPerMatch": 4.56,
+      "cancelRate": {
+        "p": 0.9230769230769231,
+        "n": 247,
+        "lo": 0.8898450465598509,
+        "hi": 0.9563087995939954
+      },
+      "meanAmountCancelled": 9.887280701754388
+    },
+    "bolsterStats": {
+      "bolsterSendsPerMatch": 1.64,
+      "holdRestoredPerBolsterSend": 1.51875,
+      "sitesWithABolsterer": 80,
+      "recoveriesPerMatch": 3.9,
+      "holdRecoveredPerBolsterSend": 11.324390243902444
+    },
+    "strainIncidence": {
+      "none": {
+        "sendShare": {
+          "p": 0.5358490566037736,
+          "n": 1060,
+          "lo": 0.5058260630712655,
+          "hi": 0.5658720501362816
+        },
+        "siteWinRate": {
+          "p": 0.5897887323943662,
+          "n": 568,
+          "lo": 0.5493372974725668,
+          "hi": 0.6302401673161657
+        }
+      },
+      "strained": {
+        "sendShare": {
+          "p": 0.39245283018867927,
+          "n": 1060,
+          "lo": 0.36305692266595174,
+          "hi": 0.4218487377114068
+        },
+        "siteWinRate": {
+          "p": 0.5528846153846154,
+          "n": 416,
+          "lo": 0.5051056803290692,
+          "hi": 0.6006635504401616
+        }
+      },
+      "severe": {
+        "sendShare": {
+          "p": 0.07169811320754717,
+          "n": 1060,
+          "lo": 0.056167034563849416,
+          "hi": 0.08722919185124492
+        },
+        "siteWinRate": {
+          "p": 0.5675675675675675,
+          "n": 74,
+          "lo": 0.4546898741999212,
+          "hi": 0.6804452609352138
+        }
+      }
+    },
+    "homeGround": {
+      "incidenceRate": {
+        "p": 0.12547169811320755,
+        "n": 1060,
+        "lo": 0.10552996218237426,
+        "hi": 0.14541343404404083
+      },
+      "siteWinRate": {
+        "p": 0.6165413533834586,
+        "n": 133,
+        "lo": 0.5339050989503895,
+        "hi": 0.6991776078165277
+      }
+    },
+    "hiddenSendStats": {
+      "rate": {
+        "p": 0,
+        "n": 1060,
+        "lo": 0,
+        "hi": 0
+      },
+      "siteWinRateHidden": null,
+      "siteWinRateVisible": {
+        "p": 0.5737240075614367,
+        "n": 1058,
+        "lo": 0.5439244245985841,
+        "hi": 0.6035235905242893
+      }
+    },
+    "stackVsSpread": {
+      "histogram": {
+        "A": {
+          "0": 32,
+          "1": 272,
+          "2": 126,
+          "3": 2
+        },
+        "B": {
+          "0": 23,
+          "1": 289,
+          "2": 119,
+          "3": 1
+        }
+      },
+      "siteWinRateAt1": {
+        "A": {
+          "p": 0.42435424354243545,
+          "n": 271,
+          "lo": 0.3655087303893322,
+          "hi": 0.4831997566955387
+        },
+        "B": {
+          "p": 0.4756944444444444,
+          "n": 288,
+          "lo": 0.41801566030494886,
+          "hi": 0.53337322858394
+        }
+      },
+      "siteWinRateAt2": {
+        "A": {
+          "p": 0.6904761904761905,
+          "n": 126,
+          "lo": 0.6097541403119631,
+          "hi": 0.7711982406404179
+        },
+        "B": {
+          "p": 0.7478991596638656,
+          "n": 119,
+          "lo": 0.6698817979298536,
+          "hi": 0.8259165213978775
+        }
+      },
+      "siteWinRateAt3Plus": {
+        "A": {
+          "p": 1,
+          "n": 2,
+          "lo": 1,
+          "hi": 1
+        },
+        "B": {
+          "p": 1,
+          "n": 1,
+          "lo": 1,
+          "hi": 1
+        }
+      }
+    }
+  },
+  "creatureBalance": {
+    "byArchetype": {
+      "unknown": {
+        "sent": 1058,
+        "siteWinRate": {
+          "p": 0.5737240075614367,
+          "n": 1058,
+          "lo": 0.5439244245985841,
+          "hi": 0.6035235905242893
+        },
+        "downsDealt": 0
+      }
+    },
+    "byElement": {
+      "undefined": {
+        "sent": 1060,
+        "siteWinRate": {
+          "p": 0.5737240075614367,
+          "n": 1058,
+          "lo": 0.5439244245985841,
+          "hi": 0.6035235905242893
+        },
+        "strainedShare": {
+          "p": 0.4641509433962264,
+          "n": 1060,
+          "lo": 0.43412794986371833,
+          "hi": 0.4941739369287345
+        }
+      }
+    },
+    "elementWorldStrainTable": {
+      "fire": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "water": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "air": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "electric": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "rock": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "plant": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "chemical": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "light": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "dark": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "psychic": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "ghost": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "metal": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "ice": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      },
+      "sand": {
+        "Magmuth": null,
+        "Poseidas": null,
+        "Grimedes": null,
+        "Luminax": null,
+        "Floria": null,
+        "Zolton": null,
+        "Phantiri": null,
+        "Stonera": null,
+        "Drainov": null,
+        "Saiphus": null,
+        "Telypso": null,
+        "Krystos": null,
+        "Veridium": null,
+        "Endessa": null
+      }
+    },
+    "byTrait": {},
+    "top5ByWinRate": [
+      {
+        "recordId": "xal_528c9d6a377621ba15af",
+        "species": "newtapede",
+        "archetype": null,
+        "hold": 9,
+        "holdRank": 62,
+        "poolSize": 87,
+        "sent": 16,
+        "siteWinRate": 0.9375
+      },
+      {
+        "recordId": "xal_3d178515e0b7050f8215",
+        "species": "tizzie",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 72,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.9333333333333333
+      },
+      {
+        "recordId": "xal_c621f9c315fc83d4e2b2",
+        "species": "thirstaserp",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 45,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.9285714285714286
+      },
+      {
+        "recordId": "xal_a51fe17e2df4c6ccb08b",
+        "species": "drilltail",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 54,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.9285714285714286
+      },
+      {
+        "recordId": "xal_5f55086ac26a8e97e7c1",
+        "species": "fathomaw",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 1,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.9230769230769231
+      }
+    ],
+    "bottom5ByWinRate": [
+      {
+        "recordId": "xal_824507b56e0f172c9b04",
+        "species": "neph",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 42,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.07692307692307693
+      },
+      {
+        "recordId": "xal_4a3649f687d017188f20",
+        "species": "kosanos",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 12,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.16666666666666666
+      },
+      {
+        "recordId": "xal_32e279650a73f9e90c0f",
+        "species": "crystorn",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 34,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.25
+      },
+      {
+        "recordId": "xal_b1405e6be4aa93b67533",
+        "species": "shuntara",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 30,
+        "poolSize": 87,
+        "sent": 19,
+        "siteWinRate": 0.2631578947368421
+      },
+      {
+        "recordId": "xal_a8a289d7274a0bd32f29",
+        "species": "kosanos",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 16,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.26666666666666666
+      }
+    ],
+    "byCreature": [
+      {
+        "recordId": "xal_528c9d6a377621ba15af",
+        "species": "newtapede",
+        "archetype": null,
+        "hold": 9,
+        "holdRank": 62,
+        "poolSize": 87,
+        "sent": 16,
+        "siteWinRate": 0.9375
+      },
+      {
+        "recordId": "xal_3d178515e0b7050f8215",
+        "species": "tizzie",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 72,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.9333333333333333
+      },
+      {
+        "recordId": "xal_c621f9c315fc83d4e2b2",
+        "species": "thirstaserp",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 45,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.9285714285714286
+      },
+      {
+        "recordId": "xal_a51fe17e2df4c6ccb08b",
+        "species": "drilltail",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 54,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.9285714285714286
+      },
+      {
+        "recordId": "xal_5f55086ac26a8e97e7c1",
+        "species": "fathomaw",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 1,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.9230769230769231
+      },
+      {
+        "recordId": "xal_0976665e8fe797527cd1",
+        "species": "avilily",
+        "archetype": null,
+        "hold": 7,
+        "holdRank": 82,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.9166666666666666
+      },
+      {
+        "recordId": "xal_829cdec5a09fc20cd1cd",
+        "species": "bioflim",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 10,
+        "poolSize": 87,
+        "sent": 10,
+        "siteWinRate": 0.9
+      },
+      {
+        "recordId": "xal_7e0ea1c87b3f56389b15",
+        "species": "bioflim",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 14,
+        "poolSize": 87,
+        "sent": 10,
+        "siteWinRate": 0.9
+      },
+      {
+        "recordId": "xal_74c42207eca4383ec33c",
+        "species": "drilltail",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 59,
+        "poolSize": 87,
+        "sent": 10,
+        "siteWinRate": 0.9
+      },
+      {
+        "recordId": "xal_d4c7b0284b28c411e40b",
+        "species": "drilltail",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 40,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.8666666666666667
+      },
+      {
+        "recordId": "xal_7da68fe44f5ecf822115",
+        "species": "luceras",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 53,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.8666666666666667
+      },
+      {
+        "recordId": "xal_90e5fca960ce33734272",
+        "species": "hypnopet",
+        "archetype": null,
+        "hold": 7,
+        "holdRank": 83,
+        "poolSize": 87,
+        "sent": 11,
+        "siteWinRate": 0.8181818181818182
+      },
+      {
+        "recordId": "xal_b78e801a73bc226f3976",
+        "species": "smokat",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 78,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.7692307692307693
+      },
+      {
+        "recordId": "xal_9e01b7b42f33f857cba6",
+        "species": "ectoghoul",
+        "archetype": null,
+        "hold": 7,
+        "holdRank": 84,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.75
+      },
+      {
+        "recordId": "xal_9d2dba845c8f44f3d30b",
+        "species": "xylum",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 20,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.7333333333333333
+      },
+      {
+        "recordId": "xal_91e8602ac50627066a91",
+        "species": "foromeer",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 33,
+        "poolSize": 87,
+        "sent": 11,
+        "siteWinRate": 0.7272727272727273
+      },
+      {
+        "recordId": "xal_24c9b28810868159e4e9",
+        "species": "ectoghoul",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 76,
+        "poolSize": 87,
+        "sent": 10,
+        "siteWinRate": 0.7
+      },
+      {
+        "recordId": "xal_7eebfc77c755b611f797",
+        "species": "hypnopet",
+        "archetype": null,
+        "hold": 7,
+        "holdRank": 87,
+        "poolSize": 87,
+        "sent": 11,
+        "siteWinRate": 0.7
+      },
+      {
+        "recordId": "xal_78c9d06055e0ae06774d",
+        "species": "luceras",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 52,
+        "poolSize": 87,
+        "sent": 16,
+        "siteWinRate": 0.6875
+      },
+      {
+        "recordId": "xal_7f98c3162494bde6a4eb",
+        "species": "yetimoth",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 8,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.6666666666666666
+      },
+      {
+        "recordId": "xal_5faf125a837253d4e0c3",
+        "species": "venemist",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 36,
+        "poolSize": 87,
+        "sent": 18,
+        "siteWinRate": 0.6666666666666666
+      },
+      {
+        "recordId": "xal_4d099844e9c91029b1eb",
+        "species": "foromeer",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 39,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.6666666666666666
+      },
+      {
+        "recordId": "xal_786da35ea88d8e196a1a",
+        "species": "vespersyn",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 73,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.6666666666666666
+      },
+      {
+        "recordId": "xal_24f2a1b0dfaaff1a0320",
+        "species": "akinza",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 74,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.6666666666666666
+      },
+      {
+        "recordId": "xal_0a396bce340e8ba31f17",
+        "species": "venemist",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 38,
+        "poolSize": 87,
+        "sent": 17,
+        "siteWinRate": 0.6470588235294118
+      },
+      {
+        "recordId": "xal_9ca4a6109bdf24553fc0",
+        "species": "fathomaw",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 6,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.6428571428571429
+      },
+      {
+        "recordId": "xal_db2ea3cf8a8d23e7ee37",
+        "species": "hippochamp",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 41,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.6428571428571429
+      },
+      {
+        "recordId": "xal_a32c48fc84b7e357066f",
+        "species": "figzy",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 71,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.6363636363636364
+      },
+      {
+        "recordId": "xal_3bd33f123a80b09888e4",
+        "species": "xylum",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 28,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.6153846153846154
+      },
+      {
+        "recordId": "xal_322cb6e06a68629aec64",
+        "species": "figzy",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 70,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.6153846153846154
+      },
+      {
+        "recordId": "xal_394ad9654a01a400a3f4",
+        "species": "foromeer",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 44,
+        "poolSize": 87,
+        "sent": 18,
+        "siteWinRate": 0.6111111111111112
+      },
+      {
+        "recordId": "xal_f6c972022b28cf002c0e",
+        "species": "newtapede",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 51,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.6
+      },
+      {
+        "recordId": "xal_edd790605f4a8fb70dd1",
+        "species": "bioflim",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 24,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.5833333333333334
+      },
+      {
+        "recordId": "xal_5d8ea551311f7feb7e58",
+        "species": "luceras",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 47,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.5833333333333334
+      },
+      {
+        "recordId": "xal_c754b9cc6f8ee4bcec81",
+        "species": "codazzo",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 57,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.5833333333333334
+      },
+      {
+        "recordId": "xal_be2f93831fcc2705d763",
+        "species": "voltish",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 29,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.5714285714285714
+      },
+      {
+        "recordId": "xal_241bd51f7fb361b27fe5",
+        "species": "dromeus",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 37,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.5384615384615384
+      },
+      {
+        "recordId": "xal_b21acf6317477570b1bd",
+        "species": "crystorn",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 26,
+        "poolSize": 87,
+        "sent": 17,
+        "siteWinRate": 0.5294117647058824
+      },
+      {
+        "recordId": "xal_ab7dcce83bb3e7d543fa",
+        "species": "terragoyle",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 7,
+        "poolSize": 87,
+        "sent": 18,
+        "siteWinRate": 0.5
+      },
+      {
+        "recordId": "xal_c2e4e2d9bbaf9b4e58e6",
+        "species": "frackworm",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 9,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.5
+      },
+      {
+        "recordId": "xal_e53831930395407f603f",
+        "species": "graviclaw",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 15,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.5
+      },
+      {
+        "recordId": "xal_39a6095fd2562922c2a5",
+        "species": "terragoyle",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 4,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.4666666666666667
+      },
+      {
+        "recordId": "xal_d8fe60a1e8566915be06",
+        "species": "graviclaw",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 21,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.46153846153846156
+      },
+      {
+        "recordId": "xal_f63ee35fd4df33fb0599",
+        "species": "thirstaserp",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 49,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.46153846153846156
+      },
+      {
+        "recordId": "xal_dd15db5dc5387da21977",
+        "species": "sonalloy",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 35,
+        "poolSize": 87,
+        "sent": 11,
+        "siteWinRate": 0.45454545454545453
+      },
+      {
+        "recordId": "xal_7b04c36b6cceb03a9c08",
+        "species": "frackworm",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 2,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.42857142857142855
+      },
+      {
+        "recordId": "xal_d46cb589ff9d9716efcf",
+        "species": "scalatto",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 23,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.42857142857142855
+      },
+      {
+        "recordId": "xal_577d79ca94758218e67f",
+        "species": "chromocat",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 50,
+        "poolSize": 87,
+        "sent": 14,
+        "siteWinRate": 0.42857142857142855
+      },
+      {
+        "recordId": "xal_1ec2913a389197c9cb1d",
+        "species": "hippochamp",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 32,
+        "poolSize": 87,
+        "sent": 19,
+        "siteWinRate": 0.42105263157894735
+      },
+      {
+        "recordId": "xal_689cb006e31de586a16b",
+        "species": "avilily",
+        "archetype": null,
+        "hold": 7,
+        "holdRank": 81,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.38461538461538464
+      },
+      {
+        "recordId": "xal_25cc14eed4a2d7650106",
+        "species": "scalatto",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 5,
+        "poolSize": 87,
+        "sent": 16,
+        "siteWinRate": 0.375
+      },
+      {
+        "recordId": "xal_a2b8f6f406c9a35523cc",
+        "species": "kosanos",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 19,
+        "poolSize": 87,
+        "sent": 19,
+        "siteWinRate": 0.3684210526315789
+      },
+      {
+        "recordId": "xal_76bb8a8ded3b5eda0bea",
+        "species": "yetimoth",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 3,
+        "poolSize": 87,
+        "sent": 11,
+        "siteWinRate": 0.36363636363636365
+      },
+      {
+        "recordId": "xal_98ee51cdaaa8b884bef4",
+        "species": "sonalloy",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 27,
+        "poolSize": 87,
+        "sent": 11,
+        "siteWinRate": 0.36363636363636365
+      },
+      {
+        "recordId": "xal_511c980bae43aa2fb0a9",
+        "species": "vespersyn",
+        "archetype": null,
+        "hold": 7,
+        "holdRank": 80,
+        "poolSize": 87,
+        "sent": 11,
+        "siteWinRate": 0.36363636363636365
+      },
+      {
+        "recordId": "xal_00a7aa74ff709aed2b71",
+        "species": "voltish",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 25,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.3333333333333333
+      },
+      {
+        "recordId": "xal_912f4ad6a81bdc0762ac",
+        "species": "hippochamp",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 31,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.3333333333333333
+      },
+      {
+        "recordId": "xal_1a54fe5713f1fe863003",
+        "species": "tizzie",
+        "archetype": null,
+        "hold": 8,
+        "holdRank": 69,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.3333333333333333
+      },
+      {
+        "recordId": "xal_dcab321ca4937be51f52",
+        "species": "graviclaw",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 11,
+        "poolSize": 87,
+        "sent": 16,
+        "siteWinRate": 0.3125
+      },
+      {
+        "recordId": "xal_080d6b3838f5982143cd",
+        "species": "neph",
+        "archetype": null,
+        "hold": 10,
+        "holdRank": 46,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.3076923076923077
+      },
+      {
+        "recordId": "xal_a8a289d7274a0bd32f29",
+        "species": "kosanos",
+        "archetype": null,
+        "hold": 13,
+        "holdRank": 16,
+        "poolSize": 87,
+        "sent": 15,
+        "siteWinRate": 0.26666666666666666
+      },
+      {
+        "recordId": "xal_b1405e6be4aa93b67533",
+        "species": "shuntara",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 30,
+        "poolSize": 87,
+        "sent": 19,
+        "siteWinRate": 0.2631578947368421
+      },
+      {
+        "recordId": "xal_32e279650a73f9e90c0f",
+        "species": "crystorn",
+        "archetype": null,
+        "hold": 12,
+        "holdRank": 34,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.25
+      },
+      {
+        "recordId": "xal_4a3649f687d017188f20",
+        "species": "kosanos",
+        "archetype": null,
+        "hold": 14,
+        "holdRank": 12,
+        "poolSize": 87,
+        "sent": 12,
+        "siteWinRate": 0.16666666666666666
+      },
+      {
+        "recordId": "xal_824507b56e0f172c9b04",
+        "species": "neph",
+        "archetype": null,
+        "hold": 11,
+        "holdRank": 42,
+        "poolSize": 87,
+        "sent": 13,
+        "siteWinRate": 0.07692307692307693
+      }
+    ],
+    "higherMeanHoldWinRate": {
+      "p": 0.5833333333333334,
+      "n": 48,
+      "lo": 0.4438609479077722,
+      "hi": 0.7228057187588945
+    },
+    "higherMeanSpeedWinRate": {
+      "p": 0.42,
+      "n": 50,
+      "lo": 0.28319256160573725,
+      "hi": 0.5568074383942627
+    }
+  },
+  "worlds": {
+    "Floria": {
+      "timesDrawn": 29,
+      "tieRate": {
+        "p": 0,
+        "n": 28,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 5,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Poseidas": {
+      "timesDrawn": 34,
+      "tieRate": {
+        "p": 0,
+        "n": 33,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.264705882352941,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Magmuth": {
+      "timesDrawn": 38,
+      "tieRate": {
+        "p": 0,
+        "n": 38,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 3.8157894736842097,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Phantiri": {
+      "timesDrawn": 33,
+      "tieRate": {
+        "p": 0.03225806451612903,
+        "n": 31,
+        "lo": 0,
+        "hi": 0.09445574055499426
+      },
+      "downsPerSite": 4.393939393939394,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Veridium": {
+      "timesDrawn": 27,
+      "tieRate": {
+        "p": 0,
+        "n": 25,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 5.370370370370369,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Luminax": {
+      "timesDrawn": 35,
+      "tieRate": {
+        "p": 0,
+        "n": 34,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.142857142857143,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Stonera": {
+      "timesDrawn": 34,
+      "tieRate": {
+        "p": 0,
+        "n": 32,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.264705882352941,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Zolton": {
+      "timesDrawn": 35,
+      "tieRate": {
+        "p": 0,
+        "n": 32,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.142857142857143,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Grimedes": {
+      "timesDrawn": 35,
+      "tieRate": {
+        "p": 0,
+        "n": 34,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.142857142857143,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Endessa": {
+      "timesDrawn": 25,
+      "tieRate": {
+        "p": 0,
+        "n": 25,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 5.8,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Drainov": {
+      "timesDrawn": 32,
+      "tieRate": {
+        "p": 0,
+        "n": 31,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.53125,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Krystos": {
+      "timesDrawn": 32,
+      "tieRate": {
+        "p": 0,
+        "n": 31,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.53125,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Telypso": {
+      "timesDrawn": 31,
+      "tieRate": {
+        "p": 0,
+        "n": 30,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.67741935483871,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    },
+    "Saiphus": {
+      "timesDrawn": 30,
+      "tieRate": {
+        "p": 0,
+        "n": 28,
+        "lo": 0,
+        "hi": 0
+      },
+      "downsPerSite": 4.833333333333333,
+      "homeElementPresent": false,
+      "homeElementSiteWinRate": null
+    }
+  },
+  "errors": []
+}

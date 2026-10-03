@@ -130,7 +130,23 @@ export interface Rules {
 	supportSteadies: boolean;
 	supportMend: number;
 	worldsPerFrame: number;
+	/*
+		The "plain" variant (docs/design/reclamation-one-number.md). 'graded' is the game as it has
+		always played; 'plain' makes hold the only number: a small whole hold, a three-step world
+		fit, fixed act hits moved one step by the element, and simultaneous exchanges.
+	*/
+	combat: CombatMode;
+	plainHoldDivisor: number;
+	plainHoldMin: number;
+	plainHoldMax: number;
+	plainStrike: number;
+	plainSweep: number;
+	plainMend: number;
+	plainExchanges: number;
+	plainElementStep: number;
 }
+
+export type CombatMode = 'graded' | 'plain';
 
 /*
 	When during Deploy a handler may stake a world (pass 6).
@@ -201,6 +217,8 @@ export interface HoldResult {
 	bolstered: boolean;
 	isHome: boolean;
 	matchup: number;
+	// plain rules only: the world fit step, +1 suits, 0 neutral, -1 hostile
+	fit?: number;
 }
 
 export type ActClass = 'contact' | 'reach' | 'projection' | 'support';
