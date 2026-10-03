@@ -299,7 +299,7 @@ for (p0, p1, s, fac, per, ph) in ARRIVALS:
     trail = '<polygon points="%s,%s %s,0 %s,%s" fill="url(#trail-fac%d)">%s</polygon>' % (f(20 * s), f(-2 * s), f(46 * s), f(20 * s), f(2 * s), fac, anim('opacity', '1;1;0;0', per, ph, '0;.48;.58;1'))
     skyfx.append('<!-- an arriving ship --><g opacity="0">%s<g>%s<g>%s<g%s>%s%s</g></g></g></g>' % (
         anim('opacity', '0;1;1;0;0', per, ph, '0;.06;.7;.76;1'),
-        trans('%s %s;%s %s;%s %s' % (f(p0[0]), f(p0[1]), f(p1[0]), f(p1[1]), f(p1[0]), f(p1[1])), per, ph, '0;.6;1'),
+        trans('%s %s;%s %s;%s %s' % (f(p0[0]), f(p0[1]), f(p1[0]), f(p1[1]), f(p1[0]), f(p1[1])), per, ph, '0;.6;1').replace('repeatCount', 'calcMode="spline" keySplines=".25 .1 .4 1;0 0 1 1" repeatCount'),
         rot('%s;%s;0;0' % (f(tilt), f(tilt)), per, ph, '0;.45;.6;1'),
         flip, trail, ship(s, 'fac%d' % fac)))
 
@@ -802,7 +802,9 @@ for (x_, y_, g_, sw) in [(lx, ly, 'lamp-elec', E_SWELL), (rx2, ry2, 'lamp-fire',
 # the electric power: a crackling column with a white-hot core and a deep blue rim, arcs flicking up and around it
 elec = ['<ellipse cx="0" cy="-64" rx="36" ry="88" fill="url(#lamp-elec)" opacity=".5" filter="url(#soft8)">%s</ellipse>' % anim('opacity', E_SWELL[0], FP, PH, E_SWELL[1], spline=True),
         '<path d="M-13 0 L-4 -100 L4 -100 L13 0 Z" fill="url(#elecCol)" stroke="#1e5a8a" stroke-width="1.6" opacity=".75" filter="url(#soft2)"/>',
-        '<path d="M-4 0 L-1 -96 L1 -96 L4 0 Z" fill="#f6fdff" opacity=".4" filter="url(#soft2)"/>']
+        '<path d="M-4 0 L-1 -96 L1 -96 L4 0 Z" fill="#f6fdff" opacity=".4" filter="url(#soft2)"/>',
+        '<path d="%s" stroke="#dff4ff" stroke-width="1.8" fill="none" opacity=".6" filter="url(#glow2)"/>' % jag_path(-2, -2, 3, -94, 9, 7, 61),
+        '<path d="%s" stroke="#dff4ff" stroke-width="1.8" fill="none" opacity="0" filter="url(#glow2)">%s</path>' % (jag_path(2, -2, -3, -90, 9, 8, 62), anim('opacity', '0;.7;0', .287, .041, '0;.5;1', calc='discrete'))]
 for j in range(5):
     x0 = (-1) ** j * (6 + 4 * j)
     d = jag_path(x0 * 1.4, -2, (-1) ** (j + 1) * (11 + 4 * j), -74 - 10 * j, 7, 12, 70 + j)
@@ -834,8 +836,9 @@ def bolt(p, u_on, u_end, values):
     half = len(p) // 2
     d1 = 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p[:half + 1])
     d2 = 'M' + ' L'.join('%s %s' % (f(a_), f(b_)) for a_, b_ in p[half:])
-    k1 = '0;%s;%s;%s;%s;%s;%s;1' % (f(u_on), f(u_on + .012), f(u_on + .02), f(u_on + .028), f(u_on + .036), f(u_end))
-    k2 = '0;%s;%s;%s;%s;%s;%s;1' % (f(u_on + .007), f(u_on + .012), f(u_on + .02), f(u_on + .028), f(u_on + .036), f(u_end))
+    tail = '%s;%s;%s;1' % (f(u_end), f(u_end + .008), f(u_end + .016))  # it dies in a flicker: .6, .25, then out
+    k1 = '0;%s;%s;%s;%s;%s;%s' % (f(u_on), f(u_on + .012), f(u_on + .02), f(u_on + .028), f(u_on + .036), tail)
+    k2 = '0;%s;%s;%s;%s;%s;%s' % (f(u_on + .007), f(u_on + .012), f(u_on + .02), f(u_on + .028), f(u_on + .036), tail)
     o = ''
     for d, k in ((d1, k1), (d2, k2)):
         o += '<path d="%s" stroke="%s" stroke-width="14" fill="none" opacity="0" filter="url(#soft4)">%s</path>' % (d, ELEC, anim('opacity', values, FP, PH, k, calc='discrete'))
@@ -873,10 +876,10 @@ fight.append('<!-- the fireball --><g opacity="0">%s<g>%s<g>%s<ellipse cx="22" r
     anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.22;.221;.32;.325;1', calc='discrete'),
     trans('%s %s;%s %s;%s %s;%s %s' % (f(fb0[0]), f(fb0[1]), f(fb0[0]), f(fb0[1]), f(mx + 8), f(my), f(mx + 8), f(my)), FP, PH, '0;.25;.32;1'),
     trans('0 0;0 0;1 1;1 1', FP, PH, '0;.22;.25;1', typ='scale')))
-fight.append('<!-- the answering bolt -->' + bolt(jag_pts(lx + 12 * PS, ly - 60 * PS, mx - 12, my, 12, 9, 93, bow=0), .307, .37, '0;1;.35;1;.5;1;0;0'))
+fight.append('<!-- the answering bolt -->' + bolt(jag_pts(lx + 12 * PS, ly - 60 * PS, mx - 12, my, 12, 9, 93, bow=0), .307, .37, '0;1;.35;1;.5;1;.6;.25;0;0'))
 fight += clash(.32, 'one')
 # exchange two: the lightning strikes at the fire, the fire answers with a jet of flame; they meet in the middle
-fight.append('<!-- the lightning strike -->' + bolt(jag_pts(lx + 14 * PS, ly - 74 * PS, mx - 6, my - 4, 13, 10, 97, bow=8), .79, .86, '0;1;.4;1;.5;1;0;0'))
+fight.append('<!-- the lightning strike -->' + bolt(jag_pts(lx + 14 * PS, ly - 74 * PS, mx - 6, my - 4, 13, 10, 97, bow=8), .79, .86, '0;1;.4;1;.5;1;.6;.25;0;0'))
 j0 = (rx2 - 16 * PS, ry2 - 92 * PS)  # the jet leaves from the top of the flame
 jl = math.hypot(mx + 12 - j0[0], my - j0[1])
 ja = math.degrees(math.atan2(my - j0[1], (mx + 12) - j0[0]))
@@ -895,7 +898,7 @@ core = '<path d="M0 -1.5 Q%s -5 %s 0 Q%s 5 0 1.5 Z" fill="#ffd060" opacity=".9" 
 jet = ('<path d="%s" fill="url(#jetFill)" filter="url(#soft2)"/>' % jet_shape(80)
        + '<path d="%s" fill="url(#jetFill)" filter="url(#soft2)" opacity="0">%s</path>' % (jet_shape(81), anim('opacity', '0;.6;0', .157, .03, '0;.5;1', calc='discrete')) + core)
 fight.append('<!-- the jet of flame --><g transform="translate(%s %s) rotate(%s)"><g opacity="0">%s<g>%s%s</g></g></g>' % (
-    f(j0[0]), f(j0[1]), f(ja), anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.777;.778;.83;.86;1', calc='discrete'), trans('0 1;0 1;1 1;1 1', FP, PH, '0;.777;.799;1', typ='scale'), jet))
+    f(j0[0]), f(j0[1]), f(ja), anim('opacity', '0;0;1;1;0;0', FP, PH, '0;.777;.778;.835;.875;1'), trans('0 1;0 1;1 1;1 1;.5 1;.5 1', FP, PH, '0;.777;.799;.835;.875;1', typ='scale'), jet))
 fight += clash(.82, 'two')
 # the crowd's roar after each clash: the crowd's lights swell and a warm band of light runs around the tiers, then settle
 fight.append('<!-- the roar --><g opacity="0">%s%s</g>' % (anim('opacity', '0;0;.9;.3;0;0;.9;.3;0;0', FP, PH, '0;.33;.38;.47;.57;.83;.88;.95;.99;1'), ''.join(crowd_roar)))

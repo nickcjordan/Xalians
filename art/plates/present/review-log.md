@@ -79,3 +79,11 @@ Every round 4 finding confirmed fixed at site size. Polish:
 2. The thread's end crossed the card's face when the card was wide: it now stops at the card's widest edge, and a stub that follows the card's turn carries it in to the edge when the card is narrow.
 3. The deck's back edge crossed the lower tiers: a low parapet along its back edge makes it a raised platform in front of the arena.
 4. The token's flare landed on clash two: the pulse now arrives about a second later (about t 4.4 s).
+
+## Round 6 (fresh reviewer, cold gate): 8
+
+Gate not passed: the end of each exchange cut out in one frame. What was done:
+1. The jet and both bolts vanished in a single frame: bolts now die in a flicker (.6, .25, then out over about 0.12 s); the jet holds, then draws back toward its root to half length and fades over about 0.3 s.
+2. Ships stopped dead on their decks: the approach eases out as each ship settles.
+3. Between crackles the electric power was a smooth blue cone: a faint jagged arc stays on its column at all times, with a second one flickering over it, under the flicking arcs.
+4. Two warm glows in the near city with no visible source, and the jet appearing 0.08 s before the strike it answers: invisible at site size, left.
