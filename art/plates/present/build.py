@@ -936,9 +936,15 @@ g_jetw = lin([(0, '#2a78c0', .9), (.6, '#4aa8e8', .95), (1, '#dff4ff', 1)], 0, 0
 for (a, t_, kind, ul, uh) in ATTACKS:
     p0, c_t = front(a), SQUAD[t_]
     if a in ('plant', 'water'):
-        p0 = (SQUAD[a]['x'] - SQUAD[a]['side'] * 14, p0[1] - 64)  # the middle row throws up from above its own head, clear of the front creature
+        p0 = (SQUAD[a]['x'] - (SQUAD[a]['side'] * 14 if a == 'plant' else 0), p0[1] - 64)  # the middle row throws up from above its own head, clear of the front creature
     p1 = (c_t['x'] - c_t['side'] * 4, c_t['y'] - 20 * c_t['s'])
     tag = '<!-- %s: %s at %s -->' % (kind, a, t_)
+    if a in ('plant', 'water'):
+        hd = front(a)
+        fight.append('<!-- the throw rising from %s --><path d="M%s %s L%s %s" stroke="%s" stroke-width="5" stroke-linecap="round" opacity="0" filter="url(#soft2)">%s</path>' % (
+            a, f(hd[0]), f(hd[1]), f(p0[0]), f(p0[1]), SQUAD[a]['c'], anim('opacity', '0;0;.7;0;0', FP, PH, ku(ul - .008, ul, ul + .012))))
+    if kind == 'stone':
+        p1 = (c_t['x'] - c_t['side'] * 4, c_t['y'] - 30 * c_t['s'])
     if kind == 'bolt':
         fight.append(tag + bolt(jag_pts(p0[0], p0[1], p1[0], p1[1], 18, 15, 93), ul, uh + .02, BOLT_V))
     elif kind == 'ball':
@@ -1101,7 +1107,7 @@ def pieces(items):
 def layer(id_, body, role=False):
     head = '<svg class="layer" id="layer-%s" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"' % (id_, W, H)
     if role:
-        head += ' role="img" aria-labelledby="scene-title scene-desc">\n  <title id="scene-title">An arena on Valleron</title>\n  <desc id="scene-desc">Under King Kozrak\'s citadel, with the Mercurius Machine burning gold at its crown, a packed arena watches two powers clash on its floor, while a Scrambler Token shown in light hangs above it as the prize and ships from across the galaxy come down to the city.</desc>\n'
+        head += ' role="img" aria-labelledby="scene-title scene-desc">\n  <title id="scene-title">An arena on Valleron</title>\n  <desc id="scene-desc">Under King Kozrak\'s citadel, with the Mercurius Machine burning gold at its crown, a packed arena watches two squads of creatures, small shapes in the colors of their elements, trade attacks on its floor until the attacks of their leaders meet in a flash, while a Scrambler Token shown in light hangs above it as the prize and ships from across the galaxy come down to the city.</desc>\n'
     else:
         head += ' aria-hidden="true">\n'
     return head + body + '\n</svg>\n'

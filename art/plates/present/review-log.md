@@ -158,3 +158,12 @@ Round 12's fixes held, but the lower lobs brought two attacks back through bysta
 3. Ice's shards grazed fire's head: the shards rise higher.
 4. The figure fade: a faint line showed at the top of beat 03 on a laptop (the backdrop's edge where the mask had not reached zero): the fall-off is steeper (exponent 3).
 5. Comment timing aligned; ice and water both blue: left (opposite sides).
+
+## Round 14 (fresh reviewer, cold gate): 9
+
+Every lob was measured against every bystander and the king's box: all clear. The gate failed only on stale text: the plate's built-in screen-reader description still said "two powers clash". What was done:
+1. The description now names the two squads of creatures and their leaders' attacks meeting; the stale comment in home.tsx too.
+2. Water throws from above its own head, not rock's.
+3. A faint streak rises from each middle-row thrower's head to where its lob begins, so the darts and the globe no longer appear from nowhere.
+4. The stone aims higher on storm.
+5. The great fireball over fire's head for 0.2 s: left; it reads as fire charging up.
