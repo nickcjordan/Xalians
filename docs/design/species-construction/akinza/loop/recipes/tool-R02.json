@@ -612,7 +612,7 @@
       "component": "head",
       "kind": "head",
       "regions": ["R02"],
-      "script": "art/species-construction/author_face_parts.py",
+      "script": "art/species-construction/author_face_parts_v2.py",
       "runner": "blender",
       "inputs": {
         "scene": "H35",
@@ -621,17 +621,17 @@
       "args": [
         "--scene", "{scene}/head.blend",
         "--donor", "{donor}/head.blend",
-        "--spec", "{repo}/art/species-construction/specs/r02_face_parts.json",
+        "--spec", "{repo}/art/species-construction/specs/r02_face_parts_v2b.json",
         "--out", "{out}"
       ],
       "note": "round 22, R02 tool: face parts at mesh precision after the last head step. Replaces the face window of the scene skin by a fine remesh of the donor skin with the orbit carved, tufts unioned and the nose shell wrapped, and rebuilds the globes and irises. Control parameters: the r10e face. See art/species-construction/author_face_parts.py.",
       "pins": {
-        "art/species-construction/author_face_parts.py": "d1a6a833198cab44a471c31588b2c53e7496472781d731642519be12b6ea6b21",
+        "art/species-construction/author_face_parts_v2.py": "2876270ecd59ef9e5f66bd8d0a06b1a4ac641545f0fb11eef4c1231c7f46da8c",
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
         "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
         "art/species-construction/fan_clumps_fast_common.py": "7a4d3b179bed2adbe92709eb2ae4812fec414340f06c88d51af3d978ac973414",
-        "art/species-construction/specs/r02_face_parts.json": "62d60cf328b779e7a45beaa302117ea9242a2597502a7a2679c4a5b2948fbc3f",
+        "art/species-construction/specs/r02_face_parts_v2b.json": "15ed3f0ff978293fa28232de1d77bb6a410c26a184776b2628765f0925b76ac4",
         "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
         "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
       }
