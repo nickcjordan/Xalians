@@ -1,0 +1,21 @@
+{
+  "order": {
+    "round": 25,
+    "region": "R07",
+    "with": []
+  },
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2675",
+  "start": null,
+  "variants": [
+    {
+      "name": "baseline control",
+      "why": "Placeholder: the round 22 v04 branch does not rebase onto the current B-23 args (both changed the spec path), and its lobe paw read as a closed fist with one claw column. The fix is a new digit-chain paw mode in rebuild_arms_field.py (needsCode); the next plan sweeps its keys.",
+      "control": true,
+      "edits": []
+    }
+  ],
+  "sweeps": [],
+  "region": "R07",
+  "top": 1
+}

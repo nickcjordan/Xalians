@@ -1,0 +1,548 @@
+{
+  "order": {
+    "round": 25,
+    "region": "R02",
+    "with": []
+  },
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2675",
+  "start": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/plan-2728/v03.json",
+  "variants": [
+    {
+      "name": "control v03",
+      "control": true,
+      "why": "Readers' candidate unchanged (continuous thick rim, three soft locks). Anchors what the readers liked and what the judge counted against it (R02.1 and R02.6 pass to partial).",
+      "edits": []
+    },
+    {
+      "name": "heavy top lid",
+      "why": "R02.6 critic: the upper lid has no dark line at top centre (grey shelf) while the bottom carries a heavy black line, so the ring is nearly uniform. Band table re-weighted to 9 to 9.5 percent over the top centre and upper outer, tapering to 2.0 along the bottom; the lowest value stays 1.8 so the rim stays continuous (the readers' praise). Late edit, F-parts only.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              9.0
+            ],
+            [
+              30,
+              9.5
+            ],
+            [
+              60,
+              8.5
+            ],
+            [
+              90,
+              5.0
+            ],
+            [
+              120,
+              3.4
+            ],
+            [
+              150,
+              2.4
+            ],
+            [
+              180,
+              2.0
+            ],
+            [
+              -150,
+              1.8
+            ],
+            [
+              -120,
+              1.8
+            ],
+            [
+              -90,
+              2.8
+            ],
+            [
+              -60,
+              4.5
+            ],
+            [
+              -30,
+              6.5
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "moderate top lid",
+      "why": "Same as heavy top lid but gentler (8 at top, 2.0 to 2.3 at the bottom) in case 9 percent reads as a scowl; keeps a rim at least 2 percent everywhere so it cannot break up on the inner and lower edge.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              8.0
+            ],
+            [
+              30,
+              8.6
+            ],
+            [
+              60,
+              7.8
+            ],
+            [
+              90,
+              4.8
+            ],
+            [
+              120,
+              3.6
+            ],
+            [
+              150,
+              2.8
+            ],
+            [
+              180,
+              2.3
+            ],
+            [
+              -150,
+              2.0
+            ],
+            [
+              -120,
+              2.0
+            ],
+            [
+              -90,
+              3.0
+            ],
+            [
+              -60,
+              4.2
+            ],
+            [
+              -30,
+              5.6
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "heavy top lid plus larger iris",
+      "why": "R02.1 critic: iris small and dead centre, a thin sliver in profile. Iris semi widened from .0555 by .094 to .066 by .100 with the pupil scaled, lens front raised .005 to .008 so it shows as a third of the profile width, on top of the heavy top lid.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              9.0
+            ],
+            [
+              30,
+              9.5
+            ],
+            [
+              60,
+              8.5
+            ],
+            [
+              90,
+              5.0
+            ],
+            [
+              120,
+              3.4
+            ],
+            [
+              150,
+              2.4
+            ],
+            [
+              180,
+              2.0
+            ],
+            [
+              -150,
+              1.8
+            ],
+            [
+              -120,
+              1.8
+            ],
+            [
+              -90,
+              2.8
+            ],
+            [
+              -60,
+              4.5
+            ],
+            [
+              -30,
+              6.5
+            ]
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.semi",
+          "value": [
+            0.066,
+            0.1
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.pupil",
+          "value": [
+            0.035,
+            0.044
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.lensFront",
+          "value": 0.008
+        }
+      ]
+    },
+    {
+      "name": "top lid iris gaze",
+      "why": "As heavy top lid plus larger iris, with the gaze moved further toward the nose and down (offset -.016, -.009) so the stare is not dead centre (rank 20) and the iris reads more in front view.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              9.0
+            ],
+            [
+              30,
+              9.5
+            ],
+            [
+              60,
+              8.5
+            ],
+            [
+              90,
+              5.0
+            ],
+            [
+              120,
+              3.4
+            ],
+            [
+              150,
+              2.4
+            ],
+            [
+              180,
+              2.0
+            ],
+            [
+              -150,
+              1.8
+            ],
+            [
+              -120,
+              1.8
+            ],
+            [
+              -90,
+              2.8
+            ],
+            [
+              -60,
+              4.5
+            ],
+            [
+              -30,
+              6.5
+            ]
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.semi",
+          "value": [
+            0.066,
+            0.1
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.pupil",
+          "value": [
+            0.035,
+            0.044
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.lensFront",
+          "value": 0.008
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.offset",
+          "value": [
+            -0.016,
+            -0.009
+          ]
+        }
+      ]
+    },
+    {
+      "name": "top lid iris lateral opening",
+      "why": "R02.1 profile wedge: open the lateral orbit wall a little (lateralShear .3) so the profile aperture reads as a tall oval and the iris shows in profile, with heavy top lid and larger iris. Round 22 swept lateralShear alone (.2 to .9) and it scored low, but alone it did nothing for the lid or iris the critic named.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              9.0
+            ],
+            [
+              30,
+              9.5
+            ],
+            [
+              60,
+              8.5
+            ],
+            [
+              90,
+              5.0
+            ],
+            [
+              120,
+              3.4
+            ],
+            [
+              150,
+              2.4
+            ],
+            [
+              180,
+              2.0
+            ],
+            [
+              -150,
+              1.8
+            ],
+            [
+              -120,
+              1.8
+            ],
+            [
+              -90,
+              2.8
+            ],
+            [
+              -60,
+              4.5
+            ],
+            [
+              -30,
+              6.5
+            ]
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.semi",
+          "value": [
+            0.066,
+            0.1
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.pupil",
+          "value": [
+            0.035,
+            0.044
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.lensFront",
+          "value": 0.008
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.orbit.lateralShear",
+          "value": 0.3
+        }
+      ]
+    },
+    {
+      "name": "raised upper lid fold",
+      "why": "R02.6 and the spec's lid overhang: a swept fold on the upper half of the aperture (height .004 at top, falling to 0 at the sides, width .012) gives the upper lid weight by form rather than only by band width; with the moderate top lid table.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              8.0
+            ],
+            [
+              30,
+              8.6
+            ],
+            [
+              60,
+              7.8
+            ],
+            [
+              90,
+              4.8
+            ],
+            [
+              120,
+              3.6
+            ],
+            [
+              150,
+              2.8
+            ],
+            [
+              180,
+              2.3
+            ],
+            [
+              -150,
+              2.0
+            ],
+            [
+              -120,
+              2.0
+            ],
+            [
+              -90,
+              3.0
+            ],
+            [
+              -60,
+              4.2
+            ],
+            [
+              -30,
+              5.6
+            ]
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.fold",
+          "value": {
+            "height": [
+              [
+                -60,
+                0.0
+              ],
+              [
+                -30,
+                0.0015
+              ],
+              [
+                0,
+                0.004
+              ],
+              [
+                30,
+                0.004
+              ],
+              [
+                60,
+                0.0035
+              ],
+              [
+                100,
+                0.002
+              ],
+              [
+                140,
+                0.0
+              ]
+            ],
+            "width": [
+              [
+                -60,
+                0.006
+              ],
+              [
+                0,
+                0.012
+              ],
+              [
+                60,
+                0.012
+              ],
+              [
+                140,
+                0.006
+              ]
+            ],
+            "center": 0.0,
+            "blend": 0.003
+          }
+        }
+      ]
+    }
+  ],
+  "sweeps": [
+    {
+      "step": "F-parts",
+      "grid": {
+        "spec:eye.iris.semi": [
+          [
+            0.07,
+            0.105
+          ],
+          [
+            0.085,
+            0.12
+          ]
+        ]
+      },
+      "why": "Least sure parameter: how large the iris can grow before the eye reads as a dark disc. Wide range from the as-built .0555 by .094 up to about .085 by .12 (iris about 0.8 of the aperture width), with the thick continuous rim as built, so the effect on R02.1 and R02.6 shows separately from the lid table."
+    }
+  ],
+  "region": "R02",
+  "top": 3
+}

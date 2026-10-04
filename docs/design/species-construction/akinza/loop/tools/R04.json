@@ -1,136 +1,136 @@
 {
-  "region": "R04",
-  "ready": true,
-  "readerCheck": "pending: three blind readers compare the plan candidate (version 2) with the baseline (plans/tool-check-R04.json). Version 1 was rejected 0 to 3 (flat faceted central slab, seam band, mottled patch from behind); version 2 fixes the cause.",
-  "script": "art/species-construction/author_fan_lock_sweeps_v5.py (--part rear; the front part, R03, is unchanged and still lives in author_fan_lock_sweeps_v3/v4; v5 is the 2026-10-04 copy of author_fan_lock_sweeps.py whose rear route calls version 2 of the rear modules, default --bandwidth 18 for the rear)",
-  "modules": [
-    "art/species-construction/fan_lock_sweeps_rear_run_v2.py (Blender and OpenVDB wrapper, version 2 of fan_lock_sweeps_rear_run.py, which stays as version 1)",
-    "art/species-construction/fan_lock_sweeps_rear_v2.py (numpy only; version 2 of fan_lock_sweeps_rear.py; DEFAULTS documents every lever)",
-    "art/species-construction/fan_lock_sweeps_v3.py, fan_clumps_front_fast_v2.py, fan_clumps_fast_common.py (reused from the R03 tool, imported, not edited)"
-  ],
-  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R04.json",
-  "step": "H34S (regions R04, input base H33, script author_fan_lock_sweeps_v5.py), inserted after H34; H35 reads H34S as its scene (H34 stays in the recipe, nothing reads it)",
-  "spec": "art/species-construction/specs/r04_sweeps.json",
-  "inputs": [
-    "art/species-construction/specs/r04_clumps.json (round 20 kept clump table, unchanged)",
-    "art/species-construction/specs/r04_envelope.json (rear envelope of specs/R04.md section 3)"
-  ],
-  "interface": "blender -b --factory-startup --python art/species-construction/author_fan_lock_sweeps_v5.py -- --part rear --scene <H33 head.blend> --table specs/r04_clumps.json --envelope specs/r04_envelope.json --spec specs/r04_sweeps.json --out <dir>. Outputs head.blend, shape.glb, fan-sweeps.json (resolved levers, per lock length, tip radius, standoff and tip depth, rear face against the envelope, dome rows, cavity window intrusion, skinTopZ, components, nonManifoldEdges), source-snapshot/.",
-  "parameters": [
-    {
-      "name": "spec:paths.planSweep.extra",
-      "default": 0.0,
-      "what": "extra df (rearward) added to the outer wing locks, rising over u0 .16 to u1 .22; the spec asks .044 to .086 at u .20 to .28 (outer wing swept back in plan). Moves the profile shell; sweep .03 to .08."
-    },
-    {
-      "name": "spec:paths.profileLean.amount",
-      "default": 0.0,
-      "what": "E band leans back this much over its height (y0 .04 to y1 .16); the spec asks about .015"
-    },
-    {
-      "name": "spec:paths.tuftCeiling.yMin",
-      "default": 0.016,
-      "what": "crown tuft path points never above this row (the C tips must stay at least .01 below the front crown)"
-    },
-    {
-      "name": "spec:paths.kRootShift / kSweepDeg",
-      "default": [
-        0.006,
-        0.0
-      ],
-      "what": "K crown line roots shift toward the centerline; sweep the K clumps downward in the back view"
-    },
-    {
-      "name": "spec:section.p / spine / rollDeg / twistDeg / widthScale / thickScale",
-      "default": [
-        2.4,
-        0.45,
-        10.0,
-        6.0,
-        1.0,
-        1.0
-      ],
-      "what": "rounded section: superellipse exponent, raised spine on the rear face, per-lock roll and twist, global width and thickness scale"
-    },
-    {
-      "name": "spec:clumps",
-      "default": {
-        "?E1[234]": {
-          "lengthScale": 0.7
-        }
-      },
-      "what": "per-clump edits of the table by name or fnmatch pattern (lengthScale, widthScale, thickScale, path, standoff, ...). The default shortens the three lower neck-side E locks so the back width at .18 stays under R01.6; it moved R01.6 from 1.172 to 1.025"
-    },
-    {
-      "name": "spec:backing.inside / belowEnvelope",
-      "default": [
-        0.004,
-        0.006
-      ],
-      "what": "rear backing slab: rear face this far behind the deepest lock fronts, at least this far inside the envelope"
-    },
-    {
-      "name": "spec:union.rootBand / rootCap / burial",
-      "default": [
-        0.035,
-        0.02,
-        0.0
-      ],
-      "what": "root band where locks are joined smoothly to the head, how far each solid is carried into the head, extra root burial"
-    },
-    {
-      "name": "spec:dome.blur",
-      "default": 6,
-      "what": "dome heightfield blur (voxels) inside the crease, crest held; 0 turns it off"
-    },
-    {
-      "name": "spec:strip.depth / cutSmooth / edge / crown",
-      "default": [
-        0.03,
-        3,
-        0.019,
-        0.052
-      ],
-      "what": "how deep the old rear coat is cleared, cut smoothing, nape and crown fades"
-    },
-    {
-      "name": "spec:voxel",
-      "default": 0.0025,
-      "what": "grid size (figure heights, head-local scaled by the tool). .0018 raised the R05 neck excess to .0034 and cost R01.1 a hair; .002 left R05 at .0020"
-    },
-    {
-      "name": "spec:layers[i].standoff / undercut / rootBlend / lengthScale",
-      "default": "edge .008, middle .004, band .002, crown 0, tuft 0",
-      "what": "layer stack: tip standoff toward the head per layer (E under M, T under I under K under C), undercut of the lower flank, root blend; lists are edited whole through recipe set --spec, not by index sweeps"
-    },
-    {
-      "name": "spec:union.bandShare",
-      "default": 1.0,
-      "what": "the root blend radius never exceeds this times (band - |d|) so the blend is continuous at the edge of each lock's voxel box; 1.0 is the safe value, lower shrinks every root blend"
-    },
-    {
-      "name": "spec:dome.overlap",
-      "default": 0.03,
-      "what": "head-local distance each wing's dome blur reaches across the centerline, so the middle is finished by the other wing's pass with no seam"
-    },
-    {
-      "name": "--bandwidth (CLI, not spec)",
-      "default": 18,
-      "what": "narrow band half width in voxels (band = bandwidth x voxel); keep band at or above the widest root blend (.012 figure heights = .045 head-local), else every lock's voxel box leaves a step in the field"
-    }
-  ],
-  "checks": {
-    "build": "H34S version 2 (about 45 s), H35, assembly assembled-2725; check pass; plan tool-check-R04 candidate.",
-    "contain": "H34S flags only R05 (neck-join vertices, same as version 1, known, marginal); H35 clean.",
-    "quick": "measured against baseline 2675 (plan result): R04.1 back head IoU .9275 -> .9165 (pass, target .91), R04.2 .0459 -> .0454 (pass), R01.1 .906 -> .9014 (pass), R01.2 pass, R01.6 1.108 -> 1.025 (pass), R03.1 and R03.2 pass, I09 pass. No criterion newly failing.",
-    "seam_check": "candidate summary: no new seams flagged. Blender clay close-up of the head from behind (render_head_clay.py head-back) shows no box edge, ghost rectangle or centerline seam.",
-    "sweep": "recipe.py sweep tool-R04-sweep3 on spec:paths.planSweep.extra .05 and spec:clumps (E12 to E14 .7): extra .05 moves the picture (changed .22) and the fit (iou .91794 against .91889); clumps moves fitIou and the lower fringe. sweep6 on spec:dome.blur 12 and spec:strip.cutSmooth 6 barely moves anything (silhouette change .00006 and .00002): they are surface-only levers.",
-    "images": "Version 1 fault found in a 1400 px clay render from behind: faint rectangles (the voxel boxes of the I and K locks) and a hairline down the dome centre. Cause: the root blend radius (I and K .012 figure heights = .045 head-local) was wider than the band (12 voxels x .0025 = .030), so smin(cur, d, k) stepped the field by up to k/4 at the edge of every lock's voxel box, smearing a flat, seamed slab over the inner wing roots; and the dome blur's centerline weight ramp left the middle unblurred on both wings. Version 2: blend radius <= band - |d|, bandwidth 18, dome ramp overlapping the centerline. m02, m04, m05 beside the baseline: locks read as overlapping rounded shingles with pointed tips, no seam band."
+ "region": "R04",
+ "ready": true,
+ "readerCheck": "worse: From behind and in rear oblique, B's fan reads as rounder overlapping lock bodies with fewer hard spikes along the upper rim and crown than A, which is closer to the soft, swept mass in the Reference. | From behind, B's fan locks lie flatter and overlap more like shingles, with fewer upright spikes ",
+ "script": "art/species-construction/author_fan_lock_sweeps_v5.py (--part rear; the front part, R03, is unchanged and still lives in author_fan_lock_sweeps_v3/v4; v5 is the 2026-10-04 copy of author_fan_lock_sweeps.py whose rear route calls version 2 of the rear modules, default --bandwidth 18 for the rear)",
+ "modules": [
+  "art/species-construction/fan_lock_sweeps_rear_run_v2.py (Blender and OpenVDB wrapper, version 2 of fan_lock_sweeps_rear_run.py, which stays as version 1)",
+  "art/species-construction/fan_lock_sweeps_rear_v2.py (numpy only; version 2 of fan_lock_sweeps_rear.py; DEFAULTS documents every lever)",
+  "art/species-construction/fan_lock_sweeps_v3.py, fan_clumps_front_fast_v2.py, fan_clumps_fast_common.py (reused from the R03 tool, imported, not edited)"
+ ],
+ "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R04.json",
+ "step": "H34S (regions R04, input base H33, script author_fan_lock_sweeps_v5.py), inserted after H34; H35 reads H34S as its scene (H34 stays in the recipe, nothing reads it)",
+ "spec": "art/species-construction/specs/r04_sweeps.json",
+ "inputs": [
+  "art/species-construction/specs/r04_clumps.json (round 20 kept clump table, unchanged)",
+  "art/species-construction/specs/r04_envelope.json (rear envelope of specs/R04.md section 3)"
+ ],
+ "interface": "blender -b --factory-startup --python art/species-construction/author_fan_lock_sweeps_v5.py -- --part rear --scene <H33 head.blend> --table specs/r04_clumps.json --envelope specs/r04_envelope.json --spec specs/r04_sweeps.json --out <dir>. Outputs head.blend, shape.glb, fan-sweeps.json (resolved levers, per lock length, tip radius, standoff and tip depth, rear face against the envelope, dome rows, cavity window intrusion, skinTopZ, components, nonManifoldEdges), source-snapshot/.",
+ "parameters": [
+  {
+   "name": "spec:paths.planSweep.extra",
+   "default": 0.0,
+   "what": "extra df (rearward) added to the outer wing locks, rising over u0 .16 to u1 .22; the spec asks .044 to .086 at u .20 to .28 (outer wing swept back in plan). Moves the profile shell; sweep .03 to .08."
   },
-  "notes": "Version 2 (2026-10-04, after the readers' 0 to 3 rejection of version 1). Version 1 files (author_fan_lock_sweeps.py rear route, fan_lock_sweeps_rear.py, fan_lock_sweeps_rear_run.py) stay as they were. Open for the first order: planSweep.extra .044 to .086 and profileLean about .015 per the spec; the R05 .002 excess at the nape; the I-row inner roots still blend into the dome (rootBlend .012), lower it if readers want the root locks more distinct.",
-  "debug": "--debug-owner and --export-locks as for the front part; sections written by the run to the output directory.",
-  "head": "H34S version 2 built inside the plan run, assembled-2725",
-  "assembly": "assembled-2725",
-  "packet": "untracked/species-construction/akinza/loop/packets/assembled-2725",
-  "checkPlan": "docs/design/species-construction/akinza/loop/plans/tool-check-R04.json"
+  {
+   "name": "spec:paths.profileLean.amount",
+   "default": 0.0,
+   "what": "E band leans back this much over its height (y0 .04 to y1 .16); the spec asks about .015"
+  },
+  {
+   "name": "spec:paths.tuftCeiling.yMin",
+   "default": 0.016,
+   "what": "crown tuft path points never above this row (the C tips must stay at least .01 below the front crown)"
+  },
+  {
+   "name": "spec:paths.kRootShift / kSweepDeg",
+   "default": [
+    0.006,
+    0.0
+   ],
+   "what": "K crown line roots shift toward the centerline; sweep the K clumps downward in the back view"
+  },
+  {
+   "name": "spec:section.p / spine / rollDeg / twistDeg / widthScale / thickScale",
+   "default": [
+    2.4,
+    0.45,
+    10.0,
+    6.0,
+    1.0,
+    1.0
+   ],
+   "what": "rounded section: superellipse exponent, raised spine on the rear face, per-lock roll and twist, global width and thickness scale"
+  },
+  {
+   "name": "spec:clumps",
+   "default": {
+    "?E1[234]": {
+     "lengthScale": 0.7
+    }
+   },
+   "what": "per-clump edits of the table by name or fnmatch pattern (lengthScale, widthScale, thickScale, path, standoff, ...). The default shortens the three lower neck-side E locks so the back width at .18 stays under R01.6; it moved R01.6 from 1.172 to 1.025"
+  },
+  {
+   "name": "spec:backing.inside / belowEnvelope",
+   "default": [
+    0.004,
+    0.006
+   ],
+   "what": "rear backing slab: rear face this far behind the deepest lock fronts, at least this far inside the envelope"
+  },
+  {
+   "name": "spec:union.rootBand / rootCap / burial",
+   "default": [
+    0.035,
+    0.02,
+    0.0
+   ],
+   "what": "root band where locks are joined smoothly to the head, how far each solid is carried into the head, extra root burial"
+  },
+  {
+   "name": "spec:dome.blur",
+   "default": 6,
+   "what": "dome heightfield blur (voxels) inside the crease, crest held; 0 turns it off"
+  },
+  {
+   "name": "spec:strip.depth / cutSmooth / edge / crown",
+   "default": [
+    0.03,
+    3,
+    0.019,
+    0.052
+   ],
+   "what": "how deep the old rear coat is cleared, cut smoothing, nape and crown fades"
+  },
+  {
+   "name": "spec:voxel",
+   "default": 0.0025,
+   "what": "grid size (figure heights, head-local scaled by the tool). .0018 raised the R05 neck excess to .0034 and cost R01.1 a hair; .002 left R05 at .0020"
+  },
+  {
+   "name": "spec:layers[i].standoff / undercut / rootBlend / lengthScale",
+   "default": "edge .008, middle .004, band .002, crown 0, tuft 0",
+   "what": "layer stack: tip standoff toward the head per layer (E under M, T under I under K under C), undercut of the lower flank, root blend; lists are edited whole through recipe set --spec, not by index sweeps"
+  },
+  {
+   "name": "spec:union.bandShare",
+   "default": 1.0,
+   "what": "the root blend radius never exceeds this times (band - |d|) so the blend is continuous at the edge of each lock's voxel box; 1.0 is the safe value, lower shrinks every root blend"
+  },
+  {
+   "name": "spec:dome.overlap",
+   "default": 0.03,
+   "what": "head-local distance each wing's dome blur reaches across the centerline, so the middle is finished by the other wing's pass with no seam"
+  },
+  {
+   "name": "--bandwidth (CLI, not spec)",
+   "default": 18,
+   "what": "narrow band half width in voxels (band = bandwidth x voxel); keep band at or above the widest root blend (.012 figure heights = .045 head-local), else every lock's voxel box leaves a step in the field"
+  }
+ ],
+ "checks": {
+  "build": "H34S version 2 (about 45 s), H35, assembly assembled-2725; check pass; plan tool-check-R04 candidate.",
+  "contain": "H34S flags only R05 (neck-join vertices, same as version 1, known, marginal); H35 clean.",
+  "quick": "measured against baseline 2675 (plan result): R04.1 back head IoU .9275 -> .9165 (pass, target .91), R04.2 .0459 -> .0454 (pass), R01.1 .906 -> .9014 (pass), R01.2 pass, R01.6 1.108 -> 1.025 (pass), R03.1 and R03.2 pass, I09 pass. No criterion newly failing.",
+  "seam_check": "candidate summary: no new seams flagged. Blender clay close-up of the head from behind (render_head_clay.py head-back) shows no box edge, ghost rectangle or centerline seam.",
+  "sweep": "recipe.py sweep tool-R04-sweep3 on spec:paths.planSweep.extra .05 and spec:clumps (E12 to E14 .7): extra .05 moves the picture (changed .22) and the fit (iou .91794 against .91889); clumps moves fitIou and the lower fringe. sweep6 on spec:dome.blur 12 and spec:strip.cutSmooth 6 barely moves anything (silhouette change .00006 and .00002): they are surface-only levers.",
+  "images": "Version 1 fault found in a 1400 px clay render from behind: faint rectangles (the voxel boxes of the I and K locks) and a hairline down the dome centre. Cause: the root blend radius (I and K .012 figure heights = .045 head-local) was wider than the band (12 voxels x .0025 = .030), so smin(cur, d, k) stepped the field by up to k/4 at the edge of every lock's voxel box, smearing a flat, seamed slab over the inner wing roots; and the dome blur's centerline weight ramp left the middle unblurred on both wings. Version 2: blend radius <= band - |d|, bandwidth 18, dome ramp overlapping the centerline. m02, m04, m05 beside the baseline: locks read as overlapping rounded shingles with pointed tips, no seam band."
+ },
+ "notes": "Version 2 (2026-10-04, after the readers' 0 to 3 rejection of version 1). Version 1 files (author_fan_lock_sweeps.py rear route, fan_lock_sweeps_rear.py, fan_lock_sweeps_rear_run.py) stay as they were. Open for the first order: planSweep.extra .044 to .086 and profileLean about .015 per the spec; the R05 .002 excess at the nape; the I-row inner roots still blend into the dome (rootBlend .012), lower it if readers want the root locks more distinct.",
+ "debug": "--debug-owner and --export-locks as for the front part; sections written by the run to the output directory.",
+ "head": "H34S version 2 built inside the plan run, assembled-2725",
+ "assembly": "assembled-2725",
+ "packet": "untracked/species-construction/akinza/loop/packets/assembled-2725",
+ "checkPlan": "docs/design/species-construction/akinza/loop/plans/tool-check-R04.json"
 }

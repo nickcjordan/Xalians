@@ -1,0 +1,310 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R04.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2722",
+ "order": {
+  "round": 25,
+  "region": "R04",
+  "with": []
+ },
+ "region": "R04",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2675",
+ "startNotes": [],
+ "top": [
+  {
+   "rank": 1,
+   "id": "v01",
+   "name": "tool as built",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2722\\v01.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2725",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2725",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 712952,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.906,
+     "after": 0.9014,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.2",
+     "region": "R01",
+     "before": 0.9315,
+     "after": 0.9323,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.6",
+     "region": "R01",
+     "before": 1.108,
+     "after": 1.025,
+     "bound": {
+      "max": 1.15
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.1",
+     "region": "R03",
+     "before": 1.021,
+     "after": 1.024,
+     "bound": {
+      "min": 0.97,
+      "max": 1.03
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0354,
+     "after": 0.0305,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.9275,
+     "after": 0.9165,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.2",
+     "region": "R04",
+     "before": 0.0459,
+     "after": 0.0454,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "I09",
+     "region": "R01",
+     "before": 1.8543,
+     "after": 1.854,
+     "bound": {
+      "expected": 1.8605
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "H34S": {
+     "flaggedRelative": [
+      "R05"
+     ],
+     "worst": [
+      {
+       "region": "R05",
+       "max": 0.00217,
+       "allowance": 0.002,
+       "excess": 0.00017,
+       "flagged": true
+      },
+      {
+       "region": "R06",
+       "max": 0.00041,
+       "allowance": 0.002,
+       "excess": -0.00159,
+       "flagged": false
+      }
+     ],
+     "error": null
+    },
+    "H35": {
+     "flaggedRelative": [],
+     "worst": [],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.04711,
+    "R02": 0.02225,
+    "R03": 0.04711,
+    "R04": 0.04711,
+    "R05": 0.01442,
+    "R06": 0.01442,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.02971
+   },
+   "verdict": "R04 measured: 2 changed; R01 measured: 4 changed; R03 measured: 2 changed; no new seams flagged; containment over allowance in R05; picture change R01 0.0471, R03 0.0471, R04 0.0471",
+   "wallMinutes": 7.3
+  }
+ ],
+ "baseline": {
+  "head": "head-2271",
+  "body": "body-2655",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2655",
+  "terms": {
+   "fitIou": 0.92472,
+   "fitIouByView": {
+    "front": 0.91196,
+    "left": 0.9343,
+    "back": 0.92789
+   },
+   "silhouetteChange": null,
+   "fitBand": "head",
+   "fitBandIou": 0.921,
+   "stationDiff": 0.12936,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "tool as built",
+   "why": "the rear lock sweeps starter as it stands, no edits: three blind readers compare it with the baseline before the tool counts as ready",
+   "source": "variant",
+   "edits": [],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2722\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "H34S",
+    "H35"
+   ],
+   "total": -2.53,
+   "parts": {
+    "fit": -0.533,
+    "station": -0.033,
+    "contain": -0.0,
+    "seam": -1.964,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.91939,
+    "fitIouByView": {
+     "front": 0.90627,
+     "left": 0.9353,
+     "back": 0.91659
+    },
+    "silhouetteChange": 0.02125,
+    "fitBand": "head",
+    "fitBandIou": 0.9158,
+    "stationDiff": 0.12969,
+    "seam": {
+     "worstRatio": 0.6267,
+     "at": "earFanRoot back needle",
+     "flagged": []
+    },
+    "criteria": {
+     "R04.1": {
+      "region": "R04",
+      "value": 0.9154,
+      "min": 0.9,
+      "max": null,
+      "result": "pass"
+     },
+     "R04.2": {
+      "region": "R04",
+      "value": 0.0488,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.6": {
+      "region": "R04",
+      "value": 1.044,
+      "min": null,
+      "max": 1.15,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.0,
+    "containRegion": null,
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": true,
+     "rows": []
+    }
+   },
+   "rank": 1,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "H34S": "head-2723",
+    "H35": "head-2724"
+   },
+   "contain": [],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2724__body-2655",
+   "head": "head-2724",
+   "body": "body-2655"
+  }
+ ],
+ "scoringSeconds": 110.4,
+ "wallMinutes": 9.3,
+ "surfaceStats": true,
+ "created": "2026-10-04T11:14:40",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R04-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R04-plan-result.png"
+ ]
+}
