@@ -200,3 +200,7 @@ Round 17's fixes confirmed. The lower lobs of round 16 had brought back plant's 
 1. The middle row throws up from above its head, so its darts and globe clear the front row by 5 to 8 units and still stay under the floor wall.
 2. Storm's small bolt launches later so it lands with its hit.
 3. Left as found: the great fireball's size (the clash, kept since round 16), darts and shards as streaks twice a creature's length (read as light at site size), a faint orange curve on the sand, all invisible or judgment calls at site size. The stale code comment about the creatures was rewritten.
+
+## Round 19 (fresh reviewer, cold gate): 9, "Nothing worth a round"
+
+Gate passed: clean checklist (22 items), no failing piece, no console errors on the page. Round 18's fixes confirmed: the darts and the globe clear the front row, storm's bolt lands with its hit. Left as found, invisible at site size: the thrown stone is the faintest attack, the great fireball is about three creatures wide (the clash, kept), bolt shapes only show zoomed in, fire's fireball glow brushes storm passing over, and the accepted dust ring, idle second and scorch curve.
