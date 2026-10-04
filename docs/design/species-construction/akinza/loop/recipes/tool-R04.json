@@ -29,9 +29,7 @@
     {
       "id": "H24",
       "component": "head",
-      "regions": [
-        "R01"
-      ],
+      "regions": ["R01"],
       "kind": "head",
       "script": "art/species-construction/shape_head_silhouette_field_r01.py",
       "runner": "blender",
@@ -39,30 +37,16 @@
         "base": "head-root"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--spec",
-        "{repo}/docs/design/species-construction/akinza/head-silhouette-0223.json",
-        "--out",
-        "{out}"
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/docs/design/species-construction/akinza/head-silhouette-0223.json",
+        "--out", "{out}"
       ],
       "existing": "head-0223",
       "note": "loop round 1, R01 head silhouette (script as run in round 1)",
       "expect": {
         "vertices": 1094807,
         "faces": 2185686,
-        "bounds": [
-          [
-            -0.976403,
-            -0.528674,
-            -0.356305
-          ],
-          [
-            0.977591,
-            0.527254,
-            0.357699
-          ]
-        ],
+        "bounds": [[-0.976403, -0.528674, -0.356305], [0.977591, 0.527254, 0.357699]],
         "record": {
           "file": "silhouette-shape.json",
           "key": "skinAfter",
@@ -87,9 +71,7 @@
     {
       "id": "H25",
       "component": "head",
-      "regions": [
-        "R01"
-      ],
+      "regions": ["R01"],
       "kind": "head",
       "script": "art/species-construction/shape_head_silhouette_field.py",
       "runner": "blender",
@@ -97,30 +79,16 @@
         "base": "H24"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--spec",
-        "{repo}/art/species-construction/specs/silhouette-r01-0260.json",
-        "--out",
-        "{out}"
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/silhouette-r01-0260.json",
+        "--out", "{out}"
       ],
       "existing": "head-0260",
       "note": "loop round 2 retry, R01; spec re-extracted from the data dir (identical to the copy embedded in head-0260/silhouette-shape.json); the helper head_r01_ops.py is today's file, which the run did not hash",
       "expect": {
         "vertices": 983630,
         "faces": 1963400,
-        "bounds": [
-          [
-            -0.97634,
-            -0.528606,
-            -0.356134
-          ],
-          [
-            0.977525,
-            0.534433,
-            0.357628
-          ]
-        ],
+        "bounds": [[-0.97634, -0.528606, -0.356134], [0.977525, 0.534433, 0.357628]],
         "record": {
           "file": "silhouette-shape.json",
           "key": "skinAfter",
@@ -146,9 +114,7 @@
     {
       "id": "H26",
       "component": "head",
-      "regions": [
-        "R02"
-      ],
+      "regions": ["R02"],
       "kind": "head",
       "script": "art/species-construction/rebuild_face_features_field_r04.py",
       "runner": "blender",
@@ -156,30 +122,16 @@
         "base": "H25"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--spec",
-        "{repo}/art/species-construction/specs/face-features-r04c.json",
-        "--out",
-        "{out}"
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/face-features-r04c.json",
+        "--out", "{out}"
       ],
       "existing": "head-0281",
       "note": "loop round 4, R02 face features (script as run in round 4); spec re-extracted from the data dir (identical to the embedded copy)",
       "expect": {
         "vertices": 974174,
         "faces": 1946586,
-        "bounds": [
-          [
-            -0.976359,
-            -0.528731,
-            -0.356256
-          ],
-          [
-            0.977621,
-            0.534415,
-            0.382993
-          ]
-        ],
+        "bounds": [[-0.976359, -0.528731, -0.356256], [0.977621, 0.534415, 0.382993]],
         "record": {
           "file": "face-features.json",
           "key": "skinAfter",
@@ -204,9 +156,7 @@
     {
       "id": "H27",
       "component": "head",
-      "regions": [
-        "R04"
-      ],
+      "regions": ["R04"],
       "kind": "head",
       "script": "art/species-construction/author_rear_lock_table_field_r06.py",
       "runner": "blender",
@@ -214,60 +164,31 @@
         "base": "H26"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--out",
-        "{out}",
-        "--table",
-        "{repo}/art/species-construction/specs/r04_locks.json",
-        "--blend",
-        "0.01",
-        "--lock-blend",
-        "0.006",
-        "--plate",
-        "0.014",
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_locks.json",
+        "--blend", "0.01",
+        "--lock-blend", "0.006",
+        "--plate", "0.014",
         "--dome-cut",
-        "--thick-scale",
-        "0.85",
-        "--width-scale",
-        "1.12",
-        "--d-lift",
-        "0.002",
-        "--tip-min",
-        "0.0022",
-        "0.0022",
-        "--max-island",
-        "5000",
-        "--tip-taper",
-        "0.7",
-        "--d-thick",
-        "0.6",
-        "--d-length",
-        "1.5",
-        "--taper-exp",
-        "1.0",
-        "--cut-smooth",
-        "2",
-        "--t-scale",
-        "1.4"
+        "--thick-scale", "0.85",
+        "--width-scale", "1.12",
+        "--d-lift", "0.002",
+        "--tip-min", "0.0022", "0.0022",
+        "--max-island", "5000",
+        "--tip-taper", "0.7",
+        "--d-thick", "0.6",
+        "--d-length", "1.5",
+        "--taper-exp", "1.0",
+        "--cut-smooth", "2",
+        "--t-scale", "1.4"
       ],
       "existing": "head-0318",
       "note": "loop round 6, R04 rear lock table with dome cut (script as run in round 6); flags derived from the recorded namespace in rear-lock-table.json",
       "expect": {
         "vertices": 990188,
         "faces": 1978602,
-        "bounds": [
-          [
-            -1.021064,
-            -0.528723,
-            -0.363855
-          ],
-          [
-            1.043223,
-            0.537555,
-            0.382993
-          ]
-        ],
+        "bounds": [[-1.021064, -0.528723, -0.363855], [1.043223, 0.537555, 0.382993]],
         "record": {
           "file": "rear-lock-table.json",
           "key": "skinAfter",
@@ -292,9 +213,7 @@
     {
       "id": "H28",
       "component": "head",
-      "regions": [
-        "R03"
-      ],
+      "regions": ["R03"],
       "kind": "head",
       "script": "art/species-construction/author_fan_front_lock_system_field_r07.py",
       "runner": "blender",
@@ -302,30 +221,16 @@
         "base": "H27"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--out",
-        "{out}",
-        "--spec",
-        "{repo}/art/species-construction/specs/R03-locks-r4e0b9dc8.md"
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/R03-locks-r4e0b9dc8.md"
       ],
       "existing": "head-0333",
       "note": "loop round 7, R03 fan front lock system, all defaults (script as run in round 7)",
       "expect": {
         "vertices": 1005909,
         "faces": 2006304,
-        "bounds": [
-          [
-            -1.020615,
-            -0.528712,
-            -0.36384
-          ],
-          [
-            1.042789,
-            0.537516,
-            0.382993
-          ]
-        ],
+        "bounds": [[-1.020615, -0.528712, -0.36384], [1.042789, 0.537516, 0.382993]],
         "record": {
           "file": "fan-front-lock-system.json",
           "key": "skinAfter",
@@ -350,9 +255,7 @@
     {
       "id": "H29",
       "component": "head",
-      "regions": [
-        "R02"
-      ],
+      "regions": ["R02"],
       "kind": "head",
       "script": "art/species-construction/rebuild_face_features_field.py",
       "runner": "blender",
@@ -360,30 +263,16 @@
         "base": "H25"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--spec",
-        "{repo}/art/species-construction/specs/face-features-r10e.json",
-        "--out",
-        "{out}"
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/face-features-r10e.json",
+        "--out", "{out}"
       ],
       "existing": "loop/scratch/r10/x-e",
       "note": "scratch donor of round 10, R02 (iteration e of five); branches from head-0260, not 0281; a scratch dir in the original run, a head-NNNN here",
       "expect": {
         "vertices": 973538,
         "faces": 1945404,
-        "bounds": [
-          [
-            -0.976228,
-            -0.528601,
-            -0.356126
-          ],
-          [
-            0.977512,
-            0.534283,
-            0.382247
-          ]
-        ],
+        "bounds": [[-0.976228, -0.528601, -0.356126], [0.977512, 0.534283, 0.382247]],
         "record": {
           "file": "face-features.json",
           "key": "skinAfter",
@@ -408,9 +297,7 @@
     {
       "id": "H30",
       "component": "head",
-      "regions": [
-        "R02"
-      ],
+      "regions": ["R02"],
       "kind": "head",
       "script": "art/species-construction/graft_face_field.py",
       "runner": "blender",
@@ -419,30 +306,16 @@
         "donor": "H29"
       },
       "args": [
-        "--base",
-        "{base}/head.blend",
-        "--donor",
-        "{donor}/head.blend",
-        "--out",
-        "{out}"
+        "--base", "{base}/head.blend",
+        "--donor", "{donor}/head.blend",
+        "--out", "{out}"
       ],
       "existing": "head-0375",
       "note": "loop round 10, R02 graft of the donor face into the fan-front head; default window",
       "expect": {
         "vertices": 998805,
         "faces": 1992118,
-        "bounds": [
-          [
-            -1.020337,
-            -0.528703,
-            -0.363824
-          ],
-          [
-            1.042573,
-            0.53746,
-            0.382015
-          ]
-        ],
+        "bounds": [[-1.020337, -0.528703, -0.363824], [1.042573, 0.53746, 0.382015]],
         "record": {
           "file": "graft.json",
           "key": "skinAfter",
@@ -466,9 +339,7 @@
     {
       "id": "H31",
       "component": "head",
-      "regions": [
-        "R04"
-      ],
+      "regions": ["R04"],
       "kind": "head",
       "script": "art/species-construction/author_rear_lock_table_field_r11.py",
       "runner": "blender",
@@ -476,72 +347,36 @@
         "base": "H30"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--out",
-        "{out}",
-        "--table",
-        "{repo}/art/species-construction/specs/r04_locks.json",
-        "--blend",
-        "0.01",
-        "--lock-blend",
-        "0.006",
-        "--rows",
-        "T,B1,B2,B3",
-        "--plate",
-        "0.014",
-        "--plate-fade",
-        "-0.002",
-        "0.016",
-        "--thick-scale",
-        "0.85",
-        "--width-scale",
-        "1.12",
-        "--tip-min",
-        "0.003",
-        "0.003",
-        "--max-island",
-        "5000",
-        "--tip-taper",
-        "0.7",
-        "--taper-exp",
-        "1.2",
-        "--cut-smooth",
-        "2",
-        "--t-scale",
-        "1.2",
-        "--len-scale",
-        "B2=1.15,B3=1.25",
-        "--len-jitter",
-        "0.3",
-        "--tip-point",
-        "0.5",
-        "--yaw",
-        "T=.006,B2=.010,B3=.008",
-        "--dir-jitter",
-        "6.0",
-        "--dir-jitter-rows",
-        "B2,B3",
-        "--edge-guard",
-        "0.006"
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_locks.json",
+        "--blend", "0.01",
+        "--lock-blend", "0.006",
+        "--rows", "T,B1,B2,B3",
+        "--plate", "0.014",
+        "--plate-fade", "-0.002", "0.016",
+        "--thick-scale", "0.85",
+        "--width-scale", "1.12",
+        "--tip-min", "0.003", "0.003",
+        "--max-island", "5000",
+        "--tip-taper", "0.7",
+        "--taper-exp", "1.2",
+        "--cut-smooth", "2",
+        "--t-scale", "1.2",
+        "--len-scale", "B2=1.15,B3=1.25",
+        "--len-jitter", "0.3",
+        "--tip-point", "0.5",
+        "--yaw", "T=.006,B2=.010,B3=.008",
+        "--dir-jitter", "6.0",
+        "--dir-jitter-rows", "B2,B3",
+        "--edge-guard", "0.006"
       ],
       "existing": "head-0387",
       "note": "loop round 11, R04 rear lock table, rows T,B1,B2,B3 (script exists only as head-0387/source-snapshot, committed as _r11); flags derived from the recorded namespace",
       "expect": {
         "vertices": 999179,
         "faces": 1996682,
-        "bounds": [
-          [
-            -1.005866,
-            -0.528694,
-            -0.363807
-          ],
-          [
-            1.030136,
-            0.537686,
-            0.381774
-          ]
-        ],
+        "bounds": [[-1.005866, -0.528694, -0.363807], [1.030136, 0.537686, 0.381774]],
         "record": {
           "file": "rear-lock-table.json",
           "key": "skinAfter",
@@ -566,9 +401,7 @@
     {
       "id": "H32",
       "component": "head",
-      "regions": [
-        "R04"
-      ],
+      "regions": ["R04"],
       "kind": "head",
       "script": "art/species-construction/carry_materials_field.py",
       "runner": "blender",
@@ -577,30 +410,16 @@
         "source": "H30"
       },
       "args": [
-        "--scene",
-        "{scene}/head.blend",
-        "--source",
-        "{source}/head.blend",
-        "--out",
-        "{out}"
+        "--scene", "{scene}/head.blend",
+        "--source", "{source}/head.blend",
+        "--out", "{out}"
       ],
       "existing": "head-0395",
       "note": "loop round 11, R04 carry the pale coat materials from head-0375 onto head-0387",
       "expect": {
         "vertices": 1001093,
         "faces": 1996682,
-        "bounds": [
-          [
-            -1.005866,
-            -0.528694,
-            -0.363807
-          ],
-          [
-            1.030136,
-            0.537686,
-            0.381774
-          ]
-        ]
+        "bounds": [[-1.005866, -0.528694, -0.363807], [1.030136, 0.537686, 0.381774]]
       },
       "pins": {
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
@@ -615,9 +434,7 @@
     {
       "id": "H33",
       "component": "head",
-      "regions": [
-        "R03"
-      ],
+      "regions": ["R03"],
       "kind": "head",
       "script": "art/species-construction/author_fan_front_lock_system_field.py",
       "runner": "blender",
@@ -625,120 +442,56 @@
         "base": "H32"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--out",
-        "{out}",
-        "--spec",
-        "{repo}/art/species-construction/specs/R03-locks-r4e0b9dc8.md",
-        "--length-scale",
-        "1.04",
-        "--width-scale",
-        "1.45",
-        "--thick-scale",
-        "1.0",
-        "--curl",
-        "6.0",
-        "--ogive",
-        "1.3",
-        "1.5",
-        "--section-p",
-        "1.8",
-        "--tip-min",
-        "0.0015",
-        "0.0015",
-        "--jitter",
-        "8.0",
-        "0.25",
-        "10.0",
-        "--drape-width",
-        "1.9",
-        "--top-width",
-        "0.95",
-        "--keep",
-        "PXF",
-        "--skip",
-        "P1,P10,F1,F2,F3,F4,F5,F6,F7,F9,M1,T2,T4",
-        "--drop",
-        "F1,F2,F3,F4,F5,F6,F7,F8,F9,M1,M2,M3,M4,M5",
-        "--top-tip-floor",
-        "1.0",
-        "--tuft-width-scale",
-        "1.35",
-        "--tuft-length-scale",
-        "1.05",
-        "--tuft-thick-scale",
-        "0.9",
-        "--tuft-ogive",
-        "1.4",
-        "0.8",
-        "--tuft-fan",
-        "24.0",
-        "--tuft-fluff",
-        "0",
-        "--pale-tol",
-        "0.005",
-        "--pale-smooth",
-        "14",
-        "--trim-pins",
-        "0.006",
-        "--trim-y",
-        "0.08",
-        "0.16",
-        "--plate-clip",
-        "0.01",
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/R03-locks-r4e0b9dc8.md",
+        "--length-scale", "1.04",
+        "--width-scale", "1.45",
+        "--thick-scale", "1.0",
+        "--curl", "6.0",
+        "--ogive", "1.3", "1.5",
+        "--section-p", "1.8",
+        "--tip-min", "0.0015", "0.0015",
+        "--jitter", "8.0", "0.25", "10.0",
+        "--drape-width", "1.9",
+        "--top-width", "0.95",
+        "--keep", "PXF",
+        "--skip", "P1,P10,F1,F2,F3,F4,F5,F6,F7,F9,M1,T2,T4",
+        "--drop", "F1,F2,F3,F4,F5,F6,F7,F8,F9,M1,M2,M3,M4,M5",
+        "--top-tip-floor", "1.0",
+        "--tuft-width-scale", "1.35",
+        "--tuft-length-scale", "1.05",
+        "--tuft-thick-scale", "0.9",
+        "--tuft-ogive", "1.4", "0.8",
+        "--tuft-fan", "24.0",
+        "--tuft-fluff", "0",
+        "--pale-tol", "0.005",
+        "--pale-smooth", "14",
+        "--trim-pins", "0.006",
+        "--trim-y", "0.08", "0.16",
+        "--plate-clip", "0.01",
         "--tip-wedge",
-        "--wedge-u",
-        "0.2",
-        "0.264",
-        "--wedge-apex-y",
-        "0.034",
-        "0.05",
-        "--wedge-top-y",
-        "-0.01",
-        "0.024",
-        "--wedge-bottom-y",
-        "0.105",
-        "0.115",
-        "--pale-cup-margin",
-        "0.011",
-        "--tip-point",
-        "0.4",
-        "--tip-floor",
-        "0.12",
-        "--fork-angle",
-        "25.0",
-        "--fork-len",
-        "0.3",
-        "--tuft-tip-min",
-        "0.002",
-        "0.002",
-        "--tuft-section-p",
-        "2.2",
-        "--tuft-aim",
-        "0.45",
-        "--crown-sink",
-        "0.01",
-        "--cup-clip-smooth",
-        "0.008"
+        "--wedge-u", "0.2", "0.264",
+        "--wedge-apex-y", "0.034", "0.05",
+        "--wedge-top-y", "-0.01", "0.024",
+        "--wedge-bottom-y", "0.105", "0.115",
+        "--pale-cup-margin", "0.011",
+        "--tip-point", "0.4",
+        "--tip-floor", "0.12",
+        "--fork-angle", "25.0",
+        "--fork-len", "0.3",
+        "--tuft-tip-min", "0.002", "0.002",
+        "--tuft-section-p", "2.2",
+        "--tuft-aim", "0.45",
+        "--crown-sink", "0.01",
+        "--cup-clip-smooth", "0.008"
       ],
       "existing": "head-0455",
       "note": "loop round 16, R03 final fan front (chain 0443 to 0455 inherited parameters only; the geometry always starts from head-0395); flags from the recorded namespace, equal to scratch-r16/cmd0455.json",
       "expect": {
         "vertices": 958497,
         "faces": 1910226,
-        "bounds": [
-          [
-            -0.98832,
-            -0.528686,
-            -0.363787
-          ],
-          [
-            1.035765,
-            0.524132,
-            0.381548
-          ]
-        ],
+        "bounds": [[-0.98832, -0.528686, -0.363787], [1.035765, 0.524132, 0.381548]],
         "record": {
           "file": "fan-front-lock-system.json",
           "key": "skinAfter",
@@ -763,9 +516,7 @@
     {
       "id": "H34",
       "component": "head",
-      "regions": [
-        "R04"
-      ],
+      "regions": ["R04"],
       "kind": "head",
       "script": "art/species-construction/author_fan_clumps_field.py",
       "runner": "blender",
@@ -773,39 +524,23 @@
         "base": "H33"
       },
       "args": [
-        "--scene",
-        "{base}/head.blend",
-        "--out",
-        "{out}",
-        "--table",
-        "{repo}/art/species-construction/specs/r04_clumps.json",
-        "--part",
-        "rear",
-        "--taper-exp",
-        "0.55",
-        "--thick-exp",
-        "0.6",
-        "--clump-blend",
-        "0.003",
-        "--skin-blend",
-        "0.006",
-        "--strip-edge",
-        "0.019",
-        "--core-crown",
-        "0.066",
-        "--k-sweep",
-        "20",
-        "--k-root-shift",
-        "0.006",
-        "--samples",
-        "90",
-        "--section-p",
-        "2.0",
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_clumps.json",
+        "--part", "rear",
+        "--taper-exp", "0.55",
+        "--thick-exp", "0.6",
+        "--clump-blend", "0.003",
+        "--skin-blend", "0.006",
+        "--strip-edge", "0.019",
+        "--core-crown", "0.066",
+        "--k-sweep", "20",
+        "--k-root-shift", "0.006",
+        "--samples", "90",
+        "--section-p", "2.0",
         "--k-flat-root",
-        "--width-scale",
-        "0.9",
-        "--strip-cut-smooth",
-        "3"
+        "--width-scale", "0.9",
+        "--strip-cut-smooth", "3"
       ],
       "note": "loop round 20, R04 rear ear fan as a clump volume (rebased from r17): leaf-shaped locks (taper .55), ellipse sections, K ridge swept down and out, softer crease; specs/R04.md",
       "pins": {
@@ -823,40 +558,32 @@
     {
       "id": "H34S",
       "component": "head",
-      "regions": [
-        "R04"
-      ],
+      "regions": ["R04"],
       "kind": "head",
-      "script": "art/species-construction/author_fan_lock_sweeps.py",
+      "script": "art/species-construction/author_fan_lock_sweeps_v5.py",
       "runner": "blender",
       "inputs": {
         "base": "H33"
       },
       "args": [
-        "--part",
-        "rear",
-        "--scene",
-        "{base}/head.blend",
-        "--out",
-        "{out}",
-        "--table",
-        "{repo}/art/species-construction/specs/r04_clumps.json",
-        "--envelope",
-        "{repo}/art/species-construction/specs/r04_envelope.json",
-        "--spec",
-        "{repo}/art/species-construction/specs/r04_sweeps.json"
+        "--part", "rear",
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_clumps.json",
+        "--envelope", "{repo}/art/species-construction/specs/r04_envelope.json",
+        "--spec", "{repo}/art/species-construction/specs/r04_sweeps.json"
       ],
-      "note": "R04 ear fan rear as layered lock sweeps (author_fan_lock_sweeps.py --part rear + fan_lock_sweeps_rear_run.py + fan_lock_sweeps_rear.py, levers in specs/r04_sweeps.json): old rear fan stripped behind the mid-surface, rear backing slab, every K, I, M, T, E lock and C tuft clump as its own closed swept solid. Replaces H34; H35 carries the pale materials from H33 onto it. Round 25 toolsmith starter; see loop/tools/R04.json.",
+      "note": "R04 ear fan rear as layered lock sweeps, version 2 (author_fan_lock_sweeps_v5.py --part rear + fan_lock_sweeps_rear_run_v2.py + fan_lock_sweeps_rear_v2.py, levers in specs/r04_sweeps.json): old rear fan stripped behind the mid-surface, rear backing slab, every K, I, M, T, E lock and C tuft clump as its own closed swept solid. Version 2 fixes the first reader rejection: the root blend radius fell short of the voxel band, which left a step at the edge of every lock's voxel box (ghost rectangles and a smeared central slab from behind) and a seam at the centerline of the dome blur. Replaces H34; H35 carries the pale materials from H33 onto it. Round 25 toolsmith starter; see loop/tools/R04.json.",
       "pins": {
-        "art/species-construction/author_fan_lock_sweeps.py": "f5e6525d060033a8242eead1273a3e1733cc6571c96a228f181ca1706551b307",
+        "art/species-construction/author_fan_lock_sweeps_v5.py": "4d0c7f6677e1d141fd8ebb22aa3117f34052adf1321f2fd50b62cf3234d6bda2",
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
         "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
         "art/species-construction/fan_clumps_fast_common.py": "7a4d3b179bed2adbe92709eb2ae4812fec414340f06c88d51af3d978ac973414",
         "art/species-construction/fan_clumps_front_fast_v2.py": "e6195c0e5a9262d7737f216ac51c638032001edbfcee57af98b4993fa4d2ba96",
         "art/species-construction/fan_lock_sweeps.py": "8702d854169a9b5d8d1c4fd0a2c66bd4adfe3a98c4553b8bbc623e12a10b4851",
-        "art/species-construction/fan_lock_sweeps_rear.py": "4787220f2219dbc5585371781dd564f3d4918a60f828bfb5576e17da642043a7",
-        "art/species-construction/fan_lock_sweeps_rear_run.py": "d6c06df2d5ecc8149bde97f1f769092220dd9d7ec86cbe95184a0035d1e4dec8",
+        "art/species-construction/fan_lock_sweeps_rear_run_v2.py": "407026f8a74ba2929e3e6a3b089038fa0fc1a0667e924ce8a3db8df3b03dc83e",
+        "art/species-construction/fan_lock_sweeps_rear_v2.py": "1fd52ba75fd5d7894ff3dc0c2addee677381d16e6fd65bd2e7f43c1501ab8a18",
         "art/species-construction/fan_lock_sweeps_v3.py": "db20d9dea6d419cef23a72823fc011d733ae1c76835a46118ea7d81b037ceb34",
         "art/species-construction/specs/r04_clumps.json": "dc33b73c5ff0da87c63491eac2b456f420f437df79af10842420036c4a47a550",
         "art/species-construction/specs/r04_envelope.json": "20f075acfb2589344cf1664c5b56665ce513824e6028effda2a5d9def0484771",
@@ -868,9 +595,7 @@
     {
       "id": "H35",
       "component": "head",
-      "regions": [
-        "R04"
-      ],
+      "regions": ["R04"],
       "kind": "head",
       "script": "art/species-construction/carry_materials_field.py",
       "runner": "blender",
@@ -879,12 +604,9 @@
         "source": "H33"
       },
       "args": [
-        "--scene",
-        "{scene}/head.blend",
-        "--source",
-        "{source}/head.blend",
-        "--out",
-        "{out}"
+        "--scene", "{scene}/head.blend",
+        "--source", "{source}/head.blend",
+        "--out", "{out}"
       ],
       "note": "loop round 17, R04 carry the pale coat materials from the front fan (H33) onto the clump rebuild",
       "pins": {
@@ -899,9 +621,7 @@
     {
       "id": "B-14",
       "component": "body",
-      "regions": [
-        "R10"
-      ],
+      "regions": ["R10"],
       "kind": "body",
       "script": "art/species-construction/rebuild_body_field.py",
       "runner": "blender",
@@ -910,37 +630,20 @@
         "tailfree": "tailfree-root"
       },
       "args": [
-        "--body",
-        "{base}/shape.glb",
-        "--tail-record",
-        "{base}/fairing.json",
+        "--body", "{base}/shape.glb",
+        "--tail-record", "{base}/fairing.json",
         "--tails-only",
-        "--tail-controls",
-        "{repo}/docs/design/species-construction/akinza/tail-controls-stack-b.json",
-        "--tail-free-body",
-        "{tailfree}/shape.glb",
-        "--tail-sweep-sigma",
-        ".009",
-        "--out",
-        "{out}"
+        "--tail-controls", "{repo}/docs/design/species-construction/akinza/tail-controls-stack-b.json",
+        "--tail-free-body", "{tailfree}/shape.glb",
+        "--tail-sweep-sigma", ".009",
+        "--out", "{out}"
       ],
       "existing": "body-0212",
       "note": "loop round 1, R10 stacked crescent tails",
       "expect": {
         "vertices": 697950,
         "faces": 1395836,
-        "bounds": [
-          [
-            -0.517996,
-            -0.95699,
-            -0.530232
-          ],
-          [
-            0.556054,
-            0.459983,
-            0.204267
-          ]
-        ],
+        "bounds": [[-0.517996, -0.95699, -0.530232], [0.556054, 0.459983, 0.204267]],
         "record": {
           "file": "field-rebuild.json",
           "key": "body",
@@ -965,9 +668,7 @@
     {
       "id": "B-15",
       "component": "body",
-      "regions": [
-        "R08"
-      ],
+      "regions": ["R08"],
       "kind": "body",
       "script": "art/species-construction/reshape_legs_field_r02.py",
       "runner": "blender",
@@ -975,32 +676,17 @@
         "base": "B-14"
       },
       "args": [
-        "--scene",
-        "{base}/body.blend",
-        "--fairing",
-        "{base}/fairing.json",
-        "--spec",
-        "{repo}/art/species-construction/specs/leg-reshape-r08-v5.json",
-        "--out",
-        "{out}"
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/leg-reshape-r08-v5.json",
+        "--out", "{out}"
       ],
       "existing": "body-0263",
       "note": "loop round 2, R08 leg reshape v5 (script as run in round 2)",
       "expect": {
         "vertices": 678275,
         "faces": 1356486,
-        "bounds": [
-          [
-            -0.517947,
-            -0.956989,
-            -0.530121
-          ],
-          [
-            0.555975,
-            0.459983,
-            0.204238
-          ]
-        ],
+        "bounds": [[-0.517947, -0.956989, -0.530121], [0.555975, 0.459983, 0.204238]],
         "record": {
           "file": "leg-reshape.json",
           "key": "skinAfter",
@@ -1025,9 +711,7 @@
     {
       "id": "B-16",
       "component": "body",
-      "regions": [
-        "R06"
-      ],
+      "regions": ["R06"],
       "kind": "body",
       "script": "art/species-construction/reshape_torso_field_r04.py",
       "runner": "blender",
@@ -1035,32 +719,17 @@
         "base": "B-15"
       },
       "args": [
-        "--scene",
-        "{base}/body.blend",
-        "--fairing",
-        "{base}/fairing.json",
-        "--spec",
-        "{repo}/art/species-construction/specs/torso-reshape-r06-v5.json",
-        "--out",
-        "{out}"
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/torso-reshape-r06-v5.json",
+        "--out", "{out}"
       ],
       "existing": "body-0288",
       "note": "loop round 4, R06 torso reshape v5 (script as run in round 4)",
       "expect": {
         "vertices": 678641,
         "faces": 1357218,
-        "bounds": [
-          [
-            -0.5179,
-            -0.956987,
-            -0.53006
-          ],
-          [
-            0.555895,
-            0.459982,
-            0.200103
-          ]
-        ],
+        "bounds": [[-0.5179, -0.956987, -0.53006], [0.555895, 0.459982, 0.200103]],
         "record": {
           "file": "torso-reshape.json",
           "key": "skinAfter",
@@ -1085,9 +754,7 @@
     {
       "id": "B-17",
       "component": "body",
-      "regions": [
-        "R07"
-      ],
+      "regions": ["R07"],
       "kind": "body",
       "script": "art/species-construction/rebuild_arms_field_r05.py",
       "runner": "blender",
@@ -1095,30 +762,16 @@
         "base": "B-16"
       },
       "args": [
-        "--body",
-        "{base}/shape.glb",
-        "--fairing",
-        "{base}/fairing.json",
-        "--out",
-        "{out}"
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}"
       ],
       "existing": "body-0303",
       "note": "loop round 5, R07 arm rebuild with the default ARM dict (script exists only as body-0303/source-snapshot, committed as _r05)",
       "expect": {
         "vertices": 650524,
         "faces": 1300984,
-        "bounds": [
-          [
-            -0.453504,
-            -0.956985,
-            -0.530026
-          ],
-          [
-            0.555818,
-            0.459981,
-            0.20008
-          ]
-        ],
+        "bounds": [[-0.453504, -0.956985, -0.530026], [0.555818, 0.459981, 0.20008]],
         "record": {
           "file": "arm-field.json",
           "key": "body",
@@ -1142,9 +795,7 @@
     {
       "id": "B-18",
       "component": "body",
-      "regions": [
-        "R09"
-      ],
+      "regions": ["R09"],
       "kind": "body",
       "script": "art/species-construction/rebuild_hind_paws_field_r06.py",
       "runner": "blender",
@@ -1152,30 +803,16 @@
         "base": "B-17"
       },
       "args": [
-        "--body",
-        "{base}/shape.glb",
-        "--fairing",
-        "{base}/fairing.json",
-        "--out",
-        "{out}"
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}"
       ],
       "existing": "body-0310",
       "note": "loop round 6, R09 hind paw rebuild with the default PAW dict (script as run in round 6)",
       "expect": {
         "vertices": 650980,
         "faces": 1301896,
-        "bounds": [
-          [
-            -0.498451,
-            -0.957,
-            -0.530008
-          ],
-          [
-            0.555778,
-            0.459981,
-            0.200062
-          ]
-        ],
+        "bounds": [[-0.498451, -0.957, -0.530008], [0.555778, 0.459981, 0.200062]],
         "record": {
           "file": "hind-paw-field.json",
           "key": "body",
@@ -1199,9 +836,7 @@
     {
       "id": "B-19",
       "component": "body",
-      "regions": [
-        "R05"
-      ],
+      "regions": ["R05"],
       "kind": "body",
       "script": "art/species-construction/shape_neck_shoulders_field_r07.py",
       "runner": "blender",
@@ -1209,32 +844,17 @@
         "base": "B-18"
       },
       "args": [
-        "--body",
-        "{base}/shape.glb",
-        "--fairing",
-        "{base}/fairing.json",
-        "--out",
-        "{out}",
-        "--spec",
-        "{repo}/art/species-construction/specs/neck-shoulders-r05-0325.json"
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/neck-shoulders-r05-0325.json"
       ],
       "existing": "body-0325",
       "note": "loop round 7, R05 neck and shoulders (script as run in round 7); spec re-extracted from the data dir (spec-0325.json, hash equals the recorded input)",
       "expect": {
         "vertices": 645306,
         "faces": 1290548,
-        "bounds": [
-          [
-            -0.498367,
-            -0.957,
-            -0.530002
-          ],
-          [
-            0.555739,
-            0.45998,
-            0.200047
-          ]
-        ],
+        "bounds": [[-0.498367, -0.957, -0.530002], [0.555739, 0.45998, 0.200047]],
         "record": {
           "file": "shoulder-field.json",
           "key": "body",
@@ -1259,9 +879,7 @@
     {
       "id": "B-20",
       "component": "body",
-      "regions": [
-        "R06"
-      ],
+      "regions": ["R06"],
       "kind": "body",
       "script": "art/species-construction/reshape_torso_field.py",
       "runner": "blender",
@@ -1269,32 +887,17 @@
         "base": "B-19"
       },
       "args": [
-        "--scene",
-        "{base}/body.blend",
-        "--fairing",
-        "{base}/fairing.json",
-        "--spec",
-        "{repo}/art/species-construction/specs/torso-reshape-r06-v7d.json",
-        "--out",
-        "{out}"
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/torso-reshape-r06-v7d.json",
+        "--out", "{out}"
       ],
       "existing": "body-0369",
       "note": "loop round 10, R06 torso reshape v7d",
       "expect": {
         "vertices": 643184,
         "faces": 1286304,
-        "bounds": [
-          [
-            -0.498282,
-            -0.957,
-            -0.529718
-          ],
-          [
-            0.5557,
-            0.459979,
-            0.200034
-          ]
-        ],
+        "bounds": [[-0.498282, -0.957, -0.529718], [0.5557, 0.459979, 0.200034]],
         "record": {
           "file": "torso-reshape.json",
           "key": "skinAfter",
@@ -1319,9 +922,7 @@
     {
       "id": "B-20T",
       "component": "body",
-      "regions": [
-        "R06"
-      ],
+      "regions": ["R06"],
       "kind": "body",
       "script": "art/species-construction/author_trunk_sections_field_r20.py",
       "runner": "blender",
@@ -1329,14 +930,10 @@
         "base": "B-20"
       },
       "args": [
-        "--body",
-        "{base}/shape.glb",
-        "--fairing",
-        "{base}/fairing.json",
-        "--spec",
-        "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json",
-        "--out",
-        "{out}"
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json",
+        "--out", "{out}"
       ],
       "note": "R06 trunk sections tool (toolsmith starter): lofted superellipse sections morphed into the native trunk, between the R06 reshape B-20 and the hind paw rebuild B-21",
       "pins": {
@@ -1352,9 +949,7 @@
     {
       "id": "B-21",
       "component": "body",
-      "regions": [
-        "R09"
-      ],
+      "regions": ["R09"],
       "kind": "body",
       "script": "art/species-construction/rebuild_hind_paws_field_r12.py",
       "runner": "blender",
@@ -1362,14 +957,10 @@
         "base": "B-20T"
       },
       "args": [
-        "--body",
-        "{base}/shape.glb",
-        "--fairing",
-        "{base}/fairing.json",
-        "--spec",
-        "{repo}/art/species-construction/specs/paw-spec-r09-v3.json",
-        "--out",
-        "{out}"
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/paw-spec-r09-v3.json",
+        "--out", "{out}"
       ],
       "note": "loop round 12, R09 hind paw spec v3; spec re-extracted from loop/scratch/r12/v3.json (identical to body-0400/paw-spec-v3.json)",
       "pins": {
@@ -1385,9 +976,7 @@
     {
       "id": "B-22",
       "component": "body",
-      "regions": [
-        "R08"
-      ],
+      "regions": ["R08"],
       "kind": "body",
       "script": "art/species-construction/reshape_legs_field.py",
       "runner": "blender",
@@ -1395,14 +984,10 @@
         "base": "B-21"
       },
       "args": [
-        "--scene",
-        "{base}/body.blend",
-        "--fairing",
-        "{base}/fairing.json",
-        "--spec",
-        "{repo}/art/species-construction/specs/leg-reshape-r08-v11.json",
-        "--out",
-        "{out}"
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/leg-reshape-r08-v11.json",
+        "--out", "{out}"
       ],
       "existing": "body-0426",
       "note": "loop round 14, R08 leg reshape v11",
@@ -1420,9 +1005,7 @@
     {
       "id": "B-23",
       "component": "body",
-      "regions": [
-        "R07"
-      ],
+      "regions": ["R07"],
       "kind": "body",
       "script": "art/species-construction/rebuild_arms_field.py",
       "runner": "blender",
@@ -1430,14 +1013,10 @@
         "base": "B-22"
       },
       "args": [
-        "--body",
-        "{base}/shape.glb",
-        "--fairing",
-        "{base}/fairing.json",
-        "--spec",
-        "{repo}/untracked/species-construction/akinza/sweep_specs/B-23-9e71236475f5.json",
-        "--out",
-        "{out}"
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/untracked/species-construction/akinza/sweep_specs/B-23-9e71236475f5.json",
+        "--out", "{out}"
       ],
       "existing": "body-0448",
       "note": "loop round 16, R07 arms v10 (clawEach)",
@@ -1455,24 +1034,16 @@
   ],
   "assembly": {
     "id": "J",
-    "regions": [
-      "R05"
-    ],
+    "regions": ["R05"],
     "head": "H35",
     "body": "B-23",
     "args": [
-      "--head-scale",
-      ".50",
-      "--jaw-anchor-z",
-      ".500",
-      "--head-depth-offset",
-      "-.020",
-      "--head-trim-offset",
-      ".038",
-      "--fusion-z-above",
-      ".035",
-      "--fusion-y-extent",
-      ".11"
+      "--head-scale", ".50",
+      "--jaw-anchor-z", ".500",
+      "--head-depth-offset", "-.020",
+      "--head-trim-offset", ".038",
+      "--fusion-z-above", ".035",
+      "--fusion-y-extent", ".11"
     ],
     "note": "assemble_reconstructed_creature.py through loop_tools assemble; the placement constants of loop_tools PLACEMENT; round 19 R05 join (kept): head trim offset .038, fusion window raised",
     "pins": {
