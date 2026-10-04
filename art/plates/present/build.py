@@ -799,8 +799,8 @@ def ku(*xs):
 
 
 # ---- the squads. Nick, 2026-10-03: two sides, each a few abstract blobs that stand for creatures (at this distance they need
-# no detail), trading little attack moves. Each creature is a dark rounded body with a smaller blob for a head on the side it
-# faces, rimmed and pooled in its element's color. Left squad: storm, ice, plant. Right squad: fire, water, rock.
+# no detail), trading little attack moves. Each creature is a small blob of its element's color, a body and a smaller head on
+# the side it faces, over a small glow (Nick, 2026-10-04: at arena distance a creature is a little dot). Left squad: storm, ice, plant. Right squad: fire, water, rock.
 mx, my = FCX, FY - 8  # the middle of the floor's far half, where the big exchange meets
 SQUAD = {
     'storm': dict(x=FCX - 70, y=FY - 2, c='#ffe066', s=1, side=1),
@@ -815,7 +815,7 @@ for k_, c_ in SQUAD.items():
 
 # Each attack: (attacker, target, kind, u at launch, u at hit). The big exchange (fire's fireball against storm's bolt meeting
 # in the middle) is handled apart, at u .80.
-ATTACKS = [('storm', 'fire', 'bolt', .03, .05), ('fire', 'ice', 'ball', .16, .23), ('plant', 'rock', 'darts', .3, .36),
+ATTACKS = [('storm', 'fire', 'bolt', .044, .05), ('fire', 'ice', 'ball', .16, .23), ('plant', 'rock', 'darts', .3, .36),
            ('water', 'ice', 'glob', .43, .5), ('ice', 'rock', 'shards', .56, .62), ('rock', 'storm', 'stone', .66, .73)]
 LOB = 36  # the creatures are dots, so lobs stay low over the sand, never up into the crowd  # the control height of a lob from or over the back row (the arc's top is half this above the line)
 BIG = (.74, .80)  # fire and storm wind up, then their attacks meet in the middle
@@ -930,7 +930,7 @@ g_jetw = lin([(0, '#2a78c0', .9), (.6, '#4aa8e8', .95), (1, '#dff4ff', 1)], 0, 0
 for (a, t_, kind, ul, uh) in ATTACKS:
     p0, c_t = front(a), SQUAD[t_]
     if a in ('plant', 'water'):
-        p0 = (SQUAD[a]['x'], p0[1] - 10)  # the middle row throws up from just above its head
+        p0 = (SQUAD[a]['x'], p0[1] - 24)  # the middle row throws up from above its head, so the lob clears the front row
     p1 = (c_t['x'] - c_t['side'] * 2, c_t['y'] - 5)
     tag = '<!-- %s: %s at %s -->' % (kind, a, t_)
     if a in ('plant', 'water'):
@@ -946,7 +946,7 @@ for (a, t_, kind, ul, uh) in ATTACKS:
     elif kind == 'darts':
         for j in range(3):
             d = .008 * j
-            fight.append(tag + missile((p0[0], p0[1] + 6 * j - 6), (p1[0], p1[1] + 5 * j - 5), ul + d, uh + d, '<ellipse cx="%s" rx="22" ry="3" fill="#8be08a" opacity=".45"/><ellipse rx="16" ry="5.5" fill="#d8f8c8"/><ellipse rx="26" ry="11" fill="url(#lamp-plant)"/>' % f(-SQUAD[a]['side'] * 18), arc=LOB - 10 + 8 * j))
+            fight.append(tag + missile((p0[0], p0[1] + 6 * j - 12), (p1[0], p1[1] + 5 * j - 5), ul + d, uh + d, '<ellipse cx="%s" rx="22" ry="3" fill="#8be08a" opacity=".45"/><ellipse rx="16" ry="5.5" fill="#d8f8c8"/><ellipse rx="26" ry="11" fill="url(#lamp-plant)"/>' % f(-SQUAD[a]['side'] * 18), arc=LOB - 10 + 8 * j))
     elif kind == 'shards':
         for j in range(3):
             d = .007 * j

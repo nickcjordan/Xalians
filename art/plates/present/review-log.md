@@ -193,3 +193,10 @@ Round 16's fixes held apart from two. What was done:
 1. The ice shards rode up onto the floor wall into the crowd: they arc as low as the other lobs, over the sand.
 2. The thrown stone was invisible against the sand: it is in rock's ochre with its glow at full strength and a pale dust trail, still a creature's size.
 3. The idle second after the clash, the globe and darts skimming heads, the floor ring under the squads: left; invisible at site size or accepted under the dots ruling.
+
+## Round 18 (fresh reviewer, cold gate): 8.5
+
+Round 17's fixes confirmed. The lower lobs of round 16 had brought back plant's darts through storm and water's globe through fire. What was done:
+1. The middle row throws up from above its head, so its darts and globe clear the front row by 5 to 8 units and still stay under the floor wall.
+2. Storm's small bolt launches later so it lands with its hit.
+3. Left as found: the great fireball's size (the clash, kept since round 16), darts and shards as streaks twice a creature's length (read as light at site size), a faint orange curve on the sand, all invisible or judgment calls at site size. The stale code comment about the creatures was rewritten.
