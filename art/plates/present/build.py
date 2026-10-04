@@ -950,9 +950,9 @@ for (a, t_, kind, ul, uh) in ATTACKS:
     elif kind == 'shards':
         for j in range(3):
             d = .007 * j
-            fight.append(tag + missile((p0[0], p0[1] + 5 * j - 5), (p1[0], p1[1] + 6 * j - 6), ul + d, uh + d, '<ellipse cx="%s" rx="22" ry="3" fill="#d8f2ff" opacity=".45"/><polygon points="-18,0 0,-8 18,0 0,8" fill="#f2fbff"/><ellipse rx="26" ry="11" fill="url(#lamp-ice)"/>' % f(-SQUAD[a]['side'] * 18), arc=LOB + 30 + 8 * j))
+            fight.append(tag + missile((p0[0], p0[1] + 5 * j - 5), (p1[0], p1[1] + 6 * j - 6), ul + d, uh + d, '<ellipse cx="%s" rx="22" ry="3" fill="#d8f2ff" opacity=".45"/><polygon points="-18,0 0,-8 18,0 0,8" fill="#f2fbff"/><ellipse rx="26" ry="11" fill="url(#lamp-ice)"/>' % f(-SQUAD[a]['side'] * 18), arc=LOB - 6 + 8 * j))
     elif kind == 'stone':
-        fight.append(tag + missile(p0, p1, ul, uh, '<ellipse rx="34" ry="18" fill="url(#lamp-rock)" opacity=".5"/><g>%s<polygon points="-21,-6 -14,-19 -2,-23 13,-18 22,-6 19,9 7,20 -9,18 -20,9" fill="#6e5e4c"/><path d="M-12 -12 Q-4 -18 6 -15" stroke="#e8dcc0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="6" cy="6" r="3" fill="#5a4c3e"/></g>' % rot('0;0;400;400', FP, PH, ku(ul, uh)), arc=LOB, size=.2))
+        fight.append(tag + missile(p0, p1, ul, uh, '<ellipse cx="%s" rx="18" ry="4" fill="#d8c8a8" opacity=".4"/><ellipse rx="60" ry="30" fill="url(#lamp-rock)"/><g>%s<polygon points="-21,-6 -14,-19 -2,-23 13,-18 22,-6 19,9 7,20 -9,18 -20,9" fill="#c08a50"/><path d="M-12 -12 Q-4 -18 6 -15" stroke="#e8dcc0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="6" cy="6" r="3" fill="#5a4c3e"/></g>' % (f(-SQUAD[a]['side'] * 14), rot('0;0;400;400', FP, PH, ku(ul, uh))), arc=LOB, size=.2))
     elif kind == 'glob':
         fight.append(tag + missile(p0, p1, ul, uh, '<ellipse cx="%s" rx="22" ry="5" fill="#3a8fe0" opacity=".4"/><circle r="24" fill="url(#lamp-water)"/><circle r="11" fill="#5ab0f0"/><circle cx="-3" cy="-4" r="4" fill="#e8f8ff" opacity=".9"/>' % f(-SQUAD[a]['side'] * 16), arc=LOB))
         for j, (dx, dy) in enumerate(((-14, -16), (12, -20), (20, -4), (-20, -2))):

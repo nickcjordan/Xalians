@@ -186,3 +186,10 @@ The creatures are at the scene's scale (item 22 passes). What was done:
 5. The small bolt's first frame: more jagged.
 6. The great clash: kept; at site size it is the moment the fight reads.
 7. The notes: "lobbed over the front row", "nudging forward".
+
+## Round 17 (fresh reviewer, cold gate): 8.5
+
+Round 16's fixes held apart from two. What was done:
+1. The ice shards rode up onto the floor wall into the crowd: they arc as low as the other lobs, over the sand.
+2. The thrown stone was invisible against the sand: it is in rock's ochre with its glow at full strength and a pale dust trail, still a creature's size.
+3. The idle second after the clash, the globe and darts skimming heads, the floor ring under the squads: left; invisible at site size or accepted under the dots ruling.
