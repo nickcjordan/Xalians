@@ -3,6 +3,7 @@ swept solids over a recessed backing, joined to the head in a root band, with th
 
 Run with Blender (through loop_tools.py blender, or as a recipe step):
   blender -b --factory-startup --python author_fan_lock_sweeps.py --
+    [--part rear: R04, the ear fan rear, see the end of this docstring]
     --scene <head.blend> --out <new dir> --table specs/r03_clumps.json --envelope specs/r03_envelope.npz --spec specs/r03_sweeps.json
     [--p section.spine=.3 ...] [--sides L,R] [--bandwidth 12]
 
@@ -35,6 +36,16 @@ Interface
   Outputs: head.blend, shape.glb, fan-sweeps.json (resolved levers, per lock length, tip radius, tip standoff, joined voxels, backing,
   tip clearance, envelope missing and extra, cup yaw, pale area front and side, skinTopZ, components, nonManifoldEdges, hashes),
   source-snapshot/. One closed component; skinTopZ at or below the baseline plus .0004.
+
+--part rear (R04, loop v3 round 25; construction in fan_lock_sweeps_rear.py, wrapper fan_lock_sweeps_rear_run.py)
+  blender -b --factory-startup --python author_fan_lock_sweeps.py -- --part rear --scene <H33 head.blend> --out <new dir>
+    --table specs/r04_clumps.json --envelope specs/r04_envelope.json --spec specs/r04_sweeps.json [--p key.sub=value ...] [--sides L,R]
+  Each rear wing lock (I, M, T, E), K crown lock and C tuft clump of the table is its own closed swept solid on a Catmull-Rom guide
+  through the table's four (x, y, df) control points with the path levers of the spec, stacked in layers over a rear backing slab and
+  joined to the head in a root band. The levers are the spec's keys: strip, dome, backing, layers, paths, section, tips, union, clumps,
+  skip (see fan_lock_sweeps_rear.DEFAULTS, which documents each). Outputs head.blend, shape.glb, fan-sweeps.json (resolved levers, per
+  lock length, tip radius, standoff, tip depth, joined voxels, rear face against the envelope, dome rows, cavity window intrusion,
+  crown tuft clearance, components, nonManifoldEdges, hashes), source-snapshot/. One closed component; skinTopZ at or below the baseline.
 """
 import argparse
 import ast
@@ -71,9 +82,11 @@ def tick(msg):
 parser = argparse.ArgumentParser()
 parser.add_argument('--scene', type=Path, required=True)
 parser.add_argument('--out', type=Path, required=True)
-parser.add_argument('--table', type=Path, default=HERE/'specs/r03_clumps.json')
-parser.add_argument('--envelope', type=Path, default=HERE/'specs/r03_envelope.npz')
-parser.add_argument('--spec', type=Path, default=HERE/'specs/r03_sweeps.json')
+parser.add_argument('--part', default='front', choices=['front', 'rear'],
+                    help='front: R03, the ear fan front (this file, with fan_lock_sweeps.py); rear: R04, the ear fan rear (fan_lock_sweeps_rear_run.py, fan_lock_sweeps_rear.py)')
+parser.add_argument('--table', type=Path, default=None, help='front default specs/r03_clumps.json, rear specs/r04_clumps.json')
+parser.add_argument('--envelope', type=Path, default=None, help='front default specs/r03_envelope.npz (the sheet fan mask), rear specs/r04_envelope.json (the rear envelope of specs/R04.md section 3)')
+parser.add_argument('--spec', type=Path, default=None, help='front default specs/r03_sweeps.json, rear specs/r04_sweeps.json')
 parser.add_argument('--p', action='append', help='a lever as a dotted path and a python literal, e.g. section.spine=.3')
 parser.add_argument('--sides', default='L,R')
 parser.add_argument('--bandwidth', type=int, default=12)
@@ -82,6 +95,16 @@ parser.add_argument('--max-island', type=int, default=5000)
 parser.add_argument('--debug-owner', action='store_true', help='debug: paint faces within a voxel of a layer 1 solid red and of a layer 2 solid blue (materials 1 and 2 of the head)')
 parser.add_argument('--export-locks', type=Path, default=None, help='debug: also write every lock solid as its own mesh object to this .blend (head-local, the head placement is the clay renderer placement)')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:])
+_DEF = {'front': ('r03_clumps.json', 'r03_envelope.npz', 'r03_sweeps.json'), 'rear': ('r04_clumps.json', 'r04_envelope.json', 'r04_sweeps.json')}[args.part]
+args.table = args.table or HERE/'specs'/_DEF[0]
+args.envelope = args.envelope or HERE/'specs'/_DEF[1]
+args.spec = args.spec or HERE/'specs'/_DEF[2]
+if args.part == 'rear':
+    # R04 (loop v3 round 25): the rear lock sweeps. Same arguments; the implementation is fan_lock_sweeps_rear_run.py.
+    import fan_lock_sweeps_rear_run
+    args.entry = __file__
+    fan_lock_sweeps_rear_run.run(args)
+    raise SystemExit(0)
 
 
 def trilinear(arr, origin, vs, pts, band):

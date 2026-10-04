@@ -1,0 +1,56 @@
+{
+ "note": "R04 rear lock sweeps, starter levers (round 25 toolsmith). Every key is documented in fan_lock_sweeps_rear.DEFAULTS; a recipe edits one as spec:<dotted.path>. The keys below are the ones a builder tunes first and are listed so recipe.py set can reach them; the rest keep their defaults. Starter choices (round 25 toolsmith): clumps shortens the three lower neck-side E locks (E12 to E14) to .7 of their table length so the back view width at .18 of figure height stays under R01.6 (1.025 against 1.172 without it); voxel .0025 (finer, .0018 to .002, did not remove the R05 containment excess and cost R01.1 a hair).",
+ "voxel": 0.0025,
+ "paths": {
+  "clampEnvelope": {
+   "rows": "IMTE",
+   "tol": 0.004
+  },
+  "planSweep": {
+   "extra": 0.0,
+   "u0": 0.16,
+   "u1": 0.22,
+   "rows": "IMTE"
+  },
+  "profileLean": {
+   "amount": 0.0,
+   "y0": 0.04,
+   "y1": 0.16,
+   "rows": "E"
+  },
+  "tuftCeiling": {
+   "yMin": 0.016
+  },
+  "kRootShift": 0.006,
+  "kSweepDeg": 0.0
+ },
+ "section": {
+  "p": 2.4,
+  "spine": 0.45,
+  "rollDeg": 10.0,
+  "twistDeg": 6.0,
+  "widthScale": 1.0,
+  "thickScale": 1.0
+ },
+ "backing": {
+  "inside": 0.004,
+  "belowEnvelope": 0.006
+ },
+ "union": {
+  "rootBand": 0.035,
+  "rootCap": 0.02,
+  "burial": 0.0
+ },
+ "dome": {
+  "blur": 6,
+  "yMax": 0.176
+ },
+ "clumps": {
+  "?E1[234]": {
+   "lengthScale": 0.7
+  }
+ },
+ "strip": {
+  "edge": 0.019
+ }
+}
