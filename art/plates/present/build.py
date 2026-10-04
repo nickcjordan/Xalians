@@ -940,7 +940,7 @@ for (a, t_, kind, ul, uh) in ATTACKS:
     if kind == 'stone':
         p1 = (c_t['x'] - c_t['side'] * 2, c_t['y'] - 6)
     if kind == 'bolt':
-        fight.append(tag + bolt(jag_pts(p0[0], p0[1], p1[0], p1[1], 10, 9, 93), ul, uh + .02, BOLT_V))
+        fight.append(tag + bolt(jag_pts(p0[0], p0[1], p1[0], p1[1], 10, 9, 93), ul, max(uh + .02, ul + .034), BOLT_V))
     elif kind == 'ball':
         fight.append(tag + missile(p0, p1, ul, uh, '<ellipse cx="%s" rx="26" ry="9" fill="url(#lamp-fire)" opacity=".8"/><circle r="30" fill="url(#lamp-fire)"/><circle r="11" fill="#ff9a40" opacity=".9" filter="url(#soft2)"/><circle r="5" fill="#ffe6b0"/>' % f(-SQUAD[a]['side'] * 16), arc=LOB))
     elif kind == 'darts':
