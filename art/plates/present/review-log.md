@@ -171,3 +171,18 @@ Every lob was measured against every bystander and the king's box: all clear. Th
 ## Round 15 (fresh reviewer, cold gate): 9, "Nothing worth a round"
 
 Gate passed: clean checklist (22 items), no failing piece, score 9; the figure fade passes. Every lob clears its bystanders and the king's box. Left as found, all invisible at site size: the throw streaks lean away from their targets before each lob turns back (reads as a wind-up); the globe passes about 12 units over fire's head; water's head overlaps fire's lower body in the staggered rows; the great fireball rests over fire's head for 0.2 s; the great bolt lingers about 0.5 s as it fades.
+
+## Nick, 2026-10-04: the creatures at the arena's scale
+
+"You did it too large... you shouldn't really be able to see the creatures more than just little dots. You put too much design into the creature itself... you gave it an eye, but there's no way you'd be able to see the creature's eye from this distance." Done: each creature is a little blob of its element's color (a body about 8 units across and a smaller head), about three crowd dots wide, over a small glow; no eyes, legs or rim. The squads stand closer together; nudges, thrown things, bolts, hit glows and the great clash all shrink to the same scale. Owner checklist item 22 now asks whether creatures are drawn at the scene's scale.
+
+## Round 16 (fresh reviewer, cold gate): 8.5
+
+The creatures are at the scene's scale (item 22 passes). What was done:
+1. The thrown stone was twice a creature's size and read as a hole: it is a creature's size and lighter.
+2. Every lob flew up into the crowd's lights and was lost: lobs stay low over the sand.
+3. The rock creature vanished on the sand: a lighter ochre, its glow at full strength.
+4. Between exchanges the fight barely registered: each hit lands with a larger, brighter glow.
+5. The small bolt's first frame: more jagged.
+6. The great clash: kept; at site size it is the moment the fight reads.
+7. The notes: "lobbed over the front row", "nudging forward".

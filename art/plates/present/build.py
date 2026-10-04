@@ -808,7 +808,7 @@ SQUAD = {
     'ice': dict(x=FCX - 136, y=FY - 4, c='#8fd0ff', s=1, side=1),
     'fire': dict(x=FCX + 70, y=FY - 2, c='#ff7a2a', s=1, side=-1),
     'water': dict(x=FCX + 104, y=FY + 18, c='#3a8fe0', s=1, side=-1),
-    'rock': dict(x=FCX + 136, y=FY - 4, c='#b07a48', s=1, side=-1),
+    'rock': dict(x=FCX + 136, y=FY - 4, c='#c08a50', s=1, side=-1),
 }
 for k_, c_ in SQUAD.items():
     rad([(0, c_['c'], 1), (.3, c_['c'], .5), (1, c_['c'], 0)], id='lamp-' + k_)
@@ -817,7 +817,7 @@ for k_, c_ in SQUAD.items():
 # in the middle) is handled apart, at u .80.
 ATTACKS = [('storm', 'fire', 'bolt', .03, .05), ('fire', 'ice', 'ball', .16, .23), ('plant', 'rock', 'darts', .3, .36),
            ('water', 'ice', 'glob', .43, .5), ('ice', 'rock', 'shards', .56, .62), ('rock', 'storm', 'stone', .66, .73)]
-LOB = 110  # the control height of a lob from or over the back row (the arc's top is half this above the line)
+LOB = 36  # the creatures are dots, so lobs stay low over the sand, never up into the crowd  # the control height of a lob from or over the back row (the arc's top is half this above the line)
 BIG = (.74, .80)  # fire and storm wind up, then their attacks meet in the middle
 
 
@@ -877,7 +877,7 @@ for k, c in SQUAD.items():
     sq_t.append(1.0)
     sq_v.append('1 1')
     squash = trans(';'.join(sq_v), FP, PH, ';'.join(f(u) for u in sq_t), typ='scale')
-    fight.append('<!-- a creature (%s) --><ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lamp-%s)" opacity=".75"/>' % (k, f(c['x']), f(c['y'] - 2), f(13), f(5), k)
+    fight.append('<!-- a creature (%s) --><ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#lamp-%s)" opacity="1"/>' % (k, f(c['x']), f(c['y'] - 2), f(13), f(5), k)
                  + '<g transform="translate(%s %s) scale(%s)"><g>%s<g>%s<g>%s%s%s</g></g></g></g>' % (f(c['x']), f(c['y']), f(c['s']), tr, bob, squash, body_of(k), flash))
 
 
@@ -916,7 +916,7 @@ def hit_burst(k, u, grad):
     """Where an attack lands on a creature: a glow of the attack's element and a small spray of sparks."""
     c = SQUAD[k]
     x, y = c['x'], c['y'] - 5
-    o = '<!-- the hit on %s -->' % k + light(x, y, 24, grad, '0;0;1;0;0', ku(u, u + .004, u + .05), PH)
+    o = '<!-- the hit on %s -->' % k + light(x, y, 32, grad, '0;0;1;0;0', ku(u, u + .004, u + .03), PH)
     r = random.Random(int(u * 1000))
     for j in range(5):
         ang = r.uniform(-math.pi, 0)
@@ -940,7 +940,7 @@ for (a, t_, kind, ul, uh) in ATTACKS:
     if kind == 'stone':
         p1 = (c_t['x'] - c_t['side'] * 2, c_t['y'] - 6)
     if kind == 'bolt':
-        fight.append(tag + bolt(jag_pts(p0[0], p0[1], p1[0], p1[1], 12, 5, 93), ul, uh + .02, BOLT_V))
+        fight.append(tag + bolt(jag_pts(p0[0], p0[1], p1[0], p1[1], 10, 9, 93), ul, uh + .02, BOLT_V))
     elif kind == 'ball':
         fight.append(tag + missile(p0, p1, ul, uh, '<ellipse cx="%s" rx="26" ry="9" fill="url(#lamp-fire)" opacity=".8"/><circle r="30" fill="url(#lamp-fire)"/><circle r="11" fill="#ff9a40" opacity=".9" filter="url(#soft2)"/><circle r="5" fill="#ffe6b0"/>' % f(-SQUAD[a]['side'] * 16), arc=LOB))
     elif kind == 'darts':
@@ -952,7 +952,7 @@ for (a, t_, kind, ul, uh) in ATTACKS:
             d = .007 * j
             fight.append(tag + missile((p0[0], p0[1] + 5 * j - 5), (p1[0], p1[1] + 6 * j - 6), ul + d, uh + d, '<ellipse cx="%s" rx="22" ry="3" fill="#d8f2ff" opacity=".45"/><polygon points="-18,0 0,-8 18,0 0,8" fill="#f2fbff"/><ellipse rx="26" ry="11" fill="url(#lamp-ice)"/>' % f(-SQUAD[a]['side'] * 18), arc=LOB + 30 + 8 * j))
     elif kind == 'stone':
-        fight.append(tag + missile(p0, p1, ul, uh, '<ellipse rx="34" ry="18" fill="url(#lamp-rock)" opacity=".5"/><g>%s<polygon points="-21,-6 -14,-19 -2,-23 13,-18 22,-6 19,9 7,20 -9,18 -20,9" fill="#4a3e34"/><path d="M-12 -12 Q-4 -18 6 -15" stroke="#e0d0b0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="6" cy="6" r="3" fill="#5a4c3e"/></g>' % rot('0;0;400;400', FP, PH, ku(ul, uh)), arc=LOB))
+        fight.append(tag + missile(p0, p1, ul, uh, '<ellipse rx="34" ry="18" fill="url(#lamp-rock)" opacity=".5"/><g>%s<polygon points="-21,-6 -14,-19 -2,-23 13,-18 22,-6 19,9 7,20 -9,18 -20,9" fill="#6e5e4c"/><path d="M-12 -12 Q-4 -18 6 -15" stroke="#e8dcc0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="6" cy="6" r="3" fill="#5a4c3e"/></g>' % rot('0;0;400;400', FP, PH, ku(ul, uh)), arc=LOB, size=.2))
     elif kind == 'glob':
         fight.append(tag + missile(p0, p1, ul, uh, '<ellipse cx="%s" rx="22" ry="5" fill="#3a8fe0" opacity=".4"/><circle r="24" fill="url(#lamp-water)"/><circle r="11" fill="#5ab0f0"/><circle cx="-3" cy="-4" r="4" fill="#e8f8ff" opacity=".9"/>' % f(-SQUAD[a]['side'] * 16), arc=LOB))
         for j, (dx, dy) in enumerate(((-14, -16), (12, -20), (20, -4), (-20, -2))):
@@ -1108,7 +1108,7 @@ def layer(id_, body, role=False):
 
 
 NOTES_WHAT = ("The present day, on Valleron. King Kozrak's citadel, the greatest of the Vallerii spires, rises over a crowded city with the Mercurius Machine burning gold at its apex, the only machine that prints Scrambler Tokens. Below it, one of his arenas is packed to the rim under floodlights and hung with the banners of factions from across Xalia, and a fight is on: two squads of creatures, abstract blobs in their elements' colors, trading attacks. Over the arena, projected from the king's box, hangs the prize, the same printed genome card that was carried home in beat 06, and a thread of gold runs to it from the Machine that makes it. Ships come down out of a sky where the plague still smolders in the galaxy's arms and settle on the city's landing decks, and a faction's ship waits on a deck in the foreground with its hatch open.")
-NOTES_HOW = ("On a ten-second clock the squads trade an attack about every second and a quarter (a bolt, a fireball, a volley of darts, a globe of water, ice shards, a thrown stone, lobbed high over the front row), each creature lunging as it attacks and recoiling as it is hit; then the two leaders' great attacks meet in the middle with a flash, a ring of dust and the crowd's roar. The token turns slowly with scan lines running through it, and every eight seconds a pulse runs down the Machine's thread and the card brightens as it arrives; the searchlights sweep the city out of step, ships glide in and settle on the decks, the Machine's ring turns, and the plague breathes in the galaxy. Every animation starts mid-cycle, so the still frame shows the great fireball and bolt about to meet.")
+NOTES_HOW = ("On a ten-second clock the squads trade an attack about every second and a quarter (a bolt, a fireball, a volley of darts, a globe of water, ice shards, a thrown stone, lobbed over the front row), each creature nudging forward as it attacks and back as it is hit; then the two leaders' great attacks meet in the middle with a flash, a ring of dust and the crowd's roar. The token turns slowly with scan lines running through it, and every eight seconds a pulse runs down the Machine's thread and the card brightens as it arrives; the searchlights sweep the city out of step, ships glide in and settle on the decks, the Machine's ring turns, and the plague breathes in the galaxy. Every animation starts mid-cycle, so the still frame shows the great fireball and bolt about to meet.")
 
 svg_defs = '<svg class="defs" id="layer-defs" width="0" height="0" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">\n<defs>\n%s\n</defs>\n</svg>\n' % (W, H, '\n'.join(defs))
 piece_comment = '<!--\n' + CONCEPT + '\n\n' + PIECES.replace('--', '-') + '\n-->\n'
