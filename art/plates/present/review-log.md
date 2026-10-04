@@ -171,3 +171,36 @@ Every lob was measured against every bystander and the king's box: all clear. Th
 ## Round 15 (fresh reviewer, cold gate): 9, "Nothing worth a round"
 
 Gate passed: clean checklist (22 items), no failing piece, score 9; the figure fade passes. Every lob clears its bystanders and the king's box. Left as found, all invisible at site size: the throw streaks lean away from their targets before each lob turns back (reads as a wind-up); the globe passes about 12 units over fire's head; water's head overlaps fire's lower body in the staggered rows; the great fireball rests over fire's head for 0.2 s; the great bolt lingers about 0.5 s as it fades.
+
+## Nick, 2026-10-04: the creatures at the arena's scale
+
+"You did it too large... you shouldn't really be able to see the creatures more than just little dots. You put too much design into the creature itself... you gave it an eye, but there's no way you'd be able to see the creature's eye from this distance." Done: each creature is a little blob of its element's color (a body about 8 units across and a smaller head), about three crowd dots wide, over a small glow; no eyes, legs or rim. The squads stand closer together; nudges, thrown things, bolts, hit glows and the great clash all shrink to the same scale. Owner checklist item 22 now asks whether creatures are drawn at the scene's scale.
+
+## Round 16 (fresh reviewer, cold gate): 8.5
+
+The creatures are at the scene's scale (item 22 passes). What was done:
+1. The thrown stone was twice a creature's size and read as a hole: it is a creature's size and lighter.
+2. Every lob flew up into the crowd's lights and was lost: lobs stay low over the sand.
+3. The rock creature vanished on the sand: a lighter ochre, its glow at full strength.
+4. Between exchanges the fight barely registered: each hit lands with a larger, brighter glow.
+5. The small bolt's first frame: more jagged.
+6. The great clash: kept; at site size it is the moment the fight reads.
+7. The notes: "lobbed over the front row", "nudging forward".
+
+## Round 17 (fresh reviewer, cold gate): 8.5
+
+Round 16's fixes held apart from two. What was done:
+1. The ice shards rode up onto the floor wall into the crowd: they arc as low as the other lobs, over the sand.
+2. The thrown stone was invisible against the sand: it is in rock's ochre with its glow at full strength and a pale dust trail, still a creature's size.
+3. The idle second after the clash, the globe and darts skimming heads, the floor ring under the squads: left; invisible at site size or accepted under the dots ruling.
+
+## Round 18 (fresh reviewer, cold gate): 8.5
+
+Round 17's fixes confirmed. The lower lobs of round 16 had brought back plant's darts through storm and water's globe through fire. What was done:
+1. The middle row throws up from above its head, so its darts and globe clear the front row by 5 to 8 units and still stay under the floor wall.
+2. Storm's small bolt launches later so it lands with its hit.
+3. Left as found: the great fireball's size (the clash, kept since round 16), darts and shards as streaks twice a creature's length (read as light at site size), a faint orange curve on the sand, all invisible or judgment calls at site size. The stale code comment about the creatures was rewritten.
+
+## Round 19 (fresh reviewer, cold gate): 9, "Nothing worth a round"
+
+Gate passed: clean checklist (22 items), no failing piece, no console errors on the page. Round 18's fixes confirmed: the darts and the globe clear the front row, storm's bolt lands with its hit. Left as found, invisible at site size: the thrown stone is the faintest attack, the great fireball is about three creatures wide (the clash, kept), bolt shapes only show zoomed in, fire's fireball glow brushes storm passing over, and the accepted dust ring, idle second and scorch curve.
