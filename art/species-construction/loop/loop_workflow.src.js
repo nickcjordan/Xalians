@@ -581,7 +581,10 @@ if (toSpec.length) {
 // Tools: a method that needs a new generator gets it from a toolsmith before any order, so
 // rounds tune parameters instead of writing generators inside a six-build budget (round 18's
 // fan front builder spent 77 minutes writing its generator and never handed over).
-const toBuild = (args.tools || []).filter(t => !t.ready && S.regions[t.region] && workable(t.region) && !S.regions[t.region].parked && !S.tools[t.region])
+// v3.9: a tool the readers rejected after its fix pass waits for a method review (stalled)
+const stalledTools = (args.tools || []).filter(t => t.stalled).map(t => t.region)
+if (stalledTools.length) log('Tools waiting for a method review after a rejected fix pass: ' + stalledTools.join(', '))
+const toBuild = (args.tools || []).filter(t => !t.ready && !t.stalled && S.regions[t.region] && workable(t.region) && !S.regions[t.region].parked && !S.tools[t.region])
 if (toBuild.length) {
   // round 21: a tool smoke-tested on its own lost 3 to 0 to the baseline once a round built it on the
   // current model, so with toolReaderCheck a tool is ready only after its starter's candidate reads

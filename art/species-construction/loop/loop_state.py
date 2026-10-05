@@ -109,6 +109,21 @@ def method_lines(loop_dir):
     return out
 
 
+def steps_key(steps):
+    import hashlib
+    return hashlib.sha256(str(steps).strip().encode('utf-8')).hexdigest()[:16]
+
+
+def method_steps(loop_dir, rid):
+    p = loop_dir / 'methods.json'
+    if not p.exists():
+        return None
+    data = read_json(p)
+    data = data.get('regions', data) if isinstance(data, dict) else {}
+    v = data.get(rid)
+    return v.get('steps') if isinstance(v, dict) else None
+
+
 def tool_list(loop_dir):
     """Tools the method plan needs: a methods.json steps entry 'new: <script> ...'. Ready when
     loop/tools/<region>.json exists (a toolsmith wrote it), with its starter recipe."""
@@ -129,8 +144,10 @@ def tool_list(loop_dir):
             r = read_json(rec)
             # a record for another script is an older tool: round 21's method review moved R03 to
             # author_fan_lock_sweeps.py while tools/R03.json still described the clump builder,
-            # which would have skipped the toolsmith
-            have, want = Path(r.get('script') or '').stem, Path(m.group(1)).stem if m else ''
+            # which would have skipped the toolsmith. The record's script may carry prose after the
+            # path (round 25's R04 record), so the path is read from it the same way
+            path_in_record = re.search(r'([\w/.-]+\.py)', str(r.get('script') or ''))
+            have, want = Path(path_in_record.group(1)).stem if path_in_record else '', Path(m.group(1)).stem if m else ''
             if want and have and not (have.startswith(want) or want.startswith(have)):  # _fast and _v2 copies count
                 entry['ready'] = False
                 entry['replaces'] = r['script']
@@ -145,6 +162,10 @@ def tool_list(loop_dir):
                     entry['built'] = True
                     if check.startswith('worse'):
                         entry['rejected'] = check[len('worse'):].lstrip(': ')[:800]
+                        # v3.9: a tool the readers still rejected after a round's fix pass waits for a method
+                        # review (round 25's R04 sweeps lost twice); a changed method lets the toolsmith try again
+                        if r.get('rejectedForMethod') == steps_key(steps):
+                            entry['stalled'] = True
         out.append(entry)
     return out
 
@@ -314,8 +335,13 @@ def merge_status(full, returned, d, species):
         rec = d['loop'] / 'tools' / f'{rid}.json'
         if rec.exists() and check:
             r = read_json(rec)
-            if r.get('readerCheck') != check:
-                r['readerCheck'] = check
+            changed = r.get('readerCheck') != check
+            r['readerCheck'] = check
+            # a round's check comes after its fix pass, so a rejection here is the second: park the tool on this method
+            steps = method_steps(d['loop'], rid)
+            if str(check).startswith('worse') and steps and r.get('rejectedForMethod') != steps_key(steps):
+                r['rejectedForMethod'], changed = steps_key(steps), True
+            if changed:
                 rec.write_text(json.dumps(r, indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
     for k, v in returned.items():
         if k not in S and k not in DROP_KEYS and k not in ('regions', 'baseline', 'specs', 'toolChecks'):

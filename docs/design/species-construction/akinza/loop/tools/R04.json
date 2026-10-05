@@ -132,5 +132,6 @@
  "head": "H34S version 2 built inside the plan run, assembled-2725",
  "assembly": "assembled-2725",
  "packet": "untracked/species-construction/akinza/loop/packets/assembled-2725",
- "checkPlan": "docs/design/species-construction/akinza/loop/plans/tool-check-R04.json"
+ "checkPlan": "docs/design/species-construction/akinza/loop/plans/tool-check-R04.json",
+ "rejectedForMethod": "c91456616c4bf997"
 }
