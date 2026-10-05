@@ -244,6 +244,18 @@ def run(args, rc):
     summary['regionChange'] = {r: v['magnitude'] for r, v in diff['regionChange'].items()}
     summary['changedRegions'] = diff['changedRegions']
 
+    # ---- geometry change per region against the baseline assembly (the judge's geometry carry, LOOP-v3 v3.9)
+    owned = [r for r in (args.owned or args.region or '').split(',') if r]
+    base_asm = recipe.work/base_packet.name
+    try:
+        import region_shift
+        zones, cfg = rc.load_zones(recipe, None)
+        rows = region_shift.shift(region_shift.assembly_glb(recipe.work, str(base_asm)), region_shift.assembly_glb(recipe.work, name),
+                                  zones, cfg.get('frame', {}), owned)
+        summary['regionShift'] = {r: v['max'] for r, v in rows.items()}
+    except Exception as error:  # a missing shift only turns the geometry carry off for this candidate
+        summary['regionShiftError'] = f'{type(error).__name__}: {error}'
+
     # ---- containment of every changed or added step
     summary['stage'] = 'contain'
     contained = {}

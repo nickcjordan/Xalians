@@ -1688,6 +1688,7 @@ def main():
     p = sub.add_parser('candidate', help='one call per candidate: build, check, packet, measured, diff, seams, contain; prints one JSON summary')
     p.add_argument('recipe'); p.add_argument('--baseline', required=True, help='baseline packet directory (or its assembly name)')
     p.add_argument('--region'); p.add_argument('--assembly-name', default='auto')
+    p.add_argument('--owned', help='comma-separated target regions for the per-region geometry change (default: --region)')
     p.add_argument('--base', help='base recipe the candidate was cut from (default: its derivedFrom block, else the live recipe.json)')
     p.add_argument('--dry-run', action='store_true')
     p.set_defaults(func=cmd_candidate)

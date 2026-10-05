@@ -765,8 +765,9 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
     # the full candidate path for the top K, in parallel up to the slot limit
     def candidate(v):
         asm = f'assembled-{reserve(rc)}'
+        owned = [region]+list((plan.get('order') or {}).get('with') or [])
         cmd = [sys.executable, str(HERE/'recipe.py'), 'candidate', v['recipe'], '--baseline', str(baseline_packet), '--region', region,
-               '--base', str(base.path), '--assembly-name', asm]
+               '--owned', ','.join(owned), '--base', str(base.path), '--assembly-name', asm]
         rc.say(f"candidate {v['id']} #{v['rank']} -> {asm}")
         proc = _run(cmd, cwd=rc.ROOT, capture_output=True, text=True)
         summary = None
@@ -793,7 +794,7 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
                                     'measuredFailing': summary.get('measuredFailing'), 'seamsNew': summary.get('seamsNew'),
                                     'containment': {sid: {'flaggedRelative': c.get('flaggedRelative'), 'worst': c.get('worst'), 'error': c.get('error')}
                                                     for sid, c in (summary.get('containment') or {}).items()},
-                                    'regionChange': summary.get('regionChange'), 'verdict': summary.get('verdict'),
+                                    'regionChange': summary.get('regionChange'), 'regionShift': summary.get('regionShift'), 'verdict': summary.get('verdict'),
                                     'wallMinutes': summary.get('wallMinutes')})
     top_entries.sort(key=lambda e: e['rank'])
 

@@ -269,6 +269,14 @@ Round 24 kept the torso again, but its +.165 was all the held tails' rescore, an
 - **Held regions frozen** (`limits.freezeHeld`): a region Nick holds keeps its results through any order, so side effects on it neither raise nor lower the mean.
 - **Control marking**: a plan variant marked `"control": true` (or named as the tool as built) keeps its reader slot even with one shared edit.
 
+## Grade drift guards after round 25 (v3.9, 2026-10-05)
+
+Round 25 kept the forepaw (mean 6.031), but about .15 of the rise was the critic regrading legs and whole-form criteria that had not changed, and the face was reverted twice on pass-to-partial grades of criteria the candidate had not touched. `region_shift.py` showed the forepaw candidate moved no vertex outside the arm zone (every other region 0.0 figure heights), so the leg regrade was drift, not a side effect. Grade drift of about one step is now the loop's dominant error, in both directions.
+
+- **Geometry carry** (`limits.geometryCarry`, .004 figure heights): `recipe.py candidate` records `regionShift`, the largest nearest-vertex displacement of the assembled figure against the baseline assembly inside each region's zone (`region_shift.py`; a vertex inside a target's zone counts only for the targets, as `contain` does). A non-target region at or below the tolerance keeps its visual results even when its images changed, and the critic is not asked to grade it. A region with no zone (whole-form coherence) has no row and is still carried only by image change. Limitation: a target edit that deforms a neighbour's vertices inside the target's own zone is not charged to the neighbour here; the target's grade, the measured criteria and the seam check still see it.
+- **Paired re-grade** (`limits.pairedRegrade`): when the judge would revert a candidate the readers (or the critic) judged better, and the critic dropped a visual criterion of a target, a fresh critic grades only those criteria on the baseline and the candidate side by side, unlabelled (the candidate's side alternates with its assembly number). A loss counts only when the candidate still grades below the baseline there; otherwise the candidate keeps the baseline's result and the judge decides again. The round record keeps the losses, the restored criteria and the paired grades.
+- **Pinned order** (`loop_state.py args --pin R02`): a region Nick approved for the next round replaces the picked order of its component in the first round of the batch only.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

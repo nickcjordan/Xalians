@@ -175,12 +175,27 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   // the critic's copies of measured.json.
   const carried = []
   const diff = o.diff || (o.regionChange ? { regionChange: o.regionChange } : null)
+  const targetIds = [order.id, ...(order.with || [])]
+  const carry = id => {
+    for (const c of rubric.regions[id]) if (c.kind !== 'measured' && state.regions[id].results[c.id]) results[id][c.id] = state.regions[id].results[c.id]
+    carried.push(id)
+  }
   if (diff && o.threshold !== undefined && o.threshold !== null) {
     const affected = new Set(sideEffectRegions(diff, order.id, o.threshold, o.regionImages, ids))
+    for (const id of ids) if (!targetIds.includes(id) && !frozen.includes(id) && !affected.has(id)) carry(id)
+  }
+  // v3.9 geometry carry (limits.geometryCarry, after round 25): a non-target region whose geometry did
+  // not move (regionShift: the largest nearest-vertex displacement of the assembled figure against the
+  // baseline inside the region's zone, figure heights) keeps its visual results even when its images
+  // changed. Round 25's critic regraded legs that had not moved by a vertex because the new forepaw
+  // showed in the leg views. A region with no zone (whole-form coherence) has no row and is not carried.
+  const gtol = limits.geometryCarry
+  const geoCarried = []
+  if (gtol !== undefined && gtol !== null && gtol !== false && o.regionShift) {
     for (const id of ids) {
-      if (id === order.id || frozen.includes(id) || affected.has(id)) continue
-      for (const c of rubric.regions[id]) if (c.kind !== 'measured' && state.regions[id].results[c.id]) results[id][c.id] = state.regions[id].results[c.id]
-      carried.push(id)
+      if (targetIds.includes(id) || frozen.includes(id) || carried.includes(id)) continue
+      const m = o.regionShift[id]
+      if (typeof m === 'number' && m <= gtol) { carry(id); geoCarried.push(id) }
     }
   }
   const after = {}
@@ -219,7 +234,7 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   // the fan rear lost its comb rows and seams with no side effect, and was reverted
   // because the bowl outline kept every R04 result where it was).
   const onVerdict = reasons.length && pair && pair.verdict === 'better' && !lost.length && !broken.length && gain >= 0
-  const extra = carried.length ? { carried } : {}
+  const extra = { ...(carried.length ? { carried } : {}), ...(geoCarried.length ? { geoCarried } : {}) }
   if (onVerdict) return { kept: true, keptOnVerdict: true, reasons: [], results, after, gain, debts: [], verdict: pair, invariants: critique.invariants || [], ...extra }
   // v3 (limits.verdictDebt): a better verdict may also carry the same kind of debt a score gain
   // may (one other region losing up to regressionDrop), within a small mean loss. Rounds 17 to
@@ -363,6 +378,8 @@ export function recordEntry(state, limits, round, outcomes, combinedAssembly, ba
       fitBefore: o.build ? o.build.fitBefore : null, fitAfter: o.build ? o.build.fitAfter : null,
       kept, keptOnVerdict: !!(o.decision && o.decision.keptOnVerdict), reason, verdict: o.decision ? o.decision.verdict : null, gain: o.decision ? o.decision.gain : null,
       after: o.decision ? o.decision.after : null, summary: o.critique ? o.critique.summary : null, parked: r.parked,
+      ...(o.decision && o.decision.geoCarried ? { geoCarried: o.decision.geoCarried } : {}),
+      ...(o.regrade || o.repairRegrade ? { regrade: o.regrade || null, repairRegrade: o.repairRegrade || null } : {}),
     })
   }
   return entry

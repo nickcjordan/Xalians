@@ -355,6 +355,7 @@ test('v3 branch: a reverted candidate judged better is handed to the next order 
   status.lastOrders = []
   status.limits.auditRefreshKept = 0
   status.limits.verdictKeep = false
+  status.limits.freezeHeld = false  // the neighbour loss below sits in a held region
   const prompts = []
   await runWorkflow(generate(), v3Args(status, rub, { rounds: 3 }), 'b', (label, prompt) => {
     if (label.startsWith('builder')) { prompts.push(prompt); return { ...okBuild('R04'), recipe: `recipes/r${prompts.length}-R04.json` } }
@@ -710,4 +711,75 @@ test('freezeHeld: a held region keeps its results whatever the critic says', () 
   const crit = { criteria: rubric.regions.R10.map(c => ({ id: c.id, result: 'pass', evidence: '' })), pairwise: [{ region: 'R06', verdict: 'better', reason: '' }], invariants: [], issues: [] }
   const d = core.judge(S, rubric, { ...LIMITS, freezeHeld: true }, ord, {}, crit)
   assert.equal(JSON.stringify(d.results.R10), before)
+})
+
+test('v3.9 geometry carry: a non-target region the geometry did not move keeps its visual results; a moved one and the target are graded', () => {
+  const S = mkState()
+  setResults(S, 'R08', R(4, 2))
+  const ord = { id: 'R07', component: 'body' }
+  const c = crit({ R07: R(6), R08: R(8), R09: R(8) }, { pairwise: better('R07') })
+  const shift = { R07: 0, R08: 0, R09: 0.02 }
+  const d = core.judge(S, rubric, { ...LIMITS, geometryCarry: 0.004 }, ord, {}, c, { regionShift: shift })
+  assert.deepEqual(d.geoCarried, ['R08'])
+  for (const cc of rubric.regions.R08) if (cc.kind === 'visual') assert.equal(d.results.R08[cc.id], S.regions.R08.results[cc.id])
+  assert.equal(d.results.R09['R09.1'], 'pass', 'a region that moved is graded')
+  assert.equal(d.results.R07['R07.1'], 'pass', 'the target is never carried')
+  const off = core.judge(S, rubric, LIMITS, ord, {}, c, { regionShift: shift })
+  assert.equal(off.geoCarried, undefined)
+  assert.equal(off.results.R08['R08.8'], 'pass', 'without the limit the critic grade stands')
+})
+
+test('v3.9 paired re-grade: a target loss that does not hold against the baseline is restored and the candidate kept; one that holds still reverts', { skip: !existsSync(P.status) }, async () => {
+  for (const holds of [false, true]) {
+    const status = splitStatus(), rub = readJson(P.rubric)
+    status.limits.repairPass = false
+    status.limits.refinePasses = 0
+    status.limits.pairedRegrade = true
+    const visual = rub.regions.R06.filter(c => c.kind === 'visual').map(c => c.id)
+    status.regions.R06.results[visual[0]] = 'pass'
+    status.regions.R06.score = core.scoreFrom(rub, status.regions.R06.results, 'R06')
+    const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'g', (label, prompt) => {
+      if (label.startsWith('planner')) return { plan: 'plans/r26-R06.json', variants: 3, approach: 'a', needsCode: false }
+      if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A')] }
+      if (label.startsWith('reader')) return { packs: [{ pack: 'assembled-901', region: 'R06', choice: 'A', reason: 'reads closer' }] }
+      if (label.startsWith('critic r')) return { criteria: visual.map((id, k) => ({ id, result: k === 0 ? 'partial' : (status.regions.R06.results[id] || 'partial'), evidence: '' })), pairwise: [{ region: 'R06', verdict: 'better', reason: '' }], invariants: [], issues: [], summary: '' }
+      // assembled-901 is odd, so the candidate is packet one
+      if (label.startsWith('regrade')) {
+        assert.match(prompt, new RegExp(visual[0].replace('.', '\.')))
+        return { grades: [{ id: visual[0], one: holds ? 'partial' : 'pass', two: 'pass', evidence: '' }] }
+      }
+      return undefined
+    })
+    assert.ok(out.calls.some(c => c.label.startsWith('regrade')), 'a re-grade was asked for')
+    assert.equal(out.ret.status.baseline.assembly === 'assembled-901', !holds)
+  }
+})
+
+test('v3.9 critic scope: a region whose images moved but whose geometry did not is not sent to the critic', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  status.regions.R07.hold = false
+  status.regions.R08.hold = false
+  status.limits.geometryCarry = 0.004
+  status.limits.refinePasses = 0
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'c', (label) => {
+    if (label.startsWith('planner')) return { plan: 'plans/r26-R06.json', variants: 3, approach: 'a', needsCode: false }
+    if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A', { regionChange: { R07: 0.5, R08: 0.5 }, regionShift: { R06: 0.01, R07: 0, R08: 0.02 } })] }
+    if (label.startsWith('reader')) return { packs: [{ pack: 'assembled-901', region: 'R06', choice: 'A', reason: 'r' }] }
+    return undefined
+  })
+  const critic = out.calls.find(c => c.label.startsWith('critic r'))
+  assert.ok(critic)
+  assert.match(critic.prompt, /other regions, whose images changed more than the side-effect threshold: R08\./)
+})
+
+test('args.pin: a pinned region replaces the first round pick of its component, once', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R02: 'm', R03: 'm', R06: 'm' }
+  status.lastOrders = []
+  for (const id of Object.keys(status.regions)) if (!['R02', 'R03', 'R06'].includes(id)) status.regions[id].hold = true
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 2, pin: ['R02'] }), 'p', () => undefined)
+  const firstBuilders = out.calls.filter(c => c.label.startsWith('builder r26')).map(c => c.label)
+  assert.ok(firstBuilders.some(l => /head: R02/.test(l)), firstBuilders.join(','))
+  assert.ok(!firstBuilders.some(l => /head: R03/.test(l)))
+  assert.ok(firstBuilders.some(l => /body: R06/.test(l)))
 })

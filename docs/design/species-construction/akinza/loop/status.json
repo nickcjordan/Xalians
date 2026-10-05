@@ -46,7 +46,9 @@
   "toolSessions": 3,
   "toolSessionCalls": 80,
   "repairPass": true,
-  "freezeHeld": true
+  "freezeHeld": true,
+  "geometryCarry": 0.004,
+  "pairedRegrade": true
  },
  "baseline": {
   "head": "head-2271",

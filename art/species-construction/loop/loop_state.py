@@ -230,6 +230,14 @@ def dump_compact(obj):
 
 def cmd_args(a):
     args = build_args(a.species, a.rounds, a.cold, a.rubric_texts, a.status)
+    if a.pin:
+        # an order Nick approved for the first round of this batch (round 26: the face's new method), in place of the
+        # picked order of the same component; the rest of the pick is unchanged
+        known = set(args['status']['regions'])
+        bad = [r for r in a.pin if r not in known or args['status']['regions'][r].get('hold')]
+        if bad:
+            raise SystemExit(f'--pin {bad}: not a workable region')
+        args['pin'] = list(a.pin)
     text = dump_compact(args)
     out = Path(a.out) / 'args.json' if a.out else species_dirs(a.species)['loop'] / 'args.json'
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -448,6 +456,7 @@ def main(argv=None):
     p = sub.add_parser('args'); p.add_argument('species'); p.add_argument('--rounds', type=int); p.add_argument('--cold', action='store_true')
     p.add_argument('--rubric-texts', action='store_true', help='include criterion texts (what the v2 workflow prompts need)')
     p.add_argument('--status'); p.add_argument('--out')
+    p.add_argument('--pin', action='append', help='order this region in the first round, in place of the pick for its component (repeatable)')
     p.set_defaults(fn=cmd_args)
     p = sub.add_parser('merge'); p.add_argument('species'); p.add_argument('result'); p.add_argument('--note'); p.add_argument('--status'); p.add_argument('--out')
     p.set_defaults(fn=cmd_merge)

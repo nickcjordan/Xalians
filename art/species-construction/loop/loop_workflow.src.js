@@ -91,6 +91,7 @@ const BUILD = {
     previews: { type: 'number' }, componentBuilds: { type: 'number' },
     fitBefore: { type: 'string' }, fitAfter: { type: 'string' },
     regionChange: { type: 'object', additionalProperties: { type: 'number' } },
+    regionShift: { type: 'object', additionalProperties: { type: 'number' } },
     containment: { type: 'string' },
     reusable: { type: 'array', items: { type: 'object', properties: { option: { type: 'string' }, what: { type: 'string' } }, required: ['option', 'what'] } },
     commit: { type: 'string' },
@@ -240,7 +241,7 @@ function builderPrompt(order, round, suffix) {
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it).\n` +
     `Your candidate recipe: ${candidateRecipe(round, order.id + (suffix || ''))}. ${scopeLine} Run recipe.py build --dry-run first: it prints what rebuilds and the minutes it costs. An early head step rebuilds the chain after it (about 25 minutes per build), so prefer changing or adding a step as late in the chain as the region allows. Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
     `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break.\n` +
-    'Return the structured output with recipe set to your candidate recipe path, head and body set to the component directories your assembly used, assembly and packet set to yours, regionChange set to the magnitude of every region in diff.json regionChange (region id to number), containment as one line (the largest foreign-region displacement and where), approach as one recognisable sentence, and reusable options you added.'
+    'Return the structured output with recipe set to your candidate recipe path, head and body set to the component directories your assembly used, assembly and packet set to yours, regionChange set to the magnitude of every region in diff.json regionChange (region id to number), regionShift copied from candidate.json regionShift when it has one (region id to number), containment as one line (the largest foreign-region displacement and where), approach as one recognisable sentence, and reusable options you added.'
 }
 function specPrompt(id) {
   return `Read the spec brief at ${BRIEF('spec-brief.md')} and follow it. Region: ${id} (${S.regions[id].name}).\n` +
@@ -295,7 +296,7 @@ const RUN_OUT = {
     ok: { type: 'boolean' }, reason: { type: 'string' },
     candidates: { type: 'array', items: { type: 'object', properties: {
       name: { type: 'string' }, recipe: { type: 'string' }, head: { type: 'string' }, body: { type: 'string' }, assembly: { type: 'string' }, packet: { type: 'string' },
-      technicalPass: { type: 'boolean' }, regionChange: { type: 'object', additionalProperties: { type: 'number' } }, seams: { type: 'string' }, measured: { type: 'string' }, pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
+      technicalPass: { type: 'boolean' }, regionChange: { type: 'object', additionalProperties: { type: 'number' } }, regionShift: { type: 'object', additionalProperties: { type: 'number' } }, seams: { type: 'string' }, measured: { type: 'string' }, pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
     }, required: ['assembly', 'packet'] } },
   },
   required: ['ok', 'candidates'],
@@ -325,7 +326,7 @@ function runnerPrompt(plan, order, round) {
     `1. Run, in the foreground: python art/species-construction/loop/plan_job.py start ${plan} --top ${L.planTop ?? 3}\n` +
     `2. Then run, in the foreground, as many times as needed: python art/species-construction/loop/plan_job.py wait ${plan} --timeout 560 . Each call blocks up to about nine minutes and prints one line. On "running", call it again at once. On "done", go on. On "failed", report the reason and the log lines it printed. Never sleep, poll other files or open a monitor.\n` +
     `Working directory: ${fwd(REPO)}. Your shell is bash: write every path with forward slashes (a Windows path with backslashes loses them and names no file). When it is done, read the plan result file it names (beside the plan). For each top candidate that has a packet, run python art/species-construction/loop/reader_pack.py ${fwd(abs(S.baseline.packet))} <candidate packet> --regions ${[order.id, ...(order.with || [])].join(',')} --out <candidate packet>/reader-pack --seed ${seed}-<candidate name>, and set its pack to that folder and its keys to the side the candidate is on for each region, from the pack key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.\n` +
-    'Return the structured output: ok, and per candidate its name, recipe, head, body, assembly, packet, technicalPass, regionChange (region to magnitude, from candidate.json), seams and measured as one line each from candidate.json, and pack. If the command failed, ok false and the reason.'
+    'Return the structured output: ok, and per candidate its name, recipe, head, body, assembly, packet, technicalPass, regionChange (region to magnitude, from candidate.json), regionShift (region to number, from the plan result regionShift for that candidate, when present), seams and measured as one line each from candidate.json, and pack. If the command failed, ok false and the reason.'
 }
 function readerPrompt(packs, order, k) {
   return `Read the reader brief at ${BRIEF('reader-brief.md')} and follow it. You are reader ${k + 1} of three; you work alone.\n` +
@@ -391,6 +392,18 @@ async function codeBuild(order, round, task) {
   if (v && regions.some(r => v.per[r].verdict === 'better') && !regions.some(r => v.per[r].verdict === 'worse')) return { ...b, readerVerdict: v.per }
   return { ...b, failed: true, reason: 'the code builder candidate did not read better than the baseline: ' + JSON.stringify(v ? v.per : null).slice(0, 400) }
 }
+// v3.9 geometry carry: a region the candidate's assembled geometry did not move (regionShift at or
+// below limits.geometryCarry) keeps its results, so the critic does not grade it either.
+const geoUnmoved = (b, id) => L.geometryCarry != null && L.geometryCarry !== false && !!b && !!b.regionShift && typeof b.regionShift[id] === 'number' && b.regionShift[id] <= L.geometryCarry
+// The regions the candidate critic grades besides the targets: at most criticScopeMax of the regions
+// whose images moved past the threshold, the ones that moved most first, never a frozen, held or unmoved one.
+function criticScope(b, order, frozen, targetsHere) {
+  const mag = regionMagnitude(b.regionChange ? { regionChange: b.regionChange } : null, SP.regionImages)
+  return sideEffectRegions(b.regionChange ? { regionChange: b.regionChange } : null, order.id, THRESHOLD, SP.regionImages, IDS)
+    .filter(id => !frozen.includes(id) && !targetsHere.includes(id) && !S.regions[id].hold && !geoUnmoved(b, id))
+    .sort((x, y) => (mag[y] ?? 1) - (mag[x] ?? 1)).slice(0, L.criticScopeMax ?? 2)
+}
+const judgeOpts = (b, extra) => ({ pools: POOLS, regionChange: b.regionChange || null, threshold: b.regionChange ? THRESHOLD : null, regionImages: SP.regionImages, regionShift: b.regionShift || null, ...(extra || {}) })
 // Target criteria that lost credit in a reverted decision, as "id before to after".
 function lostCriteria(order, decision) {
   const out = []
@@ -399,6 +412,56 @@ function lostCriteria(order, decision) {
     if (a && b && credit(a) < credit(b)) out.push(`${c.id} ${b} to ${a}`)
   }
   return out
+}
+// v3.9 paired re-grade (limits.pairedRegrade, after round 25): a target criterion the critic drops is
+// graded again on the baseline and the candidate side by side, unlabelled, by a fresh critic with the
+// same evidence standard. The loss counts only if the candidate still grades below the baseline there;
+// otherwise the candidate keeps the baseline's result for it. Round 25's face was reverted twice on
+// pass-to-partial grades of criteria the candidate had not changed, a step of drift the cold critic
+// shows on unchanged regions too.
+const REGRADE = { type: 'object', properties: { grades: { type: 'array', items: { type: 'object', properties: {
+  id: { type: 'string' }, one: RESULT, two: RESULT, evidence: { type: 'string' } }, required: ['id', 'one', 'two', 'evidence'] } } }, required: ['grades'] }
+function visualLosses(order, critique) {
+  const got = Object.fromEntries((critique.criteria || []).map(c => [c.id, c.result]))
+  const out = []
+  for (const t of [order.id, ...(order.with || [])]) for (const c of RUBRIC.regions[t] || []) {
+    if (c.kind === 'measured') continue
+    const b = S.regions[t].results[c.id], a = got[c.id]
+    if (a && b && credit(a) < credit(b)) out.push({ id: c.id, region: t, before: b, after: a })
+  }
+  return out
+}
+async function pairedRegrade(order, round, b, critique, decision, verdicts, tie) {
+  if (!L.pairedRegrade || !decision || decision.kept) return null
+  const targets = [order.id, ...(order.with || [])]
+  const vs = targets.map(t => (verdicts || {})[t] || ((critique.pairwise || []).find(p => p.region === t) || {}))
+  if (vs.some(v => v.verdict === 'worse') || !(tie || vs.some(v => v.verdict === 'better'))) return null
+  const losses = visualLosses(order, critique)
+  if (!losses.length) return null
+  // the candidate's side alternates with its assembly number, so the grader cannot learn it
+  const n = Number((String(b.assembly).match(/\d+/) || ['0'])[0])
+  const candOne = n % 2 === 1
+  const one = candOne ? b.packet : S.baseline.packet, two = candOne ? S.baseline.packet : b.packet
+  const crits = losses.map(l => { const c = RUBRIC.regions[l.region].find(x => x.id === l.id); return `${l.id}${c && c.text ? ': ' + c.text : ''}` }).join('\n')
+  const prompt = `Read the critic brief at ${BRIEF('critic-brief.md')} and the rubric at ${BRIEF('rubric.json')}, and grade by their evidence standard.\n` +
+    `Two packet folders of the same creature: packet one ${abs(one)} and packet two ${abs(two)}. Each holds index.json, its images and the references.\n` +
+    `Grade each criterion below on packet one and on packet two, from the images the rubric names for it in each packet, against the reference. Grade each packet on its own evidence, as pass, partial or fail, with the same standard for both; equal grades are fine when the two show the same thing. One line of evidence per criterion naming what differs, if anything.
+${crits}
+` +
+    'Do not write any file. Return the structured output.'
+  const r = await agent(prompt, leanOpts({ label: `regrade r${round} ${order.id}: ${b.assembly}`, phase: 'Rounds', schema: REGRADE, model: 'opus', effort: 'high' }))
+  if (!r || !r.grades) return { losses, error: 'regrade returned nothing' }
+  const restored = [], held = []
+  for (const l of losses) {
+    const g = r.grades.find(x => String(x.id).trim() === l.id)
+    if (!g) { held.push(l.id); continue }
+    const cand = candOne ? g.one : g.two, base = candOne ? g.two : g.one
+    if (credit(cand) >= credit(base)) restored.push({ ...l, paired: { candidate: cand, baseline: base }, evidence: g.evidence })
+    else held.push(l.id)
+  }
+  const fix = new Map(restored.map(l => [l.id, l.before]))
+  const critique2 = { ...critique, criteria: (critique.criteria || []).map(c => fix.has(c.id) ? { ...c, result: fix.get(c.id), evidence: `${c.evidence} [paired re-grade: the loss did not hold against the baseline]` } : c) }
+  return { losses, restored, held, grades: r.grades, critique: critique2 }
 }
 // The repair pass: a plan from the reader-picked candidate aimed at what the critic counted against it.
 async function repairOrder(order, round, out, b, frozen, targetsHere) {
@@ -417,17 +480,17 @@ async function repairOrder(order, round, out, b, frozen, targetsHere) {
   const best = readerVerdicts(cands, reads.filter(Boolean), regions)[0]
   if (!best || !regions.some(r => best.per[r].verdict === 'better') || regions.some(r => best.per[r].verdict === 'worse')) return { repair: 'no repaired candidate read better than the baseline' }
   const rb = { failed: false, recipe: best.cand.recipe, head: best.cand.head, body: best.cand.body, assembly: best.cand.assembly, packet: best.cand.packet, technicalPass: true,
-    approach: 'repair: ' + plan.approach, changes: plan.approach, regionChange: best.cand.regionChange }
-  const mag = regionMagnitude(rb.regionChange ? { regionChange: rb.regionChange } : null, SP.regionImages)
-  const scope = sideEffectRegions(rb.regionChange ? { regionChange: rb.regionChange } : null, order.id, THRESHOLD, SP.regionImages, IDS)
-    .filter(id => !frozen.includes(id) && !targetsHere.includes(id) && !S.regions[id].hold)
-    .sort((x, y) => (mag[y] ?? 1) - (mag[x] ?? 1)).slice(0, L.criticScopeMax ?? 2)
+    approach: 'repair: ' + plan.approach, changes: plan.approach, regionChange: best.cand.regionChange, regionShift: best.cand.regionShift }
+  const scope = criticScope(rb, order, frozen, targetsHere)
   let critique = await agent(criticPrompt(rb.packet, order, 'candidate', scope), leanOpts({ label: `critic r${round} ${order.component}: ${rb.assembly} repair`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' }))
   if (!critique) return { repair: 'critic returned nothing' }
   const rv = Object.entries(best.per).map(([region, v]) => ({ region, verdict: v.verdict, reason: 'readers ' + v.better + ' better, ' + v.worse + ' worse: ' + v.reason.slice(0, 400) }))
   critique = { ...critique, criticPairwise: critique.pairwise, pairwise: rv }
-  const decision = judge(S, RUBRIC, L, order, rb, critique, { pools: POOLS, regionChange: rb.regionChange || null, threshold: rb.regionChange ? THRESHOLD : null, regionImages: SP.regionImages })
-  return decision.kept ? { build: rb, critique, decision, readerVerdict: best.per, repaired: true } : { repair: 'repair candidate reverted: ' + decision.reasons.join('; ') }
+  let decision = judge(S, RUBRIC, L, order, rb, critique, judgeOpts(rb))
+  const rg = await pairedRegrade(order, round, rb, critique, decision, best.per, false)
+  const regrade = rg ? { losses: rg.losses, restored: rg.restored || [], held: rg.held || [], error: rg.error } : undefined
+  if (rg && rg.critique && rg.restored.length) { critique = rg.critique; decision = judge(S, RUBRIC, L, order, rb, critique, judgeOpts(rb)) }
+  return decision.kept ? { build: rb, critique, decision, readerVerdict: best.per, repaired: true, repairRegrade: regrade } : { repair: 'repair candidate reverted: ' + decision.reasons.join('; '), repairRegrade: regrade }
 }
 // Before a new tool counts as ready, its starter's candidate faces the three blind readers.
 async function toolCheck(region, checkPlan) {
@@ -574,7 +637,17 @@ for (let i = 0; i < ROUNDS; i++) {
     for (const id of IDS) S.regions[id].reopen = false
     for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
   }
-  const orders = pickOrders(S, L, round, POOLS, PAIRS)
+  let orders = pickOrders(S, L, round, POOLS, PAIRS)
+  // args.pin (first round of the batch): an order Nick approved replaces the picked order of its component
+  if (i === 0 && Array.isArray(args.pin) && args.pin.length) {
+    for (const id of args.pin) {
+      if (!S.regions[id] || !workable(id) || orders.some(o => o.id === id || (o.with || []).includes(id))) continue
+      const component = POOLS.head.includes(id) ? 'head' : POOLS.join.includes(id) ? 'join' : POOLS.both.includes(id) ? 'both' : 'body'
+      const pin = { id, priority: 'pinned', component }
+      const k = orders.findIndex(o => o.component === component)
+      orders = k >= 0 ? orders.map((o, j) => j === k ? pin : o) : [...orders, pin]
+    }
+  }
   if (!orders.length) { milestone = 'no eligible region'; break }
   S.round = round
   S.lastOrders.push(orders.map(o => [o.id, ...(o.with || [])].join('+')).join('+'))
@@ -591,11 +664,11 @@ for (let i = 0; i < ROUNDS; i++) {
       workerOpts({ label: `builder r${round} ${trial.component}: ${trial.id} (medium trial)`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'medium' }))
     if (!tb || tb.failed || !tb.packet || tb.technicalPass === false) return { failed: tb ? (tb.reason || 'technical check failed') : 'builder returned nothing' }
     const frozenT = trial.component === 'head' ? [...POOLS.body, ...POOLS.join] : trial.component === 'body' ? POOLS.head : []
-    const scopeT = sideEffectRegions(tb.regionChange ? { regionChange: tb.regionChange } : null, trial.id, THRESHOLD, SP.regionImages, IDS).filter(id => !frozenT.includes(id))
+    const scopeT = sideEffectRegions(tb.regionChange ? { regionChange: tb.regionChange } : null, trial.id, THRESHOLD, SP.regionImages, IDS).filter(id => !frozenT.includes(id) && !geoUnmoved(tb, id))
     const tc = await agent(criticPrompt(tb.packet, trial, 'candidate', scopeT),
       { label: `critic r${round} ${trial.component}: ${tb.assembly} (medium trial)`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' })
     if (!tc) return { failed: 'critic returned nothing', build: tb }
-    const d = judge(S, RUBRIC, L, trial, tb, tc, { pools: POOLS, regionChange: tb.regionChange || null, threshold: tb.regionChange ? THRESHOLD : null, regionImages: SP.regionImages })
+    const d = judge(S, RUBRIC, L, trial, tb, tc, judgeOpts(tb))
     return { build: tb, kept: d.kept, reasons: d.reasons, after: d.after, gain: d.gain, verdict: d.verdict }
   })() : null
 
@@ -653,7 +726,7 @@ for (let i = 0; i < ROUNDS; i++) {
           if (out.build && out.build.readerVerdict) out.readerVerdict = out.build.readerVerdict
         } else if (picked) {
           out.build = { failed: false, recipe: picked.cand.recipe, head: picked.cand.head, body: picked.cand.body, assembly: picked.cand.assembly, packet: picked.cand.packet, technicalPass: true,
-            approach: plan.approach, changes: plan.approach, regionChange: picked.cand.regionChange }
+            approach: plan.approach, changes: plan.approach, regionChange: picked.cand.regionChange, regionShift: picked.cand.regionShift }
           out.readerVerdict = picked.per
         } else out.build = { failed: true, reason: 'no candidate read better than the baseline: ' + (out.firstPass || '').slice(0, 300), changes: '', approach: plan.approach }
       } else out.build = { failed: true, reason: 'planner returned no plan', changes: '', approach: '' }
@@ -670,10 +743,7 @@ for (let i = 0; i < ROUNDS; i++) {
     // threshold exempted almost nothing, so every critique graded 54 to 79 criteria); the
     // measured criteria and the seam check guard the rest.
     const targetsHere = [order.id, ...(order.with || [])]
-    const mag = regionMagnitude(b.regionChange ? { regionChange: b.regionChange } : null, SP.regionImages)
-    const scope = sideEffectRegions(b.regionChange ? { regionChange: b.regionChange } : null, order.id, THRESHOLD, SP.regionImages, IDS)
-      .filter(id => !frozen.includes(id) && !targetsHere.includes(id) && !S.regions[id].hold)
-      .sort((x, y) => (mag[y] ?? 1) - (mag[x] ?? 1)).slice(0, L.criticScopeMax ?? 2)
+    const scope = criticScope(b, order, frozen, targetsHere)
     out.critique = await agent(criticPrompt(b.packet, order, 'candidate', scope),
       leanOpts({ label: `critic r${round} ${order.component}: ${b.assembly}`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' }))
     if (!out.critique) { out.failed = 'critic returned nothing'; return out }
@@ -682,7 +752,15 @@ for (let i = 0; i < ROUNDS; i++) {
       out.critique = { ...out.critique, criticPairwise: out.critique.pairwise, pairwise: rv }
     }
     out.decision = judge(S, RUBRIC, L, order, b, out.critique,
-      { pools: POOLS, regionChange: b.regionChange || null, threshold: b.regionChange ? THRESHOLD : null, regionImages: SP.regionImages, measuredTie: !!out.tie })
+      judgeOpts(b, { measuredTie: !!out.tie }))
+    const rg = await pairedRegrade(order, round, b, out.critique, out.decision, out.readerVerdict, !!out.tie)
+    if (rg) {
+      out.regrade = { losses: rg.losses, restored: rg.restored || [], held: rg.held || [], error: rg.error }
+      if (rg.critique && rg.restored.length) {
+        out.critique = rg.critique
+        out.decision = judge(S, RUBRIC, L, order, b, out.critique, judgeOpts(b, { measuredTie: !!out.tie }))
+      }
+    }
     // round 24: all three readers preferred the fan candidate for its inner ears and the critic reverted
     // it for a torn outer rim the readers also named; the candidate had the right half. With repairPass,
     // a reader-picked candidate the judge reverts gets one plan that starts from it and fixes only the
