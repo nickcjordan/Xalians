@@ -1,4 +1,4 @@
-import { AbilityTemplateSchema } from '@xalians/content/schema';
+import { SpeciesSchema } from '@xalians/content/creature';
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,8 +8,6 @@ import {
 	chronicleData,
 	encyclopediaData,
 	planetRecordsData,
-	registriesData,
-	speciesData,
 	templateRecordsByKey,
 } from '../loaders';
 
@@ -97,79 +95,17 @@ describe('lore integrity', () => {
 		}
 	});
 
-	it('every template species key has a legacy species', () => {
-		const legacyKeys = new Set(getSpeciesList().map((s) => s.key));
+	it('every species template appears in the species list', () => {
+		const listedKeys = new Set(getSpeciesList().map((s) => s.key));
 		for (const key of templateRecordsByKey.keys()) {
-			expect(legacyKeys.has(key), key).toBe(true);
+			expect(listedKeys.has(key), key).toBe(true);
 		}
 	});
 
-	it('every registry key referenced by a template exists in registries.json', () => {
-		const registryKeySets = {
-			attributes: new Set(registriesData.attributes.map((a) => a.key)),
-			archetypes: new Set(registriesData.archetypes.map((a) => a.key)),
-			traits: new Set(registriesData.traits.map((a) => a.key)),
-			capabilities: new Set(registriesData.capabilities.map((a) => a.key)),
-			senses: new Set(registriesData.senses.map((a) => a.key)),
-		};
-		const instrumentKeys = new Set([
-			...registriesData.anatomy.map((a) => a.key),
-			...registriesData.channels.map((a) => a.key),
-		]);
-		const physiologyKeySets = Object.fromEntries(
-			Object.entries(registriesData.physiology).map(([field, list]) => [
-				field,
-				new Set(list.map((item) => item.key)),
-			])
-		);
-
+	it('every species template parses under the v5 species schema', () => {
 		for (const record of templateRecordsByKey.values()) {
-			for (const key of Object.keys(record.attributes)) {
-				expect(registryKeySets.attributes.has(key), `attribute ${key}`).toBe(true);
-			}
-			for (const key of Object.keys(record.archetypeWeights)) {
-				expect(registryKeySets.archetypes.has(key), `archetype ${key}`).toBe(true);
-			}
-			for (const key of Object.keys(record.traits.pool)) {
-				expect(registryKeySets.traits.has(key), `trait ${key}`).toBe(true);
-			}
-			for (const key of Object.keys(record.physiology.capabilities)) {
-				expect(registryKeySets.capabilities.has(key), `capability ${key}`).toBe(true);
-			}
-			for (const key of Object.keys(record.physiology.senses)) {
-				if (key === 'special') continue;
-				expect(registryKeySets.senses.has(key), `sense ${key}`).toBe(true);
-			}
-			for (const key of record.physiology.senses.special || []) {
-				expect(registryKeySets.senses.has(key), `special sense ${key}`).toBe(true);
-			}
-			for (const key of record.instruments) {
-				expect(instrumentKeys.has(key), `instrument ${key}`).toBe(true);
-			}
-			for (const ability of record.actions) {
-				expect(AbilityTemplateSchema.safeParse(ability).success).toBe(true);
-				expect(instrumentKeys.has(ability.instrument)).toBe(true);
-			}
-
-			for (const [field, value] of Object.entries(record.physiology)) {
-				if (field === 'composition') {
-					expect(physiologyKeySets.composition.has(value.primary), 'composition.primary').toBe(
-						true
-					);
-					if (value.secondary) {
-						expect(
-							physiologyKeySets.composition.has(value.secondary),
-							'composition.secondary'
-						).toBe(true);
-					}
-					continue;
-				}
-				if (!physiologyKeySets[field]) continue;
-				const values = Array.isArray(value) ? value : [value];
-				for (const v of values) {
-					expect(physiologyKeySets[field].has(v), `physiology.${field} ${v}`).toBe(true);
-				}
-			}
+			const result = SpeciesSchema.safeParse(record);
+			expect(result.success, `${record.key}: ${result.success ? '' : result.error.issues[0].message}`).toBe(true);
 		}
 	});
 });
@@ -231,7 +167,6 @@ describe('no Earth in universe (issue #443)', () => {
 			planetRecords: planetRecordsData,
 			chronicle: chronicleData,
 			encyclopedia: encyclopediaData,
-			species: speciesData,
 			speciesRecords: templateRecordsByKey,
 		};
 		for (const [name, data] of Object.entries(sources)) {

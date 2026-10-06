@@ -23,7 +23,6 @@ import { Badge } from '@/components/ui/badge';
  * text. Kept identical to record/RecordView.tsx's TERM_DEFS.
  */
 const TERM_DEFS = {
-    corporeality: 'Whether the creature has a physical body that occupies space and can be touched, struck, and held, or no persistent physical body at all.',
     composition: 'What the body is made of at rest.',
     bodyPlan: 'How the creature presents in the field and moves through it at rest.',
     covering: 'The outer surface of the resting body.',
@@ -31,20 +30,13 @@ const TERM_DEFS = {
     ambientMedia: 'The phases of matter the creature can sustain activity in: atmosphere, liquid, or vacuum.',
     lifespan: 'How long a working life this body has, from a season to something that never wears out.',
     chirality: "Which molecular handedness this individual's genome rolled, or whether its body has none to roll.",
-    intensity: 'Strength of the ability on a scale of 100.',
+    protections: 'Harm this body resists by nature, whatever it is doing.',
+    traversal: 'Ways this body passes walls and openings that stop others.',
 };
 
 function bandText(band) {
     if (!Array.isArray(band)) return '';
     return `${band[0]} to ${band[1]}`;
-}
-
-function humanize(key) {
-    return key
-        .replace(/Rating$/, '')
-        .replace(/([a-z])([A-Z])/g, '$1 $2')
-        .replace(/^./, (c) => c.toUpperCase())
-        .trim();
 }
 
 function capitalize(text) {
@@ -58,8 +50,8 @@ function bodyValue(value) {
 
 /**
  * Humanizes an ability field's raw registry value into visitor-facing
- * prose, per the ratified vocabulary map for the six signature-ability
- * fields (activation, delivery, effects/action, medium, instrument). Falls
+ * prose, per the ratified vocabulary map for the ability fields
+ * (activation, delivery, range, element, instrument). Falls
  * back to capitalizing the first letter for anything not in the map.
  */
 const ABILITY_VALUE_MAP = {
@@ -75,6 +67,10 @@ const ABILITY_VALUE_MAP = {
     touch: 'By touch',
     line: 'In a line',
     burst: 'In a burst',
+    stream: 'As a stream',
+    pulse: 'As a pulse',
+    field: 'As a field',
+    signal: 'As a signal',
 };
 
 const ELEMENT_NAMES = new Set([
@@ -146,7 +142,6 @@ function TemplatePhysiology({ view }) {
     // identity strip's key-facts plate, so they are left out here on
     // purpose -- nothing repeats between the strip and this plate.
     const entries = [
-        { key: <Term definition={TERM_DEFS.corporeality}>Corporeality</Term>, value: p.corporeality.name },
         { key: <Term definition={TERM_DEFS.composition}>Composition</Term>, value: composition },
         { key: <Term definition={TERM_DEFS.bodyPlan}>Body plan</Term>, value: p.bodyPlan.name },
         { key: <Term definition={TERM_DEFS.covering}>Covering</Term>, value: p.covering.name },
@@ -154,49 +149,61 @@ function TemplatePhysiology({ view }) {
         { key: <Term definition={TERM_DEFS.ambientMedia}>Ambient media</Term>, value: ambientMedia || 'Not recorded' },
         { key: 'Temperature band', value: temperature || 'Not recorded' },
         { key: <Term definition={TERM_DEFS.chirality}>Chirality</Term>, value: chirality || 'Not recorded' },
+        { key: <Term definition={TERM_DEFS.protections}>Protections</Term>, value: p.protections.length > 0 ? p.protections.join(', ') : undefined },
+        { key: <Term definition={TERM_DEFS.traversal}>Traversal</Term>, value: p.traversal.length > 0 ? p.traversal.map((t) => t.name).join(', ') : undefined },
     ].filter((e) => e.value !== undefined)
         .map((e) => ({ ...e, value: bodyValue(e.value) }));
 
     return <SpecPlate columns={2} entries={entries} />;
 }
 
-function LegacyPhysiology({ view }) {
-    const legacy = view.legacy;
-    const entries = [
-        { key: 'Attack range', value: legacy.traits.attackRange || 'Not recorded' },
-        { key: 'Flight', value: legacy.traits.canFly ? 'Yes' : 'No' },
-    ].map((e) => ({ ...e, value: bodyValue(e.value) }));
-    return <SpecPlate columns={2} entries={entries} />;
-}
-
 const ABILITY_FIELD_GLOSSES = {
     Instrument: 'The body part or channel the ability works through.',
-    Activation: 'How it fires: a single discrete act, or ongoing while held.',
-    Delivery: 'How it reaches its target: by contact, as a projectile, over an area.',
-    Effects: 'What it does to the target.',
-    Medium: 'The element it works through.',
-    Intensity: 'Strength on a scale of 100. A species shows its range; one creature shows its number.',
+    Activation: 'How it fires: a single act, ongoing while held, or set off by something done to it.',
+    Delivery: 'How it reaches its target: by contact, as a projectile, a stream, a pulse, a field or a signal.',
+    Range: 'How far it reaches.',
+    Effects: 'What it does.',
+    Element: 'The element it works through.',
+    Intensity: 'Strength of each effect. 50 is a standard reference and values above 100 are allowed. A species shows its range; one creature shows its number.',
 };
 
-function Signature({ signature }) {
-    if (!signature) return null;
+function abilityKicker(ability) {
+    if (ability.signature) return ability.kind === 'passive' ? 'Signature passive' : 'Signature ability';
+    return ability.kind === 'passive' ? 'Guaranteed passive' : 'Guaranteed action';
+}
+
+function AbilityCard({ ability }) {
+    const field = (label, value) => (value
+        ? { key: <Term definition={ABILITY_FIELD_GLOSSES[label]}>{label}</Term>, value: bodyValue(humanizeAbilityValue(value)) }
+        : null);
     return (
         <Card variant="panel" className="p-4">
-            <p className="type-legend m-0">Signature ability</p>
-            <p className="type-subhead m-0">{signature.name}</p>
-            <p className="m-0 font-body text-body text-ink">{signature.description}</p>
+            <p className="type-legend m-0">{abilityKicker(ability)}</p>
+            <p className="type-subhead m-0">{ability.name}</p>
+            <p className="m-0 font-body text-body text-ink">{ability.description}</p>
             <SpecPlate
                 columns={2}
                 entries={[
-                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Instrument}>Instrument</Term>, value: bodyValue(humanizeAbilityValue(signature.instrument)) },
-                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Activation}>Activation</Term>, value: bodyValue(humanizeAbilityValue(signature.activation)) },
-                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Delivery}>Delivery</Term>, value: bodyValue(humanizeAbilityValue(signature.delivery)) },
-                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Effects}>Effects</Term>, value: bodyValue(humanizeAbilityValue(signature.action)) },
-                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Medium}>Medium</Term>, value: bodyValue(humanizeAbilityValue(signature.medium)) },
-                    { key: <Term definition={ABILITY_FIELD_GLOSSES.Intensity}>Intensity</Term>, value: bodyValue(bandText(signature.intensity)) },
-                ]}
+                    field('Instrument', ability.instrument),
+                    field('Activation', ability.activation),
+                    field('Delivery', ability.delivery),
+                    field('Range', ability.range),
+                    field('Effects', ability.effects),
+                    field('Element', ability.element),
+                    field('Intensity', ability.intensity),
+                ].filter(Boolean)}
             />
         </Card>
+    );
+}
+
+function ChipList({ items }) {
+    return (
+        <div className="flex flex-wrap gap-2">
+            {items.map((i) => (
+                <Badge key={i.key} variant="chip-outline" title={i.nature}>{i.name}</Badge>
+            ))}
+        </div>
     );
 }
 
@@ -235,89 +242,35 @@ function GeneratorTemplate({ record }) {
                 </section>
 
                 <section>
-                    <SectionHead title="Traits" />
-                    <div className="flex flex-wrap gap-2">
-                        {record.traits.map((t) => (
-                            <Badge key={t.key} variant="chip-outline" title={t.nature} className="gap-2">
-                                {t.name} <span className="type-data">{t.percent}</span>
-                            </Badge>
-                        ))}
-                    </div>
-
-                    <SectionHead title="Archetypes" className="mt-4" />
+                    <SectionHead title="Temperament" />
                     <Card variant="panel">
-                        <ol className="m-0 flex flex-col gap-2 p-0">
-                            {record.archetypes.map((a) => (
-                                <li key={a.key} className="flex flex-wrap items-baseline gap-3">
-                                    <span className="type-legend text-small">{a.name}</span>
-                                    <span className="type-data text-small">{a.weight}</span>
-                                    <span className="font-body text-small text-ink-2">{a.nature}</span>
-                                </li>
-                            ))}
-                        </ol>
+                        {record.temperament.map((t) => <MeterRow key={t.key} name={t.name} band={t.band} />)}
                     </Card>
                 </section>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                 <section>
-                    <SectionHead title="Instruments" />
-                    <div className="flex flex-wrap gap-2">
-                        {record.instruments.map((i) => (
-                            <Badge key={i.key} variant="chip-outline">{i.name}</Badge>
-                        ))}
-                    </div>
+                    <SectionHead title="Anatomy" />
+                    <ChipList items={record.anatomy} />
+                </section>
+                <section>
+                    <SectionHead title="Channels and conduits" />
+                    {record.channels.length === 0 && record.conduits.length === 0
+                        ? <p className="m-0 font-body text-small text-ink-2">None. Every act comes from the body itself.</p>
+                        : <ChipList items={[...record.channels, ...record.conduits.map((c) => ({ key: `conduit-${c.key}`, name: `${c.name} carries ${c.element}` }))]} />}
                 </section>
             </div>
         </>
     );
 }
 
-function LegacyRatings({ view }) {
-    const ratings = Object.entries(view.legacy.statRatings || {}).filter(([, v]) => v);
-    return (
-        <section>
-            <SectionHead title="Legacy ratings" />
-            <SpecPlate
-                entries={ratings.map(([key, value]) => ({
-                    key: humanize(key),
-                    value: bodyValue(capitalize(value)),
-                }))}
-            />
-            <p className="mt-4 max-w-[62ch] font-body text-small text-ink-2">
-                This species does not yet have a full record. Readouts arrive with its template.
-            </p>
-        </section>
-    );
-}
+/** Two-column key-facts plate for the identity strip: home world, mass,
+ * every overall dimension the template records, diet, lifespan and
+ * communication. */
+const DIMENSIONS = [['heightCm', 'Height'], ['lengthCm', 'Length'], ['widthCm', 'Width']];
 
-/** Two-column key-facts plate for the identity strip: home world, height,
- * weight, diet, lifespan, communication for a template species; home world,
- * height, weight, attack range and flight for a legacy stub. */
 function KeyFacts({ view }) {
-    if (view.source !== 'template') {
-        const legacy = view.legacy;
-        return (
-            <SpecPlate
-                columns={2}
-                entries={[
-                    {
-                        key: 'Home world',
-                        value: (
-                            <Link to={lore.routeFor('world', view.homePlanet)} className={`el-${view.element} font-body normal-case tracking-normal text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink`}>
-                                {view.planet ? view.planet.name : view.homePlanet}
-                            </Link>
-                        ),
-                    },
-                    { key: 'Height', value: bodyValue(legacy.height) },
-                    { key: 'Weight', value: bodyValue(legacy.weight) },
-                    { key: 'Attack range', value: bodyValue(legacy.traits.attackRange || 'Not recorded') },
-                    { key: 'Flight', value: bodyValue(legacy.traits.canFly ? 'Yes' : 'No') },
-                ]}
-            />
-        );
-    }
-
     const p = view.record.physiology;
     const communication = p.communication && p.communication.length > 0
         ? p.communication.map((c) => c.name).join(', ')
@@ -335,8 +288,8 @@ function KeyFacts({ view }) {
                         </Link>
                     ),
                 },
-                { key: 'Height', value: bodyValue(`${bandText(p.size.heightCm)} cm`) },
-                { key: 'Weight', value: bodyValue(`${bandText(p.size.weightKg)} kg`) },
+                { key: 'Mass', value: bodyValue(`${bandText(p.size.massKg)} kg`) },
+                ...DIMENSIONS.filter(([field]) => p.size[field]).map(([field, label]) => ({ key: label, value: bodyValue(`${bandText(p.size[field])} cm`) })),
                 { key: 'Diet', value: bodyValue(p.diet.name) },
                 {
                     key: <Term definition={TERM_DEFS.lifespan}>Lifespan</Term>,
@@ -354,8 +307,7 @@ function KeyFacts({ view }) {
 }
 
 /**
- * SpeciesView: specimen record built from a ratified template when one
- * exists, from the legacy species.json stub otherwise.
+ * SpeciesView: specimen record built from the species' v5 template.
  * Contract: docs/design/xalian-encyclopedia-page.md §5 "Bestiary and species".
  */
 export default function SpeciesView() {
@@ -374,7 +326,6 @@ export default function SpeciesView() {
         );
     }
 
-    const isTemplate = view.source === 'template';
     const connectionsCount = lore.getConnections('species', key, { limit: 12 }).length;
     const worldName = view.planet ? view.planet.name : view.homePlanet;
     const worldmates = view.planet && Array.isArray(view.planet.nativeSpecies)
@@ -416,10 +367,10 @@ export default function SpeciesView() {
                 </Card>
 
                 <div className="flex min-w-0 flex-col gap-6">
-                    {isTemplate && view.record.abilities.map((ability) => <Signature key={ability.name} signature={ability} />)}
+                    {view.record.abilities.map((ability) => <AbilityCard key={ability.key} ability={ability} />)}
                     <div>
                         <SectionHead title="Physiology" />
-                        {isTemplate ? <TemplatePhysiology view={view} /> : <LegacyPhysiology view={view} />}
+                        <TemplatePhysiology view={view} />
                     </div>
                 </div>
             </div>
@@ -443,7 +394,7 @@ export default function SpeciesView() {
                     <p className="mb-4 font-body text-small text-ink-2">
                         Machine-readable data the Generator and the games use.
                     </p>
-                    {isTemplate ? <GeneratorTemplate record={view.record} /> : <LegacyRatings view={view} />}
+                    <GeneratorTemplate record={view.record} />
                 </Fold>
             </FoldGroup>
         </article>

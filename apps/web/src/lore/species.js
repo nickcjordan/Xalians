@@ -1,57 +1,35 @@
-import { definingAbility } from '@xalians/content/ability-compatibility';
-// SpeciesView: builds a unified view from a ratified template
-// (speciesRecords.json) when one exists, or from the legacy species.json
-// stub otherwise. Also resolves registry vocabularies to display names.
+// SpeciesView: builds the encyclopedia's view of each species from its v5
+// template (canonicalSpeciesCatalog.json) and resolves registry vocabularies
+// to display names.
 
-import { legacySpeciesList, templateRecordsByKey, registries, lookupInstrument } from './loaders';
+import { speciesList, templateRecordsByKey, registries, lookupInstrument } from './loaders';
 import { getEntry } from './entries';
 import { getWorld, _attachNativeSpecies } from './worlds';
 
+// Display rows for v5 vocabulary that registries.json does not carry yet:
+// that file is still pinned by the legacy v4 generator, whose schema enums are
+// generated from it. Sources: lowlight, docs/design/creature-model-current.md;
+// fins, docs/design/creature-derived-acts.md; temperament axes,
+// docs/design/xalian-creature-system-redesign.md; traversal,
+// creature-model-current.md. Fold these into registries.json when v4 retires.
+const V5_ONLY_ROWS = {
+	lowlight: { name: 'Lowlight', nature: 'Sees in dim light. Not vision in total darkness, and not heat sense.' },
+	fins: { name: 'Fins', nature: 'Fins that steer and drive the body, and can strike or shove at contact.' },
+	phase: { name: 'Phases through walls', nature: 'Passes through solid walls and barriers.' },
+	seep: { name: 'Seeps through openings', nature: 'Flows through cracks and openings too small for its body.' },
+};
+
+const TRIGGER_TEXT = { contact: 'When touched', harmed: 'When harmed', 'ally-harmed': 'When an ally is harmed' };
+
+const TEMPERAMENT_AXES = ['boldness', 'curiosity', 'energy', 'aggression', 'sociability'];
+
 function resolveRegistry(map, key) {
-	const item = map.get(key);
-	return item ? { key, name: item.name, nature: item.nature } : { key, name: key, nature: '' };
+	const item = map.get(key) || V5_ONLY_ROWS[key];
+	return item ? { key, name: item.name, nature: item.nature } : { key, name: capitalize(key), nature: '' };
 }
 
-function buildLegacyView(species) {
-	const raw = species.raw;
-	return {
-		key: species.key,
-		name: species.name,
-		nameOrigin: undefined,
-		element: species.element,
-		homePlanet: species.homePlanet,
-		get planet() {
-			return getWorld(species.homePlanet);
-		},
-		source: 'legacy',
-		portrait: { svgName: species.key },
-		description: raw.description,
-		appearance: undefined,
-		fields: undefined,
-		entry: getEntry(species.key),
-		legacy: {
-			height: raw.height,
-			weight: raw.weight,
-			statRatings: raw.statRatings,
-			traits: {
-				attackRange: raw.traits.attackRange,
-				canFly: raw.traits.canFly,
-			},
-		},
-	};
-}
-
-function buildTraits(pool) {
-	return Object.entries(pool)
-		.filter(([, percent]) => percent > 0)
-		.map(([key, percent]) => ({ ...resolveRegistry(registries.traits, key), percent }))
-		.sort((a, b) => b.percent - a.percent);
-}
-
-function buildArchetypes(weights) {
-	return Object.entries(weights)
-		.map(([key, weight]) => ({ ...resolveRegistry(registries.archetypes, key), weight }))
-		.sort((a, b) => b.weight - a.weight);
+function capitalize(text) {
+	return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
 }
 
 function buildAttributes(attributes) {
@@ -73,13 +51,6 @@ function buildSenses(senses) {
 		.map((key) => ({ ...resolveRegistry(registries.senses, key), band: senses[key] }));
 	const special = (senses.special || []).map((key) => resolveRegistry(registries.senses, key));
 	return { graded, special };
-}
-
-function buildInstruments(instrumentKeys) {
-	return (instrumentKeys || []).map((key) => {
-		const item = lookupInstrument(key);
-		return item ? { key, name: item.name } : { key, name: key };
-	});
 }
 
 function buildPhysiology(physiology) {
@@ -119,23 +90,90 @@ function buildPhysiology(physiology) {
 		result.genome = { chirality: resolveRegistry(registries.physiology.chirality, physiology.genome.chirality) };
 	}
 	if (physiology.size !== undefined) result.size = physiology.size;
+	result.protections = (physiology.protections || []).map(describeProtection);
+	result.traversal = (physiology.traversal || []).map((key) => resolveRegistry(new Map(), key));
 	return result;
 }
 
-function buildSignature(signatureAbility) {
-	if (!signatureAbility) return undefined;
-	const instrument = lookupInstrument(signatureAbility.instrument);
-	const action = { name: signatureAbility.effects.map(e => e.kind).join(", ") };
+function describeProtection(p) {
+	const against = p.mechanism === 'elemental' && p.element ? capitalize(p.element) : capitalize(p.mechanism || p.status || p.type);
+	return `${capitalize(p.degree)} to ${against.toLowerCase()} harm`;
+}
+
+function buildTemperament(temperament) {
+	return TEMPERAMENT_AXES
+		.filter((key) => temperament && temperament[key] !== undefined)
+		.map((key) => ({ key, name: capitalize(key), band: temperament[key] }));
+}
+
+function instrumentName(key) {
+	const item = lookupInstrument(key) || V5_ONLY_ROWS[key];
+	return item ? item.name : capitalize(key);
+}
+
+// One plain phrase per effect, in the v5 effect vocabulary.
+function describeEffect(effect) {
+	switch (effect.type) {
+		case 'harm':
+			return effect.mechanism === 'elemental' ? 'Elemental harm' : `${capitalize(effect.mechanism)} harm`;
+		case 'status':
+			return capitalize(effect.status);
+		case 'restore':
+			return 'Restores';
+		case 'protect':
+			return 'Protects';
+		case 'displace':
+			return effect.direction ? `Displaces ${effect.direction}` : 'Displaces';
+		case 'remove':
+			return `Removes (${(effect.methods || []).join(', ')})`;
+		default:
+			return capitalize(effect.type);
+	}
+}
+
+function intensityText(effects) {
+	const values = effects
+		.map((e) => e.intensity)
+		.filter((v) => v !== undefined)
+		.map((v) => (Array.isArray(v) ? `${v[0]} to ${v[1]}` : String(v)));
+	return values.length > 0 ? values.join(', ') : undefined;
+}
+
+// A guaranteed action or passive, flattened for display.
+function buildAbility(ability, kind, signatureKey) {
 	return {
-		name: signatureAbility.name,
-		activation: signatureAbility.activation.operation,
-		instrument: instrument ? instrument.name : signatureAbility.instrument,
-		action: action.name,
-		delivery: signatureAbility.delivery.mode,
-		medium: signatureAbility.medium,
-		intensity: signatureAbility.intensity,
-		description: signatureAbility.description,
+		key: ability.key,
+		name: ability.name,
+		description: ability.description,
+		kind,
+		signature: ability.key === signatureKey,
+		instrument: instrumentName(ability.instrument),
+		activation: ability.activation.trigger ? TRIGGER_TEXT[ability.activation.trigger] : ability.activation.continuity,
+		delivery: ability.delivery.mode,
+		// A contact range only restates contact delivery, so it is left out.
+		range: ability.spatial && ability.spatial.range !== 'contact' ? ability.spatial.range : undefined,
+		element: ability.element,
+		effects: ability.effects.map(describeEffect).join(', '),
+		intensity: intensityText(ability.effects),
 	};
+}
+
+function buildAbilities(template) {
+	const signatureKey = template.signature && template.signature.key;
+	const abilities = [
+		...template.actions.map((a) => buildAbility(a, 'action', signatureKey)),
+		...template.passives.map((a) => buildAbility(a, 'passive', signatureKey)),
+	];
+	// Signature first, then the other guaranteed abilities in authored order.
+	return [...abilities.filter((a) => a.signature), ...abilities.filter((a) => !a.signature)];
+}
+
+function buildConduits(conduits) {
+	return Object.entries(conduits || {}).map(([instrument, element]) => ({
+		key: instrument,
+		name: instrumentName(instrument),
+		element,
+	}));
 }
 
 function buildTemplateView(species, template) {
@@ -156,24 +194,22 @@ function buildTemplateView(species, template) {
 		entry: getEntry(species.key),
 		record: {
 			physiology: buildPhysiology(template.physiology),
-			traits: buildTraits(template.traits.pool),
-			archetypes: buildArchetypes(template.archetypeWeights),
 			attributes: buildAttributes(template.attributes),
+			temperament: buildTemperament(template.temperament),
 			capabilities: buildCapabilities(template.physiology.capabilities),
 			senses: buildSenses(template.physiology.senses),
-			instruments: buildInstruments(template.instruments),
-			signature: buildSignature(definingAbility(template)),
-			abilities: [buildSignature(definingAbility(template))],
+			anatomy: (template.physiology.anatomy || []).map((key) => ({ key, name: instrumentName(key) })),
+			channels: (template.channels || []).map((key) => ({ key, name: instrumentName(key) })),
+			conduits: buildConduits(template.conduits),
+			abilities: buildAbilities(template),
 		},
 	};
 }
 
 const speciesViewsByKey = new Map();
 
-for (const species of legacySpeciesList) {
-	const template = templateRecordsByKey.get(species.key);
-	const view = template ? buildTemplateView(species, template) : buildLegacyView(species);
-	speciesViewsByKey.set(species.key, view);
+for (const species of speciesList) {
+	speciesViewsByKey.set(species.key, buildTemplateView(species, templateRecordsByKey.get(species.key)));
 }
 
 const speciesViewsSortedByName = [...speciesViewsByKey.values()].sort((a, b) =>

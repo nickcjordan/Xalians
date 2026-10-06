@@ -4,8 +4,7 @@
 import encyclopediaData from '@xalians/content/encyclopedia.json';
 import chronicleData from '@xalians/content/chronicle.json';
 import planetRecordsData from '@xalians/content/planetRecords.json';
-import speciesData from '@xalians/content/species.json';
-import speciesRecordsData from '@xalians/content/speciesRecords.json';
+import speciesCatalogData from '@xalians/content/canonicalSpeciesCatalog.json';
 import registriesData from '@xalians/content/registries.json';
 import tourData from '@xalians/content/tour.json';
 import narrationData from '@xalians/content/narration.json';
@@ -14,8 +13,8 @@ import platesData from '@xalians/content/plates.json';
 // ---- entries -------------------------------------------------------------
 
 // encyclopedia.json is the single source for every entry, species included
-// (category 'xalians'); speciesRecords.json carries only the mechanical
-// species template records, not encyclopedia entries.
+// (category 'xalians'); canonicalSpeciesCatalog.json carries only the
+// mechanical species templates, not encyclopedia entries.
 const allEntries = encyclopediaData.entries;
 
 const entriesByKey = new Map(allEntries.map((e) => [e.key, e]));
@@ -78,23 +77,20 @@ function assertNoAliasCollisions({ entries, planets, species, eras }) {
 const planetsInOrder = planetRecordsData;
 const planetsByKey = new Map(planetsInOrder.map((p) => [p.key, p]));
 
-// ---- species: normalize legacy species.json (capitalized planet/type) -----
+// ---- species: the v5 canonical catalog --------------------------------------
+// docs/species-templates/v5/<key>.json, bundled into canonicalSpeciesCatalog.json.
+// The roster and every species template come from here; the legacy v4
+// species.json and speciesRecords.json are no longer read by the encyclopedia.
 
-function normalizeLegacySpecies(raw) {
-	return {
-		key: raw.name.toLowerCase(),
-		name: raw.name,
-		element: raw.type.toLowerCase(),
-		homePlanet: raw.planet.toLowerCase(),
-		raw,
-	};
-}
-
-const legacySpeciesList = speciesData.map(normalizeLegacySpecies);
-const legacySpeciesByKey = new Map(legacySpeciesList.map((s) => [s.key, s]));
-
-// Template species records, keyed the same way (record.key is already lowercase).
-const templateRecordsByKey = new Map(speciesRecordsData.records.map((r) => [r.key, r]));
+const templateRecords = Object.values(speciesCatalogData);
+const speciesList = templateRecords.map((r) => ({
+	key: r.key,
+	name: r.name,
+	element: r.element,
+	homePlanet: r.homePlanet,
+}));
+const speciesByKey = new Map(speciesList.map((s) => [s.key, s]));
+const templateRecordsByKey = new Map(templateRecords.map((r) => [r.key, r]));
 
 // ---- registries -------------------------------------------------------------
 
@@ -106,8 +102,6 @@ function toMap(list) {
 
 const registries = {
 	attributes: toMap(registriesData.attributes),
-	archetypes: toMap(registriesData.archetypes),
-	traits: toMap(registriesData.traits),
 	elements: toMap(registriesData.elements),
 	capabilities: toMap(registriesData.capabilities),
 	senses: toMap(registriesData.senses),
@@ -145,7 +139,7 @@ const chronicleParagraphsByPlanetIndex = new Map(
 assertNoAliasCollisions({
 	entries: allEntries,
 	planets: planetsInOrder,
-	species: legacySpeciesList,
+	species: speciesList,
 	eras: erasInOrder,
 });
 const aliasToKey = buildAliasMap(allEntries);
@@ -160,8 +154,7 @@ export {
 	encyclopediaData,
 	chronicleData,
 	planetRecordsData,
-	speciesData,
-	speciesRecordsData,
+	speciesCatalogData,
 	registriesData,
 	tourData,
 	narrationData,
@@ -173,8 +166,8 @@ export {
 	assertNoAliasCollisions,
 	planetsInOrder,
 	planetsByKey,
-	legacySpeciesList,
-	legacySpeciesByKey,
+	speciesList,
+	speciesByKey,
 	templateRecordsByKey,
 	registries,
 	lookupInstrument,

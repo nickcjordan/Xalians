@@ -2,7 +2,7 @@
 // paragraphs, native species, entries that mention the world, the world's own
 // encyclopedia entry when one exists).
 
-import { planetsInOrder, planetsByKey, chronicleParagraphsByPlanetIndex, legacySpeciesList, allEntries } from './loaders';
+import { planetsInOrder, planetsByKey, chronicleParagraphsByPlanetIndex, speciesList, allEntries } from './loaders';
 import { getEntry } from './entries';
 import chapterPlans from '@xalians/content/worldChapters.json';
 
@@ -95,4 +95,4 @@ export function _attachNativeSpecies(speciesViews) {
 	}
 }
 
-export { legacySpeciesList as _legacySpeciesList };
+export { speciesList as _speciesList };

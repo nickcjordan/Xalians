@@ -27,8 +27,8 @@ function splitSentences(text) {
 describe('species lead does not duplicate Feeding or Behavior (issue #437)', () => {
 	const species = getSpeciesList();
 
-	it('covers all 32 species', () => {
-		expect(species.length).toBe(32);
+	it('covers all 33 species', () => {
+		expect(species.length).toBe(33);
 	});
 
 	it.each(species.map((s) => [s.key, s.name]))('%s (%s): lead sentences do not repeat in Feeding or Behavior', (key) => {

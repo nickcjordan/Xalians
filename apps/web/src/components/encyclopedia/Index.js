@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
-import { useReadMark } from './trail';
 import { RecordRow, EmptyState } from '@/components/system/record';
 import { IndexRow } from '@/components/system/index-row';
 import { usePageTitle } from '@/components/system/head';
@@ -19,7 +18,6 @@ function initialOf(title) {
 }
 
 function IndexRecord({ entry }) {
-    const read = useReadMark('entry', entry.key);
     return (
         <RecordRow
             id={`index-${entry.key}`}
@@ -32,7 +30,6 @@ function IndexRecord({ entry }) {
                     <div className="mt-2 flex flex-wrap gap-2">
                         <Badge>{entry.category}</Badge>
                         {entry.element && <Badge variant="chip" className={`el-${entry.element}`}>{entry.element}</Badge>}
-                        {read && <Badge variant="ok">Reviewed</Badge>}
                     </div>
                 </div>
             }

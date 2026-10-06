@@ -2,7 +2,7 @@
 // eras. Returns results with a ~140-char snippet and a route.
 
 import MiniSearch from 'minisearch';
-import { allEntries, planetsInOrder, legacySpeciesList, chronicleData, erasInOrder } from './loaders';
+import { allEntries, planetsInOrder, speciesList, chronicleData, erasInOrder } from './loaders';
 import { getSpeciesList } from './species';
 import { routeFor } from './routeFor';
 import { passageLabel } from './chapterLabel';
