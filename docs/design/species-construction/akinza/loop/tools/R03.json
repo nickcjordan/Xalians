@@ -1,364 +1,57 @@
 {
  "region": "R03",
- "ready": true,
- "readerCheck": "better: A's inner ears are smooth, pale, cupped fans of soft feathered locks like the reference, while B's inner ears are built from hard, angular faceted shards that read as crystals rather than fur. | A's inner ears read as one soft, pale, cupped wedge of layered pointed locks like the reference, while B'",
- "script": "art/species-construction/author_fan_lock_sweeps_v3.py",
+ "ready": false,
+ "script": "art/species-construction/finish_fan_assembled.py",
  "modules": [
-  "art/species-construction/fan_lock_sweeps_v3.py (numpy only; v1 and v2 stay pinned by older recipes)",
+  "art/species-construction/fan_lock_sweeps_assembled.py (copy of fan_lock_sweeps_v3.py: cup and tuft off, per-column window weight)",
   "art/species-construction/fan_clumps_front_fast_v2.py and fan_clumps_fast_common.py (imported, not edited)"
  ],
  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
- "step": "H36 (after H35); starter recipe recipes/tool-R03.json points at the v3 script and spec r03_sweeps_v3h.json",
- "spec": "art/species-construction/specs/r03_sweeps_v3h.json (v3 to v3g are the fix-pass trials, kept because built heads pin them)",
+ "step": "A-fan (kind post, after the assembly)",
+ "spec": "art/species-construction/specs/r03_fan_assembled.json",
  "inputs": [
-  "art/species-construction/specs/r03_clumps.json (clump table, unchanged)",
-  "art/species-construction/specs/r03_envelope.npz (sheet envelope, unchanged)"
+  "art/species-construction/specs/r03_clumps.json",
+  "art/species-construction/specs/r03_envelope.npz"
  ],
- "interface": "blender art/species-construction/author_fan_lock_sweeps_v3.py -- --scene <H35 head.blend> --out <dir> --table specs/r03_clumps.json --envelope specs/r03_envelope.npz --spec specs/r03_sweeps_v3h.json [--p section.spine=.3 ...] [--sides L,R] [--debug-owner] [--export-locks f.blend]. Outputs head.blend, shape.glb, fan-sweeps.json (resolved levers, per lock length, tip radius, standoff, joined voxels, backing, tip clearance, envelope missing and extra, cup yaw, pale area front and side, pruned fragments, skinTopZ, components, nonManifoldEdges, hashes), sections.npz, source-snapshot/.",
+ "interface": "blender art/species-construction/finish_fan_assembled.py -- --asm <assembly dir> --out <new assembly dir> --table specs/r03_clumps.json --envelope specs/r03_envelope.npz --spec specs/r03_fan_assembled.json [--voxel .0016] [--mode locks|passthrough] [--sides L,R] [--p dotted.path=value ...]. Outputs akinza.blend, akinza.glb, assembly.json (skin counts), fan-assembled.json, stage-start.json, source-snapshot/.",
  "parameters": [
   {
-   "name": "spec:voxel",
-   "default": 0.0025,
-   "what": "grid size in head-local units (.0025 is .00067 figure heights, finer than the .0008 the method asks for)"
+   "name": "voxel",
+   "default": 0.0016,
+   "what": "fine voxel, head-local (the method asks .0008; a wing crop is 135M voxels at .0016, so finer needs a tiled build)"
   },
   {
-   "name": "spec:strip.u",
-   "default": [
-    0.085,
-    0.1
-   ],
-   "what": "|u| from which the old front coat is stripped: above y .045, and below it (figure heights)"
+   "name": "window.uMin / yMax",
+   "default": "0.09 / 0.215",
+   "what": "window edge in fit units: inner edge |u| and bottom row; every depth inside is replaced"
   },
   {
-   "name": "spec:strip.yBlend",
-   "default": [
-    0.035,
-    0.055
-   ],
-   "what": "rows over which strip.u switches"
+   "name": "window.cupMargin / cupInflate",
+   "default": "0.006 / 0",
+   "what": "edits have weight 0 inside the measured cup hull plus this"
   },
   {
-   "name": "spec:strip.ramp",
-   "default": 0.008,
-   "what": "width of the strip edge in u"
-  },
-  {
-   "name": "spec:strip.rampIn",
+   "name": "window.seamBlend",
    "default": 0.03,
-   "what": "width of the strip edge toward the skull (a slope, not a wall)"
+   "what": "edits fade in over this distance inside the window edge"
   },
   {
-   "name": "spec:strip.bottom",
-   "default": 0.195,
-   "what": "no strip below this row"
-  },
-  {
-   "name": "spec:strip.maxDepth",
-   "default": 0.08,
-   "what": "the cut sinks at most this far behind the old front face"
-  },
-  {
-   "name": "spec:strip.depthRamp",
-   "default": 0.04,
-   "what": "the cut sinks from the old front to the backing over this much"
-  },
-  {
-   "name": "spec:strip.midBlur",
-   "default": 0.01,
-   "what": "box blur of the old mid-surface"
-  },
-  {
-   "name": "spec:backing.shift",
+   "name": "window.patchMargin",
    "default": 0.006,
-   "what": "the backing front is at least this far behind the old mid-surface"
+   "what": "the fine patch stops this far (head-local) from the coarse hole boundary"
   },
   {
-   "name": "spec:backing.depthBehindDeepest",
-   "default": 0.014,
-   "what": "the backing front lies this far behind the deepest layer rear faces (spec .015 does not fit the thin fan)"
-  },
-  {
-   "name": "spec:backing.minThickness",
-   "default": 0.01,
-   "what": "never closer than this to the old rear face"
-  },
-  {
-   "name": "spec:backing.blur",
-   "default": 0.008,
-   "what": "smoothing of the backing surface"
-  },
-  {
-   "name": "spec:layers.0.undercut",
-   "default": 0.85,
-   "what": "back half width as a fraction of the front (below 1 tucks the back under)"
-  },
-  {
-   "name": "spec:layers.1.undercut",
-   "default": 0.85,
-   "what": "same for layer 2"
-  },
-  {
-   "name": "spec:section.p",
-   "default": 2.4,
-   "what": "superellipse exponent of the section"
-  },
-  {
-   "name": "spec:section.spine",
-   "default": 0.45,
-   "what": "extra front height along the center line, fraction of the half thickness"
-  },
-  {
-   "name": "spec:section.rollDeg",
-   "default": 14.0,
-   "what": "constant lean about the axis, alternating sign lock to lock"
-  },
-  {
-   "name": "spec:section.twistDeg",
-   "default": 6.0,
-   "what": "peak twist about the axis, deterministic sign per lock"
-  },
-  {
-   "name": "spec:section.widthScale",
-   "default": 0.95,
-   "what": "width of every coat lock against the table"
-  },
-  {
-   "name": "spec:section.thickScale",
-   "default": 1.0,
-   "what": "thickness of every coat lock against the table"
-  },
-  {
-   "name": "spec:section.camber",
-   "default": 0.016,
-   "what": "forward camber of the front face at mid length"
-  },
-  {
-   "name": "spec:section.lowerScale",
-   "default": [
-    1.5,
-    1.25
-   ],
-   "what": "width and thickness scale of the small lower locks"
-  },
-  {
-   "name": "spec:section.rings",
-   "default": 56,
-   "what": "rings along a lock"
-  },
-  {
-   "name": "spec:section.around",
-   "default": 28,
-   "what": "points around a ring"
-  },
-  {
-   "name": "spec:tips.minHalfWidth",
-   "default": 0.0035,
-   "what": "half width of the last ring (figure heights); at least 2 voxels"
-  },
-  {
-   "name": "spec:tips.minHalfThick",
-   "default": 0.0035,
-   "what": "half thickness of the last ring"
-  },
-  {
-   "name": "spec:tips.length",
-   "default": 0.005,
-   "what": "the apex vertex stands this far past the last ring"
-  },
-  {
-   "name": "spec:tips.taperScale",
-   "default": 1.0,
-   "what": "multiplies the table taper exponents"
-  },
-  {
-   "name": "spec:union.rootBand",
-   "default": 0.035,
-   "what": "smooth union only within this distance of a lock root"
-  },
-  {
-   "name": "spec:union.rootRamp",
-   "default": 0.02,
-   "what": "fade of the root band"
-  },
-  {
-   "name": "spec:union.rootBlend",
-   "default": 0.004,
-   "what": "smooth union radius in the root band"
-  },
-  {
-   "name": "spec:union.rootCap",
-   "default": 0.02,
-   "what": "a lock is carried this far behind its root, into the head"
-  },
-  {
-   "name": "spec:union.stemRadius",
-   "default": 0.45,
-   "what": "radius of the rod from a coat lock root back into the backing, as a fraction of the root half width (what joins a lock whose root side the cup carve removes)"
-  },
-  {
-   "name": "spec:union.stemInto",
-   "default": 0.006,
-   "what": "the stem ends this far inside the backing (figure heights)"
-  },
-  {
-   "name": "spec:union.rearMargin",
-   "default": -0.003,
-   "what": "thickness clamp keeps the lock back this far in front of the old rear face"
-  },
-  {
-   "name": "spec:union.rearClip",
-   "default": -0.001,
-   "what": "new material is cut off this far behind the old rear face"
-  },
-  {
-   "name": "spec:union.seamBlur",
-   "default": 3,
-   "what": "box blur radius (voxels) in the strip-edge and cup-rim seam bands"
-  },
-  {
-   "name": "spec:tuft.standoff",
-   "default": 0.02,
-   "what": "a tuft blade tip stands this far in front of the cup floor; the strongest lever for how separate and proud the blades read (.012 flush leaf, .03 wing-like)"
-  },
-  {
-   "name": "spec:tuft.widthScale",
-   "default": 0.72,
-   "what": "tuft blade width scale against the table row; v2 uses it alone (v1 also multiplied section.widthScale and tuft width came out .035 on a .006 root spacing, melting five clumps into a slab)"
-  },
-  {
-   "name": "spec:tuft.thickScale",
-   "default": 1.3,
-   "what": "tuft blade thickness scale against the table (v2: alone, not times section.thickScale)"
-  },
-  {
-   "name": "spec:tuft.rootBand",
-   "default": 0.02,
-   "what": "tuft clumps merge within this distance of their roots"
-  },
-  {
-   "name": "spec:tuft.rootBlend",
-   "default": 0.003,
-   "what": "smooth union radius of the merged root"
-  },
-  {
-   "name": "spec:pale.tol",
-   "default": 0.004,
-   "what": "faces within this distance of a tuft solid get the pale material"
-  },
-  {
-   "name": "spec:cup.yawDeg",
-   "default": 35.0,
-   "what": "the opening yaw outward from straight forward (floor slope tan of it)"
-  },
-  {
-   "name": "spec:cup.floorStart",
-   "default": -0.016,
-   "what": "floor depth at u .100"
-  },
-  {
-   "name": "spec:cup.floorMax",
-   "default": 0.036,
-   "what": "deepest floor"
-  },
-  {
-   "name": "spec:cup.bowl",
-   "default": 0.008,
-   "what": "extra depth toward the middle of the polygon"
-  },
-  {
-   "name": "spec:cup.dish",
-   "default": 0.018,
-   "what": "carve depth rises to the coat surface over this much inside the rim"
-  },
-  {
-   "name": "spec:cup.fillet",
-   "default": 0.005,
-   "what": "rim fillet radius"
-  },
-  {
-   "name": "spec:clumps",
-   "default": "see specs/r03_sweeps.json",
-   "what": "per-clump table edits by name or fnmatch pattern (the v2 spec has none)"
-  },
-  {
-   "name": "spec:tuft.shingle",
-   "default": 0.012,
-   "what": "every second tuft blade stands this much further off the floor so neighbours overlap as layers, not a slab"
-  },
-  {
-   "name": "spec:tuft.rollDeg",
-   "default": 14.0,
-   "what": "alternating lean of the tuft blades about their axes"
-  },
-  {
-   "name": "spec:tuft.liftFrom",
-   "default": 0.08,
-   "what": "fraction of blade length where the lift off the floor starts"
-  },
-  {
-   "name": "spec:addClumps",
-   "default": "16 rows (LT11 to LT18, RT11 to RT18)",
-   "what": "v2: whole table rows appended to the table; the spec skips the table tufts (skip T1..T5) and fans eight narrow pale blades per side from the skull-side root line to the cup rim"
-  },
-  {
-   "name": "spec:tips.profile",
-   "default": "leaf",
-   "what": "'leaf' closes every coat lock in a convex ogive point; 'power' is the v2 table exponent (needle tips)"
-  },
-  {
-   "name": "spec:tips.leafA",
-   "default": 1.4,
-   "what": "width fall (1 - s^a)^b over the outer 60% of a lock: smaller closes sooner and rounder, larger holds width then ends in a blunt wedge. Sweep 1.4 vs 2.4: 1.4 raised fitIou .9122 to .9139, 2.4 lowered it to .9092"
-  },
-  {
-   "name": "spec:tips.leafB",
-   "default": 1.0,
-   "what": "width fall exponent b: below 1 rounds the tip, above 1 sharpens it"
-  },
-  {
-   "name": "spec:tips.leafThickA",
-   "default": 1.6,
-   "what": "the same a for thickness"
-  },
-  {
-   "name": "spec:tips.leafThickB",
-   "default": 0.8,
-   "what": "the same b for thickness"
-  },
-  {
-   "name": "spec:layers.0.lengthScale",
-   "default": 0.95,
-   "what": "under layer lock length scale (also layers.1.lengthScale); fuller leaf locks reach farther in the outline, so 1.0 and 1.04 failed R01.1 (.889, .881) and R03.1 (1.026, 1.043), .95 passes all (.900, 1.021)"
-  },
-  {
-   "name": "spec:layers.1.lengthScale",
-   "default": 0.95,
-   "what": "over layer lock length scale"
-  },
-  {
-   "name": "spec:layers.0.standoff",
-   "default": 0.02,
-   "what": "under layer standoff forward of the backing (was .014)"
-  },
-  {
-   "name": "spec:layers.1.shingle",
-   "default": 0.02,
-   "what": "stagger of every second primary behind its neighbours (was .012)"
+   "name": "strip.*, backing.*, layers[].standoff/undercut/lengthScale, section.*, tips.*, union.*, clumps, skip",
+   "default": "v3h values",
+   "what": "the v3 lock sweep levers, unchanged meaning (see the author_fan_lock_sweeps_v3.py docstring)"
   }
  ],
  "checks": {
-  "build": "H36 -> head-2578, assembled-2579 (about 2 min head, 7.3 min candidate run); check pass, one component, nonManifoldEdges 0, removedFragments 4.",
-  "contain": "recipe.py candidate: relative containment, nothing flagged (R05 .00045, R06 .00038).",
-  "quick": "measured against baseline 2278: R01.1 .9003 pass, R03.1 1.021 pass, R03.2 .0293 pass, R04.1 .9118 pass; no criterion newly failing.",
-  "seam_check": "candidate summary: no new seams flagged.",
-  "sweep": "recipe.py sweep tool-R03-sweep on spec:tips.leafA 1.4,2.4 by spec:union.rearMargin -.006,0 (heads 2574 to 2577): leafA moves the outline (fitIou .91386 at 1.4, .90924 at 2.4); rearMargin does not move the silhouette.",
-  "images": "m02 front beside the baseline: coat locks are broad leaf shapes with convex pointed tips and overlap in two layers; the v2 needle fringe is gone. Residual: a short fringe of small points at the lower fan edge comes from the untouched rear coat (R04) seen behind the front locks, and a thin dark slit remains on the upper rim of the R wing. The pale tuft is eight overlapping pointed blades per side.",
-  "readerFault": "Round 22 and 23 readers: v2 tuft read as a smooth leaf sheet or as faceted shards (they disagreed), and the v2 fan edge was a thin serrated fringe of needle spikes with dark gaps against the baseline's larger overlapping leaf locks. Fix: tips.profile leaf (convex ogive tips instead of the concave power fall), lock length .95 to hold the outline, deeper shingle and standoff so each lock's flank reads."
+  "build": "passes (assembled-2812, 8.3 min on a shared machine, about 110 s alone)",
+  "loop_tools check": "pass",
+  "passthrough control": "one closed component; deviation inside the window p99 .0005 world",
+  "locks": "18 L and 17 R locks built; envelope missing .0009 and .0007, extra .0015 and .0016 (fit area)",
+  "contain, quick, seam_check, sweep": "not run yet"
  },
- "notes": "FIX PASS 2 (v3): the v2 coat locks fell as (1-t)^1.25..1.5, a concave curve, so the last third of every lock was a needle and the fan edge read as a fringe of spikes; v3 adds tips.profile 'leaf' (convex ogive, (1-s^a)^b) and wider tips, deeper shingle and standoff, rearMargin -.003 (locks overlap the rear coat so no slit opens behind them), lock length .95 because fuller locks raised the outline loss. Builds: 8 head builds plus one 4-variant sweep. Open: the rear coat's small points show along the lower edge from the front (R04's domain), a thin dark slit on the R wing upper rim, and the pale tuft blades are still smooth-surfaced. Earlier v2 notes: eight narrow pale blades per side instead of five fat clumps; pruned thin fragments; stem rods.",
- "debug": "--debug-owner paints faces within a voxel of a layer 1 solid and a layer 2 solid in two grays (materials 1 and 2); --export-locks writes every solid as its own object; sections.npz holds four constant-height slices of each wing field. Run through loop_tools.py blender with the flags directly after the script name (no leading --). A Python syntax error does not print Traceback, so check that the output directory has head.blend.",
- "head": "head-2578",
- "assembly": "assembled-2579",
- "packet": "untracked/species-construction/akinza/loop/packets/assembled-2579",
- "checkPlan": "docs/design/species-construction/akinza/loop/plans/tool-check-R03.json"
+ "notes": "continue: session 1 built the tool and a passing candidate; open defects are in loop/tools/R03-notes.md"
 }

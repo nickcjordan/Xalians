@@ -1,19 +1,20 @@
 {
-  "order": {
-    "round": 23,
-    "region": "R03",
-    "with": []
-  },
-  "base": "docs/design/species-construction/akinza/recipe.json",
-  "baselinePacket": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2278",
-  "start": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
-  "variants": [
-    {
-      "name": "tool as built",
-      "why": "the layered lock sweeps starter as it stands, no edits: three blind readers compare it with the baseline before the tool counts as ready",
-      "edits": []
-    }
-  ],
+ "order": {
+  "round": 28,
   "region": "R03",
-  "top": 1
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2811",
+ "start": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
+ "variants": [
+  {
+   "name": "tool as built",
+   "why": "reader check of finish_fan_assembled.py before it counts as ready: the starter recipe with no edits against the baseline",
+   "control": true,
+   "edits": []
+  }
+ ],
+ "region": "R03",
+ "top": 1
 }
