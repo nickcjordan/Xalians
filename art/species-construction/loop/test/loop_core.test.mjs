@@ -824,3 +824,27 @@ test('v3.9 blocked tool: a region whose toolsmith needs a loop change gets no or
   assert.ok(!builders.some(l => /R06/.test(l)), builders.join(','))
   assert.match(out.ret.status.toolBlocked.R06, /post-assembly/)
 })
+
+test('v3.11 plateauCountsKeeps: a window with a kept round is not a plateau', () => {
+  const S = mkState({ means: [6, 6, 6, 6], keptLog: [false, true, false] })
+  assert.equal(core.plateau(S, { ...LIMITS, plateauRounds: 3, plateauGain: 0.15 }), true)
+  assert.equal(core.plateau(S, { ...LIMITS, plateauRounds: 3, plateauGain: 0.15, plateauCountsKeeps: true }), false)
+  S.keptLog = [false, false, false]
+  assert.equal(core.plateau(S, { ...LIMITS, plateauRounds: 3, plateauGain: 0.15, plateauCountsKeeps: true }), true)
+})
+
+test('v3.11 face guards: a candidate whose face breaks a guard never reaches the readers', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  status.limits.faceGuards = true
+  status.limits.refinePasses = 0
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'f', (label) => {
+    if (label.startsWith('planner')) return { plan: 'plans/r28-R06.json', variants: 3, approach: 'a', needsCode: false }
+    if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A', { guards: ['bandMin 2.8 (over 1.5: a thick ring all round (R02.2))'] }), splitCand(2, 'A')] }
+    if (label.startsWith('reader')) return { packs: [{ pack: 'assembled-902', region: 'R06', choice: 'A', reason: 'r' }] }
+    return undefined
+  })
+  const reader = out.calls.find(c => c.label.startsWith('reader'))
+  assert.doesNotMatch(reader.prompt, /assembled-901/)
+  assert.match(reader.prompt, /assembled-902/)
+  assert.ok(out.logs.some(l => /Face guards dropped assembled-901/.test(l)))
+})

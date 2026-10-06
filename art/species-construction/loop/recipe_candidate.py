@@ -224,6 +224,16 @@ def run(args, rc):
     else:
         rc.say(f'packet {name} (renders, posed fit, measured, seams against {base_packet.name}; several minutes)')
         stage('packet', lambda: rc.tool('packet', *species, name, str(packet[0]), '--baseline', str(base_packet)))
+    # face measures and guards against the baseline (face_measure.py; v3.11): an even thick ring or a convergent stare is
+    # caught here, before the readers, who preferred such faces four rounds running while the critic failed every one
+    try:
+        import face_measure
+        face = face_measure.measure(recipe.work/name)
+        base_face = face_measure.measure(recipe.work/base_packet.name)
+        summary['faceMeasures'] = face
+        summary['faceGuards'] = face_measure.guard_failures(face, base_face)
+    except Exception as error:  # a face that cannot be measured is not a failed candidate
+        summary['faceMeasuresError'] = f'{type(error).__name__}: {error}'
     measured = json.loads((packet[0]/'measured.json').read_text(encoding='utf-8'))
     summary['measuredChanged'] = criteria_changes(base_measured, measured)
     summary['measuredNew'] = {k: {'value': v['value'], 'result': v['result'], 'bound': bound(v)}

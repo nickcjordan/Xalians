@@ -49,7 +49,10 @@
   "freezeHeld": true,
   "geometryCarry": 0.004,
   "pairedRegrade": true,
-  "runnerUpCritic": true
+  "runnerUpCritic": true,
+  "faceGuards": true,
+  "plateauCountsKeeps": true,
+  "outsideReview": true
  },
  "baseline": {
   "head": "head-2271",

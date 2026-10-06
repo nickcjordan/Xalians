@@ -289,6 +289,16 @@ Round 26 kept a small forepaw change with no region drifting, but showed four pr
 - **Blocked tools skip the order** (toolsmith `blocked`, `loopChange`): a region whose method needs a loop change gets no order that round; the change is returned as `toolBlocked` for the maintainer.
 - **Face spec addendum** (`specs/R02.md`): a bold outline through band darkness and width, never relief; iris offset toward the nose capped at .003 fit units (invariant I01).
 
+## After round 27 (v3.11, 2026-10-06)
+
+Round 27 kept the neck with the mean flat a third time and lost the face for the fourth round on an eye ring the critic always fails and the readers always like.
+
+- **Face measures and guards** (`face_measure.py`, `limits.faceGuards`): from the fixed eyes-front render, rays from each iris centre give the eye aspect, iris width and offset toward the nose, and the lid band width at 12 angles. `recipe.py candidate` records `faceMeasures` and `faceGuards` (guards the candidate breaks where the baseline does not: irisOffset over .12, band top over bottom under 2.5, thinnest band over 1.5 percent of the eye width); the runner reports them, a guarded candidate never reaches the readers, and an R02 critic reads the numbers. Calibrated on rounds 25 to 27: the baseline reads .05 to .08, about 7 and about .4; every ring the critic failed reads 1.5 to 2.3 and 2.0 to 2.8; the convergent stare reads .165. A mesh measure of how proud the eye edge stands was tried and dropped (it read the same on every face).
+- **Plateau counts kept rounds** (`limits.plateauCountsKeeps`, `keptLog`): a window with a kept round is not a plateau.
+- **Outside review for a stuck top gap** (`limits.outsideReview`): a method review of an audit top-two region whose last three orders were reverted goes to a reviewer who reads the sheet, rubric, audit and packet but not the loop history, and gets only the names of what failed.
+- **Builders test loop code they edit**: a builder that changes a file under `loop/` runs both test suites before committing and returns `loopTests`; failing tests fail the build.
+- `plan_job.py report` no longer writes a copy beside the plan.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

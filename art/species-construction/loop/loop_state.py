@@ -206,7 +206,7 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         baseline.setdefault('recipe', rel(d['recipe']))
     slim = {
         'schemaVersion': status.get('schemaVersion'), 'limits': status['limits'], 'baseline': baseline,
-        'round': status['round'], 'lastOrders': status['lastOrders'], 'means': status.get('means') or means_from_rounds(d['loop']),
+        'round': status['round'], 'lastOrders': status['lastOrders'], 'means': status.get('means') or means_from_rounds(d['loop']), 'keptLog': status.get('keptLog') or [],
         'specs': {rid: {k: rel(v) for k, v in sp.items() if k in ('path', 'image')} for rid, sp in (status.get('specs') or {}).items()},
         'methods': methods, 'invariants': status.get('invariants', {}), 'regions': regions,
     }
@@ -327,7 +327,7 @@ def merge_status(full, returned, d, species):
                         b[part] = m.group(1)
         S['baseline'] = b
     # state the workflow changes round to round: the returned value always wins
-    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means', 'toolBlocked'):
+    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means', 'keptLog', 'toolBlocked'):
         if k in returned:
             S[k] = returned[k]
     # v3.5: each tool's reader check goes into its record, which the next args reads for readiness

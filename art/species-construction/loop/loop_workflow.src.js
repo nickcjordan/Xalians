@@ -40,6 +40,7 @@ S.toolChecks = {}  // this run's tool reader checks, written into each tools/<re
 S.toolBlocked = {}  // v3.9: regions whose tool needs a loop change, with the change the toolsmith named
 S.tools = S.tools || {}
 S.means = S.means || []
+S.keptLog = S.keptLog || []  // v3.11: whether each round in the plateau window kept a change
 for (const id of IDS) {
   const r = S.regions[id]
   r.results = r.results || {}
@@ -96,6 +97,7 @@ const BUILD = {
     containment: { type: 'string' },
     reusable: { type: 'array', items: { type: 'object', properties: { option: { type: 'string' }, what: { type: 'string' } }, required: ['option', 'what'] } },
     commit: { type: 'string' },
+    loopTests: { type: 'string' },
     pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
   },
   required: ['failed', 'changes', 'approach'],
@@ -151,6 +153,7 @@ ${criteriaText(order.id)}
 ${criteriaText(w)}
 ` + auditLines(w)
     if (featuresOn() && (S.auditGaps || []).some(g => g.region === order.id)) t += auditLines(order.id) + 'Check each audit row against the images yourself. A criterion that one of these rows shows failing in both models cannot pass. For every audit row listed for the target (and any paired target), return auditRows with its rank and resolved true only when this candidate no longer shows the problem the row describes.\n'
+    if ([order.id, ...(order.with || [])].includes('R02')) t += 'The packet candidate.json holds faceMeasures for the candidate (face_measure.py: eye aspect, iris width and offset toward the nose, lid band width at 12 angles, band top over bottom), and faceGuards lists any guard it breaks that the baseline keeps; use them beside the images for R02.1, R02.2, R02.6 and invariant I01.\n'
     t += 'Judge the target region\'s visual criteria and give the pairwise verdict for it. ' +
       (scope && scope.length ? `Then judge the visual criteria of these other regions, whose images changed more than the side-effect threshold: ${scope.join(', ')}. Leave every other region's visual criteria out; their images did not move enough to judge. ` : 'No other region\'s images moved more than the side-effect threshold, so judge no other region\'s visual criteria. ') +
       'Copy measured criteria for all regions. Report every invariant. List up to three issues for the target region.\n'
@@ -244,6 +247,8 @@ function builderPrompt(order, round, suffix) {
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it).\n` +
     `Your candidate recipe: ${candidateRecipe(round, order.id + (suffix || ''))}. ${scopeLine} Run recipe.py build --dry-run first: it prints what rebuilds and the minutes it costs. An early head step rebuilds the chain after it (about 25 minutes per build), so prefer changing or adding a step as late in the chain as the region allows. Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
     `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break.\n` +
+    // round 27: a code builder changed recipe.py and loop_tools.py; it was sound, but nothing made it run the loop's tests
+    'If you change any file under art/species-construction/loop/, run node --test art/species-construction/loop/test/ and python -m unittest discover -s art/species-construction/loop/test -p "test_*.py" before you commit, fix or undo the loop change until both pass, and return loopTests as one line with both pass counts (or "not run: no loop file changed").\n' +
     'Return the structured output with recipe set to your candidate recipe path, head and body set to the component directories your assembly used, assembly and packet set to yours, regionChange set to the magnitude of every region in diff.json regionChange (region id to number), regionShift copied exactly from candidate.json regionShift when it has one, every region including the ones at 0.0 (region id to number), containment as one line (the largest foreign-region displacement and where), approach as one recognisable sentence, and reusable options you added.'
 }
 function specPrompt(id) {
@@ -267,7 +272,24 @@ function methodPrompt() {
     `Regions on hold by Nick's direction (method "hold", no change): ${IDS.filter(id => !workable(id)).join(', ') || 'none'}. Parked regions: ${IDS.filter(id => S.regions[id].parked).join(', ') || 'none'}. For a parked region, set changed true only when the method is different from what its history shows stalled.\n` +
     'Set respec true for a region whose current spec would mislead a builder using the new method. Return the structured output with one entry per region.'
 }
+// v3.11 (limits.outsideReview, after round 27): the audit's top gap went six rounds without a keep while the reviews that
+// chose its methods read the loop's whole history; a stuck top gap gets a reviewer who sees only the names of what failed
+function stuckTopGap(id) {
+  const top = (S.auditGaps || []).filter(g => g.rank <= 2).map(g => g.region)
+  const h = S.regions[id].history || []
+  return top.includes(id) && h.length >= 3 && h.slice(-3).every(e => !e.kept)
+}
 function reviewPrompt(id, why) {
+  if (L.outsideReview && stuckTopGap(id)) {
+    const tried = (S.regions[id].history || []).slice(-6).map(e => `round ${e.round}: ${String(e.approach || '').slice(0, 90)}`).join('; ')
+    return `You are an outside reviewer for region ${id} (${S.regions[id].name}) of a creature model built by an automated loop. The region is one of the independent audit's top gaps and its last three orders were all reverted, so the loop's own method reviews are not trusted to find the way out. Read the method brief at ${BRIEF('method-brief.md')} for the format and the modeling scope, then judge the problem yourself from the reference sheet (${BRIEF('sheet.png')}), the region's rubric criteria in ${BRIEF('rubric.json')}, the gap audit ${S.audit ? abs(S.audit) : ''} and the baseline packet images ${abs(S.baseline.packet)}. Do not read status.json, the history files or the old method notes. ${why}
+` +
+      `Approaches already tried and reverted (names only; do not repeat them in another form): ${tried || 'none recorded'}.
+` +
+      `Recipe: ${abs(S.baseline.recipe)}. Propose a method that is structurally different from those, buildable as recipe steps (a post-assembly step is allowed; RECIPE.md section Post-assembly steps), and say what a first order would build.
+` +
+      'Return the structured output: the new method, unpark true only when the new method is a real change that can close the remaining gap, respec true when the region\'s spec must be rewritten for it.'
+  }
   return `Read the method brief at ${BRIEF('method-brief.md')} and follow its method review section for region ${id} (${S.regions[id].name}). ${why}\n` +
     `Its current method: ${S.methods[id] || 'none recorded'}. History card:\n${historyCard(id)}\n` +
     `Status: ${BRIEF('status.json')}. Baseline packet: ${abs(S.baseline.packet)}. Recipe: ${abs(S.baseline.recipe)}.\n` +
@@ -299,7 +321,7 @@ const RUN_OUT = {
     ok: { type: 'boolean' }, reason: { type: 'string' },
     candidates: { type: 'array', items: { type: 'object', properties: {
       name: { type: 'string' }, recipe: { type: 'string' }, head: { type: 'string' }, body: { type: 'string' }, assembly: { type: 'string' }, packet: { type: 'string' },
-      technicalPass: { type: 'boolean' }, regionChange: { type: 'object', additionalProperties: { type: 'number' } }, regionShift: { type: 'object', additionalProperties: { type: 'number' } }, seams: { type: 'string' }, measured: { type: 'string' }, pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
+      technicalPass: { type: 'boolean' }, regionChange: { type: 'object', additionalProperties: { type: 'number' } }, regionShift: { type: 'object', additionalProperties: { type: 'number' } }, guards: { type: 'array', items: { type: 'string' } }, face: { type: 'string' }, seams: { type: 'string' }, measured: { type: 'string' }, pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
     }, required: ['assembly', 'packet'] } },
   },
   required: ['ok', 'candidates'],
@@ -410,6 +432,17 @@ function criticScope(b, order, frozen, targetsHere) {
     .sort((x, y) => (mag[y] ?? 1) - (mag[x] ?? 1)).slice(0, L.criticScopeMax ?? 2)
 }
 const judgeOpts = (b, extra) => ({ pools: POOLS, regionChange: b.regionChange || null, threshold: b.regionChange ? THRESHOLD : null, regionImages: SP.regionImages, regionShift: b.regionShift || null, ...(extra || {}) })
+// v3.11 (limits.faceGuards, after round 27): a candidate whose measured face breaks a guard the baseline keeps (an even
+// thick ring, a convergent stare; face_measure.py) never reaches the readers, who preferred such faces four rounds running
+// while the critic failed every one
+// "48 pass, 2 fail", "fail 2", "FAILED (errors=1)" fail; "50 pass, 0 fail", "fail 0", "OK" do not
+const loopTestsFailed = t => /FAILED|errors?=[1-9]|[1-9]\d*\s+fail|fail(?:ed|ures?|s)?\s*[:=]?\s*[1-9]/i.test(String(t))
+function guarded(cands) {
+  if (!L.faceGuards) return cands
+  const bad = cands.filter(c => (c.guards || []).length)
+  if (bad.length) log('Face guards dropped ' + bad.map(c => `${c.assembly} (${c.guards.join('; ')})`).join(' | '))
+  return cands.filter(c => !(c.guards || []).length)
+}
 // Target criteria that lost credit in a reverted decision, as "id before to after".
 function lostCriteria(order, decision) {
   const out = []
@@ -480,7 +513,7 @@ async function repairOrder(order, round, out, b, frozen, targetsHere) {
   const plan = await agent(plannerPrompt(order, round, null, task), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} repair`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
   if (!plan || !plan.plan) return null
   const run = await agent(runnerPrompt(plan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id} repair`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' }))
-  const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
+  const cands = guarded(run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : [])
   if (!cands.length) return { repair: run ? (run.reason || 'no candidate built') : 'runner returned nothing' }
   const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id} repair`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
   const best = readerVerdicts(cands, reads.filter(Boolean), regions)[0]
@@ -502,7 +535,7 @@ async function repairOrder(order, round, out, b, frozen, targetsHere) {
 async function toolCheck(region, checkPlan) {
   const order = { id: region, with: [], component: POOLS.head.includes(region) ? 'head' : POOLS.join.includes(region) ? 'join' : 'body' }
   const run = await agent(runnerPrompt(checkPlan, order, S.round + 1), workerOpts({ label: `runner tool check: ${region}`, phase: 'Prepare', schema: RUN_OUT, model: 'sonnet', effort: 'low' }))
-  const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
+  const cands = guarded(run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : [])
   if (!cands.length) return { verdict: 'worse', reason: run ? (run.reason || 'the starter built no candidate') : 'runner returned nothing' }
   const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} tool check: ${region}`, phase: 'Prepare', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
   const [v] = readerVerdicts(cands.slice(0, 1), reads.filter(Boolean), [region])
@@ -524,7 +557,7 @@ function snapshot() {
     const r = S.regions[id]
     regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
   }
-  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, toolChecks: S.toolChecks, toolBlocked: S.toolBlocked, regions }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, keptLog: S.keptLog, toolChecks: S.toolChecks, toolBlocked: S.toolBlocked, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -550,7 +583,7 @@ if (args.coldBaseline || IDS.some(id => S.regions[id].score === null)) {
   const kind = S.round > 0 ? 'rescore' : 'baseline'
   const entry = { round: S.round, kind, assembly: S.baseline.assembly, scores: scoresNow(S), mean: meanOf(S, scoresNow(S)), summary: critique.summary }
   await agent(recordPrompt(S.round, entry, kind === 'rescore' ? '-rescore' : ''), workerOpts({ label: 'record: baseline', phase: 'Baseline', model: 'haiku', effort: 'low' }))
-  S.means = [entry.mean]
+  S.means = [entry.mean]; S.keptLog = []
   log(`Cold baseline ${S.baseline.assembly}: mean ${entry.mean} ${JSON.stringify(entry.scores)}`)
 }
 
@@ -578,7 +611,7 @@ if (!Object.keys(S.methods).length || args.replan) {
   }
 }
 // Plateau is measured from the last method change: a new plan starts a fresh window.
-if (replanned) S.means = [meanOf(S, scoresNow(S))]
+if (replanned) { S.means = [meanOf(S, scoresNow(S))]; S.keptLog = [] }
 const toSpec = IDS.filter(id => workable(id) && !S.specs[id] && !S.regions[id].parked && (S.regions[id].score ?? 0) < L.passBar)
 if (toSpec.length) {
   const specs = await parallel(toSpec.map(id => () => agent(specPrompt(id), { label: `spec: ${id}`, phase: 'Prepare', schema: SPEC, model: 'opus', effort: 'high' })))
@@ -709,7 +742,7 @@ for (let i = 0; i < ROUNDS; i++) {
           const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
           if (!thePlan || !thePlan.plan) break
           const run = await agent(runnerPrompt(thePlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' }))
-          const cands = run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []
+          const cands = guarded(run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : [])
           if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built') : 'runner returned nothing'; continue }
           const regions = [order.id, ...(order.with || [])]
           const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
@@ -756,6 +789,7 @@ for (let i = 0; i < ROUNDS; i++) {
     }
     const b = out.build
     if (!b || b.failed || !b.packet || b.technicalPass === false) { out.failed = b ? (b.reason || 'technical check failed') : 'builder returned nothing'; return out }
+    if (b.loopTests && loopTestsFailed(b.loopTests)) { out.failed = 'the builder changed loop code and its tests fail: ' + b.loopTests; return out }
     // The critic looks at the target and at regions whose images moved past the threshold;
     // a component the order did not touch is frozen by the judge, so it is not judged either.
     const frozen = order.component === 'head' ? [...POOLS.body, ...POOLS.join] : order.component === 'body' ? POOLS.head : []
@@ -847,6 +881,7 @@ for (let i = 0; i < ROUNDS; i++) {
   entry.recipe = S.baseline.recipe || null
   if (trialOutcome) entry.effortTrial = { region: trial.id, effort: 'medium', assembly: trialOutcome.build ? trialOutcome.build.assembly : null, kept: !!trialOutcome.kept, reasons: trialOutcome.reasons || [trialOutcome.failed], gain: trialOutcome.gain ?? null, verdict: trialOutcome.verdict || null }
   S.means.push(entry.mean)
+  S.keptLog.push(entry.orders.some(o => o.kept))
   // The state after this round rides in the record, so a stopped batch resumes with
   // loop_state.py merge <round file> instead of a journal replay.
   entry.state = snapshot()
@@ -872,9 +907,10 @@ for (let i = 0; i < ROUNDS; i++) {
       .filter(x => x.p !== null).sort((a, b) => b.p - a.p).slice(0, 2).map(x => x.id)
     log(`Round ${round}: plateau (${S.means.slice(-1 - (L.plateauRounds ?? 3)).join(', ')}); method review for ${top.join(', ')}`)
     const reviews = await parallel(top.map(id => () => agent(reviewPrompt(id, `The loop has plateaued: the last rounds gained less than ${L.plateauGain ?? 0.15} together, and this region ranks highest.`),
-      { label: `method review r${round}: ${id}`, phase: 'Rounds', schema: REVIEW, model: 'opus', effort: 'medium' })))
+      { label: `method review r${round}: ${id}${L.outsideReview && stuckTopGap(id) ? ' (outside)' : ''}`, phase: 'Rounds', schema: REVIEW, model: 'opus', effort: L.outsideReview && stuckTopGap(id) ? 'high' : 'medium' })))
     reviews.forEach((rv, k) => { reviewed.add(top[k]); if (rv) applyMethod({ ...rv, region: top[k] }, false) })
     S.means = [S.means[S.means.length - 1]]
+    S.keptLog = []
   }
 }
 

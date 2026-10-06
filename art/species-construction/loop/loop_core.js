@@ -62,6 +62,9 @@ export function plateau(state, limits) {
   const n = limits.plateauRounds ?? 3, gain = limits.plateauGain ?? 0.15
   const means = state.means || []
   if (means.length <= n) return false
+  // v3.11 (limits.plateauCountsKeeps, after round 27): a round that kept a change the readers preferred made visible
+  // progress even when no criterion moved (rounds 26 and 27 kept the forepaw and the neck with the mean flat)
+  if (limits.plateauCountsKeeps && (state.keptLog || []).slice(-n).some(Boolean)) return false
   return Math.round((means[means.length - 1] - means[means.length - 1 - n]) * 1000) / 1000 < gain
 }
 

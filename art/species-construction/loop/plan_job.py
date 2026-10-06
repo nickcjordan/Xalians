@@ -177,12 +177,19 @@ def candidate_row(entry, baseline_packet, regions, seed):
             'technicalPass': bool(summary.get('ok') and (summary.get('check') or {}).get('pass')),
             'regionChange': summary.get('regionChange') or {}, 'regionShift': summary.get('regionShift') or {},
             'seams': 'no new seams flagged' if not seams else 'seams flagged at '+', '.join(sorted({f"{s['joint']}/{s['view']} {s['kind']}" for s in seams})),
-            'measured': summary.get('verdict') or '', 'pack': str(pack).replace('\\', '/'), 'keys': {r: side for r in regions}}
+            'measured': summary.get('verdict') or '', 'pack': str(pack).replace('\\', '/'), 'keys': {r: side for r in regions},
+            'guards': summary.get('faceGuards') or [], 'face': face_line(summary.get('faceMeasures'))}
+
+
+def face_line(face):
+    eyes = (face or {}).get('eyes') or []
+    keys = ('eyeAspect', 'irisWidth', 'irisOffset', 'bandTopBottom', 'bandMin', 'bandMedian')
+    return '; '.join(f"eye {k+1}: " + ', '.join(f"{x} {e.get(x)}" for x in keys if x in e) for k, e in enumerate(eyes))
 
 
 def cmd_report(a):
     """The runner's whole return value for a finished plan, as one JSON line: every top candidate with a packet, its reader pack
-    and key side, regionChange and regionShift copied from candidate.json. Also written to <plan>.report.json."""
+    and key side, regionChange and regionShift copied from candidate.json. The workflow journal keeps it; no file is written beside the plan (it only repeated the plan result)."""
     plan, result, job, log = paths(a.plan)
     if not result.exists():
         print(json.dumps({'ok': False, 'reason': f'no plan result at {result}', 'candidates': []}))
@@ -194,7 +201,6 @@ def cmd_report(a):
     if not rows:
         out['reason'] = 'no top candidate built: ' + '; '.join(f"{e.get('id')} {e.get('stage')} {str(e.get('failure') or '')[:160]}" for e in data.get('top', []))
     text = json.dumps(out)
-    plan.with_name(f'{plan.stem}.report.json').write_text(text+'\n', encoding='utf-8')
     print(text)
     return 0
 
