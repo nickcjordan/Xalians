@@ -1,0 +1,2450 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r26-R07.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752",
+ "order": {
+  "round": 26,
+  "region": "R07",
+  "with": []
+ },
+ "region": "R07",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2751",
+ "startNotes": [],
+ "top": [
+  {
+   "rank": 1,
+   "id": "v01",
+   "name": "uncurl digits",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v01.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2775",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2775",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 709482,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R06.10",
+     "region": "R06",
+     "before": 0.8539,
+     "after": 0.8538,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R07.6",
+     "region": "R07",
+     "before": 0.8743,
+     "after": 0.8742,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R10.2",
+     "region": "R10",
+     "before": 0.682,
+     "after": 0.6834,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "B-23": {
+     "flaggedRelative": [],
+     "worst": [
+      {
+       "region": "R09",
+       "max": 0.00117,
+       "allowance": 0.002,
+       "excess": -0.00083,
+       "flagged": false
+      },
+      {
+       "region": "R08",
+       "max": 0.00104,
+       "allowance": 0.002,
+       "excess": -0.00096,
+       "flagged": false
+      },
+      {
+       "region": "R10",
+       "max": 0.00104,
+       "allowance": 0.002,
+       "excess": -0.00096,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 8e-05,
+    "R02": 0.0,
+    "R03": 8e-05,
+    "R04": 8e-05,
+    "R05": 0.00086,
+    "R06": 0.00086,
+    "R07": 0.0089,
+    "R08": 0.00263,
+    "R09": 0.0,
+    "R10": 0.00127,
+    "R11": 0.00127,
+    "R12": 0.00113
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.0,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.01215,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R07 measured: 1 changed; R06 measured: 1 changed; R10 measured: 1 changed; no new seams flagged; containment within allowance; picture change R07 0.0089, R08 0.0026, R10 0.0013",
+   "wallMinutes": 57.0
+  },
+  {
+   "rank": 3,
+   "id": "v03",
+   "name": "uncurl longer digits",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v03.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2776",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2776",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 710252,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R10.2",
+     "region": "R10",
+     "before": 0.682,
+     "after": 0.6839,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "B-23": {
+     "flaggedRelative": [],
+     "worst": [
+      {
+       "region": "R09",
+       "max": 0.00117,
+       "allowance": 0.002,
+       "excess": -0.00083,
+       "flagged": false
+      },
+      {
+       "region": "R08",
+       "max": 0.00104,
+       "allowance": 0.002,
+       "excess": -0.00096,
+       "flagged": false
+      },
+      {
+       "region": "R10",
+       "max": 0.00104,
+       "allowance": 0.002,
+       "excess": -0.00096,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.0001,
+    "R02": 0.0,
+    "R03": 0.0001,
+    "R04": 0.0001,
+    "R05": 0.00124,
+    "R06": 0.00124,
+    "R07": 0.01404,
+    "R08": 0.00339,
+    "R09": 0.0,
+    "R10": 0.0014,
+    "R11": 0.0014,
+    "R12": 0.0017
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.0,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.01183,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R10 measured: 1 changed; no new seams flagged; containment within allowance; picture change R07 0.0140, R08 0.0034, R12 0.0017",
+   "wallMinutes": 49.6
+  },
+  {
+   "rank": 9,
+   "id": "v02",
+   "name": "uncurl plus fan",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v02.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2777",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2777",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 710132,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R10.2",
+     "region": "R10",
+     "before": 0.682,
+     "after": 0.6836,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "B-23": {
+     "flaggedRelative": [],
+     "worst": [
+      {
+       "region": "R09",
+       "max": 0.00117,
+       "allowance": 0.002,
+       "excess": -0.00083,
+       "flagged": false
+      },
+      {
+       "region": "R08",
+       "max": 0.00104,
+       "allowance": 0.002,
+       "excess": -0.00096,
+       "flagged": false
+      },
+      {
+       "region": "R10",
+       "max": 0.00104,
+       "allowance": 0.002,
+       "excess": -0.00096,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00027,
+    "R02": 0.0,
+    "R03": 0.00027,
+    "R04": 0.00027,
+    "R05": 0.00103,
+    "R06": 0.00103,
+    "R07": 0.01152,
+    "R08": 0.00287,
+    "R09": 0.0,
+    "R10": 0.00172,
+    "R11": 0.00172,
+    "R12": 0.00145
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.0,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.01221,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R10 measured: 1 changed; no new seams flagged; containment within allowance; picture change R07 0.0115, R08 0.0029, R10 0.0017",
+   "wallMinutes": 41.3
+  }
+ ],
+ "baseline": {
+  "head": "head-2271",
+  "body": "body-2750",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2750",
+  "terms": {
+   "fitIou": 0.63685,
+   "fitIouByView": {
+    "front": 0.56568,
+    "left": 0.74674,
+    "back": 0.59812
+   },
+   "silhouetteChange": null,
+   "fitBand": "trunk",
+   "fitBandIou": 0.6396,
+   "stationDiff": 0.15503,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "uncurl digits",
+   "why": "R07.5/R07.3, audit rank 6: the digit chains curl 38 degrees palmward so the paw reads as a closed fist; pitch 0 and curl 6+4 makes the four lobes point down side by side across the paw end",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -0.057,
+   "parts": {
+    "fit": -0.038,
+    "station": -0.018,
+    "contain": -0.0,
+    "seam": -0.001,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63647,
+    "fitIouByView": {
+     "front": 0.56444,
+     "left": 0.74674,
+     "back": 0.59823
+    },
+    "silhouetteChange": 0.00236,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6396,
+    "stationDiff": 0.15521,
+    "seam": {
+     "worstRatio": 0.01,
+     "at": "tailRoot back step",
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 1,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2753"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
+   "head": "head-2271",
+   "body": "body-2753"
+  },
+  {
+   "id": "v02",
+   "name": "uncurl plus fan",
+   "why": "audit rank 6: claws bunch at the inner lower corner; wider lateral yaw (+-10/+-3.5) and root spacing (+-.031/+-.0105) give each digit its own claw root across the lower edge",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.031,
+       "yawDeg": -10,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0105,
+       "yawDeg": -3.5,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0105,
+       "yawDeg": 3.5,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.031,
+       "yawDeg": 10,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v02.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -2.514,
+   "parts": {
+    "fit": -0.051,
+    "station": -0.013,
+    "contain": -0.0,
+    "seam": -2.45,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63634,
+    "fitIouByView": {
+     "front": 0.56454,
+     "left": 0.74674,
+     "back": 0.59775
+    },
+    "silhouetteChange": 0.00247,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6396,
+    "stationDiff": 0.15516,
+    "seam": {
+     "worstRatio": 0.7,
+     "at": "hip front needle",
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 9,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2754"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2754",
+   "head": "head-2271",
+   "body": "body-2754"
+  },
+  {
+   "id": "v03",
+   "name": "uncurl longer digits",
+   "why": "R07.5: paw longer than wide with digits pointing down; segment lengths +30 percent on top of the uncurl",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.019,
+        0.015
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.025,
+        0.02
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.025,
+        0.02
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.019,
+        0.015
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v03.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -0.069,
+   "parts": {
+    "fit": -0.053,
+    "station": -0.016,
+    "contain": -0.0,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63632,
+    "fitIouByView": {
+     "front": 0.56519,
+     "left": 0.74674,
+     "back": 0.59703
+    },
+    "silhouetteChange": 0.00315,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6396,
+    "stationDiff": 0.15519,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 3,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2755"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2755",
+   "head": "head-2271",
+   "body": "body-2755"
+  },
+  {
+   "id": "v04",
+   "name": "uncurl roll 32",
+   "why": "audit rank 6: more paw roll (32 against 25 degrees, past the spec's 25 only slightly) spreads the four claw tips across the paw end in the front view",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollDeg",
+     "value": 32
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v04.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -2.519,
+   "parts": {
+    "fit": -0.059,
+    "station": -0.01,
+    "contain": -0.0,
+    "seam": -2.45,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63626,
+    "fitIouByView": {
+     "front": 0.5646,
+     "left": 0.74674,
+     "back": 0.59743
+    },
+    "silhouetteChange": 0.00274,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6395,
+    "stationDiff": 0.15513,
+    "seam": {
+     "worstRatio": 0.7,
+     "at": "hip back needle",
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 10,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2760"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2760",
+   "head": "head-2271",
+   "body": "body-2760"
+  },
+  {
+   "id": "v05",
+   "name": "uncurl wider paw",
+   "why": "audit rank 6: paw over wrist is 1.375 against about 1.5 and a cuff step marks the wrist; widen the palm and digit radii 8 percent and ease the rod's last stations so the paw grows from the wrist",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.02729,
+        0.01577
+       ],
+       "jointRadii": [
+        0.02472,
+        0.01447
+       ],
+       "tipRadii": [
+        0.01957,
+        0.01242
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.02781,
+        0.0162
+       ],
+       "jointRadii": [
+        0.02524,
+        0.01512
+       ],
+       "tipRadii": [
+        0.0206,
+        0.01318
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.02781,
+        0.0162
+       ],
+       "jointRadii": [
+        0.02524,
+        0.01512
+       ],
+       "tipRadii": [
+        0.0206,
+        0.01318
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.02729,
+        0.01577
+       ],
+       "jointRadii": [
+        0.02472,
+        0.01447
+       ],
+       "tipRadii": [
+        0.01957,
+        0.01242
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.radii",
+     "value": [
+      0.042,
+      0.03,
+      0.049
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0.0,
+       0.0419,
+       0.0446
+      ],
+      [
+       0.056,
+       0.0409,
+       0.0391
+      ],
+      [
+       0.1116,
+       0.0363,
+       0.0353
+      ],
+      [
+       0.167,
+       0.0326,
+       0.0326
+      ],
+      [
+       0.205,
+       0.0298,
+       0.0316
+      ],
+      [
+       0.2329,
+       0.0322,
+       0.0345
+      ],
+      [
+       0.2608,
+       0.0335,
+       0.0372
+      ],
+      [
+       0.2887,
+       0.0342,
+       0.0385
+      ]
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v05.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -0.061,
+   "parts": {
+    "fit": -0.041,
+    "station": -0.018,
+    "contain": -0.0,
+    "seam": -0.002,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63644,
+    "fitIouByView": {
+     "front": 0.56452,
+     "left": 0.74674,
+     "back": 0.59807
+    },
+    "silhouetteChange": 0.00236,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6396,
+    "stationDiff": 0.15521,
+    "seam": {
+     "worstRatio": 0.02,
+     "at": "tailRoot back step",
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 2,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2762"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2762",
+   "head": "head-2271",
+   "body": "body-2762"
+  },
+  {
+   "id": "v06",
+   "name": "claws only straightened",
+   "why": "cheap isolate for the claw cluster: leave digits as built and set the claw tip tilt to -25 degrees so claws leave along the digit instead of curling inward",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.claw.tipTiltDeg",
+     "value": -25
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v06.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -0.191,
+   "parts": {
+    "fit": -0.002,
+    "station": -0.005,
+    "contain": -0.0,
+    "seam": -0.184,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63683,
+    "fitIouByView": {
+     "front": 0.56573,
+     "left": 0.74674,
+     "back": 0.59802
+    },
+    "silhouetteChange": 0.00075,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6396,
+    "stationDiff": 0.15508,
+    "seam": {
+     "worstRatio": 0.1917,
+     "at": "tailRoot back wbump",
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 6,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2763"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2763",
+   "head": "head-2271",
+   "body": "body-2763"
+  },
+  {
+   "id": "v07",
+   "name": "uncurl plus fuller upper arm",
+   "why": "audit rank 12 and R07.6: the upper arm is a straight tube; add about 9 percent to the mid-arm radii and a larger corner dome so the biceps and deltoid read as soft ovals; uncurled paw shared with variant 1",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:upperRod",
+     "value": [
+      [
+       0.0,
+       0.0405,
+       0.0462
+      ],
+      [
+       0.5,
+       0.0415,
+       0.0467
+      ],
+      [
+       1.0,
+       0.0405,
+       0.0448
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound",
+     "value": {
+      "mode": "dome",
+      "offset": [
+       0.0,
+       -0.002,
+       0.004
+      ],
+      "radius": 0.068,
+      "cutBlend": 0.02,
+      "frontY": 0.016,
+      "outerX": -0.05,
+      "minZ": 0.0,
+      "sectorFade": 0.035
+     }
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v07.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -0.462,
+   "parts": {
+    "fit": -0.003,
+    "station": -0.009,
+    "contain": -0.0,
+    "seam": -0.45,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63682,
+    "fitIouByView": {
+     "front": 0.56412,
+     "left": 0.74654,
+     "back": 0.59981
+    },
+    "silhouetteChange": 0.00598,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6398,
+    "stationDiff": 0.15512,
+    "seam": {
+     "worstRatio": 0.3,
+     "at": "elbow front needle",
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 7,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2766"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2766",
+   "head": "head-2271",
+   "body": "body-2766"
+  },
+  {
+   "id": "v08",
+   "name": "uncurl plus authored deltoid",
+   "why": "audit rank 12: replace the native flat cap with the spec's authored deltoid ellipsoid (removeZ .335 to .385, fillet top .06), no corner dome; structural fix of the box shoulder, risk is R05 so containment is read",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound",
+     "value": null
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:deltoid",
+     "value": {
+      "offset": [
+       0.002,
+       -0.004,
+       0.01
+      ],
+      "radii": [
+       0.042,
+       0.05,
+       0.052
+      ],
+      "blend": 0.025
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:removeZ",
+     "value": [
+      0.335,
+      0.385
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.06,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v08.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -51.594,
+   "parts": {
+    "fit": -0.08,
+    "station": -0.082,
+    "contain": -1.182,
+    "seam": -50.25,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63605,
+    "fitIouByView": {
+     "front": 0.56462,
+     "left": 0.74674,
+     "back": 0.5968
+    },
+    "silhouetteChange": 0.00653,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6393,
+    "stationDiff": 0.15585,
+    "seam": {
+     "worstRatio": 10.05,
+     "at": "shoulder back wbump",
+     "flagged": [
+      "neckBase front kink,bump,wbump",
+      "shoulder front kink,bump,wbump",
+      "neckBase back kink,bump,wbump",
+      "shoulder back kink,bump,wbump"
+     ]
+    },
+    "criteria": {},
+    "containMax": 0.01582,
+    "containRegion": "R05",
+    "containExcess": 0.01182,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 11,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2767"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.01582,
+     "region": "R05",
+     "excess": 0.01182,
+     "relativeFlagged": [
+      "R05",
+      "R06"
+     ]
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2767",
+   "head": "head-2271",
+   "body": "body-2767"
+  },
+  {
+   "id": "v09",
+   "name": "sweep B-23 paw.digits=[{\"rootS\": 0.06, \"rootT\": -0.002, \"rootR\": -0.027, \"yawDeg\": -6, \"pitchDeg\": 0, \"segLen\": [0.015, 0.012], \"rootRadii\": [0.0265, 0.0146], \"jointRadii\": [0.024, 0.0134], \"tipRadii\": [0.019, 0.0115], \"curlDeg\": [0, 0]}, {\"rootS\": 0.062, \"rootT\": -0.002, \"rootR\": -0.0092, \"yawDeg\": -2, \"pitchDeg\": 0, \"segLen\": [0.02, 0.016], \"rootRadii\": [0.027, 0.015], \"jointRadii\": [0.0245, 0.014], \"tipRadii\": [0.02, 0.0122], \"curlDeg\": [0, 0]}, {\"rootS\": 0.062, \"rootT\": -0.002, \"rootR\": 0.0092, \"yawDeg\": 2, \"pitchDeg\": 0, \"segLen\": [0.02, 0.016], \"rootRadii\": [0.027, 0.015], \"jointRadii\": [0.0245, 0.014], \"tipRadii\": [0.02, 0.0122], \"curlDeg\": [0, 0]}, {\"rootS\": 0.06, \"rootT\": -0.002, \"rootR\": 0.027, \"yawDeg\": 6, \"pitchDeg\": 0, \"segLen\": [0.015, 0.012], \"rootRadii\": [0.0265, 0.0146], \"jointRadii\": [0.024, 0.0134], \"tipRadii\": [0.019, 0.0115], \"curlDeg\": [0, 0]}]",
+   "why": "how much palmward curl the digit chains keep: 0, 14 and 28 degrees in total (baseline 38)",
+   "source": "sweep 1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      }
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v09.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -0.07,
+   "parts": {
+    "fit": -0.049,
+    "station": -0.021,
+    "contain": -0.0,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63636,
+    "fitIouByView": {
+     "front": 0.56408,
+     "left": 0.74674,
+     "back": 0.59826
+    },
+    "silhouetteChange": 0.00274,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6396,
+    "stationDiff": 0.15524,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 4,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2770"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2770",
+   "head": "head-2271",
+   "body": "body-2770"
+  },
+  {
+   "id": "v10",
+   "name": "sweep B-23 paw.digits=[{\"rootS\": 0.06, \"rootT\": -0.002, \"rootR\": -0.027, \"yawDeg\": -6, \"pitchDeg\": 6, \"segLen\": [0.015, 0.012], \"rootRadii\": [0.0265, 0.0146], \"jointRadii\": [0.024, 0.0134], \"tipRadii\": [0.019, 0.0115], \"curlDeg\": [8, 6]}, {\"rootS\": 0.062, \"rootT\": -0.002, \"rootR\": -0.0092, \"yawDeg\": -2, \"pitchDeg\": 6, \"segLen\": [0.02, 0.016], \"rootRadii\": [0.027, 0.015], \"jointRadii\": [0.0245, 0.014], \"tipRadii\": [0.02, 0.0122], \"curlDeg\": [8, 6]}, {\"rootS\": 0.062, \"rootT\": -0.002, \"rootR\": 0.0092, \"yawDeg\": 2, \"pitchDeg\": 6, \"segLen\": [0.02, 0.016], \"rootRadii\": [0.027, 0.015], \"jointRadii\": [0.0245, 0.014], \"tipRadii\": [0.02, 0.0122], \"curlDeg\": [8, 6]}, {\"rootS\": 0.06, \"rootT\": -0.002, \"rootR\": 0.027, \"yawDeg\": 6, \"pitchDeg\": 6, \"segLen\": [0.015, 0.012], \"rootRadii\": [0.0265, 0.0146], \"jointRadii\": [0.024, 0.0134], \"tipRadii\": [0.019, 0.0115], \"curlDeg\": [8, 6]}]",
+   "why": "how much palmward curl the digit chains keep: 0, 14 and 28 degrees in total (baseline 38)",
+   "source": "sweep 1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 6,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        8,
+        6
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 6,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        8,
+        6
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 6,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        8,
+        6
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 6,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        8,
+        6
+       ]
+      }
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v10.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -1.189,
+   "parts": {
+    "fit": -0.026,
+    "station": -0.011,
+    "contain": -0.0,
+    "seam": -1.152,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63659,
+    "fitIouByView": {
+     "front": 0.56504,
+     "left": 0.74674,
+     "back": 0.59799
+    },
+    "silhouetteChange": 0.00156,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6396,
+    "stationDiff": 0.15514,
+    "seam": {
+     "worstRatio": 0.48,
+     "at": "tailRoot back step",
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 8,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2771"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2771",
+   "head": "head-2271",
+   "body": "body-2771"
+  },
+  {
+   "id": "v11",
+   "name": "sweep B-23 paw.digits=[{\"rootS\": 0.06, \"rootT\": -0.002, \"rootR\": -0.027, \"yawDeg\": -9, \"pitchDeg\": 8, \"segLen\": [0.015, 0.012], \"rootRadii\": [0.0265, 0.0146], \"jointRadii\": [0.024, 0.0134], \"tipRadii\": [0.019, 0.0115], \"curlDeg\": [12, 8]}, {\"rootS\": 0.062, \"rootT\": -0.002, \"rootR\": -0.0092, \"yawDeg\": -3, \"pitchDeg\": 8, \"segLen\": [0.02, 0.016], \"rootRadii\": [0.027, 0.015], \"jointRadii\": [0.0245, 0.014], \"tipRadii\": [0.02, 0.0122], \"curlDeg\": [12, 8]}, {\"rootS\": 0.062, \"rootT\": -0.002, \"rootR\": 0.0092, \"yawDeg\": 3, \"pitchDeg\": 8, \"segLen\": [0.02, 0.016], \"rootRadii\": [0.027, 0.015], \"jointRadii\": [0.0245, 0.014], \"tipRadii\": [0.02, 0.0122], \"curlDeg\": [12, 8]}, {\"rootS\": 0.06, \"rootT\": -0.002, \"rootR\": 0.027, \"yawDeg\": 9, \"pitchDeg\": 8, \"segLen\": [0.015, 0.012], \"rootRadii\": [0.0265, 0.0146], \"jointRadii\": [0.024, 0.0134], \"tipRadii\": [0.019, 0.0115], \"curlDeg\": [12, 8]}]",
+   "why": "how much palmward curl the digit chains keep: 0, 14 and 28 degrees in total (baseline 38)",
+   "source": "sweep 1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -9,
+       "pitchDeg": 8,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        12,
+        8
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -3,
+       "pitchDeg": 8,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        12,
+        8
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 3,
+       "pitchDeg": 8,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        12,
+        8
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 9,
+       "pitchDeg": 8,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        12,
+        8
+       ]
+      }
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2752\\v11.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -0.072,
+   "parts": {
+    "fit": -0.018,
+    "station": -0.004,
+    "contain": -0.0,
+    "seam": -0.05,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.63667,
+    "fitIouByView": {
+     "front": 0.56535,
+     "left": 0.74674,
+     "back": 0.59791
+    },
+    "silhouetteChange": 0.00095,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6396,
+    "stationDiff": 0.15507,
+    "seam": {
+     "worstRatio": 0.1,
+     "at": "hip front needle",
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.00117,
+    "containRegion": "R09",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 5,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-23": "body-2772"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00117,
+     "region": "R09",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2772",
+   "head": "head-2271",
+   "body": "body-2772"
+  }
+ ],
+ "scoringSeconds": 4555.6,
+ "wallMinutes": 134.4,
+ "surfaceStats": true,
+ "created": "2026-10-05T19:36:52",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r26-R07-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r26-R07-plan-result.png"
+ ]
+}

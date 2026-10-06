@@ -757,10 +757,11 @@ test('v3.9 paired re-grade: a target loss that does not hold against the baselin
 
 test('v3.9 critic scope: a region whose images moved but whose geometry did not is not sent to the critic', { skip: !existsSync(P.status) }, async () => {
   const status = splitStatus(), rub = readJson(P.rubric)
-  status.regions.R07.hold = false
   status.regions.R08.hold = false
   status.limits.geometryCarry = 0.004
   status.limits.refinePasses = 0
+  status.regions.R07.hold = false
+  status.auditGaps = [{ rank: 1, region: 'R06', gap: 'plank', structural: true }]  // R06 must be the order
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'c', (label) => {
     if (label.startsWith('planner')) return { plan: 'plans/r26-R06.json', variants: 3, approach: 'a', needsCode: false }
     if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A', { regionChange: { R07: 0.5, R08: 0.5 }, regionShift: { R06: 0.01, R07: 0, R08: 0.02 } })] }
@@ -778,7 +779,7 @@ test('args.pin: a pinned region replaces the first round pick of its component, 
   status.lastOrders = []
   for (const id of Object.keys(status.regions)) if (!['R02', 'R03', 'R06'].includes(id)) status.regions[id].hold = true
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 2, pin: ['R02'] }), 'p', () => undefined)
-  const firstBuilders = out.calls.filter(c => c.label.startsWith('builder r26')).map(c => c.label)
+  const firstBuilders = out.calls.filter(c => c.label.startsWith(`builder r${status.round + 1} `)).map(c => c.label)
   assert.ok(firstBuilders.some(l => /head: R02/.test(l)), firstBuilders.join(','))
   assert.ok(!firstBuilders.some(l => /head: R03/.test(l)))
   assert.ok(firstBuilders.some(l => /body: R06/.test(l)))

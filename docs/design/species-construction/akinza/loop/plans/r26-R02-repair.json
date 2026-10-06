@@ -1,0 +1,438 @@
+{
+  "order": {
+    "round": 26,
+    "region": "R02",
+    "with": []
+  },
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2751",
+  "start": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/plan-2778/v02.json",
+  "variants": [
+    {
+      "name": "control v02",
+      "control": true,
+      "why": "The readers' candidate unchanged (thick continuous rim, large iris .066 by .104, three soft locks). Anchors what three readers praised; the judge reverted it for R02.2 and R02.6 (thick ring, uniform lid) and I01 (iris offset -.034 mirrored toward the nose, so the gaze converges).",
+      "edits": []
+    },
+    {
+      "name": "forward iris only",
+      "why": "I01 alone: iris offset x from -.034 to -.006 (centre about .05 of eye width inward, as in r01), y kept -.010. Everything else, including the thick rim the readers liked, unchanged, to see whether the gaze fix alone clears I01 without losing the readers' preference.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.offset",
+          "value": [
+            -0.006,
+            -0.01
+          ]
+        }
+      ]
+    },
+    {
+      "name": "forward iris, thin lower lid",
+      "why": "I01 plus R02.2 and R02.6: critic says the band is a thick nearly continuous ring with a solid black bottom and inner line. Upper lid (0 to 60) 4.5 to 5 percent of eye width, lower and inner (120 to 180, -150 to -60) 1.0 to 1.5, transitions between. Still a closed line, heavier on the upper lid.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.offset",
+          "value": [
+            -0.006,
+            -0.01
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              4.5
+            ],
+            [
+              30,
+              5
+            ],
+            [
+              60,
+              4.5
+            ],
+            [
+              90,
+              2.5
+            ],
+            [
+              120,
+              1.5
+            ],
+            [
+              150,
+              1.2
+            ],
+            [
+              180,
+              1.0
+            ],
+            [
+              -150,
+              1.0
+            ],
+            [
+              -120,
+              1.0
+            ],
+            [
+              -90,
+              1.2
+            ],
+            [
+              -60,
+              1.5
+            ],
+            [
+              -30,
+              3.0
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "forward iris, moderate lid",
+      "why": "Same as the thin variant but keeping more of the rim the readers praised: upper 6 to 6.5, lower and inner 1.5 to 2.2, so the line stays clearly continuous while the upper lid is still about three times the bottom.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.offset",
+          "value": [
+            -0.006,
+            -0.01
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              6
+            ],
+            [
+              30,
+              6.5
+            ],
+            [
+              60,
+              6
+            ],
+            [
+              90,
+              3.5
+            ],
+            [
+              120,
+              2.2
+            ],
+            [
+              150,
+              1.8
+            ],
+            [
+              180,
+              1.6
+            ],
+            [
+              -150,
+              1.5
+            ],
+            [
+              -120,
+              1.5
+            ],
+            [
+              -90,
+              1.8
+            ],
+            [
+              -60,
+              2.4
+            ],
+            [
+              -30,
+              4.0
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "forward iris, thin lid, narrow oval, open wall",
+      "why": "R02.1 and the profile wedge: critic says the front aperture is near round (height over width 1.3) and the profile eye tapers to a wedge. Aperture semi width .105 to .093 with the inner corner fixed (centre x .1887 to .1767), semi height .1395 (ratio 1.5), orbit.lateralShear .3 so the lateral wall opens and the profile closes to an oval with the iris at the front.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.offset",
+          "value": [
+            -0.006,
+            -0.01
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              4.5
+            ],
+            [
+              30,
+              5
+            ],
+            [
+              60,
+              4.5
+            ],
+            [
+              90,
+              2.5
+            ],
+            [
+              120,
+              1.5
+            ],
+            [
+              150,
+              1.2
+            ],
+            [
+              180,
+              1.0
+            ],
+            [
+              -150,
+              1.0
+            ],
+            [
+              -120,
+              1.0
+            ],
+            [
+              -90,
+              1.2
+            ],
+            [
+              -60,
+              1.5
+            ],
+            [
+              -30,
+              3.0
+            ]
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.aperture.semi",
+          "value": [
+            0.093,
+            0.1395
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.aperture.center",
+          "value": [
+            0.1767,
+            0.0291
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.orbit.lateralShear",
+          "value": 0.3
+        }
+      ]
+    },
+    {
+      "name": "eye fix plus rounder locks",
+      "why": "R02.5 and critic issue 1 (cheek locks flat hard-ridged wedges): the thin lid with oval and wall from variant 5 plus broader lens locks (width root .056 / .050 / .042, thick root .026 / .022 / .018, thickness exponent .5, tip radius .0045, union blend kept at .03). Round 26 refine ranked this lock edit first on the old eyes.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.iris.offset",
+          "value": [
+            -0.006,
+            -0.01
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.lid.bandPercent",
+          "value": [
+            [
+              0,
+              4.5
+            ],
+            [
+              30,
+              5
+            ],
+            [
+              60,
+              4.5
+            ],
+            [
+              90,
+              2.5
+            ],
+            [
+              120,
+              1.5
+            ],
+            [
+              150,
+              1.2
+            ],
+            [
+              180,
+              1.0
+            ],
+            [
+              -150,
+              1.0
+            ],
+            [
+              -120,
+              1.0
+            ],
+            [
+              -90,
+              1.2
+            ],
+            [
+              -60,
+              1.5
+            ],
+            [
+              -30,
+              3.0
+            ]
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.aperture.semi",
+          "value": [
+            0.093,
+            0.1395
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.aperture.center",
+          "value": [
+            0.1767,
+            0.0291
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:eye.orbit.lateralShear",
+          "value": 0.3
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:tufts.list",
+          "value": [
+            {
+              "root": [
+                0.253,
+                -0.1105
+              ],
+              "tip": [
+                0.309,
+                -0.144
+              ],
+              "length": 0.065,
+              "widthRoot": 0.056,
+              "thickRoot": 0.026,
+              "lift": 0.0006
+            },
+            {
+              "root": [
+                0.2307,
+                -0.1552
+              ],
+              "tip": [
+                0.2716,
+                -0.1886
+              ],
+              "length": 0.053,
+              "widthRoot": 0.05,
+              "thickRoot": 0.022,
+              "lift": 0.0006
+            },
+            {
+              "root": [
+                0.2009,
+                -0.1961
+              ],
+              "tip": [
+                0.2233,
+                -0.2296
+              ],
+              "length": 0.04,
+              "widthRoot": 0.042,
+              "thickRoot": 0.018,
+              "lift": 0.0006
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:tufts.thicknessExponent",
+          "value": 0.5
+        },
+        {
+          "op": "set",
+          "step": "F-parts",
+          "arg": "spec:tufts.tipRadius",
+          "value": 0.0045
+        }
+      ]
+    }
+  ],
+  "sweeps": [
+    {
+      "step": "F-parts",
+      "grid": {
+        "spec:eye.iris.offset": [
+          [
+            0.0,
+            -0.01
+          ]
+        ]
+      },
+      "why": "The gaze offset caused the I01 loss and is the value I am least sure of: iris centred (x 0) against the -.006 of the variants, on the control rim and eye. Negative x is toward the nose for both eyes (mirrored), so these stay near forward."
+    }
+  ],
+  "region": "R02",
+  "top": 3
+}

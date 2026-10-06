@@ -1,0 +1,2207 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r26-R02-refine.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778",
+ "order": {
+  "round": 26,
+  "region": "R02",
+  "with": []
+ },
+ "region": "R02",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2751",
+ "startNotes": [],
+ "top": [
+  {
+   "rank": 2,
+   "id": "v02",
+   "name": "glance iris, upper lid",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v02.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2783",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2783",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 709698,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.906,
+     "after": 0.9062,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0354,
+     "after": 0.0351,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.9275,
+     "after": 0.9277,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "F-bulk": {
+     "flaggedRelative": [
+      "R01",
+      "R03",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R03",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      }
+     ],
+     "error": null
+    },
+    "F-parts": {
+     "flaggedRelative": [],
+     "worst": [],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00552,
+    "R02": 0.07233,
+    "R03": 0.00552,
+    "R04": 0.07233,
+    "R05": 0.01427,
+    "R06": 0.01427,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.00345
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.00458,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R01 measured: 1 changed; R03 measured: 1 changed; R04 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0723, R04 0.0723, R05 0.0143",
+   "wallMinutes": 21.1
+  },
+  {
+   "rank": 8,
+   "id": "v03",
+   "name": "glance plus open wall",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v03.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2784",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2784",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 709706,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.906,
+     "after": 0.9062,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0354,
+     "after": 0.0351,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.9275,
+     "after": 0.9277,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "F-bulk": {
+     "flaggedRelative": [
+      "R01",
+      "R03",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R03",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      }
+     ],
+     "error": null
+    },
+    "F-parts": {
+     "flaggedRelative": [],
+     "worst": [],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00554,
+    "R02": 0.07168,
+    "R03": 0.00554,
+    "R04": 0.07168,
+    "R05": 0.01431,
+    "R06": 0.01431,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.00346
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.00458,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R01 measured: 1 changed; R03 measured: 1 changed; R04 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0717, R04 0.0717, R05 0.0143",
+   "wallMinutes": 24.3
+  },
+  {
+   "rank": 10,
+   "id": "v01",
+   "name": "control v03",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v01.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2782",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2782",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 709698,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.906,
+     "after": 0.9062,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0354,
+     "after": 0.0351,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.9275,
+     "after": 0.9277,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "F-bulk": {
+     "flaggedRelative": [
+      "R01",
+      "R03",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R03",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      }
+     ],
+     "error": null
+    },
+    "F-parts": {
+     "flaggedRelative": [],
+     "worst": [],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.003,
+    "R02": 0.03091,
+    "R03": 0.003,
+    "R04": 0.03091,
+    "R05": 0.00826,
+    "R06": 0.00826,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.00176
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.00458,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R01 measured: 1 changed; R03 measured: 1 changed; R04 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0309, R04 0.0309, R05 0.0083",
+   "wallMinutes": 21.5
+  }
+ ],
+ "baseline": {
+  "head": "head-2271",
+  "body": "body-2750",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2750",
+  "terms": {
+   "fitIou": 0.9433,
+   "fitIouByView": {
+    "front": 0.93818,
+    "left": 0.94332,
+    "back": 0.94839
+   },
+   "silhouetteChange": null,
+   "fitBand": "head",
+   "fitBandIou": 0.921,
+   "stationDiff": 0.13623,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "control v03",
+   "why": "Round 25's readers' candidate unchanged on the current baseline (thick continuous rim, three soft locks). Anchors what the readers praised. It was reverted because the audit rows (profile eye wedge, front stare) stayed open, which held R02.1 and R02.6 at partial.",
+   "source": "variant",
+   "edits": [],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 0.001,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93827,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00054,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": null,
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 10,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {},
+   "contain": [],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2730__body-2750",
+   "head": "head-2730",
+   "body": "body-2750"
+  },
+  {
+   "id": "v02",
+   "name": "glance iris, upper lid",
+   "why": "Audit rows 9 and 3 (iris about .44 of eye width, centred, so it stares; sliver iris in profile). Iris enlarged to .066 by .104 (about .63 of the eye width), pupil scaled, moved .034 toward the nose and .010 down so it sits under the inner lid in the glance and shows at the front of the eye in profile; lens .006; band table moderate upper-heavy (8.6 top, 2.0 min, still continuous). F-parts only, the last head step.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.066,
+      0.104
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.pupil",
+     "value": [
+      0.037,
+      0.047
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.034,
+      -0.01
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.lensFront",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.lid.bandPercent",
+     "value": [
+      [
+       0,
+       8.0
+      ],
+      [
+       30,
+       8.6
+      ],
+      [
+       60,
+       7.8
+      ],
+      [
+       90,
+       4.8
+      ],
+      [
+       120,
+       3.6
+      ],
+      [
+       150,
+       2.8
+      ],
+      [
+       180,
+       2.3
+      ],
+      [
+       -150,
+       2.0
+      ],
+      [
+       -120,
+       2.0
+      ],
+      [
+       -90,
+       3.0
+      ],
+      [
+       -60,
+       4.2
+      ],
+      [
+       -30,
+       5.6
+      ]
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v02.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 5.215,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 5.214,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93827,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00054,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.806831702961189,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 2,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {},
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2757__body-2750",
+   "head": "head-2757",
+   "body": "body-2750"
+  },
+  {
+   "id": "v03",
+   "name": "glance plus open wall",
+   "why": "Audit row 3 profile wedge: the lateral wall of the orbit cuts the globe to a tapering wedge. The glance eye plus orbit.lateralShear .3 (round 22 used .3 to .4 with the locks and pad, never alone on this lid) so the profile oval closes with the iris forward.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.066,
+      0.104
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.pupil",
+     "value": [
+      0.037,
+      0.047
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.034,
+      -0.01
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.lensFront",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.lid.bandPercent",
+     "value": [
+      [
+       0,
+       8.0
+      ],
+      [
+       30,
+       8.6
+      ],
+      [
+       60,
+       7.8
+      ],
+      [
+       90,
+       4.8
+      ],
+      [
+       120,
+       3.6
+      ],
+      [
+       150,
+       2.8
+      ],
+      [
+       180,
+       2.3
+      ],
+      [
+       -150,
+       2.0
+      ],
+      [
+       -120,
+       2.0
+      ],
+      [
+       -90,
+       3.0
+      ],
+      [
+       -60,
+       4.2
+      ],
+      [
+       -30,
+       5.6
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.orbit.lateralShear",
+     "value": 0.3
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v03.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 4.908,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 4.907,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93827,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00054,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.8098987808357311,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 8,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {},
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2758__body-2750",
+   "head": "head-2758",
+   "body": "body-2750"
+  },
+  {
+   "id": "v04",
+   "name": "glance, taller oval, open wall",
+   "why": "Audit row 9 front: eye height over width about 1.28 against the sheet's 1.5. Narrow the aperture semi width .105 to .097 keeping the inner corner fixed (center x .1807), so height over width reaches 1.48, with the glance iris and the wall opened .3. R02.1 passes at the current size, so the size change is the risk this variant tests.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.066,
+      0.104
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.pupil",
+     "value": [
+      0.037,
+      0.047
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.034,
+      -0.01
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.lensFront",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.lid.bandPercent",
+     "value": [
+      [
+       0,
+       8.0
+      ],
+      [
+       30,
+       8.6
+      ],
+      [
+       60,
+       7.8
+      ],
+      [
+       90,
+       4.8
+      ],
+      [
+       120,
+       3.6
+      ],
+      [
+       150,
+       2.8
+      ],
+      [
+       180,
+       2.3
+      ],
+      [
+       -150,
+       2.0
+      ],
+      [
+       -120,
+       2.0
+      ],
+      [
+       -90,
+       3.0
+      ],
+      [
+       -60,
+       4.2
+      ],
+      [
+       -30,
+       5.6
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.aperture.semi",
+     "value": [
+      0.097,
+      0.1433
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.aperture.center",
+     "value": [
+      0.1807,
+      0.0291
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.orbit.lateralShear",
+     "value": 0.3
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v04.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 0.176,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 0.175,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93827,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00054,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.8572190722946245,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 9,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {},
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2759__body-2750",
+   "head": "head-2759",
+   "body": "body-2750"
+  },
+  {
+   "id": "v05",
+   "name": "round locks",
+   "why": "R02.5 and critic issue 1: locks read as flat hard-ridged wedge plates. Broader, thicker lens (width root .056/.050/.042, thick root .026/.022/.018), thickness exponent .7 to .5 for a rounded section, tip radius .0045, union blend kept at .03 (round 22's .015 gave thorns and terraces). Eyes and pad untouched so R02.1 to R02.4 keep their results.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.056,
+       "thickRoot": 0.026,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.05,
+       "thickRoot": 0.022,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.042,
+       "thickRoot": 0.018,
+       "lift": 0.0006
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.0045
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v05.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 5.245,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 5.244,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93828,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00079,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.8065254491130979,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 1,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {},
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2761__body-2750",
+   "head": "head-2761",
+   "body": "body-2750"
+  },
+  {
+   "id": "v06",
+   "name": "pad on the tip",
+   "why": "R02.3 and critic issue 2: the pad is a thin sliver high on the bridge slope. Move the inlay down onto the wedge tip (top -.125, apex -.172, half width .038, corner .005), softer lip (recessBlend .004). Round 22 and 25 only tried this combined with other edits.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.004
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v06.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 5.199,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 5.198,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93827,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00054,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.8069853039852105,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 5,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {},
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2764__body-2750",
+   "head": "head-2764",
+   "body": "body-2750"
+  },
+  {
+   "id": "v07",
+   "name": "face all: glance, wall, locks, pad",
+   "why": "The expected keeper: every fix at once on the control (glance iris, upper-heavy lid, wall .3, round locks, pad on the tip), so the readers can see whether the lower face and the eye improve together.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.066,
+      0.104
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.pupil",
+     "value": [
+      0.037,
+      0.047
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.034,
+      -0.01
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.lensFront",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.lid.bandPercent",
+     "value": [
+      [
+       0,
+       8.0
+      ],
+      [
+       30,
+       8.6
+      ],
+      [
+       60,
+       7.8
+      ],
+      [
+       90,
+       4.8
+      ],
+      [
+       120,
+       3.6
+      ],
+      [
+       150,
+       2.8
+      ],
+      [
+       180,
+       2.3
+      ],
+      [
+       -150,
+       2.0
+      ],
+      [
+       -120,
+       2.0
+      ],
+      [
+       -90,
+       3.0
+      ],
+      [
+       -60,
+       4.2
+      ],
+      [
+       -30,
+       5.6
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.orbit.lateralShear",
+     "value": 0.3
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.056,
+       "thickRoot": 0.026,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.05,
+       "thickRoot": 0.022,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.042,
+       "thickRoot": 0.018,
+       "lift": 0.0006
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.0045
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.004
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v07.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 4.94,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 4.939,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93828,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00079,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.8095820603055215,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 7,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {},
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2765__body-2750",
+   "head": "head-2765",
+   "body": "body-2750"
+  },
+  {
+   "id": "v08",
+   "name": "face all: taller oval, strong wall",
+   "why": "Same as the full variant but with the taller oval, a stronger iris glance (offset .040, semi .068 by .106) and the wall opened to .45; tests the larger step on the profile oval and gaze in one build.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.068,
+      0.106
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.pupil",
+     "value": [
+      0.038,
+      0.048
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.04,
+      -0.012
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.lensFront",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.lid.bandPercent",
+     "value": [
+      [
+       0,
+       8.0
+      ],
+      [
+       30,
+       8.6
+      ],
+      [
+       60,
+       7.8
+      ],
+      [
+       90,
+       4.8
+      ],
+      [
+       120,
+       3.6
+      ],
+      [
+       150,
+       2.8
+      ],
+      [
+       180,
+       2.3
+      ],
+      [
+       -150,
+       2.0
+      ],
+      [
+       -120,
+       2.0
+      ],
+      [
+       -90,
+       3.0
+      ],
+      [
+       -60,
+       4.2
+      ],
+      [
+       -30,
+       5.6
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.aperture.semi",
+     "value": [
+      0.097,
+      0.1433
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.aperture.center",
+     "value": [
+      0.1807,
+      0.0291
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.orbit.lateralShear",
+     "value": 0.45
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.056,
+       "thickRoot": 0.026,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.05,
+       "thickRoot": 0.022,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.042,
+       "thickRoot": 0.018,
+       "lift": 0.0006
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.0045
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.004
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v08.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 0.001,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 0.0,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93828,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00079,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.8589688217648992,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 11,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {},
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2768__body-2750",
+   "head": "head-2768",
+   "body": "body-2750"
+  },
+  {
+   "id": "v09",
+   "name": "face all, softer locks",
+   "why": "Full keeper with the round locks at a gentler thickness exponent .7 and a larger tip radius .006, and the pad lip softened further (recessBlend .005) to avoid the philtrum fleck and the bead at the pad's upper corner; tests whether the rounder section holds at the assembly remesh without terraces.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.semi",
+     "value": [
+      0.066,
+      0.104
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.pupil",
+     "value": [
+      0.037,
+      0.047
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.offset",
+     "value": [
+      -0.034,
+      -0.01
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.iris.lensFront",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.lid.bandPercent",
+     "value": [
+      [
+       0,
+       8.0
+      ],
+      [
+       30,
+       8.6
+      ],
+      [
+       60,
+       7.8
+      ],
+      [
+       90,
+       4.8
+      ],
+      [
+       120,
+       3.6
+      ],
+      [
+       150,
+       2.8
+      ],
+      [
+       180,
+       2.3
+      ],
+      [
+       -150,
+       2.0
+      ],
+      [
+       -120,
+       2.0
+      ],
+      [
+       -90,
+       3.0
+      ],
+      [
+       -60,
+       4.2
+      ],
+      [
+       -30,
+       5.6
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:eye.orbit.lateralShear",
+     "value": 0.3
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.056,
+       "thickRoot": 0.026,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.05,
+       "thickRoot": 0.022,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.042,
+       "thickRoot": 0.018,
+       "lift": 0.0006
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.7
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.005
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v09.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 4.95,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 4.949,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93828,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00079,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.8094836783755726,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 6,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "F-parts": "head-2779"
+   },
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2779__body-2750",
+   "head": "head-2779",
+   "body": "body-2750"
+  },
+  {
+   "id": "v10",
+   "name": "sweep F-parts tufts.thicknessExponent=0.35",
+   "why": "Least sure parameter after the first plan died unscored: the cheek lock cross section (critic issue 1, the most damaging, flat hard-ridged plates). Control locks and lid, thickness exponent .9 (default) against .65 and .35 to find how round a lens the union blend keeps without thorns. The lateral wall sweep from the first plan is dropped: round 22 ranked its .2, .4 and .9 points last (ranks 12 to 14).",
+   "source": "sweep 1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.35
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v10.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 5.213,
+   "parts": {
+    "fit": -0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 5.214,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94329,
+    "fitIouByView": {
+     "front": 0.93821,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00076,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.806831702961189,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 4,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "F-parts": "head-2780"
+   },
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2780__body-2750",
+   "head": "head-2780",
+   "body": "body-2750"
+  },
+  {
+   "id": "v11",
+   "name": "sweep F-parts tufts.thicknessExponent=0.65",
+   "why": "Least sure parameter after the first plan died unscored: the cheek lock cross section (critic issue 1, the most damaging, flat hard-ridged plates). Control locks and lid, thickness exponent .9 (default) against .65 and .35 to find how round a lens the union blend keeps without thorns. The lateral wall sweep from the first plan is dropped: round 22 ranked its .2, .4 and .9 points last (ranks 12 to 14).",
+   "source": "sweep 1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "F-parts",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.65
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2778\\v11.json",
+   "warnings": [],
+   "changedSteps": [
+    "F-bulk",
+    "F-parts"
+   ],
+   "total": 5.215,
+   "parts": {
+    "fit": 0.001,
+    "station": -0.0,
+    "contain": -0.0,
+    "tool": 5.214,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.94331,
+    "fitIouByView": {
+     "front": 0.93827,
+     "left": 0.94332,
+     "back": 0.94834
+    },
+    "silhouetteChange": 0.00054,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": "R01",
+    "containExcess": 0.0,
+    "toolScore": -0.806831702961189,
+    "toolStep": "F-parts",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 3,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "F-parts": "head-2781"
+   },
+   "contain": [
+    {
+     "step": "F-parts",
+     "max": 0.0,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2781__body-2750",
+   "head": "head-2781",
+   "body": "body-2750"
+  }
+ ],
+ "scoringSeconds": 539.9,
+ "wallMinutes": 35.3,
+ "surfaceStats": true,
+ "created": "2026-10-05T19:44:36",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r26-R02-refine-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r26-R02-refine-plan-result.png"
+ ]
+}

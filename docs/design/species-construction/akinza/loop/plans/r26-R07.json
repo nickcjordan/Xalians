@@ -1,0 +1,1361 @@
+{
+ "order": {
+  "round": 26,
+  "region": "R07",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2751",
+ "start": null,
+ "variants": [
+  {
+   "name": "uncurl digits",
+   "why": "R07.5/R07.3, audit rank 6: the digit chains curl 38 degrees palmward so the paw reads as a closed fist; pitch 0 and curl 6+4 makes the four lobes point down side by side across the paw end",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "uncurl plus fan",
+   "why": "audit rank 6: claws bunch at the inner lower corner; wider lateral yaw (+-10/+-3.5) and root spacing (+-.031/+-.0105) give each digit its own claw root across the lower edge",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.031,
+       "yawDeg": -10,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0105,
+       "yawDeg": -3.5,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0105,
+       "yawDeg": 3.5,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.031,
+       "yawDeg": 10,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "uncurl longer digits",
+   "why": "R07.5: paw longer than wide with digits pointing down; segment lengths +30 percent on top of the uncurl",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.019,
+        0.015
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.025,
+        0.02
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.025,
+        0.02
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.019,
+        0.015
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "uncurl roll 32",
+   "why": "audit rank 6: more paw roll (32 against 25 degrees, past the spec's 25 only slightly) spreads the four claw tips across the paw end in the front view",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollDeg",
+     "value": 32
+    }
+   ]
+  },
+  {
+   "name": "uncurl wider paw",
+   "why": "audit rank 6: paw over wrist is 1.375 against about 1.5 and a cuff step marks the wrist; widen the palm and digit radii 8 percent and ease the rod's last stations so the paw grows from the wrist",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.02729,
+        0.01577
+       ],
+       "jointRadii": [
+        0.02472,
+        0.01447
+       ],
+       "tipRadii": [
+        0.01957,
+        0.01242
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.02781,
+        0.0162
+       ],
+       "jointRadii": [
+        0.02524,
+        0.01512
+       ],
+       "tipRadii": [
+        0.0206,
+        0.01318
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.02781,
+        0.0162
+       ],
+       "jointRadii": [
+        0.02524,
+        0.01512
+       ],
+       "tipRadii": [
+        0.0206,
+        0.01318
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.02729,
+        0.01577
+       ],
+       "jointRadii": [
+        0.02472,
+        0.01447
+       ],
+       "tipRadii": [
+        0.01957,
+        0.01242
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.radii",
+     "value": [
+      0.042,
+      0.03,
+      0.049
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0.0,
+       0.0419,
+       0.0446
+      ],
+      [
+       0.056,
+       0.0409,
+       0.0391
+      ],
+      [
+       0.1116,
+       0.0363,
+       0.0353
+      ],
+      [
+       0.167,
+       0.0326,
+       0.0326
+      ],
+      [
+       0.205,
+       0.0298,
+       0.0316
+      ],
+      [
+       0.2329,
+       0.0322,
+       0.0345
+      ],
+      [
+       0.2608,
+       0.0335,
+       0.0372
+      ],
+      [
+       0.2887,
+       0.0342,
+       0.0385
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "claws only straightened",
+   "why": "cheap isolate for the claw cluster: leave digits as built and set the claw tip tilt to -25 degrees so claws leave along the digit instead of curling inward",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.claw.tipTiltDeg",
+     "value": -25
+    }
+   ]
+  },
+  {
+   "name": "uncurl plus fuller upper arm",
+   "why": "audit rank 12 and R07.6: the upper arm is a straight tube; add about 9 percent to the mid-arm radii and a larger corner dome so the biceps and deltoid read as soft ovals; uncurled paw shared with variant 1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:upperRod",
+     "value": [
+      [
+       0.0,
+       0.0405,
+       0.0462
+      ],
+      [
+       0.5,
+       0.0415,
+       0.0467
+      ],
+      [
+       1.0,
+       0.0405,
+       0.0448
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound",
+     "value": {
+      "mode": "dome",
+      "offset": [
+       0.0,
+       -0.002,
+       0.004
+      ],
+      "radius": 0.068,
+      "cutBlend": 0.02,
+      "frontY": 0.016,
+      "outerX": -0.05,
+      "minZ": 0.0,
+      "sectorFade": 0.035
+     }
+    }
+   ]
+  },
+  {
+   "name": "uncurl plus authored deltoid",
+   "why": "audit rank 12: replace the native flat cap with the spec's authored deltoid ellipsoid (removeZ .335 to .385, fillet top .06), no corner dome; structural fix of the box shoulder, risk is R05 so containment is read",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        6,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound",
+     "value": null
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:deltoid",
+     "value": {
+      "offset": [
+       0.002,
+       -0.004,
+       0.01
+      ],
+      "radii": [
+       0.042,
+       0.05,
+       0.052
+      ],
+      "blend": 0.025
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:removeZ",
+     "value": [
+      0.335,
+      0.385
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:fillet",
+     "value": {
+      "top": 0.06,
+      "low": 0.03,
+      "topZ": 0.3,
+      "lowZ": 0.25
+     }
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "step": "B-23",
+   "grid": {
+    "spec:paw.digits": [
+     [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      }
+     ],
+     [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -6,
+       "pitchDeg": 6,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        8,
+        6
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -2,
+       "pitchDeg": 6,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        8,
+        6
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 2,
+       "pitchDeg": 6,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        8,
+        6
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 6,
+       "pitchDeg": 6,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        8,
+        6
+       ]
+      }
+     ],
+     [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -9,
+       "pitchDeg": 8,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        12,
+        8
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -3,
+       "pitchDeg": 8,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        12,
+        8
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 3,
+       "pitchDeg": 8,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        12,
+        8
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 9,
+       "pitchDeg": 8,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        12,
+        8
+       ]
+      }
+     ]
+    ]
+   },
+   "why": "how much palmward curl the digit chains keep: 0, 14 and 28 degrees in total (baseline 38)"
+  }
+ ],
+ "region": "R07",
+ "top": 3
+}

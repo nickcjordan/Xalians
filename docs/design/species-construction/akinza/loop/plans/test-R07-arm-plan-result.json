@@ -1,0 +1,613 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\test-R07-arm.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2284",
+ "order": {
+  "round": 0,
+  "region": "R07",
+  "with": []
+ },
+ "region": "R07",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2278",
+ "startNotes": [],
+ "top": [
+  {
+   "rank": 1,
+   "id": "v05",
+   "name": "sweep B-23 lobeToRod=0.02",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2284\\v05.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2290",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2290",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 708798,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R10.2",
+     "region": "R10",
+     "before": 0.683,
+     "after": 0.6833,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R06.12",
+    "R06.13",
+    "R06.14",
+    "R06.6",
+    "R06.7",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.1",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "B-23": {
+     "flaggedRelative": [],
+     "worst": [
+      {
+       "region": "R05",
+       "max": 0.00164,
+       "allowance": 0.00213,
+       "excess": -0.00049,
+       "flagged": false
+      },
+      {
+       "region": "R06",
+       "max": 0.00164,
+       "allowance": 0.00213,
+       "excess": -0.00049,
+       "flagged": false
+      },
+      {
+       "region": "R09",
+       "max": 0.00117,
+       "allowance": 0.002,
+       "excess": -0.00083,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00039,
+    "R02": 0.0,
+    "R03": 0.00039,
+    "R04": 0.00039,
+    "R05": 0.00034,
+    "R06": 0.0009,
+    "R07": 0.0045,
+    "R08": 0.00089,
+    "R09": 0.0,
+    "R10": 0.00062,
+    "R11": 0.00062,
+    "R12": 0.00045
+   },
+   "verdict": "R10 measured: 1 changed; no new seams flagged; containment within allowance; picture change R07 0.0045, R06 0.0009, R08 0.0009",
+   "wallMinutes": 8.2
+  },
+  {
+   "rank": 2,
+   "id": "v01",
+   "name": "wider lobes",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2284\\v01.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2291",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2291",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 709082,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R06.10",
+     "region": "R06",
+     "before": 0.852,
+     "after": 0.8521,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R07.6",
+     "region": "R07",
+     "before": 0.8723,
+     "after": 0.8724,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R10.2",
+     "region": "R10",
+     "before": 0.683,
+     "after": 0.6832,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R06.12",
+    "R06.13",
+    "R06.14",
+    "R06.6",
+    "R06.7",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.1",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "B-23": {
+     "flaggedRelative": [],
+     "worst": [
+      {
+       "region": "R05",
+       "max": 0.00164,
+       "allowance": 0.00213,
+       "excess": -0.00049,
+       "flagged": false
+      },
+      {
+       "region": "R06",
+       "max": 0.00164,
+       "allowance": 0.00213,
+       "excess": -0.00049,
+       "flagged": false
+      },
+      {
+       "region": "R09",
+       "max": 0.00117,
+       "allowance": 0.002,
+       "excess": -0.00083,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00035,
+    "R02": 0.0,
+    "R03": 0.00035,
+    "R04": 0.00035,
+    "R05": 0.00044,
+    "R06": 0.00044,
+    "R07": 0.00548,
+    "R08": 0.0011,
+    "R09": 0.0,
+    "R10": 0.00061,
+    "R11": 0.00061,
+    "R12": 0.00078
+   },
+   "verdict": "R07 measured: 1 changed; R06 measured: 1 changed; R10 measured: 1 changed; no new seams flagged; containment within allowance; picture change R07 0.0055, R08 0.0011, R12 0.0008",
+   "wallMinutes": 8.6
+  }
+ ],
+ "baseline": {
+  "head": "head-2271",
+  "body": "body-2276",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2276",
+  "terms": {
+   "fitIou": 0.6344,
+   "fitIouByView": {
+    "front": 0.56104,
+    "left": 0.74635,
+    "back": 0.59582
+   },
+   "silhouetteChange": null,
+   "fitBand": "trunk",
+   "fitBandIou": 0.6377,
+   "stationDiff": 0.15782,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "wider lobes",
+   "why": "front view: the paw reads narrow; widen each lobe and its blend",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeWidthRadius",
+     "value": 0.0175
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeBlend",
+     "value": 0.02
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2284\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -1.693,
+   "parts": {
+    "fit": -0.006,
+    "station": 0.013,
+    "contain": -0.0,
+    "seam": -1.7
+   },
+   "terms": {
+    "fitIou": 0.63434,
+    "fitIouByView": {
+     "front": 0.56145,
+     "left": 0.74635,
+     "back": 0.59523
+    },
+    "silhouetteChange": 0.00081,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6377,
+    "stationDiff": 0.15769,
+    "seam": {
+     "worstRatio": 0.34,
+     "at": "tailRoot back step",
+     "flagged": []
+    },
+    "containMax": 0.00164,
+    "containRegion": "R05",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null
+   },
+   "rank": 2,
+   "noop": false,
+   "rebuilt": {
+    "B-23": "body-2285"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00164,
+     "region": "R05",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2285",
+   "head": "head-2271",
+   "body": "body-2285"
+  },
+  {
+   "id": "v02",
+   "name": "thicker lobes",
+   "why": "profile: the mitten paw is thin; raise the lobe thickness radii",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeThickRadius",
+     "value": 0.042
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeTipThickRadius",
+     "value": 0.04
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2284\\v02.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -2.428,
+   "parts": {
+    "fit": -0.053,
+    "station": 0.026,
+    "contain": -0.0,
+    "seam": -2.401
+   },
+   "terms": {
+    "fitIou": 0.63387,
+    "fitIouByView": {
+     "front": 0.56152,
+     "left": 0.74635,
+     "back": 0.59374
+    },
+    "silhouetteChange": 0.00266,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6376,
+    "stationDiff": 0.15756,
+    "seam": {
+     "worstRatio": 0.4803,
+     "at": "tailRoot back kink",
+     "flagged": []
+    },
+    "containMax": 0.00164,
+    "containRegion": "R05",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null
+   },
+   "rank": 4,
+   "noop": false,
+   "rebuilt": {
+    "B-23": "body-2286"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00164,
+     "region": "R05",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2286",
+   "head": "head-2271",
+   "body": "body-2286"
+  },
+  {
+   "id": "v03",
+   "name": "long claws",
+   "why": "claws are short stubs against the sheet; lengthen all four",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:clawEach.length",
+     "value": [
+      0.034,
+      0.034,
+      0.034,
+      0.034
+     ]
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2284\\v03.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -23.327,
+   "parts": {
+    "fit": 0.006,
+    "station": -0.0,
+    "contain": -0.0,
+    "seam": -23.333
+   },
+   "terms": {
+    "fitIou": 0.63446,
+    "fitIouByView": {
+     "front": 0.56149,
+     "left": 0.74635,
+     "back": 0.59555
+    },
+    "silhouetteChange": 0.00038,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6377,
+    "stationDiff": 0.15782,
+    "seam": {
+     "worstRatio": 4.6667,
+     "at": "hip front wbump",
+     "flagged": [
+      "hip front kink,bump,wbump,step,needle",
+      "hip back needle",
+      "tailRoot back wbump,needle"
+     ]
+    },
+    "containMax": 0.00164,
+    "containRegion": "R05",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null
+   },
+   "rank": 5,
+   "noop": false,
+   "rebuilt": {
+    "B-23": "body-2287"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00164,
+     "region": "R05",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2287",
+   "head": "head-2271",
+   "body": "body-2287"
+  },
+  {
+   "id": "v04",
+   "name": "sweep B-23 lobeToRod=0.006",
+   "why": "how far the lobes sit from the rod end",
+   "source": "sweep 1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.006
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2284\\v04.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -2.41,
+   "parts": {
+    "fit": 0.007,
+    "station": -0.001,
+    "contain": -0.0,
+    "seam": -2.417
+   },
+   "terms": {
+    "fitIou": 0.63447,
+    "fitIouByView": {
+     "front": 0.56099,
+     "left": 0.74635,
+     "back": 0.59608
+    },
+    "silhouetteChange": 0.00037,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6377,
+    "stationDiff": 0.15783,
+    "seam": {
+     "worstRatio": 0.4833,
+     "at": "tailRoot back wbump",
+     "flagged": []
+    },
+    "containMax": 0.00164,
+    "containRegion": "R05",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null
+   },
+   "rank": 3,
+   "noop": false,
+   "rebuilt": {
+    "B-23": "body-2288"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00164,
+     "region": "R05",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2288",
+   "head": "head-2271",
+   "body": "body-2288"
+  },
+  {
+   "id": "v05",
+   "name": "sweep B-23 lobeToRod=0.02",
+   "why": "how far the lobes sit from the rod end",
+   "source": "sweep 1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.02
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2284\\v05.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-23"
+   ],
+   "total": -0.009,
+   "parts": {
+    "fit": -0.014,
+    "station": 0.005,
+    "contain": -0.0,
+    "seam": -0.0
+   },
+   "terms": {
+    "fitIou": 0.63426,
+    "fitIouByView": {
+     "front": 0.56101,
+     "left": 0.74635,
+     "back": 0.59541
+    },
+    "silhouetteChange": 0.0005,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6376,
+    "stationDiff": 0.15777,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "containMax": 0.00164,
+    "containRegion": "R05",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null
+   },
+   "rank": 1,
+   "noop": false,
+   "rebuilt": {
+    "B-23": "body-2289"
+   },
+   "contain": [
+    {
+     "step": "B-23",
+     "max": 0.00164,
+     "region": "R05",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2289",
+   "head": "head-2271",
+   "body": "body-2289"
+  }
+ ],
+ "scoringSeconds": 285.6,
+ "wallMinutes": 13.8,
+ "surfaceStats": true,
+ "created": "2026-10-02T14:28:37",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\test-R07-arm-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\test-R07-arm-plan-result.png"
+ ]
+}
