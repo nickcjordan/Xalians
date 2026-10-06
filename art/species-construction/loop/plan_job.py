@@ -89,9 +89,9 @@ def cmd_start(a):
     if result.exists():
         # older than its inputs: keep it under another name so wait cannot report it as this run's
         result.replace(result.with_name(result.stem+f'-stale-{int(result.stat().st_mtime)}.json'))
-    cmd = [sys.executable, str(ROOT/'art/species-construction/loop/recipe.py'), 'run-plan', str(plan)]
-    if a.top:
-        cmd += ['--top', str(a.top)]
+    # round 27: a run-plan died during its candidate stage with nothing in its log; a supervisor now runs it with
+    # faulthandler on and writes its exit code to the log and the job record
+    cmd = [sys.executable, str(Path(__file__).resolve()), 'supervise', str(plan)] + (['--top', str(a.top)] if a.top else [])
     flags = 0
     if os.name == 'nt':
         flags = subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW
@@ -101,6 +101,27 @@ def cmd_start(a):
     job.write_text(json.dumps({'pid': p.pid, 'cmd': cmd, 'log': str(log), 'result': str(result), 'started': time.time()}))
     print(json.dumps({'status': 'started', 'pid': p.pid, 'log': str(log), 'result': str(result)}))
     return 0
+
+
+def cmd_supervise(a):
+    plan, result, job, log = paths(a.plan)
+    cmd = [sys.executable, '-X', 'faulthandler', str(ROOT/'art/species-construction/loop/recipe.py'), 'run-plan', str(plan)]
+    if a.top:
+        cmd += ['--top', str(a.top)]
+    with open(log, 'a', encoding='utf-8') as fh:
+        p = subprocess.Popen(cmd, cwd=ROOT, stdout=fh, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
+                             creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+        code = p.wait()
+    note = f'[plan_job] run-plan exited with code {code}' + (f' (0x{code & 0xffffffff:08X})' if code not in (0, 1) else '')
+    with open(log, 'a', encoding='utf-8') as fh:
+        fh.write(note+'\n')
+    try:
+        j = json.loads(job.read_text())
+        j['exitCode'] = code
+        job.write_text(json.dumps(j))
+    except (OSError, ValueError):
+        pass
+    return code
 
 
 def tail(log, n=5):
@@ -185,8 +206,9 @@ def main():
     w = sub.add_parser('wait'); w.add_argument('plan'); w.add_argument('--timeout', type=int, default=560)
     r = sub.add_parser('report'); r.add_argument('plan'); r.add_argument('--baseline-packet', required=True)
     r.add_argument('--regions', required=True); r.add_argument('--seed', required=True)
+    v = sub.add_parser('supervise'); v.add_argument('plan'); v.add_argument('--top', type=int)
     a = ap.parse_args()
-    sys.exit({'start': cmd_start, 'wait': cmd_wait, 'report': cmd_report}[a.cmd](a))
+    sys.exit({'start': cmd_start, 'wait': cmd_wait, 'report': cmd_report, 'supervise': cmd_supervise}[a.cmd](a))
 
 
 if __name__ == '__main__':
