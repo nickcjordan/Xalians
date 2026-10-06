@@ -5,15 +5,15 @@ import { describe, expect, it, vi } from 'vitest';
 
 /**
  * The story front door (docs/design/home-story-page-brief.md): Nick's 2022
- * copy in his order, one fixed specimen from a real generator record, the
- * one primary key, and the five games.
+ * copy in his order, a slim title band, the galaxy of fourteen worlds after
+ * the story (no single creature carries the page, Nick 2026-10-06), and the
+ * close with the Generator and the five games.
  */
 
 vi.mock('../../components/navbar', () => ({ default: () => null }));
 vi.mock('aws-amplify', () => ({ Amplify: { configure: vi.fn() } }));
 
 import Home from '../home';
-import specimen from '../home/specimen.json';
 
 function renderHome() {
 	return render(
@@ -24,7 +24,7 @@ function renderHome() {
 }
 
 describe('Home (the story front door)', () => {
-	it('opens with the lockup, the 2022 line and the one primary key', () => {
+	it('opens with the lockup, the 2022 line and the Generator, and no creature', () => {
 		renderHome();
 		expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
 		expect(screen.getByText(/Xalia is home to a wide range of powerful, bioengineered creatures/)).toBeInTheDocument();
@@ -32,7 +32,9 @@ describe('Home (the story front door)', () => {
 		expect(keys).toHaveLength(2);
 		expect(keys[0]).toHaveAttribute('href', '/generator');
 		expect(keys[0].getAttribute('data-variant')).toBe('default');
-		expect(keys[1].getAttribute('data-variant')).toBe('secondary');
+		// The close is screens away from the band, so it carries the forward key too.
+		expect(keys[1].getAttribute('data-variant')).toBe('default');
+		expect(screen.queryByText(/Yetimoth/)).toBeNull();
 	});
 
 	it('tells the story in the beats of the content plan under the 2022 headings', () => {
@@ -52,8 +54,6 @@ describe('Home (the story front door)', () => {
 			'By scrambling and encrypting the genome',
 			'Recently, the king has announced plans',
 			'With the plague burning through the galaxy',
-			'Today, Krystos remains a snowy wasteland',
-			'Hulking, white-furred apes',
 			'Start generating now',
 		];
 		let last = -1;
@@ -74,14 +74,11 @@ describe('Home (the story front door)', () => {
 		expect(text).not.toMatch(/[–—]/);
 	});
 
-	it('shows the one fixed specimen from its record and links to its pages', () => {
+	it('follows the story with the galaxy, and the story hands on to it', () => {
 		renderHome();
-		expect(specimen.provenance.seed).toBe('home-sample-2');
-		expect(screen.getByRole('heading', { level: 3, name: /Yetimoth/ })).toBeInTheDocument();
-		expect(screen.getByText('Mantle of Unyielding Winter')).toBeInTheDocument();
-		expect(screen.getByRole('link', { name: 'Its record' })).toHaveAttribute('href', '/encyclopedia/species/yetimoth');
-		expect(screen.getByRole('link', { name: 'Its world' })).toHaveAttribute('href', '/encyclopedia/worlds/krystos');
-		expect(screen.getByRole('link', { name: 'A Yetimoth of Krystos, shown in full below' })).toHaveAttribute('href', '#specimen');
+		const section = document.getElementById('worlds');
+		expect(section).not.toBeNull();
+		expect(screen.getByRole('link', { name: 'All fourteen worlds' })).toHaveAttribute('href', '/encyclopedia/worlds');
 	});
 
 	it('lists the five games with their routes', () => {

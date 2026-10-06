@@ -7,10 +7,8 @@
 //
 // What moves, and the catalog row each answers to (docs/DESIGN_SYSTEM.md
 // section 7):
-//   [data-hero-fig]     the creature arriving after the lockup, once on load
 //   [data-panel]        a painting settling into its frame as it scrolls in, once
 //   [data-panel] img    a scroll-linked drift inside the frame (no loop)
-//   [data-figure]       the specimen printing in (blur to sharp), once
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -40,10 +38,6 @@ export function startStoryMotion(root: HTMLElement): (() => void) | undefined {
 		{
 			const once = (trigger: Element, start = 'top 88%') => ({ trigger, start, once: true });
 
-			root.querySelectorAll<HTMLElement>('[data-hero-fig]').forEach((el) => {
-				keep(gsap.fromTo(el, { y: 28, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.9, ease: ENTER, delay: 1.4 }));
-			});
-
 			root.querySelectorAll<HTMLElement>('[data-panel]').forEach((panel) => {
 				keep(gsap.fromTo(panel, { y: 32, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.9, ease: ENTER, scrollTrigger: once(panel) }));
 				// A living plate holds still in its frame: its SVG cannot travel with
@@ -60,13 +54,6 @@ export function startStoryMotion(root: HTMLElement): (() => void) | undefined {
 				}
 			});
 
-			root.querySelectorAll<HTMLElement>('[data-figure]').forEach((fig) => {
-				keep(gsap.fromTo(
-					fig,
-					{ autoAlpha: 0.1, filter: 'blur(14px)', y: 16 },
-					{ autoAlpha: 1, filter: 'blur(0px)', y: 0, duration: 1.1, ease: ENTER, scrollTrigger: once(fig, 'top 80%') }
-				));
-			});
 		}
 	} catch {
 		// A DOM that cannot be measured (tests) keeps its resting frame.
