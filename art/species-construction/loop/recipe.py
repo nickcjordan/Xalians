@@ -47,6 +47,13 @@ ROOT = rs.ROOT
 LOOP_TOOLS = HERE/'loop_tools.py'
 ASSEMBLER = 'art/species-construction/assemble_reconstructed_creature.py'
 DEFAULT_JOIN = {'head-scale': .5, 'jaw-anchor-z': .5, 'head-depth-offset': -.02}
+PATH_JOIN_KEYS = ('neck-sections',)   # assembly args whose value is a file path (not a number)
+
+
+def assembler_of(recipe):
+    """The assembler script of a recipe: its assembly step's `script` (a versioned copy such as
+    assemble_reconstructed_creature_r27.py), else the original."""
+    return recipe.assembly.get('script', ASSEMBLER)
 BOUNDS_TOLERANCE_HEIGHTS = 1e-4
 FIGURE_HEIGHT = 1.8605
 NUMBER = re.compile(r'^[a-z-]+-(\d{4})')
@@ -171,7 +178,12 @@ def step_key(step, input_keys):
 def assembly_key(recipe, keys):
     asm = recipe.assembly
     payload = {'v': 1, 'head': keys[asm['head']], 'body': keys[asm['body']], 'args': asm.get('args', []),
-               'closure': rs.closure_hash(ASSEMBLER)}
+               'closure': rs.closure_hash(assembler_of(recipe))}
+    args = asm.get('args', [])
+    files = {args[k+1]: rs.file_hash(ROOT/args[k+1] if not Path(args[k+1]).is_absolute() else args[k+1])
+             for k in range(0, len(args)-1, 2) if args[k].lstrip('-') in PATH_JOIN_KEYS}
+    if files:
+        payload['argFiles'] = files
     return rs.sha256_bytes(json.dumps(payload, sort_keys=True).encode())
 
 
@@ -242,7 +254,7 @@ def pin_state(recipe):
         bad = rs.check_pins(pins, files)
         return {'changed': [(k, s) for k, s in bad if s != 'UNPINNED'], 'unpinned': [k for k, s in bad if s == 'UNPINNED']}
     out = {s['id']: state(rs.read_files(s['script'], s['args']), s.get('pins')) for s in recipe.order+recipe.post}
-    out['assembly'] = state(rs.read_files(ASSEMBLER, []), recipe.assembly.get('pins'))
+    out['assembly'] = state(rs.read_files(assembler_of(recipe), []), recipe.assembly.get('pins'))
     return out
 
 
@@ -286,9 +298,9 @@ def make_plan(recipe, cache, force_from=None, no_cache=False):
     if not (no_cache or rebuilt_head_or_body or asm_changed):
         asm_hit = cache.get('assemblies', keys['assembly'])
         if asm_hit and (asm_hit.get('seeded') or asm_hit.get('loose')):
-            analysis = analyze_files(ASSEMBLER, [], recipe.work/asm_hit['dir'], {}, recipe.work)
+            analysis = analyze_files(assembler_of(recipe), [], recipe.work/asm_hit['dir'], {}, recipe.work)
             asm_changed = [(k, 'DIFFERS') for k, v in analysis.items() if v['status'] == 'differs'] or (
-                [(ASSEMBLER, 'LOOSE')] if asm_hit.get('loose') else [])
+                [(assembler_of(recipe), 'LOOSE')] if asm_hit.get('loose') else [])
             asm_hit = None if asm_changed else asm_hit
     plan['assembly'] = {'key': keys['assembly'], 'dir': asm_hit['dir'] if asm_hit else None, 'changed': asm_changed,
                         'unpinned': pins['assembly']['unpinned'], 'upstreamChanged': False}
@@ -420,9 +432,9 @@ def assemble(recipe, head_dir, body_dir, name):
     """loop_tools assemble; the recipe's assembly args become a --join JSON unless they equal the defaults."""
     args = recipe.assembly.get('args', [])
     pairs = {args[k].lstrip('-'): args[k+1] for k in range(0, len(args), 2)}
-    numeric = {k: float(v) for k, v in pairs.items()}
+    numeric = {k: (v if k in PATH_JOIN_KEYS else float(v)) for k, v in pairs.items()}
     cmd = [sys.executable, str(LOOP_TOOLS), 'assemble', *species_flags(recipe), head_dir, body_dir, name]
-    if any(abs(DEFAULT_JOIN[k]-v) > 1e-12 if k in DEFAULT_JOIN else True for k, v in numeric.items()):
+    if any(abs(DEFAULT_JOIN[k]-v) > 1e-12 if k in DEFAULT_JOIN and not isinstance(v, str) else True for k, v in numeric.items()):
         if "'--join'" not in LOOP_TOOLS.read_text(encoding='utf-8'):
             fail('the assembly args differ from the defaults and loop_tools.py assemble has no --join option yet')
         tmp = recipe.work/'recipe-tmp'
@@ -430,6 +442,8 @@ def assemble(recipe, head_dir, body_dir, name):
         join = tmp/f'join-{name}.json'
         join.write_bytes((json.dumps(numeric, indent=1)+'\n').encode('utf-8'))
         cmd += ['--join', str(join)]
+    if recipe.assembly.get('script'):
+        cmd += ['--assembler', recipe.assembly['script']]
     started = time.time()
     result = _run(cmd, cwd=ROOT, capture_output=True, text=True)
     out = recipe.work/name
@@ -856,9 +870,9 @@ def cmd_pin(args):
         hit = cache.get('assemblies', keys['assembly'])
         asm_dir = recipe.work/hit['dir'] if hit else None
     before = dict(asm_holder.get('pins') or {})
-    open_, _ = pin_step('assembly', asm_holder, ASSEMBLER, [], asm_dir, {}, recipe.work, args.write, report)
+    open_, _ = pin_step('assembly', asm_holder, assembler_of(recipe), [], asm_dir, {}, recipe.work, args.write, report)
     problems += open_
-    now = rs.pins_now(ASSEMBLER, [])
+    now = rs.pins_now(assembler_of(recipe), [])
     if before != now:
         pending += 1
         report.append(f"  assembly: {len(now)} pins "+('written' if args.write and not open_ else 'to write'))
@@ -981,7 +995,7 @@ def cmd_seed(args):
             step['expect'] = measure_output(directory)
     asm = recipe.assembly
     if asm.get('existing') and (recipe.work/asm['existing']).is_dir():
-        asm_analysis = analyze_files(ASSEMBLER, [], recipe.work/asm['existing'], {}, recipe.work)
+        asm_analysis = analyze_files(assembler_of(recipe), [], recipe.work/asm['existing'], {}, recipe.work)
         asm_drift = [k for k, v in asm_analysis.items() if v['status'] == 'differs']
         asm_drift = asm_drift or (['upstream refused'] if {asm['head'], asm['body']} & refused else [])
         problems += bool(asm_drift)
@@ -1071,6 +1085,28 @@ def refresh_pins(step, before):
     step['pins'] = {key: old.get(key) or rs.pin_hash(key) for key in sorted(rs.read_files(step['script'], step['args']))}
 
 
+def apply_assembly_edits(data, pairs):
+    """Edit the assembly step (its id, J in the Akinza recipe) in place: each pair is a --join flag (--head-trim-offset .038,
+    --neck-back-fill .005, ...) or script (a versioned assembler copy). The assembler's pins are re-recorded from today's bytes
+    for a new script and carried forward otherwise."""
+    asm = data['assembly']
+    before = copy.deepcopy(asm)
+    for key, value in pairs:
+        if key == 'script':
+            if not (ROOT/value).is_file():
+                fail(f'script {value}: no such file under the repository')
+            asm['script'] = value
+        elif key.startswith('--'):
+            set_cli_arg(asm, key, value)
+        else:
+            fail(f'{key}: an assembly argument is a --flag or script')
+    old = before.get('pins') or {}
+    keep = old if asm.get('script') == before.get('script') else {}
+    asm['pins'] = {key: keep.get(key) or rs.pin_hash(key) for key in sorted(rs.read_files(asm.get('script', ASSEMBLER), []))}
+    asm.pop('expect', None)
+    return None
+
+
 def apply_edits(data, step_id, pairs, spec_path, keep_same=False):
     """Edit one step of a recipe dict in place: pairs is [(arg, value)], each a --flag, spec:<dotted.path> or script (the
     step's script path, to point it at a new versioned copy).
@@ -1078,6 +1114,8 @@ def apply_edits(data, step_id, pairs, spec_path, keep_same=False):
     leaves the document unchanged keeps the original path (so the step key equals the baseline's).
     Returns the spec file written, or None."""
     step = next((s for s in data['steps'] if s['id'] == step_id), None)
+    if step is None and data['assembly'].get('id') == step_id:
+        return apply_assembly_edits(data, pairs)
     if step is None:
         fail(f'no step {step_id}')
     spec_doc, original = None, None

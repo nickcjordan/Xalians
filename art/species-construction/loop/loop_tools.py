@@ -252,7 +252,8 @@ def cmd_render(args):
 JOIN_KEYS = ['head-scale', 'jaw-anchor-z', 'head-depth-offset', 'body-trim', 'fragment-voxels', 'bridge-rings',
              'fusion-iterations', 'fusion-factor', 'head-trim-offset', 'neck-inner-offset', 'section-segments',
              'tangent-limit', 'voxel-size', 'min-neck-length', 'fusion-x-extent', 'fusion-y-extent',
-             'fusion-z-below', 'fusion-z-above', 'head-anchor-local-z']
+             'fusion-z-below', 'fusion-z-above', 'head-anchor-local-z',
+             'neck-sections', 'neck-back-fill', 'neck-exponent', 'neck-max-shift']  # the last four need an assembler that has them (assemble_reconstructed_creature_r27.py)
 
 
 def join_parameters(join_file=None, body=None, fragment_voxels=None):
@@ -266,6 +267,11 @@ def join_parameters(join_file=None, body=None, fragment_voxels=None):
         if unknown:
             sys.exit(f'Unknown join parameters {unknown}; known: {JOIN_KEYS}')
         params.update({k: v for k, v in given.items() if k != 'note'})
+        if params.get('neck-sections'):
+            table = Path(params['neck-sections'])
+            params['neck-sections'] = str(table if table.is_absolute() else ROOT/table)
+        else:
+            params.pop('neck-sections', None)
     if fragment_voxels is not None:
         params['fragment-voxels'] = fragment_voxels
     shift = 0.0
@@ -291,7 +297,12 @@ def cmd_assemble(args):
     options = []
     for k, v in params.items():
         options += [f'--{k}', str(v)]
-    run_blender(['--factory-startup', '--python', str(CONSTRUCTION/'assemble_reconstructed_creature.py'), '--',
+    assembler = Path(args.assembler) if args.assembler else CONSTRUCTION/'assemble_reconstructed_creature.py'
+    if not assembler.is_absolute():
+        assembler = ROOT/assembler
+    if not assembler.is_file():
+        sys.exit(f'Missing assembler {assembler}')
+    run_blender(['--factory-startup', '--python', str(assembler), '--',
                  '--body', str(body/'shape.glb'), '--head', str(head/'shape.glb'),
                  '--tail-record', str(body/'fairing.json'), '--out', str(out), *options], WORK/f'{args.out}.log')
     cmd_render(argparse.Namespace(name=args.out))
@@ -1188,7 +1199,9 @@ def main():
     sub = parser.add_subparsers(dest='command', required=True)
     p = sub.add_parser('assemble'); p.add_argument('head'); p.add_argument('body'); p.add_argument('out')
     p.add_argument('--join', help='JSON of join parameters (placement and bridge); defaults come from species.json')
-    p.add_argument('--fragment-voxels', type=float, default=None); p.set_defaults(func=cmd_assemble)
+    p.add_argument('--fragment-voxels', type=float, default=None)
+    p.add_argument('--assembler', default=None, help='assembler script (default assemble_reconstructed_creature.py); a recipe names it in its assembly step')
+    p.set_defaults(func=cmd_assemble)
     p = sub.add_parser('render'); p.add_argument('name'); p.set_defaults(func=cmd_render)
     p = sub.add_parser('check'); p.add_argument('name'); p.set_defaults(func=cmd_check)
     p = sub.add_parser('packet'); p.add_argument('name'); p.add_argument('packet')
