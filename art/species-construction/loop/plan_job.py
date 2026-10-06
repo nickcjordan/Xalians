@@ -30,8 +30,18 @@ def paths(plan):
 
 def alive(pid):
     if os.name == 'nt':
-        out = subprocess.run(['tasklist', '/FI', f'PID eq {pid}', '/NH'], capture_output=True, text=True).stdout
-        return str(pid) in out
+        # round 26: one tasklist call under load came back without the pid while the plan ran on, the
+        # runner reported the plan failed and a second plan raced it; only three misses in a row count
+        import time
+        for attempt in range(3):
+            try:
+                out = subprocess.run(['tasklist', '/FI', f'PID eq {pid}', '/NH'], capture_output=True, text=True, timeout=60).stdout
+            except (subprocess.TimeoutExpired, OSError):
+                out = None
+            if out is None or str(pid) in out:
+                return True
+            time.sleep(5)
+        return False
     try:
         os.kill(pid, 0)
         return True
