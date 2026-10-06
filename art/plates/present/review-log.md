@@ -239,3 +239,17 @@ Nothing in the crowd glows or pulses; the roar is calm; the phone label is clear
 3. Darts, shards, the globe and the stone are matter, not light: flat, one highlight, no halo. Only the fireballs, the bolts and the clash give off light.
 4. Stale text: the concept and the scene description call the creatures small dark shapes.
 5. Left: the roar is faint at site size (stronger risks the shimmer Nick objected to); storm's small bolt is smooth zoomed in.
+
+## Round 23 (fresh reviewer, after PR #792): 7.5
+
+Dark specks, a calm crowd, matter drawn as matter. What was done:
+1. The fight hugged the back of the floor (only the phone's label kept it from moving down): the floor itself rose 28 units, so the fight (y 852) stands in its middle; the ring, pool and scorch follow the fight.
+2. Between attacks the fight barely read at site size: a paler pool of sand right under the squads so the dark specks stand out, longer contact shadows, and every thrown attack (darts, shards, globe, stone) kicks up a pale puff of dust where it lands; no light added.
+3. The rim banners read as glowing light tubes: darker cloth, a heavier fold shadow, a small muted gold mark instead of a white disc.
+4. Storm's small bolt was a glowing rope: jagged with fewer, sharper kinks, thinner.
+5. Glowing columns rose from the throwers: removed.
+6. The clash's sparks hung half a second: about a quarter.
+7. The thrown stone read as an ember: hard umber rock.
+8. The clash's bloom was wider than both squads: a third smaller.
+9. Stale text: the piece list says hits are a recoil and dull specks; pass 21.
+10. Left: the fireball reads as an eye zoomed in at the moment it hits ice (invisible at site size).
