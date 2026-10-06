@@ -1,10 +1,10 @@
 {
-  "order": {"round": 22, "region": "R02", "with": []},
+  "order": {"round": 27, "region": "R02", "with": []},
   "base": "docs/design/species-construction/akinza/recipe.json",
-  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2278",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2775",
   "start": "docs/design/species-construction/akinza/loop/recipes/tool-R02.json",
   "variants": [
-    {"name": "tool as built", "why": "reader check of the R02 face parts tool (author_face_parts.py): the starter recipe with no edits is the r10e control rebuilt at mesh precision, and three blind readers compare it with the baseline before the tool counts as ready", "edits": []}
+    {"name": "tool as built", "why": "reader check of the R02 post-assembly face tool (finish_face_assembled.py as A-face): the starter recipe with no edits is the r10e control cut into the assembled skin at mesh precision, with the lid band as a separate strip; three blind readers compare it with the baseline before the tool counts as ready", "edits": []}
   ],
   "sweeps": [],
   "region": "R02",
