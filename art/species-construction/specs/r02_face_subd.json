@@ -58,8 +58,8 @@
   "cell": 0.005,
   "levels": 2,
   "pad": 0.04,
-  "blendLevels": 2,
-  "extendStep": 0.002,
+  "blendLevels": 4,
+  "extendStep": 0.0035,
   "minRingGap": 0.0015,
   "creaseAperture": 1.0,
   "creaseNose": 0.9,
@@ -288,7 +288,7 @@
    "topZ": -0.11,
    "apexZ": -0.148,
    "halfWidth": 0.043,
-   "cornerRadius": 0.006,
+   "cornerRadius": 0.007,
    "wrapUnder": 0.0,
    "outlinePoints": 96,
    "lift": 0.0006,
@@ -305,7 +305,8 @@
      "rise": 0.0,
      "crease": 0.0
     }
-   ]
+   ],
+   "pinCorners": false
   },
   "wedge": {
    "lead": 0.0,

@@ -691,9 +691,28 @@ def np_rounded_triangle(P):
 
 inner_n, rc_n, incentre_n = np_rounded_triangle(NP_)
 outline = []
-for ang in np.linspace(0, 2*np.pi, int(NP_['outlinePoints']), endpoint=False):
-    direction = np.array([math.cos(ang), math.sin(ang)])
-    outline.append(inner_n[int(np.argmax(inner_n@direction))]+rc_n*direction)
+# the boundary of the rounded triangle: a corner arc about each shrunken corner (outward normals of its two edges), and a straight run along
+# each edge sampled as densely as the arcs, so the polar table below follows the flat sides instead of cutting across them
+_ctr = incentre_n
+_nrm = []
+for _i in range(3):
+    _e = inner_n[(_i+1) % 3]-inner_n[_i]
+    _n = np.array([_e[1], -_e[0]])/np.linalg.norm(_e)
+    if _n@(inner_n[_i]-_ctr) < 0:
+        _n = -_n
+    _nrm.append(_n)
+_n_arc = max(8, int(NP_['outlinePoints'])//12)
+_n_side = max(8, int(NP_['outlinePoints'])//4)
+for _i in range(3):
+    _n0, _n1 = _nrm[(_i+2) % 3], _nrm[_i]                       # edge (i-1 -> i) then edge (i -> i+1)
+    _a0, _a1 = math.atan2(_n0[1], _n0[0]), math.atan2(_n1[1], _n1[0])
+    _da = (_a1-_a0+math.pi) % (2*math.pi)-math.pi
+    for _t in np.linspace(0, 1, _n_arc, endpoint=False):
+        _d = np.array([math.cos(_a0+_da*_t), math.sin(_a0+_da*_t)])
+        outline.append(inner_n[_i]+rc_n*_d)
+    _p0, _p1 = inner_n[_i]+rc_n*_n1, inner_n[(_i+1) % 3]+rc_n*_n1
+    for _t in np.linspace(0, 1, _n_side, endpoint=False):
+        outline.append(_p0+(_p1-_p0)*_t)
 outline = np.array(outline)
 n_th = np.arctan2(outline[:, 0]-incentre_n[0], outline[:, 1]-incentre_n[1])
 n_r = np.hypot(outline[:, 0]-incentre_n[0], outline[:, 1]-incentre_n[1])
@@ -703,7 +722,7 @@ LB_N = int(NP_.get('blendLevels', LB))
 EXT_N = float(NP_.get('extendStep', EXT))
 icz_n = int(round(incentre_n[1]/CELL))
 band_n = (lambda th: np.full_like(th, .005))
-corners_n = [float(math.atan2(p_[0]-incentre_n[0], p_[1]-incentre_n[1])) for p_ in inner_n]
+corners_n = ([float(math.atan2(p_[0]-incentre_n[0], p_[1]-incentre_n[1])) for p_ in inner_n] if NP_.get('pinCorners', True) else None)
 Ka_n, Kb_n = block_half_sizes(rshape_n, rings_n, band_n, LB_N, EXT_N, (float(incentre_n[0]), float(incentre_n[1])), (0.0, icz_n*CELL))
 add_block(2, 1, 0, icz_n, Ka_n, Kb_n, (float(incentre_n[0]), float(incentre_n[1])), rshape_n, rings_n,
           band_n, LB_N, EXT_N, corners_n)
