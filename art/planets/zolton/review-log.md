@@ -69,3 +69,11 @@ The bloodstorm a peppermint candy (three even white and maroon turns, brightest 
 9. Lens: softened inside the filter so its dithered steps no longer fray crisp edges.
 10. Speeds: ground 120.7 s a turn, storm 105.3 s.
 11. Page text matches what is drawn.
+
+## Round 5 review (fresh Opus reviewer): 4.5
+
+Bloodstorm a pinkish smeared swirl on a red crescent; sprites as red pills on the night side; white cyclone outshining it; canyons as pale lakes with ink outlines; ground putty, not crags; black lightning a vector twig; flash channels like check marks; a hard vertical edge in the current (an unwrapped blur at the map's seam); a dark blotch; map sizes a grey moon.
+
+## Round 6 (bug fixes, then to Nick)
+
+Five reviews in a row scored 4.5 to 5 while each fixed its predecessor's list, which is the plateau the critic-loop notes predict; the rest is taste for Nick. Fixed: every map blur now wraps east to west (the vertical edge in the current is gone); the bloodstorms are storm grey with red capped at 0.35 and only in the gaps; sprites ride with the lit storm, so the night hides them, and keep out of the eye; black lightning has two arms with one level of forks and a darker core.

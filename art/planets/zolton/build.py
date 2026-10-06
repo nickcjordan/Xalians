@@ -204,13 +204,13 @@ def planet(p, width=None):
             for s in range(n_):
                 w = w0 * (1 - s / n_) + .5 * (s / n_)
                 segs.append((pts[s][0], pts[s][1], pts[s + 1][0], pts[s + 1][1], w))
-                if depth < 2 and 0 < s < n_ - 1 and br.random() < .3:
+                if depth < 1 and 0 < s < n_ - 1 and br.random() < .3:
                     branch(pts[s + 1][0], pts[s + 1][1], ang + br.choice((-1, 1)) * br.uniform(.5, 1.1), ln * .5, w * .7, depth + 1)
 
-        for k in range(br.randint(3, 4)):
+        for k in range(2):
             branch(x, y, br.uniform(0, 2 * math.pi), br.uniform(40, 52), 1.8, 0)
         sheath = ''.join('<path d="M%s %s L%s %s" stroke="#8a5cff" stroke-width="%s"/>' % (f(a0), f(b0), f(a1), f(b1), f(w * 2.8)) for a0, b0, a1, b1, w in segs)
-        core = ''.join('<path d="M%s %s L%s %s" stroke="#1a0826" stroke-width="%s"/>' % (f(a0), f(b0), f(a1), f(b1), f(w)) for a0, b0, a1, b1, w in segs)
+        core = ''.join('<path d="M%s %s L%s %s" stroke="#120818" stroke-width="%s"/>' % (f(a0), f(b0), f(a1), f(b1), f(w)) for a0, b0, a1, b1, w in segs)
         beg = (BP - 1.98 - i * 12.7) % BP  # the first strikes at t 1.98 s, then every 12.7 s at the next site
         # on 100 ms, off 50 ms, on 50 ms: a strike, not a drawing
         anim_on = '<animate attributeName="opacity" values="0;1;0;1;0;0" keyTimes="0;.0001;.0027;.004;.0053;1" dur="%ss" begin="-%.3fs" repeatCount="indefinite"%s/>' % (BP, beg, DISCRETE)
@@ -226,7 +226,7 @@ def planet(p, width=None):
     o.append('<g class="lyr-air"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-air)" mask="url(#%s-airm)"/></g>' % (f(C), f(C), f(R * 1.075), p, p))
     # the lit world: ground, and the storm (bloodstorm laid in, black lightning's dark bolts in it) turning slower above it
     o.append('<g clip-path="url(#%s-disc)"><g filter="url(#%s-lens)">%s<g class="lyr-clouds">%s</g></g></g>' % (
-        p, p, spin(tiles(p, 'surface'), SPIN), spin(tiles(p, 'storm') + '<g class="lyr-black">%s</g>' % ''.join(dark), CLOUD_SPIN)))
+        p, p, spin(tiles(p, 'surface'), SPIN), spin(tiles(p, 'storm') + '<g class="lyr-black">%s</g><g class="lyr-blood">@@SPRITES@@</g>' % ''.join(dark), CLOUD_SPIN)))
     o.append('<g class="lyr-air"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-haze)"/></g>' % (f(C), f(C), f(R), p))
     # the sun: night falls over the right
     o.append('<g class="lyr-sun"><image href="%s" x="%s" y="%s" width="%s" height="%s"/></g>' % (IMG['night'], f(C - R), f(C - R), f(2 * R), f(2 * R)))
@@ -278,7 +278,7 @@ def planet(p, width=None):
                     f(x0 + x), f(TILE_Y + y), kt, '%.3f' % per, '%.3f' % beg, DISCRETE, blobs))
         # sprites: clusters of two or three tapered streaks of hanging crimson tendrils, fading from top to bottom
         for i in range(int(7 * brr / B_CELLS[0][2]) + 1):
-            a_, r_ = rnd.uniform(0, 2 * math.pi), .6 * brr * math.sqrt(rnd.random())
+            a_, r_ = rnd.uniform(0, 2 * math.pi), brr * rnd.uniform(.4, .75)  # never in the eye
             cx_, cy_ = bx0 + math.cos(a_) * r_, by0 + math.sin(a_) * r_
             per = rnd.uniform(2.1, 4.8)
             at = rnd.uniform(0, 1 - .25 / per)
@@ -294,14 +294,14 @@ def planet(p, width=None):
                 for x0 in TILE_X:
                     sp.append('<g transform="translate(%s %s)" opacity="0">%s%s</g>' % (f(x0 + sx_), f(TILE_Y + sy_ - h_ * .4), show, tend))
     light = ('<g class="lyr-lightning" mask="url(#%s-cm)">%s</g>' % (p, ''.join(fl))
-             + '<g class="lyr-blood"><g mask="url(#%s-bm)">%s</g>%s</g>' % (p, ''.join(red), ''.join(sp))
+             + '<g class="lyr-blood"><g mask="url(#%s-bm)">%s</g></g>' % (p, ''.join(red))
              + '<g class="lyr-black" mask="url(#%s-cm)">%s</g>' % (p, ''.join(glow_)))
     o.append('<g style="mix-blend-mode:screen" clip-path="url(#%s-disc)"><g filter="url(#%s-lens)"><g class="lyr-clouds">%s</g></g></g>' % (
         p, p, spin(light, CLOUD_SPIN)))
     # the limb: a dark hairline under the air's rim hides the lens's last stair-steps at the edge
     o.append('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="#05060d" stroke-width="2.2" mask="url(#%s-nightm)"/>' % (f(C), f(C), f(R - .6), p))
     o.append('<g class="lyr-air"><circle cx="%s" cy="%s" r="%s" fill="none" stroke="#9ab4ff" stroke-width="1.6" opacity=".55" mask="url(#%s-airm)"/></g>' % (f(C), f(C), f(R - .2), p))
-    return '<defs>%s</defs>%s' % (''.join(d), ''.join(o))
+    return ('<defs>%s</defs>%s' % (''.join(d), ''.join(o))).replace('@@SPRITES@@', ''.join(sp))
 
 
 def stars(n, seed):

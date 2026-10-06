@@ -121,6 +121,14 @@ def swirl(x, y, z, centers):
     return x, y, z
 
 
+def wblur(a, r):
+    """Gaussian blur that wraps east to west, so a blurred map meets itself without a seam."""
+    pad = int(r * 4) + 2
+    ext = np.concatenate([a[:, -pad:], a, a[:, :pad]], axis=1)
+    out = np.array(Image.fromarray((np.clip(ext, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(r)), float) / 255
+    return out[:, pad:-pad]
+
+
 def smooth(e0, e1, x):
     u = np.clip((x - e0) / (e1 - e0), 0, 1)
     return u * u * (3 - 2 * u)
@@ -191,8 +199,8 @@ save('surface.png', col, 'RGB')
 # narrow blue halo; some canyons run hot, some dim
 heat = np.clip(pct(fbm(*S(5), octaves=3), 25, 90) * 1.3, 0, 1)
 core0 = np.maximum(np.exp(-(d1 / (1.0 * K)) ** 2) * (can_main > .5), np.exp(-(d2 / (.8 * K)) ** 2) * (can_trib > .5) * .7) * heat
-core = np.array(Image.fromarray((core0 * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(.6 * K)), float) / 255
-halo = np.array(Image.fromarray((core0 * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(4 * K)), float) / 255 * .7
+core = wblur(core0, .6 * K)
+halo = wblur(core0, 4 * K) * .7
 e = np.zeros((H, W, 4))
 e[..., :3] = lerpc(hexc('#4aa8ff'), hexc('#eef8ff'), np.clip(core * 1.5, 0, 1))
 e[..., 3] = np.clip(halo * 2.0 + core * .75, 0, 1) * 255
@@ -227,17 +235,16 @@ wisp = smooth(.16, .34, cl) * .45  # thin cloud and spray around it
 alpha = np.clip(dense + wisp * (1 - dense), 0, 1)
 alpha = np.maximum(alpha, stain) * (1 - (1 - eyes) * .7)
 tops = smooth(.45, .95, cl)
-soft = np.array(Image.fromarray((np.clip(cl / 1.15, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.4 * K)), float) / 255 * 1.15
+soft = wblur(cl / 1.15, 1.4 * K) * 1.15
 csh = np.clip(relief(soft, 30), .55, 1.35)  # the towers' sunward sides and their shadowed flanks (shaded from a softened field: no fine streaks)
 c = np.zeros((H, W, 4))
 c[..., :3] = lerpc(hexc('#44425a'), hexc('#f4f5fb'), tops ** .9) * csh[..., None]
-under = np.clip((1.05 - csh) * 2.6, 0, 1) + smooth(.75, .45, tops) * .5  # shadowed undersides and the gaps between bands
 # the bloodstorms: a heavier storm, its brightest tops a grey-maroon at about 0.7 of the white storms', red only glowing low in
 # the gaps between its bands
-bloodc = lerpc(hexc('#221c22'), hexc('#7a6c74'), tops ** 1.2) * csh[..., None]  # storm-grey with a faint wine cast
+bloodc = lerpc(hexc('#1e1a20'), hexc('#9a98a4'), tops ** 1.2) * csh[..., None]  # storm grey
 c[..., :3] = c[..., :3] + (bloodc - c[..., :3]) * stain[..., None]
 gaps = smooth(.5, .3, np.clip(cl, 0, 1)) * stain
-c[..., :3] = c[..., :3] + (np.array(hexc('#6a1626'), float) - c[..., :3]) * (np.clip(gaps * 1.6, 0, 1) * .45)[..., None]
+c[..., :3] = c[..., :3] + (np.array(hexc('#6a1626'), float) - c[..., :3]) * (np.clip(gaps * 1.6, 0, 1) * .35)[..., None]
 c[..., :3] *= eyes[..., None]
 c[..., 3] = alpha * 250
 save('clouds.png', c, 'RGBA')
