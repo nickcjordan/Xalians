@@ -1,10 +1,11 @@
-// Tier: chrome. The front door, told as a story: the brand, one fixed sample
-// creature standing on its world, Nick's own 2022 account of Xalia as a
-// sequence of beats (painted scenes and figures), the creature's page, and
-// the tournament that leads to the Generator. Brief: docs/design/home-story-
-// page-brief.md; the beats: docs/design/home-story-content-plan.md. The
-// story's words are Nick's (git 1285604e, my-app/src/pages/home.js) and the
-// 2021 Yetimoth entry, and every beat's headline is a phrase of his. The
+// Tier: chrome. The front door, told as a story: a slim title band (the
+// brand, Nick's one line, the Generator), Nick's own 2022 account of Xalia as
+// a sequence of beats (painted scenes and figures), the galaxy it happened in
+// (the encyclopedia's map of the fourteen worlds), and the close that hands
+// the visitor the Generator and the games. No single creature carries the page
+// (Nick, 2026-10-06). Brief: docs/design/home-story-page-brief.md; the beats:
+// docs/design/home-story-content-plan.md. The story's words are Nick's (git
+// 1285604e, my-app/src/pages/home.js), and every beat's headline is a phrase of his. The
 // agent-written text is each scene's small label (SCENE_LABEL) and each
 // figure's label and description for screen readers: plain accounts of what is shown,
 // fact-checked against the planet histories with the lore-factcheck skill.
@@ -12,7 +13,6 @@ import * as React from 'react';
 import { Link } from 'react-router';
 import XalianNavbar from '../components/navbar';
 import XaliansLogoDnaAnimated from '../components/animations/xaliansLogoDnaAnimated';
-import XalianImage from '../components/xalianImage';
 import { Starfield } from '../components/starfield';
 import { LivePlate } from '../components/plates/livePlate';
 import { usePageTitle } from '@/components/system/head';
@@ -20,7 +20,7 @@ import { Shell } from '@/components/system/masthead';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import specimen from './home/specimen.json';
+import { HelixSpinner } from '@/components/system/brand';
 import { startStoryMotion } from './home/motion';
 import { StoryViewer, type ViewerBeat } from './home/storyViewer';
 import { ArchivePlay, ArchiveScreen, type ScreenState } from './home/archiveScreen';
@@ -46,12 +46,7 @@ const STORY = [
 const GENERATORS = 'Their mastery of biotechnology led to the invention of Xalian Generators. These machines would be used to create the first generation of Xalians.';
 const [APEX_RELEASED, END_WARS] = STORY[1].split(/(?<=intelligence\.) /);
 
-const KRYSTOS_TODAY =
-	'Today, Krystos remains a snowy wasteland, dotted with the splendorous ruins of ancient and extravagant Vallerii estates.';
 
-// The 2021 species entry, as it stands in species.json.
-const YETIMOTH =
-	'Hulking, white-furred apes with the heads of mammoths and tusks made of pure ice, the Yetimoths formed the rank and file of Krystos’ prisonguards in ancient times. If their enormous size and strength was not enough to keep prisoners in line, they could also form thick sheets of ice from thin air, covering themselves in a near-impenetrable armor, blocking off escape routes in walls of frost, or encapsulating their opponents until they could lumber over close enough to pummel them into submission with their meaty, ice-gauntleted fists.';
 
 const TOURNAMENT =
 	'Recently, the king has announced plans for a galactic tournament, promising the winning faction access to a treasure trove of the miraculous output of the Mercurius Machine: the Scrambler Tokens that serve as the last hope for the continuance of Xalian life in the galaxy.';
@@ -111,11 +106,6 @@ const ART = {
 		live: '/assets/plates/present/live.html',
 		still: { src: '/assets/plates/present/poster.jpg', small: '/assets/plates/present/poster-768.jpg' },
 	},
-	krystos: {
-		src: '/assets/img/planets/art/krystos-landscape.webp',
-		small: '/assets/img/planets/art/krystos-landscape-768.webp',
-		alt: 'A snowbound plain under grey peaks, the ruins of a stone estate on a ridge in the foreground.',
-	},
 } satisfies Record<string, Art>;
 
 const GAMES = [
@@ -126,14 +116,41 @@ const GAMES = [
 	{ name: 'Arcade', to: '/arcade', copy: 'Familiar games that turn a quick win into progress toward another Xalian.' },
 ];
 
-// The one fixed specimen: a real generator record, never regenerated.
-const SPECIES_NAME = 'Yetimoth';
-const SPECIES_KEY = specimen.species;
-const WORLD_KEY = specimen.provenance.origin;
-const ELEMENT = specimen.element.primary;
-const SIGNATURE = specimen.actions.find((a) => a.key.endsWith('-defining'))?.name ?? specimen.actions[0].name;
 
 /* ----------------------------------------------------------------- parts */
+
+// The encyclopedia's galaxy map reads the lore bundles, which Home keeps off its
+// first load (bundleBoundaries.test.js), so it is its own chunk, fetched once the
+// section is within a screen of view. Until then a box of the map's shape holds
+// its place.
+const GalaxyMap = React.lazy(() => import('../components/encyclopedia/GalaxyMap'));
+
+function WorldsMap() {
+	const ref = React.useRef<HTMLDivElement>(null);
+	const [near, setNear] = React.useState(false);
+	React.useEffect(() => {
+		const el = ref.current;
+		if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+		const io = new IntersectionObserver((entries) => {
+			if (entries.some((e) => e.isIntersecting)) {
+				setNear(true);
+				io.disconnect();
+			}
+		}, { rootMargin: '800px 0px' });
+		io.observe(el);
+		return () => io.disconnect();
+	}, []);
+	const hold = (
+		<div className="flex aspect-[10/7] w-full items-center justify-center border border-edge bg-s1">
+			{near ? <HelixSpinner /> : null}
+		</div>
+	);
+	return (
+		<div ref={ref} className="mx-auto w-full max-w-[1000px]">
+			{near ? <React.Suspense fallback={hold}><GalaxyMap showEvents={false} /></React.Suspense> : hold}
+		</div>
+	);
+}
 
 /**
  * A framed painting: the chamfer at frame scale, a dark mat, the picture cut
@@ -222,11 +239,7 @@ function Panel({
 }
 
 /** The hero's tag: cream, cut with the system's chamfer so the hairline follows the corner. */
-const PLATE_STYLE = { '--chamfer-fill': 'var(--color-ink)', '--chamfer-edge': 'var(--color-ink-3)' } as React.CSSProperties;
 
-/** The creature silhouette with a white glow, so it separates from whatever stands behind it (Nick, 2026-09-22). */
-const GLOW =
-	'drop-shadow(0 0 2px var(--color-white)) drop-shadow(0 0 18px color-mix(in srgb, var(--color-white) 80%, transparent)) drop-shadow(0 0 48px color-mix(in srgb, var(--color-white) 35%, transparent))';
 
 /** A section head at title size: the demo Nick approved sets the three headings large, so the story reads as chapters. */
 function StoryHead({ id, className, children }: { id?: string; className?: string; children: React.ReactNode }) {
@@ -434,49 +447,22 @@ function Home() {
 			<XalianNavbar />
 			<Starfield />
 
-			<div className="relative">
-				<Shell className="pt-8 pb-12 lg:pt-14 lg:pb-24">
-					<div className="mx-auto grid max-w-[1160px] grid-cols-1 items-center gap-x-6 gap-y-10 lg:grid-cols-12">
-						{/* The words. The lockup is the page's title. */}
-						<div className="flex flex-col items-start gap-4 lg:col-span-7">
-							<h1 className="m-0">
-								<XaliansLogoDnaAnimated />
-							</h1>
-							<p className="m-0 max-w-[42ch] font-body text-lead text-ink">{HERO_LINE}</p>
-							<div className="mt-2 flex flex-wrap items-center gap-6">
-								<Button asChild>
-									<Link to="/generator">Try the Generator</Link>
-								</Button>
-								<Button asChild variant="link">
-									<a href="#story">The Story</a>
-								</Button>
-							</div>
-						</div>
-
-						{/* The creature on its world: a portrait panel of Krystos with
-						    the Yetimoth standing in front of it, feet over the frame,
-						    and a tag cutting across the left edge. The whole block is
-						    a link down to its page. */}
-						<a
-							href="#specimen"
-							aria-label="A Yetimoth of Krystos, shown in full below"
-							className={`el-${ELEMENT} mass-frame group mx-auto block w-full max-w-[420px] no-underline lg:col-span-5 lg:mx-0 lg:justify-self-end`}
-						>
-							<Panel art={ART.krystos} aspect="aspect-[4/5]" position="object-[center_35%]" eager still />
-							<span
-								data-hero-fig
-								aria-hidden="true"
-								className="absolute -bottom-[4%] left-1/2 z-20 block w-[96%] -translate-x-1/2 transition-transform duration-[320ms] ease-out group-hover:-translate-y-1.5 motion-reduce:transition-none"
-							>
-								<span className="block" style={{ filter: GLOW }}><XalianImage speciesName={SPECIES_NAME} primaryType={ELEMENT} unPadded moreClasses="w-full" /></span>
-							</span>
-							<span className="type-legend chamfer-key absolute -left-5 bottom-9 z-30 px-4 py-2.5 text-room lg:-left-10" style={PLATE_STYLE}>
-								A Yetimoth of Krystos
-							</span>
-						</a>
+			{/* The title band: what this is, in one line, and the way straight in.
+			    The story starts right under it, so its first painting is the
+			    page's first picture. */}
+			<Shell className="pt-8 pb-8 lg:pt-12 lg:pb-10">
+				<div className="mx-auto flex max-w-[1160px] flex-col items-start gap-4">
+					<h1 className="m-0">
+						<XaliansLogoDnaAnimated />
+					</h1>
+					<div className="flex w-full flex-col items-start gap-x-10 gap-y-4 lg:flex-row lg:items-center lg:justify-between">
+						<p className="m-0 max-w-[52ch] font-body text-lead text-ink">{HERO_LINE}</p>
+						<Button asChild>
+							<Link to="/generator">Try the Generator</Link>
+						</Button>
 					</div>
-				</Shell>
-			</div>
+				</div>
+			</Shell>
 
 			<Shell className="pb-10">
 				<div className="mx-auto max-w-[1160px]">
@@ -484,49 +470,32 @@ function Home() {
 					    scenes (same frame, same plate, a different arrangement every
 					    time) and figures between them. Only the shown beat
 					    animates, and only once it has settled. */}
-					<StoryViewer id="story" title={<StoryHead id="story-title" className="mb-0">The Story</StoryHead>} beats={STORY_BEATS} after="#specimen" />
+					<StoryViewer id="story" title={<StoryHead id="story-title" className="mb-0">The Story</StoryHead>} beats={STORY_BEATS} after="#worlds" />
 
-					{/* The Galaxy of Xalia: the creature's page. */}
-					<section
-						id="specimen"
-						aria-labelledby="galaxy"
-						className={`el-${ELEMENT} grid scroll-mt-24 grid-cols-1 gap-x-6 gap-y-8 pt-16 pb-16 lg:grid-cols-12 lg:pt-24 lg:pb-24`}
-					>
-						<StoryHead id="galaxy" className="mb-0 lg:col-span-12">The Galaxy of Xalia</StoryHead>
-						{/* On a phone the creature comes first, at a size that leaves its words in reach; beside them on a wide screen. */}
-						<div className="order-last flex flex-col gap-4 lg:order-none lg:col-span-5">
-							<p className="m-0 border-l-2 border-edge-strong bg-s1 px-5 py-4 font-body text-body text-ink">{KRYSTOS_TODAY}</p>
-							<h3 className="type-display m-0 mt-2 text-white">
-								{SPECIES_NAME}
-								<span className="type-legend mt-2.5 block">of Krystos &middot; Ice</span>
-							</h3>
-							<p className="m-0 border-l-2 border-el pl-4 font-body text-body text-ink">{YETIMOTH}</p>
-							<p className="m-0 mt-2">
-								<span className="type-legend block">Signature ability</span>
-								<span className="font-body text-body font-bold text-white">{SIGNATURE}</span>
-							</p>
-							<p className="m-0 flex flex-wrap gap-x-6 font-body text-small">
-								<Button asChild variant="link" className="text-small">
-									<Link to={`/encyclopedia/species/${SPECIES_KEY}`}>Its record</Link>
-								</Button>
-								<Button asChild variant="link" className="text-small">
-									<Link to={`/encyclopedia/worlds/${WORLD_KEY}`}>Its world</Link>
-								</Button>
-							</p>
-						</div>
-						<div data-figure className="mx-auto w-full max-w-[240px] sm:max-w-[320px] lg:col-span-7 lg:max-w-[560px] lg:justify-self-center lg:self-center">
-							<span className="block" style={{ filter: GLOW }}><XalianImage speciesName={SPECIES_NAME} primaryType={ELEMENT} unPadded moreClasses="w-full" /></span>
-						</div>
+					{/* The Galaxy of Xalia: the place the story happened, as the
+					    encyclopedia's map of the fourteen worlds, each a door to its
+					    record. The map reads the lore bundles, so it loads only as
+					    the section comes near. */}
+					<section id="worlds" aria-labelledby="galaxy" className="scroll-mt-24 pt-16 pb-16 lg:pt-24 lg:pb-24">
+						<StoryHead id="galaxy" className="mb-3">The Galaxy of Xalia</StoryHead>
+						<p className="m-0 mb-8 max-w-[62ch] font-body text-body text-ink-2">Fourteen worlds, each with its own element and its own Xalians. Open one to read its history.</p>
+						<WorldsMap />
+						<p className="m-0 mt-4">
+							<Button asChild variant="link">
+								<Link to="/encyclopedia/worlds">All fourteen worlds</Link>
+							</Button>
+						</p>
 					</section>
 
-					{/* The Tournament & Tokens: the door. The tournament itself is the story's last beat. */}
+					{/* The Tournament & Tokens: the close. The tournament itself is the
+					    story's last beat; this is the visitor's turn. */}
 					<section aria-labelledby="tournament" className="pt-4">
 						<StoryHead id="tournament">The Tournament &amp; Tokens</StoryHead>
 
 						<div className="flex max-w-[62ch] flex-col items-start gap-5">
 							<p className="type-display m-0 mt-1">Start generating now&hellip;</p>
 							<div className="flex flex-wrap items-center gap-6">
-								<Button asChild variant="secondary">
+								<Button asChild>
 									<Link to="/generator">Try the Generator</Link>
 								</Button>
 								<Button asChild variant="link">

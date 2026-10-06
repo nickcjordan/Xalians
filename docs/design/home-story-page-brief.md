@@ -56,3 +56,12 @@ Arrangements on the stage at 1000 px and wider: the wide plates (Unbirth 21:9, E
 ## 5. Verification
 
 `npm test -- --run` and `npx tsc --noEmit -p tsconfig.json` in `apps/web`; `node scripts/design/snap.js --out untracked/snaps / /overview` with the dev server up, PNGs opened at 1440 and 390; the lore fact-check on the eight paragraphs with the report in the PR body. Nick judges the deployed page.
+
+## 6. Revision 2026-10-06: no single creature around the story
+
+Nick: the page had been built around one sample creature on one world (the Yetimoth of Krystos), and the story has since pivoted away from creature art, so the pieces around the story are rethought. He approved this shape:
+
+- **Title band** replaces the hero: the animated lockup, his 2022 line and the primary "Try the Generator", no art. The story starts right under it, so on a 1366 by 768 laptop the story's heading, timeline and first screen are on the first screen, and beat 01's painting is the page's first picture.
+- **The Galaxy of Xalia** keeps his heading and becomes the encyclopedia's galaxy map of the fourteen worlds (`components/encyclopedia/GalaxyMap.js`, no era, no event pins), each world a door to its record, under one plain line of interface text and an "All fourteen worlds" link. The map reads the lore bundles, so Home loads it as its own lazy chunk once the section is within a screen of view (`bundleBoundaries.test.js`); a box of the map's shape holds its place. The story's last beat now reads on to `#worlds`.
+- **The Tournament & Tokens** is the close: "Start generating now…", "Try the Generator" (now the default key: it is screens away from the band's), "Read the whole story", the account note and the five games.
+- Removed: the Krystos panel, the Yetimoth figure, the specimen section and its record (`pages/home/specimen.json`), and their motion.

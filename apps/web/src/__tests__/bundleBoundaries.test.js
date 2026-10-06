@@ -60,10 +60,11 @@ describe('production loading boundaries', () => {
 		expect(overview).not.toMatch(/@xalians\/content\/(?:species|planetRecords)\.json/);
 	});
 
-	it('keeps Home off the content bundles: one fixed specimen record and static art', () => {
+	it('keeps Home off the content bundles: static art, and the galaxy map as its own lazy chunk', () => {
 		const home = fs.readFileSync(path.join(SRC_DIR, 'pages', 'home.tsx'), 'utf8');
 
-		expect(home).toContain("from './home/specimen.json'");
+		expect(home).toContain("React.lazy(() => import('../components/encyclopedia/GalaxyMap'))");
+		expect(home).not.toMatch(/^import\s+GalaxyMap\s/m);
 		expect(home).not.toMatch(/from ['\"]\.\.\/lore/);
 		expect(home).not.toMatch(/virtual:xalians-home-data/);
 		expect(home).not.toMatch(/@xalians\/content\//);
