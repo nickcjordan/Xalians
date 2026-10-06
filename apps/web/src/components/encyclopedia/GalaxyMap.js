@@ -177,6 +177,8 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 	const footprint = era ? lore.getEraFootprint(era) : null;
 	const [hoverState, setHoverState] = useState(null);
 	const scrollRef = useRef(null);
+	// The hover cards are placed inside this box, so their positions are measured from it, not the viewport.
+	const boxRef = useRef(null);
 
 	// Phones scroll the map rather than shrink it; open centered on Telypso,
 	// the drawn center of the galaxy, instead of the scrolled-left default.
@@ -207,24 +209,26 @@ export default function GalaxyMap({ era = null, showEvents = true, compact = fal
 	const onHoverWorld = (world, lit, e) => {
 		const svg = e.currentTarget.ownerSVGElement;
 		const rect = svg.getBoundingClientRect();
+		const box = boxRef.current.getBoundingClientRect();
 		const pos = POSITIONS[world.key];
-		const left = rect.left + (pos.x / 1000) * rect.width;
-		const top = rect.top + (pos.y / 700) * rect.height;
+		const left = rect.left - box.left + (pos.x / 1000) * rect.width;
+		const top = rect.top - box.top + (pos.y / 700) * rect.height;
 		const row = footprintByWorld ? footprintByWorld.get(world.key) : null;
 		setHoverState({ kind: 'world', world, row, lit, left, top });
 	};
 	const onHoverEvents = (world, events, e) => {
 		const svg = e.currentTarget.ownerSVGElement;
 		const rect = svg.getBoundingClientRect();
+		const box = boxRef.current.getBoundingClientRect();
 		const pos = POSITIONS[world.key];
-		const left = rect.left + ((pos.x + PIN_OFFSET.x) / 1000) * rect.width;
-		const top = rect.top + ((pos.y + PIN_OFFSET.y) / 700) * rect.height;
+		const left = rect.left - box.left + ((pos.x + PIN_OFFSET.x) / 1000) * rect.width;
+		const top = rect.top - box.top + ((pos.y + PIN_OFFSET.y) / 700) * rect.height;
 		setHoverState({ kind: 'events', world, events, left, top });
 	};
 	const onLeave = () => setHoverState(null);
 
 	return (
-		<div className="relative" data-tier="featured">
+		<div ref={boxRef} className="relative" data-tier="featured">
 			<p className="m-0 mb-2 font-body text-small text-ink-2 sm:hidden">Drag to pan the galaxy.</p>
 			<Card variant="glass" className="p-4">
 				<div
