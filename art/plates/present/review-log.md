@@ -204,3 +204,38 @@ Round 17's fixes confirmed. The lower lobs of round 16 had brought back plant's 
 ## Round 19 (fresh reviewer, cold gate): 9, "Nothing worth a round"
 
 Gate passed: clean checklist (22 items), no failing piece, no console errors on the page. Round 18's fixes confirmed: the darts and the globe clear the front row, storm's bolt lands with its hit. Left as found, invisible at site size: the thrown stone is the faintest attack, the great fireball is about three creatures wide (the clash, kept), bolt shapes only show zoomed in, fire's fireball glow brushes storm passing over, and the accepted dust ring, idle second and scorch curve.
+
+## Nick, 2026-10-05
+
+"It's better as far as perspective and proper sizing, but they are too colorful, they look like glowing lights. They should just be darkish dots essentially. And they should be placed centered better. Yeah, the audience members seem to be lights as well. They have like weird pulsing glows to them. I think the audience and the creatures both need a lot of work to make them look more like what you would see in a stadium." Done:
+1. The creatures are dark blobs with only a hint of their element's color and the floodlights catching their tops, over a contact shadow; the colored glow under each is gone. Same size.
+2. The fight moved from the floor's far half to its middle (ground line y 890), the squads a little wider apart.
+3. The crowd is people, not lights: every tread packed with a body and a head per seat in dark and muted clothes, lit by the floodlights (the far stand brighter, the near stand showing its backs), sections under each banner in that faction's color, gaps at the aisles, a few empty seats.
+4. The roar has no light in it: two groups of people jump out of step and arms go up after the volley and after the great clash. The warm band and the crowd's glow are gone.
+
+## Round 20 (fresh reviewer, cold gate): 8
+
+Creatures dark and centered, crowd reads as people with nothing glowing. What was done:
+1. The roar read as shimmer: random jumpers bouncing are replaced by ten sections of the far stand's lower tiers that stand up in a wave from left to right on an eased rise, arms up (each arm moves with its owner), hold, and sit again. Still no light in it.
+2. The crowd was speckled and showed the tread: bodies are taller and near-white clothes half as common.
+3. Between attacks the squads read as two scattered trios: the front pair stands 110 apart, the others closer in.
+4. Roar 1 starts after the darts land, not before.
+5. On the phone the record label covered the left squad at y 890: the ground line is y 862, still the floor's middle.
+
+## Round 21 (fresh reviewer, cold gate): 8.5
+
+Nothing in the crowd glows or pulses (measured: crowd pixels unchanged outside the roar, no net brightness in it); the crowd and creatures read as a stadium. What was done:
+1. The roar read as the stand's texture crawling: standers rise 3 units, more of them raise pale arms so a standing section lightens as a band, and the wave is slower (0.15 s a section, about 1.4 s across); a section still standing at the cycle's end sits down at the start of the next.
+2. Stale text: the piece list, the notes and the pass number now describe the standing wave.
+3. The hit glows were the loudest colored lights on the floor: half as wide.
+4. The phone label cleared the left squad by a pixel: the ground line is y 850.
+5. Left: the thrown stone reads as a small ember (invisible at site size, accepted before).
+
+## Round 22 (fresh reviewer, cold gate): 8
+
+Nothing in the crowd glows or pulses; the roar is calm; the phone label is clear. What was done:
+1. Creatures lit up in their attacker's color when hit: a hit is now a recoil, a faint tint (20%) and a puff of dull specks of the attack's stuff; no halo, no glow.
+2. The fight sat in the back of the floor's ring with the lit center and scorch empty below it: the ring (200 by 62) and the floodlights' pool are centered on the fight, the scorch marks sit where attacks land, and the front of the floor falls darker.
+3. Darts, shards, the globe and the stone are matter, not light: flat, one highlight, no halo. Only the fireballs, the bolts and the clash give off light.
+4. Stale text: the concept and the scene description call the creatures small dark shapes.
+5. Left: the roar is faint at site size (stronger risks the shimmer Nick objected to); storm's small bolt is smooth zoomed in.
