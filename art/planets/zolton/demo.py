@@ -84,8 +84,8 @@ section { margin-top: 56px; }
       <div><b>Metal crags, frozen canyons</b><p>From the history: <q>deep canyons saturated with dense, freezing gases and craggy spires whose metallic peaks act as natural lightning rods.</q> Bare metal catches the light on the peaks, and the canyon floors are frosted.</p></div>
       <div><b>Rivers of current</b><p>Strikes drain <q>into the planet's network of canyons, forming visible rivers of electricity.</q> The canyon network glows blue-white wherever it is night, dimmed under thick storm.</p></div>
       <div><b>The storm</b><p><q>Approximately 2.5 billion bolts per day.</q> Banded cloud wound into cyclones, turning faster than the ground, with lightning flickering in it everywhere, brightest in the dark.</p></div>
-      <div><b>Bloodstorm</b><p>Named for <q>the dark red color of the lightning that they brought,</q> with sprites of <q>crimson-lit ball-lightning that danced like electrical jellyfish above the clouds.</q> One storm cell is stained maroon and comes round with the clouds.</p></div>
-      <div><b>Black lightning</b><p>Strikes <q>so intense that it generated low-yield nuclear fusion,</q> releasing a lethal neutron burst. About every 13 seconds, a violet-black flash with a ring spreading from it.</p></div>
+      <div><b>Bloodstorm</b><p>Named for <q>the dark red color of the lightning that they brought,</q> with sprites of <q>crimson-lit ball-lightning that danced like electrical jellyfish above the clouds.</q> Two of the storm's cyclones are bloodstorms, heavier and darker than the rest, with dull red glowing low between their bands; red lightning flickers inside them and sprites hang above.</p></div>
+      <div><b>Black lightning</b><p>Strikes <q>so intense that it generated low-yield nuclear fusion,</q> releasing a lethal neutron burst. About every 13 seconds, somewhere new in the storm: a forked near-black bolt in a violet sheath, a white flash at its root, and a violet afterglow fading.</p></div>
     </div>
   </section>
 
@@ -97,26 +97,36 @@ section { margin-top: 56px; }
 </div>
 <script>
 (function () {
-  const svgs = () => Array.from(document.querySelectorAll('svg'));
+  // Played at film rate: the animations are paused and stepped by hand twenty times a second (as the site's story plates are),
+  // which halves the drawing work against the browser's own pace and looks the same for a slow turn and flickering light.
+  const svgs = Array.from(document.querySelectorAll('svg'));
   document.querySelectorAll('[data-l]').forEach((box) => box.addEventListener('change', () => document.body.classList.toggle('hide-' + box.dataset.l, !box.checked)));
-  let paused = false, fast = false, raf = 0, last = 0;
+  let paused = false, speed = 1, t = 0, last = 0, acc = 0;
+  const STEP = 1 / 20;
+  svgs.forEach((s) => s.pauseAnimations());
   const pauseBtn = document.getElementById('pause'), fastBtn = document.getElementById('fast');
-  function tick(now) {
-    const dt = last ? (now - last) / 1000 : 0; last = now;
-    svgs().forEach((s) => s.setCurrentTime(s.getCurrentTime() + dt * 8));
-    raf = requestAnimationFrame(tick);
+  function frame(now) {
+    const dt = last ? Math.min(.25, (now - last) / 1000) : 0;
+    last = now;
+    if (!paused) {
+      acc += dt;
+      if (acc >= STEP) {
+        t += acc * speed;
+        acc = 0;
+        svgs.forEach((s) => s.setCurrentTime(t));
+      }
+    }
+    requestAnimationFrame(frame);
   }
-  function apply() {
-    cancelAnimationFrame(raf); last = 0;
-    svgs().forEach((s) => (paused || fast ? s.pauseAnimations() : s.unpauseAnimations()));
-    if (fast && !paused) raf = requestAnimationFrame(tick);
+  function label() {
     pauseBtn.textContent = paused ? 'Play' : 'Pause';
     pauseBtn.setAttribute('aria-pressed', String(paused));
-    fastBtn.setAttribute('aria-pressed', String(fast));
+    fastBtn.setAttribute('aria-pressed', String(speed > 1));
   }
-  pauseBtn.addEventListener('click', () => { paused = !paused; apply(); });
-  fastBtn.addEventListener('click', () => { fast = !fast; apply(); });
-  try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) { paused = true; apply(); } } catch (e) {}
+  pauseBtn.addEventListener('click', () => { paused = !paused; label(); });
+  fastBtn.addEventListener('click', () => { speed = speed > 1 ? 1 : 8; label(); });
+  try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) { paused = true; label(); } } catch (e) {}
+  requestAnimationFrame(frame);
 })();
 </script>
 '''
@@ -124,8 +134,8 @@ section { margin-top: 56px; }
 if __name__ == '__main__':
     page = PAGE % {
         'BIG': svg('zb', 'big', 'Zolton, turning, with its storm and the current in its canyons'),
-        'MID': svg('zm', 'mid', 'Zolton at 150 pixels', with_stars=False).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"'),
-        'SMALL': svg('zs', 'small', 'Zolton at 76 pixels', with_stars=False).replace('<svg class="small"', '<svg class="small" width="76" height="76"'),
+        'MID': svg('zm', 'mid', 'Zolton at 150 pixels', with_stars=False, width=1024).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"'),
+        'SMALL': svg('zs', 'small', 'Zolton at 76 pixels', with_stars=False, width=1024).replace('<svg class="small"', '<svg class="small" width="76" height="76"'),
     }
     open(os.path.join(HERE, 'demo.html'), 'w', encoding='utf-8').write(page)
     print('demo', os.path.getsize(os.path.join(HERE, 'demo.html')) // 1024, 'KB')
