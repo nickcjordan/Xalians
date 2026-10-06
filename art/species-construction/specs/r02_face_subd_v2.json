@@ -1,0 +1,342 @@
+{
+ "window": {
+  "x": 0.33,
+  "xByZ": [
+   [
+    -0.29,
+    0.1
+   ],
+   [
+    -0.24,
+    0.17
+   ],
+   [
+    -0.2,
+    0.22
+   ],
+   [
+    -0.14,
+    0.26
+   ],
+   [
+    -0.1,
+    0.29
+   ],
+   [
+    -0.02,
+    0.32
+   ],
+   [
+    0.1,
+    0.32
+   ],
+   [
+    0.14,
+    0.31
+   ],
+   [
+    0.18,
+    0.29
+   ],
+   [
+    0.215,
+    0.26
+   ]
+  ],
+  "z": [
+   -0.29,
+   0.215
+  ],
+  "yCut": -0.05,
+  "yMin": -0.42,
+  "margin": 0.006,
+  "rayStep": 0.003,
+  "fade": 0.025,
+  "faceSmooth": 3
+ },
+ "cage": {
+  "cell": 0.005,
+  "levels": 2,
+  "pad": 0.04,
+  "blendLevels": 4,
+  "extendStep": 0.0035,
+  "minRingGap": 0.0015,
+  "creaseAperture": 1.0,
+  "creaseNose": 1.0,
+  "allowFolds": false
+ },
+ "eye": {
+  "sides": [
+   1,
+   -1
+  ],
+  "aperture": {
+   "center": [
+    0.1887,
+    0.0291
+   ],
+   "semi": [
+    0.0965,
+    0.1335
+   ]
+  },
+  "globe": {
+   "kind": "conformal",
+   "edgeBehindTopBottom": [
+    0.0045,
+    0.0028
+   ],
+   "mode": "edge",
+   "edgeBehind": 0.0037,
+   "apexProud": 0.013,
+   "semi": "auto",
+   "depthSemi": 0.06,
+   "margin": 1.0,
+   "minCurvature": 0.35,
+   "yawDeg": "auto",
+   "pitchDeg": "auto",
+   "hiddenRadius": 1.08,
+   "backOffset": 0.012,
+   "backCentre": 0.01,
+   "angular": 160,
+   "radial": [
+    20,
+    3,
+    3
+   ]
+  },
+  "orbit": {
+   "floorBehind": 0.0025,
+   "edgeCover": 0.0012,
+   "lateralOpenDeg": 0.0,
+   "lateralCenterDeg": 90.0,
+   "openFeather": 30.0,
+   "shear": 0.0,
+   "lateralShear": 0.0,
+   "floorBlend": 0.004,
+   "rimBlend": 0.005,
+   "extraCutters": []
+  },
+  "lid": {
+   "bandPercent": [
+    [
+     0,
+     6.5
+    ],
+    [
+     30,
+     7.3
+    ],
+    [
+     60,
+     6.6
+    ],
+    [
+     90,
+     4.2
+    ],
+    [
+     120,
+     3.5
+    ],
+    [
+     150,
+     2.8
+    ],
+    [
+     180,
+     2.3
+    ],
+    [
+     -150,
+     1.5
+    ],
+    [
+     -120,
+     1.4
+    ],
+    [
+     -90,
+     2.9
+    ],
+    [
+     -60,
+     3.7
+    ],
+    [
+     -30,
+     5.0
+    ]
+   ],
+   "bandScale": 1.0,
+   "bandMode": "skin",
+   "fold": {
+    "height": [],
+    "width": [],
+    "center": 0.0,
+    "blend": 0.003
+   }
+  },
+  "rings": [
+   {
+    "offset": "band",
+    "rise": 0.001,
+    "crease": 0.0
+   },
+   {
+    "gap": 0.003,
+    "rise": 0.0016,
+    "crease": 0.0
+   },
+   {
+    "gap": 0.0035,
+    "rise": 0.0012,
+    "crease": 0.0,
+    "byAngle": [
+     [
+      0,
+      1.5
+     ],
+     [
+      60,
+      1.3
+     ],
+     [
+      90,
+      0.8
+     ],
+     [
+      180,
+      0.2
+     ],
+     [
+      -90,
+      0.8
+     ],
+     [
+      -60,
+      1.3
+     ]
+    ]
+   },
+   {
+    "gap": 0.004,
+    "rise": 0.0,
+    "crease": 0.0
+   }
+  ],
+  "iris": {
+   "offset": [
+    -0.0111,
+    -0.0055
+   ],
+   "semi": [
+    0.0555,
+    0.094
+   ],
+   "pupil": [
+    0.0305,
+    0.0414
+   ],
+   "lensFront": 0.005,
+   "lensEdgeBehind": 0.0008,
+   "lensBack": 0.008
+  },
+  "rimProbe": 0.03
+ },
+ "tufts": {
+  "taperPower": 1.15,
+  "tipRadius": 0.012,
+  "taperExponent": 0.6,
+  "thicknessExponent": 1.3,
+  "sectionPower": 2.0,
+  "rootCap": 1.0,
+  "list": [
+   {
+    "root": [
+     0.246,
+     -0.106
+    ],
+    "tip": [
+     0.3,
+     -0.158
+    ],
+    "length": 0.075,
+    "widthRoot": 0.062,
+    "thickRoot": 0.008,
+    "lift": 0.0004
+   },
+   {
+    "root": [
+     0.212,
+     -0.176
+    ],
+    "tip": [
+     0.236,
+     -0.232
+    ],
+    "length": 0.06,
+    "widthRoot": 0.05,
+    "thickRoot": 0.007,
+    "lift": 0.0004
+   }
+  ],
+  "capPower": 2.0
+ },
+ "nose": {
+  "replaceFinish": true,
+  "pad": {
+   "topZ": -0.11,
+   "apexZ": -0.152,
+   "halfWidth": 0.045,
+   "cornerRadius": 0.0045,
+   "wrapUnder": 0.0,
+   "outlinePoints": 96,
+   "lift": 0.0006,
+   "blendLevels": 2,
+   "extendStep": 0.002,
+   "rings": [
+    {
+     "offset": 0.002,
+     "rise": 0.0003,
+     "crease": 0.0
+    },
+    {
+     "offset": 0.004,
+     "rise": 0.0,
+     "crease": 0.0
+    }
+   ],
+   "pinCorners": true
+  },
+  "wedge": {
+   "lead": 0.0,
+   "center": [
+    0.0,
+    -0.13
+   ],
+   "half": [
+    0.07,
+    0.06
+   ]
+  }
+ },
+ "muzzle": {
+  "lobeCenter": [
+   0.03,
+   -0.185
+  ],
+  "lobeRadius": 0.035,
+  "lobeLift": 0.0,
+  "philtrumDepth": 0.0,
+  "philtrumZ": [
+   -0.21,
+   -0.15
+  ],
+  "philtrumWidth": 0.008
+ },
+ "mouth": {
+  "follow": true
+ },
+ "maxIsland": 3000
+}
