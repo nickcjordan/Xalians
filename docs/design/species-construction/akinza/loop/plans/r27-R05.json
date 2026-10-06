@@ -1,0 +1,14 @@
+{
+  "order": {"round": 27, "region": "R05", "with": []},
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2775",
+  "start": null,
+  "variants": [
+    {"name": "baseline control", "why": "Control: the join as kept in round 19 (offset .038, window to z .497). The join parameters are exhausted for R05.4 to R05.6 (methods.md review round 19); the authored neck column needs --neck-sections, which does not exist yet, so a code builder adds it first and builds one candidate.", "control": true, "edits": []}
+  ],
+  "sweeps": [],
+  "region": "R05",
+  "top": 1,
+  "needsCode": true,
+  "note": "Plan placeholder: needsCode is true. Follow-up plan sweeps neck-back-fill, neck-exponent and neck-max-shift (see codeTask)."
+}

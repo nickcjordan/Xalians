@@ -7,18 +7,66 @@
  "donorSpec": "art/species-construction/specs/face-bulk-r10e.json",
  "reused": "author_face_parts_v2.py whole (window replacement, fine level set, zipper, orbit carve, lid fold, tufts, nose inlay, conformal globes and irises, face metrics and sweepScore) copied into finish_face_assembled.py with a head-local wrapper; the round 22 F-bulk cache (head-2492); spec r02_face_parts_v2b.json as the starter spec.",
  "parameters": [
-  {"name": "spec:voxel", "default": "0.0008", "what": "fine voxel, head-local. The assembly no longer resamples it. .0008 builds in about 7.7 min alone (20 to 30 min when four builds share the machine) and adds about 1.08M skin vertices (709k to 1.79M); .0006 for a final; .001 is about a third faster."},
-  {"name": "spec:window.x / z / yCut / margin / fade", "default": "0.33 / [-0.29, 0.215] / -0.05 / 0.006 / 0.025", "what": "the rectangle of assembled skin that is replaced (head-local); outside it nothing moves. Keep it inside the face (the fan front starts at |x| about .34)."},
-  {"name": "spec:eye.aperture.center / semi", "default": "[0.1887, 0.0291] / [0.105, 0.1433]", "what": "left eye aperture centre (x outward, z up) and semi axes, head-local; the right eye mirrors. The starter eye is .0564 wide in fit units (height over width 1.365, gap over width .797); R02.md asks center [0.1767, 0.0123] and semi [0.0930, 0.1265] (.050 wide, gap .90). Verified to move: that setting gave width .0500 and gap .90."},
-  {"name": "spec:eye.orbit.rimBlend / floorBlend", "default": "0.005 / 0.004", "what": "rounding of the orbit rim and floor, head-local. The r10e values are restored because the post step is not remeshed afterwards; .0025 gives a sharper rim (rim uniformity std .0126 to .0124 fit)."},
-  {"name": "spec:eye.orbit.lateralShear / shear / extraCutters", "default": "0.0 / 0.1 / []", "what": "open the lateral wall of the orbit (so a globe edge no longer reads as a bug eye), vertical shear, extra opening ellipsoids; unchanged from v2."},
-  {"name": "spec:eye.globe.kind / apexProud / edgeBehindTopBottom / depthSemi", "default": "conformal / 0.013 / [0.0045, 0.0028] / 0.06", "what": "globe shape (v2 meaning). R02.md wants the apex .012 to .016 proud and the eye front at least .010 behind the brow to nose line; the starter reads -.0136 fit on that measure, so the eye still sits ahead of the line and the builder must set it."},
-  {"name": "spec:eye.lid.bandScale", "default": "1.5", "what": "multiplier on the bandPercent table widths for the strip. The skin rim rounds over the outer part of the band, so at 1.0 the visible band is about two thirds of the table; 1.5 reads close to the table (heavy upper outer, thin lower inner)."},
-  {"name": "spec:eye.lid.bandPercent", "default": "[[0,6.5],[30,7.3],[60,6.6],[90,4.2],[120,3.5],[150,2.8],[180,2.3],[-150,1.5],[-120,1.4],[-90,2.9],[-60,3.7],[-30,5.0]]", "what": "band width as percent of eye width by angle from the top (R02.md table)."},
-  {"name": "spec:eye.lid.strip.mode / thickness / bury / radial / inset", "default": "shell / 0.001 / 0.0003 / 6 / 0.0", "what": "the lid band as its own thin closed shell on the aperture curve (thickness .001 head-local = .0005 world in front of the globe surface, bury behind it); any other mode puts the band back as a material zone of the globe."},
-  {"name": "spec:eye.iris.offset / semi / pupil", "default": "[-0.0111, -0.0055] / [0.0555, 0.094] / [0.0305, 0.0414]", "what": "iris lens: gaze offset from the aperture centre, semi axes and pupil; unchanged from v2."},
-  {"name": "spec:tufts.list / blend / thicknessExponent / taperExponent", "default": "2 per side, blend 0.03", "what": "cheek tuft roots, tips, lengths, widths and thicknesses (head-local) and the union blend. R02.md has three per side; the starter has two. The starter tufts read as creased facets in profile, so blend and thickness are the first things to tune."},
-  {"name": "spec:nosePad.*", "default": "mode inlay, topZ -0.11, apexZ -0.148, halfWidth 0.043, recessDepth 0.004", "what": "nose pad inlay outline and recess (v2 meaning). The starter pad has a straight top edge that reads as a ledge in the front view: tune cornerRadius, topLift and recessBlend."}
+  {
+   "name": "spec:voxel",
+   "default": "0.0008",
+   "what": "fine voxel, head-local. The assembly no longer resamples it. .0008 builds in about 7.7 min alone (20 to 30 min when four builds share the machine) and adds about 1.08M skin vertices (709k to 1.79M); .0006 for a final; .001 is about a third faster."
+  },
+  {
+   "name": "spec:window.x / z / yCut / margin / fade",
+   "default": "0.33 / [-0.29, 0.215] / -0.05 / 0.006 / 0.025",
+   "what": "the rectangle of assembled skin that is replaced (head-local); outside it nothing moves. Keep it inside the face (the fan front starts at |x| about .34)."
+  },
+  {
+   "name": "spec:eye.aperture.center / semi",
+   "default": "[0.1887, 0.0291] / [0.105, 0.1433]",
+   "what": "left eye aperture centre (x outward, z up) and semi axes, head-local; the right eye mirrors. The starter eye is .0564 wide in fit units (height over width 1.365, gap over width .797); R02.md asks center [0.1767, 0.0123] and semi [0.0930, 0.1265] (.050 wide, gap .90). Verified to move: that setting gave width .0500 and gap .90."
+  },
+  {
+   "name": "spec:eye.orbit.rimBlend / floorBlend",
+   "default": "0.005 / 0.004",
+   "what": "rounding of the orbit rim and floor, head-local. The r10e values are restored because the post step is not remeshed afterwards; .0025 gives a sharper rim (rim uniformity std .0126 to .0124 fit)."
+  },
+  {
+   "name": "spec:eye.orbit.lateralShear / shear / extraCutters",
+   "default": "0.0 / 0.1 / []",
+   "what": "open the lateral wall of the orbit (so a globe edge no longer reads as a bug eye), vertical shear, extra opening ellipsoids; unchanged from v2."
+  },
+  {
+   "name": "spec:eye.globe.kind / apexProud / edgeBehindTopBottom / depthSemi",
+   "default": "conformal / 0.013 / [0.0045, 0.0028] / 0.06",
+   "what": "globe shape (v2 meaning). R02.md wants the apex .012 to .016 proud and the eye front at least .010 behind the brow to nose line; the starter reads -.0136 fit on that measure, so the eye still sits ahead of the line and the builder must set it."
+  },
+  {
+   "name": "spec:eye.lid.bandScale",
+   "default": "1.5",
+   "what": "multiplier on the bandPercent table widths for the strip. The skin rim rounds over the outer part of the band, so at 1.0 the visible band is about two thirds of the table; 1.5 reads close to the table (heavy upper outer, thin lower inner)."
+  },
+  {
+   "name": "spec:eye.lid.bandPercent",
+   "default": "[[0,6.5],[30,7.3],[60,6.6],[90,4.2],[120,3.5],[150,2.8],[180,2.3],[-150,1.5],[-120,1.4],[-90,2.9],[-60,3.7],[-30,5.0]]",
+   "what": "band width as percent of eye width by angle from the top (R02.md table)."
+  },
+  {
+   "name": "spec:eye.lid.strip.mode / thickness / bury / radial / inset",
+   "default": "shell / 0.001 / 0.0003 / 6 / 0.0",
+   "what": "the lid band as its own thin closed shell on the aperture curve (thickness .001 head-local = .0005 world in front of the globe surface, bury behind it); any other mode puts the band back as a material zone of the globe."
+  },
+  {
+   "name": "spec:eye.iris.offset / semi / pupil",
+   "default": "[-0.0111, -0.0055] / [0.0555, 0.094] / [0.0305, 0.0414]",
+   "what": "iris lens: gaze offset from the aperture centre, semi axes and pupil; unchanged from v2."
+  },
+  {
+   "name": "spec:tufts.list / blend / thicknessExponent / taperExponent",
+   "default": "2 per side, blend 0.03",
+   "what": "cheek tuft roots, tips, lengths, widths and thicknesses (head-local) and the union blend. R02.md has three per side; the starter has two. The starter tufts read as creased facets in profile, so blend and thickness are the first things to tune."
+  },
+  {
+   "name": "spec:nosePad.*",
+   "default": "mode inlay, topZ -0.11, apexZ -0.148, halfWidth 0.043, recessDepth 0.004",
+   "what": "nose pad inlay outline and recess (v2 meaning). The starter pad has a straight top edge that reads as a ledge in the front view: tune cornerRadius, topLift and recessBlend."
+  }
  ],
  "checks": {
   "build": "recipe.py build tool-R02.json: A-face on assembled-2775 -> assembled-2797 (7.7 min alone, 19 min with four concurrent builds). The first build, assembled-2796, was the same tool before bandScale was added.",
@@ -28,5 +76,6 @@
   "quick": "loop_tools quick builds from head and body only and cannot see a post step, so it was not used. The direction check is the packet against assembled-2775 (m02 to m05 and details-face): crisp oval eyes with a conformal lid band heavy at the upper outer corner and thin at the lower inner corner, nose inlay pad, no straight cut lines, boxes, slabs or floating pieces.",
   "sweep": "recipe.py sweep does not handle post steps (it builds the edited step and judges the quick render). Three variants of the starter were built with recipe.py set and build instead and compared on face-parts.json: aperture semi [.093,.1265] and center [.1767,.0123] (assembled-2800: width .0564 -> .0500, gap over width .797 -> .900, sweepScore -.806 -> -.726); orbit rimBlend and floorBlend .0025 (assembled-2799: rim std .0126 -> .0124); lid.bandScale 2.2 (assembled-2798, strip only). Builders tune with plan variants (set edits on A-face), not sweeps."
  },
- "notes": "A post step is cached under its own key (a spec edit rebuilds only A-face, 8 to 20 min) but each output is a whole assembled-NNNN with the 1.8M vertex skin. The starter reaches the baseline face but is not tuned: the eye is wider than R02.md and still ahead of the brow to nose line, the tufts are two per side and read creased, the nose pad has a flat top. The first order tunes those parameters. The recipe is the baseline recipe plus F-bulk and A-face; tools/R02-notes.md (round 26, blocked) is superseded."
+ "notes": "A post step is cached under its own key (a spec edit rebuilds only A-face, 8 to 20 min) but each output is a whole assembled-NNNN with the 1.8M vertex skin. The starter reaches the baseline face but is not tuned: the eye is wider than R02.md and still ahead of the brow to nose line, the tufts are two per side and read creased, the nose pad has a flat top. The first order tunes those parameters. The recipe is the baseline recipe plus F-bulk and A-face; tools/R02-notes.md (round 26, blocked) is superseded.",
+ "readerCheck": "better: B's eyes are larger tall ovals with a single thin dark outline, like the reference, where A's eyes are smaller and ringed by a thick double rim that reads as a separate bezel. | A's eyes have the thick dark rim set into the face around the white, like the bold outlined eyes in the reference and stud"
 }

@@ -1,0 +1,384 @@
+{
+ "order": {
+  "round": 27,
+  "region": "R02",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2775",
+ "start": "docs/design/species-construction/akinza/loop/recipes/tool-R02.json",
+ "variants": [
+  {
+   "name": "baseline-idiom eyes, round locks and pad on the tip",
+   "why": "Expected keeper, R02.5 and R02.3 (critic issues 1 and 2). The first plan's run died before any result, so nothing is known about these edits. Eyes put back to the zone band idiom at bandScale 1.0 (the shell strip's thick ring cost R02.2 and R02.6 in rounds 22, 25 and 26), so any eye change is a side effect to watch. Three round-section locks per side at the R02.md positions (exponent .5, tip radius .0045, blend .03 kept) and the pad moved down onto the wedge tip (top -.125, apex -.172, half width .038).",
+   "edits": [
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.strip.mode",
+     "value": "zone"
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.bandScale",
+     "value": 1.0
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.056,
+       "thickRoot": 0.026,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.05,
+       "thickRoot": 0.022,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.042,
+       "thickRoot": 0.018,
+       "lift": 0.0006
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.0045
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.004
+    }
+   ]
+  },
+  {
+   "name": "bolder locks and softer pad",
+   "why": "R02.5 stayed partial because soft locks read too faint: thicker roots (.030/.026/.021), more lift, tips about .004 further out, exponent .6, so the locks break the lower face outline. Flatter softer pad (top -.128, apex -.174, recess .003, blend .005) to remove the ledge in front view and the fleck at the philtrum top. Same baseline-idiom eyes.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.strip.mode",
+     "value": "zone"
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.bandScale",
+     "value": 1.0
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.314,
+        -0.148
+       ],
+       "length": 0.072,
+       "widthRoot": 0.062,
+       "thickRoot": 0.03,
+       "lift": 0.0015
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2765,
+        -0.1925
+       ],
+       "length": 0.058,
+       "widthRoot": 0.055,
+       "thickRoot": 0.026,
+       "lift": 0.0015
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2265,
+        -0.2335
+       ],
+       "length": 0.045,
+       "widthRoot": 0.046,
+       "thickRoot": 0.021,
+       "lift": 0.0015
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.6
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.128
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.174
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.036
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0004
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.recessDepth",
+     "value": 0.003
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.005
+    }
+   ]
+  },
+  {
+   "name": "softer union locks, pad wrapped over the tip",
+   "why": "Critic issue 2: the pad is a sliver high on the bridge with a bead at its upper corner. The inlay is seated on the wedge tip and wraps .004 over the tip onto the underside (apex -.170, lower end -.174, still above the philtrum top at -.178 so no stray polygon), recess blend .005. Locks at exponent .7, tip radius .006, blend .04: tests whether more union rounds the locks without losing the outline break (blend .015 gave thorns in round 22, .03 was kept).",
+   "edits": [
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.strip.mode",
+     "value": "zone"
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.bandScale",
+     "value": 1.0
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.056,
+       "thickRoot": 0.026,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.05,
+       "thickRoot": 0.022,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.042,
+       "thickRoot": 0.018,
+       "lift": 0.0006
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.7
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.blend",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.wrapUnder",
+     "value": 0.004
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.17
+    }
+   ]
+  }
+ ],
+ "region": "R02",
+ "top": 3,
+ "sweeps": []
+}

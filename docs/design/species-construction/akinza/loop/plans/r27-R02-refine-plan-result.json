@@ -1,0 +1,1078 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r27-R02-refine.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2807",
+ "order": {
+  "round": 27,
+  "region": "R02",
+  "with": []
+ },
+ "region": "R02",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2775",
+ "startNotes": [],
+ "top": [
+  {
+   "rank": 1,
+   "id": "v01",
+   "name": "baseline-idiom eyes, round locks and pad on the tip",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2807\\v01.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2808",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2808",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 1802714,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.906,
+     "after": 0.9062,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.2",
+     "region": "R01",
+     "before": 0.9315,
+     "after": 0.9314,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.6",
+     "region": "R01",
+     "before": 1.108,
+     "after": 1.117,
+     "bound": {
+      "max": 1.15
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0354,
+     "after": 0.035,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.9275,
+     "after": 0.9277,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.2",
+     "region": "R04",
+     "before": 0.0459,
+     "after": 0.0461,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "F-bulk": {
+     "flaggedRelative": [
+      "R01",
+      "R03",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R03",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00329,
+    "R02": 0.03712,
+    "R03": 0.00329,
+    "R04": 0.03712,
+    "R05": 0.00925,
+    "R06": 0.00925,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.00173
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.00509,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R01 measured: 3 changed; R03 measured: 1 changed; R04 measured: 2 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0371, R04 0.0371, R05 0.0092",
+   "wallMinutes": 38.4
+  },
+  {
+   "rank": 2,
+   "id": "v02",
+   "name": "bolder locks and softer pad",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2807\\v02.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2810",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2810",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 1809810,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.2",
+     "region": "R01",
+     "before": 0.9315,
+     "after": 0.9314,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.6",
+     "region": "R01",
+     "before": 1.108,
+     "after": 1.117,
+     "bound": {
+      "max": 1.15
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0354,
+     "after": 0.0349,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.9275,
+     "after": 0.9276,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.2",
+     "region": "R04",
+     "before": 0.0459,
+     "after": 0.0461,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "F-bulk": {
+     "flaggedRelative": [
+      "R01",
+      "R03",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R03",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00354,
+    "R02": 0.03972,
+    "R03": 0.00354,
+    "R04": 0.03972,
+    "R05": 0.01003,
+    "R06": 0.01003,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.00184
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.00602,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R01 measured: 2 changed; R03 measured: 1 changed; R04 measured: 2 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0397, R04 0.0397, R05 0.0100",
+   "wallMinutes": 57.3
+  },
+  {
+   "rank": 3,
+   "id": "v03",
+   "name": "softer union locks, pad wrapped over the tip",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2807\\v03.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2809",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2809",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 1806424,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.906,
+     "after": 0.9063,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.2",
+     "region": "R01",
+     "before": 0.9315,
+     "after": 0.9314,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.6",
+     "region": "R01",
+     "before": 1.108,
+     "after": 1.117,
+     "bound": {
+      "max": 1.15
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0354,
+     "after": 0.0349,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.9275,
+     "after": 0.9278,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.2",
+     "region": "R04",
+     "before": 0.0459,
+     "after": 0.0461,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "F-bulk": {
+     "flaggedRelative": [
+      "R01",
+      "R03",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R03",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.00573,
+       "allowance": 0.002,
+       "excess": 0.00373,
+       "flagged": true
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00332,
+    "R02": 0.03803,
+    "R03": 0.00332,
+    "R04": 0.03803,
+    "R05": 0.00915,
+    "R06": 0.00915,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.00171
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.00603,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R01 measured: 3 changed; R03 measured: 1 changed; R04 measured: 2 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0380, R04 0.0380, R05 0.0092",
+   "wallMinutes": 34.5
+  }
+ ],
+ "baseline": {
+  "head": "head-2271",
+  "body": "body-2753",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
+  "terms": {
+   "fitIou": 0.9433,
+   "fitIouByView": {
+    "front": 0.93818,
+    "left": 0.94332,
+    "back": 0.94839
+   },
+   "silhouetteChange": null,
+   "fitBand": "head",
+   "fitBandIou": 0.921,
+   "stationDiff": 0.13623,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "baseline-idiom eyes, round locks and pad on the tip",
+   "why": "Expected keeper, R02.5 and R02.3 (critic issues 1 and 2). The first plan's run died before any result, so nothing is known about these edits. Eyes put back to the zone band idiom at bandScale 1.0 (the shell strip's thick ring cost R02.2 and R02.6 in rounds 22, 25 and 26), so any eye change is a side effect to watch. Three round-section locks per side at the R02.md positions (exponent .5, tip radius .0045, blend .03 kept) and the pad moved down onto the wedge tip (top -.125, apex -.172, half width .038).",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.strip.mode",
+     "value": "zone"
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.bandScale",
+     "value": 1.0
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.056,
+       "thickRoot": 0.026,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.05,
+       "thickRoot": 0.022,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.042,
+       "thickRoot": 0.018,
+       "lift": 0.0006
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.5
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.0045
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.004
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2807\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "A-face",
+    "F-bulk"
+   ],
+   "total": 0.0,
+   "parts": {
+    "fit": 0.0,
+    "station": -0.0,
+    "contain": -0.0,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.9433,
+    "fitIouByView": {
+     "front": 0.93818,
+     "left": 0.94332,
+     "back": 0.94839
+    },
+    "silhouetteChange": 0.0,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": null,
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 1,
+   "noop": true,
+   "nearNoop": true,
+   "rebuilt": {},
+   "contain": [],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
+   "head": "head-2271",
+   "body": "body-2753"
+  },
+  {
+   "id": "v02",
+   "name": "bolder locks and softer pad",
+   "why": "R02.5 stayed partial because soft locks read too faint: thicker roots (.030/.026/.021), more lift, tips about .004 further out, exponent .6, so the locks break the lower face outline. Flatter softer pad (top -.128, apex -.174, recess .003, blend .005) to remove the ledge in front view and the fleck at the philtrum top. Same baseline-idiom eyes.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.strip.mode",
+     "value": "zone"
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.bandScale",
+     "value": 1.0
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.314,
+        -0.148
+       ],
+       "length": 0.072,
+       "widthRoot": 0.062,
+       "thickRoot": 0.03,
+       "lift": 0.0015
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2765,
+        -0.1925
+       ],
+       "length": 0.058,
+       "widthRoot": 0.055,
+       "thickRoot": 0.026,
+       "lift": 0.0015
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2265,
+        -0.2335
+       ],
+       "length": 0.045,
+       "widthRoot": 0.046,
+       "thickRoot": 0.021,
+       "lift": 0.0015
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.6
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.128
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.174
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.036
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0004
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.recessDepth",
+     "value": 0.003
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.005
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2807\\v02.json",
+   "warnings": [],
+   "changedSteps": [
+    "A-face",
+    "F-bulk"
+   ],
+   "total": 0.0,
+   "parts": {
+    "fit": 0.0,
+    "station": -0.0,
+    "contain": -0.0,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.9433,
+    "fitIouByView": {
+     "front": 0.93818,
+     "left": 0.94332,
+     "back": 0.94839
+    },
+    "silhouetteChange": 0.0,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": null,
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 2,
+   "noop": true,
+   "nearNoop": true,
+   "rebuilt": {},
+   "contain": [],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
+   "head": "head-2271",
+   "body": "body-2753"
+  },
+  {
+   "id": "v03",
+   "name": "softer union locks, pad wrapped over the tip",
+   "why": "Critic issue 2: the pad is a sliver high on the bridge with a bead at its upper corner. The inlay is seated on the wedge tip and wraps .004 over the tip onto the underside (apex -.170, lower end -.174, still above the philtrum top at -.178 so no stray polygon), recess blend .005. Locks at exponent .7, tip radius .006, blend .04: tests whether more union rounds the locks without losing the outline break (blend .015 gave thorns in round 22, .03 was kept).",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.strip.mode",
+     "value": "zone"
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:eye.lid.bandScale",
+     "value": 1.0
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.list",
+     "value": [
+      {
+       "root": [
+        0.253,
+        -0.1105
+       ],
+       "tip": [
+        0.309,
+        -0.144
+       ],
+       "length": 0.065,
+       "widthRoot": 0.056,
+       "thickRoot": 0.026,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2307,
+        -0.1552
+       ],
+       "tip": [
+        0.2716,
+        -0.1886
+       ],
+       "length": 0.053,
+       "widthRoot": 0.05,
+       "thickRoot": 0.022,
+       "lift": 0.0006
+      },
+      {
+       "root": [
+        0.2009,
+        -0.1961
+       ],
+       "tip": [
+        0.2233,
+        -0.2296
+       ],
+       "length": 0.04,
+       "widthRoot": 0.042,
+       "thickRoot": 0.018,
+       "lift": 0.0006
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.thicknessExponent",
+     "value": 0.7
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.tipRadius",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:tufts.blend",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topZ",
+     "value": -0.125
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.172
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.halfWidth",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.cornerRadius",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.topLift",
+     "value": 0.0006
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.recessBlend",
+     "value": 0.005
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.wrapUnder",
+     "value": 0.004
+    },
+    {
+     "op": "set",
+     "step": "A-face",
+     "arg": "spec:nosePad.apexZ",
+     "value": -0.17
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2807\\v03.json",
+   "warnings": [],
+   "changedSteps": [
+    "A-face",
+    "F-bulk"
+   ],
+   "total": 0.0,
+   "parts": {
+    "fit": 0.0,
+    "station": -0.0,
+    "contain": -0.0,
+    "seam": -0.0,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.9433,
+    "fitIouByView": {
+     "front": 0.93818,
+     "left": 0.94332,
+     "back": 0.94839
+    },
+    "silhouetteChange": 0.0,
+    "fitBand": "head",
+    "fitBandIou": 0.921,
+    "stationDiff": 0.13623,
+    "seam": {
+     "worstRatio": 0.0,
+     "at": null,
+     "flagged": []
+    },
+    "criteria": {},
+    "containMax": 0.0,
+    "containRegion": null,
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": false,
+     "rows": []
+    }
+   },
+   "rank": 3,
+   "noop": true,
+   "nearNoop": true,
+   "rebuilt": {},
+   "contain": [],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
+   "head": "head-2271",
+   "body": "body-2753"
+  }
+ ],
+ "scoringSeconds": 3.7,
+ "wallMinutes": 57.7,
+ "surfaceStats": true,
+ "created": "2026-10-06T10:17:32",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r27-R02-refine-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r27-R02-refine-plan-result.png"
+ ]
+}

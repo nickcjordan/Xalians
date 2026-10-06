@@ -1,33 +1,33 @@
 {
  "schemaVersion": 1,
  "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02.json",
- "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2801",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2556",
  "order": {
-  "round": 27,
+  "round": 22,
   "region": "R02",
   "with": []
  },
  "region": "R02",
  "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
- "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2775",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2278",
  "startNotes": [],
  "top": [
   {
    "rank": 1,
    "id": "v01",
    "name": "tool as built",
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2801\\v01.json",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2556\\v01.json",
    "ok": true,
    "stage": "done",
    "failure": null,
-   "assembly": "assembled-2797",
-   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2797",
+   "assembly": "assembled-2523",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2523",
    "check": {
     "pass": true,
     "reasons": [],
     "components": 1,
     "nonManifoldEdges": 0,
-    "vertices": 1794400,
+    "vertices": 708408,
     "removedFragments": 1,
     "heightSpread": 0.0,
     "groundSpread": 0.0
@@ -49,10 +49,14 @@
    ],
    "measuredFailing": [
     "R06.10",
+    "R06.12",
+    "R06.13",
+    "R06.14",
     "R07.6",
     "R08.10",
     "R08.11",
     "R09.9",
+    "R10.1",
     "R10.2"
    ],
    "seamsNew": [],
@@ -87,43 +91,35 @@
       }
      ],
      "error": null
+    },
+    "F-parts": {
+     "flaggedRelative": [],
+     "worst": [],
+     "error": null
     }
    },
    "regionChange": {
-    "R01": 0.00275,
-    "R02": 0.0246,
-    "R03": 0.00275,
-    "R04": 0.0246,
-    "R05": 0.0051,
-    "R06": 0.0051,
+    "R01": 0.00163,
+    "R02": 0.01457,
+    "R03": 0.00163,
+    "R04": 0.01457,
+    "R05": 0.00309,
+    "R06": 0.00309,
     "R07": 0.0,
     "R08": 0.0,
     "R09": 0.0,
     "R10": 0.0,
     "R11": 0.0,
-    "R12": 0.00162
+    "R12": 0.00097
    },
-   "regionShift": {
-    "R01": 0.0,
-    "R02": 0.00172,
-    "R03": 0.0,
-    "R04": 0.0,
-    "R05": 0.0,
-    "R06": 0.0,
-    "R07": 0.0,
-    "R08": 0.0,
-    "R09": 0.0,
-    "R10": 0.0,
-    "R11": 0.0
-   },
-   "verdict": "R03 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0246, R04 0.0246, R05 0.0051",
-   "wallMinutes": 0.2
+   "verdict": "R03 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0146, R04 0.0146, R05 0.0031",
+   "wallMinutes": 0.1
   }
  ],
  "baseline": {
   "head": "head-2271",
-  "body": "body-2753",
-  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
+  "body": "body-2276",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2276",
   "terms": {
    "fitIou": 0.9433,
    "fitIouByView": {
@@ -142,32 +138,32 @@
   {
    "id": "v01",
    "name": "tool as built",
-   "why": "reader check of the R02 post-assembly face tool (finish_face_assembled.py as A-face): the starter recipe with no edits is the r10e control cut into the assembled skin at mesh precision, with the lid band as a separate strip; three blind readers compare it with the baseline before the tool counts as ready",
+   "why": "reader check of the R02 face parts tool (author_face_parts.py): the starter recipe with no edits is the r10e control rebuilt at mesh precision, and three blind readers compare it with the baseline before the tool counts as ready",
    "source": "variant",
    "edits": [],
    "built": true,
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2801\\v01.json",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2556\\v01.json",
    "warnings": [],
    "changedSteps": [
-    "A-face",
-    "F-bulk"
+    "F-bulk",
+    "F-parts"
    ],
-   "total": 0.0,
+   "total": -0.005,
    "parts": {
-    "fit": 0.0,
+    "fit": -0.005,
     "station": -0.0,
     "contain": -0.0,
     "seam": -0.0,
     "progress": 0.0
    },
    "terms": {
-    "fitIou": 0.9433,
+    "fitIou": 0.94325,
     "fitIouByView": {
-     "front": 0.93818,
+     "front": 0.93804,
      "left": 0.94332,
      "back": 0.94839
     },
-    "silhouetteChange": 0.0,
+    "silhouetteChange": 6e-05,
     "fitBand": "head",
     "fitBandIou": 0.921,
     "stationDiff": 0.13623,
@@ -190,19 +186,19 @@
     }
    },
    "rank": 1,
-   "noop": true,
+   "noop": false,
    "nearNoop": true,
    "rebuilt": {},
    "contain": [],
-   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
-   "head": "head-2271",
-   "body": "body-2753"
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2522__body-2276",
+   "head": "head-2522",
+   "body": "body-2276"
   }
  ],
- "scoringSeconds": 1.4,
- "wallMinutes": 0.4,
+ "scoringSeconds": 34.3,
+ "wallMinutes": 1.1,
  "surfaceStats": true,
- "created": "2026-10-06T09:09:09",
+ "created": "2026-10-03T08:35:29",
  "resultFiles": [
   "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02-plan-result.json",
   "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02-plan-result.png"

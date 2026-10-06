@@ -1006,22 +1006,27 @@
       "--head-depth-offset", "-.020",
       "--head-trim-offset", ".038",
       "--fusion-z-above", ".035",
-      "--fusion-y-extent", ".11"
+      "--fusion-y-extent", ".11",
+      "--neck-sections", "art/species-construction/specs/neck-r27-v2.json",
+      "--neck-back-fill", ".004",
+      "--neck-exponent", "1",
+      "--neck-max-shift", ".012"
     ],
     "note": "assemble_reconstructed_creature.py through loop_tools assemble; the placement constants of loop_tools PLACEMENT; round 19 R05 join (kept): head trim offset .038, fusion window raised",
     "pins": {
-      "art/species-construction/assemble_reconstructed_creature.py": "e025ea131f37d9b16440bdd2e66af0708ee8d127d6e80afdb5f7019750ac1f55",
+      "art/species-construction/assemble_reconstructed_creature_r27.py": "0b4d53811049871d4685677aae4b4f7645796f001df09f55015de09cc024ce98",
       "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
       "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
       "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
       "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
       "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
     },
-    "minutes": 5.2
+    "minutes": 5.2,
+    "script": "art/species-construction/assemble_reconstructed_creature_r27.py"
   },
   "derivedFrom": {
     "recipe": "docs/design/species-construction/akinza/recipe.json",
-    "sha256": "7ce4880b416d5cffb8ad851d5adcf6f21540bc7d1c3050dab1cc0e44cb81ba89",
+    "sha256": "9c2c35aa907991fa7355baf9f87a3415dfffa6a70060e23121560ce79247b1fb",
     "steps": {
       "H24": {
         "script": "feef615941aa2a663965ab1db366f0cf85e9669291bacb2aa28d0c523ffa375a",
@@ -1223,7 +1228,7 @@
       },
       "B-23": {
         "script": "3377a1ce6dc0367e1d344ed465db24e98f19cfb0b303dabf8aa47c6c647d74fa",
-        "args": "d457a682c6146a442465edd4561b691d04cacda41d00b8dad6c8b0e6e2953f30",
+        "args": "1e5ad6513df080a71d9d87d7993d21b109f71c7e6597873bb379ea2b7bef2a62",
         "inputs": "ab58835c1f226dcb7cfa85dae32a72655925b7bba827a43544ff1ff03cc4bad6",
         "regions": "34febf2c62117e25eba7549b56d3a600524fc9da8358160309d15374da3091e9",
         "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
