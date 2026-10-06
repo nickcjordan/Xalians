@@ -73,3 +73,25 @@ class ChooseTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class BlindCapTests(unittest.TestCase):
+    def setUp(self):
+        import loop_tools
+        self.lt = loop_tools
+        self.variants = [{'id': f'v{k:02d}', 'name': f'idea {k}', 'source': 'sweep a' if k in (4, 5) else 'variant', 'edits': [{'x': k}]} for k in range(1, 9)]
+
+    def test_a_region_with_no_quick_criterion_builds_only_the_picks(self):
+        notes = []
+        kept = rp.cap_blind(self.lt, {'region': 'R02'}, self.variants, 3, notes)
+        self.assertEqual([v['id'] for v in kept], ['v01', 'v02', 'v03'])
+        self.assertIn('not built: v04', notes[0])
+
+    def test_the_control_keeps_its_slot_and_a_sweep_counts_once(self):
+        vs = [dict(v) for v in self.variants]
+        vs[6]['control'] = True  # v07
+        kept = rp.cap_blind(self.lt, {'region': 'R02', 'start': 'x.json'}, vs, 5, [])
+        self.assertEqual([v['id'] for v in kept], ['v01', 'v02', 'v03', 'v04', 'v07'])
+
+    def test_a_region_with_quick_criteria_is_untouched(self):
+        self.assertEqual(len(rp.cap_blind(self.lt, {'region': 'R06'}, self.variants, 3, [])), 8)

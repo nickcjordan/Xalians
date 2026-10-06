@@ -48,7 +48,8 @@
   "repairPass": true,
   "freezeHeld": true,
   "geometryCarry": 0.004,
-  "pairedRegrade": true
+  "pairedRegrade": true,
+  "runnerUpCritic": true
  },
  "baseline": {
   "head": "head-2271",

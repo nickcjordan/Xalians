@@ -134,13 +134,59 @@ def cmd_wait(a):
     return 3
 
 
+def candidate_row(entry, baseline_packet, regions, seed):
+    """One candidate as the workflow's runner output wants it, read from the candidate's own candidate.json, with its blind
+    reader pack made here (round 26: a runner copying these fields by hand dropped every regionShift row at 0.0)."""
+    packet = Path(entry['packet'])
+    summary = json.loads((packet/'candidate.json').read_text(encoding='utf-8'))
+    dirs = summary.get('componentDirs') or {}
+    pack = packet/'reader-pack'
+    if not (pack/'key.json').is_file():
+        proc = subprocess.run([sys.executable, str(ROOT/'art/species-construction/loop/reader_pack.py'), str(baseline_packet), str(packet),
+                               '--regions', ','.join(regions), '--out', str(pack), '--seed', f"{seed}-{entry['name']}"],
+                              cwd=ROOT, capture_output=True, text=True)
+        if proc.returncode or not (pack/'key.json').is_file():
+            return {'name': entry['name'], 'assembly': entry.get('assembly'), 'packet': str(packet), 'technicalPass': False,
+                    'error': 'reader pack failed: '+((proc.stdout+proc.stderr).strip().splitlines() or ['no output'])[-1]}
+    key = json.loads((pack/'key.json').read_text(encoding='utf-8'))
+    side = 'A' if key.get('aIsCandidate') else 'B'
+    seams = summary.get('seamsNew') or []
+    return {'name': entry['name'], 'recipe': entry['recipe'], 'head': dirs.get('head'), 'body': dirs.get('body'),
+            'assembly': summary.get('assembly'), 'packet': str(packet).replace('\\', '/'),
+            'technicalPass': bool(summary.get('ok') and (summary.get('check') or {}).get('pass')),
+            'regionChange': summary.get('regionChange') or {}, 'regionShift': summary.get('regionShift') or {},
+            'seams': 'no new seams flagged' if not seams else 'seams flagged at '+', '.join(sorted({f"{s['joint']}/{s['view']} {s['kind']}" for s in seams})),
+            'measured': summary.get('verdict') or '', 'pack': str(pack).replace('\\', '/'), 'keys': {r: side for r in regions}}
+
+
+def cmd_report(a):
+    """The runner's whole return value for a finished plan, as one JSON line: every top candidate with a packet, its reader pack
+    and key side, regionChange and regionShift copied from candidate.json. Also written to <plan>.report.json."""
+    plan, result, job, log = paths(a.plan)
+    if not result.exists():
+        print(json.dumps({'ok': False, 'reason': f'no plan result at {result}', 'candidates': []}))
+        return 1
+    data = json.loads(result.read_text(encoding='utf-8'))
+    regions = [r for r in a.regions.split(',') if r]
+    rows = [candidate_row(e, Path(a.baseline_packet), regions, a.seed) for e in data.get('top', []) if e.get('ok') and e.get('packet')]
+    out = {'ok': bool(rows), 'candidates': rows}
+    if not rows:
+        out['reason'] = 'no top candidate built: ' + '; '.join(f"{e.get('id')} {e.get('stage')} {str(e.get('failure') or '')[:160]}" for e in data.get('top', []))
+    text = json.dumps(out)
+    plan.with_name(f'{plan.stem}.report.json').write_text(text+'\n', encoding='utf-8')
+    print(text)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest='cmd', required=True)
     s = sub.add_parser('start'); s.add_argument('plan'); s.add_argument('--top', type=int)
     w = sub.add_parser('wait'); w.add_argument('plan'); w.add_argument('--timeout', type=int, default=560)
+    r = sub.add_parser('report'); r.add_argument('plan'); r.add_argument('--baseline-packet', required=True)
+    r.add_argument('--regions', required=True); r.add_argument('--seed', required=True)
     a = ap.parse_args()
-    sys.exit({'start': cmd_start, 'wait': cmd_wait}[a.cmd](a))
+    sys.exit({'start': cmd_start, 'wait': cmd_wait, 'report': cmd_report}[a.cmd](a))
 
 
 if __name__ == '__main__':

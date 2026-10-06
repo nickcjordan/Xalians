@@ -81,10 +81,32 @@ class Recipe:
             fail('duplicate step ids')
         self.assembly = self.data['assembly']
         self.order = self._order()
+        self.post = self._post_order()
+
+    def _post_order(self):
+        """Post-assembly steps (kind "post", RECIPE.md section Post-assembly steps) in chain order: each reads the
+        assembled creature through an input named `asm` that is "assembly" or the post step before it, and writes a
+        new assembled-NNNN directory in the assembly layout. The last one's output is the recipe's assembly."""
+        post = [s for s in self.steps if s.get('kind') == 'post']
+        out, prev = [], 'assembly'
+        pending = list(post)
+        while pending:
+            nxt = [s for s in pending if s['inputs'].get('asm') == prev]
+            if len(nxt) != 1:
+                fail(f"post steps must form one chain from the assembly: {len(nxt)} read {prev} as asm "
+                     f"({', '.join(s['id'] for s in pending)})")
+            step = nxt[0]
+            for name, ref in step['inputs'].items():
+                if name != 'asm' and ref not in self.roots and (ref not in self.byid or self.byid[ref].get('kind') == 'post'):
+                    fail(f"post step {step['id']}: input {name} {ref} must be a root or a step before the assembly")
+            out.append(step)
+            pending.remove(step)
+            prev = step['id']
+        return out
 
     def _order(self):
-        """Dependency order, listing order wins ties."""
-        done, order, pending = set(self.roots), [], list(self.steps)
+        """Dependency order, listing order wins ties. Post-assembly steps are not in it (see _post_order)."""
+        done, order, pending = set(self.roots), [], [s for s in self.steps if s.get('kind') != 'post']
         while pending:
             for step in pending:
                 refs = list(step['inputs'].values())
@@ -158,6 +180,9 @@ def compute_keys(recipe):
     for step in recipe.order:
         keys[step['id']] = step_key(step, {n: keys[r] for n, r in step['inputs'].items()})
     keys['assembly'] = assembly_key(recipe, keys)
+    for step in recipe.post:
+        keys[step['id']] = step_key(step, {n: keys[r] for n, r in step['inputs'].items()})
+    keys['final'] = keys[recipe.post[-1]['id']] if recipe.post else keys['assembly']
     return keys
 
 
@@ -216,7 +241,7 @@ def pin_state(recipe):
     def state(files, pins):
         bad = rs.check_pins(pins, files)
         return {'changed': [(k, s) for k, s in bad if s != 'UNPINNED'], 'unpinned': [k for k, s in bad if s == 'UNPINNED']}
-    out = {s['id']: state(rs.read_files(s['script'], s['args']), s.get('pins')) for s in recipe.order}
+    out = {s['id']: state(rs.read_files(s['script'], s['args']), s.get('pins')) for s in recipe.order+recipe.post}
     out['assembly'] = state(rs.read_files(ASSEMBLER, []), recipe.assembly.get('pins'))
     return out
 
@@ -267,6 +292,17 @@ def make_plan(recipe, cache, force_from=None, no_cache=False):
             asm_hit = None if asm_changed else asm_hit
     plan['assembly'] = {'key': keys['assembly'], 'dir': asm_hit['dir'] if asm_hit else None, 'changed': asm_changed,
                         'unpinned': pins['assembly']['unpinned'], 'upstreamChanged': False}
+    # post-assembly steps: a hit only when everything before it in the chain is one
+    upstream = not plan['assembly']['dir']
+    for step in recipe.post:
+        sid = step['id']
+        reasons = list(pins[sid]['changed'])
+        hit = None if (no_cache or upstream or reasons or sid in forced) else cache.get('steps', keys[sid])
+        if hit and (hit.get('seeded') or hit.get('loose')):
+            hit = None
+        plan[sid] = {'key': keys[sid], 'dir': hit['dir'] if hit else None, 'changed': reasons,
+                     'unpinned': pins[sid]['unpinned'], 'upstreamChanged': upstream}
+        upstream = upstream or not hit
     return plan, keys
 
 
@@ -309,12 +345,21 @@ def estimate(recipe, cache, plan, slots=BLENDER_SLOTS):
         else:
             wall += asm
             serial += asm
+    for s in getattr(recipe, "post", []):  # post steps run one after another after the assembly, each with a re-render
+        if not plan[s['id']]['dir']:
+            m = step_minutes(recipe, cache, s['id'])
+            mins[s['id']] = m
+            if m is None:
+                unknown.append(s['id'])
+            else:
+                wall += m
+                serial += m
     return {'steps': mins, 'serialMinutes': round(serial, 1), 'wallMinutes': round(wall, 1), 'assemblyMinutes': asm,
             'unknown': unknown}
 
 
 def print_plan(recipe, plan, cache=None):
-    rows = [(s['id'], plan[s['id']]) for s in recipe.order]+[('assembly', plan['assembly'])]
+    rows = [(s['id'], plan[s['id']]) for s in recipe.order]+[('assembly', plan['assembly'])]+[(s['id'], plan[s['id']]) for s in recipe.post]
     width = max(len(r[0]) for r in rows)
     for sid, entry in rows:
         state = entry['dir'] or '-> build'
@@ -442,18 +487,64 @@ def execute(recipe, plan, keys, cache, register=True, assembly_name=None, slots=
                                                           'built': datetime.datetime.now().isoformat(timespec='seconds')})
     head, body = dirs[recipe.assembly['head']].name, dirs[recipe.assembly['body']].name
     if plan['assembly']['dir'] and not built:
-        return built, plan['assembly']['dir'], head, body, 0
-    name = assembly_name or namer.take('assembled')
-    try:
-        say(f'assemble {head} + {body} -> {name}')
-        seconds = assemble(recipe, head, body, name)
-    finally:
-        namer.release(name)
-    say(f'done assembly -> {name} in {seconds:.0f}s')
-    if register:
-        cache.put('assemblies', keys['assembly'], {'dir': name, 'head': head, 'body': body, 'seconds': seconds,
-                                                   'built': datetime.datetime.now().isoformat(timespec='seconds')})
+        name, seconds, rebuilt = plan['assembly']['dir'], 0, False
+    else:
+        # with post steps the named assembly is the last post output, not the bare assembly
+        name = (assembly_name if not recipe.post else None) or namer.take('assembled')
+        try:
+            say(f'assemble {head} + {body} -> {name}')
+            seconds = assemble(recipe, head, body, name)
+        finally:
+            namer.release(name)
+        say(f'done assembly -> {name} in {seconds:.0f}s')
+        rebuilt = True
+        if register:
+            cache.put('assemblies', keys['assembly'], {'dir': name, 'head': head, 'body': body, 'seconds': seconds,
+                                                       'built': datetime.datetime.now().isoformat(timespec='seconds')})
+    for k, step in enumerate(recipe.post):
+        sid = step['id']
+        if plan[sid]['dir'] and not rebuilt:
+            name = plan[sid]['dir']
+            continue
+        last = k == len(recipe.post)-1
+        out_name = (assembly_name if last else None) or namer.take('assembled')
+        try:
+            say(f"start {sid} ({step['script'].split('/')[-1]}) on {name} -> {out_name}")
+            step_seconds = run_post(recipe, step, {n: (recipe.work/name if n == 'asm' else dirs[r]) for n, r in step['inputs'].items()}, out_name)
+        finally:
+            namer.release(out_name)
+        say(f'done {sid} -> {out_name} in {step_seconds:.0f}s')
+        built[sid], name, rebuilt = out_name, out_name, True
+        seconds += step_seconds
+        if register:
+            cache.put('steps', keys[sid], {'dir': out_name, 'step': sid, 'seconds': step_seconds,
+                                           'built': datetime.datetime.now().isoformat(timespec='seconds')})
     return built, name, head, body, seconds
+
+
+def run_post(recipe, step, input_dirs, name):
+    """One post-assembly step: the input assembly's top-level files (glb, blend, assembly.json) are copied into a new
+    assembled-NNNN directory, the step script edits them in place ({out}; {asm} is the input assembly), the step is
+    recorded in assembly.json `post`, and the packet renders are made fresh by loop_tools render."""
+    import shutil
+    src, out = input_dirs['asm'], recipe.work/name
+    if out.exists():
+        fail(f'{out} exists; use a new name')
+    out.mkdir(parents=True)
+    for f in src.iterdir():
+        if f.is_file() and f.name != 'stage-start.json':
+            shutil.copy2(f, out/f.name)
+    started = time.time()
+    run_step(recipe, step, input_dirs, name)
+    record_path = out/'assembly.json'
+    record = json.loads(record_path.read_text(encoding='utf-8'))
+    record.setdefault('post', []).append({'step': step['id'], 'script': step['script'], 'input': src.name})
+    record_path.write_bytes((json.dumps(record, indent=1)+'\n').encode('utf-8'))
+    result = _run([sys.executable, str(LOOP_TOOLS), 'render', *species_flags(recipe), name], cwd=ROOT, capture_output=True, text=True)
+    if result.returncode or not (out/'render').is_dir():
+        tail = '\n'.join((result.stdout+result.stderr).splitlines()[-15:])
+        fail(f"post step {step['id']}: render of {name} failed\n{tail}")
+    return round(time.time()-started, 1)
 
 
 # ---------------------------------------------------------------- expectations
@@ -1051,6 +1142,20 @@ def add_step(data, after, new, rewire=()):
     ids = [s['id'] for s in data['steps']]
     if new['id'] in ids:
         fail(f"step id {new['id']} already exists")
+    if new.get('kind') == 'post':
+        # a post step goes after the assembly (after "assembly") or after another post step, and the post step that read
+        # that one as its asm now reads the new step
+        if after != 'assembly' and not any(s['id'] == after and s.get('kind') == 'post' for s in data['steps']):
+            fail(f'a post step goes --after assembly or --after a post step, not {after}')
+        if new['inputs'].get('asm') != after:
+            fail(f"post step {new['id']}: its asm input must be {after}")
+        for step in data['steps']:
+            if step.get('kind') == 'post' and step['inputs'].get('asm') == after:
+                step['inputs']['asm'] = new['id']
+        data['steps'].append(new)
+        refresh_pins(new, new)
+        drop_expect(data, [new['id']])
+        return
     if after not in ids:
         fail(f'no step {after}')
     slots = [name for name, ref in new['inputs'].items() if ref == after]

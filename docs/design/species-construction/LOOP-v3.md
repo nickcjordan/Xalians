@@ -278,6 +278,17 @@ Round 25 kept the forepaw (mean 6.031), but about .15 of the rise was the critic
 - **Rejected tools wait for a method review**: a tool whose reader check is still worse after a round's fix pass is recorded against its method (`rejectedForMethod`, a hash of the methods.json steps) and gets no toolsmith until the method changes (round 25's R04 rear sweeps lost twice; round 26 would have rebuilt them from scratch, because the record's script field carried prose after the path and read as a different tool; that is fixed too).
 - **Pinned order** (`loop_state.py args --pin R02`): a region Nick approved for the next round replaces the picked order of its component in the first round of the batch only.
 
+## After round 26 (v3.10, 2026-10-06)
+
+Round 26 kept a small forepaw change with no region drifting, but showed four process faults: the face's after-assembly method could not be built (no recipe stage after the assembly, and a toolsmith may not add one), so the face order ran on the tool its method replaced; the runner dropped every regionShift row at 0.0 when copying, so the geometry carry never fired; all 11 face variants were built although the ranking could not see the face; and the critic never saw the readers' second-choice face.
+
+- **Post-assembly recipe steps** (`"kind": "post"`, RECIPE.md section Post-assembly steps): a chain of steps after the assembly, each writing a new assembled directory from a copy of the one before, re-rendered for the packet, cached by step key. The face method's `finish_face_assembled.py` is the first.
+- **Runner output from a script** (`plan_job.py report`): the plan's candidates, reader packs, key sides, regionChange and regionShift come out as one JSON line read from each candidate.json, and the runner returns it verbatim.
+- **Blind plans build only the picks** (`recipe_plan.cap_blind`): when the order's regions have no quick-computable criterion, only the start's control and the planner's first ideas (one per sweep, up to `top`) are built.
+- **Runner-up critic** (`limits.runnerUpCritic`): when the readers' first pick is reverted, the critic grades the next candidate the readers also preferred, judged the same way, before any repair plan.
+- **Blocked tools skip the order** (toolsmith `blocked`, `loopChange`): a region whose method needs a loop change gets no order that round; the change is returned as `toolBlocked` for the maintainer.
+- **Face spec addendum** (`specs/R02.md`): a bold outline through band darkness and width, never relief; iris offset toward the nose capped at .003 fit units (invariant I01).
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

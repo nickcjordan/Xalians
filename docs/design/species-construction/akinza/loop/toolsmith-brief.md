@@ -29,3 +29,7 @@ A smoke test on its own is not enough. Round 21's fan clump tool passed its smok
 
 - Build your starter on the current baseline recipe, packet it, and look at m02 to m05 beside the baseline packet's. A straight cut line, a flat plane, a box edge, a ladder of slabs or a floating piece anywhere in the region fails the tool; fix it before you return.
 - Write the one-variant check plan the work order names. Three blind readers compare its candidate with the baseline; the tool counts as ready only if they find it no worse. If they reject it, you get their reasons and one fix pass.
+
+## Post-assembly steps and loop changes (2026-10-06)
+
+A method that must edit the creature after the assembly's voxel remesh is now a recipe step with `"kind": "post"` (RECIPE.md section Post-assembly steps): add it with `recipe.py add --after assembly`, read `{asm}` and edit the copied files in `{out}`. If a method still needs a change to the loop itself (recipe.py, loop_tools.py, the assembler or the workflow), you may not make it: return ready false, blocked true and loopChange naming the change. The loop then skips the region's order and reports the change, instead of running the order on the tool the method replaces.

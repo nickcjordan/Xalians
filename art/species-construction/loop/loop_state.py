@@ -327,7 +327,7 @@ def merge_status(full, returned, d, species):
                         b[part] = m.group(1)
         S['baseline'] = b
     # state the workflow changes round to round: the returned value always wins
-    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means'):
+    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means', 'toolBlocked'):
         if k in returned:
             S[k] = returned[k]
     # v3.5: each tool's reader check goes into its record, which the next args reads for readiness

@@ -274,6 +274,41 @@ def edit_group(v):
     return src if src.startswith('sweep') else 'variant '+v['id']
 
 
+def cap_blind(lt, plan, variants, top, notes, say=lambda s: None):
+    """A plan whose regions have no quick-computable criterion is blind before anything is built: every variant would score
+    zero progress and the candidates would be taken in the planner's order anyway (round 26 built all 11 face variants, single
+    builds up to 36 minutes under contention, and only three reached the readers). Keep only what choose_candidates would
+    pick: the start's control, then the planner's order, one per sweep, up to `top`."""
+    import quick_criteria as qc
+    regions = [plan['region']]+list((plan.get('order') or {}).get('with') or [])
+    if qc.criteria(lt, regions):
+        return variants
+    live = sorted((v for v in variants if 'error' not in v), key=lambda v: v['id'])
+    picks, groups = [], set()
+    control = next((v for v in live if is_control(v)), None) if plan.get('start') else None
+    if control:
+        picks.append(control)
+        groups.add(edit_group(control))
+    for v in live:
+        if len(picks) >= top:
+            break
+        if v not in picks and edit_group(v) not in groups:
+            picks.append(v)
+            groups.add(edit_group(v))
+    dropped = [v['id'] for v in live if v not in picks]
+    if dropped:
+        note = (f"blind plan (no quick-computable criterion for {', '.join(regions)}): building only {', '.join(v['id'] for v in picks)} "
+                f"in the planner's order; not built: {', '.join(dropped)}")
+        notes.append(note)
+        say(note)
+    return [v for v in variants if v in picks or 'error' in v]
+
+
+def is_control(v):
+    # round 24: the planner's control carried one shared edit, so a variant marked "control" or named as the tool as built counts too
+    return not v.get('edits') or v.get('control') or 'as built' in str(v.get('name', '')).lower()
+
+
 def choose_candidates(ranked, top, has_start, say=lambda s: None):
     """The top K for the readers, round 23's lessons applied:
     - a plan that starts from a tool starter keeps a slot for its control variant (no edits), the build the
@@ -286,7 +321,6 @@ def choose_candidates(ranked, top, has_start, say=lambda s: None):
     # round 24: the planner's control carried one shared edit ("crown lowered, tool otherwise as built"),
     # so the no-edit rule missed it; a variant marked "control" in the plan, or named as the tool as built,
     # also counts
-    is_control = lambda v: not v.get('edits') or v.get('control') or 'as built' in str(v.get('name', '')).lower()
     control = next((v for v in ranked if is_control(v) and not v.get('noop')), None) if has_start else None
     if control:
         picks.append(control)
@@ -507,6 +541,7 @@ def run(args, rc):
         if plan.get('start'):
             rc.dump(start_data, run_dir/'start.json', like=base.path)
         variants = make_variants(rc, base, start_data, plan, run_dir, cache)
+        variants = cap_blind(lt, plan, variants, top, notes, rc.say)
         if args.dry_run:
             dry_run(rc, base, plan, variants, notes, start_data, cache, top, slots)
             return
@@ -636,7 +671,9 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
                   quick_fn(lambda r, d=dir_of, k=sinks['head']: Path(d(k, r)).name, lambda r, d=dir_of, k=sinks['body']: Path(d(k, r)).name),
                   f'quick {vid}')
 
-        edited = [sid for sid in v['touched'] if sid in cand.byid]
+        # post-assembly steps are built only on the candidate path (they need the assembly), so a variant that edits
+        # only a post step scores like the baseline here and the plan is blind for it
+        edited = [sid for sid in v['touched'] if sid in cand.byid and cand.byid[sid].get('kind') != 'post']
 
         def contain(results, cand=cand, edited=edited, dir_of=dir_of, keys=keys, cplan=cplan, vid=vid):
             worst_all, rows = {'max': 0.0, 'region': None, 'excess': 0.0, 'step': None}, []

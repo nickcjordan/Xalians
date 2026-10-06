@@ -39,6 +39,7 @@ const abs = p => !p ? p : p.includes(':') ? p : REPO + '\\' + p.split('/').join(
 S.specs = S.specs || {}
 S.methods = S.methods || {}
 S.toolChecks = {}  // this run's tool reader checks, written into each tools/<region>.json by loop_state merge
+S.toolBlocked = {}  // v3.9: regions whose tool needs a loop change, with the change the toolsmith named
 S.tools = S.tools || {}
 S.means = S.means || []
 for (const id of IDS) {
@@ -118,7 +119,7 @@ const METHOD = {
   },
   required: ['region', 'method', 'changed', 'respec'],
 }
-const TOOL = { type: 'object', properties: { region: { type: 'string' }, script: { type: 'string' }, recipe: { type: 'string' }, ready: { type: 'boolean' }, checkPlan: { type: 'string' }, notes: { type: 'string' } }, required: ['region', 'ready', 'notes'] }
+const TOOL = { type: 'object', properties: { region: { type: 'string' }, script: { type: 'string' }, recipe: { type: 'string' }, ready: { type: 'boolean' }, checkPlan: { type: 'string' }, notes: { type: 'string' }, blocked: { type: 'boolean' }, loopChange: { type: 'string' } }, required: ['region', 'ready', 'notes'] }
 const METHODS = { type: 'object', properties: { path: { type: 'string' }, regions: { type: 'array', items: METHOD } }, required: ['path', 'regions'] }
 const REVIEW = { type: 'object', properties: { ...METHOD.properties, unpark: { type: 'boolean' } }, required: ['region', 'method', 'unpark', 'respec'] }
 
@@ -505,6 +506,7 @@ function recordEntry(state, limits, round, outcomes, combinedAssembly, baseRecip
       after: o.decision ? o.decision.after : null, summary: o.critique ? o.critique.summary : null, parked: r.parked,
       ...(o.decision && o.decision.geoCarried ? { geoCarried: o.decision.geoCarried } : {}),
       ...(o.regrade || o.repairRegrade ? { regrade: o.regrade || null, repairRegrade: o.repairRegrade || null } : {}),
+      ...(o.runnerUpResult ? { runnerUp: o.runnerUpResult, firstPick: o.firstPick || null } : {}),
     })
   }
   return entry
@@ -578,6 +580,8 @@ function toolPrompt(t) {
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline packet: ${abs(S.baseline.packet)}. Write the starter recipe to ${LOOPDIR}\\recipes\\tool-${t.region}.json and the ready record to ${LOOPDIR}\\tools\\${t.region}.json. ` +
     `Also write a one-variant check plan to ${LOOPDIR}\\plans\\tool-check-${t.region}.json (plan-schema.md: order {round ${S.round + 1}, region ${t.region}}, region ${t.region}, base the baseline recipe, start your starter recipe, baselinePacket the baseline packet, one variant "tool as built" with no edits) and return its path as checkPlan: three blind readers compare that candidate with the baseline before the tool counts as ready. ` +
     `Commit by name on branch ${BRANCH} with a plain message and no Co-Authored-By trailer, and return the structured output.` +
+    // round 26: the face toolsmith found the method needed a recipe stage it may not add, and the order then ran on the old tool
+    ' If the method cannot be built without changing the loop itself (recipe.py, loop_tools.py, the assembler or the workflow), which a toolsmith may not do, return ready false, blocked true and loopChange naming the change; the order for this region is then skipped until the change is made.' +
     (t.rejected ? `\n\nThe readers rejected the tool's first candidate against the baseline: ${t.rejected}. Find the fault they describe in the script (a new versioned file, never a pinned one), rebuild the starter, keep the check plan pointing at it, and return the structured output again.` : '') +
     // round 22: one toolsmith ran 406 turns with its context grown to 674K tokens, every turn
     // re-reading all of it; sessions with notes bound that without losing the work
@@ -714,8 +718,11 @@ function runnerPrompt(plan, order, round) {
   return `You run one plan job and report its result. A plan can take one to two hours; that is normal. Do not give up while it runs.\n` +
     `1. Run, in the foreground: python art/species-construction/loop/plan_job.py start ${plan} --top ${L.planTop ?? 3}\n` +
     `2. Then run, in the foreground, as many times as needed: python art/species-construction/loop/plan_job.py wait ${plan} --timeout 560 . Each call blocks up to about nine minutes and prints one line. On "running", call it again at once. On "done", go on. On "failed", report the reason and the log lines it printed. Never sleep, poll other files or open a monitor.\n` +
-    `Working directory: ${fwd(REPO)}. Your shell is bash: write every path with forward slashes (a Windows path with backslashes loses them and names no file). When it is done, read the plan result file it names (beside the plan). For each top candidate that has a packet, run python art/species-construction/loop/reader_pack.py ${fwd(abs(S.baseline.packet))} <candidate packet> --regions ${[order.id, ...(order.with || [])].join(',')} --out <candidate packet>/reader-pack --seed ${seed}-<candidate name>, and set its pack to that folder and its keys to the side the candidate is on for each region, from the pack key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.\n` +
-    'Return the structured output: ok, and per candidate its name, recipe, head, body, assembly, packet, technicalPass, regionChange (region to magnitude, from candidate.json), regionShift (copied exactly from the plan result regionShift for that candidate, every region including the ones at 0.0: a 0.0 is what lets the judge carry that region, and round 26 lost them when the runner dropped them), seams and measured as one line each from candidate.json, and pack. If the command failed, ok false and the reason.'
+    `Working directory: ${fwd(REPO)}. Your shell is bash: write every path with forward slashes (a Windows path with backslashes loses them and names no file). \n` +
+    // round 26: a runner that copied candidate fields by hand dropped every regionShift row at 0.0, so the geometry
+    // carry never fired; plan_job.py report makes the reader packs and prints the whole return value
+    `3. When it is done, run, in the foreground: python art/species-construction/loop/plan_job.py report ${plan} --baseline-packet ${fwd(abs(S.baseline.packet))} --regions ${[order.id, ...(order.with || [])].join(',')} --seed ${seed}\n` +
+    'It prints one JSON line {ok, candidates, reason}. Return exactly that object as the structured output, every field and every number as printed (zeros included); do not summarize, reorder or drop anything. Never open or show any key.json. If start or wait failed, return ok false with the reason and the log lines.'
 }
 function readerPrompt(packs, order, k) {
   return `Read the reader brief at ${BRIEF('reader-brief.md')} and follow it. You are reader ${k + 1} of three; you work alone.\n` +
@@ -907,7 +914,7 @@ function snapshot() {
     const r = S.regions[id]
     regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
   }
-  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, toolChecks: S.toolChecks, regions }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, toolChecks: S.toolChecks, toolBlocked: S.toolBlocked, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -996,6 +1003,7 @@ if (toBuild.length) {
     return { ...r, ready: check.verdict !== 'worse', readerCheck: `${check.verdict}: ${String(check.reason || '').slice(0, 300)}` }
   }))
   built.forEach((r, i) => {
+    if (r && r.blocked) S.toolBlocked[toBuild[i].region] = String(r.loopChange || r.notes || '').slice(0, 600)
     if (r && r.readerCheck) S.toolChecks[toBuild[i].region] = r.readerCheck
     if (r && r.ready) S.tools[toBuild[i].region] = { script: r.script || toBuild[i].script, recipe: r.recipe, readerCheck: r.readerCheck || null }
   })
@@ -1029,11 +1037,16 @@ for (let i = 0; i < ROUNDS; i++) {
     for (const id of IDS) S.regions[id].reopen = false
     for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
   }
-  let orders = pickOrders(S, L, round, POOLS, PAIRS)
+  // v3.9: a region whose method needs a loop change a toolsmith may not make gets no order (round 26 ran the face on
+  // the tool its method replaced, twice reverted already, and spent most of the round on it)
+  const blockedIds = Object.keys(S.toolBlocked || {})
+  const pickState = blockedIds.length ? { ...S, regions: Object.fromEntries(Object.entries(S.regions).map(([k, v]) => [k, blockedIds.includes(k) ? { ...v, parked: true } : v])) } : S
+  if (blockedIds.length && i === 0) log('Blocked until a loop change: ' + blockedIds.map(id => `${id} (${S.toolBlocked[id].slice(0, 160)})`).join('; '))
+  let orders = pickOrders(pickState, L, round, POOLS, PAIRS)
   // args.pin (first round of the batch): an order Nick approved replaces the picked order of its component
   if (i === 0 && Array.isArray(args.pin) && args.pin.length) {
     for (const id of args.pin) {
-      if (!S.regions[id] || !workable(id) || orders.some(o => o.id === id || (o.with || []).includes(id))) continue
+      if (!S.regions[id] || !workable(id) || blockedIds.includes(id) || orders.some(o => o.id === id || (o.with || []).includes(id))) continue
       const component = POOLS.head.includes(id) ? 'head' : POOLS.join.includes(id) ? 'join' : POOLS.both.includes(id) ? 'both' : 'body'
       const pin = { id, priority: 'pinned', component }
       const k = orders.findIndex(o => o.component === component)
@@ -1093,7 +1106,12 @@ for (let i = 0; i < ROUNDS; i++) {
           const ranked = readerVerdicts(cands, reads.filter(Boolean), regions)
           out.readers = ranked.map(x => ({ assembly: x.cand.assembly, per: x.per }))
           const best = ranked[0]
-          if (best && regions.some(rid => best.per[rid].verdict === 'better') && !regions.some(rid => best.per[rid].verdict === 'worse')) picked = best
+          const readsBetter = x => x && regions.some(rid => x.per[rid].verdict === 'better') && !regions.some(rid => x.per[rid].verdict === 'worse')
+          if (readsBetter(best)) {
+            picked = best
+            // v3.9: the next candidate the readers also prefer, for the critic if the first is reverted
+            out.runnerUp = ranked.slice(1).find(readsBetter) || null
+          }
           else {
             out.firstPass = JSON.stringify(ranked.map(x => ({ candidate: x.cand.name, per: x.per })))
             // round 21: every fan candidate read worse 3 to 0 because the tool cut a box into the
@@ -1153,12 +1171,29 @@ for (let i = 0; i < ROUNDS; i++) {
         out.decision = judge(S, RUBRIC, L, order, b, out.critique, judgeOpts(b, { measuredTie: !!out.tie }))
       }
     }
+    // v3.9 (limits.runnerUpCritic, after round 26): the readers preferred a second face candidate the critic never saw;
+    // before a repair plan, the critic grades the next reader-preferred candidate, judged the same way
+    if (L.runnerUpCritic && L.builderMode === 'split' && out.runnerUp && !out.decision.kept && !out.tie) {
+      const ru = out.runnerUp, c = ru.cand
+      const rb = { failed: false, recipe: c.recipe, head: c.head, body: c.body, assembly: c.assembly, packet: c.packet, technicalPass: true,
+        approach: b.approach, changes: b.changes, regionChange: c.regionChange, regionShift: c.regionShift }
+      let cr = await agent(criticPrompt(rb.packet, order, 'candidate', criticScope(rb, order, frozen, targetsHere)),
+        leanOpts({ label: `critic r${round} ${order.component}: ${rb.assembly} runner-up`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' }))
+      if (cr) {
+        const rv = Object.entries(ru.per).map(([region, v]) => ({ region, verdict: v.verdict, reason: 'readers ' + v.better + ' better, ' + v.worse + ' worse: ' + v.reason.slice(0, 400) }))
+        cr = { ...cr, criticPairwise: cr.pairwise, pairwise: rv }
+        let d = judge(S, RUBRIC, L, order, rb, cr, judgeOpts(rb))
+        const rg2 = await pairedRegrade(order, round, rb, cr, d, ru.per, false)
+        if (rg2 && rg2.critique && rg2.restored.length) { cr = rg2.critique; d = judge(S, RUBRIC, L, order, rb, cr, judgeOpts(rb)) }
+        out.runnerUpResult = { assembly: rb.assembly, kept: d.kept, reasons: d.reasons, regrade: rg2 ? { losses: rg2.losses, restored: rg2.restored || [], held: rg2.held || [] } : null }
+        if (d.kept) Object.assign(out, { build: rb, critique: cr, decision: d, readerVerdict: ru.per, firstPick: { assembly: b.assembly, reasons: out.decision.reasons } })
+      }
+    }
     // round 24: all three readers preferred the fan candidate for its inner ears and the critic reverted
     // it for a torn outer rim the readers also named; the candidate had the right half. With repairPass,
     // a reader-picked candidate the judge reverts gets one plan that starts from it and fixes only the
     // critic's losses, judged the same way
-    if (L.repairPass && L.builderMode === 'split' && out.readerVerdict && !out.decision.kept && b.recipe && !out.tie) {
-      const repair = await repairOrder(order, round, out, b, frozen, targetsHere)
+    if (L.repairPass && L.builderMode === 'split' && out.readerVerdict && !out.decision.kept && b.recipe && !out.tie) {      const repair = await repairOrder(order, round, out, b, frozen, targetsHere)
       if (repair) Object.assign(out, repair)
     }
     return out

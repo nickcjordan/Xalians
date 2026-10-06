@@ -380,6 +380,7 @@ export function recordEntry(state, limits, round, outcomes, combinedAssembly, ba
       after: o.decision ? o.decision.after : null, summary: o.critique ? o.critique.summary : null, parked: r.parked,
       ...(o.decision && o.decision.geoCarried ? { geoCarried: o.decision.geoCarried } : {}),
       ...(o.regrade || o.repairRegrade ? { regrade: o.regrade || null, repairRegrade: o.repairRegrade || null } : {}),
+      ...(o.runnerUpResult ? { runnerUp: o.runnerUpResult, firstPick: o.firstPick || null } : {}),
     })
   }
   return entry

@@ -784,3 +784,43 @@ test('args.pin: a pinned region replaces the first round pick of its component, 
   assert.ok(!firstBuilders.some(l => /head: R03/.test(l)))
   assert.ok(firstBuilders.some(l => /body: R06/.test(l)))
 })
+
+test('v3.9 runner-up: when the readers\' first pick is reverted, the critic grades their next preferred candidate before any repair', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  status.limits.runnerUpCritic = true
+  status.limits.repairPass = false
+  status.limits.pairedRegrade = false
+  status.limits.refinePasses = 0
+  const visual = rub.regions.R06.filter(c => c.kind === 'visual').map(c => c.id)
+  status.regions.R06.results[visual[0]] = 'pass'
+  status.regions.R06.score = core.scoreFrom(rub, status.regions.R06.results, 'R06')
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'u', (label) => {
+    if (label.startsWith('planner')) return { plan: 'plans/r27-R06.json', variants: 3, approach: 'a', needsCode: false }
+    if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A'), splitCand(2, 'A')] }
+    if (label.startsWith('reader')) return { packs: [{ pack: 'assembled-901', region: 'R06', choice: 'A', reason: 'r' }, { pack: 'assembled-902', region: 'R06', choice: 'A', reason: 'r' }] }
+    if (label.startsWith('critic r')) {
+      const first = !label.endsWith('runner-up')
+      return { criteria: visual.map((id, k) => ({ id, result: first && k === 0 ? 'fail' : (status.regions.R06.results[id] || 'partial'), evidence: '' })), pairwise: [{ region: 'R06', verdict: 'better', reason: '' }], invariants: [], issues: [], summary: '' }
+    }
+    return undefined
+  })
+  assert.ok(out.calls.some(c => c.label.endsWith('runner-up')))
+  assert.equal(out.ret.status.baseline.assembly, 'assembled-902')
+})
+
+test('v3.9 blocked tool: a region whose toolsmith needs a loop change gets no order, and the block is returned', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R06: 'm', R07: 'm' }
+  status.tools = {}
+  status.lastOrders = []
+  status.limits.toolReaderCheck = false
+  for (const id of Object.keys(status.regions)) if (!['R06', 'R07'].includes(id)) status.regions[id].hold = true
+  status.auditGaps = [{ rank: 1, region: 'R06', gap: 'plank', structural: true }]
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, tools: [{ region: 'R06', script: 'post_step.py', ready: false }] }), 'k', (label) => {
+    if (label.startsWith('tool: R06')) return { region: 'R06', ready: false, blocked: true, loopChange: 'a post-assembly recipe stage', notes: 'blocked' }
+    return undefined
+  })
+  const builders = out.calls.filter(c => c.label.startsWith('builder')).map(c => c.label)
+  assert.ok(!builders.some(l => /R06/.test(l)), builders.join(','))
+  assert.match(out.ret.status.toolBlocked.R06, /post-assembly/)
+})

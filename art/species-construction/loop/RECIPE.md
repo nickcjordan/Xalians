@@ -99,6 +99,12 @@ The round 17 and 18 candidates and the R03 and R06 starters have `*-pinned.json`
 
 The recipe's `assembly.args` are the placement flags of `loop_tools.py assemble`. When they equal the defaults, `build` calls `assemble head body out` unchanged. Otherwise they are written to a join JSON (`{"head-scale": .5, ...}`) under `recipe-tmp/` and passed as `--join`.
 
+## Post-assembly steps
+
+A step with `"kind": "post"` runs after the assembly, on the assembled creature, so its edits are never resampled by the assembly's voxel remesh (.0028 world). Post steps form one chain: the first reads the assembly through an input named `asm` set to `"assembly"`, each later one reads the post step before it as `asm`; other inputs may name roots or ordinary steps (a donor head, for example), never another post step. Add one with `recipe.py add <recipe> <out> --after assembly --step <step.json>` (or `--after` an existing post step to insert it there).
+
+For each post step the build makes a new `assembled-NNNN` directory, copies the input assembly's top-level files into it (`akinza.glb`, `akinza.blend`, `assembly.json`; renders and detail views are not copied), runs the script with `{asm}` (the input assembly directory) and `{out}` (the new one), appends `{step, script, input}` to `assembly.json` `post`, and renders the packet views fresh with `loop_tools.py render`. The script edits `{out}` in place: it rewrites `akinza.glb` (the packet and the check read it) and, if the skin changes, the skin object's `components`, `nonManifoldEdges` and `vertices` in `assembly.json`. The last post output is the recipe's assembly: `build`, `candidate` and `run-plan` name it, the bare assembly keeps its own cache entry, and each post output is cached under its step key (the assembly key plus the step's own payload). `candidate` measures what a post step moved with `regionShift`, not `contain`. In `run-plan`, a post step is built only on the candidate path, so a variant that edits only post steps scores like the baseline at the quick stage.
+
 ## Sweeps
 
 `recipe.py sweep` lets a builder try many values of a parameter in one tool call instead of one turn per value. It does not assemble or packet anything: the builder picks the best variant and runs one `build` of its candidate recipe, then its own assembly.

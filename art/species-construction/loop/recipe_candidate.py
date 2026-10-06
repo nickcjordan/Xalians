@@ -185,7 +185,7 @@ def run(args, rc):
         finish(2, 'pin refusal, a pinned input changed after its output was built: '
                + '; '.join(f'{sid} {key} {state}' for sid, key, state in pinned)
                + '. Copy the new bytes to a new name and point the step at it, or restore the pinned bytes.')
-    todo = [s['id'] for s in recipe.order if not plan[s['id']]['dir']]+(['assembly'] if not plan['assembly']['dir'] else [])
+    todo = [s['id'] for s in recipe.order if not plan[s['id']]['dir']]+(['assembly'] if not plan['assembly']['dir'] else [])+[s['id'] for s in recipe.post if not plan[s['id']]['dir']]
     est = rc.estimate(recipe, cache, plan)
     rc.say(f"build: {', '.join(todo) or 'nothing (all cached)'}; about {est['wallMinutes']} min")
     built, name, head, body, asm_seconds = stage('build', lambda: rc.execute(recipe, plan, keys, cache, assembly_name=named))
@@ -260,6 +260,8 @@ def run(args, rc):
     summary['stage'] = 'contain'
     contained = {}
     for sid in changed:
+        if recipe.byid[sid].get('kind') == 'post':
+            continue  # a post step edits the assembled figure; regionShift above measures what it moved
         out_name = built.get(sid) or plan[sid]['dir']
         path, report = find_containment(recipe, out_name)
         if report is None:
