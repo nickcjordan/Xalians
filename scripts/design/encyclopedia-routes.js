@@ -11,7 +11,7 @@
  * some records and not others, and a sample picks them up only by luck.
  */
 const worlds = require('../../packages/content/json/planetRecords.json');
-const species = require('../../packages/content/json/speciesRecords.json');
+const species = Object.values(require('../../packages/content/json/canonicalSpeciesCatalog.json'));
 const encyclopedia = require('../../packages/content/json/encyclopedia.json');
 const chronicle = require('../../packages/content/json/chronicle.json');
 
@@ -29,7 +29,7 @@ const routes = [
 	'/encyclopedia/no-such-record',
 	...chronicle.eras.map((e) => `/encyclopedia/story/${e.key}`),
 	...keysOf(worlds).map((k) => `/encyclopedia/worlds/${k}`),
-	...species.records.map((r) => `/encyclopedia/species/${r.key}`),
+	...species.map((r) => `/encyclopedia/species/${r.key}`),
 	...keysOf(entries).map((k) => `/encyclopedia/index/${k}`),
 ];
 

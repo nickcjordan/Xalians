@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router';
 import * as lore from '../../lore';
-import { isRead } from './trail';
 import LoreSearch from './LoreSearch';
 import Pronunciation from './Pronunciation';
 import TrailStrip from './TrailStrip';
@@ -47,10 +46,6 @@ const SECTIONS = [
 
 function elementChip(key, element) {
     return { key, label: element, className: `el-${element}`, chip: true };
-}
-
-function reviewedBadge(kind, key) {
-    return isRead(kind, key) ? <Badge variant="ok">Reviewed</Badge> : null;
 }
 
 function pronunciationSubtitle(pronunciation) {
@@ -126,7 +121,6 @@ function resolveMasthead(pathname) {
                 elementChip('el', view.element),
                 { key: 'world', label: worldName, to: lore.routeFor('world', view.homePlanet), className: `el-${view.element}`, outline: true },
             ],
-            badge: reviewedBadge('species', key),
             crumb: { section: 'Bestiary', sectionTo: '/encyclopedia/species', title: view.name },
         };
     }
@@ -152,7 +146,6 @@ function resolveMasthead(pathname) {
             title: entry.title,
             subtitle: pronunciationSubtitle(entry.pronunciation),
             chips,
-            badge: reviewedBadge('entry', key),
             crumb: { section: 'Index', sectionTo: '/encyclopedia/index', title: entry.title },
         };
     }
@@ -220,10 +213,7 @@ export default function EncyclopediaShell({ children }) {
             <Masthead
                 kicker={masthead.kicker}
                 title={masthead.title}
-                beside={<>
-                    {chips.map((chip) => <MastheadChip key={chip.key} chip={chip} />)}
-                    {masthead.badge}
-                </>}
+                beside={<>{chips.map((chip) => <MastheadChip key={chip.key} chip={chip} />)}</>}
                 subtitle={masthead.subtitle}
                 aside={<LoreSearch key={location.pathname} />}
             />

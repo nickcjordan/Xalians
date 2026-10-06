@@ -3,7 +3,7 @@
 // world history paragraphs, species descriptions, entry definitions, and
 // tour beat prose. The index is built once at module load.
 
-import { allEntries, planetsInOrder, legacySpeciesList, templateRecordsByKey, tourData } from './loaders';
+import { allEntries, planetsInOrder, speciesList, templateRecordsByKey, tourData } from './loaders';
 import { getEntry } from './entries';
 import { getWorld } from './worlds';
 import { getSpecies } from './species';
@@ -47,7 +47,7 @@ for (const entry of allEntries) {
 for (const planet of planetsInOrder) {
 	subjects.push({ kind: 'world', key: planet.key, name: planet.name, element: planet.element || null });
 }
-for (const species of legacySpeciesList) {
+for (const species of speciesList) {
 	const template = templateRecordsByKey.get(species.key);
 	subjects.push({
 		kind: 'species',
@@ -83,12 +83,12 @@ for (const planet of planetsInOrder) {
 	});
 }
 
-for (const species of legacySpeciesList) {
+for (const species of speciesList) {
 	const template = templateRecordsByKey.get(species.key);
 	// the 2026-09-09 lore split: the teaser plus the body and habits prose are the species' text
 	const description = template
 		? [template.lore.description, Array.isArray(template.lore.appearance) ? template.lore.appearance.join(". ") : undefined, ...['origin', 'habitat', 'feeding', 'behavior', 'company'].map((k) => template.lore[k])].filter(Boolean).join(' ')
-		: species.raw.description;
+		: undefined;
 	if (description) {
 		textUnits.push({ kind: 'species', key: species.key, label: `Species: ${species.name}`, text: description });
 	}

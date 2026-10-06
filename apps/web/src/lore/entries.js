@@ -1,7 +1,7 @@
 // Encyclopedia entry index: lookup, filtering, related resolution, and
 // appears-in scanning (world histories + species descriptions).
 
-import { allEntries, entriesByKey, planetsInOrder, legacySpeciesList, templateRecordsByKey } from './loaders';
+import { allEntries, entriesByKey, planetsInOrder, speciesList, templateRecordsByKey } from './loaders';
 import { encyclopediaData } from './loaders';
 import { getWorld } from './worlds';
 
@@ -72,9 +72,9 @@ export function getAppearances(key) {
 		});
 	}
 
-	for (const species of legacySpeciesList) {
+	for (const species of speciesList) {
 		const template = templateRecordsByKey.get(species.key);
-		const description = template ? template.lore.description : species.raw.description;
+		const description = template.lore.description;
 		const idx = findWholeWord(description, title);
 		if (idx >= 0) {
 			appearances.push({
