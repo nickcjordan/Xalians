@@ -1,81 +1,27 @@
 {
  "region": "R02",
- "script": "art/species-construction/finish_face_assembled.py (post-assembly step A-face; derived from author_face_parts_v2.py, which it supersedes for this region)",
+ "script": "art/species-construction/author_face_subd_patch.py (post-assembly step A-face-subd; replaces A-face, finish_face_assembled.py)",
  "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R02.json",
- "step": "A-face (kind post, added --after assembly, inputs asm=assembly and donor=F-bulk) and F-bulk (rebuild_face_features_field.py on H25 with specs/face-bulk-r10e.json, the round 22 donor, read only for its skin and feeding nothing else). F-parts is not in the recipe; H29 and H30 stay as the bulk face of the head chain.",
- "spec": "art/species-construction/specs/r02_face_assembled.json",
- "donorSpec": "art/species-construction/specs/face-bulk-r10e.json",
- "reused": "author_face_parts_v2.py whole (window replacement, fine level set, zipper, orbit carve, lid fold, tufts, nose inlay, conformal globes and irises, face metrics and sweepScore) copied into finish_face_assembled.py with a head-local wrapper; the round 22 F-bulk cache (head-2492); spec r02_face_parts_v2b.json as the starter spec.",
+ "step": "A-face-subd (kind post, added --after assembly; inputs asm=assembly and donor=F-bulk) and F-bulk (rebuild_face_features_field.py on H25 with specs/face-bulk-r10e.json, the round 22 donor, read only for its skin). A-face is not in the recipe; H29 and H30 stay as the bulk face of the head chain.",
+ "spec": "art/species-construction/specs/r02_face_subd.json (every number explicit, so recipe.py set spec:<path> reaches it)",
+ "reused": "finish_face_assembled.py, as a copy and not an import (it is a script that runs at import, and a toolsmith may not turn it into a module): the window cut and zipper (stitch, pinch repair, closed-solid checks), the Eye class (aperture plane fit, conformal globe front_y), globe and iris lens objects, mouth follow, face metrics and sweepScore, records. Replaced: the fine level set (tiles, orbit carve, lid fold, tuft and nose SDFs) is now the subdivided cage. The F-bulk donor cache head-2492 is reused.",
+ "method": "One regular grid over the window (cage.cell .005) is warped into ring blocks: each eye is a block whose rectangular levels become scaled copies of the aperture ellipse inside and offset curves outside (eye.rings: the lid band loop whose offset follows eye.lid.bandPercent, rim, lid fold, blend); the nose is a block on the rounded-triangle pad outline with its corners pinned. Heights are set per loop (socket floor behind the globe, aperture loop edgeCover in front of the globe edge, ring rises, optional lateral opening of the lid rings); tufts, muzzle lobes, philtrum groove and nose wedge are analytic heights sampled at the cage vertices. Donor and assembled skin are read as ray heightfields (bicubic), the border band is projected onto the assembled skin, the cage is Catmull-Clark subdivided cage.levels times by Blender's subsurf modifier (aperture and pad loops creased, material per face inherited), and the quads go through the field tool's window stitch. The lid band and the nose pad are skin material faces; globes and irises are retained objects.",
  "parameters": [
-  {
-   "name": "spec:voxel",
-   "default": "0.0008",
-   "what": "fine voxel, head-local. The assembly no longer resamples it. .0008 builds in about 7.7 min alone (20 to 30 min when four builds share the machine) and adds about 1.08M skin vertices (709k to 1.79M); .0006 for a final; .001 is about a third faster."
-  },
-  {
-   "name": "spec:window.x / z / yCut / margin / fade",
-   "default": "0.33 / [-0.29, 0.215] / -0.05 / 0.006 / 0.025",
-   "what": "the rectangle of assembled skin that is replaced (head-local); outside it nothing moves. Keep it inside the face (the fan front starts at |x| about .34)."
-  },
-  {
-   "name": "spec:eye.aperture.center / semi",
-   "default": "[0.1887, 0.0291] / [0.105, 0.1433]",
-   "what": "left eye aperture centre (x outward, z up) and semi axes, head-local; the right eye mirrors. The starter eye is .0564 wide in fit units (height over width 1.365, gap over width .797); R02.md asks center [0.1767, 0.0123] and semi [0.0930, 0.1265] (.050 wide, gap .90). Verified to move: that setting gave width .0500 and gap .90."
-  },
-  {
-   "name": "spec:eye.orbit.rimBlend / floorBlend",
-   "default": "0.005 / 0.004",
-   "what": "rounding of the orbit rim and floor, head-local. The r10e values are restored because the post step is not remeshed afterwards; .0025 gives a sharper rim (rim uniformity std .0126 to .0124 fit)."
-  },
-  {
-   "name": "spec:eye.orbit.lateralShear / shear / extraCutters",
-   "default": "0.0 / 0.1 / []",
-   "what": "open the lateral wall of the orbit (so a globe edge no longer reads as a bug eye), vertical shear, extra opening ellipsoids; unchanged from v2."
-  },
-  {
-   "name": "spec:eye.globe.kind / apexProud / edgeBehindTopBottom / depthSemi",
-   "default": "conformal / 0.013 / [0.0045, 0.0028] / 0.06",
-   "what": "globe shape (v2 meaning). R02.md wants the apex .012 to .016 proud and the eye front at least .010 behind the brow to nose line; the starter reads -.0136 fit on that measure, so the eye still sits ahead of the line and the builder must set it."
-  },
-  {
-   "name": "spec:eye.lid.bandScale",
-   "default": "1.5",
-   "what": "multiplier on the bandPercent table widths for the strip. The skin rim rounds over the outer part of the band, so at 1.0 the visible band is about two thirds of the table; 1.5 reads close to the table (heavy upper outer, thin lower inner)."
-  },
-  {
-   "name": "spec:eye.lid.bandPercent",
-   "default": "[[0,6.5],[30,7.3],[60,6.6],[90,4.2],[120,3.5],[150,2.8],[180,2.3],[-150,1.5],[-120,1.4],[-90,2.9],[-60,3.7],[-30,5.0]]",
-   "what": "band width as percent of eye width by angle from the top (R02.md table)."
-  },
-  {
-   "name": "spec:eye.lid.strip.mode / thickness / bury / radial / inset",
-   "default": "shell / 0.001 / 0.0003 / 6 / 0.0",
-   "what": "the lid band as its own thin closed shell on the aperture curve (thickness .001 head-local = .0005 world in front of the globe surface, bury behind it); any other mode puts the band back as a material zone of the globe."
-  },
-  {
-   "name": "spec:eye.iris.offset / semi / pupil",
-   "default": "[-0.0111, -0.0055] / [0.0555, 0.094] / [0.0305, 0.0414]",
-   "what": "iris lens: gaze offset from the aperture centre, semi axes and pupil; unchanged from v2."
-  },
-  {
-   "name": "spec:tufts.list / blend / thicknessExponent / taperExponent",
-   "default": "2 per side, blend 0.03",
-   "what": "cheek tuft roots, tips, lengths, widths and thicknesses (head-local) and the union blend. R02.md has three per side; the starter has two. The starter tufts read as creased facets in profile, so blend and thickness are the first things to tune."
-  },
-  {
-   "name": "spec:nosePad.*",
-   "default": "mode inlay, topZ -0.11, apexZ -0.148, halfWidth 0.043, recessDepth 0.004",
-   "what": "nose pad inlay outline and recess (v2 meaning). The starter pad has a straight top edge that reads as a ledge in the front view: tune cornerRadius, topLift and recessBlend."
-  }
+  {"name": "cage.cell / cage.levels", "default": "0.005 / 2", "what": "cage grid cell (head-local) and subdivision levels. Output spacing is cell/2^levels (.00125); levels 3 halves it again (about 1.1M quads, slower). A smaller cell needs the ring offsets to fit the gap between the nose pad and the eye (the build stops with 'cage block overlaps another block' otherwise)."},
+  {"name": "window.xByZ / x / z / yCut / margin / fade", "default": "[[-.29,.10],[-.24,.17],[-.20,.22],[-.14,.26],[-.10,.29],[-.02,.32],[.10,.32],[.14,.31],[.18,.29],[.215,.26]] / .33 / [-.29,.215] / -.05 / .006 / .025", "what": "the replaced window; its half width by height (xByZ) follows the front-facing part of the face, because the cage is a front heightfield and cannot follow the steep cheek and chin sides. Features fade out over `fade` inside the window edge, so keep rings and tufts inside it."},
+  {"name": "eye.aperture.center / semi", "default": "[.1887,.0291] / [.0965,.1335]", "what": "the white of the eye (inner edge of the lid band), head-local, left eye; the right eye mirrors. The dark band lies OUTSIDE it, so the outer edge of the band is semi plus the band width (about .0088 at the sides, .0137 at the top at bandScale 1). R02.md measures the aperture at the band's outer edge, so subtract the band width. Verified to move: semi [.084,.116] with center [.1767,.0123] gave aperture width .0451 (from .0519) and gap over width 1.10 (from .955)."},
+  {"name": "eye.lid.bandPercent / bandScale / bandMode", "default": "R02.md table (6.5 at the top to 1.4 at the lower inner corner) / 1.0 / skin", "what": "width of the band loop by angle as percent of the eye width, times bandScale (1.6 added 16 band faces and moved the rim mean from .0009 to .0007). bandMode skin makes the faces between the aperture loop and the band loop a skin material; strip keeps finish_face_assembled's separate shell strip on the globe."},
+  {"name": "eye.rings[] {offset|gap, rise, crease, byAngle}", "default": "band; +.003 rise .0016; +.0035 rise .0012 byAngle top-heavy; +.004 rise 0", "what": "concentric loops outward from the aperture edge: offset (absolute) or gap (beyond the loop inside), rise (outward height over the donor surface), crease weight, byAngle multiplier table (degrees from the top, + toward the outer corner). The first entry is the lid band loop. Add or remove entries to change the number of loops; the block grows with them."},
+  {"name": "eye.orbit.floorBehind / edgeCover / lateralOpenDeg / lateralCenterDeg / openFeather", "default": ".0025 / .0012 / 0 / 90 / 30", "what": "socket floor behind the globe front; how far the aperture loop sits in front of the globe edge; the angular width of the opened lateral wall (the rim rises scale to zero over that sector so the globe is not walled in from the side; 80 builds and moves the rim means)."},
+  {"name": "tufts.list[] {root, tip, length, widthRoot, thickRoot, lift}", "default": "two per side, as the baseline control", "what": "each tuft is a lens ridge (head-local, x mirrored); taperPower, taperExponent, thicknessExponent, tipRadius, sectionPower (.5 elliptical) and rootCap shape them. Heights are sampled at the cage vertices (.005) and subdivided, so tips are softer than the old SDF locks; lower cage.cell for sharper tips."},
+  {"name": "nose.pad {topZ, apexZ, halfWidth, cornerRadius, lift, rings, blendLevels, extendStep}", "default": "-.11 / -.148 / .043 / .006 / .0006 / two rings / 2 / .002", "what": "the baseline's rounded-triangle pad outline; the three corners are pinned vertices, the outline loop is creased, the faces inside are the nose material. nose.wedge {lead, center, half} pushes the muzzle tip forward (default 0); muzzle {lobeLift, philtrumDepth, ...} are the lobes and the philtrum groove (default 0)."}
  ],
  "checks": {
-  "build": "recipe.py build tool-R02.json: A-face on assembled-2775 -> assembled-2797 (7.7 min alone, 19 min with four concurrent builds). The first build, assembled-2796, was the same tool before bandScale was added.",
-  "loopToolsCheck": "pass (recipe.py candidate): one skin component, 0 non-manifold edges, 1,794,400 vertices (709,482 before), height and ground spread 0. The new eye globes, irises, lid strips and nose are retained closed objects (1 component, 0 non-manifold edges each); head_closed_mouth_2 keeps the baseline's 10 open edges.",
-  "regionShift": "R02 .00172, every other region 0.0, so nothing moved outside the face window. recipe.py contain does not apply to post steps (candidate uses regionShift); candidate still reports the F-bulk donor head against R01, R03 and R04 (max .0057 against .002 allowed). That donor never enters the assembly: ignore the F-bulk containment line.",
-  "seams": "candidate seams against the baseline: seamsNew [] (no new defect at the face or head joints). Window seam: fine loop to old skin mean 1.6e-5, max .00044 head-local; skin deviation inside the window p50 6.6e-5, p99 .0020, max .0050.",
-  "quick": "loop_tools quick builds from head and body only and cannot see a post step, so it was not used. The direction check is the packet against assembled-2775 (m02 to m05 and details-face): crisp oval eyes with a conformal lid band heavy at the upper outer corner and thin at the lower inner corner, nose inlay pad, no straight cut lines, boxes, slabs or floating pieces.",
-  "sweep": "recipe.py sweep does not handle post steps (it builds the edited step and judges the quick render). Three variants of the starter were built with recipe.py set and build instead and compared on face-parts.json: aperture semi [.093,.1265] and center [.1767,.0123] (assembled-2800: width .0564 -> .0500, gap over width .797 -> .900, sweepScore -.806 -> -.726); orbit rimBlend and floorBlend .0025 (assembled-2799: rim std .0126 -> .0124); lid.bandScale 2.2 (assembled-2798, strip only). Builders tune with plan variants (set edits on A-face), not sweeps."
+  "build": "recipe.py candidate tool-R02.json: A-face-subd on assembled-2811 -> tool-R02-subd, 5.6 min under load (the script itself is about 25 s, the rest is mesh export and renders). loop_tools check passes: one skin component, 0 non-manifold edges, 867,112 vertices (709,302 before), height and ground spread 0. Globes and irises are retained closed objects; the old head_nose_finish shell is removed.",
+  "regionShift": "R02 .0044, every other region 0.0, so nothing moved outside the face window. recipe.py contain does not apply to post steps; the candidate still lists the F-bulk donor head against R01, R03 and R04 (max .0057 against .002 allowed). That donor never enters the assembly: ignore the F-bulk containment line.",
+  "seams": "candidate seamsNew [] (no new defect at the face or head joints). Window seam: fine loop to old skin mean .0004, max .007 head-local at 69 of 2006 loop vertices over .002 (all on the steep outer cheek, x about .28 to .31); skin deviation in the window p50 .001, p99 .011. Two fan-filled pockets of 32 and 36 edges at (+-.21, -.116, -.198) beside tuft 2 where the window narrows (face-parts.json seam.filledPinchHoles); the first order should look at them in details-face.",
+  "direction": "Packet m02 to m05 against assembled-2811: oval eyes of the baseline size with a dark band ring outside the white (top over bottom 3.3 on the left eye and 4.0 on the right, R02.2 asks at least 2.5), conformal skin rim, two broad pointed tufts per side, nose pad on the skin, no slab, box edge or floating piece. A faint shading step along the inner edges of the eye blocks above the nose showed in the first packet; the last build samples the heightfields bicubically to remove it (see the verification note in the notes).",
+  "sweep": "recipe.py sweep does not handle post steps. Three variants of the starter were built directly with the script and compared on face-parts.json: aperture semi [.084,.116] center [.1767,.0123] (width .0451, gap over width 1.10, band faces 320, sweepScore -.97), lid.bandScale 1.6 (band faces 392, rim mean .0007), orbit.lateralOpenDeg 80 (rim mean .0008, max .0043). Builders tune with plan variants (set edits on A-face-subd)."
  },
- "notes": "A post step is cached under its own key (a spec edit rebuilds only A-face, 8 to 20 min) but each output is a whole assembled-NNNN with the 1.8M vertex skin. The starter reaches the baseline face but is not tuned: the eye is wider than R02.md and still ahead of the brow to nose line, the tufts are two per side and read creased, the nose pad has a flat top. The first order tunes those parameters. The recipe is the baseline recipe plus F-bulk and A-face; tools/R02-notes.md (round 26, blocked) is superseded.",
- "readerCheck": "better: B's eyes are larger tall ovals with a single thin dark outline, like the reference, where A's eyes are smaller and ringed by a thick double rim that reads as a separate bezel. | A's eyes have the thick dark rim set into the face around the white, like the bold outlined eyes in the reference and stud"
+ "notes": "Limits for the first order. (1) The cage is a front heightfield: it cannot follow overhangs or the steep chin and cheek sides, so the window stays on the front-facing part (xByZ) and the border band is projected onto the assembled skin. (2) The nose pad is a D shape, rounder and narrower than the baseline's triangle; finer pad loops (a smaller cage.cell or more pad rings) are the lever. (3) The lid band reads as an almost uniform thin ring in the front view at bandScale 1; raise the byAngle contrast or the top widths. (4) R02.md values need the aperture semi reduced by the band width. (5) Output spacing is .00125 head-local (cell .005, 2 levels) against the field tool's .0008 voxel. (6) The tool carries a copy of finish_face_assembled.py's stitch code, so a fix there is not picked up here. (7) A post build still takes 5 to 20 minutes with the mesh export and renders."
 }

@@ -126,7 +126,7 @@
         "--spec", "{repo}/art/species-construction/specs/face-bulk-r10e.json",
         "--out", "{out}"
       ],
-      "note": "round 27, R02 tool: the bulk face donor for finish_face_assembled.py (round 22's F-bulk, unchanged): H29's field rebuild on H25 with the r10e bridge, lower smooth, chin smooth and old-pocket fill but no socket, no tufts and no nose pad. Only its skin is read, by the post step A-face; it feeds nothing else.",
+      "note": "round 28, R02 tool: the bulk face donor for author_face_subd_patch.py (round 22's F-bulk, unchanged): H29's field rebuild on H25 with the r10e bridge, lower smooth, chin smooth and old-pocket fill but no socket, no tufts and no nose pad. Only its skin is read, by the post step A-face-subd; it feeds nothing else.",
       "pins": {
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
@@ -1021,11 +1021,11 @@
       "minutes": 1.3
     },
     {
-      "id": "A-face",
+      "id": "A-face-subd",
       "component": "post",
       "kind": "post",
       "regions": ["R02"],
-      "script": "art/species-construction/finish_face_assembled.py",
+      "script": "art/species-construction/author_face_subd_patch.py",
       "runner": "blender",
       "inputs": {
         "asm": "assembly",
@@ -1035,16 +1035,16 @@
         "--asm", "{asm}",
         "--out", "{out}",
         "--donor", "{donor}/head.blend",
-        "--spec", "{repo}/art/species-construction/specs/r02_face_assembled.json"
+        "--spec", "{repo}/art/species-construction/specs/r02_face_subd.json"
       ],
-      "note": "round 27, R02 tool: face parts cut into the assembled skin after the assembly remesh (author_face_parts_v2.py's window replacement, fine level set, zipper, orbit carve, lid fold, tufts, nose inlay, globes and irises, plus the lid band as a separate shell strip), head-local through the assembly's headTransform. Donor = F-bulk (bulk face on H25), only its skin is read.",
+      "note": "round 28, R02 tool: the face window as a Catmull-Clark subdivided quad cage (ring blocks around the eyes and nose, creased aperture and pad loops, analytic tufts), conformed to the F-bulk donor by ray heightfield, zipped into the assembled skin after the assembly remesh; the lid band and nose pad are skin material faces; globes and irises are retained objects. Replaces A-face.",
       "pins": {
+        "art/species-construction/author_face_subd_patch.py": "eb31fa3afafc0945c9d5c43d0247b1c797701f3114076ca3f7125e8053e6b090",
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
         "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
         "art/species-construction/fan_clumps_fast_common.py": "7a4d3b179bed2adbe92709eb2ae4812fec414340f06c88d51af3d978ac973414",
-        "art/species-construction/finish_face_assembled.py": "a73297189e7d283b71b0f81ee735f46ed5e5bf742ac943b11f9e235468be1d0b",
-        "art/species-construction/specs/r02_face_assembled.json": "d46e646a2408d70a140634cbe7f0b9a91859d033f992ed18748954b07fb38d46",
+        "art/species-construction/specs/r02_face_subd.json": "f7f3e360e1377db1f48998b2de63a9b96aaa462b5a94607f8e15cace1d44552b",
         "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
         "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
       }
@@ -1061,22 +1061,27 @@
       "--head-depth-offset", "-.020",
       "--head-trim-offset", ".038",
       "--fusion-z-above", ".035",
-      "--fusion-y-extent", ".11"
+      "--fusion-y-extent", ".11",
+      "--neck-sections", "art/species-construction/specs/neck-r27-v2.json",
+      "--neck-back-fill", ".004",
+      "--neck-exponent", "1",
+      "--neck-max-shift", ".012"
     ],
     "note": "assemble_reconstructed_creature.py through loop_tools assemble; the placement constants of loop_tools PLACEMENT; round 19 R05 join (kept): head trim offset .038, fusion window raised",
     "pins": {
-      "art/species-construction/assemble_reconstructed_creature.py": "e025ea131f37d9b16440bdd2e66af0708ee8d127d6e80afdb5f7019750ac1f55",
+      "art/species-construction/assemble_reconstructed_creature_r27.py": "0b4d53811049871d4685677aae4b4f7645796f001df09f55015de09cc024ce98",
       "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
       "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
       "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
       "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
       "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
     },
-    "minutes": 5.2
+    "minutes": 5.2,
+    "script": "art/species-construction/assemble_reconstructed_creature_r27.py"
   },
   "derivedFrom": {
     "recipe": "docs/design/species-construction/akinza/recipe.json",
-    "sha256": "9c2c35aa907991fa7355baf9f87a3415dfffa6a70060e23121560ce79247b1fb",
+    "sha256": "9be763a0f3a287fb203993d4293c49fadf3dadfa822e73b073a72fbc42a7d9c4",
     "steps": {
       "H24": {
         "script": "feef615941aa2a663965ab1db366f0cf85e9669291bacb2aa28d0c523ffa375a",
@@ -1289,7 +1294,7 @@
     "assembly": {
       "head": "cb20c7e1b7b18facd4eeb995f3b7420000f335d47194c343cc8cc0ff44df4a6c",
       "body": "d7223e532c340c3c5af64dc42c6463cd1d3f1ead9ed94f0bfe3de2e54d251faf",
-      "args": "3c3911ce91e1c9bd1fe4c3326662a6a7e41beaf14c23272b24613e2ed03993a9"
+      "args": "31dedb1fb76701839d3fb4267b3c1cae38464ba1f4705582475db014acfcedbf"
     }
   },
   "rebasedFrom": {
