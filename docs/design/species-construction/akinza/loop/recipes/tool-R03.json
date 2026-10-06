@@ -1431,18 +1431,18 @@
     "--spec",
     "{repo}/art/species-construction/specs/r03_fan_assembled.json"
    ],
-   "note": "round 28, R03 tool (toolsmith session 1, not yet reader-checked): the baseline H33 fan is kept; the assembled skin inside the coat window (u >= .09 fit, y_fit <= .215, every depth) is resampled at a fine level set (voxel .0016 head-local) and zipped into the .0028 skin; the strip, backing and v3 lock sweeps edit it only outside each measured cup hull plus .006 (edit weight 0 in the cup columns, so the cup and pale tuft are not edited)",
+   "note": "round 28, R03 tool (toolsmith session 2, not yet reader-checked): the baseline H33 fan is kept; the assembled skin inside the coat window (u >= .075 fit, y_fit <= .215, every depth) is resampled at a fine level set (voxel .0016 head-local) and zipped into the .0028 skin; the strip, backing and v3 lock sweeps edit it only outside each measured cup hull plus .006 (edit weight 0 in the cup columns, so the cup and pale tuft are not edited); edits fade out around each cup hull over window.cupFade (.16) so the cup stands in a smooth ramp, not a cliff",
    "pins": {
     "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
     "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
     "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
     "art/species-construction/fan_clumps_fast_common.py": "7a4d3b179bed2adbe92709eb2ae4812fec414340f06c88d51af3d978ac973414",
     "art/species-construction/fan_clumps_front_fast_v2.py": "e6195c0e5a9262d7737f216ac51c638032001edbfcee57af98b4993fa4d2ba96",
-    "art/species-construction/fan_lock_sweeps_assembled.py": "b7e21fd2ba79625f4a32600f3decce3e1f484f51c48db5c11041b5a1286f9bf5",
-    "art/species-construction/finish_fan_assembled.py": "ecc79d36ecf86150492465036e1ee18d1df75e2cbf96ab9a5cfcccca01c96d92",
+    "art/species-construction/fan_lock_sweeps_assembled.py": "bb67569a153b262fc542e2ef960d9fd0b010a752570031dbe706af9a5b95db5b",
+    "art/species-construction/finish_fan_assembled.py": "31abdf3ca446fad44caa950ae077f1582c21618fb073f595686f631e6f97ce67",
     "art/species-construction/specs/r03_clumps.json": "5ef883d39e0a5c0cd12f70fd53db5911540859f66daee9a3a888447d4e211107",
     "art/species-construction/specs/r03_envelope.npz": "40d65086667b54ded66c80239ace0b846fd3ccb839c979d64b06ac4e4d9b094d",
-    "art/species-construction/specs/r03_fan_assembled.json": "b2ec5adc306e44429ff586b1cd3dd3e6f232b40e6bab7c9d8267ccabfc78c0bc",
+    "art/species-construction/specs/r03_fan_assembled.json": "ea9aada80cc8d9007596084c45f34b6e8ec52870739e124c377259c8f6e00c8a",
     "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
     "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
    }

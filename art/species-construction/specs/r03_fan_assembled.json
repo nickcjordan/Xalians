@@ -4,8 +4,8 @@
  "voxel": 0.0016,
  "strip": {
   "u": [
-   0.085,
-   0.1
+   0.075,
+   0.095
   ],
   "yBlend": [
    0.035,
@@ -74,13 +74,13 @@
   "around": 28
  },
  "tips": {
-  "minHalfWidth": 0.0035,
-  "minHalfThick": 0.0035,
+  "minHalfWidth": 0.0055,
+  "minHalfThick": 0.0055,
   "length": 0.006,
   "taperScale": 1.0,
   "thickTaperScale": 1.0,
   "profile": "leaf",
-  "leafA": 1.4,
+  "leafA": 1.1,
   "leafB": 1.0,
   "leafThickA": 1.6,
   "leafThickB": 0.8
@@ -517,14 +517,15 @@
    "rootOn": "inner edge"
   }
  ],
- "coarseVoxel": 0.004,
+ "coarseVoxel": 0.002,
  "window": {
-  "uMin": 0.09,
+  "uMin": 0.075,
   "yMax": 0.215,
   "cupMargin": 0.006,
   "cupInflate": 0.0,
   "cupPolygons": null,
-  "seamBlend": 0.03,
+  "seamBlend": 0.05,
+  "cupFade": 0.16,
   "patchMargin": 0.006,
   "cropPad": 0.03
  },

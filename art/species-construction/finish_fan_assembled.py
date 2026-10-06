@@ -215,6 +215,16 @@ def phi_window(xh, zh, side):
     return np.minimum(phi, sdf-(W['cupMargin']+W['cupInflate']))
 
 
+def edit_weight(xh, zh, side):
+    """Edit weight per (x, z) column: 0 at the window's plane edges and inside the cup hull plus cupMargin, rising to 1 over
+    seamBlend from the plane edges and over cupFade (default seamBlend) from the cup hull, so the coat never stops at a wall."""
+    yf = (Z0-zh)/S
+    sdf = polygon_sdf(xh/S+CX, yf, cups[side])
+    fade_c = max(float(W.get('cupFade') or W['seamBlend']), 1e-6)
+    t = np.minimum(phi_plane(xh, zh, side)/max(W['seamBlend'], 1e-6), (sdf-(W['cupMargin']+W['cupInflate']))/fade_c)
+    return fls.smoothstep(t).astype(np.float32), t
+
+
 def phi_plane(xh, zh, side):
     """Signed distance (fit units) to the window's plane edges only (inner edge and bottom row), no cup exclusion."""
     u = np.abs(xh)/S
@@ -303,10 +313,9 @@ for side in SIDES:
     if P['mode'] == 'locks':
         # window weight per (x, z) column
         X2, Z2 = np.meshgrid(xs, zs, indexing='ij')
-        phi = phi_window(X2, Z2, side)
-        weight = fls.smoothstep(phi/max(W['seamBlend'], 1e-6)).astype(np.float32)
-        weight[phi <= 0] = 0.
-        del X2, Z2, phi
+        weight, tt = edit_weight(X2, Z2, side)
+        weight[tt <= 0] = 0.
+        del X2, Z2, tt
         transform = vdb.createLinearTransform(voxelSize=VF)
 
         def voxelize(verts, tri, lo=lo, shape=shape, transform=transform):

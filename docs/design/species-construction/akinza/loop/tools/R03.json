@@ -1,6 +1,6 @@
 {
  "region": "R03",
- "ready": false,
+ "ready": true,
  "script": "art/species-construction/finish_fan_assembled.py",
  "modules": [
   "art/species-construction/fan_lock_sweeps_assembled.py (copy of fan_lock_sweeps_v3.py: cup and tuft off, per-column window weight)",
@@ -22,7 +22,7 @@
   },
   {
    "name": "window.uMin / yMax",
-   "default": "0.09 / 0.215",
+   "default": "0.075 / 0.215",
    "what": "window edge in fit units: inner edge |u| and bottom row; every depth inside is replaced"
   },
   {
@@ -31,8 +31,13 @@
    "what": "edits have weight 0 inside the measured cup hull plus this"
   },
   {
+   "name": "window.cupFade",
+   "default": 0.16,
+   "what": "edits fade in over this distance outside each cup hull plus cupMargin (fit units); small values leave a cliff around the cup (a box in the head-top view)"
+  },
+  {
    "name": "window.seamBlend",
-   "default": 0.03,
+   "default": 0.05,
    "what": "edits fade in over this distance inside the window edge"
   },
   {
@@ -44,14 +49,26 @@
    "name": "strip.*, backing.*, layers[].standoff/undercut/lengthScale, section.*, tips.*, union.*, clumps, skip",
    "default": "v3h values",
    "what": "the v3 lock sweep levers, unchanged meaning (see the author_fan_lock_sweeps_v3.py docstring)"
+  },
+  {
+   "name": "coarseVoxel",
+   "default": 0.002,
+   "what": "level set of the unedited skin that fills window columns the edits do not reach (.004 gave a blobby patch)"
+  },
+  {
+   "name": "tips.minHalfWidth / minHalfThick / leafA",
+   "default": "0.0055 / 0.0055 / 1.1",
+   "what": "blunter lock tips; the v3h values (.0035, 1.4) read as a fringe of needles at the .0016 voxel"
   }
  ],
  "checks": {
-  "build": "passes (assembled-2812, 8.3 min on a shared machine, about 110 s alone)",
-  "loop_tools check": "pass",
-  "passthrough control": "one closed component; deviation inside the window p99 .0005 world",
-  "locks": "18 L and 17 R locks built; envelope missing .0009 and .0007, extra .0015 and .0016 (fit area)",
-  "contain, quick, seam_check, sweep": "not run yet"
+  "build": "assembled-2820 from recipes/tool-R03.json via recipe.py candidate (A-fan 10.7 min; 15.7 min total)",
+  "loop_tools check": "pass (1 component, 0 non-manifold edges, 2.10M vertices)",
+  "passthrough control": "mode passthrough: window resample and zipper alone leave no visible change (head-top clean)",
+  "measured": "R03.1 1.021 to 1.015, R03.2 .0358 to .0389 (bound .06), I09 1.8543 to 1.8506 (bound 1.8605), all pass; R06.10, R07.6, R08.10, R08.11, R09.9, R10.2 fail in the baseline as well (not touched)",
+  "seams": "no new seams flagged",
+  "containment": "within allowance (picture change R01 .0128, R03 .0128, R04 .0128; the window overlaps the R01 and R04 crops)",
+  "not run": "recipe.py sweep (post steps are not sweepable; use plan variants with set edits on A-fan), and loop_tools quick separately (candidate ran the measured diff)"
  },
- "notes": "continue: session 1 built the tool and a passing candidate; open defects are in loop/tools/R03-notes.md"
+ "notes": "Session 2 fixed the head-top box (edits stopped at a cliff around the cup hull: new window.cupFade), the inner-edge vertical step (uMin .075, seamBlend .05, strip.u [.075,.095]), the needle fringe (blunter tips) and the figure height. Design change from the method: the window is an axis box in x and z replacing every depth, and the cup and pale tuft are protected by edit weight 0 inside the cup hull plus cupMargin (an annulus window did not pair its hole loops). The cup and tuft are resampled, not resealed. Known remaining: the lower and outer fan edge still carries thin lock tips and a few thin slivers near the top outer edge, and the side view shows a row of small slabs in the fan face; builders should tune tips.*, section.widthScale, layers[].lengthScale and strip.yBlend. Reader check pending: plans/tool-check-R03.json."
 }

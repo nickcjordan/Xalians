@@ -156,6 +156,7 @@ DEFAULTS = {
         'cupInflate': .0,           # grows the measured hull before the margin (fit units)
         'cupPolygons': None,        # {'L': [[x, y], ...], 'R': [...]} fit frame; None = convex hull of the pale polygon centroids
         'seamBlend': .030,          # edits fade in over this distance inside the window edge (fit units)
+        'cupFade': None,            # edits fade in over this distance outside the cup hull plus cupMargin (fit units); None = seamBlend
         'patchMargin': .006,        # the fine patch stops this far (head-local) from the coarse hole boundary
         'cropPad': .03,
     },
