@@ -248,6 +248,14 @@ c[..., :3] = c[..., :3] + (np.array(hexc('#6a1626'), float) - c[..., :3]) * (np.
 c[..., :3] *= eyes[..., None]
 c[..., 3] = alpha * 250
 save('clouds.png', c, 'RGBA')
+# the same storm split in two, so the white storms and the bloodstorms can be shown apart: the bloodstorms' share of the cloud
+# (the stain) in one picture, the rest in the other
+cb = c.copy()
+cb[..., 3] = c[..., 3] * stain
+save('clouds-blood.png', cb, 'RGBA')
+cp = c.copy()
+cp[..., 3] = c[..., 3] * (1 - stain)
+save('clouds-plain.png', cp, 'RGBA')
 sh = np.zeros((H, W, 4))
 sh[..., 3] = alpha * 215
 Image.fromarray(np.clip(sh, 0, 255).astype(np.uint8), 'RGBA').resize((W // 4, H // 4), Image.LANCZOS).save(os.path.join(OUT, 'cloudshade.png'))

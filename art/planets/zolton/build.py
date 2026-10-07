@@ -72,7 +72,8 @@ def images(width):
     return {
         'surface': uri('surface.png', 'webp', 82, width, True, 1.3 if width else 1.0),
         'electric': uri('electric.png', 'webp', 86, width, True, 1.3 if width else 1.0),
-        'clouds': uri('clouds.png', 'webp', 84, width, True),
+        'clouds': uri('clouds-plain.png', 'webp', 84, width, True),
+        'cloudsblood': uri('clouds-blood.png', 'webp', 84, width, True),
         'cloudshade': uri('cloudshade.png', 'webp', 70, None, True),
         'cloudmask': uri('cloudmask.png', 'webp', 70, None, True),
         'bloodmask': uri('bloodmask.png', 'webp', 75, None, True),
@@ -131,6 +132,7 @@ def planet(p, width=None):
     d.append('<image id="%s-cloudshade" href="%s"%s/>' % (p, IMG['cloudshade'], full_at('cloudshade')))
     # one tile of storm (the bloodstorms are part of it)
     d.append('<image id="%s-storm" href="%s"%s/>' % (p, IMG['clouds'], full_at('clouds')))
+    d.append('<image id="%s-bloodcloud" href="%s"%s/>' % (p, IMG['cloudsblood'], full_at('clouds')))
     # where a flash inside the storm lights it up: the storm's thickness, as a mask in map units (both tiles)
     d.append('<mask id="%s-cm" maskUnits="userSpaceOnUse" x="-4000" y="-1000" width="8000" height="3000">%s</mask>' % (
         p, ''.join('<image href="%s" y="%s"%s/>' % (IMG['cloudmask'], f(TILE_Y), full_at('cloudmask', x)) for x in TILE_X)))
@@ -225,8 +227,10 @@ def planet(p, width=None):
     # the air seen edge on: a thin lit rim on the sun's side
     o.append('<g class="lyr-air"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-air)" mask="url(#%s-airm)"/></g>' % (f(C), f(C), f(R * 1.075), p, p))
     # the lit world: ground, and the storm (bloodstorm laid in, black lightning's dark bolts in it) turning slower above it
-    o.append('<g clip-path="url(#%s-disc)"><g filter="url(#%s-lens)">%s<g class="lyr-clouds">%s</g></g></g>' % (
-        p, p, spin(tiles(p, 'surface'), SPIN), spin(tiles(p, 'storm') + '<g class="lyr-black">%s</g><g class="lyr-blood">@@SPRITES@@</g>' % ''.join(dark), CLOUD_SPIN)))
+    # each part of the storm in its own group, so the page's switches can show any of them alone: the white storms, the
+    # bloodstorms with their sprites, and black lightning's dark bolts
+    o.append('<g clip-path="url(#%s-disc)"><g filter="url(#%s-lens)">%s<g class="lyr-clouds">%s</g><g class="lyr-blood">%s</g><g class="lyr-black">%s</g></g></g>' % (
+        p, p, spin(tiles(p, 'surface'), SPIN), spin(tiles(p, 'storm'), CLOUD_SPIN), spin(tiles(p, 'bloodcloud') + '@@SPRITES@@', CLOUD_SPIN), spin(''.join(dark), CLOUD_SPIN)))
     o.append('<g class="lyr-air"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-haze)"/></g>' % (f(C), f(C), f(R), p))
     # the sun: night falls over the right
     o.append('<g class="lyr-sun"><image href="%s" x="%s" y="%s" width="%s" height="%s"/></g>' % (IMG['night'], f(C - R), f(C - R), f(2 * R), f(2 * R)))
@@ -296,7 +300,7 @@ def planet(p, width=None):
     light = ('<g class="lyr-lightning" mask="url(#%s-cm)">%s</g>' % (p, ''.join(fl))
              + '<g class="lyr-blood"><g mask="url(#%s-bm)">%s</g></g>' % (p, ''.join(red))
              + '<g class="lyr-black" mask="url(#%s-cm)">%s</g>' % (p, ''.join(glow_)))
-    o.append('<g style="mix-blend-mode:screen" clip-path="url(#%s-disc)"><g filter="url(#%s-lens)"><g class="lyr-clouds">%s</g></g></g>' % (
+    o.append('<g style="mix-blend-mode:screen" clip-path="url(#%s-disc)"><g filter="url(#%s-lens)">%s</g></g>' % (
         p, p, spin(light, CLOUD_SPIN)))
     # the limb: a dark hairline under the air's rim hides the lens's last stair-steps at the edge
     o.append('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="#05060d" stroke-width="2.2" mask="url(#%s-nightm)"/>' % (f(C), f(C), f(R - .6), p))
