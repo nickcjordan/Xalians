@@ -1,5 +1,5 @@
 // Promise-returning repository for XalianRegistry (hash key xalianId, GSI byOwner on
-// ownerId + generatedAt). This is the only table holding creatures: the legacy XalianTable
+// ownerId + generatedAt). This is the only table holding creatures: the legacy creature table (dropped in #796)
 // and its code path were retired with issue #180, and XalianUsersTable now carries nothing
 // but account identity (see repositories/users.ts).
 import { DeleteCommand, GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';

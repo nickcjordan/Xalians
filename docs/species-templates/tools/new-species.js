@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /*
  * Scaffolds a brand-new species: appends the legacy entry to packages/content/json/species.json
- * with the next five-digit id, adds the pending row to docs/species-templates/lore-status.json,
- * and prints the remaining steps. It never writes a template, a walkthrough or an encyclopedia
- * entry; those are the migrate-species skill's outputs. See docs/species-templates/NEW-SPECIES.md.
+ * with the next five-digit id (the site's species ids, legacy routes and the duel prototype
+ * still read that file) and prints the remaining steps. It never writes the v5 template, the
+ * ability audit or an encyclopedia entry; those are the migrate-species skill's outputs. See
+ * docs/species-templates/NEW-SPECIES.md.
  *
  *   node docs/species-templates/tools/new-species.js --key frackworm --name Frackworm --element Sand \
  *     --planet Endessa --height "472 in / 1200 cm" --weight "7055 lbs / 3200 kg" --description "..." [--dry]
@@ -12,7 +13,6 @@ const fs = require('fs');
 const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const SPECIES = path.join(ROOT, 'packages', 'content', 'json', 'species.json');
-const STATUS = path.join(ROOT, 'docs', 'species-templates', 'lore-status.json');
 const ELEMENTS = JSON.parse(fs.readFileSync(path.join(ROOT, 'packages', 'content', 'json', 'elements.json'), 'utf8'));
 const PLANETS = JSON.parse(fs.readFileSync(path.join(ROOT, 'packages', 'content', 'json', 'planets.json'), 'utf8'));
 
@@ -33,9 +33,7 @@ if (!/^\d+ lbs \/ \d+ kg$/.test(args.weight)) errors.push('weight must read "<lb
 if (/\u2014/.test(args.description)) errors.push('description contains an em-dash');
 const species = JSON.parse(fs.readFileSync(SPECIES, 'utf8'));
 if (species.some(s => s.name.toLowerCase() === args.name.toLowerCase())) errors.push('a species named ' + args.name + ' already exists');
-const status = JSON.parse(fs.readFileSync(STATUS, 'utf8'));
-if (status.species[args.key]) errors.push('lore-status.json already has ' + args.key);
-if (fs.existsSync(path.join(ROOT, 'docs', 'species-templates', args.key + '.json'))) errors.push('docs/species-templates/' + args.key + '.json already exists');
+if (fs.existsSync(path.join(ROOT, 'docs', 'species-templates', 'v5', args.key + '.json'))) errors.push('docs/species-templates/v5/' + args.key + '.json already exists');
 if (errors.length) { errors.forEach(e => console.error('error: ' + e)); process.exit(1); }
 
 const nextId = String(Math.max(...species.map(s => Number(s.id))) + 1).padStart(5, '0');
@@ -52,13 +50,9 @@ const raw = fs.readFileSync(SPECIES, 'utf8');
 const eol = raw.includes('\r\n') ? '\r\n' : '\n';
 species.push(entry);
 fs.writeFileSync(SPECIES, JSON.stringify(species, null, 2).replace(/\n/g, eol) + eol);
-status.species[args.key] = { description: 'source', appearance: 'pending', fields: 'pending', traits: 'pending', note: 'scaffolded ' + new Date().toISOString().slice(0, 10) + ' as species ' + nextId + '; not yet migrated' };
-const sraw = fs.readFileSync(STATUS, 'utf8');
-const seol = sraw.includes('\r\n') ? '\r\n' : '\n';
-fs.writeFileSync(STATUS, JSON.stringify(status, null, 2).replace(/\n/g, seol) + seol);
-console.log('\nwrote species.json entry ' + nextId + ' and lore-status row for ' + args.key);
+console.log('\nwrote species.json entry ' + nextId + ' for ' + args.key);
 console.log('\nNext (docs/species-templates/NEW-SPECIES.md):');
 console.log('  1. ' + (fs.existsSync(artPath) ? 'art present: ' : 'ADD THE ART: ') + path.relative(ROOT, artPath));
-console.log('  2. run the migrate-species skill for ' + args.key + ' (it writes the template, walkthrough and encyclopedia entry)');
-console.log('  3. node docs/species-templates/tools/validate-template.js ' + args.key + '  until 0 FAIL');
-console.log('  4. present to Nick; on ratification add ' + args.key + ' to RATIFIED.json, mark lore-status, run node scripts/bundleLore.js and node scripts/checkCatalogCoverage.js');
+console.log('  2. run the migrate-species skill for ' + args.key + ' (it writes docs/species-templates/v5/' + args.key + '.json, its ability audit and the encyclopedia entry)');
+console.log('  3. npm run check:creature-model -- docs/species-templates/v5/' + args.key + '.json, then the lore-factcheck skill on the prose');
+console.log('  4. present to Nick; on ratification run node scripts/bundleLore.js and node docs/species-templates/tools/validate-all.js');

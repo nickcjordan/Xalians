@@ -7,7 +7,7 @@ import { z } from 'zod';
 // GET /db/user
 export const RetrieveUserQuerySchema = z.object({
   userId: z.string().min(1).optional(),
-  // Accepted and ignored. It selected the legacy XalianTable batch load, which was
+  // Accepted and ignored. It selected the batch load of the legacy creature table (dropped in #796), which was
   // retired with issue #180; the account page lists registry records through
   // GET /xalians instead. Kept in the schema so a stale client still gets its user
   // record rather than a 400 BAD_REQUEST on an unknown query parameter.
@@ -16,7 +16,7 @@ export const RetrieveUserQuerySchema = z.object({
 export type RetrieveUserQuery = z.infer<typeof RetrieveUserQuerySchema>;
 
 // PATCH /db/user. Every action is now rejected (see updateUser.ts): the two xalian-id
-// actions belonged to the legacy XalianTable keep flow, and token accounting was already
+// actions belonged to the keep flow of the legacy creature table (dropped in #796), and token accounting was already
 // server-only. The body shape still parses so the handler can answer a stale client with
 // a consistent 403 FORBIDDEN_ACTION rather than a 400 BAD_REQUEST.
 export const UpdateUserBodySchema = z.discriminatedUnion('action', [

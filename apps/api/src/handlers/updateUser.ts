@@ -4,7 +4,7 @@
 	The route is kept, and keeps accepting the body shape, only until a real user-settings
 	action exists to put through it. Nothing a client could send is legitimate today:
 	ADD_XALIAN_ID and REMOVE_XALIAN_ID wrote the user record's `xalianIds` list, which
-	belonged to the legacy XalianTable keep flow retired with issue #180 (creatures now
+	belonged to the keep flow of the legacy creature table (dropped in #796) retired with issue #180 (creatures now
 	live in XalianRegistry, and releasing one is DELETE /xalians/{xalianId}); ADD_TOKENS
 	and REMOVE_TOKENS were already server-only, because token accounting never went
 	through the browser.

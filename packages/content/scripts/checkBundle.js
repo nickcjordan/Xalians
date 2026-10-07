@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 // Fails when the committed content bundle (packages/content/json/*) disagrees with what
-// the repo-root bundlers (scripts/bundleLore.js, which also runs
-// scripts/bundleAbilityCatalog.js) would produce from docs/ right now. Runs the bundlers
-// into a scratch directory (CONTENT_BUNDLE_OUT_DIR, which both scripts honor without
-// changing their default behavior) and diffs each output file against the committed one.
+// the repo-root bundler (scripts/bundleLore.js) would produce from docs/ right now. Runs
+// the bundler into a scratch directory (CONTENT_BUNDLE_OUT_DIR, which it honors without
+// changing its default behavior) and diffs each output file against the committed one.
 //
 // Usage:  node packages/content/scripts/checkBundle.js   (also: npm run check:bundle -w packages/content)
 //
@@ -21,7 +20,7 @@ const repoRoot = path.join(__dirname, '..', '..', '..');
 const committedDir = path.join(repoRoot, 'packages', 'content', 'json');
 const committedSrcDir = path.join(repoRoot, 'packages', 'content', 'src');
 
-// The exact set of files scripts/bundleLore.js and scripts/bundleAbilityCatalog.js write.
+// The exact set of files scripts/bundleLore.js writes.
 // tour.json, narration.json and plates.json are conditional on the docs/ source existing;
 // they are still checked because all three exist in this repo today (see
 // scripts/bundleLore.js:11-13).
@@ -33,9 +32,6 @@ const BUNDLED_FILES = [
   'tour.json',
   'narration.json',
   'plates.json',
-  'speciesRecords.json',
-  'abilityCatalog.json',
-  'abilityPatterns.json',
   'canonicalSpeciesCatalog.json',
 ];
 

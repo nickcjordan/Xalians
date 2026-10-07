@@ -3,7 +3,7 @@ import fixture from './fixtures/support-species.json';
 import { ANATOMY_KEYS, INSTRUMENT_ROWS, MEDIUM_ROWS, MIN_DISTINCT_ACTS, PATTERNS, deriveMechanisms } from './acts.ts';
 import { MechanismSchema, SpeciesSchema, type Species } from './species.ts';
 import { AnatomyKeySchema } from './catalog.ts';
-import { AnatomyKeySchema as LegacyAnatomyKeySchema } from '../schema/registries.ts';
+import registries from '../../json/registries.json' with { type: 'json' };
 import { compileSpecies } from './compiler.ts';
 import { Removal, Status } from './catalog.ts';
 import { CHANNEL_KEYS, ELEMENT_KEYS } from '../registriesConst.ts';
@@ -51,9 +51,9 @@ function withSignature(species: Record<string, unknown>): Record<string, unknown
 }
 
 describe('the derivation tables', () => {
-  it('adds fins to v5 anatomy without changing the frozen v4 registry', () => {
+  it('carries fins in the anatomy registry, with a display row', () => {
     expect(AnatomyKeySchema.options).toContain('fins');
-    expect(LegacyAnatomyKeySchema.options).not.toContain('fins');
+    expect(registries.anatomy.map(row => row.key)).toContain('fins');
   });
   it('lists only known patterns on every instrument row', () => {
     for (const [instrument, row] of Object.entries(INSTRUMENT_ROWS)) {

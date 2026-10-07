@@ -1,7 +1,6 @@
 /*
 	Expedition (Reclamation) shared types. The record shape itself (CreatureRecord) and the
-	registry key unions come from @xalians/content/schema and packages/rules's own
-	generator/types.ts (the generator's ElementKey/AttributeKey unions), per docs/design/
+	registry key unions come from @xalians/content, per docs/design/
 	frontend-backend-data-sharing.md decision 7 and CLAUDE.md's "one source per data kind."
 	Nothing in this file redefines a record field; it types the derived, engine-owned shapes
 	the rules build on top of a record (sites, the board, prepared views, the match state).
@@ -13,9 +12,8 @@
 	truth, not a description of an existing contract.
 */
 
-import type { Sites } from '@xalians/content/schema';
+import type { ElementKey, Sites } from '@xalians/content/schema';
 import type { CreatureRecord } from '@xalians/content/creature';
-import type { ElementKey } from '../generator/types.ts';
 import type { StatusApplication } from './statusLayer.ts';
 import type { StatusEffectReading } from './recordReading.ts';
 

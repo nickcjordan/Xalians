@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 // Shared release tooling. Archives are executable application code; only load trusted archives.
+//
+// `check --base <ref>` rule (amended 2026-10-06, issue #796): a file inside a kept release
+// directory, or any archived species revision, may never be modified, renamed or deleted
+// relative to the base ref. Removing an entire release directory is allowed, so a retired
+// creature model's archives (the v4 releases generation-0.3.0-1 through 0.5.0-4, deleted
+// with the v4 model) can go once no stored creature needs them. A partial deletion fails.
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -11,7 +17,9 @@ const speciesRevisionRoot = path.join(root, 'docs/species-templates/v5/revisions
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const sourceHash = file => hash(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n'));
 const validId = id => typeof id === 'string' && /^[a-z0-9][a-z0-9._-]*$/.test(id);
-function bundle(entryPoint = 'packages/rules/src/generator/index.ts') {
+// The species-independent v5 engine; a new release freezes from here by default.
+const DEFAULT_ENTRY = 'packages/rules/src/generator/creatureEngineRelease.ts';
+function bundle(entryPoint = DEFAULT_ENTRY) {
   return buildSync({ absWorkingDir: root, entryPoints: [entryPoint], bundle: true, platform: 'neutral', format: 'esm', target: 'es2022', write: false, metafile: true, minify: true, legalComments: 'inline' });
 }
 function readManifest(id, archives = archiveRoot) {
@@ -44,7 +52,13 @@ async function replay(record, archives = archiveRoot, revisions = speciesRevisio
   }
   return archived.generateXalian(record.species, p.seed, options);
 }
-async function freeze({ entryPoint, releaseId = require('../packages/rules/src/generator/currentRelease.json').releaseId, archives = archiveRoot } = {}) {
+// Without an explicit releaseId, the entry point's own GENERATION_RELEASE_ID names it.
+function releaseIdOf(entryPoint) {
+  const match = /GENERATION_RELEASE_ID\s*=\s*'([^']+)'/.exec(fs.readFileSync(path.join(root, entryPoint), 'utf8'));
+  if (!match) throw new Error(`${entryPoint} declares no GENERATION_RELEASE_ID; pass releaseId`);
+  return match[1];
+}
+async function freeze({ entryPoint = DEFAULT_ENTRY, releaseId = releaseIdOf(entryPoint), archives = archiveRoot } = {}) {
   if (!validId(releaseId)) throw new Error('Invalid release ID');
   const dir = path.join(archives, releaseId);
   if (fs.existsSync(dir)) throw new Error(`Release ${releaseId} already exists; never overwrite a frozen release`);
@@ -63,7 +77,12 @@ async function freeze({ entryPoint, releaseId = require('../packages/rules/src/g
   fs.writeFileSync(path.join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
   return manifest;
 }
-module.exports = { freeze, readManifest, replay, archiveRoot };
+// A deleted archive file passes the check only when its whole release directory is gone.
+function wholeReleaseRemoved(file, archives = archiveRoot) {
+  const match = /^packages\/rules\/releases\/([^/]+)\//.exec(file);
+  return !!match && !fs.existsSync(path.join(archives, match[1]));
+}
+module.exports = { freeze, readManifest, replay, archiveRoot, wholeReleaseRemoved };
 if (require.main === module) (async () => {
   const [command, file] = process.argv.slice(2);
   if (command === 'freeze') console.log(`Frozen ${(await freeze()).releaseId}`);
@@ -72,7 +91,10 @@ if (require.main === module) (async () => {
     if (baseIndex >= 0) {
       const base = process.argv[baseIndex + 1];
       if (!base || base.startsWith('-')) throw new Error('Missing comparison git ref');
-      const changed = require('node:child_process').execFileSync('git', ['diff', '--name-only', '--diff-filter=MDR', base, '--', 'packages/rules/releases', 'docs/species-templates/v5/revisions'], { cwd: root, encoding: 'utf8' }).trim();
+      const changed = require('node:child_process').execFileSync('git', ['diff', '--name-status', '--no-renames', '--diff-filter=MD', base, '--', 'packages/rules/releases', 'docs/species-templates/v5/revisions'], { cwd: root, encoding: 'utf8' })
+        .split(/\r?\n/).filter(Boolean).map(line => line.split('\t'))
+        .filter(([status, file]) => !(status === 'D' && wholeReleaseRemoved(file)))
+        .map(([status, file]) => `${status} ${file}`).join('\n');
       if (changed) throw new Error(`Previously archived generator or species files changed:\n${changed}`);
     }
     for (const entry of fs.readdirSync(archiveRoot, { withFileTypes: true })) if (entry.isDirectory()) readManifest(entry.name);

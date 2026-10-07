@@ -6,9 +6,9 @@ import * as lore from '../../lore';
  * Display vocabulary for one v5 creature record (CreatureRecord).
  *
  * Every controlled key in a record is a registry key, and registries.json
- * carries its display name and one-line nature; v5 keys that file does not
- * carry yet (lowlight, fins, phase, seep, the temperament axes, an
- * individual's chirality) come from lore's V5_ONLY_ROWS. The resolution lives
+ * carries its display name and one-line nature; keys that are not registry
+ * lists (phase, seep, the temperament axes, an individual's chirality) come
+ * from lore's V5_ONLY_ROWS. The resolution lives
  * in lore/vocabulary.js, shared with the encyclopedia's species pages; this
  * module only types it for the record components. Nothing here invents a
  * label: an unknown key falls back to a title-cased key.

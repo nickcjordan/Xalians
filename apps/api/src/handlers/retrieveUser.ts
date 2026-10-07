@@ -7,7 +7,7 @@
 // browser-side create-after-sign-up call that could be skipped if the tab closed early.
 //
 // The user record no longer carries creatures. `populateXalians` batch-loaded the legacy
-// XalianTable, which was retired with issue #180; the parameter is accepted and ignored,
+// legacy creature table, retired with issue #180 and dropped in #796; the parameter is accepted and ignored,
 // and a caller wanting someone's creatures reads GET /xalians?ownerId=... instead. That
 // also empties the public profile down to the one field a stranger may see today.
 import { ApiError, withApi } from '../lib/api.ts';

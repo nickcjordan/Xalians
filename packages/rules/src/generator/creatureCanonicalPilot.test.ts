@@ -8,15 +8,10 @@ import { getSpeciesTemplates } from './canonicalCreatureRelease.ts';
 it('constructs every staged species with guaranteed identity and distinct ordinary actions', () => {
   const directory = fileURLToPath(new URL('../../../../docs/species-templates/v5/', import.meta.url));
   const files = readdirSync(directory).filter(file => file.endsWith('.json'));
-  const legacyRatified = JSON.parse(readFileSync(fileURLToPath(new URL('../../../../docs/species-templates/RATIFIED.json', import.meta.url)), 'utf8')) as { species: string[] };
   expect(files.map(file => file.slice(0, -5)).sort()).toEqual(getSpeciesTemplates().map(species => species.key).sort());
   for (const file of files) {
     const source = JSON.parse(readFileSync(fileURLToPath(new URL(`../../../../docs/species-templates/v5/${file}`, import.meta.url)), 'utf8')) as { key: string; lore: { description: string } };
     expect(readdirSync(directory)).toContain(`${source.key}.ability-audit.md`);
-    if (legacyRatified.species.includes(source.key)) {
-      const original = JSON.parse(readFileSync(fileURLToPath(new URL(`../../../../docs/species-templates/${file}`, import.meta.url)), 'utf8')) as { lore: { description: string } };
-      expect(source.lore.description).toBe(original.lore.description);
-    }
     const compiled = compileSpecies(source);
     // Anatomy grants. A ratified body offers a real act space, and no instrument the
     // record lists sits idle unless its audit excluded it on purpose.

@@ -1,7 +1,7 @@
 // Schema for the legacy species.json (lambda/src/json today; CLAUDE.md: "29 canon species
 // ... traits block -- canFly, attackRange -- used by the duel game"). Kept for contrast
-// and for the duel prototype, which still reads this shape; the ratified replacement is
-// speciesTemplate.ts / record.ts.
+// and for the duel prototype, which still reads this shape; the creature model proper is
+// the v5 catalog in ../creature (docs/species-templates/v5/<key>.json).
 import { z } from 'zod';
 import { LegacyElementNameSchema } from './typeEffectiveness.ts';
 

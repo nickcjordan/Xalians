@@ -1,17 +1,14 @@
 /** The redesign's catalog. This entry point is deliberately independent of game adapters. */
 import { z } from 'zod';
 import { DEFAULT_STATUS_INTENSITY } from './benchmarks.ts';
-import { AnatomyKeySchema as LegacyAnatomyKeySchema, InstrumentKeySchema as LegacyInstrumentKeySchema } from '../schema/registries.ts';
+import { SPECIAL_SENSE_KEYS } from '../registriesConst.ts';
+// Registry vocabularies (docs/species-templates/registries.json) are the one source for
+// every closed key list the creature model shares with the site.
 export {
   ElementKeySchema, CompositionKeySchema,
   BodyPlanKeySchema, CoveringKeySchema, DietKeySchema, CommunicationKeySchema,
-  MediumPhaseKeySchema, LifespanKeySchema,
+  MediumPhaseKeySchema, LifespanKeySchema, AnatomyKeySchema, InstrumentKeySchema,
 } from '../schema/registries.ts';
-
-// The v4 registry is pinned by the current release. New v5 anatomy belongs in the
-// redesigned creature catalog until a new platform release is explicitly selected.
-export const AnatomyKeySchema = z.enum([...LegacyAnatomyKeySchema.options, 'fins'] as const);
-export const InstrumentKeySchema = z.enum([...LegacyInstrumentKeySchema.options, 'fins'] as const);
 
 export const Continuity = z.enum(['discrete', 'ongoing']);
 export const Trigger = z.enum(['contact', 'harmed', 'ally-harmed']);
@@ -34,7 +31,7 @@ export const Harm = z.enum(['impact', 'cutting', 'piercing', 'compression', 'ele
 export const Removal = z.enum(['cooling', 'smothering', 'warming', 'cleansing', 'detoxifying', 'freeing', 'stabilizing', 'disrupting']);
 export const Function = z.enum(['reactions', 'mobility', 'force', 'perception', 'composure', 'recovery']);
 export const Traversal = z.enum(['phase', 'seep']);
-export const SpecialSense = z.enum(['echolocation', 'tremorsense', 'electroreception', 'psychic', 'heat-sense', 'void-sense', 'lowlight']);
+export const SpecialSense = z.enum(SPECIAL_SENSE_KEYS);
 export const Status = z.enum([
   'burning', 'overheated', 'chilled', 'corroding', 'poisoned', 'slowed', 'restrained',
   'pinned', 'frozen', 'buried', 'blinded', 'deafened', 'disoriented', 'frightened',

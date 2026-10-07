@@ -3,7 +3,7 @@
 // release key (this is the user's own collection, so removal lives here;
 // userDetailsPage.tsx reads someone else's and carries no release control).
 //
-// Records are v5 CreatureRecords. Every stored creature, legacy XalianTable rows
+// Records are v5 CreatureRecords. Every stored creature, legacy creature-table rows
 // included, was cleared at the v5 cutover (#796).
 import * as React from 'react';
 import { Link } from 'react-router';

@@ -2,20 +2,17 @@
 // species pages (lore/species.js) and the registry's record view
 // (components/record). React-free, like the rest of lore/.
 //
-// Registry keys resolve through registries.json; the rows below cover v5
-// vocabulary that file does not carry yet.
+// Registry keys resolve through registries.json; the rows below cover the v5
+// vocabulary that is not a registry list.
 
 import { registries, lookupInstrument } from './loaders';
 
-// Display rows for v5 vocabulary that registries.json does not carry yet:
-// that file is still pinned by the legacy v4 generator, whose schema enums are
-// generated from it. Sources: lowlight, docs/design/creature-model-current.md;
-// fins, docs/design/creature-derived-acts.md; temperament axes,
-// docs/design/xalian-creature-system-redesign.md; traversal,
-// creature-model-current.md. Fold these into registries.json when v4 retires.
+// Display rows for v5 vocabulary that registries.json does not carry: the
+// traversal kinds (creature-model-current.md), the temperament axes
+// (docs/design/xalian-creature-system-redesign.md), and an individual's rolled
+// chirality. lowlight and fins moved into registries.json when v4 was deleted
+// (2026-10-06).
 export const V5_ONLY_ROWS = {
-	lowlight: { name: 'Lowlight', nature: 'Sees in dim light. Not vision in total darkness, and not heat sense.' },
-	fins: { name: 'Fins', nature: 'Fins that steer and drive the body, and can strike or shove at contact.' },
 	phase: { name: 'Phases through walls', nature: 'Passes through solid walls and barriers.' },
 	seep: { name: 'Seeps through openings', nature: 'Flows through cracks and openings too small for its body.' },
 	boldness: { name: 'Boldness', nature: 'How readily it faces what it does not know.' },

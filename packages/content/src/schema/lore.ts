@@ -1,5 +1,5 @@
 // Shallow structural schemas for the pure authored-prose lore bundles: chronicle.json,
-// narration.json, tour.json, plates.json, sites.json, gradeCalibration.json. Per the plan
+// narration.json, tour.json, plates.json, sites.json, creatureGradeCalibration.json. Per the plan
 // brief, these need only enough structure to catch a shape break; the prose itself is
 // hand-authored and fact-checked outside this package (see the lore-factcheck-gate rule
 // in CLAUDE.md's memory), not schema-validated word by word.
@@ -114,16 +114,7 @@ const SiteEntrySchema = z
 
 export const SitesSchema = z.record(z.string().min(1), z.array(SiteEntrySchema));
 
-// ---- gradeCalibration.json ------------------------------------------------------------
-
-export const GradeCalibrationSchema = z.object({
-  generatorVersion: z.string().min(1),
-  seed: z.string().min(1),
-  n: z.number().int().positive(),
-  quantiles: z.array(z.tuple([z.number(), z.number()])),
-});
-
-// ---- creatureGradeCalibration.json (v5) ------------------------------------------------
+// ---- creatureGradeCalibration.json ----------------------------------------------------
 // Written by packages/rules/src/generator/devtools/simulateCreatures.ts --calibrate; read
 // by creatureGrade.ts. The v5 prototype carries no generator version, so the CI check
 // (npm run check:creature-simulation) is what keeps it current. One [percentile, score]
@@ -139,5 +130,4 @@ export type Narration = z.infer<typeof NarrationSchema>;
 export type Tour = z.infer<typeof TourSchema>;
 export type Plates = z.infer<typeof PlatesSchema>;
 export type Sites = z.infer<typeof SitesSchema>;
-export type GradeCalibration = z.infer<typeof GradeCalibrationSchema>;
 export type CreatureGradeCalibration = z.infer<typeof CreatureGradeCalibrationSchema>;

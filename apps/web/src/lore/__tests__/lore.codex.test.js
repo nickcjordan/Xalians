@@ -134,7 +134,7 @@ describe('Codex builder (scripts/buildCodex.js)', () => {
 		const require = createRequire(import.meta.url);
 		const registriesData = require('../../../../../docs/species-templates/registries.json');
 		const keys = new Set();
-		for (const list of ['attributes', 'archetypes', 'traits', 'elements', 'capabilities', 'senses', 'anatomy', 'channels', 'actions']) {
+		for (const list of ['attributes', 'elements', 'capabilities', 'senses', 'anatomy', 'channels']) {
 			for (const item of registriesData[list] || []) keys.add(item.key);
 		}
 		for (const list of Object.values(registriesData.physiology || {})) {
