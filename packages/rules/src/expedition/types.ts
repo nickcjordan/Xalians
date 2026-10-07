@@ -1,5 +1,5 @@
 /*
-	Expedition (Reclamation) shared types. The record shape itself (XalianRecord) and the
+	Expedition (Reclamation) shared types. The record shape itself (CreatureRecord) and the
 	registry key unions come from @xalians/content/schema and packages/rules's own
 	generator/types.ts (the generator's ElementKey/AttributeKey unions), per docs/design/
 	frontend-backend-data-sharing.md decision 7 and CLAUDE.md's "one source per data kind."
@@ -13,7 +13,8 @@
 	truth, not a description of an existing contract.
 */
 
-import type { Sites, XalianRecord } from '@xalians/content/schema';
+import type { Sites } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import type { ElementKey } from '../generator/types.ts';
 import type { StatusApplication } from './statusLayer.ts';
 import type { StatusEffectReading } from './recordReading.ts';
@@ -270,7 +271,7 @@ export interface Conduct {
 
 // prepare()'s full derived view of one creature standing at one site
 export interface PreparedCreature {
-	record: XalianRecord;
+	record: CreatureRecord;
 	id: string;
 	site: AuthoredSite | FrameSite | null;
 	world: WorldFacts | null | undefined;
@@ -291,7 +292,6 @@ export interface PreparedCreature {
 	effectiveStrainLevel: StrainLevel;
 	strainMultiplier: number;
 	acts: Act[];
-	favoredAct: Act;
 	role: Role;
 	blow: Act | null;
 	blowMagnitude: number;
@@ -332,7 +332,7 @@ export interface PrepareOptions {
 // company changes)
 export interface BoardEntry {
 	recordId: string;
-	record: XalianRecord;
+	record: CreatureRecord;
 	player: Seat;
 	siteId: string;
 	hidden: boolean;
@@ -363,7 +363,7 @@ export type SiteBoard = Record<Seat, BoardEntry[]>;
 export type Board = Record<string, SiteBoard>;
 
 export interface PlayerState {
-	roster: XalianRecord[];
+	roster: CreatureRecord[];
 	sentCount: number;
 	holding: string[];
 	downed: string[];
@@ -420,14 +420,14 @@ export interface PublicPlayerView {
 	stakeUsed: boolean;
 	sendableCap: number;
 	// present only on the handler's own view (isSelf)
-	roster?: XalianRecord[];
+	roster?: CreatureRecord[];
 	movableRecordIds?: string[];
 	stakeableSiteIds?: string[];
 }
 
 export interface PublicBoardEntry {
 	recordId: string;
-	record: XalianRecord;
+	record: CreatureRecord;
 	sentIndex: number;
 	hidden: boolean;
 	currentHold: number;
@@ -505,7 +505,7 @@ export interface Rival {
 // scoreSends' per-(creature, site) candidate. The hiding fields it used to carry went with
 // the hide decision itself in pass 4b (assumption 27): a stealthy creature arrives hidden.
 export interface SendCandidate {
-	record: XalianRecord;
+	record: CreatureRecord;
 	site: FrameSite;
 	prepared: PreparedCreature;
 	margin: number;
@@ -558,11 +558,6 @@ export interface RngLike {
 // so ordinary per-site indexing (`read[siteId]`) still reads as a plain number map.
 export type UnseenRead = Record<string, number> & { shares: Record<string, number>; unseen: number };
 
-// note: FavoredActSpec (favoredAct's archetype-table entry) is defined in
-// expeditionInterpretation.ts, next to FAVORED_ACT_BY_ARCHETYPE and getFavoredActSpec,
-// rather than here - callers that need the type get it by inference from
-// getFavoredActSpec's own return type, so it is not duplicated in this file.
-
 // ---------------------------------------------------------------------------
 // draft (draft.ts)
 // ---------------------------------------------------------------------------
@@ -595,7 +590,7 @@ export interface DraftOptions {
 }
 
 export interface DraftPools {
-	poolA: XalianRecord[];
-	poolB: XalianRecord[];
+	poolA: CreatureRecord[];
+	poolB: CreatureRecord[];
 	frames: Frame[];
 }

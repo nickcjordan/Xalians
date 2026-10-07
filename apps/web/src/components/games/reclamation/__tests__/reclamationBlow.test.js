@@ -10,7 +10,7 @@ import ReclamationFigure from '../reclamationFigure';
 	on yours (what the Clash takes from you), ink on the rival's.
 */
 
-const record = { id: 'r1', species: 'frackworm', traits: [] };
+const record = { id: 'r1', species: 'frackworm' };
 
 describe('the blow on a figure', () => {
 	it('stands over the piece it lands on, not above the figure', () => {

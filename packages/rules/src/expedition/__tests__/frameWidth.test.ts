@@ -10,6 +10,7 @@
 	that the shipped 3 x 3 is unchanged while a 2 x 3 frame is a coherent game rather than
 	a half-applied setting: six worlds dealt, a bar of four, and a bot that plays to four.
 */
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, expect } from 'vitest';
 import { createMatch, getPublicState } from '../expeditionRules.ts';
 import {
@@ -39,12 +40,11 @@ function makeWorlds(count: number): World[] {
 let uid = 0;
 function record(seat: string) {
 	uid += 1;
-	return {
+	return v5Record({
 		id: `${seat}-${uid}`,
 		species: 'graviclaw',
 		provenance: { schemaVersion: '1.0.0', origin: 'nowhere' },
-		element: { primary: 'metal', affinities: { metal: 100 } },
-		archetype: { key: 'predator', favors: [] },
+		element: 'metal',
 		attributes: {
 			strength: 50, vitality: 50, endurance: 50, agility: 50, reflex: 50,
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 50,
@@ -53,12 +53,11 @@ function record(seat: string) {
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -60, max: 90 } },
 			breathes: ['gas'], capabilities: {}, senses: {},
 		},
-		traits: [],
 		temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: [
 			{ name: 'Hit', signature: true, instrument: 'fists', action: 'strike', medium: 'metal', intensity: 60 },
 		],
-	} as any;
+	});
 }
 
 const roster = (seat: string) => Array.from({ length: 12 }, () => record(seat));

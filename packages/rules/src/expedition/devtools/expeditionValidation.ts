@@ -1358,7 +1358,7 @@ export function sectionDraft({ matches, seed, rules }: any) {
 		[['A', poolA, keepA], ['B', poolB, keepB]].forEach(([seat, pool, kept]: any) => {
 			pool.forEach((record: any) => {
 				const species = record.species || 'unknown';
-				const element = (record.element && record.element.primary) || 'unknown';
+				const element = record.element || 'unknown';
 				const hold = holdAcrossFrames(record, frames);
 				const role = roleOf(record, rules);
 				[[bySpecies, species], [byElement, element], [byRole, role]].forEach(([table, key]: any) => {

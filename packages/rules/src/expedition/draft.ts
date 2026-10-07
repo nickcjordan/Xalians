@@ -18,10 +18,10 @@
 // schema 5: the pool is built by roster.ts, which supplies the replay metadata the
 // release requires and cycles the frozen release's own species list
 import { buildExpeditionPool } from './roster.ts';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import { createRngState, nextRandom, createMatch } from './expeditionRules.ts';
 import { getWorlds } from './sites.ts';
-import { prepare, roleOf, speedOf } from './creatureOnTable.ts';
+import { prepare, roleOf, speedOf, traitKeywordsOf } from './creatureOnTable.ts';
 import {
 	ROSTER_SIZE, ROLE, SWEEP_DISCOUNT, BOLSTER_FLOOR, SHIELD_CAP, SUPPORT_GUARD,
 	DRAFT_POOL_SIZE as DEFAULT_DRAFT_POOL_SIZE, DRAFT_DISTINCT_SPECIES,
@@ -59,7 +59,7 @@ export const DRAFT_SPEED_VALUE = 0.15;
 */
 export const DRAFT_POOL_SIZE = DEFAULT_DRAFT_POOL_SIZE;
 
-function shuffleWithRng(array: XalianRecord[], rngState: number): XalianRecord[] {
+function shuffleWithRng(array: CreatureRecord[], rngState: number): CreatureRecord[] {
 	const result = array.slice();
 	let state = rngState;
 	for (let i = result.length - 1; i > 0; i--) {
@@ -74,52 +74,14 @@ function shuffleWithRng(array: XalianRecord[], rngState: number): XalianRecord[]
 }
 
 // a placeholder roster of the right size, just to satisfy createMatch's validation
-// while we read its frame draw back out; these records never touch a real match
-function placeholderRoster(prefix: string): XalianRecord[] {
-	const roster: XalianRecord[] = [];
-	for (let i = 0; i < ROSTER_SIZE; i++) {
-		roster.push({
-			id: `${prefix}_${i}`,
-			species: 'placeholder',
-			provenance: {
-				serial: i, origin: 'magmuth', seed: `${prefix}_${i}`,
-				generatorVersion: 'placeholder', schemaVersion: 'placeholder', generatedAt: new Date().toISOString(),
-			},
-			attributes: {
-				strength: 50, vitality: 50, endurance: 50, agility: 50, reflex: 50,
-				intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 50,
-			},
-			element: { primary: 'fire', affinities: { fire: 100 } },
-			archetype: { key: 'balanced', favors: [] },
-			physiology: {
-				corporeality: 'corporeal',
-				composition: { primary: 'organic' },
-				bodyPlan: 'quadruped',
-				anatomy: ['limbs'],
-				covering: 'skin',
-				heightCm: 100,
-				weightKg: 50,
-				lifespan: 'standard',
-				genome: { chirality: 'achiral' },
-				diet: 'omnivore',
-				communication: [],
-				breathes: ['gas'],
-				environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -100, max: 100 } },
-				capabilities: { flight: 0, swim: 0, burrow: 0, climb: 0, sprint: 0, leap: 0, manipulation: 0 },
-				senses: { sight: 50, hearing: 50, smell: 50 },
-			},
-			traits: [],
-			temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
-			appearance: { finish: 'standard' },
-			abilities: [{
-				name: 'placeholder', signature: true, instrument: 'limbs', action: 'strike',
-				medium: 'fire', intensity: 50,
-			}],
-		} as unknown as XalianRecord);
-		// the placeholder roster only needs to satisfy createMatch's shape and count
-		// validation to read its frame draw back out; building a schema-perfect record here
-		// would duplicate the generator's own construction for no gain, hence the single
-		// cast above rather than typing every field precisely.
+// while we read its frame draw back out; these records never touch a real match. They are
+// real generated creatures (so no hand-built record has to track the schema), made once.
+const placeholderRosters = new Map<string, CreatureRecord[]>();
+function placeholderRoster(prefix: string): CreatureRecord[] {
+	let roster = placeholderRosters.get(prefix);
+	if (!roster) {
+		roster = buildExpeditionPool(prefix, ROSTER_SIZE);
+		placeholderRosters.set(prefix, roster);
 	}
 	return roster;
 }
@@ -162,10 +124,10 @@ export interface DraftOptions {
 	so an unlucky batch can fall short - the pool is topped up from what is left, which is
 	the "distinct as far as possible" fallback the brief asks for rather than a failure.
 */
-function dealDistinct(shuffled: XalianRecord[], size: number): [XalianRecord[], XalianRecord[]] {
-	const pools: [XalianRecord[], XalianRecord[]] = [[], []];
+function dealDistinct(shuffled: CreatureRecord[], size: number): [CreatureRecord[], CreatureRecord[]] {
+	const pools: [CreatureRecord[], CreatureRecord[]] = [[], []];
 	const seen: [Set<string>, Set<string>] = [new Set(), new Set()];
-	const leftovers: XalianRecord[] = [];
+	const leftovers: CreatureRecord[] = [];
 	shuffled.forEach((record) => {
 		const species = record.species || 'unknown';
 		for (let i = 0; i < 2; i++) {
@@ -189,8 +151,8 @@ function dealDistinct(shuffled: XalianRecord[], size: number): [XalianRecord[], 
 }
 
 export interface DraftPools {
-	poolA: XalianRecord[];
-	poolB: XalianRecord[];
+	poolA: CreatureRecord[];
+	poolB: CreatureRecord[];
 	frames: Frame[];
 }
 
@@ -293,7 +255,7 @@ export interface DraftRating {
 	options: { rules, poolMeanBlow }. Both optional; with neither, the module constants and
 	a shield value of zero are used, which is what a caller with no pool in hand can know.
 */
-export function rateForDraft(record: XalianRecord, frames: Frame[], options: DraftOptions = {}): DraftRating {
+export function rateForDraft(record: CreatureRecord, frames: Frame[], options: DraftOptions = {}): DraftRating {
 	const rules = options.rules || null;
 	const sweepDiscount = rules && typeof rules.sweepDiscount === 'number' ? rules.sweepDiscount : SWEEP_DISCOUNT;
 	const bolsterFloor = rules && typeof rules.bolsterFloor === 'number' ? rules.bolsterFloor : BOLSTER_FLOOR;
@@ -355,7 +317,7 @@ export function rateForDraft(record: XalianRecord, frames: Frame[], options: Dra
 	and it is a property of the POOL, not of the shielder, which is why it is computed once
 	here and handed to rateForDraft rather than derived per creature.
 */
-export function poolMeanBlowOf(pool: XalianRecord[], frames: Frame[], rules?: Partial<Rules> | null): number {
+export function poolMeanBlowOf(pool: CreatureRecord[], frames: Frame[], rules?: Partial<Rules> | null): number {
 	const sites = sitesOf(frames);
 	const magnitudes: number[] = [];
 	pool.forEach((record) => {
@@ -378,25 +340,13 @@ function bestPlanetOf(rating: DraftRating): string | null {
 	return rating.byWorld.reduce((a, b) => (b.hold > a.hold ? b : a)).planet;
 }
 
-// stealthy read straight off the record's traits, no site needed. XalianRecord['traits']
-// is always an array under the ratified schema; the object-shaped branch is defensive
-// against pre-ratification fixtures, same as creatureOnTable.traitKeywordsOf.
-function isStealthy(record: XalianRecord): boolean {
-	const traits: unknown = record && record.traits;
-	if (Array.isArray(traits)) {
-		return traits.includes('stealthy');
-	}
-	if (traits && typeof traits === 'object') {
-		const shaped = traits as { guaranteed?: unknown; rolled?: unknown };
-		const guaranteed = Array.isArray(shaped.guaranteed) ? shaped.guaranteed : [];
-		const rolled = Array.isArray(shaped.rolled) ? shaped.rolled : [];
-		return guaranteed.includes('stealthy') || rolled.includes('stealthy');
-	}
-	return false;
+// stealthy read straight off the record, no site needed
+function isStealthy(record: CreatureRecord): boolean {
+	return traitKeywordsOf(record).includes('stealthy');
 }
 
 interface ScoredDraftCandidate {
-	record: XalianRecord;
+	record: CreatureRecord;
 	rating: DraftRating;
 	score: number;
 	bestPlanet: string | null;
@@ -426,7 +376,7 @@ interface ScoredDraftCandidate {
 	order or floating-point jitter.
 */
 export function botDraft(
-	pool: XalianRecord[],
+	pool: CreatureRecord[],
 	frames: Frame[],
 	rival: { id?: string } | null | undefined,
 	options: DraftOptions = {},
@@ -537,7 +487,7 @@ function draftPick(
 	True only when keepIds names exactly ROSTER_SIZE distinct ids, all of them present
 	in the pool.
 */
-export function validateKeep(pool: XalianRecord[] | null | undefined, keepIds: string[]): boolean {
+export function validateKeep(pool: CreatureRecord[] | null | undefined, keepIds: string[]): boolean {
 	if (!Array.isArray(keepIds) || keepIds.length !== ROSTER_SIZE) {
 		return false;
 	}

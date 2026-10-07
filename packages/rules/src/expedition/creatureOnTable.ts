@@ -1,4 +1,3 @@
-import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import { readRecord, EFFECT_ROLE } from './recordReading.ts';
 /*
 	Expedition - the creature on the table.
@@ -11,8 +10,8 @@ import { readRecord, EFFECT_ROLE } from './recordReading.ts';
 	actor's strain).
 */
 
-import type { XalianRecord } from '@xalians/content/schema';
-import { conditionMultiplier } from './elementMatchup.ts';
+import type { CreatureRecord } from '@xalians/content/creature';
+import { conditionMultiplier, type ElementReading } from './elementMatchup.ts';
 import { typeEffectivenessMultiplier, WORLD_ELEMENT_PENALTY } from './expeditionInterpretation.ts';
 import {
 	RAW_ATTRIBUTE_MIN,
@@ -30,9 +29,7 @@ import {
 	WHOLE_HOLDS,
 	MIN_BLOW_MAGNITUDE,
 	ROLE,
-	PRESENCE_BY_ARCHETYPE,
-	getFavoredActSpec,
-	getConductSpec, conductFromTemperament,
+	conductFromTemperament,
 	ACT_CLASS,
 	TEMPERAMENT_HIGH_THRESHOLD,
 	TEMPERAMENT_LOW_THRESHOLD,
@@ -56,29 +53,25 @@ import type {
 type AnySite = (AuthoredSite & { world?: WorldFacts }) | FrameSite;
 
 // ---------------------------------------------------------------------------
-// element helpers - the ratified record shape carries element as { primary, affinities }
-// (affinities always includes the primary at 100, plus at most one graded secondary).
+// element helpers - a record carries element as a bare key; the blend reads it as
+// { primary, affinities } (affinities always includes the primary at 100).
 // conditionMultiplier (elementMatchup.ts) is the blend this design's "world matchup" and
 // "magnitude against a target" paragraphs both call for: softened(0 -> 0.25) primary
 // blended with a graded secondary, read against the WORLD's element or the TARGET's.
 // ---------------------------------------------------------------------------
 
-function recordElement(record: XalianRecord | null | undefined): XalianRecord['element'] {
+function recordElement(record: CreatureRecord | null | undefined): ElementReading {
 	const element: unknown = record && record.element;
 	/*
-		PASS 57. Schema 5 writes the element as a bare string ('ghost') and retired the
-		graded secondary; schema 4 wrote { primary, affinities }. Reading `.primary` off the
-		string gave undefined, so the type chart answered 1 for every live creature from the
-		schema 5 conversion on (ELEMENT_MATCHUPS says what that did to the game).
+		Schema 5 writes the element as a bare string ('ghost') with no graded secondary.
+		The reading keeps the { primary, affinities } shape conditionMultiplier takes.
+		A record missing its element reads as the empty primary, which matches no element
+		(no real caller passes one).
 	*/
 	if (typeof element === 'string' && element) {
-		return { primary: element, affinities: { [element]: 100 } } as unknown as XalianRecord['element'];
+		return { primary: element, affinities: { [element]: 100 } };
 	}
-	// the '' fallback primary is not a real ElementKey (registry-enums narrowed it to a
-	// literal union); this path only runs for a record missing element entirely, which
-	// none of the real callers ever pass, so the cast documents "never a real element"
-	// rather than widening the type for everyone else
-	return (element as XalianRecord['element']) || ({ primary: '', affinities: {} } as unknown as XalianRecord['element']);
+	return { primary: '', affinities: {} };
 }
 
 // pass 57: whether the type chart is in play in battle (rules.elementMatchups, on since pass 71)
@@ -98,7 +91,7 @@ export function wholeHoldsOn(rules?: Partial<Rules> | null): boolean {
 	on a world of its own element included. Replaces pass 57's "world matchup", which read the
 	chart with the creature attacking the world (WORLD_ELEMENT_PENALTY says why it went).
 */
-export function worldElementFactor(record: XalianRecord, worldElement: string | null | undefined, rules?: Partial<Rules> | null): number {
+export function worldElementFactor(record: CreatureRecord, worldElement: string | null | undefined, rules?: Partial<Rules> | null): number {
 	const penalty = rules && typeof rules.worldElementPenalty === 'number' ? rules.worldElementPenalty : WORLD_ELEMENT_PENALTY;
 	if (!(penalty < 1) || !worldElement) {
 		return 1;
@@ -136,7 +129,7 @@ export function plainHitOf(role: Role | string, rules?: Partial<Rules> | null): 
 	return 0;
 }
 
-export function plainElementTier(actorRecord: XalianRecord, targetRecord: XalianRecord, rules?: Partial<Rules> | null): -1 | 0 | 1 {
+export function plainElementTier(actorRecord: CreatureRecord, targetRecord: CreatureRecord, rules?: Partial<Rules> | null): -1 | 0 | 1 {
 	const chart = targetMatchupMultiplier(actorRecord, targetRecord, rules);
 	if (chart >= 1.5) {
 		return 1;
@@ -147,7 +140,7 @@ export function plainElementTier(actorRecord: XalianRecord, targetRecord: Xalian
 	return 0;
 }
 
-export function plainHitAgainst(actorRecord: XalianRecord, role: Role | string, targetRecord: XalianRecord, rules?: Partial<Rules> | null): number {
+export function plainHitAgainst(actorRecord: CreatureRecord, role: Role | string, targetRecord: CreatureRecord, rules?: Partial<Rules> | null): number {
 	if (role !== ROLE.STRIKE && role !== ROLE.SWEEP) {
 		return 0;
 	}
@@ -163,7 +156,7 @@ export function homeGroundOf(rules?: Partial<Rules> | null): number {
 // magnitude scaling: matrix[creature][target], softened + blended with the TARGET's
 // secondary (per the design doc: "scaled by the type chart, creature against target's
 // element, blended with the target's secondary affinity")
-export function targetMatchupMultiplier(actorRecord: XalianRecord, targetRecord: XalianRecord, rules?: Partial<Rules> | null): number {
+export function targetMatchupMultiplier(actorRecord: CreatureRecord, targetRecord: CreatureRecord, rules?: Partial<Rules> | null): number {
 	if (!elementMatchupsOn(rules)) {
 		return 1;
 	}
@@ -191,33 +184,16 @@ export function targetMatchupMultiplier(actorRecord: XalianRecord, targetRecord:
 // ---------------------------------------------------------------------------
 
 /*
-	Trait keys of a record. The ratified record stores the keys that landed as a flat
-	array (`traits: ["armored", "stealthy"]`, docs/design/xalian-creature-system-redesign.md
-	section 2). Older provisional records used `{ guaranteed, rolled }` and the handoff
-	reference sketches `{ keys }`; all three read the same here so no consumer breaks on
-	the shape. XalianRecord['traits'] is always TraitKey[] under the ratified schema, so the
-	object-shaped branches below are read through `unknown` -- they are defensive against
-	pre-ratification fixtures (draft.ts's placeholderRoster, older devtools pool captures),
-	not a case the current schema can produce.
+	Trait keywords of a record. Schema 5 records carry no traits, so a creature has none and
+	nothing keyed on a keyword (hidden arrival, armor, menace, pack bond, solitude,
+	resilience) ever fires for a real creature. The function stays as the one place a future
+	source of keywords would plug in; the engine's keyword mechanics read it and nothing else.
 */
-export function traitKeywordsOf(record: XalianRecord | null | undefined): string[] {
-	const traits: unknown = record && record.traits;
-	if (Array.isArray(traits)) {
-		return [...new Set(traits)];
-	}
-	if (!traits || typeof traits !== 'object') {
-		return [];
-	}
-	const shaped = traits as { keys?: unknown; guaranteed?: unknown; rolled?: unknown };
-	if (Array.isArray(shaped.keys)) {
-		return [...new Set(shaped.keys)];
-	}
-	const guaranteed = Array.isArray(shaped.guaranteed) ? shaped.guaranteed : [];
-	const rolled = Array.isArray(shaped.rolled) ? shaped.rolled : [];
-	return [...new Set([...guaranteed, ...rolled])];
+export function traitKeywordsOf(_record: CreatureRecord | null | undefined): string[] {
+	return [];
 }
 
-function hasAnyTraitKeyword(record: XalianRecord, keyword: string): boolean {
+function hasAnyTraitKeyword(record: CreatureRecord, keyword: string): boolean {
 	return traitKeywordsOf(record).includes(keyword);
 }
 
@@ -253,7 +229,7 @@ export function worldOfSite(site: AnySite | null | undefined, world: WorldFacts 
 	return site && (site as FrameSite).world ? (site as FrameSite).world : world;
 }
 
-export function strainLevel(record: XalianRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): StrainLevel {
+export function strainLevel(record: CreatureRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): StrainLevel {
 	return strainOf(record, site, worldArg).level;
 }
 
@@ -264,14 +240,14 @@ export function strainLevel(record: XalianRecord, site: AnySite | null | undefin
 	no breath first, then a temperature far off, then the wrong medium, then a temperature off.
 */
 export type StrainCause = 'breath' | 'cold' | 'hot' | 'medium' | null;
-export function strainCauseOf(record: XalianRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): StrainCause {
+export function strainCauseOf(record: CreatureRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): StrainCause {
 	return strainOf(record, site, worldArg).cause;
 }
 
-function strainOf(record: XalianRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): { level: StrainLevel; cause: StrainCause } {
+function strainOf(record: CreatureRecord, site: AnySite | null | undefined, worldArg?: WorldFacts | null): { level: StrainLevel; cause: StrainCause } {
 	const world = worldOfSite(site, worldArg);
-	const physiology = (record && record.physiology) || ({} as Partial<XalianRecord['physiology']>);
-	const tolerance = physiology.environmentalTolerance || ({} as Partial<XalianRecord['physiology']['environmentalTolerance']>);
+	const physiology = (record && record.physiology) || ({} as Partial<CreatureRecord['physiology']>);
+	const tolerance = physiology.environmentalTolerance || ({} as Partial<CreatureRecord['physiology']['environmentalTolerance']>);
 	const breathes: string[] = Array.isArray(physiology.breathes) ? physiology.breathes : [];
 	const ambientMedia: string[] = Array.isArray(tolerance.ambientMedia) ? tolerance.ambientMedia : [];
 	const tempBand = tolerance.temperatureC || ({} as { min?: number; max?: number });
@@ -376,8 +352,8 @@ export function liftedStrainLevel(level: StrainLevel): StrainLevel {
 	rules object (a bench panel, a test, the draft rater) gets the module constants, which
 	are the shipped first settings.
 */
-export function baseHold(record: XalianRecord, rules?: Partial<Rules> | null): number {
-	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
+export function baseHold(record: CreatureRecord, rules?: Partial<Rules> | null): number {
+	const attrs = (record && record.attributes) || ({} as Partial<CreatureRecord['attributes']>);
 	const vitality = typeof attrs.vitality === 'number' ? attrs.vitality : 0;
 	const resilience = typeof attrs.resilience === 'number' ? attrs.resilience : 0;
 	const endurance = typeof attrs.endurance === 'number' ? attrs.endurance : 0;
@@ -408,7 +384,7 @@ export function baseHold(record: XalianRecord, rules?: Partial<Rules> | null): n
 	0 so this function is usable standalone (e.g. by tests and the card-inspection panel).
 */
 export function holdAtSite(
-	record: XalianRecord,
+	record: CreatureRecord,
 	site: AnySite | null | undefined,
 	worldArg: WorldFacts | null | undefined,
 	opts: PrepareOptions & { bolstered?: boolean; bolsterScale?: number } = {},
@@ -499,8 +475,8 @@ export function holdAtSite(
 	world and, at or above rules.swiftSpeed, lets the creature move once per round during
 	Deploy (assumption 20).
 */
-export function speedOf(record: XalianRecord): number {
-	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
+export function speedOf(record: CreatureRecord): number {
+	const attrs = (record && record.attributes) || ({} as Partial<CreatureRecord['attributes']>);
 	const reflex = typeof attrs.reflex === 'number' ? attrs.reflex : 0;
 	const agility = typeof attrs.agility === 'number' ? attrs.agility : 0;
 	return (reflex + agility) / 2;
@@ -510,7 +486,7 @@ export function speedOf(record: XalianRecord): number {
 // being moved to speedOf; do not add new uses.
 export const initiativeOf = speedOf;
 
-export function isSwift(record: XalianRecord, rules?: Partial<Rules> | null): boolean {
+export function isSwift(record: CreatureRecord, rules?: Partial<Rules> | null): boolean {
 	// plain: speed no longer matters, so nothing moves swiftly
 	if (plainOn(rules)) {
 		return false;
@@ -522,12 +498,12 @@ export function isSwift(record: XalianRecord, rules?: Partial<Rules> | null): bo
 	return speedOf(record) >= threshold;
 }
 
-export function isWillful(record: XalianRecord, rules?: Partial<Rules> | null): boolean {
+export function isWillful(record: CreatureRecord, rules?: Partial<Rules> | null): boolean {
 	if (rules && rules.willful === false) {
 		return false;
 	}
 	const threshold = rules && typeof rules.willfulThreshold === 'number' ? rules.willfulThreshold : WILLFUL_THRESHOLD;
-	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
+	const attrs = (record && record.attributes) || ({} as Partial<CreatureRecord['attributes']>);
 	const willpower = typeof attrs.willpower === 'number' ? attrs.willpower : 0;
 	return willpower >= threshold;
 }
@@ -551,7 +527,7 @@ export function magnitudeOf(intensity: number, governingAttrValue: number | unde
 	signature }] - one act per ability, magnitude computed against strain only (the
 	type-chart-vs-target scaling happens later, per-target, in magnitudeAgainst).
 */
-export function buildActs(record: XalianRecord, strainMult: number, magnitudeScale?: number): Act[] {
+export function buildActs(record: CreatureRecord, strainMult: number, magnitudeScale?: number): Act[] {
 	// the global magnitude rescale (assumption 12) is applied here, once, so every
 	// downstream reading of an act's magnitude is already in the game's own units
 	const scale = typeof magnitudeScale === 'number' ? magnitudeScale : MAGNITUDE_SCALE;
@@ -625,70 +601,13 @@ export function round1(value: number): number {
 	strain-scaled base magnitude. Strain is already folded into act.magnitude by
 	buildActs(), so this only adds the target matchup.
 */
-export function magnitudeAgainst(actorRecord: XalianRecord, act: Act, targetRecord: XalianRecord, rules?: Partial<Rules> | null): number {
+export function magnitudeAgainst(actorRecord: CreatureRecord, act: Act, targetRecord: CreatureRecord, rules?: Partial<Rules> | null): number {
 	// plain: a fixed hit moved one step by the element, by the act's own word
 	if (plainOn(rules) && (act.action === 'strike' || act.action === 'sweep')) {
 		return plainHitAgainst(actorRecord, act.action, targetRecord, rules);
 	}
 	const matchup = targetMatchupMultiplier(actorRecord, targetRecord, rules);
 	return round1(Math.max(0.1, act.magnitude * matchup));
-}
-
-// ---------------------------------------------------------------------------
-// favored act (used when a creature is not given an order)
-// ---------------------------------------------------------------------------
-
-const HOLD_ACT: Act = { action: 'hold', class: null, magnitude: 0, printedMagnitude: 0, name: 'Hold' };
-
-/*
-	favoredAct(record, acts) -> one entry of `acts`, or a synthetic { action: 'hold' }.
-
-	Resolves the archetype's FAVORED_ACT_BY_ARCHETYPE spec against the creature's actual
-	ability list (see expeditionInterpretation.ts's long comment on that table for the
-	reasoning). Falls back to 'hold' if the archetype favors a specific action the
-	creature does not have, or if the creature has no acts of the preferred classes.
-*/
-export function favoredAct(record: XalianRecord, acts: Act[]): Act {
-	const archetypeKey = record && record.archetype && record.archetype.key;
-	const spec = getFavoredActSpec(archetypeKey);
-	if (!spec || acts.length === 0) {
-		return HOLD_ACT;
-	}
-
-	if (spec.prefer === 'hold') {
-		return HOLD_ACT;
-	}
-
-	if (spec.prefer === 'specificAction') {
-		const found = acts.find((a) => a.action === spec.action);
-		if (found) {
-			return found;
-		}
-		return HOLD_ACT;
-	}
-
-	if (spec.prefer === 'strongestOverall') {
-		return acts.reduce((best: Act | null, a) => (!best || a.magnitude > best.magnitude ? a : best), null) as Act;
-	}
-
-	if (spec.prefer === 'strongestOfClass') {
-		const classes = spec.classes || [];
-		const inClass = acts.filter((a) => a.class !== null && classes.includes(a.class));
-		if (inClass.length === 0) {
-			return HOLD_ACT;
-		}
-		if (Array.isArray(spec.actionPriority)) {
-			for (const preferredAction of spec.actionPriority) {
-				const found = inClass.filter((a) => a.action === preferredAction);
-				if (found.length > 0) {
-					return found.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
-				}
-			}
-		}
-		return inClass.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
-	}
-
-	return HOLD_ACT;
 }
 
 // ---------------------------------------------------------------------------
@@ -700,21 +619,15 @@ export function favoredAct(record: XalianRecord, acts: Act[]): Act {
 
 	Every creature is a hold and exactly one role. The rule, written down once:
 
-	1. The four PRESENCE archetypes (survivor, bulwark, stalwart, sage) are presences.
-	   Between the two presences the default is shield for bulwark and stalwart, bolster
-	   for survivor and sage (PRESENCE_BY_ARCHETYPE). "Unless the record's abilities
-	   clearly say otherwise" is read as: a presence that carries a ward ability and no
-	   mend ability is a shield whatever its archetype says, and one that carries a mend
-	   and no ward is a bolster. Carrying both, or neither, leaves the archetype's default
-	   standing, since nothing in the record then points one way.
-	2. Everyone else is a blow: a SWEEP if it carries any of the sweep abilities
-	   (burst, spray, cloud), else a STRIKE.
+	1. A creature whose signature ability shields is a shield, and one whose signature
+	   mends is a bolster (the signature is the thing the record says the creature is).
+	2. Everyone else is a blow: a SWEEP if it carries an area attack, else a STRIKE.
 
 	`rules.roles` is the ablation switch (assumption 15): a role turned off degrades the
 	creature to a plain strike if it was a sweep, and to a plain holder (ROLE.NONE) if it
 	was a presence, so a batch can measure what each role actually carries.
 */
-export function roleOf(record: XalianRecord, rules?: Partial<Rules> | null): Role {
+export function roleOf(record: CreatureRecord, rules?: Partial<Rules> | null): Role {
 	const natural = naturalRoleOf(record);
 	const toggles = (rules && rules.roles) || null;
 	if (!toggles) {
@@ -733,38 +646,17 @@ export function roleOf(record: XalianRecord, rules?: Partial<Rules> | null): Rol
 }
 
 // the role before any ablation switch is applied
-export function naturalRoleOf(record: XalianRecord): Role {
+export function naturalRoleOf(record: CreatureRecord): Role {
 	/*
-		SCHEMA 5 RETIRED `archetype`, AND STATES SOMETHING BETTER IN ITS PLACE.
+		The signature decides a presence. The record names one ability as the thing this
+		creature fundamentally is: a creature whose signature shields is a shield, and one
+		whose signature mends is a bolster. A creature that carries a shield or a mend on an
+		ORDINARY action, with an attacking signature, stays a blow. It can still be flipped
+		to that role by act flip (pass 25), which is exactly the decision act flip exists to
+		offer.
 
-		Rule 1 below made a creature a presence when its ARCHETYPE said so, and read its
-		abilities only to pick which presence. On a schema 5 record `record.archetype` is
-		undefined, so that branch never fires, and the measured result was a roster with no
-		presences at all: 86 strike, 6 sweep, 0 shield, 0 bolster over 96 creatures. Twelve
-		of those creatures DO carry a shield or a mend; eleven of the twelve also carry an
-		attack, and without an archetype to mark them a presence they all read as strikes.
-		Two of the game's four roles would have quietly ceased to exist.
-
-		What schema 5 offers instead is the SIGNATURE: the record names one ability as the
-		thing this creature fundamentally is, stated outright where schema 4 had to infer it
-		from an archetype label. So a creature whose signature shields is a shield, and one
-		whose signature mends is a bolster. That is a truer reading than the archetype was:
-		it is about what this individual actually does, not which of sixteen labels its
-		species was filed under.
-
-		A creature that carries a shield or a mend on an ORDINARY action, with an attacking
-		signature, stays a blow. It can still be flipped to that role by act flip (pass 25),
-		which is exactly the decision act flip exists to offer.
-	*/
-	const archetypeKey = record && (record as any).archetype && (record as any).archetype.key
-		? String((record as any).archetype.key).toLowerCase()
-		: null;
-	/*
 		PASS 7. The role is read off what the record's actions DO (their primary effects and
-		whether they land on an area) rather than off a projection onto sixteen legacy keys.
-		The archetype still decides which presence a support creature is when its own actions
-		do not say, exactly as before; what changed is where "does it ward" and "does it mend"
-		are answered from.
+		whether they land on an area).
 
 		A creature with no usable action at all has no role: it is unavailable at this table
 		(readRecord().fieldable is false) and ROLE.NONE is what the board shows.
@@ -774,10 +666,6 @@ export function naturalRoleOf(record: XalianRecord): Role {
 		return ROLE.NONE as Role;
 	}
 
-	/*
-		Schema 5's reading: the signature ability decides. Checked before the archetype so a
-		record carrying both is read by what it states rather than by what it was labelled.
-	*/
 	const signatureAction = reading.actions.find((a) => a.signature)
 		|| reading.passives.find((a) => a.signature);
 	if (signatureAction) {
@@ -787,19 +675,6 @@ export function naturalRoleOf(record: XalianRecord): Role {
 		if (signatureAction.role === EFFECT_ROLE.MEND) {
 			return ROLE.BOLSTER as Role;
 		}
-	}
-
-	const presenceDefault = archetypeKey
-		? (PRESENCE_BY_ARCHETYPE as Record<string, Role>)[archetypeKey]
-		: undefined;
-	if (presenceDefault) {
-		if (reading.hasShield && !reading.hasMend) {
-			return ROLE.SHIELD as Role;
-		}
-		if (reading.hasMend && !reading.hasShield) {
-			return ROLE.BOLSTER as Role;
-		}
-		return presenceDefault;
 	}
 
 	return reading.hasArea ? (ROLE.SWEEP as Role) : (ROLE.STRIKE as Role);
@@ -817,7 +692,7 @@ export function naturalRoleOf(record: XalianRecord): Role {
 	The natural role is always first and always present, so the list doubles as "what would
 	happen if the handler chose nothing".
 */
-export function flippableRolesOf(record: XalianRecord, rules?: Partial<Rules> | null): Role[] {
+export function flippableRolesOf(record: CreatureRecord, rules?: Partial<Rules> | null): Role[] {
 	const reading = readRecord(record);
 	if (!reading.fieldable) {
 		return [];
@@ -849,7 +724,7 @@ export function flippableRolesOf(record: XalianRecord, rules?: Partial<Rules> | 
 	blowActOf(record, acts, role) -> one entry of `acts`, or a synthetic minimum strike.
 
 	A blow creature throws one blow: the magnitude of its favored ATTACKING ability
-	(assumption 4 keeps the existing favoredAct machinery), rescaled by the magnitude
+	rescaled by the magnitude
 	scale that buildActs has already folded in. A sweep throws its strongest sweep
 	ability, since that is what made it a sweep in the first place. A blow creature with
 	no attacking ability at all strikes at MIN_BLOW_MAGNITUDE; `fallback` marks that case
@@ -857,7 +732,7 @@ export function flippableRolesOf(record: XalianRecord, rules?: Partial<Rules> | 
 */
 /*
 	PASS 69. What a support creature mends for: its strongest heal, or, when the record
-	carries no heal (a support creature by its archetype rather than its acts), its strongest
+	carries no heal (a support creature by its signature rather than its acts), its strongest
 	act of any kind. Already scaled by strain and the magnitude scale, as every act is.
 */
 export function mendMagnitudeOf(acts: Act[]): number {
@@ -866,7 +741,7 @@ export function mendMagnitudeOf(acts: Act[]): number {
 	return pool.reduce((best, a) => Math.max(best, a.magnitude || 0), 0);
 }
 
-export function blowActOf(record: XalianRecord, acts: Act[], role: Role): Act | null {
+export function blowActOf(record: CreatureRecord, acts: Act[], role: Role): Act | null {
 	const minimum: Act = {
 		name: 'Blow',
 		action: 'strike',
@@ -897,11 +772,6 @@ export function blowActOf(record: XalianRecord, acts: Act[], role: Role): Act | 
 	if (attacking.length === 0) {
 		return minimum;
 	}
-	const favored = favoredAct(record, acts);
-	if (favored && favored.action !== 'hold' && favored.class !== (ACT_CLASS.SUPPORT as ActClass)
-		&& attacking.some((a) => a.action === favored.action && a.name === favored.name)) {
-		return favored;
-	}
 	return attacking.reduce((best, a) => (!best || a.magnitude > best.magnitude ? a : best));
 }
 
@@ -909,16 +779,10 @@ export function blowActOf(record: XalianRecord, acts: Act[], role: Role): Act | 
 // conduct
 // ---------------------------------------------------------------------------
 
-export function conductOf(record: XalianRecord): Conduct {
-	const archetypeKey = record && (record as any).archetype && (record as any).archetype.key;
-	const temperament = (record && record.temperament) || ({} as Partial<XalianRecord['temperament']>);
-	/*
-		Schema 4 read the line off the archetype; schema 5 has none, and reading nothing gave
-		every creature in a pool the same line (measured: 96 of 96 on `enemySentEarliest`).
-		The archetype is still honoured when a record carries one, so archived records read
-		exactly as before, and temperament decides otherwise.
-	*/
-	const spec = getConductSpec(archetypeKey) || conductFromTemperament(temperament as any);
+export function conductOf(record: CreatureRecord): Conduct {
+	const temperament = (record && record.temperament) || ({} as Partial<CreatureRecord['temperament']>);
+	// whom a creature chooses is read off its temperament (conductFromTemperament)
+	const spec = conductFromTemperament(temperament);
 	const at = (v: number | undefined) => (typeof v === 'number' ? v : 50);
 	return {
 		attacking: spec.attacking,
@@ -947,7 +811,7 @@ export function conductOf(record: XalianRecord): Conduct {
 		record, id, site, world, sentIndex,
 		baseHold, hold, holdMultiplier, isHome, bolstered,
 		speed, willful, swift, presenceScale, strainLevel, effectiveStrainLevel, strainMultiplier,
-		acts, favoredAct, role, blow, blowMagnitude, blowIsFallback,
+		acts, role, blow, blowMagnitude, blowIsFallback,
 		conduct, traitKeywords,
 		stealthy, armored, resilient, menacing, packBonded, solitary
 
@@ -959,7 +823,7 @@ export function conductOf(record: XalianRecord): Conduct {
 	whenever the company at a site changes.
 */
 export function prepare(
-	record: XalianRecord,
+	record: CreatureRecord,
 	site: AnySite | null | undefined,
 	worldArg: WorldFacts | null | undefined,
 	sentIndex: number,
@@ -1025,7 +889,6 @@ export function prepare(
 		effectiveStrainLevel: effectiveLevel,
 		strainMultiplier: strainMult,
 		acts,
-		favoredAct: favoredAct(record, acts),
 		// the base redesign's four roles (assumption 4); `blow` is null for a presence and
 		// for a creature whose role has been switched off by a rules ablation
 		role,
@@ -1060,7 +923,7 @@ export function prepare(
 	the day a generation release produces an effect family this game has no rule for, the
 	bench says so in words rather than quietly treating it as a strike.
 */
-export function isFieldable(record: XalianRecord | null | undefined): boolean {
+export function isFieldable(record: CreatureRecord | null | undefined): boolean {
 	return readRecord(record).fieldable;
 }
 
@@ -1070,7 +933,7 @@ export interface Unavailability {
 	reasons: string[];
 }
 
-export function unavailabilityOf(record: XalianRecord | null | undefined): Unavailability {
+export function unavailabilityOf(record: CreatureRecord | null | undefined): Unavailability {
 	const reading = readRecord(record);
 	return { fieldable: reading.fieldable, reasons: reading.unsupportedReasons };
 }

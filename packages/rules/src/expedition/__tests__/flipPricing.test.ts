@@ -14,6 +14,7 @@
 	These tests pin the SHAPE of the pricing rather than its tuned constants, so a re-sweep can
 	move FLIP_SECURITY without rewriting them.
 */
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, expect } from 'vitest';
 import { scoreSends, FLIP_SECURITY, FLIP_SECURE_MARGIN, FLIP_VALUE } from '../expeditionBot.ts';
 import { createMatch, getPublicState } from '../expeditionRules.ts';
@@ -37,12 +38,11 @@ let uid = 0;
 function record(over: any = {}): any {
 	uid += 1;
 	const { attributes, ...rest } = over;
-	return {
+	return v5Record({
 		id: 'fp' + uid,
 		species: 'graviclaw',
 		provenance: { schemaVersion: '1.0.0', origin: 'nowhere' },
-		element: { primary: 'metal', affinities: { metal: 100 } },
-		archetype: { key: 'predator', favors: [] },
+		element: 'metal',
 		attributes: {
 			strength: 50, vitality: 50, endurance: 50, agility: 30, reflex: 30,
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 50,
@@ -52,11 +52,10 @@ function record(over: any = {}): any {
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -80, max: 220 } },
 			breathes: ['gas'], capabilities: {}, senses: {},
 		},
-		traits: [],
 		temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: [{ name: 'Hit', signature: true, instrument: 'fists', action: 'strike', medium: 'metal', intensity: 60 }],
 		...rest,
-	};
+	});
 }
 
 describe('flip pricing depends on security', () => {

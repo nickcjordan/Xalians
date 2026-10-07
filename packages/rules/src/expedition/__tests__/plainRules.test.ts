@@ -4,6 +4,7 @@
 	the element, and simultaneous exchanges. Each test pins one sentence of that design, and the
 	last block pins that the graded rules still play exactly as they did on main.
 */
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, expect } from 'vitest';
 import {
 	createMatch, send, pass, currentFrame, forecastSendBlows, DEFAULT_RULES, RULES_PLAIN,
@@ -32,12 +33,11 @@ function record(overrides: any = {}) {
 	uid += 1;
 	const { attributes, abilities, element, ...rest } = overrides;
 	const primary = element || 'metal';
-	return {
+	return v5Record({
 		id: `p${uid}`,
 		species: 'graviclaw',
 		provenance: { schemaVersion: '1.0.0', origin: 'nowhere' },
-		element: { primary, affinities: { [primary]: 100 } },
-		archetype: { key: 'predator', favors: [] },
+		element: primary,
 		attributes: {
 			strength: 50, vitality: 0, endurance: 0, agility: 50, reflex: 50,
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 0,
@@ -47,13 +47,12 @@ function record(overrides: any = {}) {
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -60, max: 90 } },
 			breathes: ['gas'], capabilities: {}, senses: {},
 		},
-		traits: [],
 		temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: abilities || [
 			{ name: 'Hit', signature: true, instrument: 'fists', action: 'strike', medium: primary, intensity: 60 },
 		],
 		...rest,
-	} as any;
+	});
 }
 
 // attributes that make a plain hold of exactly 2 (all zero) or 6 (all full)
@@ -64,12 +63,10 @@ const sweeper = (extra: any = {}) => record({
 	...extra,
 });
 const guard = (extra: any = {}) => record({
-	archetype: { key: 'bulwark', favors: [] },
 	abilities: [{ name: 'Ward', signature: true, instrument: 'hide', action: 'ward', medium: 'metal', intensity: 60 }],
 	...extra,
 });
 const mender = (extra: any = {}) => record({
-	archetype: { key: 'sage', favors: [] },
 	abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'metal', intensity: 60 }],
 	...extra,
 });
@@ -198,7 +195,7 @@ describe('plain world fit: suits +1, neutral 0, hostile -1', () => {
 	test('no world element penalty, willpower, bolster relief, pack-bonded or solitary', () => {
 		// water attacking fire reads strong, so a water world used to dent a fire creature
 		const fireWorld = { planet: 'Poseidas', element: 'water', sites: [] } as any;
-		const fireCreature = { ...mid(), element: { primary: 'fire', affinities: { fire: 100 } }, attributes: { ...mid().attributes, willpower: 100 }, traits: ['pack-bonded'] };
+		const fireCreature = { ...mid(), element: 'fire', attributes: { ...mid().attributes, willpower: 100 } };
 		const result = holdAtSite(fireCreature, site(calm), fireWorld, { rules: PLAIN, bolstered: true, bolsterScale: 2, packBondedKinAtSite: 3, solitaryAlliesAtSite: 3 });
 		expect(result.value).toBe(base);
 		expect(result.matchup).toBe(1);

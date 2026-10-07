@@ -16,7 +16,7 @@ import { matchupsAt } from '../reclamationMatch';
 	number says so. Pass 72: and the element chart against each rival there, never the fight.
 */
 
-const frackworm = { id: 'f', species: 'frackworm', traits: [] };
+const frackworm = { id: 'f', species: 'frackworm' };
 const zolton = { id: 'z', world: { planet: 'Zolton' }, environment: { medium: 'gas', temperatureC: { min: -40, max: 20 } } };
 const warm = { temperatureC: { min: 5, max: 55 }, ambientMedia: ['gas'], breathes: ['gas'] };
 const text = (lines) => lines.map((l) => `${l.effect}${l.cause ? ` ${l.cause}` : ''}`);

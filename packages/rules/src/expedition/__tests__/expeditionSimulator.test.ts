@@ -124,20 +124,12 @@ describe('expeditionSimulator report shape', () => {
 		expect(isRateOrNull(c.hiddenSendStats.rate)).toBe(true);
 	});
 
-	test('section 6 (creature balance): per-archetype/element/trait rates valid, top/bottom 5 well-formed', () => {
+	test('section 6 (creature balance): per-element rates valid, top/bottom 5 well-formed', () => {
 		const cb = report.creatureBalance;
-		Object.values(cb.byArchetype).forEach((a: any) => {
-			expect(a.sent).toBeGreaterThanOrEqual(0);
-			expect(isRateOrNull(a.siteWinRate)).toBe(true);
-		});
 		Object.values(cb.byElement).forEach((e: any) => {
 			expect(e.sent).toBeGreaterThanOrEqual(0);
 			expect(isRateOrNull(e.siteWinRate)).toBe(true);
 			expect(isRateOrNull(e.strainedShare)).toBe(true);
-		});
-		Object.values(cb.byTrait).forEach((t: any) => {
-			expect(t.present).toBeGreaterThanOrEqual(0);
-			expect(isRateOrNull(t.siteWinRate)).toBe(true);
 		});
 		[...cb.top5ByWinRate, ...cb.bottom5ByWinRate].forEach((entry: any) => {
 			expect(entry.sent).toBeGreaterThanOrEqual(10);

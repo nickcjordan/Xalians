@@ -39,8 +39,7 @@
 	the table says so out loud instead of guessing.
 */
 
-import { recordActions, recordPassives, isSignatureAbility } from '@xalians/content/ability-compatibility';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import { conceptOf, roundsFor, type Concept } from './statusLayer.ts';
 
 // ---------------------------------------------------------------------------
@@ -304,43 +303,16 @@ export const REACH_BY_RANGE: Record<string, number> = {
 	Reads ONE capability off a record as the table sees it. Never throws: an action the
 	game cannot express comes back with role 'unsupported' and the words to say so, which
 	is the whole point of the ruling it implements.
-
-	Schema 1 records (no `effects`, a bare `action` key) are still readable: the legacy key
-	is mapped onto the same vocabulary so an archived record opens rather than erroring.
 */
-export function readAction(ability: any): ActionReading {
+export function readAction(ability: any, isSignature = false): ActionReading {
 	const name = String(ability?.name || ability?.key || 'Act');
 	const key = String(ability?.key || name);
-	const signature = isSignatureAbility(ability);
+	const signature = isSignature;
 	const base = {
 		key, name, signature,
 		instrument: ability?.instrument,
 		medium: ability?.medium,
 	};
-
-	// schema 1: a bare action key, no effects. Read through the legacy vocabulary so an
-	// archived record still opens; the game's own reading below is what new records get.
-	if (!ability?.effects && ability?.action) {
-		const legacy = String(ability.action);
-		const legacySweeps = ['burst', 'spray', 'cloud'];
-		const legacyRole: EffectRole = legacy === 'ward' ? EFFECT_ROLE.SHIELD
-			: legacy === 'mend' ? EFFECT_ROLE.MEND
-				: EFFECT_ROLE.ATTACK;
-		const legacyProjected = ['hurl', 'beam', 'spray', 'burst', 'cloud'].includes(legacy);
-		return {
-			...base,
-			intensity: typeof ability?.intensity === 'number' ? ability.intensity : DEFAULT_INTENSITY,
-			harmMechanism: null,
-			role: legacyRole,
-			effectKind: legacy,
-			area: legacySweeps.includes(legacy),
-			range: 'contact',
-			reach: 1,
-			delivery: legacyProjected ? 'projectile' : 'contact',
-			touchesOthers: true,
-			governingAttribute: governingAttributeFor(legacyRole, legacyProjected ? 'projectile' : 'contact'),
-		};
-	}
 
 	const chosen = tableEffectOf(ability);
 	const effect = chosen ? chosen.effect : null;
@@ -462,37 +434,18 @@ export interface RecordReading {
 	in the current content, all `protect`, so the cost of that is near zero today; reading
 	them here means the day content leans on them, the number is already in front of us.
 */
-export function readRecord(record: XalianRecord | null | undefined): RecordReading {
+export function readRecord(record: CreatureRecord | null | undefined): RecordReading {
 	/*
-		SCHEMA 5. THE SIGNATURE IS DECLARED ON THE RECORD, and it is read here.
-
-		Schema 4 marked a signature on the ability itself (`role`, `prominence` or a boolean),
-		and `isSignatureAbility` reads those markers. Schema 5 states it once, on the record,
-		as `signature: {type: 'action' | 'passive', key}` - which is better, because it is
-		stated rather than inferred.
-
-		The shared `recordActions` helper already stamps a role from the record's signature,
-		but it reads `signature.kind` where schema 5 writes `signature.type`, so on a v5
-		record it marks every action `standard`. Checked against the frozen release: the
-		signature action came back unmarked, which is a SILENT wrong answer rather than a
-		loud one, and the signature is what a creature's blow is read from.
-
-		So the seam reads the record's own declaration and does not depend on either
-		spelling. This is the adapter earning its existence: one file knows that schema 4
-		said `kind` and schema 5 says `type`, and nothing else has to.
+		The signature is declared once, on the record: `signature: {type: 'action' | 'passive',
+		key}`. An ability is the signature when its type and key match that declaration.
 	*/
-	const declared: any = (record as any)?.signature;
-	const signatureType = declared ? String(declared.type ?? declared.kind ?? '') : '';
-	const signatureKey = declared ? String(declared.key ?? '') : '';
-	const markSignature = (kind: 'action' | 'passive') => (ability: any) => {
-		const isSignature = !!signatureKey && signatureType === kind && String(ability?.key) === signatureKey;
-		// keep schema 4's own markers working for archived records, which state it per ability
-		return isSignature ? { ...ability, role: 'signature' } : ability;
-	};
-	const actions = (record ? recordActions(record as any) : [])
-		.map(markSignature('action')).map(readAction);
-	const passives = (record ? recordPassives(record as any) : [])
-		.map(markSignature('passive')).map(readAction);
+	const declared = record ? record.signature : undefined;
+	const signatureType = declared ? String(declared.type) : '';
+	const signatureKey = declared ? String(declared.key) : '';
+	const read = (kind: 'action' | 'passive') => (ability: any) =>
+		readAction(ability, !!signatureKey && signatureType === kind && String(ability?.key) === signatureKey);
+	const actions = (record && Array.isArray(record.actions) ? record.actions : []).map(read('action'));
+	const passives = (record && Array.isArray(record.passives) ? record.passives : []).map(read('passive'));
 	const usable = actions.filter((a) => a.role !== EFFECT_ROLE.UNSUPPORTED);
 	const reasons: string[] = [];
 	actions.forEach((a) => {

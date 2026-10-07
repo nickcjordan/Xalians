@@ -7,6 +7,7 @@
 	side has nobody standing, nobody standing can attack, or an exchange changes nothing; a
 	bolster mends at its own turn (pass 69); the single exchange is still there as a lever.
 */
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, expect } from 'vitest';
 import { createMatch, send, pass, currentFrame } from '../expeditionRules.ts';
 import type { MatchState } from '../types.ts';
@@ -24,12 +25,11 @@ let uid = 0;
 function record(overrides: any = {}) {
 	uid += 1;
 	const { attributes, abilities, ...rest } = overrides;
-	return {
+	return v5Record({
 		id: `f${uid}`,
 		species: 'graviclaw',
 		provenance: { schemaVersion: '1.0.0', origin: 'nowhere' },
-		element: { primary: 'metal', affinities: { metal: 100 } },
-		archetype: { key: 'predator', favors: [] },
+		element: 'metal',
 		attributes: {
 			strength: 50, vitality: 50, endurance: 50, agility: 50, reflex: 50,
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 50,
@@ -39,23 +39,20 @@ function record(overrides: any = {}) {
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -60, max: 90 } },
 			breathes: ['gas'], capabilities: {}, senses: {},
 		},
-		traits: [],
 		temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: abilities || [
 			{ name: 'Hit', signature: true, instrument: 'fists', action: 'strike', medium: 'metal', intensity: 60 },
 		],
 		...rest,
-	} as any;
+	});
 }
 
 // hardy enough that one blow does not end it, so the fight has exchanges to run
 const hardy = (extra: any = {}) => record({ attributes: { vitality: 95, endurance: 95, resilience: 95, strength: 40, ...extra } });
 const shieldOnly = () => record({
-	archetype: { key: 'bulwark', favors: [] },
 	abilities: [{ name: 'Ward', signature: true, instrument: 'hide', action: 'ward', medium: 'metal', intensity: 60 }],
 });
 const mender = () => record({
-	archetype: { key: 'sage', favors: [] },
 	abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'metal', intensity: 60 }],
 	attributes: { charisma: 90 },
 });

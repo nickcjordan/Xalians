@@ -36,7 +36,7 @@
 
 	This is a full designer-facing balance report (see docs/design/reclamation-design.md's
 	"Tuning" open item): seat fairness, match shape, site economy, roster economy, combat,
-	creature/archetype/element/trait balance, and per-world stats, every rate printed with
+	creature/element balance, and per-world stats, every rate printed with
 	a 95% binomial confidence interval (p ± 1.96*sqrt(p(1-p)/n)) so a designer can tell
 	signal from noise at 300 matches. Deterministic under --seed.
 
@@ -58,7 +58,7 @@
 */
 
 import fs from 'node:fs';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import {
 	createMatch, send, pass, moveSwift, stakeWorld, getPublicState,
 	createRngState, nextRandom,
@@ -182,7 +182,7 @@ function makeRng(seed: string | number): RngLike & { shuffle<T>(array: T[]): T[]
 	shared piece's liveness, pins and statuses answered for both sides at once. The engine
 	now refuses shared ids outright.
 */
-function buildRandomRoster(pool: XalianRecord[], rng: ReturnType<typeof makeRng>, taken: XalianRecord[] = []): XalianRecord[]  {
+function buildRandomRoster(pool: CreatureRecord[], rng: ReturnType<typeof makeRng>, taken: CreatureRecord[] = []): CreatureRecord[]  {
 	const takenIds = new Set(taken.map((r) => r.id));
 	const shuffled = rng.shuffle(takenIds.size ? pool.filter((r) => !takenIds.has(r.id)) : pool);
 	return shuffled.slice(0, ROSTER_SIZE);
@@ -246,7 +246,7 @@ function otherSeat(seat: Seat): Seat  {
 
 const RANDOM_PASS_PROBABILITY = 0.12;
 
-function randomChooseSend(publicState: PublicState, ownRoster: XalianRecord[], handler: Seat, rng: RngLike): BotAction  {
+function randomChooseSend(publicState: PublicState, ownRoster: CreatureRecord[], handler: Seat, rng: RngLike): BotAction  {
 	const me = publicState.players[handler];
 	if (me.passed) {
 		return { type: 'pass', reason: 'already-passed' };
@@ -262,7 +262,7 @@ function randomChooseSend(publicState: PublicState, ownRoster: XalianRecord[], h
 		return { type: 'pass', reason: 'random-pass' };
 	}
 	const capRemaining = sendableCap - me.sentCount;
-	const candidates: Array<{ record: XalianRecord; site: FrameSite }> = [];
+	const candidates: Array<{ record: CreatureRecord; site: FrameSite }> = [];
 	ownRoster.forEach((record: any) => {
 		if (capRemaining < 1) {
 			return;
@@ -374,7 +374,7 @@ interface RunMatchOptions {
 
 // this tool's own flat record shapes: see the file header's typing note.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<typeof makeRng>, options: RunMatchOptions): any  {
+function runOneMatch(matchSeed: string, pool: CreatureRecord[], rng: ReturnType<typeof makeRng>, options: RunMatchOptions): any  {
 	const { mirror, randomSeat, rivals, rules } = options;
 	const rivalFor = { A: rivals && rivals.A, B: rivals && rivals.B };
 
@@ -428,7 +428,7 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 		};
 	}
 
-	function chooseSendFor(handler: Seat, publicState: PublicState, ownRoster: XalianRecord[]): BotAction  {
+	function chooseSendFor(handler: Seat, publicState: PublicState, ownRoster: CreatureRecord[]): BotAction  {
 		if (randomSeat === handler) {
 			return randomChooseSend(publicState, ownRoster, handler, rngLike);
 		}
@@ -540,7 +540,7 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 
 			let nextState: MatchState | null = null;
 			if (action.type === 'send') {
-				const record = state.players[handler].roster.find((r: any) => r.id === action.recordId) as XalianRecord;
+				const record = state.players[handler].roster.find((r: any) => r.id === action.recordId) as CreatureRecord;
 				// pass 25: carry the act-flip choice, null when the lever is off
 				nextState = send(state, handler, action.recordId, action.siteId, false, (action as any).chosenRole || null);
 				if (nextState) {
@@ -619,8 +619,7 @@ function runOneMatch(matchSeed: string, pool: XalianRecord[], rng: ReturnType<ty
 					site: ev.site,
 					role: ev.role,
 					side: sentInfo ? sentInfo.side : null,
-					archetype: sentInfo && sentInfo.record.archetype ? sentInfo.record.archetype.key : null,
-					element: sentInfo && sentInfo.record.element ? sentInfo.record.element.primary : null,
+					element: sentInfo && sentInfo.record.element ? sentInfo.record.element : null,
 					outcome: ev.outcome,
 					power: typeof ev.power === 'number' ? ev.power : null,
 					remaining: ev.remaining,
@@ -723,7 +722,7 @@ function boardSiteOf(state: MatchState, frame: MatchState['frames'][number], han
 
 // see the file header's typing note: `any` here is this tool's own ad hoc report shape.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], rivals: { A?: Rival | null; B?: Rival | null }): any  {
+function summarize(matchResults: any[], args: CliArgs, pool: CreatureRecord[], rivals: { A?: Rival | null; B?: Rival | null }): any  {
 	const completedMatches = matchResults.filter((m: any) => !m.error);
 	const errors = matchResults.filter((m: any) => m.error).map((m: any, i: any) => ({ matchIndex: i, error: m.error }));
 
@@ -1053,37 +1052,9 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 	};
 
 	// -------------------- 6. creature balance --------------------
-	const byArchetype: Record<string, { sent: number; wins: number; downsDealt: number; downsSuffered: number }> = {};
-	allSends.filter((s: any) => !s.tie).forEach((s: any) => {
-		const key = s.record.archetype ? s.record.archetype.key : 'unknown';
-		byArchetype[key] = byArchetype[key] || { sent: 0, wins: 0, downsDealt: 0, downsSuffered: 0 };
-		byArchetype[key].sent++;
-		if (s.won) {
-			byArchetype[key].wins++;
-		}
-	});
-	allAttacks.forEach((b: any) => {
-		if (!b.archetype) {
-			return;
-		}
-		byArchetype[b.archetype] = byArchetype[b.archetype] || { sent: 0, wins: 0, downsDealt: 0, downsSuffered: 0 };
-		if (b.outcome === 'downed') {
-			byArchetype[b.archetype].downsDealt++;
-		}
-	});
-	const archetypeReport: Record<string, unknown> = {};
-	Object.keys(byArchetype).forEach((key: any) => {
-		const b = byArchetype[key];
-		archetypeReport[key] = {
-			sent: b.sent,
-			siteWinRate: rate(b.wins, b.sent),
-			downsDealt: b.downsDealt,
-		};
-	});
-
 	const byElement: Record<string, { sent: number; wins: number; nonTie: number; strainedCount: number }> = {};
 	allSends.forEach((s: any) => {
-		const el = s.record.element ? s.record.element.primary : 'unknown';
+		const el = s.record.element || 'unknown';
 		byElement[el] = byElement[el] || { sent: 0, wins: 0, nonTie: 0, strainedCount: 0 };
 		byElement[el].sent++;
 		if (!s.tie) {
@@ -1122,7 +1093,7 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 	const elementWorldStrainTable: Record<string, Record<string, number | null>> = {};
 	ALL_ELEMENTS.forEach((el: any) => {
 		elementWorldStrainTable[el] = {};
-		const creaturesOfElement = pool.filter((r: any) => r.element && r.element.primary === el);
+		const creaturesOfElement = pool.filter((r: any) => r.element === el);
 		worlds.forEach((w: any) => {
 			if (creaturesOfElement.length === 0) {
 				elementWorldStrainTable[el][w.planet] = null; // no creature of this element in the pool to test
@@ -1133,28 +1104,8 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 		});
 	});
 
-	const byTrait: Record<string, { present: number; wins: number; nonTie: number }> = {};
-	allSends.forEach((s: any) => {
-		const traits = s.record.traits ? [...(s.record.traits.guaranteed || []), ...(s.record.traits.rolled || [])] : [];
-		traits.forEach((t: string) => {
-			byTrait[t] = byTrait[t] || { present: 0, wins: 0, nonTie: 0 };
-			byTrait[t].present++;
-			if (!s.tie) {
-				byTrait[t].nonTie++;
-				if (s.won) {
-					byTrait[t].wins++;
-				}
-			}
-		});
-	});
-	const traitReport: Record<string, unknown> = {};
-	Object.keys(byTrait).forEach((t: any) => {
-		const b = byTrait[t];
-		traitReport[t] = { present: b.present, siteWinRate: rate(b.wins, b.nonTie) };
-	});
-
 	// per-individual-creature (by record id) win rate, min 10 sends
-	const byRecord: Record<string, { record: XalianRecord; sent: number; wins: number; nonTie: number; holdRank?: number }> = {};
+	const byRecord: Record<string, { record: CreatureRecord; sent: number; wins: number; nonTie: number; holdRank?: number }> = {};
 	allSends.forEach((s: any) => {
 		byRecord[s.recordId] = byRecord[s.recordId] || { record: s.record, sent: 0, wins: 0, nonTie: 0 };
 		byRecord[s.recordId].sent++;
@@ -1174,8 +1125,7 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 		.map((b: any) => ({
 			recordId: b.record.id,
 			species: b.record.species,
-			archetype: b.record.archetype ? b.record.archetype.key : null,
-			element: b.record.element ? b.record.element.primary : null,
+			element: b.record.element || null,
 			hold: b.hold,
 			holdRank: b.holdRank,
 			poolSize: poolWithHold.length,
@@ -1199,10 +1149,8 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 	}).length;
 
 	const creatureBalance = {
-		byArchetype: archetypeReport,
 		byElement: elementReport,
 		elementWorldStrainTable,
-		byTrait: traitReport,
 		top5ByWinRate: top5,
 		bottom5ByWinRate: bottom5,
 		// every eligible creature, so a balance question about a named species can be asked
@@ -1257,7 +1205,7 @@ function summarize(matchResults: any[], args: CliArgs, pool: XalianRecord[], riv
 		const sites = planetSiteRecords[planet] || [];
 		const sends = planetSendRecords[planet] || [];
 		const world = worlds.find((w: any) => w.planet === planet);
-		const homeElementSends = world ? sends.filter((s: any) => s.record.element && s.record.element.primary === world.element) : [];
+		const homeElementSends = world ? sends.filter((s: any) => s.record.element === world.element) : [];
 		worldsReport[planet] = {
 			timesDrawn: byPlanet[planet].drawn,
 			tieRate: rate(sites.filter((s: any) => s.tie).length, sites.length),
@@ -1406,12 +1354,7 @@ function printReport(report: any): void  {
 	console.log(`site win rate at count 3+ - A: ${fmtRate(c.stackVsSpread.siteWinRateAt3Plus.A)}, B: ${fmtRate(c.stackVsSpread.siteWinRateAt3Plus.B)}`);
 
 	console.log('\n--- 6. creature balance ---');
-	console.log('by archetype (sent, site win rate, downs dealt):');
 	const cb = report.creatureBalance;
-	Object.keys(cb.byArchetype).sort().forEach((key: any) => {
-		const a = cb.byArchetype[key];
-		console.log(`  ${key}: sent=${a.sent}, win rate=${fmtRate(a.siteWinRate)}, downs dealt=${a.downsDealt}`);
-	});
 	console.log('by element (sent, site win rate, strained share):');
 	Object.keys(cb.byElement).sort().forEach((el: any) => {
 		const e = cb.byElement[el];
@@ -1424,18 +1367,13 @@ function printReport(report: any): void  {
 		const row = cb.elementWorldStrainTable[el];
 		console.log(`  ${el}: ${planetNames.map((p: any) => (row[p] === null ? '  -' : `${Math.round(row[p] * 100)}%`.padStart(4))).join(' ')}`);
 	});
-	console.log('by trait keyword (present, site win rate):');
-	Object.keys(cb.byTrait).sort().forEach((t: any) => {
-		const tr = cb.byTrait[t];
-		console.log(`  ${t}: present=${tr.present}, win rate=${fmtRate(tr.siteWinRate)}`);
-	});
 	console.log('top 5 creatures by site win rate (min 10 sends):');
 	cb.top5ByWinRate.forEach((r: any) => {
-		console.log(`  ${r.species} (${r.archetype}/${r.element}) hold=${r.hold.toFixed(1)} rank ${r.holdRank}/${r.poolSize}: win rate ${(r.siteWinRate * 100).toFixed(1)}% (sent ${r.sent})`);
+		console.log(`  ${r.species} (${r.element}) hold=${r.hold.toFixed(1)} rank ${r.holdRank}/${r.poolSize}: win rate ${(r.siteWinRate * 100).toFixed(1)}% (sent ${r.sent})`);
 	});
 	console.log('bottom 5 creatures by site win rate (min 10 sends):');
 	cb.bottom5ByWinRate.forEach((r: any) => {
-		console.log(`  ${r.species} (${r.archetype}/${r.element}) hold=${r.hold.toFixed(1)} rank ${r.holdRank}/${r.poolSize}: win rate ${(r.siteWinRate * 100).toFixed(1)}% (sent ${r.sent})`);
+		console.log(`  ${r.species} (${r.element}) hold=${r.hold.toFixed(1)} rank ${r.holdRank}/${r.poolSize}: win rate ${(r.siteWinRate * 100).toFixed(1)}% (sent ${r.sent})`);
 	});
 	console.log(`power correlation - higher mean base hold wins: ${fmtRate(cb.higherMeanHoldWinRate)}`);
 	console.log(`power correlation - higher mean speed wins: ${fmtRate(cb.higherMeanSpeedWinRate)}`);

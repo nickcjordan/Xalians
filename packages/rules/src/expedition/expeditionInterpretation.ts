@@ -15,7 +15,7 @@
 */
 
 import rawTypeEffectivenessMatrix from '@xalians/content/typeEffectivenessMatrix.json';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import type { ActClass, Role, Rules } from './types.ts';
 
 // ---------------------------------------------------------------------------
@@ -217,11 +217,11 @@ export const WILLFUL_THRESHOLD = 65;
 export const PRESENCE_SCALE_FLOOR = 0.5;
 export const PRESENCE_SCALE_PER_POINT = 0.01;
 
-export function presenceScaleOf(record: XalianRecord | null | undefined, rules?: Partial<Rules> | null): number {
+export function presenceScaleOf(record: CreatureRecord | null | undefined, rules?: Partial<Rules> | null): number {
 	if (rules && rules.presenceScale === false) {
 		return 1;
 	}
-	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
+	const attrs = (record && record.attributes) || ({} as Partial<CreatureRecord['attributes']>);
 	const charisma = typeof attrs.charisma === 'number' ? attrs.charisma : 50;
 	return PRESENCE_SCALE_FLOOR + charisma * PRESENCE_SCALE_PER_POINT;
 }
@@ -230,7 +230,7 @@ export function presenceScaleOf(record: XalianRecord | null | undefined, rules?:
 	instinct: targeting. At or above KEEN_INSTINCT a creature picks the enemy it can down
 	with this attack, and failing that the enemy it takes the most off (after matchup); at
 	or below DULL_INSTINCT it simply hits whatever was sent earliest; in between it follows
-	its archetype's conduct line as it always has.
+	its temperament's conduct line as it always has.
 */
 export const KEEN_INSTINCT = 65;
 /*
@@ -304,11 +304,11 @@ export type InstinctLane = 'keen' | 'conduct' | 'dull';
 // 'keen' | 'conduct' | 'dull' - which targeting lane a creature reads its target from.
 // One definition, read by the engine's own pick and by the bot's preview of it, so the
 // two can never disagree about who a creature would hit.
-export function instinctLaneOf(record: XalianRecord | null | undefined, rules?: Partial<Rules> | null): InstinctLane {
+export function instinctLaneOf(record: CreatureRecord | null | undefined, rules?: Partial<Rules> | null): InstinctLane {
 	if (rules && rules.instinctLanes === false) {
 		return 'conduct';
 	}
-	const attrs = (record && record.attributes) || ({} as Partial<XalianRecord['attributes']>);
+	const attrs = (record && record.attributes) || ({} as Partial<CreatureRecord['attributes']>);
 	const instinct = typeof attrs.instinct === 'number' ? attrs.instinct : 50;
 	const keen = rules && typeof rules.keenInstinct === 'number' ? rules.keenInstinct : KEEN_INSTINCT;
 	const dull = rules && typeof rules.dullInstinct === 'number' ? rules.dullInstinct : DULL_INSTINCT;
@@ -974,21 +974,6 @@ export const ROLE: { STRIKE: Role; SWEEP: Role; BOLSTER: Role; SHIELD: Role; NON
 	NONE: 'none',
 };
 
-/*
-	Presence archetypes and their default presence, per assumption 4: "survivor, bulwark,
-	stalwart, sage are presences (bolster or shield by their abilities and element)".
-	Between bolster and shield the ruling is shield for bulwark and stalwart (both are
-	framed as the creatures that stand in front of something) and bolster for survivor and
-	sage (both are framed as the creatures that keep others going). See roleOf() in
-	creatureOnTable.js for the one case that overrides this table.
-*/
-export const PRESENCE_BY_ARCHETYPE: Record<string, Role> = {
-	bulwark: ROLE.SHIELD,
-	stalwart: ROLE.SHIELD,
-	survivor: ROLE.BOLSTER,
-	sage: ROLE.BOLSTER,
-};
-
 // ---------------------------------------------------------------------------
 // the ability vocabulary the registry writes, grouped by what it touches. Nothing in
 // the game lets a player choose among these any more (assumption 1): the tables survive
@@ -1018,7 +1003,7 @@ export const ACT_CLASS_BY_ACTION: Record<string, ActClass> = {
 	ambush: ACT_CLASS.REACH,
 
 	// projection - since assumption 3 (sealed worlds) these reach no further than
-	// contact does; the class is kept only because favoredAct's archetype table names it
+	// contact does; the class decides which acts can be a blow
 	beam: ACT_CLASS.PROJECTION,
 	hurl: ACT_CLASS.PROJECTION,
 	burst: ACT_CLASS.PROJECTION,
@@ -1035,7 +1020,7 @@ export const ACT_CLASS_BY_ACTION: Record<string, ActClass> = {
 // (assumption 4)
 export const SWEEP_ABILITY_ACTIONS = ['burst', 'spray', 'cloud'];
 
-// the two support abilities that override the archetype's default presence (see roleOf)
+// the two support abilities that make a creature a presence when its signature is one (see roleOf)
 export const WARD_ABILITY_ACTION = 'ward';
 export const MEND_ABILITY_ACTION = 'mend';
 
@@ -1105,50 +1090,6 @@ export function getGoverningAttributeForAction(action: string | null | undefined
 }
 
 // ---------------------------------------------------------------------------
-// favored act per archetype - since assumption 1 nobody gives orders, so this table no
-// longer decides what a creature does; it decides WHICH of a blow creature's abilities
-// is the one blow it throws (creatureOnTable.blowActOf). Support-favoring rows still
-// exist because a blow creature can have an archetype that prefers a support act it does
-// not own, and the fallback path has to be written down somewhere.
-// ---------------------------------------------------------------------------
-
-export interface FavoredActSpec {
-	prefer: 'strongestOfClass' | 'specificAction' | 'hold' | 'strongestOverall';
-	classes?: ActClass[];
-	action?: string;
-	actionPriority?: string[];
-}
-
-export const FAVORED_ACT_BY_ARCHETYPE: Record<string, FavoredActSpec> = {
-	predator: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT, ACT_CLASS.PROJECTION] },
-	prowler: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT, ACT_CLASS.PROJECTION] },
-	juggernaut: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT] },
-	berserker: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT] },
-	vanguard: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT, ACT_CLASS.PROJECTION] },
-	balanced: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT, ACT_CLASS.PROJECTION] },
-	bulwark: { prefer: 'specificAction', action: 'ward' },
-	stalwart: { prefer: 'specificAction', action: 'ward' },
-	survivor: { prefer: 'hold' },
-	skirmisher: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT], actionPriority: ['lash', 'rake'] },
-	runner: { prefer: 'strongestOfClass', classes: [ACT_CLASS.CONTACT], actionPriority: ['lash', 'rake'] },
-	seeker: { prefer: 'specificAction', action: 'mend' },
-	sage: { prefer: 'specificAction', action: 'mend' },
-	virtuoso: { prefer: 'strongestOverall' },
-	sovereign: { prefer: 'strongestOverall' },
-	rogue: { prefer: 'strongestOverall' },
-};
-
-export function getFavoredActSpec(archetypeKey: string | null | undefined): FavoredActSpec | null {
-	if (!archetypeKey) {
-		return null;
-	}
-	const key = String(archetypeKey).toLowerCase();
-	return Object.prototype.hasOwnProperty.call(FAVORED_ACT_BY_ARCHETYPE, key)
-		? FAVORED_ACT_BY_ARCHETYPE[key]
-		: null;
-}
-
-// ---------------------------------------------------------------------------
 // conduct: whom a creature chooses ("Conduct: whom a creature chooses"). Unchanged by
 // the base redesign except that every line now reads only the creature's OWN world
 // (assumption 2 keeps conduct derived and assumption 3 seals the worlds).
@@ -1159,43 +1100,14 @@ export interface ConductSpec {
 	supporting: string;
 }
 
-export const CONDUCT_BY_ARCHETYPE: Record<string, ConductSpec> = {
-	predator: { attacking: 'weakestEnemyInReach', supporting: 'allyWithLeastHold' },
-	prowler: { attacking: 'weakestEnemyInReach', supporting: 'allyWithLeastHold' },
-	juggernaut: { attacking: 'strongestEnemyInReach', supporting: 'allyWithMostHold' },
-	berserker: { attacking: 'strongestEnemyInReach', supporting: 'allyWithMostHold' },
-	vanguard: { attacking: 'enemySentEarliest', supporting: 'allySentEarliest' },
-	balanced: { attacking: 'enemySentEarliest', supporting: 'allySentEarliest' },
-	bulwark: { attacking: 'enemyThreateningWeakestAlly', supporting: 'allyWithLeastHold' },
-	stalwart: { attacking: 'enemyThreateningWeakestAlly', supporting: 'allyWithLeastHold' },
-	survivor: { attacking: 'enemyWithLowestMagnitude', supporting: 'self' },
-	skirmisher: { attacking: 'slowerEnemyWeakestFirst', supporting: 'fastestAlly' },
-	runner: { attacking: 'slowerEnemyWeakestFirst', supporting: 'fastestAlly' },
-	seeker: { attacking: 'enemyMostVulnerableToElement', supporting: 'allyMostVulnerablePresent' },
-	sage: { attacking: 'enemyMostVulnerableToElement', supporting: 'allyMostVulnerablePresent' },
-	virtuoso: { attacking: 'enemyWithHighestMagnitude', supporting: 'allyWithHighestMagnitude' },
-	sovereign: { attacking: 'enemyWithHighestMagnitude', supporting: 'allyWithHighestMagnitude' },
-	rogue: { attacking: 'enemyRoutableElseWeakest', supporting: 'allyWithHighestMagnitude' },
-};
-
 /*
-	SCHEMA 5: CONDUCT FROM TEMPERAMENT, BECAUSE ARCHETYPE IS RETIRED.
+	CONDUCT FROM TEMPERAMENT. Whom a creature chooses is derived from its temperament,
+	bounded 0 to 100 on five independently authored axes, so a pool spreads over eight
+	distinct targeting lines rather than sharing one.
 
-	Whom a creature chooses used to be read off its archetype through the table above. On a
-	schema 5 record there is no archetype, so every creature fell through to the single
-	default and the measured result was all 96 creatures in a pool sharing one line,
-	`enemySentEarliest`. Eight distinct targeting behaviours collapsed into one, which is a
-	real loss of variety in the Clash and not a cosmetic one.
-
-	Schema 5 keeps temperament, bounded 0 to 100 on five independently authored axes, and
-	the frozen roster uses the range (49 distinct aggression values over 96 creatures,
-	spanning 15 to 80). So conduct is derived from temperament instead, which is arguably
-	what the archetype table was approximating all along: "predator" was a label for high
-	aggression, "survivor" for low boldness.
-
-	The mapping below is a LEVER, recorded with its reasoning. Each line says which
-	temperament makes a creature choose that way, and every attacking line in
-	CONDUCT_BY_ARCHETYPE is reachable so no behaviour is orphaned:
+	The mapping is a LEVER, recorded with its reasoning. Each line says which temperament
+	makes a creature choose that way, and every attacking line is reachable so no
+	behaviour is orphaned:
 
 	  high aggression, high boldness   the strongest enemy standing: a fight picked on purpose
 	  high aggression, lower boldness  the weakest enemy: finish what is already hurt
@@ -1236,16 +1148,6 @@ export function conductFromTemperament(temperament: Partial<Record<string, numbe
 		return { attacking: 'enemyThreateningWeakestAlly', supporting: 'allyWithLeastHold' };
 	}
 	return { attacking: 'enemySentEarliest', supporting: 'allySentEarliest' };
-}
-
-export function getConductSpec(archetypeKey: string | null | undefined): ConductSpec | null {
-	if (!archetypeKey) {
-		return null;
-	}
-	const key = String(archetypeKey).toLowerCase();
-	return Object.prototype.hasOwnProperty.call(CONDUCT_BY_ARCHETYPE, key)
-		? CONDUCT_BY_ARCHETYPE[key]
-		: null;
 }
 
 // ---------------------------------------------------------------------------

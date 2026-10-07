@@ -10,7 +10,7 @@ import ReclamationFigure from '../reclamationFigure';
 	creature and leave it standing, its plate reads now and after, "13→10".
 */
 
-const record = { id: 'r1', species: 'scalatto', traits: [] };
+const record = { id: 'r1', species: 'scalatto' };
 const hold = (container) => container.querySelector('.rec-figure-hold');
 
 describe('a plate\'s number', () => {

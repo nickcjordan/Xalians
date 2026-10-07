@@ -1,6 +1,6 @@
-import {recordActions} from '@xalians/content/ability-compatibility';
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, it, expect } from 'vitest';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import {
 	createMatch as createMatchAsShipped, send, pass, getPublicState, moveSwift, stakeWorld, stakeableSiteIdsFor,
 	DEFAULT_RULES,
@@ -43,8 +43,8 @@ import type { MatchState, World } from '../types.ts';
 */
 
 // deliberately minimal fixture, cast rather than filled out - see creatureOnTable.test.ts
-function makeRecord(id: any, overrides: any = {}): XalianRecord {
-	return {
+function makeRecord(id: any, overrides: any = {}): CreatureRecord {
+	return v5Record({
 		id,
 		species: overrides.species || 'testling',
 		provenance: { serial: 1, origin: overrides.origin || 'magmuth' },
@@ -53,22 +53,20 @@ function makeRecord(id: any, overrides: any = {}): XalianRecord {
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 80,
 			...overrides.attributes,
 		},
-		element: overrides.element || { primary: 'fire', affinities: { fire: 100 } },
-		archetype: overrides.archetype || { key: 'balanced', favors: [] },
+		element: overrides.element || 'fire',
 		physiology: overrides.physiology || {
 			breathes: ['gas'],
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -50, max: 200 } },
 		},
-		traits: overrides.traits || { guaranteed: [], rolled: [] },
 		temperament: overrides.temperament || { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: overrides.abilities || [
 			{ name: 'Strike', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 60 },
 		],
-	} as unknown as XalianRecord;
+	});
 }
 
-function makeRoster(prefix: any, overridesFn?: any): XalianRecord[] {
-	const roster: XalianRecord[] = [];
+function makeRoster(prefix: any, overridesFn?: any): CreatureRecord[] {
+	const roster: CreatureRecord[] = [];
 	for (let i = 0; i < ROSTER_SIZE; i++) {
 		roster.push(makeRecord(`${prefix}_${i}`, overridesFn ? overridesFn(i) : {}));
 	}
@@ -268,31 +266,18 @@ describe('Deploy phase: send/pass/alternation', () => {
 		}
 	});
 
-	// pass 4b (assumption 27): hiding is not a choice. A stealthy creature arrives hidden,
-	// everyone else arrives in the open, and the fifth argument is ignored either way.
-	test('a stealthy creature arrives hidden, a non-stealthy one arrives open, whatever the fifth argument says', () => {
+	// pass 4b (assumption 27): hiding is not a choice, and the fifth argument is ignored. Only a
+	// stealthy trait hides a creature, and a schema 5 creature has no traits.
+	test('no creature arrives hidden under schema 5, whatever the fifth argument says', () => {
 		const state = freshMatch('stealth-seed');
 		const starter = state.starter;
 		const frame = currentFrame(state);
 		const siteId = frame.sites[0].id;
-		const nonStealthId = state.players[starter].roster[0].id;
-		// asking to hide a non-stealthy creature is no longer illegal; it just arrives open
-		const openAnyway = send(state, starter, nonStealthId, siteId, true)!;
+		const id = state.players[starter].roster[0].id;
+		// asking to hide a creature is not illegal; a creature without trait keywords arrives open
+		const openAnyway = send(state, starter, id, siteId, true)!;
 		expect(openAnyway).not.toBeNull();
 		expect(openAnyway.board[siteId][starter][0].hidden).toBe(false);
-
-		const stealthyRoster = makeRoster('S', () => ({ traits: { guaranteed: [], rolled: ['stealthy'] } }));
-		const stealthState = createMatch({ rosterA: stealthyRoster, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'stealth-seed-2' });
-		if (stealthState.starter === 'A') {
-			const stealthSite = currentFrame(stealthState).sites[0].id;
-			// no fifth argument at all, and it still arrives hidden
-			const arrived = send(stealthState, 'A', stealthyRoster[0].id, stealthSite)!;
-			expect(arrived).not.toBeNull();
-			expect(arrived.board[stealthSite].A[0].hidden).toBe(true);
-			// and asking for an open send does not get one
-			const asked = send(stealthState, 'A', stealthyRoster[0].id, stealthSite, false)!;
-			expect(asked.board[stealthSite].A[0].hidden).toBe(true);
-		}
 	});
 
 	test('a handler with no legal send is auto-passed', () => {
@@ -389,22 +374,6 @@ describe('the round: Deploy, Resolve, Judge', () => {
 		expect(findEntry(state, 'B_0')).toBeNull();
 	});
 
-	test('armored reduces a blow by the rules fraction', () => {
-		const bigStriker = plainStriker('big2', 80, 90);
-		const soft = makeRecord('soft', {
-			abilities: [{ name: 'Tap', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 5 }],
-			attributes: { strength: 1, vitality: 99, endurance: 99, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 99 },
-		});
-		const hard = makeRecord('hard', { ...soft, traits: { guaranteed: ['armored'], rolled: [] } });
-		const soft2 = { ...soft, traits: { guaranteed: [], rolled: [] } };
-		const softState = oneWorldRound(bigStriker, soft2, 'round-armor');
-		const hardState = oneWorldRound(bigStriker, { ...hard, abilities: recordActions(soft), attributes: soft.attributes, traits: ['armored'] }, 'round-armor');
-		const softBlow = (softState.resolutionLog as any[]).find((e: any) => e.type === 'attack' && e.recordId === 'A_0');
-		const hardBlow = (hardState.resolutionLog as any[]).find((e: any) => e.type === 'attack' && e.recordId === 'A_0');
-		expect(hardBlow.power).toBeLessThan(softBlow.power);
-		expect(hardBlow.power).toBeCloseTo(Math.round(softBlow.power * (1 - ARMORED_REDUCTION) * 10) / 10, 5);
-	});
-
 	test('sealed worlds: a blow never reaches a creature at another site', () => {
 		const projector = makeRecord('projector', {
 			abilities: [{ name: 'Beam', signature: false, instrument: 'eyes', action: 'beam', medium: 'fire', intensity: 100 }],
@@ -445,58 +414,6 @@ describe('resolution order: speed, strained last (hidden first only under its le
 	const striker = (id: any, over: any) => makeRecord(id, {
 		abilities: [{ name: 'Hit', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 60 }],
 		...over,
-	});
-
-	test('pass 4 (assumption 24): a hidden creature waits its turn in speed order like anyone else', () => {
-		const slowHidden = striker('slow-hidden0', {
-			traits: { guaranteed: ['stealthy'], rolled: [] },
-			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 1, reflex: 1, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-		});
-		const fast = striker('fast0', {
-			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-		});
-		const state = twoAtOneSite(slowHidden, fast, 'hidden-first-seed', true);
-		const blows = (state.resolutionLog as any[]).filter((e: any) => e.type === 'attack');
-		expect(blows[0].recordId).toBe('B_0');
-		// the creature was hidden until the Clash, and the log still says so
-		const own = blows.find((e: any) => e.recordId === 'A_0');
-		expect(own.hidden).toBe(true);
-	});
-
-	test('under the hiddenFirst lever a hidden creature blows first, however slow it is (the pass 2 bonus)', () => {
-		const slowHidden = striker('slow-hidden', {
-			traits: { guaranteed: ['stealthy'], rolled: [] },
-			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 1, reflex: 1, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-		});
-		const fast = striker('fast', {
-			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-		});
-		const state = twoAtOneSite(slowHidden, fast, 'hidden-first-seed', true, { hiddenFirst: true });
-		const blows = (state.resolutionLog as any[]).filter((e: any) => e.type === 'attack');
-		expect(blows[0].recordId).toBe('A_0');
-		expect(blows[0].hidden).toBe(true);
-	});
-
-	test('with hiddenFirst off the same creature waits its turn in initiative order', () => {
-		const slowHidden = striker('slow-hidden2', {
-			traits: { guaranteed: ['stealthy'], rolled: [] },
-			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 1, reflex: 1, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-		});
-		const fast = striker('fast2', {
-			attributes: { strength: 60, vitality: 60, endurance: 70, agility: 99, reflex: 99, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-		});
-		const worlds = makeWorlds();
-		const rosterA = makeRoster('A').map((r: any, i: any) => (i === 0 ? { ...slowHidden, id: 'A_0' } : r));
-		const rosterB = makeRoster('B').map((r: any, i: any) => (i === 0 ? { ...fast, id: 'B_0' } : r));
-		let state = createMatch({ rosterA, rosterB, worlds, seed: 'hidden-first-seed', rules: { hiddenFirst: false } });
-		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
-		const frame = currentFrame(state);
-		state = send(state, 'A', 'A_0', frame.sites[0].id, true)!;
-		state = send(state, 'B', 'B_0', frame.sites[0].id)!;
-		state = pass(state, state.turn!)!;
-		state = pass(state, state.turn!)!;
-		const blows = (state.resolutionLog as any[]).filter((e: any) => e.type === 'attack');
-		expect(blows[0].recordId).toBe('B_0');
 	});
 
 	test('strained creatures blow last regardless of initiative', () => {
@@ -550,27 +467,22 @@ describe('resolution order: speed, strained last (hidden first only under its le
 
 describe('the four roles', () => {
 	const bigStriker = (id: any) => makeRecord(id, {
-		archetype: { key: 'predator', favors: [] },
 		abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }],
 		attributes: { strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
 	});
 	const smallStriker = (id: any) => makeRecord(id, {
-		archetype: { key: 'predator', favors: [] },
 		abilities: [{ name: 'Poke', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 20 }],
 		attributes: { strength: 20, vitality: 60, endurance: 70, agility: 20, reflex: 20, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
 	});
 	const shielder = (id: any) => makeRecord(id, {
-		archetype: { key: 'bulwark', favors: [] },
-		abilities: [{ name: 'Guard', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 60 }],
+		abilities: [{ name: 'Guard', signature: true, instrument: 'body', action: 'ward', medium: 'fire', intensity: 60 }],
 		attributes: { strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
 	});
 	const bolsterer = (id: any) => makeRecord(id, {
-		archetype: { key: 'sage', favors: [] },
-		abilities: [{ name: 'Steady', signature: false, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
+		abilities: [{ name: 'Steady', signature: true, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
 		attributes: { strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
 	});
 	const areaCreature = (id: any) => makeRecord(id, {
-		archetype: { key: 'predator', favors: [] },
 		abilities: [{ name: 'Cloud', signature: false, instrument: 'body', action: 'cloud', medium: 'fire', intensity: 90 }],
 		attributes: { strength: 50, vitality: 60, endurance: 90, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
 	});
@@ -703,7 +615,6 @@ describe('the four roles', () => {
 
 	test('bolster lifts a strained ally a whole grade, not just the floor', () => {
 		const strainedStriker = (id: any) => makeRecord(id, {
-			archetype: { key: 'predator', favors: [] },
 			abilities: [{ name: 'Poke', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 20 }],
 			attributes: { strength: 20, vitality: 60, endurance: 70, agility: 20, reflex: 20, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
 			// pass 68: the wrong medium, whose grade still halves (a world's temperature now costs only a tenth)
@@ -792,8 +703,8 @@ describe('judging and match end', () => {
 	}
 
 	test('a tied site reverts to the Court (no winner)', () => {
-		const equalA = makeRecord('tieA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
-		const equalB = makeRecord('tieB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
+		const equalA = makeRecord('tieA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
+		const equalB = makeRecord('tieB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A').map((r: any, i: any) => (i === 0 ? { ...equalA, id: 'A_0' } : r));
 		const rosterB = makeRoster('B').map((r: any, i: any) => (i === 0 ? { ...equalB, id: 'B_0' } : r));
@@ -940,8 +851,8 @@ describe('judging and match end', () => {
 	});
 
 	test('level sites after a round: no trailing bonus for either side', () => {
-		const equalA = makeRecord('eqA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
-		const equalB = makeRecord('eqB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, archetype: { key: 'survivor', favors: [] }, abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
+		const equalA = makeRecord('eqA', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
+		const equalB = makeRecord('eqB', { attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 }, abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }] });
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A', () => ({ ...equalA }));
 		const rosterB = makeRoster('B', () => ({ ...equalB }));
@@ -988,8 +899,7 @@ describe('judging and match end', () => {
 	*/
 	test('a creature that LOSES its world is withdrawn, not returned to the roster', () => {
 		const presence = (id: any, hp: any) => makeRecord(id, {
-			archetype: { key: 'bulwark', favors: [] },
-			abilities: [{ name: 'Guard', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 50 }],
+			abilities: [{ name: 'Guard', signature: true, instrument: 'body', action: 'ward', medium: 'fire', intensity: 50 }],
 			attributes: { strength: 50, vitality: hp, endurance: hp, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: hp },
 		});
 		const worlds = makeWorlds();
@@ -1015,8 +925,7 @@ describe('judging and match end', () => {
 	test('a creature withdrawn from a TIED world is also out, exactly as a lost one is', () => {
 		const equal = (id: any) => makeRecord(id, {
 			attributes: { strength: 50, vitality: 60, endurance: 60, agility: 50, reflex: 50, intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60 },
-			archetype: { key: 'survivor', favors: [] },
-			abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }],
+			abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }],
 		});
 		const worlds = makeWorlds();
 		const rosterA = makeRoster('A').map((r: any, i: any) => (i === 0 ? { ...equal('eqA'), id: 'A_0' } : r));
@@ -1047,21 +956,6 @@ describe('public state hiding', () => {
 		expect(view.players[state.starter].roster).toBeDefined();
 	});
 
-
-	test('hides a hidden creature identity and site, but shows that a hidden send happened', () => {
-		const stealthyRoster = makeRoster('S', () => ({ traits: { guaranteed: [], rolled: ['stealthy'] } }));
-		let state = createMatch({ rosterA: stealthyRoster, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-public-seed' });
-		if (state.starter !== 'A') {
-			return; // only exercise when A (stealthy roster) starts, deterministic per seed
-		}
-		const frame = currentFrame(state);
-		state = send(state, 'A', stealthyRoster[0].id, frame.sites[0].id, true)!;
-		const viewForB = getPublicState(state, 'B');
-		expect(viewForB.board[frame.sites[0].id].A.length).toBe(0);
-		expect(viewForB.players.A.hiddenSentThisRound).toBe(1);
-		const viewForA = getPublicState(state, 'A');
-		expect(viewForA.board[frame.sites[0].id].A.length).toBe(1);
-	});
 
 	test('never exposes the seed', () => {
 		const state = freshMatch('seed-hide-test');
@@ -1125,25 +1019,6 @@ describe('moveSwift: swift creatures move', () => {
 		expect(next.turn!).toBe(mover);
 		const after = send(next, mover, next.players[mover].roster[0].id, frame.sites[2].id)!;
 		expect(after).not.toBeNull();
-	});
-
-	test('the moved creature keeps its sentIndex and stays hidden if it was hidden', () => {
-		const stealthy = [];
-		for (let i = 0; i < ROSTER_SIZE; i++) {
-			stealthy.push(makeRecord(`A_${i}`, { attributes: { agility: 80, reflex: 80 }, traits: ['stealthy'] }));
-		}
-		let state = createMatch({ rosterA: stealthy, rosterB: slowRoster('B'), worlds: makeWorlds(), seed: 'swift-hidden-seed' });
-		state = state.starter === 'A' ? state : { ...state, starter: 'A', turn: 'A' };
-		const frame = currentFrame(state);
-		state = send(state, 'A', 'A_0', frame.sites[0].id, true)!;
-		if (state.phase === 'deploy' && state.turn! === 'B') {
-			state = pass(state, 'B')!;
-		}
-		const before = state.board[frame.sites[0].id].A[0];
-		const next = moveSwift(state, 'A', 'A_0', frame.sites[1].id)!;
-		const moved = next.board[frame.sites[1].id].A.find((e: any) => e.recordId === 'A_0')!;
-		expect(moved.hidden).toBe(true);
-		expect(moved.sentIndex).toBe(before.sentIndex);
 	});
 
 	test('once per creature per round: a second move of the same creature is illegal', () => {
@@ -1229,14 +1104,6 @@ describe('moveSwift: swift creatures move', () => {
 	file is that second assertion, so it is only stated once here.
 */
 describe('rules ablation switches', () => {
-	function stealthyRoster(prefix: any) {
-		const roster = [];
-		for (let i = 0; i < ROSTER_SIZE; i++) {
-			roster.push(makeRecord(`${prefix}_${i}`, { traits: { guaranteed: ['stealthy'], rolled: [] } }));
-		}
-		return roster;
-	}
-
 	function matchWithRules(rules: any, rosterFn: any = makeRoster) {
 		return createMatch({
 			rosterA: rosterFn('A'),
@@ -1389,26 +1256,6 @@ describe('rules ablation switches', () => {
 		expect(view.rules.magnitudeScale).toBe(2);
 	});
 
-	it('under hiddenSends false a stealthy creature arrives open', () => {
-		const state = matchWithRules({ hiddenSends: false }, stealthyRoster);
-		const handler = state.turn!;
-		const site = currentFrame(state).sites[0].id;
-		const recordId = `${handler}_0`;
-		// the ablation takes concealment out of the game rather than making a send illegal
-		const sent = send(state, handler, recordId, site, true)!;
-		expect(sent).not.toBeNull();
-		expect(sent.board[site][handler][0].hidden).toBe(false);
-	});
-
-	it('hiddenSends true (the default) has a stealthy creature arrive hidden', () => {
-		const state = matchWithRules({}, stealthyRoster);
-		const handler = state.turn!;
-		const site = currentFrame(state).sites[0].id;
-		const sent = send(state, handler, `${handler}_0`, site)!;
-		expect(sent).not.toBeNull();
-		expect(sent.board[site][handler][0].hidden).toBe(true);
-	});
-
 
 
 	// the withdrawal branches and the trailing bonus all fire at Judge, so each needs a
@@ -1515,7 +1362,6 @@ describe('rules ablation switches', () => {
 */
 describe('Pass 2: the attribute rules', () => {
 	const midStriker = (id: any, over: any = {}) => makeRecord(id, {
-		archetype: { key: 'predator', favors: [] },
 		abilities: [{ name: 'Jab', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 40 }],
 		attributes: {
 			strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
@@ -1614,8 +1460,7 @@ describe('Pass 2: the attribute rules', () => {
 
 	test('a bolster recovers half the damage its allies took, logged before the judge (assumption 19)', () => {
 		const bolsterer = (id: any) => makeRecord(id, {
-			archetype: { key: 'sage', favors: [] },
-			abilities: [{ name: 'Steady', signature: false, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
+			abilities: [{ name: 'Steady', signature: true, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
 			attributes: {
 				strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
 				intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 60,
@@ -1648,11 +1493,10 @@ describe('Pass 2: the attribute rules', () => {
 		expect(ev.remaining).toBeCloseTo(damagedOn.hold, 5);
 	});
 
-	test('keen instinct takes the enemy it can down, over its archetype line (assumption 17)', () => {
+	test('keen instinct takes the enemy it can down, over its temperament line (assumption 17)', () => {
 		// a juggernaut's conduct line is "strongest enemy here", so a keen creature that
 		// ignores it for the enemy it can down proves the lane is the thing deciding
 		const keen = (id: any) => makeRecord(id, {
-			archetype: { key: 'juggernaut', favors: [] },
 			abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }],
 			attributes: {
 				strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50,
@@ -1672,15 +1516,15 @@ describe('Pass 2: the attribute rules', () => {
 		expect(attacksOf(off, 'A_0')[0].target).toBe('B_0');
 	});
 
-	test('dull instinct hits whatever was sent earliest, over its archetype line', () => {
-		// a predator's line is "weakest enemy here"; the dull creature takes the first sent
+	test('dull instinct hits whatever was sent earliest, over its temperament line', () => {
+		// an aggressive temperament's line is "weakest enemy here"; the dull creature takes the first sent
 		const dull = (id: any) => makeRecord(id, {
-			archetype: { key: 'predator', favors: [] },
 			abilities: [{ name: 'Jab', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 40 }],
 			attributes: {
 				strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
 				intelligence: 50, willpower: 50, instinct: 10, charisma: 50, resilience: 60,
 			},
+			temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 80, sociability: 50 },
 		});
 		const tough = (id: any) => midStriker(id, { attributes: { vitality: 95, endurance: 95, resilience: 95, agility: 10, reflex: 10 } });
 		const frail = (id: any) => midStriker(id, { attributes: { vitality: 30, endurance: 30, resilience: 30, agility: 10, reflex: 10 } });
@@ -1694,8 +1538,7 @@ describe('Pass 2: the attribute rules', () => {
 
 	test('charisma scales what a bolster restores', () => {
 		const bolsterWith = (charisma: any) => (id: any) => makeRecord(id, {
-			archetype: { key: 'sage', favors: [] },
-			abilities: [{ name: 'Steady', signature: false, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
+			abilities: [{ name: 'Steady', signature: true, instrument: 'voice', action: 'mend', medium: 'fire', intensity: 60 }],
 			attributes: {
 				strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
 				intelligence: 50, willpower: 50, instinct: 50, charisma, resilience: 60,
@@ -1711,8 +1554,7 @@ describe('Pass 2: the attribute rules', () => {
 
 	test('charisma scales what a shield cancels, and shieldCap half still takes half of it', () => {
 		const shieldWith = (charisma: any) => (id: any) => makeRecord(id, {
-			archetype: { key: 'bulwark', favors: [] },
-			abilities: [{ name: 'Guard', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 60 }],
+			abilities: [{ name: 'Guard', signature: true, instrument: 'body', action: 'ward', medium: 'fire', intensity: 60 }],
 			attributes: {
 				strength: 50, vitality: 60, endurance: 70, agility: 50, reflex: 50,
 				intelligence: 50, willpower: 50, instinct: 50, charisma, resilience: 60,
@@ -1736,7 +1578,6 @@ describe('Pass 2: the attribute rules', () => {
 
 	test('the public vocabulary is attack, power, hurt, downed, sweep and speed', () => {
 		const bigStriker = (id: any) => makeRecord(id, {
-			archetype: { key: 'predator', favors: [] },
 			abilities: [{ name: 'Smash', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 100 }],
 			attributes: {
 				strength: 100, vitality: 60, endurance: 70, agility: 50, reflex: 50,
@@ -1778,104 +1619,18 @@ describe('Pass 2: the attribute rules', () => {
 	names the setting it is measuring rather than relying on the shipped default.
 */
 
-function stealthyRosterOf(prefix: any, overrides: any = {}) {
-	return makeRoster(prefix, () => ({ traits: { guaranteed: ['stealthy'], rolled: [] }, ...overrides }));
-}
-
 describe('pass 3: the price of hiding (assumption 21), kept as levers since pass 4 (assumption 24)', () => {
 	test('the shipped game prices a hidden send like any other and lands it at full power', () => {
 		expect(DEFAULT_RULES.hiddenSendCost).toBe(1);
 		expect(DEFAULT_RULES.hiddenPower).toBe(1);
 		expect(DEFAULT_RULES.hiddenFirst).toBe(false);
-		const rosterA = stealthyRosterOf('S');
+		const rosterA = makeRoster('S');
 		const state = createMatch({ rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-free-seed' });
 		const siteId = currentFrame(state).sites[0].id;
 		const hiddenSend = send({ ...state, turn: 'A' } as MatchState, 'A', rosterA[0].id, siteId, true)!;
 		expect(hiddenSend.players.A.sentCount).toBe(1);
 	});
 
-	test('hiddenSendCost charges a hidden send against the round\'s sendable cap', () => {
-		const rosterA = stealthyRosterOf('S');
-		const state = createMatch({
-			rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cost-seed',
-			rules: { hiddenSendCost: 2 },
-		});
-		const siteId = currentFrame(state).sites[0].id;
-		const forced = { ...state, turn: 'A' } as MatchState;
-
-		// pass 4b: this roster is stealthy, so every one of its sends arrives hidden and
-		// pays the hidden price. The open baseline is an ordinary creature.
-		const hiddenSend = send(forced, 'A', rosterA[0].id, siteId)!;
-		expect(hiddenSend.players.A.sentCount).toBe(2);
-		expect(hiddenSend.board[siteId].A[0].hidden).toBe(true);
-
-		const plain = makeRoster('P');
-		const openState = createMatch({
-			rosterA: plain, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cost-seed',
-			rules: { hiddenSendCost: 2 },
-		});
-		const openSend = send({ ...openState, turn: 'A' } as MatchState, 'A', plain[0].id, siteId, false)!;
-		expect(openSend.players.A.sentCount).toBe(1);
-	});
-
-	test('a stealthy creature the remaining cap cannot afford is unsendable, while a non-stealthy one still goes', () => {
-		// since pass 4b the price follows the creature rather than a choice, so a stealthy
-		// creature under a raised hiddenSendCost has no cheaper open send to fall back on
-		const rosterA = stealthyRosterOf('S');
-		let state = createMatch({
-			rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cap-seed',
-			rules: { hiddenSendCost: 2 },
-		});
-		const siteId = currentFrame(state).sites[0].id;
-		// one unit of the cap left
-		state = { ...state, turn: 'A', players: { ...state.players, A: { ...state.players.A, sentCount: SENDABLE - 1 } } };
-		expect(send(state, 'A', rosterA[0].id, siteId, true)).toBeNull();
-		expect(send(state, 'A', rosterA[0].id, siteId, false)).toBeNull();
-
-		// the same board with an ordinary creature: one unit is enough
-		const plain = makeRoster('P');
-		let openState = createMatch({
-			rosterA: plain, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-cap-seed',
-			rules: { hiddenSendCost: 2 },
-		});
-		openState = { ...openState, turn: 'A', players: { ...openState.players, A: { ...openState.players.A, sentCount: SENDABLE - 1 } } };
-		expect(send(openState, 'A', plain[0].id, siteId, false)).not.toBeNull();
-	});
-
-	test('hiddenPower scales an attack thrown from hiding and leaves an open attack alone', () => {
-		// pass 4b: whether the attack comes from hiding is decided by the creature's own
-		// traits, so the open variants use a non-stealthy attacker rather than a flag
-		function powerOfFirstAttack(hiddenPower: any, stealthy: any) {
-			const attacker = makeRecord('att', {
-				traits: { guaranteed: stealthy ? ['stealthy'] : [], rolled: [] },
-				attributes: { strength: 90, vitality: 60, endurance: 60, agility: 90, reflex: 90, intelligence: 50, willpower: 20, instinct: 50, charisma: 50, resilience: 60 },
-			});
-			const rosterA = makeRoster('A').map((r: any, i: any) => (i === 0 ? { ...attacker, id: 'A_0' } : r));
-			let state = createMatch({
-				rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hidden-power-seed',
-				rules: { hiddenPower },
-			});
-			const siteId = currentFrame(state).sites[0].id;
-			state = { ...state, turn: 'A' };
-			state = send(state, 'A', 'A_0', siteId)!;
-			state = { ...state, turn: 'B' };
-			state = send(state, 'B', state.players.B.roster[0].id, siteId, false)!;
-			state = pass(state, 'A')!;
-			state = pass(state, 'B')!;
-			const attack = (state.resolutionLog as any[]).find((e: any) => e.type === 'attack' && e.recordId === 'A_0');
-			return attack ? attack.power : 0;
-		}
-
-		const openFull = powerOfFirstAttack(1, false);
-		const hiddenFull = powerOfFirstAttack(1, true);
-		const hiddenHalf = powerOfFirstAttack(0.5, true);
-		const openHalf = powerOfFirstAttack(0.5, false);
-		expect(openFull).toBeGreaterThan(0);
-		expect(hiddenFull).toBeCloseTo(openFull, 5);
-		expect(hiddenHalf).toBeCloseTo(hiddenFull / 2, 1);
-		// an open attack is untouched by the hidden price
-		expect(openHalf).toBeCloseTo(openFull, 5);
-	});
 });
 
 describe('pass 3: the stake (assumption 22)', () => {
@@ -1974,9 +1729,8 @@ describe('pass 3: the stake (assumption 22)', () => {
 	});
 
 	test('a staked world that ties counts nothing for either side', () => {
-		const equal = () => makeRecord('eq', {
-			archetype: { key: 'survivor', favors: [] },
-			abilities: [{ name: 'Mend', signature: false, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }],
+		const equal = () => ({
+			abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'light', intensity: 40 }],
 		});
 		let state = createMatch({
 			rosterA: makeRoster('A', () => equal()),

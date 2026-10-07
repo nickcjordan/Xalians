@@ -2,26 +2,33 @@
 	Display vocabulary for the Reclamation table: registry keys resolved to the names and
 	one-line natures the Encyclopedia uses, plus the species facts a dossier quotes.
 
-	Everything here reads the bundled registry data (registries.json) and species records
-	(speciesRecords.json) through the generator and lore layers; nothing is spelled out
-	twice. Unknown keys fall back to the key itself, per the registry contract ("games
+	Everything here reads the bundled registry data (registries.json) and the current
+	species catalog (canonicalSpeciesCatalog.json, through the generator's
+	getSpeciesTemplates); nothing is spelled out twice. Unknown keys fall back to the key itself, per the registry contract ("games
 	ignore unknown keys").
 */
 
 import registries from '@xalians/content/registries.json';
-import { speciesDisplayName, getSpeciesTemplate } from '@xalians/rules/generator';
+import { getSpeciesTemplates } from '@xalians/rules/generator/canonicalCreatureRelease';
 
 function toMap(list) {
 	return new Map((list || []).map((item) => [item.key, item]));
 }
 
-const TRAITS = toMap(registries.traits);
-const ARCHETYPES = toMap(registries.archetypes);
-const ACTIONS = toMap(registries.actions);
-const ATTRIBUTES = toMap(registries.attributes);
+const TEMPLATES_BY_KEY = new Map(getSpeciesTemplates().map((template) => [template.key, template]));
+
+// the species template for a key, or undefined for a key the catalog does not carry
+export function getSpeciesTemplate(key) {
+	return TEMPLATES_BY_KEY.get(key);
+}
+
+// display name for a species key ("graviclaw" -> "Graviclaw"); falls back to the key
+export function speciesDisplayName(key) {
+	const template = TEMPLATES_BY_KEY.get(key);
+	return template ? template.name : key;
+}
+
 const ELEMENTS = toMap(registries.elements);
-const ANATOMY = toMap(registries.anatomy);
-const CHANNELS = toMap(registries.channels);
 const MEDIA = toMap(registries.physiology && registries.physiology.media);
 const COVERINGS = toMap(registries.physiology && registries.physiology.covering);
 const BODY_PLANS = toMap(registries.physiology && registries.physiology.bodyPlan);
@@ -29,11 +36,6 @@ const BODY_PLANS = toMap(registries.physiology && registries.physiology.bodyPlan
 function nameOf(map, key) {
 	const item = map.get(key);
 	return item ? item.name : String(key || '');
-}
-
-function natureOf(map, key) {
-	const item = map.get(key);
-	return item ? item.nature : '';
 }
 
 export function speciesName(record) {
@@ -53,52 +55,8 @@ export function speciesFacts(record) {
 		homePlanet: template.homePlanet,
 		homePlanetName: template.homePlanet ? template.homePlanet.charAt(0).toUpperCase() + template.homePlanet.slice(1) : '',
 		description: template.lore ? template.lore.description : '',
-		biomeNiche: template.lore ? template.lore.biomeNiche : '',
+		habitat: template.lore ? template.lore.habitat : '',
 	};
-}
-
-export function traitName(key) {
-	return nameOf(TRAITS, key);
-}
-
-export function traitNature(key) {
-	return natureOf(TRAITS, key);
-}
-
-// "Juggernaut, built with high strength and resilience" (Nick's binder rule: the favored
-// attributes always travel with the archetype name)
-export function archetypeLabel(archetype) {
-	if (!archetype) {
-		return '';
-	}
-	const key = typeof archetype === 'string' ? archetype : archetype.key;
-	const row = ARCHETYPES.get(key);
-	const favors = (typeof archetype === 'object' && Array.isArray(archetype.favors) && archetype.favors.length > 0)
-		? archetype.favors
-		: (row && row.favors) || [];
-	const name = row ? row.name : String(key || '');
-	if (favors.length === 0) {
-		return `${name}, favoring nothing in particular`;
-	}
-	const words = favors.map((k) => nameOf(ATTRIBUTES, k).toLowerCase());
-	return `${name}, built with high ${words.join(' and ')}`;
-}
-
-export function archetypeName(key) {
-	return nameOf(ARCHETYPES, key);
-}
-
-export function actionName(key) {
-	return nameOf(ACTIONS, key);
-}
-
-export function actionNature(key) {
-	return natureOf(ACTIONS, key);
-}
-
-export function instrumentName(key) {
-	const item = ANATOMY.get(key) || CHANNELS.get(key);
-	return item ? item.name : String(key || '');
 }
 
 export function elementName(key) {
@@ -138,8 +96,6 @@ export function sizeLine(physiology) {
 	}
 	if (typeof physiology.massKg === 'number') {
 		parts.push(`mass ${kg(physiology.massKg)}`);
-	} else if (typeof physiology.weightKg === 'number') {
-		parts.push(kg(physiology.weightKg));
 	}
 	return parts.join(', ');
 }
@@ -162,22 +118,7 @@ export function breathesLine(physiology) {
 	return `breathes ${list.map((m) => mediumName(m).toLowerCase()).join(' and ')}`;
 }
 
-/*
-	SCHEMA 5. THE ELEMENT IS A BARE STRING.
-
-	Schema 4 wrote `element: { primary, affinities }`; schema 5 writes `element: 'ice'`,
-	because it retired the secondary-element roll and affinity strength. Five components
-	read `record.element.primary` directly, which throws on a v5 record, so the read lives
-	here once instead.
-
-	Accepting both shapes is deliberate rather than defensive: the game opens archived
-	records (the adapter keeps a schema 1 path for the same reason), and a stored record
-	from before the migration should still render its element chip.
-*/
+// A record's element is a bare key ('ice'); null when it carries none.
 export function elementOf(record) {
-	const element = record && record.element;
-	if (!element) {
-		return null;
-	}
-	return typeof element === 'string' ? element : (element.primary || null);
+	return (record && record.element) || null;
 }

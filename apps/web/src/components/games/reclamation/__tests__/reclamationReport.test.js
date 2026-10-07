@@ -4,6 +4,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { createMatch, send, pass, moveSwift, getPublicState, createRngState, nextRandom } from '@xalians/rules/expedition/expeditionRules';
 import { chooseSend } from '@xalians/rules/expedition/expeditionBot';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
+import { v5Record } from '@xalians/rules/expedition/__tests__/fixtures/v5Fixtures';
 import { buildMatchReport, ReclamationReport } from '../reclamationReport';
 
 /*
@@ -15,7 +16,7 @@ import { buildMatchReport, ReclamationReport } from '../reclamationReport';
 */
 
 function makeRecord(id, overrides = {}) {
-	return {
+	return v5Record({
 		id,
 		species: overrides.species || 'testling',
 		provenance: { serial: 1, origin: overrides.origin || 'magmuth' },
@@ -24,18 +25,16 @@ function makeRecord(id, overrides = {}) {
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 80,
 			...overrides.attributes,
 		},
-		element: overrides.element || { primary: 'fire', affinities: { fire: 100 } },
-		archetype: overrides.archetype || { key: 'balanced', favors: [] },
+		element: overrides.element || 'fire',
 		physiology: overrides.physiology || {
 			breathes: ['gas'],
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -50, max: 200 } },
 		},
-		traits: overrides.traits || { guaranteed: [], rolled: [] },
 		temperament: overrides.temperament || { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: overrides.abilities || [
 			{ name: 'Strike', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 60 },
 		],
-	};
+	});
 }
 
 function makeRoster(prefix, overridesFn) {
@@ -86,8 +85,8 @@ function makeRng(seed) {
 // plays a full bot-vs-bot match to phase 'matchEnd' and returns the final state, exactly
 // as expeditionBot.test.js's "full bot-vs-bot match" test does
 function playToMatchEnd(seed) {
-	const rosterA = makeRoster('A', (i) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
-	const rosterB = makeRoster('B', (i) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
+	const rosterA = makeRoster('A');
+	const rosterB = makeRoster('B');
 	let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed });
 
 	let botRng = makeRng(`${seed}-bot`);

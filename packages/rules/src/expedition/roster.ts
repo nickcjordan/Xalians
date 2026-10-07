@@ -12,12 +12,12 @@
 */
 
 import { generateXalian, getSpeciesTemplates } from '../generator/canonicalCreatureRelease.ts';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import { createRngState, nextRandom } from './expeditionRules.ts';
 import { ROSTER_SIZE } from './expeditionInterpretation.ts';
 
 // Fisher-Yates over the engine's own PRNG so the deal is reproducible from the seed
-function shuffleWithRng(array: XalianRecord[], rngState: number): XalianRecord[] {
+function shuffleWithRng(array: CreatureRecord[], rngState: number): CreatureRecord[] {
 	const result = array.slice();
 	let state = rngState;
 	for (let i = result.length - 1; i > 0; i--) {
@@ -51,7 +51,7 @@ function shuffleWithRng(array: XalianRecord[], rngState: number): XalianRecord[]
 */
 const POOL_GENERATED_AT = '2026-09-21T00:00:00.000Z';
 
-export function buildExpeditionPool(seed: string | number, size: number): XalianRecord[] {
+export function buildExpeditionPool(seed: string | number, size: number): CreatureRecord[] {
 	/*
 		`origin` is a PLANET, not a species: home ground compares it against the world's own
 		planet name (creatureOnTable, "a straight lowercase compare of provenance.origin
@@ -67,7 +67,7 @@ export function buildExpeditionPool(seed: string | number, size: number): Xalian
 	if (species.length === 0) {
 		return [];
 	}
-	const records: XalianRecord[] = [];
+	const records: CreatureRecord[] = [];
 	for (let i = 0; i < size; i++) {
 		const { key, home } = species[i % species.length];
 		records.push(generateXalian(key, `${seed}-pool-${i}`, {
@@ -75,7 +75,7 @@ export function buildExpeditionPool(seed: string | number, size: number): Xalian
 			serial: i + 1,
 			profile: 'full',
 			generatedAt: POOL_GENERATED_AT,
-		}) as unknown as XalianRecord);
+		}));
 	}
 	return records;
 }
@@ -85,9 +85,9 @@ export interface BuildRostersOptions {
 }
 
 export interface Rosters {
-	rosterA: XalianRecord[];
-	rosterB: XalianRecord[];
-	pool: XalianRecord[];
+	rosterA: CreatureRecord[];
+	rosterB: CreatureRecord[];
+	pool: CreatureRecord[];
 }
 
 /*

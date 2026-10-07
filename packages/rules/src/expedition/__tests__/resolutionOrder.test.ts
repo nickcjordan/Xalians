@@ -7,10 +7,11 @@
 	sentence of that section, so if the engine's order changes, the documentation fails
 	here rather than quietly becoming a lie.
 */
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, expect } from 'vitest';
 import { createMatch, send, pass, currentFrame } from '../expeditionRules.ts';
 import { prepare } from '../creatureOnTable.ts';
-import { SWEEP_DISCOUNT, ARMORED_REDUCTION, MAGNITUDE_SCALE } from '../expeditionInterpretation.ts';
+import { SWEEP_DISCOUNT, MAGNITUDE_SCALE } from '../expeditionInterpretation.ts';
 import type { MatchState } from '../types.ts';
 
 // a minimal world with one site, so every send lands in the same fight
@@ -32,12 +33,11 @@ let uid = 0;
 function record(overrides: any = {}) {
 	uid += 1;
 	const { attributes, abilities, ...rest } = overrides;
-	return {
+	return v5Record({
 		id: `r${uid}`,
 		species: 'graviclaw',
 		provenance: { schemaVersion: '1.0.0', origin: 'nowhere' },
-		element: { primary: 'metal', affinities: { metal: 100 } },
-		archetype: { key: 'predator', favors: [] },
+		element: 'metal',
 		attributes: {
 			strength: 50, vitality: 50, endurance: 50, agility: 50, reflex: 50,
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 50,
@@ -47,13 +47,12 @@ function record(overrides: any = {}) {
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -60, max: 90 } },
 			breathes: ['gas'], capabilities: {}, senses: {},
 		},
-		traits: [],
 		temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: abilities || [
 			{ name: 'Hit', signature: true, instrument: 'fists', action: 'strike', medium: 'metal', intensity: 60 },
 		],
 		...rest,
-	} as any;
+	});
 }
 
 // the roster ids are fixed so the resolution log can be read by seat and slot, the same
@@ -83,27 +82,6 @@ function clashOf(mine: any, theirs: any, rules: any = undefined): MatchState {
 const attacksIn = (state: MatchState) => (state.resolutionLog as any[]).filter((e) => e.type === 'attack');
 
 describe('the declared power chain, in the order the rulebook states it', () => {
-	/*
-		"if the TARGET is armored, times (1 - armoredReduction), so three quarters" - and it
-		is part of the DECLARATION, so a shield sees the reduced number and the hurt scaling
-		applies after it, not before.
-	*/
-	test('armored takes its quarter off an attack aimed at it', () => {
-		const striker = record({ attributes: { strength: 99, agility: 99, reflex: 99 } });
-		const plain = record({ attributes: { vitality: 99, endurance: 99, resilience: 99 } });
-		const armored = record({ attributes: { vitality: 99, endurance: 99, resilience: 99 }, traits: ['armored'] });
-
-		const againstPlain = attacksIn(clashOf(striker, plain)).find((e) => e.recordId === 'A_0' || e.role === 'strike');
-		const againstArmored = attacksIn(clashOf(striker, armored)).find((e) => e.recordId === 'A_0' || e.role === 'strike');
-		expect(againstPlain).toBeTruthy();
-		expect(againstArmored).toBeTruthy();
-		// three quarters, within the engine's one-decimal rounding
-		expect(againstArmored.power).toBeLessThan(againstPlain.power);
-		expect(againstArmored.power).toBeCloseTo(
-			Math.round(againstPlain.power * (1 - ARMORED_REDUCTION) * 10) / 10, 1,
-		);
-	});
-
 	/*
 		"if the attacker is a sweep, times sweepDiscount (0.6)". A sweep's per-creature
 		amount is the discounted one, which is what the rulebook's worked example computes.
@@ -196,34 +174,6 @@ describe('a keen creature fights on through its hurt (pass 51)', () => {
 	});
 });
 
-describe('what the rulebook says about menacing', () => {
-	/*
-		"It does not redirect a sweep, which chooses no target and hits everyone." The
-		engine only applies the menacing redirect to a target PICK, so a sweep is untouched.
-		Pinned here because the fresh reader had no way to know.
-	*/
-	test('a sweep hits every other creature regardless of menacing', () => {
-		const sweeper = record({
-			abilities: [{ name: 'Burst', signature: true, instrument: 'body', action: 'burst', medium: 'metal', intensity: 60 }],
-			attributes: { intelligence: 99, agility: 99, reflex: 99 },
-		});
-		const menacing = record({ traits: ['menacing'], attributes: { vitality: 99, endurance: 99, resilience: 99 } });
-		const plain = record({ attributes: { vitality: 99, endurance: 99, resilience: 99 } });
-		const withMenacing = clashOf(sweeper, menacing);
-		const withPlain = clashOf(sweeper, plain);
-
-		// a sweep logs one attack per victim rather than one pick, so there is no chosen
-		// target for menacing to draw: the same creature takes the same share either way
-		const sweptMenacing = attacksIn(withMenacing).filter((e) => e.role === 'sweep');
-		const sweptPlain = attacksIn(withPlain).filter((e) => e.role === 'sweep');
-		expect(sweptMenacing.length).toBe(sweptPlain.length);
-		expect(sweptMenacing.length).toBeGreaterThan(0);
-		// every sweep event names the creature it caught, and menacing changed none of them
-		expect(sweptMenacing.map((e: any) => e.target).sort())
-			.toEqual(sweptPlain.map((e: any) => e.target).sort());
-	});
-});
-
 describe('the magnitude scale is the one global rescale', () => {
 	test('every declared attack carries it', () => {
 		const striker = record({ attributes: { strength: 99 } });
@@ -244,7 +194,6 @@ describe('what the second reader could not settle', () => {
 	// "A bolster restores damage from any source, friendly fire included."
 	test('a bolster heals damage dealt by its own side', () => {
 		const bolster = record({
-			archetype: { key: 'sage', favors: [] },
 			abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'metal', intensity: 60 }],
 			attributes: { charisma: 99, vitality: 99, endurance: 99, resilience: 99 },
 		});
@@ -280,7 +229,6 @@ describe('what the second reader could not settle', () => {
 	// "The shielder's half-share is taken in the shield step, before any attack lands."
 	test('the shielder pays its half-share at the cancel, not at the Ruling', () => {
 		const shielder = record({
-			archetype: { key: 'bulwark', favors: [] },
 			abilities: [{ name: 'Ward', signature: true, instrument: 'hide', action: 'ward', medium: 'metal', intensity: 60 }],
 			attributes: { charisma: 99, vitality: 40, endurance: 40, resilience: 40 },
 		});
@@ -304,7 +252,6 @@ describe('what the second reader could not settle', () => {
 	// with a single exchange every recovery still comes after every blow (and see fightToTheEnd.test.ts)
 	test('within a single exchange, every recovery is logged after every attack', () => {
 		const bolster = record({
-			archetype: { key: 'sage', favors: [] },
 			abilities: [{ name: 'Mend', signature: true, instrument: 'voice', action: 'mend', medium: 'metal', intensity: 60 }],
 			attributes: { charisma: 99, vitality: 60, endurance: 60, resilience: 60 },
 		});

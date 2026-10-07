@@ -4,6 +4,7 @@ import XalianImage from '../../xalianImage';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
 import { speciesLabel, formatHold } from './reclamationNarration';
 import { rateForDraft, botDraft } from '@xalians/rules/expedition/draft';
+import { traitKeywordsOf } from '@xalians/rules/expedition/creatureOnTable';
 import { ROSTER_SIZE } from '@xalians/rules/expedition/expeditionInterpretation';
 import { HiddenGlyph, PIECE_RIM } from './reclamationGlyphs';
 
@@ -41,7 +42,7 @@ function DraftCard({ record, frames, kept, onToggle }) {
 	const el = elementOf(record);
 	const bestRow = rating.byWorld.reduce((a, b) => (b.hold > a.hold ? b : a), rating.byWorld[0]);
 	const rows = [rating.byWorld.slice(0, 3), rating.byWorld.slice(3, 6), rating.byWorld.slice(6, 9)];
-	const isStealthy = isStealthyRecord(record);
+	const isStealthy = traitKeywordsOf(record).includes('stealthy');
 
 	return (
 		<button
@@ -104,21 +105,6 @@ function DraftCard({ record, frames, kept, onToggle }) {
 			)}
 		</button>
 	);
-}
-
-// mirrors draft.js's own isStealthy reading of the record's traits (kept local so this
-// component never imports an unexported helper)
-function isStealthyRecord(record) {
-	const traits = record && record.traits;
-	if (Array.isArray(traits)) {
-		return traits.includes('stealthy');
-	}
-	if (traits && typeof traits === 'object') {
-		const guaranteed = Array.isArray(traits.guaranteed) ? traits.guaranteed : [];
-		const rolled = Array.isArray(traits.rolled) ? traits.rolled : [];
-		return guaranteed.includes('stealthy') || rolled.includes('stealthy');
-	}
-	return false;
 }
 
 function ReclamationDraft({ pool, frames, keepIds, onToggle, onKeepAll, onConfirm, rivalName }) {
