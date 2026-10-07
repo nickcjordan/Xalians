@@ -9,6 +9,18 @@ export { getWorlds, getWorld } from './worlds';
 export { getSpeciesList, getSpecies } from './species';
 
 export {
+	V5_ONLY_ROWS,
+	TERM_DEFS,
+	TEMPERAMENT_AXES,
+	buildAbility,
+	describeEffect,
+	describeProtection,
+	resolveInstrument,
+	term,
+	vocabularyOrder,
+} from './vocabulary';
+
+export {
 	getEras,
 	getEra,
 	getOverview,

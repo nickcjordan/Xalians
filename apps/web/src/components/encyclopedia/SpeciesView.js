@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useParams } from 'react-router';
 import * as lore from '../../lore';
 import Prose from './Prose';
+import AbilityCard from './AbilityCard';
 import XalianImage from '../xalianImage';
 import Connections from './Connections';
 import SpeciesTile from './SpeciesTile';
@@ -15,75 +16,15 @@ import { IndexList, IndexRow } from '@/components/system/index-row';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-/**
- * Definitions for internal vocabulary that reaches the visitor undefined
- * (site audit issue #438). Registry fields quote
- * docs/species-templates/REGISTRY-DEFINITIONS.md's own one-line field
- * meaning where the doc states one; the rest are the ratified non-registry
- * text. Kept identical to record/RecordView.tsx's TERM_DEFS.
- */
-const TERM_DEFS = {
-    composition: 'What the body is made of at rest.',
-    bodyPlan: 'How the creature presents in the field and moves through it at rest.',
-    covering: 'The outer surface of the resting body.',
-    communication: 'Outward signaling to other creatures.',
-    ambientMedia: 'The phases of matter the creature can sustain activity in: atmosphere, liquid, or vacuum.',
-    lifespan: 'How long a working life this body has, from a season to something that never wears out.',
-    chirality: "Which molecular handedness this individual's genome rolled, or whether its body has none to roll.",
-    protections: 'Harm this body resists by nature, whatever it is doing.',
-    traversal: 'Ways this body passes walls and openings that stop others.',
-};
+const TERM_DEFS = lore.TERM_DEFS;
 
 function bandText(band) {
     if (!Array.isArray(band)) return '';
     return `${band[0]} to ${band[1]}`;
 }
 
-function capitalize(text) {
-    if (!text) return text;
-    return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
 function bodyValue(value) {
     return <span className="font-body normal-case tracking-normal text-ink">{value}</span>;
-}
-
-/**
- * Humanizes an ability field's raw registry value into visitor-facing
- * prose, per the ratified vocabulary map for the ability fields
- * (activation, delivery, range, element, instrument). Falls
- * back to capitalizing the first letter for anything not in the map.
- */
-const ABILITY_VALUE_MAP = {
-    ongoing: 'Ongoing',
-    discrete: 'Single act',
-    single: 'Single act',
-    contact: 'By contact',
-    projectile: 'Projectile',
-    area: 'Over an area',
-    restrain: 'Restrain',
-    ranged: 'At range',
-    self: 'On itself',
-    touch: 'By touch',
-    line: 'In a line',
-    burst: 'In a burst',
-    stream: 'As a stream',
-    pulse: 'As a pulse',
-    field: 'As a field',
-    signal: 'As a signal',
-};
-
-const ELEMENT_NAMES = new Set([
-    'fire', 'water', 'dark', 'light', 'plant', 'electric', 'ghost', 'rock',
-    'chemical', 'air', 'psychic', 'ice', 'metal', 'sand',
-]);
-
-function humanizeAbilityValue(value) {
-    if (!value) return value;
-    const key = String(value).toLowerCase();
-    if (ABILITY_VALUE_MAP[key]) return ABILITY_VALUE_MAP[key];
-    if (ELEMENT_NAMES.has(key)) return capitalize(key);
-    return capitalize(String(value));
 }
 
 function MeterRow({ name, band, maxBand }) {
@@ -155,46 +96,6 @@ function TemplatePhysiology({ view }) {
         .map((e) => ({ ...e, value: bodyValue(e.value) }));
 
     return <SpecPlate columns={2} entries={entries} />;
-}
-
-const ABILITY_FIELD_GLOSSES = {
-    Instrument: 'The body part or channel the ability works through.',
-    Activation: 'How it fires: a single act, ongoing while held, or set off by something done to it.',
-    Delivery: 'How it reaches its target: by contact, as a projectile, a stream, a pulse, a field or a signal.',
-    Range: 'How far it reaches.',
-    Effects: 'What it does.',
-    Element: 'The element it works through.',
-    Intensity: 'Strength of each effect. 50 is a standard reference and values above 100 are allowed. A species shows its range; one creature shows its number.',
-};
-
-function abilityKicker(ability) {
-    if (ability.signature) return ability.kind === 'passive' ? 'Signature passive' : 'Signature ability';
-    return ability.kind === 'passive' ? 'Guaranteed passive' : 'Guaranteed action';
-}
-
-function AbilityCard({ ability }) {
-    const field = (label, value) => (value
-        ? { key: <Term definition={ABILITY_FIELD_GLOSSES[label]}>{label}</Term>, value: bodyValue(humanizeAbilityValue(value)) }
-        : null);
-    return (
-        <Card variant="panel" className="p-4">
-            <p className="type-legend m-0">{abilityKicker(ability)}</p>
-            <p className="type-subhead m-0">{ability.name}</p>
-            <p className="m-0 font-body text-body text-ink">{ability.description}</p>
-            <SpecPlate
-                columns={2}
-                entries={[
-                    field('Instrument', ability.instrument),
-                    field('Activation', ability.activation),
-                    field('Delivery', ability.delivery),
-                    field('Range', ability.range),
-                    field('Effects', ability.effects),
-                    field('Element', ability.element),
-                    field('Intensity', ability.intensity),
-                ].filter(Boolean)}
-            />
-        </Card>
-    );
 }
 
 function ChipList({ items }) {

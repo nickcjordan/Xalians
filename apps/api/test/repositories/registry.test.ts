@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { mockClient } from 'aws-sdk-client-mock';
 import { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import * as registryRepo from '../../src/repositories/registry.ts';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 
 const ddbMock = mockClient(DynamoDBDocumentClient);
 
@@ -10,20 +10,19 @@ beforeEach(() => {
   ddbMock.reset();
 });
 
-function makeRecord(overrides: Partial<XalianRecord> = {}): XalianRecord {
+function makeRecord(overrides: Partial<CreatureRecord> = {}): CreatureRecord {
   return {
     id: 'xal_deadbeef',
     species: 'graviclaw',
     provenance: {
       seed: 'abc',
-      generatorVersion: '1',
-      schemaVersion: '1',
       generatedAt: '2026-09-10T00:00:00.000Z',
       origin: 'stonera',
       serial: 1,
+      profile: 'full',
     },
     ...overrides,
-  } as XalianRecord;
+  } as CreatureRecord;
 }
 
 describe('registry repository', () => {

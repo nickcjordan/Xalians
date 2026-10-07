@@ -1,9 +1,6 @@
-import {recordCapabilities, recordActions, recordPassives, type DisplayAbility} from '@xalians/content/ability-compatibility';
-import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import * as React from 'react';
-import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
-import { getSpeciesTemplate, speciesDisplayName } from '@xalians/rules/generator';
-import { gradeWithBundledCalibration } from '@xalians/rules/generator/grade';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
+import { gradeCreature } from '@xalians/rules/generator/creatureGrade';
 
 import XalianImage from '../xalianImage';
 import { Badge } from '@/components/ui/badge';
@@ -13,51 +10,50 @@ import {
 	CAPABILITY_ORDER,
 	TEMPERAMENT_ORDER,
 	attributeTerm,
-	archetypeTerm,
 	capabilityTerm,
+	dimensions,
 	elementTerm,
 	physiologyTerm,
 	temperamentTerm,
-	traitTerm,
 	capitalize,
-	heightBoth,
-	intensityBand,
-	weightBoth,
+	massBoth,
+	signatureAbility,
+	speciesName,
+	strongest,
 } from './vocabulary';
 
 type RecordSummary = {
 	record: XalianRecord;
 	name: string;
-	secondary: string | null;
-	archetype: string;
+	bodyPlan: string;
 	strongestAttributes: Array<{ name: string; value: number }>;
-	strongestCapability: { name: string; value: number };
-	leadingTemperament: { name: string; value: number };
-	signature: DisplayAbility | undefined;
+	strongestCapability: { name: string; value: number } | undefined;
+	leadingTemperament: { name: string; value: number } | undefined;
+	signature: string | undefined;
 	percentile: number | null;
 };
 
+function percentileOf(record: XalianRecord): number | null {
+	try {
+		return gradeCreature(record).percentile;
+	} catch {
+		return null;
+	}
+}
+
 function summarize(record: XalianRecord): RecordSummary {
-	const affinities = record.element.affinities as Record<string, number>;
-	const secondary = Object.keys(affinities).find((key) => key !== record.element.primary) || null;
-	const template = getSpeciesTemplate(record.species);
+	const [capability] = strongest(CAPABILITY_ORDER, record.physiology.capabilities as Record<string, number>, 1);
+	const [temperament] = strongest(TEMPERAMENT_ORDER, record.temperament as Record<string, number>, 1);
 	return {
 		record,
-		name: speciesDisplayName(record.species),
-		secondary,
-		archetype: archetypeTerm(record.archetype.key).name,
-		strongestAttributes: ATTRIBUTE_ORDER
-			.map((key) => ({ name: attributeTerm(key).name, value: record.attributes[key as keyof XalianRecord['attributes']] }))
-			.sort((a, b) => b.value - a.value)
-			.slice(0, 2),
-		strongestCapability: CAPABILITY_ORDER
-			.map((key) => ({ name: capabilityTerm(key).name, value: record.physiology.capabilities[key as keyof typeof record.physiology.capabilities] }))
-			.sort((a, b) => b.value - a.value)[0],
-		leadingTemperament: TEMPERAMENT_ORDER
-			.map((key) => ({ name: temperamentTerm(key).name, value: record.temperament[key as keyof XalianRecord['temperament']] }))
-			.sort((a, b) => b.value - a.value)[0],
-		signature: recordCapabilities(record).find((ability) => isSignatureAbility(ability)) || recordCapabilities(record)[0],
-		percentile: template ? gradeWithBundledCalibration(record, template).percentile : null,
+		name: speciesName(record.species),
+		bodyPlan: physiologyTerm('bodyPlan', record.physiology.bodyPlan).name,
+		strongestAttributes: strongest(ATTRIBUTE_ORDER, record.attributes as Record<string, number>, 2)
+			.map(({ key, value }) => ({ name: attributeTerm(key).name, value })),
+		strongestCapability: capability ? { name: capabilityTerm(capability.key).name, value: capability.value } : undefined,
+		leadingTemperament: temperament ? { name: temperamentTerm(temperament.key).name, value: temperament.value } : undefined,
+		signature: signatureAbility(record)?.name,
+		percentile: percentileOf(record),
 	};
 }
 
@@ -73,16 +69,17 @@ function CompareRow({ label, left, right }: { label: string; left: React.ReactNo
 	);
 }
 
-function Affinity({ summary }: { summary: RecordSummary }) {
-	const primary = summary.record.element.primary;
+function Element({ summary }: { summary: RecordSummary }) {
+	const element = summary.record.element;
 	return (
-		<div className="flex flex-wrap gap-2">
-			<span className={`el-${primary}`}><Badge variant="chip">{elementTerm(primary).name}</Badge></span>
-			{summary.secondary ? (
-				<span className={`el-${summary.secondary}`}><Badge variant="chip-outline">{elementTerm(summary.secondary).name}</Badge></span>
-			) : null}
-		</div>
+		<span className={`el-${element}`}><Badge variant="chip">{elementTerm(element).name}</Badge></span>
 	);
+}
+
+function body(summary: RecordSummary): string {
+	const physiology = summary.record.physiology;
+	const [first] = dimensions(physiology);
+	return [summary.bodyPlan, massBoth(physiology.massKg), first ? `${first.label.toLowerCase()} ${first.value}` : null].filter(Boolean).join(' · ');
 }
 
 function RecordCompare({ records }: { records: [XalianRecord, XalianRecord] }) {
@@ -91,27 +88,27 @@ function RecordCompare({ records }: { records: [XalianRecord, XalianRecord] }) {
 		<div data-slot="record-compare">
 			<p className="measure mt-0 mb-5 font-body text-small text-ink-2">
 				Compare what these creatures are. The registry does not declare a winner, and games derive their own rules.
+				Ratings compare creatures: 50 is standard, and a rating can pass 100.
 			</p>
 
 			<div className="mb-5 grid grid-cols-2 gap-3">
 				{[left, right].map((summary) => (
-					<Card key={summary.record.id} variant="recessed" className={`el-${summary.record.element.primary} min-w-0 gap-3 p-3 sm:p-4`}>
+					<Card key={summary.record.id} variant="recessed" className={`el-${summary.record.element} min-w-0 gap-3 p-3 sm:p-4`}>
 						<XalianImage
 							colored
 							speciesName={summary.record.species}
-							primaryType={summary.record.element.primary}
-							secondaryType={summary.secondary || undefined}
+							primaryType={summary.record.element}
 							moreClasses="mx-auto w-full max-w-[180px]"
 						/>
 						<div>
 							<p className="type-subhead m-0 truncate">{summary.name}</p>
-							<p className="mt-1 mb-0 font-body text-small text-ink-2">{summary.archetype}</p>
+							<p className="mt-1 mb-0 font-body text-small text-ink-2">{summary.bodyPlan}</p>
 						</div>
 					</Card>
 				))}
 			</div>
 
-			<CompareRow label="Affinity" left={<Affinity summary={left} />} right={<Affinity summary={right} />} />
+			<CompareRow label="Element" left={<Element summary={left} />} right={<Element summary={right} />} />
 			<CompareRow
 				label="Natural strengths"
 				left={left.strongestAttributes.map((item) => `${item.name} ${item.value}`).join(' · ')}
@@ -119,28 +116,15 @@ function RecordCompare({ records }: { records: [XalianRecord, XalianRecord] }) {
 			/>
 			<CompareRow
 				label="Strongest aptitude"
-				left={`${left.strongestCapability.name} ${left.strongestCapability.value}`}
-				right={`${right.strongestCapability.name} ${right.strongestCapability.value}`}
+				left={left.strongestCapability ? `${left.strongestCapability.name} ${left.strongestCapability.value}` : 'None recorded'}
+				right={right.strongestCapability ? `${right.strongestCapability.name} ${right.strongestCapability.value}` : 'None recorded'}
 			/>
-			<CompareRow
-				label="Signature ability"
-				left={left.signature ? `${left.signature.name} · ${intensityBand(left.signature.intensity)}` : 'None recorded'}
-				right={right.signature ? `${right.signature.name} · ${intensityBand(right.signature.intensity)}` : 'None recorded'}
-			/>
-			<CompareRow
-				label="Traits"
-				left={left.record.traits.length > 0 ? left.record.traits.map((key) => traitTerm(key).name).join(' · ') : 'No rolled traits'}
-				right={right.record.traits.length > 0 ? right.record.traits.map((key) => traitTerm(key).name).join(' · ') : 'No rolled traits'}
-			/>
-			<CompareRow
-				label="Physiology"
-				left={`${physiologyTerm('bodyPlan', left.record.physiology.bodyPlan).name} · ${heightBoth(left.record.physiology.heightCm)} · ${weightBoth(left.record.physiology.weightKg)}`}
-				right={`${physiologyTerm('bodyPlan', right.record.physiology.bodyPlan).name} · ${heightBoth(right.record.physiology.heightCm)} · ${weightBoth(right.record.physiology.weightKg)}`}
-			/>
+			<CompareRow label="Signature" left={left.signature ?? 'None recorded'} right={right.signature ?? 'None recorded'} />
+			<CompareRow label="Body" left={body(left)} right={body(right)} />
 			<CompareRow
 				label="Leading temperament"
-				left={`${left.leadingTemperament.name} ${left.leadingTemperament.value}`}
-				right={`${right.leadingTemperament.name} ${right.leadingTemperament.value}`}
+				left={left.leadingTemperament ? `${left.leadingTemperament.name} ${left.leadingTemperament.value} of 100` : 'None recorded'}
+				right={right.leadingTemperament ? `${right.leadingTemperament.name} ${right.leadingTemperament.value} of 100` : 'None recorded'}
 			/>
 			<CompareRow
 				label="Finish and distinction"

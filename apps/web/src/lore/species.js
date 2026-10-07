@@ -2,35 +2,12 @@
 // template (canonicalSpeciesCatalog.json) and resolves registry vocabularies
 // to display names.
 
-import { speciesList, templateRecordsByKey, registries, lookupInstrument } from './loaders';
+import { speciesList, templateRecordsByKey, registries } from './loaders';
 import { getEntry } from './entries';
 import { getWorld, _attachNativeSpecies } from './worlds';
-
-// Display rows for v5 vocabulary that registries.json does not carry yet:
-// that file is still pinned by the legacy v4 generator, whose schema enums are
-// generated from it. Sources: lowlight, docs/design/creature-model-current.md;
-// fins, docs/design/creature-derived-acts.md; temperament axes,
-// docs/design/xalian-creature-system-redesign.md; traversal,
-// creature-model-current.md. Fold these into registries.json when v4 retires.
-const V5_ONLY_ROWS = {
-	lowlight: { name: 'Lowlight', nature: 'Sees in dim light. Not vision in total darkness, and not heat sense.' },
-	fins: { name: 'Fins', nature: 'Fins that steer and drive the body, and can strike or shove at contact.' },
-	phase: { name: 'Phases through walls', nature: 'Passes through solid walls and barriers.' },
-	seep: { name: 'Seeps through openings', nature: 'Flows through cracks and openings too small for its body.' },
-};
-
-const TRIGGER_TEXT = { contact: 'When touched', harmed: 'When harmed', 'ally-harmed': 'When an ally is harmed' };
-
-const TEMPERAMENT_AXES = ['boldness', 'curiosity', 'energy', 'aggression', 'sociability'];
-
-function resolveRegistry(map, key) {
-	const item = map.get(key) || V5_ONLY_ROWS[key];
-	return item ? { key, name: item.name, nature: item.nature } : { key, name: capitalize(key), nature: '' };
-}
-
-function capitalize(text) {
-	return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
-}
+import {
+	TEMPERAMENT_AXES, buildAbility, capitalize, describeProtection, instrumentName, resolveRegistry,
+} from './vocabulary';
 
 function buildAttributes(attributes) {
 	// attributes in registry order (per contract), not record-object order.
@@ -95,67 +72,10 @@ function buildPhysiology(physiology) {
 	return result;
 }
 
-function describeProtection(p) {
-	const against = p.mechanism === 'elemental' && p.element ? capitalize(p.element) : capitalize(p.mechanism || p.status || p.type);
-	return `${capitalize(p.degree)} to ${against.toLowerCase()} harm`;
-}
-
 function buildTemperament(temperament) {
 	return TEMPERAMENT_AXES
 		.filter((key) => temperament && temperament[key] !== undefined)
 		.map((key) => ({ key, name: capitalize(key), band: temperament[key] }));
-}
-
-function instrumentName(key) {
-	const item = lookupInstrument(key) || V5_ONLY_ROWS[key];
-	return item ? item.name : capitalize(key);
-}
-
-// One plain phrase per effect, in the v5 effect vocabulary.
-function describeEffect(effect) {
-	switch (effect.type) {
-		case 'harm':
-			return effect.mechanism === 'elemental' ? 'Elemental harm' : `${capitalize(effect.mechanism)} harm`;
-		case 'status':
-			return capitalize(effect.status);
-		case 'restore':
-			return 'Restores';
-		case 'protect':
-			return 'Protects';
-		case 'displace':
-			return effect.direction ? `Displaces ${effect.direction}` : 'Displaces';
-		case 'remove':
-			return `Removes (${(effect.methods || []).join(', ')})`;
-		default:
-			return capitalize(effect.type);
-	}
-}
-
-function intensityText(effects) {
-	const values = effects
-		.map((e) => e.intensity)
-		.filter((v) => v !== undefined)
-		.map((v) => (Array.isArray(v) ? `${v[0]} to ${v[1]}` : String(v)));
-	return values.length > 0 ? values.join(', ') : undefined;
-}
-
-// A guaranteed action or passive, flattened for display.
-function buildAbility(ability, kind, signatureKey) {
-	return {
-		key: ability.key,
-		name: ability.name,
-		description: ability.description,
-		kind,
-		signature: ability.key === signatureKey,
-		instrument: instrumentName(ability.instrument),
-		activation: ability.activation.trigger ? TRIGGER_TEXT[ability.activation.trigger] : ability.activation.continuity,
-		delivery: ability.delivery.mode,
-		// A contact range only restates contact delivery, so it is left out.
-		range: ability.spatial && ability.spatial.range !== 'contact' ? ability.spatial.range : undefined,
-		element: ability.element,
-		effects: ability.effects.map(describeEffect).join(', '),
-		intensity: intensityText(ability.effects),
-	};
 }
 
 function buildAbilities(template) {

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import type { TradeOffer, StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
-import { speciesDisplayName } from '@xalians/rules/generator';
+import type { TradeOffer } from '@xalians/content/schema';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
+import { speciesName } from '../components/record/vocabulary';
 import { ArrowRightLeft, Copy } from 'lucide-react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
@@ -168,7 +169,7 @@ function TradePage({ id }: TradePageProps) {
 
 			<Dialog open={!!openRecord} onOpenChange={(open: boolean) => !open && setOpenRecord(null)}>
 				<DialogContent className="sm:max-w-4xl">
-					<DialogHeader><VisuallyHidden><DialogTitle>{openRecord ? speciesDisplayName(openRecord.species) : 'Record'}</DialogTitle></VisuallyHidden></DialogHeader>
+					<DialogHeader><VisuallyHidden><DialogTitle>{openRecord ? speciesName(openRecord.species) : 'Record'}</DialogTitle></VisuallyHidden></DialogHeader>
 					<ScrollArea className="max-h-[75vh] pr-4">{openRecord ? <RecordView record={openRecord} kicker="Trade record" recordLink={`/xalian/${openRecord.id}`} /> : null}</ScrollArea>
 				</DialogContent>
 			</Dialog>

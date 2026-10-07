@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import sampleGraviclaw from '../../../../../docs/design/sample-record-graviclaw.json';
+import { sampleRecord } from '../../components/record/sampleRecord';
+
+const sampleGraviclaw = sampleRecord();
 
 const getIdToken = vi.hoisted(() => vi.fn());
 vi.mock('../authUtil', () => ({ getIdToken }));
@@ -34,12 +36,12 @@ describe('native API client', () => {
 	it('sends JSON and the current ID token for writes', async () => {
 		vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
 
-		await callCreateUser({ userId: 'nick', xalianIds: [] });
+		await callCreateUser({ userId: 'nick' });
 
 		expect(fetch).toHaveBeenCalledWith('https://api.xalians.com/prod/db/user', {
 			method: 'POST',
 			headers: { Authorization: 'Bearer jwt-token', 'content-type': 'application/json' },
-			body: JSON.stringify({ userId: 'nick', xalianIds: [] }),
+			body: JSON.stringify({ userId: 'nick' }),
 		});
 	});
 

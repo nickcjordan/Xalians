@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Link } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
 import { toast } from 'sonner';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
 
 import XalianNavbar from '../components/navbar';
 import RecordView from '../components/record/RecordView';
+import { speciesName } from '../components/record/vocabulary';
 import SignInModal from '../components/auth/signInModal';
 import VerifyEmailModal from '../components/auth/verifyEmailModal';
 import * as authUtil from '../utils/authUtil';
@@ -27,7 +28,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
  *
  * The two branches are the platform's free lever and its product
  * (docs/design/xalians-platform-vision-and-economy.md section 3). Signed out,
- * GET /xalians/showroom generates a real ratified record that nobody owns and
+ * GET /xalians/showroom generates a real v5 creature record that nobody owns and
  * the server never stored: infinite pulls, nothing kept. Signed in,
  * POST /xalians generates one and it is the caller's from the moment it
  * exists, so there is no separate "keep" step to get wrong.
@@ -45,11 +46,11 @@ const PROFILE_STORAGE_KEY = 'xalians.generatorProfile';
 const PROFILE_COPY: Record<GeneratorProfile, { label: string; summary: string }> = {
 	showroom: {
 		label: 'Commoner',
-		summary: 'The everyday range: one element, a standard finish, common traits. What most Xalians are.',
+		summary: 'The everyday range: every creature comes out with a standard finish. What most Xalians are.',
 	},
 	full: {
 		label: 'Full spectrum',
-		summary: 'The whole range: rare finishes, a second element, and rare traits can all turn up. Everything the Generator can print.',
+		summary: 'The whole range: a rare finish (gleam, prismatic or eclipse) can turn up. Everything the Generator can print.',
 	},
 };
 
@@ -218,7 +219,7 @@ function GeneratorPage() {
 					</Card>
 
 					<LiveRegion>
-						{isGenerating ? 'Generating a Xalian' : record ? `Generated a ${record.species}` : ''}
+						{isGenerating ? 'Generating a Xalian' : record ? `Generated a ${speciesName(record.species)}` : ''}
 					</LiveRegion>
 
 					{isGenerating ? (

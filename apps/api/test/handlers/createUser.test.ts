@@ -22,7 +22,7 @@ describe('createUser handler', () => {
     expect(result.statusCode).toBe(200);
     const putCalls = ddbMock.commandCalls(PutCommand);
     expect(putCalls).toHaveLength(1);
-    expect(putCalls[0].args[0].input.Item).toMatchObject({ userId: 'nick', xalianIds: [] });
+    expect(putCalls[0].args[0].input.Item).toEqual({ userId: 'nick', attributes: {} });
   });
 
   it('is idempotent: an existing record is left untouched', async () => {

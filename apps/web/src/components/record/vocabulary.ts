@@ -1,124 +1,90 @@
-import registriesData from '@xalians/content/registries.json';
+import speciesCatalog from '@xalians/content/canonicalSpeciesCatalog.json';
+import type { CreatureRecord, Species } from '@xalians/content/creature';
+import * as lore from '../../lore';
 
 /**
- * Display vocabulary for one ratified creature record.
+ * Display vocabulary for one v5 creature record (CreatureRecord).
  *
- * Every controlled key in a record (an anatomy part, an action, a trait, a
- * covering) is a registry key, and `registries.json` carries the one
- * canonical display name and one-line nature for each
- * (docs/design/xalian-creature-data-structure.md section 4). Nothing here
- * invents a label: an unknown key falls back to the key itself, so a
- * vocabulary addition shows up as a raw key rather than breaking the page.
+ * Every controlled key in a record is a registry key, and registries.json
+ * carries its display name and one-line nature; v5 keys that file does not
+ * carry yet (lowlight, fins, phase, seep, the temperament axes, an
+ * individual's chirality) come from lore's V5_ONLY_ROWS. The resolution lives
+ * in lore/vocabulary.js, shared with the encyclopedia's species pages; this
+ * module only types it for the record components. Nothing here invents a
+ * label: an unknown key falls back to a title-cased key.
  */
-
-type RegistryEntry = { key: string; name: string; nature?: string };
-type Registry = Map<string, RegistryEntry>;
-
-const data = registriesData as unknown as {
-	attributes: RegistryEntry[];
-	archetypes: Array<RegistryEntry & { favors?: string[] }>;
-	traits: RegistryEntry[];
-	elements: RegistryEntry[];
-	capabilities: RegistryEntry[];
-	senses: Array<RegistryEntry & { special?: boolean }>;
-	anatomy: RegistryEntry[];
-	channels: RegistryEntry[];
-	actions: RegistryEntry[];
-	physiology: Record<string, RegistryEntry[]>;
-};
-
-const toMap = (list: RegistryEntry[] | undefined): Registry =>
-	new Map((list || []).map((item) => [item.key, item]));
-
-const REGISTRY = {
-	attributes: toMap(data.attributes),
-	archetypes: toMap(data.archetypes),
-	traits: toMap(data.traits),
-	elements: toMap(data.elements),
-	capabilities: toMap(data.capabilities),
-	senses: toMap(data.senses),
-	anatomy: toMap(data.anatomy),
-	channels: toMap(data.channels),
-	actions: toMap(data.actions),
-	physiology: Object.fromEntries(
-		Object.entries(data.physiology || {}).map(([field, list]) => [field, toMap(list)])
-	) as Record<string, Registry>,
-};
 
 export type Term = { key: string; name: string; nature: string };
 
-// A key with no registry row still gets a readable label rather than a bare
-// slug: the record's instance-level chirality values (levo, dextro, achiral)
-// are the live case, since registries.json's chirality vocabulary describes the
-// species template's roll mode, not the individual's value.
-function titleCase(key: string): string {
-	return key
-		.split(/[-_]/)
-		.map((word) => (word ? word.charAt(0).toUpperCase() + word.slice(1) : word))
-		.join(' ');
+const templates = new Map(
+	(Object.values(speciesCatalog) as unknown as Species[]).map((species) => [species.key, species])
+);
+
+/** The v5 species template a record was generated from. */
+export function speciesTemplate(key: string): Species | undefined {
+	return templates.get(key);
 }
 
-function fromRegistry(registry: Registry | undefined, key: string): Term {
-	const entry = registry && registry.get(key);
-	return { key, name: entry ? entry.name : titleCase(key), nature: entry && entry.nature ? entry.nature : '' };
+/** The species' display name, from its v5 template. */
+export function speciesName(key: string): string {
+	return templates.get(key)?.name ?? capitalize(key);
 }
 
-export const attributeTerm = (key: string) => fromRegistry(REGISTRY.attributes, key);
-export const archetypeTerm = (key: string) => fromRegistry(REGISTRY.archetypes, key);
-export const traitTerm = (key: string) => fromRegistry(REGISTRY.traits, key);
-export const elementTerm = (key: string) => fromRegistry(REGISTRY.elements, key);
-export const capabilityTerm = (key: string) => fromRegistry(REGISTRY.capabilities, key);
-export const senseTerm = (key: string) => fromRegistry(REGISTRY.senses, key);
-export const actionTerm = (key: string) => fromRegistry(REGISTRY.actions, key);
-export const physiologyTerm = (field: string, key: string) => fromRegistry(REGISTRY.physiology[field], key);
+const termOf = (vocabulary: string) => (key: string): Term => lore.term(vocabulary, key);
 
-/** An instrument is an anatomy part or one of the seven innate channels. */
-export const instrumentTerm = (key: string): Term =>
-	REGISTRY.anatomy.has(key) ? fromRegistry(REGISTRY.anatomy, key) : fromRegistry(REGISTRY.channels, key);
+export const attributeTerm = termOf('attributes');
+export const elementTerm = termOf('elements');
+export const capabilityTerm = termOf('capabilities');
+export const senseTerm = termOf('senses');
+export const physiologyTerm = (field: string, key: string): Term => lore.term(`physiology.${field}`, key);
+export const temperamentTerm = (key: string): Term => lore.term('temperament', key);
+export const instrumentTerm = (key: string): Term => lore.resolveInstrument(key);
 
-/** Registry order, not record-object order, for the ten frozen attributes. */
-export const ATTRIBUTE_ORDER: string[] = (data.attributes || []).map((a) => a.key);
-export const CAPABILITY_ORDER: string[] = (data.capabilities || []).map((c) => c.key);
+/** Registry order, not record-object order. */
+export const ATTRIBUTE_ORDER: string[] = lore.vocabularyOrder('attributes');
+export const CAPABILITY_ORDER: string[] = lore.vocabularyOrder('capabilities');
+export const GRADED_SENSES = ['sight', 'hearing', 'smell'] as const;
+export const TEMPERAMENT_ORDER: string[] = lore.TEMPERAMENT_AXES;
 
-/** The five temperament axes, in the order the record and the design doc list them. */
-export const TEMPERAMENT_ORDER = ['boldness', 'curiosity', 'energy', 'aggression', 'sociability'];
-
-const TEMPERAMENT_NATURE: Record<string, string> = {
-	boldness: 'How readily it faces what it does not know.',
-	curiosity: 'How much the unfamiliar draws it in.',
-	energy: 'How restless it is when nothing is happening.',
-	aggression: 'How quickly it answers a challenge with force.',
-	sociability: 'How much it seeks the company of others.',
-};
-
-export const temperamentTerm = (key: string): Term => ({
-	key,
-	name: key.charAt(0).toUpperCase() + key.slice(1),
-	nature: TEMPERAMENT_NATURE[key] || '',
-});
+export const TERM_DEFS = lore.TERM_DEFS as Record<string, string>;
 
 /**
- * A word for an ability's intensity. Intensity is 1 to 100 and describes how
- * forcefully the creature performs the act, so the record view leads with the
- * word and prints the number beside it. Display only, and a tuned lever: no
- * rule reads these cuts.
+ * The scale a group of open-ended ratings is drawn against: 100 unless a
+ * rating in the group passes it, so a creature rated above 100 shows a bar
+ * that is longer than one at 100 instead of two full bars. Ratings compare
+ * creatures (50 is the standard reference); 100 is not a ceiling.
  */
-export function intensityBand(intensity: number): string {
-	if (intensity <= 20) return 'Faint';
-	if (intensity <= 40) return 'Slight';
-	if (intensity <= 60) return 'Measured';
-	if (intensity <= 80) return 'Strong';
-	return 'Overwhelming';
+export function ratingScale(values: number[]): number {
+	const top = Math.max(100, ...values);
+	return top <= 100 ? 100 : Math.ceil(top / 10) * 10;
 }
+
+/** The highest-rated keys of a ratings map, in the order given. */
+export function strongest<T extends string>(order: readonly T[], values: Partial<Record<T, number>>, count: number) {
+	return order
+		.filter((key) => typeof values[key] === 'number')
+		.map((key) => ({ key, value: values[key] as number }))
+		.sort((a, b) => b.value - a.value)
+		.slice(0, count);
+}
+
+/** The overall dimensions a record carries, in a fixed order, each in both units. */
+export function dimensions(physiology: CreatureRecord['physiology']): Array<{ key: string; label: string; value: string }> {
+	return ([['heightCm', 'Height'], ['lengthCm', 'Length'], ['widthCm', 'Width']] as const)
+		.filter(([field]) => typeof physiology[field] === 'number')
+		.map(([field, label]) => ({ key: field, label, value: lengthBoth(physiology[field] as number) }));
+}
+
+const round = (n: number) => (n < 10 ? Math.round(n * 10) / 10 : Math.round(n));
 
 /** `204 cm` as `80 in / 204 cm`, the two-unit form the species pages use. */
-export function heightBoth(cm: number): string {
-	return `${Math.round(cm / 2.54)} in / ${Math.round(cm)} cm`;
+export function lengthBoth(cm: number): string {
+	return `${round(cm / 2.54).toLocaleString()} in / ${round(cm).toLocaleString()} cm`;
 }
 
-/** `243 kg` as `536 lb / 243 kg`. */
-export function weightBoth(kg: number): string {
-	return `${Math.round(kg * 2.2046).toLocaleString()} lb / ${Math.round(kg).toLocaleString()} kg`;
+/** `243 kg` as `536 lb / 243 kg`; a small body keeps one decimal. */
+export function massBoth(kg: number): string {
+	return `${round(kg * 2.2046).toLocaleString()} lb / ${round(kg).toLocaleString()} kg`;
 }
 
 /** An absolute date, per the content rules (docs/DESIGN_SYSTEM.md section 9). */
@@ -137,4 +103,21 @@ export function generatedOnShort(iso: string): string {
 
 export function capitalize(text: string): string {
 	return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+}
+
+/** The record's actions and passives flattened for AbilityCard, signature first. */
+export function recordAbilities(record: CreatureRecord) {
+	const template = speciesTemplate(record.species);
+	const guaranteed = new Set([...(template?.actions ?? []), ...(template?.passives ?? [])].map((a) => a.key));
+	const abilities = [
+		...record.actions.map((a) => lore.buildAbility(a, 'action', record.signature.key, guaranteed.has(a.key))),
+		...record.passives.map((a) => lore.buildAbility(a, 'passive', record.signature.key, true)),
+	];
+	return [...abilities.filter((a) => a.signature), ...abilities.filter((a) => !a.signature)];
+}
+
+/** The signature ability, actions or passives, as the record names it. */
+export function signatureAbility(record: CreatureRecord) {
+	const list = record.signature.type === 'action' ? record.actions : record.passives;
+	return list.find((ability) => ability.key === record.signature.key);
 }

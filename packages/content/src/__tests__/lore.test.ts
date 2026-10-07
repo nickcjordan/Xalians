@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ChronicleSchema,
+  CreatureGradeCalibrationSchema,
   GradeCalibrationSchema,
   NarrationSchema,
   PlatesSchema,
@@ -13,6 +14,7 @@ import tour from '../../json/tour.json' with { type: 'json' };
 import plates from '../../json/plates.json' with { type: 'json' };
 import sites from '../../json/sites.json' with { type: 'json' };
 import gradeCalibration from '../../json/gradeCalibration.json' with { type: 'json' };
+import creatureGradeCalibration from '../../json/creatureGradeCalibration.json' with { type: 'json' };
 
 function assertValid(schema: { safeParse: (v: unknown) => { success: boolean; error?: { issues: unknown[] } } }, value: unknown) {
   const result = schema.safeParse(value);
@@ -48,5 +50,9 @@ describe('lore bundles', () => {
 
   it('gradeCalibration.json validates against GradeCalibrationSchema', () => {
     assertValid(GradeCalibrationSchema, gradeCalibration);
+  });
+
+  it('creatureGradeCalibration.json validates against CreatureGradeCalibrationSchema', () => {
+    assertValid(CreatureGradeCalibrationSchema, creatureGradeCalibration);
   });
 });

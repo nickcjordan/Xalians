@@ -1,18 +1,16 @@
-import {recordCapabilities, recordActions, recordPassives, type DisplayAbility} from '@xalians/content/ability-compatibility';
-import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import * as React from 'react';
-import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
-import { speciesDisplayName } from '@xalians/rules/generator';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
 import { Check, Plus } from 'lucide-react';
 
 import XalianImage from '../xalianImage';
-import { archetypeTerm, elementTerm, generatedOnShort, capitalize } from './vocabulary';
+import { elementTerm, generatedOnShort, capitalize, physiologyTerm, signatureAbility, speciesName } from './vocabulary';
 import { Tile, TileArt, TileMeta } from '@/components/system/record';
 import { Badge } from '@/components/ui/badge';
 
 /**
- * One ratified record as a catalog tile: the species art on its element wash,
- * the designation, the element chips, and the date it was generated. The whole
+ * One v5 creature record as a catalog tile: the species art on its element
+ * wash, the designation, its body plan and signature, the element chip, and
+ * the date it was generated. The whole
  * tile is one target; the caller decides what opening it does.
  */
 
@@ -30,13 +28,11 @@ type RecordTileProps = {
 };
 
 function RecordTile({ record, onOpen, action, comparison }: RecordTileProps) {
-	const element = record.element.primary;
-	const affinities = record.element.affinities as Record<string, number>;
-	const secondary = Object.keys(affinities).find((key) => key !== element) || null;
-	const name = speciesDisplayName(record.species);
+	const element = record.element;
+	const name = speciesName(record.species);
 	const finish = record.appearance.finish;
-	const archetype = archetypeTerm(record.archetype.key).name;
-	const signatureAbility = recordCapabilities(record).find((ability) => isSignatureAbility(ability)) || recordCapabilities(record)[0];
+	const signature = signatureAbility(record);
+	const summary = `${physiologyTerm('bodyPlan', record.physiology.bodyPlan).name}${signature ? ` · ${signature.name}` : ''}`;
 
 	return (
 		<div className={`el-${element} relative`}>
@@ -52,20 +48,16 @@ function RecordTile({ record, onOpen, action, comparison }: RecordTileProps) {
 						colored
 						speciesName={record.species}
 						primaryType={element}
-						secondaryType={secondary || undefined}
 						moreClasses="w-full"
 					/>
 				</TileArt>
 				<TileMeta className="flex flex-col gap-2">
 					<span className="type-legend text-ink">{name}</span>
-					<span className="truncate font-body text-small text-ink-2" title={`${archetype}${signatureAbility ? ` · ${signatureAbility.name}` : ''}`}>
-						{archetype}{signatureAbility ? ` · ${signatureAbility.name}` : ''}
+					<span className="truncate font-body text-small text-ink-2" title={summary}>
+						{summary}
 					</span>
 					<div className="flex flex-wrap gap-2">
 						<span className={`el-${element}`}><Badge variant="chip">{elementTerm(element).name}</Badge></span>
-						{secondary ? (
-							<span className={`el-${secondary}`}><Badge variant="chip-outline">{elementTerm(secondary).name}</Badge></span>
-						) : null}
 						{finish !== 'standard' ? <Badge variant="warn">{capitalize(finish)}</Badge> : null}
 					</div>
 					<span className="type-data text-small text-ink-3 whitespace-nowrap">{generatedOnShort(record.provenance.generatedAt)}</span>

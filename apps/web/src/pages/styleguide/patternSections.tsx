@@ -434,10 +434,10 @@ const SECTIONS: { id: string; label: string; node: React.ReactNode }[] = [
         </p>
         <p className="mt-6 font-body text-body text-ink-2">
           This record&apos;s{" "}
-          <Term definition="Has a physical body that occupies space and can be touched, struck, and held.">
-            corporeality
+          <Term definition="The outer surface of the resting body.">
+            covering
           </Term>{" "}
-          is corporeal, with a{" "}
+          is shell, with a{" "}
           <Term definition="How far this record sits from a typical print of its species, measured against calibrated generations. Not combat power.">
             registry distinction
           </Term>{" "}

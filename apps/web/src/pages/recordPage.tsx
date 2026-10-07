@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router';
 import { Copy, Library } from 'lucide-react';
 import { toast } from 'sonner';
-import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
-import { speciesDisplayName } from '@xalians/rules/generator';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
+import { speciesName } from '../components/record/vocabulary';
 
 import XalianNavbar from '../components/navbar';
 import RecordView from '../components/record/RecordView';
@@ -21,7 +21,7 @@ function RecordPage({ id }: { id: string }) {
 	const [isLoading, setIsLoading] = React.useState(true);
 	const [message, setMessage] = React.useState<string | null>(null);
 
-	usePageTitle(record ? `${speciesDisplayName(record.species)} record` : 'Xalian record');
+	usePageTitle(record ? `${speciesName(record.species)} record` : 'Xalian record');
 
 	React.useEffect(() => {
 		let cancelled = false;
@@ -55,7 +55,7 @@ function RecordPage({ id }: { id: string }) {
 			<Shell className="pb-16">
 				<Masthead
 					kicker="Registry"
-					title={record ? speciesDisplayName(record.species) : 'Xalian record'}
+					title={record ? speciesName(record.species) : 'Xalian record'}
 					subtitle="A permanent creature record. Its nature is shared; each game decides how to read it."
 					aside={record ? (
 						<Button onClick={copyLink}><Copy /> Copy link</Button>

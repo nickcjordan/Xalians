@@ -1,75 +1,55 @@
-import {recordCapabilities, recordActions, recordPassives, type DisplayAbility} from '@xalians/content/ability-compatibility';
-import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import * as React from 'react';
 import { Link } from 'react-router';
-import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
-import { getSpeciesTemplate, speciesDisplayName } from '@xalians/rules/generator';
-import { gradeWithBundledCalibration } from '@xalians/rules/generator/grade';
+import type { CreatureRecord } from '@xalians/content/creature';
+import { gradeCreature } from '@xalians/rules/generator/creatureGrade';
 
 import XalianImage from '../xalianImage';
+import AbilityCard from '../encyclopedia/AbilityCard';
 import * as lore from '../../lore';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { SpecPlate, RecordRow, Meter } from '@/components/system/record';
 import { Term } from '@/components/system/term';
 import {
-	ATTRIBUTE_ORDER, CAPABILITY_ORDER, TEMPERAMENT_ORDER,
-	attributeTerm, archetypeTerm, capabilityTerm, elementTerm, instrumentTerm,
-	actionTerm, physiologyTerm, senseTerm, temperamentTerm, traitTerm,
-	capitalize, generatedOn, heightBoth, intensityBand, weightBoth,
+	ATTRIBUTE_ORDER, CAPABILITY_ORDER, GRADED_SENSES, TEMPERAMENT_ORDER, TERM_DEFS,
+	attributeTerm, capabilityTerm, elementTerm, instrumentTerm, physiologyTerm, senseTerm, temperamentTerm,
+	capitalize, dimensions, generatedOn, massBoth, ratingScale, recordAbilities, signatureAbility,
+	speciesName, speciesTemplate, strongest,
 } from './vocabulary';
 
 /**
- * One ratified Xalian record, read as a document about a creature.
+ * One v5 creature record, read as a document about a creature.
  *
  * Tier: chrome (docs/DESIGN_SYSTEM.md section 1) - this reads a record, so it
  * is built from the house components and carries no surface of its own beyond
  * the cards it uses; the page decides the frame around it.
  *
- * The record describes nature, never mechanics
- * (docs/design/xalian-creature-data-structure.md section 1): no HP here, no
- * damage, no stat total, nothing a game would derive. The layers appear in the
- * record's own order, most permanent first - physiology, attributes,
- * capabilities and senses, affinity, traits, appearance, abilities,
- * temperament - and every graded value is the same 0 to 100 scale, so one
- * meter shape carries all of them.
+ * The record describes nature, never mechanics: no HP here, no damage, no
+ * stat total, nothing a game would derive. The layers appear most permanent
+ * first - physiology, attributes, capabilities and senses, appearance,
+ * abilities, temperament. Attributes, capabilities and senses are open-ended
+ * ratings (50 is the standard reference, values above 100 are allowed), so
+ * their meters are drawn against 100 unless a value passes it; temperament is
+ * five axes from 0 to 100.
  *
- * The element in scope is the record's primary element, so every meter, chip
- * and plate inside takes that hue without naming a color.
+ * The element in scope is the record's element, so every meter, chip and
+ * plate inside takes that hue without naming a color.
  */
 
 type RecordViewProps = {
-	record: XalianRecord;
+	record: CreatureRecord;
 	/** A legend above the designation: what this record is on this page. */
 	kicker?: React.ReactNode;
 	/** Direct registry route when this persisted record can be shared. */
 	recordLink?: string;
 };
 
-/**
- * Definitions for internal vocabulary that reaches the visitor undefined
- * (site audit issue #438). The registry fields quote
- * docs/species-templates/REGISTRY-DEFINITIONS.md's own one-line field
- * meaning where the doc states one; the rest are the ratified non-registry
- * text.
- */
-const TERM_DEFS = {
-	corporeality: 'Whether the creature has a physical body that occupies space and can be touched, struck, and held, or no persistent physical body at all.',
-	composition: 'What the body is made of at rest.',
-	bodyPlan: 'How the creature presents in the field and moves through it at rest.',
-	covering: 'The outer surface of the resting body.',
-	communication: 'Outward signaling to other creatures.',
-	ambientMedia: 'The phases of matter the creature can sustain activity in: atmosphere, liquid, or vacuum.',
-	lifespan: 'How long a working life this body has, from a season to something that never wears out.',
-	chirality: "Which molecular handedness this individual's genome rolled, or whether its body has none to roll.",
-	registryDistinction: 'How far this record sits from a typical print of its species, measured against calibrated generations. Not combat power.',
-	affinity: 'The element or elements the creature works through, and how much of each runs through this record.',
-	finish: 'The surface treatment this record was printed with. Most are standard.',
-	intensity: 'Strength of the ability on a scale of 100.',
-} as const;
+const PROFILE_LABEL: Record<CreatureRecord['provenance']['profile'], string> = {
+	full: 'Full spectrum',
+	showroom: 'Commoner',
+};
 
 function Layer({ title, children, className }: { title: React.ReactNode; children: React.ReactNode; className?: string }) {
 	return (
@@ -84,35 +64,6 @@ function bodyValue(value: React.ReactNode) {
 	return <span className="font-body normal-case tracking-normal text-ink">{value}</span>;
 }
 
-function Ability({ ability }: { ability: DisplayAbility }) {
-	const instrument = instrumentTerm(ability.instrument);
-	const action = 'effects' in ability ? { name: ability.effects.map(e => e.kind === 'status' ? e.status : e.kind === 'remove' && 'methods' in e ? `removal (${e.methods.join(', ')})` : e.kind).join(', '), nature: ability.description } : actionTerm(ability.action);
-	const medium = elementTerm(ability.medium);
-	return (
-		<li className="border-b border-edge py-4 first:pt-0 last:border-b-0 last:pb-0">
-			<div className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
-				<h4 className="type-subhead m-0">{ability.name}</h4>
-				{isSignatureAbility(ability) && <Badge variant="ok">Signature</Badge>}
-				<span className="type-data ml-auto text-small text-ink-2" title={`Intensity ${ability.intensity} of 100`}>
-					{intensityBand(ability.intensity)} <span className="text-ink-3">{ability.intensity}</span>
-				</span>
-			</div>
-			<p className="mt-2 mb-0 font-body text-small text-ink-2">
-				{'delivery' in ability && <>{('operation' in ability.activation ? ability.activation.operation : ability.activation.mode)} · {ability.delivery.mode}: </>}
-				<span title={action.nature}>{action.name}</span>
-				{' with its '}
-				<span title={instrument.nature}>{instrument.name.toLowerCase()}</span>
-				{', through '}
-				<span title={medium.nature}>{medium.name.toLowerCase()}</span>.
-			</p>
-			{'spatial' in ability && <p className="mt-2 mb-0 font-body text-small text-ink-2">
-				{[ability.spatial.range && `Range: ${ability.spatial.range}`, ability.spatial.area && `Area: ${ability.spatial.area.extent} ${ability.spatial.area.shape}`, ability.timing && `Preparation: ${ability.timing.preparation}; recovery: ${ability.timing.recovery}`].filter(Boolean).join(' · ')}
-			</p>}
-			{ability.description ? <p className="measure mt-2 mb-0 font-body text-body text-ink">{ability.description}</p> : null}
-		</li>
-	);
-}
-
 function BriefCard({ label, value, caption }: { label: React.ReactNode; value: React.ReactNode; caption: React.ReactNode }) {
 	return (
 		<Card variant="recessed" className="gap-2 p-4">
@@ -123,31 +74,50 @@ function BriefCard({ label, value, caption }: { label: React.ReactNode; value: R
 	);
 }
 
+function Ratings({ rows }: { rows: Array<{ key: string; name: string; nature: string; value: number }> }) {
+	const scale = ratingScale(rows.map((row) => row.value));
+	return (
+		<React.Fragment>
+			{rows.map((row) => (
+				<div key={row.key} title={row.nature}>
+					<Meter name={row.name} value={row.value} max={scale} />
+				</div>
+			))}
+		</React.Fragment>
+	);
+}
+
 function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) {
 	const isUnownedPreview = kicker === 'Unowned preview';
-	const template = getSpeciesTemplate(record.species);
-	const name = speciesDisplayName(record.species);
-	const element = record.element.primary;
-	const affinities = record.element.affinities as Record<string, number>;
-	const secondary = Object.keys(affinities).find((key) => key !== element) || null;
+	const template = speciesTemplate(record.species);
+	const name = speciesName(record.species);
+	const element = record.element;
 	const physiology = record.physiology;
-	const archetype = archetypeTerm(record.archetype.key);
 	const finish = record.appearance.finish;
 	const appearance = template ? template.lore.appearance : [];
-	const strongestAttributes = ATTRIBUTE_ORDER
-		.map((key) => ({ key, value: record.attributes[key as keyof XalianRecord['attributes']] }))
-		.sort((a, b) => b.value - a.value)
-		.slice(0, 2);
-	const strongestCapability = CAPABILITY_ORDER
-		.map((key) => ({ key, value: physiology.capabilities[key as keyof typeof physiology.capabilities] }))
-		.sort((a, b) => b.value - a.value)[0];
-	const signatureAbility = recordCapabilities(record).find((ability) => isSignatureAbility(ability));
-	const distinction = template ? gradeWithBundledCalibration(record, template).percentile : null;
+	const abilities = recordAbilities(record);
+	const passives = abilities.filter((a) => a.kind === 'passive');
+	const actions = abilities.filter((a) => a.kind === 'action');
+	const signature = signatureAbility(record);
+
+	const strongestAttributes = strongest(ATTRIBUTE_ORDER, record.attributes as Record<string, number>, 2);
+	const [strongestCapability] = strongest(CAPABILITY_ORDER, physiology.capabilities as Record<string, number>, 1);
+	const [leadingTemperament] = strongest(TEMPERAMENT_ORDER, record.temperament as Record<string, number>, 1);
+	const distinction = React.useMemo(() => {
+		try {
+			return gradeCreature(record).percentile;
+		} catch {
+			// A species missing from this build's catalog: no calibrated grade to show.
+			return null;
+		}
+	}, [record]);
 	const roundedDistinction = distinction == null ? null : Math.round(distinction);
 
 	const speciesRoute = lore.getSpecies(record.species) ? lore.routeFor('species', record.species) : null;
 	const originKey = record.provenance.origin;
-	const originRoute = lore.getWorld(originKey) ? lore.routeFor('world', originKey) : null;
+	const originWorld = lore.getWorld(originKey);
+	const originName = originWorld ? originWorld.name : capitalize(originKey);
+	const originRoute = originWorld ? lore.routeFor('world', originKey) : null;
 
 	const specialSenses = physiology.senses.special || [];
 	const composition = [physiology.composition.primary, physiology.composition.secondary]
@@ -161,17 +131,14 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 		? physiology.breathes.map((key) => physiologyTerm('media', key).name).join(', ')
 		: 'Does not breathe';
 	const tolerance = physiology.environmentalTolerance;
+	const protections = physiology.protections.map((p) => lore.describeProtection(p));
+	const traversal = physiology.traversal.map((key) => lore.term('traversal', key).name);
 
 	return (
 		<article className={`el-${element} flex flex-col gap-8`} data-slot="record-view">
 			<header className="grid gap-6 md:grid-cols-[minmax(200px,280px)_minmax(0,1fr)]">
 				<div className="mx-auto w-full max-w-[280px] md:mx-0">
-					<XalianImage
-						colored
-						speciesName={record.species}
-						primaryType={element}
-						secondaryType={secondary || undefined}
-						moreClasses="w-full" />
+					<XalianImage colored speciesName={record.species} primaryType={element} moreClasses="w-full" />
 				</div>
 
 				<div className="flex min-w-0 flex-col gap-3">
@@ -180,11 +147,6 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 
 					<div className="flex flex-wrap items-center gap-2">
 						<span className={`el-${element}`}><Badge variant="chip">{elementTerm(element).name}</Badge></span>
-						{secondary ? (
-							<span className={`el-${secondary}`}>
-								<Badge variant="chip-outline">{elementTerm(secondary).name} {affinities[secondary]}</Badge>
-							</span>
-						) : null}
 						{finish !== 'standard' ? (
 							<Badge variant="warn">
 								{capitalize(finish)} <Term definition={TERM_DEFS.finish}>finish</Term>
@@ -199,14 +161,6 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 						) : null}
 					</div>
 
-					<p className="m-0 max-w-[62ch] font-body text-body text-ink-2" title={archetype.nature}>
-						{archetype.name}
-						{record.archetype.favors.length > 0
-							? `, shaped by ${record.archetype.favors.map((key) => attributeTerm(key).name.toLowerCase()).join(' and ')}`
-							: ''}
-						.
-					</p>
-
 					<Separator className="my-1" />
 
 					<SpecPlate
@@ -216,12 +170,12 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 							{
 								key: 'Origin',
 								value: originRoute
-									? <Link to={originRoute} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">{capitalize(originKey)}</Link>
-									: capitalize(originKey),
+									? <Link to={originRoute} className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink">{originName}</Link>
+									: originName,
 							},
 							...(isUnownedPreview ? [] : [{ key: 'Serial', value: `No. ${record.provenance.serial.toLocaleString()}` }]),
 							{ key: 'Generated', value: generatedOn(record.provenance.generatedAt) },
-							{ key: 'Generator', value: `v${record.provenance.generatorVersion}` },
+							{ key: 'Range', value: PROFILE_LABEL[record.provenance.profile] },
 						]} />
 
 					<dl className="m-0 grid grid-cols-[minmax(7rem,max-content)_minmax(0,1fr)] items-baseline gap-x-6 gap-y-2 lg:grid-cols-[minmax(9rem,max-content)_minmax(0,1fr)_minmax(9rem,max-content)_minmax(0,1fr)]">
@@ -250,31 +204,29 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 					Read this one at a glance
 				</p>
 				<p className="measure mt-0 mb-5 font-body text-body text-ink-2">
-					{name} presents as {archetype.name.toLowerCase()}, led by{' '}
+					This {name} is led by{' '}
 					{strongestAttributes.map(({ key }) => attributeTerm(key).name.toLowerCase()).join(' and ')}.
-					{strongestCapability ? ` Its strongest physical aptitude is ${capabilityTerm(strongestCapability.key).name.toLowerCase()}.` : ''}
-					{signatureAbility ? ` ${signatureAbility.name} is its signature ability.` : ''}
+					{strongestCapability ? ` Its highest capability rating is ${capabilityTerm(strongestCapability.key).name} (${strongestCapability.value}).` : ''}
+					{signature ? ` ${signature.name} is its signature ${record.signature.type === 'passive' ? 'passive' : 'ability'}.` : ''}
 				</p>
 
 				<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
 					<BriefCard
-						label="Disposition"
-						value={archetype.name}
-						caption={record.archetype.favors.length > 0
-							? `Naturally favors ${record.archetype.favors.map((key) => attributeTerm(key).name.toLowerCase()).join(' and ')}.`
-							: 'Its broad natural bearing.'}
-					/>
-					<BriefCard
 						label="Strongest aptitude"
 						value={strongestCapability ? capabilityTerm(strongestCapability.key).name : 'Not recorded'}
-						caption={strongestCapability ? `${strongestCapability.value} out of 100 in its natural capability record.` : 'No capability reading.'}
+						caption={strongestCapability ? `Rated ${strongestCapability.value}, where 50 is standard.` : 'No capability reading.'}
 					/>
 					<BriefCard
-						label="Signature ability"
-						value={signatureAbility ? signatureAbility.name : 'Not recorded'}
-						caption={signatureAbility
-							? `${intensityBand(signatureAbility.intensity)} expression through ${elementTerm(signatureAbility.medium).name.toLowerCase()}.`
+						label="Signature"
+						value={signature ? signature.name : 'Not recorded'}
+						caption={signature
+							? `Through its ${instrumentTerm(signature.instrument).name.toLowerCase()}${signature.element ? `, in ${elementTerm(signature.element).name.toLowerCase()}` : ''}.`
 							: 'No signature ability recorded.'}
+					/>
+					<BriefCard
+						label={<Term definition={TERM_DEFS.temperament}>Leading temperament</Term>}
+						value={leadingTemperament ? temperamentTerm(leadingTemperament.key).name : 'Not recorded'}
+						caption={leadingTemperament ? `${leadingTemperament.value} of 100. ${temperamentTerm(leadingTemperament.key).nature}` : 'No temperament reading.'}
 					/>
 					<BriefCard
 						label={<Term definition={TERM_DEFS.registryDistinction}>Registry distinction</Term>}
@@ -290,58 +242,52 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 				<SpecPlate
 					columns={2}
 					entries={[
-						{ key: <Term definition={TERM_DEFS.corporeality}>Corporeality</Term>, value: bodyValue(physiologyTerm('corporeality', physiology.corporeality).name) },
 						{ key: <Term definition={TERM_DEFS.composition}>Composition</Term>, value: bodyValue(composition) },
 						{ key: <Term definition={TERM_DEFS.bodyPlan}>Body plan</Term>, value: bodyValue(physiologyTerm('bodyPlan', physiology.bodyPlan).name) },
 						{ key: <Term definition={TERM_DEFS.covering}>Covering</Term>, value: bodyValue(physiologyTerm('covering', physiology.covering).name) },
 						{ key: 'Anatomy', value: bodyValue(physiology.anatomy.map((key) => instrumentTerm(key).name).join(', ')) },
+						{ key: 'Mass', value: massBoth(physiology.massKg) },
+						...dimensions(physiology).map((d) => ({ key: d.label, value: d.value })),
 						{ key: 'Diet', value: bodyValue(physiologyTerm('diet', physiology.diet).name) },
-						{ key: 'Height', value: heightBoth(physiology.heightCm) },
-						{ key: 'Weight', value: weightBoth(physiology.weightKg) },
 						{ key: <Term definition={TERM_DEFS.lifespan}>Lifespan</Term>, value: bodyValue(physiologyTerm('lifespan', physiology.lifespan).name) },
 						{ key: <Term definition={TERM_DEFS.chirality}>Chirality</Term>, value: bodyValue(physiologyTerm('chirality', physiology.genome.chirality).name) },
 						{ key: <Term definition={TERM_DEFS.communication}>Communication</Term>, value: bodyValue(communication) },
 						{ key: 'Breathes', value: bodyValue(breathes) },
 						{ key: <Term definition={TERM_DEFS.ambientMedia}>Ambient media</Term>, value: bodyValue(tolerance.ambientMedia.map((key) => physiologyTerm('media', key).name).join(', ')) },
 						{ key: 'Temperature', value: `${tolerance.temperatureC.min} to ${tolerance.temperatureC.max} °C` },
+						...(protections.length > 0 ? [{ key: <Term definition={TERM_DEFS.protections}>Protections</Term>, value: bodyValue(protections.join(', ')) }] : []),
+						...(traversal.length > 0 ? [{ key: <Term definition={TERM_DEFS.traversal}>Traversal</Term>, value: bodyValue(traversal.join(', ')) }] : []),
 					]} />
 			</Layer>
+
+			<p className="m-0 max-w-[62ch] font-body text-small text-ink-2">
+				Attributes, capabilities and senses are <Term definition={TERM_DEFS.rating}>ratings</Term>: 50 is a standard reference, and
+				a rating can pass 100.
+			</p>
 
 			<div className="grid gap-8 lg:grid-cols-2">
 				<Layer title="Attributes">
 					<Card variant="panel" className="p-4 md:p-6">
-						{ATTRIBUTE_ORDER.map((key) => {
-							const term = attributeTerm(key);
-							return (
-								<div key={key} title={term.nature}>
-									<Meter name={term.name} value={record.attributes[key as keyof XalianRecord['attributes']]} max={100} />
-								</div>
-							);
-						})}
+						<Ratings
+							rows={ATTRIBUTE_ORDER
+								.filter((key) => typeof (record.attributes as Record<string, number>)[key] === 'number')
+								.map((key) => ({ ...attributeTerm(key), value: (record.attributes as Record<string, number>)[key] }))} />
 					</Card>
 				</Layer>
 
 				<div className="flex flex-col gap-8">
 					<Layer title="Capabilities">
 						<Card variant="panel" className="p-4 md:p-6">
-							{CAPABILITY_ORDER.map((key) => {
-								const term = capabilityTerm(key);
-								return (
-									<div key={key} title={term.nature}>
-										<Meter name={term.name} value={physiology.capabilities[key as keyof typeof physiology.capabilities]} max={100} />
-									</div>
-								);
-							})}
+							<Ratings
+								rows={CAPABILITY_ORDER
+									.filter((key) => typeof (physiology.capabilities as Record<string, number>)[key] === 'number')
+									.map((key) => ({ ...capabilityTerm(key), value: (physiology.capabilities as Record<string, number>)[key] }))} />
 						</Card>
 					</Layer>
 
 					<Layer title="Senses">
 						<Card variant="panel" className="p-4 md:p-6">
-							{(['sight', 'hearing', 'smell'] as const).map((key) => (
-								<div key={key} title={senseTerm(key).nature}>
-									<Meter name={senseTerm(key).name} value={physiology.senses[key]} max={100} />
-								</div>
-							))}
+							<Ratings rows={GRADED_SENSES.map((key) => ({ ...senseTerm(key), value: physiology.senses[key] }))} />
 							{specialSenses.length > 0 ? (
 								<div className="mt-3 flex flex-wrap gap-2 border-t border-edge pt-3">
 									{specialSenses.map((key) => (
@@ -354,87 +300,45 @@ function RecordView({ record, kicker = 'Record', recordLink }: RecordViewProps) 
 				</div>
 			</div>
 
-			<div className="grid gap-8 lg:grid-cols-2">
-				<div className="flex flex-col gap-8">
-					<Layer title={<Term definition={TERM_DEFS.affinity}>Affinity</Term>}>
-						<div className="flex flex-wrap items-center gap-3">
-							<span className={`el-${element}`}><Badge variant="chip">{elementTerm(element).name} 100</Badge></span>
-							{secondary ? (
-								<span className={`el-${secondary}`}>
-									<Badge variant="chip">{elementTerm(secondary).name} {affinities[secondary]}</Badge>
-								</span>
-							) : null}
-						</div>
-						<p className="mt-3 mb-0 max-w-[62ch] font-body text-small text-ink-2">
-							{secondary
-								? `Primarily ${elementTerm(element).name.toLowerCase()}, with ${elementTerm(secondary).name.toLowerCase()} running through it at ${affinities[secondary]}.`
-								: `Wholly ${elementTerm(element).name.toLowerCase()}, with nothing else running through it.`}
-						</p>
-					</Layer>
-
-					<Layer title="Traits">
-						{record.traits.length === 0 ? (
-							<p className="m-0 max-w-[62ch] font-body text-body text-ink-2">Nothing beyond its species landed for this one.</p>
-						) : (
-							<React.Fragment>
-								<div className="flex flex-wrap gap-2">
-									{record.traits.map((key) => (
-										<Badge key={key} variant="chip-outline" title={traitTerm(key).nature}>{traitTerm(key).name}</Badge>
-									))}
-								</div>
-								<Collapsible className="mt-4 max-w-3xl">
-									<CollapsibleTrigger>What these mean</CollapsibleTrigger>
-									<CollapsibleContent>
-										<dl className="m-0 grid gap-x-6 gap-y-2 sm:grid-cols-[minmax(8rem,12rem)_minmax(0,1fr)]">
-											{record.traits.map((key) => (
-												<React.Fragment key={key}>
-													<dt className="type-legend">{traitTerm(key).name}</dt>
-													<dd className="m-0 font-body text-small text-ink-2">{traitTerm(key).nature}</dd>
-												</React.Fragment>
-											))}
-										</dl>
-									</CollapsibleContent>
-								</Collapsible>
-							</React.Fragment>
-						)}
-					</Layer>
-				</div>
-
-				<Layer title="Appearance">
-					{appearance.length > 0 ? (
-						<ul className="m-0 flex max-w-[62ch] list-none flex-col gap-1 p-0 font-body text-body text-ink-2">
-							{appearance.map((quality) => <li key={quality}>{quality}</li>)}
-						</ul>
-					) : null}
-					{finish !== 'standard' ? (
-						<p className="mt-3 mb-0 max-w-[62ch] font-body text-body text-ink">
-							{capitalize(finish)} <Term definition={TERM_DEFS.finish}>finish</Term>: this one came out of the Generator wearing it.
-						</p>
-					) : null}
-				</Layer>
-			</div>
-
-			<Layer title="Actions">
-				<p className="mb-4 max-w-[62ch] font-body text-small text-ink-2">
-					Each line reads: how it fires, how it reaches, what it does, with which part, through which element. The word
-					and number at the right are its intensity on a scale of 100.
-				</p>
-				<Card variant="panel">
-					<ul className="m-0 flex list-none flex-col p-0">
-						{recordActions(record).map((ability) => <Ability key={ability.name} ability={ability} />)}
+			<Layer title="Appearance">
+				{appearance.length > 0 ? (
+					<ul className="m-0 flex max-w-[62ch] list-none flex-col gap-1 p-0 font-body text-body text-ink-2">
+						{appearance.map((quality) => <li key={quality}>{quality}</li>)}
 					</ul>
-				</Card>
+				) : null}
+				{finish !== 'standard' ? (
+					<p className="mt-3 mb-0 max-w-[62ch] font-body text-body text-ink">
+						{capitalize(finish)} <Term definition={TERM_DEFS.finish}>finish</Term>: this one came out of the Generator wearing it.
+					</p>
+				) : null}
 			</Layer>
 
-			{recordPassives(record).length > 0 && <Layer title="Passive effects"><Card variant="panel"><ul className="m-0 list-none p-0">{recordPassives(record).map(ability => <Ability key={ability.name} ability={ability} />)}</ul></Card></Layer>}
-      <Layer title="Temperament">
+			<Layer title="Actions">
+				<p className="mt-0 mb-4 max-w-[62ch] font-body text-small text-ink-2">
+					Four actions. Its species always has the guaranteed ones; the drawn ones are this creature&apos;s own. Intensity is this
+					creature&apos;s rolled strength for each effect: 50 is a standard reference, and values above 100 are allowed.
+				</p>
+				<div className="grid gap-4 lg:grid-cols-2">
+					{actions.map((ability) => <AbilityCard key={ability.key} ability={ability} />)}
+				</div>
+			</Layer>
+
+			{passives.length > 0 ? (
+				<Layer title="Passives">
+					<div className="grid gap-4 lg:grid-cols-2">
+						{passives.map((ability) => <AbilityCard key={ability.key} ability={ability} />)}
+					</div>
+				</Layer>
+			) : null}
+
+			<Layer title="Temperament">
 				<Card variant="panel" className="p-4 md:p-6">
 					<div className="grid gap-x-8 md:grid-cols-2">
 						{TEMPERAMENT_ORDER.map((key) => {
 							const term = temperamentTerm(key);
 							return (
 								<div key={key} title={term.nature}>
-									<Meter name={term.name} value={record.temperament[key as keyof XalianRecord['temperament']]} max={100} />
+									<Meter name={term.name} value={(record.temperament as Record<string, number>)[key]} max={100} />
 								</div>
 							);
 						})}
