@@ -1339,7 +1339,7 @@
   "round 25: forepaw kept (digit-chain paw); face reverted after a repair pass; R04 tool rejected twice",
   "Round 26: forepaw re-posed (digits uncurled, a claw per lobe) kept on a 2-1 reader verdict, assembled-2775; face reverted after a repair pass, the paired re-grade restored R02.1 once but R02.2 and the convergent gaze (I01) held; R02 after-assembly method blocked (no post-assembly recipe stage)",
   "Round 27: authored neck column (sheet-derived sections in an r27 assembler copy) kept on a 3-0 reader verdict, assembled-2811, mean flat; face reverted (readers 1-2 on the after-assembly tool's best candidate); three flat rounds triggered method reviews for R02 (subdivision face patch) and R03 (coat locks cut in after the assembly)",
-  "Round 28: nothing kept. Fan front: the new after-assembly lock tool passed its reader check but every plan candidate was rejected; the code builder's cup-and-tuft rebuild read better on the front 2-1 but worse on the rear 0-3. Forepaw: claw rework read the same. Face subdivision tool built and reader-passed 3-0 (not ordered). R03 parked and re-methoded as a parametric pinna shell. 85M tokens, 5.7 hours."
+  "Round 28: nothing kept. Fan front: the new after-assembly lock tool passed its reader check but every plan candidate was rejected; the code builder's cup-and-tuft rebuild read better on the front 2-1 but worse on the rear 0-3. Forepaw: claw rework read the same. Face subdivision tool built and rejected 3-0 twice by the readers (not ordered; corrected 2026-10-07, first recorded as a pass). R03 parked and re-methoded as a parametric pinna shell. 85M tokens, 5.7 hours."
  ],
  "decisionsForNick": [
   {
