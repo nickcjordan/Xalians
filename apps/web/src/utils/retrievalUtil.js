@@ -6,8 +6,8 @@ import xalianSamples from '@xalians/content/mock/xalianSamples.json';
 // resolves with the caller's user record when signed in, or null when signed out;
 // rejects if the API call itself fails.
 //
-// The record no longer carries creatures (issue #180 retired the legacy XalianTable);
-// a caller's creatures are ratified records from dbApi.callListXalians. The duel's
+// The record no longer carries creatures (issue #180 retired the legacy creature table);
+// a caller's creatures are v5 records from dbApi.callListXalians. The duel's
 // squad picker still reads the old shape and simply falls back to random squads when
 // it is absent, until its derivation layer over the record lands (#184).
 export function getCurrentUserAndXalians() {

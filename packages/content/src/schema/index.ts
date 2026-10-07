@@ -2,9 +2,6 @@
 // import surface both apps/api and apps/web use ("@xalians/content/schema"); import
 // individual files directly only from inside this package.
 export * from './registries.ts';
-export * from './record.ts';
-export * from './speciesTemplate.ts';
-export * from './abilityCatalog.ts';
 export * from './species.ts';
 export * from './elements.ts';
 export * from './planets.ts';
@@ -15,8 +12,3 @@ export * from './user.ts';
 export * from './lore.ts';
 export * from './legacy.ts';
 export * from './trade.ts';
-
-export * from './ability.ts';
-export * from '../abilityCompatibility.ts';
-
-export * from './status.ts';

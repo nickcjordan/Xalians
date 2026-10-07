@@ -10,21 +10,19 @@ describe('registries.json', () => {
     }
   });
 
-  it('instrumentActions is keyed by exactly the anatomy + channel key union', () => {
-    const anatomyKeys = registries.anatomy.map((a: { key: string }) => a.key);
-    const channelKeys = registries.channels.map((c: { key: string }) => c.key);
-    const instrumentKeys = new Set([...anatomyKeys, ...channelKeys]);
-    const iaKeys = Object.keys(registries.instrumentActions);
-    expect(iaKeys.sort()).toEqual([...instrumentKeys].sort());
+  it('keys are unique within every vocabulary', () => {
+    const lists = [
+      registries.attributes, registries.elements, registries.capabilities, registries.senses,
+      registries.anatomy, registries.channels, ...Object.values(registries.physiology),
+    ];
+    for (const list of lists) {
+      const keys = list.map((entry: { key: string }) => entry.key);
+      expect(new Set(keys).size).toBe(keys.length);
+    }
   });
 
-  it('every archetype favors exactly two attributes, except balanced which favors none', () => {
-    const attributeKeys = new Set(registries.attributes.map((a: { key: string }) => a.key));
-    for (const archetype of registries.archetypes) {
-      expect(archetype.favors.length).toBe(archetype.key === 'balanced' ? 0 : 2);
-      for (const favored of archetype.favors) {
-        expect(attributeKeys.has(favored)).toBe(true);
-      }
-    }
+  it('no anatomy key doubles as a channel key, so an instrument resolves one way', () => {
+    const channels = new Set(registries.channels.map((c: { key: string }) => c.key));
+    expect(registries.anatomy.filter((a: { key: string }) => channels.has(a.key))).toEqual([]);
   });
 });

@@ -20,7 +20,7 @@ function homeSummaryData() {
 			const contentDir = path.resolve(__dirname, '../../packages/content/json');
 			const planetRecords = JSON.parse(fs.readFileSync(path.join(contentDir, 'planetRecords.json'), 'utf8'));
 			const planetArtwork = JSON.parse(fs.readFileSync(path.join(contentDir, 'planetArtwork.json'), 'utf8'));
-			const speciesRecords = JSON.parse(fs.readFileSync(path.join(contentDir, 'species.json'), 'utf8'));
+			const legacySpecies = JSON.parse(fs.readFileSync(path.join(contentDir, 'species.json'), 'utf8'));
 
 			const worlds = planetRecords.map(({ key, name, element, physical }) => {
 				const art = planetArtwork[key]?.[0];
@@ -36,7 +36,7 @@ function homeSummaryData() {
 				}
 				return { key, name, element, terrain, image: art.thumbnail, imageAlt: art.alt };
 			});
-			const species = speciesRecords.map(({ id, name, type }) => {
+			const species = legacySpecies.map(({ id, name, type }) => {
 				if (!id || !name || !type) {
 					throw new Error(`Home species summary is missing a required field: ${name || id || 'unknown species'}`);
 				}

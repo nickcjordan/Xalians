@@ -7,9 +7,8 @@
 //   docs/encyclopedia/encyclopedia.json
 //   docs/encyclopedia/chronicle.json
 //   docs/encyclopedia/tour.json
-//   docs/species-templates/RATIFIED.json
 //   docs/species-templates/registries.json
-//   docs/species-templates/<key>.json  (one per ratified species)
+//   docs/species-templates/v5/<key>.json  (one per species, the v5 roster)
 //   packages/content/json/planetRecords.json
 //
 // Exports build(): { markdown, text, html, json, llms, warnings } without
@@ -54,15 +53,6 @@ function cap(s) {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-// Serial-comma join for a list of names the builder authors into a sentence
-// (as opposed to canon prose, which is quoted verbatim): "a, b, and c".
-function joinSerial(items) {
-	if (items.length === 0) return '';
-	if (items.length === 1) return items[0];
-	if (items.length === 2) return `${items[0]} and ${items[1]}`;
-	return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
-}
-
 function lower(s) {
 	return s.toLowerCase();
 }
@@ -83,14 +73,11 @@ function toMap(list) {
 function buildRegistryMaps(registriesData) {
 	return {
 		attributes: toMap(registriesData.attributes),
-		archetypes: toMap(registriesData.archetypes),
-		traits: toMap(registriesData.traits),
 		elements: toMap(registriesData.elements),
 		capabilities: toMap(registriesData.capabilities),
 		senses: toMap(registriesData.senses),
 		anatomy: toMap(registriesData.anatomy),
 		channels: toMap(registriesData.channels),
-		actions: toMap(registriesData.actions),
 		physiology: Object.fromEntries(
 			Object.entries(registriesData.physiology || {}).map(([k, v]) => [k, toMap(v)])
 		),
@@ -157,22 +144,23 @@ function build() {
 	const chronicle = J('docs', 'encyclopedia', 'chronicle.json');
 	const tour = J('docs', 'encyclopedia', 'tour.json');
 	const narration = J('docs', 'encyclopedia', 'narration.json');
-	const ratified = J('docs', 'species-templates', 'RATIFIED.json');
 	const registriesData = J('docs', 'species-templates', 'registries.json');
 	const planetRecords = J('packages', 'content', 'json', 'planetRecords.json');
 
 	const registries = buildRegistryMaps(registriesData);
 
-	const speciesTemplates = ratified.species.map((key) =>
-		J('docs', 'species-templates', `${key}.json`)
-	);
+	const speciesDir = path.join(ROOT, 'docs', 'species-templates', 'v5');
+	const speciesTemplates = fs
+		.readdirSync(speciesDir)
+		.filter((file) => file.endsWith('.json'))
+		.sort()
+		.map((file) => J('docs', 'species-templates', 'v5', file));
 
 	const version = [
 		encyclopedia.version,
 		chronicle.version,
 		tour.version,
 		narration.version,
-		ratified.version,
 		registriesData.version,
 	].join('+');
 
@@ -382,20 +370,18 @@ function build() {
 				phys.lifespan,
 				`species ${t.key} lifespan`
 			);
-			const corporealityName = resolveName(
-				registries.physiology.corporeality,
-				phys.corporeality,
-				`species ${t.key} corporeality`
-			);
-			const isNonCorporeal = phys.corporeality !== 'corporeal';
+			const size = phys.size;
+			const dimensions = [
+				['Height', size.heightCm],
+				['Length', size.lengthCm],
+				['Width', size.widthCm],
+				['Mass', size.massKg, 'kg'],
+			]
+				.filter(([, band]) => band)
+				.map(([label, band, unit = 'cm']) => ({ label, low: band[0], high: band[1], unit }));
 
 			const entry = entriesByKey.get(t.key);
 			if (!entry) fail(`species "${t.key}" has no encyclopedia entry (category xalians)`);
-
-			const topTraits = Object.entries(t.traits.pool)
-				.sort((a, b) => b[1] - a[1])
-				.slice(0, 3)
-				.map(([key]) => lower(resolveName(registries.traits, key, `species ${t.key} trait`)));
 
 			let signature = null;
 			if (t.signature) {
@@ -414,16 +400,12 @@ function build() {
 				otherWorlds,
 				bodyPlanName,
 				coveringName,
-				heightCm: phys.size.heightCm,
-				weightKg: phys.size.weightKg,
+				dimensions,
 				lifespanName,
 				dietName,
-				corporealityName,
-				isNonCorporeal,
 				definition: entry.definition,
 				description: t.lore.description,
-				biomeNiche: t.lore.biomeNiche,
-				topTraits,
+				habitat: t.lore.habitat,
 				signature,
 				related,
 			};
@@ -531,16 +513,13 @@ function build() {
 		if (s.otherWorlds.length) dataParts.push(`**Other generator worlds:** ${s.otherWorlds.join(', ')}`);
 		dataParts.push(`**Body plan:** ${s.bodyPlanName}`);
 		dataParts.push(`**Covering:** ${s.coveringName}`);
-		dataParts.push(`**Height:** ${s.heightCm[0]} to ${s.heightCm[1]} cm`);
-		dataParts.push(`**Weight:** ${s.weightKg[0]} to ${s.weightKg[1]} kg`);
+		for (const d of s.dimensions) dataParts.push(`**${d.label}:** ${d.low} to ${d.high} ${d.unit}`);
 		dataParts.push(`**Lifespan:** ${s.lifespanName}`);
 		dataParts.push(`**Diet:** ${s.dietName}`);
-		if (s.isNonCorporeal) dataParts.push(`**Corporeality:** ${s.corporealityName}`);
 		md.push(dataParts.join(' · '), '');
 		md.push(s.definition, '');
 		md.push(s.description, '');
-		if (s.biomeNiche) md.push(`Niche: ${s.biomeNiche}.`, '');
-		if (s.topTraits.length) md.push(`Its most pronounced traits are ${joinSerial(s.topTraits)}.`, '');
+		if (s.habitat) md.push(`Habitat: ${s.habitat}`, '');
 		if (s.signature) md.push(`**${s.signature.name}.** ${s.signature.description}`, '');
 		if (s.related.length) md.push(`See also: ${s.related.join(', ')}.`, '');
 	}
@@ -653,16 +632,13 @@ function build() {
 		if (s.otherWorlds.length) dataParts.push(`<strong>Other generator worlds:</strong> ${esc(s.otherWorlds.join(', '))}`);
 		dataParts.push(`<strong>Body plan:</strong> ${esc(s.bodyPlanName)}`);
 		dataParts.push(`<strong>Covering:</strong> ${esc(s.coveringName)}`);
-		dataParts.push(`<strong>Height:</strong> ${esc(s.heightCm[0])} to ${esc(s.heightCm[1])} cm`);
-		dataParts.push(`<strong>Weight:</strong> ${esc(s.weightKg[0])} to ${esc(s.weightKg[1])} kg`);
+		for (const d of s.dimensions) dataParts.push(`<strong>${esc(d.label)}:</strong> ${esc(d.low)} to ${esc(d.high)} ${esc(d.unit)}`);
 		dataParts.push(`<strong>Lifespan:</strong> ${esc(s.lifespanName)}`);
 		dataParts.push(`<strong>Diet:</strong> ${esc(s.dietName)}`);
-		if (s.isNonCorporeal) dataParts.push(`<strong>Corporeality:</strong> ${esc(s.corporealityName)}`);
 		h.push(`<p>${dataParts.join(' · ')}</p>`);
 		h.push(`<p>${esc(s.definition)}</p>`);
 		h.push(`<p>${esc(s.description)}</p>`);
-		if (s.biomeNiche) h.push(`<p>Niche: ${esc(s.biomeNiche)}.</p>`);
-		if (s.topTraits.length) h.push(`<p>Its most pronounced traits are ${esc(joinSerial(s.topTraits))}.</p>`);
+		if (s.habitat) h.push(`<p>Habitat: ${esc(s.habitat)}</p>`);
 		if (s.signature) h.push(`<p><strong>${esc(s.signature.name)}.</strong> ${esc(s.signature.description)}</p>`);
 		if (s.related.length) h.push(`<p>See also: ${esc(s.related.join(', '))}.</p>`);
 	}
@@ -707,7 +683,6 @@ function build() {
 			chronicle: chronicle.version,
 			tour: tour.version,
 			narration: narration.version,
-			ratified: ratified.version,
 			registries: registriesData.version,
 		},
 		preamble,

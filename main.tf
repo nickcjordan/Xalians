@@ -67,8 +67,8 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 # shares this role with the rest, so it also ends up with this scoped access
 # rather than none; splitting into per-function roles is out of scope here.
 #
-# XalianTable is deliberately absent (issue #180): the legacy creature flow and
-# every handler that read that table are gone, so nothing needs access to it.
+# The legacy XalianTable is gone (retired in #180, destroyed in #796), so no
+# grant names it.
 resource "aws_iam_role_policy" "dynamodb_policy" {
   name = "xalian-dynamodb-access"
   role = aws_iam_role.lambda_exec.id
@@ -1114,7 +1114,8 @@ resource "aws_s3_bucket_cors_configuration" "react_bucket" {
 #########################################################
 #####                  DATABASE                     #####
 #########################################################
-# Both tables were created by hand outside Terraform. Key schema and settings
+# XalianUsersTable was created by hand outside Terraform (as was the legacy
+# XalianTable, removed in #796). Key schema and settings
 # below were verified against the live tables with describe-table on
 # 2026-09-10: PAY_PER_REQUEST billing, no GSIs, no streams, no TTL, no SSE
 # configured (defaults), and point-in-time recovery currently DISABLED on
@@ -1126,36 +1127,10 @@ resource "aws_s3_bucket_cors_configuration" "react_bucket" {
 # (for example the key-design rework tracked in issue #20) accidentally
 # planning a destroy/recreate of tables that hold real user data.
 
-# RETAINED, READ BY NOTHING (issue #180). The legacy creature flow and every handler
-# that touched this table are deleted, and no Lambda role grants access to it any more.
-# The resource stays, with prevent_destroy and point-in-time recovery, because it still
-# holds the ~70 records people kept under the old system; what becomes of them (migrate
-# to XalianRegistry, export, or drop) is Nick's decision, not this change's.
-resource "aws_dynamodb_table" "xalian_table" {
-  name         = "XalianTable"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "speciesId"
-  range_key    = "xalianId"
-
-  attribute {
-    name = "speciesId"
-    type = "S"
-  }
-
-  attribute {
-    name = "xalianId"
-    type = "S"
-  }
-
-  point_in_time_recovery {
-    enabled = true
-  }
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
+# XalianTable, the legacy creature table (issue #180), is deliberately absent: it was
+# emptied and its resource block removed on 2026-10-06 (issue #796), which destroys the
+# table on the next apply. No creature needed saving; every creature is a v5 record in
+# XalianRegistry.
 resource "aws_dynamodb_table" "xalian_users_table" {
   name         = "XalianUsersTable"
   billing_mode = "PAY_PER_REQUEST"
@@ -1176,11 +1151,6 @@ resource "aws_dynamodb_table" "xalian_users_table" {
 }
 
 import {
-  to = aws_dynamodb_table.xalian_table
-  id = "XalianTable"
-}
-
-import {
   to = aws_dynamodb_table.xalian_users_table
   id = "XalianUsersTable"
 }
@@ -1188,8 +1158,8 @@ import {
 # XalianRegistry (D1): the table for server-generated, ratified records (@xalians/rules
 # XalianRecord). New, not imported -- Terraform creates it on apply. hash key xalianId
 # (the record's own id) with a byOwner GSI (ownerId + generatedAt, newest first) for
-# listing a caller's own generated Xalians. prevent_destroy for the same reason as the two
-# legacy tables: this holds real user data the moment the first record is generated.
+# listing a caller's own generated Xalians. prevent_destroy for the same reason as
+# XalianUsersTable: this holds real user data the moment the first record is generated.
 resource "aws_dynamodb_table" "xalian_registry" {
   name         = "XalianRegistry"
   billing_mode = "PAY_PER_REQUEST"

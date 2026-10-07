@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
-const { readManifest, replay, archiveRoot, freeze } = require('../generationRelease.cjs');
+const { readManifest, replay, archiveRoot, freeze, wholeReleaseRemoved } = require('../generationRelease.cjs');
 
 const fixtureFile = path.join(__dirname, 'fixtures/generation-release-records.json');
 const fixtures = () => JSON.parse(fs.readFileSync(fixtureFile, 'utf8'));
@@ -35,7 +35,6 @@ test('historical fixtures replay exactly, including full provenance and both pro
 });
 
 test('all species in every archived release replay with both profiles', async () => {
-  const { XalianRecordSchema } = require('../../packages/content/src/schema/record.ts');
   for (const entry of fs.readdirSync(archiveRoot, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
     const { artifact, manifest } = readManifest(entry.name);
@@ -51,8 +50,7 @@ test('all species in every archived release replay with both profiles', async ()
         const record = manifest.kind === 'species-independent'
           ? archived.generateXalian(template, revision, 'historical:' + template.key, options)
           : archived.generateXalian(template.key, 'historical:' + template.key, options);
-        const schema = archived.SCHEMA_VERSION.startsWith('5.') ? archived.CreatureRecordSchema : XalianRecordSchema;
-        assert.deepEqual(schema.parse(record), record, 'schema for the archived representation accepts replay');
+        assert.deepEqual(archived.CreatureRecordSchema.parse(record), record, 'schema for the archived representation accepts replay');
         assert.deepEqual(await replay(record), record, entry.name + ': ' + template.key + ': ' + profile);
       }
     }
@@ -145,6 +143,13 @@ test('replay refuses incomplete or malformed original inputs', async () => {
   delete record.species;
   await assert.rejects(replay(record), /invalid replay inputs/);
   await assert.rejects(replay({}), /invalid replay inputs/);
+});
+
+test('the base check allows deleting a whole release directory, never part of a kept one', () => {
+  const kept = fs.readdirSync(archiveRoot, { withFileTypes: true }).find(entry => entry.isDirectory()).name;
+  assert.equal(wholeReleaseRemoved(`packages/rules/releases/${kept}/generator.mjs`), false);
+  assert.equal(wholeReleaseRemoved('packages/rules/releases/generation-0.3.0-1/generator.mjs'), true);
+  assert.equal(wholeReleaseRemoved('docs/species-templates/v5/revisions/graviclaw/x.json'), false);
 });
 
 test('freeze cannot overwrite an existing release', async () => {
@@ -249,7 +254,6 @@ test('v5 freezes its actual species, catalog, compiler and naming dependencies a
   }
   assert.ok(manifest.inputs['packages/content/src/registriesConst.ts']);
   assert.ok(manifest.inputs['packages/rules/src/generator/prng.ts']);
-  assert.equal(manifest.inputs['packages/content/src/speciesRecords.json'], undefined);
   const { artifact } = readManifest(manifest.releaseId, temporary);
   const archived = await import(pathToFileURL(artifact).href);
   const species = archived.getSpeciesTemplates()[0].key;

@@ -79,8 +79,8 @@ const planetsByKey = new Map(planetsInOrder.map((p) => [p.key, p]));
 
 // ---- species: the v5 canonical catalog --------------------------------------
 // docs/species-templates/v5/<key>.json, bundled into canonicalSpeciesCatalog.json.
-// The roster and every species template come from here; the legacy v4
-// species.json and speciesRecords.json are no longer read by the encyclopedia.
+// The roster and every species template come from here; the legacy 2022
+// species.json is not read by the encyclopedia.
 
 const templateRecords = Object.values(speciesCatalogData);
 const speciesList = templateRecords.map((r) => ({
@@ -107,16 +107,13 @@ const registries = {
 	senses: toMap(registriesData.senses),
 	anatomy: toMap(registriesData.anatomy),
 	channels: toMap(registriesData.channels),
-	actions: toMap(registriesData.actions),
 	physiology: Object.fromEntries(
 		Object.entries(registriesData.physiology || {}).map(([k, v]) => [k, toMap(v)])
 	),
-	instrumentActions: registriesData.instrumentActions || {},
 };
 
-// "Instruments" (anatomy or channel used as a signature-ability instrument)
-// resolve against anatomy first, then channels (§ ambiguity: instrumentActions
-// keys span both vocabularies; see README notes below).
+// "Instruments" (anatomy or channel used as an ability instrument) resolve
+// against anatomy first, then channels; no key is in both vocabularies.
 function lookupInstrument(key) {
 	return registries.anatomy.get(key) || registries.channels.get(key);
 }

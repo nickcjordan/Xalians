@@ -1,13 +1,13 @@
-// Copies the ratified lore bundle from docs/ into packages/content/json/, which both
+// Copies the lore and creature bundle from docs/ into packages/content/json/, which both
 // apps/api and apps/web read directly through the @xalians/content workspace package.
 //
 //   encyclopedia.json    <- docs/encyclopedia/encyclopedia.json (verbatim)
 //   chronicle.json       <- docs/encyclopedia/chronicle.json (verbatim)
-//   speciesRecords.json  <- docs/species-templates/<key>.json for every key in
-//                           docs/species-templates/RATIFIED.json (encyclopedia entries for
-//                           species live only in docs/encyclopedia/encyclopedia.json)
-//   abilityCatalog.json  <- docs/ability-catalog/consolidated-<element>.md + neutral-pools.md
-//                           (via scripts/bundleAbilityCatalog.js)
+//   worldChapters.json   <- docs/encyclopedia/worldChapters.json (verbatim)
+//   registries.json      <- docs/species-templates/registries.json (verbatim)
+//   canonicalSpeciesCatalog.json <- every docs/species-templates/v5/<key>.json, sorted by
+//                           key (the v5 creature roster; encyclopedia entries for species
+//                           live only in docs/encyclopedia/encyclopedia.json)
 //   tour.json            <- docs/encyclopedia/tour.json, when it exists
 //   narration.json        <- docs/encyclopedia/narration.json, when it exists
 //   plates.json           <- docs/encyclopedia/plates.json, when it exists
@@ -17,7 +17,8 @@
 //                           enums whose z.infer is the literal key union instead of the
 //                           `string` widening that plain JSON imports produce (issue #181).
 //
-// Idempotent. Run by hand after any lore change:  node scripts/bundleLore.js
+// Idempotent. Run by hand after any lore, species or registry change:
+//   node scripts/bundleLore.js
 // Design contract: docs/design/xalian-encyclopedia-page.md section 2.
 const fs = require('fs');
 const path = require('path');
@@ -48,9 +49,8 @@ write('chronicle.json', read(path.join(docs, 'encyclopedia', 'chronicle.json')))
 write('worldChapters.json', read(path.join(docs, 'encyclopedia', 'worldChapters.json')));
 const registriesSrc = read(path.join(docs, 'species-templates', 'registries.json'));
 write('registries.json', registriesSrc);
-write('abilityPatterns.json', read(path.join(docs, 'ability-catalog', 'ability-patterns.json')));
 
-// Current prototype species are ordinary content, not immutable release inputs.
+// The v5 species are ordinary content, not immutable release inputs.
 const prototypeSpeciesDir = path.join(docs, 'species-templates', 'v5');
 const prototypeSpeciesFiles = fs.readdirSync(prototypeSpeciesDir).filter(file => file.endsWith('.json')).sort();
 if (!prototypeSpeciesFiles.length) throw new Error('Prototype species catalog must not be empty');
@@ -78,21 +78,17 @@ const registriesConstLines = [
   "// z.infer stays a literal union instead of widening to `string` (issue #181).",
   '',
   keyArray('ATTRIBUTE_KEYS', registriesSrc.attributes),
-  keyArray('ARCHETYPE_KEYS', registriesSrc.archetypes),
-  keyArray('TRAIT_KEYS', registriesSrc.traits),
   keyArray('ELEMENT_KEYS', registriesSrc.elements),
   keyArray('CAPABILITY_KEYS', registriesSrc.capabilities),
   keyArray('SENSE_KEYS', senses),
   // senses splits into the three always-present graded senses (sight/hearing/smell) and
-  // the six additive special senses (echolocation, ...), distinguished by the JSON's
-  // `special` flag; both packages/content/src/schema/record.ts (SensesSchema) and
-  // packages/rules/src/generator/types.ts (GradedSenseKey) want the split, not the union.
+  // the additive special senses (echolocation, ..., lowlight), distinguished by the JSON's
+  // `special` flag; the v5 catalog (packages/content/src/creature/catalog.ts) and the
+  // benchmarks want the split, not the union.
   keyArray('GRADED_SENSE_KEYS', gradedSenses),
   keyArray('SPECIAL_SENSE_KEYS', specialSenses),
   keyArray('ANATOMY_KEYS', registriesSrc.anatomy),
   keyArray('CHANNEL_KEYS', registriesSrc.channels),
-  keyArray('ACTION_KEYS', registriesSrc.actions),
-  keyArray('CORPOREALITY_KEYS', registriesSrc.physiology.corporeality),
   keyArray('COMPOSITION_KEYS', registriesSrc.physiology.composition),
   keyArray('BODY_PLAN_KEYS', registriesSrc.physiology.bodyPlan),
   keyArray('COVERING_KEYS', registriesSrc.physiology.covering),
@@ -101,7 +97,7 @@ const registriesConstLines = [
   keyArray('MEDIUM_PHASE_KEYS', registriesSrc.physiology.media),
   keyArray('LIFESPAN_KEYS', registriesSrc.physiology.lifespan),
   // The template's roll MODE ("rolled" | "achiral"), not the per-instance value domain
-  // ("levo" | "dextro" | "achiral") -- see the TODO(lever) note in schema/record.ts.
+  // ("levo" | "dextro" | "achiral") that a generated record carries.
   keyArray('TEMPLATE_CHIRALITY_KEYS', registriesSrc.physiology.chirality),
   '',
 ].join('\n');
@@ -129,20 +125,3 @@ if (fs.existsSync(platesPath)) {
 } else {
   console.log('skipped plates.json: docs/encyclopedia/plates.json not written yet');
 }
-
-const templates = path.join(docs, 'species-templates');
-const ratified = read(path.join(templates, 'RATIFIED.json'));
-const records = [];
-for (const key of ratified.species) {
-  const record = read(path.join(templates, `${key}.json`));
-  if (record.key !== key) throw new Error(`template ${key}.json carries key ${record.key}`);
-  const { SpeciesTemplateSchema, AbilityPatternSchema, validateAbilityPool } = require('../packages/content/src/schema/index.ts');
-  SpeciesTemplateSchema.parse(record);
-  const patterns = read(path.join(docs, 'ability-catalog', 'ability-patterns.json')).patterns;
-  validateAbilityPool(record.actionPool, new Map(patterns.map(p => [p.key, AbilityPatternSchema.parse(p)])), record.instruments, [record.element, ...require('../packages/rules/src/generator/constants.ts').ELEMENT_ADJACENCY[record.element]], [...record.actions,...record.passives].find(a=>a.key===record.signature.key));
-  records.push(record);
-}
-write('speciesRecords.json', { version: ratified.version, note: ratified.note, records });
-console.log(`${records.length} species records`);
-
-require('./bundleAbilityCatalog.js').main();

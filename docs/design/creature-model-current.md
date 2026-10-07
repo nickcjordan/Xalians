@@ -1,8 +1,10 @@
 # Creature model: current agreed contract
 
-Updated 2026-09-23. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the redesigned model's entry points; the legacy public generator and bundled species remain v4.
+Updated 2026-09-23. This document supersedes conflicting proposals and chronological notes in this directory. The implementation is available through `@xalians/content/creature` and `@xalians/rules/generator/creature`. These are the model's entry points.
 
-Current implementation update, 2026-09-25: v5 prototype generation reads the current species bundle directly. Adding or editing a species requires source validation, the ability audit, and the ordinary content bundle update, but no species revision, generator version, release ID, or archive. New prototype records do not claim immutable replay provenance. Existing historical archives remain readable for already versioned records. Powerworks and Reclamation use the current v5 roster; the legacy public generator and its species bundle remain v4. Historical checkpoint paragraphs below describe the state when written, not the current game routing.
+Update 2026-10-06: the v4 creature model is deleted (issue #796, after #798, #799 and #800 moved the encyclopedia, API, site generator, record pages and both games to v5). There is one creature model; the public generator, the registry API and every game read the v5 roster in `docs/species-templates/v5/`. The v4 templates, `RATIFIED.json`, `speciesRecords.json`, the v4 schemas and the v4 release archives (generation-0.3.0-1 through 0.5.0-4) are gone. `registries.json` now carries `lowlight` and `fins` and no longer carries archetypes, traits, corporeality or the action families.
+
+Current implementation update, 2026-09-25: v5 prototype generation reads the current species bundle directly. Adding or editing a species requires source validation, the ability audit, and the ordinary content bundle update, but no species revision, generator version, release ID, or archive. New prototype records do not claim immutable replay provenance. Existing historical archives remain readable for already versioned records. Every game and the public generator use the current v5 roster. Historical checkpoint paragraphs below describe the state when written, not the current game routing.
 
 ## Canonical roster audit decisions
 

@@ -11,8 +11,7 @@
 //
 // A site whose authored band does not overlap the habitable band at all is hostile ground
 // by its own lore (the Fissure Forges, Luminax's dark side, the Krystos catacombs): its
-// band stands as authored and every creature is strained there unless a trait exempts it
-// (luminous on Luminax, nocturnal on Grimedes). The authored band is kept on the site as `authoredTemperatureC` and a
+// band stands as authored and every creature is strained there. The authored band is kept on the site as `authoredTemperatureC` and a
 // `bandNote` explains the clamp. Idempotent: it always works from `authoredTemperatureC`
 // when present.
 //
@@ -24,7 +23,8 @@ const root = path.join(__dirname, '..');
 const jsonDir = path.join(root, 'packages', 'content', 'json');
 const sitesPath = path.join(jsonDir, 'sites.json');
 const sites = JSON.parse(fs.readFileSync(sitesPath, 'utf8'));
-const species = JSON.parse(fs.readFileSync(path.join(jsonDir, 'speciesRecords.json'), 'utf8')).records;
+// The v5 species catalog (docs/species-templates/v5/, bundled by scripts/bundleLore.js).
+const species = JSON.parse(fs.readFileSync(path.join(jsonDir, 'canonicalSpeciesCatalog.json'), 'utf8'));
 
 // The planet's habitable band is approximated from its native species: the intersection
 // of their tolerance bands when it is non-empty (so no native is ever strained at a site

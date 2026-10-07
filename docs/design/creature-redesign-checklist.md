@@ -24,7 +24,7 @@
 - [x] Review conditional passive physiology in the species pass. No additional general condition system was warranted; explicit source and event-bound behavior uses current fields.
 - [x] Screen the 32-species source data and test representative relationship cases; fix correlated recipients, dependency identity, directionless self aiming and unsupported voice/communication coupling.
 - [x] Ongoing passives target only self, with optional self-centered radial areas. Directed automatic responses use event triggers; maintained directed connections are actions. Enforced at authoring with regression coverage.
-- [ ] Adapt games after creature redesign completion, in a separate task scope.
+- [x] Adapt games after creature redesign completion, in a separate task scope. Done 2026-10-06: #798 (encyclopedia on v5), #799 (API, site generator, record pages, grade and simulator on v5), #800 (expedition rules and Reclamation on v5 types), and the v4 deletion PR for issue #796, which removed the v4 model, its templates, schemas, bundles and release archives.
 
 Started 2026-09-17. Findings: [holistic review](holistic-creature-model-review.md).
 

@@ -1,8 +1,8 @@
 /*
-	@xalians/rules: the ratified creature generator (packages/rules), currently the only
-	member of this package. Re-exported here so a consumer that wants "the rules package"
-	rather than "the generator specifically" has one import; `@xalians/rules/generator` is
-	the more precise import most call sites use.
+	@xalians/rules: re-exports the current creature generator and the Arcade engines so a
+	consumer that wants "the rules package" has one import. `@xalians/rules/generator`
+	(the canonical v5 creature generator, canonicalCreatureRelease.ts) and the per-game
+	subpaths are the more precise imports most call sites use.
 */
-export * from './generator/index.ts';
+export * from './generator/canonicalCreatureRelease.ts';
 export * from './arcade/index.ts';

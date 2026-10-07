@@ -1,19 +1,8 @@
 [
   {
-    "id": "xal_46a824b6e40dfccabbb7",
     "species": "graviclaw",
-    "provenance": {
-      "seed": "historical-fixture-2026-09-15",
-      "generatorVersion": "0.3.0",
-      "schemaVersion": "2.0.0",
-      "generatedAt": "2026-09-15T12:34:56.000Z",
-      "origin": "saiphus",
-      "serial": 42,
-      "profile": "full",
-      "releaseId": "generation-0.3.0-1"
-    },
+    "element": "dark",
     "physiology": {
-      "corporeality": "corporeal",
       "composition": {
         "primary": "flesh",
         "secondary": "mineral"
@@ -25,12 +14,7 @@
         "body"
       ],
       "covering": "chitin",
-      "heightCm": 213,
-      "weightKg": 260,
       "lifespan": "long",
-      "genome": {
-        "chirality": "dextro"
-      },
       "diet": "carnivore",
       "communication": [],
       "breathes": [
@@ -47,215 +31,226 @@
           "max": 5
         }
       },
+      "protections": [],
+      "traversal": [],
+      "heightCm": 194.77124908939004,
+      "massKg": 227.63399854302406,
+      "genome": {
+        "chirality": "levo"
+      },
       "capabilities": {
         "flight": 0,
-        "swim": 47,
-        "burrow": 55,
-        "climb": 17,
-        "sprint": 17,
-        "leap": 19,
-        "manipulation": 65
+        "swim": 67,
+        "burrow": 56,
+        "climb": 7,
+        "sprint": 19,
+        "leap": 11,
+        "manipulation": 59
       },
       "senses": {
-        "sight": 35,
-        "hearing": 37,
-        "smell": 57,
+        "sight": 24,
+        "hearing": 42,
+        "smell": 55,
         "special": [
           "void-sense"
         ]
       }
     },
-    "archetype": {
-      "key": "juggernaut",
-      "favors": [
-        "strength",
-        "resilience"
-      ]
-    },
     "attributes": {
-      "strength": 95,
-      "vitality": 75,
-      "endurance": 51,
-      "agility": 25,
-      "reflex": 42,
-      "intelligence": 28,
-      "willpower": 45,
-      "instinct": 68,
-      "charisma": 21,
-      "resilience": 72
+      "strength": 87,
+      "vitality": 70,
+      "endurance": 60,
+      "agility": 30,
+      "reflex": 50,
+      "intelligence": 46,
+      "willpower": 70,
+      "instinct": 79,
+      "charisma": 17,
+      "resilience": 94
     },
-    "element": {
-      "primary": "dark",
-      "affinities": {
-        "dark": 100
-      }
-    },
-    "traits": [
-      "armored",
-      "anchored",
-      "solitary"
-    ],
     "temperament": {
       "boldness": 70,
-      "curiosity": 41,
+      "curiosity": 43,
       "energy": 21,
-      "aggression": 66,
-      "sociability": 16
+      "aggression": 72,
+      "sociability": 32
     },
-    "appearance": {
-      "finish": "standard"
+    "signature": {
+      "type": "action",
+      "key": "graviclaw-defining"
     },
-    "abilities": [
+    "actions": [
       {
         "key": "graviclaw-defining",
-        "name": "Point of No Return",
-        "prominence": "defining",
+        "name": "Gravity Pincer",
+        "description": "Gravity intensifies at its massive pincer as it crushes a contacted target.",
         "instrument": "pincers",
-        "medium": "dark",
         "activation": {
-          "mode": "active"
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "brief",
+          "recovery": "brief"
         },
         "delivery": {
           "mode": "contact",
-          "shape": "focused",
-          "approach": "stationary",
-          "persistence": "maintained"
+          "approach": "stationary"
         },
-        "targeting": {
-          "relation": "other",
-          "subjects": [
-            "creature",
-            "object"
-          ]
+        "targeting": [
+          "other"
+        ],
+        "spatial": {
+          "range": "contact"
         },
         "effects": [
           {
-            "kind": "restrain",
+            "key": "outcome",
             "recipient": "target",
-            "faculty": "movement"
+            "onset": "instant",
+            "persistence": "resolved",
+            "likelihood": "consistent",
+            "type": "harm",
+            "mechanism": "compression",
+            "intensity": 85
           }
-        ],
-        "description": "It opens a claw beneath the water and collapses the gravitational waves inside it until nothing within reach can swim away from the closing grip.",
-        "intensity": 84,
-        "origin": "inherent"
+        ]
       },
       {
-        "key": "graviclaw-pincers-hurl-dark",
-        "name": "Heavy Fling",
-        "prominence": "ordinary",
-        "origin": "generated",
-        "instrument": "pincers",
-        "medium": "dark",
-        "intensity": 20,
+        "key": "graviclaw-attract",
+        "name": "Gravity Draw",
+        "description": "A focused gravitational pull draws a selected target toward its claws.",
+        "instrument": "aura",
         "activation": {
-          "mode": "active"
+          "continuity": "discrete"
         },
-        "delivery": {
-          "mode": "projectile",
-          "shape": "focused",
-          "approach": "stationary",
-          "persistence": "instant"
-        },
-        "targeting": {
-          "relation": "other",
-          "subjects": [
-            "creature",
-            "object"
-          ]
-        },
-        "effects": [
-          {
-            "kind": "harm",
-            "recipient": "target",
-            "mechanism": "impact"
-          }
-        ],
-        "description": "A launched solid delivers an impact to the recipient."
-      },
-      {
-        "key": "graviclaw-shell-ward-dark",
-        "name": "Horizon Sanctuary",
-        "prominence": "ordinary",
-        "origin": "generated",
-        "instrument": "shell",
-        "medium": "dark",
-        "intensity": 51,
-        "activation": {
-          "mode": "active"
+        "timing": {
+          "preparation": "immediate",
+          "recovery": "brief"
         },
         "delivery": {
           "mode": "field",
-          "shape": "radial",
-          "approach": "stationary",
-          "persistence": "maintained"
+          "approach": "stationary"
         },
-        "targeting": {
-          "relation": "self-or-other",
-          "subjects": [
-            "creature",
-            "object"
-          ]
+        "targeting": [
+          "other"
+        ],
+        "spatial": {
+          "range": "medium"
         },
         "effects": [
           {
-            "kind": "protect",
+            "key": "outcome",
             "recipient": "target",
-            "method": "barrier",
-            "against": "harm"
+            "onset": "instant",
+            "persistence": "resolved",
+            "likelihood": "consistent",
+            "type": "displace",
+            "direction": "toward",
+            "intensity": 65
           }
-        ],
-        "description": "A protective expression shields the recipient against harm."
+        ]
       },
       {
-        "key": "graviclaw-pincers-burst-dark",
-        "name": "Void Burst",
-        "prominence": "ordinary",
-        "origin": "generated",
-        "instrument": "pincers",
-        "medium": "dark",
-        "intensity": 80,
+        "key": "graviclaw-anchor",
+        "name": "Ground Anchor",
+        "description": "It roots itself against attempts to move it.",
+        "instrument": "body",
         "activation": {
-          "mode": "active"
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "brief",
+          "recovery": "brief"
         },
         "delivery": {
-          "mode": "pulse",
-          "shape": "radial",
-          "approach": "stationary",
-          "persistence": "instant"
+          "mode": "self",
+          "approach": "stationary"
         },
-        "targeting": {
-          "relation": "other",
-          "subjects": [
-            "creature",
-            "object"
-          ]
+        "targeting": [
+          "self"
+        ],
+        "spatial": {},
+        "effects": [
+          {
+            "key": "outcome",
+            "recipient": "self",
+            "onset": "instant",
+            "persistence": "lingering",
+            "duration": "brief",
+            "likelihood": "consistent",
+            "type": "status",
+            "status": "protected",
+            "removable": [
+              "disrupting"
+            ],
+            "protection": {
+              "type": "displace",
+              "degree": "immune"
+            }
+          }
+        ]
+      },
+      {
+        "key": "ordinary-1",
+        "name": "Frightening Signal",
+        "description": "Aura present a display the target reads as a threat.",
+        "instrument": "aura",
+        "element": "dark",
+        "targeting": [
+          "other"
+        ],
+        "activation": {
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "immediate",
+          "recovery": "repeatable"
+        },
+        "delivery": {
+          "mode": "signal",
+          "approach": "stationary"
+        },
+        "spatial": {
+          "range": "medium"
         },
         "effects": [
           {
-            "kind": "harm",
+            "key": "fear",
+            "type": "status",
+            "status": "frightened",
             "recipient": "target",
-            "mechanism": "elemental"
+            "onset": "instant",
+            "persistence": "lingering",
+            "duration": "brief",
+            "likelihood": "occasional",
+            "removable": [
+              "stabilizing"
+            ]
           }
-        ],
-        "description": "An outward pulse exposes nearby recipients to the stated medium."
+        ]
       }
-    ]
+    ],
+    "passives": [],
+    "id": "xal_7a2de1f8ada0c34d3697",
+    "provenance": {
+      "seed": "historical-fixture-2026-10-06",
+      "generatedAt": "2026-10-06T12:34:56.000Z",
+      "origin": "saiphus",
+      "serial": 42,
+      "profile": "full",
+      "generatorVersion": "0.9.0",
+      "schemaVersion": "5.2.0",
+      "releaseId": "generation-0.9.0-1",
+      "speciesRevision": "ea78f77d8002c8c4567d214f23179263c28b8a390ce00cc3ae6196b4ad22128c"
+    },
+    "appearance": {
+      "finish": "standard"
+    }
   },
   {
-    "id": "xal_92a88983cbf853beadd1",
     "species": "sonalloy",
-    "provenance": {
-      "seed": "historical-fixture-2026-09-15",
-      "generatorVersion": "0.3.0",
-      "schemaVersion": "2.0.0",
-      "generatedAt": "2026-09-15T12:34:56.000Z",
-      "origin": "saiphus",
-      "serial": 43,
-      "profile": "showroom",
-      "releaseId": "generation-0.3.0-1"
-    },
+    "element": "metal",
     "physiology": {
-      "corporeality": "corporeal",
       "composition": {
         "primary": "metal"
       },
@@ -267,12 +262,7 @@
         "body"
       ],
       "covering": "bare",
-      "heightCm": 82,
-      "weightKg": 282,
       "lifespan": "enduring",
-      "genome": {
-        "chirality": "dextro"
-      },
       "diet": "energy-feeder",
       "communication": [
         "vibration",
@@ -288,169 +278,240 @@
           "max": 80
         }
       },
+      "protections": [],
+      "traversal": [],
+      "heightCm": 74.30210227100179,
+      "massKg": 232.39593530539423,
+      "genome": {
+        "chirality": "levo"
+      },
       "capabilities": {
         "flight": 0,
-        "swim": 7,
+        "swim": 3,
         "burrow": 4,
-        "climb": 77,
-        "sprint": 32,
-        "leap": 11,
-        "manipulation": 94
+        "climb": 68,
+        "sprint": 36,
+        "leap": 15,
+        "manipulation": 87
       },
       "senses": {
-        "sight": 59,
-        "hearing": 50,
-        "smell": 3
+        "sight": 54,
+        "hearing": 65,
+        "smell": 3,
+        "special": []
       }
-    },
-    "archetype": {
-      "key": "stalwart",
-      "favors": [
-        "resilience",
-        "willpower"
-      ]
     },
     "attributes": {
-      "strength": 45,
-      "vitality": 65,
-      "endurance": 76,
-      "agility": 31,
-      "reflex": 48,
-      "intelligence": 81,
-      "willpower": 61,
-      "instinct": 54,
-      "charisma": 39,
-      "resilience": 83
+      "strength": 38,
+      "vitality": 69,
+      "endurance": 67,
+      "agility": 42,
+      "reflex": 36,
+      "intelligence": 80,
+      "willpower": 69,
+      "instinct": 57,
+      "charisma": 41,
+      "resilience": 72
     },
-    "element": {
-      "primary": "metal",
-      "affinities": {
-        "metal": 100
-      }
-    },
-    "traits": [
-      "regenerative",
-      "healing",
-      "protective"
-    ],
     "temperament": {
-      "boldness": 70,
-      "curiosity": 71,
-      "energy": 64,
-      "aggression": 34,
-      "sociability": 59
+      "boldness": 26,
+      "curiosity": 39,
+      "energy": 39,
+      "aggression": 10,
+      "sociability": 57
+    },
+    "signature": {
+      "type": "action",
+      "key": "sonalloy-defining"
+    },
+    "actions": [
+      {
+        "key": "sonalloy-defining",
+        "name": "Living-Alloy Seam",
+        "description": "Its tendrils work warm extruded alloy into damage on another creature.",
+        "instrument": "tendrils",
+        "activation": {
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "brief",
+          "recovery": "brief"
+        },
+        "delivery": {
+          "mode": "contact",
+          "approach": "stationary"
+        },
+        "targeting": [
+          "other"
+        ],
+        "spatial": {
+          "range": "contact"
+        },
+        "effects": [
+          {
+            "key": "outcome",
+            "recipient": "target",
+            "onset": "instant",
+            "persistence": "resolved",
+            "likelihood": "consistent",
+            "type": "restore",
+            "intensity": 65
+          }
+        ]
+      },
+      {
+        "key": "ordinary-1",
+        "name": "Crushing Ram",
+        "description": "Body deliver a compression blow at close contact.",
+        "instrument": "body",
+        "targeting": [
+          "other"
+        ],
+        "activation": {
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "brief",
+          "recovery": "repeatable"
+        },
+        "delivery": {
+          "mode": "contact",
+          "approach": "stationary"
+        },
+        "spatial": {
+          "range": "contact"
+        },
+        "effects": [
+          {
+            "key": "outcome",
+            "type": "harm",
+            "recipient": "target",
+            "onset": "instant",
+            "persistence": "resolved",
+            "likelihood": "consistent",
+            "mechanism": "compression",
+            "intensity": 33
+          }
+        ]
+      },
+      {
+        "key": "ordinary-2",
+        "name": "Heavy Lash",
+        "description": "Tendrils deliver a impact blow at close contact.",
+        "instrument": "tendrils",
+        "targeting": [
+          "other"
+        ],
+        "activation": {
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "brief",
+          "recovery": "repeatable"
+        },
+        "delivery": {
+          "mode": "contact",
+          "approach": "closing"
+        },
+        "spatial": {
+          "range": "contact"
+        },
+        "effects": [
+          {
+            "key": "outcome",
+            "type": "harm",
+            "recipient": "target",
+            "onset": "instant",
+            "persistence": "resolved",
+            "likelihood": "consistent",
+            "mechanism": "impact",
+            "intensity": 46
+          }
+        ]
+      },
+      {
+        "key": "ordinary-3",
+        "name": "Binding Pinch",
+        "description": "Pincers catch and hold the target in place.",
+        "instrument": "pincers",
+        "targeting": [
+          "other"
+        ],
+        "activation": {
+          "continuity": "discrete"
+        },
+        "timing": {
+          "preparation": "brief",
+          "recovery": "repeatable"
+        },
+        "delivery": {
+          "mode": "contact",
+          "approach": "stationary"
+        },
+        "spatial": {
+          "range": "contact"
+        },
+        "effects": [
+          {
+            "key": "hold",
+            "type": "status",
+            "status": "restrained",
+            "recipient": "target",
+            "onset": "instant",
+            "persistence": "lingering",
+            "duration": "brief",
+            "likelihood": "occasional",
+            "removable": [
+              "freeing"
+            ]
+          }
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "key": "sonalloy-self-renewal",
+        "name": "Living Alloy Renewal",
+        "description": "Living alloy within its own body continuously replaces damage.",
+        "instrument": "body",
+        "activation": {
+          "continuity": "ongoing"
+        },
+        "delivery": {
+          "mode": "self",
+          "approach": "stationary"
+        },
+        "targeting": [
+          "self"
+        ],
+        "spatial": {},
+        "effects": [
+          {
+            "key": "outcome",
+            "recipient": "self",
+            "onset": "gradual",
+            "persistence": "sustained",
+            "likelihood": "consistent",
+            "type": "restore",
+            "intensity": 44
+          }
+        ]
+      }
+    ],
+    "id": "xal_33ddfeaea5105c30c46e",
+    "provenance": {
+      "seed": "historical-fixture-2026-10-06",
+      "generatedAt": "2026-10-06T12:34:56.000Z",
+      "origin": "saiphus",
+      "serial": 43,
+      "profile": "showroom",
+      "generatorVersion": "0.9.0",
+      "schemaVersion": "5.2.0",
+      "releaseId": "generation-0.9.0-1",
+      "speciesRevision": "a5fd0cd7cb9b8f5e3cf281cc16fabe519554d6f8a9f18a4b3e7d1a95dd3ad63d"
     },
     "appearance": {
       "finish": "standard"
-    },
-    "abilities": [
-      {
-        "key": "sonalloy-defining",
-        "name": "Ruin Made Whole",
-        "prominence": "defining",
-        "instrument": "secretion",
-        "medium": "metal",
-        "activation": {
-          "mode": "active"
-        },
-        "delivery": {
-          "mode": "contact",
-          "shape": "focused",
-          "approach": "stationary",
-          "persistence": "maintained"
-        },
-        "targeting": {
-          "relation": "other",
-          "subjects": [
-            "creature",
-            "object"
-          ],
-          "compatibility": {
-            "composition": [
-              "metal"
-            ],
-            "corporeality": [
-              "corporeal"
-            ]
-          }
-        },
-        "effects": [
-          {
-            "kind": "restore",
-            "recipient": "target",
-            "aspect": "integrity"
-          }
-        ],
-        "description": "The Sonalloy floods a wound or fracture with living alloy, then draws the support lattice tight with its tendrils while its pincers hold the damaged body still.",
-        "intensity": 40,
-        "origin": "inherent"
-      },
-      {
-        "key": "sonalloy-pincers-strike-metal",
-        "name": "Ingot Strike",
-        "prominence": "ordinary",
-        "origin": "generated",
-        "instrument": "pincers",
-        "medium": "metal",
-        "intensity": 71,
-        "activation": {
-          "mode": "active"
-        },
-        "delivery": {
-          "mode": "contact",
-          "shape": "focused",
-          "approach": "stationary",
-          "persistence": "instant"
-        },
-        "targeting": {
-          "relation": "other",
-          "subjects": [
-            "creature",
-            "object"
-          ]
-        },
-        "effects": [
-          {
-            "kind": "harm",
-            "recipient": "target",
-            "mechanism": "impact"
-          }
-        ],
-        "description": "A direct impact delivered through the stated instrument."
-      },
-      {
-        "key": "sonalloy-secretion-crush-metal",
-        "name": "Riveted Press",
-        "prominence": "ordinary",
-        "origin": "generated",
-        "instrument": "secretion",
-        "medium": "metal",
-        "intensity": 21,
-        "activation": {
-          "mode": "active"
-        },
-        "delivery": {
-          "mode": "contact",
-          "shape": "focused",
-          "approach": "stationary",
-          "persistence": "maintained"
-        },
-        "targeting": {
-          "relation": "other",
-          "subjects": [
-            "creature",
-            "object"
-          ]
-        },
-        "effects": [
-          {
-            "kind": "harm",
-            "recipient": "target",
-            "mechanism": "compression"
-          }
-        ],
-        "description": "Sustained pressure compresses the recipient."
-      }
-    ]
+    }
   }
 ]
