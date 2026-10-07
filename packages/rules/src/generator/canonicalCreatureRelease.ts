@@ -6,3 +6,5 @@ const current = createCreatureCatalog(catalog);
 export { CreatureRecordSchema } from '@xalians/content/creature';
 export const getSpeciesTemplates = current.getSpeciesTemplates;
 export const generateXalian = current.generateXalian;
+export const intensityRolls = current.intensityRolls;
+export { CREATURE_FINISH_ODDS, type IntensityRoll } from './prototypeCreature.ts';

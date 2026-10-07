@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { toast } from 'sonner';
-import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
-import { speciesDisplayName } from '@xalians/rules/generator';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
+import { speciesName } from './record/vocabulary';
 
 import * as dbApi from '../utils/dbApi';
 
@@ -25,7 +25,7 @@ type VerifyRemoveXalianModalProps = {
 
 function VerifyRemoveXalianModal({ show, onHide, onXalianDelete, record }: VerifyRemoveXalianModalProps) {
 	const [isThinking, setIsThinking] = React.useState(false);
-	const name = speciesDisplayName(record.species);
+	const name = speciesName(record.species);
 
 	const release = () => {
 		setIsThinking(true);

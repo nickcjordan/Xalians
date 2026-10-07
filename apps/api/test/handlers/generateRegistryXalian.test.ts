@@ -2,8 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { mockClient } from 'aws-sdk-client-mock';
 import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { handler } from '../../src/handlers/generateRegistryXalian.ts';
-import { XalianRecordSchema } from '@xalians/content/schema';
-import { getSpeciesTemplates } from '@xalians/rules/generator';
+import { CreatureRecordSchema, getSpeciesTemplates } from '@xalians/rules/generator/canonicalCreatureRelease';
 import { authedEvent, fakeContext } from '../testEvent.ts';
 
 const ddbMock = mockClient(DynamoDBDocumentClient);
@@ -33,7 +32,7 @@ describe('generateRegistryXalian handler', () => {
     expect(ddbMock.calls()).toHaveLength(0);
   });
 
-  it('generates from a given ratified species, persists under the subject, and returns 201 with a record that passes XalianRecordSchema', async () => {
+  it('generates from a given ratified species, persists under the subject, and returns 201 with a record that passes the v5 CreatureRecordSchema', async () => {
     ddbMock.on(PutCommand).resolves({});
     const species = getSpeciesTemplates()[0].key;
 
@@ -44,7 +43,9 @@ describe('generateRegistryXalian handler', () => {
 
     expect(result.statusCode).toBe(201);
     const body = JSON.parse(result.body as string);
-    expect(() => XalianRecordSchema.parse(body)).not.toThrow();
+    expect(() => CreatureRecordSchema.parse(body)).not.toThrow();
+    // origin follows the species' home planet
+    expect(body.provenance.origin).toBe(getSpeciesTemplates()[0].homePlanet);
     expect(body.species).toBe(species);
 
     const putCalls = ddbMock.commandCalls(PutCommand);
@@ -76,6 +77,18 @@ describe('generateRegistryXalian handler', () => {
     const putCalls = ddbMock.commandCalls(PutCommand);
     expect(putCalls).toHaveLength(1);
     expect(putCalls[0].args[0].input.TableName).toBe('XalianRegistry');
+  });
+
+  it('accepts every species in the v5 roster, including fathomaw', async () => {
+    ddbMock.on(PutCommand).resolves({});
+    const keys = getSpeciesTemplates().map((t) => t.key);
+    expect(keys).toHaveLength(33);
+    expect(keys).toContain('fathomaw');
+
+    const result = await handler(authedEvent('nick', { body: JSON.stringify({ species: 'fathomaw' }) }), fakeContext());
+
+    expect(result.statusCode).toBe(201);
+    expect(CreatureRecordSchema.safeParse(JSON.parse(result.body as string)).success).toBe(true);
   });
 
   it('draws a species uniformly when none is given', async () => {
@@ -114,7 +127,6 @@ describe('generateRegistryXalian handler', () => {
     const body = JSON.parse(result.body as string);
     expect(body.provenance.profile).toBe('showroom');
     expect(body.appearance.finish).toBe('standard');
-    expect(Object.keys(body.element.affinities)).toEqual([body.element.primary]);
   });
 
   it('rejects an unknown profile value with 400 BAD_REQUEST', async () => {

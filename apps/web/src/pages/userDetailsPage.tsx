@@ -2,8 +2,8 @@
 // userAccountPage.tsx: the same tile grid over GET /xalians?ownerId=, opening
 // the same record view, with no release control.
 import * as React from 'react';
-import type { StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
-import { speciesDisplayName } from '@xalians/rules/generator';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
+import { speciesName } from '../components/record/vocabulary';
 import { ArrowRightLeft, Copy } from 'lucide-react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
@@ -157,7 +157,7 @@ function UserDetailsPage({ id }: UserDetailsPageProps) {
 				<DialogContent className="sm:max-w-4xl">
 					<DialogHeader>
 						<VisuallyHidden>
-							<DialogTitle>{openRecord ? speciesDisplayName(openRecord.species) : 'Record'}</DialogTitle>
+							<DialogTitle>{openRecord ? speciesName(openRecord.species) : 'Record'}</DialogTitle>
 						</VisuallyHidden>
 					</DialogHeader>
 					<ScrollArea className="max-h-[75vh] pr-4">

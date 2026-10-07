@@ -3,7 +3,7 @@
 // and its code path were retired with issue #180, and XalianUsersTable now carries nothing
 // but account identity (see repositories/users.ts).
 import { DeleteCommand, GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import { ddb } from '../lib/db.ts';
 import * as log from '../lib/log.ts';
 
@@ -27,7 +27,7 @@ export type RegistryItem = {
   ownerId: string;
   generatedAt: string;
   species: string;
-  record: XalianRecord;
+  record: CreatureRecord;
 };
 
 export class XalianAlreadyExistsError extends Error {
@@ -37,7 +37,7 @@ export class XalianAlreadyExistsError extends Error {
   }
 }
 
-export async function putRecord(ownerId: string, record: XalianRecord): Promise<void> {
+export async function putRecord(ownerId: string, record: CreatureRecord): Promise<void> {
   const item: RegistryItem = {
     xalianId: record.id,
     ownerId,
@@ -87,7 +87,7 @@ export async function deleteRecord(xalianId: string): Promise<void> {
   }
 }
 
-export async function getRecord(xalianId: string): Promise<XalianRecord | null> {
+export async function getRecord(xalianId: string): Promise<CreatureRecord | null> {
   try {
     const result = await ddb.send(new GetCommand({ TableName: TABLE_NAME, Key: { xalianId } }));
     const item = result.Item as RegistryItem | undefined;
@@ -144,7 +144,7 @@ export type ListByOwnerOptions = {
 };
 
 export type ListByOwnerResult = {
-  items: XalianRecord[];
+  items: CreatureRecord[];
   nextCursor?: string;
 };
 

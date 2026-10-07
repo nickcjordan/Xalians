@@ -28,6 +28,8 @@ describe('retrieveUser handler', () => {
     expect(body.userId).toBe('nick');
     expect(body.tokens).toBe(5);
     expect('attributes' in body).toBe(true);
+    // A legacy xalianIds list left on a pre-cutover item is never returned.
+    expect('xalianIds' in body).toBe(false);
   });
 
   it('returns a public profile for another user (ports userTableCRUDLambdas test)', async () => {
@@ -41,9 +43,8 @@ describe('retrieveUser handler', () => {
     );
     expect(result.statusCode).toBe(200);
     const body = JSON.parse(result.body as string);
-    // The public profile is userId and nothing else (issue #180): xalianIds listed the
-    // retired legacy XalianTable, and a stranger's creatures now come from
-    // GET /xalians?ownerId=... instead.
+    // The public profile is userId and nothing else (issue #180): a stranger's creatures
+    // come from GET /xalians?ownerId=... instead.
     expect(body).toEqual({ userId: 'someoneelse' });
   });
 
@@ -56,7 +57,9 @@ describe('retrieveUser handler', () => {
     expect(result.statusCode).toBe(200);
     const body = JSON.parse(result.body as string);
     expect(body.userId).toBe('nick');
-    expect(body.xalianIds).toEqual([]);
+    expect(body).toEqual({ userId: 'nick', tokens: 0, attributes: {} });
+    // The lazily created item carries no legacy xalianIds list (v5 cutover, issue #796).
+    expect(ddbMock.commandCalls(PutCommand)[0].args[0].input.Item).toEqual({ userId: 'nick', attributes: {} });
 
     const putCalls = ddbMock.commandCalls(PutCommand);
     expect(putCalls).toHaveLength(1);

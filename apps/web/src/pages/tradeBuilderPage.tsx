@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
 import { ArrowRightLeft } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 

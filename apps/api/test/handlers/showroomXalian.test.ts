@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { mockClient } from 'aws-sdk-client-mock';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { handler } from '../../src/handlers/showroomXalian.ts';
-import { XalianRecordSchema } from '@xalians/content/schema';
+import { CreatureRecordSchema } from '@xalians/content/creature';
 import { fakeContext } from '../testEvent.ts';
 
 const ddbMock = mockClient(DynamoDBDocumentClient);
@@ -18,7 +18,7 @@ describe('showroomXalian handler', () => {
     expect(result.statusCode).toBe(200);
     const body = JSON.parse(result.body as string);
     expect(body.keepable).toBe(false);
-    expect(XalianRecordSchema.safeParse(body.record).success).toBe(true);
+    expect(CreatureRecordSchema.safeParse(body.record).success).toBe(true);
     expect(ddbMock.calls()).toHaveLength(0);
   });
 
@@ -36,6 +36,7 @@ describe('showroomXalian handler', () => {
 
     expect(body.profile).toBe('showroom');
     expect(body.record.provenance.profile).toBe('showroom');
+    expect(body.record.appearance.finish).toBe('standard');
   });
 
   it('runs the unrestricted generator when profile=full is requested', async () => {

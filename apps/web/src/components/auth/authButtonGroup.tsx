@@ -95,7 +95,7 @@ function AuthButtonGroup({ authAlertCallback, size = "default" }: AuthButtonGrou
 		authUtil
 			.signIn(username as string, password as string)
 			.then(() => import('../../utils/dbApi'))
-			.then(({ callCreateUser }) => callCreateUser({ userId: username, xalianIds: [] }))
+			.then(({ callCreateUser }) => callCreateUser({ userId: username }))
 			.catch(() => {
 				setSignInModalShow(true);
 			});

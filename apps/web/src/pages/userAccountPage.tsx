@@ -1,18 +1,16 @@
-import {recordCapabilities, recordActions, recordPassives, type DisplayAbility} from '@xalians/content/ability-compatibility';
 // Tier: chrome. The signed-in user's own Xalians: the registry records
 // generated under their name, as tiles that open the full record, each with a
 // release key (this is the user's own collection, so removal lives here;
 // userDetailsPage.tsx reads someone else's and carries no release control).
 //
-// Legacy kept Xalians are not shown. The XalianTable rows people kept under the
-// old flow still exist and the table is retained, but nothing reads it any
-// more; what becomes of those roughly 70 records is Nick's decision (#180).
+// Records are v5 CreatureRecords. Every stored creature, legacy XalianTable rows
+// included, was cleared at the v5 cutover (#796).
 import * as React from 'react';
 import { Link } from 'react-router';
 import { Hub } from 'aws-amplify/utils';
 import { Trash2 } from 'lucide-react';
-import type { TradeOffer, StoredXalianRecord as XalianRecord } from '@xalians/content/schema';
-import { speciesDisplayName } from '@xalians/rules/generator';
+import type { TradeOffer } from '@xalians/content/schema';
+import type { CreatureRecord as XalianRecord } from '@xalians/content/creature';
 
 import XalianNavbar from '../components/navbar';
 import VerifyRemoveXalianModal from '../components/verifyRemoveXalianModal';
@@ -38,7 +36,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { archetypeTerm, elementTerm, traitTerm } from '@/components/record/vocabulary';
+import { elementTerm, speciesName } from '@/components/record/vocabulary';
 
 type AuthUser = { username: string; hasVerifiedEmail: boolean } | null;
 type CollectionSort = 'newest' | 'oldest' | 'species';
@@ -69,7 +67,7 @@ function UserAccountPage() {
 	const [recordToRelease, setRecordToRelease] = React.useState<XalianRecord | null>(null);
 	const [verifyReleaseShow, setVerifyReleaseShow] = React.useState(false);
 	const [query, setQuery] = React.useState('');
-	const [affinity, setAffinity] = React.useState('all');
+	const [elementFilter, setElementFilter] = React.useState('all');
 	const [sort, setSort] = React.useState<CollectionSort>('newest');
 	const [compareMode, setCompareMode] = React.useState(false);
 	const [compareIds, setCompareIds] = React.useState<string[]>([]);
@@ -80,25 +78,23 @@ function UserAccountPage() {
 				.length
 		: 0;
 
-	const availableAffinities = React.useMemo(() => {
-		const keys = new Set<string>();
-		records.forEach((record) => Object.keys(record.element.affinities).forEach((key) => keys.add(key)));
+	const availableElements = React.useMemo(() => {
+		const keys = new Set<string>(records.map((record) => record.element));
 		return [...keys].sort((a, b) => elementTerm(a).name.localeCompare(elementTerm(b).name));
 	}, [records]);
 
 	const visibleRecords = React.useMemo(() => {
 		const normalizedQuery = query.trim().toLowerCase();
 		const filtered = records.filter((record) => {
-			if (affinity !== 'all' && !(affinity in record.element.affinities)) return false;
+			if (elementFilter !== 'all' && record.element !== elementFilter) return false;
 			if (!normalizedQuery) return true;
 
 			const searchable = [
-				speciesDisplayName(record.species),
+				speciesName(record.species),
 				record.species,
-				archetypeTerm(record.archetype.key).name,
-				...Object.keys(record.element.affinities).map((key) => elementTerm(key).name),
-				...record.traits.map((key) => traitTerm(key).name),
-				...recordCapabilities(record).map((ability) => ability.name),
+				elementTerm(record.element).name,
+				...record.actions.map((ability) => ability.name),
+				...record.passives.map((ability) => ability.name),
 			]
 				.join(' ')
 				.toLowerCase();
@@ -107,19 +103,19 @@ function UserAccountPage() {
 
 		return [...filtered].sort((a, b) => {
 			if (sort === 'species') {
-				return speciesDisplayName(a.species).localeCompare(speciesDisplayName(b.species));
+				return speciesName(a.species).localeCompare(speciesName(b.species));
 			}
 			const aGenerated = Date.parse(a.provenance.generatedAt);
 			const bGenerated = Date.parse(b.provenance.generatedAt);
 			return sort === 'oldest' ? aGenerated - bGenerated : bGenerated - aGenerated;
 		});
-	}, [records, query, affinity, sort]);
+	}, [records, query, elementFilter, sort]);
 
-	const filtersActive = query.trim().length > 0 || affinity !== 'all' || sort !== 'newest';
-	const activeFilterCount = Number(query.trim().length > 0) + Number(affinity !== 'all') + Number(sort !== 'newest');
+	const filtersActive = query.trim().length > 0 || elementFilter !== 'all' || sort !== 'newest';
+	const activeFilterCount = Number(query.trim().length > 0) + Number(elementFilter !== 'all') + Number(sort !== 'newest');
 	const clearFilters = () => {
 		setQuery('');
-		setAffinity('all');
+		setElementFilter('all');
 		setSort('newest');
 	};
 	const compareRecords = compareIds
@@ -378,7 +374,7 @@ function UserAccountPage() {
 											<SearchField
 												value={query}
 												onChange={setQuery}
-												placeholder="Search species, abilities, traits"
+												placeholder="Search species, elements, abilities"
 												aria-label="Search your Xalians"
 											/>
 										}
@@ -388,13 +384,13 @@ function UserAccountPage() {
 										sheetTitle="Collection filters"
 									>
 										<NativeSelect
-											value={affinity}
-											onChange={(event) => setAffinity(event.target.value)}
-											aria-label="Filter by affinity"
+											value={elementFilter}
+											onChange={(event) => setElementFilter(event.target.value)}
+											aria-label="Filter by element"
 											className="w-52 sm:w-44"
 										>
-											<NativeSelectOption value="all">All affinities</NativeSelectOption>
-											{availableAffinities.map((key) => (
+											<NativeSelectOption value="all">All elements</NativeSelectOption>
+											{availableElements.map((key) => (
 												<NativeSelectOption key={key} value={key}>
 													{elementTerm(key).name}
 												</NativeSelectOption>
@@ -438,7 +434,7 @@ function UserAccountPage() {
 															variant="ghost"
 															size="icon"
 															className="bg-s0"
-															aria-label={`Release ${speciesDisplayName(record.species)}`}
+															aria-label={`Release ${speciesName(record.species)}`}
 															onClick={() => askToRelease(record)}
 														>
 															<Trash2 />
@@ -485,7 +481,7 @@ function UserAccountPage() {
 				<DialogContent className="sm:max-w-4xl">
 					<DialogHeader>
 						<VisuallyHidden>
-							<DialogTitle>{openRecord ? speciesDisplayName(openRecord.species) : 'Record'}</DialogTitle>
+							<DialogTitle>{openRecord ? speciesName(openRecord.species) : 'Record'}</DialogTitle>
 						</VisuallyHidden>
 					</DialogHeader>
 					<ScrollArea className="max-h-[75vh] pr-4">

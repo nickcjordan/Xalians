@@ -31,7 +31,7 @@ export const handler = withApi(
     if (!user) {
       if (isOwnProfile) {
         await usersRepo.createUserIfMissing(targetUserId);
-        user = { userId: targetUserId, xalianIds: [], tokens: 0, attributes: {} };
+        user = { userId: targetUserId, tokens: 0, attributes: {} };
         log.info('retrieveXalianUser lazily created user record', { requestId, targetUserId });
       } else {
         throw new ApiError(400, 'USER_NOT_FOUND', 'Did not find user with userId=' + targetUserId);

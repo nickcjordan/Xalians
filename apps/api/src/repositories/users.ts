@@ -1,6 +1,6 @@
 // Promise-returning repository for XalianUsersTable (key: userId). No callbacks; every
-// function either resolves or throws. Mutations that can race (adding/removing a
-// xalianId, spending tokens) use DynamoDB condition expressions instead of a blind
+// function either resolves or throws. Mutations that can race (spending tokens, awarding
+// Arcade credits) use DynamoDB condition expressions instead of a blind
 // read-modify-write, so two concurrent requests cannot silently drop one write.
 import { GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import type { UserRecord } from '@xalians/content/schema';
@@ -16,9 +16,10 @@ export class ConditionFailedError extends Error {
   }
 }
 
+// Items written before the v5 cutover may still carry a legacy xalianIds list; it is
+// never read (toUserRecord drops it) and new items do not write one.
 type StoredUserItem = {
   userId: string;
-  xalianIds?: string[];
   attributes?: Record<string, unknown>;
 };
 
@@ -27,7 +28,6 @@ function toUserRecord(item: StoredUserItem): UserRecord {
   const tokens = typeof attributes.tokens === 'number' ? attributes.tokens : 0;
   return {
     userId: item.userId,
-    xalianIds: item.xalianIds ?? [],
     tokens,
     attributes,
   };
@@ -44,84 +44,20 @@ export async function getUser(userId: string): Promise<UserRecord | null> {
 }
 
 // Idempotent create: a record that already exists is left untouched, so a repeated
-// lazy-create on sign-in (or a retried POST /db/user) never clobbers existing xalianIds
-// or attributes.
+// lazy-create on sign-in (or a retried POST /db/user) never clobbers existing
+// attributes.
 export async function createUserIfMissing(userId: string): Promise<void> {
   try {
     await ddb.send(
       new PutCommand({
         TableName: TABLE_NAME,
-        Item: { userId, xalianIds: [], attributes: {} },
+        Item: { userId, attributes: {} },
         ConditionExpression: 'attribute_not_exists(userId)',
       })
     );
   } catch (err) {
     if (err instanceof Error && err.name === 'ConditionalCheckFailedException') {
       return;
-    }
-    throw err;
-  }
-}
-
-export type AddXalianIdResult = 'added' | 'already-present';
-
-// A single ConditionExpression cannot say "append this id only if it is not already
-// present and only if the list already contains other ids" in one atomic step, so this
-// reads first to make the common case (and the idempotent-retry case) a no-op without an
-// extra write, then appends under a NOT contains(...) condition as the race guard: two
-// concurrent adds of the same id can both pass the read check, but only one write wins.
-export async function addXalianId(userId: string, xalianId: string): Promise<AddXalianIdResult> {
-  const user = await getUser(userId);
-  if (user && user.xalianIds.includes(xalianId)) {
-    return 'already-present';
-  }
-
-  try {
-    await ddb.send(
-      new UpdateCommand({
-        TableName: TABLE_NAME,
-        Key: { userId },
-        UpdateExpression: 'SET xalianIds = list_append(if_not_exists(xalianIds, :empty), :ids)',
-        ConditionExpression: 'NOT contains(xalianIds, :id)',
-        ExpressionAttributeValues: { ':ids': [xalianId], ':id': xalianId, ':empty': [] },
-      })
-    );
-    return 'added';
-  } catch (err) {
-    if (err instanceof Error && err.name === 'ConditionalCheckFailedException') {
-      return 'already-present';
-    }
-    throw err;
-  }
-}
-
-export type RemoveXalianIdResult = 'removed' | 'not-found';
-
-// Reads to find the index (DynamoDB has no "remove by value" update), then removes that
-// exact index under a condition that the value at it has not changed since the read. A
-// concurrent mutation that shifted the list between the read and the write fails the
-// condition rather than silently deleting the wrong element.
-export async function removeXalianId(userId: string, xalianId: string): Promise<RemoveXalianIdResult> {
-  const user = await getUser(userId);
-  const index = user ? user.xalianIds.indexOf(xalianId) : -1;
-  if (index === -1) {
-    return 'not-found';
-  }
-
-  try {
-    await ddb.send(
-      new UpdateCommand({
-        TableName: TABLE_NAME,
-        Key: { userId },
-        UpdateExpression: `REMOVE xalianIds[${index}]`,
-        ConditionExpression: `xalianIds[${index}] = :id`,
-        ExpressionAttributeValues: { ':id': xalianId },
-      })
-    );
-    return 'removed';
-  } catch (err) {
-    if (err instanceof Error && err.name === 'ConditionalCheckFailedException') {
-      throw new ConditionFailedError(`xalianIds for ${userId} changed between the read and the write; retry`);
     }
     throw err;
   }

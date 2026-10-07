@@ -1,6 +1,6 @@
 // zod schemas for every request body, query string and path parameter this API accepts.
-// Response shapes come from @xalians/content/schema (XalianRecordSchema, UserRecordSchema,
-// PublicProfileSchema) rather than being redeclared here, per the "one source per data
+// Response shapes come from @xalians/content (CreatureRecordSchema from /creature,
+// UserRecordSchema and PublicProfileSchema from /schema) rather than being redeclared here, per the "one source per data
 // kind" rule.
 import { z } from 'zod';
 
@@ -88,13 +88,13 @@ export const ArcadeCompleteBodySchema = z.discriminatedUnion('gameId', [
 export type ArcadeCompleteBody = z.infer<typeof ArcadeCompleteBodySchema>;
 
 // The showroom lever (issue #197, docs/design/xalians-platform-vision-and-economy.md
-// section 3): 'full' is the unconstrained generator, 'showroom' pins finish to standard,
-// drops rare trait outcomes and never rolls a secondary affinity. Shared by both routes
+// section 3): 'full' is the unconstrained generator, 'showroom' pins finish to standard.
+// Shared by both routes
 // below so the two default differently on purpose (see each schema's comment).
 const GeneratorProfileSchema = z.enum(['full', 'showroom']);
 
 // POST /xalians (the registry). species is optional; when given it must be a ratified
-// species key (checked against @xalians/rules's getSpeciesTemplates() in the handler, not
+// species key (checked against the v5 getSpeciesTemplates() in the handler, not
 // here, since that is a runtime lookup against the bundled templates, not a static shape
 // check). Omitted, the handler draws one uniformly. profile is optional and defaults to
 // 'full': a signed-in caller gets the unrestricted generator unless the site's visible

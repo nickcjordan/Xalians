@@ -1,4 +1,4 @@
-// POST /xalians (the registry). Generates a ratified XalianRecord server-side from
+// POST /xalians (the registry). Generates a v5 CreatureRecord server-side from
 // @xalians/rules with a server-drawn seed, persists it under the caller, and returns it.
 // This is the "generate" verb the vision doc ratified (the word "mint" is banned
 // platform-wide): the creature is the caller's from the moment it exists, so there is no
@@ -13,8 +13,7 @@
 import { randomBytes } from 'node:crypto';
 import { ApiError, withApi } from '../lib/api.ts';
 import { GenerateRegistryXalianBodySchema } from '../lib/schemas.ts';
-import { generateXalian, getSpeciesTemplate, getSpeciesTemplates } from '@xalians/rules/generator';
-import { XalianRecordV4Schema } from '@xalians/content/schema';
+import { CreatureRecordSchema, generateXalian, getSpeciesTemplates } from '@xalians/rules/generator/canonicalCreatureRelease';
 import * as registryRepo from '../repositories/registry.ts';
 import * as log from '../lib/log.ts';
 
@@ -26,7 +25,8 @@ export const handler = withApi(
   async ({ subject, body, requestId }) => {
     const ownerId = subject as string;
 
-    const template = body.species ? getSpeciesTemplate(body.species) : pickRandom(getSpeciesTemplates());
+    const templates = getSpeciesTemplates();
+    const template = body.species ? templates.find((t) => t.key === body.species) : pickRandom(templates);
     if (!template) {
       throw new ApiError(400, 'UNKNOWN_SPECIES', `"${body.species}" is not a ratified species`);
     }
@@ -35,7 +35,7 @@ export const handler = withApi(
     const serial = await registryRepo.nextSerial(template.key);
 
     const seed = randomBytes(16).toString('hex');
-    const generated = generateXalian(template, seed, {
+    const generated = generateXalian(template.key, seed, {
       origin: template.homePlanet,
       serial,
       generatedAt: new Date().toISOString(),
@@ -46,13 +46,13 @@ export const handler = withApi(
     // packages/rules); this parse is a guard against drift between the two packages, not
     // a substitute for that coverage. A failure here is a server bug, not a client error,
     // so it is logged with the zod issue path and surfaces as a 500.
-    const parsed = XalianRecordV4Schema.safeParse(generated);
+    const parsed = CreatureRecordSchema.safeParse(generated);
     if (!parsed.success) {
       log.error('generateRegistryXalian: generated record failed schema validation', {
         requestId,
         issues: parsed.error.issues.map((issue) => issue.path.join('.')),
       });
-      throw new Error('Generated record did not match XalianRecordV4Schema');
+      throw new Error('Generated record did not match CreatureRecordSchema');
     }
     const record = parsed.data;
 

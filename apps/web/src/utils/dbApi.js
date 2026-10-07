@@ -1,14 +1,14 @@
-import { UserRecordSchema, PublicProfileSchema, TradeOfferSchema, XalianRecordSchema } from "@xalians/content/schema";
-import { generateXalian, getSpeciesTemplates } from "@xalians/rules/generator";
+import { UserRecordSchema, PublicProfileSchema, TradeOfferSchema } from "@xalians/content/schema";
+import { CreatureRecordSchema, generateXalian, getSpeciesTemplates } from "@xalians/rules/generator/canonicalCreatureRelease";
 import { getIdToken } from "./authUtil";
 
 /**
  * The one HTTP client for the Xalians API.
  *
- * Creatures live in the registry as ratified XalianRecords, and every record
- * that comes back is parsed strictly through XalianRecordSchema: a response
- * that does not match the ratified shape is a bug worth failing on, not
- * something to render half of. The legacy creature routes (GET /xalian,
+ * Creatures live in the registry as v5 CreatureRecords, and every record that
+ * comes back is parsed strictly through CreatureRecordSchema: a response that
+ * does not match the current shape is a bug worth failing on, not something to
+ * render half of. The legacy creature routes (GET /xalian,
  * POST /db/xalian, GET /db/xalian) and their client functions were deleted
  * with issue #180.
  *
@@ -39,10 +39,11 @@ function sampleRecords(count = 1, profile, pullSeed) {
     const seed = pullSeed
       ? `sample-${template.key}-${pullSeed}-${profile || "full"}`
       : `sample-${template.key}-${index + 1}-${profile || "full"}`;
-    const record = generateXalian(template, seed, {
+    const record = generateXalian(template.key, seed, {
       origin: template.homePlanet,
-      generatedAt: "2026-09-07T00:00:00Z",
-      profile,
+      serial: index + 1,
+      generatedAt: "2026-10-06T00:00:00Z",
+      profile: profile || "full",
     });
     sampleRecordCache.set(record.id, record);
     return record;
@@ -109,13 +110,13 @@ export const callShowroomXalian = (profile) => {
   if (useCache()) {
     pullCounter += 1;
     return Promise.resolve({
-      record: XalianRecordSchema.parse(sampleRecords(1, profile || "showroom", pullCounter)[0]),
+      record: CreatureRecordSchema.parse(sampleRecords(1, profile || "showroom", pullCounter)[0]),
       keepable: false,
     });
   }
   const suffix = profile ? `?profile=${encodeURIComponent(profile)}` : "";
   return requestJson(`${API}/xalians/showroom${suffix}`).then((data) => ({
-    record: XalianRecordSchema.parse(data.record),
+    record: CreatureRecordSchema.parse(data.record),
     keepable: data.keepable === true,
   }));
 };
@@ -130,12 +131,12 @@ export const callShowroomXalian = (profile) => {
 export const callGenerateXalian = (species, profile) => {
   if (useCache()) {
     pullCounter += 1;
-    return Promise.resolve(XalianRecordSchema.parse(sampleRecords(1, profile, pullCounter)[0]));
+    return Promise.resolve(CreatureRecordSchema.parse(sampleRecords(1, profile, pullCounter)[0]));
   }
   const body = {};
   if (species) body.species = species;
   if (profile) body.profile = profile;
-  return callCreate(`${API}/xalians`, body).then((data) => XalianRecordSchema.parse(data));
+  return callCreate(`${API}/xalians`, body).then((data) => CreatureRecordSchema.parse(data));
 };
 
 /**
@@ -145,7 +146,7 @@ export const callGenerateXalian = (species, profile) => {
 export const callListXalians = (ownerId, cursor) => {
   if (useCache()) {
     return Promise.resolve({
-      items: sampleRecords(3).map((r) => XalianRecordSchema.parse(r)),
+      items: sampleRecords(3).map((r) => CreatureRecordSchema.parse(r)),
       nextCursor: undefined,
     });
   }
@@ -155,7 +156,7 @@ export const callListXalians = (ownerId, cursor) => {
   const suffix = params.toString() ? `?${params.toString()}` : "";
 
   return callGet(`${API}/xalians${suffix}`).then((data) => ({
-    items: data.items.map((item) => XalianRecordSchema.parse(item)),
+    items: data.items.map((item) => CreatureRecordSchema.parse(item)),
     nextCursor: data.nextCursor,
   }));
 };
@@ -163,19 +164,19 @@ export const callListXalians = (ownerId, cursor) => {
 /** Reads one record. Any signed-in caller may read any record. */
 export const callGetXalian = (id) => {
   if (useCache()) {
-    return Promise.resolve(XalianRecordSchema.parse(sampleRecords(1)[0]));
+    return Promise.resolve(CreatureRecordSchema.parse(sampleRecords(1)[0]));
   }
-  return callGet(`${API}/xalians/${encodeURIComponent(id)}`).then((data) => XalianRecordSchema.parse(data));
+  return callGet(`${API}/xalians/${encodeURIComponent(id)}`).then((data) => CreatureRecordSchema.parse(data));
 };
 
 /** Public read used by shareable creature pages; sends no identity or token. */
 export const callGetPublicXalian = (id) => {
   if (useCache()) {
     const cached = sampleRecordCache.get(id) || sampleRecords(1, undefined, id)[0];
-    return Promise.resolve(XalianRecordSchema.parse(cached));
+    return Promise.resolve(CreatureRecordSchema.parse(cached));
   }
   return requestJson(`${API}/registry/xalians/${encodeURIComponent(id)}`).then((data) =>
-    XalianRecordSchema.parse(data)
+    CreatureRecordSchema.parse(data)
   );
 };
 
@@ -183,7 +184,7 @@ export const callGetPublicXalian = (id) => {
 export const callListPublicXalians = (ownerId, cursor) => {
   if (useCache()) {
     return Promise.resolve({
-      items: sampleRecords(3, undefined, ownerId).map((r) => XalianRecordSchema.parse(r)),
+      items: sampleRecords(3, undefined, ownerId).map((r) => CreatureRecordSchema.parse(r)),
       nextCursor: undefined,
     });
   }
@@ -191,7 +192,7 @@ export const callListPublicXalians = (ownerId, cursor) => {
   if (cursor) params.set("cursor", cursor);
   const suffix = params.toString() ? `?${params.toString()}` : "";
   return requestJson(`${API}/registry/owners/${encodeURIComponent(ownerId)}/xalians${suffix}`).then((data) => ({
-    items: data.items.map((item) => XalianRecordSchema.parse(item)),
+    items: data.items.map((item) => CreatureRecordSchema.parse(item)),
     nextCursor: data.nextCursor,
   }));
 };

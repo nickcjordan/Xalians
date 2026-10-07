@@ -123,9 +123,21 @@ export const GradeCalibrationSchema = z.object({
   quantiles: z.array(z.tuple([z.number(), z.number()])),
 });
 
+// ---- creatureGradeCalibration.json (v5) ------------------------------------------------
+// Written by packages/rules/src/generator/devtools/simulateCreatures.ts --calibrate; read
+// by creatureGrade.ts. The v5 prototype carries no generator version, so the CI check
+// (npm run check:creature-simulation) is what keeps it current. One [percentile, score]
+// pair per whole percentile 0..100, ascending.
+export const CreatureGradeCalibrationSchema = z.strictObject({
+  seed: z.string().min(1),
+  n: z.number().int().positive(),
+  quantiles: z.array(z.tuple([z.number().int().min(0).max(100), z.number()])).length(101),
+});
+
 export type Chronicle = z.infer<typeof ChronicleSchema>;
 export type Narration = z.infer<typeof NarrationSchema>;
 export type Tour = z.infer<typeof TourSchema>;
 export type Plates = z.infer<typeof PlatesSchema>;
 export type Sites = z.infer<typeof SitesSchema>;
 export type GradeCalibration = z.infer<typeof GradeCalibrationSchema>;
+export type CreatureGradeCalibration = z.infer<typeof CreatureGradeCalibrationSchema>;

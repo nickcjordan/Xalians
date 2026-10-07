@@ -34,7 +34,7 @@ describe('completeArcade handler', () => {
   it('atomically converts verified credits at the token boundary', async () => {
     const seed = 'verified-match';
     ddbMock.on(GetCommand).resolves({ Item: {
-      userId: 'nick', xalianIds: [], attributes: { tokens: 2, arcadeCredits: 90, arcadeDay: new Date().toISOString().slice(0, 10), arcadeEarnedToday: 20 },
+      userId: 'nick', attributes: { tokens: 2, arcadeCredits: 90, arcadeDay: new Date().toISOString().slice(0, 10), arcadeEarnedToday: 20 },
     } });
     ddbMock.on(UpdateCommand).resolves({});
 
@@ -53,7 +53,7 @@ describe('completeArcade handler', () => {
     const seed = 'duplicate-match';
     const day = new Date().toISOString().slice(0, 10);
     ddbMock.on(GetCommand).resolves({ Item: {
-      userId: 'nick', xalianIds: [], attributes: {
+      userId: 'nick', attributes: {
         tokens: 3, arcadeCredits: 5, arcadeDay: day, arcadeEarnedToday: 35, arcadeClaimIds: ['session_repeat_1'],
       },
     } });
