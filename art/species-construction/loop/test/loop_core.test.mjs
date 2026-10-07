@@ -848,3 +848,34 @@ test('v3.11 face guards: a candidate whose face breaks a guard never reaches the
   assert.match(reader.prompt, /assembled-902/)
   assert.ok(out.logs.some(l => /Face guards dropped assembled-901/.test(l)))
 })
+
+test('v3.12 round budget: once an agent reports a time past the budget, the refine pass is skipped and recorded', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  status.limits.roundSeconds = 3600
+  status.limits.refinePasses = 1
+  status.limits.rejectToCode = false
+  status.limits.measuredTieKeep = false
+  const out = await runWorkflow(generate(), { ...v3Args(status, rub, { rounds: 1, split: true }), startedAt: 1000 }, 't', (label) => {
+    if (label.startsWith('planner')) return { plan: 'plans/r29-R06.json', variants: 3, approach: 'a', needsCode: false }
+    if (label.startsWith('runner')) return { ok: true, now: 1000 + 3601, candidates: [splitCand(1, 'A')] }
+    if (label.startsWith('reader')) return { packs: [{ pack: 'assembled-901', region: 'R06', choice: 'same', reason: 'r' }] }
+    return undefined
+  })
+  assert.ok(!out.calls.some(c => /refine/.test(c.label)), out.calls.map(c => c.label).join(','))
+  assert.ok(out.logs.some(l => /skipped refine pass for R06/.test(l)))
+})
+
+test('v3.12 toolsForOrdersOnly: no toolsmith for a region this round will not order', { skip: !existsSync(P.status) }, async () => {
+  const status = readJson(P.status), rub = readJson(P.rubric)
+  status.methods = { R06: 'm', R02: 'm' }
+  status.tools = {}
+  status.lastOrders = []
+  status.limits.toolsForOrdersOnly = true
+  status.limits.toolReaderCheck = false
+  for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
+  status.regions.R02.hold = false
+  status.regions.R02.score = 9.5  // above the pass bar and not reopened: never ordered
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, tools: [{ region: 'R02', script: 'face.py', ready: false }, { region: 'R06', script: 'trunk.py', ready: false }] }), 'o', () => undefined)
+  const smiths = out.calls.filter(c => c.label.startsWith('tool: ')).map(c => c.label)
+  assert.ok(smiths.some(l => /R06/.test(l)) && !smiths.some(l => /R02/.test(l)), smiths.join(','))
+})

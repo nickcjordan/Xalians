@@ -251,6 +251,10 @@ def dump_compact(obj):
 
 def cmd_args(a):
     args = build_args(a.species, a.rounds, a.cold, a.rubric_texts, a.status)
+    if a.start_clock:
+        # v3.12: the round budget (limits.roundSeconds) is measured from here; agents report the time as they return
+        import time as _time
+        args['startedAt'] = int(_time.time())
     if a.pin:
         # an order Nick approved for the first round of this batch (round 26: the face's new method), in place of the
         # picked order of the same component; the rest of the pick is unchanged
@@ -482,6 +486,7 @@ def main(argv=None):
     p = sub.add_parser('args'); p.add_argument('species'); p.add_argument('--rounds', type=int); p.add_argument('--cold', action='store_true')
     p.add_argument('--rubric-texts', action='store_true', help='include criterion texts (what the v2 workflow prompts need)')
     p.add_argument('--status'); p.add_argument('--out')
+    p.add_argument('--start-clock', action='store_true', help='stamp startedAt so the workflow can hold the round to limits.roundSeconds')
     p.add_argument('--pin', action='append', help='order this region in the first round, in place of the pick for its component (repeatable)')
     p.set_defaults(fn=cmd_args)
     p = sub.add_parser('merge'); p.add_argument('species'); p.add_argument('result'); p.add_argument('--note'); p.add_argument('--status'); p.add_argument('--out')

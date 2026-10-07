@@ -299,6 +299,15 @@ Round 27 kept the neck with the mean flat a third time and lost the face for the
 - **Builders test loop code they edit**: a builder that changes a file under `loop/` runs both test suites before committing and returns `loopTests`; failing tests fail the build.
 - `plan_job.py report` no longer writes a copy beside the plan.
 
+## After round 28 (v3.12, 2026-10-07)
+
+Round 28 kept nothing in 5.7 hours and 85M tokens: toolsmiths 59 percent (one built, rejected, fixed and re-checked a face tool for a region the round did not order), code builders 33 percent (one fan code builder ran 2.5 hours with no cap).
+
+- **Tools only for ordered regions** (`limits.toolsForOrdersOnly`): setup predicts the first round's orders (plus any pin) and builds tools for those regions only; the others wait for a round that orders them.
+- **Code builders in bounded sessions** (`limits.builderSessions`, 2): sessions of `toolSessionCalls` with handover notes in `loop/builds/`, as toolsmiths have.
+- **Round budget** (`limits.roundSeconds`, 10800): scripts have no clock, so `loop_state.py args --start-clock` stamps `startedAt` and runners, builders and toolsmiths report `now` (date +%s). Past the budget the optional stages are skipped and listed in the round record (`skippedForTime`, `elapsedMinutes`): refine pass, code builder after a rejected plan, runner-up critic, repair pass, extra toolsmith and builder sessions, tool fix passes.
+- **Pairs decided on the net** (`limits.pairNet`): a paired order reads better when its own region reads better and the pair's better-minus-worse votes are positive; the critic and judge still forbid checklist losses. Round 28's fan candidate (front 2-1, rear 0-3) is net -2 and still fails.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

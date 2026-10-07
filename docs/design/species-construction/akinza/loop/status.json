@@ -52,7 +52,11 @@
   "runnerUpCritic": true,
   "faceGuards": true,
   "plateauCountsKeeps": true,
-  "outsideReview": true
+  "outsideReview": true,
+  "toolsForOrdersOnly": true,
+  "builderSessions": 2,
+  "roundSeconds": 10800,
+  "pairNet": true
  },
  "baseline": {
   "head": "head-2271",

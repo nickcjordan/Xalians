@@ -197,7 +197,7 @@ def cmd_report(a):
     data = json.loads(result.read_text(encoding='utf-8'))
     regions = [r for r in a.regions.split(',') if r]
     rows = [candidate_row(e, Path(a.baseline_packet), regions, a.seed) for e in data.get('top', []) if e.get('ok') and e.get('packet')]
-    out = {'ok': bool(rows), 'candidates': rows}
+    out = {'ok': bool(rows), 'candidates': rows, 'now': int(time.time())}
     if not rows:
         out['reason'] = 'no top candidate built: ' + '; '.join(f"{e.get('id')} {e.get('stage')} {str(e.get('failure') or '')[:160]}" for e in data.get('top', []))
     text = json.dumps(out)

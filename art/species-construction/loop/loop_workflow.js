@@ -39,7 +39,17 @@ const abs = p => !p ? p : p.includes(':') ? p : REPO + '\\' + p.split('/').join(
 S.specs = S.specs || {}
 S.methods = S.methods || {}
 S.toolChecks = {}  // this run's tool reader checks, written into each tools/<region>.json by loop_state merge
-S.toolBlocked = {}  // v3.9: regions whose tool needs a loop change, with the change the toolsmith named
+S.toolBlocked = {}
+// v3.12 (limits.roundSeconds, after round 28's 5.7 hours): workflow scripts have no clock, so the time comes from the
+// agents (the runner's report and every builder and toolsmith return `now`, the output of date +%s) against
+// args.startedAt; once a round is past its budget, optional stages (refine pass, code builder after a rejected plan,
+// runner-up critic, repair pass, extra toolsmith and builder sessions, tool fix passes) are skipped and recorded
+S.clock = args.startedAt || 0
+const noteTime = x => { const t = Number(x && x.now); if (t > S.clock) S.clock = t; return x }
+const overTime = () => !!(L.roundSeconds && args.startedAt && S.clock - args.startedAt > L.roundSeconds)
+const elapsedMin = () => args.startedAt ? Math.round((S.clock - args.startedAt) / 60) : null
+const skipped = []
+function skipForTime(what) { if (!overTime()) return false; skipped.push(what); log(`Over the round budget (${elapsedMin()} min): skipped ${what}`); return true }  // v3.9: regions whose tool needs a loop change, with the change the toolsmith named
 S.tools = S.tools || {}
 S.means = S.means || []
 S.keptLog = S.keptLog || []  // v3.11: whether each round in the plateau window kept a change
@@ -100,6 +110,7 @@ const BUILD = {
     reusable: { type: 'array', items: { type: 'object', properties: { option: { type: 'string' }, what: { type: 'string' } }, required: ['option', 'what'] } },
     commit: { type: 'string' },
     loopTests: { type: 'string' },
+    now: { type: 'number' },
     pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
   },
   required: ['failed', 'changes', 'approach'],
@@ -121,7 +132,7 @@ const METHOD = {
   },
   required: ['region', 'method', 'changed', 'respec'],
 }
-const TOOL = { type: 'object', properties: { region: { type: 'string' }, script: { type: 'string' }, recipe: { type: 'string' }, ready: { type: 'boolean' }, checkPlan: { type: 'string' }, notes: { type: 'string' }, blocked: { type: 'boolean' }, loopChange: { type: 'string' } }, required: ['region', 'ready', 'notes'] }
+const TOOL = { type: 'object', properties: { region: { type: 'string' }, script: { type: 'string' }, recipe: { type: 'string' }, ready: { type: 'boolean' }, checkPlan: { type: 'string' }, notes: { type: 'string' }, blocked: { type: 'boolean' }, loopChange: { type: 'string' }, now: { type: 'number' } }, required: ['region', 'ready', 'notes'] }
 const METHODS = { type: 'object', properties: { path: { type: 'string' }, regions: { type: 'array', items: METHOD } }, required: ['path', 'regions'] }
 const REVIEW = { type: 'object', properties: { ...METHOD.properties, unpark: { type: 'boolean' } }, required: ['region', 'method', 'unpark', 'respec'] }
 
@@ -585,7 +596,7 @@ function toolPrompt(t) {
     (S.specs[t.region] ? `Region spec: ${abs(S.specs[t.region].path)}.\n` : '') +
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline packet: ${abs(S.baseline.packet)}. Write the starter recipe to ${LOOPDIR}\\recipes\\tool-${t.region}.json and the ready record to ${LOOPDIR}\\tools\\${t.region}.json. ` +
     `Also write a one-variant check plan to ${LOOPDIR}\\plans\\tool-check-${t.region}.json (plan-schema.md: order {round ${S.round + 1}, region ${t.region}}, region ${t.region}, base the baseline recipe, start your starter recipe, baselinePacket the baseline packet, one variant "tool as built" with no edits) and return its path as checkPlan: three blind readers compare that candidate with the baseline before the tool counts as ready. ` +
-    `Commit by name on branch ${BRANCH} with a plain message and no Co-Authored-By trailer, and return the structured output.` +
+    `Commit by name on branch ${BRANCH} with a plain message and no Co-Authored-By trailer, and return the structured output with now set to the output of date +%s.` +
     // round 26: the face toolsmith found the method needed a recipe stage it may not add, and the order then ran on the old tool
     ' If the method cannot be built without changing the loop itself (recipe.py, loop_tools.py, the assembler or the workflow), which a toolsmith may not do, return ready false, blocked true and loopChange naming the change; the order for this region is then skipped until the change is made.' +
     (t.rejected ? `\n\nThe readers rejected the tool's first candidate against the baseline: ${t.rejected}. Find the fault they describe in the script (a new versioned file, never a pinned one), rebuild the starter, keep the check plan pointing at it, and return the structured output again.` : '') +
@@ -598,7 +609,8 @@ function toolPrompt(t) {
 async function toolsmith(t, label) {
   let r = null
   for (let k = 0; k < Math.max(1, L.toolSessions || 1); k++) {
-    r = await agent(toolPrompt({ ...t, session: k }), workerOpts({ label: k ? `${label} session ${k + 1}` : label, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' }))
+    if (k && skipForTime(`${label} session ${k + 1}`)) return r
+    r = noteTime(await agent(toolPrompt({ ...t, session: k }), workerOpts({ label: k ? `${label} session ${k + 1}` : label, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })))
     if (!r || r.ready || !/^continue/i.test(String(r.notes || '').trim())) return r
   }
   return r
@@ -711,7 +723,7 @@ const PLAN_OUT = { type: 'object', properties: { plan: { type: 'string' }, varia
 const RUN_OUT = {
   type: 'object',
   properties: {
-    ok: { type: 'boolean' }, reason: { type: 'string' },
+    ok: { type: 'boolean' }, reason: { type: 'string' }, now: { type: 'number' },
     candidates: { type: 'array', items: { type: 'object', properties: {
       name: { type: 'string' }, recipe: { type: 'string' }, head: { type: 'string' }, body: { type: 'string' }, assembly: { type: 'string' }, packet: { type: 'string' },
       technicalPass: { type: 'boolean' }, regionChange: { type: 'object', additionalProperties: { type: 'number' } }, regionShift: { type: 'object', additionalProperties: { type: 'number' } }, guards: { type: 'array', items: { type: 'string' } }, face: { type: 'string' }, seams: { type: 'string' }, measured: { type: 'string' }, pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
@@ -784,6 +796,17 @@ function readerVerdicts(cands, reads, regions) {
   }
   return out.sort((a, b) => b.score - a.score)
 }
+// The readers prefer a candidate: some region better and none worse. v3.12 (limits.pairNet, after round 28): a paired
+// order (one tool builds both, the fan front and rear) is decided on the pair: the order's own region reads better and
+// the pair's better minus worse votes are positive; the critic and judge still forbid any checklist loss.
+function readsBetterPer(per, regions) {
+  if (!per) return false
+  if (L.pairNet && regions.length > 1) {
+    const net = regions.reduce((t, r) => t + ((per[r] || {}).better || 0) - ((per[r] || {}).worse || 0), 0)
+    return (per[regions[0]] || {}).verdict === 'better' && net > 0
+  }
+  return regions.some(r => (per[r] || {}).verdict === 'better') && !regions.some(r => (per[r] || {}).verdict === 'worse')
+}
 // Every candidate read worse on the order's region, by a majority and with no reader preferring it.
 const rejectedAll = (ranked, rid) => ranked.length > 0 && ranked.every(x => x.per[rid] && x.per[rid].verdict === 'worse' && x.per[rid].better === 0)
 const readerReasons = (ranked, rid) => ranked.map(x => `${x.cand.name}: ${(x.per[rid] && x.per[rid].reason) || ''}`).join(' || ').slice(0, 1500)
@@ -803,14 +826,24 @@ function measuredTie(ranked, regions, rid) {
 async function codeBuild(order, round, task) {
   const regions = [order.id, ...(order.with || [])]
   const seed = `r${round}-${order.id}-code`
-  const b = await agent(builderPrompt(order, round) + `\n\n${task}\n\n` +
-    `When your candidate is packeted, run python art/species-construction/loop/reader_pack.py ${abs(S.baseline.packet).split('\\').join('/')} <your packet> --regions ${regions.join(',')} --out <your packet>/reader-pack --seed ${seed} (forward slashes, your shell is bash), and return pack set to that folder and keys set to the side your candidate is on per region, from its key.json (A when aIsCandidate is true, else B). Never show key.json to anyone.`,
-    workerOpts({ label: `builder r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' }))
+  // v3.12 (limits.builderSessions, after round 28's 2.5-hour fan code builder): bounded sessions with notes, like toolsmiths
+  const notes = `${LOOPDIR}\\builds\\r${round}-${order.id}-notes.md`
+  const sessions = Math.max(1, L.builderSessions || 1)
+  let b = null
+  for (let k = 0; k < sessions; k++) {
+    if (k && skipForTime(`code builder session ${k + 1} for ${order.id}`)) break
+    b = noteTime(await agent(builderPrompt(order, round) + `\n\n${task}\n\n` +
+      `When your candidate is packeted, run python art/species-construction/loop/reader_pack.py ${abs(S.baseline.packet).split('\\').join('/')} <your packet> --regions ${regions.join(',')} --out <your packet>/reader-pack --seed ${seed} (forward slashes, your shell is bash), and return pack set to that folder and keys set to the side your candidate is on per region, from its key.json (A when aIsCandidate is true, else B). Never show key.json to anyone. Set now to the output of date +%s when you return.` +
+      (L.builderSessions ? `\n\nWork in a session of at most about ${L.toolSessionCalls ?? 80} tool calls. If you reach that without a packeted candidate, write what you built, what works and your next step to ${notes}, commit it, and return failed true with reason starting with the word continue${k + 1 < sessions ? '; a fresh session picks up from your notes' : ' (this is the last session, so return your best candidate if you have one)'}.` +
+        (k ? ` This is session ${k + 1}: read ${notes} first and continue from it.` : '') : ''),
+      workerOpts({ label: `builder r${round} ${order.component}: ${order.id}${k ? ' session ' + (k + 1) : ''}`, phase: 'Rounds', schema: BUILD, model: 'sonnet', effort: 'high' })))
+    if (!b || !b.failed || !/^continue/i.test(String(b.reason || '').trim())) break
+  }
   if (!b || b.failed || !b.packet || b.technicalPass === false || !b.pack) return b
   const cand = { name: 'code builder candidate', pack: b.pack, keys: b.keys || {}, assembly: b.assembly }
   const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt([b.pack], order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id} code`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
   const [v] = readerVerdicts([cand], reads.filter(Boolean), regions)
-  if (v && regions.some(r => v.per[r].verdict === 'better') && !regions.some(r => v.per[r].verdict === 'worse')) return { ...b, readerVerdict: v.per }
+  if (v && readsBetterPer(v.per, regions)) return { ...b, readerVerdict: v.per }
   return { ...b, failed: true, reason: 'the code builder candidate did not read better than the baseline: ' + JSON.stringify(v ? v.per : null).slice(0, 400) }
 }
 // v3.9 geometry carry: a region the candidate's assembled geometry did not move (regionShift at or
@@ -910,7 +943,7 @@ async function repairOrder(order, round, out, b, frozen, targetsHere) {
   if (!cands.length) return { repair: run ? (run.reason || 'no candidate built') : 'runner returned nothing' }
   const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id} repair`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
   const best = readerVerdicts(cands, reads.filter(Boolean), regions)[0]
-  if (!best || !regions.some(r => best.per[r].verdict === 'better') || regions.some(r => best.per[r].verdict === 'worse')) return { repair: 'no repaired candidate read better than the baseline' }
+  if (!best || !readsBetterPer(best.per, regions)) return { repair: 'no repaired candidate read better than the baseline' }
   const rb = { failed: false, recipe: best.cand.recipe, head: best.cand.head, body: best.cand.body, assembly: best.cand.assembly, packet: best.cand.packet, technicalPass: true,
     approach: 'repair: ' + plan.approach, changes: plan.approach, regionChange: best.cand.regionChange, regionShift: best.cand.regionShift }
   const scope = criticScope(rb, order, frozen, targetsHere)
@@ -1016,7 +1049,20 @@ if (toSpec.length) {
 // v3.9: a tool the readers rejected after its fix pass waits for a method review (stalled)
 const stalledTools = (args.tools || []).filter(t => t.stalled).map(t => t.region)
 if (stalledTools.length) log('Tools waiting for a method review after a rejected fix pass: ' + stalledTools.join(', '))
-const toBuild = (args.tools || []).filter(t => !t.ready && !t.stalled && S.regions[t.region] && workable(t.region) && !S.regions[t.region].parked && !S.tools[t.region])
+// v3.12 (limits.toolsForOrdersOnly, after round 28): setup built the face tool, reader-checked it twice and fixed it once,
+// about an hour, for a region the round did not order; tools are built only for the first round's predicted orders
+const predicted = (() => {
+  const o = pickOrders(S, L, S.round + 1, POOLS, PAIRS)
+  const ids = new Set(o.flatMap(x => [x.id, ...(x.with || [])]))
+  for (const id of (Array.isArray(args.pin) ? args.pin : [])) ids.add(id)
+  return ids
+})()
+const toBuild = (args.tools || []).filter(t => !t.ready && !t.stalled && S.regions[t.region] && workable(t.region) && !S.regions[t.region].parked && !S.tools[t.region]
+  && (!L.toolsForOrdersOnly || predicted.has(t.region)))
+if (L.toolsForOrdersOnly) {
+  const later = (args.tools || []).filter(t => !t.ready && !t.stalled && !predicted.has(t.region)).map(t => t.region)
+  if (later.length) log('Tools left for a round that orders their region: ' + later.join(', '))
+}
 if (toBuild.length) {
   // round 21: a tool smoke-tested on its own lost 3 to 0 to the baseline once a round built it on the
   // current model, so with toolReaderCheck a tool is ready only after its starter's candidate reads
@@ -1031,7 +1077,7 @@ if (toBuild.length) {
     if (!r || !r.ready || !L.toolReaderCheck) return r
     if (!r.checkPlan) return { ...r, ready: false, notes: 'no check plan: ' + (r.notes || '') }
     let check = await toolCheck(t.region, r.checkPlan)
-    if (check.verdict === 'worse') {
+    if (check.verdict === 'worse' && !skipForTime(`tool fix pass ${t.region}`)) {
       r = await toolsmith({ ...t, rejected: check.reason }, `tool: ${t.region} fix`)
       if (!r || !r.ready || !r.checkPlan) return r ? { ...r, ready: false } : r
       check = await toolCheck(t.region, r.checkPlan)
@@ -1132,9 +1178,10 @@ for (let i = 0; i < ROUNDS; i++) {
       } else if (plan && plan.plan) {
         let picked = null, tieCand = null
         for (let pass = 0; pass <= (L.refinePasses ?? 1) && !picked; pass++) {
+          if (pass > 0 && skipForTime(`refine pass for ${order.id}`)) break
           const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
           if (!thePlan || !thePlan.plan) break
-          const run = await agent(runnerPrompt(thePlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' }))
+          const run = noteTime(await agent(runnerPrompt(thePlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' })))
           const cands = guarded(run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : [])
           if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built') : 'runner returned nothing'; continue }
           const regions = [order.id, ...(order.with || [])]
@@ -1142,7 +1189,7 @@ for (let i = 0; i < ROUNDS; i++) {
           const ranked = readerVerdicts(cands, reads.filter(Boolean), regions)
           out.readers = ranked.map(x => ({ assembly: x.cand.assembly, per: x.per }))
           const best = ranked[0]
-          const readsBetter = x => x && regions.some(rid => x.per[rid].verdict === 'better') && !regions.some(rid => x.per[rid].verdict === 'worse')
+          const readsBetter = x => !!x && readsBetterPer(x.per, regions)
           if (readsBetter(best)) {
             picked = best
             // v3.9: the next candidate the readers also prefer, for the critic if the first is reverted
@@ -1163,7 +1210,8 @@ for (let i = 0; i < ROUNDS; i++) {
           }
         }
         if (!picked && !out.rejected && tieCand) { picked = tieCand; out.tie = true }
-        if (!picked && out.rejected) {
+        if (!picked && out.rejected && skipForTime(`code builder after the rejected ${order.id} plan`)) out.build = { failed: true, reason: 'every plan candidate read worse; the code builder was skipped for the round budget: ' + out.rejected.slice(0, 300), changes: '', approach: plan.approach }
+        else if (!picked && out.rejected) {
           // the plan's variants were rejected, not the tool's reader-checked build (round 23: the tool's own
           // control variant had read better), so this is recorded as the plan's rejection, not the tool's
           if (S.tools[order.id]) S.tools[order.id] = { ...S.tools[order.id], planRejected: `r${round}: ${out.rejected.slice(0, 300)}` }
@@ -1210,7 +1258,7 @@ for (let i = 0; i < ROUNDS; i++) {
     }
     // v3.9 (limits.runnerUpCritic, after round 26): the readers preferred a second face candidate the critic never saw;
     // before a repair plan, the critic grades the next reader-preferred candidate, judged the same way
-    if (L.runnerUpCritic && L.builderMode === 'split' && out.runnerUp && !out.decision.kept && !out.tie) {
+    if (L.runnerUpCritic && L.builderMode === 'split' && out.runnerUp && !out.decision.kept && !out.tie && !skipForTime(`runner-up critic for ${order.id}`)) {
       const ru = out.runnerUp, c = ru.cand
       const rb = { failed: false, recipe: c.recipe, head: c.head, body: c.body, assembly: c.assembly, packet: c.packet, technicalPass: true,
         approach: b.approach, changes: b.changes, regionChange: c.regionChange, regionShift: c.regionShift }
@@ -1230,7 +1278,8 @@ for (let i = 0; i < ROUNDS; i++) {
     // it for a torn outer rim the readers also named; the candidate had the right half. With repairPass,
     // a reader-picked candidate the judge reverts gets one plan that starts from it and fixes only the
     // critic's losses, judged the same way
-    if (L.repairPass && L.builderMode === 'split' && out.readerVerdict && !out.decision.kept && b.recipe && !out.tie) {      const repair = await repairOrder(order, round, out, b, frozen, targetsHere)
+    if (L.repairPass && L.builderMode === 'split' && out.readerVerdict && !out.decision.kept && b.recipe && !out.tie && !skipForTime(`repair pass for ${order.id}`)) {
+      const repair = await repairOrder(order, round, out, b, frozen, targetsHere)
       if (repair) Object.assign(out, repair)
     }
     return out
@@ -1272,6 +1321,8 @@ for (let i = 0; i < ROUNDS; i++) {
 
   const entry = recordEntry(S, L, round, outcomes, combined ? combined.build.assembly : null, baselineAtStart.recipe || null)
   entry.recipe = S.baseline.recipe || null
+  entry.elapsedMinutes = elapsedMin()
+  if (skipped.length) entry.skippedForTime = skipped.slice()
   if (trialOutcome) entry.effortTrial = { region: trial.id, effort: 'medium', assembly: trialOutcome.build ? trialOutcome.build.assembly : null, kept: !!trialOutcome.kept, reasons: trialOutcome.reasons || [trialOutcome.failed], gain: trialOutcome.gain ?? null, verdict: trialOutcome.verdict || null }
   S.means.push(entry.mean)
   S.keptLog.push(entry.orders.some(o => o.kept))
