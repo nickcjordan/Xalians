@@ -4,7 +4,7 @@ import { RoleGlyph, ArmorGlyph, PIECE_RIM } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { pieceShadowFilter } from '../duel/board/duelPieceToken';
-import { getSpeciesTemplate } from '@xalians/rules/generator';
+import { getSpeciesTemplate } from './reclamationVocabulary';
 import { HoldBar, WhyMarks, factorText } from './reclamationInstruments';
 import { tintFor, signedAdjust } from './reclamationSquad';
 

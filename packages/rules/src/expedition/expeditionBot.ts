@@ -24,7 +24,7 @@
 	site keeps working unchanged.
 */
 
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import { prepare, traitKeywordsOf, magnitudeAgainst, roleOf, round1, flippableRolesOf } from './creatureOnTable.ts';
 import {
 	ROLE, SENDABLE, clinchFor, FRAMES_PER_MATCH,
@@ -500,7 +500,7 @@ function siteMargin(publicState: PublicState, siteId: string, seat: Seat, weight
 	return visibleMargin(publicState, siteId, seat) - (resolved[siteId] || 0);
 }
 
-function traitsOf(record: XalianRecord): string[] {
+function traitsOf(record: CreatureRecord): string[] {
 	return traitKeywordsOf(record);
 }
 
@@ -633,7 +633,7 @@ function evaluateSwiftMoves(publicState: PublicState, handler: Seat, margins: Re
 	candidates is sorted best value first; each entry is
 	{ record, site, prepared, margin, value, flips, cost }.
 */
-export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], handler: Seat, rival?: Rival | null): ScoredSends {
+export function scoreSends(publicState: PublicState, ownRoster: CreatureRecord[], handler: Seat, rival?: Rival | null): ScoredSends {
 	const weights = weightsFor(rival);
 	const me = publicState.players[handler];
 	const opp = publicState.players[otherSeat(handler)];
@@ -768,7 +768,7 @@ export function scoreSends(publicState: PublicState, ownRoster: XalianRecord[], 
 	The candidate scoring itself lives in scoreSends above; this function is the policy
 	layer over it (the swift move, the pass rules, the near-equal pick).
 */
-export function chooseSend(publicState: PublicState, ownRoster: XalianRecord[], handler: Seat, rng?: RngLike | null, rival?: Rival | null): BotAction {
+export function chooseSend(publicState: PublicState, ownRoster: CreatureRecord[], handler: Seat, rng?: RngLike | null, rival?: Rival | null): BotAction {
 	const weights = weightsFor(rival);
 	const me = publicState.players[handler];
 	const opp = publicState.players[otherSeat(handler)];
@@ -873,7 +873,7 @@ export function chooseSend(publicState: PublicState, ownRoster: XalianRecord[], 
 	Reads public information only, plus this handler's own roster, exactly like chooseSend.
 	Consumes no RNG.
 */
-export function chooseStake(publicState: PublicState, ownRoster: XalianRecord[], handler: Seat, rival?: Rival | null): StakeChoice | null {
+export function chooseStake(publicState: PublicState, ownRoster: CreatureRecord[], handler: Seat, rival?: Rival | null): StakeChoice | null {
 	const rules = rulesOf(publicState);
 	if (rules && rules.stake === false) {
 		return null;
@@ -963,7 +963,7 @@ export function chooseStake(publicState: PublicState, ownRoster: XalianRecord[],
 */
 
 // the amount `attacker` would take off `victim`, before the cap
-function rawBlowAmount(publicState: PublicState, siteId: string, attackerEntry: { record: XalianRecord }, victimEntry: { record: XalianRecord }, attackerPrepared?: PreparedCreature): number {
+function rawBlowAmount(publicState: PublicState, siteId: string, attackerEntry: { record: CreatureRecord }, victimEntry: { record: CreatureRecord }, attackerPrepared?: PreparedCreature): number {
 	const prepared = attackerPrepared || prepareAt(publicState, siteId, attackerEntry as PublicEntry);
 	if (!prepared.blow) {
 		return 0;
@@ -989,14 +989,14 @@ function rawBlowAmount(publicState: PublicState, siteId: string, attackerEntry: 
 
 	- keen: the enemy this attack can down, else the one it takes the most off
 	- dull: the enemy sent earliest
-	- conduct: the archetype's line, read compactly (the weakest-seeking lines take the
+	- conduct: the temperament's line, read compactly (the weakest-seeking lines take the
 	  lowest hold, the strongest-seeking lines the highest, everything else the earliest
 	  send, which is the engine's own default)
 
 	The bot still reads the conduct lane compactly rather than replaying the engine's full
 	pick; that is recorded friction from the first measurements and is unchanged here.
 */
-function conductTargetGuess(publicState: PublicState, siteId: string, prepared: PreparedCreature, enemies: PublicEntry[], selfEntry?: { recordId: string; record: XalianRecord; sentIndex: number } | null): PublicEntry | null {
+function conductTargetGuess(publicState: PublicState, siteId: string, prepared: PreparedCreature, enemies: PublicEntry[], selfEntry?: { recordId: string; record: CreatureRecord; sentIndex: number } | null): PublicEntry | null {
 	if (enemies.length === 0) {
 		return null;
 	}
@@ -1037,7 +1037,7 @@ function conductTargetGuess(publicState: PublicState, siteId: string, prepared: 
 	return holds.reduce((best, c) => (c.entry.sentIndex < best.entry.sentIndex ? c : best)).entry;
 }
 
-export function roleValueOf(publicState: PublicState, record: XalianRecord, site: FrameSite, sentIndex: number, handler: Seat, prepared?: PreparedCreature): number {
+export function roleValueOf(publicState: PublicState, record: CreatureRecord, site: FrameSite, sentIndex: number, handler: Seat, prepared?: PreparedCreature): number {
 	const seat = handler;
 	const opponentSeat = otherSeat(handler);
 	const view = prepared || prepare(record, site, null, sentIndex, { rules: rulesOf(publicState) });

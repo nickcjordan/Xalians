@@ -1,7 +1,7 @@
 /*
 	Expedition: the element matchup blend.
 
-	One creature element ({ primary, affinities }) read against one other element (a
+	One element reading ({ primary, affinities }) read against one other element (a
 	world's, or a target's): the type chart with the creature as attacker, softened so a
 	0 becomes 0.25, blended with the creature's graded secondary affinity. The rulebook's
 	"world matchup" and "magnitude against a target" paragraphs both call for exactly this
@@ -10,16 +10,17 @@
 */
 
 import { typeEffectivenessMultiplier } from './expeditionInterpretation.ts';
-import type { XalianRecord } from '@xalians/content/schema';
 
 // a 0 on the chart would zero a creature out of a world entirely; the design softens it
 export function softened(multiplier: number): number {
 	return multiplier === 0 ? 0.25 : multiplier;
 }
 
-// element.affinities always includes the primary at 100; at most one other key is a graded
-// secondary. Reads defensively against a bare element object rather than a full record.
-type ElementShape = XalianRecord['element'] | null | undefined;
+// The element reading the blend takes. affinities includes the primary at 100; at most one
+// other key is a graded secondary. A schema 5 record has a bare element key, so its reading
+// (creatureOnTable.recordElement) never carries a secondary.
+export type ElementReading = { primary: string; affinities?: Record<string, number> };
+type ElementShape = ElementReading | null | undefined;
 
 // Picks the graded secondary affinity (if any) out of a record's element.affinities.
 // affinities always contains the primary duplicated at 100; the secondary, if present, is
@@ -35,7 +36,7 @@ export function secondaryAffinity(element: ElementShape): { element: string | nu
 	}
 	// design/record contract: at most one graded secondary
 	const secondaryElement = keys[0];
-	const grade = (element.affinities as Record<string, number>)[secondaryElement];
+	const grade = element.affinities[secondaryElement];
 	return { element: secondaryElement, grade: typeof grade === 'number' ? grade : 0 };
 }
 

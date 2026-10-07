@@ -1,9 +1,9 @@
-import {recordActions} from '@xalians/content/ability-compatibility';
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, it, expect } from 'vitest';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import {
 	baseHold, holdAtSite, worldElementFactor, strainLevel, strainMultiplierFor,
-	speedOf, buildActs, magnitudeOf, magnitudeAgainst, favoredAct, conductOf, prepare,
+	speedOf, buildActs, magnitudeOf, magnitudeAgainst, conductOf, prepare,
 	traitKeywordsOf, roleOf, naturalRoleOf, blowActOf, liftedStrainLevel, isSwift, isWillful, strainCauseOf,
 } from '../creatureOnTable.ts';
 import {
@@ -22,8 +22,8 @@ import type { FrameSite, World } from '../types.ts';
 // for the functions under test to read the fields they actually use; casting rather than
 // filling out every registry-required field (appearance, senses, capabilities, ...) keeps
 // the fixtures readable and matches how this suite has always built its test data.
-function record(overrides: any = {}): XalianRecord {
-	return {
+function record(overrides: any = {}): CreatureRecord {
+	return v5Record({
 		id: 'xal_test_0001',
 		species: 'testling',
 		provenance: { serial: 1, origin: 'stonera' },
@@ -31,19 +31,17 @@ function record(overrides: any = {}): XalianRecord {
 			strength: 50, vitality: 60, endurance: 70, agility: 40, reflex: 60,
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 80,
 		},
-		element: { primary: 'fire', affinities: { fire: 100 } },
-		archetype: { key: 'balanced', favors: [] },
+		element: 'fire',
 		physiology: {
 			breathes: ['gas'],
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -10, max: 40 } },
 		},
-		traits: { guaranteed: [], rolled: [] },
 		temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: [
 			{ name: 'Strike', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 60 },
 		],
 		...overrides,
-	} as unknown as XalianRecord;
+	});
 }
 
 function world(overrides: any = {}): World {
@@ -102,35 +100,31 @@ describe('roleOf: every creature is a hold and one role (assumption 4)', () => {
 	const wardAbility = { name: 'Ward', action: 'ward', intensity: 60 };
 	const mendAbility = { name: 'Mend', action: 'mend', intensity: 60 };
 
-	test('bulwark and stalwart are shields, survivor and sage are bolsters', () => {
-		const both = [wardAbility, mendAbility];
-		expect(naturalRoleOf(record({ archetype: { key: 'bulwark' }, abilities: both }))).toBe(ROLE.SHIELD);
-		expect(naturalRoleOf(record({ archetype: { key: 'stalwart' }, abilities: both }))).toBe(ROLE.SHIELD);
-		expect(naturalRoleOf(record({ archetype: { key: 'survivor' }, abilities: both }))).toBe(ROLE.BOLSTER);
-		expect(naturalRoleOf(record({ archetype: { key: 'sage' }, abilities: both }))).toBe(ROLE.BOLSTER);
+	test('a creature whose signature shields is a shield, and one whose signature mends is a bolster', () => {
+		expect(naturalRoleOf(record({ abilities: [{ ...wardAbility, signature: true }, mendAbility] }))).toBe(ROLE.SHIELD);
+		expect(naturalRoleOf(record({ abilities: [wardAbility, { ...mendAbility, signature: true }] }))).toBe(ROLE.BOLSTER);
 	});
 
-	test('the abilities override the archetype when they clearly point one way', () => {
-		expect(naturalRoleOf(record({ archetype: { key: 'bulwark' }, abilities: [mendAbility] }))).toBe(ROLE.BOLSTER);
-		expect(naturalRoleOf(record({ archetype: { key: 'survivor' }, abilities: [wardAbility] }))).toBe(ROLE.SHIELD);
+	test('a ward or a mend on an ordinary action leaves an attacking signature a blow', () => {
+		expect(naturalRoleOf(record({ abilities: [{ ...strikeAbility, signature: true }, wardAbility, mendAbility] }))).toBe(ROLE.STRIKE);
 	});
 
 	test('everyone else is a blow: area with an area ability, else strike', () => {
-		expect(naturalRoleOf(record({ archetype: { key: 'predator' }, abilities: [strikeAbility] }))).toBe(ROLE.STRIKE);
-		expect(naturalRoleOf(record({ archetype: { key: 'predator' }, abilities: [strikeAbility, areaAbility] }))).toBe(ROLE.SWEEP);
+		expect(naturalRoleOf(record({ abilities: [strikeAbility] }))).toBe(ROLE.STRIKE);
+		expect(naturalRoleOf(record({ abilities: [strikeAbility, areaAbility] }))).toBe(ROLE.SWEEP);
 	});
 
 	test('a role switched off degrades: sweep to a plain strike, a presence to a plain holder', () => {
-		const area = record({ archetype: { key: 'predator' }, abilities: [strikeAbility, areaAbility] });
-		const shield = record({ archetype: { key: 'bulwark' }, abilities: [wardAbility] });
-		const bolster = record({ archetype: { key: 'sage' }, abilities: [mendAbility] });
+		const area = record({ abilities: [strikeAbility, areaAbility] });
+		const shield = record({ abilities: [{ ...wardAbility, signature: true }] });
+		const bolster = record({ abilities: [{ ...mendAbility, signature: true }] });
 		expect(roleOf(area, { roles: { sweep: false, bolster: true, shield: true } })).toBe(ROLE.STRIKE);
 		expect(roleOf(shield, { roles: { sweep: true, bolster: true, shield: false } })).toBe(ROLE.NONE);
 		expect(roleOf(bolster, { roles: { sweep: true, bolster: false, shield: true } })).toBe(ROLE.NONE);
 	});
 
 	test('blowActOf gives an area its area ability and a presence no blow at all', () => {
-		const area = record({ archetype: { key: 'predator' }, abilities: [strikeAbility, areaAbility] });
+		const area = record({ abilities: [strikeAbility, areaAbility] });
 		const acts = buildActs(area, 1, MAGNITUDE_SCALE);
 		// pass 7: acts carry the table's own word and the record's own area flag, not a
 		// legacy action key, so a sweep is identified by what it does rather than by name
@@ -141,7 +135,7 @@ describe('roleOf: every creature is a hold and one role (assumption 4)', () => {
 	});
 
 	test('a blow creature with no attacking ability at all still strikes, at the pool minimum', () => {
-		const wardOnly = record({ archetype: { key: 'predator' }, abilities: [wardAbility] });
+		const wardOnly = record({ abilities: [wardAbility] });
 		const acts = buildActs(wardOnly, 1, MAGNITUDE_SCALE);
 		const blow = blowActOf(wardOnly, acts, ROLE.STRIKE)!;
 		expect(blow.fallback).toBe(true);
@@ -201,15 +195,15 @@ describe('worldElementFactor', () => {
 		expect(worldElementFactor(r, 'electric')).toBe(1);
 	});
 
-	test('the lever at 1 turns it off, and a schema 4 element reads the same', () => {
+	test('the lever at 1 turns it off, and and the bare element key reads', () => {
 		expect(worldElementFactor(record({ element: 'fire' as never }), 'water', { worldElementPenalty: 1 })).toBe(1);
-		expect(worldElementFactor(record({ element: { primary: 'fire', affinities: { fire: 100 } } }), 'water')).toBeCloseTo(0.9, 5);
+		expect(worldElementFactor(record({ element: 'fire' }), 'water')).toBeCloseTo(0.9, 5);
 	});
 });
 
 describe('holdAtSite: home ground and strain composition', () => {
 	test('home ground multiplies hold by 1.5 on the creature\'s origin world, a quarter more since pass 71 (lowercase compare)', () => {
-		const r = record({ provenance: { serial: 1, origin: 'stonera' }, element: { primary: 'rock', affinities: { rock: 100 } } });
+		const r = record({ provenance: { serial: 1, origin: 'stonera' }, element: 'rock' });
 		const w = world({ planet: 'Stonera', element: 'rock' });
 		const s = site({ environment: { medium: 'gas', temperatureC: { min: -10, max: 40 } } });
 		const { value, isHome } = holdAtSite(r, s, w, { rules: FRAC });
@@ -259,26 +253,6 @@ describe('strainLevel', () => {
 		expect(strainMultiplierFor('severe')).toBe(0.25);
 	});
 
-	test('nocturnal creatures are never strained on Grimedes', () => {
-		const r = record({
-			physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -10, max: 10 } } },
-			traits: { guaranteed: [], rolled: ['nocturnal'] },
-		});
-		const w = world({ planet: 'Grimedes', element: 'dark' });
-		const s = site({ environment: { medium: 'liquid', temperatureC: { min: 80, max: 90 } } });
-		expect(strainLevel(r, s, w)).toBe('none');
-	});
-
-	test('luminous creatures are never strained on Luminax', () => {
-		const r = record({
-			physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -10, max: 10 } } },
-			traits: { guaranteed: [], rolled: ['luminous'] },
-		});
-		const w = world({ planet: 'Luminax', element: 'light' });
-		const s = site({ environment: { medium: 'liquid', temperatureC: { min: 80, max: 90 } } });
-		expect(strainLevel(r, s, w)).toBe('none');
-	});
-
 	test('strain never excludes: a strained body still produces a positive hold', () => {
 		const r = record({ physiology: { breathes: ['gas'], environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -10, max: 40 } } } });
 		const w = world();
@@ -309,10 +283,10 @@ describe('act magnitudes', () => {
 		expect(actsStrained[0].magnitude).toBeLessThanOrEqual(actsFull[0].magnitude);
 	});
 
-	test('magnitudeAgainst scales by the type chart, actor vs target, blended with target secondary', () => {
-		const actor = record({ element: { primary: 'fire', affinities: { fire: 100 } } });
-		const targetFavorable = record({ id: 'target1', element: { primary: 'plant', affinities: { plant: 100 } } });
-		const targetUnfavorable = record({ id: 'target2', element: { primary: 'water', affinities: { water: 100 } } });
+	test('magnitudeAgainst scales by the type chart, actor vs target', () => {
+		const actor = record({ element: 'fire' });
+		const targetFavorable = record({ id: 'target1', element: 'plant' });
+		const targetUnfavorable = record({ id: 'target2', element: 'water' });
 		const act = buildActs(actor, 1)[0];
 		const magFavorable = magnitudeAgainst(actor, act, targetFavorable, { elementMatchups: true });
 		const magUnfavorable = magnitudeAgainst(actor, act, targetUnfavorable, { elementMatchups: true });
@@ -323,103 +297,48 @@ describe('act magnitudes', () => {
 	});
 });
 
-describe('favoredAct', () => {
-	test('bulwark favors ward when it has the ability', () => {
-		const r = record({
-			archetype: { key: 'bulwark', favors: [] },
-			abilities: [
-				{ name: 'Guard', signature: false, instrument: 'body', action: 'ward', medium: 'fire', intensity: 50 },
-				{ name: 'Strike', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 80 },
-			],
-		});
-		const acts = buildActs(r, 1);
-		expect(favoredAct(r, acts).action).toBe('ward');
-	});
-
-	test('survivor favors holding', () => {
-		const r = record({ archetype: { key: 'survivor', favors: [] } });
-		const acts = buildActs(r, 1);
-		expect(favoredAct(r, acts).action).toBe('hold');
-	});
-
-	test('virtuoso favors its single strongest act overall', () => {
-		const r = record({
-			archetype: { key: 'virtuoso', favors: [] },
-			abilities: [
-				{ name: 'Weak', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 20 },
-				{ name: 'Strong', signature: false, instrument: 'fists', action: 'beam', medium: 'fire', intensity: 90 },
-			],
-		});
-		const acts = buildActs(r, 1);
-		const chosen = favoredAct(r, acts);
-		// pass 7: both acts read as strikes at the table (neither has an area footprint);
-		// what tells them apart is the magnitude their intensity earns, so the virtuoso's
-		// "strongest overall" is asserted on the act it picked, by name
-		expect(chosen.name).toBe('Strong');
-		expect(chosen.action).toBe('strike');
-	});
-
-	test('falls back to hold when the archetype favors a specific action the creature lacks', () => {
-		const r = record({ archetype: { key: 'sage', favors: [] }, abilities: [
-			{ name: 'Strike', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 50 },
-		] });
-		const acts = buildActs(r, 1);
-		expect(favoredAct(r, acts).action).toBe('hold');
-	});
-});
-
 describe('conductOf', () => {
-	test('reads archetype conduct spec and temperament thresholds', () => {
-		const r = record({ archetype: { key: 'predator', favors: [] }, temperament: { boldness: 80, curiosity: 20, energy: 50, aggression: 50, sociability: 50 } });
-		const conduct = conductOf(r);
-		expect(conduct.attacking).toBe('weakestEnemyInReach');
-		expect(conduct.supporting).toBe('allyWithLeastHold');
-		expect(conduct.isHighBoldness).toBe(true);
-		expect(conduct.isLowBoldness).toBe(false);
+	test('reads its line off temperament: aggression picks the target, boldness the kind', () => {
+		const bold = conductOf(record({ temperament: { boldness: 80, curiosity: 20, energy: 50, aggression: 80, sociability: 50 } }));
+		expect(bold.attacking).toBe('strongestEnemyInReach');
+		expect(bold.supporting).toBe('allyWithMostHold');
+		expect(bold.isHighBoldness).toBe(true);
+		expect(bold.isLowBoldness).toBe(false);
+		const timid = conductOf(record({ temperament: { boldness: 50, curiosity: 20, energy: 50, aggression: 80, sociability: 50 } }));
+		expect(timid.attacking).toBe('weakestEnemyInReach');
+		expect(timid.supporting).toBe('allyWithLeastHold');
+	});
+
+	test('a middling temperament follows the enemy sent earliest', () => {
+		const conduct = conductOf(record());
+		expect(conduct.attacking).toBe('enemySentEarliest');
+		expect(conduct.supporting).toBe('allySentEarliest');
 	});
 });
 
 describe('traitKeywordsOf', () => {
-	test('merges guaranteed and rolled traits, deduplicated', () => {
-		const r = record({ traits: { guaranteed: ['armored'], rolled: ['armored', 'stealthy'] } });
-		expect(traitKeywordsOf(r).sort()).toEqual(['armored', 'stealthy']);
+	test('a schema 5 record carries no trait keywords', () => {
+		expect(traitKeywordsOf(record())).toEqual([]);
 	});
 });
 
 describe('prepare', () => {
 	test('produces the full derived view with all expected fields', () => {
-		const r = record({ traits: { guaranteed: ['armored'], rolled: [] } });
+		const r = record();
 		const w = world();
 		const s = site();
 		const view = prepare(r, s, w, 0);
 		expect(view.id).toBe(r.id);
 		expect(view.hold).toBeGreaterThan(0);
-		expect(view.armored).toBe(true);
-		expect(view.acts.length).toBe(recordActions(r).length);
-		expect(view.favoredAct).toBeTruthy();
+		expect(view.armored).toBe(false);
+		expect(view.acts.length).toBe(r.actions.length);
 		expect(view.conduct).toBeTruthy();
 		// the base redesign's four roles travel on the prepared view
 		expect([ROLE.STRIKE, ROLE.SWEEP, ROLE.BOLSTER, ROLE.SHIELD, ROLE.NONE]).toContain(view.role);
 		expect(typeof view.blowMagnitude).toBe('number');
 	});
 
-	test('pack-bonded gains +1 hold per kin at the site', () => {
-		const r = record({ traits: { guaranteed: [], rolled: ['pack-bonded'] } });
-		const w = world();
-		const s = site();
-		const withoutKin = holdAtSite(r, s, w, { packBondedKinAtSite: 0 }).value;
-		const withKin = holdAtSite(r, s, w, { packBondedKinAtSite: 2 }).value;
-		expect(withKin).toBeCloseTo(withoutKin + 2, 5);
-	});
 
-	test('solitary loses 1 hold per ally at the site', () => {
-		const r = record({ traits: { guaranteed: [], rolled: ['solitary'] } });
-		const w = world();
-		const s = site();
-		const withoutAllies = holdAtSite(r, s, w, { solitaryAlliesAtSite: 0 }).value;
-		const withAllies = holdAtSite(r, s, w, { solitaryAlliesAtSite: 3 }).value;
-		expect(withAllies).toBeCloseTo(withoutAllies - 3, 5);
-	});
 });
 
 /*

@@ -109,7 +109,7 @@ describe('blowsAt', () => {
 });
 
 describe('the blow on a target', () => {
-	const record = { id: 'g', species: 'graviclaw', traits: [] };
+	const record = { id: 'g', species: 'graviclaw' };
 
 	it('draws the landed blow, colored by its change against the attacker own power, dashed in the stage corner, the plates where it is armored', () => {
 		const { container } = render(<ReclamationFigure record={record} seat="B" you="A" facing="down" hold={13} blowIn={{ power: 9, chart: 2, armored: true, mine: false, by: 'Tizzie', role: 'strike', base: 6, byElement: 'psychic', toElement: 'dark' }} />);

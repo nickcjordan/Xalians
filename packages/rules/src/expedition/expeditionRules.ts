@@ -38,7 +38,7 @@
 	`resolutionLog` plus `lastJudgeResult` are what it narrates.
 */
 
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import {
 	CONCEPT, applicationFrom, advanceStatuses, attritionBite, isHeld, tickAmount,
 	powerFactor as statusPowerFactor, type StatusApplication,
@@ -190,7 +190,7 @@ function otherPlayer(player: Seat): Seat {
 // match setup
 // ---------------------------------------------------------------------------
 
-function validateRosterInput(roster: XalianRecord[], label: string): void {
+function validateRosterInput(roster: CreatureRecord[], label: string): void {
 	if (!roster || !Array.isArray(roster)) {
 		throw new ExpeditionRuleError('INVALID_ROSTER', `${label}: roster must be an array`);
 	}
@@ -294,7 +294,7 @@ function drawFrames(worlds: World[], rngState: number, worldsPerFrame: number): 
 	- willful: false stops willpower relieving a grade of strain.
 	- presenceScale: false makes every presence play at charisma 50 (scale 1).
 	- instinctLanes: false drops the keen and dull targeting lanes, leaving every creature
-	  on its archetype's conduct line.
+	  on its temperament's conduct line.
 	- swiftMove: false removes the swift creature's move during Deploy.
 	- hurtAttacksLess: false lands every attack at full power however hurt its attacker.
 	- bolsterRecovery: 0 removes the recovery at the Ruling.
@@ -487,8 +487,8 @@ function normalizeRules(rules: RulesInput | null | undefined): Rules {
 }
 
 export interface CreateMatchArgs {
-	rosterA: XalianRecord[];
-	rosterB: XalianRecord[];
+	rosterA: CreatureRecord[];
+	rosterB: CreatureRecord[];
 	worlds: World[];
 	seed: string | number;
 	rules?: RulesInput | null;
@@ -522,7 +522,7 @@ export function createMatch({ rosterA, rosterB, worlds, seed, rules }: CreateMat
 	rngState = afterStarter;
 	const starter: Seat = starterRoll === 0 ? 'A' : 'B';
 
-	const playerState = (roster: XalianRecord[]): PlayerState => ({
+	const playerState = (roster: CreatureRecord[]): PlayerState => ({
 		roster: roster.slice(), // records never sent; shrinks as records are sent
 		sentCount: 0,
 		holding: [], // record ids currently holding a won site (stay in that world's model)
@@ -599,7 +599,7 @@ function findEntry(state: MatchState, recordId: string): { entry: BoardEntry; si
 	return null;
 }
 
-function recordById(state: MatchState, player: Seat, recordId: string): XalianRecord | null {
+function recordById(state: MatchState, player: Seat, recordId: string): CreatureRecord | null {
 	return state.players[player].roster.find((r) => r.id === recordId)
 		|| allBoardEntries(state).map((e) => e.record).find((r) => r.id === recordId)
 		|| null;
@@ -767,7 +767,7 @@ function sendableCapFor(state: MatchState, player: Seat): number {
 	hiddenSends ablation takes concealment out of the game for both seats. No handler
 	chooses this.
 */
-function arrivesHidden(record: XalianRecord, rules: Rules): boolean {
+function arrivesHidden(record: CreatureRecord, rules: Rules): boolean {
 	return !!rules.hiddenSends && traitKeywordsOf(record).includes('stealthy');
 }
 
@@ -793,7 +793,7 @@ function sendCostFor(playerState: PlayerState, recordId: string, rules: Rules = 
 	still be sent in the open, so this list was deliberately priced at the open cost; that
 	escape hatch is gone with the choice.
 */
-function sendableRoster(playerState: PlayerState, cap: number, rules: Rules = DEFAULT_RULES): XalianRecord[] {
+function sendableRoster(playerState: PlayerState, cap: number, rules: Rules = DEFAULT_RULES): CreatureRecord[] {
 	if (playerState.sentCount >= cap) {
 		return [];
 	}
@@ -829,7 +829,7 @@ function isPlayersDeployTurn(state: MatchState, player: Seat): boolean {
 
 	The rulebook sentence is "A stealthy creature arrives hidden". Since pass 4b
 	(assumption 27) concealment is not a decision a handler makes: the hidden flag is
-	derived from the creature's own traits and the hiddenSends lever, never from the
+	derived from the creature's own trait keywords and the hiddenSends lever, never from the
 	caller. The fifth argument is IGNORED and kept only so existing callers compile; it
 	will be dropped once nothing passes it. The rival learns that something was sent, not
 	which creature or where, until the Clash reveals it.
@@ -882,7 +882,7 @@ export function send(state: MatchState, handler: Seat, recordId: string, siteId:
 	placeEntry: the send's effect on the board and the roster, without the turn. Shared by
 	send() and forecastSend() so the forecast of a send is the send, exactly.
 */
-function placeEntry(state: MatchState, handler: Seat, record: XalianRecord, siteId: string, hidden: boolean, cost: number, chosenRole: string | null): MatchState {
+function placeEntry(state: MatchState, handler: Seat, record: CreatureRecord, siteId: string, hidden: boolean, cost: number, chosenRole: string | null): MatchState {
 	const p = state.players[handler];
 	const recordId = record.id;
 	const sentIndex = p.sentCount;
@@ -1588,7 +1588,7 @@ function pickAttackTarget(state: MatchState, entry: BoardEntry, conduct: Conduct
 		rules.keenInstinct the creature reads the world: it takes the enemy this attack can
 		down, and failing that the enemy it takes the most off after matchup. At or below
 		rules.dullInstinct it reads nothing and hits whatever was sent earliest. In between
-		it follows its archetype's conduct line, exactly as it did before this pass. The
+		it follows its temperament's conduct line, exactly as it did before this pass. The
 		menacing redirect and the temperament tiebreak still apply on top, at the bottom of
 		this function.
 	*/

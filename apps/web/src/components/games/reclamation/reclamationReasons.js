@@ -1,4 +1,5 @@
 import React from 'react';
+import { traitKeywordsOf } from '@xalians/rules/expedition/creatureOnTable';
 import { speciesLabel, formatHoldShown, matchupWords, articleFor } from './reclamationNarration';
 import XalianTypeSymbolBadge from '../duel/board/xalianTypeSymbolBadge';
 import { strainCause } from './reclamationPreview';
@@ -104,7 +105,7 @@ function bolsterWhy(why, whose) {
 
 function companyLines(why, record) {
 	const out = [];
-	const traits = Array.isArray(record && record.traits) ? record.traits : [];
+	const traits = traitKeywordsOf(record);
 	if (why.selfLift) {
 		out.push({ key: 'self', mark: 'self', effect: `It steadies itself: +${shown(why.selfLift)}.`, cause: `${bolsterWhy(why, 'A bolster')} Its lift reaches every creature of yours at its world, itself included.` });
 	}

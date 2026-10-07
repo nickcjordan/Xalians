@@ -175,12 +175,6 @@ describe('readAction: what an action is at the table', () => {
 		expect(governingAttributeFor(EFFECT_ROLE.SHIELD, 'contact')).toBe(null);
 	});
 
-	test('a schema 1 record still opens, through its legacy key', () => {
-		const legacy = readAction({ name: 'Old Hit', action: 'burst', instrument: 'body', medium: 'fire', intensity: 40 });
-		expect(legacy.role).toBe(EFFECT_ROLE.ATTACK);
-		expect(legacy.area).toBe(true);
-		expect(readAction({ name: 'Old Ward', action: 'ward', intensity: 40 }).role).toBe(EFFECT_ROLE.SHIELD);
-	});
 });
 
 describe('readRecord: whether the table can field the creature', () => {

@@ -10,7 +10,6 @@
 	fake and the functions still work with no `window` at all (returns defaults).
 */
 
-import { GENERATOR_VERSION } from '@xalians/rules/generator/constants';
 
 /*
 	THE BASE (docs/design/reclamation-base-redesign.md): the saved match shape changed
@@ -26,6 +25,14 @@ const LEGACY_MATCH_KEYS = ['reclamation.match.v1', 'reclamation.match.v2'];
 const HISTORY_KEY = 'reclamation.history.v1';
 const RIVAL_KEY = 'reclamation.rival';
 const MATCH_VERSION = 1;
+/*
+	The version of the creature roster a save regenerates from. A saved match stores seeds,
+	not creatures, so a resumed match regenerates its rosters; when the generator or the
+	species catalog changes the creatures a seed expands into, bump this so an older save
+	is discarded rather than resumed against creatures its log does not name. The creature
+	model moved to schema 5 (issue #796), which is why this starts as 'creature-v5-1'.
+*/
+export const ROSTER_VERSION = 'creature-v5-1';
 const HISTORY_CAP = 100;
 
 function resolveStorage(storage) {
@@ -93,19 +100,19 @@ function removeKey(storage, key) {
 	seed, rivalId, log, squadIds, mode, ...); this wraps it with version 1 so a later
 	shape change can tell an old save apart and discard it rather than misread it.
 
-	The wrapper also records the generator version (hardening Decision 8). A saved match
+	The wrapper also records the roster version (hardening Decision 8). A saved match
 	stores seeds, not creatures, so a resumed match regenerates its rosters; under a new
-	generator those seeds expand into different creatures than the saved log names. That
-	is worse than losing the save, so a generator mismatch discards exactly like a storage
+	roster those seeds expand into different creatures than the saved log names. That
+	is worse than losing the save, so a roster mismatch discards exactly like a storage
 	version mismatch does.
 */
 export function saveMatch(payload, storage) {
-	return writeJSON(storage, MATCH_KEY, { version: MATCH_VERSION, generatorVersion: GENERATOR_VERSION, payload });
+	return writeJSON(storage, MATCH_KEY, { version: MATCH_VERSION, rosterVersion: ROSTER_VERSION, payload });
 }
 
 /*
 	loadMatch(storage) -> the saved payload, or null when there is nothing saved, the JSON
-	is corrupt, or the saved storage version or generator version does not match what this
+	is corrupt, or the saved storage version or roster version does not match what this
 	build expects.
 */
 export function loadMatch(storage) {
@@ -119,7 +126,7 @@ export function loadMatch(storage) {
 	if (wrapper.version !== MATCH_VERSION) {
 		return null;
 	}
-	if (wrapper.generatorVersion !== GENERATOR_VERSION) {
+	if (wrapper.rosterVersion !== ROSTER_VERSION) {
 		return null;
 	}
 	if (!Object.prototype.hasOwnProperty.call(wrapper, 'payload')) {

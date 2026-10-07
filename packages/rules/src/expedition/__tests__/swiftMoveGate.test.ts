@@ -12,6 +12,7 @@
 	gate's behaviour rather than its measured value, so a re-sweep can move the number
 	without rewriting them.
 */
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, expect } from 'vitest';
 import { createMatch, send, getPublicState, currentFrame } from '../expeditionRules.ts';
 import { chooseSend, SWIFT_MOVE_GAIN } from '../expeditionBot.ts';
@@ -37,12 +38,11 @@ let uid = 0;
 function record(over: any = {}): any {
 	uid += 1;
 	const { attributes, ...rest } = over;
-	return {
+	return v5Record({
 		id: `r${uid}`,
 		species: 'graviclaw',
 		provenance: { schemaVersion: '1.0.0', origin: 'nowhere' },
-		element: { primary: 'metal', affinities: { metal: 100 } },
-		archetype: { key: 'predator', favors: [] },
+		element: 'metal',
 		attributes: {
 			strength: 50, vitality: 50, endurance: 50, agility: 20, reflex: 20,
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 50,
@@ -52,11 +52,10 @@ function record(over: any = {}): any {
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -80, max: 220 } },
 			breathes: ['gas'], capabilities: {}, senses: {},
 		},
-		traits: [],
 		temperament: { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: [{ name: 'Hit', signature: true, instrument: 'fists', action: 'strike', medium: 'metal', intensity: 60 }],
 		...rest,
-	} as any;
+	});
 }
 
 // speed is the mean of agility and reflex, so this is comfortably over the threshold

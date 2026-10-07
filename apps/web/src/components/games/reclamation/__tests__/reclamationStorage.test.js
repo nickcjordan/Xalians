@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-	saveMatch, loadMatch, clearMatch,
+	saveMatch, loadMatch, clearMatch, ROSTER_VERSION,
 	recordResult, loadHistory, recordAgainst, clearHistory,
 	loadRivalId, saveRivalId,
 } from '../reclamationStorage';
-import { GENERATOR_VERSION } from '@xalians/rules/generator/constants';
 
 /*
 	Coverage for reclamationStorage's contract: every read/write degrades to a safe
@@ -47,37 +46,37 @@ describe('saveMatch / loadMatch / clearMatch', () => {
 
 	it('returns null on a version mismatch', () => {
 		const storage = makeFakeStorage();
-		storage.setItem('reclamation.match.v3', JSON.stringify({ version: 2, generatorVersion: GENERATOR_VERSION, payload: { anything: true } }));
+		storage.setItem('reclamation.match.v3', JSON.stringify({ version: 2, rosterVersion: ROSTER_VERSION, payload: { anything: true } }));
 		expect(loadMatch(storage)).toBeNull();
 	});
 
-	it('returns null on a generator version mismatch', () => {
-		// hardening Decision 8: a save stores seeds, so a new generator would regenerate
+	it('returns null on a roster version mismatch', () => {
+		// hardening Decision 8: a save stores seeds, so a new roster would regenerate
 		// different creatures than the saved log names; discard rather than misread
 		const storage = makeFakeStorage();
-		storage.setItem('reclamation.match.v3', JSON.stringify({ version: 1, generatorVersion: '0.0.1-not-this-one', payload: { anything: true } }));
+		storage.setItem('reclamation.match.v3', JSON.stringify({ version: 1, rosterVersion: '0.0.1-not-this-one', payload: { anything: true } }));
 		expect(loadMatch(storage)).toBeNull();
 	});
 
-	it('discards a save written before the generator version was recorded', () => {
+	it('discards a save written before the roster version was recorded', () => {
 		const storage = makeFakeStorage();
 		storage.setItem('reclamation.match.v3', JSON.stringify({ version: 1, payload: { anything: true } }));
 		expect(loadMatch(storage)).toBeNull();
 	});
 
-	it('stamps the current generator version onto the save', () => {
+	it('stamps the current roster version onto the save', () => {
 		const storage = makeFakeStorage();
 		saveMatch({ seed: 'abc' }, storage);
 		const wrapper = JSON.parse(storage.getItem('reclamation.match.v3'));
-		expect(wrapper.generatorVersion).toBe(GENERATOR_VERSION);
+		expect(wrapper.rosterVersion).toBe(ROSTER_VERSION);
 	});
 
 	it('drops a save under either older key rather than offering it (Pass 3 bumped to v3)', () => {
 		// the stake put `stakes` on every frame and `stakeUsed` on every player, so a v2
 		// save resumes into a match the table cannot read the Charter arithmetic off
 		const storage = makeFakeStorage();
-		storage.setItem('reclamation.match.v1', JSON.stringify({ version: 1, generatorVersion: GENERATOR_VERSION, payload: { old: true } }));
-		storage.setItem('reclamation.match.v2', JSON.stringify({ version: 1, generatorVersion: GENERATOR_VERSION, payload: { old: true } }));
+		storage.setItem('reclamation.match.v1', JSON.stringify({ version: 1, rosterVersion: ROSTER_VERSION, payload: { old: true } }));
+		storage.setItem('reclamation.match.v2', JSON.stringify({ version: 1, rosterVersion: ROSTER_VERSION, payload: { old: true } }));
 		expect(loadMatch(storage)).toBeNull();
 		expect(storage.getItem('reclamation.match.v1')).toBeNull();
 		expect(storage.getItem('reclamation.match.v2')).toBeNull();

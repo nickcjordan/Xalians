@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import type { XalianRecord, } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import { createMatch, send, pass, getPublicState, currentFrame } from '../expeditionRules.ts';
 import { ROSTER_SIZE, WORLDS_PER_MATCH } from '../expeditionInterpretation.ts';
 import { ATTRITION_BITE, DIMINISHED_FACTOR } from '../statusLayer.ts';
@@ -40,7 +40,7 @@ const action = (over: Record<string, unknown> = {}) => ({
 	...over,
 });
 
-function makeRecord(id: string, over: any = {}): XalianRecord {
+function makeRecord(id: string, over: any = {}): CreatureRecord {
 	return {
 		id,
 		species: over.species || 'testling',
@@ -61,10 +61,10 @@ function makeRecord(id: string, over: any = {}): XalianRecord {
 		signature: { type: 'action', key: 'act' },
 		actions: over.actions || [action()],
 		passives: [],
-	} as unknown as XalianRecord;
+	} as unknown as CreatureRecord;
 }
 
-const makeRoster = (prefix: string, over?: (i: number) => any): XalianRecord[] =>
+const makeRoster = (prefix: string, over?: (i: number) => any): CreatureRecord[] =>
 	Array.from({ length: ROSTER_SIZE }, (_, i) => makeRecord(`${prefix}_${i}`, over ? over(i) : {}));
 
 function makeWorlds(count = WORLDS_PER_MATCH): World[] {
@@ -95,7 +95,7 @@ function makeWorlds(count = WORLDS_PER_MATCH): World[] {
 	read the BOARD only before the double pass. A board read after resolution is a board from
 	the next frame, which is empty by design.
 */
-function openAtOneWorld(rosterA: XalianRecord[], rosterB: XalianRecord[], seed: string, rules?: any) {
+function openAtOneWorld(rosterA: CreatureRecord[], rosterB: CreatureRecord[], seed: string, rules?: any) {
 	let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed, rules });
 	const siteId = currentFrame(state).sites[0].id;
 	// the starter is drawn from the seed, so both sends follow the turn the engine hands out
@@ -116,7 +116,7 @@ function allEntries(view: any) {
 	return Object.values(view.board).flatMap((site: any) => [...site.A, ...site.B]);
 }
 
-function clashWith(rosterA: XalianRecord[], rosterB: XalianRecord[], seed = 'status-seed', rules?: any) {
+function clashWith(rosterA: CreatureRecord[], rosterB: CreatureRecord[], seed = 'status-seed', rules?: any) {
 	let { state, siteId, starter, second } = openAtOneWorld(rosterA, rosterB, seed, rules);
 	state = pass(state, starter)!;
 	state = pass(state, second)!;
@@ -279,7 +279,7 @@ describe('the diminished factor is what the Clash actually uses', () => {
 		}));
 		const slow = () => makeRoster('B', () => ({ attributes: { agility: 1, reflex: 1 } }));
 
-		const powerOfSlowSwing = (rosterA: XalianRecord[]) => {
+		const powerOfSlowSwing = (rosterA: CreatureRecord[]) => {
 			const { log } = clashWith(rosterA, slow(), 'diminish');
 			const swings = log.filter((e: any) => e.type === 'attack' && String(e.recordId).startsWith('B_') && e.power > 0);
 			return swings.length ? Number(swings[0].power) : 0;
@@ -302,7 +302,7 @@ describe('a blow that leaves a harmful status lands harder', () => {
 		Both rosters attack the same way and only the attacker's act changes, so the power
 		logged for the attacker's own swing is the whole comparison.
 	*/
-	const powerOfFirstSwing = (rosterA: XalianRecord[], seed: string) => {
+	const powerOfFirstSwing = (rosterA: CreatureRecord[], seed: string) => {
 		const { log } = clashWith(rosterA, makeRoster('B'), seed);
 		const swings = log.filter((e: any) => e.type === 'attack'
 			&& String(e.recordId).startsWith('A_') && e.power > 0);

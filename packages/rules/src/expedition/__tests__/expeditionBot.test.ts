@@ -1,5 +1,6 @@
+import { v5Record } from './fixtures/v5Fixtures.ts';
 import { describe, test, it, expect } from 'vitest';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import { getWorlds } from '../sites.ts';
 import { createMatch, send, pass, getPublicState, createRngState, nextRandom, moveSwift } from '../expeditionRules.ts';
 import { chooseSend, chooseStake, scoreSends, roleValueOf, readUnseen, RIVALS, DEFAULT_RIVAL_ID, rivalById } from '../expeditionBot.ts';
@@ -12,8 +13,8 @@ import type { Seat, World } from '../types.ts';
 */
 
 // deliberately minimal fixture, cast rather than filled out - see creatureOnTable.test.ts
-function makeRecord(id: any, overrides: any = {}): XalianRecord {
-	return {
+function makeRecord(id: any, overrides: any = {}): CreatureRecord {
+	return v5Record({
 		id,
 		species: overrides.species || 'testling',
 		provenance: { serial: 1, origin: overrides.origin || 'magmuth' },
@@ -22,22 +23,20 @@ function makeRecord(id: any, overrides: any = {}): XalianRecord {
 			intelligence: 50, willpower: 50, instinct: 50, charisma: 50, resilience: 80,
 			...overrides.attributes,
 		},
-		element: overrides.element || { primary: 'fire', affinities: { fire: 100 } },
-		archetype: overrides.archetype || { key: 'balanced', favors: [] },
+		element: overrides.element || 'fire',
 		physiology: overrides.physiology || {
 			breathes: ['gas'],
 			environmentalTolerance: { ambientMedia: ['gas'], temperatureC: { min: -50, max: 200 } },
 		},
-		traits: overrides.traits || { guaranteed: [], rolled: [] },
 		temperament: overrides.temperament || { boldness: 50, curiosity: 50, energy: 50, aggression: 50, sociability: 50 },
 		abilities: overrides.abilities || [
 			{ name: 'Strike', signature: false, instrument: 'fists', action: 'strike', medium: 'fire', intensity: 60 },
 		],
-	} as unknown as XalianRecord;
+	});
 }
 
-function makeRoster(prefix: any, overridesFn?: any): XalianRecord[] {
-	const roster: XalianRecord[] = [];
+function makeRoster(prefix: any, overridesFn?: any): CreatureRecord[] {
+	const roster: CreatureRecord[] = [];
 	for (let i = 0; i < ROSTER_SIZE; i++) {
 		roster.push(makeRecord(`${prefix}_${i}`, overridesFn ? overridesFn(i) : {}));
 	}
@@ -170,18 +169,14 @@ describe('chooseSend', () => {
 	});
 
 	// pass 4b (assumption 27): the bot no longer decides this, it reports what the engine
-	// will do, so the flag it returns has to track the creature's own traits exactly.
-	test('reports hidden exactly when the creature is stealthy', () => {
-		function reportedHiddenFor(stealthy: any, seed: any) {
-			const rosterA = makeRoster('A', () => ({ traits: { guaranteed: stealthy ? ['stealthy'] : [], rolled: [] } }));
-			const rosterB = makeRoster('B');
-			const state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed });
-			const publicState = getPublicState(state, 'A');
-			const action = chooseSend(publicState, state.players.A.roster, 'A', makeRng(3));
-			return action.type === 'send' ? (action as any).hidden : null;
-		}
-		expect(reportedHiddenFor(false, 'bot-seed-3')).toBe(false);
-		expect(reportedHiddenFor(true, 'bot-seed-3')).toBe(true);
+	// will do. A schema 5 creature carries no trait keywords, so nothing arrives hidden.
+	test('reports hidden false: no creature is stealthy under schema 5', () => {
+		const rosterA = makeRoster('A');
+		const rosterB = makeRoster('B');
+		const state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed: 'bot-seed-3' });
+		const publicState = getPublicState(state, 'A');
+		const action = chooseSend(publicState, state.players.A.roster, 'A', makeRng(3));
+		expect(action.type === 'send' ? (action as any).hidden : null).toBe(false);
 	});
 
 	test('passes when the roster is empty', () => {
@@ -222,8 +217,8 @@ describe('roleValueOf: what a role is worth at a world', () => {
 
 describe('full bot-vs-bot match', () => {
 	test('completes deterministically with only legal actions and no errors', () => {
-		const rosterA = makeRoster('A', (i: any) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
-		const rosterB = makeRoster('B', (i: any) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
+		const rosterA = makeRoster('A');
+		const rosterB = makeRoster('B');
 		let state = createMatch({ rosterA, rosterB, worlds: makeWorlds(), seed: 'bot-full-match-seed' });
 
 		let botRng = makeRng('bot-full-match-seed-bot');
@@ -309,8 +304,8 @@ describe('rivals', () => {
 	});
 
 	test('chooseSend/chooseOrders with no rival argument matches rivalById("proctor") exactly (same action sequence)', () => {
-		const rosterA = makeRoster('A', (i: any) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
-		const rosterB = makeRoster('B', (i: any) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
+		const rosterA = makeRoster('A');
+		const rosterB = makeRoster('B');
 		const proctor = rivalById('proctor');
 
 		const withoutRival = playMatch(rosterA, rosterB, makeWorlds(), 'proctor-default-seed', {});
@@ -322,8 +317,8 @@ describe('rivals', () => {
 
 	RIVALS.forEach((rival: any) => {
 		test(`${rival.id} plays a full deterministic match to matchEnd with only legal actions`, () => {
-			const rosterA = makeRoster('A', (i: any) => (i % 3 === 0 ? { traits: { guaranteed: [], rolled: ['stealthy'] } } : {}));
-			const rosterB = makeRoster('B', (i: any) => (i % 4 === 0 ? { traits: { guaranteed: [], rolled: ['armored'] } } : {}));
+			const rosterA = makeRoster('A');
+			const rosterB = makeRoster('B');
 			const result = playMatch(rosterA, rosterB, makeWorlds(), `rival-match-seed-${rival.id}`, { A: rival, B: rivalById('proctor') });
 
 			expect(result.guard).toBeLessThan(5000);
@@ -486,33 +481,9 @@ describe('chooseSend: swift creatures move', () => {
 
 /*
 	PASS 3 (docs/design/reclamation-base-redesign.md assumptions 21 and 22). The bot's own
-	pricing of hiding went with the hide decision in pass 4b (assumption 27): a stealthy
-	creature arrives hidden, so there is nothing left to price. What remains of pass 3 in
-	the bot is the stake.
+	pricing of hiding went with the hide decision in pass 4b (assumption 27). What remains
+	of pass 3 in the bot is the stake.
 */
-describe('pass 4b: concealment is reported, not chosen (assumption 27)', () => {
-	function stealthMatch(rules: any) {
-		const rosterA = makeRoster('A', () => ({ traits: { guaranteed: ['stealthy'], rolled: [] } }));
-		return createMatch({ rosterA, rosterB: makeRoster('B'), worlds: makeWorlds(), seed: 'hide-price-seed', rules });
-	}
-
-	it('reports hidden true for a stealthy roster under the default rules', () => {
-		const state = stealthMatch({});
-		const handler = state.turn!;
-		const view = getPublicState(state, handler);
-		const action = chooseSend(view, state.players[handler].roster, handler, null, null);
-		expect((action as any).hidden).toBe(true);
-	});
-
-	it('reports hidden false under the hiddenSends ablation', () => {
-		const state = stealthMatch({ hiddenSends: false });
-		const handler = state.turn!;
-		const view = getPublicState(state, handler);
-		const action = chooseSend(view, state.players[handler].roster, handler, null, null);
-		expect((action as any).hidden).toBe(false);
-	});
-});
-
 describe('pass 3: the bot and the stake (assumption 22)', () => {
 	function freshView(seed: any, rules?: any) {
 		const state = createMatch({ rosterA: makeRoster('A'), rosterB: makeRoster('B'), worlds: makeWorlds(), seed, rules });

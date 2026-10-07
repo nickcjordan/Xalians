@@ -180,7 +180,7 @@ function applyMenacingRedirect(candidate, units) {
 /*
 	pickAttackTargetPreview - mirrors expeditionRules.pickAttackTarget, including Pass 2's
 	instinct lanes (keen picks the enemy it can down, dull hits the enemy sent earliest,
-	between the two the archetype's line), the temperament tiebreak nudges and the
+	between the two the temperament's conduct line), the temperament tiebreak nudges and the
 	menacing redirect. `unit` may be a real board unit or a ghost (a creature not yet
 	sent, prepared at the site it is being pointed at).
 */
@@ -622,7 +622,7 @@ export function conductClause(conduct, kind) {
 	instinctSentence(prepared, rules) -> the printed targeting line for the dossier.
 
 	Pass 2 gave instinct the targeting job (assumption 17), so what a creature aims at is
-	its instinct lane first and its archetype's line only in the middle band.
+	its instinct lane first and its temperament's conduct line only in the middle band.
 */
 export function instinctSentence(prepared, rules) {
 	const supporting = SUPPORTING_PHRASE[prepared.conduct.supporting] || 'an ally';
@@ -717,7 +717,7 @@ export function attributeLanes(prepared, rules) {
 			? `Instinct ${at('instinct')}: keen, picks the enemy it can down and fights on at full power when hurt.`
 			: lane === 'dull'
 				? `Instinct ${at('instinct')}: dull, hits the enemy sent earliest.`
-				: `Instinct ${at('instinct')}: follows its archetype's line.`,
+				: `Instinct ${at('instinct')}: follows its temperament's line.`,
 	});
 
 	return lanes;

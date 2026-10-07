@@ -1,6 +1,4 @@
-import {recordCapabilities, recordActions, recordPassives} from '@xalians/content/ability-compatibility';
 import { readRecord } from '@xalians/rules/expedition/recordReading';
-import { isSignatureAbility } from '@xalians/content/ability-compatibility';
 import React from 'react';
 import { prepare, strainMultiplierFor } from '@xalians/rules/expedition/creatureOnTable';
 import {
@@ -12,15 +10,10 @@ import { flippableRolesOf } from '@xalians/rules/expedition/creatureOnTable';
 import { RoleGlyph, SwiftGlyph, WillfulGlyph, InstinctGlyph } from './reclamationGlyphs';
 import XalianImage from '../../xalianImage';
 import {
-	speciesFacts, archetypeLabel, traitName, traitNature,
+	speciesFacts,
 	elementName, sizeLine, toleranceLine, breathesLine, coveringName, bodyPlanName, elementOf, mediumName } from './reclamationVocabulary';
 import { reasonLines, ReasonLines } from './reclamationReasons';
 import { strainCause } from './reclamationPreview';
-import { TRAIT } from '@xalians/rules/expedition/expeditionInterpretation';
-
-// the traits this game reads (design doc, "Instinct"); every other trait is shown but marked
-// as not yet read by the table
-const READ_TRAITS = new Set(Object.values(TRAIT));
 
 /*
 	ReclamationInspect — the dossier panel. Opens for any figure, yours or the rival's,
@@ -141,9 +134,11 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 	const el = elementOf(record);
 	const armored = prepared.armored;
 	const facts = speciesFacts(record);
-	const traits = prepared.traitKeywords;
-	const secondary = Object.keys(record.element.affinities || {}).find((k) => k !== el);
-	const signature = (recordCapabilities(record) || []).find((a) => isSignatureAbility(a));
+	// the ability the record names as what this creature is (record.signature: { type, key })
+	const declared = record.signature;
+	const signature = declared
+		? ((declared.type === 'passive' ? record.passives : record.actions) || []).find((a) => a.key === declared.key)
+		: undefined;
 	// pass 7: what this table can and cannot speak of the record's own capabilities
 	const reading = readRecord(record);
 	const finish = record.appearance && record.appearance.finish && record.appearance.finish !== 'standard' ? record.appearance.finish : null;
@@ -158,12 +153,8 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 				)}
 				<div className="rec-inspect-title">
 					<h3 className="rec-inspect-name">{speciesLabel(record)}</h3>
-					<p className="rec-inspect-sub">
-						{archetypeLabel(record.archetype)}
-					</p>
 					<p className="rec-inspect-sub g-mono">
 						{elementName(el).toLowerCase()}
-						{secondary ? ` (${elementName(secondary).toLowerCase()} ${record.element.affinities[secondary]})` : ''}
 						{facts && facts.homePlanetName ? ` · of ${facts.homePlanetName}` : (record.provenance && record.provenance.origin ? ` · of ${record.provenance.origin}` : '')}
 						{finish ? ` · ${finish} finish` : ''}
 					</p>
@@ -171,8 +162,8 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 				<button type="button" className="g-btn g-btn--icon rec-inspect-close" onClick={onClose} aria-label="Close dossier">x</button>
 			</header>
 
-			{facts && facts.biomeNiche && (
-				<p className="g-body rec-inspect-niche">{facts.biomeNiche.charAt(0).toUpperCase() + facts.biomeNiche.slice(1)}.</p>
+			{facts && facts.habitat && (
+				<p className="g-body rec-inspect-niche">{facts.habitat}</p>
 			)}
 
 			<p className="g-label rec-inspect-context">
@@ -294,20 +285,6 @@ function ReclamationInspect({ record, site, frame, rules, onClose }) {
 						</li>
 					))}
 				</ul>
-			</div>
-
-			<div className="rec-inspect-section">
-				<span className="g-label">Traits</span>
-				{traits.length > 0 ? (
-					<ul className="rec-inspect-traits">
-						{traits.map((key) => (
-							<li key={key} className={READ_TRAITS.has(key) ? 'rec-inspect-trait rec-inspect-trait--read' : 'rec-inspect-trait'} title={READ_TRAITS.has(key) ? 'The table reads this trait' : 'Recorded; the table does not read it yet'}>
-								<span className="rec-inspect-trait-name">{traitName(key)}</span>
-								<span className="rec-inspect-trait-nature">{traitNature(key)}</span>
-							</li>
-						))}
-					</ul>
-				) : <p className="g-body">no traits landed</p>}
 			</div>
 
 			<div className="rec-inspect-section">

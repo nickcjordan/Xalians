@@ -46,7 +46,7 @@ export interface PositionCreature {
 	element: string;
 	strain: string;
 	home: boolean;
-	traits: string[];
+	traitKeywords: string[];
 	hidden: boolean;
 }
 
@@ -182,7 +182,7 @@ function photograph(state: MatchState) {
 				element: String((entry.record.element as any)?.primary || ''),
 				strain: String(view.strainLevel),
 				home: !!view.isHome,
-				traits: view.traitKeywords || [],
+				traitKeywords: view.traitKeywords || [],
 				hidden: !!entry.hidden,
 			};
 		};
@@ -251,7 +251,7 @@ if (isMain) {
 		p.creatures.forEach((c) => {
 			const marks = [c.home ? 'home ground' : null, c.strain !== 'none' ? c.strain : null, c.hidden ? 'arrived hidden' : null]
 				.filter(Boolean).join(', ');
-			console.log(`  ${c.side === 'yours' ? 'YOURS ' : 'RIVAL '} ${c.name} (${c.species}, ${c.element}) ${c.role}, hold ${c.hold}, speed ${c.speed}, attack ${c.attackPower}${marks ? ` [${marks}]` : ''}${c.traits.length ? ` traits: ${c.traits.join(', ')}` : ''}`);
+			console.log(`  ${c.side === 'yours' ? 'YOURS ' : 'RIVAL '} ${c.name} (${c.species}, ${c.element}) ${c.role}, hold ${c.hold}, speed ${c.speed}, attack ${c.attackPower}${marks ? ` [${marks}]` : ''}${c.traitKeywords.length ? ` traits: ${c.traitKeywords.join(', ')}` : ''}`);
 		});
 		console.log(`  totals at the end of Deploy: yours ${p.holdYours}, the rival's ${p.holdRival}`);
 		console.log(`  Q: ${p.question}\n`);

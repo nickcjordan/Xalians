@@ -6,7 +6,4 @@ describe('Reclamation creature scale', () => {
 		expect(sizeLine({ lengthCm: 215, widthCm: 65, massKg: 130 }))
 			.toBe('length 215 cm, width 65 cm, mass 130 kg');
 	});
-	it('keeps the legacy weight display when inspecting an older record', () => {
-		expect(sizeLine({ heightCm: 70, weightKg: 30 })).toBe('height 70 cm, 30 kg');
-	});
 });

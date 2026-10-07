@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import type { XalianRecord } from '@xalians/content/schema';
+import type { CreatureRecord } from '@xalians/content/creature';
 import { createMatch, send, pass, currentFrame, forecastSendBlows, getPublicState } from '../expeditionRules.ts';
 import { scoreSends } from '../expeditionBot.ts';
 import { ROSTER_SIZE, WORLDS_PER_MATCH, SUPPORT_GUARD } from '../expeditionInterpretation.ts';
@@ -37,7 +37,7 @@ const action = (effects: any[], over: Record<string, unknown> = {}) => ({
 	...over,
 });
 
-function makeRecord(id: string, over: any = {}): XalianRecord {
+function makeRecord(id: string, over: any = {}): CreatureRecord {
 	return {
 		id,
 		species: 'testling',
@@ -58,7 +58,7 @@ function makeRecord(id: string, over: any = {}): XalianRecord {
 		signature: { type: 'action', key: 'act' },
 		actions: over.actions || [action([harmEffect()])],
 		passives: [],
-	} as unknown as XalianRecord;
+	} as unknown as CreatureRecord;
 }
 
 const striker = (id: string, over: any = {}) => makeRecord(id, over);
@@ -85,15 +85,15 @@ function makeWorlds(): World[] {
 }
 
 // fills a roster of twelve behind the creatures a test names
-function roster(prefix: string, named: XalianRecord[]): XalianRecord[] {
+function roster(prefix: string, named: CreatureRecord[]): CreatureRecord[] {
 	return Array.from({ length: ROSTER_SIZE }, (_, i) => named[i] || makeRecord(`${prefix}_${i}`));
 }
 
 // sends every named creature of both sides to the one world, then both pass
-function clash(mine: XalianRecord[], theirs: XalianRecord[], rules: any = {}) {
+function clash(mine: CreatureRecord[], theirs: CreatureRecord[], rules: any = {}) {
 	let state = createMatch({ rosterA: roster('A', mine), rosterB: roster('B', theirs), worlds: makeWorlds(), seed: 'support-seed', rules: { clashExchanges: 1, ...rules } });
 	const siteId = currentFrame(state).sites[0].id;
-	const queue: Record<Seat, XalianRecord[]> = { A: [...mine], B: [...theirs] };
+	const queue: Record<Seat, CreatureRecord[]> = { A: [...mine], B: [...theirs] };
 	while (state.phase === 'deploy') {
 		const seat = state.turn as Seat;
 		const next = queue[seat].shift();

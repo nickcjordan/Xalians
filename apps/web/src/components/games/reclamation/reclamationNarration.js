@@ -1,4 +1,4 @@
-import { speciesDisplayName, getSpeciesTemplate } from '@xalians/rules/generator';
+import { speciesDisplayName, getSpeciesTemplate } from './reclamationVocabulary';
 import { SWEEP_DISCOUNT } from '@xalians/rules/expedition/expeditionInterpretation';
 
 /*
@@ -39,7 +39,7 @@ import { SWEEP_DISCOUNT } from '@xalians/rules/expedition/expeditionInterpretati
 // `species` and an id, so the table calls a creature by its species. Where two creatures
 // of the same species are on the table at once the caller supplies a disambiguator.
 export function speciesLabel(record) {
-	// the ratified species name from the template (speciesRecords.json); a record that
+	// the ratified species name from the template (the species catalog); a record that
 	// carries no known species falls back to a capitalized form of what it has
 	if (!record) {
 		return 'a creature';
