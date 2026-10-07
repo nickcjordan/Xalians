@@ -1,85 +1,45 @@
 {
  "schemaVersion": 1,
  "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02.json",
- "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2824",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2801",
  "order": {
-  "round": 28,
+  "round": 27,
   "region": "R02",
   "with": []
  },
  "region": "R02",
  "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
- "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2811",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2775",
  "startNotes": [],
  "top": [
   {
    "rank": 1,
    "id": "v01",
    "name": "tool as built",
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2824\\v01.json",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2801\\v01.json",
    "ok": true,
    "stage": "done",
    "failure": null,
-   "assembly": "assembled-2821",
-   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2821",
+   "assembly": "assembled-2797",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2797",
    "check": {
     "pass": true,
     "reasons": [],
     "components": 1,
     "nonManifoldEdges": 0,
-    "vertices": 868807,
+    "vertices": 1794400,
     "removedFragments": 1,
     "heightSpread": 0.0,
     "groundSpread": 0.0
    },
    "measuredChanged": [
     {
-     "id": "R01.2",
-     "region": "R01",
-     "before": 0.9341,
-     "after": 0.9342,
-     "bound": {
-      "min": 0.9
-     },
-     "result": [
-      "pass",
-      "pass"
-     ]
-    },
-    {
-     "id": "R01.7",
-     "region": "R01",
-     "before": 1.05,
-     "after": 1.033,
-     "bound": {
-      "max": 1.15
-     },
-     "result": [
-      "pass",
-      "pass"
-     ]
-    },
-    {
-     "id": "R04.2",
-     "region": "R04",
-     "before": 0.0435,
-     "after": 0.0434,
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0354,
+     "after": 0.0353,
      "bound": {
       "max": 0.06
-     },
-     "result": [
-      "pass",
-      "pass"
-     ]
-    },
-    {
-     "id": "R06.8",
-     "region": "R06",
-     "before": -0.002,
-     "after": -0.0034,
-     "bound": {
-      "min": -0.01,
-      "max": 0.01
      },
      "result": [
       "pass",
@@ -130,22 +90,22 @@
     }
    },
    "regionChange": {
-    "R01": 0.00342,
-    "R02": 0.03727,
-    "R03": 0.00342,
-    "R04": 0.03727,
-    "R05": 0.00768,
-    "R06": 0.00768,
+    "R01": 0.00275,
+    "R02": 0.0246,
+    "R03": 0.00275,
+    "R04": 0.0246,
+    "R05": 0.0051,
+    "R06": 0.0051,
     "R07": 0.0,
     "R08": 0.0,
     "R09": 0.0,
     "R10": 0.0,
     "R11": 0.0,
-    "R12": 0.00537
+    "R12": 0.00162
    },
    "regionShift": {
     "R01": 0.0,
-    "R02": 0.0046,
+    "R02": 0.00172,
     "R03": 0.0,
     "R04": 0.0,
     "R05": 0.0,
@@ -156,7 +116,7 @@
     "R10": 0.0,
     "R11": 0.0
    },
-   "verdict": "R01 measured: 2 changed; R04 measured: 1 changed; R06 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0373, R04 0.0373, R05 0.0077",
+   "verdict": "R03 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0246, R04 0.0246, R05 0.0051",
    "wallMinutes": 0.2
   }
  ],
@@ -182,14 +142,14 @@
   {
    "id": "v01",
    "name": "tool as built",
-   "why": "reader check of the R02 subdivision-surface face patch (author_face_subd_patch.py as A-face-subd): the starter recipe with no edits is the baseline face (baseline aperture, flat-top triangular pad, two broad tufts per side) rebuilt as a creased quad cage cut into the assembled skin; three blind readers compare it with the baseline before the tool counts as ready",
+   "why": "reader check of the R02 post-assembly face tool (finish_face_assembled.py as A-face): the starter recipe with no edits is the r10e control cut into the assembled skin at mesh precision, with the lid band as a separate strip; three blind readers compare it with the baseline before the tool counts as ready",
    "source": "variant",
    "edits": [],
    "built": true,
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2824\\v01.json",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2801\\v01.json",
    "warnings": [],
    "changedSteps": [
-    "A-face-subd",
+    "A-face",
     "F-bulk"
    ],
    "total": 0.0,
@@ -239,10 +199,10 @@
    "body": "body-2753"
   }
  ],
- "scoringSeconds": 1.6,
- "wallMinutes": 0.5,
+ "scoringSeconds": 1.4,
+ "wallMinutes": 0.4,
  "surfaceStats": true,
- "created": "2026-10-06T17:17:20",
+ "created": "2026-10-06T09:09:09",
  "resultFiles": [
   "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02-plan-result.json",
   "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02-plan-result.png"

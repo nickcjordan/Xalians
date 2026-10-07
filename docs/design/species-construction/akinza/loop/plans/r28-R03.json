@@ -1,0 +1,785 @@
+{
+ "order": {
+  "round": 28,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2811",
+ "start": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
+ "variants": [
+  {
+   "name": "tool as built, crown lowered",
+   "why": "control: the finish_fan_assembled tool on the baseline H33 fan (cup and pale tuft kept) with only the shared R04 edit: round 24's lowered crown tuft table on H34 (R04 issue 3, R03.3 V tilt), carried into every variant so H34, H35 and the assembly build once",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    }
+   ],
+   "control": true
+  },
+  {
+   "name": "primaries lead, secondaries tuck",
+   "why": "R03.4 and R03.7 (flat leaf plane): round 24's reader-preferred layer settings on the new tool: over layer wider (1.15) with a .03 stagger, under layer shorter (.80) and narrower so the nine big points own the visible edge",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.1.widthScale",
+     "value": 1.15
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.1.shingle",
+     "value": 0.03
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.0.lengthScale",
+     "value": 0.8
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.0.widthScale",
+     "value": 0.9
+    }
+   ]
+  },
+  {
+   "name": "soft wide unions, rounder section",
+   "why": "critic issue 2 and R03.7 (crinkled seams down the inner cup walls and lower tuft locks): the seams are voxel junctions, so widen the unions (root blend .007, band .05, seam blur 5) and round the section to p 2.1; the pale cup and tuft are untouched",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.rootBlend",
+     "value": 0.007
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.rootBand",
+     "value": 0.05
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.seamBlur",
+     "value": 5
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:section.p",
+     "value": 2.1
+    }
+   ]
+  },
+  {
+   "name": "wing ends wedged both sides",
+   "why": "R03.3 and critic issue 3: both wing ends are rounded lobes with tops only .01 to .02 above the crown; raise the third and fourth primaries on each side, push the wing tip primary out and up with a sharper taper (the right side edit is round 24's, the left is its mirror), keep span inside R03.1",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "RP3": {
+       "tip": [
+        -0.196,
+        0.021,
+        0.02
+       ]
+      },
+      "RP4": {
+       "tip": [
+        -0.236,
+        0.021,
+        0.024
+       ],
+       "widthMid": 0.048
+      },
+      "RP5": {
+       "tip": [
+        -0.279,
+        0.046,
+        0.018
+       ],
+       "widthMid": 0.047,
+       "taper": 1.7
+      },
+      "RP6": {
+       "tip": [
+        -0.272,
+        0.074,
+        0.022
+       ]
+      },
+      "LP3": {
+       "tip": [
+        0.199,
+        0.002,
+        0.02
+       ]
+      },
+      "LP4": {
+       "tip": [
+        0.244,
+        0.003,
+        0.024
+       ],
+       "widthMid": 0.044
+      },
+      "LP5": {
+       "tip": [
+        0.282,
+        0.022,
+        0.018
+       ],
+       "widthMid": 0.047,
+       "taper": 1.7
+      },
+      "LP6": {
+       "tip": [
+        0.266,
+        0.066,
+        0.022
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "uneven lock lengths",
+   "why": "critic issue 1 (even pine-comb overlap): alternate primary lengths .80 to 1.05 of table so the points break into long and short, per the sheet where tips are .012 to .025 apart and .006 to .016 deep",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "?P1": {
+       "lengthScale": 0.8
+      },
+      "?P2": {
+       "lengthScale": 1.05
+      },
+      "?P3": {
+       "lengthScale": 0.86
+      },
+      "?P4": {
+       "lengthScale": 1.04
+      },
+      "?P6": {
+       "lengthScale": 0.9
+      },
+      "?P7": {
+       "lengthScale": 1.05
+      },
+      "?P8": {
+       "lengthScale": 0.88
+      },
+      "?P9": {
+       "lengthScale": 1.0
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "clean cup rim, wider protected margin",
+   "why": "R03.5 and R03.7 (a real hollow with a clean rim, no crinkle beside the cup): keep edits further from each cup hull (cupMargin .012) and fade in over a shorter distance (cupFade .12) so the rim reads as a lip; cup depth itself is the baseline H33 cup",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:window.cupMargin",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:window.cupFade",
+     "value": 0.12
+    }
+   ]
+  },
+  {
+   "name": "outer wings swept back in plan",
+   "why": "R04.5 and R04 issue 1 (profile): the outer wing stands as a straight vertical band filling the cavity window; move the outer wing tips to df .032 to .044 so the shell curves back; front outline unchanged because only df moves. Untested since round 23 built it twice and Blender quit",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "LP4": {
+       "tip": [
+        0.244,
+        0.009,
+        0.032
+       ]
+      },
+      "LP5": {
+       "tip": [
+        0.276,
+        0.033,
+        0.04
+       ]
+      },
+      "LS1": {
+       "tip": [
+        0.273,
+        0.051,
+        0.04
+       ]
+      },
+      "LP6": {
+       "tip": [
+        0.26,
+        0.077,
+        0.044
+       ]
+      },
+      "LS2": {
+       "tip": [
+        0.249,
+        0.097,
+        0.044
+       ]
+      },
+      "LP7": {
+       "tip": [
+        0.236,
+        0.119,
+        0.042
+       ]
+      },
+      "RP4": {
+       "tip": [
+        -0.232,
+        0.029,
+        0.032
+       ]
+      },
+      "RP5": {
+       "tip": [
+        -0.273,
+        0.057,
+        0.04
+       ]
+      },
+      "RP6": {
+       "tip": [
+        -0.268,
+        0.08,
+        0.044
+       ]
+      },
+      "RS2": {
+       "tip": [
+        -0.258,
+        0.096,
+        0.044
+       ]
+      },
+      "RP7": {
+       "tip": [
+        -0.246,
+        0.115,
+        0.042
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "combined: primaries, soft unions, wedge, uneven",
+   "why": "the compatible front ideas together (primaries lead, soft unions, wing wedge both ends, uneven lengths); no profile edit, so R04 is touched only by the shared crown table",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.1.widthScale",
+     "value": 1.15
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.1.shingle",
+     "value": 0.03
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.0.lengthScale",
+     "value": 0.8
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.0.widthScale",
+     "value": 0.9
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.rootBlend",
+     "value": 0.007
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.rootBand",
+     "value": 0.05
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.seamBlur",
+     "value": 5
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:section.p",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "RP3": {
+       "tip": [
+        -0.196,
+        0.021,
+        0.02
+       ]
+      },
+      "RP4": {
+       "tip": [
+        -0.236,
+        0.021,
+        0.024
+       ],
+       "widthMid": 0.048
+      },
+      "RP5": {
+       "tip": [
+        -0.279,
+        0.046,
+        0.018
+       ],
+       "widthMid": 0.047,
+       "taper": 1.7
+      },
+      "RP6": {
+       "tip": [
+        -0.272,
+        0.074,
+        0.022
+       ]
+      },
+      "LP3": {
+       "tip": [
+        0.199,
+        0.002,
+        0.02
+       ]
+      },
+      "LP4": {
+       "tip": [
+        0.244,
+        0.003,
+        0.024
+       ],
+       "widthMid": 0.044
+      },
+      "LP5": {
+       "tip": [
+        0.282,
+        0.022,
+        0.018
+       ],
+       "widthMid": 0.047,
+       "taper": 1.7
+      },
+      "LP6": {
+       "tip": [
+        0.266,
+        0.066,
+        0.022
+       ]
+      },
+      "?P1": {
+       "lengthScale": 0.8
+      },
+      "?P2": {
+       "lengthScale": 1.05
+      },
+      "?P3": {
+       "lengthScale": 0.86
+      },
+      "?P4": {
+       "lengthScale": 1.04
+      },
+      "?P6": {
+       "lengthScale": 0.9
+      },
+      "?P7": {
+       "lengthScale": 1.05
+      },
+      "?P8": {
+       "lengthScale": 0.88
+      },
+      "?P9": {
+       "lengthScale": 1.0
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "thicker, rounder lock bodies",
+   "why": "audit row 2 (side and top: a column of crumpled thin slabs, fan a thin flat plate from above) and R03.7 (no flat leaf plane): thicker, fuller lock sections with a stronger raised spine and camber so each lock reads as a rounded body from the side; the rear clip keeps R04's rear face, so thickness grows forward",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:section.thickScale",
+     "value": 1.3
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:section.spine",
+     "value": 0.6
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:section.camber",
+     "value": 0.024
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:section.p",
+     "value": 2.0
+    }
+   ]
+  },
+  {
+   "name": "deeper layer stack",
+   "why": "R03.4 and audit row 1 (flat overlapping slabs): push the under layer tips back toward the head (standoff .035) and keep the primaries forward (.0) with a .04 stagger so the primaries stand proud of the secondaries by a visible step in the front and three-quarter views",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.0.standoff",
+     "value": 0.035
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.1.shingle",
+     "value": 0.04
+    }
+   ]
+  },
+  {
+   "name": "combined plus swept wings and clean rim",
+   "why": "the combined front plus the profile sweep and the clean cup rim: tests whether the profile fix adds to the front or fights it",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--table",
+     "value": "{repo}/untracked/species-construction/akinza/loop/plan-data/r23_r04_clumps_clow.json"
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.1.widthScale",
+     "value": 1.15
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.1.shingle",
+     "value": 0.03
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.0.lengthScale",
+     "value": 0.8
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:layers.0.widthScale",
+     "value": 0.9
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.rootBlend",
+     "value": 0.007
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.rootBand",
+     "value": 0.05
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:union.seamBlur",
+     "value": 5
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:section.p",
+     "value": 2.1
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:window.cupMargin",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:window.cupFade",
+     "value": 0.12
+    },
+    {
+     "op": "set",
+     "step": "A-fan",
+     "arg": "spec:clumps",
+     "value": {
+      "?P5": {
+       "lengthScale": 0.98
+      },
+      "RP3": {
+       "tip": [
+        -0.196,
+        0.021,
+        0.02
+       ]
+      },
+      "RP4": {
+       "tip": [
+        -0.236,
+        0.021,
+        0.024
+       ],
+       "widthMid": 0.048
+      },
+      "RP5": {
+       "tip": [
+        -0.279,
+        0.046,
+        0.018
+       ],
+       "widthMid": 0.047,
+       "taper": 1.7
+      },
+      "RP6": {
+       "tip": [
+        -0.272,
+        0.074,
+        0.022
+       ]
+      },
+      "LP3": {
+       "tip": [
+        0.199,
+        0.002,
+        0.02
+       ]
+      },
+      "LP4": {
+       "tip": [
+        0.244,
+        0.003,
+        0.024
+       ],
+       "widthMid": 0.044
+      },
+      "LP5": {
+       "tip": [
+        0.282,
+        0.022,
+        0.018
+       ],
+       "widthMid": 0.047,
+       "taper": 1.7
+      },
+      "LP6": {
+       "tip": [
+        0.266,
+        0.066,
+        0.022
+       ]
+      },
+      "?P1": {
+       "lengthScale": 0.8
+      },
+      "?P2": {
+       "lengthScale": 1.05
+      },
+      "?P3": {
+       "lengthScale": 0.86
+      },
+      "?P4": {
+       "lengthScale": 1.04
+      },
+      "?P6": {
+       "lengthScale": 0.9
+      },
+      "?P7": {
+       "lengthScale": 1.05
+      },
+      "?P8": {
+       "lengthScale": 0.88
+      },
+      "?P9": {
+       "lengthScale": 1.0
+      },
+      "LS1": {
+       "tip": [
+        0.273,
+        0.051,
+        0.04
+       ]
+      },
+      "LS2": {
+       "tip": [
+        0.249,
+        0.097,
+        0.044
+       ]
+      },
+      "LP7": {
+       "tip": [
+        0.236,
+        0.119,
+        0.042
+       ]
+      },
+      "RS2": {
+       "tip": [
+        -0.258,
+        0.096,
+        0.044
+       ]
+      },
+      "RP7": {
+       "tip": [
+        -0.246,
+        0.115,
+        0.042
+       ]
+      }
+     }
+    }
+   ]
+  }
+ ],
+ "sweeps": [
+  {
+   "step": "A-fan",
+   "grid": {
+    "spec:tips.minHalfWidth": [
+     0.0035,
+     0.0085
+    ]
+   },
+   "why": "how blunt the lock tips are: .0055 (control) against needles at .0035 (the round 23 fringe) and rounder lumps at .0085; quick previews cannot rank under one percent of figure height, so sweep wide to both sides (width only; minHalfThick stays)"
+  }
+ ],
+ "region": "R03",
+ "top": 3
+}

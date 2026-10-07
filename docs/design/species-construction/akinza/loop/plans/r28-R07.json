@@ -1,0 +1,936 @@
+{
+ "order": {
+  "round": 28,
+  "region": "R07",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2811",
+ "start": null,
+ "variants": [
+  {
+   "name": "long digits plus cuff fix",
+   "why": "R07.5/R07.3, audit rank 6: digits are short (tips at s .095) so the paw reads as a closed fist and a cuff ring marks the wrist (paw over wrist 1.375 against 1.5); digit segments to the spec's lobe tips (.104 to .12 from W), curl 2+2 so they point down, thinner wrist stations, longer roll fade, softer palm and lobe joins",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -8,
+       "pitchDeg": 0,
+       "segLen": [
+        0.024,
+        0.02
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -3,
+       "pitchDeg": 0,
+       "segLen": [
+        0.032,
+        0.026
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 3,
+       "pitchDeg": 0,
+       "segLen": [
+        0.032,
+        0.026
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 8,
+       "pitchDeg": 0,
+       "segLen": [
+        0.024,
+        0.02
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0.0,
+       0.0419,
+       0.0446
+      ],
+      [
+       0.056,
+       0.0409,
+       0.0391
+      ],
+      [
+       0.1116,
+       0.0363,
+       0.0353
+      ],
+      [
+       0.167,
+       0.0326,
+       0.0326
+      ],
+      [
+       0.205,
+       0.0275,
+       0.0292
+      ],
+      [
+       0.2329,
+       0.0305,
+       0.0345
+      ],
+      [
+       0.2608,
+       0.0335,
+       0.0391
+      ],
+      [
+       0.2887,
+       0.0335,
+       0.0409
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollFade",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.blend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.018
+    }
+   ]
+  },
+  {
+   "name": "long digits, smaller palm, cuff fix",
+   "why": "R07.5: the palm blob (s .042, radii .042/.03/.044) dominates so the digits narrow to an inner corner; shrink and move the palm back so the paw is mostly digits and longer than wide",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -8,
+       "pitchDeg": 0,
+       "segLen": [
+        0.024,
+        0.02
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -3,
+       "pitchDeg": 0,
+       "segLen": [
+        0.032,
+        0.026
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 3,
+       "pitchDeg": 0,
+       "segLen": [
+        0.032,
+        0.026
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 8,
+       "pitchDeg": 0,
+       "segLen": [
+        0.024,
+        0.02
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.s",
+     "value": 0.034
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.radii",
+     "value": [
+      0.036,
+      0.028,
+      0.04
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0.0,
+       0.0419,
+       0.0446
+      ],
+      [
+       0.056,
+       0.0409,
+       0.0391
+      ],
+      [
+       0.1116,
+       0.0363,
+       0.0353
+      ],
+      [
+       0.167,
+       0.0326,
+       0.0326
+      ],
+      [
+       0.205,
+       0.0275,
+       0.0292
+      ],
+      [
+       0.2329,
+       0.0305,
+       0.0345
+      ],
+      [
+       0.2608,
+       0.0335,
+       0.0391
+      ],
+      [
+       0.2887,
+       0.0335,
+       0.0409
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollFade",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.blend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.018
+    }
+   ]
+  },
+  {
+   "name": "all fixes",
+   "why": "all three critic issues in one candidate: long digits, cuff fix, elbow and upper arm out (R07.6), whole-cap dome (R07.1)",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -8,
+       "pitchDeg": 0,
+       "segLen": [
+        0.024,
+        0.02
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -3,
+       "pitchDeg": 0,
+       "segLen": [
+        0.032,
+        0.026
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 3,
+       "pitchDeg": 0,
+       "segLen": [
+        0.032,
+        0.026
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 8,
+       "pitchDeg": 0,
+       "segLen": [
+        0.024,
+        0.02
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0.0,
+       0.0419,
+       0.0446
+      ],
+      [
+       0.056,
+       0.0409,
+       0.0391
+      ],
+      [
+       0.1116,
+       0.0363,
+       0.0353
+      ],
+      [
+       0.167,
+       0.0326,
+       0.0326
+      ],
+      [
+       0.205,
+       0.0275,
+       0.0292
+      ],
+      [
+       0.2329,
+       0.0305,
+       0.0345
+      ],
+      [
+       0.2608,
+       0.0335,
+       0.0391
+      ],
+      [
+       0.2887,
+       0.0335,
+       0.0409
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollFade",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.blend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.018
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:upperRod",
+     "value": [
+      [
+       0,
+       0.0405,
+       0.0452
+      ],
+      [
+       0.5,
+       0.04,
+       0.0442
+      ],
+      [
+       1,
+       0.0425,
+       0.0458
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell.out",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.frontY",
+     "value": 0.05
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.radius",
+     "value": 0.056
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.cutBlend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.sectorFade",
+     "value": 0.04
+    }
+   ]
+  },
+  {
+   "name": "long digits, wider fan",
+   "why": "R07.3: claw tips should span about the full paw width from the front; yaw +-14/5 spreads the tips; cuff fix kept so the fan is judged on the same wrist",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -14,
+       "pitchDeg": 0,
+       "segLen": [
+        0.024,
+        0.02
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -5,
+       "pitchDeg": 0,
+       "segLen": [
+        0.032,
+        0.026
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 5,
+       "pitchDeg": 0,
+       "segLen": [
+        0.032,
+        0.026
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 14,
+       "pitchDeg": 0,
+       "segLen": [
+        0.024,
+        0.02
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        2,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0.0,
+       0.0419,
+       0.0446
+      ],
+      [
+       0.056,
+       0.0409,
+       0.0391
+      ],
+      [
+       0.1116,
+       0.0363,
+       0.0353
+      ],
+      [
+       0.167,
+       0.0326,
+       0.0326
+      ],
+      [
+       0.205,
+       0.0275,
+       0.0292
+      ],
+      [
+       0.2329,
+       0.0305,
+       0.0345
+      ],
+      [
+       0.2608,
+       0.0335,
+       0.0391
+      ],
+      [
+       0.2887,
+       0.0335,
+       0.0409
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollFade",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.blend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:lobeToRod",
+     "value": 0.018
+    }
+   ]
+  },
+  {
+   "name": "elbow out plus dome cap",
+   "why": "R07.6 (posed .874 against .90) and R07.1 without touching the paw: in posed-fit the sheet-only area runs along the outer upper arm and elbow, so fuller upper rod and swell pushed outward; the cap dome extended over the full depth (frontY .05, radius .056) removes the flat top and hard edge",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:upperRod",
+     "value": [
+      [
+       0,
+       0.0405,
+       0.0452
+      ],
+      [
+       0.5,
+       0.04,
+       0.0442
+      ],
+      [
+       1,
+       0.0425,
+       0.0458
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell.out",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.frontY",
+     "value": 0.05
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.radius",
+     "value": 0.056
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.cutBlend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.sectorFade",
+     "value": 0.04
+    }
+   ]
+  },
+  {
+   "name": "elbow out plus blurred cap top",
+   "why": "same as the previous but R07.1 by blurring the merged field around the top of the cap (mode blur) instead of a sphere cut, so the silhouette does not move",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:upperRod",
+     "value": [
+      [
+       0,
+       0.0405,
+       0.0452
+      ],
+      [
+       0.5,
+       0.04,
+       0.0442
+      ],
+      [
+       1,
+       0.0425,
+       0.0458
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell.out",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound",
+     "value": {
+      "mode": "blur",
+      "offset": [
+       0.0,
+       0.0,
+       0.035
+      ],
+      "radius": 0.075,
+      "falloff": 0.03,
+      "sigma": 0.014,
+      "strength": 1.0
+     }
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R07",
+ "top": 6
+}

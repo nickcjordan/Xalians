@@ -1,7 +1,7 @@
 {
  "schemaVersion": 1,
  "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02.json",
- "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2824",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2814",
  "order": {
   "round": 28,
   "region": "R02",
@@ -16,18 +16,18 @@
    "rank": 1,
    "id": "v01",
    "name": "tool as built",
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2824\\v01.json",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2814\\v01.json",
    "ok": true,
    "stage": "done",
    "failure": null,
-   "assembly": "assembled-2821",
-   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2821",
+   "assembly": "assembled-2813",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2813",
    "check": {
     "pass": true,
     "reasons": [],
     "components": 1,
     "nonManifoldEdges": 0,
-    "vertices": 868807,
+    "vertices": 868844,
     "removedFragments": 1,
     "heightSpread": 0.0,
     "groundSpread": 0.0
@@ -130,18 +130,18 @@
     }
    },
    "regionChange": {
-    "R01": 0.00342,
-    "R02": 0.03727,
-    "R03": 0.00342,
-    "R04": 0.03727,
-    "R05": 0.00768,
-    "R06": 0.00768,
+    "R01": 0.00333,
+    "R02": 0.03697,
+    "R03": 0.00333,
+    "R04": 0.03697,
+    "R05": 0.00745,
+    "R06": 0.00745,
     "R07": 0.0,
     "R08": 0.0,
     "R09": 0.0,
     "R10": 0.0,
     "R11": 0.0,
-    "R12": 0.00537
+    "R12": 0.00531
    },
    "regionShift": {
     "R01": 0.0,
@@ -156,8 +156,8 @@
     "R10": 0.0,
     "R11": 0.0
    },
-   "verdict": "R01 measured: 2 changed; R04 measured: 1 changed; R06 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0373, R04 0.0373, R05 0.0077",
-   "wallMinutes": 0.2
+   "verdict": "R01 measured: 2 changed; R04 measured: 1 changed; R06 measured: 1 changed; no new seams flagged; containment over allowance in R01, R03, R04; picture change R02 0.0370, R04 0.0370, R05 0.0075",
+   "wallMinutes": 0.1
   }
  ],
  "baseline": {
@@ -186,7 +186,7 @@
    "source": "variant",
    "edits": [],
    "built": true,
-   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2824\\v01.json",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2814\\v01.json",
    "warnings": [],
    "changedSteps": [
     "A-face-subd",
@@ -239,10 +239,10 @@
    "body": "body-2753"
   }
  ],
- "scoringSeconds": 1.6,
- "wallMinutes": 0.5,
+ "scoringSeconds": 1.3,
+ "wallMinutes": 0.3,
  "surfaceStats": true,
- "created": "2026-10-06T17:17:20",
+ "created": "2026-10-06T16:17:33",
  "resultFiles": [
   "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02-plan-result.json",
   "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\tool-check-R02-plan-result.png"
