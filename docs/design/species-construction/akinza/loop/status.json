@@ -66,13 +66,13 @@
   "visibleChange": 0.005
  },
  "baseline": {
-  "head": "head-2932",
+  "head": "head-2996",
   "body": "body-2960",
-  "assembly": "assembled-2961",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2961",
+  "assembly": "assembled-2999",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2999",
   "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
- "round": 33,
+ "round": 34,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -106,7 +106,8 @@
   "R09+R05",
   "R03+R04+R07",
   "R03+R04+R05",
-  "R01+R06"
+  "R01+R06",
+  "R03+R04"
  ],
  "specs": {
   "R10": {
@@ -185,14 +186,14 @@
   "R01": {
    "name": "Head silhouette",
    "weight": 3,
-   "score": 3.8,
+   "score": 5,
    "results": {
     "R01.1": "fail",
     "R01.2": "pass",
     "R01.3": "fail",
     "R01.4": "fail",
     "R01.5": "partial",
-    "R01.6": "fail",
+    "R01.6": "pass",
     "R01.7": "pass",
     "R01.8": "partial"
    },
@@ -410,9 +411,9 @@
   "R03": {
    "name": "Ear fan front",
    "weight": 3,
-   "score": 3.6,
+   "score": 5,
    "results": {
-    "R03.1": "fail",
+    "R03.1": "pass",
     "R03.2": "pass",
     "R03.3": "fail",
     "R03.4": "fail",
@@ -423,12 +424,20 @@
    "issues": [
     {
      "region": "R03",
-     "summary": "Front outline: the top edge runs level tip to tip, so the V tilt is gone; the tips are rounded ends; the span is 4 percent wider than the sheet (R03.1 1.043, R01.1 IoU .874).",
-     "fix": "With H33 parameters only: shorten the outer wings about 1.5 to 2 percent of span, raise the outer tips so the crown sits .02 to .03 of figure height below them, and taper the wing ends to soft up-flared points. Keep the soft surface; no spikes.",
+     "summary": "Thin needles and pins still stand off the fan rim and crown: three upright pins on the crown between the ear roots, and hair-thin hooks dangling from the outer tips and lower edge. This contradicts the 2026-10-08 ruling to tone down spikiness.",
+     "evidence": "m04 head-front (three pins at top centre, beaded spines along the upper rim); m02 front and m05 head-three-quarter (dangling hooks at both outer tips); m05 head-rear-oblique (comb of drips along the lower edge); seams.json earFanRoot front needle change +84, crease +101.",
+     "fix": "Remove or fuse every protrusion thinner than about .006 of figure height and longer than about .01 along the fan rim and crown. Replace them with 5 to 7 broad soft points per wing whose bases are at least .02 wide, so the edge breaks into gentle points instead of pins.",
      "fixability": 0.7
+    },
+    {
+     "region": "R03",
+     "summary": "The fan tips end blunt and droop at the outer ends instead of tapering to an up-flared point. The V tilt reads weakly because the wings are a flat horizontal band with squared outer ends.",
+     "evidence": "m02 front and m04 head-front: each outer end is a squarish lobe with hooks curling down; m01 front shows each wing tapering to a single point lifted above the crown line.",
+     "fix": "Taper the last .04 of each wing to one point and raise the tip about .02 to .03 of figure height above the crown, keeping the measured span (now 1.029, at the limit) at or below 1.03. That is, lift the tip rather than extend it.",
+     "fixability": 0.6
     }
    ],
-   "attempts": 2,
+   "attempts": 0,
    "anchorScore": 5.7,
    "parked": false,
    "history": [
@@ -567,9 +576,19 @@
      "approach": "Keep the soft round-31 fan and trim it: shorten the outer wing locks (tip-trim .009 to .020) to bring the front span from 1.043 into range, and thin the low rear mass at the head base (drop the six lowest E locks, pull in the core, end the dome higher), in three variants of rising strength.",
      "reason": "no candidate read better than the baseline: [{\"candidate\":\"strong rear thin, trim from .17\",\"per\":{\"R03\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same blobby fan outline, cupped inner ears and bead-like rim nubs in every camera, with no visible difference large enough to call. | A and B show the same fan silhouette, c",
      "reusable": []
+    },
+    {
+     "round": 34,
+     "kept": true,
+     "approach": "Give the front fan the sheet's V tilt by sinking the crown roof relative to the wing tops (H33 --crown-sink), trim the outer wing span to bring R03.1 into range, and taper each wing end to a soft up-flared point with H33's existing curl, tip-lift, tip-point and tip-wedge, paired in two variants with rear thinning (drop low E locks and crown tuft row) so R04.1 rises.",
+     "reason": "",
+     "reusable": [],
+     "verdict": "better",
+     "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v04.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 32,
+   "lastWorked": 34,
    "toolUsed": true,
    "methodChanged": 33
   },
@@ -589,24 +608,10 @@
    "issues": [
     {
      "region": "R04",
-     "summary": "The fan back reads as a knobby flat tray or plate with teeth along the rim",
-     "fix": "Rebuild the fan back as one smooth domed mass falling down and outward from the crown, rising about .015 toward the crown. Remove all rim teeth and nubs",
-     "fixability": 0.45,
-     "evidence": "m04 head-back, m05 head-rear-oblique, m03 turn-135 and turn-225; R04.3, R04.4 and R04.7 fail"
-    },
-    {
-     "region": "R04",
-     "summary": "In profile the fan cavity is lined with pin-like teeth",
-     "fix": "Remove the picket pins inside the cavity rim and keep a smooth curved inner shell surface",
-     "fixability": 0.6,
-     "evidence": "m04 head-side, m02 left; R04.5 fail"
-    },
-    {
-     "region": "R04",
-     "summary": "The back head band overshoots the sheet",
-     "fix": "Trim the fan outer ends and lower edge in the back view by about .01 to .015 of figure height to bring the extra area from 0.145 down below about 0.08",
-     "fixability": 0.55,
-     "evidence": "measured R04.1 0.8701; fit back head extra 0.1446"
+     "summary": "From behind, the fan back is still a lumpy flat plate with knobs and a rectangular panel seam around the head dome, not one soft mass flowing down and outward.",
+     "evidence": "m04 head-back: a square-cornered panel outline frames the head dome and the wings are dotted with knobs. m05 head-rear-oblique: the top reads as a flat tray with a visible seam line across it. Back head IoU 0.8913 is still under .90.",
+     "fix": "Blend the wing backs into the head dome with a concave fillet about .015 of figure height wide, so the panel corners disappear. Smooth the knobs to under .004 relief and dome the top edge so it rises about .01 toward the crown and the tips, which should also lift the back head IoU above .90.",
+     "fixability": 0.55
     }
    ],
    "attempts": 0,
@@ -690,9 +695,15 @@
      "kept": false,
      "approach": "(paired with R03) Keep the soft round-31 fan and trim it: shorten the outer wing locks (tip-trim .009 to .020) to bring the front span from 1.043 into range, and thin the low rear mass at the head base (drop the six lowest E locks, pull in the core, end the dome higher), in three variants of rising strength.",
      "reason": "no candidate read better than the baseline: [{\"candidate\":\"strong rear thin, trim from .17\",\"per\":{\"R03\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same blobby fan outline, cupped inner ears and bead-like rim nubs in every camera, with no visible difference large enough to call. | A and B show the same fan silhouette, c"
+    },
+    {
+     "round": 34,
+     "kept": true,
+     "approach": "(paired with R03) Give the front fan the sheet's V tilt by sinking the crown roof relative to the wing tops (H33 --crown-sink), trim the outer wing span to bring R03.1 into range, and taper each wing end to a soft up-flared point with H33's existing curl, tip-lift, tip-point and tip-wedge, paired in two variants with rear thinning (drop low E locks and crown tuft row) so R04.1 rises.",
+     "reason": ""
     }
    ],
-   "lastWorked": 32,
+   "lastWorked": 34,
    "methodChanged": 32,
    "toolUsed": true
   },
@@ -1488,7 +1499,8 @@
   "2026-10-08: Round 32 (60 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"strong rear thin, trim from .17\",\"per\":{\"R03\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same blobby fan outline, cupped inner ears and be | R05 KEPT; assembled-2961; readers R05 better 3-0; no criterion moved (critic score 5.507)",
   "2026-10-08: hardStopRounds raised to 33 for the Sonnet versus Opus planner test on the torso (Nick approved the test; continuing past 33 is his call).",
   "2026-10-08: Round 33 (37 min): R01 reverted; assembled-2964; why: the code builder candidate did not read better than the baseline: {\"R01\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"B's fan has a broken lower edge with hanging pointed tips that comes closer to the reference's sh | R06 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"chest plane forward\",\"per\":{\"R06\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's torso tapers more evenly from the shoulders into a narrower pinched waist | cold rescore 5.507 to 5.028 | waiting for Nick: reverts R01 (critic score 5.028)",
-  "2026-10-08: Nick approved the capped ear-outline pass (two rounds, ears only: ordersPerRound 1, R03 pinned, hard stop 35), then the texture phase without a stop for review. Plateau window restarted at the round 33 rescore."
+  "2026-10-08: Nick approved the capped ear-outline pass (two rounds, ears only: ordersPerRound 1, R03 pinned, hard stop 35), then the texture phase without a stop for review. Plateau window restarted at the round 33 rescore.",
+  "2026-10-08: Round 34 (66 min): R03 KEPT; assembled-2999; readers R03 better 2-1, R04 better 2-1; criteria R03.1 fail to pass | waiting for Nick: reverts R01 (critic score 5.297)"
  ],
  "decisionsForNick": [
   {
@@ -1581,12 +1593,15 @@
    "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R02.json"
   }
  },
- "keptSinceAudit": 1,
+ "keptSinceAudit": 2,
  "means": [
-  5.028
+  5.028,
+  5.297
  ],
  "toolBlocked": {},
- "keptLog": [],
+ "keptLog": [
+  true
+ ],
  "decisions": [
   {
    "key": "dispute:R02:R02.2",
@@ -1658,6 +1673,6 @@
  },
  "disputes": {},
  "escalated": false,
- "keptSinceCold": 0,
+ "keptSinceCold": 1,
  "clock": 1791433084
 }

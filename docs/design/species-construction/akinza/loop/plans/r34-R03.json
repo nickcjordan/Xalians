@@ -1,0 +1,335 @@
+{
+ "order": {
+  "round": 34,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2961",
+ "start": null,
+ "variants": [
+  {
+   "name": "V tilt, up-flared soft tips",
+   "why": "critic: tips are rounded ends, not up-flared points (R03.3, R03.4). Same crown sink and trim, plus a higher curl (2 to 7 degrees) and tip lift (.008 to .014) so each lock end turns up, and a tip-point fade (.5, floor .5) that tapers the end to a blunt soft point rather than a knob. No spikes: tip-min stays .005.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.022"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--curl",
+     "value": "7.0"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-lift",
+     "value": "0.014"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": "0.5"
+    }
+   ]
+  },
+  {
+   "name": "V tilt, tapered wing ends",
+   "why": "critic: each wing end is a rounded lobe. H33's existing --tip-wedge cuts each wing end through all depths to a V whose apex sits on the sheet's tip (L .034, R .060; apex |x| .268, start .232) before the locks are added, with the tip-point fade keeping the lock ends soft; the model L tip is .014 too high and R .011 too narrow at present. Crown sink .02 for the V tilt. Wing-end trim is smaller (.012) because the wedge already bounds the span.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-wedge",
+     "value": true
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-u",
+     "value": "0.232 0.268"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-apex-y",
+     "value": "0.034 0.060"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-bottom-y",
+     "value": "0.107 0.130"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": "0.5"
+    }
+   ]
+  },
+  {
+   "name": "strong V, flare and wedge",
+   "why": "larger move so a reader can see it in head-front: crown sink .03 (crown cleft at y .033, wings .03 above), the wedge ends and the up-flare together, with the full trim.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.03"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.022"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--curl",
+     "value": "7.0"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-lift",
+     "value": "0.014"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-wedge",
+     "value": true
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-u",
+     "value": "0.232 0.268"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-apex-y",
+     "value": "0.034 0.060"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-bottom-y",
+     "value": "0.107 0.130"
+    }
+   ]
+  },
+  {
+   "name": "V tilt plus thin rear base",
+   "why": "pair: R04.1 (back IoU .870, overflow .145 extra at the wing ends and head base) and the R04 knobby-rim issue. r32 v03's rear thinning (drop LE/RE11 to 14, core inset .04, dome end .155, rear clumps .8 wide, dome blur 20) took R04.1 to .886 without loss but its front change was invisible; here it is paired with the visible V tilt (crown sink .02 with the .022 trim).",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.022"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skip",
+     "value": "LE12,LE13,LE14,RE12,RE13,RE14,LE11,RE11"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-inset",
+     "value": "0.012 0.04"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-ymax",
+     "value": "0.155"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--width-scale",
+     "value": "0.8"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "20"
+    }
+   ]
+  },
+  {
+   "name": "V tilt, wedge ends, rear without crown tufts",
+   "why": "pair, distinct rear idea: the knobs and pegs along the back rim are the C crown tuft clumps and the lowest E locks; drop the C row (rows K,I,M,T,E) and the six lowest E locks so the back view top edge is one smooth dome (R04.3, R04.4), with the tapered ends of the wedge variant in front.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-wedge",
+     "value": true
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-u",
+     "value": "0.232 0.268"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-apex-y",
+     "value": "0.034 0.060"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-bottom-y",
+     "value": "0.107 0.130"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skip",
+     "value": "LE12,LE13,LE14,RE12,RE13,RE14"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-ymax",
+     "value": "0.160"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-inset",
+     "value": "0.012 0.03"
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R03",
+ "top": 3
+}

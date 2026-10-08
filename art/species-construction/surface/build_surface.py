@@ -137,7 +137,7 @@ def compute_attributes(skin, cfg, species):
         if g.get('everywhere'):
             m = np.ones(n)
         else:
-            boxes = [zones[z] for z in g['zones']] if 'zones' in g else [g['box']]
+            boxes = ([zones[z] for z in g['zones']] if 'zones' in g else [])+([g['box']] if 'box' in g else [])
             m = np.zeros(n)
             for box in boxes:
                 m = np.maximum(m, membership(co, box, floor, height, g.get('margin', 0.02)))
@@ -177,7 +177,7 @@ def compute_attributes(skin, cfg, species):
     pale = np.clip(np.maximum(smoothstep(pale*cfg.get('paleGain', 2.2)), group_pale*cfg.get('groupPaleGain', 1.0)), 0, 1)
     # cup interior from geometry: forward-facing skin inside the ear zones, plus a soft chest patch
     ears_i = names.index('ears')
-    ear_m = weights[ears_i]/cfg['groups']['ears']['priority']
+    ear_m = membership(co, cfg['cup']['box'], floor, height, cfg['cup']['margin'])
     cup = ear_m*smoothstep((-nrm[:, 1]-cfg['cup']['normalMin'])/cfg['cup']['normalSpan'])
     pale = np.maximum(pale, cup*cfg['cup']['strength'])
     cb = cfg['chestPale']

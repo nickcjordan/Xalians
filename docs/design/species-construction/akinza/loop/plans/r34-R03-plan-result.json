@@ -1,0 +1,1562 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r34-R03.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982",
+ "order": {
+  "round": 34,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "region": "R03",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2961",
+ "startNotes": [],
+ "top": [
+  {
+   "rank": 1,
+   "id": "v04",
+   "name": "V tilt plus thin rear base",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v04.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2999",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2999",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 707310,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.8735,
+     "after": 0.8863,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R01.2",
+     "region": "R01",
+     "before": 0.9304,
+     "after": 0.9292,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.6",
+     "region": "R01",
+     "before": 1.329,
+     "after": 1.025,
+     "bound": {
+      "max": 1.15
+     },
+     "result": [
+      "fail",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.1",
+     "region": "R03",
+     "before": 1.043,
+     "after": 1.029,
+     "bound": {
+      "min": 0.97,
+      "max": 1.03
+     },
+     "result": [
+      "fail",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0145,
+     "after": 0.0246,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.8701,
+     "after": 0.8913,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R04.2",
+     "region": "R04",
+     "before": 0.0538,
+     "after": 0.0436,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "I09",
+     "region": "R01",
+     "before": 1.8658,
+     "after": 1.8543,
+     "bound": {
+      "expected": 1.8605
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R01.1",
+    "R04.1",
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "H33": {
+     "flaggedRelative": [
+      "R01",
+      "R02",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.01992,
+       "allowance": 0.01511,
+       "excess": 0.00481,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.01992,
+       "allowance": 0.01511,
+       "excess": 0.00481,
+       "flagged": true
+      },
+      {
+       "region": "R02",
+       "max": 0.00651,
+       "allowance": 0.00501,
+       "excess": 0.0015,
+       "flagged": true
+      }
+     ],
+     "error": null
+    },
+    "H34": {
+     "flaggedRelative": [
+      "R05"
+     ],
+     "worst": [
+      {
+       "region": "R05",
+       "max": 0.00215,
+       "allowance": 0.002,
+       "excess": 0.00015,
+       "flagged": true
+      },
+      {
+       "region": "R06",
+       "max": 0.00041,
+       "allowance": 0.002,
+       "excess": -0.00159,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.03608,
+    "R02": 0.02536,
+    "R03": 0.04443,
+    "R04": 0.03608,
+    "R05": 0.0178,
+    "R06": 0.0178,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.01055
+   },
+   "regionShift": {
+    "R01": 0.0087,
+    "R02": 0.00296,
+    "R03": 0.02443,
+    "R04": 0.02443,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R03 measured: 2 changed (1 newly passing, 0 newly failing); R01 measured: 4 changed (1 newly passing, 0 newly failing); R04 measured: 2 changed; no new seams flagged; containment over allowance in R01, R02, R04, R05; picture change R03 0.0444, R01 0.0361, R04 0.0361",
+   "wallMinutes": 20.9
+  },
+  {
+   "rank": 2,
+   "id": "v05",
+   "name": "V tilt, wedge ends, rear without crown tufts",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v05.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2997",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2997",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 707730,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.8735,
+     "after": 0.8798,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R01.2",
+     "region": "R01",
+     "before": 0.9304,
+     "after": 0.933,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R01.6",
+     "region": "R01",
+     "before": 1.329,
+     "after": 1.025,
+     "bound": {
+      "max": 1.15
+     },
+     "result": [
+      "fail",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.1",
+     "region": "R03",
+     "before": 1.043,
+     "after": 1.037,
+     "bound": {
+      "min": 0.97,
+      "max": 1.03
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0145,
+     "after": 0.0296,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.8701,
+     "after": 0.8856,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R04.2",
+     "region": "R04",
+     "before": 0.0538,
+     "after": 0.0445,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "I09",
+     "region": "R01",
+     "before": 1.8658,
+     "after": 1.8564,
+     "bound": {
+      "expected": 1.8605
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R01.1",
+    "R03.1",
+    "R04.1",
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "H33": {
+     "flaggedRelative": [
+      "R01",
+      "R02",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.01992,
+       "allowance": 0.01511,
+       "excess": 0.00481,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.01992,
+       "allowance": 0.01511,
+       "excess": 0.00481,
+       "flagged": true
+      },
+      {
+       "region": "R02",
+       "max": 0.00651,
+       "allowance": 0.00501,
+       "excess": 0.0015,
+       "flagged": true
+      }
+     ],
+     "error": null
+    },
+    "H34": {
+     "flaggedRelative": [
+      "R05"
+     ],
+     "worst": [
+      {
+       "region": "R05",
+       "max": 0.00209,
+       "allowance": 0.002,
+       "excess": 9e-05,
+       "flagged": true
+      },
+      {
+       "region": "R06",
+       "max": 0.00041,
+       "allowance": 0.002,
+       "excess": -0.00159,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.03825,
+    "R02": 0.02137,
+    "R03": 0.02946,
+    "R04": 0.03947,
+    "R05": 0.01457,
+    "R06": 0.01457,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.01186
+   },
+   "regionShift": {
+    "R01": 0.0087,
+    "R02": 0.00296,
+    "R03": 0.01741,
+    "R04": 0.02611,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R03 measured: 2 changed; R01 measured: 4 changed (1 newly passing, 0 newly failing); R04 measured: 2 changed; no new seams flagged; containment over allowance in R01, R02, R04, R05; picture change R04 0.0395, R01 0.0382, R03 0.0295",
+   "wallMinutes": 22.3
+  },
+  {
+   "rank": 3,
+   "id": "v03",
+   "name": "strong V, flare and wedge",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v03.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2998",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2998",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 711562,
+    "removedFragments": 0,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R01.1",
+     "region": "R01",
+     "before": 0.8735,
+     "after": 0.8862,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R01.2",
+     "region": "R01",
+     "before": 0.9304,
+     "after": 0.9279,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.1",
+     "region": "R03",
+     "before": 1.043,
+     "after": 1.021,
+     "bound": {
+      "min": 0.97,
+      "max": 1.03
+     },
+     "result": [
+      "fail",
+      "pass"
+     ]
+    },
+    {
+     "id": "R03.2",
+     "region": "R03",
+     "before": 0.0145,
+     "after": 0.0198,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R04.1",
+     "region": "R04",
+     "before": 0.8701,
+     "after": 0.8873,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R04.2",
+     "region": "R04",
+     "before": 0.0538,
+     "after": 0.0439,
+     "bound": {
+      "max": 0.06
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "I09",
+     "region": "R01",
+     "before": 1.8658,
+     "after": 1.8564,
+     "bound": {
+      "expected": 1.8605
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R01.1",
+    "R01.6",
+    "R04.1",
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "H33": {
+     "flaggedRelative": [
+      "R01",
+      "R02",
+      "R04"
+     ],
+     "worst": [
+      {
+       "region": "R01",
+       "max": 0.02752,
+       "allowance": 0.01511,
+       "excess": 0.01241,
+       "flagged": true
+      },
+      {
+       "region": "R04",
+       "max": 0.02752,
+       "allowance": 0.01511,
+       "excess": 0.01241,
+       "flagged": true
+      },
+      {
+       "region": "R02",
+       "max": 0.0095,
+       "allowance": 0.00501,
+       "excess": 0.00449,
+       "flagged": true
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.04156,
+    "R02": 0.03669,
+    "R03": 0.04156,
+    "R04": 0.04156,
+    "R05": 0.00811,
+    "R06": 0.00811,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.00803
+   },
+   "regionShift": {
+    "R01": 0.01476,
+    "R02": 0.00629,
+    "R03": 0.0239,
+    "R04": 0.0239,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.0,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R03 measured: 2 changed (1 newly passing, 0 newly failing); R01 measured: 3 changed; R04 measured: 2 changed; no new seams flagged; containment over allowance in R01, R02, R04; picture change R01 0.0416, R03 0.0416, R04 0.0416",
+   "wallMinutes": 18.3
+  }
+ ],
+ "baseline": {
+  "head": "head-2932",
+  "body": "body-2960",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2932__body-2960",
+  "terms": {
+   "fitIou": 0.89119,
+   "fitIouByView": {
+    "front": 0.87628,
+    "left": 0.93295,
+    "back": 0.86433
+   },
+   "silhouetteChange": null,
+   "fitBand": "head",
+   "fitBandIou": 0.8907,
+   "stationDiff": 0.15288,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "V tilt, up-flared soft tips",
+   "why": "critic: tips are rounded ends, not up-flared points (R03.3, R03.4). Same crown sink and trim, plus a higher curl (2 to 7 degrees) and tip lift (.008 to .014) so each lock end turns up, and a tip-point fade (.5, floor .5) that tapers the end to a blunt soft point rather than a knob. No spikes: tip-min stays .005.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.022"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--curl",
+     "value": "7.0"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-lift",
+     "value": "0.014"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": "0.5"
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "H33"
+   ],
+   "total": -2.551,
+   "parts": {
+    "fit": 1.14,
+    "station": 1.145,
+    "contain": -0.481,
+    "seam": -5.672,
+    "progress": 1.317
+   },
+   "terms": {
+    "fitIou": 0.90259,
+    "fitIouByView": {
+     "front": 0.89248,
+     "left": 0.93174,
+     "back": 0.88355
+    },
+    "silhouetteChange": 0.03038,
+    "fitBand": "head",
+    "fitBandIou": 0.9008,
+    "stationDiff": 0.14143,
+    "seam": {
+     "worstRatio": 1.1344,
+     "at": "earFanRoot front kink",
+     "flagged": [
+      "earFanRoot front kink"
+     ]
+    },
+    "criteria": {
+     "R03.1": {
+      "region": "R03",
+      "value": 1.019,
+      "min": 0.97,
+      "max": 1.03,
+      "result": "pass"
+     },
+     "R03.2": {
+      "region": "R03",
+      "value": 0.0184,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.1": {
+      "region": "R04",
+      "value": 0.888,
+      "min": 0.9,
+      "max": null,
+      "result": "fail"
+     },
+     "R04.2": {
+      "region": "R04",
+      "value": 0.0513,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.6": {
+      "region": "R04",
+      "value": 1.044,
+      "min": null,
+      "max": 1.15,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.01992,
+    "containRegion": "R01",
+    "containExcess": 0.00481,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 1,
+     "closed": 0.0317,
+     "moved": true,
+     "rows": [
+      "R03.1 1.043->1.021 fail->pass",
+      "R04.1 0.8701->0.8873 fail->fail"
+     ]
+    }
+   },
+   "rank": 5,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "H33": "head-2983",
+    "H34": "head-2986",
+    "H35": "head-2988"
+   },
+   "contain": [
+    {
+     "step": "H33",
+     "max": 0.01992,
+     "region": "R01",
+     "excess": 0.00481,
+     "relativeFlagged": [
+      "R01",
+      "R02",
+      "R04"
+     ]
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2988__body-2960",
+   "head": "head-2988",
+   "body": "body-2960"
+  },
+  {
+   "id": "v02",
+   "name": "V tilt, tapered wing ends",
+   "why": "critic: each wing end is a rounded lobe. H33's existing --tip-wedge cuts each wing end through all depths to a V whose apex sits on the sheet's tip (L .034, R .060; apex |x| .268, start .232) before the locks are added, with the tip-point fade keeping the lock ends soft; the model L tip is .014 too high and R .011 too narrow at present. Crown sink .02 for the V tilt. Wing-end trim is smaller (.012) because the wedge already bounds the span.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-wedge",
+     "value": true
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-u",
+     "value": "0.232 0.268"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-apex-y",
+     "value": "0.034 0.060"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-bottom-y",
+     "value": "0.107 0.130"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": "0.5"
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v02.json",
+   "warnings": [],
+   "changedSteps": [
+    "H33"
+   ],
+   "total": -2.038,
+   "parts": {
+    "fit": 0.796,
+    "station": 0.754,
+    "contain": -0.481,
+    "seam": -3.301,
+    "progress": 0.194
+   },
+   "terms": {
+    "fitIou": 0.89915,
+    "fitIouByView": {
+     "front": 0.88608,
+     "left": 0.93466,
+     "back": 0.87671
+    },
+    "silhouetteChange": 0.01964,
+    "fitBand": "head",
+    "fitBandIou": 0.8979,
+    "stationDiff": 0.14534,
+    "seam": {
+     "worstRatio": 0.8125,
+     "at": "earFanRoot back kink",
+     "flagged": []
+    },
+    "criteria": {
+     "R03.1": {
+      "region": "R03",
+      "value": 1.034,
+      "min": 0.97,
+      "max": 1.03,
+      "result": "fail"
+     },
+     "R03.2": {
+      "region": "R03",
+      "value": 0.0162,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.1": {
+      "region": "R04",
+      "value": 0.8821,
+      "min": 0.9,
+      "max": null,
+      "result": "fail"
+     },
+     "R04.2": {
+      "region": "R04",
+      "value": 0.0504,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.6": {
+      "region": "R04",
+      "value": 1.044,
+      "min": null,
+      "max": 1.15,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.01992,
+    "containRegion": "R01",
+    "containExcess": 0.00481,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0194,
+     "moved": true,
+     "rows": [
+      "R03.1 1.043->1.036 fail->fail",
+      "R04.1 0.8701->0.8814 fail->fail"
+     ]
+    }
+   },
+   "rank": 4,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "H33": "head-2984",
+    "H34": "head-2987",
+    "H35": "head-2989"
+   },
+   "contain": [
+    {
+     "step": "H33",
+     "max": 0.01992,
+     "region": "R01",
+     "excess": 0.00481,
+     "relativeFlagged": [
+      "R01",
+      "R02",
+      "R04"
+     ]
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2989__body-2960",
+   "head": "head-2989",
+   "body": "body-2960"
+  },
+  {
+   "id": "v03",
+   "name": "strong V, flare and wedge",
+   "why": "larger move so a reader can see it in head-front: crown sink .03 (crown cleft at y .033, wings .03 above), the wedge ends and the up-flare together, with the full trim.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.03"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.022"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--curl",
+     "value": "7.0"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-lift",
+     "value": "0.014"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-wedge",
+     "value": true
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-u",
+     "value": "0.232 0.268"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-apex-y",
+     "value": "0.034 0.060"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-bottom-y",
+     "value": "0.107 0.130"
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v03.json",
+   "warnings": [],
+   "changedSteps": [
+    "H33"
+   ],
+   "total": -0.638,
+   "parts": {
+    "fit": 0.994,
+    "station": 1.097,
+    "contain": -1.241,
+    "seam": -2.802,
+    "progress": 1.314
+   },
+   "terms": {
+    "fitIou": 0.90113,
+    "fitIouByView": {
+     "front": 0.89182,
+     "left": 0.92845,
+     "back": 0.88313
+    },
+    "silhouetteChange": 0.0319,
+    "fitBand": "head",
+    "fitBandIou": 0.8995,
+    "stationDiff": 0.14191,
+    "seam": {
+     "worstRatio": 0.7486,
+     "at": "earFanRoot front wbump",
+     "flagged": []
+    },
+    "criteria": {
+     "R03.1": {
+      "region": "R03",
+      "value": 1.019,
+      "min": 0.97,
+      "max": 1.03,
+      "result": "pass"
+     },
+     "R03.2": {
+      "region": "R03",
+      "value": 0.0185,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.1": {
+      "region": "R04",
+      "value": 0.8877,
+      "min": 0.9,
+      "max": null,
+      "result": "fail"
+     },
+     "R04.2": {
+      "region": "R04",
+      "value": 0.0504,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.6": {
+      "region": "R04",
+      "value": 1.044,
+      "min": null,
+      "max": 1.15,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.02752,
+    "containRegion": "R01",
+    "containExcess": 0.01241,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 1,
+     "closed": 0.0314,
+     "moved": true,
+     "rows": [
+      "R03.1 1.043->1.021 fail->pass",
+      "R04.1 0.8701->0.887 fail->fail"
+     ]
+    }
+   },
+   "rank": 3,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "H33": "head-2985",
+    "H34": "head-2990",
+    "H35": "head-2991"
+   },
+   "contain": [
+    {
+     "step": "H33",
+     "max": 0.02752,
+     "region": "R01",
+     "excess": 0.01241,
+     "relativeFlagged": [
+      "R01",
+      "R02",
+      "R04"
+     ]
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2991__body-2960",
+   "head": "head-2991",
+   "body": "body-2960"
+  },
+  {
+   "id": "v04",
+   "name": "V tilt plus thin rear base",
+   "why": "pair: R04.1 (back IoU .870, overflow .145 extra at the wing ends and head base) and the R04 knobby-rim issue. r32 v03's rear thinning (drop LE/RE11 to 14, core inset .04, dome end .155, rear clumps .8 wide, dome blur 20) took R04.1 to .886 without loss but its front change was invisible; here it is paired with the visible V tilt (crown sink .02 with the .022 trim).",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.022"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skip",
+     "value": "LE12,LE13,LE14,RE12,RE13,RE14,LE11,RE11"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-inset",
+     "value": "0.012 0.04"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-ymax",
+     "value": "0.155"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--width-scale",
+     "value": "0.8"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "20"
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v04.json",
+   "warnings": [],
+   "changedSteps": [
+    "H33",
+    "H34"
+   ],
+   "total": 2.963,
+   "parts": {
+    "fit": 1.216,
+    "station": 2.296,
+    "contain": -0.481,
+    "seam": -1.422,
+    "progress": 1.354
+   },
+   "terms": {
+    "fitIou": 0.90335,
+    "fitIouByView": {
+     "front": 0.89201,
+     "left": 0.93087,
+     "back": 0.88716
+    },
+    "silhouetteChange": 0.03964,
+    "fitBand": "head",
+    "fitBandIou": 0.9015,
+    "stationDiff": 0.12992,
+    "seam": {
+     "worstRatio": 0.5333,
+     "at": "earFanRoot back needle",
+     "flagged": []
+    },
+    "criteria": {
+     "R03.1": {
+      "region": "R03",
+      "value": 1.027,
+      "min": 0.97,
+      "max": 1.03,
+      "result": "pass"
+     },
+     "R03.2": {
+      "region": "R03",
+      "value": 0.023,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.1": {
+      "region": "R04",
+      "value": 0.8913,
+      "min": 0.9,
+      "max": null,
+      "result": "fail"
+     },
+     "R04.2": {
+      "region": "R04",
+      "value": 0.0496,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.6": {
+      "region": "R04",
+      "value": 1.044,
+      "min": null,
+      "max": 1.15,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.01992,
+    "containRegion": "R01",
+    "containExcess": 0.00481,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 1,
+     "closed": 0.0354,
+     "moved": true,
+     "rows": [
+      "R03.1 1.043->1.029 fail->pass",
+      "R04.1 0.8701->0.8906 fail->fail"
+     ]
+    }
+   },
+   "rank": 1,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "H33": "head-2992",
+    "H34": "head-2994",
+    "H35": "head-2996"
+   },
+   "contain": [
+    {
+     "step": "H33",
+     "max": 0.01992,
+     "region": "R01",
+     "excess": 0.00481,
+     "relativeFlagged": [
+      "R01",
+      "R02",
+      "R04"
+     ]
+    },
+    {
+     "step": "H34",
+     "max": 0.03061,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": [
+      "R05"
+     ]
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2996__body-2960",
+   "head": "head-2996",
+   "body": "body-2960"
+  },
+  {
+   "id": "v05",
+   "name": "V tilt, wedge ends, rear without crown tufts",
+   "why": "pair, distinct rear idea: the knobs and pegs along the back rim are the C crown tuft clumps and the lowest E locks; drop the C row (rows K,I,M,T,E) and the six lowest E locks so the back view top edge is one smooth dome (R04.3, R04.4), with the tapered ends of the wedge variant in front.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.012"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-wedge",
+     "value": true
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-u",
+     "value": "0.232 0.268"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-apex-y",
+     "value": "0.034 0.060"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-bottom-y",
+     "value": "0.107 0.130"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": "0.5"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skip",
+     "value": "LE12,LE13,LE14,RE12,RE13,RE14"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-ymax",
+     "value": "0.160"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-inset",
+     "value": "0.012 0.03"
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v05.json",
+   "warnings": [],
+   "changedSteps": [
+    "H33",
+    "H34"
+   ],
+   "total": 2.122,
+   "parts": {
+    "fit": 0.804,
+    "station": 1.76,
+    "contain": -0.481,
+    "seam": -0.203,
+    "progress": 0.242
+   },
+   "terms": {
+    "fitIou": 0.89923,
+    "fitIouByView": {
+     "front": 0.88302,
+     "left": 0.93481,
+     "back": 0.87985
+    },
+    "silhouetteChange": 0.0352,
+    "fitBand": "head",
+    "fitBandIou": 0.8991,
+    "stationDiff": 0.13528,
+    "seam": {
+     "worstRatio": 0.2014,
+     "at": "earFanRoot front wbump",
+     "flagged": []
+    },
+    "criteria": {
+     "R03.1": {
+      "region": "R03",
+      "value": 1.034,
+      "min": 0.97,
+      "max": 1.03,
+      "result": "fail"
+     },
+     "R03.2": {
+      "region": "R03",
+      "value": 0.0279,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.1": {
+      "region": "R04",
+      "value": 0.8865,
+      "min": 0.9,
+      "max": null,
+      "result": "fail"
+     },
+     "R04.2": {
+      "region": "R04",
+      "value": 0.0509,
+      "min": null,
+      "max": 0.06,
+      "result": "pass"
+     },
+     "R04.6": {
+      "region": "R04",
+      "value": 1.044,
+      "min": null,
+      "max": 1.15,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.01992,
+    "containRegion": "R01",
+    "containExcess": 0.00481,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0242,
+     "moved": true,
+     "rows": [
+      "R03.1 1.043->1.036 fail->fail",
+      "R04.1 0.8701->0.8858 fail->fail"
+     ]
+    }
+   },
+   "rank": 2,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "H33": "head-2984",
+    "H34": "head-2993",
+    "H35": "head-2995"
+   },
+   "contain": [
+    {
+     "step": "H33",
+     "max": 0.01992,
+     "region": "R01",
+     "excess": 0.00481,
+     "relativeFlagged": [
+      "R01",
+      "R02",
+      "R04"
+     ]
+    },
+    {
+     "step": "H34",
+     "max": 0.03055,
+     "region": "R01",
+     "excess": 0.0,
+     "relativeFlagged": [
+      "R05"
+     ]
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2995__body-2960",
+   "head": "head-2995",
+   "body": "body-2960"
+  }
+ ],
+ "scoringSeconds": 2327.7,
+ "wallMinutes": 61.7,
+ "surfaceStats": true,
+ "created": "2026-10-08T16:44:15",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r34-R03-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r34-R03-plan-result.png"
+ ]
+}

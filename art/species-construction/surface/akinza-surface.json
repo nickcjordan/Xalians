@@ -37,7 +37,7 @@
     "body": {
       "everywhere": true,
       "priority": 0.05,
-      "length": 0.009,
+      "length": 0.014,
       "density": 1.0,
       "clump": 0.08,
       "curl": 0.05,
@@ -49,7 +49,7 @@
       ],
       "priority": 0.4,
       "margin": 0.03,
-      "length": 0.011,
+      "length": 0.013,
       "density": 1.0,
       "clump": 0.08,
       "curl": 0.05,
@@ -61,7 +61,7 @@
       ],
       "priority": 0.4,
       "margin": 0.02,
-      "length": 0.011,
+      "length": 0.013,
       "density": 1.0,
       "clump": 0.08,
       "curl": 0.05,
@@ -73,7 +73,7 @@
       ],
       "priority": 0.45,
       "margin": 0.02,
-      "length": 0.01,
+      "length": 0.012,
       "density": 1.0,
       "clump": 0.08,
       "curl": 0.05,
@@ -85,7 +85,7 @@
       ],
       "priority": 0.45,
       "margin": 0.02,
-      "length": 0.01,
+      "length": 0.015,
       "density": 1.0,
       "clump": 0.08,
       "curl": 0.05,
@@ -179,7 +179,6 @@
     },
     "ears": {
       "zones": [
-        "R03",
         "R04"
       ],
       "priority": 0.9,
@@ -188,7 +187,22 @@
       "density": 1.0,
       "clump": 0.08,
       "curl": 0.12,
-      "comb": "ear"
+      "comb": "ear",
+      "box": {
+        "at": [
+          0.0,
+          0.2
+        ],
+        "x": [
+          0.085,
+          0.3
+        ],
+        "symmetricX": true,
+        "y": [
+          -0.12,
+          0.07
+        ]
+      }
     },
     "tails": {
       "zones": [
@@ -239,8 +253,8 @@
     "hairGray": 0.38,
     "hairPale": 1.0,
     "rootDarken": 0.72,
-    "skinGray": 0.38,
-    "skinPale": 0.85,
+    "skinGray": 0.2,
+    "skinPale": 0.5,
     "hairRoughness": 0.45,
     "radialRoughness": 0.6
   },
@@ -256,7 +270,23 @@
   "cup": {
     "normalMin": -0.05,
     "normalSpan": 0.4,
-    "strength": 0.95
+    "strength": 0.95,
+    "box": {
+      "at": [
+        0.0,
+        0.2
+      ],
+      "x": [
+        0.1,
+        0.3
+      ],
+      "symmetricX": true,
+      "y": [
+        -0.12,
+        0.07
+      ]
+    },
+    "margin": 0.02
   },
   "chestPale": {
     "box": {

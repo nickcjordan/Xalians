@@ -483,14 +483,16 @@
         "--tuft-tip-min", "0.004", "0.004",
         "--tuft-section-p", "2.4",
         "--tuft-aim", "0.45",
-        "--crown-sink", "0.01",
+        "--crown-sink", "0.02",
         "--cup-clip-smooth", "0.016",
         "--lock-blend", "0.032",
         "--blend", "0.03",
         "--bandwidth", "26",
         "--tuft-blur", "1.5",
         "--tuft-blend", "0.008",
-        "--tuft-skull-blend", "0.03"
+        "--tuft-skull-blend", "0.03",
+        "--tip-trim", "0.022",
+        "--trim-from", "0.17"
       ],
       "existing": "head-0455",
       "note": "loop round 16, R03 final fan front (chain 0443 to 0455 inherited parameters only; the geometry always starts from head-0395); flags from the recorded namespace, equal to scratch-r16/cmd0455.json",
@@ -531,12 +533,15 @@
         "--samples", "90",
         "--section-p", "2.0",
         "--k-flat-root",
-        "--width-scale", "0.9",
+        "--width-scale", "0.8",
         "--strip-cut-smooth", "5",
         "--tip-min", "0.005",
         "--blur", "3",
-        "--dome-blur", "14",
-        "--bandwidth", "26"
+        "--dome-blur", "20",
+        "--bandwidth", "26",
+        "--skip", "LE12,LE13,LE14,RE12,RE13,RE14,LE11,RE11",
+        "--core-inset", "0.012", "0.04",
+        "--dome-ymax", "0.155"
       ],
       "note": "loop round 20, R04 rear ear fan as a clump volume (rebased from r17): leaf-shaped locks (taper .55), ellipse sections, K ridge swept down and out, softer crease; specs/R04.md",
       "pins": {
@@ -1049,7 +1054,7 @@
   },
   "derivedFrom": {
     "recipe": "docs/design/species-construction/akinza/recipe.json",
-    "sha256": "0a5994e5a25836ddec2dbf9247de8b00c6d42ab7f00b6bda3b080a5cf9cd3672",
+    "sha256": "ef336473b3838565d0ebbf3884f57a59bdcd299d71c92549bdd6079c525354f8",
     "steps": {
       "H24": {
         "script": "feef615941aa2a663965ab1db366f0cf85e9669291bacb2aa28d0c523ffa375a",
@@ -1257,11 +1262,20 @@
         "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
         "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
         "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-24Y": {
+        "script": "880c50d877b860f86bd1c820fa5c51821a9b9234dfb4d359b3ac5ea4c359717d",
+        "args": "7cb53a70a889521c09e3a877680b0d24873091784fa02cee5e95997fd4f7e6bd",
+        "inputs": "be8a4683c30cb9322efd2c51d5f87dfb4337fe07e92c5b053db52ea92a61f69b",
+        "regions": "eea3c2dc4fedb2d5889db86dea4c29cff7d27325db03fe64381da1680071a6bd",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
       }
     },
     "assembly": {
       "head": "cb20c7e1b7b18facd4eeb995f3b7420000f335d47194c343cc8cc0ff44df4a6c",
-      "body": "d7223e532c340c3c5af64dc42c6463cd1d3f1ead9ed94f0bfe3de2e54d251faf",
+      "body": "08c91fbf7862dcc7da8ce855687ea03ed01eef0f4e105667d14f5c718579bc8e",
       "args": "31dedb1fb76701839d3fb4267b3c1cae38464ba1f4705582475db014acfcedbf"
     }
   },
