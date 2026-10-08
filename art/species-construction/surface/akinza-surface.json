@@ -222,9 +222,10 @@
     "note": "Distance (world units) from these objects over which density ramps from zero to full.",
     "eyes": {
       "match": "head_eye_globe",
-      "inner": 0.0085,
-      "outer": 0.012,
-      "frontOnly": 0.2
+      "inner": 0.0045,
+      "outer": 0.008,
+      "frontOnly": 0.2,
+      "maxLength": 0.004
     },
     "nose": {
       "match": "head_nose",
@@ -250,9 +251,9 @@
   "paleSmoothing": 60,
   "paleSlot": 1,
   "materials": {
-    "hairGray": 0.44,
+    "hairGray": 0.33,
     "hairPale": 1.0,
-    "rootDarken": 0.72,
+    "rootDarken": 0.8,
     "skinGray": 0.24,
     "skinPale": 0.85,
     "hairRoughness": 0.45,
@@ -270,7 +271,7 @@
   "cup": {
     "normalMin": -0.05,
     "normalSpan": 0.4,
-    "strength": 0.95,
+    "strength": 1.0,
     "box": {
       "at": [
         0.0,
@@ -304,7 +305,9 @@
       ],
       "symmetricX": true
     },
-    "margin": 0.05,
-    "strength": 0.95
-  }
+    "margin": 0.08,
+    "strength": 1.0
+  },
+  "paleFinalSmoothing": 80,
+  "paleFinalGain": 1.4
 }

@@ -183,6 +183,7 @@ def compute_attributes(skin, cfg, species):
     cb = cfg['chestPale']
     chest = membership(co, cb['box'], floor, height, cb['margin'])*cb['strength']
     pale = np.maximum(pale, chest)
+    pale = np.clip(edge_smooth(pale, edges, n, cfg.get('paleFinalSmoothing', 0))*cfg.get('paleFinalGain', 1.0), 0, 1)
     print('pale vertices >0.5:', int((pale > 0.5).sum()), 'of', n)
 
     # keep-outs: distance to eyes, nose, mouth, claws
@@ -216,11 +217,20 @@ def compute_attributes(skin, cfg, species):
         for i, p in enumerate(pts):
             tree.insert(Vector(p), i)
         tree.balance()
+        nearest = np.zeros((n, 3))
         for i in cand:
-            near[i] = tree.find(Vector(co[i]))[2]
+            hit = tree.find(Vector(co[i]))
+            near[i] = hit[2]
+            nearest[i] = hit[0]
         ramp = smoothstep((near-ko['inner'])/max(ko['outer']-ko['inner'], 1e-6))
         density *= ramp
-        length *= cfg['keepOut'].get('lengthFloor', 1.0)+(1.0-cfg['keepOut'].get('lengthFloor', 1.0))*ramp
+        if 'maxLength' in ko:
+            length = np.minimum(length, ko['maxLength']+0.05*ramp)
+            away = unit(co-nearest)
+            wgt = (1.0-ramp)[:, None]
+            comb = unit(comb*(1.0-wgt)+away*wgt)
+        else:
+            length *= cfg['keepOut'].get('lengthFloor', 1.0)+(1.0-cfg['keepOut'].get('lengthFloor', 1.0))*ramp
         print(f'keepout {key}: {len(pts)} points, {len(cand)} skin vertices touched')
 
     pad = ((co[:, 2] < floor+cfg['pads']['belowFloor']) & (nrm[:, 2] < cfg['pads']['normalZ'])).astype(float)
