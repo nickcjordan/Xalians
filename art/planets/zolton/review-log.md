@@ -79,3 +79,5 @@ Bloodstorm a pinkish smeared swirl on a red crescent; sprites as red pills on th
 Five reviews in a row scored 4.5 to 5 while each fixed its predecessor's list, which is the plateau the critic-loop notes predict; the rest is taste for Nick. Fixed: every map blur now wraps east to west (the vertical edge in the current is gone); the bloodstorms are storm grey with red capped at 0.35 and only in the gaps; sprites ride with the lit storm, so the night hides them, and keep out of the eye; black lightning has two arms with one level of forks and a darker core.
 
 Nick, 2026-10-06: "much better, although when nothing but bloodstorm is checked, i dont see bloodstorm". The bloodstorms had become part of the cloud map in round 4, so the Storm clouds switch hid them. The storm is now split into the white storms and the bloodstorms (two pictures from the same cloud), each with its own switch; black lightning has its own group too. Checked by paint with only Bloodstorm on.
+
+Nick, 2026-10-07: "ok yeah I think that looks great". Zolton approved as the quality bar for the living planets.
