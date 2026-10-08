@@ -187,6 +187,7 @@ def compute_attributes(skin, cfg, species):
     print('pale vertices >0.5:', int((pale > 0.5).sum()), 'of', n)
 
     # keep-outs: distance to eyes, nose, mouth, claws
+    rim = np.zeros(n)
     for key, ko in cfg['keepOut'].items():
         if not isinstance(ko, dict):
             continue
@@ -222,6 +223,8 @@ def compute_attributes(skin, cfg, species):
             hit = tree.find(Vector(co[i]))
             near[i] = hit[2]
             nearest[i] = hit[0]
+        if key == 'eyes' and 'rim' in cfg:
+            rim = 1.0-smoothstep((near-cfg['rim']['width'])/cfg['rim']['soft'])
         ramp = smoothstep((near-ko['inner'])/max(ko['outer']-ko['inner'], 1e-6))
         density *= ramp
         if 'maxLength' in ko:
@@ -243,6 +246,7 @@ def compute_attributes(skin, cfg, species):
     write_attribute(me, 'fur_clump', clump)
     write_attribute(me, 'fur_curl', curl)
     write_attribute(me, 'pale', pale)
+    write_attribute(me, 'rim', rim)
     write_attribute(me, 'fur_tone', blend('tone', 1.0))
     write_attribute(me, 'pad', pad)
     write_attribute(me, 'comb', comb, 'FLOAT_VECTOR')
@@ -454,10 +458,15 @@ def hair_material(cfg):
     mul.blend_type = 'MULTIPLY'
     mul.inputs[0].default_value = 1.0
     tree.links.new(base, mul.inputs[6])
+    relief = tree.nodes.new('ShaderNodeMix')
+    relief.data_type = 'FLOAT'
+    tree.links.new(pale.outputs['Fac'], relief.inputs[0])
+    tree.links.new(ramp.outputs['Result'], relief.inputs[2])
+    relief.inputs[3].default_value = 1.0
     tone = attr_node(tree, 'fur_tone')
     tmul = tree.nodes.new('ShaderNodeMath')
     tmul.operation = 'MULTIPLY'
-    tree.links.new(ramp.outputs['Result'], tmul.inputs[0])
+    tree.links.new(relief.outputs[0], tmul.inputs[0])
     tree.links.new(tone.outputs['Fac'], tmul.inputs[1])
     tree.links.new(tmul.outputs['Value'], mul.inputs[7])
     hair = tree.nodes.new('ShaderNodeBsdfHairPrincipled')
@@ -489,10 +498,15 @@ def skin_material(mat, cfg, always_pale):
         tree.links.new(gray_mix(tree, pale.outputs['Fac'], mc['skinGray'], mc['skinPale']), bsdf.inputs['Base Color'])
     bsdf.inputs['Roughness'].default_value = 0.8
     pad_bsdf = tree.nodes.new('ShaderNodeBsdfPrincipled')
-    pad_bsdf.inputs['Base Color'].default_value = (0.03, 0.03, 0.03, 1)
-    pad_bsdf.inputs['Roughness'].default_value = 0.25
+    pad_bsdf.inputs['Base Color'].default_value = (0.04, 0.04, 0.04, 1)
+    pad_bsdf.inputs['Roughness'].default_value = 0.4
     mixs = tree.nodes.new('ShaderNodeMixShader')
-    tree.links.new(pad.outputs['Fac'], mixs.inputs[0])
+    rim = attr_node(tree, 'rim')
+    both = tree.nodes.new('ShaderNodeMath')
+    both.operation = 'MAXIMUM'
+    tree.links.new(pad.outputs['Fac'], both.inputs[0])
+    tree.links.new(rim.outputs['Fac'], both.inputs[1])
+    tree.links.new(both.outputs['Value'], mixs.inputs[0])
     tree.links.new(bsdf.outputs['BSDF'], mixs.inputs[1])
     tree.links.new(pad_bsdf.outputs['BSDF'], mixs.inputs[2])
     out = tree.nodes.new('ShaderNodeOutputMaterial')

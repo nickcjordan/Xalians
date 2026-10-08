@@ -251,9 +251,9 @@
   "paleSmoothing": 60,
   "paleSlot": 1,
   "materials": {
-    "hairGray": 0.33,
-    "hairPale": 1.0,
-    "rootDarken": 0.8,
+    "hairGray": 0.4,
+    "hairPale": 1.7,
+    "rootDarken": 0.85,
     "skinGray": 0.24,
     "skinPale": 0.85,
     "hairRoughness": 0.45,
@@ -269,8 +269,8 @@
   "groupPaleGain": 1.8,
   "paleSlotMaxAt": 0.3,
   "cup": {
-    "normalMin": -0.05,
-    "normalSpan": 0.4,
+    "normalMin": -0.3,
+    "normalSpan": 0.3,
     "strength": 1.0,
     "box": {
       "at": [
@@ -308,6 +308,10 @@
     "margin": 0.08,
     "strength": 1.0
   },
-  "paleFinalSmoothing": 80,
-  "paleFinalGain": 1.4
+  "paleFinalSmoothing": 25,
+  "paleFinalGain": 2.0,
+  "rim": {
+    "width": 0.005,
+    "soft": 0.0015
+  }
 }
