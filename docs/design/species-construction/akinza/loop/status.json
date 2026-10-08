@@ -1489,13 +1489,15 @@
    "region": "R03",
    "round": 28,
    "evidence": "untracked/species-construction/akinza/loop/packets/assembled-2848/reader-pack",
-   "question": "Ear fan (R03 front, R04 rear): what should the fur read as? Three methods and three tools since round 21 (164M tokens) kept nothing. Options seen so far: clumped volumes, swept locks, a post-assembly finish, and next a parametric pinna shell. The fan waits until you pick an idiom or say to set it aside."
+   "question": "Ear fan (R03 front, R04 rear): what should the fur read as? Three methods and three tools since round 21 (164M tokens) kept nothing. Options seen so far: clumped volumes, swept locks, a post-assembly finish, and next a parametric pinna shell. The fan waits until you pick an idiom or say to set it aside.",
+   "answer": "Nick 2026-10-08: tone the spikiness down a little and rely on the fur texture added later instead of building fur out of shapes. The fan keeps its outline, V tilt, cups and pale inner tufts as soft masses; no new lock geometry.",
+   "answered": "2026-10-08",
+   "frees": [
+    "R04"
+   ]
   }
  ],
- "awaiting": {
-  "R03": "fur idiom for the ear fan (audit 2026-10-07 recommendation 3)",
-  "R04": "fur idiom for the ear fan, paired with R03"
- },
+ "awaiting": {},
  "disputes": {},
  "escalated": false,
  "keptSinceCold": 0,

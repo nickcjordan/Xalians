@@ -221,6 +221,9 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
     if status.get('tools'):
         # drop a carried tool the method plan has replaced, so the toolsmith builds the new one
         replaced = {t['region'] for t in (tools or []) if t.get('replaces') or t.get('built')}
+        # v3.14: a method whose steps begin "retune" uses no tool, so its region's old starter is not handed to the planner
+        # (Nick 2026-10-08 moved the ear fan from lock tools to retuning H33 and H34)
+        replaced |= {rid for rid in status['tools'] if str(method_steps(d['loop'], rid) or '').strip().lower().startswith('retune')}
         slim['tools'] = {rid: t for rid, t in status['tools'].items() if rid not in replaced}
     if status.get('keptSinceAudit'):
         slim['keptSinceAudit'] = status['keptSinceAudit']
@@ -348,9 +351,17 @@ def merge_status(full, returned, d, species):
         if k in returned:
             S[k] = returned[k]
     if 'decisions' in returned:
-        # answered items stay; the returned list carries every open item (an answer given in the run, by a pin, included)
+        # answered items stay; the returned list carries every open item (an answer given in the run, by a pin, included).
+        # An item Nick answered while the run was going (loop_state.py answer) keeps his answer: the run still returns it open
+        stored = {d.get('key'): d for d in (S.get('decisions') or []) if d.get('answer')}
         got = {d.get('key'): d for d in returned['decisions']}
-        S['decisions'] = [d for d in (S.get('decisions') or []) if d.get('answer') and d.get('key') not in got] + returned['decisions']
+        late = {k for k, d in got.items() if k in stored and not d.get('answer')}
+        S['decisions'] = [d for k, d in stored.items() if k not in got or k in late] + [d for k, d in got.items() if k not in late]
+        for k in late:
+            if stored[k].get('region') and stored[k].get('answer'):
+                (S.get('awaiting') or {}).pop(stored[k]['region'], None)
+                for partner in stored[k].get('frees') or []:
+                    (S.get('awaiting') or {}).pop(partner, None)
     # v3.5: each tool's reader check goes into its record, which the next args reads for readiness
     for rid, check in (returned.get('toolChecks') or {}).items():
         rec = d['loop'] / 'tools' / f'{rid}.json'
@@ -408,8 +419,11 @@ def cmd_answer(a):
     for x in hit:
         x['answer'] = a.text
         x['answered'] = date.today().isoformat()
+        if a.frees:
+            x['frees'] = a.frees.split(',')
         if x.get('region') and not a.keep_waiting:
-            (S.get('awaiting') or {}).pop(x['region'], None)
+            for r in [x['region']] + (x.get('frees') or []):
+                (S.get('awaiting') or {}).pop(r, None)
     write_status(S, status_path)
     print(f"answered {len(hit)} item(s): " + ', '.join(x['key'] for x in hit))
 
@@ -536,6 +550,7 @@ def main(argv=None):
     p.set_defaults(fn=cmd_merge)
     p = sub.add_parser('answer'); p.add_argument('species'); p.add_argument('item', help='decision key or region id'); p.add_argument('text')
     p.add_argument('--keep-waiting', action='store_true'); p.add_argument('--status')
+    p.add_argument('--frees', help='other regions the answer frees, comma-separated (a pair: R03 frees R04)')
     p.set_defaults(fn=cmd_answer)
     p = sub.add_parser('replay'); p.add_argument('species'); p.add_argument('journal')
     p.add_argument('--partial', action='store_true', help='also replay a last round whose builders and critics finished but whose record did not')

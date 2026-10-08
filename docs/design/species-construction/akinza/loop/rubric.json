@@ -182,7 +182,7 @@
    {
     "id": "R03.4",
     "kind": "visual",
-    "text": "The fan front is built from large shaggy pointed locks radiating from the ear roots (roughly 8 to 10 per side), not knobs, thorns, scales, shingles or lumps",
+    "text": "The fan front reads as soft fur masses radiating from the ear roots, with only a few gentle points at the edge; fur detail comes from the later texture pass, not from modeled locks. Fails on thorns, hard serrations, scales, shingles, knobs or lumps (Nick 2026-10-08: tone the spikiness down and rely on the fur texture)",
     "images": [
      "m04 head-front",
      "m05 head-three-quarter",
@@ -212,7 +212,7 @@
    {
     "id": "R03.7",
     "kind": "visual",
-    "text": "Gestalt (added 2026-09-30 from gap-audit-0226.md): each ear cup is filled by a pale, fluffy, pointed inner tuft covering at least half of the cup in the front view, and the fan edge is a run of pointed locks with no crinkled rim, thorn or flat leaf plane anywhere",
+    "text": "Gestalt (added 2026-09-30 from gap-audit-0226.md; edge clause softened 2026-10-08 by Nick's fur ruling): each ear cup is filled by a pale, soft inner tuft covering at least half of the cup in the front view, and the fan edge is a soft, gently pointed outline with no crinkles, seams or serrations",
     "images": [
      "m02 front",
      "m04 head-front",
@@ -245,7 +245,7 @@
    {
     "id": "R04.3",
     "kind": "visual",
-    "text": "From behind, the fan is one soft shaggy mass whose locks flow down and outward from a crown tuft, with no bowl rim, lattice, tiles, teeth or seams",
+    "text": "From behind, the fan is one soft mass flowing down and outward from the crown, with no bowl rim, lattice, tiles, teeth or seams; fur detail is left to the later texture pass (Nick 2026-10-08)",
     "images": [
      "m04 head-back",
      "m05 head-rear-oblique",
@@ -256,7 +256,7 @@
    {
     "id": "R04.4",
     "kind": "visual",
-    "text": "The top edge rises spiky toward the tips and domes toward the crown; from above and behind it does not read as a flat tray",
+    "text": "The top edge rises toward softly pointed tips and domes toward the crown; from above and behind it does not read as a flat tray",
     "images": [
      "m03 turn-135",
      "m03 turn-225",
@@ -267,7 +267,7 @@
    {
     "id": "R04.5",
     "kind": "visual",
-    "text": "In profile the fan sweeps up and back as a curved shell of locks around a visible cavity, with no slabs, pins, picket or seam",
+    "text": "In profile the fan sweeps up and back as a curved soft shell around a visible cavity, with no slabs, pins, picket or seam",
     "images": [
      "m04 head-side",
      "m02 left",
@@ -288,7 +288,7 @@
    {
     "id": "R04.7",
     "kind": "visual",
-    "text": "Gestalt (added 2026-09-30 from gap-audit-0226.md): in the back and rear oblique views the fan's back is covered in down-and-outward locks with no smooth area larger than one lock, and nothing reads as a bowl, cup, basin rim or mushroom",
+    "text": "Gestalt (added 2026-09-30 from gap-audit-0226.md; rewritten 2026-10-08 by Nick's fur ruling): in the back and rear oblique views the fan's back is a soft rounded mass whose form flows down and outward, with no ledge or ragged rim where it meets the head dome, and nothing reads as a bowl, cup, basin, plate or shield",
     "images": [
      "m02 back",
      "m04 head-back",
