@@ -236,12 +236,23 @@ class Namer:
         return max([int(m.group(1)) for p in self.work.iterdir() if (m := NUMBER.match(p.name))] or [0])
 
     def take(self, prefix):
+        # round 28: two candidate processes of one plan both named their pre-post assembly assembled-2834 (the
+        # lock above is per process), and the second died with FileExistsError. The number is now taken across
+        # processes the way loop_tools next-number --reserve takes it: an exclusive create of reserved-NNNN.txt,
+        # which stays, so the number is never handed out twice whatever prefix asks for it
         with LOCK:
-            name = f'{prefix}-{self._highest()+1:04d}'
-            (self.work/f'{name}.reserved').write_text(str(os.getpid()))
-            return name
+            while True:
+                n = self._highest()+1
+                try:
+                    fd = os.open(self.work/f'reserved-{n:04d}.txt', os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                except FileExistsError:
+                    continue
+                os.write(fd, str(os.getpid()).encode())
+                os.close(fd)
+                return f'{prefix}-{n:04d}'
 
     def release(self, name):
+        # the reserved-NNNN.txt marker stays (see take); older runs left <name>.reserved markers
         (self.work/f'{name}.reserved').unlink(missing_ok=True)
 
 

@@ -1,7 +1,8 @@
 """Loop state: slim workflow arguments, merging a workflow result back, replaying a stopped run.
 
     python loop_state.py args <species> [--rounds N] [--cold] [--rubric-texts]
-    python loop_state.py merge <species> <workflow result.json> [--note TEXT]
+    python loop_state.py merge <species> <workflow result.json> [--note TEXT] [--auto-note]
+    python loop_state.py answer <species> <decision key or region> TEXT [--keep-waiting]
     python loop_state.py replay <species> <journal.jsonl> [--partial] [--no-refresh]
 
 `args` writes <species>/loop/args.json: the species config, limits, baseline (with the
@@ -223,6 +224,18 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         slim['tools'] = {rid: t for rid, t in status['tools'].items() if rid not in replaced}
     if status.get('keptSinceAudit'):
         slim['keptSinceAudit'] = status['keptSinceAudit']
+    # v3.13: the decision queue (open items only; answered ones stay in status.json), the regions waiting on it, the
+    # reader-critic disputes per criterion, the plateau escalation and the keeps since the last cold rescore
+    open_items = [d for d in (status.get('decisions') or []) if not d.get('answer')]
+    if open_items:
+        slim['decisions'] = open_items
+    for k in ('awaiting', 'disputes'):
+        if status.get(k):
+            slim[k] = status[k]
+    if status.get('escalated'):
+        slim['escalated'] = True
+    if status.get('keptSinceCold'):
+        slim['keptSinceCold'] = status['keptSinceCold']
     if status.get('auditGaps'):
         slim['auditGaps'] = [{'rank': g['rank'], 'region': g['region'], 'gap': trim(g['gap'], 220), 'structural': bool(g.get('structural'))} for g in status['auditGaps']]
     if rubric_texts:
@@ -251,10 +264,9 @@ def dump_compact(obj):
 
 def cmd_args(a):
     args = build_args(a.species, a.rounds, a.cold, a.rubric_texts, a.status)
-    if a.start_clock:
-        # v3.12: the round budget (limits.roundSeconds) is measured from here; agents report the time as they return
-        import time as _time
-        args['startedAt'] = int(_time.time())
+    if a.tool_go:
+        # v3.13 (limits.toolApproval): Nick's go for building the tool of these regions
+        args['toolGo'] = list(a.tool_go)
     if a.pin:
         # an order Nick approved for the first round of this batch (round 26: the face's new method), in place of the
         # picked order of the same component; the rest of the pick is unchanged
@@ -331,9 +343,14 @@ def merge_status(full, returned, d, species):
                         b[part] = m.group(1)
         S['baseline'] = b
     # state the workflow changes round to round: the returned value always wins
-    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means', 'keptLog', 'toolBlocked'):
+    for k in ('audit', 'auditGaps', 'tools', 'keptSinceAudit', 'lastOrders', 'invariants', 'means', 'keptLog', 'toolBlocked',
+              'awaiting', 'disputes', 'escalated', 'keptSinceCold'):
         if k in returned:
             S[k] = returned[k]
+    if 'decisions' in returned:
+        # answered items stay; the returned list carries every open item (an answer given in the run, by a pin, included)
+        got = {d.get('key'): d for d in returned['decisions']}
+        S['decisions'] = [d for d in (S.get('decisions') or []) if d.get('answer') and d.get('key') not in got] + returned['decisions']
     # v3.5: each tool's reader check goes into its record, which the next args reads for readiness
     for rid, check in (returned.get('toolChecks') or {}).items():
         rec = d['loop'] / 'tools' / f'{rid}.json'
@@ -364,12 +381,37 @@ def cmd_merge(a):
     returned = result.get('status') or result.get('state') or result
     status_path = Path(a.status) if a.status else d['loop'] / 'status.json'
     S = merge_status(read_json(status_path), returned, d, a.species)
+    if a.auto_note:
+        # audit 2026-10-07 bug 11: the round's verdicts come from its record, never from a hand-written summary
+        import loop_report
+        line = loop_report.note(d['loop'], S.get('round'))
+        if line:
+            S.setdefault('notes', []).append(f"{date.today().isoformat()}: {line}")
     if a.note:
         S.setdefault('notes', []).append(a.note)
     out = Path(a.out) / 'status.json' if a.out else status_path
     out.parent.mkdir(parents=True, exist_ok=True)
     write_status(S, out)
     print(f"merged round {S.get('round')} into {out}; milestone {result.get('milestone')!r}, mean {result.get('mean')}")
+
+
+def cmd_answer(a):
+    """Record Nick's answer to an open decision (v3.13): the item keeps the answer, and its region leaves `awaiting` so the
+    next pick may order it again. --keep-waiting records the answer but leaves the region out (a "set it aside")."""
+    d = species_dirs(a.species)
+    status_path = Path(a.status) if a.status else d['loop'] / 'status.json'
+    S = read_json(status_path)
+    items = [x for x in (S.get('decisions') or []) if not x.get('answer')]
+    hit = [x for x in items if x.get('key') == a.item or x.get('region') == a.item]
+    if not hit:
+        raise SystemExit(f'no open decision matches {a.item!r}; open: ' + ', '.join(x.get('key', '?') for x in items))
+    for x in hit:
+        x['answer'] = a.text
+        x['answered'] = date.today().isoformat()
+        if x.get('region') and not a.keep_waiting:
+            (S.get('awaiting') or {}).pop(x['region'], None)
+    write_status(S, status_path)
+    print(f"answered {len(hit)} item(s): " + ', '.join(x['key'] for x in hit))
 
 
 # ---- replay -----------------------------------------------------------------------------------
@@ -486,11 +528,15 @@ def main(argv=None):
     p = sub.add_parser('args'); p.add_argument('species'); p.add_argument('--rounds', type=int); p.add_argument('--cold', action='store_true')
     p.add_argument('--rubric-texts', action='store_true', help='include criterion texts (what the v2 workflow prompts need)')
     p.add_argument('--status'); p.add_argument('--out')
-    p.add_argument('--start-clock', action='store_true', help='stamp startedAt so the workflow can hold the round to limits.roundSeconds')
+    p.add_argument('--tool-go', action='append', help="Nick's go to build the tool of this region (limits.toolApproval; repeatable)")
     p.add_argument('--pin', action='append', help='order this region in the first round, in place of the pick for its component (repeatable)')
     p.set_defaults(fn=cmd_args)
     p = sub.add_parser('merge'); p.add_argument('species'); p.add_argument('result'); p.add_argument('--note'); p.add_argument('--status'); p.add_argument('--out')
+    p.add_argument('--auto-note', action='store_true', help="append the round's note generated from its record (loop_report.py)")
     p.set_defaults(fn=cmd_merge)
+    p = sub.add_parser('answer'); p.add_argument('species'); p.add_argument('item', help='decision key or region id'); p.add_argument('text')
+    p.add_argument('--keep-waiting', action='store_true'); p.add_argument('--status')
+    p.set_defaults(fn=cmd_answer)
     p = sub.add_parser('replay'); p.add_argument('species'); p.add_argument('journal')
     p.add_argument('--partial', action='store_true', help='also replay a last round whose builders and critics finished but whose record did not')
     p.add_argument('--no-refresh', action='store_true', help='do not re-read measured results from the packets')

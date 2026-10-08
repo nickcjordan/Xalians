@@ -226,14 +226,20 @@ def run(args, rc):
         stage('packet', lambda: rc.tool('packet', *species, name, str(packet[0]), '--baseline', str(base_packet)))
     # face measures and guards against the baseline (face_measure.py; v3.11): an even thick ring or a convergent stare is
     # caught here, before the readers, who preferred such faces four rounds running while the critic failed every one
+    import face_measure
     try:
-        import face_measure
-        face = face_measure.measure(recipe.work/name)
         base_face = face_measure.measure(recipe.work/base_packet.name)
+    except Exception:  # a baseline face that cannot be measured guards nothing
+        base_face = None
+    try:
+        face = face_measure.measure(recipe.work/name)
         summary['faceMeasures'] = face
         summary['faceGuards'] = face_measure.guard_failures(face, base_face)
-    except Exception as error:  # a face that cannot be measured is not a failed candidate
+    except Exception as error:
         summary['faceMeasuresError'] = f'{type(error).__name__}: {error}'
+        # audit 2026-10-07 bug 10: when the baseline face measures and the candidate's does not, that is a guard break
+        if base_face and (base_face.get('eyes') or []):
+            summary['faceGuards'] = [f'measureFailed ({type(error).__name__})']
     measured = json.loads((packet[0]/'measured.json').read_text(encoding='utf-8'))
     summary['measuredChanged'] = criteria_changes(base_measured, measured)
     summary['measuredNew'] = {k: {'value': v['value'], 'result': v['result'], 'bound': bound(v)}
@@ -256,6 +262,13 @@ def run(args, rc):
 
     # ---- geometry change per region against the baseline assembly (the judge's geometry carry, LOOP-v3 v3.9)
     owned = [r for r in (args.owned or args.region or '').split(',') if r]
+    if not owned:
+        # audit 2026-10-07 bug 14: round 28's code builder ran candidate with no --region, so nothing was owned and the
+        # fan's own move (.024) was charged to R01 to R04 alike through their overlapping zones; with no region given,
+        # the regions the changed steps are tagged with are the owned ones
+        owned = sorted({r for sid in changed for r in (recipe.byid[sid].get('regions') or [])})
+        if owned:
+            summary['ownedFromSteps'] = owned
     base_asm = recipe.work/base_packet.name
     try:
         import region_shift

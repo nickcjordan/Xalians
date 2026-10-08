@@ -99,7 +99,7 @@
    {
     "id": "R02.2",
     "kind": "visual",
-    "text": "The eye outline is a thin lid line, not a thick raised black ring",
+    "text": "The eye outline is a bold dark outline all the way around the eye, as the eye reference r01 draws it, carried by darkness and set flush into the face, not a raised tube or a disc standing proud (Nick 2026-10-07: bold outline, replacing \"a thin lid line, not a thick raised black ring\")",
     "images": [
      "m05 eyes-front",
      "r01"
@@ -140,7 +140,7 @@
    {
     "id": "R02.6",
     "kind": "visual",
-    "text": "Gestalt (added 2026-09-30 from gap-audit-0226.md): in true profile the brow and the nose tip both stand in front of the eye surface, and the dark outline is heavier on the upper lid than at the bottom; fails on a disc eye at the front line or a uniform ring",
+    "text": "Gestalt (added 2026-09-30 from gap-audit-0226.md; ring clause removed 2026-10-07 by Nick's bold-outline ruling): in true profile the brow and the nose tip both stand in front of the eye surface; fails on a disc eye at the front line",
     "images": [
      "m05 nose-profile",
      "m05 eyes-front",

@@ -34,18 +34,18 @@
   "auditRefreshKept": 3,
   "builderMode": "split",
   "verdictKeep": true,
-  "identityBonus": 5,
+  "identityBonus": 0,
   "criticScopeMax": 2,
   "refinePasses": 1,
   "planTop": 3,
   "leanAgentType": "Explore",
-  "rejectToCode": true,
-  "measuredTieKeep": true,
+  "rejectToCode": false,
+  "measuredTieKeep": false,
   "toolReaderCheck": true,
   "workerAgentType": "loop-worker",
   "toolSessions": 3,
   "toolSessionCalls": 80,
-  "repairPass": true,
+  "repairPass": false,
   "freezeHeld": true,
   "geometryCarry": 0.004,
   "pairedRegrade": true,
@@ -55,8 +55,13 @@
   "outsideReview": true,
   "toolsForOrdersOnly": true,
   "builderSessions": 2,
-  "roundSeconds": 10800,
-  "pairNet": true
+  "pairNet": true,
+  "reopenAbovePass": false,
+  "readerKeep": true,
+  "coldEvery": 3,
+  "toolApproval": true,
+  "prepareSeconds": 5400,
+  "roundSeconds": 10800
  },
  "baseline": {
   "head": "head-2271",
@@ -1442,5 +1447,32 @@
  "toolBlocked": {},
  "keptLog": [
   false
- ]
+ ],
+ "decisions": [
+  {
+   "key": "dispute:R02:R02.2",
+   "kind": "dispute",
+   "region": "R02",
+   "criterion": "R02.2",
+   "round": 28,
+   "question": "Eye outline: thin lid line (rubric R02.2) or the bold outline the readers chose four rounds running?",
+   "answer": "Bold outline: do whatever looks better (Nick, 2026-10-07). R02.2 and R02.6 rewritten; band face guards retired.",
+   "answered": "2026-10-07"
+  },
+  {
+   "key": "idiom:R03:",
+   "kind": "idiom",
+   "region": "R03",
+   "round": 28,
+   "evidence": "untracked/species-construction/akinza/loop/packets/assembled-2848/reader-pack",
+   "question": "Ear fan (R03 front, R04 rear): what should the fur read as? Three methods and three tools since round 21 (164M tokens) kept nothing. Options seen so far: clumped volumes, swept locks, a post-assembly finish, and next a parametric pinna shell. The fan waits until you pick an idiom or say to set it aside."
+  }
+ ],
+ "awaiting": {
+  "R03": "fur idiom for the ear fan (audit 2026-10-07 recommendation 3)",
+  "R04": "fur idiom for the ear fan, paired with R03"
+ },
+ "disputes": {},
+ "escalated": false,
+ "keptSinceCold": 0
 }

@@ -192,6 +192,10 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   // baseline inside the region's zone, figure heights) keeps its visual results even when its images
   // changed. Round 25's critic regraded legs that had not moved by a vertex because the new forepaw
   // showed in the leg views. A region with no zone (whole-form coherence) has no row and is not carried.
+  // v3.13 (limits.readerKeep, audit 2026-10-07 recommendation 5): the readers decide; the candidate critic only copies the
+  // measured criteria and reports the invariants (o.carryVisual), so every visual result stays as it was until the cold
+  // rescore every limits.coldEvery rounds. Every reader-preferred revert in rounds 22 to 26 was a checklist line of the target.
+  if (o.carryVisual) for (const id of ids) if (!carried.includes(id)) carry(id)
   const gtol = limits.geometryCarry
   const geoCarried = []
   if (gtol !== undefined && gtol !== null && gtol !== false && o.regionShift) {
@@ -237,7 +241,12 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   // the fan rear lost its comb rows and seams with no side effect, and was reverted
   // because the bowl outline kept every R04 result where it was).
   const onVerdict = reasons.length && pair && pair.verdict === 'better' && !lost.length && !broken.length && gain >= 0
-  const extra = { ...(carried.length ? { carried } : {}), ...(geoCarried.length ? { geoCarried } : {}) }
+  // v3.13: whether a target criterion changed result (the plateau window counts only such keeps, audit bug 7)
+  const targetMoved = targets.some(t => (rubric.regions[t] || []).some(c => {
+    const b = state.regions[t].results[c.id], a = results[t] && results[t][c.id]
+    return !!a && !!b && a !== b
+  }))
+  const extra = { ...(carried.length && !o.carryVisual ? { carried } : {}), ...(geoCarried.length ? { geoCarried } : {}), targetMoved, ...(o.carryVisual ? { readerKeep: true } : {}) }
   if (onVerdict) return { kept: true, keptOnVerdict: true, reasons: [], results, after, gain, debts: [], verdict: pair, invariants: critique.invariants || [], ...extra }
   // v3 (limits.verdictDebt): a better verdict may also carry the same kind of debt a score gain
   // may (one other region losing up to regressionDrop), within a small mean loss. Rounds 17 to
@@ -379,7 +388,12 @@ export function recordEntry(state, limits, round, outcomes, combinedAssembly, ba
       assembly: o.build ? o.build.assembly : null, approach: o.build ? o.build.approach : null, changes: o.build ? o.build.changes : null,
       previews: o.build ? o.build.previews : null, componentBuilds: o.build ? o.build.componentBuilds : null,
       fitBefore: o.build ? o.build.fitBefore : null, fitAfter: o.build ? o.build.fitAfter : null,
-      kept, keptOnVerdict: !!(o.decision && o.decision.keptOnVerdict), reason, verdict: o.decision ? o.decision.verdict : null, gain: o.decision ? o.decision.gain : null,
+      kept, keptOnVerdict: !!(o.decision && o.decision.keptOnVerdict), targetMoved: !!(o.decision && o.decision.targetMoved),
+      reason, verdict: o.decision ? o.decision.verdict : null, gain: o.decision ? o.decision.gain : null,
+      // audit 2026-10-07 bug 13: what the readers saw and chose, per candidate
+      ...(o.readers ? { readers: o.readers } : {}),
+      ...(o.readerVerdict ? { readerVerdict: Object.fromEntries(Object.entries(o.readerVerdict).map(([r, v]) => [r, { verdict: v.verdict, better: v.better, worse: v.worse }])) } : {}),
+      ...(o.alarm ? { alarm: o.alarm } : {}),
       after: o.decision ? o.decision.after : null, summary: o.critique ? o.critique.summary : null, parked: r.parked,
       ...(o.decision && o.decision.geoCarried ? { geoCarried: o.decision.geoCarried } : {}),
       ...(o.regrade || o.repairRegrade ? { regrade: o.regrade || null, repairRegrade: o.repairRegrade || null } : {}),

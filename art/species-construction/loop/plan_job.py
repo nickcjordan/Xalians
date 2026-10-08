@@ -98,7 +98,7 @@ def cmd_start(a):
     with open(log, 'w', encoding='utf-8') as fh:
         p = subprocess.Popen(cmd, cwd=ROOT, stdout=fh, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
                              creationflags=flags, start_new_session=(os.name != 'nt'))
-    job.write_text(json.dumps({'pid': p.pid, 'cmd': cmd, 'log': str(log), 'result': str(result), 'started': time.time()}))
+    job.write_text(json.dumps({'pid': p.pid, 'cmd': cmd, 'log': str(log), 'result': str(result), 'started': time.time(), 'top': a.top}))
     print(json.dumps({'status': 'started', 'pid': p.pid, 'log': str(log), 'result': str(result)}))
     return 0
 
@@ -148,7 +148,25 @@ def cmd_wait(a):
             if result.exists():
                 print(json.dumps({'status': 'done', 'result': str(result)}))
                 return 0
-            print(json.dumps({'status': 'failed', 'reason': 'run-plan exited without a result', 'log': tail(log)}))
+            # audit 2026-10-07 recommendation 19: four run-plans died silently in rounds 21 to 27, each an hour of Blender.
+            # A dead plan is started once more (the recipe cache keeps every step it built); a second death is an alarm
+            j = json.loads(job.read_text())
+            if not j.get('retried'):
+                lines = tail(log, 8)
+                # cmd_start rewrites the log, so the first run's tail is kept beside it
+                log.with_name(log.stem+'-first.log').write_text('\n'.join(lines)+'\n', encoding='utf-8')
+                again = argparse.Namespace(plan=str(plan), top=j.get('top'))
+                import contextlib, io
+                with contextlib.redirect_stdout(io.StringIO()):
+                    cmd_start(again)
+                j2 = json.loads(job.read_text())
+                j2.update(retried=True, firstDeath={'exitCode': j.get('exitCode'), 'log': lines})
+                job.write_text(json.dumps(j2))
+                pid = j2['pid']
+                print(json.dumps({'status': 'running', 'pid': pid, 'note': 'run-plan died without a result and was started once more', 'next': 'call wait again'}))
+                return 3
+            print(json.dumps({'status': 'failed', 'alarm': True, 'reason': 'run-plan died twice without a result (harness failure, not a plan verdict)',
+                              'exitCode': j.get('exitCode'), 'firstDeath': j.get('firstDeath'), 'log': tail(log)}))
             return 1
         time.sleep(10)
     print(json.dumps({'status': 'running', 'pid': pid, 'progress': tail(log, 2), 'next': 'call wait again'}))
@@ -198,6 +216,10 @@ def cmd_report(a):
     regions = [r for r in a.regions.split(',') if r]
     rows = [candidate_row(e, Path(a.baseline_packet), regions, a.seed) for e in data.get('top', []) if e.get('ok') and e.get('packet')]
     out = {'ok': bool(rows), 'candidates': rows, 'now': int(time.time())}
+    harness = [f"{e.get('id')} {str(e.get('failure') or '')[:160]}" for e in data.get('top', []) if e.get('harnessError')]
+    if harness:
+        # a top candidate the harness lost twice (recipe_plan's retry): the readers see fewer candidates than planned
+        out['harnessErrors'] = harness
     if not rows:
         out['reason'] = 'no top candidate built: ' + '; '.join(f"{e.get('id')} {e.get('stage')} {str(e.get('failure') or '')[:160]}" for e in data.get('top', []))
     text = json.dumps(out)

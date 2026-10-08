@@ -84,14 +84,17 @@ class BlindCapTests(unittest.TestCase):
     def test_a_region_with_no_quick_criterion_builds_only_the_picks(self):
         notes = []
         kept = rp.cap_blind(self.lt, {'region': 'R02'}, self.variants, 3, notes)
-        self.assertEqual([v['id'] for v in kept], ['v01', 'v02', 'v03'])
-        self.assertIn('not built: v04', notes[0])
+        # audit 2026-10-07: a blind plan sends two candidates, not top
+        self.assertEqual([v['id'] for v in kept], ['v01', 'v02'])
+        self.assertIn('not built: v03', notes[0])
 
     def test_the_control_keeps_its_slot_and_a_sweep_counts_once(self):
         vs = [dict(v) for v in self.variants]
         vs[6]['control'] = True  # v07
         kept = rp.cap_blind(self.lt, {'region': 'R02', 'start': 'x.json'}, vs, 5, [])
-        self.assertEqual([v['id'] for v in kept], ['v01', 'v02', 'v03', 'v04', 'v07'])
+        self.assertEqual([v['id'] for v in kept], ['v01', 'v07'])
+        probes = rp.probe_set({'region': 'R06', 'start': 'x.json'}, vs, 5)
+        self.assertEqual([v['id'] for v in probes], ['v07', 'v01', 'v02', 'v03', 'v04'])
 
     def test_a_region_with_quick_criteria_is_untouched(self):
         self.assertEqual(len(rp.cap_blind(self.lt, {'region': 'R06'}, self.variants, 3, [])), 8)

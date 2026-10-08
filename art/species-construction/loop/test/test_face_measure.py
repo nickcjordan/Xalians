@@ -10,9 +10,17 @@ RING = {'eyes': [{'irisOffset': .17, 'bandTopBottom': 1.9, 'bandMin': 2.8}, {'ir
 
 
 class Guards(unittest.TestCase):
-    def test_an_even_ring_and_a_convergent_stare_fail(self):
+    def test_a_convergent_stare_fails_and_a_bold_ring_does_not(self):
+        # Nick 2026-10-07: the eye outline is bold, so the ring guards are retired; the stare guard (I01) stays
         fails = fm.guard_failures(RING, BASE)
-        self.assertEqual([f.split()[0] for f in fails], ['irisOffset', 'bandTopBottom', 'bandMin'])
+        self.assertEqual([f.split()[0] for f in fails], ['irisOffset'])
+        bold = {'eyes': [dict(e, irisOffset=.06) for e in RING['eyes']]}
+        self.assertEqual(fm.guard_failures(bold, BASE), [])
+
+    def test_an_eye_that_cannot_be_measured_fails(self):
+        one = {'eyes': [BASE['eyes'][0], {'irisOffset': None, 'bandTopBottom': None, 'bandMin': None}]}
+        fails = fm.guard_failures(one, BASE)
+        self.assertEqual([f.split()[0] for f in fails], ['measureFailed'])
 
     def test_an_unchanged_face_never_fails(self):
         self.assertEqual(fm.guard_failures(BASE, BASE), [])

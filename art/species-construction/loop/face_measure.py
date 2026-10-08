@@ -121,9 +121,10 @@ def measure(assembly_dir):
 # .08, bandTopBottom about 7, bandMin about .4; the candidates the critic failed for an even thick ring (2783, 2792, the
 # as-built tool 2797) read bandTopBottom 1.7 to 2.3 and bandMin 2.0 to 2.8; the one that broke I01 (2783) reads irisOffset
 # .165. Spec: lid band top over bottom at least 2.5 (specs/R02.md, R02.6 row), iris toward the nose at most .003 fit units.
-GUARDS = {'irisOffset': ('max', .12, 'a convergent stare (invariant I01)'),
-          'bandTopBottom': ('min', 2.5, 'an even ring instead of an upper-heavy lid (R02.2, R02.6)'),
-          'bandMin': ('max', 1.5, 'a thick ring all round (R02.2)')}
+GUARDS = {'irisOffset': ('max', .12, 'a convergent stare (invariant I01)')}
+# Nick 2026-10-07 ruled the eye outline bold, as the eye reference r01 draws it and as the readers chose four rounds running,
+# so the two band guards that dropped a thick even ring (bandTopBottom under 2.5, bandMin over 1.5) are retired; the band
+# measures stay in faceMeasures as information for the critic.
 
 
 def guard_failures(cand, base=None):
@@ -131,6 +132,10 @@ def guard_failures(cand, base=None):
     with an unchanged face never fails, and a baseline that already breaks a guard does not block every candidate)."""
     fails = []
     ce, be = (cand or {}).get('eyes') or [], (base or {}).get('eyes') or []
+    # audit 2026-10-07 bug 10: an eye that could not be measured passed every guard silently (round 28, assembled-2848)
+    measured = lambda eyes: sum(1 for e in eyes if isinstance(e.get('irisOffset'), (int, float)))
+    if measured(ce) < measured(be):
+        fails.append(f'measureFailed ({measured(ce)} of {measured(be)} eyes measured; the baseline measures {measured(be)})')
     for key, (kind, limit, what) in GUARDS.items():
         cv = [e.get(key) for e in ce if isinstance(e.get(key), (int, float))]
         bv = [e.get(key) for e in be if isinstance(e.get(key), (int, float))]

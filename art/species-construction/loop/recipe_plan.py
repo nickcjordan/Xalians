@@ -274,15 +274,11 @@ def edit_group(v):
     return src if src.startswith('sweep') else 'variant '+v['id']
 
 
-def cap_blind(lt, plan, variants, top, notes, say=lambda s: None):
-    """A plan whose regions have no quick-computable criterion is blind before anything is built: every variant would score
-    zero progress and the candidates would be taken in the planner's order anyway (round 26 built all 11 face variants, single
-    builds up to 36 minutes under contention, and only three reached the readers). Keep only what choose_candidates would
-    pick: the start's control, then the planner's order, one per sweep, up to `top`."""
-    import quick_criteria as qc
-    regions = [plan['region']]+list((plan.get('order') or {}).get('with') or [])
-    if qc.criteria(lt, regions):
-        return variants
+BLIND_TOP = 2  # audit 2026-10-07: a blind plan's candidates are the planner's first ideas; two reach the readers
+
+
+def probe_set(plan, variants, top):
+    """What choose_candidates would take blind: the start's control, then the planner's order, one per sweep, up to top."""
     live = sorted((v for v in variants if 'error' not in v), key=lambda v: v['id'])
     picks, groups = [], set()
     control = next((v for v in live if is_control(v)), None) if plan.get('start') else None
@@ -295,6 +291,20 @@ def cap_blind(lt, plan, variants, top, notes, say=lambda s: None):
         if v not in picks and edit_group(v) not in groups:
             picks.append(v)
             groups.add(edit_group(v))
+    return picks
+
+
+def cap_blind(lt, plan, variants, top, notes, say=lambda s: None):
+    """A plan whose regions have no quick-computable criterion is blind before anything is built: every variant would score
+    zero progress and the candidates would be taken in the planner's order anyway (round 26 built all 11 face variants, single
+    builds up to 36 minutes under contention, and only three reached the readers). Keep only what choose_candidates would
+    pick: the start's control, then the planner's order, one per sweep, up to `top`."""
+    import quick_criteria as qc
+    regions = [plan['region']]+list((plan.get('order') or {}).get('with') or [])
+    if qc.criteria(lt, regions):
+        return variants
+    live = sorted((v for v in variants if 'error' not in v), key=lambda v: v['id'])
+    picks = probe_set(plan, variants, min(top, BLIND_TOP))
     dropped = [v['id'] for v in live if v not in picks]
     if dropped:
         note = (f"blind plan (no quick-computable criterion for {', '.join(regions)}): building only {', '.join(v['id'] for v in picks)} "
@@ -302,6 +312,15 @@ def cap_blind(lt, plan, variants, top, notes, say=lambda s: None):
         notes.append(note)
         say(note)
     return [v for v in variants if v in picks or 'error' in v]
+
+
+HARNESS_ERRORS = ('FileExistsError', 'WinError 183', 'Blender quit unexpectedly', 'EXCEPTION_ACCESS_VIOLATION', 'MemoryError')
+
+
+def harness_error(summary):
+    """A failure that says nothing about the candidate: the harness lost it (round 28: FileExistsError on a shared number)."""
+    text = ' '.join(str(summary.get(k) or '') for k in ('failure', 'stage', 'log'))
+    return any(h in text for h in HARNESS_ERRORS)
 
 
 def is_control(v):
@@ -629,7 +648,36 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
 
     sched.add(('quick', 'baseline'), [], quick_fn(lambda r: base_head, lambda r: base_body), 'quick baseline')
 
+    # audit 2026-10-07 recommendation 6: the probe variants (what choose_candidates would take blind: the start's control,
+    # then the planner's order, one per idea, up to top) are built first; every other variant waits on the gate, which
+    # opens only when a probe moved a quick criterion of the order. Round 28 built 13 fan variants and round 26 eleven
+    # forepaw variants (134 minutes) whose progress terms were all zero, so the candidates were the planner's first ideas anyway
+    probes = probe_set(plan, live, top)
+    live = probes+[v for v in live if v not in probes]
+    gate_key = ('gate', 'progress')
+    gated = len(live) > len(probes)
+    blind_state = {'blind': False}
+    if gated:
+        def gate(results):
+            moved = []
+            base_c = crit_of(results[('quick', 'baseline')])
+            for v in probes:
+                q = results.get(('quick', v['id']))
+                if not q:
+                    continue
+                points, detail = qc.progress(base_c, crit_of(q))
+                if points or detail['moved']:
+                    moved.append(v['id'])
+            if not moved:
+                blind_state['blind'] = True
+                raise RuntimeError('blind plan: no probe variant moved a quick criterion of the order')
+            rc.say(f"gate open: {', '.join(moved)} moved a quick criterion; building the other variants")
+            return {'moved': moved}
+        sched.add(gate_key, [('quick', 'baseline')]+[('quick', v['id']) for v in probes], gate, 'gate (probe progress)')
+        rc.say(f"probe variants {', '.join(v['id'] for v in probes)}; the other {len(live)-len(probes)} wait on their quick progress")
+
     for v in live:
+        gate_deps = [gate_key] if gated and v not in probes else []
         vid, cand, cplan, keys = v['id'], v['_cand'], v['_plan'], v['_keys']
         todo = [s for s in cand.order if not cplan[s['id']]['dir']]
 
@@ -642,7 +690,7 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
 
         for s in todo:
             key = keys[s['id']]
-            deps = [keys[r] for r in s['inputs'].values() if r in keys and not cplan[r]['dir']]
+            deps = [keys[r] for r in s['inputs'].values() if r in keys and not cplan[r]['dir']]+gate_deps
 
             def build(results, s=s, key=key, cand=cand, vid=vid, dir_of=dir_of):
                 dirs = {n: dir_of(r, results) for n, r in s['inputs'].items()}
@@ -667,7 +715,7 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
 
         sinks = {c: cand.assembly[c] for c in ('head', 'body')}
         sink_deps = [keys[sinks[c]] for c in ('head', 'body') if not cplan[sinks[c]]['dir']]
-        sched.add(('quick', vid), sink_deps,
+        sched.add(('quick', vid), sink_deps+gate_deps,
                   quick_fn(lambda r, d=dir_of, k=sinks['head']: Path(d(k, r)).name, lambda r, d=dir_of, k=sinks['body']: Path(d(k, r)).name),
                   f'quick {vid}')
 
@@ -749,6 +797,11 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
             v['total'] = None
             continue
         bad = [errors[k] for k in [*v['_keys'].values(), ('quick', vid), ('contain', vid), ('score', vid)] if k in errors]
+        if bad and blind_state['blind'] and any('gate' in str(b) for b in bad):
+            v['error'] = 'not built: blind plan (no probe variant moved a quick criterion of the order)'
+            v['skippedBlind'] = True
+            v['total'] = None
+            continue
         if bad:
             v['error'] = bad[0]
             v['total'] = None
@@ -797,10 +850,16 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
     ranked = sorted((v for v in variants if v.get('total') is not None), key=lambda v: (bool(v.get('nearNoop') or v.get('noop')), -v['total']))
     for k, v in enumerate(ranked, 1):
         v['rank'] = k
+    if blind_state['blind'] or (ranked and all(not (v.get('parts') or {}).get('progress') for v in ranked)):
+        if top > BLIND_TOP:
+            msg = f'blind plan: {BLIND_TOP} candidates instead of {top}'
+            notes.append(msg)
+            rc.say(msg)
+        top = min(top, BLIND_TOP)
     chosen = choose_candidates(ranked, top, bool(plan.get('start')), rc.say)
 
     # the full candidate path for the top K, in parallel up to the slot limit
-    def candidate(v):
+    def candidate(v, retry=True):
         asm = f'assembled-{reserve(rc)}'
         owned = [region]+list((plan.get('order') or {}).get('with') or [])
         cmd = [sys.executable, str(HERE/'recipe.py'), 'candidate', v['recipe'], '--baseline', str(baseline_packet), '--region', region,
@@ -819,6 +878,13 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
             tail = (proc.stdout+proc.stderr).strip().splitlines()[-6:]
             summary = {'ok': False, 'stage': 'start', 'failure': ' / '.join(tail) or 'no output', 'assembly': asm}
         rc.say(f"candidate {v['id']}: {'ok' if summary.get('ok') else 'FAILED at '+str(summary.get('stage'))} {summary.get('verdict') or summary.get('failure', '')}"[:260])
+        # audit 2026-10-07 bug 6: a candidate killed by the harness (a name collision, a lost Blender process) is built
+        # once more under a fresh number, and a second harness death is marked so the runner reports it loudly
+        if not summary.get('ok') and harness_error(summary):
+            if retry:
+                rc.say(f"candidate {v['id']}: harness error, building it once more")
+                return candidate(v, retry=False)
+            summary['harnessError'] = True
         return v, summary
     top_entries = []
     if chosen:
@@ -832,7 +898,7 @@ def execute(rc, lt, sw, row_measures, sm, base, plan, variants, notes, cache, zo
                                     'containment': {sid: {'flaggedRelative': c.get('flaggedRelative'), 'worst': c.get('worst'), 'error': c.get('error')}
                                                     for sid, c in (summary.get('containment') or {}).items()},
                                     'regionChange': summary.get('regionChange'), 'regionShift': summary.get('regionShift'), 'verdict': summary.get('verdict'),
-                                    'wallMinutes': summary.get('wallMinutes')})
+                                    'wallMinutes': summary.get('wallMinutes'), **({'harnessError': True} if summary.get('harnessError') else {})})
     top_entries.sort(key=lambda e: e['rank'])
 
     # contact sheet

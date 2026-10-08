@@ -41,15 +41,40 @@ S.methods = S.methods || {}
 S.toolChecks = {}  // this run's tool reader checks, written into each tools/<region>.json by loop_state merge
 S.toolBlocked = {}
 // v3.12 (limits.roundSeconds, after round 28's 5.7 hours): workflow scripts have no clock, so the time comes from the
-// agents (the runner's report and every builder and toolsmith return `now`, the output of date +%s) against
-// args.startedAt; once a round is past its budget, optional stages (refine pass, code builder after a rejected plan,
-// runner-up critic, repair pass, extra toolsmith and builder sessions, tool fix passes) are skipped and recorded
-S.clock = args.startedAt || 0
+// agents (the runner's report and every builder and toolsmith return `now`, the output of date +%s); once a phase is past
+// its budget, optional stages (refine pass, runner-up critic, extra toolsmith and builder sessions, tool fix passes) are
+// skipped and recorded. v3.13 (audit 2026-10-07 bug 8): the clock no longer comes from args (it started before Prepare and
+// made args differ on every run); a one-line clock agent stamps the start of Prepare (limits.prepareSeconds) and of each
+// round (limits.roundSeconds), so toolsmith time no longer counts against the round
+S.clock = 0
+const CLOCK = { type: 'object', properties: { now: { type: 'number' } }, required: ['now'] }
 const noteTime = x => { const t = Number(x && x.now); if (t > S.clock) S.clock = t; return x }
-const overTime = () => !!(L.roundSeconds && args.startedAt && S.clock - args.startedAt > L.roundSeconds)
-const elapsedMin = () => args.startedAt ? Math.round((S.clock - args.startedAt) / 60) : null
+let phaseStart = 0, phaseBudget = 0, phaseName = ''
+async function startClock(name, budget, label) {
+  const r = noteTime(await agent('Run date +%s in bash and return its output, a number, as now. Do nothing else.',
+    workerOpts({ label: `clock: ${label}`, phase: name, schema: CLOCK, model: 'haiku', effort: 'low' })))
+  phaseStart = r && r.now ? Number(r.now) : 0
+  phaseBudget = budget || 0
+  phaseName = label
+}
+const overTime = () => !!(phaseBudget && phaseStart && S.clock - phaseStart > phaseBudget)
+const elapsedMin = () => phaseStart ? Math.round((S.clock - phaseStart) / 60) : null
 const skipped = []
-function skipForTime(what) { if (!overTime()) return false; skipped.push(what); log(`Over the round budget (${elapsedMin()} min): skipped ${what}`); return true }  // v3.9: regions whose tool needs a loop change, with the change the toolsmith named
+function skipForTime(what) { if (!overTime()) return false; skipped.push(what); log(`Over the ${phaseName} budget (${elapsedMin()} min): skipped ${what}`); return true }
+// v3.13 (audit 2026-10-07 recommendation 2): the decision queue for Nick. An item is opened when a method needs a new
+// tool (limits.toolApproval), when the readers and the critic disagree twice on one criterion, when a region's last three
+// orders were reverted, or when a plan dies twice; a region with an open item gets no order until Nick answers
+S.decisions = S.decisions || []
+S.awaiting = S.awaiting || {}
+S.disputes = S.disputes || {}
+function decide(item) {
+  const key = item.kind + ':' + (item.region || '') + ':' + (item.criterion || item.script || '')
+  if (S.decisions.some(d => d.key === key && !d.answer)) return
+  S.decisions.push({ key, round: S.round + (roundNow ? 0 : 1), ...item })
+  if (item.region && item.blocks !== false) S.awaiting[item.region] = item.question.slice(0, 300)
+  log(`DECISION FOR NICK (${item.kind}${item.region ? ' ' + item.region : ''}): ${item.question}`)
+}
+// v3.9: regions whose tool needs a loop change, with the change the toolsmith named
 S.tools = S.tools || {}
 S.means = S.means || []
 S.keptLog = S.keptLog || []  // v3.11: whether each round in the plateau window kept a change
@@ -331,6 +356,10 @@ function judge(state, rubric, limits, order, build, critique, opts) {
   // baseline inside the region's zone, figure heights) keeps its visual results even when its images
   // changed. Round 25's critic regraded legs that had not moved by a vertex because the new forepaw
   // showed in the leg views. A region with no zone (whole-form coherence) has no row and is not carried.
+  // v3.13 (limits.readerKeep, audit 2026-10-07 recommendation 5): the readers decide; the candidate critic only copies the
+  // measured criteria and reports the invariants (o.carryVisual), so every visual result stays as it was until the cold
+  // rescore every limits.coldEvery rounds. Every reader-preferred revert in rounds 22 to 26 was a checklist line of the target.
+  if (o.carryVisual) for (const id of ids) if (!carried.includes(id)) carry(id)
   const gtol = limits.geometryCarry
   const geoCarried = []
   if (gtol !== undefined && gtol !== null && gtol !== false && o.regionShift) {
@@ -376,7 +405,12 @@ function judge(state, rubric, limits, order, build, critique, opts) {
   // the fan rear lost its comb rows and seams with no side effect, and was reverted
   // because the bowl outline kept every R04 result where it was).
   const onVerdict = reasons.length && pair && pair.verdict === 'better' && !lost.length && !broken.length && gain >= 0
-  const extra = { ...(carried.length ? { carried } : {}), ...(geoCarried.length ? { geoCarried } : {}) }
+  // v3.13: whether a target criterion changed result (the plateau window counts only such keeps, audit bug 7)
+  const targetMoved = targets.some(t => (rubric.regions[t] || []).some(c => {
+    const b = state.regions[t].results[c.id], a = results[t] && results[t][c.id]
+    return !!a && !!b && a !== b
+  }))
+  const extra = { ...(carried.length && !o.carryVisual ? { carried } : {}), ...(geoCarried.length ? { geoCarried } : {}), targetMoved, ...(o.carryVisual ? { readerKeep: true } : {}) }
   if (onVerdict) return { kept: true, keptOnVerdict: true, reasons: [], results, after, gain, debts: [], verdict: pair, invariants: critique.invariants || [], ...extra }
   // v3 (limits.verdictDebt): a better verdict may also carry the same kind of debt a score gain
   // may (one other region losing up to regressionDrop), within a small mean loss. Rounds 17 to
@@ -518,7 +552,12 @@ function recordEntry(state, limits, round, outcomes, combinedAssembly, baseRecip
       assembly: o.build ? o.build.assembly : null, approach: o.build ? o.build.approach : null, changes: o.build ? o.build.changes : null,
       previews: o.build ? o.build.previews : null, componentBuilds: o.build ? o.build.componentBuilds : null,
       fitBefore: o.build ? o.build.fitBefore : null, fitAfter: o.build ? o.build.fitAfter : null,
-      kept, keptOnVerdict: !!(o.decision && o.decision.keptOnVerdict), reason, verdict: o.decision ? o.decision.verdict : null, gain: o.decision ? o.decision.gain : null,
+      kept, keptOnVerdict: !!(o.decision && o.decision.keptOnVerdict), targetMoved: !!(o.decision && o.decision.targetMoved),
+      reason, verdict: o.decision ? o.decision.verdict : null, gain: o.decision ? o.decision.gain : null,
+      // audit 2026-10-07 bug 13: what the readers saw and chose, per candidate
+      ...(o.readers ? { readers: o.readers } : {}),
+      ...(o.readerVerdict ? { readerVerdict: Object.fromEntries(Object.entries(o.readerVerdict).map(([r, v]) => [r, { verdict: v.verdict, better: v.better, worse: v.worse }])) } : {}),
+      ...(o.alarm ? { alarm: o.alarm } : {}),
       after: o.decision ? o.decision.after : null, summary: o.critique ? o.critique.summary : null, parked: r.parked,
       ...(o.decision && o.decision.geoCarried ? { geoCarried: o.decision.geoCarried } : {}),
       ...(o.regrade || o.repairRegrade ? { regrade: o.regrade || null, repairRegrade: o.repairRegrade || null } : {}),
@@ -542,10 +581,19 @@ function criticPrompt(packet, order, mode, scope) {
 `
   if (mode === 'cold') {
     t += 'This is a cold baseline request. Judge every visual criterion of every region, copy every measured criterion, report every invariant, and list up to three issues per region.\n'
+  } else if (mode === 'guard') {
+    // v3.13 (limits.readerKeep): three blind readers already preferred this candidate; the critic guards it
+    t += `Baseline packet folder, for comparison: ${abs(S.baseline.packet)}.
+`
+    t += `This is a guard check. Target region: ${order.id} (${S.regions[order.id].name})${(order.with || []).length ? ' with ' + order.with.join(', ') : ''}. Three blind readers preferred this candidate to the baseline, so do not grade any visual criterion and give no pairwise verdict. Copy every measured criterion from measured.json, report every invariant against the images (a newly broken invariant reverts the candidate), and list up to three issues for the target region that the next order should fix.
+`
   } else if (mode === 'combined') {
     t += `Baseline packet folder, for comparison: ${abs(S.baseline.packet)}.
 `
-    t += `This is a combination check. ${order.note} Judge the visual criteria of every region diff.json lists as changed, copy measured criteria, and report every invariant. Give no pairwise verdicts and no issues.
+    t += L.readerKeep
+      ? `This is a combination check. ${order.note} Grade no visual criterion: copy every measured criterion from measured.json and report every invariant against the images. Give no pairwise verdicts and no issues.
+`
+      : `This is a combination check. ${order.note} Judge the visual criteria of every region diff.json lists as changed, copy measured criteria, and report every invariant. Give no pairwise verdicts and no issues.
 `
   } else {
     t += `Baseline packet folder, for comparison: ${abs(S.baseline.packet)}.
@@ -602,13 +650,15 @@ function toolPrompt(t) {
     (t.rejected ? `\n\nThe readers rejected the tool's first candidate against the baseline: ${t.rejected}. Find the fault they describe in the script (a new versioned file, never a pinned one), rebuild the starter, keep the check plan pointing at it, and return the structured output again.` : '') +
     // round 22: one toolsmith ran 406 turns with its context grown to 674K tokens, every turn
     // re-reading all of it; sessions with notes bound that without losing the work
-    (L.toolSessions ? `\n\nWork in sessions of at most about ${L.toolSessionCalls ?? 80} tool calls. If you reach that and are not done, write what you built, what works, what is left and your next step to ${LOOPDIR}\\tools\\${t.region}-notes.md, commit it, and return ready false with notes starting with the word continue; a fresh session then picks up from your notes. Keep command output short: pipe build logs through tail -n 20, never print whole scripts, records or JSON files you wrote, and read images at the crops you need.` +
+    (L.toolSessions ? `\n\nWork in sessions of at most ${L.toolSessionCalls ?? 80} tool calls; this is a hard cap, counted after the round (round 28: a session ran 100). If you reach it and are not done, write what you built, what works, what is left and your next step to ${LOOPDIR}\\tools\\${t.region}-notes.md, commit it, and return ready false with notes starting with the word continue; a fresh session then picks up from your notes if the loop allows one. Keep command output short: pipe build logs through tail -n 20, never print whole scripts, records or JSON files you wrote, and read images at the crops you need.` +
       (t.session ? ` This is session ${t.session + 1}: read ${LOOPDIR}\\tools\\${t.region}-notes.md first and continue from it.` : '') : '')
 }
 // A toolsmith in bounded sessions: a session that returns notes starting with "continue" hands over to a fresh one.
 async function toolsmith(t, label) {
   let r = null
-  for (let k = 0; k < Math.max(1, L.toolSessions || 1); k++) {
+  // v3.13 (audit recommendation 1): an approved tool gets one session until its reader check passes
+  const sessions = L.toolApproval ? 1 : Math.max(1, L.toolSessions || 1)
+  for (let k = 0; k < sessions; k++) {
     if (k && skipForTime(`${label} session ${k + 1}`)) return r
     r = noteTime(await agent(toolPrompt({ ...t, session: k }), workerOpts({ label: k ? `${label} session ${k + 1}` : label, phase: 'Prepare', schema: TOOL, model: 'sonnet', effort: 'high' })))
     if (!r || r.ready || !/^continue/i.test(String(r.notes || '').trim())) return r
@@ -723,7 +773,7 @@ const PLAN_OUT = { type: 'object', properties: { plan: { type: 'string' }, varia
 const RUN_OUT = {
   type: 'object',
   properties: {
-    ok: { type: 'boolean' }, reason: { type: 'string' }, now: { type: 'number' },
+    ok: { type: 'boolean' }, reason: { type: 'string' }, now: { type: 'number' }, alarm: { type: 'boolean' }, harnessErrors: { type: 'array', items: { type: 'string' } },
     candidates: { type: 'array', items: { type: 'object', properties: {
       name: { type: 'string' }, recipe: { type: 'string' }, head: { type: 'string' }, body: { type: 'string' }, assembly: { type: 'string' }, packet: { type: 'string' },
       technicalPass: { type: 'boolean' }, regionChange: { type: 'object', additionalProperties: { type: 'number' } }, regionShift: { type: 'object', additionalProperties: { type: 'number' } }, guards: { type: 'array', items: { type: 'string' } }, face: { type: 'string' }, seams: { type: 'string' }, measured: { type: 'string' }, pack: { type: 'string' }, keys: { type: 'object', additionalProperties: { type: 'string' } },
@@ -754,12 +804,12 @@ function runnerPrompt(plan, order, round) {
   // bounded blocking calls
   return `You run one plan job and report its result. A plan can take one to two hours; that is normal. Do not give up while it runs.\n` +
     `1. Run, in the foreground: python art/species-construction/loop/plan_job.py start ${plan} --top ${L.planTop ?? 3}\n` +
-    `2. Then run, in the foreground, as many times as needed: python art/species-construction/loop/plan_job.py wait ${plan} --timeout 560 . Each call blocks up to about nine minutes and prints one line. On "running", call it again at once. On "done", go on. On "failed", report the reason and the log lines it printed. Never sleep, poll other files or open a monitor.\n` +
+    `2. Then run, in the foreground, as many times as needed: python art/species-construction/loop/plan_job.py wait ${plan} --timeout 560 . Each call blocks up to about nine minutes and prints one line. On "running", call it again at once. On "done", go on. A plan that dies is restarted once by wait itself. On "failed", report the reason and the log lines it printed, and set alarm true when the line says alarm. Never sleep, poll other files or open a monitor.\n` +
     `Working directory: ${fwd(REPO)}. Your shell is bash: write every path with forward slashes (a Windows path with backslashes loses them and names no file). \n` +
     // round 26: a runner that copied candidate fields by hand dropped every regionShift row at 0.0, so the geometry
     // carry never fired; plan_job.py report makes the reader packs and prints the whole return value
     `3. When it is done, run, in the foreground: python art/species-construction/loop/plan_job.py report ${plan} --baseline-packet ${fwd(abs(S.baseline.packet))} --regions ${[order.id, ...(order.with || [])].join(',')} --seed ${seed}\n` +
-    'It prints one JSON line {ok, candidates, reason}. Return exactly that object as the structured output, every field and every number as printed (zeros included); do not summarize, reorder or drop anything. Never open or show any key.json. If start or wait failed, return ok false with the reason and the log lines.'
+    'It prints one JSON line {ok, candidates, reason}. Return exactly that object as the structured output, every field and every number as printed (zeros included); do not summarize, reorder or drop anything. Never open or show any key.json. If start or wait failed, return ok false with the reason and the log lines, alarm true when wait printed alarm, and now set to the output of date +%s.'
 }
 function readerPrompt(packs, order, k) {
   return `Read the reader brief at ${BRIEF('reader-brief.md')} and follow it. You are reader ${k + 1} of three; you work alone.\n` +
@@ -807,8 +857,9 @@ function readsBetterPer(per, regions) {
   }
   return regions.some(r => (per[r] || {}).verdict === 'better') && !regions.some(r => (per[r] || {}).verdict === 'worse')
 }
-// Every candidate read worse on the order's region, by a majority and with no reader preferring it.
-const rejectedAll = (ranked, rid) => ranked.length > 0 && ranked.every(x => x.per[rid] && x.per[rid].verdict === 'worse' && x.per[rid].better === 0)
+// Every candidate read worse on the order's region, by a majority and with no reader preferring it. Audit 2026-10-07 bug 9:
+// one surviving candidate at 2-1 is one comparison, not a rejected plan, so at least two judged candidates are needed.
+const rejectedAll = (ranked, rid) => ranked.length >= 2 && ranked.every(x => x.per[rid] && x.per[rid].verdict === 'worse' && x.per[rid].better === 0)
 const readerReasons = (ranked, rid) => ranked.map(x => `${x.cand.name}: ${(x.per[rid] && x.per[rid].reason) || ''}`).join(' || ').slice(0, 1500)
 // The runner's measured line reads "R06 measured: 5 changed (3 newly passing, 1 newly failing); ...".
 function measuredGain(line, rid) {
@@ -983,7 +1034,7 @@ function snapshot() {
     const r = S.regions[id]
     regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
   }
-  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, keptLog: S.keptLog, toolChecks: S.toolChecks, toolBlocked: S.toolBlocked, regions }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, keptLog: S.keptLog, toolChecks: S.toolChecks, toolBlocked: S.toolBlocked, decisions: S.decisions, awaiting: S.awaiting, disputes: S.disputes, escalated: !!S.escalated, keptSinceCold: S.keptSinceCold || 0, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -1052,18 +1103,31 @@ if (stalledTools.length) log('Tools waiting for a method review after a rejected
 // v3.12 (limits.toolsForOrdersOnly, after round 28): setup built the face tool, reader-checked it twice and fixed it once,
 // about an hour, for a region the round did not order; tools are built only for the first round's predicted orders
 const predicted = (() => {
-  const o = pickOrders(S, L, S.round + 1, POOLS, PAIRS)
+  const out = new Set([...Object.keys(S.toolBlocked || {}), ...Object.keys(S.awaiting || {})])
+  const st = { ...S, regions: Object.fromEntries(Object.entries(S.regions).map(([k, v]) => [k, out.has(k) ? { ...v, parked: true } : v])) }
+  const o = pickOrders(st, L, S.round + 1, POOLS, PAIRS)
   const ids = new Set(o.flatMap(x => [x.id, ...(x.with || [])]))
   for (const id of (Array.isArray(args.pin) ? args.pin : [])) ids.add(id)
   return ids
 })()
-const toBuild = (args.tools || []).filter(t => !t.ready && !t.stalled && S.regions[t.region] && workable(t.region) && !S.regions[t.region].parked && !S.tools[t.region]
+let toBuild = (args.tools || []).filter(t => !t.ready && !t.stalled && S.regions[t.region] && workable(t.region) && !S.regions[t.region].parked && !S.tools[t.region]
   && (!L.toolsForOrdersOnly || predicted.has(t.region)))
 if (L.toolsForOrdersOnly) {
   const later = (args.tools || []).filter(t => !t.ready && !t.stalled && !predicted.has(t.region)).map(t => t.region)
   if (later.length) log('Tools left for a round that orders their region: ' + later.join(', '))
 }
+// v3.13 (limits.toolApproval, audit 2026-10-07 recommendation 1): toolsmiths took 58 percent of rounds 21 to 28 and no kept
+// order used a tool built since round 20. A tool is built only when Nick said go for its region (args.toolGo, from
+// loop_state.py args --tool-go); any other goes to the decision queue, and its region waits for the answer
+if (L.toolApproval) {
+  const go = new Set(Array.isArray(args.toolGo) ? args.toolGo : [])
+  for (const t of toBuild.filter(t => !go.has(t.region) && !(t.built && t.checkPlan && !t.rejected)))
+    decide({ kind: 'tool', region: t.region, script: t.script, question: `Build the tool ${t.script} for ${t.region} (${S.regions[t.region].name})? Method: ${String(S.methods[t.region] || '').slice(0, 400)}`, evidence: S.baseline.packet })
+  // a tool already built and only waiting for its reader check needs no go: the check is cheap
+  toBuild = toBuild.filter(t => go.has(t.region) || (t.built && t.checkPlan && !t.rejected))
+}
 if (toBuild.length) {
+  await startClock('Prepare', L.prepareSeconds ?? 5400, 'prepare')
   // round 21: a tool smoke-tested on its own lost 3 to 0 to the baseline once a round built it on the
   // current model, so with toolReaderCheck a tool is ready only after its starter's candidate reads
   // no worse than the baseline to three blind readers; a rejected tool gets one fix pass with the reasons
@@ -1095,13 +1159,16 @@ for (const t of args.tools || []) if (t.ready && t.recipe && !S.tools[t.region])
 
 phase('Rounds')
 let milestone = null
-let escalated = false
+// audit 2026-10-07 bug 7: escalated was script-local and every batch is one run, so the plateau stop never fired; it rides
+// in the state now
+S.escalated = !!S.escalated
 const reviewed = new Set()
 for (let i = 0; i < ROUNDS; i++) {
   if (gateMet(S, L)) break
   if (S.round >= L.hardStopRounds) { milestone = 'hard stop'; break }
   const round = S.round + 1
   roundNow = round
+  await startClock('Rounds', L.roundSeconds || 0, `round ${round}`)
   // Reopen: a region above the pass bar with a structural gap in the audit's top ten is worked again.
   // Audit refresh: after limits.auditRefreshKept kept orders, a fresh audit re-ranks the gaps,
   // so a region the loop has fixed stops carrying its old rank (round 20: the fan back kept
@@ -1117,21 +1184,28 @@ for (let i = 0; i < ROUNDS; i++) {
   }
   if (featuresOn()) {
     for (const id of IDS) S.regions[id].reopen = false
-    for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
+    // v3.13 (limits.reopenAbovePass false, audit recommendation 3): a region at or above the pass bar is ordered only on a pin
+    if (L.reopenAbovePass !== false) for (const g of S.auditGaps || []) if (g.structural && g.rank <= 10 && S.regions[g.region] && workable(g.region)) S.regions[g.region].reopen = true
   }
   // v3.9: a region whose method needs a loop change a toolsmith may not make gets no order (round 26 ran the face on
   // the tool its method replaced, twice reverted already, and spent most of the round on it)
-  const blockedIds = Object.keys(S.toolBlocked || {})
+  // v3.13: a region waiting on a decision for Nick is out of the pick the same way
+  const blockedIds = [...new Set([...Object.keys(S.toolBlocked || {}), ...Object.keys(S.awaiting || {})])]
+  if (Object.keys(S.awaiting || {}).length && i === 0) log('Waiting for Nick: ' + Object.entries(S.awaiting).map(([id, q]) => `${id} (${q.slice(0, 120)})`).join('; '))
   const pickState = blockedIds.length ? { ...S, regions: Object.fromEntries(Object.entries(S.regions).map(([k, v]) => [k, blockedIds.includes(k) ? { ...v, parked: true } : v])) } : S
-  if (blockedIds.length && i === 0) log('Blocked until a loop change: ' + blockedIds.map(id => `${id} (${S.toolBlocked[id].slice(0, 160)})`).join('; '))
+  if (Object.keys(S.toolBlocked || {}).length && i === 0) log('Blocked until a loop change: ' + Object.keys(S.toolBlocked).map(id => `${id} (${S.toolBlocked[id].slice(0, 160)})`).join('; '))
   let orders = pickOrders(pickState, L, round, POOLS, PAIRS)
   // args.pin (first round of the batch): an order Nick approved replaces the picked order of its component
   if (i === 0 && Array.isArray(args.pin) && args.pin.length) {
     for (const id of args.pin) {
-      if (!S.regions[id] || !workable(id) || blockedIds.includes(id) || orders.some(o => o.id === id || (o.with || []).includes(id))) continue
+      if (!S.regions[id] || !workable(id) || (S.toolBlocked || {})[id] || orders.some(o => o.id === id || (o.with || []).includes(id))) continue
+      // a pin is Nick's answer for that region
+      if (S.awaiting[id]) { delete S.awaiting[id]; for (const d of S.decisions) if (d.region === id && !d.answer) d.answer = `pinned for round ${round}` }
       const component = POOLS.head.includes(id) ? 'head' : POOLS.join.includes(id) ? 'join' : POOLS.both.includes(id) ? 'both' : 'body'
       const pin = { id, priority: 'pinned', component }
-      const k = orders.findIndex(o => o.component === component)
+      let k = orders.findIndex(o => o.component === component)
+      // v3.13: a pin keeps the round to limits.ordersPerRound; with no order of its component it replaces the lowest pick
+      if (k < 0 && orders.length >= (L.ordersPerRound ?? 2)) k = orders.reduce((m, o, j) => o.priority !== 'pinned' && (m < 0 || o.priority < orders[m].priority) ? j : m, -1)
       orders = k >= 0 ? orders.map((o, j) => j === k ? pin : o) : [...orders, pin]
     }
   }
@@ -1182,12 +1256,19 @@ for (let i = 0; i < ROUNDS; i++) {
           const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
           if (!thePlan || !thePlan.plan) break
           const run = noteTime(await agent(runnerPrompt(thePlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' })))
+          // audit 2026-10-07 recommendation 19: a plan that died twice is a harness failure: it stops this order and goes to Nick
+          if (run && run.alarm) {
+            out.alarm = `plan died twice: ${String(run.reason || '').slice(0, 300)}`
+            decide({ kind: 'harness', region: order.id, blocks: false, question: `The ${order.id} plan ${thePlan.plan} died twice without a result. Look at the job log before the next round.` })
+            break
+          }
+          if (run && (run.harnessErrors || []).length) log(`Round ${round} ${order.id}: candidates lost to the harness: ${run.harnessErrors.join('; ')}`)
           const cands = guarded(run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : [])
           if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built') : 'runner returned nothing'; continue }
           const regions = [order.id, ...(order.with || [])]
           const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
           const ranked = readerVerdicts(cands, reads.filter(Boolean), regions)
-          out.readers = ranked.map(x => ({ assembly: x.cand.assembly, per: x.per }))
+          out.readers = [...(out.readers || []), ...ranked.map(x => ({ pass, assembly: x.cand.assembly, per: Object.fromEntries(Object.entries(x.per).map(([r, v]) => [r, { verdict: v.verdict, better: v.better, worse: v.worse }])) }))]
           const best = ranked[0]
           const readsBetter = x => !!x && readsBetterPer(x.per, regions)
           if (readsBetter(best)) {
@@ -1210,7 +1291,8 @@ for (let i = 0; i < ROUNDS; i++) {
           }
         }
         if (!picked && !out.rejected && tieCand) { picked = tieCand; out.tie = true }
-        if (!picked && out.rejected && skipForTime(`code builder after the rejected ${order.id} plan`)) out.build = { failed: true, reason: 'every plan candidate read worse; the code builder was skipped for the round budget: ' + out.rejected.slice(0, 300), changes: '', approach: plan.approach }
+        if (out.alarm) out.build = { failed: true, reason: out.alarm, changes: '', approach: plan.approach }
+        else if (!picked && out.rejected && skipForTime(`code builder after the rejected ${order.id} plan`)) out.build = { failed: true, reason: 'every plan candidate read worse; the code builder was skipped for the round budget: ' + out.rejected.slice(0, 300), changes: '', approach: plan.approach }
         else if (!picked && out.rejected) {
           // the plan's variants were rejected, not the tool's reader-checked build (round 23: the tool's own
           // control variant had read better), so this is recorded as the plan's rejection, not the tool's
@@ -1239,16 +1321,18 @@ for (let i = 0; i < ROUNDS; i++) {
     // measured criteria and the seam check guard the rest.
     const targetsHere = [order.id, ...(order.with || [])]
     const scope = criticScope(b, order, frozen, targetsHere)
-    out.critique = await agent(criticPrompt(b.packet, order, 'candidate', scope),
-      leanOpts({ label: `critic r${round} ${order.component}: ${b.assembly}`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' }))
+    // v3.13 (limits.readerKeep): a candidate the readers preferred meets a guard critic (measured copies, invariants, issues)
+    const guardMode = !!(L.readerKeep && out.readerVerdict)
+    out.critique = await agent(criticPrompt(b.packet, order, guardMode ? 'guard' : 'candidate', scope),
+      leanOpts({ label: `critic r${round} ${order.component}: ${b.assembly}${guardMode ? ' guard' : ''}`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: guardMode ? 'medium' : 'high' }))
     if (!out.critique) { out.failed = 'critic returned nothing'; return out }
     if (out.readerVerdict) {
       const rv = Object.entries(out.readerVerdict).map(([region, v]) => ({ region, verdict: v.verdict, reason: 'readers ' + v.better + ' better, ' + v.worse + ' worse: ' + v.reason.slice(0, 400) }))
       out.critique = { ...out.critique, criticPairwise: out.critique.pairwise, pairwise: rv }
     }
     out.decision = judge(S, RUBRIC, L, order, b, out.critique,
-      judgeOpts(b, { measuredTie: !!out.tie }))
-    const rg = await pairedRegrade(order, round, b, out.critique, out.decision, out.readerVerdict, !!out.tie)
+      judgeOpts(b, { measuredTie: !!out.tie, carryVisual: guardMode }))
+    const rg = guardMode ? null : await pairedRegrade(order, round, b, out.critique, out.decision, out.readerVerdict, !!out.tie)
     if (rg) {
       out.regrade = { losses: rg.losses, restored: rg.restored || [], held: rg.held || [], error: rg.error }
       if (rg.critique && rg.restored.length) {
@@ -1258,17 +1342,29 @@ for (let i = 0; i < ROUNDS; i++) {
     }
     // v3.9 (limits.runnerUpCritic, after round 26): the readers preferred a second face candidate the critic never saw;
     // before a repair plan, the critic grades the next reader-preferred candidate, judged the same way
+    // v3.13: the readers and the critic disagreeing twice on one target criterion is a question for Nick, not a third build
+    // (the eye outline: four rounds, 177M tokens)
+    if (!guardMode && out.readerVerdict && !out.decision.kept && targetsHere.some(t => (out.readerVerdict[t] || {}).verdict === 'better')) {
+      for (const l of visualLosses(order, out.critique)) {
+        S.disputes[l.id] = (S.disputes[l.id] || 0) + 1
+        if (S.disputes[l.id] >= 2) {
+          const c = (RUBRIC.regions[l.region] || []).find(x => x.id === l.id)
+          decide({ kind: 'dispute', region: l.region, criterion: l.id, evidence: b.packet + '/reader-pack',
+            question: `Readers preferred the ${l.region} candidate ${b.assembly} and the critic failed ${l.id}${c && c.text ? ' ("' + c.text.slice(0, 160) + '")' : ''} (${l.before} to ${l.after}), the ${S.disputes[l.id]}th time. Which is right: the readers or the criterion?` })
+        }
+      }
+    }
     if (L.runnerUpCritic && L.builderMode === 'split' && out.runnerUp && !out.decision.kept && !out.tie && !skipForTime(`runner-up critic for ${order.id}`)) {
       const ru = out.runnerUp, c = ru.cand
       const rb = { failed: false, recipe: c.recipe, head: c.head, body: c.body, assembly: c.assembly, packet: c.packet, technicalPass: true,
         approach: b.approach, changes: b.changes, regionChange: c.regionChange, regionShift: c.regionShift }
-      let cr = await agent(criticPrompt(rb.packet, order, 'candidate', criticScope(rb, order, frozen, targetsHere)),
-        leanOpts({ label: `critic r${round} ${order.component}: ${rb.assembly} runner-up`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' }))
+      let cr = await agent(criticPrompt(rb.packet, order, guardMode ? 'guard' : 'candidate', criticScope(rb, order, frozen, targetsHere)),
+        leanOpts({ label: `critic r${round} ${order.component}: ${rb.assembly} runner-up`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: guardMode ? 'medium' : 'high' }))
       if (cr) {
         const rv = Object.entries(ru.per).map(([region, v]) => ({ region, verdict: v.verdict, reason: 'readers ' + v.better + ' better, ' + v.worse + ' worse: ' + v.reason.slice(0, 400) }))
         cr = { ...cr, criticPairwise: cr.pairwise, pairwise: rv }
-        let d = judge(S, RUBRIC, L, order, rb, cr, judgeOpts(rb))
-        const rg2 = await pairedRegrade(order, round, rb, cr, d, ru.per, false)
+        let d = judge(S, RUBRIC, L, order, rb, cr, judgeOpts(rb, { carryVisual: guardMode }))
+        const rg2 = guardMode ? null : await pairedRegrade(order, round, rb, cr, d, ru.per, false)
         if (rg2 && rg2.critique && rg2.restored.length) { cr = rg2.critique; d = judge(S, RUBRIC, L, order, rb, cr, judgeOpts(rb)) }
         out.runnerUpResult = { assembly: rb.assembly, kept: d.kept, reasons: d.reasons, regrade: rg2 ? { losses: rg2.losses, restored: rg2.restored || [], held: rg2.held || [] } : null }
         if (d.kept) Object.assign(out, { build: rb, critique: cr, decision: d, readerVerdict: ru.per, firstPick: { assembly: b.assembly, reasons: out.decision.reasons } })
@@ -1318,14 +1414,51 @@ for (let i = 0; i < ROUNDS; i++) {
     S.auditGaps = (S.auditGaps || []).filter(g => !resolved.has(g.rank))
   }
   S.keptSinceAudit = (S.keptSinceAudit || 0) + adopted.length
+  S.keptSinceCold = (S.keptSinceCold || 0) + adopted.length
+  // v3.13 (limits.coldEvery, audit recommendation 5): with reader keeps the visual results stand still, so the score comes
+  // from a cold critique of the baseline every coldEvery rounds, when something was kept since the last one
+  let coldRescore = null
+  if (L.readerKeep && L.coldEvery && round % L.coldEvery === 0 && S.keptSinceCold > 0) {
+    const cold = await agent(criticPrompt(S.baseline.packet, null, 'cold'),
+      leanOpts({ label: `critic r${round}: cold rescore ${S.baseline.assembly}`, phase: 'Rounds', schema: CRITIC, model: 'opus', effort: 'high' }))
+    if (cold) {
+      const before = scoresNow(S)
+      const results = resultsAfter(S, cold, Object.fromEntries(IDS.map(id => [id, {}])))
+      for (const id of IDS) {
+        // a held region keeps its results (limits.freezeHeld)
+        if (S.regions[id].hold && L.freezeHeld) continue
+        const sc = scoreFrom(RUBRIC, results[id], id)
+        if (sc === null) continue
+        S.regions[id].results = results[id]
+        S.regions[id].score = sc
+        const iss = (cold.issues || []).filter(x => x.region === id).slice(0, 3)
+        if (iss.length) S.regions[id].issues = iss
+      }
+      S.invariants = Object.fromEntries((cold.invariants || []).map(x => [x.id, x.ok]))
+      S.keptSinceCold = 0
+      coldRescore = { assembly: S.baseline.assembly, before, after: scoresNow(S), meanBefore: meanOf({ ...S, regions: Object.fromEntries(IDS.map(id => [id, { ...S.regions[id], score: before[id] }])) }, before), summary: cold.summary }
+      log(`Round ${round}: cold rescore of ${S.baseline.assembly}: mean ${coldRescore.meanBefore} to ${meanOf(S, scoresNow(S))}`)
+    }
+  }
 
   const entry = recordEntry(S, L, round, outcomes, combined ? combined.build.assembly : null, baselineAtStart.recipe || null)
   entry.recipe = S.baseline.recipe || null
   entry.elapsedMinutes = elapsedMin()
   if (skipped.length) entry.skippedForTime = skipped.slice()
   if (trialOutcome) entry.effortTrial = { region: trial.id, effort: 'medium', assembly: trialOutcome.build ? trialOutcome.build.assembly : null, kept: !!trialOutcome.kept, reasons: trialOutcome.reasons || [trialOutcome.failed], gain: trialOutcome.gain ?? null, verdict: trialOutcome.verdict || null }
+  if (coldRescore) entry.coldRescore = coldRescore
   S.means.push(entry.mean)
-  S.keptLog.push(entry.orders.some(o => o.kept))
+  // audit 2026-10-07 bug 7: only a keep that moved a target criterion counts as progress in the plateau window
+  const moved = entry.orders.some(o => o.kept && o.targetMoved)
+  S.keptLog.push(moved)
+  if (moved) S.escalated = false
+  // v3.13 (audit recommendation 2): a region whose last three orders were all reverted goes to Nick
+  for (const o of entry.orders) {
+    const h = S.regions[o.region].history || []
+    if (!o.alarm && h.length >= 3 && h.slice(-3).every(e => !e.kept))
+      decide({ kind: 'reverts', region: o.region, evidence: o.assembly ? PACKETS + '/' + o.assembly : S.baseline.packet,
+        question: `${o.region} (${S.regions[o.region].name}) has had three reverted orders in a row (rounds ${h.slice(-3).map(e => e.round).join(', ')}). Keep working it, change its method, or set it aside?` })
+  }
   // The state after this round rides in the record, so a stopped batch resumes with
   // loop_state.py merge <round file> instead of a journal replay.
   entry.state = snapshot()
@@ -1345,8 +1478,8 @@ for (let i = 0; i < ROUNDS; i++) {
   // Plateau: the first time the last rounds gain too little, review the method of the two
   // highest-priority regions and start a fresh window; the second time, stop and report.
   if (plateau(S, L)) {
-    if (escalated) { milestone = 'plateau'; break }
-    escalated = true
+    if (S.escalated) { milestone = 'plateau'; break }
+    S.escalated = true
     const top = IDS.filter(id => workable(id) && !reviewed.has(id)).map(id => ({ id, p: priority(S, L, id, round + 1) }))
       .filter(x => x.p !== null).sort((a, b) => b.p - a.p).slice(0, 2).map(x => x.id)
     log(`Round ${round}: plateau (${S.means.slice(-1 - (L.plateauRounds ?? 3)).join(', ')}); method review for ${top.join(', ')}`)
