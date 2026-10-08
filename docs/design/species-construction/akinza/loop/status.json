@@ -1526,9 +1526,23 @@
    "question": "R09 (Hind paws) has had three reverted orders in a row (rounds 17, 18, 30). Keep working it, change its method, or set it aside?",
    "answer": "Nick 2026-10-08: B looks fine (assembled-2920, round 30's plumper mitten toes with thin claws). Adopt it into the baseline after round 31 merges.",
    "answered": "2026-10-08"
+  },
+  {
+   "key": "pick:R03:",
+   "kind": "pick",
+   "region": "R03",
+   "round": 31,
+   "frees": [
+    "R04"
+   ],
+   "evidence": "ear_choices.png on the artifact page, round 31",
+   "question": "Which ears: 1 current, 2 lightly softened (assembled-2934), 3 softened with fewer masses (assembled-2935), 4 softened most (assembled-2936)? Readers preferred 1 every time because the reference draws pointed locks."
   }
  ],
- "awaiting": {},
+ "awaiting": {
+  "R03": "Which ears: 1 current, 2 lightly softened (assembled-2934), 3 softened with fewer masses (assembled-2935), 4 softened most (assembled-2936)? Readers preferred 1 every time because the reference draws pointed locks.",
+  "R04": "paired with R03: Which ears: 1 current, 2 lightly softened (assembled-2934), 3 softened with fewer masses (assembled-2935), 4 softened most (assembled-2936)? Readers preferred 1 every time because the reference draws pointed locks."
+ },
  "disputes": {},
  "escalated": true,
  "keptSinceCold": 1,
