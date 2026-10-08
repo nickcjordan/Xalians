@@ -46,7 +46,9 @@ test('merge: a slim workflow result folds back into the full status without losi
   assert.equal(run('args', 'akinza', '--out', dir, '--status', statusFile, '--rounds', '3').status, 0)
   const slim = JSON.parse(readFileSync(join(dir, 'args.json'), 'utf8'))
   const wf = generate()
-  const a = await runWorkflow(wf, { status: full, rubric, rounds: 3 }, 'm1')
+  // status.json keeps methods in methods.json; give the full run the same method lines args sends, or it replans and the
+  // two runs part at the first plateau window (round 31)
+  const a = await runWorkflow(wf, { status: { ...full, methods: slim.status.methods }, rubric, rounds: 3 }, 'm1')
   const b = await runWorkflow(wf, { status: slim.status, rubric: slim.rubric, rounds: 3 }, 'm1')  // no pools: v2 pools on both sides, so only the slimming is under test
   assert.ok(a.ret.status.round > full.round, 'the fake run should play rounds')
   const resultFile = join(dir, 'result.json')
