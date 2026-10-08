@@ -248,7 +248,7 @@
     "belowFloor": 0.03,
     "normalZ": -0.25
   },
-  "paleSmoothing": 18,
+  "paleSmoothing": 10,
   "paleSlot": 1,
   "materials": {
     "hairGray": 0.4,
@@ -267,7 +267,7 @@
     "dx": -0.013,
     "dz": 0.017
   },
-  "paleGain": 1.8,
+  "paleGain": 1.5,
   "groupPaleGain": 1.8,
   "paleSlotMaxAt": 0.3,
   "cup": {
@@ -295,11 +295,11 @@
     "box": {
       "at": [
         0.3,
-        0.4
+        0.38
       ],
       "x": [
         0.0,
-        0.045
+        0.02
       ],
       "y": [
         -0.14,
@@ -307,14 +307,18 @@
       ],
       "symmetricX": true
     },
-    "margin": 0.045,
+    "margin": 0.05,
     "strength": 1.0
   },
-  "paleFinalSmoothing": 14,
-  "paleFinalGain": 1.15,
+  "paleFinalSmoothing": 20,
+  "paleFinalGain": 1.0,
   "rim": {
     "width": 0.0042,
-    "soft": 0.003,
-    "smooth": 10
+    "soft": 0.004,
+    "smooth": 30
+  },
+  "cupInner": {
+    "t0": 0.22,
+    "width": 0.22
   }
 }

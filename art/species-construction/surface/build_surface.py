@@ -168,6 +168,16 @@ def compute_attributes(skin, cfg, species):
     pale_loops = mat[face_of_loop] == cfg['paleSlot']
     pale = np.zeros(n)
     pale[loops[pale_loops]] = 1.0
+    if 'cupInner' in cfg:  # keep only the inner part of the slot, nearest the ear root, soft-edged
+        ci = cfg['cupInner']
+        for side in (-1.0, 1.0):
+            root_s = np.array(cfg['earRoot'])*np.array([side, 1.0, 1.0])
+            sel = np.where((pale > 0) & (np.sign(co[:, 0]+1e-9) == side))[0]
+            if len(sel) == 0:
+                continue
+            d = np.linalg.norm(co[sel]-root_s, axis=1)
+            t = (d-d.min())/max(d.max()-d.min(), 1e-9)
+            pale[sel] = 1.0-smoothstep((t-ci['t0'])/ci['width'])
     at_all = (floor+height-co[:, 2])/height
     pale *= (at_all < cfg.get('paleSlotMaxAt', 0.3))
     edges = np.empty(len(me.edges)*2, dtype=np.int32)
