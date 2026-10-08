@@ -1,0 +1,563 @@
+{
+ "order": {
+  "round": 33,
+  "region": "R06",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2961",
+ "start": null,
+ "variants": [
+  {
+   "name": "slim column, moderate",
+   "why": "Gap audit rank 9 and R06.3, R06.5: from the front the trunk reads as an athletic hourglass because the rib cage is a balloon (mesh half width .101 at .38 and .0925 at .40 against the sheet's .079 and .074) over a pinched .072 waist. Rib cage narrowed about .007 per side at .38 and .40 and .0045 at .42, waist .001 narrower (R06.1 from 1.09 toward 1.07, away from its cap), so the trunk tapers as one long gentle line. Built as a late re-loft after B-24Y (8 minutes instead of 25), weight ramping in from .34 to .38 so the yoke and arm fillet above stay, out by .52 so the R08 thigh root stays. Watch the armpit at .36 to .38 for a crater.",
+   "edits": [
+    {
+     "op": "add",
+     "after": "B-24Y",
+     "step": {
+      "id": "B-25T",
+      "component": "body",
+      "kind": "body",
+      "regions": [
+       "R06"
+      ],
+      "script": "art/species-construction/author_trunk_sections_field_r20.py",
+      "runner": "blender",
+      "inputs": {
+       "base": "B-24Y"
+      },
+      "args": [
+       "--body",
+       "{base}/shape.glb",
+       "--fairing",
+       "{base}/fairing.json",
+       "--spec",
+       "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json",
+       "--out",
+       "{out}"
+      ],
+      "note": "round 33 R06: late trunk re-loft after the arm rebuild and yoke, weight confined to y .34 to the waist and hip so R05, R07 and R08 keep their steps",
+      "minutes": 8.2
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:weights.y.top",
+     "value": [
+      0.34,
+      0.38
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:weights.y.bottom",
+     "value": [
+      0.48,
+      0.52
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.halfWidth",
+     "value": 0.1045
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.094
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0855
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0775
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.0695
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.0715
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.0785
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.12.halfWidth",
+     "value": 0.092
+    }
+   ]
+  },
+  {
+   "name": "slim column, sheet widths",
+   "why": "The bolder end of the same idea, for the lithe straight column the audit asks for: half widths close to the sheet's mean of front and back drawings (.38 .088, .40 .080, .42 .074, .44 .068). Rib to waist ratio about 1.29 against the sheet's 1.24 (now 1.43); R06.1 near 1.04. Risk: an armpit step where the ramp meets the arm fillet at .34 to .38, or a bottle under the R05 shoulder width.",
+   "edits": [
+    {
+     "op": "add",
+     "after": "B-24Y",
+     "step": {
+      "id": "B-25T",
+      "component": "body",
+      "kind": "body",
+      "regions": [
+       "R06"
+      ],
+      "script": "art/species-construction/author_trunk_sections_field_r20.py",
+      "runner": "blender",
+      "inputs": {
+       "base": "B-24Y"
+      },
+      "args": [
+       "--body",
+       "{base}/shape.glb",
+       "--fairing",
+       "{base}/fairing.json",
+       "--spec",
+       "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json",
+       "--out",
+       "{out}"
+      ],
+      "note": "round 33 R06: late trunk re-loft after the arm rebuild and yoke, weight confined to y .34 to the waist and hip so R05, R07 and R08 keep their steps",
+      "minutes": 8.2
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:weights.y.top",
+     "value": [
+      0.34,
+      0.38
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:weights.y.bottom",
+     "value": [
+      0.48,
+      0.52
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.halfWidth",
+     "value": 0.1015
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.088
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.08
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.074
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.068
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.0695
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.077
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.12.halfWidth",
+     "value": 0.0905
+    }
+   ]
+  },
+  {
+   "name": "slim column plus chest plane",
+   "why": "R06.4 partial (no forward chest plane, the rib cage reads as a smooth tube): the moderate slim column plus a flatter, broader chest front at .36 to .40 (front exponent 2.15, widest line at .56 to .57 of the depth, exponents stepping at most .1 per .02), the chest front .003 ahead at .36 and .38 and the belly .0015 to .0025 back at .44 to .48, so light reads a chest plane over a falling belly in m02 left and m06. R06.8 from -.002 to about -.005 (bound .01); R06.16 departure about .004 against the .38 to .50 line, inside its bound.",
+   "edits": [
+    {
+     "op": "add",
+     "after": "B-24Y",
+     "step": {
+      "id": "B-25T",
+      "component": "body",
+      "kind": "body",
+      "regions": [
+       "R06"
+      ],
+      "script": "art/species-construction/author_trunk_sections_field_r20.py",
+      "runner": "blender",
+      "inputs": {
+       "base": "B-24Y"
+      },
+      "args": [
+       "--body",
+       "{base}/shape.glb",
+       "--fairing",
+       "{base}/fairing.json",
+       "--spec",
+       "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json",
+       "--out",
+       "{out}"
+      ],
+      "note": "round 33 R06: late trunk re-loft after the arm rebuild and yoke, weight confined to y .34 to the waist and hip so R05, R07 and R08 keep their steps",
+      "minutes": 8.2
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:weights.y.top",
+     "value": [
+      0.34,
+      0.38
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:weights.y.bottom",
+     "value": [
+      0.48,
+      0.52
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.halfWidth",
+     "value": 0.1045
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.094
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0855
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0775
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.0695
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.0715
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.0785
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.12.halfWidth",
+     "value": 0.092
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.expFront",
+     "value": 2.15
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.expFront",
+     "value": 2.15
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.7.expFront",
+     "value": 2.05
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.split",
+     "value": 0.56
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.split",
+     "value": 0.57
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.front",
+     "value": -0.1035
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.front",
+     "value": -0.104
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.9.front",
+     "value": -0.0975
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.10.front",
+     "value": -0.097
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.11.front",
+     "value": -0.098
+    }
+   ]
+  },
+  {
+   "name": "combined: slim column, chest plane, rump",
+   "why": "The best guess at the finished trunk: moderate slim column (front hourglass, gap rank 9), chest plane (R06.4) and rump fill (R06.9) together, judged on m06 trunk-front, posed shaded-front and posed shaded-left where the interactions show.",
+   "edits": [
+    {
+     "op": "add",
+     "after": "B-24Y",
+     "step": {
+      "id": "B-25T",
+      "component": "body",
+      "kind": "body",
+      "regions": [
+       "R06"
+      ],
+      "script": "art/species-construction/author_trunk_sections_field_r20.py",
+      "runner": "blender",
+      "inputs": {
+       "base": "B-24Y"
+      },
+      "args": [
+       "--body",
+       "{base}/shape.glb",
+       "--fairing",
+       "{base}/fairing.json",
+       "--spec",
+       "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json",
+       "--out",
+       "{out}"
+      ],
+      "note": "round 33 R06: late trunk re-loft after the arm rebuild and yoke, weight confined to y .34 to the waist and hip so R05, R07 and R08 keep their steps",
+      "minutes": 8.2
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:weights.y.top",
+     "value": [
+      0.34,
+      0.38
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:weights.y.bottom",
+     "value": [
+      0.52,
+      0.56
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.halfWidth",
+     "value": 0.1045
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.halfWidth",
+     "value": 0.094
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0855
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0775
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.0695
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.10.halfWidth",
+     "value": 0.0715
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.0785
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.12.halfWidth",
+     "value": 0.092
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.expFront",
+     "value": 2.15
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.expFront",
+     "value": 2.15
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.7.expFront",
+     "value": 2.05
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.split",
+     "value": 0.56
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.split",
+     "value": 0.57
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.5.front",
+     "value": -0.1035
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.6.front",
+     "value": -0.104
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.9.front",
+     "value": -0.0975
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.10.front",
+     "value": -0.097
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.11.front",
+     "value": -0.098
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.10.back",
+     "value": -0.0115
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.11.back",
+     "value": 0.0055
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.12.back",
+     "value": 0.0215
+    },
+    {
+     "op": "set",
+     "step": "B-25T",
+     "arg": "spec:stations.13.back",
+     "value": 0.037
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R06",
+ "top": 3
+}

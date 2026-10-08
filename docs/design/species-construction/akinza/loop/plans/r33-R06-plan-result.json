@@ -1,0 +1,1006 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r33-R06.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2965",
+ "order": {
+  "round": 33,
+  "region": "R06",
+  "with": []
+ },
+ "region": "R06",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2961",
+ "startNotes": [],
+ "top": [
+  {
+   "rank": 1,
+   "id": "v01",
+   "name": "chest plane forward",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2965\\v01.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2981",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2981",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 712840,
+    "removedFragments": 0,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R05.3",
+     "region": "R05",
+     "before": 1.039,
+     "after": 1.04,
+     "bound": {
+      "min": 0.93,
+      "max": 1.07
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.10",
+     "region": "R06",
+     "before": 0.8392,
+     "after": 0.8544,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R06.11",
+     "region": "R06",
+     "before": 1.027,
+     "after": 1.047,
+     "bound": {
+      "min": 0.97,
+      "max": 1.1
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.13",
+     "region": "R06",
+     "before": 1.029,
+     "after": 1.058,
+     "bound": {
+      "min": 0.93,
+      "max": 1.08
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.14",
+     "region": "R06",
+     "before": 1.095,
+     "after": 1.072,
+     "bound": {
+      "min": 0.9,
+      "max": 1.15
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.16",
+     "region": "R06",
+     "before": -0.0018,
+     "after": 0.0004,
+     "bound": {
+      "max": 0.004
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.8",
+     "region": "R06",
+     "before": -0.002,
+     "after": -0.0077,
+     "bound": {
+      "min": -0.01,
+      "max": 0.01
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R07.6",
+     "region": "R07",
+     "before": 0.8493,
+     "after": 0.8726,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R08.10",
+     "region": "R08",
+     "before": 0.8315,
+     "after": 0.8284,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R08.11",
+     "region": "R08",
+     "before": 0.6616,
+     "after": 0.6439,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R09.9",
+     "region": "R09",
+     "before": 0.6414,
+     "after": 0.6425,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R10.1",
+     "region": "R10",
+     "before": 0.7424,
+     "after": 0.7423,
+     "bound": {
+      "min": 0.74
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R01.1",
+    "R01.6",
+    "R03.1",
+    "R04.1",
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "B-20T": {
+     "flaggedRelative": [],
+     "worst": [
+      {
+       "region": "R05",
+       "max": 0.00155,
+       "allowance": 0.002,
+       "excess": -0.00045,
+       "flagged": false
+      },
+      {
+       "region": "R08",
+       "max": 0.00106,
+       "allowance": 0.002,
+       "excess": -0.00094,
+       "flagged": false
+      },
+      {
+       "region": "R07",
+       "max": 0.00103,
+       "allowance": 0.002,
+       "excess": -0.00097,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00167,
+    "R02": 0.00016,
+    "R03": 0.00167,
+    "R04": 0.00167,
+    "R05": 0.01225,
+    "R06": 0.00907,
+    "R07": 0.01272,
+    "R08": 0.00046,
+    "R09": 0.0,
+    "R10": 0.00368,
+    "R11": 0.0052,
+    "R12": 0.00329
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.0,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.00027,
+    "R06": 0.00561,
+    "R07": 0.00193,
+    "R08": 0.00193,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R06 measured: 6 changed; R05 measured: 1 changed; R07 measured: 1 changed; R08 measured: 2 changed; R09 measured: 1 changed; R10 measured: 1 changed; no new seams flagged; containment within allowance; picture change R07 0.0127, R05 0.0123, R06 0.0091",
+   "wallMinutes": 14.9
+  },
+  {
+   "rank": 2,
+   "id": "v02",
+   "name": "combined chest, S and flare",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2965\\v02.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2980",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2980",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 713198,
+    "removedFragments": 0,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R05.3",
+     "region": "R05",
+     "before": 1.039,
+     "after": 1.04,
+     "bound": {
+      "min": 0.93,
+      "max": 1.07
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.1",
+     "region": "R06",
+     "before": 1.09,
+     "after": 1.081,
+     "bound": {
+      "max": 1.1
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.10",
+     "region": "R06",
+     "before": 0.8392,
+     "after": 0.8546,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R06.11",
+     "region": "R06",
+     "before": 1.027,
+     "after": 1.047,
+     "bound": {
+      "min": 0.97,
+      "max": 1.1
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.12",
+     "region": "R06",
+     "before": 1.002,
+     "after": 0.966,
+     "bound": {
+      "min": 0.95,
+      "max": 1.08
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.13",
+     "region": "R06",
+     "before": 1.029,
+     "after": 1.098,
+     "bound": {
+      "min": 0.93,
+      "max": 1.08
+     },
+     "result": [
+      "pass",
+      "fail"
+     ]
+    },
+    {
+     "id": "R06.14",
+     "region": "R06",
+     "before": 1.095,
+     "after": 1.129,
+     "bound": {
+      "min": 0.9,
+      "max": 1.15
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.16",
+     "region": "R06",
+     "before": -0.0018,
+     "after": 0.0004,
+     "bound": {
+      "max": 0.004
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R06.8",
+     "region": "R06",
+     "before": -0.002,
+     "after": -0.0077,
+     "bound": {
+      "min": -0.01,
+      "max": 0.01
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R07.6",
+     "region": "R07",
+     "before": 0.8493,
+     "after": 0.8728,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R08.10",
+     "region": "R08",
+     "before": 0.8315,
+     "after": 0.8284,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R08.11",
+     "region": "R08",
+     "before": 0.6616,
+     "after": 0.6439,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R09.9",
+     "region": "R09",
+     "before": 0.6414,
+     "after": 0.6425,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R10.1",
+     "region": "R10",
+     "before": 0.7424,
+     "after": 0.7423,
+     "bound": {
+      "min": 0.74
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R01.1",
+    "R01.6",
+    "R03.1",
+    "R04.1",
+    "R06.10",
+    "R06.13",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [],
+   "containment": {
+    "B-20T": {
+     "flaggedRelative": [],
+     "worst": [
+      {
+       "region": "R05",
+       "max": 0.00155,
+       "allowance": 0.002,
+       "excess": -0.00045,
+       "flagged": false
+      },
+      {
+       "region": "R08",
+       "max": 0.00106,
+       "allowance": 0.002,
+       "excess": -0.00094,
+       "flagged": false
+      },
+      {
+       "region": "R07",
+       "max": 0.00103,
+       "allowance": 0.002,
+       "excess": -0.00097,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00167,
+    "R02": 0.00016,
+    "R03": 0.00167,
+    "R04": 0.00167,
+    "R05": 0.01225,
+    "R06": 0.00952,
+    "R07": 0.01335,
+    "R08": 0.00046,
+    "R09": 0.0,
+    "R10": 0.00601,
+    "R11": 0.00609,
+    "R12": 0.00345
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.0,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.00027,
+    "R06": 0.00561,
+    "R07": 0.00193,
+    "R08": 0.00193,
+    "R09": 0.0,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R06 measured: 8 changed (0 newly passing, 1 newly failing); R05 measured: 1 changed; R07 measured: 1 changed; R08 measured: 2 changed; R09 measured: 1 changed; R10 measured: 1 changed; no new seams flagged; containment within allowance; picture change R07 0.0134, R05 0.0123, R06 0.0095",
+   "wallMinutes": 13.8
+  }
+ ],
+ "baseline": {
+  "head": "head-2932",
+  "body": "body-2960",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2932__body-2960",
+  "terms": {
+   "fitIou": 0.68623,
+   "fitIouByView": {
+    "front": 0.64403,
+    "left": 0.7197,
+    "back": 0.69497
+   },
+   "silhouetteChange": null,
+   "fitBand": "trunk",
+   "fitBandIou": 0.6397,
+   "stationDiff": 0.14644,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "chest plane forward",
+   "why": "R06.4 and critic issue 2: the front edge is a dead-straight vertical from .34 to .44. Chest front +.006 at .36 (-.1005 to -.1065), +.0045 at .34, +.004 at .38, +.002 at .40, falling back to the unchanged belly line by .42, so the rib cage stands proud of the belly in profile; upper back .002 shallower at .34 and .36 to hold R06.13 (chest over waist, 1.029 now, cap 1.08 allows about +.005 of chest depth) and R06.8 (-.002 now, bound -.010). Only B-20T station table values; rebuilds B-21 to B-24Y (about 32 minutes).",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.front",
+     "value": -0.0865
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0995
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.1065
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.1055
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.front",
+     "value": -0.1025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.033
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2965\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-20T"
+   ],
+   "total": -1.726,
+   "parts": {
+    "fit": -0.164,
+    "station": -0.001,
+    "contain": -0.0,
+    "tool": -0.002,
+    "seam": -1.558,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.68459,
+    "fitIouByView": {
+     "front": 0.64402,
+     "left": 0.71481,
+     "back": 0.69495
+    },
+    "silhouetteChange": 0.00237,
+    "fitBand": "trunk",
+    "fitBandIou": 0.638,
+    "stationDiff": 0.14645,
+    "seam": {
+     "worstRatio": 0.5583,
+     "at": "elbow left wbump",
+     "flagged": []
+    },
+    "criteria": {
+     "R06.1": {
+      "region": "R06",
+      "value": 1.09,
+      "min": null,
+      "max": 1.1,
+      "result": "pass"
+     },
+     "R06.8": {
+      "region": "R06",
+      "value": -0.0059,
+      "min": -0.01,
+      "max": 0.01,
+      "result": "pass"
+     },
+     "R06.11": {
+      "region": "R06",
+      "value": 1.047,
+      "min": 0.97,
+      "max": 1.1,
+      "result": "pass"
+     },
+     "R06.12": {
+      "region": "R06",
+      "value": 1.001,
+      "min": 0.95,
+      "max": 1.08,
+      "result": "pass"
+     },
+     "R06.13": {
+      "region": "R06",
+      "value": 1.059,
+      "min": 0.93,
+      "max": 1.08,
+      "result": "pass"
+     },
+     "R06.14": {
+      "region": "R06",
+      "value": 1.073,
+      "min": 0.9,
+      "max": 1.15,
+      "result": "pass"
+     },
+     "R06.16": {
+      "region": "R06",
+      "value": 0.0004,
+      "min": null,
+      "max": 0.004,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.00155,
+    "containRegion": "R05",
+    "containExcess": 0.0,
+    "toolScore": -0.005463981460937761,
+    "toolStep": "B-20T",
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": true,
+     "rows": []
+    }
+   },
+   "rank": 1,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-20T": "body-2967",
+    "B-21": "body-2975",
+    "B-22": "body-2977",
+    "B-23": "body-2978",
+    "B-24Y": "body-2979"
+   },
+   "contain": [
+    {
+     "step": "B-20T",
+     "max": 0.00155,
+     "region": "R05",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2932__body-2979",
+   "head": "head-2932",
+   "body": "body-2979"
+  },
+  {
+   "id": "v02",
+   "name": "combined chest, S and flare",
+   "why": "The interaction case: chest plane forward (variant 1) plus the sharper lumbar S (variant 4) plus a lighter hip flare (+.001 to +.0035 from .48 to .56, waist .0695, .42 and .40 +.001 and .0015 above baseline), judged in posed shaded-left, shaded-front and posed-fit together, since R06.13 and R06.14 trade against each other when both ends of the profile move.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.front",
+     "value": -0.0865
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0995
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.1065
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.1055
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.front",
+     "value": -0.1025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.033
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.011
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.013
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": -0.001
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.12.back",
+     "value": 0.0185
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.13.back",
+     "value": 0.0335
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.0695
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.0815
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.12.halfWidth",
+     "value": 0.0965
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.13.halfWidth",
+     "value": 0.1075
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.14.halfWidth",
+     "value": 0.1195
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.15.halfWidth",
+     "value": 0.1315
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0835
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0935
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2965\\v02.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-20T"
+   ],
+   "total": -3.955,
+   "parts": {
+    "fit": -0.082,
+    "station": -0.009,
+    "contain": -0.0,
+    "tool": -0.008,
+    "seam": -2.689,
+    "progress": -1.167
+   },
+   "terms": {
+    "fitIou": 0.68541,
+    "fitIouByView": {
+     "front": 0.64545,
+     "left": 0.71488,
+     "back": 0.6959
+    },
+    "silhouetteChange": 0.00375,
+    "fitBand": "trunk",
+    "fitBandIou": 0.6387,
+    "stationDiff": 0.14653,
+    "seam": {
+     "worstRatio": 0.7333,
+     "at": "elbow left wbump",
+     "flagged": []
+    },
+    "criteria": {
+     "R06.1": {
+      "region": "R06",
+      "value": 1.081,
+      "min": null,
+      "max": 1.1,
+      "result": "pass"
+     },
+     "R06.8": {
+      "region": "R06",
+      "value": -0.0059,
+      "min": -0.01,
+      "max": 0.01,
+      "result": "pass"
+     },
+     "R06.11": {
+      "region": "R06",
+      "value": 1.047,
+      "min": 0.97,
+      "max": 1.1,
+      "result": "pass"
+     },
+     "R06.12": {
+      "region": "R06",
+      "value": 0.966,
+      "min": 0.95,
+      "max": 1.08,
+      "result": "pass"
+     },
+     "R06.13": {
+      "region": "R06",
+      "value": 1.098,
+      "min": 0.93,
+      "max": 1.08,
+      "result": "fail"
+     },
+     "R06.14": {
+      "region": "R06",
+      "value": 1.129,
+      "min": 0.9,
+      "max": 1.15,
+      "result": "pass"
+     },
+     "R06.16": {
+      "region": "R06",
+      "value": 0.0004,
+      "min": null,
+      "max": 0.004,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.00155,
+    "containRegion": "R05",
+    "containExcess": 0.0,
+    "toolScore": -0.005524803569594946,
+    "toolStep": "B-20T",
+    "progress": {
+     "flips": -1,
+     "closed": -0.0167,
+     "moved": true,
+     "rows": [
+      "R06.13 1.029->1.098 pass->fail"
+     ]
+    }
+   },
+   "rank": 2,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-20T": "body-2968",
+    "B-21": "body-2971",
+    "B-22": "body-2972",
+    "B-23": "body-2973",
+    "B-24Y": "body-2976"
+   },
+   "contain": [
+    {
+     "step": "B-20T",
+     "max": 0.00155,
+     "region": "R05",
+     "excess": 0.0,
+     "relativeFlagged": []
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2932__body-2976",
+   "head": "head-2932",
+   "body": "body-2976"
+  }
+ ],
+ "scoringSeconds": 660.4,
+ "wallMinutes": 26.3,
+ "surfaceStats": true,
+ "created": "2026-10-08T14:57:21",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r33-R06-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r33-R06-plan-result.png"
+ ]
+}

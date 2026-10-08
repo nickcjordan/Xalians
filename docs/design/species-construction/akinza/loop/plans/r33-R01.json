@@ -1,0 +1,39 @@
+{
+ "order": {
+  "round": 33,
+  "region": "R01",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2961",
+ "start": null,
+ "variants": [
+  {
+   "name": "deeper fan set-back and rear valley",
+   "why": "R01.3 and R01.4 (critic issues 1 and 3, spec rules): the spec asks the fan front to sit at least .015 fig behind the dome at |x| .07 and the rear valley crest-minus-valley at least .018; current front_set_back is .05 local (.013 fig) and rear_valley .05. Neither depth was ever raised in a kept or reverted round (rounds 19 and 29 only touched the crown). Edited at H25, the last R01 step.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:warp.front_set_back.depth",
+     "value": 0.09
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:warp.rear_valley.depth",
+     "value": 0.085
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:warp.rear_valley.width",
+     "value": 0.13
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R01",
+ "top": 1
+}

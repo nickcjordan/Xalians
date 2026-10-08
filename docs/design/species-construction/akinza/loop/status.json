@@ -72,7 +72,7 @@
   "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2961",
   "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
- "round": 32,
+ "round": 33,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -105,7 +105,8 @@
   "R07+R01",
   "R09+R05",
   "R03+R04+R07",
-  "R03+R04+R05"
+  "R03+R04+R05",
+  "R01+R06"
  ],
  "specs": {
   "R10": {
@@ -184,38 +185,41 @@
   "R01": {
    "name": "Head silhouette",
    "weight": 3,
-   "score": 5.6,
+   "score": 3.8,
    "results": {
     "R01.1": "fail",
     "R01.2": "pass",
-    "R01.3": "partial",
-    "R01.4": "partial",
+    "R01.3": "fail",
+    "R01.4": "fail",
     "R01.5": "partial",
     "R01.6": "fail",
     "R01.7": "pass",
-    "R01.8": "pass"
+    "R01.8": "partial"
    },
    "issues": [
     {
      "region": "R01",
-     "summary": "Back view: the fan centre reads as a slab and the head only as a bulb under the fan's underside shelf (R01.4).",
-     "fix": "Raise a vertical head oval through the fan back about .13 to .14 of figure height wide, standing about .015 to .02 proud of the fan rear surface, carried continuously down into the bulb so the shelf underside is broken at the centre.",
-     "fixability": 0.5
+     "summary": "The back of the head is a separate disc with straight vertical seams against the fan",
+     "fix": "Replace the disc edges with a concave fillet of about .01 of figure height where the head dome meets the fan back, and delete the vertical seam edges at about ±.06 from centre",
+     "fixability": 0.6,
+     "evidence": "m04 head-back, m02 back; R01.4 fail, R01.8 partial"
     },
     {
      "region": "R01",
-     "summary": "Rim lines on the back: a flat underside band at the shelf height and a lit lip where the bulb meets the neck (R01.4).",
-     "fix": "Widen the cut blend from .045 to about .08 so the shelf underside rounds over; fair the bulb into the neck over about .03 of figure height so the ring disappears.",
-     "fixability": 0.6
+     "summary": "The head base inside the fan is far too wide in the back view",
+     "fix": "Narrow the back-view central width at .18 from .206 to about .175 of figure height (limit 1.15 x .155 = .178), and trim the fan lower outer edges, which carry most of the 0.13 to 0.14 extra in the front and back head bands",
+     "fixability": 0.55,
+     "evidence": "measured R01.6 1.329; fit front head extra 0.128, back head extra 0.145"
     },
     {
      "region": "R01",
-     "summary": "Front: the crown clears the inner fan rims only by a hair and its top is lumpy; the jaw still pinches into a narrow stem under the chin (R01.3, R01.5).",
-     "fix": "Raise crown_lift to about .04 amp with a narrower sx and smooth the crown, targeting a round crown top about .015 of figure height above the inner rims; widen the chin table half width at z -.282 to -.319 by about .01 to .015 so the jaw flows into the neck.",
-     "fixability": 0.7
+     "summary": "The skull crown does not rise above the inner fan rim in the front view",
+     "fix": "Raise the crown dome about .01 to .015 of figure height above the inner fan rim, or drop the fan inner rim over the crown by the same amount",
+     "fixability": 0.5,
+     "evidence": "m04 head-front, m02 front against m01"
     }
    ],
-   "attempts": 1,
+   "attempts": 2,
    "anchorScore": 8.1,
    "parked": false,
    "history": [
@@ -268,18 +272,36 @@
      "approach": "Raise the crown from its own cap ellipsoid and the back of the head from a vertical oval through the fan centre (both smooth-union skulls at H25 with crown_lift removed), and in a second variant also taper the jaw to the sheet U and soften the shelf cut blend to .06.",
      "reason": "no candidate read better than the baseline: [{\"candidate\":\"single smooth crown dome\",\"per\":{\"R01\":{\"verdict\":\"same\",\"better\":1,\"worse\":0,\"reason\":\"A and B show the same skull outline, crown tuft, ear fan spread and side profile in every view; the only change is a slightly smoother crown on B, too small to call. | B's crown has fewer, smaller ",
      "reusable": []
+    },
+    {
+     "round": 33,
+     "kept": false,
+     "approach": "Trim the lock bottoms that hang below the sheet shelf outside the head base with a field-space cut (new H36 remesh with x_extent .75, shelf_z -.108, blend .03) and carry the coat materials back with H37.",
+     "reason": "the code builder candidate did not read better than the baseline: {\"R01\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"B's fan has a broken lower edge with hanging pointed tips that comes closer to the reference's shaggy lower outline, while A's fan ends in a flat, slab-like bottom edge. | B's lower fan rim carries more small drip-like nubs and serrations along its underside and outer ends, while A's lower edge reads as a cleaner, softer mass closer to the r",
+     "reusable": [
+      {
+       "option": "shape_head_silhouette_field_r33.py cut.x_extent (default .45)",
+       "what": "Widens the field-space cut box in |x| so the shelf and head-base cut also trims lock geometry far out on the fan; used with a spec holding only cut (no nape, chin or warp) as a late trim step."
+      },
+      {
+       "option": "specs/silhouette-r01-trim-r33.json spec:cut.shelf_z and spec:cut.blend",
+       "what": "Sweepable shelf height (-0.125 to -0.09) and underside fillet (0.02 to 0.08) for H36; not swept this round."
+      }
+     ],
+     "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\r33-R01.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 29,
+   "lastWorked": 33,
    "toolUsed": false
   },
   "R02": {
    "name": "Face",
    "weight": 3,
-   "score": 8.3,
+   "score": 5.8,
    "results": {
-    "R02.1": "pass",
-    "R02.2": "pass",
+    "R02.1": "partial",
+    "R02.2": "fail",
     "R02.3": "partial",
     "R02.4": "pass",
     "R02.5": "partial",
@@ -288,21 +310,24 @@
    "issues": [
     {
      "region": "R02",
-     "summary": "Cheek locks read as flat hard-ridged wedge plates and barely break the lower face outline; the lower lock is faint.",
-     "fix": "Give each lock a rounded lens cross-section (thickness_exponent .9 to about .5; thick_root about .022 upper and .02 lower), soften the ridge (blend about .045), and carry each tip outward about .012 head-local past the outline.",
-     "fixability": 0.6
+     "summary": "The eye outline is a thin, uneven lid line, not r01's bold even outline",
+     "fix": "Make the dark outline an even band of about 6 to 8 percent of eye width all the way round (bring the bottom-inner minimum up from 0.4 to about the top value), set flush in the face",
+     "fixability": 0.7,
+     "evidence": "m05 eyes-front; faceMeasures bandMin 0.38 vs bandTopBottom 7.0"
     },
     {
      "region": "R02",
-     "summary": "In profile the nose pad is a thin sliver high on the bridge slope with a bead at its upper corner; the skin bulb below forms the nose tip.",
-     "fix": "Seat the pad on the wedge tip: wrap its lower third over the tip onto the underside by about .006 head-local along the surface, give it a soft proud dome of about .003 to .004, and bury the upper corners.",
-     "fixability": 0.5
+     "summary": "The cheek tufts are hard faceted plates",
+     "fix": "Rebuild each cheek as two or three soft rounded clumps that break the outline by about .005 to .01 of figure height, and remove the crease facets across the cheeks",
+     "fixability": 0.6,
+     "evidence": "m05 nose-profile, m06 neck-front"
     },
     {
      "region": "R02",
-     "summary": "A pinhole-sized dark fleck sits at the philtrum top under the nose.",
-     "fix": "Fill the hole or delete the stray dark polygon at the philtrum top (near philtrum_top_z -.178) and smooth the skin field over it.",
-     "fixability": 0.9
+     "summary": "The eyes are smaller than the sheet, and the nose reads as a flat tab in profile",
+     "fix": "Enlarge the eyes about 10 to 15 percent toward r01's proportion, and seat the nose pad as a wedge sunk about .002 to .003 into the muzzle tip",
+     "fixability": 0.55,
+     "evidence": "m05 eyes-front against r01; m05 nose-profile, nose-below"
     }
    ],
    "attempts": 2,
@@ -385,12 +410,12 @@
   "R03": {
    "name": "Ear fan front",
    "weight": 3,
-   "score": 4.3,
+   "score": 3.6,
    "results": {
     "R03.1": "fail",
     "R03.2": "pass",
     "R03.3": "fail",
-    "R03.4": "partial",
+    "R03.4": "fail",
     "R03.5": "partial",
     "R03.6": "pass",
     "R03.7": "fail"
@@ -398,9 +423,24 @@
    "issues": [
     {
      "region": "R03",
-     "summary": "Nick picked the softest ears (round 31, number 4); they now run wider than the sheet: front ear span 1.043 (max 1.03), front head band IoU .874 (min .90).",
-     "fix": "Keep the soft look and pull the fan outline back in: trim the outer wing span about 1.5 percent and tighten the lower edge so the front silhouette meets the sheet again; no new geometry, no spikes.",
-     "fixability": 0.7
+     "summary": "The fan front and edge are covered in knobs, nubs and crinkles",
+     "fix": "Smooth the fan front into broad soft masses radiating from the ear roots. Remove every knob and nub, and leave about five to seven gentle points per side along the edge",
+     "fixability": 0.5,
+     "evidence": "m04 head-front, m05 head-three-quarter; R03.4 and R03.7 fail"
+    },
+    {
+     "region": "R03",
+     "summary": "The fan tips are blunt and curled over, and the V tilt is weak",
+     "fix": "Taper each outer tip to an up-flared point and raise the tips so the crown sits about .02 to .03 of figure height below them",
+     "fixability": 0.6,
+     "evidence": "m02 front against m01; R03.3 fail"
+    },
+    {
+     "region": "R03",
+     "summary": "The ear span is 4.3 percent too wide",
+     "fix": "Narrow the front ear span from .543 to about .525 of figure height (window .505 to .536)",
+     "fixability": 0.8,
+     "evidence": "measured R03.1 1.043"
     }
    ],
    "attempts": 2,
@@ -551,22 +591,37 @@
   "R04": {
    "name": "Ear fan rear and profile",
    "weight": 2.5,
-   "score": 5,
+   "score": 2.9,
    "results": {
     "R04.1": "fail",
     "R04.2": "pass",
-    "R04.3": "partial",
-    "R04.4": "partial",
+    "R04.3": "fail",
+    "R04.4": "fail",
     "R04.5": "fail",
     "R04.6": "pass",
-    "R04.7": "partial"
+    "R04.7": "fail"
    },
    "issues": [
     {
      "region": "R04",
-     "summary": "The softened rear fan bulges at the head base: back view width at .18 is 1.33x the sheet (max 1.15) and the back silhouette IoU fell to .870 (min .90).",
-     "fix": "Keep the soft mass and thin the low rear bulge at the head base (H34 core and dome blur), restoring the back outline; no spikes.",
-     "fixability": 0.7
+     "summary": "The fan back reads as a knobby flat tray or plate with teeth along the rim",
+     "fix": "Rebuild the fan back as one smooth domed mass falling down and outward from the crown, rising about .015 toward the crown. Remove all rim teeth and nubs",
+     "fixability": 0.45,
+     "evidence": "m04 head-back, m05 head-rear-oblique, m03 turn-135 and turn-225; R04.3, R04.4 and R04.7 fail"
+    },
+    {
+     "region": "R04",
+     "summary": "In profile the fan cavity is lined with pin-like teeth",
+     "fix": "Remove the picket pins inside the cavity rim and keep a smooth curved inner shell surface",
+     "fixability": 0.6,
+     "evidence": "m04 head-side, m02 left; R04.5 fail"
+    },
+    {
+     "region": "R04",
+     "summary": "The back head band overshoots the sheet",
+     "fix": "Trim the fan outer ends and lower edge in the back view by about .01 to .015 of figure height to bring the extra area from 0.145 down below about 0.08",
+     "fixability": 0.55,
+     "evidence": "measured R04.1 0.8701; fit back head extra 0.1446"
     }
    ],
    "attempts": 0,
@@ -659,36 +714,36 @@
   "R05": {
    "name": "Neck and shoulders",
    "weight": 2,
-   "score": 5.8,
+   "score": 7.5,
    "results": {
     "R05.1": "pass",
     "R05.2": "pass",
     "R05.3": "pass",
-    "R05.4": "fail",
+    "R05.4": "partial",
     "R05.5": "partial",
-    "R05.6": "fail"
+    "R05.6": "partial"
    },
    "issues": [
     {
      "region": "R05",
-     "summary": "The neck still reads as a narrow stalk. In m06 neck-front and neck-rear the jaw underside and the base of the head turn sharply into a vertical column, with tight concave fillets. That is a stem pinch under the jaw and at the nape, not a soft furred transition.",
-     "fix": "Add a soft throat and nape fill (a ruff-scale coat mass) that widens the neck's top third. Roughly: increase the fillet radius under the chin from about .01 to about .025 of figure height. Let the front width just under the jaw run about 15 to 20 percent wider than the narrowest neck row, tapering to zero at mid-neck so the measured minimum width (R05.1 1.042) stays in band.",
-     "fixability": 0.7,
-     "evidence": "m06 neck-front: almost horizontal jaw underside meeting a near-vertical neck wall through a small radius. m06 neck-rear: the same tight hourglass pinch below the head base. Both are unchanged from assembled-2947, because the J neck table was not touched (build.json notUsed)."
-    },
-    {
-     "region": "R05",
-     "summary": "The shoulder caps are smoother than the baseline, but the trapezius still flows straight from the neck base into the arm as a sloping web. In front the cap at the top corner of the trunk is weak, and in m06 neck-profile the top of the arm reads as a separate flat-topped lump on the side of the trunk.",
-     "fix": "Round a distinct deltoid cap at the trunk's top corner, about .01 to .015 of figure height proud of the trapezius line, so the arm emerges below the cap rather than from the slope. Keep the front shoulder width ratio near 1.04 (bound .93 to 1.07).",
+     "summary": "A horizontal tonal band or ledge crosses the upper back, which reads as a yoke",
+     "fix": "Blend the trapezius smoothly into the upper back so no horizontal ledge sits between about .27 and .30 of figure height in the back view",
      "fixability": 0.6,
-     "evidence": "m06 shoulders-front and trunk-front: the slope from neck to arm is one continuous line, and the cap shows only as a faint tonal swell. m06 neck-profile: the arm top is a bulge with a soft vertical edge against the chest."
+     "evidence": "m06 neck-rear, m02 back"
     },
     {
      "region": "R05",
-     "summary": "From behind, a faint horizontal tonal band crosses the upper back just below the neck base, at shoulder-cap height. It reads as the start of a collar or yoke line across the shoulders.",
-     "fix": "Blend the yoke field's lower falloff over a longer span (about .02 to .03 of figure height rather than a short ramp), so no curvature change lines up horizontally across the upper back. Check neck-rear at 2x afterwards.",
-     "fixability": 0.65,
-     "evidence": "m06 neck-rear: a soft light-to-dark horizontal step runs across the back about a third of the way down from the neck pinch. seams.json flags nothing new, but the tonal step is visible in the image."
+     "summary": "There is a notch under the jaw and a stem-like pinch from the lower face into the neck",
+     "fix": "Widen the jaw-to-throat fillet radius to about .01 of figure height and add a soft throat ruff mass so the profile notch disappears",
+     "fixability": 0.6,
+     "evidence": "m06 neck-profile, m06 neck-front"
+    },
+    {
+     "region": "R05",
+     "summary": "Small nubs sit on top of the shoulder caps",
+     "fix": "Reduce the deltoid bulge by about .003 so each cap is one smooth rounded form",
+     "fixability": 0.7,
+     "evidence": "m06 shoulders-front, m06 trunk-front"
     }
    ],
    "attempts": 0,
@@ -794,14 +849,14 @@
   "R06": {
    "name": "Torso and pelvis",
    "weight": 2.5,
-   "score": 7.1,
+   "score": 7.5,
    "results": {
     "R06.1": "pass",
     "R06.3": "partial",
     "R06.4": "partial",
     "R06.5": "partial",
     "R06.8": "pass",
-    "R06.9": "fail",
+    "R06.9": "partial",
     "R06.10": "fail",
     "R06.11": "pass",
     "R06.12": "pass",
@@ -812,27 +867,27 @@
    "issues": [
     {
      "region": "R06",
-     "summary": "The side silhouette is still a plank (R06.9 fail, audit row 4). The waist narrowing and lumbar hollow were made at the midline section, but the m02 left outline is set by the flanks and the hanging arm, so it did not move.",
-     "fix": "Apply the lumbar pull to the outermost back-edge envelope, not the spine midline. From .42 to .48, move the lateral and paraspinal back surface forward about .008 to .010 of figure height (4 to 5 px in m02 left), blending to zero at .34 and at .52. Add about .006 of rump fill behind the pelvis between .50 and .56, above the tail root, so the profile reads chest, waist, rump. Check the m02 left back edge at y 216 to 250 (now 788 to 794 px): it should come in to about 784 at .45 and step back out below .50.",
-     "fixability": 0.6,
-     "evidence": "m02 left runs match the baseline within 1 px. Back edge: 790 at .40, 794 at .43, 788 at .48."
-    },
-    {
-     "region": "R06",
-     "summary": "There is no forward chest plane in profile (R06.4 partial). The front edge of the trunk is a dead-straight vertical from the chest (.36) to the lower belly (.53), so the chest does not stand ahead of the belly as in m01 left.",
-     "fix": "Push the chest front forward about .006 to .008 of figure height between .33 and .39, peaking at .36, then let the belly line fall back about .004 by .44 to .46. Keep the R06.16 belly straightness within .004 (now -0.0018) and R06.8 (now -0.002) inside its .01 band; if R06.8 needs it, move the chin reference with the chest.",
-     "fixability": 0.55,
-     "evidence": "m02 left front edge at x 736 to 737 for every row from y 186 to 273. m06 neck-profile is unchanged."
-    },
-    {
-     "region": "R06",
-     "summary": "Front-view hourglass (R06.3 and R06.5 partial): the waist still pinches sharply at about .44 and flares fast into the hips. The posed trunk band is stuck at 0.854 (R06.10 fail), held down by the front half missing the sheet's outer hip. This round also darkened the armpit and shoulder fold, a new seam flag.",
-     "fix": "Keep the rib cage near constant width from .34 to .40, then taper about .005 per side to the waist. Spread the hip flare over .46 to .58 and widen the outer pelvis contour there by about .012 to .015 per side, following the orange band in posed-fit.png front. Soften the new crease at .311 at the arm root (seams: back 188, front 75) back to the baseline shading.",
+     "summary": "The waist-to-hip flare is abrupt, and the posed trunk band fails",
+     "fix": "Spread the hip flare over .40 to .48 instead of .42 to .44 (front central width rising gradually from about .16 to .30) and follow the posed-fit orange areas at the flanks",
      "fixability": 0.5,
-     "evidence": "m06 trunk-front: 197 px at y 608, 151 px at y 656, then a flare by y 672. posed-fit front half trunk IoU 0.7708, missing 0.1694. m06 neck-rear right corner at y 368 is 132 grey against the baseline's 149."
+     "evidence": "measurements front central .162 at .42 to .301 at .44; measured R06.10 0.8392"
+    },
+    {
+     "region": "R06",
+     "summary": "The chest reads as a smooth tube with no forward plane",
+     "fix": "Add a soft pectoral plane standing about .004 to .006 forward between .30 and .36, keeping the R06.11 depth under 1.10",
+     "fixability": 0.6,
+     "evidence": "m06 trunk-front, m02 left"
+    },
+    {
+     "region": "R06",
+     "summary": "The lower trunk reads pear-shaped against the lithe sheet",
+     "fix": "Slim the upper thigh and hip mass at .46 to .52 by about .01 of figure height per side in the front view",
+     "fixability": 0.45,
+     "evidence": "m02 front against m01, posed/front.png"
     }
    ],
-   "attempts": 0,
+   "attempts": 1,
    "anchorScore": 7.1,
    "parked": false,
    "history": [
@@ -934,9 +989,16 @@
      "verdict": "better",
      "recipe": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/plan-2646/v01.json",
      "base": "docs/design/species-construction/akinza/recipe.json"
+    },
+    {
+     "round": 33,
+     "kept": false,
+     "approach": "Retune the baseline B-20T trunk loft station table in two variants: a chest plane pushed forward (+.006 at .36 with the upper back eased) to answer R06.4 and the plank read, and a combined variant that adds a sharper lumbar S with rump fill and a gentler hip flare for R06.9, R06.3, R06.5 and R06.10.",
+     "reason": "no candidate read better than the baseline: [{\"candidate\":\"chest plane forward\",\"per\":{\"R06\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's torso tapers more evenly from the shoulders into a narrower pinched waist, like the Reference, while A's ribcage swells out into a rounder barrel above the waist. | In the neck-profile view, B's th",
+     "reusable": []
     }
    ],
-   "lastWorked": 24,
+   "lastWorked": 33,
    "methodChanged": 16,
    "toolUsed": true,
    "notes": [
@@ -948,8 +1010,8 @@
    "weight": 2,
    "score": 5.8,
    "results": {
-    "R07.1": "partial",
-    "R07.2": "pass",
+    "R07.1": "pass",
+    "R07.2": "partial",
     "R07.3": "partial",
     "R07.4": "pass",
     "R07.5": "partial",
@@ -958,15 +1020,24 @@
    "issues": [
     {
      "region": "R07",
-     "summary": "In profile the top of the upper arm is a pale flat-topped cap with a hard upper edge, so the shoulder juts as a box (R07.1 partial).",
-     "fix": "Round the deltoid cap top to a radius of about half the arm depth (about .02 of figure height) and blend it into the trunk side so no highlight edge remains in m06 neck-profile; change no paw parameter.",
-     "fixability": 0.7
+     "summary": "The posed arm band fails",
+     "fix": "Use posed-fit.png to correct upper arm and forearm thickness and elbow position (blue model-only band along the outer arm); try slimming the upper arm by about .005 and checking the elbow height against the sheet",
+     "fixability": 0.4,
+     "evidence": "measured R07.6 0.8493; posed/posed-fit.png"
     },
     {
      "region": "R07",
-     "summary": "A ring or step of about .003 of figure height marks the wrist in profile.",
-     "fix": "Smooth the wrist into one continuous taper from mid-forearm into the paw root; change no paw, digit or claw parameter.",
-     "fixability": 0.7
+     "summary": "The elbow and wrist read as ring bands",
+     "fix": "Blend the step bulges at the elbow and wrist into continuous tapers, keeping the wrist about 10 percent narrower than the mid forearm",
+     "fixability": 0.7,
+     "evidence": "m07 forearm-profile"
+    },
+    {
+     "region": "R07",
+     "summary": "The forepaw is small and bud-like, with straight claws",
+     "fix": "Widen the paw about 15 percent past the wrist, define four digit lobes in the front view, and curve the claws down about 30 degrees",
+     "fixability": 0.7,
+     "evidence": "m07 forepaw-front, m02 front against r02"
     }
    ],
    "attempts": 0,
@@ -1140,21 +1211,17 @@
    "issues": [
     {
      "region": "R08",
-     "summary": "Posed shin band IoU .6301 (needs .72) and thigh band .8293 (needs .85): in the front half the lower leg sits medial of the sheet and the outer thigh inside it.",
-     "fix": "Restore side calf depth on the back line between about .80 and .85 of figure height by .003 to .005 while keeping the rounder corner. Widen the front outer thigh outline by about .008 to .010 from .56 to .72 and fill the inner thigh just under the crotch.",
-     "fixability": 0.4
+     "summary": "The posed thigh and shin bands fail",
+     "fix": "Match the posed-fit leg line: shift the shin and ankle outward by about .015 to .02 of figure height in the front and back views, and trim the inner shin where blue shows model-only area",
+     "fixability": 0.4,
+     "evidence": "measured R08.10 0.8315, R08.11 0.6616; posed/posed-fit.png"
     },
     {
      "region": "R08",
-     "summary": "New faint horizontal crease with a small inward step in the back outline at each ankle top, and the heel is still a square near-vertical wall rather than a taper.",
-     "fix": "Extend the bottom of the zBlur fade from about z -.86 to -.92 with a smooth falloff so the crease and the back-outline step disappear; then lean the heel back line forward by about .004 at the top of the heel and round the heel corner.",
-     "fixability": 0.7
-    },
-    {
-     "region": "R08",
-     "summary": "The knee is a lit knob over a dark groove in the front view and a kneecap bump with a dip under it in profile, not a soft kneecap plane.",
-     "fix": "Lower the kneecap protrusion by about .002 to .003 and fill the infrapatellar groove and the medial dip under it by about .002 over about .02 of height, so the front plane runs flat from the lower thigh through the knee into the shin.",
-     "fixability": 0.6
+     "summary": "The knee is a small forward knob with a groove above it",
+     "fix": "Flatten the knee into a broad soft kneecap plane and remove the groove, reducing the profile knob by about .003",
+     "fixability": 0.7,
+     "evidence": "m08 hindleg-profile, shin-profile, hindleg-front"
     }
    ],
    "attempts": 2,
@@ -1200,35 +1267,38 @@
   "R09": {
    "name": "Hind paws",
    "weight": 1.5,
-   "score": 5.6,
+   "score": 6.9,
    "results": {
-    "R09.1": "pass",
+    "R09.1": "partial",
     "R09.2": "partial",
-    "R09.3": "partial",
-    "R09.4": "partial",
+    "R09.3": "pass",
+    "R09.4": "pass",
     "R09.5": "pass",
     "R09.7": "pass",
-    "R09.8": "fail",
+    "R09.8": "partial",
     "R09.9": "fail"
    },
    "issues": [
     {
      "region": "R09",
-     "summary": "The paw is a low slipper with no domed instep: front height about .027 of figure height against about .04 on the sheet, with a straight ramp down to low toes (R09.3, R09.8).",
-     "fix": "Raise the toes and knuckle mass so the paw front stands about .04 of figure height. In profile the top line should rise in a convex arc from the claw roots to a crest about a third of the paw length back, then curve concavely into the ankle front. Keep the sole flat.",
-     "fixability": 0.5
+     "summary": "The posed foot band fails badly",
+     "fix": "Rotate and shift each hind paw to the sheet's toe-out and position (posed-fit shows blue model-only area outside and orange inside), about .02 of figure height",
+     "fixability": 0.4,
+     "evidence": "measured R09.9 0.6414; posed/posed-fit.png"
     },
     {
      "region": "R09",
-     "summary": "In the front view the claws read as straight cones with pearl-like heads on the toe faces (R09.2, R09.8).",
-     "fix": "Remove the round root. Sink the claw base into the toe tip with a base width of about .005 to .006 of figure height, start each claw at the front-lower tip of its toe, and let it extend about .008 to .012 beyond the toe outline and curve down.",
-     "fixability": 0.6
+     "summary": "The toe row is flat and straight, and the front face is boxy",
+     "fix": "Bring the middle two toes forward about .005 of figure height, shrink the outer toes about 15 percent, and round the front-bottom edge",
+     "fixability": 0.7,
+     "evidence": "m09 hindpaw-front, hindpaw-oblique against r02"
     },
     {
      "region": "R09",
-     "summary": "New dark pits and a knot appear in the front view where the toes part.",
-     "fix": "Fill each gap between toes with a soft fillet of radius about .002 to .003 of figure height, so the toes part through a smooth groove.",
-     "fixability": 0.8
+     "summary": "In the front view the claws read as straight upright spikes",
+     "fix": "Root the claws at the toe tips and curve them down and forward so they read hooked from the front",
+     "fixability": 0.7,
+     "evidence": "m09 hindpaw-front"
     }
    ],
    "attempts": 0,
@@ -1363,7 +1433,29 @@
     "R12.4": "partial",
     "R12.5": "partial"
    },
-   "issues": [],
+   "issues": [
+    {
+     "region": "R12",
+     "summary": "The fan is heavily knobbed while the body is bare smooth clay, so there is no common level or idiom",
+     "fix": "Simplify the fan to smooth clump-scale masses matching the body's level (fur left to the texture pass), or add matching soft clumps at the cheeks, chest and calves",
+     "fixability": 0.5,
+     "evidence": "m02, m03, m04, m05; R12.1 and R12.2 fail"
+    },
+    {
+     "region": "R12",
+     "summary": "Stray knobs, seams and facets",
+     "fix": "Remove the fan nubs, the back head disc seams, the cheek facet creases and the upper-back tonal band",
+     "fixability": 0.55,
+     "evidence": "m02 back, m04, m05; R12.3 fail"
+    },
+    {
+     "region": "R12",
+     "summary": "The stalk neck under a flat tray fan breaks the slim, lithe read",
+     "fix": "Dome the fan and soften the jaw-to-neck transition (see R04 and R05); the head-to-body balance then follows m01",
+     "fixability": 0.45,
+     "evidence": "m02 against m01; R12.5 partial"
+    }
+   ],
    "attempts": 0,
    "anchorScore": 1,
    "parked": true,
@@ -1409,7 +1501,8 @@
   "2026-10-08: Nick picked ears 4 (round 31, assembled-2936, softened most); merged with his hind paws as assembled-2947 (recipe r31-nick-merged.json) and adopted. Measured side effects: R01.1 .906 to .874, R01.6 1.108 to 1.329, R03.1 1.021 to 1.043, R04.1 .928 to .870 (all now fail); the next ear orders restore the outline under the soft look.",
   "2026-10-08: plateau window restarted at 5.507 after Nick's ear and hind-paw picks were adopted (the hand adoption is a new baseline, not a flat round).",
   "2026-10-08: Round 32 (60 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"strong rear thin, trim from .17\",\"per\":{\"R03\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same blobby fan outline, cupped inner ears and be | R05 KEPT; assembled-2961; readers R05 better 3-0; no criterion moved (critic score 5.507)",
-  "2026-10-08: hardStopRounds raised to 33 for the Sonnet versus Opus planner test on the torso (Nick approved the test; continuing past 33 is his call)."
+  "2026-10-08: hardStopRounds raised to 33 for the Sonnet versus Opus planner test on the torso (Nick approved the test; continuing past 33 is his call).",
+  "2026-10-08: Round 33 (37 min): R01 reverted; assembled-2964; why: the code builder candidate did not read better than the baseline: {\"R01\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"B's fan has a broken lower edge with hanging pointed tips that comes closer to the reference's sh | R06 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"chest plane forward\",\"per\":{\"R06\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's torso tapers more evenly from the shoulders into a narrower pinched waist | cold rescore 5.507 to 5.028 | waiting for Nick: reverts R01 (critic score 5.028)"
  ],
  "decisionsForNick": [
   {
@@ -1422,31 +1515,31 @@
   {
    "rank": 1,
    "region": "R03",
-   "gap": "Front and three-quarter: each fan wing is a rounded pad with a beaded, knobbed rim, lumps on its face and crinkled cup-wall seams; the cup is a thick ring around a hole (the far ear reads as a toothed wreath in three-quarter) and the inner tufts are stiff white leaf blades covering under half the cup, not a soft fur mass with a pale fluffy tuft.",
+   "gap": "Front and three-quarter: each fan wing is a rounded pad with a beaded, knobbed rim, lumps on its face and crinkled cup-wall seams; the cup is a thick ring around a hole (the far ear reads as a toothed wreath in three-qu~",
    "structural": true
   },
   {
    "rank": 2,
    "region": "R03",
-   "gap": "Side and top: the ear seen from the side is a tall oval shell split by a slit lined with tooth-like beads (a clam or flytrap) with no pale inner cup showing; from above the fan is still a thin flat tray with no forward cup depth.",
+   "gap": "Side and top: the ear seen from the side is a column of crumpled shard slabs with no pale inner cup showing; from above the fan is still a thin flat tray with no forward ~",
    "structural": true
   },
   {
    "rank": 3,
    "region": "R03",
-   "gap": "Front outline: the fan's top edge runs level tip to tip so the V tilt is gone, the tips are rounded ends rather than up-flared points, and the span is too wide (R03.1 1.043, R01.1 IoU .874; full width at .02 is .501 against .280).",
+   "gap": "Front outline: the fan's top edge runs level tip to tip so the V tilt is gone, the tips are rounded ends rather than up-flared points, and the span is too wide (R03.1 1.043, R01.1 IoU .874; full width at .02 is .501 aga~",
    "structural": true
   },
   {
    "rank": 4,
    "region": "R02",
-   "gap": "Side and three-quarter: the eye in profile is a wedge tapering to a point with the iris a dark sliver at its front edge; in three-quarter the far eye is a pinched teardrop with a kinked lid and a small centred pupil, so the face looks worried.",
+   "gap": "Side and three-quarter: the eye in profile is a wedge tapering to a point with the iris a dark sliver at its front edge; in three-quarter the far eye is a pinched teardrop with a kinked lid and a small centred pupil, so~",
    "structural": true
   },
   {
    "rank": 5,
    "region": "R04",
-   "gap": "Back and rear oblique: the head dome is a smooth disc bounded by two straight vertical cut lines through the fan, the wings carry knobs and a peg fringe on the lower edge, and the inner lower fan edge drops beside the head base so it no longer narrows into the neck (R01.6 1.329, R04.1 IoU .870).",
+   "gap": "Back and rear oblique: the head dome is a smooth disc bounded by two straight vertical cut lines through the fan, the wings carry knobs and a peg fringe on the lower edge, and the inner lower fan edge drops beside the h~",
    "structural": true
   },
   {
@@ -1464,7 +1557,7 @@
   {
    "rank": 8,
    "region": "R01",
-   "gap": "Front: the crown sits level with the fan top and carries a row of small knobs instead of rising between the ear roots, and the lower face is broad with cheek bulges at the mouth line instead of tapering to a small rounded chin.",
+   "gap": "Front: the crown sits level with the fan top and carries a row of small knobs instead of rising between the ear roots, and the lower face is broad with cheek bulges at the mouth line instead of tapering to a small round~",
    "structural": true
   },
   {
@@ -1505,10 +1598,12 @@
  "keptSinceAudit": 1,
  "means": [
   5.507,
-  5.507
+  5.507,
+  5.028
  ],
  "toolBlocked": {},
  "keptLog": [
+  false,
   false
  ],
  "decisions": [
@@ -1567,11 +1662,21 @@
    "question": "Nick prefers the current forepaw (A) to the outline paw. Which of the three marked faults (flat pale cap on the upper arm, ring at the wrist, claws bunched at the inner corner) should the loop still fix, if any?",
    "answer": "Nick 2026-10-08: fix only the flat upper-arm cap and the wrist ring; keep the paw as it is.",
    "answered": "2026-10-08"
+  },
+  {
+   "key": "reverts:R01:",
+   "round": 33,
+   "kind": "reverts",
+   "region": "R01",
+   "evidence": "untracked/species-construction/akinza/loop/packets/assembled-2964",
+   "question": "R01 (Head silhouette) has had three reverted orders in a row (rounds 19, 29, 33). Keep working it, change its method, or set it aside?"
   }
  ],
- "awaiting": {},
+ "awaiting": {
+  "R01": "R01 (Head silhouette) has had three reverted orders in a row (rounds 19, 29, 33). Keep working it, change its method, or set it aside?"
+ },
  "disputes": {},
  "escalated": false,
- "keptSinceCold": 3,
+ "keptSinceCold": 0,
  "clock": 1791433084
 }

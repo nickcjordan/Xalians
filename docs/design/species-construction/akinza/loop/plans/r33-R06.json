@@ -1,0 +1,201 @@
+{
+ "order": {
+  "round": 33,
+  "region": "R06",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2961",
+ "start": null,
+ "variants": [
+  {
+   "name": "chest plane forward",
+   "why": "R06.4 and critic issue 2: the front edge is a dead-straight vertical from .34 to .44. Chest front +.006 at .36 (-.1005 to -.1065), +.0045 at .34, +.004 at .38, +.002 at .40, falling back to the unchanged belly line by .42, so the rib cage stands proud of the belly in profile; upper back .002 shallower at .34 and .36 to hold R06.13 (chest over waist, 1.029 now, cap 1.08 allows about +.005 of chest depth) and R06.8 (-.002 now, bound -.010). Only B-20T station table values; rebuilds B-21 to B-24Y (about 32 minutes).",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.front",
+     "value": -0.0865
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0995
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.1065
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.1055
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.front",
+     "value": -0.1025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.033
+    }
+   ]
+  },
+  {
+   "name": "combined chest, S and flare",
+   "why": "The interaction case: chest plane forward (variant 1) plus the sharper lumbar S (variant 4) plus a lighter hip flare (+.001 to +.0035 from .48 to .56, waist .0695, .42 and .40 +.001 and .0015 above baseline), judged in posed shaded-left, shaded-front and posed-fit together, since R06.13 and R06.14 trade against each other when both ends of the profile move.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.3.front",
+     "value": -0.0865
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.front",
+     "value": -0.0995
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.front",
+     "value": -0.1065
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.6.front",
+     "value": -0.1055
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.front",
+     "value": -0.1025
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.4.back",
+     "value": 0.038
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.5.back",
+     "value": 0.033
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.back",
+     "value": 0.002
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.back",
+     "value": -0.011
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.back",
+     "value": -0.0225
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.10.back",
+     "value": -0.013
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.back",
+     "value": -0.001
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.12.back",
+     "value": 0.0185
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.13.back",
+     "value": 0.0335
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.9.halfWidth",
+     "value": 0.0695
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.11.halfWidth",
+     "value": 0.0815
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.12.halfWidth",
+     "value": 0.0965
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.13.halfWidth",
+     "value": 0.1075
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.14.halfWidth",
+     "value": 0.1195
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.15.halfWidth",
+     "value": 0.1315
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.8.halfWidth",
+     "value": 0.0835
+    },
+    {
+     "op": "set",
+     "step": "B-20T",
+     "arg": "spec:stations.7.halfWidth",
+     "value": 0.0935
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R06",
+ "top": 2
+}
