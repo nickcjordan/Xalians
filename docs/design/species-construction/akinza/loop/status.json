@@ -1377,7 +1377,8 @@
   "2026-10-08: Round 30 (37 min): R09 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"collar fix A, raised knuckles, thin claws, filled gaps\",\"per\":{\"R09\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"A's toes are separate rounded lobes with l | R05 reverted; why: no candidate read better than the baseline: no candidate built or none changed visibly | waiting for Nick: idiom R03, reverts R09 (critic score 6.031)",
   "2026-10-08: Round 31 (85 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"soft locks, gently pointed, melted cups\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's fan front breaks into separate pointed lock tips that | R07 reverted; assembled-2946; why: the code builder candidate did not read better than the baseline: {\"R07\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"A's forepaw has separate rounded toe pads with short curved claws like the reference studies, whi | waiting for Nick: reverts R09 (critic score 6.031)",
   "2026-10-08: Nick picked round 30 hind paw candidate B (assembled-2920: plumper mitten toes, thin claws) over the readers' 1-2 vote; adopted as the baseline (body-2918, recipe r30-R09-nick.json, only step B-21 differs). Visual results carried until the next cold rescore.",
-  "2026-10-08: Nick picked ears 4 (round 31, assembled-2936, softened most); merged with his hind paws as assembled-2947 (recipe r31-nick-merged.json) and adopted. Measured side effects: R01.1 .906 to .874, R01.6 1.108 to 1.329, R03.1 1.021 to 1.043, R04.1 .928 to .870 (all now fail); the next ear orders restore the outline under the soft look."
+  "2026-10-08: Nick picked ears 4 (round 31, assembled-2936, softened most); merged with his hind paws as assembled-2947 (recipe r31-nick-merged.json) and adopted. Measured side effects: R01.1 .906 to .874, R01.6 1.108 to 1.329, R03.1 1.021 to 1.043, R04.1 .928 to .870 (all now fail); the next ear orders restore the outline under the soft look.",
+  "2026-10-08: plateau window restarted at 5.507 after Nick's ear and hind-paw picks were adopted (the hand adoption is a new baseline, not a flat round)."
  ],
  "decisionsForNick": [
   {
@@ -1472,13 +1473,10 @@
  },
  "keptSinceAudit": 3,
  "means": [
-  6.031,
-  6.031
+  5.507
  ],
  "toolBlocked": {},
- "keptLog": [
-  false
- ],
+ "keptLog": [],
  "decisions": [
   {
    "key": "dispute:R02:R02.2",
@@ -1539,7 +1537,7 @@
  ],
  "awaiting": {},
  "disputes": {},
- "escalated": true,
+ "escalated": false,
  "keptSinceCold": 2,
  "clock": 1791433084
 }
