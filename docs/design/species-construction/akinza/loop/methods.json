@@ -99,9 +99,9 @@
   },
   "R03": {
    "name": "Ear fan front",
-   "method": "Soften the existing fan, no new lock geometry (Nick 2026-10-08): retune H33 (author_fan_front_lock_system_field.py) toward fewer, broader, softer masses with gently pointed tips (wider blends, a larger tip-min, a lower ogive and curl, less serration on the edge), keeping the outline, V tilt, cups, pale inner tufts and drape; the fur detail comes from the later texture pass.",
-   "steps": "retune: H33 (existing script and parameters only)",
-   "previous": "Coat locks finished after the assembly remesh, cup and tuft kept: a new post-assembly step finish_fan_assembled.py (kind post) keeps the baseline H33 fan (its cup, pale tuft, outline and drape) and, only inside a coat window that excludes each cup polygon plus a .006 margin, strips the remeshed front coat to a backing and cuts in fan_lock_sweeps' coat locks (about ten primaries per side, cup and tuft builders off) through a fine level set (.0008 head-local) zipped into the .0028 world skin, so undercuts, tip standoff and true points are never remeshed; the same pass reseals the crinkled tuft and cup-wall seams at the fine voxel without moving the tuft.",
+   "method": "Outline pass on the soft fan (Nick 2026-10-08, capped at two rounds): keep the soft H33 surface and its cups and pale tufts, and change only the front silhouette with H33's existing parameters: trim the outer wing span back to the sheet (R03.1 within 3 percent), lift the outer tips so the top edge forms the sheet's V tilt with the crown .02 to .03 of figure height below the tips (R03.3), and taper each wing end to a soft up-flared point instead of a rounded lobe. Make the change big enough to see in head-front. No new geometry, no spikes or serrations.",
+   "steps": "retune: H33 (outline only: span, tip lift, tip taper; H34 only to follow the front outline)",
+   "previous": "Soften the existing fan, no new lock geometry (Nick 2026-10-08): retune H33 (author_fan_front_lock_system_field.py) toward fewer, broader, softer masses with gently pointed tips (wider blends, a larger tip-min, a lower ogive and curl, less serration on the edge), keeping the outline, V tilt, cups, pale inner tufts and drape; the fur detail comes from the later texture pass.",
    "changed": "True",
    "respec": "False"
   },

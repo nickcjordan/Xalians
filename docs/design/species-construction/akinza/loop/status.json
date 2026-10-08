@@ -10,7 +10,7 @@
   "keepGain": 0.5,
   "regressionDrop": 1,
   "roundsPerBatch": 4,
-  "hardStopRounds": 33,
+  "hardStopRounds": 35,
   "gate": {
    "minRegion": 7,
    "weightedMean": 8,
@@ -26,7 +26,7 @@
   "coverageRounds": 6,
   "plateauRounds": 3,
   "plateauGain": 0.15,
-  "ordersPerRound": 2,
+  "ordersPerRound": 1,
   "priorityV3": true,
   "auditWeight": 2,
   "toolBonus": 5,
@@ -423,24 +423,9 @@
    "issues": [
     {
      "region": "R03",
-     "summary": "The fan front and edge are covered in knobs, nubs and crinkles",
-     "fix": "Smooth the fan front into broad soft masses radiating from the ear roots. Remove every knob and nub, and leave about five to seven gentle points per side along the edge",
-     "fixability": 0.5,
-     "evidence": "m04 head-front, m05 head-three-quarter; R03.4 and R03.7 fail"
-    },
-    {
-     "region": "R03",
-     "summary": "The fan tips are blunt and curled over, and the V tilt is weak",
-     "fix": "Taper each outer tip to an up-flared point and raise the tips so the crown sits about .02 to .03 of figure height below them",
-     "fixability": 0.6,
-     "evidence": "m02 front against m01; R03.3 fail"
-    },
-    {
-     "region": "R03",
-     "summary": "The ear span is 4.3 percent too wide",
-     "fix": "Narrow the front ear span from .543 to about .525 of figure height (window .505 to .536)",
-     "fixability": 0.8,
-     "evidence": "measured R03.1 1.043"
+     "summary": "Front outline: the top edge runs level tip to tip, so the V tilt is gone; the tips are rounded ends; the span is 4 percent wider than the sheet (R03.1 1.043, R01.1 IoU .874).",
+     "fix": "With H33 parameters only: shorten the outer wings about 1.5 to 2 percent of span, raise the outer tips so the crown sits .02 to .03 of figure height below them, and taper the wing ends to soft up-flared points. Keep the soft surface; no spikes.",
+     "fixability": 0.7
     }
    ],
    "attempts": 2,
@@ -586,7 +571,7 @@
    ],
    "lastWorked": 32,
    "toolUsed": true,
-   "methodChanged": 30
+   "methodChanged": 33
   },
   "R04": {
    "name": "Ear fan rear and profile",
@@ -1502,7 +1487,8 @@
   "2026-10-08: plateau window restarted at 5.507 after Nick's ear and hind-paw picks were adopted (the hand adoption is a new baseline, not a flat round).",
   "2026-10-08: Round 32 (60 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"strong rear thin, trim from .17\",\"per\":{\"R03\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same blobby fan outline, cupped inner ears and be | R05 KEPT; assembled-2961; readers R05 better 3-0; no criterion moved (critic score 5.507)",
   "2026-10-08: hardStopRounds raised to 33 for the Sonnet versus Opus planner test on the torso (Nick approved the test; continuing past 33 is his call).",
-  "2026-10-08: Round 33 (37 min): R01 reverted; assembled-2964; why: the code builder candidate did not read better than the baseline: {\"R01\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"B's fan has a broken lower edge with hanging pointed tips that comes closer to the reference's sh | R06 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"chest plane forward\",\"per\":{\"R06\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's torso tapers more evenly from the shoulders into a narrower pinched waist | cold rescore 5.507 to 5.028 | waiting for Nick: reverts R01 (critic score 5.028)"
+  "2026-10-08: Round 33 (37 min): R01 reverted; assembled-2964; why: the code builder candidate did not read better than the baseline: {\"R01\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"B's fan has a broken lower edge with hanging pointed tips that comes closer to the reference's sh | R06 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"chest plane forward\",\"per\":{\"R06\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's torso tapers more evenly from the shoulders into a narrower pinched waist | cold rescore 5.507 to 5.028 | waiting for Nick: reverts R01 (critic score 5.028)",
+  "2026-10-08: Nick approved the capped ear-outline pass (two rounds, ears only: ordersPerRound 1, R03 pinned, hard stop 35), then the texture phase without a stop for review. Plateau window restarted at the round 33 rescore."
  ],
  "decisionsForNick": [
   {
@@ -1597,15 +1583,10 @@
  },
  "keptSinceAudit": 1,
  "means": [
-  5.507,
-  5.507,
   5.028
  ],
  "toolBlocked": {},
- "keptLog": [
-  false,
-  false
- ],
+ "keptLog": [],
  "decisions": [
   {
    "key": "dispute:R02:R02.2",
