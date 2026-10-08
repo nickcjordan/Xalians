@@ -72,7 +72,7 @@
   "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2999",
   "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
- "round": 34,
+ "round": 35,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -107,6 +107,7 @@
   "R03+R04+R07",
   "R03+R04+R05",
   "R01+R06",
+  "R03+R04",
   "R03+R04"
  ],
  "specs": {
@@ -437,7 +438,7 @@
      "fixability": 0.6
     }
    ],
-   "attempts": 0,
+   "attempts": 1,
    "anchorScore": 5.7,
    "parked": false,
    "history": [
@@ -586,9 +587,16 @@
      "verdict": "better",
      "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2982\\v04.json",
      "base": "docs/design/species-construction/akinza/recipe.json"
+    },
+    {
+     "round": 35,
+     "kept": false,
+     "approach": "Four late-chain variants that drop the six C crown-tuft pins and fuse the wing back into the dome with a wider concave fillet, one also thinning the lower peg fringe for R04.1, and two H33 front variants that deepen the V tilt, taper each wing tip to a point, or fuse thin rim needles.",
+     "reason": "no candidate read better than the baseline: [{\"candidate\":\"rim needles fused, steeper V\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B has a raised tuft at the top center of the crown, like the pointed crown tuft in the Reference front view, while A's crown is flat with only faint dimples. | B has a raised tuft at the cente",
+     "reusable": []
     }
    ],
-   "lastWorked": 34,
+   "lastWorked": 35,
    "toolUsed": true,
    "methodChanged": 33
   },
@@ -614,7 +622,7 @@
      "fixability": 0.55
     }
    ],
-   "attempts": 0,
+   "attempts": 1,
    "anchorScore": 5,
    "parked": false,
    "history": [
@@ -701,9 +709,15 @@
      "kept": true,
      "approach": "(paired with R03) Give the front fan the sheet's V tilt by sinking the crown roof relative to the wing tops (H33 --crown-sink), trim the outer wing span to bring R03.1 into range, and taper each wing end to a soft up-flared point with H33's existing curl, tip-lift, tip-point and tip-wedge, paired in two variants with rear thinning (drop low E locks and crown tuft row) so R04.1 rises.",
      "reason": ""
+    },
+    {
+     "round": 35,
+     "kept": false,
+     "approach": "(paired with R03) Four late-chain variants that drop the six C crown-tuft pins and fuse the wing back into the dome with a wider concave fillet, one also thinning the lower peg fringe for R04.1, and two H33 front variants that deepen the V tilt, taper each wing tip to a point, or fuse thin rim needles.",
+     "reason": "no candidate read better than the baseline: [{\"candidate\":\"rim needles fused, steeper V\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B has a raised tuft at the top center of the crown, like the pointed crown tuft in the Reference front view, while A's crown is flat with only faint dimples. | B has a raised tuft at the cente"
     }
    ],
-   "lastWorked": 34,
+   "lastWorked": 35,
    "methodChanged": 32,
    "toolUsed": true
   },
@@ -1500,7 +1514,8 @@
   "2026-10-08: hardStopRounds raised to 33 for the Sonnet versus Opus planner test on the torso (Nick approved the test; continuing past 33 is his call).",
   "2026-10-08: Round 33 (37 min): R01 reverted; assembled-2964; why: the code builder candidate did not read better than the baseline: {\"R01\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"B's fan has a broken lower edge with hanging pointed tips that comes closer to the reference's sh | R06 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"chest plane forward\",\"per\":{\"R06\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's torso tapers more evenly from the shoulders into a narrower pinched waist | cold rescore 5.507 to 5.028 | waiting for Nick: reverts R01 (critic score 5.028)",
   "2026-10-08: Nick approved the capped ear-outline pass (two rounds, ears only: ordersPerRound 1, R03 pinned, hard stop 35), then the texture phase without a stop for review. Plateau window restarted at the round 33 rescore.",
-  "2026-10-08: Round 34 (66 min): R03 KEPT; assembled-2999; readers R03 better 2-1, R04 better 2-1; criteria R03.1 fail to pass | waiting for Nick: reverts R01 (critic score 5.297)"
+  "2026-10-08: Round 34 (66 min): R03 KEPT; assembled-2999; readers R03 better 2-1, R04 better 2-1; criteria R03.1 fail to pass | waiting for Nick: reverts R01 (critic score 5.297)",
+  "2026-10-08: Round 35 (67 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"rim needles fused, steeper V\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B has a raised tuft at the top center of the crown, like the pointed | waiting for Nick: reverts R01 (critic score 5.297)"
  ],
  "decisionsForNick": [
   {
@@ -1596,11 +1611,13 @@
  "keptSinceAudit": 2,
  "means": [
   5.028,
+  5.297,
   5.297
  ],
  "toolBlocked": {},
  "keptLog": [
-  true
+  true,
+  false
  ],
  "decisions": [
   {

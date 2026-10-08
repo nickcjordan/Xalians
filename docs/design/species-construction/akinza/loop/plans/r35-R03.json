@@ -1,0 +1,215 @@
+{
+ "order": {
+  "round": 35,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2999",
+ "start": null,
+ "variants": [
+  {
+   "name": "crown pins out, dome fillet",
+   "why": "R04.3/R04.7 and audit row 5: the dome sits in a disc with straight vertical seams and a ledge where the wing back meets it. Concave fillet about .015 figure heights wide: core-to-skin union .005 to .02 (the ledge), clump-to-skin .014 to .03 and clump-to-clump .009 to .014 (the knobs fuse into the wing back), dome blur 20 to 30 and strip cut smoothing 5 to 9 (the straight cuts). Also drops the C crown-tuft row (rows K,I,M,T,E), the six pins the critic names, so the pins and the fillet are read together. H34 only.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-blend",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.03"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--clump-blend",
+     "value": "0.014"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "30"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "9"
+    }
+   ]
+  },
+  {
+   "name": "pins out, fillet, lower fringe thinned",
+   "why": "audit row 5 and R04.1 (.8913, extra .111 along the lower fringe and wing rim in m11 back): drop the next two E locks per side (LE09, LE10, RE09, RE10) so the peg fringe leaves the lower edge, bring the core's lower edge in less (inset .03) so the wing back still reaches the sheet, blunter tip minimum .007 on the rear clumps so remaining ends are rounded, plus the dome fillet and no C row. H34 only.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-blend",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.03"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--clump-blend",
+     "value": "0.014"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "30"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "9"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skip",
+     "value": "LE09,LE10,LE11,LE12,LE13,LE14,RE09,RE10,RE11,RE12,RE13,RE14"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-inset",
+     "value": "0.012 0.03"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--tip-min",
+     "value": "0.007"
+    }
+   ]
+  },
+  {
+   "name": "steeper V, longer taper, pins out, fillet",
+   "why": "critic issue 2 and the audit's rank 3 (R03.3): tips blunt and drooping, V tilt weak. H33 crown sink .02 to .03 (crown cleft deeper under the wing tops), wedge V starts earlier (|x| .185, apex .262) with apexes .006 higher (.028, .044) so the last .08 of each wing tapers to one point, tip trim .026 to hold R03.1 inside 3 percent. Rear as the fillet variant (v01) with no C row. Early edit (H33, then H34 and H35, about 22 min).",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.03"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.026"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-u",
+     "value": "0.185 0.262"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--wedge-apex-y",
+     "value": "0.028 0.044"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-blend",
+     "value": "0.02"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": "0.03"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--clump-blend",
+     "value": "0.014"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "30"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": "9"
+    }
+   ]
+  },
+  {
+   "name": "rim needles fused, steeper V",
+   "why": "critic issue 1 on the wing rims (needles and pins thinner than .006 standing off the fan rim): H33 opening radius for thin protrusions in the old field trim-pins .006 to .010 (applied from |x| .14 outward), same crown sink .03 and trim as the steeper V but the wedge unchanged, so this variant isolates the needle trim from the wedge. Rear: no C row only. Early edit (about 22 min).",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-pins",
+     "value": "0.010"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--crown-sink",
+     "value": "0.03"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.026"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--rows",
+     "value": "K,I,M,T,E"
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R03",
+ "top": 3
+}
