@@ -1,0 +1,117 @@
+{
+  "order": {
+    "round": 30,
+    "region": "R05",
+    "with": []
+  },
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2811",
+  "start": null,
+  "variants": [
+    {
+      "name": "nape ramp raised into the skull",
+      "why": "Critic issue 3 and the profile: a faint angle where the fan underside meets the back of the neck, because the authored back edge and its back fill stop at z .497 (window top) while the head's nape keeps flaring back. Table neck-r30-nape.json adds three rows to z .515 with wBack fading 1 to 0, ramps the back fill over z .43 to .48 (not .465), keeps the fillets slightly open (.024/.030); fusion window top raised to head cut + .052 and back fill .008 so the smoothing melts the nape into the fan underside. Join step J only (about 5 minutes).",
+      "edits": [
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--neck-sections",
+          "value": "art/species-construction/specs/neck-r30-nape.json"
+        },
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--neck-back-fill",
+          "value": ".008"
+        },
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--fusion-z-above",
+          "value": ".052"
+        }
+      ]
+    },
+    {
+      "name": "flared neck base, longer loft",
+      "why": "Critic issue 2 and the front and back views: the neck leaves the body through a short-radius concave curve because the loft starts at the body cut z .425 where the body half width is already .076 (it is .098 at .415) and the sheet's shoulder line sits higher and wider at the base. Cutting the body lower (body-trim .410) with table rows to z .404 that continue the body's own flare (neck-r30-flare.json, base fillet window .415 to .445) spreads the same narrowing over a loft .052 long instead of .037, opening the curvature without touching the narrowest width (z .45 to .466, unchanged). Join step J only.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--neck-sections",
+          "value": "art/species-construction/specs/neck-r30-flare.json"
+        },
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--body-trim",
+          "value": ".410"
+        }
+      ]
+    },
+    {
+      "name": "wide fusion window over the yoke",
+      "why": "Audit row 7 and critic issue 1: from behind the upper back is a rounded disc framed by dark notches at the shoulder corners. The notch fill is a body step, but the join smoothing can reach the inner part: widening the fusion window (x half extent .16 to .24, z below the body cut .03 to .06) lets the Laplacian smoothing fill concave notches near the neck foot and soften the yoke edge. Risk: it can shave the deltoid (R05.3 now 1.039 against 1.07), so the seam and measured checks decide. Join step J only.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--fusion-x-extent",
+          "value": ".24"
+        },
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--fusion-z-below",
+          "value": ".06"
+        }
+      ]
+    },
+    {
+      "name": "combo: flare, nape ramp, open fillets",
+      "why": "The three neck-column ideas that act on different heights together (flared base to z .410, nape ramp to z .515 with back fill .008 and window top +.052, fillets .028/.034): if each reads better alone the combination should read best, and if they interfere the readers will say so. Join step J only.",
+      "edits": [
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--neck-sections",
+          "value": "art/species-construction/specs/neck-r30-combo.json"
+        },
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--body-trim",
+          "value": ".410"
+        },
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--neck-back-fill",
+          "value": ".008"
+        },
+        {
+          "op": "set",
+          "step": "J",
+          "arg": "--fusion-z-above",
+          "value": ".052"
+        }
+      ]
+    }
+  ],
+  "sweeps": [
+    {
+      "step": "J",
+      "grid": {
+        "--neck-sections": [
+          "art/species-construction/specs/neck-r30-fillet-b.json",
+          "art/species-construction/specs/neck-r30-fillet-c.json"
+        ]
+      },
+      "why": "Fillet radius is the parameter I am least sure of: the jaw and base smoothing radii (.032/.040 and .040/.050 world, against .016/.020 now) open the hourglass curvature without changing the narrowest width (checked in a numpy replica: the minimum half width stays .0505 at z .456, so R05.1 should hold near 1.04). It reads in the front and rear views as a longer, softer concave curve; the strongest setting shows where it starts to thicken the stem."
+    }
+  ],
+  "region": "R05",
+  "top": 6,
+  "note": "A join order: the quick scorer builds head and body components only, so join variants all score like the baseline there and only the top K go through the assembly path; top equals the variant count so every one is built and the readers choose."
+}
