@@ -1,5 +1,5 @@
-"""The review page for the Magmuth living planet: the planet large with layer toggles, at the map's sizes beside today's dot, and
-what is in it. Run from the repo root after textures.py: python art/planets/magmuth/demo.py  (writes demo.html)
+"""The review page for Magmuth: the planet large with layer toggles, at the map's sizes beside today's dot,
+and what is in it. Run from the repo root after textures.py: python art/planets/magmuth/demo.py  (writes demo.html)
 """
 import os
 import sys
@@ -11,10 +11,10 @@ PAGE = '''<title>Magmuth, Living</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Martian+Mono:wght@400;600&family=Saira:wght@500;700&display=swap" rel="stylesheet">
 <style>
-/* One dark look, the site's own: a room of warm near-black, ink for text, the fire's orange as the only accent. Layout: the planet
+/* One dark look, the site's own: a room of warm near-black, ink for text, the storm's blue as the only accent. Layout: the planet
    first and large, the controls under it, then the planet at map sizes beside today's dot, then what is in it. */
 :root {
-  --room: #121014; --s1: #1b181d; --edge: #2e2a31; --ink: #e9e3d6; --ink2: #b4ad9f; --ink3: #8a8478; --fire: #ffb060;
+  --room: #121014; --s1: #1b181d; --edge: #2e2a31; --ink: #e9e3d6; --ink2: #b4ad9f; --ink3: #8a8478; --storm: #ff9a5a;
   --display: "Saira", "Arial Narrow", sans-serif; --body: "Atkinson Hyperlegible", system-ui, sans-serif; --mono: "Martian Mono", ui-monospace, monospace;
   color-scheme: dark;
 }
@@ -29,14 +29,14 @@ p { margin: 0; max-width: 64ch; }
 .stage svg.big { width: min(640px, 100%%); height: auto; display: block; }
 .controls { display: flex; flex-wrap: wrap; gap: 8px 10px; justify-content: center; margin-top: 6px; }
 .controls label, .controls button { font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); border: 1px solid var(--edge); background: var(--s1); padding: 9px 11px; display: inline-flex; gap: 8px; align-items: center; cursor: pointer; }
-.controls input { accent-color: var(--fire); margin: 0; }
-.controls button:focus-visible, .controls label:focus-within { outline: 2px solid var(--fire); outline-offset: 2px; }
+.controls input { accent-color: var(--storm); margin: 0; }
+.controls button:focus-visible, .controls label:focus-within { outline: 2px solid var(--storm); outline-offset: 2px; }
 .controls button[aria-pressed="true"] { color: var(--room); background: var(--ink); }
 section { margin-top: 56px; }
 .sizes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
 .cell { border: 1px solid var(--edge); background: #0a0a10; padding: 18px; display: grid; justify-items: center; align-content: center; gap: 12px; min-height: 230px; }
 .cell .cap { font: 600 11px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); text-align: center; }
-.dot { width: 22px; height: 22px; border-radius: 50%%; background: #9a9088; box-shadow: 0 0 0 1px #3a3640; }
+.dot { width: 22px; height: 22px; border-radius: 50%%; background: #e8584a; box-shadow: 0 0 0 1px #3a3640; }
 .list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px 28px; }
 .list div { border-top: 1px solid var(--edge); padding-top: 12px; min-width: 0; }
 .list b { font: 700 15px/1.3 var(--display); letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 6px; }
@@ -44,23 +44,22 @@ section { margin-top: 56px; }
 .list q { color: var(--ink); font-style: italic; quotes: none; }
 .notes p + p { margin-top: 10px; }
 .notes p { color: var(--ink2); }
-.hide-clouds .lyr-clouds, .hide-rivers .lyr-rivers, .hide-flash .lyr-flash, .hide-erupt .lyr-eruption, .hide-seas .lyr-seas, .hide-sun .lyr-sun, .hide-air .lyr-air { display: none; }
+.hide-smoke .lyr-smoke, .hide-lava .lyr-lava, .hide-rivers .lyr-rivers, .hide-erupt .lyr-erupt, .hide-sun .lyr-sun, .hide-air .lyr-air, .hide-air .lyr-haze { display: none; }
 .motion-note { display: none; color: var(--ink3); font-size: 14px; margin-top: 8px; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .motion-note { display: block; } }
 </style>
 <div class="wrap">
-  <p class="kicker">Living planet &middot; Magmuth</p>
+  <p class="kicker">Living planet &middot; second world</p>
   <h1>Magmuth</h1>
-  <p class="lede">The fire world, drawn as an animated SVG from its history: black glass spires and ash under a red sun, the cracks glowing red, lava seas churning under a cracked crust, smoke over it all, and volcanoes that erupt in turn.</p>
+  <p class="lede">The fire world, drawn as an animated SVG from its history: seas of lava under a cracked crust around islands of basalt and ash, glowing fissures, smoke and ash on the wind, all under a dim red sun, and now and then a vent erupting.</p>
   <div class="stage">
     %(BIG)s
     <p class="motion-note">Your system asks for reduced motion, so it starts paused. Press Play to watch it turn.</p>
     <div class="controls" role="group" aria-label="Layers and playback">
-      <label><input type="checkbox" id="l-clouds" data-l="clouds" checked>Smoke and ash</label>
+      <label><input type="checkbox" id="l-lava" data-l="lava" checked>Lava light</label>
       <label><input type="checkbox" id="l-rivers" data-l="rivers" checked>Rivers of fire</label>
-      <label><input type="checkbox" id="l-flash" data-l="flash" checked>Fire flashes</label>
-      <label><input type="checkbox" id="l-erupt" data-l="erupt" checked>Volcanoes</label>
-      <label><input type="checkbox" id="l-seas" data-l="seas" checked>Lava seas</label>
+      <label><input type="checkbox" id="l-smoke" data-l="smoke" checked>Smoke and ash</label>
+      <label><input type="checkbox" id="l-erupt" data-l="erupt" checked>Eruptions</label>
       <label><input type="checkbox" id="l-sun" data-l="sun" checked>Night side</label>
       <label><input type="checkbox" id="l-air" data-l="air" checked>Atmosphere</label>
       <button type="button" id="pause" aria-pressed="false">Pause</button>
@@ -81,19 +80,17 @@ section { margin-top: 56px; }
   <section>
     <h2>What is in it</h2>
     <div class="list">
-      <div><b>Glass spires and ash</b><p>From the history: <q>obsidian islands and jagged spires of volcanic glass.</q> The high ground is black glass with a cold sheen on the faces that catch the light; the lows are basalt and grey ash, with tar-pits.</p></div>
-      <div><b>Rivers of fire</b><p><q>The cracks in the earth glow an eerie red from the magma.</q> The fissure network glows red, brightest on the night side and dimmer in the red sun's light.</p></div>
-      <div><b>Lava seas</b><p><q>Whole regions can liquify into molten seas.</q> The lowest basins are crusted over with dark cracked plates, and the cracks between them glow. The molten rock churns slowly beneath.</p></div>
-      <div><b>Fire flashes</b><p><q>Rivers of fire flash across the wastes with little to no warning.</q> Bright blooms appear on the fissures and fade, and surges of light run along them on their own clock.</p></div>
-      <div><b>Volcanoes</b><p><q>Erratic volcanic eruptions create pyroclastic flows.</q> Three vents, each on a fissure, erupt in turn: a bright vent, a glow spreading out, and a dark plume of ash rising and drifting.</p></div>
-      <div><b>Smoke and ash</b><p><q>The acrid air is thick with volcanic smoke, staining the sky crimson.</q> Dark smoke and ash wound into a few slow <q>violent ash storms</q>, lit red on their tops.</p></div>
+      <div><b>Seas of lava</b><p>From the history: <q>boiling oceans of lava and molten rock pocked with obsidian islands and jagged spires of volcanic glass.</q> About two fifths of the world is molten, under a crust broken into plates that part in bright seams and break up along the shores.</p></div>
+      <div><b>Islands of basalt and ash</b><p><q>Desolate expanses of obsidian and basalt filled with fields of ash</q>, and <q>almost everything on Magmuth is covered in a thick layer of ash.</q> Near-black rock under grey ash, glass glinting on the spires.</p></div>
+      <div><b>Fissures and rivers of fire</b><p><q>The cracks in the earth glow an eerie red from the magma that seeps up</q>, and <q>rivers of fire flash across the wastes with little to no warning.</q> Surges of brighter fire run along the cracks.</p></div>
+      <div><b>A red dwarf, smoke and ash</b><p><q>Magmuth orbits a red dwarf star</q>, and <q>the acrid air is thick with volcanic smoke, staining the sky crimson.</q> Dim red daylight, a crimson rim of air, dark smoke and ash blowing faster than the ground turns.</p></div>
+      <div><b>Eruptions</b><p><q>Erratic volcanic eruptions</q> and geysers that <q>rain bouts of flame and molten rock.</q> About every nine seconds a vent bursts somewhere in view, lights the ground, throws embers and sends up a plume of ash that spreads on the wind.</p></div>
     </div>
   </section>
 
   <section class="notes">
     <h2>How it is made</h2>
-    <p>The ground, the fissures' glow, the lava seas and the smoke are flat maps generated in code from noise, wrapped so they tile around the globe. In the SVG each map slides sideways behind a lens, a displacement map that bends a flat picture into a sphere, so the planet really turns. A red dwarf lights it from the upper left, and the day side is washed red-orange. Glow is drawn with screen blending above the night; the smoke, the ground and the plumes sit below it. Each event runs on a clock of its own, so nothing repeats in lockstep.</p>
-    <p>Weight: under 5 MB for this page, almost all of it the maps. On the home page the maps can be smaller, since the planet is drawn at about 150 px rather than 640.</p>
+    <p>Built on the same engine as Zolton: flat maps generated from noise slide behind a lens that bends them into a turning globe, lit by a fixed sun. The lava seas are cells of crust over a molten layer; the lava's light is drawn above the night, so it glows on both sides and brightest in the dark.</p>
   </section>
 </div>
 <script>
@@ -134,7 +131,7 @@ section { margin-top: 56px; }
 
 if __name__ == '__main__':
     page = PAGE % {
-        'BIG': svg('mb', 'big', 'Magmuth, turning, with its fissures, lava seas, volcanoes and smoke'),
+        'BIG': svg('mb', 'big', 'Magmuth, turning: seas of lava under a cracked crust, glowing fissures, smoke, and a vent erupting'),
         'MID': svg('mm', 'mid', 'Magmuth at 150 pixels', with_stars=False, width=1024).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"'),
         'SMALL': svg('ms', 'small', 'Magmuth at 76 pixels', with_stars=False, width=1024).replace('<svg class="small"', '<svg class="small" width="76" height="76"'),
     }
