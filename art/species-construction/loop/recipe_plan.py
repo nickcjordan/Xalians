@@ -53,8 +53,12 @@ SHEET_ROWS_PER_COLUMN = 6
 
 # ---------------------------------------------------------------- the plan
 
-def as_value(value):
-    """An edit value as the string `set` takes."""
+def as_value(value, arg=None):
+    """An edit value as the string `set` takes. A list of plain values for a command-line flag is the flag's several values
+    (round 31: a planner wrote --tip-min [0.0035, 0.0035], which reached the script as one token '[0.0035,' and failed both
+    variants), so it is joined with spaces the way `set` splits them; a spec: value keeps its JSON."""
+    if isinstance(value, list) and str(arg or '').startswith('--') and all(isinstance(x, (int, float, str)) and not isinstance(x, bool) for x in value):
+        return ' '.join(str(x) for x in value)
     if isinstance(value, str):
         return value
     if isinstance(value, bool):
@@ -193,7 +197,7 @@ def apply_edits(rc, data, edits, spec_dir):
             groups.append(('add', e))
             current = None
             continue
-        pair = (e['arg'], as_value(e['value'])) if e['op'] == 'set' else ('script', e['script'])
+        pair = (e['arg'], as_value(e['value'], e['arg'])) if e['op'] == 'set' else ('script', e['script'])
         if current is not None and current[1] == e['step']:
             current[2].append(pair)
         else:

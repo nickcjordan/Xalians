@@ -67,12 +67,12 @@
  },
  "baseline": {
   "head": "head-2271",
-  "body": "body-2753",
-  "assembly": "assembled-2811",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2811",
+  "body": "body-2918",
+  "assembly": "assembled-2920",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2920",
   "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
- "round": 30,
+ "round": 31,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -103,7 +103,8 @@
   "R02+R05",
   "R03+R04+R07",
   "R07+R01",
-  "R09+R05"
+  "R09+R05",
+  "R03+R04+R07"
  ],
  "specs": {
   "R10": {
@@ -407,7 +408,7 @@
      "fixability": 0.6
     }
    ],
-   "attempts": 0,
+   "attempts": 1,
    "anchorScore": 5.7,
    "parked": false,
    "history": [
@@ -532,9 +533,16 @@
      ],
      "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\r28-R03.json",
      "base": "docs/design/species-construction/akinza/recipe.json"
+    },
+    {
+     "round": 31,
+     "kept": false,
+     "approach": "Soften the existing H33 fan and H34 rear coat (wider lock, plate and cup unions, larger and blunter tip floors, gentler curl and jitter, wider dome blur) in two paired variants, one softening in place and one with fewer, broader masses, with no new geometry.",
+     "reason": "no candidate read better than the baseline: [{\"candidate\":\"soft locks, gently pointed, melted cups\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's fan front breaks into separate pointed lock tips that overlap along the lower rim and outer edge, while A's fan reads as a lumpy, wavy slab with only small burr spikes. | B's fa",
+     "reusable": []
     }
    ],
-   "lastWorked": 28,
+   "lastWorked": 31,
    "toolUsed": true,
    "methodChanged": 30
   },
@@ -559,7 +567,7 @@
      "fixability": 0.7
     }
    ],
-   "attempts": 1,
+   "attempts": 2,
    "anchorScore": 6.4,
    "parked": false,
    "history": [
@@ -628,9 +636,15 @@
      "kept": false,
      "approach": "(paired with R03) Kept the baseline fan coat and the baseline crown tufts and rebuilt only the cup and pale inner tuft with the H36 lock sweeps (all coat clumps skipped, strip off, blunt tips, soft rim blend, short skull ramp), so the inner ears become soft pale feathered wedges.",
      "reason": "the code builder candidate did not read better than the baseline: {\"R03\":{\"verdict\":\"better\",\"better\":2,\"worse\":1,\"reason\":\"A's inner ears read as one smooth, cupped pale fan like the reference's soft inner-ear tuft, while B breaks the inner ear into hard, splintered shards and spikes. | A's inner ears read as one clean, pale cupped bowl framed by the fan, like the reference. B breaks the inner ear into hard white blade shards that stick out of the cup, which sh"
+    },
+    {
+     "round": 31,
+     "kept": false,
+     "approach": "(paired with R03) Soften the existing H33 fan and H34 rear coat (wider lock, plate and cup unions, larger and blunter tip floors, gentler curl and jitter, wider dome blur) in two paired variants, one softening in place and one with fewer, broader masses, with no new geometry.",
+     "reason": "no candidate read better than the baseline: [{\"candidate\":\"soft locks, gently pointed, melted cups\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's fan front breaks into separate pointed lock tips that overlap along the lower rim and outer edge, while A's fan reads as a lumpy, wavy slab with only small burr spikes. | B's fa"
     }
    ],
-   "lastWorked": 28,
+   "lastWorked": 31,
    "methodChanged": 30,
    "toolUsed": true
   },
@@ -941,7 +955,7 @@
      "evidence": "posed/posed-fit.png, posed/proportions.json, m07 forearm-profile"
     }
    ],
-   "attempts": 2,
+   "attempts": 0,
    "anchorScore": 5.8,
    "parked": false,
    "history": [
@@ -1068,11 +1082,29 @@
      "approach": "Two B-23 variants: a bold paw (roll 55, small palm, wide yaw fan, straight digits, tilted-back claws) against all three critic fixes at roll 40 (paw, cuff-free wrist, fuller upper arm, full-depth dome cap).",
      "reason": "no candidate read better than the baseline: [{\"candidate\":\"arm fixes only, baseline paw\",\"per\":{\"R07\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same forearm taper, the same wrist ring and the same rounded paw with three pale claws in every camera, and I could find no difference I could call. | A and B show the same for",
      "reusable": []
+    },
+    {
+     "round": 31,
+     "kept": false,
+     "approach": "Outline-authored forepaw at B-23 in rebuild_arms_field_r30.py: a rounded, scalloped intersection of front and side outline extrusions with a continuous wrist table, and four claws probed onto the tip.",
+     "reason": "the code builder candidate did not read better than the baseline: {\"R07\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"A's forepaw has separate rounded toe pads with short curved claws like the reference studies, while B's paw is a smooth mitten bulb with thin needle claws bunched under it. | A's forepaw ends in separate toe pads with clear curved claws, like the reference paw studies, while B's paw is a swollen mitten with only tiny claw tips under a smooth",
+     "reusable": [
+      {
+       "option": "rebuild_arms_field_r30.py paw.mode 'outline' (front, side, length, outlineRound, sideRound, roundRadius, tableSmooth, sdfBlur, tipScallops, claws, clawInset, clawBaseT, wristTable, wristBlend)",
+       "what": "Closed forepaw implicit made from two extruded orthographic outlines in the rolled paw frame, with a continuous wrist table that hands over smoothly to the paw field. Claws are probed onto the built tip. The report gives frontOutlineErr, sideOutlineErr, pawOverWrist and clawTipSpread."
+      },
+      {
+       "option": "specs/arms-r30-v1.json, v2 and v3",
+       "what": "Outline-paw starter specs. v1 and v2 also carry the deltoid and arm-band push, which raised R05.3 and caused a new shoulder crease. v3 is paw and wrist only. Sweep spec:paw.front, spec:paw.side, spec:paw.roundRadius, spec:pawRollDeg, spec:paw.claws.*.at, spec:paw.tipScallops and spec:paw.wristTable on B-23."
+      }
+     ],
+     "recipe": "docs/design/species-construction/akinza/loop/recipes/r31-R07.json",
+     "base": "docs/design/species-construction/akinza/recipe.json"
     }
    ],
-   "lastWorked": 29,
+   "lastWorked": 31,
    "toolUsed": false,
-   "methodChanged": 30
+   "methodChanged": 31
   },
   "R08": {
    "name": "Legs",
@@ -1357,7 +1389,9 @@
   "Round 27: authored neck column (sheet-derived sections in an r27 assembler copy) kept on a 3-0 reader verdict, assembled-2811, mean flat; face reverted (readers 1-2 on the after-assembly tool's best candidate); three flat rounds triggered method reviews for R02 (subdivision face patch) and R03 (coat locks cut in after the assembly)",
   "Round 28: nothing kept. Fan front: the new after-assembly lock tool passed its reader check but every plan candidate was rejected; the code builder's cup-and-tuft rebuild read better on the front 2-1 but worse on the rear 0-3. Forepaw: claw rework read the same. Face subdivision tool built and rejected 3-0 twice by the readers (not ordered; corrected 2026-10-07, first recorded as a pass). R03 parked and re-methoded as a parametric pinna shell. 85M tokens, 5.7 hours.",
   "2026-10-07: Round 29 (109 min): R07 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"arm fixes only, baseline paw\",\"per\":{\"R07\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same forearm taper, the same wrist ring and the same | R01 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"single smooth crown dome\",\"per\":{\"R01\":{\"verdict\":\"same\",\"better\":1,\"worse\":0,\"reason\":\"A and B show the same skull outline, crown tuft, ear fan spread and side  | waiting for Nick: idiom R03 (critic score 6.031)",
-  "2026-10-08: Round 30 (37 min): R09 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"collar fix A, raised knuckles, thin claws, filled gaps\",\"per\":{\"R09\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"A's toes are separate rounded lobes with l | R05 reverted; why: no candidate read better than the baseline: no candidate built or none changed visibly | waiting for Nick: idiom R03, reverts R09 (critic score 6.031)"
+  "2026-10-08: Round 30 (37 min): R09 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"collar fix A, raised knuckles, thin claws, filled gaps\",\"per\":{\"R09\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"A's toes are separate rounded lobes with l | R05 reverted; why: no candidate read better than the baseline: no candidate built or none changed visibly | waiting for Nick: idiom R03, reverts R09 (critic score 6.031)",
+  "2026-10-08: Round 31 (85 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"soft locks, gently pointed, melted cups\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's fan front breaks into separate pointed lock tips that | R07 reverted; assembled-2946; why: the code builder candidate did not read better than the baseline: {\"R07\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"A's forepaw has separate rounded toe pads with short curved claws like the reference studies, whi | waiting for Nick: reverts R09 (critic score 6.031)",
+  "2026-10-08: Nick picked round 30 hind paw candidate B (assembled-2920: plumper mitten toes, thin claws) over the readers' 1-2 vote; adopted as the baseline (body-2918, recipe r30-R09-nick.json, only step B-21 differs). Visual results carried until the next cold rescore."
  ],
  "decisionsForNick": [
   {
@@ -1445,23 +1479,20 @@
    "script": "art/species-construction/author_trunk_sections_field.py",
    "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R06-pinned.json"
   },
-  "R03": {
-   "script": "art/species-construction/finish_fan_assembled.py",
-   "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
-   "readerCheck": "same: B's lower and outer fan edge breaks into smaller, overlapping shingled lock tips, while A's breaks into fewer, larger hard triangular spikes that read as serrations rather than soft locks. | A and B match closely in fan outline, ear-cup size and lock layout; A's larger hard spikes along the fan rim ",
-   "planRejected": "r28: soft wide unions, rounder section: B has a row of small pointed tufts across the crown between the ears, which echoes the Reference's spiky central crown peak, while A's crown edge is plain. | In the side view B's inner-ear locks read as rounded overlapping lock bodies instead of A's stacked hard se"
-  },
   "R02": {
    "script": "art/species-construction/author_face_subd_patch_v2.py (post-assembly step A-face-subd; replaces A-face, finish_face_assembled.py). v1 author_face_subd_patch.py is kept unedited for the earlier pin.",
    "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R02.json"
   }
  },
- "keptSinceAudit": 2,
+ "keptSinceAudit": 3,
  "means": [
+  6.031,
   6.031
  ],
  "toolBlocked": {},
- "keptLog": [],
+ "keptLog": [
+  false
+ ],
  "decisions": [
   {
    "key": "dispute:R02:R02.2",
@@ -1497,11 +1528,9 @@
    "answered": "2026-10-08"
   }
  ],
- "awaiting": {
-  "R09": "R09 (Hind paws) has had three reverted orders in a row (rounds 17, 18, 30). Keep working it, change its method, or set it aside?"
- },
+ "awaiting": {},
  "disputes": {},
  "escalated": true,
- "keptSinceCold": 0,
+ "keptSinceCold": 1,
  "clock": 1791433084
 }

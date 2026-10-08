@@ -1,0 +1,318 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r31-R03.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2922",
+ "order": {
+  "round": 31,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "region": "R03",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2811",
+ "startNotes": [],
+ "top": [],
+ "baseline": {
+  "head": "head-2271",
+  "body": "body-2753",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
+  "terms": {
+   "fitIou": 0.9247,
+   "fitIouByView": {
+    "front": 0.91349,
+    "left": 0.93472,
+    "back": 0.92588
+   },
+   "silhouetteChange": null,
+   "fitBand": "head",
+   "fitBandIou": 0.921,
+   "stationDiff": 0.13989,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "both soft plus cup seams (paired)",
+   "why": "the pair: R03 soft wide blends plus R04 soft dome and locks in one build, since an H33 edit rebuilds H34 anyway. Tests whether the softening adds up without losing either region. Also widens the cup and tuft unions (tuft-blend .007, tuft-skull-blend .035, cup-clip-smooth .020, tuft-section-p 1.9) for the crinkled cup-wall seams (R03.7).",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--lock-blend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--blend",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--section-p",
+     "value": 1.6
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-min",
+     "value": [
+      0.0035,
+      0.0035
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": 0.3
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--curl",
+     "value": 3.0
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--jitter",
+     "value": [
+      4.0,
+      0.12,
+      5.0
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--clump-blend",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--bandwidth",
+     "value": 16
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--tip-min",
+     "value": 0.003
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": 12
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--strip-cut-smooth",
+     "value": 5
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--section-p",
+     "value": 1.8
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tuft-blend",
+     "value": 0.007
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tuft-skull-blend",
+     "value": 0.035
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--cup-clip-smooth",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tuft-section-p",
+     "value": 1.9
+    }
+   ],
+   "built": false,
+   "error": "recipe: step H33 failed (head-2923); log C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\head-2923.log",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2922\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "H33",
+    "H34"
+   ],
+   "total": null
+  },
+  {
+   "id": "v02",
+   "name": "fewer broader masses",
+   "why": "audit rank 1 (a crown of leaves and thorns): fewer, broader masses. Drop the two extra filler locks per side and the thin lower P9/P10 slivers' neighbors (P2, P4 stay for the outline), widen every lock (width-scale 1.45 to 1.75, top-width 1.1, drape-width 2.2) so neighbors fuse into one swept mass, blunter ogive (1.0, 1.2), larger tip floor. Outline stays on the table tips (tip-trim keeps the span, R03.1). Paired with the soft R04 edit. Also widens the cup and tuft unions for the cup-wall seams.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--no-extras",
+     "value": true
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--width-scale",
+     "value": 1.75
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--top-width",
+     "value": 1.1
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--drape-width",
+     "value": 2.2
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--ogive",
+     "value": [
+      1.0,
+      1.2
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--lock-blend",
+     "value": 0.012
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--blend",
+     "value": 0.014
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-min",
+     "value": [
+      0.0035,
+      0.0035
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-floor",
+     "value": 0.35
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-point",
+     "value": 0.25
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--jitter",
+     "value": [
+      4.0,
+      0.12,
+      5.0
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--clump-blend",
+     "value": 0.006
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skin-blend",
+     "value": 0.01
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--bandwidth",
+     "value": 16
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--tip-min",
+     "value": 0.003
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": 12
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tuft-blend",
+     "value": 0.007
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tuft-skull-blend",
+     "value": 0.035
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--cup-clip-smooth",
+     "value": 0.02
+    }
+   ],
+   "built": false,
+   "error": "recipe: step H33 failed (head-2924); log C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\head-2924.log",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2922\\v02.json",
+   "warnings": [],
+   "changedSteps": [
+    "H33",
+    "H34"
+   ],
+   "total": null
+  }
+ ],
+ "scoringSeconds": 1073.8,
+ "wallMinutes": 18.1,
+ "surfaceStats": true,
+ "created": "2026-10-08T09:36:08",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r31-R03-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r31-R03-plan-result.png"
+ ]
+}

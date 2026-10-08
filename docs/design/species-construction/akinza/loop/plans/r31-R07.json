@@ -1,0 +1,14 @@
+{
+ "order": {"round": 31, "region": "R07", "with": []},
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2811",
+ "start": null,
+ "variants": [
+  {"name": "baseline control", "control": true,
+   "why": "Placeholder only. The outline forepaw needs rebuild_arms_field_r30.py (paw mode 'outline'), which does not exist; rounds 28 and 29 showed that every key of the digit-chain script moves the R07 picture by about .01 and reads identical. The code builder makes the script and one candidate, and a later plan sweeps its tables.",
+   "edits": []}
+ ],
+ "sweeps": [],
+ "region": "R07",
+ "top": 1
+}

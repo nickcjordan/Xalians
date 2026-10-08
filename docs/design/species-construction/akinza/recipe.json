@@ -914,7 +914,7 @@
       "component": "body",
       "regions": ["R09"],
       "kind": "body",
-      "script": "art/species-construction/rebuild_hind_paws_field_r12.py",
+      "script": "art/species-construction/rebuild_hind_paws_field_r18.py",
       "runner": "blender",
       "inputs": {
         "base": "B-20T"
@@ -922,16 +922,16 @@
       "args": [
         "--body", "{base}/shape.glb",
         "--fairing", "{base}/fairing.json",
-        "--spec", "{repo}/art/species-construction/specs/paw-spec-r09-v3.json",
+        "--spec", "{repo}/untracked/species-construction/akinza/sweep_specs/B-21-5273502d5ba4.json",
         "--out", "{out}"
       ],
       "note": "loop round 12, R09 hind paw spec v3; spec re-extracted from loop/scratch/r12/v3.json (identical to body-0400/paw-spec-v3.json)",
       "pins": {
+        "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/sweep_specs/B-21-5273502d5ba4.json": "5f7f5e48e48a9f494ca090bdd775b285bfe063a88f9e359ea8981f628ac976a1",
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
         "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
-        "art/species-construction/rebuild_hind_paws_field_r12.py": "dc21a6479e7115720ad51c2cf71896a63dc87097190023cfb17a60b8c0bbb8de",
-        "art/species-construction/specs/paw-spec-r09-v3.json": "8aa9109238b8b91a432b3109bf5dc13f122fa0fa1af38b6b5ea3268e3e3bee68",
+        "art/species-construction/rebuild_hind_paws_field_r18.py": "1f8835020fda5b8817444f2d306e98395e343542dc1f269d8fe131a0190cb8cc",
         "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
         "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
       }
@@ -1026,7 +1026,7 @@
   },
   "derivedFrom": {
     "recipe": "docs/design/species-construction/akinza/recipe.json",
-    "sha256": "9c2c35aa907991fa7355baf9f87a3415dfffa6a70060e23121560ce79247b1fb",
+    "sha256": "9be763a0f3a287fb203993d4293c49fadf3dadfa822e73b073a72fbc42a7d9c4",
     "steps": {
       "H24": {
         "script": "feef615941aa2a663965ab1db366f0cf85e9669291bacb2aa28d0c523ffa375a",
@@ -1239,11 +1239,11 @@
     "assembly": {
       "head": "cb20c7e1b7b18facd4eeb995f3b7420000f335d47194c343cc8cc0ff44df4a6c",
       "body": "d7223e532c340c3c5af64dc42c6463cd1d3f1ead9ed94f0bfe3de2e54d251faf",
-      "args": "3c3911ce91e1c9bd1fe4c3326662a6a7e41beaf14c23272b24613e2ed03993a9"
+      "args": "31dedb1fb76701839d3fb4267b3c1cae38464ba1f4705582475db014acfcedbf"
     }
   },
   "rebasedFrom": {
-    "candidate": "docs/design/species-construction/akinza/loop/recipes/r17-R04-pinned.json",
-    "candidateSha256": "b17c34908104b9b2928b00959b68aaa861e7bbe56825083ddfb4b5ddb0c3317e"
+    "candidate": "docs/design/species-construction/akinza/loop/recipes/r30-R09-start.json",
+    "candidateSha256": "330bd829f6f7587e5e6eb16e6d0faf7f1897f7dfcf3eebcede45b7ded785e857"
   }
 }

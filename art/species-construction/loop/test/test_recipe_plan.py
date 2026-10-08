@@ -71,6 +71,14 @@ class ChooseTests(unittest.TestCase):
         self.assertEqual([v['id'] for v in rp.choose_candidates(ranked, 2, False)], ['v02', 'v01'])
 
 
+class ValueTests(unittest.TestCase):
+    def test_a_list_for_a_flag_is_its_several_values(self):
+        # round 31: --tip-min [0.0035, 0.0035] reached the script as the token '[0.0035,'
+        self.assertEqual(rp.as_value([0.0035, 0.0035], '--tip-min'), '0.0035 0.0035')
+        self.assertEqual(rp.as_value([1, 2], 'spec:rows'), '[1, 2]')
+        self.assertEqual(rp.as_value(0.3, '--tip-floor'), '0.3')
+
+
 if __name__ == '__main__':
     unittest.main()
 
