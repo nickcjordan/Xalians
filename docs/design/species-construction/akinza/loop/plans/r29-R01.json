@@ -1,0 +1,197 @@
+{
+ "order": {
+  "round": 29,
+  "region": "R01",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2811",
+ "start": null,
+ "variants": [
+  {
+   "name": "crown dome plus back oval",
+   "why": "both views at once and the method's own structure: a crown cap ellipsoid (top about y .022, half width about .054 fig) replaces the crown_lift warp for R01.3, and a vertical head oval through the fan back (about .13 fig wide, .008 fig proud of the fan centre, rear crest moved only .03 local) lets the head read as a mass under the fan rather than a bulb under a slab (R01.4, critic issue 1). Edit at H25, the last R01 step, so the cost is the 28 minute chain after it.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:warp.crown_lift",
+     "value": null
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:skulls",
+     "value": [
+      {
+       "center": [
+        0,
+        0.06,
+        0.3
+       ],
+       "radii": [
+        0.2,
+        0.2,
+        0.155
+       ],
+       "blend": 0.05
+      },
+      {
+       "center": [
+        0,
+        0.15,
+        0.27
+       ],
+       "radii": [
+        0.24,
+        0.23,
+        0.17
+       ],
+       "blend": 0.06
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "skull plus jaw taper plus softer shelf",
+   "why": "combination of the structural ideas: crown cap, back oval, jaw taper, and cut blend .06 (below the .07 that broke R05 containment in round 19) so the shelf underside rounds over (critic issue 2). Costs the same chain as the first variant; kept as the second because R01.5 (chin and jaw) is the third partial criterion and nothing else in this plan touches it.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:warp.crown_lift",
+     "value": null
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:skulls",
+     "value": [
+      {
+       "center": [
+        0,
+        0.06,
+        0.3
+       ],
+       "radii": [
+        0.2,
+        0.2,
+        0.155
+       ],
+       "blend": 0.05
+      },
+      {
+       "center": [
+        0,
+        0.15,
+        0.27
+       ],
+       "radii": [
+        0.24,
+        0.23,
+        0.17
+       ],
+       "blend": 0.06
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:cut.head_base_half",
+     "value": [
+      [
+       -0.114,
+       0.316
+      ],
+      [
+       -0.133,
+       0.292
+      ],
+      [
+       -0.17,
+       0.272
+      ],
+      [
+       -0.207,
+       0.238
+      ],
+      [
+       -0.2445,
+       0.192
+      ],
+      [
+       -0.2817,
+       0.13
+      ],
+      [
+       -0.31,
+       0.12
+      ],
+      [
+       -0.34,
+       0.15
+      ],
+      [
+       -0.45,
+       0.15
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:cut.chin",
+     "value": [
+      [
+       -0.17,
+       -0.5
+      ],
+      [
+       -0.19,
+       -0.45
+      ],
+      [
+       -0.207,
+       -0.42
+      ],
+      [
+       -0.226,
+       -0.385
+      ],
+      [
+       -0.2445,
+       -0.285
+      ],
+      [
+       -0.2817,
+       -0.235
+      ],
+      [
+       -0.319,
+       -0.12
+      ],
+      [
+       -0.345,
+       -0.09
+      ],
+      [
+       -0.45,
+       -0.09
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:cut.blend",
+     "value": 0.06
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R01",
+ "top": 2
+}

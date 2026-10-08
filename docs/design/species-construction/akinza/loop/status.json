@@ -70,7 +70,7 @@
   "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2811",
   "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
- "round": 28,
+ "round": 29,
  "lastOrders": [
   "R01+R10",
   "R01+R08",
@@ -99,7 +99,8 @@
   "R02+R07",
   "R02+R07",
   "R02+R05",
-  "R03+R04+R07"
+  "R03+R04+R07",
+  "R07+R01"
  ],
  "specs": {
   "R10": {
@@ -209,7 +210,7 @@
      "fixability": 0.7
     }
    ],
-   "attempts": 0,
+   "attempts": 1,
    "anchorScore": 8.1,
    "parked": false,
    "history": [
@@ -255,9 +256,16 @@
      "verdict": "same",
      "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\r19-R01.json",
      "base": "docs/design/species-construction/akinza/recipe.json"
+    },
+    {
+     "round": 29,
+     "kept": false,
+     "approach": "Raise the crown from its own cap ellipsoid and the back of the head from a vertical oval through the fan centre (both smooth-union skulls at H25 with crown_lift removed), and in a second variant also taper the jaw to the sheet U and soften the shelf cut blend to .06.",
+     "reason": "no candidate read better than the baseline: [{\"candidate\":\"single smooth crown dome\",\"per\":{\"R01\":{\"verdict\":\"same\",\"better\":1,\"worse\":0,\"reason\":\"A and B show the same skull outline, crown tuft, ear fan spread and side profile in every view; the only change is a slightly smoother crown on B, too small to call. | B's crown has fewer, smaller ",
+     "reusable": []
     }
    ],
-   "lastWorked": 19,
+   "lastWorked": 29,
    "toolUsed": false
   },
   "R02": {
@@ -946,7 +954,7 @@
      "evidence": "posed/posed-fit.png, posed/proportions.json, m07 forearm-profile"
     }
    ],
-   "attempts": 1,
+   "attempts": 2,
    "anchorScore": 5.8,
    "parked": false,
    "history": [
@@ -1066,9 +1074,16 @@
      ],
      "recipe": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\recipes\\r28-R07.json",
      "base": "docs/design/species-construction/akinza/recipe.json"
+    },
+    {
+     "round": 29,
+     "kept": false,
+     "approach": "Two B-23 variants: a bold paw (roll 55, small palm, wide yaw fan, straight digits, tilted-back claws) against all three critic fixes at roll 40 (paw, cuff-free wrist, fuller upper arm, full-depth dome cap).",
+     "reason": "no candidate read better than the baseline: [{\"candidate\":\"arm fixes only, baseline paw\",\"per\":{\"R07\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same forearm taper, the same wrist ring and the same rounded paw with three pale claws in every camera, and I could find no difference I could call. | A and B show the same for",
+     "reusable": []
     }
    ],
-   "lastWorked": 28,
+   "lastWorked": 29,
    "toolUsed": false
   },
   "R08": {
@@ -1344,7 +1359,8 @@
   "round 25: forepaw kept (digit-chain paw); face reverted after a repair pass; R04 tool rejected twice",
   "Round 26: forepaw re-posed (digits uncurled, a claw per lobe) kept on a 2-1 reader verdict, assembled-2775; face reverted after a repair pass, the paired re-grade restored R02.1 once but R02.2 and the convergent gaze (I01) held; R02 after-assembly method blocked (no post-assembly recipe stage)",
   "Round 27: authored neck column (sheet-derived sections in an r27 assembler copy) kept on a 3-0 reader verdict, assembled-2811, mean flat; face reverted (readers 1-2 on the after-assembly tool's best candidate); three flat rounds triggered method reviews for R02 (subdivision face patch) and R03 (coat locks cut in after the assembly)",
-  "Round 28: nothing kept. Fan front: the new after-assembly lock tool passed its reader check but every plan candidate was rejected; the code builder's cup-and-tuft rebuild read better on the front 2-1 but worse on the rear 0-3. Forepaw: claw rework read the same. Face subdivision tool built and rejected 3-0 twice by the readers (not ordered; corrected 2026-10-07, first recorded as a pass). R03 parked and re-methoded as a parametric pinna shell. 85M tokens, 5.7 hours."
+  "Round 28: nothing kept. Fan front: the new after-assembly lock tool passed its reader check but every plan candidate was rejected; the code builder's cup-and-tuft rebuild read better on the front 2-1 but worse on the rear 0-3. Forepaw: claw rework read the same. Face subdivision tool built and rejected 3-0 twice by the readers (not ordered; corrected 2026-10-07, first recorded as a pass). R03 parked and re-methoded as a parametric pinna shell. 85M tokens, 5.7 hours.",
+  "2026-10-07: Round 29 (109 min): R07 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"arm fixes only, baseline paw\",\"per\":{\"R07\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same forearm taper, the same wrist ring and the same | R01 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"single smooth crown dome\",\"per\":{\"R01\":{\"verdict\":\"same\",\"better\":1,\"worse\":0,\"reason\":\"A and B show the same skull outline, crown tuft, ear fan spread and side  | waiting for Nick: idiom R03 (critic score 6.031)"
  ],
  "decisionsForNick": [
   {
@@ -1437,15 +1453,21 @@
    "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R03.json",
    "readerCheck": "same: B's lower and outer fan edge breaks into smaller, overlapping shingled lock tips, while A's breaks into fewer, larger hard triangular spikes that read as serrations rather than soft locks. | A and B match closely in fan outline, ear-cup size and lock layout; A's larger hard spikes along the fan rim ",
    "planRejected": "r28: soft wide unions, rounder section: B has a row of small pointed tufts across the crown between the ears, which echoes the Reference's spiky central crown peak, while A's crown edge is plain. | In the side view B's inner-ear locks read as rounded overlapping lock bodies instead of A's stacked hard se"
+  },
+  "R02": {
+   "script": "art/species-construction/author_face_subd_patch_v2.py (post-assembly step A-face-subd; replaces A-face, finish_face_assembled.py). v1 author_face_subd_patch.py is kept unedited for the earlier pin.",
+   "recipe": "docs/design/species-construction/akinza/loop/recipes/tool-R02.json"
   }
  },
  "keptSinceAudit": 2,
  "means": [
   6.031,
+  6.031,
   6.031
  ],
  "toolBlocked": {},
  "keptLog": [
+  false,
   false
  ],
  "decisions": [
@@ -1474,5 +1496,6 @@
  },
  "disputes": {},
  "escalated": false,
- "keptSinceCold": 0
+ "keptSinceCold": 0,
+ "clock": 1791433084
 }

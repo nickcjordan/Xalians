@@ -1,0 +1,315 @@
+{
+ "order": {
+  "round": 29,
+  "region": "R07",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2811",
+ "start": null,
+ "variants": [
+  {
+   "name": "bold paw: roll 55, small palm, wide fan, straight digits",
+   "why": "R07.5/R07.3, audit rank 6 (the most visible gap): from the front the four digit chains overlap along the view axis and curl into a fist whose claws cluster at the inner lower corner; roll 55 turns the digit row across the view, the palm blob (radii .042/.03/.044, wider than the digit roots) shrinks and moves back so each lobe is its own round, yaw +-10/4 spreads the tips across the paw width, curl 0/0 with claw bend .35 and tilt -10 keeps the digits and claws pointing down instead of in",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollDeg",
+     "value": 55
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.digits",
+     "value": [
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": -0.027,
+       "yawDeg": -10,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": -0.0092,
+       "yawDeg": -4,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.062,
+       "rootT": -0.002,
+       "rootR": 0.0092,
+       "yawDeg": 4,
+       "pitchDeg": 0,
+       "segLen": [
+        0.02,
+        0.016
+       ],
+       "rootRadii": [
+        0.027,
+        0.015
+       ],
+       "jointRadii": [
+        0.0245,
+        0.014
+       ],
+       "tipRadii": [
+        0.02,
+        0.0122
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      },
+      {
+       "rootS": 0.06,
+       "rootT": -0.002,
+       "rootR": 0.027,
+       "yawDeg": 10,
+       "pitchDeg": 0,
+       "segLen": [
+        0.015,
+        0.012
+       ],
+       "rootRadii": [
+        0.0265,
+        0.0146
+       ],
+       "jointRadii": [
+        0.024,
+        0.0134
+       ],
+       "tipRadii": [
+        0.019,
+        0.0115
+       ],
+       "curlDeg": [
+        0,
+        0
+       ]
+      }
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.s",
+     "value": 0.036
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.radii",
+     "value": [
+      0.036,
+      0.028,
+      0.04
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.blend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.claw.bend",
+     "value": 0.35
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.claw.tipTiltDeg",
+     "value": -10
+    }
+   ]
+  },
+  {
+   "name": "all three issues, roll 40",
+   "why": "the critic's three issues together (paw front view R07.5, wrist cuff ring and R07.6, flat cap R07.1) with a milder paw than v01 so the readers can compare a bold paw against a balanced whole: roll 40 and small palm, thinner wrist stations with a longer roll fade (no cuff ring in profile, paw over wrist toward 1.5), fuller upper rod and swell out for the posed arm band (.874 against .90, sheet-only area along the outer upper arm and elbow), dome sphere extended to the full depth to round the flat-topped cap",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollDeg",
+     "value": 40
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.s",
+     "value": 0.036
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.radii",
+     "value": [
+      0.036,
+      0.028,
+      0.04
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:paw.palm.blend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:rod",
+     "value": [
+      [
+       0,
+       0.0419,
+       0.0446
+      ],
+      [
+       0.056,
+       0.0409,
+       0.0391
+      ],
+      [
+       0.1116,
+       0.0363,
+       0.0353
+      ],
+      [
+       0.167,
+       0.0326,
+       0.0326
+      ],
+      [
+       0.205,
+       0.0275,
+       0.0292
+      ],
+      [
+       0.2329,
+       0.0305,
+       0.0345
+      ],
+      [
+       0.2608,
+       0.0335,
+       0.0391
+      ],
+      [
+       0.2887,
+       0.0335,
+       0.0409
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:pawRollFade",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:upperRod",
+     "value": [
+      [
+       0,
+       0.0405,
+       0.0452
+      ],
+      [
+       0.5,
+       0.04,
+       0.0442
+      ],
+      [
+       1,
+       0.0425,
+       0.0458
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:swell.out",
+     "value": 0.008
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.frontY",
+     "value": 0.05
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.radius",
+     "value": 0.056
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.cutBlend",
+     "value": 0.02
+    },
+    {
+     "op": "set",
+     "step": "B-23",
+     "arg": "spec:cornerRound.sectorFade",
+     "value": 0.04
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R07",
+ "top": 2
+}

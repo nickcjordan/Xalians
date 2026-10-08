@@ -1,0 +1,157 @@
+{
+ "order": {
+  "round": 29,
+  "region": "R01",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2811",
+ "start": null,
+ "variants": [
+  {
+   "name": "smooth crown lift, rounded shelf, jaw taper",
+   "why": "All three smooth, low-risk levers in one build, because the first plan's skull ellipsoids read lumpy (back oval and second skull faceted the occiput; silhouettes moved under .001 IoU) and a time budget allows only two variants. Crown_lift amp .04 sx .15 (amp*.86/sx .23, under the .3 ridge limit) for R01.3 (critic issue 3); cut blend .07 so the shelf underside and bulb-to-neck join round over for R01.4 (critic issue 2); head base half widths and chin pulled about half of the first plan's amounts for R01.5, which was never tried without the skulls. Edit at H25, the last R01 step.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:warp.crown_lift.amp",
+     "value": 0.04
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:warp.crown_lift.sx",
+     "value": 0.15
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:cut.blend",
+     "value": 0.07
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:cut.head_base_half",
+     "value": [
+      [
+       -0.114,
+       0.316
+      ],
+      [
+       -0.133,
+       0.292
+      ],
+      [
+       -0.17,
+       0.281
+      ],
+      [
+       -0.207,
+       0.25
+      ],
+      [
+       -0.2445,
+       0.203
+      ],
+      [
+       -0.2817,
+       0.14
+      ],
+      [
+       -0.31,
+       0.13
+      ],
+      [
+       -0.34,
+       0.16
+      ],
+      [
+       -0.45,
+       0.16
+      ]
+     ]
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:cut.chin",
+     "value": [
+      [
+       -0.17,
+       -0.5
+      ],
+      [
+       -0.19,
+       -0.45
+      ],
+      [
+       -0.207,
+       -0.42
+      ],
+      [
+       -0.226,
+       -0.385
+      ],
+      [
+       -0.2445,
+       -0.3
+      ],
+      [
+       -0.2817,
+       -0.245
+      ],
+      [
+       -0.319,
+       -0.14
+      ],
+      [
+       -0.345,
+       -0.105
+      ],
+      [
+       -0.45,
+       -0.105
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "single smooth crown dome",
+   "why": "Method variant (skull ellipsoid raising the crown between the ear roots) done the way the first plan did not: ONE ellipsoid only, wide soft blend .09, centered forward of the occiput (y -.01 so it cannot push the rear crest into a bump), x radius .20 local (about .054 fig, the spec's crown half width), top about z .44; crown_lift removed. No back oval and no second skull, since the readers called those lumpy.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:warp.crown_lift",
+     "value": null
+    },
+    {
+     "op": "set",
+     "step": "H25",
+     "arg": "spec:skulls",
+     "value": [
+      {
+       "center": [
+        0,
+        -0.01,
+        0.3
+       ],
+       "radii": [
+        0.2,
+        0.2,
+        0.14
+       ],
+       "blend": 0.09
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R01",
+ "top": 2
+}
