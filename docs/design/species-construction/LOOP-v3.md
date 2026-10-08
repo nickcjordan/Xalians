@@ -350,4 +350,4 @@ Round 29 cost 1.8 hours and 7.8M tokens (round 28: 5.7 hours, 85M) and kept noth
 ## Standing practice
 
 - Push the loop branch at every round note and every module commit (the repository is public).
-- Copy the current best parts to `C:\Users\njord\OneDrive\xalians-art-backup\<species>` after every kept round. With M1 in place the recipe in git can rebuild them, so the copy becomes a speed convenience, not the only safety.
+- Back up only what git cannot rebuild (Nick 2026-10-08): `C:\Users\njord\OneDrive\xalians-art-backup\<species>` holds the recipe's root meshes (`roots/`) and the latest kept model (its assembly, head and body folders and its recipe). After a keep, copy the new latest and remove the previous one; older models are rebuilt from the recipe history in git.

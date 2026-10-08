@@ -929,24 +929,15 @@
    "issues": [
     {
      "region": "R07",
-     "summary": "From the front, the forepaw still reads as a curled fist that narrows to its inner lower corner, with the claws bunched over about 40 to 45 percent of the paw width instead of spread across a blunt mitten tip.",
-     "fix": "Straighten the distal digit segments so they point down (flexion at the second joint under about 15 degrees). Fan the four digit roots across the full paw width, so the claw tips span at least two thirds of it with the outer digit reaching the outer edge. Lengthen the paw so paw over wrist goes from 1.375 to about 1.5 and the paw is longer than wide, with a rounded, not pointed, lower outline.",
-     "fixability": 0.6,
-     "evidence": "m07 forepaw-front, m06 trunk-front, r02 forepaw outer view; audit row 6"
+     "summary": "In profile the top of the upper arm is a pale flat-topped cap with a hard upper edge, so the shoulder juts as a box (R07.1 partial).",
+     "fix": "Round the deltoid cap top to a radius of about half the arm depth (about .02 of figure height) and blend it into the trunk side so no highlight edge remains in m06 neck-profile; change no paw parameter.",
+     "fixability": 0.7
     },
     {
      "region": "R07",
-     "summary": "In profile, the top of the upper arm is a pale, flat-topped cap with a hard upper edge, so the shoulder juts as a box (R07.1 partial).",
-     "fix": "Rebuild the top of the deltoid cap with a round cross section: replace the flat top and its edge with a radius of about half the arm depth (about .02 of figure height), and blend it into the trunk side so no highlight edge remains in m06 neck-profile.",
-     "fixability": 0.6,
-     "evidence": "m06 neck-profile, m02 left; audit row 12"
-    },
-    {
-     "region": "R07",
-     "summary": "The posed arm band still misses the sheet (R07.6 0.874 against 0.90), and a cuff ring marks the wrist in profile.",
-     "fix": "In posed/posed-fit.png front, the sheet-only area runs along the outer upper arm and elbow and the model-only area sits inside the arm loop. Bring the posed elbow out about .01 of figure height, by about +.005 to .01 on the upper arm (now .1151) or a thicker outer upper arm, and smooth the wrist ring (a step of about .003 of figure height) into a continuous taper.",
-     "fixability": 0.4,
-     "evidence": "posed/posed-fit.png, posed/proportions.json, m07 forearm-profile"
+     "summary": "A ring or step of about .003 of figure height marks the wrist in profile.",
+     "fix": "Smooth the wrist into one continuous taper from mid-forearm into the paw root; change no paw, digit or claw parameter.",
+     "fixability": 0.7
     }
    ],
    "attempts": 0,
@@ -1541,12 +1532,12 @@
    "region": "R07",
    "round": 31,
    "evidence": "paw_notes.png on the artifact page",
-   "question": "Nick prefers the current forepaw (A) to the outline paw. Which of the three marked faults (flat pale cap on the upper arm, ring at the wrist, claws bunched at the inner corner) should the loop still fix, if any?"
+   "question": "Nick prefers the current forepaw (A) to the outline paw. Which of the three marked faults (flat pale cap on the upper arm, ring at the wrist, claws bunched at the inner corner) should the loop still fix, if any?",
+   "answer": "Nick 2026-10-08: fix only the flat upper-arm cap and the wrist ring; keep the paw as it is.",
+   "answered": "2026-10-08"
   }
  ],
- "awaiting": {
-  "R07": "Nick prefers the current forepaw (A) to the outline paw. Which of the three marked faults (flat pale cap on the upper arm, ring at the wrist, claws bunched at the inner corner) should the loop still fix, if any?"
- },
+ "awaiting": {},
  "disputes": {},
  "escalated": true,
  "keptSinceCold": 2,
