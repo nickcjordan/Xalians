@@ -204,17 +204,23 @@
   },
   "R09": {
    "name": "Hind paws",
-   "method": "Analytic hind-paw rebuild with rebuild_hind_paws_field.py at step B-21, replacing the straight dorsum capsule with a profile-curve instep (a convex dome rising from the claw roots to the ankle) and a heel rounded into the sole, with graded toe lobes and claws rooted inside the toe tips.",
+   "method": "Nail-plate claws conformed to the toe surface in rebuild_hind_paws_field.py at B-21 (new claw mode 'plate'): each claw is a broad, thin, almond-shaped pale plate laid along its toe's top-front arc from just behind the toe crown over the toe front to a short down-curved point just past the tip, on round 18's domed topLine instep and native-size ankle column with columnBackLine, its collar removed by keeping the column top inside the R08 shin band.",
    "steps": [
-    "B-21"
+    "B-21",
+    "new (first order builds it): rebuild_hind_paws_field.py PAW['claws'][i] gains mode 'plate' (default stays 'tip', so every earlier run is exact) with {'toe': index, 's0': start fraction of the toe's mid-line arc in its yaw plane measured from the crown (0) to the tip equator (1), about .35 to .5, 'overhang': length past the toe outline, about .006 to .010 fit, 'droop': end pitch down in degrees, 'width': plate half-width at its widest as a fraction of the toe half-width, about .35 to .45, 'thick': about .0025 to .0035 fit, 'bury': fraction of thickness sunk into the toe, about .4, 'taper': exponent of the almond outline}; the plate is swept along the toe ellipsoid's own surface (offset along the surface normal) with a lens cross-section, so its root lies flush on the toe and never stands as a separate cone; it writes per claw the plate area visible in the front and profile cameras, root depth and overhang into the paw report (clawPaths gains 'plate' entries)."
    ],
-   "newOptions": "a PAW key for the side top-line curve (control points from the claw roots to the ankle front) with a default that keeps earlier runs exact",
-   "why": "Closes gap rank 11 (slipper with a vertical heel cliff and no instep; beads in a row; claws on the toe faces; R09.9 foot band .647, R09.3, R09.8). The paw is already authored from parameters; the ellipsoid table's straight dorsum slope is what builds the ramp, and a curve-driven top line closes what the table cannot.",
-   "failureLooks": "A clog or club foot (instep too high, toes buried); a heel bulb or ankle step at the morph band; pits between toes; pearl-headed claws; the sole lifting off the floor contact.",
-   "stallNext": "Rebuild the paw as a lofted section stack along the paw axis from a side profile curve and a front arch curve, with the toes as separate lobes unioned on top.",
-   "changed": false,
+   "why": "The paw stalled on its claw representation, which the spec and every critic fix pushed the wrong way: the spec asks for thin claws (base .005 to .006) sheathed at the lower front of the toe tip, so rounds 17 and 30 built pins that readers and the critic read as worse (round 30: both candidates lost 1 to 2, deciding on 'large pale claws lying along the top of each toe, as in the Reference' against 'tiny pins'), while round 18's longer hooks were the one 'better' verdict. The Reference shows broad pale nail plates lying on the toe tops and fronts, which a Bezier tube cannot build at any setting; plates on the round 18 dome close R09.2, R09.8's claw half and the R09.4 read, and the column kept inside the shin band removes the collar that cost R08 in round 18. R09.9 stays bound by the shared pose and is not closed by any paw method.",
+   "failureLooks": "Claws read as flat stickers or pale patches with no tip leaving the toe; plates wider than half the toe, merging into a pale toe cap; a ridge or step at the plate edge on the toe; plates standing off the surface with a dark slit; points needling down past the floor; the ankle seam checks (bump, crease, kink at the ankle in front, left or back) still flagged, which means the collar is back.",
+   "stallNext": "Rebuild the paw as a lofted section stack along the paw axis from a side profile curve and a front arch curve, with the toes as separate lobes unioned on top and the plates carried over; if that also stalls, park R09 for Nick with the R09.9 pose question.",
+   "changed": true,
    "respec": true,
-   "respecReason": "The spec's mass 7 makes the dorsum one straight capsule slope from the ankle front to the toe bases and builds the instep as a separate ellipsoid, which is the ramp the audit names; the new top line is a convex arc with its crest about a third of the paw length back."
+   "respecReason": "The spec's mass K places each claw as a thin cone sheathed .008 to .010 inside the toe at its lower front, leaving at h .008 to .012 and curling down to h .004, and the status issue asks for a .005 to .006 base; the new structure is a broad plate lying on the toe's top-front surface from behind the crown over the front, ending in a short point, so the claw row, sizes and overlap order must be rewritten from the Reference before the next order.",
+   "previous": "Analytic hind-paw rebuild with rebuild_hind_paws_field.py at step B-21, replacing the straight dorsum capsule with a profile-curve instep (a convex dome rising from the claw roots to the ankle) and a heel rounded into the sole, with graded toe lobes and claws rooted inside the toe tips.",
+   "review": {
+    "round": 30,
+    "reason": "parked: 3 rounds without a net gain of 1",
+    "whyStalled": "Three rounds rebuilt the instep and thinned or buried the claws to the spec's target; readers rejected the pin claws each time and preferred the baseline's larger pale claws along the toe tops, which match the Reference's nail plates that the Bezier tube claw cannot build."
+   }
   },
   "R10": {
    "method": "hold"

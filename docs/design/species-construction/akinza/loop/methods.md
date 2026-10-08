@@ -46,7 +46,7 @@ loop_tools.py blender art/species-construction/author_fan_clumps_field.py -- \
 | R06 Torso and pelvis | Sheet-waist loft plus B-23 arm-root fillet, judged posed (review 2026-10-02) | B-20T, B-23 fillet | yes (unparks once H1, H2, H4 land) | no |
 | R07 Arms and forepaws | Digit-chain forepaw (palm pad, four fanned digit chains, claw sheaths, rolled paw frame) in `rebuild_arms_field.py`, arm rod and authored deltoid kept (method review, round 22) | B-23 | yes | no |
 | R08 Legs | Station-table resample for the remaining sculpt | B-22 | no | no |
-| R09 Hind paws | Hind-paw rebuild with a profile-curve instep | B-21 | no | yes |
+| R09 Hind paws | Nail-plate claws conformed to the toe surface (new claw mode `plate`) on round 18's domed instep and native column, collar kept inside the shin band (method review, round 30) | B-21 | yes (unparks) | yes |
 | R10 Tails | hold | | | |
 | R11 Tail root and pelvis | hold | | | |
 | R12 Whole-form coherence | Body coat masses from the fan clump primitive | new | no (stays parked) | no |
@@ -189,6 +189,13 @@ loop_tools.py blender art/species-construction/author_fan_clumps_field.py -- \
 - **Failure looks.** A clog or club foot; a heel bulb or ankle step; pits between toes; pearl-headed claws; the sole lifting off the floor.
 - **If it stalls.** A paw loft along its axis from a side profile curve and a front arch curve, with separate toe lobes on top.
 - **Respec.** The spec's mass 7 is one straight dorsum slope; the target is a convex arc cresting about a third of the paw length back.
+
+- **Method review, round 30 (parked: 3 rounds without a net gain of 1).** The paw stalled on its claw representation, and the spec pushed it the wrong way. The spec and the status issue ask for thin claws (base .005 to .006) sheathed at the lower front of each toe tip, so round 17 and both round 30 candidates built pins; the critic called round 17's "pin dots", and in round 30 both candidates lost 1 to 2 on readers who preferred the baseline's "large pale claws lying along the top of each toe, as in the Reference" over "tiny pins". Round 18's longer hooks were the only `better` verdict, lost only to the ankle collar. The Reference shows broad pale nail plates lying on the toe tops and fronts, which a Bezier tube claw cannot build at any setting.
+- **New method.** `rebuild_hind_paws_field.py` at B-21 gains claw mode `plate` (default stays `tip`, so earlier runs are exact): per claw `toe`, `s0` (start on the toe's mid-line arc from the crown at 0 to the tip equator at 1, about .35 to .5), `overhang` (.006 to .010 fit past the toe outline), `droop` (end pitch down), `width` (.35 to .45 of the toe half-width), `thick` (.0025 to .0035 fit), `bury` (about .4 of the thickness) and `taper`. The plate is swept along the toe ellipsoid's own surface with a lens section, so its root lies flush on the toe; the paw report gains each plate's visible area in front and profile, root depth and overhang. It sits on round 18's domed `topLine` instep and native-size column with `columnBackLine` (`specs/paw-spec-r09-v10.json`), with the column top kept inside the R08 shin band so the collar does not return.
+- **Why.** Plates close R09.2, the claw half of R09.8 and the R09.4 read; the round 18 dome keeps R09.3 and R09.7's gain. R09.9 stays bound by the shared pose and no paw method closes it.
+- **Failure looks.** Flat stickers or pale patches with no point leaving the toe; plates past half the toe width, merging into a pale toe cap; a ridge at the plate edge; a dark slit where a plate stands off the toe; points below the floor; ankle seam flags (bump, crease, kink) in any view, meaning the collar is back.
+- **If it stalls.** A paw loft along its axis from a side profile curve and a front arch curve, toes as separate lobes on top, plates carried over; failing that, park R09 for Nick with the R09.9 pose question.
+- **Respec.** The spec's mass K is a thin cone sheathed .008 to .010 inside the toe's lower front; the claw rows, sizes and overlap order must be rewritten from the Reference as plates on the toe's top-front surface.
 
 ### R10 Tails and R11 Tail root and pelvis
 
