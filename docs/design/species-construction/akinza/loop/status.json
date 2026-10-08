@@ -1492,7 +1492,9 @@
    "kind": "reverts",
    "region": "R09",
    "evidence": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2811",
-   "question": "R09 (Hind paws) has had three reverted orders in a row (rounds 17, 18, 30). Keep working it, change its method, or set it aside?"
+   "question": "R09 (Hind paws) has had three reverted orders in a row (rounds 17, 18, 30). Keep working it, change its method, or set it aside?",
+   "answer": "Nick 2026-10-08: B looks fine (assembled-2920, round 30's plumper mitten toes with thin claws). Adopt it into the baseline after round 31 merges.",
+   "answered": "2026-10-08"
   }
  ],
  "awaiting": {
