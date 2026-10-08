@@ -1090,7 +1090,9 @@ for (let i = 0; i < ROUNDS; i++) {
   if (plateau(S, L)) {
     if (S.escalated) { milestone = 'plateau'; break }
     S.escalated = true
-    const top = IDS.filter(id => workable(id) && !reviewed.has(id)).map(id => ({ id, p: priority(S, L, id, round + 1) }))
+    // v3.14: a region waiting for Nick or blocked on a loop change gets no plateau review (round 30's dry run sent the fan, which
+    // waits on Nick's fur question, to two reviews)
+    const top = IDS.filter(id => workable(id) && !reviewed.has(id) && !(S.awaiting || {})[id] && !(S.toolBlocked || {})[id]).map(id => ({ id, p: priority(S, L, id, round + 1) }))
       .filter(x => x.p !== null).sort((a, b) => b.p - a.p).slice(0, 2).map(x => x.id)
     log(`Round ${round}: plateau (${S.means.slice(-1 - (L.plateauRounds ?? 3)).join(', ')}); method review for ${top.join(', ')}`)
     const reviews = await parallel(top.map(id => () => agent(reviewPrompt(id, `The loop has plateaued: the last rounds gained less than ${L.plateauGain ?? 0.15} together, and this region ranks highest.`),
