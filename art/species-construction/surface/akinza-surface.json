@@ -37,7 +37,7 @@
     "body": {
       "everywhere": true,
       "priority": 0.05,
-      "length": 0.0115,
+      "length": 0.011,
       "density": 1.5,
       "clump": 0.1,
       "curl": 0.12,
@@ -85,7 +85,7 @@
       ],
       "priority": 0.45,
       "margin": 0.02,
-      "length": 0.0135,
+      "length": 0.0125,
       "density": 1.5,
       "clump": 0.1,
       "curl": 0.12,
@@ -97,12 +97,27 @@
       ],
       "priority": 0.5,
       "margin": 0.01,
-      "length": 0.01,
-      "density": 1.0,
+      "length": 0.012,
+      "density": 2.0,
       "clump": 0.08,
-      "curl": 0.05,
+      "curl": 0.1,
       "comb": "forward",
-      "tone": 0.8
+      "tone": 0.8,
+      "box": {
+        "at": [
+          0.9,
+          1.0
+        ],
+        "x": [
+          0.03,
+          0.3
+        ],
+        "symmetricX": true,
+        "y": [
+          -0.12,
+          0.1
+        ]
+      }
     },
     "head": {
       "zones": [
@@ -110,10 +125,10 @@
       ],
       "priority": 0.5,
       "margin": 0.02,
-      "length": 0.01,
-      "density": 0.8,
-      "clump": 0.2,
-      "curl": 0.1,
+      "length": 0.006,
+      "density": 2.0,
+      "clump": 0.05,
+      "curl": 0.03,
       "comb": "face"
     },
     "face": {
@@ -122,10 +137,10 @@
       ],
       "priority": 0.6,
       "margin": 0.02,
-      "length": 0.007,
-      "density": 0.7,
-      "clump": 0.1,
-      "curl": 0.05,
+      "length": 0.004,
+      "density": 2.5,
+      "clump": 0.0,
+      "curl": 0.02,
       "comb": "face"
     },
     "cheeks": {
@@ -146,10 +161,10 @@
       },
       "priority": 0.7,
       "margin": 0.015,
-      "length": 0.021,
-      "density": 1.0,
-      "clump": 0.5,
-      "curl": 0.2,
+      "length": 0.012,
+      "density": 1.6,
+      "clump": 0.15,
+      "curl": 0.05,
       "comb": "face"
     },
     "chest": {
@@ -216,7 +231,7 @@
       ],
       "priority": 0.9,
       "margin": 0.02,
-      "length": 0.058,
+      "length": 0.054,
       "density": 1.4,
       "clump": 0.6,
       "curl": 0.15,
@@ -253,8 +268,8 @@
     "note": "Distance (world units) from these objects over which density ramps from zero to full.",
     "eyes": {
       "match": "head_eye_globe",
-      "inner": 0.0055,
-      "outer": 0.0075,
+      "inner": 0.0045,
+      "outer": 0.006,
       "frontOnly": 0.2,
       "maxLength": 0.004
     },
@@ -353,9 +368,9 @@
   "paleFinalSmoothing": 20,
   "paleFinalGain": 1.0,
   "rim": {
-    "width": 0.0055,
-    "soft": 0.0012,
-    "smooth": 6
+    "width": 0.0045,
+    "soft": 0.0008,
+    "smooth": 4
   },
   "cupInner": {
     "t0": 0.22,
@@ -370,5 +385,37 @@
     0.0,
     0.5,
     0.8
-  ]
+  ],
+  "guides": {
+    "lift": 0.35,
+    "tipSweep": 0.05,
+    "neighbors": 3,
+    "jitter": 0.012,
+    "jitterScale": 220.0,
+    "cupGain": 2.0,
+    "cup": {
+      "length": 0.01,
+      "curl": 0.03,
+      "clump": 0.05,
+      "density": 1.4
+    },
+    "groups": {
+      "ears": {
+        "count": 110,
+        "length": [
+          0.025,
+          0.07
+        ],
+        "lengthPower": 0.8
+      },
+      "crown": {
+        "count": 40,
+        "length": [
+          0.02,
+          0.035
+        ],
+        "perSide": false
+      }
+    }
+  }
 }

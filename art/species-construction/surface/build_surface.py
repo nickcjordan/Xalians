@@ -271,6 +271,57 @@ def compute_attributes(skin, cfg, species):
     pad = np.clip(pad*1.5, 0, 1)
     density *= 1.0-pad
 
+    # inner ear cups: short, neat, pale fur; the long ear fur is guided tufts everywhere else on the ears
+    gcfg = cfg.get('guides')
+    guides = []
+    guide_up = []
+    if gcfg:
+        ear_box = membership(co, cfg['cup']['box'], floor, height, cfg['cup']['margin'])
+        cup_mask = np.clip(pale*ear_box*gcfg.get('cupGain', 2.0), 0, 1)
+        cc = gcfg['cup']
+        length = length*(1-cup_mask)+cc['length']*cup_mask
+        curl = curl*(1-cup_mask)+cc['curl']*cup_mask
+        clump = clump*(1-cup_mask)+cc['clump']*cup_mask
+        density = density*(1-cup_mask)+cc['density']*cup_mask*(1.0-pad)
+        gw = np.zeros(n)
+        for gname in gcfg['groups']:
+            gw += wn[names.index(gname)]
+        guided = np.clip(gw*(1-cup_mask), 0, 1)
+        write_attribute(me, 'fur_guided', guided)
+        rng = np.random.default_rng(cfg['seed'])
+        tang = unit(comb-nrm*np.sum(comb*nrm, axis=1, keepdims=True))
+        npts = cfg['points']
+        for gname, spec in gcfg['groups'].items():
+            for side in ((-1.0, 1.0) if spec.get('perSide', True) else (0.0,)):
+                sel = wn[names.index(gname)]*(1-cup_mask) > 0.5
+                if side:
+                    sel = sel & (np.sign(co[:, 0]+1e-9) == side)
+                cand = np.where(sel)[0]
+                if len(cand) < 10:
+                    continue
+                cand = rng.permutation(cand)[:30000]
+                root_s = np.array(cfg['earRoot'])*np.array([side or 1.0, 1.0, 1.0])
+                d = np.linalg.norm(co[cand]-root_s, axis=1)
+                tn = (d-d.min())/max(d.max()-d.min(), 1e-9)
+                chosen = [0]
+                dist = np.linalg.norm(co[cand]-co[cand[0]], axis=1)
+                for _ in range(spec['count']-1):
+                    k = int(np.argmax(dist))
+                    chosen.append(k)
+                    dist = np.minimum(dist, np.linalg.norm(co[cand]-co[cand[k]], axis=1))
+                idx = cand[chosen]
+                tt = tn[chosen]
+                lo, hi = spec['length']
+                L = lo+(hi-lo)*tt**spec.get('lengthPower', 0.8)
+                sv = np.linspace(0, 1, npts)[None, :, None]
+                dirv = tang[idx][:, None, :]
+                up = nrm[idx][:, None, :]
+                Lc = L[:, None, None]
+                curve = co[idx][:, None, :]+dirv*Lc*sv+up*Lc*gcfg['lift']*sv**2+dirv*Lc*gcfg['tipSweep']*sv**3
+                guides.append(curve)
+                guide_up.append(nrm[idx])
+        print('guides:', sum(len(g) for g in guides))
+
     write_attribute(me, 'fur_length', length)
     write_attribute(me, 'fur_density', density)
     write_attribute(me, 'fur_clump', clump)
@@ -288,7 +339,7 @@ def compute_attributes(skin, cfg, species):
     poly_density = np.add.reduceat(density[loops], starts)/totals
     weighted = float((poly_area*poly_density).sum())
     print(f'surface area {poly_area.sum():.3f}, density weighted {weighted:.3f}, length mean {length.mean():.4f}')
-    return weighted
+    return weighted, guides, guide_up
 
 
 # ---------------------------------------------------------------- geometry nodes
@@ -351,7 +402,7 @@ class Builder:
         return nd.outputs['Geometry']
 
 
-def build_hair_tree(skin, cfg, density_per_area, hair_mat):
+def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
     tree = bpy.data.node_groups.new('AkinzaFur', 'GeometryNodeTree')
     tree.interface.new_socket('Geometry', in_out='INPUT', socket_type='NodeSocketGeometry')
     tree.interface.new_socket('Geometry', in_out='OUTPUT', socket_type='NodeSocketGeometry')
@@ -399,8 +450,11 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat):
     res = b.node('GeometryNodeResampleCurve', mode='COUNT')
     tree.links.new(line.outputs['Curve'], res.inputs['Curve'])
     res.inputs['Count'].default_value = cfg['points']
+    sep = b.node('GeometryNodeSeparateGeometry', domain='POINT')
+    tree.links.new(g, sep.inputs['Geometry'])
+    b.set(sep, 'Selection', b.m('GREATER_THAN', b.named('fur_guided', 'FLOAT'), 0.5))
     iop = b.node('GeometryNodeInstanceOnPoints')
-    tree.links.new(g, iop.inputs['Points'])
+    tree.links.new(sep.outputs['Inverted'], iop.inputs['Points'])
     tree.links.new(res.outputs['Curve'], iop.inputs['Instance'])
     realize = b.node('GeometryNodeRealizeInstances')
     tree.links.new(iop.outputs['Instances'], realize.inputs['Geometry'])
@@ -436,8 +490,31 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat):
     tree.links.new(realize.outputs['Geometry'], setpos.inputs['Geometry'])
     tree.links.new(total, setpos.inputs['Position'])
     radius = b.m('MULTIPLY', cfg['rootRadius'], b.m('SUBTRACT', 1.0, b.m('MULTIPLY', t, cfg['taper'])))
+    join = b.node('GeometryNodeJoinGeometry')
+    tree.links.new(setpos.outputs['Geometry'], join.inputs['Geometry'])
+    if guide_obj is not None:
+        ginfo = b.node('GeometryNodeObjectInfo', transform_space='ORIGINAL')
+        ginfo.inputs['Object'].default_value = guide_obj
+        interp = b.node('GeometryNodeInterpolateCurves')
+        tree.links.new(ginfo.outputs['Geometry'], interp.inputs['Guide Curves'])
+        tree.links.new(sep.outputs['Selection'], interp.inputs['Points'])
+        b.set(interp, 'Guide Up', b.named('up', 'FLOAT_VECTOR'))
+        b.set(interp, 'Point Up', b.named('nrm', 'FLOAT_VECTOR'))
+        interp.inputs['Max Neighbors'].default_value = cfg['guides'].get('neighbors', 2)
+        tj = b.node('GeometryNodeSplineParameter').outputs['Factor']
+        jn = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+        jn.inputs['Scale'].default_value = cfg['guides'].get('jitterScale', 220.0)
+        pos_node = b.node('GeometryNodeInputPosition').outputs['Position']
+        b.set(jn, 'Vector', pos_node)
+        jit = b.vm('SCALE', b.vm('SUBTRACT', jn.outputs['Color'], (0.5, 0.5, 0.5)),
+                   scale=b.m('MULTIPLY', tj, cfg['guides'].get('jitter', 0.012)))
+        gpos = b.vm('ADD', pos_node, jit)
+        gset = b.node('GeometryNodeSetPosition')
+        tree.links.new(interp.outputs['Curves'], gset.inputs['Geometry'])
+        tree.links.new(gpos, gset.inputs['Position'])
+        tree.links.new(gset.outputs['Geometry'], join.inputs['Geometry'])
     scr = b.node('GeometryNodeSetCurveRadius')
-    tree.links.new(setpos.outputs['Geometry'], scr.inputs['Curve'])
+    tree.links.new(join.outputs['Geometry'], scr.inputs['Curve'])
     tree.links.new(radius, scr.inputs['Radius'])
     smat = b.node('GeometryNodeSetMaterial')
     tree.links.new(scr.outputs['Curve'], smat.inputs['Geometry'])
@@ -605,7 +682,19 @@ def main():
     n_verts, n_polys = len(skin.data.vertices), len(skin.data.polygons)
     print('skin', skin.name, n_verts, n_polys)
 
-    weighted = compute_attributes(skin, cfg, species)
+    weighted, guides, guide_up = compute_attributes(skin, cfg, species)
+    guide_obj = None
+    if guides:
+        arr = np.concatenate(guides, axis=0)
+        gdata = bpy.data.hair_curves.new('Akinza guides')
+        gdata.add_curves([arr.shape[1]]*len(arr))
+        gdata.points.foreach_set('position', arr.reshape(-1).astype(np.float32))
+        up_attr = gdata.attributes.new('up', 'FLOAT_VECTOR', 'CURVE')
+        up_attr.data.foreach_set('vector', np.concatenate(guide_up, axis=0).reshape(-1).astype(np.float32))
+        guide_obj = bpy.data.objects.new('Akinza guides', gdata)
+        bpy.context.scene.collection.objects.link(guide_obj)
+        guide_obj.hide_render = True
+        guide_obj.hide_viewport = True
 
     for slot, mat in enumerate(skin.data.materials):
         skin_material(mat, cfg, always_pale=(slot == cfg['paleSlot']))
@@ -619,7 +708,7 @@ def main():
     curves = bpy.data.hair_curves.new('Akinza fur')
     fur = bpy.data.objects.new('Akinza fur', curves)
     bpy.context.scene.collection.objects.link(fur)
-    tree = build_hair_tree(skin, cfg, cfg['strands']/weighted, hair_mat)
+    tree = build_hair_tree(skin, cfg, cfg['strands']/weighted, hair_mat, guide_obj)
     mod = fur.modifiers.new('Fur', 'NODES')
     mod.node_group = tree
 
