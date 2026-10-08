@@ -92,7 +92,7 @@ def tail_centerline(co, edges, tail_m, root, fallback):
     good = np.isfinite(d) & (norm > 1e-9)
     out = fallback.copy()
     out[good] = grad[good]/norm[good, None]
-    return out
+    return out, d
 
 
 def write_attribute(me, name, data, kind='FLOAT'):
@@ -129,6 +129,7 @@ def compute_attributes(skin, cfg, species):
         'face': unit(unit(co-nose)+np.array([0, 0.3, -0.25])),
         'ear': unit(unit(co-ear_root*np.stack([sign, np.ones(n), np.ones(n)], 1))+np.array([0, 0, 0.35])),
         'tail': unit(co-tail_root),
+        'forward': unit(np.tile([0.0, -1.0, -0.25], (n, 1))),
     }
     names = list(cfg['groups'])
     weights = np.zeros((len(names), n))
@@ -141,16 +142,24 @@ def compute_attributes(skin, cfg, species):
             m = np.zeros(n)
             for box in boxes:
                 m = np.maximum(m, membership(co, box, floor, height, g.get('margin', 0.02)))
+        if 'frontFacing' in g:
+            ff = g['frontFacing']
+            m = m*smoothstep((-nrm[:, 1]-ff['min'])/ff['span'])
         weights[i] = m*g['priority']
+    if 'tails' in names and cfg.get('tailCenterline', True):
+        ti = names.index('tails')
+        directions['tail'], tail_d = tail_centerline(co, edges, weights[ti]/cfg['groups']['tails']['priority'],
+                                                     tail_root, directions['tail'])
+        if 'tailRamp' in cfg:  # the tail zones also cover the buttocks; long fur only grows out along the tails
+            r = cfg['tailRamp']
+            reach = np.where(np.isfinite(tail_d), tail_d, 0.0)
+            weights[ti] *= smoothstep((reach-r['start'])/r['width'])
     wsum = weights.sum(axis=0)
     wn = weights/np.maximum(wsum, 1e-9)
 
     def blend(key, default=0.0):
         return sum(wn[i]*cfg['groups'][nm].get(key, default) for i, nm in enumerate(names))
 
-    if 'tails' in names and cfg.get('tailCenterline', True):
-        directions['tail'] = tail_centerline(co, edges, weights[names.index('tails')]/cfg['groups']['tails']['priority'],
-                                             tail_root, directions['tail'])
     length, density = blend('length'), blend('density')
     clump, curl, group_pale = blend('clump'), blend('curl'), blend('pale')
     comb = unit(sum(wn[i, :, None]*directions[cfg['groups'][nm]['comb']] for i, nm in enumerate(names)))
@@ -192,6 +201,8 @@ def compute_attributes(skin, cfg, species):
     pale = np.maximum(pale, cup*cfg['cup']['strength'])
     cb = cfg['chestPale']
     chest = membership(co, cb['box'], floor, height, cb['margin'])*cb['strength']
+    if 'frontFacing' in cb:
+        chest = chest*smoothstep((-nrm[:, 1]-cb['frontFacing']['min'])/cb['frontFacing']['span'])
     pale = np.maximum(pale, chest)
     pale = np.clip(edge_smooth(pale, edges, n, cfg.get('paleFinalSmoothing', 0))*cfg.get('paleFinalGain', 1.0), 0, 1)
     print('pale vertices >0.5:', int((pale > 0.5).sum()), 'of', n)

@@ -100,6 +100,7 @@ def main():
     parser.add_argument('--device', default='CPU')
     parser.add_argument('--hide-fur', action='store_true')
     parser.add_argument('--alpha', action='store_true', help='transparent background, RGBA (silhouette measures)')
+    parser.add_argument('--debug-scale', type=float, default=1.0)
     parser.add_argument('--debug-attr', default=None, help='show this skin attribute as emission, fur hidden')
     args = parser.parse_args(sys.argv[len(sys.argv)-sys.argv[::-1].index('--'):])
     t_all = time.time()
@@ -141,7 +142,11 @@ def main():
                     a.attribute_name = args.debug_attr
                     e = t.nodes.new('ShaderNodeEmission')
                     o = t.nodes.new('ShaderNodeOutputMaterial')
-                    t.links.new(a.outputs['Fac'], e.inputs['Color'])
+                    m = t.nodes.new('ShaderNodeMath')
+                    m.operation = 'MULTIPLY'
+                    m.inputs[1].default_value = args.debug_scale
+                    t.links.new(a.outputs['Fac'], m.inputs[0])
+                    t.links.new(m.outputs['Value'], e.inputs['Color'])
                     t.links.new(e.outputs['Emission'], o.inputs['Surface'])
         scene.view_settings.view_transform = 'Standard'
     setup_world(scene)
