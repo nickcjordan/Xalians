@@ -324,6 +324,15 @@ The audit (`LOOP-audit-2026-10-07.md`) found 58 percent of rounds 21 to 28 in to
 - **Progress from the record** (`loop_report.py`, `loop_state.py merge --auto-note`): each round's note lists every order with its reader votes and the target criteria that changed result, the tool checks and the open decisions, generated from the round file; `--since N` gives kept changes and criteria up or down. The weighted mean is printed as the critic's score, not as progress.
 - **Harness fixes**: `recipe.py` takes output numbers by an exclusive `reserved-NNNN.txt` across processes (round 28's two candidates both named `assembled-2834`); a candidate lost to a harness error is built once more and then flagged (`harnessError`); `plan_job.py wait` restarts a dead run-plan once and reports `alarm` on a second death; `recipe_candidate.py` charges geometry to the changed steps' regions when no `--region` is given (round 28's code builder candidate showed the fan's .024 on R01 to R04 for want of one); a face that cannot be measured is a guard break (`measureFailed`); round records carry `readers` and `readerVerdict`.
 
+## After round 29 (v3.14, 2026-10-08)
+
+Round 29 cost 1.8 hours and 7.8M tokens (round 28: 5.7 hours, 85M) and kept nothing. About 50 of its 110 minutes went to refine passes after the readers had rejected the first pass; both refine plans backed off until all three readers saw no difference. Nick approved on 2026-10-08:
+
+- **Refine only on a seen tie** (`limits.refineOnTie`): the refine pass runs only when some candidate's target vote was `same` with at least one reader picking a side. After a loss, or when no reader saw a difference, the order ends with the first pass.
+- **Visible-change floor** (`limits.visibleChange`, .005): a candidate whose target region images moved less than the floor (`regionChange`) is not shown to the readers, in plans and for the code builder. Calibrated on rounds 25 to 29: assembled-2908 (.0037) and 2840 (.004) read same 0-0; every keep since round 23 moved its target .0075 or more (the round 26 forepaw keep was .0089).
+- **No pin on the head silhouette**: R01 scores above the pass bar and the readers keep its current skull, so round 30 picks from the regions below the bar.
+- Round 30 is the third flat round in the plateau window, so the plateau's first step (new-method reviews for the two highest-priority regions) runs; a review that needs a new tool opens a decision item under `toolApproval`.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

@@ -484,7 +484,8 @@ async function codeBuild(order, round, task) {
     if (!b || !b.failed || !/^continue/i.test(String(b.reason || '').trim())) break
   }
   if (!b || b.failed || !b.packet || b.technicalPass === false || !b.pack) return b
-  const cand = { name: 'code builder candidate', pack: b.pack, keys: b.keys || {}, assembly: b.assembly }
+  const cand = { name: 'code builder candidate', pack: b.pack, keys: b.keys || {}, assembly: b.assembly, regionChange: b.regionChange || {} }
+  if (!visible([cand], regions).length) return { ...b, failed: true, reason: 'the code builder candidate changed its target too little to see (limits.visibleChange)' }
   const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt([b.pack], order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id} code`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
   const [v] = readerVerdicts([cand], reads.filter(Boolean), regions)
   if (v && readsBetterPer(v.per, regions)) return { ...b, readerVerdict: v.per }
@@ -507,6 +508,17 @@ const judgeOpts = (b, extra) => ({ pools: POOLS, regionChange: b.regionChange ||
 // while the critic failed every one
 // "48 pass, 2 fail", "fail 2", "FAILED (errors=1)" fail; "50 pass, 0 fail", "fail 0", "OK" do not
 const loopTestsFailed = t => /FAILED|errors?=[1-9]|[1-9]\d*\s+fail|fail(?:ed|ures?|s)?\s*[:=]?\s*[1-9]/i.test(String(t))
+// v3.14 (limits.visibleChange, after round 29): a candidate whose target images barely moved shows the readers a copy of the
+// baseline (round 29: R01 assembled-2908 at .0037 and round 28's R07 assembled-2840 at .004 both read same 0-0, while every
+// keep since round 23 moved its target .0075 or more), so it is dropped before the readers
+function visible(cands, regions) {
+  const floor = L.visibleChange
+  if (!floor) return cands
+  const mag = c => Math.max(0, ...regions.map(r => { const v = (c.regionChange || {})[r]; return typeof v === 'number' ? v : typeof v === 'object' && v ? Math.max(0, ...Object.values(v).filter(x => typeof x === 'number')) : floor }))
+  const low = cands.filter(c => mag(c) < floor)
+  if (low.length) log(`Below the visible-change floor ${floor}, not shown to the readers: ` + low.map(c => `${c.assembly} (${mag(c).toFixed(4)})`).join(', '))
+  return cands.filter(c => mag(c) >= floor)
+}
 function guarded(cands) {
   if (!L.faceGuards) return cands
   const bad = cands.filter(c => (c.guards || []).length)
@@ -846,6 +858,9 @@ for (let i = 0; i < ROUNDS; i++) {
         let picked = null, tieCand = null
         for (let pass = 0; pass <= (L.refinePasses ?? 1) && !picked; pass++) {
           if (pass > 0 && skipForTime(`refine pass for ${order.id}`)) break
+          // v3.14 (limits.refineOnTie, after round 29): the refine pass runs only when a reader saw the change and the vote was a
+          // tie; after a loss the planner backed off until nothing showed (round 29: both refine plans read same 0-0, 50 minutes)
+          if (pass > 0 && L.refineOnTie && out.noRefine) { log(`Round ${round} ${order.id}: no refine pass (${out.noRefineWhy || 'the first pass was not a seen tie'})`); break }
           const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
           if (!thePlan || !thePlan.plan) break
           const run = noteTime(await agent(runnerPrompt(thePlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' })))
@@ -856,9 +871,9 @@ for (let i = 0; i < ROUNDS; i++) {
             break
           }
           if (run && (run.harnessErrors || []).length) log(`Round ${round} ${order.id}: candidates lost to the harness: ${run.harnessErrors.join('; ')}`)
-          const cands = guarded(run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : [])
-          if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built') : 'runner returned nothing'; continue }
           const regions = [order.id, ...(order.with || [])]
+          const cands = visible(guarded(run && run.ok ? (run.candidates || []).filter(c => c.packet && c.technicalPass !== false && c.pack) : []), regions)
+          if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built or none changed visibly') : 'runner returned nothing'; out.noRefine = !!(run && run.ok); continue }
           const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
           const ranked = readerVerdicts(cands, reads.filter(Boolean), regions)
           out.readers = [...(out.readers || []), ...ranked.map(x => ({ pass, assembly: x.cand.assembly, per: Object.fromEntries(Object.entries(x.per).map(([r, v]) => [r, { verdict: v.verdict, better: v.better, worse: v.worse }])) }))]
@@ -871,6 +886,8 @@ for (let i = 0; i < ROUNDS; i++) {
           }
           else {
             out.firstPass = JSON.stringify(ranked.map(x => ({ candidate: x.cand.name, per: x.per })))
+            const seenTie = ranked.some(x => x.per[order.id] && x.per[order.id].verdict === 'same' && x.per[order.id].better + x.per[order.id].worse >= 1)
+            if (!seenTie) { out.noRefine = true; out.noRefineWhy = ranked.some(x => x.per[order.id] && x.per[order.id].verdict === 'worse') ? 'the readers preferred the baseline' : 'no reader saw a difference' }
             // round 21: every fan candidate read worse 3 to 0 because the tool cut a box into the
             // fan; no parameter could fix that, and the refine plan spent 49 minutes proving it.
             // A unanimous rejection of the whole plan goes to the code builder with the reasons.

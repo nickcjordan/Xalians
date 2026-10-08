@@ -18,7 +18,7 @@ const P = speciesPaths('akinza')
 // test turns on what it exercises
 function liveStatus() {
   const s = readJson(P.status)
-  Object.assign(s.limits, { readerKeep: false, toolApproval: false, coldEvery: 0, reopenAbovePass: true, repairPass: true, measuredTieKeep: true, rejectToCode: true })
+  Object.assign(s.limits, { readerKeep: false, toolApproval: false, coldEvery: 0, reopenAbovePass: true, repairPass: true, measuredTieKeep: true, rejectToCode: true, refineOnTie: false, visibleChange: 0 })
   s.decisions = []; s.awaiting = {}; s.disputes = {}; s.escalated = false
   return s
 }
@@ -992,4 +992,40 @@ test('v3.13 rejectedAll: one surviving candidate read worse is not a rejected pl
     return undefined
   })
   assert.ok(!out.calls.some(c => c.label.startsWith('builder')))
+})
+
+// ---- v3.14 (after round 29) ---------------------------------------------------------------------------------
+
+test('v3.14 refineOnTie: a first pass the readers rejected gets no refine pass; a seen tie does', { skip: !existsSync(P.status) }, async () => {
+  const run = async (choice) => {
+    const status = splitStatus(), rub = readJson(P.rubric)
+    Object.assign(status.limits, { refineOnTie: true, refinePasses: 1, rejectToCode: false, measuredTieKeep: false, visibleChange: 0 })
+    return runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'rt', (label) => {
+      if (label.startsWith('planner')) return { plan: 'plans/r30-R06.json', variants: 2, approach: 'a', needsCode: false }
+      if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A')] }
+      if (label.startsWith('reader')) { const k = Number(label.match(/reader (\d)/)[1]); return { packs: [{ pack: 'assembled-901', region: 'R06', choice: choice(k), reason: 'r' }] } }
+      return undefined
+    })
+  }
+  const lost = await run(() => 'B')
+  assert.ok(!lost.calls.some(c => /refine/.test(c.label)))
+  const unseen = await run(() => 'same')
+  assert.ok(!unseen.calls.some(c => /refine/.test(c.label)))
+  const tie = await run(k => k === 1 ? 'A' : 'same')
+  assert.ok(tie.calls.some(c => /planner .* refine/.test(c.label)))
+})
+
+test('v3.14 visibleChange: a candidate whose target barely moved never reaches the readers', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  Object.assign(status.limits, { visibleChange: 0.005, refinePasses: 0 })
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'vc', (label) => {
+    if (label.startsWith('planner')) return { plan: 'plans/r30-R06.json', variants: 2, approach: 'a', needsCode: false }
+    if (label.startsWith('runner')) return { ok: true, candidates: [splitCand(1, 'A', { regionChange: { R06: 0.0037 } }), splitCand(2, 'A', { regionChange: { R06: 0.012 } })] }
+    if (label.startsWith('reader')) return { packs: [{ pack: 'assembled-902', region: 'R06', choice: 'A', reason: 'r' }] }
+    return undefined
+  })
+  const reader = out.calls.find(c => c.label.startsWith('reader'))
+  assert.doesNotMatch(reader.prompt, /assembled-901/)
+  assert.match(reader.prompt, /assembled-902/)
+  assert.ok(out.logs.some(l => /visible-change floor/.test(l)))
 })

@@ -61,7 +61,9 @@
   "coldEvery": 3,
   "toolApproval": true,
   "prepareSeconds": 5400,
-  "roundSeconds": 10800
+  "roundSeconds": 10800,
+  "refineOnTie": true,
+  "visibleChange": 0.005
  },
  "baseline": {
   "head": "head-2271",
