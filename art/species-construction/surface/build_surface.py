@@ -127,7 +127,8 @@ def compute_attributes(skin, cfg, species):
     directions = {
         'down': np.tile([0.0, 0.0, -1.0], (n, 1)),
         'face': unit(unit(co-nose)+np.array([0, 0.3, -0.25])),
-        'ear': unit(unit(co-ear_root*np.stack([sign, np.ones(n), np.ones(n)], 1))+np.array([0, 0, 0.35])),
+        'ear': unit(unit(co-ear_root*np.stack([sign, np.ones(n), np.ones(n)], 1))+np.array([0, 0, cfg.get('earBias', 0.35)])),
+        'crown': unit(np.tile(cfg.get('crownDir', [0.0, 0.5, 0.8]), (n, 1))),
         'tail': unit(co-tail_root),
         'forward': unit(np.tile([0.0, -1.0, -0.25], (n, 1))),
     }
@@ -162,6 +163,7 @@ def compute_attributes(skin, cfg, species):
 
     length, density = blend('length'), blend('density')
     clump, curl, group_pale = blend('clump'), blend('curl'), blend('pale')
+    cscale = blend('cscale', cfg['clumpScale'])
     comb = unit(sum(wn[i, :, None]*directions[cfg['groups'][nm]['comb']] for i, nm in enumerate(names)))
 
     # pale mask: vertices of faces in the pale slot, spread a little, plus the chest group
@@ -200,7 +202,13 @@ def compute_attributes(skin, cfg, species):
     cup = ear_m*smoothstep((-nrm[:, 1]-cfg['cup']['normalMin'])/cfg['cup']['normalSpan'])
     pale = np.maximum(pale, cup*cfg['cup']['strength'])
     cb = cfg['chestPale']
-    chest = membership(co, cb['box'], floor, height, cb['margin'])*cb['strength']
+    if 'radial' in cb:  # soft gradient from the sternum line, no box edges
+        rd = cb['radial']
+        at_c = (floor+height-co[:, 2])/height
+        r2 = (co[:, 0]/height/rd['ax'])**2+((at_c-rd['at'])/rd['az'])**2
+        chest = np.exp(-r2)*cb['strength']
+    else:
+        chest = membership(co, cb['box'], floor, height, cb['margin'])*cb['strength']
     if 'frontFacing' in cb:
         chest = chest*smoothstep((-nrm[:, 1]-cb['frontFacing']['min'])/cb['frontFacing']['span'])
     pale = np.maximum(pale, chest)
@@ -267,6 +275,7 @@ def compute_attributes(skin, cfg, species):
     write_attribute(me, 'fur_density', density)
     write_attribute(me, 'fur_clump', clump)
     write_attribute(me, 'fur_curl', curl)
+    write_attribute(me, 'fur_cscale', cscale)
     write_attribute(me, 'pale', pale)
     write_attribute(me, 'rim', rim)
     write_attribute(me, 'fur_tone', blend('tone', 1.0))
@@ -381,6 +390,7 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat):
     g = b.store(g, 'dirv', direction, 'FLOAT_VECTOR')
     g = b.store(g, 'combp', tangent, 'FLOAT_VECTOR')
     g = b.store(g, 'strlen', strlen, 'FLOAT')
+    g = b.store(g, 'nrm', normal, 'FLOAT_VECTOR')
 
     # strand template: a unit line resampled to N points, instanced at every point
     line = b.node('GeometryNodeCurvePrimitiveLine', mode='POINTS')
@@ -412,13 +422,15 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat):
     b.set(nz, 'Vector', b.vm('ADD', root, along))
     wave = b.vm('SUBTRACT', nz.outputs['Color'], (0.5, 0.5, 0.5))
     wave = b.vm('SCALE', wave, scale=b.m('MULTIPLY', b.m('MULTIPLY', sl, t), b.m('MULTIPLY', b.named('fur_curl', 'FLOAT'), 2.0)))
-    # clump: neighbors share a lean, so tips gather
-    cz = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
-    cz.inputs['Scale'].default_value = cfg['clumpScale']
-    cz.inputs['Detail'].default_value = 0.0
+    # clump: strands pull toward the center of their Voronoi cell, so tips gather into pointed clumps
+    cz = b.node('ShaderNodeTexVoronoi', voronoi_dimensions='3D')
+    b.set(cz, 'Scale', b.named('fur_cscale', 'FLOAT'))
+    cz.inputs['Randomness'].default_value = 1.0
     b.set(cz, 'Vector', root)
-    lean = b.vm('SUBTRACT', cz.outputs['Color'], (0.5, 0.5, 0.5))
-    lean = b.vm('SCALE', lean, scale=b.m('MULTIPLY', b.m('MULTIPLY', sl, t2), b.m('MULTIPLY', b.named('fur_clump', 'FLOAT'), 2.0)))
+    nrm_f = b.named('nrm', 'FLOAT_VECTOR')
+    pull = b.vm('SUBTRACT', cz.outputs['Position'], root)
+    pull = b.vm('SUBTRACT', pull, b.vm('SCALE', nrm_f, scale=b.vm('DOT_PRODUCT', pull, nrm_f)))
+    lean = b.vm('SCALE', pull, scale=b.m('MULTIPLY', t2, b.named('fur_clump', 'FLOAT')))
     total = b.vm('ADD', b.vm('ADD', b.vm('ADD', b.vm('ADD', root, along), droop), b.vm('ADD', gravity, wave)), lean)
     setpos = b.node('GeometryNodeSetPosition')
     tree.links.new(realize.outputs['Geometry'], setpos.inputs['Geometry'])
