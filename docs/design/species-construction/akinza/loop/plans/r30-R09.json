@@ -1,0 +1,307 @@
+{
+ "order": {
+  "round": 30,
+  "region": "R09",
+  "with": []
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2811",
+ "start": "docs/design/species-construction/akinza/loop/recipes/r30-R09-start.json",
+ "variants": [
+  {
+   "name": "collar fix A, raised knuckles, thin claws, filled gaps",
+   "why": "The full attempt on all three visible gaps, on round 18's judged-better paw (domed topLine instep, hooked claws, R09.7 1.007). Collar fix A: the morph band starts at the top of the leg-matched column back line (-.828 to -.866 instead of v10's -.842 to -.868) and the columnBackLine eases in (.0504, .0496 at -.85, then the target heel lean) so the native leg back and the paw back meet without the boot-cuff ledge that cost R08.1 and R08.4 in round 18. Issue 1, low slipper: toe lobes lifted .006 and taller by .003 (middle crown .083 world, .0446 of figure height against the .040 target, outer toes .73 and .81 of the middle), claw roots and dome front nodes raised with them so the paw front stands higher. Issue 2, pearl claws: radius .0062 and .0072 (base width .0057 to .0066 of figure height, v10 was .008 to .009) with the root sunk .014 into the toe tip. Issue 3, pits: toeToToe .009 and toe 3 .002 closer to toe 2 so the toes part in a soft fillet.",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:morph",
+     "value": [
+      -0.828,
+      -0.866
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:columnBackLine",
+     "value": {
+      "z": [
+       -0.83,
+       -0.85,
+       -0.87,
+       -0.892,
+       -0.916,
+       -0.935,
+       -0.955
+      ],
+      "V": [
+       0.0504,
+       0.0496,
+       0.0438,
+       0.0354,
+       0.03,
+       0.0225,
+       0.0011
+      ],
+      "blend": 0.012
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.0.center.2",
+     "value": -0.9275
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.0.radii.2",
+     "value": 0.0315
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.1.center.2",
+     "value": -0.9176
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.1.radii.2",
+     "value": 0.0435
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.2.center.2",
+     "value": -0.9176
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.2.radii.2",
+     "value": 0.0435
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.3.center.2",
+     "value": -0.9225
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.3.radii.2",
+     "value": 0.033
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.rootZ",
+     "value": -0.9295
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.rootZ",
+     "value": -0.924
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.rootZ",
+     "value": -0.924
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.rootZ",
+     "value": -0.9295
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:topLine.h",
+     "value": [
+      0.0,
+      0.06,
+      0.08,
+      0.087,
+      0.092,
+      0.095,
+      0.099,
+      0.099,
+      0.08,
+      0.045,
+      0.0
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.radius",
+     "value": 0.0062
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.radius",
+     "value": 0.0072
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.radius",
+     "value": 0.0072
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.radius",
+     "value": 0.0062
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:blend.toeToToe",
+     "value": 0.009
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.2.center.0",
+     "value": 0.089
+    }
+   ]
+  },
+  {
+   "name": "collar fix B (short band), thin claws, filled gaps, no raise",
+   "why": "The hedge on the two least certain choices. Collar fix B: a short morph band from the column's measured top (-.830 to -.852), which keeps the least of the old paw ramp and leaves the native leg untouched above it, with the same eased back line; if the ledge comes from blending across a long band this removes it. Heights stay at round 18's, so if lifting the knuckle row reads as a club foot this one is the fallback. Claws radius .0062 and .0072 with roots sunk .014 inside the toe tips (R09.2, R09.8) and toeToToe .009 with toe 3 .002 closer to toe 2 (no dark pits).",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:morph",
+     "value": [
+      -0.83,
+      -0.852
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:columnBackLine",
+     "value": {
+      "z": [
+       -0.83,
+       -0.85,
+       -0.87,
+       -0.892,
+       -0.916,
+       -0.935,
+       -0.955
+      ],
+      "V": [
+       0.0504,
+       0.0496,
+       0.0438,
+       0.0354,
+       0.03,
+       0.0225,
+       0.0011
+      ],
+      "blend": 0.012
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.radius",
+     "value": 0.0062
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.radius",
+     "value": 0.0072
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.radius",
+     "value": 0.0072
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.radius",
+     "value": 0.0062
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:blend.toeToToe",
+     "value": 0.009
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.2.center.0",
+     "value": 0.089
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R09",
+ "top": 2
+}

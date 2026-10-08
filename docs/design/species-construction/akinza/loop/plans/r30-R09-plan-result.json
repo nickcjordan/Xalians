@@ -1,0 +1,986 @@
+{
+ "schemaVersion": 1,
+ "plan": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r30-R09.json",
+ "runFolder": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2912",
+ "order": {
+  "round": 30,
+  "region": "R09",
+  "with": []
+ },
+ "region": "R09",
+ "base": "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\recipe.json",
+ "baselinePacket": "C:\\dev\\art-data\\species-construction\\akinza\\loop\\packets\\assembled-2811",
+ "startNotes": [
+  "blind plan: 2 candidates instead of 3"
+ ],
+ "top": [
+  {
+   "rank": 1,
+   "id": "v01",
+   "name": "collar fix A, raised knuckles, thin claws, filled gaps",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2912\\v01.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2920",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2920",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 707874,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R06.10",
+     "region": "R06",
+     "before": 0.8538,
+     "after": 0.8533,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R07.6",
+     "region": "R07",
+     "before": 0.8742,
+     "after": 0.8743,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R08.10",
+     "region": "R08",
+     "before": 0.8293,
+     "after": 0.8282,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R08.11",
+     "region": "R08",
+     "before": 0.6427,
+     "after": 0.644,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R09.7",
+     "region": "R09",
+     "before": 0.927,
+     "after": 1.055,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R09.9",
+     "region": "R09",
+     "before": 0.6465,
+     "after": 0.642,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R10.2",
+     "region": "R10",
+     "before": 0.6834,
+     "after": 0.6851,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [
+    {
+     "joint": "ankle",
+     "view": "front",
+     "kind": "bump",
+     "value": 0.00118,
+     "where": {
+      "x": 0.179,
+      "width": 0.034
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "front",
+     "kind": "wbump",
+     "value": 0.00251,
+     "where": {
+      "x": 0.179,
+      "width": 0.034
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "front",
+     "kind": "needle",
+     "value": 17,
+     "where": null
+    },
+    {
+     "joint": "ankle",
+     "view": "left",
+     "kind": "kink",
+     "value": 1.0019,
+     "where": {
+      "x": 0.0178,
+      "width": 0.0457
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "left",
+     "kind": "bump",
+     "value": 0.0034,
+     "where": {
+      "x": 0.0178,
+      "width": 0.0457
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "left",
+     "kind": "wbump",
+     "value": 0.00329,
+     "where": {
+      "x": 0.0178,
+      "width": 0.0457
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "left",
+     "kind": "crease",
+     "value": 40,
+     "where": {
+      "x": -0.004,
+      "at": 0.947
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "back",
+     "kind": "bump",
+     "value": 0.00125,
+     "where": {
+      "x": 0.1712,
+      "width": 0.034
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "back",
+     "kind": "wbump",
+     "value": 0.00264,
+     "where": {
+      "x": -0.1775,
+      "width": 0.0339
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "back",
+     "kind": "needle",
+     "value": 15,
+     "where": null
+    }
+   ],
+   "containment": {
+    "B-21": {
+     "flaggedRelative": [
+      "R08"
+     ],
+     "worst": [
+      {
+       "region": "R08",
+       "max": 0.0023,
+       "allowance": 0.002,
+       "excess": 0.0003,
+       "flagged": true
+      },
+      {
+       "region": "R10",
+       "max": 0.00098,
+       "allowance": 0.002,
+       "excess": -0.00102,
+       "flagged": false
+      },
+      {
+       "region": "R07",
+       "max": 0.00097,
+       "allowance": 0.002,
+       "excess": -0.00103,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00171,
+    "R02": 0.0,
+    "R03": 0.00171,
+    "R04": 0.00171,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.01508,
+    "R09": 0.06824,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.01739
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.0,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.00147,
+    "R09": 0.01836,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R09 measured: 2 changed; R06 measured: 1 changed; R07 measured: 1 changed; R08 measured: 2 changed; R10 measured: 1 changed; seams flagged at ankle/back bump, ankle/back needle, ankle/back wbump, ankle/front bump, ankle/front needle, ankle/front wbump, ankle/left bump, ankle/left crease, ankle/left kink, ankle/left wbump; containment over allowance in R08; picture change R09 0.0682, R12 0.0174, R08 0.0151",
+   "wallMinutes": 14.2
+  },
+  {
+   "rank": 2,
+   "id": "v02",
+   "name": "collar fix B (short band), thin claws, filled gaps, no raise",
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2912\\v02.json",
+   "ok": true,
+   "stage": "done",
+   "failure": null,
+   "assembly": "assembled-2919",
+   "packet": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\loop\\packets\\assembled-2919",
+   "check": {
+    "pass": true,
+    "reasons": [],
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 707090,
+    "removedFragments": 1,
+    "heightSpread": 0.0,
+    "groundSpread": 0.0
+   },
+   "measuredChanged": [
+    {
+     "id": "R06.10",
+     "region": "R06",
+     "before": 0.8538,
+     "after": 0.851,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R07.6",
+     "region": "R07",
+     "before": 0.8742,
+     "after": 0.8744,
+     "bound": {
+      "min": 0.9
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R08.10",
+     "region": "R08",
+     "before": 0.8293,
+     "after": 0.8247,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R09.7",
+     "region": "R09",
+     "before": 0.927,
+     "after": 1.007,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "pass",
+      "pass"
+     ]
+    },
+    {
+     "id": "R09.9",
+     "region": "R09",
+     "before": 0.6465,
+     "after": 0.6408,
+     "bound": {
+      "min": 0.85
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    },
+    {
+     "id": "R10.2",
+     "region": "R10",
+     "before": 0.6834,
+     "after": 0.6861,
+     "bound": {
+      "min": 0.72
+     },
+     "result": [
+      "fail",
+      "fail"
+     ]
+    }
+   ],
+   "measuredFailing": [
+    "R06.10",
+    "R07.6",
+    "R08.10",
+    "R08.11",
+    "R09.9",
+    "R10.2"
+   ],
+   "seamsNew": [
+    {
+     "joint": "ankle",
+     "view": "left",
+     "kind": "kink",
+     "value": 0.9156,
+     "where": {
+      "x": 0.0174,
+      "width": 0.0463
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "left",
+     "kind": "bump",
+     "value": 0.00328,
+     "where": {
+      "x": 0.0174,
+      "width": 0.0463
+     }
+    },
+    {
+     "joint": "ankle",
+     "view": "left",
+     "kind": "wbump",
+     "value": 0.00279,
+     "where": {
+      "x": 0.0174,
+      "width": 0.0463
+     }
+    }
+   ],
+   "containment": {
+    "B-21": {
+     "flaggedRelative": [
+      "R08"
+     ],
+     "worst": [
+      {
+       "region": "R08",
+       "max": 0.00392,
+       "allowance": 0.002,
+       "excess": 0.00192,
+       "flagged": true
+      },
+      {
+       "region": "R10",
+       "max": 0.00098,
+       "allowance": 0.002,
+       "excess": -0.00102,
+       "flagged": false
+      },
+      {
+       "region": "R07",
+       "max": 0.00097,
+       "allowance": 0.002,
+       "excess": -0.00103,
+       "flagged": false
+      }
+     ],
+     "error": null
+    }
+   },
+   "regionChange": {
+    "R01": 0.00167,
+    "R02": 0.0,
+    "R03": 0.00167,
+    "R04": 0.00167,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.01331,
+    "R09": 0.07877,
+    "R10": 0.0,
+    "R11": 0.0,
+    "R12": 0.00646
+   },
+   "regionShift": {
+    "R01": 0.0,
+    "R02": 0.0,
+    "R03": 0.0,
+    "R04": 0.0,
+    "R05": 0.0,
+    "R06": 0.0,
+    "R07": 0.0,
+    "R08": 0.00258,
+    "R09": 0.01837,
+    "R10": 0.0,
+    "R11": 0.0
+   },
+   "verdict": "R09 measured: 2 changed; R06 measured: 1 changed; R07 measured: 1 changed; R08 measured: 1 changed; R10 measured: 1 changed; seams flagged at ankle/left bump, ankle/left kink, ankle/left wbump; containment over allowance in R08; picture change R09 0.0788, R08 0.0133, R12 0.0065",
+   "wallMinutes": 15.5
+  }
+ ],
+ "baseline": {
+  "head": "head-2271",
+  "body": "body-2753",
+  "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2753",
+  "terms": {
+   "fitIou": 0.31031,
+   "fitIouByView": {
+    "front": 0.26315,
+    "left": 0.38859,
+    "back": 0.27919
+   },
+   "silhouetteChange": null,
+   "fitBand": "legs",
+   "fitBandIou": 0.5186,
+   "stationDiff": 0.09615,
+   "seam": null
+  }
+ },
+ "variants": [
+  {
+   "id": "v01",
+   "name": "collar fix A, raised knuckles, thin claws, filled gaps",
+   "why": "The full attempt on all three visible gaps, on round 18's judged-better paw (domed topLine instep, hooked claws, R09.7 1.007). Collar fix A: the morph band starts at the top of the leg-matched column back line (-.828 to -.866 instead of v10's -.842 to -.868) and the columnBackLine eases in (.0504, .0496 at -.85, then the target heel lean) so the native leg back and the paw back meet without the boot-cuff ledge that cost R08.1 and R08.4 in round 18. Issue 1, low slipper: toe lobes lifted .006 and taller by .003 (middle crown .083 world, .0446 of figure height against the .040 target, outer toes .73 and .81 of the middle), claw roots and dome front nodes raised with them so the paw front stands higher. Issue 2, pearl claws: radius .0062 and .0072 (base width .0057 to .0066 of figure height, v10 was .008 to .009) with the root sunk .014 into the toe tip. Issue 3, pits: toeToToe .009 and toe 3 .002 closer to toe 2 so the toes part in a soft fillet.",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:morph",
+     "value": [
+      -0.828,
+      -0.866
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:columnBackLine",
+     "value": {
+      "z": [
+       -0.83,
+       -0.85,
+       -0.87,
+       -0.892,
+       -0.916,
+       -0.935,
+       -0.955
+      ],
+      "V": [
+       0.0504,
+       0.0496,
+       0.0438,
+       0.0354,
+       0.03,
+       0.0225,
+       0.0011
+      ],
+      "blend": 0.012
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.0.center.2",
+     "value": -0.9275
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.0.radii.2",
+     "value": 0.0315
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.1.center.2",
+     "value": -0.9176
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.1.radii.2",
+     "value": 0.0435
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.2.center.2",
+     "value": -0.9176
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.2.radii.2",
+     "value": 0.0435
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.3.center.2",
+     "value": -0.9225
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.3.radii.2",
+     "value": 0.033
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.rootZ",
+     "value": -0.9295
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.rootZ",
+     "value": -0.924
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.rootZ",
+     "value": -0.924
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.rootZ",
+     "value": -0.9295
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:topLine.h",
+     "value": [
+      0.0,
+      0.06,
+      0.08,
+      0.087,
+      0.092,
+      0.095,
+      0.099,
+      0.099,
+      0.08,
+      0.045,
+      0.0
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.radius",
+     "value": 0.0062
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.radius",
+     "value": 0.0072
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.radius",
+     "value": 0.0072
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.radius",
+     "value": 0.0062
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:blend.toeToToe",
+     "value": 0.009
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.2.center.0",
+     "value": 0.089
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2912\\v01.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-21"
+   ],
+   "total": -12.539,
+   "parts": {
+    "fit": -0.108,
+    "station": -0.598,
+    "contain": -0.0,
+    "seam": -11.833,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.30923,
+    "fitIouByView": {
+     "front": 0.27336,
+     "left": 0.37849,
+     "back": 0.27585
+    },
+    "silhouetteChange": 0.05794,
+    "fitBand": "legs",
+    "fitBandIou": 0.5182,
+    "stationDiff": 0.10213,
+    "seam": {
+     "worstRatio": 2.3667,
+     "at": "ankle front wbump",
+     "flagged": [
+      "ankle front bump,wbump",
+      "ankle back bump,wbump"
+     ]
+    },
+    "criteria": {
+     "R09.5": {
+      "region": "R09",
+      "value": 1.044,
+      "min": 0.8,
+      "max": null,
+      "result": "pass"
+     },
+     "R09.7": {
+      "region": "R09",
+      "value": 1.048,
+      "min": 0.85,
+      "max": null,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.0023,
+    "containRegion": "R08",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": true,
+     "rows": []
+    }
+   },
+   "rank": 1,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-21": "body-2913",
+    "B-22": "body-2916",
+    "B-23": "body-2918"
+   },
+   "contain": [
+    {
+     "step": "B-21",
+     "max": 0.0023,
+     "region": "R08",
+     "excess": 0.0,
+     "relativeFlagged": [
+      "R08"
+     ]
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2918",
+   "head": "head-2271",
+   "body": "body-2918"
+  },
+  {
+   "id": "v02",
+   "name": "collar fix B (short band), thin claws, filled gaps, no raise",
+   "why": "The hedge on the two least certain choices. Collar fix B: a short morph band from the column's measured top (-.830 to -.852), which keeps the least of the old paw ramp and leaves the native leg untouched above it, with the same eased back line; if the ledge comes from blending across a long band this removes it. Heights stay at round 18's, so if lifting the knuckle row reads as a club foot this one is the fallback. Claws radius .0062 and .0072 with roots sunk .014 inside the toe tips (R09.2, R09.8) and toeToToe .009 with toe 3 .002 closer to toe 2 (no dark pits).",
+   "source": "variant",
+   "edits": [
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:morph",
+     "value": [
+      -0.83,
+      -0.852
+     ]
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:columnBackLine",
+     "value": {
+      "z": [
+       -0.83,
+       -0.85,
+       -0.87,
+       -0.892,
+       -0.916,
+       -0.935,
+       -0.955
+      ],
+      "V": [
+       0.0504,
+       0.0496,
+       0.0438,
+       0.0354,
+       0.03,
+       0.0225,
+       0.0011
+      ],
+      "blend": 0.012
+     }
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.radius",
+     "value": 0.0062
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.0.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.radius",
+     "value": 0.0072
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.1.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.radius",
+     "value": 0.0072
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.2.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.radius",
+     "value": 0.0062
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:claws.3.shift",
+     "value": -0.014
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:blend.toeToToe",
+     "value": 0.009
+    },
+    {
+     "op": "set",
+     "step": "B-21",
+     "arg": "spec:toes.2.center.0",
+     "value": 0.089
+    }
+   ],
+   "built": true,
+   "recipe": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\plan-2912\\v02.json",
+   "warnings": [],
+   "changedSteps": [
+    "B-21"
+   ],
+   "total": -24.644,
+   "parts": {
+    "fit": -0.081,
+    "station": -0.56,
+    "contain": -0.0,
+    "seam": -24.003,
+    "progress": 0.0
+   },
+   "terms": {
+    "fitIou": 0.3095,
+    "fitIouByView": {
+     "front": 0.27735,
+     "left": 0.37122,
+     "back": 0.27992
+    },
+    "silhouetteChange": 0.05056,
+    "fitBand": "legs",
+    "fitBandIou": 0.5186,
+    "stationDiff": 0.10175,
+    "seam": {
+     "worstRatio": 4.8007,
+     "at": "ankle left kink",
+     "flagged": [
+      "ankle left kink,bump,wbump"
+     ]
+    },
+    "criteria": {
+     "R09.5": {
+      "region": "R09",
+      "value": 1.044,
+      "min": 0.8,
+      "max": null,
+      "result": "pass"
+     },
+     "R09.7": {
+      "region": "R09",
+      "value": 1.005,
+      "min": 0.85,
+      "max": null,
+      "result": "pass"
+     }
+    },
+    "containMax": 0.00392,
+    "containRegion": "R08",
+    "containExcess": 0.0,
+    "toolScore": null,
+    "toolStep": null,
+    "progress": {
+     "flips": 0,
+     "closed": 0.0,
+     "moved": true,
+     "rows": []
+    }
+   },
+   "rank": 2,
+   "noop": false,
+   "nearNoop": false,
+   "rebuilt": {
+    "B-21": "body-2914",
+    "B-22": "body-2915",
+    "B-23": "body-2917"
+   },
+   "contain": [
+    {
+     "step": "B-21",
+     "max": 0.00392,
+     "region": "R08",
+     "excess": 0.0,
+     "relativeFlagged": [
+      "R08"
+     ]
+    }
+   ],
+   "quick": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\sweep_quick\\quick_head-2271__body-2917",
+   "head": "head-2271",
+   "body": "body-2917"
+  }
+ ],
+ "scoringSeconds": 701.2,
+ "wallMinutes": 27.4,
+ "surfaceStats": true,
+ "created": "2026-10-08T08:32:24",
+ "resultFiles": [
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r30-R09-plan-result.json",
+  "C:\\dev\\src\\xalians-akinza-loop\\docs\\design\\species-construction\\akinza\\loop\\plans\\r30-R09-plan-result.png"
+ ]
+}
