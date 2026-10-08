@@ -91,6 +91,77 @@ def place(camera, rig, view):
     scene.render.resolution_x, scene.render.resolution_y = w, h
 
 
+def lin(hexstr, scale=1.0):
+    h = hexstr.lstrip('#')
+    out = []
+    for i in (0, 2, 4):
+        c = int(h[i:i+2], 16)/255.0
+        out.append((c/12.92 if c <= 0.04045 else ((c+0.055)/1.055)**2.4)*scale)
+    return (*out, 1.0)
+
+
+def apply_palette(pal, factor):
+    """Recolor the hair, the skin under it and the iris; the grayscale structure (roots, tone, pale mask) stays."""
+    skin = max([o for o in bpy.data.objects if o.type == 'MESH'], key=lambda o: len(o.data.vertices))
+    hair = bpy.data.materials['Akinza hair'].node_tree
+
+    def mix_node(tree):
+        for n in tree.nodes:
+            if n.bl_idname == 'ShaderNodeMix' and n.data_type == 'RGBA' and n.blend_type == 'MIX':
+                return n
+    m = mix_node(hair)
+    m.inputs[6].default_value = lin(pal['coat'])
+    m.inputs[7].default_value = lin(pal['pale'])
+    if 'tip' in pal:  # icy tips on the long fur (ears and tails), strongest at the strand ends
+        info = [n for n in hair.nodes if n.bl_idname == 'ShaderNodeHairInfo'][0]
+        ends = hair.nodes.new('ShaderNodeMapRange')
+        ends.inputs['From Min'].default_value, ends.inputs['From Max'].default_value = 0.15, 0.85
+        hair.links.new(info.outputs['Intercept'], ends.inputs['Value'])
+        ln = hair.nodes.new('ShaderNodeAttribute')
+        ln.attribute_type, ln.attribute_name = 'GEOMETRY', 'fur_length'
+        longp = hair.nodes.new('ShaderNodeMapRange')
+        longp.inputs['From Min'].default_value, longp.inputs['From Max'].default_value = pal['tipFrom'], pal['tipTo']
+        hair.links.new(ln.outputs['Fac'], longp.inputs['Value'])
+        fac = hair.nodes.new('ShaderNodeMath')
+        fac.operation = 'MULTIPLY'
+        hair.links.new(ends.outputs['Result'], fac.inputs[0])
+        hair.links.new(longp.outputs['Result'], fac.inputs[1])
+        tipmix = hair.nodes.new('ShaderNodeMix')
+        tipmix.data_type = 'RGBA'
+        hair.links.new(fac.outputs['Value'], tipmix.inputs[0])
+        tipmix.inputs[7].default_value = lin(pal['tip'])
+        # splice before the root/tone multiply: coat color -> tip mix -> multiply
+        mult = [n for n in hair.nodes if n.bl_idname == 'ShaderNodeMix' and n.blend_type == 'MULTIPLY'][0]
+        src = mult.inputs[6].links[0].from_socket
+        hair.links.new(src, tipmix.inputs[6])
+        hair.links.new(tipmix.outputs[2], mult.inputs[6])
+    for slot, mat in enumerate(skin.data.materials):
+        t = mat.node_tree
+        mm = mix_node(t)
+        if mm:
+            mm.inputs[6].default_value = lin(pal['coat'], factor)
+            mm.inputs[7].default_value = lin(pal['pale'], 0.85)
+        for n in t.nodes:
+            if n.bl_idname == 'ShaderNodeBsdfPrincipled' and not n.inputs['Base Color'].is_linked and n.inputs['Base Color'].default_value[0] > 0.1:
+                n.inputs['Base Color'].default_value = lin(pal['pale'], 0.85)
+    iris = bpy.data.materials['Charcoal iris and black pupil'].node_tree
+    vc = [n for n in iris.nodes if n.bl_idname == 'ShaderNodeVertexColor'][0]
+    bsdf = [n for n in iris.nodes if n.bl_idname == 'ShaderNodeBsdfPrincipled'][0]
+    bw = iris.nodes.new('ShaderNodeRGBToBW')
+    iris.links.new(vc.outputs['Color'], bw.inputs['Color'])
+    ramp = iris.nodes.new('ShaderNodeMapRange')
+    ramp.inputs['From Max'].default_value = 0.0125
+    iris.links.new(bw.outputs['Val'], ramp.inputs['Value'])
+    tint = iris.nodes.new('ShaderNodeMix')
+    tint.data_type, tint.blend_type = 'RGBA', 'MULTIPLY'
+    tint.inputs[0].default_value = 1.0
+    iris.links.new(ramp.outputs['Result'], tint.inputs[6])
+    tint.inputs[7].default_value = lin(pal['iris'])
+    iris.links.new(tint.outputs[2], bsdf.inputs['Base Color'])
+    iris.links.new(tint.outputs[2], bsdf.inputs['Emission Color'])
+    bsdf.inputs['Emission Strength'].default_value = 0.35
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--surface', type=Path, required=True)
@@ -98,6 +169,7 @@ def main():
     parser.add_argument('--samples', type=int, default=32)
     parser.add_argument('--views', default=','.join(VIEWS))
     parser.add_argument('--device', default='CPU')
+    parser.add_argument('--palette', default=None)
     parser.add_argument('--hide-fur', action='store_true')
     parser.add_argument('--alpha', action='store_true', help='transparent background, RGBA (silhouette measures)')
     parser.add_argument('--debug-scale', type=float, default=1.0)
@@ -149,6 +221,9 @@ def main():
                     t.links.new(m.outputs['Value'], e.inputs['Color'])
                     t.links.new(e.outputs['Emission'], o.inputs['Surface'])
         scene.view_settings.view_transform = 'Standard'
+    if args.palette:
+        pals = json.loads((Path(__file__).resolve().parent/'akinza-palettes.json').read_text())
+        apply_palette(pals[args.palette], pals['skinFactor'])
     setup_world(scene)
     rig = make_rig()
     cam_data = bpy.data.cameras.new('surface camera')

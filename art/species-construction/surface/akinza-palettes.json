@@ -1,0 +1,31 @@
+{
+  "note": "Color options for the Akinza surface, applied at render time over the grayscale base (render_surface.py --palette <key>). Hex values are sRGB. skinFactor darkens the skin under the fur relative to the coat.",
+  "skinFactor": 0.6,
+  "A": {
+    "name": "Frost",
+    "coat": "#9BB0C4",
+    "pale": "#F5FAFF",
+    "iris": "#BFE3F5"
+  },
+  "B": {
+    "name": "Glacier",
+    "coat": "#53708F",
+    "pale": "#D5DEE6",
+    "iris": "#19D3F0"
+  },
+  "C": {
+    "name": "Snow",
+    "coat": "#F2F5F9",
+    "pale": "#CFC9DD",
+    "iris": "#141E44"
+  },
+  "D": {
+    "name": "Arctic dusk",
+    "coat": "#B49E8C",
+    "pale": "#FFF3DC",
+    "iris": "#E8A020",
+    "tip": "#74BDEB",
+    "tipFrom": 0.025,
+    "tipTo": 0.045
+  }
+}
