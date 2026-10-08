@@ -989,13 +989,40 @@
         "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
       },
       "minutes": 1.3
+    },
+    {
+      "id": "B-24Y",
+      "component": "body",
+      "regions": ["R05"],
+      "kind": "body",
+      "script": "art/species-construction/author_yoke_sections_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-23"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/docs/design/species-construction/akinza/loop/specs/yoke-r32-v1.json",
+        "--out", "{out}"
+      ],
+      "note": "round 32 R05: authored yoke (neck base, trapezius, upper back, shoulder caps) in field space after the arm rebuild B-23; the join reads it as its body",
+      "pins": {
+        "art/species-construction/author_yoke_sections_field.py": "c13d23886c211693e6e74694b60d153f4a4071400943a0a50ed78e5507c82026",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33",
+        "docs/design/species-construction/akinza/loop/specs/yoke-r32-v1.json": "df893201439fff0d0c684a4001916694238a883160d9c8f51209762ad684e439"
+      }
     }
   ],
   "assembly": {
     "id": "J",
     "regions": ["R05"],
     "head": "H35",
-    "body": "B-23",
+    "body": "B-24Y",
     "args": [
       "--head-scale", ".50",
       "--jaw-anchor-z", ".500",
@@ -1022,7 +1049,7 @@
   },
   "derivedFrom": {
     "recipe": "docs/design/species-construction/akinza/recipe.json",
-    "sha256": "9c2c35aa907991fa7355baf9f87a3415dfffa6a70060e23121560ce79247b1fb",
+    "sha256": "0a5994e5a25836ddec2dbf9247de8b00c6d42ab7f00b6bda3b080a5cf9cd3672",
     "steps": {
       "H24": {
         "script": "feef615941aa2a663965ab1db366f0cf85e9669291bacb2aa28d0c523ffa375a",
@@ -1107,7 +1134,7 @@
       },
       "H33": {
         "script": "a56105fc7b1faf682580cd27f45efa94b8b6266b63538730e084df077eea90ac",
-        "args": "133c750c47781190040d13e30586a745b945c3c2d45f7e6396ac61eb529e26d3",
+        "args": "0e8bd963bc08cc67a1c29640aa0db5cbda7df58a2d91a193aa0c732cae23deb3",
         "inputs": "0ca7fe6ceb55a420d6bd4c41a32a176e57336c97683df6d5edb20c21d755bb63",
         "regions": "d945927831ac5598221c513d68a87971fa35d2dec16e37e3d3af68db5bd95194",
         "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
@@ -1116,7 +1143,7 @@
       },
       "H34": {
         "script": "07b3f67bdddc3c8665843941b7bf08665a5868a472a4ee1bbd7cba7e4fea119f",
-        "args": "6f367ae485e41e776114e96efadfcaab4e71aadf919dca5a1bf7323283c7e0bf",
+        "args": "6f9b8eda512b5eebf56781b5e004a101ba668a29ee63a418c5752635670ff68f",
         "inputs": "5dc588fcf88e2d4889f70a3b5048224c555eae3be434467ca07486fb850d4a65",
         "regions": "9890452b2c554b2dfa3db7349ae9a31c39701cd3a34675e045e87e3bb7ea7de4",
         "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
@@ -1205,8 +1232,8 @@
         "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
       },
       "B-21": {
-        "script": "440f273bc69adbc2b1aa1732a05e873aa1b11342ca27bc6349beb788f5a5d921",
-        "args": "9014038ae332bf810773f39c6fc5ac882f54e7dd886222e4a298603c46b2931b",
+        "script": "ad02d8a055ea6cfc8b8e316a491c6f6a6e05affcf036c9db25cc677588395cf0",
+        "args": "0724559533d84dfa9a18e6dc327690ca726d8a97b1ae97cb1760481ec782a243",
         "inputs": "679d49241a1a04e964fccb858b05dd20c22f27c33bca8739dfbd7202f19b4bdd",
         "regions": "8ca9d59196ba2701a5f83ac8e19666d4d8f8547c595bd07323e2c725444026f0",
         "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
@@ -1235,7 +1262,7 @@
     "assembly": {
       "head": "cb20c7e1b7b18facd4eeb995f3b7420000f335d47194c343cc8cc0ff44df4a6c",
       "body": "d7223e532c340c3c5af64dc42c6463cd1d3f1ead9ed94f0bfe3de2e54d251faf",
-      "args": "3c3911ce91e1c9bd1fe4c3326662a6a7e41beaf14c23272b24613e2ed03993a9"
+      "args": "31dedb1fb76701839d3fb4267b3c1cae38464ba1f4705582475db014acfcedbf"
     }
   },
   "rebasedFrom": {

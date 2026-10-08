@@ -1,0 +1,107 @@
+{
+ "order": {
+  "round": 32,
+  "region": "R03",
+  "with": [
+   "R04"
+  ]
+ },
+ "base": "docs/design/species-construction/akinza/recipe.json",
+ "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2947",
+ "start": null,
+ "variants": [
+  {
+   "name": "trim the wing ends",
+   "why": "R03.1 front span 1.043 (max 1.03) and the back view's blue excess at the outer wing tips (R04.1): the soft coat stays, only locks whose tip is beyond |x| .20 are shortened further (tip-trim .009 to .020, about .011 per side, aim span about 1.00); one H33 edit so the soft look the readers chose is untouched",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.020"
+    }
+   ]
+  },
+  {
+   "name": "trim ends, thin the rear base",
+   "why": "audit rank 5 and the R04 issue: back width at .18 is 1.33x the sheet (R01.6, R04.1 IoU .870) because the lowest rear E locks (LE/RE12 to 14, tips u .09 to .12 at y .17 to .18) and the core and dome swell beside the head base; drop those six locks, pull the core lower edge in (inset .015 to .03) and end the dome at y .160 (from .176); plus the wing-end trim of variant 1 for the span",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.020"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skip",
+     "value": "LE12,LE13,LE14,RE12,RE13,RE14"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-inset",
+     "value": "0.012 0.03"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-ymax",
+     "value": "0.160"
+    }
+   ]
+  },
+  {
+   "name": "strong rear thin, trim from .17",
+   "why": "larger move so a reader can see it: also drop LE11 and RE11, rear clumps narrower (width-scale .9 to .8), dome blur 14 to 20, core inset .04, and the wing trim starts at |x| .17 (tip-trim .016) so the whole outer half shortens rather than only the end locks",
+   "edits": [
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--tip-trim",
+     "value": "0.016"
+    },
+    {
+     "op": "set",
+     "step": "H33",
+     "arg": "--trim-from",
+     "value": "0.17"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--skip",
+     "value": "LE12,LE13,LE14,RE12,RE13,RE14,LE11,RE11"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--core-inset",
+     "value": "0.012 0.04"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-ymax",
+     "value": "0.155"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--width-scale",
+     "value": "0.8"
+    },
+    {
+     "op": "set",
+     "step": "H34",
+     "arg": "--dome-blur",
+     "value": "20"
+    }
+   ]
+  }
+ ],
+ "sweeps": [],
+ "region": "R03",
+ "top": 3
+}

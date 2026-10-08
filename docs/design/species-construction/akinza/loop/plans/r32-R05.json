@@ -1,0 +1,14 @@
+{
+  "order": {"round": 32, "region": "R05", "with": []},
+  "base": "docs/design/species-construction/akinza/recipe.json",
+  "baselinePacket": "untracked/species-construction/akinza/loop/packets/assembled-2947",
+  "start": null,
+  "variants": [
+    {"name": "baseline control", "control": true,
+     "why": "Placeholder so the file is a valid plan. The order's method (authored yoke at a new body step B-24Y) needs author_yoke_sections_field.py, which does not exist (needsCode true). Round 30 tried six join-only variants and none moved R05 by more than .0036; no join-only plan is repeated here.",
+     "edits": []}
+  ],
+  "sweeps": [],
+  "region": "R05",
+  "top": 1
+}
