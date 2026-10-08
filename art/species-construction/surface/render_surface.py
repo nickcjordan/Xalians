@@ -97,6 +97,7 @@ def main():
     parser.add_argument('--views', default=','.join(VIEWS))
     parser.add_argument('--device', default='CPU')
     parser.add_argument('--hide-fur', action='store_true')
+    parser.add_argument('--debug-attr', default=None, help='show this skin attribute as emission, fur hidden')
     args = parser.parse_args(sys.argv[len(sys.argv)-sys.argv[::-1].index('--'):])
     t_all = time.time()
     bpy.ops.wm.open_mainfile(filepath=str(args.surface/'surface.blend'))
@@ -123,6 +124,21 @@ def main():
         for ob in bpy.data.objects:
             if ob.name == 'Akinza fur':
                 ob.hide_render = True
+    if args.debug_attr:
+        for ob in bpy.data.objects:
+            if ob.name == 'Akinza fur':
+                ob.hide_render = True
+            if ob.type == 'MESH' and len(ob.data.vertices) > 500000:
+                for mat in ob.data.materials:
+                    t = mat.node_tree
+                    t.nodes.clear()
+                    a = t.nodes.new('ShaderNodeAttribute')
+                    a.attribute_name = args.debug_attr
+                    e = t.nodes.new('ShaderNodeEmission')
+                    o = t.nodes.new('ShaderNodeOutputMaterial')
+                    t.links.new(a.outputs['Fac'], e.inputs['Color'])
+                    t.links.new(e.outputs['Emission'], o.inputs['Surface'])
+        scene.view_settings.view_transform = 'Standard'
     setup_world(scene)
     rig = make_rig()
     cam_data = bpy.data.cameras.new('surface camera')

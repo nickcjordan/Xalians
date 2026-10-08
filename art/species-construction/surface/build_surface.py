@@ -225,6 +225,7 @@ def compute_attributes(skin, cfg, species):
             nearest[i] = hit[0]
         if key == 'eyes' and 'rim' in cfg:
             rim = 1.0-smoothstep((near-cfg['rim']['width'])/cfg['rim']['soft'])
+            rim = np.clip(edge_smooth(rim, edges, n, cfg['rim'].get('smooth', 0)), 0, 1)
         ramp = smoothstep((near-ko['inner'])/max(ko['outer']-ko['inner'], 1e-6))
         density *= ramp
         if 'maxLength' in ko:
@@ -477,7 +478,18 @@ def hair_material(cfg):
     hair.inputs['Radial Roughness'].default_value = mc['radialRoughness']
     hair.inputs['Coat'].default_value = 0.0
     out = tree.nodes.new('ShaderNodeOutputMaterial')
-    tree.links.new(hair.outputs['BSDF'], out.inputs['Surface'])
+    diffuse = tree.nodes.new('ShaderNodeBsdfDiffuse')
+    tree.links.new(mul.outputs[2], diffuse.inputs['Color'])
+    share = tree.nodes.new('ShaderNodeMix')
+    share.data_type = 'FLOAT'
+    tree.links.new(pale.outputs['Fac'], share.inputs[0])
+    share.inputs[2].default_value = mc.get('diffuseShare', 0.0)
+    share.inputs[3].default_value = mc.get('paleDiffuseShare', 0.0)
+    blend = tree.nodes.new('ShaderNodeMixShader')
+    tree.links.new(share.outputs[0], blend.inputs[0])
+    tree.links.new(hair.outputs['BSDF'], blend.inputs[1])
+    tree.links.new(diffuse.outputs['BSDF'], blend.inputs[2])
+    tree.links.new(blend.outputs['Shader'], out.inputs['Surface'])
     return mat
 
 
