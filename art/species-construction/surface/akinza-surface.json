@@ -1,6 +1,6 @@
 {
   "note": "Surface (fur) settings for Akinza. Lengths are world units (the figure is 1.86 tall). Zones come from loop/species.json; a group may also give its own box in the same figure units (at: crown 0 to floor 1, x: world x over height, y: world y over height). margin is the blend distance outside a box in figure units. weights = membership * priority, so higher priority wins where boxes overlap.",
-  "strands": 220000,
+  "strands": 320000,
   "points": 9,
   "seed": 7,
   "lift": 0.25,
@@ -9,7 +9,7 @@
   "rootRadius": 0.0007,
   "taper": 0.85,
   "lengthJitter": 0.35,
-  "dirJitter": 0.25,
+  "dirJitter": 0.15,
   "curlScale": 90.0,
   "clumpScale": 30.0,
   "points_note": "points per strand",
@@ -37,10 +37,10 @@
     "body": {
       "everywhere": true,
       "priority": 0.05,
-      "length": 0.013,
-      "density": 0.8,
-      "clump": 0.3,
-      "curl": 0.15,
+      "length": 0.009,
+      "density": 1.0,
+      "clump": 0.08,
+      "curl": 0.05,
       "comb": "down"
     },
     "torso": {
@@ -49,10 +49,10 @@
       ],
       "priority": 0.4,
       "margin": 0.03,
-      "length": 0.016,
-      "density": 0.85,
-      "clump": 0.35,
-      "curl": 0.2,
+      "length": 0.011,
+      "density": 1.0,
+      "clump": 0.08,
+      "curl": 0.05,
       "comb": "down"
     },
     "neck": {
@@ -61,10 +61,10 @@
       ],
       "priority": 0.4,
       "margin": 0.02,
-      "length": 0.016,
-      "density": 0.85,
-      "clump": 0.3,
-      "curl": 0.2,
+      "length": 0.011,
+      "density": 1.0,
+      "clump": 0.08,
+      "curl": 0.05,
       "comb": "down"
     },
     "arms": {
@@ -73,10 +73,10 @@
       ],
       "priority": 0.45,
       "margin": 0.02,
-      "length": 0.015,
-      "density": 0.8,
-      "clump": 0.3,
-      "curl": 0.15,
+      "length": 0.01,
+      "density": 1.0,
+      "clump": 0.08,
+      "curl": 0.05,
       "comb": "down"
     },
     "legs": {
@@ -85,10 +85,10 @@
       ],
       "priority": 0.45,
       "margin": 0.02,
-      "length": 0.015,
-      "density": 0.8,
-      "clump": 0.3,
-      "curl": 0.15,
+      "length": 0.01,
+      "density": 1.0,
+      "clump": 0.08,
+      "curl": 0.05,
       "comb": "down"
     },
     "paws": {
@@ -97,11 +97,12 @@
       ],
       "priority": 0.5,
       "margin": 0.01,
-      "length": 0.012,
-      "density": 0.9,
-      "clump": 0.1,
+      "length": 0.01,
+      "density": 1.0,
+      "clump": 0.08,
       "curl": 0.05,
-      "comb": "down"
+      "comb": "down",
+      "tone": 0.8
     },
     "head": {
       "zones": [
@@ -185,8 +186,8 @@
       "margin": 0.02,
       "length": 0.06,
       "density": 1.0,
-      "clump": 0.25,
-      "curl": 0.25,
+      "clump": 0.08,
+      "curl": 0.12,
       "comb": "ear"
     },
     "tails": {
@@ -198,8 +199,8 @@
       "margin": 0.02,
       "length": 0.065,
       "density": 1.0,
-      "clump": 0.4,
-      "curl": 0.25,
+      "clump": 0.25,
+      "curl": 0.15,
       "comb": "tail"
     }
   },
@@ -207,8 +208,9 @@
     "note": "Distance (world units) from these objects over which density ramps from zero to full.",
     "eyes": {
       "match": "head_eye_globe",
-      "inner": 0.0065,
-      "outer": 0.015
+      "inner": 0.0085,
+      "outer": 0.012,
+      "frontOnly": 0.2
     },
     "nose": {
       "match": "head_nose",
@@ -225,7 +227,7 @@
       "inner": 0.006,
       "outer": 0.02
     },
-    "lengthFloor": 0.3
+    "lengthFloor": 0.5
   },
   "pads": {
     "belowFloor": 0.03,
@@ -234,11 +236,11 @@
   "paleSmoothing": 60,
   "paleSlot": 1,
   "materials": {
-    "hairGray": 0.55,
-    "hairPale": 0.9,
-    "rootDarken": 0.55,
-    "skinGray": 0.46,
-    "skinPale": 0.7,
+    "hairGray": 0.38,
+    "hairPale": 1.0,
+    "rootDarken": 0.72,
+    "skinGray": 0.38,
+    "skinPale": 0.85,
     "hairRoughness": 0.45,
     "radialRoughness": 0.6
   },
@@ -249,5 +251,30 @@
     "dz": 0.017
   },
   "paleGain": 3.2,
-  "groupPaleGain": 1.8
+  "groupPaleGain": 1.8,
+  "paleSlotMaxAt": 0.3,
+  "cup": {
+    "normalMin": -0.05,
+    "normalSpan": 0.4,
+    "strength": 0.95
+  },
+  "chestPale": {
+    "box": {
+      "at": [
+        0.31,
+        0.46
+      ],
+      "x": [
+        0.0,
+        0.1
+      ],
+      "y": [
+        -0.14,
+        0.0
+      ],
+      "symmetricX": true
+    },
+    "margin": 0.05,
+    "strength": 0.95
+  }
 }

@@ -59,6 +59,42 @@ def edge_smooth(values, edges, n, iterations):
     return values
 
 
+def tail_centerline(co, edges, tail_m, root, fallback):
+    """Comb along the tails: geodesic distance from the tail root over the skin graph (restricted to the
+    tail zones), then the surface gradient of that distance."""
+    n = len(co)
+    mask = tail_m > 0.15
+    a, b = edges[:, 0], edges[:, 1]
+    ok = mask[a] & mask[b]
+    a, b = a[ok], b[ok]
+    el = np.linalg.norm(co[a]-co[b], axis=1)
+    idx = np.where(mask)[0]
+    dist_root = np.linalg.norm(co[idx]-root, axis=1)
+    d = np.full(n, np.inf)
+    seeds = idx[dist_root < dist_root.min()+0.03]
+    d[seeds] = np.linalg.norm(co[seeds]-co[seeds].mean(axis=0), axis=1)*0
+    for it in range(1200):
+        new = d.copy()
+        np.minimum.at(new, b, d[a]+el)
+        np.minimum.at(new, a, d[b]+el)
+        if np.array_equal(new, d):
+            break
+        d = new
+    print('tail geodesic: iterations', it, 'reached', int(np.isfinite(d[mask]).sum()), 'of', int(mask.sum()))
+    grad = np.zeros((n, 3))
+    fin = np.isfinite(d[a]) & np.isfinite(d[b])
+    a2, b2, el2 = a[fin], b[fin], el[fin]
+    dd = (d[b2]-d[a2])/(el2**2)
+    vec = co[b2]-co[a2]
+    np.add.at(grad, a2, vec*dd[:, None])
+    np.add.at(grad, b2, vec*dd[:, None])
+    norm = np.linalg.norm(grad, axis=1)
+    good = np.isfinite(d) & (norm > 1e-9)
+    out = fallback.copy()
+    out[good] = grad[good]/norm[good, None]
+    return out
+
+
 def write_attribute(me, name, data, kind='FLOAT'):
     if name in me.attributes:
         me.attributes.remove(me.attributes[name])
@@ -82,6 +118,9 @@ def compute_attributes(skin, cfg, species):
     zones = species['zones']
     sign = np.where(co[:, 0] < 0, -1.0, 1.0)
 
+    edges = np.empty(len(me.edges)*2, dtype=np.int32)
+    me.edges.foreach_get('vertices', edges)
+    edges = edges.reshape(-1, 2)
     ear_root = np.array(cfg['earRoot'])
     nose = np.array(cfg['noseTip'])
     tail_root = np.array(cfg['tailRoot'])
@@ -109,6 +148,9 @@ def compute_attributes(skin, cfg, species):
     def blend(key, default=0.0):
         return sum(wn[i]*cfg['groups'][nm].get(key, default) for i, nm in enumerate(names))
 
+    if 'tails' in names and cfg.get('tailCenterline', True):
+        directions['tail'] = tail_centerline(co, edges, weights[names.index('tails')]/cfg['groups']['tails']['priority'],
+                                             tail_root, directions['tail'])
     length, density = blend('length'), blend('density')
     clump, curl, group_pale = blend('clump'), blend('curl'), blend('pale')
     comb = unit(sum(wn[i, :, None]*directions[cfg['groups'][nm]['comb']] for i, nm in enumerate(names)))
@@ -126,11 +168,21 @@ def compute_attributes(skin, cfg, species):
     pale_loops = mat[face_of_loop] == cfg['paleSlot']
     pale = np.zeros(n)
     pale[loops[pale_loops]] = 1.0
+    at_all = (floor+height-co[:, 2])/height
+    pale *= (at_all < cfg.get('paleSlotMaxAt', 0.3))
     edges = np.empty(len(me.edges)*2, dtype=np.int32)
     me.edges.foreach_get('vertices', edges)
     edges = edges.reshape(-1, 2)
     pale = edge_smooth(pale, edges, n, cfg['paleSmoothing'])
     pale = np.clip(np.maximum(smoothstep(pale*cfg.get('paleGain', 2.2)), group_pale*cfg.get('groupPaleGain', 1.0)), 0, 1)
+    # cup interior from geometry: forward-facing skin inside the ear zones, plus a soft chest patch
+    ears_i = names.index('ears')
+    ear_m = weights[ears_i]/cfg['groups']['ears']['priority']
+    cup = ear_m*smoothstep((-nrm[:, 1]-cfg['cup']['normalMin'])/cfg['cup']['normalSpan'])
+    pale = np.maximum(pale, cup*cfg['cup']['strength'])
+    cb = cfg['chestPale']
+    chest = membership(co, cb['box'], floor, height, cb['margin'])*cb['strength']
+    pale = np.maximum(pale, chest)
     print('pale vertices >0.5:', int((pale > 0.5).sum()), 'of', n)
 
     # keep-outs: distance to eyes, nose, mouth, claws
@@ -143,10 +195,18 @@ def compute_attributes(skin, cfg, species):
             m = np.array(o.matrix_world)
             v = np.empty(len(o.data.vertices)*3)
             o.data.vertices.foreach_get('co', v)
-            pts.append(v.reshape(-1, 3)@m[:3, :3].T+m[:3, 3])
+            vp = v.reshape(-1, 3)@m[:3, :3].T+m[:3, 3]
+            if 'frontOnly' in ko:
+                vn = np.empty(len(o.data.vertices)*3)
+                o.data.vertex_normals.foreach_get('vector', vn)
+                vn = unit(vn.reshape(-1, 3)@m[:3, :3].T)
+                vp = vp[-vn[:, 1] > ko['frontOnly']]
+            pts.append(vp)
         if not pts:
             continue
         pts = np.concatenate(pts)
+        if len(pts) == 0:
+            continue
         step = max(1, len(pts)//4000)
         pts = pts[::step]
         near = np.ones(n)
@@ -173,6 +233,7 @@ def compute_attributes(skin, cfg, species):
     write_attribute(me, 'fur_clump', clump)
     write_attribute(me, 'fur_curl', curl)
     write_attribute(me, 'pale', pale)
+    write_attribute(me, 'fur_tone', blend('tone', 1.0))
     write_attribute(me, 'pad', pad)
     write_attribute(me, 'comb', comb, 'FLOAT_VECTOR')
 
@@ -383,7 +444,12 @@ def hair_material(cfg):
     mul.blend_type = 'MULTIPLY'
     mul.inputs[0].default_value = 1.0
     tree.links.new(base, mul.inputs[6])
-    tree.links.new(ramp.outputs['Result'], mul.inputs[7])
+    tone = attr_node(tree, 'fur_tone')
+    tmul = tree.nodes.new('ShaderNodeMath')
+    tmul.operation = 'MULTIPLY'
+    tree.links.new(ramp.outputs['Result'], tmul.inputs[0])
+    tree.links.new(tone.outputs['Fac'], tmul.inputs[1])
+    tree.links.new(tmul.outputs['Value'], mul.inputs[7])
     hair = tree.nodes.new('ShaderNodeBsdfHairPrincipled')
     hair.model = 'CHIANG'
     hair.parametrization = 'COLOR'
