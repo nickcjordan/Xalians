@@ -97,6 +97,7 @@ def main():
     parser.add_argument('--views', default=','.join(VIEWS))
     parser.add_argument('--device', default='CPU')
     parser.add_argument('--hide-fur', action='store_true')
+    parser.add_argument('--alpha', action='store_true', help='transparent background, RGBA (silhouette measures)')
     parser.add_argument('--debug-attr', default=None, help='show this skin attribute as emission, fur hidden')
     args = parser.parse_args(sys.argv[len(sys.argv)-sys.argv[::-1].index('--'):])
     t_all = time.time()
@@ -116,7 +117,9 @@ def main():
     scene.render.image_settings.color_mode = 'RGB'
     scene.view_settings.view_transform = 'Standard'
     scene.view_settings.look = 'None'
-    scene.render.film_transparent = False
+    scene.render.film_transparent = bool(args.alpha)
+    if args.alpha:
+        scene.render.image_settings.color_mode = 'RGBA'
     for ob in list(bpy.data.objects):
         if ob.type in ('CAMERA', 'LIGHT'):
             bpy.data.objects.remove(ob)
