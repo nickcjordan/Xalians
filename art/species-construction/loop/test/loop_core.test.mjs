@@ -1029,3 +1029,26 @@ test('v3.14 visibleChange: a candidate whose target barely moved never reaches t
   assert.match(reader.prompt, /assembled-902/)
   assert.ok(out.logs.some(l => /visible-change floor/.test(l)))
 })
+
+test('v3.15 planner trial: an Opus planner plans the same order, both plans reach the same readers, results recorded per planner', { skip: !existsSync(P.status) }, async () => {
+  const status = splitStatus(), rub = readJson(P.rubric)
+  Object.assign(status.limits, { refinePasses: 0, visibleChange: 0.005, readerKeep: true })
+  const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true, plannerTrial: 'R06' }), 'pt', (label) => {
+    if (label.startsWith('planner')) return { plan: /opus/.test(label) ? 'plans/r29-R06-opus.json' : 'plans/r29-R06.json', variants: 2, approach: 'a', needsCode: false }
+    if (label.startsWith('runner')) return /opus/.test(label)
+      ? { ok: true, candidates: [splitCand(2, 'A', { regionChange: { R06: 0.02 } })] }
+      : { ok: true, candidates: [splitCand(1, 'A', { regionChange: { R06: 0.02 } })] }
+    if (label.startsWith('reader')) return { packs: [{ pack: 'assembled-901', region: 'R06', choice: 'B', reason: 'r' }, { pack: 'assembled-902', region: 'R06', choice: 'A', reason: 'r' }] }
+    if (label.startsWith('critic')) return { criteria: [], invariants: [{ id: 'I01', ok: true, evidence: '' }], issues: [], summary: 'guard' }
+    return undefined
+  })
+  const opusPlanner = out.calls.find(c => /planner .* opus trial/.test(c.label))
+  assert.ok(opusPlanner && opusPlanner.model === 'opus')
+  assert.match(opusPlanner.prompt, /r\d\d-R06-opus\.json/)
+  assert.match(opusPlanner.prompt, /move less than 0\.005/)
+  const reader = out.calls.find(c => c.label.startsWith('reader'))
+  assert.match(reader.prompt, /assembled-901/); assert.match(reader.prompt, /assembled-902/)
+  const t = out.ret.status && out.logs.find(l => /planner trial/.test(l))
+  assert.ok(t && /opus 3/.test(t) && /sonnet -3/.test(t), t)
+  assert.equal(out.ret.status.baseline.assembly, 'assembled-902')
+})

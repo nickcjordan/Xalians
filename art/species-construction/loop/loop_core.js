@@ -398,6 +398,7 @@ export function recordEntry(state, limits, round, outcomes, combinedAssembly, ba
       ...(o.decision && o.decision.geoCarried ? { geoCarried: o.decision.geoCarried } : {}),
       ...(o.regrade || o.repairRegrade ? { regrade: o.regrade || null, repairRegrade: o.repairRegrade || null } : {}),
       ...(o.runnerUpResult ? { runnerUp: o.runnerUpResult, firstPick: o.firstPick || null } : {}),
+      ...(o.plannerTrial ? { plannerTrial: o.plannerTrial } : {}),
     })
   }
   return entry

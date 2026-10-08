@@ -333,6 +333,12 @@ Round 29 cost 1.8 hours and 7.8M tokens (round 28: 5.7 hours, 85M) and kept noth
 - **No pin on the head silhouette**: R01 scores above the pass bar and the readers keep its current skull, so round 30 picks from the regions below the bar.
 - Round 30 is the third flat round in the plateau window, so the plateau's first step (new-method reviews for the two highest-priority regions) runs; a review that needs a new tool opens a decision item under `toolApproval`.
 
+## Before round 31 (v3.15, 2026-10-08)
+
+- **Planner told the visible-change floor**: the planner prompt states `limits.visibleChange` and asks for variants big enough to see (round 30's six neck variants were all under it).
+- **Planner trial** (`loop_state.py args --planner-trial R03`, Nick approved 2026-10-08): in the batch's first round that region's order also gets an Opus planner on the same prompt (plan file `rNN-<region>-opus.json`). Both plans are built, their candidates go to the same three readers in one set, and `plannerTrial` in the order record holds each planner's approach, candidates built and reader scores. The best candidate of either goes on as usual. One doubled order costs about 5 to 10M tokens and 45 to 60 Blender minutes; it settles whether a stronger planner would help.
+- **Reverts counted since the last method change** (`regions.<id>.methodChanged`): the three-reverts decision counts only orders after the region's method last changed (a method review, a replan, or Nick's ruling), so the ear fan's lock rounds do not count against its soft-fur method.
+
 ## Proof
 
 1. M1 verify replays assembled-0458 from git within the pass bar.

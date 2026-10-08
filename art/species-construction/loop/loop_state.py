@@ -190,6 +190,8 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
                'parked': bool(r.get('parked')), 'lastWorked': r.get('lastWorked')}
         if r.get('toolUsed'):
             out['toolUsed'] = True
+        if r.get('methodChanged') is not None:
+            out['methodChanged'] = r['methodChanged']
         if r.get('hold'):
             # held by Nick's direction: never ordered, whatever its score (the tails, 2026-10-01)
             out['hold'] = True
@@ -267,6 +269,9 @@ def dump_compact(obj):
 
 def cmd_args(a):
     args = build_args(a.species, a.rounds, a.cold, a.rubric_texts, a.status)
+    if a.planner_trial:
+        # v3.15: an Opus planner also plans this region's order in the batch's first round (Nick 2026-10-08)
+        args['plannerTrial'] = a.planner_trial
     if a.tool_go:
         # v3.13 (limits.toolApproval): Nick's go for building the tool of these regions
         args['toolGo'] = list(a.tool_go)
@@ -289,7 +294,7 @@ def cmd_args(a):
 
 # ---- merge ------------------------------------------------------------------------------------
 
-REGION_FIELDS = ('score', 'results', 'attempts', 'anchorScore', 'lastWorked', 'toolUsed')
+REGION_FIELDS = ('score', 'results', 'attempts', 'anchorScore', 'lastWorked', 'toolUsed', 'methodChanged')
 DROP_KEYS = {'methods'}
 
 
@@ -542,6 +547,7 @@ def main(argv=None):
     p = sub.add_parser('args'); p.add_argument('species'); p.add_argument('--rounds', type=int); p.add_argument('--cold', action='store_true')
     p.add_argument('--rubric-texts', action='store_true', help='include criterion texts (what the v2 workflow prompts need)')
     p.add_argument('--status'); p.add_argument('--out')
+    p.add_argument('--planner-trial', help='region whose first-round order also gets an Opus planner, for a planner comparison')
     p.add_argument('--tool-go', action='append', help="Nick's go to build the tool of this region (limits.toolApproval; repeatable)")
     p.add_argument('--pin', action='append', help='order this region in the first round, in place of the pick for its component (repeatable)')
     p.set_defaults(fn=cmd_args)

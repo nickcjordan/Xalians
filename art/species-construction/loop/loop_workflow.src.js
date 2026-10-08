@@ -376,14 +376,18 @@ const RUN_OUT = {
 }
 const READ_OUT = { type: 'object', properties: { packs: { type: 'array', items: { type: 'object', properties: { pack: { type: 'string' }, region: { type: 'string' }, choice: { type: 'string', enum: ['A', 'B', 'same'] }, reason: { type: 'string' }, remaining: { type: 'string' } }, required: ['pack', 'region', 'choice', 'reason'] } } }, required: ['packs'] }
 
-function plannerPrompt(order, round, refine, repair) {
+function plannerPrompt(order, round, refine, repair, suffix) {
   // round 21: planners spent 53 percent of the round's tokens, mostly finding which steps carry the
   // region, what their parameters are called and what was tried; the digest lists all of that
   const digest = `python art/species-construction/loop/planner_digest.py ${SP.key} ${order.id}${(order.with || []).length ? ' --with ' + order.with.join(',') : ''} --round ${round}`
   return `Read the planner brief at ${BRIEF('planner-brief.md')} and the plan format at ${BRIEF('plan-schema.md')}, and follow them.\n` +
     `Then run ${digest} (forward slashes, your shell is bash) and read the digest it writes first: the region's steps with their scripts, args and rebuild minutes, the tool's parameters, the measured criteria now, and what earlier orders and plans tried, with their results. Open RECIPE.md, scripts or old plan files only for what the digest lacks.\n\n` +
     builderPrompt(order, round).replace(/^Read the builder brief[^\n]*\n\n/, '') +
-    `\n\nWrite the plan to ${LOOPDIR}\\plans\\r${String(round).padStart(2, '0')}-${order.id}${repair ? '-repair' : refine ? '-refine' : ''}.json. Do not build anything yourself.` +
+    `\n\nWrite the plan to ${LOOPDIR}\\plans\\r${String(round).padStart(2, '0')}-${order.id}${repair ? '-repair' : refine ? '-refine' : ''}${suffix || ''}.json. Do not build anything yourself.` +
+    // v3.15 (after round 30: six neck variants and two refine plans changed nothing a reader could see)
+    (L.visibleChange ? `
+
+The loop drops, before the readers, any candidate whose target region images move less than ${L.visibleChange} (diff.json regionChange; every keep since round 23 moved its target .0075 or more). Plan variants big enough to see in the region's views; a change no reader can see costs a full build and decides nothing.` : '') +
     (repair ? `\n\n${repair}` : refine ? `\n\nThis is the refine pass. The first plan's results: ${refine}. Plan variants that fix what the readers and measurements said.` : '')
 }
 function runnerPrompt(plan, order, round) {
@@ -637,13 +641,14 @@ function snapshot() {
   const regions = {}
   for (const id of IDS) {
     const r = S.regions[id]
-    regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, issues: r.issues || [], history: r.history.slice(-2) }
+    regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, methodChanged: r.methodChanged ?? null, issues: r.issues || [], history: r.history.slice(-2) }
   }
   return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, keptLog: S.keptLog, toolChecks: S.toolChecks, toolBlocked: S.toolBlocked, decisions: S.decisions, awaiting: S.awaiting, disputes: S.disputes, escalated: !!S.escalated, keptSinceCold: S.keptSinceCold || 0, regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
   if (!r || !workable(m.region)) return
+  if (m.changed && S.methods[m.region] !== m.method) r.methodChanged = S.round
   S.methods[m.region] = m.method
   if (m.respec) delete S.specs[m.region]
   if (unparkOk && r.parked) { r.parked = false; r.parkReason = null; r.attempts = 0; r.anchorScore = r.score; r.methodChanged = S.round }
@@ -849,7 +854,15 @@ for (let i = 0; i < ROUNDS; i++) {
       if (spec) { S.specs[order.id] = { path: spec.path, image: spec.image, summary: spec.summary, structure: spec.structure, round }; out.spec = spec }
     }
     if (L.builderMode === 'split') {
-      const plan = await agent(plannerPrompt(order, round), workerOpts({ label: `planner r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
+      // v3.15 planner trial (args.plannerTrial, the first round of the batch only): the order also gets an Opus planner on the
+      // same prompt; both plans are built and their candidates go to the same three readers, recorded per planner, and the
+      // best candidate of either goes on as usual
+      const trialHere = i === 0 && args.plannerTrial === order.id
+      const [plan, opusPlan] = await parallel([
+        () => agent(plannerPrompt(order, round), workerOpts({ label: `planner r${round} ${order.component}: ${order.id}`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' })),
+        ...(trialHere ? [() => agent(plannerPrompt(order, round, null, null, '-opus'), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} opus trial`, phase: 'Rounds', schema: PLAN_OUT, model: 'opus', effort: 'high' }))] : []),
+      ])
+      if (trialHere) out.plannerTrial = { sonnet: plan ? { plan: plan.plan, approach: plan.approach, needsCode: !!plan.needsCode } : null, opus: opusPlan ? { plan: opusPlan.plan, approach: opusPlan.approach, needsCode: !!opusPlan.needsCode } : null }
       if (plan && plan.needsCode) {
         // a plan that needs a script change goes to the code builder, which builds one candidate itself
         out.build = await codeBuild(order, round, `The planner asked for this code change first: ${plan.codeTask}`)
@@ -863,7 +876,18 @@ for (let i = 0; i < ROUNDS; i++) {
           if (pass > 0 && L.refineOnTie && out.noRefine) { log(`Round ${round} ${order.id}: no refine pass (${out.noRefineWhy || 'the first pass was not a seen tie'})`); break }
           const thePlan = pass === 0 ? plan : await agent(plannerPrompt(order, round, out.firstPass), workerOpts({ label: `planner r${round} ${order.component}: ${order.id} refine`, phase: 'Rounds', schema: PLAN_OUT, model: 'sonnet', effort: 'high' }))
           if (!thePlan || !thePlan.plan) break
-          const run = noteTime(await agent(runnerPrompt(thePlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' })))
+          const trialPlan = pass === 0 && trialHere && opusPlan && opusPlan.plan && !opusPlan.needsCode ? opusPlan : null
+          const runs = await parallel([
+            () => agent(runnerPrompt(thePlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' })),
+            ...(trialPlan ? [() => agent(runnerPrompt(trialPlan.plan, order, round), workerOpts({ label: `runner r${round} ${order.component}: ${order.id} opus trial`, phase: 'Rounds', schema: RUN_OUT, model: 'sonnet', effort: 'low' }))] : []),
+          ])
+          runs.forEach(noteTime)
+          const tag = (r, who) => r ? { ...r, candidates: (r.candidates || []).map(c => ({ ...c, planner: who })) } : r
+          const run = trialPlan
+            ? (() => { const a = tag(runs[0], 'sonnet'), b = tag(runs[1], 'opus'), ok = [a, b].filter(r => r && r.ok)
+                return { ok: ok.length > 0, alarm: !!(a && a.alarm && b && b.alarm), reason: [a, b].map(r => r && r.reason).filter(Boolean).join(' | '),
+                  harnessErrors: [a, b].flatMap(r => (r && r.harnessErrors) || []), candidates: ok.flatMap(r => r.candidates || []) } })()
+            : runs[0]
           // audit 2026-10-07 recommendation 19: a plan that died twice is a harness failure: it stops this order and goes to Nick
           if (run && run.alarm) {
             out.alarm = `plan died twice: ${String(run.reason || '').slice(0, 300)}`
@@ -876,6 +900,11 @@ for (let i = 0; i < ROUNDS; i++) {
           if (!cands.length) { out.firstPass = run ? (run.reason || 'no candidate built or none changed visibly') : 'runner returned nothing'; out.noRefine = !!(run && run.ok); continue }
           const reads = await parallel([0, 1, 2].map(k => () => agent(readerPrompt(cands.map(c => c.pack), order, k), leanOpts({ label: `reader ${k + 1} r${round}: ${order.id}${pass ? ' refine' : ''}`, phase: 'Rounds', schema: READ_OUT, model: 'opus', effort: 'medium' }))))
           const ranked = readerVerdicts(cands, reads.filter(Boolean), regions)
+          if (trialPlan) {
+            const per = who => ranked.filter(x => x.cand.planner === who).map(x => ({ assembly: x.cand.assembly, score: x.score, per: Object.fromEntries(Object.entries(x.per).map(([r, v]) => [r, { verdict: v.verdict, better: v.better, worse: v.worse }])) }))
+            out.plannerTrial = { ...out.plannerTrial, results: { sonnet: per('sonnet'), opus: per('opus') }, built: { sonnet: (runs[0] && runs[0].candidates || []).length, opus: (runs[1] && runs[1].candidates || []).length } }
+            log(`Round ${round} ${order.id} planner trial: ` + ['sonnet', 'opus'].map(w => `${w} ${out.plannerTrial.results[w].map(x => x.score).join('/') || 'no candidate'}`).join(', '))
+          }
           out.readers = [...(out.readers || []), ...ranked.map(x => ({ pass, assembly: x.cand.assembly, per: Object.fromEntries(Object.entries(x.per).map(([r, v]) => [r, { verdict: v.verdict, better: v.better, worse: v.worse }])) }))]
           const best = ranked[0]
           const readsBetter = x => !!x && readsBetterPer(x.per, regions)
@@ -1064,7 +1093,8 @@ for (let i = 0; i < ROUNDS; i++) {
   if (moved) S.escalated = false
   // v3.13 (audit recommendation 2): a region whose last three orders were all reverted goes to Nick
   for (const o of entry.orders) {
-    const h = S.regions[o.region].history || []
+    // only orders since the region's last method change count (Nick's ear ruling of 2026-10-08 must not count the old lock rounds)
+    const h = (S.regions[o.region].history || []).filter(e => e.round > (S.regions[o.region].methodChanged ?? -1))
     if (!o.alarm && h.length >= 3 && h.slice(-3).every(e => !e.kept))
       decide({ kind: 'reverts', region: o.region, evidence: o.assembly ? PACKETS + '/' + o.assembly : S.baseline.packet,
         question: `${o.region} (${S.regions[o.region].name}) has had three reverted orders in a row (rounds ${h.slice(-3).map(e => e.round).join(', ')}). Keep working it, change its method, or set it aside?` })
@@ -1082,7 +1112,7 @@ for (let i = 0; i < ROUNDS; i++) {
     reviewed.add(id)
     const rv = await agent(reviewPrompt(id, `It parked in round ${round}: ${S.regions[id].parkReason}.`),
       { label: `method review r${round}: ${id}`, phase: 'Rounds', schema: REVIEW, model: 'opus', effort: 'medium' })
-    if (rv) { applyMethod({ ...rv, region: id }, !!rv.unpark); log(`Method review ${id}: ${rv.unpark ? 'unparked with a new method' : 'stays parked'}`) }
+    if (rv) { applyMethod({ ...rv, region: id, changed: true }, !!rv.unpark); log(`Method review ${id}: ${rv.unpark ? 'unparked with a new method' : 'stays parked'}`) }
   }
 
   // Plateau: the first time the last rounds gain too little, review the method of the two
@@ -1097,7 +1127,7 @@ for (let i = 0; i < ROUNDS; i++) {
     log(`Round ${round}: plateau (${S.means.slice(-1 - (L.plateauRounds ?? 3)).join(', ')}); method review for ${top.join(', ')}`)
     const reviews = await parallel(top.map(id => () => agent(reviewPrompt(id, `The loop has plateaued: the last rounds gained less than ${L.plateauGain ?? 0.15} together, and this region ranks highest.`),
       { label: `method review r${round}: ${id}${L.outsideReview && stuckTopGap(id) ? ' (outside)' : ''}`, phase: 'Rounds', schema: REVIEW, model: 'opus', effort: L.outsideReview && stuckTopGap(id) ? 'high' : 'medium' })))
-    reviews.forEach((rv, k) => { reviewed.add(top[k]); if (rv) applyMethod({ ...rv, region: top[k] }, false) })
+    reviews.forEach((rv, k) => { reviewed.add(top[k]); if (rv) applyMethod({ ...rv, region: top[k], changed: true }, false) })
     S.means = [S.means[S.means.length - 1]]
     S.keptLog = []
   }

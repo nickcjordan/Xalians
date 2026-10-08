@@ -544,7 +544,8 @@
     }
    ],
    "lastWorked": 28,
-   "toolUsed": true
+   "toolUsed": true,
+   "methodChanged": 30
   },
   "R04": {
    "name": "Ear fan rear and profile",
@@ -654,7 +655,7 @@
     }
    ],
    "lastWorked": 28,
-   "methodChanged": 16,
+   "methodChanged": 30,
    "toolUsed": true
   },
   "R05": {
@@ -774,7 +775,7 @@
     }
    ],
    "lastWorked": 30,
-   "methodChanged": 19,
+   "methodChanged": 30,
    "toolUsed": false
   },
   "R06": {
@@ -1094,7 +1095,8 @@
     }
    ],
    "lastWorked": 29,
-   "toolUsed": false
+   "toolUsed": false,
+   "methodChanged": 30
   },
   "R08": {
    "name": "Legs",
@@ -1281,7 +1283,8 @@
     }
    ],
    "lastWorked": 30,
-   "toolUsed": false
+   "toolUsed": false,
+   "methodChanged": 30
   },
   "R10": {
    "name": "Tails",
