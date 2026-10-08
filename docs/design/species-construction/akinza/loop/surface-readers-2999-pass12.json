@@ -1,0 +1,111 @@
+{
+ "date": "2026-10-08",
+ "surface": "assembled-2999 pass12",
+ "readers": [
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "Fine strands are present everywhere (model-face, model-front), but the ear masses in model-head and model-back read as matted, tangled wig clumps rather than the layered pointed tufts in ref-r04/ref-r03, and the torso and leg silhouettes in model-front and model-back are nearly smooth, with only a faint fuzz and no broken outline."
+    },
+    {
+     "id": "S02",
+     "result": "partial",
+     "why": "The chest has a soft, lighter bib with no hard edge (model-front, model-threequarter), but the ear cups in model-head and model-face are only small, streaky white smears at the ear base, not a clearly lighter inner cup like ref-r04's, and they look chalky and scratchy."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "Neck and chest fur falls downward and the tails run toward their tips (model-face, model-side, model-back), but the ear strands in model-face and model-back go every which way instead of radiating out from the base, and the head crown in model-side is a disordered tangle."
+    },
+    {
+     "id": "S04",
+     "result": "fail",
+     "why": "In model-face a smooth dark bald ring surrounds each eye, fur crosses the mouth so the smile line barely shows, model-side shows a smooth bare patch at the hip where the tails meet the rump, and the crotch area under the tail in model-front looks smooth and unfurred."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "In model-face the iris is dark and the catch light is clear, but the outline is a soft, uneven gray recess that reads like goggles, not the even crisp black rim of ref-r01, and the fur stops short of it instead of reaching the lid."
+    }
+   ],
+   "overall": 4,
+   "faults": [
+    "model-face and model-head, around both eyes: a smooth dark bald socket ring that reads like goggles; fur does not reach an even black lid line as it does in ref-r01",
+    "model-head and model-back, the ear fans: messy, matted wig-like clumps with chaotic strand direction, not the layered radiating tufts of ref-r04/ref-r03",
+    "model-head and model-face, the inner ear cups: no clearly lighter cup, only small chalky white streaks at the ear base, so the pale inner coat of ref-r04 is missing"
+   ]
+  },
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "Front, threequarter and back show fine strands on every mass and soft broken outlines on the tails and ear fans, but the torso, legs and especially the feet (back view: smooth slipper-like soles) keep an almost clean clay outline, and the ear fans read as one frizzy cloud instead of the reference's clumped, pointed tufts (ref-r03, ref-r04)."
+    },
+    {
+     "id": "S02",
+     "result": "partial",
+     "why": "Head and front views show a soft, lighter chest bib with no hard edge, but the pale inner ear shows only as small whitish streaks just beside the face rather than a clearly lighter tuft cluster filling the ear cup as in ref-r04."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "Body and limbs fall downward and the tails run cleanly to their tips (side, back), but in the back and head views the ear strands go every which way in messy clumps instead of radiating outward from the head like the reference ear fans."
+    },
+    {
+     "id": "S04",
+     "result": "fail",
+     "why": "The side view has fur strands crossing a smeared white eye and a dark blotchy patch on the upper arm, the tail roots and hip seam look thinly covered (side, back), the mouth line is mostly buried under fur in the face view, and the feet are nearly bald in the back view."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "The face view has a dark iris with a crisp catch light, but the outline is a blurry, uneven grey halo/smudge rather than the reference's even, crisp black rim (ref-r01), and the eye breaks apart in the side view."
+    }
+   ],
+   "overall": 5,
+   "faults": [
+    "Ear fans (back, head, front views): a uniform frizzy cloud with chaotic clumps instead of the reference's layered, pointed, outward-radiating tufts, and the pale inner-ear cluster is reduced to thin whitish streaks",
+    "Eye area (face view smudged grey halo instead of an even black rim; side view eye smeared and crossed by stray strands)",
+    "Bald or under-furred zones: feet read as smooth slippers in the back view, thin cover at the tail roots and hip seam, and a dark blotch on the upper arm in the side view, with the torso and leg silhouette staying nearly clay-clean"
+   ]
+  },
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "Ears and tails have fine strands and a soft broken outline in front, back and threequarter, but the torso, arms and legs read as a smooth, nearly clean silhouette in front and back, and the ears are a uniform fuzzy cloud instead of the clumped, pointed tufts in ref-r04 and ref-r03."
+    },
+    {
+     "id": "S02",
+     "result": "partial",
+     "why": "The ear cups in head and face are lighter, but only as a small streaky wisp of wiry white strands. They don't fill the cup the way the pale leaf clusters do in ref-r04. The chest bib in front and head is only a faint soft lightening and barely separates from the body coat."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "The tails run cleanly to their tips in threequarter, side and back, and the neck and body fall roughly downward in face. The ear fur in front, back and head lies in chaotic clumps instead of radiating outward, and the crown in head stands up in random tufts."
+    },
+    {
+     "id": "S04",
+     "result": "fail",
+     "why": "In face, each eye sits in a smooth bald gray gutter. The side view shows a bare smooth patch where the tails meet the rump, and in face the mouth line is mostly lost under crossing strands."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "The face shows a dark iris and a clear catch light, but the outline is a soft, smudgy, uneven dark band instead of the crisp even black ring in ref-r01. Short fur stops short of it, and in threequarter the lid shading is heavier on one side."
+    }
+   ],
+   "overall": 4,
+   "faults": [
+    "Ears (front, back, head): a shapeless fuzzy cloud with chaotic strand direction, missing the clumped, pointed, outward-radiating tufts of ref-r04 and ref-r03",
+    "Eyes (face, head): a bald, smudgy dark gutter around each eye where ref-r01 has a crisp even black outline with short fur meeting it",
+    "Face and inner ears (face, head): long shaggy wiry strands cover the face, hiding the mouth line, and leave the ear cups as streaky white wisps instead of a smooth short face and clean pale cups"
+   ]
+  }
+ ]
+}

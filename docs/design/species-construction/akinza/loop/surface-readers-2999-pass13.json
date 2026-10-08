@@ -1,0 +1,111 @@
+{
+ "date": "2026-10-08",
+ "surface": "assembled-2999 pass13",
+ "readers": [
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "Body, limbs and tails show fine strands with a soft broken outline (front, threequarter, back), but in the head view the ear fans read as lumpy matted blobs. The references show feathered spiky tufts on the ears; here the strands sit on the blobs as fuzz and do not shape the mass."
+    },
+    {
+     "id": "S02",
+     "result": "partial",
+     "why": "The chest bib is a faint, soft lighter area (head, front), which is acceptable. The ear cups (head, face) are small chalky white smears with fairly hard edges, partly buried in grey fur, not a clearly lighter inner cup like the reference heads."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "Tails run cleanly to the tip and the body and limbs fall downward (threequarter, side, back). The ear fur shows no outward radiation from the base (head, back); it sits in random clumps with the strand direction unreadable."
+    },
+    {
+     "id": "S04",
+     "result": "fail",
+     "why": "Dark gaps and crevices show through the ear masses (head, front: dark streaks along the tops of both ears), and the back view has a visible seam where the head meets the ears. In the face view a stray strand crosses the upper sclera of the right eye, and the back feet look bare or shell-like."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "The face view has a dark iris and a clear catch light. The eye outline, though, is a blurry grey halo of uneven width rather than the crisp, even black line in ref-r01/r04, and the fur ends raggedly in that smudge instead of meeting a clean rim."
+    }
+   ],
+   "overall": 4,
+   "faults": [
+    "Head and front views, ear fans: the coat reads as matted lumpy blobs with dark holes or crevices through the fur, not feathered tufts radiating from the base like the references.",
+    "Face view, eyes: the outline is a soft, smeared grey halo of uneven width with fur ending raggedly in it (plus a stray strand across the right eye), not a crisp even black rim.",
+    "Head and face views, ear cups: small chalky white patches with hard edges, half buried, instead of a clearly lighter, soft inner cup; the back view also shows a seam between the head and the ear masses."
+   ]
+  },
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "Tails and ears have fine strands and a soft broken edge in the front, threequarter and back views, but the torso, arms and legs read as a short velvet nap with a nearly smooth clay outline, and none of the tufted breaks at elbows, flanks and calves that ref-r03 shows."
+    },
+    {
+     "id": "S02",
+     "result": "partial",
+     "why": "A soft lighter chest bib is there in model-head and model-front, but the inner ear coat is a small chalky white blob with a fairly hard edge in model-front, model-head and model-side, not a lighter fill across the ear cup like ref-r04."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "Body and limb strands fall downward and the tails run to their tips (model-threequarter, model-back), but the ear coat in model-head and model-back is matted clumps with no radiating lock flow, unlike the fanned feathered ears of ref-r03 and ref-r04."
+    },
+    {
+     "id": "S04",
+     "result": "partial",
+     "why": "No strands cross the eyes, nose or claws, but model-head and model-face show dark holes and gaps in the ear masses and on the crown, the hands look close to bare in model-front, and fur runs over the faint mouth line in model-face."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "Dark iris and catch light are present in model-face, but the outline is a blurred gray smudge that is thicker on top and uneven, not the crisp, even black rim of ref-r01, and the fur stops short of it in a soft halo."
+    }
+   ],
+   "overall": 4,
+   "faults": [
+    "Ears (model-head, model-front, model-back): the coat is matted, blotchy clumps with dark holes, and the strands do not radiate in feathered locks like ref-r03 and ref-r04.",
+    "Ear cups (model-front, model-head, model-side): the inner coat is a small chalky white patch with a hard edge, not a soft lighter fill across the cup.",
+    "Body and limbs (model-front, model-threequarter, model-back): a short velvet nap on a smooth clay outline, with no tufted breaks at elbows, flanks or calves, so the body reads as shaved next to the fluffy ears and tails. Eye rims (model-face) are also a blurred, uneven gray halo, not a crisp dark outline."
+   ]
+  },
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "Fine strands and a soft broken outline read well on the tails and body (back, threequarter), but the ear masses in the head and front views clump into matted lumps with smooth patches and dark holes, not an even fine coat."
+    },
+    {
+     "id": "S02",
+     "result": "fail",
+     "why": "In the front and head views the ear cups hold small chalky white blotches with hard-ish edges instead of a pale tuft filling the cup as in ref-r04; the chest bib is only a faint, barely readable lightening (head view)."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "Body, limbs and tails flow downward and toward the tip (side, back), but the ear strands in the head and side views run in chaotic clumps instead of radiating out from the base like the feathered tufts in ref-r03 and ref-r04."
+    },
+    {
+     "id": "S04",
+     "result": "partial",
+     "why": "Eyes, nose, mouth and claws stay clear (face, front), but the ear masses show dark gaps and bare-looking patches (head view), and the back of the head shows a smoother seam band between the ears (back view)."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "Dark iris and catch light are present (face view), but the outline is a soft, smudgy gray halo of uneven width instead of the crisp, even black rim in ref-r01, though short fur does reach it."
+    }
+   ],
+   "overall": 4,
+   "faults": [
+    "Head and front views, ear masses: the fur clumps into matted lumps with dark holes and smooth patches, with no radiating feathered tufts like ref-r03 and ref-r04.",
+    "Front and head views, inner ear cups: small chalky white blotches with hard edges instead of a soft pale tuft filling each cup.",
+    "Face view, eyes: a blurry gray smudge ring stands in for the crisp, even dark outline, and the chest bib is too faint to read (head view)."
+   ]
+  }
+ ]
+}
