@@ -1,0 +1,136 @@
+{
+ "units": "fit; front/back side-view x (negative forward), world y = -0.0125 + 1.8605 x; halfWidth front view about world x 0, world = 1.8605 x; world z = -0.957 + 1.8605 (1 - y)",
+ "description": "v3: v2 plus front weight (native chest), rear drop .056 over .22 exp 1.6, back exponent 3.0 at the shoulder rows",
+ "figureHeight": 1.8605,
+ "floorZ": -0.957,
+ "sideOffset": -0.0125,
+ "centerX": 0.0,
+ "stations": [
+  {
+   "y": 0.245,
+   "front": -0.032,
+   "back": 0.0239,
+   "halfWidth": 0.0265,
+   "split": 0.58,
+   "expFront": 2.0,
+   "expBack": 2.2
+  },
+  {
+   "y": 0.255,
+   "front": -0.0343,
+   "back": 0.0217,
+   "halfWidth": 0.043,
+   "split": 0.58,
+   "expFront": 2.0,
+   "expBack": 2.2
+  },
+  {
+   "y": 0.265,
+   "front": -0.0384,
+   "back": 0.0217,
+   "halfWidth": null,
+   "split": 0.58,
+   "expFront": 2.0,
+   "expBack": 2.4
+  },
+  {
+   "y": 0.28,
+   "front": -0.0524,
+   "back": 0.026,
+   "halfWidth": null,
+   "split": 0.58,
+   "expFront": 2.0,
+   "expBack": 3.0
+  },
+  {
+   "y": 0.3,
+   "front": -0.069,
+   "back": 0.032,
+   "halfWidth": 0.135,
+   "split": 0.58,
+   "expFront": 2.0,
+   "expBack": 3.0
+  },
+  {
+   "y": 0.32,
+   "front": -0.085,
+   "back": 0.038,
+   "halfWidth": 0.145,
+   "split": 0.58,
+   "expFront": 1.95,
+   "expBack": 3.0
+  },
+  {
+   "y": 0.34,
+   "front": -0.095,
+   "back": 0.04,
+   "halfWidth": 0.13,
+   "split": 0.58,
+   "expFront": 1.9,
+   "expBack": 2.2
+  },
+  {
+   "y": 0.36,
+   "front": -0.1005,
+   "back": 0.035,
+   "halfWidth": 0.1072,
+   "split": 0.58,
+   "expFront": 1.9,
+   "expBack": 1.9
+  },
+  {
+   "y": 0.38,
+   "front": -0.1015,
+   "back": 0.022,
+   "halfWidth": 0.101,
+   "split": 0.58,
+   "expFront": 2.05,
+   "expBack": 2.0
+  }
+ ],
+ "topLine": {
+  "neckY": 0.265,
+  "neckHalf": 0.056,
+  "angleDeg": 19.0,
+  "capHalf": 0.125,
+  "round": 0.01
+ },
+ "rear": {
+  "capX": 0.22,
+  "drop": 0.056,
+  "exponent": 1.6
+ },
+ "caps": {
+  "radius": 0.022,
+  "offset": [
+   0,
+   0,
+   0
+  ],
+  "blend": 0.03
+ },
+ "weights": {
+  "y": {
+   "topZ": 0.45,
+   "topRamp": 0.08,
+   "bottom": [
+    0.31,
+    0.36
+   ]
+  },
+  "arm": {
+   "radius": 0.04,
+   "zeroMargin": 0.0,
+   "fullMargin": 0.06,
+   "startAlong": 0.03
+  },
+  "reach": [
+   0.03,
+   0.09
+  ],
+  "front": [
+   -0.1,
+   -0.04
+  ]
+ }
+}
