@@ -1,0 +1,111 @@
+{
+ "date": "2026-10-08",
+ "surface": "assembled-2999 pass 10",
+ "readers": [
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "In the face and head views the strands are fine and the ear masses have a soft broken fringe, but in the front, threequarter and back views the torso and limbs read as smooth flocked velvet with an almost hard silhouette, and the ear masses blur into hazy clumps instead of the layered tufts in ref-r03 and r04."
+    },
+    {
+     "id": "S02",
+     "result": "fail",
+     "why": "The head view does show paler ear cups, though they are blotchy white streaks; in the front and threequarter views the chest carries a chalky, flat pale panel from neck to sternum with a clearly defined side edge, not a soft bib."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "The tails in the threequarter and side views run to the tip and the limbs fall roughly downward, but the ear masses in the head and back views are tangled and clumped with dark crevices and no clear outward radiation, and the crown in the face view stands up in a messy ridge."
+    },
+    {
+     "id": "S04",
+     "result": "partial",
+     "why": "The nose and claws are clear, but the face view shows a smooth bald-looking gray ring around each eye, the mouth line shows faintly under crossing strands, the back view shows a dark parting seam down the back of the head, and the side view shows a pale bald streak near the ear root."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "In the face view the iris is dark with a catch light, but the outline is a soft, uneven gray shadow band instead of the crisp, even black rim in ref-r01, and the fur stops short of it, leaving a bare halo."
+    }
+   ],
+   "overall": 4,
+   "faults": [
+    "Front and threequarter views, chest: a chalky flat pale panel with a hard side edge instead of a soft bib",
+    "Face view, around both eyes: a soft gray bald halo where a crisp dark outline should be, with the short fur stopping short of the rim",
+    "Head and back views, ear masses: hazy tangled clumps with dark crevices and a parting seam at the back of the head, no radiating layered tufts as in ref-r03 and r04"
+   ]
+  },
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "Ears and tails in the front, back and threequarter views have fine strands and a soft broken outline, but the torso, thighs and shins in the front and back views keep a smooth, clay-clean silhouette with almost no strands past the edge, unlike the strand-fringed limbs in ref-r02."
+    },
+    {
+     "id": "S02",
+     "result": "partial",
+     "why": "The ear cups are clearly lighter in the head view, but the chest bib in the front and head views is a bright, near-rectangular block with fairly hard vertical side edges that reads as a chalky patch, not a soft bib."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "Tails run cleanly to their tips (threequarter, side) and the body falls downward, but the ears in the head and back views are clumped and streak sideways or knot up, without the radiating fan seen in ref-r03 and ref-r04."
+    },
+    {
+     "id": "S04",
+     "result": "partial",
+     "why": "Claws and nose are clear, but the head view shows dark gaps and clumps on the crown between the ears, the feet in the back view look bald and smooth, and in the side view a pale strand streak runs across the eye."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "The face view has a dark iris with a catch light, but the outline is a smudgy gray halo of uneven width around a smooth near-bald ring, not the crisp, even black rim of ref-r01, so the short fur does not reach the eye edge."
+    }
+   ],
+   "overall": 4,
+   "faults": [
+    "Front and head views, chest: the pale bib is a bright block with hard vertical edges, so it reads as a chalky patch, not a soft gradient",
+    "Head and back views, ears and crown: the ear fur is clumped and streaks sideways instead of radiating, with dark gaps and knots on the crown between the ears",
+    "Front and back views, torso and legs: the body silhouette stays smooth like clay with almost no strand breakup at the edges, while ears and tails are fluffy, so the coat looks uneven"
+   ]
+  },
+  {
+   "items": [
+    {
+     "id": "S01",
+     "result": "partial",
+     "why": "Fine strands and a fuzzy outline show on the ears, tails and head in the front and back views, but the torso and legs read as near-bare clay with a sheen and a clean hard silhouette. The ears are a frizzy halo rather than the layered tufted clumps of ref-r03 and ref-r04."
+    },
+    {
+     "id": "S02",
+     "result": "partial",
+     "why": "The ear cups are lighter in the front and head views, but streaky and patchy rather than a clear pale tuft. In the front and threequarter views the chest bib is a rectangular, chalky pale slab with fairly defined edges, not a soft bib."
+    },
+    {
+     "id": "S03",
+     "result": "partial",
+     "why": "Tail strands run to the tip and body fur falls roughly downward in the back view. The ear strands are chaotic and frizzy in the head and side views instead of radiating outward like the fanned clumps in ref-r04."
+    },
+    {
+     "id": "S04",
+     "result": "fail",
+     "why": "The head view shows a smooth bald band across the crown above the forehead and dark holes inside both ear masses. The side view has a bare white streak through the ear, and in the face view strands run over the mouth line."
+    },
+    {
+     "id": "S05",
+     "result": "partial",
+     "why": "The face view has a dark iris and a catch light. The outline is a soft gray socket halo with an uneven darker top rather than ref-r01's crisp, even black rim, and a smooth gap separates the fur from it. The side-view eye is a distorted white shape."
+    }
+   ],
+   "overall": 4,
+   "faults": [
+    "Head and front views, crown and ears: the ear fur is a frizzy, uniform halo with a bald smooth band across the crown and dark holes in the ear masses, where ref-r03 and ref-r04 show layered, fanned tufted clumps.",
+    "Front and threequarter views, chest: the pale bib is a chalky rectangular slab with defined edges rather than a soft blended bib.",
+    "Front and side views, torso and legs: the coat is so short it reads as bare shiny clay with a hard silhouette, unlike the visibly furred, soft-edged limbs in ref-r02."
+   ]
+  }
+ ]
+}
