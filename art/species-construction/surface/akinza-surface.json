@@ -250,11 +250,11 @@
   "paleSmoothing": 60,
   "paleSlot": 1,
   "materials": {
-    "hairGray": 0.38,
+    "hairGray": 0.44,
     "hairPale": 1.0,
     "rootDarken": 0.72,
-    "skinGray": 0.2,
-    "skinPale": 0.5,
+    "skinGray": 0.24,
+    "skinPale": 0.85,
     "hairRoughness": 0.45,
     "radialRoughness": 0.6
   },
