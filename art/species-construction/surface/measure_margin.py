@@ -2,7 +2,7 @@
 
   python art/species-construction/surface/measure_margin.py <surface image dir>
 Needs silhouette-fur/ and silhouette-clay/ (render_surface.py --alpha, the second with --hide-fur).
-Regions: ears (z above 0.52, off the head axis), tails (side view behind the body, front and back views
+Regions: ears (z above 0.52, the whole crown band), tails (side view behind the body, front and back views
 on the tail side below the chest), body (everything else: head, torso, limbs).
 """
 import json
@@ -26,12 +26,12 @@ for view in ('front', 'side', 'back'):
     right = (cols-w/2)*px
     if view == 'side':
         hor = cy+right            # image right is +y
-        ears = (z > 0.52) & (hor > 0.0)
+        ears = z > 0.52
         tails = (z < 0.3) & (hor > 0.2)
         torso_side = hor > 0.2
     else:
         x = right if view == 'front' else -right
-        ears = (z > 0.52) & (np.abs(x) > 0.2)
+        ears = z > 0.52                     # the crown is ear fur too (rear fan roots)
         tails = (z < 0.3) & (x > 0.15)      # the tails stack on +x
         torso_side = tails
     body = ~ears & ~tails
