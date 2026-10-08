@@ -978,7 +978,7 @@
       "args": [
         "--body", "{base}/shape.glb",
         "--fairing", "{base}/fairing.json",
-        "--spec", "{repo}/art/species-construction/specs/arms-r30-v1.json",
+        "--spec", "{repo}/art/species-construction/specs/arms-r30-v2.json",
         "--out", "{out}"
       ],
       "existing": "body-0448",
@@ -988,7 +988,7 @@
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
         "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
         "art/species-construction/rebuild_arms_field_r30.py": "6ebb706d69079987000ed417e3bc4a4076918ab4ba6bb42d741ca7ed00c18ba3",
-        "art/species-construction/specs/arms-r30-v1.json": "3feee4f52387e5d38e9aa2a0e88fab9d7c507948b1b2015abeec0a885723aae8",
+        "art/species-construction/specs/arms-r30-v2.json": "ef6734977880815836f48cf5af094e985e30e0e475de301f75b7a08ba499f4c5",
         "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
         "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
       },
