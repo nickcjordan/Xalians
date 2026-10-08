@@ -66,10 +66,10 @@
   "visibleChange": 0.005
  },
  "baseline": {
-  "head": "head-2271",
+  "head": "head-2932",
   "body": "body-2918",
-  "assembly": "assembled-2920",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2920",
+  "assembly": "assembled-2947",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2947",
   "recipe": "docs/design/species-construction/akinza/recipe.json"
  },
  "round": 31,
@@ -183,14 +183,14 @@
   "R01": {
    "name": "Head silhouette",
    "weight": 3,
-   "score": 8.1,
+   "score": 5.6,
    "results": {
-    "R01.1": "pass",
+    "R01.1": "fail",
     "R01.2": "pass",
     "R01.3": "partial",
     "R01.4": "partial",
     "R01.5": "partial",
-    "R01.6": "pass",
+    "R01.6": "fail",
     "R01.7": "pass",
     "R01.8": "pass"
    },
@@ -384,9 +384,9 @@
   "R03": {
    "name": "Ear fan front",
    "weight": 3,
-   "score": 5.7,
+   "score": 4.3,
    "results": {
-    "R03.1": "pass",
+    "R03.1": "fail",
     "R03.2": "pass",
     "R03.3": "fail",
     "R03.4": "partial",
@@ -397,15 +397,9 @@
    "issues": [
     {
      "region": "R03",
-     "summary": "The fan front is too spiky: thorn points and serrated chevrons along the top and outer edges, hard blade tufts in the cups (Nick 2026-10-08: tone it down, fur comes from texture).",
-     "fix": "Retune H33 toward broader, softer masses: wider blends, a larger tip-min, lower ogive and curl, less edge serration; keep the outline, V tilt, cups, pale tufts and drape.",
+     "summary": "Nick picked the softest ears (round 31, number 4); they now run wider than the sheet: front ear span 1.043 (max 1.03), front head band IoU .874 (min .90).",
+     "fix": "Keep the soft look and pull the fan outline back in: trim the outer wing span about 1.5 percent and tighten the lower edge so the front silhouette meets the sheet again; no new geometry, no spikes.",
      "fixability": 0.7
-    },
-    {
-     "region": "R03",
-     "summary": "Crinkled seams along the lower tuft locks and down both inner cup walls.",
-     "fix": "Wider unions and blends at the cup walls so the seams melt; do not add geometry.",
-     "fixability": 0.6
     }
    ],
    "attempts": 1,
@@ -549,9 +543,9 @@
   "R04": {
    "name": "Ear fan rear and profile",
    "weight": 2.5,
-   "score": 6.4,
+   "score": 5.0,
    "results": {
-    "R04.1": "pass",
+    "R04.1": "fail",
     "R04.2": "pass",
     "R04.3": "partial",
     "R04.4": "partial",
@@ -562,8 +556,8 @@
    "issues": [
     {
      "region": "R04",
-     "summary": "From behind the fan is hard-edged leaf locks with a needle fringe and a ragged ledge around the head dome (Nick 2026-10-08: soft mass, fur from texture).",
-     "fix": "Retune H34: wider clump and skin blends, blunter tips, a wider skin blend at the dome so the ledge melts; keep the outline and profile sweep.",
+     "summary": "The softened rear fan bulges at the head base: back view width at .18 is 1.33x the sheet (max 1.15) and the back silhouette IoU fell to .870 (min .90).",
+     "fix": "Keep the soft mass and thin the low rear bulge at the head base (H34 core and dome blur), restoring the back outline; no spikes.",
      "fixability": 0.7
     }
    ],
@@ -1391,7 +1385,8 @@
   "2026-10-07: Round 29 (109 min): R07 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"arm fixes only, baseline paw\",\"per\":{\"R07\":{\"verdict\":\"same\",\"better\":0,\"worse\":0,\"reason\":\"A and B show the same forearm taper, the same wrist ring and the same | R01 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"single smooth crown dome\",\"per\":{\"R01\":{\"verdict\":\"same\",\"better\":1,\"worse\":0,\"reason\":\"A and B show the same skull outline, crown tuft, ear fan spread and side  | waiting for Nick: idiom R03 (critic score 6.031)",
   "2026-10-08: Round 30 (37 min): R09 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"collar fix A, raised knuckles, thin claws, filled gaps\",\"per\":{\"R09\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"A's toes are separate rounded lobes with l | R05 reverted; why: no candidate read better than the baseline: no candidate built or none changed visibly | waiting for Nick: idiom R03, reverts R09 (critic score 6.031)",
   "2026-10-08: Round 31 (85 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"soft locks, gently pointed, melted cups\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's fan front breaks into separate pointed lock tips that | R07 reverted; assembled-2946; why: the code builder candidate did not read better than the baseline: {\"R07\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"A's forepaw has separate rounded toe pads with short curved claws like the reference studies, whi | waiting for Nick: reverts R09 (critic score 6.031)",
-  "2026-10-08: Nick picked round 30 hind paw candidate B (assembled-2920: plumper mitten toes, thin claws) over the readers' 1-2 vote; adopted as the baseline (body-2918, recipe r30-R09-nick.json, only step B-21 differs). Visual results carried until the next cold rescore."
+  "2026-10-08: Nick picked round 30 hind paw candidate B (assembled-2920: plumper mitten toes, thin claws) over the readers' 1-2 vote; adopted as the baseline (body-2918, recipe r30-R09-nick.json, only step B-21 differs). Visual results carried until the next cold rescore.",
+  "2026-10-08: Nick picked ears 4 (round 31, assembled-2936, softened most); merged with his hind paws as assembled-2947 (recipe r31-nick-merged.json) and adopted. Measured side effects: R01.1 .906 to .874, R01.6 1.108 to 1.329, R03.1 1.021 to 1.043, R04.1 .928 to .870 (all now fail); the next ear orders restore the outline under the soft look."
  ],
  "decisionsForNick": [
   {
@@ -1550,12 +1545,10 @@
   }
  ],
  "awaiting": {
-  "R03": "Which ears: 1 current, 2 lightly softened (assembled-2934), 3 softened with fewer masses (assembled-2935), 4 softened most (assembled-2936)? Readers preferred 1 every time because the reference draws pointed locks.",
-  "R04": "paired with R03: Which ears: 1 current, 2 lightly softened (assembled-2934), 3 softened with fewer masses (assembled-2935), 4 softened most (assembled-2936)? Readers preferred 1 every time because the reference draws pointed locks.",
   "R07": "Nick prefers the current forepaw (A) to the outline paw. Which of the three marked faults (flat pale cap on the upper arm, ring at the wrist, claws bunched at the inner corner) should the loop still fix, if any?"
  },
  "disputes": {},
  "escalated": true,
- "keptSinceCold": 1,
+ "keptSinceCold": 2,
  "clock": 1791433084
 }
