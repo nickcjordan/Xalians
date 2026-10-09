@@ -297,7 +297,8 @@ def ship(scale, hue):
             + '<circle cx="%s" cy="%s" r="%s" fill="url(#lamp-red)" opacity=".8"/>' % (f(12 * s), f(-10.5 * s), f(3.5 * s)))
 
 
-# arriving ships: (start, pad, scale, faction, period, phase). Each glides in, levels out, settles on its landing deck, holds, and fades.
+# arriving ships: (start, pad, scale, faction, period, phase). Each glides in, levels out, settles on its landing deck, holds, then
+# lifts off and climbs away, fading into the haze (it used to fade where it sat, which read as a ship dissolving: round 24).
 ARRIVING = []  # drawn at the start of cityfx, in front of the far city and its decks
 ARRIVALS = [((-100, 250), (236, 466), 1.8, 0, 22.13, 3.07), ((420, -60), (318, 478), 1.3, 1, 27.31, 6.97), ((-100, 400), (138, 481), 1.5, 2, 19.37, 9.23), ((1660, 380), (1470, 489), 1.4, 3, 24.19, 18.29)]
 for (p0, p1, s, fac, per, ph) in ARRIVALS:
@@ -308,8 +309,8 @@ for (p0, p1, s, fac, per, ph) in ARRIVALS:
     tilt = max(-45, min(45, tilt * .8))
     trail = '<polygon points="%s,%s %s,0 %s,%s" fill="url(#trail-fac%d)">%s</polygon>' % (f(20 * s), f(-2 * s), f(46 * s), f(20 * s), f(2 * s), fac, anim('opacity', '1;1;0;0', per, ph, '0;.3;.45;1'))
     ARRIVING.append('<!-- an arriving ship --><g opacity="0">%s<g>%s<g>%s<g%s>%s%s</g></g></g></g>' % (
-        anim('opacity', '0;1;1;0;0', per, ph, '0;.06;.7;.76;1'),
-        trans('%s %s;%s %s;%s %s' % (f(p0[0]), f(p0[1]), f(p1[0]), f(p1[1]), f(p1[0]), f(p1[1])), per, ph, '0;.6;1').replace('repeatCount', 'calcMode="spline" keySplines=".25 .1 .4 1;0 0 1 1" repeatCount'),
+        anim('opacity', '0;1;1;0;0', per, ph, '0;.06;.72;.8;1'),
+        trans('%s %s;%s %s;%s %s;%s %s;%s %s' % (f(p0[0]), f(p0[1]), f(p1[0]), f(p1[1]), f(p1[0]), f(p1[1]), f(p1[0] + (30 if nose_left else -30)), f(p1[1] - 140), f(p1[0] + (30 if nose_left else -30)), f(p1[1] - 140)), per, ph, '0;.6;.7;.8;1').replace('repeatCount', 'calcMode="spline" keySplines=".25 .1 .4 1;0 0 1 1;.5 0 1 1;0 0 1 1" repeatCount'),
         rot('%s;%s;0;0' % (f(tilt), f(tilt)), per, ph, '0;.42;.55;1'),
         flip, trail, ship(s, 'fac%d' % fac)))
 
