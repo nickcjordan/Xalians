@@ -217,6 +217,11 @@ def compute_attributes(skin, cfg, species):
         'tail': unit(co-tail_root),
         'forward': unit(np.tile([0.0, -1.0, -0.25], (n, 1))),
     }
+    if cfg.get('earOwnSide', True):  # ear fur between the root and the midline still combs toward its own side
+        e = directions['ear']
+        e[:, 0] = sign*np.abs(e[:, 0])
+        mid = 1.0-smoothstep(np.abs(co[:, 0])/cfg.get('earMidline', 0.06))  # at the midline comb down, so the fur does not part
+        directions['ear'] = unit(unit(e)*(1.0-mid[:, None])+np.array([0.0, 0.3, -1.0])*mid[:, None])
     names = list(cfg['groups'])
     weights = np.zeros((len(names), n))
     for i, name in enumerate(names):
@@ -375,7 +380,7 @@ def compute_attributes(skin, cfg, species):
         gcfg = {**gcfg, 'groups': {k: v for k, v in gcfg['groups'].items() if v.get('guided', True)}}
         for gname in gcfg['groups']:
             gw += wn[names.index(gname)]
-        guided = np.clip(gw*(1-cup_mask), 0, 1)
+        guided = np.clip(gw*(1-cup_mask*(0.0 if gcfg.get('cupGuided') else 1.0)), 0, 1)
         write_attribute(me, 'fur_guided', guided)
         write_attribute(me, 'cupm', cup_mask)
         rng = np.random.default_rng(cfg['seed'])
@@ -418,6 +423,13 @@ def compute_attributes(skin, cfg, species):
                 lo, hi = spec['length']
                 L = lo+(hi-lo)*tt**spec.get('lengthPower', 0.8)
                 L = L*(1.0+spec.get('lengthJitter', 0.0)*(rng.random(len(L))*2.0-1.0))
+                if 'farFade' in spec:  # the very farthest points of the fan grow shorter locks (no lone spikes at the ear points)
+                    L = L*(1.0-spec['farFade']*smoothstep((tt-0.88)/0.12))
+                if 'frontScale' in spec:  # shorter, softer locks on the front of the fan, shortest in the cup
+                    front = smoothstep((-nrm[idx, 1]-0.1)/0.4)
+                    L = L*(1.0-front*(1.0-spec['frontScale']))
+                if 'cupScale' in spec:
+                    L = L*(1.0-cup_mask[idx]*(1.0-spec['cupScale']))
                 dirs = tang[idx]
                 if spec.get('radial'):  # feathered locks: radiate from the ear root over the surface, outward on its own side
                     r = co[idx]-root_s
@@ -662,7 +674,10 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
     setpos = b.node('GeometryNodeSetPosition')
     tree.links.new(realize.outputs['Geometry'], setpos.inputs['Geometry'])
     tree.links.new(total, setpos.inputs['Position'])
-    radius = b.m('MULTIPLY', cfg['rootRadius'], b.m('SUBTRACT', 1.0, b.m('MULTIPLY', t, cfg['taper'])))
+    taper = cfg['taper']
+    if cfg.get('guides', {}).get('lockTaper') is not None:  # guided strands taper further, to fine tips
+        taper = b.m('ADD', cfg['taper'], b.m('MULTIPLY', b.named('lockc', 'FLOAT'), cfg['guides']['lockTaper']-cfg['taper']))
+    radius = b.m('MULTIPLY', cfg['rootRadius'], b.m('SUBTRACT', 1.0, b.m('MULTIPLY', t, taper)))
     join = b.node('GeometryNodeJoinGeometry')
     tree.links.new(setpos.outputs['Geometry'], join.inputs['Geometry'])
     if guide_obj is not None:
@@ -728,10 +743,31 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
             tree.links.new(gpos, fm.inputs[4])
             tree.links.new(short, fm.inputs[5])
             gpos = fm.outputs[1]
+            # each strand its own: length (lenVar), a small fan at the tip (fan, world units), frizz along it
+            cidx = cop.outputs['Curve Index']
+            rl2 = b.node('FunctionNodeRandomValue', data_type='FLOAT')
+            rl2.inputs['Min'].default_value = 1.0-lock.get('lenVar', 0.0)
+            rl2.inputs['Max'].default_value = 1.0
+            rl2.inputs['Seed'].default_value = cfg['seed']+11
+            b.set(rl2, 'ID', cidx)
+            rv = b.node('FunctionNodeRandomValue', data_type='FLOAT_VECTOR')
+            rv.inputs['Min'].default_value = (-1, -1, -1)
+            rv.inputs['Max'].default_value = (1, 1, 1)
+            rv.inputs['Seed'].default_value = cfg['seed']+12
+            b.set(rv, 'ID', cidx)
+            rel = b.vm('SUBTRACT', gpos, fat.outputs['Value'])
+            gpos = b.vm('ADD', fat.outputs['Value'], b.vm('SCALE', rel, scale=rl2.outputs['Value']))
+            gpos = b.vm('ADD', gpos, b.vm('SCALE', rv.outputs['Value'], scale=b.m('MULTIPLY', b.m('MULTIPLY', tj, tj), lock.get('fan', 0.0))))
+            fz = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+            fz.inputs['Scale'].default_value = lock.get('frizzScale', 450.0)
+            b.set(fz, 'Vector', b.node('GeometryNodeInputPosition').outputs['Position'])
+            gpos = b.vm('ADD', gpos, b.vm('SCALE', b.vm('SUBTRACT', fz.outputs['Color'], (0.5, 0.5, 0.5)),
+                                          scale=b.m('MULTIPLY', tj, lock.get('frizz', 0.0))))
         gset = b.node('GeometryNodeSetPosition')
         tree.links.new(interp.outputs['Curves'], gset.inputs['Geometry'])
         tree.links.new(gpos, gset.inputs['Position'])
-        tree.links.new(gset.outputs['Geometry'], join.inputs['Geometry'])
+        tagged = b.store(gset.outputs['Geometry'], 'lockc', 1.0, 'FLOAT')  # guided strands, for their own taper and sheen
+        tree.links.new(tagged, join.inputs['Geometry'])
     scr = b.node('GeometryNodeSetCurveRadius')
     tree.links.new(join.outputs['Geometry'], scr.inputs['Curve'])
     tree.links.new(radius, scr.inputs['Radius'])
@@ -804,6 +840,14 @@ def hair_material(cfg):
     hair.parametrization = 'COLOR'
     tree.links.new(mul.outputs[2], hair.inputs['Color'])
     hair.inputs['Roughness'].default_value = mc['hairRoughness']
+    if 'lockRoughness' in mc:  # lower sheen on the guided locks: aligned strands otherwise shine like metal scales
+        lk = attr_node(tree, 'lockc')
+        rmix = tree.nodes.new('ShaderNodeMix')
+        rmix.data_type = 'FLOAT'
+        tree.links.new(lk.outputs['Fac'], rmix.inputs[0])
+        rmix.inputs[2].default_value = mc['hairRoughness']
+        rmix.inputs[3].default_value = mc['lockRoughness']
+        tree.links.new(rmix.outputs[0], hair.inputs['Roughness'])
     hair.inputs['Radial Roughness'].default_value = mc['radialRoughness']
     hair.inputs['Coat'].default_value = 0.0
     out = tree.nodes.new('ShaderNodeOutputMaterial')

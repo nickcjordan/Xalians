@@ -528,9 +528,13 @@
         "neighbors": 1,
         "jitter": 0.006,
         "lockConverge": {
-          "power": 2.0,
-          "tipSpread": 0.08,
-          "maxSpread": 0.06
+          "power": 1.8,
+          "tipSpread": 0.15,
+          "maxSpread": 0.06,
+          "lenVar": 0.3,
+          "fan": 0.004,
+          "frizz": 0.003,
+          "frizzScale": 450.0
         },
         "cup": {
           "length": 0.014,
@@ -540,24 +544,29 @@
         },
         "groups": {
           "ears": {
-            "count": 85,
+            "count": 110,
             "length": [
               0.05,
-              0.1
+              0.12
             ],
             "lengthPower": 0.9,
             "lengthJitter": 0.25,
             "radial": 0.85,
             "outward": 0.02,
-            "lift": 0.18,
+            "lift": 0.25,
             "tipSweep": 0.05,
-            "curlIn": 0.2
+            "curlIn": 0.2,
+            "frontScale": 0.7,
+            "cupScale": 0.45,
+            "farFade": 0.5
           },
           "crown": {
             "guided": false
           }
         },
-        "cupPale": 0.6
+        "cupPale": 0.6,
+        "lockTaper": 0.97,
+        "cupGuided": true
       },
       "groups": {
         "head": {
@@ -578,6 +587,9 @@
       "cupInner": {
         "t0": 0.7,
         "width": 0.4
+      },
+      "materials": {
+        "lockRoughness": 0.75
       }
     }
   }
