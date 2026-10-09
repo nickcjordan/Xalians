@@ -1,5 +1,5 @@
 {
-  "note": "Color options for the Akinza surface, applied at render time over the grayscale base (render_surface.py --palette <key>). Hex values are sRGB. skinFactor darkens the skin under the fur relative to the coat.",
+  "note": "Color options for the Akinza surface, applied at render time over the grayscale base (render_surface.py --palette <key>). Hex values are sRGB. skinFactor darkens the skin under the fur relative to the coat. Eye color for every option from 2026-10-08: deep ice-teal #16789A. P1 to P3 add a pattern: the blue is mixed into the coat by a texture sampled at the stored rest position (attribute rest, object space), masked by pmask (countershading and belly/face-front exclusion), so it follows the body when posed.",
   "skinFactor": 0.6,
   "A": {
     "name": "Frost",
@@ -27,5 +27,58 @@
     "tip": "#74BDEB",
     "tipFrom": 0.025,
     "tipTo": 0.045
+  },
+  "P1": {
+    "name": "Broken ice",
+    "pattern": "ice",
+    "coat": "#F3F6FA",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.6,
+      1.0
+    ]
+  },
+  "P2": {
+    "name": "Drift stripes",
+    "pattern": "stripes",
+    "coat": "#F3F6FA",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.6,
+      1.0
+    ]
+  },
+  "P3": {
+    "name": "Frost spots",
+    "pattern": "spots",
+    "coat": "#F3F6FA",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.6,
+      1.0
+    ],
+    "patternParams": {
+      "base": 0.25,
+      "dorsal": 0.6,
+      "tail": 0.4
+    }
   }
 }

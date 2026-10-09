@@ -108,6 +108,7 @@ def compute_attributes(skin, cfg, species):
     co = np.empty(n*3)
     me.vertices.foreach_get('co', co)
     co = co.reshape(n, 3)
+    co_rest = co.copy()  # object-space rest position, stored for pattern shaders
     mw = np.array(skin.matrix_world)
     co = co@mw[:3, :3].T+mw[:3, 3]
     nrm = np.empty(n*3)
@@ -330,6 +331,17 @@ def compute_attributes(skin, cfg, species):
     write_attribute(me, 'pale', pale)
     write_attribute(me, 'rim', rim)
     write_attribute(me, 'fur_tone', blend('tone', 1.0))
+    # pattern support: rest position (follows the body when posed), countershading and region masks
+    write_attribute(me, 'rest', co_rest, 'FLOAT_VECTOR')
+    front = smoothstep((-nrm[:, 1]-0.2)/0.5)
+    down = smoothstep((-nrm[:, 2]-0.05)/0.5)
+    torso_zone = np.maximum(membership(co, zones['R05'], floor, height, 0.03), membership(co, zones['R06'], floor, height, 0.03))
+    under = np.maximum(down, front*torso_zone)
+    face_front = membership(co, zones['R02'], floor, height, 0.03)*front
+    write_attribute(me, 'under', under)
+    write_attribute(me, 'pmask', np.clip((1.0-under)*(1.0-face_front), 0, 1))
+    write_attribute(me, 'dorsal', smoothstep((0.5*nrm[:, 1]+0.5*nrm[:, 2]+0.2)/0.8))
+    write_attribute(me, 'ptail', np.clip(wn[names.index('tails')], 0, 1))
     write_attribute(me, 'pad', pad)
     write_attribute(me, 'comb', comb, 'FLOAT_VECTOR')
 

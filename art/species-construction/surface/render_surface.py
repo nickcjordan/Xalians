@@ -100,6 +100,116 @@ def lin(hexstr, scale=1.0):
     return (*out, 1.0)
 
 
+class MatBuilder:
+    def __init__(self, tree):
+        self.t = tree
+
+    def node(self, kind, **props):
+        n = self.t.nodes.new(kind)
+        for k, v in props.items():
+            setattr(n, k, v)
+        return n
+
+    def put(self, n, i, v):
+        if isinstance(v, bpy.types.NodeSocket):
+            self.t.links.new(v, n.inputs[i])
+        else:
+            n.inputs[i].default_value = v
+
+    def attr(self, name):
+        n = self.node('ShaderNodeAttribute', attribute_type='GEOMETRY', attribute_name=name)
+        return n
+
+    def m(self, op, a, b=None, c=None, clamp=False):
+        n = self.node('ShaderNodeMath', operation=op, use_clamp=clamp)
+        self.put(n, 0, a)
+        if b is not None:
+            self.put(n, 1, b)
+        if c is not None:
+            self.put(n, 2, c)
+        return n.outputs['Value']
+
+    def vm(self, op, a, b=None, scale=None):
+        n = self.node('ShaderNodeVectorMath', operation=op)
+        self.put(n, 0, a)
+        if b is not None:
+            self.put(n, 1, b)
+        if scale is not None:
+            self.put(n, 3, scale)
+        return n.outputs['Value'] if op in ('DOT_PRODUCT', 'LENGTH', 'DISTANCE') else n.outputs['Vector']
+
+    def ramp(self, v, lo, hi):
+        n = self.node('ShaderNodeMapRange')
+        n.clamp = True
+        self.put(n, 'From Min', lo)
+        self.put(n, 'From Max', hi)
+        self.put(n, 'Value', v)
+        return n.outputs['Result']
+
+
+def pattern_factor(hair, kind, params):
+    """Blue amount 0..1 per strand from the rest-position coordinate, so the pattern stays on the body when posed."""
+    b = MatBuilder(hair)
+    rest = b.attr('rest').outputs['Vector']
+    dorsal = b.attr('dorsal').outputs['Fac']
+    ptail = b.attr('ptail').outputs['Fac']
+    pmask = b.attr('pmask').outputs['Fac']
+    if kind == 'ice':
+        warp = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+        warp.inputs['Scale'].default_value = params.get('warpScale', 6.0)
+        b.put(warp, 'Vector', rest)
+        coord = b.vm('ADD', rest, b.vm('SCALE', b.vm('SUBTRACT', warp.outputs['Color'], (0.5, 0.5, 0.5)), scale=params.get('warp', 0.16)))
+        cells = b.node('ShaderNodeTexVoronoi', voronoi_dimensions='3D', feature='F1')
+        cells.inputs['Scale'].default_value = params.get('scale', 6.5)
+        b.put(cells, 'Vector', coord)
+        sep = b.node('ShaderNodeSeparateColor')
+        hair.links.new(cells.outputs['Color'], sep.inputs['Color'])
+        gate = b.ramp(sep.outputs['Red'], params.get('gate', 0.4), params.get('gate', 0.4)+0.08)
+        edge = b.node('ShaderNodeTexVoronoi', voronoi_dimensions='3D', feature='DISTANCE_TO_EDGE')
+        edge.inputs['Scale'].default_value = params.get('scale', 6.5)
+        b.put(edge, 'Vector', coord)
+        soft = b.ramp(edge.outputs['Distance'], 0.0, params.get('edgeSoft', 0.22))
+        f = b.m('MULTIPLY', gate, soft)
+    elif kind == 'stripes':
+        axis = b.vm('DOT_PRODUCT', rest, params.get('axis', (0.25, 0.35, 1.0)))
+        warp = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+        warp.inputs['Scale'].default_value = params.get('warpScale', 4.0)
+        b.put(warp, 'Vector', rest)
+        phase = b.m('MULTIPLY', b.m('ADD', axis, b.m('MULTIPLY', warp.outputs['Factor'], params.get('warp', 0.22))), params.get('freq', 6.28318/0.17))
+        wave = b.m('ADD', b.m('MULTIPLY', b.m('SINE', phase), 0.5), 0.5)
+        band = b.ramp(wave, params.get('lo', 0.4), params.get('hi', 0.68))
+        f = b.m('MULTIPLY', band, b.m('ADD', 0.3, b.m('MULTIPLY', dorsal, 0.7)))
+    else:  # spots
+        cells = b.node('ShaderNodeTexVoronoi', voronoi_dimensions='3D', feature='F1')
+        cells.inputs['Scale'].default_value = params.get('scale', 13.0)
+        cells.inputs['Randomness'].default_value = 1.0
+        b.put(cells, 'Vector', rest)
+        sep = b.node('ShaderNodeSeparateColor')
+        hair.links.new(cells.outputs['Color'], sep.inputs['Color'])
+        dist = cells.outputs['Distance']
+        r1 = params.get('spotR', 0.3)
+        spot = b.m('SUBTRACT', 1.0, b.ramp(dist, r1-0.07, r1+0.05))
+        inner = b.ramp(dist, r1*0.45, r1*0.45+0.07)
+        outer = b.m('SUBTRACT', 1.0, b.ramp(dist, r1+0.08, r1+0.2))
+        ring = b.m('MULTIPLY', inner, outer)
+        rosette = b.ramp(sep.outputs['Green'], 0.45, 0.55)
+        shape = b.m('ADD', b.m('MULTIPLY', spot, b.m('SUBTRACT', 1.0, rosette)), b.m('MULTIPLY', ring, rosette))
+        dens = b.m('ADD', params.get('base', 0.12), b.m('ADD', b.m('MULTIPLY', dorsal, params.get('dorsal', 0.5)), b.m('MULTIPLY', ptail, params.get('tail', 0.45))))
+        gate = b.ramp(b.m('SUBTRACT', dens, sep.outputs['Red']), 0.0, 0.08)
+        f = b.m('MULTIPLY', shape, gate)
+    return b.m('MULTIPLY', f, pmask)
+
+
+def apply_pattern(pal, hair, mix_node):
+    f = pattern_factor(hair, pal['pattern'], pal.get('patternParams', {}))
+    blend = hair.nodes.new('ShaderNodeMix')
+    blend.data_type = 'RGBA'
+    hair.links.new(f, blend.inputs[0])
+    blend.inputs[6].default_value = lin(pal['coat'])
+    blend.inputs[7].default_value = lin(pal['blue'])
+    hair.links.new(blend.outputs[2], mix_node.inputs[6])
+
+
 def apply_palette(pal, factor):
     """Recolor the hair, the skin under it and the iris; the grayscale structure (roots, tone, pale mask) stays."""
     skin = max([o for o in bpy.data.objects if o.type == 'MESH'], key=lambda o: len(o.data.vertices))
@@ -112,10 +222,12 @@ def apply_palette(pal, factor):
     m = mix_node(hair)
     m.inputs[6].default_value = lin(pal['coat'])
     m.inputs[7].default_value = lin(pal['pale'])
+    if 'pattern' in pal:
+        apply_pattern(pal, hair, m)
     if 'tip' in pal:  # icy tips on the long fur (ears and tails), strongest at the strand ends
         info = [n for n in hair.nodes if n.bl_idname == 'ShaderNodeHairInfo'][0]
         ends = hair.nodes.new('ShaderNodeMapRange')
-        ends.inputs['From Min'].default_value, ends.inputs['From Max'].default_value = 0.15, 0.85
+        ends.inputs['From Min'].default_value, ends.inputs['From Max'].default_value = pal.get('tipEnds', (0.15, 0.85))
         hair.links.new(info.outputs['Intercept'], ends.inputs['Value'])
         ln = hair.nodes.new('ShaderNodeAttribute')
         ln.attribute_type, ln.attribute_name = 'GEOMETRY', 'fur_length'
@@ -223,7 +335,7 @@ def main():
         scene.view_settings.view_transform = 'Standard'
     if args.palette:
         pals = json.loads((Path(__file__).resolve().parent/'akinza-palettes.json').read_text())
-        apply_palette(pals[args.palette], pals['skinFactor'])
+        apply_palette(pals[args.palette], pals[args.palette].get('skinFactor', pals['skinFactor']))
     setup_world(scene)
     rig = make_rig()
     cam_data = bpy.data.cameras.new('surface camera')
