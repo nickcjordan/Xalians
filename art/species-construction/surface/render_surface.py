@@ -480,6 +480,7 @@ def main():
     parser.add_argument('--device', default='CPU')
     parser.add_argument('--palette', default=None)
     parser.add_argument('--hide-fur', action='store_true')
+    parser.add_argument('--clay', action='store_true', help='with --hide-fur: the skin in one neutral matte gray, to judge the shape alone')
     parser.add_argument('--alpha', action='store_true', help='transparent background, RGBA (silhouette measures)')
     parser.add_argument('--debug-scale', type=float, default=1.0)
     parser.add_argument('--debug-attr', default=None, help='show this skin attribute as emission, fur hidden')
@@ -512,6 +513,16 @@ def main():
         for ob in bpy.data.objects:
             if ob.name == 'Akinza fur':
                 ob.hide_render = True
+    if args.clay:
+        clay = bpy.data.materials.new('diagnosis clay')
+        clay.use_nodes = True
+        bs = clay.node_tree.nodes.get('Principled BSDF')
+        bs.inputs['Base Color'].default_value = (0.35, 0.35, 0.35, 1)
+        bs.inputs['Roughness'].default_value = 0.7
+        for ob in bpy.data.objects:
+            if ob.type == 'MESH' and len(ob.data.vertices) > 500000:
+                for i in range(len(ob.data.materials)):
+                    ob.data.materials[i] = clay
     if args.debug_attr:
         for ob in bpy.data.objects:
             if ob.name == 'Akinza fur':
