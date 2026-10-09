@@ -342,6 +342,20 @@ def compute_attributes(skin, cfg, species):
     write_attribute(me, 'pmask', np.clip((1.0-under)*(1.0-face_front), 0, 1))
     write_attribute(me, 'dorsal', smoothstep((0.5*nrm[:, 1]+0.5*nrm[:, 2]+0.2)/0.8))
     write_attribute(me, 'ptail', np.clip(wn[names.index('tails')], 0, 1))
+    # wrapped-stripe support: unbanded bib line only, no bands on the ears or the lower face, fade toward the belly edge
+    torso_wide = np.maximum(membership(co, zones['R05'], floor, height, 0.03),
+                            membership(co, {'at': [0.28, 0.6], 'x': [0.0, 0.25], 'symmetricX': True, 'y': [-0.14, 0.3]}, floor, height, 0.03))
+    strip = (1.0-smoothstep((np.abs(co[:, 0])-0.03)/0.03))*front*torso_wide
+    face_low = membership(co, {'at': [0.1, 0.27], 'x': [0.0, 0.2], 'symmetricX': True, 'y': [-0.14, 0.0]}, floor, height, 0.02)*front
+    earw = np.clip(wn[names.index('ears')], 0, 1)
+    write_attribute(me, 'pmaskw', np.clip((1.0-strip)*(1.0-face_low)*(1.0-earw), 0, 1))
+    write_attribute(me, 'earw', earw)
+    write_attribute(me, 'fade', np.clip((0.65+0.35*np.maximum(smoothstep((0.5*nrm[:, 1]+0.5*nrm[:, 2]+0.2)/0.8), np.clip(wn[names.index('tails')], 0, 1)))
+                                        * (1.0-smoothstep((-nrm[:, 2]-0.1)/0.6)), 0, 1))
+    try:
+        write_attribute(me, 'tailpos', np.where(np.isfinite(tail_d), tail_d, 0.0))
+    except NameError:
+        write_attribute(me, 'tailpos', np.zeros(n))
     write_attribute(me, 'pad', pad)
     write_attribute(me, 'comb', comb, 'FLOAT_VECTOR')
 

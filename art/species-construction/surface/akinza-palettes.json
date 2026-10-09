@@ -80,5 +80,54 @@
       "dorsal": 0.6,
       "tail": 0.4
     }
+  },
+  "P2b": {
+    "pattern": "stripes",
+    "coat": "#F8FAFD",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.75,
+      1.0
+    ],
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "name": "Wrapped stripes",
+    "patternParams": {
+      "wrap": true,
+      "tailAxis": true,
+      "maskAttr": "pmaskw",
+      "earOff": true
+    }
+  },
+  "P2c": {
+    "pattern": "stripes",
+    "coat": "#F8FAFD",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.75,
+      1.0
+    ],
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "name": "Wrapped and fading stripes",
+    "patternParams": {
+      "wrap": true,
+      "tailAxis": true,
+      "maskAttr": "pmaskw",
+      "fadeAttr": "fade",
+      "earOff": true
+    }
   }
 }

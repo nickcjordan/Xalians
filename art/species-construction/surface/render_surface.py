@@ -153,7 +153,7 @@ def pattern_factor(hair, kind, params):
     rest = b.attr('rest').outputs['Vector']
     dorsal = b.attr('dorsal').outputs['Fac']
     ptail = b.attr('ptail').outputs['Fac']
-    pmask = b.attr('pmask').outputs['Fac']
+    pmask = b.attr(params.get('maskAttr', 'pmask')).outputs['Fac']
     if kind == 'ice':
         warp = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
         warp.inputs['Scale'].default_value = params.get('warpScale', 6.0)
@@ -175,10 +175,19 @@ def pattern_factor(hair, kind, params):
         warp = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
         warp.inputs['Scale'].default_value = params.get('warpScale', 4.0)
         b.put(warp, 'Vector', rest)
+        if params.get('tailAxis'):  # on the tails, bands are rings along each tail's own length (geodesic distance from the root)
+            tailpos = b.attr('tailpos').outputs['Fac']
+            tmask = b.ramp(ptail, 0.4, 0.6)
+            axis = b.m('ADD', b.m('MULTIPLY', axis, b.m('SUBTRACT', 1.0, tmask)), b.m('MULTIPLY', tailpos, tmask))
         phase = b.m('MULTIPLY', b.m('ADD', axis, b.m('MULTIPLY', warp.outputs['Factor'], params.get('warp', 0.22))), params.get('freq', 6.28318/0.17))
         wave = b.m('ADD', b.m('MULTIPLY', b.m('SINE', phase), 0.5), 0.5)
         band = b.ramp(wave, params.get('lo', 0.4), params.get('hi', 0.68))
-        f = b.m('MULTIPLY', band, b.m('ADD', 0.3, b.m('MULTIPLY', dorsal, 0.7)))
+        if params.get('wrap'):
+            f = band
+            if params.get('fadeAttr'):
+                f = b.m('MULTIPLY', band, b.attr(params['fadeAttr']).outputs['Fac'])
+        else:
+            f = b.m('MULTIPLY', band, b.m('ADD', 0.3, b.m('MULTIPLY', dorsal, 0.7)))
     else:  # spots
         cells = b.node('ShaderNodeTexVoronoi', voronoi_dimensions='3D', feature='F1')
         cells.inputs['Scale'].default_value = params.get('scale', 13.0)
@@ -197,6 +206,9 @@ def pattern_factor(hair, kind, params):
         dens = b.m('ADD', params.get('base', 0.12), b.m('ADD', b.m('MULTIPLY', dorsal, params.get('dorsal', 0.5)), b.m('MULTIPLY', ptail, params.get('tail', 0.45))))
         gate = b.ramp(b.m('SUBTRACT', dens, sep.outputs['Red']), 0.0, 0.08)
         f = b.m('MULTIPLY', shape, gate)
+    if params.get('earOff'):
+        earw = b.attr('earw').outputs['Fac']
+        f = b.m('MULTIPLY', f, b.m('SUBTRACT', 1.0, b.ramp(earw, 0.05, 0.4)))
     return b.m('MULTIPLY', f, pmask)
 
 
@@ -219,6 +231,14 @@ def apply_palette(pal, factor):
         for n in tree.nodes:
             if n.bl_idname == 'ShaderNodeMix' and n.data_type == 'RGBA' and n.blend_type == 'MIX':
                 return n
+    if 'rootLift' in pal:
+        for n in hair.nodes:
+            if n.bl_idname == 'ShaderNodeMapRange' and n.inputs['Value'].is_linked and n.inputs['Value'].links[0].from_node.bl_idname == 'ShaderNodeHairInfo':
+                n.inputs['To Min'].default_value = pal['rootLift']
+    if 'diffuseShare' in pal:
+        for n in hair.nodes:
+            if n.bl_idname == 'ShaderNodeMix' and n.data_type == 'FLOAT':
+                n.inputs[2].default_value = pal['diffuseShare']
     m = mix_node(hair)
     m.inputs[6].default_value = lin(pal['coat'])
     m.inputs[7].default_value = lin(pal['pale'])
