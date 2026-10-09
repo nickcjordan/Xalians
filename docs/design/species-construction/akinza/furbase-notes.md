@@ -102,3 +102,42 @@ Technical check passes (one component, no non-manifold edges), no face guard bro
 
 - A soft diagonal shadow line remains on the neck at the head trim and below it (world z about .45). The hard fold under the left jaw is gone; what is left lies in the assembly's neck loft and the body, outside this head-only step.
 - The cheek ruff under each ear (outside the face region: rays there cross the skin twice) and the faint panel at the back of the skull are unchanged.
+
+# Analytic ears H38, three outlines (2026-10-09)
+
+Nick on the H36/H37 ears: "the ears still have an odd shape ... like you took a piece of Play-Doh and smashed it and then tried to mold it back to the right shape"; he wants "a smooth, defined, symmetrical, clean, rounded ear shape, as you would expect in a small animal like this". Every earlier ear was derived from the old sculpted fan (traced outline, profile fitted to the old sweep), so it inherited its irregularities. H38 builds the ears from a few parameters and reads nothing from the old ear.
+
+## What was built
+
+- Step H38 after H37: `art/species-construction/analytic_ears_field.py` with `specs/ears-analytic-{A,B,C}.json` (each spec holds only the outline; every construction key is a script default). Recipes `recipe-furbase-v4{A,B,C}.json` are `recipe-furbase-v3.json` plus H38 (`recipe.py add`).
+- Outputs: A head-3044 / assembled-3047, B head-3045 / assembled-3048, C head-3046 / assembled-3049; packets under `untracked/species-construction/akinza/loop/packets/`. Superseded builds of the same recipe files: assembled-3035 to 3037 and 3041 to 3043 (ear bottoms closed the notch under the fan, a dip between crown and ear tops, A below the figure-height invariant).
+- One ear in u = |x|, so the other is its exact mirror (pale faces per side: 26397/26397, 24801/24801, 29933/29933).
+  - Outline: a closed uniform cubic B-spline through six control points (C2 smooth, no scallops or dents). A: the sheet's broad fan as a rounded triangle. B: narrower and taller with a rounder tip. C: a broad wide oval.
+  - Form: one analytic mid-surface (a backward sweep with one constant gentle curvature, a funnel that brings the edges forward, deepest at the base, opening forward), an even .03 shell with a rolled rim bead, a smooth back flare at the root and a .10 fillet into the skull.
+  - Cup: an elliptical bowl concentric with the visible outline (moment ellipse times .62) with a smooth raised rim; `Pale inner-ear coat.001` is given to the front faces inside that ellipse, so its edge is the ellipse.
+  - Skull under the ears: H37 beyond |x| .24 (where the old ear roots begin) is replaced by an ellipsoidal end cap grown from H37's own section at |x| .24 (both sides averaged, hollows closed, shorter toward the jaw). H37 is kept exactly inside |x| .18, and kept around each eye globe (exact within .012 to .03 of the globe, lightly blurred out to .12).
+
+## Measures (against assembled-3031)
+
+| Measure | 3031 | A 3047 | B 3048 | C 3049 |
+|---|---|---|---|---|
+| R03.1 ear span (.97 to 1.03) | 1.024 | 1.004 | .993 | 1.004 |
+| R01.1 front head IoU (min .90) | .918 | .846 | .785 | .840 |
+| R01.2 left head IoU (min .90) | .917 | .908 | .909 | .908 |
+| R04.1 back head IoU (min .90) | .911 | .884 | .829 | .848 |
+| R03.2 fan area missing (max .06) | .042 | .105 | .155 | .069 |
+| R04.2 side extra (max .06) | .035 | .024 | .027 | .024 |
+| R01.6 back width at .18 (max 1.15) | 1.043 | 1.043 | 1.043 | 1.043 |
+| I09 figure height (1.8605 within 1 percent) | 1.859 | 1.848 | 1.866 | 1.849 |
+
+All three pass the technical check (one component, no non-manifold edges); containment is within allowance for A and C, and B is flagged outside all zones (.031 against .015, its taller ears). Each packet flags a front crease at the ear-fan root seam joint.
+
+R01.1, R04.1 and R03.2 fail for all three, and they cannot all pass with exact mirror ears: the first sheet's right ear stands higher than its left (its tip reaches the frame top, the left about .08 head units lower), so the sheet against its own mirror reads IoU .79 over the head band and the best symmetric shape about .88 to .89. That is a lever case for Nick: symmetry (his ruling) against the sheet-overlap bar of .90.
+
+Bare-skin comparisons (3031, A, B, C): `untracked/species-construction/akinza/surface/ears-analytic-compare/` (`clay-3031-vs-A-B-C-{head,threequarter,side,back,face}.png` at the fur cameras, `heads-3030-vs-A-B-C-{head-front,head-back,head-side,head-top,q-L,q-R}.png` of the head components).
+
+## Still open
+
+- Uncovered side of the head. The old ears wrapped the head side right beside the eyes, so H38 exposes skin H37 never had to show: a faint vertical line on the forehead and crown at |x| about .24 where the cap blends in, soft dents and folds beside the outer eye corners and on the temple, small bumps at the jaw corners, and soft planes on the temple in the side view. They are smooth (no ledge or crease), but visible on the bare skin.
+- At the inner (root) end of the cup, a small shelf where the bowl meets the funnel and root flare (close view `cup-L` of head-3044).
+- The pale cup edge is the ellipse itself; a very close view shows only face-size steps.

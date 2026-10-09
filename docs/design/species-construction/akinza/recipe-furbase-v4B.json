@@ -1,0 +1,1370 @@
+{
+  "schemaVersion": 1,
+  "species": "akinza",
+  "note": "Replayable recipe for assembled-0458 (head-0455 + body-0448). Roots are the trunk outputs of the 2026-09-30 replay (head-0204, body-0195) pinned by sha256; the recipe starts there and does not rebuild the Hunyuan trunk. Built from lineage-0458.md. Every script is pinned to the bytes that ran: where the working copy later changed, the run-time file is committed beside it under an _rNN name. tailfree-root is the tail-free torso body-0086/attempt-03 that B-14 fuses the tails onto. | r20 combined: R04 head steps H34,H35 plus R06 body step B-20T | fur base v2 (2026-10-09): recipe.json plus head step H36 (fur_base_head_field_v2.py, specs/fur-base-v2.json, sheet envelope specs/r03_envelope.npz) after H35; the body, join and every other step are the baseline assembled-2999 steps | smooth face v1 (2026-10-09): recipe-furbase-v2 plus head step H37 (smooth_face_field.py, specs/face-smooth-v1.json, sheet envelope specs/r03_envelope.npz) after H36; the body, join and every other step are the recipe-furbase-v2 steps",
+  "roots": {
+    "head-root": {
+      "dir": "head-0204",
+      "files": {
+        "head.blend": "3aa0d5360faecb0dbea45c084ad7e3f7e8a60d940e4f26b3de0d606e5e0936da",
+        "shape.glb": "e4762cda0267f3a5e7915bbe04280178c3b2b8a29a9bc12ab73a9a6e9a3d8931"
+      }
+    },
+    "body-root": {
+      "dir": "body-0195",
+      "files": {
+        "body.blend": "3fe7fd0f206d323634b158f2329e48b0f8ce722a02c05044ed2fc833cab785aa",
+        "shape.glb": "fe14f93c8716bd3815ea61143583e0de785ce3b5ff9c61460a9bf83de43c5fce",
+        "fairing.json": "6e324a1de5d422e688887a2878a77d6ee5b5731392accff6e106b5bed694d05e"
+      }
+    },
+    "tailfree-root": {
+      "dir": "body-0086/attempt-03",
+      "files": {
+        "shape.glb": "618e46bc5abcf8aa56f90ee409168ae50f7621ba968478596e281476251e9b4c"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "H24",
+      "component": "head",
+      "regions": ["R01"],
+      "kind": "head",
+      "script": "art/species-construction/shape_head_silhouette_field_r01.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "head-root"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/docs/design/species-construction/akinza/head-silhouette-0223.json",
+        "--out", "{out}"
+      ],
+      "existing": "head-0223",
+      "note": "loop round 1, R01 head silhouette (script as run in round 1)",
+      "expect": {
+        "vertices": 1094807,
+        "faces": 2185686,
+        "bounds": [[-0.976403, -0.528674, -0.356305], [0.977591, 0.527254, 0.357699]],
+        "record": {
+          "file": "silhouette-shape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 1042717
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/shape_head_silhouette_field_r01.py": "fa9f86fe80b217c36e7a5627af8963c01cd0f4d217123ad9aa963f3461d89304",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33",
+        "docs/design/species-construction/akinza/head-silhouette-0223.json": "036a27a91fd5089c3813afef3b6ae71fcbe1a3ee8cda1b49ee1be1812d2bf550"
+      },
+      "minutes": 3.7
+    },
+    {
+      "id": "H25",
+      "component": "head",
+      "regions": ["R01"],
+      "kind": "head",
+      "script": "art/species-construction/shape_head_silhouette_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H24"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/silhouette-r01-0260.json",
+        "--out", "{out}"
+      ],
+      "existing": "head-0260",
+      "note": "loop round 2 retry, R01; spec re-extracted from the data dir (identical to the copy embedded in head-0260/silhouette-shape.json); the helper head_r01_ops.py is today's file, which the run did not hash",
+      "expect": {
+        "vertices": 983630,
+        "faces": 1963400,
+        "bounds": [[-0.97634, -0.528606, -0.356134], [0.977525, 0.534433, 0.357628]],
+        "record": {
+          "file": "silhouette-shape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 931540
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/head_r01_ops.py": "291fec9275d81cc18c8f5037557124f999df6fb68b2d1673a88efbd4f7c58d87",
+        "art/species-construction/shape_head_silhouette_field.py": "844a1c8547f508fd3c7cd9ac53d13457eb46351898044fda54312937208e19ba",
+        "art/species-construction/specs/silhouette-r01-0260.json": "38ca2a92d1e72f194ea45a9e8fa14fe5e7f1d8dd706e0a44dbf7ea481695d0f1",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.8
+    },
+    {
+      "id": "H26",
+      "component": "head",
+      "regions": ["R02"],
+      "kind": "head",
+      "script": "art/species-construction/rebuild_face_features_field_r04.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H25"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/face-features-r04c.json",
+        "--out", "{out}"
+      ],
+      "existing": "head-0281",
+      "note": "loop round 4, R02 face features (script as run in round 4); spec re-extracted from the data dir (identical to the embedded copy)",
+      "expect": {
+        "vertices": 974174,
+        "faces": 1946586,
+        "bounds": [[-0.976359, -0.528731, -0.356256], [0.977621, 0.534415, 0.382993]],
+        "record": {
+          "file": "face-features.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 955425
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/rebuild_face_features_field_r04.py": "519917a841109eaf1ccb4521951790820db8bf921119ca80d06508be000112b4",
+        "art/species-construction/specs/face-features-r04c.json": "7d603d791d494910954cc764513b37cf0340a330dea4a13a42fd0fbaefd89587",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.6
+    },
+    {
+      "id": "H27",
+      "component": "head",
+      "regions": ["R04"],
+      "kind": "head",
+      "script": "art/species-construction/author_rear_lock_table_field_r06.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H26"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_locks.json",
+        "--blend", "0.01",
+        "--lock-blend", "0.006",
+        "--plate", "0.014",
+        "--dome-cut",
+        "--thick-scale", "0.85",
+        "--width-scale", "1.12",
+        "--d-lift", "0.002",
+        "--tip-min", "0.0022", "0.0022",
+        "--max-island", "5000",
+        "--tip-taper", "0.7",
+        "--d-thick", "0.6",
+        "--d-length", "1.5",
+        "--taper-exp", "1.0",
+        "--cut-smooth", "2",
+        "--t-scale", "1.4"
+      ],
+      "existing": "head-0318",
+      "note": "loop round 6, R04 rear lock table with dome cut (script as run in round 6); flags derived from the recorded namespace in rear-lock-table.json",
+      "expect": {
+        "vertices": 990188,
+        "faces": 1978602,
+        "bounds": [[-1.021064, -0.528723, -0.363855], [1.043223, 0.537555, 0.382993]],
+        "record": {
+          "file": "rear-lock-table.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 971439
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/author_rear_lock_table_field_r06.py": "b33a06d45a17999ec0184b9c40951c7152b120778afaa0784c5dd6617fb0f48e",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/specs/r04_locks.json": "4cdfc90b0c20f2f41f129f5849cba0125ef7b1793dc8f985b8be1d5d613704c2",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 4.9
+    },
+    {
+      "id": "H28",
+      "component": "head",
+      "regions": ["R03"],
+      "kind": "head",
+      "script": "art/species-construction/author_fan_front_lock_system_field_r07.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H27"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/R03-locks-r4e0b9dc8.md"
+      ],
+      "existing": "head-0333",
+      "note": "loop round 7, R03 fan front lock system, all defaults (script as run in round 7)",
+      "expect": {
+        "vertices": 1005909,
+        "faces": 2006304,
+        "bounds": [[-1.020615, -0.528712, -0.36384], [1.042789, 0.537516, 0.382993]],
+        "record": {
+          "file": "fan-front-lock-system.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 985282
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/author_fan_front_lock_system_field_r07.py": "28d9b431a8a22b1e78e0dbbbad90040b4b67bc7bccaa7587543d6b6b8efbe585",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/specs/R03-locks-r4e0b9dc8.md": "8e427846014885f06a1479a6b29b655cacfd640d8135f679dd704de63435f0cb",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 4.6
+    },
+    {
+      "id": "H29",
+      "component": "head",
+      "regions": ["R02"],
+      "kind": "head",
+      "script": "art/species-construction/rebuild_face_features_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H25"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--spec", "{repo}/art/species-construction/specs/face-features-r10e.json",
+        "--out", "{out}"
+      ],
+      "existing": "loop/scratch/r10/x-e",
+      "note": "scratch donor of round 10, R02 (iteration e of five); branches from head-0260, not 0281; a scratch dir in the original run, a head-NNNN here",
+      "expect": {
+        "vertices": 973538,
+        "faces": 1945404,
+        "bounds": [[-0.976228, -0.528601, -0.356126], [0.977512, 0.534283, 0.382247]],
+        "record": {
+          "file": "face-features.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 954308
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/rebuild_face_features_field.py": "e84a9b5ca355dc8e1f7b0e8690b1da50133277747c5d6e2790b476809a629af9",
+        "art/species-construction/specs/face-features-r10e.json": "8f91eb77a1b77444c51a59d0dafb5d58c945041030e7ab1bc7f0424cad6a0a3f",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.7
+    },
+    {
+      "id": "H30",
+      "component": "head",
+      "regions": ["R02"],
+      "kind": "head",
+      "script": "art/species-construction/graft_face_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H28",
+        "donor": "H29"
+      },
+      "args": [
+        "--base", "{base}/head.blend",
+        "--donor", "{donor}/head.blend",
+        "--out", "{out}"
+      ],
+      "existing": "head-0375",
+      "note": "loop round 10, R02 graft of the donor face into the fan-front head; default window",
+      "expect": {
+        "vertices": 998805,
+        "faces": 1992118,
+        "bounds": [[-1.020337, -0.528703, -0.363824], [1.042573, 0.53746, 0.382015]],
+        "record": {
+          "file": "graft.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 977667
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/graft_face_field.py": "11f2513008ff0ce3c5dfb1860d3d20d88c847464f05183a6c9881a403db7d74e",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.7
+    },
+    {
+      "id": "H31",
+      "component": "head",
+      "regions": ["R04"],
+      "kind": "head",
+      "script": "art/species-construction/author_rear_lock_table_field_r11.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H30"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_locks.json",
+        "--blend", "0.01",
+        "--lock-blend", "0.006",
+        "--rows", "T,B1,B2,B3",
+        "--plate", "0.014",
+        "--plate-fade", "-0.002", "0.016",
+        "--thick-scale", "0.85",
+        "--width-scale", "1.12",
+        "--tip-min", "0.003", "0.003",
+        "--max-island", "5000",
+        "--tip-taper", "0.7",
+        "--taper-exp", "1.2",
+        "--cut-smooth", "2",
+        "--t-scale", "1.2",
+        "--len-scale", "B2=1.15,B3=1.25",
+        "--len-jitter", "0.3",
+        "--tip-point", "0.5",
+        "--yaw", "T=.006,B2=.010,B3=.008",
+        "--dir-jitter", "6.0",
+        "--dir-jitter-rows", "B2,B3",
+        "--edge-guard", "0.006"
+      ],
+      "existing": "head-0387",
+      "note": "loop round 11, R04 rear lock table, rows T,B1,B2,B3 (script exists only as head-0387/source-snapshot, committed as _r11); flags derived from the recorded namespace",
+      "expect": {
+        "vertices": 999179,
+        "faces": 1996682,
+        "bounds": [[-1.005866, -0.528694, -0.363807], [1.030136, 0.537686, 0.381774]],
+        "record": {
+          "file": "rear-lock-table.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 979949
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/author_rear_lock_table_field_r11.py": "e4672062a4db2b1b9a949ec4a80b0e5a9de9bf6e732aa09421f4f499ae3f4356",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/specs/r04_locks.json": "4cdfc90b0c20f2f41f129f5849cba0125ef7b1793dc8f985b8be1d5d613704c2",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 5.5
+    },
+    {
+      "id": "H32",
+      "component": "head",
+      "regions": ["R04"],
+      "kind": "head",
+      "script": "art/species-construction/carry_materials_field.py",
+      "runner": "blender",
+      "inputs": {
+        "scene": "H31",
+        "source": "H30"
+      },
+      "args": [
+        "--scene", "{scene}/head.blend",
+        "--source", "{source}/head.blend",
+        "--out", "{out}"
+      ],
+      "existing": "head-0395",
+      "note": "loop round 11, R04 carry the pale coat materials from head-0375 onto head-0387",
+      "expect": {
+        "vertices": 1001093,
+        "faces": 1996682,
+        "bounds": [[-1.005866, -0.528694, -0.363807], [1.030136, 0.537686, 0.381774]]
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/carry_materials_field.py": "6d8222801647e6bf8db24d31898032fab38e22a73474c198a4475267b8597666",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.2
+    },
+    {
+      "id": "H33",
+      "component": "head",
+      "regions": ["R03"],
+      "kind": "head",
+      "script": "art/species-construction/author_fan_front_lock_system_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H32"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/R03-locks-r4e0b9dc8.md",
+        "--length-scale", "1.04",
+        "--width-scale", "1.45",
+        "--thick-scale", "1.2",
+        "--curl", "2.0",
+        "--ogive", "2.0", "0.6",
+        "--section-p", "2.4",
+        "--tip-min", "0.005", "0.005",
+        "--jitter", "2.0", "0.08", "3.0",
+        "--drape-width", "1.9",
+        "--top-width", "0.95",
+        "--keep", "PXF",
+        "--skip", "P1,P10,F1,F2,F3,F4,F5,F6,F7,F9,M1,T2,T4",
+        "--drop", "F1,F2,F3,F4,F5,F6,F7,F8,F9,M1,M2,M3,M4,M5",
+        "--top-tip-floor", "1.0",
+        "--tuft-width-scale", "1.35",
+        "--tuft-length-scale", "1.05",
+        "--tuft-thick-scale", "0.9",
+        "--tuft-ogive", "1.6", "0.6",
+        "--tuft-fan", "24.0",
+        "--tuft-fluff", "0",
+        "--pale-tol", "0.005",
+        "--pale-smooth", "14",
+        "--trim-pins", "0.006",
+        "--trim-y", "0.08", "0.16",
+        "--plate-clip", "0.01",
+        "--tip-wedge",
+        "--wedge-u", "0.2", "0.264",
+        "--wedge-apex-y", "0.034", "0.05",
+        "--wedge-top-y", "-0.01", "0.024",
+        "--wedge-bottom-y", "0.105", "0.115",
+        "--pale-cup-margin", "0.011",
+        "--tip-point", "0.4",
+        "--tip-floor", "1.0",
+        "--fork-angle", "25.0",
+        "--fork-len", "0.3",
+        "--tuft-tip-min", "0.004", "0.004",
+        "--tuft-section-p", "2.4",
+        "--tuft-aim", "0.45",
+        "--crown-sink", "0.02",
+        "--cup-clip-smooth", "0.016",
+        "--lock-blend", "0.032",
+        "--blend", "0.03",
+        "--bandwidth", "26",
+        "--tuft-blur", "1.5",
+        "--tuft-blend", "0.008",
+        "--tuft-skull-blend", "0.03",
+        "--tip-trim", "0.022",
+        "--trim-from", "0.17"
+      ],
+      "existing": "head-0455",
+      "note": "loop round 16, R03 final fan front (chain 0443 to 0455 inherited parameters only; the geometry always starts from head-0395); flags from the recorded namespace, equal to scratch-r16/cmd0455.json",
+      "pins": {
+        "art/species-construction/author_fan_front_lock_system_field.py": "b03eb913428e821d53a76ddc9e9d02bc3a2d445ff2b1d92edd516f741596d3c3",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/specs/R03-locks-r4e0b9dc8.md": "8e427846014885f06a1479a6b29b655cacfd640d8135f679dd704de63435f0cb",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 4.6
+    },
+    {
+      "id": "H34",
+      "component": "head",
+      "regions": ["R04"],
+      "kind": "head",
+      "script": "art/species-construction/author_fan_clumps_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H33"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--table", "{repo}/art/species-construction/specs/r04_clumps.json",
+        "--part", "rear",
+        "--taper-exp", "0.55",
+        "--thick-exp", "0.6",
+        "--clump-blend", "0.009",
+        "--skin-blend", "0.014",
+        "--strip-edge", "0.019",
+        "--core-crown", "0.066",
+        "--k-sweep", "20",
+        "--k-root-shift", "0.006",
+        "--samples", "90",
+        "--section-p", "2.0",
+        "--k-flat-root",
+        "--width-scale", "0.8",
+        "--strip-cut-smooth", "5",
+        "--tip-min", "0.005",
+        "--blur", "3",
+        "--dome-blur", "20",
+        "--bandwidth", "26",
+        "--skip", "LE12,LE13,LE14,RE12,RE13,RE14,LE11,RE11",
+        "--core-inset", "0.012", "0.04",
+        "--dome-ymax", "0.155"
+      ],
+      "note": "loop round 20, R04 rear ear fan as a clump volume (rebased from r17): leaf-shaped locks (taper .55), ellipse sections, K ridge swept down and out, softer crease; specs/R04.md",
+      "pins": {
+        "art/species-construction/author_fan_clumps_field.py": "a861d112e0f21e600c26ec5f7687131a23619d3bed7bc9b993a98971dfccd6cf",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/fan_clumps_front.py": "12fc1e58db82c486890e4a580b6f40611c4f86fa51af9a25b47a90f6090f7648",
+        "art/species-construction/fan_clumps_front_run.py": "aae3acbe59ee543edfbc28b6700f86877c479d055816c7520a93e2912c4a3c74",
+        "art/species-construction/specs/r04_clumps.json": "dc33b73c5ff0da87c63491eac2b456f420f437df79af10842420036c4a47a550",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      }
+    },
+    {
+      "id": "H35",
+      "component": "head",
+      "regions": ["R04"],
+      "kind": "head",
+      "script": "art/species-construction/carry_materials_field.py",
+      "runner": "blender",
+      "inputs": {
+        "scene": "H34",
+        "source": "H33"
+      },
+      "args": [
+        "--scene", "{scene}/head.blend",
+        "--source", "{source}/head.blend",
+        "--out", "{out}"
+      ],
+      "note": "loop round 17, R04 carry the pale coat materials from the front fan (H33) onto the clump rebuild",
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/carry_materials_field.py": "6d8222801647e6bf8db24d31898032fab38e22a73474c198a4475267b8597666",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      }
+    },
+    {
+      "id": "H36",
+      "component": "head",
+      "regions": ["R01", "R02", "R03", "R04"],
+      "kind": "head",
+      "script": "art/species-construction/fur_base_head_field_v2.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H35"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/fur-base-v2.json",
+        "--envelope", "{repo}/art/species-construction/specs/r03_envelope.npz"
+      ],
+      "note": "fur base v2 (Nick 2026-10-09: the v1 plush ears read as play-doh): each ear authored as a thin shell on the first sheet's front fan outline with a quadratic forward-curving profile, cup with raised rim (pale slot fills it), rolled outer rim, root flare and fillet into the skull; v1 crown, back of skull and eye fill kept; face, eye globes, nose and mouth untouched",
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/fan_clumps_front.py": "12fc1e58db82c486890e4a580b6f40611c4f86fa51af9a25b47a90f6090f7648",
+        "art/species-construction/fur_base_head_field_v2.py": "031e744ed7e7ce32b88603caeb6d49cad9518f3a9bfc9e0d3a4aee746774faa1",
+        "art/species-construction/specs/fur-base-v2.json": "093cda787d5b9f5f73fa7b47d65d79088442a47e07ffeaa29d2d2c269a5bc7b8",
+        "art/species-construction/specs/r03_envelope.npz": "40d65086667b54ded66c80239ace0b846fd3ccb839c979d64b06ac4e4d9b094d",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      }
+    },
+    {
+      "id": "H37",
+      "component": "head",
+      "regions": ["R01", "R02", "R03", "R04"],
+      "kind": "head",
+      "script": "art/species-construction/smooth_face_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H36"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/face-smooth-v1.json",
+        "--envelope", "{repo}/art/species-construction/specs/r03_envelope.npz"
+      ],
+      "note": "smooth face v1 (Nick 2026-10-09: the face looks lumpy under fur): the face faired as a radial thin plate toward an authored ellipsoid mass, eye zone, nose pad and mouth line pinned (forehead ridge, under-eye bulges and creases, pinched muzzle, faceted jaw and throat fold go); the two crown dips beside the centre raised toward a smooth arch; the v2 ear shells moved onto a smoother outline (rim waves go)",
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/fan_clumps_front.py": "12fc1e58db82c486890e4a580b6f40611c4f86fa51af9a25b47a90f6090f7648",
+        "art/species-construction/smooth_face_field.py": "0ef23a5b163446754d732f4eef215db7943943cd516426bec86d1f945cb90e80",
+        "art/species-construction/specs/face-smooth-v1.json": "2552e12beeb1d6e0fb08b831b03e895ebe13f1959d57f51be3a9c95d60b01fc0",
+        "art/species-construction/specs/r03_envelope.npz": "40d65086667b54ded66c80239ace0b846fd3ccb839c979d64b06ac4e4d9b094d",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      }
+    },
+    {
+      "id": "H38",
+      "component": "head",
+      "regions": ["R01", "R02", "R03", "R04"],
+      "kind": "head",
+      "script": "art/species-construction/analytic_ears_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "H37"
+      },
+      "args": [
+        "--scene", "{base}/head.blend",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/ears-analytic-B.json"
+      ],
+      "note": "analytic ears B (Nick 2026-10-09: the ears read as smashed and re-molded play-doh; he wants smooth, defined, symmetrical, clean, rounded ears): both ears rebuilt from a few parameters (closed cubic B-spline outline, analytic mid-surface with sweep, funnel and elliptic cup, even shell with rolled rim, back root flare, filleted root), the other ear the exact mirror; the skull under the ears an ellipsoidal end cap from the clean section at |x| .24; face, crown dome and eye lid band of H37 kept; pale slot on the analytic cup",
+      "pins": {
+        "art/species-construction/analytic_ears_field.py": "4be809d439abb1f8dedf7fe0edfc7b077f15bb20aa11cbbfbe7e8299fcd5ca6e",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/specs/ears-analytic-B.json": "252975ff2129498f519404f02d8f8899d2a5a8abac2f2f89431bc846249eace4",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      }
+    },
+    {
+      "id": "B-14",
+      "component": "body",
+      "regions": ["R10"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_body_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "body-root",
+        "tailfree": "tailfree-root"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--tail-record", "{base}/fairing.json",
+        "--tails-only",
+        "--tail-controls", "{repo}/docs/design/species-construction/akinza/tail-controls-stack-b.json",
+        "--tail-free-body", "{tailfree}/shape.glb",
+        "--tail-sweep-sigma", ".009",
+        "--out", "{out}"
+      ],
+      "existing": "body-0212",
+      "note": "loop round 1, R10 stacked crescent tails",
+      "expect": {
+        "vertices": 697950,
+        "faces": 1395836,
+        "bounds": [[-0.517996, -0.95699, -0.530232], [0.556054, 0.459983, 0.204267]],
+        "record": {
+          "file": "field-rebuild.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 690254
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/rebuild_body_field.py": "dcdc651e98de527db96368f9073628bd3f58ae474d3fc0da0e369fb8b6f3c56f",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33",
+        "docs/design/species-construction/akinza/tail-controls-stack-b.json": "c7a482ad84784ad1066086622dfd734c630853e240f72b0324cf4cf1cc1cd0e6"
+      },
+      "minutes": 1.0
+    },
+    {
+      "id": "B-15",
+      "component": "body",
+      "regions": ["R08"],
+      "kind": "body",
+      "script": "art/species-construction/reshape_legs_field_r02.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-14"
+      },
+      "args": [
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/leg-reshape-r08-v5.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0263",
+      "note": "loop round 2, R08 leg reshape v5 (script as run in round 2)",
+      "expect": {
+        "vertices": 678275,
+        "faces": 1356486,
+        "bounds": [[-0.517947, -0.956989, -0.530121], [0.555975, 0.459983, 0.204238]],
+        "record": {
+          "file": "leg-reshape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 670579
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/reshape_legs_field_r02.py": "23213b7937a6ec418e7a7776385b91bb68dd4de7bfc2de4ca3f7c3b9bcc12b35",
+        "art/species-construction/specs/leg-reshape-r08-v5.json": "b4309096846745391fabe77c2c21a9ba53e562e038c14e7bc3a1b2f4c32f8e0f",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.7
+    },
+    {
+      "id": "B-16",
+      "component": "body",
+      "regions": ["R06"],
+      "kind": "body",
+      "script": "art/species-construction/reshape_torso_field_r04.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-15"
+      },
+      "args": [
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/torso-reshape-r06-v5.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0288",
+      "note": "loop round 4, R06 torso reshape v5 (script as run in round 4)",
+      "expect": {
+        "vertices": 678641,
+        "faces": 1357218,
+        "bounds": [[-0.5179, -0.956987, -0.53006], [0.555895, 0.459982, 0.200103]],
+        "record": {
+          "file": "torso-reshape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 670945
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/reshape_torso_field_r04.py": "f5db0960dccbea5a15a3f31d14e1d902ec9d09f06ef1661f5ed40f5d459bfdaa",
+        "art/species-construction/specs/torso-reshape-r06-v5.json": "2d1a6570eb49c56da5a5fbc67f271dbfcfe0a271de1e4c55b16d168ae4204ed2",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.4
+    },
+    {
+      "id": "B-17",
+      "component": "body",
+      "regions": ["R07"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_arms_field_r05.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-16"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0303",
+      "note": "loop round 5, R07 arm rebuild with the default ARM dict (script exists only as body-0303/source-snapshot, committed as _r05)",
+      "expect": {
+        "vertices": 650524,
+        "faces": 1300984,
+        "bounds": [[-0.453504, -0.956985, -0.530026], [0.555818, 0.459981, 0.20008]],
+        "record": {
+          "file": "arm-field.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 642828
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/rebuild_arms_field_r05.py": "1a2ea3a7cb6008bcc6b602b65a4844e31696b56cf6d025cd236b846539e2b355",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 1.2
+    },
+    {
+      "id": "B-18",
+      "component": "body",
+      "regions": ["R09"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_hind_paws_field_r06.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-17"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0310",
+      "note": "loop round 6, R09 hind paw rebuild with the default PAW dict (script as run in round 6)",
+      "expect": {
+        "vertices": 650980,
+        "faces": 1301896,
+        "bounds": [[-0.498451, -0.957, -0.530008], [0.555778, 0.459981, 0.200062]],
+        "record": {
+          "file": "hind-paw-field.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 643284
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/rebuild_hind_paws_field_r06.py": "79d3b5d1847659ea4ac55dde6dc896136c65d21c47d99a69b0f548ab36274676",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.3
+    },
+    {
+      "id": "B-19",
+      "component": "body",
+      "regions": ["R05"],
+      "kind": "body",
+      "script": "art/species-construction/shape_neck_shoulders_field_r07.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-18"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--out", "{out}",
+        "--spec", "{repo}/art/species-construction/specs/neck-shoulders-r05-0325.json"
+      ],
+      "existing": "body-0325",
+      "note": "loop round 7, R05 neck and shoulders (script as run in round 7); spec re-extracted from the data dir (spec-0325.json, hash equals the recorded input)",
+      "expect": {
+        "vertices": 645306,
+        "faces": 1290548,
+        "bounds": [[-0.498367, -0.957, -0.530002], [0.555739, 0.45998, 0.200047]],
+        "record": {
+          "file": "shoulder-field.json",
+          "key": "body",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 637610
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/shape_neck_shoulders_field_r07.py": "74945209c333c99dbd25c57947d972ca8694d11e549a5bfd8576c0691e0aa9e7",
+        "art/species-construction/specs/neck-shoulders-r05-0325.json": "0a49e3d860f61b84e889d6b30360cf6d329194ed6da6217aceaf36e3ef6302d3",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.4
+    },
+    {
+      "id": "B-20",
+      "component": "body",
+      "regions": ["R06"],
+      "kind": "body",
+      "script": "art/species-construction/reshape_torso_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-19"
+      },
+      "args": [
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/torso-reshape-r06-v7d.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0369",
+      "note": "loop round 10, R06 torso reshape v7d",
+      "expect": {
+        "vertices": 643184,
+        "faces": 1286304,
+        "bounds": [[-0.498282, -0.957, -0.529718], [0.5557, 0.459979, 0.200034]],
+        "record": {
+          "file": "torso-reshape.json",
+          "key": "skinAfter",
+          "value": {
+            "components": 1,
+            "nonManifoldEdges": 0,
+            "vertices": 635488
+          }
+        }
+      },
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/reshape_torso_field.py": "bf00b4d062b2d7afc31cb1e19ad20779eb9bdfb8c8708fda8ca674d30ac862ea",
+        "art/species-construction/specs/torso-reshape-r06-v7d.json": "e8e3bb59f05804cc7ce2b44408bf2bef853447460193e0705dc44c7397004e46",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.5
+    },
+    {
+      "id": "B-20T",
+      "component": "body",
+      "regions": ["R06"],
+      "kind": "body",
+      "script": "art/species-construction/author_trunk_sections_field_r20.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-20"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json",
+        "--out", "{out}"
+      ],
+      "note": "R06 trunk sections tool (toolsmith starter): lofted superellipse sections morphed into the native trunk, between the R06 reshape B-20 and the hind paw rebuild B-21",
+      "pins": {
+        "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/sweep_specs/B-20T-3cbdf43ea7cd.json": "b6531fe17f771fc54e9c8931a87b4412dff1698a853cde05327123c20c0a0603",
+        "art/species-construction/author_trunk_sections_field_r20.py": "a54e29a5e3f3f8f22219924abfc1e8738f8adf2a50f92f378d7c86b95cd36622",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      }
+    },
+    {
+      "id": "B-21",
+      "component": "body",
+      "regions": ["R09"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_hind_paws_field_r18.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-20T"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/untracked/species-construction/akinza/sweep_specs/B-21-5273502d5ba4.json",
+        "--out", "{out}"
+      ],
+      "note": "loop round 12, R09 hind paw spec v3; spec re-extracted from loop/scratch/r12/v3.json (identical to body-0400/paw-spec-v3.json)",
+      "pins": {
+        "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/sweep_specs/B-21-5273502d5ba4.json": "5f7f5e48e48a9f494ca090bdd775b285bfe063a88f9e359ea8981f628ac976a1",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/rebuild_hind_paws_field_r18.py": "1f8835020fda5b8817444f2d306e98395e343542dc1f269d8fe131a0190cb8cc",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      }
+    },
+    {
+      "id": "B-22",
+      "component": "body",
+      "regions": ["R08"],
+      "kind": "body",
+      "script": "art/species-construction/reshape_legs_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-21"
+      },
+      "args": [
+        "--scene", "{base}/body.blend",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/art/species-construction/specs/leg-reshape-r08-v11.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0426",
+      "note": "loop round 14, R08 leg reshape v11",
+      "pins": {
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/reshape_legs_field.py": "de25392564126938480f1af121848c8cf9f36583fca43da55b598f49f3512bca",
+        "art/species-construction/specs/leg-reshape-r08-v11.json": "53ce2afa6769822958d7a7dbe10a61bdefb4f1620f34c50413dafa2c164bd532",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 0.5
+    },
+    {
+      "id": "B-23",
+      "component": "body",
+      "regions": ["R07"],
+      "kind": "body",
+      "script": "art/species-construction/rebuild_arms_field_r25.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-22"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/untracked/species-construction/akinza/sweep_specs/B-23-c9eb62b61097.json",
+        "--out", "{out}"
+      ],
+      "existing": "body-0448",
+      "note": "loop round 16, R07 arms v10 (clawEach)",
+      "pins": {
+        "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/sweep_specs/B-23-c9eb62b61097.json": "8d2e0d3e0816f9392d6aa4ba1a71c808b0ebef83db7a4416625ed6d73223c050",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/rebuild_arms_field_r25.py": "0a9467b0c6569d96841fe2c908627697ecb83a677b61a9b088a162ddb7c555b7",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+      },
+      "minutes": 1.3
+    },
+    {
+      "id": "B-24Y",
+      "component": "body",
+      "regions": ["R05"],
+      "kind": "body",
+      "script": "art/species-construction/author_yoke_sections_field.py",
+      "runner": "blender",
+      "inputs": {
+        "base": "B-23"
+      },
+      "args": [
+        "--body", "{base}/shape.glb",
+        "--fairing", "{base}/fairing.json",
+        "--spec", "{repo}/docs/design/species-construction/akinza/loop/specs/yoke-r32-v1.json",
+        "--out", "{out}"
+      ],
+      "note": "round 32 R05: authored yoke (neck base, trapezius, upper back, shoulder caps) in field space after the arm rebuild B-23; the join reads it as its body",
+      "pins": {
+        "art/species-construction/author_yoke_sections_field.py": "c13d23886c211693e6e74694b60d153f4a4071400943a0a50ed78e5507c82026",
+        "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+        "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+        "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+        "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+        "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33",
+        "docs/design/species-construction/akinza/loop/specs/yoke-r32-v1.json": "df893201439fff0d0c684a4001916694238a883160d9c8f51209762ad684e439"
+      }
+    }
+  ],
+  "assembly": {
+    "id": "J",
+    "regions": ["R05"],
+    "head": "H38",
+    "body": "B-24Y",
+    "args": [
+      "--head-scale", ".50",
+      "--jaw-anchor-z", ".500",
+      "--head-depth-offset", "-.020",
+      "--head-trim-offset", ".038",
+      "--fusion-z-above", ".035",
+      "--fusion-y-extent", ".11",
+      "--neck-sections", "art/species-construction/specs/neck-r27-v2.json",
+      "--neck-back-fill", ".004",
+      "--neck-exponent", "1",
+      "--neck-max-shift", ".012"
+    ],
+    "note": "assemble_reconstructed_creature.py through loop_tools assemble; the placement constants of loop_tools PLACEMENT; round 19 R05 join (kept): head trim offset .038, fusion window raised",
+    "pins": {
+      "art/species-construction/assemble_reconstructed_creature_r27.py": "0b4d53811049871d4685677aae4b4f7645796f001df09f55015de09cc024ce98",
+      "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
+      "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
+      "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
+      "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
+      "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
+    },
+    "minutes": 5.2,
+    "script": "art/species-construction/assemble_reconstructed_creature_r27.py"
+  },
+  "derivedFrom": {
+    "recipe": "docs/design/species-construction/akinza/recipe.json",
+    "sha256": "3a75c8e45077101ace3c39973510e48be0ea767d3c416b262e6e3b6731447ff6",
+    "steps": {
+      "H24": {
+        "script": "feef615941aa2a663965ab1db366f0cf85e9669291bacb2aa28d0c523ffa375a",
+        "args": "ec7e895c453c0f363d867ab5f2b5df5ba8bab875926effb95cb88f6b3937ca7c",
+        "inputs": "ddf571e91bea8edeb5afc397e0bed2ca62b2dabb573c4c53ea47ac74d4dd5bb9",
+        "regions": "b686744ab022ea01ccd9f16b34dac8bf4d9d7fe99908268f7f503e29e61ec9f8",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H25": {
+        "script": "9ee8a1e8987f058fe01bd80ba0fb4ce278f345c04a6e7cf0f008af299b74f145",
+        "args": "9b2a8d8743f343220ed139dc99c8edaa52b2b48ca6306411840bbe84b88332ea",
+        "inputs": "6eddcf1102ed6d0d2236ca54ecb3b48217514b4d8a5126b0292491464a5170af",
+        "regions": "b686744ab022ea01ccd9f16b34dac8bf4d9d7fe99908268f7f503e29e61ec9f8",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H26": {
+        "script": "b3a3c67ed268fee562eb5e56116bedd7ed84d03d309a6363d6fd023e44fcb4fc",
+        "args": "f6fae3cbe423b86612d0698ac851505d25b4d2822b30d28cf0454d5d24295848",
+        "inputs": "ad501c8932c30651689bb5a9d06759b85e3b0e8c897dbcd53267cf842d9eb729",
+        "regions": "6e3d6c125208b65fc07451d2a53f4d5b1f546a3701dd7b6e16f94ef98389c4d2",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H27": {
+        "script": "4db381fc5013a24a0c82d7c90e0b3f15b740f5653a4bea9b5814f3bd97ad84dd",
+        "args": "55de002bd59cddc61ef98d1a0878a31744ccc569a3608047c9823e315319ae3e",
+        "inputs": "f98789ebc08b70324c6d41fb0c1b7523013c1cb2e9d4f13b87b907525cdbe1f5",
+        "regions": "9890452b2c554b2dfa3db7349ae9a31c39701cd3a34675e045e87e3bb7ea7de4",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H28": {
+        "script": "28eb3241dada2f1c6a08f8f8edfb035f864336dfd875534a302dd99dafa2b560",
+        "args": "eb681bfe8650e9d9addc6b1057bed61289a8017b48d2df6442a3ee1971f6ed1b",
+        "inputs": "16c301c0eb229849537ab516eeb50b2b7d8ba619fbe938e6080a9c2aebef3162",
+        "regions": "d945927831ac5598221c513d68a87971fa35d2dec16e37e3d3af68db5bd95194",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H29": {
+        "script": "2712a72dc67979b614ca1dc4ee08772c8feb593f1e38989303d485babad180bc",
+        "args": "c0d6371b4d58d40e15d502f659748265d952a811577f8bcfd2a37a628ffb87ed",
+        "inputs": "ad501c8932c30651689bb5a9d06759b85e3b0e8c897dbcd53267cf842d9eb729",
+        "regions": "6e3d6c125208b65fc07451d2a53f4d5b1f546a3701dd7b6e16f94ef98389c4d2",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H30": {
+        "script": "f20ffae21bc9bace423e894442c6425faa270f9ea89102e9c51911cc9173eacf",
+        "args": "e4f689495366a51348ccda1f006802ee909b38f4eec176d720c25e87979e3c87",
+        "inputs": "366dded33c3cd5746fa45ffc5617c5004a8185e2d46ee83ee5faa1cc5930cf73",
+        "regions": "6e3d6c125208b65fc07451d2a53f4d5b1f546a3701dd7b6e16f94ef98389c4d2",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H31": {
+        "script": "6f87b358010f2597fdc904d171207ef5454dc5de84b3e913a5bfee16c3f08438",
+        "args": "ba83f0d56651d9ae142d927512dc0da8f2106c71d8bdff6ad033b6900a9e38cc",
+        "inputs": "4bf84f74412371716a8b352af0f806b8dbf6115cc43aa93e698c7077808a0cfe",
+        "regions": "9890452b2c554b2dfa3db7349ae9a31c39701cd3a34675e045e87e3bb7ea7de4",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H32": {
+        "script": "6e6e8408598d23216743ef2addcd34379747f497336d1a86d7b3e71323382db0",
+        "args": "448666111a61055384c6b0768f041b7d68e3223d01f139332633d52a57b05904",
+        "inputs": "dc5bbadc766a800e2cb80782d59f35f1a8fd4c4917b8b71f0ac6dca6c12278bb",
+        "regions": "9890452b2c554b2dfa3db7349ae9a31c39701cd3a34675e045e87e3bb7ea7de4",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H33": {
+        "script": "a56105fc7b1faf682580cd27f45efa94b8b6266b63538730e084df077eea90ac",
+        "args": "a7744d417d0c298d5d9a3bebc66f37b0bb6f5eaf28823585e61c3f032aa8749b",
+        "inputs": "0ca7fe6ceb55a420d6bd4c41a32a176e57336c97683df6d5edb20c21d755bb63",
+        "regions": "d945927831ac5598221c513d68a87971fa35d2dec16e37e3d3af68db5bd95194",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H34": {
+        "script": "07b3f67bdddc3c8665843941b7bf08665a5868a472a4ee1bbd7cba7e4fea119f",
+        "args": "d25b65f2aa8e857f9e63c21d32f431dafa9e17508d9f25fcf67dd64bd3a0a59d",
+        "inputs": "5dc588fcf88e2d4889f70a3b5048224c555eae3be434467ca07486fb850d4a65",
+        "regions": "9890452b2c554b2dfa3db7349ae9a31c39701cd3a34675e045e87e3bb7ea7de4",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "H35": {
+        "script": "6e6e8408598d23216743ef2addcd34379747f497336d1a86d7b3e71323382db0",
+        "args": "448666111a61055384c6b0768f041b7d68e3223d01f139332633d52a57b05904",
+        "inputs": "03782e7dfa5f228107a7cd30956e650bc5384a4504b90177f20ef44a7105a356",
+        "regions": "9890452b2c554b2dfa3db7349ae9a31c39701cd3a34675e045e87e3bb7ea7de4",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0",
+        "component": "db5ef3a0f2df755f0b6116e53d23bd1ac2b6b33e3f36358d3207b9ce5068dec0"
+      },
+      "B-14": {
+        "script": "39cb006588b594bf0edfbebd737b46f87246a945ec2cbb2dbcece98600222162",
+        "args": "76e32751941cbd56c2db70ca913f38d54934a69f07ab5be144fdaff931e1e35a",
+        "inputs": "7248758ba8b2f34004d4373f79d292e993891dab0651032bf2ab1afa448e5afa",
+        "regions": "ff26536016c8c7a899955a782b0fa62ecfc754bb6f6dcd888f6effddd4553a5c",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-15": {
+        "script": "233bb3f37b503f1d3233aa64c351124529920abf611e2893075dffb4edc518b1",
+        "args": "668d190fc051be716b53cbfd9b51ebce9dea0d6632a1b68464221a0b371c8ccd",
+        "inputs": "a46ec19211240e7cd8b70ff2cf48e5ea9af70b472bee107c4caaa5a46f7652dd",
+        "regions": "b2ea60a0c4e35ec951f8ca74469898b3fa038949d4daf473ad5f486fac9c75d0",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-16": {
+        "script": "dceebd8ab0d2e2e1df8a60d6cd9a6007655a1bdec017ad494acd81ca8cfd1822",
+        "args": "ab6ae2d5e4eae6f0b328c7e520fe0f0bed5a1878910853531cef5fe46239cb97",
+        "inputs": "8e37999429fc9f354e350824ddd08ff833a332337289f71c938a534a03960b71",
+        "regions": "aaf52846a8a819b58c0cfddbfae91f59c8e226f1e28a42489e2da3b2ad57624c",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-17": {
+        "script": "41d22ec15d0a6b0bb9265015c23932fcf2409cd6ce97ddda45ef886dfc946ae3",
+        "args": "bb7e83cc06c5b00f394b4e52f99958d3b88d304698147fe044c441621ce622ae",
+        "inputs": "349c1ab7272fc230efa9cfc91593714f99518c14f8f31b7b766ade5e3d9e770a",
+        "regions": "34febf2c62117e25eba7549b56d3a600524fc9da8358160309d15374da3091e9",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-18": {
+        "script": "591b6af3f6290333068afac93ec2bc20e9d9449e13d6e7256e827b07d4b26909",
+        "args": "bb7e83cc06c5b00f394b4e52f99958d3b88d304698147fe044c441621ce622ae",
+        "inputs": "1a6674ad2310991f24cb52e41de873fe45861da7a774a0e3a6560fea9d3e8fd8",
+        "regions": "8ca9d59196ba2701a5f83ac8e19666d4d8f8547c595bd07323e2c725444026f0",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-19": {
+        "script": "ea30c967f11e3a09f812d94d2963b70a9e654c550e76981d67da550b43c8335d",
+        "args": "9592f077917ca54f6bb94e05e6a4d32e97658df76701ea680b2577ec4515cfb1",
+        "inputs": "a90c02c6cce6e1934284126fea2e3005006c70afe4d389a0afab45bff02746d9",
+        "regions": "eea3c2dc4fedb2d5889db86dea4c29cff7d27325db03fe64381da1680071a6bd",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-20": {
+        "script": "bfe0adaf9d0f09fc10bcbc8227ab4678a1bc302f1ba03f12762feaa2b6977ee6",
+        "args": "b6a26ecd72989aead3260a543cab74f55af34c978828bc25eb58b30ff399cc93",
+        "inputs": "f43a1b4818f017b9f7fd787dc0ae2201cb7a75cf62f01e68209f501559533c72",
+        "regions": "aaf52846a8a819b58c0cfddbfae91f59c8e226f1e28a42489e2da3b2ad57624c",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-20T": {
+        "script": "1987fb74842aee9548b72cc9c17acf4715924396628e3bfddbbf8114b4ee3f50",
+        "args": "0c95c64b9d149266ae6a5a0522503a8855ab516170d26bf8e6fde75a9de42e43",
+        "inputs": "f4a22d1d3bce9a4f32ce32af6a1296fe0e36964650dcd09fb0a4334e03a8bb42",
+        "regions": "aaf52846a8a819b58c0cfddbfae91f59c8e226f1e28a42489e2da3b2ad57624c",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-21": {
+        "script": "ad02d8a055ea6cfc8b8e316a491c6f6a6e05affcf036c9db25cc677588395cf0",
+        "args": "0724559533d84dfa9a18e6dc327690ca726d8a97b1ae97cb1760481ec782a243",
+        "inputs": "679d49241a1a04e964fccb858b05dd20c22f27c33bca8739dfbd7202f19b4bdd",
+        "regions": "8ca9d59196ba2701a5f83ac8e19666d4d8f8547c595bd07323e2c725444026f0",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-22": {
+        "script": "00c6bae057f234255c45d93ef8604c69398d7864bb1e9dda85667d056eb43f6c",
+        "args": "6969ba20b4a2e8a1eff0481d689a974b6a25ebc8e8431f7ce1ad87a4a1e431d8",
+        "inputs": "88de3b27b1076bd32b53016766992de312a2e655f95e0c7f17af6367c1eb658d",
+        "regions": "b2ea60a0c4e35ec951f8ca74469898b3fa038949d4daf473ad5f486fac9c75d0",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-23": {
+        "script": "3377a1ce6dc0367e1d344ed465db24e98f19cfb0b303dabf8aa47c6c647d74fa",
+        "args": "1e5ad6513df080a71d9d87d7993d21b109f71c7e6597873bb379ea2b7bef2a62",
+        "inputs": "ab58835c1f226dcb7cfa85dae32a72655925b7bba827a43544ff1ff03cc4bad6",
+        "regions": "34febf2c62117e25eba7549b56d3a600524fc9da8358160309d15374da3091e9",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      },
+      "B-24Y": {
+        "script": "880c50d877b860f86bd1c820fa5c51821a9b9234dfb4d359b3ac5ea4c359717d",
+        "args": "7cb53a70a889521c09e3a877680b0d24873091784fa02cee5e95997fd4f7e6bd",
+        "inputs": "be8a4683c30cb9322efd2c51d5f87dfb4337fe07e92c5b053db52ea92a61f69b",
+        "regions": "eea3c2dc4fedb2d5889db86dea4c29cff7d27325db03fe64381da1680071a6bd",
+        "runner": "9d1c10c1c01e5864a9f1199b98096ee5f307fa9b09df7603cd82956e3161ce13",
+        "kind": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f",
+        "component": "bfd4d039e9f8aca33b52a877ded02f73846f28f9095c2bba178316be62ef7c1f"
+      }
+    },
+    "assembly": {
+      "head": "cb20c7e1b7b18facd4eeb995f3b7420000f335d47194c343cc8cc0ff44df4a6c",
+      "body": "08c91fbf7862dcc7da8ce855687ea03ed01eef0f4e105667d14f5c718579bc8e",
+      "args": "31dedb1fb76701839d3fb4267b3c1cae38464ba1f4705582475db014acfcedbf"
+    }
+  },
+  "rebasedFrom": {
+    "candidate": "docs/design/species-construction/akinza/loop/recipes/r17-R04-pinned.json",
+    "candidateSha256": "b17c34908104b9b2928b00959b68aaa861e7bbe56825083ddfb4b5ddb0c3317e"
+  }
+}
