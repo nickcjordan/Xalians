@@ -529,10 +529,10 @@
         "jitter": 0.006,
         "lockConverge": {
           "power": 1.8,
-          "tipSpread": 0.15,
+          "tipSpread": 0.1,
           "maxSpread": 0.06,
           "lenVar": 0.3,
-          "fan": 0.004,
+          "fan": 0.003,
           "frizz": 0.003,
           "frizzScale": 450.0
         },
@@ -540,7 +540,7 @@
           "length": 0.014,
           "curl": 0.04,
           "clump": 0.1,
-          "density": 1.4
+          "density": 2.6
         },
         "groups": {
           "ears": {
@@ -556,8 +556,8 @@
             "lift": 0.25,
             "tipSweep": 0.05,
             "curlIn": 0.2,
-            "frontScale": 0.7,
-            "cupScale": 0.45,
+            "frontScale": 0.9,
+            "cupScale": 0.6,
             "farFade": 0.5
           },
           "crown": {
