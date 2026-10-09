@@ -204,7 +204,15 @@ def pattern_factor(hair, kind, params):
         h = (sth+(X.wrap(warp.outputs['Factor'])-0.5)*params.get('warp', 0.03))*(1.0/params['period'])
         a = X.wrap(b.attr('angle4').outputs['Fac'])
         edge = X.wrap(b.attr('fielda').outputs['Fac'])
-        f = tiger_stripes.stripe(X, a, side, h, params, edge).s
+        f = tiger_stripes.stripe(X, a, side, h, params, edge)
+        if params.get('tailRings'):  # tails: crisp rings, placed by where each strand's length actually lies along the tail
+            info = b.node('ShaderNodeHairInfo')
+            strlen = X.wrap(b.attr('strlen').outputs['Fac'])
+            ht = (sth+X.wrap(info.outputs['Intercept'])*strlen*params.get('tipShift', 0.8))*(1.0/params['tailRingPeriod'])
+            ring = tiger_stripes.rings(X, ht, params)
+            tm = X.wrap(b.ramp(ptail, 0.4, 0.6))
+            f = f*(1.0-tm)+ring*tm
+        f = f.s
         print('tiger4 nodes', X.count)
     elif kind == 'tiger3':
         PI = 3.14159265

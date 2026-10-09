@@ -520,5 +520,65 @@
       "lean": 0.35,
       "tailScale": 0.75
     }
+  },
+  "variants": {
+    "feathered": {
+      "note": "Ear fur as feathered locks (Nick 2026-10-09: spikes from fur, not sculpted shapes; references r03/r04): each guide is a lock radiating from the ear root over the surface, outward on its own side, longest at the rim and back of the fan; every guided strand converges into its nearest guide (lockConverge), so each lock is a clumped bundle tapering to a point.",
+      "guides": {
+        "neighbors": 1,
+        "jitter": 0.006,
+        "lockConverge": {
+          "power": 2.0,
+          "tipSpread": 0.08,
+          "maxSpread": 0.06
+        },
+        "cup": {
+          "length": 0.014,
+          "curl": 0.04,
+          "clump": 0.1,
+          "density": 1.4
+        },
+        "groups": {
+          "ears": {
+            "count": 85,
+            "length": [
+              0.05,
+              0.1
+            ],
+            "lengthPower": 0.9,
+            "lengthJitter": 0.25,
+            "radial": 0.85,
+            "outward": 0.02,
+            "lift": 0.18,
+            "tipSweep": 0.05,
+            "curlIn": 0.2
+          },
+          "crown": {
+            "guided": false
+          }
+        },
+        "cupPale": 0.6
+      },
+      "groups": {
+        "head": {
+          "length": 0.01
+        },
+        "crown": {
+          "margin": 0.05,
+          "length": 0.022,
+          "clump": 0.5,
+          "box": {
+            "x": [
+              0.0,
+              0.06
+            ]
+          }
+        }
+      },
+      "cupInner": {
+        "t0": 0.7,
+        "width": 0.4
+      }
+    }
   }
 }

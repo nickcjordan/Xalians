@@ -3,7 +3,10 @@
 Run headless through the loop harness (it takes a Blender slot lock):
 
   python art/species-construction/loop/loop_tools.py blender art/species-construction/surface/build_surface.py \
-      --log surface-build -- --asm <assembly dir> --out <out dir> [--settings <json>] [--strands N]
+      --log surface-build -- --asm <assembly dir> --out <out dir> [--settings <json>] [--strands N] [--variant NAME]
+
+--variant <name> merges settings['variants'][name] over the settings (for example 'feathered': the ear fur as
+pointed, clumped locks radiating from the ear root instead of the plush pile).
 
 Reads <asm>/akinza.blend, leaves the skin geometry untouched, writes per-vertex fur attributes from the
 species zones (fur_length, fur_density, fur_clump, fur_curl, pale, pad, comb), adds a Geometry Nodes hair
@@ -357,15 +360,19 @@ def compute_attributes(skin, cfg, species):
     gcfg = cfg.get('guides')
     guides = []
     guide_up = []
+    guide_gid = []
     if gcfg:
         ear_box = membership(co, cfg['cup']['box'], floor, height, cfg['cup']['margin'])
         cup_mask = np.clip(pale*ear_box*gcfg.get('cupGain', 2.0), 0, 1)
         cc = gcfg['cup']
+        if 'cupPale' in gcfg:  # a soft tint across the cup rather than a solid chalk-white patch
+            pale = pale*(1-cup_mask)+cup_mask*np.minimum(pale, gcfg['cupPale'])
         length = length*(1-cup_mask)+cc['length']*cup_mask
         curl = curl*(1-cup_mask)+cc['curl']*cup_mask
         clump = clump*(1-cup_mask)+cc['clump']*cup_mask
         density = density*(1-cup_mask)+cc['density']*cup_mask*(1.0-pad)
         gw = np.zeros(n)
+        gcfg = {**gcfg, 'groups': {k: v for k, v in gcfg['groups'].items() if v.get('guided', True)}}
         for gname in gcfg['groups']:
             gw += wn[names.index(gname)]
         guided = np.clip(gw*(1-cup_mask), 0, 1)
@@ -374,11 +381,25 @@ def compute_attributes(skin, cfg, species):
         rng = np.random.default_rng(cfg['seed'])
         tang = unit(comb-nrm*np.sum(comb*nrm, axis=1, keepdims=True))
         npts = cfg['points']
-        for gname, spec in gcfg['groups'].items():
+        # guide group per vertex: each guided strand follows only the guides of its own group (and ear side), so the
+        # two ears' locks never cross at the nape
+        gnames = list(gcfg['groups'])
+        gid = np.zeros(n)
+        best = np.zeros(n)
+        for gi, gname in enumerate(gnames):
+            spec = gcfg['groups'][gname]
+            wg = wn[names.index(gname)]
             for side in ((-1.0, 1.0) if spec.get('perSide', True) else (0.0,)):
-                sel = wn[names.index(gname)]*(1-cup_mask) > 0.5
-                if side:
-                    sel = sel & (np.sign(co[:, 0]+1e-9) == side)
+                code = gi*3+(0 if side == 0 else (1 if side < 0 else 2))
+                m = wg if side == 0 else wg*(np.sign(co[:, 0]+1e-9) == side)
+                take = m > best
+                gid[take] = code
+                best = np.maximum(best, m)
+        write_attribute(me, 'gid', gid)
+        for gi, (gname, spec) in enumerate(gcfg['groups'].items()):
+            for side in ((-1.0, 1.0) if spec.get('perSide', True) else (0.0,)):
+                code = gi*3+(0 if side == 0 else (1 if side < 0 else 2))
+                sel = (guided > 0.5) & (gid == code)  # every guided strand of this group has guides near it
                 cand = np.where(sel)[0]
                 if len(cand) < 10:
                     continue
@@ -396,13 +417,28 @@ def compute_attributes(skin, cfg, species):
                 tt = tn[chosen]
                 lo, hi = spec['length']
                 L = lo+(hi-lo)*tt**spec.get('lengthPower', 0.8)
+                L = L*(1.0+spec.get('lengthJitter', 0.0)*(rng.random(len(L))*2.0-1.0))
+                dirs = tang[idx]
+                if spec.get('radial'):  # feathered locks: radiate from the ear root over the surface, outward on its own side
+                    r = co[idx]-root_s
+                    if side:
+                        r[:, 0] = side*np.abs(r[:, 0])+side*spec.get('outward', 0.0)
+                    r = r+np.array(spec.get('radialBias', [0.0, 0.0, 0.0]))
+                    r = unit(r-nrm[idx]*np.sum(r*nrm[idx], axis=1, keepdims=True))
+                    w = spec['radial']
+                    dirs = unit(dirs*(1.0-w)+r*w)
                 sv = np.linspace(0, 1, npts)[None, :, None]
-                dirv = tang[idx][:, None, :]
+                dirv = dirs[:, None, :]
                 up = nrm[idx][:, None, :]
                 Lc = L[:, None, None]
-                curve = co[idx][:, None, :]+dirv*Lc*sv+up*Lc*gcfg['lift']*sv**2+dirv*Lc*gcfg['tipSweep']*sv**3
+                lift = spec.get('lift', gcfg['lift'])
+                sweep = spec.get('tipSweep', gcfg['tipSweep'])
+                droop = np.array([0.0, 0.0, -1.0])[None, None, :]*Lc*spec.get('droop', 0.0)*sv**2
+                curl_in = -up*Lc*spec.get('curlIn', 0.0)*sv**3  # tips settle back onto the ear like laid feathers
+                curve = co[idx][:, None, :]+dirv*Lc*sv+up*Lc*lift*sv**2+dirv*Lc*sweep*sv**3+droop+curl_in
                 guides.append(curve)
                 guide_up.append(nrm[idx])
+                guide_gid.append(np.full(len(idx), float(code)))
         print('guides:', sum(len(g) for g in guides))
 
     write_attribute(me, 'fur_length', length)
@@ -476,7 +512,7 @@ def compute_attributes(skin, cfg, species):
     poly_density = np.add.reduceat(density[loops], starts)/totals
     weighted = float((poly_area*poly_density).sum())
     print(f'surface area {poly_area.sum():.3f}, density weighted {weighted:.3f}, length mean {length.mean():.4f}')
-    return weighted, guides, guide_up
+    return weighted, guides, guide_up, guide_gid
 
 
 # ---------------------------------------------------------------- geometry nodes
@@ -638,6 +674,8 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
         b.set(interp, 'Guide Up', b.named('up', 'FLOAT_VECTOR'))
         b.set(interp, 'Point Up', b.named('nrm', 'FLOAT_VECTOR'))
         interp.inputs['Max Neighbors'].default_value = cfg['guides'].get('neighbors', 2)
+        b.set(interp, 'Guide Group ID', b.named('gid', 'FLOAT'))
+        b.set(interp, 'Point Group ID', b.named('gid', 'FLOAT'))
         tj = b.node('GeometryNodeSplineParameter').outputs['Factor']
         jn = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
         jn.inputs['Scale'].default_value = cfg['guides'].get('jitterScale', 220.0)
@@ -646,6 +684,50 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
         jit = b.vm('SCALE', b.vm('SUBTRACT', jn.outputs['Color'], (0.5, 0.5, 0.5)),
                    scale=b.m('MULTIPLY', tj, cfg['guides'].get('jitter', 0.012)))
         gpos = b.vm('ADD', pos_node, jit)
+        lock = cfg['guides'].get('lockConverge')
+        if lock:  # locks: every strand runs from its own root into its nearest guide, so each bundle tapers to the guide's point
+            npts = cfg['points']
+            closest = interp.outputs['Closest Index']
+            cop = b.node('GeometryNodeCurveOfPoint')
+            in_curve = cop.outputs['Index in Curve']
+            gp = b.node('GeometryNodeSampleIndex', data_type='FLOAT_VECTOR', domain='POINT')
+            tree.links.new(ginfo.outputs['Geometry'], gp.inputs['Geometry'])
+            b.set(gp, 'Value', b.node('GeometryNodeInputPosition').outputs['Position'])
+            b.set(gp, 'Index', b.m('ADD', b.m('MULTIPLY', closest, float(npts)), in_curve))
+            gr = b.node('GeometryNodeSampleIndex', data_type='FLOAT_VECTOR', domain='POINT')
+            tree.links.new(ginfo.outputs['Geometry'], gr.inputs['Geometry'])
+            b.set(gr, 'Value', b.node('GeometryNodeInputPosition').outputs['Position'])
+            b.set(gr, 'Index', b.m('MULTIPLY', closest, float(npts)))
+            poc = b.node('GeometryNodePointsOfCurve')
+            b.set(poc, 'Curve Index', cop.outputs['Curve Index'])
+            poc.inputs['Sort Index'].default_value = 0
+            fat = b.node('GeometryNodeFieldAtIndex', data_type='FLOAT_VECTOR', domain='POINT')
+            b.set(fat, 'Index', poc.outputs['Point Index'])
+            b.set(fat, 'Value', b.node('GeometryNodeInputPosition').outputs['Position'])
+            spread = b.vm('SUBTRACT', fat.outputs['Value'], gr.outputs['Value'])
+            keep = b.m('SUBTRACT', 1.0, b.m('POWER', tj, lock['power']))  # leaf profile: full width to mid-lock, then to a point
+            keep = b.m('ADD', keep, b.m('MULTIPLY', tj, lock.get('tipSpread', 0.0)))
+            # a strand far from its guide's root keeps its own line instead of drawing a sheet across to the guide
+            far = b.node('ShaderNodeMapRange', interpolation_type='SMOOTHSTEP')
+            far.inputs['From Min'].default_value = lock.get('maxSpread', 0.03)
+            far.inputs['From Max'].default_value = 2.0*lock.get('maxSpread', 0.03)
+            b.set(far, 'Value', b.vm('LENGTH', spread))
+
+            rn = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+            rn.inputs['Scale'].default_value = cfg['guides'].get('jitterScale', 220.0)
+            b.set(rn, 'Vector', fat.outputs['Value'])
+            jit2 = b.vm('SCALE', b.vm('SUBTRACT', rn.outputs['Color'], (0.5, 0.5, 0.5)),
+                        scale=b.m('MULTIPLY', tj, cfg['guides'].get('jitter', 0.004)))
+            gpos = b.vm('ADD', b.vm('ADD', gp.outputs['Value'], b.vm('SCALE', spread, scale=keep)), jit2)
+            # far from any guide root: a short strand along the guide's line from its own root, not a long copied spike
+            short = b.vm('ADD', fat.outputs['Value'], b.vm('SCALE', b.vm('SUBTRACT', gp.outputs['Value'], gr.outputs['Value']),
+                                                            scale=lock.get('farScale', 0.3)))
+            fm = b.node('ShaderNodeMix')
+            fm.data_type = 'VECTOR'
+            b.set(fm, 'Factor', far.outputs['Result'])
+            tree.links.new(gpos, fm.inputs[4])
+            tree.links.new(short, fm.inputs[5])
+            gpos = fm.outputs[1]
         gset = b.node('GeometryNodeSetPosition')
         tree.links.new(interp.outputs['Curves'], gset.inputs['Geometry'])
         tree.links.new(gpos, gset.inputs['Position'])
@@ -800,14 +882,25 @@ def add_catch_lights(cfg):
         sph.data.materials.append(mat)
 
 
+def deep_merge(base, over):
+    out = dict(base)
+    for k, v in over.items():
+        out[k] = deep_merge(base[k], v) if isinstance(v, dict) and isinstance(base.get(k), dict) else v
+    return out
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--asm', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--settings', type=Path, default=HERE/'akinza-surface.json')
     parser.add_argument('--strands', type=int)
+    parser.add_argument('--variant', help="merge settings['variants'][name] over the settings, e.g. 'feathered' ears")
     args = parser.parse_args(sys.argv[len(sys.argv)-sys.argv[::-1].index('--'):])
     cfg = json.loads(args.settings.read_text())
+    if args.variant:
+        cfg = deep_merge(cfg, cfg['variants'][args.variant])
+        print('variant', args.variant)
     if args.strands:
         cfg['strands'] = args.strands
     species = json.loads(SPECIES_JSON.read_text())
@@ -819,7 +912,7 @@ def main():
     n_verts, n_polys = len(skin.data.vertices), len(skin.data.polygons)
     print('skin', skin.name, n_verts, n_polys)
 
-    weighted, guides, guide_up = compute_attributes(skin, cfg, species)
+    weighted, guides, guide_up, guide_gid = compute_attributes(skin, cfg, species)
     guide_obj = None
     if guides:
         arr = np.concatenate(guides, axis=0)
@@ -828,6 +921,8 @@ def main():
         gdata.points.foreach_set('position', arr.reshape(-1).astype(np.float32))
         up_attr = gdata.attributes.new('up', 'FLOAT_VECTOR', 'CURVE')
         up_attr.data.foreach_set('vector', np.concatenate(guide_up, axis=0).reshape(-1).astype(np.float32))
+        gid_attr = gdata.attributes.new('gid', 'FLOAT', 'CURVE')
+        gid_attr.data.foreach_set('value', np.concatenate(guide_gid).astype(np.float32))
         guide_obj = bpy.data.objects.new('Akinza guides', gdata)
         bpy.context.scene.collection.objects.link(guide_obj)
         guide_obj.hide_render = True

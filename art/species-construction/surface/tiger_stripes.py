@@ -208,3 +208,17 @@ def stripe(X, a, side, h, P=None, edge=10.0):
             g = segment(X, a, side, hs, row, k0+dk, P, edge)
             f = g if isinstance(f, float) else X.max(f, g)
     return f
+
+
+def rings(X, h, P=None):
+    """Tail rings: one band per row period, its width varying a little ring to ring (ringWidth of the period on
+    average, so about that share of the tail is blue), crisp edges."""
+    P = {**RING_DEFAULTS, **(P or {})}
+    row = X.floor(h)
+    R1, R2, R3, R4 = hash4(X, row*1.618+5.3, row*0.37+2.9)
+    w = 0.5*P['ringWidth']*(1.0+P['ringVar']*(2.0*R1-1.0))
+    d = X.abs(h-row-0.5-(R2-0.5)*P['ringShift'])
+    return 1.0-sm_var(X, d, w-P['ringAa'], w+P['ringAa'])
+
+
+RING_DEFAULTS = dict(ringWidth=0.33, ringVar=0.25, ringShift=0.15, ringAa=0.025)

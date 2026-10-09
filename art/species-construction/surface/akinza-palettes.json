@@ -287,7 +287,11 @@
       "afterPale": true,
       "cupBlue": true,
       "period": 0.068,
-      "warp": 0.03
+      "warp": 0.03,
+      "tailRings": true,
+      "tailRingPeriod": 0.09,
+      "tipShift": 0.7,
+      "ringWidth": 0.33
     }
   }
 }
