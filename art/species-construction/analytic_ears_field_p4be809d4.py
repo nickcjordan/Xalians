@@ -21,9 +21,8 @@ field space of the other *_field.py stages), so the other ear is its exact mirro
                                                                              at the base, opening forward
            + earCupDepth bowl(q)                                              the cup, pushed back
    bowl(q) = (1 - q^2)^2 inside q < 1, where q is the elliptic radius of the cup ellipse: centre C plus `earCupShift`
-   (along, across, in units of the moment axes), semi-axes `earCupScale` (one number, or [along, across]) times the moment
-   ellipse's. The cup is concentric with the outline and its edge is C1 smooth. `earCupTaper` makes it deepest toward the
-   root: the depth falls linearly along the cup's long axis by that fraction from its root end to its tip end.
+   (along, across, in units of the moment axes), semi-axes `earCupScale` times the moment ellipse's. The cup is concentric
+   with the outline and its edge is C1 smooth.
 4. Shell: even thickness `earThick` about y_m, a rolled rim (+`earRimRoll` per side, a Gaussian `earRollW` wide just inside
    the outline), a smooth raised cup rim (+`earCupRim` on the front, a Gaussian across q = `earCupRimAt`, width
    `earCupRimW`), and a root flare on the back (+`earFlareBack` (1 - smoothstep(u, `earFlareU`))^2; `earFlareFront` on the
@@ -34,21 +33,13 @@ field space of the other *_field.py stages), so the other ear is its exact mirro
 5. Skull under the ears: the input head beyond |x| `skullX0` (where the old ear roots begin) is replaced by an ellipsoidal
    end cap: the input's section at |x| = skullX0 (both sides averaged, so the cap is symmetric), closed by `skullClose` (the
    eye socket and other hollows are not carried outward), as a 2D signed distance blurred by `skullDeepBlur`, shrunk
-   toward its centre as sqrt(1 - (dx / `skullCapR`)^2) and closed at the end. The difference between that smoothed section
-   and H37's own is added back near skullX0 (`skullMatch`, fading over `skullSlopeReach`), so the cap leaves H37 without a
-   line; `skullSlope` (default off) would add H37's own slope there too, and `skullExactAway`/`skullExactDepth` (default
-   off) would start from the exact section near its surface. It blends in over `skullBlend` inside
+   toward its centre as sqrt(1 - (dx / `skullCapR`)^2) and closed at the end. It blends in over `skullBlend` inside
    skullX0. The cap is shorter toward the jaw (`skullCapJaw` = fraction, from z, to z: skullCapR shrinks by the fraction
    below a smoothstep), so at the jaw the head is about as wide as H37 (the back view keeps its notch under the ears). Below |x| skullX0 - skullBlend (the face
    and the crown dome of H37) the input field is kept exactly.
 6. Eyes: within `eyeKeep` of the eye globes (true distance to the globe vertices, mirrored) the input field is kept: exact
-   within `eyeExact` (the lid band) and at the keep line, blurred beyond (`eyeBandBlur`; the old ear root left ripples
-   there). The distance is to a sample of the globe vertices, box-blurred by `eyeDistBlur` (unblurred it is faceted).
-8. Back of the skull (before the cap is taken, so the cap carries it): the back surface y_b(x, z) is blurred by `backBlur`
-   and the field moves to it within `backDepth` of the surface, behind `backY`, between heights `backZ` and inside |x|
-   `backX` (smoothsteps): the old rear plate's panel edge and the nape lumps go. Back-facing only; the face is in front.
-7. Join: the ears are smooth-unioned to the skull with a fillet `earFillet` behind the mid-surface and `earFilletFront`
-   in front of it (blended over `earFilletSide`), so the front fillet does not build a shelf at the cup.
+   within `eyeExact` (the lid band), lightly blurred beyond (`eyeBandBlur`; the old ear root left ripples there).
+7. Join: the ears are smooth-unioned to the skull with a fillet `earFillet`.
 
 Materials: every polygon takes the material of the nearest polygon of the input skin; the pale inner-ear slot is then
 redrawn from the analytic cup only (`Pale inner-ear coat.001`): faces whose centre lies inside the cup ellipse (q <
@@ -76,15 +67,13 @@ DEFAULTS = {
     'earVisibleU': .42, 'earSamples': 1200,
     'earY0': .06, 'earRootU': .45, 'earSweep': .61, 'earBend': .69,
     'earFunnel': .5, 'earFunnelBase': 1.0,
-    'earCupDepth': .04, 'earCupScale': .62, 'earCupShift': [0., 0.], 'earCupTaper': 0.,
+    'earCupDepth': .04, 'earCupScale': .62, 'earCupShift': [0., 0.],
     'earThick': .03, 'earRimRoll': .006, 'earRollW': .02,
-    'earCupRim': .003, 'earCupRimAt': 1.15, 'earCupRimW': .22,
+    'earCupRim': .006, 'earCupRimAt': 1.12, 'earCupRimW': .14,
     'earEdgeRound': 1.0, 'earMinU': .36, 'earMinUTop': [.26, .22, .32], 'earStartRound': .08,
-    'skullX0': .24, 'skullCapR': .20, 'skullCentreZMin': -.15, 'skullBlend': .06, 'skullClose': .05, 'skullDeepBlur': .03, 'skullExactAway': [1., 2.], 'skullExactDepth': [.03, .06],
-    'skullSlope': 0., 'skullSlopeStep': .01, 'skullSlopeReach': .05, 'skullMatch': 1., 'skullCapJaw': [.55, -.22, .12],
-    'eyeKeep': [.03, .12], 'eyeExact': [.012, .03], 'eyeBandBlur': .04, 'eyeDistBlur': .01, 'earFillet': .10, 'earFilletFront': .05, 'earFilletSide': .03,
+    'skullX0': .24, 'skullCapR': .20, 'skullCentreZMin': -.15, 'skullBlend': .06, 'skullClose': .05, 'skullDeepBlur': .015, 'skullCapJaw': [.55, -.16, .08],
+    'eyeKeep': [.03, .12], 'eyeExact': [.012, .03], 'eyeBandBlur': .02, 'earFillet': .10,
     'earFlareU': [.36, .52], 'earFlareFront': 0., 'earFlareBack': .08,
-    'backBlur': .05, 'backX': [.30, .40], 'backZ': [-.32, -.22, .24, .32], 'backY': [.0, .08], 'backDepth': .08,
     'paleQ': 1.0, 'paleNear': .06, 'paleFacing': .2, 'paleMinX': .3, 'paleSmooth': 1,
 }
 
@@ -168,8 +157,7 @@ semi_long, semi_across = 2*np.sqrt(ev[1]), 2*np.sqrt(ev[0])
 along_vis = (pu_-C[0])*e_long[0]+(pz_-C[1])*e_long[1]
 a_lo, a_hi = float(along_vis.min()), float(along_vis.max())
 Cc = C+P['earCupShift'][0]*semi_long*e_long+P['earCupShift'][1]*semi_across*e_across
-cs_l, cs_a = (P['earCupScale'], P['earCupScale']) if np.isscalar(P['earCupScale']) else P['earCupScale']
-cup_long, cup_across = cs_l*semi_long, cs_a*semi_across
+cup_long, cup_across = P['earCupScale']*semi_long, P['earCupScale']*semi_across
 
 
 def ear_frame(U, Zv):
@@ -186,10 +174,6 @@ def mid_surface(U, Zv):
     a, b, q = ear_frame(U, Zv)
     s = U-P['earRootU']
     bowl = np.where(q < 1, (1-np.minimum(q, 1)**2)**2, 0.)
-    if P['earCupTaper'] > 0:   # deepest toward the root, fading toward the tip
-        cu, cz = U-Cc[0], Zv-Cc[1]
-        t = np.clip((cu*e_long[0]+cz*e_long[1])/cup_long, -1, 1)
-        bowl = bowl*(1-P['earCupTaper']*(t+1)/2)
     return (P['earY0']+P['earSweep']*s-P['earBend']*s*s-P['earFunnel']*(1+P['earFunnelBase']*(1-a)**2)*b*b
             + P['earCupDepth']*bowl), q
 
@@ -244,51 +228,6 @@ def slabs():
     for a in range(0, nx, args.slab):
         yield slice(a, min(nx, a+args.slab))
 
-
-# ---- back of the skull: the back surface y_b(x, z) blurred (the old rear plate's panel edge and the nape lumps go) -----
-def _mblur2(val, valid, r, passes=3):
-    num = np.where(valid, val, 0.).astype(np.float64)
-    den = valid.astype(np.float64)
-    for _ in range(passes):
-        for ax_ in (0, 1):
-            outs = []
-            for a_ in (num, den):
-                n_ = a_.shape[ax_]
-                pad_ = [(r+1, r) if i == ax_ else (0, 0) for i in range(2)]
-                c_ = np.cumsum(np.pad(a_, pad_, mode='constant'), axis=ax_)
-                outs.append(np.take(c_, np.arange(2*r+1, n_+2*r+1), axis=ax_)-np.take(c_, np.arange(0, n_), axis=ax_))
-            num, den = outs
-    return np.where(den > 1e-9, num/np.maximum(den, 1e-9), np.nan)
-
-
-back_rec = None
-if P['backBlur'] > 0:
-    any_b = np.zeros((nx, nz), bool)
-    yb_ = np.zeros((nx, nz), np.float32)
-    for s in slabs():
-        ins = f[s] < 0
-        any_b[s] = ins.any(1)
-        yb_[s] = Y[ny-1-ins[:, ::-1, :].argmax(1)]
-    bx0, bx1 = P['backX']
-    valid_b = any_b & (np.abs(X)[:, None] < bx1+.05)
-    ybs = _mblur2(yb_, valid_b, max(1, int(round(P['backBlur']/VS))))
-    ybs = np.where(np.isnan(ybs), yb_, ybs).astype(np.float32)
-    gbx, gbz = np.gradient(ybs, VS, VS)
-    nrm_b = np.sqrt(1+gbx**2+gbz**2).astype(np.float32)
-    bz_ = P['backZ']
-    moved_b = 0
-    for s in slabs():
-        ax = np.abs(X[s])[:, None, None]
-        yb_s = ybs[s][:, None, :]
-        Gb = (Yb-yb_s)/nrm_b[s][:, None, :]
-        wb = ((1-ss(ax, bx0, bx1))*ss(Zb, bz_[0], bz_[1])*(1-ss(Zb, bz_[2], bz_[3]))
-              * ss(Yb-yb_s, -P['backDepth'], -P['backDepth']*.5)*ss(Yb, *P['backY'])*any_b[s][:, None, :])
-        new_b = f[s]+wb*(Gb-f[s])
-        moved_b += int(((f[s] < 0) != (new_b < 0)).sum())
-        f[s] = np.clip(new_b, -BAND, BAND)
-    back_rec = {'voxelsChangedSign': moved_b}
-    del yb_, ybs, gbx, gbz, nrm_b
-    print('back done', back_rec, flush=True)
 
 # ---- ears -----------------------------------------------------------------------------------------------------------
 U2 = (np.abs(X)[:, None]+0*Z[None, :]).astype(np.float64)
@@ -345,28 +284,15 @@ sec = f_sec < 0
 rcl = P['skullClose']
 if rcl > 0:
     sec = sdf2(sdf2(sec) <= rcl) <= -rcl
-sec_open = f_sec < 0
-F0c = box2(sdf2(sec), max(1, int(round(P['skullDeepBlur']/VS))))
-# near the surface, and away from the hollows the closing filled, the cap starts from the exact section (no step at the
-# blend into H37); deeper, and over the filled hollows, from the closed, blurred distance
-filled = sec & ~sec_open
-d_fill = sdf2(filled) if filled.any() else np.full(f_sec.shape, 1.)
-wk = ss(d_fill, *P['skullExactAway'])*(1-ss(-f_sec, *P['skullExactDepth']))
-F0 = F0c*(1-wk)+f_sec*wk
-# the section's own slope in |x| (narrowing only), so the cap leaves H37 tangentially (C1)
-k_in = max(1, int(round(P['skullSlopeStep']/VS)))
-f_in = ((f[i_p-k_in]+f[i_m+k_in])/2).astype(np.float64)
-slope = np.clip((f_sec-f_in)/(k_in*VS), 0, 1)*wk*P['skullSlope']
-resid = np.clip(f_sec-F0, -.05, .05)*(1-ss(-f_sec, .04, .08))*(f_sec < BAND*.9)
+F0 = box2(sdf2(sec), max(1, int(round(P['skullDeepBlur']/VS))))
 del YY, ZZ
 ins0 = (F0 < 0) & (Z[None, :] > P['skullCentreZMin'])
 cy = float(np.broadcast_to(Y[:, None], F0.shape)[ins0].mean())
 cz = float(np.broadcast_to(Z[None, :], F0.shape)[ins0].mean())
 
 
-def sample_F0(yq, zq, A=None):
-    """F0 (or A) at (yq, zq), bilinear, continued outside the grid by the distance to its edge."""
-    A = F0 if A is None else A
+def sample_F0(yq, zq):
+    """F0 at (yq, zq), bilinear, continued outside the grid by the distance to its edge."""
     fy = yq/VS-lo[1]
     fz = zq/VS-lo[2]
     cy_ = np.clip(fy, 0, ny-1.001)
@@ -374,8 +300,8 @@ def sample_F0(yq, zq, A=None):
     y0 = np.floor(cy_).astype(int)
     z0 = np.floor(cz_).astype(int)
     ty, tz = cy_-y0, cz_-z0
-    v = (A[y0, z0]*(1-ty)*(1-tz)+A[y0+1, z0]*ty*(1-tz)+A[y0, z0+1]*(1-ty)*tz+A[y0+1, z0+1]*ty*tz)
-    return v+np.hypot(fy-cy_, fz-cz_)*VS*(A is F0)
+    v = (F0[y0, z0]*(1-ty)*(1-tz)+F0[y0+1, z0]*ty*(1-tz)+F0[y0, z0+1]*(1-ty)*tz+F0[y0+1, z0+1]*ty*tz)
+    return v+np.hypot(fy-cy_, fz-cz_)*VS
 
 
 def cap_field(ax):
@@ -384,12 +310,7 @@ def cap_field(ax):
     jf, jz0, jz1 = P['skullCapJaw']
     capR = P['skullCapR']*(1-jf*(1-ss(Zb+0*Yb, jz0, jz1)))   # shorter at the jaw: the notch under the ears stays
     sc = np.maximum(np.sqrt(np.clip(1-(dx/capR)**2, 0, 1)), .005)
-    yq, zq = cy+(Yb-cy)/sc, cz+(Zb-cz)/sc
-    v = sample_F0(yq, zq)*sc
-    if P['skullMatch'] > 0:   # the smoothed section's difference from H37's own, added back and fading out (no line at skullX0)
-        v = v+P['skullMatch']*sample_F0(yq, zq, resid)*np.exp(-(dx/P['skullSlopeReach'])**2)
-    if P['skullSlope'] > 0:   # tangent continuation of H37 at skullX0, fading out over skullSlopeReach
-        v = v+sample_F0(yq, zq, slope)*dx*np.exp(-(dx/P['skullSlopeReach'])**2)
+    v = sample_F0(cy+(Yb-cy)/sc, cz+(Zb-cz)/sc)*sc
     return np.maximum(v, dx-capR)   # closed at the end (no needle along the centre line)
 
 
@@ -407,7 +328,7 @@ for o in meshes:
     g_[:, 0] = np.abs(g_[:, 0])
     ev_.append(g_)
 ev_ = np.concatenate(ev_)
-ev_ = ev_[::max(1, len(ev_)//3000)]
+ev_ = ev_[::max(1, len(ev_)//1500)]
 k0, k1 = P['eyeKeep']
 e_lo = np.floor((ev_.min(0)-k1)/VS).astype(int)-lo
 e_hi = np.ceil((ev_.max(0)+k1)/VS).astype(int)-lo+1
@@ -436,15 +357,7 @@ for sgn in (1, -1):
             big = ((np.take(cs_, np.arange(2*rb_e+1, n_+2*rb_e+1), axis=axis_)-np.take(cs_, np.arange(0, n_), axis=axis_))/(2*rb_e+1)).astype(np.float32)
     o0, o1, o2 = ia-max(ia-h_, 0), ja-max(ja-h_, 0), ka_-max(ka_-h_, 0)
     fb_ = big[o0:o0+(ib-ia), o1:o1+(jb-ja), o2:o2+(kb_-ka_)]
-    dsm = dmin.reshape(gx_.shape).astype(np.float32)
-    rb_d = max(1, int(round(P['eyeDistBlur']/VS)))   # the distance to sampled vertices is faceted: smooth it
-    for _ in range(3):
-        for axis_ in (0, 1, 2):
-            pad_ = [(rb_d+1, rb_d) if i == axis_ else (0, 0) for i in range(3)]
-            cs_ = np.cumsum(np.pad(dsm, pad_, mode='edge'), axis=axis_, dtype=np.float64)
-            n_ = dsm.shape[axis_]
-            dsm = ((np.take(cs_, np.arange(2*rb_d+1, n_+2*rb_d+1), axis=axis_)-np.take(cs_, np.arange(0, n_), axis=axis_))/(2*rb_d+1)).astype(np.float32)
-    eye_w[sgn] = (slice(ia, ib), slice(ja, jb), slice(ka_, kb_), dsm, fb_)
+    eye_w[sgn] = (slice(ia, ib), slice(ja, jb), slice(ka_, kb_), dmin.reshape(gx_.shape), fb_)
 print('eye keep weights', {k: v[3].shape for k, v in eye_w.items()}, flush=True)
 
 
@@ -477,14 +390,13 @@ for s in slabs():
     cap = cap_field(ax)
     de_, fblur = eye_dist(s)
     wF = 1-ss(de_, k0, k1)
-    w_exact = np.maximum(1-ss(de_, *P['eyeExact']), 1-ss(ax, x0-bl, x0))   # exact at the keep line too (no step there)
+    w_exact = 1-ss(de_, *P['eyeExact'])
     fs_eye = fs*w_exact+fblur*(1-w_exact)   # the lid band exact, the outer band blurred (old ear-root ripples go)
     sk = cap*(1-wF)+fs_eye*wF
     w = ss(ax, x0-bl, x0)
     sk = fs*(1-w)+sk*w
-    kfs = P['earFilletFront']+(kf-P['earFilletFront'])*ss(t_, -P['earFilletSide'], P['earFilletSide'])   # smaller in front (no shelf at the cup)
-    h_ = np.clip(.5+.5*(G-sk)/kfs, 0, 1)
-    new = np.clip(G*(1-h_)+sk*h_-kfs*h_*(1-h_), -BAND, BAND)   # new ears smooth-unioned to the skull
+    h_ = np.clip(.5+.5*(G-sk)/kf, 0, 1)
+    new = np.clip(G*(1-h_)+sk*h_-kf*h_*(1-h_), -BAND, BAND)   # new ears smooth-unioned to the skull
     new = new*(1-wF)+fs_eye*wF                             # the eye zone: the input field (exact at the lid)
     new = np.where(keep, fs, new)                          # face centre and crown dome: the input field exactly
     changed += int(((fs < 0) != (new < 0)).sum())
@@ -494,7 +406,7 @@ print('ears done', changed, flush=True)
 
 # front-view numbers of the outline (head-local)
 vis_curve = curve[curve[:, 0] > P['earVisibleU']]
-record = {'back': back_rec, 'ears': {
+record = {'ears': {
     'controls': P['earControls'], 'voxelsChangedSign': changed,
     'outlineHalfSpan': round(float(curve[:, 0].max()), 4), 'outlineTop': round(float(curve[:, 1].max()), 4),
     'outlineBottomVisible': round(float(vis_curve[:, 1].min()), 4),

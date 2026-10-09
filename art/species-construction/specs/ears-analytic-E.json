@@ -1,0 +1,42 @@
+{
+ "note": "Analytic ears E (Nick 2026-10-09): between A and D, the same Grogu-like taper and sideways set as D, a bit shorter and broader (length about 1.8 times the root width). Elongated cup, deepest near the root. Same H38 construction as A.",
+ "earControls": [
+  [
+   0.3,
+   0.2
+  ],
+  [
+   0.5,
+   0.08
+  ],
+  [
+   0.78,
+   0.22
+  ],
+  [
+   1.01,
+   0.39
+  ],
+  [
+   1.04,
+   0.53
+  ],
+  [
+   0.66,
+   0.52
+  ],
+  [
+   0.31,
+   0.47
+  ]
+ ],
+ "earCupScale": [
+  0.7,
+  0.58
+ ],
+ "earCupShift": [
+  -0.06,
+  0.0
+ ],
+ "earCupTaper": 0.6
+}

@@ -1,0 +1,42 @@
+{
+ "note": "Analytic ears D (Nick 2026-10-09: closer to Grogu's ears): long ears set mostly sideways and only slightly up, widest near the root and tapering to a softly rounded point that lifts a little; the upper edge a long gentle line, the lower edge a fuller curve; length about 2.4 times the root width (the sheet's span bounds the length). The cup is elongated along the ear, deepest near the root and fading toward the tip. Same H38 construction as A; keys documented in analytic_ears_field.py.",
+ "earControls": [
+  [
+   0.3,
+   0.2
+  ],
+  [
+   0.5,
+   0.17
+  ],
+  [
+   0.8,
+   0.3
+  ],
+  [
+   1.04,
+   0.44
+  ],
+  [
+   1.07,
+   0.54
+  ],
+  [
+   0.7,
+   0.5
+  ],
+  [
+   0.32,
+   0.47
+  ]
+ ],
+ "earCupScale": [
+  0.72,
+  0.55
+ ],
+ "earCupShift": [
+  -0.08,
+  0.0
+ ],
+ "earCupTaper": 0.7
+}

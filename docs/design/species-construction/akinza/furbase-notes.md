@@ -141,3 +141,47 @@ Bare-skin comparisons (3031, A, B, C): `untracked/species-construction/akinza/su
 - Uncovered side of the head. The old ears wrapped the head side right beside the eyes, so H38 exposes skin H37 never had to show: a faint vertical line on the forehead and crown at |x| about .24 where the cap blends in, soft dents and folds beside the outer eye corners and on the temple, small bumps at the jaw corners, and soft planes on the temple in the side view. They are smooth (no ledge or crease), but visible on the bare skin.
 - At the inner (root) end of the cup, a small shelf where the bowl meets the funnel and root flare (close view `cup-L` of head-3044).
 - The pale cup edge is the ellipse itself; a very close view shows only face-size steps.
+
+# Analytic ears pass 2: Grogu-like D and E, head-side fixes (2026-10-09)
+
+Nick on A to C: "going in the better direction, although my original design had them a bit closer to the shape of Grogu's ears." Two more outlines and a clean-up pass on the skin the new ears uncover.
+
+## What was built
+
+- Same H38 script (`analytic_ears_field.py`, updated); specs `ears-analytic-D.json`, `ears-analytic-E.json`; recipes `recipe-furbase-v4D.json`, `-v4E.json`; `recipe-furbase-v4A.json` rebuilt on the updated script. B and C keep the pass 1 script, frozen as `analytic_ears_field_p4be809d4.py` (their recipes point to it).
+- Outputs: A head-3062 / assembled-3065, D head-3063 / assembled-3066, E head-3064 / assembled-3067. Superseded: assembled-3053, 3054, 3057 (same recipes, before the back blur and the cup-rim change).
+- D: seven-point outline, set mostly sideways and a little up, widest at the root, tapering to a softly rounded tip that lifts at the end; length about 2.4 times the root width. E: same set and taper, shorter and broader (about 1.8). Both have an elongated cup (`earCupScale` per axis) that is deepest near the root and fades toward the tip (`earCupTaper`).
+- Script changes, all on the skull side (H37 kept exactly inside |x| .18):
+  - the eye-globe distance is blurred, the band around the eyes is blurred wider (.04), and the face is kept exactly at the keep line (no step there);
+  - the cap's smoothed section gets back its difference from H37 near |x| .24, so the cap leaves H37 without a line;
+  - the fillet is smaller in front of the ear's mid-surface (.05 against .10 behind), so it no longer builds a shelf at the cup's root side;
+  - the cap shortens more gradually toward the jaw;
+  - the back of the skull is blurred (.05) below the crown, for the panel edge and the nape lumps;
+  - the raised cup rim is lower and wider.
+- Nick's silhouette (`apps/web/src/svg/species/akinza.svg`, rasterized): its ears are one broad fan per side, nearly horizontal, the upper edge almost level with the crown and the lower edge falling from the tip to the jaw, length about 1.5 times the root height, each with a large inner notch (the cup). That sits between A and E: wider sideways than A and more level, not as long and thin as D.
+- Neck: rendering assembled-3031's clay with every rig light's shadow off removes the diagonal line on the neck completely, so it is the head's cast shadow on the neck, not a fold. A Taubin relax of the neck window (tried as a post step) changed nothing visible and was dropped; the join is unchanged and has no containment to report.
+
+## Measures (against assembled-3031)
+
+| Measure | 3031 | A 3065 | D 3066 | E 3067 |
+|---|---|---|---|---|
+| R03.1 ear span (.97 to 1.03) | 1.024 | 1.004 | 1.068 | 1.046 |
+| R01.1 front head IoU (min .90) | .918 | .847 | .627 | .691 |
+| R01.2 side head IoU (min .90) | .917 | .897 | .879 | .887 |
+| R04.1 back head IoU (min .90) | .911 | .886 | .671 | .738 |
+| R03.2 fan area missing (max .06) | .042 | .103 | .329 | .259 |
+| R04.2 side extra | .035 | .024 | .024 | .025 |
+| R01.6 back width at .18 | 1.043 | 1.071 | 1.071 | 1.071 |
+| I09 figure height | 1.859 | 1.848 | 1.852 | 1.853 |
+
+All three pass the technical check; containment is within allowance (worst R05/R06 .0004 against .002); R05 regionShift .007 (the jaw cap). D and E are far from the sheet's fan by design (the fan was the old outline). The seam check flags the ear-root crease for all three; D and E add a front and back outline kink at the ear-root row, where their narrow root meets the head.
+
+Comparisons: `untracked/species-construction/akinza/surface/ears-analytic-compare2/` (`clay-3031-A-D-E-{head,threequarter,side,back,face}.png`, `heads-3030-A-D-E-{head-front,head-back,head-side,head-top,q-L,q-R,face-F,cup-L}.png`).
+
+## Still open
+
+- A faint vertical line on the forehead and back of the skull at |x| about .24 (lighter than in pass 1, still visible in face-F and head-back).
+- Soft folds beside the outer eye corners remain (softer than pass 1).
+- D and E side view: a small ring mark on the skull side where the old ear root sat.
+- A: a small knob at the root end of the cup (cup-L).
+- The packet's ear-root crease flag is not cleared.
