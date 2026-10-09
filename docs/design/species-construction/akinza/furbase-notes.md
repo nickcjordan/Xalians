@@ -185,3 +185,60 @@ Comparisons: `untracked/species-construction/akinza/surface/ears-analytic-compar
 - D and E side view: a small ring mark on the skull side where the old ear root sat.
 - A: a small knob at the root end of the cup (cup-L).
 - The packet's ear-root crease flag is not cleared.
+
+# Head redesign around the ears, v5 (2026-10-09)
+
+Nick on A, D and E: "Prefer something between A and E, but it looks like you added some bulk to the head ... take the new version between A and E of the ears, and then completely rethink the head shape and how it should be as the ears attach to it. Maybe go back and look at the original reference drawing."
+
+## What the drawings show, and where the H38 head went wrong
+
+Measured on the first sheet (`evidence/identity-run-0001.png`; front 628 px and side 637 px per figure height, so about .0059 head units per pixel), with the face aligned on the eye centre (model z .028), and on Nick's silhouette (`apps/web/src/svg/species/akinza.svg`, rasterized, scaled to the sheet's ear span). Head-local units throughout (the head is assembled at half scale). The sheet's skull above the ear roots is hidden by fur; its head is read from the face below the ears, the back view and the head clay study (r04).
+
+- The sheet's head is a small round ball. Below the ear roots its front outline (fur included) is .30 half wide at .13 below the eye centre, .25 at .20 below, .19 at .25 below, and closes into a small chin about .29 below the eye centre. The back view shows the same round ball (.295 half wide just under the ears) narrowing into the neck.
+- The ears leave the upper sides of that ball. Their lower edge meets the cheek right beside the outer eye corner, .12 below the eye centre at |x| .30; their upper edge runs into the crown, which dips between the ears in a shallow V (crown about .38 to .41 above the eye centre with fur). In the side view the ear rises from the top back of the skull and the nape below it is tucked in (at .19 below the eye centre the back of the head is .07 further forward than the model's).
+- Nick's silhouette has the same arrangement: broad fans from the top sides, the lower edge falling from the tip to the jaw, the upper edge level with the crown, a round face below. It is drawn with taller eyes and a longer face (eye centre to chin 1.25 times the eye spacing; the sheet .80, the model .88), so it confirms the arrangement, not the exact proportions.
+- H37 and H38 kept the skull that was built while the old fan ears covered the head sides, and H38 grew an end cap from H37's section at |x| .24. Sections of head-3064 (E): straight parallel skull sides at |x| .41 from the eyes to the crown, a flat back with corners, temples .39 to .41 half wide (the sheet about .34 to .35), the back of the skull .36 to .39 half wide at y .20. The E ears start from that wall at z .12, about .2 higher and .1 further out than the sheet's root, so a tall plane of bare skull side shows between the eye and the ear: that is the bulk and the boxy side. The jaw and chin (H37) are only about .02 wider than the sheet, and the eyes, nose and mouth sit where the sheet has them (the sheet's mouth and chin are about .025 higher; left as is, see Still open).
+
+Picture: `untracked/species-construction/akinza/surface/head-redesign/overlay-current.png` (gray: sheet outline; amber: Nick's silhouette; blue: E 3067; light blue: A 3065; dotted: 3031; front and side). Sections: `sections-current.png` (E against 3031).
+
+## What was built
+
+- Ears F (`specs/ears-analytic-F.json`): an eight-point closed cubic B-spline between A and E, same H38 construction (exact mirror, .03 shell, funnel root, elliptic cup, rolled rim). The lower edge lies between A's and E's and leaves the head beside the outer eye corner (visible junction z -.09 at |x| .32, the sheet's place); the upper edge rises from the crown to the tip; the tip is slimmer than A's. Cup elongated, deepest toward the root (scale .66 by .60, taper .4).
+- Head step H39 (`art/species-construction/analytic_head_field.py`, spec `specs/head-analytic-v5.json`), in place of H38 after H37. Recipe `recipe-furbase-v5.json` (v3 plus H39). The whole skull is one authored mass: a smooth union of ellipsoids (cranium, mirrored jaw, muzzle, chin, throat, mirrored eye socket) fitted by `fit_head_mass.py` to the sheet targets in `specs/head-targets-v5.json` (front half widths, midline back of head, rear half widths behind y .12, crown height) and to the H37 face around the eyes, nose and mouth (input: the head-3030 dump written by `dump_head_mesh.py`). The face points fit within .0015 (median) and .005 (90th percentile). Kept from H37: the lid band and the skin the globes sit in (within .02 of the globe, fading out by .06), the nose pad and mouth line, the face front between and below the eyes, and the neck stub below z -.30, so the join meets the same neck. The blend weights are C2 (smootherstep, keep distances resampled by a cubic B-spline); C1 weights and trilinear distances left shading lines and a dimpled face in the development builds. A ring around each eye is blended toward a blurred field, so the seam between the kept lid band and the mass leaves no fold. The buried inner part of each ear stays flat behind the brow (`earInnerFlat`; with the root moved in, H38's sweep swung it out of the forehead) and the start cut is buried inside the skull; fillets .16 behind and .08 in front.
+- Output: head-3070, assembled-3071, packet `untracked/species-construction/akinza/loop/packets/assembled-3071`. Superseded: head-3068 / assembled-3069 (ear tips .02 longer, R03.1 1.048).
+
+## Measures
+
+Head numbers (head-local, from the head components):
+
+| | 3031 | A 3065 | E 3067 | v5 3071 | sheet |
+|---|---|---|---|---|---|
+| Temple half width at y -.12, z .03 / .15 / .27 | .41 / .37 / .40 | .39 / .41 / .38 | .39 / .41 / .38 | .34 / .33 / .29 | about .34 / .34 / .29 (round head under fur) |
+| Back of skull half width at y +.20, z .03 / .15 / .27 | (old fan) | .36 / .39 / .37 | .36 / .39 / .37 | .25 / .24 / .18 | |
+| Crown at the midline | .41 | .41 | .41 | .42 | about .41 (with fur) |
+| Ear lower edge meets the head | (old fan) | z -.08 to -.14 | z .12 | z -.09 at x .32 | z -.09 at x .30 |
+
+Loop measures (packet against assembled-3031):
+
+| Measure | 3031 | A 3065 | E 3067 | v5 3071 |
+|---|---|---|---|---|
+| R03.1 ear span (.97 to 1.03) | 1.024 | 1.004 | 1.046 | 1.029 |
+| R01.1 front head IoU (min .90) | .918 | .847 | .691 | .785 |
+| R01.2 side head IoU (min .90) | .917 | .897 | .887 | .869 |
+| R04.1 back head IoU (min .90) | .911 | .886 | .738 | .835 |
+| R03.2 fan area missing (max .06) | .042 | .103 | .259 | .160 |
+| R04.2 side extra (max .06) | .035 | .024 | .025 | .030 |
+| R01.6 back width at .18 (max 1.15) | 1.043 | 1.071 | 1.071 | 1.025 |
+| I09 figure height (1.8605 within 1 percent) | 1.859 | 1.848 | 1.853 | 1.859 |
+
+Technical check passes (one component, no non-manifold edges); containment within allowance (R05 and R06 .0004 against .002); regionShift .057 figure heights at most, all inside the head regions R01 to R04 and 0 elsewhere; the body is unchanged (body-2960). R01.1, R01.2, R04.1 and R03.2 fail as for every H38 variant: they compare with the sheet's fur fan, which is wider and taller than a clean shell ear, and the small head now also leaves out the sheet's fur crest (R01.2 falls for that). The seam check flags the ear-root crease (front), as for A to E. The face guard reports `measureFailed` (one eye measured); E 3067 already failed the same way ("only 7 of 12 rays crossed sclera and band" on the second eye). The measured eye reads aspect 1.39, iris offset .087, band top over bottom 6.1, within the guards.
+
+Comparisons (bare clay): `untracked/species-construction/akinza/surface/head-redesign/clay-3031-A-E-new-{head,threequarter,side,back,face}.png` at the fur cameras and `heads-3030-A-E-new-{w-front,w-tq,w-side,w-back,w-top,face,face-q,w-rq}.png` of the head components. The drawing over the new outline: `overlay-new.png`; sections against E: `sections-new.png`.
+
+## Still open
+
+- The sheet's mouth and chin sit about .025 higher on the face than the model's (eye centre to mouth .22 against .24). The mouth line was kept and the jaw taper was hung from the model's chin; moving the mouth and chin up is Nick's call.
+- The back of the skull narrows toward the nape (.24 half wide at y .20, where a round ball would be about .27), so in the back view the head runs into the neck in a gentle V. The ellipsoid fit did not fully meet the rear targets.
+- A soft cushion remains around each eye just outside the lid band, and a faint fold behind the outer eye corner in the side view: much softer than A to E, still visible on bare clay.
+- The back of each ear root shows a soft vertical line where the back flare meets the skull (back view), and the ear top meets the crown with a small step in the rear three-quarter view (`w-rq`).
+- The cheeks below the eyes are H37's, about .02 wider per side than the sheet.
