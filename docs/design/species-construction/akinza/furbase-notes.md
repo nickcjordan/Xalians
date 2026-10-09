@@ -73,3 +73,32 @@ v2 follows the sheet, not 2999, where the two differ, so it is closer to the she
 - A faint rectangular panel edge shows on the back of the skull in the rear-oblique view; it is the old rear plate, softened by the wider back blur and the polish but not removed.
 - The cheek ruff under each ear (inside the face guard) and the nape locks above the neck are unchanged from 2999.
 - The pale cup boundary follows the voxel grid (fine stair-step at render size); the fur pass smooths the slot anyway.
+
+# Smooth face v1 (2026-10-09)
+
+Nick, after fur on assembled-3023: fix the model before more texture work, the face looks lumpy under fur. A bare-skin render at the fur cameras (`untracked/species-construction/akinza/surface/assembled-3023/diagnosis/clay-vs-fur-face.png`, `clay-vs-fur-head.png`) showed six faults in the model: a forehead ridge above the eyes; bulges under and beside the eyes with creases toward the mouth; a lumpy, pinched muzzle; a faceted jaw edge with corners at the hinge; a diagonal fold on the throat; wavy ear rims.
+
+## What was built
+
+- Recipe: `recipe-furbase-v3.json` is `recipe-furbase-v2.json` plus head step H37 after H36, `art/species-construction/smooth_face_field.py` with `specs/face-smooth-v1.json` and the sheet envelope. Every other step is v2's.
+- Output: head-3030, assembled-3031, packet `untracked/species-construction/akinza/loop/packets/assembled-3031`. Bare-skin comparisons at the fur cameras: `untracked/species-construction/akinza/surface/assembled-3031/diagnosis/clay-3023-vs-3031-{face,head,side,threequarter}.png`. head-3024/assembled-3025, head-3026/assembled-3028 and head-3027/assembled-3029 are superseded builds (ear outline too smooth for the front outline, before the crown dome).
+- Face: the face is a radial height about (0, 0, -.12), sampled by ray casts. It is refaired as a thin plate on the sphere that follows the input with lumps down-weighted (three reweighting passes) and an authored ellipsoid mass (cranium, cheeks, muzzle, chin, throat; `fit_face_mass.py`, fitted once with the eye rings, nose and mouth weighted up). It is pinned on the eye globes and 4 degrees around them, on the nose and mouth footprints and outside the face region, and blended in field space. Rays that cross the skin more than once (under the ears) are left out.
+- Crown: the two dips between the crown centre and the ear roots are raised by at most .02 toward a smooth arch (top-facing columns only). Without it the smoother ear outline cost front outline (R01.1 .9147 to .9159 in the superseded builds).
+- Ears: the v2 shell is built on its own outline and on an outline blurred .03 (v2 .02), inset .006 (v2 .008) and held below the frame top, and only the difference is added, so nothing moves where the outlines agree.
+
+## Measures (assembled-3031 against assembled-3023)
+
+| Measure | 3023 | 3031 |
+|---|---|---|
+| R01.1 front head band IoU against the sheet | .9164 | .9179 |
+| R01.2 left head band IoU against the sheet | .9135 | .9166 |
+| R04.1 back head band IoU against the sheet | .9086 | .9113 |
+| R03.1 ear span against the sheet | 1.021 | 1.024 |
+| Face move, 95th percentile / out / in (head units) | | .012 / .020 / -.021 |
+
+Technical check passes (one component, no non-manifold edges), no face guard broken, no new seams, containment within allowance (H37 against H33), regionShift .005 figure heights at most (R01 to R04), R05 and below 0.
+
+## Still open
+
+- A soft diagonal shadow line remains on the neck at the head trim and below it (world z about .45). The hard fold under the left jaw is gone; what is left lies in the assembly's neck loft and the body, outside this head-only step.
+- The cheek ruff under each ear (outside the face region: rays there cross the skin twice) and the faint panel at the back of the skull are unchanged.
