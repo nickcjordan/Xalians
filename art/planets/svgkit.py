@@ -17,6 +17,7 @@ TILE_X = [C - 1.25 * WT + i * WT for i in range(2)]  # the two copies of every m
 TILE_Y = C - HT / 2
 PAD = 2  # wrapped columns on each side of a map
 DISCRETE = ' calcMode="discrete"'
+RESERVED = {'lens', 'disc', 'nightm', 'haze', 'air', 'sunside', 'airm', 'soft', 'band', 'surge'}  # ids the kit defines
 
 
 def f(x):
@@ -90,12 +91,13 @@ class Kit:
 
     def map_image(self, p, sym, name, q=84, width=None, punch=1.0, small=False):
         """A full map as a symbol (drawn once, used twice): `small` maps are 512 wide whatever the planet's size."""
+        assert sym not in RESERVED, 'map symbol %r collides with a kit id' % sym  # Saiphus's haze vanished behind the kit's gradient
         w_ = 512 if small else (width or MAPW)
         e = WT * PAD / w_
         href = self.uri(name, 'webp', q, 512 if small else width, True, punch)
         # the wrapped columns keep the image's edges from smoothing to transparent, but the two copies must not overlap (a
         # translucent glow drawn twice there shows as a bright stripe), so each copy is clipped to its own map width
-        return ('<clipPath id="%s-%s-clip"><rect x="0" y="-1" width="%s" height="%s"/></clipPath>' % (p, sym, f(WT), f(HT + 2))
+        return ('<clipPath id="%s-%s-clip"><rect x="-.4" y="-1" width="%s" height="%s"/></clipPath>' % (p, sym, f(WT + .8), f(HT + 2))  # a hair of overlap, so antialiasing at the cut leaves no seam
                 + '<g id="%s-%s" clip-path="url(#%s-%s-clip)"><image href="%s" x="%s" y="0" width="%s" height="%s" preserveAspectRatio="none"/></g>' % (
                     p, sym, p, sym, href, f(-e), f(WT + 2 * e), f(HT)))
 
@@ -121,7 +123,7 @@ class Kit:
         d.append('<radialGradient id="%s-air" cx="%s" cy="%s" r="%s" gradientUnits="userSpaceOnUse"><stop offset=".9" stop-color="%s" stop-opacity="0"/>'
                  '<stop offset=".935" stop-color="%s" stop-opacity=".55"/><stop offset=".965" stop-color="%s" stop-opacity=".18"/><stop offset="1" stop-color="%s" stop-opacity="0"/></radialGradient>' % (
                      p, f(C), f(C), f(R * 1.075), air[0], air[1], air[2], air[2]))
-        d.append('<linearGradient id="%s-sunside" x1="0" y1="0" x2="1" y2="1"><stop offset=".2" stop-color="#fff"/><stop offset=".75" stop-color="#fff" stop-opacity=".12"/></linearGradient>' % p)
+        d.append('<linearGradient id="%s-sunside" x1="0" y1="0" x2="1" y2="1"><stop offset=".2" stop-color="#fff"/><stop offset=".75" stop-color="#fff" stop-opacity=".03"/></linearGradient>' % p)
         d.append('<mask id="%s-airm" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="600"><rect width="600" height="600" fill="url(#%s-sunside)"/></mask>' % (p, p))
         d.append('<filter id="%s-soft" x="-50%%" y="-50%%" width="200%%" height="200%%"><feGaussianBlur stdDeviation="1.6"/></filter>' % p)
         return d

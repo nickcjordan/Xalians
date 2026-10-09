@@ -179,7 +179,7 @@ def lens():
 
 
 
-def sun(direction=(-.86, -.32, .36), soft=(.05, .45), night_color='#03040e', night_alpha=.96):
+def sun(direction=(-.86, -.32, .36), soft=(.05, .45), night_color='#03040e', night_alpha=.96, eased=False):
     """The sun on the disc: Lambert light from `direction`, a terminator softened over `soft`, a night overlay of
     `night_color` and its complement as a mask for the night side's own light."""
     # ---- the sun on the disc: Lambert light from the upper left, a soft terminator, and its complement for the night layer
@@ -188,6 +188,8 @@ def sun(direction=(-.86, -.32, .36), soft=(.05, .45), night_color='#03040e', nig
     zn = np.sqrt(np.clip(1 - r2, 0, 1))
     lam = xn * sun[0] + yn * sun[1] + zn * sun[2]
     day = np.clip((lam + soft[0]) / soft[1], 0, 1) ** 1.2
+    if eased:  # a smoothstep ramp: no corner where the night reaches full strength
+        day = smooth(-soft[0], soft[1] - soft[0], lam)
     dark = np.zeros((N, N, 4))
     dark[..., :3] = hexc(night_color)
     dark[..., 3] = np.where(inside, (1 - day) * night_alpha * 255, 0)

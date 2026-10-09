@@ -1,5 +1,5 @@
-"""The review page for Saiphus: the planet large with layer toggles, at the map's sizes beside today's dot,
-and what is in it. Run from the repo root after textures.py: python art/planets/saiphus/demo.py  (writes demo.html)
+"""The review page for the Saiphus living planet: the planet large with layer toggles, at the map's sizes beside today's dot, and
+what is in it. Run from the repo root after textures.py: python art/planets/saiphus/demo.py  (writes demo.html)
 """
 import os
 import sys
@@ -11,10 +11,10 @@ PAGE = '''<title>Saiphus, Living</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Martian+Mono:wght@400;600&family=Saira:wght@500;700&display=swap" rel="stylesheet">
 <style>
-/* One dark look, the site's own: a room of warm near-black, ink for text, the storm's blue as the only accent. Layout: the planet
+/* The site's own dark look: a room of warm near-black, ink for text, and the sulfur gold as the one accent. Layout: the planet
    first and large, the controls under it, then the planet at map sizes beside today's dot, then what is in it. */
 :root {
-  --room: #121014; --s1: #1b181d; --edge: #2e2a31; --ink: #e9e3d6; --ink2: #b4ad9f; --ink3: #8a8478; --storm: #f0b8c8;
+  --room: #121014; --s1: #1b181d; --edge: #2e2a31; --ink: #e9e3d6; --ink2: #b4ad9f; --ink3: #8a8478; --accent: #f2d26b;
   --display: "Saira", "Arial Narrow", sans-serif; --body: "Atkinson Hyperlegible", system-ui, sans-serif; --mono: "Martian Mono", ui-monospace, monospace;
   color-scheme: dark;
 }
@@ -29,14 +29,14 @@ p { margin: 0; max-width: 64ch; }
 .stage svg.big { width: min(640px, 100%%); height: auto; display: block; }
 .controls { display: flex; flex-wrap: wrap; gap: 8px 10px; justify-content: center; margin-top: 6px; }
 .controls label, .controls button { font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); border: 1px solid var(--edge); background: var(--s1); padding: 9px 11px; display: inline-flex; gap: 8px; align-items: center; cursor: pointer; }
-.controls input { accent-color: var(--storm); margin: 0; }
-.controls button:focus-visible, .controls label:focus-within { outline: 2px solid var(--storm); outline-offset: 2px; }
+.controls input { accent-color: var(--accent); margin: 0; }
+.controls button:focus-visible, .controls label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 .controls button[aria-pressed="true"] { color: var(--room); background: var(--ink); }
 section { margin-top: 56px; }
 .sizes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
 .cell { border: 1px solid var(--edge); background: #0a0a10; padding: 18px; display: grid; justify-items: center; align-content: center; gap: 12px; min-height: 230px; }
 .cell .cap { font: 600 11px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); text-align: center; }
-.dot { width: 22px; height: 22px; border-radius: 50%%; background: #c8b8a8; box-shadow: 0 0 0 1px #3a3640; }
+.dot { width: 22px; height: 22px; border-radius: 50%%; background: #e8c33a; box-shadow: 0 0 0 1px #3a3640; }
 .list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px 28px; }
 .list div { border-top: 1px solid var(--edge); padding-top: 12px; min-width: 0; }
 .list b { font: 700 15px/1.3 var(--display); letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 6px; }
@@ -44,25 +44,28 @@ section { margin-top: 56px; }
 .list q { color: var(--ink); font-style: italic; quotes: none; }
 .notes p + p { margin-top: 10px; }
 .notes p { color: var(--ink2); }
-.hide-islands .lyr-islands, .hide-haze .lyr-haze, .hide-squall .lyr-squall, .hide-bio .lyr-bio, .hide-lightning .lyr-lightning, .hide-sun .lyr-sun, .hide-air .lyr-air, .hide-air .lyr-haze { display: none; }
+.hide-bands .lyr-bands, .hide-limb .lyr-limb, .hide-islands .lyr-islands, .hide-clouds .lyr-clouds, .hide-storm .lyr-storm, .hide-flare .lyr-flare,
+.hide-lightning .lyr-lightning, .hide-sun .lyr-sun, .hide-air .lyr-air { display: none; }
 .motion-note { display: none; color: var(--ink3); font-size: 14px; margin-top: 8px; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .motion-note { display: block; } }
 </style>
 <div class="wrap">
-  <p class="kicker">Living planet &middot; third world</p>
+  <p class="kicker">Living planet &middot; proof of concept</p>
   <h1>Saiphus</h1>
-  <p class="lede">The gas giant, drawn as an animated SVG from its history: pale zones and rose belts turning, a dark superstorm with lightning in it, sulfur haze blowing faster than the bands, the life band's floating islands under fog, glowing algae on the night side, and now and then a Benthane squall bursting up out of a storm.</p>
+  <p class="lede">The gas giant, drawn as an animated SVG from its history: banded zones and belts sliding at their own speeds, islands of land drifting in the life band, yellow sulfuric cloud, a storm flaring in a shear zone with lightning inside it.</p>
   <div class="stage">
     %(BIG)s
     <p class="motion-note">Your system asks for reduced motion, so it starts paused. Press Play to watch it turn.</p>
     <div class="controls" role="group" aria-label="Layers and playback">
+      <label><input type="checkbox" id="l-bands" data-l="bands" checked>Bands</label>
       <label><input type="checkbox" id="l-islands" data-l="islands" checked>Floating islands</label>
-      <label><input type="checkbox" id="l-haze" data-l="haze" checked>Sulfur haze</label>
+      <label><input type="checkbox" id="l-clouds" data-l="clouds" checked>Sulfuric cloud</label>
+      <label><input type="checkbox" id="l-storm" data-l="storm" checked>Storm</label>
+      <label><input type="checkbox" id="l-flare" data-l="flare" checked>Storm flare</label>
       <label><input type="checkbox" id="l-lightning" data-l="lightning" checked>Lightning</label>
-      <label><input type="checkbox" id="l-squall" data-l="squall" checked>Benthane squalls</label>
-      <label><input type="checkbox" id="l-bio" data-l="bio" checked>Glowing algae</label>
       <label><input type="checkbox" id="l-sun" data-l="sun" checked>Night side</label>
-      <label><input type="checkbox" id="l-air" data-l="air" checked>Atmosphere</label>
+      <label><input type="checkbox" id="l-limb" data-l="limb" checked>Limb darkening</label>
+      <label><input type="checkbox" id="l-air" data-l="air" checked>Air rim</label>
       <button type="button" id="pause" aria-pressed="false">Pause</button>
       <button type="button" id="fast" aria-pressed="false">Spin 8&times;</button>
     </div>
@@ -81,18 +84,19 @@ section { margin-top: 56px; }
   <section>
     <h2>What is in it</h2>
     <div class="list">
-      <div><b>A gas giant</b><p>From the history: <q>a hydrogen-helium gas giant</q>. No ground, only cloud: pale peach zones and dusty rose belts with sheared, curling edges, plum in the deepest belts, lavender-grey poles.</p></div>
-      <div><b>Storms</b><p><q>Violent and relentless storms</q> and <q>the immense superstorms stirring beneath</q>. Storm ovals between the bands, one great dark superstorm, lightning flickering in them.</p></div>
-      <div><b>Sulfur haze</b><p><q>Sulfuric acid clouds sweep haphazardly across the sky.</q> Thin yellow streaks blowing faster than the bands.</p></div>
-      <div><b>The life band</b><p><q>Islands of floating landmass ... separated by a sea of clouds and dense fog</q>, from <q>flying boulders</q> to <q>hundreds of miles across</q>. Small flecks of green plains with brown edges in one band, under drifting fog, casting faint shadows.</p></div>
-      <div><b>Algae by night, dawn by day</b><p><q>Floating colonies of bright, colorful airborne algae and bioluminescent zooplankton</q> glow teal and violet on the night side; the day side warms toward the terminator, for <q>sunrises that light the entire world and all its clouds beautiful shades of orange and pink</q>.</p></div>
-      <div><b>Benthane squalls</b><p><q>Plumes of concentrated Benthane gas from the deeper layers ... would jettison themselves high into the sky</q>, driven by the superstorms. From three storms in turn, a pale plume bursts up and spreads.</p></div>
+      <div><b>Bands</b><p>From the history: <q>A hydrogen-helium gas giant.</q> No ground: pale zones and ochre belts slide at their own speeds, and their edges curl where they shear.</p></div>
+      <div><b>Floating islands</b><p><q>Islands of floating landmass appear to hover across the sky.</q> Small flecks of green and brown land drift slowly in one band, with cloud between them.</p></div>
+      <div><b>Sulfuric cloud</b><p><q>Sulfuric acid clouds sweep haphazardly across the sky.</q> Yellow cloud, thickest over the life band.</p></div>
+      <div><b>Storm and flare</b><p><q>Violent and relentless storms.</q> One cyclone sits in a shear zone, and its glow swells now and then.</p></div>
+      <div><b>Lightning</b><p>Surges of lightning inside the storm, and strikes in the cloud deck. Flashes show only where the cloud is thick, so nothing flashes in clear air.</p></div>
+      <div><b>Air rim</b><p><q>Sunrises that light the entire world and all its clouds beautiful shades of orange and pink.</q> The rim of the air is orange and pink on the sunlit side.</p></div>
     </div>
   </section>
 
   <section class="notes">
     <h2>How it is made</h2>
-    <p>Built on the same engine as Zolton and Magmuth: flat maps generated from noise slide behind a lens that bends them into a turning globe. The bands, the life band and the haze each turn at their own speed, so the layers shear past each other as a gas giant's do.</p>
+    <p>The bands, islands and cloud are flat maps generated in code from noise, wrapped so they tile around the globe. In the SVG each map slides sideways behind a lens, a displacement map that bends a flat picture into a sphere, so the planet really turns: features come in at one edge, swell across the middle and squeeze away at the other. Each layer turns on its own clock: belts, zones, cloud, islands and the storm glow never line up. A fixed sun lights it from the upper left.</p>
+    <p>Weight: about %(KB)s KB for the three planets on this page. The map-size planets use 1024-wide maps, and the islands are enlarged there so they survive the shrink.</p>
   </section>
 </div>
 <script>
@@ -132,10 +136,10 @@ section { margin-top: 56px; }
 '''
 
 if __name__ == '__main__':
-    page = PAGE % {
-        'BIG': svg('sb', 'big', 'Saiphus, turning: a banded gas giant with a dark superstorm, sulfur haze and floating islands'),
-        'MID': svg('sm', 'mid', 'Saiphus at 150 pixels', with_stars=False, width=512).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"'),
-        'SMALL': svg('ss', 'small', 'Saiphus at 76 pixels', with_stars=False, width=512).replace('<svg class="small"', '<svg class="small" width="76" height="76"'),
-    }
+    big = svg('sb', 'big', 'Saiphus, turning, with its bands, islands and storm')
+    mid = svg('sm', 'mid', 'Saiphus at 150 pixels', with_stars=False, width=1024).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"')
+    small = svg('ss', 'small', 'Saiphus at 76 pixels', with_stars=False, width=1024).replace('<svg class="small"', '<svg class="small" width="76" height="76"')
+    kb = (len(big) + len(mid) + len(small)) // 1024
+    page = PAGE % {'BIG': big, 'MID': mid, 'SMALL': small, 'KB': '%d' % kb}
     open(os.path.join(HERE, 'demo.html'), 'w', encoding='utf-8').write(page)
     print('demo', os.path.getsize(os.path.join(HERE, 'demo.html')) // 1024, 'KB')

@@ -311,8 +311,8 @@ def planet(p, width=None):
     import re
     def clip(m):
         sym = m.group(1)
-        return ('<clipPath id="%s-clip"><rect x="0" y="-1" width="%s" height="%s"/></clipPath><g id="%s" clip-path="url(#%s-clip)">%s</g>' % (
-            sym, f(WT), f(HT + 2), sym, sym, m.group(0).replace(' id="%s"' % sym, '', 1)))
+        return ('<clipPath id="%s-clip"><rect x="-.4" y="-1" width="%s" height="%s"/></clipPath><g id="%s" clip-path="url(#%s-clip)">%s</g>' % (
+            sym, f(WT + .8), f(HT + 2), sym, sym, m.group(0).replace(' id="%s"' % sym, '', 1)))
     return re.sub(r'<image id="(%s-(?:surface|electric|cloudshade|storm|bloodcloud))"[^>]*/>' % p, clip, out)
 
 

@@ -1,333 +1,164 @@
-"""Saiphus's textures for the living planet: a gas giant's banded atmosphere (zones and belts that slide at their own speeds, with
-eddies where they shear), the floating islands of the life band, the sulfuric cloud with one storm in a shear zone, plus the
-orthographic lens (a displacement map) and the sun's light on the disc. A gas giant has no ground, so there is no surface map.
+"""Saiphus's maps for the living planet: a banded gas giant (deep belts and bright zones with sheared, curling edges and storm
+ovals), the faster sulfuric haze above them, the life band with its floating islands under fog, and the night side's
+bioluminescent algae; then the lens and the sun (planetlib), with a dawn band along the terminator.
 
-Every map wraps in longitude (noise sampled on a cylinder), so a strip of it can slide behind the lens forever.
 Run from the repo root: python art/planets/saiphus/textures.py  (writes art/planets/saiphus/out/)
 """
 import math
 import os
-import random
+import sys
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter
 
-OUT = os.path.join(os.path.dirname(__file__), 'out')
-os.makedirs(OUT, exist_ok=True)
-W, H = 2048, 1024  # the maps: longitude across, latitude down (2048 so the large planet stays crisp)
-K = W / 1024  # per-pixel slopes shrink as the map grows
-PLATE_R = 240.0  # the planet's radius in the 600 by 600 plate (build.py)
-WT = 2 * math.pi * PLATE_R  # one map width, in plate units
-UNIT = WT / W  # plate units per map pixel
-rng = np.random.default_rng(1331)
-PERM = rng.permutation(4096)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from planetlib import *  # noqa: E402,F401,F403
+import planetlib as P  # noqa: E402
 
+use(os.path.dirname(os.path.abspath(__file__)))
+rng = np.random.default_rng(1630)
 
-def _hash(ix, iy, iz):
-    return (PERM[(PERM[(PERM[ix & 4095] + iy) & 4095] + iz) & 4095] / 4095.0)
+# ---- the storms: great ovals set on the boundaries between bands, turning the flow around them ("violent and relentless
+# storms", and the "immense superstorms" stirring below the Benthane squalls)
+STORMS = []  # (longitude, latitude, radius, spin)
+for lo, la, r, s in [(1.0, -.38, .16, 3.2), (3.6, .52, .1, -2.8), (5.2, -.1, .08, 2.6), (2.3, .2, .06, -2.4), (4.4, -.62, .07, 2.2), (.2, .74, .06, -2.0)]:
+    STORMS.append((lo, la, r, s))
+axes = [(math.cos(lo) * math.cos(la), math.sin(lo) * math.cos(la), math.sin(la), s, r * 1.4) for lo, la, r, s in STORMS]
+X, Y, Z = swirl(CX, CY, CZ, axes)
+LATW = np.arcsin(np.clip(Z, -1, 1))  # latitude after the storms have wound the flow
 
+# ---- the bands: zones (bright) and belts (dark) by latitude, their edges sheared into waves and curls by the flow
+turb = fbm(X * 3.0, Y * 3.0, Z * 9.0, octaves=4)  # stretched along latitude: the flow is east-west
+turb2 = fbm(X * 7.0 + 3, Y * 7.0, Z * 20.0, octaves=4)
+lat_w = LATW + turb * .06 + wblur(turb2 * .5 + .5, 1.5 * K) * .012  # wavy band edges, not frayed
+# the band profile: a sum of a few sines of latitude, unequal widths
+prof = (np.sin(lat_w * 7.2 + .4) * .55 + np.sin(lat_w * 12.6 + 1.3) * .3 + np.sin(lat_w * 19.0 + 2.1) * .15)
+zone = smooth(-.25, .35, prof)  # 1 in a bright zone, 0 in a dark belt
+fine = fbm(X * 4.0, Y * 4.0, Z * 20.0, octaves=4) * .5 + .5  # fine streaks within each band (no hairline octave: it frayed the band edges)
+# palette: pale cream and sand zones, ochre and dusty rose belts, a deeper russet in the darkest belts
+belt_c = lerpc(hexc('#9a6a74'), hexc('#c4949a'), smooth(.2, .8, fine))  # dusty rose
+deep = smooth(-.55, -.85, prof)
+belt_c = belt_c + (np.array(hexc('#5e3c56'), float) - belt_c) * (deep * .7)[..., None]  # plum in the deepest belts
+zone_c = lerpc(hexc('#e6d2c0'), hexc('#f8ece0'), smooth(.25, .85, fine))  # pale peach and cream
+col = belt_c + (zone_c - belt_c) * zone[..., None]
+# the polar regions: duller and bluer, with fewer bands
+polar = smooth(.95, 1.3, np.abs(LAT))
+col = col + (lerpc(hexc('#7a7088'), hexc('#a49ab0'), fine) - col) * (polar * .7)[..., None]  # lavender-grey poles
+# the storm ovals: pale cores ringed by darker collars, the big one rose-red
+for i, (lo, la, r, s) in enumerate(STORMS):
+    ax = (math.cos(lo) * math.cos(la), math.sin(lo) * math.cos(la), math.sin(la))
+    d = np.arccos(np.clip(CX * ax[0] + CY * ax[1] + CZ * ax[2], -1, 1)) / r
+    dlo = np.angle(np.exp(1j * (LON - lo))) * math.cos(la)
+    oval = np.sqrt((dlo / (r * 1.6)) ** 2 + ((LAT - la) / r) ** 2)  # wider than tall
+    core = smooth(1.0, .55, oval) * (.8 + .2 * fine)
+    collar = smooth(1.25, 1.0, oval) * smooth(.75, 1.0, oval)
+    core_c = np.array(hexc('#3c3450') if i == 0 else hexc('#fbf3e8'), float)  # the superstorm dark, the others pale
+    col = col + (core_c - col) * (core * (.85 if i == 0 else .7))[..., None]
+    col = col * (1 - (collar * .25)[..., None])
+# shading: the cloud tops have a little relief from the fine streaks
+soft = wblur(fine * .5 + zone * .5, 1.2 * K)
+col *= np.clip(relief(soft, 10), .9, 1.1)[..., None]
+save('bands.png', col, 'RGB')
 
-def vnoise(x, y, z):
-    """Smooth value noise in 3D, -1..1."""
-    ix, iy, iz = np.floor(x).astype(np.int64), np.floor(y).astype(np.int64), np.floor(z).astype(np.int64)
-    fx, fy, fz = x - ix, y - iy, z - iz
-    sx, sy, sz = fx * fx * (3 - 2 * fx), fy * fy * (3 - 2 * fy), fz * fz * (3 - 2 * fz)
-    out = 0
-    for dx in (0, 1):
-        for dy in (0, 1):
-            for dz in (0, 1):
-                w = (sx if dx else 1 - sx) * (sy if dy else 1 - sy) * (sz if dz else 1 - sz)
-                out = out + w * _hash(ix + dx, iy + dy, iz + dz)
-    return out * 2 - 1
+# ---- the upper haze: thin sulfuric streaks ("Sulfuric acid clouds sweep haphazardly across the sky") blowing faster than the
+# bands, yellowish and translucent, with the life band's fog
+X2, Y2, Z2 = CX * 2.2, CY * 2.2, (CZ + CX * .12) * 18.0  # long streaks, tilted a little across the bands
+hz = pct(fbm(X2 + 11, Y2, Z2, octaves=6), 0, 100)
+hz_a = wblur(smooth(.6, .85, hz), 2 * K) * .75  # about a fifth of the sky, soft-edged
+h = np.zeros((H, W, 4))
+h[..., :3] = lerpc(hexc('#d0a830'), hexc('#e8d060'), smooth(.55, 1, hz))  # sulfur yellow, saturated enough to show on the pale zones
+h[..., 3] = hz_a * 255
+save('haze.png', h, 'RGBA')
 
+# ---- the life band: "islands of floating landmass ... separated by a sea of clouds and dense fog", "from little more than
+# flying boulders to landmasses that are hundreds of miles across". In one band of latitude a scatter of small flecks of land,
+# green plains with brown edges, some in clusters, under drifting fog; they ride their own layer, drifting slower than the haze
+LIFE_LA, LIFE_W = .3, .1
+ir = np.random.default_rng(31)
+isl = np.zeros_like(fine)
+for i in range(70):
+    lo, la = ir.uniform(0, 2 * math.pi), LIFE_LA + ir.normal(0, LIFE_W * .5)
+    r = ir.choice([.004, .006, .008, .012, .02], p=[.35, .3, .2, .1, .05])
+    for j in range(ir.integers(1, 5)):  # some in clusters
+        lo2, la2 = lo + ir.normal(0, r * 3), la + ir.normal(0, r * 2)
+        rr = r * ir.uniform(.6, 1.2)
+        dlo = np.angle(np.exp(1j * (LON - lo2))) * math.cos(la2)
+        dd = np.sqrt(dlo ** 2 + (LAT - la2) ** 2) / rr
+        if dd.min() > 1:
+            continue
+        isl = np.maximum(isl, smooth(1.0, .7, dd * (1 + .25 * turb2)))
+it = np.zeros((H, W, 4))
+plain = fbm(CX * 60, CY * 60, CZ * 60, octaves=2) * .5 + .5
+it[..., :3] = lerpc(hexc('#6e8a48'), hexc('#8aa45a'), plain)  # sunlit plains
+edge_ = smooth(.2, .7, isl) * smooth(1.0, .75, isl)
+it[..., :3] = it[..., :3] + (np.array(hexc('#b8a878'), float) - it[..., :3]) * (edge_ * .7)[..., None]  # pale cliff edges
+it[..., 3] = smooth(.15, .45, isl) * 255
+save('islands.png', it, 'RGBA')
+# the islands' shadows on the cloud below, offset away from the sun (east and south)
+sh = np.zeros((H, W, 4))
+sh[..., 3] = np.roll(np.roll(smooth(.15, .45, isl), int(3 * K), axis=1), int(2 * K), axis=0) * 60
+save('islandshade.png', sh, 'RGBA')
+# fog drifting over the life band, partly hiding the islands
+fogn = fbm(CX * 5 + 3, CY * 5, CZ * 18, octaves=5) * .5 + .5
+fog = smooth(.45, .75, fogn) * np.exp(-((LAT - LIFE_LA) / (LIFE_W * 1.6)) ** 2) * .45  # wisps; about a third of the islands sit partly under them
+fg = np.zeros((H, W, 4))
+fg[..., :3] = hexc('#f4ece0')
+fg[..., 3] = fog * 255
+save('fog.png', fg, 'RGBA')
 
-def _rot(seed):
-    q = np.random.default_rng(seed).normal(size=4)
-    q /= np.linalg.norm(q)
-    w, x, y, z = q
-    return np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
-                     [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
-                     [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]], np.float32)
+# ---- the night side's own light: "floating colonies of bright, colorful airborne algae and bioluminescent zooplankton" drift in
+# the life band, a faint teal and violet glow where it is dark
+bio = np.zeros_like(fine)
+for i in range(46):
+    lo, la = ir.uniform(0, 2 * math.pi), LIFE_LA + ir.normal(0, LIFE_W * .8)
+    r = ir.uniform(.01, .03)
+    dlo = np.angle(np.exp(1j * (LON - lo))) * math.cos(la)
+    bio = np.maximum(bio, np.exp(-(dlo ** 2 / (r * 2.2) ** 2 + (LAT - la) ** 2 / r ** 2)))
+bio = bio * smooth(.3, .7, fbm(CX * 20, CY * 20, CZ * 30, octaves=3) * .5 + .5)
+b = np.zeros((H, W, 4))
+hue = fbm(CX * 3, CY * 3, CZ * 3, octaves=2) * .5 + .5
+b[..., :3] = lerpc(hexc('#40e0c0'), hexc('#a070ff'), smooth(.35, .65, hue))
+b[..., 3] = np.clip(bio * 1.4, 0, 1) * 255
+save('bio.png', b, 'RGBA')
 
+# ---- where the storms are thick, for lightning and the Benthane squalls
+sm = np.zeros_like(fine)
+for lo, la, r, s in STORMS:
+    dlo = np.angle(np.exp(1j * (LON - lo))) * math.cos(la)
+    sm = np.maximum(sm, smooth(1.3, .6, np.sqrt((dlo / (r * 1.6)) ** 2 + ((LAT - la) / r) ** 2)))
+m = np.zeros((H, W, 4))
+m[..., :3] = 255
+m[..., 3] = sm * 255
+from PIL import Image as _I
+_I.fromarray(m.astype(np.uint8), 'RGBA').resize((512, 256), _I.BILINEAR).save(os.path.join(P.OUT, 'stormmask.png'))
+with open(os.path.join(P.OUT, 'storms.txt'), 'w') as fh:
+    for lo, la, r, s in STORMS:
+        fh.write('%.5f %.5f %.5f\n' % (lo, la, r))
 
-ROTS = [_rot(100 + i) for i in range(16)]
-
-
-def rnoise(x, y, z, o=0):
-    """Value noise with its lattice turned at random, so its creases never line up with the map's rows (as horizontal lines)."""
-    m = ROTS[o % 16]
-    return vnoise(m[0, 0] * x + m[0, 1] * y + m[0, 2] * z, m[1, 0] * x + m[1, 1] * y + m[1, 2] * z, m[2, 0] * x + m[2, 1] * y + m[2, 2] * z)
-
-
-def fbm(x, y, z, octaves=6, lac=2.03, gain=.5):
-    a, f, s, n = 1.0, 1.0, 0.0, 0.0
-    for o in range(octaves):
-        s += a * rnoise(x * f + 17.1 * o, y * f + 3.7 * o, z * f + 9.3 * o, o)
-        n += a
-        a *= gain
-        f *= lac
-    return s / n
-
-
-# the cylinder: longitude around, latitude up. Points on the unit sphere: no seam, no pinch.
-lon = (np.arange(W) + .5) / W * 2 * math.pi
-lat = ((np.arange(H) + .5) / H - .5) * math.pi
-LON, LAT = np.meshgrid(lon, lat)
-CX, CY, CZ = (np.cos(LON) * np.cos(LAT)).astype(np.float32), (np.sin(LON) * np.cos(LAT)).astype(np.float32), np.sin(LAT).astype(np.float32)
-
-
-def S(k):
-    return CX * k, CY * k, CZ * k
-
-
-def save(name, arr, mode):
-    Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), mode).save(os.path.join(OUT, name))
-
-
-def lerpc(a, b, t):
-    a, b = np.array(a, float), np.array(b, float)
-    return a + (b - a) * t[..., None]
-
-
-def hexc(h):
-    return [int(h[i:i + 2], 16) for i in (1, 3, 5)]
-
-
-def pct(a, lo, hi):
-    """Rescale so the lo and hi percentiles land on 0 and 1."""
-    l, h = np.percentile(a, lo), np.percentile(a, hi)
-    return np.clip((a - l) / (h - l), 0, 1)
-
-
-def swirl(x, y, z, centers):
-    """Twist the sphere's points around a few centers (eddies and cyclones), strongest at each eye."""
-    for (cx_, cy_, cz_, strength, size) in centers:
-        k = np.array([cx_, cy_, cz_], float)
-        k /= np.linalg.norm(k)
-        d = np.arccos(np.clip(x * k[0] + y * k[1] + z * k[2], -1, 1))
-        th = strength * np.exp(-(d / size) ** 2)
-        c, s = np.cos(th), np.sin(th)
-        kx = k[1] * z - k[2] * y
-        ky = k[2] * x - k[0] * z
-        kz = k[0] * y - k[1] * x
-        kd = k[0] * x + k[1] * y + k[2] * z
-        x, y, z = (x * c + kx * s + k[0] * kd * (1 - c), y * c + ky * s + k[1] * kd * (1 - c), z * c + kz * s + k[2] * kd * (1 - c))
-    return x, y, z
-
-
-def wblur(a, r):
-    """Gaussian blur that wraps east to west, so a blurred map meets itself without a seam."""
-    pad = int(r * 4) + 2
-    ext = np.concatenate([a[:, -pad:], a, a[:, :pad]], axis=1)
-    out = np.array(Image.fromarray((np.clip(ext, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(r)), float) / 255
-    return out[:, pad:-pad]
-
-
-def smooth(e0, e1, x):
-    u = np.clip((x - e0) / (e1 - e0), 0, 1)
-    return u * u * (3 - 2 * u)
-
-
-def relief(h, k, light=(.55, .45)):
-    """Shade a height field from a fixed northwest light: a slope is lit where height rises to the right and down."""
-    gy, gx = np.gradient(h)
-    return 1 + (gx * light[0] + gy * light[1]) * k * K
-
-
-def axis(lo, la):
-    """A point on the sphere from its longitude and latitude (radians)."""
-    return (math.cos(lo) * math.cos(la), math.sin(lo) * math.cos(la), math.sin(la))
-
-
-STORM = (2.1, .40, .30)  # the storm: center longitude, latitude and radius, radians (its shear zone is at its latitude)
-SX, SY, SZ = axis(STORM[0], STORM[1])
-LIFE = (-.30, .085)  # the life band: center latitude and half-width, radians (the islands drift in it)
-BAND_N = 7.0  # bands per radian of latitude: seven bands across the disc
-
-
-# ---- the banded atmosphere: zones (pale) and belts (ochre-brown) alternate in latitude. Three eddies twist the band edges
-# so the boundaries curl where they shear (one of them under the storm). The belts are the whole sphere; the zones sit over
-# them with their own alpha, and the two are laid on their own clocks, so the seam between them shears.
-SWIRL_BANDS = [axis(STORM[0], STORM[1]) + (1.5, .34), axis(STORM[0] + 2.4, -.62) + (-1.3, .24), axis(STORM[0] - 2.2, .9) + (1.1, .2)]
-# small festoon eddies strung along the band edges, alternating in turn so the edges curl like festoons
-SWIRL_BANDS += [axis(lo, la) + (s_, .11) for lo, la, s_ in [(0.4, .42, 1.4), (1.2, -.62, -1.2), (2.9, .42, -1.1), (3.9, -.62, 1.2), (4.9, .9, -.9), (5.6, -.62, 1.0), (0.9, -.1, 1.0), (3.4, .05, -1.0)]]
-X, Y, Z = swirl(CX, CY, CZ, SWIRL_BANDS)
-LATS = np.arcsin(np.clip(Z, -1, 1))  # the latitude once the eddies have turned the sphere
-warp = fbm(X * 1.7, Y * 1.7, Z * 1.7, octaves=4)
-wide = fbm(X * .6, Y * .6, Z * .6, octaves=3)  # a slow field that varies the band widths: some wide, some narrow
-phase = LATS * BAND_N + 1.6 * warp + 1.1 * wide  # wavier, sheared edges with varied widths
-zone = smooth(-.3, .3, np.sin(phase))  # 1 in a zone, 0 in a belt
-edge = np.exp(-(np.sin(phase) / .12) ** 2)  # a sulfur-pale line where a band turns
-mottle = fbm(X * 3.0, Y * 3.0, Z * 3.0, octaves=5)
-streak = fbm(X * 1.5, Y * 1.5, Z * 7.0, octaves=4)  # stretched along latitude: fine streaks, not spots
-streak2 = fbm(X * 2.2 + 5.0, Y * 2.2, Z * 9.0, octaves=4)
-tb = pct(streak * .75 + mottle * .35, 2, 98)
-belt = lerpc(hexc('#6a4430'), hexc('#c9996c'), tb)  # dusty dark to pale ochre
-rose = smooth(.5, .85, pct(mottle, 20, 99)) * .4  # dusty rose through some of the belts
-belt = belt + (lerpc(hexc('#6a4430'), hexc('#c48a7e'), tb) - belt) * rose[..., None]
-tz = pct(streak2 * .75 + mottle * .25, 2, 98)
-zcol = lerpc(hexc('#b89a72'), hexc('#efe0c0'), tz)  # sand to cream
-zcol = zcol + (np.array(hexc('#f0dc7a'), float) - zcol) * (edge * .3)[..., None]  # sulfur along the turns
-save('belts.png', belt, 'RGB')
-zrgba = np.zeros((H, W, 4))
-zrgba[..., :3] = zcol
-zrgba[..., 3] = zone * 255
-save('zones.png', zrgba, 'RGBA')
-
-
-# ---- the floating islands: small flecks of green and brown land in the life band, scattered in clusters, drifting with cloud
-# between them. Drawn at two sizes: the large planet's map at true size, and the map-size planets' map with the flecks enlarged
-# so they survive the shrink (a fleck is about the same size on the screen either way).
-def sphere_grid(width):
-    lo = (np.arange(width) + .5) / width * 2 * math.pi
-    la = ((np.arange(H) + .5) / H - .5) * math.pi
-    LO, LA = np.meshgrid(lo, la)
-    return (np.cos(LO) * np.cos(LA)).astype(np.float32), (np.sin(LO) * np.cos(LA)).astype(np.float32), np.sin(LA).astype(np.float32)
-
-
-def islands(width, mul, count=24, seed=2024):
-    rs = random.Random(seed)
-    unit = WT / width  # plate units per map pixel at this width
-    g = Image.new('L', (width, H), 0)
-    b = Image.new('L', (width, H), 0)
-    dg, db = ImageDraw.Draw(g), ImageDraw.Draw(b)
-    for _ in range(count):
-        la = LIFE[0] + rs.uniform(-LIFE[1], LIFE[1])
-        cx = rs.uniform(0, 1) * width
-        cy = (la / math.pi + .5) * H
-        cos_l = max(math.cos(la), .3)
-        spread = rs.uniform(12, 24) / unit
-        green = rs.random() < .6
-        for _ in range(rs.randint(6, 14)):
-            fx = cx + rs.gauss(0, spread) / cos_l
-            fy = cy + rs.gauss(0, spread * .6)
-            rp = rs.uniform(2.2, 4.2) * mul / unit  # a fleck's radius, in map pixels
-            pts = []
-            for k in range(9):
-                a_ = 2 * math.pi * k / 9
-                rr = rp * rs.uniform(.6, 1.25)
-                pts.append((math.cos(a_) * rr / cos_l, math.sin(a_) * rr))
-            for off in (-width, 0, width):  # drawn three times so the flecks wrap east to west
-                poly = [(fx + px + off, fy + py) for px, py in pts]
-                (dg if green else db).polygon(poly, fill=255)
-    ga = wblur(np.array(g, float) / 255, .6)
-    ba = wblur(np.array(b, float) / 255, .6)
-    a = np.clip(ga + ba, 0, 1)
-    frac = ba / (ga + ba + 1e-6)
-    LX, LY, LZ = sphere_grid(width)
-    tex = fbm(LX * 9.0, LY * 9.0, LZ * 9.0, octaves=3)
-    gcol = lerpc(hexc('#3d5a2c'), hexc('#5e7a40'), pct(tex, 5, 95))  # dark green plains
-    bcol = lerpc(hexc('#5a3e24'), hexc('#7e5a34'), pct(tex, 5, 95))  # brown
-    col = gcol * (1 - frac)[..., None] + bcol * frac[..., None]
-    # a pale rim on the sun side (the sun is upper left: the flecks' upper-left edges), and a faint shadow thrown lower right
-    d_ = max(1, round(3 * width / W))
-    shifted = np.roll(a, (d_, d_), axis=(0, 1))
-    rim = np.clip(a - shifted, 0, 1)
-    col = col + (np.array(hexc('#e6e6b0'), float) - col) * (rim * .7)[..., None]
-    sh = wblur(np.clip(shifted - a, 0, 1), .8) * .4
-    shcol = np.array(hexc('#120c06'), float)
-    total = np.clip(a + sh, 0, 1)
-    rgb = (col * a[..., None] + shcol * sh[..., None]) / (total[..., None] + 1e-6)
-    out = np.zeros((H, width, 4))
-    out[..., :3] = rgb
-    out[..., 3] = total * 255
-    return out
-
-
-isl_big = islands(W, 1.0)
-Image.fromarray(np.clip(isl_big, 0, 255).astype(np.uint8), 'RGBA').save(os.path.join(OUT, 'islands.png'))
-isl_small = islands(1024, 1.7)
-Image.fromarray(np.clip(isl_small, 0, 255).astype(np.uint8), 'RGBA').save(os.path.join(OUT, 'islands-s.png'))
-
-
-# ---- the sulfuric cloud: banded and torn, wound into the storm in its shear zone, crisp tops shaded as towers and soft wisps
-# between. The storm and the rest of the cloud are two pictures of one field, so each can be shown alone.
-CLOUD_SWIRL = [axis(STORM[0], STORM[1]) + (2.6, .3), axis(-1.1, .12) + (-1.0, .2), axis(1.0, -.5) + (1.4, .16)]
-X, Y, Z = swirl(CX, CY, CZ, CLOUD_SWIRL)
-w1 = fbm(X * 2.0, Y * 2.0, Z * 2.0, octaves=4)
-w2 = fbm(X * 2.0 + 7.7, Y * 2.0 - 3.1, Z * 2.0, octaves=4)
-cl0 = fbm(X * 3.0 + w1 * 1.1, Y * 3.0 + w2 * 1.1, Z * 3.6 + w1 * .5, octaves=6)
-# streaks: fast across latitude, slow along longitude, so the cloud runs out as sheared sweeps along the band flow
-cl = fbm(X * 1.1 + w1 * .8, Y * 1.1 + w2 * .8, Z * 6.5, octaves=5) * .75 + cl0 * .25
-life = np.exp(-((LAT - LIFE[0]) / .2) ** 2) * .3  # thicker cloud over the life band, so the islands sit under cloud
-shear = np.exp(-((LAT - STORM[1]) / .22) ** 2) * .18
-cl = pct(cl + np.sin(LAT * 9 + w1 * 2.2) * .08 + life + shear, 8, 99.7)
-dist = np.arccos(np.clip(CX * SX + CY * SY + CZ * SZ, -1, 1))
-u = dist / STORM[2]
-env = np.exp(-u ** 3)
-core = smooth(.7, .35, u)
-cl = np.clip(cl + env * .3, 0, 1.15)
-cl = cl * (1 - core) + (.55 + cl * .45) * core  # the storm's dense overcast core keeps its towers
-storm_w = smooth(1.15, .7, u)  # the storm's share of the cloud, for its own switch
-eyes = 1 - .35 * smooth(.3, .08, u)  # a slightly darker eye at its middle
-dense = smooth(.44, .62, cl)  # thinner than before: the bands show through between the cloud
-wisp = smooth(.26, .46, cl) * .35
-alpha = np.clip(dense + wisp * (1 - dense), 0, 1) * .8  # partly translucent: the bands show through
-tops = smooth(.45, .95, cl)
-soft = wblur(cl / 1.15, 1.4 * K) * 1.15
-csh = np.clip(relief(soft, 10), .8, 1.2)  # gentle towers: a strong relief reads as crinkled paper  # the towers' sunward sides and shadowed flanks (from a softened field: no fine streaks)
-body = lerpc(hexc('#8a6a20'), hexc('#f6e58a'), tops ** .9) * csh[..., None]  # sulfur yellow
-bright = lerpc(hexc('#8e7438'), hexc('#fffbd8'), tops) * csh[..., None]
-body = body + (bright - body) * (storm_w * .3)[..., None]  # the storm's tops a little brighter
-c = np.zeros((H, W, 4))
-c[..., :3] = body * eyes[..., None]
-c[..., 3] = alpha * 235
-save('clouds.png', c, 'RGBA')  # the whole cloud: placement only, never drawn as one picture
-cs = c.copy()
-cs[..., 3] = c[..., 3] * storm_w
-save('clouds-storm.png', cs, 'RGBA')
-cp = c.copy()
-cp[..., 3] = c[..., 3] * (1 - storm_w)
-save('clouds-plain.png', cp, 'RGBA')
-cm = np.zeros((H, W, 4))
-cm[..., :3] = 255
-cm[..., 3] = np.clip(alpha * (.6 + .4 * tops) * 1.2, 0, 1) * 255  # where a flash lights the cloud: thick cloud most
-Image.fromarray(cm.astype(np.uint8), 'RGBA').resize((W // 4, H // 4), Image.LANCZOS).save(os.path.join(OUT, 'cloudmask.png'))
-with open(os.path.join(OUT, 'storm.txt'), 'w') as fh:
-    fh.write('%.6f %.6f %.6f' % STORM)
-with open(os.path.join(OUT, 'life.txt'), 'w') as fh:
-    fh.write('%.6f %.6f' % LIFE)
-
-
-# ---- the lens: an orthographic sphere as a displacement map. For each pixel of the disc, how far to reach into the flat map
-# (laid out at one map pixel per radian of radius) for the point of the sphere seen there.
+lens()
+# a gas giant's deep, scattering atmosphere: a wide soft terminator
+sun(direction=(-.86, -.32, .36), soft=(.16, .8), night_color='#0a0610', night_alpha=.86, eased=True)
+# dawn: "sunrises that light the entire world and all its clouds beautiful shades of orange and pink" - a warm band along the
+# terminator, on the disc
 N = 512
 yy, xx = np.mgrid[0:N, 0:N]
-xn = (xx + .5) / N * 2 - 1
-yn = (yy + .5) / N * 2 - 1
+xn, yn = (xx + .5) / N * 2 - 1, (yy + .5) / N * 2 - 1
 r2 = xn * xn + yn * yn
-inside = r2 < 1.0
-yc = np.clip(yn, -.999999, .999999)
-la_ = np.arcsin(yc)
-cosla = np.sqrt(1 - yc * yc)
-lo_ = np.arcsin(np.clip(xn / cosla, -1, 1))
-dx = np.where(inside, lo_ - xn, 0)  # in units of the radius
-dy = np.where(inside, la_ - yn, 0)
-MAXD = math.pi / 2 - 1
-d = np.zeros((N, N, 3))
-d[..., 0] = (dx / (2 * MAXD) + .5) * 255
-d[..., 1] = (dy / (2 * MAXD) + .5) * 255
-d[..., 2] = 128
-# dithered before rounding: the 8-bit steps become a fine grain instead of stair-steps and sheared rows
-dith = np.random.default_rng(7).uniform(-.5, .5, (N, N, 1))
-q = np.clip(np.round(d + np.where(inside[..., None], dith, 0)), 0, 255)
-q[..., 2] = 128
-save('lens.png', q, 'RGB')
-with open(os.path.join(OUT, 'lens.txt'), 'w') as fh:
-    fh.write('%.6f' % (2 * MAXD))  # the displacement scale, in radii
-
-# ---- the sun on the disc: Lambert light from the upper left, a soft terminator, and its complement for the night layer
-sun = np.array([-.62, -.52, .6])  # upper left, so the terminator bends across the disc
-sun /= np.linalg.norm(sun)
-zn = np.sqrt(np.clip(1 - r2, 0, 1))
-lam = xn * sun[0] + yn * sun[1] + zn * sun[2]
-day = np.clip((lam + .12) / .62, 0, 1) ** 1.3  # a wide soft terminator: a thick atmosphere scatters light past it
-dark = np.zeros((N, N, 4))
-dark[..., :3] = hexc('#0b0710')
-dark[..., 3] = np.where(inside, (1 - day) * .9 * 255, 0)  # the bands stay faintly visible on the night side
-save('night.png', dark, 'RGBA')
-nm = np.zeros((N, N, 4))
-nm[..., :3] = 255
-nm[..., 3] = np.where(inside, np.clip(1 - day * 1.3, 0, 1) * 255, 0)
-save('nightmask.png', nm, 'RGBA')
+sun_ = np.array([-.86, -.32, .36])
+sun_ /= np.linalg.norm(sun_)
+lam = xn * sun_[0] + yn * sun_[1] + np.sqrt(np.clip(1 - r2, 0, 1)) * sun_[2]
+dawn = np.exp(-((lam - .06) / .2) ** 2) * (r2 < 1)
+dw = np.zeros((N, N, 4))
+dw[..., :3] = lerpc(hexc('#ff8a5a'), hexc('#ff9ab0'), np.clip((yn + 1) / 2, 0, 1))
+dw[..., 3] = dawn * .28 * 255
+save('dawn.png', dw, 'RGBA')
+# drawn as a warm tint multiplied into the clouds on the day side of the terminator (a bright band added on top of the night read
+# as a false second terminator)
+warm = np.exp(-((lam - .14) / .14) ** 2) * (r2 < 1) * (lam > -.02)
+dm = np.ones((N, N, 3)) * 255
+dm = dm + (lerpc(hexc('#ffc4a0'), hexc('#ffbcd0'), np.clip((yn + 1) / 2, 0, 1)) - dm) * (warm * .45)[..., None]
+save('dawnmul.png', dm, 'RGB')
+dn = np.zeros((N, N, 4))
+dn[..., :3] = 255
+dn[..., 3] = np.clip((-.08 - lam) / .2, 0, 1) * (r2 < 1) * 255  # deep night only: the glowing algae never show in daylight
+save('deepnight.png', dn, 'RGBA')
 print('ok')

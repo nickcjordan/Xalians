@@ -45,7 +45,7 @@ th { color: var(--ink3); font-weight: 600; }
 </style>
 <div class="wrap">
   <h1>Planets on the map</h1>
-  <p>Two living planets as the home page would carry them: each a small file fetched only when the map comes near the screen, its pictures shared and cached, every planet stepped at twenty frames a second. Every world sits where the encyclopedia's map puts it, drawn at its size from the planet data; the grey discs are the twelve still to build.</p>
+  <p>The living planets built so far, as the home page would carry them: each a small file fetched only when the map comes near the screen, its pictures shared and cached, every planet stepped at twenty frames a second. Every world sits where the encyclopedia's map puts it, drawn at its size from the planet data; the grey discs are the twelve still to build.</p>
   <div class="map" id="map">%(WORLDS)s%(DOTS)s</div>
   <h2>What it costs</h2>
   <table>
@@ -83,7 +83,7 @@ th { color: var(--ink3); font-weight: 600; }
       s.pauseAnimations();
       svgs.push(s);
     }));
-    live.textContent = 'both worlds loaded and playing ' + Math.round(performance.now() - t0) + ' ms after the map came near';
+    live.textContent = 'the built worlds loaded and playing ' + Math.round(performance.now() - t0) + ' ms after the map came near';
     requestAnimationFrame(frame);
   }
   // nothing plays while the map is off screen

@@ -23,7 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DIST = os.environ.get('PLANET_DIST') or os.path.join(HERE, 'dist')
 ASSETS = os.path.join(DIST, 'a')
 os.makedirs(ASSETS, exist_ok=True)
-WORLDS = ['zolton', 'magmuth']
+WORLDS = ['zolton', 'magmuth', 'saiphus']
 MAP_WIDTH = int(os.environ.get('PLANET_W', '512'))  # map width for a planet drawn at about 150 px (300 device px on a 2x screen)
 Q = int(os.environ.get('PLANET_Q', '40'))  # re-encode lossy pictures at this quality (40: no visible loss at map size; 0 keeps each picture's own)
 
