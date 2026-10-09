@@ -38,3 +38,38 @@ Candidate summary: technical check passes (one component, no non-manifold edges)
 - The eye hollow is mostly the broad dish the globe sits in, not a deep gutter; filling that dish would raise the skin past the fixed globe, so only the narrow gutter was filled. The gray around the eye in eyes-front is lighter, not gone.
 - The rim of each wing still has soft lumps seen edge-on, and the back-top corner beside each ear root shades a little unevenly; both are smooth (no ledge, crease or groove) and well under fur length.
 - `recipe.py pin` reports two open items on B-23 (a body step); they are on the baseline `recipe.json` too and were left alone.
+
+# Fur base v2: authored ears (2026-10-09)
+
+Nick on fur over v1 (assembled-3019): the plush ears "look like a weird poorly molded piece of play-doh". v1 smoothed the old fan and kept its blobby volume, so the ear had no designed shape. v2 authors each ear.
+
+## What was built
+
+- Recipe: `recipe-furbase-v2.json` is `recipe.json` plus H36 after H35, now `art/species-construction/fur_base_head_field_v2.py` with `specs/fur-base-v2.json` and the sheet envelope `specs/r03_envelope.npz` as a pinned file argument. Every other step is the baseline's.
+- Output: head-3022, assembled-3023, packet `untracked/species-construction/akinza/loop/packets/assembled-3023`. Side-by-side m04 and m05 of v1 and v2: `untracked/species-construction/akinza/loop/scratch/furbase/compare/`. head-3020/assembled-3021 is a superseded build of the same recipe file (its ear root bridged the jaw notch).
+- The step runs the whole v1 pipeline on the skull (crown, back of skull with a wider blur, eye fill), cuts the old fan off outside a superellipse skull section, and unions two authored ears with a fillet:
+  - Outline: the first sheet's closed front fan outline mapped into head-local space as `fan_clumps_front.py` does, blurred .02 and inset .008, so it is one clean curve with the sheet's gentle scallops.
+  - Profile: one quadratic mid-surface in |x| and z, fitted to the old fan over both wings at once; the old V sweep with a gentle forward curve toward the tips, identical on both sides, no ripples.
+  - Thickness: .03 head units (about 5 percent of a wing's width), a rolled rim, and a root flare front and back so the ear grows out of the head side; the back of the ear is one convex surface into the back of the skull. The ear's lower edge rises near the root, keeping the sheet's notch between ear bottom and jaw.
+  - Cup: the R03 cup polygons push the shell back .045 with a raised front rim around them; the pale slot is drawn from the same cup.
+  - Clean-up: a blur on each forehead top corner (a knob where the old fan met the forehead) and a light polish over the back of the skull.
+
+## Measures (assembled-3023)
+
+| Measure | 2999 | v1 (3019) | v2 (3023) |
+|---|---|---|---|
+| R01.1 front head band IoU against the sheet | .886 | .892 | .916 (now passes) |
+| R04.1 back head band IoU against the sheet | .891 | .900 | .909 (now passes) |
+| R01.2 left head band IoU against the sheet | .929 | .933 | .914 |
+| R03.1 ear span against the sheet | 1.029 | .993 | 1.021 |
+| Front head band IoU against 2999 | 1 | .938 | .906 |
+| Outer fans IoU against 2999 (needles opened) | 1 | .968 | .868 |
+| Whole figure front IoU against 2999 | 1 | .982 | .972 |
+
+v2 follows the sheet, not 2999, where the two differ, so it is closer to the sheet and further from 2999. Technical check passes, no new seams, containment within allowance, no face guard broken, nothing in R01 to R04 fails (R01.6 1.043, R04.2 .039, R03.2 .045).
+
+## Still open
+
+- A faint rectangular panel edge shows on the back of the skull in the rear-oblique view; it is the old rear plate, softened by the wider back blur and the polish but not removed.
+- The cheek ruff under each ear (inside the face guard) and the nape locks above the neck are unchanged from 2999.
+- The pale cup boundary follows the voxel grid (fine stair-step at render size); the fur pass smooths the slot anyway.
