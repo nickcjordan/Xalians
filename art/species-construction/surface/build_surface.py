@@ -289,6 +289,7 @@ def compute_attributes(skin, cfg, species):
             gw += wn[names.index(gname)]
         guided = np.clip(gw*(1-cup_mask), 0, 1)
         write_attribute(me, 'fur_guided', guided)
+        write_attribute(me, 'cupm', cup_mask)
         rng = np.random.default_rng(cfg['seed'])
         tang = unit(comb-nrm*np.sum(comb*nrm, axis=1, keepdims=True))
         npts = cfg['points']

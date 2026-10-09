@@ -139,7 +139,7 @@ class MatBuilder:
         return n.outputs['Value'] if op in ('DOT_PRODUCT', 'LENGTH', 'DISTANCE') else n.outputs['Vector']
 
     def ramp(self, v, lo, hi):
-        n = self.node('ShaderNodeMapRange')
+        n = self.node('ShaderNodeMapRange', interpolation_type='SMOOTHSTEP')
         n.clamp = True
         self.put(n, 'From Min', lo)
         self.put(n, 'From Max', hi)
@@ -188,6 +188,68 @@ def pattern_factor(hair, kind, params):
                 f = b.m('MULTIPLY', band, b.attr(params['fadeAttr']).outputs['Fac'])
         else:
             f = b.m('MULTIPLY', band, b.m('ADD', 0.3, b.m('MULTIPLY', dorsal, 0.7)))
+    elif kind == 'tiger3':
+        PI = 3.14159265
+        P = params
+        a = b.attr('angle').outputs['Fac']
+        belly = b.attr('bellyf').outputs['Fac']
+        sepx = b.node('ShaderNodeSeparateXYZ')
+        hair.links.new(rest, sepx.inputs['Vector'])
+        side = b.m('GREATER_THAN', sepx.outputs['X'], 0.0)
+        axis = b.vm('DOT_PRODUCT', rest, (0.25, 0.35, 1.0))
+        tailpos = b.attr('tailpos').outputs['Fac']
+        tmask = b.ramp(ptail, 0.4, 0.6)
+        axis = b.m('ADD', b.m('MULTIPLY', axis, b.m('SUBTRACT', 1.0, tmask)),
+                   b.m('MULTIPLY', b.m('MULTIPLY', tailpos, tmask), P['period']/P['tailPeriod']))
+        warp = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+        warp.inputs['Scale'].default_value = 4.0
+        b.put(warp, 'Vector', rest)
+        h = b.m('MULTIPLY', b.m('ADD', axis, b.m('MULTIPLY', b.m('SUBTRACT', warp.outputs['Factor'], 0.5), P.get('warp', 0.03))), 1.0/P['period'])
+        base = b.m('FLOOR', h)
+        shear = b.m('MULTIPLY', b.m('MINIMUM', a, P['chevMax']), P['chev'])
+        mw = b.m('SUBTRACT', 1.0, b.ramp(belly, 0.0, P.get('fieldRamp', 0.5))) if P.get('narrow') == 'field' else 1.0
+
+        def row_stripe(row):
+            vrel = b.m('SUBTRACT', b.m('SUBTRACT', h, b.m('ADD', row, 0.5)), shear)
+            odd = b.m('FLOORED_MODULO', row, 2.0)
+            cxyz = b.node('ShaderNodeCombineXYZ')
+            b.put(cxyz, 'X', b.m('ADD', b.m('ADD', b.m('MULTIPLY', row, 0.37), 1.3), b.m('MULTIPLY', side, 5.1)))
+            b.put(cxyz, 'Y', b.m('ADD', 0.9, b.m('MULTIPLY', side, 3.3)))
+            cxyz.inputs['Z'].default_value = 0.7
+            wnn = b.node('ShaderNodeTexWhiteNoise', noise_dimensions='3D')
+            hair.links.new(cxyz.outputs['Vector'], wnn.inputs['Vector'])
+            sp = b.node('ShaderNodeSeparateColor')
+            hair.links.new(wnn.outputs['Color'], sp.inputs['Color'])
+            Rr, Gg, Bb, R2 = sp.outputs['Red'], sp.outputs['Green'], sp.outputs['Blue'], wnn.outputs['Value']
+            s0 = b.m('MULTIPLY', odd, b.m('ADD', P['offMin'], b.m('MULTIPLY', R2, P['offMax']-P['offMin'])))
+            L = b.m('ADD', P['lenMin'], b.m('MULTIPLY', Rr, P['lenMax']-P['lenMin']))
+            u = b.m('DIVIDE', b.m('SUBTRACT', a, s0), L)
+            valid = b.m('MULTIPLY', b.ramp(u, -0.02, 0.0), b.m('SUBTRACT', 1.0, b.ramp(u, 0.98, 1.0)))
+            wvar = b.m('ADD', 0.85, b.m('MULTIPLY', Gg, 0.3))
+            uc = b.m('MAXIMUM', b.m('MINIMUM', u, 1.0), 0.0)
+            hw = b.m('MULTIPLY', b.m('MULTIPLY', b.m('MULTIPLY', P['hw'], wvar), b.m('POWER', b.m('SUBTRACT', 1.0, uc), P['power'])),
+                     b.m('MULTIPLY', b.m('MULTIPLY', valid, b.ramp(b.m('SUBTRACT', a, s0), 0.0, 0.45)), mw))
+            c = b.m('SUBTRACT', b.m('MULTIPLY', b.m('MULTIPLY', b.m('SINE', b.m('MULTIPLY', uc, PI)), P['bend']),
+                                     b.m('SUBTRACT', b.m('MULTIPLY', Gg, 2.0), 1.0)), b.m('MULTIPLY', uc, 0.1))
+            dbl = b.m('LESS_THAN', Bb, P['double'])
+            rampd = b.ramp(u, 0.12, 0.6)
+            delta = b.m('MULTIPLY', b.m('MULTIPLY', rampd, dbl), P['dgap'])
+            main_w = b.m('MULTIPLY', hw, b.m('SUBTRACT', 1.0, b.m('MULTIPLY', dbl, rampd)))
+            br_w = b.m('MULTIPLY', b.m('MULTIPLY', hw, P['dwidth']), b.m('MULTIPLY', dbl, rampd))
+
+            def S(off, w):
+                d = b.m('ABSOLUTE', b.m('SUBTRACT', b.m('SUBTRACT', vrel, c), off))
+                val = b.m('SUBTRACT', 1.0, b.ramp(d, b.m('MULTIPLY', w, 0.9), b.m('ADD', w, 0.006)))
+                return b.m('MULTIPLY', val, b.ramp(w, 0.012, 0.04))
+            f = b.m('MAXIMUM', S(0.0, main_w), b.m('MAXIMUM', S(delta, br_w), S(b.m('MULTIPLY', delta, -1.0), br_w)))
+            Lb = b.m('ADD', P['partnerMin'], b.m('MULTIPLY', R2, P['partnerMax']-P['partnerMin']))
+            ub = b.m('DIVIDE', b.m('SUBTRACT', PI, a), Lb)
+            vb = b.m('MULTIPLY', b.ramp(ub, -0.02, 0.0), b.m('SUBTRACT', 1.0, b.ramp(ub, 0.98, 1.0)))
+            ubc = b.m('MAXIMUM', b.m('MINIMUM', ub, 1.0), 0.0)
+            wb = b.m('MULTIPLY', b.m('MULTIPLY', b.m('MULTIPLY', P['hw']*P['partner'], wvar), b.m('POWER', b.m('SUBTRACT', 1.0, ubc), P['power'])),
+                     b.m('MULTIPLY', b.m('MULTIPLY', vb, odd), mw))
+            return b.m('MAXIMUM', f, S(0.0, wb))
+        f = b.m('MAXIMUM', row_stripe(b.m('SUBTRACT', base, 1.0)), b.m('MAXIMUM', row_stripe(base), row_stripe(b.m('ADD', base, 1.0))))
     elif kind == 'tiger':
         PI = 3.14159265
         arc = b.attr('arc').outputs['Fac']
@@ -283,6 +345,16 @@ def apply_pattern(pal, hair, mix_node):
     else:
         blend.inputs[6].default_value = lin(pal['coat'])
         hair.links.new(blend.outputs[2], mix_node.inputs[6])
+    if params.get('cupBlue'):  # inner ear cups take the stripe blue, soft-edged by the stored cup mask
+        cb = hair.nodes.new('ShaderNodeMix')
+        cb.data_type = 'RGBA'
+        cb.inputs[7].default_value = lin(pal['blue'])
+        out_sock = blend.outputs[2]
+        targets = [l.to_socket for l in out_sock.links]
+        hair.links.new(MatBuilder(hair).attr('cupm').outputs['Fac'], cb.inputs[0])
+        hair.links.new(out_sock, cb.inputs[6])
+        for t in targets:
+            hair.links.new(cb.outputs[2], t)
     if params.get('wash'):  # faint cool wash outside the pale field so its edge reads
         wb = MatBuilder(hair)
         wmix = hair.nodes.new('ShaderNodeMix')

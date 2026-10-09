@@ -217,5 +217,50 @@
       "taperPower": 1.3,
       "tailPeriod": 0.1
     }
+  },
+  "T3": {
+    "coat": "#F8FAFD",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.75,
+      1.0
+    ],
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "earLift": true,
+    "name": "Tiger stripes, spine-rooted spears, pale underside",
+    "pattern": "tiger3",
+    "patternParams": {
+      "maskAttr": "pmaskt",
+      "earOff": true,
+      "afterPale": true,
+      "narrow": "field",
+      "cupBlue": true,
+      "period": 0.075,
+      "tailPeriod": 0.1,
+      "hw": 0.4,
+      "power": 1.25,
+      "chev": 0.42,
+      "chevMax": 1.7,
+      "lenMin": 1.5,
+      "lenMax": 3.0,
+      "offMin": 0.35,
+      "offMax": 0.7,
+      "double": 0.25,
+      "dgap": 0.2,
+      "dwidth": 0.5,
+      "bend": 0.1,
+      "partner": 0.8,
+      "partnerMin": 0.7,
+      "partnerMax": 1.2,
+      "warp": 0.03,
+      "fieldRamp": 0.5
+    }
   }
 }
