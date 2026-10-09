@@ -253,3 +253,7 @@ Dark specks, a calm crowd, matter drawn as matter. What was done:
 8. The clash's bloom was wider than both squads: a third smaller.
 9. Stale text: the piece list says hits are a recoil and dull specks; pass 21.
 10. Left: the fireball reads as an eye zoomed in at the moment it hits ice (invisible at site size).
+
+## Round 24 (final gate review of PR #793): 8.5
+
+Nothing broken at site size apart from one visible fault: the arriving ships faded out where they sat on their decks, so the deck lights showed through the hull and a ship read as dissolving. Each ship now holds on its deck, then lifts off, climbs about 140 units and fades into the haze. Left as accepted: searchlights aiming down into the city, idle seconds between attacks, a faint ring after the clash.
