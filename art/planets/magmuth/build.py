@@ -31,6 +31,7 @@ KIT = Kit(HERE)
 SPIN, SMOKE_SPIN = 118.3, 96.1  # seconds per turn: the ground, and the smoke and ash blowing over it
 LAND = np.array(Image.open(os.path.join(KIT.out, 'landmask.png')), float) / 255
 ERUPT = 37.7  # the eruptions' shared clock: four vents fire on it in turn
+VOLCANOES = [(float(a) / (2 * math.pi) * WT, (float(b) / math.pi + .5) * HT) for a, b, _ in (ln.split() for ln in open(os.path.join(KIT.out, 'volcanoes.txt')) if ln.strip())]
 
 
 def on_land(x, y):
@@ -81,6 +82,7 @@ def planet(p, width=None):
     d.append('<radialGradient id="%s-ground"><stop offset="0" stop-color="#ffb050" stop-opacity=".9"/><stop offset=".4" stop-color="#ff5a14" stop-opacity=".5"/><stop offset="1" stop-color="#c02000" stop-opacity="0"/></radialGradient>' % p)
     d.append('<radialGradient id="%s-burst"><stop offset="0" stop-color="#fffbe8"/><stop offset=".4" stop-color="#ffd070"/><stop offset="1" stop-color="#ff6a14" stop-opacity="0"/></radialGradient>' % p)
     d.append('<radialGradient id="%s-plume"><stop offset="0" stop-color="#6e5a50"/><stop offset=".5" stop-color="#4a3c36" stop-opacity=".9"/><stop offset="1" stop-color="#2a201e" stop-opacity="0"/></radialGradient>' % p)
+    d.append('<radialGradient id="%s-crimson" cx="%s" cy="%s" r="%s" gradientUnits="userSpaceOnUse"><stop offset=".55" stop-color="#7a1408" stop-opacity=".0"/><stop offset=".9" stop-color="#a02010" stop-opacity=".35"/><stop offset="1" stop-color="#d03818" stop-opacity=".55"/></radialGradient>' % (p, f(C - .2 * R), f(C - .15 * R), f(1.15 * R)))
     d.append('<filter id="%s-billow" x="-30%%" y="-30%%" width="160%%" height="160%%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="7"/><feDisplacementMap in="SourceGraphic" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter>' % p)
     d.append('<radialGradient id="%s-sun" cx="%s" cy="%s" r="%s" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffe0c4"/><stop offset="1" stop-color="#f0a274"/></radialGradient>' % (
         p, f(C - .45 * R), f(C - .3 * R), f(1.6 * R)))
@@ -91,10 +93,9 @@ def planet(p, width=None):
     for i in range(4):
         at = (.08 + i * .245) % 1
         xc = facing_x(at * ERUPT + 1.5, SPIN, .25 - looks[i][2])
-        for _ in range(5000):
-            x, y = (xc + rnd.uniform(-.35, .35) * R) % WT, rnd.uniform(.3, .7) * HT
-            if on_land(x, y):
-                break
+        # the volcano nearest that point, among those in the middle band of latitude
+        best = min(VOLCANOES, key=lambda v: (min(abs(v[0] - xc), WT - abs(v[0] - xc)) / R) ** 2 + ((v[1] - HT / 2) / R) ** 2 * .6)
+        x, y = best
         vents.append((x, y, at, looks[i][0], looks[i][1]))
     fire, ash = [], []
     for (x, y, at, s_, dur_) in vents:
@@ -111,11 +112,12 @@ def planet(p, width=None):
                         + '<g class="lyr-smoke">%s</g>' % spin(tiles(p, 'smoke'), SMOKE_SPIN)))
     o.append('<g class="lyr-sun"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-sun)" style="mix-blend-mode:multiply"/></g>' % (f(C), f(C), f(R), p))
     o.append(KIT.haze(p))
+    o.append('<g class="lyr-air"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-crimson)" style="mix-blend-mode:screen"/></g>' % (f(C), f(C), f(R), p))
     o.append(KIT.night(p))
     # the lava's own light, day and night: the seas' seams and shores and the fissures, dimmed under thick smoke; its halo at
     # night; surges running along the fissures
     smoke_dim = '<g class="lyr-smoke">%s</g>' % spin(tiles(p, 'smokeshade'), SMOKE_SPIN)
-    o.append(KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim, 'lyr-lava', ' style="mix-blend-mode:screen" opacity=".7"'))
+    o.append(KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim, 'lyr-lava', ' style="mix-blend-mode:screen" opacity=".85"'))
     o.append('<g class="lyr-lava" style="mix-blend-mode:screen" mask="url(#%s-nightm)" opacity=".45">%s</g>' % (p, KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim)))
     o.append('<g class="lyr-lava" style="mix-blend-mode:screen" mask="url(#%s-nightm)">%s</g>' % (p, KIT.lensed(p, spin(tiles(p, 'halo'), SPIN) + smoke_dim)))
     o.append(KIT.lensed(p, spin('<g mask="url(#%s-surge)">%s</g>' % (p, tiles(p, 'cracks')), SPIN), 'lyr-rivers', ' style="mix-blend-mode:screen"'))

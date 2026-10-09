@@ -31,12 +31,38 @@ X, Y, Z = S(5.0)
 crest = (1 - np.abs(rnoise(X + warp * .3, Y, Z, 11))) ** 3
 X, Y, Z = S(14.0)
 spire = (1 - np.abs(rnoise(X, Y + warp * .2, Z, 12))) ** 6 * smooth(.35, .8, land_h)
-h = land_h * .6 + crest * .3 * land_h + spire * .35
+vr = np.random.default_rng(77)
+VOLC = []
+while len(VOLC) < 18:
+    v = vr.normal(size=3)
+    v /= np.linalg.norm(v)
+    lo_, la_ = math.atan2(v[1], v[0]) % (2 * math.pi), math.asin(v[2])
+    u_, w_ = int(lo_ / (2 * math.pi) * W) % W, int((la_ / math.pi + .5) * H)
+    if abs(la_) < 1.0 and land_h[min(H - 1, w_), u_] > .25 and all(np.dot(v, q) < .94 for q, _ in VOLC):
+        VOLC.append((v, vr.uniform(.11, .2)))
+cone = np.zeros_like(land_h)
+caldera = np.zeros_like(land_h)
+flows = np.zeros_like(land_h)
+rough = 1 + .15 * fbm(*S(18), octaves=2)
+for v, r_ in VOLC:
+    dist = np.arccos(np.clip(CX * v[0] + CY * v[1] + CZ * v[2], -1, 1)) / r_
+    # lava running down the flanks from the crater: a few radial channels, wavering, fading toward the foot
+    e1 = np.cross(v, [0, 0, 1])
+    e1 /= np.linalg.norm(e1)
+    e2 = np.cross(v, e1)
+    th = np.arctan2(CX * e2[0] + CY * e2[1] + CZ * e2[2], CX * e1[0] + CY * e1[1] + CZ * e1[2])
+    nch = vr.integers(2, 4)
+    ch = np.cos(nch * th + vr.uniform(0, 6) + fbm(*S(12), octaves=2) * 2.5)
+    flows = np.maximum(flows, smooth(.8, .97, ch) * smooth(.75, .15, dist) * smooth(.08, .16, dist))
+    cone = np.maximum(cone, np.clip(1 - dist * rough, 0, 1) ** 1.6 * (1 - smooth(.18, .0, dist) * .6))  # a cone with its top cut into a crater
+    caldera = np.maximum(caldera, smooth(.16, .07, dist))
+h = land_h * .5 + crest * .2 * land_h * (1 - cone) + spire * .3 * (1 - cone) + cone * .9  # the cones' smooth flanks are fresh rock, not crags
 gy, gx = np.gradient(h)
-shade = np.clip(1 + (gx * .55 + gy * .45) * 17 * K, .55, 1.35)
+shade = np.clip(1 + (gx * .55 + gy * .45) * 22 * K, .45, 1.5)
 ash = smooth(.0, .5, fbm(*S(7), octaves=4) * .5 + .5) * smooth(.06, .0, np.sqrt(gx * gx + gy * gy) * 40 * K)  # ash settles on the flats
-col = lerpc(hexc('#2a2222'), hexc('#3e3432'), land_h)  # basalt
-col = col + (lerpc(hexc('#685a52'), hexc('#95857a'), fbm(*S(22), octaves=2) * .5 + .5) - col) * (ash * .8)[..., None]  # ash
+col = lerpc(hexc('#141010'), hexc('#2a2220'), land_h)  # basalt and obsidian, near black
+col = col + (lerpc(hexc('#7a6c64'), hexc('#a8988c'), fbm(*S(22), octaves=2) * .5 + .5) - col) * (ash * .85)[..., None]  # pale ash fields
+col = col * (1 - (cone * .45)[..., None])  # fresh black lava on the cones
 col *= shade[..., None]
 facing = np.clip((gx * .55 + gy * .45) * 50 * K, 0, 1)
 glint = smooth(.25, .6, spire) * facing  # volcanic glass catching the sun
@@ -59,15 +85,16 @@ def plates(n, seed, wob):
 edge, pid = plates(450, 3, .02)  # the big plates
 edge2, _ = plates(3000, 5, .012)  # each plate split by secondary cracks
 heat = np.random.default_rng(9).uniform(.42, .58, pid.max() + 1)[pid]  # plates differ only a little
-seam = wblur(np.maximum(smooth(.03, .0, edge), smooth(.03, .0, edge2) * .5), .6 * K)
+seam = wblur(np.maximum(smooth(.035, .0, edge), smooth(.03, .0, edge2) * .45), .6 * K)
 open_lava = smooth(SEA, SEA - .05, base)  # 1 offshore, 0 at the shore: the crust is whole offshore
 breakup = 1 - open_lava  # near shore the crust breaks up into open lava
 flow = smooth(.3, .75, fbm(*S(6), octaves=3) * .5 + .5)  # where the crust is moving the seams run hot; elsewhere they skin over
-molten = np.clip(seam * (.25 + .75 * flow) * (.5 + .5 * breakup + .5 * heat) + breakup * .9 + smooth(.1, .0, edge) * breakup * .4 , 0, 1)
-crust = lerpc(hexc('#120908'), hexc('#2e130c'), np.clip(fbm(*S(30), octaves=2) * .25 + heat * .6 + smooth(.2, .0, np.minimum(edge, edge2 * 1.5)) * .5, 0, 1))  # darker at a plate's heart, warmer toward its seams
-lava = lerpc(hexc('#b0280a'), hexc('#ffc050'), np.clip(molten * 1.25 - .15, 0, 1))
+molten = np.clip(seam * 1.25 * (.6 + .4 * flow) * (.5 + .5 * breakup + .5 * heat) + breakup * .9 + smooth(.1, .0, edge) * breakup * .4 , 0, 1)
+crust = lerpc(hexc('#0a0605'), hexc('#2a0e06'), np.clip(fbm(*S(30), octaves=2) * .25 + heat * .6 + smooth(.2, .0, np.minimum(edge, edge2 * 1.5)) * .5, 0, 1))  # darker at a plate's heart, warmer toward its seams
+lava = lerpc(hexc('#d8400c'), hexc('#ffd070'), np.clip(molten * 1.3 - .2, 0, 1))
 sea_col = crust + (lava - crust) * molten[..., None]
 surface = col * shore[..., None] + sea_col * (1 - shore[..., None])
+surface = surface + (np.array(hexc('#ff7a20'), float) - surface) * np.maximum(caldera, flows * .8)[..., None]
 
 # ---- fissures on the land: "the cracks in the earth glow an eerie red from the magma that seeps up". Zero lines of noise,
 # width measured in map pixels, running out in places
@@ -93,7 +120,7 @@ save('surface.png', surface, 'RGB')
 # ---- the light the lava gives off: the molten seams and shores, the open lava, the fissures. Drawn with screen blending over
 # the planet, day and night (lava is self-lit); its soft halo is shown at night only
 POLE = smooth(1.22, 1.08, np.abs(LAT))  # the lens squeezes the map's polar rows into its last stair-steps: no glow there
-glow_core = np.clip(molten * (1 - shore) + crack * .75, 0, 1) * POLE
+glow_core = np.clip(molten * (1 - shore) + crack * .75 + caldera + flows * .8, 0, 1) * POLE
 e = np.zeros((H, W, 4))
 e[..., :3] = lerpc(hexc('#d0360a'), hexc('#ffd070'), np.clip(glow_core * 1.3 - .2, 0, 1))
 e[..., 3] = glow_core * 255
@@ -131,6 +158,9 @@ lm = (shore * 255).astype(np.uint8)
 from PIL import Image as _I
 _I.fromarray(lm, 'L').resize((512, 256), _I.BILINEAR).save(os.path.join(P.OUT, 'landmask.png'))
 
+with open(os.path.join(P.OUT, 'volcanoes.txt'), 'w') as fh:
+    for v, r_ in VOLC:
+        fh.write('%.5f %.5f %.5f\n' % (math.atan2(v[1], v[0]) % (2 * math.pi), math.asin(v[2]), r_))
 lens()
 # a red dwarf: a dimmer, warmer day, the terminator a little softer
 sun(direction=(-.86, -.32, .36), soft=(.08, .5), night_color='#070304', night_alpha=.97)

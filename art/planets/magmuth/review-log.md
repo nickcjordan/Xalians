@@ -28,3 +28,11 @@ Reads at once as a lava world at 600 and 150 px, short of the Zolton bar: glowin
 8. Ground: half the emboss, lighter ash fields, less glint.
 9. Lava light at 0.7 by day and full at night; a darker night.
 10. Page: 2.8 MB (from 6.7): small maps are now really 512 wide (a bug in the shared kit had embedded the full 2048 maps for them), lava and smoke at quality 78, map-size planets from 512-wide maps.
+
+## Round 3 (Nick, 2026-10-08: "I feel like it still needs work")
+
+My own read of round 2: the seas looked like a dark leather with a red grid, not molten; the land was one muddy brown with nothing on it; no volcanoes for the eruptions to come from; no crimson in the air. What was done:
+1. Volcanoes: 18 cones on the land, smooth dark flanks of fresh lava, a glowing crater and two or three tongues of lava running down each; eruptions now come from the volcano nearest the point facing the viewer.
+2. Seas: near-black crust, seams brighter and running hot over more of the sea, the lava light at 0.85 by day.
+3. Land: basalt and obsidian near black, the ash fields paler, so the islands show light and dark.
+4. A crimson stain in the air over the day side, thicker toward the limb ("staining the sky crimson").
