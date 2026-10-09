@@ -196,7 +196,7 @@ def pattern_factor(hair, kind, params):
         axis = b.vm('DOT_PRODUCT', rest, (0.25, 0.35, 1.0))
         tailpos = b.attr('tailpos').outputs['Fac']
         tmask = b.ramp(ptail, 0.4, 0.6)
-        axis = b.m('ADD', b.m('MULTIPLY', axis, b.m('SUBTRACT', 1.0, tmask)), b.m('MULTIPLY', tailpos, tmask))
+        axis = b.m('ADD', b.m('MULTIPLY', axis, b.m('SUBTRACT', 1.0, tmask)), b.m('MULTIPLY', b.m('MULTIPLY', tailpos, tmask), params.get('period', 0.17)/params.get('tailPeriod', params.get('period', 0.17))))
         warp = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
         warp.inputs['Scale'].default_value = 4.0
         b.put(warp, 'Vector', rest)
@@ -312,6 +312,12 @@ def apply_palette(pal, factor):
         for n in hair.nodes:
             if n.bl_idname == 'ShaderNodeMix' and n.data_type == 'FLOAT':
                 n.inputs[2].default_value = pal['diffuseShare']
+    if pal.get('earLift'):  # ears and crown: treat like pale strands for root darkening and diffuse share, so they read white
+        lift = MatBuilder(hair)
+        for n in list(hair.nodes):
+            if n.bl_idname == 'ShaderNodeMix' and n.data_type == 'FLOAT' and n.inputs[0].is_linked                     and n.inputs[0].links[0].from_node.bl_idname == 'ShaderNodeAttribute':
+                src = n.inputs[0].links[0].from_socket
+                hair.links.new(lift.m('MAXIMUM', src, lift.attr('fur_guided').outputs['Fac']), n.inputs[0])
     m = mix_node(hair)
     m.inputs[6].default_value = lin(pal['coat'])
     m.inputs[7].default_value = lin(pal['pale'])

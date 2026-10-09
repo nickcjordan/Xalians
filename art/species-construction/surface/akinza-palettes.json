@@ -152,13 +152,15 @@
       "earOff": true,
       "afterPale": true,
       "narrow": "belly",
-      "halfWidth": 0.23,
-      "presence": 0.96,
+      "halfWidth": 0.26,
+      "presence": 0.98,
       "irregular": 0.4,
-      "period": 0.15,
+      "period": 0.075,
       "forkFrac": 0.15,
-      "taperPower": 1.3
-    }
+      "taperPower": 1.3,
+      "tailPeriod": 0.1
+    },
+    "earLift": true
   },
   "T2": {
     "coat": "#F8FAFD",
@@ -182,12 +184,38 @@
       "earOff": true,
       "afterPale": true,
       "narrow": "field",
-      "halfWidth": 0.23,
-      "presence": 0.96,
+      "halfWidth": 0.26,
+      "presence": 0.98,
       "irregular": 0.4,
-      "period": 0.15,
+      "period": 0.075,
       "forkFrac": 0.15,
-      "taperPower": 1.3
+      "taperPower": 1.3,
+      "tailPeriod": 0.1
+    },
+    "earLift": true
+  },
+  "T2notip": {
+    "coat": "#F8FAFD",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "skinFactor": 0.8,
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "name": "T2 without tips (debug)",
+    "pattern": "tiger",
+    "patternParams": {
+      "maskAttr": "pmaskt",
+      "earOff": true,
+      "afterPale": true,
+      "narrow": "field",
+      "halfWidth": 0.26,
+      "presence": 0.98,
+      "irregular": 0.4,
+      "period": 0.075,
+      "forkFrac": 0.15,
+      "taperPower": 1.3,
+      "tailPeriod": 0.1
     }
   }
 }
