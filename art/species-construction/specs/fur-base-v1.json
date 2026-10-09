@@ -1,0 +1,91 @@
+{
+ "note": "Fur base head v1 (Nick 2026-10-08): smooth ear-fan shells on the same outline, crown without pins or tufts, back of skull smoothed, eye gutters filled, pale inner-ear slot redrawn from its front projection. Head-local units. Keys documented in fur_base_head_field.py.",
+ "needle": 0.028,
+ "notch": 0.025,
+ "outlineSmooth": 0.02,
+ "outlineInset": 0.005,
+ "surf": 0.035,
+ "back": 0.03,
+ "rim": 0.04,
+ "rimSmooth": 0.015,
+ "rimBand": 0.03,
+ "wingX": [
+  0.28,
+  0.38
+ ],
+ "fillX": [
+  0.29,
+  0.31
+ ],
+ "faceY": [
+  -0.2,
+  -0.12
+ ],
+ "faceZ": [
+  0.2,
+  0.28
+ ],
+ "faceX": [
+  0.3,
+  0.36
+ ],
+ "backX": [
+  0.4,
+  0.48
+ ],
+ "backZ": [
+  -0.15,
+  -0.05,
+  0.28,
+  0.38
+ ],
+ "backDepth": 0.08,
+ "back2": 0.03,
+ "backY": [
+  0.0,
+  0.06
+ ],
+ "pinSmall": 0.06,
+ "pin": 0.06,
+ "humpTol": 0.006,
+ "dip": 0.04,
+ "crownSmooth": 0.025,
+ "crownX": [
+  0.45,
+  0.58
+ ],
+ "crownY": [
+  -0.3,
+  -0.22
+ ],
+ "crownZ": [
+  0.3,
+  0.36
+ ],
+ "crownDepth": 0.08,
+ "crownSlope": [
+  50.0,
+  60.0
+ ],
+ "crownEdge": 0.04,
+ "crownEdgeSmooth": 0.01,
+ "rimRound": 0.01,
+ "shellBlur": 0.005,
+ "eyeFill": 0.015,
+ "eyeRing": [
+  1.0,
+  1.08,
+  1.35,
+  1.6
+ ],
+ "eyeAxial": [
+  -0.05,
+  0.04
+ ],
+ "eyeBins": 90,
+ "paleSmooth": 4,
+ "paleProject": 0.015,
+ "paleClose": 0.012,
+ "paleFacing": 0.2,
+ "paleMinX": 0.28
+}
