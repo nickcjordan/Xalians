@@ -188,6 +188,58 @@ def pattern_factor(hair, kind, params):
                 f = b.m('MULTIPLY', band, b.attr(params['fadeAttr']).outputs['Fac'])
         else:
             f = b.m('MULTIPLY', band, b.m('ADD', 0.3, b.m('MULTIPLY', dorsal, 0.7)))
+    elif kind == 'tiger':
+        PI = 3.14159265
+        arc = b.attr('arc').outputs['Fac']
+        angle = b.attr('angle').outputs['Fac']
+        belly = b.attr('bellyf').outputs['Fac']
+        axis = b.vm('DOT_PRODUCT', rest, (0.25, 0.35, 1.0))
+        tailpos = b.attr('tailpos').outputs['Fac']
+        tmask = b.ramp(ptail, 0.4, 0.6)
+        axis = b.m('ADD', b.m('MULTIPLY', axis, b.m('SUBTRACT', 1.0, tmask)), b.m('MULTIPLY', tailpos, tmask))
+        warp = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+        warp.inputs['Scale'].default_value = 4.0
+        b.put(warp, 'Vector', rest)
+        h = b.m('MULTIPLY', b.m('ADD', axis, b.m('MULTIPLY', warp.outputs['Factor'], 0.2)), 1.0/params.get('period', 0.17))
+        row = b.m('FLOOR', h)
+        v = b.m('FRACT', h)
+        odd = b.m('MODULO', row, 2.0)
+        wob = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+        wob.inputs['Scale'].default_value = 7.0
+        b.put(wob, 'Vector', rest)
+        q = b.m('ADD', b.m('ADD', arc, b.m('MULTIPLY', odd, 0.5)), b.m('MULTIPLY', b.m('SUBTRACT', wob.outputs['Factor'], 0.5), params.get('irregular', 0.7)))
+        seg = b.m('FLOOR', q)
+        u = b.m('FRACT', q)
+        comb3 = b.node('ShaderNodeCombineXYZ')
+        b.put(comb3, 'X', b.m('ADD', b.m('MULTIPLY', row, 0.37), 1.3))
+        b.put(comb3, 'Y', b.m('ADD', b.m('MULTIPLY', seg, 0.53), 2.1))
+        comb3.inputs['Z'].default_value = 0.7
+        wn3 = b.node('ShaderNodeTexWhiteNoise', noise_dimensions='3D')
+        hair.links.new(comb3.outputs['Vector'], wn3.inputs['Vector'])
+        sp = b.node('ShaderNodeSeparateColor')
+        hair.links.new(wn3.outputs['Color'], sp.inputs['Color'])
+        rr, gg, bb = sp.outputs['Red'], sp.outputs['Green'], sp.outputs['Blue']
+        gate = b.m('SUBTRACT', 1.0, b.ramp(rr, params.get('presence', 0.86), params.get('presence', 0.86)+0.05))
+        wvar = b.m('ADD', 0.8, b.m('MULTIPLY', gg, 0.4))
+        fork = b.m('SUBTRACT', 1.0, b.ramp(bb, 0.24, 0.3))
+        endflag = b.ramp(b.m('FRACT', b.m('MULTIPLY', gg, 17.3)), 0.45, 0.55)
+        uf = b.m('ADD', u, b.m('MULTIPLY', endflag, b.m('SUBTRACT', 1.0, b.m('MULTIPLY', u, 2.0))))
+        taper = b.m('POWER', b.m('MAXIMUM', b.m('SINE', b.m('MULTIPLY', u, PI)), 0.0), 0.75)
+        v2 = b.m('ADD', v, b.m('MULTIPLY', b.m('SINE', b.m('ADD', b.m('MULTIPLY', q, 6.2832), b.m('MULTIPLY', row, 1.7))), 0.07))
+        if params.get('narrow') == 'field':
+            mw = b.m('SUBTRACT', 1.0, b.ramp(belly, 0.0, 0.75))
+        else:
+            mw = b.m('SUBTRACT', 1.0, b.m('MULTIPLY', b.ramp(angle, 2.4, 3.1416), 0.6))
+        hw = b.m('MULTIPLY', b.m('MULTIPLY', b.m('MULTIPLY', taper, wvar), b.m('MULTIPLY', gate, mw)), params.get('halfWidth', 0.3))
+
+        def stripe(off, w):
+            d = b.m('ABSOLUTE', b.m('SUBTRACT', b.m('SUBTRACT', v2, 0.5), off))
+            val = b.m('SUBTRACT', 1.0, b.ramp(d, b.m('MULTIPLY', w, 0.7), b.m('ADD', b.m('MULTIPLY', w, 1.3), 0.004)))
+            return b.m('MULTIPLY', val, b.ramp(w, 0.015, 0.05))
+        hw_main = b.m('MULTIPLY', hw, b.m('SUBTRACT', 1.0, b.m('MULTIPLY', fork, b.ramp(uf, 0.5, 0.7))))
+        hw_br = b.m('MULTIPLY', b.m('MULTIPLY', hw, 0.6), b.m('MULTIPLY', fork, b.ramp(uf, 0.45, 0.65)))
+        delta = b.m('MAXIMUM', b.m('MULTIPLY', b.m('SUBTRACT', uf, 0.5), 0.55), 0.0)
+        f = b.m('MAXIMUM', stripe(0.0, hw_main), b.m('MAXIMUM', stripe(delta, hw_br), stripe(b.m('MULTIPLY', delta, -1.0), hw_br)))
     else:  # spots
         cells = b.node('ShaderNodeTexVoronoi', voronoi_dimensions='3D', feature='F1')
         cells.inputs['Scale'].default_value = params.get('scale', 13.0)
@@ -213,13 +265,30 @@ def pattern_factor(hair, kind, params):
 
 
 def apply_pattern(pal, hair, mix_node):
-    f = pattern_factor(hair, pal['pattern'], pal.get('patternParams', {}))
+    params = pal.get('patternParams', {})
+    f = pattern_factor(hair, pal['pattern'], params)
     blend = hair.nodes.new('ShaderNodeMix')
     blend.data_type = 'RGBA'
     hair.links.new(f, blend.inputs[0])
-    blend.inputs[6].default_value = lin(pal['coat'])
     blend.inputs[7].default_value = lin(pal['blue'])
-    hair.links.new(blend.outputs[2], mix_node.inputs[6])
+    if params.get('afterPale'):  # pattern drawn over the finished coat/pale mix, so it reaches the bib
+        targets = [l.to_socket for l in mix_node.outputs[2].links]
+        hair.links.new(mix_node.outputs[2], blend.inputs[6])
+        for t in targets:
+            hair.links.new(blend.outputs[2], t)
+    else:
+        blend.inputs[6].default_value = lin(pal['coat'])
+        hair.links.new(blend.outputs[2], mix_node.inputs[6])
+    if params.get('wash'):  # faint cool wash outside the pale field so its edge reads
+        wb = MatBuilder(hair)
+        wmix = hair.nodes.new('ShaderNodeMix')
+        wmix.data_type = 'RGBA'
+        wmix.inputs[6].default_value = lin(pal['coat'])
+        wmix.inputs[7].default_value = lin(params['wash'])
+        hair.links.new(wb.m('SUBTRACT', 1.0, wb.attr('bellyf').outputs['Fac']), wmix.inputs[0])
+        src = mix_node.inputs[6].default_value
+        mix_node.inputs[6].default_value = lin(pal['coat'])
+        hair.links.new(wmix.outputs[2], mix_node.inputs[6])
 
 
 def apply_palette(pal, factor):

@@ -350,6 +350,33 @@ def compute_attributes(skin, cfg, species):
     earw = np.clip(wn[names.index('ears')], 0, 1)
     write_attribute(me, 'pmaskw', np.clip((1.0-strip)*(1.0-face_low)*(1.0-earw), 0, 1))
     write_attribute(me, 'earw', earw)
+    # tiger-stripe support: angle around the body from the back midline (0) to the belly midline (pi), mirrored left/right;
+    # arc = segment coordinate measured from the belly midline so even rows have a gap there and odd rows a stripe
+    sc = cfg.get('stripe')
+    if sc:
+        nxy = np.linalg.norm(nrm[:, :2], axis=1)
+        ang_trunk = np.arccos(np.clip(nrm[:, 1]/np.maximum(nxy, 1e-6), -1, 1))
+        ang_trunk = np.where(nxy < 0.2, np.pi/2, ang_trunk)
+        tvec = directions['tail']
+        up_v = np.array([0.0, 0.0, 1.0])
+        e1 = unit(up_v-tvec*np.sum(tvec*up_v, axis=1, keepdims=True))
+        e2 = np.cross(tvec, e1)
+        ang_tail = np.abs(np.arctan2(np.sum(nrm*e2, axis=1), np.sum(nrm*e1, axis=1)))
+        th = wn[names.index('tails')] > 0.5
+        angle = np.where(th, ang_tail, ang_trunk)
+        segs = sum(wn[i]*sc['segs'].get(nm, 3.0) for i, nm in enumerate(names))
+        write_attribute(me, 'angle', angle)
+        write_attribute(me, 'arc', (np.pi-angle)/np.pi*segs)
+        # pale belly field (T2): from chin and throat down the chest and belly, and onto the inner arms and inner thighs
+        pts = np.array(sc['fieldEdge'])
+        a_e = np.interp(at_all, pts[:, 0], pts[:, 1])+sc['wave']*np.sin(at_all*sc['waveFreq'])+0.5*sc['wave']*np.sin(co[:, 1]*11.0)
+        trunk_f = smoothstep((angle-a_e)/sc['soft'])
+        inner = -np.sign(co[:, 0]+1e-9)*nrm[:, 0]
+        limb_f = smoothstep((inner-sc['innerMin'])/sc['innerSpan'])
+        wl = np.clip(wn[names.index('arms')]+wn[names.index('legs')]+wn[names.index('paws')], 0, 1)
+        belly = np.where(th, 0.0, wl*limb_f+(1.0-wl)*trunk_f)
+        write_attribute(me, 'bellyf', belly)
+        write_attribute(me, 'pmaskt', np.clip((1.0-face_low)*(1.0-earw), 0, 1))
     write_attribute(me, 'fade', np.clip((0.65+0.35*np.maximum(smoothstep((0.5*nrm[:, 1]+0.5*nrm[:, 2]+0.2)/0.8), np.clip(wn[names.index('tails')], 0, 1)))
                                         * (1.0-smoothstep((-nrm[:, 2]-0.1)/0.6)), 0, 1))
     try:

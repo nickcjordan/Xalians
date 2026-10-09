@@ -129,5 +129,62 @@
       "fadeAttr": "fade",
       "earOff": true
     }
+  },
+  "T1": {
+    "coat": "#F8FAFD",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.75,
+      1.0
+    ],
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "name": "Tiger stripes, no belly gap",
+    "pattern": "tiger",
+    "patternParams": {
+      "maskAttr": "pmaskt",
+      "earOff": true,
+      "afterPale": true,
+      "narrow": "belly",
+      "halfWidth": 0.44,
+      "presence": 0.94,
+      "irregular": 0.5,
+      "period": 0.15
+    }
+  },
+  "T2": {
+    "coat": "#F8FAFD",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.75,
+      1.0
+    ],
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "name": "Tiger stripes, pale belly field",
+    "pattern": "tiger",
+    "patternParams": {
+      "maskAttr": "pmaskt",
+      "earOff": true,
+      "afterPale": true,
+      "narrow": "field",
+      "wash": "#D3E3F3",
+      "halfWidth": 0.44,
+      "presence": 0.94,
+      "irregular": 0.5,
+      "period": 0.15
+    }
   }
 }
