@@ -36,3 +36,20 @@ My own read of round 2: the seas looked like a dark leather with a red grid, not
 2. Seas: near-black crust, seams brighter and running hot over more of the sea, the lava light at 0.85 by day.
 3. Land: basalt and obsidian near black, the ash fields paler, so the islands show light and dark.
 4. A crimson stain in the air over the day side, thicker toward the limb ("staining the sky crimson").
+
+## Round 3 review (fresh Opus reviewer): 5
+
+"A brown ball with orange lines": evenly self-lit with no direction of light; seas a uniform Voronoi hide; volcanoes reading as lollipops; eruptions a glow with a bead necklace; smoke invisible; every glow line the same weight; a stair-stepped shore; flat brown islands; a uniform orange rim; mush at 76 px.
+
+## Round 4
+
+1. Seas in three tiers: open molten pools (about an eighth of the sea, churning convection cells, orange with yellow cores), thin crust glowing dull red through (about a quarter), black crust elsewhere; plates large far from the open lava and small and broken near it; a few big seams torn open as rifts; seams at half the brightness of open lava.
+2. Light: the lava's light at half strength by day and full at night, a narrower terminator, a near-black night; the night hemisphere is now black threaded with fire.
+3. Volcanoes: five great cones and smaller ones, a crater ring with a dark heart and hot rim, two or three tongues that branch, taper and cool from yellow to dark red.
+4. Eruptions: 32 streaked embers on random delays and reaches, a pillar of fire at the vent, an opaque plume with its shadow on the ground and an orange-lit underside.
+5. Smoke: three long ash storms sheared by the wind and wisps over about a third of the world, dimming the lava under them to about a third; by night their undersides are lit red over open lava.
+6. Glow hierarchy: open lava and rifts brightest, shores next, seams at half, fissures at 0.4 except under a surge.
+7. Shore taken from a softened field: no staircase.
+8. Islands: near-black obsidian against pale wind-streaked ash drifts; sharp glints on a few facets only.
+9. Air rim bright orange on the sun side, deep crimson toward the night.
+10. Map sizes: the small planets drop the seams and keep the open lava, rifts, shores and craters.
