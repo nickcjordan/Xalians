@@ -16,6 +16,9 @@ from pathlib import Path
 import bpy
 from mathutils import Vector
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import tiger_stripes  # noqa: E402
+
 CENTER = Vector((0.0, 0.16, -0.03))
 VIEWS = {
     # name: (azimuth degrees from the front toward +x, elevation degrees, target, ortho scale (tall side), width, height)
@@ -27,6 +30,7 @@ VIEWS = {
     'forepaw': (0, 10, Vector((0.36, -0.11, -0.17)), 0.22, 1024, 1024),
     'hindpaw': (0, 14, Vector((0.39, -0.12, -0.9)), 0.34, 1024, 1024),
     'face': (0, 2, Vector((0.0, -0.15, 0.62)), 0.5, 1024, 1024),
+    'backclose': (180, 4, Vector((0.0, 0.16, 0.1)), 1.05, 1024, 1024),  # the trunk from behind, shoulders to hips
 }
 
 
@@ -188,6 +192,20 @@ def pattern_factor(hair, kind, params):
                 f = b.m('MULTIPLY', band, b.attr(params['fadeAttr']).outputs['Fac'])
         else:
             f = b.m('MULTIPLY', band, b.m('ADD', 0.3, b.m('MULTIPLY', dorsal, 0.7)))
+    elif kind == 'tiger4':  # tiger_stripes.py, the same function the swatch draws
+        X = tiger_stripes.NodeOps(hair)
+        sepx = b.node('ShaderNodeSeparateXYZ')
+        hair.links.new(rest, sepx.inputs['Vector'])
+        side = X.wrap(b.m('GREATER_THAN', sepx.outputs['X'], 0.0))
+        warp = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
+        warp.inputs['Scale'].default_value = params.get('warpScale', 4.0)
+        b.put(warp, 'Vector', rest)
+        sth = X.wrap(b.attr('sth').outputs['Fac'])
+        h = (sth+(X.wrap(warp.outputs['Factor'])-0.5)*params.get('warp', 0.03))*(1.0/params['period'])
+        a = X.wrap(b.attr('angle4').outputs['Fac'])
+        edge = X.wrap(b.attr('fielda').outputs['Fac'])
+        f = tiger_stripes.stripe(X, a, side, h, params, edge).s
+        print('tiger4 nodes', X.count)
     elif kind == 'tiger3':
         PI = 3.14159265
         P = params
@@ -457,6 +475,7 @@ def main():
     parser.add_argument('--alpha', action='store_true', help='transparent background, RGBA (silhouette measures)')
     parser.add_argument('--debug-scale', type=float, default=1.0)
     parser.add_argument('--debug-attr', default=None, help='show this skin attribute as emission, fur hidden')
+    parser.add_argument('--debug-pattern', default=None, help="show this palette's pattern factor on the skin as emission, fur hidden")
     args = parser.parse_args(sys.argv[len(sys.argv)-sys.argv[::-1].index('--'):])
     t_all = time.time()
     bpy.ops.wm.open_mainfile(filepath=str(args.surface/'surface.blend'))
@@ -504,6 +523,26 @@ def main():
                     t.links.new(m.outputs['Value'], e.inputs['Color'])
                     t.links.new(e.outputs['Emission'], o.inputs['Surface'])
         scene.view_settings.view_transform = 'Standard'
+    if args.debug_pattern:
+        pals = json.loads((Path(__file__).resolve().parent/'akinza-palettes.json').read_text())
+        pal = pals[args.debug_pattern]
+        for ob in bpy.data.objects:
+            if ob.name == 'Akinza fur':
+                ob.hide_render = True
+            if ob.type == 'MESH' and len(ob.data.vertices) > 500000:
+                for mat in ob.data.materials:
+                    t = mat.node_tree
+                    t.nodes.clear()
+                    f = pattern_factor(t, pal['pattern'], pal.get('patternParams', {}))
+                    mix = t.nodes.new('ShaderNodeMix')
+                    mix.data_type = 'RGBA'
+                    mix.inputs[6].default_value = lin(pal['coat'])
+                    mix.inputs[7].default_value = lin(pal['blue'])
+                    t.links.new(f, mix.inputs[0])
+                    e = t.nodes.new('ShaderNodeEmission')
+                    t.links.new(mix.outputs[2], e.inputs['Color'])
+                    o = t.nodes.new('ShaderNodeOutputMaterial')
+                    t.links.new(e.outputs['Emission'], o.inputs['Surface'])
     if args.palette:
         pals = json.loads((Path(__file__).resolve().parent/'akinza-palettes.json').read_text())
         apply_palette(pals[args.palette], pals[args.palette].get('skinFactor', pals['skinFactor']))

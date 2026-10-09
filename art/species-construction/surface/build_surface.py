@@ -95,6 +95,87 @@ def tail_centerline(co, edges, tail_m, root, fallback):
     return out, d
 
 
+def graph_distance(co, edges, seeds, allowed, max_iterations=3000):
+    """Shortest edge-path distance from the seed vertices over the skin graph, restricted to allowed vertices.
+    Bellman-Ford sweeps with a sorted reduceat (np.minimum.at is far too slow on 700k vertices)."""
+    n = len(co)
+    a = np.concatenate([edges[:, 0], edges[:, 1]])
+    b = np.concatenate([edges[:, 1], edges[:, 0]])
+    ok = allowed[a] & allowed[b]
+    a, b = a[ok], b[ok]
+    order = np.argsort(b, kind='stable')
+    a, b = a[order], b[order]
+    el = np.linalg.norm(co[a]-co[b], axis=1)
+    starts = np.flatnonzero(np.r_[True, b[1:] != b[:-1]])
+    targets = b[starts]
+    d = np.full(n, np.inf)
+    d[seeds & allowed] = 0.0
+    for it in range(max_iterations):
+        best = np.minimum.reduceat(d[a]+el, starts)
+        new = d.copy()
+        new[targets] = np.minimum(d[targets], best)
+        if np.array_equal(new, d):
+            break
+        d = new
+    print('graph distance: iterations', it, 'reached', int(np.isfinite(d).sum()), 'of', int(allowed.sum()))
+    return d
+
+
+def stripe_coordinates(me, co, nrm, edges, wn, names, at_all, th, ac, tail_d, tail_angle):
+    """Tiger-stripe coordinates for pattern kind 'tiger4' (tiger_stripes.py), all stored on the skin so they follow
+    the body when posed:
+      angle4  0 on the back midline to pi on the belly midline, uniform in arc length on the trunk and head
+              (pi * d_back / (d_back + d_belly), edge-path distances from the two midlines); on the limbs the angle
+              around the limb from its outer side (0) to its inner side (pi) from the normal; blended at the joins
+      fielda  the angle where the pale underside starts at this point (wavy), so stripes can end there in a point
+      bellyf4 the pale underside field itself, 0..1
+      sth     the stripe axis along the body in figure units (height plus a lean toward the back; the tail's own
+              length on the tails)
+    Normal angles alone squash a broad flat back to angle 0, which is why the back showed only a few stripes."""
+    n = len(co)
+    wl = np.clip(wn[names.index('arms')]+wn[names.index('legs')]+wn[names.index('paws')], 0, 1)
+    wl = np.clip(edge_smooth(wl, edges, n, ac.get('limbSmooth', 40)), 0, 1)
+    tails = th
+    ears = wn[names.index('ears')] > 0.5
+    allowed = ~(tails | ears)
+    mid = np.abs(co[:, 0]) < ac.get('midline', 0.005)
+    band = at_all < ac.get('seedMaxAt', 0.56)
+    back_seed = mid & band & (nrm[:, 1] > 0.15)
+    belly_seed = mid & band & (nrm[:, 1] < -0.15)
+    d_back = graph_distance(co, edges, back_seed, allowed)
+    d_belly = graph_distance(co, edges, belly_seed, allowed)
+    nxy = np.linalg.norm(nrm[:, :2], axis=1)
+    ang_n = np.arccos(np.clip(nrm[:, 1]/np.maximum(nxy, 1e-6), -1, 1))
+    ang_n = np.where(nxy < 0.2, np.pi/2, ang_n)
+    good = np.isfinite(d_back) & np.isfinite(d_belly) & (d_back+d_belly > 1e-6)
+    a_trunk = np.where(good, np.pi*d_back/np.maximum(d_back+d_belly, 1e-9), ang_n)
+    outward = np.sign(co[:, 0]+1e-9)
+    a_limb = np.arccos(np.clip(outward*nrm[:, 0]/np.maximum(nxy, 1e-6), -1, 1))
+    a_limb = np.where(nxy < 0.2, np.pi/2, a_limb)
+    angle = wl*a_limb+(1.0-wl)*a_trunk
+    angle = np.clip(edge_smooth(angle, edges, n, ac.get('angleSmooth', 6)), 0, np.pi)
+    # pale underside edge: by height on the trunk, a fixed angle around the limbs, both with a wave
+    pts = np.array(ac['fieldEdge'])
+    e_trunk = np.interp(at_all, pts[:, 0], pts[:, 1])
+    wave = ac['wave']*np.sin(at_all*ac['waveFreq']+(outward > 0)*2.0)+0.5*ac['wave']*np.sin(co[:, 1]*11.0+at_all*23.0)
+    fielda = wl*ac['limbEdge']+(1.0-wl)*e_trunk+wave
+    fielda = np.where(tails, 10.0, fielda)
+    belly = np.where(tails, 0.0, smoothstep((angle-fielda)/ac['soft']))
+    sth = co[:, 2]+ac.get('lean', 0.35)*co[:, 1]
+    if tail_d is not None:
+        sth = np.where(tails & np.isfinite(tail_d), np.where(np.isfinite(tail_d), tail_d, 0.0)*ac['tailScale'], sth)
+    # tails: rings, so the angle barely changes around the tail (it sits inside the first piece of most rows; the
+    # small spread only varies the ring width); the normal-based tail angle is too noisy to place pieces by
+    ring = ac.get('tailRing', [0.55, 0.35])
+    tail_a = np.clip(edge_smooth(ring[0]+ring[1]*tail_angle/np.pi, edges, n, 10), 0, np.pi)
+    write_attribute(me, 'angle4', np.where(tails, tail_a, angle))
+    write_attribute(me, 'fielda', fielda)
+    write_attribute(me, 'bellyf4', belly)
+    write_attribute(me, 'sth', sth)
+    print('stripe coordinates: back seeds', int(back_seed.sum()), 'belly seeds', int(belly_seed.sum()),
+          'angle pct', np.round(np.percentile(angle, [5, 25, 50, 75, 95]), 2))
+
+
 def write_attribute(me, name, data, kind='FLOAT'):
     if name in me.attributes:
         me.attributes.remove(me.attributes[name])
@@ -378,6 +459,8 @@ def compute_attributes(skin, cfg, species):
         belly = np.where(th, 0.0, wl*limb_f+(1.0-wl)*trunk_f)
         write_attribute(me, 'bellyf', belly)
         write_attribute(me, 'pmaskt', np.clip((1.0-face_low)*(1.0-earw), 0, 1))
+        if 'arc' in sc:
+            stripe_coordinates(me, co, nrm, edges, wn, names, at_all, th, sc['arc'], tail_d, angle)
     write_attribute(me, 'fade', np.clip((0.65+0.35*np.maximum(smoothstep((0.5*nrm[:, 1]+0.5*nrm[:, 2]+0.2)/0.8), np.clip(wn[names.index('tails')], 0, 1)))
                                         * (1.0-smoothstep((-nrm[:, 2]-0.1)/0.6)), 0, 1))
     try:

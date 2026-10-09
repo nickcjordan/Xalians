@@ -262,5 +262,32 @@
       "warp": 0.03,
       "fieldRamp": 0.5
     }
+  },
+  "T4": {
+    "coat": "#F8FAFD",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "tip": "#7DB8E8",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "skinFactor": 0.8,
+    "tipEnds": [
+      0.75,
+      1.0
+    ],
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "earLift": true,
+    "name": "Tiger stripes, smooth spears in brickwork, arc-length body angle",
+    "pattern": "tiger4",
+    "patternParams": {
+      "maskAttr": "pmaskt",
+      "earOff": true,
+      "afterPale": true,
+      "cupBlue": true,
+      "period": 0.068,
+      "warp": 0.03
+    }
   }
 }

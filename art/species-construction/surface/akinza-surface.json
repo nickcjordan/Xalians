@@ -472,6 +472,53 @@
     "waveFreq": 55.0,
     "soft": 0.4,
     "innerMin": 0.3,
-    "innerSpan": 0.5
+    "innerSpan": 0.5,
+    "arc": {
+      "note": "tiger4 stripe coordinates (build_surface.stripe_coordinates): fieldEdge is the pale underside's starting angle by row 'at' on the trunk (angle4 is arc-length uniform, 0 back midline, pi belly midline), limbEdge the same around the limbs from the outer side; tailScale = period/tailPeriod so tail rings keep their own spacing",
+      "midline": 0.005,
+      "seedMaxAt": 0.56,
+      "limbSmooth": 40,
+      "angleSmooth": 6,
+      "fieldEdge": [
+        [
+          0.1,
+          2.0
+        ],
+        [
+          0.26,
+          1.9
+        ],
+        [
+          0.33,
+          2.0
+        ],
+        [
+          0.4,
+          2.25
+        ],
+        [
+          0.46,
+          2.5
+        ],
+        [
+          0.52,
+          2.3
+        ],
+        [
+          0.6,
+          2.1
+        ],
+        [
+          0.75,
+          2.1
+        ]
+      ],
+      "limbEdge": 2.0,
+      "wave": 0.14,
+      "waveFreq": 55.0,
+      "soft": 0.35,
+      "lean": 0.35,
+      "tailScale": 0.75
+    }
   }
 }
