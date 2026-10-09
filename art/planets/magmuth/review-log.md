@@ -53,3 +53,15 @@ My own read of round 2: the seas looked like a dark leather with a red grid, not
 8. Islands: near-black obsidian against pale wind-streaked ash drifts; sharp glints on a few facets only.
 9. Air rim bright orange on the sun side, deep crimson toward the night.
 10. Map sizes: the small planets drop the seams and keep the open lava, rifts, shores and craters.
+
+## Round 5 (Nick, 2026-10-09: "why are you stopping to get my judgment if you've already know that it needs more work")
+
+Fixed the three faults I had listed and kept going until my own look found nothing to change:
+1. Open lava pools: a firm smooth edge, dark crust rafts at their margins, the surface a skin of darker veins with bright upwelling at the cells' hearts (an early version read as leopard print; a fresh reviewer caught it).
+2. Islands: lighter basalt and more, paler ash.
+3. Volcanoes: lit on the sun side and shadowed away from it, craters full of glowing lava (not a ring with a black heart), and the five great ones smoke all the time: a pale billowing ash column leaning downwind, fixed to the ground.
+4. Eruptions: the ash cloud is lit pale ash with a dark edge (dark ash had vanished against the dark rock), visible within a second of the burst.
+5. Night limb: the lava's light fades over the last tenth of the radius, where the lens had squeezed seams and craters into glowing loops.
+6. Land relief halved, so it no longer reads as plasticine.
+
+Fresh reviewer on the round before these last fixes: 6. Checked after: page at 1366 and 390 with no console errors or overflow, keyTimes all valid.

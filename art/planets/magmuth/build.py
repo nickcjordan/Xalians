@@ -53,7 +53,7 @@ def eruption(p, x, y, at, rnd, s=1.0, dur=1.0):
     o = []
     o.append('<circle cx="%s" cy="%s" r="%s" fill="url(#%s-ground)" opacity="0">%s</circle>' % (f(x), f(y), f(46 * s), p, anim('opacity', '0;0;1;.7;0;0', k(0, .25, 1.4, 4.2))))
     o.append('<circle cx="%s" cy="%s" r="5" fill="url(#%s-burst)" opacity="0">%s%s</circle>' % (
-        f(x), f(y), p, anim('opacity', '0;0;1;.8;0;0', k(0, .1, .45, 1.1)), anim('r', '%s;%s;%s;%s;%s;%s' % tuple(f(v * s) for v in (3, 3, 22, 14, 7, 3)), k(0, .15, .6, 1.1))))
+        f(x), f(y), p, anim('opacity', '0;0;1;.8;0;0', k(0, .1, .45, 1.1)), anim('r', '%s;%s;%s;%s;%s;%s' % tuple(f(v * s) for v in (3, 3, 14, 10, 6, 3)), k(0, .15, .6, 1.1))))
     for i in range(32):
         ang = rnd.uniform(0, 2 * math.pi)
         dist = rnd.uniform(8, 50) * s
@@ -66,12 +66,12 @@ def eruption(p, x, y, at, rnd, s=1.0, dur=1.0):
                      f(rnd.uniform(1.8, 5.4) * .5), f(rnd.uniform(.6, 1.8) * .5), f(math.degrees(ang)), p))
     o.append('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#%s-pillar)" opacity="0">%s</ellipse>' % (f(x), f(y - 7 * s), f(1.5 * s), f(7 * s), p, anim('opacity', '0;0;1;.8;0;0', k(0, .1, 1.1, 1.5))))
     # the plume: opaque ash, its shadow cast on the ground below and to the right, its underside lit orange at first
-    rx, ry = (4, 4, 22, 42, 56, 56), (3, 3, 16, 30, 40, 40)
+    rx, ry = (6, 6, 26, 46, 60, 60), (5, 5, 19, 33, 43, 43)
     def plume_el(dx, dy, fill, ops):
         return '<ellipse cx="%s" cy="%s" rx="4" ry="3" fill="%s" opacity="0">%s%s%s%s</ellipse>' % (
             f(x + dx), f(y + dy), fill, anim('opacity', ops, k(.2, 1.2, 4, 9)), anim('rx', '%s;%s;%s;%s;%s;%s' % tuple(f(v * s) for v in rx), k(.2, 1.5, 5, 9)),
             anim('ry', '%s;%s;%s;%s;%s;%s' % tuple(f(v * s) for v in ry), k(.2, 1.5, 5, 9)), anim('cx', '%s;%s;%s;%s' % (f(x + dx), f(x + dx), f(x + dx + 26), f(x + dx + 26)), k(.2, 9)))
-    plume = (plume_el(4, 4, 'url(#%s-shadow)' % p, '0;0;.6;.5;0;0') + plume_el(0, 0, 'url(#%s-plume)' % p, '0;0;.95;.9;0;0')
+    plume = (plume_el(4, 4, 'url(#%s-shadow)' % p, '0;0;.6;.5;0;0') + plume_el(0, 0, 'url(#%s-plume)' % p, '0;0;1;.92;0;0')
              + '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="url(#%s-under)" opacity="0">%s</ellipse>' % (f(x), f(y), f(30 * s), f(22 * s), p, anim('opacity', '0;0;.4;0;0', k(.2, 1.2, 3.2))))
     return ''.join(o), plume
 
@@ -87,10 +87,13 @@ def planet(p, width=None):
     d.append(KIT.map_image(p, 'smoke', 'smoke.png', 78, width))
     d.append(KIT.map_image(p, 'smokeshade', 'smokeshade.png', 70, small=True))
     d.append(KIT.map_image(p, 'smokeglow', 'smokeglow.png', 70, small=True))
+    d.append(KIT.map_image(p, 'ventsmoke', 'ventsmoke.png', 78, width))
     d.append(surge_mask(p, period=4.3, gap=610, width=90))
     d.append('<radialGradient id="%s-ground"><stop offset="0" stop-color="#ffb050" stop-opacity=".9"/><stop offset=".4" stop-color="#ff5a14" stop-opacity=".5"/><stop offset="1" stop-color="#c02000" stop-opacity="0"/></radialGradient>' % p)
     d.append('<radialGradient id="%s-burst"><stop offset="0" stop-color="#fffbe8"/><stop offset=".4" stop-color="#ffd070"/><stop offset="1" stop-color="#ff6a14" stop-opacity="0"/></radialGradient>' % p)
-    d.append('<radialGradient id="%s-plume"><stop offset="0" stop-color="#3a2e2a"/><stop offset=".55" stop-color="#1e1714" stop-opacity=".95"/><stop offset="1" stop-color="#1e1714" stop-opacity="0"/></radialGradient>' % p)
+    d.append('<radialGradient id="%s-plume" fx=".38" fy=".34"><stop offset="0" stop-color="#a69486"/><stop offset=".5" stop-color="#6e5e55" stop-opacity=".95"/><stop offset=".85" stop-color="#3a2e2a" stop-opacity=".7"/><stop offset="1" stop-color="#2a201e" stop-opacity="0"/></radialGradient>' % p)
+    d.append('<radialGradient id="%s-limbfade" cx="%s" cy="%s" r="%s" gradientUnits="userSpaceOnUse"><stop offset=".9" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>' % (p, f(C), f(C), f(R)))
+    d.append('<mask id="%s-limb" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="600"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-limbfade)"/></mask>' % (p, f(C), f(C), f(R), p))
     d.append('<radialGradient id="%s-shadow"><stop offset="0" stop-color="#000" stop-opacity=".8"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>' % p)
     d.append('<radialGradient id="%s-under"><stop offset="0" stop-color="#ff6a20"/><stop offset="1" stop-color="#ff6a20" stop-opacity="0"/></radialGradient>' % p)
     d.append('<radialGradient id="%s-ember"><stop offset="0" stop-color="#fff0c0"/><stop offset="1" stop-color="#ff5010" stop-opacity=".2"/></radialGradient>' % p)
@@ -122,6 +125,7 @@ def planet(p, width=None):
     o.append(KIT.air_rim(p))
     # the lit world: ground, eruptions' ash, and the smoke blowing over it; then the red dwarf's light
     o.append(KIT.lensed(p, spin(tiles(p, 'surface'), SPIN)
+                        + '<g class="lyr-smoke">%s</g>' % spin(tiles(p, 'ventsmoke'), SPIN)
                         + '<g class="lyr-smoke">%s</g>' % spin(tiles(p, 'smoke'), SMOKE_SPIN)))
     o.append('<g class="lyr-sun"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-sun)" style="mix-blend-mode:multiply"/></g>' % (f(C), f(C), f(R), p))
     o.append(KIT.haze(p))
@@ -130,8 +134,8 @@ def planet(p, width=None):
     # the lava's own light, day and night: the seas' seams and shores and the fissures, dimmed under thick smoke; its halo at
     # night; surges running along the fissures
     smoke_dim = '<g class="lyr-smoke">%s</g>' % spin(tiles(p, 'smokeshade'), SMOKE_SPIN)
-    o.append(KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim, 'lyr-lava', ' style="mix-blend-mode:screen" opacity=".5"'))
-    o.append('<g class="lyr-lava" style="mix-blend-mode:screen" mask="url(#%s-nightm)">%s</g>' % (p, KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim)))
+    o.append(KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim, 'lyr-lava', ' style="mix-blend-mode:screen" opacity=".5" mask="url(#%s-limb)"' % p))
+    o.append('<g class="lyr-lava" style="mix-blend-mode:screen" mask="url(#%s-nightm)"><g mask="url(#%s-limb)">%s</g></g>' % (p, p, KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim)))
     o.append('<g class="lyr-smoke" style="mix-blend-mode:screen" mask="url(#%s-nightm)" opacity=".6">%s</g>' % (p, KIT.lensed(p, spin(tiles(p, 'smokeglow'), SMOKE_SPIN))))
     o.append('<g class="lyr-lava" style="mix-blend-mode:screen" mask="url(#%s-nightm)">%s</g>' % (p, KIT.lensed(p, spin(tiles(p, 'halo'), SPIN) + smoke_dim)))
     o.append(KIT.lensed(p, spin('<g mask="url(#%s-surge)">%s</g>' % (p, tiles(p, 'cracks')), SPIN), 'lyr-rivers', ' style="mix-blend-mode:screen"'))
