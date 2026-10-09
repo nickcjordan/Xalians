@@ -39,31 +39,31 @@ def on_land(x, y):
     return LAND[v, u] > .9
 
 
-def eruption(p, x, y, at, rnd):
+def eruption(p, x, y, at, rnd, s=1.0, dur=1.0):
     """One vent bursting at clock fraction `at`: a white-hot flash, the ground lit orange and fading, embers thrown out, and a
     dark plume of ash rising (seen from above: a spreading disc) that drifts east and thins."""
     a = '%.4f' % at
 
     def k(*xs):
-        return ';'.join(['0'] + ['%.4f' % min(.9999, at + v / ERUPT) for v in xs] + ['1'])
+        return ';'.join(['0'] + ['%.4f' % min(.9999, at + v * dur / ERUPT) for v in xs] + ['1'])
 
     def anim(attr, vals, kt):
         return '<animate attributeName="%s" values="%s" keyTimes="%s" dur="%ss" repeatCount="indefinite"/>' % (attr, vals, kt, ERUPT)
     o = []
-    o.append('<circle cx="%s" cy="%s" r="42" fill="url(#%s-ground)" opacity="0">%s</circle>' % (f(x), f(y), p, anim('opacity', '0;0;1;.7;0;0', k(0, .25, 1.4, 4.2))))
+    o.append('<circle cx="%s" cy="%s" r="%s" fill="url(#%s-ground)" opacity="0">%s</circle>' % (f(x), f(y), f(46 * s), p, anim('opacity', '0;0;1;.7;0;0', k(0, .25, 1.4, 4.2))))
     o.append('<circle cx="%s" cy="%s" r="5" fill="url(#%s-burst)" opacity="0">%s%s</circle>' % (
-        f(x), f(y), p, anim('opacity', '0;0;1;.8;0;0', k(0, .1, .45, 1.1)), anim('r', '3;3;14;9;5;3', k(0, .15, .6, 1.1))))
-    for i in range(9):
+        f(x), f(y), p, anim('opacity', '0;0;1;.8;0;0', k(0, .1, .45, 1.1)), anim('r', '%s;%s;%s;%s;%s;%s' % tuple(f(v * s) for v in (3, 3, 22, 14, 7, 3)), k(0, .15, .6, 1.1))))
+    for i in range(12):
         ang = rnd.uniform(0, 2 * math.pi)
-        dist = rnd.uniform(8, 18)
-        o.append('<circle r="%s" fill="#ffb060" opacity="0">%s<animateTransform attributeName="transform" type="translate" values="%s %s;%s %s;%s %s;%s %s" keyTimes="%s" dur="%ss" repeatCount="indefinite"/></circle>' % (
-            f(rnd.uniform(.6, 1.1)), anim('opacity', '0;0;1;0;0', k(.05, .2, 1.2)),
+        dist = rnd.uniform(14, 34) * s
+        o.append('<circle r="%s" fill="#ffc070" opacity="0">%s<animateTransform attributeName="transform" type="translate" values="%s %s;%s %s;%s %s;%s %s" keyTimes="%s" dur="%ss" repeatCount="indefinite"/></circle>' % (
+            f(rnd.uniform(1.6, 2.4)), anim('opacity', '0;0;1;0;0', k(.05, .2, 1.4)),
             f(x), f(y), f(x), f(y), f(x + math.cos(ang) * dist), f(y + math.sin(ang) * dist * .8), f(x + math.cos(ang) * dist), f(y + math.sin(ang) * dist * .8),
-            k(.05, 1.2), ERUPT))
+            k(.05, 1.4), ERUPT))
     # the plume: dark ash, spreading and drifting east with the wind
     plume = '<ellipse cx="%s" cy="%s" rx="4" ry="3" fill="url(#%s-plume)" opacity="0">%s%s%s%s</ellipse>' % (
-        f(x), f(y), p, anim('opacity', '0;0;.95;.8;0;0', k(.2, 1.2, 4, 9)), anim('rx', '4;4;22;44;58;58', k(.2, 1.5, 5, 9)),
-        anim('ry', '3;3;16;30;40;40', k(.2, 1.5, 5, 9)), anim('cx', '%s;%s;%s;%s' % (f(x), f(x), f(x + 26), f(x + 26)), k(.2, 9)))
+        f(x), f(y), p, anim('opacity', '0;0;1;.85;0;0', k(.2, 1.2, 4, 9)), anim('rx', '%s;%s;%s;%s;%s;%s' % tuple(f(v * s) for v in (4, 4, 26, 52, 70, 70)), k(.2, 1.5, 5, 9)),
+        anim('ry', '%s;%s;%s;%s;%s;%s' % tuple(f(v * s) for v in (3, 3, 18, 36, 50, 50)), k(.2, 1.5, 5, 9)), anim('cx', '%s;%s;%s;%s' % (f(x), f(x), f(x + 26), f(x + 26)), k(.2, 9)))
     return ''.join(o), plume
 
 
@@ -72,32 +72,34 @@ def planet(p, width=None):
     small = width is not None
     d = KIT.base_defs(p, air=('#ff6a3a', '#ff7a40', '#c0301a'), haze=('#ff9a60', '#ff8a50', '#ffb080'))
     d.append(KIT.map_image(p, 'surface', 'surface.png', 84, width, 1.25 if small else 1.0))
-    d.append(KIT.map_image(p, 'lava', 'lava.png', 86, width, 1.5 if small else 1.0))
+    d.append(KIT.map_image(p, 'lava', 'lava.png', 78, width, 1.5 if small else 1.0))
     d.append(KIT.map_image(p, 'halo', 'lavahalo.png', 70, small=True))
     d.append(KIT.map_image(p, 'cracks', 'cracks.png', 84, width))
-    d.append(KIT.map_image(p, 'smoke', 'smoke.png', 84, width))
+    d.append(KIT.map_image(p, 'smoke', 'smoke.png', 78, width))
     d.append(KIT.map_image(p, 'smokeshade', 'smokeshade.png', 70, small=True))
-    d.append(surge_mask(p, period=4.3, gap=610, width=170))
+    d.append(surge_mask(p, period=4.3, gap=610, width=90))
     d.append('<radialGradient id="%s-ground"><stop offset="0" stop-color="#ffb050" stop-opacity=".9"/><stop offset=".4" stop-color="#ff5a14" stop-opacity=".5"/><stop offset="1" stop-color="#c02000" stop-opacity="0"/></radialGradient>' % p)
     d.append('<radialGradient id="%s-burst"><stop offset="0" stop-color="#fffbe8"/><stop offset=".4" stop-color="#ffd070"/><stop offset="1" stop-color="#ff6a14" stop-opacity="0"/></radialGradient>' % p)
-    d.append('<radialGradient id="%s-plume"><stop offset="0" stop-color="#1a1414"/><stop offset=".6" stop-color="#2e2422" stop-opacity=".85"/><stop offset="1" stop-color="#3e302a" stop-opacity="0"/></radialGradient>' % p)
+    d.append('<radialGradient id="%s-plume"><stop offset="0" stop-color="#6e5a50"/><stop offset=".5" stop-color="#4a3c36" stop-opacity=".9"/><stop offset="1" stop-color="#2a201e" stop-opacity="0"/></radialGradient>' % p)
+    d.append('<filter id="%s-billow" x="-30%%" y="-30%%" width="160%%" height="160%%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="7"/><feDisplacementMap in="SourceGraphic" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter>' % p)
     d.append('<radialGradient id="%s-sun" cx="%s" cy="%s" r="%s" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffe0c4"/><stop offset="1" stop-color="#f0a274"/></radialGradient>' % (
         p, f(C - .45 * R), f(C - .3 * R), f(1.6 * R)))
 
     # the vents: four sites on land, each where the ground faces the viewer when its turn on the eruption clock comes
     vents = []
+    looks = [(1.0, 1.0, 0), (.75, .8, 0), (1.35, 1.25, .55), (.9, .9, -.2)]  # size, length, how far off center toward the limb
     for i in range(4):
         at = (.08 + i * .245) % 1
-        xc = facing_x(at * ERUPT + 1.5, SPIN)
+        xc = facing_x(at * ERUPT + 1.5, SPIN, .25 - looks[i][2])
         for _ in range(5000):
             x, y = (xc + rnd.uniform(-.35, .35) * R) % WT, rnd.uniform(.3, .7) * HT
             if on_land(x, y):
                 break
-        vents.append((x, y, at))
+        vents.append((x, y, at, looks[i][0], looks[i][1]))
     fire, ash = [], []
-    for (x, y, at) in vents:
+    for (x, y, at, s_, dur_) in vents:
         for x0 in TILE_X:
-            a_, b_ = eruption(p, x0 + x, TILE_Y + y, at, rnd)
+            a_, b_ = eruption(p, x0 + x, TILE_Y + y, at, rnd, s_, dur_)
             fire.append(a_)
             ash.append(b_)
     plumes = ''.join(ash)
@@ -105,7 +107,7 @@ def planet(p, width=None):
     o = []
     o.append(KIT.air_rim(p))
     # the lit world: ground, eruptions' ash, and the smoke blowing over it; then the red dwarf's light
-    o.append(KIT.lensed(p, spin(tiles(p, 'surface'), SPIN) + '<g class="lyr-erupt">%s</g>' % spin(plumes, SPIN)
+    o.append(KIT.lensed(p, spin(tiles(p, 'surface'), SPIN)
                         + '<g class="lyr-smoke">%s</g>' % spin(tiles(p, 'smoke'), SMOKE_SPIN)))
     o.append('<g class="lyr-sun"><circle cx="%s" cy="%s" r="%s" fill="url(#%s-sun)" style="mix-blend-mode:multiply"/></g>' % (f(C), f(C), f(R), p))
     o.append(KIT.haze(p))
@@ -113,10 +115,12 @@ def planet(p, width=None):
     # the lava's own light, day and night: the seas' seams and shores and the fissures, dimmed under thick smoke; its halo at
     # night; surges running along the fissures
     smoke_dim = '<g class="lyr-smoke">%s</g>' % spin(tiles(p, 'smokeshade'), SMOKE_SPIN)
-    o.append(KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim, 'lyr-lava', ' style="mix-blend-mode:screen"'))
+    o.append(KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim, 'lyr-lava', ' style="mix-blend-mode:screen" opacity=".7"'))
+    o.append('<g class="lyr-lava" style="mix-blend-mode:screen" mask="url(#%s-nightm)" opacity=".45">%s</g>' % (p, KIT.lensed(p, spin(tiles(p, 'lava'), SPIN) + smoke_dim)))
     o.append('<g class="lyr-lava" style="mix-blend-mode:screen" mask="url(#%s-nightm)">%s</g>' % (p, KIT.lensed(p, spin(tiles(p, 'halo'), SPIN) + smoke_dim)))
     o.append(KIT.lensed(p, spin('<g mask="url(#%s-surge)">%s</g>' % (p, tiles(p, 'cracks')), SPIN), 'lyr-rivers', ' style="mix-blend-mode:screen"'))
     # the eruptions' fire, above the night (it makes its own light)
+    o.append(KIT.lensed(p, spin('<g filter="url(#%s-billow)">%s</g>' % (p, plumes), SPIN), 'lyr-erupt'))
     o.append(KIT.lensed(p, spin(''.join(fire), SPIN), 'lyr-erupt', ' style="mix-blend-mode:screen"'))
     o.append(KIT.limb(p, rim='#ff8a5a'))
     return '<defs>%s</defs>%s' % (''.join(d), ''.join(o))

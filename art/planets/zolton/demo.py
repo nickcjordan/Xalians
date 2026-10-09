@@ -134,8 +134,8 @@ section { margin-top: 56px; }
 if __name__ == '__main__':
     page = PAGE % {
         'BIG': svg('zb', 'big', 'Zolton, turning, with its storm and the current in its canyons'),
-        'MID': svg('zm', 'mid', 'Zolton at 150 pixels', with_stars=False, width=1024).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"'),
-        'SMALL': svg('zs', 'small', 'Zolton at 76 pixels', with_stars=False, width=1024).replace('<svg class="small"', '<svg class="small" width="76" height="76"'),
+        'MID': svg('zm', 'mid', 'Zolton at 150 pixels', with_stars=False, width=512).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"'),
+        'SMALL': svg('zs', 'small', 'Zolton at 76 pixels', with_stars=False, width=512).replace('<svg class="small"', '<svg class="small" width="76" height="76"'),
     }
     open(os.path.join(HERE, 'demo.html'), 'w', encoding='utf-8').write(page)
     print('demo', os.path.getsize(os.path.join(HERE, 'demo.html')) // 1024, 'KB')

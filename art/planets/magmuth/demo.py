@@ -132,8 +132,8 @@ section { margin-top: 56px; }
 if __name__ == '__main__':
     page = PAGE % {
         'BIG': svg('mb', 'big', 'Magmuth, turning: seas of lava under a cracked crust, glowing fissures, smoke, and a vent erupting'),
-        'MID': svg('mm', 'mid', 'Magmuth at 150 pixels', with_stars=False, width=1024).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"'),
-        'SMALL': svg('ms', 'small', 'Magmuth at 76 pixels', with_stars=False, width=1024).replace('<svg class="small"', '<svg class="small" width="76" height="76"'),
+        'MID': svg('mm', 'mid', 'Magmuth at 150 pixels', with_stars=False, width=512).replace('<svg class="mid"', '<svg class="mid" width="150" height="150"'),
+        'SMALL': svg('ms', 'small', 'Magmuth at 76 pixels', with_stars=False, width=512).replace('<svg class="small"', '<svg class="small" width="76" height="76"'),
     }
     open(os.path.join(HERE, 'demo.html'), 'w', encoding='utf-8').write(page)
     print('demo', os.path.getsize(os.path.join(HERE, 'demo.html')) // 1024, 'KB')

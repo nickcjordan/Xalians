@@ -33,14 +33,14 @@ X, Y, Z = S(14.0)
 spire = (1 - np.abs(rnoise(X, Y + warp * .2, Z, 12))) ** 6 * smooth(.35, .8, land_h)
 h = land_h * .6 + crest * .3 * land_h + spire * .35
 gy, gx = np.gradient(h)
-shade = np.clip(1 + (gx * .55 + gy * .45) * 34 * K, .4, 1.6)
+shade = np.clip(1 + (gx * .55 + gy * .45) * 17 * K, .55, 1.35)
 ash = smooth(.0, .5, fbm(*S(7), octaves=4) * .5 + .5) * smooth(.06, .0, np.sqrt(gx * gx + gy * gy) * 40 * K)  # ash settles on the flats
 col = lerpc(hexc('#2a2222'), hexc('#3e3432'), land_h)  # basalt
-col = col + (lerpc(hexc('#5a4e48'), hexc('#83746a'), fbm(*S(22), octaves=2) * .5 + .5) - col) * (ash * .8)[..., None]  # ash
+col = col + (lerpc(hexc('#685a52'), hexc('#95857a'), fbm(*S(22), octaves=2) * .5 + .5) - col) * (ash * .8)[..., None]  # ash
 col *= shade[..., None]
 facing = np.clip((gx * .55 + gy * .45) * 50 * K, 0, 1)
 glint = smooth(.25, .6, spire) * facing  # volcanic glass catching the sun
-col = col + (np.array(hexc('#c9b2a6'), float) - col) * (glint * .7)[..., None]
+col = col + (np.array(hexc('#c9b2a6'), float) - col) * (glint * .22)[..., None]
 col += (fbm(*S(40), octaves=2) * 4)[..., None]
 
 # ---- the seas: molten rock under a crust broken into plates, the plates parting in bright seams, the crust breaking up into
@@ -56,15 +56,15 @@ def plates(n, seed, wob):
     return (f2 - f1) / (f2 + f1), ii[:, 0].reshape(H, W)
 
 
-edge, pid = plates(2200, 3, .02)  # the big plates
-edge2, _ = plates(14000, 5, .01)  # each plate crazed with finer cracks
-heat = np.random.default_rng(9).uniform(0, 1, pid.max() + 1)[pid]  # some plates thin and hot, most cooled dark
-seam = np.maximum(smooth(.035, .0, edge), smooth(.02, .0, edge2) * .35)
+edge, pid = plates(450, 3, .02)  # the big plates
+edge2, _ = plates(3000, 5, .012)  # each plate split by secondary cracks
+heat = np.random.default_rng(9).uniform(.42, .58, pid.max() + 1)[pid]  # plates differ only a little
+seam = wblur(np.maximum(smooth(.03, .0, edge), smooth(.03, .0, edge2) * .5), .6 * K)
 open_lava = smooth(SEA, SEA - .05, base)  # 1 offshore, 0 at the shore: the crust is whole offshore
 breakup = 1 - open_lava  # near shore the crust breaks up into open lava
 flow = smooth(.3, .75, fbm(*S(6), octaves=3) * .5 + .5)  # where the crust is moving the seams run hot; elsewhere they skin over
-molten = np.clip(seam * (.25 + .75 * flow) * (.5 + .5 * breakup + .5 * heat) + breakup * .9 + smooth(.1, .0, edge) * breakup * .4 + heat ** 6 * .25, 0, 1)
-crust = lerpc(hexc('#140a09'), hexc('#2a120c'), np.clip(fbm(*S(30), octaves=2) * .5 + .5 + heat * .3, 0, 1))
+molten = np.clip(seam * (.25 + .75 * flow) * (.5 + .5 * breakup + .5 * heat) + breakup * .9 + smooth(.1, .0, edge) * breakup * .4 , 0, 1)
+crust = lerpc(hexc('#120908'), hexc('#2e130c'), np.clip(fbm(*S(30), octaves=2) * .25 + heat * .6 + smooth(.2, .0, np.minimum(edge, edge2 * 1.5)) * .5, 0, 1))  # darker at a plate's heart, warmer toward its seams
 lava = lerpc(hexc('#b0280a'), hexc('#ffc050'), np.clip(molten * 1.25 - .15, 0, 1))
 sea_col = crust + (lava - crust) * molten[..., None]
 surface = col * shore[..., None] + sea_col * (1 - shore[..., None])
@@ -80,13 +80,20 @@ X, Y, Z = S(4.2)
 cw = fbm(*S(11), octaves=3) * .25
 d1 = px_dist(rnoise(X + cw, Y - cw, Z, 21))
 gate = smooth(.42, .56, pct(fbm(*S(2.5), octaves=3), 0, 100)) * smooth(.15, .4, land_h)
-crack = np.exp(-(d1 / (1.1 * K)) ** 2) * gate * smooth(1.35, 1.15, np.abs(LAT))  # the map's rows crowd together near the poles, where a distance-measured line smears into a band
+cwid = (.6 + 1.4 * smooth(.3, .7, fbm(*S(8), octaves=2) * .5 + .5)) * K  # 0.6 to 2 px along each crack
+crack = np.exp(-(d1 / cwid) ** 2) * gate * smooth(1.35, 1.15, np.abs(LAT))  # the map's rows crowd together near the poles, where a distance-measured line smears into a band
+import scipy.ndimage as ndi
+lab, _n = ndi.label(crack > .3)
+for i_, sl in enumerate(ndi.find_objects(lab)):
+    if sl is not None and max(sl[0].stop - sl[0].start, sl[1].stop - sl[1].start) < 80 * K:
+        crack[sl][lab[sl] == i_ + 1] = 0
 surface = surface * (1 - (crack * .6)[..., None]) + (np.array(hexc('#ff6a20'), float) * crack[..., None] * .6)
 save('surface.png', surface, 'RGB')
 
 # ---- the light the lava gives off: the molten seams and shores, the open lava, the fissures. Drawn with screen blending over
 # the planet, day and night (lava is self-lit); its soft halo is shown at night only
-glow_core = np.clip(molten * (1 - shore) + crack * .9, 0, 1)
+POLE = smooth(1.22, 1.08, np.abs(LAT))  # the lens squeezes the map's polar rows into its last stair-steps: no glow there
+glow_core = np.clip(molten * (1 - shore) + crack * .75, 0, 1) * POLE
 e = np.zeros((H, W, 4))
 e[..., :3] = lerpc(hexc('#d0360a'), hexc('#ffd070'), np.clip(glow_core * 1.3 - .2, 0, 1))
 e[..., 3] = glow_core * 255
@@ -98,22 +105,23 @@ hh[..., 3] = np.clip(halo * 1.8, 0, 1) * 255
 save('lavahalo.png', hh, 'RGBA')
 # the fissures alone, for the travelling surges ("Rivers of fire flash across the wastes")
 cr = np.zeros((H, W, 4))
-cr[..., :3] = hexc('#ffc060')
-cr[..., 3] = np.clip(crack * 1.2, 0, 1) * 255
+cr[..., :3] = hexc('#ffc870')
+cr[..., 3] = np.clip(wblur(crack, .8 * K) * 1.5, 0, 1) * POLE * 255
 save('cracks.png', cr, 'RGBA')
 
 # ---- smoke and ash: "The acrid air is thick with volcanic smoke ... violent ash storms". Dark brown-grey, streaky, sheared by
 # the wind, a few storms wound into whorls; dull red light on its tops
-CYC = [(.5, .6, .62, 2.2, .18), (-.4, -.7, -.4, -2.4, .2), (.2, -.8, .5, 2.0, .16)]
+CYC = [(.5, .6, .62, 1.2, .2), (-.4, -.7, -.4, -1.3, .22), (.2, -.8, .5, 1.1, .18)]
 X, Y, Z = swirl(CX, CY, CZ, CYC)
 w1 = fbm(X * 2.0, Y * 2.0, Z * 2.0, octaves=4)
-sm = fbm(X * 3.2 + w1 * 1.2, Y * 3.2 - w1, Z * 7.0 + w1 * .6, octaves=6)  # stretched along latitude: streaks
+sm = fbm(X * 3.2 + w1 * 1.4, Y * 3.2 - w1 * 1.2, Z * 4.6 + w1, octaves=6)  # a little stretched along latitude, curling
 sm = pct(sm + np.sin(LAT * 7 + w1 * 2) * .08, 10, 99.6)
 s_alpha = smooth(.32, .72, sm) * .9
 soft = wblur(sm, 1.4 * K)
 csh = np.clip(relief(soft, 26), .6, 1.35)
 c = np.zeros((H, W, 4))
-c[..., :3] = lerpc(hexc('#231c1a'), hexc('#6e5b52'), smooth(.55, 1, sm)) * csh[..., None]
+c[..., :3] = lerpc(hexc('#2a2220'), hexc('#4a3a34'), smooth(.55, 1, sm) * .6) * np.clip(1 + (csh - 1) * .5, .8, 1.15)[..., None]
+c[..., :3] = c[..., :3] + (np.array(hexc('#6a2410'), float) - c[..., :3]) * (wblur(1 - shore, 8 * K) * .35)[..., None]  # lit from below by the lava
 c[..., 3] = s_alpha * 235
 save('smoke.png', c, 'RGBA')
 sh = np.zeros((H, W, 4))
@@ -125,5 +133,5 @@ _I.fromarray(lm, 'L').resize((512, 256), _I.BILINEAR).save(os.path.join(P.OUT, '
 
 lens()
 # a red dwarf: a dimmer, warmer day, the terminator a little softer
-sun(direction=(-.86, -.32, .36), soft=(.08, .5), night_color='#070304', night_alpha=.95)
+sun(direction=(-.86, -.32, .36), soft=(.08, .5), night_color='#070304', night_alpha=.97)
 print('ok')

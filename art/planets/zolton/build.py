@@ -305,7 +305,15 @@ def planet(p, width=None):
     # the limb: a dark hairline under the air's rim hides the lens's last stair-steps at the edge
     o.append('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="#05060d" stroke-width="2.2" mask="url(#%s-nightm)"/>' % (f(C), f(C), f(R - .6), p))
     o.append('<g class="lyr-air"><circle cx="%s" cy="%s" r="%s" fill="none" stroke="#9ab4ff" stroke-width="1.6" opacity=".55" mask="url(#%s-airm)"/></g>' % (f(C), f(C), f(R - .2), p))
-    return ('<defs>%s</defs>%s' % (''.join(d), ''.join(o))).replace('@@SPRITES@@', ''.join(sp))
+    out = ('<defs>%s</defs>%s' % (''.join(d), ''.join(o))).replace('@@SPRITES@@', ''.join(sp))
+    # the two copies of each map overlap by their wrapped columns, so a translucent layer drawn twice there shows as a
+    # stripe: clip each map symbol to its own width (found on Magmuth, 2026-10-08)
+    import re
+    def clip(m):
+        sym = m.group(1)
+        return ('<clipPath id="%s-clip"><rect x="0" y="-1" width="%s" height="%s"/></clipPath><g id="%s" clip-path="url(#%s-clip)">%s</g>' % (
+            sym, f(WT), f(HT + 2), sym, sym, m.group(0).replace(' id="%s"' % sym, '', 1)))
+    return re.sub(r'<image id="(%s-(?:surface|electric|cloudshade|storm|bloodcloud))"[^>]*/>' % p, clip, out)
 
 
 def stars(n, seed):

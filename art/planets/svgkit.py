@@ -92,7 +92,7 @@ class Kit:
         """A full map as a symbol (drawn once, used twice): `small` maps are 512 wide whatever the planet's size."""
         w_ = 512 if small else (width or MAPW)
         e = WT * PAD / w_
-        href = self.uri(name, 'webp', q, None if small else width, True, punch)
+        href = self.uri(name, 'webp', q, 512 if small else width, True, punch)
         # the wrapped columns keep the image's edges from smoothing to transparent, but the two copies must not overlap (a
         # translucent glow drawn twice there shows as a bright stripe), so each copy is clipped to its own map width
         return ('<clipPath id="%s-%s-clip"><rect x="0" y="-1" width="%s" height="%s"/></clipPath>' % (p, sym, f(WT), f(HT + 2))
@@ -103,7 +103,7 @@ class Kit:
         """A map as a mask in map units, both copies."""
         w_ = 512 if small else (width or MAPW)
         e = WT * PAD / w_
-        href = self.uri(name, 'webp', 75, None if small else width, True)
+        href = self.uri(name, 'webp', 75, 512 if small else width, True)
         return '<mask id="%s-%s" maskUnits="userSpaceOnUse" x="-4000" y="-1000" width="8000" height="3000">%s</mask>' % (
             p, mid, ''.join('<image href="%s" x="%s" y="%s" width="%s" height="%s" preserveAspectRatio="none"/>' % (href, f(x - e), f(TILE_Y), f(WT + 2 * e), f(HT)) for x in TILE_X))
 
