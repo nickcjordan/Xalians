@@ -207,13 +207,17 @@ def pattern_factor(hair, kind, params):
         wob = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
         wob.inputs['Scale'].default_value = 7.0
         b.put(wob, 'Vector', rest)
-        q = b.m('ADD', b.m('ADD', arc, b.m('MULTIPLY', odd, 0.5)), b.m('MULTIPLY', b.m('SUBTRACT', wob.outputs['Factor'], 0.5), params.get('irregular', 0.7)))
+        sepx = b.node('ShaderNodeSeparateXYZ')
+        hair.links.new(rest, sepx.inputs['Vector'])
+        side = b.m('GREATER_THAN', sepx.outputs['X'], 0.0)  # the two flanks get different seeds
+        q = b.m('ADD', b.m('ADD', b.m('ADD', arc, b.m('MULTIPLY', odd, 0.5)), b.m('MULTIPLY', side, 0.23)),
+                b.m('MULTIPLY', b.m('SUBTRACT', wob.outputs['Factor'], 0.5), params.get('irregular', 0.7)))
         seg = b.m('FLOOR', q)
         u = b.m('FRACT', q)
         comb3 = b.node('ShaderNodeCombineXYZ')
-        b.put(comb3, 'X', b.m('ADD', b.m('MULTIPLY', row, 0.37), 1.3))
+        b.put(comb3, 'X', b.m('ADD', b.m('ADD', b.m('MULTIPLY', row, 0.37), 1.3), b.m('MULTIPLY', side, 5.1)))
         b.put(comb3, 'Y', b.m('ADD', b.m('MULTIPLY', seg, 0.53), 2.1))
-        comb3.inputs['Z'].default_value = 0.7
+        b.put(comb3, 'Z', b.m('ADD', 0.7, b.m('MULTIPLY', side, 3.3)))
         wn3 = b.node('ShaderNodeTexWhiteNoise', noise_dimensions='3D')
         hair.links.new(comb3.outputs['Vector'], wn3.inputs['Vector'])
         sp = b.node('ShaderNodeSeparateColor')
@@ -221,24 +225,24 @@ def pattern_factor(hair, kind, params):
         rr, gg, bb = sp.outputs['Red'], sp.outputs['Green'], sp.outputs['Blue']
         gate = b.m('SUBTRACT', 1.0, b.ramp(rr, params.get('presence', 0.86), params.get('presence', 0.86)+0.05))
         wvar = b.m('ADD', 0.8, b.m('MULTIPLY', gg, 0.4))
-        fork = b.m('SUBTRACT', 1.0, b.ramp(bb, 0.24, 0.3))
+        fork = b.m('SUBTRACT', 1.0, b.ramp(bb, params.get('forkFrac', 0.15), params.get('forkFrac', 0.15)+0.04))
         endflag = b.ramp(b.m('FRACT', b.m('MULTIPLY', gg, 17.3)), 0.45, 0.55)
         uf = b.m('ADD', u, b.m('MULTIPLY', endflag, b.m('SUBTRACT', 1.0, b.m('MULTIPLY', u, 2.0))))
-        taper = b.m('POWER', b.m('MAXIMUM', b.m('SINE', b.m('MULTIPLY', u, PI)), 0.0), 0.75)
+        taper = b.m('POWER', b.m('MAXIMUM', b.m('SUBTRACT', 1.0, b.m('ABSOLUTE', b.m('SUBTRACT', b.m('MULTIPLY', u, 2.0), 1.0))), 0.0), params.get('taperPower', 1.3))
         v2 = b.m('ADD', v, b.m('MULTIPLY', b.m('SINE', b.m('ADD', b.m('MULTIPLY', q, 6.2832), b.m('MULTIPLY', row, 1.7))), 0.07))
         if params.get('narrow') == 'field':
-            mw = b.m('SUBTRACT', 1.0, b.ramp(belly, 0.0, 0.75))
+            mw = b.m('SUBTRACT', 1.0, b.ramp(belly, 0.0, params.get('fieldRamp', 0.5)))
         else:
             mw = b.m('SUBTRACT', 1.0, b.m('MULTIPLY', b.ramp(angle, 2.4, 3.1416), 0.6))
         hw = b.m('MULTIPLY', b.m('MULTIPLY', b.m('MULTIPLY', taper, wvar), b.m('MULTIPLY', gate, mw)), params.get('halfWidth', 0.3))
 
         def stripe(off, w):
             d = b.m('ABSOLUTE', b.m('SUBTRACT', b.m('SUBTRACT', v2, 0.5), off))
-            val = b.m('SUBTRACT', 1.0, b.ramp(d, b.m('MULTIPLY', w, 0.7), b.m('ADD', b.m('MULTIPLY', w, 1.3), 0.004)))
+            val = b.m('SUBTRACT', 1.0, b.ramp(d, b.m('MULTIPLY', w, 0.9), b.m('ADD', b.m('MULTIPLY', w, 1.0), 0.006)))
             return b.m('MULTIPLY', val, b.ramp(w, 0.015, 0.05))
-        hw_main = b.m('MULTIPLY', hw, b.m('SUBTRACT', 1.0, b.m('MULTIPLY', fork, b.ramp(uf, 0.5, 0.7))))
-        hw_br = b.m('MULTIPLY', b.m('MULTIPLY', hw, 0.6), b.m('MULTIPLY', fork, b.ramp(uf, 0.45, 0.65)))
-        delta = b.m('MAXIMUM', b.m('MULTIPLY', b.m('SUBTRACT', uf, 0.5), 0.55), 0.0)
+        hw_main = b.m('MULTIPLY', hw, b.m('SUBTRACT', 1.0, b.m('MULTIPLY', fork, b.ramp(uf, 0.35, 0.6))))
+        hw_br = b.m('MULTIPLY', b.m('MULTIPLY', hw, 0.6), b.m('MULTIPLY', fork, b.ramp(uf, 0.3, 0.55)))
+        delta = b.m('MAXIMUM', b.m('MULTIPLY', b.m('SUBTRACT', uf, 0.35), 0.5), 0.0)
         f = b.m('MAXIMUM', stripe(0.0, hw_main), b.m('MAXIMUM', stripe(delta, hw_br), stripe(b.m('MULTIPLY', delta, -1.0), hw_br)))
     else:  # spots
         cells = b.node('ShaderNodeTexVoronoi', voronoi_dimensions='3D', feature='F1')
