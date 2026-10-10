@@ -1,0 +1,46 @@
+{
+ "note": "Analytic ears F7 (2026-10-10, coordinator's call for Nick): F6b (ears-analytic-F6b.json) with the lower edge swept lower toward the lower edge of Nick's silhouette (apps/web/src/svg/species/akinza.svg, scaled to the sheet's ear span): about halfway from mid-ear to the tip (.04 lower at u .6, .06 at u .8, .07 at u .9; [.56, -.045], [.84, .10], [.99, .32] for [.56, -.02], [.84, .17], [.99, .38]), and only about .01 lower at the root ([.30, -.10] kept): a root swept as far as the rest widened the back view at the jaw row (R01.6 1.22 against 1.15) in a first build. Tips .01 in ([.99, .32], [1.00, .53]) for the ear span. Same construction, exact mirror; the upper edge, root and cup keys are F6b's.",
+ "earControls": [
+  [
+   0.1,
+   0.16
+  ],
+  [
+   0.3,
+   -0.1
+  ],
+  [
+   0.56,
+   -0.045
+  ],
+  [
+   0.84,
+   0.1
+  ],
+  [
+   0.99,
+   0.32
+  ],
+  [
+   1.0,
+   0.53
+  ],
+  [
+   0.62,
+   0.54
+  ],
+  [
+   0.28,
+   0.33
+  ]
+ ],
+ "earCupScale": [
+  0.66,
+  0.6
+ ],
+ "earCupShift": [
+  -0.04,
+  0.0
+ ],
+ "earCupTaper": 0.4
+}

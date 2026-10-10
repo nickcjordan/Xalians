@@ -287,3 +287,43 @@ Comparisons (bare clay, v5 against v6): `untracked/species-construction/akinza/s
 - A faint diagonal fold behind the outer eye corner in the side view (much softer than v5), and the face outline has a slight corner where the cheek meets each ear's lower root in the front view.
 - The back of each ear root still shows a soft vertical shading line.
 - A soft horizontal line at the jaw and neck junction (the kept neck stub meets the raised chin), visible in the close mouth views.
+
+# Head v6b: v5's round head under v6's eyes and mouth (2026-10-09/10)
+
+Coordinator on v6 (assembled-3077): the head lost v5's roundness (flatter top, temple corners where the ears meet, flat cheeks with a corner at each lower ear root, a square jaw, a line where the jaw meets the neck); the upper eye outline had gone even. Then, as Nick's calls: keep the .025 mouth and chin raise but bring the chin-to-chest check and containment back within limits, and sweep the ears' lower edge about halfway toward Nick's silhouette.
+
+## What was built
+
+- Step H41 (`art/species-construction/analytic_head_v6b_field.py`, spec `specs/head-analytic-v6b.json`, ears `specs/ears-analytic-F7.json`) in place of H40 after H37; recipe `recipe-furbase-v6b.json`. v5 and v6 files are untouched.
+- Head: v5's mass and v5's face-front keep again (v6's refit mass was the cause of the squarer head), with the muzzle and mouth left to the mass by a window (no H37 pit). The mouth, muzzle and upper chin are raised .025 by a smooth warp of the field (full between z -.19 and -.24, none above -.15 or below -.30, front only, held at 0 round the nose) instead of a refit, so the chin underside and throat stay where v5 had them: chin-to-chest R06.8 -.005 (v6 -.039, limit .01) and containment within allowance.
+- Face: one radial thin plate over the whole face front, temples, cheeks and jaw (`faceFair`, data .2, grid -70 to 80 by -110 to 110 degrees), fairing the composite head itself, pinned at a narrow lid ring on each eye globe, its border and the nose. It removes the soft lumps of the ellipsoid unions and blends and the corners at the lower ear roots without changing the outline. A wider grid with a lighter data weight filled the notch under the ears and widened the jaw; one ending at -45 degrees left a crease under the chin.
+- Eyes: v6's opening and lid, with the opening reaching .75 into the dark outline band at the top (.35 at the bottom), so the upper outline is heavier: band top over bottom 2.8 / 1.6 (v5 6.1, v6 1.3 / .9). The opening edge is rounded .008, which removed v6's fuzzy fringe.
+- Ears F7: F6b with the lower edge swept toward Nick's silhouette: about .04 lower at u .6, .06 at .8, .07 at .9, about .01 at the root (a root swept as far as the rest widened the back view at the jaw row, R01.6 1.22). F6b is F6 with the upper edge control .01 lower (F6's lowered root had lifted the upper edge just past the head's top row, the containment flag of v6). Back flare .03, front fillet .10.
+- Output: head-3094, assembled-3095, packet `untracked/species-construction/akinza/loop/packets/assembled-3095`. Superseded builds of the same recipe file: 3079, 3081, 3083, 3085, 3087, 3089, 3091, 3093.
+
+## Measures (packet against assembled-3071)
+
+| Measure | v5 3071 | v6 3077 | v6b 3095 |
+|---|---|---|---|
+| R03.1 ear span (.97 to 1.03) | 1.029 | 1.026 | 1.026 |
+| R01.1 front head IoU (min .90) | .785 | .793 | .826 |
+| R01.2 side head IoU (min .90) | .869 | .853 | .860 |
+| R04.1 back head IoU (min .90) | .835 | .840 | .868 |
+| R03.2 fan area missing (max .06) | .160 | .153 | .112 |
+| R01.6 back width at .18 (max 1.15) | 1.025 | 1.108 | 1.145 |
+| R06.8 chest ahead of chin (within .01) | -.002 | -.039 (fail) | -.005 |
+| Containment outside all zones | within | .030 (flag) | within |
+| I09 figure height | 1.859 | 1.862 | 1.859 |
+| Eye band top over bottom | one eye 6.1 | 1.3 / .9 | 2.8 / 1.6 |
+
+Technical check passes, no new seams, no face guard broken, regionShift .028 at most inside R01 to R04 and 0 elsewhere; body unchanged.
+
+Comparisons: `untracked/species-construction/akinza/surface/head-redesign/v6b/clay-v5-v6-v6b-{head,face,threequarter,side,back}.png` (fur cameras, v5 3071, v6 3077, v6b 3095), `heads-v5-v6-v6b-{eyes-close,eye-close-q,mouth-close,mouth-close-q,face,face-q,w-front,w-side,w-back,w-rq}.png` (head components; the first four are the close eye and mouth crops), `overlay-v6b.png` (drawing over the new outline).
+
+## Still open (my own look)
+
+- A small light sliver at the tip of the nose in the assembled face view, and a slight notch in the muzzle just under it: the nose object's tip and the skin meet there within a voxel or two. Keeping no skin round the nose and cutting a seat behind it instead was tried and broke the skin through the nose (dev-u); not solved.
+- R01.6 back width at .18 is 1.145 against 1.15: the swept ears' lower roots widen the back view just under them. A further sweep at the root would fail it.
+- The jaw below the cheeks is a little fuller than the sheet's taper (the fairing plate rounds it); the face is round, not square, but the chin could taper more.
+- The back of each ear root still shows a soft shading line in the back and rear three-quarter views (much fainter than v5's).
+- The side view keeps a faint soft fold behind the outer eye corner.

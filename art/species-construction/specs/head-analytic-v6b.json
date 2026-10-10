@@ -1,5 +1,5 @@
 {
- "note": "Analytic head v6b (2026-10-09): v6's eye surround and muzzle on v5's round head. v6's refit mass lost v5's roundness; v6b keeps v5's mass (throat blend .095) and v5's face-front keep (with the muzzle and mouth left to the mass by a window, as v6), and raises the mouth, muzzle and upper chin by a smooth .025 warp (faceLift: full from z -.21 to -.24, none above -.15 or below -.30, front only), so the chin's underside and the throat stay. The eye-surround plate follows the v6 mass right round the eyes and the kept face farther out; the opening reaches .6 into the dark outline band at the top (.35 at the bottom), so the upper outline shows heavier; the opening edge is rounded .008. Ear back flare .03 over u .24 to .52, front fillet .10; the plate's kept-face target only inside |x| .10 to .20 (the kept face's old temples are bulky). Ears: ears-analytic-F6b.json. Keys documented in analytic_head_v6b_field.py.",
+ "note": "Analytic head v6b (2026-10-09/10): v6's eye surround and muzzle on v5's round head. v6's refit mass lost v5's roundness; v6b keeps v5's mass (throat blend .095) and v5's face-front keep (with the muzzle and mouth left to the mass by a window), and raises the mouth, muzzle and upper chin by a smooth .025 warp (faceLift: full from z -.19 to -.24, none above -.15 or below -.30, held at 0 round the nose (faceLiftNose; without it the raised muzzle ran into the nose tip), front only), so the chin's underside and the throat stay (chin-to-chest R06.8 and containment back within limits). The whole face front, temples, cheeks and jaw are then faired as one radial thin plate over that composite head (faceFair, data .2, grid -70 to 80 by -110 to 110 degrees; data .05 on a wider grid filled the notch under the ears and widened the jaw, a grid ending at -45 left a crease under the chin), pinned at the lid rings on the eye globes, its border and the nose, so the soft lumps of the unions and blends go and the round outline stays. The eye opening reaches .75 into the dark outline band at the top (.35 at the bottom), so the upper outline shows heavier; its edge is rounded .008. Ear back flare .03 over u .24 to .52, front fillet .10. Ears: ears-analytic-F7.json (lower edge swept toward Nick's silhouette). Keys documented in analytic_head_v6b_field.py.",
  "mass": {
   "parts": [
    {
@@ -104,10 +104,6 @@
   0.4
  ],
  "earFlareBack": 0.03,
- "featKeep": [
-  0.002,
-  0.008
- ],
  "featObjects": [
   "nose"
  ],
@@ -121,10 +117,10 @@
   0.15
  ],
  "eyeFairGrid": [
-  -50.0,
-  75.0,
-  -85.0,
-  85.0,
+  -70.0,
+  80.0,
+  -110.0,
+  110.0,
   0.5
  ],
  "lidThick": 0.008,
@@ -133,7 +129,7 @@
   -0.33
  ],
  "faceLift": 0.025,
- "openFracTop": 0.6,
+ "openFracTop": 0.75,
  "apertureRound": 0.008,
  "earFlareU": [
   0.24,
@@ -159,7 +155,7 @@
  "eyeFairTargetFace": true,
  "faceLiftZ": [
   -0.15,
-  -0.21,
+  -0.19,
   -0.24,
   -0.3
  ],
@@ -266,5 +262,20 @@
  "eyeFairTargetFaceX": [
   0.1,
   0.2
+ ],
+ "faceFair": true,
+ "faceFairData": 0.2,
+ "faceLiftNose": [
+  0,
+  -0.35,
+  -0.13,
+  0.05,
+  0.05,
+  0.03,
+  1.8
+ ],
+ "featKeep": [
+  0.002,
+  0.008
  ]
 }

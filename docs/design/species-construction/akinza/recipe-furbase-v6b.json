@@ -653,17 +653,17 @@
       "args": [
         "--scene", "{base}/head.blend",
         "--out", "{out}",
-        "--ears", "{repo}/art/species-construction/specs/ears-analytic-F6b.json",
+        "--ears", "{repo}/art/species-construction/specs/ears-analytic-F7.json",
         "--spec", "{repo}/art/species-construction/specs/head-analytic-v6b.json"
       ],
-      "note": "analytic head v6b (coordinator 2026-10-09 on v6: the head lost v5's roundness): v5's round head (mass and face keep) with v6's eye surround and muzzle, the mouth, muzzle and upper chin raised .025 by a smooth warp, heavier upper eye outline; replaces H40",
+      "note": "analytic head v6b (coordinator 2026-10-09/10 on v6: the head lost v5's roundness): v5's round head (mass and face keep) with v6's eye surround and muzzle, faired as one thin plate over the face, temples and jaw; the mouth, muzzle and upper chin raised .025 by a smooth warp with the chin underside and throat kept; heavier upper eye outline; ears F7 (lower edge swept toward Nick's silhouette); replaces H40",
       "pins": {
-        "art/species-construction/analytic_head_v6b_field.py": "a5122425db5ef754ab395ae6bdd049cdc7b908a0d735122fae1024cd0dc08660",
+        "art/species-construction/analytic_head_v6b_field.py": "5bb20c4773fb54323d820360a54c204aa23232f07a804d60ab2388fc93ec0116",
         "art/species-construction/authored_surfaces.py": "57dc8462fa440d9b7ab50fc278dcfb1002c1849b18c3e704d6fd1da6435210f3",
         "art/species-construction/blender_blockout.py": "beedffd777447cfdb58a9910a464e388686d324b646a9e70f511c80fdf8b610a",
         "art/species-construction/blender_probe.py": "93e2a1fe98239d63d77b2ff94f07d8be5d01a2e5ac46f724f77581719194f675",
-        "art/species-construction/specs/ears-analytic-F6b.json": "26ecc2cab0d537d58e47089a3b5a8cf24fac6e7cdcb6c79b47c5f18528ca5013",
-        "art/species-construction/specs/head-analytic-v6b.json": "976da3dcf4a4039931425fdf899208d16b9a7e764fc6cb9046dbbda2769063ea",
+        "art/species-construction/specs/ears-analytic-F7.json": "f0a56f93d8a999c1f208259bcc753faca907f38ab45cfcb1a09c47be21cf153f",
+        "art/species-construction/specs/head-analytic-v6b.json": "b8a40d1ffc7dc35f38ca8dce8e11e946b4af910c27f8b7153acb0dae9c713ab8",
         "art/species-construction/study_provenance.py": "c96e23816b3c4c89a5dd71e01cef06ded4be33990aa7e5ee31cda5940218d1e0",
         "art/species-construction/surface_math.py": "25fc278203e8db9391a29ec42ab6bdb186bdad54f8e58c0ffe1b410125e3de33"
       }

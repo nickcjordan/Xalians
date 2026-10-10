@@ -5,7 +5,11 @@ a corner at each lower ear root, a square jaw). v6b keeps v5's mass and raises t
 (`faceLift`): the mass is sampled at z - L(y, z), L = lift times a profile in z (0 above the first height, full between
 the second and third, 0 again below the fourth, smoothsteps) times a front weight in y (`faceLiftY`, full in front, none
 behind), so the mouth, muzzle and upper chin rise by the lift while the chin's underside, the throat and the back of the
-head stay; the mouth line objects follow the same L per vertex. With `eyeFairTargetFace` the eye-surround plate follows the kept
+head stay; the mouth line objects follow the same L per vertex; `faceLiftNose` [cx, cy, cz, rx, ry, rz, fade] holds the warp at 0
+inside an ellipsoid round the nose; `noseSeat` [shrink, behind] cuts the skin in front of the nose object's back surface (less behind) inside its front-view
+footprint shrunk by shrink, so the skin passes behind the nose; `featFine` measures the nose keep on a voxel-step grid (the coarse .01 grid
+smoothed a keep of .002 to .008 away, so the skin showed through the tip of the nose) (fading out to fade times its radii), so the raised muzzle does not run into the nose; `mouthSink` {object: depth} sets a piece that sat in the old
+pit (closed_mouth_2, the short stroke under the nose) that far under the new skin, so it does not stand out of it. With `eyeFairTargetFace` the eye-surround plate follows the kept
 face (the input skin by ray) inside the face zone instead of the mass, whose ellipsoid unions read as bumps there,
 fading in between `eyeFairTargetFaceFrom` of the globes (closer in, the kept face carries the old socket rims);
 `eyeFairTargetFaceX` (default `faceX`) limits that to the face centre (the kept face's old temples are bulky);
@@ -13,6 +17,10 @@ fading in between `eyeFairTargetFaceFrom` of the globes (closer in, the kept fac
 masked to the head (|x| fade x, between zLow and zHigh) and held near the eye globes, the nose and mouth objects
 (eyeHold, featHold distances) and on the ears beyond |x| earU, so the soft lumps left by the mass unions and the kept
 face go;
+`faceFair`: the plate covers the whole grid (face front, temples, cheeks, jaw) and fairs the composite head itself
+(the kept face, the mass, the lift; radial heights by bisection), data weight `faceFairData`, pinned at the lid rings, a
+`faceFairBorder`-degree border and at the nose (`faceFairNose`), so the soft lumps of the unions and blends go while
+the round outline stays;
 `eyeFairMass` (default the head mass) is the mass the plate follows near the eyes (v6b: the v6 refit, which has no
 brow lobes; v5's mass bulges above the brows). The kept input is warped the same way. With `faceKeep` (v5's
 face-front zone), `mouthWindow` [cx, cy, cz, rx, ry, rz] leaves the muzzle and mouth to the mass (the kept face had the
@@ -134,8 +142,9 @@ DEFAULTS = {
     'eyeAperture': True, 'openFrac': .35, 'openSmooth': 20., 'cutUnder': .002, 'apertureRound': .004, 'lidR': .006, 'lidDepth': .002, 'lidBlend': .012,
     'lidMode': 'hug', 'lidThick': .004, 'lidInset': 0., 'globeStep': .004,
     'eyeFair': False, 'eyeFairCenter': [0., 0., -.04], 'eyeFairGrid': [-35., 70., -80., 80., .5], 'eyeFairReach': [.08, .13],
-    'eyeFairEdge': .0, 'eyeFairRing': .008, 'eyeFairWeightBlur': 3., 'eyeFairTargetFace': False, 'eyeFairMass': None, 'eyeFairTargetFaceX': None, 'skinFair': None, 'eyeFairTargetFaceFrom': [.0, .0001], 'eyeFairData': .02, 'eyeFairLam': 3e-4,
-    'mouthLift': .025, 'mouthWindow': None, 'mouthWindowBlend': [.0, .03], 'faceLift': 0., 'faceLiftZ': [-.12, -.20, -.24, -.30], 'faceLiftY': [-.15, .05],
+    'eyeFairEdge': .0, 'eyeFairRing': .008, 'eyeFairWeightBlur': 3., 'eyeFairTargetFace': False, 'eyeFairMass': None, 'eyeFairTargetFaceX': None, 'skinFair': None,
+    'faceFair': False, 'faceFairData': .05, 'faceFairBorder': 8., 'faceFairNose': [.03, .06], 'eyeFairTargetFaceFrom': [.0, .0001], 'eyeFairData': .02, 'eyeFairLam': 3e-4,
+    'mouthLift': .025, 'mouthSink': None, 'mouthWindow': None, 'mouthWindowBlend': [.0, .03], 'faceLift': 0., 'faceLiftZ': [-.12, -.20, -.24, -.30], 'faceLiftY': [-.15, .05], 'faceLiftNose': None, 'featFine': False, 'noseSeat': None,
     'openFracTop': None, 'openTopPow': 1.5,
 }
 
@@ -265,13 +274,18 @@ def ellipsoid_xyz(x, y, z, cen, rad):
     return (np.sqrt(((x-cen[0])/rad[0])**2+((y-cen[1])/rad[1])**2+((z-cen[2])/rad[2])**2)-1)*min(rad)
 
 
-def face_lift(y, z):
-    """The face warp L(y, z): how far the lower face is raised at (y, z)."""
+def face_lift(y, z, x=None):
+    """The face warp L(y, z): how far the lower face is raised at (y, z) (none round the nose with x and `faceLiftNose`)."""
     if not P['faceLift']:
         return 0.
     z0, z1, z2, z3 = P['faceLiftZ']
     prof = (1-ss2(z, z1, z0))*ss2(z, z3, z2)
-    return P['faceLift']*prof*(1-ss2(y, *P['faceLiftY']))
+    L = P['faceLift']*prof*(1-ss2(y, *P['faceLiftY']))
+    if x is not None and P['faceLiftNose']:
+        c_, r_ = P['faceLiftNose'][:3], P['faceLiftNose'][3:6]
+        qn = np.sqrt(((x-c_[0])/r_[0])**2+((y-c_[1])/r_[1])**2+((z-c_[2])/r_[2])**2)
+        L = L*ss2(qn, 1., P['faceLiftNose'][6])
+    return L
 
 
 def mass_field(x, y, z, mass=None):
@@ -359,6 +373,90 @@ for name, objs in (('eye', eye_objs), ('feat', feat_objs)):
                 D[i, j, k] = hit[3] if hit[0] is not None else 1.
     dist[name] = D
 print('keep distances', {k: v.shape for k, v in dist.items()}, flush=True)
+# a fine distance grid round the kept features (the nose pad): the coarse grid cannot resolve a keep of a few voxels
+feat_fine = None
+if P['featFine'] and feat_objs:
+    trf = tree_of(feat_objs)
+    fv_ = np.concatenate([np.array([tuple(o.matrix_world @ v.co) for v in o.data.vertices]) for o in feat_objs])
+    f_lo = fv_.min(0)-P['featKeep'][1]-.01
+    f_hi = fv_.max(0)+P['featKeep'][1]+.01
+    fax = [np.arange(f_lo[i], f_hi[i]+VS/2, VS) for i in range(3)]
+    FD = np.empty(tuple(len(a) for a in fax), np.float32)
+    for i, xv in enumerate(fax[0]):
+        for j, yv in enumerate(fax[1]):
+            for k, zv in enumerate(fax[2]):
+                FD[i, j, k] = trf.find_nearest(Vector((xv, yv, zv)))[3]
+    feat_fine = (f_lo, FD)
+    print('fine feature distances', FD.shape, flush=True)
+
+
+# nose seat: the skin in front of the nose object's back surface, inside its front-view footprint, is cut away, so the
+# skin passes behind the nose and never shows through it (`noseSeat`)
+nose_seat = None
+if P['noseSeat']:
+    nv_ = np.concatenate([np.array([tuple(o.matrix_world @ v.co) for v in o.data.vertices]) for o in meshes if o.name.startswith('nose')])
+    NS = .002
+    n_lo = nv_[:, [0, 2]].min(0)-.01
+    gxn = np.arange(n_lo[0], nv_[:, 0].max()+.01, NS)
+    gzn = np.arange(n_lo[1], nv_[:, 2].max()+.01, NS)
+    yb = np.full((len(gxn), len(gzn)), np.nan)
+    ix = np.clip(((nv_[:, 0]-n_lo[0])/NS).round().astype(int), 0, len(gxn)-1)
+    iz = np.clip(((nv_[:, 2]-n_lo[1])/NS).round().astype(int), 0, len(gzn)-1)
+    for a_, b_, c_ in zip(ix, iz, nv_[:, 1]):
+        if not (yb[a_, b_] >= c_):
+            yb[a_, b_] = c_
+    foot = ~np.isnan(yb)
+    for _ in range(2):   # close small gaps between vertex cells
+        pad = np.pad(foot, 1)
+        foot = foot | (pad[:-2, 1:-1] & pad[2:, 1:-1]) | (pad[1:-1, :-2] & pad[1:-1, 2:])
+    edge_ = foot & ~(np.pad(foot, 1)[:-2, 1:-1] & np.pad(foot, 1)[2:, 1:-1] & np.pad(foot, 1)[1:-1, :-2] & np.pad(foot, 1)[1:-1, 2:])
+    ex, ez = np.nonzero(edge_)
+    GX, GZ = np.meshgrid(gxn, gzn, indexing='ij')
+    dd = np.sqrt((GX[..., None]-gxn[ex])**2+(GZ[..., None]-gzn[ez])**2).min(-1)
+    sdf_foot = np.where(foot, -dd, dd)
+    ybf = yb.copy()
+    for _ in range(6):   # fill the back height into gap cells from neighbours
+        pad = np.pad(ybf, 1, constant_values=np.nan)
+        nb = np.stack([pad[1+di:1+di+ybf.shape[0], 1+dj:1+dj+ybf.shape[1]] for di in (-1, 0, 1) for dj in (-1, 0, 1)])
+        best = np.where(np.isnan(nb), -np.inf, nb).max(0)
+        ybf = np.where(np.isnan(ybf) & np.isfinite(best), best, ybf)
+    ybf = np.nan_to_num(ybf, nan=-1.)
+    nose_seat = (n_lo, NS, sdf_foot, ybf)
+    print('nose seat', sdf_foot.shape, int(foot.sum()), flush=True)
+
+
+def nose_cut(xs, ys, zs):
+    """Negative inside the region to cut: inside the nose footprint (shrunk by noseSeat[0]) and in front of its back."""
+    n_lo, NS, SD, YB = nose_seat
+    fi = np.clip((xs-n_lo[0])/NS, 0, SD.shape[0]-1.001)
+    fk = np.clip((zs-n_lo[1])/NS, 0, SD.shape[1]-1.001)
+    i0, k0 = np.floor(fi).astype(int), np.floor(fk).astype(int)
+    ti, tk = fi-i0, fk-k0
+    def bl(A):
+        return A[i0, k0]*(1-ti)*(1-tk)+A[i0+1, k0]*ti*(1-tk)+A[i0, k0+1]*(1-ti)*tk+A[i0+1, k0+1]*ti*tk
+    outside = (xs < n_lo[0]) | (xs > n_lo[0]+NS*(SD.shape[0]-1)) | (zs < n_lo[1]) | (zs > n_lo[1]+NS*(SD.shape[1]-1))
+    return np.where(outside, 1., np.maximum(bl(SD)+P['noseSeat'][0], ys-(bl(YB)-P['noseSeat'][1])))
+
+
+def fine_feat(s):
+    """Distance to the kept features on slab s from the fine grid (trilinear), 1 outside it."""
+    f_lo, FD = feat_fine
+    fi = (X[s][:, None, None]-f_lo[0])/VS
+    fj = (Y[None, :, None]-f_lo[1])/VS
+    fk = (Z[None, None, :]-f_lo[2])/VS
+    out_ = (fi < 0) | (fi > FD.shape[0]-1) | (fj < 0) | (fj > FD.shape[1]-1) | (fk < 0) | (fk > FD.shape[2]-1)
+    i0 = np.clip(np.floor(fi).astype(int), 0, FD.shape[0]-2)
+    j0 = np.clip(np.floor(fj).astype(int), 0, FD.shape[1]-2)
+    k0 = np.clip(np.floor(fk).astype(int), 0, FD.shape[2]-2)
+    ti, tj, tk = np.clip(fi-i0, 0, 1), np.clip(fj-j0, 0, 1), np.clip(fk-k0, 0, 1)
+    v = 0.
+    for di in (0, 1):
+        for dj in (0, 1):
+            for dk in (0, 1):
+                v = v+((ti if di else 1-ti)*(tj if dj else 1-tj)*(tk if dk else 1-tk))*FD[i0+di, j0+dj, k0+dk]
+    return np.where(out_, 1., v)
+
+
 
 
 def bspline_weights(fine, c0, n):
@@ -686,13 +784,69 @@ if P['eyeFair']:
         wz = np.where(np.isnan(r_in) | (np.abs(np.nan_to_num(r_in)-rM) > .05), 0., wz)
         wz = wz*ss2(dg, *P['eyeFairTargetFaceFrom'])   # right around the eyes the kept face carries its old socket rims
         rTarget = rM+wz*(np.nan_to_num(r_in, nan=0.)-rM)
-    rT = np.where(covered, r_g+P['lidThick'], np.where(opening, r_g-.01, rTarget))
-    a = np.where(opening, P['eyeFairData'], np.where(farpin, 1., P['eyeFairData']))
+    if P['faceFair']:   # the whole face front and temples: the plate fairs the composite head itself
+        def sample_f(q):
+            fi = q[:, 0]/VS-lo[0]
+            fj = q[:, 1]/VS-lo[1]
+            fk = q[:, 2]/VS-lo[2]
+            i0 = np.clip(np.floor(fi).astype(int), 0, nx-2)
+            j0 = np.clip(np.floor(fj).astype(int), 0, ny-2)
+            k0 = np.clip(np.floor(fk).astype(int), 0, nz-2)
+            ti, tj, tk = np.clip(fi-i0, 0, 1), np.clip(fj-j0, 0, 1), np.clip(fk-k0, 0, 1)
+            v = 0.
+            for di in (0, 1):
+                for dj in (0, 1):
+                    for dk in (0, 1):
+                        v = v+((ti if di else 1-ti)*(tj if dj else 1-tj)*(tk if dk else 1-tk))*f[i0+di, j0+dj, k0+dk]
+            return v
+
+        def composite(q):
+            x_, y_, z_ = q[:, 0], q[:, 1], q[:, 2]
+            L_ = face_lift(y_, z_, x_)
+            zl = z_-L_
+            fv = sample_f(np.stack([x_, y_, zl], 1)) if P['faceLift'] else sample_f(q)
+            mv = np.clip(mass_field(x_, y_, zl), -BAND, BAND)
+            wF_ = ((1-ss2(np.abs(x_), *P['faceX']))*(1-ss2(y_, *P['faceY']))*(1-ss2(z_, *P['faceZ']))) if P['faceKeep'] else 0*x_
+            if P['faceKeep'] and P['mouthWindow']:
+                mc, mr = P['mouthWindow'][:3], P['mouthWindow'][3:]
+                qm = np.sqrt((x_/mr[0])**2+((y_-mc[1])/mr[1])**2+((zl-mc[2])/mr[2])**2)
+                wF_ = wF_*ss2(qm, 1.+P['mouthWindowBlend'][0], 1.+P['mouthWindowBlend'][1]+.6)
+            wK_ = np.maximum(wF_, 1-ss2(z_, *P['neckKeepZ']))
+            return wK_*fv+(1-wK_)*mv
+        flatd = dirs.reshape(-1, 3)
+        lo_r = np.full(len(flatd), .02)
+        hi_r = np.full(len(flatd), .9)
+        for _ in range(36):
+            m_ = (lo_r+hi_r)/2
+            ins_ = composite(fc+flatd*m_[:, None]) < 0
+            lo_r = np.where(ins_, m_, lo_r)
+            hi_r = np.where(ins_, hi_r, m_)
+        r_comp = ((lo_r+hi_r)/2).reshape(T_.shape)
+        nose_v = np.concatenate([np.array([tuple(o.matrix_world @ v.co) for v in o.data.vertices]) for o in meshes if o.name.startswith('nose')])
+        pc = (fc+dirs*r_comp[..., None]).reshape(-1, 3)
+        dn = np.empty(len(pc))
+        for c0 in range(0, len(pc), 2000):
+            dn[c0:c0+2000] = np.sqrt(((pc[c0:c0+2000, None, :]-nose_v[None, ::2])**2).sum(2)).min(1)
+        dn = dn.reshape(T_.shape)
+        bcell = P['faceFairBorder']/step
+        ii, jj = np.meshgrid(np.arange(len(th)), np.arange(len(ph)), indexing='ij')
+        dborder = np.minimum(np.minimum(ii, len(th)-1-ii), np.minimum(jj, len(ph)-1-jj))
+        border = dborder < bcell
+        nosepin = dn < P['faceFairNose'][0]
+        pins = covered | border | nosepin
+        rT = np.where(covered, r_g+P['lidThick'], np.where(opening, r_g-.01, r_comp))
+        a = np.full(T_.shape, P['faceFairData'])
+        rM = r_comp
+    else:
+        rT = np.where(covered, r_g+P['lidThick'], np.where(opening, r_g-.01, rTarget))
+        a = np.where(opening, P['eyeFairData'], np.where(farpin, 1., P['eyeFairData']))
     rs, iters_ = fair_ml(rT, pins, a, P['eyeFairLam'], th, hstep, 3, 1500)
     gt_ = np.gradient(rs, hstep, axis=0)
     gp_ = np.gradient(rs, hstep, axis=1)/np.cos(th)[:, None]
     nrm_r = np.sqrt(1+(gt_*gt_+gp_*gp_)/rs**2)
     wdir = 1-ss2(dg, *P['eyeFairReach'])                  # 1 near the eyes, 0 where the mass is pinned
+    if P['faceFair']:   # everywhere in the grid, fading at its border and at the nose
+        wdir = ss2(dborder.astype(float), 0., 2*bcell)*ss2(dn, *P['faceFairNose'])
     rb_w = max(1, int(round(P['eyeFairWeightBlur']/step)))  # the nearest-globe distance has a kink at the midline:
     for _ in range(3):                                      # blur the weight over the grid
         for ax_ in (0, 1):
@@ -701,6 +855,10 @@ if P['eyeFair']:
             cs_ = np.cumsum(np.pad(wdir, pad_, mode='edge'), axis=ax_)
             wdir = (np.take(cs_, np.arange(2*rb_w+1, n_+2*rb_w+1), axis=ax_)-np.take(cs_, np.arange(0, n_), axis=ax_))/(2*rb_w+1)
     eye_rad = {'c': fc, 'th0': t0, 'ph0': p0_, 'step': step, 'nth': len(th), 'nph': len(ph), 'rs': rs, 'nrm': nrm_r, 'w': wdir}
+    dl_ = np.where(~pins & ~opening, rs-rM, 0)
+    im_ = np.unravel_index(np.argmax(np.abs(dl_)*wdir), dl_.shape)
+    print('eye fair largest weighted change', round(float(dl_[im_]), 4), 'at elevation', round(float(np.degrees(th[im_[0]])), 1),
+          'azimuth', round(float(np.degrees(ph[im_[1]])), 1), 'weight', round(float(wdir[im_]), 3), flush=True)
     print('eye fair', {'covered': int(covered.sum()), 'opening': int(opening.sum()), 'free': int((~pins).sum()),
                        'cg': int(iters_), 'maxLift': round(float(np.max(np.where(~pins, rs-rM, 0))), 4),
                        'minLift': round(float(np.min(np.where(~pins & ~opening, rs-rM, 0))), 4)}, flush=True)
@@ -730,7 +888,7 @@ for s in slabs():
     xs = X[s][:, None, None].astype(np.float64)
     ax = np.abs(xs)
     fs = f[s]
-    Lf = face_lift(Yb.astype(np.float64)+0*xs, Zb.astype(np.float64)+0*xs)
+    Lf = face_lift(Yb.astype(np.float64)+0*xs, Zb.astype(np.float64)+0*xs, xs+0*Yb)
     Zl = Zb.astype(np.float64)-Lf
     if P['faceLift']:   # the kept input raised by the same warp (sampled along z)
         kz = np.arange(nz)[None, None, :]-np.asarray(Lf)/VS
@@ -739,7 +897,7 @@ for s in slabs():
         fs = (np.take_along_axis(fs, k0, 2)*(1-tk)+np.take_along_axis(fs, k0+1, 2)*tk).astype(np.float32)
     Mf = mass_field(xs, Yb.astype(np.float64), Zl)
     dE = coarse(dist['eye'], s)
-    dF = coarse(dist['feat'], s)
+    dF = fine_feat(s) if feat_fine is not None else coarse(dist['feat'], s)
     wE = (1-ss2(dE, k_e0, k_e1)) if P['eyeKeepOn'] else 0*dE
     wF = 1-ss2(dF, k_f0, k_f1)
     wN = 1-ss2(Zb+0*xs, nz0, nz1)
@@ -752,6 +910,8 @@ for s in slabs():
     keep_stats['eyeExactVoxels'] += int((dE < k_e0).sum())
     keep_stats['featExactVoxels'] += int((dF < k_f0).sum())
     sk = wK*fs+(1-wK)*np.clip(Mf, -BAND, BAND)
+    if nose_seat is not None:   # the skin passes behind the nose
+        sk = smax(sk, -nose_cut(xs+0*Yb, Yb+0*xs, Zb+0*xs), .002)
     if eye_rad is not None:   # the thin-plate eye surround replaces the mass near the eyes
         Gf, wf_ = eye_fair_field(xs, Yb.astype(np.float64), Zb.astype(np.float64))
         sk = sk*(1-wf_)+np.clip(Gf, -BAND, BAND)*wf_
@@ -978,9 +1138,12 @@ if P['mouthLift']:
         for v in o.data.vertices:
             pw = Mo @ v.co
             y0 = front_y(old_tree, pw.x, pw.z)
-            dz_ = face_lift(pw.y, pw.z) if P['faceLift'] else P['mouthLift']
+            dz_ = float(face_lift(pw.y, pw.z, pw.x)) if P['faceLift'] else P['mouthLift']
             y1 = front_y(new_tree, pw.x, pw.z+dz_)
             dy = (y1-y0) if (y0 is not None and y1 is not None) else 0.
+            sink_ = (P['mouthSink'] or {}).get(o.name)
+            if sink_ is not None and y0 is not None and y1 is not None:   # this piece sat in the old pit: set it just under the new skin
+                dy = y1+max(pw.y-y0, 0.)+sink_-pw.y
             offs.append(dy)
             v.co = Mi @ Vector((pw.x, pw.y+dy, pw.z+dz_))
         o.data.update()
