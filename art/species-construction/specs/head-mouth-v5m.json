@@ -1,0 +1,97 @@
+{
+ "note": "Mouth v5m (Nick 2026-10-10): only the muzzle, mouth and chin of the v5 head (H39, head-3070) change; the v5 skin is moved in place (same vertices and faces), so every vertex outside the mask keeps its exact v5 position. 1. The divot under the nose is filled toward the v5 head mass inside v6b's mouth window (held near the nose, none above z -.14). 2. The mouth, muzzle and upper chin rise .025 by v6b's field warp in vertex form (upper ramp from z -.11, full -.20 to -.23, none below -.32; front weighted from y -.28 to -.10 so the chin underside and throat stay; none beyond |x| .26; held round the nose). 3. The upper lip, which the warp compresses between the fixed nose and the raised mouth, is refit as a thin plate on a .002 (x, z) grid (data weight .02 in the core between nose and mouth, pinned under the nose), so it is one smooth surface. 4. The mouth line follows (closed_mouth_2, the short stroke that sat in the old pit, set .003 under the new skin). maskBox [|x|, zLow, zHigh, y] bounds every moved vertex. Keys documented in mouth_v5m_field.py.",
+ "window": [
+  0.0,
+  -0.33,
+  -0.19,
+  0.12,
+  0.1,
+  0.07
+ ],
+ "windowBlend": [
+  1.0,
+  1.63
+ ],
+ "noseHold": [
+  0.003,
+  0.02
+ ],
+ "fillTop": [
+  -0.17,
+  -0.14
+ ],
+ "fillReach": [
+  0.03,
+  0.045
+ ],
+ "lift": 0.025,
+ "liftZ": [
+  -0.11,
+  -0.2,
+  -0.23,
+  -0.32
+ ],
+ "liftY": [
+  -0.28,
+  -0.1
+ ],
+ "liftX": [
+  0.08,
+  0.26
+ ],
+ "liftNose": [
+  0,
+  -0.35,
+  -0.13,
+  0.05,
+  0.05,
+  0.03,
+  2.5
+ ],
+ "maskBox": [
+  0.28,
+  -0.37,
+  -0.1,
+  0.06
+ ],
+ "plate": {
+  "x": [
+   -0.16,
+   0.16
+  ],
+  "z": [
+   -0.27,
+   -0.1
+  ],
+  "step": 0.002,
+  "core": [
+   0,
+   -0.18,
+   0.12,
+   0.04,
+   0.6,
+   1.4
+  ],
+  "coreData": 0.02,
+  "pinData": 50,
+  "noseMargin": 0.004,
+  "alpha": 320,
+  "applyMask": [
+   0,
+   -0.185,
+   0.15,
+   0.07,
+   0.7,
+   1.0
+  ],
+  "facing": [
+   0.3,
+   0.6
+  ],
+  "maxY": -0.2,
+  "pinSoft": 12
+ },
+ "mouthSink": {
+  "closed_mouth_2": 0.003
+ }
+}

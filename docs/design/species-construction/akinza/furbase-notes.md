@@ -352,3 +352,26 @@ Check passes, no new seams, no face guard broken. Comparisons: `untracked/specie
 - The light sliver under the nose tip still shows in the assembled fur-camera face view, though not in the head-component renders; the skin cut in front of the nose did not change it, so it is likely the nose object's own lower tip or how the surface scene shades it, not the skin. Not resolved.
 - A faint horizontal shading line remains above the centre of the mouth line, much softer than v6b's groove.
 - A faint ring of shading below each eye where the lid shell ends.
+
+# Head v5m: v5 with only the mouth changed (2026-10-10)
+
+Nick rejected v6, v6b and v6c (skull shape, uncanny lumps); the one change he liked was the mouth. His rule: one part at a time, nothing else changes. v5m is v5 exactly (recipe-furbase-v5, head-3070) plus one step after H39 that changes only the muzzle, mouth and chin.
+
+- Step H43 (`art/species-construction/mouth_v5m_field.py`, spec `specs/head-mouth-v5m.json`, reads v5's mass from `specs/head-analytic-v5.json`), recipe `recipe-furbase-v5m.json` (v5 plus H43; every v5 step cached). It does not rebuild a field or remesh: it moves vertices of the v5 skin in place (same 689,832 vertices and faces), so nothing outside the mask can move.
+- Divot: inside v6b's mouth window the skin is moved onto the v5 head mass (the pit was H37 skin that v5 kept), held near the nose and none above z -.14.
+- Raise: the mouth, muzzle and upper chin rise .025 by v6b's warp, applied as its inverse map per vertex; the chin underside and throat stay (front weight y -.28 to -.10, none beyond |x| .26, held round the nose).
+- Upper lip: the warp squeezes the lip between the fixed nose and the raised mouth, which left a shelf above the mouth; the lip's front depth is refit as a thin plate on a .002 grid (low data weight between nose and mouth, nose pinned with a soft edge, cubic B-spline lookup; a bilinear lookup and a hard pin left fine ripples under the nose).
+- Mouth line: closed_mouth_0 and _1 lifted with the skin, depth to the skin unchanged (proud -.0048 to .0030, as v5); closed_mouth_2 (the short stroke that sat in the pit, never visible) set .003 under the new skin.
+- Output: head-3098, assembled-3099, packet `untracked/species-construction/akinza/loop/packets/assembled-3099`.
+
+## Measures
+
+Per-vertex displacement of head-3098 against head-3070 (head units): outside the mask box (|x| < .28, z -.37 to -.10, y < .06) the maximum is 0.0 exactly; above z -.10 it is 0.0; the eye globes, irises and nose object do not move (0.0). Inside, the maximum is .0276 (median of moved vertices .0041); moved vertices span |x| up to .258 and z -.308 to -.111. By band: |x| under .12 up to .0276, .12 to .16 .023, .16 to .20 .015, .20 to .24 .0044, beyond .24 .0002. Assembly regionShift: R02 .0059 figure heights, every other region 0.0. Check passes, no new seams, face guards unchanged, containment within allowance. Measured changes: R01.7 1.085 to .999, R04.2 .030 to .028, R06.8 chest ahead of chin -.002 to -.009 (limit -.01, still passing, close), R01.1 and R01.2 change in the fourth decimal (both failing as on v5).
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/v5m/`: `clay-3071-vs-v5m-{face,head,threequarter,side}.png` (bare clay, fur cameras), `clay-3071-vs-v5m-mouth-crop.png`, `heads-3070-vs-3098-{mouth-close,mouth-close-q,eyes-close,eye-close-q,face-q,w-side}.png` (head components), `v5m-3098-heat.png` and `v5m-3098-heat-close.png` (displacement heat maps, front and side), `pixel-diff-{face,head,threequarter,side}.png` (render difference), `v5m-3098-numbers.json`.
+
+## Still open (my own look)
+
+- A soft shading band remains just above the mouth line, where the raised mouth sits closer under the fixed nose: much smoother than the warp alone left it, but visible on bare clay.
+- The jaw sides below the mouth corners move up to .015 at |x| .16 to .20 (the chin raise fades out across them); the jaw outline keeps its shape in the front and three-quarter views.
+- The lower face reads slightly darker on clay, because the raised chin front faces a little more downward; the pixel difference on the neck and chest is the chin's shadow, not geometry (regionShift 0 there).
