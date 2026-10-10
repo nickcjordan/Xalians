@@ -1,0 +1,46 @@
+{
+ "note": "Analytic ears F6b (2026-10-09): F6 (ears-analytic-F6.json, kept for v6) with the upper edge control lowered .01 ([.62, .54] for [.62, .55]): F6's lowered root lifted the upper edge near the tips just above the head's top row (z .537 head units, the containment zone top), which flagged containment outside all zones; the outline is otherwise F6's.",
+ "earControls": [
+  [
+   0.1,
+   0.16
+  ],
+  [
+   0.3,
+   -0.1
+  ],
+  [
+   0.56,
+   -0.02
+  ],
+  [
+   0.84,
+   0.17
+  ],
+  [
+   0.99,
+   0.38
+  ],
+  [
+   1.01,
+   0.53
+  ],
+  [
+   0.62,
+   0.54
+  ],
+  [
+   0.32,
+   0.33
+  ]
+ ],
+ "earCupScale": [
+  0.66,
+  0.6
+ ],
+ "earCupShift": [
+  -0.04,
+  0.0
+ ],
+ "earCupTaper": 0.4
+}
