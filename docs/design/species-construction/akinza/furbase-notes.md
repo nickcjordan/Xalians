@@ -375,3 +375,18 @@ Images in `untracked/species-construction/akinza/surface/head-redesign/v5m/`: `c
 - A soft shading band remains just above the mouth line, where the raised mouth sits closer under the fixed nose: much smoother than the warp alone left it, but visible on bare clay.
 - The jaw sides below the mouth corners move up to .015 at |x| .16 to .20 (the chin raise fades out across them); the jaw outline keeps its shape in the front and three-quarter views.
 - The lower face reads slightly darker on clay, because the raised chin front faces a little more downward; the pixel difference on the neck and chest is the chin's shadow, not geometry (regionShift 0 there).
+
+# Head v5m2: smooth upper lip, one mouth line (2026-10-10)
+
+Coordinator on v5m: remove the soft band above the mouth line so the lip from the nose pad down to the mouth is one gently convex slope, and join the two mouth curves into one continuous line with a soft centre point; same mask only. v5m is kept.
+
+- Step H44 (`art/species-construction/mouth_v5m2_field.py`, spec `specs/head-mouth-v5m2.json`) in place of H43 after H39; recipe `recipe-furbase-v5m2.json`. v5m's script, spec and recipe are untouched.
+- Upper lip: the lifted lower face also moves .02 forward (by the lift's own fraction, front-facing skin), so the lip is not squeezed into a steep band between the fixed nose and the raised mouth; the thin plate's target gets a .006 forward bump between nose and mouth, with a softer nose pin. The centre slope (depth over height) now rises steadily, .31 / .47 / .61 / .71 / .92 at z -.16 / -.17 / -.18 / -.19 / -.20 (v5m: .46 / .72 / 1.00 / 1.22 / 1.35). The mouth itself stays at +.025.
+- Mouth line: the two curves already met at x 0 in the mesh, but their inner ends sat .003 buried in the old pit; their tube centres within .02 of the middle now come forward to the line's own depth (.0009 proud), and the V's corner is rounded (.008), so they read as one line with a soft centre point.
+- Output: head-3100, assembled-3101, packet `untracked/species-construction/akinza/loop/packets/assembled-3101`.
+
+Displacement against head-3070: outside the mask box 0.0 exactly, above z -.10 0.0, eyes, irises and nose 0.0; inside max .0358 (median .0046), moved vertices within |x| .259, z -.308 to -.110. regionShift R02 .0052 figure heights, every other region 0.0. Check passes, no new seams, face guards unchanged, containment within allowance; R06.8 -.0077 (v5m -.0091, limit -.01), R01.7 1.016.
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/v5m2/`: `clay-3071-vs-v5m-vs-v5m2-{face,head,threequarter,side}.png`, `clay-3071-vs-v5m-vs-v5m2-mouth-crop.png`, `heads-3070-3098-3100-{mouth-close,mouth-close-q,eyes-close,eye-close-q,face-q,w-side}.png`, `v5m2-3100-heat.png`, `v5m2-3100-heat-close.png`, `pixel-diff-*.png`, `v5m2-3100-numbers.json`.
+
+Still open (my own look): the chin front below the mouth still reads a little darker than v5 on clay (it faces slightly more downward after the raise); a very faint shading crescent remains just under the nose tip.
