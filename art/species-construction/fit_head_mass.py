@@ -13,6 +13,12 @@ least-squares fitted (soft L1) to:
     above the eyes (the old temples are the bulk being removed) except the ring around each eye (within .10 of the
     globe, inside |x| .34, which a mirrored socket part follows), with the eye ring weighted 3 and the nose and mouth 4, so
     the mass meets the parts that stay fixed;
+  Optional target keys (v6): "liftFace" [z0, z1, dz] lifts the H37 face points below z0 by dz (fading out by z1), so
+    the fitted mouth, muzzle and chin sit higher; "dropNearMouth" r leaves out the H37 points within r of the mouth
+    objects (its pit is not a target); "featWeightObjects" names the objects whose surroundings weigh 4 (default nose
+    and mouth); "dropEyeRing" r leaves out the H37 points within r of the eye globes (their old socket rims), and
+    "eyeRimFromGlobe" t adds the front of each globe's dark outline band lifted by t as targets (weight "eyeRimWeight"),
+    so the mass meets the eye where the lid does.
   - the front silhouette half widths and the midline back profile of the targets, and the crown height;
   - "rear" rows [z, half width] of the skull behind the ears (the widest x over y from "rearY" back), so the back of
     the head stays round in plan instead of narrowing to a ridge.
@@ -94,8 +100,9 @@ def top(spec):
     return bisect(lambda m: field(spec, np.stack([0*ys, ys, m], -1)) < 0, np.zeros(ys.shape), np.full(ys.shape, .7)).max()
 
 
-def face_points(dump):
+def face_points(dump, T=None):
     from scipy.spatial import cKDTree
+    T = T or {}
     d = np.load(dump)
     objs = {}
     for k in d.files:
@@ -103,22 +110,54 @@ def face_points(dump):
         objs.setdefault(n, {})[kind] = d[k]
     s = max(objs.values(), key=lambda o: len(o['v']))['v'].astype(np.float64)
     eye = np.concatenate([o['v'] for n, o in objs.items() if n.startswith('eye_globe')])
-    feat = np.concatenate([o['v'] for n, o in objs.items() if n.startswith('nose') or n.startswith('closed_mouth')])
+    fw = T.get('featWeightObjects', ['nose', 'closed_mouth'])
+    feat = np.concatenate([o['v'] for n, o in objs.items() if any(n.startswith(f) for f in fw)])
     de, _ = cKDTree(eye).query(s)
     df, _ = cKDTree(feat).query(s)
     ax = np.abs(s[:, 0])
     pts = ((s[:, 1] < -.08) & (s[:, 2] > -.31) & (s[:, 2] < .30) & (de > .025)
            & (((ax < .30) & ((s[:, 2] < -.02) | (ax < .16))) | ((de < .10) & (ax < .34))))
+    if T.get('dropNearMouth'):     # the H37 skin pit at the mouth is not a target
+        mouth = np.concatenate([o['v'] for n, o in objs.items() if n.startswith('closed_mouth')])
+        dm, _ = cKDTree(mouth).query(s)
+        pts &= dm > T['dropNearMouth']
+    if T.get('dropEyeRing'):       # the H37 skin around the eyes (the old socket rims) is no target
+        pts &= de > T['dropEyeRing']
     w = np.where(df < .06, 4., np.where(de < .10, 3., 1.))
     sel = np.nonzero(pts)[0][::7]
-    return s[sel], w[sel]
+    Q = s[sel].copy()
+    Wsel = w[sel]
+    if T.get('eyeRimFromGlobe'):   # instead: the front of each globe's dark outline band, lifted by the lid thickness
+        extra, wex = [], []
+        for n, o in objs.items():
+            if not n.startswith('eye_globe') or 'm' not in o:
+                continue
+            gv, gt, gm = o['v'].astype(np.float64), o['t'], o['m']
+            gc = gv.mean(0)
+            ev, EV = np.linalg.eigh(np.cov((gv-gc).T))
+            fwd = EV[:, 0] if EV[1, 0] < 0 else -EV[:, 0]
+            tc = gv[gt].mean(1)
+            tn = np.cross(gv[gt[:, 1]]-gv[gt[:, 0]], gv[gt[:, 2]]-gv[gt[:, 0]])
+            tn /= np.linalg.norm(tn, axis=1, keepdims=True)+1e-12
+            band = (gm == 1) & (tn@fwd > .3)
+            pb = tc[band]+fwd*T['eyeRimFromGlobe']
+            extra.append(pb[::3])
+            wex.append(np.full(len(pb[::3]), T.get('eyeRimWeight', 3.)))
+        if extra:
+            Q = np.concatenate([Q]+extra)
+            Wsel = np.concatenate([Wsel]+wex)
+    if T.get('liftFace'):          # [z below which the full lift applies, z above which none, lift]
+        z0, z1, dz = T['liftFace']
+        t = np.clip((Q[:, 2]-z0)/(z1-z0), 0, 1)
+        Q[:, 2] += dz*(1-t*t*(3-2*t))
+    return Q, Wsel
 
 
 def main():
     from scipy.optimize import least_squares
     dump, targets, out = sys.argv[1:4]
     T = json.loads(open(targets).read())
-    Q, Wq = face_points(dump)
+    Q, Wq = face_points(dump, T)
     zf = np.array([r[0] for r in T['front']])
     wf = np.array([r[1] for r in T['front']])
     zb = np.array([r[0] for r in T['back']])

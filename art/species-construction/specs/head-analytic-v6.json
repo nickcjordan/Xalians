@@ -1,0 +1,135 @@
+{
+ "note": "Analytic head v6 (Nick 2026-10-09 on v5: leftover eye sockets outside the eyeballs, a divot in the middle of the mouth). The v5 head with: the eye surround rebuilt (no H37 skin kept around the eyes; the opening cut in front of each globe along an outline between the white and the outer edge of its dark outline band; the surrounding skin a radial thin plate from a narrow lid ring on the globe to the mass), the H37 face-front zone and mouth keep off (only the nose pad kept, tightly), the mass refit on head-targets-v6.json (mouth, muzzle and chin raised .025, the H37 mouth pit no target), the mouth line objects lifted .025 onto the new surface, the nose pad kept only within .002 to .008 of the nose (a wider keep carried the H37 pit under it), the lid .008 thick on the globe (.004 flickered against it), the neck kept below z -.38 to -.33, the ear back flare off and the back fillet .20. Ears: ears-analytic-F6.json. Keys documented in analytic_head_v6_field.py.",
+ "mass": {
+  "parts": [
+   {
+    "name": "cranium",
+    "c": [
+     0.0,
+     -0.0065,
+     0.0953
+    ],
+    "r": [
+     0.25,
+     0.3365,
+     0.3332
+    ],
+    "k": 0.1,
+    "mirror": false
+   },
+   {
+    "name": "jaw",
+    "c": [
+     0.0676,
+     -0.0346,
+     -0.0823
+    ],
+    "r": [
+     0.0968,
+     0.1497,
+     0.2179
+    ],
+    "k": 0.06,
+    "mirror": true
+   },
+   {
+    "name": "muzzle",
+    "c": [
+     0.0,
+     -0.2713,
+     -0.1691
+    ],
+    "r": [
+     0.0825,
+     0.0988,
+     0.045
+    ],
+    "k": 0.1243,
+    "mirror": false
+   },
+   {
+    "name": "chin",
+    "c": [
+     0.0,
+     -0.2059,
+     -0.202
+    ],
+    "r": [
+     0.105,
+     0.0632,
+     0.0514
+    ],
+    "k": 0.0761,
+    "mirror": false
+   },
+   {
+    "name": "throat",
+    "c": [
+     0.0,
+     0.0102,
+     -0.4588
+    ],
+    "r": [
+     0.095,
+     0.0815,
+     0.1917
+    ],
+    "k": 0.08,
+    "mirror": false
+   },
+   {
+    "name": "socket",
+    "c": [
+     0.2667,
+     -0.0684,
+     0.0712
+    ],
+    "r": [
+     0.067,
+     0.1438,
+     0.1691
+    ],
+    "k": 0.1834,
+    "mirror": true
+   }
+  ]
+ },
+ "earFilletFront": 0.08,
+ "earStartRound": 0.06,
+ "earFillet": 0.2,
+ "earMinU": 0.12,
+ "earMinUTop": [
+  0.12,
+  0.3,
+  0.4
+ ],
+ "earFlareBack": 0.0,
+ "featKeep": [
+  0.002,
+  0.008
+ ],
+ "featObjects": [
+  "nose"
+ ],
+ "cutUnder": 0.015,
+ "lidBlend": 0.02,
+ "eyeFair": true,
+ "lidMode": "none",
+ "eyeFairData": 0.3,
+ "eyeFairReach": [
+  0.06,
+  0.1
+ ],
+ "eyeFairGrid": [
+  -50.0,
+  75.0,
+  -85.0,
+  85.0,
+  0.5
+ ],
+ "lidThick": 0.008,
+ "neckKeepZ": [
+  -0.38,
+  -0.33
+ ]
+}

@@ -242,3 +242,48 @@ Comparisons (bare clay): `untracked/species-construction/akinza/surface/head-red
 - A soft cushion remains around each eye just outside the lid band, and a faint fold behind the outer eye corner in the side view: much softer than A to E, still visible on bare clay.
 - The back of each ear root shows a soft vertical line where the back flare meets the skull (back view), and the ear top meets the crown with a small step in the rear three-quarter view (`w-rq`).
 - The cheeks below the eyes are H37's, about .02 wider per side than the sheet.
+
+# Head v6: eye surround, muzzle and mouth rebuilt (2026-10-09)
+
+Nick on assembled-3071: "much better ... still not what I want"; "weird artifacts left in place from what I'm interpreting as leftover eye sockets that got moved outward ... almost on the outside of the eyeballs", and "a weird divot in the middle of the mouth that makes the whole thing look a little disturbing". Both were H37 skin that v5 kept: the old socket rims around each eye (they sat on the old wide face and now lay outside the new head's eyes) and the pit at the mouth centre under the nose.
+
+## What was built
+
+- Step H40 (`art/species-construction/analytic_head_v6_field.py`, spec `specs/head-analytic-v6.json`, ears `specs/ears-analytic-F6.json`), in place of H39 after H37; recipe `recipe-furbase-v6.json` (v3 plus H40). v5's script, spec, F ears and recipe are untouched (`recipe.py status` on v5 still reports every step cached).
+- Eyes: no H37 skin is kept around them. Per eye globe a frame from its vertices (forward normal, in-plane axes); the opening outline lies a third of the way from the edge of the white to the outer edge of the globe's dark outline band (its own two materials), smoothed; inside it everything in front of the globe is cut. The skin around each eye is a radial thin plate (as in H37): pinned .008 over the globe in a ring .008 wide just outside the opening (the lid edge), pinned to the head mass where the mass is more than .10 from the globes, and free in between with a light pull toward the mass, so the head runs into the lid in the smoothest surface the two allow. Tried and dropped on the way: a lid bead tube (read as a ring around the eye), a lid shell on the whole covered rim (pulled the skin into a deep socket), a blur of the ring (left concentric ripples), a mass refit to the globe rims (puffy bags); the nearest-globe distance had a kink at the midline, so the plate's weight is blurred (it left a line between the eyes).
+- Muzzle, mouth and chin: the H37 face-front keep and mouth keep are off; the nose pad is kept only within .002 to .008 of the nose object (a wider keep carried the H37 pit under it, and none let the skin through the nose). The mass is refit (`fit_head_mass.py`, new optional keys, v5's fit reproduces exactly) on `specs/head-targets-v6.json`: the H37 face points below the nose lifted .025, the jaw rows the sheet's own taper aligned on the eyes, the H37 skin within .035 of the mouth no target. The mouth line objects (the existing curves and material) are lifted .025 and keep their depth from the new skin. Raising the mouth and chin by .025 is my call from the sheet measurement, overridable by Nick.
+- Ears: the back flare is off (fillet .20 behind), and the buried inner end of the outline is lowered (F6: [.10, .16] and [.32, .33] for F's [.10, .20] and [.28, .35], tips .01 shorter), so the ear tops leave the crown lower; the two humps on the back of the crown go. The neck is kept below z -.38 to -.33 (v5: -.36 to -.30).
+- Output: head-3076, assembled-3077, packet `untracked/species-construction/akinza/loop/packets/assembled-3077`. Superseded: assembled-3073 (ear span 1.037), 3075 (lid .004 flickered against the globe, wider nose keep).
+
+## Measures (packet against assembled-3071)
+
+| Measure | v5 3071 | v6 3077 |
+|---|---|---|
+| R03.1 ear span (.97 to 1.03) | 1.029 | 1.026 |
+| R01.1 front head IoU (min .90) | .785 | .793 |
+| R01.2 side head IoU (min .90) | .869 | .853 |
+| R04.1 back head IoU (min .90) | .835 | .840 |
+| R03.2 fan area missing (max .06) | .160 | .153 |
+| R01.6 back width at .18 (max 1.15) | 1.025 | 1.108 |
+| R01.7 side depth at .22 (max 1.15) | 1.085 | .637 |
+| R06.8 chest ahead of chin at .22 (within .01) | -.002 | -.039 (newly fails) |
+| I09 figure height | 1.859 | 1.862 |
+| Face measure | second eye unmeasurable | both eyes measured: aspect 1.20 / 1.23, iris offset .053 / .044, band top over bottom 1.27 / .85 |
+
+Technical check passes; no new seams (the ear-root crease flag of A to v5 is gone); regionShift .012 at most, inside R01 to R04, 0 elsewhere; body unchanged. Containment flags outside-all-zones .030 against .015: the raised chin and throat, which sit below the head zones. R06.8 and R01.7 measure the chin row at .22 of the figure: the sheet's chin, placed by the fit frame, sits there, so raising the chin by the eye-aligned .025 costs R06.8. Both follow from the raise; reverting it (liftFace and mouthLift to 0) would restore them.
+
+Comparisons (bare clay, v5 against v6): `untracked/species-construction/akinza/surface/head-redesign/v6/clay-3071-vs-v6-{head,face,threequarter,side,back}.png` at the fur cameras, `heads-3070-vs-v6-{eyes-close,eye-close-q,mouth-close,mouth-close-q,face,face-q,w-front,w-side,w-back,w-rq}.png` of the head components (the first four are the close eye and mouth crops).
+
+## Looked at honestly
+
+- The socket marks are gone: no rim, cushion or hollow outside the eyes in the front, three-quarter or close views; the skin runs smoothly into an even lid edge on the globe.
+- The mouth divot is gone: the muzzle under the nose is one smooth surface, the mouth line sits on it as a clean shallow curve (its own V where the two halves meet, as drawn), the chin is a small rounded form.
+- The crown humps at the back are gone.
+
+## Still open
+
+- The dark outline band now shows about evenly all round the eye (band top over bottom about 1); v5 and H37 had a heavier upper line. The upper emphasis could come back with an outline set higher on the globe at the top.
+- A slight fuzzy fringe at the lower outer edge of each eye in close views, where the lid lies within a voxel or two of the globe.
+- A faint diagonal fold behind the outer eye corner in the side view (much softer than v5), and the face outline has a slight corner where the cheek meets each ear's lower root in the front view.
+- The back of each ear root still shows a soft vertical shading line.
+- A soft horizontal line at the jaw and neck junction (the kept neck stub meets the raised chin), visible in the close mouth views.

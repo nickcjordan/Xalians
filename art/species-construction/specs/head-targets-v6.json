@@ -1,0 +1,177 @@
+{
+ "note": "Head proportions for the analytic head v6 (Nick 2026-10-09), head-local units. As head-targets-v5.json, except: the mouth and chin are raised by .025 to the sheet's height (my call from the sheet measurement, overridable by Nick): the H37 face points below the nose are lifted .025 (liftFace, full below z -.17, none above -.14), the jaw rows are the sheet's own taper aligned on the eyes (fur allowance .012) and close into the neck at z -.265; the H37 skin within .035 of the mouth objects is no target (its pit is the divot Nick saw); only the nose weighs 4; the rear rows weigh 14; the H37 skin within .10 of the eye globes (its old socket rims) is no target, and the front of each globe's dark outline band, lifted .004, is (so the mass meets the eye where the lid does). measured on the first sheet (evidence/identity-run-0001.png) with the face aligned on the eye centre (z .028) and the sheet scale of the fit frame (front 628 px, side 637 px per figure height of 1.8605 world = 3.721 head units), minus a fur allowance of about .012 on the face; the sheet's mouth and chin sit about .025 higher than the model's and were not followed (the mouth line is fixed), so the jaw rows are the sheet's taper hung from the model's chin. Above the ear root the sheet's skull is hidden by the ears: those rows follow its round head (the eye globes' outer edge plus the lid band at the eye level, the crown at z .415). Back rows: the midline back of the head, the nape tucked as the sheet's side view shows below the ear. See furbase-notes.md, Head redesign. Rear rows: the half width of the skull behind y .12, a round back (the sheet's back view shows the head below the ears as round, about .30 half wide with fur).",
+ "front": [
+  [
+   -0.265,
+   0.115
+  ],
+  [
+   -0.245,
+   0.145
+  ],
+  [
+   -0.221,
+   0.182
+  ],
+  [
+   -0.197,
+   0.21
+  ],
+  [
+   -0.173,
+   0.237
+  ],
+  [
+   -0.15,
+   0.258
+  ],
+  [
+   -0.126,
+   0.275
+  ],
+  [
+   -0.09,
+   0.312
+  ],
+  [
+   -0.06,
+   0.325
+  ],
+  [
+   -0.03,
+   0.334
+  ],
+  [
+   0.0,
+   0.34
+  ],
+  [
+   0.03,
+   0.345
+  ],
+  [
+   0.06,
+   0.348
+  ],
+  [
+   0.09,
+   0.35
+  ],
+  [
+   0.15,
+   0.345
+  ],
+  [
+   0.21,
+   0.325
+  ],
+  [
+   0.27,
+   0.29
+  ],
+  [
+   0.33,
+   0.232
+  ],
+  [
+   0.38,
+   0.15
+  ]
+ ],
+ "back": [
+  [
+   -0.24,
+   0.1
+  ],
+  [
+   -0.2,
+   0.135
+  ],
+  [
+   -0.16,
+   0.18
+  ],
+  [
+   -0.12,
+   0.235
+  ],
+  [
+   -0.08,
+   0.272
+  ],
+  [
+   -0.04,
+   0.298
+  ],
+  [
+   0.04,
+   0.322
+  ],
+  [
+   0.12,
+   0.33
+  ],
+  [
+   0.2,
+   0.318
+  ],
+  [
+   0.28,
+   0.28
+  ],
+  [
+   0.34,
+   0.215
+  ]
+ ],
+ "top": 0.415,
+ "wFront": 12.0,
+ "rear": [
+  [
+   -0.2,
+   0.19
+  ],
+  [
+   -0.15,
+   0.23
+  ],
+  [
+   -0.08,
+   0.265
+  ],
+  [
+   0.0,
+   0.285
+  ],
+  [
+   0.08,
+   0.29
+  ],
+  [
+   0.16,
+   0.285
+  ],
+  [
+   0.24,
+   0.26
+  ],
+  [
+   0.3,
+   0.22
+  ]
+ ],
+ "rearY": 0.12,
+ "liftFace": [
+  -0.17,
+  -0.14,
+  0.025
+ ],
+ "dropNearMouth": 0.035,
+ "featWeightObjects": [
+  "nose"
+ ],
+ "wRear": 14.0,
+ "dropEyeRing": 0.1,
+ "eyeRimFromGlobe": 0.004,
+ "eyeRimWeight": 3.0
+}

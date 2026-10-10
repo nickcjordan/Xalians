@@ -1,0 +1,46 @@
+{
+ "note": "Analytic ears F, v6 root (Nick 2026-10-09): the F outline (ears-analytic-F.json, kept for v5) with its buried inner end lowered ([.10, .16] and [.32, .33] for [.10, .20] and [.28, .35]), so the ear tops leave the crown lower and the two humps at the back of the crown go; the tips .01 shorter (R03.1 ear span read 1.037 with F's tips once the root changed); the visible outline is otherwise F's.",
+ "earControls": [
+  [
+   0.1,
+   0.16
+  ],
+  [
+   0.3,
+   -0.1
+  ],
+  [
+   0.56,
+   -0.02
+  ],
+  [
+   0.84,
+   0.17
+  ],
+  [
+   0.99,
+   0.38
+  ],
+  [
+   1.01,
+   0.53
+  ],
+  [
+   0.62,
+   0.55
+  ],
+  [
+   0.32,
+   0.33
+  ]
+ ],
+ "earCupScale": [
+  0.66,
+  0.6
+ ],
+ "earCupShift": [
+  -0.04,
+  0.0
+ ],
+ "earCupTaper": 0.4
+}
