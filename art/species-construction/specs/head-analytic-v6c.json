@@ -1,0 +1,304 @@
+{
+ "note": "Analytic head v6c (2026-10-10): v6b (head-analytic-v6b.json) with an even eye outline and a smooth muzzle. Eye opening: the white plus an absolute band (openBand: .007 at the sides and bottom, .018 along the top lid, sine taper), and the globe-hugging lid shell back on (lidMode hug, .006 thick, blend .006, ending .03 outside the outline with a .02 round), so the globe's wide outer band no longer shows as thick dark crescents. Muzzle: inside an ellipsoid between the nose and the mouth the face plate's data weight falls to .05 of its own (faceFairSoft), so the plate bridges the groove under the nose; the skin standing in front of the nose's front surface is cut (noseSeat front), so no sliver shows over the nose tip. Everything else is v6b's. Keys documented in analytic_head_v6c_field.py.",
+ "mass": {
+  "parts": [
+   {
+    "name": "cranium",
+    "c": [
+     0.0,
+     -0.0018,
+     0.0897
+    ],
+    "r": [
+     0.2996,
+     0.3402,
+     0.3343
+    ],
+    "k": 0.1,
+    "mirror": false
+   },
+   {
+    "name": "jaw",
+    "c": [
+     0.0711,
+     -0.0802,
+     -0.1826
+    ],
+    "r": [
+     0.1046,
+     0.1774,
+     0.12
+    ],
+    "k": 0.06,
+    "mirror": true
+   },
+   {
+    "name": "muzzle",
+    "c": [
+     0.0,
+     -0.2465,
+     -0.1463
+    ],
+    "r": [
+     0.07,
+     0.1055,
+     0.045
+    ],
+    "k": 0.0894,
+    "mirror": false
+   },
+   {
+    "name": "chin",
+    "c": [
+     0.0,
+     -0.1976,
+     -0.2126
+    ],
+    "r": [
+     0.1168,
+     0.0845,
+     0.0431
+    ],
+    "k": 0.1011,
+    "mirror": false
+   },
+   {
+    "name": "throat",
+    "c": [
+     0.0,
+     0.0114,
+     -0.4531
+    ],
+    "r": [
+     0.1061,
+     0.0724,
+     0.1975
+    ],
+    "k": 0.095,
+    "mirror": false
+   },
+   {
+    "name": "socket",
+    "c": [
+     0.2462,
+     -0.1187,
+     0.0534
+    ],
+    "r": [
+     0.0826,
+     0.127,
+     0.1977
+    ],
+    "k": 0.1178,
+    "mirror": true
+   }
+  ]
+ },
+ "earFilletFront": 0.1,
+ "earStartRound": 0.06,
+ "earFillet": 0.2,
+ "earMinU": 0.12,
+ "earMinUTop": [
+  0.12,
+  0.3,
+  0.4
+ ],
+ "earFlareBack": 0.03,
+ "featObjects": [
+  "nose"
+ ],
+ "cutUnder": 0.015,
+ "lidBlend": 0.006,
+ "eyeFair": true,
+ "lidMode": "hug",
+ "eyeFairData": 0.3,
+ "eyeFairReach": [
+  0.1,
+  0.15
+ ],
+ "eyeFairGrid": [
+  -70.0,
+  80.0,
+  -110.0,
+  110.0,
+  0.5
+ ],
+ "lidThick": 0.006,
+ "neckKeepZ": [
+  -0.42,
+  -0.33
+ ],
+ "faceLift": 0.025,
+ "openFracTop": 0.75,
+ "apertureRound": 0.008,
+ "earFlareU": [
+  0.24,
+  0.52
+ ],
+ "faceKeep": true,
+ "faceX": [
+  0.2,
+  0.3
+ ],
+ "faceZ": [
+  0.12,
+  0.3
+ ],
+ "mouthWindow": [
+  0,
+  -0.33,
+  -0.19,
+  0.12,
+  0.1,
+  0.07
+ ],
+ "eyeFairTargetFace": true,
+ "faceLiftZ": [
+  -0.15,
+  -0.19,
+  -0.24,
+  -0.3
+ ],
+ "eyeFairTargetFaceFrom": [
+  0.06,
+  0.12
+ ],
+ "eyeFairMass": {
+  "parts": [
+   {
+    "name": "cranium",
+    "c": [
+     0.0,
+     -0.0065,
+     0.0953
+    ],
+    "r": [
+     0.25,
+     0.3365,
+     0.3332
+    ],
+    "k": 0.1,
+    "mirror": false
+   },
+   {
+    "name": "jaw",
+    "c": [
+     0.0676,
+     -0.0346,
+     -0.0823
+    ],
+    "r": [
+     0.0968,
+     0.1497,
+     0.2179
+    ],
+    "k": 0.06,
+    "mirror": true
+   },
+   {
+    "name": "muzzle",
+    "c": [
+     0.0,
+     -0.2713,
+     -0.1691
+    ],
+    "r": [
+     0.0825,
+     0.0988,
+     0.045
+    ],
+    "k": 0.1243,
+    "mirror": false
+   },
+   {
+    "name": "chin",
+    "c": [
+     0.0,
+     -0.2059,
+     -0.202
+    ],
+    "r": [
+     0.105,
+     0.0632,
+     0.0514
+    ],
+    "k": 0.0761,
+    "mirror": false
+   },
+   {
+    "name": "throat",
+    "c": [
+     0.0,
+     0.0102,
+     -0.4588
+    ],
+    "r": [
+     0.095,
+     0.0815,
+     0.1917
+    ],
+    "k": 0.08,
+    "mirror": false
+   },
+   {
+    "name": "socket",
+    "c": [
+     0.2667,
+     -0.0684,
+     0.0712
+    ],
+    "r": [
+     0.067,
+     0.1438,
+     0.1691
+    ],
+    "k": 0.1834,
+    "mirror": true
+   }
+  ]
+ },
+ "openTopPow": 2.0,
+ "openSmooth": 40.0,
+ "eyeFairTargetFaceX": [
+  0.1,
+  0.2
+ ],
+ "faceFair": true,
+ "faceFairData": 0.2,
+ "faceLiftNose": [
+  0,
+  -0.35,
+  -0.13,
+  0.05,
+  0.05,
+  0.03,
+  1.8
+ ],
+ "featKeep": [
+  0.002,
+  0.008
+ ],
+ "openBand": [
+  0.007,
+  0.018,
+  1.5
+ ],
+ "faceFairSoft": [
+  0,
+  -0.35,
+  -0.185,
+  0.07,
+  0.06,
+  0.04,
+  0.05
+ ],
+ "noseSeat": [
+  0.002,
+  -0.002,
+  "front"
+ ],
+ "lidHugOut": false,
+ "lidReach": 0.03,
+ "globeStep": 0.002,
+ "lidReachRound": 0.02
+}

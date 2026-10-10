@@ -327,3 +327,28 @@ Comparisons: `untracked/species-construction/akinza/surface/head-redesign/v6b/cl
 - The jaw below the cheeks is a little fuller than the sheet's taper (the fairing plate rounds it); the face is round, not square, but the chin could taper more.
 - The back of each ear root still shows a soft shading line in the back and rear three-quarter views (much fainter than v5's).
 - The side view keeps a faint soft fold behind the outer eye corner.
+
+# Head v6c: even eye outline, smooth muzzle (2026-10-10)
+
+Coordinator on v6b: the dark band bulged into thick crescents at the outer sides of the eyes (and the inner side of the left eye), a groove crossed the muzzle under the nose, and a light sliver showed at the nose tip.
+
+- Step H42 (`art/species-construction/analytic_head_v6c_field.py`, spec `specs/head-analytic-v6c.json`, ears F7), recipe `recipe-furbase-v6c.json`; v6b untouched. Output head-3096, assembled-3097.
+- Eye outline: the opening is the white plus an absolute band (`openBand`: .007 at the sides and bottom, .018 along the top lid, sine taper) instead of a fraction of the globe's band, whose outer sides are wide; and v6's globe-hugging lid shell is back on (.006 thick, blend .006, ending .03 beyond the outline with a .02 round), so the skin covers the globe's band outside the opening. A wider shell blend (.012 to .02) left concentric ripples round the eyes. Band top over bottom 2.3 / 1.1.
+- Muzzle: inside an ellipsoid between nose and mouth the face plate's data weight falls to .05 of its own (`faceFairSoft`), so the plate bridges the groove; skin standing in front of the nose's front surface is cut (`noseSeat` front).
+
+| Measure | v6b 3095 | v6c 3097 |
+|---|---|---|
+| R03.1 ear span | 1.026 | 1.026 |
+| R01.1 / R01.2 / R04.1 head IoU | .826 / .860 / .868 | .826 / .861 / .868 |
+| R01.6 back width at .18 (max 1.15) | 1.145 | 1.145 |
+| R06.8 chest ahead of chin | -.005 | -.003 |
+| Containment | within | within |
+
+Check passes, no new seams, no face guard broken. Comparisons: `untracked/species-construction/akinza/surface/head-redesign/v6c/clay-v5-v6b-v6c-{head,face,threequarter,side}.png`, `heads-v5-v6b-v6c-{eyes-close,eye-close-q,mouth-close,mouth-close-q,face,face-q}.png`, `face-crops-v5-v6b-v6c.png`.
+
+## Still open (my own look)
+
+- The crescents are much smaller but not gone: a narrow dark wedge remains at the outer side of the right eye and the inner side of the left eye in the assembled face view (the globe's band is widest there and the shell does not fully reach it).
+- The light sliver under the nose tip still shows in the assembled fur-camera face view, though not in the head-component renders; the skin cut in front of the nose did not change it, so it is likely the nose object's own lower tip or how the surface scene shades it, not the skin. Not resolved.
+- A faint horizontal shading line remains above the centre of the mouth line, much softer than v6b's groove.
+- A faint ring of shading below each eye where the lid shell ends.
