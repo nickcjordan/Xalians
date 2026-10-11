@@ -1,0 +1,17 @@
+{
+ "note": "Eye surround v5e (Nick 2026-10-11, on v5m2): the skin round each eye refit as a thin plate in the eye's own frame (the plane of its opening), so the old socket rims, cushion ring, outer fold and halo bands go and the skin runs from the lid edge straight into the existing face. Held exactly: skin within .006 of the opening in the eye's plane (the lid edge: opening shape, dark outline and v5's heavier upper line unchanged) and within .0006 of a globe; free from .016 off the opening; held again beyond .05 to .075 from a globe, so nothing outside that moves. Skin moves only along the eye axis; no vertex is moved closer than .001 to a globe; globes, irises and every other vertex unchanged. Grid .003 over +-.28. Tried: a grid of +-.20 left streaks where its edge cut the free zone; a frame from the iris offset tilted the plate toward the nose; holding by closeness to the globe (.004 to .012) kept the old hollow where skin lies close over the buried outer part of the globe. Keys documented in eye_v5e_field.py.",
+ "half": 0.28,
+ "step": 0.003,
+ "pin": [
+  0.0006,
+  0.0015
+ ],
+ "out": [
+  0.05,
+  0.075
+ ],
+ "pinOpening": [
+  0.006,
+  0.016
+ ]
+}
