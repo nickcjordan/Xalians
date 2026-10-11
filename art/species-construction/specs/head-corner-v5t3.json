@@ -1,0 +1,5 @@
+{
+ "note": "Outer eye corner v5t3 (Nick 2026-10-11, on v5t2): Taubin smoothing (60 passes, .5 / -.53) of the skin at each outer eye corner inside an ellipsoid centred |x| .31, y -.145, z .035 (radii .035, .05, .08), weighted 0 within .0015 of the exposed globe and full beyond .006, so the small notch where v5t2's raised skin met the held lid edge fairs out. The eye globes, their materials and the dark band are not changed. Tried: a lid roll lifting the skin .002 to .004 along its normal just outside the opening (with or without pushing vertices out of the globe): speckles where the lifted skin crossed the dark band. Keys documented in corner_v5t3_field.py.",
+ "centre": [0.31, -0.145, 0.035],
+ "radii": [0.035, 0.05, 0.08]
+}

@@ -435,3 +435,18 @@ Against v5e (head-3104, so H46 and H47 together): skin max move .012, median .00
 Images in `untracked/species-construction/akinza/surface/head-redesign/v5t2/`: `clay-3105-vs-v5t2-eye-crop-{front,threequarter,side}.png`, `clay-3105-vs-v5t2-{face,head,threequarter,side}.png`, `heads-3104-vs-3110-*.png`, `v5t2-3110-heat.png`, `v5t2-3110-heat-corners.png`, `eye-region-diff-{face,threequarter,side}.png`, `v5t2-3110-numbers.json`.
 
 Still open (my own look): the soft pocket beside each outer corner is lighter in the three-quarter view, and the broad smudge beside the left eye in the face view is mostly gone. But a short, sharper dark mark remains at the left eye's outer edge in the face view, and a narrow crescent of shade still sits right at the lid end in the close three-quarter view. Both lie inside the held .004 of the opening: they are the lid end itself and the globe's dark band where it ends. Freeing that band moves the visible outline end and gave jagged edges. Clearing them needs the outline band's outer end itself redrawn (the eye globe's dark-band material at the outer corner), which this part did not change.
+
+# Head v5t3: outer corner lid end faired (2026-10-11)
+
+Coordinator: redraw the end of the dark band at the outer corner so it tapers cleanly, with no sharp mark and no crescent.
+
+- Close look first: the short dark mark at the left eye's outer edge (front) is not band material. It is skin shading, a small notch where v5t2's raised skin met the held lid edge. The band itself ends cleanly. So no band faces were reassigned.
+- Step H48 (`art/species-construction/corner_v5t3_field.py`, spec `specs/head-corner-v5t3.json`) after H47; recipe `recipe-furbase-v5t3.json`. Taubin smoothing (60 passes) of the skin inside an ellipsoid at each outer corner (centre |x| .31, y -.145, z .035, radii .035, .05, .08), weighted 0 within .0015 of the exposed globe and full beyond .006.
+- Output: head-3112, assembled-3113.
+- Tried and dropped: a lid roll lifting the skin .002 to .004 along its normal just outside the opening, with and without pushing vertices back out of the globe. It lightened the crescent, but left speckles and jagged spots where the lifted skin crossed the dark band.
+
+Against head-3110 (v5t2): outside the two ellipsoids 0.0 exactly; inside max .0009, median .00008; globes, irises, nose and mouth 0.0. Eye-region pixels against v5t2: face 1 white and 3 dark differ, three-quarter 1 and 0, side 0 and 0. Against v5e: face 10 and 60, three-quarter 4 and 1, side 0 and 3. regionShift R02 .0003 figure heights; check passes, no new seams, no measured change.
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/v5t3/`: `eye-crop-{front,threequarter,side}.png` (v5e, v5t2, v5t3), `clay-v5e-v5t2-v5t3-{face,head,threequarter,side}.png`, `v5t3-3112-heat.png`, `v5t3-3112-heat-corners.png`, `eye-region-diff-*.png` (against v5e), `v5t3-3112-numbers.json`, `mark-zoom.png`.
+
+Still open (my own look): the mark at the left eye's outer edge is softer, but a faint dark sliver remains. The shaded crescent at the lid end in the three-quarter close view is unchanged. It is the skin turning in to meet the globe along the held .0015 of the opening. Every way I found to lift that edge out over the globe broke the band's clean edge. The next lever is the opening itself at the outer corner: a slightly shorter, rounder outer end of the visible opening, so the skin meets the globe where the globe faces forward instead of where it curves away. That changes the eye opening's shape, which this part was told to keep.
