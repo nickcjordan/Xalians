@@ -1,0 +1,19 @@
+{
+ "note": "Outer eye corner v5t2 (Nick 2026-10-11, on v5t): the buried outer tip of each eye globe (the part covered by skin, at least .008 to .025 from any exposed globe vertex, on the outer side) is trimmed back toward the globe centre by up to .03, and the skin round each outer corner is raised in the plane of the opening by an upper closing of its depth along the eye axis (800 passes, rise capped at .04, smoothed 60 passes), inside an ellipse .06 by .09 centred .01 outward of the opening's outer corner, held within .004 of the opening (free beyond .012). No skin vertex comes within .001 of the trimmed globe; nothing beyond |x| .35 to .365 moves. Tried: a thin plate in the same frame (no change: the corner is a smooth saddle, not a dent); the opening hold relaxed inside the corner (.000 to .006: jagged dark streaks where the skin edge crossed the globe's dark band); less smoothing (small dark smudges). Keys documented in corner_v5t2_field.py.",
+ "close": {
+  "iters": 800,
+  "cap": 0.04,
+  "blur": 60
+ },
+ "corner": {
+  "offset": 0.01,
+  "radii": [
+   0.06,
+   0.09
+  ]
+ },
+ "hold": [
+  0.004,
+  0.012
+ ]
+}
