@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'art/species-construction/**'
+      - 'art/studio/**'
       - 'docs/design/species-construction/**'
       - '.github/workflows/species-construction.yml'
 
@@ -17,6 +18,8 @@ jobs:
         with:
           python-version: '3.13'
       - name: Install image review dependencies
-        run: python3 -m pip install -r art/species-views/requirements.txt
+        run: python3 -m pip install -r art/species-views/requirements.txt numpy
       - name: Test dependency and approval tracking
         run: python3 -m unittest discover -s art/species-construction/tests -v
+      - name: Test studio blockout parts
+        run: python3 -m unittest discover -s art/studio/tests -v

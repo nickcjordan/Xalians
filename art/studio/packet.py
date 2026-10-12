@@ -2,7 +2,7 @@
 
     python art/studio/packet.py --assembly <assembled dir> [--baseline <assembled dir>] \
         --cameras art/studio/cameras/akinza.json --out <dir> \
-        [--component head --head <head dir> --baseline-head <head dir>]
+        [--component head --head <head dir> --baseline-head <head dir>] [--part <part key>]
 
 Renders every camera of the cameras file (art/studio/packet_render.py, run through loop_tools.py blender, so
 the Blender slot lock applies) for the assembly and, when given, the baseline. Baseline renders are cached
@@ -12,6 +12,11 @@ and renderer are unchanged. Per camera it writes <id>.png, and with a baseline <
 blue to amber ramp by size of the change). With head directories it also writes heat.png, the skin
 displacement of the head against the baseline head (gray exactly zero, blue to amber by size) and the
 maximum displacement per species zone. Everything is summarized in packet.json.
+
+The assembly directories may also be blockout outputs (art/studio/blockout.py: blockout.blend, blockout.npz).
+With --part <part key> and a baseline that both carry part_id, packet.json gets displacement.part: the skin
+displacement inside versus outside that part (max and median for each), measured between the two blockouts'
+vertices, plus part-heat.png.
 """
 import argparse
 import hashlib
@@ -59,7 +64,7 @@ def ramp(t):
 
 
 def blend_file(assembly):
-    for name in ('akinza.blend', 'head.blend'):
+    for name in ('akinza.blend', 'head.blend', 'blockout.blend'):
         if (assembly/name).is_file():
             return assembly/name
     found = sorted(assembly.glob('*.blend'))
@@ -244,6 +249,94 @@ def heat_report(base_dir, cand_dir, out, species, component):
             'median': round(med, 6), 'units': 'head units', 'perZone': per_zone}
 
 
+# ---------------------------------------------------------------- displacement inside and outside one part
+
+def load_blockout(directory):
+    f = directory/'blockout.npz'
+    if not f.is_file():
+        return None
+    z = np.load(f)
+    return {'v': z['vertices'].astype(float), 'pid': z['part_id'], 'keys': [str(k) for k in z['partKeys']]}
+
+
+def nearest_distance(a, b):
+    """Per vertex of a: distance to the nearest vertex of b."""
+    try:
+        from scipy.spatial import cKDTree
+        return cKDTree(b).query(a)[0]
+    except ImportError:
+        out = np.empty(len(a))
+        for i in range(0, len(a), 500):
+            c = a[i:i+500]
+            out[i:i+500] = np.sqrt(((c[:, None, :]-b[None, :, :])**2).sum(-1)).min(axis=1)
+        return out
+
+
+def stats(d):
+    moved = d > 1e-9
+    return {'vertices': int(len(d)), 'moved': int(moved.sum()), 'max': round(float(d.max()) if len(d) else 0.0, 6),
+            'median': round(float(np.median(d)) if len(d) else 0.0, 6),
+            'medianOfMoved': round(float(np.median(d[moved])) if moved.any() else 0.0, 6)}
+
+
+def part_report(base_dir, cand_dir, key, out):
+    base, cand = load_blockout(base_dir), load_blockout(cand_dir)
+    if base is None or cand is None:
+        sys.exit('--part needs blockout.npz (with part_id) in both the baseline and the candidate directory')
+    if key not in cand['keys'] or key not in base['keys']:
+        sys.exit(f'--part {key}: not a part of both blockouts (candidate: {cand["keys"]}, baseline: {base["keys"]})')
+    in_c = cand['pid'] == cand['keys'].index(key)
+    in_b = base['pid'] == base['keys'].index(key)
+    if base['v'].shape == cand['v'].shape and base['keys'] == cand['keys']:
+        how = 'same topology, vertex to vertex'
+        d_c = np.linalg.norm(cand['v']-base['v'], axis=1)
+        d_b = d_c
+    else:
+        how = 'different topology: each vertex to the nearest vertex of the other build, both directions'
+        d_c = nearest_distance(cand['v'], base['v'])
+        d_b = nearest_distance(base['v'], cand['v'])
+    # a vertex counts as inside the part when its own build assigns it to the part; the baseline's vertices
+    # (removed or moved material) are counted by the baseline's assignment
+    inside = np.concatenate([d_c[in_c], d_b[in_b]])
+    outside = np.concatenate([d_c[~in_c], d_b[~in_b]])
+    vmax = max(float(np.percentile(np.concatenate([d_c, d_b])[np.concatenate([d_c, d_b]) > 1e-9], 99.5)), 1e-6)         if (np.concatenate([d_c, d_b]) > 1e-9).any() else 1.0
+    heat = part_heat(cand['v'], d_c, in_c, vmax, key, how, stats(inside), stats(outside), out)
+    return {'key': key, 'method': how, 'units': 'world units', 'inside': stats(inside), 'outside': stats(outside),
+            'heatFile': heat}
+
+
+def part_heat(points, d, inside, vmax, key, how, s_in, s_out, out, size=520):
+    views = [('front', view_rotation(0, 0)), ('side-left', view_rotation(90, 0)), ('top', view_rotation(0, 89))]
+    lo, hi = points.min(axis=0), points.max(axis=0)
+    mid = (lo+hi)/2
+    scale = size*0.9/float(max(hi-lo))
+    sheet = Image.new('RGB', (size*3, size+78), 'white')
+    for k, (title, rot) in enumerate(views):
+        P = (points-mid)@rot.T
+        order = np.argsort(-P[:, 2])
+        P, dd, ins = P[order], d[order], inside[order]
+        u = (size/2+P[:, 0]*scale).astype(int)
+        v = (size/2-P[:, 1]*scale).astype(int)
+        col = np.where((dd > 1e-9)[:, None], ramp(dd/vmax), np.where(ins[:, None], 150, 215).astype(np.uint8))
+        img = np.full((size, size, 3), 255, np.uint8)
+        for du in (0, 1):
+            for dv in (0, 1):
+                uu, vv = u+du, v+dv
+                ok = (uu >= 0) & (uu < size) & (vv >= 0) & (vv < size)
+                img[vv[ok], uu[ok]] = col[ok]
+        im = Image.fromarray(img)
+        ImageDraw.Draw(im).text((8, 6), title, fill=0, font=font(16))
+        sheet.paste(im, (k*size, 0))
+    dr = ImageDraw.Draw(sheet)
+    sheet.paste(Image.fromarray(ramp(np.linspace(0, 1, 240))[None].repeat(14, axis=0)), (10, size+8))
+    f = font(14)
+    dr.text((256, size+7), f'blue = small, amber = {vmax:.5f} world units (99.5th percentile of moved); dark gray = unmoved vertex of {key}, light gray = unmoved elsewhere', fill=0, font=f)
+    dr.text((10, size+30), f'inside {key}: moved {s_in["moved"]} of {s_in["vertices"]}, max {s_in["max"]}, median of moved {s_in["medianOfMoved"]}', fill=0, font=f)
+    dr.text((10, size+50), f'outside {key}: moved {s_out["moved"]} of {s_out["vertices"]}, max {s_out["max"]}, median of moved {s_out["medianOfMoved"]}   ({how})', fill=0, font=f)
+    sheet.save(out/'part-heat.png')
+    return 'part-heat.png'
+
+
 # ---------------------------------------------------------------- main
 
 def resolve(path, species):
@@ -266,10 +359,12 @@ def main():
     ap.add_argument('--component', default='head')
     ap.add_argument('--head')
     ap.add_argument('--baseline-head')
+    ap.add_argument('--part', help='part key: report displacement inside versus outside it (blockout outputs)')
     args = ap.parse_args()
     cameras = Path(args.cameras).resolve()
     spec = json.loads(cameras.read_text(encoding='utf-8'))
     species = spec['species']
+    lock_species = spec.get('lockSpecies', species)     # the loop_tools species config that owns the Blender slot lock
     ids = [c['id'] for c in spec['cameras']]
     bg = tuple(spec['render']['background'])
     out = Path(args.out)
@@ -284,9 +379,9 @@ def main():
     base_raw = base_cached = None
     if baseline:
         _, base_raw, base_cached = raw_images(blend_file(baseline), cameras, ids, jobs)
-    procs = [(start_render(blend, cameras, cand_raw, species, assembly.name), assembly.name)]
+    procs = [(start_render(blend, cameras, cand_raw, lock_species, assembly.name), assembly.name)]
     for bl, folder, _, _ in jobs:
-        procs.append((start_render(bl, cameras, folder, species, baseline.name), baseline.name))
+        procs.append((start_render(bl, cameras, folder, lock_species, baseline.name), baseline.name))
     for proc, what in procs:
         finish_render(proc, what)
     for bl, folder, bsha, key in jobs:
@@ -309,6 +404,11 @@ def main():
         result['cameras'].append(row)
     if args.head and args.baseline_head:
         result['displacement'] = heat_report(resolve(args.baseline_head, species), resolve(args.head, species), out, species, args.component)
+    if args.part:
+        if not baseline:
+            sys.exit('--part needs --baseline')
+        part = part_report(baseline, assembly, args.part, out)
+        result['displacement'] = {**(result['displacement'] or {}), 'part': part}
     # keep the raw candidate renders beside the packet so a later run can be compared pixel for pixel
     raw_out = out/'raw'
     if raw_out.exists():

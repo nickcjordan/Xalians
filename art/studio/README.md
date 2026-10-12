@@ -19,3 +19,21 @@ Directory names resolve under `untracked/species-construction/<species>` (create
 - With head directories: `heat.png` is the skin displacement of the head (gray is exactly zero, blue to amber by size, legend with max, median of moved and moved count). Same vertex count means vertex-to-vertex displacement; otherwise nearest vertex (scipy KD-tree, numpy chunks if scipy is missing). `perZone` is the largest displacement among head vertices inside each species zone (zones of `species.json`, placed as the assembly places the head). Units are head units.
 - `packet.json` summarizes the packet; `raw/` keeps the transparent candidate renders.
 - Timing on the dev PC for Akinza: about 1.2 minutes with a cold baseline cache, about 0.5 minutes with a warm one.
+
+## Blockout framework
+
+Authored, parametric parts assembled into one closed body for any creature. Part kinds and their parameters: `parts/README.md`.
+
+```
+python art/species-construction/loop/loop_tools.py --species akinza blender --log blockout \
+    art/studio/blockout.py -- --spec art/studio/blockout/examples/biped-test.json --out <dir>
+python art/studio/cameras_auto.py --build <dir> --out <cameras.json> --close tail --close head
+python art/studio/packet.py --assembly <dir> [--baseline <older dir> --part tail] --cameras <cameras.json> --out <packet dir>
+```
+
+- `blockout.py` writes `blockout.blend`, `blockout.glb`, `blockout.npz` and `record.json` (spec sha256, counts, components, non-manifold edges, bounds, minutes). It refuses, exit status 2, unless the skin is one closed manifold component. The skin carries a per-vertex `part_id` (index into `record.json` `partKeys`) and `part_weight`; after meshing every vertex is projected onto the analytic surface, which removes the voxel ripple a grid mesher leaves.
+- The grid is snapped to the world lattice, so rebuilding after changing one part samples every other part at identical points; the surface away from the change comes out the same.
+- `--species akinza` on `loop_tools.py` only selects the config that owns the Blender slot lock and the log folder; it does not touch Akinza data.
+- `cameras_auto.py` builds the standard eight whole-figure cameras from the blockout's bounds (one fixed scale; `--freeze-from` keeps an earlier file's frame) and close views framed on any `--close <part key>`. The light rig is the Akinza one scaled to the figure.
+- `packet.py --part <key>` compares two blockouts: displacement inside versus outside that part (max, median, median of moved) in `packet.json` under `displacement.part`, and `part-heat.png`. Topology differs between builds, so each vertex is measured to the nearest vertex of the other build, in both directions; a vertex counts as inside the part when its own build assigns it to the part.
+- Tests: `python -m unittest discover -s art/studio/tests -v` (numpy only; CI runs them).
