@@ -11,7 +11,7 @@ import { initCreature, openCreature } from '../store.ts';
 
 const projectsDir = join(fileURLToPath(new URL('.', import.meta.url)), 'fixtures', 'projects');
 const wide = { since: '2026-01-01T00:00:00Z', until: '2027-01-01T00:00:00Z', projectsDir };
-const window = { since: '2026-10-01T10:00:00Z', until: '2026-10-01T11:00:00Z', projectsDir };
+const window = { since: '2026-10-01T10:00:00Z', until: '2026-10-01T11:00:00Z', projectsDir, orchestratorSession: 'sess1' };
 
 describe('collectBuildCost', () => {
 	it('matches by description and by first user message, and ignores other tags and non-Xalians slugs', () => {
@@ -43,16 +43,25 @@ describe('collectBuildCost', () => {
 
 	it('sums the orchestrator share only inside the window, skipping sidechain lines and other projects', () => {
 		const c = collectBuildCost({ buildTag: 'B-k3f9', ...window });
-		expect(c.orchestrator.approximate).toBe(true);
-		expect(c.orchestrator.messages).toBe(2);
-		expect(c.orchestrator.tokens).toEqual({ input: 150, output: 15, cacheRead: 1500, cacheWrite: 300 });
+		expect(c.orchestrator!.approximate).toBe(true);
+		expect(c.orchestrator!.messages).toBe(2);
+		expect(c.orchestrator!.tokens).toEqual({ input: 150, output: 15, cacheRead: 1500, cacheWrite: 300 });
 		// The orchestrator share is never folded into the subagent total.
 		expect(c.tokens.input).toBe(31);
 	});
 
 	it('widening the window picks up the earlier and later messages', () => {
-		const c = collectBuildCost({ buildTag: 'B-k3f9', ...wide });
-		expect(c.orchestrator.tokens.input).toBe(2150);
+		const c = collectBuildCost({ buildTag: 'B-k3f9', ...wide, orchestratorSession: 'sess1' });
+		expect(c.orchestrator!.tokens.input).toBe(2150);
+	});
+
+	it('reads only the named session and omits the share when none is recorded', () => {
+		// sess9 sits in a non-Xalians slug and sess1 is the only Xalians session in the fixtures.
+		expect(collectBuildCost({ buildTag: 'B-k3f9', ...wide, orchestratorSession: 'sess9' }).orchestrator!.messages).toBe(0);
+		expect(collectBuildCost({ buildTag: 'B-k3f9', ...wide, orchestratorSession: 'nope' }).orchestrator!.messages).toBe(0);
+		const none = collectBuildCost({ buildTag: 'B-k3f9', since: wide.since, until: wide.until, projectsDir });
+		expect(none.orchestrator).toBeNull();
+		expect(uncoveredText(none)).toContain('no orchestrator session recorded');
 	});
 
 	it('counts messages with no usage instead of treating them as zero silently', () => {
@@ -63,7 +72,7 @@ describe('collectBuildCost', () => {
 	});
 
 	it('returns empty, uncovered-free results for a tag nobody used when nothing is missing', () => {
-		const c = collectBuildCost({ buildTag: 'B-nope', since: '2026-10-01T12:30:00Z', until: '2026-10-01T12:40:00Z', projectsDir });
+		const c = collectBuildCost({ buildTag: 'B-nope', since: '2026-10-01T12:30:00Z', until: '2026-10-01T12:40:00Z', projectsDir, orchestratorSession: 'sess1' });
 		expect(c.agents).toEqual([]);
 		expect(uncoveredText(c)).toBeUndefined();
 	});
@@ -90,7 +99,7 @@ describe('studio cost CLI', () => {
 		store.acquireLock('t');
 		const part = store.create('part', { key: 'skull', name: 'skull', includes: [], why: 'w', scope: {}, dependsOn: [], order: 1, status: 'not-started', budget: { builds: 4, wallMinutes: 100 } }, 'orchestrator', { session: 't' });
 		const b = store.create('build', planBuild(store.load(), { part: part.key, kind: 'preview', goal: 'g', method: 'm' }), 'orchestrator', { session: 't' });
-		store.update<'build'>(b.id, (x) => { x.startedAt = '2026-10-01T10:00:00.000Z'; x.endedAt = '2026-10-01T11:00:00.000Z'; }, { actor: 'orchestrator', session: 't' });
+		store.update<'build'>(b.id, (x) => { x.startedAt = '2026-10-01T10:00:00.000Z'; x.endedAt = '2026-10-01T11:00:00.000Z'; x.orchestratorSession = 's1'; }, { actor: 'orchestrator', session: 't' });
 
 		const dir = join(mkdtempSync(join(tmpdir(), 'studio-projects-')), 'C--dev-src-xalians-x', 's1', 'subagents');
 		mkdirSync(dir, { recursive: true });

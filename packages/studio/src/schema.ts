@@ -254,6 +254,8 @@ export const BuildSchema = record('B', {
 		uncovered: z.string().optional(),
 	}),
 	status: z.enum(['planned', 'running', 'reported', 'checked', 'presented', 'reviewed', 'superseded', 'failed']),
+	/** Session id of the orchestrator that ran this build; scopes the approximate orchestrator cost. */
+	orchestratorSession: z.string().min(1).optional(),
 	startedAt: iso.optional(),
 	endedAt: iso.optional(),
 	deadline: iso.optional(),

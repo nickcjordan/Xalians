@@ -41,6 +41,7 @@ const OPTIONS = {
 	decision: { type: 'string' },
 	packet: { type: 'string' },
 	projects: { type: 'string' },
+	'orchestrator-session': { type: 'string' },
 } as const;
 
 type Flags = ReturnType<typeof parseArgs<{ options: typeof OPTIONS; allowPositionals: true }>>['values'];
@@ -229,11 +230,12 @@ function costCommand(store: Store, sub: string | undefined, args: string[], flag
 		const b = found.record as Build;
 		const since = b.startedAt ?? b.createdAt;
 		const until = b.endedAt ?? new Date().toISOString();
-		const got = collectBuildCost({ buildTag: b.alias, since, until, ...(flags.projects ? { projectsDir: resolve(flags.projects) } : {}) });
+		const got = collectBuildCost({ buildTag: b.alias, since, until, ...(b.orchestratorSession ? { orchestratorSession: b.orchestratorSession } : {}), ...(flags.projects ? { projectsDir: resolve(flags.projects) } : {}) });
 		const unc = uncoveredText(got);
 		const rec = store.update<'build'>(b.id, (x) => {
 			x.cost.tokens = got.tokens;
-			x.cost.orchestratorTokens = got.orchestrator.tokens;
+			if (got.orchestrator) x.cost.orchestratorTokens = got.orchestrator.tokens;
+			else delete x.cost.orchestratorTokens;
 			x.cost.agents = got.agents;
 			if (unc) x.cost.uncovered = unc;
 			else delete x.cost.uncovered;
@@ -242,7 +244,7 @@ function costCommand(store: Store, sub: string | undefined, args: string[], flag
 		for (const a of got.agents) lines.push(`  agent ${a.file}${a.model ? ` [${a.model}]` : ''}: ${a.description || '(no description)'}; ${formatTokens(a.tokens)}; ${a.minutes} min`);
 		if (got.agents.length === 0) lines.push(`  no subagents tagged [${rec.alias}]`);
 		lines.push(`  subagents total: ${formatTokens(got.tokens)}; ${got.agentMinutes} min`);
-		lines.push(`  orchestrator (approximate, ${got.orchestrator.messages} messages in window): ${formatTokens(got.orchestrator.tokens)}`);
+		lines.push(got.orchestrator ? `  orchestrator session ${b.orchestratorSession} (approximate, ${got.orchestrator.messages} messages in window): ${formatTokens(got.orchestrator.tokens)}` : '  orchestrator: omitted, no session recorded (use --orchestrator-session on build plan or start)');
 		lines.push(`  uncovered: ${unc ?? 'none'}`);
 		emit({ build: rec.alias, ...got }, lines.join('\n'));
 		return;
@@ -343,7 +345,7 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			const kind = need(flags, 'kind');
 			if (kind !== 'preview' && kind !== 'build') throw new StudioError('--kind must be preview or build');
 			const planned = planBuild(data, { part: need(flags, 'part'), kind, goal: need(flags, 'goal'), method: need(flags, 'method'), ...(targets ? { targets } : {}), ...(flags['allow-multiple'] ? { allowMultiple: true } : {}) });
-			const rec = store.create('build', planned as NewRecord<'build'>, actor, copts);
+			const rec = store.create('build', { ...planned, ...(flags['orchestrator-session'] ? { orchestratorSession: flags['orchestrator-session'] } : {}) } as NewRecord<'build'>, actor, copts);
 			for (const d of planned.targets) store.update<'defect'>(d, (x) => { x.attempts.push(rec.id); }, mopts);
 			const part = data.parts.find((p) => p.id === planned.part)!;
 			if (part.status === 'not-started') store.update<'part'>(part.id, { status: 'in-progress' }, mopts);
@@ -353,7 +355,7 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 		case 'start': {
 			const b = load();
 			if (b.status !== 'planned') throw new StudioError(`build ${b.alias} is ${b.status}, not planned`);
-			const rec = setBuild(b.id, (x) => { x.status = 'running'; x.startedAt = new Date().toISOString(); });
+			const rec = setBuild(b.id, (x) => { x.status = 'running'; x.startedAt = new Date().toISOString(); if (flags['orchestrator-session']) x.orchestratorSession = flags['orchestrator-session']; });
 			emit(rec, `started ${rec.alias}`);
 			return;
 		}

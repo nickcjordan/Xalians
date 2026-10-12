@@ -23,7 +23,7 @@ export interface BuildCost {
 	tokens: TokenTotals;
 	agentMinutes: number;
 	/** Main-session spend in the window. Approximate: a session may do other work in it. */
-	orchestrator: { tokens: TokenTotals; messages: number; approximate: true };
+	orchestrator: { tokens: TokenTotals; messages: number; approximate: true } | null;
 	/** Assistant messages (unique by id) that carried no usage, so their spend is unknown. */
 	uncovered: { subagentMessages: number; orchestratorMessages: number };
 }
@@ -33,6 +33,8 @@ export interface CollectOptions {
 	buildTag: string;
 	since: string | Date;
 	until: string | Date;
+	/** Session id of the orchestrator; only <slug>/<id>.jsonl is read for the orchestrator share. Without it the share is omitted. */
+	orchestratorSession?: string;
 	/** Defaults to ~/.claude/projects. */
 	projectsDir?: string;
 	/** 'bracket' (default) matches `[tag]`; 'substring' matches the tag text anywhere. */
@@ -187,7 +189,7 @@ export function collectBuildCost(opts: CollectOptions): BuildCost {
 		const slugDir = join(projects, slug);
 		for (const name of readdirSync(slugDir)) {
 			const full = join(slugDir, name);
-			if (name.endsWith('.jsonl')) {
+			if (opts.orchestratorSession && name === `${opts.orchestratorSession}.jsonl`) {
 				// A session file last written before the window cannot hold messages inside it.
 				if (statSync(full).mtimeMs < since) continue;
 				const t = tally(full, (line, ms) => line.isSidechain !== true && line.type === 'assistant' && ms >= since && ms <= until && /xalians/i.test(String(line.cwd ?? '')));
@@ -221,12 +223,13 @@ export function collectBuildCost(opts: CollectOptions): BuildCost {
 		}
 	}
 	agents.sort((a, b) => a.file.localeCompare(b.file));
-	return { agents, tokens, agentMinutes: Math.round(agentMinutes * 100) / 100, orchestrator: { tokens: orch, messages: orchMessages, approximate: true }, uncovered };
+	return { agents, tokens, agentMinutes: Math.round(agentMinutes * 100) / 100, orchestrator: opts.orchestratorSession ? { tokens: orch, messages: orchMessages, approximate: true } : null, uncovered };
 }
 
 export function uncoveredText(c: BuildCost): string | undefined {
 	const parts: string[] = [];
+	if (!c.orchestrator) parts.push('no orchestrator session recorded, so the orchestrator share is omitted');
 	if (c.uncovered.subagentMessages) parts.push(`${c.uncovered.subagentMessages} subagent message(s) had no usage`);
 	if (c.uncovered.orchestratorMessages) parts.push(`${c.uncovered.orchestratorMessages} orchestrator message(s) had no usage`);
-	return parts.length ? `${parts.join('; ')}; their spend is not counted` : undefined;
+	return parts.length ? `${parts.join('; ')}; any such spend is not counted` : undefined;
 }
