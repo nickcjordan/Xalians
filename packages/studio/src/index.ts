@@ -4,3 +4,7 @@ export * from './engine.ts';
 export * from './verify.ts';
 export * from './ids.ts';
 export { StudioError } from './errors.ts';
+export * from './blobs.ts';
+export * from './review.ts';
+export * from './watch.ts';
+export * from './ingest.ts';

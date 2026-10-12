@@ -19,12 +19,14 @@ Akinza imported at v5eye3; one skull build made through the studio (previews, th
 | Step | State | Evidence |
 |---|---|---|
 | Design, audits, revision 3 | done | PR #804 |
-| S0 bucket | PR #804 (Terraform) | |
-| S0 keep-set upload | measured: v5eye3 rebuild closure 2.5 GB (3 roots, 30 step outputs, assemblies 3141 and 3101, their packets) | |
-| S1 studio core (`packages/studio`) | in progress, branch `studio-core` | |
-| S1 Blender runner and packet | not started | |
-| S1 Akinza import and chain port | not started | |
-| S1 `/studio` review screen | not started | |
+| S0 bucket | done | PR #804; the first apply hit IAM propagation, a rerun created it |
+| S0 keep-set upload | done | 578 objects, 2.73 GB, 12.4 min; manifest `manifests/akinza-initial-2026-10-12.json` |
+| S1 studio core (`packages/studio`) | done | PR #805, 30 tests |
+| S1 chain port | done for v5eye3 | PR #806; H50 replay matched head-3140 exactly |
+| S1 packet renderer | done | PR #807; 14 cameras, 1.2 min cold, pixel-identical reruns |
+| S1 `/studio` review screen and blob store | done | this PR; one-screen workspace, real Akinza packet in the fixture (`node apps/web/scripts/studio-fixture.mjs --force`, then `/studio/fixture/head`) |
+| S1 token cost collector | not started | screen shows "not collected yet" |
+| S1 Akinza import | waiting | Nick's parallel head session moved on past v5eye3: v5eye4 eyes approved ("the eyes look great"), v5eye5 tiny fix, nose-mouth-v1 (H53, assembled-3157) in review. Import from that session's final state, then port its new steps (H51 to H53) the same way as #806 |
 | S1 skull previews, build, review | not started | |
 
 ## Next unfinished action

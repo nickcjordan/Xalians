@@ -79,7 +79,7 @@ export interface Store {
 	load(): CreatureData;
 	list<K extends Kind>(kind: K): RecordMap[K][];
 	get(idOrAlias: string): { kind: Kind; record: RecordMap[Kind] } | undefined;
-	create<K extends Exclude<Kind, 'creature'>>(kind: K, data: NewRecord<K>, actor: Actor, opts?: { session?: string }): RecordMap[K];
+	create<K extends Exclude<Kind, 'creature'>>(kind: K, data: NewRecord<K>, actor: Actor, opts?: { session?: string; bypassLock?: boolean }): RecordMap[K];
 	update<K extends Kind>(idOrAlias: string, change: Change<K>, opts: MutateOptions): RecordMap[K];
 	readLock(): LockInfo | undefined;
 	acquireLock(session: string): LockInfo;
@@ -208,7 +208,9 @@ export function openCreature(repoRoot: string, key: string): Store {
 		create(kind, data, actor, opts = {}) {
 			const note = data as NewRecord<'note'>;
 			const reviewByNickViaStudio = kind === 'note' && note.kind === 'review' && note.by === 'nick' && note.via === 'studio';
-			if (!reviewByNickViaStudio) assertCanMutate(opts.session);
+			// Nick's own act in the review screen (a mark, a review, a choice) needs no lock; nobody else gets this.
+			const nickInScreen = opts.bypassLock === true && actor === 'nick';
+			if (!reviewByNickViaStudio && !nickInScreen) assertCanMutate(opts.session);
 			const now = new Date().toISOString();
 			const raw = {
 				id: newId(kind),
