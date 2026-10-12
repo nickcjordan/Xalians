@@ -1,0 +1,20 @@
+{
+ "note": "Eyes v4 (Nick 2026-10-12, finishing pass on the approved v5eye3 eyes; step H51 in place of H50 after H49). Held from v5eye3 (Nick: \"Incredibly better\"): ball semi-axes, axis, theta0, depth and opening, all keys unchanged. Changed: iris clear coat softened (Roughness .12 to .30, Coat Weight .35 to .15, Coat Roughness .03 to .30) and iris height above the globe front scaled .7, so the key lamp no longer makes a sharp glint on the domed iris; lower lid roll .009 wide and .001 thick at the bottom (.006 and .004 at the top as before); socket blend widened to .10 from the old opening (.08 below), still inside the eye mask, so the fall from the lid to the face is gentler. Tried: iris dome .85 with Roughness .25 and Coat .2 (a brighter, broader sheen); socket .09 and .07. Keys documented in eye_v5eye4_field.py.",
+ "lidEdge": 0.006,
+ "lidZone": 0.012,
+ "margin": 0.1,
+ "marginLower": 0.08,
+ "band": 0.04,
+ "marginInner": 0.04,
+ "bandInner": 0.02,
+ "bandTop": 0.013,
+ "refine": 0,
+ "lidThicknessBottom": 0.001,
+ "lidEdgeBottom": 0.009,
+ "irisDome": 0.7,
+ "irisMaterial": {
+  "Roughness": 0.3,
+  "Coat Weight": 0.15,
+  "Coat Roughness": 0.3
+ }
+}
