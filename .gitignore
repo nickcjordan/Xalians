@@ -78,3 +78,6 @@ __pycache__/
 
 # Per-chat completion receipts, never shared or committed.
 .codex/audit-state/
+
+# Creature Studio per-creature session locks
+art/creatures/*/.lock
