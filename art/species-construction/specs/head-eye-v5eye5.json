@@ -1,0 +1,24 @@
+{
+ "note": "Eyes v5 (Nick 2026-10-12: tiny fix on the approved v5eye4 eyes; step H52 in place of H51 after H49). Remove the faint shading line down the inner side of the eye, where the lid rolls into the nose bridge. Cause: the inner edge of the free socket region was a hard hold, so the fill met the bridge with a curvature step (a narrow convex ridge, measured on the front depth map). Changed: marginInner .04 to .055, bandInner .02 to .03, and innerSoft (width .028, weight .001): the cells just beyond the inner edge are solved too, pulled to the face by a rising data weight. Held (v5eye4 values unchanged): ball semi-axes, axis, theta0, depth, opening, lid keys, iris keys.",
+ "lidEdge": 0.006,
+ "lidZone": 0.012,
+ "margin": 0.1,
+ "marginLower": 0.08,
+ "band": 0.04,
+ "marginInner": 0.055,
+ "bandInner": 0.03,
+ "bandTop": 0.013,
+ "refine": 0,
+ "lidThicknessBottom": 0.001,
+ "lidEdgeBottom": 0.009,
+ "irisDome": 0.7,
+ "irisMaterial": {
+  "Roughness": 0.3,
+  "Coat Weight": 0.15,
+  "Coat Roughness": 0.3
+ },
+ "innerSoft": {
+  "width": 0.028,
+  "weight": 0.001
+ }
+}

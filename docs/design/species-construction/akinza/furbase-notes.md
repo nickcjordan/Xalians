@@ -506,3 +506,16 @@ Measures (head-3146 against head-3140): eyeball vertices 0.0 exactly (the ball i
 Images in `untracked/species-construction/akinza/surface/head-redesign/eyes-v4/`: `eye-crop-{front,threequarter,side,top,below}.png`, `clay-3141-vs-v5eye4-{face,head,threequarter,side,top}.png`, `v5eye4-3146-heat.png`, `v5eye4-3146-numbers.json`.
 
 Still open (my own look): one or two tiny dark ticks remain along the lower lid of each eye in the close front crop; they are the assembly's .0028 world-unit voxel re-mesh resolving the lid roll (the head component itself is clean), so they are blocked by the re-mesh hold. A faint soft shading line runs down the inner side of the character's left eye where the lid rolls into the bridge.
+
+# Head v5eye5: inner eye shading line removed (2026-10-12)
+
+Nick approved the eyes ("the eyes look great") and allowed tiny fixes: remove the faint shading line down the inner side of the character's left eye where the lid rolls into the nose bridge.
+
+| Hold | Source | Why |
+|---|---|---|
+| Eyeball, opening, lids elsewhere, everything outside the eye mask | Nick 2026-10-12 | approved part |
+
+- Cause (front depth curvature map of head-3146): the inner edge of the free socket region (marginInner .04) was a hard hold, so the socket fill met the bridge with a curvature step, a narrow convex ridge with a kink at mid height beside each eye. The other eye has the same ridge; the key light from the left only shows it on the character's left eye.
+- Step H52 (`art/species-construction/eye_v5eye5_field.py`: the v5eye4 script plus `innerSoft`; spec `specs/head-eye-v5eye5.json`) in place of H51 after H49; recipe `recipe-furbase-v5eye5.json`. marginInner .055, bandInner .03, and the cells up to .028 beyond the inner edge are solved too, pulled to the face by a data weight rising from 0 to .001, so the fill meets the bridge without a step. Tried: a Gaussian fairing of the filled radius along the inner side (left sharp edges at the weight's ends), the wider margins alone (ridge broader but still bright).
+- Output: head-3148, assembled-3149. Check passes, regionShift R02 .0026 figure heights and 0.0 elsewhere, no new seams, no measured change, face guards clear. The rendered change lies only along the inner side of each eye (`pixel-diff`).
+- Look: the narrow line is gone; in its place is a broad soft socket shade further from the lid. Images in `untracked/species-construction/akinza/surface/head-redesign/nose-mouth-v1/task0-eye/`.
