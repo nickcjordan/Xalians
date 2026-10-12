@@ -171,7 +171,10 @@ export function openCreature(repoRoot: string, key: string): Store {
 	function assertCanMutate(session?: string): void {
 		const lock = readLock();
 		if (!lock) throw new StudioError(`creature ${key} is not locked; run: studio lock ${key} --session <label>`);
-		if (session !== undefined && session !== lock.session) {
+		if (session === undefined) {
+			throw new StudioError(`creature ${key} is locked; pass --session <label> (or set STUDIO_SESSION) to write to it`);
+		}
+		if (session !== lock.session) {
 			throw new StudioError(`creature ${key} is locked by session "${lock.session}", not "${session}"`);
 		}
 	}

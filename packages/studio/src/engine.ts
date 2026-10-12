@@ -307,3 +307,19 @@ export function applyReview(data: CreatureData, note: Pick<Note, 'by' | 'kind' |
 	}
 	return out;
 }
+
+/**
+ * Pure permission check for striking or lifting a hold. Returns a refusal reason, or undefined when allowed.
+ * Only Nick strikes. Anyone may lift an inferred or imported hold; lifting one Nick set needs a decision
+ * note by Nick (id or alias in `decisionRef`) unless Nick himself lifts it.
+ */
+export function holdChangeRefusal(data: CreatureData, hold: Hold, action: 'strike' | 'lift', actor: string, decisionRef?: string): string | undefined {
+	if (action === 'strike' && actor !== 'nick') return 'only Nick strikes holds; lift it with a reason instead';
+	if (action === 'lift' && hold.source.kind === 'nick' && actor !== 'nick') {
+		const decision = decisionRef ? byIdOrAlias(data.notes, decisionRef) : undefined;
+		if (!decision || decision.kind !== 'decision' || decision.by !== 'nick') {
+			return `hold ${hold.alias} was set by Nick; lifting it needs --decision <note> recording his ruling`;
+		}
+	}
+	return undefined;
+}

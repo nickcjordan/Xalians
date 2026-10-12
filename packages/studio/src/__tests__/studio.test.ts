@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { applyReview, canPresent, planBuild, status, STANDARD_CAMERAS, submitReport } from '../engine.ts';
+import { applyReview, canPresent, holdChangeRefusal, planBuild, status, STANDARD_CAMERAS, submitReport } from '../engine.ts';
 import { initCreature, openCreature, type CreatureData, type Store } from '../store.ts';
 import { ReportSchema, type Build, type Defect, type Hold, type Note, type Part } from '../schema.ts';
 import { verifyAll } from '../verify.ts';
@@ -18,6 +18,11 @@ function fresh(): { root: string; store: Store } {
 	const root = tmpRoot();
 	const store = initCreature(root, { key: 'akinza', name: 'Akinza', speciesTemplate: 'docs/x.json', silhouette: 'x.svg' });
 	store.acquireLock('test');
+	// Mutations need the session; inject it so tests read like the CLI with STUDIO_SESSION set.
+	const create = store.create.bind(store);
+	const update = store.update.bind(store);
+	store.create = ((kind: never, data: never, actor: never, opts?: object) => create(kind, data, actor, { session: 'test', ...opts })) as typeof store.create;
+	store.update = ((id: string, change: never, opts: { actor: never }) => update(id, change, { session: 'test', ...opts })) as typeof store.update;
 	return { root, store };
 }
 
@@ -141,6 +146,11 @@ describe('store', () => {
 		expect(() => addPart(store)).toThrow(/not locked/);
 		other.acquireLock('someone-else');
 		expect(() => store.create('part', { key: 'x', name: 'x', includes: [], why: '', scope: {}, dependsOn: [], order: 1, status: 'not-started', budget: { builds: 1, wallMinutes: 1 } }, 'orchestrator', { session: 'test' })).toThrow(/not "test"/);
+	});
+
+	it('refuses a mutation with no session while the creature is locked', () => {
+		const raw = openCreature(store.root, 'akinza');
+		expect(() => raw.create('part', { key: 'x', name: 'x', includes: [], why: '', scope: {}, dependsOn: [], order: 1, status: 'not-started', budget: { builds: 1, wallMinutes: 1 } }, 'orchestrator')).toThrow(/pass --session/);
 	});
 
 	it('lets a review by nick via studio in without the lock', () => {
@@ -339,5 +349,37 @@ describe('verify', () => {
 		rec.alias = a.alias;
 		writeFileSync(file, JSON.stringify(rec));
 		expect(verifyAll(root).errors.some((e) => e.includes('already used'))).toBe(true);
+	});
+});
+
+describe('hold permissions', () => {
+	const hold = (kind: 'nick' | 'inferred'): Hold => ({
+		...base('H', 0), statement: 's', scope: {}, status: 'active', history: [],
+		source: kind === 'nick' ? { kind: 'nick', quote: 'q', date: 'd' } : { kind: 'inferred', reason: 'r', by: 'o' },
+	});
+
+	it('refuses strike by the orchestrator and allows it by nick', () => {
+		const { data } = memData();
+		expect(holdChangeRefusal(data, hold('inferred'), 'strike', 'orchestrator')).toMatch(/only Nick/);
+		expect(holdChangeRefusal(data, hold('inferred'), 'strike', 'nick')).toBeUndefined();
+	});
+
+	it('lets anyone lift an inferred hold', () => {
+		const { data } = memData();
+		expect(holdChangeRefusal(data, hold('inferred'), 'lift', 'orchestrator')).toBeUndefined();
+	});
+
+	it('lifting a nick hold needs a decision note by nick', () => {
+		const { data } = memData();
+		const h = hold('nick');
+		expect(holdChangeRefusal(data, h, 'lift', 'orchestrator')).toMatch(/--decision/);
+		const byOrch = mkNote(1, { kind: 'decision', by: 'orchestrator' });
+		const audit = mkNote(2, { kind: 'audit', by: 'nick' });
+		const ok = mkNote(3, { kind: 'decision', by: 'nick' });
+		data.notes.push(byOrch, audit, ok);
+		expect(holdChangeRefusal(data, h, 'lift', 'orchestrator', byOrch.id)).toMatch(/--decision/);
+		expect(holdChangeRefusal(data, h, 'lift', 'orchestrator', audit.id)).toMatch(/--decision/);
+		expect(holdChangeRefusal(data, h, 'lift', 'orchestrator', ok.id)).toBeUndefined();
+		expect(holdChangeRefusal(data, h, 'lift', 'nick')).toBeUndefined();
 	});
 });

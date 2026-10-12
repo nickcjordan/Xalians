@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
-import { applyReview, canPresent, findPart, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
+import { applyReview, canPresent, findPart, holdChangeRefusal, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
 import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
 import { initCreature, listCreatureKeys, openCreature, type Store } from './store.ts';
@@ -35,6 +35,7 @@ const OPTIONS = {
 	camera: { type: 'string' },
 	image: { type: 'string' },
 	note: { type: 'string' },
+	decision: { type: 'string' },
 } as const;
 
 type Flags = ReturnType<typeof parseArgs<{ options: typeof OPTIONS; allowPositionals: true }>>['values'];
@@ -219,8 +220,13 @@ function holdCommand(store: Store, sub: string | undefined, args: string[], flag
 		if (!ref) throw new StudioError(`usage: hold ${sub} <key> <alias> --reason "..."`);
 		const reason = need(flags, 'reason');
 		const next = sub === 'strike' ? 'struck' : 'lifted';
+		// Striking is Nick's act (the review screen). Anyone else may lift an inferred or
+		// imported hold with a reason, but lifting one Nick set needs his decision note.
+		const data = store.load();
 		const rec = store.update<'hold'>(ref, (h) => {
 			if (h.status !== 'active') throw new StudioError(`hold ${h.alias} is already ${h.status}`);
+			const refusal = holdChangeRefusal(data, h, sub, actor, flags.decision);
+			if (refusal) throw new StudioError(refusal);
 			h.status = next;
 			h.history.push({ at: new Date().toISOString(), status: next, by: actor, reason });
 		}, mopts);
