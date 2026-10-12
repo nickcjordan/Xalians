@@ -1,0 +1,73 @@
+{
+ "note": "Nose and mouth v1 (Nick 2026-10-12: rebuild the nose and mouth the right way, not inside earlier inferred holds; step H53 after H52). Muzzle: thin-plate face under the region (ellipsoid 'region', core .7) plus the muzzle as mirrored Gaussians in (theta, phi) fitted once to this head (form.gaussians, fitform.py; rms .00034 head units), solved as a thin plate pulled to that target (dataCore .05), so the old crescent, pits, notch and shelves are not copied; chin: one extra midline Gaussian (.007) for a small rounded chin. Nose pad: rounded triangle top -.1095, tip -.1525, half width .041, corner .005; roll .005 and edge height .0012 meeting the skin at a right angle, dome .0032, wall .005 under the skin. Mouth line: the old front-view line joined and mirrored, V rounded .006, one tube radius .0016 with its centre .0005 under the skin. Keys documented in nose_mouth_v1_field.py.",
+ "form": {
+  "gaussians": [
+   [
+    0.02463,
+    13.7,
+    -15.685,
+    7.778,
+    19.169,
+    71.15399999916553,
+    "pair"
+   ],
+   [
+    0.01806,
+    20.12,
+    -10.318,
+    7.971,
+    5.241,
+    -14.161999999545515,
+    "pair"
+   ],
+   [
+    -0.01819,
+    25.655,
+    -16.452,
+    8.719,
+    14.889,
+    51.493000000715256,
+    "pair"
+   ],
+   [
+    0.01887,
+    0.0,
+    -5.567,
+    6.144,
+    3.373,
+    0.0,
+    "mid"
+   ],
+   [
+    -0.00113,
+    -0.0,
+    -34.104,
+    12.539,
+    2.34,
+    0.0,
+    "mid"
+   ]
+  ],
+  "extra": [
+   [
+    0.007,
+    0.0,
+    -27.0,
+    9.0,
+    5.0,
+    0.0,
+    "mid"
+   ]
+  ]
+ },
+ "dataCore": 0.05,
+ "nose": {
+  "top": -0.1095,
+  "tip": -0.1525,
+  "halfWidth": 0.041,
+  "round": 0.005
+ },
+ "height": 0.0012,
+ "dome": 0.0032,
+ "roll": 0.005
+}
