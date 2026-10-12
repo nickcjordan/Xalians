@@ -172,6 +172,7 @@ export function AppRoutes() {
           {StyleGuidePage && <Route path="/styleguide" element={<StyleGuidePage />} />}
           {StudioPage && <Route path="/studio" element={<StudioPage />} />}
           {StudioPage && <Route path="/studio/:creature" element={<StudioPage />} />}
+          {StudioPage && <Route path="/studio/:creature/stage/:stage" element={<StudioPage />} />}
           {StudioPage && <Route path="/studio/:creature/:part" element={<StudioPage />} />}
           {/* throws on render, to exercise ErrorBoundary/ErrorPage - a developer
               route, unlinked like /styleguide */}

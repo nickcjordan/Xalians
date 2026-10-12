@@ -219,3 +219,74 @@ describe('production exclusion', () => {
 		expect(app).toMatch(/StudioPage && <Route path="\/studio"/);
 	});
 });
+
+describe('stages', () => {
+	const who = { actor: 'orchestrator', session: 's' };
+
+	async function intakeFixture() {
+		writeFileSync(join(root, 'tpl.json'), '{}');
+		const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><path d="M0 0h4v4z"/></svg>';
+		const dir = mkdtempSync(join(tmpdir(), 'studio-stage-'));
+		const svgFile = join(dir, 'bird.svg');
+		writeFileSync(svgFile, svg);
+		const store = lib.initCreature(root, { key: 'sx', name: 'Stage fixture', speciesTemplate: 'tpl.json', silhouette: 'bird.svg' });
+		store.acquireLock('s');
+		const blob = lib.putFile(svgFile);
+		store.update(store.load().creature.id, (c) => {
+			c.intake = { speciesTemplate: 'tpl.json', templateSha256: 'a'.repeat(64), name: 'Birdy', element: 'fire', homeWorld: 'magmuth', bodyPlan: 'biped', covering: 'feathers', sizeCm: [88, 112], loreSummary: 'A runner.', appearance: ['two legs'], anatomy: ['jaws'], silhouette: { blob, fileName: 'bird.svg' } };
+		}, who);
+		lib.proposeParts(store, [
+			{ key: 'torso', name: 'Torso', includes: ['ribcage'], why: 'base', dependsOn: [], order: 1 },
+			{ key: 'neck', name: 'Neck', includes: ['neck'], why: 'link', dependsOn: ['torso'], order: 2 },
+		], who);
+		return { store, blob };
+	}
+
+	it('returns the creature board with stages, intake, parts and needs', async () => {
+		const { store, blob } = await intakeFixture();
+		lib.submitStage(store, 'intake', who);
+		const r = await api.route('GET', 'creatures/sx');
+		expect(r.status).toBe(200);
+		expect(r.json.stages).toHaveLength(11);
+		expect(r.json.stages.find((s) => s.id === 'intake').status).toBe('in-review');
+		expect(r.json.intake.silhouette.blob).toBe(blob);
+		expect(r.json.parts.map((p) => [p.key, p.status, p.dependsOn.map((d) => d.name)])).toEqual([['torso', 'proposed', []], ['neck', 'proposed', ['Torso']]]);
+		expect(r.json.needs).toEqual([expect.objectContaining({ kind: 'stage', stage: 'intake' })]);
+	});
+
+	it('serves an SVG silhouette as image/svg+xml', async () => {
+		const { blob } = await intakeFixture();
+		const r = await api.route('GET', `blob/${blob}`);
+		expect(r.contentType).toBe('image/svg+xml');
+	});
+
+	it('lists references by precedence and serves them with their file type', async () => {
+		const { store } = await intakeFixture();
+		const dir = mkdtempSync(join(tmpdir(), 'studio-ref-'));
+		writeFileSync(join(dir, 'a.webp'), 'webp-bytes');
+		writeFileSync(join(dir, 'b.png'), 'png-bytes');
+		lib.addReference(store, { file: join(dir, 'a.webp'), role: 'late', governs: ['x'], mustNotBeUsedFor: [], precedence: 2 }, who);
+		const first = lib.addReference(store, { file: join(dir, 'b.png'), role: 'early', governs: ['y'], mustNotBeUsedFor: ['color'], precedence: 1 }, who);
+		const r = await api.route('GET', 'creatures/sx/references');
+		expect(r.json.map((x) => x.role)).toEqual(['early', 'late']);
+		expect(r.json[0].mustNotBeUsedFor).toEqual(['color']);
+		expect((await api.route('GET', `blob/${r.json[1].blob}`)).contentType).toBe('image/webp');
+		expect(first.alias).toMatch(/^R-/);
+	});
+
+	it('records a stage verdict as Nick with the header, and refuses it without', async () => {
+		const { store } = await intakeFixture();
+		lib.submitStage(store, 'intake', who);
+		expect((await api.route('POST', 'creatures/sx/stage-review', { body: { stage: 'intake', verdict: 'approve', text: '' } })).status).toBe(403);
+		store.releaseLock();
+		const r = await api.route('POST', 'creatures/sx/stage-review', { body: { stage: 'intake', verdict: 'approve', text: 'good' }, headers: POST });
+		expect(r.status).toBe(200);
+		expect(r.json.note).toMatchObject({ by: 'nick', via: 'studio', verdict: 'approve' });
+		const board = await api.route('GET', 'creatures/sx');
+		expect(board.json.stages.find((s) => s.id === 'intake').status).toBe('approved');
+		expect(board.json.stages.find((s) => s.id === 'references').status).toBe('open');
+		expect(board.json.parts.every((p) => p.status === 'not-started')).toBe(true);
+		const again = await api.route('POST', 'creatures/sx/stage-review', { body: { stage: 'intake', verdict: 'approve', text: '' }, headers: POST });
+		expect(again.status).toBe(409);
+	});
+});

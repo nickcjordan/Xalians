@@ -9,6 +9,7 @@ import { addTokens, collectBuildCost, formatTokens, uncoveredText, zeroTokens, t
 import { applyReview, canPresent, findPart, holdChangeRefusal, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
 import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
+import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, submitStage } from './intake.ts';
 import { initCreature, listCreatureKeys, openCreature, type Store } from './store.ts';
 import { verifyAll } from './verify.ts';
 
@@ -42,6 +43,12 @@ const OPTIONS = {
 	packet: { type: 'string' },
 	projects: { type: 'string' },
 	'orchestrator-session': { type: 'string' },
+	species: { type: 'string' },
+	force: { type: 'boolean' },
+	governs: { type: 'string' },
+	'not-for': { type: 'string' },
+	precedence: { type: 'string' },
+	provisional: { type: 'boolean' },
 } as const;
 
 type Flags = ReturnType<typeof parseArgs<{ options: typeof OPTIONS; allowPositionals: true }>>['values'];
@@ -125,7 +132,7 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 	const emit = (data: unknown, text: string) => io.out(flags.json ? JSON.stringify(data, null, 2) : text);
 
 	const [cmd, ...rest] = pos;
-	if (!cmd) throw new StudioError('no command; try: init, status, next, lock, unlock, part, hold, defect, note, build, verify');
+	if (!cmd) throw new StudioError('no command; try: init, intake, reference, stage, status, next, lock, unlock, part, hold, defect, note, build, verify');
 
 	if (cmd === 'verify') {
 		const result = verifyAll(root);
@@ -154,7 +161,7 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 		return;
 	}
 
-	const GROUPS = ['part', 'hold', 'defect', 'note', 'build', 'cost'];
+	const GROUPS = ['part', 'hold', 'defect', 'note', 'build', 'cost', 'reference', 'stage'];
 	const grouped = GROUPS.includes(cmd);
 	const sub = grouped ? rest[0] : undefined;
 	const key = grouped ? rest[1] : rest[0];
@@ -168,18 +175,25 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 		return;
 	}
 
+	if (cmd === 'intake') {
+		const r = runIntake(root, key, { actor, ...(session ? { session } : {}), ...(flags.species ? { species: flags.species } : {}), ...(flags.silhouette ? { silhouette: flags.silhouette } : {}), ...(flags.force ? { force: true } : {}) });
+		const verb = r.created ? 'created and read' : r.changed ? 'updated' : 'unchanged';
+		emit({ created: r.created, changed: r.changed, intake: r.intake }, `intake ${verb} for ${key} from ${r.intake.speciesTemplate} (${r.intake.name}, ${r.intake.element}, ${r.intake.homeWorld}); silhouette ${r.intake.silhouette.blob.slice(0, 12)}`);
+		return;
+	}
+
 	const store = openCreature(root, key);
 	const mopts = { actor, ...(session ? { session } : {}) };
 	const copts = session ? { session } : {};
 
 	switch (cmd) {
 		case 'status': {
-			const s = computeStatus(store.load());
+			const s = computeStatus(store.load(), liveTemplateSha(root));
 			emit(s, formatStatus(s));
 			return;
 		}
 		case 'next': {
-			const s = computeStatus(store.load());
+			const s = computeStatus(store.load(), liveTemplateSha(root));
 			emit({ next: s.next }, s.next);
 			return;
 		}
@@ -208,6 +222,14 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 		case 'note': {
 			if (sub !== 'add') throw new StudioError('usage: note add <key> --file note.json');
 			return noteAdd(store, flags, emit, actor, mopts, copts);
+		}
+		case 'reference':
+			return referenceCommand(store, sub, args, flags, emit, actor, copts);
+		case 'stage': {
+			if (sub !== 'submit' || !args[0]) throw new StudioError('usage: stage submit <key> <stage>');
+			const stage = submitStage(store, args[0], { actor, ...copts });
+			emit({ stage, status: 'in-review' }, `submitted stage ${stage} for Nick's review`);
+			return;
 		}
 		case 'cost':
 			return costCommand(store, sub, args, flags, emit, mopts);
@@ -274,8 +296,46 @@ function costCommand(store: Store, sub: string | undefined, args: string[], flag
 	throw new StudioError('usage: cost collect <key> <build alias> | cost show <key> [<part>]');
 }
 
+const csv = (v: string | undefined): string[] => (v ? v.split(',').map((x) => x.trim()).filter(Boolean) : []);
+
+function precedenceFlag(flags: Flags): number | undefined {
+	if (flags.precedence === undefined) return undefined;
+	const n = Number(flags.precedence);
+	if (!Number.isInteger(n)) throw new StudioError('--precedence must be a whole number');
+	return n;
+}
+
+function referenceCommand(store: Store, sub: string | undefined, args: string[], flags: Flags, emit: Emit, actor: Actor, copts: COpts): void {
+	const who = { actor, ...copts };
+	if (sub === 'add') {
+		const p = precedenceFlag(flags);
+		const rec = addReference(store, { file: need(flags, 'file'), role: need(flags, 'role'), governs: csv(flags.governs), mustNotBeUsedFor: csv(flags['not-for']), ...(p !== undefined ? { precedence: p } : {}) }, who);
+		emit(rec, `added reference ${rec.alias} (${rec.fileName}, precedence ${rec.precedence})`);
+		return;
+	}
+	if (sub === 'edit') {
+		if (!args[0]) throw new StudioError('usage: reference edit <key> <alias> [--role R] [--governs a,b] [--not-for x,y] [--precedence n]');
+		const p = precedenceFlag(flags);
+		const rec = editReference(store, args[0], { ...(flags.role !== undefined ? { role: flags.role } : {}), ...(flags.governs !== undefined ? { governs: csv(flags.governs) } : {}), ...(flags['not-for'] !== undefined ? { mustNotBeUsedFor: csv(flags['not-for']) } : {}), ...(p !== undefined ? { precedence: p } : {}) }, who);
+		emit(rec, `edited reference ${rec.alias}`);
+		return;
+	}
+	if (sub === 'target') {
+		if (!args[0]) throw new StudioError('usage: reference target <key> <alias> --file image --kind K [--provisional]');
+		const rec = addDerivedTarget(store, args[0], need(flags, 'file'), need(flags, 'kind'), flags.provisional === true, who);
+		emit(rec, `attached ${need(flags, 'kind')} target to reference ${rec.alias}`);
+		return;
+	}
+	throw new StudioError('usage: reference add|edit|target <key> ...');
+}
+
 function partCommand(store: Store, sub: string | undefined, flags: Flags, emit: Emit, actor: Actor, copts: COpts): void {
-	if (sub !== 'add') throw new StudioError('usage: part add <key> --file part.json');
+	if (sub === 'propose') {
+		const parts = proposeParts(store, readJsonFile(need(flags, 'file')), { actor, ...copts });
+		emit(parts, `proposed ${parts.length} part(s): ${parts.map((p) => p.key).join(', ')}`);
+		return;
+	}
+	if (sub !== 'add') throw new StudioError('usage: part add|propose <key> --file part.json');
 	const creature = store.load().creature;
 	const input = resolveAliases(store, readJsonFile(need(flags, 'file')));
 	const rec = store.create('part', { includes: [], why: '', scope: {}, dependsOn: [], order: store.list('part').length + 1, status: 'not-started', budget: { ...creature.defaultBudget }, ...input } as NewRecord<'part'>, actor, copts);
@@ -314,6 +374,7 @@ function holdCommand(store: Store, sub: string | undefined, args: string[], flag
 function noteAdd(store: Store, flags: Flags, emit: Emit, actor: Actor, mopts: MOpts, copts: COpts): void {
 	const input = resolveAliases(store, readJsonFile(need(flags, 'file')));
 	if (input.kind === 'review' && input.by !== 'nick') throw new StudioError('a review note must be by nick');
+	if (input.about?.stage && input.kind === 'review') throw new StudioError('a stage review is the verdict Nick gives in the review screen; it cannot be added from a file');
 	const rec = store.create('note', input as NewRecord<'note'>, actor, copts);
 	const applied: string[] = [];
 	if (rec.kind === 'review') {
@@ -447,7 +508,7 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 
 function formatStatus(s: StatusReport): string {
 	const lines: string[] = [`${s.creature}`, '', 'Stages'];
-	for (const [id, st] of Object.entries(s.stages)) lines.push(`  ${id.padEnd(11)} ${st}`);
+	for (const [id, st] of Object.entries(s.stages)) lines.push(`  ${id.padEnd(11)} ${st}${st === 'stale' ? `: ${s.staleStages.find((x) => x.id === id)?.reason ?? ''}` : ''}`);
 	lines.push('', 'Parts');
 	if (s.parts.length === 0) lines.push('  none');
 	for (const p of s.parts) {

@@ -1,6 +1,7 @@
 import { StudioError } from './errors.ts';
 import { applyReview, holdChangeRefusal } from './engine.ts';
-import type { Build, Defect, Hold, Note } from './schema.ts';
+import { STAGE_IDS, type Build, type Defect, type Hold, type Note } from './schema.ts';
+import { PHASE_ONE, stageEvidence, submitProblems } from './stages.ts';
 import type { Store } from './store.ts';
 
 const fraction = (v: unknown, name: string): number => {
@@ -137,4 +138,64 @@ export function recordChoice(store: Store, input: ChoiceInput): { note: Note; ch
 	}, 'nick', { bypassLock: true });
 	for (const b of builds) store.update<'build'>(b.id, (x) => { x.status = b.id === chosen.id ? 'reviewed' : 'superseded'; }, NICK);
 	return { note, chosen: store.get(chosen.id)!.record as Build };
+}
+
+export interface StageReviewInput {
+	stage: string;
+	verdict: 'approve' | 'reject' | 'adjust';
+	text: string;
+}
+
+/**
+ * Nick's verdict on a whole stage, from the studio screen. Only a stage that was submitted (in-review)
+ * can be reviewed. Approve: the stage is approved with evidence (the hashes of every record and blob
+ * it covers), proposed parts become not-started, and the next Phase 1 stage opens if it was locked.
+ * Adjust or reject: the stage goes back to open with Nick's words kept on it.
+ */
+export function recordStageReview(store: Store, input: StageReviewInput): { note: Note; applied: string[] } {
+	const stage = STAGE_IDS.find((s) => s === input.stage);
+	if (!stage) throw new StudioError(`unknown stage ${input.stage}`);
+	if (!['approve', 'reject', 'adjust'].includes(input.verdict)) throw new StudioError('verdict must be approve, reject or adjust');
+	const data = store.load();
+	const st = data.creature.stages[stage];
+	if (st.status !== 'in-review') throw new StudioError(`stage ${stage} is ${st.status}; only a stage that was submitted for review can be reviewed`);
+	if (input.verdict === 'approve') {
+		const problems = submitProblems(data, stage);
+		if (problems.length > 0) throw new StudioError(`stage ${stage} no longer meets its required outputs: ${problems.join('; ')}`);
+	}
+	const text = (input.text ?? '').trim();
+	const evidence = input.verdict === 'approve' ? stageEvidence(data, stage) : [];
+
+	const note = store.create('note', {
+		kind: 'review',
+		about: { stage },
+		by: 'nick',
+		via: 'studio',
+		text,
+		date: new Date().toISOString().slice(0, 10),
+		verdict: input.verdict,
+		...(evidence.length ? { evidence } : {}),
+	}, 'nick', { bypassLock: true });
+
+	const applied: string[] = [];
+	if (input.verdict === 'approve') {
+		const next = STAGE_IDS[STAGE_IDS.indexOf(stage) + 1];
+		const opens = next && PHASE_ONE.includes(next) && data.creature.stages[next].status === 'locked' ? next : undefined;
+		store.update<'creature'>(data.creature.id, (c) => {
+			c.stages[stage] = { status: 'approved', approvedBy: note.id, evidence, ...(text ? { note: text } : {}) };
+			if (opens) c.stages[opens] = { status: 'open' };
+		}, NICK);
+		applied.push(`stage ${stage} approved`);
+		if (stage === 'intake') {
+			for (const p of data.parts.filter((x) => x.status === 'proposed')) {
+				store.update<'part'>(p.id, { status: 'not-started' }, NICK);
+				applied.push(`part ${p.alias} not-started`);
+			}
+		}
+		if (opens) applied.push(`stage ${opens} open`);
+	} else {
+		store.update<'creature'>(data.creature.id, (c) => { c.stages[stage] = { status: 'open', ...(text ? { note: text } : {}) }; }, NICK);
+		applied.push(`stage ${stage} open`);
+	}
+	return { note, applied };
 }
