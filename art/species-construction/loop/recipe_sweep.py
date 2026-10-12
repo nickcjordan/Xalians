@@ -45,6 +45,7 @@ SHEET_STEP = .02            # station spacing of loop/sheet.json
 MISSING_PICK = .1           # figure heights charged when only the model or only the sheet has a run at a station
 SEAM_WEIGHT = 5             # total points per 1.0 of seam ratio (1.0 = the seam check's flag threshold)
 CONTAIN_TOL = .004          # figure heights of foreign displacement allowed before the total is charged
+CONTAIN_WEIGHT = 0          # v3.16 (hold audit 2026-10-12, S4): containment is reported, not charged; was 100 per figure height
 TOOL_WEIGHT = 100           # total points per 1.0 (a figure height) of the step's own sweepScore
 VIEWS = ('front', 'left', 'back')
 BASELINE = 'baseline'
@@ -53,7 +54,7 @@ CELL_PAD = .06              # contact sheet: figure heights of margin around the
 
 TERMS = '''total = 100*(fitIou - baseline.fitIou)
         - 100*(stationDiff - baseline.stationDiff)
-        - 100*containExcess
+        - CONTAIN_WEIGHT*containExcess          # 0 since v3.16: reported in the row, never charged
         + 100*(toolScore - baseline.toolScore)  # only when the edited step's output records a sweepScore
         - 5*seam.worstRatio                     # only when seam_check.py exists
 fitIou      mean over front, left, back of the model-vs-reference silhouette IoU over the region's zone rows, and in the front and back views only the columns of the zone's x extent (higher is better)
@@ -365,7 +366,7 @@ def total_score(term, base, contain_excess, tool_ref=None):
     if term['stationDiff'] is not None and base['stationDiff'] is not None:
         parts['station'] = -100*(term['stationDiff']-base['stationDiff'])
     if contain_excess is not None:
-        parts['contain'] = -100*max(0.0, contain_excess)
+        parts['contain'] = -CONTAIN_WEIGHT*max(0.0, contain_excess)
     if term.get('toolScore') is not None and tool_ref is not None:
         parts['tool'] = TOOL_WEIGHT*(term['toolScore']-tool_ref)
     seam = term.get('seam')

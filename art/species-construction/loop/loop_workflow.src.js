@@ -163,7 +163,8 @@ const REVIEW = { type: 'object', properties: { ...METHOD.properties, unpark: { t
 
 const workable = id => !S.regions[id].hold
 function criteriaText(id) {
-  return RUBRIC.regions[id].map(c => `${c.id} (${c.kind}, now ${S.regions[id].results[c.id] || 'unjudged'})${c.text ? ': ' + c.text : ''}`).join('\n') +
+  // v3.16: an advisory criterion is shown as a measurement to read, never a target to pass (Nick 2026-10-12)
+  return RUBRIC.regions[id].map(c => `${c.id} (${c.kind}${c.advisory ? ', advisory, not a gate' : ''}, now ${S.regions[id].results[c.id] || 'unjudged'})${c.text ? ': ' + c.text : ''}`).join('\n') +
     (RUBRIC.regions[id].some(c => c.text) ? '' : `\n(Criterion texts and the images each names: ${BRIEF('rubric.json')}.)`)
 }
 function criticPrompt(packet, order, mode, scope) {
@@ -282,7 +283,7 @@ function builderPrompt(order, round, suffix) {
     `Round ${round} work order for the ${order.component === 'both' ? 'head and body' : order.component} component: region ${order.id} (${r.name})${order.with ? ' together with ' + order.with.join(', ') : ''}.\n` +
     (partners ? partners + '\n' : '') +
     (S.methods[order.id] ? `Method for this region (${BRIEF('methods.md')}): ${S.methods[order.id]}\n` : '') +
-    `Rubric criteria with the baseline's current results. Turn failing or partial criteria into passes without breaking passing ones:\n${criteriaText(order.id)}\n\n` +
+    `Rubric criteria with the baseline's current results. Turn failing or partial criteria into passes without breaking passing ones. A criterion marked advisory, not a gate, is a measurement against the painted, furred sheet: read it, never chase it (Nick 2026-10-12):\n${criteriaText(order.id)}\n\n` +
     `Critic issues, most damaging first (suggestions to verify, not measurements): ${r.issues ? JSON.stringify(r.issues) : 'read this region\'s issues in ' + BRIEF('status.json')}\n\n` +
     (spec ? `Target spec: ${abs(spec.path)}${spec.image ? ' with image ' + abs(spec.image) : ''}. Implement its structure table.\n` + (spec.structure ? `Structure table from the spec:\n${spec.structure}\n` : '') + '\n' : '') +
     `History card for this region:\n${historyCard(order.id)}\n\n` +
@@ -294,7 +295,7 @@ function builderPrompt(order, round, suffix) {
     'Search parameters with recipe.py sweep (many values in one call, scored automatically) rather than one build per turn, and read the seam check (loop_tools.py quick --baseline prints it; the packet has seams.json) before you hand over: a new crease, collar or step at a joint is the side effect that reverted the last two promising candidates.\n\n' +
     `Baseline recipe: ${abs(S.baseline.recipe)}. Baseline: head ${S.baseline.head}, body ${S.baseline.body}, assembly ${S.baseline.assembly}. Baseline packet: ${abs(S.baseline.packet)} (fit.json and measured.json are in it).\n` +
     `Your candidate recipe: ${candidateRecipe(round, order.id + (suffix || ''))}. ${scopeLine} Run recipe.py build --dry-run first: it prints what rebuilds and the minutes it costs. An early head step rebuilds the chain after it (about 25 minutes per build), so prefer changing or adding a step as late in the chain as the region allows. Build it with recipe.py build, run recipe.py contain on every new component step, then packet into ${PACKETS}/<assembly> and diff against the baseline packet.\n` +
-    `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break.\n` +
+    `Keep: the critic must judge ${order.id} better, at least one of its criteria must improve, no region may lose credit, and no invariant may newly break. Advisory criteria never count. Containment is a report: say what moved outside the part and why; never confine a fix whose cause sits outside the mask (v3.16).\n` +
     // round 27: a code builder changed recipe.py and loop_tools.py; it was sound, but nothing made it run the loop's tests
     'If you change any file under art/species-construction/loop/, run node --test art/species-construction/loop/test/ and python -m unittest discover -s art/species-construction/loop/test -p "test_*.py" before you commit, fix or undo the loop change until both pass, and return loopTests as one line with both pass counts (or "not run: no loop file changed").\n' +
     'Return the structured output with recipe set to your candidate recipe path, head and body set to the component directories your assembly used, assembly and packet set to yours, regionChange set to the magnitude of every region in diff.json regionChange (region id to number), regionShift copied exactly from candidate.json regionShift when it has one, every region including the ones at 0.0 (region id to number), containment as one line (the largest foreign-region displacement and where), approach as one recognisable sentence, and reusable options you added.'
@@ -533,6 +534,7 @@ function guarded(cands) {
 function lostCriteria(order, decision) {
   const out = []
   for (const t of [order.id, ...(order.with || [])]) for (const c of RUBRIC.regions[t] || []) {
+    if (c.advisory) continue
     const b = S.regions[t].results[c.id], a = decision.results && decision.results[t] && decision.results[t][c.id]
     if (a && b && credit(a) < credit(b)) out.push(`${c.id} ${b} to ${a}`)
   }
@@ -643,7 +645,7 @@ function snapshot() {
     const r = S.regions[id]
     regions[id] = { score: r.score, results: r.results, attempts: r.attempts, anchorScore: r.anchorScore, lastWorked: r.lastWorked, parked: !!r.parked, parkReason: r.parkReason || null, toolUsed: !!r.toolUsed, methodChanged: r.methodChanged ?? null, issues: r.issues || [], history: r.history.slice(-2) }
   }
-  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, keptLog: S.keptLog, toolChecks: S.toolChecks, toolBlocked: S.toolBlocked, decisions: S.decisions, awaiting: S.awaiting, disputes: S.disputes, escalated: !!S.escalated, keptSinceCold: S.keptSinceCold || 0, regions }
+  return { round: S.round, baseline: S.baseline, lastOrders: S.lastOrders, invariants: S.invariants, specs: S.specs, tools: S.tools, auditGaps: S.auditGaps || [], audit: S.audit || null, keptSinceAudit: S.keptSinceAudit || 0, means: S.means, keptLog: S.keptLog, toolChecks: S.toolChecks, toolBlocked: S.toolBlocked, decisions: S.decisions, awaiting: S.awaiting, disputes: S.disputes, escalated: !!S.escalated, keptSinceCold: S.keptSinceCold || 0, ...(S.coldScoredAssembly ? { coldScoredAssembly: S.coldScoredAssembly } : {}), regions }
 }
 function applyMethod(m, unparkOk) {
   const r = S.regions[m.region]
@@ -671,6 +673,7 @@ if (args.coldBaseline || IDS.some(id => S.regions[id].score === null)) {
   const entry = { round: S.round, kind, assembly: S.baseline.assembly, scores: scoresNow(S), mean: meanOf(S, scoresNow(S)), summary: critique.summary }
   await agent(recordPrompt(S.round, entry, kind === 'rescore' ? '-rescore' : ''), workerOpts({ label: 'record: baseline', phase: 'Baseline', model: 'haiku', effort: 'low' }))
   S.means = [entry.mean]; S.keptLog = []
+  S.coldScoredAssembly = S.baseline.assembly  // v3.16: lets the merge clear a rebased status's needsColdBaseline
   log(`Cold baseline ${S.baseline.assembly}: mean ${entry.mean} ${JSON.stringify(entry.scores)}`)
 }
 

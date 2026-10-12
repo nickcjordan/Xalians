@@ -37,8 +37,8 @@ INK, MUTED = (25, 25, 25), (120, 120, 120)
 NAMES = {
     'R01': 'the head shape and skull (front, side, back)',
     'R02': 'the face: eyes, nose, muzzle and cheeks',
-    'R03': 'the front of the ear fan: locks and cupped inner ears',
-    'R04': 'the rear of the ear fan: how the locks lie from behind, above and in profile',
+    'R03': 'the front of the ears: their outline and cupped inner ears',
+    'R04': 'the back of the ears: their shape from behind, above and in profile',
     'R05': 'the neck and shoulders',
     'R06': 'the trunk: chest, waist and hips',
     'R07': 'the arms and forepaws',
@@ -159,7 +159,34 @@ def sheet_crop(view, region, height=560):
     return im.resize((max(1, round(im.width*s)), height), Image.LANCZOS)
 
 
+def approved_look(region, docs=None):
+    """v3.16 (Nick 2026-10-12): the approved look of a region Nick approved, from <species docs>/approved-looks.json: the
+    packet folder of its lookReference and the approved part names, else None. Readers compare an approved part against
+    this, not the sheet."""
+    path = Path(docs or lt.SPECIES.docs)/'approved-looks.json'
+    if not path.is_file():
+        return None
+    record = json.loads(path.read_text(encoding='utf-8'))
+    parts = [p['part'] for p in record.get('parts', []) if region in p.get('regions', [])]
+    if not parts:
+        return None
+    packet = Path(record['lookReference']['packet'])
+    if not packet.is_absolute():
+        packet = lt.ROOT/packet
+    if not packet.is_dir():
+        raise SystemExit(f'approved look for {region} ({", ".join(parts)}): packet {packet} is missing; rebuild its packet first')
+    return {'packet': packet, 'parts': parts}
+
+
 def reference_panel(packet, region):
+    approved = approved_look(region)
+    if approved:
+        # the approved model's own cells for the region, at the same cameras as A and B
+        grid = region_panel(approved['packet'], region)
+        out = Image.new('RGB', (grid.width, BAND+grid.height), 'white')
+        ImageDraw.Draw(out).text((10, 6), 'Reference (approved look)', fill=INK, font=font(40))
+        out.paste(grid, (0, BAND))
+        return out
     views, studies = REFERENCE[region]
     parts = [sheet_crop(v, region) for v in views]
     for study in studies:
@@ -198,13 +225,13 @@ def whole_figure(assembly_a, assembly_b, scale=.8):
 
 def question(region):
     return (f'Which of A or B is closer to the Reference in {NAMES[region]}? Answer A, B or tie, then name the one '
-            'visible difference that decides it. Judge the shape and softness of the large and medium forms and coat '
-            'masses, not fine strands or colour. The model stands arms down and the sheet has hands on hips; ignore '
+            'visible difference that decides it. Judge the shape and softness of the large and medium forms, not fur, '
+            'strands or color: fur comes later from the texture stage, so a smooth clean form is not a fault. The model stands arms down and the sheet has hands on hips; ignore '
             'that and nothing else about the pose.')
 
 
 WHOLE_QUESTION = ('Which of A or B reads more like the Reference creature as a whole (proportion, balance of head, fan, '
-                  'body and tails, one consistent coat)? Answer A, B or tie, then name the one visible difference that '
+                  'body and tails, one consistent finish)? Answer A, B or tie, then name the one visible difference that '
                   'decides it. The Reference for the whole figure is the first panel of any region; the model is arms down.')
 
 
@@ -232,7 +259,8 @@ def build(baseline, candidate, regions, out, seed):
         save(side_by_side(region_panel(side['A'][0], r), region_panel(side['B'][0], r)),
              {'kind': 'region', 'region': r, 'shows': f'A and B, {NAMES[r]}, same cameras and scale', 'question': question(r)})
         save(reference_panel(candidate, r), {'kind': 'reference', 'region': r,
-             'shows': f'Reference for {NAMES[r]}: the sheet cropped to the region, plus accepted studies'})
+             'shows': (f'Reference for {NAMES[r]}: the approved look of this part, as clay, at the same cameras' if approved_look(r)
+                       else f'Reference for {NAMES[r]}: the sheet cropped to the region, plus accepted studies')})
     save(whole_figure(side['A'][1], side['B'][1]),
          {'kind': 'whole', 'shows': 'A (left) and B (right), each front, left and back in one fixed frame', 'question': WHOLE_QUESTION})
     (out/'pack.json').write_text(json.dumps({'panels': panels, 'answerFormat': 'A, B or tie, plus the one deciding difference'}, indent=1)+'\n')

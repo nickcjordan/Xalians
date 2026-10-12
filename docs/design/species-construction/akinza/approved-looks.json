@@ -1,0 +1,92 @@
+{
+ "about": "Approved looks: every Akinza part Nick has approved, with his words and the date. Briefs, loop orders and reader packs cite this file. An approval protects the look, not its implementation (REFINEMENT.md rule 1): a later step may change how a part is built as long as it still looks like the approved version from every angle. Readers judging an approved part compare against the approved look (reader_pack.py uses lookReference), not the reference sheet. Only Nick reopens an approved part. Times are UTC from the session record.",
+ "updated": "2026-10-12",
+ "lookReference": {
+  "assembly": "assembled-3168",
+  "head": "head-3167",
+  "body": "body-2960",
+  "recipe": "docs/design/species-construction/akinza/recipe-furbase-nose-v3.json",
+  "packet": "untracked/species-construction/akinza/loop/packets/assembled-3168",
+  "note": "The current model carries every approved part below; it is the look a reader compares an approved part against."
+ },
+ "parts": [
+  {
+   "part": "eyes",
+   "regions": ["R02"],
+   "covers": "eyeballs, openings, lids, sockets and the skin around each eye",
+   "approvedOn": "2026-10-12",
+   "approvedIn": "assembled-3149 (eyes v5, recipe-furbase-v5eye5)",
+   "quotes": [
+    {"at": "2026-10-12T16:58Z", "text": "This is much better. Incredibly better."},
+    {"at": "2026-10-12T17:43Z", "text": "I think the eyes look great from here. If you have a tiny few things that you want to fix that I haven't noticed, then go ahead and fix those. Otherwise, I think we can move on from the eyes."}
+   ]
+  },
+  {
+   "part": "mouth",
+   "regions": ["R02"],
+   "covers": "mouth line, lips and chin",
+   "approvedOn": "2026-10-11, confirmed 2026-10-12",
+   "approvedIn": "assembled-3101 (v5m2), refit in assembled-3157 (nose-mouth v1)",
+   "quotes": [
+    {"at": "2026-10-11T17:19Z", "text": "mouth looks good, proceed"},
+    {"at": "2026-10-12T19:40Z", "text": "I think all of the changes you made look great. I'm happy with it all."}
+   ]
+  },
+  {
+   "part": "muzzle",
+   "regions": ["R02"],
+   "covers": "the muzzle mass, the slope from nose to mouth and the cheeks beside it",
+   "approvedOn": "2026-10-12",
+   "approvedIn": "assembled-3157 (nose-mouth v1: muzzle refit as one authored smooth form)",
+   "quotes": [
+    {"at": "2026-10-12T19:40Z", "text": "I think all of the changes you made look great. I'm happy with it all. The only caveat is that the result of the nose is sort of a perfect triangle now"}
+   ],
+   "note": "The caveat was the nose shape, fixed by nose v3."
+  },
+  {
+   "part": "nose",
+   "regions": ["R02"],
+   "covers": "nose leather, nostrils and the groove to the mouth",
+   "approvedOn": "2026-10-12",
+   "approvedIn": "assembled-3168 (nose v3, recipe-furbase-nose-v3, from his approved sketch)",
+   "quotes": [
+    {"at": "2026-10-12T20:26Z", "text": "ok yeah do that", "context": "approving the sketch of the nose shape"},
+    {"at": "2026-10-12T21:00Z", "text": "I think the nose looks good enough to proceed with."}
+   ]
+  },
+  {
+   "part": "ears",
+   "regions": ["R03", "R04"],
+   "covers": "both ears, front, back and profile, and their roots on the skull",
+   "approvedOn": "2026-10-12",
+   "approvedIn": "the analytic ears chosen between A and E (furbase v5), carried unchanged to assembled-3168",
+   "quotes": [
+    {"at": "2026-10-09T14:53Z", "text": "a smooth, defined, symmetrical, clean, rounded ear shape, as you would expect in a small animal like this"},
+    {"at": "2026-10-09T21:22Z", "text": "Prefer something between A and E"},
+    {"at": "2026-10-12T21:00Z", "text": "I think we're ready to take a step back from the head as a whole"}
+   ],
+   "note": "Approved with the head as a whole. Still open: how much fur the ears carry once texture resumes (hold audit 2026-10-12, question 2)."
+  },
+  {
+   "part": "head",
+   "regions": ["R01"],
+   "covers": "the skull and the head silhouette, with the approved face and ears on it",
+   "approvedOn": "2026-10-12",
+   "approvedIn": "the furbase v5 skull, held since 2026-10-10, carried to assembled-3168",
+   "quotes": [
+    {"at": "2026-10-10T20:21Z", "text": "In this case the skull should not have been adjusted much but it got major changes", "context": "rejecting v6 to v6c and keeping the v5 skull"},
+    {"at": "2026-10-12T21:00Z", "text": "I think we're ready to take a step back from the head as a whole"}
+   ],
+   "note": "The neck below the jaw is not part of this approval: the hold audit's finding 1 (the jaw-to-throat corner) is the next part."
+  }
+ ],
+ "reopened": [
+  {
+   "part": "tails, tail root and hips",
+   "regions": ["R10", "R11"],
+   "on": "2026-10-12",
+   "quote": {"at": "2026-10-12T21:17Z", "text": "I'm fine with you adjusting the hips. The comment about the tails being fine, I think, was just to get you to move on because you were spinning your wheels, but I think you probably have some adjustments still to do in this area."},
+   "note": "Lifts the 2026-09-30 and 2026-10-01 tail holds (\"the tails are fine\")."
+  }
+ ]
+}

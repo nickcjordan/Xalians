@@ -67,7 +67,8 @@ def criteria_changes(before, after):
             continue  # a criterion the baseline packet predates; listed under measuredNew
         elif b.get('value') != a.get('value') or b.get('result') != a.get('result'):
             out.append({'id': cid, 'region': a.get('region'), 'before': b.get('value'), 'after': a.get('value'),
-                        'bound': bound(a), 'result': [b.get('result'), a.get('result')]})
+                        'bound': bound(a), 'result': [b.get('result'), a.get('result')],
+                        **({'advisory': True} if a.get('advisory') else {})})
     return out
 
 
@@ -91,18 +92,23 @@ def hint(own, criteria, regions, seams, contained):
         by.setdefault(c['region'], []).append(c)
     for region in sorted(by, key=lambda r: (r != own, r)):
         rows = by[region]
-        now_pass = sum(1 for c in rows if c['result'][0] != 'pass' and c['result'][1] == 'pass')
-        now_fail = sum(1 for c in rows if c['result'][0] == 'pass' and c['result'][1] != 'pass')
-        text = f'{region} measured: {len(rows)} changed'
+        # v3.16 (Nick 2026-10-12): advisory criteria (against the furred sheet) are reported apart and never counted
+        gate = [c for c in rows if not c.get('advisory')]
+        now_pass = sum(1 for c in gate if c['result'][0] != 'pass' and c['result'][1] == 'pass')
+        now_fail = sum(1 for c in gate if c['result'][0] == 'pass' and c['result'][1] != 'pass')
+        text = f'{region} measured: {len(gate)} changed'
         if now_pass or now_fail:
             text += f' ({now_pass} newly passing, {now_fail} newly failing)'
+        if len(rows) > len(gate):
+            text += f', {len(rows)-len(gate)} advisory moved'
         parts.append(text)
     if seams:
         parts.append('seams flagged at '+', '.join(sorted({f"{s['joint']}/{s['view']} {s['kind']}" for s in seams})))
     else:
         parts.append('no new seams flagged')
     bad = sorted({r['region'] for c in contained.values() for r in c.get('worst', []) if r.get('flagged')})
-    parts.append('containment over allowance in '+', '.join(bad) if bad else 'containment within allowance')
+    # v3.16: containment is a report of what moved outside the part, not a rule (hold audit 2026-10-12, S4)
+    parts.append('moved outside the part (report): '+', '.join(bad) if bad else 'nothing moved outside the part past the allowance')
     big = sorted(regions.items(), key=lambda kv: -kv[1])[:3]
     big = [(r, m) for r, m in big if m >= .0005]
     parts.append('picture change '+', '.join(f'{r} {m:.4f}' for r, m in big) if big else 'picture change below .0005 everywhere')

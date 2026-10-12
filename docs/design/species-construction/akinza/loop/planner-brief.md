@@ -12,7 +12,7 @@ Read the work order below, then the builder brief beside this file for the coord
 - **A time budget.** Run `python art/species-construction/loop/recipe.py run-plan <your plan> --dry-run --top 3` before you return, and keep the estimate under about 60 minutes of wall time: cut the weakest variants, narrow sweeps, or move edits later in the chain. The estimate schedules builds on the share of the Blender slots this plan gets while the other component's plan runs, and prices each candidate by the measured median of past candidates (round 21's plans were estimated at 27 and 17 minutes and ran 63 and 90). The budget holds for a refine plan too. Never cut a variant you believe in to save minutes; cut the ones you would rank last.
 - **Start points.** If the order names a promising branch or a tool starter, set it as `start` (with `attachAfter` when the baseline has added steps after the old sink) and vary from there.
 - **Pairs.** A paired order (for example the ear fan front and back) must leave neither region worse; vary the shared tool's parameters for both.
-- **Modeling scope.** Plan shapes at the scale of the outline and the coat masses: lock counts, lengths, tips, overlaps, rounded sections. Never plan strands, fur texture, color or fine creases; those belong to the surface phase (see the builder brief).
+- **Modeling scope.** Plan the forms under the fur: outline, proportions, rounded sections and clean joins. Never plan fur locks, tufts, strands, texture, color or fine creases; fur comes from the texture stage (see Modeling scope below). Never rank a variant on an advisory criterion.
 
 ## When a plan cannot do it
 
@@ -24,9 +24,9 @@ If the order says this is the refine pass, read the first plan's results (scores
 
 Return the structured output: the plan path, the number of variants, the approach as one recognisable sentence, and `needsCode`. American English, no em dashes.
 
-## Modeling scope (2026-10-02, Nick: textures and painting have not started)
+## Modeling scope (2026-10-02, revised 2026-10-12 to Nick's fur rulings)
 
-The model is construction geometry, judged as untextured clay. It owns everything visible in the outline or at the scale of the coat masses: overall shapes and proportions, lock and tuft counts, lengths, directions and pointed tips that break the outline, how masses overlap, and soft rounded cross sections with no facets, serrated edges, seams or spikes. It does not own anything finer than a lock: fur strands, fluffiness, color, markings and fine creases belong to the surface phase (painted textures, normal maps or a fur shader), recorded in `../surface-backlog.md`. Words like shaggy, fluffy, furred or soft in the rubric mean clump-scale form, never strand detail. Do not model strands, and do not fail or reject a coat for lacking them.
+The model is construction geometry, judged as untextured clay. It owns the overall shapes and proportions, the forms under the fur, their cross sections and how the parts join, with soft, clean, rounded surfaces and no lumps, dents, creases, facets, serrated edges, seams or spikes. Fur is not modeled. Nick, 2026-10-08: "rely more on the fur texture we add later instead of trying to create shapes to make fur"; 2026-10-09: the sheet's fur was "intended to be tufts of hair, not feathers", and it should be "shorter on the face and the neck and the head, and longer on the tips of the ears". So the geometry has no fur locks, shingles, tufts or pointed coat tips, and no form fails for lacking them; fur (tufts of hair), strands, color and markings belong to the texture stage (`../surface-backlog.md`). The painted sheet's outline includes that fur, so the clay sits inside it: the measured criteria that compare clay with the sheet are advisory, not gates (rubric.json, 2026-10-12). For a part Nick has approved, the target is his approved look (`../approved-looks.json`), not the sheet.
 
 ## Repair pass (2026-10-03, after round 24)
 

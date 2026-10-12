@@ -12,7 +12,10 @@
     "view": "front",
     "band": "head",
     "metric": "iou",
-    "min": 0.9
+    "min": 0.9,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares the bare clay silhouette with the painted, furred sheet (or the painted back study), so the clean shapes Nick chose fail it by design (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R01.2",
@@ -22,7 +25,10 @@
     "view": "left",
     "band": "head",
     "metric": "iou",
-    "min": 0.9
+    "min": 0.9,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares the bare clay silhouette with the painted, furred sheet (or the painted back study), so the clean shapes Nick chose fail it by design (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R01.3",
@@ -62,7 +68,10 @@
     "view": "back",
     "at": 0.18,
     "pick": "central",
-    "max": 1.15
+    "max": 1.15,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or depth with the same row of the painted, furred sheet; the clay is meant to sit inside the fur outline (hold audit 2026-10-12, S1 and finding 6). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R01.7",
@@ -72,7 +81,10 @@
     "view": "left",
     "at": 0.22,
     "pick": "central",
-    "max": 1.15
+    "max": 1.15,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or depth with the same row of the painted, furred sheet; the clay is meant to sit inside the fur outline (hold audit 2026-10-12, S1 and finding 6). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R01.8",
@@ -157,7 +169,10 @@
     "view": "front",
     "key": "earSpan",
     "min": 0.97,
-    "max": 1.03
+    "max": 1.03,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or span with the painted, furred sheet (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R03.2",
@@ -167,7 +182,10 @@
     "view": "front",
     "band": "head",
     "metric": "missing",
-    "max": 0.06
+    "max": 0.06,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares the bare clay silhouette with the painted, furred sheet (or the painted back study), so the clean shapes Nick chose fail it by design (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R03.3",
@@ -230,7 +248,10 @@
     "view": "back",
     "band": "head",
     "metric": "iou",
-    "min": 0.9
+    "min": 0.9,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares the bare clay silhouette with the painted, furred sheet (or the painted back study), so the clean shapes Nick chose fail it by design (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R04.2",
@@ -240,7 +261,10 @@
     "view": "left",
     "band": "head",
     "metric": "extra",
-    "max": 0.06
+    "max": 0.06,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares the bare clay silhouette with the painted, furred sheet (or the painted back study), so the clean shapes Nick chose fail it by design (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R04.3",
@@ -283,7 +307,10 @@
     "view": "back",
     "at": 0.2,
     "pick": "central",
-    "max": 1.15
+    "max": 1.15,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or depth with the same row of the painted, furred sheet; the clay is meant to sit inside the fur outline (hold audit 2026-10-12, S1 and finding 6). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R04.7",
@@ -306,7 +333,10 @@
     "view": "front",
     "key": "neck",
     "min": 0.9,
-    "max": 1.1
+    "max": 1.1,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or span with the painted, furred sheet (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R05.2",
@@ -316,7 +346,10 @@
     "view": "left",
     "key": "neck",
     "min": 0.9,
-    "max": 1.15
+    "max": 1.15,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or span with the painted, furred sheet (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R05.3",
@@ -326,7 +359,10 @@
     "view": "front",
     "key": "shoulders",
     "min": 0.93,
-    "max": 1.07
+    "max": 1.07,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or span with the painted, furred sheet (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R05.4",
@@ -368,7 +404,10 @@
     "source": "measure",
     "view": "front",
     "key": "waist",
-    "max": 1.1
+    "max": 1.1,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or span with the painted, furred sheet (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R06.3",
@@ -415,7 +454,10 @@
      "pick": "left"
     },
     "min": -0.01,
-    "max": 0.01
+    "max": 0.01,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay edge with the painted, furred sheet (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R06.9",
@@ -434,7 +476,10 @@
     "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: trunk band IoU at least .90",
     "source": "posed",
     "band": "trunk",
-    "min": 0.9
+    "min": 0.9,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: a band in the heuristic hands-on-hips rig pose against a sheet whose own front and back figures disagree about the stance; no shape fix can pass it (hold audit 2026-10-12, finding 9). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R06.11",
@@ -448,7 +493,10 @@
     ],
     "reduce": "mean",
     "min": 0.97,
-    "max": 1.1
+    "max": 1.1,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares bare clay trunk sections with the painted, furred sheet's trunk outline (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R06.12",
@@ -463,7 +511,10 @@
     ],
     "reduce": "min",
     "min": 0.95,
-    "max": 1.08
+    "max": 1.08,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares bare clay trunk sections with the painted, furred sheet's trunk outline (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R06.13",
@@ -487,7 +538,10 @@
      "reduce": "min"
     },
     "min": 0.93,
-    "max": 1.08
+    "max": 1.08,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares bare clay trunk sections with the painted, furred sheet's trunk outline (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R06.14",
@@ -503,7 +557,10 @@
      "at": 0.44
     },
     "min": 0.9,
-    "max": 1.15
+    "max": 1.15,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares bare clay trunk sections with the painted, furred sheet's trunk outline (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R06.16",
@@ -578,7 +635,10 @@
     "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: arm band IoU at least .90 (upper arm and forearm lengths and thickness)",
     "source": "posed",
     "band": "arm",
-    "min": 0.9
+    "min": 0.9,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: a band in the heuristic hands-on-hips rig pose against a sheet whose own front and back figures disagree about the stance; no shape fix can pass it (hold audit 2026-10-12, finding 9). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    }
   ],
   "R08": [
@@ -631,7 +691,10 @@
     ],
     "pick": "left",
     "reduce": "min",
-    "max": 1.15
+    "max": 1.15,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or depth with the same row of the painted, furred sheet; the clay is meant to sit inside the fur outline (hold audit 2026-10-12, S1 and finding 6). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R08.6",
@@ -645,7 +708,10 @@
     ],
     "pick": "right",
     "reduce": "min",
-    "max": 1.15
+    "max": 1.15,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or depth with the same row of the painted, furred sheet; the clay is meant to sit inside the fur outline (hold audit 2026-10-12, S1 and finding 6). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R08.7",
@@ -655,7 +721,10 @@
     "view": "front",
     "at": 0.85,
     "pick": "left",
-    "max": 1.1
+    "max": 1.1,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or depth with the same row of the painted, furred sheet; the clay is meant to sit inside the fur outline (hold audit 2026-10-12, S1 and finding 6). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R08.8",
@@ -675,7 +744,10 @@
      "at": 0.68,
      "pick": "left"
     },
-    "max": 1.2
+    "max": 1.2,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay proportion with the same proportion read off the painted, furred sheet (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R08.9",
@@ -694,7 +766,10 @@
     "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: thigh band IoU at least .85 (the sheet places the leg about .03 apart between its front and back figures, so one 3D leg tops out near .85 to .90; R08 spec, 2026-10-01)",
     "source": "posed",
     "band": "thigh",
-    "min": 0.85
+    "min": 0.85,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: a band in the heuristic hands-on-hips rig pose against a sheet whose own front and back figures disagree about the stance; no shape fix can pass it (hold audit 2026-10-12, finding 9). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R08.11",
@@ -702,7 +777,10 @@
     "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: shin band IoU at least .72 (same sheet inconsistency; an exact-spec leg reaches about .71 unshifted)",
     "source": "posed",
     "band": "shin",
-    "min": 0.72
+    "min": 0.72,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: a band in the heuristic hands-on-hips rig pose against a sheet whose own front and back figures disagree about the stance; no shape fix can pass it (hold audit 2026-10-12, finding 9). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    }
   ],
   "R09": [
@@ -767,7 +845,10 @@
      "pick": "right",
      "reduce": "min"
     },
-    "min": 0.8
+    "min": 0.8,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay proportion with the same proportion read off the painted, furred sheet (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R09.7",
@@ -777,7 +858,10 @@
     "view": "back",
     "at": 0.96,
     "pick": "right",
-    "min": 0.85
+    "min": 0.85,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares a bare clay width or depth with the same row of the painted, furred sheet; the clay is meant to sit inside the fur outline (hold audit 2026-10-12, S1 and finding 6). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R09.8",
@@ -797,7 +881,10 @@
     "text": "Posed to the sheet (hands on hips), tail-free halves, mean of front, left and back: foot band IoU at least .85",
     "source": "posed",
     "band": "foot",
-    "min": 0.85
+    "min": 0.85,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: a band in the heuristic hands-on-hips rig pose against a sheet whose own front and back figures disagree about the stance; no shape fix can pass it (hold audit 2026-10-12, finding 9). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    }
   ],
   "R10": [
@@ -809,7 +896,10 @@
     "view": "back-r03",
     "band": "trunk",
     "metric": "iou",
-    "min": 0.74
+    "min": 0.74,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares the bare clay silhouette with the painted, furred sheet (or the painted back study), so the clean shapes Nick chose fail it by design (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R10.2",
@@ -819,7 +909,10 @@
     "view": "back-r03",
     "band": "legs",
     "metric": "iou",
-    "min": 0.72
+    "min": 0.72,
+    "advisory": true,
+    "advisorySince": "2026-10-12",
+    "advisoryWhy": "Advisory, not a gate: compares the bare clay silhouette with the painted, furred sheet (or the painted back study), so the clean shapes Nick chose fail it by design (hold audit 2026-10-12, S1). Still measured and reported in measured.json; it no longer counts toward the region score or the keep guard. Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
    },
    {
     "id": "R10.3",
@@ -904,23 +997,15 @@
   ],
   "R12": [
    {
-    "id": "R12.1",
+    "id": "R12.6",
     "kind": "visual",
-    "text": "Every part is at one level of development: body coat masses (cheek, chest, forearm or calf tufts) match the head fan's, or the fan is simplified to the body's level",
+    "text": "Whole figure against Nick's approved look (added 2026-10-12, replacing R12.1 and R12.2): the body is finished to the same level as the approved head (smooth, soft clay forms; fur comes from the texture stage), with no part modeled as fur locks, shingles or tufts and no part reading as a different idiom from the approved head (approved-looks.json)",
     "images": [
      "m02",
-     "m03"
-    ]
-   },
-   {
-    "id": "R12.2",
-    "kind": "visual",
-    "text": "One coat idiom is used across the model: fan front, fan rear and body masses read as the same kind of fur lock",
-    "images": [
-     "m04",
-     "m05",
-     "m02"
-    ]
+     "m03",
+     "m04"
+    ],
+    "addedOn": "2026-10-12"
    },
    {
     "id": "R12.3",
@@ -952,7 +1037,7 @@
    }
   ]
  },
- "revised": "2026-09-30: gestalt and fixed-row criteria added after Nick said the effort was on the wrong parts; see loop/gap-audit-0226.md; 2026-10-02: R06.11 to R06.14 and R06.16 added (trunk side profile from mesh sections, source trunk); R06.15 left out because it double-counts the lumbar hollow; 2026-10-02 (after round 21): R06.2, R06.6 and R06.7 retired as measuring the arm or the wrong sheet rows, superseded by R06.12 and R06.13 (method review prerequisite H1 and H2); R06.3, R06.5 and R06.9 also read the posed renders (H4)",
+ "revised": "2026-09-30: gestalt and fixed-row criteria added after Nick said the effort was on the wrong parts; see loop/gap-audit-0226.md; 2026-10-02: R06.11 to R06.14 and R06.16 added (trunk side profile from mesh sections, source trunk); R06.15 left out because it double-counts the lumbar hollow; 2026-10-02 (after round 21): R06.2, R06.6 and R06.7 retired as measuring the arm or the wrong sheet rows, superseded by R06.12 and R06.13 (method review prerequisite H1 and H2); R06.3, R06.5 and R06.9 also read the posed renders (H4); 2026-10-12 (Nick: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"): every measured criterion that compares bare clay with the painted, furred sheet or the painted back study, and every posed band, is advisory (advisory: true, advisoryWhy on each): still measured and reported, never counted in a region score or the keep guard. Advisory: R01.1, R01.2, R01.6, R01.7, R03.1, R03.2, R04.1, R04.2, R04.6, R05.1, R05.2, R05.3, R06.1, R06.8, R06.10, R06.11, R06.12, R06.13, R06.14, R07.6, R08.5, R08.6, R08.7, R08.8, R08.10, R08.11, R09.5, R09.7, R09.9, R10.1, R10.2. R06.16 (belly line straightness, measured against the model's own line, not the sheet) stays a gate. R12.1 and R12.2 retired for R12.6 (hold audit 2026-10-12, S1, S6, findings 2, 9 and 11; LOOP-v3.md v3.16)",
  "retired": [
   {
    "id": "R06.2",
@@ -1003,6 +1088,30 @@
    "min": 0.9,
    "retiredOn": "2026-10-02",
    "why": "chest over waist from the same arm-covered silhouette rows (specs/R06.md H1). Superseded by R06.13, the same ratio from mesh sections."
+  },
+  {
+   "id": "R12.1",
+   "kind": "visual",
+   "text": "Every part is at one level of development: body coat masses (cheek, chest, forearm or calf tufts) match the head fan's, or the fan is simplified to the body's level",
+   "images": [
+    "m02",
+    "m03"
+   ],
+   "retiredOn": "2026-10-12",
+   "why": "asked for one modeled coat-lock idiom across the body (fan locks, cheek, chest, forearm and calf tufts), which Nick's 2026-10-08 ruling made obsolete: fur comes from the texture stage, and his approved head is smooth clay. Replaced by R12.6, a whole-figure read against Nick's approved look (hold audit 2026-10-12, finding 11). Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
+  },
+  {
+   "id": "R12.2",
+   "kind": "visual",
+   "text": "One coat idiom is used across the model: fan front, fan rear and body masses read as the same kind of fur lock",
+   "images": [
+    "m04",
+    "m05",
+    "m02"
+   ],
+   "retiredOn": "2026-10-12",
+   "why": "asked for one modeled coat-lock idiom across the body (fan locks, cheek, chest, forearm and calf tufts), which Nick's 2026-10-08 ruling made obsolete: fur comes from the texture stage, and his approved head is smooth clay. Replaced by R12.6, a whole-figure read against Nick's approved look (hold audit 2026-10-12, finding 11). Nick 2026-10-12: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"."
   }
- ]
+ ],
+ "advisory": "A criterion with advisory: true is measured and reported (measured.json, the critic copies it, briefs show it labeled \"advisory, not a gate\") but never counts toward a region score, the keep guard (no measured regression), the measured tie or the gate. Added 2026-10-12, LOOP-v3.md v3.16."
 }

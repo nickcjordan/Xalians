@@ -66,11 +66,11 @@
   "visibleChange": 0.005
  },
  "baseline": {
-  "head": "head-2996",
+  "head": "head-3167",
   "body": "body-2960",
-  "assembly": "assembled-2999",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2999",
-  "recipe": "docs/design/species-construction/akinza/recipe.json"
+  "assembly": "assembled-3168",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-3168",
+  "recipe": "docs/design/species-construction/akinza/recipe-furbase-nose-v3.json"
  },
  "round": 35,
  "lastOrders": [
@@ -295,7 +295,14 @@
     }
    ],
    "lastWorked": 33,
-   "toolUsed": false
+   "toolUsed": false,
+   "approved": {
+    "on": "2026-10-12",
+    "parts": "head",
+    "quote": "Nick 2026-10-12: \"I think we're ready to take a step back from the head as a whole\"",
+    "look": "docs/design/species-construction/akinza/approved-looks.json",
+    "assembly": "assembled-3168"
+   }
   },
   "R02": {
    "name": "Face",
@@ -407,7 +414,14 @@
     }
    ],
    "lastWorked": 27,
-   "toolUsed": true
+   "toolUsed": true,
+   "approved": {
+    "on": "2026-10-12",
+    "parts": "eyes, nose, mouth, muzzle",
+    "quote": "Nick 2026-10-12: \"I think the eyes look great from here\"; \"I think all of the changes you made look great. I'm happy with it all\"; \"I think the nose looks good enough to proceed with\"; 2026-10-11: \"mouth looks good, proceed\"",
+    "look": "docs/design/species-construction/akinza/approved-looks.json",
+    "assembly": "assembled-3168"
+   }
   },
   "R03": {
    "name": "Ear fan front",
@@ -598,7 +612,14 @@
    ],
    "lastWorked": 35,
    "toolUsed": true,
-   "methodChanged": 33
+   "methodChanged": 33,
+   "approved": {
+    "on": "2026-10-12",
+    "parts": "ears",
+    "quote": "Nick 2026-10-09: \"Prefer something between A and E\"; Nick 2026-10-12: \"I think we're ready to take a step back from the head as a whole\"",
+    "look": "docs/design/species-construction/akinza/approved-looks.json",
+    "assembly": "assembled-3168"
+   }
   },
   "R04": {
    "name": "Ear fan rear and profile",
@@ -719,7 +740,14 @@
    ],
    "lastWorked": 35,
    "methodChanged": 32,
-   "toolUsed": true
+   "toolUsed": true,
+   "approved": {
+    "on": "2026-10-12",
+    "parts": "ears",
+    "quote": "Nick 2026-10-09: \"Prefer something between A and E\"; Nick 2026-10-12: \"I think we're ready to take a step back from the head as a whole\"",
+    "look": "docs/design/species-construction/akinza/approved-looks.json",
+    "assembly": "assembled-3168"
+   }
   },
   "R05": {
    "name": "Neck and shoulders",
@@ -1403,13 +1431,16 @@
    "issues": [],
    "attempts": 0,
    "anchorScore": 4.2,
-   "parked": true,
-   "parkReason": "Nick 2026-09-30: the tails are fine",
+   "parked": false,
    "history": [],
    "lastWorked": 1,
-   "hold": true,
-   "holdReason": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head",
-   "toolUsed": false
+   "hold": false,
+   "toolUsed": false,
+   "holdLifted": {
+    "on": "2026-10-12",
+    "was": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head",
+    "quote": "Nick 2026-10-12: \"I'm fine with you adjusting the hips. The comment about the tails being fine, I think, was just to get you to move on because you were spinning your wheels, but I think you probably have some adjustments still to do in this area.\""
+   }
   },
   "R11": {
    "name": "Tail root and pelvis",
@@ -1424,13 +1455,16 @@
    "issues": [],
    "attempts": 0,
    "anchorScore": 1.2,
-   "parked": true,
-   "parkReason": "Nick 2026-09-30: the tails are fine",
+   "parked": false,
    "history": [],
    "lastWorked": null,
-   "hold": true,
-   "holdReason": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head",
-   "toolUsed": false
+   "hold": false,
+   "toolUsed": false,
+   "holdLifted": {
+    "on": "2026-10-12",
+    "was": "Nick 2026-10-01: the tail is fine; spend the work on the legs, body, arms, face and head",
+    "quote": "Nick 2026-10-12: \"I'm fine with you adjusting the hips. The comment about the tails being fine, I think, was just to get you to move on because you were spinning your wheels, but I think you probably have some adjustments still to do in this area.\""
+   }
   },
   "R12": {
    "name": "Whole-form coherence",
@@ -1468,11 +1502,15 @@
    ],
    "attempts": 0,
    "anchorScore": 1,
-   "parked": true,
-   "parkReason": "Coherence follows the part fixes; reopen when parts reach 5",
+   "parked": false,
    "history": [],
    "lastWorked": null,
-   "toolUsed": false
+   "toolUsed": false,
+   "unparked": {
+    "on": "2026-10-12",
+    "was": "Coherence follows the part fixes; reopen when parts reach 5",
+    "why": "hold audit 2026-10-12 finding 11 and S10: the park condition (\"reopen when parts reach 5\") kept coherence from ever being worked; R12.1 and R12.2 retired for R12.6, a whole-figure read against Nick's approved look"
+   }
   }
  },
  "v1": "status-v1.json (16 rounds, weighted 5.12 to 6.05 on the 0 to 10 scale)",
@@ -1515,7 +1553,8 @@
   "2026-10-08: Round 33 (37 min): R01 reverted; assembled-2964; why: the code builder candidate did not read better than the baseline: {\"R01\":{\"verdict\":\"worse\",\"better\":1,\"worse\":2,\"reason\":\"B's fan has a broken lower edge with hanging pointed tips that comes closer to the reference's sh | R06 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"chest plane forward\",\"per\":{\"R06\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B's torso tapers more evenly from the shoulders into a narrower pinched waist | cold rescore 5.507 to 5.028 | waiting for Nick: reverts R01 (critic score 5.028)",
   "2026-10-08: Nick approved the capped ear-outline pass (two rounds, ears only: ordersPerRound 1, R03 pinned, hard stop 35), then the texture phase without a stop for review. Plateau window restarted at the round 33 rescore.",
   "2026-10-08: Round 34 (66 min): R03 KEPT; assembled-2999; readers R03 better 2-1, R04 better 2-1; criteria R03.1 fail to pass | waiting for Nick: reverts R01 (critic score 5.297)",
-  "2026-10-08: Round 35 (67 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"rim needles fused, steeper V\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B has a raised tuft at the top center of the crown, like the pointed | waiting for Nick: reverts R01 (critic score 5.297)"
+  "2026-10-08: Round 35 (67 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"rim needles fused, steeper V\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B has a raised tuft at the top center of the crown, like the pointed | waiting for Nick: reverts R01 (critic score 5.297)",
+  "2026-10-12: Rebased to assembled-3168 (recipe-furbase-nose-v3.json, head-3167, body-2960) from assembled-2999 (hold audit S13); needsColdBaseline set, so the next loop_state.py args asks for a cold baseline before any order. Measured criteria against the painted, furred sheet and the posed bands are advisory, not gates (rubric.json; Nick: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"). R01 to R04 marked approved (approved-looks.json) and no longer ordered; the stale R01 reverts decision closed; R10 and R11 holds lifted on Nick's 2026-10-12 message; R12 unparked. The loop was not run (LOOP-v3.md v3.16)."
  ],
  "decisionsForNick": [
   {
@@ -1682,14 +1721,29 @@
    "kind": "reverts",
    "region": "R01",
    "evidence": "untracked/species-construction/akinza/loop/packets/assembled-2964",
-   "question": "R01 (Head silhouette) has had three reverted orders in a row (rounds 19, 29, 33). Keep working it, change its method, or set it aside?"
+   "question": "R01 (Head silhouette) has had three reverted orders in a row (rounds 19, 29, 33). Keep working it, change its method, or set it aside?",
+   "answer": "Closed 2026-10-12 as stale (hold audit S10): the head was rebuilt outside the loop (furbase v5 skull, the ears between A and E, eyes v5eye5, nose v3) and Nick approved it: Nick 2026-10-12: \"I think we're ready to take a step back from the head as a whole\". R01 is now an approved part (approved-looks.json), not ordered by the loop.",
+   "answered": "2026-10-12",
+   "closedBy": "rebase"
   }
  ],
- "awaiting": {
-  "R01": "R01 (Head silhouette) has had three reverted orders in a row (rounds 19, 29, 33). Keep working it, change its method, or set it aside?"
- },
+ "awaiting": {},
  "disputes": {},
  "escalated": false,
  "keptSinceCold": 1,
- "clock": 1791433084
+ "clock": 1791433084,
+ "rebased": {
+  "on": "2026-10-12",
+  "from": {
+   "head": "head-2996",
+   "body": "body-2960",
+   "assembly": "assembled-2999",
+   "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2999",
+   "recipe": "docs/design/species-construction/akinza/recipe.json"
+  },
+  "to": "assembled-3168",
+  "why": "Hold audit 2026-10-12 (S13): the loop state described assembled-2999 and the pre-furbase head; resuming from it would undo the eyes, nose, mouth, muzzle, ears and head Nick approved since. Region scores, results and issues below are still those of assembled-2999 under the old rubric until the cold baseline (needsColdBaseline) rescores assembled-3168.",
+  "scoresFrom": "assembled-2999"
+ },
+ "needsColdBaseline": "assembled-3168"
 }

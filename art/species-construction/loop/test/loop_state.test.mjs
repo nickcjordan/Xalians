@@ -27,9 +27,9 @@ test('args: under 20 KB, byte-identical across runs, slim shape', { skip: !haveP
   assert.ok(x.equals(y), 'args.json differs between runs')
   assert.ok(x.length < 40960  /* v2 sent about 48 KB; the method lines arrived with v3 and grew to about 6 KB after the round 21 method review */, `args.json is ${x.length} bytes`)
   const args = JSON.parse(x.toString('utf8'))
-  assert.deepEqual(Object.keys(args.status.regions.R01).sort().slice(0, 4), ['anchorScore', 'attempts', 'component', 'history'])
+  assert.deepEqual(Object.keys(args.status.regions.R05).sort().slice(0, 4), ['anchorScore', 'attempts', 'component', 'history'])
   assert.ok(args.status.regions.R01.history.length <= 4)
-  assert.ok(Object.values(args.rubric.regions).flat().every(c => Object.keys(c).join() === 'id,kind'))
+  assert.ok(Object.values(args.rubric.regions).flat().every(c => ['id,kind', 'id,kind,advisory'].includes(Object.keys(c).join())))  // advisory since v3.16
   assert.ok(args.status.baseline.recipe, 'baseline carries the recipe path')
   assert.ok(Array.isArray(args.status.means) && args.status.means.length >= 1)  // a method review restarts the window at one mean
   assert.deepEqual(args.pools.join, ['R05'])
@@ -53,8 +53,11 @@ test('merge: a slim workflow result folds back into the full status without losi
   assert.ok(a.ret.status.round > full.round, 'the fake run should play rounds')
   const resultFile = join(dir, 'result.json')
   writeFileSync(resultFile, JSON.stringify(b.ret))
+  const liveRecipe = P.recipe, recipeBefore = existsSync(liveRecipe) ? readFileSync(liveRecipe) : null
   const m = run('merge', 'akinza', resultFile, '--status', statusFile, '--out', dir, '--note', 'test merge')
   assert.equal(m.status, 0, m.stderr)
+  // v3.16: a merge with --out promotes the recipe beside its status, never over the live recipe.json
+  if (recipeBefore) assert.ok(readFileSync(liveRecipe).equals(recipeBefore), 'merge --out overwrote the live recipe.json')
   const merged = JSON.parse(readFileSync(join(dir, 'status.json'), 'utf8'))
   const want = a.ret.status
   assert.equal(merged.round, want.round)
@@ -84,7 +87,7 @@ test('replay: the round 14 journal gives the status replay_r14.py produced (R08 
   const after = spawnSync('git', ['show', 'ebe1a999:docs/design/species-construction/akinza/loop/status.json'], { encoding: 'utf8', cwd: REPO })
   if (before.status !== 0 || after.status !== 0) return  // no history in a shallow clone
   const bf = join(dir, 'before.json'); writeFileSync(bf, before.stdout)
-  const r = run('replay', 'akinza', J14, '--status', bf, '--out', dir)
+  const r = run('replay', 'akinza', J14, '--status', bf, '--out', dir, '--as-of', '2026-10-01')  // judged before the v3.16 advisory flags
   assert.equal(r.status, 0, r.stderr)
   const mine = JSON.parse(readFileSync(join(dir, 'status.json'), 'utf8')), want = JSON.parse(after.stdout)
   for (const k of ['round', 'lastOrders', 'invariants', 'baseline', 'specs', 'limits']) assert.deepEqual(mine[k], want[k], k)

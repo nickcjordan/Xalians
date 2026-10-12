@@ -192,6 +192,9 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
             out['toolUsed'] = True
         if r.get('methodChanged') is not None:
             out['methodChanged'] = r['methodChanged']
+        if r.get('approved'):
+            # v3.16: a part Nick approved (approved-looks.json) is never ordered and never blocks the gate
+            out['approved'] = True
         if r.get('hold'):
             # held by Nick's direction: never ordered, whatever its score (the tails, 2026-10-01)
             out['hold'] = True
@@ -244,9 +247,9 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
     if status.get('auditGaps'):
         slim['auditGaps'] = [{'rank': g['rank'], 'region': g['region'], 'gap': trim(g['gap'], 220), 'structural': bool(g.get('structural'))} for g in status['auditGaps']]
     if rubric_texts:
-        rub = {'regions': {rid: [{'id': c['id'], 'kind': c['kind'], 'text': c.get('text', '')} for c in cs] for rid, cs in rubric['regions'].items()}}
+        rub = {'regions': {rid: [{'id': c['id'], 'kind': c['kind'], 'text': c.get('text', ''), **advisory(c)} for c in cs] for rid, cs in rubric['regions'].items()}}
     else:
-        rub = {'regions': {rid: [{'id': c['id'], 'kind': c['kind']} for c in cs] for rid, cs in rubric['regions'].items()}}
+        rub = {'regions': {rid: [{'id': c['id'], 'kind': c['kind'], **advisory(c)} for c in cs] for rid, cs in rubric['regions'].items()}}
     cfg = {'key': species}
     if config:
         if config.get('pairs'):
@@ -258,9 +261,29 @@ def build_args(species, rounds=None, cold=False, rubric_texts=False, status_path
         args['tools'] = slim_tools
     if rounds is not None:
         args['rounds'] = rounds
-    if cold:
+    if cold or status.get('needsColdBaseline'):
+        # v3.16: a rebased status (a baseline built outside the loop) is scored cold before any order
         args['coldBaseline'] = True
     return args
+
+
+def rubric_as_of(rubric, day):
+    """The rubric as a run on `day` (YYYY-MM-DD) judged it: an advisory flag added after that day is dropped, so a replay of an
+    older journal scores as its run did (v3.16)."""
+    if not day:
+        return rubric
+    out = json.loads(json.dumps(rubric))
+    for cs in out['regions'].values():
+        for c in cs:
+            if c.get('advisory') and str(c.get('advisorySince', '')) > day:
+                for k in ('advisory', 'advisorySince', 'advisoryWhy'):
+                    c.pop(k, None)
+    return out
+
+
+def advisory(c):
+    # v3.16 (Nick 2026-10-12): an advisory criterion is reported, never a gate; the core reads the flag
+    return {'advisory': True} if c.get('advisory') else {}
 
 
 def dump_compact(obj):
@@ -295,12 +318,15 @@ def cmd_args(a):
 # ---- merge ------------------------------------------------------------------------------------
 
 REGION_FIELDS = ('score', 'results', 'attempts', 'anchorScore', 'lastWorked', 'toolUsed', 'methodChanged')
-DROP_KEYS = {'methods'}
+DROP_KEYS = {'methods', 'coldScoredAssembly'}  # v3.16: coldScoredAssembly only spends needsColdBaseline
 
 
-def merge_status(full, returned, d, species):
-    """Fold a workflow's returned (slim) status into the full status.json content."""
+def merge_status(full, returned, d, species, recipe_out=None):
+    """Fold a workflow's returned (slim) status into the full status.json content. recipe_out is where the adopted
+    recipe is promoted (default the species' recipe.json; merge --out writes it beside the status instead, so a test or a
+    dry merge never overwrites the live recipe, as the merge test did after the 2026-10-12 rebase)."""
     S = full
+    recipe_out = Path(recipe_out) if recipe_out else d['recipe']
     for rid, r in returned.get('regions', {}).items():
         old = S['regions'].setdefault(rid, {})
         for k in REGION_FIELDS:
@@ -323,6 +349,9 @@ def merge_status(full, returned, d, species):
     for k in ('round', 'lastOrders', 'invariants'):
         if k in returned:
             S[k] = returned[k]
+    # v3.16: a run that scored the rebased baseline cold spends the flag (needsColdBaseline names that assembly)
+    if S.get('needsColdBaseline') and returned.get('coldScoredAssembly') == S['needsColdBaseline']:
+        S.setdefault('notes', []).append(f"{date.today().isoformat()}: needsColdBaseline {S.pop('needsColdBaseline')} cleared: the run scored it cold.")
     for rid, sp in (returned.get('specs') or {}).items():
         have = (S.setdefault('specs', {})).get(rid)
         # args sends repo-relative spec paths; an unchanged path keeps the stored (absolute) entry
@@ -336,7 +365,8 @@ def merge_status(full, returned, d, species):
         if cand and cand.replace('\\', '/') != canon:
             src = Path(cand) if Path(cand).is_absolute() else REPO / cand
             if src.exists():
-                shutil.copyfile(src, d['recipe'])
+                recipe_out.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(src, recipe_out)
                 b['recipe'] = canon
         if 'recipe' in b or 'recipe' in S.get('baseline', {}):
             b.setdefault('recipe', S.get('baseline', {}).get('recipe', canon))
@@ -396,7 +426,7 @@ def cmd_merge(a):
     # a workflow result ({status}) or a round record ({state}, written every round since v3)
     returned = result.get('status') or result.get('state') or result
     status_path = Path(a.status) if a.status else d['loop'] / 'status.json'
-    S = merge_status(read_json(status_path), returned, d, a.species)
+    S = merge_status(read_json(status_path), returned, d, a.species, Path(a.out) / 'recipe.json' if a.out else None)
     if a.auto_note:
         # audit 2026-10-07 bug 11: the round's verdicts come from its record, never from a hand-written summary
         import loop_report
@@ -505,7 +535,7 @@ def cmd_replay(a):
     d = species_dirs(a.species)
     status_path = Path(a.status) if a.status else d['loop'] / 'status.json'
     S = read_json(status_path)
-    rubric = read_json(d['loop'] / 'rubric.json')
+    rubric = rubric_as_of(read_json(d['loop'] / 'rubric.json'), a.as_of)
     config = load_species_config(a.species)
     rounds, skipped = journal_rounds(a.journal, S['round'], a.partial)
     if not rounds:
@@ -562,6 +592,7 @@ def main(argv=None):
     p.add_argument('--partial', action='store_true', help='also replay a last round whose builders and critics finished but whose record did not')
     p.add_argument('--no-refresh', action='store_true', help='do not re-read measured results from the packets')
     p.add_argument('--carry', action='store_true', help="apply the species' side-effect carry threshold")
+    p.add_argument('--as-of', help='judge with the rubric as of this day (YYYY-MM-DD): advisory flags added later are ignored (v3.16)')
     p.add_argument('--status'); p.add_argument('--out')
     p.set_defaults(fn=cmd_replay)
     a = ap.parse_args(argv)

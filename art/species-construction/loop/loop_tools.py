@@ -972,6 +972,9 @@ def evaluate_measured(packet, assembly):
             ok = value is not None and c.get('min', -1e9) <= value <= c.get('max', 1e9)
             results[c['id']] = {'region': region, 'value': value, 'min': c.get('min'), 'max': c.get('max'), **extra,
                                 'result': 'pass' if ok else 'fail'}
+            if c.get('advisory'):
+                # v3.16 (Nick 2026-10-12): reported, never a gate; the score and the keep guard skip it
+                results[c['id']]['advisory'] = 'advisory, not a gate'
     bounds = json.loads((work(assembly)/'render/geometry.json').read_text())['bounds']
     height = bounds[1][2]-bounds[0][2]
     results['I09'] = {'region': 'R01', 'value': round(height, 4), 'expected': FIXED_HEIGHT,

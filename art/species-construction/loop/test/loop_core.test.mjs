@@ -18,9 +18,22 @@ const P = speciesPaths('akinza')
 // test turns on what it exercises
 function liveStatus() {
   const s = readJson(P.status)
-  Object.assign(s.limits, { readerKeep: false, toolApproval: false, coldEvery: 0, reopenAbovePass: true, repairPass: true, measuredTieKeep: true, rejectToCode: true, refineOnTie: false, visibleChange: 0 })
+  Object.assign(s.limits, { readerKeep: false, toolApproval: false, coldEvery: 0, reopenAbovePass: true, repairPass: true, measuredTieKeep: true, rejectToCode: true, refineOnTie: false, visibleChange: 0, ordersPerRound: 2 })  // ordersPerRound 1 since 2026-10-08 (the capped ear pass)
   s.decisions = []; s.awaiting = {}; s.disputes = {}; s.escalated = false
+  // v3.16 (2026-10-12): the rebase marked the approved head parts and asked for a cold baseline; the older tests replay
+  // the loop as it ran before, so both are taken back out (the v3.16 tests below exercise them)
+  for (const r of Object.values(s.regions)) delete r.approved
+  delete s.needsColdBaseline
   return s
+}
+// The live rubric without the 2026-10-12 advisory flags: the recorded rounds and the fixtures were judged that way
+function historicRubric() {
+  const r = readJson(P.rubric)
+  for (const cs of Object.values(r.regions)) for (const c of cs) { delete c.advisory; delete c.advisorySince; delete c.advisoryWhy }
+  // and with the criteria the same day retired put back (R12.1, R12.2) and the one it added (R12.6) taken out
+  for (const [id, cs] of Object.entries(r.regions)) r.regions[id] = cs.filter(c => c.addedOn !== '2026-10-12')
+  for (const c of r.retired || []) if (c.retiredOn === '2026-10-12') { const { retiredOn, why, ...crit } = c; r.regions[crit.id.split('.')[0]].push(crit) }
+  return r
 }
 const LIMITS = { passBar: 8, cooldownRounds: 2, stallAttempts: 3, stallGain: 1, keepGain: 0.5, regressionDrop: 1, roundsPerBatch: 4, hardStopRounds: 16,
   gate: { minRegion: 7, weightedMean: 8, identityRegions: ['R01', 'R02', 'R03'], identityMin: 8 }, meanGain: 0.025, coverageRounds: 6 }
@@ -61,12 +74,12 @@ test('scores and weighted means reproduce the recorded round 16 and the round 1 
   const r1 = readJson(join(P.rounds, 'round-01-rescore.json'))
   assert.equal(core.meanOf(S, r1.scores), r1.mean)
   // the adopted status is internally consistent: every score is the score of its results under the current rubric
-  const rub = readJson(P.rubric)
+  const rub = historicRubric()
   for (const id of Object.keys(S.regions)) assert.equal(core.scoreFrom(rub, S.regions[id].results, id), S.regions[id].score, id)
 })
 
 test('the cold rescore of assembled-0226 scores as recorded (needs the untracked packet)', { skip: !existsSync(join(P.packets, 'assembled-0226', 'critique-rescore.json')) }, () => {
-  const S = liveStatus(), rub = readJson(P.rubric)
+  const S = liveStatus(), rub = historicRubric()
   const c = readJson(join(P.packets, 'assembled-0226', 'critique-rescore.json'))
   const m = JSON.parse(readFileSync(join(P.packets, 'assembled-0226', 'measured.json'), 'utf8'))
   const res = core.resultsAfter(S, core.overlayMeasured(rub, c, m), Object.fromEntries(Object.keys(S.regions).map(i => [i, {}])))
@@ -249,7 +262,7 @@ function v3Args(status, rub, over) {
 const okBuild = id => ({ failed: false, recipe: `recipes/r-${id}.json`, head: 'head-' + id, body: 'body-' + id, assembly: 'assembled-' + id, packet: 'p/' + id, technicalPass: true, approach: 'a', changes: 'c' })
 
 test('v3 prepare: methods planned once, missing specs written in one parallel pass, held regions never ordered', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = {}
   for (const id of ['R10', 'R11']) status.regions[id].hold = true
   const out = await runWorkflow(generate(), v3Args(status, rub), 'p')
@@ -264,7 +277,7 @@ test('v3 prepare: methods planned once, missing specs written in one parallel pa
 })
 
 test('v3 kickoff: a fresh audit logs the ranked gap list and returns it', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   const out = await runWorkflow(generate(), v3Args(status, rub, { freshAudit: true, rounds: 1 }), 'k')
   assert.deepEqual(out.ret.kickoff.map(g => g.region), ['R05', 'R06'])
   assert.ok(out.logs.some(l => l.startsWith('KICKOFF gaps')))
@@ -272,7 +285,7 @@ test('v3 kickoff: a fresh audit logs the ranked gap list and returns it', { skip
 })
 
 test('v3 critic scope: only regions past the side-effect threshold are named', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R01: 'm' }
   const change = Object.fromEntries(Object.keys(rub.regions).map(id => [id, 0.0001]))
   change.R09 = 0.01
@@ -294,7 +307,7 @@ test('v3 critic scope: only regions past the side-effect threshold are named', {
 })
 
 test('v3 plateau: flat rounds trigger one method review, a second plateau stops the batch', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R01: 'm' }
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 12 }), 'q', label => {
     // every candidate fails its build: no round gains anything
@@ -307,7 +320,7 @@ test('v3 plateau: flat rounds trigger one method review, a second plateau stops 
 })
 
 test('v3 combine: two kept orders are merged by recipe, not by component directories', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R01: 'm' }
   status.regions.R12.hold = true
   let saw = null
@@ -329,7 +342,7 @@ test('v3 combine: two kept orders are merged by recipe, not by component directo
 })
 
 test('v3 effort trial: the first order gets a medium-effort twin, judged and recorded, never adopted', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R01: 'm' }
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 2, effortTrial: true }), 't', label => {
     if (label.startsWith('builder')) { const id = /: (R\d+)/.exec(label)[1]; return { ...okBuild(id), assembly: 'assembled-' + id + (label.includes('trial') ? '-t' : '') } }
@@ -355,7 +368,7 @@ test('reopen: a region above the pass bar is ordered only when the audit reopene
 })
 
 test('v3 branch: a reverted candidate judged better is handed to the next order for its region, with the audit rows', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R01: 'm' }
   for (const id of Object.keys(status.regions)) if (id !== 'R04') status.regions[id].hold = true
   status.auditGaps = [{ rank: 1, region: 'R04', gap: 'crumpled paper bowl from behind', structural: true }]
@@ -378,7 +391,7 @@ test('v3 branch: a reverted candidate judged better is handed to the next order 
 })
 
 test('v3 tools: a needed generator is built by a toolsmith before the rounds and handed to the order for its region; every round record carries the state', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R06: 'author the trunk from sections' }
   status.tools = {}
   status.lastOrders = []  // the real status may hold R06 in cooldown
@@ -436,7 +449,7 @@ test('verdictDebt: a better verdict carrying one small neighbour loss is kept, a
 })
 
 test('prompts carry no control characters and name brief files that exist (round 19: a tab in a path)', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.tools = {}
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 2, freshAudit: true, replan: true, tools: [{ region: 'R06', script: 'x.py', ready: false }] }), 'z')
   for (const c of out.calls) {
@@ -475,7 +488,7 @@ test('pairs: pickOrders orders a pair partner with its region; the judge needs b
 })
 
 test('audit rows: a kept candidate that resolves a row removes it; enough kept orders refresh the audit', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R01: 'm' }
   for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
   status.regions.R06.history = []
@@ -518,6 +531,41 @@ test('verdictKeep: a better verdict keeps without a checklist rise; measured reg
   assert.equal(core.judge(S, rubric, L4, ord, {}, crit({ R04: R(6) }, { pairwise: [{ region: 'R04', verdict: 'same', reason: '' }] })).kept, false)
 })
 
+test('v3.16 advisory: an advisory criterion is reported but never scores, never reverts a keep and never counts as a measured gain', () => {
+  const adv = { regions: Object.fromEntries(Object.entries(rubric.regions).map(([id, cs]) => [id, cs.map((c, n) => n === 7 ? { ...c, advisory: true } : c)])) }
+  // seven gating criteria: six visual and one measured; the advisory eighth drops out of the denominator
+  const res = Object.fromEntries(adv.regions.R03.map((c, i) => [c.id, i < 7 ? 'pass' : 'fail']))
+  assert.equal(core.scoreFrom(adv, res, 'R03'), 10)
+  const noAdv = { ...res }; delete noAdv['R03.8']
+  assert.equal(core.scoreFrom(adv, noAdv, 'R03'), 10, 'a missing advisory result does not leave the region unscored')
+  const L4 = { ...LIMITS, verdictKeep: true }
+  const S = mkState()
+  setResults(S, 'R04', R(4)); setResults(S, 'R03', R(8))
+  const ord = { id: 'R04', component: 'head' }
+  // the advisory R03.8 loses credit: still kept (before v3.16 this was a measured regression)
+  const a = R(8); a[7] = 'fail'
+  const kept = core.judge(S, adv, L4, ord, {}, crit({ R04: R(4), R03: a }, { pairwise: better('R04') }))
+  assert.equal(kept.kept, true, kept.reasons.join(' '))
+  // the gating measured R03.7 loses credit: reverted
+  const g = R(8); g[6] = 'fail'
+  const rev = core.judge(S, adv, L4, ord, {}, crit({ R04: R(4), R03: g }, { pairwise: better('R04') }))
+  assert.equal(rev.kept, false); assert.match(rev.reasons.join(' '), /measured regression R03\.7/)
+  // the same loss under the rubric without the flag reverts, as it did before
+  assert.equal(core.judge(S, rubric, L4, ord, {}, crit({ R04: R(4), R03: a }, { pairwise: better('R04') })).kept, false)
+})
+
+test('v3.16 approved: a part Nick approved is never ordered and does not block the gate', () => {
+  const S = mkState()
+  for (const id of IDS12) S.regions[id].score = 9
+  S.regions.R03.score = 5; S.regions.R01.score = 6
+  assert.equal(core.gateMet(S, LIMITS), false)
+  S.regions.R03.approved = { on: '2026-10-12' }; S.regions.R01.approved = { on: '2026-10-12' }
+  assert.equal(core.gateMet(S, LIMITS), true, 'approved identity regions do not block the gate')
+  assert.equal(core.priority(S, LIMITS, 'R03', 5), null)
+  delete S.regions.R03.approved
+  assert.notEqual(core.priority(S, LIMITS, 'R03', 5), null)
+})
+
 test('gate: held regions do not block it', () => {
   const S = mkState()
   setScores(S, { R10: 4.2, R11: 1.3 })
@@ -528,7 +576,7 @@ test('gate: held regions do not block it', () => {
 })
 
 test('split builder: planner, one runner, three blind readers pick the candidate, the scoped critic grades it on the lean agent type', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R06: 'm' }
   for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
   status.regions.R06.history = []
@@ -573,7 +621,7 @@ function splitStatus() {
 const splitCand = (n, side, extra) => ({ name: 'v' + n, recipe: `plans/v${n}.json`, head: 'head-x', body: 'body-' + n, assembly: 'assembled-90' + n, packet: 'p/assembled-90' + n, technicalPass: true, regionChange: {}, seams: 'no new seams flagged', measured: '', pack: `p/assembled-90${n}/reader-pack`, keys: { R06: side }, ...(extra || {}) })
 
 test('split builder: a plan the readers reject unanimously goes to the code builder with their reasons, and its candidate faces the readers too', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   status.limits.rejectToCode = true
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 's', (label, prompt) => {
     if (label.startsWith('planner')) return { plan: 'plans/r22-R06.json', variants: 4, approach: 'loft sweep', needsCode: false }
@@ -597,7 +645,7 @@ test('split builder: a plan the readers reject unanimously goes to the code buil
 })
 
 test('split builder: with measuredTieKeep a clean candidate the readers call the same is kept on its measured gain', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   status.limits.measuredTieKeep = true
   status.limits.refinePasses = 0
   const trunk = rub.regions.R06.filter(c => c.source === 'trunk').map(c => c.id)
@@ -623,7 +671,7 @@ test('split builder: with measuredTieKeep a clean candidate the readers call the
 })
 
 test('tools: with toolReaderCheck a new tool is ready only when three readers find its starter no worse than the baseline; a rejected tool gets one fix pass', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R06: 'author the trunk from sections' }
   status.tools = {}
   status.lastOrders = []
@@ -649,7 +697,7 @@ test('tools: with toolReaderCheck a new tool is ready only when three readers fi
 })
 
 test('tools: a tool built but not yet passed by the readers is checked without a toolsmith, and its check is returned for its record', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.tools = {}
   status.lastOrders = []
   for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
@@ -667,7 +715,7 @@ test('tools: a tool built but not yet passed by the readers is checked without a
 })
 
 test('v3.6: write roles run on the worker agent type, and a toolsmith that returns continue hands over to a fresh session that reads its notes', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.tools = {}
   status.lastOrders = []
   for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
@@ -686,7 +734,7 @@ test('v3.6: write roles run on the worker agent type, and a toolsmith that retur
 })
 
 test('v3.8: a reader-picked candidate the judge reverts gets one repair plan from it, judged the same way', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   status.limits.repairPass = true
   status.limits.refinePasses = 0
   const visual = rub.regions.R06.filter(c => c.kind === 'visual').map(c => c.id)
@@ -739,7 +787,7 @@ test('v3.9 geometry carry: a non-target region the geometry did not move keeps i
 
 test('v3.9 paired re-grade: a target loss that does not hold against the baseline is restored and the candidate kept; one that holds still reverts', { skip: !existsSync(P.status) }, async () => {
   for (const holds of [false, true]) {
-    const status = splitStatus(), rub = readJson(P.rubric)
+    const status = splitStatus(), rub = historicRubric()
     status.limits.repairPass = false
     status.limits.refinePasses = 0
     status.limits.pairedRegrade = true
@@ -764,7 +812,7 @@ test('v3.9 paired re-grade: a target loss that does not hold against the baselin
 })
 
 test('v3.9 critic scope: a region whose images moved but whose geometry did not is not sent to the critic', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   status.regions.R08.hold = false
   status.limits.geometryCarry = 0.004
   status.limits.refinePasses = 0
@@ -782,7 +830,7 @@ test('v3.9 critic scope: a region whose images moved but whose geometry did not 
 })
 
 test('args.pin: a pinned region replaces the first round pick of its component, once', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R02: 'm', R03: 'm', R06: 'm' }
   status.lastOrders = []
   for (const id of Object.keys(status.regions)) if (!['R02', 'R03', 'R06'].includes(id)) status.regions[id].hold = true
@@ -794,7 +842,7 @@ test('args.pin: a pinned region replaces the first round pick of its component, 
 })
 
 test('v3.9 runner-up: when the readers\' first pick is reverted, the critic grades their next preferred candidate before any repair', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   status.limits.runnerUpCritic = true
   status.limits.repairPass = false
   status.limits.pairedRegrade = false
@@ -817,7 +865,7 @@ test('v3.9 runner-up: when the readers\' first pick is reverted, the critic grad
 })
 
 test('v3.9 blocked tool: a region whose toolsmith needs a loop change gets no order, and the block is returned', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R06: 'm', R07: 'm' }
   status.tools = {}
   status.lastOrders = []
@@ -842,7 +890,7 @@ test('v3.11 plateauCountsKeeps: a window with a kept round is not a plateau', ()
 })
 
 test('v3.11 face guards: a candidate whose face breaks a guard never reaches the readers', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   status.limits.faceGuards = true
   status.limits.refinePasses = 0
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'f', (label) => {
@@ -858,7 +906,7 @@ test('v3.11 face guards: a candidate whose face breaks a guard never reaches the
 })
 
 test('v3.12 round budget: once an agent reports a time past the budget, the refine pass is skipped and recorded', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   status.limits.roundSeconds = 3600
   status.limits.refinePasses = 1
   status.limits.rejectToCode = false
@@ -876,7 +924,7 @@ test('v3.12 round budget: once an agent reports a time past the budget, the refi
 })
 
 test('v3.12 toolsForOrdersOnly: no toolsmith for a region this round will not order', { skip: !existsSync(P.status) }, async () => {
-  const status = liveStatus(), rub = readJson(P.rubric)
+  const status = liveStatus(), rub = historicRubric()
   status.methods = { R06: 'm', R02: 'm' }
   status.tools = {}
   status.lastOrders = []
@@ -893,7 +941,7 @@ test('v3.12 toolsForOrdersOnly: no toolsmith for a region this round will not or
 // ---- v3.13 (audit 2026-10-07) -------------------------------------------------------------------------------
 
 test('v3.13 readerKeep: a reader-preferred candidate meets a guard critic and is kept with every visual result carried', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   Object.assign(status.limits, { readerKeep: true, repairPass: false, measuredTieKeep: false, rejectToCode: false, coldEvery: 0 })
   const before = JSON.parse(JSON.stringify(status.regions.R06.results))
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'rk', (label) => {
@@ -922,7 +970,7 @@ test('v3.13 toolApproval: a tool without Nick\'s go opens a decision and no tool
     for (const id of Object.keys(status.regions)) if (id !== 'R06') status.regions[id].hold = true
     return status
   }
-  const rub = readJson(P.rubric), tools = [{ region: 'R06', script: 'trunk_v9.py', ready: false }]
+  const rub = historicRubric(), tools = [{ region: 'R06', script: 'trunk_v9.py', ready: false }]
   const no = await runWorkflow(generate(), v3Args(mk(), rub, { rounds: 1, tools }), 'ta', () => undefined)
   assert.ok(!no.calls.some(c => c.label.startsWith('tool: ')))
   assert.equal(no.ret.status.decisions[0].kind, 'tool')
@@ -952,7 +1000,7 @@ test('v3.13 judge: targetMoved says whether a target criterion changed result', 
 })
 
 test('v3.13 reverts: a region with three reverted orders in a row goes to the decision queue and waits', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   Object.assign(status.limits, { readerKeep: true, repairPass: false, measuredTieKeep: false, rejectToCode: false, refinePasses: 0, runnerUpCritic: false })
   status.decisions = []; status.awaiting = {}
   status.regions.R06.history = [{ round: 27, kept: false, approach: 'a', reason: 'r' }, { round: 28, kept: false, approach: 'b', reason: 'r' }]
@@ -969,7 +1017,7 @@ test('v3.13 reverts: a region with three reverted orders in a row goes to the de
 })
 
 test('v3.13 alarm: a plan that died twice opens a harness item and records the alarm, with no code builder', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   Object.assign(status.limits, { rejectToCode: true, refinePasses: 1 })
   status.decisions = []; status.awaiting = {}
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'al', (label) => {
@@ -983,7 +1031,7 @@ test('v3.13 alarm: a plan that died twice opens a harness item and records the a
 })
 
 test('v3.13 rejectedAll: one surviving candidate read worse is not a rejected plan, so no code builder runs', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   Object.assign(status.limits, { rejectToCode: true, refinePasses: 0, measuredTieKeep: false })
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'ra', (label) => {
     if (label.startsWith('planner')) return { plan: 'plans/r29-R06.json', variants: 3, approach: 'a', needsCode: false }
@@ -998,7 +1046,7 @@ test('v3.13 rejectedAll: one surviving candidate read worse is not a rejected pl
 
 test('v3.14 refineOnTie: a first pass the readers rejected gets no refine pass; a seen tie does', { skip: !existsSync(P.status) }, async () => {
   const run = async (choice) => {
-    const status = splitStatus(), rub = readJson(P.rubric)
+    const status = splitStatus(), rub = historicRubric()
     Object.assign(status.limits, { refineOnTie: true, refinePasses: 1, rejectToCode: false, measuredTieKeep: false, visibleChange: 0 })
     return runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'rt', (label) => {
       if (label.startsWith('planner')) return { plan: 'plans/r30-R06.json', variants: 2, approach: 'a', needsCode: false }
@@ -1016,7 +1064,7 @@ test('v3.14 refineOnTie: a first pass the readers rejected gets no refine pass; 
 })
 
 test('v3.14 visibleChange: a candidate whose target barely moved never reaches the readers', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   Object.assign(status.limits, { visibleChange: 0.005, refinePasses: 0 })
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true }), 'vc', (label) => {
     if (label.startsWith('planner')) return { plan: 'plans/r30-R06.json', variants: 2, approach: 'a', needsCode: false }
@@ -1031,7 +1079,7 @@ test('v3.14 visibleChange: a candidate whose target barely moved never reaches t
 })
 
 test('v3.15 planner trial: an Opus planner plans the same order, both plans reach the same readers, results recorded per planner', { skip: !existsSync(P.status) }, async () => {
-  const status = splitStatus(), rub = readJson(P.rubric)
+  const status = splitStatus(), rub = historicRubric()
   Object.assign(status.limits, { refinePasses: 0, visibleChange: 0.005, readerKeep: true })
   const out = await runWorkflow(generate(), v3Args(status, rub, { rounds: 1, split: true, plannerTrial: 'R06' }), 'pt', (label) => {
     if (label.startsWith('planner')) return { plan: /opus/.test(label) ? 'plans/r29-R06-opus.json' : 'plans/r29-R06.json', variants: 2, approach: 'a', needsCode: false }

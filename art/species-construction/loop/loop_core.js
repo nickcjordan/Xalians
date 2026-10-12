@@ -18,8 +18,13 @@ export function defaultPools(config) {
 
 export const credit = r => r === 'pass' ? 1 : r === 'partial' ? 0.5 : 0
 
+// v3.16 (2026-10-12, Nick: "remove any of those restricting rules about failing checks because it doesn't meet the shape
+// or trying to match it to the outline of the fur image"): a criterion marked advisory is measured and reported but is not a
+// gate: it never counts toward a region score, the measured keep guard, the measured tie or the gate.
+export const gating = c => !c.advisory
 export function scoreFrom(rubric, results, id) {
-  const crits = rubric.regions[id]
+  const crits = rubric.regions[id].filter(gating)
+  if (!crits.length) return null
   if (crits.some(c => !results[c.id])) return null
   return Math.round(10 * crits.reduce((t, c) => t + credit(results[c.id]), 0) / crits.length * 10) / 10
 }
@@ -49,9 +54,11 @@ export function gateMet(state, limits) {
   const g = limits.gate
   // v3: a region held by Nick's direction (the tails) cannot block the gate (audit 2026-10-02:
   // with the tails at 4.2 and 1.3 the gate was unreachable).
-  const ids = Object.keys(state.regions).filter(id => !state.regions[id].hold)
+  // v3.16: a part Nick approved (regions.<id>.approved, approved-looks.json) is judged by his eye, not the checklist
+  const ids = Object.keys(state.regions).filter(id => !state.regions[id].hold && !state.regions[id].approved)
+  const identity = g.identityRegions.filter(id => !(state.regions[id] && state.regions[id].approved))
   return ids.every(id => (state.regions[id].score || 0) >= g.minRegion) && meanOf(state, scoresNow(state)) >= g.weightedMean
-    && g.identityRegions.every(id => (state.regions[id].score || 0) >= g.identityMin)
+    && identity.every(id => (state.regions[id].score || 0) >= g.identityMin)
 }
 
 // v3: the loop stops when the last plateauRounds round means (state.means, one per
@@ -71,7 +78,8 @@ export function plateau(state, limits) {
 export function priority(state, limits, id, round) {
   const r = state.regions[id]
   // v3: a held region (Nick's direction, such as the tails on 2026-10-01) is never ordered.
-  if (r.parked || r.hold || r.score === null) return null
+  // v3.16: a part Nick approved (regions.<id>.approved) is not ordered by the loop; it is reopened only by Nick
+  if (r.parked || r.hold || r.approved || r.score === null) return null
   // v3: a region the independent audit ranks among its top structural gaps is reopened even
   // above the pass bar, and counts as one point below it (round 17: the face scored 8.3
   // while the audit ranked its slit profile eye third).
@@ -242,7 +250,7 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
   // because the bowl outline kept every R04 result where it was).
   const onVerdict = reasons.length && pair && pair.verdict === 'better' && !lost.length && !broken.length && gain >= 0
   // v3.13: whether a target criterion changed result (the plateau window counts only such keeps, audit bug 7)
-  const targetMoved = targets.some(t => (rubric.regions[t] || []).some(c => {
+  const targetMoved = targets.some(t => (rubric.regions[t] || []).filter(gating).some(c => {
     const b = state.regions[t].results[c.id], a = results[t] && results[t][c.id]
     return !!a && !!b && a !== b
   }))
@@ -265,7 +273,7 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
     for (const id of ids) {
       if (held.has(id)) continue
       for (const c of rubric.regions[id]) {
-        if (c.kind !== 'measured') continue
+        if (c.kind !== 'measured' || c.advisory) continue
         const b = state.regions[id].results[c.id], a = results[id][c.id]
         if (b && a && credit(a) < credit(b)) measuredLoss.push(`${c.id} ${b} to ${a}`)
       }
@@ -275,7 +283,7 @@ export function judge(state, rubric, limits, order, build, critique, opts) {
     // below (no target loses visual credit, no measured criterion anywhere loses, no invariant breaks)
     let measuredNet = 0
     for (const t of targets) for (const c of rubric.regions[t]) {
-      if (c.kind !== 'measured') continue
+      if (c.kind !== 'measured' || c.advisory) continue
       const b = state.regions[t].results[c.id], a = results[t][c.id]
       if (a && b) measuredNet += credit(a) - credit(b)
     }

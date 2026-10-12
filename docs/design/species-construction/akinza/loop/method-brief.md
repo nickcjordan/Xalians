@@ -30,9 +30,9 @@ Read the region's whole history and its method entry. Say in two or three senten
 
 Write American English with no em dashes. Commit only the method files, by name, on branch `akinza/construction-loop`, with a plain message and no Co-Authored-By trailer.
 
-## Modeling scope (2026-10-02, Nick: textures and painting have not started)
+## Modeling scope (2026-10-02, revised 2026-10-12 to Nick's fur rulings)
 
-The model is construction geometry, judged as untextured clay. It owns everything visible in the outline or at the scale of the coat masses: overall shapes and proportions, lock and tuft counts, lengths, directions and pointed tips that break the outline, how masses overlap, and soft rounded cross sections with no facets, serrated edges, seams or spikes. It does not own anything finer than a lock: fur strands, fluffiness, color, markings and fine creases belong to the surface phase (painted textures, normal maps or a fur shader), recorded in `../surface-backlog.md`. Words like shaggy, fluffy, furred or soft in the rubric mean clump-scale form, never strand detail. Do not model strands, and do not fail or reject a coat for lacking them.
+The model is construction geometry, judged as untextured clay. It owns the overall shapes and proportions, the forms under the fur, their cross sections and how the parts join, with soft, clean, rounded surfaces and no lumps, dents, creases, facets, serrated edges, seams or spikes. Fur is not modeled. Nick, 2026-10-08: "rely more on the fur texture we add later instead of trying to create shapes to make fur"; 2026-10-09: the sheet's fur was "intended to be tufts of hair, not feathers", and it should be "shorter on the face and the neck and the head, and longer on the tips of the ears". So the geometry has no fur locks, shingles, tufts or pointed coat tips, and no form fails for lacking them; fur (tufts of hair), strands, color and markings belong to the texture stage (`../surface-backlog.md`). The painted sheet's outline includes that fur, so the clay sits inside it: the measured criteria that compare clay with the sheet are advisory, not gates (rubric.json, 2026-10-12). For a part Nick has approved, the target is his approved look (`../approved-looks.json`), not the sheet.
 
 ## Respec only when the structure changes
 
