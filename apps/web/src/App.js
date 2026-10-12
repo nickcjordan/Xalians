@@ -123,6 +123,8 @@ function TradeRoute() {
 const IMMERSIVE_PREFIXES = ['/duel', '/reclamation', '/long-return', '/powerworks'];
 
 function isImmersiveRoute(pathname) {
+  // The dev-only Creature Studio is a fixed one-screen workspace with its own slim header.
+  if (import.meta.env.DEV && (pathname === '/studio' || pathname.startsWith('/studio/'))) return true;
   if (IMMERSIVE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'))) {
     return true;
   }

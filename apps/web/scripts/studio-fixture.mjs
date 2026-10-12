@@ -14,11 +14,11 @@
 // Then: npm run dev -w apps/web, and open /studio/fixture/skull.
 
 import { deflateSync } from 'node:zlib';
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { initCreature, putFile, STANDARD_CAMERAS } from '../../../packages/studio/src/index.ts';
+import { ingestPacket, initCreature, putFile, STANDARD_CAMERAS } from '../../../packages/studio/src/index.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../../..');
@@ -197,6 +197,23 @@ for (const [label, brow, snout] of [['A', 18, 1], ['B', 26, 0.8], ['C', 12, 1.2]
 	});
 }
 
+// --- real renders: the Akinza packet, when it is on this machine (--no-real skips it) ---
+const packetDir = process.env.STUDIO_FIXTURE_PACKET ?? 'C:/dev/art-data/studio/packets/akinza-3141-vs-3101';
+if (!process.argv.includes('--no-real') && existsSync(join(packetDir, 'packet.json'))) {
+	const packet = JSON.parse(readFileSync(join(packetDir, 'packet.json'), 'utf8'));
+	const head = mk('part', { key: 'head', name: 'Head', includes: ['skull', 'eyes', 'muzzle'], why: 'Real Akinza renders from the packet ingest, for exercising the screen.', scope: {}, dependsOn: [], order: 3, status: 'in-progress', budget: { builds: 6, wallMinutes: 180 } });
+	mk('hold', { statement: 'Keep the muzzle length', scope: { part: head.id }, source: { kind: 'nick', quote: 'muzzle length is right', date: '2026-10-11' }, status: 'active', history: [] });
+	const headDefect = mk('defect', { part: head.id, description: 'The brow reads flat from the front', origin: 'nick', status: 'open', attempts: [] });
+	// The baseline build is made from the packet's own *.baseline.png files.
+	const baselineOuts = packet.cameras.filter((c) => c.baselineFile).map((c) => ({ name: c.id, blob: putFile(join(packetDir, c.baselineFile)), role: 'render', camera: c.id }));
+	const realBase = mk('build', { part: head.id, kind: 'build', goal: { text: `Approved head, ${packet.baseline}` }, targets: [], method: 'recipe', outputs: baselineOuts, checks: [], lookNotes: [], cost: { wallMinutes: 30, blenderMinutes: 6 }, status: 'reviewed' });
+	store.update(head.id, { approvedBuild: realBase.id }, { actor: 'orchestrator', session });
+	// The presented build goes through the same ingest as `studio build ingest`.
+	const got = ingestPacket(packetDir);
+	mk('build', { part: head.id, kind: 'build', goal: { text: `Rebuild the head (${packet.assembly})` }, targets: [headDefect.id], method: 'recipe', outputs: got.outputs, checks: got.checks, lookNotes: [], cost: { wallMinutes: 14, blenderMinutes: got.blenderMinutes }, status: 'presented' });
+	console.log(`ingested real packet ${packet.assembly} onto part head`);
+}
+
 store.releaseLock();
 rmSync(scratch, { recursive: true, force: true });
-console.log(`seeded art/creatures/fixture (parts: skull, jaw). Open /studio/fixture/skull and /studio/fixture/jaw`);
+console.log(`seeded art/creatures/fixture (parts: skull, jaw, and head when the real packet exists). Open /studio/fixture/skull and /studio/fixture/jaw`);

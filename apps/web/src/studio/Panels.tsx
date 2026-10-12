@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router';
-import { AlertTriangle, CircleDot, Check, HelpCircle, Lock, SlidersHorizontal, X } from 'lucide-react';
+import { AlertTriangle, CircleDot, Check, HelpCircle, Lock, PanelLeftClose, PanelLeftOpen, SlidersHorizontal, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,29 +29,60 @@ export function Panel({ title, count, children, className }: { title: React.Reac
 const NEED_WORD = { review: 'Look and decide', question: 'Question', stalled: 'Stuck' } as const;
 const NEED_ICON = { review: CircleDot, question: HelpCircle, stalled: AlertTriangle } as const;
 
-export function NeedsRail({ items, creature, current }: { items: (NeedItem & { creature: string })[] | undefined; creature?: string; current?: { creature: string; part: string; build?: string } }) {
+export function NeedsRail({ items, creature, current, collapsed, onToggle }: { items: (NeedItem & { creature: string })[] | undefined; creature?: string; current?: { creature: string; part: string; build?: string }; collapsed: boolean; onToggle: () => void }) {
+	const hrefOf = (item: NeedItem & { creature: string }) => `/studio/${item.creature}/${item.partKey ?? ''}${item.kind === 'review' ? `?build=${item.ref}` : ''}`;
+	const isHere = (item: NeedItem & { creature: string }) => !!current && current.creature === item.creature && current.part === item.partKey && (item.kind !== 'review' || current.build === item.ref);
+	const toggle = (
+		<Button type="button" size="icon-sm" variant="ghost" onClick={onToggle} aria-expanded={!collapsed} aria-label={collapsed ? 'Show the needs list' : 'Collapse the needs list'}>
+			{collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
+		</Button>
+	);
+	if (collapsed) {
+		return (
+			<aside aria-label="Needs you" className="flex h-full w-14 shrink-0 flex-col items-center gap-2 overflow-y-auto border-r border-edge bg-s0 py-2">
+				{toggle}
+				<span className="type-data text-small text-ink-2" title="Waiting on you">{items?.length ?? '…'}</span>
+				{(items ?? []).map((item) => {
+					const Icon = NEED_ICON[item.kind];
+					return (
+						<Link
+							key={`${item.kind}-${item.ref}`}
+							to={hrefOf(item)}
+							title={`${NEED_WORD[item.kind]}: ${item.partName ?? ''} ${item.ask}`}
+							aria-label={`${NEED_WORD[item.kind]}: ${item.partName ?? 'whole creature'}`}
+							aria-current={isHere(item) ? 'true' : undefined}
+							className={cn('relative block size-10 shrink-0 border bg-s1 outline-none focus-visible:outline-2 focus-visible:outline-ring', isHere(item) ? 'border-ink shadow-[inset_0_-3px_0_var(--color-ink)]' : 'border-edge')}
+						>
+							{item.thumb ? <img src={blobUrl(item.thumb)} alt="" className="size-full object-cover" /> : <span className="grid size-full place-items-center text-ink-2" aria-hidden="true"><Icon className="size-4" /></span>}
+							{item.kind !== 'review' ? <span className="absolute -right-1 -bottom-1 grid size-4 place-items-center border border-edge-strong bg-room text-ink" aria-hidden="true"><Icon className="size-3" /></span> : null}
+						</Link>
+					);
+				})}
+			</aside>
+		);
+	}
 	return (
-		<aside aria-label="Needs you" className="flex flex-col gap-3">
-			<div className="flex items-baseline gap-3">
-				<h2 className="type-heading m-0 text-[20px]">Needs you</h2>
+		<aside aria-label="Needs you" className="flex h-full w-[264px] shrink-0 flex-col gap-3 overflow-y-auto border-r border-edge bg-s0 p-3">
+			<div className="flex items-center gap-3">
+				<h2 className="type-heading m-0 text-[18px]">Needs you</h2>
 				{items ? <span className="type-data text-small text-ink-2">{items.length}</span> : null}
+				<span className="ml-auto">{toggle}</span>
 			</div>
 			{!items ? <p className="m-0 font-body text-small text-ink-2">Loading.</p> : null}
 			{items && items.length === 0 ? (
-				<p className="m-0 border border-edge bg-s1 p-4 font-body text-small text-ink-2">Nothing is waiting on you{creature ? ` for ${creature}` : ''}.</p>
+				<p className="m-0 border border-edge bg-s1 p-3 font-body text-small text-ink-2">Nothing is waiting on you{creature ? ` for ${creature}` : ''}.</p>
 			) : null}
 			<ul className="m-0 flex list-none flex-col gap-2 p-0">
 				{(items ?? []).map((item) => {
 					const Icon = NEED_ICON[item.kind];
-					const href = `/studio/${item.creature}/${item.partKey ?? ''}${item.kind === 'review' ? `?build=${item.ref}` : ''}`;
-					const here = current && current.creature === item.creature && current.part === item.partKey && (item.kind !== 'review' || current.build === item.ref);
+					const here = isHere(item);
 					return (
 						<li key={`${item.kind}-${item.ref}`}>
 							<Link
-								to={href}
+								to={hrefOf(item)}
 								aria-current={here ? 'true' : undefined}
 								className={cn(
-									'flex gap-3 border bg-s1 p-3 text-ink no-underline outline-none hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring',
+									'flex gap-3 border bg-s1 p-2 text-ink no-underline outline-none hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring',
 									here ? 'border-ink bg-s2 shadow-[inset_3px_0_0_var(--color-ink)]' : 'border-edge',
 								)}
 							>
@@ -60,14 +91,14 @@ export function NeedsRail({ items, creature, current }: { items: (NeedItem & { c
 								) : (
 									<span className="grid size-12 shrink-0 place-items-center border border-edge bg-s0 text-ink-3" aria-hidden="true"><Icon className="size-5" /></span>
 								)}
-								<span className="flex min-w-0 flex-1 flex-col gap-1">
+								<span className="flex min-w-0 flex-1 flex-col gap-0.5">
 									<span className="flex flex-wrap items-center gap-2">
-										<span className="type-legend inline-flex items-center gap-1 text-ink"><Icon className="size-3.5" />{NEED_WORD[item.kind]}</span>
+										<span className="type-legend inline-flex items-center gap-1 text-[10.5px] text-ink"><Icon className="size-3.5" />{NEED_WORD[item.kind]}</span>
 										{item.buildKind === 'preview' ? <Badge>Preview</Badge> : null}
 									</span>
 									<span className="font-body text-small font-bold text-ink">{item.partName ?? 'Whole creature'}</span>
-									<span className="line-clamp-2 font-body text-small text-ink-2">{item.ask}</span>
-									<span className="type-data text-[12px] text-ink-3">{timeAgo(item.since)}</span>
+									<span className="line-clamp-2 font-body text-[12.5px] text-ink-2">{item.ask}</span>
+									<span className="type-data text-[11px] text-ink-3">{timeAgo(item.since)}</span>
 								</span>
 							</Link>
 						</li>
