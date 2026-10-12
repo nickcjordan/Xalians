@@ -81,6 +81,8 @@ resource "aws_iam_role_policy" "github_terraform" {
           "arn:aws:s3:::chronic-labs-*/*",
           "arn:aws:s3:::xalians.com",
           "arn:aws:s3:::xalians.com/*",
+          "arn:aws:s3:::xalians-art-archive-*",
+          "arn:aws:s3:::xalians-art-archive-*/*",
         ]
       },
       {
