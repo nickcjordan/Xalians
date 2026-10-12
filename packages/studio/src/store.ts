@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomBytes } from 'node:crypto';
 import { StudioError } from './errors.ts';
@@ -81,6 +81,8 @@ export interface Store {
 	get(idOrAlias: string): { kind: Kind; record: RecordMap[Kind] } | undefined;
 	create<K extends Exclude<Kind, 'creature'>>(kind: K, data: NewRecord<K>, actor: Actor, opts?: { session?: string; bypassLock?: boolean }): RecordMap[K];
 	update<K extends Kind>(idOrAlias: string, change: Change<K>, opts: MutateOptions): RecordMap[K];
+	/** Deletes a part that is still only proposed. Nothing else is ever deleted. */
+	removeProposedPart(idOrAlias: string, opts: MutateOptions): void;
 	readLock(): LockInfo | undefined;
 	acquireLock(session: string): LockInfo;
 	releaseLock(): void;
@@ -251,6 +253,13 @@ export function openCreature(repoRoot: string, key: string): Store {
 			if (!again || again.record.rev !== current.rev) throw new StudioError(`${current.alias} changed while updating; reload and retry`);
 			writeJsonAtomic(fileFor(found.kind, current.id), parsed);
 			return parsed as never;
+		},
+		removeProposedPart(idOrAlias, opts) {
+			if (!opts.bypassLock) assertCanMutate(opts.session);
+			const found = store.get(idOrAlias);
+			if (!found || found.kind !== 'part') throw new StudioError(`no part ${idOrAlias} in ${key}`);
+			if ((found.record as RecordMap['part']).status !== 'proposed') throw new StudioError(`part ${found.record.alias} is not a proposed part; only proposed parts can be removed`);
+			unlinkSync(fileFor('part', found.record.id));
 		},
 		readLock,
 		acquireLock(session) {

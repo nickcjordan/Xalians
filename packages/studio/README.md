@@ -10,6 +10,12 @@ Run with `npm run studio -- <command>`. Output is plain text; add `--json` for J
 
 ```
 init <key> --name N --template PATH --silhouette PATH [--builds 6 --minutes 180]
+intake <key> [--species TEMPLATE_KEY] [--silhouette PATH] [--force]   (creates the creature if missing and takes its lock, reads the template, encyclopedia entry and silhouette; idempotent)
+part propose <key> --file parts.json   (replaces the proposed list: [{key, name, includes, why, dependsOn: [keys], order}])
+stage submit <key> intake|references   (checks required outputs, sets the stage in-review)
+reference add <key> --file IMG --role R --governs a,b --not-for x,y [--precedence n]   (PNG, JPG, WEBP or SVG)
+reference edit <key> <alias> [--role R] [--governs ..] [--not-for ..] [--precedence n]
+reference target <key> <alias> --file IMG --kind K [--provisional]
 status <key>        next <key>
 lock <key> --session LABEL        unlock <key>
 part add <key> --file part.json
@@ -46,3 +52,11 @@ Mutations need the creature lock (`.lock`, gitignored, stale after 12 hours). Pa
 Tests: `npm test -w packages/studio`; types: `npm run typecheck -w packages/studio`.
 
 `partView(data, part)` and `needsNick(data)` in `engine.ts` feed the review screen (`/studio` in apps/web, dev server only); `review.ts` has `recordReview`, `strikeHold` and `recordChoice`, the writes the screen makes as Nick without the creature lock.
+
+## Stages: intake and references
+
+`creature.intake` (strict, optional) holds what intake read: template path and sha256, name, element, home world, body plan, covering, `sizeCm` (the template's `heightCm`, or null), the template's `lore.description` as `loreSummary` (the encyclopedia entry's definition is the fallback), appearance and anatomy lists, and the silhouette blob. The record key and the template key are separate: `studio intake fixture-dromeus --species dromeus`.
+
+Parts proposed at intake have status `proposed`. Nick's verdict on a stage is `recordStageReview(store, { stage, verdict, text })` in `review.ts` (a review note with `about.stage`, by nick, via studio; no creature lock). Approve records evidence (sha256 of the silhouette blob, the template sha, each part's content hash; for references each reference record, image and target blob), makes proposed parts `not-started` and opens the next Phase 1 stage. Adjust or reject returns the stage to `open` with his words. A part's content hash leaves out status, so starting work on a part does not stale the approval; editing what it includes does. `status()` reports an approved stage whose evidence moved, or whose template file changed on disk, as `stale` with the reason. Changing proposed parts or references while a stage is in-review sends it back to `open`.
+
+The review screen shows these at `/studio/<key>` (stage track and parts), `/studio/<key>/stage/intake` and `/studio/<key>/stage/references`. Keep test creatures under `art/creatures/fixture*/`, which is gitignored.

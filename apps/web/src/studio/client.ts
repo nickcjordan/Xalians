@@ -2,8 +2,12 @@
 // Types come from the studio library (type-only imports, erased at build).
 import * as React from 'react';
 import type { BuildView, NeedItem, PartView } from '@xalians/studio/engine';
+import type { BoardPart, CreatureBoard, ReferenceView, StageView } from '@xalians/studio/stages';
 
-export type { BuildView, NeedItem, PartView };
+export type { BuildView, NeedItem, PartView, BoardPart, CreatureBoard, ReferenceView, StageView };
+
+/** GET creatures/:key: the board plus everything waiting on Nick. */
+export type CreatureState = CreatureBoard & { needs: NeedItem[] };
 
 export interface CreatureSummary {
 	key: string;
@@ -60,6 +64,10 @@ async function send<T>(method: 'GET' | 'POST', path: string, body?: unknown): Pr
 
 export const api = {
 	creatures: () => send<CreatureSummary[]>('GET', 'creatures'),
+	creature: (creature: string) => send<CreatureState>('GET', `creatures/${encodeURIComponent(creature)}`),
+	references: (creature: string) => send<ReferenceView[]>('GET', `creatures/${encodeURIComponent(creature)}/references`),
+	stageReview: (creature: string, body: { stage: string; verdict: 'approve' | 'adjust' | 'reject'; text: string }) =>
+		send<{ note: { alias: string; verdict: string; text: string }; applied: string[] }>('POST', `creatures/${encodeURIComponent(creature)}/stage-review`, body),
 	needs: (creature: string) => send<NeedItem[]>('GET', `creatures/${encodeURIComponent(creature)}/needs`),
 	parts: (creature: string) => send<PartSummary[]>('GET', `creatures/${encodeURIComponent(creature)}/parts`),
 	part: (creature: string, part: string) => send<PartView>('GET', `creatures/${encodeURIComponent(creature)}/parts/${encodeURIComponent(part)}`),

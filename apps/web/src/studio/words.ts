@@ -41,6 +41,7 @@ const PART_STATUS: Record<string, string> = {
 	'in-review': 'In review',
 	approved: 'Approved',
 	stale: 'Needs another look',
+	proposed: 'Proposed',
 };
 export const partStatusWord = (s: string) => PART_STATUS[s] ?? s;
 
@@ -69,3 +70,29 @@ export const VERDICT_WORD: Record<string, string> = { approve: 'Approved', adjus
 
 const SHORT: Record<string, string> = { 'threequarter-left': '3/4 left', 'threequarter-right': '3/4 right', 'side-left': 'Left', 'side-right': 'Right' };
 export const cameraShort = (id: string) => SHORT[id] ?? cameraWord(id);
+
+const STAGE_NAME: Record<string, string> = {
+	intake: 'Intake',
+	references: 'References',
+	blockout: 'Blockout',
+	parts: 'Parts',
+	coherence: 'Coherence',
+	surface: 'Surface',
+	color: 'Color and pattern',
+	readiness: 'Readiness',
+	rig: 'Rig',
+	animate: 'Animate',
+	atlas: 'Sprite atlas',
+};
+export const stageName = (id: string) => STAGE_NAME[id] ?? id;
+
+const STAGE_STATUS: Record<string, string> = {
+	locked: 'Not open yet',
+	open: 'Open',
+	'in-review': 'Waiting for you',
+	approved: 'Approved',
+	stale: 'Out of date',
+};
+export const stageStatusWord = (s: string) => STAGE_STATUS[s] ?? s;
+
+export const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);

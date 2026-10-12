@@ -65,7 +65,11 @@ export function createStudioApi({ repoRoot }) {
 	async function blobName(lib, sha) {
 		for (const key of lib.listCreatureKeys(repoRoot)) {
 			try {
-				for (const b of lib.openCreature(repoRoot, key).list('build')) {
+				const store = lib.openCreature(repoRoot, key);
+				const intake = store.load().creature.intake;
+				if (intake && intake.silhouette.blob === sha) return intake.silhouette.fileName;
+				for (const r of store.list('reference')) if (r.blob === sha) return r.fileName;
+				for (const b of store.list('build')) {
 					const out = b.outputs.find((o) => o.blob === sha);
 					if (out) return out.name;
 				}
@@ -111,13 +115,28 @@ export function createStudioApi({ repoRoot }) {
 
 			const store = await openStore(lib, parts[1]);
 
+			if (method === 'GET' && parts.length === 2) {
+				const data = store.load();
+				return json(200, { ...lib.creatureBoard(data, lib.liveTemplateSha(repoRoot)), needs: lib.needsNick(data) });
+			}
+
+			if (method === 'GET' && parts[2] === 'references' && parts.length === 3) {
+				return json(200, lib.referenceViews(store.load()));
+			}
+
+			if (method === 'POST' && parts[2] === 'stage-review' && parts.length === 3) {
+				need(body && typeof body === 'object', 'expected a JSON body');
+				const result = lib.recordStageReview(store, { stage: String(body.stage ?? ''), verdict: body.verdict, text: typeof body.text === 'string' ? body.text : '' });
+				return json(200, { note: result.note, applied: result.applied });
+			}
+
 			if (method === 'GET' && parts[2] === 'needs' && parts.length === 3) {
 				return json(200, lib.needsNick(store.load()));
 			}
 
 			if (method === 'GET' && parts[2] === 'parts' && parts.length === 3) {
 				const data = store.load();
-				const report = lib.status(data);
+				const report = lib.status(data, lib.liveTemplateSha(repoRoot));
 				const names = new Map(data.parts.map((p) => [p.id, p.name]));
 				return json(200, report.parts.map((p) => ({ ...p, name: names.get(p.id) ?? p.key })));
 			}
@@ -199,6 +218,7 @@ export function studioMiddleware(api) {
 		res.setHeader('Cache-Control', 'no-store');
 		if (result.file) {
 			res.setHeader('Content-Type', result.contentType);
+			res.setHeader('X-Content-Type-Options', 'nosniff');
 			// A blob is addressed by its hash, so it never changes.
 			res.setHeader('Cache-Control', 'private, max-age=31536000, immutable');
 			createReadStream(result.file).pipe(res);

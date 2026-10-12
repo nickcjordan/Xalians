@@ -10,7 +10,6 @@ import { Link, useParams, useSearchParams } from 'react-router';
 
 import { HelixSpinner } from '@/components/system/brand';
 import { Callout } from '@/components/system/readouts';
-import { Badge } from '@/components/ui/badge';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
@@ -19,7 +18,8 @@ import { api, blobUrl, usePolled, type BuildView, type MarkDraft, type NeedItem,
 import { OptionsView } from '@/studio/Options';
 import { BuilderPanel, CostLine, DefectsPanel, HoldsPanel, NeedsRail, NotesPanel, Panel, VerdictPanel } from '@/studio/Panels';
 import { MarksList, renderFor, Viewer, type CompareMode, type Overlay, type Tool } from '@/studio/Viewer';
-import { buildKindWord, buildStatusWord, cameraShort, partStatusWord, sortCameras, timeAgo } from '@/studio/words';
+import { CreatureBoard, IntakeReview, ReferencesReview } from '@/studio/Stages';
+import { buildKindWord, buildStatusWord, cameraShort, partStatusWord, sortCameras, stageName, timeAgo } from '@/studio/words';
 
 type NeedWithCreature = NeedItem & { creature: string };
 
@@ -79,26 +79,12 @@ function CreatureList() {
 	);
 }
 
-function PartList({ creature }: { creature: string }) {
-	const { data, error } = usePolled(() => api.parts(creature), `parts:${creature}`, 5000);
-	if (error) return <ServerProblem message={error} />;
-	if (!data) return <Loading />;
-	return (
-		<ul className="m-0 flex list-none flex-col gap-2 p-0">
-			{data.map((p) => (
-				<li key={p.id}>
-					<Link to={`/studio/${creature}/${p.key}`} className="flex flex-wrap items-center gap-3 border border-edge bg-s1 p-4 text-ink no-underline hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring">
-						<span className="type-heading text-[18px]">{p.name}</span>
-						<Badge variant={p.status === 'stale' ? 'warn' : 'default'}>{partStatusWord(p.status)}</Badge>
-						{p.stalledDefects.length > 0 ? <Badge variant="warn">Stalled</Badge> : null}
-						<span className="ml-auto font-body text-small text-ink-2">
-							{p.openDefects.length === 1 ? '1 open problem' : `${p.openDefects.length} open problems`} · {p.budgetLeft.builds} builds left
-						</span>
-					</Link>
-				</li>
-			))}
-		</ul>
-	);
+function BoardPage({ creature }: { creature: string }) {
+	const { data: state, error } = usePolled(() => api.creature(creature), `board:${creature}`, 4000);
+	const { data: summaries } = usePolled(() => api.parts(creature), `board-parts:${creature}`, 5000);
+	if (error && !state) return <div className="p-6"><ServerProblem message={error} /></div>;
+	if (!state) return <Loading />;
+	return <CreatureBoard creature={creature} state={state} summaries={summaries} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -245,11 +231,12 @@ export default function StudioPage() {
 	const params = useParams();
 	const creature = params.creature;
 	const part = params.part;
+	const stage = params.stage;
 	const needs = useNeeds(creature);
 	const [railCollapsed, setRailCollapsed] = React.useState(() => typeof window !== 'undefined' && window.innerWidth < 1500);
 
 	const [search] = useSearchParams();
-	const current = creature && part ? { creature, part, build: search.get('build') ?? undefined } : undefined;
+	const current = creature && part ? { creature, part, build: search.get('build') ?? undefined } : creature && stage ? { creature, stage } : undefined;
 
 	const partsLoad = React.useCallback(() => api.parts(creature!), [creature]);
 	const { data: parts } = usePolled(creature ? partsLoad : null, `partnav:${creature ?? ''}`, 5000);
@@ -262,6 +249,7 @@ export default function StudioPage() {
 				<nav aria-label="Where you are" className="flex min-w-0 items-center gap-2 font-body text-small text-ink-2">
 					<Link to="/studio" className={linkClass}>All creatures</Link>
 					{creature ? <><span aria-hidden="true">/</span><Link to={`/studio/${creature}`} className={linkClass}>{creature}</Link></> : null}
+					{creature && stage ? <><span aria-hidden="true">/</span><span className="text-ink">{stageName(stage)} review</span></> : null}
 				</nav>
 				{parts && part ? (
 					<nav aria-label="Parts" className="ml-auto flex min-w-0 gap-1.5 overflow-x-auto">
@@ -288,12 +276,20 @@ export default function StudioPage() {
 					{needs.error ? <div className="p-6"><ServerProblem message={needs.error} /></div> : null}
 					{!needs.error && creature && part ? (
 						<PartReview key={`${creature}/${part}`} creature={creature} part={part} />
+					) : !needs.error && creature && stage === 'intake' ? (
+						<IntakeReview key={`${creature}/intake`} creature={creature} />
+					) : !needs.error && creature && stage === 'references' ? (
+						<ReferencesReview key={`${creature}/references`} creature={creature} />
+					) : !needs.error && creature && stage ? (
+						<div className="p-6"><p className="m-0 max-w-[62ch] border border-edge bg-s1 p-4 font-body text-body text-ink-2">The {stageName(stage).toLowerCase()} stage has no review screen yet.</p></div>
+					) : !needs.error && creature ? (
+						<BoardPage key={creature} creature={creature} />
 					) : !needs.error ? (
 						<div className="h-full overflow-y-auto p-6">
-							<h1 className="type-title m-0 mb-4 text-[28px]">{creature ?? 'Creatures'}</h1>
-							{creature ? <PartList creature={creature} /> : <CreatureList />}
+							<h1 className="type-title m-0 mb-4 text-[28px]">Creatures</h1>
+							<CreatureList />
 							<Panel title="How this works" className="mt-6 max-w-[62ch]">
-								<p className="m-0 font-body text-body text-ink-2">The orchestrator presents a build; it shows up under Needs you. Open it, compare it with the last approved version, mark anything wrong, and approve, ask for changes or reject. Your decision is written to the records and the orchestrator is told.</p>
+								<p className="m-0 font-body text-body text-ink-2">The orchestrator presents a build or submits a stage; it shows up under Needs you. Open it, look, mark anything wrong, and approve, ask for changes or reject. Your decision is written to the records and the orchestrator is told.</p>
 							</Panel>
 						</div>
 					) : null}

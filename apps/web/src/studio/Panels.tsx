@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router';
-import { AlertTriangle, CircleDot, Check, HelpCircle, Lock, PanelLeftClose, PanelLeftOpen, SlidersHorizontal, X } from 'lucide-react';
+import { AlertTriangle, CircleDot, Check, HelpCircle, Layers, Lock, PanelLeftClose, PanelLeftOpen, SlidersHorizontal, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Fold } from '@/components/system/fold';
 import { cn } from '@/lib/utils';
 import { api, blobUrl, type BuildView, type MarkDraft, type NeedItem, type PartView } from './client';
-import { buildKindWord, buildStatusWord, cameraWord, minutes, timeAgo, tokens as tokenWord, VERDICT_WORD } from './words';
+import { buildKindWord, buildStatusWord, cameraWord, minutes, stageName, timeAgo, tokens as tokenWord, VERDICT_WORD } from './words';
 
 export function Panel({ title, count, children, className }: { title: React.ReactNode; count?: React.ReactNode; children: React.ReactNode; className?: string }) {
 	return (
@@ -26,12 +26,12 @@ export function Panel({ title, count, children, className }: { title: React.Reac
 // Needs you
 // ---------------------------------------------------------------------------
 
-const NEED_WORD = { review: 'Look and decide', question: 'Question', stalled: 'Stuck' } as const;
-const NEED_ICON = { review: CircleDot, question: HelpCircle, stalled: AlertTriangle } as const;
+const NEED_WORD = { review: 'Look and decide', question: 'Question', stalled: 'Stuck', stage: 'Stage review' } as const;
+const NEED_ICON = { review: CircleDot, question: HelpCircle, stalled: AlertTriangle, stage: Layers } as const;
 
-export function NeedsRail({ items, creature, current, collapsed, onToggle }: { items: (NeedItem & { creature: string })[] | undefined; creature?: string; current?: { creature: string; part: string; build?: string }; collapsed: boolean; onToggle: () => void }) {
-	const hrefOf = (item: NeedItem & { creature: string }) => `/studio/${item.creature}/${item.partKey ?? ''}${item.kind === 'review' ? `?build=${item.ref}` : ''}`;
-	const isHere = (item: NeedItem & { creature: string }) => !!current && current.creature === item.creature && current.part === item.partKey && (item.kind !== 'review' || current.build === item.ref);
+export function NeedsRail({ items, creature, current, collapsed, onToggle }: { items: (NeedItem & { creature: string })[] | undefined; creature?: string; current?: { creature: string; part?: string; build?: string; stage?: string }; collapsed: boolean; onToggle: () => void }) {
+	const hrefOf = (item: NeedItem & { creature: string }) => (item.kind === 'stage' ? `/studio/${item.creature}/stage/${item.stage}` : `/studio/${item.creature}/${item.partKey ?? ''}${item.kind === 'review' ? `?build=${item.ref}` : ''}`);
+	const isHere = (item: NeedItem & { creature: string }) => !!current && current.creature === item.creature && (item.kind === 'stage' ? current.stage === item.stage : current.part === item.partKey && (item.kind !== 'review' || current.build === item.ref));
 	const toggle = (
 		<Button type="button" size="icon-sm" variant="ghost" onClick={onToggle} aria-expanded={!collapsed} aria-label={collapsed ? 'Show the needs list' : 'Collapse the needs list'}>
 			{collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
@@ -49,11 +49,11 @@ export function NeedsRail({ items, creature, current, collapsed, onToggle }: { i
 							key={`${item.kind}-${item.ref}`}
 							to={hrefOf(item)}
 							title={`${NEED_WORD[item.kind]}: ${item.partName ?? ''} ${item.ask}`}
-							aria-label={`${NEED_WORD[item.kind]}: ${item.partName ?? 'whole creature'}`}
+							aria-label={`${NEED_WORD[item.kind]}: ${item.kind === 'stage' ? stageName(item.stage ?? '') : (item.partName ?? 'whole creature')}`}
 							aria-current={isHere(item) ? 'true' : undefined}
 							className={cn('relative block size-10 shrink-0 border bg-s1 outline-none focus-visible:outline-2 focus-visible:outline-ring', isHere(item) ? 'border-ink shadow-[inset_0_-3px_0_var(--color-ink)]' : 'border-edge')}
 						>
-							{item.thumb ? <img src={blobUrl(item.thumb)} alt="" className="size-full object-cover" /> : <span className="grid size-full place-items-center text-ink-2" aria-hidden="true"><Icon className="size-4" /></span>}
+							{item.thumb ? <img src={blobUrl(item.thumb)} alt="" className={cn('size-full', item.kind === 'stage' ? 'bg-ink object-contain p-0.5' : 'object-cover')} /> : <span className="grid size-full place-items-center text-ink-2" aria-hidden="true"><Icon className="size-4" /></span>}
 							{item.kind !== 'review' ? <span className="absolute -right-1 -bottom-1 grid size-4 place-items-center border border-edge-strong bg-room text-ink" aria-hidden="true"><Icon className="size-3" /></span> : null}
 						</Link>
 					);
@@ -87,7 +87,7 @@ export function NeedsRail({ items, creature, current, collapsed, onToggle }: { i
 								)}
 							>
 								{item.thumb ? (
-									<img src={blobUrl(item.thumb)} alt="" className="size-12 shrink-0 border border-edge bg-s0 object-cover" />
+									<img src={blobUrl(item.thumb)} alt="" className={cn('size-12 shrink-0 border border-edge', item.kind === 'stage' ? 'bg-ink object-contain p-0.5' : 'bg-s0 object-cover')} />
 								) : (
 									<span className="grid size-12 shrink-0 place-items-center border border-edge bg-s0 text-ink-3" aria-hidden="true"><Icon className="size-5" /></span>
 								)}
@@ -96,7 +96,7 @@ export function NeedsRail({ items, creature, current, collapsed, onToggle }: { i
 										<span className="type-legend inline-flex items-center gap-1 text-[10.5px] text-ink"><Icon className="size-3.5" />{NEED_WORD[item.kind]}</span>
 										{item.buildKind === 'preview' ? <Badge>Preview</Badge> : null}
 									</span>
-									<span className="font-body text-small font-bold text-ink">{item.partName ?? 'Whole creature'}</span>
+									<span className="font-body text-small font-bold text-ink">{item.kind === 'stage' ? `${stageName(item.stage ?? '')} stage` : (item.partName ?? 'Whole creature')}</span>
 									<span className="line-clamp-2 font-body text-[12.5px] text-ink-2">{item.ask}</span>
 									<span className="type-data text-[11px] text-ink-3">{timeAgo(item.since)}</span>
 								</span>

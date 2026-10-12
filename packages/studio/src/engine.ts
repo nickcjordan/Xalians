@@ -1,5 +1,6 @@
 import { StudioError } from './errors.ts';
 import { ReportSchema, STAGE_IDS, STANDARD_CAMERAS, type Build, type Defect, type Hold, type Note, type Part, type Report } from './schema.ts';
+import { staleStages } from './stages.ts';
 import type { CreatureData } from './store.ts';
 
 export { STANDARD_CAMERAS };
@@ -60,15 +61,19 @@ export interface PartStatus {
 export interface StatusReport {
 	creature: string;
 	stages: Record<string, string>;
+	/** Approved stages whose evidence changed since approval, with the reason. */
+	staleStages: { id: string; reason: string }[];
 	parts: PartStatus[];
 	holds: { alias: string; id: string; statement: string; source: string; strength: HoldStrength }[];
 	openQuestions: { alias: string; id: string; text: string }[];
 	next: string;
 }
 
-export function status(data: CreatureData): StatusReport {
+export function status(data: CreatureData, templateSha?: (path: string) => string | undefined): StatusReport {
 	const stages: Record<string, string> = {};
 	for (const id of STAGE_IDS) stages[id] = data.creature.stages[id].status;
+	const stale = staleStages(data, templateSha);
+	for (const s of stale) stages[s.id] = 'stale';
 
 	const parts: PartStatus[] = [...data.parts]
 		.sort((a, b) => a.order - b.order)
@@ -98,11 +103,26 @@ export function status(data: CreatureData): StatusReport {
 		.filter((n) => n.kind === 'question' && !n.answered)
 		.map((n) => ({ alias: n.alias, id: n.id, text: n.text }));
 
-	return { creature: data.creature.key, stages, parts, holds, openQuestions, next: nextAction(data, parts, openQuestions) };
+	return { creature: data.creature.key, stages, staleStages: stale, parts, holds, openQuestions, next: nextAction(data, parts, openQuestions) };
 }
 
 function nextAction(data: CreatureData, parts: PartStatus[], questions: { alias: string }[]): string {
 	if (questions.length > 0) return `Waiting on Nick: answer question ${questions[0]!.alias}.`;
+
+	const inReview = STAGE_IDS.find((id) => data.creature.stages[id].status === 'in-review');
+	if (inReview) return `Waiting on Nick: review the ${inReview} stage in the review screen.`;
+	const staleStage = staleStages(data)[0];
+	if (staleStage) return `Stage ${staleStage.id} is stale (${staleStage.reason}). Resubmit it for Nick's approval.`;
+	// Stage guidance applies while no part has started and no build exists; a creature already building is past it.
+	const early = data.builds.length === 0 && data.parts.every((p) => p.status === 'proposed' || p.status === 'not-started');
+	const intakeStage = data.creature.stages.intake;
+	if (early && intakeStage.status === 'open') {
+		if (!data.creature.intake) return 'Run studio intake to read the species template, silhouette and encyclopedia entry.';
+		if (!data.parts.some((p) => p.status === 'proposed')) return 'Propose the functional parts (studio part propose), then submit the intake stage.';
+		return 'Submit the intake stage for Nick (studio stage submit <key> intake).';
+	}
+	const refStage = data.creature.stages.references;
+	if (early && refStage.status === 'open') return data.references.length === 0 ? 'Add the references (studio reference add), then submit the references stage.' : 'Submit the references stage for Nick (studio stage submit <key> references).';
 
 	const presented = data.builds.find((b) => b.status === 'presented');
 	if (presented) return `Waiting on Nick: review build ${presented.alias} in the review screen.`;
@@ -114,7 +134,7 @@ function nextAction(data: CreatureData, parts: PartStatus[], questions: { alias:
 	if (planned) return `Start build ${planned.alias}.`;
 
 	for (const p of parts) {
-		if (p.status === 'approved') continue;
+		if (p.status === 'approved' || p.status === 'proposed') continue;
 		if (p.stalledDefects.length > 0) {
 			return `Part ${p.key}: defect ${p.stalledDefects[0]} is stalled. Write an audit note naming the physical cause and one outcome (lift an inferred hold, change the method, redefine the part, or ask Nick).`;
 		}
@@ -264,6 +284,7 @@ export interface ReviewUpdates {
 export function applyReview(data: CreatureData, note: Pick<Note, 'by' | 'kind' | 'about' | 'verdict' | 'holdsStruck' | 'defectsClosed' | 'text' | 'createdAt'>): ReviewUpdates {
 	if (note.by !== 'nick') throw new StudioError('only Nick can approve or reject: a review note must be by nick');
 	if (note.kind !== 'review') throw new StudioError('applyReview needs a review note');
+	if (note.about?.stage) throw new StudioError('a stage review is recorded with recordStageReview, not applyReview');
 	const at = note.createdAt;
 	const out: ReviewUpdates = { parts: [], holds: [], defects: [], builds: [] };
 
@@ -484,7 +505,7 @@ export function partView(data: CreatureData, partRef: string): PartView {
 	};
 }
 
-export type NeedKind = 'review' | 'question' | 'stalled';
+export type NeedKind = 'review' | 'question' | 'stalled' | 'stage';
 
 export interface NeedItem {
 	kind: NeedKind;
@@ -500,6 +521,8 @@ export interface NeedItem {
 	since: string;
 	/** Blob hash of a thumbnail, when there is an image. */
 	thumb?: string;
+	/** For a stage review: the stage id. */
+	stage?: string;
 }
 
 /** Everything waiting on Nick, oldest first: builds presented for review, unanswered questions, stalled defects whose audit says to ask him. */
@@ -520,6 +543,13 @@ export function needsNick(data: CreatureData): NeedItem[] {
 			since: b.updatedAt,
 			...(thumbOut ? { thumb: thumbOut.blob } : {}),
 		});
+	}
+
+	for (const id of STAGE_IDS) {
+		if (data.creature.stages[id].status !== 'in-review') continue;
+		const last = data.notes.filter((n) => n.about?.stage === id).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+		const thumb = id === 'intake' ? data.creature.intake?.silhouette.blob : id === 'references' ? [...data.references].sort((a, b) => a.precedence - b.precedence)[0]?.blob : undefined;
+		items.push({ kind: 'stage', ref: id, stage: id, ask: `Review the ${id} stage and approve, adjust or reject it`, since: last?.createdAt ?? data.creature.updatedAt, ...(thumb ? { thumb } : {}) });
 	}
 
 	for (const n of data.notes) {

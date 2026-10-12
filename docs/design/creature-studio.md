@@ -31,7 +31,7 @@ Nick's answers on 2026-10-12, which this design follows:
 | 8 | The recipe engine (`recipe.py` and its cache, pins and DAG) is the build backend, ported to main with every script the v5eye3 chain pins. The Workflow critic loop is retired. | 85% | tooling audit; Fable 8 |
 | 9 | Containment is a report, not a prohibition. Each build shows what moved outside its part (measured per component before assembly, with the remesh tolerance after). A builder may change anything the goal needs; an outside change blocks presentation only when the builder did not declare and explain it. | 90%: the eye-socket failure came from treating a protective rule as untouchable; Nick, revision 3 | `REFINEMENT.md`; Fable 4, Codex 4 |
 | 10 | A stalled defect's audit must end in one of four outcomes: lift an inferred hold, change the method, redefine the part's scope, or ask Nick. An audit that changes nothing unlocks nothing. | 90% | Fable 5, Codex 5; `REFINEMENT.md` rule 4 |
-| 11 | The first milestone is one vertical slice through the real workflow on Akinza's skull, built before anything general. Later phases are re-estimated from its measured cost. | 85% | Codex 12, Fable 9 |
+| 11 | The first milestone is one vertical slice through the real workflow on a new creature from intake (Nick's pick), not on Akinza, which another session owns. Later phases are re-estimated from its measured cost. | 85% | Codex 12, Fable 9; Nick 2026-10-12: "I dont want you to do anything with Akinza" |
 | 12 | Blender runs as the Windows build from a pinned install path, not the Codex package cache the loop uses now; every build records the version. | 80% | tooling audit "Notable" 3 |
 | 13 | The Akinza branch is not merged wholesale (325 commits apart from main). The studio ports what it uses; the branch's 64 MB of tracked evidence PNGs move to the blob store. | 80% | `git rev-list --left-right --count` |
 | 14 | Color direction can start early as 2D swatches; color on the model waits for shape approval. | 70% | memory "creature coloring"; lesson 14 |
@@ -173,7 +173,7 @@ Each step is one or more small pull requests that auto-merge on green. Estimates
 | Step | Content | Rough time | Rough tokens |
 |---|---|---|---|
 | S0 Backup first | Terraform bucket PR; dry-run size of the Akinza keep set (approved v5 head, v5m2, v5eye3 builds, recipe roots head-0204 and body-0195, the tail-free root, every pinned script, references, images shown to Nick); upload; verify | 2 to 3 h | 1 to 2M |
-| S1 Vertical slice (milestone 1) | Seven record schemas and the CLI core; Akinza import at v5eye3 with the chain ported to main and rebuilt on main; runner with pinned Blender, standard cameras, pixel diff, the outside-the-part report; the `/studio` review screen; cost collector proven on real transcripts; then Akinza's skull: part defined, holds declared, two or three previews, one build, Nick's review in the screen | 14 to 20 h, plus the skull's own budget agreed with Nick | 15 to 22M |
+| S1 Vertical slice (milestone 1) | Seven record schemas and the CLI core; Akinza import at v5eye3 with the chain ported to main and rebuilt on main; runner with pinned Blender, standard cameras, pixel diff, the outside-the-part report; the `/studio` review screen; cost collector proven on real transcripts; then a new creature (Nick's pick) through intake, references, blockout and a first part: holds declared, previews, one build, Nick's review in the screen. Akinza was dropped from the slice on 2026-10-12; its chain port (#806) and S3 backup remain | 14 to 20 h, plus the creature's own build budget | 15 to 22M |
 | Re-estimate | From S1's measured cost | | |
 | S2 Enforcement and storage | Stall audits, budgets and deadlines complete; restore drill; `gc` with Nick's confirmed delete list | 5 to 8 h | 5 to 8M |
 | S3 Review depth | Heat map, onion and difference, history, references, costs screens | 6 to 10 h | 6 to 10M |
@@ -183,6 +183,6 @@ Each step is one or more small pull requests that auto-merge on green. Estimates
 
 ## 9. Risks
 
-- The skull meets the eye socket, which Nick's eye session is working on. The skull build may touch the socket rim if the shape needs it, and its report says so; a larger socket change is raised with Nick because of the parallel eye work, not because of a rule.
-- Porting the v5eye3 chain may surface missing pinned files; the slice must rebuild the chain on main and match the recorded statistics before any skull work.
+- Akinza is worked on in a separate session and stays out of the studio until Nick says otherwise.
+- The blockout stage needs a part library that does not exist yet; the first creature's body plan decides which part kinds come first.
 - A dev-only route inside the site could leak into production; a build test fails if any studio code is in the production bundle.

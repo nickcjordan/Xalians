@@ -83,4 +83,4 @@ __pycache__/
 art/creatures/*/.lock
 
 # Creature Studio local fixture (apps/web/scripts/studio-fixture.mjs); never committed
-art/creatures/fixture/
+art/creatures/fixture*/

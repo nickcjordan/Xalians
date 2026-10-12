@@ -101,11 +101,28 @@ export const StagesSchema = z.strictObject({
 	atlas: stage,
 });
 
+export const IntakeSchema = z.strictObject({
+	/** Repo-relative path of the species template this intake was read from. */
+	speciesTemplate: z.string().min(1),
+	templateSha256: sha256,
+	name: z.string().min(1),
+	element: z.string().min(1),
+	homeWorld: z.string().min(1),
+	bodyPlan: z.string().min(1),
+	covering: z.string().min(1),
+	sizeCm: z.tuple([z.number().min(0), z.number().min(0)]).nullable(),
+	loreSummary: z.string().min(1),
+	appearance: z.array(z.string()),
+	anatomy: z.array(z.string()),
+	silhouette: z.strictObject({ blob: sha256, fileName: z.string().min(1) }),
+});
+
 export const CreatureSchema = record('C', {
 	key: z.string().regex(/^[a-z0-9][a-z0-9-]*$/),
 	name: z.string().min(1),
 	speciesTemplate: z.string(),
 	silhouette: z.string(),
+	intake: IntakeSchema.optional(),
 	stages: StagesSchema,
 	defaultBudget: budget,
 	provenance: z.string().optional(),
@@ -129,7 +146,7 @@ export const PartSchema = record('P', {
 	scope: z.strictObject({ zones: z.array(z.string()).optional(), rule: z.string().optional() }),
 	dependsOn: z.array(idFor('P')),
 	order: z.number().int(),
-	status: z.enum(['not-started', 'in-progress', 'in-review', 'approved', 'stale']),
+	status: z.enum(['proposed', 'not-started', 'in-progress', 'in-review', 'approved', 'stale']),
 	approvedBuild: idFor('B').optional(),
 	budget,
 	transitionBands: z.array(z.string()).optional(),
@@ -269,6 +286,7 @@ export const NoteSchema = record('N', {
 			part: idFor('P').optional(),
 			hold: idFor('H').optional(),
 			defect: idFor('D').optional(),
+			stage: z.enum(STAGE_IDS).optional(),
 		})
 		.optional(),
 	by: z.enum(['nick', 'orchestrator', 'import']),
@@ -302,6 +320,8 @@ export const SCHEMAS = {
 	note: NoteSchema,
 } as const;
 
+export type Intake = z.infer<typeof IntakeSchema>;
+export type StageId = (typeof STAGE_IDS)[number];
 export type Creature = z.infer<typeof CreatureSchema>;
 export type Reference = z.infer<typeof ReferenceSchema>;
 export type Part = z.infer<typeof PartSchema>;

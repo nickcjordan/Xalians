@@ -12,7 +12,7 @@ Nick, 2026-10-12: "proceed" on design revision 3, after answering the backup (S3
 
 ## Completion criteria for milestone 1
 
-Akinza imported at v5eye3; one skull build made through the studio (previews, then a build) and reviewed by Nick in the `/studio` screen, with holds, defects, verdict and cost recorded; the keep set backed up to S3.
+Nick, 2026-10-12: "I dont want you to do anything with Akinza, that model is being worked on in another session." Akinza is out of scope for this work (no import, no builds). Milestone 1 is a new creature taken through the studio from intake: intake and references approved by Nick in the screen, then a blockout and a first part build reviewed in the screen, with holds, defects, verdict and cost recorded. The creature is Nick's pick (recommended: Dromeus).
 
 ## Steps
 
@@ -25,10 +25,12 @@ Akinza imported at v5eye3; one skull build made through the studio (previews, th
 | S1 chain port | done for v5eye3 | PR #806; H50 replay matched head-3140 exactly |
 | S1 packet renderer | done | PR #807; 14 cameras, 1.2 min cold, pixel-identical reruns |
 | S1 `/studio` review screen and blob store | done | this PR; one-screen workspace, real Akinza packet in the fixture (`node apps/web/scripts/studio-fixture.mjs --force`, then `/studio/fixture/head`) |
-| S1 token cost collector | not started | screen shows "not collected yet" |
-| S1 Akinza import | waiting | Nick's parallel head session moved on past v5eye3: v5eye4 eyes approved ("the eyes look great"), v5eye5 tiny fix, nose-mouth-v1 (H53, assembled-3157) in review. Import from that session's final state, then port its new steps (H51 to H53) the same way as #806 |
-| S1 skull previews, build, review | not started | |
+| S1 token cost collector | done | PR #809 |
+| S1 intake and reference stages, creature board | done | PR #810 |
+| S1 Akinza import, skull | dropped | Nick, 2026-10-12 (above) |
+| S1 blockout: part library and assembly | not started | needs the milestone creature for its first part kinds |
+| S1 first creature through intake and references | waiting on Nick's pick | |
 
 ## Next unfinished action
 
-Finish the studio core, then the runner and import.
+Nick names the first creature; run its intake, propose its parts, gather references, submit both stages for his review; meanwhile build the blockout part library for its body plan.
