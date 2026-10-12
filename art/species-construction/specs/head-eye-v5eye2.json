@@ -1,7 +1,20 @@
 {
- "note": "Eyes v2 (Nick 2026-10-11, on v5m2): face surface first, then the eyes fitted to it. Free region: skin whose first hit from the centre lies inside the old opening or within `margin` (3D distance to the old opening outline on the skin; `marginInner` toward the nose) is refilled as a thin plate on the spherical grid; the next `band` (`bandInner`) blends back to the original surface; nothing else moves. Each eye globe is rebuilt as a closed lens on the new skin with the v5m2 front-view opening outline and dark band (heavier on top); the iris and pupil keep their front-view place and their depth offset from the globe front. Tried: front-view margin .045 (ran far back along the head side, strong concave spot at x .32); 3D margin .045 (temple groove left as held data, concave .03 radius at the outer end); a Tutte re-spread of directions (no folds existed in the radial parametrization, and the re-spread folded 13 faces); trimming the outer end of the outline by 12 percent (squared the eye's outer side in the front view). Keys documented in eye_v5eye2_field.py.",
+ "note": "Eyes v2 (Nick 2026-10-11, on v5m2): face surface first, then the eyes fitted to it. Free region: skin whose first hit from the centre lies inside the old opening or within `margin` (3D distance to the old opening outline on the skin; `marginInner` toward the nose) is refilled as a thin plate on the spherical grid; the next `band` (`bandInner`) blends back to the original surface; nothing else moves. Each eye globe is rebuilt as a closed lens on the new skin with the v5m2 front-view opening outline and dark band (heavier on top); the iris and pupil keep their front-view place and their depth offset from the globe front. Tried: front-view margin .045 (ran far back along the head side, strong concave spot at x .32); 3D margin .045 (temple groove left as held data, concave .03 radius at the outer end); a Tutte re-spread of directions (no folds existed in the radial parametrization, and the re-spread folded 13 faces); trimming the outer end of the outline by 12 percent (squared the eye's outer side in the front view). Lens: base eased toward a quadratic fit of the face inside rho .55 to .95 (smooth iris and white), cap front sheet eased over its ring grid (30 passes, none beyond rho .97), bulge .012 so the cap crosses the skin cleanly, band and outline widths smoothed over 17 and 7 of 256 angles. Keys documented in eye_v5eye2_field.py.",
  "margin": 0.06,
  "marginInner": 0.025,
  "band": 0.035,
- "bandInner": 0.02
+ "bandInner": 0.02,
+ "baseSmooth": [
+  0.55,
+  0.95
+ ],
+ "capSmooth": [
+  30,
+  0.85,
+  0.97
+ ],
+ "lensHeight": 0.012,
+ "normalStep": 0.006,
+ "bandSmooth": 17,
+ "outlineSmooth": 7
 }

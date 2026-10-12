@@ -27,6 +27,15 @@ so the skin had to sink into pockets and folds round them. This step inverts tha
    front-view height field of S (central differences, `normalStep`). A ring lies exactly on the band's inner edge, so
    the dark band ('Upper emphasized eyelid') keeps v5m2's front-view width per angle, heavier on top. The iris and
    pupil keep their front-view position; each vertex keeps its depth offset from the globe front.
+   `baseSmooth` [r0, r1]: inside the opening the lens base is eased toward a quadratic fit of the face (weight 1 to
+   rho r0, 0 at r1, never more than half the bulge behind the face), so the iris and white are smooth domes.
+   `capSmooth` [passes, r0, r1]: the cap front sheet is eased over its ring grid (the sampled skin is faceted), not
+   at all beyond r1, so the cap still meets the skin exactly on the outline.
+
+Margins: with `distance3d` (default) a cell outside the old outline is measured by its 3D distance to the outline curve
+on the old skin; front-view distance runs far back along the head side, where the view is grazing. `tutte` (default
+off) re-spreads the region's directions by a Tutte map; the radial parametrization of the v5m2 eye region has no folds,
+so each skin vertex keeps its own direction and only its radius changes.
 
 Writes head.blend, shape.glb, eye-v5eye2.json.
 """
@@ -512,6 +521,15 @@ for s in SIDES:
         lift = w*np.maximum(SP[..., 1]-qy(SP[..., 0], SP[..., 2]), -.5*H)
         q0 = max(p0[1]-qy(p0[0], p0[2]), -.5*P['lensHeight'])
     front_pts = SP+SN*H[..., None]-lift[..., None]*np.array([0., 1., 0.])
+    if P.get('capSmooth'):
+        # the sampled skin is faceted at its own triangle size; ease the cap's front sheet over its ring grid
+        # (rings and angles) inside the opening, untouched near the outline so the cap still meets the skin there
+        its_, r0_, r1_ = P['capSmooth']
+        ws = (1-ss2(rings, r0_, r1_))[..., None]*.5
+        for _ in range(int(its_)):
+            avg = front_pts.copy()
+            avg[1:-1] = (np.roll(front_pts, 1, 1)[1:-1]+np.roll(front_pts, -1, 1)[1:-1]+front_pts[2:]+front_pts[:-2])/4
+            front_pts = front_pts+ws*(avg-front_pts)
     back_pts = SP-SN*P['backDepth']
     rho_of = rings
     V = [p0+n0*P['lensHeight']-np.array([0., q0, 0.])]+list(front_pts.reshape(-1, 3))+[p0-n0*P['backDepth']]+list(back_pts.reshape(-1, 3))
