@@ -489,14 +489,32 @@ for s in SIDES:
     NR = len(rings)
     front_pts = np.zeros((NR, NA, 3))
     back_pts = np.zeros((NR, NA, 3))
+    SP = np.zeros((NR, NA, 3))
+    SN = np.zeros((NR, NA, 3))
     for k in range(NR):
         for j, a in enumerate(ANG):
-            rho = rings[k, j]
-            p, n = surf(e['e0'][0]+rho*Rn[j]*math.cos(a), e['e0'][1]+rho*Rn[j]*math.sin(a))
-            front_pts[k, j] = p+n*P['lensHeight']*(1-rho*rho)
-            back_pts[k, j] = p-n*P['backDepth']
+            SP[k, j], SN[k, j] = surf(e['e0'][0]+rings[k, j]*Rn[j]*math.cos(a), e['e0'][1]+rings[k, j]*Rn[j]*math.sin(a))
     p0, n0 = surf(*e['e0'])
-    V = [p0+n0*P['lensHeight']]+list(front_pts.reshape(-1, 3))+[p0-n0*P['backDepth']]+list(back_pts.reshape(-1, 3))
+    H = P['lensHeight']*(1-rings*rings)
+    lift = np.zeros_like(rings)
+    q0 = 0.
+    if P.get('baseSmooth'):
+        # the lens base inside the opening eased toward a quadratic fit of the face there (smooth iris and white),
+        # back to the face itself at the outline; never more than half the bulge behind the face
+        m = rings <= P['baseSmooth'][1]
+        X_, Z_, Y_ = SP[m][:, 0], SP[m][:, 2], SP[m][:, 1]
+        A_ = np.c_[np.ones(len(X_)), X_, Z_, X_*X_, X_*Z_, Z_*Z_]
+        cq, *_ = np.linalg.lstsq(A_, Y_, rcond=None)
+
+        def qy(x, z):
+            return cq[0]+cq[1]*x+cq[2]*z+cq[3]*x*x+cq[4]*x*z+cq[5]*z*z
+        w = 1-ss2(rings, *P['baseSmooth'])
+        lift = w*np.maximum(SP[..., 1]-qy(SP[..., 0], SP[..., 2]), -.5*H)
+        q0 = max(p0[1]-qy(p0[0], p0[2]), -.5*P['lensHeight'])
+    front_pts = SP+SN*H[..., None]-lift[..., None]*np.array([0., 1., 0.])
+    back_pts = SP-SN*P['backDepth']
+    rho_of = rings
+    V = [p0+n0*P['lensHeight']-np.array([0., q0, 0.])]+list(front_pts.reshape(-1, 3))+[p0-n0*P['backDepth']]+list(back_pts.reshape(-1, 3))
     off_b = 1+NR*NA+1
 
     def fid(k, j):

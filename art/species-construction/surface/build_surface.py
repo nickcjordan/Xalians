@@ -919,8 +919,26 @@ def add_catch_lights(cfg):
         pts = np.array([o.matrix_world@v.co for v in o.data.vertices])
         lo, hi = pts.min(axis=0), pts.max(axis=0)
         c = (lo+hi)/2
-        bpy.ops.mesh.primitive_uv_sphere_add(radius=cl['radius'], location=(c[0]+cl['dx'], lo[1]+cl['radius']*0.15, c[2]+cl['dz']))
+        x, z = c[0]+cl['dx'], c[2]+cl['dz']
+        # depth: the iris front under the light's own spot (eyes v2, 2026-10-12), so a tilted iris does not leave the
+        # light floating in front of it with a shadow crescent; the old rule (front-most iris depth) is the fallback
+        y = lo[1]
+        dg = bpy.context.evaluated_depsgraph_get()
+        inv = o.matrix_world.inverted()
+        hit, loc, _n, _i = o.ray_cast(inv@Vector((x, lo[1]-1.0, z)), (inv.to_3x3()@Vector((0, 1, 0))).normalized(), depsgraph=dg)
+        if hit:
+            # the flattened light sits on the iris (its back at the iris front), seen by the camera only: it casts no
+            # shadow and lights nothing, so no crescent or halo shows round it on the iris
+            y = (o.matrix_world@loc)[1]-cl['radius']*0.35
+        else:
+            y = y+cl['radius']*0.15
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=cl['radius'], location=(x, y, z))
         sph = bpy.context.object
+        if hit:
+            sph.visible_shadow = False
+            sph.visible_diffuse = False
+            sph.visible_glossy = False
+            sph.visible_transmission = False
         sph.name = 'catch light '+o.name
         sph.scale = (1, 0.35, 1)
         sph.data.materials.append(mat)
