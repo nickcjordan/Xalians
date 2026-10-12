@@ -60,6 +60,15 @@ jobs:
       - name: Typecheck rules
         run: npm run typecheck -w packages/rules
 
+      - name: Typecheck studio
+        run: npm run typecheck -w packages/studio
+
+      - name: Test studio
+        run: npm test -w packages/studio
+
+      - name: Verify creature studio records
+        run: npm run studio -- verify
+
       - name: Test
         run: npm test -w packages/content
 

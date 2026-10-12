@@ -1,0 +1,20 @@
+{
+  "name": "@xalians/studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Creature Studio core: the seven record kinds, the store, the engine that enforces the build process, and the studio CLI. TypeScript source is the published form; no build step.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./store": "./src/store.ts",
+    "./engine": "./src/engine.ts"
+  },
+  "dependencies": {
+    "zod": "^4.6.0"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  }
+}
