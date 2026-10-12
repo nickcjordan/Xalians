@@ -1,0 +1,51 @@
+# Akinza initial keep set, 2026-10-12: the full rebuild closure of the approved v5eye3
+# recipe (recipe-furbase-v5eye3.json: three roots, 30 step outputs, assembly), the
+# approved v5m2 assembly, both packets, and the comparison images Nick was shown for
+# the approved head steps. Paths are relative to C:/dev/art-data/species-construction/akinza.
+head-0204
+body-0195
+body-0086/attempt-03
+head-0223
+head-0260
+head-0281
+head-0318
+head-0333
+loop/scratch/r10/x-e
+head-0375
+head-0387
+head-0395
+head-0455
+head-2994
+head-2996
+head-3022
+head-3030
+head-3070
+head-3100
+head-3122
+head-3140
+body-0212
+body-0263
+body-0288
+body-0303
+body-0310
+body-0325
+body-0369
+body-2647
+body-2913
+body-2916
+body-2918
+body-2960
+assembled-3141
+assembled-3101
+loop/packets/assembled-3141
+loop/packets/assembled-3101
+surface/head-redesign/v5m/*.png
+surface/head-redesign/v5m2/*.png
+surface/head-redesign/eyes-v2/*.png
+surface/head-redesign/eyes-v3/*.png
+surface/head-redesign/v5m2/*.json
+surface/head-redesign/eyes-v3/*.json
+# The review pages exactly as Nick saw them (images embedded).
+C:/Users/njord/AppData/Local/Temp/claude/c--dev-src-Xalians/f0532f7e-7c4a-4de8-a1ff-d63721d93567/scratchpad/akinza-review.html
+C:/Users/njord/AppData/Local/Temp/claude/c--dev-src-Xalians/f0532f7e-7c4a-4de8-a1ff-d63721d93567/scratchpad/akinza-review-full-2026-10-09.html
+C:/Users/njord/AppData/Local/Temp/claude/c--dev-src-Xalians/f0532f7e-7c4a-4de8-a1ff-d63721d93567/scratchpad/akinza-review-r20.html
