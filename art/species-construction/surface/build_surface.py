@@ -898,11 +898,14 @@ def skin_material(mat, cfg, always_pale):
     tree.links.new(mixs.outputs['Shader'], out.inputs['Surface'])
 
 
-def nose_material(mat):
+def nose_material(mat, cfg=None):
     tree = clear(mat)
     bsdf = tree.nodes.new('ShaderNodeBsdfPrincipled')
     bsdf.inputs['Base Color'].default_value = (0.03, 0.03, 0.03, 1)
     bsdf.inputs['Roughness'].default_value = 0.2
+    # settings `noseMaterial`: Principled inputs over the defaults (nose and mouth v2, 2026-10-12: a satin leather)
+    for k, v in ((cfg or {}).get('noseMaterial') or {}).items():
+        bsdf.inputs[k].default_value = v
     out = tree.nodes.new('ShaderNodeOutputMaterial')
     tree.links.new(bsdf.outputs['BSDF'], out.inputs['Surface'])
 
@@ -995,7 +998,7 @@ def main():
     for o in meshes:
         if 'nose' in o.name:
             for mat in o.data.materials:
-                nose_material(mat)
+                nose_material(mat, cfg)
 
     add_catch_lights(cfg)
     hair_mat = hair_material(cfg)

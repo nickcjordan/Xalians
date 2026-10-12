@@ -1,0 +1,88 @@
+{
+ "note": "Nose and mouth v2 (2026-10-12; step H54 in place of H53 after H52). Coordinator on v1: the nose read as a hard beveled plastic plate on the snout and a flat dark band in profile; rebuild it as part of the snout. Muzzle form, chin and mouth line as v1 (form.gaussians fitted by fitform.py, now art/species-construction/fit_muzzle_form.py). Nose: outline top -.1095, tip -.156, half width .042, corners .006 (close to the approved size; a little taller so the leather reaches the front of the snout tip); mound .016 high with soft sides (edge .011, out .002) and a .002 dome, its height growing from .25 at the top edge to full at the tip (tiltPow 1.5), blurred 6 grid cells so the distance field's medial creases go; leather shell .001 above the skin, crossing it on the outline over .001 (tanh), .003 back sheet; satin finish (Roughness .55; the surface build reads noseMaterial from akinza-surface.json). Tried: tip -.160 (the leather wraps the very front, but the triangle is about 40 percent taller than approved), tip -.154 (leather stops above the snout front). Keys documented in nose_mouth_v2_field.py.",
+ "form": {
+  "gaussians": [
+   [
+    0.02463,
+    13.7,
+    -15.685,
+    7.778,
+    19.169,
+    71.15399999916553,
+    "pair"
+   ],
+   [
+    0.01806,
+    20.12,
+    -10.318,
+    7.971,
+    5.241,
+    -14.161999999545515,
+    "pair"
+   ],
+   [
+    -0.01819,
+    25.655,
+    -16.452,
+    8.719,
+    14.889,
+    51.493000000715256,
+    "pair"
+   ],
+   [
+    0.01887,
+    0.0,
+    -5.567,
+    6.144,
+    3.373,
+    0.0,
+    "mid"
+   ],
+   [
+    -0.00113,
+    -0.0,
+    -34.104,
+    12.539,
+    2.34,
+    0.0,
+    "mid"
+   ]
+  ],
+  "extra": [
+   [
+    0.007,
+    0.0,
+    -27.0,
+    9.0,
+    5.0,
+    0.0,
+    "mid"
+   ]
+  ]
+ },
+ "dataCore": 0.05,
+ "nose": {
+  "top": -0.1095,
+  "tip": -0.156,
+  "halfWidth": 0.042,
+  "round": 0.006
+ },
+ "noseMaterial": {
+  "Roughness": 0.55
+ },
+ "mound": {
+  "height": 0.016,
+  "edge": 0.011,
+  "out": 0.002,
+  "dome": 0.002,
+  "top": 0.25,
+  "tiltPow": 1.5,
+  "blur": 6
+ },
+ "shell": {
+  "offset": 0.001,
+  "edge": 0.001,
+  "sink": 0.003,
+  "rings": 24
+ }
+}
