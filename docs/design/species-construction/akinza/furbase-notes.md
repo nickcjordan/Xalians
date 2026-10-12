@@ -633,3 +633,28 @@ Images in `untracked/species-construction/akinza/surface/head-redesign/shoulders
 Still open (my own look): a tiny dark tick (one facet) at the front of the armpit apex in the close front view, where the smoothing reshaped the apex; the diagonal crease on the back at about armpit height (the lower edge of the shoulder blade, at the edge of the held torso) is softer but still there in the rear three-quarter view; the shoulder ball is a clear round deltoid in side view, which is the rounded shoulder asked for but stands out more than the old block on bare clay; the faint vertical spine groove at the top of the back is kept.
 
 Correction to the neck v1 section: its `curvature-before-after.png` legend read "amber convex, blue concave"; the colors are the other way round (blue convex, amber concave). The image was regenerated with the right legend.
+
+# Arms v1: upper arm, elbow, forearm, wrist and palm root as one tube (2026-10-12)
+
+Hold audit finding 4: ring bands at the elbow and the wrist. The paw hold ("keep the paw as it is", Nick 2026-10-08) had been implemented as every paw, digit and claw parameter frozen, which also froze the place where the paw meets the wrist. Base: shoulders v1 (assembled-3173).
+
+| Hold | Source | Why |
+|---|---|---|
+| Forepaw look: digits, claws, palm shape from front, side and below | Nick 2026-10-08: "the forepaw in A looks much better than B" | approved look, not its settings |
+| Shoulders, neck, head | just built; Nick approvals | done parts |
+| Torso, legs, tails | inferred: next part or held | one part at a time |
+
+Lifted (inferred): "every paw, digit and claw parameter stays at its baseline value"; only the look is protected.
+
+Cause, measured first (radius along the bone axis, `radius-profile.png`): the upper arm is a constant .0405 tube down to z .14, then jumps to the forearm's .050 to .052 over about .03 of arm length (z .14 to .105): that steep step, with ripples of about .0015 on it, is the elbow ring. The forearm tapers to a .032 plateau at z -.07 to -.10 (the wrist, 38 percent under the forearm's widest), and the radius then climbs back to .040 within .035 (z -.10 to -.135), with a crease across the top of the paw at about z -.14: the wrist ring and the paw-top line. Both sit where separately built pieces meet (B-23's arm tube and its frozen paw settings).
+
+- Step P-arms1 (`art/species-construction/arms_v1_post.py` with `arms_v1_field.py`, spec `specs/arms-v1.json`), a post-assembly step after P-shoulders1. Recipe `recipe-arms-v1.json`.
+- Method: per arm (mirrored), the bone axis is the old arm's smoothed slice centroids, densified with a cubic spline (a coarse polyline left plateaus in arc length that printed as rings, dev b). Every arm vertex gets arc length, radius and angle about the axis; the mean radius on a .002 by 64-sector grid is smoothed along the axis (Gaussian .012) and slightly around it, rescaled to an authored taper (upper arm .0405, elbow .0425 to .0475, forearm .051 at z .07, .0395 at z -.05, wrist .035 at z -.085, about 12 percent under the forearm .035 above it, palm root .0365 to .040), and each vertex is placed on that smooth tube along its own radial direction (bilinear in arc length and angle). The edit fades in below the shoulder ball (axis z .20 to .17) and out across the palm root (z -.148 to -.168). A light Taubin relax follows, and a small Laplacian sphere at the front of each armpit apex removes the shoulder step's sliver facet (found by ray-picking the dark tick: a twisted quad at (±.197, -.084, .262); Taubin smoothing did not move it enough, plain Laplacian did).
+- Development: a (per-cell offsets) left a wrinkle noise; b (vertices onto the smoothed tube) still showed rings from the coarse axis; c (densified axis) removed them; d and e blended the palm root further and reached the paw-top crease; f to h fixed the armpit facet. h is kept.
+- Output: assembled-3174 (head-3167 and body-2960 unchanged).
+
+Measures (assembled-3174 against assembled-3173): 40,291 of 643,424 skin vertices move, max .0040 world, median .0012; outside the part (the arm masks and the two armpit spheres) 0.0 exactly; every other object (eyes, irises, nose, mouth line, claws) 0.0. The paw: below arm z -.175 (digits, pads) 0.0; the top of the paw between z -.15 and -.17 at most .002 (the fade over the paw-top crease). Check passes; regionShift R07 .0021 figure heights, 0.0 elsewhere; no new seams; face guards clear; R06.10, R07.6, R10.1 move under .0013 (advisory).
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/arms-v1/`: `before-after-{afront,aside,aback,aq,arq}.png` (arm), `before-after-{elbowside,elbowfront,elbowback}.png`, `before-after-{wristside,wristfront,wristback,wristq}.png`, `before-after-{pawfront,pawside,pawbelow}.png` (the paw look), `before-after-{pitfront,pitfrontR}.png` (the armpit facet), bare clay, 3173 against 3174; `arms-v1-3174-heat.png`; `radius-profile.png`; `arms-v1-3174-numbers.json`.
+
+Still open (my own look): a faint line remains across the top of the paw in the close side view (much softer; removing it fully means reshaping the top of the paw itself, inside the paw look); the arm's back is mostly hidden by the tails in the back view, so it was judged in the rear three-quarter and close views.

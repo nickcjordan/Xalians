@@ -1,0 +1,110 @@
+{
+ "note": "arms v1 (2026-10-12): the upper arm below the shoulder ball, elbow, forearm, wrist and palm root as one tube (post step). World units. mask: the arm's vertices (x beyond xGap[0] + max(0, xGap[1] - z) * xGap[2], y below yMax, z in [zBottom, zTop]); axis: slice centroids every step, smoothed, densified; grid: (s, angle) cells (ds, na), smoothing sAlong (world) along the axis and aAround (cells) around it; taper: rows of axis z and mean radius (natural spline); weight: fade in from in[0] to in[1] and out from out[0] to out[1] (axis z); relax: Taubin on the moved vertices; spots: Laplacian smoothing spheres (mirrored) at the armpit facets.",
+ "mask": {
+  "xGap": [
+   0.21,
+   0.09,
+   0.35
+  ],
+  "yMax": 0.05,
+  "zTop": 0.26,
+  "zBottom": -0.21
+ },
+ "axis": {
+  "zTop": 0.25,
+  "zBottom": -0.2,
+  "step": 0.01,
+  "smooth": 3
+ },
+ "grid": {
+  "ds": 0.002,
+  "na": 64,
+  "sAlong": 0.012,
+  "aAround": 1.5
+ },
+ "taper": {
+  "rows": [
+   {
+    "z": 0.2,
+    "r": 0.0405
+   },
+   {
+    "z": 0.14,
+    "r": 0.0425
+   },
+   {
+    "z": 0.11,
+    "r": 0.0475
+   },
+   {
+    "z": 0.07,
+    "r": 0.051
+   },
+   {
+    "z": 0.03,
+    "r": 0.049
+   },
+   {
+    "z": -0.01,
+    "r": 0.045
+   },
+   {
+    "z": -0.05,
+    "r": 0.0395
+   },
+   {
+    "z": -0.085,
+    "r": 0.0348
+   },
+   {
+    "z": -0.105,
+    "r": 0.0357
+   },
+   {
+    "z": -0.125,
+    "r": 0.0382
+   },
+   {
+    "z": -0.145,
+    "r": 0.04
+   },
+   {
+    "z": -0.16,
+    "r": 0.0378
+   },
+   {
+    "z": -0.175,
+    "r": 0.034
+   }
+  ]
+ },
+ "weight": {
+  "in": [
+   0.2,
+   0.17
+  ],
+  "out": [
+   -0.148,
+   -0.168
+  ]
+ },
+ "relax": {
+  "iterations": 3,
+  "lambda": 0.5,
+  "mu": -0.53,
+  "fullMove": 0.002
+ },
+ "spots": [
+  {
+   "c": [
+    0.197,
+    -0.083,
+    0.261
+   ],
+   "radius": 0.012,
+   "iterations": 15,
+   "taubin": false,
+   "lambda": 0.5
+  }
+ ]
+}
