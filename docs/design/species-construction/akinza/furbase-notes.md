@@ -561,3 +561,27 @@ Measures (head-3165 against head-3148): 19,890 skin vertices move, max .0105; ou
 Images in `untracked/species-construction/akinza/surface/head-redesign/nose-mouth-v2/`: `compare-crop-{front,threequarter,side,below,tip-profile,nose-front,nose-threequarter}.png` (before 3149, v1 3155, v2 3166, bare clay with the new satin finish on all three), `compare-crop-tip-threequarter.png`, `before-after-{face,head,threequarter,side,faceq,faceside}.png`, `alternative-tip-{mtip,mfront,mnose}.png`, `nose-mouth-v2-3165-heat.png`, `nose-mouth-v2-3165-numbers.json`.
 
 Still open (my own look): a faint soft streak of light down the lower middle of the leather toward the tip (the mound's slope catching the key lamp, much softer than v1's); in profile the leather's top end shows its .0005 world thickness as a small lip where it meets the bridge; the profile point is still the lip bulge just below the leather unless the tip goes lower (the trade-off above).
+
+# Head nose-v3: the nose as a soft rounded shield (2026-10-12)
+
+Nick approved all of nose-mouth-v2 except the nose shape: "the result of the nose is sort of a perfect triangle now ... it should look a little bit more closer to a nose rather than a cartoon abstraction of a nose", and approved the sketch (scratchpad `nose-sketch.html`): "ok yeah do that".
+
+| Hold | Source | Why |
+|---|---|---|
+| Nose size and position about as now | Nick 2026-10-12: keep as now | approved |
+| Muzzle, mouth line, chin, eyes, everything else | Nick 2026-10-12: "all of the changes you made look great"; one part at a time 2026-10-10 | approved |
+| How the nose is built | inferred | lifted where needed (below) |
+
+- Step H55 (`art/species-construction/nose_v3_field.py`, spec `specs/head-nose-v3.json`) in place of H54 after H52; recipe `recipe-furbase-nose-v3.json`. Muzzle form, chin and mouth line as v2.
+- Outline: the sketch's shield (the SVG path's six cubic segments, mapped from sketch units: half width .038, top z -.1095, bottom -.1547, about the v2 size), with a wide rounded top, sides curving in and a blunt rounded bottom.
+- Mound: built from the blurred inside mask (no distance-field creases), fuller toward the bottom, with a soft dome; the muzzle target under the leather is blurred first, because the form's upper-lip V ran up under the nose bottom and printed as a mark.
+- Leather shell: .0012 above the skin with the same clean edge as v2; its inset rings stop at half the inradius (deeper insets folded it into a Y at the centre) and its inner part is smoothed before the nostrils go in (skin ripples at the mound's roll showed as a mark at the bottom).
+- Nostrils: one soft curve per side along the lower sides (the sketch's strokes), pressed .0011 into the leather, Gaussian .001 wide, ends faded, kept under the shell's offset so no skin shows through.
+- Groove: a faint midline groove in the muzzle (.0012 deep, .0035 wide) from just under the nose to the mouth's centre.
+- Output: head-3167, assembled-3168. Development builds in `head-redesign/nose-v3/work/` (dev-a to dev-j and the t1 to t3 ablations that found the bottom mark's cause).
+
+Measures (head-3167 against head-3165): 9,260 skin vertices move, max .0049; outside the muzzle region 0.0 exactly; outside the nose and the groove at most .0008 (99th percentile .0003, the plate solve settling around the new seat); the mouth line's centre moves .0002 where the groove meets it; eye globes and irises 0.0. Assembly: check passes, regionShift R02 .0016 figure heights, 0.0 elsewhere, no new seams, face guards clear; R01.2 .8673 to .8667 (failing as before), R04.2 .0305 to .0313 (passing).
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/nose-v3/`: `v2-vs-v3-crop-{front,threequarter,side,below,profile,tip-threequarter,nose-front,nose-threequarter}.png`, `v2-vs-v3-face.png`, `nose-v3-3167-heat.png`, `nose-v3-3167-numbers.json`.
+
+Still open (my own look): the nostrils sit on the front of the lower sides, so in a true profile they are hidden rather than showing at the lower front as in the sketch's side view; the lighter band across the top is only the soft satin sheen of the dome, fainter than the sketch's band; the groove is faint at face scale (as asked), clearer in the close front crop.

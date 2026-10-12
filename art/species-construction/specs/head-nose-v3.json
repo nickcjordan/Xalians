@@ -1,0 +1,195 @@
+{
+ "note": "Nose v3 (Nick 2026-10-12: 'it should look a little bit more closer to a nose rather than a cartoon abstraction of a nose', and his approved sketch; step H55 in place of H54 after H52). Muzzle, chin and mouth line as nose-mouth-v2. Outline: the sketch's shield (segments in sketch units, mapped .00066 by .00052 head units per unit from the sketch top at z -.1095: half width .038, bottom z -.1547, about the v2 size). Mound .014 from the blurred inside mask (outline grown .003, 6 cells), a quarter more at the bottom (top .35, tiltPow 1.5), dome .002 (radius .012), seat smoothed 6 cells under the leather. Leather shell .0012 above the skin, edge .001, inner part smoothed 40 passes, rings stop at half the inradius. Nostrils: one sketch curve per side along the lower sides, pressed .0011 into the leather, Gaussian .001, ends faded over .4. Groove: .0012 deep, .0035 wide, z -.163 to -.184. Satin finish from the surface settings (Roughness .55). Keys documented in nose_v3_field.py.",
+ "form": {
+  "gaussians": [
+   [
+    0.02463,
+    13.7,
+    -15.685,
+    7.778,
+    19.169,
+    71.15399999916553,
+    "pair"
+   ],
+   [
+    0.01806,
+    20.12,
+    -10.318,
+    7.971,
+    5.241,
+    -14.161999999545515,
+    "pair"
+   ],
+   [
+    -0.01819,
+    25.655,
+    -16.452,
+    8.719,
+    14.889,
+    51.493000000715256,
+    "pair"
+   ],
+   [
+    0.01887,
+    0.0,
+    -5.567,
+    6.144,
+    3.373,
+    0.0,
+    "mid"
+   ],
+   [
+    -0.00113,
+    -0.0,
+    -34.104,
+    12.539,
+    2.34,
+    0.0,
+    "mid"
+   ]
+  ],
+  "extra": [
+   [
+    0.007,
+    0.0,
+    -27.0,
+    9.0,
+    5.0,
+    0.0,
+    "mid"
+   ]
+  ]
+ },
+ "dataCore": 0.05,
+ "nose": {
+  "top": -0.1095,
+  "tip": -0.15474,
+  "halfWidth": 0.042,
+  "round": 0.006
+ },
+ "noseMaterial": {
+  "Roughness": 0.55
+ },
+ "mound": {
+  "height": 0.014,
+  "out": 0.003,
+  "mask": 6,
+  "top": 0.35,
+  "tiltPow": 1.5,
+  "dome": 0.002,
+  "domeR": 0.012,
+  "seatSmooth": {
+   "sigma": 6,
+   "out": 0.006,
+   "blend": 4
+  }
+ },
+ "shell": {
+  "offset": 0.0012,
+  "edge": 0.001,
+  "sink": 0.003,
+  "rings": 40,
+  "switch": 0.5,
+  "smooth": 40
+ },
+ "shape": {
+  "segments": [
+   [
+    100,
+    30,
+    132,
+    28,
+    156,
+    32,
+    158,
+    46
+   ],
+   [
+    158,
+    46,
+    160,
+    62,
+    148,
+    82,
+    130,
+    99
+   ],
+   [
+    130,
+    99,
+    120,
+    110,
+    111,
+    117,
+    100,
+    117
+   ],
+   [
+    100,
+    117,
+    89,
+    117,
+    80,
+    110,
+    70,
+    99
+   ],
+   [
+    70,
+    99,
+    52,
+    82,
+    40,
+    62,
+    42,
+    46
+   ],
+   [
+    42,
+    46,
+    44,
+    32,
+    68,
+    28,
+    100,
+    30
+   ]
+  ],
+  "centre": [
+   100,
+   30
+  ],
+  "scale": [
+   0.00066,
+   0.00052
+  ],
+  "top": -0.1095
+ },
+ "nostrils": {
+  "curves": [
+   [
+    140,
+    74,
+    137,
+    84,
+    130,
+    91,
+    121,
+    95
+   ]
+  ],
+  "depth": 0.0011,
+  "width": 0.001,
+  "taper": 0.4
+ },
+ "groove2": {
+  "depth": 0.0012,
+  "width": 0.0035,
+  "z": [
+   -0.163,
+   -0.184
+  ],
+  "fade": 0.004
+ },
+ "noseSegments": 320
+}
