@@ -1,0 +1,11 @@
+{
+  "resolution": 800,
+  "views": [
+    {"name": "nose-front", "target": [0, -0.18, 0.57], "offset": [0, -6, 0], "orthoScale": 0.17},
+    {"name": "nose-profile", "target": [0, -0.16, 0.57], "offset": [6, 0, 0], "orthoScale": 0.17},
+    {"name": "nose-below", "target": [0, -0.17, 0.565], "offset": [0, -4.5, -4.0], "orthoScale": 0.18},
+    {"name": "eyes-front", "target": [0, -0.2, 0.65], "offset": [0, -6, 0], "orthoScale": 0.34},
+    {"name": "head-three-quarter", "target": [0, -0.05, 0.70], "offset": [4.2, -4.2, 0.8], "orthoScale": 0.75},
+    {"name": "head-rear-oblique", "target": [0, 0.05, 0.72], "offset": [-4.0, 4.5, 1.6], "orthoScale": 0.85}
+  ]
+}

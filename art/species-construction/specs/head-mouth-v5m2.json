@@ -1,0 +1,109 @@
+{
+ "note": "Mouth v5m2 (2026-10-10): v5m (head-mouth-v5m.json) plus two fixes inside the same mask. Upper lip: the lifted lower face also moves .02 forward (liftFwd, by the lift's own fraction, front-facing skin), and the thin plate's target is pushed forward by a .006 bump between nose and mouth (plate.bulge), with a softer nose pin (noseMargin .002, pinSoft 20), so the lip from the nose pad down to the mouth line is one gently convex slope (slope at the centre .31 / .47 / .61 / .71 / .92 at z -.16 / -.17 / -.18 / -.19 / -.20, rising steadily, against v5m's band of .46 to 1.22). Mouth line: where the two curves meet, their tube centres come forward to the line's own depth under the skin (they sat .003 buried in the old pit) and the V's corner is rounded (mouthCenter reach .02, soft .008), so the two halves read as one line with a soft centre point. Every vertex outside the mask box keeps its v5 position. Keys documented in mouth_v5m2_field.py and mouth_v5m_field.py.",
+ "window": [
+  0.0,
+  -0.33,
+  -0.19,
+  0.12,
+  0.1,
+  0.07
+ ],
+ "windowBlend": [
+  1.0,
+  1.63
+ ],
+ "noseHold": [
+  0.003,
+  0.02
+ ],
+ "fillTop": [
+  -0.17,
+  -0.14
+ ],
+ "fillReach": [
+  0.03,
+  0.045
+ ],
+ "lift": 0.025,
+ "liftZ": [
+  -0.11,
+  -0.2,
+  -0.23,
+  -0.32
+ ],
+ "liftY": [
+  -0.28,
+  -0.1
+ ],
+ "liftX": [
+  0.08,
+  0.26
+ ],
+ "liftNose": [
+  0,
+  -0.35,
+  -0.13,
+  0.05,
+  0.05,
+  0.03,
+  2.5
+ ],
+ "maskBox": [
+  0.28,
+  -0.37,
+  -0.1,
+  0.06
+ ],
+ "plate": {
+  "x": [
+   -0.16,
+   0.16
+  ],
+  "z": [
+   -0.27,
+   -0.1
+  ],
+  "step": 0.002,
+  "core": [
+   0,
+   -0.18,
+   0.12,
+   0.04,
+   0.6,
+   1.4
+  ],
+  "coreData": 0.02,
+  "pinData": 50,
+  "noseMargin": 0.002,
+  "alpha": 320,
+  "applyMask": [
+   0,
+   -0.185,
+   0.15,
+   0.07,
+   0.7,
+   1.0
+  ],
+  "facing": [
+   0.3,
+   0.6
+  ],
+  "maxY": -0.2,
+  "pinSoft": 20,
+  "bulge": [
+   0,
+   -0.18,
+   0.09,
+   0.025,
+   0.006
+  ]
+ },
+ "mouthSink": {
+  "closed_mouth_2": 0.003
+ },
+ "mouthCenter": {
+  "reach": 0.02,
+  "soft": 0.008
+ },
+ "liftFwd": 0.02
+}

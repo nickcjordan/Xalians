@@ -1,0 +1,164 @@
+{
+ "note": "Smooth face v1 (Nick 2026-10-09: the face looks lumpy under fur). Face faired as a radial thin plate toward an authored ellipsoid mass (cranium, mirrored cheeks, muzzle, chin, throat; fitted once to the 3023 face outside the lumps with the eye rings, nose and mouth weighted up; fit_face_mass.py), eye zone, nose pad and mouth line pinned. Crown: the two dips between the crown centre and the ear roots raised by at most .02 toward a smooth arch (keeps the front head outline as close to the sheet as 3023). Ears: the change from the v2 shell on its outline (blur .02) to the same shell on an outline blurred .03, held below the frame top and inset .006 instead of .008 (the blur rounds the tips), with v2's own mid-surface coefficients. Head-local units, angles in degrees. Keys documented in smooth_face_field.py.",
+ "faceCenter": [
+  0.0,
+  0.0,
+  -0.12
+ ],
+ "faceGrid": [
+  -85.0,
+  88.0,
+  -100.0,
+  100.0,
+  0.5
+ ],
+ "faceYBack": [
+  -0.02,
+  0.06
+ ],
+ "faceEarX": [
+  0.3,
+  0.36
+ ],
+ "faceEarZ": [
+  -0.12,
+  -0.04
+ ],
+ "faceSideX": [
+  0.36,
+  0.42
+ ],
+ "faceZMin": -0.38,
+ "eyeKeep": 4.0,
+ "eyeHold": 1.0,
+ "multiGrow": 3.0,
+ "edge": [
+  2.0,
+  10.0
+ ],
+ "lam": 0.0003,
+ "data": 1.0,
+ "irls": 3,
+ "sigma": 0.005,
+ "irlsMin": 0.2,
+ "massWeight": 0.3,
+ "maxDelta": 0.04,
+ "mass": {
+  "parts": [
+   {
+    "name": "cranium",
+    "c": [
+     0.0,
+     0.1094,
+     0.1094
+    ],
+    "r": [
+     0.4162,
+     0.4393,
+     0.3245
+    ],
+    "k": 0.11,
+    "mirror": false
+   },
+   {
+    "name": "cheek",
+    "c": [
+     0.2288,
+     -0.0743,
+     -0.0192
+    ],
+    "r": [
+     0.08,
+     0.1678,
+     0.148
+    ],
+    "k": 0.0953,
+    "mirror": true
+   },
+   {
+    "name": "muzzle",
+    "c": [
+     0.0,
+     -0.3123,
+     -0.1617
+    ],
+    "r": [
+     0.0795,
+     0.0459,
+     0.045
+    ],
+    "k": 0.1524,
+    "mirror": false
+   },
+   {
+    "name": "chin",
+    "c": [
+     0.0,
+     -0.1703,
+     -0.2552
+    ],
+    "r": [
+     0.1098,
+     0.061,
+     0.0405
+    ],
+    "k": 0.161,
+    "mirror": false
+   },
+   {
+    "name": "throat",
+    "c": [
+     0.0,
+     0.0142,
+     -0.4723
+    ],
+    "r": [
+     0.0775,
+     0.0574,
+     0.2283
+    ],
+    "k": 0.1871,
+    "mirror": false
+   }
+  ]
+ },
+ "earOutlineSmooth": 0.03,
+ "earTopCap": 0.537,
+ "earTopCapRound": 0.02,
+ "earMidCoef": [
+  -0.45555,
+  1.60627,
+  0.21486,
+  -1.09779,
+  0.22425,
+  -0.64504
+ ],
+ "faceZMax": [
+  0.3,
+  0.38
+ ],
+ "massZ": [
+  -0.33,
+  -0.28
+ ],
+ "earOutlineSmoothFrom": 0.02,
+ "earTopCapFrom": null,
+ "earOutlineInset": 0.006,
+ "crownLift": 0.02,
+ "crownDomeX": 0.28,
+ "crownDomeBlend": [
+  0.2,
+  0.27
+ ],
+ "crownDomeRowZ": [
+  0.3,
+  0.36
+ ],
+ "crownDomeBlur": 0.03,
+ "crownDomeDepth": 0.06,
+ "crownDomeSlope": [
+  0.7,
+  1.2
+ ],
+ "earOutlineInsetFrom": 0.008
+}

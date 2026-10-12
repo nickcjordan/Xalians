@@ -1,0 +1,7 @@
+{
+ "note": "Analytic ears F (Nick 2026-10-09: prefer something between A and E): eight-point closed cubic B-spline, the lower edge between A's and E's (it leaves the skull just outside the outer eye corner, a little below the eye centre, and rises in a gentle straight line to the tip), the upper edge level with the crown, the tip at the upper outer corner a little slimmer than A's; length about 1.6 times the visible root height. The inner end of the outline lies inside the new skull (analytic_head_field.py places it). Cup elongated along the ear, deepest toward the root, between A's round cup and E's long one. Same H38 construction; keys documented in analytic_ears_field.py.",
+ "earControls": [[0.10, 0.20], [0.30, -0.10], [0.56, -0.02], [0.84, 0.17], [1.00, 0.38], [1.02, 0.53], [0.62, 0.55], [0.28, 0.35]],
+ "earCupScale": [0.66, 0.60],
+ "earCupShift": [-0.04, 0.0],
+ "earCupTaper": 0.4
+}
