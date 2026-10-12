@@ -1,0 +1,43 @@
+{
+  "species": "akinza",
+  "convention": "World axes are Blender's (Z up). The creature faces -Y. Its LEFT is world +X and its RIGHT is world -X (the three tails stack on +x, the figure's left; the front camera sees +X on the image right). 'left' and 'right' in a camera id always mean the creature's own side, and the camera sits on that side: side-left looks at the creature's left flank from +X, threequarter-left stands at front-left (+X, -Y). A camera is its target plus an offset (the direction from the target to the camera, any length that clears the figure); it looks at the target along the negative offset with world +Z up (the top and below cameras use a 0.001 y offset so the up vector stays defined). All cameras are orthographic, so orthoScale is the width and height of the frame in world units.",
+  "resolution": 800,
+  "figureFrame": "Whole-figure cameras use the species' fixed render frame (species.json frame.render: center 0.0287, 0.1647, -0.0300; scale 3.1981), the frame every Akinza assembly render has used, so the figure never rescales between builds. Top and below use a tighter scale on the figure's plan centre.",
+  "headFrame": "Head close cameras are in world coordinates around the head as the assembly places it (head scale .5, offset 0, -.02, .635); targets and scales are those of render_clay_views.py w-front, w-back, w-top, w-side and w-tq, which are the views the head reviews used.",
+  "render": {
+    "engine": "CYCLES",
+    "device": "CPU",
+    "samples": 48,
+    "seed": 0,
+    "denoise": true,
+    "viewTransform": "Standard",
+    "background": [245, 245, 245],
+    "world": {"color": [0.6, 0.6, 0.6], "strength": 0.5},
+    "clay": {"color": [0.38, 0.38, 0.38], "roughness": 0.7}
+  },
+  "lightRig": {
+    "note": "Three area lamps aimed at a fixed point (the whole-creature bounds centre of the Akinza assemblies). They are placed in world space and never move with a camera, so every view of every build is lit alike. Offsets are from the aim point.",
+    "aim": [0.0229, 0.1643, -0.0266],
+    "lamps": [
+      {"offset": [-3, -5, 7], "power": 650, "size": 4},
+      {"offset": [4, -2, 4], "power": 300, "size": 4},
+      {"offset": [1, 4, 6], "power": 550, "size": 3}
+    ]
+  },
+  "cameras": [
+    {"id": "front", "group": "figure", "target": [0.0287, 0.1647, -0.03], "offset": [0, -6, 0], "orthoScale": 3.1981},
+    {"id": "threequarter-left", "group": "figure", "target": [0.0287, 0.1647, -0.03], "offset": [4.2, -4.2, 1.2], "orthoScale": 3.1981},
+    {"id": "threequarter-right", "group": "figure", "target": [0.0287, 0.1647, -0.03], "offset": [-4.2, -4.2, 1.2], "orthoScale": 3.1981},
+    {"id": "side-left", "group": "figure", "target": [0.0287, 0.1647, -0.03], "offset": [6, 0, 0], "orthoScale": 3.1981},
+    {"id": "side-right", "group": "figure", "target": [0.0287, 0.1647, -0.03], "offset": [-6, 0, 0], "orthoScale": 3.1981},
+    {"id": "back", "group": "figure", "target": [0.0287, 0.1647, -0.03], "offset": [0, 6, 0], "orthoScale": 3.1981},
+    {"id": "top", "group": "figure", "target": [0.0287, 0.1647, -0.03], "offset": [0, -0.001, 6], "orthoScale": 2.0},
+    {"id": "below", "group": "figure", "target": [0.0287, 0.1647, -0.03], "offset": [0, -0.001, -6], "orthoScale": 2.0},
+    {"id": "head-front", "group": "head", "target": [0, -0.02, 0.68], "offset": [0, -6, 0], "orthoScale": 1.15},
+    {"id": "head-threequarter-left", "group": "head", "target": [0, -0.02, 0.68], "offset": [4.2, -4.2, 1.2], "orthoScale": 1.15},
+    {"id": "head-threequarter-right", "group": "head", "target": [0, -0.02, 0.68], "offset": [-4.2, -4.2, 1.2], "orthoScale": 1.15},
+    {"id": "head-side", "group": "head", "target": [0, -0.02, 0.66], "offset": [6, 0, 0], "orthoScale": 0.75},
+    {"id": "head-top", "group": "head", "target": [0, -0.02, 0.66], "offset": [0, -0.001, 6], "orthoScale": 1.15},
+    {"id": "head-back", "group": "head", "target": [0, -0.02, 0.68], "offset": [0, 6, 0], "orthoScale": 1.15}
+  ]
+}

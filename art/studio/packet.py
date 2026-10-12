@@ -1,0 +1,324 @@
+"""Packet: the standard review images and comparisons for one build.
+
+    python art/studio/packet.py --assembly <assembled dir> [--baseline <assembled dir>] \
+        --cameras art/studio/cameras/akinza.json --out <dir> \
+        [--component head --head <head dir> --baseline-head <head dir>]
+
+Renders every camera of the cameras file (art/studio/packet_render.py, run through loop_tools.py blender, so
+the Blender slot lock applies) for the assembly and, when given, the baseline. Baseline renders are cached
+under C:/dev/art-data/studio/packet-cache/<sha256 of the baseline blend>/ and reused while the cameras file
+and renderer are unchanged. Per camera it writes <id>.png, and with a baseline <id>.baseline.png,
+<id>.compare.png (before and after, labeled) and <id>.diff.png (unchanged pixels gray, changed pixels on a
+blue to amber ramp by size of the change). With head directories it also writes heat.png, the skin
+displacement of the head against the baseline head (gray exactly zero, blue to amber by size) and the
+maximum displacement per species zone. Everything is summarized in packet.json.
+"""
+import argparse
+import hashlib
+import json
+import shutil
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+LOOP = ROOT/'art/species-construction/loop'
+CACHE_ROOT = Path(r'C:\dev\art-data\studio\packet-cache')
+WORK_DEFAULT = ROOT/'untracked/species-construction'
+CHANGED_MIN = 3          # per-channel difference (of 255) at or below which a pixel counts as unchanged
+RAMP_FULL = 48           # difference at which the ramp reaches amber
+BLUE, AMBER = np.array([30, 60, 160]), np.array([255, 190, 40])
+
+
+def sha256(path):
+    h = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(1 << 20), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def font(size):
+    for name in ('arial.ttf', 'segoeui.ttf', 'DejaVuSans.ttf'):
+        try:
+            return ImageFont.truetype(name, size)
+        except OSError:
+            pass
+    return ImageFont.load_default()
+
+
+def ramp(t):
+    """Blue (dark) to amber (light): luminance rises with t, never red or green."""
+    t = np.clip(t, 0, 1)[..., None]
+    return (BLUE*(1-t)+AMBER*t).astype(np.uint8)
+
+
+def blend_file(assembly):
+    for name in ('akinza.blend', 'head.blend'):
+        if (assembly/name).is_file():
+            return assembly/name
+    found = sorted(assembly.glob('*.blend'))
+    if not found:
+        sys.exit(f'no .blend in {assembly}')
+    return found[0]
+
+
+def start_render(blend, cameras, out, species, tag):
+    """Launch Blender through loop_tools (slot lock). Returns the process; wait with finish_render."""
+    out.mkdir(parents=True, exist_ok=True)
+    cmd = [sys.executable, str(LOOP/'loop_tools.py'), '--species', species, 'blender', '--log', f'studio-packet-{tag}',
+           str(HERE/'packet_render.py'), '--', '--scene', str(blend), '--cameras', str(cameras), '--out', str(out)]
+    return subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+
+
+def finish_render(proc, what):
+    text = proc.communicate()[0]
+    if proc.returncode:
+        sys.exit(f'render of {what} failed:\n{text[-2000:]}')
+
+
+def config_key(cameras):
+    h = hashlib.sha256()
+    h.update(Path(cameras).read_bytes())
+    h.update((HERE/'packet_render.py').read_bytes())
+    return h.hexdigest()[:16]
+
+
+def raw_images(blend, cameras, ids, jobs):
+    """Raw RGBA render folder for a blend, cached by its sha256. Queues a render job when it is missing."""
+    sha = sha256(blend)
+    folder = CACHE_ROOT/sha
+    meta = folder/'meta.json'
+    key = config_key(cameras)
+    fresh = meta.is_file() and json.loads(meta.read_text())['config'] == key and all((folder/f'{i}.png').is_file() for i in ids)
+    if fresh:
+        return sha, folder, True
+    if folder.exists():
+        shutil.rmtree(folder)
+    jobs.append((blend, folder, sha, key))
+    return sha, folder, False
+
+
+def over_background(raw, bg):
+    im = Image.open(raw).convert('RGBA')
+    base = Image.new('RGBA', im.size, (*bg, 255))
+    base.alpha_composite(im)
+    return base.convert('RGB'), np.asarray(im)[..., 3] > 8
+
+
+def label_strip(width, text, height=28, size=16):
+    strip = Image.new('RGB', (width, height), 'white')
+    ImageDraw.Draw(strip).text((8, 5), text, fill=(20, 20, 20), font=font(size))
+    return strip
+
+
+def side_by_side(before, after, name_before, name_after, cam):
+    w, h = after.size
+    sheet = Image.new('RGB', (w*2+4, h+28), (120, 120, 120))
+    sheet.paste(label_strip(w, f'before: {name_before}   [{cam}]'), (0, 0))
+    sheet.paste(label_strip(w, f'after: {name_after}   [{cam}]'), (w+4, 0))
+    sheet.paste(before, (0, 28))
+    sheet.paste(after, (w+4, 28))
+    return sheet
+
+
+def diff_image(before, after, mask_before, mask_after, name_before, name_after, cam):
+    a, b = np.asarray(before).astype(int), np.asarray(after).astype(int)
+    mag = np.abs(a-b).max(axis=2)
+    changed = mag > CHANGED_MIN
+    figure = mask_before | mask_after
+    lum = 0.299*b[..., 0]+0.587*b[..., 1]+0.114*b[..., 2]
+    context = (225-(255-lum)*0.45).clip(150, 245).astype(np.uint8)
+    out = np.stack([context]*3, axis=-1)
+    out[changed] = ramp((mag[changed]-CHANGED_MIN)/(RAMP_FULL-CHANGED_MIN))
+    img = Image.fromarray(out)
+    w, h = img.size
+    sheet = Image.new('RGB', (w, h+60), 'white')
+    sheet.paste(img, (0, 0))
+    d = ImageDraw.Draw(sheet)
+    bar = ramp(np.linspace(0, 1, 240))[None].repeat(14, axis=0)
+    sheet.paste(Image.fromarray(bar), (10, h+8))
+    f = font(13)
+    d.text((256, h+7), f'blue = small change ({CHANGED_MIN+1}/255), amber = large ({RAMP_FULL}/255 or more)', fill=0, font=f)
+    d.text((10, h+28), f'pale gray = unchanged   [{cam}]  {name_after} against {name_before}', fill=0, font=f)
+    d.text((10, h+43), 'change is the largest per-channel difference between the two renders', fill=(80, 80, 80), font=f)
+    fraction = float(changed[figure].sum())/max(1, int(figure.sum()))
+    return sheet, fraction
+
+
+# ---------------------------------------------------------------- head displacement
+
+def head_skin(head_dir):
+    sys.path.insert(0, str(LOOP))
+    import recipe_steps as rs
+    return rs.glb_vertices(head_dir/'shape.glb', skin_only=True)
+
+
+def displacement(base, cand):
+    """Per candidate vertex: distance to the same vertex of the baseline when the topology matches,
+    else to the nearest baseline vertex."""
+    if base.shape == cand.shape:
+        return np.linalg.norm(cand-base, axis=1), 'same topology, vertex to vertex'
+    try:
+        from scipy.spatial import cKDTree
+        d, _ = cKDTree(base).query(cand)
+    except ImportError:
+        d = np.empty(len(cand))
+        for i in range(0, len(cand), 2000):
+            chunk = cand[i:i+2000]
+            d[i:i+2000] = np.sqrt(((chunk[:, None, :]-base[None, :, :])**2).sum(-1)).min(axis=1)
+    return d, 'different topology, nearest vertex'
+
+
+def view_rotation(az, el):
+    az, el = np.radians(az), np.radians(el)
+    f = np.array([np.sin(az)*np.cos(el), -np.cos(az)*np.cos(el), np.sin(el)])   # toward camera
+    r = np.array([np.cos(az), np.sin(az), 0.])
+    up = np.cross(f, r)
+    return np.stack([r, up, -f])    # third row: depth, larger is farther
+
+
+def heat_view(points, d, rot, vmax, size=700, scale=575, title=''):
+    P = points@rot.T
+    keep = (np.abs(points[:, 0]) < .55) & (points[:, 2] > -.42) & (points[:, 2] < .5)
+    P, dd = P[keep], d[keep]
+    order = np.argsort(-P[:, 2])
+    P, dd = P[order], dd[order]
+    u = (size/2+P[:, 0]*scale).astype(int)
+    v = (size/2-P[:, 1]*scale).astype(int)
+    col = np.where((dd > 0)[:, None], ramp(dd/vmax), np.array([200, 200, 200], np.uint8)[None])
+    img = np.full((size, size, 3), 255, np.uint8)
+    for du in (0, 1):
+        for dv in (0, 1):
+            uu, vv = u+du, v+dv
+            ok = (uu >= 0) & (uu < size) & (vv >= 0) & (vv < size)
+            img[vv[ok], uu[ok]] = col[ok]
+    im = Image.fromarray(img)
+    ImageDraw.Draw(im).text((8, 6), title, fill=0, font=font(16))
+    return im
+
+
+def heat_report(base_dir, cand_dir, out, species, component):
+    base, cand = head_skin(base_dir), head_skin(cand_dir)
+    d, how = displacement(base, cand)
+    moved = d > 0
+    vmax = max(float(np.percentile(d[moved], 99.5)), 1e-6) if moved.any() else 1.0
+    views = [('front', view_rotation(0, 0)), ('three-quarter', view_rotation(40, 8)),
+             ('side (+x, creature left)', view_rotation(90, 0)), ('top', view_rotation(0, 70))]
+    ims = [heat_view(cand, d, rot, vmax, title=t) for t, rot in views]
+    sheet = Image.new('RGB', (1400, 1400+70), 'white')
+    for k, im in enumerate(ims):
+        sheet.paste(im, ((k % 2)*700, (k//2)*700))
+    dr = ImageDraw.Draw(sheet)
+    bar = ramp(np.linspace(0, 1, 240))[None].repeat(14, axis=0)
+    sheet.paste(Image.fromarray(bar), (10, 1408))
+    f = font(15)
+    med = float(np.median(d[moved])) if moved.any() else 0.0
+    dr.text((256, 1407), f'blue = small, amber = {vmax:.4f} head units (99.5th percentile of moved vertices); gray = exactly zero ({how})', fill=0, font=f)
+    dr.text((10, 1432), f'{cand_dir.name} against {base_dir.name}: moved {int(moved.sum())} of {len(d)} skin vertices; max {float(d.max()):.4f}, median of moved {med:.4f} head units', fill=0, font=f)
+    sheet.save(out/'heat.png')
+    # per zone, in the assembled figure's frame: the head is placed as the assembly places it
+    sys.path.insert(0, str(LOOP))
+    import species as sp
+    import recipe as rc
+    s = sp.load(species)
+    join = s.get('join', {})
+    sc = join.get('head-scale', .5)
+    offset = np.array([0, join.get('head-depth-offset', -.02), join.get('jaw-anchor-z', .5)+.27*sc])
+    world = cand*sc+offset
+    frame = s.get('frame', {})
+    floor, height = frame.get('floorZ', -.957), frame.get('fixedHeight', 1.8605)
+    per_zone = {}
+    for name, zone in s['zones'].items():
+        if not isinstance(zone, dict):
+            continue
+        member = rc.in_zone(world, zone, floor, height)
+        if member.any():
+            per_zone[name] = round(float(d[member].max()), 6)
+    return {'component': component, 'heatFile': 'heat.png', 'moved': int(moved.sum()), 'max': round(float(d.max()), 6),
+            'median': round(med, 6), 'units': 'head units', 'perZone': per_zone}
+
+
+# ---------------------------------------------------------------- main
+
+def resolve(path, species):
+    p = Path(path)
+    if p.is_dir():
+        return p.resolve()
+    q = WORK_DEFAULT/species/path
+    if q.is_dir():
+        return q.resolve()
+    sys.exit(f'not a directory: {path}')
+
+
+def main():
+    t0 = time.time()
+    ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
+    ap.add_argument('--assembly', required=True)
+    ap.add_argument('--baseline')
+    ap.add_argument('--cameras', required=True)
+    ap.add_argument('--out', required=True)
+    ap.add_argument('--component', default='head')
+    ap.add_argument('--head')
+    ap.add_argument('--baseline-head')
+    args = ap.parse_args()
+    cameras = Path(args.cameras).resolve()
+    spec = json.loads(cameras.read_text(encoding='utf-8'))
+    species = spec['species']
+    ids = [c['id'] for c in spec['cameras']]
+    bg = tuple(spec['render']['background'])
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    assembly = resolve(args.assembly, species)
+    baseline = resolve(args.baseline, species) if args.baseline else None
+
+    blend = blend_file(assembly)
+    sha = sha256(blend)
+    jobs = []
+    cand_raw = CACHE_ROOT/'_run'/f'{sha[:12]}-{int(t0)}'
+    base_raw = base_cached = None
+    if baseline:
+        _, base_raw, base_cached = raw_images(blend_file(baseline), cameras, ids, jobs)
+    procs = [(start_render(blend, cameras, cand_raw, species, assembly.name), assembly.name)]
+    for bl, folder, _, _ in jobs:
+        procs.append((start_render(bl, cameras, folder, species, baseline.name), baseline.name))
+    for proc, what in procs:
+        finish_render(proc, what)
+    for bl, folder, bsha, key in jobs:
+        (folder/'meta.json').write_text(json.dumps({'config': key, 'blend': str(bl), 'sha256': bsha}), encoding='utf-8')
+
+    result = {'assembly': assembly.name, 'assemblySha256': sha, 'baseline': baseline.name if baseline else None,
+              'cameras': [], 'displacement': None, 'minutes': 0.0}
+    for cam in ids:
+        after, mask_after = over_background(cand_raw/f'{cam}.png', bg)
+        after.save(out/f'{cam}.png')
+        row = {'id': cam, 'file': f'{cam}.png', 'baselineFile': None, 'sideBySide': None, 'diffFile': None, 'changedFraction': None}
+        if baseline:
+            before, mask_before = over_background(base_raw/f'{cam}.png', bg)
+            before.save(out/f'{cam}.baseline.png')
+            side_by_side(before, after, baseline.name, assembly.name, cam).save(out/f'{cam}.compare.png')
+            diff, fraction = diff_image(before, after, mask_before, mask_after, baseline.name, assembly.name, cam)
+            diff.save(out/f'{cam}.diff.png')
+            row.update(baselineFile=f'{cam}.baseline.png', sideBySide=f'{cam}.compare.png', diffFile=f'{cam}.diff.png',
+                       changedFraction=round(fraction, 6))
+        result['cameras'].append(row)
+    if args.head and args.baseline_head:
+        result['displacement'] = heat_report(resolve(args.baseline_head, species), resolve(args.head, species), out, species, args.component)
+    # keep the raw candidate renders beside the packet so a later run can be compared pixel for pixel
+    raw_out = out/'raw'
+    if raw_out.exists():
+        shutil.rmtree(raw_out)
+    shutil.move(str(cand_raw), str(raw_out))
+    result['minutes'] = round((time.time()-t0)/60, 2)
+    (out/'packet.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+    print(json.dumps({k: v for k, v in result.items() if k != 'cameras'}, indent=1))
+    print(f"baseline cache {'hit' if base_cached else 'miss' if baseline else 'n/a'}; {result['minutes']} min")
+
+
+if __name__ == '__main__':
+    main()
