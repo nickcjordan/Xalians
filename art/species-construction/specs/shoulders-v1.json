@@ -1,0 +1,198 @@
+{
+ "note": "shoulders v1 (2026-10-12): upper back, trapezius slope, shoulder caps and the top of the upper arm as one part, after the neck (post step). World units. domes: authored mirrored ellipsoids (centre c, semi-axes s) joined with a C2 smooth minimum of radius k (a rounded shoulder ball under the old flat-topped cap); blur: Gaussian smoothing of the field (sigma) under mirrored ellipsoid masks (fade in units of the ellipsoid value) and boxes (|x|, fade in world units): the crease behind the cap, the cap, and the upper back up to the neck base; partMask: the part (outside it nothing moves).",
+ "grid": {
+  "lo": [
+   -0.37,
+   -0.21,
+   0.15
+  ],
+  "hi": [
+   0.37,
+   0.13,
+   0.47
+  ],
+  "step": 0.0025,
+  "far": 0.08
+ },
+ "domes": [
+  {
+   "c": [
+    0.242,
+    -0.042,
+    0.295
+   ],
+   "s": [
+    0.054,
+    0.052,
+    0.062
+   ],
+   "k": 0.035
+  }
+ ],
+ "blur": [
+  {
+   "sigma": 0.02,
+   "weight": 1.0,
+   "mask": [
+    {
+     "ellipsoid": [
+      0.195,
+      0.0,
+      0.32
+     ],
+     "s": [
+      0.05,
+      0.045,
+      0.085
+     ],
+     "fade": [
+      0.5,
+      1.3
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.012,
+   "weight": 1.0,
+   "mask": [
+    {
+     "ellipsoid": [
+      0.23,
+      -0.03,
+      0.31
+     ],
+     "s": [
+      0.09,
+      0.08,
+      0.1
+     ],
+     "fade": [
+      0.5,
+      1.25
+     ]
+    },
+    {
+     "box": [
+      [
+       0.12,
+       0.27
+      ],
+      [
+       -0.07,
+       0.08
+      ],
+      [
+       0.33,
+       0.42
+      ]
+     ],
+     "fade": 0.025
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "weight": 1.0,
+   "mask": [
+    {
+     "ellipsoid": [
+      0.23,
+      -0.005,
+      0.315
+     ],
+     "s": [
+      0.1,
+      0.085,
+      0.085
+     ],
+     "fade": [
+      0.8,
+      1.15
+     ]
+    },
+    {
+     "box": [
+      [
+       0.0,
+       0.2
+      ],
+      [
+       -0.01,
+       0.12
+      ],
+      [
+       0.28,
+       0.42
+      ]
+     ],
+     "fade": 0.03
+    }
+   ]
+  },
+  {
+   "sigma": 0.016,
+   "weight": 1.0,
+   "mask": [
+    {
+     "box": [
+      [
+       0.0,
+       0.19
+      ],
+      [
+       0.0,
+       0.12
+      ],
+      [
+       0.3,
+       0.43
+      ]
+     ],
+     "fade": 0.035
+    }
+   ]
+  }
+ ],
+ "partMask": [
+  {
+   "ellipsoid": [
+    0.23,
+    -0.02,
+    0.3
+   ],
+   "s": [
+    0.1,
+    0.09,
+    0.11
+   ],
+   "fade": [
+    1.0,
+    1.35
+   ]
+  },
+  {
+   "box": [
+    [
+     0.0,
+     0.21
+    ],
+    [
+     -0.02,
+     0.125
+    ],
+    [
+     0.26,
+     0.45
+    ]
+   ],
+   "fade": 0.03
+  }
+ ],
+ "relax": {
+  "iterations": 6,
+  "factor": 0.5,
+  "minMove": 0.0002,
+  "fullMove": 0.002
+ }
+}
