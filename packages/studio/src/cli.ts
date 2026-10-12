@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { putFile } from './blobs.ts';
 import { ingestPacket } from './ingest.ts';
 import { watchReviews } from './watch.ts';
+import { addTokens, collectBuildCost, formatTokens, uncoveredText, zeroTokens, type TokenTotals } from './cost.ts';
 import { applyReview, canPresent, findPart, holdChangeRefusal, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
 import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
@@ -39,6 +40,7 @@ const OPTIONS = {
 	note: { type: 'string' },
 	decision: { type: 'string' },
 	packet: { type: 'string' },
+	projects: { type: 'string' },
 } as const;
 
 type Flags = ReturnType<typeof parseArgs<{ options: typeof OPTIONS; allowPositionals: true }>>['values'];
@@ -151,7 +153,7 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 		return;
 	}
 
-	const GROUPS = ['part', 'hold', 'defect', 'note', 'build'];
+	const GROUPS = ['part', 'hold', 'defect', 'note', 'build', 'cost'];
 	const grouped = GROUPS.includes(cmd);
 	const sub = grouped ? rest[0] : undefined;
 	const key = grouped ? rest[1] : rest[0];
@@ -206,6 +208,8 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 			if (sub !== 'add') throw new StudioError('usage: note add <key> --file note.json');
 			return noteAdd(store, flags, emit, actor, mopts, copts);
 		}
+		case 'cost':
+			return costCommand(store, sub, args, flags, emit, mopts);
 		case 'build':
 			return buildCommand(store, sub, args, flags, emit, actor, mopts, copts);
 		default:
@@ -216,6 +220,57 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 type Emit = (data: unknown, text: string) => void;
 type MOpts = { actor: Actor; session?: string };
 type COpts = { session?: string };
+
+function costCommand(store: Store, sub: string | undefined, args: string[], flags: Flags, emit: Emit, mopts: MOpts): void {
+	if (sub === 'collect') {
+		const ref = args[0];
+		const found = ref ? store.get(ref) : undefined;
+		if (!found || found.kind !== 'build') throw new StudioError('usage: cost collect <key> <build alias> [--projects DIR]');
+		const b = found.record as Build;
+		const since = b.startedAt ?? b.createdAt;
+		const until = b.endedAt ?? new Date().toISOString();
+		const got = collectBuildCost({ buildTag: b.alias, since, until, ...(flags.projects ? { projectsDir: resolve(flags.projects) } : {}) });
+		const unc = uncoveredText(got);
+		const rec = store.update<'build'>(b.id, (x) => {
+			x.cost.tokens = got.tokens;
+			x.cost.orchestratorTokens = got.orchestrator.tokens;
+			x.cost.agents = got.agents;
+			if (unc) x.cost.uncovered = unc;
+			else delete x.cost.uncovered;
+		}, mopts);
+		const lines = [`cost for ${rec.alias} (${since} to ${until})`];
+		for (const a of got.agents) lines.push(`  agent ${a.file}${a.model ? ` [${a.model}]` : ''}: ${a.description || '(no description)'}; ${formatTokens(a.tokens)}; ${a.minutes} min`);
+		if (got.agents.length === 0) lines.push(`  no subagents tagged [${rec.alias}]`);
+		lines.push(`  subagents total: ${formatTokens(got.tokens)}; ${got.agentMinutes} min`);
+		lines.push(`  orchestrator (approximate, ${got.orchestrator.messages} messages in window): ${formatTokens(got.orchestrator.tokens)}`);
+		lines.push(`  uncovered: ${unc ?? 'none'}`);
+		emit({ build: rec.alias, ...got }, lines.join('\n'));
+		return;
+	}
+	if (sub === 'show') {
+		const data = store.load();
+		const partRef = args[0];
+		const part = partRef ? findPart(data, partRef) : undefined;
+		const rows = data.builds.filter((b) => !part || b.part === part.id);
+		const sumOf = (list: typeof rows, pick: (b: Build) => TokenTotals | undefined) => list.reduce((acc, b) => { const t = pick(b); return t ? addTokens(acc, t) : acc; }, zeroTokens());
+		const line = (label: string, list: typeof rows) => {
+			const minutes = list.reduce((m, b) => m + (b.cost.wallMinutes ?? 0), 0);
+			const blender = list.reduce((m, b) => m + (b.cost.blenderMinutes ?? 0), 0);
+			return `${label}: ${list.length} build(s); subagents ${formatTokens(sumOf(list, (b) => b.cost.tokens))}; orchestrator (approximate) ${formatTokens(sumOf(list, (b) => b.cost.orchestratorTokens))}; wall ${Math.round(minutes * 100) / 100} min, blender ${Math.round(blender * 100) / 100} min`;
+		};
+		const lines: string[] = [];
+		const partsToShow = part ? [part] : data.parts;
+		for (const p of partsToShow) {
+			const mine = data.builds.filter((b) => b.part === p.id);
+			for (const b of mine) lines.push(`  ${line(`${b.alias} (${b.kind}, ${b.status})`, [b])}${b.cost.uncovered ? `; uncovered: ${b.cost.uncovered}` : ''}${b.cost.tokens ? '' : '; no tokens collected'}`);
+			lines.push(line(`part ${p.alias} ${p.key}`, mine));
+		}
+		lines.push(line(`creature ${data.creature.key}${part ? ' (selected part shown above)' : ''}`, part ? data.builds : rows));
+		emit({ builds: rows.map((b) => ({ alias: b.alias, part: b.part, cost: b.cost })) }, lines.join('\n'));
+		return;
+	}
+	throw new StudioError('usage: cost collect <key> <build alias> | cost show <key> [<part>]');
+}
 
 function partCommand(store: Store, sub: string | undefined, flags: Flags, emit: Emit, actor: Actor, copts: COpts): void {
 	if (sub !== 'add') throw new StudioError('usage: part add <key> --file part.json');

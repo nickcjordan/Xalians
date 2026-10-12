@@ -224,6 +224,31 @@ export const BuildSchema = record('B', {
 				cacheWrite: z.number().int().min(0),
 			})
 			.optional(),
+		/** Main-session spend in the build's time window; approximate by construction. */
+		orchestratorTokens: z
+			.strictObject({
+				input: z.number().int().min(0),
+				output: z.number().int().min(0),
+				cacheRead: z.number().int().min(0),
+				cacheWrite: z.number().int().min(0),
+			})
+			.optional(),
+		agents: z
+			.array(
+				z.strictObject({
+					file: z.string(),
+					description: z.string(),
+					model: z.string().optional(),
+					tokens: z.strictObject({
+						input: z.number().int().min(0),
+						output: z.number().int().min(0),
+						cacheRead: z.number().int().min(0),
+						cacheWrite: z.number().int().min(0),
+					}),
+					minutes: z.number().min(0),
+				}),
+			)
+			.optional(),
 		approximate: z.boolean().optional(),
 		manual: z.boolean().optional(),
 		uncovered: z.string().optional(),

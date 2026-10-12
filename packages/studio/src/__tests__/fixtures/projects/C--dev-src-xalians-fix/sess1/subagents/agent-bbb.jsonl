@@ -1,0 +1,2 @@
+{"type":"user","timestamp":"2026-10-01T11:00:00.000Z","message":{"role":"user","content":"Builder for [B-k3f9], part skull"}}
+{"type":"assistant","timestamp":"2026-10-01T11:02:30.000Z","message":{"id":"n1","model":"claude-sonnet-5","role":"assistant","content":[{"type":"text","text":"x"}],"usage":{"input_tokens":20,"output_tokens":10,"cache_read_input_tokens":0,"cache_creation_input_tokens":0}}}
