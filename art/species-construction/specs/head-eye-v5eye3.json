@@ -1,12 +1,13 @@
 {
- "note": "Eyes v3 (Nick 2026-10-12, on v5eye2): one regular ellipsoid eyeball per eye, exact mirror, axis 21.5 degrees outward and 6 down (the orientation that keeps the planar rim closest to the v5eye2 face), opening the plane cut at polar angle 50 degrees, depth .08, rim placed where it clears the face along the whole rim. Lids: the skin within .007 of the rim (on the ball) is the ball plus .004 tanh(d / .003), so an even lid hugs the ball and rolls in over the rim; the socket skin (within .08 of the old opening outline, .06 below, .04 toward the nose) is a thin plate between the lids and the held face with the ball as an obstacle, blended back over .04 (.02 toward the nose). Dark band on the ball inside the lid edge, .0015 at the bottom to .013 at the top. Tried: lid edge .0015 and lid zone .010 (the lid edge was jagged at the skin's own vertex spacing and a halo ring showed outside the lid); margin .06 and .025 toward the nose (faint vertical creases on the bridge sides). Skin faces along the lid line (-.006 to .012 from the rim on the ball) are split twice before moving, so the lid edge is not a sawtooth at the skin's .002 vertex spacing; original vertices keep their indices. Keys documented in eye_v5eye3_field.py.",
- "lidEdge": 0.003,
- "lidZone": 0.007,
+ "note": "Eyes v3 (Nick 2026-10-12, on v5eye2): one regular ellipsoid eyeball per eye, exact mirror, axis 21.5 degrees outward and 6 down (the orientation that keeps the planar rim closest to the v5eye2 face), opening the plane cut at polar angle 50 degrees, depth .08, rim placed where it clears the face along the whole rim. Lids: the skin within .012 of the rim (measured on the ball) is the ball plus t tanh(d / .006), t .004 at the top of the rim easing to .0015 at the bottom, so an even upper lid hugs the ball and rolls in over the rim and the lower lid lies flatter into the cheek; the socket skin (within .08 of the old opening outline, .06 below, .04 toward the nose) is a thin plate between the lids and the held face with the ball as an obstacle, blended back over .04 (.02 toward the nose). Dark band on the ball inside the lid edge, .0015 at the bottom to .013 at the top. Tried: lid edge .0015 to .003 with a .004 lid all round (the assembly's .0028 world voxel remesh, .0056 head units, staircased the lid roll into a sawtooth edge, and left short dashes along the lower lid fold); splitting the skin faces along the lid line (lost in the assembly remesh); lid edge .008 (dashes became a smudge); lids .0025 and .007 thick (dashes unchanged); margin .06 and .025 toward the nose (faint vertical creases on the bridge sides). Keys documented in eye_v5eye3_field.py.",
+ "lidEdge": 0.006,
+ "lidZone": 0.012,
  "margin": 0.08,
  "marginLower": 0.06,
  "band": 0.04,
  "marginInner": 0.04,
  "bandInner": 0.02,
  "bandTop": 0.013,
- "refine": 2
+ "refine": 0,
+ "lidThicknessBottom": 0.0015
 }

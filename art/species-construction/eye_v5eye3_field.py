@@ -18,7 +18,8 @@ the eye is built the way a character modeler would:
    axis c cos(theta0) behind the rim plane.
 2. Lids and socket: per eye, a spherical grid of directions from `centre`. Where a direction meets the ball within
    `lidZone` of the rim (measured on the ball, negative inside the opening), the skin radius is the ball's plus
-   `lidThickness` tanh(d / `lidEdge`): an even lid that hugs the ball and rolls in over the rim, and skin that dives
+   `lidThickness` tanh(d / `lidEdge`) (with `lidThicknessBottom`, the thickness eases from that at the bottom of the rim
+   to `lidThickness` at the top, so the lower lid lies flatter into the cheek): an even lid that hugs the ball and rolls in over the rim, and skin that dives
    under the ball inside the opening. Every other cell inside the eye mask (v5eye2's: within `margin` of the old
    opening outline, `marginInner` toward the nose) is free; a thin plate fills it between the lids and the held face,
    with the ball as an obstacle (cells where the fill would come within `lidThickness` of the covered ball are held
@@ -372,8 +373,15 @@ def rim_dist(Pl):
     return (th_-TH0)*L, psi
 
 
-def lidprof(ds):
-    return P['lidThickness']*np.tanh(ds/P['lidEdge'])
+def lid_t(psi):
+    tb_ = P.get('lidThicknessBottom')
+    if tb_ is None:
+        return np.full(np.shape(psi), P['lidThickness'])
+    return tb_+(P['lidThickness']-tb_)*((1+np.sin(psi))/2)
+
+
+def lidprof(ds, psi):
+    return lid_t(psi)*np.tanh(ds/P['lidEdge'])
 
 
 # ---------------------------------------------------------------- 3. lids and socket on the spherical grid
@@ -415,8 +423,9 @@ for s in SIDES:
     R0 = R0.reshape(NT, NP)
     Hp = Hp.reshape(NT, NP, 3)
     rb = tb.reshape(NT, NP)
-    dsb, _ = rim_dist(ball_local(s, C+D*np.nan_to_num(tb)[:, None]))
+    dsb, psib = rim_dist(ball_local(s, C+D*np.nan_to_num(tb)[:, None]))
     dsb = np.where(np.isfinite(tb), dsb, 9.).reshape(NT, NP)
+    psib = psib.reshape(NT, NP)
     dl, a = outline_at(s, Hp[..., 0], Hp[..., 2], Hp)
     m = margin_of(s, a, 'margin')
     valid = np.isfinite(R0)
@@ -427,7 +436,7 @@ for s in SIDES:
     if (lid & (dl >= m)).any():
         raise ValueError('lid zone reaches outside the eye mask; widen margin')
     free = valid & (dl < m) & (R0 > P['rMin']) & ~lid
-    fixed = np.where(lid, np.nan_to_num(rb)+lidprof(dsb), h0)
+    fixed = np.where(lid, np.nan_to_num(rb)+lidprof(dsb, psib), h0)
     held_obst = 0
     for rnd in range(int(P['obstacleRounds'])):
         base = np.where(free, 0., fixed)
@@ -440,12 +449,12 @@ for s in SIDES:
         sol, its = cg(Aop, bvec, fixed[free].copy(), int(P['iters']))
         Rf = fixed.copy()
         Rf[free] = sol
-        viol = free & hasb & (Rf < np.nan_to_num(rb)+T_)
+        viol = free & hasb & (Rf < np.nan_to_num(rb)+lid_t(psib))
         if not viol.any():
             break
         held_obst += int(viol.sum())
         free &= ~viol
-        fixed[viol] = rb[viol]+T_
+        fixed[viol] = rb[viol]+lid_t(psib)[viol]
     FILL[s] = {'Rf': Rf, 'dl': dl, 'm': m}
     rise = (Rf-h0)[valid & (dl < m)]
     record['eyes'][s] = {'fillIterations': its, 'obstacleRounds': rnd+1, 'obstacleCells': held_obst, 'lidCells': int(lid.sum()),
@@ -514,10 +523,10 @@ for s in SIDES:
     Dv = rel[ids]/rv[ids, None]
     rfill = bspline_lookup(F['Rf'], fi[ids], fj[ids])
     tbv = ray_ball_exit(s, C[None, :], Dv)
-    dsv, _ = rim_dist(ball_local(s, C+Dv*np.nan_to_num(tbv)[:, None]))
+    dsv, psiv = rim_dist(ball_local(s, C+Dv*np.nan_to_num(tbv)[:, None]))
     hasv = np.isfinite(tbv)
     wl = np.where(hasv, 1-ss2(np.where(hasv, dsv, 9.), LZ-.004, LZ), 0.)
-    r_an = np.where(hasv, np.nan_to_num(tbv)+lidprof(np.where(hasv, dsv, 0.)), rfill)
+    r_an = np.where(hasv, np.nan_to_num(tbv)+lidprof(np.where(hasv, dsv, 0.), psiv), rfill)
     r1 = wl*r_an+(1-wl)*rfill
     _, ar = outline_at(s, pts[ids, 0], pts[ids, 2])
     br = margin_of(s, ar, 'band')
