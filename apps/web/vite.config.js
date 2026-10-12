@@ -4,6 +4,7 @@ import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import svgr from 'vite-plugin-svgr';
+import { studioPlugin } from './studio/plugin.js';
 
 const HOME_DATA_ID = 'virtual:xalians-home-data';
 const RESOLVED_HOME_DATA_ID = `\0${HOME_DATA_ID}`;
@@ -61,6 +62,10 @@ export default defineConfig(({ mode }) => ({
 		// so Home does not download the encyclopedia graph and editors never have
 		// a second data source to keep synchronized.
 		homeSummaryData(),
+
+		// Creature Studio review screen API (docs/design/creature-studio.md section 5).
+		// apply: 'serve' inside the plugin, so `vite build` never loads it.
+		studioPlugin({ repoRoot: path.resolve(__dirname, '../..') }),
 
 		// 75 components carry JSX in `.js` files. Vite's default esbuild
 		// transform only treats `.jsx`/`.tsx` as JSX, so `.js` needs a targeted

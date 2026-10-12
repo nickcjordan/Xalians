@@ -323,3 +323,221 @@ export function holdChangeRefusal(data: CreatureData, hold: Hold, action: 'strik
 	}
 	return undefined;
 }
+
+// ---------------------------------------------------------------------------
+// Views for the review screen
+// ---------------------------------------------------------------------------
+
+type Output = Build['outputs'][number];
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function plainDate(date: string): string {
+	const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(date);
+	if (!m) return date;
+	return `${MONTHS[Number(m[2]) - 1] ?? m[2]} ${Number(m[3])}`;
+}
+
+/** Where a hold came from, in plain words for the review screen. */
+export function holdSourceText(hold: Hold): string {
+	const s = hold.source;
+	switch (s.kind) {
+		case 'nick': return `You, ${plainDate(s.date)}: "${s.quote}"`;
+		case 'inferred': return `Inferred by ${s.by.replace(/^builder:/, 'a builder ')}: ${s.reason}`;
+		case 'imported': return `Imported from ${s.file}, line ${s.line}${s.quote ? `: "${s.quote}"` : ''}`;
+	}
+}
+
+export interface HoldView {
+	id: string;
+	alias: string;
+	statement: string;
+	reach: 'part' | 'creature';
+	strength: HoldStrength;
+	sourceKind: Hold['source']['kind'];
+	sourceText: string;
+}
+
+export interface DefectView {
+	id: string;
+	alias: string;
+	description: string;
+	status: Defect['status'];
+	origin: Defect['origin'];
+	region?: Defect['region'];
+	attempts: { alias: string; status: Build['status']; kind: Build['kind'] }[];
+	stalled: boolean;
+}
+
+export interface BuildView {
+	id: string;
+	alias: string;
+	kind: Build['kind'];
+	status: Build['status'];
+	goal: string;
+	method: string;
+	createdAt: string;
+	targets: string[];
+	/** Outputs that belong to a camera, grouped by camera id, in the order recorded. */
+	cameras: Record<string, Output[]>;
+	/** Outputs with no camera (for example a displacement heat map). */
+	otherOutputs: Output[];
+	checks: Build['checks'];
+	report?: Build['report'];
+	cost: { wallMinutes?: number; blenderMinutes?: number; tokens?: number; approximate?: boolean };
+}
+
+export interface PartView {
+	creature: string;
+	part: Part;
+	holds: HoldView[];
+	defects: DefectView[];
+	/** Newest first. */
+	builds: BuildView[];
+	/** The last approved build: the comparison baseline. */
+	baseline?: BuildView;
+	notes: Note[];
+	budget: { total: Part['budget']; builds: number; wallMinutes: number; buildsLeft: number; wallMinutesLeft: number };
+}
+
+function buildView(b: Build, data: CreatureData): BuildView {
+	const cameras: Record<string, Output[]> = {};
+	const otherOutputs: Output[] = [];
+	for (const o of b.outputs) {
+		if (o.camera) (cameras[o.camera] ??= []).push(o);
+		else otherOutputs.push(o);
+	}
+	const t = b.cost.tokens;
+	return {
+		id: b.id,
+		alias: b.alias,
+		kind: b.kind,
+		status: b.status,
+		goal: b.goal.text,
+		method: b.method,
+		createdAt: b.createdAt,
+		targets: b.targets.map((id) => data.defects.find((d) => d.id === id)?.alias ?? id),
+		cameras,
+		otherOutputs,
+		checks: b.checks,
+		...(b.report ? { report: b.report } : {}),
+		cost: {
+			...(b.cost.wallMinutes !== undefined ? { wallMinutes: b.cost.wallMinutes } : {}),
+			...(b.cost.blenderMinutes !== undefined ? { blenderMinutes: b.cost.blenderMinutes } : {}),
+			...(t ? { tokens: t.input + t.output + t.cacheRead + t.cacheWrite } : {}),
+			...(b.cost.approximate ? { approximate: true } : {}),
+		},
+	};
+}
+
+/** Everything the review screen needs for one part, in one object. */
+export function partView(data: CreatureData, partRef: string): PartView {
+	const part = findPart(data, partRef);
+	const inForce = (h: Hold) => h.status === 'active' && (h.scope.part === undefined || h.scope.part === part.id);
+	const holds: HoldView[] = data.holds.filter(inForce).map((h) => ({
+		id: h.id,
+		alias: h.alias,
+		statement: h.statement,
+		reach: h.scope.part === part.id ? 'part' : 'creature',
+		strength: holdStrength(h),
+		sourceKind: h.source.kind,
+		sourceText: holdSourceText(h),
+	}));
+	// Part-scoped holds first, then creature-wide; the strongest first within each.
+	const rank = { strong: 0, medium: 1, weak: 2 } as const;
+	holds.sort((a, b) => (a.reach === b.reach ? rank[a.strength] - rank[b.strength] : a.reach === 'part' ? -1 : 1));
+
+	const defects: DefectView[] = data.defects
+		.filter((d) => d.part === part.id)
+		.map((d) => ({
+			id: d.id,
+			alias: d.alias,
+			description: d.description,
+			status: d.status,
+			origin: d.origin,
+			...(d.region ? { region: d.region } : {}),
+			attempts: attemptsOn(data, d.id).map((b) => ({ alias: b.alias, status: b.status, kind: b.kind })),
+			stalled: isStalled(data, d),
+		}));
+
+	const partBuilds = data.builds.filter((b) => b.part === part.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+	const builds = partBuilds.map((b) => buildView(b, data));
+	const approved = part.approvedBuild ? partBuilds.find((b) => b.id === part.approvedBuild) : undefined;
+
+	const buildIds = new Set(partBuilds.map((b) => b.id));
+	const defectIds = new Set(defects.map((d) => d.id));
+	const holdIds = new Set(data.holds.filter((h) => h.scope.part === part.id).map((h) => h.id));
+	const notes = data.notes
+		.filter((n) => n.about?.part === part.id || (n.about?.build && buildIds.has(n.about.build)) || (n.about?.defect && defectIds.has(n.about.defect)) || (n.about?.hold && holdIds.has(n.about.hold)))
+		.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+
+	const usage = partUsage(data, part);
+	return {
+		creature: data.creature.key,
+		part,
+		holds,
+		defects,
+		builds,
+		...(approved ? { baseline: buildView(approved, data) } : {}),
+		notes,
+		budget: { total: part.budget, builds: usage.buildsUsed, wallMinutes: usage.wallMinutesUsed, buildsLeft: usage.buildsLeft, wallMinutesLeft: usage.wallMinutesLeft },
+	};
+}
+
+export type NeedKind = 'review' | 'question' | 'stalled';
+
+export interface NeedItem {
+	kind: NeedKind;
+	/** The record this card is about: a build alias, a question note alias or a defect alias. */
+	ref: string;
+	partKey?: string;
+	partAlias?: string;
+	partName?: string;
+	/** For a review: preview or build. */
+	buildKind?: Build['kind'];
+	/** What is being asked, in plain words. */
+	ask: string;
+	since: string;
+	/** Blob hash of a thumbnail, when there is an image. */
+	thumb?: string;
+}
+
+/** Everything waiting on Nick, oldest first: builds presented for review, unanswered questions, stalled defects whose audit says to ask him. */
+export function needsNick(data: CreatureData): NeedItem[] {
+	const items: NeedItem[] = [];
+	const partOf = (id: string | undefined) => (id ? data.parts.find((p) => p.id === id) : undefined);
+	const partBits = (p: Part | undefined) => (p ? { partKey: p.key, partAlias: p.alias, partName: p.name } : {});
+
+	for (const b of data.builds) {
+		if (b.status !== 'presented') continue;
+		const thumbOut = b.outputs.find((o) => o.camera === 'front' && (o.role === undefined || o.role === 'render')) ?? b.outputs.find((o) => o.role === 'render') ?? b.outputs[0];
+		items.push({
+			kind: 'review',
+			ref: b.alias,
+			...partBits(partOf(b.part)),
+			buildKind: b.kind,
+			ask: b.kind === 'preview' ? `Look at preview ${b.alias}: ${b.goal.text}` : `Review build ${b.alias}: ${b.goal.text}`,
+			since: b.updatedAt,
+			...(thumbOut ? { thumb: thumbOut.blob } : {}),
+		});
+	}
+
+	for (const n of data.notes) {
+		if (n.kind !== 'question' || n.answered) continue;
+		const p = partOf(n.about?.part) ?? partOf(data.defects.find((d) => d.id === n.about?.defect)?.part) ?? partOf(data.builds.find((b) => b.id === n.about?.build)?.part);
+		items.push({ kind: 'question', ref: n.alias, ...partBits(p), ask: n.text, since: n.createdAt });
+	}
+
+	for (const d of data.defects) {
+		if (!isStalled(data, d)) continue;
+		const audit = data.notes
+			.filter((n) => n.kind === 'audit' && n.about?.defect === d.id && n.outcome === 'ask-nick')
+			.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+		if (!audit) continue;
+		const answered = data.notes.some((n) => n.kind === 'question' && n.answered && n.createdAt >= audit.createdAt && n.about?.defect === d.id);
+		if (answered) continue;
+		items.push({ kind: 'stalled', ref: d.alias, ...partBits(partOf(d.part)), ask: `Stuck after ${attemptsOn(data, d.id).length} tries: ${d.description}`, since: audit.createdAt });
+	}
+
+	return items.sort((a, b) => a.since.localeCompare(b.since));
+}

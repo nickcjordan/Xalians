@@ -46,6 +46,12 @@ const includeStyleGuide = import.meta.env.DEV || import.meta.env.MODE === 'style
 const StyleGuidePage = includeStyleGuide
   ? lazy(() => import('./pages/styleGuidePage'))
   : null;
+// The Creature Studio review screen is a dev-only tool: its API lives inside the
+// Vite dev server (studio/plugin.js, apply: 'serve'), so it has nothing to talk
+// to in a production build. Gated exactly like the style guide: Vite replaces
+// import.meta.env.DEV with false, and the import and routes are dropped.
+const includeStudio = import.meta.env.DEV;
+const StudioPage = includeStudio ? lazy(() => import('./pages/studioPage')) : null;
 const GeneratorPage = lazy(() => import('./pages/generatorPage'));
 const UserAccountPage = lazy(() => import('./pages/userAccountPage'));
 const UserDetailsPage = lazy(() => import('./pages/userDetailsPage'));
@@ -162,6 +168,9 @@ export function AppRoutes() {
           {/* the design system reference - unlinked from the navbar, it is a
               developer tool rather than a page for players */}
           {StyleGuidePage && <Route path="/styleguide" element={<StyleGuidePage />} />}
+          {StudioPage && <Route path="/studio" element={<StudioPage />} />}
+          {StudioPage && <Route path="/studio/:creature" element={<StudioPage />} />}
+          {StudioPage && <Route path="/studio/:creature/:part" element={<StudioPage />} />}
           {/* throws on render, to exercise ErrorBoundary/ErrorPage - a developer
               route, unlinked like /styleguide */}
           <Route path="/dev/error" element={<DevErrorPage />} />

@@ -1,0 +1,71 @@
+// Plain words for the review screen. No ids except the short alias.
+
+export const CAMERA_ORDER = ['front', 'threequarter-left', 'threequarter-right', 'side-left', 'side-right', 'back', 'top', 'below'];
+
+const CAMERA_WORDS: Record<string, string> = {
+	front: 'Front',
+	'threequarter-left': 'Three-quarter left',
+	'threequarter-right': 'Three-quarter right',
+	'side-left': 'Left side',
+	'side-right': 'Right side',
+	back: 'Back',
+	top: 'Top',
+	below: 'Below',
+};
+
+export const cameraWord = (id: string) => CAMERA_WORDS[id] ?? id.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
+
+export function sortCameras(ids: string[]): string[] {
+	const rank = (id: string) => {
+		const i = CAMERA_ORDER.indexOf(id);
+		return i === -1 ? CAMERA_ORDER.length : i;
+	};
+	return [...ids].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+}
+
+const BUILD_STATUS: Record<string, string> = {
+	planned: 'Not started',
+	running: 'Running',
+	reported: 'Reported',
+	checked: 'Checked',
+	presented: 'Waiting for you',
+	reviewed: 'Reviewed',
+	superseded: 'Set aside',
+	failed: 'Failed',
+};
+export const buildStatusWord = (s: string) => BUILD_STATUS[s] ?? s;
+
+const PART_STATUS: Record<string, string> = {
+	'not-started': 'Not started',
+	'in-progress': 'In progress',
+	'in-review': 'In review',
+	approved: 'Approved',
+	stale: 'Needs another look',
+};
+export const partStatusWord = (s: string) => PART_STATUS[s] ?? s;
+
+export const buildKindWord = (k: string) => (k === 'preview' ? 'Preview' : 'Build');
+
+export function timeAgo(iso: string, now: number = Date.now()): string {
+	const mins = Math.max(0, Math.round((now - Date.parse(iso)) / 60000));
+	if (mins < 1) return 'just now';
+	if (mins < 60) return `${mins} min ago`;
+	const hours = Math.round(mins / 60);
+	if (hours < 48) return `${hours} h ago`;
+	return `${Math.round(hours / 24)} days ago`;
+}
+
+export function minutes(n: number): string {
+	return `${Number.isInteger(n) ? n : n.toFixed(1)} min`;
+}
+
+export function tokens(n: number): string {
+	if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+	if (n >= 1_000) return `${Math.round(n / 1_000)}k`;
+	return String(n);
+}
+
+export const VERDICT_WORD: Record<string, string> = { approve: 'Approved', adjust: 'Asked for changes', reject: 'Rejected' };
+
+const SHORT: Record<string, string> = { 'threequarter-left': '3/4 left', 'threequarter-right': '3/4 right', 'side-left': 'Left', 'side-right': 'Right' };
+export const cameraShort = (id: string) => SHORT[id] ?? cameraWord(id);

@@ -1,8 +1,10 @@
-import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
+import { putFile } from './blobs.ts';
+import { ingestPacket } from './ingest.ts';
+import { watchReviews } from './watch.ts';
 import { applyReview, canPresent, findPart, holdChangeRefusal, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
 import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
@@ -36,6 +38,7 @@ const OPTIONS = {
 	image: { type: 'string' },
 	note: { type: 'string' },
 	decision: { type: 'string' },
+	packet: { type: 'string' },
 } as const;
 
 type Flags = ReturnType<typeof parseArgs<{ options: typeof OPTIONS; allowPositionals: true }>>['values'];
@@ -130,6 +133,21 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 
 	if (cmd === 'list') {
 		emit(listCreatureKeys(root), listCreatureKeys(root).join('\n'));
+		return;
+	}
+
+	if (cmd === 'blob') {
+		if (rest[0] !== 'put' || !rest[1]) throw new StudioError('usage: blob put <file>');
+		const sha = putFile(resolve(rest[1]));
+		emit({ sha256: sha }, sha);
+		return;
+	}
+
+	if (cmd === 'watch') {
+		const wkey = rest[0];
+		if (!wkey) throw new StudioError('usage: watch <key>');
+		openCreature(root, wkey);
+		watchReviews(root, wkey, (line) => io.out(line));
 		return;
 	}
 
@@ -253,11 +271,6 @@ function noteAdd(store: Store, flags: Flags, emit: Emit, actor: Actor, mopts: MO
 	emit({ note: rec, applied }, `added ${rec.kind} note ${rec.alias}${applied.length ? `; ${applied.join('; ')}` : ''}`);
 }
 
-function sha256File(file: string): string {
-	if (!existsSync(file)) throw new StudioError(`file not found: ${file}`);
-	return createHash('sha256').update(readFileSync(file)).digest('hex');
-}
-
 function buildCommand(store: Store, sub: string | undefined, args: string[], flags: Flags, emit: Emit, actor: Actor, mopts: MOpts, copts: COpts): void {
 	const ref = args[0];
 	const load = (): Build => {
@@ -306,9 +319,22 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			const b = load();
 			const file = resolve(need(flags, 'file'));
 			const name = need(flags, 'name');
-			const out = { name, blob: sha256File(file), path: file, ...(flags.role ? { role: flags.role } : {}), ...(flags.camera ? { camera: flags.camera } : {}) };
+			const out = { name, blob: putFile(file), ...(flags.role ? { role: flags.role } : {}), ...(flags.camera ? { camera: flags.camera } : {}) };
 			const rec = setBuild(b.id, (x) => { x.outputs = [...x.outputs.filter((o) => o.name !== name), out]; });
 			emit(rec, `recorded output ${name} (${out.blob.slice(0, 12)}) on ${rec.alias}`);
+			return;
+		}
+		case 'ingest': {
+			const b = load();
+			const got = ingestPacket(need(flags, 'packet'));
+			const rec = setBuild(b.id, (x) => {
+				const names = new Set(got.outputs.map((o) => o.name));
+				x.outputs = [...x.outputs.filter((o) => !names.has(o.name)), ...got.outputs];
+				const ids = new Set(got.checks.map((k) => k.id));
+				x.checks = [...x.checks.filter((k) => !ids.has(k.id)), ...got.checks];
+				x.cost.blenderMinutes = got.blenderMinutes;
+			});
+			emit(rec, `ingested ${got.outputs.length} output(s) and ${got.checks.length} check(s) on ${rec.alias}`);
 			return;
 		}
 		case 'report': {
@@ -358,7 +384,7 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			return;
 		}
 		default:
-			throw new StudioError('usage: build plan|start|fail|output|report|check|look|present <key> ...');
+			throw new StudioError('usage: build plan|start|fail|output|ingest|report|check|look|present <key> ...');
 	}
 }
 
