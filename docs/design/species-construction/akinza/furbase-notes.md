@@ -658,3 +658,32 @@ Measures (assembled-3174 against assembled-3173): 40,291 of 643,424 skin vertice
 Images in `untracked/species-construction/akinza/surface/head-redesign/arms-v1/`: `before-after-{afront,aside,aback,aq,arq}.png` (arm), `before-after-{elbowside,elbowfront,elbowback}.png`, `before-after-{wristside,wristfront,wristback,wristq}.png`, `before-after-{pawfront,pawside,pawbelow}.png` (the paw look), `before-after-{pitfront,pitfrontR}.png` (the armpit facet), bare clay, 3173 against 3174; `arms-v1-3174-heat.png`; `radius-profile.png`; `arms-v1-3174-numbers.json`.
 
 Still open (my own look): a faint line remains across the top of the paw in the close side view (much softer; removing it fully means reshaping the top of the paw itself, inside the paw look); the arm's back is mostly hidden by the tails in the back view, so it was judged in the rear three-quarter and close views.
+
+# Hips v1: waist, pelvis, hips, rump and tail root as one part (2026-10-12)
+
+Hold audit finding 5. Nick (2026-10-12) lifted his hold: "I'm fine with you adjusting the hips. The comment about the tails being fine, I think, was just to get you to move on because you were spinning your wheels, but I think you probably have some adjustments still to do in this area." Base: arms v1 (assembled-3174).
+
+| Hold | Source | Why |
+|---|---|---|
+| The tails' look beyond the root (count, length, fan, curl, taper) | inferred from Nick's "the tails are fine" (lifted for the root) | keep what he liked |
+| Head, neck, shoulders, arms, forepaws | Nick approvals; just built | done parts |
+| Legs below the upper thigh, hind paws | Nick 2026-10-08 hind paws "B looks fine"; inferred for legs | next or approved |
+
+Lifted (inferred): R11 "tail root and pelvis" held with the tails; the trunk loft faded out behind the trunk "so the tail root stays put"; held regions frozen in the judge.
+
+Causes, measured first (`sections-before-after.png`, horizontal sections z +.06 to -.30):
+- Pear-shaped hips and the flare: the front-view trunk half width runs .133 at z .07 (waist) to .207 at -.08, .252 at -.16 and .282 at -.28, a near-linear widening of .012 to .013 per .02 that keeps going down to the thigh; the trunk loft (B-20T) stopped behind the trunk and above the hip, so nothing ever shaped the pelvis.
+- Lumpy fusion: the three tails leave the rump through one narrow stem (|x| about .03 to .09 wide at y .06 to .10, z -.03 to -.30), which joins the back with a hard re-entrant corner on each side (the sections show a T: trunk ellipse, then the stem as a thin neck, then the tails); the grooves seen from behind are those corners, and the side view's dark pocket is the gap between the stem and the buttock.
+- Round bulge: ray-picked on the top tail at about (.30, .45, .10), about .45 behind the body, so it is the top tail's own blade body seen end-on, not the root; it sits past the root and was left (see Still open).
+
+- Step P-hips1 (`art/species-construction/hips_v1_post.py` with `hips_v1_field.py`, spec `specs/hips-v1.json`), a post-assembly step after P-arms1. Recipe `recipe-hips-v1.json`.
+- Hip width: the trunk is warped sideways to an authored half width (waist .137 at z .06, .163 at -.02, .199 at -.10, .234 at -.18, .262 at -.26, then .2755 / .2803 / .2835 at -.30 / -.34 / -.38, meeting the old thigh at -.42), a gentle S instead of the straight flare; the measured width is smoothed along z first (a ratio of the faceted slice widths printed ripples); the warp fades in front of y .035 to .075 (the tail stem and tails do not warp), out above z .06 to .10 and down the thigh from -.30 to -.44; the arms are excluded with the arms step's own arm mask.
+- Tail root: on the warped skin's signed distance (.0025 grid), a sacral base (ellipsoid at (.03, .06, -.13), semi-axes .075, .03, .06, smooth minimum .025) fills the corner between the stem and the back, a Gaussian blur (.016) under a mask around the root softens the fusion, and two small blurs (.010) at (±.17, .045, -.18) take out the diagonal streak on each buttock top. A first sacral mass placed lower (dev a to d) filled the deep crease between stem and buttock and folded about 200 faces into each other; moved above the crease (f), the fold count is 0.
+- Development: a to i in `untracked/.../head-redesign/hips-v1/work/`; g (assembled-3175) left a band on the thigh where the warp faded out too fast; h lengthened the fade; i added the buttock-top smoothing and is kept.
+- Output: assembled-3176.
+
+Measures (assembled-3176 against assembled-3174): 138,687 of 643,424 skin vertices move (126,356 in the hip warp, 25,491 at the tail root), max .0247 world (the hip sides at z -.16), median .0028; outside the part 0.0 exactly (0 vertices); arm vertices 0.0; above z .10 0.0; the tails beyond the root (y above .25) 0.0; the legs below z -.36 at most .0013 (the warp's last fade on the upper thigh, under the .44 end); every other object 0.0; no folded faces. Front half width before / after at z -.04, -.12, -.20, -.28: .1835 / .1725, .2294 / .2081, .2658 / .2427, .2819 / .2705. Check passes; regionShift R06 .0124, R11 .0103, R07 and R08 .0124 (zone overlap at the hip side: no arm vertex moved, the leg zone starts at the hip), R10 .0002; face guards clear; seam check flags a shading crease at the hip in the front view (208 samples; the crotch's new concavity seen against the old rounder one); R06.1 1.090 to 1.086 (passing), posed bands R06.10, R07.6, R08.10 fall .007 to .025 (failing before and after, advisory), R10.1 and R10.2 rise slightly.
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/hips-v1/`: `before-after-{hback,hrqL,hrqR,hsideL,hsideR,hfront,htop,hbelow}.png` and `before-after-{rootback,rootrqL,rootrqR,rootside,roottop}.png`, bare clay, 3174 against 3176; `hips-v1-3176-heat.png`; `sections-before-after.png` (gray before, blue after); `hips-v1-3176-numbers.json`.
+
+Still open (my own look): the round bulge at the top of the tail stack is the top tail's own body, past the root, held; the tails still meet the rump through one stem, so a soft groove remains between the stem and each buttock in the side and rear three-quarter views (much softer, no hard corner); the tails remain flat blades with crisp edges (held, and fur will soften them); a faint vertical groove at the back of each thigh below the buttock remains, at the top of the held leg.

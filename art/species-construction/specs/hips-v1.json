@@ -1,0 +1,248 @@
+{
+ "note": "hips v1 (2026-10-12): waist, pelvis, hips, rump and tail root as one part (post step). World units. hipWidth: front-view trunk half width rows (natural spline) the trunk is warped to laterally, zRange/zStep for the measured table, smoothCells (default 2.5) along z, zFade (in at a..b, out at c..d), yFade (1 in front of y0, 0 behind y1: the tail stem and tails do not warp), xMax (fade by |x|); the arms are excluded by armsSpec's arm mask. grid: signed-distance grid for the tail root; masses: ellipsoids joined with a C2 smooth minimum of radius k (a sacral base under the tail stem); blur: masked Gaussian smoothing of the field; partMask: the tail-root part; project: Newton iterations and step cap; relax: Taubin on moved vertices.",
+ "armsSpec": "specs/arms-v1.json",
+ "hipWidth": {
+  "zRange": [
+   0.12,
+   -0.46
+  ],
+  "zStep": 0.01,
+  "zFade": [
+   -0.44,
+   -0.3,
+   0.06,
+   0.1
+  ],
+  "yFade": [
+   0.035,
+   0.075
+  ],
+  "xMax": [
+   0.3,
+   0.34
+  ],
+  "rows": [
+   {
+    "z": 0.12,
+    "half": 0.1445
+   },
+   {
+    "z": 0.1,
+    "half": 0.139
+   },
+   {
+    "z": 0.06,
+    "half": 0.137
+   },
+   {
+    "z": 0.02,
+    "half": 0.146
+   },
+   {
+    "z": -0.02,
+    "half": 0.163
+   },
+   {
+    "z": -0.06,
+    "half": 0.181
+   },
+   {
+    "z": -0.1,
+    "half": 0.199
+   },
+   {
+    "z": -0.14,
+    "half": 0.217
+   },
+   {
+    "z": -0.18,
+    "half": 0.234
+   },
+   {
+    "z": -0.22,
+    "half": 0.249
+   },
+   {
+    "z": -0.26,
+    "half": 0.262
+   },
+   {
+    "z": -0.3,
+    "half": 0.2755
+   },
+   {
+    "z": -0.34,
+    "half": 0.2803
+   },
+   {
+    "z": -0.38,
+    "half": 0.2835
+   },
+   {
+    "z": -0.42,
+    "half": 0.2812
+   },
+   {
+    "z": -0.46,
+    "half": 0.2745
+   }
+  ]
+ },
+ "grid": {
+  "lo": [
+   -0.27,
+   -0.05,
+   -0.35
+  ],
+  "hi": [
+   0.3,
+   0.3,
+   0.1
+  ],
+  "step": 0.0025,
+  "far": 0.08
+ },
+ "masses": [
+  {
+   "c": [
+    0.03,
+    0.06,
+    -0.13
+   ],
+   "s": [
+    0.075,
+    0.03,
+    0.06
+   ],
+   "k": 0.025
+  }
+ ],
+ "blur": [
+  {
+   "sigma": 0.016,
+   "weight": 1.0,
+   "mask": [
+    {
+     "ellipsoid": [
+      0.06,
+      0.1,
+      -0.11
+     ],
+     "s": [
+      0.14,
+      0.09,
+      0.1
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "weight": 1.0,
+   "mask": [
+    {
+     "ellipsoid": [
+      0.17,
+      0.045,
+      -0.18
+     ],
+     "s": [
+      0.05,
+      0.04,
+      0.08
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "weight": 1.0,
+   "mask": [
+    {
+     "ellipsoid": [
+      -0.17,
+      0.045,
+      -0.18
+     ],
+     "s": [
+      0.05,
+      0.04,
+      0.08
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  }
+ ],
+ "partMask": [
+  {
+   "ellipsoid": [
+    0.06,
+    0.1,
+    -0.11
+   ],
+   "s": [
+    0.18,
+    0.12,
+    0.15
+   ],
+   "fade": [
+    1.0,
+    1.3
+   ]
+  },
+  {
+   "ellipsoid": [
+    0.17,
+    0.045,
+    -0.18
+   ],
+   "s": [
+    0.065,
+    0.05,
+    0.1
+   ],
+   "fade": [
+    1.0,
+    1.3
+   ]
+  },
+  {
+   "ellipsoid": [
+    -0.17,
+    0.045,
+    -0.18
+   ],
+   "s": [
+    0.065,
+    0.05,
+    0.1
+   ],
+   "fade": [
+    1.0,
+    1.3
+   ]
+  }
+ ],
+ "relax": {
+  "iterations": 6,
+  "factor": 0.5,
+  "minMove": 0.0002,
+  "fullMove": 0.002
+ },
+ "project": {
+  "iterations": 30,
+  "maxStep": 0.004
+ }
+}
