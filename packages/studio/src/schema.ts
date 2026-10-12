@@ -224,11 +224,38 @@ export const BuildSchema = record('B', {
 				cacheWrite: z.number().int().min(0),
 			})
 			.optional(),
+		/** Main-session spend in the build's time window; approximate by construction. */
+		orchestratorTokens: z
+			.strictObject({
+				input: z.number().int().min(0),
+				output: z.number().int().min(0),
+				cacheRead: z.number().int().min(0),
+				cacheWrite: z.number().int().min(0),
+			})
+			.optional(),
+		agents: z
+			.array(
+				z.strictObject({
+					file: z.string(),
+					description: z.string(),
+					model: z.string().optional(),
+					tokens: z.strictObject({
+						input: z.number().int().min(0),
+						output: z.number().int().min(0),
+						cacheRead: z.number().int().min(0),
+						cacheWrite: z.number().int().min(0),
+					}),
+					minutes: z.number().min(0),
+				}),
+			)
+			.optional(),
 		approximate: z.boolean().optional(),
 		manual: z.boolean().optional(),
 		uncovered: z.string().optional(),
 	}),
 	status: z.enum(['planned', 'running', 'reported', 'checked', 'presented', 'reviewed', 'superseded', 'failed']),
+	/** Session id of the orchestrator that ran this build; scopes the approximate orchestrator cost. */
+	orchestratorSession: z.string().min(1).optional(),
 	startedAt: iso.optional(),
 	endedAt: iso.optional(),
 	deadline: iso.optional(),

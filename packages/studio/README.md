@@ -26,8 +26,16 @@ build look <key> <alias> --camera C --image OUTPUT_NAME --note TEXT
 build present <key> <alias>
 verify
 blob put <file>     (prints the sha256; store is $XALIANS_STUDIO_STORE, default C:/dev/art-data/studio)
+cost collect <key> <build alias> [--projects DIR]   (token cost from Claude Code transcripts, see Cost)
+cost show <key> [<part>]    (totals per build, part and creature)
 watch <key>         (prints REVIEW/DECISION lines for new notes by nick; run under a monitor)
 ```
+
+## Cost
+
+**Tagging rule: every builder Agent call's `description` must start with `[<build alias>]`, for example `[B-k3f9] skull build`.** The collector finds a build's subagents by that tag in the transcript's `.meta.json` description (or, failing that, in the agent's first user message). An untagged builder is invisible to it.
+
+`studio cost collect <key> <alias>` scans `~/.claude/projects/*` for every slug containing "xalians" (case-insensitive), reads each `<session>/subagents/agent-*.jsonl`, and sums `usage` per category (input, output, cache read, cache write), de-duplicated by message id (the same message appears on several lines, and a streamed message's output count grows, so the largest value per id is kept). Pass `--orchestrator-session <session id>` on `build plan` or `build start` to record the orchestrator session. It writes `cost.tokens` (subagents only), `cost.agents` (one row per agent), `cost.orchestratorTokens` and `cost.uncovered` to the build. The orchestrator figure is approximate and comes only from that one session (`<slug>/<id>.jsonl`): its assistant messages with a Xalians cwd between the build's `startedAt` and `endedAt` (or now), which may include other work that session did in the window. With no session recorded the share is omitted and `cost.uncovered` says so. It is never added into `cost.tokens`. Messages with no usage are counted in `cost.uncovered`, not treated as zero. Codex sessions are out of scope. Transcripts are only read.
 
 Mutations need the creature lock (`.lock`, gitignored, stale after 12 hours). Pass `--session` (or set `STUDIO_SESSION`) so a command is refused if another session holds the lock. `--by` sets the actor (`orchestrator` default, `nick`, `builder:<alias>`, `import`). The root is found by walking up to `packages/studio`; override with `--root` or `STUDIO_ROOT`.
 
