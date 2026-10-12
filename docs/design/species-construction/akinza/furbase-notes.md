@@ -484,3 +484,25 @@ Measures (head-3140 against head-3122): 77,216 of 689,832 skin vertices move, ma
 Images in `untracked/species-construction/akinza/surface/head-redesign/eyes-v3/`: `clay-3123-vs-v5eye3-{face,head,threequarter,side,top,faceq,faceside}.png` (bare clay at the fur cameras), `eye-crop-{front,threequarter,side,top,below}.png`, `heads-3122-vs-3140-*.png` (head clay), `v5eye3-3140-heat.png`, `v5eye3-3140-numbers.json`.
 
 Still open (my own look): the eye is a regular oval in every view; no globe shows outside the opening and I see no pocket, crease, wedge or melt. Remaining: a sharp elongated highlight on the upper right of the character's left iris in the front views (the domed iris catches the key lamp; the other eye does not); a soft shading ring round each eye where the lid rolls into the socket, slightly darker under the outer lower lid; a few very faint dashes along the lower lid of the character's right eye left by the assembly remesh; the eye stands about .029 proud of its rim, so in profile the white dome is visible at the face line.
+
+# Head v5eye4: finishing pass on the approved v5eye3 eyes (2026-10-12)
+
+Nick on v5eye3: "This is much better. Incredibly better." Brief per REFINEMENT.md. Goal: remove the sharp extra glint on the character's left iris, soften the shading under the outer lower lid and the soft lid ring, remove the faint dashes along the lower lid.
+
+| Hold | Source | Why |
+|---|---|---|
+| Eyeball shape, size, axis and the opening oval as in v5eye3 | Nick 2026-10-12: "Incredibly better" | approved look |
+| Everything outside the eye mask, mouth included | Nick 2026-10-10: one part at a time | protect approved parts |
+| Lid sharpness limited by the assembly re-mesh resolution | inferred (found in v5eye3) | the join is not this part |
+| H51 replaces H50 after H49 with v5eye3's ball keys unchanged | inferred (mine) | rebuilding the lid and socket on top of v5eye3's lids would have filled against its own lid zone |
+
+- Step H51 (`art/species-construction/eye_v5eye4_field.py`: the v5eye3 script plus `lidEdgeBottom`, `irisDome`, `irisMaterial`; spec `specs/head-eye-v5eye4.json`) in place of H50 after H49; recipe `recipe-furbase-v5eye4.json` (v5eye2 plus H51).
+- Glint: its cause is the iris clear coat (Roughness .12, Coat Weight .35, coat roughness .03) on the domed iris, which mirrors the key lamp. The coat is softened (Roughness .30, Coat Weight .15, Coat Roughness .30) and the iris height above the globe front scaled .7; the glint becomes a broad soft sheen. The catch lights are unchanged.
+- Lower lid: the roll eases from .006 wide at the top to .009 at the bottom and its thickness from .004 to .001; the socket blend widens to .10 from the opening (.08 below), inside the v5eye3 eye mask, so the fall from the lid into the cheek and temple is gentler and the darker crescent under the outer lower lid and the ring are lighter.
+- Output: head-3146, assembled-3147, packet `untracked/species-construction/akinza/loop/packets/assembled-3147`. Tried: assembled-3144 (iris dome .85, Roughness .25, Coat .2: a brighter, broader sheen; socket .09 and .07).
+
+Measures (head-3146 against head-3140): eyeball vertices 0.0 exactly (the ball is the v5eye3 ball); iris vertices up to .0024 (the lower dome); skin 88,642 vertices, max .0049, all within .115 of a v5m2 globe, 0.0 outside the mask (skin within .12 of a v5m2 globe); mouth line area (|x| < .10, z -.16 to -.22) 0.0; skin within .03 of the nose at most .00002, within .05 at most .0009 (the socket blend's tail); nose object 0.0. Assembly: check passes, regionShift R02 .0014 figure heights, 0.0 elsewhere, no new seams, no measured change, face guards clear.
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/eyes-v4/`: `eye-crop-{front,threequarter,side,top,below}.png`, `clay-3141-vs-v5eye4-{face,head,threequarter,side,top}.png`, `v5eye4-3146-heat.png`, `v5eye4-3146-numbers.json`.
+
+Still open (my own look): one or two tiny dark ticks remain along the lower lid of each eye in the close front crop; they are the assembly's .0028 world-unit voxel re-mesh resolving the lid roll (the head component itself is clean), so they are blocked by the re-mesh hold. A faint soft shading line runs down the inner side of the character's left eye where the lid rolls into the bridge.
