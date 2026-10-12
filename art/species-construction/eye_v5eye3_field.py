@@ -54,7 +54,7 @@ DEFAULTS = {
     'frontStep': .001, 'nTheta': 256, 'outlineSmooth': 7, 'bandSmooth': 17, 'bandMin': .0008, 'distance3d': True,
     'opening': None, 'axis': [21.5, -6.], 'theta0': 50., 'depth': .08, 'rimLift': 0.,
     'lidThickness': .004, 'lidEdge': .0015, 'lidZone': .010, 'obstacleRounds': 12,
-    'bandTop': .010, 'bandBottom': .0015, 'bandPow': 1.5, 'nPsi': 256,
+    'bandTop': .010, 'bandBottom': .0015, 'bandPow': 1.5, 'nPsi': 256, 'refine': 0, 'refineBand': [-.006, .012],
 }
 
 argv = sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else []
@@ -457,6 +457,40 @@ for s in SIDES:
     DBG[f'free{s}'] = free
 
 # ---------------------------------------------------------------- 4. skin laid onto lids and socket
+def lid_band_vertices(Q):
+    sel = np.zeros(len(Q), bool)
+    for s in SIDES:
+        rel_ = Q-C
+        r_ = np.linalg.norm(rel_, axis=1)
+        D_ = rel_/np.maximum(r_, 1e-9)[:, None]
+        tb_ = ray_ball_exit(s, C[None, :], D_)
+        ok = np.isfinite(tb_)
+        ds_, _ = rim_dist(ball_local(s, C+D_*np.nan_to_num(tb_)[:, None]))
+        sel |= ok & (ds_ > P['refineBand'][0]) & (ds_ < P['refineBand'][1]) & (np.abs(r_-np.nan_to_num(tb_)) < .03)
+    return sel
+
+
+nverts0 = len(pts)
+if P['refine']:
+    # the lid edge is where the skin crosses the ball; at the skin's own vertex spacing (about .002) that line is a
+    # sawtooth, so the skin faces along it are split (grid fill) before they are moved; new vertices are appended, so
+    # every original vertex keeps its index
+    bm = bmesh.new()
+    bm.from_mesh(head.data)
+    Mw = np.array(head.matrix_world)
+    for _ in range(int(P['refine'])):
+        bm.verts.ensure_lookup_table()
+        co = np.array([v.co[:] for v in bm.verts])
+        sel = lid_band_vertices(co@Mw[:3, :3].T+Mw[:3, 3])
+        faces_ = [f for f in bm.faces if any(sel[v.index] for v in f.verts)]
+        edges_ = list({e for f in faces_ for e in f.edges})
+        bmesh.ops.subdivide_edges(bm, edges=edges_, cuts=1, use_grid_fill=True)
+    bm.to_mesh(head.data)
+    bm.free()
+    head.data.update()
+    pts = world_points(head)
+    T, _ = tris_of(head)
+    record['refine'] = {'verticesBefore': nverts0, 'verticesAfter': len(pts)}
 new = pts.copy()
 moved_any = np.zeros(len(pts), bool)
 for s in SIDES:
@@ -496,7 +530,7 @@ for s in SIDES:
 
 disp = np.linalg.norm(new-pts, axis=1)
 set_world_points(head, new)
-record['skinDisplacement'] = {'moved': int((disp > 0).sum()), 'max': round(float(disp.max()), 5)}
+record['skinDisplacement'] = {'moved': int((disp > 0).sum()), 'max': round(float(disp.max()), 5), 'originalVerticesMoved': int((disp[:nverts0] > 0).sum())}
 skin_tree = tree_from(new, T)
 require_single_closed_mesh(head, args.out, 'Head skin eyes v3')
 
