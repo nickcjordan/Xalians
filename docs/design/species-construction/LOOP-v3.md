@@ -348,6 +348,7 @@ Round 29 cost 1.8 hours and 7.8M tokens (round 28: 5.7 hours, 85M) and kept noth
 5. A live v3 batch from assembled-0458 on the remaining gaps (neck by the join, torso profile, fan read), compared with v2 rounds 8 to 16 on tokens per +0.1 of weighted mean and on the share of discarded builds.
 
 ## Standing practice
+- Refinement with Nick follows `REFINEMENT.md` (2026-10-12): every hold in a brief or order is declared with its source (Nick quote or "inferred"), shown on the review page, and reported as "Blocked by" when it stops the goal; two passes without a fix trigger a cause and hold audit, not a third pass; a part is a functional unit (an eye is eyeball, opening, lids and socket).
 
 - Push the loop branch at every round note and every module commit (the repository is public).
 - Back up only what git cannot rebuild (Nick 2026-10-08): `C:\Users\njord\OneDrive\xalians-art-backup\<species>` holds the recipe's root meshes (`roots/`) and the latest kept model (its assembly, head and body folders and its recipe). After a keep, copy the new latest and remove the previous one; older models are rebuilt from the recipe history in git.

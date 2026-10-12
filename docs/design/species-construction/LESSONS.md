@@ -108,3 +108,7 @@ Coat masses read by their shape and flow, not their count. Spines radiating from
 - The ear fan is a 7-shaped shell (a roof slab over a rear wall), so locks that must show from the front are rooted on the roof's front face and lean back over the roof with a negative lift; locks tangent to the front face and pointing up stand like a comb.
 
 - **Measure the model against a fixed height (2026-09-30).** The harness normalized model widths by each render's bounding box, so round 9's raised ear tips (figure 3 percent taller) moved every body reading: the left neck ratio jumped from 1.05 to 1.29 with the body unchanged. Model rows are now fixed in world space: the floor and the loop-start figure's height, 1.8605. Rebuilt readings for 0184 and 0186, whose bodies are identical, now agree within about 1 percent.
+
+## Hidden holds, 2026-10-12
+
+Eleven Akinza builds (about 12 hours, 6M tokens) failed to remove the dents around the eyes because every brief held the eye globes fixed, a rule I inferred and Nick never set or saw; the dent was caused by the globe itself. Lifting that hold, then the traced front outline and the face-offset lens, fixed it in two builds. Applied: `REFINEMENT.md` (declared and sourced holds, "Blocked by" in every report, a cause and hold audit after two failed passes, parts as functional units).
