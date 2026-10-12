@@ -20,6 +20,10 @@ parser.add_argument('--out', type=Path, required=True)
 parser.add_argument('--preserve-materials', action='store_true')
 parser.add_argument('--turntable', action='store_true')
 parser.add_argument('--studio-fill', action='store_true')
+# A fixed frame (target point and orthographic scale) instead of one fitted to this mesh's bounds, so a change
+# to one part cannot rescale or shift the pixels of the others. The mesh must stay inside the frame.
+parser.add_argument('--frame-center', help='x,y,z the cameras aim at')
+parser.add_argument('--frame-scale', type=float, help='orthographic scale of every camera')
 args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
 args.out = args.out.resolve()
 args.out.mkdir(parents=True, exist_ok=False)
@@ -41,6 +45,8 @@ low = Vector([min(p[i] for p in points) for i in range(3)])
 high = Vector([max(p[i] for p in points) for i in range(3)])
 target = (low + high) / 2
 extent = high - low
+if args.frame_center:
+    target = Vector([float(v) for v in args.frame_center.split(',')])
 scene = bpy.context.scene
 scene.render.engine = 'CYCLES'
 scene.cycles.samples = 48
@@ -59,6 +65,13 @@ if args.studio_fill:
     background.inputs['Strength'].default_value = .5
 scene.view_settings.view_transform = 'Standard'
 scale = max(extent.x, extent.y, extent.z * 1.5) * 1.15
+if args.frame_scale:
+    scale = args.frame_scale
+    # the views are 1200 by 800: half the scale reaches sideways, two thirds of that half reaches up and down
+    half, vertical = scale / 2, scale * 800 / 1200 / 2
+    if (max(abs(low.x - target.x), abs(high.x - target.x), abs(low.y - target.y), abs(high.y - target.y)) > half
+            or max(abs(low.z - target.z), abs(high.z - target.z)) > vertical):
+        raise ValueError('The mesh leaves the fixed render frame; change frame.render in the species config on purpose')
 for pos, power, size in [((-3, -5, 7), 650, 4), ((4, -2, 4), 300, 4), ((1, 4, 6), 550, 3)]:
     bpy.ops.object.light_add(type='AREA', location=target + Vector(pos))
     lamp = bpy.context.object

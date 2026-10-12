@@ -1,0 +1,61 @@
+{
+  "resolution": 800,
+  "views": [
+    {
+      "orthoScale": 0.42,
+      "name": "neck-front",
+      "target": [
+        0,
+        -0.035,
+        0.45999999999999996
+      ],
+      "offset": [
+        0,
+        -6,
+        0
+      ]
+    },
+    {
+      "orthoScale": 0.42,
+      "name": "neck-profile",
+      "target": [
+        0,
+        -0.035,
+        0.45999999999999996
+      ],
+      "offset": [
+        6,
+        0,
+        0
+      ]
+    },
+    {
+      "orthoScale": 0.42,
+      "name": "neck-rear",
+      "target": [
+        0,
+        -0.035,
+        0.45999999999999996
+      ],
+      "offset": [
+        0,
+        6,
+        0
+      ]
+    },
+    {
+      "orthoScale": 0.75,
+      "name": "shoulders-front",
+      "target": [
+        0,
+        0,
+        0.315
+      ],
+      "offset": [
+        0,
+        -6,
+        0
+      ]
+    }
+  ]
+}

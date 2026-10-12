@@ -1,0 +1,115 @@
+{
+ "note": "Analytic head v5 (Nick 2026-10-09: rethink the head shape around the new ears from the original drawing). The whole skull is the authored mass below (fit_head_mass.py on the H37 head and specs/head-targets-v5.json: the sheet's front half widths, back of head, rear widths and crown height, and the H37 face around the eyes, nose and mouth), replacing H38's end cap and H37's wide temples. Kept from H37: the eye lid band and the skin the globes sit in, the nose pad, the mouth line, the face front between and below the eyes (faceX, faceY, faceZ), the neck stub. The F ears sit on the new skull: visible from |x| .34, root at .36, the buried inner part flat behind the brow, the start cut buried (earMinU .12), a softer back flare and wider fillets. Keys documented in analytic_head_field.py.",
+ "mass": {
+  "parts": [
+   {
+    "name": "cranium",
+    "c": [
+     0.0,
+     -0.0018,
+     0.0897
+    ],
+    "r": [
+     0.2996,
+     0.3402,
+     0.3343
+    ],
+    "k": 0.1,
+    "mirror": false
+   },
+   {
+    "name": "jaw",
+    "c": [
+     0.0711,
+     -0.0802,
+     -0.1826
+    ],
+    "r": [
+     0.1046,
+     0.1774,
+     0.12
+    ],
+    "k": 0.06,
+    "mirror": true
+   },
+   {
+    "name": "muzzle",
+    "c": [
+     0.0,
+     -0.2465,
+     -0.1463
+    ],
+    "r": [
+     0.07,
+     0.1055,
+     0.045
+    ],
+    "k": 0.0894,
+    "mirror": false
+   },
+   {
+    "name": "chin",
+    "c": [
+     0.0,
+     -0.1976,
+     -0.2126
+    ],
+    "r": [
+     0.1168,
+     0.0845,
+     0.0431
+    ],
+    "k": 0.1011,
+    "mirror": false
+   },
+   {
+    "name": "throat",
+    "c": [
+     0.0,
+     0.0114,
+     -0.4531
+    ],
+    "r": [
+     0.1061,
+     0.0724,
+     0.1975
+    ],
+    "k": 0.0857,
+    "mirror": false
+   },
+   {
+    "name": "socket",
+    "c": [
+     0.2462,
+     -0.1187,
+     0.0534
+    ],
+    "r": [
+     0.0826,
+     0.127,
+     0.1977
+    ],
+    "k": 0.1178,
+    "mirror": true
+   }
+  ]
+ },
+ "faceX": [
+  0.2,
+  0.3
+ ],
+ "faceZ": [
+  0.12,
+  0.3
+ ],
+ "earFilletFront": 0.08,
+ "earStartRound": 0.06,
+ "earFillet": 0.16,
+ "earMinU": 0.12,
+ "earMinUTop": [
+  0.12,
+  0.3,
+  0.4
+ ],
+ "earFlareBack": 0.05
+}

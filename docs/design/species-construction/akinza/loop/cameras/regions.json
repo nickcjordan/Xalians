@@ -1,0 +1,159 @@
+{
+  "resolution": 800,
+  "views": [
+    {
+      "name": "face-front",
+      "target": [
+        0,
+        -0.2,
+        0.7
+      ],
+      "orthoScale": 0.62,
+      "offset": [
+        0,
+        -6,
+        0
+      ]
+    },
+    {
+      "name": "face-profile",
+      "target": [
+        0,
+        -0.15,
+        0.7
+      ],
+      "orthoScale": 0.62,
+      "offset": [
+        6,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "ears-rear",
+      "target": [
+        0,
+        0.05,
+        0.82
+      ],
+      "orthoScale": 1.35,
+      "offset": [
+        4,
+        6,
+        1
+      ]
+    },
+    {
+      "name": "trunk-front",
+      "target": [
+        0,
+        0,
+        0.08
+      ],
+      "orthoScale": 0.82,
+      "offset": [
+        0,
+        -6,
+        0
+      ]
+    },
+    {
+      "name": "forepaw-front",
+      "target": [
+        0.445,
+        -0.1,
+        -0.15
+      ],
+      "orthoScale": 0.38,
+      "offset": [
+        0,
+        -6,
+        0
+      ]
+    },
+    {
+      "name": "forepaw-profile",
+      "target": [
+        0.445,
+        -0.1,
+        -0.15
+      ],
+      "orthoScale": 0.38,
+      "offset": [
+        6,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "hindpaw-front",
+      "target": [
+        0.34,
+        -0.03,
+        -0.85
+      ],
+      "orthoScale": 0.45,
+      "offset": [
+        0,
+        -6,
+        0
+      ]
+    },
+    {
+      "name": "hindpaw-profile",
+      "target": [
+        0.34,
+        -0.03,
+        -0.85
+      ],
+      "orthoScale": 0.45,
+      "offset": [
+        6,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "hindleg-front",
+      "target": [
+        0.24,
+        0.02,
+        -0.53
+      ],
+      "orthoScale": 0.76,
+      "offset": [
+        0,
+        -6,
+        0
+      ]
+    },
+    {
+      "name": "hindleg-profile",
+      "target": [
+        0.24,
+        0.02,
+        -0.53
+      ],
+      "orthoScale": 0.76,
+      "offset": [
+        6,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail-root",
+      "target": [
+        0.16,
+        0.17,
+        -0.06
+      ],
+      "orthoScale": 0.95,
+      "offset": [
+        2,
+        6,
+        1
+      ]
+    }
+  ]
+}

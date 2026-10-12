@@ -1,0 +1,105 @@
+{
+ "note": "Bone rotations (degrees) matching the reference sheet pose: hands on hips, S-curve, the sheet's uneven stance. Rotations about the world axes through each bone head (R = Rz Ry Rx), applied in the parent frame; arms mirror .L to .R (y and z negate), legs are free per side. Found by rig_fit.fit_pose against the tail-free halves of identity-run-0001 (plus the lower legs below the tails); arms start from sheet-read directions and move at most 35 degrees; angles only, never lengths. rootShift is [dx, dy] in model units; the ground drop is recomputed per model.",
+ "fitObjective": 0.8187,
+ "bones": {
+  "pelvis": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "spine": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "chest": [
+   0.0,
+   1.5,
+   0.0
+  ],
+  "neck": [
+   0.0,
+   -1.5,
+   0.0
+  ],
+  "head": [
+   -3.0,
+   7.5,
+   0.0
+  ],
+  "clavicle.L": [
+   9.0,
+   3.0,
+   15.0
+  ],
+  "upperarm.L": [
+   61.9188001916811,
+   0.9557382479306114,
+   33.6860558523423
+  ],
+  "forearm.L": [
+   -72.3593009872172,
+   17.665044572363932,
+   -39.42436879955362
+  ],
+  "hand.L": [
+   -21.0,
+   -24.0,
+   15.0
+  ],
+  "thigh.L": [
+   11.335785370781814,
+   5.416010507014702,
+   -12.0
+  ],
+  "thigh.R": [
+   11.335785370781814,
+   -17.416010507014704,
+   -1.5
+  ],
+  "shin.L": [
+   -7.564006989621371,
+   -7.346844181679234,
+   6.236835744824477
+  ],
+  "shin.R": [
+   10.43599301037863,
+   -4.653155818320766,
+   -13.5
+  ],
+  "foot.L": [
+   -7.5,
+   15.0,
+   25.0
+  ],
+  "foot.R": [
+   -12.0,
+   13.5,
+   -22.0
+  ],
+  "clavicle.R": [
+   9.0,
+   -3.0,
+   -15.0
+  ],
+  "upperarm.R": [
+   61.9188001916811,
+   -0.9557382479306114,
+   -33.6860558523423
+  ],
+  "forearm.R": [
+   -72.3593009872172,
+   -17.665044572363932,
+   39.42436879955362
+  ],
+  "hand.R": [
+   -21.0,
+   24.0,
+   -15.0
+  ]
+ },
+ "rootShift": [
+  -0.07800000000000001,
+  0.114
+ ]
+}

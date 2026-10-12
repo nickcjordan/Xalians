@@ -1,0 +1,193 @@
+{
+ "note": "authored neck column from the first sheet; see make_neck_table_r27.py",
+ "frame": "world, front is -y",
+ "fade": 0.012,
+ "residualFade": 0.85,
+ "smooth": 0.003,
+ "jawFillet": 0.016,
+ "jawFilletZ": [
+  0.466,
+  0.482
+ ],
+ "baseFillet": 0.02,
+ "baseFilletZ": [
+  0.43,
+  0.445
+ ],
+ "fillZ": [
+  0.43,
+  0.465
+ ],
+ "rows": [
+  {
+   "z": 0.424,
+   "half": 0.07591,
+   "front": -0.07455,
+   "back": 0.02083,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.429,
+   "half": 0.06661,
+   "front": -0.07231,
+   "back": 0.0186,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.434,
+   "half": 0.06185,
+   "front": -0.07014,
+   "back": 0.01632,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.438,
+   "half": 0.05805,
+   "front": -0.06841,
+   "back": 0.01451,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.443,
+   "half": 0.05414,
+   "front": -0.06673,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.448,
+   "half": 0.05098,
+   "front": -0.06673,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.452,
+   "half": 0.05042,
+   "front": -0.06673,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.457,
+   "half": 0.05042,
+   "front": -0.06673,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.462,
+   "half": 0.05061,
+   "front": -0.06673,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.466,
+   "half": 0.05061,
+   "front": -0.06673,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 1.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.471,
+   "half": 0.05126,
+   "front": -0.06813,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 0.5,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.476,
+   "half": 0.05191,
+   "front": -0.06952,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 0.0,
+   "wSide": 1.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.481,
+   "half": 0.05358,
+   "front": -0.07268,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 0.0,
+   "wSide": 0.7222222222222222,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.485,
+   "half": 0.05507,
+   "front": -0.0751,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 0.0,
+   "wSide": 0.5,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.49,
+   "half": 0.05931,
+   "front": -0.0751,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 0.0,
+   "wSide": 0.2222222222222222,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.494,
+   "half": 0.0627,
+   "front": -0.0751,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 0.0,
+   "wSide": 0.0,
+   "wBack": 1.0
+  },
+  {
+   "z": 0.497,
+   "half": 0.06524,
+   "front": -0.0751,
+   "back": 0.01264,
+   "exp": 2.0,
+   "wFront": 0.0,
+   "wSide": 0.0,
+   "wBack": 1.0
+  }
+ ]
+}

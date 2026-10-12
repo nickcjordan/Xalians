@@ -1,0 +1,159 @@
+{
+ "note": "Fur base head v2 (Nick 2026-10-09): ears authored as thin shells on the first sheet front outline (cup, raised cup rim, rolled outer rim, root flare and fillet into the skull); v1 crown, back of skull and eye fill kept, plus a temple-corner blur and a back polish. Head-local units. Keys documented in fur_base_head_field_v2.py.",
+ "needle": 0.028,
+ "notch": 0.025,
+ "outlineSmooth": 0.02,
+ "outlineInset": 0.005,
+ "surf": 0.035,
+ "back": 0.03,
+ "rim": 0.04,
+ "rimSmooth": 0.015,
+ "rimBand": 0.03,
+ "wingX": [
+  0.28,
+  0.38
+ ],
+ "fillX": [
+  0.29,
+  0.31
+ ],
+ "faceY": [
+  -0.2,
+  -0.12
+ ],
+ "faceZ": [
+  0.2,
+  0.28
+ ],
+ "faceX": [
+  0.3,
+  0.36
+ ],
+ "backX": [
+  0.4,
+  0.48
+ ],
+ "backZ": [
+  -0.15,
+  -0.05,
+  0.28,
+  0.38
+ ],
+ "backDepth": 0.08,
+ "back2": 0.06,
+ "backY": [
+  0.0,
+  0.06
+ ],
+ "pinSmall": 0.06,
+ "pin": 0.06,
+ "humpTol": 0.006,
+ "dip": 0.04,
+ "crownSmooth": 0.025,
+ "crownX": [
+  0.45,
+  0.58
+ ],
+ "crownY": [
+  -0.3,
+  -0.22
+ ],
+ "crownZ": [
+  0.3,
+  0.36
+ ],
+ "crownDepth": 0.08,
+ "crownSlope": [
+  50.0,
+  60.0
+ ],
+ "crownEdge": 0.04,
+ "crownEdgeSmooth": 0.01,
+ "rimRound": 0.01,
+ "shellBlur": 0.005,
+ "eyeFill": 0.015,
+ "eyeRing": [
+  1.0,
+  1.08,
+  1.35,
+  1.6
+ ],
+ "eyeAxial": [
+  -0.05,
+  0.04
+ ],
+ "eyeBins": 90,
+ "paleSmooth": 4,
+ "paleProject": 0.015,
+ "paleClose": 0.012,
+ "paleFacing": 0.2,
+ "paleMinX": 0.28,
+ "paleFrom": "cup",
+ "earOutlineSmooth": 0.02,
+ "earOutlineInset": 0.008,
+ "earThick": 0.03,
+ "earRootFlare": 0.2,
+ "earRootU": [
+  0.3,
+  0.62
+ ],
+ "earRootFlareBack": 0.34,
+ "earRootUBack": [
+  0.24,
+  0.7
+ ],
+ "earRimRoll": 0.008,
+ "earRollW": 0.025,
+ "earCupDepth": 0.045,
+ "earCupBlur": 0.04,
+ "earRingBlur": 0.02,
+ "earCupRim": 0.01,
+ "earStart": 0.36,
+ "earStartBack": 0.26,
+ "earStartBackZ": [
+  0.28,
+  0.36
+ ],
+ "earSideBlend": 0.03,
+ "earCornerRound": 0.06,
+ "earZmin": -0.3,
+ "earRootFloor": -0.06,
+ "earRootFloorU": [
+  0.4,
+  0.55
+ ],
+ "earEdgeRound": 1.0,
+ "earSkull": [
+  0.44,
+  0.32,
+  0.0,
+  3.5
+ ],
+ "earCutZ": [
+  -0.34,
+  -0.28
+ ],
+ "earCutRound": 0.03,
+ "earFillet": 0.08,
+ "earMidCoef": null,
+ "earFitU": 0.5,
+ "earFitZ": -0.2,
+ "templeBlur": 0.02,
+ "templeBox": [
+  0.29,
+  0.42,
+  -0.26,
+  0.02,
+  0.26,
+  0.48
+ ],
+ "templeRamp": 0.03,
+ "polishBlur": 0.005,
+ "polishBox": [
+  0.46,
+  0.12,
+  -0.15,
+  0.46,
+  0.04
+ ]
+}
