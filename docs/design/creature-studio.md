@@ -1,6 +1,6 @@
 # Creature Studio: design
 
-Status: revision 2, 2026-10-12, after independent audits by Codex and Fable. Awaiting Nick's go-ahead to build. Discussion is not approval.
+Status: revision 3, 2026-10-12. Revision 2 took in independent audits by Codex and Fable; revision 3 takes in Nick's answers on approvals, containment and backup cadence. Nick said "proceed" on 2026-10-12; building has started.
 
 ## Context
 
@@ -13,6 +13,9 @@ Nick's answers on 2026-10-12, which this design follows:
 - Backup: "I think Amazon S3 is the right solution here. I just want to make sure we're not unnecessarily sending data back and forth to S3, especially if it is large files." Local cleanup is allowed once the keep set is stored off the machine.
 - Review: "This will all be happening at my desk. I don't think you need to build anything for me to review from my phone. Claude code is where all my stuff happens."
 - First test: Nick is working on Akinza's eyeballs in a separate session; the first slice uses another part.
+- Approvals (revision 3): no logging of his messages across sessions and no codes; he approves with a button in the review screen.
+- Rules (revision 3): "I just want to make sure we're not being too literal with rules like this", citing the eye-socket failure. Measurements report what moved; they do not forbid it.
+- Backup cadence (revision 3): back up without slowing the process down; "I'm going to lean to you about when that smart move is".
 
 ## Assumptions & Decisions
 
@@ -21,12 +24,12 @@ Nick's answers on 2026-10-12, which this design follows:
 | 1 | Records are JSON files in git, seven kinds, written through the `studio` library with atomic writes. Git is the history; there is no separate authoritative event log. | 85%: both audits showed a union-merged log cannot stay consistent; seven kinds cover every fact | audits (Codex 3, 6; Fable 3, 7) |
 | 2 | Progress is tracked by defects (a named problem with an image region), not critic scores. One defect per build by default. | 85%: fresh critics plateau at 6 to 7 with plus or minus 1 noise; 81% of 420M loop tokens bought no keeps | `LOOP-audit-2026-10-07.md` section 1; memory "shape target before build" |
 | 3 | Process rules are enforced where the work flows (CLI refusals, hooks, CI validation), described honestly as workflow enforcement with tested bypass limits, not as impossibility. | 85% | Codex 1 |
-| 4 | Nick's approvals bind to a specific build's evidence hashes and a stated scope. His words come from a capture hook that records every message he types, in any session; praise is not approval unless he approves that build. | 85%: the exact-quote check alone proves the words occurred, not what they approved | Fable 1, Codex 2 |
+| 4 | Nick approves with a button on a specific build in the review screen; the approval binds to that build's evidence hashes. A ruling he gives in chat is recorded by the orchestrator with his words, date and session, and shown in the screen beside the build it refers to, where he can confirm or correct it. No message capture, no codes. | 85%: Nick's answer, revision 3; the screen is where he looks at the build, so approval there means the most | this doc, Context |
 | 5 | The review screen is a dev-only `/studio` route inside `apps/web` (Vite dev server middleware reads and writes records), excluded from the production build by a test. No phone or Artifact surface. | 75%: reuses the design system without cross-app alias problems; risk is coupling to the site | Fable 10; Nick's answer 2 |
-| 6 | Binaries live in a content-addressed store outside every worktree. The keep set is the full dependency closure of every approved and active recipe (roots, pinned scripts, snapshots, approved outputs) plus references and every image shown to Nick. It goes to S3 once per file; nothing is downloaded except to restore. | 85%: approved outputs alone cannot rebuild later work | Codex 8, 9 |
+| 6 | Binaries live in a content-addressed store outside every worktree. The keep set is the full dependency closure of every approved and active recipe (roots, pinned scripts, snapshots, approved outputs) plus references and every image shown to Nick. It goes to S3 once per file, in the background, at two moments only: a one-time initial upload, and when Nick approves a build. Ordinary builds and previews never upload. Nothing is downloaded except to restore. | 85%: approved outputs alone cannot rebuild later work; uploading only at approval keeps S3 off the working path | Codex 8, 9; Nick, revision 3 |
 | 7 | Nothing local is deleted until a restore drill rebuilds the approved model from S3 with local caches unavailable, and Nick confirms the delete list. | 95% | Codex 8; Nick's answer 1 |
 | 8 | The recipe engine (`recipe.py` and its cache, pins and DAG) is the build backend, ported to main with every script the v5eye3 chain pins. The Workflow critic loop is retired. | 85% | tooling audit; Fable 8 |
-| 9 | Containment is measured where it can be exact: per component before assembly, parameters unchanged outside the part. After the assembly remesh, the recipe's existing tolerance applies, and parts may declare transition bands. | 85%: the whole-head remesh moves every region slightly | Fable 4, Codex 4; `recipe.py` `FLAT_ALLOWANCE` |
+| 9 | Containment is a report, not a prohibition. Each build shows what moved outside its part (measured per component before assembly, with the remesh tolerance after). A builder may change anything the goal needs; an outside change blocks presentation only when the builder did not declare and explain it. | 90%: the eye-socket failure came from treating a protective rule as untouchable; Nick, revision 3 | `REFINEMENT.md`; Fable 4, Codex 4 |
 | 10 | A stalled defect's audit must end in one of four outcomes: lift an inferred hold, change the method, redefine the part's scope, or ask Nick. An audit that changes nothing unlocks nothing. | 90% | Fable 5, Codex 5; `REFINEMENT.md` rule 4 |
 | 11 | The first milestone is one vertical slice through the real workflow on Akinza's skull, built before anything general. Later phases are re-estimated from its measured cost. | 85% | Codex 12, Fable 9 |
 | 12 | Blender runs as the Windows build from a pinned install path, not the Codex package cache the loop uses now; every build records the version. | 80% | tooling audit "Notable" 3 |
@@ -77,11 +80,9 @@ Records live in `art/creatures/<key>/`. IDs are collision-resistant (time-ordere
 
 Status, spend and history are derived from these records and git, not stored twice. CI validates every record against its schema and every reference between records.
 
-**Nick's words.** A `UserPromptSubmit` hook appends every message Nick types, in any session, with its timestamp and session to `~/.claude/studio/nick-messages.jsonl`. A decision or chat approval must cite one of those messages. A chat approval also names the build it approves and its scope ("approves the front view of the eyes"). Imported Akinza rulings carry `imported` provenance (note file and line) and are labeled as such.
+**Nick's words.** Approval is a button in the review screen on the build he is looking at. A ruling he gives in chat is written by the orchestrator as a decision with his exact words, the date and the session, and appears in the screen beside the build or hold it refers to, with a control to correct it. Imported Akinza rulings carry `imported` provenance (note file and line) and are labeled as such. Agents may screenshot the review screen to check it, but never click its controls.
 
-**UI approvals.** `npm run studio` prints a per-launch token; the browser stores it once. A hook denies browser automation tools access to the studio address, so an agent cannot click approve. This makes forgery deliberate and visible, not impossible.
-
-**Binaries and S3.** Blob store `C:\dev\art-data\studio\blobs\<aa>\<sha256>`, shared by all worktrees, with a manifest giving each blob's original file name and bundle. Keep set (decision 6) goes to the private bucket `xalians-art-archive` (Terraform, encryption on, public access blocked, versioning on so nothing is lost to an overwrite or delete). `studio backup` uploads only hashes missing from the remote manifest and verifies each upload. `studio gc` lists rebuildable files not used by any registered worktree, active build or recipe, and deletes only after Nick confirms. Size is measured by `backup --dry-run` before anything uploads; the expected scale is a few GB now and tens of GB over dozens of creatures, which is about one to two dollars a month.
+**Binaries and S3.** Blob store `C:\dev\art-data\studio\blobs\<aa>\<sha256>`, shared by all worktrees, with a manifest giving each blob's original file name and bundle. Keep set (decision 6) goes to the private bucket `xalians-art-archive` (Terraform, encryption on, public access blocked, versioning on so nothing is lost to an overwrite or delete). `studio backup` uploads only hashes missing from the remote manifest and verifies each upload. After the initial upload it runs on its own in the background after each approval; an approval usually adds only the few step outputs that changed, since everything upstream is already stored. `studio gc` lists rebuildable files not used by any registered worktree, active build or recipe, and deletes only after Nick confirms. Size is measured by `backup --dry-run` before anything uploads; the expected scale is a few GB now and tens of GB over dozens of creatures, which is about one to two dollars a month.
 
 ## 3. Engine
 
@@ -96,8 +97,8 @@ Builders run with a wall-clock deadline; a dead or timed-out build fails loudly 
 
 | Kind | Effect | Examples |
 |---|---|---|
-| Gate | Blocks presentation | outputs present and hashed; recipe pinned; containment (decision 9); pixel difference outside the part's screen mask and declared transition bands under threshold; skin one closed manifold component; every hold respected or reported in Blocked by |
-| Measure | Shown, never a pass mark | fit to the bare target per view band; symmetry; part-declared measures |
+| Gate | Blocks presentation | outputs present and hashed; recipe pinned; skin one closed manifold component; every change outside the part declared and explained in the report; every hold respected or reported in Blocked by |
+| Measure | Shown, never a pass mark | what moved outside the part (displacement and pixel difference) beside the builder's reason; fit to the bare target per view band; symmetry; part-declared measures |
 | Advisory | Off by default; on request only | an Opus blind reader for a concrete question. Never blocks, never reported to Nick as a verdict |
 
 **Progress.** `studio status` and `studio next` give, from records: current stage and part, open defects with attempts, budget left, holds in force with their strength, questions waiting on Nick, and one next action. A defect surviving two builds is stalled; the next build needs an audit naming the physical cause, each hold checked against it, and one of the four outcomes (decision 10).
@@ -116,7 +117,7 @@ Goal, in Nick's words: <cited message>
 Part: <functional unit>, includes <list>, because <why>
 Defect targeted: <alias, description, region image>
 Holds: | Hold | Source | Why | Strength |
-May change: everything inside the part, including anything the holds do not name
+May change: anything the goal needs that the holds do not name; declare and explain any change outside the part
 Required outputs, deadline, budget left
 Report: studio build report <id> --file report.json
 ```
@@ -154,10 +155,10 @@ Later, in this order: displacement heat map (luminance-ordered ramp), onion and 
 
 1. Defects replace scores as the measure of progress, one per build.
 2. Holds are records with a cited source; invented ones are labeled weak and are the first lifted.
-3. Approvals bind to a build's evidence hashes and a scope, and cite a captured message.
+3. Approval is a button on the build Nick is looking at, bound to its evidence hashes.
 4. Parts declare dependencies, so a change reopens only what depends on it.
 5. A stall audit must change something before another build runs.
-6. Containment is measured where it can be exact, with declared tolerances elsewhere.
+6. Containment is reported, not enforced: a builder may change what the goal needs, and says so.
 7. The review screen is generated from records, not hand-edited HTML.
 8. Costs are collected from transcripts, with uncovered spend shown.
 9. Previews are required for new methods, and only builds can be approved.
@@ -172,7 +173,7 @@ Each step is one or more small pull requests that auto-merge on green. Estimates
 | Step | Content | Rough time | Rough tokens |
 |---|---|---|---|
 | S0 Backup first | Terraform bucket PR; dry-run size of the Akinza keep set (approved v5 head, v5m2, v5eye3 builds, recipe roots head-0204 and body-0195, the tail-free root, every pinned script, references, images shown to Nick); upload; verify | 2 to 3 h | 1 to 2M |
-| S1 Vertical slice (milestone 1) | Seven record schemas and the CLI core; message capture hook; Akinza import at v5eye3 with the chain ported to main and rebuilt on main; runner with pinned Blender, standard cameras, pixel diff, per-component containment; the `/studio` review screen; cost collector proven on real transcripts; then Akinza's skull: part defined, holds declared, two or three previews, one build, Nick's review in the screen | 14 to 20 h, plus the skull's own budget agreed with Nick | 15 to 22M |
+| S1 Vertical slice (milestone 1) | Seven record schemas and the CLI core; Akinza import at v5eye3 with the chain ported to main and rebuilt on main; runner with pinned Blender, standard cameras, pixel diff, the outside-the-part report; the `/studio` review screen; cost collector proven on real transcripts; then Akinza's skull: part defined, holds declared, two or three previews, one build, Nick's review in the screen | 14 to 20 h, plus the skull's own budget agreed with Nick | 15 to 22M |
 | Re-estimate | From S1's measured cost | | |
 | S2 Enforcement and storage | Stall audits, budgets and deadlines complete; restore drill; `gc` with Nick's confirmed delete list | 5 to 8 h | 5 to 8M |
 | S3 Review depth | Heat map, onion and difference, history, references, costs screens | 6 to 10 h | 6 to 10M |
@@ -182,6 +183,6 @@ Each step is one or more small pull requests that auto-merge on green. Estimates
 
 ## 9. Risks
 
-- The skull meets the eye socket, which Nick's eye session owns. The skull part excludes the socket and declares the socket rim as a transition band; if a stall audit finds the cause inside the socket, the outcome is a question to Nick, not a silent scope change.
+- The skull meets the eye socket, which Nick's eye session is working on. The skull build may touch the socket rim if the shape needs it, and its report says so; a larger socket change is raised with Nick because of the parallel eye work, not because of a rule.
 - Porting the v5eye3 chain may surface missing pinned files; the slice must rebuild the chain on main and match the recorded statistics before any skull work.
 - A dev-only route inside the site could leak into production; a build test fails if any studio code is in the production bundle.
