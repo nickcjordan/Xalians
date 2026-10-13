@@ -30,6 +30,8 @@ build plan <key> --stage blockout --goal TEXT --method TEXT [--targets a,b]   (w
 build start|fail <key> <alias>
 build output <key> <alias> --name N --file PATH [--role R --camera C]   (file goes to the blob store)
 build ingest <key> <alias> --packet DIR     (reads DIR/packet.json: renders, baselines, diffs, heat map, measures, Blender minutes)
+build reference <key> <alias> --camera ID [--file IMG --label TEXT] [--overlay IMG]   (X24: --file adds a labeled reference image for that camera to the build's `compare` list, shown first beside the options; --overlay stores this build's overlay for the camera as role overlay, which the Options view toggles to)
+build judge <key> <alias> --file checks.json      (X25: a JSON array of strings, the numbered "What to judge" checks shown above the images; the first option of a presented set that has them supplies the list; works on any build, image builds included)
 build overlay <key> <alias> --dir DIR      (blockout builds: DIR/<view>.overlay.png stored as role overlay, camera = view; optional DIR/fit.json { view: iou } becomes fit-iou:<view> measure checks)
 build report <key> <alias> --file report.json
 build check <key> <alias> --file checks.json

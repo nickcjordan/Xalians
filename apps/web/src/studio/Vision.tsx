@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
+import { JudgeList } from './Judge';
 import { api, blobUrl, usePolled, type ImageView, type ReferenceView, type VisionElementView, type VisionView } from './client';
 import { Panel } from './Panels';
 import { plate, ReferenceLarge, StageVerdict, WordList } from './Stages';
@@ -163,6 +164,7 @@ function ElementSection({ creature, element, context, canUnpick, onChanged, onOp
 
 			{waiting ? (
 				<>
+					<JudgeList checks={element.judge} />
 					<ul className="m-0 grid list-none gap-3 p-0" style={{ gridTemplateColumns: `repeat(${Math.min(element.options.length, 3)}, minmax(0, 1fr))` }}>
 						{element.options.map((o, i) => (
 							<OptionCard key={o.id} image={o} index={i} busy={busy} onPick={() => void run(() => api.pick(creature, { build: o.alias, text: '' }))} />

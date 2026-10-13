@@ -283,6 +283,10 @@ const buildBase = record('B', {
 	stage: z.enum(['blockout']).optional(),
 	kind: z.enum(['preview', 'build', 'image']),
 	image: ImageBlockSchema.optional(),
+	/** Reference images (X24) a preview is judged against, one per camera: shown first, beside the options at the same camera. */
+	compare: z.array(z.strictObject({ camera: z.string().min(1), blob: sha256, label: z.string().min(1) })).optional(),
+	/** Numbered "what to judge" checks (X25) written by the orchestrator, shown above the images. */
+	judge: z.array(z.string().min(1)).optional(),
 	goal: z.strictObject({ text: z.string().min(1), sourceNote: idFor('N').optional() }),
 	targets: z.array(idFor('D')),
 	method: z.string(),

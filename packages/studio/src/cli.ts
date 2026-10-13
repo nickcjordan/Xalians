@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
+import { z } from 'zod';
 import { pathToFileURL } from 'node:url';
 import { putFile } from './blobs.ts';
 import { ingestOverlays, ingestPacket } from './ingest.ts';
@@ -61,6 +62,7 @@ const OPTIONS = {
 	label: { type: 'string' },
 	'prompt-file': { type: 'string' },
 	input: { type: 'string', multiple: true },
+	overlay: { type: 'string' },
 } as const;
 
 type Flags = ReturnType<typeof parseArgs<{ options: typeof OPTIONS; allowPositionals: true }>>['values'];
@@ -558,6 +560,31 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			emit(rec, `ingested ${got.outputs.length} output(s) and ${got.checks.length} check(s) on ${rec.alias}`);
 			return;
 		}
+		case 'reference': {
+			// X24: a reference image (and/or this build's overlay) for one camera.
+			const b = load();
+			const camera = need(flags, 'camera');
+			if (!flags.file && !flags.overlay) throw new StudioError('usage: build reference <key> <alias> --camera <id> [--file <img> --label <text>] [--overlay <img>]');
+			if (flags.file && !flags.label) throw new StudioError('--file needs --label (what the reference is, in plain words)');
+			const ref = flags.file ? { camera, blob: putFile(resolve(flags.file)), label: flags.label as string } : undefined;
+			const overlay = flags.overlay ? { name: `${camera}-overlay`, blob: putFile(resolve(flags.overlay)), role: 'overlay', camera } : undefined;
+			const rec = setBuild(b.id, (x) => {
+				if (ref) x.compare = [...(x.compare ?? []).filter((c) => c.camera !== camera), ref];
+				if (overlay) x.outputs = [...x.outputs.filter((o) => o.name !== overlay.name), overlay];
+			});
+			emit(rec, `${ref ? `reference for ${camera} (${ref.blob.slice(0, 12)})` : ''}${ref && overlay ? ' and ' : ''}${overlay ? `overlay for ${camera} (${overlay.blob.slice(0, 12)})` : ''} on ${rec.alias}`);
+			return;
+		}
+		case 'judge': {
+			// X25: numbered "what to judge" checks, a JSON array of strings.
+			const b = load();
+			const raw = readJsonFile(need(flags, 'file'));
+			const checks = z.array(z.string().min(1)).min(1).safeParse(raw);
+			if (!checks.success) throw new StudioError('--file must hold a JSON array of non-empty strings (the checks, in order)');
+			const rec = setBuild(b.id, (x) => { x.judge = checks.data; });
+			emit(rec, `${checks.data.length} judge check(s) on ${rec.alias}`);
+			return;
+		}
 		case 'overlay': {
 			const b = load();
 			if (b.stage !== 'blockout') throw new StudioError(`build ${b.alias} is not a blockout build; overlays belong to the blockout`);
@@ -618,7 +645,7 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			return;
 		}
 		default:
-			throw new StudioError('usage: build plan|start|fail|output|ingest|overlay|report|check|look|present <key> ...');
+			throw new StudioError('usage: build plan|start|fail|output|ingest|reference|judge|overlay|report|check|look|present <key> ...');
 	}
 }
 

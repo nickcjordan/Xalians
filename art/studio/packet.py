@@ -3,6 +3,7 @@
     python art/studio/packet.py --assembly <assembled dir> [--baseline <assembled dir>] \
         --cameras art/studio/cameras/akinza.json --out <dir> \
         [--component head --head <head dir> --baseline-head <head dir>] [--part <part key>]
+        [--cameras-only front,side-left] [--quick [--quick-samples 12]] [--no-baseline]
 
 Renders every camera of the cameras file (art/studio/packet_render.py, run through runner.py blender, so
 the Blender slot lock applies) for the assembly and, when given, the baseline. Baseline renders are cached
@@ -12,6 +13,11 @@ and renderer are unchanged. Per camera it writes <id>.png, and with a baseline <
 blue to amber ramp by size of the change). With head directories it also writes heat.png, the skin
 displacement of the head against the baseline head (gray exactly zero, blue to amber by size) and the
 maximum displacement per species zone. Everything is summarized in packet.json.
+
+Part-only previews (experiment X26): --cameras-only renders just the listed camera ids (packet.json lists only
+those), --quick renders at --quick-samples (default 12) Cycles samples with denoising on (a preview, not the
+packet of record; quick baselines are cached apart from full ones), and --no-baseline skips the baseline renders
+and every comparison even when --baseline is given. A full packet stays the default and is for the chosen build.
 
 The assembly directories may also be blockout outputs (art/studio/blockout.py: blockout.blend, blockout.npz).
 With --part <part key> and a baseline that both carry part_id, packet.json gets displacement.part: the skin
@@ -73,13 +79,17 @@ def blend_file(assembly):
     return found[0]
 
 
-def start_render(blend, cameras, out, lock_species, tag):
+def start_render(blend, cameras, out, lock_species, tag, only=None, samples=0):
     """Launch Blender under the slot lock. Returns the process; wait with finish_render.
 
     `lock_species` is None for the studio's own runner (art/studio/runner.py, settings in runner.json). A cameras
     file that still names `lockSpecies` keeps the old path through loop_tools.py and that species' config."""
     out.mkdir(parents=True, exist_ok=True)
     tail = [str(HERE/'packet_render.py'), '--', '--scene', str(blend), '--cameras', str(cameras), '--out', str(out)]
+    if only:
+        tail += ['--only', ','.join(only)]
+    if samples:
+        tail += ['--samples', str(samples)]
     if lock_species:
         cmd = [sys.executable, str(LOOP/'loop_tools.py'), '--species', lock_species, 'blender', '--log', f'studio-packet-{tag}', *tail]
     else:
@@ -93,19 +103,20 @@ def finish_render(proc, what):
         sys.exit(f'render of {what} failed:\n{text[-2000:]}')
 
 
-def config_key(cameras):
+def config_key(cameras, samples=0):
     h = hashlib.sha256()
+    h.update(f'samples={samples}'.encode())
     h.update(Path(cameras).read_bytes())
     h.update((HERE/'packet_render.py').read_bytes())
     return h.hexdigest()[:16]
 
 
-def raw_images(blend, cameras, ids, jobs):
+def raw_images(blend, cameras, ids, jobs, samples=0):
     """Raw RGBA render folder for a blend, cached by its sha256. Queues a render job when it is missing."""
     sha = sha256(blend)
     folder = CACHE_ROOT/sha
     meta = folder/'meta.json'
-    key = config_key(cameras)
+    key = config_key(cameras, samples)
     fresh = meta.is_file() and json.loads(meta.read_text())['config'] == key and all((folder/f'{i}.png').is_file() for i in ids)
     if fresh:
         return sha, folder, True
@@ -365,6 +376,10 @@ def main():
     ap.add_argument('--component', default='head')
     ap.add_argument('--head')
     ap.add_argument('--baseline-head')
+    ap.add_argument('--cameras-only', help='comma list of camera ids to render; the others are skipped')
+    ap.add_argument('--quick', action='store_true', help='fewer Cycles samples with denoising on (a preview)')
+    ap.add_argument('--quick-samples', type=int, default=12)
+    ap.add_argument('--no-baseline', action='store_true', help='skip the baseline renders and comparisons even when --baseline is given')
     ap.add_argument('--part', help='part key: report displacement inside versus outside it (blockout outputs)')
     args = ap.parse_args()
     cameras = Path(args.cameras).resolve()
@@ -372,11 +387,19 @@ def main():
     species = spec['species']
     lock_species = spec.get('lockSpecies')     # set only by an old cameras file: the loop_tools species config that owns the slot lock; otherwise the studio runner
     ids = [c['id'] for c in spec['cameras']]
+    only = None
+    if args.cameras_only:
+        only = [c.strip() for c in args.cameras_only.split(',') if c.strip()]
+        unknown = [c for c in only if c not in ids]
+        if unknown:
+            sys.exit(f'--cameras-only: not in {cameras.name}: {", ".join(unknown)} (cameras: {", ".join(ids)})')
+        ids = [c for c in ids if c in only]
+    samples = args.quick_samples if args.quick else 0
     bg = tuple(spec['render']['background'])
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     assembly = resolve(args.assembly, species)
-    baseline = resolve(args.baseline, species) if args.baseline else None
+    baseline = resolve(args.baseline, species) if args.baseline and not args.no_baseline else None
 
     blend = blend_file(assembly)
     sha = sha256(blend)
@@ -384,17 +407,18 @@ def main():
     cand_raw = CACHE_ROOT/'_run'/f'{sha[:12]}-{int(t0)}'
     base_raw = base_cached = None
     if baseline:
-        _, base_raw, base_cached = raw_images(blend_file(baseline), cameras, ids, jobs)
-    procs = [(start_render(blend, cameras, cand_raw, lock_species, assembly.name), assembly.name)]
+        _, base_raw, base_cached = raw_images(blend_file(baseline), cameras, ids, jobs, samples)
+    procs = [(start_render(blend, cameras, cand_raw, lock_species, assembly.name, ids if only else None, samples), assembly.name)]
     for bl, folder, _, _ in jobs:
-        procs.append((start_render(bl, cameras, folder, lock_species, baseline.name), baseline.name))
+        procs.append((start_render(bl, cameras, folder, lock_species, baseline.name, ids if only else None, samples), baseline.name))
     for proc, what in procs:
         finish_render(proc, what)
     for bl, folder, bsha, key in jobs:
         (folder/'meta.json').write_text(json.dumps({'config': key, 'blend': str(bl), 'sha256': bsha}), encoding='utf-8')
 
     result = {'assembly': assembly.name, 'assemblySha256': sha, 'baseline': baseline.name if baseline else None,
-              'cameras': [], 'displacement': None, 'minutes': 0.0}
+              'cameras': [], 'displacement': None, 'minutes': 0.0,
+              'quick': {'samples': samples} if samples else None, 'camerasOnly': ids if only else None}
     for cam in ids:
         after, mask_after = over_background(cand_raw/f'{cam}.png', bg)
         after.save(out/f'{cam}.png')

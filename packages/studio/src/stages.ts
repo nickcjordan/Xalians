@@ -323,11 +323,18 @@ export interface ImageView {
 	governs: string[];
 	notFor: string[];
 	round?: number;
+	/** Numbered "what to judge" checks (X25). */
+	judge?: string[];
 	createdAt: string;
 	wallMinutes?: number;
 	codexTokens: number | null;
 	inputs: { name: string; blob: string }[];
 	failure?: string;
+}
+
+/** The "what to judge" checks of a presented set: those of the first option that has any. */
+export function firstJudge(items: { judge?: string[] }[]): string[] | undefined {
+	return items.find((i) => i.judge?.length)?.judge;
 }
 
 function imageView(b: Build): ImageView {
@@ -346,6 +353,7 @@ function imageView(b: Build): ImageView {
 		governs: im.governs ?? [],
 		notFor: im.notFor ?? [],
 		...(im.round !== undefined ? { round: im.round } : {}),
+		...(b.judge?.length ? { judge: b.judge } : {}),
 		createdAt: b.createdAt,
 		...(b.cost.wallMinutes !== undefined ? { wallMinutes: b.cost.wallMinutes } : {}),
 		codexTokens: im.codexTokens,
@@ -373,6 +381,8 @@ export interface VisionElementView {
 	rounds: number;
 	/** The set waiting for a pick, in the order generated. */
 	options: ImageView[];
+	/** "What to judge" for the waiting set: the checks of the first option that has them. */
+	judge?: string[];
 	/** The chosen image, once picked. */
 	picked?: ImageView & { reference?: string };
 	/** Nick's latest "none of these" for this element while no set is waiting. */
@@ -410,6 +420,7 @@ export function visionView(data: CreatureData): VisionView {
 				element,
 				rounds: rounds[`vision:${element}`] ?? 0,
 				options,
+				...(firstJudge(options) ? { judge: firstJudge(options) } : {}),
 				...(picked ? { picked } : {}),
 				...(adjustNote && options.length === 0 && !picked ? { adjust: { text: adjustNote.text, createdAt: adjustNote.createdAt } } : {}),
 				running: mine.filter((b) => b.status === 'running').length,

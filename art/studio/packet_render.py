@@ -1,6 +1,6 @@
 """Packet renderer (runs inside Blender, launched by packet.py through runner.py blender).
 
-    packet_render.py --scene <assembly .blend> --cameras <cameras json> --out <dir> [--only id,id]
+    packet_render.py --scene <assembly .blend> --cameras <cameras json> --out <dir> [--only id,id] [--samples N]
 
 Opens the assembly, gives the skin a neutral clay material (the pale inner-ear coat, eyes, irises, nose,
 mouth and claws keep their own materials), gives every object that carries a material tag (the custom property
@@ -22,6 +22,7 @@ p.add_argument('--scene', type=Path, required=True)
 p.add_argument('--cameras', type=Path, required=True)
 p.add_argument('--out', type=Path, required=True)
 p.add_argument('--only', default='')
+p.add_argument('--samples', type=int, default=0, help='override the cameras file sample count (quick previews); denoising is forced on')
 args = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 spec = json.loads(args.cameras.read_text(encoding='utf-8'))
 cfg = spec['render']
@@ -130,10 +131,10 @@ for obj in sc.objects:
 
 sc.render.engine = 'CYCLES'
 sc.cycles.device = cfg.get('device', 'CPU')
-sc.cycles.samples = cfg['samples']
+sc.cycles.samples = args.samples or cfg['samples']
 sc.cycles.seed = cfg['seed']
 sc.cycles.use_animated_seed = False
-sc.cycles.use_denoising = cfg['denoise']
+sc.cycles.use_denoising = True if args.samples else cfg['denoise']
 sc.render.image_settings.file_format = 'PNG'
 sc.render.image_settings.color_mode = 'RGBA'
 sc.render.film_transparent = True

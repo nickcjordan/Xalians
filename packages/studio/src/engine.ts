@@ -480,6 +480,10 @@ export interface BuildView {
 	otherOutputs: Output[];
 	checks: Build['checks'];
 	report?: Build['report'];
+	/** Reference images the option is judged against (X24), one per camera. */
+	compare?: NonNullable<Build['compare']>;
+	/** Numbered "what to judge" checks (X25). */
+	judge?: string[];
 	cost: { wallMinutes?: number; blenderMinutes?: number; tokens?: number; approximate?: boolean };
 }
 
@@ -517,6 +521,8 @@ function buildView(b: Build, data: CreatureData): BuildView {
 		otherOutputs,
 		checks: b.checks,
 		...(b.report ? { report: b.report } : {}),
+		...(b.compare?.length ? { compare: b.compare } : {}),
+		...(b.judge?.length ? { judge: b.judge } : {}),
 		cost: {
 			...(b.cost.wallMinutes !== undefined ? { wallMinutes: b.cost.wallMinutes } : {}),
 			...(b.cost.blenderMinutes !== undefined ? { blenderMinutes: b.cost.blenderMinutes } : {}),

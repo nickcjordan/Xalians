@@ -26,10 +26,17 @@ export function overlayFor(build: BuildView, camera: string, kind: 'diff' | 'hea
 	return undefined;
 }
 
+/** The reference image (X24) a build carries for a camera, shaped like an output so it can stand in as the left image. */
+export function referenceFor(build: BuildView | undefined, camera: string): (Out & { label: string }) | undefined {
+	const c = build?.compare?.find((x) => x.camera === camera);
+	return c ? { name: c.label, blob: c.blob, role: 'reference', camera, label: c.label } : undefined;
+}
+
 export function baselineFor(build: BuildView, baseline: BuildView | undefined, camera: string, ownBaseline = true): Out | undefined {
-	// The build's own packet baseline is a fallback for part reviews only; a page that supplies its
-	// own comparison (the blockout's sheet and overlays) must not fall back to it.
-	return renderFor(baseline, camera) ?? (ownBaseline ? build.cameras[camera]?.find((o) => o.role === 'baseline') : undefined);
+	// With no approved baseline, a compare reference is the left image. The build's own packet baseline is a
+	// fallback for part reviews only; a page that supplies its own comparison (the blockout's sheet and
+	// overlays) must not fall back to it.
+	return renderFor(baseline, camera) ?? (ownBaseline ? referenceFor(build, camera) : undefined) ?? (ownBaseline ? build.cameras[camera]?.find((o) => o.role === 'baseline') : undefined);
 }
 
 function useSize(ref: React.RefObject<HTMLElement | null>) {
@@ -177,8 +184,9 @@ export function Viewer(props: ViewerProps) {
 	const heat = overlayFor(build, camera, 'heat');
 	const shown = (overlay === 'diff' ? diff : overlay === 'heat' ? heat : render) ?? render;
 	const baselineIsApproved = !!renderFor(baseline, camera);
-	const tagBase = props.baseLabel ?? (baselineIsApproved ? 'Last approved' : 'Before');
-	const baseFitClass = props.baseFit === 'contain' ? 'object-contain' : 'object-fill';
+	const ref = !baselineIsApproved && (props.ownBaseline ?? true) ? referenceFor(build, camera) : undefined;
+	const tagBase = props.baseLabel ?? (baselineIsApproved ? 'Last approved' : ref ? `Reference: ${ref.label}` : 'Before');
+	const baseFitClass = props.baseFit === 'contain' || ref ? 'object-contain' : 'object-fill';
 	const ratio = useRatio(shown ? blobUrl(shown.blob) : undefined);
 
 	const stageRef = React.useRef<HTMLDivElement>(null);

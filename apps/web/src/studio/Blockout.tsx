@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
 
+import { JudgeList } from './Judge';
 import { api, usePolled, type BlockoutView, type BuildView, type MarkDraft } from './client';
 import { BuilderPanel, CostLine, Panel } from './Panels';
 import { StageVerdict } from './Stages';
@@ -166,6 +167,7 @@ export function BlockoutReview({ creature }: { creature: string }) {
 						{baseKind === 'overlay' ? 'Left: the model drawn over the sheet. Right: the model.' : baseKind === 'sheet' ? 'Left: the sheet, bare body, with no overlay for this view. Right: the model.' : ''}
 					</span>
 				</div>
+				<JudgeList checks={build?.judge} className="shrink-0" />
 				{build && cmp ? (
 					<div className="min-h-0 flex-1">
 						<Viewer
