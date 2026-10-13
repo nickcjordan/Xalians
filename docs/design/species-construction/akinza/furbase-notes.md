@@ -712,3 +712,26 @@ Measures (assembled-3177 against assembled-3176): 452,503 input skin vertices ar
 Images in `untracked/species-construction/akinza/surface/head-redesign/tails-v1/`: `before-after-{hback,hrqL,hrqR,hsideL,hsideR,htop,hbelow}.png`, `before-after-{rootback,rootrqL,rootrqR,rootside,roottop,crotch,wallrq}.png` (close views), bare clay, 3176 against 3177; `tail-sections.png` (width and depth along each tail; near the root the slices also cut the rump); `tails-v1-3177-heat.png` (unchanged input vertices gray, rebuilt surface by distance to the nearest input vertex, seam in black); `tails-v1-3177-numbers.json`, `tail-sections.json`.
 
 Still open (my own look, not ready for Nick): a narrow vertical groove remains between tail 3's base and each buttock in the side views (the smooth union of the tail base with the buttock; moving tail 3 out of the cleft did not change it); small sliver fins at the base behind the +x buttock in the +x side view; a faint stitched-seam line under the rump between the legs; tail 1's root still spreads broad and flat across the rump from behind. The method (carve the old tails out of the skin, then add new ones) leaves the rump's own shape behind the hips undefined; an authored rump surface under the tail roots, instead of the carved skin, is the likely next step.
+
+# Tails v2: the tails grown from an authored rump (2026-10-12)
+
+Coordinator on v1: author the rump surface under the tail roots instead of relying on the carved skin; fix the groove between tail 3's base and each buttock, the sliver fins, the seam line under the rump, and tail 1's broad flat root. The hips hold is loosened for the back of the buttocks, the rump and the cleft (built today); the hips' front and side widths and the waist stay as built.
+
+| Hold | Source | Why |
+|---|---|---|
+| Hips' front and side widths, waist | built today (hips v1) | done part |
+| Tails' new shapes (own roots, round sections, steady taper); count, length, fan, curl, direction | v1; Nick 2026-09-30 (look) | done part, his approved look |
+| Everything else | approvals; one part at a time | done parts |
+
+- Step P-tails2 (`art/species-construction/tails_v2_post.py`, spec `specs/tails-v2.json`) in place of P-tails1 after P-hips1 (so it rebuilds from the same input, assembled-3176); recipe `recipe-tails-v2.json` (hips-v1 plus P-tails2). v1's script, spec and recipe are untouched.
+- Rump: an authored sacrum (ellipsoid at (0, .035, -.15), semi-axes .085, .045, .10, smooth minimum .04) under the three roots; a wider carve of the old tails (sweep distance under .03, smooth maximum .03); rump-wide smoothing (.009) plus blurs at the buttock backs, under tail 3 between the thighs and where tail 3 passes the buttock; below y 0 to .03 the field is the old one, so the stitch stays off the crotch (v1's seam line there is gone).
+- Tail 1 leaves as a rounded root: root radius .054 (v1 .062), root point .015 deeper with a second point straight out from the back, root smooth minimum .032 (v1 .04).
+- Stitch: v1 dropped every new-surface component but the largest and deleted faces at boundary pinches for up to 30 passes; here components under 5000 faces are dropped (two closed shells of 1808 and 1064 faces inside the body), pinch handling touches only new boundary faces, and a fold-repair pass smooths the vertices of folded stitch faces and projects them onto the field (19 folded faces in one pass, then none). Sharp or folded edges in the region: 0 (v1 216).
+- Development: a to g in `untracked/.../head-redesign/tails-v2/work/`. a: mirrored buttock masses made the stitch boundaries .03 apart (a ladder of stitch triangles on the -x buttock), dropped in d; e: blur between the thighs; f: tail 1 root; g: fold repair. g is kept.
+- Output: assembled-3178.
+
+Measures (assembled-3178 against assembled-3176, the input of both tail steps): 447,097 input skin vertices unchanged exactly, 196,327 replaced (bounds x -.20 to .555, y -.016 to .54, z -.611 to .13; 1,133 of them below y 0, on the rump's underside), 185,661 new; every other object 0.0; one component, no non-manifold edges; tail lengths .799 / .817 / .741 as v1. Against v1 (assembled-3177): regionShift R10 .0087, R11 .0089, R08 .017, R06 .0067, R07 .0009 (zone overlap at the hip side); no new seam except a small wrist outline change in the left view (the tails seen past the arm); face guards clear; R10.1 .704 to .696, R10.2 .642 to .640, R08.10 .800 to .798 (advisory).
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/tails-v2/`: `before-after-{hback,hrqL,hrqR,hsideL,hsideR,htop,hbelow,rootback,rootrqL,rootrqR,rootside,roottop,crotch,wallrq}.png` (bare clay, v1 3177 against v2 3178); `fullbody-3168-vs-3178-{bfront,bside,bback,bq}.png` (the whole figure before today's audit fixes against now); `tail-sections.png` (original, v1, v2); `tails-v2-3178-heat.png`; `tails-v2-3178-numbers.json`, `tail-sections.json`.
+
+Still open (my own look): a small cusp at the bottom of the +x buttock's back where it meets the thigh, in the +x side view; tail 1's root still shows a soft rim on its +x side seen from behind (rounder than v1, not yet a clean collar); the vertical groove beside tail 3's base is gone on the -x side and much softer on the +x side; the tails are slimmer than the original fur-sheet blades by design (cores for fur).
