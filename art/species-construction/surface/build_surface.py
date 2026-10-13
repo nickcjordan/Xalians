@@ -233,10 +233,14 @@ def compute_attributes(skin, cfg, species):
             m = np.zeros(n)
             for box in boxes:
                 m = np.maximum(m, membership(co, box, floor, height, g.get('margin', 0.02)))
+        if 'cut' in g:  # optional: keep only the skin behind a depth line that varies with height (y beyond cut(z))
+            c = g['cut']
+            m = m*smoothstep((co[:, 1]-np.interp(co[:, 2], c['z'], c['y']))/c['soft'])
         if 'frontFacing' in g:
             ff = g['frontFacing']
             m = m*smoothstep((-nrm[:, 1]-ff['min'])/ff['span'])
         weights[i] = m*g['priority']
+    tail_d = None
     if 'tails' in names and cfg.get('tailCenterline', True):
         ti = names.index('tails')
         directions['tail'], tail_d = tail_centerline(co, edges, weights[ti]/cfg['groups']['tails']['priority'],
@@ -252,6 +256,11 @@ def compute_attributes(skin, cfg, species):
         return sum(wn[i]*cfg['groups'][nm].get(key, default) for i, nm in enumerate(names))
 
     length, density = blend('length'), blend('density')
+    if 'tailLength' in cfg and 'tails' in names and tail_d is not None:  # optional: tail fur length along the tail
+        ti = names.index('tails')
+        tl = np.array(cfg['tailLength']['along'], float)
+        f = np.interp(np.where(np.isfinite(tail_d), tail_d, 0.0), tl[:, 0], tl[:, 1])
+        length = length+wn[ti]*cfg['groups']['tails']['length']*(f-1.0)
     clump, curl, group_pale = blend('clump'), blend('curl'), blend('pale')
     cscale = blend('cscale', cfg['clumpScale'])
     comb = unit(sum(wn[i, :, None]*directions[cfg['groups'][nm]['comb']] for i, nm in enumerate(names)))
@@ -458,6 +467,8 @@ def compute_attributes(skin, cfg, species):
     write_attribute(me, 'fur_clump', clump)
     write_attribute(me, 'fur_curl', curl)
     write_attribute(me, 'fur_cscale', cscale)
+    if any('lift' in g for g in cfg['groups'].values()):  # optional per-group lift off the skin (else the global lift)
+        write_attribute(me, 'fur_lift', sum(wn[i]*cfg['groups'][nm].get('lift', cfg['lift']) for i, nm in enumerate(names)))
     write_attribute(me, 'pale', pale)
     write_attribute(me, 'rim', rim)
     write_attribute(me, 'fur_tone', blend('tone', 1.0))
@@ -513,7 +524,7 @@ def compute_attributes(skin, cfg, species):
                                         * (1.0-smoothstep((-nrm[:, 2]-0.1)/0.6)), 0, 1))
     try:
         write_attribute(me, 'tailpos', np.where(np.isfinite(tail_d), tail_d, 0.0))
-    except NameError:
+    except (NameError, TypeError):
         write_attribute(me, 'tailpos', np.zeros(n))
     write_attribute(me, 'pad', pad)
     write_attribute(me, 'comb', comb, 'FLOAT_VECTOR')
@@ -612,7 +623,11 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
     rnd.inputs['Seed'].default_value = cfg['seed']+1
     jitter = b.vm('SCALE', rnd.outputs['Value'], scale=cfg['dirJitter'])
     lift = cfg['lift']
-    direction = b.vm('ADD', b.vm('ADD', b.vm('SCALE', tangent, scale=1.0-lift), b.vm('SCALE', normal, scale=lift)), jitter)
+    if any('lift' in g for g in cfg['groups'].values()):
+        lift = b.named('fur_lift', 'FLOAT')
+        direction = b.vm('ADD', b.vm('ADD', b.vm('SCALE', tangent, scale=b.m('SUBTRACT', 1.0, lift)), b.vm('SCALE', normal, scale=lift)), jitter)
+    else:
+        direction = b.vm('ADD', b.vm('ADD', b.vm('SCALE', tangent, scale=1.0-lift), b.vm('SCALE', normal, scale=lift)), jitter)
     direction = b.vm('NORMALIZE', direction)
     rl = b.node('FunctionNodeRandomValue', data_type='FLOAT')
     rl.inputs['Min'].default_value = 1.0-cfg['lengthJitter']  # Min (float)

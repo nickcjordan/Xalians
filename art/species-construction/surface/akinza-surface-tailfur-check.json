@@ -1,0 +1,658 @@
+{
+ "note": "Surface (fur) settings for Akinza. Lengths are world units (the figure is 1.86 tall). Zones come from loop/species.json; a group may also give its own box in the same figure units (at: crown 0 to floor 1, x: world x over height, y: world y over height). margin is the blend distance outside a box in figure units. weights = membership * priority, so higher priority wins where boxes overlap. TAIL FUR CHECK (2026-10-13, combined-v1): akinza-surface.json with only the tail fur changed, to judge the shaved tails v5 under long, full fur (Nick 2026-10-13: bare tails are modelled shaved and the fluff comes from fur). Tail root moved to the v5 root; tail zone cut to the skin behind the back line (so the buttocks keep body fur); tail fur .13 near the root (about 3 times the .04 shaved radius), lifted .6 off the skin (global lift .18), tapering along the tail by tailLength; softer, fuller clumps. Not the final fur pass.",
+ "noseMaterial": {
+  "Roughness": 0.55
+ },
+ "strands": 420000,
+ "points": 9,
+ "seed": 7,
+ "lift": 0.18,
+ "droop": 0.25,
+ "gravity": 0.1,
+ "rootRadius": 0.0007,
+ "taper": 0.85,
+ "lengthJitter": 0.35,
+ "dirJitter": 0.15,
+ "curlScale": 90.0,
+ "clumpScale": 30.0,
+ "points_note": "points per strand",
+ "earRoot": [
+  0.11,
+  0.02,
+  0.6
+ ],
+ "noseTip": [
+  0.0,
+  -0.2,
+  0.57
+ ],
+ "tailRoot": [
+  0.0,
+  0.07,
+  -0.13
+ ],
+ "tail2Root": [
+  0.0,
+  0.07,
+  -0.13
+ ],
+ "groups": {
+  "body": {
+   "everywhere": true,
+   "priority": 0.05,
+   "length": 0.011,
+   "density": 1.5,
+   "clump": 0.1,
+   "curl": 0.12,
+   "comb": "down"
+  },
+  "torso": {
+   "zones": [
+    "R06"
+   ],
+   "priority": 0.4,
+   "margin": 0.03,
+   "length": 0.012,
+   "density": 1.5,
+   "clump": 0.1,
+   "curl": 0.12,
+   "comb": "down"
+  },
+  "neck": {
+   "zones": [
+    "R05"
+   ],
+   "priority": 0.4,
+   "margin": 0.02,
+   "length": 0.013,
+   "density": 1.5,
+   "clump": 0.1,
+   "curl": 0.12,
+   "comb": "down"
+  },
+  "arms": {
+   "zones": [
+    "R07"
+   ],
+   "priority": 0.45,
+   "margin": 0.02,
+   "length": 0.011,
+   "density": 1.5,
+   "clump": 0.1,
+   "curl": 0.12,
+   "comb": "down"
+  },
+  "legs": {
+   "zones": [
+    "R08"
+   ],
+   "priority": 0.45,
+   "margin": 0.02,
+   "length": 0.0125,
+   "density": 1.5,
+   "clump": 0.1,
+   "curl": 0.12,
+   "comb": "down"
+  },
+  "paws": {
+   "zones": [
+    "R09"
+   ],
+   "priority": 0.5,
+   "margin": 0.01,
+   "length": 0.012,
+   "density": 2.0,
+   "clump": 0.08,
+   "curl": 0.1,
+   "comb": "forward",
+   "tone": 0.8,
+   "box": {
+    "at": [
+     0.9,
+     1.0
+    ],
+    "x": [
+     0.03,
+     0.3
+    ],
+    "symmetricX": true,
+    "y": [
+     -0.12,
+     0.1
+    ]
+   }
+  },
+  "head": {
+   "zones": [
+    "R01"
+   ],
+   "priority": 0.5,
+   "margin": 0.02,
+   "length": 0.006,
+   "density": 2.0,
+   "clump": 0.05,
+   "curl": 0.03,
+   "comb": "face"
+  },
+  "face": {
+   "zones": [
+    "R02"
+   ],
+   "priority": 0.6,
+   "margin": 0.02,
+   "length": 0.004,
+   "density": 2.5,
+   "clump": 0.0,
+   "curl": 0.02,
+   "comb": "face"
+  },
+  "cheeks": {
+   "box": {
+    "at": [
+     0.15,
+     0.26
+    ],
+    "x": [
+     0.08,
+     0.2
+    ],
+    "y": [
+     -0.13,
+     0.03
+    ],
+    "symmetricX": true
+   },
+   "priority": 0.7,
+   "margin": 0.015,
+   "length": 0.012,
+   "density": 1.6,
+   "clump": 0.15,
+   "curl": 0.05,
+   "comb": "face"
+  },
+  "chest": {
+   "box": {
+    "at": [
+     0.3,
+     0.44
+    ],
+    "x": [
+     0.0,
+     0.11
+    ],
+    "y": [
+     -0.13,
+     -0.02
+    ],
+    "symmetricX": true
+   },
+   "priority": 0.95,
+   "margin": 0.02,
+   "length": 0.026,
+   "density": 1.0,
+   "clump": 0.4,
+   "curl": 0.2,
+   "comb": "down",
+   "pale": 0.0,
+   "frontFacing": {
+    "min": 0.25,
+    "span": 0.4
+   }
+  },
+  "ears": {
+   "zones": [
+    "R04"
+   ],
+   "priority": 0.9,
+   "margin": 0.02,
+   "length": 0.065,
+   "density": 1.9,
+   "clump": 1.0,
+   "curl": 0.08,
+   "comb": "ear",
+   "box": {
+    "at": [
+     0.0,
+     0.2
+    ],
+    "x": [
+     0.085,
+     0.3
+    ],
+    "symmetricX": true,
+    "y": [
+     -0.12,
+     0.07
+    ]
+   },
+   "cscale": 8.0
+  },
+  "tails": {
+   "zones": [
+    "R10",
+    "R11"
+   ],
+   "priority": 0.9,
+   "margin": 0.03,
+   "length": 0.13,
+   "density": 1.8,
+   "clump": 0.5,
+   "curl": 0.1,
+   "comb": "tail",
+   "cscale": 10.0,
+   "box": {
+    "at": [
+     0.3,
+     0.9
+    ],
+    "x": [
+     -0.08,
+     0.36
+    ],
+    "y": [
+     0.02,
+     0.32
+    ]
+   },
+   "cut": {
+    "z": [
+     -0.78,
+     -0.43,
+     -0.37,
+     0.16
+    ],
+    "y": [
+     0.12,
+     0.12,
+     0.07,
+     0.07
+    ],
+    "soft": 0.02
+   },
+   "lift": 0.6
+  },
+  "crown": {
+   "box": {
+    "at": [
+     0.0,
+     0.1
+    ],
+    "x": [
+     0.0,
+     0.12
+    ],
+    "symmetricX": true,
+    "y": [
+     -0.1,
+     0.09
+    ]
+   },
+   "priority": 0.8,
+   "margin": 0.03,
+   "length": 0.05,
+   "density": 1.6,
+   "clump": 0.8,
+   "cscale": 11.0,
+   "curl": 0.1,
+   "comb": "crown"
+  }
+ },
+ "keepOut": {
+  "note": "Distance (world units) from these objects over which density ramps from zero to full.",
+  "eyes": {
+   "match": "head_eye_globe",
+   "inner": 0.0045,
+   "outer": 0.006,
+   "frontOnly": 0.2,
+   "maxLength": 0.004
+  },
+  "nose": {
+   "match": "head_nose",
+   "inner": 0.004,
+   "outer": 0.012
+  },
+  "mouth": {
+   "match": "head_closed_mouth",
+   "inner": 0.0,
+   "outer": 0.012
+  },
+  "claws": {
+   "match": "claw",
+   "inner": 0.006,
+   "outer": 0.02
+  },
+  "lengthFloor": 0.5
+ },
+ "pads": {
+  "belowFloor": 0.03,
+  "normalZ": -0.25
+ },
+ "paleSmoothing": 10,
+ "paleSlot": 1,
+ "materials": {
+  "hairGray": 0.4,
+  "hairPale": 1.0,
+  "rootDarken": 0.85,
+  "skinGray": 0.24,
+  "skinPale": 0.85,
+  "hairRoughness": 0.45,
+  "radialRoughness": 0.6,
+  "diffuseShare": 0.45,
+  "paleDiffuseShare": 0.6
+ },
+ "catchLight": {
+  "radius": 0.0055,
+  "strength": 12.0,
+  "dx": -0.013,
+  "dz": 0.017
+ },
+ "paleGain": 1.5,
+ "groupPaleGain": 1.8,
+ "paleSlotMaxAt": 0.3,
+ "cup": {
+  "normalMin": -0.3,
+  "normalSpan": 0.3,
+  "strength": 0.0,
+  "box": {
+   "at": [
+    0.0,
+    0.2
+   ],
+   "x": [
+    0.1,
+    0.3
+   ],
+   "symmetricX": true,
+   "y": [
+    -0.12,
+    0.07
+   ]
+  },
+  "margin": 0.02
+ },
+ "chestPale": {
+  "box": {
+   "at": [
+    0.3,
+    0.38
+   ],
+   "x": [
+    0.0,
+    0.02
+   ],
+   "y": [
+    -0.14,
+    0.0
+   ],
+   "symmetricX": true
+  },
+  "margin": 0.05,
+  "strength": 0.7,
+  "frontFacing": {
+   "min": 0.25,
+   "span": 0.4
+  },
+  "radial": {
+   "at": 0.36,
+   "ax": 0.05,
+   "az": 0.07
+  }
+ },
+ "paleFinalSmoothing": 20,
+ "paleFinalGain": 1.0,
+ "rim": {
+  "width": 0.0045,
+  "soft": 0.0008,
+  "smooth": 4
+ },
+ "cupInner": {
+  "t0": 0.22,
+  "width": 0.22
+ },
+ "tailRamp": {
+  "start": 0.0,
+  "width": 0.02
+ },
+ "earBias": 0.0,
+ "crownDir": [
+  0.0,
+  0.5,
+  0.8
+ ],
+ "guides": {
+  "lift": 0.35,
+  "tipSweep": 0.05,
+  "neighbors": 3,
+  "jitter": 0.012,
+  "jitterScale": 220.0,
+  "cupGain": 2.0,
+  "cup": {
+   "length": 0.01,
+   "curl": 0.03,
+   "clump": 0.05,
+   "density": 1.4
+  },
+  "groups": {
+   "ears": {
+    "count": 110,
+    "length": [
+     0.025,
+     0.07
+    ],
+    "lengthPower": 0.8
+   },
+   "crown": {
+    "count": 40,
+    "length": [
+     0.02,
+     0.035
+    ],
+    "perSide": false
+   }
+  }
+ },
+ "stripe": {
+  "segs": {
+   "body": 2.5,
+   "torso": 2.5,
+   "neck": 1.3,
+   "arms": 0.6,
+   "legs": 0.6,
+   "paws": 0.6,
+   "head": 2.0,
+   "face": 2.0,
+   "cheeks": 2.0,
+   "chest": 2.5,
+   "ears": 3,
+   "tails": 0.65,
+   "crown": 2.0
+  },
+  "fieldEdge": [
+   [
+    0.1,
+    1.9
+   ],
+   [
+    0.26,
+    1.85
+   ],
+   [
+    0.33,
+    1.9
+   ],
+   [
+    0.4,
+    2.2
+   ],
+   [
+    0.46,
+    2.6
+   ],
+   [
+    0.52,
+    2.3
+   ],
+   [
+    0.6,
+    2.0
+   ],
+   [
+    0.75,
+    2.0
+   ]
+  ],
+  "wave": 0.14,
+  "waveFreq": 55.0,
+  "soft": 0.4,
+  "innerMin": 0.3,
+  "innerSpan": 0.5,
+  "arc": {
+   "note": "tiger4 stripe coordinates (build_surface.stripe_coordinates): fieldEdge is the pale underside's starting angle by row 'at' on the trunk (angle4 is arc-length uniform, 0 back midline, pi belly midline), limbEdge the same around the limbs from the outer side; tailScale = period/tailPeriod so tail rings keep their own spacing",
+   "midline": 0.005,
+   "seedMaxAt": 0.56,
+   "limbSmooth": 40,
+   "angleSmooth": 6,
+   "fieldEdge": [
+    [
+     0.1,
+     2.0
+    ],
+    [
+     0.26,
+     1.9
+    ],
+    [
+     0.33,
+     2.0
+    ],
+    [
+     0.4,
+     2.25
+    ],
+    [
+     0.46,
+     2.5
+    ],
+    [
+     0.52,
+     2.3
+    ],
+    [
+     0.6,
+     2.1
+    ],
+    [
+     0.75,
+     2.1
+    ]
+   ],
+   "limbEdge": 2.0,
+   "wave": 0.14,
+   "waveFreq": 55.0,
+   "soft": 0.35,
+   "lean": 0.35,
+   "tailScale": 0.75
+  }
+ },
+ "variants": {
+  "feathered": {
+   "note": "Ear fur as feathered locks (Nick 2026-10-09: spikes from fur, not sculpted shapes; references r03/r04): each guide is a lock radiating from the ear root over the surface, outward on its own side, longest at the rim and back of the fan; every guided strand converges into its nearest guide (lockConverge), so each lock is a clumped bundle tapering to a point.",
+   "guides": {
+    "neighbors": 1,
+    "jitter": 0.006,
+    "lockConverge": {
+     "power": 1.8,
+     "tipSpread": 0.1,
+     "maxSpread": 0.06,
+     "lenVar": 0.3,
+     "fan": 0.003,
+     "frizz": 0.003,
+     "frizzScale": 450.0
+    },
+    "cup": {
+     "length": 0.014,
+     "curl": 0.04,
+     "clump": 0.1,
+     "density": 2.6
+    },
+    "groups": {
+     "ears": {
+      "count": 110,
+      "length": [
+       0.05,
+       0.12
+      ],
+      "lengthPower": 0.9,
+      "lengthJitter": 0.25,
+      "radial": 0.85,
+      "outward": 0.02,
+      "lift": 0.25,
+      "tipSweep": 0.05,
+      "curlIn": 0.2,
+      "frontScale": 0.9,
+      "cupScale": 0.6,
+      "farFade": 0.5
+     },
+     "crown": {
+      "guided": false
+     }
+    },
+    "cupPale": 0.6,
+    "lockTaper": 0.97,
+    "cupGuided": true
+   },
+   "groups": {
+    "head": {
+     "length": 0.01
+    },
+    "crown": {
+     "margin": 0.05,
+     "length": 0.022,
+     "clump": 0.5,
+     "box": {
+      "x": [
+       0.0,
+       0.06
+      ]
+     }
+    }
+   },
+   "cupInner": {
+    "t0": 0.7,
+    "width": 0.4
+   },
+   "materials": {
+    "lockRoughness": 0.75
+   }
+  }
+ },
+ "tailLength": {
+  "note": "multiplier on the tail group's length by geodesic distance from the tail root (world units)",
+  "along": [
+   [
+    0.0,
+    0.8
+   ],
+   [
+    0.1,
+    1.0
+   ],
+   [
+    0.3,
+    0.95
+   ],
+   [
+    0.5,
+    0.7
+   ],
+   [
+    0.7,
+    0.45
+   ],
+   [
+    0.9,
+    0.3
+   ]
+  ]
+ }
+}
