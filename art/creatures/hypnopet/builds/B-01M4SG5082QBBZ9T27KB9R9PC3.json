@@ -1,15 +1,16 @@
 {
   "id": "B-01M4SG5082QBBZ9T27KB9R9PC3",
   "alias": "B-r4le",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:06:04.546Z",
-  "updatedAt": "2026-10-13T02:07:16.559Z",
+  "updatedAt": "2026-10-13T13:38:08.665Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "glow",
     "label": "B: Inner glow",
+    "summary": "The whole coat looks lit from inside, warmer and brighter everywhere, and it throws a soft pool of light on the ground under it. Look at the floor glow and how bright the body is.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Show the creature in three-quarter view on a dim dark gray background so its glow is visible. The whole golden coat seems softly lit from within, a gentle even warm light that spills faintly onto the ground beneath it.",
     "promptSha256": "ced3adef66e328587e458280750e331b35ccd50e141994b6de4a97adb357a278",
     "inputs": [

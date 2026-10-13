@@ -268,6 +268,7 @@ export interface ImageView {
 	stage: 'vision' | 'sheet';
 	element: string;
 	label: string;
+	summary?: string;
 	prompt: string;
 	/** The generated image (the build's one output); absent while running or after a failure. */
 	blob?: string;
@@ -291,6 +292,7 @@ function imageView(b: Build): ImageView {
 		stage: im.stage,
 		element: im.element,
 		label: im.label,
+		...(im.summary ? { summary: im.summary } : {}),
 		prompt: im.prompt,
 		...(out ? { blob: out.blob } : {}),
 		governs: im.governs ?? [],

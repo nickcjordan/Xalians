@@ -46,6 +46,7 @@ export interface ImageRunInput {
 	stage: string;
 	element: string;
 	label: string;
+	summary?: string;
 	promptFile: string;
 	inputs?: string[];
 	governs?: string[];
@@ -118,6 +119,7 @@ export function runImage(store: Store, input: ImageRunInput, who: Who): Build {
 			stage,
 			element: input.element,
 			label: input.label.trim(),
+			...(input.summary?.trim() ? { summary: input.summary.trim() } : {}),
 			prompt,
 			promptSha256: sha(prompt),
 			inputs: files.map((f, i) => ({ name: names[i]!, blob: putFile(f) })),

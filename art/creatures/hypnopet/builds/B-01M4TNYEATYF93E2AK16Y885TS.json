@@ -1,15 +1,16 @@
 {
   "id": "B-01M4TNYEATYF93E2AK16Y885TS",
   "alias": "B-s73w",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T13:06:35.482Z",
-  "updatedAt": "2026-10-13T13:07:54.329Z",
+  "updatedAt": "2026-10-13T13:38:12.225Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "pattern",
     "label": "C: Spiral swirls",
+    "summary": "Faint lighter swirl marks on the haunches and shoulders that echo the horn's spiral. Look at the curls on the back legs.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy dark eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (use only for proportions and features); picked-palette.png shows the chosen colors (pale champagne-gold fur with faint lavender shadows, ivory face and chest, lilac inner ears); picked-fur.png shows the chosen medium fluffy coat. Keep those colors and that coat. Clean modern cartoon character style with soft shading. Plain light gray background. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view, seen slightly from behind so the back and haunches show. Faint lighter swirl markings on each haunch and shoulder that echo the horn's spiral, subtle and soft; paler face mask and chest.",
     "promptSha256": "aac831acd69d175dbe433ab3434cb89154a17fc4f176810ffc4bac86c7d79d4d",
     "inputs": [

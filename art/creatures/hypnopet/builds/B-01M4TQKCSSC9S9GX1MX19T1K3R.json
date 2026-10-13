@@ -1,0 +1,71 @@
+{
+  "id": "B-01M4TQKCSSC9S9GX1MX19T1K3R",
+  "alias": "B-55za",
+  "rev": 4,
+  "createdAt": "2026-10-13T13:35:30.617Z",
+  "updatedAt": "2026-10-13T13:38:13.752Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "palette",
+    "label": "F: Light honey",
+    "summary": "Coat a light honey gold, closest to Honey gold but paler. Cream face and chest, lilac inner ears, dusty rose nose, amber eyes, iridescent horn.",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (proportions and features only); palette-A-honey.png and palette-C-champagne.png are two earlier color options. The creator wants a coat color between those two, and the warm amber eye color from palette-A-honey.png. Keep the medium fluffy coat. Show the creature standing on all four legs in three-quarter view, fully colored, with a row of six plain flat color swatches beneath it (body fur, face and chest, inner ears, nose, iris, horn). Clean modern cartoon style with soft shading. Plain light gray background. No text, no labels, no watermark. Coat: a light honey gold, closer to the honey option but paler and softer; cream face and chest; lilac inner ears; dusty rose nose; warm amber irises; softly iridescent horn.",
+    "promptSha256": "6657b0b70be9b7c4f8b2b2201061454018c8125e502b2d084db3a7fc80c529d9",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      },
+      {
+        "name": "palette-A-honey.png",
+        "blob": "cbd4620e8e9c68e10d8bad5150f959b02f42d1e8292481b06f64f98bb5481b5a"
+      },
+      {
+        "name": "palette-C-champagne.png",
+        "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13579-b39f-7ea3-8ae4-a6d6eb30a47a\\exec-29152e4c-b4f6-49bb-a8fa-57eae90ef22c.png",
+    "codexTokens": 18917,
+    "model": null,
+    "governs": [
+      "fur color range",
+      "face and chest color",
+      "inner ear color",
+      "nose color",
+      "iris color",
+      "horn resting color"
+    ],
+    "notFor": [
+      "shape",
+      "pattern",
+      "pose",
+      "fur length"
+    ],
+    "round": 2
+  },
+  "goal": {
+    "text": "F: Light honey: vision palette"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "26bbc277920554351d583b9c497d7a901a83dfc2849183df7cdb27e5d2d5898f",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.24
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T13:35:30.614Z",
+  "endedAt": "2026-10-13T13:36:44.760Z",
+  "deadline": "2026-10-13T13:50:30.614Z"
+}

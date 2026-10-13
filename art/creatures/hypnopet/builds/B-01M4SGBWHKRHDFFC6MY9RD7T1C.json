@@ -1,15 +1,16 @@
 {
   "id": "B-01M4SGBWHKRHDFFC6MY9RD7T1C",
   "alias": "B-quar",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:09:50.131Z",
-  "updatedAt": "2026-10-13T02:11:11.060Z",
+  "updatedAt": "2026-10-13T13:38:10.203Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "horn",
     "label": "B: Ridged and glowing",
+    "summary": "A ridged spiral in pale gold with grooves that glow faintly, so it reads as warm and slightly lit. Look at the glowing grooves between the ridges.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Close-up of the creature's head from a three-quarter view, focused on the horn: a ridged spiral whose grooves glow softly, rising from a tuft of crown fur. Plain light gray background.",
     "promptSha256": "e62c0582e914f3ee476adb7fb76bf2ea4be16a3b4529c18bc9179dd180d9de06",
     "inputs": [

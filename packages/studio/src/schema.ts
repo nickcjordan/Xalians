@@ -254,6 +254,8 @@ export const ImageBlockSchema = z.strictObject({
 	element: z.string().min(1),
 	/** Short option name, for example "A: dawn gold". */
 	label: z.string().min(1),
+	/** Plain words for Nick: what this option is and what to look at, so a weak drawing does not hide the intent. */
+	summary: z.string().min(1).optional(),
 	/** The exact prompt text the user's prompt file held. */
 	prompt: z.string().min(1),
 	promptSha256: sha256,

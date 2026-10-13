@@ -1,15 +1,16 @@
 {
   "id": "B-01M4TNYCBP40YY4FDRZ397VXGM",
   "alias": "B-j6fv",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T13:06:33.462Z",
-  "updatedAt": "2026-10-13T13:07:54.326Z",
+  "updatedAt": "2026-10-13T13:38:11.728Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "pattern",
     "label": "B: Soft points",
+    "summary": "Meant to have darker golden tips on the ear ends, along the spine and on the feet. The drawing barely shows them, so it looks almost the same as A; pick it for the idea of darker tips, not for this picture.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy dark eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (use only for proportions and features); picked-palette.png shows the chosen colors (pale champagne-gold fur with faint lavender shadows, ivory face and chest, lilac inner ears); picked-fur.png shows the chosen medium fluffy coat. Keep those colors and that coat. Clean modern cartoon character style with soft shading. Plain light gray background. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view, seen slightly from behind so the back and haunches show. Soft darker golden shading on the ear tips, along the spine and on the feet, fading smoothly into the champagne coat; paler face mask and chest.",
     "promptSha256": "961e1254892a6716c5f7bd0bbe8fab2bfc8d7a7a689af206cfd8a599eec28846",
     "inputs": [

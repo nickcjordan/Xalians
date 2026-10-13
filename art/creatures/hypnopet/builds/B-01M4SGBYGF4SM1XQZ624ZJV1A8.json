@@ -1,15 +1,16 @@
 {
   "id": "B-01M4SGBYGF4SM1XQZ624ZJV1A8",
   "alias": "B-364p",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:09:52.143Z",
-  "updatedAt": "2026-10-13T02:11:11.065Z",
+  "updatedAt": "2026-10-13T13:38:10.701Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "horn",
     "label": "C: Crystal spiral",
+    "summary": "A translucent crystal spiral with a rainbow shimmer inside, the most magical-looking of the three. Look at the rainbow color inside the horn.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Close-up of the creature's head from a three-quarter view, focused on the horn: a translucent crystal-like spiral with a faint rainbow shimmer inside, rising from a tuft of crown fur. Plain light gray background.",
     "promptSha256": "ef7bb2463a8ef52daa68ee2b8ac5daa607c240e3236f09fb516c7f87a24ca0c5",
     "inputs": [

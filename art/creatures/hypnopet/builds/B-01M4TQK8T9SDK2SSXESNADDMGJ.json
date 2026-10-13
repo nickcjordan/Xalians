@@ -1,0 +1,71 @@
+{
+  "id": "B-01M4TQK8T9SDK2SSXESNADDMGJ",
+  "alias": "B-fsbh",
+  "rev": 4,
+  "createdAt": "2026-10-13T13:35:26.537Z",
+  "updatedAt": "2026-10-13T13:38:12.724Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "palette",
+    "label": "D: Pale honey",
+    "summary": "Coat a pale honey gold, closest to Champagne mist. Ivory face and chest, lilac inner ears, amber eyes, iridescent horn.",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (proportions and features only); palette-A-honey.png and palette-C-champagne.png are two earlier color options. The creator wants a coat color between those two, and the warm amber eye color from palette-A-honey.png. Keep the medium fluffy coat. Show the creature standing on all four legs in three-quarter view, fully colored, with a row of six plain flat color swatches beneath it (body fur, face and chest, inner ears, nose, iris, horn). Clean modern cartoon style with soft shading. Plain light gray background. No text, no labels, no watermark. Coat: a pale honey gold, closer to the champagne option, with faint lavender shadow tones; ivory face and chest; lilac inner ears; mauve nose; warm amber irises; softly iridescent horn.",
+    "promptSha256": "305edb8afe0d9bc01e7de301ce7b5934cb6fc93de2bd75cb240b444f6a1ba0cd",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      },
+      {
+        "name": "palette-A-honey.png",
+        "blob": "cbd4620e8e9c68e10d8bad5150f959b02f42d1e8292481b06f64f98bb5481b5a"
+      },
+      {
+        "name": "palette-C-champagne.png",
+        "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13579-a3c5-75d2-bec9-524779348900\\exec-76cee022-5795-4e43-b32e-a3d9c601540c.png",
+    "codexTokens": 18370,
+    "model": null,
+    "governs": [
+      "fur color range",
+      "face and chest color",
+      "inner ear color",
+      "nose color",
+      "iris color",
+      "horn resting color"
+    ],
+    "notFor": [
+      "shape",
+      "pattern",
+      "pose",
+      "fur length"
+    ],
+    "round": 2
+  },
+  "goal": {
+    "text": "D: Pale honey: vision palette"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "247645ee4ecf9e784c133dfe76c80190cbba1b0f3f8154ef37bbfd2848711cf5",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.47
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T13:35:26.534Z",
+  "endedAt": "2026-10-13T13:36:54.484Z",
+  "deadline": "2026-10-13T13:50:26.534Z"
+}

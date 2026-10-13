@@ -52,6 +52,7 @@ const OPTIONS = {
 	provisional: { type: 'boolean' },
 	stage: { type: 'string' },
 	element: { type: 'string' },
+	summary: { type: 'string' },
 	label: { type: 'string' },
 	'prompt-file': { type: 'string' },
 	input: { type: 'string', multiple: true },
@@ -253,7 +254,7 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 			return;
 		}
 		case 'image':
-			return imageCommand(store, sub, flags, emit, actor, copts);
+			return imageCommand(store, sub, args, flags, emit, actor, mopts, copts);
 		case 'cost':
 			return costCommand(store, sub, args, flags, emit, mopts);
 		case 'build':
@@ -352,10 +353,10 @@ function referenceCommand(store: Store, sub: string | undefined, args: string[],
 	throw new StudioError('usage: reference add|edit|target <key> ...');
 }
 
-function imageCommand(store: Store, sub: string | undefined, flags: Flags, emit: Emit, actor: Actor, copts: COpts): void {
+function imageCommand(store: Store, sub: string | undefined, args: string[], flags: Flags, emit: Emit, actor: Actor, mopts: MOpts, copts: COpts): void {
 	const who = { actor, ...copts };
 	if (sub === 'run') {
-		const build = runImage(store, { stage: need(flags, 'stage'), element: need(flags, 'element'), label: need(flags, 'label'), promptFile: resolve(need(flags, 'prompt-file')), inputs: flags.input ?? [], governs: csv(flags.governs), notFor: csv(flags['not-for']) }, who);
+		const build = runImage(store, { stage: need(flags, 'stage'), element: need(flags, 'element'), label: need(flags, 'label'), summary: flags.summary as string | undefined, promptFile: resolve(need(flags, 'prompt-file')), inputs: flags.input ?? [], governs: csv(flags.governs), notFor: csv(flags['not-for']) }, who);
 		if (build.status === 'failed') {
 			emit(build, `image ${build.alias} failed after ${build.cost.wallMinutes ?? '?'} min`);
 			throw new StudioError(`image ${build.alias} failed: ${(build.image?.failure ?? '').split(/[\r\n]/)[0]}`);
@@ -368,7 +369,19 @@ function imageCommand(store: Store, sub: string | undefined, flags: Flags, emit:
 		emit(builds, `presented ${builds.length} image(s): ${builds.map((b) => b.alias).join(', ')} (round ${builds[0]!.image!.round})`);
 		return;
 	}
-	throw new StudioError('usage: image run|present <key> --stage vision|sheet --element E ...');
+	if (sub === 'describe') {
+		// Plain-words description of an option, added or corrected after the run.
+		const ref = args[0];
+		if (!ref) throw new StudioError('usage: image describe <key> <alias> --summary "..."');
+		const summary = need(flags, 'summary').trim();
+		const rec = store.update<'build'>(ref, (b) => {
+			if (b.kind !== 'image' || !b.image) throw new StudioError(`${b.alias} is not an image build`);
+			b.image.summary = summary;
+		}, mopts);
+		emit(rec, `described ${rec.alias}`);
+		return;
+	}
+	throw new StudioError('usage: image run|present|describe <key> ...');
 }
 
 function partCommand(store: Store, sub: string | undefined, flags: Flags, emit: Emit, actor: Actor, copts: COpts): void {

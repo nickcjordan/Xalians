@@ -1,15 +1,16 @@
 {
   "id": "B-01M4SG5285KJMJ51H798XXMC66",
   "alias": "B-j65q",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:06:06.597Z",
-  "updatedAt": "2026-10-13T02:07:16.562Z",
+  "updatedAt": "2026-10-13T13:38:09.195Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "glow",
     "label": "C: Glow with motes",
+    "summary": "A soft glow on the coat plus a scatter of tiny floating golden specks around the creature. Look at the specks in the air.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Show the creature in three-quarter view on a dim dark gray background so its glow is visible. The golden fur has a soft warm glow, and a few tiny floating golden light motes drift near the coat.",
     "promptSha256": "ca2967eba32b9e15d82a04688ec9bd3e2e7fe90435462dfc2f98afefaf1f9bd7",
     "inputs": [

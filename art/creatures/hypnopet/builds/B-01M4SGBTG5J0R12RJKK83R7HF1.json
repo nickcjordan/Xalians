@@ -1,15 +1,16 @@
 {
   "id": "B-01M4SGBTG5J0R12RJKK83R7HF1",
   "alias": "B-zc24",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:09:48.037Z",
-  "updatedAt": "2026-10-13T02:11:11.020Z",
+  "updatedAt": "2026-10-13T13:38:09.710Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "horn",
     "label": "A: Smooth spiral",
+    "summary": "A smooth, tightly twisted spiral like a narwhal tusk, pearl white with a soft sheen. Look at the clean, even twist.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Close-up of the creature's head from a three-quarter view, focused on the horn: a smooth, tightly twisted spiral like a narwhal tusk, pearl white, rising from a tuft of crown fur. Plain light gray background.",
     "promptSha256": "43b8402d78283cdb911d15b2401b597ad846d0ea9f9455d73c9a8df360326c71",
     "inputs": [

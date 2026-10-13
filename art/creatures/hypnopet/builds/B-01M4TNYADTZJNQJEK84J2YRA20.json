@@ -1,15 +1,16 @@
 {
   "id": "B-01M4TNYADTZJNQJEK84J2YRA20",
   "alias": "B-momr",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T13:06:31.482Z",
-  "updatedAt": "2026-10-13T13:07:54.322Z",
+  "updatedAt": "2026-10-13T13:38:11.215Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "pattern",
     "label": "A: Plain coat",
+    "summary": "No markings at all beyond the paler face mask, chest and feet: one even coat color everywhere else.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy dark eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (use only for proportions and features); picked-palette.png shows the chosen colors (pale champagne-gold fur with faint lavender shadows, ivory face and chest, lilac inner ears); picked-fur.png shows the chosen medium fluffy coat. Keep those colors and that coat. Clean modern cartoon character style with soft shading. Plain light gray background. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view, seen slightly from behind so the back and haunches show. No markings beyond the paler face mask and chest.",
     "promptSha256": "b76c8a838a26540046aaafe95d46ff361c49d376409a4822280b0c20516077f3",
     "inputs": [

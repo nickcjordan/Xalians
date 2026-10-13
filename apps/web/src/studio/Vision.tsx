@@ -36,6 +36,7 @@ function OptionCard({ image, index, busy, onPick }: { image: ImageView; index: n
 				<span className="type-data border border-edge-strong px-1.5 text-[12px] text-ink">{String.fromCharCode(65 + index)}</span>
 				<span className="type-heading min-w-0 text-[16px] text-ink">{image.label}</span>
 			</div>
+			{image.summary ? <p className="m-0 font-body text-body text-ink">{image.summary}</p> : null}
 			{image.blob ? (
 				<img src={blobUrl(image.blob)} alt={`${elementName(image.element)}, ${image.label}`} className="block max-h-[min(44vh,460px)] w-full border border-edge bg-s0 object-contain" />
 			) : (

@@ -1,15 +1,16 @@
 {
   "id": "B-01M4SG4YAS4HBMYV3KAP1YWK2E",
   "alias": "B-ejup",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:06:02.585Z",
-  "updatedAt": "2026-10-13T02:07:16.554Z",
+  "updatedAt": "2026-10-13T13:38:08.150Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
     "stage": "vision",
     "element": "glow",
     "label": "A: Rim glow",
+    "summary": "The glow sits only on the outline: a thin bright halo along the ears, back and paws, while the body itself looks normally lit. Look at the edges of the ears.",
     "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Show the creature in three-quarter view on a dim dark gray background so its glow is visible. The golden fur glows only at its edges, a soft warm halo along the outline as if lit from behind; the body itself is normally lit.",
     "promptSha256": "a0fe8656035d70eb80c3c52cb9885c0be14f4abd3712c8a5d29fc79bbff48160",
     "inputs": [
