@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TP0VX4VDVN98T8PPDAQ9EF",
   "alias": "B-tv4g",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T13:07:54.916Z",
-  "updatedAt": "2026-10-13T13:09:13.575Z",
+  "updatedAt": "2026-10-13T13:33:17.169Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -59,7 +59,7 @@
   "cost": {
     "wallMinutes": 1.19
   },
-  "status": "presented",
+  "status": "reviewed",
   "startedAt": "2026-10-13T13:07:54.912Z",
   "endedAt": "2026-10-13T13:09:06.346Z",
   "deadline": "2026-10-13T13:22:54.912Z"

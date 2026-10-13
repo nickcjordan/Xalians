@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4TQGBW4WNJYVB0957P8V3JR",
+  "alias": "N-l62p",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:33:51.364Z",
+  "updatedAt": "2026-10-13T13:33:51.364Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4SFYD5E6M6ERWXSJZS35EYD",
+    "stage": "vision",
+    "element": "palette"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "Undid the pick of C: Champagne mist for palette",
+  "date": "2026-10-13"
+}

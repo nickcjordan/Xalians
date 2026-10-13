@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TP0XVNZ3BSPHMXPAJBGM9C",
   "alias": "B-vvqa",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T13:07:56.916Z",
-  "updatedAt": "2026-10-13T13:09:13.580Z",
+  "updatedAt": "2026-10-13T13:33:17.174Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -59,7 +59,7 @@
   "cost": {
     "wallMinutes": 1.27
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T13:07:56.913Z",
   "endedAt": "2026-10-13T13:09:13.009Z",
   "deadline": "2026-10-13T13:22:56.913Z"

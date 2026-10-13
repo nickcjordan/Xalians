@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TP0ZTMQQ9TEMH5CBFSK883",
   "alias": "B-lybd",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T13:07:58.932Z",
-  "updatedAt": "2026-10-13T13:09:13.583Z",
+  "updatedAt": "2026-10-13T13:33:17.179Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -59,7 +59,7 @@
   "cost": {
     "wallMinutes": 1.23
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T13:07:58.928Z",
   "endedAt": "2026-10-13T13:09:12.808Z",
   "deadline": "2026-10-13T13:22:58.928Z"

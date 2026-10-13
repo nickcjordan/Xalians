@@ -1,0 +1,23 @@
+{
+  "id": "N-01M4TQHYD259GH6SGGA98SZQSJ",
+  "alias": "N-qunc",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:34:43.106Z",
+  "updatedAt": "2026-10-13T13:34:43.106Z",
+  "createdBy": "nick",
+  "kind": "review",
+  "about": {
+    "stage": "vision",
+    "element": "palette"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "I think I want something in between A and C for coat color. Use A's eye color",
+  "date": "2026-10-13",
+  "verdict": "adjust",
+  "evidence": [
+    "cbd4620e8e9c68e10d8bad5150f959b02f42d1e8292481b06f64f98bb5481b5a",
+    "f6708cab01ee8c204a47fe03689cb418ca3318f146b42c4ec9a09214affc979f",
+    "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58"
+  ]
+}
