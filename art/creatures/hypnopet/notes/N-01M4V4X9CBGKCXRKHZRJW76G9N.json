@@ -1,0 +1,14 @@
+{
+  "id": "N-01M4V4X9CBGKCXRKHZRJW76G9N",
+  "alias": "N-wvqu",
+  "rev": 1,
+  "createdAt": "2026-10-13T17:28:06.283Z",
+  "updatedAt": "2026-10-13T17:28:06.283Z",
+  "createdBy": "orchestrator",
+  "kind": "decision",
+  "about": {
+    "part": "P-01M4SD18GECA5VQA5F218GNS4V"
+  },
+  "by": "orchestrator",
+  "text": "For the first face pass the head part's builds also shape the eyes (sockets, eyeballs, lids) and the muzzle, because a head reads as skull, eyes and muzzle together; the eyes and muzzle parts refine details afterwards. The orchestrator's call, overridable by Nick."
+}
