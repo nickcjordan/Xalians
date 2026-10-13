@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4TWXXWWDXS4YV18WBZ3CRM9",
+  "alias": "B-ysmr",
+  "rev": 3,
+  "createdAt": "2026-10-13T15:08:38.684Z",
+  "updatedAt": "2026-10-13T15:12:28.584Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "sheet",
+    "element": "bare-front",
+    "label": "Bare body (clay), front",
+    "summary": "Hairless gray clay sculpture, front: the body shape under the fur, horn rising straight from a smooth skull",
+    "prompt": "Attached turnaround-v2.png, view-front.png, view-side.png and view-back.png show an original cartoon creature called a Hypnopet: a small bunny on four legs with very long lop ears, very large eyes, large rabbit hind legs with long hind feet, and a single spiral unicorn horn on top of the head. Draw the same creature as a smooth, hairless, matte light-gray clay sculpture, like an untextured 3D modeling maquette, showing only the true body shape under the fur: no fur, no hair, no tufts, no fluff, no fur outline anywhere. The skull is a smooth rounded form; the very large eyes are smooth glossy balls set into the skull; the horn rises directly out of the smooth skull with no tuft around its base; the ears are smooth thin shells hanging from the skull; the body shows the neck, chest, belly, the big rounded rabbit haunches and thighs, the long hind feet and the small forelegs; the tail is a small smooth round knob. Keep the same proportions and the same neutral pose as the attached views: standing on all four legs, feet planted flat, head level, ears hanging naturally. Soft even studio lighting, plain white background, no text, no labels, no watermark. Front view, large and centered.",
+    "promptSha256": "d9055c9dc08d140fdad28585606207392badc3f27850e446effc24ef2d0aeb8f",
+    "inputs": [
+      {
+        "name": "turnaround-v2.png",
+        "blob": "447b50aaa0b92122ebb8c3cdacad85cc482f67bef025292f1b8b8d837dbd1c3c"
+      },
+      {
+        "name": "view-front.png",
+        "blob": "19ade5532f09ed85b1185a3f2b159e1f500864da4809d48fc4aa70644c0e4100"
+      },
+      {
+        "name": "view-side.png",
+        "blob": "3512bd17e97483ef1a111edfff2196a485dd0833d9c0c685924db98dfc92e1ef"
+      },
+      {
+        "name": "view-back.png",
+        "blob": "e2c64fc8e3f4a950b6726e32cf08caac15ff43700e5b3fdfd54c2df47fbfbe8d"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a135ce-fc80-7c12-aec8-f4bba8713656\\exec-ced1dc45-a507-4acd-bda6-26415e65c571.png",
+    "codexTokens": 24470,
+    "model": null,
+    "round": 2
+  },
+  "goal": {
+    "text": "Bare body (clay), front: sheet bare-front"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "07b1f6514effad99a83119e426d1130d4b84e6c979b16be018dcd377189c6427",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.57
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T15:08:38.677Z",
+  "endedAt": "2026-10-13T15:10:12.630Z",
+  "deadline": "2026-10-13T15:23:38.677Z"
+}

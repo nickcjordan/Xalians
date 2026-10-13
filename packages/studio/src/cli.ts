@@ -381,7 +381,19 @@ function imageCommand(store: Store, sub: string | undefined, args: string[], fla
 		emit(rec, `described ${rec.alias}`);
 		return;
 	}
-	throw new StudioError('usage: image run|present|describe <key> ...');
+	if (sub === 'retire') {
+		// An option or sheet image replaced by a better one leaves the page; its record stays as history.
+		const ref = args[0];
+		if (!ref) throw new StudioError('usage: image retire <key> <alias>');
+		const rec = store.update<'build'>(ref, (b) => {
+			if (b.kind !== 'image') throw new StudioError(`${b.alias} is not an image build`);
+			if (b.status !== 'presented' && b.status !== 'reported') throw new StudioError(`${b.alias} is ${b.status}; only a shown or unshown image can be retired`);
+			b.status = 'superseded';
+		}, mopts);
+		emit(rec, `retired ${rec.alias}`);
+		return;
+	}
+	throw new StudioError('usage: image run|present|describe|retire <key> ...');
 }
 
 function partCommand(store: Store, sub: string | undefined, flags: Flags, emit: Emit, actor: Actor, copts: COpts): void {

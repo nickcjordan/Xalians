@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TW1YY48H01A4KPMZBS9WA8",
   "alias": "B-a66t",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T14:53:22.244Z",
-  "updatedAt": "2026-10-13T14:57:39.040Z",
+  "updatedAt": "2026-10-13T15:08:26.634Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -50,7 +50,7 @@
   "cost": {
     "wallMinutes": 2.06
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T14:53:22.240Z",
   "endedAt": "2026-10-13T14:55:25.918Z",
   "deadline": "2026-10-13T15:08:22.240Z"

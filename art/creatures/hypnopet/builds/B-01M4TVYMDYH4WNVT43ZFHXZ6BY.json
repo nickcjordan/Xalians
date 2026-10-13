@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TVYMDYH4WNVT43ZFHXZ6BY",
   "alias": "B-yx5f",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T14:51:33.182Z",
-  "updatedAt": "2026-10-13T14:57:39.035Z",
+  "updatedAt": "2026-10-13T15:08:24.444Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -50,7 +50,7 @@
   "cost": {
     "wallMinutes": 1.81
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T14:51:33.176Z",
   "endedAt": "2026-10-13T14:53:21.683Z",
   "deadline": "2026-10-13T15:06:33.176Z"
