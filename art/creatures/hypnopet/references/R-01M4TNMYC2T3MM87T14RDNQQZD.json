@@ -1,0 +1,22 @@
+{
+  "id": "R-01M4TNMYC2T3MM87T14RDNQQZD",
+  "alias": "R-rx4l",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:01:24.226Z",
+  "updatedAt": "2026-10-13T13:01:24.226Z",
+  "createdBy": "nick",
+  "blob": "76a9a61326f541fb1fd1cd3de1e9f32dccdc7d8372e8abd56e99c955b10c1620",
+  "fileName": "eyes-a-classic-glossy.png",
+  "role": "eyes",
+  "governs": [
+    "eye design",
+    "iris look",
+    "catch lights"
+  ],
+  "mustNotBeUsedFor": [
+    "color palette",
+    "head shape",
+    "nose and mouth"
+  ],
+  "precedence": 3
+}

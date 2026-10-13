@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4TNMYC6E0F74JJBYE10CETH",
+  "alias": "N-3i4n",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:01:24.230Z",
+  "updatedAt": "2026-10-13T13:01:24.230Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4SG9PW4PN6V9QABPWF17KRJ",
+    "stage": "vision",
+    "element": "eyes"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "Picked A: Classic glossy for eyes over B: Colored iris, C: Hypnotic swirl.",
+  "date": "2026-10-13"
+}

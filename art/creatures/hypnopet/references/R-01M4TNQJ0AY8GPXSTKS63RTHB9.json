@@ -1,0 +1,22 @@
+{
+  "id": "R-01M4TNQJ0AY8GPXSTKS63RTHB9",
+  "alias": "R-yi3m",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:02:49.866Z",
+  "updatedAt": "2026-10-13T13:02:49.866Z",
+  "createdBy": "nick",
+  "blob": "b89c96644910382c3e8e077600b79651819ac95e6094f2211b6c4652334c6e80",
+  "fileName": "face-a-happy-open-mouth.png",
+  "role": "face",
+  "governs": [
+    "nose design",
+    "mouth design",
+    "muzzle shape"
+  ],
+  "mustNotBeUsedFor": [
+    "color palette",
+    "eyes",
+    "head shape"
+  ],
+  "precedence": 4
+}

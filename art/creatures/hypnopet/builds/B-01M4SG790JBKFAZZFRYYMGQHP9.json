@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG790JBKFAZZFRYYMGQHP9",
   "alias": "B-potu",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:07:19.058Z",
-  "updatedAt": "2026-10-13T02:08:38.199Z",
+  "updatedAt": "2026-10-13T12:59:31.872Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.31
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:07:19.055Z",
   "endedAt": "2026-10-13T02:08:37.638Z",
   "deadline": "2026-10-13T02:22:19.055Z"

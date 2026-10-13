@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SGEGYSPTREW300NCZFHGX8",
   "alias": "B-3tcl",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:11:16.569Z",
-  "updatedAt": "2026-10-13T02:12:29.489Z",
+  "updatedAt": "2026-10-13T13:02:49.881Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.08
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:11:16.544Z",
   "endedAt": "2026-10-13T02:12:21.211Z",
   "deadline": "2026-10-13T02:26:16.544Z"

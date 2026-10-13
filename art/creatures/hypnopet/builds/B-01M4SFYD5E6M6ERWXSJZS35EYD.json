@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SFYD5E6M6ERWXSJZS35EYD",
   "alias": "B-tbpp",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:02:28.398Z",
-  "updatedAt": "2026-10-13T02:06:01.823Z",
+  "updatedAt": "2026-10-13T12:58:54.243Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -55,7 +55,7 @@
   "cost": {
     "wallMinutes": 3.54
   },
-  "status": "presented",
+  "status": "reviewed",
   "startedAt": "2026-10-13T02:02:28.396Z",
   "endedAt": "2026-10-13T02:06:00.703Z",
   "deadline": "2026-10-13T02:17:28.396Z"

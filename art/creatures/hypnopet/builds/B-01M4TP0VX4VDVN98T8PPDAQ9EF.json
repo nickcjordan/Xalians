@@ -1,0 +1,66 @@
+{
+  "id": "B-01M4TP0VX4VDVN98T8PPDAQ9EF",
+  "alias": "B-tv4g",
+  "rev": 3,
+  "createdAt": "2026-10-13T13:07:54.916Z",
+  "updatedAt": "2026-10-13T13:09:13.575Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "tail",
+    "label": "A: Small cotton puff",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy dark eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (use only for proportions and features); picked-palette.png shows the chosen colors (pale champagne-gold fur with faint lavender shadows, ivory face and chest, lilac inner ears); picked-fur.png shows the chosen medium fluffy coat. Keep those colors and that coat. Clean modern cartoon character style with soft shading. Plain light gray background. No text, no labels, no watermark. Show the creature from a rear three-quarter view so the tail is clearly visible. The tail is a small, round cotton puff.",
+    "promptSha256": "af6af2331466af1d93854c28842b42467680cff11b8909bd5fd550a2e860aaaa",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      },
+      {
+        "name": "picked-palette.png",
+        "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58"
+      },
+      {
+        "name": "picked-fur.png",
+        "blob": "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13560-7017-7ec0-ac89-ab0150fdeb86\\exec-a40d0923-d15a-4c92-984d-63c6c8a52742.png",
+    "codexTokens": 20472,
+    "model": null,
+    "governs": [
+      "tail size",
+      "tail shape",
+      "tail fluff"
+    ],
+    "notFor": [
+      "colors",
+      "pattern",
+      "body shape"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "A: Small cotton puff: vision tail"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "b037f45c5b80f3a997ae99db3ee37be30fcecab770fb176016e9e30fff561629",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.19
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T13:07:54.912Z",
+  "endedAt": "2026-10-13T13:09:06.346Z",
+  "deadline": "2026-10-13T13:22:54.912Z"
+}

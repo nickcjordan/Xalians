@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG9TZ5Z15BQDEA5GKMF5F4",
   "alias": "B-ytyf",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:08:42.981Z",
-  "updatedAt": "2026-10-13T02:09:47.366Z",
+  "updatedAt": "2026-10-13T13:01:24.243Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.06
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:08:42.979Z",
   "endedAt": "2026-10-13T02:09:46.707Z",
   "deadline": "2026-10-13T02:23:42.979Z"

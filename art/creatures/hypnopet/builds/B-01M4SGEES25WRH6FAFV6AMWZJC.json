@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SGEES25WRH6FAFV6AMWZJC",
   "alias": "B-saur",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:11:14.337Z",
-  "updatedAt": "2026-10-13T02:12:29.484Z",
+  "updatedAt": "2026-10-13T13:02:49.877Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.19
   },
-  "status": "presented",
+  "status": "reviewed",
   "startedAt": "2026-10-13T02:11:14.315Z",
   "endedAt": "2026-10-13T02:12:25.495Z",
   "deadline": "2026-10-13T02:26:14.315Z"

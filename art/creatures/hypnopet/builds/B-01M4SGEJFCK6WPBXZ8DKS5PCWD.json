@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SGEJFCK6WPBXZ8DKS5PCWD",
   "alias": "B-phtz",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:11:18.124Z",
-  "updatedAt": "2026-10-13T02:12:29.494Z",
+  "updatedAt": "2026-10-13T13:02:49.885Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.15
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:11:18.122Z",
   "endedAt": "2026-10-13T02:12:27.215Z",
   "deadline": "2026-10-13T02:26:18.122Z"

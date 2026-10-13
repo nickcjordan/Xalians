@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SFYCTC90SY76S83YR1FMZB",
   "alias": "B-bn2n",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:02:28.044Z",
-  "updatedAt": "2026-10-13T02:06:01.820Z",
+  "updatedAt": "2026-10-13T12:58:54.248Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -55,7 +55,7 @@
   "cost": {
     "wallMinutes": 1.26
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:02:28.042Z",
   "endedAt": "2026-10-13T02:03:43.794Z",
   "deadline": "2026-10-13T02:17:28.042Z"

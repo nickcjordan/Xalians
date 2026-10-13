@@ -1,0 +1,65 @@
+{
+  "id": "B-01M4TNYEATYF93E2AK16Y885TS",
+  "alias": "B-s73w",
+  "rev": 3,
+  "createdAt": "2026-10-13T13:06:35.482Z",
+  "updatedAt": "2026-10-13T13:07:54.329Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "pattern",
+    "label": "C: Spiral swirls",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy dark eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (use only for proportions and features); picked-palette.png shows the chosen colors (pale champagne-gold fur with faint lavender shadows, ivory face and chest, lilac inner ears); picked-fur.png shows the chosen medium fluffy coat. Keep those colors and that coat. Clean modern cartoon character style with soft shading. Plain light gray background. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view, seen slightly from behind so the back and haunches show. Faint lighter swirl markings on each haunch and shoulder that echo the horn's spiral, subtle and soft; paler face mask and chest.",
+    "promptSha256": "aac831acd69d175dbe433ab3434cb89154a17fc4f176810ffc4bac86c7d79d4d",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      },
+      {
+        "name": "picked-palette.png",
+        "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58"
+      },
+      {
+        "name": "picked-fur.png",
+        "blob": "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a1355f-39bd-79c2-a09c-01e88944972f\\exec-9faf664d-98b2-438a-924f-9d8f6e7a96ca.png",
+    "codexTokens": 20558,
+    "model": null,
+    "governs": [
+      "coat pattern",
+      "markings"
+    ],
+    "notFor": [
+      "colors",
+      "fur length",
+      "shape"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "C: Spiral swirls: vision pattern"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "9b11deb1cb2fb345033b35c68cba4bb86b81497be0c4d23b7bc805978a62bb16",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.23
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T13:06:35.478Z",
+  "endedAt": "2026-10-13T13:07:49.520Z",
+  "deadline": "2026-10-13T13:21:35.478Z"
+}

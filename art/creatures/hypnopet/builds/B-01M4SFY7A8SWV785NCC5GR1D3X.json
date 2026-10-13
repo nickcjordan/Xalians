@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SFY7A8SWV785NCC5GR1D3X",
   "alias": "B-74iz",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:02:22.408Z",
-  "updatedAt": "2026-10-13T02:06:01.816Z",
+  "updatedAt": "2026-10-13T12:58:54.246Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -55,7 +55,7 @@
   "cost": {
     "wallMinutes": 1.32
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:02:22.405Z",
   "endedAt": "2026-10-13T02:03:41.646Z",
   "deadline": "2026-10-13T02:17:22.405Z"

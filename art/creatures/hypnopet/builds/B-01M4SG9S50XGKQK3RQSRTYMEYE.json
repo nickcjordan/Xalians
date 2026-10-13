@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG9S50XGKQK3RQSRTYMEYE",
   "alias": "B-6jbv",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:08:41.120Z",
-  "updatedAt": "2026-10-13T02:09:47.364Z",
+  "updatedAt": "2026-10-13T13:01:24.238Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.01
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:08:41.118Z",
   "endedAt": "2026-10-13T02:09:41.500Z",
   "deadline": "2026-10-13T02:23:41.118Z"

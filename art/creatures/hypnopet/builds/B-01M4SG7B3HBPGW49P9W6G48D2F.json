@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG7B3HBPGW49P9W6G48D2F",
   "alias": "B-wdyw",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:07:21.201Z",
-  "updatedAt": "2026-10-13T02:08:38.202Z",
+  "updatedAt": "2026-10-13T12:59:31.869Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.1
   },
-  "status": "presented",
+  "status": "reviewed",
   "startedAt": "2026-10-13T02:07:21.198Z",
   "endedAt": "2026-10-13T02:08:27.478Z",
   "deadline": "2026-10-13T02:22:21.198Z"

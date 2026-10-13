@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4TNGBWZCX2KHDVMNX9H1RQZ",
+  "alias": "N-mywa",
+  "rev": 1,
+  "createdAt": "2026-10-13T12:58:54.239Z",
+  "updatedAt": "2026-10-13T12:58:54.239Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4SFYD5E6M6ERWXSJZS35EYD",
+    "stage": "vision",
+    "element": "palette"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "Picked C: Champagne mist for palette over A: Honey gold, B: Dawn amber.",
+  "date": "2026-10-13"
+}

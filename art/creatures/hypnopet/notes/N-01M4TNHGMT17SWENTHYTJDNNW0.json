@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4TNHGMT17SWENTHYTJDNNW0",
+  "alias": "N-ygeh",
+  "rev": 1,
+  "createdAt": "2026-10-13T12:59:31.866Z",
+  "updatedAt": "2026-10-13T12:59:31.866Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4SG7B3HBPGW49P9W6G48D2F",
+    "stage": "vision",
+    "element": "fur"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "Picked B: Medium fluffy for fur over A: Short plush, C: Long silky.",
+  "date": "2026-10-13"
+}

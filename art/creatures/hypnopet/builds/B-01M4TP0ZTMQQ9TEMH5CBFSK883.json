@@ -1,0 +1,66 @@
+{
+  "id": "B-01M4TP0ZTMQQ9TEMH5CBFSK883",
+  "alias": "B-lybd",
+  "rev": 3,
+  "createdAt": "2026-10-13T13:07:58.932Z",
+  "updatedAt": "2026-10-13T13:09:13.583Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "tail",
+    "label": "C: Plume tuft",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy dark eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (use only for proportions and features); picked-palette.png shows the chosen colors (pale champagne-gold fur with faint lavender shadows, ivory face and chest, lilac inner ears); picked-fur.png shows the chosen medium fluffy coat. Keep those colors and that coat. Clean modern cartoon character style with soft shading. Plain light gray background. No text, no labels, no watermark. Show the creature from a rear three-quarter view so the tail is clearly visible. The tail is a slightly longer soft plume-like tuft that curls upward.",
+    "promptSha256": "49355cf171c1cb4bc8c96a1e1617abdc667e75b1f0884ad2be228b31bb05c1dd",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      },
+      {
+        "name": "picked-palette.png",
+        "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58"
+      },
+      {
+        "name": "picked-fur.png",
+        "blob": "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13560-7fb7-7173-a507-ae6c3abdff9b\\exec-c205bd02-e51a-4c74-b552-2749af4bb320.png",
+    "codexTokens": 26807,
+    "model": null,
+    "governs": [
+      "tail size",
+      "tail shape",
+      "tail fluff"
+    ],
+    "notFor": [
+      "colors",
+      "pattern",
+      "body shape"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "C: Plume tuft: vision tail"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "70d1b68ca51e1792a2f9efacb3f38e67cdda630a67774dadcd2b83c4ff2d968b",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.23
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T13:07:58.928Z",
+  "endedAt": "2026-10-13T13:09:12.808Z",
+  "deadline": "2026-10-13T13:22:58.928Z"
+}

@@ -1,0 +1,65 @@
+{
+  "id": "B-01M4TNYCBP40YY4FDRZ397VXGM",
+  "alias": "B-j6fv",
+  "rev": 3,
+  "createdAt": "2026-10-13T13:06:33.462Z",
+  "updatedAt": "2026-10-13T13:07:54.326Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "pattern",
+    "label": "B: Soft points",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy dark eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (use only for proportions and features); picked-palette.png shows the chosen colors (pale champagne-gold fur with faint lavender shadows, ivory face and chest, lilac inner ears); picked-fur.png shows the chosen medium fluffy coat. Keep those colors and that coat. Clean modern cartoon character style with soft shading. Plain light gray background. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view, seen slightly from behind so the back and haunches show. Soft darker golden shading on the ear tips, along the spine and on the feet, fading smoothly into the champagne coat; paler face mask and chest.",
+    "promptSha256": "961e1254892a6716c5f7bd0bbe8fab2bfc8d7a7a689af206cfd8a599eec28846",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      },
+      {
+        "name": "picked-palette.png",
+        "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58"
+      },
+      {
+        "name": "picked-fur.png",
+        "blob": "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a1355f-31e6-7560-aef7-4f759417805f\\exec-dfa5ab1b-3fed-4b39-ba40-c8e1c1c41077.png",
+    "codexTokens": 21094,
+    "model": null,
+    "governs": [
+      "coat pattern",
+      "markings"
+    ],
+    "notFor": [
+      "colors",
+      "fur length",
+      "shape"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "B: Soft points: vision pattern"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "94f507d3ea48a4f0817385e5c22c5d7afa6c1486c83cbd2e644bce6048910b6d",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.25
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T13:06:33.458Z",
+  "endedAt": "2026-10-13T13:07:48.670Z",
+  "deadline": "2026-10-13T13:21:33.458Z"
+}

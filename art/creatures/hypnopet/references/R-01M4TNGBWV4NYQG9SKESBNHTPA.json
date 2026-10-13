@@ -1,0 +1,26 @@
+{
+  "id": "R-01M4TNGBWV4NYQG9SKESBNHTPA",
+  "alias": "R-b3tm",
+  "rev": 1,
+  "createdAt": "2026-10-13T12:58:54.235Z",
+  "updatedAt": "2026-10-13T12:58:54.235Z",
+  "createdBy": "nick",
+  "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58",
+  "fileName": "palette-c-champagne-mist.png",
+  "role": "palette",
+  "governs": [
+    "fur color range",
+    "face and chest color",
+    "inner ear color",
+    "nose color",
+    "iris color",
+    "horn resting color"
+  ],
+  "mustNotBeUsedFor": [
+    "shape",
+    "pattern",
+    "pose",
+    "fur length"
+  ],
+  "precedence": 1
+}

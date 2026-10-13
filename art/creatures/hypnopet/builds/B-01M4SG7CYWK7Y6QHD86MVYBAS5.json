@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG7CYWK7Y6QHD86MVYBAS5",
   "alias": "B-tlcg",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:07:23.100Z",
-  "updatedAt": "2026-10-13T02:08:38.204Z",
+  "updatedAt": "2026-10-13T12:59:31.874Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.11
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:07:23.098Z",
   "endedAt": "2026-10-13T02:08:29.450Z",
   "deadline": "2026-10-13T02:22:23.098Z"

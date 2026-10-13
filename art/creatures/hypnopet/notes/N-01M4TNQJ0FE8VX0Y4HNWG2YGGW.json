@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4TNQJ0FE8VX0Y4HNWG2YGGW",
+  "alias": "N-5snp",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:02:49.871Z",
+  "updatedAt": "2026-10-13T13:02:49.871Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4SGEES25WRH6FAFV6AMWZJC",
+    "stage": "vision",
+    "element": "face"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "Picked A: Happy open mouth for face over B: Rabbit nose, gentle smile, C: Whisker pads.",
+  "date": "2026-10-13"
+}

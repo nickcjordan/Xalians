@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG9PW4PN6V9QABPWF17KRJ",
   "alias": "B-qjjd",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T02:08:38.788Z",
-  "updatedAt": "2026-10-13T02:09:47.360Z",
+  "updatedAt": "2026-10-13T13:01:24.234Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -51,7 +51,7 @@
   "cost": {
     "wallMinutes": 1.02
   },
-  "status": "presented",
+  "status": "reviewed",
   "startedAt": "2026-10-13T02:08:38.786Z",
   "endedAt": "2026-10-13T02:09:39.990Z",
   "deadline": "2026-10-13T02:23:38.786Z"

@@ -1,0 +1,65 @@
+{
+  "id": "B-01M4TNYADTZJNQJEK84J2YRA20",
+  "alias": "B-momr",
+  "rev": 3,
+  "createdAt": "2026-10-13T13:06:31.482Z",
+  "updatedAt": "2026-10-13T13:07:54.322Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "pattern",
+    "label": "A: Plain coat",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small bunny with very long lop ears hanging almost to the ground, very large glossy dark eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. Attached references: silhouette.png is the creator's silhouette (use only for proportions and features); picked-palette.png shows the chosen colors (pale champagne-gold fur with faint lavender shadows, ivory face and chest, lilac inner ears); picked-fur.png shows the chosen medium fluffy coat. Keep those colors and that coat. Clean modern cartoon character style with soft shading. Plain light gray background. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view, seen slightly from behind so the back and haunches show. No markings beyond the paler face mask and chest.",
+    "promptSha256": "b76c8a838a26540046aaafe95d46ff361c49d376409a4822280b0c20516077f3",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      },
+      {
+        "name": "picked-palette.png",
+        "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58"
+      },
+      {
+        "name": "picked-fur.png",
+        "blob": "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a1355f-2c0a-7481-8a15-3e7d1cbe6e2b\\exec-4731d39f-a0b6-46ed-8fd1-674844ab035b.png",
+    "codexTokens": 22548,
+    "model": null,
+    "governs": [
+      "coat pattern",
+      "markings"
+    ],
+    "notFor": [
+      "colors",
+      "fur length",
+      "shape"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "A: Plain coat: vision pattern"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "f59bf982fb8d721230e9f118d005a6672edc4d2060dd1404a210d9446de1c3a7",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.37
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T13:06:31.476Z",
+  "endedAt": "2026-10-13T13:07:53.720Z",
+  "deadline": "2026-10-13T13:21:31.476Z"
+}

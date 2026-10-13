@@ -1,0 +1,22 @@
+{
+  "id": "R-01M4TNHGMP3R2ZW6MRR3WGVGPZ",
+  "alias": "R-n3cj",
+  "rev": 1,
+  "createdAt": "2026-10-13T12:59:31.862Z",
+  "updatedAt": "2026-10-13T12:59:31.862Z",
+  "createdBy": "nick",
+  "blob": "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306",
+  "fileName": "fur-b-medium-fluffy.png",
+  "role": "fur",
+  "governs": [
+    "fur length",
+    "fur texture",
+    "outline softness"
+  ],
+  "mustNotBeUsedFor": [
+    "color palette",
+    "shape",
+    "pattern"
+  ],
+  "precedence": 2
+}
