@@ -52,6 +52,19 @@ export interface ImageRunInput {
 	notFor?: string[];
 }
 
+/**
+ * On Windows a bare `codex` resolves, without a shell, to whatever `codex.exe` is first on PATH,
+ * which can be an older WinGet install whose default model the account rejects. The npm install
+ * is the one the shell uses, so prefer its script entry (run with node, no shell) when present.
+ */
+function defaultCodexBin(): string {
+	if (process.platform === 'win32' && process.env.APPDATA) {
+		const npmEntry = join(process.env.APPDATA, 'npm', 'node_modules', '@openai', 'codex', 'bin', 'codex.js');
+		if (existsSync(npmEntry)) return npmEntry;
+	}
+	return 'codex';
+}
+
 function runCodex(bin: string, args: string[], input: string): { status: number | null; log: string; timedOut: boolean; error?: string } {
 	const isScript = /\.(?:c|m)?js$/i.test(bin);
 	const command = isScript ? process.execPath : bin;
@@ -139,7 +152,7 @@ export function runImage(store: Store, input: ImageRunInput, who: Who): Build {
 	const wrapper = wrapperPrompt(prompt, names);
 	writeFileSync(join(runDir, 'prompt.md'), wrapper);
 
-	const bin = process.env.STUDIO_CODEX_BIN || 'codex';
+	const bin = process.env.STUDIO_CODEX_BIN || defaultCodexBin();
 	const result = runCodex(bin, ['exec', ...(model ? ['-m', model] : []), '--sandbox', 'workspace-write', '--skip-git-repo-check', '-C', runDir, '--output-last-message', join(runDir, 'reply.md'), '-'], wrapper);
 	writeFileSync(join(runDir, 'run.log'), result.log);
 
