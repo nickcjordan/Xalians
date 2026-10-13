@@ -1,0 +1,609 @@
+{
+ "note": "tails v5 (2026-10-13), for tails_v5_post.py / tails_v5_field.py, in place of tails-v4.json after P-hips1. Nick 2026-10-13: one tail root out of the end of the spine at the top of the rump, splitting into three a short way out, and the tails modelled shaved (slender, round, steady taper), no fullness for fur. stem: the shared root's centreline from inside the rump (y -.06) out past the back (y about .05) to just short of the fork; radius 'flare' r = root (tip + (1 - tip)(1 - u)^power), .085 inside the body, about .066 where it leaves the back, .043 at its end; the only part joined to the body (rootK smooth minimum; its sweep reaches 2 rootK). fork: centre c and radius r; inside it the tails blend into the root (forkK) and into each other (tailUnionK), beyond it the hard minimum, so air stays between them and between each tail and the body. tails: each starts .07 inside the root on its axis, passes fork + .05 axis + .05 toward its own path, then follows tails v4's centreline from its fifth control point to the same tip; smooth [iterations, fixed] Laplacian-smooths the sampled centreline; radius r = root (1 - (1 - tip) u^power): .038 / .040 / .038 at the fork to .16 of that at the tip. Body (tails v4's, then): carve as v4; carveMid deeper carves at the midline (a list of masks, the old shared stem's flat wall, the cleft top, the back above the root); masses: a low sacrum; grooves: the top of the cleft under the root as a round-cone sweep taken out (smooth maximum k); blur: v4's body blurs less the one at v4 tail 1's root, plus one on the back above the root and one in the cleft; mirror: the rump's -x half mirrored onto +x (x 0 to fade, y and z windows), where the old tails' carve had left a flat wall; rootBlur: masked blur at the root's join, before the tails. Region, stitch, seam relax, fold repair, keepY as tails v4. Design and measures: docs/design/species-construction/akinza/furbase-notes.md, Tails v5.",
+ "oldControls": "docs/design/species-construction/akinza/tail-controls-stack-b.json",
+ "grid": {
+  "lo": [
+   -0.2,
+   -0.03,
+   -0.7
+  ],
+  "hi": [
+   0.62,
+   0.6,
+   0.18
+  ],
+  "step": 0.0025,
+  "band": 0.06
+ },
+ "tailUnionK": 0.02,
+ "carve": {
+  "y": [
+   0.05,
+   0.08
+  ],
+  "margin": 0.03,
+  "k": 0.03
+ },
+ "rootK": 0.035,
+ "blur": [
+  {
+   "sigma": 0.005,
+   "mask": [
+    {
+     "c": [
+      0.12,
+      0.16,
+      -0.18
+     ],
+     "s": [
+      0.2,
+      0.1,
+      0.2
+     ],
+     "fade": [
+      0.6,
+      1.1
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.008,
+   "mask": [
+    {
+     "c": [
+      0.19,
+      0.1,
+      -0.4
+     ],
+     "s": [
+      0.08,
+      0.06,
+      0.1
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.008,
+   "mask": [
+    {
+     "c": [
+      0.03,
+      0.06,
+      -0.21
+     ],
+     "s": [
+      0.12,
+      0.05,
+      0.05
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      0.02,
+      0.06,
+      -0.33
+     ],
+     "s": [
+      0.1,
+      0.05,
+      0.07
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      0.13,
+      0.1,
+      -0.29
+     ],
+     "s": [
+      0.07,
+      0.05,
+      0.1
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.009,
+   "mask": [
+    {
+     "c": [
+      0.0,
+      0.08,
+      -0.2
+     ],
+     "s": [
+      0.2,
+      0.09,
+      0.17
+     ],
+     "fade": [
+      0.5,
+      1.15
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      0.1,
+      0.075,
+      -0.39
+     ],
+     "s": [
+      0.09,
+      0.045,
+      0.06
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      0.16,
+      0.07,
+      -0.4
+     ],
+     "s": [
+      0.07,
+      0.045,
+      0.06
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.012,
+   "mask": [
+    {
+     "c": [
+      0,
+      0.05,
+      -0.07
+     ],
+     "s": [
+      0.11,
+      0.05,
+      0.05
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.008,
+   "mask": [
+    {
+     "c": [
+      0,
+      0.035,
+      -0.27
+     ],
+     "s": [
+      0.09,
+      0.05,
+      0.08
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  }
+ ],
+ "region": {
+  "tol": 2e-05,
+  "grow": 0.006,
+  "gain": 3.0,
+  "cut": 0.3,
+  "nearSurface": 0.02
+ },
+ "seamRelax": {
+  "iterations": 8,
+  "rings": 3
+ },
+ "masses": [
+  {
+   "c": [
+    0.0,
+    -0.01,
+    -0.13
+   ],
+   "s": [
+    0.075,
+    0.045,
+    0.085
+   ],
+   "k": 0.03
+  }
+ ],
+ "keepY": [
+  0.0,
+  0.03
+ ],
+ "islandFaces": 5000,
+ "foldRepair": {
+  "passes": 6,
+  "threshold": 0.3,
+  "rings": 2,
+  "iterations": 6
+ },
+ "stem": {
+  "points": [
+   [
+    0,
+    -0.06,
+    -0.155
+   ],
+   [
+    0,
+    0.02,
+    -0.137
+   ],
+   [
+    0.008,
+    0.085,
+    -0.123
+   ],
+   [
+    0.012,
+    0.117,
+    -0.117
+   ]
+  ],
+  "radius": {
+   "root": 0.085,
+   "tip": 0.5,
+   "power": 1.5,
+   "flare": true
+  }
+ },
+ "fork": {
+  "c": [
+   0.015,
+   0.15,
+   -0.108
+  ],
+  "r": [
+   0.06,
+   0.11
+  ]
+ },
+ "tails": [
+  {
+   "points": [
+    [
+     0.0087,
+     0.0829,
+     -0.1269
+    ],
+    [
+     0.0565,
+     0.1857,
+     -0.0632
+    ],
+    [
+     0.18,
+     0.29,
+     0.07
+    ],
+    [
+     0.27,
+     0.35,
+     0.068
+    ],
+    [
+     0.35,
+     0.4,
+     0.05
+    ],
+    [
+     0.41,
+     0.445,
+     0.02
+    ],
+    [
+     0.455,
+     0.485,
+     -0.02
+    ],
+    [
+     0.49,
+     0.525,
+     -0.075
+    ]
+   ],
+   "radius": {
+    "root": 0.038,
+    "tip": 0.16,
+    "power": 1.15
+   },
+   "smooth": [
+    200,
+    1
+   ]
+  },
+  {
+   "points": [
+    [
+     0.0087,
+     0.0829,
+     -0.1269
+    ],
+    [
+     0.0669,
+     0.1979,
+     -0.1103
+    ],
+    [
+     0.375,
+     0.27,
+     -0.19
+    ],
+    [
+     0.465,
+     0.34,
+     -0.23
+    ],
+    [
+     0.54,
+     0.41,
+     -0.28
+    ],
+    [
+     0.6,
+     0.47,
+     -0.34
+    ]
+   ],
+   "radius": {
+    "root": 0.04,
+    "tip": 0.16,
+    "power": 1.15
+   },
+   "smooth": [
+    200,
+    1
+   ]
+  },
+  {
+   "points": [
+    [
+     0.0087,
+     0.0829,
+     -0.1269
+    ],
+    [
+     0.0351,
+     0.2094,
+     -0.1406
+    ],
+    [
+     0.12,
+     0.29,
+     -0.38
+    ],
+    [
+     0.195,
+     0.33,
+     -0.435
+    ],
+    [
+     0.26,
+     0.37,
+     -0.485
+    ],
+    [
+     0.31,
+     0.41,
+     -0.535
+    ],
+    [
+     0.34,
+     0.45,
+     -0.58
+    ]
+   ],
+   "radius": {
+    "root": 0.038,
+    "tip": 0.16,
+    "power": 1.15
+   },
+   "smooth": [
+    200,
+    1
+   ]
+  }
+ ],
+ "forkK": 0.025,
+ "mirror": {
+  "fade": [
+   0.16,
+   0.2
+  ],
+  "y": [
+   -0.02,
+   0.005
+  ],
+  "z": [
+   -0.5,
+   0.02
+  ],
+  "zFade": 0.04
+ },
+ "rootBlur": [
+  {
+   "sigma": 0.008,
+   "mask": [
+    {
+     "c": [
+      0.0,
+      0.045,
+      -0.135
+     ],
+     "s": [
+      0.09,
+      0.025,
+      0.09
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  }
+ ],
+ "carveMid": [
+  {
+   "y": [
+    0.012,
+    0.037
+   ],
+   "margin": 0.03,
+   "k": 0.03,
+   "mask": {
+    "c": [
+     0,
+     0.05,
+     -0.16
+    ],
+    "s": [
+     0.11,
+     0.2,
+     0.17
+    ],
+    "fade": [
+     0.7,
+     1.1
+    ]
+   }
+  },
+  {
+   "y": [
+    0.0,
+    0.02
+   ],
+   "margin": 0.03,
+   "k": 0.03,
+   "mask": {
+    "c": [
+     0,
+     0.05,
+     -0.29
+    ],
+    "s": [
+     0.08,
+     0.2,
+     0.08
+    ],
+    "fade": [
+     0.6,
+     1.1
+    ]
+   }
+  },
+  {
+   "y": [
+    -0.005,
+    0.015
+   ],
+   "margin": 0.03,
+   "k": 0.03,
+   "mask": {
+    "c": [
+     0,
+     0.05,
+     -0.035
+    ],
+    "s": [
+     0.1,
+     0.2,
+     0.045
+    ],
+    "fade": [
+     0.6,
+     1.15
+    ]
+   }
+  }
+ ],
+ "keepYMirror": false,
+ "grooves": [
+  {
+   "points": [
+    [
+     0,
+     0.085,
+     -0.13,
+     0.004
+    ],
+    [
+     0,
+     0.065,
+     -0.2,
+     0.04
+    ],
+    [
+     0,
+     0.045,
+     -0.26,
+     0.06
+    ],
+    [
+     0,
+     0.02,
+     -0.33,
+     0.06
+    ]
+   ],
+   "k": 0.025
+  }
+ ]
+}
