@@ -54,6 +54,10 @@ Define a part by what has to change together to fix it: an eye is the eyeball, i
 
 Never show Nick a picture with flaws and ask him to ignore them; he judges what is on screen. Before a step reaches him, look at the part from front, three-quarter, side, top and below, and judge the look, not the checklist: a defect list going to zero is not the same as the part looking right.
 
+### 7. Model the shaved animal; the fur stage owns the fluff (Nick, 2026-10-13)
+
+Every part is modeled as the creature would look shaved: bare anatomy, with no fur volume, locks, plumes or fringes built into the mesh. Fluffy tails, ruffs, ear fringes and cheek tufts are fur-stage work (fur length, direction and locks per region). Bare targets are the furred reference minus the fur thickness for that region, and no check compares bare geometry with a furred outline. Nick: "imagine what this tail would look like if the creature was shaved, and build that version so that when we add the subsequent fur to it, it ends up looking how we want"; asked whether this applies to everything: "yes I think that's a direction we want to establish for all of this."
+
 ## Builder brief template (the part of it this adds)
 
 ```
