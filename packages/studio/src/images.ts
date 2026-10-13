@@ -8,6 +8,7 @@ import { SHEET_ELEMENTS, VISION_ELEMENTS, VisionContextSchema, type Build, type 
 import type { Who } from './intake.ts';
 import type { MarkInput } from './review.ts';
 import type { Store } from './store.ts';
+import { submitProblems } from './stages.ts';
 
 const NICK = { actor: 'nick' as const, bypassLock: true };
 const sha = (text: string): string => createHash('sha256').update(text).digest('hex');
@@ -212,7 +213,7 @@ export interface PickInput {
  * governs and not-for from the image build), the other options of the set are set aside, and a
  * decision note by nick records it.
  */
-export function pickImage(store: Store, input: PickInput): { note: Note; reference: Reference; chosen: Build } {
+export function pickImage(store: Store, input: PickInput): { note: Note; reference: Reference; chosen: Build; submitted: boolean } {
 	const data = store.load();
 	const chosen = find(data.builds, input.build);
 	if (!chosen || chosen.kind !== 'image' || chosen.image?.stage !== 'vision') throw new StudioError(`no vision option ${input.build}`);
@@ -245,7 +246,26 @@ export function pickImage(store: Store, input: PickInput): { note: Note; referen
 	}, 'nick', { bypassLock: true });
 	store.update<'build'>(chosen.id, (b) => { b.status = 'reviewed'; }, NICK);
 	for (const b of others) store.update<'build'>(b.id, (x) => { x.status = 'superseded'; }, NICK);
-	return { note, reference, chosen: store.get(chosen.id)!.record as Build };
+	const submitted = submitVisionIfComplete(store);
+	return { note, reference, chosen: store.get(chosen.id)!.record as Build, submitted };
+}
+
+/**
+ * Nick's last pick finishes the board: when every vision element that has options has a pick,
+ * nothing is still generating, and the stage's checks pass, the stage goes straight to review so
+ * the approval box appears without anyone submitting it by hand (Nick, 2026-10-13).
+ */
+export function submitVisionIfComplete(store: Store): boolean {
+	const data = store.load();
+	if (data.creature.stages.vision.status !== 'open') return false;
+	const vision = data.builds.filter((b) => b.kind === 'image' && b.image?.stage === 'vision');
+	if (vision.length === 0) return false;
+	if (vision.some((b) => b.status === 'running' || b.status === 'reported' || b.status === 'presented' || b.status === 'planned')) return false;
+	const elements = new Set(vision.map((b) => b.image!.element));
+	for (const el of elements) if (!vision.some((b) => b.image!.element === el && b.status === 'reviewed')) return false;
+	if (submitProblems(data, 'vision').length > 0) return false;
+	store.update<'creature'>(data.creature.id, (c) => { c.stages.vision = { status: 'in-review' }; }, NICK);
+	return true;
 }
 
 /**

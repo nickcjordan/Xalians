@@ -326,6 +326,8 @@ export function submitStage(store: Store, stageRef: string, who: Who): StageId {
 		const why = submitProblems(data, stage);
 		throw new StudioError(`stage ${stage} is locked${why.length ? `: ${why.join('; ')}` : ''}`);
 	}
+	// A stage can submit itself (the vision board does on Nick's last pick); a repeat submit is a no-op.
+	if (st.status === 'in-review') return stage;
 	if (st.status !== 'open') throw new StudioError(`stage ${stage} is ${st.status}; only an open stage can be submitted`);
 	const problems = submitProblems(data, stage);
 	if (problems.length > 0) throw new StudioError(`cannot submit ${stage}: ${problems.join('; ')}`);

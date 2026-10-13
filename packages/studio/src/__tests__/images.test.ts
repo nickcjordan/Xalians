@@ -309,8 +309,10 @@ describe('vision picks', () => {
 	it('submits and approves the vision stage with the picks, and opens the sheet', () => {
 		const store = atVision();
 		const { a } = twoOptions(store);
-		pickImage(store, { build: a.alias });
-		submitStage(store, 'vision', who);
+		const picked = pickImage(store, { build: a.alias });
+		// The last pick finishes the board, so it goes to review without a hand submit.
+		expect(picked.submitted).toBe(true);
+		expect(store.load().creature.stages.vision.status).toBe('in-review');
 		recordStageReview(store, { stage: 'vision', verdict: 'approve', text: '' });
 		const c = store.load().creature;
 		expect(c.stages.vision.status).toBe('approved');

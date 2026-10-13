@@ -29,6 +29,28 @@ function PromptFold({ image }: { image: ImageView }) {
 	);
 }
 
+/** Every pick so far in one view, beside the approval box, so the whole look is judged together (Nick, 2026-10-13). */
+function PicksCollage({ elements }: { elements: VisionView['elements'] }) {
+	const picked = elements.filter((e) => e.picked?.blob);
+	const open = elements.filter((e) => !e.picked);
+	return (
+		<Panel title="Your picks" count={`${picked.length} of ${elements.length}`} className="p-3">
+			{picked.length === 0 ? <p className="m-0 font-body text-small text-ink-2">Each pick appears here as you make it.</p> : (
+				<ul className="m-0 grid list-none grid-cols-4 gap-1.5 p-0">
+					{picked.map((e) => (
+						<li key={e.element} className="flex min-w-0 flex-col gap-0.5" title={`${elementName(e.element)}: ${e.picked!.label}`}>
+							<img src={blobUrl(e.picked!.blob!)} alt={`${elementName(e.element)}: ${e.picked!.label}`} className="block aspect-square w-full border border-edge bg-s0 object-contain" />
+							<span className="type-legend truncate text-[9.5px]">{elementName(e.element)}</span>
+							<span className="truncate font-body text-[11.5px] leading-tight text-ink">{e.picked!.label.replace(/^[A-Z]: /, '')}</span>
+						</li>
+					))}
+				</ul>
+			)}
+			{open.length > 0 ? <p className="mt-2 mb-0 font-body text-small text-ink-2">Still to pick: {open.map((e) => elementName(e.element)).join(', ')}.</p> : null}
+		</Panel>
+	);
+}
+
 function OptionCard({ image, index, busy, onPick }: { image: ImageView; index: number; busy: boolean; onPick: () => void }) {
 	return (
 		<li className="flex min-w-0 flex-col gap-2 border border-dashed border-edge-strong bg-s1 p-3">
@@ -235,7 +257,8 @@ export function VisionReview({ creature }: { creature: string }) {
 				) : null}
 			</div>
 			<div className="flex w-[420px] shrink-0 flex-col gap-3 overflow-y-auto border-l border-edge bg-s0 p-3 min-[1700px]:w-[460px]">
-				<StageVerdict creature={creature} stage={stage} notes={state.stageNotes} onDone={changed} approveHint="Approving fixes each pick's role and precedence. Changing a reference later shows this stage as out of date." />
+				<PicksCollage elements={vision.elements} />
+				<StageVerdict creature={creature} stage={stage} notes={state.stageNotes} onDone={changed} approveHint="Approving locks in these picks as the creature's references. Changing one later shows this stage as out of date." />
 				<Panel title="How to read this">
 					<p className="m-0 font-body text-small text-ink-2">Each element has its own set. Pick the one that is closest, or say what is wrong with all of them. Every option lists what it would govern and what it must not be used for; the prompt that made it is in the fold under the image. The stage is ready to approve when every element you care about is picked.</p>
 				</Panel>
