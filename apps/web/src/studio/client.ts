@@ -2,9 +2,9 @@
 // Types come from the studio library (type-only imports, erased at build).
 import * as React from 'react';
 import type { BuildView, NeedItem, PartView } from '@xalians/studio/engine';
-import type { BoardPart, CreatureBoard, ReferenceView, StageView } from '@xalians/studio/stages';
+import type { BoardPart, CreatureBoard, ImageView, ReferenceView, SheetView, StageView, VisionElementView, VisionView } from '@xalians/studio/stages';
 
-export type { BuildView, NeedItem, PartView, BoardPart, CreatureBoard, ReferenceView, StageView };
+export type { BuildView, NeedItem, PartView, BoardPart, CreatureBoard, ImageView, ReferenceView, SheetView, StageView, VisionElementView, VisionView };
 
 /** GET creatures/:key: the board plus everything waiting on Nick. */
 export type CreatureState = CreatureBoard & { needs: NeedItem[] };
@@ -66,6 +66,11 @@ export const api = {
 	creatures: () => send<CreatureSummary[]>('GET', 'creatures'),
 	creature: (creature: string) => send<CreatureState>('GET', `creatures/${encodeURIComponent(creature)}`),
 	references: (creature: string) => send<ReferenceView[]>('GET', `creatures/${encodeURIComponent(creature)}/references`),
+	vision: (creature: string) => send<VisionView>('GET', `creatures/${encodeURIComponent(creature)}/vision`),
+	sheet: (creature: string) => send<SheetView>('GET', `creatures/${encodeURIComponent(creature)}/sheet`),
+	pick: (creature: string, body: { build: string; text: string }) => send<unknown>('POST', `creatures/${encodeURIComponent(creature)}/pick`, body),
+	elementAdjust: (creature: string, body: { element: string; text: string }) => send<unknown>('POST', `creatures/${encodeURIComponent(creature)}/element-adjust`, body),
+	sheetMarks: (creature: string, body: { build: string; marks: MarkDraft[] }) => send<{ defects: { alias: string }[] }>('POST', `creatures/${encodeURIComponent(creature)}/sheet-marks`, body),
 	stageReview: (creature: string, body: { stage: string; verdict: 'approve' | 'adjust' | 'reject'; text: string }) =>
 		send<{ note: { alias: string; verdict: string; text: string }; applied: string[] }>('POST', `creatures/${encodeURIComponent(creature)}/stage-review`, body),
 	needs: (creature: string) => send<NeedItem[]>('GET', `creatures/${encodeURIComponent(creature)}/needs`),

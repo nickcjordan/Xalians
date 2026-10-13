@@ -18,7 +18,9 @@ import { api, blobUrl, usePolled, type BuildView, type MarkDraft, type NeedItem,
 import { OptionsView } from '@/studio/Options';
 import { BuilderPanel, CostLine, DefectsPanel, HoldsPanel, NeedsRail, NotesPanel, Panel, VerdictPanel } from '@/studio/Panels';
 import { MarksList, renderFor, Viewer, type CompareMode, type Overlay, type Tool } from '@/studio/Viewer';
-import { CreatureBoard, IntakeReview, ReferencesReview } from '@/studio/Stages';
+import { CreatureBoard, IntakeReview } from '@/studio/Stages';
+import { SheetReview } from '@/studio/Sheet';
+import { VisionReview } from '@/studio/Vision';
 import { buildKindWord, buildStatusWord, cameraShort, partStatusWord, sortCameras, stageName, timeAgo } from '@/studio/words';
 
 type NeedWithCreature = NeedItem & { creature: string };
@@ -278,8 +280,10 @@ export default function StudioPage() {
 						<PartReview key={`${creature}/${part}`} creature={creature} part={part} />
 					) : !needs.error && creature && stage === 'intake' ? (
 						<IntakeReview key={`${creature}/intake`} creature={creature} />
-					) : !needs.error && creature && stage === 'references' ? (
-						<ReferencesReview key={`${creature}/references`} creature={creature} />
+					) : !needs.error && creature && stage === 'vision' ? (
+						<VisionReview key={`${creature}/vision`} creature={creature} />
+					) : !needs.error && creature && stage === 'sheet' ? (
+						<SheetReview key={`${creature}/sheet`} creature={creature} />
 					) : !needs.error && creature && stage ? (
 						<div className="p-6"><p className="m-0 max-w-[62ch] border border-edge bg-s1 p-4 font-body text-body text-ink-2">The {stageName(stage).toLowerCase()} stage has no review screen yet.</p></div>
 					) : !needs.error && creature ? (

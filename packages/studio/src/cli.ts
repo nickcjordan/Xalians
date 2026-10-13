@@ -9,6 +9,7 @@ import { addTokens, collectBuildCost, formatTokens, uncoveredText, zeroTokens, t
 import { applyReview, canPresent, findPart, holdChangeRefusal, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
 import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
+import { presentImages, runImage } from './images.ts';
 import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, submitStage } from './intake.ts';
 import { initCreature, listCreatureKeys, openCreature, type Store } from './store.ts';
 import { verifyAll } from './verify.ts';
@@ -49,6 +50,11 @@ const OPTIONS = {
 	'not-for': { type: 'string' },
 	precedence: { type: 'string' },
 	provisional: { type: 'boolean' },
+	stage: { type: 'string' },
+	element: { type: 'string' },
+	label: { type: 'string' },
+	'prompt-file': { type: 'string' },
+	input: { type: 'string', multiple: true },
 } as const;
 
 type Flags = ReturnType<typeof parseArgs<{ options: typeof OPTIONS; allowPositionals: true }>>['values'];
@@ -132,7 +138,7 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 	const emit = (data: unknown, text: string) => io.out(flags.json ? JSON.stringify(data, null, 2) : text);
 
 	const [cmd, ...rest] = pos;
-	if (!cmd) throw new StudioError('no command; try: init, intake, reference, stage, status, next, lock, unlock, part, hold, defect, note, build, verify');
+	if (!cmd) throw new StudioError('no command; try: init, intake, reference, image, stage, status, next, lock, unlock, part, hold, defect, note, build, verify');
 
 	if (cmd === 'verify') {
 		const result = verifyAll(root);
@@ -161,7 +167,7 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 		return;
 	}
 
-	const GROUPS = ['part', 'hold', 'defect', 'note', 'build', 'cost', 'reference', 'stage'];
+	const GROUPS = ['part', 'hold', 'defect', 'note', 'build', 'cost', 'reference', 'stage', 'image'];
 	const grouped = GROUPS.includes(cmd);
 	const sub = grouped ? rest[0] : undefined;
 	const key = grouped ? rest[1] : rest[0];
@@ -231,6 +237,8 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 			emit({ stage, status: 'in-review' }, `submitted stage ${stage} for Nick's review`);
 			return;
 		}
+		case 'image':
+			return imageCommand(store, sub, flags, emit, actor, copts);
 		case 'cost':
 			return costCommand(store, sub, args, flags, emit, mopts);
 		case 'build':
@@ -327,6 +335,25 @@ function referenceCommand(store: Store, sub: string | undefined, args: string[],
 		return;
 	}
 	throw new StudioError('usage: reference add|edit|target <key> ...');
+}
+
+function imageCommand(store: Store, sub: string | undefined, flags: Flags, emit: Emit, actor: Actor, copts: COpts): void {
+	const who = { actor, ...copts };
+	if (sub === 'run') {
+		const build = runImage(store, { stage: need(flags, 'stage'), element: need(flags, 'element'), label: need(flags, 'label'), promptFile: resolve(need(flags, 'prompt-file')), inputs: flags.input ?? [], governs: csv(flags.governs), notFor: csv(flags['not-for']) }, who);
+		if (build.status === 'failed') {
+			emit(build, `image ${build.alias} failed after ${build.cost.wallMinutes ?? '?'} min`);
+			throw new StudioError(`image ${build.alias} failed: ${(build.image?.failure ?? '').split(/[\r\n]/)[0]}`);
+		}
+		emit(build, `image ${build.alias} reported (${build.image!.label}, ${build.cost.wallMinutes} min, ${build.image!.codexTokens ?? 'unknown'} Codex tokens); generated file ${build.image!.generatedPath || 'not named in the reply'}`);
+		return;
+	}
+	if (sub === 'present') {
+		const builds = presentImages(store, { stage: need(flags, 'stage'), ...(flags.element ? { element: flags.element } : {}) }, who);
+		emit(builds, `presented ${builds.length} image(s): ${builds.map((b) => b.alias).join(', ')} (round ${builds[0]!.image!.round})`);
+		return;
+	}
+	throw new StudioError('usage: image run|present <key> --stage vision|sheet --element E ...');
 }
 
 function partCommand(store: Store, sub: string | undefined, flags: Flags, emit: Emit, actor: Actor, copts: COpts): void {
@@ -514,6 +541,15 @@ function formatStatus(s: StatusReport): string {
 	for (const p of s.parts) {
 		lines.push(`  ${p.alias} ${p.key} [${p.status}${p.stale ? ', STALE' : ''}] builds ${p.buildsUsed}, ${p.wallMinutesUsed} min; left ${p.budgetLeft.builds} builds, ${p.budgetLeft.wallMinutes} min${p.approvedBuild ? `; approved ${p.approvedBuild}` : ''}`);
 		for (const d of p.openDefects) lines.push(`    defect ${d.alias} (${d.attempts} attempts${p.stalledDefects.includes(d.alias) ? ', STALLED' : ''}): ${d.description}`);
+	}
+	const rounds = Object.entries(s.imageRounds);
+	if (rounds.length > 0) {
+		lines.push('', 'Image option sets presented');
+		for (const [k, n] of rounds) lines.push(`  ${k}: ${n}${n >= 3 ? ' (two regenerations did not land; try a different approach)' : ''}`);
+	}
+	if (s.stageDefects.length > 0) {
+		lines.push('', 'Problems marked on stage images');
+		for (const d of s.stageDefects) lines.push(`  ${d.alias} (${d.stage}): ${d.description}`);
 	}
 	lines.push('', 'Holds in force');
 	if (s.holds.length === 0) lines.push('  none');

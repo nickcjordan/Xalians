@@ -230,10 +230,10 @@ function imageFile(file: string): string {
 	return full;
 }
 
-/** A change to references reopens a submitted references stage. */
-function reopenReferences(store: Store, who: Who): void {
+/** A change to references reopens a submitted vision stage (the references belong to it). */
+export function reopenReferences(store: Store, who: Who): void {
 	const c = store.load().creature;
-	if (c.stages.references.status === 'in-review') store.update<'creature'>(c.id, (x) => { x.stages.references = { status: 'open' }; }, opts(who));
+	if (c.stages.vision.status === 'in-review') store.update<'creature'>(c.id, (x) => { x.stages.vision = { status: 'open' }; }, opts(who));
 }
 
 export interface ReferenceInput {

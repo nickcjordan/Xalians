@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createStudioApi, studioMiddleware, contentTypeFor, loadLibrary } from '../../../studio/api.js';
 import { studioPlugin } from '../../../studio/plugin.js';
@@ -247,7 +248,7 @@ describe('stages', () => {
 		lib.submitStage(store, 'intake', who);
 		const r = await api.route('GET', 'creatures/sx');
 		expect(r.status).toBe(200);
-		expect(r.json.stages).toHaveLength(11);
+		expect(r.json.stages).toHaveLength(12);
 		expect(r.json.stages.find((s) => s.id === 'intake').status).toBe('in-review');
 		expect(r.json.intake.silhouette.blob).toBe(blob);
 		expect(r.json.parts.map((p) => [p.key, p.status, p.dependsOn.map((d) => d.name)])).toEqual([['torso', 'proposed', []], ['neck', 'proposed', ['Torso']]]);
@@ -284,9 +285,92 @@ describe('stages', () => {
 		expect(r.json.note).toMatchObject({ by: 'nick', via: 'studio', verdict: 'approve' });
 		const board = await api.route('GET', 'creatures/sx');
 		expect(board.json.stages.find((s) => s.id === 'intake').status).toBe('approved');
-		expect(board.json.stages.find((s) => s.id === 'references').status).toBe('open');
+		expect(board.json.stages.find((s) => s.id === 'vision').status).toBe('open');
 		expect(board.json.parts.every((p) => p.status === 'not-started')).toBe(true);
 		const again = await api.route('POST', 'creatures/sx/stage-review', { body: { stage: 'intake', verdict: 'approve', text: '' }, headers: POST });
 		expect(again.status).toBe(409);
+	});
+
+	describe('vision and sheet images', () => {
+		const FAKE = fileURLToPath(new URL('../../../../../packages/studio/src/__tests__/fixtures/fake-codex.cjs', import.meta.url));
+		const savedBin = process.env.STUDIO_CODEX_BIN;
+		afterEach(() => {
+			if (savedBin === undefined) delete process.env.STUDIO_CODEX_BIN;
+			else process.env.STUDIO_CODEX_BIN = savedBin;
+		});
+
+		function prompt() {
+			const file = join(mkdtempSync(join(tmpdir(), 'studio-prompt-')), 'p.txt');
+			writeFileSync(file, 'A swatch.');
+			return file;
+		}
+
+		async function atVision() {
+			process.env.STUDIO_CODEX_BIN = FAKE;
+			const { store } = await intakeFixture();
+			lib.submitStage(store, 'intake', who);
+			lib.recordStageReview(store, { stage: 'intake', verdict: 'approve', text: '' });
+			return store;
+		}
+
+		it('lists option sets, picks one as Nick and returns the picked reference', async () => {
+			const store = await atVision();
+			const a = lib.runImage(store, { stage: 'vision', element: 'palette', label: 'A: dawn gold', promptFile: prompt(), governs: ['fur color'] }, who);
+			lib.runImage(store, { stage: 'vision', element: 'palette', label: 'B: ember', promptFile: prompt() }, who);
+			lib.presentImages(store, { stage: 'vision', element: 'palette' }, who);
+			store.releaseLock();
+			const needs = await api.route('GET', 'creatures/sx/needs');
+			expect(needs.json).toEqual([expect.objectContaining({ kind: 'stage', stage: 'vision' })]);
+			const view = await api.route('GET', 'creatures/sx/vision');
+			const palette = view.json.elements[0];
+			expect(palette).toMatchObject({ element: 'palette', rounds: 1 });
+			expect(palette.options.map((o) => o.label)).toEqual(['A: dawn gold', 'B: ember']);
+			expect((await api.route('GET', `blob/${palette.options[0].blob}`)).contentType).toBe('image/png');
+
+			expect((await api.route('POST', 'creatures/sx/pick', { body: { build: a.alias } })).status).toBe(403);
+			const r = await api.route('POST', 'creatures/sx/pick', { body: { build: a.alias, text: 'warm' }, headers: POST });
+			expect(r.status).toBe(200);
+			expect(r.json.reference).toMatchObject({ role: 'palette', governs: ['fur color'] });
+			expect(r.json.note).toMatchObject({ kind: 'decision', by: 'nick', via: 'studio' });
+			const after = await api.route('GET', 'creatures/sx/vision');
+			expect(after.json.elements[0].picked.alias).toBe(a.alias);
+			expect((await api.route('POST', 'creatures/sx/pick', { body: { build: a.alias }, headers: POST })).status).toBe(409);
+		});
+
+		it('records none of these for an element', async () => {
+			const store = await atVision();
+			lib.runImage(store, { stage: 'vision', element: 'fur', label: 'A', promptFile: prompt() }, who);
+			lib.presentImages(store, { stage: 'vision', element: 'fur' }, who);
+			store.releaseLock();
+			const bad = await api.route('POST', 'creatures/sx/element-adjust', { body: { element: 'fur', text: '' }, headers: POST });
+			expect(bad.status).toBe(409);
+			const r = await api.route('POST', 'creatures/sx/element-adjust', { body: { element: 'fur', text: 'too smooth' }, headers: POST });
+			expect(r.status).toBe(200);
+			expect(r.json.note).toMatchObject({ verdict: 'adjust', about: { stage: 'vision', element: 'fur' } });
+			const view = await api.route('GET', 'creatures/sx/vision');
+			expect(view.json.elements[0].adjust.text).toBe('too smooth');
+		});
+
+		it('serves the sheet and turns marks into defects about the sheet', async () => {
+			const store = await atVision();
+			const a = lib.runImage(store, { stage: 'vision', element: 'palette', label: 'A', promptFile: prompt() }, who);
+			lib.presentImages(store, { stage: 'vision', element: 'palette' }, who);
+			lib.pickImage(store, { build: a.alias });
+			lib.submitStage(store, 'vision', who);
+			lib.recordStageReview(store, { stage: 'vision', verdict: 'approve', text: '' });
+			const front = lib.runImage(store, { stage: 'sheet', element: 'turnaround-front', label: 'front', promptFile: prompt() }, who);
+			lib.presentImages(store, { stage: 'sheet' }, who);
+			store.releaseLock();
+			const view = await api.route('GET', 'creatures/sx/sheet');
+			expect(view.json.images.map((i) => i.element)).toEqual(['turnaround-front']);
+			const mark = { camera: 'sheet', shape: 'rect', x: 0.1, y: 0.1, w: 0.3, h: 0.3, description: 'horn missing' };
+			expect((await api.route('POST', 'creatures/sx/sheet-marks', { body: { build: front.alias, marks: [mark] } })).status).toBe(403);
+			const r = await api.route('POST', 'creatures/sx/sheet-marks', { body: { build: front.alias, marks: [mark] }, headers: POST });
+			expect(r.status).toBe(200);
+			expect(r.json.defects[0]).toMatchObject({ stage: 'sheet', origin: 'nick' });
+			const after = await api.route('GET', 'creatures/sx/sheet');
+			expect(after.json.marks).toEqual([expect.objectContaining({ description: 'horn missing', build: front.alias })]);
+			expect((await api.route('POST', 'creatures/sx/sheet-marks', { body: { build: front.alias, marks: 'x' }, headers: POST })).status).toBe(400);
+		});
 	});
 });
