@@ -237,7 +237,7 @@ export const CheckSchema = z.strictObject({
 	detail: z.string().optional(),
 });
 
-export const VISION_ELEMENTS = ['palette', 'fur', 'pattern', 'anatomy', 'eyes', 'other'] as const;
+export const VISION_ELEMENTS = ['palette', 'fur', 'glow', 'pattern', 'eyes', 'face', 'horn', 'ears', 'feet', 'tail', 'anatomy', 'other'] as const;
 export const SHEET_ELEMENTS = ['turnaround-front', 'turnaround-threequarter', 'turnaround-side', 'turnaround-back', 'turnaround-top', 'closeup', 'bare-front', 'bare-side', 'bare-back', 'other'] as const;
 
 /** One image generation run through Codex, recorded as a build. */

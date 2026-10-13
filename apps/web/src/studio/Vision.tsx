@@ -158,7 +158,7 @@ export function VisionReview({ creature }: { creature: string }) {
 					<h1 className="type-title m-0 text-[24px]">Vision board for {state.name}</h1>
 					<span className="font-body text-small text-ink-2">One pick for each element. A pick becomes a reference with a role and a precedence.</span>
 				</div>
-				{vision.elements.length === 0 ? <p className="m-0 max-w-[62ch] border border-edge bg-s1 p-4 font-body text-body text-ink-2">No options yet. The orchestrator generates a set of images for each element (color palette, fur, pattern, anatomy, eyes) and shows them here.</p> : null}
+				{vision.elements.length === 0 ? <p className="m-0 max-w-[62ch] border border-edge bg-s1 p-4 font-body text-body text-ink-2">No options yet. The orchestrator generates a set of images for each element (color palette, fur, glow, eyes, horn and so on) and shows them here.</p> : null}
 				{vision.elements.map((e) => (
 					<ElementSection
 						key={e.element}

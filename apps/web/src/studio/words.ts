@@ -101,7 +101,13 @@ export const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 
 const ELEMENT_NAME: Record<string, string> = {
 	palette: 'Color palette',
 	fur: 'Fur and texture',
+	glow: 'Glow',
 	pattern: 'Pattern',
+	face: 'Nose and mouth',
+	horn: 'Horn',
+	ears: 'Ears',
+	feet: 'Feet',
+	tail: 'Tail',
 	anatomy: 'Anatomy studies',
 	eyes: 'Eyes and expression',
 	other: 'Other',
