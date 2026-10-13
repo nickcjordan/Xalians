@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { run } from '../cli.ts';
 import { needsNick, status } from '../engine.ts';
-import { adjustElement, markSheetImage, parseCodexTokens, pickImage, presentImages, runImage, wrapperPrompt } from '../images.ts';
+import { adjustElement, markSheetImage, parseCodexTokens, pickImage, presentImages, runImage, setVisionContext, unpickImage, wrapperPrompt } from '../images.ts';
 import { proposeParts, runIntake, setReading, submitStage } from '../intake.ts';
 import { recordStageReview } from '../review.ts';
 import { sheetView, visionView } from '../stages.ts';
@@ -213,6 +213,67 @@ describe('vision picks', () => {
 		expect(view.options).toEqual([]);
 		expect(() => pickImage(store, { build: b.alias })).toThrow(/not presented/);
 		expect(verifyAll(root).errors).toEqual([]);
+	});
+
+	describe('undoing a pick', () => {
+		const nick = { actor: 'nick' as const };
+		it('removes the reference, brings the set back, keeps the pick note and records the undo', () => {
+			const store = atVision();
+			const { a, b } = twoOptions(store);
+			const picked = pickImage(store, { build: a.alias });
+			const r = unpickImage(store, { element: 'palette' }, nick);
+			expect(r.note).toMatchObject({ kind: 'decision', by: 'nick', via: 'studio', text: 'Undid the pick of A: dawn gold for palette' });
+			const data = store.load();
+			expect(data.references.find((x) => x.id === picked.reference.id)).toBeUndefined();
+			expect(data.builds.find((x) => x.id === a.id)!.status).toBe('presented');
+			expect(data.builds.find((x) => x.id === b.id)!.status).toBe('presented');
+			expect(data.notes.find((n) => n.id === picked.note.id)).toBeDefined();
+			const view = visionView(data).elements.find((e) => e.element === 'palette')!;
+			expect(view.picked).toBeUndefined();
+			expect(view.options.map((o) => o.alias)).toEqual([a.alias, b.alias]);
+			expect(verifyAll(root).errors).toEqual([]);
+			// The set can be picked again.
+			expect(pickImage(store, { build: b.alias }).reference.role).toBe('palette');
+		});
+
+		it('is refused for the orchestrator and when nothing is picked', () => {
+			const store = atVision();
+			const { a } = twoOptions(store);
+			pickImage(store, { build: a.alias });
+			expect(() => unpickImage(store, { element: 'palette' }, who)).toThrow(/only Nick/);
+			expect(store.load().references).toHaveLength(1);
+			expect(() => unpickImage(store, { element: 'fur' }, nick)).toThrow(/no pick to undo/);
+		});
+
+		it('reopens a vision stage that was waiting for review', () => {
+			const store = atVision();
+			const { a } = twoOptions(store);
+			pickImage(store, { build: a.alias });
+			submitStage(store, 'vision', who);
+			expect(store.load().creature.stages.vision.status).toBe('in-review');
+			unpickImage(store, { element: 'palette' }, nick);
+			expect(store.load().creature.stages.vision.status).toBe('open');
+		});
+
+		it('is refused once the vision stage is approved', () => {
+			const store = atVision();
+			const { a } = twoOptions(store);
+			pickImage(store, { build: a.alias });
+			submitStage(store, 'vision', who);
+			recordStageReview(store, { stage: 'vision', verdict: 'approve', text: '' });
+			expect(() => unpickImage(store, { element: 'palette' }, nick)).toThrow(/approved/);
+			expect(store.load().references).toHaveLength(1);
+		});
+	});
+
+	it('stores the vision context and serves it in the vision view', () => {
+		const store = atVision();
+		const ctx = { palette: { description: ['golden fur'], silhouette: 'paler mask', note: 'gold is open' }, fur: { description: [] } };
+		setVisionContext(store, ctx, who);
+		expect(visionView(store.load()).context).toEqual(ctx);
+		expect(() => setVisionContext(store, { palette: { description: [], extra: 1 } }, who)).toThrow();
+		expect(() => setVisionContext(store, { nonsense: { description: [] } }, who)).toThrow(/not a vision element/);
+		expect(visionView(store.load()).canUnpick).toBe(true);
 	});
 
 	it('refuses a second pick for an element that is already picked', () => {

@@ -138,6 +138,12 @@ export function createStudioApi({ repoRoot }) {
 				return json(200, { note: result.note, reference: result.reference });
 			}
 
+			if (method === 'POST' && parts[2] === 'unpick' && parts.length === 3) {
+				need(body && typeof body === 'object', 'expected a JSON body');
+				const result = lib.unpickImage(store, { element: String(body.element ?? '') }, { actor: 'nick' });
+				return json(200, { note: result.note, builds: result.builds.map((b) => b.alias) });
+			}
+
 			if (method === 'POST' && parts[2] === 'element-adjust' && parts.length === 3) {
 				need(body && typeof body === 'object', 'expected a JSON body');
 				const note = lib.adjustElement(store, { element: String(body.element ?? ''), text: typeof body.text === 'string' ? body.text : '' });

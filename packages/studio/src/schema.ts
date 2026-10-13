@@ -143,12 +143,20 @@ export const IntakeSchema = z.strictObject({
 	reading: ReadingSchema.optional(),
 });
 
+/** What the species description and silhouette say about each vision element, shown above its options. */
+export const VisionContextSchema = z.record(z.string().min(1), z.strictObject({
+	description: z.array(z.string()),
+	silhouette: z.string().optional(),
+	note: z.string().optional(),
+}));
+
 export const CreatureSchema = record('C', {
 	key: z.string().regex(/^[a-z0-9][a-z0-9-]*$/),
 	name: z.string().min(1),
 	speciesTemplate: z.string(),
 	silhouette: z.string(),
 	intake: IntakeSchema.optional(),
+	visionContext: VisionContextSchema.optional(),
 	stages: StagesSchema,
 	defaultBudget: budget,
 	provenance: z.string().optional(),

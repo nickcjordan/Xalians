@@ -340,6 +340,21 @@ describe('stages', () => {
 			expect((await api.route('POST', 'creatures/sx/pick', { body: { build: a.alias }, headers: POST })).status).toBe(409);
 		});
 
+		it('undoes a pick as Nick and refuses without the header', async () => {
+			const store = await atVision();
+			const a = lib.runImage(store, { stage: 'vision', element: 'palette', label: 'A', promptFile: prompt() }, who);
+			lib.presentImages(store, { stage: 'vision', element: 'palette' }, who);
+			lib.pickImage(store, { build: a.alias });
+			store.releaseLock();
+			expect((await api.route('POST', 'creatures/sx/unpick', { body: { element: 'palette' } })).status).toBe(403);
+			const r = await api.route('POST', 'creatures/sx/unpick', { body: { element: 'palette' }, headers: POST });
+			expect(r.status).toBe(200);
+			const view = await api.route('GET', 'creatures/sx/vision');
+			expect(view.json.elements[0].options).toHaveLength(1);
+			expect(view.json.canUnpick).toBe(true);
+			expect((await api.route('POST', 'creatures/sx/unpick', { body: { element: 'palette' }, headers: POST })).status).toBe(409);
+		});
+
 		it('records none of these for an element', async () => {
 			const store = await atVision();
 			lib.runImage(store, { stage: 'vision', element: 'fur', label: 'A', promptFile: prompt() }, who);

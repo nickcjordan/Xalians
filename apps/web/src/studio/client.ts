@@ -69,6 +69,7 @@ export const api = {
 	vision: (creature: string) => send<VisionView>('GET', `creatures/${encodeURIComponent(creature)}/vision`),
 	sheet: (creature: string) => send<SheetView>('GET', `creatures/${encodeURIComponent(creature)}/sheet`),
 	pick: (creature: string, body: { build: string; text: string }) => send<unknown>('POST', `creatures/${encodeURIComponent(creature)}/pick`, body),
+	unpick: (creature: string, body: { element: string }) => send<unknown>('POST', `creatures/${encodeURIComponent(creature)}/unpick`, body),
 	elementAdjust: (creature: string, body: { element: string; text: string }) => send<unknown>('POST', `creatures/${encodeURIComponent(creature)}/element-adjust`, body),
 	sheetMarks: (creature: string, body: { build: string; marks: MarkDraft[] }) => send<{ defects: { alias: string }[] }>('POST', `creatures/${encodeURIComponent(creature)}/sheet-marks`, body),
 	stageReview: (creature: string, body: { stage: string; verdict: 'approve' | 'adjust' | 'reject'; text: string }) =>

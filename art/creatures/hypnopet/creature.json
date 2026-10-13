@@ -1,9 +1,9 @@
 {
   "id": "C-01M4SD0NQBWM6MCZJ79JKJF1PN",
   "alias": "C-5lik",
-  "rev": 6,
+  "rev": 7,
   "createdAt": "2026-10-13T01:11:16.971Z",
-  "updatedAt": "2026-10-13T01:59:13.883Z",
+  "updatedAt": "2026-10-13T13:34:16.483Z",
   "createdBy": "orchestrator",
   "key": "hypnopet",
   "name": "Hypnopet",
@@ -113,6 +113,67 @@
         }
       ],
       "questions": []
+    }
+  },
+  "visionContext": {
+    "palette": {
+      "description": [
+        "Hypnopets resemble glowing, golden-furred bunny rabbits",
+        "Glowing golden fur",
+        "Habitat: the fungal forests and mists of Telypso"
+      ],
+      "silhouette": "A paler face mask and chest than the rest of the coat.",
+      "note": "The description fixes golden fur; the exact gold, the paler areas and the accent colors are open."
+    },
+    "glow": {
+      "description": [
+        "Hypnopets resemble glowing, golden-furred bunny rabbits",
+        "Glowing golden fur",
+        "Their natural empathic healing abilities served to balance and treat patients"
+      ],
+      "silhouette": "Not shown in a silhouette.",
+      "note": "The fur itself glows. The horn's pulsing, swirling color is a separate effect (the horn set and later animation)."
+    },
+    "fur": {
+      "description": [
+        "golden-furred bunny rabbits",
+        "Covering: fur"
+      ],
+      "silhouette": "Shaggy, tufted fur on the crown, cheeks and chest; smooth along the ears and legs.",
+      "note": "Fur length and texture are open."
+    },
+    "eyes": {
+      "description": [
+        "Very large eyes"
+      ],
+      "silhouette": "Big round eyes with large catch lights, set wide in a pale face mask.",
+      "note": "Size is fixed (very large); the eye design and iris are open."
+    },
+    "face": {
+      "description": [
+        "It reads the state of whoever is near it and steadies them",
+        "Service animals and therapists"
+      ],
+      "silhouette": "A small rounded nose and a wide, open, happy mouth.",
+      "note": "The description names no nose or mouth design; its role as a calming therapist suggests a friendly, gentle face."
+    },
+    "horn": {
+      "description": [
+        "A single color-changing unicorn horn atop the head",
+        "When their horn begins to pulse and swirl with psychedelic color, it hypnotizes others and locks them in a trance"
+      ],
+      "silhouette": "A ridged spiral horn rising from a tuft of fur on the crown.",
+      "note": "A single horn atop the head is mandatory. Its spiral style and resting color are open; the color change and pulse are animation, recorded for later."
+    },
+    "pattern": {
+      "description": [],
+      "silhouette": "A paler face mask and chest; no other markings shown.",
+      "note": "The description names no pattern, so any pattern is a design choice."
+    },
+    "tail": {
+      "description": [],
+      "silhouette": "No tail visible (seated, front-facing pose).",
+      "note": "The description names no tail; a rabbit tail is assumed and its size and fluff are open."
     }
   },
   "stages": {

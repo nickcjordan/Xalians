@@ -83,6 +83,8 @@ export interface Store {
 	update<K extends Kind>(idOrAlias: string, change: Change<K>, opts: MutateOptions): RecordMap[K];
 	/** Deletes a part that is still only proposed. Nothing else is ever deleted. */
 	removeProposedPart(idOrAlias: string, opts: MutateOptions): void;
+	/** Deletes one reference record. Only a pick's reference is ever removed, and only by unpickImage. */
+	removeReference(idOrAlias: string, opts: MutateOptions): void;
 	readLock(): LockInfo | undefined;
 	acquireLock(session: string): LockInfo;
 	releaseLock(): void;
@@ -260,6 +262,12 @@ export function openCreature(repoRoot: string, key: string): Store {
 			if (!found || found.kind !== 'part') throw new StudioError(`no part ${idOrAlias} in ${key}`);
 			if ((found.record as RecordMap['part']).status !== 'proposed') throw new StudioError(`part ${found.record.alias} is not a proposed part; only proposed parts can be removed`);
 			unlinkSync(fileFor('part', found.record.id));
+		},
+		removeReference(idOrAlias, opts) {
+			if (!opts.bypassLock) assertCanMutate(opts.session);
+			const found = store.get(idOrAlias);
+			if (!found || found.kind !== 'reference') throw new StudioError(`no reference ${idOrAlias} in ${key}`);
+			unlinkSync(fileFor('reference', found.record.id));
 		},
 		readLock,
 		acquireLock(session) {

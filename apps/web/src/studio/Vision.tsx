@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
-import { api, blobUrl, usePolled, type ImageView, type ReferenceView, type VisionElementView } from './client';
+import { api, blobUrl, usePolled, type ImageView, type ReferenceView, type VisionElementView, type VisionView } from './client';
 import { Panel } from './Panels';
 import { plate, ReferenceLarge, StageVerdict, WordList } from './Stages';
 import { elementName, minutes, tokens as tokenWord } from './words';
@@ -52,7 +52,26 @@ function OptionCard({ image, index, busy, onPick }: { image: ImageView; index: n
 	);
 }
 
-function ElementSection({ creature, element, onChanged, onOpenPicked }: { creature: string; element: VisionElementView; onChanged: () => void; onOpenPicked: (blob: string) => void }) {
+type ElementContext = VisionView['context'][string];
+
+function ContextBlock({ context }: { context: ElementContext | undefined }) {
+	const lines = context?.description ?? [];
+	return (
+		<div className="flex max-w-[80ch] flex-col gap-1 border-l-4 border-edge-strong bg-s0 p-3 font-body text-small text-ink-2">
+			<p className="type-legend m-0 text-[10.5px] text-ink">What your description says</p>
+			{lines.length > 0 ? (
+				<ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+					{lines.map((l) => <li key={l}>&ldquo;{l}&rdquo;</li>)}
+				</ul>
+			) : <p className="m-0">Nothing in the description.</p>}
+			{context?.silhouette ? <p className="m-0"><span className="font-bold text-ink">From your silhouette:</span> {context.silhouette}</p> : null}
+			{context?.note ? <p className="m-0">{context.note}</p> : null}
+		</div>
+	);
+}
+
+function ElementSection({ creature, element, context, canUnpick, onChanged, onOpenPicked }: { creature: string; element: VisionElementView; context: ElementContext | undefined; canUnpick: boolean; onChanged: () => void; onOpenPicked: (blob: string) => void }) {
+	const [confirmUndo, setConfirmUndo] = React.useState(false);
 	const [busy, setBusy] = React.useState(false);
 	const [error, setError] = React.useState<string | null>(null);
 	const [none, setNone] = React.useState('');
@@ -85,6 +104,8 @@ function ElementSection({ creature, element, onChanged, onOpenPicked }: { creatu
 				{element.rounds >= 3 && !picked ? <Badge variant="warn"><TriangleAlert />Two sets did not land</Badge> : null}
 			</div>
 
+			<ContextBlock context={context} />
+
 			{picked ? (
 				<div className="flex min-w-0 flex-wrap gap-4 border border-edge-strong bg-s2 p-3">
 					<button
@@ -100,6 +121,19 @@ function ElementSection({ creature, element, onChanged, onOpenPicked }: { creatu
 						<WordList label="Governs" items={picked.governs} empty="Nothing" />
 						<WordList label="Do not use for" items={picked.notFor} empty="Nothing excluded" />
 						<Facts image={picked} />
+						{canUnpick ? (
+							confirmUndo ? (
+								<div role="group" aria-label={`Undo the ${name.toLowerCase()} pick`} className="flex flex-col gap-2 border border-edge-strong bg-s1 p-2">
+									<p className="m-0 font-body text-small text-ink">Undo? The options come back so you can choose again.</p>
+									<div className="flex flex-wrap gap-2">
+										<Button type="button" variant="secondary" disabled={busy} onClick={() => void run(async () => { await api.unpick(creature, { element: element.element }); setConfirmUndo(false); })}><RotateCcw /> Yes, undo this pick</Button>
+										<Button type="button" variant="ghost" disabled={busy} onClick={() => setConfirmUndo(false)}>Keep the pick</Button>
+									</div>
+								</div>
+							) : (
+								<div><Button type="button" variant="secondary" disabled={busy} onClick={() => setConfirmUndo(true)}><RotateCcw /> Undo this pick</Button></div>
+							)
+						) : null}
 					</div>
 				</div>
 			) : null}
@@ -164,6 +198,8 @@ export function VisionReview({ creature }: { creature: string }) {
 						key={e.element}
 						creature={creature}
 						element={e}
+						context={vision.context?.[e.element]}
+						canUnpick={vision.canUnpick !== false}
 						onChanged={changed}
 						onOpenPicked={(blob) => { const r = byBlob(blob); if (r) setOpen(r.id); }}
 					/>

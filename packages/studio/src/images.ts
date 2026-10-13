@@ -4,7 +4,7 @@ import { basename, join, relative, resolve, sep } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { putFile, storeRoot } from './blobs.ts';
 import { StudioError } from './errors.ts';
-import { SHEET_ELEMENTS, VISION_ELEMENTS, type Build, type Defect, type Note, type Reference } from './schema.ts';
+import { SHEET_ELEMENTS, VISION_ELEMENTS, VisionContextSchema, type Build, type Defect, type Note, type Reference } from './schema.ts';
 import type { Who } from './intake.ts';
 import type { MarkInput } from './review.ts';
 import type { Store } from './store.ts';
@@ -244,6 +244,48 @@ export function pickImage(store: Store, input: PickInput): { note: Note; referen
 	store.update<'build'>(chosen.id, (b) => { b.status = 'reviewed'; }, NICK);
 	for (const b of others) store.update<'build'>(b.id, (x) => { x.status = 'superseded'; }, NICK);
 	return { note, reference, chosen: store.get(chosen.id)!.record as Build };
+}
+
+/**
+ * Nick takes back the pick for one vision element (through the studio screen only). The pick's
+ * reference is deleted, the chosen option and the options that pick set aside come back as a
+ * presented set, and a vision stage that was waiting for review goes back to open. The pick's
+ * decision note stays as history.
+ */
+export function unpickImage(store: Store, input: { element: string }, who: Who): { note: Note; builds: Build[] } {
+	if (who.actor !== 'nick') throw new StudioError('only Nick can undo a pick, in the studio screen');
+	const data = store.load();
+	const stage = data.creature.stages.vision;
+	if (stage.status === 'approved') throw new StudioError('the vision stage is approved; a pick can no longer be undone');
+	const vision = data.builds.filter((b) => b.kind === 'image' && b.image?.stage === 'vision' && b.image.element === input.element);
+	const chosen = [...vision].sort((a, b) => a.createdAt.localeCompare(b.createdAt)).reverse().find((b) => b.status === 'reviewed');
+	if (!chosen || !chosen.image) throw new StudioError(`${input.element} has no pick to undo`);
+	const blob = chosen.outputs[0]?.blob;
+	const reference = data.references.find((r) => r.blob === blob && r.role === input.element);
+	if (reference?.derivedTargets?.length) throw new StudioError(`the ${input.element} reference ${reference.alias} already has derived targets; ask the orchestrator to change it instead`);
+	const note = store.create('note', {
+		kind: 'decision',
+		about: { stage: 'vision', build: chosen.id, element: input.element },
+		by: 'nick',
+		via: 'studio',
+		text: `Undid the pick of ${chosen.image.label} for ${input.element}`,
+		date: new Date().toISOString().slice(0, 10),
+	}, 'nick', { bypassLock: true });
+	if (reference) store.removeReference(reference.id, NICK);
+	// The set that pick settled: the chosen build and the builds set aside in the same round.
+	const round = chosen.image.round;
+	const set = vision.filter((b) => b.id === chosen.id || (b.status === 'superseded' && b.image?.round === round));
+	for (const b of set) store.update<'build'>(b.id, (x) => { x.status = 'presented'; }, NICK);
+	if (stage.status === 'in-review') store.update<'creature'>(data.creature.id, (c) => { c.stages.vision = { status: 'open' }; }, NICK);
+	return { note, builds: set.map((b) => store.get(b.id)!.record as Build) };
+}
+
+/** The orchestrator records what the description and silhouette say about each element, shown above its options. */
+export function setVisionContext(store: Store, input: unknown, who: Who): Record<string, { description: string[]; silhouette?: string; note?: string }> {
+	const context = VisionContextSchema.parse(input);
+	for (const el of Object.keys(context)) if (!VISION_ELEMENTS.includes(el as never)) throw new StudioError(`${el} is not a vision element; use one of ${VISION_ELEMENTS.join(', ')}`);
+	store.update<'creature'>(store.load().creature.id, (c) => { c.visionContext = context; }, opts(who));
+	return context;
 }
 
 /** Nick rejects a whole option set for an element ("none of these") in words; the set is set aside. */

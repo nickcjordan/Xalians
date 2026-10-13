@@ -9,7 +9,7 @@ import { addTokens, collectBuildCost, formatTokens, uncoveredText, zeroTokens, t
 import { applyReview, canPresent, findPart, holdChangeRefusal, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
 import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
-import { presentImages, runImage } from './images.ts';
+import { presentImages, runImage, setVisionContext } from './images.ts';
 import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, setReading, submitStage } from './intake.ts';
 import { initCreature, listCreatureKeys, openCreature, type Store } from './store.ts';
 import { verifyAll } from './verify.ts';
@@ -176,7 +176,7 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 		return;
 	}
 
-	const GROUPS = ['part', 'hold', 'defect', 'note', 'build', 'cost', 'reference', 'stage', 'image'];
+	const GROUPS = ['part', 'hold', 'defect', 'note', 'build', 'cost', 'reference', 'stage', 'image', 'vision'];
 	const grouped = GROUPS.includes(cmd);
 	const sub = grouped ? rest[0] : undefined;
 	const key = grouped ? rest[1] : rest[0];
@@ -244,6 +244,12 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 			if (sub !== 'submit' || !args[0]) throw new StudioError('usage: stage submit <key> <stage>');
 			const stage = submitStage(store, args[0], { actor, ...copts });
 			emit({ stage, status: 'in-review' }, `submitted stage ${stage} for Nick's review`);
+			return;
+		}
+		case 'vision': {
+			if (sub !== 'context') throw new StudioError('usage: vision context <key> --file context.json');
+			const ctx = setVisionContext(store, readJsonFile(need(flags, 'file')), { actor, ...copts });
+			emit(ctx, `vision context set for ${key}: ${Object.keys(ctx).join(', ')}`);
 			return;
 		}
 		case 'image':

@@ -334,6 +334,10 @@ export interface VisionElementView {
 
 export interface VisionView {
 	elements: VisionElementView[];
+	/** What the species description and silhouette say about each element, by element. */
+	context: Record<string, { description: string[]; silhouette?: string; note?: string }>;
+	/** Whether picks can still be undone (the vision stage is not approved). */
+	canUnpick: boolean;
 }
 
 export function visionView(data: CreatureData): VisionView {
@@ -342,6 +346,8 @@ export function visionView(data: CreatureData): VisionView {
 	const elements = [...new Set(builds.map((b) => b.image!.element))].sort((a, b) => (order.get(a) ?? 99) - (order.get(b) ?? 99) || a.localeCompare(b));
 	const rounds = imageRounds(data);
 	return {
+		context: data.creature.visionContext ?? {},
+		canUnpick: data.creature.stages.vision.status !== 'approved',
 		elements: elements.map((element) => {
 			const mine = builds.filter((b) => b.image!.element === element).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 			const options = mine.filter((b) => b.status === 'presented').map(imageView);
