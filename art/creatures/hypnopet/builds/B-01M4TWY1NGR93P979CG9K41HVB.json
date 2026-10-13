@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TWY1NGR93P979CG9K41HVB",
   "alias": "B-ivyn",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T15:08:42.544Z",
-  "updatedAt": "2026-10-13T15:12:28.597Z",
+  "updatedAt": "2026-10-13T15:40:27.176Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -54,7 +54,7 @@
   "cost": {
     "wallMinutes": 1.34
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T15:08:42.538Z",
   "endedAt": "2026-10-13T15:10:02.975Z",
   "deadline": "2026-10-13T15:23:42.538Z"

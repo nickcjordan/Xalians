@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TWXXWWDXS4YV18WBZ3CRM9",
   "alias": "B-ysmr",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T15:08:38.684Z",
-  "updatedAt": "2026-10-13T15:12:28.584Z",
+  "updatedAt": "2026-10-13T15:40:26.131Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -54,7 +54,7 @@
   "cost": {
     "wallMinutes": 1.57
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T15:08:38.677Z",
   "endedAt": "2026-10-13T15:10:12.630Z",
   "deadline": "2026-10-13T15:23:38.677Z"

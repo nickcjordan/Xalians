@@ -1,0 +1,53 @@
+{
+  "id": "B-01M4TYN112CPWS0JDDZQER2RXP",
+  "alias": "B-xmps",
+  "rev": 3,
+  "createdAt": "2026-10-13T15:38:44.130Z",
+  "updatedAt": "2026-10-13T15:40:29.783Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "sheet",
+    "element": "bare-front",
+    "label": "Flesh under the fur, front",
+    "summary": "The flesh the 3D model is built from, front: smaller skull than the fluffy head, slim cheeks and chest, soft rounded cartoon limbs; the fluff comes later from the fur",
+    "prompt": "Edit the attached flesh-front.png. It is the flesh under the fur of a cartoon creature, but it came out too realistic and gaunt, like a hairless cat. Keep everything that is right: the hairless matte gray clay, the short tail stub, the skull smaller than the fluffy furred head (see view-front.png for the furred version), the slim neck and chest, the thin smooth ear shells, the horn rising straight from the smooth skull, the pose, the camera angle, the white background. Change only this: make the flesh soft and rounded like a cartoon animal sculpture, with no visible ribs, spine bumps, tendons or bony joints; slightly fuller, smoothly rounded limbs (still thinner than the fluffy furred legs); big rounded haunches and long hind feet; the very large glossy eyes as large as in view-front.png; the friendly, happy open mouth from view-front.png. No fur, no hair, no tufts. No text, no labels, no watermark.",
+    "promptSha256": "f7a3c1c7d39bde7fa75ab92dca11fcef390cad0a512cb53d25ab08b2a84e1c04",
+    "inputs": [
+      {
+        "name": "flesh-front.png",
+        "blob": "e740169482ca88563b4b5f7beab1e0c2dee96258cfaf8eb1654c1c53997e3b78"
+      },
+      {
+        "name": "view-front.png",
+        "blob": "19ade5532f09ed85b1185a3f2b159e1f500864da4809d48fc4aa70644c0e4100"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a135ea-84a8-7f50-a598-69a5e512dbac\\exec-a882ab74-0e0b-4aa9-81d5-8304bf454c65.png",
+    "codexTokens": 24098,
+    "model": null,
+    "round": 3
+  },
+  "goal": {
+    "text": "Flesh under the fur, front: sheet bare-front"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "beb76514df66fc0ad3efe5c77bd9b248889323fbac041186a231d63877d7cf8b",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.14
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T15:38:44.127Z",
+  "endedAt": "2026-10-13T15:39:52.762Z",
+  "deadline": "2026-10-13T15:53:44.127Z"
+}

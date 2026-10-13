@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TWY10TV67QNHHFFJQ8Q8YS",
   "alias": "B-wxjj",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T15:08:41.882Z",
-  "updatedAt": "2026-10-13T15:12:28.591Z",
+  "updatedAt": "2026-10-13T15:40:26.646Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -54,7 +54,7 @@
   "cost": {
     "wallMinutes": 3.3
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T15:08:41.874Z",
   "endedAt": "2026-10-13T15:11:59.943Z",
   "deadline": "2026-10-13T15:23:41.874Z"

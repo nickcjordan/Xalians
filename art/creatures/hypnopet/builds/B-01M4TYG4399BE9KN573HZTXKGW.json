@@ -1,0 +1,60 @@
+{
+  "id": "B-01M4TYG4399BE9KN573HZTXKGW",
+  "alias": "B-olm3",
+  "rev": 3,
+  "createdAt": "2026-10-13T15:36:03.433Z",
+  "updatedAt": "2026-10-13T15:40:27.703Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "sheet",
+    "element": "bare-front",
+    "label": "Flesh under the fur, front",
+    "summary": "The flesh the 3D model is built from, front: a smaller skull than the fluffy head, slim cheeks and chest, real leg thickness; the fluff comes later from the fur",
+    "prompt": "Attached turnaround-v2.png, view-front.png, view-side.png and view-back.png show an original cartoon creature called a Hypnopet: a small fluffy bunny on four legs with very long lop ears, very large eyes, large rabbit hind legs with long hind feet, and a single spiral unicorn horn on top of the head. Draw the flesh under its fur, as a hairless gray clay anatomy sculpture: what is left if every hair were removed. The fur adds volume in many places, so the flesh is smaller than the furred silhouette: the skull is clearly smaller than the fluffy head, about the size of the fur-free head of a young rabbit, with the very large eyes set in it as smooth glossy balls; the cheeks are slim (the round cheek puffs are fur); the neck and chest are slimmer (the chest ruff is fur); the body is a lean rabbit body; the legs are their real thickness, thinner than the fluffy legs; the haunches and thighs are still big and powerful and the hind feet long, because that is muscle and bone, not fur; the tail is only a short, small stub of flesh at the base of the spine, because the round cotton-ball tail is made entirely of fur; the ears are thin smooth shells, slightly narrower than the furred ears and about the same length; the horn rises directly out of the smooth skull with no tuft. Matte light-gray clay, no fur, no hair, no tufts anywhere. Same neutral pose as the attached views: standing on all four legs, feet planted flat, head level, ears hanging naturally. Soft even studio lighting, plain white background, no text, no labels, no watermark. Front view, large and centered.",
+    "promptSha256": "65c1d43cc484cb3a44d57e3a8824aa50b6433997d9cd8f5ff122ab9aff293f17",
+    "inputs": [
+      {
+        "name": "turnaround-v2.png",
+        "blob": "447b50aaa0b92122ebb8c3cdacad85cc482f67bef025292f1b8b8d837dbd1c3c"
+      },
+      {
+        "name": "view-front.png",
+        "blob": "19ade5532f09ed85b1185a3f2b159e1f500864da4809d48fc4aa70644c0e4100"
+      },
+      {
+        "name": "view-side.png",
+        "blob": "3512bd17e97483ef1a111edfff2196a485dd0833d9c0c685924db98dfc92e1ef"
+      },
+      {
+        "name": "view-back.png",
+        "blob": "e2c64fc8e3f4a950b6726e32cf08caac15ff43700e5b3fdfd54c2df47fbfbe8d"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a135e8-1134-7033-9721-68fabdd3efa6\\exec-5bf6ddbc-fbd0-4c5f-9df0-53b49249e19a.png",
+    "codexTokens": 27132,
+    "model": null
+  },
+  "goal": {
+    "text": "Flesh under the fur, front: sheet bare-front"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "e740169482ca88563b4b5f7beab1e0c2dee96258cfaf8eb1654c1c53997e3b78",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.44
+  },
+  "status": "superseded",
+  "startedAt": "2026-10-13T15:36:03.418Z",
+  "endedAt": "2026-10-13T15:37:29.880Z",
+  "deadline": "2026-10-13T15:51:03.418Z"
+}
