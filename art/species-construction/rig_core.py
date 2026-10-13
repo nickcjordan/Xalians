@@ -114,7 +114,8 @@ def centerline(skin, mask, zs, tol=.008):
 def derive_joints(skin, claws=None):
     """Joint positions from the skin mesh (an (n,3) array of the one fused skin
     object). Heuristic and recorded: cross-section centerlines, two-line knee
-    and elbow fits, the narrowest neck section, the front crotch arch. Limbs are
+    and elbow fits, the narrowest neck section, the shoulder flare (neck base,
+    collarbones and shoulder height), the front crotch arch. Limbs are
     measured on the -x side (clear of the tails) and mirrored. claws: optional
     dict with 'fore' and 'hind' arrays of claw-centroid world positions (-x side)."""
     j = {}
@@ -170,17 +171,13 @@ def derive_joints(skin, claws=None):
     A = np.stack([az[up], np.ones(up.sum())], 1)
     cx = np.linalg.lstsq(A, ac[up][:, 0], rcond=None)[0]
     cy = np.linalg.lstsq(A, ac[up][:, 1], rcond=None)[0]
-    # neck base: the highest height below the head where the body is 5x as wide as the narrowest neck
-    # section (a landmark on the shoulders, so a longer neck moves the head and not this); the
-    # shoulder joint sits .08 below it
-    nb_z = head_z-.17
-    narrow = float(min(widths))
-    for z in np.arange(head_z-.005, head_z-.35, -.005):
-        p_ = skin[(np.abs(skin[:, 2]-z) < .004) & (skin[:, 1] < .125)]
-        if len(p_) and np.ptp(p_[:, 0]) >= 5*narrow:
-            nb_z = float(z)
-            break
-    shoulder_z = nb_z-.08
+    # neck base and shoulder line from the shoulder flare (see neck_shoulder_landmarks); the collarbones
+    # sit on the shoulder line and the shoulder joint one upper-arm half-thickness below it
+    nb_z, line_z = neck_shoulder_landmarks(skin, head_z, max(elbow_z, crotch))
+    top = az.max()
+    arm_top = skin[arm_mask & (np.abs(skin[:, 2]-top) < .008)]
+    arm_half = float(np.ptp(arm_top[:, 1]))/2 if len(arm_top) > 20 else 0.
+    shoulder_z = line_z-arm_half
     j['shoulder.R'] = [float(cx[0]*shoulder_z+cx[1]), None, shoulder_z]
     ex = float(ac[k][0]); ey = float(ac[k][1])
     j['elbow.R'] = [ex, ey, elbow_z]
@@ -200,11 +197,12 @@ def derive_joints(skin, claws=None):
     j['pelvis'] = [0., mid_y(hip_z), hip_z]
     j['waist'] = [0., mid_y(hip_z+.14), hip_z+.14]
     j['chest'] = [0., mid_y(shoulder_z-.09), shoulder_z-.09]
-    j['clavicle'] = [0., mid_y(shoulder_z+.03), shoulder_z+.03]
+    j['clavicle'] = [0., mid_y(line_z), line_z]
     j['neck_base'] = [0., mid_y(nb_z), nb_z]
     j['shoulder.R'][1] = j['clavicle'][1]
     j['shoulder.L'] = [-j['shoulder.R'][0], j['shoulder.R'][1], shoulder_z]
-    j['head_base'] = [0., float(np.median(skin[(np.abs(skin[:, 2]-head_z) < .01)][:, 1])), head_z]
+    # head base on the neck column's depth midline at its narrowest section
+    j['head_base'] = [0., mid_y(head_z), head_z]
     j['head_top'] = [0., j['head_base'][1], zmax]
     # tail root: the rear edge of the buttocks, where the tails leave the body
     rear = front[(np.abs(front[:, 0]) < .15) & (front[:, 2] < hip_z-.05) & (front[:, 2] > hip_z-.35)]
@@ -212,8 +210,50 @@ def derive_joints(skin, claws=None):
     tails = skin[skin[:, 1] > .125]
     j['tail_tip'] = [0., float(tails[:, 1].mean()), float(tails[:, 2].mean())]
     j['_meta'] = {'floorZ': floor, 'crotchZ': crotch, 'kneeZ': knee_z, 'elbowZ': elbow_z, 'headZ': head_z,
-                  'topZ': zmax}
+                  'topZ': zmax, 'neckBaseZ': nb_z, 'shoulderLineZ': line_z}
     return j
+
+
+def neck_shoulder_landmarks(skin, head_z, low_z, step=.005, gap=.01):
+    """(neck base z, shoulder line z) from the front-view width of the body (tails excluded) between the
+    narrowest neck section and the armpit, the highest section below it where the arm stands clear of the
+    trunk by more than `gap` (searched down to low_z, the elbow or the crotch, whichever is higher; below
+    the armpit the width measures the arms' splay, not the shoulders). Going down from the neck the width
+    stays near the neck's, rises steeply where the shoulders slope out (the flare), then flattens across
+    the shoulders. The top of the shoulder slope is where the tangent at the steepest point of the flare
+    meets the neck's width: where the sides of the neck column meet the shoulders. The shoulder line
+    (collarbones, the top of the chest) is the break of the best two-line fit of width against height
+    between the steepest point and the armpit: where the flare turns into the shoulders, level with
+    where the front of the neck meets the chest. The neck's base ring is tilted between those two
+    heights, so the neck base joint sits midway between them. Every height follows the mesh; nothing is
+    a fixed offset from another joint."""
+    body = skin[skin[:, 1] < .125]
+    zs, w = [], []
+    for z in np.arange(head_z, low_z, -step):
+        p = body[np.abs(body[:, 2]-z) < .004]
+        if len(p) < 2:
+            continue
+        x = np.sort(p[p[:, 0] < 0][:, 0])
+        if len(zs) > 3 and len(x) > 1 and np.diff(x).max() > gap:
+            break
+        zs.append(z)
+        w.append(np.ptp(p[:, 0]))
+    zs, w = np.array(zs), np.array(w)
+    if len(zs) < 12:
+        z = float(zs[-1]) if len(zs) else head_z-step
+        return z, z
+    k = 5    # smooth over 5 rows (.025) so one remesh row does not set the slope
+    ws = np.convolve(np.pad(w, k//2, mode='edge'), np.ones(k)/k, mode='valid')
+    slope = np.gradient(ws, -zs)    # width gained per unit of height going down
+    i = int(np.argmax(slope))
+    s = float(slope[i])
+    if s <= 0:
+        return head_z-step, head_z-step
+    slope_top = float(zs[i])+(float(ws[i])-float(ws[0]))/s
+    slope_top = min(max(slope_top, float(zs[i])), head_z-step)
+    n = len(zs)-i
+    line_z = float(zs[i+two_segment_break(zs[i:], ws[i:, None], 3, n-3)]) if n >= 8 else float(zs[-1])
+    return (slope_top+line_z)/2, line_z
 
 
 # ---------------------------------------------------------------- skeleton
