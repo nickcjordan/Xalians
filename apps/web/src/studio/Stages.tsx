@@ -128,7 +128,7 @@ export function CreatureBoard({ creature, state, summaries }: { creature: string
 			<section aria-label="Stage track" className="flex flex-col gap-2">
 				<h2 className="type-subhead m-0 text-[15px]">Stages</h2>
 				<StageTrack stages={state.stages} creature={creature} />
-				<p className="m-0 font-body text-small text-ink-2">The first eight are the work. The last three are reserved for later and not built yet. A stage is approved only when you press the button on its review.</p>
+				<p className="m-0 font-body text-small text-ink-2">The first nine are the work. The last three are reserved for later and not built yet. A stage is approved only when you press the button on its review.</p>
 				{state.stages.filter((s) => s.stale).map((s) => (
 					<p key={s.id} className="m-0 flex items-start gap-2 border-l-2 border-caution bg-caution-tint p-2 font-body text-small text-ink">
 						<AlertTriangle className="mt-0.5 size-4 shrink-0 text-caution" aria-hidden="true" />
@@ -173,7 +173,7 @@ export function StageVerdict({ creature, stage, notes, onDone, approveHint }: { 
 	const [error, setError] = React.useState<string | null>(null);
 	const [sent, setSent] = React.useState<{ verdict: string; text: string } | null>(null);
 
-	const mine = notes.filter((n) => n.about?.stage === stage.id);
+	const mine = notes.filter((n) => n.about?.stage === stage.id && n.verdict && !n.about.element);
 	const last = mine[mine.length - 1];
 	const name = stageName(stage.id);
 
@@ -315,13 +315,13 @@ export function IntakeReview({ creature }: { creature: string }) {
 }
 
 // ---------------------------------------------------------------------------
-// References review
+// Reference helpers (the vision board shows references the orchestrator added by hand)
 // ---------------------------------------------------------------------------
 
 /** A line-art SVG (black on transparent) needs a light plate to read on the dark room. */
-const plate = (r: ReferenceView) => (r.fileName.toLowerCase().endsWith('.svg') ? 'bg-ink' : 'bg-s0');
+export const plate = (r: ReferenceView) => (r.fileName.toLowerCase().endsWith('.svg') ? 'bg-ink' : 'bg-s0');
 
-function WordList({ label, items, empty }: { label: string; items: string[]; empty: string }) {
+export function WordList({ label, items, empty }: { label: string; items: string[]; empty: string }) {
 	return (
 		<div>
 			<p className="type-legend m-0">{label}</p>
@@ -330,7 +330,7 @@ function WordList({ label, items, empty }: { label: string; items: string[]; emp
 	);
 }
 
-function ReferenceLarge({ reference, onClose }: { reference: ReferenceView | null; onClose: () => void }) {
+export function ReferenceLarge({ reference, onClose }: { reference: ReferenceView | null; onClose: () => void }) {
 	const [overlayOn, setOverlayOn] = React.useState(false);
 	const [targetKind, setTargetKind] = React.useState<string>('');
 	React.useEffect(() => {
@@ -373,55 +373,5 @@ function ReferenceLarge({ reference, onClose }: { reference: ReferenceView | nul
 				) : null}
 			</DialogContent>
 		</Dialog>
-	);
-}
-
-export function ReferencesReview({ creature }: { creature: string }) {
-	const { data: state, error, refresh } = usePolled(() => api.creature(creature), `refs-state:${creature}`, 4000);
-	const { data: refs } = usePolled(() => api.references(creature), `refs:${creature}`, 4000);
-	const [open, setOpen] = React.useState<string | null>(null);
-	if (error && !state) return <p role="alert" className="m-6 font-body text-body text-plague-outline-ink">{error}</p>;
-	if (!state || !refs) return null;
-	const stage = state.stages.find((s) => s.id === 'references')!;
-	const opened = refs.find((r) => r.id === open) ?? null;
-	return (
-		<div className="flex h-full min-h-0">
-			<div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3">
-				<div className="flex flex-wrap items-baseline gap-3">
-					<h1 className="type-title m-0 text-[24px]">References for {state.name}</h1>
-					<span className="font-body text-small text-ink-2">Sorted by precedence: when two images disagree, the lower number wins.</span>
-				</div>
-				{refs.length === 0 ? <p className="m-0 max-w-[62ch] border border-edge bg-s1 p-4 font-body text-body text-ink-2">No references yet. The orchestrator adds each image with a role, what it governs and what it must not be used for.</p> : null}
-				<ul className="m-0 grid list-none gap-3 p-0 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
-					{refs.map((r) => (
-						<li key={r.id} className="flex min-w-0">
-							<button
-								type="button"
-								onClick={() => setOpen(r.id)}
-								aria-label={`Open ${r.role} large`}
-								className="flex w-full min-w-0 flex-col gap-2 border border-edge-strong bg-s1 p-3 text-left outline-none hover:bg-s2 focus-visible:outline-2 focus-visible:outline-ring"
-							>
-								<span className="flex items-center gap-2">
-									<span className="type-data border border-edge-strong px-1.5 text-[12px] text-ink">{r.precedence}</span>
-									<span className="type-legend text-[10.5px]">Precedence</span>
-									{r.derivedTargets.length > 0 ? <Badge className="ml-auto"><Layers />Has target</Badge> : null}
-								</span>
-								<img src={blobUrl(r.blob)} alt="" className={cn('block h-44 w-full border border-edge object-contain', plate(r))} />
-								<span className="type-heading text-[16px] text-ink">{r.role}</span>
-								<WordList label="Governs" items={r.governs} empty="Nothing" />
-								<WordList label="Do not use for" items={r.mustNotBeUsedFor} empty="Nothing excluded" />
-							</button>
-						</li>
-					))}
-				</ul>
-			</div>
-			<div className="flex w-[420px] shrink-0 flex-col gap-3 overflow-y-auto border-l border-edge bg-s0 p-3 min-[1700px]:w-[460px]">
-				<StageVerdict creature={creature} stage={stage} notes={state.stageNotes} onDone={() => void refresh()} approveHint="Approving fixes each image's role and precedence. Changing a reference later shows this stage as out of date." />
-				<Panel title="How to read this">
-					<p className="m-0 font-body text-small text-ink-2">Each card says what the image decides, and what it must not be used for. Click a card to see the image large. Where an image has a derived target, a button lays the target over it at 50 percent.</p>
-				</Panel>
-			</div>
-			<ReferenceLarge reference={opened} onClose={() => setOpen(null)} />
-		</div>
 	);
 }

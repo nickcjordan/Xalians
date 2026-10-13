@@ -165,22 +165,22 @@ describe('submitting stages', () => {
 	it('checks the references outputs, including a unique precedence and an approved intake', () => {
 		const store = intaken();
 		addReference(store, { file: png('a.png'), role: 'side view', governs: ['proportions'], mustNotBeUsedFor: [], precedence: 1 }, who);
-		expect(() => submitStage(store, 'references', who)).toThrow(/intake stage is not approved/);
+		expect(() => submitStage(store, 'vision', who)).toThrow(/intake stage is not approved/);
 		proposeParts(store, PARTS, who);
 		submitStage(store, 'intake', who);
 		recordStageReview(store, { stage: 'intake', verdict: 'approve', text: '' });
 		const second = addReference(store, { file: png('b.png'), role: 'front view', governs: [], mustNotBeUsedFor: ['color'], precedence: 1 }, who);
-		expect(() => submitStage(store, 'references', who)).toThrow(/governs nothing/);
+		expect(() => submitStage(store, 'vision', who)).toThrow(/governs nothing/);
 		editReference(store, second.alias, { governs: ['head'] }, who);
-		expect(() => submitStage(store, 'references', who)).toThrow(/share precedence 1/);
+		expect(() => submitStage(store, 'vision', who)).toThrow(/share precedence 1/);
 		editReference(store, second.alias, { precedence: 2 }, who);
-		submitStage(store, 'references', who);
-		expect(store.load().creature.stages.references.status).toBe('in-review');
+		submitStage(store, 'vision', who);
+		expect(store.load().creature.stages.vision.status).toBe('in-review');
 	});
 });
 
 describe('stage review', () => {
-	it('approves intake with evidence, readies the parts and opens references', () => {
+	it('approves intake with evidence, readies the parts and opens vision', () => {
 		const store = intaken();
 		proposeParts(store, PARTS, who);
 		submitStage(store, 'intake', who);
@@ -193,7 +193,7 @@ describe('stage review', () => {
 		// silhouette + template + three parts
 		expect(st.evidence).toHaveLength(5);
 		expect(data.parts.every((p) => p.status === 'not-started')).toBe(true);
-		expect(data.creature.stages.references.status).toBe('open');
+		expect(data.creature.stages.vision.status).toBe('open');
 		expect(data.creature.stages.blockout.status).toBe('locked');
 		expect(verifyAll(root).errors).toEqual([]);
 		expect(staleStages(data)).toEqual([]);
@@ -207,7 +207,7 @@ describe('stage review', () => {
 		const c = store.load().creature;
 		expect(c.stages.intake).toEqual({ status: 'open', note: 'merge neck into torso' });
 		expect(store.load().parts.every((p) => p.status === 'proposed')).toBe(true);
-		expect(c.stages.references.status).toBe('locked');
+		expect(c.stages.vision.status).toBe('locked');
 	});
 
 	it('only reviews a submitted stage and needs no creature lock', () => {
@@ -252,22 +252,22 @@ describe('stage review', () => {
 		expect(s.staleStages[0]!.reason).toMatch(/template/);
 	});
 
-	it('approves references with evidence and opens blockout', () => {
+	it('approves the vision stage with evidence and opens the sheet', () => {
 		const store = intaken();
 		proposeParts(store, PARTS, who);
 		submitStage(store, 'intake', who);
 		recordStageReview(store, { stage: 'intake', verdict: 'approve', text: '' });
 		const ref = addReference(store, { file: png('a.png'), role: 'side view', governs: ['proportions'], mustNotBeUsedFor: ['color'], precedence: 1 }, who);
 		addDerivedTarget(store, ref.alias, png('t.png'), 'bare-body', true, who);
-		submitStage(store, 'references', who);
-		recordStageReview(store, { stage: 'references', verdict: 'approve', text: '' });
+		submitStage(store, 'vision', who);
+		recordStageReview(store, { stage: 'vision', verdict: 'approve', text: '' });
 		const data = store.load();
-		expect(data.creature.stages.references.status).toBe('approved');
-		expect(data.creature.stages.references.evidence).toHaveLength(3);
-		expect(data.creature.stages.blockout.status).toBe('open');
+		expect(data.creature.stages.vision.status).toBe('approved');
+		expect(data.creature.stages.vision.evidence).toHaveLength(3);
+		expect(data.creature.stages.sheet.status).toBe('open');
 		expect(staleStages(data)).toEqual([]);
 		editReference(store, ref.alias, { role: 'front view' }, who);
-		expect(staleStages(store.load())[0]!.id).toBe('references');
+		expect(staleStages(store.load())[0]!.id).toBe('vision');
 	});
 
 	it('refuses to apply a stage note through the generic review path', () => {
@@ -312,7 +312,7 @@ describe('views and the cli', () => {
 		expect(needs).toHaveLength(1);
 		expect(needs[0]).toMatchObject({ kind: 'stage', stage: 'intake' });
 		const board = creatureBoard(store.load());
-		expect(board.stages).toHaveLength(11);
+		expect(board.stages).toHaveLength(12);
 		expect(board.stages.filter((s) => s.phase === 2).map((s) => s.id)).toEqual(['rig', 'animate', 'atlas']);
 		expect(board.parts.map((p) => p.dependsOn.map((d) => d.name))).toEqual([[], ['Torso'], ['Neck']]);
 	});
@@ -332,9 +332,9 @@ describe('views and the cli', () => {
 		const alias = store.load().references[0]!.alias;
 		expect(run(['reference', 'edit', 'fx-bird', alias, '--role', 'side', '--not-for', 'color,pose', ...base], io)).toBe(0);
 		expect(store.load().references[0]).toMatchObject({ role: 'side', governs: ['proportions', 'head'], mustNotBeUsedFor: ['color', 'pose'] });
-		expect(run(['stage', 'submit', 'fx-bird', 'references', ...base], io)).toBe(0);
+		expect(run(['stage', 'submit', 'fx-bird', 'vision', ...base], io)).toBe(0);
 		expect(run(['status', 'fx-bird', ...base], io)).toBe(0);
-		expect(out.join('\n')).toMatch(/Waiting on Nick: review the references stage/);
+		expect(out.join('\n')).toMatch(/Waiting on Nick: review the vision stage/);
 		expect(readFileSync(partsFile, 'utf8')).toContain('torso');
 	});
 });

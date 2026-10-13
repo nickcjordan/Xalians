@@ -12,10 +12,12 @@ Run with `npm run studio -- <command>`. Output is plain text; add `--json` for J
 init <key> --name N --template PATH --silhouette PATH [--builds 6 --minutes 180]
 intake <key> [--species TEMPLATE_KEY] [--silhouette PATH] [--force]   (creates the creature if missing and takes its lock, reads the template, encyclopedia entry and silhouette; idempotent)
 part propose <key> --file parts.json   (replaces the proposed list: [{key, name, includes, why, dependsOn: [keys], order}])
-stage submit <key> intake|references   (checks required outputs, sets the stage in-review)
+stage submit <key> intake|vision|sheet   (checks required outputs, sets the stage in-review)
 reference add <key> --file IMG --role R --governs a,b --not-for x,y [--precedence n]   (PNG, JPG, WEBP or SVG)
 reference edit <key> <alias> [--role R] [--governs ..] [--not-for ..] [--precedence n]
 reference target <key> <alias> --file IMG --kind K [--provisional]
+image run <key> --stage vision|sheet --element E --label TEXT --prompt-file FILE [--input IMG ...] [--governs a,b --not-for x,y]   (one Codex image run, recorded as an image build)
+image present <key> --stage vision --element E        image present <key> --stage sheet   (shows reported images to Nick; each call is one round)
 status <key>        next <key>
 lock <key> --session LABEL        unlock <key>
 part add <key> --file part.json
@@ -53,10 +55,18 @@ Tests: `npm test -w packages/studio`; types: `npm run typecheck -w packages/stud
 
 `partView(data, part)` and `needsNick(data)` in `engine.ts` feed the review screen (`/studio` in apps/web, dev server only); `review.ts` has `recordReview`, `strikeHold` and `recordChoice`, the writes the screen makes as Nick without the creature lock.
 
-## Stages: intake and references
+## Stages: intake, vision and sheet
 
 `creature.intake` (strict, optional) holds what intake read: template path and sha256, name, element, home world, body plan, covering, `sizeCm` (the template's `heightCm`, or null), the template's `lore.description` as `loreSummary` (the encyclopedia entry's definition is the fallback), appearance and anatomy lists, and the silhouette blob. The record key and the template key are separate: `studio intake fixture-dromeus --species dromeus`.
 
-Parts proposed at intake have status `proposed`. Nick's verdict on a stage is `recordStageReview(store, { stage, verdict, text })` in `review.ts` (a review note with `about.stage`, by nick, via studio; no creature lock). Approve records evidence (sha256 of the silhouette blob, the template sha, each part's content hash; for references each reference record, image and target blob), makes proposed parts `not-started` and opens the next Phase 1 stage. Adjust or reject returns the stage to `open` with his words. A part's content hash leaves out status, so starting work on a part does not stale the approval; editing what it includes does. `status()` reports an approved stage whose evidence moved, or whose template file changed on disk, as `stale` with the reason. Changing proposed parts or references while a stage is in-review sends it back to `open`.
+Parts proposed at intake have status `proposed`. Nick's verdict on a stage is `recordStageReview(store, { stage, verdict, text })` in `review.ts` (a review note with `about.stage`, by nick, via studio; no creature lock). Approve records evidence (sha256 of the silhouette blob, the template sha, each part's content hash; for vision each reference record, image and target blob; for the sheet each shown sheet image and the consistency note), makes proposed parts `not-started` and opens the next Phase 1 stage. Adjust or reject returns the stage to `open` with his words. A part's content hash leaves out status, so starting work on a part does not stale the approval; editing what it includes does. `status()` reports an approved stage whose evidence moved, or whose template file changed on disk, as `stale` with the reason. Changing proposed parts or references while a stage is in-review sends it back to `open`.
 
-The review screen shows these at `/studio/<key>` (stage track and parts), `/studio/<key>/stage/intake` and `/studio/<key>/stage/references`. Keep test creatures under `art/creatures/fixture*/`, which is gitignored.
+The Phase 1 stages are `intake`, `vision`, `sheet`, `blockout`, `parts`, `coherence`, `surface`, `color`, `readiness`; `rig`, `animate`, `atlas` are reserved. `vision` was `references`; a creature file written with the old name is read as `vision` (and gets a locked `sheet`).
+
+The review screen shows these at `/studio/<key>` (stage track and parts), `/studio/<key>/stage/intake` and `/studio/<key>/stage/vision` and `/studio/<key>/stage/sheet`. Keep test creatures under `art/creatures/fixture*/`, which is gitignored.
+
+## Image runs, the vision board and the model sheet
+
+An image run is a build with `kind: image`, no part and no defect targets, and a strict `image` block: stage, element, label, the exact prompt and its sha256, inputs (name and blob), tool `codex image_gen`, the path of Codex's own file, `codexTokens`, `model: null`, optional `governs`/`notFor` for a vision pick, `round` (set when presented) and `failure` (log tail). `studio image run` creates the build as `running`, makes `<store>/codex-runs/<build alias>/` (outside the repository; the repo Stop hook traps Codex inside it), copies the inputs there, writes the wrapper prompt and runs `codex exec --sandbox workspace-write --skip-git-repo-check -C <folder> --output-last-message <folder>/reply.md -` with the prompt on stdin (binary from `STUDIO_CODEX_BIN`, default `codex`; a `.js`/`.cjs` path is run with node). It stores `output.png` as a `render` output, reads `tokens used` from the log, records wall minutes and sets `reported`. A failed or timed-out (15 minute) run is a `failed` build carrying the log tail, and the command exits 1.
+
+`image present` sets reported images to `presented` and stamps them with the next round for that element (`vision:<element>`) or for the sheet. `status` lists the rounds, so a third set for one element (two failed regenerations) shows up as a signal to change approach. Nick, in the screen, picks one option per vision element (`pickImage`: a reference with role = the element, governs and not-for from the image build, precedence next in line; a decision note by nick; the other options become `superseded`) or says none of these (`adjustElement`: a review note with verdict `adjust` and `about.element`; the set becomes `superseded`). On the sheet he marks problems on an image (`markSheetImage`: defects with `stage: sheet`, no part). The sheet stage submits only with vision approved, a shown turnaround image for each of front, threequarter, side and back, a shown bare-body image, and an orchestrator `decision` note about stage `sheet` whose text starts "Consistency check:".

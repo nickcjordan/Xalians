@@ -36,7 +36,8 @@ export const STANDARD_CAMERAS = [
 
 export const STAGE_IDS = [
 	'intake',
-	'references',
+	'vision',
+	'sheet',
 	'blockout',
 	'parts',
 	'coherence',
@@ -87,9 +88,22 @@ const stage = z.strictObject({
 	note: z.string().optional(),
 });
 
-export const StagesSchema = z.strictObject({
+/** A creature written before the vision stage existed had `references`; read it as `vision` and add the new locked stages. */
+function migrateStages(raw: unknown): unknown {
+	if (!raw || typeof raw !== 'object') return raw;
+	const o = { ...(raw as Record<string, unknown>) };
+	if ('references' in o) {
+		o.vision ??= o.references;
+		delete o.references;
+	}
+	o.sheet ??= { status: 'locked' };
+	return o;
+}
+
+export const StagesSchema = z.preprocess(migrateStages, z.strictObject({
 	intake: stage,
-	references: stage,
+	vision: stage,
+	sheet: stage,
 	blockout: stage,
 	parts: stage,
 	coherence: stage,
@@ -99,7 +113,7 @@ export const StagesSchema = z.strictObject({
 	rig: stage,
 	animate: stage,
 	atlas: stage,
-});
+}));
 
 export const IntakeSchema = z.strictObject({
 	/** Repo-relative path of the species template this intake was read from. */
@@ -169,7 +183,10 @@ export const HoldSchema = record('H', {
 const fraction = z.number().min(0).max(1);
 
 export const DefectSchema = record('D', {
-	part: idFor('P'),
+	/** The part the problem is in; absent for a problem marked on a stage's images (see `stage`). */
+	part: idFor('P').optional(),
+	/** Set instead of `part` for a problem marked on a model sheet image. */
+	stage: z.enum(STAGE_IDS).optional(),
 	description: z.string().min(1),
 	region: z
 		.strictObject({
@@ -185,7 +202,7 @@ export const DefectSchema = record('D', {
 	origin: z.enum(['nick', 'orchestrator', 'reader']),
 	status: z.enum(['open', 'fixed', 'wontfix']),
 	attempts: z.array(idFor('B')),
-});
+}).refine((d) => d.part !== undefined || d.stage !== undefined, { message: 'a defect needs a part or a stage' });
 
 export const ReportSchema = z.strictObject({
 	changed: z.string(),
@@ -208,9 +225,38 @@ export const CheckSchema = z.strictObject({
 	detail: z.string().optional(),
 });
 
-export const BuildSchema = record('B', {
-	part: idFor('P'),
-	kind: z.enum(['preview', 'build']),
+export const VISION_ELEMENTS = ['palette', 'fur', 'pattern', 'anatomy', 'eyes', 'other'] as const;
+export const SHEET_ELEMENTS = ['turnaround-front', 'turnaround-threequarter', 'turnaround-side', 'turnaround-back', 'turnaround-top', 'closeup', 'bare-front', 'bare-side', 'bare-back', 'other'] as const;
+
+/** One image generation run through Codex, recorded as a build. */
+export const ImageBlockSchema = z.strictObject({
+	stage: z.enum(['vision', 'sheet']),
+	element: z.string().min(1),
+	/** Short option name, for example "A: dawn gold". */
+	label: z.string().min(1),
+	/** The exact prompt text the user's prompt file held. */
+	prompt: z.string().min(1),
+	promptSha256: sha256,
+	inputs: z.array(z.strictObject({ name: z.string().min(1), blob: sha256 })),
+	tool: z.literal('codex image_gen'),
+	/** Where Codex's own file was written (its reply); empty until the run reports. */
+	generatedPath: z.string(),
+	codexTokens: z.number().int().min(0).nullable(),
+	/** Codex does not report the model; set only when STUDIO_CODEX_MODEL named one for the run. */
+	model: z.string().min(1).nullable(),
+	/** Vision only: what a pick of this image governs and must not be used for. */
+	governs: z.array(z.string()).optional(),
+	notFor: z.array(z.string()).optional(),
+	/** The option set this image was presented in (counts regenerations); set when presented. */
+	round: z.number().int().min(1).optional(),
+	/** The tail of the run log when the run failed. */
+	failure: z.string().optional(),
+});
+
+const buildBase = record('B', {
+	part: idFor('P').optional(),
+	kind: z.enum(['preview', 'build', 'image']),
+	image: ImageBlockSchema.optional(),
 	goal: z.strictObject({ text: z.string().min(1), sourceNote: idFor('N').optional() }),
 	targets: z.array(idFor('D')),
 	method: z.string(),
@@ -278,6 +324,17 @@ export const BuildSchema = record('B', {
 	deadline: iso.optional(),
 });
 
+export const BuildSchema = buildBase.superRefine((b, ctx) => {
+	if (b.kind === 'image') {
+		if (b.part !== undefined) ctx.addIssue({ code: 'custom', message: 'an image build has no part' });
+		if (b.targets.length > 0) ctx.addIssue({ code: 'custom', message: 'an image build targets no defects' });
+		if (!b.image) ctx.addIssue({ code: 'custom', message: 'an image build needs its image block' });
+	} else {
+		if (b.part === undefined) ctx.addIssue({ code: 'custom', message: 'a build needs a part' });
+		if (b.image) ctx.addIssue({ code: 'custom', message: 'only an image build carries an image block' });
+	}
+});
+
 export const NoteSchema = record('N', {
 	kind: z.enum(['review', 'decision', 'question', 'audit']),
 	about: z
@@ -287,6 +344,8 @@ export const NoteSchema = record('N', {
 			hold: idFor('H').optional(),
 			defect: idFor('D').optional(),
 			stage: z.enum(STAGE_IDS).optional(),
+			/** A vision or sheet element (palette, fur, ...) the note is about. */
+			element: z.string().optional(),
 		})
 		.optional(),
 	by: z.enum(['nick', 'orchestrator', 'import']),

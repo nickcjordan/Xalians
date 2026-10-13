@@ -45,7 +45,7 @@ const PART_STATUS: Record<string, string> = {
 };
 export const partStatusWord = (s: string) => PART_STATUS[s] ?? s;
 
-export const buildKindWord = (k: string) => (k === 'preview' ? 'Preview' : 'Build');
+export const buildKindWord = (k: string) => (k === 'preview' ? 'Preview' : k === 'image' ? 'Image' : 'Build');
 
 export function timeAgo(iso: string, now: number = Date.now()): string {
 	const mins = Math.max(0, Math.round((now - Date.parse(iso)) / 60000));
@@ -73,7 +73,8 @@ export const cameraShort = (id: string) => SHORT[id] ?? cameraWord(id);
 
 const STAGE_NAME: Record<string, string> = {
 	intake: 'Intake',
-	references: 'References',
+	vision: 'Vision board',
+	sheet: 'Model sheet',
 	blockout: 'Blockout',
 	parts: 'Parts',
 	coherence: 'Coherence',
@@ -96,3 +97,22 @@ const STAGE_STATUS: Record<string, string> = {
 export const stageStatusWord = (s: string) => STAGE_STATUS[s] ?? s;
 
 export const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+
+const ELEMENT_NAME: Record<string, string> = {
+	palette: 'Color palette',
+	fur: 'Fur and texture',
+	pattern: 'Pattern',
+	anatomy: 'Anatomy studies',
+	eyes: 'Eyes and expression',
+	other: 'Other',
+	'turnaround-front': 'Front',
+	'turnaround-threequarter': 'Three-quarter',
+	'turnaround-side': 'Side',
+	'turnaround-back': 'Back',
+	'turnaround-top': 'Top',
+	closeup: 'Close-up',
+	'bare-front': 'Bare body, front',
+	'bare-side': 'Bare body, side',
+	'bare-back': 'Bare body, back',
+};
+export const elementName = (id: string) => ELEMENT_NAME[id] ?? cap(id.replace(/-/g, ' '));

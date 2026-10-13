@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { hasBlob } from './blobs.ts';
-import { STAGE_IDS, type Creature, type Intake, type Note, type Part, type Reference, type StageId } from './schema.ts';
+import { STAGE_IDS, type Build, type Creature, type Intake, type Note, type Part, type Reference, type StageId } from './schema.ts';
 import type { CreatureData } from './store.ts';
 
 export type StageStatus = Creature['stages']['intake']['status'];
@@ -8,11 +8,11 @@ export type StageStatus = Creature['stages']['intake']['status'];
 const sha = (text: string): string => createHash('sha256').update(text).digest('hex');
 
 /** Phase 1 stages come first; the last three are reserved names for Phase 2. */
-export const PHASE_ONE: readonly StageId[] = STAGE_IDS.slice(0, 8);
-export const PHASE_TWO: readonly StageId[] = STAGE_IDS.slice(8);
+export const PHASE_ONE: readonly StageId[] = STAGE_IDS.slice(0, 9);
+export const PHASE_TWO: readonly StageId[] = STAGE_IDS.slice(9);
 
 /** Stages whose submit checks and evidence exist in this build. */
-export const SUBMITTABLE: readonly StageId[] = ['intake', 'references'];
+export const SUBMITTABLE: readonly StageId[] = ['intake', 'vision', 'sheet'];
 
 const partName = (data: CreatureData, id: string): string => data.parts.find((p) => p.id === id)?.key ?? id;
 
@@ -45,7 +45,14 @@ export function stageEvidenceItems(data: CreatureData, stage: StageId): Evidence
 		for (const p of data.parts) items.push({ label: `part ${p.key}`, hash: partContentHash(data, p) });
 		return items;
 	}
-	if (stage === 'references') {
+	if (stage === 'sheet') {
+		const items: EvidenceItem[] = [];
+		for (const b of sheetImages(data)) items.push({ label: `sheet image ${b.image!.label}`, hash: b.outputs[0]!.blob });
+		const note = consistencyNote(data);
+		if (note) items.push({ label: 'the consistency check', hash: sha(note.text) });
+		return items;
+	}
+	if (stage === 'vision') {
 		const items: EvidenceItem[] = [];
 		for (const r of data.references) {
 			items.push({ label: `reference ${r.fileName}`, hash: referenceContentHash(r) });
@@ -110,7 +117,17 @@ export function submitProblems(data: CreatureData, stage: StageId): string[] {
 		}
 		return problems;
 	}
-	if (stage === 'references') {
+	if (stage === 'sheet') {
+		if (data.creature.stages.vision.status !== 'approved') problems.push('the vision stage is not approved yet');
+		const images = sheetImages(data);
+		for (const [need, label] of [['turnaround-front', 'front'], ['turnaround-threequarter', 'three-quarter'], ['turnaround-side', 'side'], ['turnaround-back', 'back']] as const) {
+			if (!images.some((b) => b.image!.element === need)) problems.push(`no ${label} turnaround image; run: studio image run <key> --stage sheet --element ${need} ...`);
+		}
+		if (!images.some((b) => b.image!.element.startsWith('bare-'))) problems.push('no bare-body image (element bare-front, bare-side or bare-back)');
+		if (!consistencyNote(data)) problems.push('no orchestrator consistency note; add a decision note about stage sheet whose text starts "Consistency check:"');
+		return problems;
+	}
+	if (stage === 'vision') {
 		if (data.creature.stages.intake.status !== 'approved') problems.push('the intake stage is not approved yet');
 		if (data.references.length === 0) problems.push('no references; run: studio reference add <key> --file <image> --role ...');
 		const seen = new Map<number, string>();
@@ -124,6 +141,25 @@ export function submitProblems(data: CreatureData, stage: StageId): string[] {
 		return problems;
 	}
 	return [`stage ${stage} has no required outputs defined yet`];
+}
+
+// ---------------------------------------------------------------------------
+// Image builds (vision board and model sheet)
+// ---------------------------------------------------------------------------
+
+/** Image builds that have an output Nick has been shown (or has decided on). */
+const SHOWN: readonly Build['status'][] = ['presented', 'reviewed'];
+
+/** The sheet's images that count toward the stage: presented or reviewed, with an output. */
+export function sheetImages(data: CreatureData): Build[] {
+	return data.builds.filter((b) => b.kind === 'image' && b.image?.stage === 'sheet' && SHOWN.includes(b.status) && b.outputs.length > 0);
+}
+
+/** The orchestrator's note that the views were compared: a decision about the sheet starting "Consistency check:". Newest wins. */
+export function consistencyNote(data: CreatureData): Note | undefined {
+	return data.notes
+		.filter((n) => n.kind === 'decision' && n.by === 'orchestrator' && n.about?.stage === 'sheet' && n.text.trimStart().startsWith('Consistency check:'))
+		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
 }
 
 // ---------------------------------------------------------------------------
@@ -217,4 +253,142 @@ export function referenceViews(data: CreatureData): ReferenceView[] {
 	return [...data.references]
 		.sort((a, b) => a.precedence - b.precedence || a.fileName.localeCompare(b.fileName))
 		.map((r) => ({ id: r.id, alias: r.alias, blob: r.blob, fileName: r.fileName, role: r.role, governs: r.governs, mustNotBeUsedFor: r.mustNotBeUsedFor, precedence: r.precedence, derivedTargets: r.derivedTargets ?? [] }));
+}
+
+// ---------------------------------------------------------------------------
+// Vision board and model sheet views
+// ---------------------------------------------------------------------------
+
+export interface ImageView {
+	id: string;
+	alias: string;
+	status: Build['status'];
+	stage: 'vision' | 'sheet';
+	element: string;
+	label: string;
+	prompt: string;
+	/** The generated image (the build's one output); absent while running or after a failure. */
+	blob?: string;
+	governs: string[];
+	notFor: string[];
+	round?: number;
+	createdAt: string;
+	wallMinutes?: number;
+	codexTokens: number | null;
+	inputs: { name: string; blob: string }[];
+	failure?: string;
+}
+
+function imageView(b: Build): ImageView {
+	const im = b.image!;
+	const out = b.outputs[0];
+	return {
+		id: b.id,
+		alias: b.alias,
+		status: b.status,
+		stage: im.stage,
+		element: im.element,
+		label: im.label,
+		prompt: im.prompt,
+		...(out ? { blob: out.blob } : {}),
+		governs: im.governs ?? [],
+		notFor: im.notFor ?? [],
+		...(im.round !== undefined ? { round: im.round } : {}),
+		createdAt: b.createdAt,
+		...(b.cost.wallMinutes !== undefined ? { wallMinutes: b.cost.wallMinutes } : {}),
+		codexTokens: im.codexTokens,
+		inputs: im.inputs,
+		...(im.failure ? { failure: im.failure } : {}),
+	};
+}
+
+const imageBuilds = (data: CreatureData, stage: 'vision' | 'sheet'): Build[] => data.builds.filter((b) => b.kind === 'image' && b.image?.stage === stage);
+
+/** Option sets presented so far, per key (`vision:<element>` or `sheet`). */
+export function imageRounds(data: CreatureData): Record<string, number> {
+	const out: Record<string, number> = {};
+	for (const b of data.builds) {
+		if (b.kind !== 'image' || !b.image?.round) continue;
+		const key = b.image.stage === 'vision' ? `vision:${b.image.element}` : 'sheet';
+		out[key] = Math.max(out[key] ?? 0, b.image.round);
+	}
+	return out;
+}
+
+export interface VisionElementView {
+	element: string;
+	/** Option sets presented so far. */
+	rounds: number;
+	/** The set waiting for a pick, in the order generated. */
+	options: ImageView[];
+	/** The chosen image, once picked. */
+	picked?: ImageView & { reference?: string };
+	/** Nick's latest "none of these" for this element while no set is waiting. */
+	adjust?: { text: string; createdAt: string };
+	/** Runs still going or failed, so the screen can say why a set is short. */
+	running: number;
+	failed: ImageView[];
+}
+
+export interface VisionView {
+	elements: VisionElementView[];
+}
+
+export function visionView(data: CreatureData): VisionView {
+	const builds = imageBuilds(data, 'vision');
+	const order = new Map<string, number>(['palette', 'fur', 'pattern', 'anatomy', 'eyes', 'other'].map((e, i) => [e, i]));
+	const elements = [...new Set(builds.map((b) => b.image!.element))].sort((a, b) => (order.get(a) ?? 99) - (order.get(b) ?? 99) || a.localeCompare(b));
+	const rounds = imageRounds(data);
+	return {
+		elements: elements.map((element) => {
+			const mine = builds.filter((b) => b.image!.element === element).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+			const options = mine.filter((b) => b.status === 'presented').map(imageView);
+			const pickedBuild = [...mine].reverse().find((b) => b.status === 'reviewed');
+			const picked = pickedBuild ? { ...imageView(pickedBuild), ...(() => { const r = data.references.find((x) => x.blob === pickedBuild.outputs[0]?.blob && x.role === element); return r ? { reference: r.alias } : {}; })() } : undefined;
+			const adjustNote = data.notes
+				.filter((n) => n.kind === 'review' && n.verdict === 'adjust' && n.about?.stage === 'vision' && n.about.element === element)
+				.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+			return {
+				element,
+				rounds: rounds[`vision:${element}`] ?? 0,
+				options,
+				...(picked ? { picked } : {}),
+				...(adjustNote && options.length === 0 && !picked ? { adjust: { text: adjustNote.text, createdAt: adjustNote.createdAt } } : {}),
+				running: mine.filter((b) => b.status === 'running').length,
+				failed: mine.filter((b) => b.status === 'failed').map(imageView),
+			};
+		}),
+	};
+}
+
+export interface SheetMark {
+	alias: string;
+	description: string;
+	build: string;
+	status: string;
+}
+
+export interface SheetView {
+	images: ImageView[];
+	rounds: number;
+	consistency?: { alias: string; text: string; createdAt: string };
+	marks: SheetMark[];
+	running: number;
+	failed: ImageView[];
+}
+
+export function sheetView(data: CreatureData): SheetView {
+	const builds = imageBuilds(data, 'sheet').sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+	const note = consistencyNote(data);
+	const byId = new Map(data.builds.map((b) => [b.id, b]));
+	return {
+		images: builds.filter((b) => (b.status === 'presented' || b.status === 'reviewed') && b.outputs.length > 0).map(imageView),
+		rounds: imageRounds(data).sheet ?? 0,
+		...(note ? { consistency: { alias: note.alias, text: note.text, createdAt: note.createdAt } } : {}),
+		marks: data.defects
+			.filter((d) => d.stage === 'sheet')
+			.map((d) => ({ alias: d.alias, description: d.description, build: byId.get(d.region?.buildId ?? '')?.alias ?? '', status: d.status })),
+		running: builds.filter((b) => b.status === 'running').length,
+		failed: builds.filter((b) => b.status === 'failed').map(imageView),
+	};
 }

@@ -46,6 +46,8 @@ export function recordReview(store: Store, input: ReviewInput): { note: Note; de
 	const build = pick(data.builds, input.build, 'build');
 	if (!['approve', 'reject', 'adjust'].includes(input.verdict)) throw new StudioError('verdict must be approve, reject or adjust');
 	if (build.status !== 'presented') throw new StudioError(`build ${build.alias} is ${build.status}; only a presented build can be reviewed`);
+	if (build.kind === 'image' || !build.part) throw new StudioError(`build ${build.alias} is an image; pick or mark images on the vision and sheet screens`);
+	const part = build.part;
 	if (input.verdict === 'approve' && build.kind === 'preview') throw new StudioError('a preview cannot be approved; choose a direction and ask for a build');
 
 	const marks = input.marks ?? [];
@@ -60,7 +62,7 @@ export function recordReview(store: Store, input: ReviewInput): { note: Note; de
 
 	const defects: Defect[] = marks.map((m) =>
 		store.create('defect', {
-			part: build.part,
+			part,
 			description: m.description.trim(),
 			region: { buildId: build.id, camera: m.camera, shape: m.shape, x: m.x, y: m.y, w: m.w, h: m.h },
 			origin: 'nick',
@@ -71,7 +73,7 @@ export function recordReview(store: Store, input: ReviewInput): { note: Note; de
 
 	const note = store.create('note', {
 		kind: 'review',
-		about: { build: build.id, part: build.part },
+		about: { build: build.id, part },
 		by: 'nick',
 		via: 'studio',
 		text: input.text,
@@ -123,14 +125,14 @@ export function recordChoice(store: Store, input: ChoiceInput): { note: Note; ch
 	const chosen = builds.find((b) => b.id === input.chosen || b.alias === input.chosen);
 	if (!chosen) throw new StudioError(`chosen build ${input.chosen} is not among the options`);
 	for (const b of builds) {
-		if (b.kind !== 'preview') throw new StudioError(`build ${b.alias} is not a preview`);
+		if (b.kind !== 'preview' || !b.part) throw new StudioError(`build ${b.alias} is not a preview`);
 		if (b.status !== 'presented') throw new StudioError(`build ${b.alias} is ${b.status}, not presented`);
 	}
 	const others = builds.filter((b) => b.id !== chosen.id).map((b) => b.alias).join(', ');
 	const extra = (input.text ?? '').trim();
 	const note = store.create('note', {
 		kind: 'decision',
-		about: { build: chosen.id, part: chosen.part },
+		about: { build: chosen.id, ...(chosen.part ? { part: chosen.part } : {}) },
 		by: 'nick',
 		via: 'studio',
 		text: `Chose ${chosen.alias} over ${others}.${extra ? ` ${extra}` : ''}`,

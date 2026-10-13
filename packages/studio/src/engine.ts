@@ -1,6 +1,6 @@
 import { StudioError } from './errors.ts';
 import { ReportSchema, STAGE_IDS, STANDARD_CAMERAS, type Build, type Defect, type Hold, type Note, type Part, type Report } from './schema.ts';
-import { staleStages } from './stages.ts';
+import { imageRounds, sheetImages, staleStages, visionView } from './stages.ts';
 import type { CreatureData } from './store.ts';
 
 export { STANDARD_CAMERAS };
@@ -66,6 +66,10 @@ export interface StatusReport {
 	parts: PartStatus[];
 	holds: { alias: string; id: string; statement: string; source: string; strength: HoldStrength }[];
 	openQuestions: { alias: string; id: string; text: string }[];
+	/** Option sets presented per `vision:<element>` and `sheet`, to check experiment X14 (two failed regenerations means a different approach). */
+	imageRounds: Record<string, number>;
+	/** Open problems Nick marked on the model sheet images. */
+	stageDefects: { alias: string; id: string; stage: string; description: string }[];
 	next: string;
 }
 
@@ -103,7 +107,8 @@ export function status(data: CreatureData, templateSha?: (path: string) => strin
 		.filter((n) => n.kind === 'question' && !n.answered)
 		.map((n) => ({ alias: n.alias, id: n.id, text: n.text }));
 
-	return { creature: data.creature.key, stages, staleStages: stale, parts, holds, openQuestions, next: nextAction(data, parts, openQuestions) };
+	const stageDefects = data.defects.filter((d) => d.stage && d.status === 'open').map((d) => ({ alias: d.alias, id: d.id, stage: d.stage!, description: d.description }));
+	return { creature: data.creature.key, stages, staleStages: stale, parts, holds, openQuestions, imageRounds: imageRounds(data), stageDefects, next: nextAction(data, parts, openQuestions) };
 }
 
 function nextAction(data: CreatureData, parts: PartStatus[], questions: { alias: string }[]): string {
@@ -114,23 +119,36 @@ function nextAction(data: CreatureData, parts: PartStatus[], questions: { alias:
 	const staleStage = staleStages(data)[0];
 	if (staleStage) return `Stage ${staleStage.id} is stale (${staleStage.reason}). Resubmit it for Nick's approval.`;
 	// Stage guidance applies while no part has started and no build exists; a creature already building is past it.
-	const early = data.builds.length === 0 && data.parts.every((p) => p.status === 'proposed' || p.status === 'not-started');
+	const partBuilds = data.builds.filter((b) => b.kind !== 'image');
+	const early = partBuilds.length === 0 && data.parts.every((p) => p.status === 'proposed' || p.status === 'not-started');
 	const intakeStage = data.creature.stages.intake;
 	if (early && intakeStage.status === 'open') {
 		if (!data.creature.intake) return 'Run studio intake to read the species template, silhouette and encyclopedia entry.';
 		if (!data.parts.some((p) => p.status === 'proposed')) return 'Propose the functional parts (studio part propose), then submit the intake stage.';
 		return 'Submit the intake stage for Nick (studio stage submit <key> intake).';
 	}
-	const refStage = data.creature.stages.references;
-	if (early && refStage.status === 'open') return data.references.length === 0 ? 'Add the references (studio reference add), then submit the references stage.' : 'Submit the references stage for Nick (studio stage submit <key> references).';
+	const visionStage = data.creature.stages.vision;
+	if (early && visionStage.status === 'open') {
+		const waiting = visionView(data).elements.filter((e) => e.options.length > 0).map((e) => e.element);
+		if (waiting.length > 0) return `Waiting on Nick: pick one option each for ${waiting.join(', ')} on the vision board.`;
+		if (data.references.length === 0) return 'Generate the vision board options (studio image run --stage vision), present each set (studio image present), and let Nick pick.';
+		return 'Submit the vision stage for Nick (studio stage submit <key> vision).';
+	}
+	const sheetStage = data.creature.stages.sheet;
+	if (early && sheetStage.status === 'open') {
+		const shown = sheetImages(data);
+		if (data.builds.some((b) => b.kind === 'image' && b.image?.stage === 'sheet' && b.status === 'reported')) return 'Present the reported sheet images (studio image present <key> --stage sheet).';
+		if (shown.length === 0) return 'Generate the model sheet images (studio image run --stage sheet): four turnaround views, a bare body, close-ups.';
+		return 'Submit the sheet stage for Nick (studio stage submit <key> sheet); it needs the four turnaround views, a bare-body image and your "Consistency check:" note.';
+	}
 
-	const presented = data.builds.find((b) => b.status === 'presented');
+	const presented = partBuilds.find((b) => b.status === 'presented');
 	if (presented) return `Waiting on Nick: review build ${presented.alias} in the review screen.`;
-	const running = data.builds.find((b) => b.status === 'running');
+	const running = partBuilds.find((b) => b.status === 'running');
 	if (running) return `Wait for build ${running.alias} to report, or fail it if its deadline has passed.`;
-	const reported = data.builds.find((b) => b.status === 'reported' || b.status === 'checked');
+	const reported = partBuilds.find((b) => b.status === 'reported' || b.status === 'checked');
 	if (reported) return `Run checks and look notes for build ${reported.alias}, then present it.`;
-	const planned = data.builds.find((b) => b.status === 'planned');
+	const planned = partBuilds.find((b) => b.status === 'planned');
 	if (planned) return `Start build ${planned.alias}.`;
 
 	for (const p of parts) {
@@ -157,14 +175,14 @@ function nextAction(data: CreatureData, parts: PartStatus[], questions: { alias:
 
 export interface PlanInput {
 	part: string;
-	kind: Build['kind'];
+	kind: 'preview' | 'build';
 	goal: string | { text: string; sourceNote?: string };
 	targets?: string[];
 	method: string;
 	allowMultiple?: boolean;
 }
 
-export type PlannedBuild = Pick<Build, 'part' | 'kind' | 'goal' | 'targets' | 'method' | 'outputs' | 'checks' | 'lookNotes' | 'cost' | 'status'>;
+export type PlannedBuild = Pick<Build, 'part'> & { kind: 'preview' | 'build' } & Pick<Build, 'goal' | 'targets' | 'method' | 'outputs' | 'checks' | 'lookNotes' | 'cost' | 'status'>;
 
 /** Throws a StudioError with a clear reason when the plan is not allowed; otherwise returns the build to create. */
 export function planBuild(data: CreatureData, input: PlanInput): PlannedBuild {
@@ -532,7 +550,7 @@ export function needsNick(data: CreatureData): NeedItem[] {
 	const partBits = (p: Part | undefined) => (p ? { partKey: p.key, partAlias: p.alias, partName: p.name } : {});
 
 	for (const b of data.builds) {
-		if (b.status !== 'presented') continue;
+		if (b.status !== 'presented' || b.kind === 'image') continue;
 		const thumbOut = b.outputs.find((o) => o.camera === 'front' && (o.role === undefined || o.role === 'render')) ?? b.outputs.find((o) => o.role === 'render') ?? b.outputs[0];
 		items.push({
 			kind: 'review',
@@ -545,11 +563,29 @@ export function needsNick(data: CreatureData): NeedItem[] {
 		});
 	}
 
+	// Images presented but not yet part of a submitted stage: Nick picks (vision) or looks (sheet).
+	const imagePending = new Map<string, NeedItem>();
+	const vision = visionView(data).elements.filter((e) => e.options.length > 0);
+	if (vision.length > 0) {
+		const first = vision[0]!.options[0]!;
+		const since = data.builds.filter((b) => b.status === 'presented' && b.image?.stage === 'vision').map((b) => b.updatedAt).sort()[0] ?? data.creature.updatedAt;
+		imagePending.set('vision', { kind: 'stage', ref: 'vision', stage: 'vision', ask: `Pick one option each for ${vision.map((e) => e.element).join(', ')} on the vision board`, since, ...(first.blob ? { thumb: first.blob } : {}) });
+	}
+	const sheetShown = data.builds.filter((b) => b.status === 'presented' && b.image?.stage === 'sheet');
+	if (sheetShown.length > 0) {
+		const first = sheetShown.find((b) => b.image!.element === 'turnaround-front') ?? sheetShown[0]!;
+		imagePending.set('sheet', { kind: 'stage', ref: 'sheet', stage: 'sheet', ask: `Look at the model sheet (${sheetShown.length} images)`, since: sheetShown.map((b) => b.updatedAt).sort()[0]!, ...(first.outputs[0] ? { thumb: first.outputs[0].blob } : {}) });
+	}
+
 	for (const id of STAGE_IDS) {
-		if (data.creature.stages[id].status !== 'in-review') continue;
+		if (data.creature.stages[id].status !== 'in-review') {
+			const pending = imagePending.get(id);
+			if (pending && data.creature.stages[id].status === 'open') items.push(pending);
+			continue;
+		}
 		const last = data.notes.filter((n) => n.about?.stage === id).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-		const thumb = id === 'intake' ? data.creature.intake?.silhouette.blob : id === 'references' ? [...data.references].sort((a, b) => a.precedence - b.precedence)[0]?.blob : undefined;
-		items.push({ kind: 'stage', ref: id, stage: id, ask: `Review the ${id} stage and approve, adjust or reject it`, since: last?.createdAt ?? data.creature.updatedAt, ...(thumb ? { thumb } : {}) });
+		const thumb = id === 'intake' ? data.creature.intake?.silhouette.blob : id === 'vision' ? [...data.references].sort((a, b) => a.precedence - b.precedence)[0]?.blob : id === 'sheet' ? (sheetImages(data).find((b) => b.image!.element === 'turnaround-front') ?? sheetImages(data)[0])?.outputs[0]?.blob : undefined;
+		items.push({ kind: 'stage', ref: id, stage: id, ask: `Review the ${id === 'sheet' ? 'model sheet' : id === 'vision' ? 'vision board' : id} stage and approve, adjust or reject it`, since: last?.createdAt ?? data.creature.updatedAt, ...(thumb ? { thumb } : {}) });
 	}
 
 	for (const n of data.notes) {

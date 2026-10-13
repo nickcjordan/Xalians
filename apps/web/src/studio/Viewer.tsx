@@ -150,6 +150,8 @@ export interface ViewerProps {
 	lead?: React.ReactNode;
 	/** Placed under the stage (the camera strip). */
 	footer?: React.ReactNode;
+	/** A single image with nothing to compare against: no comparison controls or hint. */
+	plain?: boolean;
 }
 
 /** A toolbar row that never wraps; it scrolls sideways if the space is ever too small. */
@@ -235,7 +237,7 @@ export function Viewer(props: ViewerProps) {
 						<ToggleGroupItem value="side">Side by side</ToggleGroupItem>
 						<ToggleGroupItem value="swipe">Swipe</ToggleGroupItem>
 					</ToggleGroup>
-				) : (
+				) : props.plain ? null : (
 					<span className="font-body text-small text-ink-2">Nothing approved yet to compare against.</span>
 				)}
 				{diff || heat ? (
@@ -268,7 +270,7 @@ export function Viewer(props: ViewerProps) {
 							</div>
 						) : null}
 						<div ref={frameRef} className="relative shrink-0 select-none overflow-hidden border border-edge bg-s0" style={frameStyle}>
-							{url ? <img src={url} alt={`${cameraWord(camera)}, this build`} className="absolute inset-0 size-full object-fill" draggable={false} /> : null}
+							{url ? <img src={url} alt={props.plain ? 'The image being reviewed' : `${cameraWord(camera)}, this build`} className="absolute inset-0 size-full object-fill" draggable={false} /> : null}
 							{base && compare === 'swipe' ? (
 								<>
 									<img
@@ -301,7 +303,7 @@ export function Viewer(props: ViewerProps) {
 									</div>
 								</>
 							) : (
-								<Tag side="right">{overlay === 'diff' ? 'Changes' : overlay === 'heat' ? 'Heat map' : 'This build'}</Tag>
+								<Tag side="right">{overlay === 'diff' ? 'Changes' : overlay === 'heat' ? 'Heat map' : props.plain ? 'This image' : 'This build'}</Tag>
 							)}
 							<Marks marks={here} draft={draft ?? pending} />
 							{drawing ? <div className="absolute inset-0 z-30 cursor-crosshair touch-none" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} /> : null}
