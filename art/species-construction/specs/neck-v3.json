@@ -1,0 +1,214 @@
+{
+ "name": "neck v3",
+ "approval": null,
+ "note": "neck v3 (2026-10-13), for neck_v3_post.py / neck_v3_field.py, appended after P-torso1 in place of P-neck2. Nick, 2026-10-13, on neck v2 side view: \"It looks like it has a neck brace on\"; on its back view: \"I'm fine with the way that looks\". columns: neck v2's neck capsule (back and sides as v2); front: the throat line in the side view (y at z, leaving the jaw underside near y -.055 at z .52 and leaning forward to y -.147 at z .33), a cylinder of radius R behind it trims the column there (smooth max cutK), so the front of the neck leans forward and the jaw and chin underside stay the old skin; joinK: the column joined to the skin; lobes, blurs: v2's nape lobe and neck, base and nape blurs (v2's throat blur dropped), plus a blur at the jaw-throat join; spotRelax under the jaw; partBox as v2 (z .32 to .555, |x| .18). World units, +y back.",
+ "grid": {
+  "lo": [
+   -0.2,
+   -0.2,
+   0.28
+  ],
+  "hi": [
+   0.18,
+   0.12,
+   0.58
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "columns": [
+  {
+   "a": [
+    0.0,
+    -0.046,
+    0.38
+   ],
+   "b": [
+    0.0,
+    -0.03,
+    0.52
+   ],
+   "ra": 0.08,
+   "rb": 0.062,
+   "ySquash": 1.08,
+   "k": 0.022
+  }
+ ],
+ "front": {
+  "points": [
+   [
+    -0.055,
+    0.52
+   ],
+   [
+    -0.073,
+    0.478
+   ],
+   [
+    -0.129,
+    0.37
+   ],
+   [
+    -0.147,
+    0.33
+   ]
+  ],
+  "R": 0.09,
+  "cutK": 0.025
+ },
+ "joinK": 0.022,
+ "lobes": [
+  {
+   "c": [
+    0.0,
+    -0.005,
+    0.495
+   ],
+   "s": [
+    0.06,
+    0.045,
+    0.06
+   ],
+   "k": 0.03
+  }
+ ],
+ "blurs": [
+  {
+   "c": [
+    0.0,
+    -0.03,
+    0.43
+   ],
+   "s": [
+    0.14,
+    0.11,
+    0.09
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.008,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.085,
+    -0.03,
+    0.405
+   ],
+   "s": [
+    0.06,
+    0.07,
+    0.045
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.016,
+   "mirror": true
+  },
+  {
+   "c": [
+    0.0,
+    0.03,
+    0.48
+   ],
+   "s": [
+    0.09,
+    0.05,
+    0.07
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.016,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.0,
+    -0.12,
+    0.378
+   ],
+   "s": [
+    0.1,
+    0.05,
+    0.04
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.015,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.0,
+    -0.078,
+    0.48
+   ],
+   "s": [
+    0.08,
+    0.04,
+    0.035
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.02,
+   "mirror": false
+  }
+ ],
+ "spotRelax": [
+  {
+   "c": [
+    0.0,
+    -0.082,
+    0.478
+   ],
+   "r": 0.04,
+   "fade": 0.03,
+   "iterations": 200
+  }
+ ],
+ "partBox": {
+  "x": [
+   -1,
+   -1,
+   0.16,
+   0.18
+  ],
+  "y": [
+   -1,
+   -1,
+   0.1,
+   0.12
+  ],
+  "z": [
+   0.32,
+   0.35,
+   0.52,
+   0.555
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ }
+}
