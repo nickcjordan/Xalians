@@ -7,9 +7,15 @@ muzzle (nose pad, mouth, chin), all under the part key 'head' (lesson face-is-on
 ears, horn, body, legs and tail are v5's, untouched.
 
 Each eye is a socket carved into the skin (op carve, a sphere concentric with the eyeball and a hair larger,
-so the ball fills it and no hollow is left), an eyeball added after the carve, and a lid ring (a closed sweep,
-also added after) laid on the ball along the line where the ball leaves the uncarved skin, so the skin seems
-to roll over the ball. The ring is computed from the field, not typed, so it follows the face's curvature.
+so the ball fills it and no hollow is left), an eyeball, and a lid ring (a closed sweep, added after the carve)
+laid on the ball along the line where the ball leaves the uncarved skin, so the skin seems to roll over the
+ball. The ring is computed from the field, not typed, so it follows the face's curvature.
+
+The eyeballs are separate objects ("separate": true, material tag "eye", named eye-left and eye-right, pivot at
+the ball center, gaze along the ball's axis): not part of the skin, as a rig needs them, and rendered with the
+studio's eye material (art/studio/packet_render.py). Sockets and lids stay on the skin. The eye shader's angles
+are set from the seated opening: the pupil is EYE_PUPIL of the visible width, the iris runs to a thin dark rim
+just inside the lids.
 """
 import json
 import sys
@@ -143,6 +149,15 @@ def smile(adds, half, depth=0.4):
     return pts
 
 
+EYE_PUPIL = 0.5          # pupil width over the visible eye width (the sheet's eyes are mostly pupil)
+
+
+def eye_shading(opened):
+    """Angles (degrees from the gaze) for the eye material: pupil, iris to the rim, rim at the lid line."""
+    pupil = np.degrees(np.arcsin(EYE_PUPIL*np.sin(np.radians(opened))))
+    return {'pupilDeg': round(float(pupil), 2), 'irisDeg': round(float(opened-5), 2), 'rimDeg': round(float(opened), 2)}
+
+
 def face_parts(d):
     """The head part adds of one direction, dictionary d of numbers (meters)."""
     adds = [{'part': 'head', 'kind': 'sweep', 'blend': 0.04, 'params': {'points': V5['neck']}}]
@@ -177,17 +192,20 @@ def build(name, verbose=True):
     if 'tongue' in d:                           # [x, z, rx, ry, rz, sink]: the tongue sits inside the open mouth
         x, z, rx, ry, rz, sink = d['tongue']
         afters.append(mass([x, surface_y(field_adds, x, z)+sink, z], [rx, ry, rz], 0.005, op='add-after'))
-    afters.append(mass(c, [re]*3, 0.003, op='add-after', mirror='x'))
-    afters.append({'part': 'head', 'kind': 'sweep', 'op': 'add-after', 'mirror': 'x', 'blend': d.get('lid_blend', 0.006),
+    ball = mass(c, [re]*3, 0.003, mirror='x')
+    ball.update(part='eyes', separate=True, material='eye', name='eye-left', mirrorName='eye-right',
+                gaze=[round(float(x), 5) for x in axis], shading=eye_shading(opened))
+    afters.append({'part': 'head', 'kind': 'sweep', 'op': 'add-after', 'mirror': 'x', 'blend': d.get('lid_blend', 0.011),
                    'params': {'closed': True, 'samples': 8, 'points': ring}})
     if verbose:
         print(f'{name}: eye center {np.round(c, 4).tolist()}, radius {re}, mean opening half-angle {opened:.1f} deg, '
               f'opening about {2*re*np.sin(np.radians(opened)):.4f} across')
     # head first so the head's smooth unions run in the same place in the order as in v5 (before the horn and ears)
     i = next(n for n, p in enumerate(keep) if p['part'] == 'horn')
-    s = {**base, 'parts': keep[:i]+adds+keep[i:]+carves+afters}
+    s = {**base, 'parts': keep[:i]+adds+keep[i:]+carves+afters+[ball]}
     s['note'] = (f'Hypnopet face preview {name}: v5 with the head, muzzle and eyes rebuilt as one head part '
-                 '(skull, sockets, eyeballs, lids, muzzle). Written by face_previews.py. ' + d['note'])
+                 '(skull, sockets, lids, muzzle) and the eyeballs as separate eye objects. Written by face_previews.py. '
+                 + d['note'])
     return s
 
 
@@ -227,13 +245,13 @@ DIRECTIONS = {
           'cranium_c': [0, -0.13, 0.44], 'cranium_r': [0.078, 0.092, 0.076],
           'cheek_c': [0, -0.17, 0.383], 'cheek_r': [0.07, 0.06, 0.05], 'cheek_blend': 0.035,
           'muzzle_c': [0, -0.22, 0.382], 'muzzle_r': [0.035, 0.035, 0.025], 'muzzle_blend': 0.03,
-          'lip_c': [0.013, -0.236, 0.374], 'lip_r': [0.014, 0.012, 0.011], 'lip_blend': 0.014,
+          'lip_c': [0.009, -0.236, 0.378], 'lip_r': [0.01, 0.012, 0.009], 'lip_blend': 0.018,
           'jaw_c': [0, -0.2, 0.333], 'jaw_r': [0.03, 0.03, 0.024], 'jaw_blend': 0.022,
           'nose_c': [0, -0.253, 0.391], 'nose_r': [0.016, 0.009, 0.011],
-          'smile': [[0, 0.357, 0.014, 0.45], [0.013, 0.362, 0.011, 0.4], [0.024, 0.37, 0.007, 0.2], [0.031, 0.376, 0.0045, -0.2], [0.036, 0.381, 0.003, -0.6]], 'mouth_blend': 0.006,
+          'smile': [[0, 0.357, 0.014, 0.45], [0.013, 0.362, 0.011, 0.4], [0.024, 0.37, 0.007, 0.2], [0.031, 0.376, 0.0045, 0.0], [0.036, 0.381, 0.003, -0.4]], 'mouth_blend': 0.006,
           'tongue': [0, 0.345, 0.012, 0.011, 0.005, 0.024],
           'eye_c': [0.05, -0.178, 0.43], 'eye_r': 0.034, 'eye_yaw': 12, 'eye_pitch': 2, 'eye_open': 66,
-          'lid_top': 0.0055, 'lid_bottom': 0.0035, 'lid_drop': 5, 'lid_blend': 0.009},
+          'lid_top': 0.0055, 'lid_bottom': 0.0035, 'lid_drop': 5, 'lid_blend': 0.012},
 }
 
 

@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from parts import Instance, KINDS, build_field, mass, ownership, part_keys, shell, smax, smin, sweep, union_at  # noqa: E402
+from parts import Instance, KINDS, build_field, mass, ownership, part_keys, separate_objects, shell, smax, smin, sweep, union_at  # noqa: E402
 from parts.common import pchip  # noqa: E402
 
 
@@ -473,3 +473,61 @@ class CurvedPlateTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class SeparateTests(unittest.TestCase):
+    """"separate": true instances (eyeballs) are their own closed objects, never part of the skin's field."""
+    SKIN = {'part': 'head', 'kind': 'mass', 'params': {'radii': [0.2, 0.2, 0.2]}, 'blend': 0.03}
+    EYE = {'part': 'eye', 'kind': 'mass', 'params': {'center': [0.1, -0.2, 0.0], 'radii': [0.04, 0.04, 0.04]},
+           'blend': 0.003, 'separate': True, 'material': 'eye', 'gaze': [0.3, -1.0, 0.0], 'mirror': 'x',
+           'name': 'eye-left', 'mirrorName': 'eye-right'}
+
+    def test_spec_parsing(self):
+        e = Instance(self.EYE)
+        self.assertTrue(e.separate)
+        self.assertEqual(e.material, 'eye')
+        np.testing.assert_allclose(e.pivot, [0.1, -0.2, 0.0])                # defaults to the mass center
+        self.assertAlmostEqual(float(np.linalg.norm(e.gaze)), 1.0)
+        p = Instance({**self.EYE, 'pivot': [0.1, -0.19, 0.0]})
+        np.testing.assert_allclose(p.pivot, [0.1, -0.19, 0.0])
+        self.assertFalse(Instance(self.SKIN).separate)
+
+    def test_bad_specs_refused(self):
+        with self.assertRaises(ValueError):
+            Instance({**self.EYE, 'op': 'carve'})
+        with self.assertRaises(ValueError):
+            Instance({**self.EYE, 'gaze': [0, 0, 0]})
+        with self.assertRaises(ValueError):
+            Instance({**self.SKIN, 'material': 'eye'})                       # tags belong to separate objects only
+        with self.assertRaises(ValueError):
+            separate_objects([Instance({**self.EYE, 'mirror': None, 'name': 'a'}),
+                              Instance({**self.EYE, 'mirror': None, 'name': 'a'})])
+
+    def test_excluded_from_the_skin_field(self):
+        skin, eye = Instance(self.SKIN), Instance({**self.EYE, 'params': {'center': [0.0, -0.3, 0.0], 'radii': [0.05]*3}})
+        probe = np.array([[0.0, -0.3, 0.0], [0.0, 0.0, 0.0]])
+        np.testing.assert_allclose(union_at([skin, eye], probe), union_at([skin], probe))
+        self.assertGreater(union_at([skin, eye], probe)[0], 0)              # the eye's center is not skin
+        o1, f1, _ = build_field([skin, eye], 0.02)
+        o2, f2, _ = build_field([skin], 0.02)
+        np.testing.assert_allclose(o1, o2)
+        np.testing.assert_allclose(f1, f2)
+        keys = part_keys({'parts': [self.SKIN, self.EYE]})
+        self.assertEqual(keys, ['head'])
+        which, _ = ownership([skin, eye], keys, np.array([[0.0, -0.3, 0.0]]))
+        self.assertEqual(which[0], 0)
+
+    def test_objects_and_mirroring(self):
+        objs = separate_objects([Instance(self.SKIN), Instance(self.EYE)])
+        self.assertEqual([o['name'] for o in objs], ['eye-left', 'eye-right'])
+        left, right = objs
+        np.testing.assert_allclose(right['pivot'], left['pivot']*[-1, 1, 1])
+        np.testing.assert_allclose(right['gaze'], left['gaze']*[-1, 1, 1])
+        self.assertTrue(right['mirrored'])
+        solo = left['instance']
+        self.assertFalse(solo.separate)
+        self.assertIsNone(solo.mirror)                                       # each side is meshed on its own
+        self.assertLess(solo.sdf(np.array([[0.1, -0.2, 0.0]]))[0], 0)
+        self.assertGreater(solo.sdf(np.array([[-0.1, -0.2, 0.0]]))[0], 0)
+        unnamed = separate_objects([Instance({k: v for k, v in self.EYE.items() if k not in ('name', 'mirrorName')})])
+        self.assertEqual([o['name'] for o in unnamed], ['eye-0', 'eye-0-mirror'])

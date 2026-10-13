@@ -12,6 +12,7 @@ Convention: the creature faces -y, its left is +x, up is +z (the same as `camera
 | `mirror` | `"x"` adds the copy reflected through the plane x = 0; `null` for none |
 | `blend` | smooth union radius (default 0.03). Where this part meets another closer than `blend` the two fields blend; farther apart they are untouched. The part being added uses its own value |
 | `op` | `"add"` (default), `"carve"` or `"add-after"`; see Carving below |
+| `separate` | `true` makes the instance its own closed object (an eyeball), left out of the skin's field entirely; with optional `name`, `mirrorName`, `material`, `shading`, `pivot` and `gaze`. See `art/studio/README.md`, Separate objects |
 
 ## mass
 

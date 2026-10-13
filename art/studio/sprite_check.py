@@ -5,6 +5,8 @@
 Crops the figure (pixels that differ from the corner background color) with a small margin, scales it to
 --height pixels tall (Lanczos), and writes sprite-<height>.png plus sprite-<height>-x2.png, the same sprite
 enlarged two times with nearest-neighbor sampling so its pixels can be looked at without resampling blur.
+The sprite is the packet render itself, so it carries the packet's materials (tagged objects such as eye
+objects get their studio material in packet_render.py).
 """
 import argparse
 from pathlib import Path

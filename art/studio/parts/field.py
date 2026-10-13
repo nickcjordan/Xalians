@@ -46,8 +46,14 @@ def sample_region(fn, origin, voxel, i0, shape, band, stride=4):
     return block, int(len(near))
 
 
+def _skin(insts):
+    """Separate instances (their own objects, "separate": true) take no part in the skin's field."""
+    return [i for i in insts if not getattr(i, 'separate', False)]
+
+
 def _ordered(insts):
-    """Instances in evaluation order: every add (spec order), then every carve, then every add-after."""
+    """Skin instances in evaluation order: every add (spec order), then every carve, then every add-after."""
+    insts = _skin(insts)
     return ([i for i in insts if i.op == 'add'], [i for i in insts if i.op == 'carve'],
             [i for i in insts if i.op == 'add-after'])
 
@@ -56,7 +62,10 @@ def build_field(insts, voxel, stride=4):
     """Smooth union of all instances, in three passes: the adds are combined first (spec order, each with its own
     blend), then each carve is smoothly subtracted from that union (smooth max of the union and the negated
     shape, its own blend), then each add-after is added on top, so a part can sit inside a carved hollow
-    without being carved. Returns (origin, field float32 (nx,ny,nz), info)."""
+    without being carved. Separate instances are left out. Returns (origin, field float32 (nx,ny,nz), info)."""
+    insts = _skin(insts)
+    if not insts:
+        raise ValueError('no skin instances to build')
     bnds = [i.bounds() for i in insts]
     kmax = max(i.blend for i in insts)
     grown = [b for i, b in zip(insts, bnds) if i.op != 'carve'] or bnds       # a carve never makes the skin bigger
@@ -131,7 +140,7 @@ def ownership(insts, keys, pts):
     best = np.take_along_axis(per_key, order[:1], axis=0)[0]
     if len(keys) > 1:
         second = np.take_along_axis(per_key, order[1:2], axis=0)[0]
-    blend = max(i.blend for i in insts)
+    blend = max(i.blend for i in _skin(insts))
     weight = np.clip((second-best)/max(blend, 1e-9), 0.0, 1.0)
     return which, weight.astype(np.float32)
 
