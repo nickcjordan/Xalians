@@ -1,7 +1,7 @@
 import { StudioError } from './errors.ts';
 import { applyReview, holdChangeRefusal } from './engine.ts';
 import { STAGE_IDS, type Build, type Defect, type Hold, type Note } from './schema.ts';
-import { PHASE_ONE, stageEvidence, submitProblems } from './stages.ts';
+import { PHASE_ONE, currentBlockoutBuild, stageEvidence, submitProblems } from './stages.ts';
 import type { Store } from './store.ts';
 
 const fraction = (v: unknown, name: string): number => {
@@ -197,10 +197,45 @@ export function recordStageReview(store: Store, input: StageReviewInput): { note
 				applied.push(`part ${p.alias} not-started`);
 			}
 		}
+		if (stage === 'blockout') {
+			// The approved blockout is every part's starting point.
+			const build = currentBlockoutBuild(data);
+			if (build) {
+				store.update<'build'>(build.id, (b) => { b.status = 'reviewed'; }, NICK);
+				applied.push(`blockout build ${build.alias} reviewed`);
+				for (const p of data.parts) {
+					store.update<'part'>(p.id, { startBuild: build.id }, NICK);
+					applied.push(`part ${p.alias} starts from ${build.alias}`);
+				}
+			}
+		}
 		if (opens) applied.push(`stage ${opens} open`);
 	} else {
 		store.update<'creature'>(data.creature.id, (c) => { c.stages[stage] = { status: 'open', ...(text ? { note: text } : {}) }; }, NICK);
 		applied.push(`stage ${stage} open`);
 	}
 	return { note, applied };
+}
+
+/** Nick's marks on a blockout render or overlay: one defect about stage blockout per mark. The build must be one he has been shown. */
+export function markBlockoutBuild(store: Store, input: { build: string; marks: MarkInput[] }): Defect[] {
+	const data = store.load();
+	const build = pick(data.builds, input.build, 'build');
+	if (build.stage !== 'blockout') throw new StudioError(`build ${build.alias} is not a blockout build`);
+	if (build.status !== 'presented' && build.status !== 'reviewed') throw new StudioError(`build ${build.alias} is ${build.status}; only a shown build can be marked`);
+	if (!input.marks || input.marks.length === 0) throw new StudioError('no marks to send');
+	for (const m of input.marks) {
+		if (!m.description || !m.description.trim()) throw new StudioError('every mark needs a description of what is wrong');
+		if (m.shape !== 'ellipse' && m.shape !== 'rect') throw new StudioError('mark shape must be ellipse or rect');
+		fraction(m.x, 'x'); fraction(m.y, 'y'); fraction(m.w, 'w'); fraction(m.h, 'h');
+		if (!m.camera) throw new StudioError('every mark needs a camera');
+	}
+	return input.marks.map((m) => store.create('defect', {
+		stage: 'blockout',
+		description: m.description.trim(),
+		region: { buildId: build.id, camera: m.camera, shape: m.shape, x: m.x, y: m.y, w: m.w, h: m.h },
+		origin: 'nick',
+		status: 'open',
+		attempts: [],
+	}, 'nick', NICK));
 }

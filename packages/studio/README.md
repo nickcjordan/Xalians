@@ -26,9 +26,11 @@ hold add <key> --file hold.json   hold strike|lift <key> <alias> --reason TEXT
 defect add <key> --file defect.json
 note add <key> --file note.json   (a review note by nick also applies the review)
 build plan <key> --part P --kind preview|build --goal TEXT --method TEXT [--targets a,b] [--allow-multiple]
+build plan <key> --stage blockout --goal TEXT --method TEXT [--targets a,b]   (whole-form build, no part; budget is the creature default; no target needed the first time)
 build start|fail <key> <alias>
 build output <key> <alias> --name N --file PATH [--role R --camera C]   (file goes to the blob store)
 build ingest <key> <alias> --packet DIR     (reads DIR/packet.json: renders, baselines, diffs, heat map, measures, Blender minutes)
+build overlay <key> <alias> --dir DIR      (blockout builds: DIR/<view>.overlay.png stored as role overlay, camera = view; optional DIR/fit.json { view: iou } becomes fit-iou:<view> measure checks)
 build report <key> <alias> --file report.json
 build check <key> <alias> --file checks.json
 build look <key> <alias> --camera C --image OUTPUT_NAME --note TEXT

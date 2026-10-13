@@ -1,6 +1,6 @@
 import { StudioError } from './errors.ts';
-import { ReportSchema, STAGE_IDS, STANDARD_CAMERAS, type Build, type Defect, type Hold, type Note, type Part, type Report } from './schema.ts';
-import { imageRounds, sheetImages, staleStages, visionView } from './stages.ts';
+import { ReportSchema, STAGE_IDS, STANDARD_CAMERAS, type Build, type Creature, type Defect, type Hold, type Note, type Part, type Report } from './schema.ts';
+import { blockoutBuilds, currentBlockoutBuild, fitNote, imageRounds, sheetImages, staleStages, visionView } from './stages.ts';
 import type { CreatureData } from './store.ts';
 
 export { STANDARD_CAMERAS };
@@ -119,7 +119,7 @@ function nextAction(data: CreatureData, parts: PartStatus[], questions: { alias:
 	const staleStage = staleStages(data)[0];
 	if (staleStage) return `Stage ${staleStage.id} is stale (${staleStage.reason}). Resubmit it for Nick's approval.`;
 	// Stage guidance applies while no part has started and no build exists; a creature already building is past it.
-	const partBuilds = data.builds.filter((b) => b.kind !== 'image');
+	const partBuilds = data.builds.filter((b) => b.kind !== 'image' && b.stage !== 'blockout');
 	const early = partBuilds.length === 0 && data.parts.every((p) => p.status === 'proposed' || p.status === 'not-started');
 	const intakeStage = data.creature.stages.intake;
 	if (early && intakeStage.status === 'open') {
@@ -141,6 +141,19 @@ function nextAction(data: CreatureData, parts: PartStatus[], questions: { alias:
 		if (data.builds.some((b) => b.kind === 'image' && b.image?.stage === 'sheet' && b.status === 'reported')) return 'Present the reported sheet images (studio image present <key> --stage sheet).';
 		if (shown.length === 0) return 'Generate the model sheet images (studio image run --stage sheet): four turnaround views, a bare body, close-ups.';
 		return 'Submit the sheet stage for Nick (studio stage submit <key> sheet); it needs the four turnaround views, a bare-body image and your "Consistency check:" note.';
+	}
+
+	if (data.creature.stages.blockout.status === 'open') {
+		const bb = blockoutBuilds(data);
+		const by = (st: Build['status'][]) => bb.find((b) => st.includes(b.status));
+		const running = by(['running']);
+		const reported = by(['reported', 'checked']);
+		const planned = by(['planned']);
+		if (running) return `Wait for blockout build ${running.alias} to report, or fail it if its deadline has passed.`;
+		if (reported) return `Overlay, check and look at blockout build ${reported.alias} (studio build overlay, check, look), then present it.`;
+		if (planned) return `Start blockout build ${planned.alias}.`;
+		if (!currentBlockoutBuild(data)) return bb.length === 0 ? 'Plan the blockout build (studio build plan <key> --stage blockout --goal ... --method ...).' : 'Plan the next blockout build against the open blockout defects.';
+		return 'Submit the blockout stage for Nick (studio stage submit <key> blockout); it needs the 8 renders, front, side and back overlays and your "Fit check:" note.';
 	}
 
 	const presented = partBuilds.find((b) => b.status === 'presented');
@@ -183,7 +196,7 @@ export interface PlanInput {
 	allowMultiple?: boolean;
 }
 
-export type PlannedBuild = Pick<Build, 'part'> & { kind: 'preview' | 'build' } & Pick<Build, 'goal' | 'targets' | 'method' | 'outputs' | 'checks' | 'lookNotes' | 'cost' | 'status'>;
+export type PlannedBuild = Pick<Build, 'part' | 'stage'> & { kind: 'preview' | 'build' } & Pick<Build, 'goal' | 'targets' | 'method' | 'outputs' | 'checks' | 'lookNotes' | 'cost' | 'status'>;
 
 /** Throws a StudioError with a clear reason when the plan is not allowed; otherwise returns the build to create. */
 export function planBuild(data: CreatureData, input: PlanInput): PlannedBuild {
@@ -223,8 +236,50 @@ export function planBuild(data: CreatureData, input: PlanInput): PlannedBuild {
 	return { part: part.id, kind: input.kind, goal, targets: targets.map((d) => d.id), method: input.method, outputs: [], checks: [], lookNotes: [], cost: {}, status: 'planned' };
 }
 
+export interface PlanBlockoutInput {
+	goal: string | { text: string; sourceNote?: string };
+	targets?: string[];
+	method: string;
+	allowMultiple?: boolean;
+}
+
+/**
+ * Plans a blockout build: a whole-form build that belongs to no part. Its budget is the creature's default
+ * (builds and wall minutes across all blockout builds). It may target no defect the first time; after that it
+ * must target a defect marked about stage blockout, and the stall rules apply to those targets as for a part.
+ */
+export function planBlockout(data: CreatureData, input: PlanBlockoutInput): PlannedBuild {
+	const st = data.creature.stages.blockout;
+	if (st.status === 'locked') throw new StudioError('the blockout stage is locked; it opens when Nick approves the model sheet');
+	if (st.status === 'in-review') throw new StudioError('the blockout stage is waiting on Nick; plan the next build after his verdict');
+	if (st.status === 'approved') throw new StudioError('the blockout stage is approved; a new blockout build would change what the parts start from');
+	const existing = blockoutBuilds(data);
+	const budget = data.creature.defaultBudget;
+	if (existing.length >= budget.builds) throw new StudioError(`the blockout has spent its build budget (${existing.length} of ${budget.builds}); ask Nick to raise it`);
+	const wall = existing.reduce((sum, b) => sum + (b.cost.wallMinutes ?? 0), 0);
+	if (wall >= budget.wallMinutes) throw new StudioError(`the blockout has spent its time budget (${wall} of ${budget.wallMinutes} minutes); ask Nick to raise it`);
+
+	const targets = (input.targets ?? []).map((ref) => {
+		const d = byIdOrAlias(data.defects, ref);
+		if (!d) throw new StudioError(`no defect ${ref}`);
+		return d;
+	});
+	if (targets.length === 0 && existing.length > 0) throw new StudioError('after the first blockout build, a build must target a defect marked about stage blockout');
+	if (targets.length > 1 && !input.allowMultiple) throw new StudioError(`one defect per build by default; ${targets.length} targets need allowMultiple`);
+	for (const d of targets) {
+		if (d.stage !== 'blockout') throw new StudioError(`defect ${d.alias} is not about stage blockout`);
+		if (d.status !== 'open') throw new StudioError(`defect ${d.alias} is ${d.status}, not open`);
+		if (isStalled(data, d)) {
+			const why = auditUnlocks(data, d, undefined, input.method);
+			if (why !== true) throw new StudioError(`defect ${d.alias} is stalled after ${attemptsOn(data, d.id).length} builds; ${why}`);
+		}
+	}
+	const goal = typeof input.goal === 'string' ? { text: input.goal } : input.goal;
+	return { stage: 'blockout', kind: 'build', goal, targets: targets.map((d) => d.id), method: input.method, outputs: [], checks: [], lookNotes: [], cost: {}, status: 'planned' };
+}
+
 /** True when some audit note about the defect, written after its last attempt, has a satisfied outcome; otherwise a reason. */
-function auditUnlocks(data: CreatureData, defect: Defect, part: Part, newMethod: string): true | string {
+function auditUnlocks(data: CreatureData, defect: Defect, part: Part | undefined, newMethod: string): true | string {
 	const attempts = attemptsOn(data, defect.id);
 	const lastBuildAt = attempts.reduce((max, b) => (b.createdAt > max ? b.createdAt : max), '');
 	const audits = data.notes.filter((n) => n.kind === 'audit' && n.about?.defect === defect.id && n.createdAt >= lastBuildAt);
@@ -240,7 +295,7 @@ function auditUnlocks(data: CreatureData, defect: Defect, part: Part, newMethod:
 	return `the audit does not change anything yet: ${reasons.join('; ')}`;
 }
 
-function auditSatisfied(data: CreatureData, audit: Note, defect: Defect, part: Part, attempts: Build[], newMethod: string): true | string {
+function auditSatisfied(data: CreatureData, audit: Note, defect: Defect, part: Part | undefined, attempts: Build[], newMethod: string): true | string {
 	switch (audit.outcome) {
 		case 'lift-inferred-hold': {
 			const hold = audit.outcomeDetail ? byIdOrAlias(data.holds, audit.outcomeDetail) : undefined;
@@ -254,6 +309,7 @@ function auditSatisfied(data: CreatureData, audit: Note, defect: Defect, part: P
 			return true;
 		}
 		case 'redefine-part': {
+			if (!part) return 'redefine-part does not apply to the blockout; change the method or ask Nick';
 			if (part.updatedAt >= audit.createdAt && part.rev > 1) return true;
 			return `part ${part.key} was not updated after the audit`;
 		}
@@ -551,7 +607,7 @@ export function needsNick(data: CreatureData): NeedItem[] {
 	const partBits = (p: Part | undefined) => (p ? { partKey: p.key, partAlias: p.alias, partName: p.name } : {});
 
 	for (const b of data.builds) {
-		if (b.status !== 'presented' || b.kind === 'image') continue;
+		if (b.status !== 'presented' || b.kind === 'image' || b.stage === 'blockout') continue;
 		const thumbOut = b.outputs.find((o) => o.camera === 'front' && (o.role === undefined || o.role === 'render')) ?? b.outputs.find((o) => o.role === 'render') ?? b.outputs[0];
 		items.push({
 			kind: 'review',
@@ -578,6 +634,12 @@ export function needsNick(data: CreatureData): NeedItem[] {
 		imagePending.set('sheet', { kind: 'stage', ref: 'sheet', stage: 'sheet', ask: `Look at the model sheet (${sheetShown.length} images)`, since: sheetShown.map((b) => b.updatedAt).sort()[0]!, ...(first.outputs[0] ? { thumb: first.outputs[0].blob } : {}) });
 	}
 
+	const blockoutShown = currentBlockoutBuild(data);
+	const blockoutThumb = blockoutShown?.outputs.find((o) => o.camera === 'front' && o.role === 'render')?.blob;
+	if (blockoutShown?.status === 'presented') {
+		imagePending.set('blockout', { kind: 'stage', ref: 'blockout', stage: 'blockout', ask: `Look at the blockout (build ${blockoutShown.alias}) and approve, adjust or reject it`, since: blockoutShown.updatedAt, ...(blockoutThumb ? { thumb: blockoutThumb } : {}) });
+	}
+
 	for (const id of STAGE_IDS) {
 		if (data.creature.stages[id].status !== 'in-review') {
 			const pending = imagePending.get(id);
@@ -585,7 +647,7 @@ export function needsNick(data: CreatureData): NeedItem[] {
 			continue;
 		}
 		const last = data.notes.filter((n) => n.about?.stage === id).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-		const thumb = id === 'intake' ? data.creature.intake?.silhouette.blob : id === 'vision' ? [...data.references].sort((a, b) => a.precedence - b.precedence)[0]?.blob : id === 'sheet' ? (sheetImages(data).find((b) => b.image!.element === 'turnaround-front') ?? sheetImages(data)[0])?.outputs[0]?.blob : undefined;
+		const thumb = id === 'intake' ? data.creature.intake?.silhouette.blob : id === 'vision' ? [...data.references].sort((a, b) => a.precedence - b.precedence)[0]?.blob : id === 'sheet' ? (sheetImages(data).find((b) => b.image!.element === 'turnaround-front') ?? sheetImages(data)[0])?.outputs[0]?.blob : id === 'blockout' ? blockoutThumb : undefined;
 		items.push({ kind: 'stage', ref: id, stage: id, ask: `Review the ${id === 'sheet' ? 'model sheet' : id === 'vision' ? 'vision board' : id} stage and approve, adjust or reject it`, since: last?.createdAt ?? data.creature.updatedAt, ...(thumb ? { thumb } : {}) });
 	}
 
@@ -607,4 +669,41 @@ export function needsNick(data: CreatureData): NeedItem[] {
 	}
 
 	return items.sort((a, b) => a.since.localeCompare(b.since));
+}
+
+export interface BlockoutView {
+	status: Creature['stages']['blockout']['status'];
+	/** Blockout builds, newest first. */
+	builds: BuildView[];
+	/** The build the stage is about (newest shown), by alias. */
+	current?: string;
+	/** The orchestrator's fit note. */
+	fitNote?: { alias: string; text: string; createdAt: string };
+	/** The flesh views of the model sheet (bare-body images), by view, for the comparison when a camera has no overlay. */
+	flesh: { front?: string; side?: string; back?: string };
+	/** Problems marked about the blockout. */
+	marks: { alias: string; description: string; build: string; camera: string; status: string }[];
+	budget: { builds: number; buildsLeft: number; wallMinutes: number; wallMinutesLeft: number };
+}
+
+export function blockoutView(data: CreatureData): BlockoutView {
+	const all = blockoutBuilds(data).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+	const current = currentBlockoutBuild(data);
+	const note = fitNote(data);
+	const byId = new Map(data.builds.map((b) => [b.id, b]));
+	const bare = (el: string) => sheetImages(data).filter((b) => b.image!.element === el).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0]?.outputs[0]?.blob;
+	const front = bare('bare-front');
+	const side = bare('bare-side');
+	const back = bare('bare-back');
+	const budget = data.creature.defaultBudget;
+	const wall = all.reduce((sum, b) => sum + (b.cost.wallMinutes ?? 0), 0);
+	return {
+		status: data.creature.stages.blockout.status,
+		builds: all.map((b) => buildView(b, data)),
+		...(current ? { current: current.alias } : {}),
+		...(note ? { fitNote: { alias: note.alias, text: note.text, createdAt: note.createdAt } } : {}),
+		flesh: { ...(front ? { front } : {}), ...(side ? { side } : {}), ...(back ? { back } : {}) },
+		marks: data.defects.filter((d) => d.stage === 'blockout').map((d) => ({ alias: d.alias, description: d.description, build: byId.get(d.region?.buildId ?? '')?.alias ?? '', camera: d.region?.camera ?? '', status: d.status })),
+		budget: { builds: budget.builds, buildsLeft: Math.max(0, budget.builds - all.length), wallMinutes: budget.wallMinutes, wallMinutesLeft: Math.max(0, budget.wallMinutes - wall) },
+	};
 }

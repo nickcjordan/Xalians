@@ -89,6 +89,7 @@ function verifyCreature(root: string, key: string, errors: string[]): number {
 			case 'part':
 				for (const d of r.dependsOn ?? []) need(label, d, 'part', 'dependsOn');
 				need(label, r.approvedBuild, 'build', 'approvedBuild');
+				need(label, r.startBuild, 'build', 'startBuild');
 				break;
 			case 'hold':
 				need(label, r.scope?.part, 'part', 'scope.part');

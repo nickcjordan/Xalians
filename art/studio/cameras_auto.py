@@ -90,7 +90,6 @@ def build(blockout, close=(), resolution=800, freeze_from=None):
         record = json.loads(rp.read_text(encoding='utf-8'))
     return {
         'species': record.get('creature') or 'blockout',
-        'lockSpecies': 'akinza',
         'convention': ref['convention'],
         'resolution': resolution,
         'figureFrame': f'Generated from the blockout bounds {lo.round(4).tolist()} to {hi.round(4).tolist()}: one scale ({scale}) for every whole-figure view.',

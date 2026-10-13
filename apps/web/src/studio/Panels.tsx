@@ -219,7 +219,7 @@ export function DefectsPanel({ view }: { view: PartView }) {
 // Cost
 // ---------------------------------------------------------------------------
 
-export function CostLine({ build, view }: { build: BuildView; view: PartView }) {
+export function CostLine({ build, view, budgetLine }: { build: BuildView; view?: PartView; budgetLine?: string }) {
 	const c = build.cost;
 	return (
 		<Panel title="What this build cost">
@@ -238,7 +238,7 @@ export function CostLine({ build, view }: { build: BuildView; view: PartView }) 
 				</div>
 			</dl>
 			<p className="mt-3 mb-0 font-body text-small text-ink-2">
-				This part has used {view.budget.builds} of {view.budget.total.builds} builds and {minutes(view.budget.wallMinutes)} of {minutes(view.budget.total.wallMinutes)}.
+				{budgetLine ?? (view ? `This part has used ${view.budget.builds} of ${view.budget.total.builds} builds and ${minutes(view.budget.wallMinutes)} of ${minutes(view.budget.total.wallMinutes)}.` : '')}
 			</p>
 		</Panel>
 	);

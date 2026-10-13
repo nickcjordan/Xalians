@@ -1,0 +1,10 @@
+{
+  "note": "Blender runner config for Creature Studio. The Blender path comes from the environment variable named in blenderEnv, else blenderDefault. Slot lock files go in <work>/slots and logs in <work>/logs.",
+  "blenderEnv": "XALIANS_BLENDER",
+  "blenderDefault": "C:/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe",
+  "work": "C:/dev/art-data/studio/blender",
+  "maxSlots": 3,
+  "minFreeGb": 9,
+  "thirdSlotFreeGb": 14,
+  "settleSeconds": 15
+}

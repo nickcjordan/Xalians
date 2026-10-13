@@ -1,4 +1,4 @@
-"""Blockout builder (runs inside Blender: python art/species-construction/loop/loop_tools.py blender art/studio/blockout.py -- ...)
+"""Blockout builder (runs inside Blender: python art/studio/runner.py blender art/studio/blockout.py -- ...)
 
     blockout.py --spec <spec.json> --out <dir>
 

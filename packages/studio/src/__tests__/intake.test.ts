@@ -188,7 +188,7 @@ describe('submitting stages', () => {
 		submitStage(store, 'intake', who);
 		expect(store.load().creature.stages.intake.status).toBe('in-review');
 		expect(submitStage(store, 'intake', who)).toBe('intake'); // a repeat submit is a no-op
-		expect(() => submitStage(store, 'blockout', who)).toThrow(/no required outputs/);
+		expect(() => submitStage(store, 'parts', who)).toThrow(/no required outputs/);
 	});
 
 	it('checks the references outputs, including a unique precedence and an approved intake', () => {

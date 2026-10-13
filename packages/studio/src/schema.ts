@@ -182,6 +182,8 @@ export const PartSchema = record('P', {
 	order: z.number().int(),
 	status: z.enum(['proposed', 'not-started', 'in-progress', 'in-review', 'approved', 'stale']),
 	approvedBuild: idFor('B').optional(),
+	/** The approved blockout build this part starts from; set when the blockout stage is approved. */
+	startBuild: idFor('B').optional(),
 	budget,
 	transitionBands: z.array(z.string()).optional(),
 });
@@ -277,6 +279,8 @@ export const ImageBlockSchema = z.strictObject({
 
 const buildBase = record('B', {
 	part: idFor('P').optional(),
+	/** `blockout` for the whole-form blockout build, which belongs to no part. */
+	stage: z.enum(['blockout']).optional(),
 	kind: z.enum(['preview', 'build', 'image']),
 	image: ImageBlockSchema.optional(),
 	goal: z.strictObject({ text: z.string().min(1), sourceNote: idFor('N').optional() }),
@@ -348,11 +352,16 @@ const buildBase = record('B', {
 
 export const BuildSchema = buildBase.superRefine((b, ctx) => {
 	if (b.kind === 'image') {
+		if (b.stage !== undefined) ctx.addIssue({ code: 'custom', message: 'an image build has no stage field' });
 		if (b.part !== undefined) ctx.addIssue({ code: 'custom', message: 'an image build has no part' });
 		if (b.targets.length > 0) ctx.addIssue({ code: 'custom', message: 'an image build targets no defects' });
 		if (!b.image) ctx.addIssue({ code: 'custom', message: 'an image build needs its image block' });
+	} else if (b.stage === 'blockout') {
+		if (b.part !== undefined) ctx.addIssue({ code: 'custom', message: 'a blockout build has no part' });
+		if (b.kind !== 'build') ctx.addIssue({ code: 'custom', message: 'a blockout build has kind build' });
+		if (b.image) ctx.addIssue({ code: 'custom', message: 'only an image build carries an image block' });
 	} else {
-		if (b.part === undefined) ctx.addIssue({ code: 'custom', message: 'a build needs a part' });
+		if (b.part === undefined) ctx.addIssue({ code: 'custom', message: 'a build needs a part (only a blockout build has none)' });
 		if (b.image) ctx.addIssue({ code: 'custom', message: 'only an image build carries an image block' });
 	}
 });

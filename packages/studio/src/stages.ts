@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { hasBlob } from './blobs.ts';
-import { STAGE_IDS, type Build, type Creature, type Intake, type Note, type Part, type Reference, type StageId } from './schema.ts';
+import { STAGE_IDS, STANDARD_CAMERAS, type Build, type Creature, type Intake, type Note, type Part, type Reference, type StageId } from './schema.ts';
 import type { CreatureData } from './store.ts';
 
 export type StageStatus = Creature['stages']['intake']['status'];
@@ -12,7 +12,7 @@ export const PHASE_ONE: readonly StageId[] = STAGE_IDS.slice(0, 9);
 export const PHASE_TWO: readonly StageId[] = STAGE_IDS.slice(9);
 
 /** Stages whose submit checks and evidence exist in this build. */
-export const SUBMITTABLE: readonly StageId[] = ['intake', 'vision', 'sheet'];
+export const SUBMITTABLE: readonly StageId[] = ['intake', 'vision', 'sheet', 'blockout'];
 
 const partName = (data: CreatureData, id: string): string => data.parts.find((p) => p.id === id)?.key ?? id;
 
@@ -52,6 +52,10 @@ export function stageEvidenceItems(data: CreatureData, stage: StageId): Evidence
 		const note = consistencyNote(data);
 		if (note) items.push({ label: 'the consistency check', hash: sha(note.text) });
 		return items;
+	}
+	if (stage === 'blockout') {
+		const build = currentBlockoutBuild(data);
+		return build ? build.outputs.map((o) => ({ label: `blockout ${build.alias} output ${o.name}`, hash: o.blob })) : [];
 	}
 	if (stage === 'vision') {
 		const items: EvidenceItem[] = [];
@@ -129,6 +133,23 @@ export function submitProblems(data: CreatureData, stage: StageId): string[] {
 		if (!consistencyNote(data)) problems.push('no orchestrator consistency note; add a decision note about stage sheet whose text starts "Consistency check:"');
 		return problems;
 	}
+	if (stage === 'blockout') {
+		if (data.creature.stages.sheet.status !== 'approved') problems.push('the sheet stage is not approved yet');
+		const build = currentBlockoutBuild(data);
+		if (!build) {
+			problems.push('no presented blockout build; plan one with: studio build plan <key> --stage blockout --goal ... --method ..., then ingest, check, look and present it');
+			return problems;
+		}
+		const cams = new Set(build.outputs.filter((o) => o.role === 'render' && o.camera).map((o) => o.camera));
+		const missing = STANDARD_CAMERAS.filter((c) => !cams.has(c));
+		if (missing.length > 0) problems.push(`blockout build ${build.alias} has no render for: ${missing.join(', ')}`);
+		const overlayCams = new Set(build.outputs.filter((o) => o.role === 'overlay' && o.camera).map((o) => o.camera));
+		for (const v of BLOCKOUT_OVERLAY_VIEWS) {
+			if (!v.cameras.some((c) => overlayCams.has(c))) problems.push(`no ${v.label} overlay on blockout build ${build.alias}; run: studio build overlay <key> ${build.alias} --dir <folder with ${v.cameras[0]}.overlay.png>`);
+		}
+		if (!fitNote(data)) problems.push('no orchestrator fit note; add a decision note about stage blockout whose text starts "Fit check:"');
+		return problems;
+	}
 	if (stage === 'vision') {
 		if (data.creature.stages.intake.status !== 'approved') problems.push('the intake stage is not approved yet');
 		if (data.references.length === 0) problems.push('no references; run: studio reference add <key> --file <image> --role ...');
@@ -161,6 +182,33 @@ export function sheetImages(data: CreatureData): Build[] {
 export function consistencyNote(data: CreatureData): Note | undefined {
 	return data.notes
 		.filter((n) => n.kind === 'decision' && n.by === 'orchestrator' && n.about?.stage === 'sheet' && n.text.trimStart().startsWith('Consistency check:'))
+		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+}
+
+// ---------------------------------------------------------------------------
+// Blockout
+// ---------------------------------------------------------------------------
+
+/** The views a blockout needs an overlay for. `side` is met by either side camera. */
+export const BLOCKOUT_OVERLAY_VIEWS: readonly { label: string; cameras: readonly string[] }[] = [
+	{ label: 'front', cameras: ['front'] },
+	{ label: 'side', cameras: ['side-left', 'side-right', 'side'] },
+	{ label: 'back', cameras: ['back'] },
+];
+
+export const blockoutBuilds = (data: CreatureData): Build[] => data.builds.filter((b) => b.stage === 'blockout');
+
+/** The blockout build the stage is about: the newest one Nick has been shown (presented) or has decided on (reviewed). */
+export function currentBlockoutBuild(data: CreatureData): Build | undefined {
+	return blockoutBuilds(data)
+		.filter((b) => SHOWN.includes(b.status))
+		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+}
+
+/** The orchestrator's note that the blockout was measured against the sheet: a decision about the blockout starting "Fit check:". Newest wins. */
+export function fitNote(data: CreatureData): Note | undefined {
+	return data.notes
+		.filter((n) => n.kind === 'decision' && n.by === 'orchestrator' && n.about?.stage === 'blockout' && n.text.trimStart().startsWith('Fit check:'))
 		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
 }
 

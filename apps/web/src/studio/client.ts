@@ -1,10 +1,10 @@
 // Creature Studio review screen: the client half of the dev-only /__studio/api.
 // Types come from the studio library (type-only imports, erased at build).
 import * as React from 'react';
-import type { BuildView, NeedItem, PartView } from '@xalians/studio/engine';
+import type { BlockoutView, BuildView, NeedItem, PartView } from '@xalians/studio/engine';
 import type { BoardPart, CreatureBoard, ImageView, ReferenceView, SheetView, StageView, VisionElementView, VisionView } from '@xalians/studio/stages';
 
-export type { BuildView, NeedItem, PartView, BoardPart, CreatureBoard, ImageView, ReferenceView, SheetView, StageView, VisionElementView, VisionView };
+export type { BlockoutView, BuildView, NeedItem, PartView, BoardPart, CreatureBoard, ImageView, ReferenceView, SheetView, StageView, VisionElementView, VisionView };
 
 /** GET creatures/:key: the board plus everything waiting on Nick. */
 export type CreatureState = CreatureBoard & { needs: NeedItem[] };
@@ -67,6 +67,8 @@ export const api = {
 	creature: (creature: string) => send<CreatureState>('GET', `creatures/${encodeURIComponent(creature)}`),
 	references: (creature: string) => send<ReferenceView[]>('GET', `creatures/${encodeURIComponent(creature)}/references`),
 	vision: (creature: string) => send<VisionView>('GET', `creatures/${encodeURIComponent(creature)}/vision`),
+	blockout: (creature: string) => send<BlockoutView>('GET', `creatures/${encodeURIComponent(creature)}/blockout`),
+	blockoutMarks: (creature: string, body: { build: string; marks: MarkDraft[] }) => send<{ defects: { alias: string }[] }>('POST', `creatures/${encodeURIComponent(creature)}/blockout-marks`, body),
 	sheet: (creature: string) => send<SheetView>('GET', `creatures/${encodeURIComponent(creature)}/sheet`),
 	pick: (creature: string, body: { build: string; text: string }) => send<unknown>('POST', `creatures/${encodeURIComponent(creature)}/pick`, body),
 	unpick: (creature: string, body: { element: string }) => send<unknown>('POST', `creatures/${encodeURIComponent(creature)}/unpick`, body),

@@ -3,10 +3,10 @@ import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
 import { putFile } from './blobs.ts';
-import { ingestPacket } from './ingest.ts';
+import { ingestOverlays, ingestPacket } from './ingest.ts';
 import { watchReviews } from './watch.ts';
 import { addTokens, collectBuildCost, formatTokens, uncoveredText, zeroTokens, type TokenTotals } from './cost.ts';
-import { applyReview, canPresent, findPart, holdChangeRefusal, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
+import { applyReview, canPresent, findPart, holdChangeRefusal, planBlockout, planBuild, status as computeStatus, submitReport, type StatusReport } from './engine.ts';
 import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
 import { presentImages, runImage, setVisionContext } from './images.ts';
@@ -52,6 +52,7 @@ const OPTIONS = {
 	precedence: { type: 'string' },
 	provisional: { type: 'boolean' },
 	stage: { type: 'string' },
+	dir: { type: 'string' },
 	element: { type: 'string' },
 	summary: { type: 'string' },
 	verdict: { type: 'string' },
@@ -482,6 +483,16 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 		case 'plan': {
 			const data = store.load();
 			const targets = flags.targets ? flags.targets.split(',').map((s) => s.trim()).filter(Boolean) : undefined;
+			if (flags.stage !== undefined) {
+				if (flags.stage !== 'blockout') throw new StudioError('--stage on build plan must be blockout; part builds use --part');
+				if (flags.part) throw new StudioError('a blockout build belongs to no part; drop --part');
+				if (flags.kind && flags.kind !== 'build') throw new StudioError('a blockout build has kind build');
+				const plannedBlockout = planBlockout(data, { goal: need(flags, 'goal'), method: need(flags, 'method'), ...(targets ? { targets } : {}), ...(flags['allow-multiple'] ? { allowMultiple: true } : {}) });
+				const made = store.create('build', { ...plannedBlockout, ...(flags['orchestrator-session'] ? { orchestratorSession: flags['orchestrator-session'] } : {}) } as NewRecord<'build'>, actor, copts);
+				for (const d of plannedBlockout.targets) store.update<'defect'>(d, (x) => { x.attempts.push(made.id); }, mopts);
+				emit(made, `planned blockout build ${made.alias}`);
+				return;
+			}
 			const kind = need(flags, 'kind');
 			if (kind !== 'preview' && kind !== 'build') throw new StudioError('--kind must be preview or build');
 			const planned = planBuild(data, { part: need(flags, 'part'), kind, goal: need(flags, 'goal'), method: need(flags, 'method'), ...(targets ? { targets } : {}), ...(flags['allow-multiple'] ? { allowMultiple: true } : {}) });
@@ -534,6 +545,19 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			emit(rec, `ingested ${got.outputs.length} output(s) and ${got.checks.length} check(s) on ${rec.alias}`);
 			return;
 		}
+		case 'overlay': {
+			const b = load();
+			if (b.stage !== 'blockout') throw new StudioError(`build ${b.alias} is not a blockout build; overlays belong to the blockout`);
+			const got = ingestOverlays(need(flags, 'dir'));
+			const rec = setBuild(b.id, (x) => {
+				const names = new Set(got.outputs.map((o) => o.name));
+				x.outputs = [...x.outputs.filter((o) => !names.has(o.name)), ...got.outputs];
+				const ids = new Set(got.checks.map((k) => k.id));
+				x.checks = [...x.checks.filter((k) => !ids.has(k.id)), ...got.checks];
+			});
+			emit(rec, `stored ${got.outputs.length} overlay(s) and ${got.checks.length} fit number(s) on ${rec.alias}`);
+			return;
+		}
 		case 'report': {
 			const b = load();
 			if (b.status !== 'planned' && b.status !== 'running') throw new StudioError(`build ${b.alias} is ${b.status}; a report needs a planned or running build`);
@@ -581,7 +605,7 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			return;
 		}
 		default:
-			throw new StudioError('usage: build plan|start|fail|output|ingest|report|check|look|present <key> ...');
+			throw new StudioError('usage: build plan|start|fail|output|ingest|overlay|report|check|look|present <key> ...');
 	}
 }
 

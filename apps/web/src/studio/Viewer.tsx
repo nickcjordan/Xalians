@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { cn } from '@/lib/utils';
 import { blobUrl, type BuildView, type MarkDraft } from './client';
-import { cameraWord } from './words';
+import { cameraShort, cameraWord } from './words';
 
 type Out = BuildView['cameras'][string][number];
 
@@ -152,6 +152,12 @@ export interface ViewerProps {
 	footer?: React.ReactNode;
 	/** A single image with nothing to compare against: no comparison controls or hint. */
 	plain?: boolean;
+	/** What the comparison image is, when it is not the last approved build (for example the overlay on the sheet). */
+	baseLabel?: string;
+	/** How the comparison image sits in its frame: `fill` stretches it to the render's shape, `contain` keeps its own. */
+	baseFit?: 'fill' | 'contain';
+	/** Said in the toolbar when there is nothing to compare against. */
+	noBaseText?: string;
 }
 
 /** A toolbar row that never wraps; it scrolls sideways if the space is ever too small. */
@@ -167,6 +173,8 @@ export function Viewer(props: ViewerProps) {
 	const heat = overlayFor(build, camera, 'heat');
 	const shown = (overlay === 'diff' ? diff : overlay === 'heat' ? heat : render) ?? render;
 	const baselineIsApproved = !!renderFor(baseline, camera);
+	const tagBase = props.baseLabel ?? (baselineIsApproved ? 'Last approved' : 'Before');
+	const baseFitClass = props.baseFit === 'contain' ? 'object-contain' : 'object-fill';
 	const ratio = useRatio(shown ? blobUrl(shown.blob) : undefined);
 
 	const stageRef = React.useRef<HTMLDivElement>(null);
@@ -238,7 +246,7 @@ export function Viewer(props: ViewerProps) {
 						<ToggleGroupItem value="swipe">Swipe</ToggleGroupItem>
 					</ToggleGroup>
 				) : props.plain ? null : (
-					<span className="font-body text-small text-ink-2">Nothing approved yet to compare against.</span>
+					<span className="font-body text-small text-ink-2">{props.noBaseText ?? 'Nothing approved yet to compare against.'}</span>
 				)}
 				{diff || heat ? (
 					<ToggleGroup size="sm" type="single" value={overlay} onValueChange={(v: string) => v && props.onOverlay(v as Overlay)} aria-label="What to show" spacing={1}>
@@ -265,8 +273,8 @@ export function Viewer(props: ViewerProps) {
 					<>
 						{showBase && base ? (
 							<div className="relative shrink-0 overflow-hidden border border-edge bg-s0" style={frameStyle}>
-								<img src={blobUrl(base.blob)} alt={`${cameraWord(camera)}, last approved`} className="absolute inset-0 size-full object-fill" draggable={false} />
-								<Tag side="left">{baselineIsApproved ? 'Last approved' : 'Before'}</Tag>
+								<img src={blobUrl(base.blob)} alt={`${cameraWord(camera)}, ${tagBase}`} className={cn('absolute inset-0 size-full', baseFitClass)} draggable={false} />
+								<Tag side="left">{tagBase}</Tag>
 							</div>
 						) : null}
 						<div ref={frameRef} className="relative shrink-0 select-none overflow-hidden border border-edge bg-s0" style={frameStyle}>
@@ -275,13 +283,13 @@ export function Viewer(props: ViewerProps) {
 								<>
 									<img
 										src={blobUrl(base.blob)}
-										alt={`${cameraWord(camera)}, last approved`}
-										className="absolute inset-0 size-full object-fill"
+										alt={`${cameraWord(camera)}, ${tagBase}`}
+										className={cn('absolute inset-0 size-full', baseFitClass)}
 										style={{ clipPath: `inset(0 ${100 - pos * 100}% 0 0)` }}
 										draggable={false}
 									/>
 									<div className="pointer-events-none absolute inset-y-0 z-10 w-0.5 bg-ink" style={{ left: `${pos * 100}%` }} />
-									<Tag side="left">{baselineIsApproved ? 'Last approved' : 'Before'}</Tag>
+									<Tag side="left">{tagBase}</Tag>
 									<Tag side="right">This build</Tag>
 									<div
 										role="slider"
@@ -328,6 +336,38 @@ export function Viewer(props: ViewerProps) {
 			</div>
 
 			{props.footer}
+		</div>
+	);
+}
+
+/** One row of thumbnails, one per view; scrolls sideways if there are many. */
+export function CameraStrip({ build, cameras, camera, onCamera, marks }: { build: BuildView | undefined; cameras: string[]; camera: string; onCamera: (c: string) => void; marks: MarkDraft[] }) {
+	if (!build || cameras.length === 0) return null;
+	return (
+		<div role="group" aria-label="Views" className="flex shrink-0 gap-1.5 overflow-x-auto pb-1">
+			{cameras.map((c) => {
+				const out = renderFor(build, c);
+				const n = marks.filter((m) => m.camera === c).length;
+				const on = c === camera;
+				return (
+					<button
+						key={c}
+						type="button"
+						aria-pressed={on}
+						onClick={() => onCamera(c)}
+						className={cn(
+							'flex w-[76px] shrink-0 flex-col gap-0.5 border bg-s1 p-0.5 text-left outline-none focus-visible:outline-2 focus-visible:outline-ring',
+							on ? 'border-ink bg-s2 shadow-[inset_0_-3px_0_var(--color-ink)]' : 'border-edge hover:bg-s2',
+						)}
+					>
+						{out ? <img src={blobUrl(out.blob)} alt="" className="h-[52px] w-full bg-s0 object-cover" /> : <span className="h-[52px] w-full bg-s0" />}
+						<span className="type-legend flex items-center justify-between px-0.5 text-[10px]">
+							<span className="truncate">{cameraShort(c)}</span>
+							{n > 0 ? <span className="type-data ml-1 border border-caution px-1 text-caution">{n}</span> : null}
+						</span>
+					</button>
+				);
+			})}
 		</div>
 	);
 }

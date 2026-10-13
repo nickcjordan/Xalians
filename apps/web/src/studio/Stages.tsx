@@ -172,6 +172,7 @@ const NEXT_AFTER: Record<string, string> = {
 	intake: 'Next the orchestrator prepares the vision board; it appears under Needs you when it is ready.',
 	vision: 'Next the orchestrator prepares the model sheet; it appears under Needs you when it is ready.',
 	sheet: 'Next the orchestrator builds the blockout; it appears under Needs you when it is ready.',
+	blockout: 'The parts stage is open now. Each part starts from this blockout.',
 };
 
 function nextStageWord(stageId: string): string {

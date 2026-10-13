@@ -132,6 +132,17 @@ export function createStudioApi({ repoRoot }) {
 				return json(200, lib.sheetView(store.load()));
 			}
 
+			if (method === 'GET' && parts[2] === 'blockout' && parts.length === 3) {
+				return json(200, lib.blockoutView(store.load()));
+			}
+
+			if (method === 'POST' && parts[2] === 'blockout-marks' && parts.length === 3) {
+				need(body && typeof body === 'object', 'expected a JSON body');
+				need(Array.isArray(body.marks), 'marks must be a list');
+				const defects = lib.markBlockoutBuild(store, { build: String(body.build ?? ''), marks: body.marks });
+				return json(200, { defects });
+			}
+
 			if (method === 'POST' && parts[2] === 'pick' && parts.length === 3) {
 				need(body && typeof body === 'object', 'expected a JSON body');
 				const result = lib.pickImage(store, { build: String(body.build ?? ''), text: typeof body.text === 'string' ? body.text : '' });

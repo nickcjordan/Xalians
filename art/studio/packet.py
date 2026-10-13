@@ -4,7 +4,7 @@
         --cameras art/studio/cameras/akinza.json --out <dir> \
         [--component head --head <head dir> --baseline-head <head dir>] [--part <part key>]
 
-Renders every camera of the cameras file (art/studio/packet_render.py, run through loop_tools.py blender, so
+Renders every camera of the cameras file (art/studio/packet_render.py, run through runner.py blender, so
 the Blender slot lock applies) for the assembly and, when given, the baseline. Baseline renders are cached
 under C:/dev/art-data/studio/packet-cache/<sha256 of the baseline blend>/ and reused while the cameras file
 and renderer are unchanged. Per camera it writes <id>.png, and with a baseline <id>.baseline.png,
@@ -73,11 +73,17 @@ def blend_file(assembly):
     return found[0]
 
 
-def start_render(blend, cameras, out, species, tag):
-    """Launch Blender through loop_tools (slot lock). Returns the process; wait with finish_render."""
+def start_render(blend, cameras, out, lock_species, tag):
+    """Launch Blender under the slot lock. Returns the process; wait with finish_render.
+
+    `lock_species` is None for the studio's own runner (art/studio/runner.py, settings in runner.json). A cameras
+    file that still names `lockSpecies` keeps the old path through loop_tools.py and that species' config."""
     out.mkdir(parents=True, exist_ok=True)
-    cmd = [sys.executable, str(LOOP/'loop_tools.py'), '--species', species, 'blender', '--log', f'studio-packet-{tag}',
-           str(HERE/'packet_render.py'), '--', '--scene', str(blend), '--cameras', str(cameras), '--out', str(out)]
+    tail = [str(HERE/'packet_render.py'), '--', '--scene', str(blend), '--cameras', str(cameras), '--out', str(out)]
+    if lock_species:
+        cmd = [sys.executable, str(LOOP/'loop_tools.py'), '--species', lock_species, 'blender', '--log', f'studio-packet-{tag}', *tail]
+    else:
+        cmd = [sys.executable, str(HERE/'runner.py'), 'blender', '--log', f'studio-packet-{tag}', *tail]
     return subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
 
@@ -364,7 +370,7 @@ def main():
     cameras = Path(args.cameras).resolve()
     spec = json.loads(cameras.read_text(encoding='utf-8'))
     species = spec['species']
-    lock_species = spec.get('lockSpecies', species)     # the loop_tools species config that owns the Blender slot lock
+    lock_species = spec.get('lockSpecies')     # set only by an old cameras file: the loop_tools species config that owns the slot lock; otherwise the studio runner
     ids = [c['id'] for c in spec['cameras']]
     bg = tuple(spec['render']['background'])
     out = Path(args.out)

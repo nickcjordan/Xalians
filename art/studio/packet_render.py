@@ -1,4 +1,4 @@
-"""Packet renderer (runs inside Blender, launched by packet.py through loop_tools.py blender).
+"""Packet renderer (runs inside Blender, launched by packet.py through runner.py blender).
 
     packet_render.py --scene <assembly .blend> --cameras <cameras json> --out <dir> [--only id,id]
 

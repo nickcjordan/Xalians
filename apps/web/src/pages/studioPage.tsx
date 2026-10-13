@@ -17,11 +17,12 @@ import { cn } from '@/lib/utils';
 import { api, blobUrl, usePolled, type BuildView, type MarkDraft, type NeedItem, type PartView } from '@/studio/client';
 import { OptionsView } from '@/studio/Options';
 import { BuilderPanel, CostLine, DefectsPanel, HoldsPanel, NeedsRail, NotesPanel, Panel, VerdictPanel } from '@/studio/Panels';
-import { MarksList, renderFor, Viewer, type CompareMode, type Overlay, type Tool } from '@/studio/Viewer';
+import { CameraStrip, MarksList, Viewer, type CompareMode, type Overlay, type Tool } from '@/studio/Viewer';
+import { BlockoutReview } from '@/studio/Blockout';
 import { CreatureBoard, IntakeReview } from '@/studio/Stages';
 import { SheetReview } from '@/studio/Sheet';
 import { VisionReview } from '@/studio/Vision';
-import { buildKindWord, buildStatusWord, cameraShort, partStatusWord, sortCameras, stageName, timeAgo } from '@/studio/words';
+import { buildKindWord, buildStatusWord, partStatusWord, sortCameras, stageName, timeAgo } from '@/studio/words';
 
 type NeedWithCreature = NeedItem & { creature: string };
 
@@ -95,38 +96,6 @@ function BoardPage({ creature }: { creature: string }) {
 
 function pickInitialBuild(view: PartView, wanted: string | null): BuildView | undefined {
 	return view.builds.find((b) => b.alias === wanted) ?? view.builds.find((b) => b.status === 'presented') ?? view.builds[0];
-}
-
-/** One row of thumbnails, one per view; scrolls sideways if there are many. */
-function CameraStrip({ build, cameras, camera, onCamera, marks }: { build: BuildView | undefined; cameras: string[]; camera: string; onCamera: (c: string) => void; marks: MarkDraft[] }) {
-	if (!build || cameras.length === 0) return null;
-	return (
-		<div role="group" aria-label="Views" className="flex shrink-0 gap-1.5 overflow-x-auto pb-1">
-			{cameras.map((c) => {
-				const out = renderFor(build, c);
-				const n = marks.filter((m) => m.camera === c).length;
-				const on = c === camera;
-				return (
-					<button
-						key={c}
-						type="button"
-						aria-pressed={on}
-						onClick={() => onCamera(c)}
-						className={cn(
-							'flex w-[76px] shrink-0 flex-col gap-0.5 border bg-s1 p-0.5 text-left outline-none focus-visible:outline-2 focus-visible:outline-ring',
-							on ? 'border-ink bg-s2 shadow-[inset_0_-3px_0_var(--color-ink)]' : 'border-edge hover:bg-s2',
-						)}
-					>
-						{out ? <img src={blobUrl(out.blob)} alt="" className="h-[52px] w-full bg-s0 object-cover" /> : <span className="h-[52px] w-full bg-s0" />}
-						<span className="type-legend flex items-center justify-between px-0.5 text-[10px]">
-							<span className="truncate">{cameraShort(c)}</span>
-							{n > 0 ? <span className="type-data ml-1 border border-caution px-1 text-caution">{n}</span> : null}
-						</span>
-					</button>
-				);
-			})}
-		</div>
-	);
 }
 
 function PartReview({ creature, part }: { creature: string; part: string }) {
@@ -284,6 +253,8 @@ export default function StudioPage() {
 						<VisionReview key={`${creature}/vision`} creature={creature} />
 					) : !needs.error && creature && stage === 'sheet' ? (
 						<SheetReview key={`${creature}/sheet`} creature={creature} />
+					) : !needs.error && creature && stage === 'blockout' ? (
+						<BlockoutReview key={`${creature}/blockout`} creature={creature} />
 					) : !needs.error && creature && stage ? (
 						<div className="p-6"><p className="m-0 max-w-[62ch] border border-edge bg-s1 p-4 font-body text-body text-ink-2">The {stageName(stage).toLowerCase()} stage has no review screen yet.</p></div>
 					) : !needs.error && creature ? (

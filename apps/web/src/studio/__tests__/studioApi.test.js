@@ -392,3 +392,43 @@ describe('stages', () => {
 		});
 	});
 });
+
+describe('the blockout', () => {
+	const who = { actor: 'orchestrator', session: 't' };
+
+	it('serves the blockout view, turns marks into defects about the blockout, and approves with parts starting from it', async () => {
+		const store = lib.openCreature(root, 'fx');
+		store.acquireLock('t');
+		store.update(store.load().creature.id, (c) => {
+			for (const id of ['intake', 'vision', 'sheet']) c.stages[id] = { status: 'approved' };
+			c.stages.blockout = { status: 'open' };
+		}, who);
+		const outputs = lib.STANDARD_CAMERAS.map((cam) => ({ name: cam, blob: image(`${cam}.png`, `r-${cam}`), role: 'render', camera: cam }));
+		outputs.push({ name: 'front-overlay', blob: image('fo.png', 'fo'), role: 'overlay', camera: 'front' }, { name: 'side-left-overlay', blob: image('so.png', 'so'), role: 'overlay', camera: 'side-left' }, { name: 'back-overlay', blob: image('bo.png', 'bo'), role: 'overlay', camera: 'back' });
+		const b = store.create('build', { stage: 'blockout', kind: 'build', goal: { text: 'blockout' }, targets: [], method: 'm', outputs, checks: [{ id: 'fit-iou:front', kind: 'measure', value: 0.9 }], lookNotes: [], cost: {}, status: 'presented' }, 'orchestrator', { session: 't' });
+		store.create('note', { kind: 'decision', by: 'orchestrator', about: { stage: 'blockout' }, text: 'Fit check: front 90%.' }, 'orchestrator', { session: 't' });
+		lib.submitStage(store, 'blockout', who);
+		store.releaseLock();
+
+		const view = (await api.route('GET', 'creatures/fx/blockout')).json;
+		expect(view).toMatchObject({ status: 'in-review', current: b.alias, fitNote: { text: 'Fit check: front 90%.' } });
+		expect(view.builds[0].cameras.front.map((o) => o.role).sort()).toEqual(['overlay', 'render']);
+		const needs = (await api.route('GET', 'creatures/fx/needs')).json;
+		expect(needs.find((n) => n.stage === 'blockout')).toMatchObject({ kind: 'stage', thumb: outputs[0].blob });
+
+		const mark = { camera: 'front', shape: 'rect', x: 0.1, y: 0.1, w: 0.3, h: 0.3, description: 'legs short' };
+		expect((await api.route('POST', 'creatures/fx/blockout-marks', { body: { build: b.alias, marks: [mark] } })).status).toBe(403);
+		expect((await api.route('POST', 'creatures/fx/blockout-marks', { body: { build: b.alias, marks: 'x' }, headers: POST })).status).toBe(400);
+		const r = await api.route('POST', 'creatures/fx/blockout-marks', { body: { build: b.alias, marks: [mark] }, headers: POST });
+		expect(r.status).toBe(200);
+		expect(r.json.defects[0]).toMatchObject({ stage: 'blockout', origin: 'nick' });
+		expect((await api.route('GET', 'creatures/fx/blockout')).json.marks).toEqual([expect.objectContaining({ description: 'legs short', camera: 'front', build: b.alias })]);
+
+		const ok = await api.route('POST', 'creatures/fx/stage-review', { body: { stage: 'blockout', verdict: 'approve', text: 'good' }, headers: POST });
+		expect(ok.status).toBe(200);
+		const board = (await api.route('GET', 'creatures/fx')).json;
+		expect(board.stages.find((s) => s.id === 'blockout')).toMatchObject({ status: 'approved', reviewable: true });
+		expect(board.stages.find((s) => s.id === 'parts').status).toBe('open');
+		expect(lib.openCreature(root, 'fx').load().parts.every((p) => p.startBuild === b.id)).toBe(true);
+	});
+});

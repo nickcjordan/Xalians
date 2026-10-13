@@ -1,9 +1,9 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { isAbsolute, join, resolve } from 'node:path';
 import { z } from 'zod';
 import { putFile } from './blobs.ts';
 import { StudioError } from './errors.ts';
-import type { Build, Check } from './schema.ts';
+import { STANDARD_CAMERAS, type Build, type Check } from './schema.ts';
 
 const nullable = <T extends z.ZodType>(t: T) => t.nullable().optional();
 
@@ -88,4 +88,44 @@ export function ingestPacket(dir: string, storeDir?: string): IngestResult {
 	}
 	checks.push({ id: 'assembly', kind: 'measure', value: { assembly: packet.assembly, assemblySha256: packet.assemblySha256, baseline: packet.baseline }, detail: 'the assembly this packet was rendered from' });
 	return { outputs, checks, blenderMinutes: packet.minutes };
+}
+
+export interface OverlayResult {
+	outputs: Build['outputs'];
+	checks: Check[];
+}
+
+/**
+ * Reads a folder of overlay images named `<view>.overlay.png` (the view is a standard camera) and an optional
+ * `fit.json` ({ "<view>": iou }), blob-stores the images as outputs with role overlay and camera = view, and
+ * turns each fit number into a measure check `fit-iou:<view>`.
+ */
+export function ingestOverlays(dir: string, storeDir?: string): OverlayResult {
+	const folder = resolve(dir);
+	if (!existsSync(folder)) throw new StudioError(`no folder ${folder}`);
+	const cams: readonly string[] = STANDARD_CAMERAS;
+	const outputs: Build['outputs'] = [];
+	for (const f of readdirSync(folder).filter((n) => n.endsWith('.overlay.png')).sort()) {
+		const view = f.slice(0, -'.overlay.png'.length);
+		if (!cams.includes(view)) throw new StudioError(`overlay ${f}: ${view} is not a standard camera (${cams.join(', ')})`);
+		outputs.push({ name: `${view}-overlay`, blob: putFile(join(folder, f), storeDir), role: 'overlay', camera: view });
+	}
+	if (outputs.length === 0) throw new StudioError(`no <view>.overlay.png files in ${folder}`);
+	const checks: Check[] = [];
+	const fitFile = join(folder, 'fit.json');
+	if (existsSync(fitFile)) {
+		let raw: unknown;
+		try {
+			raw = JSON.parse(readFileSync(fitFile, 'utf8'));
+		} catch (e) {
+			throw new StudioError(`fit.json is not valid JSON: ${(e as Error).message}`);
+		}
+		if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new StudioError('fit.json must be an object of { view: iou }');
+		for (const [view, iou] of Object.entries(raw as Record<string, unknown>)) {
+			if (!cams.includes(view)) throw new StudioError(`fit.json: ${view} is not a standard camera`);
+			if (typeof iou !== 'number' || !Number.isFinite(iou) || iou < 0 || iou > 1) throw new StudioError(`fit.json: ${view} must be a number from 0 to 1`);
+			checks.push({ id: `fit-iou:${view}`, kind: 'measure', value: iou, detail: `silhouette overlap (intersection over union) between the model and the sheet at ${view}` });
+		}
+	}
+	return { outputs, checks };
 }
