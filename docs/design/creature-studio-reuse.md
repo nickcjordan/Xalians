@@ -1,6 +1,6 @@
 # Creature Studio: what carries from one creature to the next
 
-Status: revision 2, 2026-10-12, after independent audits by Codex and Fable. Awaiting Nick's sign-off. Amends [creature-studio.md](creature-studio.md) section 7 ("Part library") and step S6, and replaces the "toolbox catalog" idea floated in chat the same day. Discussion is not approval.
+Status: revision 2, 2026-10-12, after independent audits by Codex and Fable. Tentatively signed off by Nick on 2026-10-12 ("I'm going to tentatively sign off on the plan because it's hard for me to give any more judgment without letting you give it a try"); tracked as experiment X09. Amends [creature-studio.md](creature-studio.md) section 7 ("Part library") and step S6, and replaces the "toolbox catalog" idea floated in chat the same day. Discussion is not approval.
 
 ## Context
 
@@ -30,7 +30,7 @@ Neither pure option. Do not keep reusable parts (an eye, a paw, a head): they ca
 | 8 | Each part has an adaptation budget covering previews, discarded attempts and porting. Previews count as attempts on the defects they target. | 80% | Codex 7 |
 | 9 | Lessons have no topic taxonomy up front. Each lesson names what it governs (a block, a procedure, a part kind or a process rule), when it applies, its status and its evidence. A brief carries at most five, chosen by the orchestrator; a lesson no build cites across two creatures is archived at the retro. | 80%: lessons rot when every lesson goes into every brief | Fable 4, Codex 5 |
 | 10 | Whether reuse helps is measured per part, not per creature: attempts and tokens to Nick's approval, split by `startedFrom`, plus a same-part sheet across creatures so Nick can see sameness. | 80% | Fable 5, Codex 6 |
-| 11 | Creature two gets lessons and the generic blocks only, unless Nick allows Akinza's proven procedures (eye in socket, rimmed shell with cup, fitted mass) to be promoted. Promotion reads Akinza's scripts and specs; it never touches its model or records. | open: Nick's call | Fable 7; Nick 2026-10-12 on Akinza |
+| 11 | Creature two (Hypnopet) gets lessons and the generic blocks only; promoting Akinza's proven procedures (eye in socket, rimmed shell with cup, fitted mass) waits for Nick's answer. Promotion reads Akinza's scripts and specs; it never touches its model or records. | open: asked 2026-10-12, unanswered | Fable 7; Nick 2026-10-12 on Akinza |
 
 ## The layers
 

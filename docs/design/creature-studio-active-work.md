@@ -12,7 +12,7 @@ Nick, 2026-10-12: "proceed" on design revision 3, after answering the backup (S3
 
 ## Completion criteria for milestone 1
 
-Nick, 2026-10-12: "I dont want you to do anything with Akinza, that model is being worked on in another session." Akinza is out of scope for this work (no import, no builds). Milestone 1 is a new creature taken through the studio from intake: intake and references approved by Nick in the screen, then a blockout and a first part build reviewed in the screen, with holds, defects, verdict and cost recorded. The creature is Nick's pick (recommended: Dromeus).
+Nick, 2026-10-12: "I dont want you to do anything with Akinza, that model is being worked on in another session." Akinza is out of scope for this work (no import, no builds). Milestone 1 is a new creature taken through the studio from intake: intake and references approved by Nick in the screen, then a blockout and a first part build reviewed in the screen, with holds, defects, verdict and cost recorded. The creature is Hypnopet (Nick, 2026-10-12). Every process decision is logged as an experiment in `creature-studio-experiments.md` with its result filled in as evidence arrives.
 
 ## Steps
 
@@ -28,9 +28,12 @@ Nick, 2026-10-12: "I dont want you to do anything with Akinza, that model is bei
 | S1 token cost collector | done | PR #809 |
 | S1 intake and reference stages, creature board | done | PR #810 |
 | S1 Akinza import, skull | dropped | Nick, 2026-10-12 (above) |
-| S1 blockout: part library and assembly | not started | needs the milestone creature for its first part kinds |
-| S1 first creature through intake and references | waiting on Nick's pick | |
+| S1 blockout framework (mass, sweep, shell; part_id) | done | PR #811 |
+| Reuse plan | tentatively signed off | `creature-studio-reuse.md`, audited by Codex and Fable |
+| Vision board and model sheet stages, Codex image runs as builds | not started | design revision 4 |
+| Hypnopet intake | not started | |
+| Hypnopet vision board, model sheet | not started | |
 
 ## Next unfinished action
 
-Nick names the first creature; run its intake, propose its parts, gather references, submit both stages for his review; meanwhile build the blockout part library for its body plan.
+Verify Codex image generation from this session with one test image; build the vision board and model sheet stages; run Hypnopet's intake and submit it for Nick's review.
