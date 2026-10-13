@@ -1,0 +1,21 @@
+{
+  "id": "B-01M4V2M1BJSSF4DHQ90GFR47R3",
+  "alias": "B-p3yd",
+  "rev": 1,
+  "createdAt": "2026-10-13T16:48:06.001Z",
+  "updatedAt": "2026-10-13T16:48:06.001Z",
+  "createdBy": "orchestrator",
+  "part": "P-01M4SD18GECA5VQA5F218GNS4V",
+  "kind": "preview",
+  "goal": {
+    "text": "A round, short-faced cartoon bunny skull that reads cute, not dog-like"
+  },
+  "targets": [],
+  "method": "skull variant C from mass blocks",
+  "outputs": [],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {},
+  "status": "planned",
+  "orchestratorSession": "7fa482e3"
+}

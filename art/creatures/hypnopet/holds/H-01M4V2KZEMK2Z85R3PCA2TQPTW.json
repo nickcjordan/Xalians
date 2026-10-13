@@ -1,0 +1,24 @@
+{
+  "id": "H-01M4V2KZEMK2Z85R3PCA2TQPTW",
+  "alias": "H-qeue",
+  "rev": 1,
+  "createdAt": "2026-10-13T16:48:04.052Z",
+  "updatedAt": "2026-10-13T16:48:04.052Z",
+  "createdBy": "orchestrator",
+  "statement": "Everything outside the part being built stays as the approved blockout",
+  "scope": {},
+  "source": {
+    "kind": "inferred",
+    "reason": "one part at a time, so a review only shows what changed in that part; a builder may still change a neighbor when the part needs it, and must declare it",
+    "by": "orchestrator"
+  },
+  "status": "active",
+  "history": [
+    {
+      "at": "2026-10-13T16:48:04.051Z",
+      "status": "active",
+      "by": "orchestrator",
+      "reason": "created"
+    }
+  ]
+}

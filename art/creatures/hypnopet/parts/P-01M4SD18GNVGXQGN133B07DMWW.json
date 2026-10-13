@@ -1,9 +1,9 @@
 {
   "id": "P-01M4SD18GNVGXQGN133B07DMWW",
   "alias": "P-6ax2",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T01:11:36.213Z",
-  "updatedAt": "2026-10-13T01:59:13.893Z",
+  "updatedAt": "2026-10-13T16:47:24.280Z",
   "createdBy": "orchestrator",
   "key": "horn",
   "name": "Horn",
@@ -18,6 +18,7 @@
   ],
   "order": 6,
   "status": "not-started",
+  "startBuild": "B-01M4V1S1MVH3K4WCM4J71SQDX6",
   "budget": {
     "builds": 6,
     "wallMinutes": 180

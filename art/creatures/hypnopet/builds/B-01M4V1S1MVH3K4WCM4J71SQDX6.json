@@ -1,9 +1,9 @@
 {
   "id": "B-01M4V1S1MVH3K4WCM4J71SQDX6",
   "alias": "B-fpvq",
-  "rev": 14,
+  "rev": 15,
   "createdAt": "2026-10-13T16:33:21.562Z",
-  "updatedAt": "2026-10-13T16:34:19.494Z",
+  "updatedAt": "2026-10-13T16:47:24.196Z",
   "createdBy": "orchestrator",
   "stage": "blockout",
   "kind": "build",
@@ -677,7 +677,7 @@
     "wallMinutes": 0.26,
     "blenderMinutes": 3.24
   },
-  "status": "presented",
+  "status": "reviewed",
   "orchestratorSession": "7fa482e3",
   "startedAt": "2026-10-13T16:33:35.536Z",
   "endedAt": "2026-10-13T16:33:51.278Z"
