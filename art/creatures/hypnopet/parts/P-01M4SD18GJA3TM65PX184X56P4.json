@@ -1,0 +1,28 @@
+{
+  "id": "P-01M4SD18GJA3TM65PX184X56P4",
+  "alias": "P-3522",
+  "rev": 2,
+  "createdAt": "2026-10-13T01:11:36.210Z",
+  "updatedAt": "2026-10-13T01:11:36.222Z",
+  "createdBy": "orchestrator",
+  "key": "muzzle",
+  "name": "Muzzle and mouth",
+  "includes": [
+    "nose pad",
+    "split upper lip",
+    "mouth line",
+    "chin",
+    "whisker pads"
+  ],
+  "why": "The small rabbit muzzle and open, friendly mouth in the silhouette read as one unit; the nose, lips and chin have to change together.",
+  "scope": {},
+  "dependsOn": [
+    "P-01M4SD18GECA5VQA5F218GNS4V"
+  ],
+  "order": 4,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

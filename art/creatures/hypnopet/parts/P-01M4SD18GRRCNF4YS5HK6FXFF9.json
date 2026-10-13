@@ -1,0 +1,25 @@
+{
+  "id": "P-01M4SD18GRRCNF4YS5HK6FXFF9",
+  "alias": "P-naqx",
+  "rev": 2,
+  "createdAt": "2026-10-13T01:11:36.216Z",
+  "updatedAt": "2026-10-13T01:11:36.229Z",
+  "createdBy": "orchestrator",
+  "key": "tail",
+  "name": "Tail",
+  "includes": [
+    "short round tail",
+    "where it meets the rump"
+  ],
+  "why": "A small rabbit tail; its own part so its size and fluff can change without touching the rump.",
+  "scope": {},
+  "dependsOn": [
+    "P-01M4SD18GCC03ED1G0FZ0X8TST"
+  ],
+  "order": 9,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

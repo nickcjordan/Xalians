@@ -1,0 +1,27 @@
+{
+  "id": "P-01M4SD18GG35HF9RTH1RY6FR3N",
+  "alias": "P-ldwt",
+  "rev": 2,
+  "createdAt": "2026-10-13T01:11:36.208Z",
+  "updatedAt": "2026-10-13T01:11:36.220Z",
+  "createdBy": "orchestrator",
+  "key": "eyes",
+  "name": "Eyes",
+  "includes": [
+    "eyeballs",
+    "eye openings",
+    "upper and lower lids",
+    "the sockets and the skin around them"
+  ],
+  "why": "Very large eyes are a defining feature; an eye is the ball, its opening, its lids and its socket together, because a dent around an eye is usually caused by the ball itself (lesson from Akinza).",
+  "scope": {},
+  "dependsOn": [
+    "P-01M4SD18GECA5VQA5F218GNS4V"
+  ],
+  "order": 3,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "P-01M4SD18GCC03ED1G0FZ0X8TST",
+  "alias": "P-koyn",
+  "rev": 1,
+  "createdAt": "2026-10-13T01:11:36.204Z",
+  "updatedAt": "2026-10-13T01:11:36.204Z",
+  "createdBy": "orchestrator",
+  "key": "torso",
+  "name": "Torso",
+  "includes": [
+    "ribcage and chest",
+    "belly",
+    "back line from shoulders to rump",
+    "rump and haunch base",
+    "chest ruff mass"
+  ],
+  "why": "Every other part hangs from the trunk, and its length and depth set the scale of a small, rounded rabbit body.",
+  "scope": {},
+  "dependsOn": [],
+  "order": 1,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

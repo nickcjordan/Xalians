@@ -1,0 +1,27 @@
+{
+  "id": "P-01M4SD18GQ99G5E0H4DFHA25R7",
+  "alias": "P-maty",
+  "rev": 2,
+  "createdAt": "2026-10-13T01:11:36.215Z",
+  "updatedAt": "2026-10-13T01:11:36.228Z",
+  "createdBy": "orchestrator",
+  "key": "hindlegs",
+  "name": "Hind legs and feet",
+  "includes": [
+    "haunches and thighs",
+    "hocks",
+    "long hind feet",
+    "toe and heel pads on the soles"
+  ],
+  "why": "Large springing hind legs and the big padded feet in the silhouette are defining; haunch, hock and foot work as one unit.",
+  "scope": {},
+  "dependsOn": [
+    "P-01M4SD18GCC03ED1G0FZ0X8TST"
+  ],
+  "order": 8,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

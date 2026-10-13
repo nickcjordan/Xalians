@@ -1,0 +1,25 @@
+{
+  "id": "P-01M4SD18GNVGXQGN133B07DMWW",
+  "alias": "P-6ax2",
+  "rev": 2,
+  "createdAt": "2026-10-13T01:11:36.213Z",
+  "updatedAt": "2026-10-13T01:11:36.224Z",
+  "createdBy": "orchestrator",
+  "key": "horn",
+  "name": "Horn",
+  "includes": [
+    "single spiral horn",
+    "its base collar where it rises out of the crown fur"
+  ],
+  "why": "The color-changing spiral horn is the creature's signature; its base is part of the horn so the join to the crown is owned by one part.",
+  "scope": {},
+  "dependsOn": [
+    "P-01M4SD18GECA5VQA5F218GNS4V"
+  ],
+  "order": 6,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "C-01M4SD0NQBWM6MCZJ79JKJF1PN",
+  "alias": "C-5lik",
+  "rev": 3,
+  "createdAt": "2026-10-13T01:11:16.971Z",
+  "updatedAt": "2026-10-13T01:11:36.743Z",
+  "createdBy": "orchestrator",
+  "key": "hypnopet",
+  "name": "Hypnopet",
+  "speciesTemplate": "docs/species-templates/v5/hypnopet.json",
+  "silhouette": "apps/web/src/svg/species/hypnopet.svg",
+  "intake": {
+    "speciesTemplate": "docs/species-templates/v5/hypnopet.json",
+    "templateSha256": "6efa8faed65c830fa72434dc75ad47f34150adc9873ac756f9f25f12fe53ad90",
+    "name": "Hypnopet",
+    "element": "psychic",
+    "homeWorld": "telypso",
+    "bodyPlan": "quadruped",
+    "covering": "fur",
+    "sizeCm": [
+      30,
+      42
+    ],
+    "loreSummary": "Hypnopets resemble glowing, golden-furred bunny rabbits with a single color-changing unicorn horn atop their heads. They were created by the Telypso Generator as service animals and therapists for the insane Vallerii imprisoned on the world, where their natural empathic healing abilities served to balance and treat patients. When their horn begins to pulse and swirl with psychedelic color, it hypnotizes others and locks them in a trance, which was useful for sedating patients when they entered into dangerous bouts of mania. With the Nemesis Plague reducing the patient population of Telypso, many Hypnopets have taken to the stars as healers, though some have been forced into service by King Kozrak, who uses their hypnotic abilities as crowd control on rebellious worlds.",
+    "appearance": [
+      "Small bunny rabbit",
+      "Glowing golden fur",
+      "Single color-changing unicorn horn atop the head",
+      "Very long lop ears",
+      "Very large eyes",
+      "Large springing hind legs"
+    ],
+    "anatomy": [
+      "crest",
+      "hide",
+      "body"
+    ],
+    "silhouette": {
+      "blob": "d27fcab5b242eb91011f9d9bf2508fc8e5f082204dfe785235b71ba11476c93b",
+      "fileName": "hypnopet.svg"
+    }
+  },
+  "stages": {
+    "intake": {
+      "status": "in-review"
+    },
+    "vision": {
+      "status": "locked"
+    },
+    "sheet": {
+      "status": "locked"
+    },
+    "blockout": {
+      "status": "locked"
+    },
+    "parts": {
+      "status": "locked"
+    },
+    "coherence": {
+      "status": "locked"
+    },
+    "surface": {
+      "status": "locked"
+    },
+    "color": {
+      "status": "locked"
+    },
+    "readiness": {
+      "status": "locked"
+    },
+    "rig": {
+      "status": "locked"
+    },
+    "animate": {
+      "status": "locked"
+    },
+    "atlas": {
+      "status": "locked"
+    }
+  },
+  "defaultBudget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

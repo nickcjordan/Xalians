@@ -1,0 +1,28 @@
+{
+  "id": "P-01M4SD18GECA5VQA5F218GNS4V",
+  "alias": "P-clgr",
+  "rev": 2,
+  "createdAt": "2026-10-13T01:11:36.206Z",
+  "updatedAt": "2026-10-13T01:11:36.219Z",
+  "createdBy": "orchestrator",
+  "key": "head",
+  "name": "Head and neck",
+  "includes": [
+    "skull mass",
+    "cheeks",
+    "brow",
+    "crown where the horn and ears sit",
+    "short neck into the chest ruff"
+  ],
+  "why": "The big round head carries the face; it is one smooth mass so the eyes, muzzle, ears and horn fit into it rather than being stuck on.",
+  "scope": {},
+  "dependsOn": [
+    "P-01M4SD18GCC03ED1G0FZ0X8TST"
+  ],
+  "order": 2,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "P-01M4SD18GPNV8BWW76DZV1KWTM",
+  "alias": "P-swv7",
+  "rev": 2,
+  "createdAt": "2026-10-13T01:11:36.214Z",
+  "updatedAt": "2026-10-13T01:11:36.226Z",
+  "createdBy": "orchestrator",
+  "key": "forelegs",
+  "name": "Forelegs and front paws",
+  "includes": [
+    "shoulders",
+    "short forelegs",
+    "front paws and toes"
+  ],
+  "why": "Small forelegs support the front of the body; shoulder to toe changes together.",
+  "scope": {},
+  "dependsOn": [
+    "P-01M4SD18GCC03ED1G0FZ0X8TST"
+  ],
+  "order": 7,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}

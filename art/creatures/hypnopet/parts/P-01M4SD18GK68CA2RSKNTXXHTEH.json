@@ -1,0 +1,27 @@
+{
+  "id": "P-01M4SD18GK68CA2RSKNTXXHTEH",
+  "alias": "P-6ouo",
+  "rev": 2,
+  "createdAt": "2026-10-13T01:11:36.211Z",
+  "updatedAt": "2026-10-13T01:11:36.223Z",
+  "createdBy": "orchestrator",
+  "key": "ears",
+  "name": "Lop ears",
+  "includes": [
+    "ear roots where they leave the skull",
+    "the long hanging drape",
+    "inner ear cup",
+    "ear tips"
+  ],
+  "why": "Very long lop ears are a defining feature and will have to bend in animation; the root belongs to the ear so the join can be fixed without touching the skull.",
+  "scope": {},
+  "dependsOn": [
+    "P-01M4SD18GECA5VQA5F218GNS4V"
+  ],
+  "order": 5,
+  "status": "proposed",
+  "budget": {
+    "builds": 6,
+    "wallMinutes": 180
+  }
+}
