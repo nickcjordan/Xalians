@@ -1,0 +1,58 @@
+{
+  "id": "B-01M4SGEGYSPTREW300NCZFHGX8",
+  "alias": "B-3tcl",
+  "rev": 3,
+  "createdAt": "2026-10-13T02:11:16.569Z",
+  "updatedAt": "2026-10-13T02:12:29.489Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "face",
+    "label": "B: Rabbit nose, gentle smile",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Close-up portrait of the creature's face, front view: a tiny Y-shaped rabbit nose over a split upper lip and a closed, gentle smile. Plain light gray background.",
+    "promptSha256": "e1d024b233bcbc0f01bfafe17e8974277cad56e1805aafe6ce1f00867612cd3b",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13307-45cc-7460-86e7-44d1c2ba74be\\exec-37399a80-cc62-42c7-a603-4dd916465de3.png",
+    "codexTokens": 25884,
+    "model": null,
+    "governs": [
+      "nose design",
+      "mouth design",
+      "muzzle shape"
+    ],
+    "notFor": [
+      "color palette",
+      "eyes",
+      "head shape"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "B: Rabbit nose, gentle smile: vision face"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "54bbf16837e8cba81ac62849b93715b839ee0a02be7f4e5d7b3bf1e5177b11be",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.08
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T02:11:16.544Z",
+  "endedAt": "2026-10-13T02:12:21.211Z",
+  "deadline": "2026-10-13T02:26:16.544Z"
+}

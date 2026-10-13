@@ -1,0 +1,58 @@
+{
+  "id": "B-01M4SGBYGF4SM1XQZ624ZJV1A8",
+  "alias": "B-364p",
+  "rev": 3,
+  "createdAt": "2026-10-13T02:09:52.143Z",
+  "updatedAt": "2026-10-13T02:11:11.065Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "horn",
+    "label": "C: Crystal spiral",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Close-up of the creature's head from a three-quarter view, focused on the horn: a translucent crystal-like spiral with a faint rainbow shimmer inside, rising from a tuft of crown fur. Plain light gray background.",
+    "promptSha256": "ef7bb2463a8ef52daa68ee2b8ac5daa607c240e3236f09fb516c7f87a24ca0c5",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13305-fa87-7602-a9f3-644b4c5fd122\\exec-5f3160a9-132c-446a-9581-e19ab57bd8ec.png",
+    "codexTokens": 17780,
+    "model": null,
+    "governs": [
+      "horn shape",
+      "horn spiral",
+      "horn base"
+    ],
+    "notFor": [
+      "color palette",
+      "ears",
+      "eyes"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "C: Crystal spiral: vision horn"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "261e5d93afe87a1bf07797bb0274ff8065edf1ef7cdba96befa4561847ce5219",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.27
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T02:09:52.140Z",
+  "endedAt": "2026-10-13T02:11:08.133Z",
+  "deadline": "2026-10-13T02:24:52.140Z"
+}

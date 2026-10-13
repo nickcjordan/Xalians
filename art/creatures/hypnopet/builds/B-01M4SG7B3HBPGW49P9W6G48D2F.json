@@ -1,0 +1,58 @@
+{
+  "id": "B-01M4SG7B3HBPGW49P9W6G48D2F",
+  "alias": "B-wdyw",
+  "rev": 3,
+  "createdAt": "2026-10-13T02:07:21.201Z",
+  "updatedAt": "2026-10-13T02:08:38.202Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "fur",
+    "label": "B: Medium fluffy",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view. Its coat is medium length and fluffy, with a fuller chest ruff and soft cheek tufts; the outline is soft but readable. Plain light gray background.",
+    "promptSha256": "d246c39e3daabc8fa4d13be8b6b756094e3f954612c39eb86c9398453e62ad4f",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13303-aece-7173-976d-aae83458d91d\\exec-1e607b67-094c-42b8-8795-ab67de6776ba.png",
+    "codexTokens": 25430,
+    "model": null,
+    "governs": [
+      "fur length",
+      "fur texture",
+      "outline softness"
+    ],
+    "notFor": [
+      "color palette",
+      "shape",
+      "pattern"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "B: Medium fluffy: vision fur"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.1
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T02:07:21.198Z",
+  "endedAt": "2026-10-13T02:08:27.478Z",
+  "deadline": "2026-10-13T02:22:21.198Z"
+}

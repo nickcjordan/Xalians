@@ -1,0 +1,58 @@
+{
+  "id": "B-01M4SGEJFCK6WPBXZ8DKS5PCWD",
+  "alias": "B-phtz",
+  "rev": 3,
+  "createdAt": "2026-10-13T02:11:18.124Z",
+  "updatedAt": "2026-10-13T02:12:29.494Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "face",
+    "label": "C: Whisker pads",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Close-up portrait of the creature's face, front view: a soft rounded muzzle with plump whisker pads and short whiskers, a small nose and a small open smile. Plain light gray background.",
+    "promptSha256": "fe428f56524573803fafefd88cc90258f2b30dbde8ddf4cc4504e6f0785e7adc",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13307-4c46-7cb2-9f74-4ec4afdaab32\\exec-55339078-a145-470d-bd40-393c309b16b9.png",
+    "codexTokens": 26694,
+    "model": null,
+    "governs": [
+      "nose design",
+      "mouth design",
+      "muzzle shape"
+    ],
+    "notFor": [
+      "color palette",
+      "eyes",
+      "head shape"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "C: Whisker pads: vision face"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "22da9d7775b27e92bac53cf223caff0cfb51ba4391c3f9eee4b5c4672f5c5865",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.15
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T02:11:18.122Z",
+  "endedAt": "2026-10-13T02:12:27.215Z",
+  "deadline": "2026-10-13T02:26:18.122Z"
+}

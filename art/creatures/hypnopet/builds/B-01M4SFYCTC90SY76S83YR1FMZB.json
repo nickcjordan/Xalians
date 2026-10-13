@@ -1,0 +1,62 @@
+{
+  "id": "B-01M4SFYCTC90SY76S83YR1FMZB",
+  "alias": "B-bn2n",
+  "rev": 3,
+  "createdAt": "2026-10-13T02:02:28.044Z",
+  "updatedAt": "2026-10-13T02:06:01.820Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "palette",
+    "label": "B: Dawn amber",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view, fully colored, with a row of six plain flat color swatches beneath it (body fur, face and chest, inner ears, nose, iris, horn). Palette: deep amber-orange gold body fur, pale butter-yellow face and chest, coral inner ears, dark brown nose, violet irises, opal horn. Plain light gray background.",
+    "promptSha256": "83b5a4499d9eb94d9088e9608e66d1bc8c785b4de1ef254296dfebc1ddb8542a",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a132ff-33c1-72a3-846c-b8084083d3cb\\exec-00e66a8d-e105-4902-b449-b0c6afea760a.png",
+    "codexTokens": 18216,
+    "model": null,
+    "governs": [
+      "fur color range",
+      "face and chest color",
+      "inner ear color",
+      "nose color",
+      "iris color",
+      "horn resting color"
+    ],
+    "notFor": [
+      "shape",
+      "pattern",
+      "pose",
+      "fur length"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "B: Dawn amber: vision palette"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "f6708cab01ee8c204a47fe03689cb418ca3318f146b42c4ec9a09214affc979f",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.26
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T02:02:28.042Z",
+  "endedAt": "2026-10-13T02:03:43.794Z",
+  "deadline": "2026-10-13T02:17:28.042Z"
+}

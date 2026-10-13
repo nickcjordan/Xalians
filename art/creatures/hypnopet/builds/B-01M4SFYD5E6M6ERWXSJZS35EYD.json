@@ -1,0 +1,62 @@
+{
+  "id": "B-01M4SFYD5E6M6ERWXSJZS35EYD",
+  "alias": "B-tbpp",
+  "rev": 3,
+  "createdAt": "2026-10-13T02:02:28.398Z",
+  "updatedAt": "2026-10-13T02:06:01.823Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "palette",
+    "label": "C: Champagne mist",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Show the creature standing on all four legs in three-quarter view, fully colored, with a row of six plain flat color swatches beneath it (body fur, face and chest, inner ears, nose, iris, horn). Palette: pale champagne-gold body fur with faint lavender shadow tones, ivory face and chest, lilac inner ears, mauve nose, teal irises, softly iridescent horn. Plain light gray background.",
+    "promptSha256": "e591a7c19eff80f929236f519f5f741e37ebb85aea4e2c772e1b96e889f29c86",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a132ff-3510-70d2-be5b-8472c5196984\\exec-9a9d22b0-3452-49da-a784-93c863e5c9f4.png",
+    "codexTokens": 29885,
+    "model": null,
+    "governs": [
+      "fur color range",
+      "face and chest color",
+      "inner ear color",
+      "nose color",
+      "iris color",
+      "horn resting color"
+    ],
+    "notFor": [
+      "shape",
+      "pattern",
+      "pose",
+      "fur length"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "C: Champagne mist: vision palette"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "4593123a746aab53c76e3cc811ba580f3d02aef1b0009454ecab31e4ac14fe58",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 3.54
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T02:02:28.396Z",
+  "endedAt": "2026-10-13T02:06:00.703Z",
+  "deadline": "2026-10-13T02:17:28.396Z"
+}

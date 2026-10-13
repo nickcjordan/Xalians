@@ -1,0 +1,58 @@
+{
+  "id": "B-01M4SG9S50XGKQK3RQSRTYMEYE",
+  "alias": "B-6jbv",
+  "rev": 3,
+  "createdAt": "2026-10-13T02:08:41.120Z",
+  "updatedAt": "2026-10-13T02:09:47.364Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "eyes",
+    "label": "B: Colored iris",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Close-up portrait of the creature's face, front view. Its very large eyes show a clear warm colored iris around a round dark pupil, with a soft catch light. Plain light gray background.",
+    "promptSha256": "7534f3c06717ee6134096fe595e94d28bd8b8b03e00559ffbd334d24793e5a33",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13304-e57e-72b2-936e-e44e1a48c879\\exec-f1f905c8-7c7b-456b-afa5-c53636fcd0df.png",
+    "codexTokens": 28543,
+    "model": null,
+    "governs": [
+      "eye design",
+      "iris look",
+      "catch lights"
+    ],
+    "notFor": [
+      "color palette",
+      "head shape",
+      "nose and mouth"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "B: Colored iris: vision eyes"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "a7f10a8b9ff4807191501bf494c5258e473e287ed5d1001f7990fcf672241048",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.01
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T02:08:41.118Z",
+  "endedAt": "2026-10-13T02:09:41.500Z",
+  "deadline": "2026-10-13T02:23:41.118Z"
+}

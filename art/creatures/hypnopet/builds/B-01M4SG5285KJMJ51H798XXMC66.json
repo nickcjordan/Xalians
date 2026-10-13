@@ -1,0 +1,56 @@
+{
+  "id": "B-01M4SG5285KJMJ51H798XXMC66",
+  "alias": "B-j65q",
+  "rev": 3,
+  "createdAt": "2026-10-13T02:06:06.597Z",
+  "updatedAt": "2026-10-13T02:07:16.562Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "glow",
+    "label": "C: Glow with motes",
+    "prompt": "Character design study for an original creature called a Hypnopet: a small golden-furred bunny with very long lop ears hanging almost to the ground, very large eyes, a large round head, big hind feet with toe pads, a paler face mask and chest, and a single spiral unicorn horn rising from a tuft of fur on the crown. The attached silhouette.png is the creator's silhouette: use it only for overall proportions and features, not for style or pose. Clean modern cartoon character style with soft shading. No text, no labels, no watermark. Show the creature in three-quarter view on a dim dark gray background so its glow is visible. The golden fur has a soft warm glow, and a few tiny floating golden light motes drift near the coat.",
+    "promptSha256": "ca2967eba32b9e15d82a04688ec9bd3e2e7fe90435462dfc2f98afefaf1f9bd7",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13302-8989-7b13-ad38-79b937db434b\\exec-4648dcf4-96a5-4fcf-9969-1717bd66163c.png",
+    "codexTokens": 20164,
+    "model": null,
+    "governs": [
+      "how the glowing fur reads"
+    ],
+    "notFor": [
+      "color palette",
+      "shape",
+      "fur length"
+    ],
+    "round": 1
+  },
+  "goal": {
+    "text": "C: Glow with motes: vision glow"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "ad4a08dc02edd4ded521b76b0dbdea19a99d1a19e915a5749a3546767045a466",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.11
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T02:06:06.595Z",
+  "endedAt": "2026-10-13T02:07:13.306Z",
+  "deadline": "2026-10-13T02:21:06.595Z"
+}
