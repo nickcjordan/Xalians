@@ -1,0 +1,544 @@
+{
+ "creature": "hypnopet",
+ "version": "v5",
+ "note": "Hypnopet blockout: the flesh under the fur, fitted to the model sheet flesh views (art/studio/blockout/hypnopet/measures.json). Meters; shoulder height 0.30 m, skull top (horn excluded) 0.514 m. Faces -y, its left is +x, up is +z. Eyes and ears are part of the one skin here; the horn is a straight tapered sweep (no spiral yet). Written by make_spec.py.",
+ "voxel": 0.002,
+ "parts": [
+  {
+   "part": "torso",
+   "kind": "mass",
+   "blend": 0.04,
+   "params": {
+    "center": [
+     0,
+     0.02,
+     0.23
+    ],
+    "radii": [
+     0.068,
+     0.15,
+     0.072
+    ],
+    "exponent": 2.2,
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "part": "torso",
+   "kind": "mass",
+   "blend": 0.04,
+   "params": {
+    "center": [
+     0,
+     -0.075,
+     0.235
+    ],
+    "radii": [
+     0.066,
+     0.065,
+     0.075
+    ],
+    "exponent": 2.0
+   }
+  },
+  {
+   "part": "hindlegs",
+   "kind": "mass",
+   "mirror": "x",
+   "blend": 0.04,
+   "params": {
+    "center": [
+     0.058,
+     0.16,
+     0.2
+    ],
+    "radii": [
+     0.064,
+     0.09,
+     0.105
+    ],
+    "exponent": 2.0,
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "part": "hindlegs",
+   "kind": "sweep",
+   "mirror": "x",
+   "blend": 0.03,
+   "params": {
+    "up": [
+     0,
+     0,
+     1
+    ],
+    "points": [
+     {
+      "p": [
+       0.06,
+       0.17,
+       0.17
+      ],
+      "r": 0.05
+     },
+     {
+      "p": [
+       0.07,
+       0.218,
+       0.115
+      ],
+      "r": 0.042
+     },
+     {
+      "p": [
+       0.078,
+       0.23,
+       0.075
+      ],
+      "r": 0.038
+     },
+     {
+      "p": [
+       0.085,
+       0.226,
+       0.048
+      ],
+      "r": 0.035
+     }
+    ]
+   }
+  },
+  {
+   "part": "forelegs",
+   "kind": "sweep",
+   "mirror": "x",
+   "blend": 0.03,
+   "params": {
+    "up": [
+     0,
+     0,
+     1
+    ],
+    "points": [
+     {
+      "p": [
+       0.05,
+       -0.095,
+       0.24
+      ],
+      "r": 0.042
+     },
+     {
+      "p": [
+       0.048,
+       -0.098,
+       0.15
+      ],
+      "r": 0.032
+     },
+     {
+      "p": [
+       0.048,
+       -0.094,
+       0.075
+      ],
+      "r": 0.027
+     },
+     {
+      "p": [
+       0.05,
+       -0.098,
+       0.035
+      ],
+      "r": 0.026
+     }
+    ]
+   }
+  },
+  {
+   "part": "forelegs",
+   "kind": "mass",
+   "mirror": "x",
+   "blend": 0.02,
+   "params": {
+    "center": [
+     0.052,
+     -0.123,
+     0.025
+    ],
+    "radii": [
+     0.034,
+     0.042,
+     0.025
+    ],
+    "exponent": 2.3
+   }
+  },
+  {
+   "part": "hindlegs",
+   "kind": "mass",
+   "mirror": "x",
+   "blend": 0.025,
+   "params": {
+    "center": [
+     0.09,
+     0.15,
+     0.04
+    ],
+    "radii": [
+     0.042,
+     0.1,
+     0.04
+    ],
+    "exponent": 2.3,
+    "rotation": [
+     5,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "part": "tail",
+   "kind": "sweep",
+   "blend": 0.02,
+   "params": {
+    "points": [
+     {
+      "p": [
+       0,
+       0.17,
+       0.258
+      ],
+      "r": 0.024
+     },
+     {
+      "p": [
+       0,
+       0.195,
+       0.265
+      ],
+      "r": 0.021
+     },
+     {
+      "p": [
+       0,
+       0.215,
+       0.274
+      ],
+      "r": 0.017
+     },
+     {
+      "p": [
+       0,
+       0.228,
+       0.282
+      ],
+      "r": 0.012
+     }
+    ]
+   }
+  },
+  {
+   "part": "head",
+   "kind": "sweep",
+   "blend": 0.04,
+   "params": {
+    "points": [
+     {
+      "p": [
+       0,
+       -0.12,
+       0.36
+      ],
+      "r": 0.042
+     },
+     {
+      "p": [
+       0,
+       -0.1,
+       0.31
+      ],
+      "r": 0.046
+     },
+     {
+      "p": [
+       0,
+       -0.08,
+       0.26
+      ],
+      "r": 0.056
+     }
+    ]
+   }
+  },
+  {
+   "part": "head",
+   "kind": "mass",
+   "blend": 0.035,
+   "params": {
+    "center": [
+     0,
+     -0.13,
+     0.432
+    ],
+    "radii": [
+     0.08,
+     0.095,
+     0.088
+    ],
+    "exponent": 2.0,
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "part": "head",
+   "kind": "mass",
+   "blend": 0.03,
+   "params": {
+    "center": [
+     0,
+     -0.17,
+     0.375
+    ],
+    "radii": [
+     0.052,
+     0.058,
+     0.05
+    ],
+    "exponent": 2.0
+   }
+  },
+  {
+   "part": "muzzle",
+   "kind": "mass",
+   "blend": 0.02,
+   "params": {
+    "center": [
+     0,
+     -0.226,
+     0.393
+    ],
+    "radii": [
+     0.023,
+     0.032,
+     0.024
+    ],
+    "exponent": 2.0
+   }
+  },
+  {
+   "part": "muzzle",
+   "kind": "mass",
+   "blend": 0.015,
+   "params": {
+    "center": [
+     0,
+     -0.207,
+     0.35
+    ],
+    "radii": [
+     0.026,
+     0.028,
+     0.019
+    ],
+    "exponent": 2.0
+   }
+  },
+  {
+   "part": "eyes",
+   "kind": "mass",
+   "mirror": "x",
+   "blend": 0.012,
+   "params": {
+    "center": [
+     0.049,
+     -0.196,
+     0.43
+    ],
+    "radii": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "exponent": 2.0
+   }
+  },
+  {
+   "part": "horn",
+   "kind": "sweep",
+   "blend": 0.012,
+   "params": {
+    "points": [
+     {
+      "p": [
+       0,
+       -0.135,
+       0.49
+      ],
+      "r": 0.026
+     },
+     {
+      "p": [
+       0,
+       -0.142,
+       0.54
+      ],
+      "r": 0.022
+     },
+     {
+      "p": [
+       0,
+       -0.152,
+       0.585
+      ],
+      "r": 0.016
+     },
+     {
+      "p": [
+       0,
+       -0.164,
+       0.62
+      ],
+      "r": 0.01
+     },
+     {
+      "p": [
+       0,
+       -0.175,
+       0.645
+      ],
+      "r": 0.005
+     },
+     {
+      "p": [
+       0,
+       -0.18,
+       0.655
+      ],
+      "r": 0.003
+     }
+    ]
+   }
+  },
+  {
+   "part": "ears",
+   "kind": "mass",
+   "mirror": "x",
+   "blend": 0.025,
+   "params": {
+    "center": [
+     0.07,
+     -0.068,
+     0.505
+    ],
+    "radii": [
+     0.042,
+     0.032,
+     0.036
+    ],
+    "exponent": 2.0,
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "part": "ears",
+   "kind": "shell",
+   "mirror": "x",
+   "blend": 0.02,
+   "params": {
+    "center": [
+     0.17,
+     0.0075,
+     0.3075
+    ],
+    "normal": [
+     -0.5687,
+     -0.7098,
+     -0.4157
+    ],
+    "up": [
+     -0.3136,
+     -0.28,
+     0.9073
+    ],
+    "outline": [
+     [
+      0.03,
+      0.2482
+     ],
+     [
+      0.045,
+      0.1674
+     ],
+     [
+      0.068,
+      0.0558
+     ],
+     [
+      0.09,
+      -0.0625
+     ],
+     [
+      0.08,
+      -0.1451
+     ],
+     [
+      0.044,
+      -0.2076
+     ],
+     [
+      0,
+      -0.2232
+     ],
+     [
+      -0.044,
+      -0.2076
+     ],
+     [
+      -0.08,
+      -0.1451
+     ],
+     [
+      -0.09,
+      -0.0625
+     ],
+     [
+      -0.068,
+      0.0558
+     ],
+     [
+      -0.045,
+      0.1674
+     ],
+     [
+      -0.03,
+      0.2482
+     ]
+    ],
+    "smooth": 3,
+    "thickness": 0.014,
+    "rimThickness": 0.007,
+    "rimWidth": 0.03,
+    "bend": 9.0,
+    "bendAxis": "u"
+   }
+  }
+ ]
+}
