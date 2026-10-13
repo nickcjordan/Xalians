@@ -1,9 +1,9 @@
 {
   "id": "C-01M4SD0NQBWM6MCZJ79JKJF1PN",
   "alias": "C-5lik",
-  "rev": 5,
+  "rev": 6,
   "createdAt": "2026-10-13T01:11:16.971Z",
-  "updatedAt": "2026-10-13T01:53:42.854Z",
+  "updatedAt": "2026-10-13T01:59:13.883Z",
   "createdBy": "orchestrator",
   "key": "hypnopet",
   "name": "Hypnopet",
@@ -117,10 +117,25 @@
   },
   "stages": {
     "intake": {
-      "status": "in-review"
+      "status": "approved",
+      "approvedBy": "N-01M4SFRF6SD22GF0EDSC7FPAD9",
+      "evidence": [
+        "31cfeba2e8c3596b15eac31b132c5bd8fc03eb94811cc65838d702f4d1523a19",
+        "44d8f4ff8faf1580721f34fa9cb05ec1534ed029146596b9f0c34a82ab0a2fc5",
+        "6efa8faed65c830fa72434dc75ad47f34150adc9873ac756f9f25f12fe53ad90",
+        "712b4d6a40bf88b82ff98b27a8e9d8ca6bf899a88fabfcf19d2a24a89e14f527",
+        "76d92c735dda8db45d9747c74a85872903cb9985df21deefae5868ff0c182435",
+        "bef5504ef8b8c66025f2b480e7df41eba0c72222e5c9bdf68a468463fafb1b93",
+        "c6605d6aacbb285bc851ae9395aa6f779bc2bdc50cb925025e982b06d5b223ca",
+        "d27fcab5b242eb91011f9d9bf2508fc8e5f082204dfe785235b71ba11476c93b",
+        "d3e1ce7872b3bc428376174396d9b3b358aa92ec0e3505e2b889267f7aaa545a",
+        "e1bd2c72572edc84685fdb3d30e8c6b0a48c2c99442cd9e63e93005e602864c7",
+        "e81df1b54587ed5a1f5383ccc9a6728226a0b663e673ce8ee4b8af42f0270bb6",
+        "f475a9e669d41c0ced0462966747594d53d83fd7d207f7e6f45f17f8c826033a"
+      ]
     },
     "vision": {
-      "status": "locked"
+      "status": "open"
     },
     "sheet": {
       "status": "locked"

@@ -1,9 +1,9 @@
 {
   "id": "P-01M4SD18GJA3TM65PX184X56P4",
   "alias": "P-3522",
-  "rev": 2,
+  "rev": 3,
   "createdAt": "2026-10-13T01:11:36.210Z",
-  "updatedAt": "2026-10-13T01:11:36.222Z",
+  "updatedAt": "2026-10-13T01:59:13.890Z",
   "createdBy": "orchestrator",
   "key": "muzzle",
   "name": "Muzzle and mouth",
@@ -20,7 +20,7 @@
     "P-01M4SD18GECA5VQA5F218GNS4V"
   ],
   "order": 4,
-  "status": "proposed",
+  "status": "not-started",
   "budget": {
     "builds": 6,
     "wallMinutes": 180

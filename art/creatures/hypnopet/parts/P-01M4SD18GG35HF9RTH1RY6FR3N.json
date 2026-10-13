@@ -1,9 +1,9 @@
 {
   "id": "P-01M4SD18GG35HF9RTH1RY6FR3N",
   "alias": "P-ldwt",
-  "rev": 2,
+  "rev": 3,
   "createdAt": "2026-10-13T01:11:36.208Z",
-  "updatedAt": "2026-10-13T01:11:36.220Z",
+  "updatedAt": "2026-10-13T01:59:13.888Z",
   "createdBy": "orchestrator",
   "key": "eyes",
   "name": "Eyes",
@@ -19,7 +19,7 @@
     "P-01M4SD18GECA5VQA5F218GNS4V"
   ],
   "order": 3,
-  "status": "proposed",
+  "status": "not-started",
   "budget": {
     "builds": 6,
     "wallMinutes": 180

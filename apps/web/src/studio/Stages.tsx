@@ -168,6 +168,16 @@ export function CreatureBoard({ creature, state, summaries }: { creature: string
 // Verdict on a stage
 // ---------------------------------------------------------------------------
 
+const NEXT_AFTER: Record<string, string> = {
+	intake: 'Next the orchestrator prepares the vision board; it appears under Needs you when it is ready.',
+	vision: 'Next the orchestrator prepares the model sheet; it appears under Needs you when it is ready.',
+	sheet: 'Next the orchestrator builds the blockout; it appears under Needs you when it is ready.',
+};
+
+function nextStageWord(stageId: string): string {
+	return NEXT_AFTER[stageId] ?? 'The next stage opens now; the orchestrator brings its work to Needs you when it is ready.';
+}
+
 export function StageVerdict({ creature, stage, notes, onDone, approveHint }: { creature: string; stage: StageView; notes: CreatureState['stageNotes']; onDone: () => void; approveHint: string }) {
 	const [text, setText] = React.useState('');
 	const [busy, setBusy] = React.useState(false);
@@ -218,6 +228,15 @@ export function StageVerdict({ creature, stage, notes, onDone, approveHint }: { 
 					<p className="m-0 mb-2"><Badge variant={verdict === 'approve' ? 'ok' : 'default'}>{verdict === 'approve' ? <Check /> : null}{VERDICT_WORD[verdict] ?? verdict}</Badge></p>
 					<p className="m-0 font-body text-body text-ink">{said ? `"${said}"` : 'No comment.'}</p>
 				</>
+			) : null}
+			{stage.status === 'approved' && verdict === 'approve' ? (
+				<div role="status" className="mt-3 flex items-start gap-2 border-l-4 border-edge-strong bg-s2 p-3 font-body text-body text-ink">
+					<Check className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+					<span>
+						<strong>Approved and recorded.</strong> {nextStageWord(stage.id)}{' '}
+						<Link to={`/studio/${creature}`} className="text-ink underline">Back to the creature board</Link>
+					</span>
+				</div>
 			) : null}
 			{stage.status === 'open' ? <p className="mt-2 mb-0 font-body text-small text-ink-2">{verdict ? 'The stage is open again. The orchestrator will change it and submit it for you to look at once more.' : 'Not submitted yet. The orchestrator submits the stage when its required outputs are in place.'}</p> : null}
 			{stage.status === 'locked' ? <p className="m-0 font-body text-small text-ink-2">This stage opens when the one before it is approved.</p> : null}

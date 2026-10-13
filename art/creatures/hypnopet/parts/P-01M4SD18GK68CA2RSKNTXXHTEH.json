@@ -1,9 +1,9 @@
 {
   "id": "P-01M4SD18GK68CA2RSKNTXXHTEH",
   "alias": "P-6ouo",
-  "rev": 2,
+  "rev": 3,
   "createdAt": "2026-10-13T01:11:36.211Z",
-  "updatedAt": "2026-10-13T01:11:36.223Z",
+  "updatedAt": "2026-10-13T01:59:13.892Z",
   "createdBy": "orchestrator",
   "key": "ears",
   "name": "Lop ears",
@@ -19,7 +19,7 @@
     "P-01M4SD18GECA5VQA5F218GNS4V"
   ],
   "order": 5,
-  "status": "proposed",
+  "status": "not-started",
   "budget": {
     "builds": 6,
     "wallMinutes": 180

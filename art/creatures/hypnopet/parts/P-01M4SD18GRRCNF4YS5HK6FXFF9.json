@@ -1,9 +1,9 @@
 {
   "id": "P-01M4SD18GRRCNF4YS5HK6FXFF9",
   "alias": "P-naqx",
-  "rev": 2,
+  "rev": 3,
   "createdAt": "2026-10-13T01:11:36.216Z",
-  "updatedAt": "2026-10-13T01:11:36.229Z",
+  "updatedAt": "2026-10-13T01:59:13.898Z",
   "createdBy": "orchestrator",
   "key": "tail",
   "name": "Tail",
@@ -17,7 +17,7 @@
     "P-01M4SD18GCC03ED1G0FZ0X8TST"
   ],
   "order": 9,
-  "status": "proposed",
+  "status": "not-started",
   "budget": {
     "builds": 6,
     "wallMinutes": 180

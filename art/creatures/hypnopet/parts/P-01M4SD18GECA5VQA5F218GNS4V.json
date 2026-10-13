@@ -1,9 +1,9 @@
 {
   "id": "P-01M4SD18GECA5VQA5F218GNS4V",
   "alias": "P-clgr",
-  "rev": 2,
+  "rev": 3,
   "createdAt": "2026-10-13T01:11:36.206Z",
-  "updatedAt": "2026-10-13T01:11:36.219Z",
+  "updatedAt": "2026-10-13T01:59:13.887Z",
   "createdBy": "orchestrator",
   "key": "head",
   "name": "Head and neck",
@@ -20,7 +20,7 @@
     "P-01M4SD18GCC03ED1G0FZ0X8TST"
   ],
   "order": 2,
-  "status": "proposed",
+  "status": "not-started",
   "budget": {
     "builds": 6,
     "wallMinutes": 180

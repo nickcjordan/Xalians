@@ -1,9 +1,9 @@
 {
   "id": "P-01M4SD18GPNV8BWW76DZV1KWTM",
   "alias": "P-swv7",
-  "rev": 2,
+  "rev": 3,
   "createdAt": "2026-10-13T01:11:36.214Z",
-  "updatedAt": "2026-10-13T01:11:36.226Z",
+  "updatedAt": "2026-10-13T01:59:13.895Z",
   "createdBy": "orchestrator",
   "key": "forelegs",
   "name": "Forelegs and front paws",
@@ -18,7 +18,7 @@
     "P-01M4SD18GCC03ED1G0FZ0X8TST"
   ],
   "order": 7,
-  "status": "proposed",
+  "status": "not-started",
   "budget": {
     "builds": 6,
     "wallMinutes": 180
