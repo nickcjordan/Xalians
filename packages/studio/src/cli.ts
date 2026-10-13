@@ -415,7 +415,20 @@ function partCommand(store: Store, sub: string | undefined, flags: Flags, emit: 
 		emit(parts, `proposed ${parts.length} part(s): ${parts.map((p) => p.key).join(', ')}`);
 		return;
 	}
-	if (sub !== 'add') throw new StudioError('usage: part add|propose <key> --file part.json');
+	if (sub === 'budget') {
+		// The orchestrator raises or lowers a part's budget as the work needs (Nick, 2026-10-13); the reason is recorded.
+		const ref = need(flags, 'part');
+		const reason = need(flags, 'reason');
+		const part = findPart(store.load(), ref);
+		const builds = flags.builds !== undefined ? Number(flags.builds) : part.budget.builds;
+		const wallMinutes = flags.minutes !== undefined ? Number(flags.minutes) : part.budget.wallMinutes;
+		if (!Number.isFinite(builds) || !Number.isFinite(wallMinutes)) throw new StudioError('budget values must be numbers');
+		const rec = store.update<'part'>(part.id, (x) => { x.budget = { ...x.budget, builds, wallMinutes }; }, { actor, ...copts });
+		store.create('note', { kind: 'decision', about: { part: part.id }, by: 'orchestrator', text: `Budget for ${part.key} set to ${builds} builds and ${wallMinutes} minutes: ${reason}` } as NewRecord<'note'>, actor, copts);
+		emit(rec, `budget for ${part.key}: ${builds} builds, ${wallMinutes} minutes`);
+		return;
+	}
+	if (sub !== 'add') throw new StudioError('usage: part add|propose|budget <key> ...');
 	const creature = store.load().creature;
 	const input = resolveAliases(store, readJsonFile(need(flags, 'file')));
 	const rec = store.create('part', { includes: [], why: '', scope: {}, dependsOn: [], order: store.list('part').length + 1, status: 'not-started', budget: { ...creature.defaultBudget }, ...input } as NewRecord<'part'>, actor, copts);

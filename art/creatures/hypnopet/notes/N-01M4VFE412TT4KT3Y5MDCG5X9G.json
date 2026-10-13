@@ -1,0 +1,14 @@
+{
+  "id": "N-01M4VFE412TT4KT3Y5MDCG5X9G",
+  "alias": "N-4iol",
+  "rev": 1,
+  "createdAt": "2026-10-13T20:32:03.618Z",
+  "updatedAt": "2026-10-13T20:32:03.618Z",
+  "createdBy": "orchestrator",
+  "kind": "decision",
+  "about": {
+    "part": "P-01M4SD18GECA5VQA5F218GNS4V"
+  },
+  "by": "orchestrator",
+  "text": "Budget for head set to 16 builds and 600 minutes: Nick 2026-10-13: open budgets until we get what we want; the face needs separate glossy eyes, a re-render of three directions and a full build"
+}
