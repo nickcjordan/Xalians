@@ -245,6 +245,7 @@ describe('stages', () => {
 
 	it('returns the creature board with stages, intake, parts and needs', async () => {
 		const { store, blob } = await intakeFixture();
+		lib.setReading(store, { mustHave: [{ feature: 'Two legs', source: 'both' }], carryOver: [], openForDesign: [], questions: [] }, who);
 		lib.submitStage(store, 'intake', who);
 		const r = await api.route('GET', 'creatures/sx');
 		expect(r.status).toBe(200);
@@ -277,6 +278,7 @@ describe('stages', () => {
 
 	it('records a stage verdict as Nick with the header, and refuses it without', async () => {
 		const { store } = await intakeFixture();
+		lib.setReading(store, { mustHave: [{ feature: 'Two legs', source: 'both' }], carryOver: [], openForDesign: [], questions: [] }, who);
 		lib.submitStage(store, 'intake', who);
 		expect((await api.route('POST', 'creatures/sx/stage-review', { body: { stage: 'intake', verdict: 'approve', text: '' } })).status).toBe(403);
 		store.releaseLock();
@@ -308,7 +310,8 @@ describe('stages', () => {
 		async function atVision() {
 			process.env.STUDIO_CODEX_BIN = FAKE;
 			const { store } = await intakeFixture();
-			lib.submitStage(store, 'intake', who);
+			lib.setReading(store, { mustHave: [{ feature: 'Two legs', source: 'both' }], carryOver: [], openForDesign: [], questions: [] }, who);
+		lib.submitStage(store, 'intake', who);
 			lib.recordStageReview(store, { stage: 'intake', verdict: 'approve', text: '' });
 			return store;
 		}

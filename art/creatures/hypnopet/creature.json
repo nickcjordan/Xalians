@@ -1,9 +1,9 @@
 {
   "id": "C-01M4SD0NQBWM6MCZJ79JKJF1PN",
   "alias": "C-5lik",
-  "rev": 3,
+  "rev": 5,
   "createdAt": "2026-10-13T01:11:16.971Z",
-  "updatedAt": "2026-10-13T01:11:36.743Z",
+  "updatedAt": "2026-10-13T01:53:42.854Z",
   "createdBy": "orchestrator",
   "key": "hypnopet",
   "name": "Hypnopet",
@@ -38,6 +38,81 @@
     "silhouette": {
       "blob": "d27fcab5b242eb91011f9d9bf2508fc8e5f082204dfe785235b71ba11476c93b",
       "fileName": "hypnopet.svg"
+    },
+    "reading": {
+      "mustHave": [
+        {
+          "feature": "Small bunny rabbit body",
+          "source": "both"
+        },
+        {
+          "feature": "Glowing golden fur",
+          "source": "description"
+        },
+        {
+          "feature": "A single unicorn horn atop the head (it changes color; the color change and pulse are animation, recorded for later)",
+          "source": "both"
+        },
+        {
+          "feature": "Very long lop ears",
+          "source": "both"
+        },
+        {
+          "feature": "Very large eyes",
+          "source": "both"
+        },
+        {
+          "feature": "Large springing hind legs",
+          "source": "both"
+        }
+      ],
+      "carryOver": [
+        {
+          "feature": "Ears hang down past the cheeks, wide and soft, almost to the ground"
+        },
+        {
+          "feature": "A large round head relative to the body"
+        },
+        {
+          "feature": "Big hind feet with visible toe and heel pads"
+        },
+        {
+          "feature": "A paler face mask and chest than the rest of the coat"
+        },
+        {
+          "feature": "The horn rises from a tuft of fur on the crown and has a spiral twist"
+        },
+        {
+          "feature": "A friendly, open-mouthed expression"
+        }
+      ],
+      "openForDesign": [
+        {
+          "feature": "Exact golden color range and how the glow reads"
+        },
+        {
+          "feature": "Fur length and texture"
+        },
+        {
+          "feature": "Any coat pattern beyond the pale face and chest"
+        },
+        {
+          "feature": "Eye design (iris color, shine, shape)"
+        },
+        {
+          "feature": "Nose and mouth design"
+        },
+        {
+          "feature": "Horn spiral style and its resting color"
+        },
+        {
+          "feature": "Tail size and fluff"
+        },
+        {
+          "feature": "Pose for modeling: a neutral stance on four legs (your seated pose stays the look reference)"
+        }
+      ],
+      "questions": []
     }
   },
   "stages": {

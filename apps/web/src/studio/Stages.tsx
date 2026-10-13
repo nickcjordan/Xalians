@@ -7,6 +7,7 @@ import { AlertTriangle, ArrowRight, Check, CircleDashed, CircleDot, Eye, Layers,
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
@@ -234,6 +235,8 @@ export function StageVerdict({ creature, stage, notes, onDone, approveHint }: { 
 // Intake review
 // ---------------------------------------------------------------------------
 
+const SOURCE_TAG = { description: 'From description', silhouette: 'From silhouette', both: 'Description and silhouette' } as const;
+
 function FactList({ entries }: { entries: [string, string][] }) {
 	return (
 		<dl className="m-0 grid grid-cols-2 gap-x-6 gap-y-1">
@@ -260,6 +263,7 @@ export function IntakeReview({ creature }: { creature: string }) {
 			</div>
 		);
 	}
+	const reading = intake.reading;
 	const size = intake.sizeCm ? `${intake.sizeCm[0]} to ${intake.sizeCm[1]} cm` : 'not stated';
 	return (
 		<div className="flex h-full min-h-0">
@@ -271,43 +275,100 @@ export function IntakeReview({ creature }: { creature: string }) {
 			</div>
 			<div className="flex w-[600px] shrink-0 flex-col border-l border-edge bg-s0 min-[1700px]:w-[680px]">
 				<div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
-					<div className="flex flex-wrap items-baseline gap-3">
-						<h1 className="type-title m-0 text-[26px]">{intake.name}</h1>
-						<span className="font-body text-small text-ink-2">Intake review</span>
-					</div>
-					<p className="m-0 font-body text-body text-ink">{intake.loreSummary}</p>
-					<FactList entries={[['Element', cap(intake.element)], ['Home world', cap(intake.homeWorld)], ['Body plan', cap(intake.bodyPlan)], ['Covering', cap(intake.covering)], ['Size', size]]} />
-					<div className="grid gap-4 sm:grid-cols-2">
-						<section aria-label="Appearance">
-							<h2 className="type-legend m-0 mb-1">Appearance</h2>
-							<ul className="m-0 list-disc pl-5 font-body text-small text-ink">{intake.appearance.map((a) => <li key={a}>{a}</li>)}</ul>
-						</section>
-						<section aria-label="Anatomy its abilities use">
-							<h2 className="type-legend m-0 mb-1">Anatomy its abilities use</h2>
-							<ul className="m-0 list-disc pl-5 font-body text-small text-ink">{intake.anatomy.map((a) => <li key={a}>{cap(a)}</li>)}</ul>
-						</section>
-					</div>
-					<section aria-label="Proposed parts" className="flex flex-col gap-2">
-						<h2 className="type-subhead m-0 text-[15px]">Proposed parts, in order <span className="type-data ml-2 text-small text-ink-2">{state.parts.length}</span></h2>
-						{state.parts.length === 0 ? <p className="m-0 font-body text-small text-ink-2">No parts proposed yet.</p> : null}
-						<ol className="m-0 flex list-none flex-col gap-2 p-0">
-							{state.parts.map((p) => (
-								<li key={p.id} className="flex flex-col gap-2 border border-edge-strong bg-s1 p-3">
-									<div className="flex flex-wrap items-center gap-3">
-										<span className="type-data text-[12px] text-ink-3">{String(p.order).padStart(2, '0')}</span>
-										<h3 className="type-heading m-0 text-[17px]">{p.name}</h3>
-										<Badge variant="default">{partStatusWord(p.status)}</Badge>
-									</div>
-									<p className="m-0 font-body text-small text-ink"><span className="type-legend mr-2">Includes</span>{p.includes.join(', ')}</p>
-									<p className="m-0 font-body text-small text-ink"><span className="type-legend mr-2">Why</span>{p.why}</p>
-									<p className="m-0 flex items-center gap-2 font-body text-small text-ink-2"><ArrowRight className="size-3.5 shrink-0" aria-hidden="true" />{dependsText(p)}</p>
-								</li>
-							))}
-						</ol>
-					</section>
+					<h1 className="type-title m-0 text-[26px]">{intake.name}</h1>
+					<p className="m-0 font-body text-body font-bold text-ink">Did I read your creature right? Approve this reading, or tell me what is off.</p>
+					{reading ? (
+						<div className="flex flex-col gap-4">
+							<section aria-label="Must have" className="flex flex-col gap-1.5">
+								<h2 className="type-subhead m-0 text-[15px]">Must have (from your description)</h2>
+								<ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+									{reading.mustHave.map((m) => (
+										<li key={m.feature} className="flex items-start gap-2 border-l-4 border-ink bg-s1 py-1.5 pr-2 pl-3 font-body text-body text-ink">
+											<span className="min-w-0 flex-1">{m.feature}</span>
+											<span className="type-legend shrink-0 border border-edge-strong px-1.5 text-[10.5px] text-ink-2">{SOURCE_TAG[m.source]}</span>
+										</li>
+									))}
+								</ul>
+							</section>
+							<section aria-label="Carried over from your silhouette" className="flex flex-col gap-1.5">
+								<h2 className="type-subhead m-0 text-[15px]">Carried over from your silhouette</h2>
+								<ul className="m-0 flex list-none flex-col gap-1 p-0">
+									{reading.carryOver.map((c) => <li key={c.feature} className="border-l-2 border-edge-strong py-0.5 pl-3 font-body text-body text-ink">{c.feature}</li>)}
+								</ul>
+							</section>
+							<section aria-label="Open for design" className="flex flex-col gap-1.5">
+								<h2 className="type-subhead m-0 text-[15px]">Open for design (decided on the vision board)</h2>
+								<ul className="m-0 flex list-none flex-col gap-1 p-0">
+									{reading.openForDesign.map((o) => (
+										<li key={o.feature} className="border-l-2 border-dashed border-edge-strong py-0.5 pl-3 font-body text-body text-ink-2">
+											{o.feature}
+											{o.note ? <span className="text-ink-3"> ({o.note})</span> : null}
+										</li>
+									))}
+								</ul>
+							</section>
+							{reading.questions.length > 0 ? (
+								<section aria-label="Questions for you" className="flex flex-col gap-1.5">
+									<h2 className="type-subhead m-0 text-[15px]">Questions for you</h2>
+									<ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+										{reading.questions.map((q) => (
+											<li key={q.text} className="flex items-start gap-2 border-l-4 border-caution bg-caution-tint py-1.5 pr-2 pl-3 font-body text-body text-ink">
+												<CircleDot className="mt-1 size-4 shrink-0" aria-hidden="true" />
+												{q.text}
+											</li>
+										))}
+									</ul>
+								</section>
+							) : null}
+						</div>
+					) : (
+						<p className="m-0 border border-edge bg-s1 p-3 font-body text-small text-ink-2">The reading is not written yet. The orchestrator writes it before submitting intake.</p>
+					)}
+					<Collapsible>
+						<CollapsibleTrigger>Lore and facts</CollapsibleTrigger>
+						<CollapsibleContent>
+							<div className="flex flex-col gap-4">
+								<p className="m-0 font-body text-body text-ink">{intake.loreSummary}</p>
+								<FactList entries={[['Element', cap(intake.element)], ['Home world', cap(intake.homeWorld)], ['Body plan', cap(intake.bodyPlan)], ['Covering', cap(intake.covering)], ['Size', size]]} />
+								<div className="grid gap-4 sm:grid-cols-2">
+									<section aria-label="Appearance">
+										<h2 className="type-legend m-0 mb-1">Appearance</h2>
+										<ul className="m-0 list-disc pl-5 font-body text-small text-ink">{intake.appearance.map((a) => <li key={a}>{a}</li>)}</ul>
+									</section>
+									<section aria-label="Anatomy its abilities use">
+										<h2 className="type-legend m-0 mb-1">Anatomy its abilities use</h2>
+										<ul className="m-0 list-disc pl-5 font-body text-small text-ink">{intake.anatomy.map((a) => <li key={a}>{cap(a)}</li>)}</ul>
+									</section>
+								</div>
+							</div>
+						</CollapsibleContent>
+					</Collapsible>
+					<Collapsible>
+						<CollapsibleTrigger>How I plan to split it for building (my call)</CollapsibleTrigger>
+						<CollapsibleContent>
+							<section aria-label="Proposed parts" className="flex flex-col gap-2">
+								<p className="m-0 font-body text-small text-ink-2">You do not need to approve this; say so if something looks wrong.</p>
+								{state.parts.length === 0 ? <p className="m-0 font-body text-small text-ink-2">No parts proposed yet.</p> : null}
+								<ol className="m-0 flex list-none flex-col gap-2 p-0">
+									{state.parts.map((p) => (
+										<li key={p.id} className="flex flex-col gap-2 border border-edge-strong bg-s1 p-3">
+											<div className="flex flex-wrap items-center gap-3">
+												<span className="type-data text-[12px] text-ink-3">{String(p.order).padStart(2, '0')}</span>
+												<h3 className="type-heading m-0 text-[17px]">{p.name}</h3>
+												<Badge variant="default">{partStatusWord(p.status)}</Badge>
+											</div>
+											<p className="m-0 font-body text-small text-ink"><span className="type-legend mr-2">Includes</span>{p.includes.join(', ')}</p>
+											<p className="m-0 font-body text-small text-ink"><span className="type-legend mr-2">Why</span>{p.why}</p>
+											<p className="m-0 flex items-center gap-2 font-body text-small text-ink-2"><ArrowRight className="size-3.5 shrink-0" aria-hidden="true" />{dependsText(p)}</p>
+										</li>
+									))}
+								</ol>
+							</section>
+						</CollapsibleContent>
+					</Collapsible>
 				</div>
 				<div className="shrink-0 border-t border-edge bg-s0 p-3">
-					<StageVerdict creature={creature} stage={stage} notes={state.stageNotes} onDone={() => void refresh()} approveHint="Approving fixes this part list. If a part or the template changes later, this stage shows as out of date." />
+					<StageVerdict creature={creature} stage={stage} notes={state.stageNotes} onDone={() => void refresh()} approveHint="Approving fixes this reading. If the reading or the species file changes later, this stage shows as out of date." />
 				</div>
 			</div>
 		</div>

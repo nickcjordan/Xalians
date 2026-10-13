@@ -42,6 +42,7 @@ export function stageEvidenceItems(data: CreatureData, stage: StageId): Evidence
 			{ label: 'the silhouette', hash: intake.silhouette.blob },
 			{ label: 'the species template', hash: intake.templateSha256 },
 		];
+		if (intake.reading) items.push({ label: 'the reading', hash: sha(JSON.stringify(intake.reading)) });
 		for (const p of data.parts) items.push({ label: `part ${p.key}`, hash: partContentHash(data, p) });
 		return items;
 	}
@@ -107,6 +108,7 @@ export function submitProblems(data: CreatureData, stage: StageId): string[] {
 		const intake = data.creature.intake;
 		if (!intake) return ['the intake block is empty; run: studio intake <key> --species <template>'];
 		if (!hasBlob(intake.silhouette.blob)) problems.push('the silhouette blob is not in the blob store');
+		if (!intake.reading || intake.reading.mustHave.length === 0) problems.push('no reading with at least one must-have feature; run: studio intake reading <key> --file reading.json');
 		const proposed = data.parts.filter((p) => p.status === 'proposed');
 		if (proposed.length === 0) problems.push('no proposed parts; run: studio part propose <key> --file parts.json');
 		const ids = new Set(data.parts.map((p) => p.id));

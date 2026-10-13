@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { run } from '../cli.ts';
 import { needsNick, status } from '../engine.ts';
-import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, submitStage } from '../intake.ts';
+import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, setReading, submitStage } from '../intake.ts';
 import { recordStageReview } from '../review.ts';
 import { creatureBoard, referenceViews, staleStages } from '../stages.ts';
 import { openCreature } from '../store.ts';
@@ -50,8 +50,11 @@ const PARTS = [
 	{ key: 'head', name: 'Head', includes: ['skull', 'jaws'], why: 'the face', dependsOn: ['neck'], order: 3 },
 ];
 
+const READING = { mustHave: [{ feature: 'Two legs', source: 'both' }], carryOver: [{ feature: 'Long tail' }], openForDesign: [{ feature: 'Feather pattern', note: 'vision board' }], questions: [] };
+
 function intaken() {
 	const r = runIntake(root, 'fx-bird', { ...who, species: 'bird' });
+	setReading(r.store, READING, who);
 	return r.store;
 }
 
@@ -147,6 +150,32 @@ describe('proposing parts', () => {
 	});
 });
 
+describe('the reading', () => {
+	it('is required to submit intake, survives re-running intake, and goes stale when edited after approval', () => {
+		const r = runIntake(root, 'fx-bird', { ...who, species: 'bird' });
+		proposeParts(r.store, PARTS, who);
+		expect(() => submitStage(r.store, 'intake', who)).toThrow(/reading/);
+		setReading(r.store, { ...READING, mustHave: [] }, who);
+		expect(() => submitStage(r.store, 'intake', who)).toThrow(/reading/);
+		setReading(r.store, READING, who);
+		expect(runIntake(root, 'fx-bird', { ...who, species: 'bird' }).changed).toBe(false);
+		expect(r.store.load().creature.intake!.reading).toEqual(READING);
+		submitStage(r.store, 'intake', who);
+		setReading(r.store, { ...READING, questions: [{ text: 'Is it nocturnal?' }] }, who);
+		expect(r.store.load().creature.stages.intake.status).toBe('open');
+		submitStage(r.store, 'intake', who);
+		recordStageReview(r.store, { stage: 'intake', verdict: 'approve', text: '' });
+		expect(() => setReading(r.store, READING, who)).toThrow(/approved/);
+		setReading(r.store, READING, who, true);
+		expect(status(r.store.load()).stages.intake).toBe('stale');
+	});
+
+	it('rejects a malformed reading', () => {
+		const r = runIntake(root, 'fx-bird', { ...who, species: 'bird' });
+		expect(() => setReading(r.store, { mustHave: [{ feature: 'x', source: 'dream' }], carryOver: [], openForDesign: [], questions: [] }, who)).toThrow(/bad reading/);
+	});
+});
+
 describe('submitting stages', () => {
 	it('checks the intake outputs', () => {
 		const store = intaken();
@@ -190,8 +219,8 @@ describe('stage review', () => {
 		const st = data.creature.stages.intake;
 		expect(st.status).toBe('approved');
 		expect(st.approvedBy).toBe(r.note.id);
-		// silhouette + template + three parts
-		expect(st.evidence).toHaveLength(5);
+		// silhouette + template + reading + three parts
+		expect(st.evidence).toHaveLength(6);
 		expect(data.parts.every((p) => p.status === 'not-started')).toBe(true);
 		expect(data.creature.stages.vision.status).toBe('open');
 		expect(data.creature.stages.blockout.status).toBe('locked');
@@ -322,6 +351,9 @@ describe('views and the cli', () => {
 		const io = { out: (l: string) => out.push(l) };
 		const base = ['--root', root, '--session', 's'];
 		expect(run(['intake', 'fx-bird', '--species', 'bird', ...base], io)).toBe(0);
+		const readingFile = join(root, 'reading.json');
+		writeFileSync(readingFile, JSON.stringify(READING));
+		expect(run(['intake', 'reading', 'fx-bird', '--file', readingFile, ...base], io)).toBe(0);
 		const partsFile = join(root, 'parts.json');
 		writeFileSync(partsFile, JSON.stringify(PARTS));
 		expect(run(['part', 'propose', 'fx-bird', '--file', partsFile, ...base], io)).toBe(0);

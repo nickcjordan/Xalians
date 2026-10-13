@@ -124,6 +124,7 @@ function nextAction(data: CreatureData, parts: PartStatus[], questions: { alias:
 	const intakeStage = data.creature.stages.intake;
 	if (early && intakeStage.status === 'open') {
 		if (!data.creature.intake) return 'Run studio intake to read the species template, silhouette and encyclopedia entry.';
+		if (!data.creature.intake.reading) return 'Write the reading of the creature (studio intake reading <key> --file reading.json), then propose the parts.';
 		if (!data.parts.some((p) => p.status === 'proposed')) return 'Propose the functional parts (studio part propose), then submit the intake stage.';
 		return 'Submit the intake stage for Nick (studio stage submit <key> intake).';
 	}

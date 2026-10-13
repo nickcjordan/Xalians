@@ -115,6 +115,17 @@ export const StagesSchema = z.preprocess(migrateStages, z.strictObject({
 	atlas: stage,
 }));
 
+/** What the orchestrator read from the description and silhouette; this is what Nick approves at intake. */
+export const ReadingSchema = z.strictObject({
+	/** Features the finished design must show. Source says where each came from. */
+	mustHave: z.array(z.strictObject({ feature: z.string().min(1), source: z.enum(['description', 'silhouette', 'both']) })),
+	/** High-level features read from the silhouette and carried over. */
+	carryOver: z.array(z.strictObject({ feature: z.string().min(1) })),
+	/** Details the vision board and model sheet decide. */
+	openForDesign: z.array(z.strictObject({ feature: z.string().min(1), note: z.string().optional() })),
+	questions: z.array(z.strictObject({ text: z.string().min(1) })),
+});
+
 export const IntakeSchema = z.strictObject({
 	/** Repo-relative path of the species template this intake was read from. */
 	speciesTemplate: z.string().min(1),
@@ -129,6 +140,7 @@ export const IntakeSchema = z.strictObject({
 	appearance: z.array(z.string()),
 	anatomy: z.array(z.string()),
 	silhouette: z.strictObject({ blob: sha256, fileName: z.string().min(1) }),
+	reading: ReadingSchema.optional(),
 });
 
 export const CreatureSchema = record('C', {
@@ -380,6 +392,7 @@ export const SCHEMAS = {
 } as const;
 
 export type Intake = z.infer<typeof IntakeSchema>;
+export type Reading = z.infer<typeof ReadingSchema>;
 export type StageId = (typeof STAGE_IDS)[number];
 export type Creature = z.infer<typeof CreatureSchema>;
 export type Reference = z.infer<typeof ReferenceSchema>;

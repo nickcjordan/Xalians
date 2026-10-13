@@ -10,7 +10,7 @@ import { applyReview, canPresent, findPart, holdChangeRefusal, planBuild, status
 import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
 import { presentImages, runImage } from './images.ts';
-import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, submitStage } from './intake.ts';
+import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, setReading, submitStage } from './intake.ts';
 import { initCreature, listCreatureKeys, openCreature, type Store } from './store.ts';
 import { verifyAll } from './verify.ts';
 
@@ -164,6 +164,15 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 		if (!wkey) throw new StudioError('usage: watch <key>');
 		openCreature(root, wkey);
 		watchReviews(root, wkey, (line) => io.out(line));
+		return;
+	}
+
+	if (cmd === 'intake' && rest[0] === 'reading') {
+		const rkey = rest[1];
+		if (!rkey) throw new StudioError('usage: intake reading <key> --file reading.json [--force]');
+		const store = openCreature(root, rkey);
+		const reading = setReading(store, readJsonFile(need(flags, 'file')), { actor, ...(session ? { session } : {}) }, Boolean(flags.force));
+		emit(reading, `reading set for ${rkey}: ${reading.mustHave.length} must-have, ${reading.carryOver.length} carried over, ${reading.openForDesign.length} open for design, ${reading.questions.length} question(s)`);
 		return;
 	}
 

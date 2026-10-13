@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { run } from '../cli.ts';
 import { needsNick, status } from '../engine.ts';
 import { adjustElement, markSheetImage, parseCodexTokens, pickImage, presentImages, runImage, wrapperPrompt } from '../images.ts';
-import { proposeParts, runIntake, submitStage } from '../intake.ts';
+import { proposeParts, runIntake, setReading, submitStage } from '../intake.ts';
 import { recordStageReview } from '../review.ts';
 import { sheetView, visionView } from '../stages.ts';
 import type { Store } from '../store.ts';
@@ -47,6 +47,7 @@ function prompt(text = 'A flat swatch strip of golden fur.'): string {
 function atVision(): Store {
 	const store = runIntake(root, 'fx-bird', { ...who, species: 'bird' }).store;
 	proposeParts(store, PARTS, who);
+	setReading(store, { mustHave: [{ feature: 'Two legs', source: 'both' }], carryOver: [], openForDesign: [], questions: [] }, who);
 	submitStage(store, 'intake', who);
 	recordStageReview(store, { stage: 'intake', verdict: 'approve', text: '' });
 	return store;

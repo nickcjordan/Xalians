@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { basename, extname, join, resolve } from 'node:path';
 import { putFile } from './blobs.ts';
 import { StudioError } from './errors.ts';
-import { STAGE_IDS, type Actor, type Intake, type Part, type Reference, type StageId } from './schema.ts';
+import { STAGE_IDS, type Actor, type Intake, type Part, type Reading, ReadingSchema, type Reference, type StageId } from './schema.ts';
 import { submitProblems, SUBMITTABLE } from './stages.ts';
 import { creatureDir, initCreature, openCreature, type Store } from './store.ts';
 
@@ -126,6 +126,8 @@ export function runIntake(repoRoot: string, key: string, o: IntakeOptions): Inta
 	const stage = creature.stages.intake;
 	if (stage.status === 'approved' && !o.force) throw new StudioError(`the intake stage of ${key} is approved; pass --force to overwrite its intake`);
 
+	// Re-reading the template never discards the reading the orchestrator wrote.
+	if (creature.intake?.reading) intake.reading = creature.intake.reading;
 	const same = JSON.stringify(creature.intake) === JSON.stringify(intake);
 	const nextStatus = stage.status === 'approved' ? 'approved' : stage.status === 'in-review' && same ? 'in-review' : 'open';
 	if (same && nextStatus === stage.status) return { store, created, changed: false, intake };
@@ -135,6 +137,27 @@ export function runIntake(repoRoot: string, key: string, o: IntakeOptions): Inta
 		if (nextStatus !== stage.status) c.stages.intake = { status: nextStatus };
 	}, opts(o));
 	return { store, created, changed: true, intake };
+}
+
+// ---------------------------------------------------------------------------
+// The reading (what Nick approves at intake)
+// ---------------------------------------------------------------------------
+
+/** Sets the reading of the creature. Refused once intake is approved unless forced. A submitted intake goes back to open. */
+export function setReading(store: Store, raw: unknown, who: Who, force = false): Reading {
+	const data = store.load();
+	const intake = data.creature.intake;
+	if (!intake) throw new StudioError('no intake yet; run: studio intake <key> first');
+	const stage = data.creature.stages.intake.status;
+	if (stage === 'approved' && !force) throw new StudioError('the intake stage is approved; pass --force to change its reading (the stage then shows as out of date)');
+	const parsed = ReadingSchema.safeParse(raw);
+	if (!parsed.success) throw new StudioError(`bad reading: ${parsed.error.issues.map((i) => `${i.path.join('.') || 'reading'}: ${i.message}`).join('; ')}`);
+	const reading = parsed.data;
+	store.update<'creature'>(data.creature.id, (c) => {
+		c.intake = { ...c.intake!, reading };
+		if (stage === 'in-review') c.stages.intake = { status: 'open' };
+	}, opts(who));
+	return reading;
 }
 
 // ---------------------------------------------------------------------------
