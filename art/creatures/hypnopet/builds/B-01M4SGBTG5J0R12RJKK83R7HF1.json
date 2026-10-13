@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SGBTG5J0R12RJKK83R7HF1",
   "alias": "B-zc24",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T02:09:48.037Z",
-  "updatedAt": "2026-10-13T13:38:09.710Z",
+  "updatedAt": "2026-10-13T13:44:22.554Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -52,7 +52,7 @@
   "cost": {
     "wallMinutes": 1.19
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:09:48.035Z",
   "endedAt": "2026-10-13T02:10:59.707Z",
   "deadline": "2026-10-13T02:24:48.035Z"

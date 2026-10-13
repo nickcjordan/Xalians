@@ -1,0 +1,21 @@
+{
+  "id": "R-01M4TR1N49K1G0HQJ1FEFYMHKY",
+  "alias": "R-igcs",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:43:17.897Z",
+  "updatedAt": "2026-10-13T13:43:17.897Z",
+  "createdBy": "nick",
+  "blob": "94f507d3ea48a4f0817385e5c22c5d7afa6c1486c83cbd2e644bce6048910b6d",
+  "fileName": "pattern-b-soft-points.png",
+  "role": "pattern",
+  "governs": [
+    "coat pattern",
+    "markings"
+  ],
+  "mustNotBeUsedFor": [
+    "colors",
+    "fur length",
+    "shape"
+  ],
+  "precedence": 6
+}

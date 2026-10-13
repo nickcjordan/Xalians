@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SGBYGF4SM1XQZ624ZJV1A8",
   "alias": "B-364p",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T02:09:52.143Z",
-  "updatedAt": "2026-10-13T13:38:10.701Z",
+  "updatedAt": "2026-10-13T13:44:22.551Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -52,7 +52,7 @@
   "cost": {
     "wallMinutes": 1.27
   },
-  "status": "presented",
+  "status": "reviewed",
   "startedAt": "2026-10-13T02:09:52.140Z",
   "endedAt": "2026-10-13T02:11:08.133Z",
   "deadline": "2026-10-13T02:24:52.140Z"

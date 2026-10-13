@@ -1,0 +1,23 @@
+{
+  "id": "N-01M4TR0VDE1JZJTHPCEE5NB492",
+  "alias": "N-int2",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:42:51.566Z",
+  "updatedAt": "2026-10-13T13:42:51.566Z",
+  "createdBy": "nick",
+  "kind": "review",
+  "about": {
+    "stage": "vision",
+    "element": "palette"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "I don't like the pink being so vibrant on the inside of the ear. If we need a new color for that, let's make something a little bit less vibrant. I'd like to prevent introducing pink as part of the color scheme for this creature",
+  "date": "2026-10-13",
+  "verdict": "adjust",
+  "evidence": [
+    "247645ee4ecf9e784c133dfe76c80190cbba1b0f3f8154ef37bbfd2848711cf5",
+    "e175371b9776c55766d13a0ffeae152551065ff3089bb2da3eeadba309a9c3ae",
+    "26bbc277920554351d583b9c497d7a901a83dfc2849183df7cdb27e5d2d5898f"
+  ]
+}

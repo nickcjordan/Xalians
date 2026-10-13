@@ -1,0 +1,22 @@
+{
+  "id": "R-01M4TR3M8EVCG3HJGCH4D0J163",
+  "alias": "R-sely",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:44:22.542Z",
+  "updatedAt": "2026-10-13T13:44:22.542Z",
+  "createdBy": "nick",
+  "blob": "261e5d93afe87a1bf07797bb0274ff8065edf1ef7cdba96befa4561847ce5219",
+  "fileName": "horn-c-crystal-spiral.png",
+  "role": "horn",
+  "governs": [
+    "horn shape",
+    "horn spiral",
+    "horn base"
+  ],
+  "mustNotBeUsedFor": [
+    "color palette",
+    "ears",
+    "eyes"
+  ],
+  "precedence": 8
+}

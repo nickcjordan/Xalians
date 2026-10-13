@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SGBWHKRHDFFC6MY9RD7T1C",
   "alias": "B-quar",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T02:09:50.131Z",
-  "updatedAt": "2026-10-13T13:38:10.203Z",
+  "updatedAt": "2026-10-13T13:44:22.557Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -52,7 +52,7 @@
   "cost": {
     "wallMinutes": 1.01
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:09:50.128Z",
   "endedAt": "2026-10-13T02:10:50.729Z",
   "deadline": "2026-10-13T02:24:50.128Z"

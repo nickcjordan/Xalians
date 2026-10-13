@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TQKAT37X0KW23P3DJ7Q6BV",
   "alias": "B-z6ee",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T13:35:28.579Z",
-  "updatedAt": "2026-10-13T13:38:13.229Z",
+  "updatedAt": "2026-10-13T13:42:51.576Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -64,7 +64,7 @@
   "cost": {
     "wallMinutes": 1.44
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T13:35:28.576Z",
   "endedAt": "2026-10-13T13:36:55.037Z",
   "deadline": "2026-10-13T13:50:28.576Z"

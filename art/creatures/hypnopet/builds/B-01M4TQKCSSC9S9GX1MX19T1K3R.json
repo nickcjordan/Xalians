@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TQKCSSC9S9GX1MX19T1K3R",
   "alias": "B-55za",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T13:35:30.617Z",
-  "updatedAt": "2026-10-13T13:38:13.752Z",
+  "updatedAt": "2026-10-13T13:42:51.579Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -64,7 +64,7 @@
   "cost": {
     "wallMinutes": 1.24
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T13:35:30.614Z",
   "endedAt": "2026-10-13T13:36:44.760Z",
   "deadline": "2026-10-13T13:50:30.614Z"

@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4TR3M8JTAGDMVQDHN2FCHFN",
+  "alias": "N-ojwz",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:44:22.546Z",
+  "updatedAt": "2026-10-13T13:44:22.546Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4SGBYGF4SM1XQZ624ZJV1A8",
+    "stage": "vision",
+    "element": "horn"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "Picked C: Crystal spiral for horn over A: Smooth spiral, B: Ridged and glowing.",
+  "date": "2026-10-13"
+}

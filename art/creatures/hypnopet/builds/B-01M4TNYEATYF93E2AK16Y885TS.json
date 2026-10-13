@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TNYEATYF93E2AK16Y885TS",
   "alias": "B-s73w",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T13:06:35.482Z",
-  "updatedAt": "2026-10-13T13:38:12.225Z",
+  "updatedAt": "2026-10-13T13:43:17.911Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -59,7 +59,7 @@
   "cost": {
     "wallMinutes": 1.23
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T13:06:35.478Z",
   "endedAt": "2026-10-13T13:07:49.520Z",
   "deadline": "2026-10-13T13:21:35.478Z"

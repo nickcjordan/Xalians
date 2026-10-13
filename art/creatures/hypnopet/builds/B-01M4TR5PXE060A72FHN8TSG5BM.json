@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4TR5PXE060A72FHN8TSG5BM",
+  "alias": "B-4fxg",
+  "rev": 3,
+  "createdAt": "2026-10-13T13:45:30.798Z",
+  "updatedAt": "2026-10-13T13:46:57.195Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "vision",
+    "element": "palette",
+    "label": "G: Tone-on-tone ears",
+    "summary": "Inner ears pale cream-gold (tone on tone with the coat); nose and paw pads warm brown; coat, face, eyes and horn unchanged from E. Look inside the ears.",
+    "prompt": "Edit the attached image palette-E-softgold.png. Keep everything identical: the creature, its pose, its soft warm gold coat, ivory face and chest, amber eyes, iridescent horn, the background and the layout. Change only these colors: the nose and the paw pads become a warm medium brown with no pink in it; and the inside of the ears becomes a pale cream-gold, slightly lighter than the coat, so the ear reads tone on tone. There must be no pink, rose or lilac anywhere on the coat, ears, nose or pads. Also update the row of six color swatches under the creature to match (body fur, face and chest, inner ears, nose, iris, horn). No text, no labels, no watermark.",
+    "promptSha256": "3a785fa70a4ef63785d0f03c04bdfe0bf2c9860e75cddfaadb6f7514e94af5c1",
+    "inputs": [
+      {
+        "name": "palette-E-softgold.png",
+        "blob": "e175371b9776c55766d13a0ffeae152551065ff3089bb2da3eeadba309a9c3ae"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a13582-dc1e-7041-9984-fb3d8f554d80\\exec-5ff8dedd-becc-46d5-915b-c7f37914f1ee.png",
+    "codexTokens": 17594,
+    "model": null,
+    "governs": [
+      "fur color range",
+      "face and chest color",
+      "inner ear color",
+      "nose color",
+      "iris color",
+      "horn resting color"
+    ],
+    "notFor": [
+      "shape",
+      "pattern",
+      "pose",
+      "fur length"
+    ],
+    "round": 3
+  },
+  "goal": {
+    "text": "G: Tone-on-tone ears: vision palette"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "c55630e69966fc4373a978e1c0cd90ed51ac0fd4cd7410066afa708c65f05bf2",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.16
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T13:45:30.795Z",
+  "endedAt": "2026-10-13T13:46:40.251Z",
+  "deadline": "2026-10-13T14:00:30.795Z"
+}

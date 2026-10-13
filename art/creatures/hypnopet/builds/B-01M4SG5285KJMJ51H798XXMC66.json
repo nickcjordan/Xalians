@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG5285KJMJ51H798XXMC66",
   "alias": "B-j65q",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T02:06:06.597Z",
-  "updatedAt": "2026-10-13T13:38:09.195Z",
+  "updatedAt": "2026-10-13T13:43:48.685Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -50,7 +50,7 @@
   "cost": {
     "wallMinutes": 1.11
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:06:06.595Z",
   "endedAt": "2026-10-13T02:07:13.306Z",
   "deadline": "2026-10-13T02:21:06.595Z"

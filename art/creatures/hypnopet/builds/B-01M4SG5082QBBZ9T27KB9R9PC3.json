@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG5082QBBZ9T27KB9R9PC3",
   "alias": "B-r4le",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T02:06:04.546Z",
-  "updatedAt": "2026-10-13T13:38:08.665Z",
+  "updatedAt": "2026-10-13T13:43:48.679Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -50,7 +50,7 @@
   "cost": {
     "wallMinutes": 1.16
   },
-  "status": "presented",
+  "status": "reviewed",
   "startedAt": "2026-10-13T02:06:04.544Z",
   "endedAt": "2026-10-13T02:07:13.885Z",
   "deadline": "2026-10-13T02:21:04.544Z"

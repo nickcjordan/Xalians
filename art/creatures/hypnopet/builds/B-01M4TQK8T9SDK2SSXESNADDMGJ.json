@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TQK8T9SDK2SSXESNADDMGJ",
   "alias": "B-fsbh",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T13:35:26.537Z",
-  "updatedAt": "2026-10-13T13:38:12.724Z",
+  "updatedAt": "2026-10-13T13:42:51.571Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -64,7 +64,7 @@
   "cost": {
     "wallMinutes": 1.47
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T13:35:26.534Z",
   "endedAt": "2026-10-13T13:36:54.484Z",
   "deadline": "2026-10-13T13:50:26.534Z"

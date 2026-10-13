@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4TR1N4DD056XA7GSMD17G0S",
+  "alias": "N-o3mr",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:43:17.901Z",
+  "updatedAt": "2026-10-13T13:43:17.901Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4TNYCBP40YY4FDRZ397VXGM",
+    "stage": "vision",
+    "element": "pattern"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "Picked B: Soft points for pattern over A: Plain coat, C: Spiral swirls.",
+  "date": "2026-10-13"
+}

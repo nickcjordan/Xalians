@@ -1,0 +1,20 @@
+{
+  "id": "R-01M4TR2K5XXXRVW3KNVSFJS3GC",
+  "alias": "R-y7d5",
+  "rev": 1,
+  "createdAt": "2026-10-13T13:43:48.669Z",
+  "updatedAt": "2026-10-13T13:43:48.669Z",
+  "createdBy": "nick",
+  "blob": "34e80e0822a69d5260954ca6f10cbb3ba67648a3a332b89b1ddae70cc6f9ed5f",
+  "fileName": "glow-b-inner-glow.png",
+  "role": "glow",
+  "governs": [
+    "how the glowing fur reads"
+  ],
+  "mustNotBeUsedFor": [
+    "color palette",
+    "shape",
+    "fur length"
+  ],
+  "precedence": 7
+}

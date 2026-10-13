@@ -1,9 +1,9 @@
 {
   "id": "B-01M4SG4YAS4HBMYV3KAP1YWK2E",
   "alias": "B-ejup",
-  "rev": 4,
+  "rev": 5,
   "createdAt": "2026-10-13T02:06:02.585Z",
-  "updatedAt": "2026-10-13T13:38:08.150Z",
+  "updatedAt": "2026-10-13T13:43:48.682Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -50,7 +50,7 @@
   "cost": {
     "wallMinutes": 1.17
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T02:06:02.582Z",
   "endedAt": "2026-10-13T02:07:12.961Z",
   "deadline": "2026-10-13T02:21:02.582Z"
