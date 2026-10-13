@@ -826,3 +826,13 @@ Measures (assembled-3189; `tails-v6-3189.json`): the tails' centrelines leave th
 Images in `untracked/species-construction/akinza/surface/head-redesign/tails-v6/`: `before-after-*.png` (14 views, v5 3186 against v6 3189), `fullbody-3186-vs-3189-*.png`, `clay-3189-*.png`, `tails-v6-3189-{gaps,radius,heat}.png`, `tails-v6-3189.json`. (The charts' arc lengths run from each tail's start inside the body, .075 behind the attachment point.)
 
 Still open (my own look): a small soft dimple on the back just above the attachment in the close back view; a faint crease where tail 2 meets tail 1's base in the close top view; from directly below the cleft is softened but still reads as a few broad planes rather than two round buttocks meeting (the original skin's shape, rounded, not re-authored).
+
+# Tails v7 and chain v2: dimple and base crease removed; body B and feet chained on top (2026-10-13)
+
+Coordinator on v6: remove the small dimple on the back above the attachment and the faint crease where tail 2 meets tail 1's base; leave the cleft walls (the pelvis step will model the buttocks and cleft); then chain P-bodyB1 and P-feet2 on the result.
+
+- Causes, picked on assembled-3189: the dimple at (-.052, .044, -.103) is the concave ring where v6's root mound under the skin meets the back (its round fillet); the crease at (.043, .072, -.16), a face turned toward -x, is the tails' own union at their bases (tailUnionK .02).
+- Step P-tails7: same script and field as P-tails6 (`tails_v6_post.py`, `tails_v6_field.py`), spec `specs/tails-v7.json`: tailUnionK .035, and one masked blur of the body and root around the mound before the tails are added (rootBlur, sigma .01). Recipe `recipe-tails-v7.json`; output assembled-3190 (identical to dev variant q in `tails-v6/work/`).
+- Chain: `recipe-feet-v3.json` is recipe-tails-v7 plus P-bodyB1 (body_b_v1_post.py, specs/body-b-v1.json) and P-feet2 (feet_v1_post.py, specs/feet-v2.json, sole roll .12), as recipe-feet-v2 on tails v7: assembled-3190 (tails v7), 3191 (body B), 3192 (feet).
+- Movement from 3190 to 3192, same mesh: tail vertices past y .08 (67,332) moved 0.0 exactly; the 6,008 tail-base vertices in front of y .08 move with body B's rump slimming (max .0044, median .00065; body B fades by distance to tail vertices behind its tail cut at y .08 to .12); head above z .42 (135,557 vertices) and every head object 0.0; the fore claws ride with the arm shift (max .029), the hind claws with the feet (max .066), as designed by those steps.
+- Images in `untracked/species-construction/akinza/surface/head-redesign/chain-v2/`: `akinza-3192-{front,back,side,three-quarter,rear-three-quarter}.png` (bare clay, cropped), `tails-v6-vs-v7-root-close.png` (close root views, v6 against v7).
