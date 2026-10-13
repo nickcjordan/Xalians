@@ -1,0 +1,21 @@
+{
+  "id": "B-01M4V4WS21DT7AVD61D6JCK6G6",
+  "alias": "B-fcqm",
+  "rev": 1,
+  "createdAt": "2026-10-13T17:27:49.569Z",
+  "updatedAt": "2026-10-13T17:27:49.569Z",
+  "createdBy": "orchestrator",
+  "part": "P-01M4SD18GECA5VQA5F218GNS4V",
+  "kind": "preview",
+  "goal": {
+    "text": "A round, short-faced cartoon bunny face that reads cute, with very large eyes set into real sockets with lids"
+  },
+  "targets": [],
+  "method": "face pass C: skull, carved sockets, eyeballs, lid rings, muzzle",
+  "outputs": [],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {},
+  "status": "planned",
+  "orchestratorSession": "7fa482e3"
+}
