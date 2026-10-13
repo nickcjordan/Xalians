@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4TW5VSN7D3D9ZJH27SRQQBM",
+  "alias": "B-xbyn",
+  "rev": 3,
+  "createdAt": "2026-10-13T14:55:30.101Z",
+  "updatedAt": "2026-10-13T14:57:39.058Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "sheet",
+    "element": "closeup",
+    "label": "Hind foot close-up",
+    "summary": "Close-up of a long hind foot and its sole pads",
+    "prompt": "The creature is a Hypnopet, an original character: a small bunny on four legs. Fixed features, all required: very long lop ears that hang down past the cheeks almost to the ground; very large glossy eyes with warm amber irises and big white catch lights; a large round head; large springing hind legs with big hind feet showing toe and heel pads on the soles; small forelegs; a small round cotton-puff tail; a single translucent crystal spiral unicorn horn with a faint rainbow shimmer, rising from a tuft of fur on the crown. Coat: medium-length fluffy fur in a soft warm gold, with an ivory face mask, chest and belly; slightly darker golden tips on the ear ends, along the spine and on the feet; the inside of the ears a pale cream-gold (no pink anywhere); nose and paw pads warm brown. Expression: a friendly, happy open mouth.\r\nAttached references: silhouette.png is the creator's silhouette (overall proportions only; its seated pose is not the pose to draw); pick-palette.png shows the exact colors; pick-fur.png the fur; pick-horn.png the horn; pick-pattern.png where the darker tips go (ignore its colors); pick-tail.png the tail (ignore its colors); pick-face.png the face.\r\nStyle: clean cartoon character model sheet, soft even studio lighting, no glow effect, no shadows on the background, plain white background. No text, no labels, no arrows, no watermark.\r\n\r\nAttached turnaround-v2.png is the approved-direction turnaround sheet of this exact character: match it exactly (proportions, colors, fur, horn, markings). Close-up of one long hind foot seen from below and the side: the sole with its warm brown toe pads and heel pad, the ivory fur around them, and the darker golden tip on the foot.",
+    "promptSha256": "d516fab8247ec4f000811424e711717b691c4dcbbce80613ff18667704357c1d",
+    "inputs": [
+      {
+        "name": "turnaround-v2.png",
+        "blob": "447b50aaa0b92122ebb8c3cdacad85cc482f67bef025292f1b8b8d837dbd1c3c"
+      },
+      {
+        "name": "pick-palette.png",
+        "blob": "c55630e69966fc4373a978e1c0cd90ed51ac0fd4cd7410066afa708c65f05bf2"
+      },
+      {
+        "name": "pick-horn.png",
+        "blob": "261e5d93afe87a1bf07797bb0274ff8065edf1ef7cdba96befa4561847ce5219"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a135c2-efb0-7df3-86ce-871729c8a34b\\exec-c6f00127-c63c-4fea-97b9-03b913cd3fdf.png",
+    "codexTokens": 22180,
+    "model": null,
+    "round": 1
+  },
+  "goal": {
+    "text": "Hind foot close-up: sheet closeup"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "5658c8309914d5c5f75d681047c425070cce1f7becbb7dad01ba3c1ddcd22181",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.48
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T14:55:30.096Z",
+  "endedAt": "2026-10-13T14:56:59.169Z",
+  "deadline": "2026-10-13T15:10:30.096Z"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4TVYK821ZE0N9RY2H8HPY29",
+  "alias": "B-euan",
+  "rev": 3,
+  "createdAt": "2026-10-13T14:51:31.970Z",
+  "updatedAt": "2026-10-13T14:57:39.030Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "sheet",
+    "element": "turnaround-top",
+    "label": "Top",
+    "summary": "Top view from directly above",
+    "prompt": "The creature is a Hypnopet, an original character: a small bunny on four legs. Fixed features, all required: very long lop ears that hang down past the cheeks almost to the ground; very large glossy eyes with warm amber irises and big white catch lights; a large round head; large springing hind legs with big hind feet showing toe and heel pads on the soles; small forelegs; a small round cotton-puff tail; a single translucent crystal spiral unicorn horn with a faint rainbow shimmer, rising from a tuft of fur on the crown. Coat: medium-length fluffy fur in a soft warm gold, with an ivory face mask, chest and belly; slightly darker golden tips on the ear ends, along the spine and on the feet; the inside of the ears a pale cream-gold (no pink anywhere); nose and paw pads warm brown. Expression: a friendly, happy open mouth.\r\nAttached references: silhouette.png is the creator's silhouette (overall proportions only; its seated pose is not the pose to draw); pick-palette.png shows the exact colors; pick-fur.png the fur; pick-horn.png the horn; pick-pattern.png where the darker tips go (ignore its colors); pick-tail.png the tail (ignore its colors); pick-face.png the face.\r\nStyle: clean cartoon character model sheet, soft even studio lighting, no glow effect, no shadows on the background, plain white background. No text, no labels, no arrows, no watermark.\r\n\r\nAttached turnaround-v2.png is the approved-direction turnaround sheet of this exact character: match it exactly (proportions, colors, fur, horn, markings). View from directly above, large and centered. The creature stands in the same neutral pose as the sheet: on all four legs, feet planted flat on the ground, head level, ears hanging naturally. The lop ears hang down along the sides of the head, so from above they are seen lying against the head and shoulders, not spread out sideways.",
+    "promptSha256": "cf37f6449131345c4bb1971e35209cc961c09cfbfcbcf2841fc3707377f7aa69",
+    "inputs": [
+      {
+        "name": "turnaround-v2.png",
+        "blob": "447b50aaa0b92122ebb8c3cdacad85cc482f67bef025292f1b8b8d837dbd1c3c"
+      },
+      {
+        "name": "pick-palette.png",
+        "blob": "c55630e69966fc4373a978e1c0cd90ed51ac0fd4cd7410066afa708c65f05bf2"
+      },
+      {
+        "name": "pick-horn.png",
+        "blob": "261e5d93afe87a1bf07797bb0274ff8065edf1ef7cdba96befa4561847ce5219"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a135bf-4ecf-7f62-87b3-db5c7f0c088d\\exec-1243a3d8-ae0d-460b-863e-bf37e4f8bb8d.png",
+    "codexTokens": 22159,
+    "model": null,
+    "round": 1
+  },
+  "goal": {
+    "text": "Top: sheet turnaround-top"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "c32c90d4ce8ea94f3fd94b77daddd049b9d39f3a1830f3c6ea5ee0cb70743f41",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.5
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T14:51:31.964Z",
+  "endedAt": "2026-10-13T14:53:02.115Z",
+  "deadline": "2026-10-13T15:06:31.964Z"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4TW22WZ8XRK7SJX8BGGJB88",
+  "alias": "B-dihk",
+  "rev": 3,
+  "createdAt": "2026-10-13T14:53:26.303Z",
+  "updatedAt": "2026-10-13T14:57:39.049Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "sheet",
+    "element": "closeup",
+    "label": "Horn close-up",
+    "summary": "Close-up of the crystal spiral horn and how its base rises from the crown tuft",
+    "prompt": "The creature is a Hypnopet, an original character: a small bunny on four legs. Fixed features, all required: very long lop ears that hang down past the cheeks almost to the ground; very large glossy eyes with warm amber irises and big white catch lights; a large round head; large springing hind legs with big hind feet showing toe and heel pads on the soles; small forelegs; a small round cotton-puff tail; a single translucent crystal spiral unicorn horn with a faint rainbow shimmer, rising from a tuft of fur on the crown. Coat: medium-length fluffy fur in a soft warm gold, with an ivory face mask, chest and belly; slightly darker golden tips on the ear ends, along the spine and on the feet; the inside of the ears a pale cream-gold (no pink anywhere); nose and paw pads warm brown. Expression: a friendly, happy open mouth.\r\nAttached references: silhouette.png is the creator's silhouette (overall proportions only; its seated pose is not the pose to draw); pick-palette.png shows the exact colors; pick-fur.png the fur; pick-horn.png the horn; pick-pattern.png where the darker tips go (ignore its colors); pick-tail.png the tail (ignore its colors); pick-face.png the face.\r\nStyle: clean cartoon character model sheet, soft even studio lighting, no glow effect, no shadows on the background, plain white background. No text, no labels, no arrows, no watermark.\r\n\r\nAttached turnaround-v2.png is the approved-direction turnaround sheet of this exact character: match it exactly (proportions, colors, fur, horn, markings). Close-up of the top of the head from a three-quarter view: the translucent crystal spiral horn with its faint rainbow shimmer, and its base rising out of a tuft of crown fur between the ear roots.",
+    "promptSha256": "8a9662ed82def2754576c8309fc7e7bf531c707e49a59f80702cbc47021f5ab2",
+    "inputs": [
+      {
+        "name": "turnaround-v2.png",
+        "blob": "447b50aaa0b92122ebb8c3cdacad85cc482f67bef025292f1b8b8d837dbd1c3c"
+      },
+      {
+        "name": "pick-palette.png",
+        "blob": "c55630e69966fc4373a978e1c0cd90ed51ac0fd4cd7410066afa708c65f05bf2"
+      },
+      {
+        "name": "pick-horn.png",
+        "blob": "261e5d93afe87a1bf07797bb0274ff8065edf1ef7cdba96befa4561847ce5219"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a135c1-0c05-7ad0-ac71-7279b8886e80\\exec-045290df-e799-48ae-b1e0-6db4d58c5ecb.png",
+    "codexTokens": 21985,
+    "model": null,
+    "round": 1
+  },
+  "goal": {
+    "text": "Horn close-up: sheet closeup"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "7807bb1a3e21e61670e18c86d5cd68edf3f2bb2d2f126984fc19db0ab68b2377",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.51
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T14:53:26.299Z",
+  "endedAt": "2026-10-13T14:54:56.995Z",
+  "deadline": "2026-10-13T15:08:26.299Z"
+}

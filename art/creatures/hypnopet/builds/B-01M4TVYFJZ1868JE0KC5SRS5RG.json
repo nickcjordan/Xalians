@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4TVYFJZ1868JE0KC5SRS5RG",
+  "alias": "B-mjoe",
+  "rev": 3,
+  "createdAt": "2026-10-13T14:51:28.223Z",
+  "updatedAt": "2026-10-13T14:57:39.025Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "sheet",
+    "element": "turnaround-back",
+    "label": "Back",
+    "summary": "Back view, hind feet planted",
+    "prompt": "The creature is a Hypnopet, an original character: a small bunny on four legs. Fixed features, all required: very long lop ears that hang down past the cheeks almost to the ground; very large glossy eyes with warm amber irises and big white catch lights; a large round head; large springing hind legs with big hind feet showing toe and heel pads on the soles; small forelegs; a small round cotton-puff tail; a single translucent crystal spiral unicorn horn with a faint rainbow shimmer, rising from a tuft of fur on the crown. Coat: medium-length fluffy fur in a soft warm gold, with an ivory face mask, chest and belly; slightly darker golden tips on the ear ends, along the spine and on the feet; the inside of the ears a pale cream-gold (no pink anywhere); nose and paw pads warm brown. Expression: a friendly, happy open mouth.\r\nAttached references: silhouette.png is the creator's silhouette (overall proportions only; its seated pose is not the pose to draw); pick-palette.png shows the exact colors; pick-fur.png the fur; pick-horn.png the horn; pick-pattern.png where the darker tips go (ignore its colors); pick-tail.png the tail (ignore its colors); pick-face.png the face.\r\nStyle: clean cartoon character model sheet, soft even studio lighting, no glow effect, no shadows on the background, plain white background. No text, no labels, no arrows, no watermark.\r\n\r\nAttached turnaround-v2.png is the approved-direction turnaround sheet of this exact character: match it exactly (proportions, colors, fur, horn, markings). Back view, large and centered. The creature stands in the same neutral pose as the sheet: on all four legs, feet planted flat on the ground, head level, ears hanging naturally. The hind feet are planted flat with their heels toward the viewer; the soles are on the ground and not visible. The cotton-puff tail and the darker spine stripe are visible.",
+    "promptSha256": "7cf7086b3a609d1201781fe04cdf464c1168ece25608980a11a309236f9d1a35",
+    "inputs": [
+      {
+        "name": "turnaround-v2.png",
+        "blob": "447b50aaa0b92122ebb8c3cdacad85cc482f67bef025292f1b8b8d837dbd1c3c"
+      },
+      {
+        "name": "pick-palette.png",
+        "blob": "c55630e69966fc4373a978e1c0cd90ed51ac0fd4cd7410066afa708c65f05bf2"
+      },
+      {
+        "name": "pick-horn.png",
+        "blob": "261e5d93afe87a1bf07797bb0274ff8065edf1ef7cdba96befa4561847ce5219"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a135bf-3edf-77c2-b819-1303f5d0654f\\exec-d63edf28-e73f-4844-b76c-7d63653d3603.png",
+    "codexTokens": 30396,
+    "model": null,
+    "round": 1
+  },
+  "goal": {
+    "text": "Back: sheet turnaround-back"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "e2c64fc8e3f4a950b6726e32cf08caac15ff43700e5b3fdfd54c2df47fbfbe8d",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.48
+  },
+  "status": "presented",
+  "startedAt": "2026-10-13T14:51:28.218Z",
+  "endedAt": "2026-10-13T14:52:56.982Z",
+  "deadline": "2026-10-13T15:06:28.218Z"
+}

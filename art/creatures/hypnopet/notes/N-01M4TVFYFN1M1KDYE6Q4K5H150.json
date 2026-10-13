@@ -1,0 +1,35 @@
+{
+  "id": "N-01M4TVFYFN1M1KDYE6Q4K5H150",
+  "alias": "N-7xq2",
+  "rev": 1,
+  "createdAt": "2026-10-13T14:43:31.957Z",
+  "updatedAt": "2026-10-13T14:43:31.957Z",
+  "createdBy": "nick",
+  "kind": "review",
+  "about": {
+    "stage": "vision"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "",
+  "date": "2026-10-13",
+  "verdict": "approve",
+  "evidence": [
+    "24ca91287ff46df5be4f11a8a3c2fe18f1be6baffe1d14c266edddc734cbb10c",
+    "261e5d93afe87a1bf07797bb0274ff8065edf1ef7cdba96befa4561847ce5219",
+    "308f1cbf8faa64b397476900dc707cc057a300c4961ec91339e3a7aa410fdc54",
+    "34e80e0822a69d5260954ca6f10cbb3ba67648a3a332b89b1ddae70cc6f9ed5f",
+    "3af8f1f6f4014cce3bf9bb767657f6a42046385b5a31257a867b08b00dc14283",
+    "76a9a61326f541fb1fd1cd3de1e9f32dccdc7d8372e8abd56e99c955b10c1620",
+    "8498d641e27ef93025a8395405ad958587b02b1bc684f54bb855856f082f49b8",
+    "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306",
+    "94f507d3ea48a4f0817385e5c22c5d7afa6c1486c83cbd2e644bce6048910b6d",
+    "b037f45c5b80f3a997ae99db3ee37be30fcecab770fb176016e9e30fff561629",
+    "b89c96644910382c3e8e077600b79651819ac95e6094f2211b6c4652334c6e80",
+    "c55630e69966fc4373a978e1c0cd90ed51ac0fd4cd7410066afa708c65f05bf2",
+    "cd78d0bdb4bfdd0f78bfee7972d12364c6334dd1ed0baacf768293b861f38021",
+    "cee078e30a89e046e7dd59517ccf87a70247e308692fc9a1ddc1b3829282824d",
+    "f63e1c4acef14862b9d3fa1f2f4ed05886e2db5a04a788ca4aa4bbf468269089",
+    "fe4f1621d1c0c983718d341845b76dba18711fd0b483a9067c88a8e51edf3df1"
+  ]
+}

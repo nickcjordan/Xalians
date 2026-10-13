@@ -1,0 +1,72 @@
+{
+  "id": "B-01M4TVJ517G4926Z0VB9TBD0XP",
+  "alias": "B-tbyq",
+  "rev": 3,
+  "createdAt": "2026-10-13T14:44:44.199Z",
+  "updatedAt": "2026-10-13T14:57:37.652Z",
+  "createdBy": "orchestrator",
+  "kind": "image",
+  "image": {
+    "stage": "sheet",
+    "element": "other",
+    "label": "Turnaround sheet",
+    "summary": "All five views in one image, so the views stay consistent with each other; each view is redrawn large from this.",
+    "prompt": "The creature is a Hypnopet, an original character: a small bunny on four legs. Fixed features, all required: very long lop ears that hang down past the cheeks almost to the ground; very large glossy eyes with warm amber irises and big white catch lights; a large round head; large springing hind legs with big hind feet showing toe and heel pads on the soles; small forelegs; a small round cotton-puff tail; a single translucent crystal spiral unicorn horn with a faint rainbow shimmer, rising from a tuft of fur on the crown. Coat: medium-length fluffy fur in a soft warm gold, with an ivory face mask, chest and belly; slightly darker golden tips on the ear ends, along the spine and on the feet; the inside of the ears a pale cream-gold (no pink anywhere); nose and paw pads warm brown. Expression: a friendly, happy open mouth.\r\nAttached references: silhouette.png is the creator's silhouette (overall proportions only; its seated pose is not the pose to draw); pick-palette.png shows the exact colors; pick-fur.png the fur; pick-horn.png the horn; pick-pattern.png where the darker tips go (ignore its colors); pick-tail.png the tail (ignore its colors); pick-face.png the face.\r\nStyle: clean cartoon character model sheet, soft even studio lighting, no glow effect, no shadows on the background, plain white background. No text, no labels, no arrows, no watermark.\r\n\r\nDraw one character turnaround model sheet: the same creature five times in a single row at the same scale, all standing in the same neutral pose on all four legs, feet planted, head level, ears hanging naturally, mouth friendly: front view, three-quarter front view, side view (facing left), back view, and top view. Every view must show the identical character with identical proportions.",
+    "promptSha256": "0d612f1fa6d77bd1e274ced6d0f76ea5fd268fd2e38f68ddda99b512a37ddc7f",
+    "inputs": [
+      {
+        "name": "silhouette.png",
+        "blob": "0b5a995b820a45f8f827ea943de928d7ddd30199befc6d0991edd95ef2a40bea"
+      },
+      {
+        "name": "pick-palette.png",
+        "blob": "c55630e69966fc4373a978e1c0cd90ed51ac0fd4cd7410066afa708c65f05bf2"
+      },
+      {
+        "name": "pick-fur.png",
+        "blob": "8f8277de136b9ef3b435cac3fe1e1501d95981905384b4c0e5ed8633a52cc306"
+      },
+      {
+        "name": "pick-horn.png",
+        "blob": "261e5d93afe87a1bf07797bb0274ff8065edf1ef7cdba96befa4561847ce5219"
+      },
+      {
+        "name": "pick-pattern.png",
+        "blob": "94f507d3ea48a4f0817385e5c22c5d7afa6c1486c83cbd2e644bce6048910b6d"
+      },
+      {
+        "name": "pick-tail.png",
+        "blob": "b037f45c5b80f3a997ae99db3ee37be30fcecab770fb176016e9e30fff561629"
+      },
+      {
+        "name": "pick-face.png",
+        "blob": "b89c96644910382c3e8e077600b79651819ac95e6094f2211b6c4652334c6e80"
+      }
+    ],
+    "tool": "codex image_gen",
+    "generatedPath": "C:\\Users\\njord\\.codex\\generated_images\\01a135b9-14b0-7910-b87a-f232a50c01e9\\exec-dac542dd-fdd5-48bd-b59a-38479dae5d50.png",
+    "codexTokens": 35571,
+    "model": null
+  },
+  "goal": {
+    "text": "Turnaround sheet: sheet other"
+  },
+  "targets": [],
+  "method": "codex image_gen",
+  "outputs": [
+    {
+      "name": "output.png",
+      "blob": "62c72811c801d54fb60660a3763ee91bf5517921058c960c98013998fb2dc7e7",
+      "role": "render"
+    }
+  ],
+  "checks": [],
+  "lookNotes": [],
+  "cost": {
+    "wallMinutes": 1.89
+  },
+  "status": "failed",
+  "startedAt": "2026-10-13T14:44:44.190Z",
+  "endedAt": "2026-10-13T14:57:37.642Z",
+  "deadline": "2026-10-13T14:59:44.190Z"
+}
