@@ -173,7 +173,8 @@ export function BlockoutReview({ creature }: { creature: string }) {
 							baseline={cmp.baseline}
 							baseLabel={baseKind === 'overlay' ? 'Overlay on sheet' : 'Sheet, bare body'}
 							baseFit={baseKind === 'sheet' ? 'contain' : 'fill'}
-							noBaseText="No sheet view for this camera."
+							noBaseText="No sheet drawing for this camera; the model is shown alone."
+							ownBaseline={false}
 							camera={cam}
 							compare={compare}
 							onCompare={setCompare}

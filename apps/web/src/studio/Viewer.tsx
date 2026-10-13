@@ -26,8 +26,10 @@ export function overlayFor(build: BuildView, camera: string, kind: 'diff' | 'hea
 	return undefined;
 }
 
-export function baselineFor(build: BuildView, baseline: BuildView | undefined, camera: string): Out | undefined {
-	return renderFor(baseline, camera) ?? build.cameras[camera]?.find((o) => o.role === 'baseline');
+export function baselineFor(build: BuildView, baseline: BuildView | undefined, camera: string, ownBaseline = true): Out | undefined {
+	// The build's own packet baseline is a fallback for part reviews only; a page that supplies its
+	// own comparison (the blockout's sheet and overlays) must not fall back to it.
+	return renderFor(baseline, camera) ?? (ownBaseline ? build.cameras[camera]?.find((o) => o.role === 'baseline') : undefined);
 }
 
 function useSize(ref: React.RefObject<HTMLElement | null>) {
@@ -158,6 +160,8 @@ export interface ViewerProps {
 	baseFit?: 'fill' | 'contain';
 	/** Said in the toolbar when there is nothing to compare against. */
 	noBaseText?: string;
+	/** False when the page supplies the only valid comparison; the build's own packet baseline is then never shown. */
+	ownBaseline?: boolean;
 }
 
 /** A toolbar row that never wraps; it scrolls sideways if the space is ever too small. */
@@ -168,7 +172,7 @@ export function Toolbar({ children }: { children: React.ReactNode }) {
 export function Viewer(props: ViewerProps) {
 	const { build, baseline, camera, compare, overlay, tool, marks, canMark } = props;
 	const render = renderFor(build, camera);
-	const base = baselineFor(build, baseline, camera);
+	const base = baselineFor(build, baseline, camera, props.ownBaseline ?? true);
 	const diff = overlayFor(build, camera, 'diff');
 	const heat = overlayFor(build, camera, 'heat');
 	const shown = (overlay === 'diff' ? diff : overlay === 'heat' ? heat : render) ?? render;
