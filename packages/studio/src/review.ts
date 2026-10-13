@@ -146,6 +146,8 @@ export interface StageReviewInput {
 	stage: string;
 	verdict: 'approve' | 'reject' | 'adjust';
 	text: string;
+	/** A verdict Nick gave in chat, recorded by the orchestrator with his exact words (design decision 4). */
+	chat?: { quote: string; session?: string };
 }
 
 /**
@@ -172,8 +174,9 @@ export function recordStageReview(store: Store, input: StageReviewInput): { note
 		kind: 'review',
 		about: { stage },
 		by: 'nick',
-		via: 'studio',
+		via: input.chat ? 'chat' : 'studio',
 		text,
+		...(input.chat ? { quote: input.chat.quote, ...(input.chat.session ? { session: input.chat.session } : {}) } : {}),
 		date: new Date().toISOString().slice(0, 10),
 		verdict: input.verdict,
 		...(evidence.length ? { evidence } : {}),

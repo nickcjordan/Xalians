@@ -1,0 +1,35 @@
+{
+  "id": "N-01M4TYWQT6WBZBAJ2D99XK2SA2",
+  "alias": "N-5xyc",
+  "rev": 1,
+  "createdAt": "2026-10-13T15:42:56.838Z",
+  "updatedAt": "2026-10-13T15:42:56.838Z",
+  "createdBy": "nick",
+  "kind": "review",
+  "about": {
+    "stage": "sheet"
+  },
+  "by": "nick",
+  "via": "chat",
+  "text": "Okay, I think I am cool with what you've put together here. I don't have anything specific to change. Make sure to save these notes as we go . I think we're probably good to move to the next phase. I don't know if I can guarantee that what you built for the blockout here is going to work as expected, but it's much closer to what I was expecting. And I think probably aligns well",
+  "quote": "Okay, I think I am cool with what you've put together here. I don't have anything specific to change. Make sure to save these notes as we go . I think we're probably good to move to the next phase. I don't know if I can guarantee that what you built for the blockout here is going to work as expected, but it's much closer to what I was expecting. And I think probably aligns well",
+  "date": "2026-10-13",
+  "session": "7fa482e3",
+  "verdict": "approve",
+  "evidence": [
+    "19ade5532f09ed85b1185a3f2b159e1f500864da4809d48fc4aa70644c0e4100",
+    "3512bd17e97483ef1a111edfff2196a485dd0833d9c0c685924db98dfc92e1ef",
+    "447b50aaa0b92122ebb8c3cdacad85cc482f67bef025292f1b8b8d837dbd1c3c",
+    "497c15d8d978ec769eda01938f88675d9f2ad6f2ee24ad80aaf6fe9a2f4aed66",
+    "5134b18098afe83886255af154762d85d60e041d6c66e483a43146aa3f01ca3e",
+    "5658c8309914d5c5f75d681047c425070cce1f7becbb7dad01ba3c1ddcd22181",
+    "6a88cf6aa69758f18134e8db3df33e3399e5992fd698834e1f6dee9d95aebeb3",
+    "7807bb1a3e21e61670e18c86d5cd68edf3f2bb2d2f126984fc19db0ab68b2377",
+    "897b1c52fcbac9a4f9333e89239a3b6d16e4ba68a37e5ed0c1b465bba44b9963",
+    "8cb26a478be33ab59fddadc54d79bcccb91741f178763e5a095002cfd07ac579",
+    "beb76514df66fc0ad3efe5c77bd9b248889323fbac041186a231d63877d7cf8b",
+    "c32c90d4ce8ea94f3fd94b77daddd049b9d39f3a1830f3c6ea5ee0cb70743f41",
+    "e2c64fc8e3f4a950b6726e32cf08caac15ff43700e5b3fdfd54c2df47fbfbe8d",
+    "f3b8fb2383426e6ca2fa50243a37325f7d8df38635703473bcc9aba4796eb86b"
+  ]
+}

@@ -11,6 +11,7 @@ import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
 import { presentImages, runImage, setVisionContext } from './images.ts';
 import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, setReading, submitStage } from './intake.ts';
+import { recordStageReview } from './review.ts';
 import { initCreature, listCreatureKeys, openCreature, type Store } from './store.ts';
 import { verifyAll } from './verify.ts';
 
@@ -53,6 +54,9 @@ const OPTIONS = {
 	stage: { type: 'string' },
 	element: { type: 'string' },
 	summary: { type: 'string' },
+	verdict: { type: 'string' },
+	quote: { type: 'string' },
+	'chat-session': { type: 'string' },
 	label: { type: 'string' },
 	'prompt-file': { type: 'string' },
 	input: { type: 'string', multiple: true },
@@ -242,7 +246,15 @@ function execute(flags: Flags, pos: string[], io: Io): void {
 		case 'reference':
 			return referenceCommand(store, sub, args, flags, emit, actor, copts);
 		case 'stage': {
-			if (sub !== 'submit' || !args[0]) throw new StudioError('usage: stage submit <key> <stage>');
+			if (sub === 'verdict-from-chat' && args[0]) {
+				// Nick gave his verdict in chat; record it with his exact words so it stays checkable.
+				const verdict = need(flags, 'verdict') as 'approve' | 'reject' | 'adjust';
+				const quote = need(flags, 'quote').trim();
+				const r = recordStageReview(store, { stage: args[0], verdict, text: quote, chat: { quote, ...(flags['chat-session'] ? { session: flags['chat-session'] as string } : {}) } });
+				emit(r, `recorded Nick's ${verdict} of stage ${args[0]} from chat: ${r.applied.join('; ')}`);
+				return;
+			}
+			if (sub !== 'submit' || !args[0]) throw new StudioError('usage: stage submit|verdict-from-chat <key> <stage>');
 			const stage = submitStage(store, args[0], { actor, ...copts });
 			emit({ stage, status: 'in-review' }, `submitted stage ${stage} for Nick's review`);
 			return;
