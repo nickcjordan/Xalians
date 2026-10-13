@@ -735,3 +735,16 @@ Measures (assembled-3178 against assembled-3176, the input of both tail steps): 
 Images in `untracked/species-construction/akinza/surface/head-redesign/tails-v2/`: `before-after-{hback,hrqL,hrqR,hsideL,hsideR,htop,hbelow,rootback,rootrqL,rootrqR,rootside,roottop,crotch,wallrq}.png` (bare clay, v1 3177 against v2 3178); `fullbody-3168-vs-3178-{bfront,bside,bback,bq}.png` (the whole figure before today's audit fixes against now); `tail-sections.png` (original, v1, v2); `tails-v2-3178-heat.png`; `tails-v2-3178-numbers.json`, `tail-sections.json`.
 
 Still open (my own look): a small cusp at the bottom of the +x buttock's back where it meets the thigh, in the +x side view; tail 1's root still shows a soft rim on its +x side seen from behind (rounder than v1, not yet a clean collar); the vertical groove beside tail 3's base is gone on the -x side and much softer on the +x side; the tails are slimmer than the original fur-sheet blades by design (cores for fur).
+
+# Tails v3: fuller tails (2026-10-12)
+
+Coordinator on v2: the cores read as whips or tentacles in the whole-figure back and three-quarter views, which changes the look Nick approved ("the tails are fine"). Keep the separate roots, round sections and the clean rump, give each tail a fuller body (widest about 80 to 90 percent of the old mid-length radius, full through the first half to two thirds, then a long taper), and fix the +x buttock cusp and the rim on tail 1's root.
+
+- Step P-tails3 (`tails_v2_post.py`, spec `specs/tails-v3.json`) in place of P-tails2 after P-hips1; recipe `recipe-tails-v3.json`.
+- Radius profile over normalised length: .82 at the root, .95 at .15, 1.0 at .35, .97 at .55, .85 at .70, .57 at .85, .28 at .95, .06 at the tip; widest radius .076 / .100 / .096 (82 / 90 / 90 percent of the old .093 / .111 / .107). Tail union smooth minimum .025. Extra blurs at the +x buttock's lower back (cusp) and at tail 1's root (rim).
+- Development a to c in `untracked/.../head-redesign/tails-v3/work/`; c (tail 1 at .076 rather than .082) is kept.
+- Output: assembled-3179. Against 3176: 446,596 input skin vertices unchanged, 196,828 replaced (same region as v2), 249,005 new; other objects 0.0; one component, no non-manifold edges; tail lengths .814 / .817 / .741. Against v2: R10 .036, R11 .030, R08 .032, R06 .017 regionShift; seam check flags outline changes at the elbow, wrist, knee and tail root in the front, left and back views, where the fuller tails now overlap those joints in silhouette; R10.1 .696 to .733, R10.2 .640 to .686 (advisory).
+
+Images in `untracked/species-construction/akinza/surface/head-redesign/tails-v3/`: `before-after-*.png` (v2 3178 against v3 3179, the same fourteen views as v2), `fullbody-3168-vs-3179-{bfront,bside,bback,bq}.png`, `tail-sections.png` (original, v2, v3), `tails-v3-3179-heat.png`, `tails-v3-3179-numbers.json`, `tail-sections.json`.
+
+Still open (my own look): in the rear three-quarter view from the +x side the top tail is seen almost along its own length, so it reads as a round mass there (the original tails did the same; it is the tail's own full section, not a bulge in its profile); the dark band where tail 2's root is shadowed by tail 1 in the side view is lighting, not a crease.
