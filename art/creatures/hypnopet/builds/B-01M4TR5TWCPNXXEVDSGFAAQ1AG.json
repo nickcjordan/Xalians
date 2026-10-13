@@ -1,9 +1,9 @@
 {
   "id": "B-01M4TR5TWCPNXXEVDSGFAAQ1AG",
   "alias": "B-auzq",
-  "rev": 3,
+  "rev": 4,
   "createdAt": "2026-10-13T13:45:34.860Z",
-  "updatedAt": "2026-10-13T13:46:57.205Z",
+  "updatedAt": "2026-10-13T14:25:28.620Z",
   "createdBy": "orchestrator",
   "kind": "image",
   "image": {
@@ -56,7 +56,7 @@
   "cost": {
     "wallMinutes": 1.36
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-13T13:45:34.858Z",
   "endedAt": "2026-10-13T13:46:56.616Z",
   "deadline": "2026-10-13T14:00:34.858Z"

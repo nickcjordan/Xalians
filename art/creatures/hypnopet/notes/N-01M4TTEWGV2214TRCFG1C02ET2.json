@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4TTEWGV2214TRCFG1C02ET2",
+  "alias": "N-xg2n",
+  "rev": 1,
+  "createdAt": "2026-10-13T14:25:28.603Z",
+  "updatedAt": "2026-10-13T14:25:28.603Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4TR5PXE060A72FHN8TSG5BM",
+    "stage": "vision",
+    "element": "palette"
+  },
+  "by": "nick",
+  "via": "studio",
+  "text": "Picked G: Tone-on-tone ears for palette over H: Soft taupe ears, I: Light tan ears.",
+  "date": "2026-10-13"
+}

@@ -1,9 +1,9 @@
 {
   "id": "C-01M4SD0NQBWM6MCZJ79JKJF1PN",
   "alias": "C-5lik",
-  "rev": 7,
+  "rev": 8,
   "createdAt": "2026-10-13T01:11:16.971Z",
-  "updatedAt": "2026-10-13T13:34:16.483Z",
+  "updatedAt": "2026-10-13T14:25:48.483Z",
   "createdBy": "orchestrator",
   "key": "hypnopet",
   "name": "Hypnopet",
@@ -196,7 +196,7 @@
       ]
     },
     "vision": {
-      "status": "open"
+      "status": "in-review"
     },
     "sheet": {
       "status": "locked"

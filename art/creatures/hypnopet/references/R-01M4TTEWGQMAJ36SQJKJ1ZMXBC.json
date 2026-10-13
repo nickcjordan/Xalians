@@ -1,0 +1,26 @@
+{
+  "id": "R-01M4TTEWGQMAJ36SQJKJ1ZMXBC",
+  "alias": "R-elnv",
+  "rev": 1,
+  "createdAt": "2026-10-13T14:25:28.599Z",
+  "updatedAt": "2026-10-13T14:25:28.599Z",
+  "createdBy": "nick",
+  "blob": "c55630e69966fc4373a978e1c0cd90ed51ac0fd4cd7410066afa708c65f05bf2",
+  "fileName": "palette-g-tone-on-tone-ears.png",
+  "role": "palette",
+  "governs": [
+    "fur color range",
+    "face and chest color",
+    "inner ear color",
+    "nose color",
+    "iris color",
+    "horn resting color"
+  ],
+  "mustNotBeUsedFor": [
+    "shape",
+    "pattern",
+    "pose",
+    "fur length"
+  ],
+  "precedence": 9
+}
