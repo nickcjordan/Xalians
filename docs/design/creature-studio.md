@@ -1,6 +1,6 @@
 # Creature Studio: design
 
-Status: revision 3, 2026-10-12. Revision 2 took in independent audits by Codex and Fable; revision 3 takes in Nick's answers on approvals, containment and backup cadence. Nick said "proceed" on 2026-10-12; building has started.
+Status: revision 4, 2026-10-12. Revision 4 adds the vision board and model sheet stages (Nick, 2026-10-12) and defers part reuse to [creature-studio-reuse.md](creature-studio-reuse.md); process decisions are tracked as experiments in [creature-studio-experiments.md](creature-studio-experiments.md). Earlier: Revision 2 took in independent audits by Codex and Fable; revision 3 takes in Nick's answers on approvals, containment and backup cadence. Nick said "proceed" on 2026-10-12; building has started.
 
 ## Context
 
@@ -55,14 +55,15 @@ Every creature has the same stages. A stage opens when its entry holds, produces
 | # | Stage | Required outputs | Gate |
 |---|---|---|---|
 | 1 | Intake | Lore summary, element and world, Nick's silhouette, anatomy list, proposed functional parts with order, dependencies, and why each includes what it includes | Nick approves the part list |
-| 2 | References | Each image with a role, what it governs, what it must not be used for, precedence. A bare-body target for the views the references actually show; unseen views marked provisional | Nick approves roles and the bare target overlay |
-| 3 | Blockout | A whole-form body: authored parts at measured proportions, or an imported existing body (Akinza) | Nick approves proportions from every standard camera |
-| 4 | Parts | Per part in order: previews, builds, reviews, an approved build | Each part approved |
-| 5 | Coherence | Whole form from every angle, joins | Nick approves the whole form |
-| 6 | Surface | Per species: fur by region where the species has fur, materials; bare clay and surface side by side at the same cameras | Nick approves |
-| 7 | Color and pattern | Swatches, then palettes on the model under identical light; pattern in stored rest coordinates | Nick picks and approves |
-| 8 | Readiness | Smoke test: the rig library's automatic biped or template rig, three fixed test poses, a check for collapsed or intersecting surface; renders at the sprite cameras; a handoff manifest. Not production rigging | Nick approves the handoff |
-| 9 to 11 | Rig, Animate, Sprite atlas | Names reserved only | |
+| 2 | Vision board | Option sets per signature element (color palette fit to the home world, fur and texture, pattern, anatomy studies, eyes and expression), generated through Codex on Nick's subscription; each pick stored as a reference with a role, what it governs, what it must not be used for, and precedence | Nick picks per element and approves the board |
+| 3 | Model sheet | The official cartoon pack generated from the silhouette and vision picks: a turnaround (front, three-quarter, side, back, top) in a neutral modeling pose, close-ups of signature features, and a bare-body version without fur. Cross-view proportions checked and contradictions listed before Nick sees it. The sheet governs look and features; the blockout settles exact consistency | Nick approves the sheet, scoped per aspect if needed |
+| 4 | Blockout | A whole-form body from blocks at proportions measured against the model sheet's bare-body views | Nick approves proportions from every standard camera |
+| 5 | Parts | Per part in order: previews, builds, reviews, an approved build | Each part approved |
+| 6 | Coherence | Whole form from every angle, joins | Nick approves the whole form |
+| 7 | Surface | Per species: fur by region where the species has fur, materials; bare clay and surface side by side at the same cameras | Nick approves |
+| 8 | Color and pattern | Swatches, then palettes on the model under identical light; pattern in stored rest coordinates | Nick picks and approves |
+| 9 | Readiness | Smoke test: the rig library's automatic biped or template rig, three fixed test poses, a check for collapsed or intersecting surface; renders at the sprite cameras; a handoff manifest. Not production rigging | Nick approves the handoff |
+| 10 to 12 | Rig, Animate, Sprite atlas | Names reserved only | |
 
 **Reading a creature at intake (Nick, 2026-10-12).** The species description is mandatory: every feature its lore, appearance list and anatomy list name must be present in the finished design (for Hypnopet: the single horn, golden fur, very large eyes, very long lop ears, large springing hind legs). The anatomy list names only the anatomy its abilities use (to attack, heal, protect), so features like ears may be absent from it; a thin list is expected. Nick's silhouette is a high-level reference: it supplies the masses and signature features to carry over (body plan, proportions, ear type, signature shapes), and everything finer that the description does not specify (coat pattern, hair length, eye, mouth and nose design, texture of fur, scales or feathers) is open to the vision board and model sheet to decide. Nick: "Everything in the image is just a reference, and it is up for debate as far as implementation. It does not need to be implemented perfectly. The things in the description do need to be 100% present." A silhouette detail is never a hold.
 
