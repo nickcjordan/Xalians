@@ -282,8 +282,8 @@ export function IntakeReview({ creature }: { creature: string }) {
 							<h2 className="type-legend m-0 mb-1">Appearance</h2>
 							<ul className="m-0 list-disc pl-5 font-body text-small text-ink">{intake.appearance.map((a) => <li key={a}>{a}</li>)}</ul>
 						</section>
-						<section aria-label="Anatomy">
-							<h2 className="type-legend m-0 mb-1">Anatomy</h2>
+						<section aria-label="Anatomy its abilities use">
+							<h2 className="type-legend m-0 mb-1">Anatomy its abilities use</h2>
 							<ul className="m-0 list-disc pl-5 font-body text-small text-ink">{intake.anatomy.map((a) => <li key={a}>{cap(a)}</li>)}</ul>
 						</section>
 					</div>

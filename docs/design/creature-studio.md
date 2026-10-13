@@ -64,6 +64,8 @@ Every creature has the same stages. A stage opens when its entry holds, produces
 | 8 | Readiness | Smoke test: the rig library's automatic biped or template rig, three fixed test poses, a check for collapsed or intersecting surface; renders at the sprite cameras; a handoff manifest. Not production rigging | Nick approves the handoff |
 | 9 to 11 | Rig, Animate, Sprite atlas | Names reserved only | |
 
+**Reading a creature at intake (Nick, 2026-10-12).** The species template's text describes only what matters to the creature's possible actions: its `physiology.anatomy` list names the anatomy its abilities use (to attack, heal, protect), so features like ears or a tail can be absent from it. Nick's silhouette carries every other descriptive feature. The part list is therefore read from the silhouette first; the template's anatomy and appearance lists are a cross-check that nothing was missed, and everything they name must be in the design. A thin anatomy list is expected, not a template fault.
+
 ## 2. Records
 
 Records live in `art/creatures/<key>/`. IDs are collision-resistant (time-ordered) with a short display alias Nick can say ("hold H-k3f9"). One orchestrating session writes a creature's records at a time, enforced by a lock file; other sessions' results come in as imports.
