@@ -1,0 +1,274 @@
+{
+ "name": "pelvis v1",
+ "approval": null,
+ "note": "pelvis v1 (2026-10-13), for pelvis_v1_post.py / pelvis_v1_field.py, run last in the chain (after tails, body B, feet). World units, +y back. Nick 2026-10-13 asked for definition at the waist-hip-thigh join, two distinct legs meeting at the pelvis with a crease, and smooth lower thighs above the knee; coordinator 2026-10-13 added the buttocks and cleft. Keys as in the field docstring; grooves' points sit on the skin surface of the chain they were authored on (inguinal on assembled-3188, gluteal fold on assembled-3192; the front is the same in both), moved .002 inside; grid: signed-distance grid (BVH); project / relax / untangle: vertex projection as hips v1.",
+ "grid": {
+  "lo": [
+   -0.3,
+   -0.25,
+   -0.56
+  ],
+  "hi": [
+   0.3,
+   0.17,
+   -0.02
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "erode": [
+  {
+   "c": [
+    0.0,
+    0.03,
+    -0.2
+   ],
+   "s": [
+    0.26,
+    0.1,
+    0.16
+   ],
+   "depth": 0.006,
+   "fade": [
+    0.4,
+    1.0
+   ]
+  }
+ ],
+ "glutes": {
+  "c": [
+   0.12,
+   -0.005,
+   -0.205
+  ],
+  "s": [
+   0.1,
+   0.075,
+   0.095
+  ],
+  "cleftK": 0.016,
+  "k": 0.045
+ },
+ "capsules": [
+  {
+   "a": [
+    0.1,
+    -0.045,
+    -0.235
+   ],
+   "b": [
+    0.207,
+    -0.05,
+    -0.45
+   ],
+   "ra": 0.08,
+   "rb": 0.055,
+   "ySquash": 0.9,
+   "k": 0.03
+  }
+ ],
+ "blurZ": {
+  "sigma": 0.028,
+  "box": {
+   "x": [
+    0.07,
+    0.11,
+    0.4,
+    0.41
+   ],
+   "z": [
+    -0.535,
+    -0.44,
+    -0.3,
+    -0.24
+   ]
+  }
+ },
+ "blurs": [
+  {
+   "c": [
+    0.16,
+    0.035,
+    -0.34
+   ],
+   "s": [
+    0.11,
+    0.065,
+    0.12
+   ],
+   "fade": [
+    0.55,
+    1.1
+   ],
+   "sigma": 0.016
+  }
+ ],
+ "grooves": [
+  {
+   "points": [
+    [
+     0.038,
+     -0.1192,
+     -0.235
+    ],
+    [
+     0.055,
+     -0.1567,
+     -0.21
+    ],
+    [
+     0.08,
+     -0.1764,
+     -0.175
+    ],
+    [
+     0.105,
+     -0.1786,
+     -0.14
+    ],
+    [
+     0.13,
+     -0.1662,
+     -0.11
+    ],
+    [
+     0.15,
+     -0.1464,
+     -0.085
+    ],
+    [
+     0.165,
+     -0.1133,
+     -0.065
+    ]
+   ],
+   "depth": 0.0045,
+   "sigma": 0.014,
+   "depthAlong": [
+    [
+     0,
+     0.5
+    ],
+    [
+     0.15,
+     1
+    ],
+    [
+     0.55,
+     0.9
+    ],
+    [
+     0.9,
+     0.0
+    ],
+    [
+     1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "points": [
+    [
+     0.07,
+     0.0408,
+     -0.262
+    ],
+    [
+     0.1,
+     0.0485,
+     -0.272
+    ],
+    [
+     0.13,
+     0.0548,
+     -0.278
+    ],
+    [
+     0.16,
+     0.0573,
+     -0.278
+    ],
+    [
+     0.19,
+     0.0456,
+     -0.27
+    ],
+    [
+     0.21,
+     0.0227,
+     -0.255
+    ]
+   ],
+   "depth": 0.003,
+   "sigma": 0.014,
+   "depthAlong": [
+    [
+     0,
+     0.0
+    ],
+    [
+     0.2,
+     1
+    ],
+    [
+     0.75,
+     1
+    ],
+    [
+     1.0,
+     0.0
+    ]
+   ]
+  }
+ ],
+ "swells": [],
+ "tailGuard": {
+  "window": 0.04,
+  "thin": 0.036,
+  "dilate": 0.018,
+  "behindY": -0.02,
+  "base": [
+   0.01,
+   0.05,
+   -0.13
+  ],
+  "discR": 0.085,
+  "discFade": 0.05
+ },
+ "partBox": {
+  "x": [
+   -1,
+   -1,
+   0.285,
+   0.3
+  ],
+  "y": [
+   -1,
+   -1,
+   0.15,
+   0.165
+  ],
+  "z": [
+   -0.555,
+   -0.535,
+   -0.07,
+   -0.04
+  ]
+ },
+ "project": {
+  "iterations": 40,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 6,
+  "factor": 0.5,
+  "minMove": 0.0002,
+  "fullMove": 0.002
+ },
+ "untangle": {
+  "iterations": 12,
+  "threshold": 0.5,
+  "rings": 2
+ }
+}
