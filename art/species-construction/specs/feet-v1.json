@@ -1,0 +1,13 @@
+{
+ "name": "feet v1",
+ "approval": "Nick, 2026-10-13: \"Let's go with your recommendations for changes.\" The 2026-10-12 hind-foot proposal: narrow each hind foot sideways about its own ankle to about 74 percent, ball inward under the ankle, lower side edges rounded into the sole, side view unchanged, claws with their toes.",
+ "note": "World units. Ported from art/species-construction/previews/feet_body/deform_feet.py with scale .74, inward .025, roll .22. Every move is along x.",
+ "footMinX": 0.2,
+ "ankleZ": -0.83,
+ "ease": [-0.86, -0.78],
+ "scale": 0.74,
+ "inward": 0.025,
+ "ballY": 0.02,
+ "ballSpan": 0.08,
+ "roll": {"amount": 0.22, "z": -0.905, "depth": 0.052, "selectZ": -0.88, "yRange": [-0.16, 0.08]}
+}

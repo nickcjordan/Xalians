@@ -1,0 +1,48 @@
+{
+ "name": "body B v1",
+ "approval": "Nick, 2026-10-13: \"Let's go with your recommendations for changes.\" Body variant B of the 2026-10-12 previews with the legs at variant A's amount (-5 percent).",
+ "note": "World units. Ported from art/species-construction/previews/feet_body/deform_body.py variant B; legs .08 -> .05. Bare (shaved) body: widths sit inside the sheet's furred outline by the fur margin.",
+ "body": {
+  "zt": [0.30, 0.18, 0.06, -0.10, -0.28],
+  "tx": [0.12, 0.10, 0.05, 0.07, 0.08],
+  "ty": [0.05, 0.06, -0.04, 0.03, 0.03],
+  "arm": 0.11,
+  "armCapGain": 0.4,
+  "leg": 0.05,
+  "drop": 0.014,
+  "capZ": 0.26
+ },
+ "headFade": [0.34, 0.42],
+ "tails": {
+  "band": [-0.78, 0.16],
+  "cutZ": [-0.78, -0.43, -0.37, 0.16],
+  "cutY": [0.12, 0.12, 0.08, 0.08],
+  "fade": [0.0, 0.08]
+ },
+ "armMask": {
+  "bzZ": [-0.25, -0.18, -0.10, 0.10, 0.22, 0.30],
+  "bzX": [0.30, 0.2845, 0.2585, 0.204, 0.209, 0.209],
+  "width": 0.024,
+  "widthShoulder": 0.10,
+  "shoulderZ": 0.16,
+  "shoulderSpan": 0.14,
+  "topZ": [0.20, 0.30],
+  "bottomZ": -0.30
+ },
+ "legMask": {"topZ": -0.27, "span": 0.13},
+ "wristFade": [-0.145, -0.09],
+ "forepawMinX": 0.30,
+ "ankleFade": [-0.80, -0.74],
+ "drop": {"x": 0.27, "sigmaX": 0.07, "z0": 0.20, "span": 0.10},
+ "smooth": {
+  "lambda": 0.5,
+  "mu": -0.504,
+  "taubinPasses": 350,
+  "capPasses": 180,
+  "neckZ": [0.30, 0.38],
+  "capWeight": 0.5,
+  "capX": 0.25,
+  "capZ": 0.24,
+  "capSigma": 0.075
+ }
+}
