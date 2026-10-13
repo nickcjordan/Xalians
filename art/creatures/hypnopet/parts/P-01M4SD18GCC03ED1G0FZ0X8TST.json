@@ -1,9 +1,9 @@
 {
   "id": "P-01M4SD18GCC03ED1G0FZ0X8TST",
   "alias": "P-koyn",
-  "rev": 2,
+  "rev": 3,
   "createdAt": "2026-10-13T01:11:36.204Z",
-  "updatedAt": "2026-10-13T01:59:13.885Z",
+  "updatedAt": "2026-10-13T16:47:24.224Z",
   "createdBy": "orchestrator",
   "key": "torso",
   "name": "Torso",
@@ -19,6 +19,7 @@
   "dependsOn": [],
   "order": 1,
   "status": "not-started",
+  "startBuild": "B-01M4V1S1MVH3K4WCM4J71SQDX6",
   "budget": {
     "builds": 6,
     "wallMinutes": 180
