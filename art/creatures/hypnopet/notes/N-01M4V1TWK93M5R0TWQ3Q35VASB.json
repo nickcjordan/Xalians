@@ -1,0 +1,14 @@
+{
+  "id": "N-01M4V1TWK93M5R0TWQ3Q35VASB",
+  "alias": "N-sbtf",
+  "rev": 1,
+  "createdAt": "2026-10-13T16:34:21.928Z",
+  "updatedAt": "2026-10-13T16:34:21.928Z",
+  "createdBy": "orchestrator",
+  "kind": "decision",
+  "about": {
+    "stage": "blockout"
+  },
+  "by": "orchestrator",
+  "text": "Fit check: outline overlap with the flesh views is 0.83 front, 0.79 side, 0.81 back (higher is closer). The body proportions line up: back line, belly and chest within about 2 percent of figure height in the side view, big rounded haunches, ears long enough to reach nearly to the ground, horn leaning slightly forward from the crown, a tail stub. What the blockout does not settle, and why: the face reads dog-like with bulging eyeballs (no lids or sockets yet), the ear roots show as knobs, the ears are flat paddles that stick out sideways from above, and the hind feet are plain tubes. These are part shapes for the parts stage, and two are limits of the part library (no curved plate for ears; rings on vertical tapered tubes), which would be added as new building blocks. The flesh views also disagree with each other on hind foot spacing, ear splay and tail height, so the blockout takes a middle value. The blockout used its whole budget (6 builds, about 48 minutes)."
+}

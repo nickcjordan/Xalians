@@ -1,0 +1,684 @@
+{
+  "id": "B-01M4V1S1MVH3K4WCM4J71SQDX6",
+  "alias": "B-fpvq",
+  "rev": 14,
+  "createdAt": "2026-10-13T16:33:21.562Z",
+  "updatedAt": "2026-10-13T16:34:19.494Z",
+  "createdBy": "orchestrator",
+  "stage": "blockout",
+  "kind": "build",
+  "goal": {
+    "text": "A blockout matching the approved model sheet's flesh views, one instance per part"
+  },
+  "targets": [],
+  "method": "authored parts (mass, sweep, shell) fitted to measured flesh-view silhouettes",
+  "outputs": [
+    {
+      "name": "front",
+      "blob": "641e3e1b2c57de46fb197440526e3bab8f09fe3d73d53e06c75dc089e606b862",
+      "role": "render",
+      "camera": "front"
+    },
+    {
+      "name": "front-baseline",
+      "blob": "69f51cc9b29ef623621994124353ee1526c5095473ede763bd5104bfcf7f7a7b",
+      "role": "baseline",
+      "camera": "front"
+    },
+    {
+      "name": "front-compare",
+      "blob": "08d85aa7f7bb63717fa30b07edbaa11b0007be97d7ada230bd521b56c62a735b",
+      "role": "compare",
+      "camera": "front"
+    },
+    {
+      "name": "front-diff",
+      "blob": "2405d50cc0d6b51d595a9648b1ba6c68b04307451af7ae53cb4f73cb9170eae1",
+      "role": "diff",
+      "camera": "front"
+    },
+    {
+      "name": "threequarter-left",
+      "blob": "86c95bf4c06f306309ea8ce291f3f03f4e2cd50de70ff82999c55e514614cea6",
+      "role": "render",
+      "camera": "threequarter-left"
+    },
+    {
+      "name": "threequarter-left-baseline",
+      "blob": "93e04162014dcf46efc08f36e22f7dd78447cf025a53a723b111f8fc741bed50",
+      "role": "baseline",
+      "camera": "threequarter-left"
+    },
+    {
+      "name": "threequarter-left-compare",
+      "blob": "b582f5f4faa46861a94524c9c5ebf10880bdcf814a519dbc9252cb5fd094a8af",
+      "role": "compare",
+      "camera": "threequarter-left"
+    },
+    {
+      "name": "threequarter-left-diff",
+      "blob": "084fff66047ad97e7e01814e8d827b645ff71dc82366b32447157b162229cd4d",
+      "role": "diff",
+      "camera": "threequarter-left"
+    },
+    {
+      "name": "threequarter-right",
+      "blob": "1a90aaaef8a469ea7891ec5a677b94593811a40d3555c0bbaf41940c438a6339",
+      "role": "render",
+      "camera": "threequarter-right"
+    },
+    {
+      "name": "threequarter-right-baseline",
+      "blob": "6c2bae27a36416bc9068c669a3be476cb44d3641638285c9329a521c7e4d89be",
+      "role": "baseline",
+      "camera": "threequarter-right"
+    },
+    {
+      "name": "threequarter-right-compare",
+      "blob": "5a1d432cd1af2c9a89e8c483fa2f700b5fabbdc53e3b0cac219f0178ce18d1bf",
+      "role": "compare",
+      "camera": "threequarter-right"
+    },
+    {
+      "name": "threequarter-right-diff",
+      "blob": "4a9509ae3a3d8cf0abb1d3c7ce2b2eaaf73cb97d5af6c04a314156efbfb3aa1f",
+      "role": "diff",
+      "camera": "threequarter-right"
+    },
+    {
+      "name": "side-left",
+      "blob": "170d4fee92ed40748f8a6abed79654c18591b20d796cb00d7fcbeb17b717477d",
+      "role": "render",
+      "camera": "side-left"
+    },
+    {
+      "name": "side-left-baseline",
+      "blob": "def31d678dc1a37e12e77b972a5061ab0543a5c6ac6a7134afc89a38cf665b83",
+      "role": "baseline",
+      "camera": "side-left"
+    },
+    {
+      "name": "side-left-compare",
+      "blob": "b048367eaf63ff582d001e1d16be3d20ef24f83fcc71673034c74dc709a9cbc4",
+      "role": "compare",
+      "camera": "side-left"
+    },
+    {
+      "name": "side-left-diff",
+      "blob": "42d82a7ae277f8d43228a7b740dafc787e577368ce67ded9fc5579ecc4b2976a",
+      "role": "diff",
+      "camera": "side-left"
+    },
+    {
+      "name": "side-right",
+      "blob": "02a987bc02e2ee7a48c16bed571aea348841b7004a9f61d719723006aa30e58c",
+      "role": "render",
+      "camera": "side-right"
+    },
+    {
+      "name": "side-right-baseline",
+      "blob": "7b9f7f94580a4727272fee855291582b37eeb0e31bc929974f2c37749901b647",
+      "role": "baseline",
+      "camera": "side-right"
+    },
+    {
+      "name": "side-right-compare",
+      "blob": "7b680da39762873a1c7dd492ee88b8814ff54f7ccc47e722044838cb661121c2",
+      "role": "compare",
+      "camera": "side-right"
+    },
+    {
+      "name": "side-right-diff",
+      "blob": "dfa172a4a84a3d5e3ea178f244152522dacf1f258b9b530ad661d42b83972989",
+      "role": "diff",
+      "camera": "side-right"
+    },
+    {
+      "name": "back",
+      "blob": "3687198786c0987aba96cf6594757eb428c98b1408fe851ef6cbaffe6d7d8e25",
+      "role": "render",
+      "camera": "back"
+    },
+    {
+      "name": "back-baseline",
+      "blob": "4ee93ceae695770cbdf9e9bcafa8fdea0aa464fc2b7b31d43bcb9cb057eb2892",
+      "role": "baseline",
+      "camera": "back"
+    },
+    {
+      "name": "back-compare",
+      "blob": "40bcc37da7e7672c79d8b85c6ef1555f181fbbe5fa3b0ab8273a32209120fc2c",
+      "role": "compare",
+      "camera": "back"
+    },
+    {
+      "name": "back-diff",
+      "blob": "8727b89824f6d27f687aeb086035d6cbf4deb1a6c008de2293fa3d4b45856529",
+      "role": "diff",
+      "camera": "back"
+    },
+    {
+      "name": "top",
+      "blob": "efd6b2dbcc9a3d4234962a7df948238399d796631a4b408db0417c133d8b80a9",
+      "role": "render",
+      "camera": "top"
+    },
+    {
+      "name": "top-baseline",
+      "blob": "7aa779e28d31c993a8b3f160efe58bcfcbc17fa2e3f06b96fb8dceb5999df505",
+      "role": "baseline",
+      "camera": "top"
+    },
+    {
+      "name": "top-compare",
+      "blob": "64c1850f5f55ffe8df5a8e75665fc381efe383898a7a4c1703973e620ecdf7c2",
+      "role": "compare",
+      "camera": "top"
+    },
+    {
+      "name": "top-diff",
+      "blob": "3b2ed513b76088bcde28520754a11ca2810cdc43de82e9cd2c715a2da0c96e1e",
+      "role": "diff",
+      "camera": "top"
+    },
+    {
+      "name": "below",
+      "blob": "672f2c8bc060dd9c720f89bf6abe2394dc7f9459e8af8a4c42996811b5634550",
+      "role": "render",
+      "camera": "below"
+    },
+    {
+      "name": "below-baseline",
+      "blob": "d51f0b5f437588940792f5aefe98a514e14f30ed2c6c3b008c2251051ac2b5f0",
+      "role": "baseline",
+      "camera": "below"
+    },
+    {
+      "name": "below-compare",
+      "blob": "3a401fd9cb2448d00cb4ccbbfdcbfabea1a5f6024326921e85e91bda6d147919",
+      "role": "compare",
+      "camera": "below"
+    },
+    {
+      "name": "below-diff",
+      "blob": "be1ccdec9f4367704fe6492984c843a531573d4a4482e65fa2d5962d3a9ff22a",
+      "role": "diff",
+      "camera": "below"
+    },
+    {
+      "name": "head-front",
+      "blob": "4025f24d460ced498de892e294c4a193375127a454ac3600e74bc7d586f2e517",
+      "role": "render",
+      "camera": "head-front"
+    },
+    {
+      "name": "head-front-baseline",
+      "blob": "fc1cb0c769cdebae74906e0f749c133bffc52ea03ca9b29fea60f7d1c2e7ee6d",
+      "role": "baseline",
+      "camera": "head-front"
+    },
+    {
+      "name": "head-front-compare",
+      "blob": "643c77471315d465287d967149a3edb45dac9c1d9d17fa3d6d060d3c0f8e1bbb",
+      "role": "compare",
+      "camera": "head-front"
+    },
+    {
+      "name": "head-front-diff",
+      "blob": "ebe27bd5b4d74773d023b9e88061f049977621e7750bada0d6fe4a3200ab1d64",
+      "role": "diff",
+      "camera": "head-front"
+    },
+    {
+      "name": "head-threequarter-left",
+      "blob": "842d178e7f956d5da17b9a8595378c0b5f9f2a8beed7adb82b00aec9ffdb62ef",
+      "role": "render",
+      "camera": "head-threequarter-left"
+    },
+    {
+      "name": "head-threequarter-left-baseline",
+      "blob": "12d5b9faf9df9cf763565981adde832b6bd6cce5ce6c0d299efa3e2d43137d8a",
+      "role": "baseline",
+      "camera": "head-threequarter-left"
+    },
+    {
+      "name": "head-threequarter-left-compare",
+      "blob": "f15535592ac9d8e3560530c78baebe234d0c224a775b1c5b5437b202dfe5a78d",
+      "role": "compare",
+      "camera": "head-threequarter-left"
+    },
+    {
+      "name": "head-threequarter-left-diff",
+      "blob": "f91a4bdbb3d6c1c25f3b7e8f8b7be6137c7d69584243766d6a83ca5f102cf439",
+      "role": "diff",
+      "camera": "head-threequarter-left"
+    },
+    {
+      "name": "head-side-left",
+      "blob": "cf78c608356b75c2cd16794102c3aa06b891109a5a078d751f085be914b2ca3f",
+      "role": "render",
+      "camera": "head-side-left"
+    },
+    {
+      "name": "head-side-left-baseline",
+      "blob": "14a57f3386357722b9c3791e8ba001212b51bb229e10ee0a1680a7ae86aa7338",
+      "role": "baseline",
+      "camera": "head-side-left"
+    },
+    {
+      "name": "head-side-left-compare",
+      "blob": "2a676e1036b7cf2521c6ebcfdf62702abe85b9ce56672d32d3163e4081dc8875",
+      "role": "compare",
+      "camera": "head-side-left"
+    },
+    {
+      "name": "head-side-left-diff",
+      "blob": "01617c9fd308a62b78c4e57941613f131e413fd35e6c4fa420800f01ee3bf1fd",
+      "role": "diff",
+      "camera": "head-side-left"
+    },
+    {
+      "name": "head-top",
+      "blob": "16d4cab041f30a28ce4afe69dd5e81fa8120d500c78b13fe78b6dd72ac5a6446",
+      "role": "render",
+      "camera": "head-top"
+    },
+    {
+      "name": "head-top-baseline",
+      "blob": "f37c31fa49b8efdf8ec2174499860a7694ad1b4c65d6c315f3aac9d165e8764a",
+      "role": "baseline",
+      "camera": "head-top"
+    },
+    {
+      "name": "head-top-compare",
+      "blob": "13443ffddf3ae44c2df12eb942d6d044e9a9693a6d49a40c8fa51371a205ceec",
+      "role": "compare",
+      "camera": "head-top"
+    },
+    {
+      "name": "head-top-diff",
+      "blob": "b73408d9649cac395fcfb8e21586f3b2a43cd29ab302258c7babffbae41094f3",
+      "role": "diff",
+      "camera": "head-top"
+    },
+    {
+      "name": "head-back",
+      "blob": "fd1cb1e6ebb95d82450a52c290090fc83491b543d0f165d1f27ca0050b23b791",
+      "role": "render",
+      "camera": "head-back"
+    },
+    {
+      "name": "head-back-baseline",
+      "blob": "bd2e5fb80d7937808d985b35eb169de3d9f7d7433c15e027f4be3c6c2f990268",
+      "role": "baseline",
+      "camera": "head-back"
+    },
+    {
+      "name": "head-back-compare",
+      "blob": "2d52db76e1640652565e9541003ab0037f8d7c0e2d448373f506c524da221668",
+      "role": "compare",
+      "camera": "head-back"
+    },
+    {
+      "name": "head-back-diff",
+      "blob": "30b9c2ab8ec6d5c9747cdea6bc5faafa62637d77e6133728ff36b7c2f339f791",
+      "role": "diff",
+      "camera": "head-back"
+    },
+    {
+      "name": "hindlegs-front",
+      "blob": "5843fca6023ec5e9c57afec19022b4e92bdb9273eae296ed2ef655a5b20ebf8a",
+      "role": "render",
+      "camera": "hindlegs-front"
+    },
+    {
+      "name": "hindlegs-front-baseline",
+      "blob": "9beb6a5be15f6573183d89ac311a11e22789b5880249a19423526bbc43c64dbd",
+      "role": "baseline",
+      "camera": "hindlegs-front"
+    },
+    {
+      "name": "hindlegs-front-compare",
+      "blob": "49bc8d830e6547cb721a11e2d06d45915bb7c2b1b092a63c6724e6cba34d15dd",
+      "role": "compare",
+      "camera": "hindlegs-front"
+    },
+    {
+      "name": "hindlegs-front-diff",
+      "blob": "fa1a4f14ef15c2a3c93c37ff45ea998c5f7ab1ee974415cb4032b2133d6b432f",
+      "role": "diff",
+      "camera": "hindlegs-front"
+    },
+    {
+      "name": "hindlegs-threequarter-left",
+      "blob": "74d38ea9beb3ded11843a7bf46a696d591494d31060ff172b65963ecbd92cacd",
+      "role": "render",
+      "camera": "hindlegs-threequarter-left"
+    },
+    {
+      "name": "hindlegs-threequarter-left-baseline",
+      "blob": "11bcea105ddc3b798f1d26e97423db442073e40de1de45705c7d606bb87e93a7",
+      "role": "baseline",
+      "camera": "hindlegs-threequarter-left"
+    },
+    {
+      "name": "hindlegs-threequarter-left-compare",
+      "blob": "85d1c44c9957d3080e856ec05d1ab4c8aab43c37f09192b6898691483ceb30e4",
+      "role": "compare",
+      "camera": "hindlegs-threequarter-left"
+    },
+    {
+      "name": "hindlegs-threequarter-left-diff",
+      "blob": "f5963eed9386bf0546eefe2cc4a56e9d4220c35debabd2d050e969053e01f66f",
+      "role": "diff",
+      "camera": "hindlegs-threequarter-left"
+    },
+    {
+      "name": "hindlegs-side-left",
+      "blob": "0722af580005502adef7336c592ddcbc63c16bf79f771f192b125af582da8bc2",
+      "role": "render",
+      "camera": "hindlegs-side-left"
+    },
+    {
+      "name": "hindlegs-side-left-baseline",
+      "blob": "66be658e021dca29cd1189da0fad0328e81b9f2855bff0bab7803c0f5fba71fc",
+      "role": "baseline",
+      "camera": "hindlegs-side-left"
+    },
+    {
+      "name": "hindlegs-side-left-compare",
+      "blob": "fa12ad4f52a7e58b1e72982eb8ea95cc4d1acec673ea9493424ebeb9a740ebe8",
+      "role": "compare",
+      "camera": "hindlegs-side-left"
+    },
+    {
+      "name": "hindlegs-side-left-diff",
+      "blob": "7bd8fb7cbe91e0a80bf9d3b7a8366d6fb627436f628f14eedb398084af037266",
+      "role": "diff",
+      "camera": "hindlegs-side-left"
+    },
+    {
+      "name": "hindlegs-top",
+      "blob": "4e37fcb94f33c7431e2c117d6f952cec1cb5a5437ff2dd783c77ae574cfd0873",
+      "role": "render",
+      "camera": "hindlegs-top"
+    },
+    {
+      "name": "hindlegs-top-baseline",
+      "blob": "56e5dc77d2e275e2fba5043b6c787e7cf7b0db752165549af549757ef8522147",
+      "role": "baseline",
+      "camera": "hindlegs-top"
+    },
+    {
+      "name": "hindlegs-top-compare",
+      "blob": "420b113035b5a4cdad74965dafea1ae516b1b56ff949cb8b38d2ecd75dd7ce2c",
+      "role": "compare",
+      "camera": "hindlegs-top"
+    },
+    {
+      "name": "hindlegs-top-diff",
+      "blob": "7d729d6ecb23f0500d6054f3c10231c7ea3717bf7b557658319db2cc8bfd8dcb",
+      "role": "diff",
+      "camera": "hindlegs-top"
+    },
+    {
+      "name": "hindlegs-back",
+      "blob": "5d517d9005ab7d4bf4b9c24bb12e2e23564f70e3c6d8c0b6af8efff934d4e7cc",
+      "role": "render",
+      "camera": "hindlegs-back"
+    },
+    {
+      "name": "hindlegs-back-baseline",
+      "blob": "8a7dbafeb3aa129e6e948497f6b720465c3eba1f1e76db9ccba7d09226515557",
+      "role": "baseline",
+      "camera": "hindlegs-back"
+    },
+    {
+      "name": "hindlegs-back-compare",
+      "blob": "20c85333caed5b546669530220386d18a8dae288b2db49e5d4923c55d08a5d9c",
+      "role": "compare",
+      "camera": "hindlegs-back"
+    },
+    {
+      "name": "hindlegs-back-diff",
+      "blob": "4f0075f66ba4aaaec0f84266d7f73150246c5a0af76695da3adce3d455e9d722",
+      "role": "diff",
+      "camera": "hindlegs-back"
+    },
+    {
+      "name": "back-overlay",
+      "blob": "fc23db978faae8efda2260b7b2d1b5a7a64009a56035db2b71d11729d047d14b",
+      "role": "overlay",
+      "camera": "back"
+    },
+    {
+      "name": "front-overlay",
+      "blob": "4716fb8295afd3db8ad776c06ad74043b88f3d6139ae9fcdcc4cda70d76e7ee3",
+      "role": "overlay",
+      "camera": "front"
+    },
+    {
+      "name": "side-left-overlay",
+      "blob": "1ebec87c4263134f56476a0f0b4cd179cc680e650fd3e32df38134b293db108e",
+      "role": "overlay",
+      "camera": "side-left"
+    }
+  ],
+  "checks": [
+    {
+      "id": "changed-fraction:front",
+      "kind": "measure",
+      "value": 0.53227,
+      "detail": "share of pixels that differ from the baseline at front"
+    },
+    {
+      "id": "changed-fraction:threequarter-left",
+      "kind": "measure",
+      "value": 0.3923,
+      "detail": "share of pixels that differ from the baseline at threequarter-left"
+    },
+    {
+      "id": "changed-fraction:threequarter-right",
+      "kind": "measure",
+      "value": 0.361542,
+      "detail": "share of pixels that differ from the baseline at threequarter-right"
+    },
+    {
+      "id": "changed-fraction:side-left",
+      "kind": "measure",
+      "value": 0.393402,
+      "detail": "share of pixels that differ from the baseline at side-left"
+    },
+    {
+      "id": "changed-fraction:side-right",
+      "kind": "measure",
+      "value": 0.30104,
+      "detail": "share of pixels that differ from the baseline at side-right"
+    },
+    {
+      "id": "changed-fraction:back",
+      "kind": "measure",
+      "value": 0.507207,
+      "detail": "share of pixels that differ from the baseline at back"
+    },
+    {
+      "id": "changed-fraction:top",
+      "kind": "measure",
+      "value": 0.491592,
+      "detail": "share of pixels that differ from the baseline at top"
+    },
+    {
+      "id": "changed-fraction:below",
+      "kind": "measure",
+      "value": 0.371078,
+      "detail": "share of pixels that differ from the baseline at below"
+    },
+    {
+      "id": "changed-fraction:head-front",
+      "kind": "measure",
+      "value": 0.551428,
+      "detail": "share of pixels that differ from the baseline at head-front"
+    },
+    {
+      "id": "changed-fraction:head-threequarter-left",
+      "kind": "measure",
+      "value": 0.467034,
+      "detail": "share of pixels that differ from the baseline at head-threequarter-left"
+    },
+    {
+      "id": "changed-fraction:head-side-left",
+      "kind": "measure",
+      "value": 0.387251,
+      "detail": "share of pixels that differ from the baseline at head-side-left"
+    },
+    {
+      "id": "changed-fraction:head-top",
+      "kind": "measure",
+      "value": 0.481112,
+      "detail": "share of pixels that differ from the baseline at head-top"
+    },
+    {
+      "id": "changed-fraction:head-back",
+      "kind": "measure",
+      "value": 0.503163,
+      "detail": "share of pixels that differ from the baseline at head-back"
+    },
+    {
+      "id": "changed-fraction:hindlegs-front",
+      "kind": "measure",
+      "value": 0.501085,
+      "detail": "share of pixels that differ from the baseline at hindlegs-front"
+    },
+    {
+      "id": "changed-fraction:hindlegs-threequarter-left",
+      "kind": "measure",
+      "value": 0.358601,
+      "detail": "share of pixels that differ from the baseline at hindlegs-threequarter-left"
+    },
+    {
+      "id": "changed-fraction:hindlegs-side-left",
+      "kind": "measure",
+      "value": 0.486223,
+      "detail": "share of pixels that differ from the baseline at hindlegs-side-left"
+    },
+    {
+      "id": "changed-fraction:hindlegs-top",
+      "kind": "measure",
+      "value": 0.449125,
+      "detail": "share of pixels that differ from the baseline at hindlegs-top"
+    },
+    {
+      "id": "changed-fraction:hindlegs-back",
+      "kind": "measure",
+      "value": 0.429604,
+      "detail": "share of pixels that differ from the baseline at hindlegs-back"
+    },
+    {
+      "id": "assembly",
+      "kind": "measure",
+      "value": {
+        "assembly": "build",
+        "assemblySha256": "27bf81687550cb5e8293b7abbe93c754aa57256eba988c92adcb9103441b869d",
+        "baseline": "build"
+      },
+      "detail": "the assembly this packet was rendered from"
+    },
+    {
+      "id": "fit-iou:front",
+      "kind": "measure",
+      "value": 0.832,
+      "detail": "silhouette overlap (intersection over union) between the model and the sheet at front"
+    },
+    {
+      "id": "fit-iou:side-left",
+      "kind": "measure",
+      "value": 0.7874,
+      "detail": "silhouette overlap (intersection over union) between the model and the sheet at side-left"
+    },
+    {
+      "id": "fit-iou:back",
+      "kind": "measure",
+      "value": 0.8118,
+      "detail": "silhouette overlap (intersection over union) between the model and the sheet at back"
+    }
+  ],
+  "report": {
+    "changed": "First blockout of Hypnopet: nine parts authored from mass, sweep and shell instances (art/studio/blockout/hypnopet/spec.json, v5 after five revisions), fitted to the flesh views at a 0.30 m shoulder height. Outline overlap with the flesh views rose from 0.67-0.76 (v1) to 0.79-0.83.",
+    "outputs": [
+      "front",
+      "side-left",
+      "back"
+    ],
+    "defectResults": [],
+    "blockedBy": {
+      "hold": "nothing",
+      "liftWouldAllow": "No hold blocked the fit. Limits were the part library (no curved plate, so the ears cannot arc over the crown and fall, and needed a bridging knob at the root; elliptical sweeps make rings on vertical segments) and the flesh views contradicting each other (hind foot spacing, ear splay, tail height differ between views; the side view is drawn in perspective)."
+    },
+    "outsideChanges": [],
+    "newDefects": [
+      {
+        "description": "Ear roots read as round knobs where the ear meets the skull"
+      },
+      {
+        "description": "The face reads dog-like: eyes bulge with no lids or sockets, a crease between cheek and muzzle"
+      },
+      {
+        "description": "Hind feet are smooth wedge tubes with no heel or toe definition"
+      },
+      {
+        "description": "From above the ears stick out sideways instead of hanging along the head"
+      }
+    ],
+    "note": "Builder budget used in full: 6 Blender builds (one refused for disconnected ears), about 48 minutes, about 270k tokens."
+  },
+  "lookNotes": [
+    {
+      "camera": "front",
+      "imageBlob": "641e3e1b2c57de46fb197440526e3bab8f09fe3d73d53e06c75dc089e606b862",
+      "note": "Looked at by the orchestrator: proportions match the flesh views; part shapes (face, ears, feet) are blockout-rough."
+    },
+    {
+      "camera": "threequarter-left",
+      "imageBlob": "86c95bf4c06f306309ea8ce291f3f03f4e2cd50de70ff82999c55e514614cea6",
+      "note": "Looked at by the orchestrator: proportions match the flesh views; part shapes (face, ears, feet) are blockout-rough."
+    },
+    {
+      "camera": "threequarter-right",
+      "imageBlob": "1a90aaaef8a469ea7891ec5a677b94593811a40d3555c0bbaf41940c438a6339",
+      "note": "Looked at by the orchestrator: proportions match the flesh views; part shapes (face, ears, feet) are blockout-rough."
+    },
+    {
+      "camera": "side-left",
+      "imageBlob": "170d4fee92ed40748f8a6abed79654c18591b20d796cb00d7fcbeb17b717477d",
+      "note": "Looked at by the orchestrator: proportions match the flesh views; part shapes (face, ears, feet) are blockout-rough."
+    },
+    {
+      "camera": "side-right",
+      "imageBlob": "02a987bc02e2ee7a48c16bed571aea348841b7004a9f61d719723006aa30e58c",
+      "note": "Looked at by the orchestrator: proportions match the flesh views; part shapes (face, ears, feet) are blockout-rough."
+    },
+    {
+      "camera": "back",
+      "imageBlob": "3687198786c0987aba96cf6594757eb428c98b1408fe851ef6cbaffe6d7d8e25",
+      "note": "Looked at by the orchestrator: proportions match the flesh views; part shapes (face, ears, feet) are blockout-rough."
+    },
+    {
+      "camera": "top",
+      "imageBlob": "efd6b2dbcc9a3d4234962a7df948238399d796631a4b408db0417c133d8b80a9",
+      "note": "Looked at by the orchestrator: proportions match the flesh views; part shapes (face, ears, feet) are blockout-rough."
+    },
+    {
+      "camera": "below",
+      "imageBlob": "672f2c8bc060dd9c720f89bf6abe2394dc7f9459e8af8a4c42996811b5634550",
+      "note": "Looked at by the orchestrator: proportions match the flesh views; part shapes (face, ears, feet) are blockout-rough."
+    }
+  ],
+  "cost": {
+    "wallMinutes": 0.26,
+    "blenderMinutes": 3.24
+  },
+  "status": "presented",
+  "orchestratorSession": "7fa482e3",
+  "startedAt": "2026-10-13T16:33:35.536Z",
+  "endedAt": "2026-10-13T16:33:51.278Z"
+}
