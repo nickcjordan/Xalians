@@ -1,0 +1,369 @@
+{
+ "note": "tails v1 (2026-10-12): the three tails and their roots rebuilt as round tapering cores from separate roots (post step, remeshes its region). World units. grid: level-set grid (band = narrow-band half width); oldControls: the B-14 tail controls (carved out); tails: per tail the centreline control points (the old ones, with new separate roots) and a radius profile (root radius times a scale table over normalised length u); tailUnionK: smooth-minimum radius between tails; carve: the old tails removed from the body where T_old < margin, faded in over y (k: smooth maximum); rootK: smooth minimum between body and tails; blur: masked Gaussian smoothing stages; region: changed-field tolerance, nearSurface limit, grow (Gaussian) and gain for the fade band, cut (the stitch contour); seamRelax: iterations and rings of the stitched seam.",
+ "oldControls": "docs/design/species-construction/akinza/tail-controls-stack-b.json",
+ "grid": {
+  "lo": [
+   -0.2,
+   -0.03,
+   -0.7
+  ],
+  "hi": [
+   0.62,
+   0.6,
+   0.18
+  ],
+  "step": 0.0025,
+  "band": 0.06
+ },
+ "tails": [
+  {
+   "points": [
+    [
+     0.01,
+     0.04,
+     -0.075
+    ],
+    [
+     0.081,
+     0.251,
+     -0.04
+    ],
+    [
+     0.163,
+     0.317,
+     0.006
+    ],
+    [
+     0.249,
+     0.369,
+     0.035
+    ],
+    [
+     0.325,
+     0.405,
+     0.046
+    ],
+    [
+     0.4,
+     0.437,
+     0.031
+    ],
+    [
+     0.48,
+     0.47,
+     0.001
+    ],
+    [
+     0.539,
+     0.5,
+     -0.062
+    ]
+   ],
+   "radius": {
+    "root": 0.062,
+    "u": [
+     0,
+     0.15,
+     0.35,
+     0.55,
+     0.75,
+     0.9,
+     1.0
+    ],
+    "scale": [
+     1.0,
+     1.04,
+     1.0,
+     0.88,
+     0.66,
+     0.4,
+     0.06
+    ]
+   }
+  },
+  {
+   "points": [
+    [
+     0.03,
+     0.045,
+     -0.125
+    ],
+    [
+     0.07,
+     0.154,
+     -0.162
+    ],
+    [
+     0.173,
+     0.225,
+     -0.182
+    ],
+    [
+     0.277,
+     0.295,
+     -0.179
+    ],
+    [
+     0.379,
+     0.366,
+     -0.21
+    ],
+    [
+     0.465,
+     0.432,
+     -0.257
+    ],
+    [
+     0.519,
+     0.487,
+     -0.319
+    ],
+    [
+     0.539,
+     0.54,
+     -0.395
+    ]
+   ],
+   "radius": {
+    "root": 0.068,
+    "u": [
+     0,
+     0.15,
+     0.35,
+     0.55,
+     0.75,
+     0.9,
+     1.0
+    ],
+    "scale": [
+     1.0,
+     1.04,
+     1.0,
+     0.88,
+     0.66,
+     0.4,
+     0.06
+    ]
+   }
+  },
+  {
+   "points": [
+    [
+     0.0,
+     0.048,
+     -0.175
+    ],
+    [
+     -0.02,
+     0.1,
+     -0.25
+    ],
+    [
+     0.048,
+     0.119,
+     -0.29
+    ],
+    [
+     0.115,
+     0.15300000000000002,
+     -0.344
+    ],
+    [
+     0.204,
+     0.199,
+     -0.385
+    ],
+    [
+     0.29,
+     0.25,
+     -0.442
+    ],
+    [
+     0.342,
+     0.307,
+     -0.501
+    ],
+    [
+     0.37,
+     0.354,
+     -0.555
+    ],
+    [
+     0.381,
+     0.4,
+     -0.611
+    ]
+   ],
+   "radius": {
+    "root": 0.068,
+    "u": [
+     0,
+     0.15,
+     0.35,
+     0.55,
+     0.75,
+     0.9,
+     1.0
+    ],
+    "scale": [
+     1.0,
+     1.04,
+     1.0,
+     0.88,
+     0.66,
+     0.4,
+     0.06
+    ]
+   }
+  }
+ ],
+ "tailUnionK": 0.02,
+ "carve": {
+  "y": [
+   0.06,
+   0.09
+  ],
+  "margin": 0.025,
+  "k": 0.03
+ },
+ "rootK": 0.04,
+ "blur": [
+  {
+   "sigma": 0.012,
+   "mask": [
+    {
+     "c": [
+      0.01,
+      0.07,
+      -0.12
+     ],
+     "s": [
+      0.09,
+      0.04,
+      0.08
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.005,
+   "mask": [
+    {
+     "c": [
+      0.12,
+      0.16,
+      -0.18
+     ],
+     "s": [
+      0.2,
+      0.1,
+      0.2
+     ],
+     "fade": [
+      0.6,
+      1.1
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.008,
+   "mask": [
+    {
+     "c": [
+      0.19,
+      0.1,
+      -0.4
+     ],
+     "s": [
+      0.08,
+      0.06,
+      0.1
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.008,
+   "mask": [
+    {
+     "c": [
+      0.03,
+      0.06,
+      -0.21
+     ],
+     "s": [
+      0.12,
+      0.05,
+      0.05
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      0.02,
+      0.06,
+      -0.33
+     ],
+     "s": [
+      0.1,
+      0.05,
+      0.07
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      0.13,
+      0.1,
+      -0.29
+     ],
+     "s": [
+      0.07,
+      0.05,
+      0.1
+     ],
+     "fade": [
+      0.5,
+      1.2
+     ]
+    }
+   ]
+  }
+ ],
+ "region": {
+  "tol": 2e-05,
+  "grow": 0.006,
+  "gain": 3.0,
+  "cut": 0.3,
+  "nearSurface": 0.02
+ },
+ "seamRelax": {
+  "iterations": 8,
+  "rings": 3
+ }
+}
