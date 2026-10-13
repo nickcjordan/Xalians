@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from parts import Instance, KINDS, build_field, mass, ownership, part_keys, shell, smin, sweep  # noqa: E402
+from parts import Instance, KINDS, build_field, mass, ownership, part_keys, shell, smax, smin, sweep, union_at  # noqa: E402
 from parts.common import pchip  # noqa: E402
 
 
@@ -212,6 +212,263 @@ class UnionTests(unittest.TestCase):
         self.assertEqual(list(which[:2]), [0, 1])
         self.assertGreater(weight[0], 0.99)
         self.assertLess(weight[2], 0.01)
+
+
+def with_op(i, op):
+    i.spec['op'] = op
+    i.op = op
+    return i
+
+
+class CarveTests(unittest.TestCase):
+    def setUp(self):
+        self.ball = inst('mass', {'radii': [0.2, 0.2, 0.2]}, part='ball', blend=0.03)
+        self.socket = with_op(inst('mass', {'radii': [0.06, 0.06, 0.06], 'center': [0, -0.15, 0]}, part='socket', blend=0.02),
+                              'carve')
+        self.eye = with_op(inst('mass', {'radii': [0.035, 0.035, 0.035], 'center': [0, -0.15, 0]}, part='eye', blend=0.01),
+                           'add-after')
+
+    def test_smax_is_the_mirror_of_smin(self):
+        a = np.linspace(-1, 1, 41)
+        np.testing.assert_allclose(smax(a, 0.3, 0.2), -smin(-a, -0.3, 0.2))
+        far = np.abs(a-0.3) >= 0.2
+        np.testing.assert_allclose(smax(a, 0.3, 0.2)[far], np.maximum(a, 0.3)[far])
+
+    def test_carve_removes_material_and_leaves_the_rest(self):
+        probe = np.array([[0, -0.15, 0], [0, -0.12, 0], [0, 0, 0], [0.1, 0.05, 0], [0, -0.3, 0]])
+        before = union_at([self.ball], probe)
+        after = union_at([self.ball, self.socket], probe)
+        self.assertLess(before[0], 0)
+        self.assertGreater(after[0], 0)                      # the socket center is empty now
+        self.assertGreater(after[1], 0)
+        self.assertLess(after[2], 0)                         # the ball's core is untouched
+        self.assertLess(after[3], 0)
+        self.assertGreater(after[4], 0)                      # outside stays outside
+        np.testing.assert_allclose(after[2:4], before[2:4], atol=1e-9)
+
+    def test_carve_is_a_smooth_subtraction(self):
+        pts = np.array([[0, -0.15+0.06, 0], [0, -0.15+0.07, 0]])    # on the socket wall, and just behind it
+        want = smax(self.ball.sdf(pts), -self.socket.sdf(pts), 0.02)
+        np.testing.assert_allclose(union_at([self.ball, self.socket], pts), want)
+
+    def test_order_in_the_spec_does_not_matter(self):
+        probe = np.array([[0, -0.12, 0], [0, -0.15, 0], [0.02, -0.17, 0.01], [0, 0.1, 0]])
+        a = union_at([self.ball, self.socket, self.eye], probe)
+        b = union_at([self.eye, self.socket, self.ball], probe)
+        np.testing.assert_allclose(a, b)
+
+    def test_add_after_restores_material_inside_the_hollow(self):
+        probe = np.array([[0, -0.15, 0]])
+        self.assertGreater(union_at([self.ball, self.socket], probe)[0], 0)
+        self.assertLess(union_at([self.ball, self.socket, self.eye], probe)[0], 0)
+        # the eye is not itself carved: its own surface stays where it is
+        edge = np.array([[0, -0.15+0.035, 0]])
+        self.assertAlmostEqual(float(union_at([self.ball, self.socket, self.eye], edge)[0]), 0.0, delta=0.01)
+
+    def test_grid_field_matches_the_direct_evaluation(self):
+        insts = [self.ball, self.socket, self.eye]
+        origin, f, _ = build_field(insts, 0.01)
+        ix = lambda p: tuple(int(round((p[a]-origin[a])/0.01)) for a in range(3))
+        for p in ([0, -0.15, 0], [0, -0.12, 0], [0, 0, 0], [0.1, -0.1, 0.05]):
+            self.assertAlmostEqual(float(f[ix(p)]), float(union_at(insts, np.array([p]))[0]), delta=1e-4)
+        bare = build_field([self.ball, self.socket], 0.01)[1]
+        self.assertGreater(bare[ix([0, -0.15, 0])], 0)       # a hollow before the eye goes in
+        self.assertLess(f[ix([0, -0.15, 0])], 0)             # and the eye fills it
+
+    def test_the_carved_wall_belongs_to_the_carving_part(self):
+        insts = [self.ball, self.socket, self.eye]
+        keys = part_keys({'parts': [i.spec for i in insts]})
+        which, _ = ownership(insts, keys, np.array([[0, -0.15+0.06, 0]]))   # deep in the ball, on the socket wall
+        self.assertEqual(keys[which[0]], 'socket')
+        which, _ = ownership(insts, keys, np.array([[0.19, 0, 0]]))
+        self.assertEqual(keys[which[0]], 'ball')
+        which, _ = ownership(insts, keys, np.array([[0, -0.15-0.035, 0]]))
+        self.assertEqual(keys[which[0]], 'eye')              # the eyeball's own surface
+
+    def test_unknown_op(self):
+        with self.assertRaises(ValueError):
+            Instance({'part': 'p', 'kind': 'mass', 'params': {}, 'op': 'subtract'})
+
+
+class ClosedSweepTests(unittest.TestCase):
+    R = 0.2
+
+    def ring(self, **kw):
+        c = [[self.R, 0, 0, 0.02], [0, self.R, 0, 0.03], [-self.R, 0, 0, 0.02], [0, -self.R, 0, 0.03]]
+        return {'points': c, 'closed': True, 'samples': 20, **kw}
+
+    def test_spine_loops(self):
+        S, r, q, e1, e2 = sweep.spine(self.ring())
+        np.testing.assert_allclose(S[0], S[-1])
+        self.assertAlmostEqual(float(r[0]), float(r[-1]))
+        np.testing.assert_allclose(e1[0], e1[-1])
+        self.assertGreater(float(np.linalg.norm(S, axis=1).min()), 0.17)     # a loop, not a chord
+
+    def test_no_gap_at_the_join(self):
+        p = self.ring()
+        S, r, _, _, _ = sweep.spine(p)
+        np.testing.assert_allclose(sweep.sdf(p, S), -r, atol=1e-6)          # every sample, the join included, is inside by its radius
+        # the outer wall, one radius out from the spine in the ring's plane, is on the zero level everywhere,
+        # the join included (the join is sample 0 and the last sample)
+        T = np.gradient(S, axis=0)
+        T[0] = T[-1] = S[1]-S[-2]
+        T /= np.linalg.norm(T, axis=1, keepdims=True)
+        out = np.cross(T, [0, 0, 1.0])
+        out /= np.linalg.norm(out, axis=1, keepdims=True)
+        wall = sweep.sdf(p, S+r[:, None]*out)
+        self.assertLess(float(np.abs(wall).max()), 1e-3)
+        near_join = np.r_[0:6, len(S)-6:len(S)]
+        self.assertTrue(np.all(sweep.sdf(p, S[near_join]) < -0.015))
+
+    def test_radius_has_no_kink_at_the_join(self):
+        _, r, _, _, _ = sweep.spine(self.ring())
+        step = np.diff(r)
+        self.assertLess(float(abs(step[-1]-step[0])), 2e-4)
+
+    def test_not_a_solid_disc(self):
+        d = sweep.sdf(self.ring(), np.array([[0, 0, 0], [0.2, 0, 0.05], [0.3, 0, 0]]))
+        self.assertGreater(d[0], 0)                          # the hole in the ring
+        self.assertGreater(d[1], 0)
+        self.assertGreater(d[2], 0)
+
+    def test_elliptic_ring_is_smooth_all_the_way_round(self):
+        p = self.ring()
+        p['points'] = [[*c[:3], c[3], 0.5] for c in p['points']]
+        S, r, _, _, _ = sweep.spine(p)
+        z = sweep.sdf(p, S+np.array([0, 0, 0.004]))                          # above the spine; half thickness is 0.5 r >= 0.01
+        self.assertTrue(np.all(z < 0))
+        self.assertTrue(np.all(np.abs(np.diff(z)) < 1e-3), 'the field must not jump anywhere on the loop')
+        top = sweep.sdf(p, S+np.array([0, 0, 1.0])*(0.5*r[:, None]+0.0005))  # just over the flattened top, all the way round
+        self.assertTrue(np.all(top > 0) and float(top.max()) < 2e-3)
+
+    def test_needs_three_points(self):
+        with self.assertRaises(ValueError):
+            sweep.spine({'points': [[0, 0, 0, 0.1], [1, 0, 0, 0.1]], 'closed': True})
+
+    def test_open_sweeps_are_unchanged(self):
+        P = {'points': [[0, 0, 0, 0.1], [0, 0, 0.5, 0.06], [0, 0, 1.0, 0.03]]}
+        S0, r0, _, _, _ = sweep.spine(P)
+        S1, r1, _, _, _ = sweep.spine({**P, 'closed': False})
+        np.testing.assert_array_equal(S0, S1)
+        np.testing.assert_array_equal(r0, r1)
+
+
+class EllipticFrameTests(unittest.TestCase):
+    def test_vertical_leg_has_no_rings(self):
+        # a vertical spine that leans part-way up used to leave a solid thin disc where it began to lean
+        pts = [[0, 0, 0, 0.05, 0.4], [0, 0, 0.3, 0.05, 0.4], [0, 0, 0.6, 0.05, 0.4], [0, 0.1, 0.9, 0.05, 0.4]]
+        p = {'points': pts, 'up': [0, 0, 1]}
+        for z in np.linspace(0.04, 0.58, 28):
+            xs = np.linspace(-0.09, 0.09, 721)
+            d = sweep.sdf(p, np.stack([xs, np.zeros_like(xs), np.full_like(xs, z)], axis=1))
+            self.assertGreater(d[0], 0, f'z={z:.3f}: the slice must not be solid out to x = -0.09')
+            self.assertGreater(d[-1], 0)
+            self.assertAlmostEqual(float(xs[d < 0].max()), 0.05, delta=0.004, msg=f'width at z={z:.3f}')
+
+    def test_exactly_vertical_spine_is_an_ellipse_of_constant_size(self):
+        p = {'points': [[0, 0, 0.1*i, 0.05, 0.4] for i in range(7)], 'up': [0, 0, 1]}
+        for z in (0.1, 0.25, 0.4, 0.5):
+            xs = np.linspace(-0.09, 0.09, 721)
+            wx = xs[sweep.sdf(p, np.stack([xs, 0*xs, 0*xs+z], axis=1)) < 0]
+            wy = xs[sweep.sdf(p, np.stack([0*xs, xs, 0*xs+z], axis=1)) < 0]
+            extents = sorted([float(wx.max()), float(wy.max())])
+            self.assertAlmostEqual(extents[0], 0.02, delta=0.002)
+            self.assertAlmostEqual(extents[1], 0.05, delta=0.002)
+
+    def test_vertical_leg_is_smooth_along_its_length(self):
+        p = {'points': [[0, 0, 0.1*i, 0.05, 0.4] for i in range(7)], 'up': [0, 0, 1]}
+        z = np.linspace(0.05, 0.55, 200)
+        d = sweep.sdf(p, np.stack([np.full_like(z, 0.03), np.full_like(z, 0.005), z], axis=1))
+        self.assertLess(float(np.ptp(d)), 1e-3)
+
+    def test_horizontal_spine_keeps_the_up_convention(self):
+        p = {'points': [[0, 0, 0, 0.1, 0.5], [0, 1, 0, 0.1, 0.5]], 'up': [0, 0, 1]}
+        d = sweep.sdf(p, np.array([[0.08, 0.5, 0], [0, 0.5, 0.08], [0, 0.5, 0.04]]))
+        self.assertLess(d[0], 0)                             # wide across
+        self.assertGreater(d[1], 0)                          # thin along up
+        self.assertLess(d[2], 0)
+
+
+class CurvedPlateTests(unittest.TestCase):
+    R = 0.3
+
+    def plate(self, **kw):
+        th = np.radians([0, 50, 100, 150])
+        spine = [[0.0, self.R*np.sin(t), self.R*(1-np.cos(t))] for t in th]
+        self.length = self.R*np.radians(150)
+        return {'spine': spine, 'normal': [0, 0, 1],
+                'outline': [[-0.08, -0.03], [0.08, -0.03], [0.08, self.length+0.03], [-0.08, self.length+0.03]],
+                'smooth': 2, 'thickness': 0.03, 'rimThickness': 0.01, 'rimWidth': 0.04, **kw}
+
+    def test_follows_its_spine(self):
+        p = self.plate()
+        S, arc, T, N, U, *_ = shell._curved(p)
+        keep = (arc > 0.1) & (arc < self.length-0.1)
+        np.testing.assert_allclose(shell.sdf(p, S[keep]), -0.015, atol=2e-3)    # mid surface: minus half the thickness
+        self.assertTrue(np.all(shell.sdf(p, S[keep]+0.06*N[keep]) > 0.03))      # clear of the plate along the normal
+        self.assertTrue(np.all(shell.sdf(p, S[keep]+0.12*U[keep]) > 0.03))      # past the lateral edge
+
+    def test_arcs_over_and_comes_back_down(self):
+        p = self.plate()
+        a150 = np.radians(150)
+        end = np.array([[0.0, self.R*np.sin(a150), self.R*(1-np.cos(a150))]])
+        top = np.array([[0.0, self.R, self.R]])
+        self.assertLess(shell.sdf(p, end)[0], 0.0)
+        self.assertLess(shell.sdf(p, top)[0], 0.0)
+        # a flat plate would run straight on along y; the curved one has no material out there
+        self.assertGreater(shell.sdf(p, np.array([[0.0, 0.45, 0.02]]))[0], 0.05)
+        self.assertGreater(shell.sdf(p, np.array([[0.0, 0.0, 0.3]]))[0], 0.1)        # nor in the hollow of the curl
+
+    def test_even_width_along_the_curve(self):
+        p = self.plate()
+        S, arc, *_ = shell._curved(p)
+        for frac in (0.2, 0.5, 0.8):
+            mid = S[int(np.searchsorted(arc, frac*self.length))]
+            probe = lambda du: shell.sdf(p, np.array([mid+np.array([du, 0, 0])]))[0]
+            self.assertLess(probe(0.0), 0)
+            self.assertLess(probe(0.06), 0)
+            self.assertGreater(probe(0.1), 0)
+
+    def test_no_knob_at_the_root(self):
+        p = self.plate()
+        root = np.array([[0.0, 0.0, 0.0]])
+        self.assertLess(shell.sdf(p, root)[0], 0)
+        self.assertGreater(shell.sdf(p, root+np.array([[0, 0, 0.04]]))[0], 0.02)     # a plate, not a lump
+        self.assertGreater(shell.sdf(p, root+np.array([[0, -0.05, 0]]))[0], 0.0)     # ends where the outline ends (-0.03)
+
+    def test_rolled_rim_is_thinner_than_the_middle(self):
+        p = self.plate()
+        a = np.radians(75)
+        mid = np.array([0.0, self.R*np.sin(a), self.R*(1-np.cos(a))])
+        radial = (np.array([0.0, 0.0, self.R])-mid)/self.R
+        thick = shell.sdf(p, np.array([mid+0.012*radial]))[0]                         # inside at the center (half thickness 0.015)
+        rim = shell.sdf(p, np.array([mid+np.array([0.0795, 0, 0])+0.012*radial]))[0]  # at the lateral edge only the rim is left
+        self.assertLess(thick, 0)
+        self.assertGreater(rim, 0)
+
+    def test_bounds_contain_the_solid(self):
+        p = self.plate()
+        lo, hi = shell.bounds(p)
+        rng = np.random.default_rng(5)
+        pts = rng.uniform(lo-0.1, hi+0.1, (60000, 3))
+        inside = shell.sdf(p, pts) < 0
+        self.assertGreater(inside.sum(), 200)
+        self.assertTrue(np.all(pts[inside] >= lo-1e-9) and np.all(pts[inside] <= hi+1e-9))
+
+    def test_without_a_spine_the_flat_plate_is_unchanged(self):
+        flat = ShellTests.P
+        probe = np.array([[0, 0, 0], [0, 0.015, 0], [0.4, 0, 0]])
+        np.testing.assert_array_equal(shell.sdf(flat, probe), shell.sdf({**flat, 'spine': None}, probe))
+
+    def test_spine_needs_three_points(self):
+        with self.assertRaises(ValueError):
+            shell.bounds({'spine': [[0, 0, 0], [0, 1, 0]]})
+
+    def test_mirror_works_for_a_curved_plate(self):
+        q = self.plate()
+        q['spine'] = [[0.1, y, z] for _, y, z in q['spine']]
+        i = inst('shell', q, mirror='x')
+        self.assertLess(i.sdf(np.array([[-0.1, 0.0, 0.0]]))[0], 0)
 
 
 if __name__ == '__main__':

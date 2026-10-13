@@ -1,7 +1,7 @@
 """Sparse evaluation and smooth union of part instances on one grid (numpy only)."""
 import numpy as np
 
-from .common import BIG, smin
+from .common import BIG, smin, smax
 
 CHUNK = 300000
 
@@ -46,42 +46,83 @@ def sample_region(fn, origin, voxel, i0, shape, band, stride=4):
     return block, int(len(near))
 
 
+def _ordered(insts):
+    """Instances in evaluation order: every add (spec order), then every carve, then every add-after."""
+    return ([i for i in insts if i.op == 'add'], [i for i in insts if i.op == 'carve'],
+            [i for i in insts if i.op == 'add-after'])
+
+
 def build_field(insts, voxel, stride=4):
-    """Smooth union of all instances. Returns (origin, field float32 (nx,ny,nz), info)."""
+    """Smooth union of all instances, in three passes: the adds are combined first (spec order, each with its own
+    blend), then each carve is smoothly subtracted from that union (smooth max of the union and the negated
+    shape, its own blend), then each add-after is added on top, so a part can sit inside a carved hollow
+    without being carved. Returns (origin, field float32 (nx,ny,nz), info)."""
     bnds = [i.bounds() for i in insts]
     kmax = max(i.blend for i in insts)
-    glo = np.min([b[0] for b in bnds], axis=0)-kmax-6*voxel
-    ghi = np.max([b[1] for b in bnds], axis=0)+kmax+6*voxel
+    grown = [b for i, b in zip(insts, bnds) if i.op != 'carve'] or bnds       # a carve never makes the skin bigger
+    glo = np.min([b[0] for b in grown], axis=0)-kmax-6*voxel
+    ghi = np.max([b[1] for b in grown], axis=0)+kmax+6*voxel
     origin = np.floor(glo/voxel)*voxel          # snapped to the world lattice: a rebuild samples unchanged parts at identical points
     dims = np.ceil((ghi-origin)/voxel).astype(int)+1
     field = np.full(tuple(dims), BIG, np.float32)
     exact = 0
-    for inst, (lo, hi) in zip(insts, bnds):
+    by_inst = dict(zip((id(i) for i in insts), bnds))
+    for inst in [i for group in _ordered(insts) for i in group]:
+        lo, hi = by_inst[id(inst)]
         pad = inst.blend+4*voxel
         i0 = np.maximum(np.floor((lo-pad-origin)/voxel).astype(int), 0)
         i1 = np.minimum(np.ceil((hi+pad-origin)/voxel).astype(int)+1, dims)
+        if (i1 <= i0).any():
+            continue
         shape = tuple(i1-i0)
         band = inst.blend+3*voxel+1.8*stride*voxel
         block, n = sample_region(inst.sdf, origin, voxel, i0, shape, band, stride)
         exact += n
         # outside the padded box the instance is farther than its blend radius, so it contributes nothing
         sl = tuple(slice(a, b) for a, b in zip(i0, i1))
-        field[sl] = smin(field[sl], block, inst.blend).astype(np.float32)
+        if inst.op == 'carve':
+            field[sl] = smax(field[sl], -block, inst.blend).astype(np.float32)
+        else:
+            field[sl] = smin(field[sl], block, inst.blend).astype(np.float32)
     return origin, field, {'dims': [int(d) for d in dims], 'exactEvaluations': exact}
 
 
 def ownership(insts, keys, pts):
     """For each point the index (into `keys`) of the part with the smallest distance, and a weight in
     [0, 1]: how decisively that part owns the point, (second smallest - smallest) / blend, clamped.
-    0 is the seam between two parts, 1 is the inside of one part's own territory."""
+    0 is the seam between two parts, 1 is the inside of one part's own territory.
+
+    Carves: each add's distance is first carved by the same smooth max the field uses, so inside a carved
+    hollow the adds' own distances are pushed out to the hollow's wall, and the carving instance's part claims
+    the wall (its distance there is the distance to its own shape's surface). Add-afters are measured as plain
+    adds, after the carving."""
     best = np.full(len(pts), BIG)
     second = np.full(len(pts), BIG)
     which = np.zeros(len(pts), np.int32)
     per_key = np.full((len(keys), len(pts)), BIG)
-    for inst in insts:
+
+    def near_mask(inst):
         lo, hi = inst.bounds()
         pad = inst.blend*2
-        near = np.all((pts >= lo-pad) & (pts <= hi+pad), axis=1)
+        return np.all((pts >= lo-pad) & (pts <= hi+pad), axis=1)
+
+    adds, carves, afters = _ordered(insts)
+    for inst in adds:
+        near = near_mask(inst)
+        if near.any():
+            k = keys.index(inst.key)
+            per_key[k, near] = np.minimum(per_key[k, near], inst.sdf(pts[near]))
+    for inst in carves:
+        near = near_mask(inst)
+        if near.any():
+            d = inst.sdf(pts[near])
+            per_key[:, near] = smax(per_key[:, near], -d[None, :], inst.blend)
+            k = keys.index(inst.key)
+            # the carving part owns the wall within half its blend of its shape's surface (a tie with the carved
+            # adds, which sit exactly on that wall, would otherwise go to whichever part is listed first)
+            per_key[k, near] = np.minimum(per_key[k, near], np.abs(d)-0.5*inst.blend)
+    for inst in afters:
+        near = near_mask(inst)
         if near.any():
             k = keys.index(inst.key)
             per_key[k, near] = np.minimum(per_key[k, near], inst.sdf(pts[near]))
@@ -96,15 +137,20 @@ def ownership(insts, keys, pts):
 
 
 def union_at(insts, pts):
-    """The same smooth union as build_field, evaluated directly at arbitrary points (instances whose padded
-    box does not contain a point are treated as far away, exactly as in the grid)."""
+    """The same combination as build_field (adds, then carves, then add-afters), evaluated directly at arbitrary
+    points (instances whose padded box does not contain a point are treated as far away, exactly as in the
+    grid)."""
     out = np.full(len(pts), BIG)
-    for inst in insts:
-        lo, hi = inst.bounds()
-        pad = inst.blend+0.02
-        near = np.all((pts >= lo-pad) & (pts <= hi+pad), axis=1)
-        if near.any():
-            out[near] = smin(out[near], inst.sdf(pts[near]), inst.blend)
+    for group in _ordered(insts):
+        for inst in group:
+            lo, hi = inst.bounds()
+            pad = inst.blend+0.02
+            near = np.all((pts >= lo-pad) & (pts <= hi+pad), axis=1)
+            if near.any():
+                if inst.op == 'carve':
+                    out[near] = smax(out[near], -inst.sdf(pts[near]), inst.blend)
+                else:
+                    out[near] = smin(out[near], inst.sdf(pts[near]), inst.blend)
     return out
 
 

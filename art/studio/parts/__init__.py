@@ -10,10 +10,11 @@ The creature's left is +x, it faces -y and up is +z (the convention of cameras/a
 import numpy as np
 
 from . import mass, sweep, shell
-from .common import BIG, smin  # noqa: F401  (re-exported)
+from .common import BIG, smin, smax  # noqa: F401  (re-exported)
 from .field import build_field, ownership, project_to_surface, sample_region, union_at  # noqa: F401
 
 KINDS = {'mass': mass, 'sweep': sweep, 'shell': shell}
+OPS = ('add', 'carve', 'add-after')
 
 
 class Instance:
@@ -30,6 +31,9 @@ class Instance:
         if self.mirror not in (None, 'x'):
             raise ValueError("mirror must be 'x' or null")
         self.blend = float(spec.get('blend', 0.03))
+        self.op = spec.get('op') or 'add'
+        if self.op not in OPS:
+            raise ValueError(f"op must be one of {', '.join(OPS)}")
         self.module = KINDS[self.kind]
         self.module.bounds(self.params)           # validates the parameters now rather than mid-build
 

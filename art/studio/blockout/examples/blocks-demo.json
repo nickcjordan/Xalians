@@ -1,0 +1,243 @@
+{
+ "creature": "blocks-demo",
+ "note": "Demo of the carve, add-after, closed sweep, curved plate and elliptical-sweep blocks. A ball with a carved socket, an eyeball added after the carve, a lid ring around the socket, a curved ear plate that arcs over and hangs down, and a vertical elliptical leg. Not a creature design. Faces -y, left is +x, up is +z.",
+ "voxel": 0.004,
+ "parts": [
+  {
+   "part": "ball",
+   "kind": "mass",
+   "blend": 0.04,
+   "params": {
+    "center": [
+     0,
+     0,
+     0.4
+    ],
+    "radii": [
+     0.2,
+     0.2,
+     0.2
+    ]
+   }
+  },
+  {
+   "part": "leg",
+   "kind": "sweep",
+   "blend": 0.04,
+   "params": {
+    "up": [
+     0,
+     0,
+     1
+    ],
+    "points": [
+     {
+      "p": [
+       -0.07,
+       0.02,
+       0.3
+      ],
+      "r": 0.06,
+      "ratio": 0.5
+     },
+     {
+      "p": [
+       -0.07,
+       0.02,
+       0.18
+      ],
+      "r": 0.058,
+      "ratio": 0.5
+     },
+     {
+      "p": [
+       -0.07,
+       0.02,
+       0.06
+      ],
+      "r": 0.056,
+      "ratio": 0.5
+     },
+     {
+      "p": [
+       -0.07,
+       -0.05,
+       0.02
+      ],
+      "r": 0.05,
+      "ratio": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "part": "ear",
+   "kind": "shell",
+   "blend": 0.03,
+   "params": {
+    "spine": [
+     [
+      0.1,
+      0.03,
+      0.55
+     ],
+     [
+      0.12,
+      0.03,
+      0.78
+     ],
+     [
+      0.24,
+      0.03,
+      0.9
+     ],
+     [
+      0.34,
+      0.03,
+      0.76
+     ],
+     [
+      0.36,
+      0.03,
+      0.62
+     ]
+    ],
+    "normal": [
+     -1,
+     0,
+     0
+    ],
+    "outline": [
+     [
+      -0.05,
+      -0.04
+     ],
+     [
+      0.05,
+      -0.04
+     ],
+     [
+      0.055,
+      0.3
+     ],
+     [
+      0.04,
+      0.6
+     ],
+     [
+      0.0,
+      0.747
+     ],
+     [
+      -0.04,
+      0.6
+     ],
+     [
+      -0.055,
+      0.3
+     ]
+    ],
+    "smooth": 3,
+    "thickness": 0.026,
+    "rimThickness": 0.012,
+    "rimWidth": 0.03
+   }
+  },
+  {
+   "part": "socket",
+   "kind": "mass",
+   "op": "carve",
+   "blend": 0.02,
+   "params": {
+    "center": [
+     0,
+     -0.17,
+     0.42
+    ],
+    "radii": [
+     0.06,
+     0.06,
+     0.06
+    ]
+   }
+  },
+  {
+   "part": "eyeball",
+   "kind": "mass",
+   "op": "add-after",
+   "blend": 0.015,
+   "params": {
+    "center": [
+     0,
+     -0.15,
+     0.42
+    ],
+    "radii": [
+     0.058,
+     0.058,
+     0.058
+    ]
+   }
+  },
+  {
+   "part": "lid",
+   "kind": "sweep",
+   "op": "add-after",
+   "blend": 0.012,
+   "params": {
+    "closed": true,
+    "samples": 10,
+    "points": [
+     [
+      0.07,
+      -0.1823,
+      0.42,
+      0.011
+     ],
+     [
+      0.0495,
+      -0.1769,
+      0.4695,
+      0.009
+     ],
+     [
+      0.0,
+      -0.1746,
+      0.49,
+      0.011
+     ],
+     [
+      -0.0495,
+      -0.1769,
+      0.4695,
+      0.009
+     ],
+     [
+      -0.07,
+      -0.1823,
+      0.42,
+      0.011
+     ],
+     [
+      -0.0495,
+      -0.1875,
+      0.3705,
+      0.009
+     ],
+     [
+      -0.0,
+      -0.1896,
+      0.35,
+      0.011
+     ],
+     [
+      0.0495,
+      -0.1875,
+      0.3705,
+      0.009
+     ]
+    ]
+   }
+  }
+ ]
+}

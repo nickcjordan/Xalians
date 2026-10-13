@@ -35,6 +35,12 @@ def smin(a, b, k):
     return np.minimum(a, b)-h*h*k*0.25
 
 
+def smax(a, b, k):
+    """Polynomial smooth maximum (the mirror of smin): max(a, b) wherever |a - b| >= k; k <= 0 is a hard maximum.
+    Carving is smax(field, -shape): material is removed with a rounded crease of radius k."""
+    return -smin(-np.asarray(a), -np.asarray(b), k)
+
+
 def smoothstep(x):
     x = np.clip(x, 0.0, 1.0)
     return x*x*(3.0-2.0*x)
