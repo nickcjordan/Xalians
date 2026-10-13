@@ -1,0 +1,238 @@
+{
+ "name": "torso v1",
+ "approval": null,
+ "note": "torso v1 (2026-10-13), for torso_v1_post.py / torso_v1_field.py, appended after P-pelvis2. Anatomy review 2026-10-13 finding 1 (Nick, 2026-10-13: \"Yes, fix all ten of them.\"): the trunk read as a flat board in front and a hump plus a deep hollow behind. Stage 1 is a depth-only warp (vertices move along y only, so every front-view width, body B, is unchanged): the measured midline profiles (profile: a fit of y = a + b x^2 + c dz to the vertices within fitX of the midline, per z) are taken to the target profiles (front: chest forward about .012 at z .16 to .20, a slight belly round below, back to the old line by z -.10; back: upper-back hump lowered about .01 at z .26 to .28, lumbar hollow filled about .04 at z .08, the rise into the rump eased above the tail attachment), natural cubic splines through the targets, the change smoothed along z (deltaSmooth), faded outside zBand, spread round the section by a smootherstep ramp from the side (split, rampSmooth), faded toward the arms (xIn, xOut), nothing behind y .08 (yCut: the tails and their root). Stage 2: a masked Gaussian blur (sigma .025) of the warped skin signed distance over the lumbar back, wide enough to reach the back corners but not the sides (grid; blurs), vertices moved onto it (project, relax, untangle as hips v1), which takes out the rest of the old lumbar crease where it bends across the back. World units, +y back. region: the only vertices the step may move.",
+ "profile": {
+  "z": [
+   -0.14,
+   0.44
+  ],
+  "dz": 0.0025,
+  "slab": 0.003,
+  "maxY": 0.06,
+  "minY": -0.3,
+  "smooth": 0.008,
+  "fitX": 0.025,
+  "band": 0.01
+ },
+ "split": 0.5,
+ "beyond": 0.01,
+ "beyondFade": 0.02,
+ "rampSmooth": 0.03,
+ "deltaSmooth": 0.02,
+ "yCut": [
+  0.065,
+  0.08
+ ],
+ "front": {
+  "zBand": [
+   -0.11,
+   -0.06,
+   0.31,
+   0.36
+  ],
+  "xIn": 0.12,
+  "xOut": 0.19,
+  "target": [
+   [
+    0.36,
+    -0.128
+   ],
+   [
+    0.32,
+    -0.16
+   ],
+   [
+    0.28,
+    -0.184
+   ],
+   [
+    0.26,
+    -0.195
+   ],
+   [
+    0.22,
+    -0.207
+   ],
+   [
+    0.18,
+    -0.21
+   ],
+   [
+    0.14,
+    -0.209
+   ],
+   [
+    0.1,
+    -0.207
+   ],
+   [
+    0.06,
+    -0.206
+   ],
+   [
+    0.02,
+    -0.205
+   ],
+   [
+    -0.02,
+    -0.203
+   ],
+   [
+    -0.06,
+    -0.199
+   ],
+   [
+    -0.1,
+    -0.19
+   ]
+  ]
+ },
+ "back": {
+  "zBand": [
+   -0.065,
+   -0.045,
+   0.33,
+   0.37
+  ],
+  "xIn": 0.12,
+  "xOut": 0.19,
+  "target": [
+   [
+    0.38,
+    0.038
+   ],
+   [
+    0.35,
+    0.043
+   ],
+   [
+    0.32,
+    0.048
+   ],
+   [
+    0.3,
+    0.048
+   ],
+   [
+    0.28,
+    0.045
+   ],
+   [
+    0.26,
+    0.039
+   ],
+   [
+    0.24,
+    0.032
+   ],
+   [
+    0.22,
+    0.025
+   ],
+   [
+    0.18,
+    0.012
+   ],
+   [
+    0.14,
+    0.003
+   ],
+   [
+    0.1,
+    -0.002
+   ],
+   [
+    0.08,
+    -0.003
+   ],
+   [
+    0.06,
+    -0.001
+   ],
+   [
+    0.04,
+    0.003
+   ],
+   [
+    0.02,
+    0.008
+   ],
+   [
+    0.0,
+    0.014
+   ],
+   [
+    -0.02,
+    0.022
+   ],
+   [
+    -0.04,
+    0.031
+   ],
+   [
+    -0.06,
+    0.047
+   ]
+  ]
+ },
+ "region": {
+  "xMax": 0.2,
+  "z": [
+   -0.13,
+   0.38
+  ],
+  "y": [
+   -0.3,
+   0.12
+  ]
+ },
+ "grid": {
+  "lo": [
+   -0.2,
+   -0.1,
+   -0.14
+  ],
+  "hi": [
+   0.2,
+   0.12,
+   0.3
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "blurs": [
+  {
+   "c": [
+    0.0,
+    -0.02,
+    0.08
+   ],
+   "s": [
+    0.22,
+    0.07,
+    0.12
+   ],
+   "fade": [
+    0.4,
+    1.0
+   ],
+   "sigma": 0.025
+  }
+ ],
+ "project": {
+  "iterations": 40,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 6,
+  "factor": 0.5,
+  "minMove": 0.0002,
+  "fullMove": 0.002
+ },
+ "untangle": {
+  "iterations": 30,
+  "threshold": 0.5,
+  "rings": 2
+ }
+}
