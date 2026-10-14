@@ -15,7 +15,7 @@ TARGETS = Path(r'C:\dev\art-data\studio\blockout\hypnopet\targets')
 CLOSEUP = Path(r'C:\dev\art-data\studio\blockout\hypnopet\face-fit\closeup-face.png')
 REF = {
     'head-front': (TARGETS/'flesh-front.png', (200, 200, 950, 800)),
-    'head-threequarter-left': (CLOSEUP, None),
+    'head-threequarter-left': (TARGETS/'turnaround.png', (400, 170, 660, 440)),
     'head-side-left': (TARGETS/'flesh-side.png', (50, 150, 800, 800)),
     'front': (TARGETS/'flesh-front.png', None),
     'side-left': (TARGETS/'flesh-side.png', None),

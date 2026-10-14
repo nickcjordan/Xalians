@@ -635,6 +635,18 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			emit(rec, `look note for ${camera} on ${rec.alias}`);
 			return;
 		}
+		case 'retire': {
+			// A part option replaced by a better set before Nick chose leaves the page; the record stays as history,
+			// with the reason as a decision note.
+			const b = load();
+			if (b.kind === 'image') throw new StudioError(`${b.alias} is an image build; use image retire`);
+			if (b.status !== 'presented' && b.status !== 'reported' && b.status !== 'checked') throw new StudioError(`${b.alias} is ${b.status}; only an unreviewed build can be retired`);
+			const reason = need(flags, 'reason');
+			const rec = setBuild(b.id, (x) => { x.status = 'superseded'; });
+			store.create('note', { kind: 'decision', about: { build: b.id, ...(b.part ? { part: b.part } : {}) }, by: 'orchestrator', text: `Retired ${b.alias}: ${reason}` } as NewRecord<'note'>, actor, copts);
+			emit(rec, `retired ${rec.alias}`);
+			return;
+		}
 		case 'present': {
 			const b = load();
 			if (b.status !== 'reported' && b.status !== 'checked') throw new StudioError(`build ${b.alias} is ${b.status}; report it first`);
@@ -645,7 +657,7 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			return;
 		}
 		default:
-			throw new StudioError('usage: build plan|start|fail|output|ingest|reference|judge|overlay|report|check|look|present <key> ...');
+			throw new StudioError('usage: build plan|start|fail|output|ingest|reference|judge|overlay|report|check|look|present|retire <key> ...');
 	}
 }
 

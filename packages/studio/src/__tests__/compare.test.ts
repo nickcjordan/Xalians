@@ -106,3 +106,18 @@ describe('judge checks (X25)', () => {
 		expect(el.options[1]!.judge).toEqual(['Is the iris warm?']);
 	});
 });
+
+describe('build retire', () => {
+	it('takes a presented option off the page and records the reason as a decision note', () => {
+		const a = preview();
+		expect(cli('build', 'retire', 'fx', a).code).toBe(1);                       // a reason is required
+		expect(cli('build', 'retire', 'fx', a, '--reason', 'replaced by the fitted set').code).toBe(0);
+		const data = store.load();
+		const b = data.builds.find((x) => x.alias === a)!;
+		expect(b.status).toBe('superseded');
+		const note = data.notes.find((n) => n.about?.build === b.id)!;
+		expect(note).toMatchObject({ kind: 'decision', by: 'orchestrator' });
+		expect(note.text).toContain('replaced by the fitted set');
+		expect(cli('build', 'retire', 'fx', a, '--reason', 'again').code).toBe(1);  // already retired
+	});
+});
