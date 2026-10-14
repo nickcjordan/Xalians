@@ -321,6 +321,8 @@ def compute_attributes(skin, cfg, species):
             continue
         objs = [o for o in bpy.data.objects if o.type == 'MESH' and ko['match'] in o.name]
         pts = []
+        tris = []  # ko['surface']: distance to the faces (front-facing only with frontOnly), not to the nearest vertex
+        tri_base = 0
         for o in objs:
             m = np.array(o.matrix_world)
             v = np.empty(len(o.data.vertices)*3)
@@ -330,28 +332,52 @@ def compute_attributes(skin, cfg, species):
                 vn = np.empty(len(o.data.vertices)*3)
                 o.data.vertex_normals.foreach_get('vector', vn)
                 vn = unit(vn.reshape(-1, 3)@m[:3, :3].T)
-                vp = vp[-vn[:, 1] > ko['frontOnly']]
+                keep_v = -vn[:, 1] > ko['frontOnly']
+                if ko.get('surface'):
+                    for poly in o.data.polygons:
+                        vs = list(poly.vertices)
+                        if all(keep_v[v] for v in vs):
+                            tris.append([tri_base+v for v in vs])
+                    tri_base += len(vp)
+                    pts.append(vp)
+                    continue
+                vp = vp[keep_v]
             pts.append(vp)
         if not pts:
             continue
         pts = np.concatenate(pts)
         if len(pts) == 0:
             continue
-        step = max(1, len(pts)//4000)
-        pts = pts[::step]
         near = np.ones(n)
-        lo, hi = pts.min(axis=0)-ko['outer'], pts.max(axis=0)+ko['outer']
-        cand = np.where(np.all((co >= lo) & (co <= hi), axis=1))[0]
-        tree = KDTree(len(pts))
-        for i, p in enumerate(pts):
-            tree.insert(Vector(p), i)
-        tree.balance()
         nearest = np.zeros((n, 3))
-        for i in cand:
-            hit = tree.find(Vector(co[i]))
-            near[i] = hit[2]
-            nearest[i] = hit[0]
+        if tris:
+            from mathutils.bvhtree import BVHTree
+            used = np.unique(np.concatenate([np.array(t) for t in tris]))
+            lo, hi = pts[used].min(axis=0)-ko['outer'], pts[used].max(axis=0)+ko['outer']
+            cand = np.where(np.all((co >= lo) & (co <= hi), axis=1))[0]
+            bvh = BVHTree.FromPolygons([Vector(p) for p in pts], tris)
+            for i in cand:
+                hit = bvh.find_nearest(Vector(co[i]))
+                if hit[0] is not None:
+                    near[i] = hit[3]
+                    nearest[i] = hit[0]
+        else:
+            step = max(1, len(pts)//4000)
+            pts = pts[::step]
+            lo, hi = pts.min(axis=0)-ko['outer'], pts.max(axis=0)+ko['outer']
+            cand = np.where(np.all((co >= lo) & (co <= hi), axis=1))[0]
+            tree = KDTree(len(pts))
+            for i, p in enumerate(pts):
+                tree.insert(Vector(p), i)
+            tree.balance()
+            for i in cand:
+                hit = tree.find(Vector(co[i]))
+                near[i] = hit[2]
+                nearest[i] = hit[0]
         if key == 'eyes' and 'rim' in cfg:
+            # the distance itself, for a ring thresholded per pixel in the skin shader (rim.shader): a per-vertex threshold
+            # interpolated over the lid's radial topology breaks a thin ring into spokes and notches its outer edge
+            write_attribute(me, 'eyed', np.minimum(near, 0.05))
             rim = 1.0-smoothstep((near-cfg['rim']['width'])/cfg['rim']['soft'])
             rim = np.clip(edge_smooth(rim, edges, n, cfg['rim'].get('smooth', 0)), 0, 1)
         ramp = smoothstep((near-ko['inner'])/max(ko['outer']-ko['inner'], 1e-6))
@@ -929,10 +955,19 @@ def skin_material(mat, cfg, always_pale):
     pad_bsdf.inputs['Roughness'].default_value = 0.4
     mixs = tree.nodes.new('ShaderNodeMixShader')
     rim = attr_node(tree, 'rim')
+    rim_out = rim.outputs['Fac']
+    if cfg.get('rim', {}).get('shader'):
+        eyed = attr_node(tree, 'eyed')
+        ring = tree.nodes.new('ShaderNodeMapRange')
+        ring.interpolation_type = 'SMOOTHSTEP'
+        ring.inputs['From Min'].default_value = cfg['rim']['width']+cfg['rim']['soft']
+        ring.inputs['From Max'].default_value = cfg['rim']['width']
+        tree.links.new(eyed.outputs['Fac'], ring.inputs['Value'])
+        rim_out = ring.outputs['Result']
     both = tree.nodes.new('ShaderNodeMath')
     both.operation = 'MAXIMUM'
     tree.links.new(pad.outputs['Fac'], both.inputs[0])
-    tree.links.new(rim.outputs['Fac'], both.inputs[1])
+    tree.links.new(rim_out, both.inputs[1])
     tree.links.new(both.outputs['Value'], mixs.inputs[0])
     tree.links.new(bsdf.outputs['BSDF'], mixs.inputs[1])
     tree.links.new(pad_bsdf.outputs['BSDF'], mixs.inputs[2])
