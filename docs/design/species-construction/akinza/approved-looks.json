@@ -2,9 +2,9 @@
  "about": "Approved looks: every Akinza part Nick has approved, with his words and the date. Briefs, loop orders and reader packs cite this file. An approval protects the look, not its implementation (REFINEMENT.md rule 1): a later step may change how a part is built as long as it still looks like the approved version from every angle. Readers judging an approved part compare against the approved look (reader_pack.py uses lookReference), not the reference sheet. Only Nick reopens an approved part. Times are UTC from the session record.",
  "updated": "2026-10-14",
  "lookReference": {
-  "assembly": "assembled-3296",
-  "recipe": "docs/design/species-construction/akinza/recipe-integrated-v2.json",
-  "note": "Integrated v2 (2026-10-14): every approved part on one model, each region an exact match to its approved build."
+  "assembly": "assembled-3300",
+  "recipe": "docs/design/species-construction/akinza/recipe-integrated-v3.json",
+  "note": "Final bare-clay model (2026-10-14): every approved part plus the lid cleanup; the model of record for the surface (fur and color) stage."
  },
  "parts": [
   {
@@ -256,6 +256,18 @@
     {
      "at": "2026-10-14",
      "text": "new pad looks good, proceed"
+    }
+   ]
+  },
+  {
+   "part": "lower eyelids (final cleanup)",
+   "covers": "skin band within .012 of each eye globe, refined and snapped to the approved head surface",
+   "approvedOn": "2026-10-14",
+   "approvedIn": "assembled-3300 (lids v1, recipe-integrated-v3)",
+   "quotes": [
+    {
+     "at": "2026-10-14",
+     "text": "looks good to ne"
     }
    ]
   }
