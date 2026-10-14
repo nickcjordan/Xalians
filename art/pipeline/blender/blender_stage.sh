@@ -4,4 +4,4 @@ set -euo pipefail
 BLENDER="${BLENDER:-/home/njord/.local/opt/blender-5.2.2-linux-x64/blender}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT="${1:-$HERE/../out/standin.build}"
-"$BLENDER" -b --factory-startup --python "$HERE/export_asset.py" --python-exit-code 1 --   --class "$HERE/../roster/classes/quadruped.json" --out "$OUT"
+"$BLENDER" -b --factory-startup --python-exit-code 1 --python "$HERE/export_asset.py" --   --class "$HERE/../roster/classes/quadruped.json" --out "$OUT"

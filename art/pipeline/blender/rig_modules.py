@@ -87,7 +87,10 @@ def m_root(plan, spec, _all):
 
 
 def m_spine(plan, spec, _all):
-    pts = bowed(spec["from"], spec["to"], spec["count"], spec.get("arch", 0.0))
+    # A creature spec may give measured ``points`` (count + 1) instead of from/to/arch.
+    pts = spec["points"] if "points" in spec else bowed(spec["from"], spec["to"], spec["count"], spec.get("arch", 0.0))
+    if len(pts) != spec["count"] + 1:
+        raise ValueError("spine: points must be count + 1")
     chain(plan, "spine", None, pts, spec["parent"])
 
 
@@ -100,8 +103,15 @@ def m_neck_head(plan, spec, _all):
 
 
 def m_single(module):
-    def build(plan, spec, _all):
-        plan.add(Joint(f"{module}_01", tuple(spec["from"]), tuple(spec["to"]), spec["parent"],
+    def build(plan, spec, all_specs):
+        # ``side`` (with ``mirror`` of another side) makes a paired joint, e.g. horn_l_01 and horn_r_01.
+        side = spec.get("side")
+        if "mirror" in spec:
+            source = next(s for s in all_specs if s.get("module") == module and s.get("side") == spec["mirror"])
+            a, b = mirror_points([source["from"], source["to"]])
+        else:
+            a, b = spec["from"], spec["to"]
+        plan.add(Joint(joint_name(module, side, 1), tuple(a), tuple(b), spec["parent"],
                        deform=module != "horn", module=module))
     return build
 
@@ -119,7 +129,9 @@ def m_limb(plan, spec, all_specs):
 
 
 def m_tail(plan, spec, _all):
-    pts = bowed(spec["from"], spec["to"], spec["count"], -spec.get("droop", 0.0))
+    pts = spec["points"] if "points" in spec else bowed(spec["from"], spec["to"], spec["count"], -spec.get("droop", 0.0))
+    if len(pts) != spec["count"] + 1:
+        raise ValueError("tail: points must be count + 1")
     chain(plan, "tail", None, pts, spec["parent"])
 
 

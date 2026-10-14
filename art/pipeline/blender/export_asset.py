@@ -1,6 +1,6 @@
 """Build and export the stand-in quadruped: armature, body, weights, clips, glb, build facts.
 
-    blender -b --factory-startup --python export_asset.py --python-exit-code 1 -- \
+    blender -b --factory-startup --python-exit-code 1 --python export_asset.py -- \
         --class ../roster/classes/quadruped.json --out ../out/standin.build
 
 Writes ``standin.raw.glb`` (uncompressed glTF binary) and ``blender_facts.json``

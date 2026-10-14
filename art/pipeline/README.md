@@ -13,7 +13,7 @@ bash art/pipeline/run.sh                                          # from Git Bas
 
 Both do the same three steps and exit nonzero if any fails:
 
-1. Blender 5.2.2 in WSL Ubuntu (`blender/blender_stage.sh` runs `blender -b --factory-startup --python blender/export_asset.py --python-exit-code 1`): armature from the class spec, stand-in body, automatic weights, eleven baked clips, a `low` tier (collapse-decimated copy, weights re-limited), the side-view token, export to `out/standin.build/standin.raw.glb` plus `blender_facts.json`, `token.png`, `token.svg`.
+1. Blender 5.2.2 in WSL Ubuntu (`blender/blender_stage.sh` runs `blender -b --factory-startup --python-exit-code 1 --python blender/export_asset.py`; the exit-code flag must come before `--python` or Blender 5.2 exits 0 after a traceback): armature from the class spec, stand-in body, automatic weights, eleven baked clips, a `low` tier (collapse-decimated copy, weights re-limited), the side-view token, export to `out/standin.build/standin.raw.glb` plus `blender_facts.json`, `token.png`, `token.svg`.
 2. Node (`contract/write_manifest.mjs`): lossless clip clean-up (`contract/lean_clips.mjs`), optional KTX2 (skipped unless `toktx` is on PATH), `gltf-transform meshopt --level high`, then `out/standin/standin.glb`, `token.png`, `token.svg` and `manifest.json`. The build record (Blender facts, timings) goes to `out/standin.build/build_record.json`, referenced by the manifest's `build` id.
 3. `node contract/validate.mjs out/standin`.
 

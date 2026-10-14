@@ -1,0 +1,483 @@
+{
+  "id": "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+  "alias": "t479",
+  "stage": "04-blockout",
+  "kind": "build",
+  "goal": "Stage 4 blockout and proxy rig from the approved clay views",
+  "scope": "whole form",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "blockout .blend (bound rest mesh, armature)",
+      "hash": "e0f773bd99edeb6a1be1f037696e81d08743eae33781ab7f25d15d6ab6d4d676"
+    },
+    {
+      "name": "blockout glb (skinned rest mesh, 40 joints)",
+      "hash": "45909377d60bc291255138769ba7a6155752f5cb0301717dea302aa32da17773"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "65d19cf358bd3a15be514138e345426c40850be4903a09b0a5addc4f54593793"
+    },
+    {
+      "name": "landmark report (landmark_report.md)",
+      "hash": "19bcbc62691ac6c075fc454dcb68d7320f89e96729b806ed3945a0afd1a2f421"
+    },
+    {
+      "name": "creature rig spec (luceras.rig_spec.json)",
+      "hash": "edfa1588926074e1ef60964418beb81f6d73ac95140ef8963f3152400d200695"
+    },
+    {
+      "name": "landmarks.json",
+      "hash": "585a863df8803ab3a8bcc9ed62f6701055c7bbaaea2474ce077aec8e3a2ec6a0"
+    },
+    {
+      "name": "validators.json",
+      "hash": "1e97d1eff70282fcedafcf991fbd35d396636a14c04594aebf58fa45b2e1642b"
+    },
+    {
+      "name": "blender_report.json (bind, poses, volumes, timings)",
+      "hash": "20ca05c945307bb3fe4cf332333222cebae5d66eb0c1306cea873ca3a126e3cc"
+    },
+    {
+      "name": "reconstruction run record (recon mv3 run.json)",
+      "hash": "518973ebef87791b6b33868512b5bcdc2d0d19dddcaf3051fb20a9b44f32e210"
+    },
+    {
+      "name": "reconstruction mesh (recon mv3 shape.glb)",
+      "hash": "e6693c32b646bd0337b34f52e4b7ce0d182c42b4b612a39bfda0e6fadebbc936"
+    },
+    {
+      "name": "masks.json",
+      "hash": "c1f6ca523fadae21d3469f8a1674188d7142e7d98c27ed807e730ee7954caf42"
+    },
+    {
+      "name": "symmetric_views.json",
+      "hash": "bdd05760c1deabc028c2f689f4a07f322c395603d25065d55fceef4e3e013b3b"
+    },
+    {
+      "name": "mask check: side overlay",
+      "hash": "068d507d0e62dd7a70f662c067a56b056cfa25d6ed9c91b60d1eb0e62b6a5497"
+    },
+    {
+      "name": "mask check: front overlay",
+      "hash": "4fb24a1138317004665f602779cf145fb872387fb61d1b3692b5a8780638e62f"
+    },
+    {
+      "name": "mask check: three-quarter overlay",
+      "hash": "cdc585a610a6d07f62a3e1b40445d74e7494ed1fe85b4b305ecb17bb1269534e"
+    },
+    {
+      "name": "model input: front (symmetric)",
+      "hash": "3d040595ebba2dd5147c8238547398c3e718d0ba6795c3fcbfbca8884a429607"
+    },
+    {
+      "name": "model input: left (side)",
+      "hash": "08e950e3f6545e27dc2eb173d33218cab28b46057335355b6f415cd21be43ed0"
+    },
+    {
+      "name": "model input: right (mirrored side)",
+      "hash": "b6eabfbb1055ac819acde5bb5a3d0bcaf04af9620d31dd1252ba64955978e051"
+    },
+    {
+      "name": "compare: side",
+      "hash": "49973efdf59b7a9676373b2553aa91e7343ec6c8f45495d5023b1e1143942338"
+    },
+    {
+      "name": "compare: front",
+      "hash": "d1ac14caa601da51a7b0cb52c1fb803a0fb4c2f4043a887e1bc7d59c0152ea37"
+    },
+    {
+      "name": "compare: three-quarter",
+      "hash": "385060e3b37914774c2a343368fca96620aa71551ded6c34c16dfe6fd1dc6bd9"
+    },
+    {
+      "name": "silhouette overlay: side",
+      "hash": "aa7edfda2d49ad07814f9a623aa5e6c0f390e0b8820ce9a2b89dafda9dbf4ac9"
+    },
+    {
+      "name": "silhouette overlay: front",
+      "hash": "b5172cecf41ec67e2fc7deba59b3a6f05a920c239084ea49ee7f97bd90ff39f9"
+    },
+    {
+      "name": "silhouette overlay: three-quarter",
+      "hash": "4b75023d6fa911a0628eba79951e83a1d920c468fe72872919416de560ff622c"
+    },
+    {
+      "name": "pose sheet",
+      "hash": "df14035879ee8a1666a302774983b656967de424451367f02b62f86d5e6f405c"
+    },
+    {
+      "name": "rest sheet (five cameras)",
+      "hash": "9dc0792e0816f7ec002027207c03dd417aa13a49f76c8be407d4adb6e030c32c"
+    },
+    {
+      "name": "landmarks overlay",
+      "hash": "577687955abd8751f7fbd2b51834647878822f178d02d00d668293b79c270413"
+    },
+    {
+      "name": "hind-leg dominance (side and back crops)",
+      "hash": "85260a121b6968ebc7b4c5b4c553100b1530cc39a668a23bbd309ab17392bb45"
+    },
+    {
+      "name": "render: pose_crouch_side_left",
+      "hash": "4d96f5a8155a13ec5607fd41a13a61778174954b314d153233bfde22418a9654"
+    },
+    {
+      "name": "render: pose_crouch_three_quarter_left",
+      "hash": "474b8b6ce02e06d826de0c8c60e9739cbcc5cacc687770974a7fd296f56674ca"
+    },
+    {
+      "name": "render: pose_landing_side_left",
+      "hash": "1ab1285aa7ebffc83616da50ffb6434a617b0a883c325f7baf56ba969710d2cd"
+    },
+    {
+      "name": "render: pose_landing_three_quarter_left",
+      "hash": "1f8818101790cf93fcb2b06becc182f8dce5b04963c54b30aa77635a7730ffab"
+    },
+    {
+      "name": "render: pose_leap_side_left",
+      "hash": "059a978c6aedb4089b60db815175b80c7f3cfa9b8b054cbc101cae520234c5ce"
+    },
+    {
+      "name": "render: pose_leap_three_quarter_left",
+      "hash": "8d0563b218d4d56fb2444f80165c0f00159539e00fb60673fac804aa2f145441"
+    },
+    {
+      "name": "render: pose_rest_side_left",
+      "hash": "00b6bd5f87536a45e695b7fa3e305bc986b4da79ac019634dc98da21dde3c4c4"
+    },
+    {
+      "name": "render: pose_rest_three_quarter_left",
+      "hash": "d8b9df1f7df21b85845ffc570c4596ec3e0a0e349689fe63179faf62cac8421f"
+    },
+    {
+      "name": "render: rest_back",
+      "hash": "1a89f04b6d74a8f880f292c965d3678fb6f7aaad47e2c4e711b2ba4626c644f6"
+    },
+    {
+      "name": "render: rest_front",
+      "hash": "b166d60d64b7a1e30b79750a2da92d845b4cd8edee676c53352d861984354841"
+    },
+    {
+      "name": "render: rest_side_left",
+      "hash": "141c229d652ac4310344b322acfe528c940b5d588d35043f956b9950eaef1b6e"
+    },
+    {
+      "name": "render: rest_three_quarter_left",
+      "hash": "6b86808110383f8d843fefd58bce8d8bb93d0486307e1a2412e8ba30b41630c0"
+    },
+    {
+      "name": "render: rest_top",
+      "hash": "f8b710a4e931a64613d7708b182a92580e3db08b013136e133936e0c94f4acd5"
+    },
+    {
+      "name": "render: sprite_side_192",
+      "hash": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88"
+    },
+    {
+      "name": "reconstruction run record, attempt 1 (recon mv1 run.json: turned front view, body too wide, not used)",
+      "hash": "13ffcfce38ff161b7f6085494fff9125283cdad6509d7af8f2d610207cd1e44a"
+    },
+    {
+      "name": "reconstruction run record, attempt 2 (recon mv2 run.json: forelegs fused, not used)",
+      "hash": "0ac55d5867bfdc4924868f1534f9a4d7a591ae12dedac25563288a0e5f3275d1"
+    }
+  ],
+  "validators": {
+    "passed": 13,
+    "total": 13,
+    "file": "1e97d1eff70282fcedafcf991fbd35d396636a14c04594aebf58fa45b2e1642b"
+  },
+  "report": {
+    "outputs": [
+      {
+        "name": "blockout .blend (bound rest mesh, armature)",
+        "hash": "e0f773bd99edeb6a1be1f037696e81d08743eae33781ab7f25d15d6ab6d4d676"
+      },
+      {
+        "name": "blockout glb (skinned rest mesh, 40 joints)",
+        "hash": "45909377d60bc291255138769ba7a6155752f5cb0301717dea302aa32da17773"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "65d19cf358bd3a15be514138e345426c40850be4903a09b0a5addc4f54593793"
+      },
+      {
+        "name": "landmark report (landmark_report.md)",
+        "hash": "19bcbc62691ac6c075fc454dcb68d7320f89e96729b806ed3945a0afd1a2f421"
+      },
+      {
+        "name": "creature rig spec (luceras.rig_spec.json)",
+        "hash": "edfa1588926074e1ef60964418beb81f6d73ac95140ef8963f3152400d200695"
+      },
+      {
+        "name": "landmarks.json",
+        "hash": "585a863df8803ab3a8bcc9ed62f6701055c7bbaaea2474ce077aec8e3a2ec6a0"
+      },
+      {
+        "name": "validators.json",
+        "hash": "1e97d1eff70282fcedafcf991fbd35d396636a14c04594aebf58fa45b2e1642b"
+      },
+      {
+        "name": "blender_report.json (bind, poses, volumes, timings)",
+        "hash": "20ca05c945307bb3fe4cf332333222cebae5d66eb0c1306cea873ca3a126e3cc"
+      },
+      {
+        "name": "reconstruction run record (recon mv3 run.json)",
+        "hash": "518973ebef87791b6b33868512b5bcdc2d0d19dddcaf3051fb20a9b44f32e210"
+      },
+      {
+        "name": "reconstruction mesh (recon mv3 shape.glb)",
+        "hash": "e6693c32b646bd0337b34f52e4b7ce0d182c42b4b612a39bfda0e6fadebbc936"
+      },
+      {
+        "name": "masks.json",
+        "hash": "c1f6ca523fadae21d3469f8a1674188d7142e7d98c27ed807e730ee7954caf42"
+      },
+      {
+        "name": "symmetric_views.json",
+        "hash": "bdd05760c1deabc028c2f689f4a07f322c395603d25065d55fceef4e3e013b3b"
+      },
+      {
+        "name": "mask check: side overlay",
+        "hash": "068d507d0e62dd7a70f662c067a56b056cfa25d6ed9c91b60d1eb0e62b6a5497"
+      },
+      {
+        "name": "mask check: front overlay",
+        "hash": "4fb24a1138317004665f602779cf145fb872387fb61d1b3692b5a8780638e62f"
+      },
+      {
+        "name": "mask check: three-quarter overlay",
+        "hash": "cdc585a610a6d07f62a3e1b40445d74e7494ed1fe85b4b305ecb17bb1269534e"
+      },
+      {
+        "name": "model input: front (symmetric)",
+        "hash": "3d040595ebba2dd5147c8238547398c3e718d0ba6795c3fcbfbca8884a429607"
+      },
+      {
+        "name": "model input: left (side)",
+        "hash": "08e950e3f6545e27dc2eb173d33218cab28b46057335355b6f415cd21be43ed0"
+      },
+      {
+        "name": "model input: right (mirrored side)",
+        "hash": "b6eabfbb1055ac819acde5bb5a3d0bcaf04af9620d31dd1252ba64955978e051"
+      },
+      {
+        "name": "compare: side",
+        "hash": "49973efdf59b7a9676373b2553aa91e7343ec6c8f45495d5023b1e1143942338"
+      },
+      {
+        "name": "compare: front",
+        "hash": "d1ac14caa601da51a7b0cb52c1fb803a0fb4c2f4043a887e1bc7d59c0152ea37"
+      },
+      {
+        "name": "compare: three-quarter",
+        "hash": "385060e3b37914774c2a343368fca96620aa71551ded6c34c16dfe6fd1dc6bd9"
+      },
+      {
+        "name": "silhouette overlay: side",
+        "hash": "aa7edfda2d49ad07814f9a623aa5e6c0f390e0b8820ce9a2b89dafda9dbf4ac9"
+      },
+      {
+        "name": "silhouette overlay: front",
+        "hash": "b5172cecf41ec67e2fc7deba59b3a6f05a920c239084ea49ee7f97bd90ff39f9"
+      },
+      {
+        "name": "silhouette overlay: three-quarter",
+        "hash": "4b75023d6fa911a0628eba79951e83a1d920c468fe72872919416de560ff622c"
+      },
+      {
+        "name": "pose sheet",
+        "hash": "df14035879ee8a1666a302774983b656967de424451367f02b62f86d5e6f405c"
+      },
+      {
+        "name": "rest sheet (five cameras)",
+        "hash": "9dc0792e0816f7ec002027207c03dd417aa13a49f76c8be407d4adb6e030c32c"
+      },
+      {
+        "name": "landmarks overlay",
+        "hash": "577687955abd8751f7fbd2b51834647878822f178d02d00d668293b79c270413"
+      },
+      {
+        "name": "hind-leg dominance (side and back crops)",
+        "hash": "85260a121b6968ebc7b4c5b4c553100b1530cc39a668a23bbd309ab17392bb45"
+      },
+      {
+        "name": "render: pose_crouch_side_left",
+        "hash": "4d96f5a8155a13ec5607fd41a13a61778174954b314d153233bfde22418a9654"
+      },
+      {
+        "name": "render: pose_crouch_three_quarter_left",
+        "hash": "474b8b6ce02e06d826de0c8c60e9739cbcc5cacc687770974a7fd296f56674ca"
+      },
+      {
+        "name": "render: pose_landing_side_left",
+        "hash": "1ab1285aa7ebffc83616da50ffb6434a617b0a883c325f7baf56ba969710d2cd"
+      },
+      {
+        "name": "render: pose_landing_three_quarter_left",
+        "hash": "1f8818101790cf93fcb2b06becc182f8dce5b04963c54b30aa77635a7730ffab"
+      },
+      {
+        "name": "render: pose_leap_side_left",
+        "hash": "059a978c6aedb4089b60db815175b80c7f3cfa9b8b054cbc101cae520234c5ce"
+      },
+      {
+        "name": "render: pose_leap_three_quarter_left",
+        "hash": "8d0563b218d4d56fb2444f80165c0f00159539e00fb60673fac804aa2f145441"
+      },
+      {
+        "name": "render: pose_rest_side_left",
+        "hash": "00b6bd5f87536a45e695b7fa3e305bc986b4da79ac019634dc98da21dde3c4c4"
+      },
+      {
+        "name": "render: pose_rest_three_quarter_left",
+        "hash": "d8b9df1f7df21b85845ffc570c4596ec3e0a0e349689fe63179faf62cac8421f"
+      },
+      {
+        "name": "render: rest_back",
+        "hash": "1a89f04b6d74a8f880f292c965d3678fb6f7aaad47e2c4e711b2ba4626c644f6"
+      },
+      {
+        "name": "render: rest_front",
+        "hash": "b166d60d64b7a1e30b79750a2da92d845b4cd8edee676c53352d861984354841"
+      },
+      {
+        "name": "render: rest_side_left",
+        "hash": "141c229d652ac4310344b322acfe528c940b5d588d35043f956b9950eaef1b6e"
+      },
+      {
+        "name": "render: rest_three_quarter_left",
+        "hash": "6b86808110383f8d843fefd58bce8d8bb93d0486307e1a2412e8ba30b41630c0"
+      },
+      {
+        "name": "render: rest_top",
+        "hash": "f8b710a4e931a64613d7708b182a92580e3db08b013136e133936e0c94f4acd5"
+      },
+      {
+        "name": "render: sprite_side_192",
+        "hash": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88"
+      },
+      {
+        "name": "reconstruction run record, attempt 1 (recon mv1 run.json: turned front view, body too wide, not used)",
+        "hash": "13ffcfce38ff161b7f6085494fff9125283cdad6509d7af8f2d610207cd1e44a"
+      },
+      {
+        "name": "reconstruction run record, attempt 2 (recon mv2 run.json: forelegs fused, not used)",
+        "hash": "0ac55d5867bfdc4924868f1534f9a4d7a591ae12dedac25563288a0e5f3275d1"
+      }
+    ],
+    "blockedBy": "nothing",
+    "checks": [
+      {
+        "title": "Side proportions",
+        "question": "Side view at 57 cm to the top of the back: do the torso, chest to waist, neck, head, horns, tail and legs match the approved side clay?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "141c229d652ac4310344b322acfe528c940b5d588d35043f956b9950eaef1b6e",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+        "recommended": "Approve the torso, neck, head and tail: measured on both silhouettes they agree within a few percent (length over rump height 1.78 vs 1.80, overall height 1.30 vs 1.30, chest depth 0.58 vs 0.58, waist 0.34 vs 0.32). One gap: the clay stands with its hind legs staggered (near foot back, far foot forward); the blockout stands square with both hind feet about 4 to 12 cm ahead of the clay average. I recommend keeping the square stance as the class rest pose; answer \"move the hind feet back\" and I rotate the hind legs back about 6 cm and re-bind."
+      },
+      {
+        "title": "Front proportions",
+        "question": "Front view: narrow chest and forelegs, wider haunches and hind feet, horns spanning about 37 cm. Is the width right?",
+        "before": "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981",
+        "after": "b166d60d64b7a1e30b79750a2da92d845b4cd8edee676c53352d861984354841",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+        "recommended": "Approve. The clay front is turned about 15 to 20 degrees with the tail swinging out, so the model was given its right half mirrored; that is why the outlines differ (box aspect 0.56 vs 0.94, overlap 0.26). Small faults left for stage 5 to resculpt: a thin whisker flap at the muzzle, and horns smooth and a little thicker than the slim ridged clay horns."
+      },
+      {
+        "title": "Three-quarter proportions",
+        "question": "Three-quarter view from the standard 45 degree camera: does it read as the same animal as the approved three-quarter clay?",
+        "before": "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99",
+        "after": "6b86808110383f8d843fefd58bce8d8bb93d0486307e1a2412e8ba30b41630c0",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+        "recommended": "Approve. The clay three-quarter is shallower (about 25 to 30 degrees off the side) than the standard camera, so the outlines differ (overlap 0.42); the masses agree with the side check."
+      },
+      {
+        "title": "Pose sheet (shown, no decision needed)",
+        "question": "Rest, crouch, leap peak and landing, posed on the proxy rig. It bends without collapse; nothing to answer unless something looks broken.",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "df14035879ee8a1666a302774983b656967de424451367f02b62f86d5e6f405c",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+        "recommended": "No action. Whole-body volume change: crouch -8.9 percent, leap -10.1, landing +1.1. Worst joint region -26 percent (hind shin in the crouch), under the 30 percent limit. Flagged: in the crouch and the leap the upper forelegs press into the chest (a visible crease, about 3,000 new touching triangle pairs); expected with no shoulder-blade joint, the stage 8 rig handles it."
+      },
+      {
+        "title": "Hind-leg dominance",
+        "question": "Are the hind legs clearly the dominant mass: heavy thighs and long hind feet against slim short forelegs?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "85260a121b6968ebc7b4c5b4c553100b1530cc39a668a23bbd309ab17392bb45",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+        "recommended": "Approve. Thigh 17 cm front to back against a 4.5 cm forearm (3.7 to 1); thighs stand 15 cm off the midline against a 7.7 cm waist half width; hind leg 63 cm of joint chain against 44 cm; hind foot 20 cm against a 10 cm fore paw. The clay side reads a little heavier because its two staggered hind legs add up in the outline; its thigh measures about 20 cm by eye."
+      }
+    ],
+    "wallMinutes": 50,
+    "blenderSeconds": 55.1,
+    "method": "reconstruction: Hunyuan3D-2 multi-view (hunyuan3d-dit-v2-mv, fp16, 50 steps, octree 380, guidance 5, seed 12345, CPU offload, torch capped at 4.72 GB with 1.08 GB held by other programs; peak 2.70 GB allocated, 3.17 GB reserved, so the card stayed near 5 GB of the 6.5 GB cap; 253 s). Three runs, all recorded: run 1 (front plus side) made a lopsided, too-wide body because the clay front view is turned 15 to 20 degrees; run 2 (front mirrored about the face midline, side, side mirrored as the right view) fused the forelegs; run 3 (front mirrored per row: face midline x 573 for the head, foreleg-gap midline x 597 for the body, blended over the neck; side; mirrored side) gave four separate legs, symmetric body, horns, ears and the full tail, so the parametric fallback was not needed. Masks: color distance from a quadratic background fitted to the image border (tolerance 22) plus a warmth test (the clay is warm gray, the ground and its cast shadow neutral) to drop the shadow; checked by eye on rendered overlays. Blender: largest piece kept (4 specks of 72 faces dropped), placed and scaled by 0.509 so the top of the back (the rump) is 0.570 m, 2 mm voxel remesh to one closed manifold, decimated to 200,000 triangles; 40 joints from the quadruped class via rig_modules with measured placements (tail 6 joints and paired horn joints per the tech spec); bone-heat weights, 4 influences, normalized, 0 unweighted vertices before any fix. tool: Hunyuan3D-2, Tencent Hunyuan 3D 2.0 Community License, noted per Nick's 2026-10-14 ruling that licensing is not a gate",
+    "validators": {
+      "passed": 13,
+      "total": 13,
+      "file": "1e97d1eff70282fcedafcf991fbd35d396636a14c04594aebf58fa45b2e1642b"
+    }
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T20:24:37Z",
+  "briefSha256": "ee26be2565d638c680f0f21512911444893845c37f21c7a5724e87640dd438bd",
+  "checks": [
+    {
+      "title": "Side proportions",
+      "question": "Side view at 57 cm to the top of the back: do the torso, chest to waist, neck, head, horns, tail and legs match the approved side clay?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "141c229d652ac4310344b322acfe528c940b5d588d35043f956b9950eaef1b6e",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+      "recommended": "Approve the torso, neck, head and tail: measured on both silhouettes they agree within a few percent (length over rump height 1.78 vs 1.80, overall height 1.30 vs 1.30, chest depth 0.58 vs 0.58, waist 0.34 vs 0.32). One gap: the clay stands with its hind legs staggered (near foot back, far foot forward); the blockout stands square with both hind feet about 4 to 12 cm ahead of the clay average. I recommend keeping the square stance as the class rest pose; answer \"move the hind feet back\" and I rotate the hind legs back about 6 cm and re-bind."
+    },
+    {
+      "title": "Front proportions",
+      "question": "Front view: narrow chest and forelegs, wider haunches and hind feet, horns spanning about 37 cm. Is the width right?",
+      "before": "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981",
+      "after": "b166d60d64b7a1e30b79750a2da92d845b4cd8edee676c53352d861984354841",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+      "recommended": "Approve. The clay front is turned about 15 to 20 degrees with the tail swinging out, so the model was given its right half mirrored; that is why the outlines differ (box aspect 0.56 vs 0.94, overlap 0.26). Small faults left for stage 5 to resculpt: a thin whisker flap at the muzzle, and horns smooth and a little thicker than the slim ridged clay horns."
+    },
+    {
+      "title": "Three-quarter proportions",
+      "question": "Three-quarter view from the standard 45 degree camera: does it read as the same animal as the approved three-quarter clay?",
+      "before": "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99",
+      "after": "6b86808110383f8d843fefd58bce8d8bb93d0486307e1a2412e8ba30b41630c0",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+      "recommended": "Approve. The clay three-quarter is shallower (about 25 to 30 degrees off the side) than the standard camera, so the outlines differ (overlap 0.42); the masses agree with the side check."
+    },
+    {
+      "title": "Pose sheet (shown, no decision needed)",
+      "question": "Rest, crouch, leap peak and landing, posed on the proxy rig. It bends without collapse; nothing to answer unless something looks broken.",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "df14035879ee8a1666a302774983b656967de424451367f02b62f86d5e6f405c",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+      "recommended": "No action. Whole-body volume change: crouch -8.9 percent, leap -10.1, landing +1.1. Worst joint region -26 percent (hind shin in the crouch), under the 30 percent limit. Flagged: in the crouch and the leap the upper forelegs press into the chest (a visible crease, about 3,000 new touching triangle pairs); expected with no shoulder-blade joint, the stage 8 rig handles it."
+    },
+    {
+      "title": "Hind-leg dominance",
+      "question": "Are the hind legs clearly the dominant mass: heavy thighs and long hind feet against slim short forelegs?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "85260a121b6968ebc7b4c5b4c553100b1530cc39a668a23bbd309ab17392bb45",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "61b237703ab4c3ea518298a7ee423af80214dd0c82a237aaa1d2e3e956657f88",
+      "recommended": "Approve. Thigh 17 cm front to back against a 4.5 cm forearm (3.7 to 1); thighs stand 15 cm off the midline against a 7.7 cm waist half width; hind leg 63 cm of joint chain against 44 cm; hind foot 20 cm against a 10 cm fore paw. The clay side reads a little heavier because its two staggered hind legs add up in the outline; its thigh measures about 20 cm by eye."
+    }
+  ],
+  "reportedAt": "2026-10-14T20:26:21Z"
+}
