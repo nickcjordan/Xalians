@@ -122,3 +122,18 @@ Standing holds for every item:
 - **Check:** one component, no non-manifold edges, 547,691 skin vertices. Every other object (eyes, irises, nose, mouth line, claws) as in the approved builds.
 - **Images:** `integrated-v1-check.png` (front, side, back, three-quarter; each pair 3199 left, integrated right, shadows off). No region comparison image: nothing differs.
 - **Blocked by:** nothing.
+
+## Integrated v2: integrated v1 plus the hind paw sole, groin and knees (2026-10-14)
+
+`recipe-integrated-v2.json` is v1's chain with P-heel6 (heel v6, the approved hind paw sole, assembled-3252) right after P-ankle1 and the rear lane's partial P-groin1 and P-knee1 (final rear-lane build assembled-3262) after P-buttocks3, added with `recipe.py add` (inputs rewired only, scripts, specs and pins unchanged). Builds: assembled-3290 (heel), 3291 (ear roots), 3292 (tail base), 3293 (tail ring), 3294 (buttocks), 3295 (groin), 3296 (knees: the integrated model); 3207 (ankle) is reused from v1. Checked as v1 was, by position against each approved build inside the region it changed (the ankle and sole against 3252, the rear, groin and knees against 3262, since those builds carry both steps): every region matches exactly both ways, and outside all regions the model equals 3199 exactly. The only nonzero reverse readings are the ankle's and the rear's own v1-era vertices that the heel and groin steps later moved, which the approved builds move identically (3252's and 3262's own changed vertices are all present in 3296 at 0.0). The knee step and the ankle and heel steps do not meet (closest .092 and .29), so no new seam exists; the ankle and sole, and the rear and groin, touch only as they already do inside 3252 and 3262. One component, no non-manifold edges, 547,710 skin vertices; every other object as in 3271. Image: `integrated-v2-check.png` (front, side, back, three-quarter; each pair 3199 left, v2 right, shadows off). The v1-only intermediates 3208, 3209 and 3270 were archived; 3271 stays as the v1 record. Blocked by: nothing.
+
+| Region (approved build against its base) | Compared with | Changed vertices | Integrated to approved, max | Approved to integrated, max | Z range |
+|---|---|---|---|---|---|
+| Torso, neck, shoulders, arms (3206 vs 3197) | 3206 | 90,249 | 0.0 | 0.0 | -.075 to .54 |
+| Ankles (3211 vs 3199) | 3252 | 34,135 | 0.0 | .0029 (moved by heel v6, as in 3252) | -.93 to -.66 |
+| Hind paw sole (3252 vs 3211) | 3252 | 17,063 | 0.0 | 0.0 | -.957 to -.866 |
+| Ear roots (3232 vs 3199) | 3232 | 16,835 | 0.0 | 0.0 | .59 to .86 |
+| Tail base, tail ring, buttocks (3242 vs 3199) | 3262 | 55,179 | 0.0 | .0018 (moved by groin v1, as in 3262) | -.56 to -.01 |
+| Groin (3262 vs 3242, z above -.4) | 3262 | 1,280 | 0.0 | 0.0 | -.27 to -.215 |
+| Knees (3262 vs 3242, z below -.4) | 3262 | 8,285 | 0.0 | 0.0 | -.60 to -.475 |
+| Outside every region (more than .02 from any change) | 3199 | 284,284 | 0.0 | | |
