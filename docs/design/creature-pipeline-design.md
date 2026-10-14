@@ -124,3 +124,12 @@ Holds: every constraint in a brief carries a source (Nick quote with date, or "i
 One creature through all eleven stages, measured per stage. Success is a glTF loaded in the viewer on a phone-class profile under budget, with the five common clips and one signature clip, that Nick approved at every gate, plus a derived sprite atlas. The slice also settles two measurements the design cannot: the real frame time of twelve creatures on Nick's phone, and the cost of each outline technique. Cost per approved stage is compared with Hypnopet's image stages (vision 30 images, about 704K Codex tokens; sheet 23 images, about 645K) and the Akinza loop's numbers where a stage overlaps.
 
 Nick accepted Luceras as the first creature and ruled licensing out as a concern on 2026-10-14. Pending his approval of this design and the design program order, work starts with the roster layer's quadruped modules, the base meshes and the tech spec template, which the slice needs first.
+
+## 9. Part 2: measured budgets (in progress, 2026-10-14)
+
+Process decisions, the pipeline owner's:
+
+- **Runtime: three.js**, loaded as a pinned module in whichever game adopts 3D, with the glTF, KTX2, meshopt and material-variants loaders. model-viewer was rejected because it is a single-model web component with no scene, no multi-creature control and no event hooks a game needs. Bundle cost is counted when a game cuts over, not here.
+- **Method:** the budgets in decision 2 are replaced by measurement. `art/pipeline/budget/budget-scene.html` (published as an Artifact page) animates twelve to twenty-four skinned stand-in creatures at 6K, 10K and 15K triangles, lit and toon, with and without an inverted-hull outline, at 1024 and 2048 textures, and reports median frame time per preset on the device that runs it. Nick's phone is the floor device. The per-creature budget is the largest preset that holds 60 fps with twelve creatures on that phone, with a margin of a third for effects, interface and the game's own scene.
+- **What the stand-in does not measure:** texture memory under compression, a post-pass outline, skinning with four influences (the stand-in uses two), and morph targets. Those are measured on the real Luceras asset in the viewer at stage 10.
+- **Laptop result** (headless Chrome, Intel integrated graphics): every preset held the frame cap, so the laptop cannot set the budget. Phone result: pending.
