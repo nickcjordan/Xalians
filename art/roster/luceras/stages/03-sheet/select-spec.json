@@ -1,7 +1,7 @@
 {
  "title": "Luceras Model Sheet",
  "heading": "Luceras: model sheet",
- "lede": "Stage 3 of 11. The official reference pack built from your approved picks: a turnaround in the standing rest pose, close-ups of the signature features, and a shaved clay bare body that the 3D blockout will follow. Approve each aspect, or say what needs work and in which view.",
+ "lede": "Stage 3 of 11, second pass from your final head. The official reference pack: a turnaround in the standing rest pose, close-ups of the signature features, and a shaved clay bare body that the 3D blockout will follow. Approve each aspect, or say what needs work and in which view; Confirm notifies the orchestrator.",
  "fallback": "Approvals cannot be saved from this view; reply with the aspect names you approve instead.",
  "order": [
   "composite",
@@ -23,7 +23,7 @@
     "mustHave[1]"
    ],
    "recommend": null,
-   "note": "One generated image with all five picks applied to the base. Every sheet view below was edited from this image."
+   "note": "Your set 9 pick is the combined look: every sheet view below was edited from it."
   },
   "turnaround": {
    "name": "Turnaround",
@@ -39,7 +39,7 @@
     "carriedOverFromSilhouette[3]"
    ],
    "recommend": null,
-   "note": "Known contradiction found in my check: the furred side view understates the hind legs compared with the clay views below. The clay views are the shape authority for the blockout, so the furred side view is a look reference only."
+   "note": "Second pass. My check: the five views agree on horns, ears, blaze, plume and coat; the side view now carries the hind-leg mass. The top view is a layout hint only."
   },
   "closeup": {
    "name": "Signature close-ups",
@@ -55,7 +55,7 @@
     "mustHave[5]"
    ],
    "recommend": null,
-   "note": "The head and hind-leg crops were regenerated once because the first pass returned full bodies."
+   "note": "Second pass, cropped as asked: head, one hind leg, the plume."
   },
   "bare": {
    "name": "Shaved clay bare body",
@@ -71,7 +71,7 @@
     "carriedOverFromSilhouette[3]"
    ],
    "recommend": null,
-   "note": "Regenerated once with the hind-leg rule stated outright; the first pass read like a greyhound. These three views set the blockout's proportions, so this is the aspect to be strictest on."
+   "note": "Second pass with the hind-leg rule in the prompt: thighs the biggest mass, forelegs slim, body lower at the front. These three views set the blockout's proportions, so be strictest here."
   }
  },
  "creature": "luceras",

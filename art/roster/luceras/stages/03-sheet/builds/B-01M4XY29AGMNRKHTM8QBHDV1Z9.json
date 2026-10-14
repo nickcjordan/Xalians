@@ -1,0 +1,59 @@
+{
+  "id": "B-01M4XY29AGMNRKHTM8QBHDV1Z9",
+  "alias": "3zsg",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "C: Shaved clay, three-quarter: sheet bare",
+  "scope": "bare",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 24072,
+    "wallMinutes": 1.3,
+    "image": {
+      "stage": "sheet",
+      "element": "bare",
+      "label": "C: Shaved clay, three-quarter",
+      "summary": "Shaved clay, three-quarter, second pass from new reference",
+      "promptSha256": "68374b6e399365abd175eb80093ddc0a695ed86e2bb06e9667647894d2ed9369",
+      "inputs": [
+        {
+          "name": "ref.png",
+          "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "bare body shape under the fur"
+      ],
+      "notFor": [
+        "color"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-3zsg",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:26:13Z",
+  "briefSha256": "61cfadb81d0500de9e2ae3835c4640fe47e47fd65fe85c11899b65987775ee79",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:27:31Z"
+}

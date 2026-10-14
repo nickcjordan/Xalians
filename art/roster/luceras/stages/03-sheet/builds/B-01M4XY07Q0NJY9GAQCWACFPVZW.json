@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XY07Q0NJY9GAQCWACFPVZW",
+  "alias": "zvnt",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "B: Three-quarter front: sheet turnaround",
+  "scope": "turnaround",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "ee0d82e980b576199a8d8bdd66463ff92c5175771c6ea12a013afba580f89de4"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 15156,
+    "wallMinutes": 0.94,
+    "image": {
+      "stage": "sheet",
+      "element": "turnaround",
+      "label": "B: Three-quarter front",
+      "summary": "Three-quarter front, second pass from new reference",
+      "promptSha256": "99a0a76341a0c132505ba3e314d1c0af9619e2305d98c6725554ea2e12667ba5",
+      "inputs": [
+        {
+          "name": "ref.png",
+          "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "turnaround proportions"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-zvnt",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "ee0d82e980b576199a8d8bdd66463ff92c5175771c6ea12a013afba580f89de4"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:25:06Z",
+  "briefSha256": "f63bfec5915147eee45112d9f7b24ad9db2dcc9b19d43cb0136a55f6d427b3a4",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:26:02Z"
+}

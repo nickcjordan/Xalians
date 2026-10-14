@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XY1WASRNT4447V4VYTMPDD",
+  "alias": "95yx",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "B: Hind leg and foot: sheet closeup",
+  "scope": "closeup",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "5c7640b182be825b4734ebdf92b0ac262a7faa958f65cd6803853a2a43fc92f3"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 36751,
+    "wallMinutes": 0.94,
+    "image": {
+      "stage": "sheet",
+      "element": "closeup",
+      "label": "B: Hind leg and foot",
+      "summary": "Hind leg and foot, second pass from new reference",
+      "promptSha256": "c0d8dd1d509ee4178c32d53c8d0556cb23c07ed24b2d3e7aee40353626336b64",
+      "inputs": [
+        {
+          "name": "ref.png",
+          "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "feature detail"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-95yx",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "5c7640b182be825b4734ebdf92b0ac262a7faa958f65cd6803853a2a43fc92f3"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:26:00Z",
+  "briefSha256": "59a5cba0661fce49536d205d8c420dc79c7ed100c7f198c0bf982a32cfad22e2",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:26:56Z"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XXZFT4JNHTXXY4Y0M35JZX",
+  "alias": "6bxr",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "A: Front: sheet turnaround",
+  "scope": "turnaround",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "ac6ecd21a0fa4519b235c1a667fba98d5d9d262a2249eea9aba5592c5b684a3b"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 31393,
+    "wallMinutes": 0.97,
+    "image": {
+      "stage": "sheet",
+      "element": "turnaround",
+      "label": "A: Front",
+      "summary": "Front, second pass from new reference",
+      "promptSha256": "f9d2f7bfabfba0a5ff1498e036b44bde654c58c021f5b78151d4aa7b54218ed6",
+      "inputs": [
+        {
+          "name": "ref.png",
+          "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "turnaround proportions"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-6bxr",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "ac6ecd21a0fa4519b235c1a667fba98d5d9d262a2249eea9aba5592c5b684a3b"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:24:41Z",
+  "briefSha256": "0d70db1758e1eea5df8b3a3a169b50aa6e3f8c0418e7044e2cd039f619af0925",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:25:39Z"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XY07PE469DV8VAMTG1TQ17",
+  "alias": "p4gq",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "A: Front: sheet turnaround",
+  "scope": "turnaround",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "c96afd98e282fa5abaee6f1aed3245e0892be71998e1ade914c7c3af4f108178"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 15742,
+    "wallMinutes": 1.2,
+    "image": {
+      "stage": "sheet",
+      "element": "turnaround",
+      "label": "A: Front",
+      "summary": "Front, second pass from new reference",
+      "promptSha256": "f9d2f7bfabfba0a5ff1498e036b44bde654c58c021f5b78151d4aa7b54218ed6",
+      "inputs": [
+        {
+          "name": "ref.png",
+          "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "turnaround proportions"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-p4gq",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "c96afd98e282fa5abaee6f1aed3245e0892be71998e1ade914c7c3af4f108178"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:25:06Z",
+  "briefSha256": "8aa8633b3b209f85057f418903ae365f2f36477d15bb6265419103fc8e63c772",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:26:18Z"
+}

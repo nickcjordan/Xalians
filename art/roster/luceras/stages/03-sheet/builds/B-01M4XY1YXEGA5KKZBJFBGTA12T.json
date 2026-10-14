@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XY1YXEGA5KKZBJFBGTA12T",
+  "alias": "5pap",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "C: Tail plume: sheet closeup",
+  "scope": "closeup",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "de95391a807cf826b9e19d7a02a1018d28171b19c4fc73a7dee2fe621719a2fe"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 15523,
+    "wallMinutes": 0.84,
+    "image": {
+      "stage": "sheet",
+      "element": "closeup",
+      "label": "C: Tail plume",
+      "summary": "Tail plume, second pass from new reference",
+      "promptSha256": "d4246d27c71f863c1bd0572a2d1e3633756fd1187d699cd27d043a2ce7d63bad",
+      "inputs": [
+        {
+          "name": "ref.png",
+          "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "feature detail"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-5pap",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "de95391a807cf826b9e19d7a02a1018d28171b19c4fc73a7dee2fe621719a2fe"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:26:02Z",
+  "briefSha256": "63275080ac3d797a8b0b10345548771aef8fc4b43c73406776ed92824c11d7b8",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:26:53Z"
+}

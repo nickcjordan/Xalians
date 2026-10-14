@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XY07RHT47ZNM7NZC07PF50",
+  "alias": "2ptg",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "A: Head: sheet closeup",
+  "scope": "closeup",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 20952,
+    "wallMinutes": 1.01,
+    "image": {
+      "stage": "sheet",
+      "element": "closeup",
+      "label": "A: Head",
+      "summary": "Head, second pass from new reference",
+      "promptSha256": "ec1ab968f966ea54109e36f9a802bdf4691d83668289159f1f2b6e9e8714ff96",
+      "inputs": [
+        {
+          "name": "ref.png",
+          "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "feature detail"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-2ptg",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:25:06Z",
+  "briefSha256": "6bb47e966cc20a76d16cefa8a4fd570065c210b0cf41e9e4a891f41820212b00",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:26:07Z"
+}
