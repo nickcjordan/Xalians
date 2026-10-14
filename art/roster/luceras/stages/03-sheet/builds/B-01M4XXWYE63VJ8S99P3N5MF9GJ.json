@@ -8,12 +8,33 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+      }
+    ],
+    "blockedBy": "nothing",
+    "image": {
+      "stage": "sheet",
+      "element": "composite",
+      "label": "Composite: all picks (horn tips turned in)",
+      "summary": "The picked horns4 image is the combined look: coat, eyes, fur, plume, ears and horns as picked."
+    }
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-14T19:23:18Z",
-  "briefSha256": "44f12003f714b95c0e0405805b1f70727d6e7ae86f862a13b7a89346672570f7"
+  "briefSha256": "44f12003f714b95c0e0405805b1f70727d6e7ae86f862a13b7a89346672570f7",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:23:56Z"
 }
