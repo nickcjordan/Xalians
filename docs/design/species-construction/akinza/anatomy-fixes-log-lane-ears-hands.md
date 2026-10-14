@@ -218,3 +218,47 @@ Superseded by hands v3 and archived to `C:\Users\njord\.claude\scratch-archive\X
 ## Cleanup (cleanup pass)
 
 Superseded by hands v3b and archived to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\`: assembled-3235 and its `assembled-3235*` log files. assembled-3234 (refined paws) stays as the base of 3236; assembled-3232 (ear roots v2) stays. Scratch dumps are deleted.
+
+## 8e. Hands v3c (toe zone remeshed, coordinator review of v3b, 2026-10-14)
+
+- **Asked:** the valley pleats showed clearly at normal size (zigzag crinkles between the toes, side and below views). Rebuild the faces inside the toe zone from the new surface (a local remesh, stitched back with no seam and materials kept) instead of moving old vertices; fix the soft crease along the palm pad's lower edge; keep v3b's shapes, separations and claw seating.
+- **Base:** assembled-3234 (`recipe-pawrefine-v1.json`). **Output:** assembled-3237, recipe `recipe-hands-v3c.json` (chain ... P-earroot2, P-pawrefine1, P-hands3c; step `art/species-construction/hands_v3c_post.py` with field `hands_v3b_field.py` and remesh `toe_remesh.py`, spec `specs/hands-v3c.json`), in place of P-hands3b.
+- **What changed:**
+  - Field, toes, claws and mover are v3b's, except the palm pad's blend radius (.010, was .006), which takes the crease off its lower edge.
+  - After the mover, per paw (`toe_remesh.py`):
+    1. Copy the skin's faces below z -.158 in the toe zone (|x| above .275, y -.16 to -.04, z above -.25) and close the piece with a cap.
+    2. Voxel-remesh it at .0007, with no adaptivity.
+    3. Cut the skin at z -.162 and the piece .001 lower.
+    4. Bridge the two cut loops, which have unequal vertex counts (594 and 464 edges on +x), with a band about one edge tall.
+    5. Give every new face the material index of the nearest old face.
+    6. Project every new vertex exactly onto the hands field (residual under 1e-8) and Taubin-smooth it 10 passes, projected back each pass.
+    7. Blend the skin from the cut up to z -.135 onto the field (weight 1 at the cut, fading to 0), so the seam leaves no step.
+- **Development problems found and fixed:**
+  - bmesh `bridge_loops` with merge silently skips loops of unequal counts, so the stitch now bridges without merge.
+  - After the skin cut, the appended piece's vertices reuse the freed slots, so "the last N vertices" is not the piece. It is now found by set difference.
+  - Stale bmesh indices were fixed with `index_update`.
+  - The first version left a faint line at the cut height, because v3b's Taubin-smoothed skin sits up to about .005 off the field while the piece sits exactly on it. The blend in step 7 removed it.
+- **Numbers (3199 against 3237):**
+  - **Bottom of the paw along the row** (z in thousandths, y -.14 to -.06 every .0025):
+    - after -190 -194 -196 -197 -197 -197 -195 -195 -199 -202 -203 -203 -203 -203 -201 -199 -199 -202 -203 -203 -203 -203 -201 -198 -194 -195 -196 -196 -196 -194 -192 -187 -169
+    - Same four toes as v3b, within .001.
+  - **Paw extent:** y -.143 to -.0477, x .2879 to .3686, lowest point -.2035.
+  - **Claw bases:** y -.1323, -.1131, -.0925, -.0719, centered on their toes.
+  - **Claw tops:** each top rim is .0035 to .0062 inside the skin.
+  - **Claw tips:** z -.2076 to -.2154.
+  - **Toe zone mesh:** 127,983 triangles, edge median .00068 (10th to 90th percentile .00049 to .00175), evenly spaced quads from the voxel remesh.
+  - **Skin vertices:** 634,526 go to 631,542; one component, 0 non-manifold edges.
+- **Box bounding box, per paw:** as v3 (|x| .263 to .395, y -.17 to -.031, z -.245 to -.111). The remesh zone and the seam blend sit inside it (z -.135 and below).
+- **Displacement outside the region (by nearest vertex, since the remesh changes the vertex order):** 0.0 for the wrist band (|x| above .26, z -.115 to -.09, 2,279 vertices), the arm above it (z -.09 to .1, 28,883 vertices) and a 40,000-vertex sample of the rest of the body. Every other object is 0.0 except the eight fore claws, which moved rigidly by .009 to .013 (object diff 3234 against 3237, the same claw seating as v3b).
+- **Images (3199 left, v3c right, +x paw, shadows off; the 08 files are overwritten):** `08-hand-front-check.png`, `08-hand-below-check.png`, `08-hand-side-check.png`, `08-hand-back-check.png`, `08-hand-palm-check.png`, `08-hand-wrist-check.png`.
+- **My own look (side, front, back, below, palm, three-quarter):**
+  - The valley pleats are gone, and each toe is one clean dome from below, the side and the palm.
+  - The palm pad is a smooth dome rolling into the toes, with no crease on its lower edge.
+  - The front toe is a smooth bean, and no seam line shows.
+  - What I can still see: from the side, a faint soft line where the toes meet the paw above the valleys. It is the blend between the toes and the paw, not a pleat.
+- **Wall time:** about 1 hour 15 minutes (v3h to v3i, the debugging of the stitch, and the build).
+- **Blocked by:** nothing.
+
+## Cleanup (v3c)
+
+Superseded by hands v3c and archived to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\`: assembled-3236 and its `assembled-3236*` log files. assembled-3234 (refined paws) stays as the base of 3237. Scratch dumps and dry-run blends are deleted.
