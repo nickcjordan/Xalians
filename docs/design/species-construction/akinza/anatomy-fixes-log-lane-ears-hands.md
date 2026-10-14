@@ -262,3 +262,11 @@ Superseded by hands v3b and archived to `C:\Users\njord\.claude\scratch-archive\
 ## Cleanup (v3c)
 
 Superseded by hands v3c and archived to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\`: assembled-3236 and its `assembled-3236*` log files. assembled-3234 (refined paws) stays as the base of 3237. Scratch dumps and dry-run blends are deleted.
+
+## Close of lane (2026-10-14)
+
+- **Ear roots (item 10):** approved by Nick (2026-10-14: "10: good"). Ear roots v2 (P-earroot2, assembled-3232, `recipe-earroot-v2.json`) is this lane's result.
+- **Hands (item 8):** reverted. Nick, 2026-10-14: "I think I preferred the look of the prior version better. The version you're showing me now is like a blob with little nubs on the bottom, whereas the first version at least had some indentations where the toes would be... I don't think we'll ever really need to animate individual toes. So I'm inclined to say just put it back how it was before." The hands stay as they are in assembled-3199. P-pawrefine1 and every P-hands step are dropped from the chain.
+- **Final chain for this lane:** ... P-torso1, P-neck3, P-earroot2 (`recipe-earroot-v2.json`, assembled-3232).
+- **Records kept:** the hands recipes and scripts stay in the repository as the record of what was tried: `recipe-hands-v1/v2/v3/v3b/v3c.json`, `recipe-pawrefine-v1.json`, `hands_v*_post.py`, `hands_v*_field.py`, `paws_refine_v1_post.py`, `toe_remesh.py` and their specs. No live recipe uses them.
+- **Archived** to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\`: assembled-3234 and assembled-3237 with their log files, alongside the earlier 3230, 3231, 3233, 3235 and 3236. Of this lane's numbers only assembled-3232 remains. The 3238 and 3239 reservation markers were never used.
