@@ -1,0 +1,483 @@
+{
+ "name": "heel v5 (sole v5)",
+ "approval": null,
+ "note": "sole v5 (2026-10-14), for heel_v5_post.py / heel_v5_field.py, appended after P-ankle1 in place of P-heel4. Anatomy review finding 7; Nick, 2026-10-14, with a reference photo of a lion's sole: \"i think the sole still needs work. It is minor in the overall model but looks bad. Can you make it look closer to this example of the sole of a lion foot?\"; earlier the same day, the main pad \"closer to being under the ankle\"; the heel stays flat on the floor (Nick). Written for the +x foot; the -x foot uses it mirrored on its own grid. blurX, heelShape, openings, openingsAfterPads: as heel v4 (the authored round heel back, the side-wall roll, the pad-skirt trim); lift: the whole sole moved up .006 by a vertical shift; pads: every pad a cushion (outline: its plan a smooth union of ellipses, its underside on the foot's own underside at its center and rising by .008 to the outline over an edge band, capped .016 above): four large oval toe pads (half sizes .0145 to .016 across and .0215 to .0225 long) in a tight arc, and one main pad, a rounded triangle .096 across and about .08 long (a body, a narrower front nesting into the toe arc, and three rear lobes that scallop its back edge), from y -.076 behind the toe arc back to y +.006 under the ankle; partBox: |x| from .18 (in by .20), z below -.85 (in by -.88). World units, +y back.",
+ "grid": {
+  "lo": [
+   0.25,
+   -0.16,
+   -0.965
+  ],
+  "hi": [
+   0.45,
+   0.09,
+   -0.84
+  ],
+  "step": 0.0015,
+  "far": 0.04
+ },
+ "blurX": [
+  {
+   "c": [
+    0.345,
+    0.035,
+    -0.91
+   ],
+   "s": [
+    0.06,
+    0.035,
+    0.04
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.014
+  }
+ ],
+ "heelShape": {
+  "xc": 0.34,
+  "a": 0.034,
+  "b": 0.045,
+  "profile": [
+   [
+    -0.85,
+    0.068
+   ],
+   [
+    -0.87,
+    0.066
+   ],
+   [
+    -0.89,
+    0.0635
+   ],
+   [
+    -0.905,
+    0.0605
+   ],
+   [
+    -0.92,
+    0.056
+   ],
+   [
+    -0.935,
+    0.049
+   ],
+   [
+    -0.9375,
+    0.04783
+   ],
+   [
+    -0.939687,
+    0.046813
+   ],
+   [
+    -0.940408,
+    0.046464
+   ],
+   [
+    -0.941129,
+    0.046092
+   ],
+   [
+    -0.941851,
+    0.045694
+   ],
+   [
+    -0.942572,
+    0.045269
+   ],
+   [
+    -0.943294,
+    0.044817
+   ],
+   [
+    -0.944015,
+    0.044336
+   ],
+   [
+    -0.944736,
+    0.043823
+   ],
+   [
+    -0.945458,
+    0.043277
+   ],
+   [
+    -0.946179,
+    0.042696
+   ],
+   [
+    -0.9469,
+    0.042077
+   ],
+   [
+    -0.947622,
+    0.041416
+   ],
+   [
+    -0.948343,
+    0.04071
+   ],
+   [
+    -0.949065,
+    0.039954
+   ],
+   [
+    -0.949786,
+    0.039141
+   ],
+   [
+    -0.950507,
+    0.038266
+   ],
+   [
+    -0.951229,
+    0.037318
+   ],
+   [
+    -0.95195,
+    0.036285
+   ],
+   [
+    -0.952672,
+    0.035151
+   ],
+   [
+    -0.953393,
+    0.03389
+   ],
+   [
+    -0.954114,
+    0.032465
+   ],
+   [
+    -0.954836,
+    0.030815
+   ],
+   [
+    -0.955557,
+    0.028819
+   ],
+   [
+    -0.956279,
+    0.026167
+   ],
+   [
+    -0.957,
+    0.019627
+   ],
+   [
+    -0.96,
+    -0.00037
+   ]
+  ],
+  "mask": {
+   "x": [
+    0.2,
+    0.22,
+    0.44,
+    0.455
+   ],
+   "y": [
+    0.015,
+    0.045,
+    1,
+    1
+   ],
+   "z": [
+    -1,
+    -1,
+    -0.905,
+    -0.865
+   ]
+  },
+  "floorZ": -0.957,
+  "uSection": true,
+  "aProfile": [
+   [
+    -0.86,
+    0.0355
+   ],
+   [
+    -0.89,
+    0.0365
+   ],
+   [
+    -0.91,
+    0.034
+   ],
+   [
+    -0.93,
+    0.0315
+   ],
+   [
+    -0.95,
+    0.036
+   ],
+   [
+    -0.96,
+    0.037
+   ]
+  ],
+  "interp": "linear"
+ },
+ "lift": {
+  "floorZ": -0.957,
+  "depth": 0.006,
+  "band": [
+   0.012,
+   0.03
+  ],
+  "x": [
+   0.2,
+   0.22,
+   0.44,
+   0.455
+  ]
+ },
+ "openings": [
+  {
+   "r": 0.008,
+   "box": {
+    "x": [
+     0.2,
+     0.22,
+     0.44,
+     0.455
+    ],
+    "z": [
+     -1,
+     -1,
+     -0.935,
+     -0.925
+    ],
+    "y": [
+     -1,
+     -1,
+     0.012,
+     0.028
+    ]
+   }
+  }
+ ],
+ "pads": {
+  "floorZ": -0.957,
+  "sink": 0.002,
+  "lobeK": 0.02,
+  "padK": 0.003,
+  "pads": [
+   {
+    "name": "toe 1",
+    "at": [
+     0.298,
+     -0.09
+    ],
+    "sink": 0.0,
+    "outline": true,
+    "rise": 0.008,
+    "edge": 0.009,
+    "lobes": [
+     {
+      "c": [
+       0.298,
+       -0.09
+      ],
+      "s": [
+       0.0145,
+       0.0215
+      ]
+     }
+    ]
+   },
+   {
+    "name": "toe 2",
+    "at": [
+     0.333,
+     -0.108
+    ],
+    "sink": 0.0,
+    "outline": true,
+    "rise": 0.008,
+    "edge": 0.009,
+    "lobes": [
+     {
+      "c": [
+       0.333,
+       -0.108
+      ],
+      "s": [
+       0.016,
+       0.0225
+      ]
+     }
+    ]
+   },
+   {
+    "name": "toe 3",
+    "at": [
+     0.371,
+     -0.108
+    ],
+    "sink": 0.0,
+    "outline": true,
+    "rise": 0.008,
+    "edge": 0.009,
+    "lobes": [
+     {
+      "c": [
+       0.371,
+       -0.108
+      ],
+      "s": [
+       0.016,
+       0.0225
+      ]
+     }
+    ]
+   },
+   {
+    "name": "toe 4",
+    "at": [
+     0.401,
+     -0.088
+    ],
+    "sink": 0.0,
+    "outline": true,
+    "rise": 0.008,
+    "edge": 0.009,
+    "lobes": [
+     {
+      "c": [
+       0.401,
+       -0.088
+      ],
+      "s": [
+       0.0145,
+       0.0215
+      ]
+     }
+    ]
+   },
+   {
+    "name": "main (metacarpal)",
+    "at": [
+     0.349,
+     -0.038
+    ],
+    "sink": 0.0,
+    "outline": true,
+    "rise": 0.008,
+    "edge": 0.012,
+    "outlineK": 0.012,
+    "lobes": [
+     {
+      "c": [
+       0.349,
+       -0.04
+      ],
+      "s": [
+       0.048,
+       0.036
+      ]
+     },
+     {
+      "c": [
+       0.349,
+       -0.058
+      ],
+      "s": [
+       0.026,
+       0.018
+      ]
+     },
+     {
+      "c": [
+       0.326,
+       -0.016
+      ],
+      "s": [
+       0.021,
+       0.019
+      ]
+     },
+     {
+      "c": [
+       0.349,
+       -0.013
+      ],
+      "s": [
+       0.021,
+       0.019
+      ]
+     },
+     {
+      "c": [
+       0.372,
+       -0.016
+      ],
+      "s": [
+       0.021,
+       0.019
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "openingsAfterPads": [
+  {
+   "r": 0.004,
+   "box": {
+    "x": [
+     0.2,
+     0.22,
+     0.44,
+     0.455
+    ],
+    "y": [
+     -1,
+     -1,
+     0.02,
+     0.032
+    ],
+    "z": [
+     -1,
+     -1,
+     -0.94,
+     -0.93
+    ]
+   }
+  }
+ ],
+ "partBox": {
+  "x": [
+   0.18,
+   0.2,
+   0.44,
+   0.455
+  ],
+  "z": [
+   -1,
+   -1,
+   -0.88,
+   -0.85
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ }
+}
