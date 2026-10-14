@@ -6,6 +6,9 @@ params:
     clip      {"center": [x, y, z], "radii": [rx, ry, rz], "blend": k}: the field is kept only inside this
               ellipsoid, joined to it by a smooth intersection of radius k (the cut edge is rounded, not sheared)
     offset    optional [x, y, z] added to the grid's position (default none)
+    cuts      optional list of {"center", "radii", "blend"} ellipsoids removed from the field (smooth subtraction):
+              for example the face region when the face comes from its own finer grid, or a reconstruction's own
+              horn where an authored horn goes
 
 Outside the grid the field reads as far away. Trilinear sampling in numpy only, so it also runs inside Blender.
 """
@@ -75,7 +78,13 @@ def sample(params, pts):
 def sdf(params, pts):
     pts = np.asarray(pts, float)
     c, r, k = _clip(params)
-    return smax(sample(params, pts), _ellipsoid(c, r, pts), k)
+    d = smax(sample(params, pts), _ellipsoid(c, r, pts), k)
+    for cut in params.get('cuts', []):
+        cr = np.asarray(cut['radii'], float)
+        if cr.shape != (3,) or (cr <= 0).any():
+            raise ValueError('grid cut radii must be three positive numbers')
+        d = smax(d, -_ellipsoid(np.asarray(cut['center'], float), cr, pts), float(cut.get('blend', 0.0)))
+    return d
 
 
 def bounds(params):

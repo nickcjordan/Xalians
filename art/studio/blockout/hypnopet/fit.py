@@ -62,6 +62,8 @@ def main():
     ap.add_argument('--cameras', type=Path, required=True)
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--label', default='')
+    ap.add_argument('--skull-top', type=float, help='skull top height (m) when the head part does not own the crown '
+                                                     '(a reconstructed body, experiment X30)')
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     cams = {c['id']: c for c in json.loads(a.cameras.read_text(encoding='utf-8'))['cameras']}
@@ -70,7 +72,7 @@ def main():
     keys = [str(k) for k in z['partKeys']]
     v = z['vertices'].astype(float)
     z_ground = float(v[:, 2].min())
-    z_skull = float(v[z['part_id'] == keys.index('head'), 2].max())
+    z_skull = a.skull_top if a.skull_top is not None else float(v[z['part_id'] == keys.index('head'), 2].max())
     out_F, out_ground = 0.62*SIZE, 0.93*SIZE
     result = {'label': a.label, 'zGround': round(z_ground, 4), 'zSkullTop': round(z_skull, 4), 'views': {}}
     f = font(17)

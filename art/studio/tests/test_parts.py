@@ -503,6 +503,11 @@ class GridTests(unittest.TestCase):
         self.assertAlmostEqual(hi[2], 0.0)
         self.assertAlmostEqual(lo[0], -0.2)
 
+    def test_cut_removes_a_region(self):
+        p = self.params(cuts=[{'center': [0.1, 0, 0], 'radii': [0.05, 0.05, 0.05], 'blend': 0}])
+        self.assertGreater(grid.sdf(p, np.array([[0.08, 0, 0]]))[0], 0)     # inside the cut: removed
+        self.assertLess(grid.sdf(p, np.array([[-0.05, 0, 0]]))[0], 0)       # elsewhere: kept
+
     def test_sha_mismatch_refused(self):
         grid._GRIDS.clear()
         with self.assertRaises(ValueError):

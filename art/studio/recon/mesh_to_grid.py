@@ -39,6 +39,8 @@ def main():
     ap.add_argument('--height', type=float, default=0.658)
     ap.add_argument('--center-y', type=float, default=0.005)
     ap.add_argument('--samples', type=int, default=3_000_000)
+    ap.add_argument('--thin-near-floor', type=float, nargs=2, metavar=('RADIUS', 'TOP'),
+                    help='empty solid thinner than about 2 x RADIUS below height TOP (a copied ground plate)')
     ap.add_argument('--floor', type=float, help='cut everything below this height (the ground plate a model copies '
                                                 'from a drawn shadow)')
     args = ap.parse_args()
@@ -64,10 +66,20 @@ def main():
         vals = ndimage.gaussian_filter(vals, args.smooth).astype(np.float32)
     if args.floor is not None:
         vals = np.maximum(vals, (args.floor-axes[2])[None, None, :]).astype(np.float32)
+    if args.thin_near_floor:
+        # the ground plate copied from a drawn shadow is a thin sheet: near the floor, solid that an opening of
+        # this radius removes is thin plate, not foot, and is emptied
+        r, top = args.thin_near_floor
+        k = int(np.searchsorted(axes[2], top))
+        inside = vals[:, :, :k] < 0
+        n = max(1, int(round(r/args.voxel)))
+        ball = np.linalg.norm(np.mgrid[-n:n+1, -n:n+1, -n:n+1], axis=0) <= n
+        thin = inside & ~ndimage.binary_opening(inside, structure=ball)
+        vals[:, :, :k][thin] = 2*args.voxel
     args.out.parent.mkdir(parents=True, exist_ok=True)
     record = {'source': str(args.glb), 'sourceSha256': hashlib.sha256(args.glb.read_bytes()).hexdigest(),
               'frame': {'height': args.height, 'centerY': args.center_y, 'scale': s, 'offset': off.tolist()},
-              'box': box.tolist(), 'voxel': args.voxel, 'smooth': args.smooth, 'samples': args.samples, 'floor': args.floor,
+              'box': box.tolist(), 'voxel': args.voxel, 'smooth': args.smooth, 'samples': args.samples, 'floor': args.floor, 'thinNearFloor': args.thin_near_floor,
               'shape': shape.tolist()}
     np.savez_compressed(args.out, origin=lo.astype(np.float64), voxel=np.float64(args.voxel), values=vals,
                         record=json.dumps(record))
