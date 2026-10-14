@@ -1,0 +1,100 @@
+{
+ "name": "ear roots v2",
+ "approval": null,
+ "note": "ear roots v2 (2026-10-13), for earroot_v2_post.py (stage 1 earroot_v1_field, stage 2 earroot_v2_fair), appended after P-neck3 in place of P-earroot1. Anatomy review 2026-10-13, finding 10 (Nick, 2026-10-13: \"Yes, fix all ten of them.\"); coordinator review of v1 (2026-10-13): the line where the ear's flat back begins was still visible; the coordinator cleared a slight convex roll on the back of the ear near its root under REFINEMENT rule 1, front-view outline held to .0005 (outlineTol), rim, angle and inner ear held. Stage 1: v1's fill-only closing (radius .085, rear-facing gate) with fillSigma 0 (v1's fill blur left part of the old crease, because the fill carries the crease's kink) and the light fill-only smooth. Stage 2 (fair): a weighted umbrella smoothing (300 passes, step .5) of backward-facing vertices (normal y above .3 to .6) in one ellipsoid per side over the rear ear root, from the skull's flat side band across the fillet to the ear's back; a plane is a fixed point, so only the curvature steps spread. Development variants o to r in untracked anatomy-fixes/work/10-earroot (this is variant r). World units, +y back.",
+ "grid": {
+  "lo": [
+   -0.44,
+   -0.17,
+   0.42
+  ],
+  "hi": [
+   0.44,
+   0.25,
+   1.03
+  ],
+  "step": 0.0025,
+  "far": 0.14
+ },
+ "closing": {
+  "r": 0.085,
+  "searchR": 1.5,
+  "shell": [
+   -0.03,
+   0.045
+  ],
+  "taper": 0.03
+ },
+ "k": 0.002,
+ "fillSigma": 0.0,
+ "gateSigma": 0.006,
+ "rearGate": [
+  0.05,
+  0.35
+ ],
+ "masks": [
+  {
+   "c": [
+    0.19,
+    0.03,
+    0.73
+   ],
+   "s": [
+    0.1,
+    0.065,
+    0.16
+   ],
+   "fade": [
+    0.5,
+    1.0
+   ],
+   "mirror": true
+  }
+ ],
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ },
+ "smooth": {
+  "sigma": 0.007
+ },
+ "fair": {
+  "masks": [
+   {
+    "c": [
+     0.195,
+     0.04,
+     0.73
+    ],
+    "s": [
+     0.085,
+     0.06,
+     0.15
+    ],
+    "fade": [
+     0.35,
+     1.0
+    ],
+    "mirror": true
+   }
+  ],
+  "rearGate": [
+   0.3,
+   0.6
+  ],
+  "factor": 0.5,
+  "iterations": 300
+ },
+ "outlineTol": 0.0005
+}

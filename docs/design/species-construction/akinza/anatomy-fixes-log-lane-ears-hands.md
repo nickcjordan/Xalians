@@ -40,3 +40,82 @@ Holds for this lane:
 - **My own look (front, back of hand, palm, below, three-quarter):** from the back the paw now reads as four toes with shallow valleys between them and a claw at the tip of each, in place of a mitten with a row of lumps. From the palm side it shows one palm pad and four toe pads, and the ridges and crevices are gone. From below, the four toe tips each carry a claw. Two things I can still see. Seen from below, the palm pad's lower edge reads as a curved fold; it is the crease between the palm pad and the toe pads, which a real paw has, but it reads a little like a lip. Where each claw enters the skin there is a straight cut line, because the claws are separate objects (as before this step).
 - **Wall time:** about 30 minutes (20:50 to 21:20). Variants a to g are in `work/08-hands/specs/` (generator `gen2.py`). Variant a (grooves only) lost the digits. Variant c's digit capsules pushed out of the back of the hand. Variant d left a band at the erode's edge.
 - **Blocked by:** nothing for the finding as written. The claw cut line would need the claws merged into the skin or given a sheath, which is a separate claw-representation decision, not this step.
+
+## Second pass (coordinator review, 2026-10-13)
+
+The coordinator judged neither v1 ready for Nick. Ear roots: the vertical line where the ear's flat back begins was still clearly visible on both ears from behind. Hands: from the side the claws stuck out of the gaps beside the digits with their cut tops showing, from the front the claws bunched and the digits were small lumps, and the palm pad had a lip edge. v2 of each replaces v1 in the chain: P-neck3, P-earroot2, P-hands2 (`recipe-hands-v2.json`, built on assembled-3199). v1 (assembled-3230 and 3231, `recipe-earroot-v1.json`, `recipe-hands-v1.json`) is superseded. Its builds are archived (see Cleanup); its recipes stay in the repository as the record. The check images named in sections 10 and 8 were overwritten by this pass's versions (3199 left, v2 right).
+
+Holds added or changed this pass:
+
+| Hold | Source | Why |
+|---|---|---|
+| Ear front-view outline unchanged to .0005; rim, angle and inner ear unchanged | coordinator, 2026-10-13 | protects the approved ear look |
+| Convex roll on the back of the ear near its root allowed | coordinator, 2026-10-13, under REFINEMENT rule 1 (Nick's approval of the ears protects their look, not their implementation) | lifts v1's "Blocked by" |
+| Claw joins sheathed: skin wraps over the claw base in a small nail-bed fold, so no cut line or claw top is visible | the coordinator's call, 2026-10-13, overridable by Nick | design decision, not Nick's |
+
+## 10b. Ear roots v2
+
+- **Base:** assembled-3199 (`recipe-neck-v3.json`). **Output:** assembled-3232, recipe `recipe-earroot-v2.json` (step P-earroot2, `art/species-construction/earroot_v2_post.py`; stage 1 `earroot_v1_field.py`, stage 2 `earroot_v2_fair.py`; spec `specs/earroot-v2.json`), in place of P-earroot1.
+- **Cause of the line v1 left, measured:** two things.
+  - v1 blurred its fill (fillSigma .005). The fill (closed surface minus skin) carries the old crease's kink with the opposite sign, so a blurred fill added back to the creased skin leaves part of the crease. At z .66 and .78 a turn of 13 to 14 degrees within .01 remained at x about .205.
+  - The closing's circular fillet meets flat surfaces on both sides, so the curvature steps at the fillet's edges. One is the ear's flat back. The other is a flat band on the skull's side that ends at x about .175 in 3199 (16 degrees within .0075). That second step is the line a grazing rear three-quarter view shows on the far ear.
+- **What changed:**
+  - Stage 1 is v1's closing (radius .085, rear-facing gate, mask as v1) without the fill blur.
+  - Stage 2 is the convex roll: a weighted umbrella smoothing of backward-facing vertices (normal y component above .3 to .6), 300 passes at step .5. It covers one ellipsoid per side centered at (±.195, .04, .73) with semi-axes .085 by .06 by .15, from the skull's flat band across the fillet to the ear's back. A plane is a fixed point of it, so the ear's back away from the root, the rim and the front face (never selected) stay put. Only the curvature steps spread, so the back of the ear rolls into the skull.
+- **Before / after:**
+  - At z .72, x .17 to .23, the normal turn across the root ran 36, 26, 15, -5, -31, -34 degrees in 3199 and 19, 13, 8, -1, -9, -14, -21 in v1. It is now 20, 12, 5, -1, -8, -14, -21: 5 to 8 degrees per .01, with no jump.
+  - On the -x root at z .74, x .15 to .21 every .0075: 3199 ran 35, 37, 36, 31, 24, 11, 3, -21; v2 runs 31, 24, 16, 11, 7, 3, -2, -6.
+- **Front-view outline (verified in the step against 3199, outlineTol .0005):** top contour per |x| at most .00041, side contour per z at most .00001, bottom contour .000003.
+- **Mask bounding boxes:**
+  - Stage 1: |x| about .09 to .2825, y -.0125 to .0925, z .5725 to .8875.
+  - Stage 2: 14,527 vertices in |x| up to .2745, y -.0032 to .0742, z .5978 to .8564.
+  - Both sit on the top and back of the skull at the ear roots, clear of the jaw, throat and nape (z below .555).
+- **Displacement outside the region:** 0.0 exactly. 17,551 of 547,455 skin vertices move, max .0140. Every other object is 0.0 (object diff 3199 against 3232). Check passes: one component, no non-manifold edges, no folded faces, no faces turned over 72 degrees.
+- **Images (3199 left, v2 right, shadows off):**
+  - `10-earroot-back-check.png` (from behind).
+  - `10-earroot-rear-three-quarter-check.png` (from the +x side).
+  - `10-earroot-rear-three-quarter-left-check.png` (from the -x side).
+  - `10-earroot-far-ear-root-check.png` (the far ear's root at a grazing angle, the view the review cited).
+- **My own look (back, both rear three-quarters, top, grazing far-ear view):** from behind and from both rear three-quarters the skull now rounds into the back of each ear with no line; the root shades as one broad soft hollow. At the grazing far-ear angle a soft fold remains where the root turns. It is much fainter than in 3199 and has no sharp edge.
+- **Wall time:** about 35 minutes of this pass (variants o to r, plus the 9-minute build).
+- **Blocked by:** nothing.
+
+## 8b. Hands v2
+
+- **Base:** assembled-3232 (`recipe-earroot-v2.json`). **Output:** assembled-3233, recipe `recipe-hands-v2.json` (step P-hands2, `art/species-construction/hands_v2_post.py` with `hands_v2_field.py`, spec `specs/hands-v2.json`), in place of P-hands1.
+- **What changed:**
+  - **Toes:** each is a bean, a tapered capsule fuller at the tip (radius .017) than at the knuckle (.013), on its paw's own center line, narrower across the row than front to back (squash 1.95). They are splayed -9, -3, 3 and 9 degrees so the four fan out a little, and joined toe to toe and to the paw by smooth minimums, leaving clear shallow valleys.
+  - **Claws:** each fore claw is rotated about its own base so it points along its toe, curled 15 degrees toward the palm (down and toward the palm, like a cat's at rest with the arm hanging). It is then seated with its base .0075 inside the tip of its own toe, centered on it, 30 degrees toward the back of the toe.
+  - **Sheath:** a nail-bed hood of skin (a flattened ellipsoid joined by a smooth minimum) sits over each claw's root on the back of the toe tip. The flat claw top is inside the toe, and the skin folds over the claw's base.
+  - **Pads:** one palm pad and four toe pads are flattened ellipsoids joined by smooth minimums (palm pad blend radius .008), so each is a dome that rolls into the skin with no edge.
+  - **What did not work:** joining a claw-shaped collar to the skin (v2a to v2h) folded the skin mesh in the valleys next to each claw. The paw's vertex spacing is about .002, so the collar was only about four edges across. With it off there are no folds at all (v2i), and the hood replaces it.
+  - **Vertex mover:** this step's mover (`move_vertices_from`) adds three things. A pre-smoothing of the starting positions with a move along the smoothed normals (gradient projection had focused vertices into the valleys). A final local unfold. And a short Taubin smoothing (60 passes) that takes the fine waviness off the small toe forms.
+- **Before / after:**
+  - **Bottom of the paw along the row** (z in thousandths, y -.14 to -.06 every .0025):
+    - before -185 -187 -187 -188 -194 -197 -200 -202 -202 -202 -202 -202 -200 -202 -204 -205 -206 -206 -205 -204 -203 -200 -197 -196 -197 -197 -196 -196 -195 -192 -186 -180 -175
+    - after -195 -195 -196 -194 -194 -193 -191 -192 -200 -202 -203 -204 -203 -199 -197 -194 -195 -201 -203 -203 -204 -203 -201 -196 -191 -192 -195 -196 -196 -196 -195 -192 -170
+    - Four toes with tips at -.196, -.204, -.204, -.196 and valleys 5, 10 and 5 thousandths deep (v1: 2 to 6).
+  - **Claw bases:** before at y -.1373, -.1213, -.1008, -.0796 (off the digits, claw 1 up the side). Now at y -.1361, -.1144, -.0906, -.0685, each within .0015 of its toe tip's center (toe tip centers y -.1337, -.1129, -.0911, -.0705). Base z -.1877, -.1943, -.1946, -.1872.
+  - **Claw tops:** each flat top is .0037 to .0067 inside the skin (v1: about .003, with the rim showing).
+  - **Claw tips:** z -.2097, -.2164, -.2162, -.2083, spread over y -.1387 to -.0655.
+  - **Paw extent:** within .002 of before (lowest point -.2037 against -.2056).
+- **Box bounding box, per paw:** |x| .2625 to .3945, y -.17 to -.0305, z -.245 to -.1115. The vertices that moved lie in |x| up to .3693, y -.145 to -.0542, z -.2056 to -.1147.
+- **Displacement outside the region:** 0.0 exactly. 8,001 skin vertices move (step log; 3,962 on +x and 3,949 on -x in the saved file), max .0116. Above z -.1147: 0, so the wrist (z -.09) and the arm are untouched. Every other object is 0.0 except the eight fore claws, which moved rigidly by .010 to .016 (object diff 3232 against 3233). Check passes: one component, no non-manifold edges, no folded faces. 657 faces turn more than 72 degrees against their old orientation, all on the toes, where the old lumps faced other ways.
+- **Images (3199 left, v2 right, +x paw, shadows off):**
+  - `08-hand-front-check.png`
+  - `08-hand-below-check.png`
+  - `08-hand-side-check.png` (from +x, the back of the hand)
+  - `08-hand-back-check.png` (from behind, near-clipped past the tail)
+  - `08-hand-palm-check.png` (palm and pads, near-clipped past the trunk)
+  - `08-hand-wrist-check.png`
+- **My own look (side, front, back, below, palm, three-quarter):**
+  - From the side, front and back: four distinct bean-shaped toes with clear shallow valleys.
+  - Claws: each comes out of the tip of its own toe, centered, angled down along the toe and curling toward the palm, under a small hood of skin. No claw top or cut is visible. From the front the claws still line up behind one another, as four claws in a row along the line of sight must, but they now fan slightly.
+  - Palm: one smooth palm dome and four toe pads, with no lip.
+  - What I can still see: up close from below, a slight unevenness on the surface of the two back toes; and seen from behind, a small soft step behind the back toe. Both are much smaller than the v1 defects.
+- **Wall time:** about 50 minutes of this pass (variants v2a to v2l).
+- **Blocked by:** nothing.
+
+## Cleanup
+
+Superseded by v2 and archived to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\` (purged after 30 days): assembled-3230 and assembled-3231, with their `assembled-3230*` and `assembled-3231*` log files. Scratch dumps in the work folders are deleted.

@@ -1,0 +1,557 @@
+{
+ "name": "hands v2",
+ "approval": null,
+ "note": "hands v2 (2026-10-13), for hands_v2_post.py / hands_v2_field.py, appended after P-earroot2, in place of hands v1. Anatomy review 2026-10-13, finding 8 (Nick, 2026-10-13: \"Yes, fix all ten of them.\"); coordinator review of v1 (2026-10-13): claws came out of the gaps beside the digits with their cut tops showing, bunched from the front, digits small lumps, palm pad with a lip edge. The +x paw is described; the step runs one grid per paw and mirrors every mass to -x. blurs and erode: the old lumps, palm ridges and crease band averaged out, the paw end pulled in .005. toes: one tapered capsule per toe, fuller at the tip (rb .017) than at the knuckle (ra .013), narrower across the row (ySquash 1.95), splayed -9, -3, 3, 9 degrees, joined toe to toe (toeToeK) and to the paw (toeK). pads: palm pad and four toe pads, plus a nail-bed hood on the back of each toe tip over the claw root, all flattened ellipsoids joined by a smooth minimum (no edge). claws: per fore claw a rotation about its base (pivot) so it points along its toe, curled 15 degrees toward the palm, then a translation that seats its base .0075 inside its toe tip, centered on the toe, 30 degrees toward the back of the toe (mirrored for -x). sheath: a claw-shaped collar joined to the skin was tried (v2a to v2h) and folded the coarse skin mesh in the valleys; it is off (collar -1) and the nail-bed hood is the fold instead. preSmooth (with alongNormal), relax, untangle, finalUnfold, postSmooth: the mover settings that put the old lumpy vertices onto the new toes without folds (see hands_v2_field.move_vertices_from and taubin). Development variants v2a to v2l in untracked anatomy-fixes/work/08-hands/specs (this is v2l, from gen3.py). World units, +y back.",
+ "grid": {
+  "lo": [
+   0.255,
+   -0.17,
+   -0.245
+  ],
+  "hi": [
+   0.395,
+   -0.03,
+   -0.08
+  ],
+  "step": 0.0015,
+  "far": 0.05
+ },
+ "blurs": [
+  {
+   "c": [
+    0.33,
+    -0.102,
+    -0.172
+   ],
+   "s": [
+    0.055,
+    0.065,
+    0.055
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.008
+  },
+  {
+   "c": [
+    0.33,
+    -0.1,
+    -0.145
+   ],
+   "s": [
+    0.05,
+    0.065,
+    0.022
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.006
+  }
+ ],
+ "erode": [
+  {
+   "c": [
+    0.336,
+    -0.102,
+    -0.198
+   ],
+   "s": [
+    0.04,
+    0.06,
+    0.05
+   ],
+   "fade": [
+    0.0,
+    1.0
+   ],
+   "depth": 0.005
+  }
+ ],
+ "toes": [
+  {
+   "a": [
+    0.33,
+    -0.1305,
+    -0.16
+   ],
+   "b": [
+    0.33,
+    -0.1337,
+    -0.18
+   ],
+   "ra": 0.013,
+   "rb": 0.017,
+   "ySquash": 1.95
+  },
+  {
+   "a": [
+    0.336,
+    -0.1115,
+    -0.16
+   ],
+   "b": [
+    0.336,
+    -0.1129,
+    -0.1865
+   ],
+   "ra": 0.013,
+   "rb": 0.017,
+   "ySquash": 1.95
+  },
+  {
+   "a": [
+    0.342,
+    -0.0925,
+    -0.16
+   ],
+   "b": [
+    0.342,
+    -0.0911,
+    -0.1865
+   ],
+   "ra": 0.013,
+   "rb": 0.017,
+   "ySquash": 1.95
+  },
+  {
+   "a": [
+    0.345,
+    -0.0735,
+    -0.16
+   ],
+   "b": [
+    0.345,
+    -0.0705,
+    -0.179
+   ],
+   "ra": 0.013,
+   "rb": 0.017,
+   "ySquash": 1.95
+  }
+ ],
+ "toeK": 0.005,
+ "toeToeK": 0.006,
+ "grooves": [],
+ "pads": [
+  {
+   "c": [
+    0.3075,
+    -0.1024,
+    -0.175
+   ],
+   "ang": 195,
+   "s": [
+    0.009,
+    0.026,
+    0.017
+   ],
+   "h": 0.0035,
+   "k": 0.008
+  },
+  {
+   "s": [
+    0.006,
+    0.0075,
+    0.008
+   ],
+   "h": 0.0025,
+   "k": 0.003,
+   "c": [
+    0.3171,
+    -0.1363,
+    -0.1908
+   ],
+   "ang": -140.0
+  },
+  {
+   "s": [
+    0.005,
+    0.0065,
+    0.0075
+   ],
+   "h": 0.0018,
+   "k": 0.003,
+   "c": [
+    0.3419,
+    -0.1363,
+    -0.1919
+   ],
+   "ang": -45.0
+  },
+  {
+   "s": [
+    0.006,
+    0.0075,
+    0.008
+   ],
+   "h": 0.0025,
+   "k": 0.003,
+   "c": [
+    0.323,
+    -0.1138,
+    -0.1974
+   ],
+   "ang": -140.0
+  },
+  {
+   "s": [
+    0.005,
+    0.0065,
+    0.0075
+   ],
+   "h": 0.0018,
+   "k": 0.003,
+   "c": [
+    0.348,
+    -0.1138,
+    -0.1985
+   ],
+   "ang": -45.0
+  },
+  {
+   "s": [
+    0.006,
+    0.0075,
+    0.008
+   ],
+   "h": 0.0025,
+   "k": 0.003,
+   "c": [
+    0.329,
+    -0.0902,
+    -0.1974
+   ],
+   "ang": -140.0
+  },
+  {
+   "s": [
+    0.005,
+    0.0065,
+    0.0075
+   ],
+   "h": 0.0018,
+   "k": 0.003,
+   "c": [
+    0.354,
+    -0.0902,
+    -0.1985
+   ],
+   "ang": -45.0
+  },
+  {
+   "s": [
+    0.006,
+    0.0075,
+    0.008
+   ],
+   "h": 0.0025,
+   "k": 0.003,
+   "c": [
+    0.3321,
+    -0.0678,
+    -0.1898
+   ],
+   "ang": -140.0
+  },
+  {
+   "s": [
+    0.005,
+    0.0065,
+    0.0075
+   ],
+   "h": 0.0018,
+   "k": 0.003,
+   "c": [
+    0.3569,
+    -0.0678,
+    -0.1909
+   ],
+   "ang": -45.0
+  }
+ ],
+ "padK": 0.003,
+ "sheath": {
+  "thick": 0.0012,
+  "collar": -1.0,
+  "k": 0.0045,
+  "margin": 0.008
+ },
+ "claws": {
+  "1": {
+   "R": [
+    [
+     0.995352,
+     -0.050798,
+     -0.081819
+    ],
+    [
+     0.06375,
+     0.984331,
+     0.164403
+    ],
+    [
+     0.072185,
+     -0.168854,
+     0.982994
+    ]
+   ],
+   "pivot": [
+    0.32024,
+    -0.13731,
+    -0.18362
+   ],
+   "t": [
+    0.01445,
+    0.00216,
+    -0.00451
+   ]
+  },
+  "2": {
+   "R": [
+    [
+     0.997584,
+     -0.023794,
+     -0.065264
+    ],
+    [
+     0.029335,
+     0.995923,
+     0.085301
+    ],
+    [
+     0.062968,
+     -0.08701,
+     0.994215
+    ]
+   ],
+   "pivot": [
+    0.33035,
+    -0.1213,
+    -0.19878
+   ],
+   "t": [
+    0.01039,
+    0.00791,
+    0.00407
+   ]
+  },
+  "3": {
+   "R": [
+    [
+     0.998542,
+     0.003853,
+     -0.053839
+    ],
+    [
+     -0.004061,
+     0.999985,
+     -0.003762
+    ],
+    [
+     0.053823,
+     0.003975,
+     0.998543
+    ]
+   ],
+   "pivot": [
+    0.3397,
+    -0.10083,
+    -0.20252
+   ],
+   "t": [
+    0.00704,
+    0.01022,
+    0.00781
+   ]
+  },
+  "4": {
+   "R": [
+    [
+     0.999067,
+     0.023264,
+     -0.03638
+    ],
+    [
+     -0.025745,
+     0.997265,
+     -0.069277
+    ],
+    [
+     0.034669,
+     0.070149,
+     0.996934
+    ]
+   ],
+   "pivot": [
+    0.34668,
+    -0.07962,
+    -0.1943
+   ],
+   "t": [
+    0.00301,
+    0.01062,
+    0.00717
+   ]
+  }
+ },
+ "partBox": {
+  "x": [
+   0.262,
+   0.272,
+   1,
+   1
+  ],
+  "y": [
+   -1,
+   -1,
+   -0.035,
+   -0.03
+  ],
+  "z": [
+   -1,
+   -1,
+   -0.125,
+   -0.11
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 120,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 200,
+  "threshold": 0.5,
+  "rings": 4
+ },
+ "preSmooth": {
+  "iterations": 60,
+  "factor": 0.5,
+  "box": {
+   "z": [
+    -1,
+    -1,
+    -0.17,
+    -0.15
+   ]
+  },
+  "alongNormal": true,
+  "rayIterations": 40
+ },
+ "finalUnfold": {
+  "iterations": 60,
+  "rings": 2
+ },
+ "postSmooth": {
+  "iterations": 60,
+  "lam": 0.5,
+  "mu": -0.53,
+  "box": {
+   "z": [
+    -1,
+    -1,
+    -0.165,
+    -0.15
+   ]
+  }
+ },
+ "generatorParams": {
+  "y": [
+   -0.1305,
+   -0.1115,
+   -0.0925,
+   -0.0735
+  ],
+  "xc": [
+   0.33,
+   0.336,
+   0.342,
+   0.345
+  ],
+  "tipZ": [
+   -0.197,
+   -0.2035,
+   -0.2035,
+   -0.196
+  ],
+  "splay": [
+   -9,
+   -3,
+   3,
+   9
+  ],
+  "knuckleZ": -0.16,
+  "ra": 0.013,
+  "rb": 0.017,
+  "ySquash": 1.95,
+  "toeK": 0.005,
+  "toeToeK": 0.006,
+  "erodeDepth": 0.005,
+  "padK": 0.003,
+  "palm": {
+   "c": [
+    0.3075,
+    -0.1024,
+    -0.175
+   ],
+   "ang": 195,
+   "s": [
+    0.009,
+    0.026,
+    0.017
+   ],
+   "h": 0.0035,
+   "k": 0.008
+  },
+  "toePad": {
+   "s": [
+    0.006,
+    0.0075,
+    0.008
+   ],
+   "h": 0.0025,
+   "k": 0.003,
+   "off": -50
+  },
+  "clawDorsal": 30,
+  "clawCurl": 15,
+  "clawSink": 0.0075,
+  "sheath": {
+   "thick": 0.0012,
+   "collar": -1.0,
+   "k": 0.0045,
+   "margin": 0.008
+  },
+  "lumpSigma": 0.008,
+  "lumpC": [
+   0.33,
+   -0.102,
+   -0.172
+  ],
+  "lumpS": [
+   0.055,
+   0.065,
+   0.055
+  ],
+  "creaseSigma": 0.006,
+  "nailHood": {
+   "off": 45,
+   "s": [
+    0.005,
+    0.0065,
+    0.0075
+   ],
+   "h": 0.0018,
+   "k": 0.003
+  }
+ }
+}
