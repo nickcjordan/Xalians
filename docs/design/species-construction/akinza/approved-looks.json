@@ -189,6 +189,18 @@
      "text": "7: I am fine with how it is now"
     }
    ]
+  },
+  {
+   "part": "hands",
+   "covers": "fore paws and claws: kept as built before the anatomy fixes (no toe reshape)",
+   "approvedOn": "2026-10-14",
+   "approvedIn": "assembled-3199 hands (hands v1 to v3c reverted)",
+   "quotes": [
+    {
+     "at": "2026-10-14",
+     "text": "I think I preferred the look of the prior version better... I'm inclined to say just put it back how it was before."
+    }
+   ]
   }
  ],
  "reopened": [
