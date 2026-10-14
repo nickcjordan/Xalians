@@ -1,0 +1,159 @@
+{
+ "name": "ankle v1",
+ "approval": null,
+ "note": "ankle v1 (2026-10-13), for ankle_v1_post.py / ankle_v1_field.py, appended after P-neck3. Anatomy review 2026-10-13 findings 4 and 13; Nick, 2026-10-13: \"Yes, fix all ten of them.\" Written for the +x leg; the -x leg uses it mirrored on its own grid. sweep: elliptic tapered capsules through the shin's measured center line (z, x, y, half widths rx and ry), hard-unioned, the last segment near vertical so the leg comes down onto the heel centered; joinK: the sweep joined to the skin (adds only where the old ankle is thinner); blurZ: a z-only blur over the ankle that evens the radius profile; blurs: the shin-to-instep corner (fillet), the ring where the shin meets the foot, and the front of the lower shin (the rope ridge); partBox: |x| from .18 (in by .20), z below -.66 (in by -.70), so the knee (z -.557) and everything above it is outside. World units, +y back.",
+ "grid": {
+  "lo": [
+   0.17,
+   -0.19,
+   -0.975
+  ],
+  "hi": [
+   0.46,
+   0.11,
+   -0.64
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "sweep": [
+  {
+   "z": -0.69,
+   "x": 0.276,
+   "y": 0.025,
+   "rx": 0.026,
+   "ry": 0.036
+  },
+  {
+   "z": -0.76,
+   "x": 0.307,
+   "y": 0.024,
+   "rx": 0.031,
+   "ry": 0.041
+  },
+  {
+   "z": -0.8,
+   "x": 0.326,
+   "y": 0.024,
+   "rx": 0.032,
+   "ry": 0.042
+  },
+  {
+   "z": -0.84,
+   "x": 0.339,
+   "y": 0.02,
+   "rx": 0.033,
+   "ry": 0.042
+  },
+  {
+   "z": -0.885,
+   "x": 0.341,
+   "y": 0.012,
+   "rx": 0.033,
+   "ry": 0.04
+  }
+ ],
+ "joinK": 0.02,
+ "blurZ": {
+  "box": {
+   "x": [
+    0.2,
+    0.22,
+    0.44,
+    0.455
+   ],
+   "z": [
+    -0.9,
+    -0.86,
+    -0.74,
+    -0.7
+   ]
+  },
+  "sigma": 0.012
+ },
+ "blurs": [
+  {
+   "c": [
+    0.34,
+    -0.062,
+    -0.868
+   ],
+   "s": [
+    0.045,
+    0.03,
+    0.028
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.016,
+   "mirror": true
+  },
+  {
+   "c": [
+    0.338,
+    -0.005,
+    -0.872
+   ],
+   "s": [
+    0.05,
+    0.055,
+    0.028
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.014,
+   "mirror": true
+  },
+  {
+   "c": [
+    0.315,
+    -0.02,
+    -0.79
+   ],
+   "s": [
+    0.035,
+    0.02,
+    0.07
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.006,
+   "mirror": true
+  }
+ ],
+ "partBox": {
+  "x": [
+   0.18,
+   0.2,
+   0.44,
+   0.455
+  ],
+  "z": [
+   -1,
+   -1,
+   -0.7,
+   -0.66
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ }
+}
