@@ -1,4 +1,6 @@
 """sweep: a smooth tube through control points, each with a radius."""
+import json
+
 import numpy as np
 from .common import pchip, unit
 
@@ -112,8 +114,25 @@ def _frame(T, up, closed):
     return e1, e2
 
 
+_SPINES = {}
+
+
 def spine(params):
-    """The dense spine: points (M,3), radius (M,), ratio (M,), frame vectors e1 (M,3) and e2 (M,3)."""
+    """The dense spine: points (M,3), radius (M,), ratio (M,), frame vectors e1 (M,3) and e2 (M,3). Cached by
+    the parameters' value (single-point field queries, such as a bisection, would otherwise rebuild it on every
+    call); the arrays are read-only so no caller can change a cached spine."""
+    key = json.dumps(params, sort_keys=True, default=float)
+    hit = _SPINES.get(key)
+    if hit is None:
+        if len(_SPINES) > 512:
+            _SPINES.clear()
+        hit = _SPINES[key] = _spine(params)
+        for a in hit:
+            a.setflags(write=False)
+    return hit
+
+
+def _spine(params):
     P, R, Q = _controls(params)
     closed = bool(params.get('closed', DEFAULTS['closed']))
     if closed and len(P) < 3:

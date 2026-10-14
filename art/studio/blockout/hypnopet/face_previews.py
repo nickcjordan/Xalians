@@ -158,6 +158,23 @@ def eye_shading(opened):
     return {'pupilDeg': round(float(pupil), 2), 'irisDeg': round(float(opened-5), 2), 'rimDeg': round(float(opened), 2)}
 
 
+FACE_BOX = (np.array([-0.2, -0.36, 0.28]), np.array([0.2, 0.05, 0.66]))
+
+
+def near_face(insts):
+    """The instances whose padded box reaches the face region. union_at treats an instance as far away wherever
+    its padded box does not contain the point, so dropping the others changes nothing at the face; it only saves
+    time (the legs, body and tail are most of the creature's instances)."""
+    lo, hi = FACE_BOX
+    out = []
+    for i in insts:
+        a, b = i.bounds()
+        pad = i.blend+0.02
+        if np.all(a-pad <= hi) and np.all(b+pad >= lo):
+            out.append(i)
+    return out
+
+
 def face_parts(d):
     """The head part adds of one direction, dictionary d of numbers (meters)."""
     adds = [{'part': 'head', 'kind': 'sweep', 'blend': 0.04, 'params': {'points': V5['neck']}}]
@@ -179,7 +196,7 @@ def build(name, verbose=True):
     adds = face_parts(d)
     # sockets, lids and mouth are fitted to the skin as it will be built: every add of the creature, mirrored,
     # before carving
-    field_adds = parts.instances({'parts': [p for p in keep if p.get('op', 'add') == 'add']+adds})
+    field_adds = near_face(parts.instances({'parts': [p for p in keep if p.get('op', 'add') == 'add']+adds}))
     re = d['eye_r']
     axis = eye_axis(d['eye_yaw'], d['eye_pitch'])
     c, opened = seat_eye(field_adds, np.asarray(d['eye_c'], float), re, axis, d['eye_open'])

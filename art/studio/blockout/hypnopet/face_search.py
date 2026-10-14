@@ -11,11 +11,14 @@ afterwards around the fitted face.
 import argparse
 import copy
 import json
+import os
 import sys
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+for _v in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS'):
+    os.environ.setdefault(_v, '1')            # one thread per worker: the workers are the parallelism
 sys.path.insert(0, str(HERE))
 
 # (key, index or None, step in meters or degrees); extra_adds[0] is the brow mass ((center, radii, blend))
@@ -56,7 +59,8 @@ def put(d, key, i, v):
 def evaluate(d):
     import face_fit as ff
     import face_previews as fp
-    ff.SHEET_CURVES = ff.sheet_curves()
+    ff.SHEET_CURVES = ff.SHEET_CURVES or ff.sheet_curves()
+    ff.STEP = 0.0015                          # coarser grid for the search; the final report runs at 1 mm
     fp.DIRECTIONS['S'] = d
     try:
         spec = fp.build('S', verbose=False)
@@ -75,11 +79,16 @@ def main():
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--sweeps', type=int, default=12)
     ap.add_argument('--workers', type=int, default=20)
+    ap.add_argument('--resume', action='store_true', help='start from <out>/best.json')
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
-    log = (args.out/'log.jsonl').open('a', encoding='utf-8')
-    best = copy.deepcopy(fp.DIRECTIONS[args.start])
-    best['note'] = f'searched from {args.start} against the sheet by face_search.py'
+    log = (args.out/'log.jsonl').open('a', encoding='utf-8', buffering=1)
+    if args.resume:
+        best = json.loads((args.out/'best.json').read_text(encoding='utf-8'))['direction']
+        best['extra_adds'] = [tuple(a) for a in best['extra_adds']]
+    else:
+        best = copy.deepcopy(fp.DIRECTIONS[args.start])
+        best['note'] = f'searched from {args.start} against the sheet by face_search.py'
     scale = 1.0
     with ProcessPoolExecutor(args.workers) as pool:
         best_score, best_m = pool.submit(evaluate, best).result()

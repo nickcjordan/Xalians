@@ -94,7 +94,7 @@ def sheet_curves():
     return out
 
 
-def front_hits(fn, xs, zs, y0=-0.32, y1=-0.02, dy=0.002):
+def front_hits(fn, xs, zs, y0=-0.31, y1=-0.06, dy=0.002):
     """For each (x, z) on the grid: the y of the first surface of field fn met from the front (+inf where none)."""
     ys = np.arange(y0, y1, dy)
     out = np.full((len(zs), len(xs)), np.inf)
@@ -114,8 +114,8 @@ def measure(spec):
     balls = [i for i in insts if i.key == 'eyes']
     if not balls:
         raise SystemExit('no eyes part in the spec')
-    xs = np.arange(0, 0.16+STEP/2, STEP)
-    zs = np.arange(0.28, 0.62, STEP)
+    xs = np.arange(0, 0.14+STEP/2, STEP)
+    zs = np.arange(0.30, 0.57, STEP)
     skin = front_hits(lambda p: parts.union_at(head, p), xs, zs)
     ball = front_hits(lambda p: np.min([b.sdf(p) for b in balls], 0), xs, zs)
     eye = np.isfinite(ball) & (ball < skin)
@@ -156,10 +156,10 @@ def measure(spec):
 
 def side(head, balls, W, eye_z, zs):
     """Profile measures: looking from +x toward the midline, the first surface met; forward is -y."""
-    ys = np.arange(-0.34, 0.0, STEP)
+    ys = np.arange(-0.31, -0.06, STEP)
     hits = {}
     for name, fn in (('skin', lambda p: parts.union_at(head, p)), ('ball', lambda p: np.min([b.sdf(p) for b in balls], 0))):
-        xs = np.arange(0.2, -STEP/2, -0.002)
+        xs = np.arange(0.14, -STEP/2, -0.002)
         out = np.full((len(zs), len(ys)), -np.inf)
         Y, X = np.meshgrid(ys, xs, indexing='ij')
         for i, z in enumerate(zs):
