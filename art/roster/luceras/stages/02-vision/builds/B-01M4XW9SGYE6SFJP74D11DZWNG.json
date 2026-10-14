@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XW9SGYE6SFJP74D11DZWNG",
+  "alias": "79pd",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "D: Tufted ear openings, no standing ears: vision head",
+  "scope": "head",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "83b909cc52c537277356660395caf3e85cd3360fd5e6f6ab62f39afa863a25e2"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 20908,
+    "wallMinutes": 0.9,
+    "image": {
+      "stage": "vision",
+      "element": "head",
+      "label": "D: Tufted ear openings, no standing ears",
+      "summary": "Big horns; no standing ears at all, just ear openings marked by small fur tufts below the horn bases.",
+      "promptSha256": "6b920d21e2a75139a06faff3d014256d96c3dee9bd6cb5f3cf71380c7e9b352a",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn size",
+        "ear implementation"
+      ],
+      "notFor": [
+        "coat",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-79pd",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "83b909cc52c537277356660395caf3e85cd3360fd5e6f6ab62f39afa863a25e2"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:55:22Z",
+  "briefSha256": "84b2041dc8fea569d966a1f78c1f8fcf314e160e8e5cc14718fadc03952a9d22",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:56:16Z"
+}

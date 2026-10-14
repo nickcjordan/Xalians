@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XW9SFGT0KE9NXDG5HGAXVD",
+  "alias": "gqvj",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Ears folded along the horns: vision head",
+  "scope": "head",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "af39be1c47b961871ade848be2051a9d826775dd50a692e767e0264371b8060a"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 27727,
+    "wallMinutes": 1.06,
+    "image": {
+      "stage": "vision",
+      "element": "head",
+      "label": "B: Ears folded along the horns",
+      "summary": "Big horns; short ears folded back flat along the horn curl, almost hidden.",
+      "promptSha256": "01491c322a9eb5679015e0e4f78880bb59b147861295d52c7941f3a86fe01740",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn size",
+        "ear implementation"
+      ],
+      "notFor": [
+        "coat",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-gqvj",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "af39be1c47b961871ade848be2051a9d826775dd50a692e767e0264371b8060a"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:55:22Z",
+  "briefSha256": "13eefbc2b8a64f50004eb99445066e8a0be35c571fdaabd0917860cfa87a03d9",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:56:25Z"
+}

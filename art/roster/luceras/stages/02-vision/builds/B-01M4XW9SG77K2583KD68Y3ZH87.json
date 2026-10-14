@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XW9SG77K2583KD68Y3ZH87",
+  "alias": "7p6g",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "C: Tiny pointed ears under the curl: vision head",
+  "scope": "head",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "95f2a401423d73cb01d002920701397c44ad6da0d4ac14fe39a17220c27d8183"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 19885,
+    "wallMinutes": 1.04,
+    "image": {
+      "stage": "vision",
+      "element": "head",
+      "label": "C: Tiny pointed ears under the curl",
+      "summary": "Big horns; tiny pointed ears set wide and low under the horn curl.",
+      "promptSha256": "fa422ff694c54d494dfe0a858f63f3fafa3321abeedd2ea68a53c043d5866c89",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn size",
+        "ear implementation"
+      ],
+      "notFor": [
+        "coat",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-7p6g",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "95f2a401423d73cb01d002920701397c44ad6da0d4ac14fe39a17220c27d8183"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:55:22Z",
+  "briefSha256": "c17a3cb1681c268ebf8fc575d979c108289bfc6736d6f51317443f3b03f96f36",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:56:24Z"
+}

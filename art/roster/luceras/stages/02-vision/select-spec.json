@@ -3,13 +3,14 @@
  "stage": "02-vision",
  "title": "Luceras Vision Board",
  "heading": "Luceras: vision board",
- "lede": "Stage 2 of 11. Five decisions about how Luceras looks, each as pictures edited from one neutral gray base so only that element changes. Pick one per set; a recommendation is marked, and any pick is fine.",
+ "lede": "Stage 2 of 11, reopened for one more set. Five picks are in; the sixth is the head: horns enlarged into the focal point, ears reduced to pair with them. Pick one; then Confirm again and tell the orchestrator.",
  "order": [
   "palette",
   "horns",
   "eyes",
   "fur",
-  "plume"
+  "plume",
+  "head"
  ],
  "elements": {
   "palette": {
@@ -93,6 +94,24 @@
     "reason": "Set 2, made from your note: closest to the base plume with the fur drawn to pointed tips, so it still answers the record's spiked plume without becoming a weapon. B is the calmer flame, C the slimmest brush."
    },
    "note": "Second set. Your note on the first set: closer to the base image, the flame tongues nearest but too dramatic, no spiked ball."
+  },
+  "head": {
+   "name": "Horns and ears",
+   "question": "Which head: bigger horns as the focal point, with which ears?",
+   "judge": [
+    "Do the horns now own the head?",
+    "Do the ears pair with the horns instead of competing?",
+    "Does it still read as a Luceras at sprite size?"
+   ],
+   "reading": [
+    "mustHave[2]",
+    "mustHave[3]"
+   ],
+   "recommend": {
+    "letter": "A",
+    "reason": "Reads as an ear at sprite size and sits where a bighorn's would, so the horns crown the head without the face going earless. C is the subtler version; D is horns only."
+   },
+   "note": "Added after your note: the rabbit ears and the horns were competing. Every option edits the combined look, so coat, eyes, fur and plume are as you picked them. The record's 'long upright ears' line is amended to match your pick once you confirm."
   }
  },
  "fold": {

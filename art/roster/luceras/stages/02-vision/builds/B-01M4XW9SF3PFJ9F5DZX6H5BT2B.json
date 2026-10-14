@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XW9SF3PFJ9F5DZX6H5BT2B",
+  "alias": "gh7k",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Small round ears behind the horns: vision head",
+  "scope": "head",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 23698,
+    "wallMinutes": 0.99,
+    "image": {
+      "stage": "vision",
+      "element": "head",
+      "label": "A: Small round ears behind the horns",
+      "summary": "Big horns; small rounded ears set low behind the horn bases, like a bighorn sheep's.",
+      "promptSha256": "6f4cbc73d4e5690b464ea76d424f02bfd30d17c0af9e83a4aebdd039931e521e",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn size",
+        "ear implementation"
+      ],
+      "notFor": [
+        "coat",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-gh7k",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:55:22Z",
+  "briefSha256": "1a385bf9ae954e70c5a738cd86d9ed560c5c8499670191a78bc0f3379c704072",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:56:21Z"
+}
