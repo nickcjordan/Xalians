@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH3B90ZSV5FWQJXE22P0",
+  "alias": "fe4g",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (closeup) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY1WASRNT4447V4VYTMPDD",
+    "evidence": [
+      "5c7640b182be825b4734ebdf92b0ac262a7faa958f65cd6803853a2a43fc92f3"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "closeup:95yx",
+  "buildAlias": "95yx",
+  "blob": "5c7640b182be825b4734ebdf92b0ac262a7faa958f65cd6803853a2a43fc92f3"
+}

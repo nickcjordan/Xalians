@@ -1,0 +1,43 @@
+{
+  "id": "N-01M4XYNH53PCST6Z71TD39DMQ8",
+  "alias": "gdyc",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "confirmed the picks on the selection screen",
+  "date": "2026-10-14",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M4XY29AGMNRKHTM8QBHDV1Z9",
+    "builds": [
+      "B-01M4XY29AGMNRKHTM8QBHDV1Z9",
+      "B-01M4XY23E5ZTWXMV0Z7XKK73NV",
+      "B-01M4XY1Z6T5VTYER8GVCYF0Z5B",
+      "B-01M4XY07RHT47ZNM7NZC07PF50",
+      "B-01M4XY1YXEGA5KKZBJFBGTA12T",
+      "B-01M4XY1WASRNT4447V4VYTMPDD",
+      "B-01M4XXWYE63VJ8S99P3N5MF9GJ",
+      "B-01M4XY07Q00H96ANSCCQPD213Q",
+      "B-01M4XY07R7CQJDNWC133K8YFZE",
+      "B-01M4XY07QRJ0PAS8HK2M8YAFZW",
+      "B-01M4XY07PE469DV8VAMTG1TQ17",
+      "B-01M4XY07Q0NJY9GAQCWACFPVZW"
+    ],
+    "evidence": [
+      "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99",
+      "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981",
+      "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "de95391a807cf826b9e19d7a02a1018d28171b19c4fc73a7dee2fe621719a2fe",
+      "5c7640b182be825b4734ebdf92b0ac262a7faa958f65cd6803853a2a43fc92f3",
+      "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "8a78d9128f7aebb5c291f60cb70e0cfbec928fa357d1a91dff1eba27746286f9",
+      "0cd3721f8a18961586ca5f2322f9ef88b402d8ef90078170f37268f787b29148",
+      "2f95f06d6b4a0e42e8275dfec5f7e003001710bd73e9eb37c92cdc46ffebd2d9",
+      "c96afd98e282fa5abaee6f1aed3245e0892be71998e1ade914c7c3af4f108178",
+      "ee0d82e980b576199a8d8bdd66463ff92c5175771c6ea12a013afba580f89de4"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "picksKey": "bare:3zsg=B-3zsg,bare:8aen=B-8aen,bare:n6ej=B-n6ej,closeup:2ptg=B-2ptg,closeup:5pap=B-5pap,closeup:95yx=B-95yx,composite:r9tz=B-r9tz,turnaround:96wg=B-96wg,turnaround:9fxx=B-9fxx,turnaround:ee6r=B-ee6r,turnaround:p4gq=B-p4gq,turnaround:zvnt=B-zvnt"
+}

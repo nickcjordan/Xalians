@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH2V80VMARN5WDJ32XWB",
+  "alias": "9546",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (closeup) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY07RHT47ZNM7NZC07PF50",
+    "evidence": [
+      "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "closeup:2ptg",
+  "buildAlias": "2ptg",
+  "blob": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9"
+}

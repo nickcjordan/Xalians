@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH3VSBHQV17ARTFQGGW9",
+  "alias": "gcrf",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (turnaround) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY07Q00H96ANSCCQPD213Q",
+    "evidence": [
+      "8a78d9128f7aebb5c291f60cb70e0cfbec928fa357d1a91dff1eba27746286f9"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "turnaround:96wg",
+  "buildAlias": "96wg",
+  "blob": "8a78d9128f7aebb5c291f60cb70e0cfbec928fa357d1a91dff1eba27746286f9"
+}

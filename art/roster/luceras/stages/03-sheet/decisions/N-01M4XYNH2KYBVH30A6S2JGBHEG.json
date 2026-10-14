@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH2KYBVH30A6S2JGBHEG",
+  "alias": "pjdk",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (bare) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY1Z6T5VTYER8GVCYF0Z5B",
+    "evidence": [
+      "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "bare:n6ej",
+  "buildAlias": "n6ej",
+  "blob": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9"
+}

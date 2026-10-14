@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH3J4EFVD1CPW6NHGYSR",
+  "alias": "a9t3",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (composite) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XXWYE63VJ8S99P3N5MF9GJ",
+    "evidence": [
+      "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "composite:r9tz",
+  "buildAlias": "r9tz",
+  "blob": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH2CVE883B91ZT9970YN",
+  "alias": "cvry",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (bare) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY23E5ZTWXMV0Z7XKK73NV",
+    "evidence": [
+      "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "bare:8aen",
+  "buildAlias": "8aen",
+  "blob": "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981"
+}

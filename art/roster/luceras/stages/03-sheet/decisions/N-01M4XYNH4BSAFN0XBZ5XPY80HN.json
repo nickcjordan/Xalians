@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH4BSAFN0XBZ5XPY80HN",
+  "alias": "7ehh",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (turnaround) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY07QRJ0PAS8HK2M8YAFZW",
+    "evidence": [
+      "2f95f06d6b4a0e42e8275dfec5f7e003001710bd73e9eb37c92cdc46ffebd2d9"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "turnaround:ee6r",
+  "buildAlias": "ee6r",
+  "blob": "2f95f06d6b4a0e42e8275dfec5f7e003001710bd73e9eb37c92cdc46ffebd2d9"
+}

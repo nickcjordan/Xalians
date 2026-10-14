@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH4MM1A98YP1B9EYDJ56",
+  "alias": "k5sp",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (turnaround) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY07PE469DV8VAMTG1TQ17",
+    "evidence": [
+      "c96afd98e282fa5abaee6f1aed3245e0892be71998e1ade914c7c3af4f108178"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "turnaround:p4gq",
+  "buildAlias": "p4gq",
+  "blob": "c96afd98e282fa5abaee6f1aed3245e0892be71998e1ade914c7c3af4f108178"
+}

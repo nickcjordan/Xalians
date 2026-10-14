@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH4VXEV6Y97VYGKPEP5Z",
+  "alias": "wgae",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (turnaround) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY07Q0NJY9GAQCWACFPVZW",
+    "evidence": [
+      "ee0d82e980b576199a8d8bdd66463ff92c5175771c6ea12a013afba580f89de4"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "turnaround:zvnt",
+  "buildAlias": "zvnt",
+  "blob": "ee0d82e980b576199a8d8bdd66463ff92c5175771c6ea12a013afba580f89de4"
+}

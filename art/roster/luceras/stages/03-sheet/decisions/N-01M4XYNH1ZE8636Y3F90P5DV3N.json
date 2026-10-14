@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XYNH1ZE8636Y3F90P5DV3N",
+  "alias": "8re7",
+  "stage": "03-sheet",
+  "who": "nick",
+  "words": "picked approved (bare) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XY29AGMNRKHTM8QBHDV1Z9",
+    "evidence": [
+      "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:36:43Z",
+  "element": "bare:3zsg",
+  "buildAlias": "3zsg",
+  "blob": "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99"
+}
