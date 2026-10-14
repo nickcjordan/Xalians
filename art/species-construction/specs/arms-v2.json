@@ -1,0 +1,120 @@
+{
+ "name": "arms v2",
+ "approval": null,
+ "note": "arms v2 (2026-10-14), for arms_v2_post.py / arms_v2_field.py, appended after P-shoulders3d. Anatomy review 2026-10-13 finding 5: the upper arm was thinnest under the shoulder (mean radius .032 at z .20) and widened to .045 just below the elbow, then tapered to the wrist, a thin upper arm on a club forearm, with no elbow landmark. As arms-v1.json (mask, axis, grid; along-axis smoothing sAlong .018) with: taper, a fuller upper arm ramping up gradually below the approved shoulder (.0335 at z .19, .037 at .16, .040 at .13) to the forearm top (.041 to .042) and down to the wrist as before; weight, faded in from z .215 to .17 (under the deltoid) and out from -.035 to -.065 (above the wrist); landmarks, the olecranon point behind the elbow (+.0055 toward +y at z .10) and a soft crease in front (-.0015 toward -y at z .095); handZ -.075: nothing below it moves (wrists and hands held). World units, +y back.",
+ "mask": {
+  "xGap": [
+   0.21,
+   0.09,
+   0.35
+  ],
+  "yMax": 0.05,
+  "zTop": 0.26,
+  "zBottom": -0.21
+ },
+ "axis": {
+  "zTop": 0.25,
+  "zBottom": -0.2,
+  "step": 0.01,
+  "smooth": 3
+ },
+ "grid": {
+  "ds": 0.002,
+  "na": 64,
+  "sAlong": 0.018,
+  "aAround": 1.5
+ },
+ "taper": {
+  "rows": [
+   {
+    "z": 0.22,
+    "r": 0.031
+   },
+   {
+    "z": 0.19,
+    "r": 0.0335
+   },
+   {
+    "z": 0.16,
+    "r": 0.037
+   },
+   {
+    "z": 0.13,
+    "r": 0.04
+   },
+   {
+    "z": 0.1,
+    "r": 0.041
+   },
+   {
+    "z": 0.07,
+    "r": 0.042
+   },
+   {
+    "z": 0.04,
+    "r": 0.042
+   },
+   {
+    "z": 0.01,
+    "r": 0.041
+   },
+   {
+    "z": -0.02,
+    "r": 0.039
+   },
+   {
+    "z": -0.05,
+    "r": 0.036
+   },
+   {
+    "z": -0.08,
+    "r": 0.032
+   },
+   {
+    "z": -0.1,
+    "r": 0.032
+   }
+  ]
+ },
+ "weight": {
+  "in": [
+   0.215,
+   0.17
+  ],
+  "out": [
+   -0.035,
+   -0.065
+  ]
+ },
+ "relax": {
+  "iterations": 3,
+  "lambda": 0.5,
+  "mu": -0.53,
+  "fullMove": 0.002
+ },
+ "landmarks": [
+  {
+   "c": 0.1,
+   "sz": 0.02,
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "width": 0.25,
+   "amp": 0.0055
+  },
+  {
+   "c": 0.095,
+   "sz": 0.012,
+   "dir": [
+    0,
+    -1,
+    0
+   ],
+   "width": 0.2,
+   "amp": -0.0015
+  }
+ ],
+ "handZ": -0.075
+}
