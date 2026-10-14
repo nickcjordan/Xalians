@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from parts import Instance, KINDS, build_field, mass, ownership, part_keys, separate_objects, shell, smax, smin, sweep, union_at  # noqa: E402
+from parts import Instance, KINDS, build_field, grid, mass, ownership, part_keys, separate_objects, shell, smax, smin, sweep, union_at  # noqa: E402
 from parts.common import pchip  # noqa: E402
 
 
@@ -168,7 +168,7 @@ class InstanceTests(unittest.TestCase):
             inst('blob', {})
 
     def test_kinds_registered(self):
-        self.assertEqual(sorted(KINDS), ['mass', 'shell', 'sweep'])
+        self.assertEqual(sorted(KINDS), ['grid', 'mass', 'shell', 'sweep'])
 
 
 class UnionTests(unittest.TestCase):
@@ -469,6 +469,44 @@ class CurvedPlateTests(unittest.TestCase):
         q['spine'] = [[0.1, y, z] for _, y, z in q['spine']]
         i = inst('shell', q, mirror='x')
         self.assertLess(i.sdf(np.array([[-0.1, 0.0, 0.0]]))[0], 0)
+
+
+class GridTests(unittest.TestCase):
+    """A sampled sphere: trilinear sampling, the clip, bounds and the sha256 check."""
+
+    def setUp(self):
+        import hashlib
+        import tempfile
+        self.dir = tempfile.mkdtemp()
+        ax = np.arange(-0.2, 0.2001, 0.01)
+        X, Y, Z = np.meshgrid(ax, ax, ax, indexing='ij')
+        vals = (np.sqrt(X**2+Y**2+Z**2)-0.1).astype(np.float32)
+        self.path = str(Path(self.dir)/'sphere.npz')
+        np.savez(self.path, origin=np.array([-0.2, -0.2, -0.2]), voxel=np.float64(0.01), values=vals)
+        self.sha = hashlib.sha256(Path(self.path).read_bytes()).hexdigest()
+
+    def params(self, **kw):
+        return {'file': self.path, 'sha256': self.sha, 'clip': {'center': [0, 0, 0], 'radii': [1, 1, 1], 'blend': 0}, **kw}
+
+    def test_samples_the_distance(self):
+        d = grid.sdf(self.params(), np.array([[0, 0, 0], [0.1, 0, 0], [0.15, 0.0, 0.0], [0.5, 0, 0]]))
+        self.assertAlmostEqual(d[0], -0.1, places=3)
+        self.assertAlmostEqual(d[1], 0.0, places=3)
+        self.assertAlmostEqual(d[2], 0.05, places=3)
+        self.assertGreater(d[3], 1.0)          # outside the grid reads far away
+
+    def test_clip_cuts_and_bounds_follow(self):
+        p = self.params(clip={'center': [0, 0, -0.1], 'radii': [0.2, 0.2, 0.1], 'blend': 0})
+        self.assertGreater(grid.sdf(p, np.array([[0, 0, 0.05]]))[0], 0)    # above the clip: removed
+        self.assertLess(grid.sdf(p, np.array([[0, 0, -0.05]]))[0], 0)      # inside both: kept
+        lo, hi = grid.bounds(p)
+        self.assertAlmostEqual(hi[2], 0.0)
+        self.assertAlmostEqual(lo[0], -0.2)
+
+    def test_sha_mismatch_refused(self):
+        grid._GRIDS.clear()
+        with self.assertRaises(ValueError):
+            grid.sdf(self.params(sha256='0'*64), np.zeros((1, 3)))
 
 
 if __name__ == '__main__':

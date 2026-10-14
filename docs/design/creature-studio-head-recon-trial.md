@@ -55,3 +55,16 @@ Evidence: `docs/design/creature-studio-head-recon/cp1-raw-reconstructions.jpg` (
 - r05 (mini, head crop) is kept as a second head source to compare after alignment.
 
 Decision for CP2: take the head from r04, not the whole body. The v5 body was approved; only the face was failing.
+
+### CP2, first joins (22:00 to 22:30)
+
+New pieces: `art/studio/recon/mesh_to_grid.py` (the reconstruction as a signed distance grid in the studio frame: nearest of 3 million surface samples, sign from the sample's face normal, light Gaussian blur against scan relief), part kind `grid` in `art/studio/parts/grid.py` (trilinear sampling in numpy only so it runs inside Blender, clipped by a smooth ellipsoid, the file pinned by sha256; three unit tests), and `art/studio/blockout/hypnopet/face_recon.py` plus `face_recon.sh` (v5 with its head part replaced by the clipped grid and v5's neck; eyes carved and seated with the same code as the authored faces).
+
+Alignment: no fitting needed. The reconstruction scaled to v5's height already puts its eyes at x = +-0.052, z = 0.436 and its head 0.178 wide at the eyes (round 4's fitted face: +-0.052, 0.4465, 0.173). Both come from the same sheet, so the head lands where v5's head was.
+
+- R1 (first join, `cp2-first-join.jpg`): round face, short snout, smile and eyes in sockets; reads far closer to the sheet than round 4. Faults: the clip flattened the crown and left the reconstruction's own horn base as a lump under v5's horn; the eyes sat about 1 cm proud of the face.
+- Crown fix: clip top at 0.53 plus a dome mass under v5's horn. Eyes sunk (opening half-angle 62 degrees instead of 67) and set a little closer (x 0.047, gaze 4 degrees out).
+- R2 and R3 (`cp2-snout-corrections.jpg`) added small masses to bring the nose and lower lip forward toward the side sheet. Rejected: the lip mass reads as a shelf with teeth, the same failure as the blob faces. No corrective masses on the reconstruction from here on; that path is closed.
+- The fanged slot of a mouth in R1 to R3 was my clip cutting off the chin and lower lip (clip bottom at z 0.33, mouth bottom at 0.336). Clip moved down to 0.30; the measured chin went from 0.2 W behind the eye front to level with it.
+- The numbers: face_fit still reports 11 of 15 misses, but several sheet measures disagree with each other (the bare side view's lower face sits lower relative to the eye than the bare front view's), and the reconstruction reconciled the views. From here I use the numbers for the eyes (size, spacing, height) and the renders for the rest.
+- Building a sharper grid (1 mm, lighter blur) because the 1.5 mm grid softened the nose and lips.
