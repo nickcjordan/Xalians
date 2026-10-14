@@ -1,0 +1,19 @@
+{
+  "id": "B-01M4XXWYE63VJ8S99P3N5MF9GJ",
+  "alias": "r9tz",
+  "stage": "03-sheet",
+  "kind": "run",
+  "goal": "Combined look: the horns4 pick is the composite of every pick",
+  "scope": "composite",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-14T19:23:18Z",
+  "briefSha256": "44f12003f714b95c0e0405805b1f70727d6e7ae86f862a13b7a89346672570f7"
+}

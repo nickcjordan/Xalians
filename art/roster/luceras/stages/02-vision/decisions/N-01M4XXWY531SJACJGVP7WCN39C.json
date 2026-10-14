@@ -1,0 +1,33 @@
+{
+  "id": "N-01M4XXWY531SJACJGVP7WCN39C",
+  "alias": "2qmg",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "confirmed the picks on the selection screen",
+  "date": "2026-10-14",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M4XJRYZDJGASDJTKV2RP0STP",
+    "builds": [
+      "B-01M4XJRYZDJGASDJTKV2RP0STP",
+      "B-01M4XJTD3AZ24N93KDHDC06K2N",
+      "B-01M4XW9SF3PFJ9F5DZX6H5BT2B",
+      "B-01M4XJS07B1NMS8HEQF5NE6CZ5",
+      "B-01M4XXNY4MYMMQ6PVZ2RCCTKYM",
+      "B-01M4XJTNKJ5BR790RJ325FQYS2",
+      "B-01M4XS7N6BFBWG25GF3BNNC0F7"
+    ],
+    "evidence": [
+      "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8",
+      "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9",
+      "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe",
+      "574891431107799d9b5c8547377c6676fc51290e21d6aa72fa3a97251d24ec55",
+      "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00",
+      "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:23:18Z",
+  "picksKey": "eyes=B-5pne,fur=B-bd53,head=B-gh7k,horns=B-kvht,horns4=B-x4ww,palette=B-8gke,plume=B-wn7y"
+}

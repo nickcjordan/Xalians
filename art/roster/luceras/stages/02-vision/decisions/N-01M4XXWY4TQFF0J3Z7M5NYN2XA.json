@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XXWY4TQFF0J3Z7M5NYN2XA",
+  "alias": "7bbd",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "picked A: Tips turned in on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XXNY4MYMMQ6PVZ2RCCTKYM",
+    "evidence": [
+      "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:23:18Z",
+  "element": "horns4",
+  "buildAlias": "x4ww",
+  "blob": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+}
