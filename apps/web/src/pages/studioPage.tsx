@@ -118,7 +118,11 @@ function PartReview({ creature, part }: { creature: string; part: string }) {
 	const activeTab = tab ?? (options.length >= 2 && !wantedBuild ? 'options' : 'review');
 
 	const cameras = sortCameras(Array.from(new Set((activeTab === 'options' ? options : build ? [build] : []).flatMap((b) => Object.keys(b.cameras)))));
-	const cam = cameras.includes(camera) ? camera : (cameras[0] ?? camera);
+	// Until the reviewer picks a camera, open on one that carries the sheet beside it (a part-only preview may have
+	// no full-body front, and a view without its reference is the hardest to judge).
+	const shown = activeTab === 'options' ? options : build ? [build] : [];
+	const referenced = cameras.find((c) => shown.some((b) => b.compare?.some((r) => r.camera === c)));
+	const cam = cameras.includes(camera) ? camera : (referenced ?? cameras[0] ?? camera);
 	const marks = (build && marksByBuild[build.id]) || [];
 	const setMarks = (m: MarkDraft[]) => build && setMarksByBuild((prev) => ({ ...prev, [build.id]: m }));
 	const canMark = !!build && build.status === 'presented';

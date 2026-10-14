@@ -340,7 +340,12 @@ export function canPresent(build: Build, standardCameras: readonly string[] = ST
 		if (c.kind === 'gate' && c.passed !== true) reasons.push(`gate check "${c.id}" has not passed`);
 	}
 	const blobs = new Set(build.outputs.map((o) => o.blob));
-	for (const camera of standardCameras) {
+	// A full build is looked at from every standard camera. A preview may render only the cameras its part
+	// needs (experiment X26, part-only previews): each camera it rendered needs a look note, and it must render one.
+	const rendered = [...new Set(build.outputs.filter((o) => o.role === 'render' && o.camera).map((o) => o.camera as string))];
+	if (build.kind === 'preview' && rendered.length === 0) reasons.push('a preview needs at least one rendered camera');
+	const cameras = build.kind === 'preview' ? rendered : standardCameras;
+	for (const camera of cameras) {
 		const look = build.lookNotes.find((l) => l.camera === camera);
 		if (!look) reasons.push(`no look note for camera ${camera}`);
 		else if (!blobs.has(look.imageBlob)) reasons.push(`look note for ${camera} points at an image that is not among the build outputs`);

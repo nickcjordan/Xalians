@@ -1,0 +1,15 @@
+{
+  "id": "N-01M4WAMD0EZB649PCYQTCR95XF",
+  "alias": "N-gy3d",
+  "rev": 1,
+  "createdAt": "2026-10-14T04:27:20.973Z",
+  "updatedAt": "2026-10-14T04:27:20.973Z",
+  "createdBy": "orchestrator",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4VFEB8ZJMC95G6MABX08MKH",
+    "part": "P-01M4SD18GECA5VQA5F218GNS4V"
+  },
+  "by": "orchestrator",
+  "text": "Retired B-mata: replaced by the reconstructed-head set (experiment X29); all three missed the sheet's eye placement (Nick, 2026-10-13)"
+}

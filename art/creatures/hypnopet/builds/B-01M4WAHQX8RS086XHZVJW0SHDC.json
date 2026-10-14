@@ -1,0 +1,135 @@
+{
+  "id": "B-01M4WAHQX8RS086XHZVJW0SHDC",
+  "alias": "B-m3ml",
+  "rev": 17,
+  "createdAt": "2026-10-14T04:25:53.831Z",
+  "updatedAt": "2026-10-14T04:29:09.594Z",
+  "createdBy": "orchestrator",
+  "part": "P-01M4SD18GECA5VQA5F218GNS4V",
+  "kind": "preview",
+  "compare": [
+    {
+      "camera": "head-front",
+      "blob": "e09acaa1ec435e045e8917559073597d3a3e19aa00d9a9806a9e8a6e4327aa25",
+      "label": "Model sheet, bare front"
+    },
+    {
+      "camera": "head-side-left",
+      "blob": "d6799af2c9a2a3d21daf5b898314c3894b5fd0c9757e8167f34504df8fbea229",
+      "label": "Model sheet, bare side"
+    },
+    {
+      "camera": "head-threequarter-left",
+      "blob": "90788bdeb2a19edd1bd99fbc57e7447fff6d39f603335e10987c285950a9c532",
+      "label": "Model sheet turnaround, three-quarter (with fur)"
+    }
+  ],
+  "judge": [
+    "Front view: are the eyes where your sheet puts them (size, spacing, height)? This is what the first two rounds missed.",
+    "Three-quarter view: does the head read as the same soft, round-faced bunny as your sheet, rather than an alien or a goblin?",
+    "Side view: is the snout short and rounded, with the nose and open mouth roughly where your sheet has them?",
+    "Mouth: I think it reads closer to a hiss than your sheet's wide happy smile. Do you agree, and does it matter at this stage?",
+    "Eye size: which of the three is closest to what you want: the bare sheet's size, between, or the painted sheet's larger eyes?"
+  ],
+  "goal": {
+    "text": "Reconstructed head option R3 (experiment X29): the head from a local 3D reconstruction of the bare sheet views, the painted sheet larger eyes"
+  },
+  "targets": [],
+  "method": "Hunyuan3D-2 multi-view reconstruction of the bare front, side and back views (octree 512), as a clipped signed distance grid joined to v5 at the neck; eye mounds softened, studio eyes carved and seated; face_recon.py R3",
+  "outputs": [
+    {
+      "name": "threequarter-left",
+      "blob": "a921531e9b5fd3fb08ebba909823685c5e11751e422fa8ff772574a22f55ba06",
+      "role": "render",
+      "camera": "threequarter-left"
+    },
+    {
+      "name": "head-front",
+      "blob": "d190fd620dcdcdfd80541629c7550b67d7ab1f4336ab09486fce0f3a35c53391",
+      "role": "render",
+      "camera": "head-front"
+    },
+    {
+      "name": "head-threequarter-left",
+      "blob": "747b8b4e2fcc882f3bac339418139807b2a8bd24e3231ff9c342da3bdcb54e14",
+      "role": "render",
+      "camera": "head-threequarter-left"
+    },
+    {
+      "name": "head-side-left",
+      "blob": "d10fd822b888389b30852953ae9623f25e6a32619e2b97cb5178075f7e3fb6be",
+      "role": "render",
+      "camera": "head-side-left"
+    },
+    {
+      "name": "sprite-192",
+      "blob": "eee7d56d097012fec5f37e0f46440303c38e9775610332cc33b7f7145223137d",
+      "role": "sprite"
+    }
+  ],
+  "checks": [
+    {
+      "id": "assembly",
+      "kind": "measure",
+      "value": {
+        "assembly": "build",
+        "assemblySha256": "6b25f10646ea021e39aaf5411dca24a5828b450b9a1d421ffcd9993c3de6218f",
+        "baseline": null
+      },
+      "detail": "the assembly this packet was rendered from"
+    }
+  ],
+  "report": {
+    "changed": "The whole head is new: a local 3D reconstruction (Hunyuan3D-2, multi-view, from the bare front, side and back sheet views) used as the head volume, joined to v5 at the neck; v5 ears, horn and body unchanged. Eye mounds softened, the studio eyes carved and seated, the painted sheet larger eyes. Eye measures against the bare front sheet: opening 0.333 W (sheet 0.32), center 0.303 W from the midline (0.29), gap 0.284 W (0.27). Known gap: the mouth reads closer to a hiss than the sheet smile (independent critic, 5 of 10 overall), and the eyes show slightly past the outline from above.",
+    "outputs": [
+      "head-front",
+      "head-threequarter-left",
+      "head-side-left"
+    ],
+    "defectResults": [
+      {
+        "defect": "D-01M4V2KWSBKB1C3MSP3V7436A6",
+        "result": "partly",
+        "evidence": "the skull is round and short-faced like the sheet; the muzzle still reads somewhat cat-like"
+      }
+    ],
+    "blockedBy": {
+      "hold": "nothing"
+    },
+    "outsideChanges": [
+      {
+        "what": "the neck top and the crown under the horn",
+        "why": "the new head joins v5 there (v5 neck sweep, a crown dome under the horn)"
+      }
+    ]
+  },
+  "lookNotes": [
+    {
+      "camera": "head-front",
+      "imageBlob": "d190fd620dcdcdfd80541629c7550b67d7ab1f4336ab09486fce0f3a35c53391",
+      "note": "Eyes at the sheet's height and spacing; round skull, open mouth with tongue. The mouth is smaller than the sheet's and the upper lip corners point down."
+    },
+    {
+      "camera": "head-threequarter-left",
+      "imageBlob": "747b8b4e2fcc882f3bac339418139807b2a8bd24e3231ff9c342da3bdcb54e14",
+      "note": "Round face and short snout read as the sheet's bunny; the far eye shows a little past the face outline; the muzzle reads somewhat cat-like."
+    },
+    {
+      "camera": "head-side-left",
+      "imageBlob": "d10fd822b888389b30852953ae9623f25e6a32619e2b97cb5178075f7e3fb6be",
+      "note": "Short rounded snout with the open mouth below the nose; the snout tip is a little pointed and the chin shallow next to the sheet."
+    },
+    {
+      "camera": "threequarter-left",
+      "imageBlob": "a921531e9b5fd3fb08ebba909823685c5e11751e422fa8ff772574a22f55ba06",
+      "note": "Head and v5 body join cleanly at the neck; no seam or step visible at this size; reads at sprite size (192 px)."
+    }
+  ],
+  "cost": {
+    "wallMinutes": 0.08,
+    "blenderMinutes": 0.15
+  },
+  "status": "presented",
+  "startedAt": "2026-10-14T04:26:23.273Z",
+  "endedAt": "2026-10-14T04:26:28.090Z"
+}

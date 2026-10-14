@@ -290,6 +290,17 @@ describe('reports and presenting', () => {
 		});
 		expect(canPresent(build).ok).toBe(true);
 	});
+
+	it('a part-only preview needs look notes for the cameras it rendered, not every standard camera (X26)', () => {
+		const { part, defect } = memData();
+		const outputs = [{ name: 'head-front', blob: HASH, role: 'render', camera: 'head-front' }, { name: 'head-front-ref', blob: HASH2, role: 'reference', camera: 'head-front' }];
+		const missing = mkBuild(part, defect, 1, 'm', { kind: 'preview', outputs, lookNotes: [] });
+		expect(canPresent(missing).reasons).toEqual(['no look note for camera head-front']);
+		const seen = mkBuild(part, defect, 1, 'm', { kind: 'preview', outputs, lookNotes: [{ camera: 'head-front', imageBlob: HASH, note: 'eyes at the sheet spacing' }] });
+		expect(canPresent(seen).ok).toBe(true);
+		const nothing = mkBuild(part, defect, 1, 'm', { kind: 'preview', outputs: [], lookNotes: [] });
+		expect(canPresent(nothing).reasons).toContain('a preview needs at least one rendered camera');
+	});
 });
 
 describe('applyReview', () => {

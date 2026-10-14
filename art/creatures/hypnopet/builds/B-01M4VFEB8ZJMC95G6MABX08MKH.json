@@ -1,9 +1,9 @@
 {
   "id": "B-01M4VFEB8ZJMC95G6MABX08MKH",
   "alias": "B-mata",
-  "rev": 13,
+  "rev": 14,
   "createdAt": "2026-10-13T20:32:11.039Z",
-  "updatedAt": "2026-10-13T23:32:55.907Z",
+  "updatedAt": "2026-10-14T04:27:20.965Z",
   "createdBy": "orchestrator",
   "part": "P-01M4SD18GECA5VQA5F218GNS4V",
   "kind": "preview",
@@ -484,7 +484,7 @@
     "wallMinutes": 0.53,
     "blenderMinutes": 1.26
   },
-  "status": "presented",
+  "status": "superseded",
   "orchestratorSession": "7fa482e3",
   "startedAt": "2026-10-13T23:32:19.071Z",
   "endedAt": "2026-10-13T23:32:51.096Z"

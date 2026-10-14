@@ -14,9 +14,9 @@ from PIL import Image, ImageDraw, ImageFont
 TARGETS = Path(r'C:\dev\art-data\studio\blockout\hypnopet\targets')
 CLOSEUP = Path(r'C:\dev\art-data\studio\blockout\hypnopet\face-fit\closeup-face.png')
 REF = {
-    'head-front': (TARGETS/'flesh-front.png', (200, 200, 950, 800)),
-    'head-threequarter-left': (TARGETS/'turnaround.png', (400, 170, 660, 440)),
-    'head-side-left': (TARGETS/'flesh-side.png', (50, 150, 800, 800)),
+    'head-front': (TARGETS/'flesh-front.png', (200, 170, 950, 920)),
+    'head-threequarter-left': (TARGETS/'turnaround.png', (395, 170, 665, 440)),
+    'head-side-left': (TARGETS/'flesh-side.png', (50, 100, 800, 850)),
     'front': (TARGETS/'flesh-front.png', None),
     'side-left': (TARGETS/'flesh-side.png', None),
     'threequarter-left': (TARGETS/'turnaround.png', None),

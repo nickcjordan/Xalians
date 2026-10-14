@@ -1,9 +1,9 @@
 {
   "id": "B-01M4VFEBVGSH5A04VPMZKSMWTD",
   "alias": "B-rhmr",
-  "rev": 13,
+  "rev": 14,
   "createdAt": "2026-10-13T20:32:11.631Z",
-  "updatedAt": "2026-10-13T23:33:01.981Z",
+  "updatedAt": "2026-10-14T04:27:21.869Z",
   "createdBy": "orchestrator",
   "part": "P-01M4SD18GECA5VQA5F218GNS4V",
   "kind": "preview",
@@ -484,7 +484,7 @@
     "wallMinutes": 0.53,
     "blenderMinutes": 1.28
   },
-  "status": "presented",
+  "status": "superseded",
   "orchestratorSession": "7fa482e3",
   "startedAt": "2026-10-13T23:32:25.297Z",
   "endedAt": "2026-10-13T23:32:57.139Z"
