@@ -179,3 +179,42 @@ Ear roots v2 were accepted and posted to Nick. Hands v2 were not: claw 1 still s
 ## Cleanup (third pass)
 
 Superseded by hands v3 and archived to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\`: assembled-3233 and its `assembled-3233*` log files. assembled-3232 (ear roots v2, posted to Nick) stays as the base of 3234. Scratch dumps and the refinement's dry-run blend are deleted.
+
+## 8d. Hands v3b (cleanup pass, coordinator review of v3, 2026-10-13)
+
+- **Asked:** the front toe read as one big swollen, dented lump in the front view; small dents, wrinkles and raised outline ridges sat on the toes (from below); faint pleats sat in the valleys between the back toes. Shapes, separations and claw seating were to stay as v3.
+- **Base:** assembled-3234 (`recipe-pawrefine-v1.json`). **Output:** assembled-3236, recipe `recipe-hands-v3b.json` (chain ... P-earroot2, P-pawrefine1, P-hands3b; step `art/species-construction/hands_v3b_post.py` with `hands_v3b_field.py`, spec `specs/hands-v3b.json`), in place of P-hands3. `hands_v3_field.py` is left as committed, so `recipe-hands-v3.json` still builds.
+- **Causes, measured:**
+  - The eroded old paw bottom (about z -.200) almost coincided with the toe tips (-.197 to -.204), and the front toe sat on the old paw's front face (y -.145). The smooth union fused them, so the front toe swelled.
+  - A height map of a toe's bottom (toe 2, every .0025 by .002) is one clean dome with its lowest point at the center and no raised rim in the geometry. The outline rings seen from below are the render rig's rim light catching the tight groove where each toe met the paw (toe-to-paw blend .005).
+- **What changed:**
+  - Rounded half-space cuts of the old paw before the toes are added: its bottom above z -.188, its front face behind y -.138 and its back face in front of y -.062, below z -.17, blended over .025.
+  - Toe-to-paw blend .009, so each toe rises from the paw gradually.
+  - Outer toes slightly smaller (tip radii .0128, .0145, .0145, .013).
+  - Separate toe pads off: the bean is the pad, and the pads' own blend edge printed a ring.
+  - Toe-to-toe blend .006, and Taubin smoothing raised to 300 passes.
+  - A first try with a sharp front cut (fade .012) printed a crease across the front toe (v3f); the wider, rounder cut fixed it.
+- **Numbers (3199 against 3236):**
+  - **Bottom of the paw along the row** (z in thousandths, y -.14 to -.06 every .0025):
+    - after -190 -194 -196 -197 -197 -197 -196 -195 -199 -202 -203 -204 -204 -203 -202 -199 -200 -202 -203 -204 -204 -203 -201 -199 -194 -195 -196 -196 -196 -195 -192 -188 -170
+    - Four toes as v3, tips -.197, -.204, -.204, -.196.
+  - **Front-toe zone** (y below -.125, z below -.165): front-to-back extent x .3018 to .3498 (.048; v3 and 3199 about .052). Toe 2's zone is .3011 to .3622.
+  - **Claw bases:** y -.1323, -.1131, -.0925, -.0719, centered on their toes.
+  - **Claw tops:** each top rim is .0036 to .0062 inside the skin.
+  - **Claw tips:** z -.2076 to -.2154.
+- **Box bounding box, per paw:** as v3 (|x| .263 to .395, y -.17 to -.031, z -.245 to -.111).
+- **Displacement outside the region:** 0.0. 93,434 skin vertices move, max .0102. Against 3199, the wrist band (z -.115 to -.09) moved 0.0, and no old vertex between z -.116 and 0 moved. Every other object is 0.0 except the eight fore claws, which moved rigidly by .009 to .013 (object diff 3234 against 3236). Check passes: one component, 0 non-manifold edges, no folded faces.
+- **Images (3199 left, v3b right, +x paw, shadows off; the 08 files are overwritten):** `08-hand-front-check.png`, `08-hand-below-check.png`, `08-hand-side-check.png`, `08-hand-back-check.png`, `08-hand-palm-check.png`, `08-hand-wrist-check.png`.
+- **My own look:**
+  - Side: four clean round toe beans, a claw out of each tip.
+  - Front: the front toe is smaller and smoother than in v3, but it is still the largest form in that view (it is the nearest toe, seen side-on).
+  - Below: the outline rings are much softer.
+  - Not cleared:
+    - Fine pleats remain in the valleys between the toes, seen from below and from the palm side, and they roughen the third toe's surface in the palm view.
+    - The palm pad has a soft crease along its lower edge.
+- **Blocked by:** nothing named. The remaining pleats come from the mover crowding vertices into the concave valleys between toes (more Taubin passes no longer change them, v3d to v3g). The next lever would be to re-sample the toe zone itself (rebuild the faces from the new surface, for example a local remesh inside the toe box) instead of moving the old vertices onto it.
+- **Wall time:** about 40 minutes over two sessions (v3e to v3g, plus the build).
+
+## Cleanup (cleanup pass)
+
+Superseded by hands v3b and archived to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\`: assembled-3235 and its `assembled-3235*` log files. assembled-3234 (refined paws) stays as the base of 3236; assembled-3232 (ear roots v2) stays. Scratch dumps are deleted.
