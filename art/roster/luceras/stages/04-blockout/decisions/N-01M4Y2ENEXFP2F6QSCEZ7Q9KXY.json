@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4Y2ENEXFP2F6QSCEZ7Q9KXY",
+  "alias": "csj6",
+  "stage": "04-blockout",
+  "who": "nick",
+  "words": "picked approved (blockout) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+    "evidence": [
+      "e0f773bd99edeb6a1be1f037696e81d08743eae33781ab7f25d15d6ab6d4d676"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T20:42:53Z",
+  "element": "blockout:blockout_.blend_(bound_rest_mesh,_armature)",
+  "buildAlias": "t479",
+  "blob": "e0f773bd99edeb6a1be1f037696e81d08743eae33781ab7f25d15d6ab6d4d676"
+}

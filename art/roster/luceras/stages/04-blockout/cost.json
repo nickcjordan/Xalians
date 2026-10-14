@@ -1,0 +1,18 @@
+{
+  "tokens": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "byRole": {},
+  "blenderMinutes": 5.09,
+  "codexTokens": 0,
+  "buildCount": 2,
+  "buildsWithoutTranscripts": [
+    "wac3",
+    "t479"
+  ],
+  "closedAt": "2026-10-14T20:42:53Z",
+  "approval": "N-01M4Y2ENG64BZQ7AX0RC64Y3B1"
+}

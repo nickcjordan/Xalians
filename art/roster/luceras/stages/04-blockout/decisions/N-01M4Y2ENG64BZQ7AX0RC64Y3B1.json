@@ -1,0 +1,31 @@
+{
+  "id": "N-01M4Y2ENG64BZQ7AX0RC64Y3B1",
+  "alias": "5emb",
+  "stage": "04-blockout",
+  "who": "nick",
+  "words": "confirmed the picks on the selection screen",
+  "date": "2026-10-14",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+    "builds": [
+      "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+      "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+      "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+      "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+      "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+      "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG"
+    ],
+    "evidence": [
+      "20ca05c945307bb3fe4cf332333222cebae5d66eb0c1306cea873ca3a126e3cc",
+      "e0f773bd99edeb6a1be1f037696e81d08743eae33781ab7f25d15d6ab6d4d676",
+      "45909377d60bc291255138769ba7a6155752f5cb0301717dea302aa32da17773",
+      "d1ac14caa601da51a7b0cb52c1fb803a0fb4c2f4043a887e1bc7d59c0152ea37",
+      "49973efdf59b7a9676373b2553aa91e7343ec6c8f45495d5023b1e1143942338",
+      "e6693c32b646bd0337b34f52e4b7ce0d182c42b4b612a39bfda0e6fadebbc936"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T20:42:53Z",
+  "picksKey": "blockout:blender_report.json_(bind,_poses,_volumes,_timings)=B-t479,blockout:blockout_.blend_(bound_rest_mesh,_armature)=B-t479,blockout:blockout_glb_(skinned_rest_mesh,_40_joints)=B-t479,blockout:compare_front=B-t479,blockout:compare_side=B-t479,blockout:reconstruction_mesh_(recon_mv3_shape.glb)=B-t479"
+}

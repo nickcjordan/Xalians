@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4Y2ENEM574S6RGNWZF71KXN",
+  "alias": "khh6",
+  "stage": "04-blockout",
+  "who": "nick",
+  "words": "picked approved (blockout) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+    "evidence": [
+      "20ca05c945307bb3fe4cf332333222cebae5d66eb0c1306cea873ca3a126e3cc"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T20:42:53Z",
+  "element": "blockout:blender_report.json_(bind,_poses,_volumes,_timings)",
+  "buildAlias": "t479",
+  "blob": "20ca05c945307bb3fe4cf332333222cebae5d66eb0c1306cea873ca3a126e3cc"
+}

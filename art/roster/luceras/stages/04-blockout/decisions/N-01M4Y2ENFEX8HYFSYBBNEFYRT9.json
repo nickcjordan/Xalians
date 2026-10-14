@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4Y2ENFEX8HYFSYBBNEFYRT9",
+  "alias": "k5ac",
+  "stage": "04-blockout",
+  "who": "nick",
+  "words": "picked approved (blockout) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+    "evidence": [
+      "d1ac14caa601da51a7b0cb52c1fb803a0fb4c2f4043a887e1bc7d59c0152ea37"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T20:42:53Z",
+  "element": "blockout:compare_front",
+  "buildAlias": "t479",
+  "blob": "d1ac14caa601da51a7b0cb52c1fb803a0fb4c2f4043a887e1bc7d59c0152ea37"
+}

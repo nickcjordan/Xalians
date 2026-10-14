@@ -87,15 +87,24 @@
       "closedAt": "2026-10-14T19:36:44Z"
     },
     "04-blockout": {
+      "state": "closed",
+      "approval": "N-01M4Y2ENG64BZQ7AX0RC64Y3B1",
+      "evidence": [
+        "20ca05c945307bb3fe4cf332333222cebae5d66eb0c1306cea873ca3a126e3cc",
+        "e0f773bd99edeb6a1be1f037696e81d08743eae33781ab7f25d15d6ab6d4d676",
+        "45909377d60bc291255138769ba7a6155752f5cb0301717dea302aa32da17773",
+        "d1ac14caa601da51a7b0cb52c1fb803a0fb4c2f4043a887e1bc7d59c0152ea37",
+        "49973efdf59b7a9676373b2553aa91e7343ec6c8f45495d5023b1e1143942338",
+        "e6693c32b646bd0337b34f52e4b7ce0d182c42b4b612a39bfda0e6fadebbc936"
+      ],
+      "openedAt": "2026-10-14T19:36:44Z",
+      "closedAt": "2026-10-14T20:42:53Z"
+    },
+    "05-sculpt": {
       "state": "open",
       "approval": null,
       "evidence": [],
-      "openedAt": "2026-10-14T19:36:44Z"
-    },
-    "05-sculpt": {
-      "state": "not-started",
-      "approval": null,
-      "evidence": []
+      "openedAt": "2026-10-14T20:42:53Z"
     },
     "06-gamemesh": {
       "state": "not-started",

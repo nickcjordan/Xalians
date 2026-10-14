@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4Y2ENF56FNZ612N2PXK5T5J",
+  "alias": "rwar",
+  "stage": "04-blockout",
+  "who": "nick",
+  "words": "picked approved (blockout) on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4Y1D7C8EQ7HFJ3BKJ38ZWNG",
+    "evidence": [
+      "45909377d60bc291255138769ba7a6155752f5cb0301717dea302aa32da17773"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T20:42:53Z",
+  "element": "blockout:blockout_glb_(skinned_rest_mesh,_40_joints)",
+  "buildAlias": "t479",
+  "blob": "45909377d60bc291255138769ba7a6155752f5cb0301717dea302aa32da17773"
+}
