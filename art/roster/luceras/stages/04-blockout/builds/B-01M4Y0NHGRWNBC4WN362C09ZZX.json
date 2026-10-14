@@ -1,0 +1,19 @@
+{
+  "id": "B-01M4Y0NHGRWNBC4WN362C09ZZX",
+  "alias": "wac3",
+  "stage": "04-blockout",
+  "kind": "build",
+  "goal": "Stage 4 blockout and proxy rig, Codex stream (gpt-6-astra), parallel to the Claude build for comparison",
+  "scope": "whole form",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-14T20:11:41Z",
+  "briefSha256": "6dbffdd63fed6f037ff4d218ba31e846b86fecaa4b30f3b1aaf8caef5beba2cd"
+}
