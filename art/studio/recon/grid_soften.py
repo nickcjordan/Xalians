@@ -1,14 +1,15 @@
 """Soften a reconstruction grid locally: a heavy blur inside given spheres, faded into the untouched field.
 
     python art/studio/recon/grid_soften.py --grid <grid.npz> --out <grid.npz> --at x,y,z,radius,sigma [--at ...]
-        [--mirror-x]
+        [--mirror-x] [--below z,fade,sigma]
 
 Each --at is a sphere (center and radius in meters) and a blur width (sigma, meters). Inside the sphere the
 field is the blurred one, fading back to the original over the outer third of the radius. A blurred distance
 field loses its small bumps and ridges while large forms stay put, so this flattens a feature the reconstruction
 invented (the closed eye mounds with their raised skirts, which read as goggles once the studio's eyes are
 seated) without editing the mesh. --mirror-x also softens each sphere's reflection through x = 0.
-Experiment X29.
+--below softens a whole horizontal slab instead: full blur below height z, fading out over the next `fade`
+meters (the jagged cut edge grid_plate.py leaves around the feet). Experiments X29, X32.
 """
 import argparse
 import hashlib
@@ -23,9 +24,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--grid', type=Path, required=True)
     ap.add_argument('--out', type=Path, required=True)
-    ap.add_argument('--at', action='append', required=True)
+    ap.add_argument('--at', action='append', default=[])
+    ap.add_argument('--below')
     ap.add_argument('--mirror-x', action='store_true')
     args = ap.parse_args()
+
     z = np.load(args.grid)
     origin, voxel, vals = np.asarray(z['origin'], float), float(z['voxel']), np.asarray(z['values'], np.float32)
     record = json.loads(str(z['record'])) if 'record' in z.files else {}
@@ -52,8 +55,21 @@ def main():
         w = w*w*(3-2*w)
         cur = out[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]]
         out[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = (cur*(1-w)+blurred[sl]*w).astype(np.float32)
+    below = None
+    if args.below:
+        zc, fade, s = (float(t) for t in args.below.split(','))
+        top = min(vals.shape[2], int((zc+fade-origin[2])/voxel)+1)
+        pad = int(np.ceil(3*s/voxel))
+        block = vals[:, :, :min(vals.shape[2], top+pad)]
+        blurred = ndimage.gaussian_filter(block, s/voxel)[:, :, :top]
+        w = np.clip((zc+fade-axes[2][:top])/fade, 0.0, 1.0)
+        w = (w*w*(3-2*w))[None, None, :]
+        out[:, :, :top] = (out[:, :, :top]*(1-w)+blurred*w).astype(np.float32)
+        below = [zc, fade, s]
+    if not spheres and below is None:
+        ap.error('give --at or --below')
     record['softened'] = {'from': str(args.grid), 'fromSha256': hashlib.sha256(args.grid.read_bytes()).hexdigest(),
-                          'spheres': spheres}
+                          'spheres': spheres, **({'below': below} if below else {})}
     np.savez_compressed(args.out, origin=origin, voxel=np.float64(voxel), values=out, record=json.dumps(record))
     print(json.dumps(record['softened']))
 
