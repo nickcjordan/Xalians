@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XTST31Y68630N9Q12N7PM4",
+  "alias": "wx4y",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "E: Top: sheet turnaround",
+  "scope": "turnaround",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "a0d7142819972fd1d820fdfdc9f89cd260f1a38a075c410c1fabe3d99c7b1800"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17317,
+    "wallMinutes": 1.22,
+    "image": {
+      "stage": "sheet",
+      "element": "turnaround",
+      "label": "E: Top",
+      "summary": "Luceras top view",
+      "promptSha256": "d0398c6fd1ccb027b040b7dbe5f6f5c70a9bf6aa14d55fa47df8c6aec2430698",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "turnaround proportions"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-wx4y",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "a0d7142819972fd1d820fdfdc9f89cd260f1a38a075c410c1fabe3d99c7b1800"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:29:09Z",
+  "briefSha256": "e1b86ace8545dd015125836558eb03b465f754921f85da7ee9c26d3597fb77af",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:30:22Z"
+}

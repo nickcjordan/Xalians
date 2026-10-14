@@ -1,0 +1,46 @@
+{
+ "title": "Luceras Model Sheet",
+ "heading": "Luceras: model sheet",
+ "lede": "Stage 3 of 11. The official reference pack built from your approved picks: a turnaround in the standing rest pose, close-ups of the signature features, and a shaved clay bare body that the 3D blockout will follow. Approve each aspect, or say what needs work and in which view.",
+ "fallback": "Approvals cannot be saved from this view; reply with the aspect names you approve instead.",
+ "order": ["composite", "turnaround", "closeup", "bare"],
+ "elements": {
+  "composite": {
+   "name": "The combined look",
+   "mode": "approve",
+   "question": "Is this the Luceras your picks add up to?",
+   "judge": ["Coat, horns, eyes, fur and plume all as you picked them?", "Still the creature from the approved reading: hare-like, built around the hind legs?"],
+   "reading": ["mustHave[0]", "mustHave[1]"],
+   "recommend": null,
+   "note": "One generated image with all five picks applied to the base. Every sheet view below was edited from this image."
+  },
+  "turnaround": {
+   "name": "Turnaround",
+   "mode": "approve",
+   "question": "Do these five views agree with each other and with the combined look?",
+   "judge": ["Same creature in every view: horn curl, ear length, blaze, plume?", "Proportions consistent from front, side and back?", "The top view is only a layout hint from an image model; judge the other four."],
+   "reading": ["carriedOverFromSilhouette[2]", "carriedOverFromSilhouette[3]"],
+   "recommend": null,
+   "note": "Known contradiction found in my check: the furred side view understates the hind legs compared with the clay views below. The clay views are the shape authority for the blockout, so the furred side view is a look reference only."
+  },
+  "closeup": {
+   "name": "Signature close-ups",
+   "mode": "approve",
+   "question": "Do the head, the hind leg and the plume read the way you want them built?",
+   "judge": ["Head: horns, ears, eyes, whiskers, blaze as picked?", "Hind leg: the heavy thigh, the feathering, the long foot?", "Plume: pointed tips, the size you asked for, not a weapon?"],
+   "reading": ["mustHave[2]", "mustHave[5]"],
+   "recommend": null,
+   "note": "The head and hind-leg crops were regenerated once because the first pass returned full bodies."
+  },
+  "bare": {
+   "name": "Shaved clay bare body",
+   "mode": "approve",
+   "question": "Is this the flesh under the fur, built around the hind legs?",
+   "judge": ["Hind legs clearly heavier and longer than the forelegs, body lower at the front?", "Long hind feet planted flat?", "Slim neck, narrow chest, bare whip tail, no fur volume anywhere?"],
+   "reading": ["mustHave[0]", "carriedOverFromSilhouette[3]"],
+   "recommend": null,
+   "note": "Regenerated once with the hind-leg rule stated outright; the first pass read like a greyhound. These three views set the blockout's proportions, so this is the aspect to be strictest on."
+  }
+ },
+ "decidedFold": "The blockout (next stage) is built in meters at the species' middle height, 57 cm, from the clay views, then bound to the quadruped skeleton and bent into three extreme poses before any look work. Fur volume comes later from the surface stage, never from the mesh. Images were generated on Nick's Codex subscription: 17 images for this stage, about 1.2 minutes and 27K Codex tokens each."
+}

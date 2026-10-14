@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XTST2QAQJ804P4P0W2WNKT",
+  "alias": "883k",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "D: Back: sheet turnaround",
+  "scope": "turnaround",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "ef167e6b58f34ae9ffa26f06a75fc62fb545f3fbc1b4b8e824f3cc9484d9d366"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 20876,
+    "wallMinutes": 1.03,
+    "image": {
+      "stage": "sheet",
+      "element": "turnaround",
+      "label": "D: Back",
+      "summary": "Luceras rear view",
+      "promptSha256": "426aa0d337b9e29a03db86462a0952f1ab8cbd48287ca5fb3d136d23132c5807",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "turnaround proportions"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-883k",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "ef167e6b58f34ae9ffa26f06a75fc62fb545f3fbc1b4b8e824f3cc9484d9d366"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:29:09Z",
+  "briefSha256": "5554d530aba3d53a02d5e11b9638511fd761c0c9258049515991e004f3db7395",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:30:11Z"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XTW2ESGD7XSQKF7QTNQQRM",
+  "alias": "eb79",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "C: Tail plume: sheet closeup",
+  "scope": "closeup",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "78b6e710d79225a1cb6eb5f46cc9358ba2d304dba94c7f76fba9595e128da511"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 40694,
+    "wallMinutes": 0.82,
+    "image": {
+      "stage": "sheet",
+      "element": "closeup",
+      "label": "C: Tail plume",
+      "summary": "Luceras tail plume close-up",
+      "promptSha256": "5afda8bcdb8e11f7a97ac1e1142ea89c81bf3f86e16fadce57ef7cd9b961cec4",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "feature detail"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-eb79",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "78b6e710d79225a1cb6eb5f46cc9358ba2d304dba94c7f76fba9595e128da511"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:30:23Z",
+  "briefSha256": "44da7b98661803ebd220a1ba63423b3da814609e8b0323d09bb2e2c4838b8b9a",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:31:13Z"
+}

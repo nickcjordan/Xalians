@@ -1,0 +1,59 @@
+{
+  "id": "B-01M4XVFCHH3H99E9TAXYDFA083",
+  "alias": "nf8m",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "C: Shaved clay, three-quarter: sheet bare",
+  "scope": "bare",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "d4bef4a265c69f222c53558cc68ba4501f7eee52a40982fd376254ab11f8585e"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 21030,
+    "wallMinutes": 1.65,
+    "image": {
+      "stage": "sheet",
+      "element": "bare",
+      "label": "C: Shaved clay, three-quarter",
+      "summary": "Luceras shaved clay three-quarter v2",
+      "promptSha256": "f66e15d3e35e68df4f1efb8f39c2ae6ad85076f403e50b995ddf5e26955afdcf",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "bare body shape under the fur"
+      ],
+      "notFor": [
+        "color"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-nf8m",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "d4bef4a265c69f222c53558cc68ba4501f7eee52a40982fd376254ab11f8585e"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:40:56Z",
+  "briefSha256": "0859d46c9bd5e098584fa5b96a1ea696026503f01a5d22e439861e152608037b",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:42:36Z"
+}

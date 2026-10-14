@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XTST2BHGAPEWBXVHHGAV2N",
+  "alias": "n869",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "C: Side: sheet turnaround",
+  "scope": "turnaround",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "33269dc63489456243a39e01e4792342dfed60aa183e98ed0c062939c0329a66"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 24083,
+    "wallMinutes": 1.11,
+    "image": {
+      "stage": "sheet",
+      "element": "turnaround",
+      "label": "C: Side",
+      "summary": "Luceras left side",
+      "promptSha256": "80f8245e5f24c1affeeca0b27b7fe13202f7da47d48a5e861db1f76475064052",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "turnaround proportions"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-n869",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "33269dc63489456243a39e01e4792342dfed60aa183e98ed0c062939c0329a66"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:29:09Z",
+  "briefSha256": "817fa580d6ebb0df59b31ceddbce8bf07f6007af63cf563c31cb83a90e4f68f2",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:30:16Z"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XTST3GWCRZYSCGP2XRPHGD",
+  "alias": "mzh5",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "A: Head: sheet closeup",
+  "scope": "closeup",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "4d8044dab7af7c3152057afddd3a87c5a6aec3a1dcf9510bcc49001d3271da1a"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 26741,
+    "wallMinutes": 1.1,
+    "image": {
+      "stage": "sheet",
+      "element": "closeup",
+      "label": "A: Head",
+      "summary": "Luceras head close-up",
+      "promptSha256": "003003db0026c7526bebdaef3a0f952156e7ccdc0b4d827a54011b7f991b9127",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "feature detail"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-mzh5",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "4d8044dab7af7c3152057afddd3a87c5a6aec3a1dcf9510bcc49001d3271da1a"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:29:09Z",
+  "briefSha256": "5a47a74b360b2af698a2a74d2c0a07c2462c0ff0a9b990b426a438d0304d83ed",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:30:16Z"
+}

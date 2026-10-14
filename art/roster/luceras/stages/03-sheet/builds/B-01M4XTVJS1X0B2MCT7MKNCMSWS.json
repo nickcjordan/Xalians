@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XTVJS1X0B2MCT7MKNCMSWS",
+  "alias": "gnfv",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "B: Hind leg and foot: sheet closeup",
+  "scope": "closeup",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "c0bf9724c894d89fb923ee9f1986855dbf2c07582ed459bdd6eba7fc9dbd44bd"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 26599,
+    "wallMinutes": 1.08,
+    "image": {
+      "stage": "sheet",
+      "element": "closeup",
+      "label": "B: Hind leg and foot",
+      "summary": "Luceras hind leg close-up",
+      "promptSha256": "f51857400a26736393188874fa4b5e090184e0607c3c9eb7a5ab383c47cde957",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "feature detail"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-gnfv",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "c0bf9724c894d89fb923ee9f1986855dbf2c07582ed459bdd6eba7fc9dbd44bd"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:30:07Z",
+  "briefSha256": "bab214c48591f059a3612551da5c43f32d56dd4854bc7c789021798407643cce",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:31:12Z"
+}

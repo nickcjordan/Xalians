@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XVFCH077HV9PNAH85SXKS1",
+  "alias": "dt4k",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "B: Hind leg and foot: sheet closeup",
+  "scope": "closeup",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "1cab8a6ecc41fcee977ff8555190d71f8db8de003be41f85e78a788372a91549"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 41075,
+    "wallMinutes": 1.61,
+    "image": {
+      "stage": "sheet",
+      "element": "closeup",
+      "label": "B: Hind leg and foot",
+      "summary": "Luceras hind leg crop v2",
+      "promptSha256": "a0f145f8f8dc9a1e829e6f94df49996f52de00db878e3aa48d455aad79edc01b",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "feature detail"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-dt4k",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "1cab8a6ecc41fcee977ff8555190d71f8db8de003be41f85e78a788372a91549"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:40:56Z",
+  "briefSha256": "6d9f68a84656c70f823a10ca7415acdacb0b79bd320ad788088625d9fd31f1ba",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:42:33Z"
+}

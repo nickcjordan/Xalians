@@ -15,6 +15,10 @@ The page publishes with capabilities {db: {}, user: {}}. Store layout it reads a
   requests/<element>   {kind: "new-set"|"mix", text, at}   set from the two request boxes
   composite/current    {blob, label, note, dataUri?}        written by the orchestrator, shown when all are picked
   status/board         {submitted: true, at, picks}         set by "Confirm these picks"
+An element may carry "mode": "approve" (an aspect Nick approves rather than picks from): all its views show as cards
+without Pick buttons, one "Approve <name>" button writes picks/<element> {alias: "a,b,c", label: "approved", blob,
+blobs: [...], at}, and "Needs work" writes requests/<element> {kind: "rework", text, at}. "recommend": null means no
+recommendation; an optional "note" string renders under the question.
 A sticky left rail (a closed fold on phones) carries the "Source material" once: the species silhouette
 (docs/species-templates/art/<key>.png, embedded once as a CSS variable), the raw lore from
 docs/species-templates/v5/<key>.json, the home world's encyclopedia entry, and the neutral base image with a
@@ -314,6 +318,8 @@ aside.srcrail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:au
 .seg button[aria-pressed="true"]{background:var(--blue-soft);color:var(--fg);font-weight:700;box-shadow:inset 0 -3px 0 var(--blue)}
 .swatch{width:14px;height:14px;border:1px solid var(--muted);display:inline-block}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.set.approve .cards{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.set.approved{border-left:10px solid var(--blue)}
 .card{position:relative;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;transition:opacity .15s}
 .card.rec{border:3px solid var(--amber)}
 .card.picked{border-left:10px solid var(--blue)}
@@ -337,6 +343,10 @@ aside.srcrail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:au
 .ask .row{display:flex;gap:8px;flex-wrap:wrap}
 .ask input{flex:1 1 180px;min-width:0;min-height:40px;padding:6px 10px;border:1px solid var(--line);background:var(--bg)}
 .ask .msg{font-size:.88rem;margin-top:6px}
+.asks.one{grid-template-columns:minmax(0,1fr)}
+.approve-bar{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.approve-bar .msg{margin:0;font-size:.88rem}
+.note-line{margin:0 0 8px;font-size:.95rem}
 .filed{margin-top:10px;font-size:.92rem;border-left:4px solid var(--blue);padding:4px 8px;background:var(--blue-soft)}
 .filed[hidden]{display:none}
 aside.rail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;background:var(--surface);border:1px solid var(--line);padding:14px}
@@ -437,11 +447,22 @@ def render_section(el, cfg, opts, rec_alias, reading, n, total):
         for k, t, note in reading)
     ref = ('<div class="ref"><h3>The approved reading</h3><ul>%s</ul></div>'
            % (ref_items or '<li class="muted">No reading lines attached.</li>'))
+    approve = cfg.get("mode") == "approve"
     cards = []
     for o in opts:
-        rec = o["alias"] == rec_alias
-        reason = ('<p class="reason"><span class="sr">Why recommended: </span>%s</p>' % E(cfg["recommend"]["reason"])) if rec else ""
+        rec = o["alias"] == rec_alias and not approve
+        reason = ('<p class="reason"><span class="sr">Why recommended: </span>%s</p>' % E((cfg.get("recommend") or {}).get("reason", ""))) if rec else ""
         badge = ('<span class="badge">%s Recommended</span>' % ICONS["star"]) if rec else ""
+        if approve:
+            cards.append(
+                '<article class="card" data-alias="%s" data-el="%s">'
+                '<button type="button" class="frame" data-open="%s" data-el="%s" aria-label="Compare %s larger">'
+                '<img data-img="%s" src="%s" alt="%s: %s"></button>'
+                '<div class="card-body"><h3>%s</h3><p class="sum">%s</p>'
+                '<div class="card-actions"><button type="button" class="btn quiet" data-open="%s" data-el="%s">%s Compare</button></div></div></article>'
+                % (o["alias"], el, o["alias"], el, E(o["label"]), o["alias"], o["uri"], E(name), E(o["label"]),
+                   E(o["label"]), E(o["summary"]), o["alias"], el, ICONS["zoom"]))
+            continue
         cards.append(
             '<article class="card%s" data-alias="%s" data-el="%s">'
             '<button type="button" class="frame" data-open="%s" data-el="%s" aria-label="Compare %s larger">'
@@ -454,7 +475,19 @@ def render_section(el, cfg, opts, rec_alias, reading, n, total):
                o["alias"], o["uri"], E(name), E(o["label"]),
                badge, ICONS["check"], E(o["label"]), E(o["summary"]), reason,
                o["alias"], el, o["alias"], el, ICONS["zoom"]))
-    asks = (
+    if approve:
+        asks = (
+            '<div class="approve-bar"><button type="button" class="btn primary" data-approve="%(el)s">Approve %(name)s</button>'
+            '<p class="msg muted" data-approve-msg="%(el)s" aria-live="polite"></p></div>'
+            '<div class="asks one">'
+            '<form class="ask" data-ask="rework" data-el="%(el)s"><h3>Needs work</h3>'
+            '<label for="rw-%(el)s">What should change? (required)</label>'
+            '<div class="row"><input id="rw-%(el)s" type="text" autocomplete="off" placeholder="what to change, and in which view">'
+            '<button class="btn" type="submit">Send for rework</button></div><p class="msg muted" aria-live="polite"></p></form>'
+            '</div><p class="ask-note muted">Requests save only when the picks store is connected; otherwise put them in your reply.</p>'
+            '<p class="filed" data-filed="%(el)s" hidden></p>' % {"el": el, "name": E(name)})
+    else:
+      asks = (
         '<div class="asks">'
         '<form class="ask" data-ask="new-set" data-el="%(el)s"><h3>None of these</h3>'
         '<label for="ns-%(el)s">What is missing? (optional)</label>'
@@ -469,10 +502,11 @@ def render_section(el, cfg, opts, rec_alias, reading, n, total):
     return (
         '<section class="set" id="set-%s" data-el="%s" data-bg="light" aria-labelledby="h-%s">'
         '<div class="set-head"><h2 id="h-%s"><span class="mono muted">%d of %d</span> %s</h2>'
-        '<span class="set-state" data-state="%s">Not picked yet</span></div>'
-        '<p class="question">%s</p><h3>What to judge</h3><ul class="judge">%s</ul>'
+        '<span class="set-state" data-state="%s">%s</span></div>'
+        '<p class="question">%s</p>%s<h3>What to judge</h3><ul class="judge">%s</ul>'
         '%s<div class="toolbar">%s</div><div class="cards">%s</div>%s</section>'
-        % (el, el, el, el, n, total, E(name), el, E(cfg.get("question", "")), judge, ref, bg_toggle(el), "".join(cards), asks))
+        % (el, el, el, el, n, total, E(name), el, "Not approved yet" if approve else "Not picked yet",
+           E(cfg.get("question", "")), ('<p class="note-line muted">%s</p>' % E(cfg["note"])) if cfg.get("note") else "", judge, ref, bg_toggle(el), "".join(cards), asks))
 
 
 JS = r"""
@@ -482,6 +516,8 @@ var D = JSON.parse(document.getElementById('sel-data').textContent);
 var ORDER = D.order, EL = D.elements, TOTAL = ORDER.length;
 var IMG = {};
 document.querySelectorAll('img[data-img]').forEach(function(im){ IMG[im.getAttribute('data-img')] = im.src; });
+var NAPP = ORDER.filter(function(k){ return EL[k].mode === 'approve'; }).length;
+var WORD = NAPP === 0 ? 'picked' : NAPP === TOTAL ? 'approved' : 'decided';
 var ICON = {check: D.icons.check, star: D.icons.star};
 var S = { picks: {}, requests: {}, composite: null, board: null, mode: 'waiting', canWrite: true, pendingUndo: null, firstPicks: true };
 var local = {}; // picks made before the store answered
@@ -492,6 +528,8 @@ function $$(s, r){ return Array.prototype.slice.call((r||document).querySelector
 function opt(el, alias){ var o = EL[el].options; for (var i=0;i<o.length;i++) if (o[i].alias===alias) return o[i]; return null; }
 function el(tag, cls, text){ var e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
 function iconSpan(name){ var s=document.createElement('span'); s.innerHTML=ICON[name]; return s.firstChild; }
+function isApprove(k){ return EL[k].mode === 'approve'; }
+function valid(k, p){ return !!p && (isApprove(k) ? p.alias === EL[k].joined : !!opt(k, p.alias)); }
 function picksNow(){ return S.mode==='ready' ? S.picks : local; }
 function nowIso(){ return new Date().toISOString(); }
 
@@ -511,19 +549,31 @@ function writeFail(e, msgEl){
 // ---------------- render (pure: reads state, never subscribes or writes)
 function render(){
   var P = picksNow(), n = 0;
-  ORDER.forEach(function(k){ if (P[k] && opt(k, P[k].alias)) n++; });
-  $('#progress-n').textContent = n + ' of ' + TOTAL + ' picked';
+  ORDER.forEach(function(k){ if (valid(k, P[k])) n++; });
+  $('#progress-n').textContent = n + ' of ' + TOTAL + ' ' + WORD;
   $('#rail-count').textContent = 'Your picks: ' + n + ' of ' + TOTAL;
   $$('#dots i').forEach(function(d, i){ d.className = i < n ? 'on' : ''; });
 
   ORDER.forEach(function(k){
-    var sec = $('#set-'+k), p = P[k] && opt(k, P[k].alias) ? P[k].alias : null;
-    sec.classList.toggle('has-pick', !!p);
+    var ap = isApprove(k), sec = $('#set-'+k), p = valid(k, P[k]) ? P[k].alias : null;
+    sec.classList.toggle('has-pick', !!p && !ap);
+    sec.classList.toggle('approve', ap);
+    sec.classList.toggle('approved', ap && !!p);
     var st = $('[data-state]', sec);
     st.textContent = '';
-    if (p) { st.appendChild(iconSpan('check')); st.appendChild(document.createTextNode('Picked: ' + opt(k,p).label)); st.className='set-state done'; }
-    else { st.textContent = 'Not picked yet'; st.className='set-state'; }
+    if (p && ap) { st.appendChild(iconSpan('check')); st.appendChild(document.createTextNode('Approved')); st.className='set-state done'; }
+    else if (p) { st.appendChild(iconSpan('check')); st.appendChild(document.createTextNode('Picked: ' + opt(k,p).label)); st.className='set-state done'; }
+    else { st.textContent = ap ? 'Not approved yet' : 'Not picked yet'; st.className='set-state'; }
+    if (ap) {
+      var ab = $('[data-approve="'+k+'"]', sec);
+      ab.textContent = '';
+      if (p) ab.appendChild(iconSpan('check'));
+      ab.appendChild(document.createTextNode(p ? 'Approved' : 'Approve ' + EL[k].name));
+      ab.setAttribute('aria-pressed', p ? 'true' : 'false');
+      ab.disabled = !!p || !S.canWrite;
+    }
     $$('.card', sec).forEach(function(c){
+      if (ap) return;
       var on = c.getAttribute('data-alias') === p;
       c.classList.toggle('picked', on);
       $('[data-picked-badge]', c).hidden = !on;
@@ -536,7 +586,7 @@ function render(){
     var req = S.requests[k], f = $('[data-filed="'+k+'"]');
     if (req) {
       f.hidden = false;
-      f.textContent = (req.kind==='mix' ? 'Mix request on file: ' : 'New set request on file: ') + (req.text ? '"' + req.text + '"' : '(no note)') + '. The orchestrator reads it.';
+      f.textContent = (req.kind==='mix' ? 'Mix request on file: ' : req.kind==='rework' ? 'Rework request on file: ' : 'New set request on file: ') + (req.text ? '"' + req.text + '"' : '(no note)') + '. The orchestrator reads it.';
     } else f.hidden = true;
     $$('.ask input, .ask button', sec).forEach(function(x){ x.disabled = S.mode!=='ready' || !S.canWrite; });
   });
@@ -555,30 +605,30 @@ function renderRail(P, n){
   var ul = $('#rail-picks'); ul.textContent = '';
   var still = [];
   ORDER.forEach(function(k){
-    var o = P[k] && opt(k, P[k].alias);
+    var ap = isApprove(k), o = valid(k, P[k]) ? (ap ? EL[k].options[0] : opt(k, P[k].alias)) : null;
     if (!o) { still.push(EL[k].name); return; }
     var li = el('li', 'pk');
     var im = el('img'); im.src = IMG[o.alias]; im.alt = ''; li.appendChild(im);
     var box = el('div');
     box.appendChild(el('div', 'el', EL[k].name));
-    var lb = el('div', 'lb'); lb.appendChild(iconSpan('check')); lb.appendChild(document.createTextNode(' ' + o.label)); box.appendChild(lb);
+    var lb = el('div', 'lb'); lb.appendChild(iconSpan('check')); lb.appendChild(document.createTextNode(' ' + (ap ? 'Approved' : o.label))); box.appendChild(lb);
     if (S.canWrite) {
       if (S.pendingUndo === k) {
         var cu = el('div', 'confirm-undo'); cu.setAttribute('role','group');
-        cu.appendChild(el('div', null, 'Undo? The options come back.'));
+        cu.appendChild(el('div', null, ap ? 'Undo? The approval is removed.' : 'Undo? The options come back.'));
         var row = el('div', 'row');
         var yes = el('button', 'btn', 'Yes, undo'); yes.type='button'; yes.setAttribute('data-undo-yes', k);
         var no = el('button', 'btn quiet', 'Keep'); no.type='button'; no.setAttribute('data-undo-no', k);
         row.appendChild(yes); row.appendChild(no); cu.appendChild(row); box.appendChild(cu);
       } else {
         var u = el('button', 'linkbtn undo', 'Undo'); u.type='button'; u.setAttribute('data-undo', k);
-        u.setAttribute('aria-label', 'Undo the ' + EL[k].name + ' pick'); box.appendChild(u);
+        u.setAttribute('aria-label', 'Undo the ' + EL[k].name + (ap ? ' approval' : ' pick')); box.appendChild(u);
       }
     }
     li.appendChild(box); ul.appendChild(li);
   });
-  $('#rail-still').textContent = still.length ? 'Still to pick: ' + still.join(', ') + '.' : 'All ' + TOTAL + ' sets picked.';
-  var letters = ORDER.map(function(k){ var o = P[k] && opt(k, P[k].alias); return EL[k].name + ' ' + (o ? o.letter : '?'); }).join(', ');
+  $('#rail-still').textContent = still.length ? 'Still to ' + (NAPP === 0 ? 'pick' : NAPP === TOTAL ? 'approve' : 'decide') + ': ' + still.join(', ') + '.' : 'All ' + TOTAL + ' sets ' + WORD + '.';
+  var letters = ORDER.map(function(k){ var o = valid(k, P[k]) && !isApprove(k) ? opt(k, P[k].alias) : null; return EL[k].name + ' ' + (isApprove(k) ? (valid(k, P[k]) ? 'approved' : '?') : (o ? o.letter : '?')); }).join(', ');
   $('#rail-letters').textContent = 'Letters so far: ' + letters + '.';
 
   var comp = $('#rail-composite'); comp.hidden = n < TOTAL;
@@ -627,11 +677,14 @@ function figFor(alias){
   var fr = el('div', 'frame'); var im = el('img'); im.src = IMG[alias]; im.alt = EL[OV.el].name + ': ' + o.label; fr.appendChild(im); f.appendChild(fr);
   var cap = el('figcaption'); var t = el('strong', null, o.label); cap.appendChild(t);
   if (o.alias === EL[OV.el].recommended) { cap.appendChild(document.createTextNode(' ')); var bd = el('span','badge'); bd.appendChild(iconSpan('star')); bd.appendChild(document.createTextNode(' Recommended')); cap.appendChild(bd); }
-  if (P[OV.el] && P[OV.el].alias === alias) { cap.appendChild(document.createTextNode(' ')); var pk = el('span','badge pk'); pk.appendChild(iconSpan('check')); pk.appendChild(document.createTextNode(' Picked')); cap.appendChild(pk); }
+  var ap = isApprove(OV.el);
+  if (!ap && P[OV.el] && P[OV.el].alias === alias) { cap.appendChild(document.createTextNode(' ')); var pk = el('span','badge pk'); pk.appendChild(iconSpan('check')); pk.appendChild(document.createTextNode(' Picked')); cap.appendChild(pk); }
   cap.appendChild(el('p', 'muted', o.summary));
-  var pb = el('button', 'btn', (P[OV.el] && P[OV.el].alias===alias) ? 'Picked' : 'Pick this'); pb.type='button';
-  pb.setAttribute('data-pick', alias); pb.setAttribute('data-el', OV.el); pb.disabled = !S.canWrite;
-  cap.appendChild(pb);
+  if (!ap) {
+    var pb = el('button', 'btn', (P[OV.el] && P[OV.el].alias===alias) ? 'Picked' : 'Pick this'); pb.type='button';
+    pb.setAttribute('data-pick', alias); pb.setAttribute('data-el', OV.el); pb.disabled = !S.canWrite;
+    cap.appendChild(pb);
+  }
   f.appendChild(cap); return f;
 }
 function renderOverlay(){
@@ -665,6 +718,15 @@ function doPick(k, alias){
   S.picks[k] = body; render(); // optimistic; the snapshot confirms
   retry(function(){ return db.doc('picks/' + k).set(body); }).catch(function(e){ writeFail(e, null); });
 }
+function doApprove(k){
+  if (!S.canWrite) return;
+  var P = picksNow(); if (valid(k, P[k])) return;
+  var opts = EL[k].options;
+  var body = { alias: EL[k].joined, label: 'approved', blob: opts[0].blob, blobs: opts.map(function(o){ return o.blob; }), at: nowIso() };
+  if (S.mode !== 'ready') { local[k] = body; render(); return; }
+  S.picks[k] = body; render();
+  retry(function(){ return db.doc('picks/' + k).set(body); }).catch(function(e){ writeFail(e, $('[data-approve-msg="'+k+'"]')); });
+}
 function doUndo(k){
   S.pendingUndo = null;
   if (S.mode !== 'ready') { delete local[k]; render(); return; }
@@ -676,6 +738,7 @@ function doAsk(form){
   var text = inp.value.trim();
   if (S.mode !== 'ready' || !S.canWrite) return;
   if (kind === 'mix' && !text) { msg.textContent = 'Write what to mix first.'; inp.focus(); return; }
+  if (kind === 'rework' && !text) { msg.textContent = 'Write what to change first.'; inp.focus(); return; }
   var prev = S.requests[k];
   if (prev && prev.kind === kind && prev.text === text) { msg.textContent = 'That request is already on file.'; return; }
   var body = { kind: kind, text: text, at: nowIso() }, btn = $('button', form);
@@ -698,6 +761,7 @@ document.addEventListener('click', function(ev){
   if (!t) return;
   var a;
   if ((a = t.getAttribute('data-pick'))) return doPick(t.getAttribute('data-el'), a);
+  if ((a = t.getAttribute('data-approve'))) return doApprove(a);
   if ((a = t.getAttribute('data-open'))) return openOverlay(t.getAttribute('data-el'), a, t);
   if ((a = t.getAttribute('data-undo'))) { S.pendingUndo = a; render(); var y = $('[data-undo-yes="'+a+'"]'); if (y) y.focus(); return; }
   if ((a = t.getAttribute('data-undo-yes'))) return doUndo(a);
@@ -803,9 +867,13 @@ def build(creature, stage, spec, index=None):
         reading = resolve_reading(creature, cfg.get("reading"))
         sections.append(render_section(el, cfg, opts, rec_alias, reading, n, len(order)))
         data["elements"][el] = {"name": cfg.get("name", el.title()), "recommended": rec_alias,
+                                "mode": "approve" if cfg.get("mode") == "approve" else "pick",
+                                "joined": ",".join(o["alias"] for o in opts),
                                 "options": [{"alias": o["alias"], "letter": o["letter"], "label": o["label"],
                                              "summary": o["summary"], "blob": o["hash"]} for o in opts]}
     total = len(order)
+    napp = sum(1 for el in order if spec["elements"][el].get("mode") == "approve")
+    word = "picked" if napp == 0 else "approved" if napp == total else "decided"
     dots = "".join("<i></i>" for _ in order)
     ov_bg = "".join('<button type="button" data-bg-set="%s" data-el="" aria-pressed="false"><span class="swatch" style="background:%s"></span>%s</button>'
                     % (k, sw, E(name)) for k, name, sw in BGS)
@@ -817,11 +885,11 @@ def build(creature, stage, spec, index=None):
     page.append('<link rel="stylesheet" href="%s">' % FONTS)
     page.append('<div class="wrap">')
     page.append('<header class="top"><h1>%s</h1><p class="lede">%s</p>'
-                '<div class="progress" aria-live="polite"><span class="dots" id="dots" aria-hidden="true">%s</span><span id="progress-n">0 of %d picked</span></div>'
+                '<div class="progress" aria-live="polite"><span class="dots" id="dots" aria-hidden="true">%s</span><span id="progress-n">0 of %d %s</span></div>'
                 '<p class="notice info" id="n-wait">%s<span>Connecting to the picks store. You can look and compare now.</span></p>'
                 '<p class="notice" id="n-fallback" hidden>%s<span>%s</span></p>'
                 '<p class="notice" id="n-readonly" hidden>%s<span>You can see the picks here but not change them.</span></p>'
-                '</header>' % (E(spec["heading"]), E(spec["lede"]), dots, total, ICONS["info"], ICONS["info"], E(spec["fallback"]), ICONS["info"]))
+                '</header>' % (E(spec["heading"]), E(spec["lede"]), dots, total, word, ICONS["info"], ICONS["info"], E(spec["fallback"]), ICONS["info"]))
     page.append('<div class="layout">')
     page.append(
         '<aside class="srcrail" aria-label="Source material">'

@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XTST1FBN69FJACNYVF4N3J",
+  "alias": "rvgy",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "A: Front: sheet turnaround",
+  "scope": "turnaround",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "c1961afde0bbe305cbec8cb7f0c21b8a68f5b93ad95ee002d6d9bd2a9cf66661"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 28177,
+    "wallMinutes": 0.88,
+    "image": {
+      "stage": "sheet",
+      "element": "turnaround",
+      "label": "A: Front",
+      "summary": "Luceras front view",
+      "promptSha256": "1a1cc369d7de050b58b7a6bb8b56f7ddbae795c0013b5eb8c844c92dcf2ad4df",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "turnaround proportions"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-rvgy",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "c1961afde0bbe305cbec8cb7f0c21b8a68f5b93ad95ee002d6d9bd2a9cf66661"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:29:09Z",
+  "briefSha256": "0560cb334802e548c20a78a56f01f0a5986c69fb71e1e9a16fbf456fdead8a53",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:30:02Z"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XTST1YCCMW8QREQH8S13KC",
+  "alias": "w8rg",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "B: Three-quarter front: sheet turnaround",
+  "scope": "turnaround",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "b3d64b3eda6cd250231ac81280696e8b6695bc550778ba15afff7aa6044b71be"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 26029,
+    "wallMinutes": 1.02,
+    "image": {
+      "stage": "sheet",
+      "element": "turnaround",
+      "label": "B: Three-quarter front",
+      "summary": "Luceras front-left three-quarter",
+      "promptSha256": "6e563b3999ad9ca5ebf409ff5dde2fa6621220c1d968f4513d1e9bbcb5101c18",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "turnaround proportions"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-w8rg",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "b3d64b3eda6cd250231ac81280696e8b6695bc550778ba15afff7aa6044b71be"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:29:09Z",
+  "briefSha256": "674fb53e8ff2aed2c6ae68b62b6573479895b6ad6dd7a8cc2f0dff46e98a0b29",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:30:11Z"
+}

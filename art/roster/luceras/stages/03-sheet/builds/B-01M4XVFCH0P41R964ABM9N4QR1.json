@@ -1,0 +1,59 @@
+{
+  "id": "B-01M4XVFCH0P41R964ABM9N4QR1",
+  "alias": "y5a3",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "A: Shaved clay, side: sheet bare",
+  "scope": "bare",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "135f065b8cd6e8d7800a63c89c08f78427dda76b03f68ba8f5da8c694df8ef65"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 20593,
+    "wallMinutes": 1.21,
+    "image": {
+      "stage": "sheet",
+      "element": "bare",
+      "label": "A: Shaved clay, side",
+      "summary": "Luceras shaved clay side v2",
+      "promptSha256": "8c08784d0d8efa9f28f16fc4d17883d60404ce4b8bd09b12907a12224881a5c7",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "bare body shape under the fur"
+      ],
+      "notFor": [
+        "color"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-y5a3",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "135f065b8cd6e8d7800a63c89c08f78427dda76b03f68ba8f5da8c694df8ef65"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:40:56Z",
+  "briefSha256": "6b6990bdf4d4fb17226e345d2a593f663412995ccfa3e9d41a288fe2c4be3fed",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:42:09Z"
+}

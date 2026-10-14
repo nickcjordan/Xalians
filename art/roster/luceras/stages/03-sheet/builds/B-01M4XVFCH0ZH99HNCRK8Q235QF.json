@@ -1,0 +1,57 @@
+{
+  "id": "B-01M4XVFCH0ZH99HNCRK8Q235QF",
+  "alias": "2c9x",
+  "stage": "03-sheet",
+  "kind": "image",
+  "goal": "A: Head: sheet closeup",
+  "scope": "closeup",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "f96af4d100e3678b99d7c305b95f19841ac5f3377f80fcfe21c0cb4a39be953a"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17732,
+    "wallMinutes": 1.12,
+    "image": {
+      "stage": "sheet",
+      "element": "closeup",
+      "label": "A: Head",
+      "summary": "Luceras head crop v2",
+      "promptSha256": "51d8203b1f6c35bc15ae256b6ab9856ea082eca1b6953d08e4a53be116439443",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "feature detail"
+      ],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-2c9x",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "f96af4d100e3678b99d7c305b95f19841ac5f3377f80fcfe21c0cb4a39be953a"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T18:40:56Z",
+  "briefSha256": "374f3cbb7b5bea949c3c4236d322593952e9154721636a55cacdabbdbfc8a3c3",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:42:04Z"
+}
