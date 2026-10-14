@@ -1,0 +1,199 @@
+{
+ "name": "buttocks v3",
+ "recordName": "buttocks-v3",
+ "approval": null,
+ "note": "buttocks v3 (2026-10-14), for buttocks_v1_post.py / buttocks_v1_field.py (unchanged), appended after P-tailring1: buttocks-v2.json on tail base v3 (tailbase spec tailbase-v3.json for the tail clearance masks); otherwise as v2. buttocks v2 (2026-10-14), for buttocks_v1_post.py / buttocks_v1_field.py (unchanged), appended after P-tailbase2 in place of P-buttocks1. As buttocks-v1.json except: tailbase spec tailbase-v2.json (the moved tails for the clearance masks); the lower-cleft blurs dropped (tail base v2 rebuilds the perineum itself); a blur (sigma .01) on the lower inner sides of both buttocks beside the cleft, where the creases and fine lines run, kept off the tails; spotRelax (tangential, shape-keeping) over the +x buttock under the middle tail, both lower inner buttocks and the arch apex. Mirror off as v1. World units, +y back.",
+ "tailbase": "art/species-construction/specs/tailbase-v3.json",
+ "grid": {
+  "lo": [
+   -0.2,
+   -0.06,
+   -0.46
+  ],
+  "hi": [
+   0.2,
+   0.32,
+   -0.06
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "hole": {
+  "d": 0.035,
+  "order": 2,
+  "iterations": 600,
+  "coarseIterations": 3000
+ },
+ "mirror": {
+  "mask": {
+   "c": [
+    -0.08,
+    0.05,
+    -0.21
+   ],
+   "s": [
+    0.08,
+    0.06,
+    0.1
+   ],
+   "fade": [
+    0.6,
+    1.1
+   ]
+  },
+  "xFade": [
+   -0.035,
+   -0.015
+  ],
+  "clear": [
+   0.015,
+   0.03
+  ],
+  "enabled": false
+ },
+ "blurs": [
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      -0.06,
+      0.055,
+      -0.2
+     ],
+     "s": [
+      0.05,
+      0.04,
+      0.07
+     ],
+     "fade": [
+      0.5,
+      1.1
+     ]
+    }
+   ],
+   "clear": [
+    0.008,
+    0.02
+   ]
+  },
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      -0.08,
+      0.04,
+      -0.245
+     ],
+     "s": [
+      0.06,
+      0.045,
+      0.04
+     ],
+     "fade": [
+      0.5,
+      1.1
+     ]
+    },
+    {
+     "c": [
+      0.08,
+      0.04,
+      -0.245
+     ],
+     "s": [
+      0.06,
+      0.045,
+      0.04
+     ],
+     "fade": [
+      0.5,
+      1.1
+     ]
+    }
+   ],
+   "clear": [
+    0.008,
+    0.02
+   ]
+  }
+ ],
+ "partBox": {
+  "x": [
+   -1,
+   -1,
+   0.17,
+   0.19
+  ],
+  "y": [
+   -0.06,
+   -0.04,
+   0.2,
+   0.24
+  ],
+  "z": [
+   -0.42,
+   -0.39,
+   -0.12,
+   -0.09
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ },
+ "spotRelax": [
+  {
+   "c": [
+    0.115,
+    0.08,
+    -0.2
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    -0.08,
+    0.04,
+    -0.24
+   ],
+   "r": 0.035,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.08,
+    0.04,
+    -0.24
+   ],
+   "r": 0.035,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.0,
+    0.0,
+    -0.235
+   ],
+   "r": 0.025,
+   "fade": 0.015,
+   "iterations": 150
+  }
+ ]
+}

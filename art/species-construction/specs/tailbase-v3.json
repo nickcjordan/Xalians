@@ -1,0 +1,337 @@
+{
+ "name": "tail base v3",
+ "recordName": "tailbase-v3",
+ "approval": null,
+ "note": "tail base v3 (2026-10-14), for tailbase_v3_post.py / tailbase_v3_field.py, appended after P-neck3 in place of P-tailbase2. As tailbase-v2.json except: keepZ {z [-.08, -.06], clear [.004, .012]}: above z -.06 the field is the skin's own (torso v1's back profile, approved by Nick) except within .012 of the tails, so the back midline above z -.05 is unchanged and moves at most .0018 at z -.06; keepY [-.055, .005]: the blend between the held front of the arch and the rebuilt perineum is .06 wide (v2 .04), widened rearward so the front-view outline is still held; a tangential relax over the lowest tail's root ring (r .045). The ripple bands on that ring are vertex layout, not surface; P-tailring1 remeshes them. World units, +y back.",
+ "tailsSpec": "art/species-construction/specs/tails-v7.json",
+ "grid": {
+  "lo": [
+   -0.18,
+   -0.08,
+   -0.44
+  ],
+  "hi": [
+   0.24,
+   0.32,
+   0.03
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "hole": {
+  "d": 0.05,
+  "box": {
+   "x": [
+    -1,
+    -1,
+    1,
+    1.1
+   ],
+   "y": [
+    -1,
+    -1,
+    1,
+    1.1
+   ],
+   "z": [
+    -1,
+    -1,
+    1,
+    1.1
+   ]
+  },
+  "iterations": 600,
+  "order": 2,
+  "coarseIterations": 3000,
+  "add": [
+   {
+    "c": [
+     0.0,
+     0.025,
+     -0.235
+    ],
+    "s": [
+     0.055,
+     0.05,
+     0.04
+    ],
+    "fade": [
+     0.9,
+     1.1
+    ]
+   }
+  ],
+  "floorFix": {
+   "y": [
+    -0.12,
+    -0.035
+   ],
+   "z": [
+    -0.3,
+    -0.2
+   ],
+   "margin": 0.0,
+   "above": -0.006,
+   "behindMax": 0.06
+  }
+ },
+ "holeBlur": [
+  {
+   "sigma": 0.006,
+   "band": 0.006
+  }
+ ],
+ "join": {
+  "c": [
+   0.01,
+   0.06,
+   -0.15
+  ],
+  "r": [
+   0.12,
+   0.17
+  ],
+  "zFade": [
+   -0.09,
+   -0.04,
+   0.5
+  ]
+ },
+ "joinK": 0.045,
+ "partBox": {
+  "x": [
+   -1,
+   -1,
+   0.2,
+   0.22
+  ],
+  "y": [
+   -0.06,
+   -0.04,
+   0.26,
+   0.29
+  ],
+  "z": [
+   -0.39,
+   -0.36,
+   -0.03,
+   -0.01
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ },
+ "tailUnionK": 0.045,
+ "move": {
+  "tail": 2,
+  "offset": {
+   "vec": [
+    -0.0058,
+    0.0138,
+    0.0
+   ],
+   "s": [
+    0.03,
+    0.11
+   ]
+  },
+  "rotate": {
+   "pivotS": 0.14,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "deg": -5,
+   "s": [
+    0.14,
+    0.3
+   ]
+  },
+  "warp": {
+   "s": [
+    0.22,
+    0.3
+   ],
+   "near": 0.006
+  },
+  "rootOffset": {
+   "vec": [
+    0.0,
+    0.0,
+    0.035
+   ],
+   "s": [
+    0.05,
+    0.15
+   ]
+  }
+ },
+ "spotRelax": [
+  {
+   "c": [
+    0.045,
+    0.075,
+    -0.172
+   ],
+   "r": 0.02,
+   "fade": 0.015,
+   "iterations": 150
+  },
+  {
+   "c": [
+    0.07,
+    0.064,
+    -0.113
+   ],
+   "r": 0.02,
+   "fade": 0.015,
+   "iterations": 150
+  },
+  {
+   "c": [
+    0.0,
+    0.03,
+    -0.235
+   ],
+   "r": 0.025,
+   "fade": 0.015,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.115,
+    0.08,
+    -0.2
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.01,
+    0.065,
+    -0.17
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.0,
+    0.1,
+    -0.16
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.005,
+    0.075,
+    -0.14
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 250
+  },
+  {
+   "c": [
+    0.0,
+    0.07,
+    -0.15
+   ],
+   "r": 0.045,
+   "fade": 0.02,
+   "iterations": 600
+  }
+ ],
+ "bodyBlur": [],
+ "keepY": [
+  -0.055,
+  0.005
+ ],
+ "joinFloor": {
+  "y": [
+   -0.12,
+   -0.035
+  ],
+  "z": [
+   -0.3,
+   -0.2
+  ],
+  "margin": 0.0,
+  "fade": [
+   0.0,
+   0.012
+  ]
+ },
+ "finalBlur": [
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      0.0,
+      0.025,
+      -0.235
+     ],
+     "s": [
+      0.06,
+      0.055,
+      0.035
+     ],
+     "fade": [
+      0.5,
+      1.1
+     ]
+    }
+   ],
+   "clear": [
+    0.004,
+    0.012
+   ]
+  }
+ ],
+ "floor": {
+  "y": [
+   -0.12,
+   -0.035
+  ],
+  "z": [
+   -0.3,
+   -0.2
+  ],
+  "behind": [
+   -0.05,
+   -0.035
+  ],
+  "k": 0.008,
+  "margin": 0.0
+ },
+ "keepZ": {
+  "z": [
+   -0.08,
+   -0.06
+  ],
+  "clear": [
+   0.004,
+   0.012
+  ]
+ }
+}
