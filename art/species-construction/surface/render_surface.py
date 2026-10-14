@@ -406,10 +406,12 @@ def apply_palette(pal, factor):
         for n in hair.nodes:
             if n.bl_idname == 'ShaderNodeMapRange' and n.inputs['Value'].is_linked and n.inputs['Value'].links[0].from_node.bl_idname == 'ShaderNodeHairInfo':
                 n.inputs['To Min'].default_value = pal['rootLift']
-    if 'diffuseShare' in pal:
+    if 'diffuseShare' in pal:  # only the hair/diffuse share mix (it feeds the shader mix factor), not every float mix
         for n in hair.nodes:
-            if n.bl_idname == 'ShaderNodeMix' and n.data_type == 'FLOAT':
-                n.inputs[2].default_value = pal['diffuseShare']
+            if n.bl_idname == 'ShaderNodeMixShader' and n.inputs[0].is_linked:
+                src = n.inputs[0].links[0].from_node
+                if src.bl_idname == 'ShaderNodeMix' and src.data_type == 'FLOAT':
+                    src.inputs[2].default_value = pal['diffuseShare']
     if pal.get('earLift'):  # ears and crown: treat like pale strands for root darkening and diffuse share, so they read white
         lift = MatBuilder(hair)
         for n in list(hair.nodes):
@@ -494,10 +496,13 @@ def main():
     scene.cycles.device = 'CPU'
     scene.cycles.samples = args.samples
     scene.cycles.use_denoising = True
-    scene.cycles.max_bounces = 4
-    scene.cycles.diffuse_bounces = 2
-    scene.cycles.glossy_bounces = 2
-    scene.cycles.transmission_bounces = 2
+    # dense white fur needs many bounces: at 4/2/2/2 the long fur (ears, crown, tails) lost most of its light
+    # and read gray beside the short coat (fur step 1, 2026-10-14: ear backs 156 -> 205 against the back's 228)
+    scene.cycles.max_bounces = 64
+    scene.cycles.diffuse_bounces = 16
+    scene.cycles.glossy_bounces = 48
+    scene.cycles.transmission_bounces = 48
+    scene.cycles.transparent_max_bounces = 64
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
     scene.render.image_settings.color_mode = 'RGB'
