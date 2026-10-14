@@ -1,0 +1,77 @@
+{
+ "name": "knee v1",
+ "recordName": "knee-v1",
+ "grid": {
+  "lo": [
+   -0.36,
+   -0.2,
+   -0.66
+  ],
+  "hi": [
+   0.36,
+   0.12,
+   -0.42
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "blurs": [
+  {
+   "c": [
+    0.215,
+    -0.105,
+    -0.54
+   ],
+   "s": [
+    0.08,
+    0.06,
+    0.06
+   ],
+   "fade": [
+    0.3,
+    1.2
+   ],
+   "sigma": 0.01,
+   "mirror": true
+  }
+ ],
+ "swells": [],
+ "spotRelax": [],
+ "partBox": {
+  "x": [
+   0.12,
+   0.14,
+   0.33,
+   0.35
+  ],
+  "y": [
+   -1,
+   -1,
+   0.0,
+   0.02
+  ],
+  "z": [
+   -0.64,
+   -0.62,
+   -0.49,
+   -0.47
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ },
+ "approval": null,
+ "note": "knee v1 (2026-10-14), for knee_v1_post.py (pelvis_v1_field.compose, mirrored to both knees), appended after P-groin1. Anatomy review finding 11. One broad masked blur (sigma .01, faded over a wide band) over the front and sides of each knee, which rounds the angular front corner where the thigh turns into the shin and softens the faint crease below the kneecap. No kneecap mound: every mound tried (a Gaussian swell, smooth-union ellipsoids at two heights, with and without a tendon fill below; variants a, d to k in the work folder; one was built as assembled-3261 and archived) sharpened the corner under it and deepened the hollow on its inner lower side, which is the crease the review asked to smooth. partBox z -.62 to -.49 (fade to -.47), |x| .14 to .33: the area above the knee and the ankles are outside it. World units, +y back."
+}
