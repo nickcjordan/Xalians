@@ -1,0 +1,117 @@
+<title>Creature Budget Scene</title>
+<style>
+/* layout: full-screen canvas with a compact control strip at the top and a results panel that slides over it */
+:root{--bg:#15171c;--fg:#e8e6e0;--muted:#a2a6b0;--rule:#2d3038;--card:#1d2027;--blue:#7fa7e8;--amber:#e0a84a;--font-body:"Atkinson Hyperlegible",system-ui,sans-serif;--font-head:"Saira",system-ui,sans-serif;--font-mono:"Martian Mono",ui-monospace,monospace;color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f6f4ef;--fg:#1d1f24;--muted:#5d6270;--rule:#d8d4ca;--card:#ffffff;--blue:#2457a8;--amber:#b9771a;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f6f4ef;--fg:#1d1f24;--muted:#5d6270;--rule:#d8d4ca;--card:#ffffff;--blue:#2457a8;--amber:#b9771a;color-scheme:light}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);display:flex;flex-direction:column;padding-inline:0}
+header{padding:8px 16px;border-bottom:1px solid var(--rule);background:var(--card);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:.85rem}
+header b{font-family:var(--font-head)}
+label{display:inline-flex;align-items:center;gap:4px}
+select,button{font:inherit;font-size:.85rem;background:var(--bg);color:var(--fg);border:1px solid var(--rule);padding:3px 8px}
+button.primary{border-color:var(--blue);color:var(--blue);font-weight:600}
+#stage{flex:1;min-height:0;position:relative}
+canvas{display:block;width:100%;height:100%}
+#hud{position:absolute;left:12px;top:10px;font-family:var(--font-mono);font-size:.8rem;background:var(--card);border:1px solid var(--rule);padding:6px 10px;line-height:1.5;opacity:.95}
+#results{position:absolute;right:12px;top:10px;max-width:min(92vw,520px);background:var(--card);border:1px solid var(--rule);padding:10px 12px;font-size:.85rem;max-height:80%;overflow:auto}
+#results[hidden]{display:none}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--rule);padding:3px 6px;text-align:left}
+.ok{color:var(--blue);font-weight:700}.slow{color:var(--amber);font-weight:700}
+#note{padding:6px 16px;font-size:.8rem;color:var(--muted);border-top:1px solid var(--rule);background:var(--card)}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@600&family=Atkinson+Hyperlegible&family=Martian+Mono:wght@400&display=swap">
+<header>
+<b>Budget scene</b>
+<label>creatures <select id="count"><option>1</option><option>6</option><option selected>12</option><option>24</option></select></label>
+<label>triangles each <select id="tris"><option value="2500">2.5K</option><option value="6000">6K</option><option value="10000" selected>10K</option><option value="15000">15K</option></select></label>
+<label>shading <select id="shade"><option value="lit" selected>lit</option><option value="toon">toon</option></select></label>
+<label>outline <select id="outline"><option value="none" selected>none</option><option value="hull">inverted hull</option></select></label>
+<label>texture <select id="tex"><option value="512">512</option><option value="1024" selected>1024</option><option value="2048">2048</option></select></label>
+<button id="apply">Apply</button>
+<button id="sweep" class="primary">Run sweep (about 1 min)</button>
+</header>
+<div id="stage"><div id="hud">starting</div><div id="results" hidden></div></div>
+<div id="note">Each creature is a procedurally built skinned body with a six-joint spine, four rigid legs and a tail, animated every frame. This is a load stand-in, not art. The sweep steps through presets for four seconds each and reports the median frame time; under 16.7 ms is 60 fps, under 33 ms is 30 fps.</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
+<script>
+(function(){
+const stage=document.getElementById('stage'),hud=document.getElementById('hud'),results=document.getElementById('results');
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+stage.insertBefore(renderer.domElement,hud);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x2a2f3a);
+const camera=new THREE.PerspectiveCamera(35,1,0.1,100);
+scene.add(new THREE.HemisphereLight(0xffffff,0x334455,0.9));
+const sun=new THREE.DirectionalLight(0xffffff,1.1);sun.position.set(3,6,4);scene.add(sun);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:0x3b4452,roughness:1}));ground.rotation.x=-Math.PI/2;scene.add(ground);
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+window.addEventListener('resize',resize);resize();
+
+const texCache={};
+function noiseTexture(size){if(texCache[size])return texCache[size];const c=document.createElement('canvas');c.width=c.height=size;const g=c.getContext('2d');const img=g.createImageData(size,size);const d=img.data;for(let i=0;i<size*size;i++){const x=i%size,y=(i/size)|0;const v=0.55+0.25*Math.sin(x*0.07)*Math.cos(y*0.05)+0.2*(Math.random()-0.5);d[i*4]=200*v;d[i*4+1]=150*v;d[i*4+2]=90*v;d[i*4+3]=255;}g.putImageData(img,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=4;texCache[size]=t;return t;}
+
+function buildCreature(tris,shade,outline,texSize){
+  // body: a capsule along the local z axis, segment counts chosen to hit the triangle target
+  const target=Math.max(400,tris-1200);
+  // capsule triangles are about radial * (2*caps + 1) * 2; with caps = radial/2 that is about 2*radial*radial
+  let radial=Math.max(8,Math.round(Math.sqrt(target/3.4)));let caps=Math.max(4,Math.round(radial/2));
+  const geo=new THREE.CapsuleGeometry(0.22,0.6,caps,radial);
+  geo.rotateX(Math.PI/2);
+  const pos=geo.attributes.position;const n=pos.count;
+  const spine=6,len=1.04;const idx=new Float32Array(n*4),wt=new Float32Array(n*4);
+  for(let i=0;i<n;i++){const z=pos.getZ(i)+len/2;const f=Math.min(spine-1,Math.max(0,z/len*(spine-1)));const a=Math.floor(f),b=Math.min(spine-1,a+1),t=f-a;idx[i*4]=a;idx[i*4+1]=b;wt[i*4]=1-t;wt[i*4+1]=t;}
+  geo.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(idx,4));geo.setAttribute('skinWeight',new THREE.BufferAttribute(wt,4));
+  const bones=[];let prev=null;for(let i=0;i<spine;i++){const b=new THREE.Bone();b.position.z=i===0?-len/2:len/(spine-1);if(prev)prev.add(b);bones.push(b);prev=b;}
+  const map=noiseTexture(texSize);
+  const mat=shade==='toon'?new THREE.MeshToonMaterial({map}):new THREE.MeshStandardMaterial({map,roughness:0.8,metalness:0});
+  const mesh=new THREE.SkinnedMesh(geo,mat);const skel=new THREE.Skeleton(bones);mesh.add(bones[0]);mesh.bind(skel);
+  const group=new THREE.Group();group.add(mesh);
+  if(outline==='hull'){const hg=geo.clone();const p=hg.attributes.position,nr=hg.attributes.normal;for(let i=0;i<p.count;i++){p.setXYZ(i,p.getX(i)+nr.getX(i)*0.012,p.getY(i)+nr.getY(i)*0.012,p.getZ(i)+nr.getZ(i)*0.012);}const hm=new THREE.SkinnedMesh(hg,new THREE.MeshBasicMaterial({color:0x101010,side:THREE.BackSide}));hm.add(bones[0].clone(true));hm.bind(skel);mesh.add(hm);hm.skeleton=skel;}
+  const legGeo=new THREE.CylinderGeometry(0.05,0.06,0.42,8);const legMat=mat;
+  const legs=[];for(const [x,z] of [[-0.14,-0.3],[0.14,-0.3],[-0.14,0.3],[0.14,0.3]]){const l=new THREE.Mesh(legGeo,legMat);l.position.set(x,-0.2,z);group.add(l);legs.push(l);}
+  const tail=new THREE.Mesh(new THREE.ConeGeometry(0.06,0.5,8),legMat);tail.rotation.x=Math.PI/2;tail.position.set(0,0.1,-0.75);group.add(tail);
+  group.position.y=0.42;group.userData={bones,legs,tail,phase:Math.random()*Math.PI*2};
+  return group;
+}
+
+let creatures=[];let current={};
+function rebuild(cfg){for(const c of creatures){scene.remove(c);c.traverse(o=>{if(o.geometry)o.geometry.dispose();});}creatures=[];
+  const cols=Math.ceil(Math.sqrt(cfg.count));for(let i=0;i<cfg.count;i++){const c=buildCreature(cfg.tris,cfg.shade,cfg.outline,cfg.tex);const r=Math.floor(i/cols),k=i%cols;c.position.x=(k-(cols-1)/2)*1.4;c.position.z=(r-(Math.ceil(cfg.count/cols)-1)/2)*1.6;scene.add(c);creatures.push(c);}
+  const span=Math.max(3,cols*1.4)/Math.min(1,camera.aspect/1.1);camera.position.set(0,span*0.9,span*1.6);camera.lookAt(0,0.3,0);current=cfg;}
+function readCfg(){return {count:+document.getElementById('count').value,tris:+document.getElementById('tris').value,shade:document.getElementById('shade').value,outline:document.getElementById('outline').value,tex:+document.getElementById('tex').value};}
+document.getElementById('apply').onclick=()=>rebuild(readCfg());
+rebuild(readCfg());
+
+let frames=[];let last=performance.now();
+function animate(now){requestAnimationFrame(animate);const dt=now-last;last=now;frames.push(dt);if(frames.length>240)frames.shift();
+  const t=now/1000;for(const c of creatures){const ph=c.userData.phase;c.userData.bones.forEach((b,i)=>{b.rotation.x=Math.sin(t*4+ph+i*0.6)*0.12;b.rotation.y=Math.sin(t*2.5+ph+i*0.4)*0.08;});c.userData.legs.forEach((l,i)=>{l.rotation.x=Math.sin(t*6+ph+(i%2)*Math.PI)*0.6;});c.userData.tail.rotation.z=Math.sin(t*5+ph)*0.5;c.position.y=0.42+Math.abs(Math.sin(t*3+ph))*0.05;}
+  renderer.render(scene,camera);
+  if(frames.length%10===0){const med=median(frames);const info=renderer.info.render;hud.textContent=`${(1000/med).toFixed(0)} fps  ${med.toFixed(1)} ms/frame\ncreatures ${current.count}  tris ${info.triangles.toLocaleString()}  draw calls ${info.calls}\n${current.shade} ${current.outline} tex ${current.tex}`;}
+}
+function median(a){const s=[...a].sort((x,y)=>x-y);return s[Math.floor(s.length/2)];}
+requestAnimationFrame(animate);
+
+const presets=[
+ ['12 x 6K lit',{count:12,tris:6000,shade:'lit',outline:'none',tex:1024}],
+ ['12 x 10K lit',{count:12,tris:10000,shade:'lit',outline:'none',tex:1024}],
+ ['12 x 15K lit',{count:12,tris:15000,shade:'lit',outline:'none',tex:1024}],
+ ['12 x 10K toon',{count:12,tris:10000,shade:'toon',outline:'none',tex:1024}],
+ ['12 x 10K toon + hull outline',{count:12,tris:10000,shade:'toon',outline:'hull',tex:1024}],
+ ['24 x 6K lit',{count:24,tris:6000,shade:'lit',outline:'none',tex:1024}],
+ ['24 x 10K lit',{count:24,tris:10000,shade:'lit',outline:'none',tex:1024}],
+ ['12 x 10K lit, 2048 tex',{count:12,tris:10000,shade:'lit',outline:'none',tex:2048}],
+ ['6 x 10K toon + hull',{count:6,tris:10000,shade:'toon',outline:'hull',tex:1024}],
+];
+document.getElementById('sweep').onclick=async()=>{const rows=[];results.hidden=false;results.innerHTML='<b>Sweep running</b>';for(const [name,cfg] of presets){rebuild(cfg);frames=[];await new Promise(r=>setTimeout(r,4000));const med=median(frames.slice(-150));const info=renderer.info.render;rows.push({name,med,fps:1000/med,tris:info.triangles,calls:info.calls});results.innerHTML=`<b>Sweep running</b> ${rows.length}/${presets.length}`;}
+  const ua=navigator.userAgent.replace(/[()]/g,'');const gl=renderer.getContext();const dbg=gl.getExtension('WEBGL_debug_renderer_info');const gpu=dbg?gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL):'unknown';
+  let html=`<b>Results</b> <span style="color:var(--muted)">pixel ratio ${renderer.getPixelRatio()}, ${stage.clientWidth}x${stage.clientHeight}</span><table><tr><th>Preset</th><th>ms/frame</th><th>fps</th><th>draw calls</th><th>triangles</th></tr>`;
+  for(const r of rows){const cls=r.med<=17?'ok':r.med<=34?'':'slow';html+=`<tr><td>${r.name}</td><td class="${cls}">${r.med.toFixed(1)}</td><td>${r.fps.toFixed(0)}</td><td>${r.calls}</td><td>${r.tris.toLocaleString()}</td></tr>`;}
+  html+=`</table><p style="font-size:.8rem;color:var(--muted)">${gpu}<br>${ua}</p><button id="copy">Copy results as text</button> <button id="close">Close</button>`;results.innerHTML=html;
+  const text=`Budget scene sweep\n${gpu}\n${ua}\npixel ratio ${renderer.getPixelRatio()} ${stage.clientWidth}x${stage.clientHeight}\n`+rows.map(r=>`${r.name}: ${r.med.toFixed(1)} ms (${r.fps.toFixed(0)} fps), ${r.calls} calls, ${r.tris} tris`).join('\n');
+  document.getElementById('copy').onclick=()=>{navigator.clipboard.writeText(text).then(()=>{document.getElementById('copy').textContent='Copied';}).catch(()=>{const ta=document.createElement('textarea');ta.value=text;results.appendChild(ta);ta.select();});};
+  document.getElementById('close').onclick=()=>{results.hidden=true;};
+  rebuild(readCfg());};
+})();
+</script>
