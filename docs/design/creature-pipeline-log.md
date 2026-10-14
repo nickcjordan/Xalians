@@ -7,8 +7,8 @@ Read this first when resuming the creature pipeline. Design of record: [creature
 - **Intended outcome:** a production-quality system that takes each Xalians creature from its record and silhouette to a live 3D glTF asset (mobile browser), with sprites derived, run by AI agents with Nick as the only creative approver.
 - **Ratified by Nick:** delivery target (3D first, sprites derived); he decides look, feel, product and output, I decide process; each product decision carries a production and a slice answer; Luceras is the validation creature; licensing is not a gate; the asset contract's product items (behavior set, action lengths, side plus three-quarter facings, token derived from the model); presentations are Artifact pages showing only what needs him.
 - **Design program (six parts):** 1 asset contract (done, ratified items recorded), 2 measured budgets (done, from Nick's iPhone), 3 roster layer (drafted, proven by the walking skeleton), 4 stage contracts (drafted), 5 records and tooling (next), 6 the look (needs Luceras through stage 3 first).
-- **Built and verified:** `art/pipeline/` walking skeleton: quadruped class spec, rig modules, stand-in body, eleven parametric clips, glTF export with meshopt, contract schema and validator (65 checks pass), browser viewer; published live at https://claude.ai/artifact/CvQX6U4SHXUBzhhkj5Q9Bv.
-- **Next unfinished action:** part 5 records CLI and cost collector; then Luceras stage 1 intake.
+- **Built and verified:** `art/pipeline/records/` records CLI, blob store, cost collector, review page generator (21 tests pass); Luceras initialized, stage 1 open with `reading.json` and `techspec.json`. `art/pipeline/` walking skeleton: quadruped class spec, rig modules, stand-in body, eleven parametric clips, glTF export with meshopt, contract schema and validator (65 checks pass), browser viewer; published live at https://claude.ai/artifact/CvQX6U4SHXUBzhhkj5Q9Bv.
+- **Next unfinished action:** Nick's answer on the Luceras reading (stage 1 gate); then stage 2 vision board through Codex images.
 - **Open items:** seven archetypes borrow generic clips without their required events; KTX2, low tier, token, sprites, finish variants not built; act resolver test over every compiled species not wired (needs `packages/content` from a checkout with node_modules); toon versus lit taste question deferred to Luceras; Duel runs on old move data until its own v5 cutover.
 
 ## Costs to date
@@ -20,7 +20,8 @@ Read this first when resuming the creature pipeline. Design of record: [creature
 | 2026-10-14 | Part 1 asset contract, cold challenge, draft 2, two Artifact pages | 55 min | 120K session + 117K reviewer | 12 findings, all accepted; page rebuilt as needs-Nick after his ruling |
 | 2026-10-14 | Part 2 budget scene, phone sweep | 40 min | 60K session | every preset held 60 fps on Nick's iPhone |
 | 2026-10-14 | Parts 3 and 4 drafts; walking skeleton | 50 min | 70K session + 233K builder | chain green in 6.4 s; validator 65 checks |
-| **Total** | | **about 3 h 50 min** | **about 1.1M** | |
+| 2026-10-14 | Log, part 5 design and tooling, Luceras intake | 35 min | 45K session + 134K builder | 21 tests; stage 1 open |
+| **Total** | | **about 4 h 25 min** | **about 1.3M** | |
 
 ## Entries
 
