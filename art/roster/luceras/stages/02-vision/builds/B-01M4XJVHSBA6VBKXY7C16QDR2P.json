@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJVHSBA6VBKXY7C16QDR2P",
+  "alias": "bsvq",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "C: Amber cloud horn: vision horns",
+  "scope": "horns",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "a6b11d92cec446bbc5f2bd8fae2e4455d0656c992064bf57802f78a92444edba"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 30377,
+    "wallMinutes": 1.63,
+    "image": {
+      "stage": "vision",
+      "element": "horns",
+      "label": "C: Amber cloud horn",
+      "summary": "Translucent amber horns with faint cloudy swirls inside, catching the light, hinting at the air element.",
+      "promptSha256": "59e8083d9503194994245b7bfac23d0ea1565ff7d29281178b01738138259a11",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn surface",
+        "horn color",
+        "horn tip"
+      ],
+      "notFor": [
+        "coat",
+        "pose",
+        "ears"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-bsvq",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "a6b11d92cec446bbc5f2bd8fae2e4455d0656c992064bf57802f78a92444edba"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:10:18Z",
+  "briefSha256": "59384aa58fba43f6dc2e9fa7a3a5dd04b7748d1510d1d9b6ad9f3022cdf42c4d",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:11:56Z"
+}

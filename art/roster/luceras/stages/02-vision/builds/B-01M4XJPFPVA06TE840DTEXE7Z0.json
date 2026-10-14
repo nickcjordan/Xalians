@@ -1,0 +1,64 @@
+{
+  "id": "B-01M4XJPFPVA06TE840DTEXE7Z0",
+  "alias": "d37t",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Sky dapple: vision palette",
+  "scope": "palette",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "f92d644f6820fdc294cf64c747d8df89d691b51440b0800ecdad81d6c615b4cf"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 19683,
+    "wallMinutes": 1.18,
+    "image": {
+      "stage": "vision",
+      "element": "palette",
+      "label": "A: Sky dapple",
+      "summary": "Pale blue-gray coat with soft white cloud-like dapples across the back and flanks, cream belly and chest, slightly darker gray-blue face mask; a creature that hides against the open sky and cloud banks of the floating islands.",
+      "promptSha256": "50c6be5c1d53958821cbef9d58a68ef56abb2320f5aa78b20dcbcd80c9f29422",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "coat color",
+        "pattern",
+        "belly and face color"
+      ],
+      "notFor": [
+        "shape",
+        "fur length",
+        "horn shape",
+        "eyes"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-d37t",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "f92d644f6820fdc294cf64c747d8df89d691b51440b0800ecdad81d6c615b4cf"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:07:32Z",
+  "briefSha256": "374aaefed4245e86defcf5b4842f3babc5597e31b1cce8e284aec8e1dc745559",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:08:43Z"
+}

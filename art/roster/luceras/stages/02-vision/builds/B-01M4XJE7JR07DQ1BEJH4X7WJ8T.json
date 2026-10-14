@@ -1,0 +1,55 @@
+{
+  "id": "B-01M4XJE7JR07DQ1BEJH4X7WJ8T",
+  "alias": "h7mt",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "Base: neutral gray illustration: vision base",
+  "scope": "base",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "74803fac0c3255c4e77e18e4cf46c0761d782d55accac05d36364798686516b2"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": null,
+    "wallMinutes": 1.14,
+    "image": {
+      "stage": "vision",
+      "element": "base",
+      "label": "Base: neutral gray illustration",
+      "summary": "The neutral starting illustration every option set edits; coat intentionally plain gray",
+      "promptSha256": "52295e95b6b7b592663602185e54b483d681b738863b1aa71fde3b05205f0d28",
+      "inputs": [],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "pose and framing for the option sets"
+      ],
+      "notFor": [
+        "color",
+        "pattern"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-h7mt",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "74803fac0c3255c4e77e18e4cf46c0761d782d55accac05d36364798686516b2"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:03:01Z",
+  "briefSha256": "9b9e6e57775023d318722d86f652739a41862985acb52f6c069e0d228655b2f4",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:04:10Z"
+}

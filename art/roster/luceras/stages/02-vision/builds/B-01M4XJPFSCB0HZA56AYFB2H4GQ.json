@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJPFSCB0HZA56AYFB2H4GQ",
+  "alias": "s672",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Full mane and skirt: vision fur",
+  "scope": "fur",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "1609eaa8b1b6035fb104e4aeb7912d83973d3e60aa91e362e17cc60aa51acc6a"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 30598,
+    "wallMinutes": 1.22,
+    "image": {
+      "stage": "vision",
+      "element": "fur",
+      "label": "A: Full mane and skirt",
+      "summary": "A thick shaggy mane around the neck and chest and a long belly skirt, short fur on face and legs.",
+      "promptSha256": "0d6ec8c2ff5c91cc3c5bfd075eba90a019c2352a9310a696c6044650e3242b32",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "fur length by region",
+        "chest fringe",
+        "leg fur"
+      ],
+      "notFor": [
+        "coat color",
+        "horns",
+        "eyes"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-s672",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "1609eaa8b1b6035fb104e4aeb7912d83973d3e60aa91e362e17cc60aa51acc6a"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:07:32Z",
+  "briefSha256": "0975e25c665572be1f0ff93fb3a09833e9b6500648b89d61ceb5b0137a58e261",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:08:45Z"
+}

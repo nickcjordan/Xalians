@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XJPFTRMPMWFE6CZ323R2VT",
+  "alias": "2pxh",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Spiked star: vision plume",
+  "scope": "plume",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "46cc59c37346a3fbc753f1653fb9dd68ab126e786dc028ee4bfbbfa1919b9caa"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 18405,
+    "wallMinutes": 1.2,
+    "image": {
+      "stage": "vision",
+      "element": "plume",
+      "label": "A: Spiked star",
+      "summary": "A compact star of stiff spikes at the tail tip.",
+      "promptSha256": "1da320db6b3902c109e3fe8fac29990347b11772a28082891aea77531df5390c",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "tail tuft shape"
+      ],
+      "notFor": [
+        "coat color",
+        "tail length",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-2pxh",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "46cc59c37346a3fbc753f1653fb9dd68ab126e786dc028ee4bfbbfa1919b9caa"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:07:32Z",
+  "briefSha256": "0a37e602b30996bfff868e5290bf07e2e64e215cd532a5da6f7aa29e04ba2c84",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:08:44Z"
+}

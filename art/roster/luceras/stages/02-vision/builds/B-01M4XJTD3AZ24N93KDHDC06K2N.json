@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJTD3AZ24N93KDHDC06K2N",
+  "alias": "bd53",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "C: Feathered hind legs: vision fur",
+  "scope": "fur",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 30552,
+    "wallMinutes": 1.15,
+    "image": {
+      "stage": "vision",
+      "element": "fur",
+      "label": "C: Feathered hind legs",
+      "summary": "Medium coat with long fur feathering down the backs of the big hind legs and a modest chest fringe.",
+      "promptSha256": "d8f8f6ad645e117378e14690825c2f5770da7f58cd8dfe00a440219ffd6f5cb7",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "fur length by region",
+        "chest fringe",
+        "leg fur"
+      ],
+      "notFor": [
+        "coat color",
+        "horns",
+        "eyes"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-bd53",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:09:40Z",
+  "briefSha256": "3ae54cc634794f3b22261b249a7416bd877beda7fdace8e5fb7c09cfd8a1ed71",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:10:50Z"
+}

@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJVJ5ZW57RSWPXKHVYV67B",
+  "alias": "5ekb",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "C: Sky-blue eyes: vision eyes",
+  "scope": "eyes",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "2331695b83e0773ba0fd51fd50bbf28bf14563abf2672192af55044b4bb3b095"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 27550,
+    "wallMinutes": 1.33,
+    "image": {
+      "stage": "vision",
+      "element": "eyes",
+      "label": "C: Sky-blue eyes",
+      "summary": "Pale sky-blue eyes with round pupils, a soft gentle expression.",
+      "promptSha256": "1eec9912b74b6427f48f180970728f2d530e77e9fd35ffb0ab0f250694519f3c",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "eye color",
+        "pupil shape",
+        "expression"
+      ],
+      "notFor": [
+        "coat",
+        "horns",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-5ekb",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "2331695b83e0773ba0fd51fd50bbf28bf14563abf2672192af55044b4bb3b095"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:10:18Z",
+  "briefSha256": "581f7b42145bee2000ccec1937b3feaf521748dcec3d6a8f70c0630b72b6662d",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:11:38Z"
+}

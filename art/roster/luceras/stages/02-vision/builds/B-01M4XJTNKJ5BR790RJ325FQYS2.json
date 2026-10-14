@@ -1,0 +1,64 @@
+{
+  "id": "B-01M4XJTNKJ5BR790RJ325FQYS2",
+  "alias": "8gke",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "C: Storm slate: vision palette",
+  "scope": "palette",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 33794,
+    "wallMinutes": 1.05,
+    "image": {
+      "stage": "vision",
+      "element": "palette",
+      "label": "C: Storm slate",
+      "summary": "Dark slate-gray coat with bright white countershading on chest, belly and inner legs and a bold white blaze on the face; a storm-cloud animal.",
+      "promptSha256": "1106b1b02f5abbaec3b94a71814da20980512aa772bc8d3ef9034a3f8d3fa2e9",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "coat color",
+        "pattern",
+        "belly and face color"
+      ],
+      "notFor": [
+        "shape",
+        "fur length",
+        "horn shape",
+        "eyes"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-8gke",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:09:49Z",
+  "briefSha256": "1f9e648229b9cae0d05e0084db1ba44030b9db5d70160d514abfad956752eb20",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:10:52Z"
+}

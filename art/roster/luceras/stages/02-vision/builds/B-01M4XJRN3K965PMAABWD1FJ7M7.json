@@ -1,0 +1,64 @@
+{
+  "id": "B-01M4XJRN3K965PMAABWD1FJ7M7",
+  "alias": "6vbg",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Sunrise bands: vision palette",
+  "scope": "palette",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "2345de8fba8c82e3b67742bbfdba12f31bd1e7aa0f55a6ebaaa66a4472996ccf"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 42445,
+    "wallMinutes": 1.1,
+    "image": {
+      "stage": "vision",
+      "element": "palette",
+      "label": "B: Sunrise bands",
+      "summary": "Warm sand and amber coat with a dark brown dorsal stripe and faint pale barring down the hind legs; the colors of island stone under the gas giant's evening light.",
+      "promptSha256": "0e15aba288f98d7efe1c6cf7f4b1edbb486a1c298ee1eba911dc93018804c392",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "coat color",
+        "pattern",
+        "belly and face color"
+      ],
+      "notFor": [
+        "shape",
+        "fur length",
+        "horn shape",
+        "eyes"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-6vbg",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "2345de8fba8c82e3b67742bbfdba12f31bd1e7aa0f55a6ebaaa66a4472996ccf"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:08:43Z",
+  "briefSha256": "369ddbf5d2d769700cbcfe8612d37e9da6ab53454169ebc0fb1ee2a1ba11cfc7",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:09:49Z"
+}

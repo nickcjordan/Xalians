@@ -1,0 +1,64 @@
+{
+  "id": "B-01M4XJWK4SFJ77KZJGC81JDV2V",
+  "alias": "q3wx",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "D: Mist tabby: vision palette",
+  "scope": "palette",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "526bf8b79bdc96a9ee6310494d5f53902890a1a846c9fdcdd1754ded28ccaebf"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 19657,
+    "wallMinutes": 1.21,
+    "image": {
+      "stage": "vision",
+      "element": "palette",
+      "label": "D: Mist tabby",
+      "summary": "Silver-white coat with faint lilac-gray broken stripes on the flanks and legs, like vapor drifting through the island canyons.",
+      "promptSha256": "8469a66a09125d26403c9fcd61b898ee9df2f9b788de601fb0a99b6c9f1b5fab",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "coat color",
+        "pattern",
+        "belly and face color"
+      ],
+      "notFor": [
+        "shape",
+        "fur length",
+        "horn shape",
+        "eyes"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-q3wx",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "526bf8b79bdc96a9ee6310494d5f53902890a1a846c9fdcdd1754ded28ccaebf"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:10:52Z",
+  "briefSha256": "4c665e55500ba580e776acbd271791007afda770bc0845738e0320c36433bc85",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:12:05Z"
+}

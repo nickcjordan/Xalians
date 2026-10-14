@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJS07B1NMS8HEQF5NE6CZ5",
+  "alias": "kvht",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Ridged dark horn: vision horns",
+  "scope": "horns",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "574891431107799d9b5c8547377c6676fc51290e21d6aa72fa3a97251d24ec55"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 35482,
+    "wallMinutes": 1.38,
+    "image": {
+      "stage": "vision",
+      "element": "horns",
+      "label": "B: Ridged dark horn",
+      "summary": "Heavily ridged dark gray-brown horns like a wild ram's, with worn lighter ridges.",
+      "promptSha256": "23072aa2411c595527cdfdc9e5c773d0faf4aa5fbc0fe14010f5285d6c8a399c",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn surface",
+        "horn color",
+        "horn tip"
+      ],
+      "notFor": [
+        "coat",
+        "pose",
+        "ears"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-kvht",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "574891431107799d9b5c8547377c6676fc51290e21d6aa72fa3a97251d24ec55"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:08:54Z",
+  "briefSha256": "4306f5e6bc406777e2679be347f6f387cf834b5b279e2bd65f98f1294e73fdd0",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:10:17Z"
+}

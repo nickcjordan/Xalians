@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJRQBEA26Y9ZSK8WC00RT3",
+  "alias": "hmkr",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Sleek with chest fringe: vision fur",
+  "scope": "fur",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "14243d7215b41cbdd5bc33583ed12cbb389c66218f936a89487e2d1712f6baec"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17639,
+    "wallMinutes": 0.9,
+    "image": {
+      "stage": "vision",
+      "element": "fur",
+      "label": "B: Sleek with chest fringe",
+      "summary": "Short sleek fur everywhere except a single long fringe down the chest.",
+      "promptSha256": "9d983eabcf8f3761153d76741190846b8ecb9ce71939d4b6371732045b73f8e5",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "fur length by region",
+        "chest fringe",
+        "leg fur"
+      ],
+      "notFor": [
+        "coat color",
+        "horns",
+        "eyes"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-hmkr",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "14243d7215b41cbdd5bc33583ed12cbb389c66218f936a89487e2d1712f6baec"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:08:45Z",
+  "briefSha256": "d9c730b9d6a1e7c643c4e461299325fa243a79ca27612a066027b8a30d3f8772",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:09:40Z"
+}

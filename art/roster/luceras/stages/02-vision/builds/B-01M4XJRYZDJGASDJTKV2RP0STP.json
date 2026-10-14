@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJRYZDJGASDJTKV2RP0STP",
+  "alias": "5pne",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Amber goat eyes: vision eyes",
+  "scope": "eyes",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17673,
+    "wallMinutes": 1.41,
+    "image": {
+      "stage": "vision",
+      "element": "eyes",
+      "label": "B: Amber goat eyes",
+      "summary": "Amber eyes with a horizontal bar pupil like a goat's, calm and wary.",
+      "promptSha256": "6d7f78eaf35978f9bdffac3df6bf5167a9d25806891e100f958a3c271ac4cc02",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "eye color",
+        "pupil shape",
+        "expression"
+      ],
+      "notFor": [
+        "coat",
+        "horns",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-5pne",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:08:53Z",
+  "briefSha256": "689578ec884b27b03b7782f76cbb3841b4f926a9c90ed597fcc290cbc65b2581",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:10:18Z"
+}

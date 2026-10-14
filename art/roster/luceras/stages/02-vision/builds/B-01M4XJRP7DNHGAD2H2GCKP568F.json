@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XJRP7DNHGAD2H2GCKP568F",
+  "alias": "mvyt",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Flame tongues: vision plume",
+  "scope": "plume",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "bfd48514a49701229fb55c1149696600acbbd9cf0782c2a068c38e48935cbffb"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17142,
+    "wallMinutes": 1.29,
+    "image": {
+      "stage": "vision",
+      "element": "plume",
+      "label": "B: Flame tongues",
+      "summary": "A flame-shaped tuft of long pointed tongues of fur sweeping back.",
+      "promptSha256": "8db07ede8084848ce73764d56ddd9871f1c159cbe5365089d8ac6d28893843e6",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "tail tuft shape"
+      ],
+      "notFor": [
+        "coat color",
+        "tail length",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-mvyt",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "bfd48514a49701229fb55c1149696600acbbd9cf0782c2a068c38e48935cbffb"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:08:44Z",
+  "briefSha256": "a79fee5703529073dd2ac8a87d1cdef6e4c3840be445d0cb6efd9bd9f39989ad",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:10:01Z"
+}

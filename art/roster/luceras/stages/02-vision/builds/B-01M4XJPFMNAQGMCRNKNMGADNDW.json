@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJPFMNAQGMCRNKNMGADNDW",
+  "alias": "rjgc",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Smooth bone, dark tips: vision horns",
+  "scope": "horns",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "83ae90e65096bf741bed1ec8fba1020bd4551025d9e2b523e62be78c46b4b48a"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 27349,
+    "wallMinutes": 1.36,
+    "image": {
+      "stage": "vision",
+      "element": "horns",
+      "label": "A: Smooth bone, dark tips",
+      "summary": "Smooth pale bone-colored horns darkening to near-black at the tips.",
+      "promptSha256": "667439f34fe7d88dbe229d432df42d6c303b5c7c5253eb21b7e3915496f30511",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn surface",
+        "horn color",
+        "horn tip"
+      ],
+      "notFor": [
+        "coat",
+        "pose",
+        "ears"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-rjgc",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "83ae90e65096bf741bed1ec8fba1020bd4551025d9e2b523e62be78c46b4b48a"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:07:32Z",
+  "briefSha256": "80faa728bf6ec6b0673cb4fa473c598005b55f80d98c6fc3fc6e38ba768c4a2a",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:08:54Z"
+}

@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XJV1SCSMCYNJBVPSEK3WZA",
+  "alias": "w7rj",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "C: Sparse long spikes: vision plume",
+  "scope": "plume",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "5300c45d922ed0e0b7eeb3b1a71f3c754743baf3c0a84f65f877c1b7c7b07f43"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 20748,
+    "wallMinutes": 1.4,
+    "image": {
+      "stage": "vision",
+      "element": "plume",
+      "label": "C: Sparse long spikes",
+      "summary": "A few long separate spikes of fur fanning from the tip.",
+      "promptSha256": "6e546708a6617aec5eacc516995bcbe2d9662f2b13da4a7dc038d8768c996bdb",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "tail tuft shape"
+      ],
+      "notFor": [
+        "coat color",
+        "tail length",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-w7rj",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "5300c45d922ed0e0b7eeb3b1a71f3c754743baf3c0a84f65f877c1b7c7b07f43"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:10:01Z",
+  "briefSha256": "2136894cc3395dcabe1378084b52c251a57056de7f14703685289a50dd838f7c",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:11:25Z"
+}

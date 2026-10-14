@@ -1,0 +1,60 @@
+{
+  "id": "B-01M4XJHTAP0APFDB41EYYSGV22",
+  "alias": "yxw6",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "Base v2: hind-leg mass, spiked plume, three-quarter: vision base",
+  "scope": "base",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 18055,
+    "wallMinutes": 1.24,
+    "image": {
+      "stage": "vision",
+      "element": "base",
+      "label": "Base v2: hind-leg mass, spiked plume, three-quarter",
+      "summary": "The neutral starting illustration every option set edits; coat intentionally plain gray",
+      "promptSha256": "ad23c17e60f46a75d9ea408145b8b32c1ab346b61df18959d07bb681c2278c97",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "74803fac0c3255c4e77e18e4cf46c0761d782d55accac05d36364798686516b2"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "pose and framing for the option sets"
+      ],
+      "notFor": [
+        "color",
+        "pattern"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-yxw6",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:04:59Z",
+  "briefSha256": "ab9bf3d2fe3e18d18a16f5006492fef432efeaed0be3e16f79e091d2b8fdd5f0",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:06:13Z"
+}

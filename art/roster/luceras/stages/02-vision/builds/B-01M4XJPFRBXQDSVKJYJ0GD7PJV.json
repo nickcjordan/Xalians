@@ -1,0 +1,63 @@
+{
+  "id": "B-01M4XJPFRBXQDSVKJYJ0GD7PJV",
+  "alias": "a5me",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Keen dark eyes: vision eyes",
+  "scope": "eyes",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "a81ec48295834fa52dc7709c9dbe8b7616fc01ab710d595df7b3d761a538d6ad"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17228,
+    "wallMinutes": 1.35,
+    "image": {
+      "stage": "vision",
+      "element": "eyes",
+      "label": "A: Keen dark eyes",
+      "summary": "Large dark eyes with a thin bright ring around the iris, an alert watchful expression.",
+      "promptSha256": "6a8d739eefd80d9dca21b69960af8aa84e19bd18a62b58afc5612566bea5abb1",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "eye color",
+        "pupil shape",
+        "expression"
+      ],
+      "notFor": [
+        "coat",
+        "horns",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-a5me",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "a81ec48295834fa52dc7709c9dbe8b7616fc01ab710d595df7b3d761a538d6ad"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:07:32Z",
+  "briefSha256": "f7bb628548f9fe659f953ae5d720abaccfa60bfea54cb47a0803b875a5fdec9a",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:08:53Z"
+}
