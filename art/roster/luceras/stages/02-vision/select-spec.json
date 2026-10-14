@@ -3,14 +3,15 @@
  "stage": "02-vision",
  "title": "Luceras Vision Board",
  "heading": "Luceras: vision board",
- "lede": "Stage 2 of 11, reopened for one more set. Five picks are in; the sixth is the head: horns enlarged into the focal point, ears reduced to pair with them. Pick one; then Confirm again and tell the orchestrator.",
+ "lede": "Stage 2 of 11, reopened. Six picks are in; the seventh is the horn shape. Pick one; then Confirm again and tell the orchestrator.",
  "order": [
   "palette",
   "horns",
   "eyes",
   "fur",
   "plume",
-  "head"
+  "head",
+  "horns2"
  ],
  "elements": {
   "palette": {
@@ -112,6 +113,23 @@
     "reason": "Reads as an ear at sprite size and sits where a bighorn's would, so the horns crown the head without the face going earless. C is the subtler version; D is horns only."
    },
    "note": "Added after your note: the rabbit ears and the horns were competing. Every option edits the combined look, so coat, eyes, fur and plume are as you picked them. The record's 'long upright ears' line is amended to match your pick once you confirm."
+  },
+  "horns2": {
+   "name": "Horn shape",
+   "question": "Which horns: same size, less curl, less bulk?",
+   "judge": [
+    "Still the focal point of the head?",
+    "Less bulk at the base without losing the ram read?",
+    "Does the curl you want survive a side view at sprite size?"
+   ],
+   "reading": [
+    "mustHave[2]"
+   ],
+   "recommend": {
+    "letter": "A",
+    "reason": "Closest to your note: the size kept, the spiral opened to about three-quarters of a turn, and slimmer throughout. B goes further toward an ibex sweep; C keeps the full curl and only slims."
+   },
+   "note": "Second refinement on the head after your note: the size was right, the curl and bulk were not. Edited from the ears you picked."
   }
  },
  "fold": {

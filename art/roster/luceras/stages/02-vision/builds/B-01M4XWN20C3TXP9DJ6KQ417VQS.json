@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XWN20C3TXP9DJ6KQ417VQS",
+  "alias": "ndth",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Long sweep, tips curl: vision horns2",
+  "scope": "horns2",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "f8b74f8eb8be445faa6dd35b447c60c1bcafa94e7509135fd3ec49b8a573e374"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17184,
+    "wallMinutes": 1.35,
+    "image": {
+      "stage": "vision",
+      "element": "horns2",
+      "label": "B: Long sweep, tips curl",
+      "summary": "Same size; a long backward sweep with only the last third curling, slim throughout.",
+      "promptSha256": "0c1ba5bd26103cc947bdef13c0aac8f6171899e5ae8d7df123283c576e4793db",
+      "inputs": [
+        {
+          "name": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe",
+          "hash": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn curl",
+        "horn bulk"
+      ],
+      "notFor": [
+        "ears",
+        "coat"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-ndth",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "f8b74f8eb8be445faa6dd35b447c60c1bcafa94e7509135fd3ec49b8a573e374"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:01:31Z",
+  "briefSha256": "b7e1b38f629645767933c2a5812f106cdc302274c6209d205d0815d31e971f10",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:02:52Z"
+}

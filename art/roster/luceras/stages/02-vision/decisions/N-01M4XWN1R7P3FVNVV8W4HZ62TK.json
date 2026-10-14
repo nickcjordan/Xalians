@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XWN1R7P3FVNVV8W4HZ62TK",
+  "alias": "v8xs",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "picked A: Small round ears behind the horns on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XW9SF3PFJ9F5DZX6H5BT2B",
+    "evidence": [
+      "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:01:31Z",
+  "element": "head",
+  "buildAlias": "gh7k",
+  "blob": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+}

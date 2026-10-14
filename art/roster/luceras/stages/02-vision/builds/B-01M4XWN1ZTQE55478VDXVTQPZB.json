@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XWN1ZTQE55478VDXVTQPZB",
+  "alias": "vavr",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Opened curl, slimmer: vision horns2",
+  "scope": "horns2",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "363dd63ebe1bf47b6d182f8f1a37ced342d5bc48ca6c7f4fbde0b162b3da54b3"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17355,
+    "wallMinutes": 1.37,
+    "image": {
+      "stage": "vision",
+      "element": "horns2",
+      "label": "A: Opened curl, slimmer",
+      "summary": "Same overall size and reach; the curl opened to about three-quarters of a turn, the horn noticeably slimmer along its whole length.",
+      "promptSha256": "32a4a607a475ea85a382fe3055cf7745a57109a195ac93b90505752a4ea4912d",
+      "inputs": [
+        {
+          "name": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe",
+          "hash": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn curl",
+        "horn bulk"
+      ],
+      "notFor": [
+        "ears",
+        "coat"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-vavr",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "363dd63ebe1bf47b6d182f8f1a37ced342d5bc48ca6c7f4fbde0b162b3da54b3"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:01:31Z",
+  "briefSha256": "61ecda0d6cd40a6cd4f4bec2d288ec6c0d457fcff3bb387318b952b43985db49",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:02:53Z"
+}

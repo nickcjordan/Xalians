@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XWN2109KJVYJTY4YFEPQ40",
+  "alias": "wmpn",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "C: Same curl, slimmer only: vision horns2",
+  "scope": "horns2",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "cb1da6c3d178cc3447bd74da31f1772da9d58c87d8e665e3f4e2d31fe206715e"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 28056,
+    "wallMinutes": 1.16,
+    "image": {
+      "stage": "vision",
+      "element": "horns2",
+      "label": "C: Same curl, slimmer only",
+      "summary": "The present curl kept; only the bulk reduced, a slimmer horn with a lighter base.",
+      "promptSha256": "0e79c6dd5798b87c3003b2c68ffeb44d435676988c96f0ba41ad09a55f1dde5b",
+      "inputs": [
+        {
+          "name": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe",
+          "hash": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn curl",
+        "horn bulk"
+      ],
+      "notFor": [
+        "ears",
+        "coat"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-wmpn",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "cb1da6c3d178cc3447bd74da31f1772da9d58c87d8e665e3f4e2d31fe206715e"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:01:31Z",
+  "briefSha256": "4606f0d30c894520f3ef6aa896e8ad1b54636f0bd8b7db665a6c1d5f461467fb",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:02:40Z"
+}

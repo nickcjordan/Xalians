@@ -1,0 +1,14 @@
+{
+  "id": "D-01M4XWN1RJPSM43YW39D94N4DQ",
+  "alias": "8prr",
+  "stage": "02-vision",
+  "description": "head: no option accepted",
+  "camera": null,
+  "region": null,
+  "origin": "selection screen",
+  "attempts": [
+    "N-01M4XWN1RDZWQWV3AME3936QZV"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-14T19:01:31Z"
+}

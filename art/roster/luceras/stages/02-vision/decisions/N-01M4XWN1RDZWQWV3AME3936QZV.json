@@ -1,0 +1,16 @@
+{
+  "id": "N-01M4XWN1RDZWQWV3AME3936QZV",
+  "alias": "hkjv",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "the horns are close: the size is right but they got bulkier than I wanted; a little less curl and a little less bulk",
+  "date": "2026-10-14",
+  "kind": "request",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:01:31Z",
+  "element": "head",
+  "requestKind": "mix"
+}
