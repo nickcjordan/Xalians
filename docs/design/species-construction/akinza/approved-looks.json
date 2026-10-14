@@ -201,6 +201,30 @@
      "text": "I think I preferred the look of the prior version better... I'm inclined to say just put it back how it was before."
     }
    ]
+  },
+  {
+   "part": "shoulders",
+   "covers": "deltoid, shoulder line, rear groove and armpit",
+   "approvedOn": "2026-10-14",
+   "approvedIn": "assembled-3205 (shoulders v3d, recipe-shoulders-v3d)",
+   "quotes": [
+    {
+     "at": "2026-10-14",
+     "text": "I like all your recommendations."
+    }
+   ]
+  },
+  {
+   "part": "tail base and rear",
+   "covers": "tail-to-root joins, lowest tail clear of the buttock, buttocks, cleft and perineum behind the crotch",
+   "approvedOn": "2026-10-14",
+   "approvedIn": "assembled-3242 (tail base v3 and buttocks v3, rear lane)",
+   "quotes": [
+    {
+     "at": "2026-10-14",
+     "text": "I like all your recommendations. (on 'good enough to move on, the tail root will be under long tail fur')"
+    }
+   ]
   }
  ],
  "reopened": [
