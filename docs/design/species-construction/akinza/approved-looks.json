@@ -2,12 +2,9 @@
  "about": "Approved looks: every Akinza part Nick has approved, with his words and the date. Briefs, loop orders and reader packs cite this file. An approval protects the look, not its implementation (REFINEMENT.md rule 1): a later step may change how a part is built as long as it still looks like the approved version from every angle. Readers judging an approved part compare against the approved look (reader_pack.py uses lookReference), not the reference sheet. Only Nick reopens an approved part. Times are UTC from the session record.",
  "updated": "2026-10-14",
  "lookReference": {
-  "assembly": "assembled-3168",
-  "head": "head-3167",
-  "body": "body-2960",
-  "recipe": "docs/design/species-construction/akinza/recipe-furbase-nose-v3.json",
-  "packet": "untracked/species-construction/akinza/loop/packets/assembled-3168",
-  "note": "The current model carries every approved part below; it is the look a reader compares an approved part against."
+  "assembly": "assembled-3271",
+  "recipe": "docs/design/species-construction/akinza/recipe-integrated-v1.json",
+  "note": "Integrated model carrying every approved part (2026-10-14); hind soles still in work, groin1 and knee1 to be added."
  },
  "parts": [
   {
@@ -235,6 +232,18 @@
     {
      "at": "2026-10-14",
      "text": "yes"
+    }
+   ]
+  },
+  {
+   "part": "whole creature (integrated)",
+   "covers": "every approved part joined on one model; hind paw sole excluded (still being worked)",
+   "approvedOn": "2026-10-14",
+   "approvedIn": "assembled-3271 (recipe-integrated-v1)",
+   "quotes": [
+    {
+     "at": "2026-10-14",
+     "text": "Otherwise all the other pieces look good"
     }
    ]
   }
