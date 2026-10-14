@@ -1,0 +1,179 @@
+{
+ "title": "Luceras Head",
+ "heading": "Luceras: the head",
+ "lede": "Stage 5 of 11, part 1 of 5. The head sculpted onto the approved blockout: skull, muzzle, eyes, horns, ears, placeholder whiskers. Judge shape only: does it read as the model sheet's head? Surface detail, horn ridge waviness, the crisp lid line and real whiskers belong to the surface stage. Approve, or say what needs work and in which view. Confirm notifies the orchestrator.",
+ "fallback": "Approvals cannot be saved from this view; reply in chat.",
+ "compositeEmpty": "Confirm closes the head; the torso part starts next.",
+ "confirmed": "Head confirmed; the orchestrator files it and starts the next part. Tell the orchestrator you confirmed.",
+ "fold": {
+  "title": "Decided by the pipeline owner",
+  "text": "Both streams were given the same brief twice: first with Blender work only (hand-placed masses), which stalled on the face in both streams, then, after a hold audit, with the face reconstructed from your clay head views and the authored horns, eyes and ears re-seated. That audit result is now a pipeline rule: faces and other soft forms come from reconstruction. The Claude head took four passes: masses (rodent), measured fixes (balloon), reconstruction graft (reads), cleanup. The Codex stream's reconstruction pass is being finished and will be added here for comparison; its masses pass is shown below. Everything outside the head is unchanged to within 0.6 mm. Costs: Claude about 2 hours 20 minutes wall and about 490K tokens over four passes; Codex pass 2 about 80 minutes wall."
+ },
+ "order": [
+  "claude",
+  "progress",
+  "codex",
+  "numbers"
+ ],
+ "elements": {
+  "claude": {
+   "name": "Claude stream head (pass 4)",
+   "mode": "gallery",
+   "question": "Does this head read as the model sheet's head?",
+   "judge": [
+    "Three-quarter: brow, cheekbone, nose bridge, short muzzle as the sheet?",
+    "Horns: large, slim, ridged, half-turn, tips turned in, sitting on the skull?",
+    "Ears: small, rounded, cupped, behind the horn bases?",
+    "Eyes: large, forward, high, seated with lids?",
+    "Still Luceras at sprite size?"
+   ],
+   "reading": [
+    "mustHave[2]",
+    "mustHave[3]"
+   ],
+   "recommend": null,
+   "note": "Declared leftovers for later stages: two faint nubs per whisker pad at the close side camera, ring-like horn ridges, a soft lid line, placeholder whiskers.",
+   "views": [
+    {
+     "label": "Head close three-quarter",
+     "blob": "c5e7f8278043b5d9a13aa41342398b4ece0786b4b53ecb19d4d52c2d6cdcb2d1",
+     "caption": "Head close three-quarter: build left, sheet close-up right"
+    },
+    {
+     "label": "Front",
+     "blob": "3b7f39a4f04691178522f6226850a26da7574566f3eba21baa1ee06e8644cd00",
+     "caption": "Front: build left, sheet right"
+    },
+    {
+     "label": "Side",
+     "blob": "5ebd89c9cc0e5e9a7e4501e4ddc514b7c704fb628ff0f2e5a5393fbba984c13d",
+     "caption": "Side: build left, sheet right"
+    },
+    {
+     "label": "Sprite size",
+     "blob": "c58d269f4bf7e46fd93513ea3fde1435a0b47fcb7336550b864c1be976595381",
+     "caption": "Sprite size"
+    },
+    {
+     "label": "Full body, three-quarter",
+     "blob": "34a0b812ae77e98fa753e31a6c813d312d900e6fe779b1893fe5032c04d1bbe1",
+     "caption": "Full body, three-quarter left: head on the approved blockout"
+    },
+    {
+     "label": "Full body, front",
+     "blob": "377188abc12762f3fd02ef080f1223f5ffe32df19a8e081ad7f079b5d44d8776",
+     "caption": "Full body, front"
+    },
+    {
+     "label": "Sheet head close-up",
+     "blob": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+     "caption": "Reference: the model sheet's head close-up"
+    },
+    {
+     "label": "Sheet combined look",
+     "blob": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+     "caption": "Reference: the model sheet's combined look"
+    }
+   ]
+  },
+  "progress": {
+   "name": "How it got here",
+   "mode": "info",
+   "question": "",
+   "judge": [],
+   "reading": [],
+   "recommend": null,
+   "note": "Pass 1 masses, pass 2 measured fixes, pass 3 reconstruction graft, pass 4 cleanup.",
+   "views": [
+    {
+     "label": "Progression",
+     "blob": "1d6cef192cf75692e189b16e8c4c34f92543098a01a1510f0727d7b11ef8d821",
+     "caption": "Progression"
+    },
+    {
+     "label": "Pass 3 beside pass 4",
+     "blob": "8c18a7d4df8381026668ebea41bc807e870676dd23800fe38b425c3a3b997411",
+     "caption": "Pass 3 beside pass 4, close side"
+    },
+    {
+     "label": "Pass 1",
+     "blob": "efd4c59421a4040903d31f0079d5a9c79bb987f5224f27b4c9333a78586508bf",
+     "caption": "Pass 1 (B-j4kr)"
+    },
+    {
+     "label": "Pass 2",
+     "blob": "fad12b5da04103c3d9c3514370d122fbf9ce7c22bc850033eee94315425c00aa",
+     "caption": "Pass 2 (B-h5p3)"
+    }
+   ]
+  },
+  "codex": {
+   "name": "Codex stream head (pass 2, masses)",
+   "mode": "info",
+   "question": "For comparison only.",
+   "judge": [],
+   "reading": [],
+   "recommend": null,
+   "note": "Codex (gpt-6-astra), pure Blender steering from the same brief: thin wiry horns, bulging eyes, long snout, bulb ears. Its reconstruction pass is in progress and will replace this when done.",
+   "views": [
+    {
+     "label": "Codex pass 2",
+     "blob": "2e7accc94512f8cf5487b358b3a7f8175b391900f6dfb2a40b8f693bd1586272",
+     "caption": "Codex pass 2, three-quarter beside the sheet"
+    }
+   ]
+  },
+  "numbers": {
+   "name": "The two streams in numbers (head)",
+   "mode": "info",
+   "views": [],
+   "table": [
+    [
+     "Measure",
+     "Claude",
+     "Codex"
+    ],
+    [
+     "Passes",
+     "4 (masses, fixes, reconstruction graft, cleanup)",
+     "2 done (masses), reconstruction pass in progress"
+    ],
+    [
+     "Wall time",
+     "about 2 h 20 min",
+     "about 80 min plus the pending pass"
+    ],
+    [
+     "Blender time",
+     "about 3,400 s over 50 runs",
+     "1,435 s (860 s waiting on the shared machine)"
+    ],
+    [
+     "GPU",
+     "one reconstruction run, 319 s",
+     "one reconstruction run (pending integration)"
+    ],
+    [
+     "Tokens",
+     "about 490K",
+     "not exposed by the Codex runtime"
+    ],
+    [
+     "Triangles head plus horns",
+     "221,824",
+     "not reported"
+    ],
+    [
+     "Outside-the-head displacement",
+     "max 0.61 mm",
+     "not reported"
+    ],
+    [
+     "Blockers",
+     "none",
+     "Blender wait limit (my rule) stopped pass 3 once."
+    ]
+   ]
+  }
+ }
+}
