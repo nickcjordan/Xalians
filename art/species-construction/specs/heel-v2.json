@@ -1,0 +1,333 @@
+{
+ "name": "heel v2",
+ "approval": null,
+ "note": "heel v2 (2026-10-13), for heel_v2_post.py / heel_v2_field.py, appended after P-ankle1 in place of P-heel1 (heel v1's pads read faint and wobbly, its bottom edge lumpy, and its corner arc left a kink where it met the heel back). Anatomy review finding 7. Written for the +x foot; the -x foot uses it mirrored on its own grid. blurX: as heel v1, merges the leg column's ridge down the heel back; lift: the sole moved up .005 by a vertical shift (side walls stay put), except on an elliptical heel contact patch, so the heel stays on the floor plane (no lift, by the brief); pads: four oval toe pads and one three-lobed metatarsal pad (a body and three rear lobes, smooth union), flattened ellipsoid domes sitting on the foot's own underside and clipped at the floor, joined with a small smooth minimum so each has a clean groove round it; corner: a line fitted to the measured heel back (z -.935 to -.905) and the floor, joined by a fillet of radius .03 tangent to both, intersected with the foot by a smooth maximum (hard within .002 to .008 of the floor), faded in x round the heel center, with an across-the-foot blur below it; openings: a ball opening of radius .004 over the bottom of the foot rolls the old sole slab's edge lip; keepContact: in the core of the heel's contact patch, within .002 of the floor and in front of y .012, the field from before the corner and the openings is restored, so the heel's contact stays exactly on the floor plane; partBox: |x| from .18 (in by .20), z below -.85 (in by -.88). World units, +y back.",
+ "grid": {
+  "lo": [
+   0.25,
+   -0.16,
+   -0.965
+  ],
+  "hi": [
+   0.45,
+   0.09,
+   -0.84
+  ],
+  "step": 0.0015,
+  "far": 0.04
+ },
+ "blurX": [
+  {
+   "c": [
+    0.345,
+    0.035,
+    -0.91
+   ],
+   "s": [
+    0.06,
+    0.035,
+    0.04
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.014
+  }
+ ],
+ "lift": {
+  "floorZ": -0.957,
+  "depth": 0.005,
+  "band": [
+   0.012,
+   0.022
+  ],
+  "x": [
+   0.2,
+   0.22,
+   0.44,
+   0.455
+  ],
+  "heel": {
+   "c": [
+    0.347,
+    0.016
+   ],
+   "s": [
+    0.042,
+    0.028
+   ],
+   "fade": [
+    0.85,
+    1.25
+   ]
+  }
+ },
+ "pads": {
+  "floorZ": -0.957,
+  "sink": 0.003,
+  "lobeK": 0.01,
+  "padK": 0.003,
+  "pads": [
+   {
+    "name": "toe 1",
+    "at": [
+     0.298,
+     -0.09
+    ],
+    "lobes": [
+     {
+      "c": [
+       0.298,
+       -0.09
+      ],
+      "s": [
+       0.0105,
+       0.016,
+       0.011
+      ]
+     }
+    ]
+   },
+   {
+    "name": "toe 2",
+    "at": [
+     0.333,
+     -0.111
+    ],
+    "lobes": [
+     {
+      "c": [
+       0.333,
+       -0.111
+      ],
+      "s": [
+       0.012,
+       0.017,
+       0.011
+      ]
+     }
+    ]
+   },
+   {
+    "name": "toe 3",
+    "at": [
+     0.371,
+     -0.111
+    ],
+    "lobes": [
+     {
+      "c": [
+       0.371,
+       -0.111
+      ],
+      "s": [
+       0.012,
+       0.017,
+       0.011
+      ]
+     }
+    ]
+   },
+   {
+    "name": "toe 4",
+    "at": [
+     0.4,
+     -0.088
+    ],
+    "lobes": [
+     {
+      "c": [
+       0.4,
+       -0.088
+      ],
+      "s": [
+       0.0105,
+       0.016,
+       0.011
+      ]
+     }
+    ]
+   },
+   {
+    "name": "metatarsal",
+    "at": [
+     0.35,
+     -0.052
+    ],
+    "lobes": [
+     {
+      "c": [
+       0.35,
+       -0.056
+      ],
+      "s": [
+       0.035,
+       0.02,
+       0.011
+      ]
+     },
+     {
+      "c": [
+       0.327,
+       -0.043
+      ],
+      "s": [
+       0.016,
+       0.015,
+       0.011
+      ]
+     },
+     {
+      "c": [
+       0.35,
+       -0.04
+      ],
+      "s": [
+       0.016,
+       0.015,
+       0.011
+      ]
+     },
+     {
+      "c": [
+       0.373,
+       -0.043
+      ],
+      "s": [
+       0.016,
+       0.015,
+       0.011
+      ]
+     }
+    ],
+    "sink": 0.0012
+   }
+  ]
+ },
+ "corner": {
+  "xc": 0.343,
+  "xhalf": 0.008,
+  "zfit": [
+   -0.935,
+   -0.905
+  ],
+  "R": 0.03,
+  "floorZ": -0.957,
+  "box": {
+   "x": [
+    0.295,
+    0.322,
+    0.364,
+    0.391
+   ],
+   "y": [
+    -0.02,
+    -0.005,
+    1,
+    1
+   ],
+   "z": [
+    -1,
+    -1,
+    -0.895,
+    -0.88
+   ]
+  },
+  "blurX": [
+   {
+    "c": [
+     0.343,
+     0.03,
+     -0.945
+    ],
+    "s": [
+     0.06,
+     0.035,
+     0.022
+    ],
+    "fade": [
+     0.5,
+     1.1
+    ],
+    "sigma": 0.01
+   }
+  ],
+  "smoothK": 0.01,
+  "hardBand": [
+   0.002,
+   0.008
+  ]
+ },
+ "openings": [
+  {
+   "r": 0.004,
+   "box": {
+    "x": [
+     0.2,
+     0.22,
+     0.44,
+     0.455
+    ],
+    "z": [
+     -1,
+     -1,
+     -0.94,
+     -0.93
+    ]
+   }
+  }
+ ],
+ "keepContact": {
+  "c": [
+   0.347,
+   0.0
+  ],
+  "s": [
+   0.03,
+   0.02
+  ],
+  "fade": [
+   0.6,
+   1.0
+  ],
+  "yMax": [
+   0.004,
+   0.012
+  ],
+  "floorZ": -0.957,
+  "band": [
+   0.0008,
+   0.002
+  ]
+ },
+ "partBox": {
+  "x": [
+   0.18,
+   0.2,
+   0.44,
+   0.455
+  ],
+  "z": [
+   -1,
+   -1,
+   -0.88,
+   -0.85
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ }
+}
