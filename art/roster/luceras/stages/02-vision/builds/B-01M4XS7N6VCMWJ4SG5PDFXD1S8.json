@@ -8,12 +8,54 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "fe4415db8917a29516db79f3c4b6220569e4c0dfc0505ea6fcae9cd009430118"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 19650,
+    "wallMinutes": 1.49,
+    "image": {
+      "stage": "vision",
+      "element": "plume",
+      "label": "B: Quiet flame",
+      "summary": "A toned-down flame plume: the same sweeping shape as the base, a little looser, with a few longer pointed tongues and the rest soft.",
+      "promptSha256": "cd8173ab275b6c9026f37b7aa65f99ccaba77ac44dfedc4a14b3a2e629ce1776",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "tail tuft shape"
+      ],
+      "notFor": [
+        "coat color",
+        "tail length",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-mkz6",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "fe4415db8917a29516db79f3c4b6220569e4c0dfc0505ea6fcae9cd009430118"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-14T18:01:46Z",
-  "briefSha256": "38707cf1c9df8d1a52b84e3b70b767348bf81ffed3650b7a8c0d94228cd02eee"
+  "briefSha256": "38707cf1c9df8d1a52b84e3b70b767348bf81ffed3650b7a8c0d94228cd02eee",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:03:15Z"
 }

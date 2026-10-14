@@ -8,12 +8,54 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 35719,
+    "wallMinutes": 1.21,
+    "image": {
+      "stage": "vision",
+      "element": "plume",
+      "label": "A: Base plume, pointed tips",
+      "summary": "The base image's soft plume kept at its size, with the fur drawn into pointed tips so it reads as spiked without being a weapon.",
+      "promptSha256": "603e29ec3791e0dba3c964d8bf190777b721383b2ac8c338d8c639f1376eb8fa",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "tail tuft shape"
+      ],
+      "notFor": [
+        "coat color",
+        "tail length",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-wn7y",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-14T18:01:46Z",
-  "briefSha256": "bb3d4af1f5c5a36867ac43eb88dad57945aee2ea1297faf1ef3d745b79230209"
+  "briefSha256": "bb3d4af1f5c5a36867ac43eb88dad57945aee2ea1297faf1ef3d745b79230209",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:02:59Z"
 }

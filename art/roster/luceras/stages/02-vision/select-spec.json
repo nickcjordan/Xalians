@@ -1,52 +1,105 @@
 {
-  "creature": "luceras",
-  "stage": "02-vision",
-  "title": "Luceras Vision Board",
-  "heading": "Luceras: vision board",
-  "lede": "Stage 2 of 11. Five decisions about how Luceras looks, each as pictures edited from one neutral gray base so only that element changes. Pick one per set; a recommendation is marked, and any pick is fine.",
-  "order": ["palette", "horns", "eyes", "fur", "plume"],
-  "elements": {
-    "palette": {
-      "name": "Palette",
-      "question": "Which coat color and pattern?",
-      "judge": ["Does the pattern read at a glance?", "Does it fit sky, cloud and island stone?", "Dark above and light below?"],
-      "reading": ["openForDesign[0]"],
-      "recommend": {"letter": "C", "reason": "Reads strongest at game size, and dark-above, bright-below is how an animal hides when seen from above against the gaps and from below against the sky."}
-    },
-    "horns": {
-      "name": "Horns",
-      "question": "Which horn surface and color?",
-      "judge": ["Ram-like?", "Heavy enough to be the strike weapon?", "Readable against the ears?"],
-      "reading": ["mustHave[2]", "openForDesign[2]"],
-      "recommend": {"letter": "B", "reason": "The most ram-like, and these horns are the creature's strike weapon, so heavy and dark suits them. C is the air-element hint if you want character over realism."}
-    },
-    "eyes": {
-      "name": "Eyes",
-      "question": "Which eyes?",
-      "judge": ["Alert at small size?", "Does the pupil shape suit the horns?"],
-      "reading": ["carriedOverFromSilhouette[0]", "openForDesign[3]"],
-      "recommend": {"letter": "B", "reason": "The goat pupil matches the ram horns and reads as alert at small size."}
-    },
-    "fur": {
-      "name": "Fur",
-      "question": "Where does the long fur grow?",
-      "judge": ["Is the shag where the sheet shows it, short on the face?", "Do the hind legs read as the big mass?"],
-      "reading": ["mustHave[1]", "carriedOverFromSilhouette[4]"],
-      "recommend": {"letter": "C", "reason": "Long fur on the hind legs underlines what the creature is built around; A is the fullest shag; B is the weakest fit to the record's shaggy fur and is shown for completeness."}
-    },
-    "plume": {
-      "name": "Tail plume",
-      "question": "Which plume at the tail tip?",
-      "judge": ["Spiked, as the record says?", "Readable at sprite size?"],
-      "reading": ["mustHave[5]", "openForDesign[5]"],
-      "recommend": {"letter": "A", "reason": "The record says a spiked plume, and the compact burr reads at sprite size; B is the showiest."}
-    }
+ "creature": "luceras",
+ "stage": "02-vision",
+ "title": "Luceras Vision Board",
+ "heading": "Luceras: vision board",
+ "lede": "Stage 2 of 11. Five decisions about how Luceras looks, each as pictures edited from one neutral gray base so only that element changes. Pick one per set; a recommendation is marked, and any pick is fine.",
+ "order": [
+  "palette",
+  "horns",
+  "eyes",
+  "fur",
+  "plume"
+ ],
+ "elements": {
+  "palette": {
+   "name": "Palette",
+   "question": "Which coat color and pattern?",
+   "judge": [
+    "Does the pattern read at a glance?",
+    "Does it fit sky, cloud and island stone?",
+    "Dark above and light below?"
+   ],
+   "reading": [
+    "openForDesign[0]"
+   ],
+   "recommend": {
+    "letter": "C",
+    "reason": "Reads strongest at game size, and dark-above, bright-below is how an animal hides when seen from above against the gaps and from below against the sky."
+   }
   },
-  "fold": {
-    "title": "Decided by the pipeline owner",
-    "text": "Eye color, horn color and coat are independent choices; the model sheet (next stage) combines your picks into one consistent turnaround and a shaved bare-body version. Every option here keeps every must-have from the approved reading. Images were generated on Nick's Codex subscription, 16 images, about 1.4 minutes and 25K Codex tokens each."
+  "horns": {
+   "name": "Horns",
+   "question": "Which horn surface and color?",
+   "judge": [
+    "Ram-like?",
+    "Heavy enough to be the strike weapon?",
+    "Readable against the ears?"
+   ],
+   "reading": [
+    "mustHave[2]",
+    "openForDesign[2]"
+   ],
+   "recommend": {
+    "letter": "B",
+    "reason": "The most ram-like, and these horns are the creature's strike weapon, so heavy and dark suits them. C is the air-element hint if you want character over realism."
+   }
   },
-  "fallback": "Picks cannot be saved from this view; reply with five letters instead.",
-  "compositeEmpty": "Composed preview: the orchestrator generates one image with all five picks and it appears here.",
-  "confirmed": "Picks confirmed; the orchestrator files them."
+  "eyes": {
+   "name": "Eyes",
+   "question": "Which eyes?",
+   "judge": [
+    "Alert at small size?",
+    "Does the pupil shape suit the horns?"
+   ],
+   "reading": [
+    "carriedOverFromSilhouette[0]",
+    "openForDesign[3]"
+   ],
+   "recommend": {
+    "letter": "B",
+    "reason": "The goat pupil matches the ram horns and reads as alert at small size."
+   }
+  },
+  "fur": {
+   "name": "Fur",
+   "question": "Where does the long fur grow?",
+   "judge": [
+    "Is the shag where the sheet shows it, short on the face?",
+    "Do the hind legs read as the big mass?"
+   ],
+   "reading": [
+    "mustHave[1]",
+    "carriedOverFromSilhouette[4]"
+   ],
+   "recommend": {
+    "letter": "C",
+    "reason": "Long fur on the hind legs underlines what the creature is built around; A is the fullest shag; B is the weakest fit to the record's shaggy fur and is shown for completeness."
+   }
+  },
+  "plume": {
+   "name": "Tail plume",
+   "question": "Which plume at the tail tip?",
+   "judge": [
+    "Close to the base plume, as you asked, while still reading as spiked?",
+    "Readable at sprite size without stealing from the leap?"
+   ],
+   "reading": [
+    "mustHave[5]",
+    "openForDesign[5]"
+   ],
+   "recommend": {
+    "letter": "A",
+    "reason": "Set 2, made from your note: closest to the base plume with the fur drawn to pointed tips, so it still answers the record's spiked plume without becoming a weapon. B is the calmer flame, C the slimmest brush."
+   },
+   "note": "Second set. Your note on the first set: closer to the base image, the flame tongues nearest but too dramatic, no spiked ball."
+  }
+ },
+ "fold": {
+  "title": "Decided by the pipeline owner",
+  "text": "Eye color, horn color and coat are independent choices; the model sheet (next stage) combines your picks into one consistent turnaround and a shaved bare-body version. Every option here keeps every must-have from the approved reading. Images were generated on Nick's Codex subscription, 16 images, about 1.4 minutes and 25K Codex tokens each."
+ },
+ "fallback": "Picks cannot be saved from this view; reply with five letters instead.",
+ "compositeEmpty": "Composed preview: the orchestrator generates one image with all five picks and it appears here.",
+ "confirmed": "Picks confirmed; the orchestrator files them."
 }

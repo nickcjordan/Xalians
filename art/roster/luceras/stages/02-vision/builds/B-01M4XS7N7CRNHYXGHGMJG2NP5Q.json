@@ -8,12 +8,54 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "34c06d8fb2471b6e49ea84741575c7b5ba4b953a3ba0e3849b8efd86090cd058"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 17025,
+    "wallMinutes": 1.34,
+    "image": {
+      "stage": "vision",
+      "element": "plume",
+      "label": "C: Tapered brush",
+      "summary": "A slimmer brush-shaped plume tapering to a point, with short spiky fur along its edges.",
+      "promptSha256": "71973c40e404e69acc880ca5ffd5c3dea6b141a8dd32aee5a124222b26b43d55",
+      "inputs": [
+        {
+          "name": "output.png",
+          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "tail tuft shape"
+      ],
+      "notFor": [
+        "coat color",
+        "tail length",
+        "pose"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-wyz3",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "34c06d8fb2471b6e49ea84741575c7b5ba4b953a3ba0e3849b8efd86090cd058"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-14T18:01:46Z",
-  "briefSha256": "0df239d19b4fd7b4fb0551041430be5c5b4627090747dc75d0bfc17d4080bd00"
+  "briefSha256": "0df239d19b4fd7b4fb0551041430be5c5b4627090747dc75d0bfc17d4080bd00",
+  "checks": [],
+  "reportedAt": "2026-10-14T18:03:06Z"
 }
