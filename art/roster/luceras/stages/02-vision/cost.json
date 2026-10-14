@@ -1,0 +1,37 @@
+{
+  "tokens": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "byRole": {},
+  "blenderMinutes": 0.0,
+  "codexTokens": 496771,
+  "buildCount": 21,
+  "buildsWithoutTranscripts": [
+    "h7mt",
+    "yxw6",
+    "rjgc",
+    "d37t",
+    "a5me",
+    "s672",
+    "2pxh",
+    "6vbg",
+    "mvyt",
+    "hmkr",
+    "5pne",
+    "kvht",
+    "bd53",
+    "8gke",
+    "w7rj",
+    "bsvq",
+    "5ekb",
+    "q3wx",
+    "wn7y",
+    "mkz6",
+    "wyz3"
+  ],
+  "closedAt": "2026-10-14T18:26:02Z",
+  "approval": "N-01M4XTM2D4TAEAKRHW2Z73WXXT"
+}

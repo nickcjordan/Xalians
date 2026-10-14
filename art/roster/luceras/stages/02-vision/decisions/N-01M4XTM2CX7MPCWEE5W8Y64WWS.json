@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XTM2CX7MPCWEE5W8Y64WWS",
+  "alias": "eram",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "picked A: Base plume, pointed tips on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XS7N6BFBWG25GF3BNNC0F7",
+    "evidence": [
+      "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T18:26:01Z",
+  "element": "plume",
+  "buildAlias": "wn7y",
+  "blob": "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd"
+}

@@ -52,15 +52,23 @@
       "closedAt": "2026-10-14T16:01:51Z"
     },
     "02-vision": {
+      "state": "closed",
+      "approval": "N-01M4XTM2D4TAEAKRHW2Z73WXXT",
+      "evidence": [
+        "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8",
+        "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9",
+        "574891431107799d9b5c8547377c6676fc51290e21d6aa72fa3a97251d24ec55",
+        "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00",
+        "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd"
+      ],
+      "openedAt": "2026-10-14T16:01:51Z",
+      "closedAt": "2026-10-14T18:26:02Z"
+    },
+    "03-sheet": {
       "state": "open",
       "approval": null,
       "evidence": [],
-      "openedAt": "2026-10-14T16:01:51Z"
-    },
-    "03-sheet": {
-      "state": "not-started",
-      "approval": null,
-      "evidence": []
+      "openedAt": "2026-10-14T18:26:03Z"
     },
     "04-blockout": {
       "state": "not-started",
