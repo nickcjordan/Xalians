@@ -1,0 +1,18 @@
+{
+  "tokens": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "byRole": {},
+  "blenderMinutes": 0.0,
+  "codexTokens": 0,
+  "buildCount": 2,
+  "buildsWithoutTranscripts": [
+    "jetj",
+    "99af"
+  ],
+  "closedAt": "2026-10-14T16:01:51Z",
+  "approval": "N-01M4XJBV8MN7995DDR7D5WPJ9Y"
+}

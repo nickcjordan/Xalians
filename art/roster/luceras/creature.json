@@ -42,15 +42,20 @@
   "budget": null,
   "stages": {
     "01-intake": {
+      "state": "closed",
+      "approval": "N-01M4XJBV8MN7995DDR7D5WPJ9Y",
+      "evidence": [
+        "0fd7230b9a0b6622d81f36fc647aab03a655d8522757e789bf4ede0a0a4cf9c2",
+        "d5dc252a3ab2bbb0599f6e221ce3f53d70366ea8752529641377a820028005a9"
+      ],
+      "openedAt": "2026-10-14T15:32:00Z",
+      "closedAt": "2026-10-14T16:01:51Z"
+    },
+    "02-vision": {
       "state": "open",
       "approval": null,
       "evidence": [],
-      "openedAt": "2026-10-14T15:32:00Z"
-    },
-    "02-vision": {
-      "state": "not-started",
-      "approval": null,
-      "evidence": []
+      "openedAt": "2026-10-14T16:01:51Z"
     },
     "03-sheet": {
       "state": "not-started",

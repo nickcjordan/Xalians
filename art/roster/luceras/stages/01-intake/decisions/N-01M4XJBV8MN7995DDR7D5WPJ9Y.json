@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4XJBV8MN7995DDR7D5WPJ9Y",
+  "alias": "neyp",
+  "stage": "01-intake",
+  "who": "nick",
+  "words": "i approve what is written there. (2026-10-14, on the Luceras reading page https://claude.ai/artifact/WiWMG3PUqwZyPkA1ByJzzh)",
+  "date": "2026-10-14",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M4XJBFZJ2VPNXKHE1B3H7FHM",
+    "evidence": [
+      "0fd7230b9a0b6622d81f36fc647aab03a655d8522757e789bf4ede0a0a4cf9c2",
+      "d5dc252a3ab2bbb0599f6e221ce3f53d70366ea8752529641377a820028005a9"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T16:01:43Z"
+}

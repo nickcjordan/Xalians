@@ -1,0 +1,19 @@
+{
+  "id": "B-01M4XJBBYEDQR23C0P33NM9PZB",
+  "alias": "jetj",
+  "stage": "01-intake",
+  "kind": "run",
+  "goal": "Stage 1 reading and tech spec for Nick's approval",
+  "scope": "intake",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-14T16:01:28Z",
+  "briefSha256": "24ae842144d09d4d316992c3fe8f1f37d6e521ecb1569eed7a454093eea07c35"
+}

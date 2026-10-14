@@ -1,0 +1,43 @@
+{
+  "id": "B-01M4XJBFZJ2VPNXKHE1B3H7FHM",
+  "alias": "99af",
+  "stage": "01-intake",
+  "kind": "run",
+  "goal": "Stage 1 reading and tech spec for Nick's approval",
+  "scope": "intake",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "reading.json",
+      "hash": "0fd7230b9a0b6622d81f36fc647aab03a655d8522757e789bf4ede0a0a4cf9c2"
+    },
+    {
+      "name": "techspec.json",
+      "hash": "d5dc252a3ab2bbb0599f6e221ce3f53d70366ea8752529641377a820028005a9"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "reading.json",
+        "hash": "0fd7230b9a0b6622d81f36fc647aab03a655d8522757e789bf4ede0a0a4cf9c2"
+      },
+      {
+        "name": "techspec.json",
+        "hash": "d5dc252a3ab2bbb0599f6e221ce3f53d70366ea8752529641377a820028005a9"
+      }
+    ],
+    "blockedBy": "nothing",
+    "note": "the earlier planned build in this stage is a stray duplicate from a scripting slip; it carries no outputs"
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T16:01:32Z",
+  "briefSha256": "f805ea35b83a3a074f5f56ee146c8164292e858bb13721ea319e5cc8ecdd2677",
+  "checks": [],
+  "reportedAt": "2026-10-14T16:01:43Z"
+}
