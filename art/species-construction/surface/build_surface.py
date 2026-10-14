@@ -409,10 +409,29 @@ def compute_attributes(skin, cfg, species):
                 take = m > best
                 gid[take] = code
                 best = np.maximum(best, m)
-        write_attribute(me, 'gid', gid)
+        # splitFacing: a thin sheet (the ears) gets separate guide sets for its front and back faces, so a strand on
+        # one face never interpolates guides rooted on the other face (they pierced the ear: clumps and dark pits)
+        facing_back = (nrm[:, 1] > 0.0).astype(float)
         for gi, (gname, spec) in enumerate(gcfg['groups'].items()):
+            if spec.get('splitFacing'):
+                own = (np.floor(gid/3) == gi) & (best > 0)
+                gid = np.where(own, gid+1000.0*facing_back, gid)
+        write_attribute(me, 'gid', gid)
+        # rim distance for groups with 'rim': edge-path distance to where the sheet's front and back faces meet
+        rim_d = {}
+        for gi, (gname, spec) in enumerate(gcfg['groups'].items()):
+            if spec.get('rim') and spec.get('splitFacing'):
+                own = (np.floor((gid % 1000)/3) == gi) & (best > 0)
+                ea, eb = edges[:, 0], edges[:, 1]
+                flip = own[ea] & own[eb] & (facing_back[ea] != facing_back[eb])
+                seeds = np.zeros(n, bool)
+                seeds[ea[flip]] = True
+                seeds[eb[flip]] = True
+                rim_d[gi] = graph_distance(co, edges, seeds, own)
+        for gi, (gname, spec) in enumerate(gcfg['groups'].items()):
+          for face_code in ((0.0, 1000.0) if spec.get('splitFacing') else (0.0,)):
             for side in ((-1.0, 1.0) if spec.get('perSide', True) else (0.0,)):
-                code = gi*3+(0 if side == 0 else (1 if side < 0 else 2))
+                code = gi*3+(0 if side == 0 else (1 if side < 0 else 2))+face_code
                 sel = (guided > 0.5) & (gid == code)  # every guided strand of this group has guides near it
                 cand = np.where(sel)[0]
                 if len(cand) < 10:
@@ -432,6 +451,12 @@ def compute_attributes(skin, cfg, species):
                 lo, hi = spec['length']
                 L = lo+(hi-lo)*tt**spec.get('lengthPower', 0.8)
                 L = L*(1.0+spec.get('lengthJitter', 0.0)*(rng.random(len(L))*2.0-1.0))
+                if gi in rim_d:  # long plume tufts along the rim, not near the ear root
+                    rc = spec['rim']
+                    rd = rim_d[gi][idx]
+                    near_rim = 1.0-smoothstep(np.where(np.isfinite(rd), rd, 1.0)/rc['width'])
+                    rim_len = rc['length']*near_rim*smoothstep((tt-rc.get('rootFade', 0.2))/0.2)
+                    L = np.maximum(L, rim_len*(1.0+spec.get('lengthJitter', 0.0)*(rng.random(len(L))*2.0-1.0)))
                 if 'farFade' in spec:  # the very farthest points of the fan grow shorter locks (no lone spikes at the ear points)
                     L = L*(1.0-spec['farFade']*smoothstep((tt-0.88)/0.12))
                 if 'frontScale' in spec:  # shorter, softer locks on the front of the fan, shortest in the cup

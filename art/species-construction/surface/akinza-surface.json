@@ -374,8 +374,8 @@
     "smooth": 4
   },
   "cupInner": {
-    "t0": 0.22,
-    "width": 0.22
+    "t0": 0.86,
+    "width": 0.14
   },
   "tailRamp": {
     "start": 0.04,
@@ -402,12 +402,19 @@
     },
     "groups": {
       "ears": {
-        "count": 110,
+        "count": 160,
         "length": [
           0.025,
-          0.07
+          0.1
         ],
-        "lengthPower": 0.8
+        "lengthPower": 2.2,
+        "lengthJitter": 0.2,
+        "splitFacing": true,
+        "rim": {
+          "length": 0.085,
+          "width": 0.02,
+          "rootFade": 0.25
+        }
       },
       "crown": {
         "count": 40,
