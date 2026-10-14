@@ -62,9 +62,9 @@ class RebaseTests(unittest.TestCase):
 
     def test_live_status_is_rebased(self):
         S = json.loads(STATUS.read_text(encoding='utf-8'))
-        self.assertEqual(S['baseline']['assembly'], 'assembled-3168')
-        self.assertEqual(S['baseline']['recipe'], 'docs/design/species-construction/akinza/recipe-furbase-nose-v3.json')
-        self.assertEqual(S['needsColdBaseline'], 'assembled-3168')
+        self.assertEqual(S['baseline']['assembly'], 'assembled-3300')
+        self.assertEqual(S['baseline']['recipe'], 'docs/design/species-construction/akinza/recipe-integrated-v3.json')
+        self.assertEqual(S['needsColdBaseline'], 'assembled-3300')
         self.assertNotIn('R01', S.get('awaiting') or {})
         self.assertTrue(all(d.get('answer') for d in S['decisions'] if d.get('region') == 'R01'))
         self.assertEqual(sorted(r for r, v in S['regions'].items() if v.get('approved')), ['R01', 'R02', 'R03', 'R04'])
@@ -84,9 +84,9 @@ class RebaseTests(unittest.TestCase):
         d = ls.species_dirs('akinza')
         full = json.loads(self.status.read_text(encoding='utf-8'))
         other = ls.merge_status(json.loads(json.dumps(full)), {'coldScoredAssembly': 'assembled-1'}, d, 'akinza')
-        self.assertEqual(other['needsColdBaseline'], 'assembled-3168')
+        self.assertEqual(other['needsColdBaseline'], 'assembled-3300')
         self.assertNotIn('coldScoredAssembly', other)
-        done = ls.merge_status(json.loads(json.dumps(full)), {'coldScoredAssembly': 'assembled-3168'}, d, 'akinza')
+        done = ls.merge_status(json.loads(json.dumps(full)), {'coldScoredAssembly': 'assembled-3300'}, d, 'akinza')
         self.assertNotIn('needsColdBaseline', done)
         self.assertNotIn('coldScoredAssembly', done)
 

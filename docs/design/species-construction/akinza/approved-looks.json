@@ -4,7 +4,8 @@
  "lookReference": {
   "assembly": "assembled-3300",
   "recipe": "docs/design/species-construction/akinza/recipe-integrated-v3.json",
-  "note": "Final bare-clay model (2026-10-14): every approved part plus the lid cleanup; the model of record for the surface (fur and color) stage."
+  "packet": "untracked/species-construction/akinza/loop/packets/assembled-3300",
+  "note": "Final bare-clay model (2026-10-14): every approved part plus the lid cleanup; the model of record for the surface (fur and color) stage. Its packet (for reader_pack.py) is not built yet."
  },
  "parts": [
   {

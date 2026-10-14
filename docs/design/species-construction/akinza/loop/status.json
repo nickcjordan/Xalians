@@ -68,9 +68,9 @@
  "baseline": {
   "head": "head-3167",
   "body": "body-2960",
-  "assembly": "assembled-3168",
-  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-3168",
-  "recipe": "docs/design/species-construction/akinza/recipe-furbase-nose-v3.json"
+  "assembly": "assembled-3300",
+  "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-3300",
+  "recipe": "docs/design/species-construction/akinza/recipe-integrated-v3.json"
  },
  "round": 35,
  "lastOrders": [
@@ -1554,7 +1554,8 @@
   "2026-10-08: Nick approved the capped ear-outline pass (two rounds, ears only: ordersPerRound 1, R03 pinned, hard stop 35), then the texture phase without a stop for review. Plateau window restarted at the round 33 rescore.",
   "2026-10-08: Round 34 (66 min): R03 KEPT; assembled-2999; readers R03 better 2-1, R04 better 2-1; criteria R03.1 fail to pass | waiting for Nick: reverts R01 (critic score 5.297)",
   "2026-10-08: Round 35 (67 min): R03 reverted; why: no candidate read better than the baseline: [{\"candidate\":\"rim needles fused, steeper V\",\"per\":{\"R03\":{\"verdict\":\"worse\",\"better\":0,\"worse\":3,\"reason\":\"B has a raised tuft at the top center of the crown, like the pointed | waiting for Nick: reverts R01 (critic score 5.297)",
-  "2026-10-12: Rebased to assembled-3168 (recipe-furbase-nose-v3.json, head-3167, body-2960) from assembled-2999 (hold audit S13); needsColdBaseline set, so the next loop_state.py args asks for a cold baseline before any order. Measured criteria against the painted, furred sheet and the posed bands are advisory, not gates (rubric.json; Nick: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"). R01 to R04 marked approved (approved-looks.json) and no longer ordered; the stale R01 reverts decision closed; R10 and R11 holds lifted on Nick's 2026-10-12 message; R12 unparked. The loop was not run (LOOP-v3.md v3.16)."
+  "2026-10-12: Rebased to assembled-3168 (recipe-furbase-nose-v3.json, head-3167, body-2960) from assembled-2999 (hold audit S13); needsColdBaseline set, so the next loop_state.py args asks for a cold baseline before any order. Measured criteria against the painted, furred sheet and the posed bands are advisory, not gates (rubric.json; Nick: \"You'll need to remove any of those restricting rules about failing checks because it doesn't meet the shape or trying to match it to the outline of the fur image or things like that\"). R01 to R04 marked approved (approved-looks.json) and no longer ordered; the stale R01 reverts decision closed; R10 and R11 holds lifted on Nick's 2026-10-12 message; R12 unparked. The loop was not run (LOOP-v3.md v3.16).",
+  "2026-10-14: Promoted to assembled-3300 (recipe-integrated-v3.json, head-3167, body-2960; Nick approved the lid cleanup and the whole bare-clay model 2026-10-14) from assembled-3168. needsColdBaseline now names assembled-3300; its packet is not built yet. Backed up to OneDrive (assembled-3300, head-3167, body-2960, roots, sweep specs). The loop was not run."
  ],
  "decisionsForNick": [
   {
@@ -1733,17 +1734,30 @@
  "keptSinceCold": 1,
  "clock": 1791433084,
  "rebased": {
-  "on": "2026-10-12",
+  "on": "2026-10-14",
   "from": {
-   "head": "head-2996",
+   "head": "head-3167",
    "body": "body-2960",
-   "assembly": "assembled-2999",
-   "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2999",
-   "recipe": "docs/design/species-construction/akinza/recipe.json"
+   "assembly": "assembled-3168",
+   "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-3168",
+   "recipe": "docs/design/species-construction/akinza/recipe-furbase-nose-v3.json"
   },
-  "to": "assembled-3168",
-  "why": "Hold audit 2026-10-12 (S13): the loop state described assembled-2999 and the pre-furbase head; resuming from it would undo the eyes, nose, mouth, muzzle, ears and head Nick approved since. Region scores, results and issues below are still those of assembled-2999 under the old rubric until the cold baseline (needsColdBaseline) rescores assembled-3168.",
-  "scoresFrom": "assembled-2999"
+  "to": "assembled-3300",
+  "why": "Final bare-clay model approved by Nick 2026-10-14 (lid cleanup, recipe-integrated-v3; approved-looks.json lookReference). It is the model of record for the surface (fur and color) stage. Region scores, results and issues below are still those of assembled-2999 under the old rubric until a cold baseline rescores assembled-3300; no packet for assembled-3300 exists yet.",
+  "scoresFrom": "assembled-2999",
+  "previous": {
+   "on": "2026-10-12",
+   "from": {
+    "head": "head-2996",
+    "body": "body-2960",
+    "assembly": "assembled-2999",
+    "packet": "C:/dev/src/xalians-akinza-loop/untracked/species-construction/akinza/loop/packets/assembled-2999",
+    "recipe": "docs/design/species-construction/akinza/recipe.json"
+   },
+   "to": "assembled-3168",
+   "why": "Hold audit 2026-10-12 (S13): the loop state described assembled-2999 and the pre-furbase head; resuming from it would undo the eyes, nose, mouth, muzzle, ears and head Nick approved since. Region scores, results and issues below are still those of assembled-2999 under the old rubric until the cold baseline (needsColdBaseline) rescores assembled-3168.",
+   "scoresFrom": "assembled-2999"
+  }
  },
- "needsColdBaseline": "assembled-3168"
+ "needsColdBaseline": "assembled-3300"
 }

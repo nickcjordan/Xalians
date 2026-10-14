@@ -1,5 +1,9 @@
 # Akinza construction handoff candidate
 
+## Model of record
+
+**assembled-3300** (recipe `docs/design/species-construction/akinza/recipe-integrated-v3.json`, head-3167, body-2960), set 2026-10-14. It is the final bare-clay model: integrated v2 plus the lids v1 cleanup, which Nick approved on 2026-10-14 along with every approved part it carries (`approved-looks.json`, `lookReference`). The surface (fur and color) stage builds from it: `build_surface.py --asm C:/dev/art-data/species-construction/akinza/assembled-3300` (the worktree's `untracked/species-construction/akinza/assembled-3300`). It replaces assembled-2999, the base of the 2026-10-08 fur passes. A copy, with its head, body, recipe roots and untracked inputs, is in `OneDrive/xalians-art-backup/akinza` (see `BACKUP.md` there). Everything below this section is the historical 2026-09-28 candidate 0020 handoff.
+
 **Rejected for visual quality, 2026-09-28.** Candidate 0020 and its portable bundle are retained as technical experiments only. Do not use them as accepted construction input. Nick rejected the model's quality; the agent's previous readiness verdict is withdrawn. [Current audit](quality-audit-0020.md) identifies substantial construction work still required. The file descriptions below document the historical export, not current readiness.
 
 This is a proposed layer-6 handoff built from the same geometry as the review renders. It does not grant Nick's approval. The preferred first-round sheet remains the appearance target; later tail, gaze and paw directions retain precedence. The editable construction surface is the starting reference for the downstream model, so that its builder does not have to infer the same hidden shapes again from pictures.
