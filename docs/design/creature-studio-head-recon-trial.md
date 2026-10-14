@@ -68,3 +68,17 @@ Alignment: no fitting needed. The reconstruction scaled to v5's height already p
 - The fanged slot of a mouth in R1 to R3 was my clip cutting off the chin and lower lip (clip bottom at z 0.33, mouth bottom at 0.336). Clip moved down to 0.30; the measured chin went from 0.2 W behind the eye front to level with it.
 - The numbers: face_fit still reports 11 of 15 misses, but several sheet measures disagree with each other (the bare side view's lower face sits lower relative to the eye than the bare front view's), and the reconstruction reconciled the views. From here I use the numbers for the eyes (size, spacing, height) and the renders for the rest.
 - Building a sharper grid (1 mm, lighter blur) because the 1.5 mm grid softened the nose and lips.
+
+### CP2, independent critic and round 5 (22:30 to 23:00)
+
+Round 4 (`cp2-round4-eyes.jpg`): the 1 mm grid kept the open mouth and tongue; eyes facing forward, sunk to 52 to 56 degrees showing. An independent critic (Opus, no code, images only; report `creature-studio-head-recon/critic-cp2.md`) judged all three "no": a goggle-eyed gremlin, not the soft bunny. Its ranked findings and what I did:
+
+| Critic finding | Cause | Action |
+|---|---|---|
+| Raised rims around the eyes read as goggles | my lid rings on top of the reconstruction's own eye-mound skirts | lid rings off; new `grid_soften.py` blurs the grid inside a sphere around each mound (sigma 6 mm, faded), so the skirts flatten before the socket is carved |
+| Eyes too far out, poking through the skull from above; far eye bulges past the outline | balls up to 0.048 m radius on a skull narrow at the front | smaller balls (0.033 to 0.037) showing more of themselves (68 to 72 degrees) |
+| Eye reads startled: wide orange ring, small pupil | eye shader pupil at half the opening | pupil at 0.62 of the opening (per-build shading) |
+| Lower face too narrow; mouth small with fang-like lip corners; lower face short; beaky snout; ridge on the bridge; weak chin | the reconstruction's shape | measured: the raw r04 face is not narrow (0.98 W at the mouth corners against the sheet's 0.87). Mouth size and snout are what the model inferred. Running five more reconstructions (seeds 1 to 3, guidance 7.5, octree 512) to pick the best mouth and snout instead of sculpting corrections |
+| Notch at the lower lip, step where the head meets the neck | the clip edge and v5's neck | to check on the next render |
+
+Round 5 (`cp2-round5-no-lids.jpg`): the goggles are gone and the pupils read as the sheet's. Eye spacing re-fitted after the softening let the inner sides show (eye centers moved out to x 0.049 to 0.050): 0.28 to 0.32 W gap against the sheet's 0.27.

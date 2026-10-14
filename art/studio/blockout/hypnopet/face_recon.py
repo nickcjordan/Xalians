@@ -36,14 +36,20 @@ CROWN = {'center': [0, -0.15, 0.452], 'radii': [0.07, 0.08, 0.06], 'blend': 0.04
 
 VARIANTS = {
     # eye_x, eye_z: the eye center in the front view; eye_r: ball radius; open: the share of the ball that shows
-    # (mean opening half-angle, degrees); yaw: gaze outward from straight ahead. Optional nose and lip
-    # corrective masses ([center, radii, blend]) exist but were rejected in CP2 (they read as shelves); unused.
-    'R1': {'note': 'R1: reconstructed head, eyes at its eye mounds, the bare sheet eye size.',
-           'eye_x': 0.040, 'eye_z': 0.436, 'eye_r': 0.040, 'open': 56, 'yaw': 0, 'pitch': 2},
+    # (mean opening half-angle, degrees); yaw: gaze outward from straight ahead; lid: [top, bottom] lid ring
+    # radii or none; pupil: pupil width over the visible eye width. Optional nose and lip corrective masses
+    # ([center, radii, blend]) exist but were rejected in CP2 (they read as shelves); unused.
+    # Round 5 (after the critic, CP2): no lid rings (with the mounds they read as goggles), smaller balls showing
+    # more of themselves (a big ball poked through the skull's sides from above), a larger pupil.
+    'R1': {'note': 'R1: reconstructed head, eyes the bare sheet size.',
+           'eye_x': 0.049, 'eye_z': 0.436, 'eye_r': 0.033, 'open': 68, 'yaw': 0, 'pitch': 2, 'pupil': 0.62,
+           'socket_blend': 0.004},
     'R2': {'note': 'R2: reconstructed head, eyes between the bare and the painted sheet.',
-           'eye_x': 0.039, 'eye_z': 0.436, 'eye_r': 0.044, 'open': 54, 'yaw': 0, 'pitch': 2},
+           'eye_x': 0.050, 'eye_z': 0.436, 'eye_r': 0.035, 'open': 70, 'yaw': 0, 'pitch': 2, 'pupil': 0.62,
+           'socket_blend': 0.004},
     'R3': {'note': 'R3: reconstructed head, the painted sheet larger, closer eyes.',
-           'eye_x': 0.038, 'eye_z': 0.436, 'eye_r': 0.048, 'open': 52, 'yaw': 0, 'pitch': 2},
+           'eye_x': 0.050, 'eye_z': 0.436, 'eye_r': 0.037, 'open': 72, 'yaw': 0, 'pitch': 2, 'pupil': 0.62,
+           'socket_blend': 0.004},
 }
 
 
@@ -67,18 +73,23 @@ def build(name, grid_path, verbose=True, overrides=None):
     y_front = surface_y(field_adds, d['eye_x'], d['eye_z'])
     c0 = np.array([d['eye_x'], y_front, d['eye_z']])-axis*re*0.5
     c, opened = seat_eye(field_adds, c0, re, axis, d['open'])
-    ring = lid_ring(field_adds, c, re, axis, 0.0045, 0.003, drop_top=np.radians(3))
-    carves = [mass(c, [re+0.0008]*3, 0.0025, op='carve', mirror='x')]
-    lid = {'part': 'head', 'kind': 'sweep', 'op': 'add-after', 'mirror': 'x', 'blend': 0.009,
-           'params': {'closed': True, 'samples': 8, 'points': ring}}
+    carves = [mass(c, [re+0.0008]*3, d.get('socket_blend', 0.0025), op='carve', mirror='x')]
+    afters = []
+    if d.get('lid'):                            # [top, bottom] lid ring radii; none leaves a clean socket edge
+        ring = lid_ring(field_adds, c, re, axis, d['lid'][0], d['lid'][1], drop_top=np.radians(3))
+        afters.append({'part': 'head', 'kind': 'sweep', 'op': 'add-after', 'mirror': 'x', 'blend': 0.009,
+                       'params': {'closed': True, 'samples': 8, 'points': ring}})
     ball = mass(c, [re]*3, 0.003, mirror='x')
+    shading = eye_shading(opened)
+    if d.get('pupil'):                          # pupil width over the visible eye width (the sheet: mostly dark)
+        shading['pupilDeg'] = round(float(np.degrees(np.arcsin(d['pupil']*np.sin(np.radians(opened))))), 2)
     ball.update(part='eyes', separate=True, material='eye', name='eye-left', mirrorName='eye-right',
-                gaze=[round(float(x), 5) for x in axis], shading=eye_shading(opened))
+                gaze=[round(float(x), 5) for x in axis], shading=shading)
     if verbose:
         print(f'{name}: skin front at the eye {y_front:.4f}, eye center {np.round(c, 4).tolist()}, radius {re}, '
               f'opening half-angle {opened:.1f} deg')
     i = next(n for n, p in enumerate(keep) if p['part'] == 'horn')
-    s = {**base, 'parts': keep[:i]+head+keep[i:]+carves+[lid, ball]}
+    s = {**base, 'parts': keep[:i]+head+keep[i:]+carves+afters+[ball]}
     if d.get('voxel'):
         s['voxel'] = d['voxel']
     s['note'] = ('Hypnopet reconstructed head (experiment X29), written by face_recon.py: v5 with the head part '
