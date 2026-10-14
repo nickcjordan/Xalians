@@ -29,6 +29,15 @@ RECON4 = {
 }
 
 
+# Track A's re-authored hind legs (experiment X32, authored-hind-3 onward): the joints are the leg sweep's own
+# control points, then the foot pad and toes. Read off the spec, not measured.
+AUTHORED5 = {
+    'hind': [[0.105, 0.155, 0.165], [0.11, 0.19, 0.12], [0.115, 0.2, 0.068], [0.117, 0.196, 0.04],
+             [0.12, 0.09, 0.03], [0.12, 0.05, 0.026]],
+}
+
+
+
 def skeleton(fit=None):
     hip, knee, hock, heel = [0.06, 0.17, 0.17], [0.07, 0.218, 0.115], [0.078, 0.23, 0.075], [0.085, 0.226, 0.048]
     ball, toe = [0.09, 0.1, 0.035], [0.09, 0.058, 0.028]
@@ -38,7 +47,7 @@ def skeleton(fit=None):
     e = [[0.1, -0.055, 0.51], [0.145, -0.02, 0.405], [0.19, 0.025, 0.27], [0.24, 0.07, 0.105]]
     if fit:
         hip, knee, hock, heel, ball, toe = fit['hind']
-        e = fit['ear']
+        e = fit.get('ear', e)
     b = [
         bone('pelvis', [0, 0.17, 0.225], [0, 0.06, 0.232]),
         bone('spine', [0, 0.06, 0.232], 'chest_head', 'pelvis'),
@@ -63,7 +72,7 @@ def skeleton(fit=None):
         bone('ear3', e[2], e[3], 'ear2', 'ear', True),
     ]
     b[1]['tail'] = b[2]['head']
-    src = 'v5 blockout joint points (make_spec.py V5)'+(', hind legs and ears placed on body-recon-4' if fit else '')
+    src = 'v5 blockout joint points (make_spec.py V5)'+(f", replaced: {', '.join(sorted(fit))}" if fit else '')
     return {'creature': 'hypnopet', 'source': src, 'bones': b,
             'separate': {'eye-left': 'head', 'eye-right': 'head'}, 'poses': POSES}
 
@@ -95,8 +104,8 @@ POSES = {
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', type=Path, required=True)
-    ap.add_argument('--fit', choices=['recon4'], help='use joints placed on that body for the hind legs and ears')
+    ap.add_argument('--fit', choices=['recon4', 'authored5'], help='use joints placed on that body')
     a = ap.parse_args()
     a.out.parent.mkdir(parents=True, exist_ok=True)
-    a.out.write_text(json.dumps(skeleton(RECON4 if a.fit else None), indent=1), encoding='utf-8')
+    a.out.write_text(json.dumps(skeleton({'recon4': RECON4, 'authored5': AUTHORED5}.get(a.fit)), indent=1), encoding='utf-8')
     print('wrote', a.out)
