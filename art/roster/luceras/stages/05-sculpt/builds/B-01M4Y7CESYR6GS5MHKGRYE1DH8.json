@@ -8,12 +8,501 @@
   "defect": "D-01M4Y67WPJYEQJM66STMEF2F0T",
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "head.blend",
+      "hash": "a19a742928bcdc45193f445b23122f25b69e42e9ab308497630daa4dc69d58b8"
+    },
+    {
+      "name": "head.glb",
+      "hash": "5abe59d83fa7c9f0ded011c5f2e3c9783fdade3a85d213fd0b3c54cc5ec27d7e"
+    },
+    {
+      "name": "head_part.glb",
+      "hash": "0a39a00ba839d6391eca6d3448583bb48e9564720db390c99351b1be824b133d"
+    },
+    {
+      "name": "renders/final_head_three_quarter.png",
+      "hash": "6b33598a96c0ba922cb72905ea5799cb0919db9dbf1a80f59b4b96691ed73310"
+    },
+    {
+      "name": "renders/final_head_front.png",
+      "hash": "9d72f629b959b4c413f9a3ea32eb64cc16fc3729cc335d7b40f4be36fb38532f"
+    },
+    {
+      "name": "renders/final_head_side.png",
+      "hash": "fcd4d7357f8e0b1e0beed70a88c691c1756e67bb45c2523289f2bf61da7ade9b"
+    },
+    {
+      "name": "renders/full_front.png",
+      "hash": "969363ae7ed4611d42cf0f7f192449d40080ea6432c2062c29cec55efee2b6cb"
+    },
+    {
+      "name": "renders/full_three_quarter_left.png",
+      "hash": "719b838a1f4d75daca6fac4749192247544fb0478cedf5817f27feac38b3e8d8"
+    },
+    {
+      "name": "renders/full_side_left.png",
+      "hash": "135b666f8d95079997eec28eed1985f92cd886f5be101c72719996a6e52edc51"
+    },
+    {
+      "name": "renders/full_back.png",
+      "hash": "38655776f0c616c34927f3d50ca68ec251b25dbbcf474604411771ec26b9ff03"
+    },
+    {
+      "name": "renders/full_top.png",
+      "hash": "c7396d90508d96c48828a9801d9ba8bcb6524f80ff361018ee765ab4de917984"
+    },
+    {
+      "name": "renders/sprite_side_192.png",
+      "hash": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6"
+    },
+    {
+      "name": "renders/crop_face_three_quarter.png",
+      "hash": "12600d35f4f0ef612d70b81699df683d03b2a1641ca21a90d6ba5a4040208794"
+    },
+    {
+      "name": "renders/crop_eyes_muzzle_front.png",
+      "hash": "7ee8fdcced653b9e7976df22a613efe0c0bbd7ce8c28c493c31c03ee34c64086"
+    },
+    {
+      "name": "renders/crop_ears_front.png",
+      "hash": "ffeac700022af570fb26e8a5acc879cd5187a73c1395bcffc94e59be2c9342df"
+    },
+    {
+      "name": "compare_close.png",
+      "hash": "a9fc80823e4020f53af3913248b311f9589afd04f545096f578a0f3d47f48ac4"
+    },
+    {
+      "name": "compare_front.png",
+      "hash": "a8084cf64629129676aafaaf464616bbf8a084c3d968863e7771e2f6aeee0bd9"
+    },
+    {
+      "name": "compare_side.png",
+      "hash": "89903b4d71cf823912afb04501f1fb246dbe7b5bca7864aed14de2174e2e64ac"
+    },
+    {
+      "name": "compare_sprite.png",
+      "hash": "e5ec9fc59470de53d62879b38c67e14cfe7a2434c1e88119f293cd18185bbc35"
+    },
+    {
+      "name": "progress.png",
+      "hash": "b834560c8deb0c1cac811f0d600b0f1695bf7cbd1905a06374d0688695403d3e"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "50eb2cda7ddb7e0983883f11d74be298e10268ee9d10df81892aea9413ee23e4"
+    },
+    {
+      "name": "recon3/mv1/shape.glb",
+      "hash": "b2e95d23ed34892f873af315d5b63bc5803724089009aab81ab1e769ab4d8102"
+    },
+    {
+      "name": "recon3/mv1/run.json",
+      "hash": "9512a4abdf7c9ae9426e09b323a690663d3d4152ccc284cbe3420094585de6d1"
+    },
+    {
+      "name": "recon3/crops/front_sym.rgba.png",
+      "hash": "12bb43b8c97f2e6245c0769ce0878591a5fb08af647a553936e71f7c594541d6"
+    },
+    {
+      "name": "recon3/crops/side.rgba.png",
+      "hash": "c2ac6dbb9880b91e548cfd660ac152e4986b02772f426298bd85425c6d64c537"
+    },
+    {
+      "name": "recon3/mv1_views.png",
+      "hash": "3a4d5cef2040cabe8a7636a0e394c76ace7dcd2af6d3f71def1d7b3ddd15bf6d"
+    },
+    {
+      "name": "art/pipeline/sculpt/build_head.py",
+      "hash": "ca842e0e6787a3fc1a8cebcf5bc7cdb7d0b3d594d7ec9941d1572f06ecc9500f"
+    },
+    {
+      "name": "art/pipeline/sculpt/graft_recon.py",
+      "hash": "cb71653215e8767e668db9e6393ab58d54ce490a1454ed9e728d1f1c5389c744"
+    },
+    {
+      "name": "art/pipeline/sculpt/sculptkit.py",
+      "hash": "c5f00d5eed51a72b8efd0a40ca47db618226ba76a9b66165983a0e58ec5f8de7"
+    },
+    {
+      "name": "art/pipeline/sculpt/hornpath.py",
+      "hash": "2ae8af5478e77d2ee4e40b8bc0adf4a3e19a2a3ccb9c54458f2808cd57785070"
+    },
+    {
+      "name": "art/pipeline/sculpt/headcam.py",
+      "hash": "02e8b1e87d64f776f98849106aa75c2c297a887e29674418c735f74a279f3cba"
+    },
+    {
+      "name": "art/pipeline/sculpt/compose.py",
+      "hash": "f100646044f1bf03d203c530b19695342b3698165f94b830637ee81d07886d7f"
+    },
+    {
+      "name": "art/pipeline/sculpt/run_head.sh",
+      "hash": "08ef1ed0a2fbcfbee404f72e0834c666525c0e23304a8ce9aa38cb139e7a87d1"
+    },
+    {
+      "name": "art/pipeline/sculpt/bwait.sh",
+      "hash": "65e0c7279443a2eb4a35962ac98fdad5b6f24389a91c267cfdc4273423c13c99"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "build": "B-stfp",
+    "creature": "luceras",
+    "stage": "05-sculpt",
+    "part": "head",
+    "pass": 3,
+    "defect": "D-tegy",
+    "audit": "N-s7qj",
+    "method": [
+      "Recorded the orchestrator audit N-s7qj (method change) and planned B-stfp on D-tegy; pass 2 moved to work/pass2.",
+      "Cropped the stage 4 clay masks (front and side, background already masked by recon/masks.py) to the head and upper neck; mirrored the front crop's image-left half about the face midline because the clay front is turned.",
+      "Reconstructed with Hunyuan3D-2 multi-view (front plus left) through recon/reconstruct.py: 50 steps, octree 380, seed 12345, fp16 with CPU offload; the GPU had 1.2 GB in use by others at start (under the 2 GB wait threshold); 319 s. License line in recon3/mv1/run.json.",
+      "Placed the reconstruction with sculpt/graft_recon.py: pitch 0, scale set so the measured final skull width is within 5 percent of pass 2, translated so its neck section at the upper neck ring centers on the kept blockout ring; nose tip within 0.5 mm of the target height.",
+      "Closed it by voxel remesh (0.9 mm) and cut its own horns, the nape behind them, its ear roots and the lower neck with exact boolean boxes (the first approach, deleting vertices and filling holes, failed at two scales and was replaced).",
+      "Unioned it with the kept blockout neck tube (pass-2 thinning), the neck bridge metaballs, the horn collar seats and the authored pass-2 ears by voxel remesh; blended the neck ring over 140 weighted passes; smoothed only the whisker seats (the reconstruction grew whisker spikes), the horn seats and the ear seats.",
+      "Seated the 34 mm eyeballs on the reconstructed surface by ray cast and carved sockets with the lid brush (upper fold, lower lid); no other edits to the reconstruction's surface.",
+      "Bridged onto the untouched body at the seam plane, transferred blockout weights, re-seated the pass-2 horns (roots buried 18 mm into the narrower crown), eyes and whiskers (roots projected onto the new pads), all on head_01.",
+      "Six graft iterations (p3a to p3f) plus five final runs against the sheet and turnaround crops."
+    ],
+    "defectResult": "D-tegy: the face now comes from the reconstruction of the approved clay views and carries brow, cheekbone and muzzle structure; the balloon masses are gone.",
+    "defectsFixed": [
+      "Balloon-mass face from authored metaballs: replaced by the reconstructed skull, face, muzzle and neck.",
+      "The reconstruction grew its own horns, ears and whisker spikes: horns and ears cut away, whisker seats flattened.",
+      "Delete-and-fill cuts left open shells at some scales (the head collapsed in two final runs): replaced by voxel close plus exact boolean cuts.",
+      "Skull width came out 9.6 percent under pass 2 because the ear cut and seat smoothing trim the widest band: placement target raised so the final width is -3.7 percent.",
+      "Thick pass-2 horn bases overhung the narrower reconstructed crown as a ledge: roots buried 18 mm into the skull.",
+      "Horn collars met across the forehead as a band, then showed through the ridge grooves: reduced to a seat inside the horn root.",
+      "Eyes sat high and bulging on the reconstructed face: lowered, looking more forward, less proud.",
+      "Step around the neck where the fuller reconstructed neck met the kept blockout tube: wider and longer ring blend."
+    ],
+    "remains": [
+      "Whisker pads show small dimples and lumps left from the reconstruction's whisker spikes after seat smoothing.",
+      "Eyes still read slightly proud and high against the sheet; the lids are the brush's soft roll, not the sheet's crisp lid line.",
+      "A faint flat patch and a short crease at each ear seat and around each horn root (cut regions), most visible at the side camera.",
+      "The skin collar at the horn base is now only a soft seat with no visible roll.",
+      "Head length 0.1375 is 9 percent longer than pass 2 (0.126): the reconstruction's own proportion at the matched skull width, as in the sheet.",
+      "Horn ridges remain ring-like (authored), not the sheet's wavy ridges.",
+      "The blend band across the neck ring is still slightly soft.",
+      "Whiskers are placeholders."
+    ],
+    "holds": [
+      {
+        "hold": "Skull width within 5 percent of pass 2 (PASS3.md)",
+        "status": "respected",
+        "evidence": "0.1128 vs 0.1172 (-3.7 percent)"
+      },
+      {
+        "hold": "No edits to the reconstruction beyond socket carving, ear and horn seats and the neck blend",
+        "status": "respected, with one declared extra",
+        "evidence": "the whisker seats on the pads were smoothed to remove the reconstruction's grown whisker spikes (replaced by authored whiskers)"
+      },
+      {
+        "hold": "Everything outside the head and neck blend unchanged",
+        "status": "respected",
+        "evidence": "max 0.61 mm, mean 0.0014 mm on the body side of the seam plane"
+      },
+      {
+        "hold": "Neck blend declared",
+        "status": "declared",
+        "evidence": "max 19.9 mm, mean 4.9 mm"
+      },
+      {
+        "hold": "One GPU job and one Blender process at a time",
+        "status": "respected",
+        "evidence": "GPU at 1.2 GB before the run; every Blender launch went through the wait wrapper"
+      }
+    ],
+    "wallMinutes": 43,
+    "blenderSeconds": 1210,
+    "gpuSeconds": 319,
+    "measurements": "measurements.json",
+    "checks": [
+      {
+        "title": "Head read at the close camera",
+        "question": "Does the clay head now read as the sheet's head (hare-like face with brow and cheekbone structure, large eyes, heavy ridged horns, rounded ears) at the close three-quarter camera?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "6b33598a96c0ba922cb72905ea5799cb0919db9dbf1a80f59b4b96691ed73310",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+        "recommended": "Accept: the reconstructed face carries the sheet's brow, cheekbone, nose bridge and muzzle; what remains is local (whisker-pad dimples, horn and ear seats)."
+      },
+      {
+        "title": "Horns: curl, thickness, ridges, collar",
+        "question": "Are the authored pass-2 horns (thick, ridged, half-turn, tips inward) seated cleanly on the reconstructed crown with a skin collar?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "9d72f629b959b4c413f9a3ea32eb64cc16fc3729cc335d7b40f4be36fb38532f",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+        "recommended": "Accept the horns; the collar is now only a soft seat where the buried root meets the skull, so say whether a visible skin roll is still wanted."
+      },
+      {
+        "title": "Ears",
+        "question": "Are the authored ears (cupped, rounded, behind the horn bases) seated on the new skull without stumps of the reconstructed ears?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "ffeac700022af570fb26e8a5acc879cd5187a73c1395bcffc94e59be2c9342df",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+        "recommended": "Accept; a faint flat patch remains at each ear seat where the reconstructed ear root was cut."
+      },
+      {
+        "title": "Eyes and muzzle",
+        "question": "Are the 34 mm eyes seated in carved sockets with lids on the reconstructed face, and does the muzzle read short and hare-like with a small nose?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "12600d35f4f0ef612d70b81699df683d03b2a1641ca21a90d6ba5a4040208794",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+        "recommended": "Accept the muzzle and nose from the reconstruction; the eyes still sit slightly proud and high against the sheet, so a lid pass is recommended later."
+      },
+      {
+        "title": "Head at sprite size",
+        "question": "At 192 px, does the head read as Luceras (heavy horn curl first, then the face)?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "e5ec9fc59470de53d62879b38c67e14cfe7a2434c1e88119f293cd18185bbc35",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+        "recommended": "Accept: the horn curl and the structured face read at sprite size."
+      }
+    ],
+    "checksByPath": [
+      {
+        "title": "Head read at the close camera",
+        "question": "Does the clay head now read as the sheet's head (hare-like face with brow and cheekbone structure, large eyes, heavy ridged horns, rounded ears) at the close three-quarter camera?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/final_head_three_quarter.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept: the reconstructed face carries the sheet's brow, cheekbone, nose bridge and muzzle; what remains is local (whisker-pad dimples, horn and ear seats)."
+      },
+      {
+        "title": "Horns: curl, thickness, ridges, collar",
+        "question": "Are the authored pass-2 horns (thick, ridged, half-turn, tips inward) seated cleanly on the reconstructed crown with a skin collar?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/final_head_front.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept the horns; the collar is now only a soft seat where the buried root meets the skull, so say whether a visible skin roll is still wanted."
+      },
+      {
+        "title": "Ears",
+        "question": "Are the authored ears (cupped, rounded, behind the horn bases) seated on the new skull without stumps of the reconstructed ears?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/crop_ears_front.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept; a faint flat patch remains at each ear seat where the reconstructed ear root was cut."
+      },
+      {
+        "title": "Eyes and muzzle",
+        "question": "Are the 34 mm eyes seated in carved sockets with lids on the reconstructed face, and does the muzzle read short and hare-like with a small nose?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/crop_face_three_quarter.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept the muzzle and nose from the reconstruction; the eyes still sit slightly proud and high against the sheet, so a lid pass is recommended later."
+      },
+      {
+        "title": "Head at sprite size",
+        "question": "At 192 px, does the head read as Luceras (heavy horn curl first, then the face)?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/compare_sprite.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept: the horn curl and the structured face read at sprite size."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "head.blend",
+        "hash": "a19a742928bcdc45193f445b23122f25b69e42e9ab308497630daa4dc69d58b8"
+      },
+      {
+        "name": "head.glb",
+        "hash": "5abe59d83fa7c9f0ded011c5f2e3c9783fdade3a85d213fd0b3c54cc5ec27d7e"
+      },
+      {
+        "name": "head_part.glb",
+        "hash": "0a39a00ba839d6391eca6d3448583bb48e9564720db390c99351b1be824b133d"
+      },
+      {
+        "name": "renders/final_head_three_quarter.png",
+        "hash": "6b33598a96c0ba922cb72905ea5799cb0919db9dbf1a80f59b4b96691ed73310"
+      },
+      {
+        "name": "renders/final_head_front.png",
+        "hash": "9d72f629b959b4c413f9a3ea32eb64cc16fc3729cc335d7b40f4be36fb38532f"
+      },
+      {
+        "name": "renders/final_head_side.png",
+        "hash": "fcd4d7357f8e0b1e0beed70a88c691c1756e67bb45c2523289f2bf61da7ade9b"
+      },
+      {
+        "name": "renders/full_front.png",
+        "hash": "969363ae7ed4611d42cf0f7f192449d40080ea6432c2062c29cec55efee2b6cb"
+      },
+      {
+        "name": "renders/full_three_quarter_left.png",
+        "hash": "719b838a1f4d75daca6fac4749192247544fb0478cedf5817f27feac38b3e8d8"
+      },
+      {
+        "name": "renders/full_side_left.png",
+        "hash": "135b666f8d95079997eec28eed1985f92cd886f5be101c72719996a6e52edc51"
+      },
+      {
+        "name": "renders/full_back.png",
+        "hash": "38655776f0c616c34927f3d50ca68ec251b25dbbcf474604411771ec26b9ff03"
+      },
+      {
+        "name": "renders/full_top.png",
+        "hash": "c7396d90508d96c48828a9801d9ba8bcb6524f80ff361018ee765ab4de917984"
+      },
+      {
+        "name": "renders/sprite_side_192.png",
+        "hash": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6"
+      },
+      {
+        "name": "renders/crop_face_three_quarter.png",
+        "hash": "12600d35f4f0ef612d70b81699df683d03b2a1641ca21a90d6ba5a4040208794"
+      },
+      {
+        "name": "renders/crop_eyes_muzzle_front.png",
+        "hash": "7ee8fdcced653b9e7976df22a613efe0c0bbd7ce8c28c493c31c03ee34c64086"
+      },
+      {
+        "name": "renders/crop_ears_front.png",
+        "hash": "ffeac700022af570fb26e8a5acc879cd5187a73c1395bcffc94e59be2c9342df"
+      },
+      {
+        "name": "compare_close.png",
+        "hash": "a9fc80823e4020f53af3913248b311f9589afd04f545096f578a0f3d47f48ac4"
+      },
+      {
+        "name": "compare_front.png",
+        "hash": "a8084cf64629129676aafaaf464616bbf8a084c3d968863e7771e2f6aeee0bd9"
+      },
+      {
+        "name": "compare_side.png",
+        "hash": "89903b4d71cf823912afb04501f1fb246dbe7b5bca7864aed14de2174e2e64ac"
+      },
+      {
+        "name": "compare_sprite.png",
+        "hash": "e5ec9fc59470de53d62879b38c67e14cfe7a2434c1e88119f293cd18185bbc35"
+      },
+      {
+        "name": "progress.png",
+        "hash": "b834560c8deb0c1cac811f0d600b0f1695bf7cbd1905a06374d0688695403d3e"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "50eb2cda7ddb7e0983883f11d74be298e10268ee9d10df81892aea9413ee23e4"
+      },
+      {
+        "name": "recon3/mv1/shape.glb",
+        "hash": "b2e95d23ed34892f873af315d5b63bc5803724089009aab81ab1e769ab4d8102"
+      },
+      {
+        "name": "recon3/mv1/run.json",
+        "hash": "9512a4abdf7c9ae9426e09b323a690663d3d4152ccc284cbe3420094585de6d1"
+      },
+      {
+        "name": "recon3/crops/front_sym.rgba.png",
+        "hash": "12bb43b8c97f2e6245c0769ce0878591a5fb08af647a553936e71f7c594541d6"
+      },
+      {
+        "name": "recon3/crops/side.rgba.png",
+        "hash": "c2ac6dbb9880b91e548cfd660ac152e4986b02772f426298bd85425c6d64c537"
+      },
+      {
+        "name": "recon3/mv1_views.png",
+        "hash": "3a4d5cef2040cabe8a7636a0e394c76ace7dcd2af6d3f71def1d7b3ddd15bf6d"
+      },
+      {
+        "name": "art/pipeline/sculpt/build_head.py",
+        "hash": "ca842e0e6787a3fc1a8cebcf5bc7cdb7d0b3d594d7ec9941d1572f06ecc9500f"
+      },
+      {
+        "name": "art/pipeline/sculpt/graft_recon.py",
+        "hash": "cb71653215e8767e668db9e6393ab58d54ce490a1454ed9e728d1f1c5389c744"
+      },
+      {
+        "name": "art/pipeline/sculpt/sculptkit.py",
+        "hash": "c5f00d5eed51a72b8efd0a40ca47db618226ba76a9b66165983a0e58ec5f8de7"
+      },
+      {
+        "name": "art/pipeline/sculpt/hornpath.py",
+        "hash": "2ae8af5478e77d2ee4e40b8bc0adf4a3e19a2a3ccb9c54458f2808cd57785070"
+      },
+      {
+        "name": "art/pipeline/sculpt/headcam.py",
+        "hash": "02e8b1e87d64f776f98849106aa75c2c297a887e29674418c735f74a279f3cba"
+      },
+      {
+        "name": "art/pipeline/sculpt/compose.py",
+        "hash": "f100646044f1bf03d203c530b19695342b3698165f94b830637ee81d07886d7f"
+      },
+      {
+        "name": "art/pipeline/sculpt/run_head.sh",
+        "hash": "08ef1ed0a2fbcfbee404f72e0834c666525c0e23304a8ce9aa38cb139e7a87d1"
+      },
+      {
+        "name": "art/pipeline/sculpt/bwait.sh",
+        "hash": "65e0c7279443a2eb4a35962ac98fdad5b6f24389a91c267cfdc4273423c13c99"
+      }
+    ],
+    "blockedBy": "nothing"
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-14T22:09:03Z",
-  "briefSha256": "3c42d46033aef40cb28605ff988ea1b716190e0ca6fe3e6469af9f7651e27b33"
+  "briefSha256": "3c42d46033aef40cb28605ff988ea1b716190e0ca6fe3e6469af9f7651e27b33",
+  "checks": [
+    {
+      "title": "Head read at the close camera",
+      "question": "Does the clay head now read as the sheet's head (hare-like face with brow and cheekbone structure, large eyes, heavy ridged horns, rounded ears) at the close three-quarter camera?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "6b33598a96c0ba922cb72905ea5799cb0919db9dbf1a80f59b4b96691ed73310",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+      "recommended": "Accept: the reconstructed face carries the sheet's brow, cheekbone, nose bridge and muzzle; what remains is local (whisker-pad dimples, horn and ear seats)."
+    },
+    {
+      "title": "Horns: curl, thickness, ridges, collar",
+      "question": "Are the authored pass-2 horns (thick, ridged, half-turn, tips inward) seated cleanly on the reconstructed crown with a skin collar?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "9d72f629b959b4c413f9a3ea32eb64cc16fc3729cc335d7b40f4be36fb38532f",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+      "recommended": "Accept the horns; the collar is now only a soft seat where the buried root meets the skull, so say whether a visible skin roll is still wanted."
+    },
+    {
+      "title": "Ears",
+      "question": "Are the authored ears (cupped, rounded, behind the horn bases) seated on the new skull without stumps of the reconstructed ears?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "ffeac700022af570fb26e8a5acc879cd5187a73c1395bcffc94e59be2c9342df",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+      "recommended": "Accept; a faint flat patch remains at each ear seat where the reconstructed ear root was cut."
+    },
+    {
+      "title": "Eyes and muzzle",
+      "question": "Are the 34 mm eyes seated in carved sockets with lids on the reconstructed face, and does the muzzle read short and hare-like with a small nose?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "12600d35f4f0ef612d70b81699df683d03b2a1641ca21a90d6ba5a4040208794",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+      "recommended": "Accept the muzzle and nose from the reconstruction; the eyes still sit slightly proud and high against the sheet, so a lid pass is recommended later."
+    },
+    {
+      "title": "Head at sprite size",
+      "question": "At 192 px, does the head read as Luceras (heavy horn curl first, then the face)?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "e5ec9fc59470de53d62879b38c67e14cfe7a2434c1e88119f293cd18185bbc35",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "e24d88ff7aaf66054b1436e453a9059c6f438b72c293a44f69d4daf8472ff6b6",
+      "recommended": "Accept: the horn curl and the structured face read at sprite size."
+    }
+  ],
+  "reportedAt": "2026-10-14T22:51:25Z"
 }

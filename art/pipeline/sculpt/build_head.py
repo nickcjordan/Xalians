@@ -29,6 +29,7 @@ import headcam  # noqa: E402
 import hornpath  # noqa: E402
 import lookdev  # noqa: E402
 import sculptkit as sk  # noqa: E402
+import graft_recon as gr  # noqa: E402
 
 T0 = time.time()
 ARGS = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -41,6 +42,7 @@ def arg(name, default=None):
 OUT = Path(arg("--out"))
 TAG = arg("--tag", "iter")
 FINAL = "--final" in ARGS
+RECON = arg("--recon")          # pass 3: reconstructed skull, face and neck (shape.glb) replaces the metaball face
 OUT.mkdir(parents=True, exist_ok=True)
 LOG = {}
 
@@ -63,9 +65,9 @@ PH = np.array([0.0, -0.186, 0.537])             # skull plane (reference for the
 NH = np.array([0.0, -0.985, -0.172]); NH /= np.linalg.norm(NH)
 
 EYE_R = 0.0170                                   # pass 2: about 30 percent larger diameter than pass 1 (0.026)
-EYE_C = np.array([0.030, -0.252, 0.577])        # first guess; seated on the surface after the union
-EYE_LOOK = np.array([0.34, -0.91, 0.24]); EYE_LOOK /= np.linalg.norm(EYE_LOOK)
-EYE_PROUD = 0.18                                 # fraction of the radius left in front of the surface
+EYE_C = np.array([0.042, -0.252, 0.563])        # first guess; seated on the surface after the union
+EYE_LOOK = np.array([0.50, -0.84, 0.18]); EYE_LOOK /= np.linalg.norm(EYE_LOOK)
+EYE_PROUD = 0.12                                 # fraction of the radius left in front of the surface
 
 SKULL = [
     dict(co=(0, -0.211, 0.589), half=(0.048, 0.046, 0.046), rot=(10, 0, 0)),     # braincase, rounder dome
@@ -112,7 +114,10 @@ def groove_f(obj, pts, **kw):
 EAR = dict(base=(0.041, -0.168, 0.590), up=(0.66, 0.22, 0.72), face=(0.68, -0.72, 0.10),
            height=0.083, width=0.046, cup=0.0150, thick=0.0032)   # pass 2: about 60 percent taller exposed ear
 
-HORN_R0, HORN_TIP = 0.0315, 0.0012                 # pass 2: 40 percent thicker base, same taper
+HORN_R0, HORN_TIP = 0.0315, 0.0012
+HORN_CUT_Z = 0.633                                 # pass 3: the reconstruction's own horns are removed above this
+RECON_SKULL_W = 0.1220                             # pass 3: placement target; the measured final width lands about 8 percent under it (seat smoothing, lids)
+HEAD_TREE = None                 # pass 2: 40 percent thicker base, same taper
 HORN_BASE_SHIFT_X = 0.010                          # move the bases apart so the thicker horns do not overlap
 
 
@@ -181,6 +186,11 @@ def ear_shell(spec, side):
 def horn(side):
     pts, tan, s = hornpath.centerline(None, 380)
     pts = pts + np.array([HORN_BASE_SHIFT_X, 0, 0])
+    if RECON:
+        # pass 3: bury the horn root 18 mm into the skull so the thick base never overhangs the narrower crown
+        ext = pts[0] - tan[0] * np.linspace(0.018, 0.0, 13)[:-1, None]
+        pts = np.vstack([ext, pts])
+        tan = np.vstack([np.repeat(tan[:1], len(ext), 0), tan])
     sx = 1 if side == "l" else -1
     pts = pts * [sx, 1, 1]
     # outer side of the curl (the keel the ridges stand proud on): opposite the curvature vector
@@ -224,7 +234,11 @@ def whiskers(side):
     objs = []
     rng = np.random.default_rng(7)
     for i, root in enumerate(WHISKER_ROOTS):
-        root = np.array(fwd(root)) * [sx, 1, 1]
+        root = np.array(root if RECON else fwd(root)) * [sx, 1, 1]
+        if RECON and HEAD_TREE is not None:
+            hit = HEAD_TREE.find_nearest(Vector(root))
+            if hit[0] is not None:
+                root = np.array(hit[0][:]) - np.array(hit[1][:]) * 0.0006
         fan = (i - 3) / 3.0
         d0 = np.array([sx * 0.80, 0.30 + 0.05 * rng.normal(), -0.05 - 0.22 * (root[2] < 0.499) + 0.14 * fan])
         d0 /= np.linalg.norm(d0)
@@ -343,16 +357,31 @@ def main():
     # pass 2: soft skin collar at each horn base, a flattened metaball on the horn axis where it leaves the skull
     hp, ht, _ = hornpath.centerline(None, 460)
     hp = hp + np.array([HORN_BASE_SHIFT_X, 0, 0])
-    k = int(np.argmax(hp[:, 2] > 0.624))
+    k = int(np.argmax(hp[:, 2] > (0.628 if RECON else 0.624)))
     for sx in (1, -1):
         tq = Vector(tuple(ht[k] * [sx, 1, 1])).to_track_quat("Z", "Y")
         SKULL.append(dict(co=tuple(hp[k] * [sx, 1, 1]),
-                          half=(HORN_R0 * 0.98, HORN_R0 * 0.98, 0.022), quat=tuple(tq), stiff=2.0))
+                          half=((HORN_R0 * 0.86, HORN_R0 * 0.86, 0.012) if RECON else (HORN_R0 * 0.98, HORN_R0 * 0.98, 0.022)),
+                          quat=tuple(tq), stiff=2.0))
     LOG["hornCollarAt"] = hp[k].round(4).tolist()
+    extra = []
+    if RECON:
+        # pass 3: keep only the neck bridge and horn collar metaballs; the face, skull and neck come from the recon
+        del SKULL[:-4]
+        rec = gr.import_glb(RECON, "recon")
+        P0 = sk.co(rec)
+        s_, pitch_, t_, c0_, rep_ = gr.place(P0, RECON_SKULL_W, rc, P2, N1, 0.516)
+        Wr = (P0 - c0_) @ gr.rot_x(pitch_).T * s_ + t_
+        sk.set_co(rec, Wr)
+        LOG["reconPlacement"] = rep_
+        nk = gr.strip_parts_bool(rec, 0.0009, HORN_CUT_Z, 0.052, (0.555, 0.72), -0.228,
+                                 (P2 - N1 * 0.004, N1), keep_point=(0.0, -0.290, 0.505))
+        LOG["reconNonManifoldAfterCuts"] = nk
+        extra = [rec]
     skull = sk.metaball("skull", SKULL, resolution=0.0012)
     ears = [ear_shell(EAR, s) for s in ("l", "r")]
-    head = sk.join([chunk, skull] + ears, "luceras_head")
-    for o in [chunk, skull] + ears:
+    head = sk.join([chunk, skull] + ears + extra, "luceras_head")
+    for o in [chunk, skull] + ears + extra:
         bpy.data.objects.remove(o, do_unlink=True)
     sk.voxel_remesh(head, 0.0012)
     sk.keep_largest(head)
@@ -363,10 +392,32 @@ def main():
     s2 = signed(P, P2, N1)
     s1 = signed(P, P1, N1)
     keep1 = np.clip((s1 - 0.010) / 0.015, 0, 1)
-    w = np.exp(-((s2 - 0.004) / 0.020) ** 2) * keep1
-    sk.smooth(head, 60, 0.5, w)
-    # unify the metaball forms into one skull (not near the seam cut)
-    sk.smooth(head, 8, 0.5, keep1)
+    if RECON:
+        # the reconstruction's neck is fuller than the kept blockout tube: a wider, longer blend across the ring
+        w = np.exp(-((s2 + 0.002) / 0.032) ** 2) * keep1 * (P[:, 1] > -0.235)
+        sk.smooth(head, 140, 0.5, w)
+    else:
+        w = np.exp(-((s2 - 0.004) / 0.020) ** 2) * keep1
+        sk.smooth(head, 60, 0.5, w)
+    if RECON:
+        # whisker seats: flatten the reconstruction's whisker spikes on the pads (they are replaced by authored whiskers)
+        wz = np.zeros(len(P))
+        for sx in (1, -1):
+            q = (P - np.array([sx * 0.030, -0.272, 0.510])) / np.array([0.028, 0.042, 0.028])
+            wz = np.maximum(wz, np.clip(1 - (q * q).sum(1), 0, 1))
+        wz = np.clip(wz * 2.5, 0, 1)
+        sk.smooth(head, 120, 0.6, wz)
+        # horn seats: soften the cut cap and the collar join under each authored horn
+        wh = np.zeros(len(P))
+        for sx in (1, -1):
+            d = np.linalg.norm(P - np.array([sx * 0.040, -0.212, 0.630]), axis=1)
+            wh = np.maximum(wh, np.clip((0.050 - d) / 0.016, 0, 1))
+            d = np.linalg.norm(P - np.array([sx * 0.046, -0.182, 0.595]), axis=1)   # ear seat
+            wh = np.maximum(wh, np.clip((0.030 - d) / 0.012, 0, 1))
+        sk.smooth(head, 50, 0.5, wh)
+    else:
+        # unify the metaball forms into one skull (not near the seam cut)
+        sk.smooth(head, 8, 0.5, keep1)
     lap("seam blend")
 
     # face sculpt: seat the eyes on the surface, then wrap lids around them
@@ -382,24 +433,27 @@ def main():
         look = EYE_LOOK * [sx, 1, 1]
         sk.eyelids(head, c, EYE_R, look, up, aperture=(0.88, 0.62), lid=0.0012, rim=0.0010,
                    upper_fold=0.0018, crease=0.0012, lower_lid=0.0013, reach=1.9, far_pull=0.35)
-    # nose: nostril commas and the split under it
-    for sx in (1, -1):
+    if RECON:
+        pass  # pass 3: no face grooves; the reconstruction carries nose, mouth and jaw line
+    for sx in ((1, -1) if not RECON else ()):
         groove_f(head, [(sx * 0.0030, -0.3150, 0.5135), (sx * 0.0068, -0.3130, 0.5110), (sx * 0.0080, -0.3100, 0.5083)],
                   depth=0.0015, width=0.0009)
     # back edge of the jaw (separates cheek from throat, as in the shaved clay side)
-    for sx in (1, -1):
+    for sx in ((1, -1) if not RECON else ()):
         groove_f(head, [(sx * 0.040, -0.200, 0.535), (sx * 0.035, -0.208, 0.505), (sx * 0.024, -0.218, 0.482),
                          (sx * 0.010, -0.222, 0.474)], depth=0.0036, width=0.0060)
     # philtrum and mouth line (inverted Y, hare-like split lip)
-    groove_f(head, [(0, -0.3150, 0.5080), (0, -0.3130, 0.4990)], depth=0.0013, width=0.0008)
-    for sx in (1, -1):
+    if not RECON:
+        groove_f(head, [(0, -0.3150, 0.5080), (0, -0.3130, 0.4990)], depth=0.0013, width=0.0008)
+    for sx in ((1, -1) if not RECON else ()):
         groove_f(head, [(0, -0.3120, 0.4990), (sx * 0.006, -0.3085, 0.4930), (sx * 0.0125, -0.3015, 0.4900),
                          (sx * 0.0175, -0.2935, 0.4905)], depth=0.0009, width=0.0008)
     sk.voxel_remesh(head, 0.00145)
     sk.keep_largest(head)
     P = sk.co(head)
     s1 = signed(P, P1, N1)
-    sk.smooth(head, 2, 0.3, np.clip((s1 - 0.010) / 0.02, 0, 1))
+    if not RECON:
+        sk.smooth(head, 2, 0.3, np.clip((s1 - 0.010) / 0.02, 0, 1))
     # clean the lid margins (voxel steps along the almond rim)
     for sx in (1, -1):
         d = np.linalg.norm(P - EYE_C * [sx, 1, 1], axis=1)
@@ -438,6 +492,8 @@ def main():
     lap("weights")
 
     # rigid parts
+    global HEAD_TREE
+    HEAD_TREE = sk.bvh(head_part)
     parts = {}
     horn_info = {}
     for s in ("l", "r"):
