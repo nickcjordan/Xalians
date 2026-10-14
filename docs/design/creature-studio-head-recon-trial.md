@@ -106,3 +106,13 @@ What would move it further, for Nick to choose (not done tonight):
 1. Feed the model a front view drawn the way the face should read (a bare-body face with the wide happy mouth and a small button nose), since the reconstruction follows its input closely and is stable across seeds.
 2. Rebuild just the mouth and muzzle region as its own small reconstruction from the face close-up, joined in the field like the head.
 3. Accept the head as the base and let Nick's own read decide what matters at blockout scale, leaving mouth shape to the surface stage.
+
+### CP3: presented (00:10 to 00:40)
+
+- Round 6's three eye options are on the studio page as head previews B-a5jr (bare sheet eye size), B-y6r3 (between) and B-m3ml (painted sheet's larger eyes), each with the sheet's bare front, bare side and turnaround three-quarter beside it, five numbered judge checks, look notes and the 192 px sprite. The three first-round face options (B-mata, B-rhmr, B-ibvj) are retired with a decision note.
+- System fixes made on the way: `studio build retire` (a replaced option leaves the page, the reason kept as a decision note); the present gate asked for look notes on all eight full-body cameras even for a part-only preview (X26), now it asks for the cameras the preview rendered; the part page now opens on a camera that has the sheet beside it; reference crops are square.
+- Gate: the set is judgeable on taste, but I can still name flaws (the mouth reads cat-like; the eyes show slightly past the outline from above). Those are stated on the page (judge check 4) and here, not hidden.
+
+### Trial result
+
+The reconstruction moved the head from "no" to "mostly" (critic 5 of 10) in one night, where the blob method had stalled through four rounds. Kept: the grid part kind, the recon tools, the head source (r10, octree 512). Lessons: (1) never edit a reconstruction's details with added masses or carves, which failed twice here and 30 times on Akinza; (2) its shape follows its input closely and is stable across seeds, so a better result comes from a better input view, not more runs; (3) my own additions (lid rings, big eyeballs) caused half of the first critic's findings.
