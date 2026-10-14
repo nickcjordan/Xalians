@@ -49,4 +49,6 @@ Read this first when resuming the creature pipeline. Design of record: [creature
 9. Five sequential streams were cautious; image runs are network-bound, so the next batch runs eight at once with a rate-limit retry (concurrency policy, design section 10).
 10. Edit-from-one-base keeps option sets comparable: all sixteen options kept pose, framing and every must-have, so Nick judges only the element in question.
 
+11. Selection UX (Nick 2026-10-14, "do them all 1-6"): picks as store writes on a standard Artifact selection screen, with full-size, flicker and two-up compare, background toggle, none-of-these and mix orders, and a composed preview before Confirm; generated from records by `select_page.py`, filed by `roster.py picks file`. Baked into records-and-tooling section 4 and the stage 2 and 3 contracts.
+
 **Check-ins sent:** orientation and delivery question; design program question; part 1 page (twice); part 2 phone sweep; walking skeleton viewer. Nick: "i think it all looks great ... Proceed."
