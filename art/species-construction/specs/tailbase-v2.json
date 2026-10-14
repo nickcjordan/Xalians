@@ -1,0 +1,317 @@
+{
+ "name": "tail base v2",
+ "recordName": "tailbase-v2",
+ "approval": null,
+ "note": "tail base v2 (2026-10-14), for tailbase_v2_post.py / tailbase_v2_field.py, appended after P-neck3 in place of P-tailbase1. Coordinator ruling 2026-10-14: the crotch may be reshaped behind and under the lowest tail's root; the front view of the hips and groin is held (outline within .001). As tail base v1 (spec tailbase-v1.json) except: hole.d .05 (the old collar's rim lay just outside v1's .035 and printed as ripple bands round the lowest tail's root); hole.add refills the cleft's lower end and the back of the perineum with the rest of the hole, so the biharmonic fill builds them as one smooth saddle; no hole.exclude and no joinProtect (v1 kept the arch and left a crimp); hole.floorFix keeps the air under the front-view arch outline (per x, the lowest solid z in the front window y -.12 to -.035) as it is behind the root up to y .06, and joinFloor takes the body fillet to zero within .012 above that outline, so nothing hangs below it; floor: a soft safety maximum at that outline behind y -.035; keepY [-.055, -.015]: in front of the arch the skin is its own; move.rootOffset lifts the lowest tail's centreline start .035 (fading out by s .15) so its tube clears the arch and its fillet runs all the way round; tailUnionK .045 (the V seam between the middle and lowest tails); finalBlur sigma .01 over the perineum; spotRelax adds the +x buttock under the middle tail and the tops and undersides of the lowest and top tails' roots (ripples where the lifted root bends). World units, +y back.",
+ "tailsSpec": "art/species-construction/specs/tails-v7.json",
+ "grid": {
+  "lo": [
+   -0.18,
+   -0.08,
+   -0.44
+  ],
+  "hi": [
+   0.24,
+   0.32,
+   0.03
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "hole": {
+  "d": 0.05,
+  "box": {
+   "x": [
+    -1,
+    -1,
+    1,
+    1.1
+   ],
+   "y": [
+    -1,
+    -1,
+    1,
+    1.1
+   ],
+   "z": [
+    -1,
+    -1,
+    1,
+    1.1
+   ]
+  },
+  "iterations": 600,
+  "order": 2,
+  "coarseIterations": 3000,
+  "add": [
+   {
+    "c": [
+     0.0,
+     0.025,
+     -0.235
+    ],
+    "s": [
+     0.055,
+     0.05,
+     0.04
+    ],
+    "fade": [
+     0.9,
+     1.1
+    ]
+   }
+  ],
+  "floorFix": {
+   "y": [
+    -0.12,
+    -0.035
+   ],
+   "z": [
+    -0.3,
+    -0.2
+   ],
+   "margin": 0.0,
+   "above": -0.006,
+   "behindMax": 0.06
+  }
+ },
+ "holeBlur": [
+  {
+   "sigma": 0.006,
+   "band": 0.006
+  }
+ ],
+ "join": {
+  "c": [
+   0.01,
+   0.06,
+   -0.15
+  ],
+  "r": [
+   0.12,
+   0.17
+  ],
+  "zFade": [
+   -0.09,
+   -0.04,
+   0.5
+  ]
+ },
+ "joinK": 0.045,
+ "partBox": {
+  "x": [
+   -1,
+   -1,
+   0.2,
+   0.22
+  ],
+  "y": [
+   -0.06,
+   -0.04,
+   0.26,
+   0.29
+  ],
+  "z": [
+   -0.39,
+   -0.36,
+   -0.03,
+   -0.01
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ },
+ "tailUnionK": 0.045,
+ "move": {
+  "tail": 2,
+  "offset": {
+   "vec": [
+    -0.0058,
+    0.0138,
+    0.0
+   ],
+   "s": [
+    0.03,
+    0.11
+   ]
+  },
+  "rotate": {
+   "pivotS": 0.14,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "deg": -5,
+   "s": [
+    0.14,
+    0.3
+   ]
+  },
+  "warp": {
+   "s": [
+    0.22,
+    0.3
+   ],
+   "near": 0.006
+  },
+  "rootOffset": {
+   "vec": [
+    0.0,
+    0.0,
+    0.035
+   ],
+   "s": [
+    0.05,
+    0.15
+   ]
+  }
+ },
+ "spotRelax": [
+  {
+   "c": [
+    0.045,
+    0.075,
+    -0.172
+   ],
+   "r": 0.02,
+   "fade": 0.015,
+   "iterations": 150
+  },
+  {
+   "c": [
+    0.07,
+    0.064,
+    -0.113
+   ],
+   "r": 0.02,
+   "fade": 0.015,
+   "iterations": 150
+  },
+  {
+   "c": [
+    0.0,
+    0.03,
+    -0.235
+   ],
+   "r": 0.025,
+   "fade": 0.015,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.115,
+    0.08,
+    -0.2
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.01,
+    0.065,
+    -0.17
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.0,
+    0.1,
+    -0.16
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.005,
+    0.075,
+    -0.14
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 250
+  }
+ ],
+ "bodyBlur": [],
+ "keepY": [
+  -0.055,
+  -0.015
+ ],
+ "joinFloor": {
+  "y": [
+   -0.12,
+   -0.035
+  ],
+  "z": [
+   -0.3,
+   -0.2
+  ],
+  "margin": 0.0,
+  "fade": [
+   0.0,
+   0.012
+  ]
+ },
+ "finalBlur": [
+  {
+   "sigma": 0.01,
+   "mask": [
+    {
+     "c": [
+      0.0,
+      0.025,
+      -0.235
+     ],
+     "s": [
+      0.06,
+      0.055,
+      0.035
+     ],
+     "fade": [
+      0.5,
+      1.1
+     ]
+    }
+   ],
+   "clear": [
+    0.004,
+    0.012
+   ]
+  }
+ ],
+ "floor": {
+  "y": [
+   -0.12,
+   -0.035
+  ],
+  "z": [
+   -0.3,
+   -0.2
+  ],
+  "behind": [
+   -0.05,
+   -0.035
+  ],
+  "k": 0.008,
+  "margin": 0.0
+ }
+}
