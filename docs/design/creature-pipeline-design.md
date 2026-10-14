@@ -135,3 +135,13 @@ Process decisions, the pipeline owner's:
 - **Laptop result** (headless Chrome, Intel integrated graphics): every preset held the frame cap, so the laptop cannot set the budget.
 - **Phone result (Nick's iPhone, iOS 18.7, Apple GPU, pixel ratio 2, 390 by 460 inside the Claude app, 2026-10-14):** every preset held 59 fps at a 17.0 ms frame, including 24 creatures at 10K (260,690 triangles, 145 draw calls) and 12 toon creatures with an inverted-hull outline (258,866 triangles, 85 draw calls). The ceiling is above the tested range.
 - **Budgets set from it (decision 2 amended):** full tier 10,000 triangles (hard cap 12,000), low tier 3,000; one 1024 texture set; two materials; up to 60 joints; the inverted-hull outline is affordable on the floor device (two draw calls and double triangles per creature) and stays a live option for part 6. Scene budget: twelve creatures at full tier plus effects fits with at least a factor of two to spare on the floor device. These are levers; the real Luceras asset in the viewer is the second measurement.
+
+## 10. Concurrency policy (Nick, 2026-10-14: "i dont want to overload my machine but at the same time I do want to have good efficiency")
+
+| Work | Loads | Concurrency | Guard |
+|---|---|---|---|
+| Codex image runs | network only | up to 8 at once | retry with backoff on a rate-limit refusal; alias generation locked in the records tool |
+| Blender builds and renders | CPU, memory | 1; 2 only with more than 9 GB free and low load | a slot lock under `art/pipeline/` shared by every runner and agent |
+| Reconstruction (Hunyuan3D-2) | GPU under the 6.5 GB cap | exactly 1, never beside a Blender render | the same slot lock, GPU class |
+| Builder agents | tokens | 2 to 3 | each heavy launch goes through the slot lock, so parallel agents cannot stack heavy work |
+| Any heavy launch | | | the runner checks load and free memory first and waits instead of piling on |
