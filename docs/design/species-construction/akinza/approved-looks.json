@@ -246,6 +246,18 @@
      "text": "Otherwise all the other pieces look good"
     }
    ]
+  },
+  {
+   "part": "hind paw sole",
+   "covers": "toe pads, main pad under the ankle, clefts, heel back (heel flat on the floor)",
+   "approvedOn": "2026-10-14",
+   "approvedIn": "assembled-3252 (heel v6, recipe-heel-v6)",
+   "quotes": [
+    {
+     "at": "2026-10-14",
+     "text": "new pad looks good, proceed"
+    }
+   ]
   }
  ],
  "reopened": [
