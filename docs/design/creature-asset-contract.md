@@ -183,3 +183,16 @@ Twelve findings; all accepted. Generated act keys carry no identity (resolver re
 ## 12. What Nick is approving
 
 That a game receives exactly this: one versioned folder per species; one self-contained glTF with two tiers, four finish variants and the required clips; a manifest carrying the names, timings and measurements in section 3; size from a two-number rule; acts resolved by the table in section 6; sprites and a 2D token derived from the same runtime. Approving it fixes what every later part of the design must produce.
+
+## 13. Ratified by Nick, 2026-10-14
+
+Nick ruled that product and look decisions are his and process decisions are the pipeline owner's, and that each product decision carries two answers: the production answer and the slice answer used to prove the pipeline on Luceras.
+
+| Decision | Production answer (approved) | Slice answer (Luceras) |
+|---|---|---|
+| Visible behaviors | The ten required clips plus the authored signature; `celebrate` only when a game shows a results screen; `react` optional | `idle` plus the signature act (Horns-First Descent, a lunge, which also exercises the generic archetype path) |
+| Action lengths | The defaults in section 3 (idle 2 to 4 s, hurt 0.5 s, evade 0.6 s, light 0.9 s, heavy 1.4 s, signature 1.5 s), kept as levers | same numbers |
+| Sprite facings | `side` and `three_quarter` by default; `front` and `back` on a game's request | one facing, `side`, for the one act, to prove the derived path |
+| 2D token | Derived from the model. Nick: "definitely derive from the model. We don't need to keep any of the silhouette aspects once we get all of this pipeline in place." The hand-drawn silhouettes remain design references only | derived token for Luceras |
+
+Nick on the staging: "maybe we just pick one of the actions and one angle until we prove out the pipeline works. And then once we have a working pipeline for the most part, then we can start expanding." Expansion to the full set is a roster-layer task after the slice retro, not a per-creature decision.
