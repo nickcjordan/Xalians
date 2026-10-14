@@ -213,11 +213,21 @@ def report(name, m):
 SHEET_CURVES = None
 
 
+EYE_WEIGHT = 4.0      # the eyes are what Nick judged first; an outline gain never pays for an eye miss
+
+
 def score(m, sc):
-    """One number for the search: spot measures over their tolerance plus both outlines' RMS (in W)."""
-    spot = sum(min((m[k]-t)/TOLERANCE[k], 3.0)**2 for k, t in SHEET.items() if not k.startswith('side_eye'))
+    """One number for the search: each spot measure over its tolerance (the eye measures weighted EYE_WEIGHT),
+    plus both outlines' mean squared error over (0.05 W) squared. A spot measure inside tolerance costs little;
+    one well outside it costs as much as a poor outline."""
+    spot = 0.0
+    for k, t in SHEET.items():
+        if k.startswith('side_eye'):
+            continue                          # the drawing's profile eye cannot be met by a round eyeball
+        w = EYE_WEIGHT if k.startswith('eye_') else 1.0
+        spot += w*min((m[k]-t)/TOLERANCE[k], 4.0)**2
     curves = sum(np.mean([(m[f'{v}_curve'][k]-sc[v][k])**2 for k in sc[v]]) for v in ('front', 'side'))
-    return spot/len(SHEET)+curves/0.03**2
+    return spot+curves/0.05**2
 
 
 def main():
