@@ -1,0 +1,23 @@
+{
+  "creature": "luceras",
+  "stage": "01-intake",
+  "writtenBy": "orchestrator",
+  "date": "2026-10-14",
+  "deliveryTarget": "live 3D glTF for mobile browsers; sprites derived",
+  "skeletonClass": "quadruped",
+  "modules": ["spine", "neck_head", "limb x4 (fore 3 joints short, hind 3 joints long, digitigrade)", "tail (6 joints, plume socket)", "ear x2 (2 joints each)", "jaw", "sockets: horn_l, horn_r (emitter at the horn tips), status, carry"],
+  "size": {"dimension": "heightCm", "referenceCm": 57, "bandCm": [48, 66], "massKgReference": 13, "restHeightCm": 0},
+  "units": {"length": "meters", "blenderForward": "-Y", "gltfForward": "+Z", "origin": "ground point under the body center"},
+  "budgets": {"fullTriangles": 10000, "fullTrianglesHardCap": 12000, "lowTriangles": 3000, "textureSet": "one 1024 set: base color, normal, packed occlusion-roughness-metallic", "materials": 2, "jointsMax": 60, "influencesPerVertex": 4, "morphTargetsMax": 8, "fileBytesTarget": 400000},
+  "look": {"covering": "fur", "furMethod": "texture fur with a short silhouette fringe where the sheet demands", "lightingModel": "decided in part 6 on a rendered A/B", "finishes": ["standard", "gleam", "prismatic", "eclipse"]},
+  "rootMotion": "in place; act clips declare travel and reach",
+  "clips": {
+    "production": ["idle", "move (bound gait)", "hurt", "evade", "guard", "displaced", "held", "faint", "act.light", "act.heavy", "sig.horns-first-descent"],
+    "slice": ["idle", "sig.horns-first-descent"]
+  },
+  "archetypeForSignature": "lunge (contact, closing): launch, hit, recover; travel declared; reach from the horn tips at the hit",
+  "sprites": {"production": ["side", "three_quarter"], "slice": ["side"]},
+  "token": "derived from the model",
+  "reconstruction": {"tool": "Hunyuan3D-2 (license noted per run; not a gate, Nick 2026-10-14)", "gpuCapGb": 6.5},
+  "stageOrderNotes": "Stages 2 and 3 use Codex images on Nick's subscription; stage 4 binds the proxy rig from the quadruped class; stage 5 sculpts head, torso and hind legs from reconstruction with ears, horns, tail, forelegs and paws authored."
+}

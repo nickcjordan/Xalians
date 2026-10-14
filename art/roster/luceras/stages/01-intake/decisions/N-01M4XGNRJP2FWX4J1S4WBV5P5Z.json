@@ -1,0 +1,14 @@
+{
+  "id": "N-01M4XGNRJP2FWX4J1S4WBV5P5Z",
+  "alias": "cwtr",
+  "stage": "01-intake",
+  "who": "orchestrator",
+  "words": "Tech spec filed (stages/01-intake/techspec.json): quadruped class, reference height 57 cm, budgets from part 2, slice clips idle plus the signature lunge, slice sprite facing side, token derived from the model. Process decision, shown to Nick, not asked.",
+  "date": "2026-10-14",
+  "kind": "ruling",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T15:32:11Z"
+}

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "id": "C-01M4XGME7ZY194E8CHGJ8KQZJ7",
+  "alias": "knes",
+  "key": "luceras",
+  "createdAt": "2026-10-14T15:31:28Z",
+  "species": {
+    "template": "docs/species-templates/v5/luceras.json",
+    "templateSha256": "c57143da33bdca7e57e59035949781a06991450ca150513a613dabebc60963c9",
+    "silhouette": "apps/web/src/svg/species/luceras.svg",
+    "silhouetteSha256": "48ef8b8a4f512389eb00814f290c22e2354a2fec07c160b49eb0c21cfdce3302",
+    "name": "Luceras",
+    "element": "air",
+    "homePlanet": "saiphus",
+    "bodyPlan": "quadruped",
+    "covering": "fur",
+    "size": {
+      "massKg": [
+        9,
+        17
+      ],
+      "heightCm": [
+        48,
+        66
+      ]
+    },
+    "appearance": [
+      "Small bounding quadruped, built around its hind legs",
+      "Shaggy fur",
+      "A pair of curved ram-like horns",
+      "Long upright ears",
+      "Long whiskers",
+      "Whip tail longer than the body, ending in a spiked plume"
+    ],
+    "anatomy": [
+      "horns",
+      "tail",
+      "body"
+    ]
+  },
+  "techSpec": {},
+  "budget": null,
+  "stages": {
+    "01-intake": {
+      "state": "open",
+      "approval": null,
+      "evidence": [],
+      "openedAt": "2026-10-14T15:32:00Z"
+    },
+    "02-vision": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "03-sheet": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "04-blockout": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "05-sculpt": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "06-gamemesh": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "07-surface": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "08-rig": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "09-animate": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "10-export": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    },
+    "11-retro": {
+      "state": "not-started",
+      "approval": null,
+      "evidence": []
+    }
+  }
+}

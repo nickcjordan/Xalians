@@ -1,0 +1,40 @@
+{
+  "creature": "luceras",
+  "stage": "01-intake",
+  "writtenBy": "orchestrator",
+  "date": "2026-10-14",
+  "sources": {
+    "speciesTemplate": "docs/species-templates/v5/luceras.json",
+    "silhouette": "apps/web/src/svg/species/luceras.svg",
+    "rulings": ["species-text-is-moveset-image-is-look (Nick 2026-10-12)", "model-shaved-anatomy (Nick 2026-10-13)", "creature-coloring-ecology-plus-character (Nick 2026-10-08)", "creature-fur-tufts-not-feathers (Nick 2026-10-09)"]
+  },
+  "inOneBreath": "A small, shaggy, hare-like leaper from the floating islands of Saiphus, built around enormous hind legs, with a pair of ram horns sweeping back over its head, tall ears, long whiskers, and a whip tail longer than its body that ends in a spiked plume. It jumps so high it seems to fly, then comes down horns-first like a battering ram.",
+  "mustHave": [
+    {"feature": "Small bounding quadruped, built around its hind legs", "source": "description", "note": "Hind legs are the dominant mass; forelegs are small. Size band 48 to 66 cm tall, 9 to 17 kg."},
+    {"feature": "Shaggy fur", "source": "description", "note": "Modeled shaved; shagginess comes from the fur stage, long where the sheet says (chest, neck ruff, belly fringe), short on the face."},
+    {"feature": "A pair of curved ram-like horns", "source": "both", "note": "Two horns. The silhouette shows one large sweep curling back over the skull; the pair is symmetric. The horns are the strike instrument of the signature act (emitter socket at the horn tips)."},
+    {"feature": "Long upright ears", "source": "both", "note": "Tall, leaf-shaped, standing up and slightly back; they read in the silhouette beside the horn."},
+    {"feature": "Long whiskers", "source": "both", "note": "Several long whiskers forward from the muzzle on each side; a texture or card feature, not mesh."},
+    {"feature": "Whip tail longer than the body, ending in a spiked plume", "source": "both", "note": "Thin tail, longer than the body, with a flame-like spiked tuft at the end. The tail is an ability instrument (tail/strike)."},
+    {"feature": "Body as an ability instrument", "source": "template anatomy", "note": "The body itself strikes (body/strike, the battering-ram descent), so the chest and brow must read as something that can hit."}
+  ],
+  "carriedOverFromSilhouette": [
+    {"feature": "Hare-like head: short rounded muzzle with a small nose, large eye set high and forward"},
+    {"feature": "Horns rise from the top of the skull between the ears and curl back and down in one wide arc"},
+    {"feature": "Deep chest tapering to a narrow waist; the back line runs straight from shoulders to rump"},
+    {"feature": "Forelegs short and slender with small paws; hind legs long, heavily muscled at the thigh, with large elongated feet"},
+    {"feature": "A fringe of longer fur along the chest, under the neck and along the belly line (fur stage, not mesh)"},
+    {"feature": "The drawn pose is a mid-leap; it is a look reference only, the model is built standing (rest pose of the quadruped class)"}
+  ],
+  "openForDesign": [
+    "Coat color and pattern: reasoned from Saiphus (a gas giant's floating islands, open sky, canyon vapor); must carry a pattern, never one flat color; eye color chosen independently",
+    "Fur length by region beyond the fringe the silhouette shows",
+    "Horn surface (ridged or smooth), color and tip shape",
+    "Eye shape and expression within 'large, set high and forward'",
+    "Paw and foot detail (toe count, pads)",
+    "Whisker count and exact plume shape",
+    "Nose and mouth design"
+  ],
+  "questionsForNick": [],
+  "notForDesign": ["No flight: capability flight is 0; the leap is a leap", "No wings, membranes or feathers; covering is fur only"]
+}
