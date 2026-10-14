@@ -15,9 +15,11 @@ The page publishes with capabilities {db: {}, user: {}}. Store layout it reads a
   requests/<element>   {kind: "new-set"|"mix", text, at}   set from the two request boxes
   composite/current    {blob, label, note, dataUri?}        written by the orchestrator, shown when all are picked
   status/board         {submitted: true, at, picks}         set by "Confirm these picks"
-Each section's reference strip also carries a "Source material" block: the species silhouette
+A sticky left rail (a closed fold on phones) carries the "Source material" once: the species silhouette
 (docs/species-templates/art/<key>.png, embedded once as a CSS variable), the raw lore from
-docs/species-templates/v5/<key>.json, and the home world's encyclopedia entry. The key is the creature name.
+docs/species-templates/v5/<key>.json, the home world's encyclopedia entry, and the neutral base image with a
+one-line note that every option edits it. The key is the creature name. Each section keeps only what differs
+per question: title, question, what to judge, the approved reading lines it serves, background toggle, options.
 Python 3 standard library plus Pillow.
 """
 import argparse
@@ -186,13 +188,11 @@ def load_source(creature):
             "entry": entry, "silh": uri, "silhSize": size}
 
 
-def render_source(src):
-    """The 'Source material' block (static HTML, identical in every section)."""
-    if not src:
-        return ""
-    lore = src["lore"]
-    parts = ['<div class="src"><h3>Source material</h3>']
-    if src["silh"]:
+def render_source(src, base_uri):
+    """The left rail's body: silhouette, raw lore, home world, then the base image (static HTML, once)."""
+    parts = []
+    lore = (src or {}).get("lore") or {}
+    if src and src["silh"]:
         w, h = src["silhSize"]
         parts.append('<figure class="silh-fig"><div class="silh" role="img" aria-label="Nick&#x27;s silhouette of the creature" '
                      'style="aspect-ratio:%d/%d"></div><figcaption>Nick&#x27;s silhouette</figcaption></figure>' % (w, h))
@@ -204,7 +204,7 @@ def render_source(src):
     rows = "".join("<dt>%s</dt><dd>%s</dd>" % (E(lbl), E(lore[k])) for k, lbl in LORE_FIELDS if lore.get(k))
     if rows:
         parts.append('<dl class="lorelist">%s</dl>' % rows)
-    if src["planet"]:
+    if src and src["planet"]:
         e = src["entry"]
         parts.append('<h4>Home world</h4><p><strong>%s</strong> <span class="muted">(element: %s)</span></p>'
                      % (E((e or {}).get("title") or src["planet"].title()), E(src["element"].title())))
@@ -218,9 +218,10 @@ def render_source(src):
                 parts.append("<p>%s</p>" % E(d))
         else:
             parts.append('<p class="muted">No encyclopedia entry found for this world.</p>')
-    elif src["element"]:
+    elif src and src["element"]:
         parts.append('<h4>Element</h4><p>%s</p>' % E(src["element"].title()))
-    parts.append("</div>")
+    parts.append('<h4>Base image</h4><figure class="base-fig"><img src="%s" alt="The neutral gray base every option was edited from">'
+                 '<figcaption>The neutral gray base. Every option in every set is an edit of this image.</figcaption></figure>' % base_uri)
     return "".join(parts)
 
 
@@ -254,7 +255,7 @@ button,input,textarea{font:inherit;color:inherit}
 .mono{font-family:var(--f-mono);font-size:.82rem}
 .muted{color:var(--muted)}
 .wrap{max-width:1360px;margin:0 auto;padding:16px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr) 300px;gap:24px;align-items:start}
 header.top{padding:8px 0 16px}
 header.top .lede{max-width:70ch;color:var(--muted)}
 .progress{display:inline-flex;align-items:center;gap:8px;margin-top:8px;font-weight:700}
@@ -279,30 +280,32 @@ section.set{background:var(--surface);border:1px solid var(--line);padding:16px;
 .question{font-size:1.1rem;margin:6px 0 8px}
 .judge{margin:0 0 12px;padding-left:1.2em}
 .judge li{margin:2px 0}
-.set-body{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
 .ref{background:var(--surface-2);border:1px solid var(--line);padding:10px;font-size:.92rem}
 .ref h3{font-size:.95rem;margin-bottom:6px}
-.ref ul{list-style:none;margin:0 0 10px;padding:0}
+.ref ul{list-style:none;margin:0;padding:0}
 .ref li{margin:0 0 8px}
+.ref li:last-child{margin-bottom:0}
 .ref .k{display:block;font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .ref .note{display:block;color:var(--muted);font-size:.85rem}
-.ref figure{margin:0}
-.ref img{width:100%;height:auto;display:block;border:1px solid var(--line)}
-.ref figcaption{font-size:.8rem;color:var(--muted);margin-top:4px}
-.ref .src{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
-.ref .src h3{font-size:1rem;margin-bottom:6px}
-.ref .src h4{font-family:var(--f-mono);font-size:.72rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 4px}
-.ref .src p{margin:.3em 0}
-.ref .silh-fig{margin:0 0 8px}
-.ref .silh{width:100%;background:#fff var(--silh) center/100% 100% no-repeat;border:1px solid var(--line)}
-.ref .app{margin:0;padding-left:1.1em}
-.ref .app li{margin:0 0 3px}
-.ref .lorelist{display:grid;grid-template-columns:76px minmax(0,1fr);gap:6px 10px;margin:10px 0 0}
-.ref .lorelist dt{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
-.ref .lorelist dd{margin:0;overflow-wrap:anywhere}
-.ref details.more{display:inline}
-.ref details.more summary{cursor:pointer;color:var(--blue);text-decoration:underline;display:inline}
-.ref details.more[open] summary{display:block;margin-top:4px}
+aside.srcrail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;background:var(--surface);border:1px solid var(--line);padding:14px;font-size:.92rem}
+.src-toggle{display:none}
+.srcrail h2{font-size:1.2rem;margin-bottom:8px}
+.srcrail h4{font-family:var(--f-mono);font-size:.72rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 4px}
+.srcrail p{margin:.3em 0}
+.srcrail figure{margin:0}
+.srcrail .base-fig img{width:100%;height:auto;display:block;border:1px solid var(--line)}
+.srcrail figcaption{font-size:.8rem;color:var(--muted);margin-top:4px}
+.srcrail .silh-fig{margin:0 0 8px}
+.srcrail .silh{width:100%;background:#fff var(--silh) center/100% 100% no-repeat;border:1px solid var(--line)}
+.srcrail .app{margin:0;padding-left:1.1em}
+.srcrail .app li{margin:0 0 3px}
+.srcrail .lorelist{display:grid;grid-template-columns:70px minmax(0,1fr);gap:6px 10px;margin:10px 0 0}
+.srcrail .lorelist dt{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.srcrail .lorelist dd{margin:0;overflow-wrap:anywhere}
+.srcrail details.more{display:inline}
+.srcrail details.more summary{cursor:pointer;color:var(--blue);text-decoration:underline;display:inline}
+.srcrail details.more[open] summary{display:block;margin-top:4px}
+.ref{margin:0 0 12px}
 .toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
 .toolbar .lbl{font-size:.9rem;color:var(--muted);margin-right:2px}
 .seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line)}
@@ -369,8 +372,20 @@ details.fold summary{cursor:pointer;font-family:var(--f-head);font-weight:600;fo
 .ov-stage figcaption{margin-top:6px}
 .ov-stage figcaption strong{font-family:var(--f-head);font-weight:600;font-size:1.1rem}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-@media (max-width:1000px){
+@media (min-width:901px) and (max-width:1199px){
+ .layout{grid-template-columns:220px minmax(0,1fr) 250px;gap:16px}
+}
+@media (max-width:900px){
  .layout{grid-template-columns:minmax(0,1fr)}
+ aside.srcrail{order:-2;position:static;max-height:none;padding:0;margin:0 -16px;border-left:0;border-right:0}
+ .src-toggle{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px;min-height:48px;background:var(--surface);border:0;cursor:pointer;font-weight:700;text-align:left}
+ .src-toggle svg{transition:transform .15s}
+ .src-toggle[aria-expanded="true"]{border-bottom:1px solid var(--line)}
+ .src-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+ .src-inner{padding:0 16px 14px;max-height:65vh;overflow:auto}
+ .src-inner[hidden]{display:none}
+ .srcrail h2{display:none}
+ .srcrail .silh-fig{max-width:260px}
  aside.rail{order:-1;position:sticky;top:0;z-index:20;max-height:none;padding:0;margin:0 -16px;border-left:0;border-right:0}
  .rail-toggle{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px;min-height:48px;background:var(--surface);border:0;cursor:pointer;font-weight:700;text-align:left}
  .rail-toggle svg{transition:transform .15s}
@@ -379,12 +394,9 @@ details.fold summary{cursor:pointer;font-family:var(--f-head);font-weight:600;fo
  .rail-inner[hidden]{display:none}
  .rail h2{display:none}
 }
-@media (min-width:1001px){.rail-inner[hidden]{display:block!important}}
+@media (min-width:901px){.rail-inner[hidden],.src-inner[hidden]{display:block!important}}
 @media (max-width:760px){
  h1{font-size:1.55rem}
- .set-body{grid-template-columns:minmax(0,1fr)}
- .ref-top{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px}
- .ref .silh-fig{max-width:260px}
  .asks{grid-template-columns:minmax(0,1fr)}
  .cards{grid-template-columns:minmax(0,1fr)}
  section.set{padding:12px}
@@ -417,16 +429,14 @@ def bg_toggle(el):
     return '<span class="lbl">Background</span><span class="seg" role="group" aria-label="Background behind images">%s</span>' % btns
 
 
-def render_section(el, cfg, opts, rec_alias, base_uri, reading, n, total, source_html=""):
+def render_section(el, cfg, opts, rec_alias, reading, n, total):
     name = cfg.get("name", el.title())
     judge = "".join("<li>%s</li>" % E(j) for j in cfg.get("judge", []))
     ref_items = "".join(
         '<li><span class="k">%s</span>%s%s</li>' % (E(k), E(t), ('<span class="note">%s</span>' % E(note)) if note else "")
         for k, t, note in reading)
-    ref = ('<div class="ref"><div class="ref-top"><div><h3>The approved reading</h3><ul>%s</ul></div>'
-           '<figure><img src="%s" alt="The neutral gray base every option in this set was edited from">'
-           '<figcaption>The base: neutral gray, edited per option</figcaption></figure></div>%s</div>'
-           % (ref_items or '<li class="muted">No reading lines attached.</li>', base_uri, source_html))
+    ref = ('<div class="ref"><h3>The approved reading</h3><ul>%s</ul></div>'
+           % (ref_items or '<li class="muted">No reading lines attached.</li>'))
     cards = []
     for o in opts:
         rec = o["alias"] == rec_alias
@@ -461,7 +471,7 @@ def render_section(el, cfg, opts, rec_alias, base_uri, reading, n, total, source
         '<div class="set-head"><h2 id="h-%s"><span class="mono muted">%d of %d</span> %s</h2>'
         '<span class="set-state" data-state="%s">Not picked yet</span></div>'
         '<p class="question">%s</p><h3>What to judge</h3><ul class="judge">%s</ul>'
-        '<div class="set-body">%s<div><div class="toolbar">%s</div><div class="cards">%s</div></div></div>%s</section>'
+        '%s<div class="toolbar">%s</div><div class="cards">%s</div>%s</section>'
         % (el, el, el, el, n, total, E(name), el, E(cfg.get("question", "")), judge, ref, bg_toggle(el), "".join(cards), asks))
 
 
@@ -702,6 +712,7 @@ document.addEventListener('click', function(ev){
   if (t.id === 'ov-two') { OV.two = !OV.two; if (OV.two && OV.b === OV.a) { var o = EL[OV.el].options; for (var i=0;i<o.length;i++) if (o[i].alias!==OV.a) { OV.b=o[i].alias; break; } } return renderOverlay(); }
   if (t.id === 'ov-close') return closeOverlay();
   if (t.id === 'confirm-btn') return doConfirm();
+  if (t.id === 'src-toggle') { var so = t.getAttribute('aria-expanded') !== 'true'; t.setAttribute('aria-expanded', so ? 'true':'false'); $('#src-inner').hidden = !so; return; }
   if (t.id === 'rail-toggle') { var open = t.getAttribute('aria-expanded') !== 'true'; t.setAttribute('aria-expanded', open ? 'true':'false'); $('#rail-inner').hidden = !open; return; }
 });
 document.addEventListener('submit', function(ev){ var f = ev.target; if (f.matches && f.matches('form.ask')) { ev.preventDefault(); doAsk(f); } });
@@ -719,7 +730,7 @@ document.addEventListener('keydown', function(ev){
 });
 
 // rail starts open on wide screens, collapsed on phones
-(function(){ var narrow = window.matchMedia && window.matchMedia('(max-width:1000px)').matches;
+(function(){ var narrow = window.matchMedia && window.matchMedia('(max-width:900px)').matches;
   $('#rail-toggle').setAttribute('aria-expanded', narrow ? 'false' : 'true'); $('#rail-inner').hidden = narrow; })();
 
 render();
@@ -772,7 +783,7 @@ def build(creature, stage, spec, index=None):
         raise Refusal("no base image found for %s %s" % (creature, stage))
     base_uri, _ = jpeg_data_uri(base["hash"])
     src = load_source(creature)
-    source_html = render_source(src)
+    source_html = render_source(src, base_uri)
     sections, data = [], {"order": order, "elements": {}, "icons": {"check": ICONS["check"], "star": ICONS["star"]},
                           "text": {"compositeEmpty": spec["compositeEmpty"]}}
     for n, el in enumerate(order, 1):
@@ -790,7 +801,7 @@ def build(creature, stage, spec, index=None):
         if rec_letter and not rec_alias:
             raise Refusal("recommended letter %s not among %s options" % (rec_letter, el))
         reading = resolve_reading(creature, cfg.get("reading"))
-        sections.append(render_section(el, cfg, opts, rec_alias, base_uri, reading, n, len(order), source_html))
+        sections.append(render_section(el, cfg, opts, rec_alias, reading, n, len(order)))
         data["elements"][el] = {"name": cfg.get("name", el.title()), "recommended": rec_alias,
                                 "options": [{"alias": o["alias"], "letter": o["letter"], "label": o["label"],
                                              "summary": o["summary"], "blob": o["hash"]} for o in opts]}
@@ -811,7 +822,11 @@ def build(creature, stage, spec, index=None):
                 '<p class="notice" id="n-fallback" hidden>%s<span>%s</span></p>'
                 '<p class="notice" id="n-readonly" hidden>%s<span>You can see the picks here but not change them.</span></p>'
                 '</header>' % (E(spec["heading"]), E(spec["lede"]), dots, total, ICONS["info"], ICONS["info"], E(spec["fallback"]), ICONS["info"]))
-    page.append('<div class="layout"><main>')
+    page.append('<div class="layout">')
+    page.append(
+        '<aside class="srcrail" aria-label="Source material">'
+        '<button type="button" class="src-toggle" id="src-toggle" aria-controls="src-inner" aria-expanded="false"><span>Source material</span>%s</button>'
+        '<div class="src-inner" id="src-inner" hidden><h2>Source material</h2>%s</div></aside><main>' % (ICONS["chev"], source_html))
     page.extend(sections)
     page.append('<details class="fold"><summary>%s</summary><p>%s</p></details>' % (E(spec["fold"]["title"]), E(spec["fold"]["text"])))
     page.append('</main>')
