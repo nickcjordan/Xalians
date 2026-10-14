@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "species": "akinza",
   "note": "ear roots v2: recipe-neck-v3 plus P-earroot2 (earroot_v2_post.py, specs/earroot-v2.json) last, in place of ear roots v1 (anatomy review 2026-10-13, finding 10).",
+  "superseded": "Superseded record (2026-10-14). Its approved output assembled-3232 was built by hand (loop_tools.py blender on earroot_v2_post.py with assembled-3199 as input, the post list appended and the packet rendered; see untracked/species-construction/akinza/surface/anatomy-fixes/work/10-earroot/build.sh), not by recipe.py build, so the recipe cache never held an entry for it and recipe.py status shows P-earroot2 as \"-> build\". Script, spec and input are the same bytes as that run (earroot-v2.json in assembled-3232 records script 90961082, spec c1687340, input assembled-3199, which is this recipe's cached P-neck3), but recipe.py has no command that adopts a hand-built post output (seed covers ordinary steps only, and a seeded post entry is never trusted as a hit), so it cannot resolve to 3232. Do not rebuild this recipe to reproduce ear roots v2: the step lives on unchanged as P-earroot2 in recipe-integrated-v3.json (on P-heel6, output assembled-3291, inside the model of record assembled-3300).",
   "roots": {
     "head-root": {
       "dir": "head-0204",
