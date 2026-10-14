@@ -263,6 +263,18 @@
       "comb": "crown"
     }
   },
+  "lengthRamps": [
+    {
+      "note": "throat: fur length grows evenly from the chin to the chest (fur step 5)",
+      "box": {"at": [0.225, 0.38], "x": [0.0, 0.12], "symmetricX": true, "y": [-0.14, 0.0]},
+      "margin": 0.02,
+      "frontFacing": {"min": 0.1, "span": 0.4},
+      "at": [[0.2, 0.006], [0.23, 0.01], [0.27, 0.016], [0.32, 0.022], [0.36, 0.026]],
+      "clump": 0.25,
+      "curl": 0.15,
+      "lift": 0.3
+    }
+  ],
   "keepOut": {
     "note": "Distance (world units) from these objects over which density ramps from zero to full.",
     "eyes": {

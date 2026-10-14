@@ -179,6 +179,10 @@ def stripe_coordinates(me, co, nrm, edges, wn, names, at_all, th, ac, tail_d, ta
           'angle pct', np.round(np.percentile(angle, [5, 25, 50, 75, 95]), 2))
 
 
+def has_lift(cfg):
+    return any('lift' in g for g in cfg['groups'].values()) or any('lift' in r for r in cfg.get('lengthRamps', []))
+
+
 def write_attribute(me, name, data, kind='FLOAT'):
     if name in me.attributes:
         me.attributes.remove(me.attributes[name])
@@ -261,7 +265,21 @@ def compute_attributes(skin, cfg, species):
         tl = np.array(cfg['tailLength']['along'], float)
         f = np.interp(np.where(np.isfinite(tail_d), tail_d, 0.0), tl[:, 0], tl[:, 1])
         length = length+wn[ti]*cfg['groups']['tails']['length']*(f-1.0)
+    ramp_w = []
+    for r in cfg.get('lengthRamps', []):  # optional: length by row inside a box (an even grow from chin to chest)
+        w = membership(co, r['box'], floor, height, r.get('margin', 0.02))
+        if 'frontFacing' in r:
+            w = w*smoothstep((-nrm[:, 1]-r['frontFacing']['min'])/r['frontFacing']['span'])
+        pts_r = np.array(r['at'], float)
+        target = np.interp((floor+height-co[:, 2])/height, pts_r[:, 0], pts_r[:, 1])
+        length = length*(1.0-w)+target*w
+        ramp_w.append((w, r))
     clump, curl, group_pale = blend('clump'), blend('curl'), blend('pale')
+    for w, r in ramp_w:  # the ramp may also carry its own texture (clump, curl) so the grow reads as one coat
+        if 'clump' in r:
+            clump = clump*(1.0-w)+r['clump']*w
+        if 'curl' in r:
+            curl = curl*(1.0-w)+r['curl']*w
     cscale = blend('cscale', cfg['clumpScale'])
     comb = unit(sum(wn[i, :, None]*directions[cfg['groups'][nm]['comb']] for i, nm in enumerate(names)))
 
@@ -518,8 +536,12 @@ def compute_attributes(skin, cfg, species):
     write_attribute(me, 'fur_clump', clump)
     write_attribute(me, 'fur_curl', curl)
     write_attribute(me, 'fur_cscale', cscale)
-    if any('lift' in g for g in cfg['groups'].values()):  # optional per-group lift off the skin (else the global lift)
-        write_attribute(me, 'fur_lift', sum(wn[i]*cfg['groups'][nm].get('lift', cfg['lift']) for i, nm in enumerate(names)))
+    if has_lift(cfg):  # optional per-group (or ramp) lift off the skin (else the global lift)
+        lift_v = sum(wn[i]*cfg['groups'][nm].get('lift', cfg['lift']) for i, nm in enumerate(names))
+        for w, r in ramp_w:
+            if 'lift' in r:
+                lift_v = lift_v*(1.0-w)+r['lift']*w
+        write_attribute(me, 'fur_lift', lift_v)
     write_attribute(me, 'pale', pale)
     write_attribute(me, 'rim', rim)
     write_attribute(me, 'fur_tone', blend('tone', 1.0))
@@ -676,7 +698,7 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
     rnd.inputs['Seed'].default_value = cfg['seed']+1
     jitter = b.vm('SCALE', rnd.outputs['Value'], scale=cfg['dirJitter'])
     lift = cfg['lift']
-    if any('lift' in g for g in cfg['groups'].values()):
+    if has_lift(cfg):
         lift = b.named('fur_lift', 'FLOAT')
         direction = b.vm('ADD', b.vm('ADD', b.vm('SCALE', tangent, scale=b.m('SUBTRACT', 1.0, lift)), b.vm('SCALE', normal, scale=lift)), jitter)
     else:
