@@ -1,0 +1,267 @@
+{
+ "name": "heel v1",
+ "approval": null,
+ "note": "heel v1 (2026-10-13), for heel_v1_post.py / heel_v1_field.py, appended after P-ankle1. Anatomy review 2026-10-13 finding 7; Nick, 2026-10-13: \"Yes, fix all ten of them.\" Written for the +x foot; the -x foot uses it mirrored on its own grid. corner: the heel's back-bottom corner taken back to an arc of radius .06 round (y 0, z -.90), tangent to the floor, pulled in with gain 5 so the old sole's edge lip at the heel goes too, and the heel stays on the floor plane (rounded, not lifted); sole: within .012 of the floor (z -.957) the sole rises .004 except under the pads (four toe pads, a three-lobed metatarsal pad, the heel's contact patch), faded out behind y 0 so only the corner arc shapes the heel back, so the pads are low mounds on the floor and the sole's edge lip rolls in; blurX: an across-the-foot blur over the heel's back and sides that merges the leg column's ridge and the grooves beside it (the small bumps on the heel's sides); blurs: a light blur over the sole (pad edges) one where the corner arc meets the floor, and one round the old sole slab's top edge at z -.944 (the edge lip's upper rim, which had left a bump in the heel's side silhouette); partBox: |x| from .18 (in by .20), z below -.85 (in by -.88). World units, +y back.",
+ "grid": {
+  "lo": [
+   0.17,
+   -0.19,
+   -0.975
+  ],
+  "hi": [
+   0.46,
+   0.11,
+   -0.83
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "corner": {
+  "yc": 0.0,
+  "zc": -0.9,
+  "R": 0.06,
+  "gain": 5.0,
+  "soft": 0.015,
+  "x": [
+   0.2,
+   0.22,
+   0.44,
+   0.455
+  ]
+ },
+ "sole": {
+  "floorZ": -0.957,
+  "band": 0.012,
+  "depth": 0.004,
+  "x": [
+   0.2,
+   0.22,
+   0.44,
+   0.455
+  ],
+  "y": [
+   -1,
+   -1,
+   0.0,
+   0.025
+  ],
+  "pads": [
+   {
+    "c": [
+     0.293,
+     -0.093
+    ],
+    "s": [
+     0.012,
+     0.014
+    ],
+    "fade": [
+     0.6,
+     1.3
+    ]
+   },
+   {
+    "c": [
+     0.332,
+     -0.115
+    ],
+    "s": [
+     0.013,
+     0.014
+    ],
+    "fade": [
+     0.6,
+     1.3
+    ]
+   },
+   {
+    "c": [
+     0.371,
+     -0.115
+    ],
+    "s": [
+     0.013,
+     0.014
+    ],
+    "fade": [
+     0.6,
+     1.3
+    ]
+   },
+   {
+    "c": [
+     0.405,
+     -0.09
+    ],
+    "s": [
+     0.012,
+     0.014
+    ],
+    "fade": [
+     0.6,
+     1.3
+    ]
+   },
+   {
+    "c": [
+     0.326,
+     -0.047
+    ],
+    "s": [
+     0.022,
+     0.022
+    ],
+    "fade": [
+     0.6,
+     1.3
+    ]
+   },
+   {
+    "c": [
+     0.35,
+     -0.057
+    ],
+    "s": [
+     0.024,
+     0.022
+    ],
+    "fade": [
+     0.6,
+     1.3
+    ]
+   },
+   {
+    "c": [
+     0.374,
+     -0.047
+    ],
+    "s": [
+     0.022,
+     0.022
+    ],
+    "fade": [
+     0.6,
+     1.3
+    ]
+   },
+   {
+    "c": [
+     0.347,
+     -0.002
+    ],
+    "s": [
+     0.034,
+     0.016
+    ],
+    "fade": [
+     0.6,
+     1.3
+    ]
+   }
+  ]
+ },
+ "blurX": [
+  {
+   "c": [
+    0.345,
+    0.035,
+    -0.91
+   ],
+   "s": [
+    0.06,
+    0.035,
+    0.04
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.014
+  }
+ ],
+ "blurs": [
+  {
+   "c": [
+    0.35,
+    -0.04,
+    -0.957
+   ],
+   "s": [
+    0.08,
+    0.11,
+    0.02
+   ],
+   "fade": [
+    0.6,
+    1.1
+   ],
+   "sigma": 0.003,
+   "mirror": true
+  },
+  {
+   "c": [
+    0.345,
+    0.02,
+    -0.953
+   ],
+   "s": [
+    0.06,
+    0.025,
+    0.01
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.004,
+   "mirror": true
+  },
+  {
+   "c": [
+    0.35,
+    -0.04,
+    -0.944
+   ],
+   "s": [
+    0.085,
+    0.12,
+    0.009
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.004,
+   "mirror": true
+  }
+ ],
+ "partBox": {
+  "x": [
+   0.18,
+   0.2,
+   0.44,
+   0.455
+  ],
+  "z": [
+   -1,
+   -1,
+   -0.88,
+   -0.85
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ }
+}
