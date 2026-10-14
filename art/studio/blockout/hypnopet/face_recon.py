@@ -102,8 +102,12 @@ if __name__ == '__main__':
     ap.add_argument('variant', choices=sorted(VARIANTS))
     ap.add_argument('--grid', type=Path, required=True)
     ap.add_argument('--out', type=Path)
+    ap.add_argument('--voxel', type=float, help='meshing voxel (default 0.002, as v5); thin lips need finer')
     args = ap.parse_args()
     out = args.out or HERE/f'face-recon-{args.variant}.json'
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(build(args.variant, args.grid), indent=1), encoding='utf-8')
+    spec = build(args.variant, args.grid)
+    if args.voxel:
+        spec['voxel'] = args.voxel
+    out.write_text(json.dumps(spec, indent=1), encoding='utf-8')
     print('wrote', out)

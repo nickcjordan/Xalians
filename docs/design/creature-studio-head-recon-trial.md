@@ -82,3 +82,11 @@ Round 4 (`cp2-round4-eyes.jpg`): the 1 mm grid kept the open mouth and tongue; e
 | Notch at the lower lip, step where the head meets the neck | the clip edge and v5's neck | to check on the next render |
 
 Round 5 (`cp2-round5-no-lids.jpg`): the goggles are gone and the pupils read as the sheet's. Eye spacing re-fitted after the softening let the inner sides show (eye centers moved out to x 0.049 to 0.050): 0.28 to 0.32 W gap against the sheet's 0.27.
+
+### CP2, seeds and settings (23:00 to 23:40)
+
+Five more multi-view runs (`cp2-seeds-and-settings.jpg`): seeds 1, 2, 3, guidance 7.5, and octree resolution 512. Each took 4.5 to 8 minutes at 2.7 GB on the GPU (offloaded). All six heads are the same character with small differences in the mouth: seed 1 closes the mouth more; octree 512 gives the crispest open mouth and tongue. The 512 run's grid differs from r04's by 0.18 mm on average (the same seed, only finer meshing), so the head shape is stable across runs and the mouth size and snout are what the model consistently infers from the sheet. Seeds will not fix them; I stopped searching seeds.
+
+- Round 6 (`cp2-round6-oct512.jpg`): the three eye options on the 512 run's grid. face_fit: eye width 0.30 to 0.33 W, spacing 0.30 W from the midline, gap 0.28 to 0.31 W, skull top 0.505 W above the eyes (sheet: 0.32, 0.29, 0.27, 0.50). 7 or 8 misses, all in the side view's eye size (the drawing's profile eye) and the snout and chin depth, where the bare front and side sheets disagree with each other.
+- Meshing finer (1.2 mm instead of 2 mm) changed nothing visible in the mouth (`voxel-check.png` in art-data) and took 8 minutes instead of 3; the default stays at 2 mm. `face_recon.sh` takes `VOXEL=` for later.
+- A second independent critic (fresh agent, same brief plus a 1 to 10 likeness score) is reviewing round 6.
