@@ -1,0 +1,10 @@
+{
+ "name": "fore paws refine v1",
+ "approval": null,
+ "note": "fore paws refine v1 (2026-10-13), for paws_refine_v1_post.py, appended after P-earroot2 and before P-hands3. Coordinator, 2026-10-13: the paw's vertex spacing (median edge .00246) is too coarse for toes, nail-bed folds and pad edges; refine locally to about .0007 inside the paw box, blended into the wrist with no seam. levels: each cuts every skin edge with both ends inside its region once at the midpoint (flat and conforming: smooth 0, because smooth 1 amplified the old lumps' uneven normals into bumps; the chord sag at this edge length is about .00002). Level 1: the paw below z -.115 (the wrist is at z -.09 and the hands step's part box starts at -.11), level 2: the toes and pads below z -.15. Regions mirror in x (|x|); zMin -.26 keeps the hind feet out. World units, +y back.",
+ "smooth": 0.0,
+ "levels": [
+  {"xMin": 0.265, "yMin": -0.17, "yMax": -0.03, "zMin": -0.26, "zMax": -0.115},
+  {"xMin": 0.27, "yMin": -0.165, "yMax": -0.035, "zMin": -0.26, "zMax": -0.15}
+ ]
+}

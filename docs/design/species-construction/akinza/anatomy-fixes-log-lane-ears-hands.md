@@ -119,3 +119,63 @@ Holds added or changed this pass:
 ## Cleanup
 
 Superseded by v2 and archived to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\` (purged after 30 days): assembled-3230 and assembled-3231, with their `assembled-3230*` and `assembled-3231*` log files. Scratch dumps in the work folders are deleted.
+
+## Third pass on the hands (coordinator review of hands v2, 2026-10-13)
+
+Ear roots v2 were accepted and posted to Nick. Hands v2 were not: claw 1 still showed its flat top from the side, the front toe's nail-bed hood read as a big lump with a lip, the toes looked like rectangular sausages with lumpy edges from below, and the palm pad read as a slab. This was the second pass on the same defects, so under REFINEMENT rule 3 the cause came first: the paw's vertex spacing (median edge .00246) was too coarse for toes, hoods and pad edges. The coordinator asked for a local refinement to about .0007, then hands v3 on the finer mesh.
+
+**Dependency check before refining (as asked):** nothing downstream depends on the skin's vertex count, vertex order, topology or UVs.
+- The skin has no UVs. The surface plan uses procedural shaders on object and attribute coordinates (`surface-plan.md:15`).
+- `build_surface.py` rebuilds every fur attribute from positions, normals and edges on each run. Its vertex-count assertion (`build_surface.py:992,1034`) compares the mesh with itself within one run.
+- `rig_core` and `loop_tools.py posed` compute weights fresh per run. `rig_akinza.py:82` checks counts within the same run.
+- `recipe.py` `expect` blocks compare counts, but no step of these recipes has one. `contain` and `regionShift` match by nearest vertex.
+- The post chain already changes the vertex count mid-chain: P-tails7 remeshes the tails.
+- The two invariants that matter: the skin stays one closed component, and every face keeps its material index (the fur stage reads the pale area from it). Both hold.
+- Two things are worth re-running later, not broken: the surface build's edge-hop smoothing passes and `rig_core.smooth_weights` (24 nearest neighbors) cover a shorter distance on a denser paw.
+
+## 8c. Fore paws refine v1 and hands v3
+
+- **Chain:** P-neck3, P-earroot2, P-pawrefine1, P-hands3 (`recipe-pawrefine-v1.json` for the chain up to P-pawrefine1, `recipe-hands-v3.json` for the whole chain, built on assembled-3199).
+- **Refine (assembled-3234, step P-pawrefine1, `art/species-construction/paws_refine_v1_post.py`, spec `specs/paws-refine-v1.json`):**
+  - Every skin edge inside each fore paw is cut once at its midpoint: one level below z -.115 (the wrist is at z -.09), and a second below z -.15 (toes and pads). Regions are |x| above .265 (.27), y -.17 to -.03, z above -.26 (which keeps the hind feet out).
+  - Cuts are flat (smooth 0) and conforming. bmesh's fill patterns split the faces at each region edge, so there are no T-junctions. Only the n-gons those patterns leave (674) are triangulated, and the skin's own quads stay. smooth 1 was tried and amplified the old lumps' uneven normals into bumps.
+  - 547,455 vertices become 634,526 (87,071 new, all inside the paws: |x| .2943 to .3686, y -.1434 to -.0547, z -.2036 to -.1153). Faces go from 548,423 to 636,563.
+  - Median edge in the toe zone goes from .00246 to .00064 (90th percentile .00091). Old vertices moved 0.0, materials stay [0, 1], and the skin is one component with 0 non-manifold edges.
+  - The wrist render shows no seam above the toe zone.
+- **Hands v3 (assembled-3235, step P-hands3, `art/species-construction/hands_v3_post.py` with `hands_v3_field.py`, spec `specs/hands-v3.json`):** hands v2's method on the finer mesh, with these changes.
+  - **Toes:** rounder beans (tip radius .0145, knuckle .011, squash 1.3, knuckle z -.172) instead of v2's long narrow capsules, so from below each toe is nearly round.
+  - **Claws:** sunk .009 (v2 .0075) under a smaller nail-bed hood (.001 proud, footprint .005 by .0055, smaller than the toe tip).
+  - **Palm pad:** an ellipsoid .016 deep standing .004 proud, a true dome.
+  - **Toe pads:** flatter (.0016 proud) and more blended.
+  - **Field grid:** step .001.
+  - **Mover:** vertices land on the new surface itself inside the part box (`levelZeroInside`), so the refinement's flat chords do not carry over. Pre-smoothing (400 passes), relax (300) and Taubin (150) are scaled to the finer mesh: 60 pre-smoothing passes left valley pleats, because they spread the start positions over only about .005 where the old lumps are about .01 across.
+- **Before / after (3199 against 3235):**
+  - **Bottom of the paw along the row** (z in thousandths, y -.14 to -.06 every .0025):
+    - before -185 -186 -187 -188 -194 -197 -200 -201 -201 -201 -201 -201 -200 -202 -204 -205 -206 -205 -204 -204 -202 -200 -196 -196 -197 -197 -196 -196 -193 -190 -186 -180 -172
+    - after -194 -196 -197 -197 -197 -196 -194 -197 -200 -202 -203 -204 -203 -203 -201 -197 -200 -202 -203 -204 -204 -203 -201 -199 -193 -195 -196 -196 -196 -195 -194 -191 -182
+    - Four toes with tips at -.197, -.204, -.204, -.196; the valleys between them sit 3 to 11 thousandths above the neighboring toe tips.
+  - **Claw bases:** y -.1343, -.1141, -.0925, -.0709, centered on their toes. Base z -.1864 to -.1934.
+  - **Claw tops:** each claw's top rim is .0037 to .0063 inside the skin (signed distance to the nearest skin vertex along its normal).
+  - **Claw tips:** z -.2074 to -.2154.
+  - **Paw extent:** within .002 (lowest point -.2036 against -.2056).
+- **Box bounding box, per paw:** |x| .263 to .395, y -.17 to -.031, z -.245 to -.111. The vertices that moved lie in |x| up to .3693, y -.145 to -.0542, z -.2056 to -.116.
+- **Displacement outside the region:**
+  - Skin: 93,434 vertices move in the hands step, max .0108, and 0 outside the box. Against 3199, no old vertex above z -.116 moved anywhere below the head (the head changes are the ear-root step), and the wrist band (z -.115 to -.09) moved 0.0.
+  - Objects: every other object is 0.0 except the eight fore claws, which moved rigidly by .0096 to .0142 (object diff 3232 against 3235).
+  - Mesh checks: one component, 0 non-manifold edges, no folded faces after the untangle and final unfold. 6,005 faces turn more than 72 degrees, all on the reshaped toes.
+- **Images (3199 left, v3 right, +x paw, shadows off; the 08 files are overwritten):** `08-hand-front-check.png`, `08-hand-below-check.png`, `08-hand-side-check.png`, `08-hand-back-check.png`, `08-hand-palm-check.png`, `08-hand-wrist-check.png`.
+- **My own look (side, front, back, below, palm, three-quarter):**
+  - From the side: four round toe beans with clear valleys, and each claw comes out of the bottom of its own toe tip. No claw top shows from any angle I checked.
+  - From the palm: a domed palm pad above four round toes with their pads.
+  - From the front and back: the end toe reads as a rounded bean with its claw below.
+  - Surfaces are even.
+  - What I can still see:
+    - From below, each toe has a faint raised outline where its pad meets the side of the toe.
+    - A couple of very faint pleats remain in the valley bottoms between the back toes.
+    - With the claws buried deeper, less of each claw shows (claw tips about .011 below the toe bottoms, against about .015 in 3199).
+- **Wall time:** about 45 minutes (22:30 to 23:16): the dependency check, the refinement (three dry runs), variants v3a to v3d, and the two builds.
+- **Blocked by:** nothing. If Nick wants longer visible claws, the claw objects themselves would have to be lengthened (or the sink reduced, at the risk of the top showing again).
+
+## Cleanup (third pass)
+
+Superseded by hands v3 and archived to `C:\Users\njord\.claude\scratch-archive\Xalians\2026-10-13\akinza-builds\`: assembled-3233 and its `assembled-3233*` log files. assembled-3232 (ear roots v2, posted to Nick) stays as the base of 3234. Scratch dumps and the refinement's dry-run blend are deleted.
