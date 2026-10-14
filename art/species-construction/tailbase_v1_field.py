@@ -19,10 +19,15 @@ Composition (spec keys in brackets):
   B             the skin's field with the hole filled by a harmonic (Laplace) fill from the surrounding field: the body under
                 the tails as if the tails were not there (the buttock surface continued under the lowest tail, the rump under
                 the root), then a masked blur over the hole's edge band [holeBlur] so the fill meets the old skin with no ring
+  tailCut       inside a mask under the root the tails are cut off below a height (the lowest tail's root tube starts
+                lower than the crotch's underside; tails v7's keepY band hid it), so they cannot reach out under the crotch
   T             the hard minimum of the new tails (inside the body their overlap is hidden; outside they part at once)
   F1            smin_round(B, T, k(x)) with k = [joinK] inside the join sphere [join]: a circular fillet, concave by
                 construction (no swelling past either surface), so every tail flares into the root instead of standing on it
                 as a bead
+  protect       ellipsoids where the field returns to the skin's own (the crotch's arch, pelvis v2)
+  keepY         in front of y [keepY][0] the field is the skin's own (tails v7's band), so the root tubes, which run on
+                inside the body, do not reach out under the crotch
   F             S + w (F1 - S), w the part box [partBox]
 """
 import json
@@ -67,6 +72,11 @@ class Move:
         of = mv.get('offset')
         if of:
             out = out+np.outer(ramp(sv, of['s']), np.asarray(of['vec'], float))
+        ro2 = mv.get('rootOffset')
+        if ro2:
+            # move.rootOffset {vec, s}: the start of the tail's centreline, inside the body, moved by vec, fading out along s
+            # (the lowest tail's root tube started lower than the crotch's underside and showed through it)
+            out = out+np.outer(1-ramp(sv, ro2['s']), np.asarray(ro2['vec'], float))
         return out
 
 
@@ -302,6 +312,10 @@ def compose(S, lo, step, spec, repo, log=print):
     from pelvis_v1_field import box_weight
     hbox = box_weight(X, Y, Z, spec['hole']['box']) > .5
     hole = (np.minimum(Told, Tnew) < spec['hole']['d']) & hbox
+    for ex in spec['hole'].get('exclude', []):
+        # hole.exclude: ellipsoids where the body is kept as it is (the crotch's arch under the root, pelvis v2: a fill there
+        # continues the buttocks' curvature into the arch and lowers its apex)
+        hole &= ellipsoid_w(X, Y, Z, ex) < .5
     # keep a one-cell Dirichlet frame on the grid border
     hole[[0, -1], :, :] = False
     hole[:, [0, -1], :] = False
@@ -317,6 +331,8 @@ def compose(S, lo, step, spec, repo, log=print):
     B[~hole] = S[~hole]
     # beyond the hole box the tails are in the air: the body there is the skin with the tails removed, which is air
     far = (np.minimum(Told, Tnew) < spec['hole']['d']) & ~hbox
+    # hole.farBehind: only behind this depth (the air beyond the hole box), never in front of it (the crotch in front of the box)
+    far &= Y > float(spec['hole'].get('farBehind', -1.0))
     B[far] = np.maximum(B[far], spec['hole']['d'])
     for bl in spec.get('holeBlur', []):
         Fb = nf.gaussian_blur3(B, bl['sigma']/step).astype(np.float32)
@@ -333,6 +349,16 @@ def compose(S, lo, step, spec, repo, log=print):
             wb = np.maximum(wb, ellipsoid_w(X, Y, Z, e))
         B = (B+wb*(Fb-B)).astype(np.float32)
     log('body under the tails')
+    for tc in spec.get('tailCut', []):
+        # spec 'tailCut': {z, k, mask}: inside the mask the tails are cut off below the height z (smooth maximum k), because
+        # the lowest tail's root tube starts lower than the crotch's underside (tails v7 hid it there with its keepY band)
+        wc = ellipsoid_w(X, Y, Z, tc['mask']) if 'mask' in tc else np.ones_like(X)
+        # scaled (spec 'scale'), so the cut face reads as far away at once and the body fillet never sees it as a surface
+        # a cut is a height (key 'z': tails kept above it) or a depth (key 'y': tails kept behind it)
+        cut = (float(tc.get('scale', 1.0))*((tc['z']-Z) if 'z' in tc else (tc['y']-Y))).astype(np.float32)
+        for i in range(len(Tn)):
+            Tc = (-nf.smin3(-Tn[i], -cut, tc['k'])).astype(np.float32)
+            Tn[i] = (Tn[i]+wc*(Tc-Tn[i])).astype(np.float32)
     T = Tn[0]
     uk = spec.get('tailUnionK', 0.0)
     for t in Tn[1:]:
@@ -341,12 +367,27 @@ def compose(S, lo, step, spec, repo, log=print):
     dj = np.sqrt((X-jn['c'][0])**2+(Y-jn['c'][1])**2+(Z-jn['c'][2])**2)
     wj = nf.smootherstep((jn['r'][1]-dj)/(jn['r'][1]-jn['r'][0])).astype(np.float32)
     kj = float(spec['joinK'])*wj
+    for kp in spec.get('joinProtect', []):
+        # spec 'joinProtect': ellipsoids where the body fillet's radius falls to zero (the crotch's arch: the lowest tail's root
+        # runs inside the body just above it, and a fillet there would round the arch down)
+        kj = kj*(1-ellipsoid_w(X, Y, Z, kp))
     if jn.get('zFade'):
         # join.zFade [z0, z1, factor]: the fillet radius falls to factor x joinK from z0 up to z1, so the top tail's fillet
         # does not raise the back's midline profile above the root (torso v1, approved)
         z0, z1, fac = jn['zFade']
         kj = kj*(1-(1-fac)*ramp(Z, [z0, z1]))
     F1 = tf.smin_round(B, T, kj.astype(np.float32))
+    for pr in spec.get('protect', []):
+        # spec 'protect': ellipsoids where the field returns to the skin's own (faded), e.g. the crotch's arch under the root
+        # (pelvis v2, approved), which the fill and the blurs of the body would otherwise round down
+        wp = ellipsoid_w(X, Y, Z, pr)
+        F1 = (F1+wp*(S-F1)).astype(np.float32)
+    if spec.get('keepY'):
+        # spec 'keepY' [y0, y1]: in front of y0 the field is the skin's own, blending to the composed field by y1, as tails v7
+        # (its keepY band): the tails' root tubes run on inside the body there and must not reach the crotch's underside
+        k0, k1 = spec['keepY']
+        wky = nf.smootherstep((Y-k0)/(k1-k0)).astype(np.float32)
+        F1 = (S+wky*(F1-S)).astype(np.float32)
     w = box_weight(X, Y, Z, spec['partBox']).astype(np.float32)
     F = (S+w*(F1-S)).astype(np.float32)
     rec = {'holeCells': int(hole.sum()), 'moved': {str(i): {'pivot': M.pivot.round(4).tolist()} for i, (M, _) in moves.items()},

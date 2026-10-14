@@ -2,7 +2,7 @@
  "name": "tail base v1",
  "recordName": "tailbase-v1",
  "approval": null,
- "note": "tail base v1 (2026-10-13), for tailbase_v1_post.py / tailbase_v1_field.py, appended after P-neck3. Anatomy review 2026-10-13, finding 6: collars and round mounds where the tails leave the root, the lowest tail lying in a channel on the +x buttock, the hanging tail against the back of the +x thigh. tailsSpec: the tails v7 sweeps, as built; move: tail 2 (the lowest, hanging tail) offset .015 back and toward the midline off the +x buttock (ramped in over s .03 to .11) and swung 5 degrees outward (+x, about the y axis through its s .14 point, ramped in over s .14 to .30); its free shaft beyond s .22 to .30 is carried rigidly; hole/order 2: the body under the tails is a biharmonic fill of the skin's field within .035 of any old or new tail (air round a tail seen as at least .06 from the body); tailUnionK: the tails meet each other with a .03 circular fillet; join, joinK: they meet the body with a .045 circular fillet (concave, no swelling) inside the join sphere, falling to half above z -.09 to -.04 so the top tail does not raise the back's midline (torso v1); spotRelax at the two crotches between tails; bodyBlur: two small masked blurs of the body field under the tails (the top of the cleft beside the lowest tail's root on -x, and the +x buttock under the middle tail); partBox z -.36 to -.03, |x| .22, y -.06 to .29. World units, +y back.",
+ "note": "tail base v1 (2026-10-13), for tailbase_v1_post.py / tailbase_v1_field.py, appended after P-neck3. Anatomy review 2026-10-13, finding 6: collars and round mounds where the tails leave the root, the lowest tail lying in a channel on the +x buttock, the hanging tail against the back of the +x thigh. tailsSpec: the tails v7 sweeps, as built; move: tail 2 (the lowest, hanging tail) offset .015 back and toward the midline off the +x buttock (ramped in over s .03 to .11) and swung 5 degrees outward (+x, about the y axis through its s .14 point, ramped in over s .14 to .30); its free shaft beyond s .22 to .30 is carried rigidly; hole/order 2: the body under the tails is a biharmonic fill of the skin's field within .035 of any old or new tail (air round a tail seen as at least .06 from the body); tailUnionK: the tails meet each other with a .03 circular fillet; join, joinK: they meet the body with a .045 circular fillet (concave, no swelling) inside the join sphere, falling to half above z -.09 to -.04 so the top tail does not raise the back's midline (torso v1); spotRelax at the two crotches between tails and at the top of the cleft; bodyBlur: a small masked blur of the body field under the middle tail on the +x buttock; move.rootOffset lifts the lowest tail's centreline start .02 inside the body (its root tube started lower than the crotch's underside); hole.exclude keeps the fill off the crotch's arch and joinProtect takes the body fillet to zero there (pelvis v2, approved: a fill or a fillet there lowered the arch's apex by .022 in the first build, assembled-3221); partBox z -.36 to -.03, |x| .22, y -.06 to .29. World units, +y back.",
  "tailsSpec": "art/species-construction/specs/tails-v7.json",
  "grid": {
   "lo": [
@@ -42,7 +42,25 @@
   },
   "iterations": 600,
   "order": 2,
-  "coarseIterations": 3000
+  "coarseIterations": 3000,
+  "exclude": [
+   {
+    "c": [
+     0.0,
+     -0.015,
+     -0.272
+    ],
+    "s": [
+     0.08,
+     0.05,
+     0.035
+    ],
+    "fade": [
+     0.9,
+     1.1
+    ]
+   }
+  ]
  },
  "holeBlur": [
   {
@@ -135,6 +153,17 @@
     0.3
    ],
    "near": 0.006
+  },
+  "rootOffset": {
+   "vec": [
+    0.0,
+    0.0,
+    0.02
+   ],
+   "s": [
+    0.04,
+    0.12
+   ]
   }
  },
  "spotRelax": [
@@ -157,44 +186,34 @@
    "r": 0.02,
    "fade": 0.015,
    "iterations": 150
+  },
+  {
+   "c": [
+    0.0,
+    0.03,
+    -0.235
+   ],
+   "r": 0.025,
+   "fade": 0.015,
+   "iterations": 200
   }
  ],
- "bodyBlur": [
+ "bodyBlur": [],
+ "joinProtect": [
   {
-   "sigma": 0.008,
-   "mask": [
-    {
-     "c": [
-      -0.025,
-      0.03,
-      -0.265
-     ],
-     "s": [
-      0.04,
-      0.045,
-      0.045
-     ],
-     "fade": [
-      0.5,
-      1.1
-     ]
-    },
-    {
-     "c": [
-      0.11,
-      0.06,
-      -0.2
-     ],
-     "s": [
-      0.05,
-      0.045,
-      0.04
-     ],
-     "fade": [
-      0.5,
-      1.1
-     ]
-    }
+   "c": [
+    0.0,
+    -0.015,
+    -0.272
+   ],
+   "s": [
+    0.08,
+    0.05,
+    0.035
+   ],
+   "fade": [
+    0.6,
+    1.3
    ]
   }
  ]
