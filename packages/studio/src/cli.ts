@@ -12,7 +12,7 @@ import { StudioError } from './errors.ts';
 import { ALIAS_PATTERN, SCHEMAS, type Actor, type Build, type Check, type NewRecord } from './schema.ts';
 import { presentImages, runImage, setVisionContext } from './images.ts';
 import { addDerivedTarget, addReference, editReference, liveTemplateSha, proposeParts, runIntake, setReading, submitStage } from './intake.ts';
-import { recordStageReview } from './review.ts';
+import { recordStageReview, recordChoice } from './review.ts';
 import { initCreature, listCreatureKeys, openCreature, type Store } from './store.ts';
 import { verifyAll } from './verify.ts';
 
@@ -59,6 +59,7 @@ const OPTIONS = {
 	verdict: { type: 'string' },
 	quote: { type: 'string' },
 	'chat-session': { type: 'string' },
+	chosen: { type: 'string' },
 	label: { type: 'string' },
 	'prompt-file': { type: 'string' },
 	input: { type: 'string', multiple: true },
@@ -635,6 +636,13 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			emit(rec, `look note for ${camera} on ${rec.alias}`);
 			return;
 		}
+		case 'choose-from-chat': {
+			// Nick picked one of the presented options in chat; record it with his exact words, as the page would.
+			const quote = need(flags, 'quote').trim();
+			const r = recordChoice(store, { builds: need(flags, 'builds').split(',').map((x) => x.trim()), chosen: need(flags, 'chosen'), text: quote, chat: { quote, ...(flags['chat-session'] ? { session: flags['chat-session'] as string } : {}) } });
+			emit(r, `recorded Nick's choice of ${r.chosen.alias} from chat`);
+			return;
+		}
 		case 'retire': {
 			// A part option replaced by a better set before Nick chose leaves the page; the record stays as history,
 			// with the reason as a decision note.
@@ -657,7 +665,7 @@ function buildCommand(store: Store, sub: string | undefined, args: string[], fla
 			return;
 		}
 		default:
-			throw new StudioError('usage: build plan|start|fail|output|ingest|reference|judge|overlay|report|check|look|present|retire <key> ...');
+			throw new StudioError('usage: build plan|start|fail|output|ingest|reference|judge|overlay|report|check|look|present|retire|choose-from-chat <key> ...');
 	}
 }
 

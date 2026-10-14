@@ -1,9 +1,9 @@
 {
   "id": "B-01M4WAHQX8RS086XHZVJW0SHDC",
   "alias": "B-m3ml",
-  "rev": 17,
+  "rev": 18,
   "createdAt": "2026-10-14T04:25:53.831Z",
-  "updatedAt": "2026-10-14T04:29:09.594Z",
+  "updatedAt": "2026-10-14T11:35:41.966Z",
   "createdBy": "orchestrator",
   "part": "P-01M4SD18GECA5VQA5F218GNS4V",
   "kind": "preview",
@@ -129,7 +129,7 @@
     "wallMinutes": 0.08,
     "blenderMinutes": 0.15
   },
-  "status": "presented",
+  "status": "superseded",
   "startedAt": "2026-10-14T04:26:23.273Z",
   "endedAt": "2026-10-14T04:26:28.090Z"
 }

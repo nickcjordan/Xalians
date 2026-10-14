@@ -1,0 +1,19 @@
+{
+  "id": "N-01M4X34QKBH5TFAG2GM3AFXNH3",
+  "alias": "N-srxs",
+  "rev": 1,
+  "createdAt": "2026-10-14T11:35:41.931Z",
+  "updatedAt": "2026-10-14T11:35:41.931Z",
+  "createdBy": "nick",
+  "kind": "decision",
+  "about": {
+    "build": "B-01M4WAHKK9GY6FA12RJXSWZFC5",
+    "part": "P-01M4SD18GECA5VQA5F218GNS4V"
+  },
+  "by": "nick",
+  "via": "chat",
+  "text": "Chose B-a5jr over B-y6r3, B-m3ml. I don't notice too much difference between the options. Primary thing I notice is the size of the eyeball. Option one seems to align best with what I would expect. So I guess let's go with that.",
+  "quote": "I don't notice too much difference between the options. Primary thing I notice is the size of the eyeball. Option one seems to align best with what I would expect. So I guess let's go with that.",
+  "date": "2026-10-14",
+  "session": "7fa482e3"
+}

@@ -112,6 +112,8 @@ export interface ChoiceInput {
 	builds: string[];
 	chosen: string;
 	text: string;
+	/** A choice Nick made in chat, recorded by the orchestrator with his exact words. */
+	chat?: { quote: string; session?: string };
 }
 
 /**
@@ -134,8 +136,9 @@ export function recordChoice(store: Store, input: ChoiceInput): { note: Note; ch
 		kind: 'decision',
 		about: { build: chosen.id, ...(chosen.part ? { part: chosen.part } : {}) },
 		by: 'nick',
-		via: 'studio',
+		via: input.chat ? 'chat' : 'studio',
 		text: `Chose ${chosen.alias} over ${others}.${extra ? ` ${extra}` : ''}`,
+		...(input.chat ? { quote: input.chat.quote, ...(input.chat.session ? { session: input.chat.session } : {}) } : {}),
 		date: new Date().toISOString().slice(0, 10),
 	}, 'nick', { bypassLock: true });
 	for (const b of builds) store.update<'build'>(b.id, (x) => { x.status = b.id === chosen.id ? 'reviewed' : 'superseded'; }, NICK);

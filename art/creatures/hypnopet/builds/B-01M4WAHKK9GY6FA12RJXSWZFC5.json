@@ -1,9 +1,9 @@
 {
   "id": "B-01M4WAHKK9GY6FA12RJXSWZFC5",
   "alias": "B-a5jr",
-  "rev": 17,
+  "rev": 18,
   "createdAt": "2026-10-14T04:25:49.417Z",
-  "updatedAt": "2026-10-14T04:29:04.392Z",
+  "updatedAt": "2026-10-14T11:35:41.945Z",
   "createdBy": "orchestrator",
   "part": "P-01M4SD18GECA5VQA5F218GNS4V",
   "kind": "preview",
@@ -129,7 +129,7 @@
     "wallMinutes": 0.08,
     "blenderMinutes": 0.14
   },
-  "status": "presented",
+  "status": "reviewed",
   "startedAt": "2026-10-14T04:26:11.072Z",
   "endedAt": "2026-10-14T04:26:15.934Z"
 }

@@ -121,3 +121,16 @@ describe('build retire', () => {
 		expect(cli('build', 'retire', 'fx', a, '--reason', 'again').code).toBe(1);  // already retired
 	});
 });
+
+describe('build choose-from-chat', () => {
+	it('records Nick\'s pick from chat with his words, like the page does', () => {
+		const a = preview(); const b = preview(); const c = preview();
+		expect(cli('build', 'choose-from-chat', 'fx', '--builds', `${a},${b},${c}`, '--chosen', a).code).toBe(1); // a quote is required
+		expect(cli('build', 'choose-from-chat', 'fx', '--builds', `${a},${b},${c}`, '--chosen', a, '--quote', 'Option one seems to align best').code).toBe(0);
+		const data = store.load();
+		const by = (x: string) => data.builds.find((k) => k.alias === x)!.status;
+		expect([by(a), by(b), by(c)]).toEqual(['reviewed', 'superseded', 'superseded']);
+		const note = data.notes.find((n) => n.kind === 'decision' && n.by === 'nick')!;
+		expect(note).toMatchObject({ via: 'chat', quote: 'Option one seems to align best' });
+	});
+});
