@@ -198,9 +198,7 @@
       }
     },
     "ears": {
-      "zones": [
-        "R04"
-      ],
+      "zones": [],
       "priority": 0.9,
       "margin": 0.02,
       "length": 0.065,
@@ -257,11 +255,11 @@
       },
       "priority": 0.8,
       "margin": 0.03,
-      "length": 0.05,
-      "density": 1.6,
-      "clump": 0.8,
+      "length": 0.012,
+      "density": 1.8,
+      "clump": 0.2,
       "cscale": 11.0,
-      "curl": 0.1,
+      "curl": 0.05,
       "comb": "crown"
     }
   },
@@ -381,11 +379,14 @@
     "start": 0.04,
     "width": 0.12
   },
+  "earPatternZones": [
+    "R04"
+  ],
   "earBias": 0.0,
   "crownDir": [
     0.0,
-    0.5,
-    0.8
+    0.8,
+    -0.6
   ],
   "guides": {
     "lift": 0.35,
@@ -417,12 +418,7 @@
         }
       },
       "crown": {
-        "count": 40,
-        "length": [
-          0.02,
-          0.035
-        ],
-        "perSide": false
+        "guided": false
       }
     }
   },
