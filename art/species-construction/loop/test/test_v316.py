@@ -107,10 +107,15 @@ class ApprovedLookTests(unittest.TestCase):
 
     def test_live_record_quotes_every_part(self):
         rec = json.loads((DOCS/'approved-looks.json').read_text(encoding='utf-8'))
-        self.assertEqual({p['part'] for p in rec['parts']}, {'eyes', 'nose', 'mouth', 'muzzle', 'ears', 'head'})
+        head_parts = {'eyes', 'nose', 'mouth', 'muzzle', 'ears', 'head'}
+        self.assertTrue(head_parts <= {p['part'] for p in rec['parts']})
         for p in rec['parts']:
             self.assertTrue(p['quotes'] and all(q['text'] and q['at'] for q in p['quotes']), p['part'])
-            self.assertTrue(p['regions'])
+            # head parts are scored loop regions; anatomy-fix approvals carry their build instead
+            if p['part'] in head_parts:
+                self.assertTrue(p['regions'])
+            else:
+                self.assertTrue(p['approvedIn'], p['part'])
 
 
 if __name__ == '__main__':
