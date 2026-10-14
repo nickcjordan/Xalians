@@ -90,3 +90,19 @@ Five more multi-view runs (`cp2-seeds-and-settings.jpg`): seeds 1, 2, 3, guidanc
 - Round 6 (`cp2-round6-oct512.jpg`): the three eye options on the 512 run's grid. face_fit: eye width 0.30 to 0.33 W, spacing 0.30 W from the midline, gap 0.28 to 0.31 W, skull top 0.505 W above the eyes (sheet: 0.32, 0.29, 0.27, 0.50). 7 or 8 misses, all in the side view's eye size (the drawing's profile eye) and the snout and chin depth, where the bare front and side sheets disagree with each other.
 - Meshing finer (1.2 mm instead of 2 mm) changed nothing visible in the mouth (`voxel-check.png` in art-data) and took 8 minutes instead of 3; the default stays at 2 mm. `face_recon.sh` takes `VOXEL=` for later.
 - A second independent critic (fresh agent, same brief plus a 1 to 10 likeness score) is reviewing round 6.
+
+### CP2, second critic and the mouth (23:40 to 00:10)
+
+Second independent critic on round 6 (`creature-studio-head-recon/critic-cp2b.md`): "mostly", 5 of 10 (first critic on round 4: "no"). Top findings: the mouth reads as a hiss, not a smile (small shallow opening, corners down, two upper-lip points like fangs); the whisker pads and nose wedge too broad (cat-like); the eyes still show past the head outline from above and in three-quarter. It preferred R3's eye size, R2 a close second.
+
+- Tried carving a wider smile with lifted corners into the reconstruction (S1, S2; `cp2-carved-smile-rejected.jpg`). Worse: jagged tooth-like cuts. Rejected. That makes two kinds of local edit on the reconstruction that failed (corrective masses, carved smile), the same pattern the Akinza work hit. I am not trying a third.
+- Plateau rule (two critic rounds, the second still short of the bar): stop polishing and hand to Nick with the gaps named.
+
+### CP2 verdict: passed on construction, short on likeness
+
+The joined head has no seams, holes or loose pieces, and the eye measures are inside tolerance. It reads far closer to the sheet than any blob face (critic: "no" to "mostly"). It is not at the bar: the mouth and muzzle read cat-like, and the eyes show past the outline from above. Both come from what the reconstruction infers from the sheet, and editing its details made things worse.
+
+What would move it further, for Nick to choose (not done tonight):
+1. Feed the model a front view drawn the way the face should read (a bare-body face with the wide happy mouth and a small button nose), since the reconstruction follows its input closely and is stable across seeds.
+2. Rebuild just the mouth and muzzle region as its own small reconstruction from the face close-up, joined in the field like the head.
+3. Accept the head as the base and let Nick's own read decide what matters at blockout scale, leaving mouth shape to the surface stage.

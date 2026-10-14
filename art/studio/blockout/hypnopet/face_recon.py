@@ -26,7 +26,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[1]))
 import parts  # noqa: E402
-from face_previews import eye_axis, eye_shading, lid_ring, mass, near_face, seat_eye, surface_y  # noqa: E402
+from face_previews import eye_axis, eye_shading, lid_ring, mass, near_face, seat_eye, smile, surface_y  # noqa: E402
 from make_spec import V5, spec as v5_spec  # noqa: E402
 
 CLIP = {'center': [0, -0.155, 0.41], 'radii': [0.098, 0.135, 0.11], 'blend': 0.02}
@@ -50,6 +50,18 @@ VARIANTS = {
     'R3': {'note': 'R3: reconstructed head, the painted sheet larger, closer eyes.',
            'eye_x': 0.050, 'eye_z': 0.436, 'eye_r': 0.037, 'open': 72, 'yaw': 0, 'pitch': 2, 'pupil': 0.62,
            'socket_blend': 0.004},
+    # Mouth tests after the second critic (5 of 10, the mouth read as a hiss): R2's eyes plus a carved smile that
+    # widens the opening and lifts its corners, and a tighter, softer socket edge (the groove read as a gap).
+    'S1': {'note': 'S1: R2 eyes, a carved smile widening the mouth with lifted corners.',
+           'eye_x': 0.050, 'eye_z': 0.436, 'eye_r': 0.035, 'open': 70, 'yaw': 0, 'pitch': 2, 'pupil': 0.62,
+           'socket_gap': 0.0003, 'socket_blend': 0.005,
+           'smile': [[0, 0.358, 0.008, 0.5], [0.015, 0.362, 0.007, 0.5], [0.028, 0.37, 0.005, 0.3],
+                     [0.036, 0.378, 0.003, -0.2]]},
+    'S2': {'note': 'S2: R2 eyes, a larger carved smile (wider, deeper, corners higher).',
+           'eye_x': 0.050, 'eye_z': 0.436, 'eye_r': 0.035, 'open': 70, 'yaw': 0, 'pitch': 2, 'pupil': 0.62,
+           'socket_gap': 0.0003, 'socket_blend': 0.005,
+           'smile': [[0, 0.355, 0.010, 0.6], [0.016, 0.36, 0.009, 0.6], [0.03, 0.369, 0.006, 0.4],
+                     [0.04, 0.379, 0.0035, -0.2]]},
 }
 
 
@@ -73,7 +85,10 @@ def build(name, grid_path, verbose=True, overrides=None):
     y_front = surface_y(field_adds, d['eye_x'], d['eye_z'])
     c0 = np.array([d['eye_x'], y_front, d['eye_z']])-axis*re*0.5
     c, opened = seat_eye(field_adds, c0, re, axis, d['open'])
-    carves = [mass(c, [re+0.0008]*3, d.get('socket_blend', 0.0025), op='carve', mirror='x')]
+    carves = [mass(c, [re+d.get('socket_gap', 0.0008)]*3, d.get('socket_blend', 0.0025), op='carve', mirror='x')]
+    if d.get('smile'):                          # a carved smile line over the reconstruction's small mouth
+        carves.append({'part': 'head', 'kind': 'sweep', 'op': 'carve', 'blend': d.get('smile_blend', 0.005),
+                       'params': {'points': smile(field_adds, d['smile']), 'samples': 10}})
     afters = []
     if d.get('lid'):                            # [top, bottom] lid ring radii; none leaves a clean socket edge
         ring = lid_ring(field_adds, c, re, axis, d['lid'][0], d['lid'][1], drop_top=np.radians(3))
