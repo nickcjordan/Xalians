@@ -254,7 +254,7 @@ button,input,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .mono{font-family:var(--f-mono);font-size:.82rem}
 .muted{color:var(--muted)}
-.wrap{max-width:1360px;margin:0 auto;padding:16px}
+.wrap{width:100%;margin:0;padding:16px;box-sizing:border-box}
 .layout{display:grid;grid-template-columns:280px minmax(0,1fr) 300px;gap:24px;align-items:start}
 header.top{padding:8px 0 16px}
 header.top .lede{max-width:70ch;color:var(--muted)}
@@ -313,7 +313,7 @@ aside.srcrail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:au
 .seg button:last-child{border-right:0}
 .seg button[aria-pressed="true"]{background:var(--blue-soft);color:var(--fg);font-weight:700;box-shadow:inset 0 -3px 0 var(--blue)}
 .swatch{width:14px;height:14px;border:1px solid var(--muted);display:inline-block}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .card{position:relative;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;transition:opacity .15s}
 .card.rec{border:3px solid var(--amber)}
 .card.picked{border-left:10px solid var(--blue)}
