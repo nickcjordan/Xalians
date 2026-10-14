@@ -32,6 +32,20 @@ export const PacketSchema = z.strictObject({
 			perZone: z.record(z.string(), z.number()),
 		})
 		.nullable(),
+	// packet.py --part: skin displacement inside versus outside one part, against the baseline blockout
+	partDisplacement: nullable(
+		z.strictObject({
+			key: z.string(),
+			method: z.string(),
+			units: z.string(),
+			inside: z.record(z.string(), z.number()),
+			outside: z.record(z.string(), z.number()),
+			heatFile: z.string(),
+		}),
+	),
+	// packet.py --cameras-only / --quick (part-only previews, experiment X26)
+	camerasOnly: nullable(z.array(z.string())),
+	quick: nullable(z.union([z.boolean(), z.strictObject({ samples: z.number().int().positive() })])),
 	minutes: z.number().min(0),
 });
 
@@ -84,6 +98,16 @@ export function ingestPacket(dir: string, storeDir?: string): IngestResult {
 			kind: 'measure',
 			value: { component: d.component, moved: d.moved, max: d.max, median: d.median, units: d.units, perZone: d.perZone },
 			detail: `how far ${d.component} moved from the baseline, in ${d.units}`,
+		});
+	}
+	if (packet.partDisplacement) {
+		const p = packet.partDisplacement;
+		add(`part-heat-${p.key}`, p.heatFile, 'heat');
+		checks.push({
+			id: 'part-displacement',
+			kind: 'measure',
+			value: { key: p.key, method: p.method, units: p.units, inside: p.inside, outside: p.outside },
+			detail: `how far the skin moved inside versus outside the part ${p.key}, in ${p.units}`,
 		});
 	}
 	checks.push({ id: 'assembly', kind: 'measure', value: { assembly: packet.assembly, assemblySha256: packet.assemblySha256, baseline: packet.baseline }, detail: 'the assembly this packet was rendered from' });

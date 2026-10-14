@@ -20,7 +20,7 @@ packet of record; quick baselines are cached apart from full ones), and --no-bas
 and every comparison even when --baseline is given. A full packet stays the default and is for the chosen build.
 
 The assembly directories may also be blockout outputs (art/studio/blockout.py: blockout.blend, blockout.npz).
-With --part <part key> and a baseline that both carry part_id, packet.json gets displacement.part: the skin
+With --part <part key> and a baseline that both carry part_id, packet.json gets partDisplacement: the skin
 displacement inside versus outside that part (max and median for each), measured between the two blockouts'
 vertices, plus part-heat.png.
 """
@@ -417,7 +417,7 @@ def main():
         (folder/'meta.json').write_text(json.dumps({'config': key, 'blend': str(bl), 'sha256': bsha}), encoding='utf-8')
 
     result = {'assembly': assembly.name, 'assemblySha256': sha, 'baseline': baseline.name if baseline else None,
-              'cameras': [], 'displacement': None, 'minutes': 0.0,
+              'cameras': [], 'displacement': None, 'partDisplacement': None, 'minutes': 0.0,
               'quick': {'samples': samples} if samples else None, 'camerasOnly': ids if only else None}
     for cam in ids:
         after, mask_after = over_background(cand_raw/f'{cam}.png', bg)
@@ -438,7 +438,7 @@ def main():
         if not baseline:
             sys.exit('--part needs --baseline')
         part = part_report(baseline, assembly, args.part, out)
-        result['displacement'] = {**(result['displacement'] or {}), 'part': part}
+        result['partDisplacement'] = part
     # keep the raw candidate renders beside the packet so a later run can be compared pixel for pixel
     raw_out = out/'raw'
     if raw_out.exists():

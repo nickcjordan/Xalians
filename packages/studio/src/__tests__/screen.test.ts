@@ -107,6 +107,25 @@ describe('build output and ingest', () => {
 		expect(got.blenderMinutes).toBe(4.5);
 	});
 
+	it('ingestPacket reads a part-only quick packet with part displacement', () => {
+		const dir = packetDir();
+		const p = JSON.parse(readFileSync(join(dir, 'packet.json'), 'utf8'));
+		p.displacement = null;
+		p.camerasOnly = ['front', 'back'];
+		p.quick = { samples: 12 };
+		p.partDisplacement = {
+			key: 'head', method: 'same topology, vertex to vertex', units: 'world units', heatFile: 'img/heat.png',
+			inside: { vertices: 10, moved: 4, max: 0.01, median: 0.002, medianOfMoved: 0.004 },
+			outside: { vertices: 90, moved: 0, max: 0, median: 0, medianOfMoved: 0 },
+		};
+		writeFileSync(join(dir, 'packet.json'), JSON.stringify(p));
+		const got = ingestPacket(dir);
+		expect(got.outputs.map((o) => o.name)).toContain('part-heat-head');
+		const check = got.checks.find((c) => c.id === 'part-displacement');
+		expect(check?.value).toMatchObject({ key: 'head', inside: { moved: 4 } });
+		expect(got.checks.map((c) => c.id)).not.toContain('displacement');
+	});
+
 	it('rejects a packet with an unknown field', () => {
 		const dir = packetDir();
 		const p = JSON.parse(readFileSync(join(dir, 'packet.json'), 'utf8'));

@@ -255,6 +255,28 @@ DIRECTIONS = {
 }
 
 
+# Second face round (experiment X27, fit before options): the face is fitted by numbers to the sheet's bare front
+# and side views first (face_fit.py), then the options vary only what Nick flagged, the eyes' size and spacing,
+# around that fit. From B: cheeks wider at the nose row and a narrower chin (front), and a snout: the nose bridge,
+# nose, lips and chin brought forward of the eyes and a brow over them (side). The first round had the eyes as
+# the most forward point of the face, which made them read as set on the sides of a pinched head.
+FIT_FACE = {**DIRECTIONS['B'], 'cheek_c': [0.035, -0.15, 0.412], 'cheek_r': [0.052, 0.05, 0.03],
+            'extra_adds': [([0, -0.175, 0.478], [0.06, 0.055, 0.04], 0.035)],
+            'muzzle_c': [0, -0.228, 0.407], 'muzzle_r': [0.03, 0.045, 0.038],
+            'nose_c': [0, -0.268, 0.403], 'jaw_c': [0, -0.215, 0.35], 'jaw_r': [0.022, 0.025, 0.018],
+            'lip_c': [0.009, -0.245, 0.385]}
+DIRECTIONS.update({
+    # D: the bare sheet's numbers (flesh-front): eye opening 0.32 W, gap 0.27 W.
+    'D': {**FIT_FACE, 'note': 'D: fitted to the bare sheet.',
+          'eye_c': [0.04, -0.172, 0.442], 'eye_r': 0.037, 'eye_yaw': 8, 'eye_open': 67},
+    # E: between the bare sheet and the painted sheet.
+    'E': {**FIT_FACE, 'note': 'E: between the bare and the painted sheet.',
+          'eye_c': [0.04, -0.171, 0.441], 'eye_r': 0.0405, 'eye_yaw': 6, 'eye_open': 67},
+    # F: the painted sheet and face close-up: eyes larger and closer, the gap about half an eye width.
+    'F': {**FIT_FACE, 'note': 'F: the painted sheet and face close-up.',
+          'eye_c': [0.039, -0.169, 0.44], 'eye_r': 0.044, 'eye_yaw': 4, 'eye_open': 67},
+})
+
 if __name__ == '__main__':
     name = sys.argv[1]
     out = Path(sys.argv[sys.argv.index('--out')+1]) if '--out' in sys.argv else HERE/f'face-preview-{name}.json'
