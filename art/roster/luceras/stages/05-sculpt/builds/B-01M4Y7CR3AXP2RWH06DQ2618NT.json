@@ -1,0 +1,133 @@
+{
+  "id": "B-01M4Y7CR3AXP2RWH06DQ2618NT",
+  "alias": "9t5e",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 1: head, Codex stream (gpt-6-astra), pass 2 result from the shared brief",
+  "scope": "head",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "head.glb",
+      "hash": "4864ad345faf1955e04d3b7ce9d974ce287a3e471983fa55d8fd7a1032bafe27"
+    },
+    {
+      "name": "compare_head.png",
+      "hash": "2e7accc94512f8cf5487b358b3a7f8175b391900f6dfb2a40b8f693bd1586272"
+    },
+    {
+      "name": "compare_front.png",
+      "hash": "451af421eb40aba04221ef4aaf9febc38cce7e99b3f8549307e15f3878a46042"
+    },
+    {
+      "name": "compare_side.png",
+      "hash": "f73ff10db08390f500d09f4ae9d8df3a9c35fc76ac006e55042c5023858cd24b"
+    },
+    {
+      "name": "compare_shaved_front.png",
+      "hash": "caa6ec0fddd308d94240858680a09b084d55be075d6152b3ca90dea9dedb7ac8"
+    },
+    {
+      "name": "build_head.py",
+      "hash": "914a7d77d5d2b81221997e874a322646a0ee83b4b5c577a8ae96e586142acf90"
+    },
+    {
+      "name": "write_report.py",
+      "hash": "c3904b26d5c2be071d0e4dc95d5c4661a8d13c2c0a9f445463afe0df3e73bc57"
+    },
+    {
+      "name": "audit_v4.json",
+      "hash": "f3200a2b9695d3c870384af52cd2c1338d4c450e70207fd351dcfe1f910a2bf6"
+    },
+    {
+      "name": "pass2/report.json",
+      "hash": "475c87ca2b141b0b23da05638e4748146c306a88bae2c4286f17e805e1c20c1d"
+    },
+    {
+      "name": "pass2/codex.log",
+      "hash": "0d3fab595545f54384552caf92245651b3fba205c24aae92d3e25c69941773fc"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "head.glb",
+        "hash": "4864ad345faf1955e04d3b7ce9d974ce287a3e471983fa55d8fd7a1032bafe27"
+      },
+      {
+        "name": "compare_head.png",
+        "hash": "2e7accc94512f8cf5487b358b3a7f8175b391900f6dfb2a40b8f693bd1586272"
+      },
+      {
+        "name": "compare_front.png",
+        "hash": "451af421eb40aba04221ef4aaf9febc38cce7e99b3f8549307e15f3878a46042"
+      },
+      {
+        "name": "compare_side.png",
+        "hash": "f73ff10db08390f500d09f4ae9d8df3a9c35fc76ac006e55042c5023858cd24b"
+      },
+      {
+        "name": "compare_shaved_front.png",
+        "hash": "caa6ec0fddd308d94240858680a09b084d55be075d6152b3ca90dea9dedb7ac8"
+      },
+      {
+        "name": "build_head.py",
+        "hash": "914a7d77d5d2b81221997e874a322646a0ee83b4b5c577a8ae96e586142acf90"
+      },
+      {
+        "name": "write_report.py",
+        "hash": "c3904b26d5c2be071d0e4dc95d5c4661a8d13c2c0a9f445463afe0df3e73bc57"
+      },
+      {
+        "name": "audit_v4.json",
+        "hash": "f3200a2b9695d3c870384af52cd2c1338d4c450e70207fd351dcfe1f910a2bf6"
+      },
+      {
+        "name": "pass2/report.json",
+        "hash": "475c87ca2b141b0b23da05638e4748146c306a88bae2c4286f17e805e1c20c1d"
+      },
+      {
+        "name": "pass2/codex.log",
+        "hash": "0d3fab595545f54384552caf92245651b3fba205c24aae92d3e25c69941773fc"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "method": "codex gpt-6-astra; Opened the approved bound rest mesh and existing armature. Read the reference images and copied the repository look-dev conventions into this workspace. | Retained the approved upper neck foundation. Removed the fused old horns, ears, muzzle flap, and superseded head surfaces with local Boolean cuts; retained the connected body. | Built closed skull and facial volumes with a longitudinal facial loft, jaw, muzzle pads, orbital tissue, horn roots, and ear shells. Joined and voxel-remeshed them, then relaxed the surface. | Carved the sockets and ear bowls. Wrapped the two separate spherical eyeballs with continuous eyelid tissue merged into the head surface. | Formed the small triangular nose, narrow nostrils, split upper lip, and mouth corners. Used surface-following cuts for the visible lip",
+    "wallMinutes": 79.61,
+    "blenderSeconds": 1435.0,
+    "sharedMachineWaitSeconds": 859.5,
+    "checks": [
+      {
+        "title": "Head read, Codex pass 2",
+        "question": "Does it read as the sheet's head?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "2e7accc94512f8cf5487b358b3a7f8175b391900f6dfb2a40b8f693bd1586272",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "2e7accc94512f8cf5487b358b3a7f8175b391900f6dfb2a40b8f693bd1586272",
+        "recommended": "Orchestrator's read: no; long snout, bulging ball eyes, wiry thin horns, bulb ears."
+      }
+    ],
+    "note": "Pass 2 of the Codex head stream from the shared brief (pure Blender steering). Orchestrator assessment: below the bar and below the Claude stream's pass 2 (B-h5p3): horns thin and wiry, eyes bulging balls, snout long, ears bulbs. Both streams stalled on the face with hand-placed masses, which triggered the hold audit and the method change to reconstruction for pass 3."
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T22:09:13Z",
+  "briefSha256": "c8cc2a55a0daeff71de30ad68458b493a73b57b55071de381b3d051115392df2",
+  "checks": [
+    {
+      "title": "Head read, Codex pass 2",
+      "question": "Does it read as the sheet's head?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "2e7accc94512f8cf5487b358b3a7f8175b391900f6dfb2a40b8f693bd1586272",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "2e7accc94512f8cf5487b358b3a7f8175b391900f6dfb2a40b8f693bd1586272",
+      "recommended": "Orchestrator's read: no; long snout, bulging ball eyes, wiry thin horns, bulb ears."
+    }
+  ],
+  "reportedAt": "2026-10-14T22:09:15Z"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "B-01M4Y7CESYR6GS5MHKGRYE1DH8",
+  "alias": "stfp",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 1: head, pass 3 (reconstructed face grafted, authored horns, eyes, ears)",
+  "scope": "head",
+  "defect": "D-01M4Y67WPJYEQJM66STMEF2F0T",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-14T22:09:03Z",
+  "briefSha256": "3c42d46033aef40cb28605ff988ea1b716190e0ca6fe3e6469af9f7651e27b33"
+}

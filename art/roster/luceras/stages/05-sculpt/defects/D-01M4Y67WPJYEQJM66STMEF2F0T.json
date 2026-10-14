@@ -1,0 +1,15 @@
+{
+  "id": "D-01M4Y67WPJYEQJM66STMEF2F0T",
+  "alias": "tegy",
+  "stage": "05-sculpt",
+  "description": "head reads rodent: long muzzle, small eyes, low brow, thin horns, tiny ears",
+  "camera": "head close three-quarter",
+  "region": null,
+  "origin": null,
+  "attempts": [
+    "B-01M4Y680RF529DNBD7BF7G4B0E",
+    "B-01M4Y7CESYR6GS5MHKGRYE1DH8"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-14T21:49:05Z"
+}

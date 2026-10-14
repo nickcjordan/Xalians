@@ -1,0 +1,15 @@
+{
+  "id": "N-01M4Y7CEJYYYDJ7J4455E5RQ6W",
+  "alias": "s7qj",
+  "stage": "05-sculpt",
+  "who": "orchestrator",
+  "words": "Two builds fell short on the face; the limiting assumption was the no-reconstruction method rule for this part. Outcome: change the method: reconstruct the head from the clay head crops, graft, keep the authored horns, eyes and ears.",
+  "date": "2026-10-14",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M4Y67WPJYEQJM66STMEF2F0T",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T22:09:03Z"
+}

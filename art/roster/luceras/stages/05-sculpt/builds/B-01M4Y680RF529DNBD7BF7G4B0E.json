@@ -1,0 +1,450 @@
+{
+  "id": "B-01M4Y680RF529DNBD7BF7G4B0E",
+  "alias": "h5p3",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 1: head, second pass",
+  "scope": "head",
+  "defect": "D-01M4Y67WPJYEQJM66STMEF2F0T",
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "head.blend",
+      "hash": "fe18a270bc1a320dfb9730d6d1d3b2286b29b5c822eb95fab952985cfb3b7388"
+    },
+    {
+      "name": "head.glb",
+      "hash": "368e4b05c27e799a8b5eaf53798b56fe327ea7ec505f98104d0aa7bb97faa18c"
+    },
+    {
+      "name": "head_part.glb",
+      "hash": "583ee9423f501768ed60bc659e66e0a4e369eab60a6eb1f0ff71983af0370649"
+    },
+    {
+      "name": "renders/final_head_three_quarter.png",
+      "hash": "24a6ad93f5866d9014d28f2ea3a50f247c5015a39b42d260ab6d6fe104796b54"
+    },
+    {
+      "name": "renders/final_head_front.png",
+      "hash": "e4a4a88436fa507efb245d583571c2862c10618b26bb2be93280aab73e7bb4c2"
+    },
+    {
+      "name": "renders/final_head_side.png",
+      "hash": "71a95ce24f9dc32f9c3783db4bcdb70125fcd0a6730a75aa6a248c394bd44c64"
+    },
+    {
+      "name": "renders/full_front.png",
+      "hash": "48ed2a799088355c88d3116d19e485ee9efd98fc38e729317b5bab2a13c0a3d5"
+    },
+    {
+      "name": "renders/full_three_quarter_left.png",
+      "hash": "b6e91af81462c15c5372e084c08a9afe3888a3ed2fe407dae05e681f75e526cb"
+    },
+    {
+      "name": "renders/full_side_left.png",
+      "hash": "d1fae259682a521359ef6d6bbef5c0ca0a560be337681fc3373de4f84a614a52"
+    },
+    {
+      "name": "renders/full_back.png",
+      "hash": "e54136e0d504921e454fd6d3bf28f9badd87627f37d54e49558be1cc63633cc5"
+    },
+    {
+      "name": "renders/full_top.png",
+      "hash": "ef3144cad6a272e8754c2b665aed84d49b931e44822640e6d4851695e3b09008"
+    },
+    {
+      "name": "renders/sprite_side_192.png",
+      "hash": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0"
+    },
+    {
+      "name": "renders/crop_face_three_quarter.png",
+      "hash": "7304ce7fde811e3ca8fa9b06705952ec8a2829c7bfbd81b11e9969dcbfdbd346"
+    },
+    {
+      "name": "renders/crop_eyes_muzzle_front.png",
+      "hash": "2cac199ee6a807a6ff02dca0ba166ab6fd49c456a54d587b7797204e3b7b4d22"
+    },
+    {
+      "name": "renders/crop_ears_front.png",
+      "hash": "e5884c55942fe351233171774d23b3893949745c2ea863eabf46ee8173dcdb83"
+    },
+    {
+      "name": "compare_close.png",
+      "hash": "fad12b5da04103c3d9c3514370d122fbf9ce7c22bc850033eee94315425c00aa"
+    },
+    {
+      "name": "compare_front.png",
+      "hash": "cc891e2204fd84ca3b2ea23bec70fcee07a7838b534192de6490e3856318f7d0"
+    },
+    {
+      "name": "compare_side.png",
+      "hash": "0bd6e3d211f7f7e33aae07152bcc34af0aa70a7a0df6cae640729e6289f4e9f8"
+    },
+    {
+      "name": "compare_sprite.png",
+      "hash": "93e7694a19407b368a988546f3ed8468f4bf16353d692dd0c760ddf626aa7b78"
+    },
+    {
+      "name": "progress.png",
+      "hash": "e6f5149c3769d5614b834aa3c865292a2f549f72cd221096c3fb579ce1d10d25"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "3f1b23f7495c69e6a05f215a431494ebb327a3a5133f7f1c7e47fdfbb8d51949"
+    },
+    {
+      "name": "art/pipeline/sculpt/build_head.py",
+      "hash": "358c6ccd129ddc4d4f726649202c69b501a33a048e32219efcd6997c92fd4e92"
+    },
+    {
+      "name": "art/pipeline/sculpt/sculptkit.py",
+      "hash": "c5f00d5eed51a72b8efd0a40ca47db618226ba76a9b66165983a0e58ec5f8de7"
+    },
+    {
+      "name": "art/pipeline/sculpt/hornpath.py",
+      "hash": "2ae8af5478e77d2ee4e40b8bc0adf4a3e19a2a3ccb9c54458f2808cd57785070"
+    },
+    {
+      "name": "art/pipeline/sculpt/headcam.py",
+      "hash": "02e8b1e87d64f776f98849106aa75c2c297a887e29674418c735f74a279f3cba"
+    },
+    {
+      "name": "art/pipeline/sculpt/compose.py",
+      "hash": "f100646044f1bf03d203c530b19695342b3698165f94b830637ee81d07886d7f"
+    },
+    {
+      "name": "art/pipeline/sculpt/run_head.sh",
+      "hash": "c02335ba3b4e6f0262cc67806314af9e095ea3aa5416d4c66c89099fec3d3293"
+    },
+    {
+      "name": "art/pipeline/sculpt/bwait.sh",
+      "hash": "65e0c7279443a2eb4a35962ac98fdad5b6f24389a91c267cfdc4273423c13c99"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "build": "B-h5p3",
+    "creature": "luceras",
+    "stage": "05-sculpt",
+    "part": "head",
+    "pass": 2,
+    "defect": "D-tegy",
+    "method": [
+      "Same pipeline as pass 1 (B-j4kr): kept blockout neck tube, metaball skull, ear shells, voxel-remesh union, numpy lid and groove brushes, bridged seam onto the untouched body, weights from the blockout, swept rigid horns, eyes and whiskers on head_01.",
+      "Muzzle: every face element, groove and whisker root forward of y -0.240 compressed toward the eyes by a factor of 0.79, element lengths scaled the same; added a rounded nose-bridge element and lowered the face wedge slope (28 to 22 degrees).",
+      "Brow and dome: rounder, taller braincase, a forehead element in front of the horns and a brow pad over each eye (crown up 2.6 cm).",
+      "Eyes: eyeball diameter 26 to 34 mm, seated forward and high (look 0.34, -0.91, 0.24) and less proud; the lid brush gained an upper fold roll with a crease above it and a lower lid roll; brush reach limited so it no longer pulls the forehead.",
+      "Horns: base radius 22.5 to 31.5 mm with the same taper exponent, bases moved 1 cm apart, ridge spacing jittered by two incommensurate sines (about plus or minus 30 percent), a skin sleeve metaball along each horn axis where it leaves the skull.",
+      "Ears: shell 52 to 83 mm (exposed about 42 to 67 mm), width 38 to 46 mm, cup 10.5 to 15 mm, cup fading to flat at the root, base moved inward and back behind the horn bases.",
+      "Neck: kept blockout tube scaled toward its axis, ramping to minus 10 percent at the upper ring behind the jaw; throat and upper bridge metaballs slimmed; jaw groove 2.2 to 3.6 mm deep.",
+      "Remesh 1.45 mm and horn sampling 380 rings to stay under the triangle cap; 12 runs, compared each against the sheet close-up and turnaround crops."
+    ],
+    "defectResult": "D-tegy addressed: all six items changed and measured (see measurements.json versusPass1).",
+    "defectsFixed": [
+      "Long rat muzzle: head length 0.1397 to 0.1259 (-9.9 percent), rounded bridge.",
+      "Low brow and flat skull: crown raised 2.6 cm, domed braincase, forehead and brow pads.",
+      "Small eyes: diameter +31 percent, set forward and high, upper fold and lower lid added.",
+      "Thin horns: base radius +40 percent, taper kept, irregular ridge spacing, skin collar.",
+      "Tiny ears: exposed height +60 percent, deeper cup, rounded, behind the horn bases.",
+      "Thick neck behind the jaw: -10.1 percent at the ring behind the jaw; jaw groove +64 percent deeper.",
+      "First collar attempt read as a hat brim around the horn: replaced by a narrow sleeve metaball along the horn axis.",
+      "Eyes bulged past the face silhouette in front view (frog-like): inset toward the midline and made less proud.",
+      "Whisker pads and maxilla read as hamster cheeks after the muzzle compression: slimmed.",
+      "Ear cup curled into a lip at the root: cup fades to flat at the root."
+    ],
+    "remains": [
+      "Front view: the face is still a little wide at the cheeks and whisker pads, a trace of hamster.",
+      "The upper lid fold is subtle in clay; the eyes read mostly as large balls with a lid ring.",
+      "The muzzle front is blunt and nearly vertical in profile; the sheet's nose tips slightly forward over a receding chin.",
+      "Horn ridges are still ring-like; the sheet's ridges are wavier with a keel.",
+      "A hard shadow line from the horn base falls across the side of the head under the key light; it is a shadow, not geometry, but it reads as a crease at the close side camera.",
+      "Ears lack inner relief and rim roll; left for the fur stage.",
+      "Horn span grew 10 percent over pass 1 (0.277 to 0.306) from separating the thicker bases.",
+      "Whiskers are placeholders.",
+      "Neck-blend displacement grew (max 20 mm, mean 6.9 mm) because the neck behind the jaw was thinned as asked."
+    ],
+    "holds": [
+      {
+        "hold": "Head size within 5 percent",
+        "status": "lifted for the muzzle by the orchestrator",
+        "evidence": "head length -11.6 percent against the blockout, -9.9 percent against pass 1; skull width unchanged at 0.1172"
+      },
+      {
+        "hold": "Keep everything outside the head and the declared neck blend unchanged",
+        "status": "respected",
+        "evidence": "body side of the seam plane: max 0.61 mm, mean 0.0014 mm"
+      },
+      {
+        "hold": "Neck blend declared",
+        "status": "declared and widened",
+        "evidence": "max 19.8 mm, mean 6.9 mm, from the requested 10 percent neck thinning behind the jaw"
+      }
+    ],
+    "wallMinutes": 18,
+    "blenderSeconds": 479,
+    "measurements": "measurements.json",
+    "checks": [
+      {
+        "title": "Head read at the close camera",
+        "question": "Does the clay head now read as the sheet's hare-like head rather than a rodent at the close three-quarter camera?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "24a6ad93f5866d9014d28f2ea3a50f247c5015a39b42d260ab6d6fe104796b54",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+        "recommended": "Accept: shorter muzzle, raised domed brow, large forward eyes and heavy horns read hare and ibex; the face is still a little wide at the cheeks."
+      },
+      {
+        "title": "Horns: curl, thickness, ridges, collar",
+        "question": "Are the horns heavy at the base with the taper kept, ridged a little irregularly, with a soft skin collar where they leave the skull, tips still turned inward?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "e4a4a88436fa507efb245d583571c2862c10618b26bb2be93280aab73e7bb4c2",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+        "recommended": "Accept; the bases sit 1 cm further apart than pass 1 so the thicker horns do not overlap, which widens the span 10 percent."
+      },
+      {
+        "title": "Ears",
+        "question": "Are the ears about 60 percent taller, properly cupped, still rounded and behind the horn bases?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "e5884c55942fe351233171774d23b3893949745c2ea863eabf46ee8173dcdb83",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+        "recommended": "Accept; inner-ear relief is left for the fur stage."
+      },
+      {
+        "title": "Eyes and muzzle",
+        "question": "Are the eyes about 30 percent larger, forward and high, with an upper lid fold and a visible lower lid, and is the muzzle short with a rounded bridge?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "7304ce7fde811e3ca8fa9b06705952ec8a2829c7bfbd81b11e9969dcbfdbd346",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+        "recommended": "Accept the eye size and placement; the upper lid fold is subtle in clay, and a dedicated lid pass is recommended if it must read without color."
+      },
+      {
+        "title": "Head at sprite size",
+        "question": "At 192 px, does the head read as Luceras (heavy horn curl first, then the domed face)?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "93e7694a19407b368a988546f3ed8468f4bf16353d692dd0c760ddf626aa7b78",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+        "recommended": "Accept: the thicker horns now carry the silhouette at sprite size."
+      }
+    ],
+    "checksByPath": [
+      {
+        "title": "Head read at the close camera",
+        "question": "Does the clay head now read as the sheet's hare-like head rather than a rodent at the close three-quarter camera?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/final_head_three_quarter.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept: shorter muzzle, raised domed brow, large forward eyes and heavy horns read hare and ibex; the face is still a little wide at the cheeks."
+      },
+      {
+        "title": "Horns: curl, thickness, ridges, collar",
+        "question": "Are the horns heavy at the base with the taper kept, ridged a little irregularly, with a soft skin collar where they leave the skull, tips still turned inward?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/final_head_front.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept; the bases sit 1 cm further apart than pass 1 so the thicker horns do not overlap, which widens the span 10 percent."
+      },
+      {
+        "title": "Ears",
+        "question": "Are the ears about 60 percent taller, properly cupped, still rounded and behind the horn bases?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/crop_ears_front.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept; inner-ear relief is left for the fur stage."
+      },
+      {
+        "title": "Eyes and muzzle",
+        "question": "Are the eyes about 30 percent larger, forward and high, with an upper lid fold and a visible lower lid, and is the muzzle short with a rounded bridge?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/crop_face_three_quarter.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept the eye size and placement; the upper lid fold is subtle in clay, and a dedicated lid pass is recommended if it must read without color."
+      },
+      {
+        "title": "Head at sprite size",
+        "question": "At 192 px, does the head read as Luceras (heavy horn curl first, then the domed face)?",
+        "before": "C:/dev/art-data/pipeline/blobs/dd/dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/compare_sprite.png",
+        "reference": "C:/dev/art-data/pipeline/blobs/56/56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "C:/dev/src/xalians-creature-pipeline/art/pipeline/out/luceras/head/renders/sprite_side_192.png",
+        "recommended": "Accept: the thicker horns now carry the silhouette at sprite size."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "head.blend",
+        "hash": "fe18a270bc1a320dfb9730d6d1d3b2286b29b5c822eb95fab952985cfb3b7388"
+      },
+      {
+        "name": "head.glb",
+        "hash": "368e4b05c27e799a8b5eaf53798b56fe327ea7ec505f98104d0aa7bb97faa18c"
+      },
+      {
+        "name": "head_part.glb",
+        "hash": "583ee9423f501768ed60bc659e66e0a4e369eab60a6eb1f0ff71983af0370649"
+      },
+      {
+        "name": "renders/final_head_three_quarter.png",
+        "hash": "24a6ad93f5866d9014d28f2ea3a50f247c5015a39b42d260ab6d6fe104796b54"
+      },
+      {
+        "name": "renders/final_head_front.png",
+        "hash": "e4a4a88436fa507efb245d583571c2862c10618b26bb2be93280aab73e7bb4c2"
+      },
+      {
+        "name": "renders/final_head_side.png",
+        "hash": "71a95ce24f9dc32f9c3783db4bcdb70125fcd0a6730a75aa6a248c394bd44c64"
+      },
+      {
+        "name": "renders/full_front.png",
+        "hash": "48ed2a799088355c88d3116d19e485ee9efd98fc38e729317b5bab2a13c0a3d5"
+      },
+      {
+        "name": "renders/full_three_quarter_left.png",
+        "hash": "b6e91af81462c15c5372e084c08a9afe3888a3ed2fe407dae05e681f75e526cb"
+      },
+      {
+        "name": "renders/full_side_left.png",
+        "hash": "d1fae259682a521359ef6d6bbef5c0ca0a560be337681fc3373de4f84a614a52"
+      },
+      {
+        "name": "renders/full_back.png",
+        "hash": "e54136e0d504921e454fd6d3bf28f9badd87627f37d54e49558be1cc63633cc5"
+      },
+      {
+        "name": "renders/full_top.png",
+        "hash": "ef3144cad6a272e8754c2b665aed84d49b931e44822640e6d4851695e3b09008"
+      },
+      {
+        "name": "renders/sprite_side_192.png",
+        "hash": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0"
+      },
+      {
+        "name": "renders/crop_face_three_quarter.png",
+        "hash": "7304ce7fde811e3ca8fa9b06705952ec8a2829c7bfbd81b11e9969dcbfdbd346"
+      },
+      {
+        "name": "renders/crop_eyes_muzzle_front.png",
+        "hash": "2cac199ee6a807a6ff02dca0ba166ab6fd49c456a54d587b7797204e3b7b4d22"
+      },
+      {
+        "name": "renders/crop_ears_front.png",
+        "hash": "e5884c55942fe351233171774d23b3893949745c2ea863eabf46ee8173dcdb83"
+      },
+      {
+        "name": "compare_close.png",
+        "hash": "fad12b5da04103c3d9c3514370d122fbf9ce7c22bc850033eee94315425c00aa"
+      },
+      {
+        "name": "compare_front.png",
+        "hash": "cc891e2204fd84ca3b2ea23bec70fcee07a7838b534192de6490e3856318f7d0"
+      },
+      {
+        "name": "compare_side.png",
+        "hash": "0bd6e3d211f7f7e33aae07152bcc34af0aa70a7a0df6cae640729e6289f4e9f8"
+      },
+      {
+        "name": "compare_sprite.png",
+        "hash": "93e7694a19407b368a988546f3ed8468f4bf16353d692dd0c760ddf626aa7b78"
+      },
+      {
+        "name": "progress.png",
+        "hash": "e6f5149c3769d5614b834aa3c865292a2f549f72cd221096c3fb579ce1d10d25"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "3f1b23f7495c69e6a05f215a431494ebb327a3a5133f7f1c7e47fdfbb8d51949"
+      },
+      {
+        "name": "art/pipeline/sculpt/build_head.py",
+        "hash": "358c6ccd129ddc4d4f726649202c69b501a33a048e32219efcd6997c92fd4e92"
+      },
+      {
+        "name": "art/pipeline/sculpt/sculptkit.py",
+        "hash": "c5f00d5eed51a72b8efd0a40ca47db618226ba76a9b66165983a0e58ec5f8de7"
+      },
+      {
+        "name": "art/pipeline/sculpt/hornpath.py",
+        "hash": "2ae8af5478e77d2ee4e40b8bc0adf4a3e19a2a3ccb9c54458f2808cd57785070"
+      },
+      {
+        "name": "art/pipeline/sculpt/headcam.py",
+        "hash": "02e8b1e87d64f776f98849106aa75c2c297a887e29674418c735f74a279f3cba"
+      },
+      {
+        "name": "art/pipeline/sculpt/compose.py",
+        "hash": "f100646044f1bf03d203c530b19695342b3698165f94b830637ee81d07886d7f"
+      },
+      {
+        "name": "art/pipeline/sculpt/run_head.sh",
+        "hash": "c02335ba3b4e6f0262cc67806314af9e095ea3aa5416d4c66c89099fec3d3293"
+      },
+      {
+        "name": "art/pipeline/sculpt/bwait.sh",
+        "hash": "65e0c7279443a2eb4a35962ac98fdad5b6f24389a91c267cfdc4273423c13c99"
+      }
+    ],
+    "blockedBy": "nothing"
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T21:49:09Z",
+  "briefSha256": "e03b25dcf511ae39a97d9c93ce543bfd3fab4e07b08eefa23ee33443e3cf0586",
+  "checks": [
+    {
+      "title": "Head read at the close camera",
+      "question": "Does the clay head now read as the sheet's hare-like head rather than a rodent at the close three-quarter camera?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "24a6ad93f5866d9014d28f2ea3a50f247c5015a39b42d260ab6d6fe104796b54",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+      "recommended": "Accept: shorter muzzle, raised domed brow, large forward eyes and heavy horns read hare and ibex; the face is still a little wide at the cheeks."
+    },
+    {
+      "title": "Horns: curl, thickness, ridges, collar",
+      "question": "Are the horns heavy at the base with the taper kept, ridged a little irregularly, with a soft skin collar where they leave the skull, tips still turned inward?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "e4a4a88436fa507efb245d583571c2862c10618b26bb2be93280aab73e7bb4c2",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+      "recommended": "Accept; the bases sit 1 cm further apart than pass 1 so the thicker horns do not overlap, which widens the span 10 percent."
+    },
+    {
+      "title": "Ears",
+      "question": "Are the ears about 60 percent taller, properly cupped, still rounded and behind the horn bases?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "e5884c55942fe351233171774d23b3893949745c2ea863eabf46ee8173dcdb83",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+      "recommended": "Accept; inner-ear relief is left for the fur stage."
+    },
+    {
+      "title": "Eyes and muzzle",
+      "question": "Are the eyes about 30 percent larger, forward and high, with an upper lid fold and a visible lower lid, and is the muzzle short with a rounded bridge?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "7304ce7fde811e3ca8fa9b06705952ec8a2829c7bfbd81b11e9969dcbfdbd346",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+      "recommended": "Accept the eye size and placement; the upper lid fold is subtle in clay, and a dedicated lid pass is recommended if it must read without color."
+    },
+    {
+      "title": "Head at sprite size",
+      "question": "At 192 px, does the head read as Luceras (heavy horn curl first, then the domed face)?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "93e7694a19407b368a988546f3ed8468f4bf16353d692dd0c760ddf626aa7b78",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "30b01e0fcd3edac9288e83db5d035bfad2e9675d6c888332da1a4158184d04a0",
+      "recommended": "Accept: the thicker horns now carry the silhouette at sprite size."
+    }
+  ],
+  "reportedAt": "2026-10-14T22:06:57Z"
+}
