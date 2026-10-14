@@ -1,0 +1,382 @@
+{
+ "name": "neck v4b",
+ "approval": null,
+ "note": "neck v4b (2026-10-13), for neck_v4b_post.py / neck_v4b_field.py, appended after P-torso1 in place of P-neck4. Coordinator 2026-10-13 on neck v4: the jaw-to-throat junction was a tight corner with a slight undercut (the throat front ran back toward the nape for about .018 below the jaw before turning forward), reading as a head on a post. As neck-v4.json (jaw carve, column, nape, blurs, spot relaxes) with: front, the top of the throat line moved forward (y -.082 at z .52, -.089 at z .49), so no backward lean remains below the junction; closing, a rolling-ball closing (radius .022) of the composed field under a mask at the junction, which makes it one round concave fillet; cornerBlurs, a light blur over the junction and over each jaw corner (mirrored) for the front view. World units, +y back.",
+ "grid": {
+  "lo": [
+   -0.2,
+   -0.2,
+   0.28
+  ],
+  "hi": [
+   0.18,
+   0.12,
+   0.58
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "jaw": {
+  "profile": [
+   [
+    -0.2,
+    0.536
+   ],
+   [
+    -0.18,
+    0.52
+   ],
+   [
+    -0.17,
+    0.516
+   ],
+   [
+    -0.15,
+    0.515
+   ],
+   [
+    -0.13,
+    0.516
+   ],
+   [
+    -0.11,
+    0.518
+   ],
+   [
+    -0.09,
+    0.52
+   ],
+   [
+    -0.07,
+    0.521
+   ],
+   [
+    -0.04,
+    0.522
+   ]
+  ],
+  "lateral": -3.0,
+  "k": 0.02,
+  "mask": {
+   "x": [
+    -1,
+    -1,
+    0.09,
+    0.13
+   ],
+   "y": [
+    -0.19,
+    -0.15,
+    -0.035,
+    -0.015
+   ],
+   "z": [
+    0.455,
+    0.48,
+    0.535,
+    0.55
+   ]
+  }
+ },
+ "columns": [
+  {
+   "a": [
+    0.0,
+    -0.046,
+    0.38
+   ],
+   "b": [
+    0.0,
+    -0.03,
+    0.52
+   ],
+   "ra": 0.08,
+   "rb": 0.062,
+   "ySquash": 1.08,
+   "k": 0.022
+  }
+ ],
+ "front": {
+  "points": [
+   [
+    -0.082,
+    0.52
+   ],
+   [
+    -0.089,
+    0.49
+   ],
+   [
+    -0.129,
+    0.37
+   ],
+   [
+    -0.147,
+    0.33
+   ]
+  ],
+  "R": 0.09,
+  "cutK": 0.025
+ },
+ "joinK": 0.022,
+ "lobes": [
+  {
+   "c": [
+    0.0,
+    -0.005,
+    0.495
+   ],
+   "s": [
+    0.06,
+    0.045,
+    0.06
+   ],
+   "k": 0.03
+  }
+ ],
+ "blurs": [
+  {
+   "c": [
+    0.0,
+    -0.03,
+    0.43
+   ],
+   "s": [
+    0.14,
+    0.11,
+    0.09
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.008,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.085,
+    -0.03,
+    0.405
+   ],
+   "s": [
+    0.06,
+    0.07,
+    0.045
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.016,
+   "mirror": true
+  },
+  {
+   "c": [
+    0.0,
+    0.03,
+    0.48
+   ],
+   "s": [
+    0.09,
+    0.05,
+    0.07
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.016,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.0,
+    -0.12,
+    0.378
+   ],
+   "s": [
+    0.1,
+    0.05,
+    0.04
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.015,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.0,
+    -0.066,
+    0.508
+   ],
+   "s": [
+    0.11,
+    0.045,
+    0.035
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.02,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.0,
+    -0.16,
+    0.512
+   ],
+   "s": [
+    0.06,
+    0.03,
+    0.025
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.01,
+   "mirror": false
+  }
+ ],
+ "spotRelax": [
+  {
+   "c": [
+    0.0,
+    -0.066,
+    0.508
+   ],
+   "r": 0.05,
+   "fade": 0.03,
+   "iterations": 300
+  },
+  {
+   "c": [
+    0.06,
+    -0.065,
+    0.505
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    -0.06,
+    -0.065,
+    0.505
+   ],
+   "r": 0.03,
+   "fade": 0.02,
+   "iterations": 200
+  },
+  {
+   "c": [
+    0.0,
+    -0.08,
+    0.495
+   ],
+   "r": 0.05,
+   "fade": 0.03,
+   "iterations": 200
+  }
+ ],
+ "closing": {
+  "r": 0.022,
+  "mask": {
+   "c": [
+    0.0,
+    -0.075,
+    0.495
+   ],
+   "s": [
+    0.1,
+    0.05,
+    0.05
+   ],
+   "fade": [
+    0.5,
+    1.0
+   ]
+  },
+  "edtSmooth": 0.006,
+  "minFill": 0.0006,
+  "fullFill": 0.002
+ },
+ "cornerBlurs": [
+  {
+   "c": [
+    0.0,
+    -0.075,
+    0.495
+   ],
+   "s": [
+    0.1,
+    0.05,
+    0.05
+   ],
+   "fade": [
+    0.4,
+    1.0
+   ],
+   "sigma": 0.008
+  },
+  {
+   "c": [
+    0.085,
+    -0.1,
+    0.515
+   ],
+   "s": [
+    0.035,
+    0.05,
+    0.025
+   ],
+   "fade": [
+    0.4,
+    1.0
+   ],
+   "sigma": 0.01
+  }
+ ],
+ "partBox": {
+  "x": [
+   -1,
+   -1,
+   0.16,
+   0.18
+  ],
+  "y": [
+   -1,
+   -1,
+   0.1,
+   0.12
+  ],
+  "z": [
+   0.32,
+   0.35,
+   0.52,
+   0.555
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ }
+}
