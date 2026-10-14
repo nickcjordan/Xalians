@@ -2,9 +2,9 @@
  "about": "Approved looks: every Akinza part Nick has approved, with his words and the date. Briefs, loop orders and reader packs cite this file. An approval protects the look, not its implementation (REFINEMENT.md rule 1): a later step may change how a part is built as long as it still looks like the approved version from every angle. Readers judging an approved part compare against the approved look (reader_pack.py uses lookReference), not the reference sheet. Only Nick reopens an approved part. Times are UTC from the session record.",
  "updated": "2026-10-14",
  "lookReference": {
-  "assembly": "assembled-3271",
-  "recipe": "docs/design/species-construction/akinza/recipe-integrated-v1.json",
-  "note": "Integrated model carrying every approved part (2026-10-14); hind soles still in work, groin1 and knee1 to be added."
+  "assembly": "assembled-3296",
+  "recipe": "docs/design/species-construction/akinza/recipe-integrated-v2.json",
+  "note": "Integrated v2 (2026-10-14): every approved part on one model, each region an exact match to its approved build."
  },
  "parts": [
   {
