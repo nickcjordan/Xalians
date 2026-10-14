@@ -350,6 +350,83 @@ class TestFlowStatusNextPageCost(Base):
         self.assertIn("<details><summary>01-intake", (self.ros / "fixo/review.html").read_text(encoding="utf-8"))
 
 
+class TestPicks(Base):
+    ELS = ("air", "fire", "water", "rock")
+
+    def setUp(self):
+        super().setUp()
+        self.ok("init", "fixo")
+        self.ok("stage", "open", "fixo", "02-vision")
+        self.builds, self.blobs = {}, {}
+        for el in self.ELS:
+            out = self.ok("build", "plan", "fixo", "vision", "--goal", el, "--scope", el)
+            b = self.alias_of(out.split("Tag your agent")[1])
+            h = self.blob("img-" + el)
+            self.ok("build", "report", "fixo", b, "--file", self.report(hashes=[h]))
+            self.builds[el], self.blobs[el] = b, h
+
+    def export(self, elements=("air", "fire", "water"), submitted=True, **over):
+        d = {"picks": {el: {"alias": "B-" + self.builds[el], "label": "C: " + el, "blob": self.blobs[el],
+                            "at": "2026-10-14T10:00:00Z"} for el in elements},
+             "requests": {"rock": {"kind": "mix", "text": "A's color with B's stripes", "at": "2026-10-14T10:01:00Z"}},
+             "status": {"submitted": submitted, "at": "2026-10-14T10:02:00Z"},
+             "composite": {"blob": self.blobs["rock"], "label": "all picks", "note": "composed"}}
+        d.update(over)
+        f = self.t / "picks.json"
+        f.write_text(json.dumps(d))
+        return f
+
+    def decisions(self):
+        return common.list_records("fixo", "02-vision", "N")
+
+    def test_happy_path(self):
+        out = self.ok("picks", "file", "fixo", "vision", "--from", self.export())
+        self.assertIn("approval N-", out)
+        kinds = sorted(n["kind"] for n in self.decisions())
+        self.assertEqual(kinds, ["approval", "pick", "pick", "pick", "request"])
+        pick = next(n for n in self.decisions() if n["kind"] == "pick" and n["element"] == "fire")
+        self.assertEqual(pick["who"], "nick")
+        self.assertEqual(pick["words"], "picked C: fire on the selection screen")
+        self.assertEqual(pick["binds"]["evidence"], [self.blobs["fire"]])
+        req = next(n for n in self.decisions() if n["kind"] == "request")
+        self.assertEqual((req["element"], req["requestKind"]), ("rock", "mix"))
+        ds = common.list_records("fixo", "02-vision", "D")
+        self.assertEqual([d["description"] for d in ds], ["rock: no option accepted"])
+        self.assertEqual(len(ds[0]["attempts"]), 1)
+
+    def test_blob_not_in_outputs_refused_and_nothing_written(self):
+        f = self.export()
+        d = json.loads(f.read_text())
+        d["picks"]["water"]["blob"] = self.blobs["rock"]
+        f.write_text(json.dumps(d))
+        self.refused("picks", "file", "fixo", "vision", "--from", f, contains="water")
+        self.assertEqual(self.decisions(), [])
+
+    def test_idempotent(self):
+        f = self.export()
+        self.ok("picks", "file", "fixo", "vision", "--from", f)
+        n = len(self.decisions())
+        out = self.ok("picks", "file", "fixo", "vision", "--from", f)
+        self.assertEqual(len(self.decisions()), n)
+        self.assertIn("already filed", out)
+        self.assertEqual(len(common.list_records("fixo", "02-vision", "D")[0]["attempts"]), 1)
+
+    def test_approval_binding_and_stage_close(self):
+        out = self.ok("picks", "file", "fixo", "vision", "--from", self.export())
+        ap = next(n for n in self.decisions() if n["kind"] == "approval")
+        self.assertIn("N-" + ap["alias"], out)
+        ids = {common.find_record("fixo", "B-" + self.builds[el], "B")[1]["id"] for el in ("air", "fire", "water")}
+        self.assertEqual(set(ap["binds"]["builds"]), ids)
+        self.assertEqual(set(ap["binds"]["evidence"]), {self.blobs[el] for el in ("air", "fire", "water")})
+        self.assertEqual(ap["composite"]["label"], "all picks")
+        self.ok("stage", "close", "fixo", "vision", "--approval", ap["alias"])
+
+    def test_not_submitted_writes_no_approval(self):
+        out = self.ok("picks", "file", "fixo", "vision", "--from", self.export(submitted=False))
+        self.assertNotIn("approval N-", out)
+        self.assertNotIn("approval", [n["kind"] for n in self.decisions()])
+
+
 class TestCost(Base):
     def line(self, role, mid, inp, out, cr=0, cc=0, text=None):
         if role == "user":

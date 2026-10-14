@@ -21,6 +21,7 @@ python art/pipeline/records/roster.py decision add luceras sculpt --who orchestr
 python art/pipeline/records/roster.py decision add luceras sculpt --who nick --kind budget --words "..." --amount 12
 python art/pipeline/records/roster.py review add luceras B-xxxx --file review.json
 python art/pipeline/records/roster.py stage close luceras sculpt --approval N-xxxx
+python art/pipeline/records/roster.py picks file luceras vision --from picks.json
 python art/pipeline/records/roster.py status luceras
 python art/pipeline/records/roster.py next luceras
 python art/pipeline/records/roster.py blob put <file>
@@ -37,11 +38,16 @@ A build report (`--file`) is JSON with `outputs` (list of `{name, hash}`, requir
 
 A review file is `{"verdict": "pass"}` or `{"verdict": "defects", "defects": ["name", ...], "notes": "..."}`.
 
+### Filing picks
+
+`picks file` takes an export of the selection screen's store: `picks` (element to `{alias, label, blob, at}`), `requests` (element to `{kind: new-set|mix, text, at}`), `status` (`{submitted, at}`) and an optional `composite`. Every pick must name a build in that stage whose reported outputs include the blob hash, or the whole file is refused (naming the element) and nothing is written. Each pick becomes a Nick decision of kind `pick` (field `element`, bound to the build and blob). Each request becomes a Nick decision of kind `request` (fields `element`, `requestKind`) and appends its id to the `attempts` list of the defect "<element>: no option accepted" (created if missing, reopened if closed), so the two-regeneration stall rule sees it. If `status.submitted` is true, one `approval` decision is written, bound to every picked build (`binds.builds`, with the first as `binds.build` so `stage close` accepts it) and every picked blob, and carrying the `composite` block; its id is printed for `stage close --approval`. Running the same file twice adds nothing (keys: element plus alias plus kind; requests by element, request kind and text; the approval by its set of picks).
+
 ### Refusals
 
 - a build report without outputs, without `blockedBy`, or with a score
 - a third build on a defect with no audit decision naming it
 - a stage close without an approval decision bound to a build and evidence hashes
+- a picks file naming a blob that is not in the picked build's outputs, or a build from another stage
 - a build input pinned under another creature's folder
 - a build, defect, hold or decision in a stage that is not open; a review of a build with no report; a hold sourced to Nick without words and date, or inferred without a reason
 

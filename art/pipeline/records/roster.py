@@ -303,6 +303,108 @@ def cmd_decision(a):
     print("N-%s %s" % (n["alias"], n["id"]))
 
 
+# ---------------------------------------------------------------- picks
+
+def _decision_exists(key, st, match):
+    for n in list_records(key, st, "N"):
+        if all(n.get(k) == v for k, v in match.items()):
+            return n
+    return None
+
+
+def cmd_picks_file(a):
+    c, st = _need_open(a.key, a.stage)
+    data = _load_file(a.src, "picks")
+    picks = data.get("picks") or {}
+    requests = data.get("requests") or {}
+    status = data.get("status") or {}
+    composite = data.get("composite")
+    if not isinstance(picks, dict) or not isinstance(requests, dict):
+        raise Refusal("picks file: 'picks' and 'requests' must be objects keyed by element")
+    # Validate everything first so a refusal writes nothing.
+    checked = {}
+    for el, p in picks.items():
+        if not isinstance(p, dict) or not p.get("alias") or not p.get("blob"):
+            raise Refusal("pick for %s needs an alias and a blob hash" % el)
+        bst, b = find_record(a.key, p["alias"], "B")
+        if bst != st:
+            raise Refusal("pick for %s: build %s is in stage %s, not %s" % (el, p["alias"], bst, st))
+        hashes = [o.get("hash") for o in (b.get("outputs") or []) if isinstance(o, dict)]
+        if p["blob"] not in hashes:
+            raise Refusal("pick for %s: blob %s is not among the reported outputs of build B-%s"
+                          % (el, p["blob"], b["alias"]))
+        checked[el] = b
+    for el, r in requests.items():
+        if not isinstance(r, dict) or r.get("kind") not in ("new-set", "mix") or not r.get("text"):
+            raise Refusal("request for %s needs kind new-set or mix, and text" % el)
+    submitted = bool(status.get("submitted"))
+    if submitted and not picks:
+        raise Refusal("the picks file is submitted but holds no picks; nothing to approve")
+    head = ("element", "kind", "build", "label", "record")
+    rows = []
+    for el in sorted(picks):
+        p, b = picks[el], checked[el]
+        match = {"kind": "pick", "element": el, "buildAlias": b["alias"]}
+        if _decision_exists(a.key, st, match):
+            rows.append((el, "pick", b["alias"], p.get("label") or "", "already filed"))
+            continue
+        n = {"id": new_id("N"), "alias": new_alias(a.key), "stage": st, "who": "nick",
+             "words": "picked %s on the selection screen" % (p.get("label") or p["alias"]),
+             "date": (p.get("at") or now_iso())[:10], "kind": "pick",
+             "binds": {"build": b["id"], "evidence": [p["blob"]]}, "amount": None,
+             "createdAt": now_iso(), "element": el, "buildAlias": b["alias"], "blob": p["blob"]}
+        save_record(a.key, st, "N", n)
+        rows.append((el, "pick", b["alias"], p.get("label") or "", "N-" + n["alias"]))
+    for el in sorted(requests):
+        r = requests[el]
+        match = {"kind": "request", "element": el, "requestKind": r["kind"], "words": r["text"]}
+        if _decision_exists(a.key, st, match):
+            rows.append((el, "request", "-", r["kind"], "already filed"))
+            continue
+        n = {"id": new_id("N"), "alias": new_alias(a.key), "stage": st, "who": "nick",
+             "words": r["text"], "date": (r.get("at") or now_iso())[:10], "kind": "request",
+             "binds": {"evidence": []}, "amount": None, "createdAt": now_iso(),
+             "element": el, "requestKind": r["kind"]}
+        save_record(a.key, st, "N", n)
+        title = "%s: no option accepted" % el
+        d = next((x for x in list_records(a.key, st, "D") if x.get("description") == title), None)
+        if d is None:
+            d = {"id": new_id("D"), "alias": new_alias(a.key), "stage": st, "description": title,
+                 "camera": None, "region": None, "origin": "selection screen", "attempts": [],
+                 "status": "open", "createdAt": now_iso()}
+        elif d.get("status") != "open":
+            d["status"] = "open"
+            d.pop("closedAt", None)
+        d["attempts"] = list(d.get("attempts", [])) + [n["id"]]
+        save_record(a.key, st, "D", d)
+        rows.append((el, "request", "-", r["kind"], "N-%s, D-%s attempts %d" % (n["alias"], d["alias"], len(d["attempts"]))))
+    approval = None
+    if submitted:
+        order = sorted(picks)
+        keyed = ",".join("%s=%s" % (el, picks[el]["alias"]) for el in order)
+        approval = _decision_exists(a.key, st, {"kind": "approval", "picksKey": keyed})
+        if approval is None:
+            approval = {
+                "id": new_id("N"), "alias": new_alias(a.key), "stage": st, "who": "nick",
+                "words": "confirmed the picks on the selection screen",
+                "date": (status.get("at") or now_iso())[:10], "kind": "approval",
+                "binds": {"build": checked[order[0]]["id"],
+                          "builds": [checked[el]["id"] for el in order],
+                          "evidence": [picks[el]["blob"] for el in order]},
+                "amount": None, "createdAt": now_iso(), "picksKey": keyed}
+            if composite:
+                approval["composite"] = composite
+            save_record(a.key, st, "N", approval)
+            rows.append(("(all)", "approval", "-", "", "N-" + approval["alias"]))
+        else:
+            rows.append(("(all)", "approval", "-", "", "already filed"))
+    w = [max(len(str(r[i])) for r in rows + [head]) for i in range(5)]
+    for r in [head] + rows:
+        print("  ".join(str(x).ljust(w[i]) for i, x in enumerate(r)).rstrip())
+    if approval:
+        print("approval N-%s %s" % (approval["alias"], approval["id"]))
+
+
 def cmd_review(a):
     st, b = find_record(a.key, a.build, "B")
     if b["status"] != "reported":
@@ -421,10 +523,14 @@ def build_parser():
     dd = sub.add_parser("decision").add_subparsers(dest="action", required=True)
     s = dd.add_parser("add"); s.add_argument("key"); s.add_argument("stage")
     s.add_argument("--who", required=True, choices=["nick", "orchestrator"])
-    s.add_argument("--kind", required=True, choices=["approval", "pick", "ruling", "budget", "audit"])
+    s.add_argument("--kind", required=True, choices=["approval", "pick", "request", "ruling", "budget", "audit"])
     s.add_argument("--words", required=True); s.add_argument("--date")
     s.add_argument("--build"); s.add_argument("--defect"); s.add_argument("--evidence", action="append")
     s.add_argument("--amount", type=int); s.set_defaults(fn=cmd_decision)
+
+    pk = sub.add_parser("picks").add_subparsers(dest="action", required=True)
+    s = pk.add_parser("file"); s.add_argument("key"); s.add_argument("stage")
+    s.add_argument("--from", dest="src", required=True); s.set_defaults(fn=cmd_picks_file)
 
     r = sub.add_parser("review").add_subparsers(dest="action", required=True)
     s = r.add_parser("add"); s.add_argument("key"); s.add_argument("build"); s.add_argument("--file", required=True)
