@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XX4JYD342XM7B66V4Q6AJR",
+  "alias": "phv6",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Just over half a turn, slim: vision horns3",
+  "scope": "horns3",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "5127cfbf08d475a12f241990136b7e9a4a2dab2ef90897aa83dbb5d25e10bb7b"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 15297,
+    "wallMinutes": 1.03,
+    "image": {
+      "stage": "vision",
+      "element": "horns3",
+      "label": "B: Just over half a turn, slim",
+      "summary": "A touch more curl than A: about two-thirds of a turn, the tip curling forward under the arc, slim throughout.",
+      "promptSha256": "093a0028ae4d2c6a6d5f96a73d9419c841f6a4eb9a75939409bc2b474e457844",
+      "inputs": [
+        {
+          "name": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe",
+          "hash": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn curl",
+        "horn bulk"
+      ],
+      "notFor": [
+        "ears",
+        "coat"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-phv6",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "5127cfbf08d475a12f241990136b7e9a4a2dab2ef90897aa83dbb5d25e10bb7b"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:10:00Z",
+  "briefSha256": "b551ed9bf7cbb808c15a9cfa910d5f9fadde32264dca191a52021299f33fa91e",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:11:01Z"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "N-01M4XX4JN3FMDRFCHRZ2XC2A5Y",
+  "alias": "nfmg",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "i want the curve somewhere between A and B",
+  "date": "2026-10-14",
+  "kind": "request",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:09:59Z",
+  "element": "horns2",
+  "requestKind": "mix"
+}

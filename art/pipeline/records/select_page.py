@@ -10,7 +10,7 @@ reason); plus fold, fallback, compositeEmpty and confirmed strings. Options come
 builds (scope = element, report.image.label/summary, outputs[0].hash), or from --index (the vision
 runner's index.json) when given. The base is the image most options were edited from.
 
-The page publishes with capabilities {db: {}, user: {}}. Store layout it reads and writes:
+The page publishes with capabilities {db: {}, user: {}, comments: {}}. Store layout it reads and writes:
   picks/<element>      {alias, label, blob, at}             set on Pick, deleted on Undo
   requests/<element>   {kind: "new-set"|"mix", text, at}   set from the two request boxes
   composite/current    {blob, label, note, dataUri?}        written by the orchestrator, shown when all are picked
@@ -19,6 +19,10 @@ An element may carry "mode": "approve" (an aspect Nick approves rather than pick
 without Pick buttons, one "Approve <name>" button writes picks/<element> {alias: "a,b,c", label: "approved", blob,
 blobs: [...], at}, and "Needs work" writes requests/<element> {kind: "rework", text, at}. "recommend": null means no
 recommendation; an optional "note" string renders under the question.
+Notification: Confirm and the request submits (new set, mix, needs work) also call comments.sendToClaude, anchored at
+the confirm box or the request form, when canSendToClaude() reads "available"; picks and approvals never send. Any
+rejection shows "Could not notify the orchestrator; tell them in chat." and is never retried. Without the comments
+capability the page behaves as before and says so in a line under the picks.
 A sticky left rail (a closed fold on phones) carries the "Source material" once: the species silhouette
 (docs/species-templates/art/<key>.png, embedded once as a CSS variable), the raw lore from
 docs/species-templates/v5/<key>.json, the home world's encyclopedia entry, and the neutral base image with a
@@ -522,6 +526,8 @@ var ICON = {check: D.icons.check, star: D.icons.star};
 var S = { picks: {}, requests: {}, composite: null, board: null, mode: 'waiting', canWrite: true, pendingUndo: null, firstPicks: true };
 var local = {}; // picks made before the store answered
 var db = null;
+var CM = null, CAN = 'off', canBusy = false;
+var NOTIFY_FAIL = 'Could not notify the orchestrator; tell them in chat.';
 
 function $(s, r){ return (r||document).querySelector(s); }
 function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
@@ -544,6 +550,25 @@ function writeFail(e, msgEl){
     S.canWrite = false; render();
   }
   if (msgEl) msgEl.textContent = (e && e.code==='quota_exceeded') ? 'The picks store is full; tell the orchestrator.' : 'Could not save that. Try again in a moment.';
+}
+
+// ---------------- notification to the orchestrator (comments capability)
+function updateNotify(){
+  var n = $('#notify-line'); if (!n) return;
+  n.textContent = CAN === 'available' ? 'Confirm will notify the orchestrator.' : 'Notification not available in this view; tell the orchestrator in chat after confirming.';
+}
+function checkCan(){
+  if (!CM || typeof CM.canSendToClaude !== 'function') { CAN = 'off'; updateNotify(); return; }
+  if (canBusy) return; canBusy = true;
+  var done = function(v){ canBusy = false; CAN = v; updateNotify(); };
+  try { CM.canSendToClaude().then(done, function(){ done('off'); }); } catch (e) { done('off'); }
+}
+// Resolves 'sent', 'failed' or 'unavailable'. Call from inside a viewer gesture handler, after the store write.
+function notify(anchorEl, text){
+  if (!CM || CAN !== 'available' || typeof CM.sendToClaude !== 'function') return Promise.resolve('unavailable');
+  var t = String(text); if (t.length > 3500) t = t.slice(0, 3490) + ' ...';
+  return CM.anchorFor(anchorEl).then(function(a){ return CM.sendToClaude({ anchor: a, text: t }); })
+    .then(function(){ return 'sent'; }, function(){ checkCan(); return 'failed'; });
 }
 
 // ---------------- render (pure: reads state, never subscribes or writes)
@@ -602,6 +627,7 @@ function render(){
 }
 
 function renderRail(P, n){
+  checkCan();
   var ul = $('#rail-picks'); ul.textContent = '';
   var still = [];
   ORDER.forEach(function(k){
@@ -745,15 +771,25 @@ function doAsk(form){
   btn.disabled = true; msg.textContent = 'Saving...';
   retry(function(){ return db.doc('requests/' + k).set(body); }).then(function(){
     msg.textContent = 'Saved. It replaces any earlier request for this set.'; inp.value = '';
-  }).catch(function(e){ writeFail(e, msg); }).then(function(){ btn.disabled = false; });
+    return notify(form, 'REQUEST ' + D.creature + ' ' + D.stage + ' ' + k + ' (' + kind + '): ' + (text || '(no note)')).then(function(r){
+      msg.textContent = r === 'sent' ? 'Saved and the orchestrator was notified.' : r === 'failed' ? 'Saved. ' + NOTIFY_FAIL : 'Saved. Tell the orchestrator in chat (notification unavailable in this view).';
+    });
+  }, function(e){ writeFail(e, msg); }).then(function(){ btn.disabled = false; });
 }
 function doConfirm(){
   var P = S.picks, picks = {};
   ORDER.forEach(function(k){ picks[k] = P[k].alias; });
   var btn = $('#confirm-btn'), msg = $('#confirm-msg'); btn.disabled = true; msg.textContent = 'Saving...';
   retry(function(){ return db.doc('status/board').set({ submitted: true, at: nowIso(), picks: picks }); })
-    .then(function(){ msg.textContent = ''; })
-    .catch(function(e){ writeFail(e, msg); btn.disabled = false; });
+    .then(function(){
+      var lines = ['CONFIRMED ' + D.creature + ' ' + D.stage + ': '];
+      ORDER.forEach(function(k){ var p = P[k]; lines.push(k + '=' + p.label + ' (' + p.alias + ')'); });
+      var rq = ORDER.filter(function(k){ return S.requests[k]; }).map(function(k){ return k + ': ' + (S.requests[k].text || '(no note)'); });
+      if (rq.length) lines.push('requests: ' + rq.join('; '));
+      return notify($('#rail-composite'), lines.join('\n')).then(function(r){
+        msg.textContent = r === 'sent' ? 'Confirmed and the orchestrator was notified.' : r === 'failed' ? 'Confirmed. ' + NOTIFY_FAIL : 'Confirmed. Tell the orchestrator in chat (notification unavailable in this view).';
+      });
+    }, function(e){ writeFail(e, msg); btn.disabled = false; });
 }
 
 document.addEventListener('click', function(ev){
@@ -807,6 +843,7 @@ C.use('user').then(function(u){
   if (!u || typeof u.can !== 'function') return;
   return u.can('data.write').then(function(ok){ if (ok === false) { S.canWrite = false; render(); } });
 }).catch(function(){});
+C.use('comments').then(function(c){ CM = c || null; checkCan(); }).catch(function(){ CM = null; });
 C.use('db').then(function(d){
   if (!d) return toNone();
   db = d; S.mode = 'ready'; render();
@@ -848,7 +885,7 @@ def build(creature, stage, spec, index=None):
     base_uri, _ = jpeg_data_uri(base["hash"])
     src = load_source(creature)
     source_html = render_source(src, base_uri)
-    sections, data = [], {"order": order, "elements": {}, "icons": {"check": ICONS["check"], "star": ICONS["star"]},
+    sections, data = [], {"creature": creature, "stage": stage, "order": order, "elements": {}, "icons": {"check": ICONS["check"], "star": ICONS["star"]},
                           "text": {"compositeEmpty": spec["compositeEmpty"]}}
     for n, el in enumerate(order, 1):
         cfg = spec["elements"][el]
@@ -903,6 +940,7 @@ def build(creature, stage, spec, index=None):
         '<button type="button" class="rail-toggle" id="rail-toggle" aria-controls="rail-inner" aria-expanded="true"><span id="rail-count">Your picks: 0 of %d</span>%s</button>'
         '<div class="rail-inner" id="rail-inner"><h2>Your picks</h2><ul class="picks" id="rail-picks"></ul>'
         '<p class="still" id="rail-still"></p><p class="letters mono" id="rail-letters"></p>'
+        '<p class="muted" id="notify-line" aria-live="polite">Notification not available in this view; tell the orchestrator in chat after confirming.</p>'
         '<div class="composite" id="rail-composite" hidden><h3>Composed preview</h3><div id="composite-body"></div>'
         '<button type="button" class="btn primary" id="confirm-btn">%s Confirm these picks</button>'
         '<p class="muted" id="changed-line" hidden>Your picks changed since you confirmed; confirm again.</p>'

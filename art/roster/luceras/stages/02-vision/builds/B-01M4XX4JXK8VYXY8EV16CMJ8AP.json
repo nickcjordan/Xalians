@@ -1,0 +1,61 @@
+{
+  "id": "B-01M4XX4JXK8VYXY8EV16CMJ8AP",
+  "alias": "x7vk",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Half-turn curl, slim: vision horns3",
+  "scope": "horns3",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "a5e1f887a79c2ea8d6ca08f87d18fb64acb8190a27c3b769befb4e361121ca11"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 27016,
+    "wallMinutes": 0.96,
+    "image": {
+      "stage": "vision",
+      "element": "horns3",
+      "label": "A: Half-turn curl, slim",
+      "summary": "Between the opened curl and the long sweep: the horn sweeps back from the skull and curls through about half a turn, slim along its length.",
+      "promptSha256": "b61542d48be4cfc168bf690c86838b18bf5005dec20fd936cf2805f9b73ad951",
+      "inputs": [
+        {
+          "name": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe",
+          "hash": "8d11b08100eced74fc7240f1e1706a3136f55721c639acaac78c0414ac1fa5fe"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn curl",
+        "horn bulk"
+      ],
+      "notFor": [
+        "ears",
+        "coat"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-x7vk",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "a5e1f887a79c2ea8d6ca08f87d18fb64acb8190a27c3b769befb4e361121ca11"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:10:00Z",
+  "briefSha256": "9a51da2df59d1c27fec650547eaf9d3d3829c3292c61d5f92e686995cb7c41ac",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:10:57Z"
+}
