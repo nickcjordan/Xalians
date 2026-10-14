@@ -1,0 +1,21 @@
+{
+  "name": "xalians-creature-pipeline",
+  "private": true,
+  "type": "module",
+  "description": "Creature asset pipeline tooling: compression, manifest, contract validator. Local to art/pipeline; not a workspace package.",
+  "scripts": {
+    "build": "powershell -ExecutionPolicy Bypass -File run.ps1",
+    "validate": "node contract/validate.mjs out/standin",
+    "viewer:check": "node viewer/check.mjs",
+    "serve": "node viewer/serve.mjs"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "4.5.1",
+    "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
+    "@gltf-transform/functions": "4.5.1",
+    "ajv": "8.20.0",
+    "gltf-validator": "2.0.0-dev.3.10",
+    "meshoptimizer": "1.3.0"
+  }
+}

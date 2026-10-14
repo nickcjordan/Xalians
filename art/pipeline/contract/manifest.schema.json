@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xalians.com/schemas/xalians-creature-asset-v1.json",
+  "title": "Xalians creature asset manifest",
+  "description": "Normative schema for docs/design/creature-asset-contract.md section 3. Every field is required unless the contract marks it optional.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "species", "assetVersion", "files", "units", "size", "bounds", "tiers", "sockets", "parameters", "clips", "acts", "measured", "build", "builtAt"],
+  "$defs": {
+    "vec3": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+    "nonNegInt": { "type": "integer", "minimum": 0 },
+    "ms": { "type": "number", "minimum": 0 },
+    "clipName": { "type": "string", "pattern": "^(idle|move|hurt|evade|guard|displaced|held|faint|react|celebrate|act\\.light|act\\.heavy|sig\\.[a-z0-9-]+)(\\.(start|loop|end))?$" },
+    "socket": { "enum": ["ground", "head", "eye_l", "eye_r", "emitter", "status", "carry"] },
+    "finish": { "enum": ["standard", "gleam", "prismatic", "eclipse"] },
+    "event": {
+      "type": "object", "additionalProperties": false, "required": ["name", "timeMs"],
+      "properties": { "name": { "type": "string", "pattern": "^[a-z][a-z_]*$" }, "timeMs": { "$ref": "#/$defs/ms" } }
+    },
+    "clip": {
+      "type": "object", "additionalProperties": false, "required": ["durationMs", "loop", "events"],
+      "properties": {
+        "durationMs": { "type": "number", "exclusiveMinimum": 0 },
+        "loop": { "type": "boolean" },
+        "events": { "type": "array", "items": { "$ref": "#/$defs/event" } },
+        "archetype": { "enum": ["lunge", "strike", "slam", "sweep", "spit", "spray", "burst", "aura", "brace", "mend", "focus"] },
+        "travel": {
+          "type": "object", "additionalProperties": false, "required": ["distanceM"],
+          "properties": { "distanceM": { "type": "number", "minimum": 0 }, "startMs": { "$ref": "#/$defs/ms" }, "endMs": { "$ref": "#/$defs/ms" } }
+        },
+        "reachM": { "type": "number", "minimum": 0 }
+      }
+    },
+    "tierMeasured": {
+      "type": "object", "additionalProperties": false, "required": ["triangles", "drawCalls"],
+      "properties": { "triangles": { "$ref": "#/$defs/nonNegInt" }, "drawCalls": { "$ref": "#/$defs/nonNegInt" } }
+    }
+  },
+  "properties": {
+    "format": { "const": "xalians-creature-asset-v1" },
+    "species": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "assetVersion": { "type": "string", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$" },
+    "files": {
+      "type": "object", "minProperties": 1,
+      "propertyNames": { "pattern": "^[A-Za-z0-9._/-]+$" },
+      "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+    },
+    "units": {
+      "type": "object", "additionalProperties": false, "required": ["length", "up", "forward"],
+      "properties": { "length": { "const": "meters" }, "up": { "const": "+Y" }, "forward": { "const": "+Z" } }
+    },
+    "size": {
+      "type": "object", "additionalProperties": false, "required": ["dimension", "referenceCm", "bandCm"],
+      "properties": {
+        "dimension": { "enum": ["heightCm", "lengthCm"] },
+        "referenceCm": { "type": "number", "exclusiveMinimum": 0 },
+        "bandCm": { "type": "array", "items": { "type": "number", "exclusiveMinimum": 0 }, "minItems": 2, "maxItems": 2 },
+        "restHeightCm": { "type": "number", "minimum": 0 }
+      }
+    },
+    "bounds": {
+      "type": "object", "additionalProperties": false, "required": ["rest", "footprintRadiusM", "maxExtentM"],
+      "properties": {
+        "rest": {
+          "type": "object", "additionalProperties": false, "required": ["min", "max"],
+          "properties": { "min": { "$ref": "#/$defs/vec3" }, "max": { "$ref": "#/$defs/vec3" } }
+        },
+        "footprintRadiusM": { "type": "number", "minimum": 0 },
+        "maxExtentM": { "type": "number", "minimum": 0 }
+      }
+    },
+    "tiers": {
+      "type": "object", "additionalProperties": false, "required": ["full"],
+      "properties": {
+        "full": { "type": "object", "additionalProperties": false, "required": ["node"], "properties": { "node": { "type": "string", "minLength": 1 } } },
+        "low": { "type": "object", "additionalProperties": false, "required": ["node"], "properties": { "node": { "type": "string", "minLength": 1 } } }
+      }
+    },
+    "sockets": { "type": "array", "items": { "$ref": "#/$defs/socket" }, "uniqueItems": true, "minItems": 1 },
+    "parameters": {
+      "type": "object", "additionalProperties": false, "required": ["finish"],
+      "properties": {
+        "finish": {
+          "type": "object", "additionalProperties": false, "required": ["values", "default", "variants"],
+          "properties": {
+            "values": { "type": "array", "items": { "$ref": "#/$defs/finish" }, "uniqueItems": true, "minItems": 1 },
+            "default": { "$ref": "#/$defs/finish" },
+            "variants": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "clips": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/clipName" },
+      "additionalProperties": { "$ref": "#/$defs/clip" },
+      "required": ["idle", "move", "hurt", "evade", "guard", "displaced", "held", "faint", "act.light", "act.heavy"]
+    },
+    "acts": {
+      "type": "object", "additionalProperties": false, "required": ["signatures", "archetypes"],
+      "properties": {
+        "signatures": { "type": "object", "additionalProperties": { "$ref": "#/$defs/clipName" } },
+        "passives": { "type": "object", "additionalProperties": { "$ref": "#/$defs/clipName" } },
+        "archetypes": {
+          "type": "object", "additionalProperties": { "$ref": "#/$defs/clipName" },
+          "required": ["lunge", "strike", "slam", "sweep", "spit", "spray", "burst", "aura", "brace", "mend", "focus"]
+        }
+      }
+    },
+    "measured": {
+      "type": "object", "additionalProperties": false,
+      "required": ["full", "joints", "influencesPerVertex", "morphTargets", "materials", "textureBytes", "fileBytes", "clipBytes"],
+      "properties": {
+        "full": { "$ref": "#/$defs/tierMeasured" },
+        "low": { "$ref": "#/$defs/tierMeasured" },
+        "joints": { "$ref": "#/$defs/nonNegInt" },
+        "influencesPerVertex": { "type": "integer", "minimum": 0, "maximum": 8 },
+        "morphTargets": { "$ref": "#/$defs/nonNegInt" },
+        "materials": { "$ref": "#/$defs/nonNegInt" },
+        "textureBytes": { "$ref": "#/$defs/nonNegInt" },
+        "fileBytes": { "$ref": "#/$defs/nonNegInt" },
+        "clipBytes": { "$ref": "#/$defs/nonNegInt" }
+      }
+    },
+    "build": { "type": "string", "pattern": "^B-[0-9A-Za-z]+$" },
+    "builtAt": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?Z$" }
+  }
+}

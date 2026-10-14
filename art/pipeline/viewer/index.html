@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creature Asset Viewer</title>
+<style>
+  :root { --bg: #15171a; --panel: #1f2226; --line: #3a3f46; --text: #e6e8eb; --muted: #9aa1aa; --accent: #f2b33d; --cool: #5aa9e6; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, sans-serif; }
+  body { display: flex; flex-direction: column; }
+  header { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  header label { color: var(--muted); }
+  select, button { background: var(--bg); color: var(--text); border: 1px solid var(--line); padding: 4px 8px; font: inherit; }
+  button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  main { flex: 1; display: flex; min-height: 0; flex-wrap: wrap; }
+  #stage { flex: 1; min-width: 0; min-height: 300px; display: flex; align-items: center; justify-content: center; background: #0d0e10; }
+  #stage canvas { display: block; }
+  #stage.phone canvas { outline: 1px dashed var(--line); }
+  aside { width: 300px; max-width: 100%; padding: 12px 16px; background: var(--panel); border-left: 1px solid var(--line); overflow: auto; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0 0 12px; }
+  dt { color: var(--muted); }
+  dd { margin: 0; font-family: ui-monospace, monospace; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 12px 0 4px; }
+  #events { font-family: ui-monospace, monospace; font-size: 12px; white-space: pre-wrap; color: var(--accent); min-height: 3em; }
+  #error { color: var(--accent); font-weight: 600; }
+  @media (max-width: 760px) {
+    main { flex-direction: column; flex-wrap: nowrap; }
+    #stage { flex: none; height: 60vh; min-height: 320px; overflow: auto; justify-content: flex-start; }
+    aside { width: 100%; border-left: 0; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<!-- Viewer config, read by viewer/check.mjs: default asset and the runtime pins. -->
+<script type="application/json" id="viewer-config">
+{ "defaultAsset": "../out/standin", "three": "0.160.0", "phoneViewport": [390, 700], "socketMarkerRadiusM": 0.012 }
+</script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<header>
+  <strong>Creature asset viewer</strong>
+  <label>Clip <select id="clip"></select></label>
+  <button id="replay" type="button">Replay</button>
+  <button id="phone" type="button" aria-pressed="false">Phone 390 x 700</button>
+  <button id="markers" type="button" aria-pressed="true">Sockets</button>
+  <span id="error" role="alert"></span>
+</header>
+<main>
+  <div id="stage"></div>
+  <aside>
+    <h2>Asset</h2>
+    <dl id="asset"></dl>
+    <h2>Render</h2>
+    <dl>
+      <dt>Creature tris</dt><dd id="ctris">-</dd>
+      <dt>Creature calls</dt><dd id="ccalls">-</dd>
+      <dt>Scene tris</dt><dd id="tris">-</dd>
+      <dt>Scene calls</dt><dd id="calls">-</dd>
+      <dt>Joints</dt><dd id="joints">-</dd>
+      <dt>Frame time</dt><dd id="frame">-</dd>
+      <dt>Clip time</dt><dd id="ctime">-</dd>
+    </dl>
+    <h2>Events fired</h2>
+    <div id="events"></div>
+    <h2>Sockets (rest, m)</h2>
+    <dl id="sockets"></dl>
+  </aside>
+</main>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+
+const config = JSON.parse(document.getElementById('viewer-config').textContent);
+const params = new URLSearchParams(location.search);
+const assetDir = (params.get('asset') || config.defaultAsset).replace(/\/$/, '');
+const $ = (id) => document.getElementById(id);
+const status = (k, v) => document.body.setAttribute('data-' + k, v);
+status('state', 'loading');
+
+const stage = $('stage');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.info.autoReset = false;
+stage.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0d0e10);
+const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 50);
+camera.position.set(1.3, 0.75, 1.5);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0.3, 0);
+scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x3a3226, 1.2));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(1.5, 3, 2);
+scene.add(sun);
+const grid = new THREE.GridHelper(4, 40, 0x3a3f46, 0x24282d);
+scene.add(grid);
+const forward = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0.002, 0), 0.5, 0x5aa9e6, 0.06, 0.04);
+scene.add(forward);
+
+let phone = false;
+function resize() {
+  const [pw, ph] = config.phoneViewport;
+  const w = phone ? pw : stage.clientWidth;
+  const h = phone ? ph : stage.clientHeight;
+  stage.classList.toggle('phone', phone);
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.zoom = Math.min(1, camera.aspect * 1.2); // keep the creature in frame on tall viewports
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+$('phone').onclick = () => { phone = !phone; $('phone').setAttribute('aria-pressed', phone); resize(); };
+resize();
+
+let mixer, manifest, current, lastClipTime = 0;
+const markers = [];
+const actions = {};
+
+async function load() {
+  manifest = await (await fetch(`${assetDir}/manifest.json`)).json();
+  const glbName = Object.keys(manifest.files).find((f) => f.endsWith('.glb'));
+  const loader = new GLTFLoader();
+  loader.setMeshoptDecoder(MeshoptDecoder);
+  const gltf = await loader.loadAsync(`${assetDir}/${glbName}`);
+  scene.add(gltf.scene);
+  mixer = new THREE.AnimationMixer(gltf.scene);
+
+  let joints = 0;
+  gltf.scene.traverse((o) => { if (o.isSkinnedMesh) joints = Math.max(joints, o.skeleton.bones.length); });
+  $('joints').textContent = joints;
+  // Creature-only counts from the loaded geometry (scene counts below include grid, arrow and markers).
+  let ctris = 0, ccalls = 0;
+  gltf.scene.traverse((o) => {
+    if (!o.isMesh) return;
+    const g = o.geometry;
+    ctris += (g.index ? g.index.count : g.attributes.position.count) / 3;
+    ccalls += Math.max(1, g.groups.length);
+  });
+  $('ctris').textContent = ctris;
+  $('ccalls').textContent = ccalls;
+  status('creature-tris', ctris);
+  status('creature-calls', ccalls);
+
+  const geo = new THREE.SphereGeometry(config.socketMarkerRadiusM, 12, 8);
+  const mat = new THREE.MeshBasicMaterial({ color: 0xf2b33d, depthTest: false });
+  gltf.scene.updateMatrixWorld(true);
+  gltf.scene.traverse((o) => {
+    const tag = o.userData && o.userData.xalians && o.userData.xalians.socket;
+    if (!tag) return;
+    const m = new THREE.Mesh(geo, mat);
+    m.renderOrder = 10;
+    m.name = 'marker_' + tag;
+    o.add(m);
+    markers.push(m);
+    const p = new THREE.Vector3().setFromMatrixPosition(o.matrixWorld);
+    $('sockets').insertAdjacentHTML('beforeend', `<dt>${tag}</dt><dd>${p.toArray().map((v) => v.toFixed(3)).join(', ')}</dd>`);
+  });
+
+  const m = manifest.measured;
+  $('asset').innerHTML = [
+    ['Species', manifest.species], ['Version', manifest.assetVersion], ['Reference', `${manifest.size.referenceCm} cm (${manifest.size.dimension})`],
+    ['File', `${(m.fileBytes / 1024).toFixed(1)} KB`], ['Texture', `${(m.textureBytes / 1024).toFixed(1)} KB`], ['Clips', `${(m.clipBytes / 1024).toFixed(1)} KB`],
+    ['Manifest tris', m.full.triangles], ['Sockets', `${markers.length} of ${manifest.sockets.length}`],
+  ].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+
+  const select = $('clip');
+  for (const clip of gltf.animations) {
+    actions[clip.name] = mixer.clipAction(clip);
+    const opt = document.createElement('option');
+    opt.value = opt.textContent = clip.name;
+    select.appendChild(opt);
+  }
+  const first = params.get('clip') || (actions['sig.lunge'] ? 'sig.lunge' : gltf.animations[0]?.name);
+  select.value = first;
+  select.onchange = () => play(select.value);
+  $('replay').onclick = () => play(select.value);
+  $('markers').onclick = () => {
+    const on = $('markers').getAttribute('aria-pressed') !== 'true';
+    $('markers').setAttribute('aria-pressed', on);
+    markers.forEach((mk) => (mk.visible = on));
+  };
+  play(first);
+  status('clips', gltf.animations.map((c) => c.name).join(','));
+  status('sockets', markers.map((mk) => mk.name.slice(7)).join(','));
+  status('joints', joints);
+  status('state', 'ready');
+}
+
+function play(name) {
+  if (!actions[name]) return;
+  const info = manifest.clips[name] || { loop: true, events: [] };
+  for (const a of Object.values(actions)) a.stop();
+  current = actions[name];
+  current.reset();
+  current.setLoop(info.loop ? THREE.LoopRepeat : THREE.LoopOnce, Infinity);
+  current.clampWhenFinished = true;
+  current.play();
+  // ?t=<ms> freezes the clip at that time (for stills and checks).
+  if (params.has('t')) { current.time = Number(params.get('t')) / 1000; current.paused = true; }
+  lastClipTime = current.time;
+  $('events').textContent = '';
+}
+
+function fireEvents(t0, t1) {
+  const info = manifest && manifest.clips[current?.getClip().name];
+  if (!info) return;
+  for (const e of info.events) {
+    const t = e.timeMs / 1000;
+    const crossed = t1 >= t0 ? t >= t0 && t < t1 : t >= t0 || t < t1;
+    if (crossed) $('events').textContent = (`${e.name} @ ${e.timeMs} ms\n` + $('events').textContent).slice(0, 400);
+  }
+}
+
+const clock = new THREE.Clock();
+let acc = 0, frames = 0, lastReport = performance.now();
+function tick() {
+  const dt = clock.getDelta();
+  const start = performance.now();
+  if (mixer) {
+    mixer.update(dt);
+    if (current) {
+      const t = current.time;
+      fireEvents(lastClipTime, t);
+      lastClipTime = t;
+      $('ctime').textContent = `${Math.round(t * 1000)} ms`;
+    }
+  }
+  controls.update();
+  renderer.info.reset();
+  renderer.render(scene, camera);
+  acc += performance.now() - start + 0;
+  frames++;
+  const now = performance.now();
+  if (now - lastReport > 500) {
+    const frameMs = (now - lastReport) / frames;
+    $('frame').textContent = `${frameMs.toFixed(1)} ms (${(1000 / frameMs).toFixed(0)} fps), cpu ${(acc / frames).toFixed(2)} ms`;
+    $('tris').textContent = renderer.info.render.triangles;
+    $('calls').textContent = renderer.info.render.calls;
+    status('tris', renderer.info.render.triangles);
+    status('calls', renderer.info.render.calls);
+    status('frame-ms', frameMs.toFixed(2));
+    acc = 0; frames = 0; lastReport = now;
+  }
+  requestAnimationFrame(tick);
+}
+tick();
+load().catch((e) => { $('error').textContent = 'Load failed: ' + e.message; status('state', 'error'); status('error', e.message); console.error(e); });
+</script>
+</body>
+</html>

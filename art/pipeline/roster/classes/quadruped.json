@@ -1,0 +1,36 @@
+{
+  "format": "xalians-skeleton-class-v1",
+  "class": "quadruped",
+  "note": "Stand-in proportions for the walking skeleton. Blender space: meters, +Z up, the creature faces -Y (glTF +Z after export), left is +X. Origin at the ground point under the body center.",
+  "modules": [
+    { "module": "root", "socket": "ground" },
+    { "module": "spine", "count": 5, "parent": "root", "from": [0, 0.20, 0.36], "to": [0, -0.16, 0.38], "arch": 0.015 },
+    { "module": "neck_head", "neckCount": 2, "parent": "spine_05",
+      "neck": [[0, -0.16, 0.38], [0, -0.21, 0.44], [0, -0.25, 0.49]],
+      "head": [[0, -0.25, 0.49], [0, -0.37, 0.47]] },
+    { "module": "jaw", "parent": "head_01", "from": [0, -0.27, 0.46], "to": [0, -0.37, 0.435] },
+    { "module": "limb", "name": "leg", "side": "fl", "parent": "spine_05",
+      "points": [[0.085, -0.13, 0.33], [0.095, -0.115, 0.19], [0.095, -0.13, 0.045], [0.095, -0.18, 0.0]] },
+    { "module": "limb", "name": "leg", "side": "fr", "mirror": "fl", "parent": "spine_05" },
+    { "module": "limb", "name": "leg", "side": "hl", "parent": "spine_01",
+      "points": [[0.085, 0.17, 0.32], [0.095, 0.125, 0.19], [0.095, 0.185, 0.065], [0.095, 0.13, 0.0]] },
+    { "module": "limb", "name": "leg", "side": "hr", "mirror": "hl", "parent": "spine_01" },
+    { "module": "tail", "count": 4, "parent": "spine_01", "from": [0, 0.21, 0.36], "to": [0, 0.52, 0.27], "droop": 0.04 },
+    { "module": "ear", "side": "l", "count": 2, "parent": "head_01", "points": [[0.035, -0.28, 0.525], [0.055, -0.27, 0.565], [0.07, -0.26, 0.6]] },
+    { "module": "ear", "side": "r", "mirror": "l", "parent": "head_01" },
+    { "module": "horn", "parent": "head_01", "from": [0, -0.31, 0.53], "to": [0, -0.33, 0.58] },
+    { "module": "sockets", "items": [
+      { "socket": "head",    "name": "socket_head",    "parent": "head_01",  "at": [0, -0.31, 0.50] },
+      { "socket": "eye_l",   "name": "socket_eye_l",   "parent": "head_01",  "at": [0.035, -0.345, 0.505] },
+      { "socket": "eye_r",   "name": "socket_eye_r",   "parent": "head_01",  "at": [-0.035, -0.345, 0.505] },
+      { "socket": "emitter", "name": "socket_emitter", "parent": "jaw_01",   "at": [0, -0.385, 0.45] },
+      { "socket": "status",  "name": "socket_status",  "parent": "head_01",  "at": [0, -0.28, 0.72] },
+      { "socket": "carry",   "name": "socket_carry",   "parent": "spine_03", "at": [0, 0.02, 0.45] }
+    ] }
+  ],
+  "body": {
+    "note": "Radii for the stand-in body only (metaball capsules along each deform bone). Real species use base meshes per module.",
+    "radius": { "spine": [0.105, 0.115], "neck": [0.06, 0.055], "head": [0.07, 0.05], "jaw": [0.035, 0.025],
+                "leg": [0.042, 0.03, 0.024], "tail": [0.04, 0.012], "ear": [0.022, 0.008] }
+  }
+}
