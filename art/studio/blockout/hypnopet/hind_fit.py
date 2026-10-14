@@ -144,6 +144,23 @@ def search(args):
             (args.out/'best.json').write_text(json.dumps({'score': best_score, 'params': best, 'fit': best_m}, indent=1))
 
 
+HIND_CLIP = {'center': [0.11, 0.135, 0.13], 'radii': [0.08, 0.13, 0.17], 'blend': 0.02}
+
+
+def recon_spec(base_spec, grid_path):
+    """The sculpt-layer role for comparison: the hind legs taken from the reconstruction grid (left side,
+    mirrored), clipped around haunch, leg and foot, in place of the authored hind legs."""
+    import hashlib
+    sha = hashlib.sha256(Path(grid_path).read_bytes()).hexdigest()
+    keep = [p for p in base_spec['parts'] if p['part'] != 'hindlegs']
+    i = next(n for n, p in enumerate(keep) if p['part'] == 'forelegs')
+    leg = {'part': 'hindlegs', 'kind': 'grid', 'mirror': 'x', 'blend': 0.03,
+           'params': {'file': str(Path(grid_path).resolve()), 'sha256': sha, 'clip': HIND_CLIP}}
+    s = {**base_spec, 'parts': keep[:i]+[leg]+keep[i:]}
+    s['note'] = base_spec.get('note', '')+' Hind legs from the reconstruction grid (experiment X30, sculpt-layer role).'
+    return s
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest='cmd', required=True)
@@ -160,6 +177,10 @@ def main():
     p.add_argument('--params', type=Path)
     p.add_argument('--out', type=Path, required=True)
     p.add_argument('--start', action='store_true', help='write the starting structure, not a searched one')
+    q = sub.add_parser('recon-spec')
+    q.add_argument('--base', type=Path, required=True, help='the spec to put the reconstructed hind legs into')
+    q.add_argument('--grid', type=Path, required=True)
+    q.add_argument('--out', type=Path, required=True)
     a = ap.parse_args()
     if a.cmd == 'refs':
         import numpy as np
@@ -169,6 +190,10 @@ def main():
         print(len(pts), 'reference points')
     elif a.cmd == 'search':
         search(a)
+    elif a.cmd == 'recon-spec':
+        a.out.parent.mkdir(parents=True, exist_ok=True)
+        a.out.write_text(json.dumps(recon_spec(json.loads(a.base.read_text()), a.grid), indent=1), encoding='utf-8')
+        print('wrote', a.out)
     else:
         h = START if a.start else json.loads(a.params.read_text())['params']
         a.out.parent.mkdir(parents=True, exist_ok=True)

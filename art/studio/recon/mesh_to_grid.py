@@ -39,6 +39,8 @@ def main():
     ap.add_argument('--height', type=float, default=0.658)
     ap.add_argument('--center-y', type=float, default=0.005)
     ap.add_argument('--samples', type=int, default=3_000_000)
+    ap.add_argument('--floor', type=float, help='cut everything below this height (the ground plate a model copies '
+                                                'from a drawn shadow)')
     args = ap.parse_args()
     m = trimesh.load(args.glb, force='mesh')
     v, s, off = studio_frame(np.asarray(m.vertices, float), args.height, args.center_y)
@@ -60,10 +62,12 @@ def main():
         vals[i] = (d*sign).reshape(Y.shape)
     if args.smooth > 0:
         vals = ndimage.gaussian_filter(vals, args.smooth).astype(np.float32)
+    if args.floor is not None:
+        vals = np.maximum(vals, (args.floor-axes[2])[None, None, :]).astype(np.float32)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     record = {'source': str(args.glb), 'sourceSha256': hashlib.sha256(args.glb.read_bytes()).hexdigest(),
               'frame': {'height': args.height, 'centerY': args.center_y, 'scale': s, 'offset': off.tolist()},
-              'box': box.tolist(), 'voxel': args.voxel, 'smooth': args.smooth, 'samples': args.samples,
+              'box': box.tolist(), 'voxel': args.voxel, 'smooth': args.smooth, 'samples': args.samples, 'floor': args.floor,
               'shape': shape.tolist()}
     np.savez_compressed(args.out, origin=lo.astype(np.float64), voxel=np.float64(args.voxel), values=vals,
                         record=json.dumps(record))
