@@ -294,6 +294,20 @@ DIRECTIONS.update({
           'eye_c': [0.039, -0.169, 0.44], 'eye_r': 0.044, 'eye_yaw': 4, 'eye_open': 67},
 })
 
+# The fitted face (face_search.py from D, scored by face_fit.py; numbers in face-fitted.json) and the eye options
+# around it. G is the fit itself (the bare sheet's eyes); H and I keep every face number and change only the eyes,
+# toward the painted sheet and the face close-up, where the eyes are larger and closer (gap about half an eye).
+FITTED = json.loads((HERE/'face-fitted.json').read_text(encoding='utf-8'))['direction']
+FITTED['extra_adds'] = [tuple(a) for a in FITTED['extra_adds']]
+_ex, _ey, _ez = FITTED['eye_c']
+DIRECTIONS.update({
+    'G': {**FITTED, 'note': 'G: fitted face, the bare sheet eyes.'},
+    'H': {**FITTED, 'note': 'H: fitted face, eyes between the bare and the painted sheet.',
+          'eye_c': [_ex-0.002, _ey, _ez], 'eye_r': round(FITTED['eye_r']*1.09, 4)},
+    'I': {**FITTED, 'note': 'I: fitted face, the painted sheet eyes (larger, closer).',
+          'eye_c': [_ex-0.004, _ey+0.002, _ez], 'eye_r': round(FITTED['eye_r']*1.18, 4)},
+})
+
 if __name__ == '__main__':
     name = sys.argv[1]
     out = Path(sys.argv[sys.argv.index('--out')+1]) if '--out' in sys.argv else HERE/f'face-preview-{name}.json'
