@@ -1,0 +1,392 @@
+{
+ "name": "hands v1",
+ "approval": null,
+ "note": "hands v1 (2026-10-13), for hands_v1_post.py / hands_v1_field.py, appended after P-earroot1. Anatomy review 2026-10-13, finding 8 (Nick, 2026-10-13: \"Yes, fix all ten of them.\"): the paw was a mitten (digit lumps at the very end, no separation, claws on a fixed arc not on the digits, lumpy palm with crevices, a crease band across the back of the hand). The +x paw is described; the step runs one grid per paw and mirrors every mass to -x. blurs: the old lumps, palm ridges and crease band averaged out first; erode: the paw end pulled in .003 with a full-ellipsoid taper so the digits define it; digits: one elliptic tapered capsule per digit (knuckle z -.172 to its tip, each on the paw's own measured center line at its y, narrower across the row than front to back) joined by a smooth minimum (digitK), leaving shallow valleys between them; pads: one palm pad above the digit pads and one pad under each digit tip (domes h (1 - e^2)^2); nailBeds: small domes on the back of each digit tip; claws: a rigid translation per fore claw (mirrored for -x) so its base sits .003 inside its digit tip, under the nail bed; partBox: the paw below the wrist (full below z -.125, zero above -.11). Development variants a to g in untracked anatomy-fixes/work/08-hands/specs (this is variant g, from gen2.py). World units, +y back.",
+ "grid": {
+  "lo": [
+   0.255,
+   -0.17,
+   -0.24
+  ],
+  "hi": [
+   0.395,
+   -0.03,
+   -0.08
+  ],
+  "step": 0.0015,
+  "far": 0.05
+ },
+ "blurs": [
+  {
+   "c": [
+    0.33,
+    -0.102,
+    -0.172
+   ],
+   "s": [
+    0.055,
+    0.065,
+    0.055
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.008
+  },
+  {
+   "c": [
+    0.33,
+    -0.1,
+    -0.145
+   ],
+   "s": [
+    0.05,
+    0.065,
+    0.022
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.006
+  }
+ ],
+ "erode": [
+  {
+   "c": [
+    0.3365,
+    -0.102,
+    -0.198
+   ],
+   "s": [
+    0.04,
+    0.06,
+    0.05
+   ],
+   "fade": [
+    0.0,
+    1.0
+   ],
+   "depth": 0.003
+  }
+ ],
+ "digits": [
+  {
+   "a": [
+    0.329,
+    -0.1305,
+    -0.172
+   ],
+   "b": [
+    0.329,
+    -0.1305,
+    -0.182
+   ],
+   "ra": 0.015,
+   "rb": 0.015,
+   "ySquash": 1.55
+  },
+  {
+   "a": [
+    0.335,
+    -0.1115,
+    -0.172
+   ],
+   "b": [
+    0.335,
+    -0.1115,
+    -0.1885
+   ],
+   "ra": 0.015,
+   "rb": 0.015,
+   "ySquash": 1.55
+  },
+  {
+   "a": [
+    0.341,
+    -0.0925,
+    -0.172
+   ],
+   "b": [
+    0.341,
+    -0.0925,
+    -0.1885
+   ],
+   "ra": 0.015,
+   "rb": 0.015,
+   "ySquash": 1.55
+  },
+  {
+   "a": [
+    0.343,
+    -0.0735,
+    -0.172
+   ],
+   "b": [
+    0.343,
+    -0.0735,
+    -0.181
+   ],
+   "ra": 0.015,
+   "rb": 0.015,
+   "ySquash": 1.55
+  }
+ ],
+ "digitK": 0.006,
+ "grooves": [],
+ "pads": [
+  {
+   "c": [
+    0.3075,
+    -0.1024,
+    -0.175
+   ],
+   "s": [
+    0.013,
+    0.028,
+    0.017
+   ],
+   "h": 0.0048
+  },
+  {
+   "c": [
+    0.3204,
+    -0.1305,
+    -0.1943
+   ],
+   "s": [
+    0.009,
+    0.0085,
+    0.0095
+   ],
+   "h": 0.0028
+  },
+  {
+   "c": [
+    0.3264,
+    -0.1115,
+    -0.2008
+   ],
+   "s": [
+    0.009,
+    0.0085,
+    0.0095
+   ],
+   "h": 0.0028
+  },
+  {
+   "c": [
+    0.3324,
+    -0.0925,
+    -0.2008
+   ],
+   "s": [
+    0.009,
+    0.0085,
+    0.0095
+   ],
+   "h": 0.0028
+  },
+  {
+   "c": [
+    0.3344,
+    -0.0735,
+    -0.1933
+   ],
+   "s": [
+    0.009,
+    0.0085,
+    0.0095
+   ],
+   "h": 0.0028
+  }
+ ],
+ "nailBeds": [
+  {
+   "c": [
+    0.3405,
+    -0.1305,
+    -0.1916
+   ],
+   "s": [
+    0.007,
+    0.0065,
+    0.009
+   ],
+   "h": 0.0016
+  },
+  {
+   "c": [
+    0.3465,
+    -0.1115,
+    -0.1981
+   ],
+   "s": [
+    0.007,
+    0.0065,
+    0.009
+   ],
+   "h": 0.0016
+  },
+  {
+   "c": [
+    0.3525,
+    -0.0925,
+    -0.1981
+   ],
+   "s": [
+    0.007,
+    0.0065,
+    0.009
+   ],
+   "h": 0.0016
+  },
+  {
+   "c": [
+    0.3545,
+    -0.0735,
+    -0.1906
+   ],
+   "s": [
+    0.007,
+    0.0065,
+    0.009
+   ],
+   "h": 0.0016
+  }
+ ],
+ "partBox": {
+  "x": [
+   0.262,
+   0.272,
+   1,
+   1
+  ],
+  "y": [
+   -1,
+   -1,
+   -0.035,
+   -0.03
+  ],
+  "z": [
+   -1,
+   -1,
+   -0.125,
+   -0.11
+  ]
+ },
+ "claws": {
+  "1": [
+   0.0129,
+   0.0068,
+   -0.0097
+  ],
+  "2": [
+   0.0088,
+   0.0098,
+   -0.001
+  ],
+  "3": [
+   0.0054,
+   0.0083,
+   0.0027
+  ],
+  "4": [
+   0.0004,
+   0.0061,
+   0.002
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ },
+ "generatorParams": {
+  "digitY": [
+   -0.1305,
+   -0.1115,
+   -0.0925,
+   -0.0735
+  ],
+  "tipZ": [
+   -0.197,
+   -0.2035,
+   -0.2035,
+   -0.196
+  ],
+  "xc": 0.3365,
+  "r": 0.015,
+  "rKnuckle": 0.015,
+  "knuckleZ": -0.172,
+  "ySquash": 1.55,
+  "digitK": 0.006,
+  "erodeDepth": 0.003,
+  "padH": 0.0048,
+  "padS": [
+   0.013,
+   0.028,
+   0.017
+  ],
+  "palm": [
+   0.3075,
+   -0.1024,
+   -0.175
+  ],
+  "digitPadH": 0.0028,
+  "digitPadS": [
+   0.009,
+   0.0085,
+   0.0095
+  ],
+  "digitPadAng": -125,
+  "nailH": 0.0016,
+  "nailS": [
+   0.007,
+   0.0065,
+   0.009
+  ],
+  "nailAng": -40,
+  "clawAng": -70,
+  "clawSink": 0.003,
+  "lumpSigma": 0.008,
+  "creaseSigma": 0.006,
+  "grooveDepth": 0,
+  "xcs": [
+   0.329,
+   0.335,
+   0.341,
+   0.343
+  ],
+  "lumpC": [
+   0.33,
+   -0.102,
+   -0.172
+  ],
+  "lumpS": [
+   0.055,
+   0.065,
+   0.055
+  ],
+  "erodeS": [
+   0.04,
+   0.06,
+   0.05
+  ],
+  "erodeFade": [
+   0.0,
+   1.0
+  ]
+ }
+}
