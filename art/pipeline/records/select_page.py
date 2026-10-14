@@ -15,6 +15,9 @@ The page publishes with capabilities {db: {}, user: {}}. Store layout it reads a
   requests/<element>   {kind: "new-set"|"mix", text, at}   set from the two request boxes
   composite/current    {blob, label, note, dataUri?}        written by the orchestrator, shown when all are picked
   status/board         {submitted: true, at, picks}         set by "Confirm these picks"
+Each section's reference strip also carries a "Source material" block: the species silhouette
+(docs/species-templates/art/<key>.png, embedded once as a CSS variable), the raw lore from
+docs/species-templates/v5/<key>.json, and the home world's encyclopedia entry. The key is the creature name.
 Python 3 standard library plus Pillow.
 """
 import argparse
@@ -38,6 +41,11 @@ E = html.escape
 IMG_WIDTH = 720
 JPEG_QUALITY = 82
 MAX_BYTES = 8 * 1024 * 1024
+SILH_WIDTH = 480
+SILH_QUALITY = 85
+MORE_AFTER = 600
+LORE_FIELDS = (("origin", "Origin"), ("habitat", "Habitat"), ("feeding", "Feeding"),
+               ("behavior", "Behavior"), ("company", "Company"))
 FONTS = ("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700"
          "&family=Martian+Mono:wght@400;500&family=Saira:wght@600&display=swap")
 
@@ -132,6 +140,90 @@ def resolve_reading(creature, refs):
     return out
 
 
+def repo_root():
+    here = Path(__file__).resolve()
+    for p in here.parents:
+        if (p / "docs" / "species-templates").is_dir():
+            return p
+    raise Refusal("cannot find docs/species-templates above %s" % here)
+
+
+def silhouette_uri(key):
+    """Nick's silhouette -> 480 px wide JPEG data URI (white background kept) and its size."""
+    p = repo_root() / "docs" / "species-templates" / "art" / ("%s.png" % key)
+    if not p.exists():
+        return None, None
+    im = Image.open(p)
+    if im.mode in ("RGBA", "LA") or "transparency" in im.info:
+        im = im.convert("RGBA")
+        bg = Image.new("RGBA", im.size, (255, 255, 255, 255))
+        im = Image.alpha_composite(bg, im)
+    im = im.convert("RGB")
+    if im.width > SILH_WIDTH:
+        im = im.resize((SILH_WIDTH, round(im.height * SILH_WIDTH / im.width)), Image.LANCZOS)
+    buf = io.BytesIO()
+    im.save(buf, "JPEG", quality=SILH_QUALITY, optimize=True, progressive=True)
+    return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode("ascii"), im.size
+
+
+def load_source(creature):
+    """Lore, home-world entry and silhouette for the creature, or None when it has no species record."""
+    root = repo_root()
+    sp = root / "docs" / "species-templates" / "v5" / ("%s.json" % creature)
+    if not sp.exists():
+        return None
+    rec = json.loads(sp.read_text(encoding="utf-8"))
+    planet = rec.get("homePlanet") or ""
+    entry = None
+    ep = root / "docs" / "encyclopedia" / "encyclopedia.json"
+    if ep.exists() and planet:
+        for e in json.loads(ep.read_text(encoding="utf-8")).get("entries", []):
+            if (e.get("key") or "").lower() == planet.lower() or (e.get("title") or "").lower() == planet.lower():
+                entry = e
+                break
+    uri, size = silhouette_uri(creature)
+    return {"lore": rec.get("lore") or {}, "planet": planet, "element": rec.get("element") or "",
+            "entry": entry, "silh": uri, "silhSize": size}
+
+
+def render_source(src):
+    """The 'Source material' block (static HTML, identical in every section)."""
+    if not src:
+        return ""
+    lore = src["lore"]
+    parts = ['<div class="src"><h3>Source material</h3>']
+    if src["silh"]:
+        w, h = src["silhSize"]
+        parts.append('<figure class="silh-fig"><div class="silh" role="img" aria-label="Nick&#x27;s silhouette of the creature" '
+                     'style="aspect-ratio:%d/%d"></div><figcaption>Nick&#x27;s silhouette</figcaption></figure>' % (w, h))
+    if lore.get("description"):
+        parts.append('<h4>Description</h4><p>%s</p>' % E(lore["description"]))
+    if lore.get("appearance"):
+        parts.append('<h4>Appearance (every line mandatory)</h4><ul class="app">%s</ul>'
+                     % "".join("<li>%s</li>" % E(a) for a in lore["appearance"]))
+    rows = "".join("<dt>%s</dt><dd>%s</dd>" % (E(lbl), E(lore[k])) for k, lbl in LORE_FIELDS if lore.get(k))
+    if rows:
+        parts.append('<dl class="lorelist">%s</dl>' % rows)
+    if src["planet"]:
+        e = src["entry"]
+        parts.append('<h4>Home world</h4><p><strong>%s</strong> <span class="muted">(element: %s)</span></p>'
+                     % (E((e or {}).get("title") or src["planet"].title()), E(src["element"].title())))
+        if e and e.get("definition"):
+            d = e["definition"]
+            if len(d) > MORE_AFTER:
+                cut = d.rfind(" ", 0, MORE_AFTER)
+                cut = cut if cut > 0 else MORE_AFTER
+                parts.append('<p>%s <details class="more"><summary>more</summary>%s</details></p>' % (E(d[:cut]), E(d[cut:].strip())))
+            else:
+                parts.append("<p>%s</p>" % E(d))
+        else:
+            parts.append('<p class="muted">No encyclopedia entry found for this world.</p>')
+    elif src["element"]:
+        parts.append('<h4>Element</h4><p>%s</p>' % E(src["element"].title()))
+    parts.append("</div>")
+    return "".join(parts)
+
+
 # ---------------------------------------------------------------- page
 
 CSS = r"""
@@ -187,7 +279,7 @@ section.set{background:var(--surface);border:1px solid var(--line);padding:16px;
 .question{font-size:1.1rem;margin:6px 0 8px}
 .judge{margin:0 0 12px;padding-left:1.2em}
 .judge li{margin:2px 0}
-.set-body{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:start}
+.set-body{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
 .ref{background:var(--surface-2);border:1px solid var(--line);padding:10px;font-size:.92rem}
 .ref h3{font-size:.95rem;margin-bottom:6px}
 .ref ul{list-style:none;margin:0 0 10px;padding:0}
@@ -197,6 +289,20 @@ section.set{background:var(--surface);border:1px solid var(--line);padding:16px;
 .ref figure{margin:0}
 .ref img{width:100%;height:auto;display:block;border:1px solid var(--line)}
 .ref figcaption{font-size:.8rem;color:var(--muted);margin-top:4px}
+.ref .src{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.ref .src h3{font-size:1rem;margin-bottom:6px}
+.ref .src h4{font-family:var(--f-mono);font-size:.72rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 4px}
+.ref .src p{margin:.3em 0}
+.ref .silh-fig{margin:0 0 8px}
+.ref .silh{width:100%;background:#fff var(--silh) center/100% 100% no-repeat;border:1px solid var(--line)}
+.ref .app{margin:0;padding-left:1.1em}
+.ref .app li{margin:0 0 3px}
+.ref .lorelist{display:grid;grid-template-columns:76px minmax(0,1fr);gap:6px 10px;margin:10px 0 0}
+.ref .lorelist dt{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.ref .lorelist dd{margin:0;overflow-wrap:anywhere}
+.ref details.more{display:inline}
+.ref details.more summary{cursor:pointer;color:var(--blue);text-decoration:underline;display:inline}
+.ref details.more[open] summary{display:block;margin-top:4px}
 .toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
 .toolbar .lbl{font-size:.9rem;color:var(--muted);margin-right:2px}
 .seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line)}
@@ -277,7 +383,8 @@ details.fold summary{cursor:pointer;font-family:var(--f-head);font-weight:600;fo
 @media (max-width:760px){
  h1{font-size:1.55rem}
  .set-body{grid-template-columns:minmax(0,1fr)}
- .ref{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px}
+ .ref-top{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px}
+ .ref .silh-fig{max-width:260px}
  .asks{grid-template-columns:minmax(0,1fr)}
  .cards{grid-template-columns:minmax(0,1fr)}
  section.set{padding:12px}
@@ -310,16 +417,16 @@ def bg_toggle(el):
     return '<span class="lbl">Background</span><span class="seg" role="group" aria-label="Background behind images">%s</span>' % btns
 
 
-def render_section(el, cfg, opts, rec_alias, base_uri, reading, n, total):
+def render_section(el, cfg, opts, rec_alias, base_uri, reading, n, total, source_html=""):
     name = cfg.get("name", el.title())
     judge = "".join("<li>%s</li>" % E(j) for j in cfg.get("judge", []))
     ref_items = "".join(
         '<li><span class="k">%s</span>%s%s</li>' % (E(k), E(t), ('<span class="note">%s</span>' % E(note)) if note else "")
         for k, t, note in reading)
-    ref = ('<div class="ref"><div><h3>The approved reading</h3><ul>%s</ul></div>'
+    ref = ('<div class="ref"><div class="ref-top"><div><h3>The approved reading</h3><ul>%s</ul></div>'
            '<figure><img src="%s" alt="The neutral gray base every option in this set was edited from">'
-           '<figcaption>The base: neutral gray, edited per option</figcaption></figure></div>'
-           % (ref_items or '<li class="muted">No reading lines attached.</li>', base_uri))
+           '<figcaption>The base: neutral gray, edited per option</figcaption></figure></div>%s</div>'
+           % (ref_items or '<li class="muted">No reading lines attached.</li>', base_uri, source_html))
     cards = []
     for o in opts:
         rec = o["alias"] == rec_alias
@@ -664,6 +771,8 @@ def build(creature, stage, spec, index=None):
     if not base:
         raise Refusal("no base image found for %s %s" % (creature, stage))
     base_uri, _ = jpeg_data_uri(base["hash"])
+    src = load_source(creature)
+    source_html = render_source(src)
     sections, data = [], {"order": order, "elements": {}, "icons": {"check": ICONS["check"], "star": ICONS["star"]},
                           "text": {"compositeEmpty": spec["compositeEmpty"]}}
     for n, el in enumerate(order, 1):
@@ -681,7 +790,7 @@ def build(creature, stage, spec, index=None):
         if rec_letter and not rec_alias:
             raise Refusal("recommended letter %s not among %s options" % (rec_letter, el))
         reading = resolve_reading(creature, cfg.get("reading"))
-        sections.append(render_section(el, cfg, opts, rec_alias, base_uri, reading, n, len(order)))
+        sections.append(render_section(el, cfg, opts, rec_alias, base_uri, reading, n, len(order), source_html))
         data["elements"][el] = {"name": cfg.get("name", el.title()), "recommended": rec_alias,
                                 "options": [{"alias": o["alias"], "letter": o["letter"], "label": o["label"],
                                              "summary": o["summary"], "blob": o["hash"]} for o in opts]}
@@ -692,6 +801,8 @@ def build(creature, stage, spec, index=None):
     page = []
     page.append("<title>%s</title>" % E(spec["title"]))
     page.append("<style>%s</style>" % CSS)
+    if src and src["silh"]:
+        page.append('<style>:root{--silh:url("%s")}</style>' % src["silh"])
     page.append('<link rel="stylesheet" href="%s">' % FONTS)
     page.append('<div class="wrap">')
     page.append('<header class="top"><h1>%s</h1><p class="lede">%s</p>'
