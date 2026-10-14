@@ -1,0 +1,16 @@
+{
+  "id": "N-01M4XXKJA0XA9GR7Q4WA1V9HTB",
+  "alias": "xevc",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "Option A is close to what I want, but the horns are still a tad to turned outward. I think I would prefer then where the tips were turned inward a bit more so that when you are looking directly at it, the horns curve back around the creature back rather than curving around its side.",
+  "date": "2026-10-14",
+  "kind": "request",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T19:18:11Z",
+  "element": "horns3",
+  "requestKind": "new-set"
+}

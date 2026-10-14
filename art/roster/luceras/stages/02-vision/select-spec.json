@@ -3,7 +3,7 @@
  "stage": "02-vision",
  "title": "Luceras Vision Board",
  "heading": "Luceras: vision board",
- "lede": "Stage 2 of 11, reopened. Six picks are in; the last is the horn shape, now in two sets (7 and 8). Pick one; then Confirm, which notifies the orchestrator.",
+ "lede": "Stage 2 of 11, reopened. Six picks are in; the last is the horn shape, now in sets 7 to 9. Pick one; then Confirm, which notifies the orchestrator.",
  "order": [
   "palette",
   "horns",
@@ -12,7 +12,8 @@
   "plume",
   "head",
   "horns2",
-  "horns3"
+  "horns3",
+  "horns4"
  ],
  "elements": {
   "palette": {
@@ -147,6 +148,22 @@
     "reason": "A sits squarely between the two you named: a long arc with the tip turning down, half a turn, slim. B curls a little further."
    },
    "note": "Second horn refinement, from your note 'somewhere between A and B'. This is the second regeneration on the horns; if neither fits, the next step is a sketch-level note from you rather than another reroll."
+  },
+  "horns4": {
+   "name": "Horn tips, turned in",
+   "question": "Which tip direction: turned in, or turned in more?",
+   "judge": [
+    "Seen head-on, do the arcs wrap back over the creature rather than out around its sides?",
+    "Still slim, still half a turn, still the focal point?"
+   ],
+   "reading": [
+    "mustHave[2]"
+   ],
+   "recommend": {
+    "letter": "A",
+    "reason": "Your note applied to set 8's A: the same half-turn, slim horns with the tips turned in so the arcs sweep back over the head. B turns them in further until the two arcs nearly meet behind the skull."
+   },
+   "note": "Made from your comment on set 8. Pick in any horn set; the latest pick wins."
   }
  },
  "fold": {

@@ -1,0 +1,60 @@
+{
+  "id": "B-01M4XXNY4MYMMQ6PVZ2RCCTKYM",
+  "alias": "x4ww",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Tips turned in: vision horns4",
+  "scope": "horns4",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 26283,
+    "wallMinutes": 1.11,
+    "image": {
+      "stage": "vision",
+      "element": "horns4",
+      "label": "A: Tips turned in",
+      "summary": "The same half-turn horns, but the tips turn inward toward each other, so seen head-on the arcs wrap back over the creature rather than flaring out to the sides.",
+      "promptSha256": "2ed42057079f572b7452fdab661e604d927cf6e4920280a7ff17bac3140d3ff2",
+      "inputs": [
+        {
+          "name": "a5e1f887a79c2ea8d6ca08f87d18fb64acb8190a27c3b769befb4e361121ca11",
+          "hash": "a5e1f887a79c2ea8d6ca08f87d18fb64acb8190a27c3b769befb4e361121ca11"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn tip direction"
+      ],
+      "notFor": [
+        "ears",
+        "coat"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-x4ww",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:19:28Z",
+  "briefSha256": "b775a40d940d35c186a644ae9e21914f3cbc80f11e1bc7471ab00758c7b67f4b",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:20:35Z"
+}

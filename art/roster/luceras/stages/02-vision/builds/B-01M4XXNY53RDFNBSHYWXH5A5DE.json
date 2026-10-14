@@ -1,0 +1,60 @@
+{
+  "id": "B-01M4XXNY53RDFNBSHYWXH5A5DE",
+  "alias": "6rh5",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Tips turned in more: vision horns4",
+  "scope": "horns4",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "cc8773ec78fcf5d44976ce5bee89a9e459fbbedfd49f342662b0fda255de7d4a"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 25689,
+    "wallMinutes": 0.88,
+    "image": {
+      "stage": "vision",
+      "element": "horns4",
+      "label": "B: Tips turned in more",
+      "summary": "The same half-turn horns with the tips turned in further, the two arcs nearly meeting behind the head.",
+      "promptSha256": "a9e05135b4b6e52deb4518286518e42c86ff21ba9c388c937e2ffa36720b5515",
+      "inputs": [
+        {
+          "name": "a5e1f887a79c2ea8d6ca08f87d18fb64acb8190a27c3b769befb4e361121ca11",
+          "hash": "a5e1f887a79c2ea8d6ca08f87d18fb64acb8190a27c3b769befb4e361121ca11"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [
+        "horn tip direction"
+      ],
+      "notFor": [
+        "ears",
+        "coat"
+      ],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-6rh5",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "cc8773ec78fcf5d44976ce5bee89a9e459fbbedfd49f342662b0fda255de7d4a"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-14T19:19:28Z",
+  "briefSha256": "0c20ce0bfe2b1d1ec8ec88b6fa89710033f94a4e2bc5ebe1dc1e72ea5e30c21c",
+  "checks": [],
+  "reportedAt": "2026-10-14T19:20:21Z"
+}

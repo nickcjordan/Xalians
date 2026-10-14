@@ -1,0 +1,14 @@
+{
+  "id": "D-01M4XXKJADDY2REKBDS67YN0GR",
+  "alias": "2rd9",
+  "stage": "02-vision",
+  "description": "horns3: no option accepted",
+  "camera": null,
+  "region": null,
+  "origin": "selection screen",
+  "attempts": [
+    "N-01M4XXKJA0XA9GR7Q4WA1V9HTB"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-14T19:18:11Z"
+}
