@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XS7MYFFSYF4F96DZJTDRNB",
+  "alias": "7q2n",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "picked B: Amber goat eyes on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XJRYZDJGASDJTKV2RP0STP",
+    "evidence": [
+      "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T18:01:46Z",
+  "element": "eyes",
+  "buildAlias": "5pne",
+  "blob": "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8"
+}

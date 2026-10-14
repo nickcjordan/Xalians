@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XS7MYKBEY2P3YHYDPEXJ45",
+  "alias": "cbaz",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "picked C: Feathered hind legs on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XJTD3AZ24N93KDHDC06K2N",
+    "evidence": [
+      "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T18:01:46Z",
+  "element": "fur",
+  "buildAlias": "bd53",
+  "blob": "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9"
+}

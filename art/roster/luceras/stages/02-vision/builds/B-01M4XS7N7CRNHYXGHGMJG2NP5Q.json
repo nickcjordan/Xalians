@@ -1,0 +1,19 @@
+{
+  "id": "B-01M4XS7N7CRNHYXGHGMJG2NP5Q",
+  "alias": "wyz3",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "C: Tapered brush: vision plume",
+  "scope": "plume",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-14T18:01:46Z",
+  "briefSha256": "0df239d19b4fd7b4fb0551041430be5c5b4627090747dc75d0bfc17d4080bd00"
+}

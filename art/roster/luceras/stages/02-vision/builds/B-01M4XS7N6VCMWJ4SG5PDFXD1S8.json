@@ -1,0 +1,19 @@
+{
+  "id": "B-01M4XS7N6VCMWJ4SG5PDFXD1S8",
+  "alias": "mkz6",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "B: Quiet flame: vision plume",
+  "scope": "plume",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-14T18:01:46Z",
+  "briefSha256": "38707cf1c9df8d1a52b84e3b70b767348bf81ffed3650b7a8c0d94228cd02eee"
+}

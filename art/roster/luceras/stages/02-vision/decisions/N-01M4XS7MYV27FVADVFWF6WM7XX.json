@@ -1,0 +1,20 @@
+{
+  "id": "N-01M4XS7MYV27FVADVFWF6WM7XX",
+  "alias": "gern",
+  "stage": "02-vision",
+  "who": "nick",
+  "words": "picked C: Storm slate on the selection screen",
+  "date": "2026-10-14",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M4XJTNKJ5BR790RJ325FQYS2",
+    "evidence": [
+      "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-14T18:01:46Z",
+  "element": "palette",
+  "buildAlias": "8gke",
+  "blob": "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00"
+}

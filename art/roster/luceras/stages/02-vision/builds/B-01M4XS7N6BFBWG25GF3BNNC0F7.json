@@ -1,0 +1,19 @@
+{
+  "id": "B-01M4XS7N6BFBWG25GF3BNNC0F7",
+  "alias": "wn7y",
+  "stage": "02-vision",
+  "kind": "image",
+  "goal": "A: Base plume, pointed tips: vision plume",
+  "scope": "plume",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-14T18:01:46Z",
+  "briefSha256": "bb3d4af1f5c5a36867ac43eb88dad57945aee2ea1297faf1ef3d745b79230209"
+}

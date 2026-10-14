@@ -1,0 +1,14 @@
+{
+  "id": "D-01M4XS7MZ1S3ZKD5Y42DZXTENA",
+  "alias": "pxp5",
+  "stage": "02-vision",
+  "description": "plume: no option accepted",
+  "camera": null,
+  "region": null,
+  "origin": "selection screen",
+  "attempts": [
+    "N-01M4XS7MYY8FFZ60F1B0PPB9EN"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-14T18:01:46Z"
+}
