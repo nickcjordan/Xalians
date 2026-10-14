@@ -1,79 +1,81 @@
 {
-  "id": "B-01M4XTMMN07ZAZA0QCA3Y36G9X",
-  "alias": "emw3",
-  "stage": "03-sheet",
-  "kind": "image",
-  "goal": "Composite: all five picks: sheet composite",
-  "scope": "composite",
-  "defect": null,
-  "holds": [],
-  "inputs": [],
-  "outputs": [
-    {
-      "name": "output.png",
-      "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
-    }
-  ],
-  "validators": null,
-  "report": {
-    "blockedBy": "nothing",
-    "codexTokens": 30210,
-    "wallMinutes": 1.59,
-    "image": {
-      "stage": "sheet",
-      "element": "composite",
-      "label": "Composite: all five picks",
-      "summary": "One image with the coat, horns, eyes, fur and plume you picked, applied together to the base",
-      "promptSha256": "6aaff6c43e2d04002ccd68f0049ccf6464b5782396ee55df8d844ad8f24bd61a",
-      "inputs": [
-        {
-          "name": "output.png",
-          "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
-        },
-        {
-          "name": "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00",
-          "hash": "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00"
-        },
-        {
-          "name": "574891431107799d9b5c8547377c6676fc51290e21d6aa72fa3a97251d24ec55",
-          "hash": "574891431107799d9b5c8547377c6676fc51290e21d6aa72fa3a97251d24ec55"
-        },
-        {
-          "name": "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8",
-          "hash": "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8"
-        },
-        {
-          "name": "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9",
-          "hash": "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9"
-        },
-        {
-          "name": "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd",
-          "hash": "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd"
-        }
-      ],
-      "tool": "codex image_gen (Nick's subscription)",
-      "model": "config default",
-      "governs": [
-        "the combined look"
-      ],
-      "notFor": [
-        "proportions"
-      ],
-      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-emw3",
-      "exitStatus": 0
-    },
-    "outputs": [
-      {
-        "name": "output.png",
-        "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
-      }
-    ]
-  },
+ "id": "B-01M4XTMMN07ZAZA0QCA3Y36G9X",
+ "alias": "emw3",
+ "stage": "03-sheet",
+ "kind": "image",
+ "goal": "Composite: all five picks: sheet composite",
+ "scope": "composite",
+ "defect": null,
+ "holds": [],
+ "inputs": [],
+ "outputs": [
+  {
+   "name": "output.png",
+   "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+  }
+ ],
+ "validators": null,
+ "report": {
   "blockedBy": "nothing",
-  "cost": null,
-  "status": "reported",
-  "createdAt": "2026-10-14T18:26:20Z",
-  "briefSha256": "8269135235e151f9b467431f0a8cc95e27481e6f825c89209612722c3d54cb39",
-  "checks": [],
-  "reportedAt": "2026-10-14T18:27:56Z"
+  "codexTokens": 30210,
+  "wallMinutes": 1.59,
+  "image": {
+   "stage": "sheet",
+   "element": "composite",
+   "label": "Composite: all five picks",
+   "summary": "One image with the coat, horns, eyes, fur and plume you picked, applied together to the base",
+   "promptSha256": "6aaff6c43e2d04002ccd68f0049ccf6464b5782396ee55df8d844ad8f24bd61a",
+   "inputs": [
+    {
+     "name": "output.png",
+     "hash": "e6d8220680f0429a35435a614e44e3ad9e8fabf3d39f2d02ddf30b2f7def9de0"
+    },
+    {
+     "name": "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00",
+     "hash": "c6a7f14d19d2d672268e9853110e00972494074e186a2775d7712879f9bd9d00"
+    },
+    {
+     "name": "574891431107799d9b5c8547377c6676fc51290e21d6aa72fa3a97251d24ec55",
+     "hash": "574891431107799d9b5c8547377c6676fc51290e21d6aa72fa3a97251d24ec55"
+    },
+    {
+     "name": "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8",
+     "hash": "c63ee53190401d62bb1b96633b379674eb8b2dc6097d91ac236ad890047068e8"
+    },
+    {
+     "name": "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9",
+     "hash": "407ee6f4474bd65f793f99b0e8dc62c5968a767c491dd8534e2d5df52272aac9"
+    },
+    {
+     "name": "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd",
+     "hash": "5df59e85ea7045c29f17b2cc3741246cf5e8b9c3806c522ced8c7e86f86d3ddd"
+    }
+   ],
+   "tool": "codex image_gen (Nick's subscription)",
+   "model": "config default",
+   "governs": [
+    "the combined look"
+   ],
+   "notFor": [
+    "proportions"
+   ],
+   "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-emw3",
+   "exitStatus": 0
+  },
+  "outputs": [
+   {
+    "name": "output.png",
+    "hash": "a6980e3ab5c2cc353d60522f89284c57be0a3df012b6cad71b3093ad06de4855"
+   }
+  ]
+ },
+ "blockedBy": "nothing",
+ "cost": null,
+ "status": "superseded",
+ "createdAt": "2026-10-14T18:26:20Z",
+ "briefSha256": "8269135235e151f9b467431f0a8cc95e27481e6f825c89209612722c3d54cb39",
+ "checks": [],
+ "reportedAt": "2026-10-14T18:27:56Z",
+ "supersededBy": "B-r9tz",
+ "supersededNote": "head reworked after Nick's ruling; the picked horns4 image is the combined look"
 }
