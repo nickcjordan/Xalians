@@ -62,33 +62,58 @@ M2 = np.array([0.0, N1[2], -N1[1]])             # in the plane, pointing back an
 PH = np.array([0.0, -0.186, 0.537])             # skull plane (reference for the seam blend)
 NH = np.array([0.0, -0.985, -0.172]); NH /= np.linalg.norm(NH)
 
-EYE_R = 0.0130
-EYE_C = np.array([0.034, -0.245, 0.568])        # first guess; seated on the surface after the union
-EYE_LOOK = np.array([0.52, -0.83, 0.20]); EYE_LOOK /= np.linalg.norm(EYE_LOOK)
-EYE_PROUD = 0.42                                 # fraction of the radius left in front of the surface
+EYE_R = 0.0170                                   # pass 2: about 30 percent larger diameter than pass 1 (0.026)
+EYE_C = np.array([0.030, -0.252, 0.577])        # first guess; seated on the surface after the union
+EYE_LOOK = np.array([0.34, -0.91, 0.24]); EYE_LOOK /= np.linalg.norm(EYE_LOOK)
+EYE_PROUD = 0.18                                 # fraction of the radius left in front of the surface
 
 SKULL = [
-    dict(co=(0, -0.207, 0.580), half=(0.048, 0.045, 0.039), rot=(10, 0, 0)),     # braincase
-    dict(co=(0, -0.250, 0.551), half=(0.041, 0.052, 0.031), rot=(28, 0, 0)),     # face wedge, sloping to the nose
+    dict(co=(0, -0.211, 0.589), half=(0.048, 0.046, 0.046), rot=(10, 0, 0)),     # braincase, rounder dome
+    dict(co=(0, -0.240, 0.585), half=(0.035, 0.028, 0.027)),                     # raised brow / forehead
+    dict(co=(0, -0.250, 0.552), half=(0.041, 0.050, 0.031), rot=(22, 0, 0)),     # face wedge, sloping to the nose
+    dict(co=(0, -0.266, 0.551), half=(0.021, 0.030, 0.018), rot=(16, 0, 0)),     # rounded nose bridge
     dict(co=(0, -0.285, 0.512), half=(0.029, 0.020, 0.021), rot=(12, 0, 0)),     # muzzle, blunt
     dict(co=(0, -0.252, 0.490), half=(0.024, 0.046, 0.013), rot=(8, 0, 0)),      # jaw
-    dict(co=(0, -0.289, 0.489), half=(0.008, 0.009, 0.006)),                     # chin
-    dict(co=(0, -0.3098, 0.5170), half=(0.0100, 0.0052, 0.0056), rot=(-25, 0, 0), stiff=4.0),  # nose pad, wide on top
+    dict(co=(0, -0.286, 0.490), half=(0.007, 0.008, 0.006)),                     # chin
+    dict(co=(0, -0.3120, 0.5180), half=(0.0100, 0.0052, 0.0056), rot=(-25, 0, 0), stiff=4.0),  # nose pad, wide on top
     dict(co=(0, -0.3092, 0.5115), half=(0.0042, 0.0045, 0.0045), stiff=4.0),     # nose pad, point at the split
-    dict(co=(0, -0.207, 0.497), half=(0.025, 0.028, 0.024)),                     # throat
+    dict(co=(0, -0.207, 0.497), half=(0.022, 0.025, 0.021)),                     # throat, thinner behind the jaw
     dict(co=(0, -0.185, 0.552), half=(0.036, 0.028, 0.045)),                     # occiput
 ]
 for sx in (1, -1):
     SKULL += [
         dict(co=(sx * 0.033, -0.246, 0.528), half=(0.025, 0.033, 0.024), rot=(15, 0, 0)),  # cheek
-        dict(co=(sx * 0.0128, -0.2995, 0.4995), half=(0.0145, 0.0115, 0.0115), stiff=2.5),  # whisker pad
-        dict(co=(sx * 0.021, -0.279, 0.523), half=(0.019, 0.024, 0.019), rot=(20, 0, 0)),  # maxilla: cheek into muzzle
+        dict(co=(sx * 0.0118, -0.2995, 0.4995), half=(0.0122, 0.0108, 0.0105), stiff=2.5),  # whisker pad
+        dict(co=(sx * 0.019, -0.279, 0.524), half=(0.016, 0.024, 0.018), rot=(20, 0, 0)),  # maxilla: cheek into muzzle
+        dict(co=(sx * 0.027, -0.249, 0.590), half=(0.016, 0.017, 0.010)),                  # brow over the eye
     ]
 
-EAR = dict(base=(0.042, -0.182, 0.596), up=(0.70, 0.20, 0.69), face=(0.68, -0.72, 0.10),
-           height=0.052, width=0.038, cup=0.0105, thick=0.003)
+# pass 2: shorten the muzzle (the blockout head carried a scan artifact; hold lifted for the muzzle by the orchestrator).
+MUZZLE_Y0, MUZZLE_K = -0.240, 0.790
 
-HORN_R0, HORN_TIP = 0.0225, 0.0012
+
+def fwd(p):
+    p = list(p)
+    if p[1] < MUZZLE_Y0:
+        p[1] = MUZZLE_Y0 + (p[1] - MUZZLE_Y0) * MUZZLE_K
+    return tuple(p)
+
+
+for _e in SKULL:
+    if _e["co"][1] < -0.27:
+        _a, _b, _c = _e["half"]
+        _e["half"] = (_a, _b * MUZZLE_K, _c)
+    _e["co"] = fwd(_e["co"])
+
+
+def groove_f(obj, pts, **kw):
+    sk.groove(obj, [fwd(p) for p in pts], **kw)
+
+EAR = dict(base=(0.041, -0.168, 0.590), up=(0.66, 0.22, 0.72), face=(0.68, -0.72, 0.10),
+           height=0.083, width=0.046, cup=0.0150, thick=0.0032)   # pass 2: about 60 percent taller exposed ear
+
+HORN_R0, HORN_TIP = 0.0315, 0.0012                 # pass 2: 40 percent thicker base, same taper
+HORN_BASE_SHIFT_X = 0.010                          # move the bases apart so the thicker horns do not overlap
 
 
 # ------------------------------------------------------------------ helpers
@@ -121,12 +146,13 @@ def ear_shell(spec, side):
     verts, faces = [], []
     for j in range(nv + 1):
         v = j / nv
-        w = W * math.sqrt(max(0.0, 1 - ((v - 0.42) / 0.58) ** 2))
+        w = W * math.sqrt(max(0.0, 1 - ((v - 0.50) / 0.50) ** 2))
         for i in range(nu + 1):
             u = (i / nu) * 2 - 1
             # rounded top: pull the top row's corners down
-            vv = v * H - 0.010
+            vv = v * H - 0.016
             depth = spec["cup"] * (1 - u * u) * math.sin(math.pi * min(v * 0.9 + 0.1, 1.0))
+            depth *= min(1.0, max(0.0, (v - 0.12) / 0.30)) ** 2  # no curled lip where the root enters the skull
             verts.append((u * w, vv, depth))  # hollow opens toward the face direction
         if j:
             for i in range(nu):
@@ -153,7 +179,8 @@ def ear_shell(spec, side):
 
 
 def horn(side):
-    pts, tan, s = hornpath.centerline(None, 460)
+    pts, tan, s = hornpath.centerline(None, 380)
+    pts = pts + np.array([HORN_BASE_SHIFT_X, 0, 0])
     sx = 1 if side == "l" else -1
     pts = pts * [sx, 1, 1]
     # outer side of the curl (the keel the ridges stand proud on): opposite the curvature vector
@@ -164,7 +191,9 @@ def horn(side):
     L = arc[-1]
     r = HORN_TIP + (HORN_R0 - HORN_TIP) * (1 - arc / L) ** 0.7
     spacing = 0.0040 + 0.0075 * (r / HORN_R0)
-    phase = np.concatenate([[0], np.cumsum(seg_len / spacing[:-1])])
+    a_mid = arc[:-1]
+    jitter = 1 + 0.20 * np.sin(a_mid * 131.0) + 0.12 * np.sin(a_mid * 317.0 + 1.3)  # a little irregular in spacing
+    phase = np.concatenate([[0], np.cumsum(seg_len / (spacing[:-1] * jitter))])
     kn = np.linalg.norm(k, axis=1) + 1e-9
     outer = -k / kn[:, None]
     th_out = np.arctan2((outer * B).sum(1), (outer * N).sum(1))
@@ -195,7 +224,7 @@ def whiskers(side):
     objs = []
     rng = np.random.default_rng(7)
     for i, root in enumerate(WHISKER_ROOTS):
-        root = np.array(root) * [sx, 1, 1]
+        root = np.array(fwd(root)) * [sx, 1, 1]
         fan = (i - 3) / 3.0
         d0 = np.array([sx * 0.80, 0.30 + 0.05 * rng.normal(), -0.05 - 0.22 * (root[2] < 0.499) + 0.14 * fan])
         d0 /= np.linalg.norm(d0)
@@ -274,6 +303,17 @@ def main():
     bm.to_mesh(chunk.data); bm.free()
     sk.keep_near(chunk, (P1 + P2) / 2 + M2 * 0.03)
     Pc = sk.co(chunk)
+    # pass 2: thin the kept neck behind the jaw, ramping to 10 percent at the upper ring
+    ring0 = Pc[np.abs(signed(Pc, P2, N1)) < 1e-5]
+    LOG["neckRingHalfXBefore"] = round(float(np.abs(ring0[:, 0]).max()), 4)
+    sP = signed(Pc, P1, N1)
+    sP2 = float(signed(P2, P1, N1))
+    wthin = np.clip((sP - 0.010) / (sP2 - 0.010), 0, 1) ** 1.5
+    axc = (ring0.max(0) + ring0.min(0)) / 2
+    rel = Pc - axc
+    rel_ax = np.outer(rel @ N1, N1)
+    Pc = axc + rel_ax + (rel - rel_ax) * (1 - 0.10 * wthin)[:, None]
+    sk.set_co(chunk, Pc)
     ring = Pc[np.abs(signed(Pc, P2, N1)) < 1e-5]
     rc = (ring.max(0) + ring.min(0)) / 2
     wx = float(np.abs(ring[:, 0] - rc[0]).max())
@@ -296,10 +336,19 @@ def main():
     tilt = math.degrees(math.atan2(-N1[1], N1[2]))
     SKULL.extend([
         dict(co=tuple(rc + N1 * 0.012), half=(wx * 0.90, wm * 0.90, 0.022), rot=(tilt, 0, 0), stiff=4.0),
-        dict(co=tuple(rc + N1 * 0.036 + M2 * 0.002), half=(wx * 0.84, wm * 0.84, 0.026), rot=(tilt, 0, 0), stiff=3.0),
+        dict(co=tuple(rc + N1 * 0.036 + M2 * 0.004), half=(wx * 0.80, wm * 0.84, 0.026), rot=(tilt, 0, 0), stiff=3.0),
     ])
     lap(f"neck chunk {len(Pc)} verts, ring {LOG['neckRing']}")
 
+    # pass 2: soft skin collar at each horn base, a flattened metaball on the horn axis where it leaves the skull
+    hp, ht, _ = hornpath.centerline(None, 460)
+    hp = hp + np.array([HORN_BASE_SHIFT_X, 0, 0])
+    k = int(np.argmax(hp[:, 2] > 0.624))
+    for sx in (1, -1):
+        tq = Vector(tuple(ht[k] * [sx, 1, 1])).to_track_quat("Z", "Y")
+        SKULL.append(dict(co=tuple(hp[k] * [sx, 1, 1]),
+                          half=(HORN_R0 * 0.98, HORN_R0 * 0.98, 0.022), quat=tuple(tq), stiff=2.0))
+    LOG["hornCollarAt"] = hp[k].round(4).tolist()
     skull = sk.metaball("skull", SKULL, resolution=0.0012)
     ears = [ear_shell(EAR, s) for s in ("l", "r")]
     head = sk.join([chunk, skull] + ears, "luceras_head")
@@ -331,21 +380,22 @@ def main():
     for sx in (1, -1):
         c = EYE_C * [sx, 1, 1]
         look = EYE_LOOK * [sx, 1, 1]
-        sk.eyelids(head, c, EYE_R, look, up, aperture=(0.86, 0.58), lid=0.0012, rim=0.0010)
+        sk.eyelids(head, c, EYE_R, look, up, aperture=(0.88, 0.62), lid=0.0012, rim=0.0010,
+                   upper_fold=0.0018, crease=0.0012, lower_lid=0.0013, reach=1.9, far_pull=0.35)
     # nose: nostril commas and the split under it
     for sx in (1, -1):
-        sk.groove(head, [(sx * 0.0030, -0.3150, 0.5135), (sx * 0.0068, -0.3130, 0.5110), (sx * 0.0080, -0.3100, 0.5083)],
+        groove_f(head, [(sx * 0.0030, -0.3150, 0.5135), (sx * 0.0068, -0.3130, 0.5110), (sx * 0.0080, -0.3100, 0.5083)],
                   depth=0.0015, width=0.0009)
     # back edge of the jaw (separates cheek from throat, as in the shaved clay side)
     for sx in (1, -1):
-        sk.groove(head, [(sx * 0.040, -0.200, 0.535), (sx * 0.035, -0.208, 0.505), (sx * 0.024, -0.218, 0.482),
-                         (sx * 0.010, -0.222, 0.474)], depth=0.0022, width=0.0055)
+        groove_f(head, [(sx * 0.040, -0.200, 0.535), (sx * 0.035, -0.208, 0.505), (sx * 0.024, -0.218, 0.482),
+                         (sx * 0.010, -0.222, 0.474)], depth=0.0036, width=0.0060)
     # philtrum and mouth line (inverted Y, hare-like split lip)
-    sk.groove(head, [(0, -0.3150, 0.5080), (0, -0.3130, 0.4990)], depth=0.0013, width=0.0008)
+    groove_f(head, [(0, -0.3150, 0.5080), (0, -0.3130, 0.4990)], depth=0.0013, width=0.0008)
     for sx in (1, -1):
-        sk.groove(head, [(0, -0.3120, 0.4990), (sx * 0.006, -0.3085, 0.4930), (sx * 0.0125, -0.3015, 0.4900),
+        groove_f(head, [(0, -0.3120, 0.4990), (sx * 0.006, -0.3085, 0.4930), (sx * 0.0125, -0.3015, 0.4900),
                          (sx * 0.0175, -0.2935, 0.4905)], depth=0.0009, width=0.0008)
-    sk.voxel_remesh(head, 0.0013)
+    sk.voxel_remesh(head, 0.00145)
     sk.keep_largest(head)
     P = sk.co(head)
     s1 = signed(P, P1, N1)

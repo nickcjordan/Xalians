@@ -94,7 +94,9 @@ def metaball(name, elements, resolution=0.0012, threshold=0.6):
         el.size_x, el.size_y, el.size_z = a / m, b / m, c / m
         el.stiffness = e.get("stiff", 2.0)
         el.use_negative = bool(e.get("neg", False))
-        if "rot" in e:
+        if "quat" in e:
+            el.rotation = Quaternion(e["quat"])
+        elif "rot" in e:
             from mathutils import Euler
             el.rotation = Euler([math.radians(x) for x in e["rot"]], "XYZ").to_quaternion()
     o = new_obj(name, mb)
@@ -242,7 +244,8 @@ def smooth(obj, iters, factor, weights=None):
     set_co(obj, P)
 
 
-def eyelids(obj, center, radius, look, up, aperture=(0.95, 0.60), lid=0.0016, rim=0.0010, reach=2.3):
+def eyelids(obj, center, radius, look, up, aperture=(0.95, 0.60), lid=0.0016, rim=0.0010, reach=2.3,
+            upper_fold=0.0, crease=0.0, lower_lid=0.0, far_pull=0.8):
     """Wrap the surface around an eyeball: verts near the eye go onto a shell just outside the ball, except inside
     an almond aperture facing `look`, where they sink behind the ball so it shows. Aperture is (half width, half
     height) as sines of the opening angle."""
@@ -261,12 +264,15 @@ def eyelids(obj, center, radius, look, up, aperture=(0.95, 0.60), lid=0.0016, ri
     inside = np.clip((1.25 - e) / 0.45, 0, 1)  # 1 well inside the opening, 0 outside
     inside = inside * inside * (3 - 2 * inside)
     shell = radius + lid + rim * np.exp(-((e - 1.30) / 0.35) ** 2)
+    # upper lid fold: a roll above the opening with a crease above it; lower lid: a smaller roll under it
+    shell = shell + np.where(y > 0, upper_fold * np.exp(-((e - 1.75) / 0.40) ** 2)
+                             - crease * np.exp(-((e - 2.70) / 0.35) ** 2), lower_lid * np.exp(-((e - 1.45) / 0.30) ** 2))
     target = inside * (radius * 0.80) + (1 - inside) * shell
     rr = r[near]
     t = np.clip((radius * reach - rr) / (radius * (reach - 1.35)), 0, 1)
     t = t * t * (3 - 2 * t)
     # Only pull verts that sit inside the shell outward, and only push the aperture inward; leave the far field.
-    newr = np.where(inside > 0.01, rr + (target - rr) * t, np.where(rr < target, rr + (target - rr) * t, rr + (target - rr) * t * 0.8))
+    newr = np.where(inside > 0.01, rr + (target - rr) * t, np.where(rr < target, rr + (target - rr) * t, rr + (target - rr) * t * far_pull))
     P[near] = c + d * newr[:, None]
     set_co(obj, P)
 
