@@ -91,6 +91,8 @@ def options_from_records(creature, stage):
         outs = d.get("outputs") or rep.get("outputs") or []
         if d.get("status") not in ("reported", "reviewed", "passed") and not outs:
             continue
+        if d.get("status") == "superseded":
+            continue
         if not outs:
             continue
         rows.append({
