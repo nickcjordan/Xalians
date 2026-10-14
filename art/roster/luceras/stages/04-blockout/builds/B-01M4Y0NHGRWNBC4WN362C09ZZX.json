@@ -8,12 +8,566 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
-  "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "outputs": [
+    {
+      "name": "blockout.blend",
+      "hash": "bdd7ee3d3969d45eb701fa6de439e1dbe5a94c97b6e118ba72c68b1434d15dfd"
+    },
+    {
+      "name": "blockout.glb",
+      "hash": "ad85abbbe4ef5a8c6728b4706374933b6a1a722666e99c8c2dc4a403a58e58af"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "285f85e8b380bc2a14552dd54d36bc859e9c0e4caf5f676d2318e6bc2341d96e"
+    },
+    {
+      "name": "landmarks.md",
+      "hash": "5e84291be3b2746abce0af049a8e18a0716db20ae1aeb7e50e84e22615ee69d2"
+    },
+    {
+      "name": "validators.json",
+      "hash": "15687a612b2eec291f76f52b3eedb6e0fb769b33189937cf7201a99530212bfa"
+    },
+    {
+      "name": "report.json",
+      "hash": "9502e70eab21d46a5ca08f4a729a669af76e860ebb6d431143cff21b7539d5a4"
+    },
+    {
+      "name": "cost.json",
+      "hash": "aad6cb54d114943fbe786e03e3cb30eebb4de7a8ce78f03b19cee57e6de70019"
+    },
+    {
+      "name": "poses.json",
+      "hash": "9d1dc000a354320ddec015bb087a55dc032052b46da9f008788417d8aed3a288"
+    },
+    {
+      "name": "creature-rig-spec.json",
+      "hash": "955f0204c580b86c3e0ff465ec250459f7b838df0bd1252e6a6401af9f8efff1"
+    },
+    {
+      "name": "rest_front.png",
+      "hash": "4e7ae91e5cc20e17801e06e8c04bd92a82a3c8dcdc2d9718fdc122a9d9fb059f"
+    },
+    {
+      "name": "rest_three_quarter_left.png",
+      "hash": "233f850e445d3a4b904d78ab12c0099d879c0c4ae0e6a5ddeaa88692b958f739"
+    },
+    {
+      "name": "rest_side_left.png",
+      "hash": "ba30d2c5fe1bde9d7298f2a0004410b5d2ab2258cd8dd1516990e3aa63a7eee5"
+    },
+    {
+      "name": "rest_back.png",
+      "hash": "85ea169ec2dc5a23bcaad1e33b48caab652fd14c94bd12c7a6ed5f778a679329"
+    },
+    {
+      "name": "rest_top.png",
+      "hash": "cd2e160e0a3dba043dba9b45b069214f088f791ee1c06733e172ac21ffa60a27"
+    },
+    {
+      "name": "pose_sheet_side_left.png",
+      "hash": "0b964427911104c4a17c2b5893d80baa550da57864fdf2927191564ac4391e4a"
+    },
+    {
+      "name": "pose_sheet_three_quarter_left.png",
+      "hash": "6aca0e69551d3b5ab9160bb7b5c1511421f83f74a744215a625f0ce26335b277"
+    },
+    {
+      "name": "comparison_side.png",
+      "hash": "b96265ca06c50cd07b5d502b7f280ecae1e03a30393715d0938181f85f2a3e7c"
+    },
+    {
+      "name": "comparison_front.png",
+      "hash": "d68bc24dad84da13f61d9ac927a00e226bebb802c795738c1f91982cc1de87d5"
+    },
+    {
+      "name": "comparison_three_quarter.png",
+      "hash": "4ca6f1bb59ac9dbb51b9a5a089d5b7899ec69a78b7eb9afa555c18a5185e6374"
+    },
+    {
+      "name": "sprite_192.png",
+      "hash": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b"
+    },
+    {
+      "name": "build.py",
+      "hash": "a6fe9adf990f0bd2f411c6bb8e8890f40b82992b3dc51b646ac27522e45e70a6"
+    },
+    {
+      "name": "finish.py",
+      "hash": "907fb9bab639ee5e4a9a1ceb6d8fad77de98ee79ca9914ad1400e28a48696980"
+    },
+    {
+      "name": "inspect_asset.py",
+      "hash": "68f7d146fd899355936694c1ca7e9d80114438aea0aae09e884cf4e9bb752e4f"
+    },
+    {
+      "name": "BRIEF.md",
+      "hash": "576191e756bb60f067b6a3b73f702d37d1e7194aaf5006e95fdd7d9622f9aea0"
+    },
+    {
+      "name": "codex.log",
+      "hash": "25f920d913fe2685c433bc62a50729453b566bf6b9520433dec5b2d19318a329"
+    }
+  ],
+  "validators": {
+    "height": {
+      "value": 0.5699999928474426,
+      "target": 0.57,
+      "tolerance_percent": 2,
+      "pass": true
+    },
+    "forward": {
+      "value": "-Y",
+      "pass": true
+    },
+    "root_at_origin": {
+      "value": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pass": true
+    },
+    "manifold": {
+      "nonmanifold_edges": 0,
+      "components": 1,
+      "component_vertices": [
+        54998
+      ],
+      "pass": true
+    },
+    "joints": {
+      "value": 40,
+      "limit": 60,
+      "pass": true
+    },
+    "influences": {
+      "value": 4,
+      "limit": 4,
+      "pass": true
+    },
+    "unweighted_vertices": {
+      "value": 0,
+      "pass": true
+    },
+    "weight_normalization": {
+      "max_error": 1.6391277313232422e-07,
+      "pass": true
+    },
+    "triangles": {
+      "value": 110000,
+      "limit": 300000,
+      "pass": true
+    },
+    "transforms_applied": {
+      "pass": true
+    },
+    "glb_export": {
+      "pass": true,
+      "details": {
+        "bytes": 3189764,
+        "sha256": "ad85abbbe4ef5a8c6728b4706374933b6a1a722666e99c8c2dc4a403a58e58af",
+        "triangles": 110000,
+        "skin_joints": 40,
+        "animations": [
+          "crouch",
+          "landing",
+          "leap_peak",
+          "rest"
+        ],
+        "unweighted_vertices": 0,
+        "max_influences": 4,
+        "max_weight_sum_error": 1.7881393432617188e-07,
+        "max_root_translation": 0.0,
+        "bounds_gltf_y_up": {
+          "min": [
+            -0.22574694454669952,
+            0.0,
+            -1.0505287647247314
+          ],
+          "max": [
+            0.22576956450939178,
+            0.736700177192688,
+            0.42125943303108215
+          ]
+        },
+        "note": "Structural and accessor checks, not the external Khronos validator."
+      }
+    },
+    "regional_volume_proxy": {
+      "pass": true,
+      "worst_change_percent": -29.440023544217198,
+      "pose": "leap_peak",
+      "region": "joint_leg_fl_01",
+      "method": "Convex hull of fixed rest-space surface regions, including >0.5 bone-weight regions. This is a screening approximation, not a complete tissue-volume proof."
+    },
+    "rotation_only_poses": {
+      "pass": true,
+      "maximum_translation": 0.0
+    },
+    "self_intersections": {
+      "pass": false,
+      "pairs_by_pose": {
+        "rest": 0,
+        "crouch": 1190,
+        "leap_peak": 780,
+        "landing": 1128
+      },
+      "method": "BVH overlaps excluding triangles that share a vertex; coplanar contact can count."
+    },
+    "full_deformation_gate": {
+      "pass": false,
+      "reason": "The volume check is an approximate regional screen. Hip and elbow pinching and any listed triangle intersections require review before a clean deformation claim."
+    }
+  },
+  "report": {
+    "outputs": [
+      {
+        "name": "blockout.blend",
+        "hash": "bdd7ee3d3969d45eb701fa6de439e1dbe5a94c97b6e118ba72c68b1434d15dfd"
+      },
+      {
+        "name": "blockout.glb",
+        "hash": "ad85abbbe4ef5a8c6728b4706374933b6a1a722666e99c8c2dc4a403a58e58af"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "285f85e8b380bc2a14552dd54d36bc859e9c0e4caf5f676d2318e6bc2341d96e"
+      },
+      {
+        "name": "landmarks.md",
+        "hash": "5e84291be3b2746abce0af049a8e18a0716db20ae1aeb7e50e84e22615ee69d2"
+      },
+      {
+        "name": "validators.json",
+        "hash": "15687a612b2eec291f76f52b3eedb6e0fb769b33189937cf7201a99530212bfa"
+      },
+      {
+        "name": "report.json",
+        "hash": "9502e70eab21d46a5ca08f4a729a669af76e860ebb6d431143cff21b7539d5a4"
+      },
+      {
+        "name": "cost.json",
+        "hash": "aad6cb54d114943fbe786e03e3cb30eebb4de7a8ce78f03b19cee57e6de70019"
+      },
+      {
+        "name": "poses.json",
+        "hash": "9d1dc000a354320ddec015bb087a55dc032052b46da9f008788417d8aed3a288"
+      },
+      {
+        "name": "creature-rig-spec.json",
+        "hash": "955f0204c580b86c3e0ff465ec250459f7b838df0bd1252e6a6401af9f8efff1"
+      },
+      {
+        "name": "rest_front.png",
+        "hash": "4e7ae91e5cc20e17801e06e8c04bd92a82a3c8dcdc2d9718fdc122a9d9fb059f"
+      },
+      {
+        "name": "rest_three_quarter_left.png",
+        "hash": "233f850e445d3a4b904d78ab12c0099d879c0c4ae0e6a5ddeaa88692b958f739"
+      },
+      {
+        "name": "rest_side_left.png",
+        "hash": "ba30d2c5fe1bde9d7298f2a0004410b5d2ab2258cd8dd1516990e3aa63a7eee5"
+      },
+      {
+        "name": "rest_back.png",
+        "hash": "85ea169ec2dc5a23bcaad1e33b48caab652fd14c94bd12c7a6ed5f778a679329"
+      },
+      {
+        "name": "rest_top.png",
+        "hash": "cd2e160e0a3dba043dba9b45b069214f088f791ee1c06733e172ac21ffa60a27"
+      },
+      {
+        "name": "pose_sheet_side_left.png",
+        "hash": "0b964427911104c4a17c2b5893d80baa550da57864fdf2927191564ac4391e4a"
+      },
+      {
+        "name": "pose_sheet_three_quarter_left.png",
+        "hash": "6aca0e69551d3b5ab9160bb7b5c1511421f83f74a744215a625f0ce26335b277"
+      },
+      {
+        "name": "comparison_side.png",
+        "hash": "b96265ca06c50cd07b5d502b7f280ecae1e03a30393715d0938181f85f2a3e7c"
+      },
+      {
+        "name": "comparison_front.png",
+        "hash": "d68bc24dad84da13f61d9ac927a00e226bebb802c795738c1f91982cc1de87d5"
+      },
+      {
+        "name": "comparison_three_quarter.png",
+        "hash": "4ca6f1bb59ac9dbb51b9a5a089d5b7899ec69a78b7eb9afa555c18a5185e6374"
+      },
+      {
+        "name": "sprite_192.png",
+        "hash": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b"
+      },
+      {
+        "name": "build.py",
+        "hash": "a6fe9adf990f0bd2f411c6bb8e8890f40b82992b3dc51b646ac27522e45e70a6"
+      },
+      {
+        "name": "finish.py",
+        "hash": "907fb9bab639ee5e4a9a1ceb6d8fad77de98ee79ca9914ad1400e28a48696980"
+      },
+      {
+        "name": "inspect_asset.py",
+        "hash": "68f7d146fd899355936694c1ca7e9d80114438aea0aae09e884cf4e9bb752e4f"
+      },
+      {
+        "name": "BRIEF.md",
+        "hash": "576191e756bb60f067b6a3b73f702d37d1e7194aaf5006e95fdd7d9622f9aea0"
+      },
+      {
+        "name": "codex.log",
+        "hash": "25f920d913fe2685c433bc62a50729453b566bf6b9520433dec5b2d19318a329"
+      }
+    ],
+    "blockedBy": "nothing",
+    "method": "codex gpt-6-astra; Parametric ellipsoids and swept tubes, voxel union, smoothing, decimation, automatic bone heat weights",
+    "methodWhy": "Parametric masses make scale and silhouette edits directly controllable and avoid a shared GPU or reconstruction uncertainty. The approved clay is the shape authority; the furred image is reference only.",
+    "stream": "codex",
+    "validators": {
+      "height": {
+        "value": 0.5699999928474426,
+        "target": 0.57,
+        "tolerance_percent": 2,
+        "pass": true
+      },
+      "forward": {
+        "value": "-Y",
+        "pass": true
+      },
+      "root_at_origin": {
+        "value": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pass": true
+      },
+      "manifold": {
+        "nonmanifold_edges": 0,
+        "components": 1,
+        "component_vertices": [
+          54998
+        ],
+        "pass": true
+      },
+      "joints": {
+        "value": 40,
+        "limit": 60,
+        "pass": true
+      },
+      "influences": {
+        "value": 4,
+        "limit": 4,
+        "pass": true
+      },
+      "unweighted_vertices": {
+        "value": 0,
+        "pass": true
+      },
+      "weight_normalization": {
+        "max_error": 1.6391277313232422e-07,
+        "pass": true
+      },
+      "triangles": {
+        "value": 110000,
+        "limit": 300000,
+        "pass": true
+      },
+      "transforms_applied": {
+        "pass": true
+      },
+      "glb_export": {
+        "pass": true,
+        "details": {
+          "bytes": 3189764,
+          "sha256": "ad85abbbe4ef5a8c6728b4706374933b6a1a722666e99c8c2dc4a403a58e58af",
+          "triangles": 110000,
+          "skin_joints": 40,
+          "animations": [
+            "crouch",
+            "landing",
+            "leap_peak",
+            "rest"
+          ],
+          "unweighted_vertices": 0,
+          "max_influences": 4,
+          "max_weight_sum_error": 1.7881393432617188e-07,
+          "max_root_translation": 0.0,
+          "bounds_gltf_y_up": {
+            "min": [
+              -0.22574694454669952,
+              0.0,
+              -1.0505287647247314
+            ],
+            "max": [
+              0.22576956450939178,
+              0.736700177192688,
+              0.42125943303108215
+            ]
+          },
+          "note": "Structural and accessor checks, not the external Khronos validator."
+        }
+      },
+      "regional_volume_proxy": {
+        "pass": true,
+        "worst_change_percent": -29.440023544217198,
+        "pose": "leap_peak",
+        "region": "joint_leg_fl_01",
+        "method": "Convex hull of fixed rest-space surface regions, including >0.5 bone-weight regions. This is a screening approximation, not a complete tissue-volume proof."
+      },
+      "rotation_only_poses": {
+        "pass": true,
+        "maximum_translation": 0.0
+      },
+      "self_intersections": {
+        "pass": false,
+        "pairs_by_pose": {
+          "rest": 0,
+          "crouch": 1190,
+          "leap_peak": 780,
+          "landing": 1128
+        },
+        "method": "BVH overlaps excluding triangles that share a vertex; coplanar contact can count."
+      },
+      "full_deformation_gate": {
+        "pass": false,
+        "reason": "The volume check is an approximate regional screen. Hip and elbow pinching and any listed triangle intersections require review before a clean deformation claim."
+      }
+    },
+    "measurements": {
+      "units": "meters",
+      "body_length": 0.4583808481693268,
+      "height_at_shoulder": 0.4888779819011688,
+      "height_at_rump": 0.5699999928474426,
+      "back_height": 0.5699999928474426,
+      "chest_depth": 0.26895739138126373,
+      "hind_thigh_width": 0.12475292757153511,
+      "foreleg_width": 0.042595475912094116,
+      "head_length": 0.17048955382760406,
+      "horn_reach": 0.19671871595492774,
+      "horn_arc_length": 0.3973537589406181,
+      "tail_arc_length": 0.9602186729031499,
+      "hind_foot_length": 0.1885221027901391,
+      "overall_height": 0.7367002367973328,
+      "triangle_count": 110000,
+      "vertices": 54998,
+      "rest_volume_m3": 0.033461833152633215,
+      "definitions": "Body length: shoulder joint Y to rear rump surface, excluding head and tail. Chest depth: central thorax slice at Y=-0.115 +/-0.008 m, abs(X)<0.04 m. Thigh width: positive-X surface span at Y=0.195 +/-0.02 m and Z=0.335 +/-0.015 m. Foreleg width: positive-X surface span at Z=0.20 +/-0.012 m, Y<-0.16 m. Head and foot lengths are authoring-envelope measures; horn and tail arcs use transformed centerlines. Heights are mesh samples; all values are meters.",
+      "hind_to_fore_width_ratio": 2.928783512807614,
+      "body_length_endpoints_y": [
+        -0.17868617177009583,
+        0.27969467639923096
+      ]
+    },
+    "checks": [
+      {
+        "title": "Side proportions (Codex)",
+        "question": "Do the leg lengths, neck and body match the clay side view?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "ba30d2c5fe1bde9d7298f2a0004410b5d2ab2258cd8dd1516990e3aa63a7eee5",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+        "recommended": "Orchestrator's read: no. Legs far too short, neck and chest mass wrong, horns and head symbolic."
+      },
+      {
+        "title": "Front proportions (Codex)",
+        "question": "Chest width, leg spacing, horn spread as the clay front?",
+        "before": "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981",
+        "after": "4e7ae91e5cc20e17801e06e8c04bd92a82a3c8dcdc2d9718fdc122a9d9fb059f",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+        "recommended": "Orchestrator's read: partly; chest too bulbous, legs too short."
+      },
+      {
+        "title": "Three-quarter proportions (Codex)",
+        "question": "Overall masses as the clay three-quarter?",
+        "before": "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99",
+        "after": "233f850e445d3a4b904d78ab12c0099d879c0c4ae0e6a5ddeaa88692b958f739",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+        "recommended": "Orchestrator's read: no."
+      },
+      {
+        "title": "Pose sheet (Codex)",
+        "question": "Does it bend without collapse?",
+        "before": "ba30d2c5fe1bde9d7298f2a0004410b5d2ab2258cd8dd1516990e3aa63a7eee5",
+        "after": "0b964427911104c4a17c2b5893d80baa550da57864fdf2927191564ac4391e4a",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+        "recommended": "Yes: crouch, leap and landing deform cleanly, volume loss 5 to 11 percent."
+      },
+      {
+        "title": "Hind-leg dominance (Codex)",
+        "question": "Are the hind legs the dominant mass?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "ba30d2c5fe1bde9d7298f2a0004410b5d2ab2258cd8dd1516990e3aa63a7eee5",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+        "recommended": "Thigh width ratio 2.9 to 1 yes, but leg length no."
+      }
+    ],
+    "wallMinutes": 13.409528983333333,
+    "blenderSeconds": 250.29095064120483,
+    "codexTokens": null,
+    "note": "First attempt under Codex's default sandbox could not reach WSL (Blender) and was stopped; this is the unsandboxed second attempt. Orchestrator assessment: validators honest and complete; proportions would not pass the gate (legs far too short, neck and chest wrong, horns and head symbolic knobs). Kept as the Codex comparison build; not presented as a candidate on its own.",
+    "attempt1Log": "C:/dev/art-data/pipeline/codex-stream/luceras-blockout/attempt1-sandboxed/codex.log"
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-14T20:11:41Z",
-  "briefSha256": "6dbffdd63fed6f037ff4d218ba31e846b86fecaa4b30f3b1aaf8caef5beba2cd"
+  "briefSha256": "6dbffdd63fed6f037ff4d218ba31e846b86fecaa4b30f3b1aaf8caef5beba2cd",
+  "checks": [
+    {
+      "title": "Side proportions (Codex)",
+      "question": "Do the leg lengths, neck and body match the clay side view?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "ba30d2c5fe1bde9d7298f2a0004410b5d2ab2258cd8dd1516990e3aa63a7eee5",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+      "recommended": "Orchestrator's read: no. Legs far too short, neck and chest mass wrong, horns and head symbolic."
+    },
+    {
+      "title": "Front proportions (Codex)",
+      "question": "Chest width, leg spacing, horn spread as the clay front?",
+      "before": "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981",
+      "after": "4e7ae91e5cc20e17801e06e8c04bd92a82a3c8dcdc2d9718fdc122a9d9fb059f",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+      "recommended": "Orchestrator's read: partly; chest too bulbous, legs too short."
+    },
+    {
+      "title": "Three-quarter proportions (Codex)",
+      "question": "Overall masses as the clay three-quarter?",
+      "before": "352833b55a8c0f986f76f81e9c5d9389bfc2849a99ff4161507a78c920a40b99",
+      "after": "233f850e445d3a4b904d78ab12c0099d879c0c4ae0e6a5ddeaa88692b958f739",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+      "recommended": "Orchestrator's read: no."
+    },
+    {
+      "title": "Pose sheet (Codex)",
+      "question": "Does it bend without collapse?",
+      "before": "ba30d2c5fe1bde9d7298f2a0004410b5d2ab2258cd8dd1516990e3aa63a7eee5",
+      "after": "0b964427911104c4a17c2b5893d80baa550da57864fdf2927191564ac4391e4a",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+      "recommended": "Yes: crouch, leap and landing deform cleanly, volume loss 5 to 11 percent."
+    },
+    {
+      "title": "Hind-leg dominance (Codex)",
+      "question": "Are the hind legs the dominant mass?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "ba30d2c5fe1bde9d7298f2a0004410b5d2ab2258cd8dd1516990e3aa63a7eee5",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "dca2b54db43bcc19920a82995e22011e659db8dfa6589d5cb83dd262d0dec74b",
+      "recommended": "Thigh width ratio 2.9 to 1 yes, but leg length no."
+    }
+  ],
+  "reportedAt": "2026-10-14T20:12:18Z"
 }
