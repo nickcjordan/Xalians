@@ -9,7 +9,7 @@ Read this first when resuming the creature pipeline. Design of record: [creature
 - **Design program (six parts):** 1 asset contract (done, ratified items recorded), 2 measured budgets (done, from Nick's iPhone), 3 roster layer (drafted, proven by the walking skeleton), 4 stage contracts (drafted), 5 records and tooling (next), 6 the look (needs Luceras through stage 3 first).
 - **Luceras:** stage 1 approved (N-neyp); stage 2 closed on Nick's confirm (N-c85m): coat C storm slate, horns B ridged dark, eyes B amber goat, fur C feathered hind legs, plume A base with pointed tips (second plume set after his none-of-these note); composite of all picks B-emw3. Stage 3: composite B-emw3, five turnaround views, three close-ups (head and hind leg regenerated once as crops), three clay bare views (regenerated once with the hind-leg rule after the first pass read like a greyhound); my check found one contradiction (furred side view understates the hind legs; clay is the shape authority) and labeled the top view a layout hint. Model sheet page: https://claude.ai/artifact/Sys1nD4xLJfTJYpyLuxS6v; vision board: https://claude.ai/artifact/LaWkn8rxp8KMKFdoSAGjJn
 - **Built and verified:** `art/pipeline/images/codex_image.py` (Codex image runs recorded as builds, inputs copied as in-<n>-<name>); `art/pipeline/records/` records CLI, blob store, cost collector, review page generator (21 tests pass); Luceras initialized, stage 1 open with `reading.json` and `techspec.json`. `art/pipeline/` walking skeleton: quadruped class spec, rig modules, stand-in body, eleven parametric clips, glTF export with meshopt, contract schema and validator (65 checks pass), browser viewer; published live at https://claude.ai/artifact/CvQX6U4SHXUBzhhkj5Q9Bv.
-- **Next unfinished action:** second model sheet pass (eleven views from the final head) rendering; then Nick's four approvals on the sheet page; then stage 4 blockout.
+- **Next unfinished action:** Nick's four approvals on the second-pass model sheet page (https://claude.ai/artifact/Sys1nD4xLJfTJYpyLuxS6v); then stage 4 blockout from the clay views bound to the quadruped proxy rig.
 - **Open items:** seven archetypes borrow generic clips without their required events; KTX2, low tier, token, sprites, finish variants not built; act resolver test over every compiled species not wired (needs `packages/content` from a checkout with node_modules); toon versus lit taste question deferred to Luceras; Duel runs on old move data until its own v5 cutover.
 
 ## Costs to date
@@ -23,7 +23,8 @@ Read this first when resuming the creature pipeline. Design of record: [creature
 | 2026-10-14 | Parts 3 and 4 drafts; walking skeleton | 50 min | 70K session + 233K builder | chain green in 6.4 s; validator 65 checks |
 | 2026-10-14 | Log, part 5 design and tooling, Luceras intake | 35 min | 45K session + 134K builder | 21 tests; stage 1 open |
 | 2026-10-14 | Stage 1 approval, Codex runner, vision board (18 images), walking skeleton gaps (events, low tier, token, KTX2 wired), contact sheets | 1 h 10 min | 60K session + 164K gap builder + 85K sheet builder; Codex about 430K image tokens | all 16 options keep must-haves |
-| **Total** | | **about 5 h 35 min** | **about 1.6M agent, plus Codex** | |
+| 2026-10-14 | Stage 2 to close: selection screen (3 builds), notify loop, head rework (4 horn sets), record amendment, stage 3 two passes (23 images), approve mode | 4 h 30 min | about 400K session + about 1.1M builders; Codex about 1.6M image tokens for 56 images | stage 2 closed on seven picks; stage 3 presented |
+| **Total** | | **about 10 h** | **about 3.1M agent, plus about 2.0M Codex** | |
 
 ## Entries
 
