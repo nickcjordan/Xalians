@@ -1,5 +1,5 @@
 {
-  "note": "Color options for the Akinza surface, applied at render time over the grayscale base (render_surface.py --palette <key>). Hex values are sRGB. skinFactor darkens the skin under the fur relative to the coat. Eye color for every option from 2026-10-08: deep ice-teal #16789A. P1 to P3 add a pattern: the blue is mixed into the coat by a texture sampled at the stored rest position (attribute rest, object space), masked by pmask (countershading and belly/face-front exclusion), so it follows the body when posed.",
+  "note": "Color options for the Akinza surface, applied at render time over the grayscale base (render_surface.py --palette <key>). Hex values are sRGB. skinFactor darkens the skin under the fur relative to the coat. Eye color for every option from 2026-10-08: deep ice-teal #16789A. P1 to P3 add a pattern: the blue is mixed into the coat by a texture sampled at the stored rest position (attribute rest, object space), masked by pmask (countershading and belly/face-front exclusion), so it follows the body when posed. T5 (2026-10-14, fur stage step 1) is the current default for the Akinza look: T4 without the blue tipping, so long hairs (ears, crown, nape, tails) stay white between the stripes. T4 and earlier stay as the record of the color passes.",
   "skinFactor": 0.6,
   "A": {
     "name": "Frost",
@@ -280,6 +280,30 @@
     "diffuseShare": 0.5,
     "earLift": true,
     "name": "Tiger stripes, smooth spears in brickwork, arc-length body angle",
+    "pattern": "tiger4",
+    "patternParams": {
+      "maskAttr": "pmaskt",
+      "earOff": true,
+      "afterPale": true,
+      "cupBlue": true,
+      "period": 0.068,
+      "warp": 0.03,
+      "tailRings": true,
+      "tailRingPeriod": 0.09,
+      "tipShift": 0.7,
+      "ringWidth": 0.33
+    }
+  },
+  "T5": {
+    "coat": "#F8FAFD",
+    "pale": "#FAFCFF",
+    "iris": "#16789A",
+    "blue": "#93C4E8",
+    "skinFactor": 0.8,
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "earLift": true,
+    "name": "T4 with a white coat between stripes (no blue tipping on the long hairs)",
     "pattern": "tiger4",
     "patternParams": {
       "maskAttr": "pmaskt",
