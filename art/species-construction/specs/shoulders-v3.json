@@ -1,0 +1,159 @@
+{
+ "name": "shoulders v3",
+ "approval": null,
+ "note": "shoulders v3 (2026-10-14), for shoulders_v3_post.py (field: shoulders_v2_field.compose), appended after P-neck4c. Anatomy review 2026-10-13 finding 3: the deltoid read as a round pod set on the trunk (shoulders v1's shoulder ball), with a rear groove, a kink on the shoulder-top line and a tight high armpit. Moving the old vertices (shoulders v2, development only) could not remove the pod's rim or lower the armpit without folding, so the region is rebuilt: closings, a rolling-ball closing of radius .07 over the joint (fills the rear groove and the kink) and of radius .018 at the armpit apex; blurs, a strong masked blur (sigma .02) of the closed field over the whole joint, which rounds the pod rim into the chest, back and arm, and a light one (.008) at the armpit, giving a wider, lower round arch; partBox: the edit fades out by z .17 to .20 (the deltoid's lower edge: the arm below keeps its skin) and above z .37 (the neck); region, remesh, stitch, seam relax and fold repair as tails v2 (openvdb, the region is where the field changed, stitched on the old surface). World units, +y back.",
+ "grid": {
+  "lo": [
+   -0.34,
+   -0.2,
+   0.12
+  ],
+  "hi": [
+   0.34,
+   0.1,
+   0.42
+  ],
+  "step": 0.0025,
+  "band": 0.1
+ },
+ "masses": [],
+ "closings": [
+  {
+   "r": 0.07,
+   "masks": [
+    {
+     "c": [
+      0.19,
+      -0.045,
+      0.28
+     ],
+     "s": [
+      0.085,
+      0.1,
+      0.09
+     ],
+     "fade": [
+      0.5,
+      1.0
+     ]
+    }
+   ],
+   "exclude": [
+    {
+     "c": [
+      0.2,
+      -0.045,
+      0.17
+     ],
+     "s": [
+      0.06,
+      0.08,
+      0.05
+     ],
+     "fade": [
+      0.5,
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "r": 0.018,
+   "masks": [
+    {
+     "c": [
+      0.188,
+      -0.045,
+      0.215
+     ],
+     "s": [
+      0.035,
+      0.06,
+      0.035
+     ],
+     "fade": [
+      0.4,
+      1.0
+     ]
+    }
+   ]
+  }
+ ],
+ "edtSmooth": 0.005,
+ "minFill": 0.0004,
+ "fullFill": 0.0015,
+ "blurs": [
+  {
+   "c": [
+    0.2,
+    -0.045,
+    0.28
+   ],
+   "s": [
+    0.08,
+    0.1,
+    0.08
+   ],
+   "fade": [
+    0.4,
+    1.0
+   ],
+   "sigma": 0.02
+  },
+  {
+   "c": [
+    0.188,
+    -0.045,
+    0.212
+   ],
+   "s": [
+    0.04,
+    0.07,
+    0.04
+   ],
+   "fade": [
+    0.4,
+    1.0
+   ],
+   "sigma": 0.008
+  }
+ ],
+ "partBox": {
+  "x": [
+   0.09,
+   0.12,
+   0.31,
+   0.335
+  ],
+  "y": [
+   -1,
+   -1,
+   0.08,
+   0.09
+  ],
+  "z": [
+   0.17,
+   0.2,
+   0.37,
+   0.4
+  ]
+ },
+ "region": {
+  "tol": 2e-05,
+  "grow": 0.006,
+  "gain": 3.0,
+  "cut": 0.3,
+  "nearSurface": 0.02
+ },
+ "seamRelax": {
+  "iterations": 8,
+  "rings": 3
+ },
+ "foldRepair": {
+  "passes": 6,
+  "threshold": 0.3,
+  "rings": 2,
+  "iterations": 6
+ },
+ "islandFaces": 5000
+}
