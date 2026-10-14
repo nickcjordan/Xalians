@@ -14,6 +14,7 @@ import validator from 'gltf-validator';
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { MeshoptDecoder } from 'meshoptimizer';
+import { readPngRgba } from './png.mjs';
 import { ARCHETYPES, REQUIRED_CLIPS, measure, readGlb, sha256, socketTags } from './glb.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -123,10 +124,11 @@ async function main() {
   }
 
   // 6. Measured matches the file.
-  const m = measure(json, bytes);
+  const m = measure(json, bytes, manifest.tiers);
   const mm = manifest.measured || {};
   const pairs = [
     ['full.triangles', m.full.triangles, mm.full?.triangles], ['full.drawCalls', m.full.drawCalls, mm.full?.drawCalls],
+    ...(manifest.tiers?.low ? [['low.triangles', m.low?.triangles, mm.low?.triangles], ['low.drawCalls', m.low?.drawCalls, mm.low?.drawCalls]] : []),
     ['joints', m.joints, mm.joints], ['influencesPerVertex', m.influencesPerVertex, mm.influencesPerVertex],
     ['morphTargets', m.morphTargets, mm.morphTargets], ['materials', m.materials, mm.materials],
     ['textureBytes', m.textureBytes, mm.textureBytes], ['fileBytes', m.fileBytes, mm.fileBytes], ['clipBytes', m.clipBytes, mm.clipBytes],
@@ -174,9 +176,10 @@ async function main() {
   if (mesh && mesh.getMesh()) {
     const ibm = skin.getInverseBindMatrices();
     const mats = joints.map((j, i) => mul(j.getWorldMatrix(), ibm.getElement(i, [])));
+    const skinBounds = (meshNode) => {
     const lo = [Infinity, Infinity, Infinity];
     const hi = [-Infinity, -Infinity, -Infinity];
-    for (const prim of mesh.getMesh().listPrimitives()) {
+    for (const prim of meshNode.getMesh().listPrimitives()) {
       const pos = prim.getAttribute('POSITION');
       const J = prim.getAttribute('JOINTS_0');
       const W = prim.getAttribute('WEIGHTS_0');
@@ -192,6 +195,25 @@ async function main() {
         for (let a = 0; a < 3; a++) { lo[a] = Math.min(lo[a], v[a]); hi[a] = Math.max(hi[a], v[a]); }
       }
     }
+    return [lo, hi];
+    };
+    const [lo, hi] = skinBounds(mesh);
+    if (manifest.tiers?.low) {
+      const lowNode = root.listNodes().find((n) => n.getName() === manifest.tiers.low.node);
+      if (lowNode && lowNode.getMesh()) {
+        const [llo, lhi] = skinBounds(lowNode);
+        const off = Math.max(...[0, 1, 2].flatMap((a) => [Math.abs(llo[a] - lo[a]), Math.abs(lhi[a] - hi[a])]));
+        check(off < 0.02, `low tier bounds match the full tier (within ${(off * 100).toFixed(2)} cm)`, `low tier bounds differ from the full tier by ${(off * 100).toFixed(2)} cm`);
+        const prims = lowNode.getMesh().listPrimitives();
+        const wOk = prims.every((p) => {
+          const W = p.getAttribute('WEIGHTS_0');
+          const ww = [];
+          for (let i = 0; i < W.getCount(); i++) { W.getElement(i, ww); if (Math.abs(ww.reduce((s, x) => s + x, 0) - 1) > 0.02) return false; }
+          return true;
+        });
+        check(wOk, 'low tier skin weights sum to 1', 'low tier has vertices whose skin weights do not sum to 1');
+      }
+    }
     const b = manifest.bounds?.rest;
     if (b) {
       const off = Math.max(...[0, 1, 2].flatMap((a) => [Math.abs(lo[a] - b.min[a]), Math.abs(hi[a] - b.max[a])]));
@@ -205,6 +227,25 @@ async function main() {
     const [bmin, bmax] = manifest.size?.bandCm || [0, 0];
     check(bmin <= manifest.size.referenceCm && manifest.size.referenceCm <= bmax, 'referenceCm inside bandCm', `referenceCm ${manifest.size?.referenceCm} outside band ${bmin} to ${bmax}`);
   } else fail('full tier node has no mesh to measure');
+
+  // Token: PNG is 512 x 512 RGBA with a transparent background and a solid dark silhouette; SVG has a path.
+  if (files['token.png'] && existsSync(join(dir, 'token.png'))) {
+    const img = readPngRgba(join(dir, 'token.png'));
+    let solid = 0, partial = 0, darkOk = true;
+    for (let i = 0; i < img.width * img.height; i++) {
+      const a = img.data[i * 4 + 3];
+      if (a === 255) { solid++; if (img.data[i * 4] > 60 || img.data[i * 4 + 1] > 60 || img.data[i * 4 + 2] > 60) darkOk = false; } else if (a > 0) partial++;
+    }
+    const cover = (solid + partial) / (img.width * img.height);
+    check(img.width === 512 && img.height === 512, 'token.png is 512 x 512', `token.png is ${img.width} x ${img.height}, expected 512 x 512`);
+    check(img.data[3] === 0 && img.data[(img.width - 1) * 4 + 3] === 0, 'token.png corners are transparent', 'token.png corners are not transparent');
+    check(cover > 0.03 && cover < 0.8 && darkOk, `token.png is non-empty (${(cover * 100).toFixed(1)}% covered) with a dark fill`, `token.png coverage ${(cover * 100).toFixed(1)}% or fill not dark`);
+  }
+  if (files['token.svg'] && existsSync(join(dir, 'token.svg'))) {
+    const svg = readFileSync(join(dir, 'token.svg'), 'utf8');
+    const d = /<path[^>]* d="([^"]+)"/.exec(svg)?.[1] || '';
+    check(/^<svg /.test(svg) && (d.match(/M/g) || []).length >= 1 && d.length > 200, `token.svg has a traced outline (${(d.match(/M/g) || []).length} loop, ${d.length} chars)`, 'token.svg has no traced outline');
+  }
 
   // Up and forward: the head is above the ground and in front of the origin; eye_l is on +X.
   const at = (tag) => {
@@ -237,7 +278,7 @@ try {
 console.log(`validate ${dir}`);
 console.log(`passed ${passed.length} checks`);
 for (const w of warnings) console.log(`warning: ${w}`);
-console.log('not checked yet: act resolver over every compiled species; sprite atlases; KTX2 textures; low tier');
+console.log('not checked yet: act resolver over every compiled species; sprite atlases; KTX2 textures (toktx not installed)');
 if (failures.length) {
   console.log(`FAILED ${failures.length}:`);
   for (const f of failures) console.log(`  - ${f}`);

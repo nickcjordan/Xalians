@@ -34,7 +34,7 @@
 <body>
 <!-- Viewer config, read by viewer/check.mjs: default asset and the runtime pins. -->
 <script type="application/json" id="viewer-config">
-{ "defaultAsset": "../out/standin", "three": "0.160.0", "phoneViewport": [390, 700], "socketMarkerRadiusM": 0.012 }
+{ "defaultAsset": "../out/standin", "three": "0.160.0", "phoneViewport": [390, 700], "basisPath": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/", "socketMarkerRadiusM": 0.012 }
 </script>
 <script type="importmap">
 {
@@ -47,6 +47,7 @@
 <header>
   <strong>Creature asset viewer</strong>
   <label>Clip <select id="clip"></select></label>
+  <label>Tier <select id="tier"></select></label>
   <button id="replay" type="button">Replay</button>
   <button id="phone" type="button" aria-pressed="false">Phone 390 x 700</button>
   <button id="markers" type="button" aria-pressed="true">Sockets</button>
@@ -59,6 +60,7 @@
     <dl id="asset"></dl>
     <h2>Render</h2>
     <dl>
+      <dt>Active tier</dt><dd id="tier-name">-</dd>
       <dt>Creature tris</dt><dd id="ctris">-</dd>
       <dt>Creature calls</dt><dd id="ccalls">-</dd>
       <dt>Scene tris</dt><dd id="tris">-</dd>
@@ -77,6 +79,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 const config = JSON.parse(document.getElementById('viewer-config').textContent);
@@ -131,6 +134,9 @@ async function load() {
   const glbName = Object.keys(manifest.files).find((f) => f.endsWith('.glb'));
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
+  // KTX2 textures (KHR_texture_basisu): transcoder from the same pinned three version on jsDelivr.
+  const ktx2 = new KTX2Loader().setTranscoderPath(config.basisPath).detectSupport(renderer);
+  loader.setKTX2Loader(ktx2);
   const gltf = await loader.loadAsync(`${assetDir}/${glbName}`);
   scene.add(gltf.scene);
   mixer = new THREE.AnimationMixer(gltf.scene);
@@ -138,18 +144,32 @@ async function load() {
   let joints = 0;
   gltf.scene.traverse((o) => { if (o.isSkinnedMesh) joints = Math.max(joints, o.skeleton.bones.length); });
   $('joints').textContent = joints;
-  // Creature-only counts from the loaded geometry (scene counts below include grid, arrow and markers).
-  let ctris = 0, ccalls = 0;
-  gltf.scene.traverse((o) => {
-    if (!o.isMesh) return;
-    const g = o.geometry;
-    ctris += (g.index ? g.index.count : g.attributes.position.count) / 3;
-    ccalls += Math.max(1, g.groups.length);
-  });
-  $('ctris').textContent = ctris;
-  $('ccalls').textContent = ccalls;
-  status('creature-tris', ctris);
-  status('creature-calls', ccalls);
+  // Tier switch: each tier is a skinned mesh node named in manifest.tiers; only the active one is visible.
+  const tierNodes = {};
+  for (const [tier, t] of Object.entries(manifest.tiers)) {
+    gltf.scene.traverse((o) => { if (o.name === t.node && o.isMesh) tierNodes[tier] = o; });
+  }
+  const triCount = (mesh) => { const g = mesh.geometry; return (g.index ? g.index.count : g.attributes.position.count) / 3; };
+  function setTier(tier) {
+    for (const [name, mesh] of Object.entries(tierNodes)) mesh.visible = name === tier;
+    const mesh = tierNodes[tier];
+    // Creature-only counts from the active tier's geometry (scene counts include grid, arrow and markers).
+    const ctris = triCount(mesh), ccalls = Math.max(1, mesh.geometry.groups.length);
+    $('tier-name').textContent = `${tier} (${manifest.tiers[tier].node})`;
+    $('ctris').textContent = ctris;
+    $('ccalls').textContent = ccalls;
+    $('tier').value = tier;
+    status('tier', tier);
+    status('creature-tris', ctris);
+    status('creature-calls', ccalls);
+  }
+  for (const tier of Object.keys(tierNodes)) {
+    const opt = document.createElement('option');
+    opt.value = opt.textContent = tier;
+    $('tier').appendChild(opt);
+  }
+  $('tier').onchange = () => setTier($('tier').value);
+  setTier(tierNodes[params.get('tier')] ? params.get('tier') : 'full');
 
   const geo = new THREE.SphereGeometry(config.socketMarkerRadiusM, 12, 8);
   const mat = new THREE.MeshBasicMaterial({ color: 0xf2b33d, depthTest: false });
@@ -170,7 +190,7 @@ async function load() {
   $('asset').innerHTML = [
     ['Species', manifest.species], ['Version', manifest.assetVersion], ['Reference', `${manifest.size.referenceCm} cm (${manifest.size.dimension})`],
     ['File', `${(m.fileBytes / 1024).toFixed(1)} KB`], ['Texture', `${(m.textureBytes / 1024).toFixed(1)} KB`], ['Clips', `${(m.clipBytes / 1024).toFixed(1)} KB`],
-    ['Manifest tris', m.full.triangles], ['Sockets', `${markers.length} of ${manifest.sockets.length}`],
+    ['Manifest tris', `full ${m.full.triangles}` + (m.low ? `, low ${m.low.triangles}` : '')], ['Sockets', `${markers.length} of ${manifest.sockets.length}`],
   ].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
 
   const select = $('clip');

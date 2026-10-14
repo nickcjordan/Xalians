@@ -39,19 +39,21 @@ function viewBytes(json, index) {
   return meshopt ? meshopt.byteLength : view.byteLength;
 }
 
-export function measure(json, fileBytes) {
+// tiers: manifest.tiers ({ full: { node }, low: { node } }); each tier is measured from its own node.
+export function measure(json, fileBytes, tiers = {}) {
   const meshNodes = (json.nodes || []).filter((n) => n.mesh !== undefined);
-  let triangles = 0;
-  let drawCalls = 0;
+  const tierOf = (node) => Object.keys(tiers).find((t) => tiers[t].node === node.name) || 'full';
+  const perTier = {};
   let morphTargets = 0;
   let influences = 0;
   for (const node of meshNodes) {
+    const tier = (perTier[tierOf(node)] ||= { triangles: 0, drawCalls: 0 });
     for (const prim of json.meshes[node.mesh].primitives) {
       const mode = prim.mode ?? 4;
       if (mode !== 4) continue;
       const count = prim.indices !== undefined ? json.accessors[prim.indices].count : json.accessors[prim.attributes.POSITION].count;
-      triangles += count / 3;
-      drawCalls += 1;
+      tier.triangles += count / 3;
+      tier.drawCalls += 1;
       morphTargets = Math.max(morphTargets, (prim.targets || []).length);
       const sets = Object.keys(prim.attributes).filter((k) => /^JOINTS_\d+$/.test(k)).length;
       influences = Math.max(influences, sets * 4);
@@ -74,7 +76,7 @@ export function measure(json, fileBytes) {
   let clipBytes = 0;
   for (const v of clipViews) clipBytes += viewBytes(json, v);
   return {
-    full: { triangles, drawCalls },
+    ...perTier,
     joints,
     influencesPerVertex: influences,
     morphTargets,

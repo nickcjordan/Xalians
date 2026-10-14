@@ -7,9 +7,9 @@ Writes ``standin.raw.glb`` (uncompressed glTF binary) and ``blender_facts.json``
 (clip timings and events, sockets, size, bounds, measured counts from Blender)
 into ``--out``. The node step ``contract/write_manifest.mjs`` compresses the
 glb with meshopt and writes the contract manifest from these facts plus the
-final file. KTX2 texture compression would run in that node step, beside
-meshopt (``gltf-transform etc1s`` or ``uastc``); it is out of scope for this
-chain, so the texture ships as the exporter's PNG.
+final file. Also writes ``token.png`` and ``token.svg`` (silhouette_token.py)
+into ``--out``. KTX2 texture compression runs in that node step when ``toktx``
+is on PATH.
 """
 
 import json
@@ -26,6 +26,7 @@ from mathutils import Vector  # noqa: E402
 
 import clips as clip_lib  # noqa: E402
 import rig_modules  # noqa: E402
+import silhouette_token  # noqa: E402
 import standin_body  # noqa: E402
 
 ARGS = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -126,9 +127,16 @@ def main():
         if tag is not None:
             sockets[tag["socket"]] = {"joint": b.name, "rest": [r(x) for x in to_gltf(b.head_local)]}
 
+    # Low tier: collapse-decimated copy of the full body on the same skeleton.
+    low, low_stats = standin_body.make_low_tier(body, rig, target_triangles=3000, name="standin_low")
+    # Token: side-view silhouette of the full body at rest.
+    body.data.calc_loop_triangles()
+    tri_idx = [tuple(lt.vertices) for lt in body.data.loop_triangles]
+    token_stats = silhouette_token.make_token(rest, tri_idx, out / "token.png", out / "token.svg")
+
     # Export: Y up, +Z forward (exporter converts Blender -Y), every action as its own animation.
     for o in bpy.context.scene.objects:
-        o.select_set(o in (rig, body))
+        o.select_set(o in (rig, body, low))
     raw = out / "standin.raw.glb"
     t_exp = time.time()
     bpy.ops.export_scene.gltf(
@@ -163,14 +171,17 @@ def main():
         "blender": bpy.app.version_string,
         "class": spec["class"],
         "classFile": class_path.name,
-        "tierNodes": {"full": body.name},
+        "tierNodes": {"full": body.name, "low": low.name},
         "size": {"dimension": "heightCm", "builtHeightCm": r(maxs[1] * 100, 2), "referenceCm": height_cm,
                  "bandCm": [48, 66], "restHeightCm": 0},
         "bounds": {"rest": {"min": [r(x) for x in mins], "max": [r(x) for x in maxs]},
                    "footprintRadiusM": r(footprint, 3), "maxExtentM": r(max_extent, 3)},
         "sockets": sockets,
+        "token": token_stats,
         "clips": clip_facts,
-        "blenderMeasured": {"triangles": tris, "vertices": len(body.data.vertices),
+        "blenderMeasured": {"triangles": tris, "lowTriangles": low_stats["triangles"],
+                            "lowInfluencesPerVertex": low_stats["influencesPerVertex"],
+                            "lowUnweightedFixed": low_stats["unweightedFixed"], "vertices": len(body.data.vertices),
                             "joints": len(rig.data.bones),
                             "deformJoints": sum(1 for b in rig.data.bones if b.use_deform),
                             "influencesPerVertex": skin["influencesPerVertex"],
@@ -180,7 +191,7 @@ def main():
                     "measure": r(t_exp - t_clips, 2), "export": r(t_done - t_exp, 2), "total": r(t_done - t0, 2)},
     }
     (out / "blender_facts.json").write_text(json.dumps(facts, indent=2), encoding="utf-8")
-    print("XALIANS_FACTS", json.dumps({"triangles": tris, "joints": facts["blenderMeasured"]["joints"],
+    print("XALIANS_FACTS", json.dumps({"triangles": tris, "low": low_stats["triangles"], "token": token_stats, "joints": facts["blenderMeasured"]["joints"],
                                       "heightCm": height_cm, "seconds": facts["seconds"]}))
 
 

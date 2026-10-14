@@ -159,6 +159,14 @@ def skin_to(body, rig, limit=4):
     bpy.context.view_layer.objects.active = body
     for o in bpy.context.scene.objects:
         o.select_set(o == body)
+    return limit_and_fix_weights(body, rig, limit)
+
+
+def limit_and_fix_weights(body, rig, limit=4):
+    """Drop near-zero weights, keep at most ``limit`` influences, normalize, give every vertex a weight."""
+    for o in bpy.context.scene.objects:
+        o.select_set(o == body)
+    bpy.context.view_layer.objects.active = body
     # Drop near-zero weights first so the limit keeps meaningful influences.
     bpy.ops.object.vertex_group_clean(group_select_mode="ALL", limit=0.01)
     bpy.ops.object.vertex_group_limit_total(group_select_mode="ALL", limit=limit)
@@ -176,6 +184,40 @@ def skin_to(body, rig, limit=4):
         fixed += 1
     influences = max((sum(1 for g in v.groups if g.weight > 0) for v in body.data.vertices), default=0)
     return {"unweightedFixed": fixed, "influencesPerVertex": influences}
+
+
+def make_low_tier(body, rig, target_triangles=3000, name="standin_low", limit=4):
+    """Low tier: a duplicate of the full body, collapse-decimated.
+
+    The Decimate modifier interpolates vertex-group weights and UVs across collapses, so the copy stays
+    skinned to the same armature; weights are then re-limited to ``limit`` and normalized.
+    """
+    low = body.copy()
+    low.data = body.data.copy()
+    low.name = name
+    low.data.name = name
+    bpy.context.scene.collection.objects.link(low)
+    for m in list(low.modifiers):
+        if m.type == "ARMATURE":
+            low.modifiers.remove(m)
+    for o in bpy.context.scene.objects:
+        o.select_set(o == low)
+    bpy.context.view_layer.objects.active = low
+    tris = sum(len(p.vertices) - 2 for p in low.data.polygons)
+    dec = low.modifiers.new("decimate", "DECIMATE")
+    dec.decimate_type = "COLLAPSE"
+    dec.ratio = target_triangles / tris
+    dec.use_collapse_triangulate = True
+    bpy.ops.object.modifier_apply(modifier=dec.name)
+    arm = low.modifiers.new("Armature", "ARMATURE")
+    arm.object = rig
+    low.parent = rig
+    low.matrix_parent_inverse = body.matrix_parent_inverse.copy()
+    low.data.update()
+    low.data.calc_loop_triangles()
+    stats = limit_and_fix_weights(low, rig, limit)
+    stats["triangles"] = len(low.data.loop_triangles)
+    return low, stats
 
 
 def _dist_to_segment(p, a, b):
