@@ -42,6 +42,7 @@ def arg(name, default=None):
 OUT = Path(arg("--out"))
 TAG = arg("--tag", "iter")
 FINAL = "--final" in ARGS
+CLEANUP = "--cleanup" in ARGS   # pass 4: whisker pads, eye seat, ear seats, horn roots
 RECON = arg("--recon")          # pass 3: reconstructed skull, face and neck (shape.glb) replaces the metaball face
 OUT.mkdir(parents=True, exist_ok=True)
 LOG = {}
@@ -238,7 +239,7 @@ def whiskers(side):
         if RECON and HEAD_TREE is not None:
             hit = HEAD_TREE.find_nearest(Vector(root))
             if hit[0] is not None:
-                root = np.array(hit[0][:]) - np.array(hit[1][:]) * 0.0006
+                root = np.array(hit[0][:]) - np.array(hit[1][:]) * (0.0028 if CLEANUP else 0.0006)  # pass 4: roots fully inside the pad
         fan = (i - 3) / 3.0
         d0 = np.array([sx * 0.80, 0.30 + 0.05 * rng.normal(), -0.05 - 0.22 * (root[2] < 0.499) + 0.14 * fan])
         d0 /= np.linalg.norm(d0)
@@ -368,6 +369,10 @@ def main():
     if RECON:
         # pass 3: keep only the neck bridge and horn collar metaballs; the face, skull and neck come from the recon
         del SKULL[:-4]
+        if CLEANUP:
+            # pass 4 (3): round the flat ear-seat patches left by the ear-root cut into the skull curvature
+            for sx in (1, -1):
+                SKULL.append(dict(co=(sx * 0.041, -0.196, 0.588), half=(0.017, 0.028, 0.028), stiff=2.0))
         rec = gr.import_glb(RECON, "recon")
         P0 = sk.co(rec)
         s_, pitch_, t_, c0_, rep_ = gr.place(P0, RECON_SKULL_W, rc, P2, N1, 0.516)
@@ -426,6 +431,9 @@ def main():
     if hit is not None:
         EYE_C = hit - EYE_LOOK * (EYE_R * (1 - EYE_PROUD))
         EYE_C[0] = abs(EYE_C[0])
+    if CLEANUP:
+        # pass 4 (2): sink the eyeballs 2 mm along the look direction and lower them 2 mm, so the lid rolls sit on the face
+        EYE_C = EYE_C - EYE_LOOK * 0.002 - np.array([0.0, 0.0, 0.002])
     LOG["eyeCenter"] = EYE_C.round(4).tolist()
     up = np.array([0, 0, 1.0])
     for sx in (1, -1):
@@ -458,6 +466,25 @@ def main():
     for sx in (1, -1):
         d = np.linalg.norm(P - EYE_C * [sx, 1, 1], axis=1)
         sk.smooth(head, 10, 0.45, np.clip((EYE_R * 2.0 - d) / (EYE_R * 0.6), 0, 1))
+    if CLEANUP:
+        P = sk.co(head)
+        # pass 4 (1): relax the whisker pads (pads only) so the reconstruction's spike dimples go
+        wp = np.zeros(len(P))
+        for sx in (1, -1):
+            q = (P - np.array([sx * 0.030, -0.282, 0.508])) / np.array([0.026, 0.026, 0.018])
+            wp = np.maximum(wp, np.clip((1 - (q * q).sum(1)) * 2.0, 0, 1))
+        sk.smooth(head, 150, 0.6, wp)
+        # pass 4 (3, 4): relax the ear seats on the skull side only (|x| under the skull half width keeps the ear
+        # shells untouched) and soften the creases at the horn roots
+        P = sk.co(head)
+        wr = np.zeros(len(P))
+        for sx in (1, -1):
+            d = np.linalg.norm(P - np.array([sx * 0.046, -0.196, 0.590]), axis=1)
+            wr = np.maximum(wr, np.clip((0.034 - d) / 0.012, 0, 1) * (np.abs(P[:, 0]) < 0.057))
+            d = np.linalg.norm(P - np.array([sx * 0.040, -0.212, 0.628]), axis=1)
+            wr = np.maximum(wr, np.clip((0.048 - d) / 0.016, 0, 1))
+        sk.smooth(head, 40, 0.5, wr)
+        LOG["cleanupVerts"] = dict(pads=int((wp > 0).sum()), seats=int((wr > 0).sum()))
     lap(f"face sculpt: {len(head.data.vertices)} verts")
 
     head_part = bpy.data.objects.new("luceras_head_part", head.data.copy())
