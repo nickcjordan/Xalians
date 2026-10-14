@@ -1,0 +1,190 @@
+{
+ "title": "Luceras Blockout",
+ "heading": "Luceras: blockout and proxy rig",
+ "lede": "Stage 4 of 11. The first 3D shape of Luceras, built from your approved clay views, bound to the quadruped skeleton and bent into three extreme poses. Two independent streams built it from the same brief: Claude (reconstruction from the clay) and Codex (parametric masses). This gate is about proportions, not look: silhouette and masses. Approve the Claude blockout's proportions, or say what needs work and in which view. Confirm notifies the orchestrator.",
+ "fallback": "Approvals cannot be saved from this view; reply in chat.",
+ "compositeEmpty": "Confirm closes the blockout stage; the sculpt stage starts from this shape.",
+ "confirmed": "Blockout confirmed; the orchestrator files it and starts the sculpt. Tell the orchestrator you confirmed.",
+ "fold": {
+  "title": "Decided by the pipeline owner",
+  "text": "Claude's build came from three reconstruction runs of the clay front and side views through the installed image-to-3D tool, under the GPU cap, cleaned to one closed manifold at 200K triangles and scaled so the rump top is 0.57 m; the proxy rig has 40 joints placed by measured landmarks. Codex's build is parametric ellipsoids and tubes, 110K triangles, 40 joints. Both pass every engine-breaking validator (height, forward axis, origin, manifold, joints, influences, unweighted vertices). The orchestrator's read: the Claude build matches the clay's side proportions within a percent and is the one to carry forward; the Codex build is a legitimate blockout but its legs are far too short and its head, horns and feet are symbolic knobs, so it is shown for comparison only. The hind stance stays square as the class rest pose unless you ask otherwise."
+ },
+ "order": [
+  "claude",
+  "codex",
+  "numbers"
+ ],
+ "elements": {
+  "claude": {
+   "name": "Claude stream (reconstruction)",
+   "mode": "gallery",
+   "question": "Do the proportions match the clay from the side, the front and the three-quarter, and does it bend without collapse?",
+   "judge": [
+    "Side: leg lengths, chest depth, waist, tail as the clay?",
+    "Front: chest width, leg spacing, horn spread?",
+    "Pose sheet: crouch, leap and landing deform cleanly?",
+    "Hind legs the dominant mass?"
+   ],
+   "reading": [
+    "mustHave[0]",
+    "carriedOverFromSilhouette[3]"
+   ],
+   "recommend": null,
+   "note": "Known and declared: the hind stance is square where the clay staggers its hind legs (the square stance is the class rest pose; say if you want the hind feet moved back about 6 cm); the horns are thicker and smoother than the clay's ridged horns (fixed in the sculpt stage); a thin whisker flap at the muzzle; from above the hind feet splay. Volume implies about 22 kg against the 13 kg reference, a concern for the surface stage, not this gate.",
+   "views": [
+    {
+     "label": "Side",
+     "blob": "49973efdf59b7a9676373b2553aa91e7343ec6c8f45495d5023b1e1143942338",
+     "caption": "Blockout left, clay right"
+    },
+    {
+     "label": "Front",
+     "blob": "d1ac14caa601da51a7b0cb52c1fb803a0fb4c2f4043a887e1bc7d59c0152ea37",
+     "caption": "Blockout left, clay right"
+    },
+    {
+     "label": "Three-quarter",
+     "blob": "385060e3b37914774c2a343368fca96620aa71551ded6c34c16dfe6fd1dc6bd9",
+     "caption": "Blockout left, clay right"
+    },
+    {
+     "label": "Pose sheet",
+     "blob": "df14035879ee8a1666a302774983b656967de424451367f02b62f86d5e6f405c",
+     "caption": "Rest, crouch, leap peak, landing, from two cameras, with volume change per pose"
+    },
+    {
+     "label": "Rest, side",
+     "blob": "141c229d652ac4310344b322acfe528c940b5d588d35043f956b9950eaef1b6e",
+     "caption": "Rest pose, left side"
+    },
+    {
+     "label": "Rest, front",
+     "blob": "b166d60d64b7a1e30b79750a2da92d845b4cd8edee676c53352d861984354841",
+     "caption": "Rest pose, front"
+    },
+    {
+     "label": "Rest, three-quarter",
+     "blob": "6b86808110383f8d843fefd58bce8d8bb93d0486307e1a2412e8ba30b41630c0",
+     "caption": "Rest pose, left three-quarter"
+    },
+    {
+     "label": "Rest, back",
+     "blob": "1a89f04b6d74a8f880f292c965d3678fb6f7aaad47e2c4e711b2ba4626c644f6",
+     "caption": "Rest pose, back"
+    },
+    {
+     "label": "Rest, top",
+     "blob": "f8b710a4e931a64613d7708b182a92580e3db08b013136e133936e0c94f4acd5",
+     "caption": "Rest pose, from above"
+    }
+   ]
+  },
+  "codex": {
+   "name": "Codex stream (parametric)",
+   "mode": "info",
+   "question": "For comparison only.",
+   "judge": [],
+   "reading": [],
+   "recommend": null,
+   "note": "Built by Codex (gpt-6-astra) from the same brief in 13 minutes, no GPU. Validators all pass. The orchestrator's read: legs far too short, neck and chest mass wrong, horns, head and feet symbolic; poses deform cleanly.",
+   "views": [
+    {
+     "label": "Side",
+     "blob": "b96265ca06c50cd07b5d502b7f280ecae1e03a30393715d0938181f85f2a3e7c",
+     "caption": "Blockout left, clay right"
+    },
+    {
+     "label": "Front",
+     "blob": "d68bc24dad84da13f61d9ac927a00e226bebb802c795738c1f91982cc1de87d5",
+     "caption": "Blockout left, clay right"
+    },
+    {
+     "label": "Three-quarter",
+     "blob": "4ca6f1bb59ac9dbb51b9a5a089d5b7899ec69a78b7eb9afa555c18a5185e6374",
+     "caption": "Blockout left, clay right"
+    },
+    {
+     "label": "Pose sheet, side",
+     "blob": "0b964427911104c4a17c2b5893d80baa550da57864fdf2927191564ac4391e4a",
+     "caption": "Rest and extreme poses, left side"
+    }
+   ]
+  },
+  "numbers": {
+   "name": "The two streams in numbers",
+   "mode": "info",
+   "question": "",
+   "judge": [],
+   "reading": [],
+   "recommend": null,
+   "views": [],
+   "table": [
+    [
+     "Measure",
+     "Claude",
+     "Codex"
+    ],
+    [
+     "Method",
+     "reconstruction from clay (3 GPU runs)",
+     "parametric masses"
+    ],
+    [
+     "Wall time",
+     "about 50 min",
+     "13.4 min"
+    ],
+    [
+     "Blender time",
+     "55 s final build, about 440 s all runs",
+     "250 s"
+    ],
+    [
+     "GPU",
+     "peak about 5 GB of the 6.5 GB cap",
+     "none"
+    ],
+    [
+     "Triangles",
+     "200,000",
+     "110,000"
+    ],
+    [
+     "Joints, influences, unweighted",
+     "40, 4, 0",
+     "40, 4, 0"
+    ],
+    [
+     "Height at rump top",
+     "0.570 m",
+     "0.570 m"
+    ],
+    [
+     "Side silhouette overlap with clay",
+     "0.61",
+     "not measured by the stream"
+    ],
+    [
+     "Side ratios versus clay (height, length, chest, waist over rump height)",
+     "1.298/1.78/0.579/0.336 against clay 1.299/1.80/0.577/0.321",
+     "not measured"
+    ],
+    [
+     "Volume change in poses (crouch, leap, landing)",
+     "-8.9%, -10.1%, +1.1%",
+     "-9.7%, -5.1%, -10.8%"
+    ],
+    [
+     "Agent tokens",
+     "about 368K (Claude)",
+     "not exposed by the Codex runtime"
+    ],
+    [
+     "First attempt",
+     "reconstruction run 1 and 2 failed (lopsided body, fused forelegs), run 3 kept",
+     "sandboxed attempt could not reach WSL, relaunched unsandboxed"
+    ]
+   ]
+  }
+ }
+}

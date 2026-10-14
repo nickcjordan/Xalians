@@ -19,6 +19,11 @@ An element may carry "mode": "approve" (an aspect Nick approves rather than pick
 without Pick buttons, one "Approve <name>" button writes picks/<element> {alias: "a,b,c", label: "approved", blob,
 blobs: [...], at}, and "Needs work" writes requests/<element> {kind: "rework", text, at}. "recommend": null means no
 recommendation; an optional "note" string renders under the question.
+An element may carry "mode": "gallery" with "views": [{"label", "blob", "caption"}] listed explicitly in the spec (blob =
+sha256 in the pipeline store): it renders and behaves like approve mode (cards, overlay compare, one Approve button writing
+picks/<element> with every view blob, a Needs work box writing requests/<element> kind rework, undo via the rail). An
+element may carry "mode": "info" with "views" and an optional "table": [[cell, ...], ...] (first row is the header): it shows
+the views as plain figures and the table, has no buttons, and is not counted among the picks.
 Notification: Confirm and the request submits (new set, mix, needs work) also call comments.sendToClaude, anchored at
 the confirm box or the request form, when canSendToClaude() reads "available"; picks and approvals never send. Any
 rejection shows "Could not notify the orchestrator; tell them in chat." and is never retried. Without the comments
@@ -230,8 +235,9 @@ def render_source(src, base_uri):
             parts.append('<p class="muted">No encyclopedia entry found for this world.</p>')
     elif src and src["element"]:
         parts.append('<h4>Element</h4><p>%s</p>' % E(src["element"].title()))
-    parts.append('<h4>Base image</h4><figure class="base-fig"><img src="%s" alt="The neutral gray base every option was edited from">'
-                 '<figcaption>The neutral gray base. Every option in every set is an edit of this image.</figcaption></figure>' % base_uri)
+    if base_uri:
+        parts.append('<h4>Base image</h4><figure class="base-fig"><img src="%s" alt="The neutral gray base every option was edited from">'
+                     '<figcaption>The neutral gray base. Every option in every set is an edit of this image.</figcaption></figure>' % base_uri)
     return "".join(parts)
 
 
@@ -325,6 +331,13 @@ aside.srcrail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:au
 .swatch{width:14px;height:14px;border:1px solid var(--muted);display:inline-block}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .set.approve .cards{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.set.gallery .cards,.set.info .cards{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.set.info .card .frame{cursor:default}
+.tbl-wrap{margin:0 0 14px;max-width:100%;overflow-x:auto}
+table.cmp{border-collapse:collapse;width:100%;font-size:.92rem}
+table.cmp th,table.cmp td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+table.cmp th{background:var(--surface-2);font-family:var(--f-head);font-weight:600}
+table.cmp tbody th{background:var(--surface);font-family:var(--f-text);font-weight:700}
 .set.approved{border-left:10px solid var(--blue)}
 .card{position:relative;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;transition:opacity .15s}
 .card.rec{border:3px solid var(--amber)}
@@ -445,6 +458,26 @@ def bg_toggle(el):
     return '<span class="lbl">Background</span><span class="seg" role="group" aria-label="Background behind images">%s</span>' % btns
 
 
+def render_info(el, cfg, opts):
+    """An info-only section: views as plain figures and an optional table; no buttons, not counted among the picks."""
+    name = cfg.get("name", el.title())
+    figs = "".join('<article class="card"><div class="frame"><img src="%s" alt="%s: %s"></div>'
+                   '<div class="card-body"><h3>%s</h3><p class="sum">%s</p></div></article>'
+                   % (o["uri"], E(name), E(o["label"]), E(o["label"]), E(o["summary"])) for o in opts)
+    tbl = ""
+    rows = cfg.get("table") or []
+    if rows:
+        head = "".join('<th scope="col">%s</th>' % E(str(c)) for c in rows[0])
+        body = "".join("<tr>%s</tr>" % ('<th scope="row">%s</th>' % E(str(r[0])) + "".join("<td>%s</td>" % E(str(c)) for c in r[1:]))
+                       for r in rows[1:])
+        tbl = '<div class="tbl-wrap"><table class="cmp"><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>' % (head, body)
+    return ('<section class="set info" id="set-%s" data-el="%s" aria-labelledby="h-%s"><div class="set-head"><h2 id="h-%s">%s</h2></div>%s%s%s%s</section>'
+            % (el, el, el, el, E(name),
+               ('<p class="question">%s</p>' % E(cfg["question"])) if cfg.get("question") else "",
+               ('<p class="note-line muted">%s</p>' % E(cfg["note"])) if cfg.get("note") else "",
+               tbl, ('<div class="cards">%s</div>' % figs) if figs else ""))
+
+
 def render_section(el, cfg, opts, rec_alias, reading, n, total):
     name = cfg.get("name", el.title())
     judge = "".join("<li>%s</li>" % E(j) for j in cfg.get("judge", []))
@@ -453,7 +486,9 @@ def render_section(el, cfg, opts, rec_alias, reading, n, total):
         for k, t, note in reading)
     ref = ('<div class="ref"><h3>The approved reading</h3><ul>%s</ul></div>'
            % (ref_items or '<li class="muted">No reading lines attached.</li>'))
-    approve = cfg.get("mode") == "approve"
+    if cfg.get("mode") == "info":
+        return render_info(el, cfg, opts)
+    approve = cfg.get("mode") in ("approve", "gallery")
     cards = []
     for o in opts:
         rec = o["alias"] == rec_alias and not approve
@@ -506,12 +541,12 @@ def render_section(el, cfg, opts, rec_alias, reading, n, total):
         '</div><p class="ask-note muted">Requests save only when the picks store is connected; otherwise put them in your reply.</p>'
         '<p class="filed" data-filed="%(el)s" hidden></p>' % {"el": el})
     return (
-        '<section class="set" id="set-%s" data-el="%s" data-bg="light" aria-labelledby="h-%s">'
+        '<section class="set%s" id="set-%s" data-el="%s" data-bg="light" aria-labelledby="h-%s">'
         '<div class="set-head"><h2 id="h-%s"><span class="mono muted">%d of %d</span> %s</h2>'
         '<span class="set-state" data-state="%s">%s</span></div>'
         '<p class="question">%s</p>%s<h3>What to judge</h3><ul class="judge">%s</ul>'
         '%s<div class="toolbar">%s</div><div class="cards">%s</div>%s</section>'
-        % (el, el, el, el, n, total, E(name), el, "Not approved yet" if approve else "Not picked yet",
+        % (" gallery" if cfg.get("mode") == "gallery" else "", el, el, el, el, n, total, E(name), el, "Not approved yet" if approve else "Not picked yet",
            E(cfg.get("question", "")), ('<p class="note-line muted">%s</p>' % E(cfg["note"])) if cfg.get("note") else "", judge, ref, bg_toggle(el), "".join(cards), asks))
 
 
@@ -879,25 +914,45 @@ C.use('db').then(function(d){
 
 
 def build(creature, stage, spec, index=None):
-    options = options_from_index(index) if index else options_from_records(creature, stage)
-    order = spec["order"]
-    base = pick_base(options, order)
-    if not base:
+    full_order = spec["order"]
+
+    def listed(el):
+        return spec["elements"][el].get("mode") in ("gallery", "info")
+    if index:
+        options = options_from_index(index)
+    elif all(listed(el) for el in full_order):
+        options = {}
+    else:
+        options = options_from_records(creature, stage)
+    order = [el for el in full_order if spec["elements"][el].get("mode") != "info"]  # elements that carry a decision
+    base = pick_base(options, [el for el in order if not listed(el)])
+    if not base and any(not listed(el) for el in full_order):
         raise Refusal("no base image found for %s %s" % (creature, stage))
-    base_uri, _ = jpeg_data_uri(base["hash"])
+    base_uri = jpeg_data_uri(base["hash"])[0] if base else None
     src = load_source(creature)
     source_html = render_source(src, base_uri)
     sections, data = [], {"creature": creature, "stage": stage, "order": order, "elements": {}, "icons": {"check": ICONS["check"], "star": ICONS["star"]},
                           "text": {"compositeEmpty": spec["compositeEmpty"]}}
-    for n, el in enumerate(order, 1):
+    n = 0
+    for el in full_order:
         cfg = spec["elements"][el]
-        opts = options.get(el) or []
-        if not opts:
+        info = cfg.get("mode") == "info"
+        if not info:
+            n += 1
+        if listed(el):
+            opts = []
+            for i, v in enumerate(cfg.get("views") or [], 1):
+                opts.append({"alias": "%s-%d" % (el, i), "label": v["label"], "summary": v.get("caption", ""), "hash": v["blob"],
+                             "letter": "%s-%d" % (el, i)})
+        else:
+            opts = options.get(el) or []
+        if not opts and not (info and cfg.get("table")):
             raise Refusal("no options for element %r" % el)
-        rec_letter = (cfg.get("recommend") or {}).get("letter")
+        rec_letter = (cfg.get("recommend") or {}).get("letter") if not listed(el) else None
         rec_alias = None
         for o in opts:
-            o["letter"] = letter_of(o["label"]) or o["alias"]
+            if not listed(el):
+                o["letter"] = letter_of(o["label"]) or o["alias"]
             o["uri"], _ = jpeg_data_uri(o["hash"])
             if o["letter"] == rec_letter:
                 rec_alias = o["alias"]
@@ -905,13 +960,15 @@ def build(creature, stage, spec, index=None):
             raise Refusal("recommended letter %s not among %s options" % (rec_letter, el))
         reading = resolve_reading(creature, cfg.get("reading"))
         sections.append(render_section(el, cfg, opts, rec_alias, reading, n, len(order)))
+        if info:
+            continue
         data["elements"][el] = {"name": cfg.get("name", el.title()), "recommended": rec_alias,
-                                "mode": "approve" if cfg.get("mode") == "approve" else "pick",
+                                "mode": "approve" if cfg.get("mode") in ("approve", "gallery") else "pick",
                                 "joined": ",".join(o["alias"] for o in opts),
                                 "options": [{"alias": o["alias"], "letter": o["letter"], "label": o["label"],
                                              "summary": o["summary"], "blob": o["hash"]} for o in opts]}
     total = len(order)
-    napp = sum(1 for el in order if spec["elements"][el].get("mode") == "approve")
+    napp = sum(1 for el in order if spec["elements"][el].get("mode") in ("approve", "gallery"))
     word = "picked" if napp == 0 else "approved" if napp == total else "decided"
     dots = "".join("<i></i>" for _ in order)
     ov_bg = "".join('<button type="button" data-bg-set="%s" data-el="" aria-pressed="false"><span class="swatch" style="background:%s"></span>%s</button>'
