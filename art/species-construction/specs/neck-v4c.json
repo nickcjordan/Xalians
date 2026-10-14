@@ -1,0 +1,330 @@
+{
+ "name": "neck v4c",
+ "approval": null,
+ "note": "neck v4c (2026-10-13), for neck_v4b_post.py / neck_v4b_field.py (unchanged), appended after P-torso1 in place of P-neck4b. Coordinator 2026-10-13 on v4 and v4b: replacing the whole jaw underside with a raised level line squared the jaw (a box set on a post from the front, a level shelf ending in a near right angle from the side); Nick asked only to remove the second-chin lobe. Starts from neck v3 (same column, throat line, nape, blurs): jaw keeps v3's underside from the chin back through its first half and carves only the back part where the lobe sagged (mask y -.165 to -.035, z .43 to .53, |x| under .13) up to a straight-to-slightly-concave continuation of v3's slope (profile), rounded crosswise like v3's jaw (lateral 2.0); closing, a rolling-ball closing of radius .03 at the jaw-throat junction (one large round concave fillet); cornerBlurs, light blurs over the junction and the junction sides. World units, +y back.",
+ "grid": {
+  "lo": [
+   -0.2,
+   -0.2,
+   0.28
+  ],
+  "hi": [
+   0.18,
+   0.12,
+   0.58
+  ],
+  "step": 0.0025,
+  "far": 0.06
+ },
+ "jaw": {
+  "profile": [
+   [
+    -0.2,
+    0.528
+   ],
+   [
+    -0.18,
+    0.512
+   ],
+   [
+    -0.16,
+    0.5035
+   ],
+   [
+    -0.15,
+    0.5015
+   ],
+   [
+    -0.13,
+    0.4975
+   ],
+   [
+    -0.11,
+    0.4935
+   ],
+   [
+    -0.09,
+    0.49
+   ],
+   [
+    -0.06,
+    0.488
+   ]
+  ],
+  "lateral": 2.0,
+  "k": 0.015,
+  "mask": {
+   "x": [
+    -1,
+    -1,
+    0.08,
+    0.13
+   ],
+   "y": [
+    -0.165,
+    -0.13,
+    -0.08,
+    -0.035
+   ],
+   "z": [
+    0.43,
+    0.46,
+    0.505,
+    0.53
+   ]
+  }
+ },
+ "columns": [
+  {
+   "a": [
+    0.0,
+    -0.046,
+    0.38
+   ],
+   "b": [
+    0.0,
+    -0.03,
+    0.52
+   ],
+   "ra": 0.08,
+   "rb": 0.062,
+   "ySquash": 1.08,
+   "k": 0.022
+  }
+ ],
+ "front": {
+  "points": [
+   [
+    -0.055,
+    0.52
+   ],
+   [
+    -0.073,
+    0.478
+   ],
+   [
+    -0.129,
+    0.37
+   ],
+   [
+    -0.147,
+    0.33
+   ]
+  ],
+  "R": 0.09,
+  "cutK": 0.025
+ },
+ "joinK": 0.022,
+ "lobes": [
+  {
+   "c": [
+    0.0,
+    -0.005,
+    0.495
+   ],
+   "s": [
+    0.06,
+    0.045,
+    0.06
+   ],
+   "k": 0.03
+  }
+ ],
+ "blurs": [
+  {
+   "c": [
+    0.0,
+    -0.03,
+    0.43
+   ],
+   "s": [
+    0.14,
+    0.11,
+    0.09
+   ],
+   "fade": [
+    0.5,
+    1.1
+   ],
+   "sigma": 0.008,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.085,
+    -0.03,
+    0.405
+   ],
+   "s": [
+    0.06,
+    0.07,
+    0.045
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.016,
+   "mirror": true
+  },
+  {
+   "c": [
+    0.0,
+    0.03,
+    0.48
+   ],
+   "s": [
+    0.09,
+    0.05,
+    0.07
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.016,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.0,
+    -0.12,
+    0.378
+   ],
+   "s": [
+    0.1,
+    0.05,
+    0.04
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.015,
+   "mirror": false
+  },
+  {
+   "c": [
+    0.0,
+    -0.078,
+    0.48
+   ],
+   "s": [
+    0.08,
+    0.04,
+    0.035
+   ],
+   "fade": [
+    0.4,
+    1.1
+   ],
+   "sigma": 0.02,
+   "mirror": false
+  }
+ ],
+ "spotRelax": [
+  {
+   "c": [
+    0.0,
+    -0.082,
+    0.478
+   ],
+   "r": 0.04,
+   "fade": 0.03,
+   "iterations": 200
+  }
+ ],
+ "closing": {
+  "r": 0.03,
+  "mask": {
+   "c": [
+    0.0,
+    -0.085,
+    0.48
+   ],
+   "s": [
+    0.12,
+    0.06,
+    0.06
+   ],
+   "fade": [
+    0.3,
+    1.0
+   ]
+  },
+  "edtSmooth": 0.008,
+  "minFill": 0.0006,
+  "fullFill": 0.002
+ },
+ "cornerBlurs": [
+  {
+   "c": [
+    0.0,
+    -0.085,
+    0.48
+   ],
+   "s": [
+    0.12,
+    0.06,
+    0.06
+   ],
+   "fade": [
+    0.3,
+    1.0
+   ],
+   "sigma": 0.01
+  },
+  {
+   "c": [
+    0.055,
+    -0.07,
+    0.5
+   ],
+   "s": [
+    0.04,
+    0.035,
+    0.03
+   ],
+   "fade": [
+    0.3,
+    1.0
+   ],
+   "sigma": 0.012
+  }
+ ],
+ "partBox": {
+  "x": [
+   -1,
+   -1,
+   0.16,
+   0.18
+  ],
+  "y": [
+   -1,
+   -1,
+   0.1,
+   0.12
+  ],
+  "z": [
+   0.32,
+   0.35,
+   0.52,
+   0.555
+  ]
+ },
+ "project": {
+  "iterations": 60,
+  "maxStep": 0.004
+ },
+ "relax": {
+  "iterations": 40,
+  "factor": 0.5,
+  "minMove": 5e-05,
+  "fullMove": 0.0005
+ },
+ "untangle": {
+  "iterations": 80,
+  "threshold": 0.5,
+  "rings": 3
+ }
+}
