@@ -1,0 +1,9 @@
+{
+ "name": "lids v1",
+ "approval": null,
+ "note": "lids v1 (2026-10-14, final cleanup), for lids_v1_post.py, appended after P-knee1. The lid rims of both eyes (skin within bandR of an eye globe, z above .5) are subdivided (cuts per edge) and moved onto the head component's own surface, faded to zero from fadeFrom to bandR; maxMove is the largest distance from the head surface any band vertex may have (the assembly remesh error is about .0006). World units.",
+ "bandR": 0.012,
+ "fadeFrom": 0.007,
+ "cuts": 2,
+ "maxMove": 0.0015
+}

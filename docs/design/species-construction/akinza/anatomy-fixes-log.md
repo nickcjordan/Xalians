@@ -137,3 +137,16 @@ Standing holds for every item:
 | Groin (3262 vs 3242, z above -.4) | 3262 | 1,280 | 0.0 | 0.0 | -.27 to -.215 |
 | Knees (3262 vs 3242, z below -.4) | 3262 | 8,285 | 0.0 | 0.0 | -.60 to -.475 |
 | Outside every region (more than .02 from any change) | 3199 | 284,284 | 0.0 | | |
+
+## Final cleanup (2026-10-14)
+
+Close crops on assembled-3296 (clay, front, three-quarter, below). Item 2, the faint lines under the mouth corners on the chin underside: no longer show in any view (the same on 3197, so nose v3 and the later head steps had already removed them, not neck v4c); dropped. Item 1, the dark ticks along the lower lids: still there, plainest at the inner lower lid of the character's left eye. Cause, by elimination: the head component (head-3167) renders clean in the same camera, the ticks vanish with shadows off and stay with the eye globes subdivided or a larger shadow terminator offset, so they are the cast shadow along the lid roll (a fold of radius about .003) picking up the assembly remesh's facets. Item 3: a finer assembly voxel size (`--voxel-size`, `assemble_reconstructed_creature_r27.py`) only fades them: at .0020, .0016 and .0012 (3.5M skin vertices) a few remain. A scratch rebuild of the whole chain on .0020 (outside the numbered builds; its .0028 control reproduces 3296 exactly) holds every region (median difference .0004, at the resampling level, max .0022 except one point of .006 at the tail-root stitch) but costs 72 percent more final vertices for a partial fix, so the base remesh stays .0028. Instead, a post step, lids v1 (`art/species-construction/lids_v1_post.py`, spec `specs/lids-v1.json`, step P-lids1 after P-knee1 with the head step H55 as an input), subdivides the skin within .012 of either eye globe (2 cuts per edge) and moves every vertex there onto the head component's own surface, faded out from .007. Recipe `recipe-integrated-v3.json`, output assembled-3300 (check passes: one component, no non-manifold edges). The ticks are gone and the lid line is cleaner; everything else is as on 3296. Image: `cleanup-lids-check.png` (3296 left, 3300 right). Blocked by: nothing.
+
+| Measure | Value |
+|---|---|
+| Lids v1 band | 9,453 skin vertices, z .56 to .75, both eyes |
+| Largest move (band) / outside the band | .00038 / 0.0 exactly |
+| Skin vertices, 3296 to 3300 | 547,710 to 621,482 |
+| Bare assembly at .0028 / .0020 / .0016 / .0012 | 643,424 / 1,257,532 / 1,962,392 / 3,483,305 vertices; 41 / 54 / 70 / 104 s |
+| Full post chain at .0028 / .0020 (scratch, no renders) | 20.6 / 23.4 min; final skin 547,710 / 939,833 vertices |
+| .0020 chain against 3296, per region (max, median) | face .0016, .0004; head and ears .0017, .0004; neck .0015, .0004; shoulders .0019, .0004; arms .0020, .0004; torso and hips .0061, 0; legs .0016, .0003; hind paws .0022, .0004; tails 0, 0 |
