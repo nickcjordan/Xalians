@@ -13,12 +13,171 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "torso.blend",
+      "hash": "75c18cd9920f1c8971d57002222fa0e31aff5e85a2915ab3561c99ab692918fe"
+    },
+    {
+      "name": "torso.glb",
+      "hash": "908230a7dbca71d1d911da594065b354b159c6ea006307885b35c94a6f65ef4a"
+    },
+    {
+      "name": "torso_part.glb",
+      "hash": "32bd5ec7dc8c61aedd3b5da777bbe9323a211a9b39d99b3a7a9bee3222e8e4c2"
+    },
+    {
+      "name": "compare_side.png",
+      "hash": "9e8bb91884f16bf6949ffd01306e72e1a08944fe605325950fe11ce3be11b625"
+    },
+    {
+      "name": "compare_threequarter.png",
+      "hash": "e4ef47535c1880998e5e670b030682f462a82b9d1bff8ec2e25708fa46da05a1"
+    },
+    {
+      "name": "compare_front.png",
+      "hash": "54a6ee1fd679eecf00494350c04b7ac9f07e7e2878fc712dee0ee87a2c082cb1"
+    },
+    {
+      "name": "compare_furred_side.png",
+      "hash": "0d434623cee00a9d1b9a0e4ea588d04e8c4e42b789bc7ba2677b2a62c6ba11ea"
+    },
+    {
+      "name": "before_torso_side.png",
+      "hash": "d5381e171e3d878c927b561feeb75b32a142147640c0c89ef659c4cd3fe0c205"
+    },
+    {
+      "name": "progress.png",
+      "hash": "9771f183934d3f964152e81dc3bbe0a413db735576912d13c93709b1fb1383ae"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "d2842214bb444c246344e8d6ff5b236796a6f055aa5b532d1c2505d55c7bf1f7"
+    },
+    {
+      "name": "report.json",
+      "hash": "4d4624c5dbc60a622bb8599d2c0dbfe6695e03caf882dfb410924b37fb194294"
+    },
+    {
+      "name": "build.py",
+      "hash": "c4bee9adbbae0ae83eff5f2a6ad7ae8fa945369b1a20a8828be392def68cf8f5"
+    },
+    {
+      "name": "duplicate_head_audit.json",
+      "hash": "15fe72ec4e56b6ccb72c3b8ac25fdcab4ea4aff8c22366fdf2394802cf4bdeaa"
+    },
+    {
+      "name": "pass1-codex.log",
+      "hash": "e261f859341c9a2bedec85db68f0c23f81d03870ea0e24cdc804d47e91ab5a15"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "torso.blend",
+        "hash": "75c18cd9920f1c8971d57002222fa0e31aff5e85a2915ab3561c99ab692918fe"
+      },
+      {
+        "name": "torso.glb",
+        "hash": "908230a7dbca71d1d911da594065b354b159c6ea006307885b35c94a6f65ef4a"
+      },
+      {
+        "name": "torso_part.glb",
+        "hash": "32bd5ec7dc8c61aedd3b5da777bbe9323a211a9b39d99b3a7a9bee3222e8e4c2"
+      },
+      {
+        "name": "compare_side.png",
+        "hash": "9e8bb91884f16bf6949ffd01306e72e1a08944fe605325950fe11ce3be11b625"
+      },
+      {
+        "name": "compare_threequarter.png",
+        "hash": "e4ef47535c1880998e5e670b030682f462a82b9d1bff8ec2e25708fa46da05a1"
+      },
+      {
+        "name": "compare_front.png",
+        "hash": "54a6ee1fd679eecf00494350c04b7ac9f07e7e2878fc712dee0ee87a2c082cb1"
+      },
+      {
+        "name": "compare_furred_side.png",
+        "hash": "0d434623cee00a9d1b9a0e4ea588d04e8c4e42b789bc7ba2677b2a62c6ba11ea"
+      },
+      {
+        "name": "before_torso_side.png",
+        "hash": "d5381e171e3d878c927b561feeb75b32a142147640c0c89ef659c4cd3fe0c205"
+      },
+      {
+        "name": "progress.png",
+        "hash": "9771f183934d3f964152e81dc3bbe0a413db735576912d13c93709b1fb1383ae"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "d2842214bb444c246344e8d6ff5b236796a6f055aa5b532d1c2505d55c7bf1f7"
+      },
+      {
+        "name": "report.json",
+        "hash": "4d4624c5dbc60a622bb8599d2c0dbfe6695e03caf882dfb410924b37fb194294"
+      },
+      {
+        "name": "build.py",
+        "hash": "c4bee9adbbae0ae83eff5f2a6ad7ae8fa945369b1a20a8828be392def68cf8f5"
+      },
+      {
+        "name": "duplicate_head_audit.json",
+        "hash": "15fe72ec4e56b6ccb72c3b8ac25fdcab4ea4aff8c22366fdf2394802cf4bdeaa"
+      },
+      {
+        "name": "pass1-codex.log",
+        "hash": "e261f859341c9a2bedec85db68f0c23f81d03870ea0e24cdc804d47e91ab5a15"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "method": "codex gpt-6-astra; Opened the supplied approved base in Blender 5.2.2. Inspected clay side, front and three-quarter references and rendered the unchanged base through the shared look-dev conventions. | Retained the reconstructed body mesh, topology, vertex IDs, skin weights and 40-bone armature. Defined a torso envelope with explicit fixed head/neck, foreleg, hindleg and tail regions and smooth seam falloffs. | Imported the supplied raw full-body reconstruction and applied the stage-4 normalization to a 0.57 m rump. Sampled its surface symmetrically with nearest-surface queries and restored 55 percent of the normal-direction residual inside the torso mask. Mean raw-to-base distance was only 0.107 mm, so another reconstruction was not justified. | Applied shallow scripted surface-brush displacements to lighten the chest, distinguish the scapula edge and last rib, lift the belly tuck, retain loin depth, articulate upper hip plates and suggest a narrow spine groove. No torso primitives, metaballs, remeshing or replacement masses were used. | Reviewed side, front and three-quarter torso renders and the 192 px full-body sprite. Reframed torso cameras to include the complete head and legs, with the distal tail allowed outside the torso frame. Retained three reproducible intermediate renders from the actual coordinate snapshots. | Found the supplied scene also contained an overlapping capped luceras_head_part delivery artifact. Audited it, preserved every vertex unchanged in base_head_part_archive.blend, and excluded it from the final creature to remove coincident-surface artifacts and meet the triangle budget. The integrated head and neck in luceras_blockout remain exactly fixed. | Exported the complete bound creature and the full anatomical torso surface patch, including the untouched rump ape",
+    "wallMinutes": 16.609,
+    "blenderSeconds": 601.132,
+    "codexTokens": 112099,
+    "measurements": {
+      "torso_length_m": 0.0,
+      "chest_depth_m": -0.13913935425494914,
+      "chest_width_m": -3.130861225855616,
+      "belly_tuck_height_m": 1.0641743446136949,
+      "loin_depth_m": -2.5850542933462823,
+      "hip_width_m": 3.311038455890594e-05,
+      "rump_top_height_m": 0.0,
+      "shoulder_width_m": -0.025898639758398775
+    },
+    "checks": [
+      {
+        "title": "Trunk read from the side, Codex pass 1",
+        "question": "Does the trunk read as the shaved clay body?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "9e8bb91884f16bf6949ffd01306e72e1a08944fe605325950fe11ce3be11b625",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "",
+        "recommended": "Orchestrator's read: barely changed from the base (chest width -3 percent, tuck +3.7 mm); the trunk is still slimmer and smoother than the clay, with a shallow belly tuck and no sternum keel; the clay's deeper chest and shoulder mass are not there."
+      }
+    ],
+    "newDefects": [
+      "Base file carried an overlapping capped head_part export object inside the creature scene (Codex found and archived it; verify on the Claude side before any further part builds on this base)."
+    ],
+    "note": "Codex torso pass 1: 16.6 min wall, 601 Blender s, 112K tokens. It measured the raw reconstruction as only 0.1 mm from the base torso (the blockout is that reconstruction), so it restored little, and its brush work is restrained to the point of invisibility in the renders. Holds respected: head, neck, limbs and tail at zero displacement. Real finding: the approved head .blend contains a duplicate capped head_part object overlapping the integrated head (510K to 345K triangles once excluded). Front composite again on a dark ground."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T00:29:18Z",
-  "briefSha256": "5f0ca167ebd38ed6ad3a47c4e8320cae6f8f5e18675cbb32673ae649e7051110"
+  "briefSha256": "5f0ca167ebd38ed6ad3a47c4e8320cae6f8f5e18675cbb32673ae649e7051110",
+  "checks": [
+    {
+      "title": "Trunk read from the side, Codex pass 1",
+      "question": "Does the trunk read as the shaved clay body?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "9e8bb91884f16bf6949ffd01306e72e1a08944fe605325950fe11ce3be11b625",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "",
+      "recommended": "Orchestrator's read: barely changed from the base (chest width -3 percent, tuck +3.7 mm); the trunk is still slimmer and smoother than the clay, with a shallow belly tuck and no sternum keel; the clay's deeper chest and shoulder mass are not there."
+    }
+  ],
+  "reportedAt": "2026-10-15T00:48:18Z"
 }
