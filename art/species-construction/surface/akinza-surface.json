@@ -507,7 +507,12 @@
       "facing": [0.2, 0.45],
       "rim": [0.006, 0.014],
       "base": [0.15, 0.3],
-      "smooth": 3
+      "smooth": 3,
+      "sheetThickness": {
+        "note": "fur step 12b: the cup only on the thin ear sheet (skin thickness by a ray inward along -normal, full blue under thick[0], none past thick[1]); the eye sockets, temples and the head skin at the ear root are thick and stay white, also after the smoothing",
+        "thick": [0.032, 0.045],
+        "maxRay": 0.2
+      }
     },
     "cup": {
       "length": 0.01,

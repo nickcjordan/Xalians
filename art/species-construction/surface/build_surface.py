@@ -633,8 +633,35 @@ def compute_attributes(skin, cfg, species):
                 thin_f = 1.0-smoothstep((thin-cf['sheet'][0])/(cf['sheet'][1]-cf['sheet'][0]))
                 thin_f[back_e] = 1.0
                 ear_w = ear_w*thin_f
+            sheet_f = None
+            if 'sheetThickness' in cf:
+                # fur step 12b: the cup only on the ear sheet itself, by the skin's own thickness (a ray inward along -normal
+                # to the far wall: thin on the ear, thick where the ray runs into the skull). The box and facing test also
+                # took the forward-facing skin of the eye sockets and the temples and the head skin at the ear root, so blue
+                # fur grew beside the eyes and up the side of the head; the gate gives a clean edge where the ear meets the head
+                from mathutils.bvhtree import BVHTree
+                st = cf['sheetThickness']
+                cand = np.where(ear_w > 0.02)[0]
+                me.calc_loop_triangles()
+                tri = np.empty(len(me.loop_triangles)*3, dtype=np.int32)
+                me.loop_triangles.foreach_get('vertices', tri)
+                tri = tri.reshape(-1, 3)
+                inside = np.zeros(n, bool)
+                inside[cand] = True
+                tri = tri[inside[tri].any(axis=1)]
+                bvh = BVHTree.FromPolygons([Vector(v) for v in co], tri.tolist(), all_triangles=True)
+                thick = np.full(n, np.inf)
+                for i in cand:
+                    hit = bvh.ray_cast(Vector(co[i]-nrm[i]*1e-4), Vector(-nrm[i]), st.get('maxRay', 0.2))
+                    if hit[0] is not None:
+                        thick[i] = hit[3]
+                sheet_f = 1.0-smoothstep((thick-st['thick'][0])/(st['thick'][1]-st['thick'][0]))
+                ear_w = ear_w*sheet_f
+                print('cup sheet: thin ear vertices', int((sheet_f > 0.5).sum()))
             cup_new = ear_w*front_f*smoothstep((rd-cf['rim'][0])/(cf['rim'][1]-cf['rim'][0]))*base_f
             cup_mask = np.clip(edge_smooth(cup_new, edges, n, cf.get('smooth', 3)), 0, 1)
+            if sheet_f is not None:  # the smoothing must not carry the blue back over the edge onto the head
+                cup_mask = cup_mask*sheet_f
             print('cup front: vertices over .5', int((cup_mask > 0.5).sum()))
         cc = gcfg['cup']
         if 'cupPale' in gcfg:  # a soft tint across the cup rather than a solid chalk-white patch
