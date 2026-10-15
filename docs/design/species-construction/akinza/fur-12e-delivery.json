@@ -1,0 +1,64 @@
+{
+  "status": "partial/incomplete",
+  "buildInvocations": 4,
+  "successfulSaves": 3,
+  "pushPerformed": false,
+  "candidateSupersedesBaseline": false,
+  "baselineRetained": true,
+  "archiveRule": "When your step supersedes an earlier fur-steps surface folder",
+  "archiveAssessment": "Not triggered: this candidate fails root continuity and width-jump reduction and does not supersede s12d.",
+  "previewArchive": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12e-try3",
+  "files": {
+    "candidate": {
+      "path": "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12e\\surface.blend",
+      "sha256": "71aa2132881973daf4c241a2ea2c30ff208b35cb9011edea4940e1cc0805e3fd"
+    },
+    "baseline": {
+      "path": "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12d\\surface.blend",
+      "sha256": "6a2213e7fe62b5769d27ca174d4bde7a259c9851eab8b6ee2bfa41b0d76a68e0"
+    },
+    "side": {
+      "path": "untracked\\species-construction\\akinza\\surface\\fur-steps\\12e-tails-side.png",
+      "sha256": "ac6448636f1adf1a8e511aa93b2b4687ead31835c9c3c0ff2d97fe807035e6fa"
+    },
+    "back": {
+      "path": "untracked\\species-construction\\akinza\\surface\\fur-steps\\12e-tails-back.png",
+      "sha256": "7ef5d61cad1fd8328ac56e5b68bb973821ed1c3f38512389597b627eccce5a2f"
+    },
+    "threequarter": {
+      "path": "untracked\\species-construction\\akinza\\surface\\fur-steps\\12e-tails-threequarter.png",
+      "sha256": "9d5028c9acfc9480736aef5282b2a2793e2f48008522f505e7c208e9710fa9e3"
+    },
+    "profile": {
+      "path": "untracked\\species-construction\\akinza\\surface\\fur-steps\\12e-width-profile.png",
+      "sha256": "af5f02cb85c34a2067b2edb47d7b01795cc5e5a22e5c3c623eaf16a107cf17a0"
+    }
+  },
+  "unresolved": [
+    "F001 root continuity",
+    "F007 width-jump reduction"
+  ],
+  "commitPending": false,
+  "recordedAt": "2026-10-15T19:29:48.677278+00:00",
+  "commitCompleted": true,
+  "commitMessage": "Akinza fur step 12e: soften tail plumes and widen their middles",
+  "explicitCommittedPaths": [
+    "art/species-construction/surface/akinza-tail-12e-corrections.json",
+    "art/species-construction/surface/check_fur_12e.py",
+    "art/species-construction/surface/guard_artifacts_12e.py",
+    "art/species-construction/surface/measure_fur_12e.py",
+    "art/species-construction/surface/plan_tail_12e.py",
+    "art/species-construction/surface/refine_tail_12e.py",
+    "art/species-construction/surface/review_fur_12e.py",
+    "art/species-construction/surface/run_fur_12e.py",
+    "art/species-construction/surface/tail_profile_12e.py",
+    "art/species-construction/surface/verify_fur_12e.py",
+    "docs/design/species-construction/akinza/fur-12e-active-work.md",
+    "docs/design/species-construction/akinza/fur-12e-completion-audit.json",
+    "docs/design/species-construction/akinza/fur-12e-delivery.json",
+    "docs/design/species-construction/akinza/fur-12e-metrics.json",
+    "docs/design/species-construction/akinza/fur-12e-review.md",
+    "docs/design/species-construction/akinza/surface-backlog.md"
+  ],
+  "finalHashesRechecked": true
+}

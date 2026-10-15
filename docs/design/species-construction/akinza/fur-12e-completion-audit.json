@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-12e",
+  "outcome": "Execute step 12e: continuous root-to-tip tail plume widening with preserved mid-tail volume and held s12d appearance.",
+  "authorizedScope": "Brief 12e only, at most four Blender build invocations, fixed mesh/stripes/T7 and held fur, serial WSL Blender, commit without push.",
+  "workRecord": "docs/design/species-construction/akinza/fur-12e-active-work.md",
+  "evidence": {
+    "beforeSide": {
+      "path": ".codex/audit-state/fur-12e-evidence/beforeSide-tails-side.png",
+      "sha256": "9a461663feb1870cc6faa6a213edc6e7feb0f896e73ca36a1f4f34ad7a0bb328",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-before/tails-side.png"
+    },
+    "leafFailure": {
+      "path": ".codex/audit-state/fur-12e-evidence/leafFailure-tails-side.png",
+      "sha256": "20eca520b8ecfd89886d2d57eb6e36b3736a00148fa0635f15f84d374ef70e9a",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-preview3/tails-side.png"
+    },
+    "artifactFailure": {
+      "path": ".codex/audit-state/fur-12e-evidence/artifactFailure-12e-build2-artifact-diagnostic.json",
+      "sha256": "35bb9d756a477607e29f2df14d7bc889d7b3a0a70cb0477a602940cd87223206",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-build2-artifact-diagnostic.json"
+    },
+    "rootFailure": {
+      "path": ".codex/audit-state/fur-12e-evidence/rootFailure-12e-build2-root-diagnostic.json",
+      "sha256": "7cb767b5be30dcd31b5f8c61371549153d6e0a7308a68921843fe0f1fe53d67e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-build2-root-diagnostic.json"
+    },
+    "brief": {
+      "path": ".codex/audit-state/fur-12e-evidence/brief-12e.md",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/12e.md",
+      "sha256": "d99e007c5decb933188a8fc34b71644f334f782480c449888fee21cf92ba498d"
+    },
+    "model": {
+      "path": ".codex/audit-state/fur-12e-evidence/model-surface.blend",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12e/surface.blend",
+      "sha256": "71aa2132881973daf4c241a2ea2c30ff208b35cb9011edea4940e1cc0805e3fd"
+    },
+    "baselineModel": {
+      "path": ".codex/audit-state/fur-12e-evidence/baselineModel-surface.blend",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/surface.blend",
+      "sha256": "6a2213e7fe62b5769d27ca174d4bde7a259c9851eab8b6ee2bfa41b0d76a68e0"
+    },
+    "side": {
+      "path": ".codex/audit-state/fur-12e-evidence/side-12e-tails-side.png",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-tails-side.png",
+      "sha256": "ac6448636f1adf1a8e511aa93b2b4687ead31835c9c3c0ff2d97fe807035e6fa"
+    },
+    "back": {
+      "path": ".codex/audit-state/fur-12e-evidence/back-12e-tails-back.png",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-tails-back.png",
+      "sha256": "7ef5d61cad1fd8328ac56e5b68bb973821ed1c3f38512389597b627eccce5a2f"
+    },
+    "threequarter": {
+      "path": ".codex/audit-state/fur-12e-evidence/threequarter-12e-tails-threequarter.png",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-tails-threequarter.png",
+      "sha256": "9d5028c9acfc9480736aef5282b2a2793e2f48008522f505e7c208e9710fa9e3"
+    },
+    "profile": {
+      "path": ".codex/audit-state/fur-12e-evidence/profile-12e-width-profile.png",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-width-profile.png",
+      "sha256": "af5f02cb85c34a2067b2edb47d7b01795cc5e5a22e5c3c623eaf16a107cf17a0"
+    },
+    "protection": {
+      "path": ".codex/audit-state/fur-12e-evidence/protection-saved-protection-check.json",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12e/saved-protection-check.json",
+      "sha256": "54afce607b283ba48adc46de69e737f97f444891eb7e8900ffe77fe195145547"
+    },
+    "beforeFlags": {
+      "path": ".codex/audit-state/fur-12e-evidence/beforeFlags-sweep-flags.npz",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/r/sweep-flags.npz",
+      "sha256": "be327cabfd52914437958e2f76b26bf3a217dd15729cbd1c4a5478f4b9a26c20"
+    },
+    "afterFlags": {
+      "path": ".codex/audit-state/fur-12e-evidence/afterFlags-sweep-flags.npz",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12e/r/sweep-flags.npz",
+      "sha256": "77450082e711e812318f84552925f3999f5e1fd8a92c2a04492cd3bdb9bbcb54"
+    },
+    "beforeCollision": {
+      "path": ".codex/audit-state/fur-12e-evidence/beforeCollision-collision-evidence.npz",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/r/collision-evidence.npz",
+      "sha256": "acb4787ecdfcb13f0c2b594324b2ceb0e0f13703c93e10cec5cfca25db6185f6"
+    },
+    "afterCollision": {
+      "path": ".codex/audit-state/fur-12e-evidence/afterCollision-collision-evidence.npz",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12e/r/collision-evidence.npz",
+      "sha256": "8a8225b1c1d3b2f98a1b7710e8d32f2e8134e511dd0cc2a7473ed5ac96e660ed"
+    },
+    "solid": {
+      "path": ".codex/audit-state/fur-12e-evidence/solid-obstacle-evidence.npz",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12e/r/obstacle-evidence.npz",
+      "sha256": "fffaf3b9a7afa86a928829bee264d943cf91ebaec9bebd20725daa9b4ebabe18"
+    },
+    "rootGap": {
+      "path": ".codex/audit-state/fur-12e-evidence/rootGap-12e-root-gap-diagnostic.json",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-root-gap-diagnostic.json",
+      "sha256": "c872282946616a08d18c5028b5fbdabb1ac969bda779ac9296ce93c4a3fc3bc0"
+    },
+    "guardHistory": {
+      "path": ".codex/audit-state/fur-12e-evidence/guardHistory-artifact-guard-history.json",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12e/artifact-guard-history.json",
+      "sha256": "eeab7d7162280411e3330ce3cc8c2def78b64c1ca590b29ddcdd4a5011252cd0"
+    },
+    "build1": {
+      "path": ".codex/audit-state/fur-12e-evidence/build1-12e-build1.log",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-build1.log",
+      "sha256": "37528d54baa3b1f870b9cdf837f81f101905efb1a13351c3ba42c4abccae36d4"
+    },
+    "build2": {
+      "path": ".codex/audit-state/fur-12e-evidence/build2-12e-build2.log",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-build2.log",
+      "sha256": "cda8d09d9612da2fb7e953134df73971d897583af6069cf6b9a7582c43f62c47"
+    },
+    "build3": {
+      "path": ".codex/audit-state/fur-12e-evidence/build3-12e-build3.log",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-build3.log",
+      "sha256": "f1c206905649409e8a1aa2900d82cf22cf3ce7c6122f8ad69773f05d4f083893"
+    },
+    "build4": {
+      "path": ".codex/audit-state/fur-12e-evidence/build4-12e-build4.log",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-build4.log",
+      "sha256": "5fa466d724d8fa0e4ebe82395c2ff9ab48a4cdf2de3cb21081727c734e9fd10a"
+    },
+    "surfaceInfo": {
+      "path": ".codex/audit-state/fur-12e-evidence/surfaceInfo-surface-info.json",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12e/surface-info.json",
+      "sha256": "f6d563e464805a1a6661b0148aa3b0c1d47c5c3427c0e93a0a183f75796456a6"
+    },
+    "work": {
+      "path": "docs/design/species-construction/akinza/fur-12e-active-work.md",
+      "sha256": "1410f73160828ddc9d9b5951e36ac5e4eff59e6e9db2daf556bc5fa6a6d3ea1e"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-12e-review.md",
+      "sha256": "3debffaa36da408c53abb50d3e2254c89fcb33d86b0e0bb45abf1fac166bc840"
+    },
+    "metrics": {
+      "path": "docs/design/species-construction/akinza/fur-12e-metrics.json",
+      "sha256": "cc42d270bfc12cb1b53262962ba6ca8a1dd085ccfb030a1bd239a95371ab8b5d"
+    },
+    "stage": {
+      "path": "docs/design/species-construction/akinza/surface-backlog.md",
+      "sha256": "bd6e87f1a0060ef8ac70c31c97e271b917ac6805eecbff04df1e21d7550c9f7b"
+    },
+    "code-akinza-tail-12e-corrections.json": {
+      "path": "art/species-construction/surface/akinza-tail-12e-corrections.json",
+      "sha256": "8c5c94d9c6bd48c36f116bbc7fb7b38cddc988f8542acf876d9f137bbbcaac9c"
+    },
+    "code-check_fur_12e.py": {
+      "path": "art/species-construction/surface/check_fur_12e.py",
+      "sha256": "6b1f877d38351dc078bee56cfa8a3e9d6a7fbf5fc6932ec46794626b7e07d445"
+    },
+    "code-guard_artifacts_12e.py": {
+      "path": "art/species-construction/surface/guard_artifacts_12e.py",
+      "sha256": "e5323396928201d06f1ef9c437bd6fd910f6b3a361dcd6518048dafa0dd1204b"
+    },
+    "code-measure_fur_12e.py": {
+      "path": "art/species-construction/surface/measure_fur_12e.py",
+      "sha256": "3eaa9fa4a8f633efaca11c1582dc70b962b55105081a061f10011f1570d3c893"
+    },
+    "code-plan_tail_12e.py": {
+      "path": "art/species-construction/surface/plan_tail_12e.py",
+      "sha256": "2e354b56363c178c7253992f2dc413a86abbc3398b33502d01eb7ba42642a177"
+    },
+    "code-refine_tail_12e.py": {
+      "path": "art/species-construction/surface/refine_tail_12e.py",
+      "sha256": "829f36bdcaa3456bf8e8c3de79f96510d2055b58187f911580c3226bf58b546c"
+    },
+    "code-review_fur_12e.py": {
+      "path": "art/species-construction/surface/review_fur_12e.py",
+      "sha256": "6447203c4292e94dfe31b8cd91809d200d31d0eedbeb2fbad3687c9ce54c6661"
+    },
+    "code-run_fur_12e.py": {
+      "path": "art/species-construction/surface/run_fur_12e.py",
+      "sha256": "06fe5a1ef3bdef340fba48e5c493a8f369bec3935f0b92dcc7ed8fc40ce9f43f"
+    },
+    "code-tail_profile_12e.py": {
+      "path": "art/species-construction/surface/tail_profile_12e.py",
+      "sha256": "cc36b4bdea893bc7a3a69e7b4995e14391252c0b824b15da404557ae7aab6242"
+    },
+    "code-verify_fur_12e.py": {
+      "path": "art/species-construction/surface/verify_fur_12e.py",
+      "sha256": "d25e4a664f01a10a5fb0053105e88dc057c67db7384909b7accbf0f6de0ecc0d"
+    },
+    "localScope": {
+      "path": ".codex/audit-state/fur-12e-evidence/finalLocalScope.json",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12e-final-local-scope.json",
+      "sha256": "9245ecb9071ed2fdec8009c3d52ae33dd046a7273bc16f9deb98ae4385c3311b"
+    },
+    "delivery": {
+      "path": "docs/design/species-construction/akinza/fur-12e-delivery.json",
+      "sha256": "6669e997a5f8fabfd030cb2e3a2d145e884db798baad94ff68a881f0d46ff00c"
+    }
+  },
+  "criteria": [
+    {
+      "id": "shape",
+      "expectation": "All three rendered tails expand continuously from root into a full plume and taper softly; inspect exact step 11 cameras at full size.",
+      "status": "blocked",
+      "assessment": "Final native-size side/back/q retain a narrow upper/middle connector and upper-root rosette. Soft wispy fur and tips improved, but continuous root-to-widest flow fails.",
+      "evidence": [
+        "side",
+        "back",
+        "threequarter",
+        "review",
+        "rootGap"
+      ]
+    },
+    {
+      "id": "width",
+      "expectation": "48 or more fixed stations on each tail in side and back; global largest jump falls sharply and every mid-tail width ratio stays at least 1.",
+      "status": "blocked",
+      "assessment": "Corrected 48-station measurement removes endpoint accumulation: max jump .021187 to .025128 (+19%), failing requested decrease. All mid ratios pass volume at 1.291-1.488.",
+      "evidence": [
+        "metrics",
+        "profile",
+        "review"
+      ]
+    },
+    {
+      "id": "artifacts",
+      "expectation": "Full 12d sweep on saved result; every regional flag count nonincreasing, no new strand flag cluster, zero skin and separate-solid collisions.",
+      "status": "pass",
+      "assessment": "Fresh saved-file sweep: no new per-ID flags in all five types; every regional count nonincreasing; threshold skin/ray and separate-solid collisions zero.",
+      "evidence": [
+        "metrics",
+        "beforeFlags",
+        "afterFlags",
+        "beforeCollision",
+        "afterCollision",
+        "solid"
+      ]
+    },
+    {
+      "id": "held",
+      "expectation": "Saved meshes, materials, roots, topology, radii and all unselected fur preserved; changed mask constrained to tails and local hip blend.",
+      "status": "pass",
+      "assessment": "Full saved snapshot equality plus exact roots, whole-radius equality, and independently constrained true-tail/local-hip selection pass.",
+      "evidence": [
+        "protection",
+        "model",
+        "baselineModel",
+        "metrics",
+        "localScope"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Three matched comparison pairs, blue/amber width chart, independent audit, work/progress/stage logs, explicit-path step commit and baseline archival after commit; no push.",
+      "status": "pass",
+      "assessment": "All required artifacts, review, work/progress/stage logs and explicit-path partial commit are delivered. No push. Baseline retained because this inadequate candidate does not supersede it; conditional superseded-folder archive rule is not triggered.",
+      "evidence": [
+        "delivery",
+        "work",
+        "review",
+        "side",
+        "back",
+        "threequarter",
+        "profile",
+        "brief"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "shape",
+      "status": "blocked",
+      "observation": "Narrow upper/middle connectors and an upper-root rosette still precede the full plume; 576 upper connector roots are excluded by the hip-only diagnostic label.",
+      "nextAction": "After renewed build authorization, select the connected anatomical connector rather than diagnostic hip label 6, preserve middle/tip gains, then repeat the full verification and render audit.",
+      "evidence": [
+        "side",
+        "back",
+        "rootGap",
+        "review",
+        "brief",
+        "build1",
+        "build2",
+        "build3",
+        "build4"
+      ],
+      "blocker": {
+        "externalDependency": "Brief 12e explicitly limits the step to four tries; four Blender build invocations are exhausted.",
+        "attempts": "Invocation 1 rejected before save; 2 saved the initial envelope; 3 fixed exact roots; 4 added real fur variation, soft tips and complete artifact guards. Final independent visual review still finds the root defect.",
+        "unblocksWhen": "Nick or the orchestrator authorizes another model-build step beyond the current four-invocation limit."
+      }
+    },
+    {
+      "id": "F002",
+      "criterion": "artifacts",
+      "status": "resolved",
+      "observation": "New saved tail geometry has not yet passed the exhaustive sweep.",
+      "nextAction": "Run unchanged 12d sweep, separate-obstacle checks and per-ID flag comparison; repair every new cluster within build cap.",
+      "resolution": "Fresh final saved sweep and solid checks find zero new per-ID flags, no region rise and no collisions.",
+      "resolutionEvidence": [
+        "metrics",
+        "beforeFlags",
+        "afterFlags",
+        "afterCollision",
+        "solid"
+      ]
+    },
+    {
+      "id": "F003",
+      "criterion": "held",
+      "status": "resolved",
+      "observation": "Held saved-result equality is pending.",
+      "nextAction": "Run saved-data snapshot equality and independently constrain changed mask.",
+      "resolution": "Final root restoration, saved snapshot equality and all-radius digest equality pass.",
+      "resolutionEvidence": [
+        "protection",
+        "model"
+      ]
+    },
+    {
+      "id": "F004",
+      "criterion": "delivery",
+      "status": "resolved",
+      "observation": "Final review, logs, commit and archive are pending.",
+      "nextAction": "Inspect all outputs, obtain independent review, update records, commit explicit paths, archive superseded baseline and seal.",
+      "resolution": "Completed the explicit-path step commit and delivery verification. Candidate and baseline hashes match; required pairs/chart exist; independent review and logs recorded. No push. Conditional archival is not triggered because this partial candidate does not supersede s12d.",
+      "resolutionEvidence": [
+        "delivery",
+        "work",
+        "review",
+        "side",
+        "back",
+        "threequarter",
+        "profile",
+        "brief"
+      ]
+    },
+    {
+      "id": "F005",
+      "criterion": "artifacts",
+      "status": "resolved",
+      "observation": "Build 2/3 introduce two isolated cap neighbor/lift outliers and ten proximal transfer flags despite lower total transfer counts.",
+      "nextAction": "Replace three collision blends with short exterior cap hairs, restore ten flagged root paths, then rerun full saved-result sweep and per-ID comparison.",
+      "evidence": [
+        "artifactFailure"
+      ],
+      "resolution": "Cap and proximal path repairs plus pre-save guard pass; independent fresh saved sweep has zero new flag IDs.",
+      "resolutionEvidence": [
+        "guardHistory",
+        "metrics",
+        "afterFlags"
+      ]
+    },
+    {
+      "id": "F006",
+      "criterion": "shape",
+      "status": "resolved",
+      "observation": "Preview3 tails read as compact leaves/feathers with parallel strokes, a narrow stalk and hard pointed blue tips.",
+      "nextAction": "Inspect fourth-invocation final renders for irregular hair edges, fuller proximal coat and soft covered tips; preserve incomplete status if the visual defect remains at the four-invocation cap.",
+      "evidence": [
+        "leafFailure"
+      ],
+      "resolution": "Final native-size views show wispy hair surfaces and covered soft tips; leaf/bare-tip regression is resolved in all views.",
+      "resolutionEvidence": [
+        "side",
+        "back",
+        "threequarter",
+        "review"
+      ]
+    },
+    {
+      "id": "F007",
+      "criterion": "width",
+      "status": "blocked",
+      "observation": "Corrected raw maximum station jump increases .021187 to .025128; the requested sharp drop is not achieved.",
+      "evidence": [
+        "metrics",
+        "profile",
+        "review",
+        "brief",
+        "build1",
+        "build2",
+        "build3",
+        "build4"
+      ],
+      "blocker": {
+        "externalDependency": "The four-build cap in brief 12e is exhausted; changing the actual width profile requires another model build.",
+        "attempts": "Measured all three saved-result tails at 48 fixed stations in both views; independently corrected endpoint accumulation and regenerated the chart, exposing the unmet reduction target.",
+        "unblocksWhen": "A further model-build step is authorized beyond this brief limit."
+      },
+      "nextAction": "In an authorized continuation, smooth the actual proximal plume while preserving mid volume, then demonstrate reduced raw station jumps using the corrected endpoint projection."
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent adversarial review_12e",
+    "comparison": "Compared original brief, baseline, rejected leaf preview, all final native-size views/pairs and corrected chart. Result is partial/incomplete, not visually ready.",
+    "regressions": "New leaf/bare-tip and artifact regressions repaired; all held data passes. Original continuity defect and width-reduction target remain unresolved.",
+    "scopeCheck": "Only true tails and local hip connector fur changed. No mesh, stripe, T7, held fur, references or other stages changed. Four invocations respected; no fifth save. Baseline retained because this candidate does not supersede it.",
+    "sessionId": "01a140de-0101-7643-a81e-2c8094f33fe5",
+    "requestId": "7f5c2fef-03cb-469c-87a0-b36e34894db7",
+    "performedAt": "2026-10-15T19:29:48.678290+00:00"
+  },
+  "stop": {
+    "kind": "blocked",
+    "reason": "The only unfinished outcome work is F001/F007, which requires a further model revision beyond the explicit four-invocation cap. All independent authorized checks, diagnosis and partial delivery are complete; no approval or artistic completion is claimed."
+  }
+}

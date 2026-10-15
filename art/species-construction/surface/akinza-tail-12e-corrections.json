@@ -1,0 +1,16 @@
+{
+  "beforeSurfaceSha256": "6a2213e7fe62b5769d27ca174d4bde7a259c9851eab8b6ee2bfa41b0d76a68e0",
+  "restoreRootPaths": [
+    217287,
+    217343,
+    257030,
+    257035,
+    257112,
+    257113,
+    257120,
+    257293,
+    271985,
+    272349
+  ],
+  "reason": "Ten proximal blend paths newly approach the neighboring hip surface. Restore the exact approved parent root paths; replace the three colliding cap paths with short exterior hairs instead of blending old long plume paths."
+}
