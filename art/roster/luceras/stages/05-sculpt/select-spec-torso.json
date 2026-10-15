@@ -1,0 +1,165 @@
+{
+ "title": "Luceras Torso",
+ "heading": "Luceras: the torso",
+ "lede": "Stage 5 of 11, part 2 of 5. The trunk refined on the approved head build: spine line, chest and keel, shoulder plates, rib cage, belly tuck, loin, hip points, rump. Judge shape only: does the trunk read as the shaved clay body under the fur? Muscle relief is surface work the fur covers; the belly tuck finishes when the hind legs (part 3) move the thigh seam. Approve, or say what needs work and in which view. Confirm notifies the orchestrator.",
+ "fallback": "Approvals cannot be saved from this view; reply in chat.",
+ "compositeEmpty": "Confirm closes the torso; the hind legs and feet start next.",
+ "confirmed": "Torso confirmed; the orchestrator files it and starts the hind legs. Tell the orchestrator you confirmed.",
+ "fold": {
+  "title": "Decided by the pipeline owner",
+  "text": "Both streams got the same brief on the approved head file (B-rv4f), 60-minute cap, Blender queued through the machine lock. Both found the blockout trunk already is the body reconstruction (within 1 mm), so neither ran another reconstruction; the work was brushing the shaved landmarks against your clay views. The Claude pass (B-ej6s, Opus builder) is presented: its landmarks read. The Codex pass (B-eccr) respected every hold but changed so little it is indistinguishable from the base; it is in section 2 for comparison. Both left out a stray review copy of the head that the head file carried; it will be stripped from the base before part 3. Every vertex of the approved head and neck, and of the limbs and tail below their joints, is unmoved in both (measured zero). Costs: Claude 29 minutes wall, about 300K tokens; Codex 17 minutes, 112K tokens."
+ },
+ "order": [
+  "claude",
+  "codex",
+  "numbers"
+ ],
+ "elements": {
+  "claude": {
+   "name": "Torso, Claude stream (pass 1)",
+   "mode": "gallery",
+   "question": "Does the trunk read as the shaved clay body?",
+   "judge": [
+    "Side: chest, back line, belly tuck into the loin, rump as the clay?",
+    "Three-quarter: shoulder plate and its back edge, flank, hip points?",
+    "Front: chest between the forelegs, shoulder width?",
+    "Still Luceras at sprite size?"
+   ],
+   "reading": [
+    "mustHave[0]"
+   ],
+   "recommend": null,
+   "note": "Declared for later parts: the belly tuck meets the frozen thigh front lower than the clay (part 3 moves the thigh seam); the hindquarters look wide from the front because of the thighs (part 3); chest depth kept at the approved stage 4 proportion; the trunk is softer than the clay's muscle relief, which the fur covers.",
+   "views": [
+    {
+     "label": "Side",
+     "blob": "fb8a7dce029b0b2fff300e738a0a994cabb83485c7ab3ad41317384816e191fd",
+     "caption": "Side: build left, shaved clay right"
+    },
+    {
+     "label": "Three-quarter",
+     "blob": "894f0fd9828ba6b2a3bea191ff5bbdadf4c9148bc53db3dab59ec103abc7b5f9",
+     "caption": "Three-quarter: build left, shaved clay right"
+    },
+    {
+     "label": "Front",
+     "blob": "6fabac3d20b925bc84de04c560509311146460fb47a1af4255d3a1792b48dcc2",
+     "caption": "Front: build left, shaved clay right"
+    },
+    {
+     "label": "Sprite size",
+     "blob": "d4a326c9eda77689379aea64997a28a264420216efdc0f9ef44b9adc3a56e826",
+     "caption": "Sprite size (192 px)"
+    },
+    {
+     "label": "Full body beside the furred sheet",
+     "blob": "8764d554bd4861db5e71a7a61fa0ba3d1e737f542d5594a6d711c31ddf5f208f",
+     "caption": "Full body side beside the furred turnaround: the body under the coat"
+    },
+    {
+     "label": "Progression",
+     "blob": "5ec05b5cde677c7527ee99b47cd3b146abbc21419dd0c5fdf4abdd6a270432f9",
+     "caption": "Progression: approved blockout trunk, first landmarks (too faint), final"
+    },
+    {
+     "label": "Top",
+     "blob": "ecc687bda39562c1c607c617e235c3cf6e0a8ac6be5e5ff7f1cef69f63a57b95",
+     "caption": "Top: spine line and shoulder width"
+    },
+    {
+     "label": "Clay side",
+     "blob": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+     "caption": "Reference: shaved clay side (shape authority)"
+    },
+    {
+     "label": "Sheet combined look",
+     "blob": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+     "caption": "Reference: the model sheet's combined look"
+    }
+   ]
+  },
+  "codex": {
+   "name": "Torso, Codex stream (pass 1)",
+   "mode": "info",
+   "question": "For comparison only.",
+   "judge": [],
+   "reading": [],
+   "recommend": null,
+   "note": "Codex (gpt-6-astra), same brief. Holds respected, but the trunk is nearly the untouched base: chest width down 3 percent, tuck up 4 mm, landmarks too faint to see. Its front composite is on its own dark ground.",
+   "views": [
+    {
+     "label": "Codex side",
+     "blob": "9e8bb91884f16bf6949ffd01306e72e1a08944fe605325950fe11ce3be11b625",
+     "caption": "Codex pass 1, side beside the clay"
+    },
+    {
+     "label": "Codex three-quarter",
+     "blob": "e4ef47535c1880998e5e670b030682f462a82b9d1bff8ec2e25708fa46da05a1",
+     "caption": "Codex pass 1, three-quarter beside the clay"
+    },
+    {
+     "label": "Codex before",
+     "blob": "d5381e171e3d878c927b561feeb75b32a142147640c0c89ef659c4cd3fe0c205",
+     "caption": "The base before the Codex pass, side"
+    }
+   ]
+  },
+  "numbers": {
+   "name": "The two streams in numbers (torso)",
+   "mode": "info",
+   "views": [],
+   "table": [
+    [
+     "Measure",
+     "Claude",
+     "Codex"
+    ],
+    [
+     "Wall time",
+     "29 min",
+     "17 min"
+    ],
+    [
+     "Blender time",
+     "752 s over 14 launches",
+     "601 s"
+    ],
+    [
+     "Tokens",
+     "about 300K",
+     "112K"
+    ],
+    [
+     "Second reconstruction",
+     "no (base within 0.9 mm of the raw mesh)",
+     "no (0.1 mm)"
+    ],
+    [
+     "Head and neck moved",
+     "0",
+     "0"
+    ],
+    [
+     "Outside the torso moved",
+     "0 (seam band 2.4 mm max)",
+     "0"
+    ],
+    [
+     "Inside the torso moved",
+     "7.7 mm max, 1.4 mm mean",
+     "not reported; visibly under 1 mm"
+    ],
+    [
+     "Creature triangles",
+     "344,602",
+     "344,602"
+    ],
+    [
+     "Outcome",
+     "presented for approval",
+     "comparison build"
+    ]
+   ]
+  }
+ }
+}
