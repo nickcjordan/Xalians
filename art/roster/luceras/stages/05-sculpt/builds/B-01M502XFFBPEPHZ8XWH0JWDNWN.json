@@ -13,12 +13,148 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "paws.blend",
+      "hash": "0c606a62ce02607c20f969042bf5fe4d7fcf18d2bc0ee49a0caba23f615767ba"
+    },
+    {
+      "name": "paws_part.glb",
+      "hash": "22c2806729782776d063d44db55d21469f1c9ffef5b32e00e770fda458f417e0"
+    },
+    {
+      "name": "composite_hind_paw_side_vs_clay.png",
+      "hash": "e1ce1b26f5bf9993cc050b0cfa7a4b9257cf2d24329673b16d1bd9a9fcbdb52a"
+    },
+    {
+      "name": "composite_hind_paw_front_three_quarter_vs_clay.png",
+      "hash": "a457d07de5d4cc0d20eeb88f8476b525dc168c47d0ddcf3e7f31416d64102b9c"
+    },
+    {
+      "name": "composite_fore_paw_front_vs_clay.png",
+      "hash": "4af7dd71de99df739cffd1e97f4d1df59d26ce6e8beb80f121e4c623273a7b3c"
+    },
+    {
+      "name": "composite_fore_paw_side_vs_clay.png",
+      "hash": "ad9b2355c2092daf3bfac554ac0c124e8a2c5269e4a1dc407215c19b5d97ea3f"
+    },
+    {
+      "name": "progress.png",
+      "hash": "f4a1831a2c7fec42e74fe525ea0d11196f90ba53ff6eaa83d3f1f1ccdf70adbe"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "d37b8628f72bc3dfca6129d1185008d6e18864192a0274cc8317b63868f0e842"
+    },
+    {
+      "name": "report.json",
+      "hash": "eae0977d2bcdd2adce27b0794a983c9cf009909d66de364af250160685bed1b6"
+    },
+    {
+      "name": "iter_notes.json",
+      "hash": "5f7056626f819dc622673cf5f0064fc90d2a57733f0775535e93d250a46817cc"
+    },
+    {
+      "name": "build_paws.py",
+      "hash": "f964bfb98f80a55c576636e23fec97862f55861e040e6d8b42458141bb822f0b"
+    },
+    {
+      "name": "run_paws.sh",
+      "hash": "412befa891630f4a5db773ca367f60ad63f1f7b9e546c07b8f891f22b78bd43c"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "paws.blend",
+        "hash": "0c606a62ce02607c20f969042bf5fe4d7fcf18d2bc0ee49a0caba23f615767ba"
+      },
+      {
+        "name": "paws_part.glb",
+        "hash": "22c2806729782776d063d44db55d21469f1c9ffef5b32e00e770fda458f417e0"
+      },
+      {
+        "name": "composite_hind_paw_side_vs_clay.png",
+        "hash": "e1ce1b26f5bf9993cc050b0cfa7a4b9257cf2d24329673b16d1bd9a9fcbdb52a"
+      },
+      {
+        "name": "composite_hind_paw_front_three_quarter_vs_clay.png",
+        "hash": "a457d07de5d4cc0d20eeb88f8476b525dc168c47d0ddcf3e7f31416d64102b9c"
+      },
+      {
+        "name": "composite_fore_paw_front_vs_clay.png",
+        "hash": "4af7dd71de99df739cffd1e97f4d1df59d26ce6e8beb80f121e4c623273a7b3c"
+      },
+      {
+        "name": "composite_fore_paw_side_vs_clay.png",
+        "hash": "ad9b2355c2092daf3bfac554ac0c124e8a2c5269e4a1dc407215c19b5d97ea3f"
+      },
+      {
+        "name": "progress.png",
+        "hash": "f4a1831a2c7fec42e74fe525ea0d11196f90ba53ff6eaa83d3f1f1ccdf70adbe"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "d37b8628f72bc3dfca6129d1185008d6e18864192a0274cc8317b63868f0e842"
+      },
+      {
+        "name": "report.json",
+        "hash": "eae0977d2bcdd2adce27b0794a983c9cf009909d66de364af250160685bed1b6"
+      },
+      {
+        "name": "iter_notes.json",
+        "hash": "5f7056626f819dc622673cf5f0064fc90d2a57733f0775535e93d250a46817cc"
+      },
+      {
+        "name": "build_paws.py",
+        "hash": "f964bfb98f80a55c576636e23fec97862f55861e040e6d8b42458141bb822f0b"
+      },
+      {
+        "name": "run_paws.sh",
+        "hash": "412befa891630f4a5db773ca367f60ad63f1f7b9e546c07b8f891f22b78bd43c"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 57.6,
+    "codexTokens": "324,939",
+    "remains": [
+      "Hind dorsal line is too flat and the rear graft forms an overhang instead of a continuous leg-to-toe slope.",
+      "Hind and fore toe surfaces retain inferred gray nail sleeves around the authored dark claws.",
+      "Digit widths and knuckle ratios differ from the clay; see measurements.json.",
+      "Fore toes are too rail-like with broad gaps and angular tips; rounded knuckles and tight dark clefts are not achieved.",
+      "Underside pads are inferred and not verified against a sole view.",
+      "N-r373 remains held. This package is review evidence, not an approved merge."
+    ],
+    "checks": [
+      {
+        "title": "Paws by reconstruction, Codex pass 1",
+        "question": "Do the paws read as the clay?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "e1ce1b26f5bf9993cc050b0cfa7a4b9257cf2d24329673b16d1bd9a9fcbdb52a",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "",
+        "recommended": "Critic read: no, and worse than pass 3: the hind graft makes a flange and a bag heel, the fore toes are rails with invented nail sleeves. The builder held it itself. Single-view reconstruction of a small multi-digit crop gives mush; reconstruction suits large soft volumes, not digits."
+      }
+    ],
+    "note": "Not chosen. 57.6 min, four reconstruction runs (mini and full, hind and fore)."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T15:29:27Z",
-  "briefSha256": "3d1c19e7e46019e72aa7b9f531bbd8b741c82fe483895601b5b3656cc2673b31"
+  "briefSha256": "3d1c19e7e46019e72aa7b9f531bbd8b741c82fe483895601b5b3656cc2673b31",
+  "checks": [
+    {
+      "title": "Paws by reconstruction, Codex pass 1",
+      "question": "Do the paws read as the clay?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "e1ce1b26f5bf9993cc050b0cfa7a4b9257cf2d24329673b16d1bd9a9fcbdb52a",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "",
+      "recommended": "Critic read: no, and worse than pass 3: the hind graft makes a flange and a bag heel, the fore toes are rails with invented nail sleeves. The builder held it itself. Single-view reconstruction of a small multi-digit crop gives mush; reconstruction suits large soft volumes, not digits."
+    }
+  ],
+  "reportedAt": "2026-10-15T16:28:56Z"
 }

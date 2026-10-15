@@ -1,0 +1,24 @@
+{
+  "id": "B-01M506AD1KTBKZQETYW856TN99",
+  "alias": "jas4",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: all four paws as swept-tube digits with clay-measured radius profiles, on the merged file, after audit 2; Codex",
+  "scope": "all four paws",
+  "defect": "D-01M500J4H0SK8F6KPTW3D6SSJ9",
+  "holds": [],
+  "inputs": [
+    {
+      "path": "2f4883f87a1f625430607a72be20a91ab99434abbaab055b15ff78f2c1ed57fc",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T16:28:56Z",
+  "briefSha256": "b22f1ecd0a1f3ceeefecd2a4fa245a857098fddcf8b67fb6b219ebc3b4ae9ea8"
+}

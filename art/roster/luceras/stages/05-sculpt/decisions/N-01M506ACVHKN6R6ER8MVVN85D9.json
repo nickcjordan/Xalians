@@ -1,0 +1,15 @@
+{
+  "id": "N-01M506ACVHKN6R6ER8MVVN85D9",
+  "alias": "a4z4",
+  "stage": "05-sculpt",
+  "who": "orchestrator",
+  "words": "Second paw audit after the reconstruction pass (B-dp38) came out worse than brushing: small multi-digit crops reconstruct as mush with invented nail sleeves. What did work on this creature for precise organic tubes: the tail and the horns, built as swept tubes with a radius profile measured from the clay (tail passed first try). Outcome: change the method again: each digit is a swept tube along its own centerline with a measured radius profile (knuckle bulges as radius maxima, a rounded pad underneath, a rounded tip), the four digits and a metatarsal or metacarpal pad unioned by a local voxel remesh and lightly smoothed, grafted below 65 mm; start from the pass 3 paws on the merged file. Reconstruction stays the rule for large soft volumes; rule 12 amended to say so.",
+  "date": "2026-10-15",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M500J4H0SK8F6KPTW3D6SSJ9",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-15T16:28:56Z"
+}
