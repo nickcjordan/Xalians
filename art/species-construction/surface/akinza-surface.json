@@ -316,9 +316,27 @@
     "lengthFloor": 0.5
   },
   "pads": {
-    "note": "dark leather only on the modeled pads, which are the skin that meets the floor (the sole around them sits about .008 higher); fur step 7",
+    "note": "dark leather only on the modeled pads (main pad and four toe pads): grown from the skin that meets the floor over the facing-down sole, stopped by the creases round each pad (fur step 7b)",
     "belowFloor": 0.0065,
-    "normalZ": -0.25
+    "normalZ": -0.25,
+    "shape": {
+      "belowFloor": 0.04,
+      "normalZ": -0.15,
+      "seedBelow": 0.003,
+      "creaseSmooth": 12,
+      "crease": -0.00015,
+      "creaseGrow": 3,
+      "creaseGrowMin": 0.1,
+      "maxReach": 0.05
+    },
+    "sole": {
+      "belowFloor": 0.03,
+      "soft": 0.01,
+      "facingMin": 0.3,
+      "facingSpan": 0.3,
+      "length": 0.003,
+      "density": 0.35
+    }
   },
   "paleSmoothing": 10,
   "paleSlot": 1,

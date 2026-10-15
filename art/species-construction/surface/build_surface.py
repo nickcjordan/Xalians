@@ -414,17 +414,28 @@ def compute_attributes(skin, cfg, species):
 
     pc = cfg['pads']
     pad = ((co[:, 2] < floor+pc['belowFloor']) & (nrm[:, 2] < pc['normalZ'])).astype(float)
-    if 'bump' in pc:  # only the modeled pads: skin raised above a smoothed copy of itself (a pad is a small bump)
-        bc = pc['bump']
-        co_s = np.stack([edge_smooth(co[:, k].copy(), edges, n, bc['smooth']) for k in range(3)], 1)
-        disp = np.sum((co-co_s)*nrm, axis=1)
-        reg = pad > 0
-        print('pad bump: region', int(reg.sum()), 'offset pct', np.round(np.percentile(disp[reg], [5, 25, 50, 75, 90, 95, 99])*1000, 3), '(x1000)',
-              'height pct', np.round(np.percentile(co[reg, 2]-floor, [1, 5, 25, 50, 75, 95])*1000, 2), '(x1000)')
-        for hh in (0.004, 0.008, 0.012, 0.016, 0.02):
-            print('  below', hh, int((reg & (co[:, 2] < floor+hh)).sum()))
-        pad = pad*smoothstep((disp-bc['min'])/bc['span'])
-        write_attribute(me, 'padbump', np.clip(disp*bc.get('debugGain', 100.0)+0.5, 0, 1))
+    sole_m = np.zeros(n)
+    if 'shape' in pc:  # the modeled pads whole: grown from the floor-contact skin over the sole, stopped by the creases round each pad
+        sc_ = pc['shape']
+        reg = (co[:, 2] < floor+sc_['belowFloor']) & (nrm[:, 2] < sc_['normalZ'])
+        co_s = np.stack([edge_smooth(co[:, k].copy(), edges, n, sc_['creaseSmooth']) for k in range(3)], 1)
+        bend = np.sum((co-co_s)*nrm, axis=1)  # negative in a crease
+        seeds = reg & (co[:, 2] < floor+sc_['seedBelow'])
+        block = (bend < sc_['crease']).astype(float)
+        if sc_.get('creaseGrow'):  # widen the crease lines so small gaps in them do not let the pad leak onto the sole
+            block = edge_smooth(block, edges, n, sc_['creaseGrow']) > sc_.get('creaseGrowMin', 0.1)
+        allowed = reg & (block < 0.5)
+        d = graph_distance(co, edges, seeds, allowed)
+        pad = (np.isfinite(d) & (d < sc_['maxReach'])).astype(float)
+        print('pad shape: region', int(reg.sum()), 'seeds', int(seeds.sum()), 'allowed', int(allowed.sum()), 'pad', int(pad.sum()),
+              'bend pct x1000', np.round(np.percentile(bend[reg], [2, 5, 10, 25, 50]) * 1000, 3))
+        write_attribute(me, 'padbend', np.clip(-bend*sc_.get('debugGain', 400.0), 0, 1))
+        if 'sole' in pc:  # the rest of the sole: short sparse fur, no stripes; the fringe at the sole edge stays
+            so = pc['sole']
+            sole_m = smoothstep((floor+so['belowFloor']-co[:, 2])/so['soft'])*smoothstep((-nrm[:, 2]-so['facingMin'])/so['facingSpan'])
+            sole_m = np.clip(edge_smooth(sole_m, edges, n, 3), 0, 1)
+            length = length*(1.0-sole_m)+np.minimum(length, so['length'])*sole_m
+            density = density*(1.0-sole_m*(1.0-so['density']))
     pad = edge_smooth(pad, edges, n, 2)
     pad = np.clip(pad*1.5, 0, 1)
     density *= 1.0-pad
@@ -579,6 +590,7 @@ def compute_attributes(skin, cfg, species):
     earw = np.clip(wn[names.index('ears')], 0, 1)
     for z in cfg.get('earPatternZones', []):  # pattern stays off here although the fur is not ear fur (the back of the skull)
         earw = np.maximum(earw, membership(co, zones[z], floor, height, cfg.get('earPatternMargin', 0.02)))
+    earw = np.maximum(earw, sole_m)  # no stripes on the sole
     for pb in cfg.get('patternOffBoxes', []):  # pattern off in a box (the fingers)
         earw = np.maximum(earw, membership(co, pb['box'], floor, height, pb.get('margin', 0.01)))
     write_attribute(me, 'pmaskw', np.clip((1.0-strip)*(1.0-face_low)*(1.0-earw), 0, 1))
