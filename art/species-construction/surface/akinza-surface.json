@@ -130,7 +130,7 @@
       "density": 2.0,
       "clump": 0.05,
       "curl": 0.03,
-      "comb": "face"
+      "comb": "skull"
     },
     "face": {
       "zones": [
@@ -273,7 +273,7 @@
       "clump": 0.2,
       "cscale": 11.0,
       "curl": 0.05,
-      "comb": "crown"
+      "comb": "skull"
     }
   },
   "lengthRamps": [
@@ -443,6 +443,16 @@
     {"note": "no stripes on the fingers (fur step 8)", "box": {"at": [0.57, 0.62], "x": [0.14, 0.215], "symmetricX": true, "y": [-0.1, -0.01]}, "margin": 0.01}
   ],
   "earBias": 0.0,
+  "skullFlow": {"note": "head and crown comb (fur step 10d): radial from the brow point origin, turning down behind y downY (start, full) by down", "origin": [0.0, -0.4, 0.58], "down": 1.5, "downY": [0.0, 0.07]},
+  "combSmooth": [
+    {
+      "note": "back of the head: the comb field diffused over the skull, ear roots and nape so the fur radiates from the brow, runs back over the crown, down the nape and out onto the ear backs with no parts (fur step 10d)",
+      "box": {"at": [0.0, 0.2], "x": [0.0, 0.3], "symmetricX": true, "y": [-0.06, 0.12]},
+      "margin": 0.03,
+      "iterations": 80,
+      "chunk": 5
+    }
+  ],
   "crownDir": [
     0.0,
     0.8,

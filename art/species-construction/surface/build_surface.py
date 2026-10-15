@@ -275,6 +275,12 @@ def compute_attributes(skin, cfg, species):
         'tail': unit(co-tail_root),
         'forward': unit(np.tile([0.0, -1.0, -0.25], (n, 1))),
     }
+    if 'skullFlow' in cfg:
+        # fur step 10d: over the skull the fur radiates from the brow and, behind the ear roots, turns down the back of the
+        # head into the nape (a direction radial from a front point alone points into the occiput and converges there)
+        sf = cfg['skullFlow']
+        bend_down = smoothstep((co[:, 1]-sf['downY'][0])/(sf['downY'][1]-sf['downY'][0]))*sf['down']
+        directions['skull'] = unit(unit(co-np.array(sf['origin']))+np.stack([np.zeros(n), np.zeros(n), -bend_down], 1))
     if cfg.get('earOwnSide', True):  # ear fur between the root and the midline still combs toward its own side
         e = directions['ear']
         e[:, 0] = sign*np.abs(e[:, 0])
@@ -328,6 +334,21 @@ def compute_attributes(skin, cfg, species):
         target = np.interp((floor+height-co[:, 2])/height, pts_r[:, 0], pts_r[:, 1])
         length = length*(1.0-w)+target*w
         ramp_w.append((w, r))
+    radial_w = []
+    for r in cfg.get('radialRamps', []):
+        # fur step 10e: fur length and density by distance from a center (the nose tip): very short, dense fur on the
+        # muzzle that grows smoothly into the cheeks and forehead, handing back to the groups' own values past fade
+        dist = np.linalg.norm(co-np.array(r['center']), axis=1)
+        w = membership(co, r['box'], floor, height, r.get('margin', 0.02))
+        if 'frontFacing' in r:
+            w = w*smoothstep((-nrm[:, 1]-r['frontFacing']['min'])/r['frontFacing']['span'])
+        w = w*(1.0-smoothstep((dist-r['fade'][0])/(r['fade'][1]-r['fade'][0])))
+        la = np.array(r['length'], float)
+        length = length*(1.0-w)+np.interp(dist, la[:, 0], la[:, 1])*w
+        if 'density' in r:
+            da = np.array(r['density'], float)
+            density = density*(1.0-w)+np.interp(dist, da[:, 0], da[:, 1])*w
+        radial_w.append((w, r))
     clump, curl, group_pale = blend('clump'), blend('curl'), blend('pale')
     for w, r in ramp_w:  # the ramp may also carry its own texture (clump, curl) so the grow reads as one coat
         if 'clump' in r:
@@ -336,6 +357,24 @@ def compute_attributes(skin, cfg, species):
             curl = curl*(1.0-w)+r['curl']*w
     cscale = blend('cscale', cfg['clumpScale'])
     comb = unit(sum(wn[i, :, None]*directions[cfg['groups'][nm]['comb']] for i, nm in enumerate(names)))
+    for w, r in radial_w:  # the ramp's own direction (radiating from the nose) and texture
+        if 'comb' in r:
+            comb = unit(comb*(1.0-w[:, None])+directions[r['comb']]*w[:, None])
+        if 'clump' in r:
+            clump = clump*(1.0-w)+r['clump']*w
+        if 'curl' in r:
+            curl = curl*(1.0-w)+r['curl']*w
+    for cs in cfg.get('combSmooth', []):
+        # fur step 10d: inside a box the comb field is diffused over the mesh (kept tangent each pass), so the directions
+        # of neighboring groups (face, crown, ears, neck) flow into each other with no parts or abrupt turns
+        wbox = membership(co, cs['box'], floor, height, cs.get('margin', 0.02))
+        sel_e = (wbox[edges[:, 0]] > 0) | (wbox[edges[:, 1]] > 0)
+        cv = comb.copy()
+        for _ in range(cs['iterations']//cs.get('chunk', 5)):
+            cv = np.stack([edge_smooth(cv[:, k].copy(), edges[sel_e], n, cs.get('chunk', 5)) for k in range(3)], 1)
+            cv = unit(cv-nrm*np.sum(cv*nrm, axis=1, keepdims=True))
+        comb = unit(comb*(1.0-wbox[:, None])+cv*wbox[:, None])
+        print('comb smooth: vertices in box', int((wbox > 0.5).sum()))
 
     # pale mask: vertices of faces in the pale slot, spread a little, plus the chest group
     loops = np.empty(len(me.loops), dtype=np.int32)
@@ -530,6 +569,20 @@ def compute_attributes(skin, cfg, species):
                 d = np.linalg.norm(co[sel]-root_s, axis=1)
                 t = (d-d.min())/max(d.max()-d.min(), 1e-9)
                 base_f[sel] = smoothstep((t-cf['base'][0])/(cf['base'][1]-cf['base'][0]))
+            if 'sheet' in cf:
+                # only the thin ear sheet: a front-facing vertex counts when back-facing ear skin lies within the sheet
+                # thickness behind it (the box also reaches the front-facing temples beside the eyes)
+                bk = np.where(own_e & back_e)[0]
+                tree = KDTree(len(bk))
+                for k, i in enumerate(bk):
+                    tree.insert(Vector(co[i]), k)
+                tree.balance()
+                thin = np.zeros(n)
+                for i in np.where((ear_w > 0.05) & ~back_e)[0]:
+                    thin[i] = tree.find(Vector(co[i]))[2]
+                thin_f = 1.0-smoothstep((thin-cf['sheet'][0])/(cf['sheet'][1]-cf['sheet'][0]))
+                thin_f[back_e] = 1.0
+                ear_w = ear_w*thin_f
             cup_new = ear_w*front_f*smoothstep((rd-cf['rim'][0])/(cf['rim'][1]-cf['rim'][0]))*base_f
             cup_mask = np.clip(edge_smooth(cup_new, edges, n, cf.get('smooth', 3)), 0, 1)
             print('cup front: vertices over .5', int((cup_mask > 0.5).sum()))
