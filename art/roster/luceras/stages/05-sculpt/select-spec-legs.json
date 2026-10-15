@@ -1,7 +1,7 @@
 {
  "title": "Luceras Legs and Tail",
  "heading": "Luceras: legs, paws and tail",
- "lede": "Stage 5 of 11, parts 3 to 5, second version. The paws are now the generated paws you liked, exactly their shape and size, with four toes and dark claws added on top (and a dewclaw on each front wrist). Every picture shows three versions through the same camera: 1 the generated model, 2 the current build, 3 your shaved clay. Judge shape only: do the legs, paws and tail read right? Approve, or say what needs work and in which view. Confirm notifies the orchestrator.",
+ "lede": "Stage 5 of 11, parts 3 to 5, second version. The paws are now the generated paws you liked, exactly their shape and size, with four toes and small blunt claws added on top (and a small dewclaw on each front wrist), sized down after your note. Every picture shows three versions through the same camera: 1 the generated model, 2 the current build, 3 your shaved clay. Judge shape only: do the legs, paws and tail read right? Approve, or say what needs work and in which view. Confirm notifies the orchestrator.",
  "fallback": "Approvals cannot be saved from this view; reply in chat.",
  "compositeEmpty": "Confirm closes the legs, paws and tail; the whole-body check comes next.",
  "confirmed": "Confirmed; the orchestrator files it and runs the whole-body check. Tell the orchestrator you confirmed.",
@@ -33,37 +33,37 @@
    "views": [
     {
      "label": "Hind paw, side",
-     "blob": "ed6bc25e5cf8962946093fbe52cb6aafe42cb9fdfbdea03f134b7f4b9ea975cc",
+     "blob": "19d6367ffd32a9cf117c3df836d0c17537c0386493cb6348c892eec46936b440",
      "caption": "Hind paw, side: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Hind paw, three-quarter",
-     "blob": "30727b63c17a37fc6bb6c31e15e3d466bc3ad8997080d385e97232e7fe0e422b",
+     "blob": "fdd8ef44ddccf244db7f16ae6bc53b8f18574c32ddedeadb2ea70a652f952c85",
      "caption": "Hind paw, three-quarter: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Fore paws, front",
-     "blob": "1cafb18e10ad4685fbac1a58c2c4e0cd8f1f7b31d8886ee92dc679bc12918c48",
+     "blob": "7215ac234489fdde58a01764a6448442ce017bca8d1853604812b64d3b26c70c",
      "caption": "Fore paws, front: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Fore paw, side",
-     "blob": "c11e025bc3e6db931e70d8678d9d4a167e4f925a6ca3c9f4529d2c4463abcce7",
+     "blob": "8a25bc3d6868eacaee5f1eedfe92df66ca35eeabd17629849fba6843e8033397",
      "caption": "Fore paw, side: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Full body, side",
-     "blob": "b60f4c2f2839276f3c992e03e1c4d4f0f4b8ad1f9ec53dca1a46a8ff26e48231",
+     "blob": "6ba5be38466a446f6629651dbdbe042b6f1a0600507f2a6d659be6ccf4ecb795",
      "caption": "Full body, side: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Full body, three-quarter",
-     "blob": "b30d6a676c7a0142397e84acde6657793f9f8cad84c99a8517fe5ccbb1fdd08d",
+     "blob": "4d1c0f5bd4d1b6195d5a0f136af446ec7d34f41061a38ac9361f1ee6b876e02b",
      "caption": "Full body, three-quarter: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Full body, front",
-     "blob": "c5aa72b0e9ec0b1218e1152de6d8e87453b9436f5606429509b3810c7375eb87",
+     "blob": "10663996a90bd931a91b512b8e2b42b0ede9ac595b72431b3c2375ac6a33b94d",
      "caption": "Full body, front: 1 generated, 2 current, 3 clay"
     },
     {

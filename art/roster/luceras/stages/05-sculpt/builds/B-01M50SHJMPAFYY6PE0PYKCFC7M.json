@@ -1,0 +1,109 @@
+{
+  "id": "B-01M50SHJMPAFYY6PE0PYKCFC7M",
+  "alias": "rnxn",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: claws made small and integrated with the toes (claw objects only) on B-vhr6; Codex",
+  "scope": "claws",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "paws.blend",
+      "hash": "cf85f39aa426e70ae08ba3539cba167b5c96ecb7560c4490081d460f6bfdb7bc"
+    },
+    {
+      "name": "report.json",
+      "hash": "8632fc2ccb060eea281214f01bd1614aba6cc8752a21e33b8be4d1d46baeab3a"
+    },
+    {
+      "name": "saved_file_audit.json",
+      "hash": "2dc6875d5bb0f376d46db02ce8bc1e3121e23a3c438c1360231df04db61c64fe"
+    },
+    {
+      "name": "triple_pass8_fore_paws_front.png",
+      "hash": "f6e514faa9fae727f45fd8bc33d2ed114bb4285c1f6922518a58e7af6ac72f13"
+    },
+    {
+      "name": "triple_pass8_fore_paw_side.png",
+      "hash": "81e97dd4cf1cd3ed889f25ffa3f631f750a8c0abd16902a70860aa0bcbcdebfe"
+    },
+    {
+      "name": "triple_pass8_full_front.png",
+      "hash": "d7b3f094012275c099d9cb86285448c282ad91e62192cb63746bbf4195fdeaa6"
+    },
+    {
+      "name": "triple_pass8_full_side.png",
+      "hash": "d994a801472efda90445ab4b844e80ccd3d35617e7f0c659b4c7da857a0d5dfc"
+    },
+    {
+      "name": "triple_pass8_full_three_quarter.png",
+      "hash": "3b2ac46419503cd97c2b070e7f7f12ceb387922b85a9fe5e51dc8609e292afbe"
+    },
+    {
+      "name": "triple_pass8_hind_paw_side.png",
+      "hash": "33770ddbb17cef0d20364bdfafa06ade05e8976eaddaca12b46d8cec213a6dd9"
+    },
+    {
+      "name": "triple_pass8_hind_paw_three_quarter.png",
+      "hash": "72aff207db1311aa7cda5bc70183aadf8bd50361900bcb96b29dc13adcdef5e7"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "paws.blend",
+        "hash": "cf85f39aa426e70ae08ba3539cba167b5c96ecb7560c4490081d460f6bfdb7bc"
+      },
+      {
+        "name": "report.json",
+        "hash": "8632fc2ccb060eea281214f01bd1614aba6cc8752a21e33b8be4d1d46baeab3a"
+      },
+      {
+        "name": "saved_file_audit.json",
+        "hash": "2dc6875d5bb0f376d46db02ce8bc1e3121e23a3c438c1360231df04db61c64fe"
+      },
+      {
+        "name": "triple_pass8_fore_paws_front.png",
+        "hash": "f6e514faa9fae727f45fd8bc33d2ed114bb4285c1f6922518a58e7af6ac72f13"
+      },
+      {
+        "name": "triple_pass8_fore_paw_side.png",
+        "hash": "81e97dd4cf1cd3ed889f25ffa3f631f750a8c0abd16902a70860aa0bcbcdebfe"
+      },
+      {
+        "name": "triple_pass8_full_front.png",
+        "hash": "d7b3f094012275c099d9cb86285448c282ad91e62192cb63746bbf4195fdeaa6"
+      },
+      {
+        "name": "triple_pass8_full_side.png",
+        "hash": "d994a801472efda90445ab4b844e80ccd3d35617e7f0c659b4c7da857a0d5dfc"
+      },
+      {
+        "name": "triple_pass8_full_three_quarter.png",
+        "hash": "3b2ac46419503cd97c2b070e7f7f12ceb387922b85a9fe5e51dc8609e292afbe"
+      },
+      {
+        "name": "triple_pass8_hind_paw_side.png",
+        "hash": "33770ddbb17cef0d20364bdfafa06ade05e8976eaddaca12b46d8cec213a6dd9"
+      },
+      {
+        "name": "triple_pass8_hind_paw_three_quarter.png",
+        "hash": "72aff207db1311aa7cda5bc70183aadf8bd50361900bcb96b29dc13adcdef5e7"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 4.1,
+    "note": "Small seated claws; body identical to pass 7. Critic read: now overcorrected: the claws are needle-thin points, nearly invisible at the side camera and spiny at the front. Next: short blunt nail-like claws, thicker at the root, between pass 7 and pass 8 in size."
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-15T22:04:54Z",
+  "briefSha256": "6425b1d8ee6c23fe905dffac10a22ea05a99818511cfbb029f27381ec77bd9d1",
+  "checks": [],
+  "reportedAt": "2026-10-15T22:09:36Z"
+}

@@ -1,0 +1,101 @@
+{
+  "id": "B-01M50ST5YCT11YVQPK49QPHNNX",
+  "alias": "ss73",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: short blunt nail-like claws between pass 7 and 8, claw objects only; Codex",
+  "scope": "claws",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "paws.blend",
+      "hash": "9696be3dd71e1e22e761ede8cc635e9dbc7245662d5c195b03e3a44fa3aebdd9"
+    },
+    {
+      "name": "saved_file_audit.json",
+      "hash": "b4652198900a374952f35d8b9b425aa64c9ed96d594c636888994941eb1a4d83"
+    },
+    {
+      "name": "triple_pass9_fore_paws_front.png",
+      "hash": "7215ac234489fdde58a01764a6448442ce017bca8d1853604812b64d3b26c70c"
+    },
+    {
+      "name": "triple_pass9_fore_paw_side.png",
+      "hash": "8a25bc3d6868eacaee5f1eedfe92df66ca35eeabd17629849fba6843e8033397"
+    },
+    {
+      "name": "triple_pass9_full_front.png",
+      "hash": "10663996a90bd931a91b512b8e2b42b0ede9ac595b72431b3c2375ac6a33b94d"
+    },
+    {
+      "name": "triple_pass9_full_side.png",
+      "hash": "6ba5be38466a446f6629651dbdbe042b6f1a0600507f2a6d659be6ccf4ecb795"
+    },
+    {
+      "name": "triple_pass9_full_three_quarter.png",
+      "hash": "4d1c0f5bd4d1b6195d5a0f136af446ec7d34f41061a38ac9361f1ee6b876e02b"
+    },
+    {
+      "name": "triple_pass9_hind_paw_side.png",
+      "hash": "19d6367ffd32a9cf117c3df836d0c17537c0386493cb6348c892eec46936b440"
+    },
+    {
+      "name": "triple_pass9_hind_paw_three_quarter.png",
+      "hash": "fdd8ef44ddccf244db7f16ae6bc53b8f18574c32ddedeadb2ea70a652f952c85"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "paws.blend",
+        "hash": "9696be3dd71e1e22e761ede8cc635e9dbc7245662d5c195b03e3a44fa3aebdd9"
+      },
+      {
+        "name": "saved_file_audit.json",
+        "hash": "b4652198900a374952f35d8b9b425aa64c9ed96d594c636888994941eb1a4d83"
+      },
+      {
+        "name": "triple_pass9_fore_paws_front.png",
+        "hash": "7215ac234489fdde58a01764a6448442ce017bca8d1853604812b64d3b26c70c"
+      },
+      {
+        "name": "triple_pass9_fore_paw_side.png",
+        "hash": "8a25bc3d6868eacaee5f1eedfe92df66ca35eeabd17629849fba6843e8033397"
+      },
+      {
+        "name": "triple_pass9_full_front.png",
+        "hash": "10663996a90bd931a91b512b8e2b42b0ede9ac595b72431b3c2375ac6a33b94d"
+      },
+      {
+        "name": "triple_pass9_full_side.png",
+        "hash": "6ba5be38466a446f6629651dbdbe042b6f1a0600507f2a6d659be6ccf4ecb795"
+      },
+      {
+        "name": "triple_pass9_full_three_quarter.png",
+        "hash": "4d1c0f5bd4d1b6195d5a0f136af446ec7d34f41061a38ac9361f1ee6b876e02b"
+      },
+      {
+        "name": "triple_pass9_hind_paw_side.png",
+        "hash": "19d6367ffd32a9cf117c3df836d0c17537c0386493cb6348c892eec46936b440"
+      },
+      {
+        "name": "triple_pass9_hind_paw_three_quarter.png",
+        "hash": "fdd8ef44ddccf244db7f16ae6bc53b8f18574c32ddedeadb2ea70a652f952c85"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 2.8,
+    "note": "Short blunt nail-like claws grown from the toe tips; body identical to pass 8. Critic read: small, connected, quiet; presented to Nick."
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-15T22:09:36Z",
+  "briefSha256": "e55c2fac9f8db1dfcd82568d4bcf137ac888876afc93cd0090464a2e3d07bec0",
+  "checks": [],
+  "reportedAt": "2026-10-15T22:12:54Z"
+}
