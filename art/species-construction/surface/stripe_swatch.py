@@ -4,7 +4,7 @@ x: angle around the body, left belly -> back midline (center) -> right belly
 y: height in row periods. The same function drives the shader in render_surface.py, so tune here first.
 The pale underside is drawn the way build_surface.py makes it: a wavy edge near angle 2.1 where the stripes
 narrow to points (pass --no-field to see the bare function).
-  python art/species-construction/surface/stripe_swatch.py <out.png> [--palette T6] [--rows 12] [--no-field]
+  python art/species-construction/surface/stripe_swatch.py <out.png> [--palette T7] [--rows 12] [--no-field]
 The image stacks the back view (spine down the middle) over the right flank seen from the side (spine on top).
 """
 import argparse
@@ -55,7 +55,7 @@ def swatch(params, W=1400, H=None, rows=10.0, field=True, coat='#F8FAFD', blue='
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('out')
-    ap.add_argument('--palette', default='T6')
+    ap.add_argument('--palette', default='T7')
     ap.add_argument('--rows', type=float, default=10.0)
     ap.add_argument('--no-field', action='store_true')
     args = ap.parse_args()

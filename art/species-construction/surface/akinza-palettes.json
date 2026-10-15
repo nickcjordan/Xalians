@@ -1,5 +1,5 @@
 {
-  "note": "Color options for the Akinza surface, applied at render time over the grayscale base (render_surface.py --palette <key>). Hex values are sRGB. skinFactor darkens the skin under the fur relative to the coat. Eye color for every option from 2026-10-08: deep ice-teal #16789A. P1 to P3 add a pattern: the blue is mixed into the coat by a texture sampled at the stored rest position (attribute rest, object space), masked by pmask (countershading and belly/face-front exclusion), so it follows the body when posed. T5 (2026-10-14, fur stage step 1) is the current default for the Akinza look: T4 without the blue tipping, so long hairs (ears, crown, nape, tails) stay white between the stripes. T4 and earlier stay as the record of the color passes.",
+  "note": "Color options for the Akinza surface, applied at render time over the grayscale base (render_surface.py --palette <key>). Hex values are sRGB. skinFactor darkens the skin under the fur relative to the coat. Eye color for every option from 2026-10-08: deep ice-teal #16789A. P1 to P3 add a pattern: the blue is mixed into the coat by a texture sampled at the stored rest position (attribute rest, object space), masked by pmask (countershading and belly/face-front exclusion), so it follows the body when posed. T7 (2026-10-15, fur step 10a) is the current default for the Akinza look. T6 (fur step 1b) is the record of the first softening; T5 (2026-10-14, fur stage step 1) is T4 without the blue tipping, so long hairs (ears, crown, nape, tails) stay white between the stripes. T4 and earlier stay as the record of the color passes.",
   "skinFactor": 0.6,
   "A": {
     "name": "Frost",
@@ -342,6 +342,37 @@
       "ringWidth": 0.33
     },
     "tip": "#D0E3F5",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "tipEnds": [
+      0.75,
+      1.0
+    ]
+  },
+  "T7": {
+    "coat": "#EEF2F7",
+    "pale": "#F2F6F9",
+    "iris": "#16789A",
+    "blue": "#B1DAF8",
+    "skinFactor": 0.8,
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "earLift": true,
+    "name": "T6 softened once more (Nick 2026-10-15: \"one more step in that direction\"): every color moved from T6 by the same step T5 to T6 took: coat #F3F6FA to #EEF2F7, pale #F6F9FC to #F2F6F9, stripes #A2CFF0 to #B1DAF8 (saturation .32 to .29, value .94 to .97), tip kept at 30 percent of the way from the coat to T4's #7DB8E8 (#CCE1F2)",
+    "pattern": "tiger4",
+    "patternParams": {
+      "maskAttr": "pmaskt",
+      "earOff": true,
+      "afterPale": true,
+      "cupBlue": true,
+      "period": 0.068,
+      "warp": 0.03,
+      "tailRings": true,
+      "tailRingPeriod": 0.09,
+      "tipShift": 0.7,
+      "ringWidth": 0.33
+    },
+    "tip": "#CCE1F2",
     "tipFrom": 0.025,
     "tipTo": 0.045,
     "tipEnds": [
