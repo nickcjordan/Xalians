@@ -317,5 +317,36 @@
       "tipShift": 0.7,
       "ringWidth": 0.33
     }
+  },
+  "T6": {
+    "coat": "#F3F6FA",
+    "pale": "#F6F9FC",
+    "iris": "#16789A",
+    "blue": "#A2CFF0",
+    "skinFactor": 0.8,
+    "rootLift": 0.95,
+    "diffuseShare": 0.5,
+    "earLift": true,
+    "name": "T5 softened (Nick 2026-10-14): coat a cool off-white, blue tipping on the long fur at about 30 percent of T4 (tip #D0E3F5, 30 percent of the way from the coat to T4's #7DB8E8; half strength read ice blue on the ears), stripes about 12 percent less saturated and a little lighter (#93C4E8 to #A2CFF0)",
+    "pattern": "tiger4",
+    "patternParams": {
+      "maskAttr": "pmaskt",
+      "earOff": true,
+      "afterPale": true,
+      "cupBlue": true,
+      "period": 0.068,
+      "warp": 0.03,
+      "tailRings": true,
+      "tailRingPeriod": 0.09,
+      "tipShift": 0.7,
+      "ringWidth": 0.33
+    },
+    "tip": "#D0E3F5",
+    "tipFrom": 0.025,
+    "tipTo": 0.045,
+    "tipEnds": [
+      0.75,
+      1.0
+    ]
   }
 }
