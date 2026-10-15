@@ -6,7 +6,9 @@
   "camera": "hind_paw_side, hind_paw_three_quarter, fore_paws_front",
   "region": "all four paws",
   "origin": "B-jas4",
-  "attempts": [],
+  "attempts": [
+    "B-01M50CF9PT9HG6MSJP7Z9KDCKB"
+  ],
   "status": "open",
   "createdAt": "2026-10-15T17:32:02Z"
 }

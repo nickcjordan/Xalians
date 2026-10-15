@@ -1,0 +1,24 @@
+{
+  "id": "B-01M50CF9PT9HG6MSJP7Z9KDCKB",
+  "alias": "vsb3",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: generated paw shape kept, whole foot made evenly less tall (no taper), three height variants for Nick to pick, claws seated; Codex",
+  "scope": "all four paws",
+  "defect": "D-01M509XY1WRPJ7AXW2MJK3CSSN",
+  "holds": [],
+  "inputs": [
+    {
+      "path": "2f4883f87a1f625430607a72be20a91ab99434abbaab055b15ff78f2c1ed57fc",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T18:16:28Z",
+  "briefSha256": "89e71a8ab004c1fa5ed09058c08fa879d543bd663726fddbdb4ee29a5f7836ea"
+}
