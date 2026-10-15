@@ -162,7 +162,9 @@ def stripe_coordinates(me, co, nrm, edges, wn, names, at_all, th, ac, tail_d, ta
     pts = np.array(ac['fieldEdge'])
     e_trunk = np.interp(at_all, pts[:, 0], pts[:, 1])
     wave = ac['wave']*np.sin(at_all*ac['waveFreq']+(outward > 0)*2.0)+0.5*ac['wave']*np.sin(co[:, 1]*11.0+at_all*23.0)
-    fielda = wl*ac['limbEdge']+(1.0-wl)*e_trunk+wave
+    le = ac['limbEdge']  # a number, or [[row, edge], ...] so the limb edge can move over the shoulder caps
+    e_limb = np.interp(at_all, np.array(le)[:, 0], np.array(le)[:, 1]) if isinstance(le, list) else le
+    fielda = wl*e_limb+(1.0-wl)*e_trunk+wave
     fielda = np.where(tails, 10.0, fielda)
     belly = np.where(tails, 0.0, smoothstep((angle-fielda)/ac['soft']))
     sth = co[:, 2]+ac.get('lean', 0.35)*co[:, 1]
