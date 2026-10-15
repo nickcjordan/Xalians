@@ -13,12 +13,214 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "torso.blend",
+      "hash": "60aaa890d3397587286d068860742e42225ac5e636a0adb62a5ba1d21fbf9080"
+    },
+    {
+      "name": "torso.glb",
+      "hash": "cad94263de9497642a06363d680a7b73e16f8dcdc93e396d2d636780f311098b"
+    },
+    {
+      "name": "torso_part.glb",
+      "hash": "048e4a0f7ca778d8d8ae772fa0aa57006bfbffb4332fbf79b8fdeeb6556d50ac"
+    },
+    {
+      "name": "composite_torso_side_vs_clay.png",
+      "hash": "fb8a7dce029b0b2fff300e738a0a994cabb83485c7ab3ad41317384816e191fd"
+    },
+    {
+      "name": "composite_torso_three_quarter_vs_clay.png",
+      "hash": "894f0fd9828ba6b2a3bea191ff5bbdadf4c9148bc53db3dab59ec103abc7b5f9"
+    },
+    {
+      "name": "composite_torso_front_vs_clay.png",
+      "hash": "6fabac3d20b925bc84de04c560509311146460fb47a1af4255d3a1792b48dcc2"
+    },
+    {
+      "name": "composite_full_side_vs_furred.png",
+      "hash": "8764d554bd4861db5e71a7a61fa0ba3d1e737f542d5594a6d711c31ddf5f208f"
+    },
+    {
+      "name": "progress.png",
+      "hash": "5ec05b5cde677c7527ee99b47cd3b146abbc21419dd0c5fdf4abdd6a270432f9"
+    },
+    {
+      "name": "renders/sprite_side_192.png",
+      "hash": "d4a326c9eda77689379aea64997a28a264420216efdc0f9ef44b9adc3a56e826"
+    },
+    {
+      "name": "renders/full_three_quarter_left.png",
+      "hash": "eae0e9157f865e9089a059c69f6c151601d4fbbcee13e15bab539b83fbab3f78"
+    },
+    {
+      "name": "renders/full_front.png",
+      "hash": "d1ac4d64563db77eb0f5828dfd308cbcb6630549c23974266bcebc1911594e08"
+    },
+    {
+      "name": "renders/final_torso_top.png",
+      "hash": "ecc687bda39562c1c607c617e235c3cf6e0a8ac6be5e5ff7f1cef69f63a57b95"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "997c793252ae875236bd217c8b8c21bb3a7c8afe70c142184038f19ad094db84"
+    },
+    {
+      "name": "report.json",
+      "hash": "b847d585050c5da307a8cea35cc97adb69779f8fddbcc28e55ea432ebf5dad02"
+    },
+    {
+      "name": "build_torso.py",
+      "hash": "7dd3bbdf7818f1a64ce922803aa01191d03d5515c642d2b4039132fd5e009ab5"
+    },
+    {
+      "name": "torsocam.py",
+      "hash": "a2bbe1ec793a53265b6b26485def1a2b8b0e67ed69a99c09109ba75c610e3a50"
+    },
+    {
+      "name": "run_torso.sh",
+      "hash": "5c06ef241c17b6c7db4ecdbc922f7fda7b74a7e91b3ab46090829a5ca5775129"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "torso.blend",
+        "hash": "60aaa890d3397587286d068860742e42225ac5e636a0adb62a5ba1d21fbf9080"
+      },
+      {
+        "name": "torso.glb",
+        "hash": "cad94263de9497642a06363d680a7b73e16f8dcdc93e396d2d636780f311098b"
+      },
+      {
+        "name": "torso_part.glb",
+        "hash": "048e4a0f7ca778d8d8ae772fa0aa57006bfbffb4332fbf79b8fdeeb6556d50ac"
+      },
+      {
+        "name": "composite_torso_side_vs_clay.png",
+        "hash": "fb8a7dce029b0b2fff300e738a0a994cabb83485c7ab3ad41317384816e191fd"
+      },
+      {
+        "name": "composite_torso_three_quarter_vs_clay.png",
+        "hash": "894f0fd9828ba6b2a3bea191ff5bbdadf4c9148bc53db3dab59ec103abc7b5f9"
+      },
+      {
+        "name": "composite_torso_front_vs_clay.png",
+        "hash": "6fabac3d20b925bc84de04c560509311146460fb47a1af4255d3a1792b48dcc2"
+      },
+      {
+        "name": "composite_full_side_vs_furred.png",
+        "hash": "8764d554bd4861db5e71a7a61fa0ba3d1e737f542d5594a6d711c31ddf5f208f"
+      },
+      {
+        "name": "progress.png",
+        "hash": "5ec05b5cde677c7527ee99b47cd3b146abbc21419dd0c5fdf4abdd6a270432f9"
+      },
+      {
+        "name": "renders/sprite_side_192.png",
+        "hash": "d4a326c9eda77689379aea64997a28a264420216efdc0f9ef44b9adc3a56e826"
+      },
+      {
+        "name": "renders/full_three_quarter_left.png",
+        "hash": "eae0e9157f865e9089a059c69f6c151601d4fbbcee13e15bab539b83fbab3f78"
+      },
+      {
+        "name": "renders/full_front.png",
+        "hash": "d1ac4d64563db77eb0f5828dfd308cbcb6630549c23974266bcebc1911594e08"
+      },
+      {
+        "name": "renders/final_torso_top.png",
+        "hash": "ecc687bda39562c1c607c617e235c3cf6e0a8ac6be5e5ff7f1cef69f63a57b95"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "997c793252ae875236bd217c8b8c21bb3a7c8afe70c142184038f19ad094db84"
+      },
+      {
+        "name": "report.json",
+        "hash": "b847d585050c5da307a8cea35cc97adb69779f8fddbcc28e55ea432ebf5dad02"
+      },
+      {
+        "name": "build_torso.py",
+        "hash": "7dd3bbdf7818f1a64ce922803aa01191d03d5515c642d2b4039132fd5e009ab5"
+      },
+      {
+        "name": "torsocam.py",
+        "hash": "a2bbe1ec793a53265b6b26485def1a2b8b0e67ed69a99c09109ba75c610e3a50"
+      },
+      {
+        "name": "run_torso.sh",
+        "hash": "5c06ef241c17b6c7db4ecdbc922f7fda7b74a7e91b3ab46090829a5ca5775129"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "claude",
+    "method": [
+      "Started from the base .blend (whole creature, approved head, bound to luceras_rig) in rest pose. Edited the body mesh in place: only vertex positions move, so topology, every vertex group and the armature binding are the base's, and displacement is measured per vertex against the base.",
+      "Aligned the raw reconstruction to the base by similarity ICP (scale 0.508, near-identity rotation): the base trunk sits within 0.9 mm median and 1.6 mm p95 of it, so the blockout trunk is the reconstruction almost exactly.",
+      "Region mask from bone weights: everything that is not head and neck (neck_02, head, jaw, ears), tail, forearm, shank and feet, the upper arm below z 0.305 to 0.345 m or the thigh below z 0.43 to 0.48 m, diffused over the surface, and forced to zero on the head side of part 1's seam plane with a 5 mm margin and a 25 mm ramp. The scapulae, upper arm root, rib cage, belly, loin, pelvis and rump top are in.",
+      "Soft form from the raw reconstruction: normal offset from each trunk vertex to the aligned reconstruction, low-passed over the surface (60 diffusion passes) and applied inside the mask. It measured 0.33 mm median and 0.72 mm p95, applied max 0.74 mm: the reconstruction carries no trunk form the base lacks.",
+      "Denoise: 12 Taubin passes inside the mask to clear the reconstruction's fine surface lumpiness without shrinking volume.",
+      "Brush work against the clay views (numpy surface brushes placed by ray casts onto the trunk): spine groove 3.6 mm along the dorsal midline, fading in behind the withers and out over the sacrum; sternum keel ridge 6 mm down the chest front; scapula plate 6 mm along the scapular spine line, a soft shoulder block 4 mm in front of it and a 6 mm caudal border groove from the withers down toward the elbow; epaxial line 3.5 mm (lower border of the long back muscles, behind the scapula toward the hip); last rib 1.6 mm; flank hollow 6 mm in front of the thigh; hip points 2.8 mm; the belly underside softened (15 Taubin passes on the ventral crease) and lifted 3 mm toward the loin.",
+      "A final light Taubin pass (3) over the region. Renders in Cycles through roster/lookdev.py (same lights, ground and clay material). Cycles instead of EEVEE because EEVEE drew speckled shadow patches on the trunk that are not in the geometry, confirmed with a Cycles render of the untouched base.",
+      "Iterated seven times (i0 to i6) at 640 px torso cameras against clay side, front and three-quarter crops, then the final at 1024 px, then one fix pass on the hip point and epaxial line join."
+    ],
+    "wallMinutes": 28.9,
+    "blenderSeconds": 752,
+    "agentTokens": 300663,
+    "measurements": "C:\\dev\\art-data\\pipeline\\claude-stream\\luceras-torso\\pass1\\measurements.json",
+    "remains": [
+      "The clay is much more muscular than the base: big pectorals, a deep shoulder block, triceps and serratus relief, skin striation. The landmarks now read, but at the torso camera the trunk still looks smoother than the clay. Going further means hand sculpting muscle masses that the pipeline rule assigns to reconstruction, which gave nothing more here.",
+      "Chest depth and the brisket projection in the clay side are deeper than the base; left as is because the silhouette is the approved stage 4 proportion and the hold keeps chest depth within 5 percent.",
+      "The clay belly tuck rises to about 0.39 m in front of the stifle; the base's thigh front (part 3, frozen) meets the belly at about 0.355 m. Matching it means moving the thigh seam, which is part 3's work.",
+      "A small step where the approved neck meets the withers (visible in the base too) sits on part 1's side of the seam and was not touched.",
+      "The lookdev front camera sits at 4 degrees, so the head hides most of the chest; the sternum keel is clearer in the three-quarter view.",
+      "From the front the hindquarters flare much wider than in the clay front; that width is the thighs (part 3) and the approved stage 4 proportion, so it was left alone here.",
+      "Clay crops in the composites are cut by hand to the torso region, so their framing is close to but not exactly the render's scale."
+    ],
+    "holds": {
+      "torsoLengthChestDepthRumpHeightWithin5Percent": "respected: torso length 1.0024, chest depth 0.9822, rump top 0.9947 times the base",
+      "headAndNeckVerticesUnmoved": "respected: max displacement 0.0 m over 69563 vertices on the head side of part 1's seam plane; horn, eye and whisker objects untouched",
+      "limbAndTailGeometryBelowJointsUnchanged": "respected: max displacement 0.0 m over 55293 vertices outside the torso region; a declared seam band of 4644 vertices moved at most 2.36 mm",
+      "rumpTopAt057": "respected: 0.567 m (the spine groove lowers the midline by about 3 mm)",
+      "oneClosedManifold": "respected: 0 non-manifold edges on the body; topology unchanged from the base",
+      "under400KTriangles": "respected: 344602 triangles for the whole creature",
+      "secondReconstruction": "not run: the existing reconstruction already equals the base trunk within about 1 mm and came from these clay views, so another run would not add the shoulder and rib relief the clay shows"
+    },
+    "checks": [
+      {
+        "title": "Trunk read from the side, Claude pass 1",
+        "question": "Does the trunk read as the shaved clay body?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "fb8a7dce029b0b2fff300e738a0a994cabb83485c7ab3ad41317384816e191fd",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "d4a326c9eda77689379aea64997a28a264420216efdc0f9ef44b9adc3a56e826",
+        "recommended": "Orchestrator's read: yes at shape level. Spine groove, shoulder plate and its back edge, the line under the back muscles, flank hollow and hip points read; the trunk is softer than the clay's muscle relief, which the fur covers; chest depth and the belly tuck are held by the stage 4 proportion and the frozen thigh seam (part 3)."
+      }
+    ],
+    "newDefects": [
+      "Belly tuck stops at the frozen thigh front (0.355 m) where the clay rises to about 0.39 m: part 3 moves the thigh seam.",
+      "Small neck-to-withers step on part 1 side of the seam, present in the base."
+    ],
+    "note": "Claude torso pass 1 (Opus builder): 28.9 min wall, 752 Blender s over 14 launches, about 300K tokens. Edited in place (same topology, weights, binding). Raw reconstruction within 0.9 mm of the base trunk, so no second reconstruction. Landmarks brushed to the clay over three iterations. Head and neck 0 displacement (69,563 vertices), outside the torso 0 (55,293), seam band 2.4 mm max. Renders in Cycles (EEVEE drew speckled shadow patches not in the geometry). The head_part review object found in the base was left out of torso.blend. Chosen over Codex B-eccr: its landmarks read, Codex's do not."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T00:29:18Z",
-  "briefSha256": "84cbb980255b3a4b489d020dfb1db0039c85176d71fcd817bd468edcf2c3647f"
+  "briefSha256": "84cbb980255b3a4b489d020dfb1db0039c85176d71fcd817bd468edcf2c3647f",
+  "checks": [
+    {
+      "title": "Trunk read from the side, Claude pass 1",
+      "question": "Does the trunk read as the shaved clay body?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "fb8a7dce029b0b2fff300e738a0a994cabb83485c7ab3ad41317384816e191fd",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "d4a326c9eda77689379aea64997a28a264420216efdc0f9ef44b9adc3a56e826",
+      "recommended": "Orchestrator's read: yes at shape level. Spine groove, shoulder plate and its back edge, the line under the back muscles, flank hollow and hip points read; the trunk is softer than the clay's muscle relief, which the fur covers; chest depth and the belly tuck are held by the stage 4 proportion and the frozen thigh seam (part 3)."
+    }
+  ],
+  "reportedAt": "2026-10-15T01:00:56Z"
 }

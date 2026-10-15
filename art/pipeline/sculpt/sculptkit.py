@@ -408,3 +408,71 @@ def bone_parent(obj, rig, bone):
     obj.parent_bone = bone
     bpy.context.view_layer.update()
     obj.matrix_world = mw
+
+
+# ---------------------------------------------------------------- scalar fields and region brushes (stage 5 part 2)
+
+def smooth_scalar(obj, f, iters, factor=0.5):
+    """Laplacian diffusion of a per-vertex scalar over the mesh edges."""
+    E = edges(obj)
+    n = len(f)
+    deg = np.bincount(E.ravel(), minlength=n).astype(float)
+    deg[deg == 0] = 1
+    f = np.asarray(f, float).copy()
+    for _ in range(iters):
+        S = np.zeros(n)
+        np.add.at(S, E[:, 0], f[E[:, 1]])
+        np.add.at(S, E[:, 1], f[E[:, 0]])
+        f = f + factor * (S / deg - f)
+    return f
+
+
+def taubin(obj, iters, weights, lam=0.5, mu=-0.53):
+    """Taubin (lambda/mu) smoothing: removes high-frequency noise without shrinking the volume.
+    weights: per-vertex 0..1 (0 keeps a vertex fixed)."""
+    P = co(obj)
+    E = edges(obj)
+    n = len(P)
+    deg = np.bincount(E.ravel(), minlength=n).astype(float)
+    deg[deg == 0] = 1
+    w = np.asarray(weights, float)[:, None]
+    for _ in range(iters):
+        for k in (lam, mu):
+            S = np.zeros_like(P)
+            np.add.at(S, E[:, 0], P[E[:, 1]])
+            np.add.at(S, E[:, 1], P[E[:, 0]])
+            P = P + k * w * (S / deg[:, None] - P)
+    set_co(obj, P)
+
+
+def ridge(obj, pts, height, width, mask=None, power=2.0, taper=None):
+    """Raise the surface along the normal near a polyline (negative height cuts a groove). power 2 is gaussian,
+    higher is flatter on top (a plate edge). taper: optional per-point scale along the polyline."""
+    P, N = co(obj), normals(obj)
+    pts = np.asarray(pts, float)
+    d = np.full(len(P), 1e9)
+    s = np.ones(len(P))
+    for i in range(len(pts) - 1):
+        A, B = pts[i], pts[i + 1]
+        AB = B - A
+        t = np.clip(((P - A) @ AB) / max(AB @ AB, 1e-12), 0, 1)
+        di = np.linalg.norm(P - (A + t[:, None] * AB), axis=1)
+        better = di < d
+        d = np.where(better, di, d)
+        if taper is not None:
+            s = np.where(better, taper[i] + (taper[i + 1] - taper[i]) * t, s)
+    w = np.exp(-(d / width) ** power) * s
+    if mask is not None:
+        w = w * mask
+    set_co(obj, P + N * (height * w)[:, None])
+    return w
+
+
+def normal_offset_to(tree, P, N, reach):
+    """Signed distance along each vertex normal to the nearest point of another surface (0 when farther than reach)."""
+    out = np.zeros(len(P))
+    for i, p in enumerate(P):
+        hit = tree.find_nearest(Vector(p), reach)
+        if hit[0] is not None:
+            out[i] = (np.array(hit[0][:]) - p) @ N[i]
+    return out
