@@ -238,6 +238,18 @@
       "lift": 0.32,
       "cscale": 14.0
     },
+    "hands": {
+      "note": "short fur over the fingers so the fingers and knuckles read (fur step 8)",
+      "box": {"at": [0.55, 0.62], "x": [0.14, 0.215], "symmetricX": true, "y": [-0.1, -0.01]},
+      "priority": 3.0,
+      "margin": 0.012,
+      "length": 0.003,
+      "lift": 0.06,
+      "density": 2.2,
+      "clump": 0.0,
+      "curl": 0.02,
+      "comb": "down"
+    },
     "crown": {
       "box": {
         "at": [
@@ -401,6 +413,9 @@
   },
   "earPatternZones": [
     "R04"
+  ],
+  "patternOffBoxes": [
+    {"note": "no stripes on the fingers (fur step 8)", "box": {"at": [0.57, 0.62], "x": [0.14, 0.215], "symmetricX": true, "y": [-0.1, -0.01]}, "margin": 0.01}
   ],
   "earBias": 0.0,
   "crownDir": [

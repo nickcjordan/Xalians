@@ -577,6 +577,8 @@ def compute_attributes(skin, cfg, species):
     earw = np.clip(wn[names.index('ears')], 0, 1)
     for z in cfg.get('earPatternZones', []):  # pattern stays off here although the fur is not ear fur (the back of the skull)
         earw = np.maximum(earw, membership(co, zones[z], floor, height, cfg.get('earPatternMargin', 0.02)))
+    for pb in cfg.get('patternOffBoxes', []):  # pattern off in a box (the fingers)
+        earw = np.maximum(earw, membership(co, pb['box'], floor, height, pb.get('margin', 0.01)))
     write_attribute(me, 'pmaskw', np.clip((1.0-strip)*(1.0-face_low)*(1.0-earw), 0, 1))
     write_attribute(me, 'earw', earw)
     # tiger-stripe support: angle around the body from the back midline (0) to the belly midline (pi), mirrored left/right;
