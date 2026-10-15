@@ -182,6 +182,57 @@ def stripe_coordinates(me, co, nrm, edges, wn, names, at_all, th, ac, tail_d, ta
           'angle pct', np.round(np.percentile(angle, [5, 25, 50, 75, 95]), 2))
 
 
+def pad_outline_distance(co, floor, oc):
+    """Signed distance in plan (negative inside) to the hind pads exactly as the sole step authored them (the spec's pads with
+    outline: a smooth union of ellipses per pad, k outlineK, then blur2d in plan, on the spec's own grid), the union over all
+    pads, mirrored to both feet by |x|. Skin higher than oc['height'] above the floor is pushed outside (the top of the foot
+    lies over the same plan)."""
+    sys.path.insert(0, str(HERE.parent))
+    from neck_v1_field import smin3
+    spec = json.loads((ROOT/oc['spec']).read_text(encoding='utf-8'))
+    G = spec['grid']
+    step = float(G['step'])
+    xs = np.arange(G['lo'][0], G['hi'][0]+step*0.5, step)
+    ys = np.arange(G['lo'][1], G['hi'][1]+step*0.5, step)
+    X, Y = np.meshgrid(xs, ys, indexing='ij')
+    U = None
+    for pad in spec['pads']['pads']:
+        if not pad.get('outline'):
+            continue
+        d2 = None
+        for lb in pad['lobes']:
+            e2 = np.sqrt(((X-lb['c'][0])/lb['s'][0])**2+((Y-lb['c'][1])/lb['s'][1])**2)
+            di = (e2-1)*min(lb['s'][0], lb['s'][1])
+            d2 = di if d2 is None else smin3(d2, di, pad.get('outlineK', .008))
+        if pad.get('blur2d'):  # as heel_v6_field: a Gaussian blur in plan, edge padded
+            sig = pad['blur2d']/step
+            rad = int(np.ceil(3*sig))
+            kk = np.exp(-0.5*(np.arange(-rad, rad+1)/sig)**2)
+            kk /= kk.sum()
+            for ax in (0, 1):
+                pw = [(0, 0), (0, 0)]
+                pw[ax] = (rad, rad)
+                q = np.pad(d2, pw, mode='edge')
+                acc = np.zeros_like(d2)
+                for j, kv in enumerate(kk):
+                    sl = [slice(None)]*2
+                    sl[ax] = slice(j, j+d2.shape[ax])
+                    acc += kv*q[tuple(sl)]
+                d2 = acc
+        U = d2 if U is None else np.minimum(U, d2)
+    # bilinear lookup at each vertex (|x|, y); outside the grid, far outside
+    fx = (np.abs(co[:, 0])-xs[0])/step
+    fy = (co[:, 1]-ys[0])/step
+    inside = (fx >= 0) & (fx <= len(xs)-1) & (fy >= 0) & (fy <= len(ys)-1)
+    i0 = np.clip(np.floor(fx).astype(int), 0, len(xs)-2)
+    j0 = np.clip(np.floor(fy).astype(int), 0, len(ys)-2)
+    tx, ty = np.clip(fx-i0, 0, 1), np.clip(fy-j0, 0, 1)
+    d = (U[i0, j0]*(1-tx)*(1-ty)+U[i0+1, j0]*tx*(1-ty)+U[i0, j0+1]*(1-tx)*ty+U[i0+1, j0+1]*tx*ty)
+    d = np.where(inside, d, oc.get('far', 0.05))
+    up = smoothstep((co[:, 2]-floor-oc['height'][0])/(oc['height'][1]-oc['height'][0]))
+    return d+up*oc.get('far', 0.05)
+
+
 def has_lift(cfg):
     return any('lift' in g for g in cfg['groups'].values()) or any('lift' in r for r in cfg.get('lengthRamps', []))
 
@@ -415,29 +466,33 @@ def compute_attributes(skin, cfg, species):
     pc = cfg['pads']
     pad = ((co[:, 2] < floor+pc['belowFloor']) & (nrm[:, 2] < pc['normalZ'])).astype(float)
     sole_m = np.zeros(n)
-    if 'shape' in pc:  # the modeled pads whole: grown from the floor-contact skin over the sole, stopped by the creases round each pad
-        sc_ = pc['shape']
-        reg = (co[:, 2] < floor+sc_['belowFloor']) & (nrm[:, 2] < sc_['normalZ'])
-        co_s = np.stack([edge_smooth(co[:, k].copy(), edges, n, sc_['creaseSmooth']) for k in range(3)], 1)
-        bend = np.sum((co-co_s)*nrm, axis=1)  # negative in a crease
-        seeds = reg & (co[:, 2] < floor+sc_['seedBelow'])
-        block = (bend < sc_['crease']).astype(float)
-        if sc_.get('creaseGrow'):  # widen the crease lines so small gaps in them do not let the pad leak onto the sole
-            block = edge_smooth(block, edges, n, sc_['creaseGrow']) > sc_.get('creaseGrowMin', 0.1)
-        allowed = reg & (block < 0.5)
-        d = graph_distance(co, edges, seeds, allowed)
-        pad = (np.isfinite(d) & (d < sc_['maxReach'])).astype(float)
-        print('pad shape: region', int(reg.sum()), 'seeds', int(seeds.sum()), 'allowed', int(allowed.sum()), 'pad', int(pad.sum()),
-              'bend pct x1000', np.round(np.percentile(bend[reg], [2, 5, 10, 25, 50]) * 1000, 3))
-        write_attribute(me, 'padbend', np.clip(-bend*sc_.get('debugGain', 400.0), 0, 1))
-        if 'sole' in pc:  # the rest of the sole: short sparse fur, no stripes; the fringe at the sole edge stays
-            so = pc['sole']
-            sole_m = smoothstep((floor+so['belowFloor']-co[:, 2])/so['soft'])*smoothstep((-nrm[:, 2]-so['facingMin'])/so['facingSpan'])
-            sole_m = np.clip(edge_smooth(sole_m, edges, n, 3), 0, 1)
-            length = length*(1.0-sole_m)+np.minimum(length, so['length'])*sole_m
-            density = density*(1.0-sole_m*(1.0-so['density']))
-    pad = edge_smooth(pad, edges, n, 2)
-    pad = np.clip(pad*1.5, 0, 1)
+    padd = None
+    if 'outline' in pc:
+        # fur step 7c: the pads are the sole step's own analytic outlines (specs/heel-v6.json), not re-derived from the mesh.
+        # padd (plan signed distance) is also thresholded per pixel in the skin shader and per strand root in the hair tree.
+        oc = pc['outline']
+        padd = pad_outline_distance(co, floor, oc)
+        write_attribute(me, 'padd', np.clip(padd, -0.05, 0.05))
+        pad = 1.0-smoothstep((padd-oc['cut'])/oc['soft'])
+        # the grooves: dark skin within reach of a pad on the facing-down sole (thresholded per pixel from padd)
+        write_attribute(me, 'solef', smoothstep((-nrm[:, 2]-oc['grooveFacing'][0])/(oc['grooveFacing'][1]-oc['grooveFacing'][0])))
+        print('pad outline: pad vertices', int((padd < oc['cut']).sum()), 'groove vertices',
+              int(((padd >= oc['cut']) & (padd < oc['grooveReach'])).sum()))
+    if 'sole' in pc:  # the sole outside the pads: short sparse fur, no stripes; the fringe at the sole edge stays
+        so = pc['sole']
+        sole_m = smoothstep((floor+so['belowFloor']-co[:, 2])/so['soft'])*smoothstep((-nrm[:, 2]-so['facingMin'])/so['facingSpan'])
+        sole_m = np.clip(edge_smooth(sole_m, edges, n, 3), 0, 1)
+        s_len, s_den = np.full(n, so['length']), np.full(n, so['density'])
+        if padd is not None and 'fringeLength' in so:
+            # past the dark grooves the sole carries a fuller, still short fringe of white fur instead of sparse hairs on bare skin
+            g = 1.0-smoothstep((padd-pc['outline']['grooveReach'])/so['fringeSoft'])
+            s_len = g*so['length']+(1.0-g)*so['fringeLength']
+            s_den = g*so['density']+(1.0-g)*so['fringeDensity']
+        length = length*(1.0-sole_m)+np.minimum(length, s_len)*sole_m
+        density = density*(1.0-sole_m*(1.0-s_den))
+    if padd is None:
+        pad = edge_smooth(pad, edges, n, 2)
+        pad = np.clip(pad*1.5, 0, 1)
     density *= 1.0-pad
 
     # inner ear cups: short, neat, pale fur; the long ear fur is guided tufts everywhere else on the ears
@@ -716,6 +771,12 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
     dist.inputs['Seed'].default_value = cfg['seed']
     b.set(dist, 'Density', b.m('MULTIPLY', b.named('fur_density', 'FLOAT'), density_per_area))
     points, normal = dist.outputs['Points'], dist.outputs['Normal']
+    oc = cfg.get('pads', {}).get('outline')
+    if oc:  # no strand roots inside a pad outline (the per-vertex density alone lets strands root inside along the edge)
+        cull = b.node('GeometryNodeDeleteGeometry', domain='POINT')
+        tree.links.new(points, cull.inputs['Geometry'])
+        b.set(cull, 'Selection', b.m('LESS_THAN', b.named('padd', 'FLOAT'), oc['cut']+oc.get('rootMargin', 0.0)))
+        points = cull.outputs['Geometry']
 
     # point stage: strand frame
     comb = b.named('comb', 'FLOAT_VECTOR')
@@ -1015,12 +1076,40 @@ def skin_material(mat, cfg, always_pale):
         ring.inputs['From Max'].default_value = cfg['rim']['width']
         tree.links.new(eyed.outputs['Fac'], ring.inputs['Value'])
         rim_out = ring.outputs['Result']
+    pad_out = pad.outputs['Fac']
+    skin_out = bsdf.outputs['BSDF']
+    oc = cfg.get('pads', {}).get('outline')
+    if oc:  # fur step 7c: pad edge and groove thresholded per pixel from the plan distance padd
+        padd = attr_node(tree, 'padd')
+        pr = tree.nodes.new('ShaderNodeMapRange')
+        pr.interpolation_type = 'SMOOTHSTEP'
+        pr.inputs['From Min'].default_value = oc['cut']+oc['shaderSoft']
+        pr.inputs['From Max'].default_value = oc['cut']
+        tree.links.new(padd.outputs['Fac'], pr.inputs['Value'])
+        pad_out = pr.outputs['Result']
+        gr = tree.nodes.new('ShaderNodeMapRange')
+        gr.interpolation_type = 'SMOOTHSTEP'
+        gr.inputs['From Min'].default_value = oc['grooveReach']+oc['grooveSoft']
+        gr.inputs['From Max'].default_value = oc['grooveReach']
+        tree.links.new(padd.outputs['Fac'], gr.inputs['Value'])
+        gm = tree.nodes.new('ShaderNodeMath')
+        gm.operation = 'MULTIPLY'
+        tree.links.new(gr.outputs['Result'], gm.inputs[0])
+        tree.links.new(attr_node(tree, 'solef').outputs['Fac'], gm.inputs[1])
+        groove_bsdf = tree.nodes.new('ShaderNodeBsdfPrincipled')
+        groove_bsdf.inputs['Base Color'].default_value = (oc['grooveColor'],)*3+(1,)
+        groove_bsdf.inputs['Roughness'].default_value = oc.get('grooveRoughness', 0.7)
+        gmix = tree.nodes.new('ShaderNodeMixShader')
+        tree.links.new(gm.outputs['Value'], gmix.inputs[0])
+        tree.links.new(bsdf.outputs['BSDF'], gmix.inputs[1])
+        tree.links.new(groove_bsdf.outputs['BSDF'], gmix.inputs[2])
+        skin_out = gmix.outputs['Shader']
     both = tree.nodes.new('ShaderNodeMath')
     both.operation = 'MAXIMUM'
-    tree.links.new(pad.outputs['Fac'], both.inputs[0])
+    tree.links.new(pad_out, both.inputs[0])
     tree.links.new(rim_out, both.inputs[1])
     tree.links.new(both.outputs['Value'], mixs.inputs[0])
-    tree.links.new(bsdf.outputs['BSDF'], mixs.inputs[1])
+    tree.links.new(skin_out, mixs.inputs[1])
     tree.links.new(pad_bsdf.outputs['BSDF'], mixs.inputs[2])
     out = tree.nodes.new('ShaderNodeOutputMaterial')
     tree.links.new(mixs.outputs['Shader'], out.inputs['Surface'])
