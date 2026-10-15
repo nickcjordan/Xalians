@@ -1,0 +1,24 @@
+{
+  "id": "B-01M50KS70GK2Q4B7YXBX4GMAQE",
+  "alias": "rh4f",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: restore the generated paws exactly on all four feet with a seamless join, nothing else; Codex",
+  "scope": "all four paws",
+  "defect": "D-01M509XY1WRPJ7AXW2MJK3CSSN",
+  "holds": [],
+  "inputs": [
+    {
+      "path": "2f4883f87a1f625430607a72be20a91ab99434abbaab055b15ff78f2c1ed57fc",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T20:24:13Z",
+  "briefSha256": "4bcb9afb043d78d9f6a9d646b68f860e595496c994f1847cbe7f6770fe592b47"
+}
