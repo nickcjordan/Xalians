@@ -497,6 +497,15 @@ def compute_attributes(skin, cfg, species):
                 if hit[0] is not None:
                     near[i] = hit[3]
                     nearest[i] = hit[0]
+            covered = np.zeros(n, dtype=bool)
+            if ko.get('coveredCut'):
+                # fur step 12a: skin lying under the object (a ray out along its normal hits it) carries no roots, so the
+                # keep-out band at the lid can shrink to nothing without strands poking through the eye from the socket
+                for i in cand:
+                    nv = Vector(nrm[i])
+                    if bvh.ray_cast(Vector(co[i])+nv*1e-5, nv, ko['coveredCut'])[0] is not None:
+                        covered[i] = True
+                print(f'keepout {key}: {int(covered.sum())} covered skin vertices')
         else:
             step = max(1, len(pts)//4000)
             pts = pts[::step]
@@ -516,17 +525,31 @@ def compute_attributes(skin, cfg, species):
             write_attribute(me, 'eyed', np.minimum(near, 0.05))
             rim = 1.0-smoothstep((near-cfg['rim']['width'])/cfg['rim']['soft'])
             rim = np.clip(edge_smooth(rim, edges, n, cfg['rim'].get('smooth', 0)), 0, 1)
+        if 'rootCut' in ko:
+            # fur step 12a: the distance itself, thresholded per strand root in the hair tree (no roots nearer than rootCut),
+            # so the density ramp can reach full right at the lid or nose edge instead of leaving a bare band
+            write_attribute(me, f'kod_{key}', np.where(covered, 0.0, np.minimum(near, 0.05)) if tris else np.minimum(near, 0.05))
         ramp = smoothstep((near-ko['inner'])/max(ko['outer']-ko['inner'], 1e-6))
+        if tris:
+            ramp = np.where(covered, 0.0, ramp)
         density *= ramp
         if 'maxLength' in ko:
             # cap only near the object (ramp < 1): the old cap maxLength+.05*ramp also held every strand on the body
             # to about .05, which is why longer tail fur stopped adding volume (fur step 11)
-            length = np.where(ramp < 1.0, np.minimum(length, ko['maxLength']+0.05*ramp), length)
+            # combOuter (fur step 12a): the short, turned-away lid fur reaches past the density ramp, so the radial muzzle
+            # comb does not lay strands rooted at the lid across the eyeliner
+            cr = ramp
+            if 'combOuter' in ko:
+                cr = smoothstep((near-ko['inner'])/max(ko['combOuter']-ko['inner'], 1e-6))
+                if tris:
+                    cr = np.where(covered, 0.0, cr)
+            length = np.where(cr < 1.0, np.minimum(length, ko['maxLength']+0.05*cr), length)
             away = unit(co-nearest)
-            wgt = (1.0-ramp)[:, None]
+            wgt = (1.0-cr)[:, None]
             comb = unit(comb*(1.0-wgt)+away*wgt)
         else:
-            length *= cfg['keepOut'].get('lengthFloor', 1.0)+(1.0-cfg['keepOut'].get('lengthFloor', 1.0))*ramp
+            lf = ko.get('lengthFloor', cfg['keepOut'].get('lengthFloor', 1.0))  # per keep-out override (fur step 12a)
+            length *= lf+(1.0-lf)*ramp
         print(f'keepout {key}: {len(pts)} points, {len(cand)} skin vertices touched')
 
     pc = cfg['pads']
@@ -890,6 +913,12 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
         tree.links.new(points, cull.inputs['Geometry'])
         b.set(cull, 'Selection', b.m('LESS_THAN', b.named('padd', 'FLOAT'), oc['cut']+oc.get('rootMargin', 0.0)))
         points = cull.outputs['Geometry']
+    for key, ko in cfg.get('keepOut', {}).items():
+        if isinstance(ko, dict) and 'rootCut' in ko:  # fur step 12a: no strand roots nearer than rootCut to the eye or nose
+            cull = b.node('GeometryNodeDeleteGeometry', domain='POINT')
+            tree.links.new(points, cull.inputs['Geometry'])
+            b.set(cull, 'Selection', b.m('LESS_THAN', b.named(f'kod_{key}', 'FLOAT'), ko['rootCut']))
+            points = cull.outputs['Geometry']
 
     # point stage: strand frame
     comb = b.named('comb', 'FLOAT_VECTOR')
