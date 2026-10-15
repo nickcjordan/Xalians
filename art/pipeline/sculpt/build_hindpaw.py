@@ -7,6 +7,7 @@ def compose2():
     import json
     out=Path(sys.argv[sys.argv.index('--out')+1]);inp=out.parent/'inputs';(out/'references').mkdir(exist_ok=True)
     font=ImageFont.truetype('C:/Windows/Fonts/arial.ttf',24)
+    build='B-gsn9' if out.name=='pass3' else 'B-kgav'
     def comp(a,b,path,la,lb):
         a=Image.open(a).convert('RGB');b=Image.open(b).convert('RGB');b=b.resize((round(b.width*a.height/b.height),a.height),Image.Resampling.LANCZOS)
         im=Image.new('RGB',(a.width+b.width,a.height+52),(25,27,30));im.paste(a,(0,52));im.paste(b,(a.width,52));d=ImageDraw.Draw(im);d.text((15,12),la,font=font,fill='white');d.text((a.width+15,12),lb,font=font,fill='white');im.save(path)
@@ -16,14 +17,15 @@ def compose2():
         for r in (out/'renders').glob(f'*_{view}.png'):
             tag=r.name[:-len('_'+view+'.png')];dst=out/(f'composite_{view}_vs_clay.png' if tag=='final' else f'composite_{tag}_{view}_vs_clay.png')
             label='Clay authority' if view not in ('leg_rear','leg_three_quarter_rear') else 'Clay reference (no rear clay supplied)'
-            comp(r,crop,dst,'B-kgav '+tag+' | '+view,label)
-    if (out/'renders'/'full_side_left.png').exists():comp(out/'renders'/'full_side_left.png',inp/'furred_side.png',out/'composite_full_side_vs_furred.png','B-kgav | full side','Furred placement reference')
+            comp(r,crop,dst,build+' '+tag+' | '+view,label)
+    if (out/'renders'/'full_side_left.png').exists():comp(out/'renders'/'full_side_left.png',inp/'furred_side.png',out/'composite_full_side_vs_furred.png',build+' | full side','Furred placement reference')
     for n in ('combined.png','clay_side.png'):
         Image.open(inp/n).save(out/'references'/('full_side_clay.png' if n=='clay_side.png' else n))
-    tags=['baseline','iter1','iter6','final']
+    tags=['baseline','iter1','iter2','final'] if out.name=='pass3' else ['baseline','iter1','iter6','final']
     if all((out/'renders'/f'{t}_paw_side.png').exists() for t in tags):
         im=Image.new('RGB',(2048,570),(25,27,30));d=ImageDraw.Draw(im);f=ImageFont.truetype('C:/Windows/Fonts/arial.ttf',18)
-        for i,(t,cap) in enumerate(zip(tags,['Pass 1: low web, small claws, flared heel','First toes and hooks; heel needs repair','Open digits; heel and collar repaired','Final: rounded tips and clean claw roots'])):
+        caps=['Pass 2: thin digits and low instep','First volume pass: dorsal lift and width','Refined knuckle volume and instep','Final paw; heel and claws preserved'] if out.name=='pass3' else ['Pass 1: low web, small claws, flared heel','First toes and hooks; heel needs repair','Open digits; heel and collar repaired','Final: rounded tips and clean claw roots']
+        for i,(t,cap) in enumerate(zip(tags,caps)):
             a=Image.open(out/'renders'/f'{t}_paw_side.png').resize((512,512),Image.Resampling.LANCZOS);im.paste(a,(i*512,58));d.text((i*512+8,10),cap,font=f,fill='white')
         im.save(out/'progress.png')
 if '--compose' in sys.argv:
@@ -223,6 +225,7 @@ def audit2():
        'maxInfluencesPerVertex':max(len(v.groups) for v in body.data.vertices),'auditBlenderSeconds':time.time()-T0}
     assert d['bodyMeshCount']==1 and len(meshes)==15 and d['headPartAbsent']
     assert d['nonManifoldEdges']==0 and d['protectedMaxDisplacementM']==0 and d['jointMaxDisplacementM']==0
+    (OUT/'audit_rigid_diagnostic.json').write_text(json.dumps(d,indent=2))
     assert max(d['rigidDisplacementM'].values())==0 and d['maxInfluencesPerVertex']<=4
     assert all(v['type']=='BONE' and v['bone'] in ('leg_hl_03','leg_hr_03') for v in d['clawParents'].values())
     (OUT/'saved_file_audit.json').write_text(json.dumps(d,indent=2))
@@ -240,7 +243,209 @@ def diagnostic():
             if hit is None and start is not None:segments.append([start,float(x-.00025)]);start=None
         rows[str(y)]=segments
     (OUT/f'{TAG}_toe_sections.json').write_text(json.dumps(rows,indent=2))
-if '--diagnostic' in ARGS:diagnostic()
+
+def main3():
+    body=bpy.data.objects['luceras_blockout'];rig=bpy.data.objects['luceras_rig'];rig.data.pose_position='REST'
+    P0=sk.co(body);P=P0.copy();names,W=wm(body)
+    bones={b.name:np.array([b.head_local[:],b.tail_local[:]]) for b in rig.data.bones}
+    claws=[o for o in bpy.data.objects if o.name.startswith('hind_claw_') and o.type=='MESH']
+    claw0={o.name:np.array([tuple(o.matrix_world@v.co) for v in o.data.vertices]) for o in claws}
+    allowed=(np.abs(P0[:,0])>.065)&(P0[:,1]>.04)&(P0[:,1]<.210)&(P0[:,2]<.065)&(group_sum(names,W,'leg_h')>.5)
+    ids=np.where(allowed&(P0[:,0]>0))[0];q=P0[ids].copy();x,y,z=q.T
+    centers=np.array([.110,.137,.164,.191]);tips=np.array([.072,.054,.056,.075])
+    digit=np.abs(x[:,None]-centers).argmin(1)
+    if ITER>=11:
+        free=set(int(i) for i in ids if P0[i,1]<.145);adj={i:[] for i in free}
+        for e in body.data.edges:
+            a,b=e.vertices
+            if a in free and b in free:adj[a].append(b);adj[b].append(a)
+        labels={};seen=set()
+        for i in free:
+            if i in seen:continue
+            stack=[i];seen.add(i);component=[]
+            while stack:
+                v=stack.pop();component.append(v)
+                for u in adj[v]:
+                    if u not in seen:seen.add(u);stack.append(u)
+            label=int(np.abs(centers-np.mean(P0[component,0])).argmin())
+            labels.update({v:label for v in component})
+        for k,i in enumerate(ids):
+            if i in labels:digit[k]=labels[i]
+    cx=centers[digit];tip=tips[digit]
+    # Widen the free digits while retaining tight, nonintersecting clefts.
+    spread=ss(((.145 if ITER>=11 else .148 if ITER>=3 else .153)-y)/(.012 if ITER>=11 else .010 if ITER>=3 else .018))*ss((y-tip)/.017)
+    gain=1.44 if ITER==1 else 1.49
+    q[:,0]=x+(x-cx)*(gain-1)*spread
+    if ITER>=10:
+        offset=x-cx
+        shape=1.9 if ITER>=13 else 2.4
+        bounded=.0135*np.tanh(shape*offset/.0135)/np.tanh(shape)
+        q[:,0]=x+(bounded-offset)*spread
+    if ITER==12:q[:,0]=x+(x-cx)*.44*spread
+    # Lift dorsal volume without moving the sole or the seated claw roots.
+    toe=ss((y-tip-.003)/.038)
+    fade=ss((.210-y)/.025)
+    top=ss((z-.004)/.022)
+    amp=.027 if ITER==1 else .029
+    ceiling=ss((.065-z)/.020) if ITER==1 else np.clip((.065-z)/.035,0,1)
+    q[:,2]=z+amp*toe*fade*top*ceiling
+    if ITER==1:q[:,2]=np.minimum(q[:,2],.0649)
+    if ITER>=3:
+        q[:,2]+=.008*np.exp(-((y-.151)/.018)**2)*ss((z-.010)/.020)*np.clip((.065-q[:,2])/.012,0,1)
+    if ITER>=4:
+        t=(.192-y)/(.192-tip)
+        q[:,2]-=(.003 if ITER>=5 else .0045)*np.exp(-((t-.69)/.055)**2)*ss((z-.012)/.015)
+    if ITER>=5:
+        gap=np.exp(-((x[:,None]-np.array([.1235,.1505,.1775]))/.0045)**2).max(1)
+        q[:,2]-=.012*gap*np.exp(-((y-.165)/.025)**2)*ss((z-.018)/.018)*ss((.065-z)/.012)
+    P[ids]=q
+    if ITER>=4:
+        sk.set_co(body,P)
+        sm=allowed*(P0[:,0]>0)*ss((P0[:,1]-.125)/.025)*ss((.207-P0[:,1])/.025)*ss((P0[:,2]-.010)/.020)*ss((.065-P0[:,2])/.012)
+        sk.smooth(body,65,.40,sm)
+        P=sk.co(body)
+    if ITER>=6:
+        surf=sk.bvh(body)
+        for i in ids:
+            xx,yy,zz=P[i]
+            if not .137<yy<.201:continue
+            hit=surf.ray_cast(Vector((float(xx),float(yy),.065)),Vector((0,0,-1)))[0]
+            if hit is None or hit.z<zz-1e-5 or hit.z<.018:continue
+            h=hit.z
+            target=.057+.10*(yy-.14)-.004*((xx-.15)/.055)**2
+            blend=ss((yy-.137)/.017)*ss((.201-yy)/.017)*ss((zz-.008)/(h-.008))
+            P[i,2]+=(target-h)*blend
+        sk.set_co(body,P)
+        sk.smooth(body,150 if ITER>=7 else 12,.40,sm)
+        P=sk.co(body)
+    if ITER>=8:
+        a=P[ids].copy();xx,yy,zz=a.T
+        tx=np.clip((.192-yy[:,None])/(.192-tips[None,:]),0,1)
+        centerpaths=(.142+(centers-.142)*.52)[None,:]*(1-ss(tx/.40))+centers[None,:]*ss(tx/.40)
+        mid=(centerpaths[:,:-1]+centerpaths[:,1:])/2
+        grooves=np.exp(-((xx[:,None]-mid)/.004)**2).max(1)
+        a[:,2]-=(.0065 if ITER>=9 else .009)*grooves*ss((yy-.140)/.012)*ss((.195-yy)/.022)*ss((zz-.026)/.018)*ss((.065-P0[ids,2])/.012)
+        P[ids]=a
+        sk.set_co(body,P);sk.smooth(body,38 if ITER>=9 else 8,.35,sm);P=sk.co(body)
+    # Repair only any newly folded triangles inside the editable left paw.
+    if ITER>=11:
+        from mathutils.bvhtree import BVHTree
+        body.data.calc_loop_triangles()
+        faces=[tuple(f.vertices) for f in body.data.loop_triangles if all(allowed[v] and P0[v,0]>0 for v in f.vertices)]
+        for repair in range(8):
+            bv=BVHTree.FromPolygons([Vector(v) for v in P],faces,all_triangles=True)
+            pairs=[(a,b) for a,b in bv.overlap(bv) if a<b and not set(faces[a]).intersection(faces[b])]
+            if not pairs:break
+            bad=set(v for a,b in pairs for face in (faces[a],faces[b]) for v in face)
+            rw=np.zeros(len(P))
+            for v in bad:
+                ds=((P[ids]-P[v])**2).sum(1)
+                rw[ids]=np.maximum(rw[ids],np.exp(-ds/.000064))
+            sk.set_co(body,P);sk.smooth(body,45,.45,rw);P=sk.co(body)
+        log(f'local fold repair rounds {repair}, remaining candidates {len(pairs)}')
+        assert not pairs, 'Local paw surface folds remain'
+    # The inherited paw topology is symmetric. Copy each edited left vertex exactly.
+    kd=KDTree(len(P0))
+    for i,v in enumerate(P0):kd.insert(Vector(v),i)
+    kd.balance()
+    for i in ids:
+        _,j,d=kd.find(Vector(P0[i]*np.array([-1,1,1])))
+        assert d<1e-7
+        P[j]=P[i]*np.array([-1,1,1])
+    sk.set_co(body,P)
+    band=(P0[:,1]>.075)&(P0[:,1]<.335)&(P0[:,2]>.335)&(P0[:,2]<.535)&(group_sum(names,W,'tail_')<.15)&(group_sum(names,W,'leg_f')<.1)
+    detail=detailed_metrics(body,rig,P0,allowed,band,names,W,P)
+    rigid=[o for o in bpy.data.objects if o.type=='MESH' and o.parent==rig and o!=body]
+    detail.update(buildId='B-gsn9',nonManifoldEdges=sk.nonmanifold_edges(body),maxInfluencesPerVertex=max(len(v.groups) for v in body.data.vertices),triangles={o.name:sk.tri_count(o) for o in [body]+rigid})
+    detail['triangles']['creatureTotal']=sum(detail['triangles'].values())
+    detail['declaredEditRegion']={'zMaxM':.065,'yM':[.04,.210],'absXMinM':.065,'hindWeightMin':.5,'description':'Existing hind digit and instep vertices only. Heel at y >= 0.210 m frozen.'}
+    delta=np.linalg.norm(P-P0,axis=1)
+    for label,m in {'atOrAbove65mm':P0[:,2]>=.065,'heel':(P0[:,1]>=.210)&(P0[:,2]<.065),'thigh':(P0[:,2]>.3)&(group_sum(names,W,'leg_h')>.5),'gaskin':(P0[:,2]>.20)&(P0[:,2]<.30)&(group_sum(names,W,'leg_h')>.5),'hock':(P0[:,2]>.15)&(P0[:,2]<.20)&(group_sum(names,W,'leg_h')>.5),'bellyBandPass1':band}.items():
+        detail['displacement'][label]={'vertices':int(m.sum()),'maxM':float(delta[m].max()),'meanM':float(delta[m].mean()),'method':'Same-index vertex displacement; topology unchanged'}
+    tree=sk.bvh(body);L=detail['geometry']['pawLengthM']
+    heights=[];widths=[]
+    for j,cx in enumerate(centers):
+        heights.append(max(tree.ray_cast(Vector((float(cx),float(y),.08)),Vector((0,0,-1)))[0].z for y in np.linspace(.105,.145,81)))
+        sel=(P[:,0]>cx-.0134)&(P[:,0]<cx+.0134)&(abs(P[:,1]-.12)<.0015)&(P[:,2]<.065)
+        widths.append(float(np.ptp(P[sel,0])))
+    detail['knuckleHeightM']=heights;detail['knuckleHeightFraction']=[h/L for h in heights]
+    detail['digitWidthM']=widths;detail['digitWidthFraction']=[w/L for w in widths]
+    detail['clayProportions']={'knuckleHeightFraction':49/148,'digitWidthFraction':27/180,'method':'Manual image landmark measurement, side crop skin paw length 148 px and knuckle height 49 px; front three-quarter projected paw length 180 px and central digit width 27 px. Perspective and painted shading make these approximate.'}
+    detail['proportionRelativeErrors']={'knuckleHeight':[abs(h/L/(49/148)-1) for h in heights],'digitWidth':[abs(w/L/.15-1) for w in widths]}
+    detail['jointMaxDisplacementM']=max(float(np.linalg.norm(np.array([b.head_local[:],b.tail_local[:]])-bones[b.name])) for b in rig.data.bones)
+    detail['clawMaxDisplacementM']=max(float(np.linalg.norm(np.array([tuple(o.matrix_world@v.co) for v in o.data.vertices])-claw0[o.name],axis=1).max()) for o in claws)
+    prior=json.loads((OUT.parent/'pass2'/'measurements.json').read_text())
+    for key in ['clawLengthM','clawArcLengthM','clawMaterialLinearValue','heelWidthAt30mmM','toeCleftDepthFraction','toeCleftDefinition']:detail[key]=prior[key]
+    clefts=[]
+    for cx in [.1235,.1505,.1775]:
+        misses=[float(y) for y in np.arange(.065,.16,.0005) if tree.ray_cast(Vector((cx,float(y),.07)),Vector((0,0,-1)))[0] is None]
+        clefts.append(max(misses) if misses else .065)
+    detail['toeCleftRearYM']=clefts
+    detail['toeCleftDepthFraction']=[(y-t)/L for y,t in zip(clefts,[.072,.056,.075])]
+    detail['heelWidthAt30mmDefinition']='Unchanged heel vertices, y >= 0.210 m; value inherited from exact-identical pass 2 heel.'
+    detail['pawLengthRatioToPass2']=L/detail['baseGeometry']['pawLengthM'];detail['pawStanceRatioToPass2']=detail['geometry']['pawCenterStanceWidthM']/detail['baseGeometry']['pawCenterStanceWidthM']
+    mir=P[(P[:,0]>.04)&(P[:,1]>.025)&(P[:,1]<.34)&(P[:,2]<.065)].copy();mir[:,0]*=-1;ds=sk.nearest_dist(tree,mir)
+    detail['pawMirrorAsymmetry']={'maxM':float(ds.max()),'meanM':float(ds.mean())}
+    detail['topologyChanged']=False;detail['skinWeightsChanged']=False
+    (OUT/f'measurements_{TAG}.json').write_text(json.dumps(detail,indent=2))
+    assert detail['nonManifoldEdges']==0 and detail['bodyConnectedComponents']==1 and detail['bodyDegenerateFaces']==0
+    assert detail['displacement']['allProtected']['maxM']==0 and detail['displacement']['atOrAbove65mm']['maxM']==0
+    assert detail['triangles']['creatureTotal']<400000 and detail['maxInfluencesPerVertex']<=4
+    assert .95<=detail['pawLengthRatioToPass2']<=1.05 and .95<=detail['pawStanceRatioToPass2']<=1.05
+    lookdev.setup_scene(engine='CYCLES')
+    if body.data.has_custom_normals:body.data.normals_split_custom_set([(0,0,0)]*len(body.data.loops))
+    for n,c in {**legcam.frame_paws(),**legcam.frame_legs()}.items():lookdev.render(c,str(OUT/'renders'/f'{TAG}_{n}.png'),1024)
+    full=lookdev.frame_cameras([body]+rigid)
+    lookdev.render(full['side_left'],str(OUT/'renders'/f'{TAG}_sprite_side_192.png'),192)
+    if FINAL:
+        for n,c in full.items():lookdev.render(c,str(OUT/'renders'/f'full_{n}.png'),1024)
+        lookdev.render(full['side_left'],str(OUT/'renders'/'sprite_side_192.png'),192)
+        (OUT/'measurements.json').write_text(json.dumps(detail,indent=2))
+    bpy.data.objects.remove(bpy.data.objects['lookdev_ground'],do_unlink=True)
+    bpy.ops.wm.save_as_mainfile(filepath=str(OUT/('hindlegs.blend' if FINAL else TAG+'.blend')),compress=True)
+    if FINAL:
+        export(OUT/'hindlegs.glb',[body,rig]+rigid)
+        part=bpy.data.objects.new('hindlegs_part',body.data.copy());bpy.context.collection.objects.link(part)
+        bm=bmesh.new();bm.from_mesh(part.data);hind=group_sum(names,W,'leg_h');bm.verts.ensure_lookup_table()
+        bmesh.ops.delete(bm,geom=[v for v in bm.verts if not(hind[v.index]>.35 and v.co.z<.535)],context='VERTS');bm.to_mesh(part.data);bm.free()
+        cc=[sk.evaluated_copy(c,c.name+'_part') for c in claws];export(OUT/'hindlegs_part.glb',[part]+cc,False)
+        for o in [part]+cc:bpy.data.objects.remove(o,do_unlink=True)
+    (OUT/f'blender_log_{TAG}.json').write_text(json.dumps({'blenderSeconds':time.time()-T0,'buildId':'B-gsn9'},indent=2))
+
+
+def audit3():
+    body=bpy.data.objects['luceras_blockout'];rig=bpy.data.objects['luceras_rig'];P=sk.co(body)
+    meshes=[o for o in bpy.data.objects if o.type=='MESH'];rn=[o.name for o in meshes if o!=body]
+    now={n:np.array([tuple(bpy.data.objects[n].matrix_world@v.co) for v in bpy.data.objects[n].data.vertices]) for n in rn}
+    n,W=wm(body);bones={b.name:np.array([b.head_local[:],b.tail_local[:]]) for b in rig.data.bones}
+    with bpy.data.libraries.load(str(OUT.parent/'pass2'/'hindlegs.blend'),link=False) as (src,dst):dst.objects=['luceras_blockout','luceras_rig']+rn
+    base,br,*rigids=dst.objects
+    for obj in dst.objects:bpy.context.collection.objects.link(obj)
+    bpy.context.view_layer.update()
+    Q=sk.co(base);bn,BW=wm(base)
+    assert P.shape==Q.shape and n==bn
+    dP=np.linalg.norm(P-Q,axis=1)
+    allowed=(np.abs(Q[:,0])>.065)&(Q[:,1]>.04)&(Q[:,1]<.210)&(Q[:,2]<.065)&(group_sum(bn,BW,'leg_h')>.5)
+    d={'buildId':'B-gsn9','bodyMeshCount':sum(any(m.type=='ARMATURE' for m in o.modifiers) for o in meshes),'meshObjects':[o.name for o in meshes],'headPartAbsent':not any('head_part' in o.name for o in meshes),'bodyVertices':len(P),'sameTopology':len(body.data.polygons)==len(base.data.polygons) and all(tuple(a.vertices)==tuple(b.vertices) for a,b in zip(body.data.polygons,base.data.polygons)),
+       'protectedMaxDisplacementM':float(dP[~allowed].max()),'protectedMeanDisplacementM':float(dP[~allowed].mean()),'above65mmMaxDisplacementM':float(dP[Q[:,2]>=.065].max()),'heelMaxDisplacementM':float(dP[(Q[:,1]>=.210)&(Q[:,2]<.065)].max()),
+       'skinWeightMaxDifference':float(np.max(np.abs(W-BW))),'jointMaxDisplacementM':max(float(np.linalg.norm(bones[b.name]-np.array([b.head_local[:],b.tail_local[:]]))) for b in br.data.bones),'rigJointCount':len(rig.data.bones),'rigidDisplacementM':{n:float(np.linalg.norm(now[n]-np.array([tuple(o.matrix_world@v.co) for v in o.data.vertices]),axis=1).max()) for n,o in zip(rn,rigids)},
+       'clawParents':{o.name:{'parent':o.parent.name,'type':o.parent_type,'bone':o.parent_bone} for o in meshes if o.name.startswith('hind_claw_')},'nonManifoldEdges':sk.nonmanifold_edges(body),'maxInfluencesPerVertex':max(len(v.groups) for v in body.data.vertices),'auditBlenderSeconds':time.time()-T0}
+    assert d['bodyMeshCount']==1 and len(meshes)==15 and d['headPartAbsent'] and d['sameTopology']
+    assert d['nonManifoldEdges']==0 and d['protectedMaxDisplacementM']==0 and d['jointMaxDisplacementM']==0 and d['skinWeightMaxDifference']==0
+    (OUT/'audit_rigid_diagnostic.json').write_text(json.dumps(d,indent=2))
+    assert max(d['rigidDisplacementM'].values())==0 and d['maxInfluencesPerVertex']<=4
+    assert all(v['type']=='BONE' and v['bone'] in ('leg_hl_03','leg_hr_03') for v in d['clawParents'].values())
+    from mathutils.bvhtree import BVHTree
+    body.data.calc_loop_triangles()
+    local=[tuple(f.vertices) for f in body.data.loop_triangles if all(P[v,0]>.065 and .04<P[v,1]<.21 and P[v,2]<.065 for v in f.vertices)]
+    bv=BVHTree.FromPolygons([Vector(v) for v in P],local,all_triangles=True)
+    overlaps=[(a,b) for a,b in bv.overlap(bv) if a<b and not set(local[a]).intersection(local[b])]
+    d['pawNonAdjacentTriangleOverlapCandidates']=len(overlaps)
+    d['overlapCandidateCenters']=[np.mean(P[list(local[a])],axis=0).tolist() for a,b in overlaps[:30]]
+    (OUT/'saved_file_audit.json').write_text(json.dumps(d,indent=2))
+if '--audit3' in ARGS:audit3()
+elif '--pass3' in ARGS:main3()
+elif '--diagnostic' in ARGS:diagnostic()
 elif '--audit' in ARGS:audit2()
 else:
     main2()

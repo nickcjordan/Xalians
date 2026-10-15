@@ -13,12 +13,141 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "hindlegs.blend",
+      "hash": "a85cc9301428720d25d35927d6b3ab2e27dfe885322cf287272ec50a48e57637"
+    },
+    {
+      "name": "hindlegs.glb",
+      "hash": "22851806af7d691d91cda83c1d2353393ffdca288b7f3199770850c203a976ac"
+    },
+    {
+      "name": "hindlegs_part.glb",
+      "hash": "2851c340b8aef7cdd8474c6360c3d08e24704764ed6728a2d3af7927161887ee"
+    },
+    {
+      "name": "composite_paw_side_vs_clay.png",
+      "hash": "ec1a7cbff62f38050e955d2eacd6c30dcd474a639535f4e8be7869cff7e86295"
+    },
+    {
+      "name": "composite_paw_front_three_quarter_vs_clay.png",
+      "hash": "df5146ca564076d5302e8f334d1a79659613209a1f23a8e56b0d94ad80eed509"
+    },
+    {
+      "name": "composite_leg_side_vs_clay.png",
+      "hash": "d02e97e04853f75b24cfeb8eeb9c819cbcb85fa6ad889d64d262aefd313ef8b6"
+    },
+    {
+      "name": "composite_full_side_vs_furred.png",
+      "hash": "4fd6009c4262a08d193e834eb31685aed3c1da02a80b397b6523c24c854ecca8"
+    },
+    {
+      "name": "progress.png",
+      "hash": "e812222e0c7dafdd927653d3aab61535bda0f6bd476a27b8f1362711cdf4d4b0"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "aab5f51c7385c6baf1ed14fdaef1c8107977762e344c0f2daec52428598b24c1"
+    },
+    {
+      "name": "report.json",
+      "hash": "503894fae6ed447b5b502ff68277eda4f8c203c3b67fa3bb7857ed4aa9d646c3"
+    },
+    {
+      "name": "iter_notes.json",
+      "hash": "a75324e04acb7ab9019a932bea5904e733e4e3bbc5005aa7727f0238c87f277b"
+    },
+    {
+      "name": "build_hindpaw.py",
+      "hash": "8b19df865e409f91205f4588bea03318780ac7638f379598288b13faebb719d5"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "hindlegs.blend",
+        "hash": "a85cc9301428720d25d35927d6b3ab2e27dfe885322cf287272ec50a48e57637"
+      },
+      {
+        "name": "hindlegs.glb",
+        "hash": "22851806af7d691d91cda83c1d2353393ffdca288b7f3199770850c203a976ac"
+      },
+      {
+        "name": "hindlegs_part.glb",
+        "hash": "2851c340b8aef7cdd8474c6360c3d08e24704764ed6728a2d3af7927161887ee"
+      },
+      {
+        "name": "composite_paw_side_vs_clay.png",
+        "hash": "ec1a7cbff62f38050e955d2eacd6c30dcd474a639535f4e8be7869cff7e86295"
+      },
+      {
+        "name": "composite_paw_front_three_quarter_vs_clay.png",
+        "hash": "df5146ca564076d5302e8f334d1a79659613209a1f23a8e56b0d94ad80eed509"
+      },
+      {
+        "name": "composite_leg_side_vs_clay.png",
+        "hash": "d02e97e04853f75b24cfeb8eeb9c819cbcb85fa6ad889d64d262aefd313ef8b6"
+      },
+      {
+        "name": "composite_full_side_vs_furred.png",
+        "hash": "4fd6009c4262a08d193e834eb31685aed3c1da02a80b397b6523c24c854ecca8"
+      },
+      {
+        "name": "progress.png",
+        "hash": "e812222e0c7dafdd927653d3aab61535bda0f6bd476a27b8f1362711cdf4d4b0"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "aab5f51c7385c6baf1ed14fdaef1c8107977762e344c0f2daec52428598b24c1"
+      },
+      {
+        "name": "report.json",
+        "hash": "503894fae6ed447b5b502ff68277eda4f8c203c3b67fa3bb7857ed4aa9d646c3"
+      },
+      {
+        "name": "iter_notes.json",
+        "hash": "a75324e04acb7ab9019a932bea5904e733e4e3bbc5005aa7727f0238c87f277b"
+      },
+      {
+        "name": "build_hindpaw.py",
+        "hash": "8b19df865e409f91205f4588bea03318780ac7638f379598288b13faebb719d5"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 38.7,
+    "codexTokens": "181,544",
+    "defectResult": "D-3sh5: knuckle height now matches the clay (0.33 of paw length) but the paw became a box: flat top, square digit blocks, vertical walls, a corner where the metatarsus meets the paw top.",
+    "checks": [
+      {
+        "title": "Hind paw, Codex pass 3",
+        "question": "Does the paw read as the clay?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "ec1a7cbff62f38050e955d2eacd6c30dcd474a639535f4e8be7869cff7e86295",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "",
+        "recommended": "Critic read: the numbers match and the shape does not; brush-built digits go from thin pads to boxes. Second paw build short of the clay: hold audit."
+      }
+    ],
+    "note": "Paw pass 3: 38.7 min. Above 65 mm unmoved. Merge base for the next pass: tail and forelegs deltas applied onto this file with no refusals."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T14:48:25Z",
-  "briefSha256": "3eab8716e430db971af2d66463553fd334a0e980b414609ca4a5723bb32eb0e9"
+  "briefSha256": "3eab8716e430db971af2d66463553fd334a0e980b414609ca4a5723bb32eb0e9",
+  "checks": [
+    {
+      "title": "Hind paw, Codex pass 3",
+      "question": "Does the paw read as the clay?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "ec1a7cbff62f38050e955d2eacd6c30dcd474a639535f4e8be7869cff7e86295",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "",
+      "recommended": "Critic read: the numbers match and the shape does not; brush-built digits go from thin pads to boxes. Second paw build short of the clay: hold audit."
+    }
+  ],
+  "reportedAt": "2026-10-15T15:29:22Z"
 }

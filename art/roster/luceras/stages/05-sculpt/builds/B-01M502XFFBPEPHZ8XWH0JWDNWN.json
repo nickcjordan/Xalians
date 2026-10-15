@@ -1,0 +1,24 @@
+{
+  "id": "B-01M502XFFBPEPHZ8XWH0JWDNWN",
+  "alias": "dp38",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: all four paws reconstructed from the clay paw crops and grafted below 65 mm on the merged file (paw pass 3 + tail + forelegs), after hold audit N-r373; Codex",
+  "scope": "all four paws",
+  "defect": "D-01M500J4H0SK8F6KPTW3D6SSJ9",
+  "holds": [],
+  "inputs": [
+    {
+      "path": "2f4883f87a1f625430607a72be20a91ab99434abbaab055b15ff78f2c1ed57fc",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T15:29:27Z",
+  "briefSha256": "3d1c19e7e46019e72aa7b9f531bbd8b741c82fe483895601b5b3656cc2673b31"
+}
