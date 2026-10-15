@@ -1,0 +1,286 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-12f",
+  "outcome": "Execute step 12f: visible soft white fennec ear-base furnishings at normal framing, blue between tapered tips, held approved surface and all requested renders.",
+  "authorizedScope": "Only ear furnishings on s12e-fix; at most four tries, serial WSL Blender, unchanged artifact gate, explicit-path commit without push.",
+  "workRecord": "docs/design/species-construction/akinza/fur-12f-active-work.md",
+  "evidence": {
+    "brief": {
+      "path": ".codex/audit-state/fur-12f-evidence/brief-12f.md",
+      "sha256": "aea6974fd3d6dde11e046e116c30aa7641a3edda353eb4e7c2e897a9bf07da3f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/12f.md"
+    },
+    "initialFront": {
+      "path": ".codex/audit-state/fur-12f-evidence/initialFront-ears-front.png",
+      "sha256": "0ac39fd45baa9c65ce3ba4ac2f5a38ae09a20bcd1483d45afcb3440796d10240",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-initial-review/ears-front.png"
+    },
+    "initialClose": {
+      "path": ".codex/audit-state/fur-12f-evidence/initialClose-ear-root-close.png",
+      "sha256": "18a7e2ae13e7339578685f0f141a6865277e9752708ac33bc5896c01ad76a8a7",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-initial-review/ear-root-close.png"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-12f-review.md",
+      "sha256": "7afe11ba35b2672eae400274155c75ce2f33f9b50859598f3e2cb6fa05772247"
+    },
+    "work": {
+      "path": "docs/design/species-construction/akinza/fur-12f-active-work.md",
+      "sha256": "b4ab7e28f7052df9f505320be53a75d75bf4ad230017c863599fbded5817982d"
+    },
+    "preSaveGuard": {
+      "path": ".codex/audit-state/fur-12f-evidence/third-build-guard.json",
+      "sha256": "97fe73e70f8f4509328944108b22bc586d7cb1123f2061fd507be17ca5f2a41d",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12f/artifact-guard-history.json"
+    },
+    "thirdFront": {
+      "path": ".codex/audit-state/fur-12f-evidence/thirdFront.png",
+      "sha256": "08dc53a5492d38a3c822612d71e5e31a87556ce59729abcf89800b5efdad0e55"
+    },
+    "thirdClose": {
+      "path": ".codex/audit-state/fur-12f-evidence/thirdClose.png",
+      "sha256": "01b68b96cf5e7ef61d666b621b4de00a6f49e20c948473f247ee852a1ce6f270"
+    },
+    "finalModel": {
+      "path": ".codex/audit-state/fur-12f-evidence/finalModel-surface.blend",
+      "sha256": "e9b68fada7b033c0d844617cf4f1053a4cb0c0f1bf0acf8889b28ca09032cb0b",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12f/surface.blend"
+    },
+    "finalPreSaveGuard": {
+      "path": ".codex/audit-state/fur-12f-evidence/finalPreSaveGuard-artifact-guard-history.json",
+      "sha256": "8a65404fde1474c111721198c3d3491678df4ae6381200da92efd29b4e91542d",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12f/artifact-guard-history.json"
+    },
+    "build4": {
+      "path": ".codex/audit-state/fur-12f-evidence/build4-12f-build4.log",
+      "sha256": "1403d5b666c0ffd9744eef95526ef1a4ed5ce0f226e47749d67fd68d0bbebf03",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-build4.log"
+    },
+    "finalFront": {
+      "path": ".codex/audit-state/fur-12f-evidence/finalFront.png",
+      "sha256": "dbc28747e553df62eadf82df65086d486ac9f229059b8f02e0fe0af7dd9778e5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12f/r/ears-front.png"
+    },
+    "finalClose": {
+      "path": ".codex/audit-state/fur-12f-evidence/finalClose-ear-root-close.png",
+      "sha256": "ffc27fc20d284d61d5f943d9a01f4185b7d90c80ad10b64faed680a37377d4a6",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12f/r/ear-root-close.png"
+    },
+    "frontPair": {
+      "path": ".codex/audit-state/fur-12f-evidence/frontPair-12f-ears-front.png",
+      "sha256": "3baa9823c3a6cacfc3a7d939368b4676702035c2267b832e485888324f0a6b23",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-ears-front.png"
+    },
+    "closePair": {
+      "path": ".codex/audit-state/fur-12f-evidence/closePair-12f-ear-root-close.png",
+      "sha256": "81ef381c949be953468fcbd17e9c663e12aab1cb2c95b071b7ee2e012dee4444",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-ear-root-close.png"
+    },
+    "protection": {
+      "path": ".codex/audit-state/fur-12f-evidence/protection-saved-protection-check.json",
+      "sha256": "520f87cbcbc9b05b9aebc6c1f36f03b5c9992c3d1e090899127d3883313b559f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12f/saved-protection-check.json"
+    },
+    "metrics": {
+      "path": "docs/design/species-construction/akinza/fur-12f-metrics.json",
+      "sha256": "4a66505b5e4bcb954a4525adc15453ef98b778cb9f85228cc27f3fa063167638",
+      "sourcePath": "docs/design/species-construction/akinza/fur-12f-metrics.json"
+    },
+    "sweepMetrics": {
+      "path": ".codex/audit-state/fur-12f-evidence/sweepMetrics-sweep-metrics.json",
+      "sha256": "6a6b689b1f1891654e46af10305a6b0ddd342a1ccb46a2a29778394d7c5830b7",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12f/r/sweep-metrics.json"
+    },
+    "savedFlags": {
+      "path": ".codex/audit-state/fur-12f-evidence/savedFlags-sweep-flags.npz",
+      "sha256": "8db22396b914a0db3f64df05a9d830c3af78c583d0733d38ec36600036ab2303",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12f/r/sweep-flags.npz"
+    },
+    "skinLog": {
+      "path": ".codex/audit-state/fur-12f-evidence/skinLog-12f-final-sweep.log",
+      "sha256": "442b7d2e85f826cc4cf73b5360a141499469099303d16f1828f685e71180f48e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-final-sweep.log"
+    },
+    "solidLog": {
+      "path": ".codex/audit-state/fur-12f-evidence/solidLog-12f-final-obstacles.log",
+      "sha256": "01433592ec632d94e65abcc8cd44575fb409eb73231c7755d340b628e51ed867",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-final-obstacles.log"
+    },
+    "protectionLog": {
+      "path": ".codex/audit-state/fur-12f-evidence/protectionLog-12f-final-protection.log",
+      "sha256": "88783fe7b4a49b3907c3b422f1b31b916349b61faa8597409bac7a5c56b77531",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-final-protection.log"
+    },
+    "delivery": {
+      "path": "docs/design/species-construction/akinza/fur-12f-delivery.json",
+      "sha256": "94b33982670b969dbef24a15929c012c80511c28204f7406fe54cdedc1f130b0",
+      "sourcePath": "docs/design/species-construction/akinza/fur-12f-delivery.json"
+    },
+    "build1": {
+      "path": ".codex/audit-state/fur-12f-evidence/build1-12f-build1.log",
+      "sha256": "a4004940111052fb0e257173d51aea72150bd705c7a628252ec84f2340792e34",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-build1.log"
+    },
+    "build2": {
+      "path": ".codex/audit-state/fur-12f-evidence/build2-12f-build2.log",
+      "sha256": "4ae0919d10ee9bf7a22618e05d24df6310db4c029f435950ca4abbd98a9015c4",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-build2.log"
+    },
+    "build3": {
+      "path": ".codex/audit-state/fur-12f-evidence/build3-12f-build3.log",
+      "sha256": "0c2617c4760e0d2124e2fe12d5e3899b18b0abbd2eab8572bf6e84078d4b2718",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12f-build3.log"
+    },
+    "ears-front": {
+      "path": ".codex/audit-state/fur-12f-evidence/ears-front-current-ears-front.png",
+      "sha256": "df72027c3f12306f3a2bc8f234599646901e30408c6bfdb1a361e914807281c3",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png"
+    },
+    "head-side": {
+      "path": ".codex/audit-state/fur-12f-evidence/head-side-current-head-side.png",
+      "sha256": "c1f2587b9cd0d85dadfe2806cedffa36b9a76989daed30f99f68997c081e509a",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png"
+    },
+    "head-backq": {
+      "path": ".codex/audit-state/fur-12f-evidence/head-backq-current-head-backq.png",
+      "sha256": "b6455217902a137cde54bc3ccb9c37fe941dd2bf8935c2e66f93731952611fed",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png"
+    },
+    "body-backq": {
+      "path": ".codex/audit-state/fur-12f-evidence/body-backq-current-body-backq.png",
+      "sha256": "2492d864d73c82fdc1df546933fe865fdd51b453a9b57bdac976fdf400339114",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png"
+    },
+    "body-front": {
+      "path": ".codex/audit-state/fur-12f-evidence/body-front-current-body-front.png",
+      "sha256": "28db4f5b76a6dd0470d03ac9196a48a073fbf0bfbf776062125cc8f8dc5ec5b7",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png"
+    },
+    "tails-side": {
+      "path": ".codex/audit-state/fur-12f-evidence/tails-side-current-tails-side.png",
+      "sha256": "600c8a4db48a489fde169decc764ca9305578ea38be93a7a9610670d878f7ae0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+    }
+  },
+  "criteria": [
+    {
+      "id": "tuft",
+      "expectation": "Dense white base and separated soft long locks visible at normal front framing, blue between tips.",
+      "status": "blocked",
+      "assessment": "Final full-size normal/close/side and exact pairs confirm visible white furnishings with blue-separated tips, but compact parallel curtain center, blunt lower boundary and limited broad fan remain. Four model invocations used; explicitly partial, not approved.",
+      "evidence": [
+        "brief",
+        "finalFront",
+        "finalClose",
+        "frontPair",
+        "closePair",
+        "review",
+        "build1",
+        "build2",
+        "build3",
+        "build4"
+      ]
+    },
+    {
+      "id": "preservation",
+      "expectation": "Held mesh, material, mask and unrelated fur data equal; unchanged full saved artifact flags never rise by region and no new flagged cluster.",
+      "status": "pass",
+      "assessment": "Full saved skin and solid sweeps complete; zero new flags in all five categories, no regional rise or new clusters, held geometry/materials/roots/layout/skin masks/unselected attributes equal baseline. Baseline model hash matches prior delivery.",
+      "evidence": [
+        "metrics",
+        "sweepMetrics",
+        "savedFlags",
+        "protection",
+        "skinLog",
+        "solidLog",
+        "protectionLog",
+        "review",
+        "delivery"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Two before/after pairs and six current single panels, full-size independent review, logs, explicit-path commit and no push.",
+      "status": "pass",
+      "assessment": "All eight exact requested images rendered, assembled and inspected at full size by builder and independent reviewer; panel order/dimensions/native pixels verified. Logs, manifest, all artifact hashes, parent/message and explicit12-path commit scope verified. No push. Metadata amendment remains within the same logical step commit.",
+      "evidence": [
+        "frontPair",
+        "closePair",
+        "ears-front",
+        "head-side",
+        "head-backq",
+        "body-backq",
+        "body-front",
+        "tails-side",
+        "review",
+        "work",
+        "delivery"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "tuft",
+      "status": "blocked",
+      "observation": "First candidate is a dense planar white curtain with straight edge and too few separated tips.",
+      "nextAction": "Additional model work requires authorization beyond the explicit four-try cap.",
+      "evidence": [
+        "brief",
+        "initialFront",
+        "thirdFront",
+        "thirdClose",
+        "finalFront",
+        "finalClose",
+        "review",
+        "build1",
+        "build2",
+        "build3",
+        "build4"
+      ],
+      "blocker": {
+        "externalDependency": "The explicit step12f maximum of four model tries has been exhausted.",
+        "attempts": "Invocation1 failed before save; invocation2 produced a curtain; invocation3 separated tips but undercovered; invocation4 increased density and introduced forward/outward bends and waves, but normal view retains a compact pleated medial wedge.",
+        "unblocksWhen": "Nick authorizes additional model work beyond the four-try cap."
+      }
+    },
+    {
+      "id": "F002",
+      "criterion": "tuft",
+      "status": "blocked",
+      "observation": "Third invocation separates tips better but has narrow, subdued medial coverage and some parallel curtain character in close view.",
+      "nextAction": "Additional model work requires authorization beyond the explicit four-try cap.",
+      "evidence": [
+        "brief",
+        "initialFront",
+        "thirdFront",
+        "thirdClose",
+        "finalFront",
+        "finalClose",
+        "review",
+        "build1",
+        "build2",
+        "build3",
+        "build4"
+      ],
+      "blocker": {
+        "externalDependency": "The explicit step12f maximum of four model tries has been exhausted.",
+        "attempts": "Invocation1 failed before save; invocation2 produced a curtain; invocation3 separated tips but undercovered; invocation4 increased density and introduced forward/outward bends and waves, but normal view retains a compact pleated medial wedge.",
+        "unblocksWhen": "Nick authorizes additional model work beyond the four-try cap."
+      }
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent adversarial review_12f",
+    "comparison": "All final native views and both full-size pairs compared with exact before and original fennec target. Visible difference confirmed; incomplete soft broad fan explicitly preserved.",
+    "regressions": "No new flagged curves/clusters or regional rises. Held saved data equal. Inherited tail-root transitions remain outside step scope; no additional held-scope visual regression.",
+    "scopeCheck": "Only ear furnishing paths/radii/color/length changed. Four invocations total, including initial failed save. Rejected two saved candidates archived; parent retained because final is partial. All required image outputs complete. No push.",
+    "sessionId": "akinza-fur-12f",
+    "requestId": "e8bbafc7-fc6a-4cf6-b8c4-62aec3e64df8",
+    "performedAt": "2026-10-15T21:16:45.151680+00:00"
+  },
+  "stop": {
+    "kind": "blocked",
+    "reason": "F001 curtain structure and F002 limited soft broad fan remain below the original fennec target. The explicit four-try limit is exhausted: one failed before-save invocation and three saved candidates. All currently authorized independent work, eight deliverable images, full saved checks, adversarial review, documentation, hash verification and separate explicit-path commit are complete. Additional model work requires Nick to extend the cap. Partial result, not artistic completion or an approval request."
+  }
+}

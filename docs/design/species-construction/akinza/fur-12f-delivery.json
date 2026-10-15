@@ -1,0 +1,49 @@
+{
+  "status": "partial",
+  "unresolved": [
+    "F001 parallel curtain-like center and blunt lower boundary",
+    "F002 compact medial fan rather than broad soft lower-third locks"
+  ],
+  "buildsUsed": 4,
+  "buildsAllowed": 4,
+  "parentCommit": "cbbd160c4233bca4fad7b70f2ad594ee4720dda8",
+  "commitMessage": "Akinza fur step 12f: add white ear base tufts and current views",
+  "committed": true,
+  "pushed": false,
+  "supersedesBaseline": false,
+  "retained": [
+    "s12e-fix"
+  ],
+  "archives": [
+    "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12f-try2",
+    "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12f-try3"
+  ],
+  "baselineSha256": "e3ca17c1a123237c84417f77c3c2d147c07f40ab91e5e874993247786bf1a220",
+  "artifacts": {
+    "untracked/species-construction/akinza/surface/fur-steps/s12f/surface.blend": "e9b68fada7b033c0d844617cf4f1053a4cb0c0f1bf0acf8889b28ca09032cb0b",
+    "untracked/species-construction/akinza/surface/fur-steps/s12f/surface-info.json": "a4a7028788f2a40360c3c217bfc349a8106b0098f4d4ef85178f4e6cae3cca80",
+    "untracked/species-construction/akinza/surface/fur-steps/s12f/patch-evidence.npz": "49b425cad38c36dffc8e81f43957c16f577945b68e36e1f9cd48f59a7db27110",
+    "untracked/species-construction/akinza/surface/fur-steps/s12f/artifact-guard-history.json": "8a65404fde1474c111721198c3d3491678df4ae6381200da92efd29b4e91542d",
+    "untracked/species-construction/akinza/surface/fur-steps/12f-ears-front.png": "3baa9823c3a6cacfc3a7d939368b4676702035c2267b832e485888324f0a6b23",
+    "untracked/species-construction/akinza/surface/fur-steps/12f-ear-root-close.png": "81ef381c949be953468fcbd17e9c663e12aab1cb2c95b071b7ee2e012dee4444",
+    "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png": "df72027c3f12306f3a2bc8f234599646901e30408c6bfdb1a361e914807281c3",
+    "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png": "c1f2587b9cd0d85dadfe2806cedffa36b9a76989daed30f99f68997c081e509a",
+    "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png": "b6455217902a137cde54bc3ccb9c37fe941dd2bf8935c2e66f93731952611fed",
+    "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png": "2492d864d73c82fdc1df546933fe865fdd51b453a9b57bdac976fdf400339114",
+    "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png": "28db4f5b76a6dd0470d03ac9196a48a073fbf0bfbf776062125cc8f8dc5ec5b7",
+    "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png": "600c8a4db48a489fde169decc764ca9305578ea38be93a7a9610670d878f7ae0",
+    "untracked/species-construction/akinza/surface/fur-steps/s12f/saved-protection-check.json": "520f87cbcbc9b05b9aebc6c1f36f03b5c9992c3d1e090899127d3883313b559f",
+    "untracked/species-construction/akinza/surface/fur-steps/s12f/r/sweep-metrics.json": "6a6b689b1f1891654e46af10305a6b0ddd342a1ccb46a2a29778394d7c5830b7",
+    "untracked/species-construction/akinza/surface/fur-steps/s12f/r/sweep-flags.npz": "8db22396b914a0db3f64df05a9d830c3af78c583d0733d38ec36600036ab2303",
+    "docs/design/species-construction/akinza/fur-12f-metrics.json": "4a66505b5e4bcb954a4525adc15453ef98b778cb9f85228cc27f3fa063167638",
+    "docs/design/species-construction/akinza/fur-12f-review.md": "7afe11ba35b2672eae400274155c75ce2f33f9b50859598f3e2cb6fa05772247"
+  },
+  "savedChecks": "pass: held data equal; full unchanged skin/solid sweeps; zero new flags and no regional rises",
+  "imageReview": "all eight inspected by builder and independent review_12f; exact panel/native pixel matches verified",
+  "archivedModels": {
+    "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12f-try2/surface.blend": "1a97b05afcc63cb2c60923545b7db5c040cc51f937ee72652f1c2d0e80e1a0cf",
+    "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12f-try3/surface.blend": "f07b3cf9a3c381e1340fc5ba8413e22695db86cd63d4b43623fe89b8c8f24432"
+  },
+  "commitScopeVerified": true,
+  "artifactHashesVerified": true
+}

@@ -1,0 +1,231 @@
+{
+  "artifactGate": {
+    "collision": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 0,
+          "after": 0
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "neighborLength": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 31,
+          "after": 24
+        },
+        "ears": {
+          "before": 176,
+          "after": 52
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "regionalLength": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 2103,
+          "after": 2067
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "partTransfer": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1700,
+          "after": 1687
+        },
+        "ears": {
+          "before": 20,
+          "after": 20
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "lift": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 16,
+          "after": 8
+        },
+        "ears": {
+          "before": 95,
+          "after": 95
+        },
+        "arms": {
+          "before": 1,
+          "after": 1
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    }
+  },
+  "changedCurves": 2689,
+  "heldData": true
+}
