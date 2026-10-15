@@ -1,0 +1,24 @@
+{
+  "id": "B-01M4ZT0TJ0K487CB39DQE6HCHZ",
+  "alias": "xcbx",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 3: hind legs and feet on the approved torso build B-ej6s, Codex (gpt-6-astra) sole builder, pass 1; orchestrator as critic",
+  "scope": "hind legs and feet",
+  "defect": null,
+  "holds": [],
+  "inputs": [
+    {
+      "path": "60aaa890d3397587286d068860742e42225ac5e636a0adb62a5ba1d21fbf9080",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T12:54:00Z",
+  "briefSha256": "79ddd0fcb2a05f16389f9592da0ed467e7d742d507818c09c8b6a64cf40924b4"
+}
