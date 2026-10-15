@@ -292,11 +292,11 @@
     "note": "Distance (world units) from these objects over which density ramps from zero to full.",
     "eyes": {
       "match": "head_eye_globe",
-      "inner": 0.003,
-      "outer": 0.009,
+      "inner": 0.0012,
+      "outer": 0.005,
       "frontOnly": 0.2,
       "surface": true,
-      "maxLength": 0.004
+      "maxLength": 0.0025
     },
     "nose": {
       "match": "head_nose",
@@ -420,8 +420,8 @@
   "paleFinalGain": 1.0,
   "rim": {
     "shader": true,
-    "width": 0.0028,
-    "soft": 0.0008,
+    "width": 0.0006,
+    "soft": 0.0003,
     "smooth": 4
   },
   "cupInner": {
