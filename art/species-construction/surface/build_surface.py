@@ -83,7 +83,8 @@ def tail_centerline(co, edges, tail_m, root, fallback):
         if np.array_equal(new, d):
             break
         d = new
-    print('tail geodesic: iterations', it, 'reached', int(np.isfinite(d[mask]).sum()), 'of', int(mask.sum()))
+    print('tail geodesic: iterations', it, 'reached', int(np.isfinite(d[mask]).sum()), 'of', int(mask.sum()),
+          'distance pct', np.round(np.percentile(d[mask & np.isfinite(d)], [5, 25, 50, 75, 95, 100]), 3))
     grad = np.zeros((n, 3))
     fin = np.isfinite(d[a]) & np.isfinite(d[b])
     a2, b2, el2 = a[fin], b[fin], el[fin]
