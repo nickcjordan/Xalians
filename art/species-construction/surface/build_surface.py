@@ -325,6 +325,31 @@ def compute_attributes(skin, cfg, species):
         tl = np.array(cfg['tailLength']['along'], float)
         f = np.interp(np.where(np.isfinite(tail_d), tail_d, 0.0), tl[:, 0], tl[:, 1])
         length = length+wn[ti]*cfg['groups']['tails']['length']*(f-1.0)
+        tt = cfg['tailLength'].get('tube')
+        if tt:
+            # fur step 11: the long plume only on the tail tubes. The tail zones and the tail graph distance also reach the
+            # hips and the lower back, where the old global cap (.0525, see keepOut maxLength) held the fur short; the tube
+            # test is the skin's own thickness (a ray inward along -normal to the far wall), thin on a tail, thick on the body
+            from mathutils.bvhtree import BVHTree
+            cand = np.where(wn[ti] > 0.02)[0]
+            me.calc_loop_triangles()
+            tri = np.empty(len(me.loop_triangles)*3, dtype=np.int32)
+            me.loop_triangles.foreach_get('vertices', tri)
+            tri = tri.reshape(-1, 3)
+            inside = np.zeros(n, bool)
+            inside[cand] = True
+            tri = tri[inside[tri].any(axis=1)]
+            bvh = BVHTree.FromPolygons([Vector(v) for v in co], tri.tolist(), all_triangles=True)
+            thick = np.full(n, np.inf)
+            for i in cand:
+                hit = bvh.ray_cast(Vector(co[i]-nrm[i]*1e-4), Vector(-nrm[i]), tt['maxRay'])
+                if hit[0] is not None:
+                    thick[i] = hit[3]
+            tube = 1.0-smoothstep((thick-tt['thick'][0])/(tt['thick'][1]-tt['thick'][0]))
+            tube = np.clip(edge_smooth(tube, edges, n, tt.get('smooth', 0)), 0, 1)
+            length = length*tube+np.minimum(length, tt['offCap'])*(1.0-tube)
+            print('tail tube: candidates', len(cand), 'tube over .5', int((tube > 0.5).sum()),
+                  'thickness pct', np.round(np.percentile(thick[cand][np.isfinite(thick[cand])], [5, 25, 50, 75, 95]), 3))
     ramp_w = []
     for r in cfg.get('lengthRamps', []):  # optional: length by row inside a box (an even grow from chin to chest)
         w = membership(co, r['box'], floor, height, r.get('margin', 0.02))
@@ -494,7 +519,9 @@ def compute_attributes(skin, cfg, species):
         ramp = smoothstep((near-ko['inner'])/max(ko['outer']-ko['inner'], 1e-6))
         density *= ramp
         if 'maxLength' in ko:
-            length = np.minimum(length, ko['maxLength']+0.05*ramp)
+            # cap only near the object (ramp < 1): the old cap maxLength+.05*ramp also held every strand on the body
+            # to about .05, which is why longer tail fur stopped adding volume (fur step 11)
+            length = np.where(ramp < 1.0, np.minimum(length, ko['maxLength']+0.05*ramp), length)
             away = unit(co-nearest)
             wgt = (1.0-ramp)[:, None]
             comb = unit(comb*(1.0-wgt)+away*wgt)
@@ -706,6 +733,9 @@ def compute_attributes(skin, cfg, species):
             if 'lift' in r:
                 lift_v = lift_v*(1.0-w)+r['lift']*w
         write_attribute(me, 'fur_lift', lift_v)
+    for key in ('droop', 'taper'):  # optional per-group strand shape (fur step 11: tails arc out then sweep tipward, fine tips)
+        if any(key in g for g in cfg['groups'].values()):
+            write_attribute(me, f'fur_{key}', blend(key, cfg[key]))
     write_attribute(me, 'pale', pale)
     write_attribute(me, 'rim', rim)
     write_attribute(me, 'fur_tone', blend('tone', 1.0))
@@ -915,7 +945,9 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
     sl = b.named('strlen', 'FLOAT')
     t2 = b.m('MULTIPLY', t, t)
     along = b.vm('SCALE', dirv, scale=b.m('MULTIPLY', sl, t))
-    droop = b.vm('SCALE', combp, scale=b.m('MULTIPLY', b.m('MULTIPLY', sl, t2), cfg['droop']))
+    has_group = lambda key: any(key in g for g in cfg['groups'].values())
+    droop_f = b.named('fur_droop', 'FLOAT') if has_group('droop') else cfg['droop']
+    droop = b.vm('SCALE', combp, scale=b.m('MULTIPLY', b.m('MULTIPLY', sl, t2), droop_f))
     gravity = b.vm('SCALE', _const_vec(b, (0, 0, -1)), scale=b.m('MULTIPLY', b.m('MULTIPLY', sl, t2), cfg['gravity']))
     # curl: a wave along the strand
     nz = b.node('ShaderNodeTexNoise', noise_dimensions='3D')
@@ -937,9 +969,9 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
     setpos = b.node('GeometryNodeSetPosition')
     tree.links.new(realize.outputs['Geometry'], setpos.inputs['Geometry'])
     tree.links.new(total, setpos.inputs['Position'])
-    taper = cfg['taper']
+    taper = b.named('fur_taper', 'FLOAT') if has_group('taper') else cfg['taper']
     if cfg.get('guides', {}).get('lockTaper') is not None:  # guided strands taper further, to fine tips
-        taper = b.m('ADD', cfg['taper'], b.m('MULTIPLY', b.named('lockc', 'FLOAT'), cfg['guides']['lockTaper']-cfg['taper']))
+        taper = b.m('ADD', taper, b.m('MULTIPLY', b.named('lockc', 'FLOAT'), cfg['guides']['lockTaper']-cfg['taper']))
     radius = b.m('MULTIPLY', cfg['rootRadius'], b.m('SUBTRACT', 1.0, b.m('MULTIPLY', t, taper)))
     join = b.node('GeometryNodeJoinGeometry')
     tree.links.new(setpos.outputs['Geometry'], join.inputs['Geometry'])
@@ -1305,7 +1337,11 @@ def main():
     curves = bpy.data.hair_curves.new('Akinza fur')
     fur = bpy.data.objects.new('Akinza fur', curves)
     bpy.context.scene.collection.objects.link(fur)
-    tree = build_hair_tree(skin, cfg, cfg['strands']/weighted, hair_mat, guide_obj)
+    # strandsPerArea (optional) fixes the strands per density-weighted area, so denser fur on one group (the tails)
+    # adds strands instead of taking them from the rest of the coat (fur step 11)
+    per_area = cfg.get('strandsPerArea', cfg['strands']/weighted)
+    print(f'strands per weighted area {per_area:.0f} (budget alone {cfg["strands"]/weighted:.0f})')
+    tree = build_hair_tree(skin, cfg, per_area, hair_mat, guide_obj)
     mod = fur.modifiers.new('Fur', 'NODES')
     mod.node_group = tree
 
