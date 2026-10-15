@@ -401,6 +401,45 @@ def compute_attributes(skin, cfg, species):
         comb = unit(comb*(1.0-wbox[:, None])+cv*wbox[:, None])
         print('comb smooth: vertices in box', int((wbox > 0.5).sum()))
 
+    for flow in cfg.get('combFlows', []):
+        # A shared field spans the lateral skull and ear sheet. Its source moves gradually
+        # toward the ear base, avoiding the reversal at a radial field's root singularity.
+        w = membership(co, flow['box'], floor, height, flow.get('margin', 0.02))
+        lateral = np.abs(co[:, 0])
+        w *= smoothstep((lateral-flow['sideFade'][0])/np.diff(flow['sideFade'])[0])
+        rear = smoothstep((co[:, 1]-flow['rearFade'][0])/np.diff(flow['rearFade'])[0])
+        outer = smoothstep((lateral-flow['outerFade'][0])/np.diff(flow['outerFade'])[0])
+        w *= np.maximum(rear, outer)
+        shift = smoothstep((lateral-flow['sourceFade'][0])/np.diff(flow['sourceFade'])[0])
+        origin = (np.array(flow['skullOrigin'])*(1-shift[:, None])
+                  + np.array(flow['earOrigin'])*shift[:, None])
+        target = (co-origin)*np.array(flow['scale'])
+        target = unit(target-nrm*np.sum(target*nrm, axis=1, keepdims=True))
+        cv = unit(comb*(1-w[:, None])+target*w[:, None])
+        sel_e = (w[edges[:, 0]] > 0) | (w[edges[:, 1]] > 0)
+        for _ in range(flow.get('iterations', 80)//5):
+            cv = np.stack([edge_smooth(cv[:, k], edges[sel_e], n, 5) for k in range(3)], 1)
+            cv = unit(cv-nrm*np.sum(cv*nrm, axis=1, keepdims=True))
+        comb = unit(comb*(1-w[:, None])+cv*w[:, None])
+        write_attribute(me, 'comb_flow', w)
+
+    if cfg.get('tailRootFlow') and tail_d is not None and cfg.get('tailLength', {}).get('tube'):
+        # The tail region includes the thick hip skin. Comb that skin down into
+        # the tail roots rather than radially away from the tail source point.
+        # The existing thin-tube test holds the plume and its volume unchanged.
+        flow = cfg['tailRootFlow']
+        w = membership(co, flow['box'], floor, height, flow.get('margin', 0.02))
+        w *= (1-tube)*(1-smoothstep((tube-flow['tubeFade'][0])/np.diff(flow['tubeFade'])[0]))*smoothstep((nrm[:, 1]-flow['facing'][0])/np.diff(flow['facing'])[0])
+        down_flow = np.tile(flow['direction'], (n, 1))
+        cv = unit(down_flow-nrm*np.sum(down_flow*nrm, axis=1, keepdims=True))
+        sel_e = (w[edges[:, 0]] > 0) | (w[edges[:, 1]] > 0)
+        for _ in range(flow.get('iterations', 40)//5):
+            cv = np.stack([edge_smooth(cv[:, k], edges[sel_e], n, 5) for k in range(3)], 1)
+            cv = unit(cv-nrm*np.sum(cv*nrm, axis=1, keepdims=True))
+        comb = unit(comb*(1-w[:, None])+cv*w[:, None])
+        write_attribute(me, 'tail_root_flow', w)
+        write_attribute(me, 'tail_tube', tube)
+
     # pale mask: vertices of faces in the pale slot, spread a little, plus the chest group
     loops = np.empty(len(me.loops), dtype=np.int32)
     me.loops.foreach_get('vertex_index', loops)
@@ -1114,6 +1153,32 @@ def build_hair_tree(skin, cfg, density_per_area, hair_mat, guide_obj=None):
             b.set(fz, 'Vector', b.node('GeometryNodeInputPosition').outputs['Position'])
             gpos = b.vm('ADD', gpos, b.vm('SCALE', b.vm('SUBTRACT', fz.outputs['Color'], (0.5, 0.5, 0.5)),
                                           scale=b.m('MULTIPLY', tj, lock.get('frizz', 0.0))))
+        if cfg['guides'].get('alignComb'):
+            # Correct only copied guide points that turn against their local
+            # growth field. Use the carried root directly, avoiding a sampled
+            # curve frame. Rotation holds radial reach and normal height;
+            # points already following the comb keep their existing waviness.
+            root_align = b.named('root', 'FLOAT_VECTOR')
+            delta = b.vm('SUBTRACT', gpos, root_align)
+            up_align = b.vm('NORMALIZE', b.named('nrm', 'FLOAT_VECTOR'))
+            start_tangent = b.vm('NORMALIZE', b.vm('SUBTRACT', delta, b.vm('SCALE', up_align, scale=b.vm('DOT_PRODUCT', delta, up_align))))
+            target_tangent = b.vm('NORMALIZE', b.named('combp', 'FLOAT_VECTOR'))
+            sine = b.vm('DOT_PRODUCT', up_align, b.vm('CROSS_PRODUCT', start_tangent, target_tangent))
+            cosine = b.vm('DOT_PRODUCT', start_tangent, target_tangent)
+            limits = np.cos(np.deg2rad(cfg['guides']['alignComb']['angle']))
+            gate = b.node('ShaderNodeMapRange', interpolation_type='SMOOTHSTEP')
+            b.set(gate, 'Value', cosine)
+            gate.inputs['From Min'].default_value = float(limits[1])
+            gate.inputs['From Max'].default_value = float(limits[0])
+            gate.inputs['To Min'].default_value = 1.0
+            gate.inputs['To Max'].default_value = 0.0
+            weight = b.m('MULTIPLY', b.named('comb_flow', 'FLOAT'), gate.outputs['Result'])
+            turn = b.m('MULTIPLY', b.m('ARCTAN2', sine, cosine), weight)
+            rotate = b.node('ShaderNodeVectorRotate', rotation_type='AXIS_ANGLE')
+            b.set(rotate, 'Vector', delta)
+            b.set(rotate, 'Axis', up_align)
+            b.set(rotate, 'Angle', turn)
+            gpos = b.vm('ADD', root_align, rotate.outputs['Vector'])
         gset = b.node('GeometryNodeSetPosition')
         tree.links.new(interp.outputs['Curves'], gset.inputs['Geometry'])
         tree.links.new(gpos, gset.inputs['Position'])

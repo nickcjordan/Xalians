@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-step-12c",
+  "outcome": "Execute exactly fur step 12c: visible natural lateral skull, ear-root and ear-sheet direction improvement, body seam inspection, measured comparison and four review pairs, preserving approved appearance.",
+  "authorizedScope": "Direction only; s12b baseline; maximum four tries; no chest/armpit/rib texture or tail-volume changes; geometry and approved look held. Commit only, no push. This bounded fur step does not approve Akinza or finish the broader creature project.",
+  "workRecord": "docs/design/species-construction/akinza/fur-12c-work.md",
+  "evidence": {
+    "surface": {
+      "path": ".codex/audit-state/fur-12c-evidence/surface.blend",
+      "sha256": "3ad369d778b15267743ee0d22481bfb3376e838427c781ab8a0e61a82eb2f690"
+    },
+    "head-backq": {
+      "path": ".codex/audit-state/fur-12c-evidence/12c-head-backq.png",
+      "sha256": "a60d18ae60399e91c4fb6b5fc1a4af6d01098410330fad61a7e3c2efb83790ec"
+    },
+    "head-side": {
+      "path": ".codex/audit-state/fur-12c-evidence/12c-head-side.png",
+      "sha256": "271bc00ad6d08f132cfab1fc46eb074aaf4cb1d03baa39c59cc93fd4b81ccef8"
+    },
+    "ear-back-close": {
+      "path": ".codex/audit-state/fur-12c-evidence/12c-ear-back-close.png",
+      "sha256": "d5fa497bd0d53b5f271002cabd105de316b9ce5dd2b6725310ac97bb011febfa"
+    },
+    "body-backq": {
+      "path": ".codex/audit-state/fur-12c-evidence/12c-body-backq.png",
+      "sha256": "0ab2f288d1dc1105c1bf193e914495d856114dada7a8e91e6e74ad72102574d6"
+    },
+    "before": {
+      "path": ".codex/audit-state/fur-12c-evidence/evidence.npz",
+      "sha256": "87ed9cf18ac4d4e4430e2d18bfaf94dffcc8587c5bc110725fcb265740531a11"
+    },
+    "work": {
+      "path": "docs/design/species-construction/akinza/fur-12c-work.md",
+      "sha256": "a6b01c6e382ccf161b5554036d4007f7d79c6fc84c60d2b430055851999767e2"
+    },
+    "measure": {
+      "path": "docs/design/species-construction/akinza/fur-12c-direction-clashes.json",
+      "sha256": "fe67e970c41b37f1f70a5d89517d7aecc2a70330ad8cda7d0d61b25a007df0cd"
+    },
+    "builder": {
+      "path": "art/species-construction/surface/build_surface.py",
+      "sha256": "da3bfa9056f9a0c9a574fde00be1e9bd9a96dcfe25d0f6c3dacd3661c7414ca7"
+    },
+    "settings": {
+      "path": "art/species-construction/surface/akinza-surface.json",
+      "sha256": "afade57b6f32f0db94ccab81c6726cdda6abb32e1926362990e82286b843519e"
+    }
+  },
+  "criteria": [
+    {
+      "id": "visual",
+      "expectation": "Visible natural growth from lateral skull onto ear roots and along ears, full-size comparison and candid remaining defects.",
+      "status": "blocked",
+      "assessment": "Full-size builder and independent review confirm visible upper-root and hip direction improvement, but lower-root part, ear crossings, new upper-cup crossers, bristly rim and residual hip bloom remain. All four authorized builds are used; no seamless-flow or approval claim.",
+      "evidence": [
+        "head-backq",
+        "head-side",
+        "ear-back-close",
+        "body-backq",
+        "work",
+        "measure"
+      ]
+    },
+    {
+      "id": "measure",
+      "expectation": "Actual-strand direction-clash fractions before and after by region; inspect body and fix visible in-scope seams.",
+      "status": "pass",
+      "assessment": "Actual-strand regional before/after metrics, sampling counts, neighbor-pair fractions and body upstream diagnostic recorded, including small regional regressions. Geometry/roots and all prior non-comb attributes compared exactly.",
+      "evidence": [
+        "measure",
+        "before",
+        "surface",
+        "work"
+      ]
+    },
+    {
+      "id": "scope",
+      "expectation": "Geometry, root positions, non-direction attributes and held regions preserved.",
+      "status": "pass",
+      "assessment": "Direction-only source/config changes. Geometry,420420 roots and prior non-comb attrs equal. Muzzle, eye/nose edges and paws/soles fully unchanged; established plume point displacement at most5.37e-8. Small rear forearm shifts are within body direction scope and visually unchanged. No lore/ability/game changes, no push.",
+      "evidence": [
+        "measure",
+        "surface",
+        "builder",
+        "settings",
+        "body-backq",
+        "head-side"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Four near-1000 px left-before/right-now pairs; logs, independent audit, separate explicit-path commit and archive superseded s12b after commit; no push.",
+      "status": "pass",
+      "assessment": "All four left-before/right-now pairs rendered and inspected at full size; progress and stage logs written; eight explicit paths committed separately with the required message; s12b archived only afterward and verified. No push. Work record and JSON preserve unresolved defects and regression.",
+      "evidence": [
+        "work",
+        "head-backq",
+        "head-side",
+        "ear-back-close",
+        "body-backq",
+        "measure"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "visual",
+      "status": "resolved",
+      "observation": "Candidate had not been inspected in actual before/after images.",
+      "resolution": "All four final rendered pairs inspected at full size by builder and independent scoped reviewer. Inspection identified defects; this resolves missing inspection, not those defects.",
+      "resolutionEvidence": [
+        "head-backq",
+        "head-side",
+        "ear-back-close",
+        "body-backq",
+        "work"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "visual",
+      "status": "blocked",
+      "observation": "Lower diagonal ear-root part, crossed ear-back strands and upright rim bristles remain; final ear-back clash23.666% versus25.605% before.",
+      "nextAction": "After further authorization, repair the root transition and residual guided ear-back reversals, render and compare again.",
+      "blocker": {
+        "externalDependency": "The explicit brief permits at most four tries; all four surface builds were used.",
+        "attempts": "Four builds, source-field diffusion, sampled guided rotation, explicit ordering experiment, narrow carried-root correction, body tube-gated downflow; actual strands and full-size images audited after final build.",
+        "unblocksWhen": "Nick or the orchestrator explicitly authorizes additional corrective 12c attempts after reviewing this capped result."
+      },
+      "evidence": [
+        "ear-back-close",
+        "head-backq",
+        "measure",
+        "work"
+      ]
+    },
+    {
+      "id": "F003",
+      "criterion": "visual",
+      "status": "blocked",
+      "observation": "Thick-hip upstream roots fall13.549% to.0137%, but the central radial bloom still reads in the full-body image.",
+      "nextAction": "After further authorization, localize and correct remaining thick-skin radial flow without changing tail volume.",
+      "blocker": {
+        "externalDependency": "The explicit brief permits at most four tries; all four surface builds were used.",
+        "attempts": "Four builds, source-field diffusion, sampled guided rotation, explicit ordering experiment, narrow carried-root correction, body tube-gated downflow; actual strands and full-size images audited after final build.",
+        "unblocksWhen": "Nick or the orchestrator explicitly authorizes additional corrective 12c attempts after reviewing this capped result."
+      },
+      "evidence": [
+        "body-backq",
+        "measure",
+        "work"
+      ]
+    },
+    {
+      "id": "F004",
+      "criterion": "visual",
+      "status": "blocked",
+      "observation": "Visible regression: several long white hairs cross the upper blue ear cup, and its rim is bristlier.",
+      "nextAction": "After further authorization, retarget stray white rim/root strands so they follow the ear sheet without crossing its blue cup.",
+      "blocker": {
+        "externalDependency": "The explicit brief permits at most four tries; all four surface builds were used.",
+        "attempts": "Four builds, source-field diffusion, sampled guided rotation, explicit ordering experiment, narrow carried-root correction, body tube-gated downflow; actual strands and full-size images audited after final build.",
+        "unblocksWhen": "Nick or the orchestrator explicitly authorizes additional corrective 12c attempts after reviewing this capped result."
+      },
+      "evidence": [
+        "head-side",
+        "work"
+      ]
+    },
+    {
+      "id": "F005",
+      "criterion": "visual",
+      "status": "out_of_scope",
+      "observation": "Tail-root transition remains bulky.",
+      "rationale": "The brief holds tail plume volume and assigns that work to12e; no volume changes were made here.",
+      "scopeSource": "untracked/species-construction/akinza/surface/fur-steps/briefs/12c.md: Do NOT change tail plume volume (step12e)."
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder plus independent adversarial audit_12c",
+    "comparison": "All four pairs inspected at original resolution. Partial visible direction improvement, unresolved seams/crossings and a new white-cup-crossing regression are explicitly retained.",
+    "regressions": "Protected geometry, material attributes and appearance held. Ear rim/cup direction regression remains F004; small metric regressions are listed in the work record and JSON.",
+    "scopeCheck": "Only step12c. Four-build limit enforced. No art approval, no claim that the broader Akinza work is complete. Commit only, no push.",
+    "sessionId": "akinza-fur-12c",
+    "requestId": "7823fd39-8a97-4db8-83cb-a305ed5b36e9",
+    "performedAt": "2026-10-15T16:01:59.825004+00:00"
+  },
+  "stop": {
+    "kind": "blocked"
+  }
+}

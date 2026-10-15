@@ -490,12 +490,96 @@
       "chunk": 5
     }
   ],
+  "combFlows": [
+    {
+      "note": "Fur step 12c: continuous lateral skull to ear-root and ear-tip flow; center occiput and muzzle held.",
+      "box": {
+        "at": [
+          0.0,
+          0.22
+        ],
+        "x": [
+          0.0,
+          0.3
+        ],
+        "symmetricX": true,
+        "y": [
+          -0.08,
+          0.12
+        ]
+      },
+      "margin": 0.025,
+      "sideFade": [
+        0.06,
+        0.14
+      ],
+      "rearFade": [
+        -0.1,
+        -0.015
+      ],
+      "outerFade": [
+        0.16,
+        0.22
+      ],
+      "sourceFade": [
+        0.09,
+        0.25
+      ],
+      "skullOrigin": [
+        0,
+        -0.3,
+        0.68
+      ],
+      "earOrigin": [
+        0,
+        -0.12,
+        0.5
+      ],
+      "scale": [
+        1.8,
+        0.5,
+        1.0
+      ],
+      "iterations": 120
+    }
+  ],
+  "tailRootFlow": {
+    "tubeFade": [0.9, 0.99],
+    "note": "Fur step 12c: downflow on thick hip skin above the tail roots; the existing thin tail-tube mask holds plume directions and volume.",
+    "box": {
+      "at": [
+        0.43,
+        0.65
+      ],
+      "x": [
+        0,
+        0.18
+      ],
+      "symmetricX": true,
+      "y": [
+        0,
+        0.2
+      ]
+    },
+    "margin": 0.02,
+    "facing": [
+      0.1,
+      0.5
+    ],
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "iterations": 60
+  },
   "crownDir": [
     0.0,
     0.8,
     -0.6
   ],
   "guides": {
+    "alignComb": {"angle": [30, 60]},
     "lift": 0.35,
     "tipSweep": 0.05,
     "neighbors": 3,
