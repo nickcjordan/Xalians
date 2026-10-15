@@ -13,12 +13,228 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "tail.blend",
+      "hash": "39cda130e73a19648f3a9f12ec60417788400858428a689aad387e7300cf6da3"
+    },
+    {
+      "name": "tail_delta.npz",
+      "hash": "6ee65a299cd50e6bf25d1258d4b875840c5f6b51e4250a64f218b2cc37143e9d"
+    },
+    {
+      "name": "meta.json",
+      "hash": "0425979ec314b18fa05a55eaed49e5adf82b6383ab9a3b989fa848be29a1575b"
+    },
+    {
+      "name": "tail_part.glb",
+      "hash": "e7d3ef28bcd68ef6be2461d0bc614e08486e2d8f91c5705c5e7fbe6ba20c5bc8"
+    },
+    {
+      "name": "delta_proof.json",
+      "hash": "1848788b6345227e282754299ab5cf109d802c502b3b465a1b83430c217141ad"
+    },
+    {
+      "name": "composite_side_vs_clay.png",
+      "hash": "96ae906d08529fa05ed9cf22337abb069b183d70352f8c7c6d74078c2ce1cedb"
+    },
+    {
+      "name": "composite_three_quarter_rear_vs_clay.png",
+      "hash": "96f35a0d4ac61692d2e4c900d678cbe256edd6261445fa6391a79f350a3ac8d7"
+    },
+    {
+      "name": "composite_top_vs_clay.png",
+      "hash": "6bb3911dc4439dc2afdb4d0060af98ed0745c1f1c62e7bf9cd7ea232a8ca8146"
+    },
+    {
+      "name": "composite_full_side_vs_furred.png",
+      "hash": "a4f472cf048a1ac60df278daa20cb0d1415dee15516d38cce6bca0efa929926e"
+    },
+    {
+      "name": "progress.png",
+      "hash": "8ca324a160a58acfa1285cea3fba1b8183a546c7a68487c59088700d694977b8"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "3956686478a358f935798295aa0a0de388b6e45c4975f13e57e567556379c895"
+    },
+    {
+      "name": "report.json",
+      "hash": "ab82f20cc01f58d9b52fb4a3071c524ed80a99bc2a72f97dfb74608b4392669a"
+    },
+    {
+      "name": "iter_notes.json",
+      "hash": "71d2eab72c3af30999d728836c886fea130b4852924372a2c650dffe4b330350"
+    },
+    {
+      "name": "build_tail.py",
+      "hash": "dc46c6088d4cebb840f88a608828b531a56d918ef7bb0b6ce8cdab52ea330e15"
+    },
+    {
+      "name": "tailcam.py",
+      "hash": "b8ce2ef5d7ded4d064d2af6999ec5f8e67c645056b896781df8901ca352329ca"
+    },
+    {
+      "name": "run_tail.sh",
+      "hash": "49de6eef71a872c6b85f190146f429e8a58c10ea0a4483a6fc44e057d450973e"
+    },
+    {
+      "name": "apply_region_delta.py",
+      "hash": "a58319d82eabfefe1e0a75d75d3c200367077dcfe2085ef4c152bc650c76abc1"
+    },
+    {
+      "name": "pass1-codex.log",
+      "hash": "75ecff5e858a0774f4133e6b99a17a71352a4c1686952484047d0137aba82920"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "tail.blend",
+        "hash": "39cda130e73a19648f3a9f12ec60417788400858428a689aad387e7300cf6da3"
+      },
+      {
+        "name": "tail_delta.npz",
+        "hash": "6ee65a299cd50e6bf25d1258d4b875840c5f6b51e4250a64f218b2cc37143e9d"
+      },
+      {
+        "name": "meta.json",
+        "hash": "0425979ec314b18fa05a55eaed49e5adf82b6383ab9a3b989fa848be29a1575b"
+      },
+      {
+        "name": "tail_part.glb",
+        "hash": "e7d3ef28bcd68ef6be2461d0bc614e08486e2d8f91c5705c5e7fbe6ba20c5bc8"
+      },
+      {
+        "name": "delta_proof.json",
+        "hash": "1848788b6345227e282754299ab5cf109d802c502b3b465a1b83430c217141ad"
+      },
+      {
+        "name": "composite_side_vs_clay.png",
+        "hash": "96ae906d08529fa05ed9cf22337abb069b183d70352f8c7c6d74078c2ce1cedb"
+      },
+      {
+        "name": "composite_three_quarter_rear_vs_clay.png",
+        "hash": "96f35a0d4ac61692d2e4c900d678cbe256edd6261445fa6391a79f350a3ac8d7"
+      },
+      {
+        "name": "composite_top_vs_clay.png",
+        "hash": "6bb3911dc4439dc2afdb4d0060af98ed0745c1f1c62e7bf9cd7ea232a8ca8146"
+      },
+      {
+        "name": "composite_full_side_vs_furred.png",
+        "hash": "a4f472cf048a1ac60df278daa20cb0d1415dee15516d38cce6bca0efa929926e"
+      },
+      {
+        "name": "progress.png",
+        "hash": "8ca324a160a58acfa1285cea3fba1b8183a546c7a68487c59088700d694977b8"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "3956686478a358f935798295aa0a0de388b6e45c4975f13e57e567556379c895"
+      },
+      {
+        "name": "report.json",
+        "hash": "ab82f20cc01f58d9b52fb4a3071c524ed80a99bc2a72f97dfb74608b4392669a"
+      },
+      {
+        "name": "iter_notes.json",
+        "hash": "71d2eab72c3af30999d728836c886fea130b4852924372a2c650dffe4b330350"
+      },
+      {
+        "name": "build_tail.py",
+        "hash": "dc46c6088d4cebb840f88a608828b531a56d918ef7bb0b6ce8cdab52ea330e15"
+      },
+      {
+        "name": "tailcam.py",
+        "hash": "b8ce2ef5d7ded4d064d2af6999ec5f8e67c645056b896781df8901ca352329ca"
+      },
+      {
+        "name": "run_tail.sh",
+        "hash": "49de6eef71a872c6b85f190146f429e8a58c10ea0a4483a6fc44e057d450973e"
+      },
+      {
+        "name": "apply_region_delta.py",
+        "hash": "a58319d82eabfefe1e0a75d75d3c200367077dcfe2085ef4c152bc650c76abc1"
+      },
+      {
+        "name": "pass1-codex.log",
+        "hash": "75ecff5e858a0774f4133e6b99a17a71352a4c1686952484047d0137aba82920"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 18.34,
+    "blenderSeconds": 241.26,
+    "codexTokens": "118,353",
+    "method": [
+      "Read the approved base and copied all supplied references to named input files.",
+      "Measured clay side thickness normal to the tail curve at root, one third, two thirds, and 95 percent; normalized by rump height.",
+      "Built a smooth Hermite centerline through unchanged tail joints and selected only the tail plus the declared root band.",
+      "Edited existing vertices in place into a steady radial taper. Preserved all body vertex indices, edges, faces, armature weights, and joints.",
+      "Replaced the hard radial boundary with smooth falloff, then softened root channels with 24 weighted Laplacian steps confined to that region.",
+      "Turned the last curve tangent upright at the fixed tip position; changed length by less than one percent.",
+      "Rendered each iteration with Cycles on CPU using shared look-dev lights, ground, clay, and orthographic tail cameras. Rendered all five full-body cameras and the 192 px sprite.",
+      "Exported a coordinate delta and an extracted tail GLB, applied the delta to the untouched base, and checked exact equality plus non-tail invariants. Tested refusal on a deliberately missing coordinate.",
+      "Compared final renders with normalized clay crops, reviewed all full-body views, and obtained an independent read-only visual review."
+    ],
+    "remains": [
+      "Faint shallow root-flank channels remain visible in the top view. They are softened and do not create an abrupt step or constriction.",
+      "The root fraction is approximately 9 percent above the manual clay estimate at the joint plane, preserving a smooth attachment. The other three thickness stations closely match the measurements.",
+      "Fine tip contrast is weak in the rear three-quarter lighting. The hook is clear in side silhouette and survives at 192 pixels.",
+      "The supplied three-quarter clay image is a front three-quarter view. The required rear camera is not an angle-matched comparison. No clay top view was supplied."
+    ],
+    "holds": [
+      {
+        "hold": "Tail joints and plume socket unchanged",
+        "status": "respected",
+        "evidence": "delta_proof.json: no armature or object transform differences."
+      },
+      {
+        "hold": "Centerline length within 5 percent of base",
+        "status": "respected",
+        "evidence": "Nominal 0.52639 to 0.52840 m, +0.38 percent; surface cross-check +0.20 percent."
+      },
+      {
+        "hold": "Every vertex outside tail and declared root band unmoved",
+        "status": "respected",
+        "evidence": "Maximum 0 m and mean 0 m outside region. Other mesh coordinates unchanged."
+      },
+      {
+        "hold": "Topology outside tail unchanged",
+        "status": "respected",
+        "evidence": "Topology unchanged everywhere, including tail. All vertex groups and weights unchanged."
+      }
+    ],
+    "checks": [
+      {
+        "title": "Tail, Codex pass 1",
+        "question": "Does the tail read as the clay?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "96ae906d08529fa05ed9cf22337abb069b183d70352f8c7c6d74078c2ce1cedb",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "",
+        "recommended": "Critic read: pass. Root, taper (thickness fractions within 1 percent of the clay at three of four stations, root 9 percent thicker for a smooth attachment), low curve and upward hook match the clay side; 1.04 times body length."
+      }
+    ],
+    "note": "Tail built in parallel with the paw fix, 19.6 min wall, in place (topology unchanged), delivered as a region delta of 6,129 vertices with a proven apply script (max distance 0 on the base, refusal test passed). Critic read: pass, no defects. To be applied to the approved paw build."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T14:24:58Z",
-  "briefSha256": "9e492a5c8a3b28f5fe21977061ef5d5d73a9d4da6f1eff622b456ca449092dca"
+  "briefSha256": "9e492a5c8a3b28f5fe21977061ef5d5d73a9d4da6f1eff622b456ca449092dca",
+  "checks": [
+    {
+      "title": "Tail, Codex pass 1",
+      "question": "Does the tail read as the clay?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "96ae906d08529fa05ed9cf22337abb069b183d70352f8c7c6d74078c2ce1cedb",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "",
+      "recommended": "Critic read: pass. Root, taper (thickness fractions within 1 percent of the clay at three of four stations, root 9 percent thicker for a smooth attachment), low curve and upward hook match the clay side; 1.04 times body length."
+    }
+  ],
+  "reportedAt": "2026-10-15T14:46:04Z"
 }
