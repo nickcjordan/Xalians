@@ -54,6 +54,8 @@ from PIL import Image  # noqa: E402
 
 E = html.escape
 IMG_WIDTH = 720
+IMG_MAX_AREA = 900_000   # about 950 x 950 for a square render
+IMG_MAX_WIDTH = 2400
 JPEG_QUALITY = 82
 MAX_BYTES = 8 * 1024 * 1024
 SILH_WIDTH = 480
@@ -68,11 +70,12 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@40
 # ---------------------------------------------------------------- inputs
 
 def jpeg_data_uri(h):
-    """Blob hash -> 720 px wide JPEG data URI."""
+    """Blob hash -> JPEG data URI, scaled by pixel area (not a fixed width) so wide comparison strips keep their detail."""
     im = Image.open(blobs.get(h))
     im = im.convert("RGB")
-    if im.width > IMG_WIDTH:
-        im = im.resize((IMG_WIDTH, round(im.height * IMG_WIDTH / im.width)), Image.LANCZOS)
+    scale = min(1.0, (IMG_MAX_AREA / float(im.width * im.height)) ** 0.5, IMG_MAX_WIDTH / float(im.width))
+    if scale < 1.0:
+        im = im.resize((round(im.width * scale), round(im.height * scale)), Image.LANCZOS)
     buf = io.BytesIO()
     im.save(buf, "JPEG", quality=JPEG_QUALITY, optimize=True, progressive=True)
     return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode("ascii"), im.size
@@ -332,7 +335,6 @@ aside.srcrail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:au
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .set.approve .cards{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .set.gallery .cards,.set.info .cards{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.set.info .card .frame{cursor:default}
 .tbl-wrap{margin:0 0 14px;max-width:100%;overflow-x:auto}
 table.cmp{border-collapse:collapse;width:100%;font-size:.92rem}
 table.cmp th,table.cmp td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
@@ -397,7 +399,7 @@ details.fold summary{cursor:pointer;font-family:var(--f-head);font-weight:600;fo
 .ov-stage.two{grid-template-columns:1fr 1fr}
 .ov-stage figure{margin:0}
 .ov-stage .frame{cursor:default}
-.ov-stage img{max-height:72vh;width:auto;max-width:100%;margin:0 auto}
+.ov-stage img{max-height:72vh;width:100%;height:auto;object-fit:contain;margin:0 auto}
 .ov-stage figcaption{margin-top:6px}
 .ov-stage figcaption strong{font-family:var(--f-head);font-weight:600;font-size:1.1rem}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -461,9 +463,14 @@ def bg_toggle(el):
 def render_info(el, cfg, opts):
     """An info-only section: views as plain figures and an optional table; no buttons, not counted among the picks."""
     name = cfg.get("name", el.title())
-    figs = "".join('<article class="card"><div class="frame"><img src="%s" alt="%s: %s"></div>'
-                   '<div class="card-body"><h3>%s</h3><p class="sum">%s</p></div></article>'
-                   % (o["uri"], E(name), E(o["label"]), E(o["label"]), E(o["summary"])) for o in opts)
+    # Info views open in the same full-size viewer as decision views (flicker, two-up, background), just without picks.
+    figs = "".join('<article class="card" data-alias="%s" data-el="%s">'
+                   '<button type="button" class="frame" data-open="%s" data-el="%s" aria-label="View %s larger">'
+                   '<img data-img="%s" src="%s" alt="%s: %s"></button>'
+                   '<div class="card-body"><h3>%s</h3><p class="sum">%s</p>'
+                   '<div class="card-actions"><button type="button" class="btn quiet" data-open="%s" data-el="%s">%s View</button></div></div></article>'
+                   % (o["alias"], el, o["alias"], el, E(o["label"]), o["alias"], o["uri"], E(name), E(o["label"]),
+                      E(o["label"]), E(o["summary"]), o["alias"], el, ICONS["zoom"]) for o in opts)
     tbl = ""
     rows = cfg.get("table") or []
     if rows:
@@ -740,7 +747,7 @@ function figFor(alias){
   var fr = el('div', 'frame'); var im = el('img'); im.src = IMG[alias]; im.alt = EL[OV.el].name + ': ' + o.label; fr.appendChild(im); f.appendChild(fr);
   var cap = el('figcaption'); var t = el('strong', null, o.label); cap.appendChild(t);
   if (o.alias === EL[OV.el].recommended) { cap.appendChild(document.createTextNode(' ')); var bd = el('span','badge'); bd.appendChild(iconSpan('star')); bd.appendChild(document.createTextNode(' Recommended')); cap.appendChild(bd); }
-  var ap = isApprove(OV.el);
+  var ap = isApprove(OV.el) || EL[OV.el].mode === 'info';
   if (!ap && P[OV.el] && P[OV.el].alias === alias) { cap.appendChild(document.createTextNode(' ')); var pk = el('span','badge pk'); pk.appendChild(iconSpan('check')); pk.appendChild(document.createTextNode(' Picked')); cap.appendChild(pk); }
   cap.appendChild(el('p', 'muted', o.summary));
   if (!ap) {
@@ -754,7 +761,7 @@ function renderOverlay(){
   if (!OV.open) return;
   var ov = $('#ov'), k = OV.el;
   ov.setAttribute('data-bg', $('#set-'+k).getAttribute('data-bg'));
-  $('#ov-title').textContent = 'Compare: ' + EL[k].name;
+  $('#ov-title').textContent = (EL[k].mode === 'info' ? 'View: ' : 'Compare: ') + EL[k].name;
   optButtons($('#ov-a'), 'a');
   $('#ov-b-row').hidden = !OV.two;
   if (OV.two) optButtons($('#ov-b'), 'b');
@@ -961,6 +968,10 @@ def build(creature, stage, spec, index=None):
         reading = resolve_reading(creature, cfg.get("reading"))
         sections.append(render_section(el, cfg, opts, rec_alias, reading, n, len(order)))
         if info:
+            # Not a decision (kept out of ORDER), but its views still feed the viewer.
+            data["elements"][el] = {"name": cfg.get("name", el.title()), "recommended": None, "mode": "info", "joined": "",
+                                    "options": [{"alias": o["alias"], "letter": o["letter"], "label": o["label"],
+                                                 "summary": o["summary"], "blob": o["hash"]} for o in opts]}
             continue
         data["elements"][el] = {"name": cfg.get("name", el.title()), "recommended": rec_alias,
                                 "mode": "approve" if cfg.get("mode") in ("approve", "gallery") else "pick",
