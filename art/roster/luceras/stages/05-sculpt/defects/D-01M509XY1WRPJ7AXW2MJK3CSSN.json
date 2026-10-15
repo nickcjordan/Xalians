@@ -1,0 +1,12 @@
+{
+  "id": "D-01M509XY1WRPJ7AXW2MJK3CSSN",
+  "alias": "d67a",
+  "stage": "05-sculpt",
+  "description": "Nick: the feet read as swollen clown shoes. Both the generated and the current paws are too wide and too tall for the leg they end; the current ones are also boxy with a seam. Target: slim paws on the generated paws' long sloping shape, paw width and toe height at the clay's ratios to the ankle, with claws, tight clefts and dewclaws.",
+  "camera": "hind_paw_side, hind_paw_three_quarter, fore_paws_front",
+  "region": "all four paws",
+  "origin": "B-jas4",
+  "attempts": [],
+  "status": "open",
+  "createdAt": "2026-10-15T17:32:02Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "B-01M509XY5XF9J035WX56K07S7A",
+  "alias": "6c2c",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: slim the paws (Nick: swollen clown shoes), on the generated paw shape, claws and clefts added; Codex",
+  "scope": "all four paws",
+  "defect": null,
+  "holds": [],
+  "inputs": [
+    {
+      "path": "2f4883f87a1f625430607a72be20a91ab99434abbaab055b15ff78f2c1ed57fc",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T17:32:02Z",
+  "briefSha256": "68c11651fcd6a27f43bbf650ab4aa9f16a75792e090f52817c62093534ff9076"
+}
