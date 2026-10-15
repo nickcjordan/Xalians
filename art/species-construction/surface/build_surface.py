@@ -503,6 +503,36 @@ def compute_attributes(skin, cfg, species):
     if gcfg:
         ear_box = membership(co, cfg['cup']['box'], floor, height, cfg['cup']['margin'])
         cup_mask = np.clip(pale*ear_box*gcfg.get('cupGain', 2.0), 0, 1)
+        if 'cupFront' in gcfg:
+            # fur step 10c: the cup is the whole front face of the ear sheet, following the ear to its tip, less a band
+            # along the rim and a fade at the base, where the long white tufts stay
+            cf = gcfg['cupFront']
+            # the ear sheet by the ears group's own box, not its normalized weight: the crown group shares the inner part of
+            # the box and would cut the cup along a straight line
+            eg = cfg['groups']['ears']
+            ear_w = membership(co, eg['box'], floor, height, eg.get('margin', 0.02))
+            own_e = ear_w > 0.5
+            back_e = nrm[:, 1] > 0.0
+            ea, eb = edges[:, 0], edges[:, 1]
+            flip = own_e[ea] & own_e[eb] & (back_e[ea] != back_e[eb])
+            seeds = np.zeros(n, bool)
+            seeds[ea[flip]] = True
+            seeds[eb[flip]] = True
+            rd = graph_distance(co, edges, seeds, own_e)
+            rd = np.where(np.isfinite(rd), rd, 1.0)
+            front_f = smoothstep((-nrm[:, 1]-cf['facing'][0])/(cf['facing'][1]-cf['facing'][0]))
+            base_f = np.zeros(n)
+            for side in (-1.0, 1.0):
+                root_s = np.array(cfg['earRoot'])*np.array([side, 1.0, 1.0])
+                sel = np.where(own_e & (np.sign(co[:, 0]+1e-9) == side))[0]
+                if len(sel) == 0:
+                    continue
+                d = np.linalg.norm(co[sel]-root_s, axis=1)
+                t = (d-d.min())/max(d.max()-d.min(), 1e-9)
+                base_f[sel] = smoothstep((t-cf['base'][0])/(cf['base'][1]-cf['base'][0]))
+            cup_new = ear_w*front_f*smoothstep((rd-cf['rim'][0])/(cf['rim'][1]-cf['rim'][0]))*base_f
+            cup_mask = np.clip(edge_smooth(cup_new, edges, n, cf.get('smooth', 3)), 0, 1)
+            print('cup front: vertices over .5', int((cup_mask > 0.5).sum()))
         cc = gcfg['cup']
         if 'cupPale' in gcfg:  # a soft tint across the cup rather than a solid chalk-white patch
             pale = pale*(1-cup_mask)+cup_mask*np.minimum(pale, gcfg['cupPale'])

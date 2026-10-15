@@ -455,6 +455,13 @@
     "jitter": 0.012,
     "jitterScale": 220.0,
     "cupGain": 2.0,
+    "cupFront": {
+      "note": "the blue cup is the whole front face of the ear to its tip, less a white band along the rim and a white fade at the base (fur step 10c); facing on -normal y, rim and base as [start, full] (rim in world units of edge-path distance from where the faces meet, base as the fraction of the distance from the ear root)",
+      "facing": [-0.2, 0.05],
+      "rim": [0.006, 0.014],
+      "base": [0.05, 0.15],
+      "smooth": 3
+    },
     "cup": {
       "length": 0.01,
       "curl": 0.03,
