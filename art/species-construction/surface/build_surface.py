@@ -410,7 +410,19 @@ def compute_attributes(skin, cfg, species):
             length *= cfg['keepOut'].get('lengthFloor', 1.0)+(1.0-cfg['keepOut'].get('lengthFloor', 1.0))*ramp
         print(f'keepout {key}: {len(pts)} points, {len(cand)} skin vertices touched')
 
-    pad = ((co[:, 2] < floor+cfg['pads']['belowFloor']) & (nrm[:, 2] < cfg['pads']['normalZ'])).astype(float)
+    pc = cfg['pads']
+    pad = ((co[:, 2] < floor+pc['belowFloor']) & (nrm[:, 2] < pc['normalZ'])).astype(float)
+    if 'bump' in pc:  # only the modeled pads: skin raised above a smoothed copy of itself (a pad is a small bump)
+        bc = pc['bump']
+        co_s = np.stack([edge_smooth(co[:, k].copy(), edges, n, bc['smooth']) for k in range(3)], 1)
+        disp = np.sum((co-co_s)*nrm, axis=1)
+        reg = pad > 0
+        print('pad bump: region', int(reg.sum()), 'offset pct', np.round(np.percentile(disp[reg], [5, 25, 50, 75, 90, 95, 99])*1000, 3), '(x1000)',
+              'height pct', np.round(np.percentile(co[reg, 2]-floor, [1, 5, 25, 50, 75, 95])*1000, 2), '(x1000)')
+        for hh in (0.004, 0.008, 0.012, 0.016, 0.02):
+            print('  below', hh, int((reg & (co[:, 2] < floor+hh)).sum()))
+        pad = pad*smoothstep((disp-bc['min'])/bc['span'])
+        write_attribute(me, 'padbump', np.clip(disp*bc.get('debugGain', 100.0)+0.5, 0, 1))
     pad = edge_smooth(pad, edges, n, 2)
     pad = np.clip(pad*1.5, 0, 1)
     density *= 1.0-pad

@@ -304,7 +304,8 @@
     "lengthFloor": 0.5
   },
   "pads": {
-    "belowFloor": 0.03,
+    "note": "dark leather only on the modeled pads, which are the skin that meets the floor (the sole around them sits about .008 higher); fur step 7",
+    "belowFloor": 0.0065,
     "normalZ": -0.25
   },
   "paleSmoothing": 10,
