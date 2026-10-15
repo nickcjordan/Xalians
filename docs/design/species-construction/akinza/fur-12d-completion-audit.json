@@ -1,0 +1,388 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-12d",
+  "outcome": "Execute widened step 12d: remove the rear-arm chunk and other body fur artifacts, then make chest/armpit/rib fur visibly natural, with held looks preserved.",
+  "authorizedScope": "12d brief plus user-directed addendum; six builds maximum; one active Blender; commit only, no push; Claude reviews afterward.",
+  "workRecord": "docs/design/species-construction/akinza/fur-12d-active-work.md",
+  "evidence": {
+    "brief": {
+      "path": ".codex/audit-state/fur-12d-evidence/12d.md",
+      "sha256": "fd41d3dbe75615522a38352b23873543d79214104f12de20b6619a21c65aacf2",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/12d.md"
+    },
+    "addendum": {
+      "path": ".codex/audit-state/fur-12d-evidence/12d-addendum.md",
+      "sha256": "ff7226708653ebc3e59b0c8970d68390698c13616b618770e3f1c715bea0ed1e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/12d-addendum.md"
+    },
+    "reference": {
+      "path": ".codex/audit-state/fur-12d-evidence/12d-nick-arm-chunk.png",
+      "sha256": "03c47a4501081e8f2cd372e5c3267dcc20ab42806385114d06caefb2c26c4bdf",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/12d-nick-arm-chunk.png"
+    },
+    "work": {
+      "path": "docs/design/species-construction/akinza/fur-12d-active-work.md",
+      "sha256": "d888fdff1e350fe942e9aeb9c584063691145224951356465949fc8a55e2b3d1"
+    },
+    "metrics": {
+      "path": "docs/design/species-construction/akinza/fur-12d-metrics.json",
+      "sha256": "3db707cc2233f67ac5452bfa1dcb561328ed566c837a5f5ca2e5b314462f9b8c"
+    },
+    "settings": {
+      "path": "art/species-construction/surface/akinza-surface.json",
+      "sha256": "c06275302a6a3748d8da32309a09b72156e3ab62135c0747a88328e46b9b1cdb"
+    },
+    "sweepCode": {
+      "path": "art/species-construction/surface/analyze_sweep_12d.py",
+      "sha256": "3e80bae2a309b46f1b39cb0157aede78a9763f0c2cf838539d9d6476b08f5b8f"
+    },
+    "verificationCode": {
+      "path": "art/species-construction/surface/verify_fur_12d.py",
+      "sha256": "f0c7d6da436797e41dca16c5f37fa54bdbce575f1d91485e1d4734179acc20af"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-12d-review.md",
+      "sha256": "43696efea23584251988e1627b67c3ad437d53dcd30b525b4302280bcb668e79"
+    },
+    "solidCode": {
+      "path": "art/species-construction/surface/sweep_obstacles_12d.py",
+      "sha256": "bf905cd8699870778acb3cc1f392bba99ad1916dad50c1bfef31d9132e7ca3e9"
+    },
+    "model": {
+      "path": ".codex/audit-state/fur-12d-evidence/model-surface.blend",
+      "sha256": "6a2213e7fe62b5769d27ca174d4bde7a259c9851eab8b6ee2bfa41b0d76a68e0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/surface.blend"
+    },
+    "protection": {
+      "path": ".codex/audit-state/fur-12d-evidence/protection-saved-protection-check.json",
+      "sha256": "0528d7ef2edf59be739c995c99b013ac47edfd803c1b48411b69c4ec34c0e4c6",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/saved-protection-check.json"
+    },
+    "patch": {
+      "path": ".codex/audit-state/fur-12d-evidence/patch-patch-evidence.npz",
+      "sha256": "93b7d79501c069ce7d53dcd33f10a132cc33988e18a22937473d67e24ce01f4f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/patch-evidence.npz"
+    },
+    "beforeSolid": {
+      "path": ".codex/audit-state/fur-12d-evidence/beforeSolid-obstacle-evidence.npz",
+      "sha256": "868ffe08786adf711d31e2dd89fe726bc16c756cc5f05f435df09274c39540ce",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-before/obstacle-evidence.npz"
+    },
+    "afterSolid": {
+      "path": ".codex/audit-state/fur-12d-evidence/afterSolid-obstacle-evidence.npz",
+      "sha256": "fffaf3b9a7afa86a928829bee264d943cf91ebaec9bebd20725daa9b4ebabe18",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/r/obstacle-evidence.npz"
+    },
+    "eyeDiagnostic": {
+      "path": ".codex/audit-state/fur-12d-evidence/eyeDiagnostic-eye-winding-diagnostic.json",
+      "sha256": "0fd2bb05a36640a0741194d079fc021537302ad487b0d72ccec0ec6b9af7e0f6",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/eye-winding-diagnostic.json"
+    },
+    "beforeevidence.npz": {
+      "path": ".codex/audit-state/fur-12d-evidence/beforeevidence.npz-evidence.npz",
+      "sha256": "33315f25dff07628514848a5e25f42efe6d618f86bcf07d5be27dc55de26d719",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-before/evidence.npz"
+    },
+    "beforecollision-evidence.npz": {
+      "path": ".codex/audit-state/fur-12d-evidence/beforecollision-evidence.npz-collision-evidence.npz",
+      "sha256": "0e84acfa6b3423c2262b1cc16d1b0fe46ec207454b1f610d43dfb6d7c82bb7c3",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-before/collision-evidence.npz"
+    },
+    "beforesweep-flags.npz": {
+      "path": ".codex/audit-state/fur-12d-evidence/beforesweep-flags.npz-sweep-flags.npz",
+      "sha256": "40ec2ef27309177dd2e016cebb9a2fc0f0e62171c1275a9e25e161d11d24dbd2",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-before/sweep-flags.npz"
+    },
+    "afterevidence.npz": {
+      "path": ".codex/audit-state/fur-12d-evidence/afterevidence.npz-evidence.npz",
+      "sha256": "df1f53351a316859a86931538faa9b33b2721396665d22685e4f6bc78001f5fd",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/r/evidence.npz"
+    },
+    "aftercollision-evidence.npz": {
+      "path": ".codex/audit-state/fur-12d-evidence/aftercollision-evidence.npz-collision-evidence.npz",
+      "sha256": "acb4787ecdfcb13f0c2b594324b2ceb0e0f13703c93e10cec5cfca25db6185f6",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/r/collision-evidence.npz"
+    },
+    "aftersweep-flags.npz": {
+      "path": ".codex/audit-state/fur-12d-evidence/aftersweep-flags.npz-sweep-flags.npz",
+      "sha256": "be327cabfd52914437958e2f76b26bf3a217dd15729cbd1c4a5478f4b9a26c20",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12d/r/sweep-flags.npz"
+    },
+    "patchCode": {
+      "path": "art/species-construction/surface/refine_chest_12d.py",
+      "sha256": "d933cfde3a676a5c5740330cb86a3acbdea4c013c7ae61d9db79e2b3c5608388"
+    },
+    "chest-front": {
+      "path": ".codex/audit-state/fur-12d-evidence/chest-front-12d-chest-front.png",
+      "sha256": "4deefa8199376fe3e2b95ad37e70b4814a46de18021fd19ccbd200f6dcafe632",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-chest-front.png"
+    },
+    "chest-threequarter": {
+      "path": ".codex/audit-state/fur-12d-evidence/chest-threequarter-12d-chest-threequarter.png",
+      "sha256": "b419f2374e444cf4b4edc8164dbceac174b32d3b404008a532c8a9fd05801ccb",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-chest-threequarter.png"
+    },
+    "chest-underarm": {
+      "path": ".codex/audit-state/fur-12d-evidence/chest-underarm-12d-chest-underarm.png",
+      "sha256": "6082ced8973f3399651a313c45ce5660c111dbde1ebf4a0debaecc5323f77fd1",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-chest-underarm.png"
+    },
+    "worst-spot": {
+      "path": ".codex/audit-state/fur-12d-evidence/worst-spot-12d-worst-spot.png",
+      "sha256": "ad5b396f1947c430a78c709a042c2cae96797905f7ed743d6e4584021dd3e40c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-worst-spot.png"
+    },
+    "body-backq": {
+      "path": ".codex/audit-state/fur-12d-evidence/body-backq-12d-body-backq.png",
+      "sha256": "34a04c291dd6dfe0b6d44257aca6f510469fec1e49c5b7f4bdb735087cad7e68",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-body-backq.png"
+    },
+    "body-front": {
+      "path": ".codex/audit-state/fur-12d-evidence/body-front-12d-body-front.png",
+      "sha256": "33c7e64c87df3337fafc8a403effafd0fde8d437c5995eb42ee89fb468ceb1d5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-body-front.png"
+    },
+    "artifact-overlay": {
+      "path": ".codex/audit-state/fur-12d-evidence/artifact-overlay-12d-artifact-overlay.png",
+      "sha256": "217e61353ed2b28b0c1c6bcdb7912146d5c6cfd59141d7f18b826860115fc21d",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-artifact-overlay.png"
+    },
+    "held-head-side": {
+      "path": ".codex/audit-state/fur-12d-evidence/held-head-side-12d-held-head-side.png",
+      "sha256": "46670458714f6f03875a275f831e7cc597ff8759892154f064459d026d86dac3",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-held-head-side.png"
+    },
+    "held-ears-front": {
+      "path": ".codex/audit-state/fur-12d-evidence/held-ears-front-12d-held-ears-front.png",
+      "sha256": "21510f848ef2c8f509d2c86aff6669bb17dffcf2e722287b66b2f9bda52a967b",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-held-ears-front.png"
+    },
+    "held-sole": {
+      "path": ".codex/audit-state/fur-12d-evidence/held-sole-12d-held-sole.png",
+      "sha256": "8e1ca7bb089e719174cc55a1d0613f54b11667bfc52d20f4ff98ea385c72acb5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12d-held-sole.png"
+    },
+    "deliveryReceipt": {
+      "path": ".codex/audit-state/fur-12d-evidence/delivery.json",
+      "sha256": "a81e51f82fcfdc39801f7b8e55517a7253e11d601f43ce02e7a908e625f872c9"
+    }
+  },
+  "criteria": [
+    {
+      "id": "artifactSweep",
+      "expectation": "Test every strand for crossings, neighbor length, part transfer and lift; report per-region before/after counts and worst root clusters; fix body artifact clusters.",
+      "status": "pass",
+      "assessment": "All curves swept, body artifact clusters removed; final skin and separate-solid intersections zero. Per-region counts and worst root clusters recorded.",
+      "evidence": [
+        "work",
+        "metrics",
+        "review",
+        "model",
+        "protection",
+        "chest-front",
+        "chest-threequarter",
+        "chest-underarm",
+        "worst-spot",
+        "body-backq",
+        "body-front",
+        "artifact-overlay",
+        "held-head-side",
+        "held-ears-front",
+        "held-sole"
+      ]
+    },
+    {
+      "id": "chest",
+      "expectation": "Chest, ribs and inner arm visibly lie flatter with smooth down/outward flow and soft wavy independent strands; diagnosis numbers and worst-spot crop accompany native-size pairs.",
+      "status": "pass",
+      "assessment": "Three native-size chest pairs and worst crop show shorter independent wavy down/outward paths with no bristled bridge or seam.",
+      "evidence": [
+        "work",
+        "metrics",
+        "review",
+        "model",
+        "protection",
+        "chest-front",
+        "chest-threequarter",
+        "chest-underarm",
+        "worst-spot",
+        "body-backq",
+        "body-front",
+        "artifact-overlay",
+        "held-head-side",
+        "held-ears-front",
+        "held-sole"
+      ]
+    },
+    {
+      "id": "protection",
+      "expectation": "Keep fixed geometry, T7 and stripes; preserve held head/hip direction, ear look, sole look and genuine tail volume except collision repair.",
+      "status": "pass",
+      "assessment": "Saved-file protection passes; held ear/head/sole images remain consistent, and noncolliding genuine tail curves are bit-identical.",
+      "evidence": [
+        "work",
+        "metrics",
+        "review",
+        "model",
+        "protection",
+        "chest-front",
+        "chest-threequarter",
+        "chest-underarm",
+        "worst-spot",
+        "body-backq",
+        "body-front",
+        "artifact-overlay",
+        "held-head-side",
+        "held-ears-front",
+        "held-sole"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Three original chest pairs, worst crop, body backq/front pairs and front/back flag overlays; independent final audit, short logs, explicit-path commit without push, archive superseded source after commit.",
+      "status": "pass",
+      "assessment": "All requested comparisons, independent reviews and short logs delivered; explicit-path step commit created before baseline archive; archive manifest verified; no push. Final audit amended into same step commit.",
+      "evidence": [
+        "work",
+        "metrics",
+        "review",
+        "model",
+        "protection",
+        "chest-front",
+        "chest-threequarter",
+        "chest-underarm",
+        "worst-spot",
+        "body-backq",
+        "body-front",
+        "artifact-overlay",
+        "held-head-side",
+        "held-ears-front",
+        "held-sole",
+        "deliveryReceipt"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "artifactSweep",
+      "status": "resolved",
+      "observation": "Rear arm curtain and back/hip shelves stem from tail settings on body roots.",
+      "resolution": "Tail cutoff proof, zero body regional-length/transfer flags, and native-size back view confirm curtain/shelves removed.",
+      "resolutionEvidence": [
+        "metrics",
+        "review",
+        "protection",
+        "body-backq",
+        "chest-underarm",
+        "held-sole"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "chest",
+      "status": "resolved",
+      "observation": "Baseline inner-arm/rib fringe has long straight lifted hairs.",
+      "resolution": "Chest pairs and crop show soft shorter wavy fur; measured chest median lift falls 9.80 to 1.18 degrees.",
+      "resolutionEvidence": [
+        "metrics",
+        "review",
+        "protection",
+        "body-backq",
+        "chest-underarm",
+        "held-sole"
+      ]
+    },
+    {
+      "id": "F003",
+      "criterion": "artifactSweep",
+      "status": "resolved",
+      "observation": "First build left 168 collision flags and created long foot correction paths; 373 residual repair candidates.",
+      "resolution": "Bounded residual shortening removed all skin/solid crossings and long foot paths; isolated arm advisory improved physically and has no visible spike.",
+      "resolutionEvidence": [
+        "metrics",
+        "review",
+        "protection",
+        "body-backq",
+        "chest-underarm",
+        "held-sole"
+      ]
+    },
+    {
+      "id": "F004",
+      "criterion": "protection",
+      "status": "resolved",
+      "observation": "Global collision corrections moved approved head/ear and sole strands.",
+      "resolution": "Held head, ear and sole native-size pairs reviewed; saved-file protection passes and unaffected genuine tails are unchanged.",
+      "resolutionEvidence": [
+        "metrics",
+        "review",
+        "protection",
+        "body-backq",
+        "chest-underarm",
+        "held-sole"
+      ]
+    },
+    {
+      "id": "F005",
+      "criterion": "artifactSweep",
+      "status": "resolved",
+      "observation": "Initial spatial classifier overwrote lower arms/hands with hips.",
+      "resolution": "Fixed region precedence before first build and recomputed baseline under identical classification for all subsequent sweeps.",
+      "resolutionEvidence": [
+        "sweepCode",
+        "metrics"
+      ]
+    },
+    {
+      "id": "F006",
+      "criterion": "protection",
+      "status": "resolved",
+      "observation": "Initial preservation checker lacked material graph and fur transform comparisons.",
+      "resolution": "Expanded saved-file verification to include material graph values/links and fur transform; first saved result passes.",
+      "resolutionEvidence": [
+        "verificationCode",
+        "work"
+      ]
+    },
+    {
+      "id": "F007",
+      "criterion": "artifactSweep",
+      "status": "resolved",
+      "observation": "Signed nearest-normal and single-direction parity falsely flagged separate-eye/nose/claw penetrations; guarded cull aborted without saving.",
+      "resolution": "Coherently oriented closed-mesh solid-angle winding and segment sweeps verify zero final solid collisions; independent compensated calculation confirms suspect eye points outside.",
+      "resolutionEvidence": [
+        "metrics",
+        "solidCode",
+        "beforeSolid",
+        "afterSolid",
+        "eyeDiagnostic",
+        "review"
+      ]
+    },
+    {
+      "id": "F008",
+      "criterion": "delivery",
+      "status": "resolved",
+      "observation": "Repair script assumed archived baseline remained adjacent to live sweep data.",
+      "resolution": "Added explicit --sweep path; saved-file verifier also accepts an explicit baseline path. Archive hashes will verify unchanged input files.",
+      "resolutionEvidence": [
+        "patchCode",
+        "verificationCode",
+        "work"
+      ]
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent scoped review_12d",
+    "comparison": "All ten native-size comparison images, overlays, complete strand sweeps and saved-file protection inspected.",
+    "regressions": "No substantive new visual defect; held data passes, isolated improved arm advisory documented.",
+    "scopeCheck": "Four of six build invocations, three saves; local fur/source tail mask only. No mesh, lore, platform, or tail-volume expansion.",
+    "sessionId": "akinza-fur-12d",
+    "requestId": "1bd14455-45ab-4c2a-9cbe-d0083ac66822",
+    "performedAt": "2026-10-15T18:39:44.916333+00:00"
+  },
+  "stop": {
+    "kind": "complete"
+  }
+}
