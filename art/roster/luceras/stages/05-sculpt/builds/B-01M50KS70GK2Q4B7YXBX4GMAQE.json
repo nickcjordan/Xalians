@@ -13,12 +13,95 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "paws.blend",
+      "hash": "a6eeb7866365eeb3e52f82620531c47ff8175b9bdf7ba5eef3b21d031bde5c0c"
+    },
+    {
+      "name": "report.json",
+      "hash": "0f33f38a41b7b4f8ae7ca21bf107dedec23b285eecd3a490cfbc56de04130152"
+    },
+    {
+      "name": "triple_pass5_fore_paws_front.png",
+      "hash": "a1d460ab1aa527cb06918b44571ea957d3433bd2f1739b0405ff555784197248"
+    },
+    {
+      "name": "triple_pass5_fore_paw_side.png",
+      "hash": "145851689c0f33140bb9922d3eab692e0507b4be1a9881544c66e793c0c8b616"
+    },
+    {
+      "name": "triple_pass5_full_front.png",
+      "hash": "98e8056561d6b0183ab6d7cd1e4b851add848333d9a8a4a4ba87e28a29075520"
+    },
+    {
+      "name": "triple_pass5_full_side.png",
+      "hash": "1af4862a0042b622976bcf21f77fbad8f20c061cdb85803958b9f7ec3c3486d6"
+    },
+    {
+      "name": "triple_pass5_full_three_quarter.png",
+      "hash": "b70785bfddb071e3cd0d6d5f22d11727b2057010de5b5d649948ea47fe14aaa8"
+    },
+    {
+      "name": "triple_pass5_hind_paw_side.png",
+      "hash": "28803a35551866d336d66b78e76b92ffc1c4f4c9cb4844c13ca594b98895989c"
+    },
+    {
+      "name": "triple_pass5_hind_paw_three_quarter.png",
+      "hash": "8cac4f6a070664cccdd8940aa07308985dd79cc5dfa811af78ca43c371916f49"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "paws.blend",
+        "hash": "a6eeb7866365eeb3e52f82620531c47ff8175b9bdf7ba5eef3b21d031bde5c0c"
+      },
+      {
+        "name": "report.json",
+        "hash": "0f33f38a41b7b4f8ae7ca21bf107dedec23b285eecd3a490cfbc56de04130152"
+      },
+      {
+        "name": "triple_pass5_fore_paws_front.png",
+        "hash": "a1d460ab1aa527cb06918b44571ea957d3433bd2f1739b0405ff555784197248"
+      },
+      {
+        "name": "triple_pass5_fore_paw_side.png",
+        "hash": "145851689c0f33140bb9922d3eab692e0507b4be1a9881544c66e793c0c8b616"
+      },
+      {
+        "name": "triple_pass5_full_front.png",
+        "hash": "98e8056561d6b0183ab6d7cd1e4b851add848333d9a8a4a4ba87e28a29075520"
+      },
+      {
+        "name": "triple_pass5_full_side.png",
+        "hash": "1af4862a0042b622976bcf21f77fbad8f20c061cdb85803958b9f7ec3c3486d6"
+      },
+      {
+        "name": "triple_pass5_full_three_quarter.png",
+        "hash": "b70785bfddb071e3cd0d6d5f22d11727b2057010de5b5d649948ea47fe14aaa8"
+      },
+      {
+        "name": "triple_pass5_hind_paw_side.png",
+        "hash": "28803a35551866d336d66b78e76b92ffc1c4f4c9cb4844c13ca594b98895989c"
+      },
+      {
+        "name": "triple_pass5_hind_paw_three_quarter.png",
+        "hash": "8cac4f6a070664cccdd8940aa07308985dd79cc5dfa811af78ca43c371916f49"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 17.5,
+    "codexTokens": "107,962",
+    "note": "Generated paws restored exactly on all four feet (max distance 0 against the generated source, 20,876 vertices), hind join blended over 42 mm from 0.139 m; critic read: identical to the generated paws in the side and three-quarter triples, no visible band. Base for the detail pass B-23xc."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T20:24:13Z",
-  "briefSha256": "4bcb9afb043d78d9f6a9d646b68f860e595496c994f1847cbe7f6770fe592b47"
+  "briefSha256": "4bcb9afb043d78d9f6a9d646b68f860e595496c994f1847cbe7f6770fe592b47",
+  "checks": [],
+  "reportedAt": "2026-10-15T20:42:18Z"
 }
