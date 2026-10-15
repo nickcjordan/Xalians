@@ -1,0 +1,15 @@
+{
+  "note": "Step 12b2 local patch on the evaluated s12c-fix coat. Thickness cutoff moved into the root fold, with skull skin at .1 or thicker always excluded.",
+  "sheetThickness": [0.065, 0.095],
+  "base": [0.0, 0.04],
+  "rootZone": {"xFade": [0.22, 0.26], "zFade": [0.77, 0.82]},
+  "furnishings": {
+    "thickness": [0.045, 0.095],
+    "height": [0.565, 0.77],
+    "fraction": 0.18,
+    "length": [0.035, 0.065],
+    "radius": 0.00017,
+    "direction": [0.7, -0.06, 0.72],
+    "lift": 0.26
+  }
+}

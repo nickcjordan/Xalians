@@ -1,0 +1,220 @@
+{
+  "equal": true,
+  "final": {
+    "unselectedFurAttributes": {
+      "position": "c96721a6a1b0a1f90e12096aec8d47d8fb8a22b3f4e276bab6ed77a50797de58",
+      "id": "a9c7fff2ba5ccc7096b60138f45d20462d30154909573031cb37df58649bfa8b",
+      "up": "4a85d30d57856e5f1c48ac206d91ff1ad8b103ce92ebb02b2fed7c9da1d8918c",
+      "gid": "58068eb1560c45756129cb57e3bc4c65754251250d08712b5ddf4d59d804e9ab",
+      "Neck fusion": "7e8f50f4f1a292d64787ff4b4b7074f419fc36cf11f3ec059ebfda23524770a4",
+      ".select_vert": "a2a008fc3d39b47d0e89a88a742889935c5cfdea628917895aedf2c06e687de3",
+      ".select_poly": "0ce74126e9198ecdb8f66f7ae567e503520b5ee9fb59bcc21e1ea4d8c36ca5cd",
+      "root_bridge": "be254b3a74291f46f8d9c3d51728e709ff03f968ed357d36a6f2e757bbcb7eda",
+      "comb_flow": "764ea06524024ad114242e8a435119b2d9179980aacd510b662a7b0ac7af71f2",
+      "tail_root_flow": "f2f9e95ed1f258be1640d0425f890ff4865e9885a71e57920b658e8e2f3216e0",
+      "tail_tube": "1281fac499e808d5386646cde295b549adcf758189b703351b2c7661c4a90e80",
+      "eyed": "57b8de510f9233e1882c49a7b1c50541ec1c066b80ecd6b8a31eb9c94b15d63f",
+      "kod_eyes": "57b8de510f9233e1882c49a7b1c50541ec1c066b80ecd6b8a31eb9c94b15d63f",
+      "kod_nose": "f70c0d8b74b8524f85aaaaee40e47dcc37162c7e9693951dfebf7f2dd66552ea",
+      "padd": "bc1c49e7236405f959cb70142690ddb666c2952b17a340eaef5b8c4846a5fb4a",
+      "solef": "fe9bae17d0f4944b81398e818650725f94ddeeb97b0759164469208c7c508b08",
+      "fur_guided": "2d4c28be1537d31cbe1b1e8ecdc99cb86be69f753d449868262626bfd801d4db",
+      "cupm": "a9fcdde4603eba76a73d91a109d64d793531ec92a7bbf202e11431a96bf60d65",
+      "fur_length": "9fb2e60eeeac2e4ffbb595fe2b6a8b1ef8b09d227c2d0b062ee9d7871cbe19f2",
+      "fur_density": "6fd1128ab82697cd9f296ff2e37b33be14919797989402e88da738ee1f681fc6",
+      "fur_clump": "0236f4d808e68f451a5e4c42cb94eda4adc5282cc75134ae6edb37e4edb3d6ca",
+      "fur_curl": "9d5353114148a43616140eb4d314598a5828dfe6bd4b2929d3bdac5c7a122c9c",
+      "fur_cscale": "0b2b2baf1279b95c4feb5fefcb12a33dcf70cadd02d0cee53e56db21c8c513d8",
+      "fur_lift": "9495c27b904f58c65fb1a5c4eb5b6dc8c61cb49afc2f73a690ab06c219c0fa1d",
+      "fur_droop": "2f83ea55bf85eb4f348a46e0a45293a60d7896cef358747254cb015fdbb4595e",
+      "fur_taper": "f5aeab69c2eff7acff1ea35d7df29ccefe12992948503b13efaa30ffa77d3106",
+      "pale": "65e179f19b4088729310ae31566489fb801cce16b1f04df95cc3fe8fe088c4ba",
+      "rim": "553da3dc3e2e6e51577617b950dd3f636fe35a0e7eac0d8e28a82067b1c3b2c0",
+      "fur_tone": "16395fba6a739ad7f8d40ad1cf24140818f73b3ab851fe9d8eb13639947c946a",
+      "rest": "019cad219762c287fd544903d5f9c64ae38a79fed4395b1593431ea1bdbb2ac9",
+      "under": "47d65ff1297265d80067eb0cc127cb6613b47ff2c1fb4b0fa7cc61b6700ed1f4",
+      "pmask": "f62f92a2fc1fa1a65146314ab639294ca0e989418234a74c22a85ef3f926d755",
+      "dorsal": "c7e9684f8cf46930f94ef0996332dae93d9858f151b873256bdcd5c3bb73f407",
+      "ptail": "586c9ca5e7273cc675e1ecf0f499b5c01ed516706117e5aa4d4ae4b6cd707347",
+      "pmaskw": "a681472f7501f8246156301d6927a4fca02e688207e2af7ab3fe4097d1b38872",
+      "earw": "d422a42dfc2ba93ef484ed5aa6de55c45d3251017b06e2a8f9462e836d2a60d7",
+      "angle": "36ae47b2e5ff79926f26207f91de8a1f8e9188abde27fcdd8debd96f9c19705c",
+      "arc": "c38ff787b1cd72c2a5940fddfcd8194a93eaf1f3f39e4186a4468ca8bc83b6da",
+      "bellyf": "7d7723fb7dfb2abfc9234a682cb5989dea1f3a99d5cf3c6f20a0f0e88a2aba0f",
+      "pmaskt": "51a5a8820d55c87363fc98eb4c5ae5136d0648ef725238b9c919af4d8925d6b4",
+      "angle4": "822bb8a5aac0b428fe6c76d784f5880cd38984c5e1fffb1230052b6cc6e44526",
+      "fielda": "af168eb81145a0471b980289f92c83d7c6bc4d74edb90d1f3c4284e35e33d1f4",
+      "bellyf4": "f721bb1a0a0995a25e540ca17fe6f2455240d585cf2363ff813c218813578613",
+      "sth": "b1bde098827b9f2629d85335fa5743c7a1b2aa44881b1251b5fe2d963b0ce107",
+      "fade": "106f2dec2d18154b80466df227064e228b52fc1b3fb24a5ce578997c2b5737a8",
+      "tailpos": "716677022fb5f170c7eff87069d99e0c2ad7ccfadd2915015a8881deeeace66f",
+      "pad": "c4d48a8f0e01ac74304d00aef6c8703201f12472384c4986dfca4bcf3dc605a9",
+      "comb": "c0222bdbe81e2353dbffc6391ee4835c620a0b8f8e5c7c210c0e574014840681",
+      "root": "019cad219762c287fd544903d5f9c64ae38a79fed4395b1593431ea1bdbb2ac9",
+      "dirv": "5d3e0696c698296e0c7aacdc03cf2fcbab18c3d0c8581576dde08df612ecb537",
+      "combp": "9833dcf06059ae89231e0b43160686e85fd2738e5125b7451a354a970debfa48",
+      "strlen": "a02892e60c38df0ceb4d9b8601543505b75b3e9207c75fc6219e3be6c47a62fe",
+      "nrm": "ca58265c1e81306c2ae3d6246110495705b37b58cae36d7e6eb4cbd70e1d1c9a",
+      "lockc": "038406d88cfab82bd5bb9ae17d7b32d1439bea00390d145ea10c200355b782bf",
+      "radius": "49d5adef904b45b2514964416a0ffb98cb6c8f024b70d2c1442492b42c19c5db"
+    },
+    "meshes": {
+      "akinza_continuous_construction": {
+        "geometry": "d74cf72840c2927db73dff3e3103b6773dfe7eeb05f85f21114c10b5b583e3f5",
+        "materials": [
+          "Continuous construction clay",
+          "Pale inner-ear coat.001"
+        ]
+      },
+      "body_Curved fore claw +1 1": {
+        "geometry": "b63dd866825cb49623caba8a5dd25c1caad53560e702991304d4503e3bc13f55",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved fore claw +1 2": {
+        "geometry": "7bbfd63bf8f527ad4b8bbae16b3adc1058cb6103a1501dc215ab170d6c68a57a",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved fore claw +1 3": {
+        "geometry": "4a39512781d04cb12796f213fb19782af8333815a8f2a68477145812253981f2",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved fore claw +1 4": {
+        "geometry": "6379ebf708cb45c6a014efeccbdd60cf590f7afb0c241cad2d3cbe3c996fd83d",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved fore claw -1 1": {
+        "geometry": "134da4684b210d66264c0a6ffde6534997cbafd9467fc6a8b65a462f9a2e92bb",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved fore claw -1 2": {
+        "geometry": "40ffbe24ce70dcb778f3c56c333e5ee666e9785187e4c39239d0e6c2e21f6b02",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved fore claw -1 3": {
+        "geometry": "faadffe17cc020df52e114955dff567eda9bf78b2b924b0a48796492060e5a3a",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved fore claw -1 4": {
+        "geometry": "5a3accb7504e9ae2f516951d2cd1f5533649dfe8e72225c24a6e7e6bbfef59f5",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved hind claw +1 1": {
+        "geometry": "0203053ce3f87eceb6ef0748969f0c85fdc6d3b1a2e19515b86c7f7b3d64c303",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved hind claw +1 2": {
+        "geometry": "e03249391370d77940cc9aa25ac3bbca4a915e9fe0e33e3a7d69e5decd270a9b",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved hind claw +1 3": {
+        "geometry": "e85f5faeff4cae832c5ef31e2ef8d5069e40ae1f08c71daae1158bddc210696b",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved hind claw +1 4": {
+        "geometry": "1a0a59c52c4cf39597016dedab6573d6ae95e71ce31ad0978803abe5346d33c0",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved hind claw -1 1": {
+        "geometry": "90dafdcdf4389d396fdf8987498e147df1afcb6739eca765ce43f7bbeda69dcd",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved hind claw -1 2": {
+        "geometry": "a93b3487ab03209b8a1e6586667dd667699c4ec28aa84a97781d42dd448e4f78",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved hind claw -1 3": {
+        "geometry": "4428daa896446403f78a6e8fc2b3823db45511f418553c4913c1ea19189d4806",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "body_Curved hind claw -1 4": {
+        "geometry": "649e56ef287d79f1d80e308731bc5aebac5516bccf17238c5f268d9251a7d312",
+        "materials": [
+          "Pale curved claw"
+        ]
+      },
+      "catch light head_iris_and_pupil_-1": {
+        "geometry": "888be41221464b61843d20e1bb5afe1ecb9b8fbf1878998bd5a594a1c167a1ad",
+        "materials": [
+          "Catch light"
+        ]
+      },
+      "catch light head_iris_and_pupil_1": {
+        "geometry": "888be41221464b61843d20e1bb5afe1ecb9b8fbf1878998bd5a594a1c167a1ad",
+        "materials": [
+          "Catch light"
+        ]
+      },
+      "head_closed_mouth_0": {
+        "geometry": "e14cb70fc630fbf12d203084607f4295f5afca3148e1465dd3310c0c6e682f6a",
+        "materials": [
+          "Transplanted closed mouth crease"
+        ]
+      },
+      "head_eye_globe_-1": {
+        "geometry": "d27370767a6901323c4f826056101902ad10135aabe88639be73996cfd575f7f",
+        "materials": [
+          "Ocular white",
+          "Upper emphasized eyelid"
+        ]
+      },
+      "head_eye_globe_1": {
+        "geometry": "f617f8641efcfd55612c49ff9a8895a340719cace9843af0df2fad15e7effcb6",
+        "materials": [
+          "Ocular white",
+          "Upper emphasized eyelid"
+        ]
+      },
+      "head_iris_and_pupil_-1": {
+        "geometry": "704737f6ed910eda9b53ce81bde1b349ea09855e749fd8cb57b95855e761b2ff",
+        "materials": [
+          "Charcoal iris and black pupil"
+        ]
+      },
+      "head_iris_and_pupil_1": {
+        "geometry": "553aad015fef572be7605c567c3ecb8d6d1a419e4da6d887338fee5bef802b39",
+        "materials": [
+          "Charcoal iris and black pupil"
+        ]
+      },
+      "head_nose_finish": {
+        "geometry": "fd38f3e96ad149ec5876771ddeb8c78698a9d85162a47f9732637ca6f0fcc27b",
+        "materials": [
+          "Rounded animal nose"
+        ]
+      }
+    },
+    "furMaterials": [
+      "Akinza hair"
+    ]
+  }
+}

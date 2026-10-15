@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-12b2",
+  "outcome": "Extend lower inner-ear blue to the ear-head crease and add sparse fine white hairs sweeping up and outward over it, with white head skin and all other fur preserved.",
+  "authorizedScope": "Exactly briefs/12b2.md, build on s12c-fix, maximum four tries, three original 12b views, separate explicit-path commit, no push, archive superseded source after committing.",
+  "workRecord": "docs/design/species-construction/akinza/fur-12b2-work.md",
+  "evidence": {
+    "brief": {
+      "path": ".codex/audit-state/fur-12b2-evidence/brief.md",
+      "sha256": "c124dd238535ca7f277436a63cb768592d7764582b4d11868e6909adfe250a42",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/12b2.md"
+    },
+    "reference": {
+      "path": ".codex/audit-state/fur-12b2-evidence/reference.png",
+      "sha256": "4c5b58c22272f2c57e14a0f703effc0d91cfb6dd4e0b9eaecc603d314b482d65",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/12b2-nick-circled.png"
+    },
+    "work": {
+      "path": "docs/design/species-construction/akinza/fur-12b2-work.md",
+      "sha256": "df4b18f2dc00141822c97deca077c22863f788637fa2118d0a1697a5cc633d3d"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-12b2-review.md",
+      "sha256": "77bcd5d78ff69f770db0cecbcd80bee35b9da9623974647c32b39276aa95c23f"
+    },
+    "metrics": {
+      "path": "docs/design/species-construction/akinza/fur-12b2-metrics.json",
+      "sha256": "6c2d52ccd29e655e90388f77bde7ca3cccb6679dd3e703e0083756b95d4df656"
+    },
+    "protection": {
+      "path": "docs/design/species-construction/akinza/fur-12b2-protection.json",
+      "sha256": "7b39db4e9778410f7dcdd67c5e1a6bb98dfe31035970ea3ff4b83e8922624ed9"
+    },
+    "surface": {
+      "path": ".codex/audit-state/fur-12b2-evidence/surface.blend",
+      "sha256": "6b71adcc3d21e72bfe40884200c73ec4c9fb02eb7bd7693e40f9d043fb99861c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12b2/surface.blend"
+    },
+    "patch": {
+      "path": ".codex/audit-state/fur-12b2-evidence/patch.npz",
+      "sha256": "b435a8597b132bf995141a32b147b10036d79566a178b87dc796a8fd2c46eed9",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12b2/patch-evidence.npz"
+    },
+    "builder": {
+      "path": "art/species-construction/surface/refine_ear_root_12b2.py",
+      "sha256": "0943cca7e61ef0177b7a5531f7ecdd4b2238841276ab8f0bf1bbd59edd9f659a"
+    },
+    "settings": {
+      "path": "art/species-construction/surface/akinza-ear-root-12b2.json",
+      "sha256": "78e38ff2a00300d89bf37acf12cf957832e98daf6a36ce5a235da83328fdc284"
+    },
+    "cameras": {
+      "path": "art/species-construction/surface/review_fur_12b2.py",
+      "sha256": "f23652488b00f67bd2d83a1d97564c1027041c63d5a65ab0d5740ced768a1554"
+    },
+    "measurement": {
+      "path": "art/species-construction/surface/measure_fur_12b2.py",
+      "sha256": "d1e724a4763731b6bc2c0a1e13fa8307cd975fb4a14129fa2d7ac3b418e31c7d"
+    },
+    "ears-front": {
+      "path": ".codex/audit-state/fur-12b2-evidence/ears-front.png",
+      "sha256": "7db9a19437bcc22402077f3e34c354c049ec2d252772431b85471cebe2259797",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12b2-ears-front.png"
+    },
+    "head-side": {
+      "path": ".codex/audit-state/fur-12b2-evidence/head-side.png",
+      "sha256": "b0709e8918e7f56e5f1e441da328c8d770b0adcd300a1d1518f0562bccaec9c5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12b2-head-side.png"
+    },
+    "ear-root-close": {
+      "path": ".codex/audit-state/fur-12b2-evidence/ear-root-close.png",
+      "sha256": "76d5af1cfef23737c58b74175089e9e51a43cee6e31053c7c79ea66b1c486637",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/12b2-ear-root-close.png"
+    },
+    "delivery": {
+      "path": ".codex/audit-state/fur-12b2-evidence/delivery.json",
+      "sha256": "f355413ccb5644434dd38e459268bb135bbe2aa5b4a90a892f71e50dccf46a4e"
+    }
+  },
+  "criteria": [
+    {
+      "id": "blue",
+      "expectation": "Blue fills the circled lower inner ear down to the crease, with visible change against s12c-fix.",
+      "status": "pass",
+      "assessment": "All three before/now original-size views inspected against Nick circle by builder and independent reviewer. Blue visibly fills the lower gap including lower lobe to crease; 4391 vertices extended, none removed.",
+      "evidence": [
+        "brief",
+        "reference",
+        "work",
+        "review",
+        "metrics",
+        "protection",
+        "surface",
+        "patch",
+        "builder",
+        "settings",
+        "cameras",
+        "measurement",
+        "ears-front",
+        "head-side",
+        "ear-root-close",
+        "delivery"
+      ]
+    },
+    {
+      "id": "tuft",
+      "expectation": "Fine sparse white furnishings originate along the front inner ear-root edge and sweep upward and outward with blue visible between them.",
+      "status": "pass",
+      "assessment": "195 fine white root furnishing hairs cross upward/outward with visible blue gaps. No solid band or feathers. Minor visible residual: some strands straight/parallel with upward sweep stronger than outward; no substantive blocker identified; no user approval claimed.",
+      "evidence": [
+        "brief",
+        "reference",
+        "work",
+        "review",
+        "metrics",
+        "protection",
+        "surface",
+        "patch",
+        "builder",
+        "settings",
+        "cameras",
+        "measurement",
+        "ears-front",
+        "head-side",
+        "ear-root-close",
+        "delivery"
+      ]
+    },
+    {
+      "id": "protection",
+      "expectation": "Zero tint on head fur within .02/.04/.06 of the ear and .02 of the eyes; geometry and all unselected fur attributes unchanged.",
+      "status": "pass",
+      "assessment": "Saved-file geometry/material slots and untouched fur attribute SHA-256 hashes match. Root/strand topology and all other skin attributes match. Original broad skin tint means/maxima are zero in ear .02/.04/.06 and eye .02 bands; actual anatomical skull-fur means/maxima also zero. 74 unchanged peripheral rim curves with inherited max .05627288 are separately disclosed.",
+      "evidence": [
+        "brief",
+        "reference",
+        "work",
+        "review",
+        "metrics",
+        "protection",
+        "surface",
+        "patch",
+        "builder",
+        "settings",
+        "cameras",
+        "measurement",
+        "ears-front",
+        "head-side",
+        "ear-root-close",
+        "delivery"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Three same-camera before/now pairs inspected full size and independently reviewed, short logs and report, explicit-path step commit without push, superseded source archived after commit.",
+      "status": "pass",
+      "assessment": "All three original 12b-camera before/now pairs inspected full size and independently reviewed. Metrics, preservation hashes, stage/progress logs and work record retained. Explicit-path step commit created, then superseded s12c-fix archived at verified destination. No push. Final Git/report verification accompanies seal.",
+      "evidence": [
+        "brief",
+        "reference",
+        "work",
+        "review",
+        "metrics",
+        "protection",
+        "surface",
+        "patch",
+        "builder",
+        "settings",
+        "cameras",
+        "measurement",
+        "ears-front",
+        "head-side",
+        "ear-root-close",
+        "delivery"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "protection",
+      "status": "resolved",
+      "observation": "Intermediate mask increased blue at upper ear rims beyond step scope.",
+      "nextAction": "None; final local root fade preserves upper/outer ear.",
+      "resolution": "Final root zone restricts extension; upper/outer ear complete-curve max delta 0 and all unselected attributes match the parent.",
+      "resolutionEvidence": [
+        "metrics",
+        "protection",
+        "settings",
+        "review"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "protection",
+      "status": "resolved",
+      "observation": "Added actual-fur assertion misclassified 74 unchanged peripheral ear-rim curves as head via thickness ray misses.",
+      "nextAction": "None; retained broad skin metrics and disclosed anatomical fur selector and inherited rim samples.",
+      "resolution": "Same original broad skin means/maxima remain 0. Actual head-fur samples use prior 12c abs(x)<.17 skull bound and are 0. False samples are unchanged, abs(x)>=.1926415, inherited max .05627288; reviewer agrees this corrects the classifier.",
+      "resolutionEvidence": [
+        "metrics",
+        "protection",
+        "measurement",
+        "review"
+      ]
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent scoped audit_12b2",
+    "comparison": "All three current before/now views and assembled pairs inspected at original size against the brief and circled reference. Changes visibly satisfy blue gap and sparse fine furnishing requirements; straight/parallel hair residual disclosed.",
+    "regressions": "Saved-file geometry/material slots and untouched fur attribute SHA-256 hashes match. Root/strand topology and all other skin attributes match. Original broad skin tint means/maxima are zero in ear .02/.04/.06 and eye .02 bands; actual anatomical skull-fur means/maxima also zero. 74 unchanged peripheral rim curves with inherited max .05627288 are separately disclosed.",
+    "scopeCheck": "Exactly step 12b2. Three of four build invocations, including one failed pre-save invocation; no fourth needed. Geometry/T7/protected fur held. Explicit-path commit followed by source archive; no push. All bound evidence copies verified byte-identical to current source artifacts.",
+    "sessionId": "01a14078-117f-72f0-b243-64609fe20eab",
+    "requestId": "8dea8fd7-67b1-47c5-9512-11f98577c027",
+    "performedAt": "2026-10-15T17:22:45.101675+00:00"
+  },
+  "stop": {
+    "kind": "complete",
+    "reason": "The requested step is visibly implemented, independently inspected and protected-region checks pass. Delivery/archive actions completed; minor fine-hair regularity is disclosed without user approval claims."
+  }
+}
