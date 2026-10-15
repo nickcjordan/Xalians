@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Codex Watch</title>
+<style>
+  :root { --bg:#f4f4f1; --card:#fff; --fg:#1c1d1f; --muted:#62656b; --line:#d9dad6; --run:#1f5fbf; --done:#8a5a00; --bar:#e6e6e2; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#151618; --card:#1e1f22; --fg:#e8e8e6; --muted:#9a9ca1; --line:#2e3034; --run:#6aa4ff; --done:#e0a84a; --bar:#2a2c30; color-scheme: dark; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 16px; }
+  main { max-width: 980px; margin: 0 auto; display: grid; gap: 14px; }
+  header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+  h1 { font-size: 18px; margin: 0; letter-spacing: .02em; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 10px; }
+  .top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+  .title { font-weight: 600; }
+  .state { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border: 2px solid currentColor; }
+  .state.running { color: var(--run); }
+  .state.done { color: var(--done); border-style: dashed; }
+  .nums { display: flex; gap: 22px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+  .num b { display: block; font-size: 26px; line-height: 1.1; }
+  .num span { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .bar { height: 8px; background: var(--bar); position: relative; }
+  .bar i { position: absolute; inset: 0 auto 0 0; background: var(--run); }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 14px; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+  ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+  ol li:last-child { font-weight: 600; }
+  figure { margin: 0; }
+  figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); }
+  figcaption { font-size: 12px; color: var(--muted); margin-top: 4px; word-break: break-all; }
+  details summary { cursor: pointer; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Codex runs</h1>
+    <span class="muted" id="meta">loading</span>
+  </header>
+  <div id="current"></div>
+  <details id="older"><summary>Earlier runs</summary><div id="list" style="display:grid;gap:10px;margin-top:10px"></div></details>
+</main>
+<script>
+const el = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const mins = (m) => m == null ? "-" : (m >= 60 ? `${Math.floor(m / 60)} h ${Math.round(m % 60)} min` : `${Math.round(m)} min`);
+const ago = (ms, now) => { const s = Math.round((now - ms) / 1000); return s < 90 ? `${s} s ago` : `${Math.round(s / 60)} min ago`; };
+
+function card(r, now, full) {
+  const c = el("section", "card");
+  const top = el("div", "top");
+  const t = el("div"); t.append(el("div", "title", r.title), el("div", "muted", `${r.name} / ${r.pass}${r.build ? " / " + r.build : ""}`));
+  const running = !r.done;
+  top.append(t, el("span", "state " + (running ? "running" : "done"), running ? "Running" : (r.report ? "Done, report written" : "Ended")));
+  c.append(top);
+  const nums = el("div", "nums");
+  const n = (v, l) => { const d = el("div", "num"); d.append(el("b", null, v), el("span", null, l)); return d; };
+  nums.append(n(r.iteration ? String(r.iteration) : "-", "iteration"), n(mins(r.elapsedMin), r.cap ? `of ${r.cap} min cap` : "elapsed"),
+              n(ago(r.lastActivity, now), "last activity"));
+  if (r.tokens) nums.append(n(r.tokens, "tokens"));
+  c.append(nums);
+  if (r.cap && running) { const b = el("div", "bar"); const i = el("i"); i.style.width = Math.min(100, 100 * r.elapsedMin / r.cap) + "%"; b.append(i); c.append(b); }
+  if (!full) return c;
+  const g = el("div", "grid");
+  const left = el("div");
+  left.append(el("div", "muted", "What Codex says it is doing (latest last)"));
+  const ol = el("ol"); for (const m of r.messages) ol.append(el("li", null, m)); left.append(ol);
+  g.append(left);
+  if (r.image) {
+    const f = el("figure"); const img = el("img"); img.alt = "Latest render"; img.loading = "lazy";
+    img.src = `/img?p=${encodeURIComponent(r.image)}&t=${Math.round(r.imageTime)}`;
+    f.append(img, el("figcaption", null, `Latest image: ${r.image.split(/[\\/]/).pop()}, ${ago(r.imageTime, now)}`));
+    g.append(f);
+  }
+  c.append(g);
+  return c;
+}
+
+let lastJson = "";
+async function tick() {
+  try {
+    const s = await (await fetch("/api/status", { cache: "no-store" })).json();
+    const now = s.now;
+    const lock = s.locks.length ? s.locks.map((l) => `${l.cls}: ${l.owner || "?"}`).join(", ") : "machine idle";
+    document.getElementById("meta").textContent = `updated ${new Date(now).toLocaleTimeString()} · ${lock}`;
+    const key = JSON.stringify(s.runs);
+    if (key === lastJson) return;
+    lastJson = key;
+    const cur = document.getElementById("current"); cur.replaceChildren();
+    const list = document.getElementById("list"); list.replaceChildren();
+    s.runs.forEach((r, i) => (i === 0 ? cur : list).append(card(r, now, i === 0)));
+    document.getElementById("older").hidden = s.runs.length < 2;
+  } catch (e) { document.getElementById("meta").textContent = "watcher not reachable"; }
+}
+tick(); setInterval(tick, 10000);
+</script>
+</body>
+</html>

@@ -87,3 +87,7 @@ Negative tests run by hand on copies: a tampered manifest (wrong triangle count,
 ## KTX2
 
 KTX2 (etc1s) needs KTX-Software's `toktx` on PATH. It is a free download but a system install, so it was not installed here. To enable it: install KTX-Software v4.x from https://github.com/KhronosGroup/KTX-Software/releases (the Windows installer adds `toktx.exe` to PATH), open a new shell, check `toktx --version`, and run the chain again. `write_manifest.mjs` then runs `gltf-transform etc1s --quality 128` before meshopt, `textureBytes` is measured from the KTX2 image, and the viewer's KTX2Loader decodes it. The validator would also need a check that the glb declares `KHR_texture_basisu` (listed as "not checked yet").
+
+## Watching Codex runs
+
+`node art/pipeline/watch/watch.mjs` serves a small page at http://localhost:4791 that follows every run under `C:\dev\art-data\pipeline\codex-stream`: the iteration number, elapsed time against the brief's cap, Codex's own last three status messages from its log, the newest full-size render, and who holds the Blender or GPU slot. It refreshes every 10 seconds and reads only files the runs already write; `--lan` serves it to a phone on the same network. Briefs keep it working by naming intermediate files `iter<N>_...` and stating the cap as "Cap N minutes".
