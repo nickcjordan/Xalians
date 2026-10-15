@@ -95,10 +95,15 @@ function runInfo(runDir) {
   const pass = log.f.replace(/-codex\.log$/, "");
   const passDir = path.join(runDir, pass);
   const brief = (read(path.join(runDir, "BRIEF.md")) || "").toString();
-  const cap = Number((/Cap (\d+) minutes/i.exec(brief) || /after (\d+) minutes of wall time/i.exec(brief) || [])[1]) || null;
-  const build = (/\(build (B-[a-z0-9]{4})\)/.exec(brief) || /Codex stream build id: (B-[a-z0-9]{4})/.exec(brief)
-    || /\b(B-[a-z0-9]{4})\b/.exec(brief) || [])[1] || null;
-  const title = ((/^# (.+)$/m.exec(brief) || [])[1] || name).replace(/\s*\(build B-[a-z0-9]{4}\)/, "");
+  // A follow-up pass carries its own addendum (PASS2.md for pass2); its cap, build id and heading win.
+  const addendum = (read(path.join(runDir, pass.toUpperCase() + ".md")) || "").toString();
+  const capOf = (t) => Number((/Cap (\d+) minutes/i.exec(t) || /after (\d+) minutes of wall time/i.exec(t) || [])[1]) || null;
+  const buildOf = (t) => (/\(build (B-[a-z0-9]{4})\)/.exec(t) || /Codex stream build id: (B-[a-z0-9]{4})/.exec(t)
+    || /\b(B-[a-z0-9]{4})\b/.exec(t) || [])[1] || null;
+  const cap = capOf(addendum) || capOf(brief);
+  const build = buildOf(addendum) || buildOf(brief);
+  const head = (t) => ((/^# (.+)$/m.exec(t) || [])[1] || "").replace(/\s*\(build B-[a-z0-9]{4}\)/, "");
+  const title = [head(brief) || name, head(addendum)].filter(Boolean).join(" / ");
   const launch = stat(path.join(runDir, `${pass}-launch.log`)) || log.st;
   const started = Math.min(launch.birthtimeMs || launch.ctimeMs, log.st.birthtimeMs || log.st.ctimeMs);
   const wallFile = read(path.join(runDir, `${pass}-wall.txt`));

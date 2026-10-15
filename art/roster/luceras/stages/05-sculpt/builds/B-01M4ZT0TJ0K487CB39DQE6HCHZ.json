@@ -13,12 +13,237 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "hindlegs.blend",
+      "hash": "0fffa66c7806c08ec385251af235505d224c2e8305b09ce7804850d9f0fab507"
+    },
+    {
+      "name": "hindlegs.glb",
+      "hash": "8355e30f4aa4cd053bf1e0320c40ba7407f83ef794adda485098cac84b0d5bd0"
+    },
+    {
+      "name": "hindlegs_part.glb",
+      "hash": "473aaf726cac0208383658d614662faebb13ffcd6a274428fb092c0d2cef9b6c"
+    },
+    {
+      "name": "composite_leg_side_vs_clay.png",
+      "hash": "07dde72cb32cde7187cdc94b08b703f80a162e3295fcc0de9c7309a593d222c1"
+    },
+    {
+      "name": "composite_leg_front_three_quarter_vs_clay.png",
+      "hash": "7dff6a277870618bdd7fa975031db8c02017d9781270b4c346cc3ecebf05f3ea"
+    },
+    {
+      "name": "composite_leg_three_quarter_rear_vs_clay.png",
+      "hash": "35fcc4a20ed728fad7db9b5e647cec808700f5f2d55ce62a0ea06901f30f71ff"
+    },
+    {
+      "name": "composite_leg_rear_vs_clay.png",
+      "hash": "9350d6bea2d555654408777291d98b774522afc6e407e6db956700402493f65e"
+    },
+    {
+      "name": "composite_full_side_vs_furred.png",
+      "hash": "af49a4585504d587097297ea79489af6d3a196bb40c660e69a14aa8b0edea685"
+    },
+    {
+      "name": "progress.png",
+      "hash": "d72541ae7d4526e708c2d709c53a0209c1daed06033f75e920c9dc410987ddda"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "3b0a260dfcdd2999bd257bcad202f0ac21518863e17f4274b100735219aa1833"
+    },
+    {
+      "name": "report.json",
+      "hash": "2426b2251276c33e3deb014d687e00943db5fafb1b9857cfff1639a11cbabf99"
+    },
+    {
+      "name": "iter_notes.json",
+      "hash": "0d30186e0805ad037d221456407bbcfdff367fab1f3e30f316ff15579bd50855"
+    },
+    {
+      "name": "renders/final_sprite_side_192.png",
+      "hash": "7b5761b8ce4544e2f3da4ce4e045d12653df226d89fa3384930a7f6923604070"
+    },
+    {
+      "name": "renders/sprite_side_192.png",
+      "hash": "0a658755fc7b46105a9c90c635f5f1b6b9286c0d9192ba1636a14ae02a57843f"
+    },
+    {
+      "name": "build_hindlegs.py",
+      "hash": "9b4107f1115c7b5edbc82402b27f82ad68c34ec85097a65938befe4fdf0393b4"
+    },
+    {
+      "name": "legcam.py",
+      "hash": "af731f0330cc0603d6acf526ed92619800cc6ed0ee6c0b3ce7451625c739a99d"
+    },
+    {
+      "name": "run_hindlegs.sh",
+      "hash": "58afb0d01e286e0487bf032ad358d46c8cea7d1bcb18823f7e564ffc7054d4ac"
+    },
+    {
+      "name": "pass1-codex.log",
+      "hash": "5e642382d61f518148dbee6efe9ead4d2191815e566c07acc9553ee867d37043"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "hindlegs.blend",
+        "hash": "0fffa66c7806c08ec385251af235505d224c2e8305b09ce7804850d9f0fab507"
+      },
+      {
+        "name": "hindlegs.glb",
+        "hash": "8355e30f4aa4cd053bf1e0320c40ba7407f83ef794adda485098cac84b0d5bd0"
+      },
+      {
+        "name": "hindlegs_part.glb",
+        "hash": "473aaf726cac0208383658d614662faebb13ffcd6a274428fb092c0d2cef9b6c"
+      },
+      {
+        "name": "composite_leg_side_vs_clay.png",
+        "hash": "07dde72cb32cde7187cdc94b08b703f80a162e3295fcc0de9c7309a593d222c1"
+      },
+      {
+        "name": "composite_leg_front_three_quarter_vs_clay.png",
+        "hash": "7dff6a277870618bdd7fa975031db8c02017d9781270b4c346cc3ecebf05f3ea"
+      },
+      {
+        "name": "composite_leg_three_quarter_rear_vs_clay.png",
+        "hash": "35fcc4a20ed728fad7db9b5e647cec808700f5f2d55ce62a0ea06901f30f71ff"
+      },
+      {
+        "name": "composite_leg_rear_vs_clay.png",
+        "hash": "9350d6bea2d555654408777291d98b774522afc6e407e6db956700402493f65e"
+      },
+      {
+        "name": "composite_full_side_vs_furred.png",
+        "hash": "af49a4585504d587097297ea79489af6d3a196bb40c660e69a14aa8b0edea685"
+      },
+      {
+        "name": "progress.png",
+        "hash": "d72541ae7d4526e708c2d709c53a0209c1daed06033f75e920c9dc410987ddda"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "3b0a260dfcdd2999bd257bcad202f0ac21518863e17f4274b100735219aa1833"
+      },
+      {
+        "name": "report.json",
+        "hash": "2426b2251276c33e3deb014d687e00943db5fafb1b9857cfff1639a11cbabf99"
+      },
+      {
+        "name": "iter_notes.json",
+        "hash": "0d30186e0805ad037d221456407bbcfdff367fab1f3e30f316ff15579bd50855"
+      },
+      {
+        "name": "renders/final_sprite_side_192.png",
+        "hash": "7b5761b8ce4544e2f3da4ce4e045d12653df226d89fa3384930a7f6923604070"
+      },
+      {
+        "name": "renders/sprite_side_192.png",
+        "hash": "0a658755fc7b46105a9c90c635f5f1b6b9286c0d9192ba1636a14ae02a57843f"
+      },
+      {
+        "name": "build_hindlegs.py",
+        "hash": "9b4107f1115c7b5edbc82402b27f82ad68c34ec85097a65938befe4fdf0393b4"
+      },
+      {
+        "name": "legcam.py",
+        "hash": "af731f0330cc0603d6acf526ed92619800cc6ed0ee6c0b3ce7451625c739a99d"
+      },
+      {
+        "name": "run_hindlegs.sh",
+        "hash": "58afb0d01e286e0487bf032ad358d46c8cea7d1bcb18823f7e564ffc7054d4ac"
+      },
+      {
+        "name": "pass1-codex.log",
+        "hash": "5e642382d61f518148dbee6efe9ead4d2191815e566c07acc9553ee867d37043"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 72.9,
+    "blenderSeconds": 813.685,
+    "codexTokens": "289,605",
+    "iterations": 23,
+    "method": [
+      "Copied the content-addressed inputs to named files and inspected the approved base. Confirmed one body and no head_part object.",
+      "Applied finite-support numpy and sculptkit smoothing, bulges, grooves and ridges to the reconstructed left thigh, stifle, gaskin, hock and metatarsus. Preserved the original ankle and heel surface. No primitive replacement of the soft leg.",
+      "Raised the belly underline within the declared y 0.075 to 0.335 m, z 0.335 to 0.535 m band, excluding tail and foreleg weights as detailed in measurements.json.",
+      "Authored four toe lofts, rounded knuckles, plantar pads and curved rigid claws. Locally voxel-unioned the paw at 1.8 mm, reduced local density, joined it to the reconstructed cuff, and retained protected body coordinates exactly.",
+      "Transferred skin weights from nearest base triangles, normalized to the four largest influences, and bone-parented claws to each side leg_h*_03.",
+      "Reflected the left hind patch exactly across X=0 and joined it through a bounded attachment collar. The free leg mirrors exactly; retained asymmetric trunk attachment accounts for the reported band residual.",
+      "Rendered and reviewed repeated 1024 px leg views against clay crops and 192 px sprites. Updated geometry through 24 candidates, including the final heel narrowing. Independent visual audit was read-only.",
+      "Rendered final CPU Cycles leg and full-body cameras, saved and reopened the blend, exported whole and regional GLBs, checked mesh and rig inventories, and assembled review composites."
+    ],
+    "remains": [
+      "Moderate heel bulk in the rear and rear-three-quarter cameras at 1024 px. It is rounder than earlier passes but less flowing than the clay.",
+      "The side paw has a more uniform low profile and less rounded knuckle rhythm than the clay.",
+      "The retained asymmetric trunk attachment produces a maximum mirrored-surface distance of 4.418 mm when the attachment band is included. The free leg itself has zero measured asymmetry.",
+      "No supplied rear clay view exists. Rear composites explicitly use the closest supplied reference and label that limitation."
+    ],
+    "holds": [
+      {
+        "hold": "Joint positions and 40-joint rig",
+        "status": "respected",
+        "evidence": "Saved-file audit: maximum head or tail joint displacement 0 m."
+      },
+      {
+        "hold": "Thigh, gaskin, metatarsus lengths and stance within 5 percent",
+        "status": "respected",
+        "evidence": {
+          "rigLengthRatios": {
+            "leg_hl_01": 1.0,
+            "leg_hl_02": 1.0,
+            "leg_hl_03": 1.0
+          },
+          "surfaceProxyRatios": {
+            "metatarsus": 0.9609828874514135,
+            "pawCenterStance": 0.9864254480749532
+          },
+          "note": "The third rig segment includes the paw; the separate surface metatarsus proxy is also measured."
+        }
+      },
+      {
+        "hold": "Head, neck, trunk outside band, forelegs and tail unmoved",
+        "status": "respected",
+        "evidence": "All 101941 protected source vertex coordinates retained exactly, max and mean displacement 0 m. Six original rigid meshes also have zero vertex displacement."
+      }
+    ],
+    "checks": [
+      {
+        "title": "Hind legs, Codex pass 1",
+        "question": "Do the hind legs read as the clay?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "07dde72cb32cde7187cdc94b08b703f80a162e3295fcc0de9c7309a593d222c1",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "7b5761b8ce4544e2f3da4ce4e045d12653df226d89fa3384930a7f6923604070",
+        "recommended": "Critic read: thigh, rump mass, stifle, gaskin and hock read as the clay; belly tuck 0.391 m as asked. The paw does not: it reads as a flat slipper with short toe nubs, tiny claws and a bulbous heel. One defect to pass 2."
+      }
+    ],
+    "newDefects": [
+      "hind paw reads as a slipper (see defect record)"
+    ],
+    "note": "Codex pass 1, first part as sole builder: 72.9 min of 75, 23 iterations with written self-review, every protected vertex exactly retained (101,941), belly tuck 0.391 m, 0 non-manifold, 4 influences, free-leg asymmetry 0, tooling written into art/pipeline/sculpt as asked, Cycles and the composite layout followed. The self-review section worked: its own remains list names the heel and paw. Critic read: thigh to hock pass; paw fails."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T12:54:00Z",
-  "briefSha256": "79ddd0fcb2a05f16389f9592da0ed467e7d742d507818c09c8b6a64cf40924b4"
+  "briefSha256": "79ddd0fcb2a05f16389f9592da0ed467e7d742d507818c09c8b6a64cf40924b4",
+  "checks": [
+    {
+      "title": "Hind legs, Codex pass 1",
+      "question": "Do the hind legs read as the clay?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "07dde72cb32cde7187cdc94b08b703f80a162e3295fcc0de9c7309a593d222c1",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "7b5761b8ce4544e2f3da4ce4e045d12653df226d89fa3384930a7f6923604070",
+      "recommended": "Critic read: thigh, rump mass, stifle, gaskin and hock read as the clay; belly tuck 0.391 m as asked. The paw does not: it reads as a flat slipper with short toe nubs, tiny claws and a bulbous heel. One defect to pass 2."
+    }
+  ],
+  "reportedAt": "2026-10-15T14:07:53Z"
 }

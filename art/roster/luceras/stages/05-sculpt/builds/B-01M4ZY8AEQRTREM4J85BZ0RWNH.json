@@ -1,0 +1,24 @@
+{
+  "id": "B-01M4ZY8AEQRTREM4J85BZ0RWNH",
+  "alias": "kgav",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 3 pass 2: fix the hind paw (defect D-g4sb) on pass 1 B-xcbx, Codex sole builder",
+  "scope": "hind paws",
+  "defect": "D-01M4ZY84779XM0J6VXDET9TVCD",
+  "holds": [],
+  "inputs": [
+    {
+      "path": "0fffa66c7806c08ec385251af235505d224c2e8305b09ce7804850d9f0fab507",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T14:07:59Z",
+  "briefSha256": "1fe10da2bc9d1007782735b48fd3fb5fa2437589d22332b47c658da28d2cda50"
+}
