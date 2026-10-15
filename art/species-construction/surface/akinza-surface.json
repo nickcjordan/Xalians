@@ -443,6 +443,21 @@
     {"note": "no stripes on the fingers (fur step 8)", "box": {"at": [0.57, 0.62], "x": [0.14, 0.215], "symmetricX": true, "y": [-0.1, -0.01]}, "margin": 0.01}
   ],
   "earBias": 0.0,
+  "radialRamps": [
+    {
+      "note": "muzzle (fur step 10e): very short, dense, fine fur on the muzzle and round the nose and lips, radiating from the nose, growing smoothly toward the cheeks and forehead; length and density by distance from the nose tip, handed back to the groups past fade",
+      "center": [0.0, -0.2, 0.57],
+      "box": {"at": [0.12, 0.3], "x": [0.0, 0.2], "symmetricX": true, "y": [-0.25, 0.02]},
+      "margin": 0.02,
+      "frontFacing": {"min": -0.3, "span": 0.4},
+      "fade": [0.07, 0.12],
+      "length": [[0.0, 0.0016], [0.02, 0.002], [0.04, 0.0028], [0.06, 0.004], [0.09, 0.0058]],
+      "density": [[0.0, 4.0], [0.04, 3.6], [0.07, 2.6]],
+      "comb": "face",
+      "clump": 0.0,
+      "curl": 0.01
+    }
+  ],
   "skullFlow": {"note": "head and crown comb (fur step 10d): radial from the brow point origin, turning down behind y downY (start, full) by down", "origin": [0.0, -0.4, 0.58], "down": 1.5, "downY": [0.0, 0.07]},
   "combSmooth": [
     {
