@@ -1,0 +1,19 @@
+{
+  "id": "B-01M50M46QRZQXH7HKG4378HV16",
+  "alias": "23xc",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: claws, toe clefts and dewclaws added on the restored generated paws, outline and size unchanged; Codex",
+  "scope": "all four paws",
+  "defect": "D-01M509XY1WRPJ7AXW2MJK3CSSN",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T20:30:13Z",
+  "briefSha256": "5010da8fdd0c49af5628ab789546b7e5b0652f569e52731bfb5e94128826c487"
+}

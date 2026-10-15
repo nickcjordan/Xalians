@@ -1,0 +1,15 @@
+{
+  "id": "N-01M50M46J28P82V4VH4JBBBPQ7",
+  "alias": "jjs9",
+  "stage": "05-sculpt",
+  "who": "orchestrator",
+  "words": "Audit after B-6c2c (stopped) and B-vsb3 (wrong target): the limiting cause was the orchestrator's brief, which read 'less bulky' as 'smaller than generated' and then asked for a reshape. Every paw build since B-kgav also changed the paw's shape while adding detail. Outcome: lift the shape work entirely: the generated paw is the shape authority (hold: outline and size within 1 mm), and detail is added only on top of it (clefts carved shallow, claws and dewclaws as separate objects).",
+  "date": "2026-10-15",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M509XY1WRPJ7AXW2MJK3CSSN",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-15T20:30:13Z"
+}

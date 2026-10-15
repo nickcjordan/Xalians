@@ -1,0 +1,14 @@
+{
+  "id": "N-01M50M3ZHQAYYHM40MWJ5SGN9T",
+  "alias": "w3nh",
+  "stage": "05-sculpt",
+  "who": "nick",
+  "words": "Nick 2026-10-15: 'wasn't the whole point... to give details to the generated paws so that they have claws and toes? We still want that in place, right?' Ruling: generated paw shape and size kept exactly, with toes defined and claws added on top. Restore (B-rh4f) first, then details (next build).",
+  "date": "2026-10-15",
+  "kind": "ruling",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-15T20:30:06Z"
+}
