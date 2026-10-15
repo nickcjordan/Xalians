@@ -13,12 +13,220 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "paws.blend",
+      "hash": "f48b19ae16bd91e4a082997438c86788a0363ff3494c9ff52f87dfabc4658690"
+    },
+    {
+      "name": "paws.glb",
+      "hash": "5c47bbd678c3291ac06551c5ddd56062eaa6176d9b949f7cb91362577ae2fc0e"
+    },
+    {
+      "name": "paws_part.glb",
+      "hash": "6f0b9075b092a76898fc07e0aeac26a995647930403eb2deb4b223bf25057f09"
+    },
+    {
+      "name": "composite_hind_paw_side_vs_clay.png",
+      "hash": "a1c50013678bd2defcaea529b2bbe7b124d20105887f5d73c05cbda8511c8491"
+    },
+    {
+      "name": "composite_hind_paw_front_three_quarter_vs_clay.png",
+      "hash": "7c056da6e227d0fe4408c4d563c96bd56f8ba1fd984a22affdcdc9dfc826800f"
+    },
+    {
+      "name": "composite_fore_paw_front_vs_clay.png",
+      "hash": "2e87b38c086ffe258fe253c9b61a4fd6bc180be1b9194a69d6a5e721c6906d20"
+    },
+    {
+      "name": "composite_fore_paw_side_vs_clay.png",
+      "hash": "1be9520194dcf738ec10c3ba3bfa14e33cc902049ca4b100f8eece566c39a97f"
+    },
+    {
+      "name": "renders/leg_side.png",
+      "hash": "d0dba0a51a9c46ce0f975bebe947f03a19ba6de9a76b74787516c2cac4eee614"
+    },
+    {
+      "name": "renders/foreleg_three_quarter.png",
+      "hash": "dfdba56000484cab422a71a36a8b2f66c45b719bd48e6034c6f37e238c853bea"
+    },
+    {
+      "name": "renders/fore_dewclaw_back.png",
+      "hash": "aabe047498ffca893428ee2950fbbbed55a1dcb6ea551270e578bab119626746"
+    },
+    {
+      "name": "renders/sprite_side_192.png",
+      "hash": "baa6aeb00d3147b681446ee372f8d8b48a86a2744c6c9d760224199c5ec8384f"
+    },
+    {
+      "name": "renders/full_three_quarter_left.png",
+      "hash": "1a88e03615f4f12fd883d4bada887b2938e117bd617749e4560a9930da32af78"
+    },
+    {
+      "name": "progress.png",
+      "hash": "758e67ce9d9ebe61d8fd10e6c9a9e48a4c245ca102488d4d43b00187f9d94f22"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "25d43b23529225ab13b75d6f42fefb0b8c678a88d63dc774beaef427897613d3"
+    },
+    {
+      "name": "report.json",
+      "hash": "f40b2f4dcb6d4c37f9c511a755d6c331703920b5ffbeccbab5053747b8aa2571"
+    },
+    {
+      "name": "iter_notes.json",
+      "hash": "aa9e55645c96abe5685630dbb3930b3545e020329f3b7b6177b3ee8ade2ff76c"
+    },
+    {
+      "name": "page/full_side_vs_clay.png",
+      "hash": "e4ed257960df16eec3460f18a208763a05cd2be03c873bec33a14c2680f5bdaa"
+    },
+    {
+      "name": "page/full_front_vs_clay.png",
+      "hash": "94d02e69b46625a3a92863186e60c3e13a7f3ba59d0d63b5e72129739fd2e3e2"
+    },
+    {
+      "name": "page/full_tq_vs_clay.png",
+      "hash": "6d991425a733a06d6d50651c1520269bb925eb3ea292a4472726cf379b13b0bc"
+    },
+    {
+      "name": "build_paws.py",
+      "hash": "41fa15c82cb798a2c94c5197eba41784e59197f63f33a1aece3e4bada08d763e"
+    },
+    {
+      "name": "run_paws.sh",
+      "hash": "5abe8a6c777c26be62b8658f31f8b6c854bbf8e9a85cda47e3d59179c783d7d6"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "paws.blend",
+        "hash": "f48b19ae16bd91e4a082997438c86788a0363ff3494c9ff52f87dfabc4658690"
+      },
+      {
+        "name": "paws.glb",
+        "hash": "5c47bbd678c3291ac06551c5ddd56062eaa6176d9b949f7cb91362577ae2fc0e"
+      },
+      {
+        "name": "paws_part.glb",
+        "hash": "6f0b9075b092a76898fc07e0aeac26a995647930403eb2deb4b223bf25057f09"
+      },
+      {
+        "name": "composite_hind_paw_side_vs_clay.png",
+        "hash": "a1c50013678bd2defcaea529b2bbe7b124d20105887f5d73c05cbda8511c8491"
+      },
+      {
+        "name": "composite_hind_paw_front_three_quarter_vs_clay.png",
+        "hash": "7c056da6e227d0fe4408c4d563c96bd56f8ba1fd984a22affdcdc9dfc826800f"
+      },
+      {
+        "name": "composite_fore_paw_front_vs_clay.png",
+        "hash": "2e87b38c086ffe258fe253c9b61a4fd6bc180be1b9194a69d6a5e721c6906d20"
+      },
+      {
+        "name": "composite_fore_paw_side_vs_clay.png",
+        "hash": "1be9520194dcf738ec10c3ba3bfa14e33cc902049ca4b100f8eece566c39a97f"
+      },
+      {
+        "name": "renders/leg_side.png",
+        "hash": "d0dba0a51a9c46ce0f975bebe947f03a19ba6de9a76b74787516c2cac4eee614"
+      },
+      {
+        "name": "renders/foreleg_three_quarter.png",
+        "hash": "dfdba56000484cab422a71a36a8b2f66c45b719bd48e6034c6f37e238c853bea"
+      },
+      {
+        "name": "renders/fore_dewclaw_back.png",
+        "hash": "aabe047498ffca893428ee2950fbbbed55a1dcb6ea551270e578bab119626746"
+      },
+      {
+        "name": "renders/sprite_side_192.png",
+        "hash": "baa6aeb00d3147b681446ee372f8d8b48a86a2744c6c9d760224199c5ec8384f"
+      },
+      {
+        "name": "renders/full_three_quarter_left.png",
+        "hash": "1a88e03615f4f12fd883d4bada887b2938e117bd617749e4560a9930da32af78"
+      },
+      {
+        "name": "progress.png",
+        "hash": "758e67ce9d9ebe61d8fd10e6c9a9e48a4c245ca102488d4d43b00187f9d94f22"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "25d43b23529225ab13b75d6f42fefb0b8c678a88d63dc774beaef427897613d3"
+      },
+      {
+        "name": "report.json",
+        "hash": "f40b2f4dcb6d4c37f9c511a755d6c331703920b5ffbeccbab5053747b8aa2571"
+      },
+      {
+        "name": "iter_notes.json",
+        "hash": "aa9e55645c96abe5685630dbb3930b3545e020329f3b7b6177b3ee8ade2ff76c"
+      },
+      {
+        "name": "page/full_side_vs_clay.png",
+        "hash": "e4ed257960df16eec3460f18a208763a05cd2be03c873bec33a14c2680f5bdaa"
+      },
+      {
+        "name": "page/full_front_vs_clay.png",
+        "hash": "94d02e69b46625a3a92863186e60c3e13a7f3ba59d0d63b5e72129739fd2e3e2"
+      },
+      {
+        "name": "page/full_tq_vs_clay.png",
+        "hash": "6d991425a733a06d6d50651c1520269bb925eb3ea292a4472726cf379b13b0bc"
+      },
+      {
+        "name": "build_paws.py",
+        "hash": "41fa15c82cb798a2c94c5197eba41784e59197f63f33a1aece3e4bada08d763e"
+      },
+      {
+        "name": "run_paws.sh",
+        "hash": "5abe8a6c777c26be62b8658f31f8b6c854bbf8e9a85cda47e3d59179c783d7d6"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 49.5,
+    "codexTokens": "274,779",
+    "remains": [
+      "Proximal digit ridges are too straight and regular relative to clay.",
+      "Rear ankle transition retains creases visible in close side views.",
+      "Two knuckle bumps are less distinct than the reference; quantitative height and width alone do not establish an artistic pass.",
+      "Fore clay ratios are approximate because front and oblique-side crops have different projection and scale.",
+      "Dewclaws were curved in iteration 20 after the independent review. This narrow fix does not lift the paw artistic hold."
+    ],
+    "defectResult": "D-3sh5: rounded separate digits with clefts, claws from the tips, no box, no flange, no bag heel. Knuckle bumps softer and digit tops more regular than the clay; slight creases at the ankle.",
+    "checks": [
+      {
+        "title": "Paws as swept digits, Codex pass 2",
+        "question": "Do the paws read as the clay?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "a1c50013678bd2defcaea529b2bbe7b124d20105887f5d73c05cbda8511c8491",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "baa6aeb00d3147b681446ee372f8d8b48a86a2744c6c9d760224199c5ec8384f",
+        "recommended": "Critic read: best paw of five builds and the first that reads as the clay's paw: four rounded toes, clefts, claws from the tips. Softer knuckles and regular toe tops remain; presented to Nick with that named."
+      }
+    ],
+    "note": "Swept-tube digits after audit N-a4z4: 49.5 min, 20 iterations. The builder held artistic sign-off for Nick."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T16:28:56Z",
-  "briefSha256": "b22f1ecd0a1f3ceeefecd2a4fa245a857098fddcf8b67fb6b219ebc3b4ae9ea8"
+  "briefSha256": "b22f1ecd0a1f3ceeefecd2a4fa245a857098fddcf8b67fb6b219ebc3b4ae9ea8",
+  "checks": [
+    {
+      "title": "Paws as swept digits, Codex pass 2",
+      "question": "Do the paws read as the clay?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "a1c50013678bd2defcaea529b2bbe7b124d20105887f5d73c05cbda8511c8491",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "baa6aeb00d3147b681446ee372f8d8b48a86a2744c6c9d760224199c5ec8384f",
+      "recommended": "Critic read: best paw of five builds and the first that reads as the clay's paw: four rounded toes, clefts, claws from the tips. Softer knuckles and regular toe tops remain; presented to Nick with that named."
+    }
+  ],
+  "reportedAt": "2026-10-15T17:19:57Z"
 }

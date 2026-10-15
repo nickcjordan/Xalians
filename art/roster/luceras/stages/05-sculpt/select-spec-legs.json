@@ -1,0 +1,109 @@
+{
+ "title": "Luceras Legs and Tail",
+ "heading": "Luceras: legs, paws and tail",
+ "lede": "Stage 5 of 11, parts 3 to 5. The hind legs, forelegs, all four paws and the tail, on the head and torso you approved: the whole sculpted body. Judge shape only: do the legs, paws and tail read as your shaved clay? Muscle relief and skin texture are surface work the fur covers. Approve, or say what needs work and in which view. Confirm notifies the orchestrator; after this the whole-body check closes the sculpt stage.",
+ "fallback": "Approvals cannot be saved from this view; reply in chat.",
+ "compositeEmpty": "Confirm closes the legs, paws and tail; the whole-body check comes next.",
+ "confirmed": "Confirmed; the orchestrator files it and runs the whole-body check. Tell the orchestrator you confirmed.",
+ "fold": {
+  "title": "Decided by the pipeline owner",
+  "text": "Built by Codex alone from here, with the orchestrator reading every pass against your clay. The hind legs took one pass for the thigh to the hock; the tail and the forelegs were built at the same time as the paws by separate Codex builders and merged by moving only their own points, which worked with nothing refused. The paws took five builds and three method changes: brushing the old foot gave thin pads, then boxes; rebuilding them from pictures of your clay gave mush; building each toe as a tube whose thickness is measured from your clay, the way the tail and horns were made, is the first that reads as your clay's paw. That last lesson is now a pipeline rule. Codex time for these parts about 5 hours, about 1.5M Codex tokens; my reading about 150K Claude tokens."
+ },
+ "order": [
+  "legs",
+  "notes"
+ ],
+ "elements": {
+  "legs": {
+   "name": "Legs, paws and tail",
+   "mode": "gallery",
+   "question": "Do the legs, paws and tail read as your shaved clay?",
+   "judge": [
+    "Side: the big hind thigh into the rump, knee, hock, long lower leg, as the clay?",
+    "Paws: four rounded toes with clefts, dark claws from the tips?",
+    "Forelegs: lean columns, elbow point, wrist, short bone into the paw?",
+    "Tail: thick root, steady taper, low curve, upward hook?",
+    "Still Luceras at sprite size?"
+   ],
+   "reading": [
+    "mustHave[0]",
+    "mustHave[5]"
+   ],
+   "recommend": null,
+   "note": "Named and left for later: the knuckle bumps on the toes are softer and the toe tops more regular than the clay; a few soft creases where the paws meet the legs; muscle relief softer than the clay everywhere, as on the torso you approved. Fur covers all three.",
+   "views": [
+    {
+     "label": "Full body side",
+     "blob": "e4ed257960df16eec3460f18a208763a05cd2be03c873bec33a14c2680f5bdaa",
+     "caption": "Full body, side: build left, your shaved clay right"
+    },
+    {
+     "label": "Full body three-quarter",
+     "blob": "6d991425a733a06d6d50651c1520269bb925eb3ea292a4472726cf379b13b0bc",
+     "caption": "Full body, three-quarter: build left, clay right"
+    },
+    {
+     "label": "Full body front",
+     "blob": "94d02e69b46625a3a92863186e60c3e13a7f3ba59d0d63b5e72129739fd2e3e2",
+     "caption": "Full body, front: build left, clay right"
+    },
+    {
+     "label": "Hind paw side",
+     "blob": "a1c50013678bd2defcaea529b2bbe7b124d20105887f5d73c05cbda8511c8491",
+     "caption": "Hind paw, side: build left, clay right"
+    },
+    {
+     "label": "Hind paw three-quarter",
+     "blob": "7c056da6e227d0fe4408c4d563c96bd56f8ba1fd984a22affdcdc9dfc826800f",
+     "caption": "Hind paw, three-quarter: build left, clay right"
+    },
+    {
+     "label": "Fore paw front",
+     "blob": "2e87b38c086ffe258fe253c9b61a4fd6bc180be1b9194a69d6a5e721c6906d20",
+     "caption": "Fore paw, front: build left, clay right"
+    },
+    {
+     "label": "Hind leg side",
+     "blob": "d0dba0a51a9c46ce0f975bebe947f03a19ba6de9a76b74787516c2cac4eee614",
+     "caption": "Hind leg, side"
+    },
+    {
+     "label": "Forelegs three-quarter",
+     "blob": "dfdba56000484cab422a71a36a8b2f66c45b719bd48e6034c6f37e238c853bea",
+     "caption": "Forelegs, three-quarter"
+    },
+    {
+     "label": "Dewclaw",
+     "blob": "aabe047498ffca893428ee2950fbbbed55a1dcb6ea551270e578bab119626746",
+     "caption": "Dewclaw on the back of the fore wrist"
+    },
+    {
+     "label": "Tail",
+     "blob": "96ae906d08529fa05ed9cf22337abb069b183d70352f8c7c6d74078c2ce1cedb",
+     "caption": "Tail, side: build left, clay right"
+    },
+    {
+     "label": "Sprite size",
+     "blob": "baa6aeb00d3147b681446ee372f8d8b48a86a2744c6c9d760224199c5ec8384f",
+     "caption": "Sprite size (192 px)"
+    }
+   ]
+  },
+  "notes": {
+   "name": "How the paws got here",
+   "mode": "info",
+   "question": "",
+   "judge": [],
+   "reading": [],
+   "recommend": null,
+   "note": "Five builds: the original foot, thin pads, boxes, rebuilt from pictures (mush), toes as measured tubes (presented).",
+   "views": [
+    {
+     "label": "Paw progression",
+     "blob": "758e67ce9d9ebe61d8fd10e6c9a9e48a4c245ca102488d4d43b00187f9d94f22",
+     "caption": "Paw iterations in the presented build"
+    }
+   ]
+  }
+ }
+}
