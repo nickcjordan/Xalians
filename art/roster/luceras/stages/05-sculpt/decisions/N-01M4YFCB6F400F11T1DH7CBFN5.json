@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4YFCB6F400F11T1DH7CBFN5",
+  "alias": "f3y7",
+  "stage": "05-sculpt",
+  "who": "nick",
+  "words": "Head page (Claude pass 4, B-rv4f) presented; Nick in chat: 'looks good, proceed'. Part 1 (head) approved; leftovers declared to the surface stage (whisker-pad nubs, horn ridge waviness, lid line, whiskers). Codex pass 3 (B-vh9a) recorded for comparison, not chosen.",
+  "date": "2026-10-15",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M4Y9WDZ1M4JBKEFKQ226H8KQ",
+    "evidence": [
+      "9fe2310b903a76c051a0887369d94720d5adbe228dc68f2403fbebef3f1f1f59",
+      "c5e7f8278043b5d9a13aa41342398b4ece0786b4b53ecb19d4d52c2d6cdcb2d1"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-15T00:28:48Z"
+}

@@ -1,13 +1,13 @@
 {
  "title": "Luceras Head",
  "heading": "Luceras: the head",
- "lede": "Stage 5 of 11, part 1 of 5. The head sculpted onto the approved blockout: skull, muzzle, eyes, horns, ears, placeholder whiskers. Judge shape only: does it read as the model sheet's head? Surface detail, horn ridge waviness, the crisp lid line and real whiskers belong to the surface stage. Approve, or say what needs work and in which view. Confirm notifies the orchestrator.",
+ "lede": "Stage 5 of 11, part 1 of 5. APPROVED by Nick on 2026-10-14 (decision N-f3y7, Claude pass 4, B-rv4f). The torso (part 2) is building in both streams. This page stays as the record; the Codex stream's reconstruction pass is now in section 3 for comparison.",
  "fallback": "Approvals cannot be saved from this view; reply in chat.",
  "compositeEmpty": "Confirm closes the head; the torso part starts next.",
  "confirmed": "Head confirmed; the orchestrator files it and starts the next part. Tell the orchestrator you confirmed.",
  "fold": {
   "title": "Decided by the pipeline owner",
-  "text": "Both streams were given the same brief twice: first with Blender work only (hand-placed masses), which stalled on the face in both streams, then, after a hold audit, with the face reconstructed from your clay head views and the authored horns, eyes and ears re-seated. That audit result is now a pipeline rule: faces and other soft forms come from reconstruction. The Claude head took four passes: masses (rodent), measured fixes (balloon), reconstruction graft (reads), cleanup. The Codex stream's reconstruction pass is being finished and will be added here for comparison; its masses pass is shown below. Everything outside the head is unchanged to within 0.6 mm. Costs: Claude about 2 hours 20 minutes wall and about 490K tokens over four passes; Codex pass 2 about 80 minutes wall."
+  "text": "Both streams were given the same brief twice: first with Blender work only (hand-placed masses), which stalled on the face in both streams, then, after a hold audit, with the face reconstructed from your clay head views and the authored horns, eyes and ears re-seated. That audit result is now a pipeline rule: faces and other soft forms come from reconstruction. The Claude head took four passes: masses (rodent), measured fixes (balloon), reconstruction graft (reads), cleanup. The Codex stream's reconstruction pass (its pass 3) is in section 3 for comparison beside its masses pass. Everything outside the head is unchanged to within 0.6 mm. Costs: Claude about 2 hours 20 minutes wall and about 490K tokens over four passes; Codex pass 2 about 80 minutes wall."
  },
  "order": [
   "claude",
@@ -108,18 +108,38 @@
    ]
   },
   "codex": {
-   "name": "Codex stream head (pass 2, masses)",
+   "name": "Codex stream head (passes 2 and 3)",
    "mode": "info",
    "question": "For comparison only.",
    "judge": [],
    "reading": [],
    "recommend": null,
-   "note": "Codex (gpt-6-astra), pure Blender steering from the same brief: thin wiry horns, bulging eyes, long snout, bulb ears. Its reconstruction pass is in progress and will replace this when done.",
+   "note": "Codex (gpt-6-astra). Pass 3 (B-vh9a) after the same hold audit: the face reconstructed from the clay views, its pass-2 horns, eyes and ears re-seated. My read: a clear step up from its pass 2 (real nasal bridge, cheek plane, small nose) but below the Claude head: the muzzle still runs long, the eyes sit small in flat rings, the horns stay thin and wide-spread. Pass 2 was pure Blender steering: thin wiry horns, bulging eyes, long snout, bulb ears.",
    "views": [
+    {
+     "label": "Codex pass 3, three-quarter",
+     "blob": "9e1204f6549b8c1157afce2b8a6a24360a12656d15de71d404b2decb18942988",
+     "caption": "Codex pass 3 (B-vh9a), three-quarter beside the sheet"
+    },
+    {
+     "label": "Codex pass 3, front",
+     "blob": "be27da70c492d817ac185f8c1f253d649ac173d93fa14986ad08a1d2106f1e9a",
+     "caption": "Codex pass 3, front beside the sheet"
+    },
+    {
+     "label": "Codex pass 3, side",
+     "blob": "af7d909df21a6f7998889a2de5bcd02ebadc01d078cb178d63af321b75d049e6",
+     "caption": "Codex pass 3, side beside the sheet"
+    },
+    {
+     "label": "Codex pass 3, sprite",
+     "blob": "86190f46b4b3c7ecf5857af92ee3346c3a54390ca059babed4222f3e6d24f511",
+     "caption": "Codex pass 3 at sprite size"
+    },
     {
      "label": "Codex pass 2",
      "blob": "2e7accc94512f8cf5487b358b3a7f8175b391900f6dfb2a40b8f693bd1586272",
-     "caption": "Codex pass 2, three-quarter beside the sheet"
+     "caption": "Codex pass 2 (masses), three-quarter beside the sheet"
     }
    ]
   },
@@ -136,42 +156,47 @@
     [
      "Passes",
      "4 (masses, fixes, reconstruction graft, cleanup)",
-     "2 done (masses), reconstruction pass in progress"
+     "3 (masses, masses, reconstruction graft)"
     ],
     [
      "Wall time",
      "about 2 h 20 min",
-     "about 80 min plus the pending pass"
+     "about 2 h 20 min (80 min pass 2, 32 min blocked attempt, 26 min resume)"
     ],
     [
      "Blender time",
      "about 3,400 s over 50 runs",
-     "1,435 s (860 s waiting on the shared machine)"
+     "2,261 s (860 s of it waiting on the shared machine)"
     ],
     [
      "GPU",
      "one reconstruction run, 319 s",
-     "one reconstruction run (pending integration)"
+     "one reconstruction run (single view, three-quarter crop)"
     ],
     [
      "Tokens",
      "about 490K",
-     "not exposed by the Codex runtime"
+     "200K on the resumed pass; earlier passes not exposed"
     ],
     [
      "Triangles head plus horns",
      "221,824",
-     "not reported"
+     "223,648"
     ],
     [
      "Outside-the-head displacement",
      "max 0.61 mm",
-     "not reported"
+     "0 outside the declared neck region, 17.6 mm inside it"
     ],
     [
      "Blockers",
      "none",
-     "Blender wait limit (my rule) stopped pass 3 once."
+     "Blender wait limit (my rule) stopped pass 3 once; resumed through the slot lock."
+    ],
+    [
+     "Outcome",
+     "approved by Nick (N-f3y7)",
+     "comparison build, not chosen"
     ]
    ]
   }

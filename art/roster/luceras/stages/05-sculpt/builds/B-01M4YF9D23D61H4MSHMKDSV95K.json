@@ -1,0 +1,140 @@
+{
+  "id": "B-01M4YF9D23D61H4MSHMKDSV95K",
+  "alias": "vh9a",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 1: head, Codex stream (gpt-6-astra), pass 3 after the hold audit: reconstruction of the clay head views with the pass-2 horns, eyes and ears re-seated",
+  "scope": "head",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "head.glb",
+      "hash": "f23cd8288fb374f3e3f8d2ec30d2666f41265bc046a3516f05adc2a731c5a117"
+    },
+    {
+      "name": "head_part.glb",
+      "hash": "7dfab72db17b2ae5b434e03b8d5bd9288b528ec943f656813fc67d447337f205"
+    },
+    {
+      "name": "compare_head.png",
+      "hash": "9e1204f6549b8c1157afce2b8a6a24360a12656d15de71d404b2decb18942988"
+    },
+    {
+      "name": "compare_front.png",
+      "hash": "be27da70c492d817ac185f8c1f253d649ac173d93fa14986ad08a1d2106f1e9a"
+    },
+    {
+      "name": "compare_side.png",
+      "hash": "af7d909df21a6f7998889a2de5bcd02ebadc01d078cb178d63af321b75d049e6"
+    },
+    {
+      "name": "sprite_192.png",
+      "hash": "86190f46b4b3c7ecf5857af92ee3346c3a54390ca059babed4222f3e6d24f511"
+    },
+    {
+      "name": "progress.png",
+      "hash": "e245d944ba0fe238d2c8bbc98bbbf9f8ca47d156e1ae81788ce0ce891f6cb99f"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "0208083bfd99e738be3d7405f7671154fd229b79244c30a2a1c56633c3ec003f"
+    },
+    {
+      "name": "pass3b-codex.log",
+      "hash": "fe3e1fe9212e61d5e578373419b255a909b04a06c9f0784592bb75f71989ab2b"
+    },
+    {
+      "name": "pass3/report.json",
+      "hash": "0d1f419c9a4dd2ff40768431582f82d2ac72f2c4e9e9b6afef30e65116eed30a"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "head.glb",
+        "hash": "f23cd8288fb374f3e3f8d2ec30d2666f41265bc046a3516f05adc2a731c5a117"
+      },
+      {
+        "name": "head_part.glb",
+        "hash": "7dfab72db17b2ae5b434e03b8d5bd9288b528ec943f656813fc67d447337f205"
+      },
+      {
+        "name": "compare_head.png",
+        "hash": "9e1204f6549b8c1157afce2b8a6a24360a12656d15de71d404b2decb18942988"
+      },
+      {
+        "name": "compare_front.png",
+        "hash": "be27da70c492d817ac185f8c1f253d649ac173d93fa14986ad08a1d2106f1e9a"
+      },
+      {
+        "name": "compare_side.png",
+        "hash": "af7d909df21a6f7998889a2de5bcd02ebadc01d078cb178d63af321b75d049e6"
+      },
+      {
+        "name": "sprite_192.png",
+        "hash": "86190f46b4b3c7ecf5857af92ee3346c3a54390ca059babed4222f3e6d24f511"
+      },
+      {
+        "name": "progress.png",
+        "hash": "e245d944ba0fe238d2c8bbc98bbbf9f8ca47d156e1ae81788ce0ce891f6cb99f"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "0208083bfd99e738be3d7405f7671154fd229b79244c30a2a1c56633c3ec003f"
+      },
+      {
+        "name": "pass3b-codex.log",
+        "hash": "fe3e1fe9212e61d5e578373419b255a909b04a06c9f0784592bb75f71989ab2b"
+      },
+      {
+        "name": "pass3/report.json",
+        "hash": "0d1f419c9a4dd2ff40768431582f82d2ac72f2c4e9e9b6afef30e65116eed30a"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "method": "codex gpt-6-astra; Reused pass3/reconstruction2/shape.glb and its license-bearing run.json from the blocked attempt. No GPU reconstruction was repeated. The prior run used the masked three-quarter clay crop as the single-view fallback because the nominal side view was turned. | Queued every Blender launch through slot.py run blender --wait 1800, with capacity set to one. Used Blender 5.2.2 and CPU rendering. All artifact writes stayed inside this workspace; the shared runner managed its own lock files. | Imported and uniformly aligned the reconstruction at scale 0.1139986413. The Blender import yielded one vertex-connected component; holes were closed before geometry operations. Reduced the working head to the 145000-triangle budget before sockets and attachments. | Removed the generated horn-stump crown. Mirrored the intact positive-X reconstructed crown above Z=0.578, joined it to the original lower surface at Z=0.564 with a stitched ring, and relaxed only the crown-seat and upper-socket transition at Z=0.561 to 0.589. The lower face and muzzle were not resculpted. | Translated the reconstructed head and authored attachments 2 mm rearward. Extracted the pass-2 rounded ears and skin collars, retained the horn geometry and fourteen whisker meshes, and resized the existing eyeballs from 29 mm to the required 34 mm. | Carved elliptical apertures and 34.5 mm inner cavities for the 34 mm eyeballs. Relaxed the socket boundaries locally, then merged narrow closed skin rims around the globes. Merged t",
+    "wallMinutes": 57.26,
+    "blenderSeconds": 826.01,
+    "codexTokens": 199995,
+    "checks": [
+      {
+        "title": "Head read, Codex pass 3",
+        "question": "Does it read as the sheet's head?",
+        "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+        "after": "9e1204f6549b8c1157afce2b8a6a24360a12656d15de71d404b2decb18942988",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "86190f46b4b3c7ecf5857af92ee3346c3a54390ca059babed4222f3e6d24f511",
+        "recommended": "Orchestrator's read: partly. Reconstruction gave it a real nasal bridge, cheek plane and small nose, but the muzzle still runs long, the eyes sit small in flat rings, and the retained pass-2 horns stay thin and wide-spread against the sheet."
+      }
+    ],
+    "remaining": [
+      "The preserved pass-2 horns read thinner and more widely spread than the approved head close-up, especially across their upper arcs. Their geometry was explicitly retained by the pass-3 instructions.",
+      "The saved reconstruction still has broad facets and uneven small planes across the cheeks and nasal bridge at close range. Those areas are outside the allowed socket, attachment-seat, and neck edits.",
+      "The upper orbital tissue retains small angular corners, and the added lid rims are more uniform than the organic lids in the sheet.",
+      "The neck blend has faint stretched shading lines at the close camera. Its silhouette is continuous and its changes are confined to the declared neck region.",
+      "The shaved gray head cannot show the sheet's fur silhouette, amber iris, or horizontal pupil at this stage. No final art approval is claimed."
+    ],
+    "note": "Codex pass 3 (first attempt 31.7 min blocked on the Blender wait rule, resume 25.6 min through the slot lock, 200K Codex tokens). Orchestrator assessment: a clear step up from its pass 2 and the method change worked here too, but it lands below the Claude stream pass 4 (B-rv4f): muzzle longer than the sheet, eyes small and sunken, horns thin and wiry (Codex kept its pass-2 horns as instructed), neck blend shows shading lines. Outside the head unchanged except the declared neck region (max 17.6 mm there). Kept as the Codex comparison build; the Claude head is the one at Nick's gate."
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-15T00:27:12Z",
+  "briefSha256": "c187abcfe388c652f03b52b2869c79aaf31d646bf4c8e41272222b150f930128",
+  "checks": [
+    {
+      "title": "Head read, Codex pass 3",
+      "question": "Does it read as the sheet's head?",
+      "before": "dd345a46081ff9cfe97e3f4db380ae45a249a55322e0b15ea54b28846af6c4a9",
+      "after": "9e1204f6549b8c1157afce2b8a6a24360a12656d15de71d404b2decb18942988",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "86190f46b4b3c7ecf5857af92ee3346c3a54390ca059babed4222f3e6d24f511",
+      "recommended": "Orchestrator's read: partly. Reconstruction gave it a real nasal bridge, cheek plane and small nose, but the muzzle still runs long, the eyes sit small in flat rings, and the retained pass-2 horns stay thin and wide-spread against the sheet."
+    }
+  ],
+  "reportedAt": "2026-10-15T00:27:40Z"
+}

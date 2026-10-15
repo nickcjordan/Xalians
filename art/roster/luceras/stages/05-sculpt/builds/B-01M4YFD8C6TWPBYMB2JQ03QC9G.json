@@ -1,0 +1,24 @@
+{
+  "id": "B-01M4YFD8C6TWPBYMB2JQ03QC9G",
+  "alias": "ej6s",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 2: torso on the approved head build B-rv4f, Claude stream (Opus 5.5), pass 1 from the shared brief",
+  "scope": "torso",
+  "defect": null,
+  "holds": [],
+  "inputs": [
+    {
+      "path": "74897d116881b5cb2cbfe2a2744938995712aca3f5860eb2c13c81e1c883df5b",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T00:29:18Z",
+  "briefSha256": "84cbb980255b3a4b489d020dfb1db0039c85176d71fcd817bd468edcf2c3647f"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "B-01M4YFD8FAWZYR3YD9FVECCVKW",
+  "alias": "eccr",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 2: torso on the approved head build B-rv4f, Codex stream (gpt-6-astra), pass 1 from the shared brief",
+  "scope": "torso",
+  "defect": null,
+  "holds": [],
+  "inputs": [
+    {
+      "path": "74897d116881b5cb2cbfe2a2744938995712aca3f5860eb2c13c81e1c883df5b",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T00:29:18Z",
+  "briefSha256": "5f0ca167ebd38ed6ad3a47c4e8320cae6f8f5e18675cbb32673ae649e7051110"
+}
