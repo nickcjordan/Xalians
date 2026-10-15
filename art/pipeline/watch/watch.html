@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Codex Watch</title>
 <style>
-  :root { --bg:#f4f4f1; --card:#fff; --fg:#1c1d1f; --muted:#62656b; --line:#d9dad6; --run:#1f5fbf; --done:#8a5a00; --bar:#e6e6e2; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#151618; --card:#1e1f22; --fg:#e8e8e6; --muted:#9a9ca1; --line:#2e3034; --run:#6aa4ff; --done:#e0a84a; --bar:#2a2c30; color-scheme: dark; } }
+  :root { --bg:#f4f4f1; --card:#fff; --fg:#1c1d1f; --muted:#62656b; --line:#d9dad6; --run:#1f5fbf; --done:#8a5a00; --bar:#e6e6e2; --new:#e8effa; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#151618; --card:#1e1f22; --fg:#e8e8e6; --muted:#9a9ca1; --line:#2e3034; --run:#6aa4ff; --done:#e0a84a; --bar:#2a2c30; --new:#1c2a40; color-scheme: dark; } }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 16px; }
-  main { max-width: 980px; margin: 0 auto; display: grid; gap: 14px; }
+  main { max-width: 1100px; margin: 0 auto; display: grid; gap: 14px; }
   header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
   h1 { font-size: 18px; margin: 0; letter-spacing: .02em; }
   .muted { color: var(--muted); font-size: 13px; }
-  .card { background: var(--card); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 10px; }
+  .card { background: var(--card); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
   .top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
   .title { font-weight: 600; }
   .state { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border: 2px solid currentColor; }
@@ -24,13 +24,19 @@
   .num span { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
   .bar { height: 8px; background: var(--bar); position: relative; }
   .bar i { position: absolute; inset: 0 auto 0 0; background: var(--run); }
-  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 14px; }
-  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
-  ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
-  ol li:last-child { font-weight: 600; }
-  figure { margin: 0; }
-  figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); }
-  figcaption { font-size: 12px; color: var(--muted); margin-top: 4px; word-break: break-all; }
+  .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .log { max-height: 420px; overflow-y: auto; border: 1px solid var(--line); padding: 4px 10px; display: grid; gap: 0; }
+  .entry { display: grid; grid-template-columns: 4.2em minmax(0, 1fr); gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .entry:last-child { border-bottom: 0; }
+  .entry time { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 2px; }
+  .entry.fresh { animation: fresh 6s ease-out; }
+  @keyframes fresh { from { background: var(--new); } to { background: transparent; } }
+  .strip { display: grid; grid-auto-flow: column; grid-auto-columns: 180px; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .strip figure { margin: 0; }
+  .strip img { width: 180px; height: 180px; object-fit: cover; display: block; border: 1px solid var(--line); background: var(--bar); cursor: zoom-in; }
+  .strip figcaption { font-size: 12px; color: var(--muted); }
+  .zoom { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: grid; place-items: center; padding: 16px; z-index: 5; cursor: zoom-out; }
+  .zoom img { max-width: 100%; max-height: 100%; }
   details summary { cursor: pointer; color: var(--muted); }
 </style>
 </head>
@@ -40,58 +46,95 @@
     <h1>Codex runs</h1>
     <span class="muted" id="meta">loading</span>
   </header>
-  <div id="current"></div>
-  <details id="older"><summary>Earlier runs</summary><div id="list" style="display:grid;gap:10px;margin-top:10px"></div></details>
+  <div id="active" style="display:grid;gap:14px"></div>
+  <details id="older"><summary>Finished runs</summary><div id="list" style="display:grid;gap:10px;margin-top:10px"></div></details>
 </main>
 <script>
 const el = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 const mins = (m) => m == null ? "-" : (m >= 60 ? `${Math.floor(m / 60)} h ${Math.round(m % 60)} min` : `${Math.round(m)} min`);
 const ago = (ms, now) => { const s = Math.round((now - ms) / 1000); return s < 90 ? `${s} s ago` : `${Math.round(s / 60)} min ago`; };
+const hhmm = (ms) => ms ? new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "";
+const imgUrl = (p, t) => `/img?p=${encodeURIComponent(p)}&t=${Math.round(t)}`;
 
-function card(r, now, full) {
-  const c = el("section", "card");
-  const top = el("div", "top");
-  const t = el("div"); t.append(el("div", "title", r.title), el("div", "muted", `${r.name} / ${r.pass}${r.build ? " / " + r.build : ""}`));
-  const running = !r.done;
-  top.append(t, el("span", "state " + (running ? "running" : "done"), running ? "Running" : (r.report ? "Done, report written" : "Ended")));
-  c.append(top);
-  const nums = el("div", "nums");
-  const n = (v, l) => { const d = el("div", "num"); d.append(el("b", null, v), el("span", null, l)); return d; };
-  nums.append(n(r.iteration ? String(r.iteration) : "-", "iteration"), n(mins(r.elapsedMin), r.cap ? `of ${r.cap} min cap` : "elapsed"),
-              n(ago(r.lastActivity, now), "last activity"));
-  if (r.tokens) nums.append(n(r.tokens, "tokens"));
-  c.append(nums);
-  if (r.cap && running) { const b = el("div", "bar"); const i = el("i"); i.style.width = Math.min(100, 100 * r.elapsedMin / r.cap) + "%"; b.append(i); c.append(b); }
-  if (!full) return c;
-  const g = el("div", "grid");
-  const left = el("div");
-  left.append(el("div", "muted", "What Codex says it is doing (latest last)"));
-  const ol = el("ol"); for (const m of r.messages) ol.append(el("li", null, m)); left.append(ol);
-  g.append(left);
-  if (r.image) {
-    const f = el("figure"); const img = el("img"); img.alt = "Latest render"; img.loading = "lazy";
-    img.src = `/img?p=${encodeURIComponent(r.image)}&t=${Math.round(r.imageTime)}`;
-    f.append(img, el("figcaption", null, `Latest image: ${r.image.split(/[\\/]/).pop()}, ${ago(r.imageTime, now)}`));
-    g.append(f);
-  }
-  c.append(g);
-  return c;
+function zoom(src) {
+  const z = el("div", "zoom"); const i = el("img"); i.src = src; i.alt = "Iteration render"; z.append(i);
+  z.onclick = () => z.remove(); document.body.append(z);
 }
 
-let lastJson = "";
+// One card per run, kept for the life of the page; each refresh only updates the numbers and appends what is new.
+const cards = new Map();
+function makeCard(r) {
+  const c = el("section", "card");
+  const top = el("div", "top"); const t = el("div");
+  const title = el("div", "title"); const sub = el("div", "muted"); t.append(title, sub);
+  const state = el("span", "state"); top.append(t, state);
+  const nums = el("div", "nums"); const bar = el("div", "bar"); const fill = el("i"); bar.append(fill);
+  const stripLabel = el("div", "label", "Iterations (click to enlarge)"); const strip = el("div", "strip");
+  const logLabel = el("div", "label", "Running log (newest at the bottom)"); const log = el("div", "log");
+  c.append(top, nums, bar, stripLabel, strip, logLabel, log);
+  return { c, title, sub, state, nums, bar, fill, strip, stripLabel, log, nMsg: 0, iters: new Map() };
+}
+
+function update(k, r, now) {
+  k.title.textContent = r.title;
+  k.sub.textContent = `${r.name} / ${r.pass}${r.build ? " / " + r.build : ""}`;
+  const running = !r.done;
+  k.state.className = "state " + (running ? "running" : "done");
+  k.state.textContent = running ? "Running" : (r.report ? "Done, report written" : "Ended");
+  k.nums.replaceChildren();
+  const n = (v, l) => { const d = el("div", "num"); d.append(el("b", null, v), el("span", null, l)); return d; };
+  k.nums.append(n(r.iteration ? String(r.iteration) : "-", "iteration"), n(mins(r.elapsedMin), r.cap ? `of ${r.cap} min cap` : "elapsed"),
+                n(ago(r.lastActivity, now), "last activity"));
+  if (r.tokens) k.nums.append(n(r.tokens, "tokens"));
+  k.bar.hidden = !(r.cap && running);
+  if (r.cap) k.fill.style.width = Math.min(100, 100 * r.elapsedMin / r.cap) + "%";
+
+  // Iteration strip: add new iterations, refresh one whose image changed.
+  for (const it of r.iterations) {
+    const prev = k.iters.get(it.iter);
+    if (prev && prev.mtime === it.mtime) continue;
+    const src = imgUrl(it.path, it.mtime);
+    if (prev) { prev.img.src = src; prev.mtime = it.mtime; continue; }
+    const f = el("figure"); const img = el("img"); img.loading = "lazy"; img.alt = `Iteration ${it.iter}`; img.src = src;
+    img.onclick = () => zoom(img.src);
+    f.append(img, el("figcaption", null, `Iteration ${it.iter} · ${hhmm(it.mtime)}`));
+    const after = [...k.iters.keys()].filter((x) => x > it.iter).sort((a, b) => a - b)[0];
+    if (after != null) k.strip.insertBefore(f, k.iters.get(after).fig); else k.strip.append(f);
+    k.iters.set(it.iter, { img, mtime: it.mtime, fig: f });
+    if (!prev && k.strip.scrollLeft + k.strip.clientWidth >= k.strip.scrollWidth - 200) k.strip.scrollLeft = k.strip.scrollWidth;
+  }
+  k.strip.hidden = k.stripLabel.hidden = r.iterations.length === 0;
+
+  // Running log: append only the messages not yet shown; follow the bottom unless the reader scrolled up.
+  const atBottom = k.log.scrollTop + k.log.clientHeight >= k.log.scrollHeight - 30;
+  const fresh = k.nMsg > 0;
+  for (let i = k.nMsg; i < r.messages.length; i++) {
+    const m = r.messages[i];
+    const row = el("div", "entry" + (fresh ? " fresh" : ""));
+    row.append(el("time", null, hhmm(m.seen)), el("div", null, m.text));
+    k.log.append(row);
+  }
+  k.nMsg = r.messages.length;
+  if (atBottom) k.log.scrollTop = k.log.scrollHeight;
+}
+
 async function tick() {
   try {
     const s = await (await fetch("/api/status", { cache: "no-store" })).json();
     const now = s.now;
     const lock = s.locks.length ? s.locks.map((l) => `${l.cls}: ${l.owner || "?"}`).join(", ") : "machine idle";
     document.getElementById("meta").textContent = `updated ${new Date(now).toLocaleTimeString()} · ${lock}`;
-    const key = JSON.stringify(s.runs);
-    if (key === lastJson) return;
-    lastJson = key;
-    const cur = document.getElementById("current"); cur.replaceChildren();
-    const list = document.getElementById("list"); list.replaceChildren();
-    s.runs.forEach((r, i) => (i === 0 ? cur : list).append(card(r, now, i === 0)));
-    document.getElementById("older").hidden = s.runs.length < 2;
+    const active = document.getElementById("active"), list = document.getElementById("list");
+    for (const r of s.runs) {
+      const key = r.name + "/" + r.pass;
+      let k = cards.get(key);
+      if (!k) { k = makeCard(r); cards.set(key, k); }
+      update(k, r, now);
+      const home = r.done ? list : active;
+      if (k.c.parentNode !== home) home.append(k.c);
+    }
+    document.getElementById("older").hidden = !list.children.length;
+    if (!active.children.length) active.replaceChildren(el("div", "muted", "No run in progress."));
   } catch (e) { document.getElementById("meta").textContent = "watcher not reachable"; }
 }
 tick(); setInterval(tick, 10000);

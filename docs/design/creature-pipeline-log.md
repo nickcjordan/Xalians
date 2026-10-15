@@ -103,3 +103,14 @@ Read this first when resuming the creature pipeline. Design of record: [creature
 **Lesson:**
 28. A builder that cannot judge its own render needs the judgment written as a test it can run (visible at a stated size, numbers against the clay) and a critic who reads every pass; the brief carries the first, the orchestrator is the second.
 
+### 2026-10-15, parallel builders and the run watcher
+
+**Hind legs pass 1 (B-xcbx, Codex):** 72.9 of 75 minutes, 23 iterations with written self-review, 290K Codex tokens; thigh to hock and the belly tuck (0.391 m) pass the critic read, every protected vertex exactly retained; the paw fails (slipper, short toe clefts, 10 mm claws, heel blob): defect D-g4sb, pass 2 B-kgav (45 min cap) on the paw only.
+
+**Parallel parts (process decision, after Nick asked about efficiency):** the tail (B-e6bc) runs beside the paw fix on the same base file. Measured basis: Blender was busy about 19 percent of a Codex pass (814 s of 73 min), so two builders queue on the slot lock only briefly; a Blender render pegs about 14 cores, so the lock stays at one Blender at a time. Merge rule: a parallel part edits its region in place and delivers a region delta (base coordinates to new coordinates); the integrator applies it to the approved neighbor build by exact coordinate match, which works because every builder keeps vertices outside its region at exactly the base coordinates. Forelegs wait for the paw fix so they reuse a proven paw method. Each builder owns its own tooling files; shared helpers only by addition.
+
+**Run watcher:** art/pipeline/watch/ serves localhost:4791 for Nick: one card per run with iteration, elapsed against the cap, a running log of every Codex status message (append-only, times from first sight), and an iteration strip with one render per iteration. No Claude tokens.
+
+**Lesson:**
+29. Parallel parts are safe only with a merge rule that does not depend on topology outside the part; the exact-coordinate delta gives one, and briefs must forbid remeshing outside the part and name the files each builder owns.
+

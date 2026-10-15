@@ -39,6 +39,29 @@ function decodeLog(buf) {
   return text.split(/\r?\n/).map(fromCp437).join("\n");
 }
 
+// First time this server saw each message, so the running log can show when a line appeared (lines that were
+// already in the log when the server started carry no time).
+const firstSeen = new Map();
+const BOOT = Date.now();
+
+// One image per iteration for the running log: the newest full-size image whose name starts iter<N>_,
+// preferring a side view.
+function iterationImages(dir) {
+  const per = new Map();
+  const consider = (p, f) => {
+    const m = /^(?:composite_)?iter(\d+)_/i.exec(f);
+    if (!m || !/\.(png|jpg)$/i.test(f) || /sprite|_192/i.test(f)) return;
+    const st = stat(p); if (!st) return;
+    const n = Number(m[1]);
+    const score = (/composite/i.test(f) ? 0 : 2) + (/side/i.test(f) && !/rear|front/i.test(f) ? 1 : 0);
+    const cur = per.get(n);
+    if (!cur || score > cur.score || (score === cur.score && st.mtimeMs > cur.mtime)) per.set(n, { iter: n, path: path.relative(ROOT, p), mtime: st.mtimeMs, score });
+  };
+  for (const f of ls(dir)) consider(path.join(dir, f), f);
+  for (const f of ls(path.join(dir, "renders"))) consider(path.join(dir, "renders", f), f);
+  return [...per.values()].sort((a, b) => a.iter - b.iter).map(({ iter, path: p, mtime }) => ({ iter, path: p, mtime }));
+}
+
 function agentMessages(text, n = 3) {
   const L = text.split("\n");
   const out = [];
@@ -118,7 +141,12 @@ function runInfo(runDir) {
     elapsedMin: done && wall ? wall : (Date.now() - started) / 60000,
     lastActivity: log.st.mtimeMs,
     iteration: maxIteration(passDir),
-    messages: agentMessages(text),
+    messages: agentMessages(text, Infinity).map((m, i) => {
+      const key = `${runDir}|${pass}|${i}|${m.slice(0, 60)}`;
+      if (!firstSeen.has(key)) firstSeen.set(key, Date.now() - BOOT < 15000 ? null : Date.now());
+      return { text: m, seen: firstSeen.get(key) };
+    }),
+    iterations: iterationImages(passDir),
     report: !!stat(path.join(passDir, "report.json")),
     image: render ? path.relative(ROOT, render.path) : null,
     imageTime: render ? render.mtime : null,

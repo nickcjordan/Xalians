@@ -1,0 +1,24 @@
+{
+  "id": "B-01M4ZZ7DFQE7DRK0DM12NZKGWQ",
+  "alias": "e6bc",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 5: tail, built in parallel with the hind paw fix on the hind-leg pass 1 file, delivered as a region delta; Codex",
+  "scope": "tail",
+  "defect": null,
+  "holds": [],
+  "inputs": [
+    {
+      "path": "0fffa66c7806c08ec385251af235505d224c2e8305b09ce7804850d9f0fab507",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T14:24:58Z",
+  "briefSha256": "9e492a5c8a3b28f5fe21977061ef5d5d73a9d4da6f1eff622b456ca449092dca"
+}
