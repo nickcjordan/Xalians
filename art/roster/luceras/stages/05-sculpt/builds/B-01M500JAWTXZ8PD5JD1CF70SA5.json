@@ -13,12 +13,177 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "forelegs.blend",
+      "hash": "b28c5413ba4ab39a3f57bbf1e2fd097887c756b424b3ad6223332b3d75e2b3dc"
+    },
+    {
+      "name": "forelegs_delta.npz",
+      "hash": "4fad988998914fc10218566affc43ac5884677b0e9cfe354e69d4425a63d8a82"
+    },
+    {
+      "name": "meta.json",
+      "hash": "3a3a5cef6daa9083753a6969a118f49ff010bbf8523de58809502ed966e65eb0"
+    },
+    {
+      "name": "delta_proof.json",
+      "hash": "1d3b086c42e01397d9f98ba70c01c4e3582615dcc47f03950929935afa8c1fea"
+    },
+    {
+      "name": "forelegs_part.glb",
+      "hash": "3be0ac5a22bd9d577e55df2e78863d5cdb2d25ea3a3ed97ca7891739193c63ba"
+    },
+    {
+      "name": "composite_side_vs_clay.png",
+      "hash": "040792709d98bc83f1021a01323a49d381feb9de693d767d950fd3b5b6fe1d54"
+    },
+    {
+      "name": "composite_front_vs_clay.png",
+      "hash": "9bdfc96abf8d34e7a3c6f496937cbed3637bcd0bf000a053e10fc843d0709a53"
+    },
+    {
+      "name": "composite_three_quarter_vs_clay.png",
+      "hash": "1b703b04c860b1baaa399630b0c295eaf00248f6c5936878666b31ce8d4dca67"
+    },
+    {
+      "name": "composite_full_side_vs_furred.png",
+      "hash": "ce99b33943f8f4e86abfe30fb2b45eaf9ca4aed113b76c79be5b0d39e1cbafa0"
+    },
+    {
+      "name": "progress.png",
+      "hash": "f6dd19d5cf2e3a2ac1258116b6d821696b6d6e8fb03aacc968a61514d2d61b15"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "2697b21a9333c8c3c1831038e9d0da85860d58a9d120e84bde388f2a88505d8c"
+    },
+    {
+      "name": "report.json",
+      "hash": "076041646b4b25447c8802579f8a24488cd30ceebac79f82f172359f44e35fc6"
+    },
+    {
+      "name": "iter_notes.json",
+      "hash": "8adbc5f020a8d0d166cb0a111e3ea14a644f7f38a704a5681e05c197ddfab394"
+    },
+    {
+      "name": "build_forelegs.py",
+      "hash": "c821fe559d9acca643a5be6b8b7690f27ea4f8c50e88adff84142e4930e2ba27"
+    },
+    {
+      "name": "forecam.py",
+      "hash": "746971d6faf45347e3aba457f3e6c81eb727c5e2f25c69d5268cc34d1dcb460e"
+    },
+    {
+      "name": "run_forelegs.sh",
+      "hash": "a842e336312af0bdeb1c3e1f40257e05221f34a215dbbb3487514c41f6cbd233"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "forelegs.blend",
+        "hash": "b28c5413ba4ab39a3f57bbf1e2fd097887c756b424b3ad6223332b3d75e2b3dc"
+      },
+      {
+        "name": "forelegs_delta.npz",
+        "hash": "4fad988998914fc10218566affc43ac5884677b0e9cfe354e69d4425a63d8a82"
+      },
+      {
+        "name": "meta.json",
+        "hash": "3a3a5cef6daa9083753a6969a118f49ff010bbf8523de58809502ed966e65eb0"
+      },
+      {
+        "name": "delta_proof.json",
+        "hash": "1d3b086c42e01397d9f98ba70c01c4e3582615dcc47f03950929935afa8c1fea"
+      },
+      {
+        "name": "forelegs_part.glb",
+        "hash": "3be0ac5a22bd9d577e55df2e78863d5cdb2d25ea3a3ed97ca7891739193c63ba"
+      },
+      {
+        "name": "composite_side_vs_clay.png",
+        "hash": "040792709d98bc83f1021a01323a49d381feb9de693d767d950fd3b5b6fe1d54"
+      },
+      {
+        "name": "composite_front_vs_clay.png",
+        "hash": "9bdfc96abf8d34e7a3c6f496937cbed3637bcd0bf000a053e10fc843d0709a53"
+      },
+      {
+        "name": "composite_three_quarter_vs_clay.png",
+        "hash": "1b703b04c860b1baaa399630b0c295eaf00248f6c5936878666b31ce8d4dca67"
+      },
+      {
+        "name": "composite_full_side_vs_furred.png",
+        "hash": "ce99b33943f8f4e86abfe30fb2b45eaf9ca4aed113b76c79be5b0d39e1cbafa0"
+      },
+      {
+        "name": "progress.png",
+        "hash": "f6dd19d5cf2e3a2ac1258116b6d821696b6d6e8fb03aacc968a61514d2d61b15"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "2697b21a9333c8c3c1831038e9d0da85860d58a9d120e84bde388f2a88505d8c"
+      },
+      {
+        "name": "report.json",
+        "hash": "076041646b4b25447c8802579f8a24488cd30ceebac79f82f172359f44e35fc6"
+      },
+      {
+        "name": "iter_notes.json",
+        "hash": "8adbc5f020a8d0d166cb0a111e3ea14a644f7f38a704a5681e05c197ddfab394"
+      },
+      {
+        "name": "build_forelegs.py",
+        "hash": "c821fe559d9acca643a5be6b8b7690f27ea4f8c50e88adff84142e4930e2ba27"
+      },
+      {
+        "name": "forecam.py",
+        "hash": "746971d6faf45347e3aba457f3e6c81eb727c5e2f25c69d5268cc34d1dcb460e"
+      },
+      {
+        "name": "run_forelegs.sh",
+        "hash": "a842e336312af0bdeb1c3e1f40257e05221f34a215dbbb3487514c41f6cbd233"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 22.3,
+    "codexTokens": "150,013",
+    "remains": [
+      "Exact mirroring is not achieved. The allowed base region has 6526 left vertices and 6436 right vertices with no exact mirrored base pairs. Surface projection reduces core error but cannot provide identical triangulated surfaces while preserving unequal topology and asymmetric fixed boundaries.",
+      "Minor medial upper-arm corners and a slightly elongated carpal envelope remain visible. Independent review found no additional mandatory geometric correction.",
+      "Only the pastern above 65 mm is covered. Paw and lower pastern corrections remain outside this part."
+    ],
+    "checks": [
+      {
+        "title": "Forelegs above the paw, Codex pass 1",
+        "question": "Do the forelegs read as the clay?",
+        "before": "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981",
+        "after": "9bdfc96abf8d34e7a3c6f496937cbed3637bcd0bf000a053e10fc843d0709a53",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "",
+        "recommended": "Critic read: pass at shape level. Widths at the elbow, mid forearm, wrist and pastern are within 10 percent of the clay; elbow point, forearm taper and wrist knob read. Muscle relief is softer than the clay, the same as the approved torso, and goes to the fur stage. The dewclaw at the back of the wrist moves to the fore paw pass with the other claws."
+      }
+    ],
+    "note": "Forelegs in parallel with paw pass 3: 22.3 min, in place (topology unchanged), region delta of 12,761 vertices proven (max 0 on the base). Exact left-right mirror impossible on the unequal original triangulation; core asymmetry under 1 mm, max 3.2 mm at the band. Critic: pass."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T14:48:25Z",
-  "briefSha256": "ca8ec4138882c578ad1bc1d69fa4dd12e7969b8aaa63b27b70b41645e35a5f5a"
+  "briefSha256": "ca8ec4138882c578ad1bc1d69fa4dd12e7969b8aaa63b27b70b41645e35a5f5a",
+  "checks": [
+    {
+      "title": "Forelegs above the paw, Codex pass 1",
+      "question": "Do the forelegs read as the clay?",
+      "before": "bc153b786d965458e78dab459cc8a9e6027a66b67dc3a38d58e61bccba570981",
+      "after": "9bdfc96abf8d34e7a3c6f496937cbed3637bcd0bf000a053e10fc843d0709a53",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "",
+      "recommended": "Critic read: pass at shape level. Widths at the elbow, mid forearm, wrist and pastern are within 10 percent of the clay; elbow point, forearm taper and wrist knob read. Muscle relief is softer than the clay, the same as the approved torso, and goes to the fur stage. The dewclaw at the back of the wrist moves to the fore paw pass with the other claws."
+    }
+  ],
+  "reportedAt": "2026-10-15T15:12:44Z"
 }
