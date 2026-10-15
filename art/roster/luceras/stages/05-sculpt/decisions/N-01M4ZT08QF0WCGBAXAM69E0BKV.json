@@ -1,0 +1,18 @@
+{
+  "id": "N-01M4ZT08QF0WCGBAXAM69E0BKV",
+  "alias": "tecc",
+  "stage": "05-sculpt",
+  "who": "nick",
+  "words": "Torso page (Claude pass 1, B-ej6s) presented; Nick in chat 2026-10-15: 'torso looks good, proceed'. Part 2 approved; belly tuck finish carried to part 3 (thigh seam), muscle relief to the fur stage. Codex B-eccr recorded for comparison, not chosen.",
+  "date": "2026-10-15",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M4YFD8C6TWPBYMB2JQ03QC9G",
+    "evidence": [
+      "cad94263de9497642a06363d680a7b73e16f8dcdc93e396d2d636780f311098b",
+      "fb8a7dce029b0b2fff300e738a0a994cabb83485c7ab3ad41317384816e191fd"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-15T12:53:41Z"
+}

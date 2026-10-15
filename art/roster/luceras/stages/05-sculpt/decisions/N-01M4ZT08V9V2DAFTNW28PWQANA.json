@@ -1,0 +1,14 @@
+{
+  "id": "N-01M4ZT08V9V2DAFTNW28PWQANA",
+  "alias": "jg9v",
+  "stage": "05-sculpt",
+  "who": "nick",
+  "words": "Builder switch (Nick 2026-10-15, 'sounds good, lets go with that approach'): from stage 5 part 3 on, Codex (gpt-6-astra) is the sole builder for every stage except stage 7 (surface/look), with the orchestrator as critic reading every pass and returning a concrete defect list; Opus returns for stage 7. The two-stream comparison ends; its data stays as the record.",
+  "date": "2026-10-15",
+  "kind": "ruling",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-15T12:53:41Z"
+}
