@@ -13,12 +13,127 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "paws_s085.blend",
+      "hash": "a64eec057d4bcd9a5121f963975132fd4eded4b41ead7dec90dffef0e5f92a1a"
+    },
+    {
+      "name": "paws_s075.blend",
+      "hash": "4b568b19fbc536a8fa089df375e5168ec6d86101fbbf97634436240ba28ae1c0"
+    },
+    {
+      "name": "paws_s065.blend",
+      "hash": "f2654b1b78073b6dc4ae07b6915c1c22e5220a14ced068bdb9614892ec65da9c"
+    },
+    {
+      "name": "report.json",
+      "hash": "71d9ee89412895d3a21f8be0c2cfa5dc92c68078da9d0b71eface378e8d9ab28"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "da97caa1b56024e9ade1e55d81d83bfd2750aa3908671a13df93055213f36b79"
+    },
+    {
+      "name": "Hind paw, side",
+      "hash": "e79d94568b18174e739ecc9e2f763d2df4690e764893a78b850010a1bd7263bc"
+    },
+    {
+      "name": "Hind paw, three-quarter",
+      "hash": "0d7ed9211dc78dd9d0256df75f70550d211ba83906cfbd133700e9dd9c697f4f"
+    },
+    {
+      "name": "Fore paws, front",
+      "hash": "96d4c90d90e6f40b1568e331fde4fc0c28f2b4069aa5f9b7b013e944649990db"
+    },
+    {
+      "name": "Fore paw, side",
+      "hash": "40581992244293f27206a79f69a377f9ffc4adee131041c6b6656f209d9c5f13"
+    },
+    {
+      "name": "Full body, side",
+      "hash": "7c39083474290135bb3a4a88880e348219d97778474a88ec652ed161947455a8"
+    },
+    {
+      "name": "Full body, three-quarter",
+      "hash": "970cf225e67451dda85da895c708e6d693e432e9563576b712da194e28f6615a"
+    },
+    {
+      "name": "Full body, front",
+      "hash": "955107ef18d3630ae7ba37352e7be79c6fe171b1e5fb24c21b7268d7b4a96d01"
+    },
+    {
+      "name": "Sprite size",
+      "hash": "3c9cc77f8bacf56c478797cae1c3a672d1bb69dced0f67f2b2a3163d147c718e"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "paws_s085.blend",
+        "hash": "a64eec057d4bcd9a5121f963975132fd4eded4b41ead7dec90dffef0e5f92a1a"
+      },
+      {
+        "name": "paws_s075.blend",
+        "hash": "4b568b19fbc536a8fa089df375e5168ec6d86101fbbf97634436240ba28ae1c0"
+      },
+      {
+        "name": "paws_s065.blend",
+        "hash": "f2654b1b78073b6dc4ae07b6915c1c22e5220a14ced068bdb9614892ec65da9c"
+      },
+      {
+        "name": "report.json",
+        "hash": "71d9ee89412895d3a21f8be0c2cfa5dc92c68078da9d0b71eface378e8d9ab28"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "da97caa1b56024e9ade1e55d81d83bfd2750aa3908671a13df93055213f36b79"
+      },
+      {
+        "name": "Hind paw, side",
+        "hash": "e79d94568b18174e739ecc9e2f763d2df4690e764893a78b850010a1bd7263bc"
+      },
+      {
+        "name": "Hind paw, three-quarter",
+        "hash": "0d7ed9211dc78dd9d0256df75f70550d211ba83906cfbd133700e9dd9c697f4f"
+      },
+      {
+        "name": "Fore paws, front",
+        "hash": "96d4c90d90e6f40b1568e331fde4fc0c28f2b4069aa5f9b7b013e944649990db"
+      },
+      {
+        "name": "Fore paw, side",
+        "hash": "40581992244293f27206a79f69a377f9ffc4adee131041c6b6656f209d9c5f13"
+      },
+      {
+        "name": "Full body, side",
+        "hash": "7c39083474290135bb3a4a88880e348219d97778474a88ec652ed161947455a8"
+      },
+      {
+        "name": "Full body, three-quarter",
+        "hash": "970cf225e67451dda85da895c708e6d693e432e9563576b712da194e28f6615a"
+      },
+      {
+        "name": "Full body, front",
+        "hash": "955107ef18d3630ae7ba37352e7be79c6fe171b1e5fb24c21b7268d7b4a96d01"
+      },
+      {
+        "name": "Sprite size",
+        "hash": "3c9cc77f8bacf56c478797cae1c3a672d1bb69dced0f67f2b2a3163d147c718e"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 33.6,
+    "codexTokens": "186,341",
+    "note": "Three even-height variants of the generated paws (85, 75, 65 percent), claws and dewclaws seated, no narrowing. Critic: the even compression keeps the shape Nick liked; a faint planar band (cuff) shows on the hind metatarsus where the graft blends, to fix after Nick picks; claws read small at full body."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T18:16:28Z",
-  "briefSha256": "89e71a8ab004c1fa5ed09058c08fa879d543bd663726fddbdb4ee29a5f7836ea"
+  "briefSha256": "89e71a8ab004c1fa5ed09058c08fa879d543bd663726fddbdb4ee29a5f7836ea",
+  "checks": [],
+  "reportedAt": "2026-10-15T18:51:01Z"
 }
