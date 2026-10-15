@@ -50,11 +50,12 @@
       ],
       "priority": 0.4,
       "margin": 0.03,
-      "length": 0.012,
+      "length": 0.0105,
       "density": 1.5,
       "clump": 0.1,
-      "curl": 0.12,
-      "comb": "down"
+      "curl": 0.22,
+      "comb": "down",
+      "lift": 0.04
     },
     "neck": {
       "zones": [
@@ -66,7 +67,8 @@
       "density": 1.5,
       "clump": 0.1,
       "curl": 0.12,
-      "comb": "down"
+      "comb": "down",
+      "lift": 0.04
     },
     "arms": {
       "zones": [
@@ -77,8 +79,9 @@
       "length": 0.011,
       "density": 1.5,
       "clump": 0.1,
-      "curl": 0.12,
-      "comb": "down"
+      "curl": 0.22,
+      "comb": "down",
+      "lift": 0.04
     },
     "legs": {
       "zones": [
@@ -188,8 +191,9 @@
       "margin": 0.02,
       "length": 0.026,
       "density": 1.0,
-      "clump": 0.4,
-      "curl": 0.2,
+      "clump": 0.15,
+      "curl": 0.08,
+      "lift": 0.06,
       "comb": "down",
       "pale": 0.0,
       "frontFacing": {
@@ -460,6 +464,13 @@
   ],
   "skullFlow": {"note": "head and crown comb (fur step 10d): radial from the brow point origin, turning down behind y downY (start, full) by down", "origin": [0.0, -0.4, 0.58], "down": 1.5, "downY": [0.0, 0.07]},
   "combSmooth": [
+    {
+      "note": "chest, armpits and ribs (fur step 10f): the comb field diffused so the fur flows down the chest, round the ribs and into and out of the armpits along the arms, where a straight-down comb is nearly normal to the skin and scatters",
+      "box": {"at": [0.24, 0.52], "x": [0.0, 0.16], "symmetricX": true, "y": [-0.16, 0.16]},
+      "margin": 0.03,
+      "iterations": 40,
+      "chunk": 5
+    },
     {
       "note": "back of the head: the comb field diffused over the skull, ear roots and nape so the fur radiates from the brow, runs back over the crown, down the nape and out onto the ear backs with no parts (fur step 10d)",
       "box": {"at": [0.0, 0.2], "x": [0.0, 0.3], "symmetricX": true, "y": [-0.06, 0.12]},
