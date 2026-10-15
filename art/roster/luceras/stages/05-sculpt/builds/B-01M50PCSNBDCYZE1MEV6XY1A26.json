@@ -1,0 +1,118 @@
+{
+  "id": "B-01M50PCSNBDCYZE1MEV6XY1A26",
+  "alias": "vhr6",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: claws resized to the clay (claw objects only) on B-23xc; Codex",
+  "scope": "claws",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "iter_notes.json",
+      "hash": "40a24507739ae6358f1590bc5fc20b651290d54c1c53a1cad1c05b1b49ae21b6"
+    },
+    {
+      "name": "paws.blend",
+      "hash": "27822a1b497b409657a03ac9a1abbe10f32b9bef26f40dcffe8e5c9fa52d5cfb"
+    },
+    {
+      "name": "report.json",
+      "hash": "7d66d21fea069a66f0e62baa3355b73d984f386d65d71d04a0b998405e934115"
+    },
+    {
+      "name": "saved_file_audit.json",
+      "hash": "d6506ef8a4e899df9ea05ce23891aef9a4753f2b9822765edc66b38c35286a61"
+    },
+    {
+      "name": "triple_pass7_fore_paws_front.png",
+      "hash": "1cafb18e10ad4685fbac1a58c2c4e0cd8f1f7b31d8886ee92dc679bc12918c48"
+    },
+    {
+      "name": "triple_pass7_fore_paw_side.png",
+      "hash": "c11e025bc3e6db931e70d8678d9d4a167e4f925a6ca3c9f4529d2c4463abcce7"
+    },
+    {
+      "name": "triple_pass7_full_front.png",
+      "hash": "c5aa72b0e9ec0b1218e1152de6d8e87453b9436f5606429509b3810c7375eb87"
+    },
+    {
+      "name": "triple_pass7_full_side.png",
+      "hash": "b60f4c2f2839276f3c992e03e1c4d4f0f4b8ad1f9ec53dca1a46a8ff26e48231"
+    },
+    {
+      "name": "triple_pass7_full_three_quarter.png",
+      "hash": "b30d6a676c7a0142397e84acde6657793f9f8cad84c99a8517fe5ccbb1fdd08d"
+    },
+    {
+      "name": "triple_pass7_hind_paw_side.png",
+      "hash": "ed6bc25e5cf8962946093fbe52cb6aafe42cb9fdfbdea03f134b7f4b9ea975cc"
+    },
+    {
+      "name": "triple_pass7_hind_paw_three_quarter.png",
+      "hash": "30727b63c17a37fc6bb6c31e15e3d466bc3ad8997080d385e97232e7fe0e422b"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "iter_notes.json",
+        "hash": "40a24507739ae6358f1590bc5fc20b651290d54c1c53a1cad1c05b1b49ae21b6"
+      },
+      {
+        "name": "paws.blend",
+        "hash": "27822a1b497b409657a03ac9a1abbe10f32b9bef26f40dcffe8e5c9fa52d5cfb"
+      },
+      {
+        "name": "report.json",
+        "hash": "7d66d21fea069a66f0e62baa3355b73d984f386d65d71d04a0b998405e934115"
+      },
+      {
+        "name": "saved_file_audit.json",
+        "hash": "d6506ef8a4e899df9ea05ce23891aef9a4753f2b9822765edc66b38c35286a61"
+      },
+      {
+        "name": "triple_pass7_fore_paws_front.png",
+        "hash": "1cafb18e10ad4685fbac1a58c2c4e0cd8f1f7b31d8886ee92dc679bc12918c48"
+      },
+      {
+        "name": "triple_pass7_fore_paw_side.png",
+        "hash": "c11e025bc3e6db931e70d8678d9d4a167e4f925a6ca3c9f4529d2c4463abcce7"
+      },
+      {
+        "name": "triple_pass7_full_front.png",
+        "hash": "c5aa72b0e9ec0b1218e1152de6d8e87453b9436f5606429509b3810c7375eb87"
+      },
+      {
+        "name": "triple_pass7_full_side.png",
+        "hash": "b60f4c2f2839276f3c992e03e1c4d4f0f4b8ad1f9ec53dca1a46a8ff26e48231"
+      },
+      {
+        "name": "triple_pass7_full_three_quarter.png",
+        "hash": "b30d6a676c7a0142397e84acde6657793f9f8cad84c99a8517fe5ccbb1fdd08d"
+      },
+      {
+        "name": "triple_pass7_hind_paw_side.png",
+        "hash": "ed6bc25e5cf8962946093fbe52cb6aafe42cb9fdfbdea03f134b7f4b9ea975cc"
+      },
+      {
+        "name": "triple_pass7_hind_paw_three_quarter.png",
+        "hash": "30727b63c17a37fc6bb6c31e15e3d466bc3ad8997080d385e97232e7fe0e422b"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 8.2,
+    "codexTokens": "74,416",
+    "note": "Claws resized to the clay (claw objects only); body, horns, whiskers identical to pass 6 (max distance 0). Critic read: claws now read as the clay hooks at the paw cameras and as dark points at full body. Presented to Nick with the legs and tail."
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-15T21:09:52Z",
+  "briefSha256": "aae5ccca5c5b5fcb7468330c2b0e0780e11b75f308a865347a715dad8dd699ee",
+  "checks": [],
+  "reportedAt": "2026-10-15T21:18:54Z"
+}

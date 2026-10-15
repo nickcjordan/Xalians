@@ -8,12 +8,103 @@
   "defect": "D-01M509XY1WRPJ7AXW2MJK3CSSN",
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "measurements.json",
+      "hash": "9033ac8a8e6d0ecfec2929675450ad2a982ca413abb02040b8f64d3a6d8b566b"
+    },
+    {
+      "name": "paws.blend",
+      "hash": "f97a8ca3161d691202fc1cefa7f9ed90602910d3d07a0da752de004cf56c223c"
+    },
+    {
+      "name": "report.json",
+      "hash": "d329c35e959e4cc90361974f943661e7cc0774465847fcc8f8770caf5121c81f"
+    },
+    {
+      "name": "triple_pass6_fore_paws_front.png",
+      "hash": "e6b8d20dc9a5990f7c3689903b1880669ddca0ed19dd1a88d94e73ac68253765"
+    },
+    {
+      "name": "triple_pass6_fore_paw_side.png",
+      "hash": "cfcd4c5013fb1e7212f94e9fb3e45a82df479d513eff209188f2dabf9b2060ac"
+    },
+    {
+      "name": "triple_pass6_full_front.png",
+      "hash": "c81567289b318c412e20cf8b728b8983f79356fa4d498afc80c24d1fb1200348"
+    },
+    {
+      "name": "triple_pass6_full_side.png",
+      "hash": "014d7dc3dc577324b9d05c8f5533008fb7491209ab92a99379237eb2de48033e"
+    },
+    {
+      "name": "triple_pass6_full_three_quarter.png",
+      "hash": "ec9e48da22421927950ac72625e95fdc0300bd10c570e3700bdf504f11f27200"
+    },
+    {
+      "name": "triple_pass6_hind_paw_side.png",
+      "hash": "422db18a3a20a913034cffbb17802a1afe82b4491053c01fc887be0cd936329e"
+    },
+    {
+      "name": "triple_pass6_hind_paw_three_quarter.png",
+      "hash": "1c6beb0e52bb6c5492e9f75a35c286c0b1cb693305e2f64cc9a63120aca1d6ae"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "measurements.json",
+        "hash": "9033ac8a8e6d0ecfec2929675450ad2a982ca413abb02040b8f64d3a6d8b566b"
+      },
+      {
+        "name": "paws.blend",
+        "hash": "f97a8ca3161d691202fc1cefa7f9ed90602910d3d07a0da752de004cf56c223c"
+      },
+      {
+        "name": "report.json",
+        "hash": "d329c35e959e4cc90361974f943661e7cc0774465847fcc8f8770caf5121c81f"
+      },
+      {
+        "name": "triple_pass6_fore_paws_front.png",
+        "hash": "e6b8d20dc9a5990f7c3689903b1880669ddca0ed19dd1a88d94e73ac68253765"
+      },
+      {
+        "name": "triple_pass6_fore_paw_side.png",
+        "hash": "cfcd4c5013fb1e7212f94e9fb3e45a82df479d513eff209188f2dabf9b2060ac"
+      },
+      {
+        "name": "triple_pass6_full_front.png",
+        "hash": "c81567289b318c412e20cf8b728b8983f79356fa4d498afc80c24d1fb1200348"
+      },
+      {
+        "name": "triple_pass6_full_side.png",
+        "hash": "014d7dc3dc577324b9d05c8f5533008fb7491209ab92a99379237eb2de48033e"
+      },
+      {
+        "name": "triple_pass6_full_three_quarter.png",
+        "hash": "ec9e48da22421927950ac72625e95fdc0300bd10c570e3700bdf504f11f27200"
+      },
+      {
+        "name": "triple_pass6_hind_paw_side.png",
+        "hash": "422db18a3a20a913034cffbb17802a1afe82b4491053c01fc887be0cd936329e"
+      },
+      {
+        "name": "triple_pass6_hind_paw_three_quarter.png",
+        "hash": "1c6beb0e52bb6c5492e9f75a35c286c0b1cb693305e2f64cc9a63120aca1d6ae"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 27.3,
+    "codexTokens": "130,469",
+    "note": "Toes carved and claws added on the generated paws; silhouette within 0.4 mm, size unchanged. Critic read: shape exactly kept; the claws are thin small spikes against the clay broad hooks, and the clefts are faint at full-body size. Claws are separate objects, so the fix does not touch the paw."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T20:30:13Z",
-  "briefSha256": "5010da8fdd0c49af5628ab789546b7e5b0652f569e52731bfb5e94128826c487"
+  "briefSha256": "5010da8fdd0c49af5628ab789546b7e5b0652f569e52731bfb5e94128826c487",
+  "checks": [],
+  "reportedAt": "2026-10-15T21:09:52Z"
 }
