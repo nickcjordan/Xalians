@@ -1,0 +1,24 @@
+{
+  "id": "B-01M500JAWTXZ8PD5JD1CF70SA5",
+  "alias": "t5qe",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 4: forelegs above the paw, in parallel with the hind paw pass 3, delivered as a region delta on B-kgav; fore paws follow with the proven paw method; Codex",
+  "scope": "forelegs above 65 mm",
+  "defect": null,
+  "holds": [],
+  "inputs": [
+    {
+      "path": "2bed33840d829d8a2c7cb57c0ccae5c2ee7a88dcdef7793ea3ee3fe22ff1acd1",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T14:48:25Z",
+  "briefSha256": "ca8ec4138882c578ad1bc1d69fa4dd12e7969b8aaa63b27b70b41645e35a5f5a"
+}

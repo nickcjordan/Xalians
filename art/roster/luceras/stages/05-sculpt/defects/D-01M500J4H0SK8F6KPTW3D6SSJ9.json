@@ -1,0 +1,14 @@
+{
+  "id": "D-01M500J4H0SK8F6KPTW3D6SSJ9",
+  "alias": "3sh5",
+  "stage": "05-sculpt",
+  "description": "Hind digits too low and thin: on the clay each toe is a thick digit whose knuckle top stands about as high as a third of the paw length above the ground and whose width nearly fills the paw, the four digits pressed side by side with tight clefts; on pass 2 they are low narrow pads on a flat sole (knuckle top about a sixth of paw length). The instep is also a vertical step behind the toes where the clay runs one long slope from the metatarsus down over the digits.",
+  "camera": "paw_side, paw_front_three_quarter",
+  "region": "hind paws (both)",
+  "origin": "B-kgav",
+  "attempts": [
+    "B-01M500JAS2S8EKVF6V3P1BP3RA"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-15T14:48:18Z"
+}

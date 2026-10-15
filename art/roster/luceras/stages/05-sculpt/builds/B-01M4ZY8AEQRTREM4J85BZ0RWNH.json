@@ -13,12 +13,171 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "hindlegs.blend",
+      "hash": "2bed33840d829d8a2c7cb57c0ccae5c2ee7a88dcdef7793ea3ee3fe22ff1acd1"
+    },
+    {
+      "name": "hindlegs.glb",
+      "hash": "ebbd2dfd4012b15c31ad9dc2b5dd9431ddccef64a16691bcfb4720fa27c575eb"
+    },
+    {
+      "name": "hindlegs_part.glb",
+      "hash": "f52d0adad12ba60a5f4c08b0271b11d6d27972dd7a07423fffa1af9be05d2827"
+    },
+    {
+      "name": "composite_paw_side_vs_clay.png",
+      "hash": "6131f374aa20c020998d4839490d5c5d27e6363c83cc21a4b79b747b1b6f9aab"
+    },
+    {
+      "name": "composite_paw_front_three_quarter_vs_clay.png",
+      "hash": "98c56463d8a6f55b4b13032680e861f7ba5276cb348c1e5f96cf26e438b2747f"
+    },
+    {
+      "name": "composite_leg_side_vs_clay.png",
+      "hash": "4de66f9c70083dc6c0ebfdfd272cec938b5773b3a4010aa4e6b05914166830b3"
+    },
+    {
+      "name": "composite_leg_front_three_quarter_vs_clay.png",
+      "hash": "c4560dbccc20712ace46c43248764a8e56959432eac4ead274ff61287308aca4"
+    },
+    {
+      "name": "composite_leg_three_quarter_rear_vs_clay.png",
+      "hash": "69e56435561553b891143d77940b4d3981c8d39f0d42e4a121f013e910e5f956"
+    },
+    {
+      "name": "composite_full_side_vs_furred.png",
+      "hash": "92716d996ca69e4af2e435f553e6b5f396a5e4f7aa88099d227d2441ba1f6d90"
+    },
+    {
+      "name": "progress.png",
+      "hash": "283b3ca10039a85960ce98dc1ae78eb9462be036273626ce020dfc115586ac89"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "a2de66ba8cdbc2e6cd211c5ab06be4dd294e1dc50bd92597532882603e01f65a"
+    },
+    {
+      "name": "report.json",
+      "hash": "c6b79c1b4351075b4f161fe7cfcb93edf23b486c09d848b6d707601924fd5d9b"
+    },
+    {
+      "name": "iter_notes.json",
+      "hash": "0ad2e1b398cc3ede4cc31f4f577bd708e4e52f8efb28c39b53701ba3af9e81f6"
+    },
+    {
+      "name": "build_hindpaw.py",
+      "hash": "dd8c8b5849d1367e88aebc2422f36803f2f1e8b581862fcee342b1f188ab67ba"
+    },
+    {
+      "name": "legcam.py",
+      "hash": "c7e584058c3edce6347205d32680f425a81a90bfe9bb5ada936df2b472502c95"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "hindlegs.blend",
+        "hash": "2bed33840d829d8a2c7cb57c0ccae5c2ee7a88dcdef7793ea3ee3fe22ff1acd1"
+      },
+      {
+        "name": "hindlegs.glb",
+        "hash": "ebbd2dfd4012b15c31ad9dc2b5dd9431ddccef64a16691bcfb4720fa27c575eb"
+      },
+      {
+        "name": "hindlegs_part.glb",
+        "hash": "f52d0adad12ba60a5f4c08b0271b11d6d27972dd7a07423fffa1af9be05d2827"
+      },
+      {
+        "name": "composite_paw_side_vs_clay.png",
+        "hash": "6131f374aa20c020998d4839490d5c5d27e6363c83cc21a4b79b747b1b6f9aab"
+      },
+      {
+        "name": "composite_paw_front_three_quarter_vs_clay.png",
+        "hash": "98c56463d8a6f55b4b13032680e861f7ba5276cb348c1e5f96cf26e438b2747f"
+      },
+      {
+        "name": "composite_leg_side_vs_clay.png",
+        "hash": "4de66f9c70083dc6c0ebfdfd272cec938b5773b3a4010aa4e6b05914166830b3"
+      },
+      {
+        "name": "composite_leg_front_three_quarter_vs_clay.png",
+        "hash": "c4560dbccc20712ace46c43248764a8e56959432eac4ead274ff61287308aca4"
+      },
+      {
+        "name": "composite_leg_three_quarter_rear_vs_clay.png",
+        "hash": "69e56435561553b891143d77940b4d3981c8d39f0d42e4a121f013e910e5f956"
+      },
+      {
+        "name": "composite_full_side_vs_furred.png",
+        "hash": "92716d996ca69e4af2e435f553e6b5f396a5e4f7aa88099d227d2441ba1f6d90"
+      },
+      {
+        "name": "progress.png",
+        "hash": "283b3ca10039a85960ce98dc1ae78eb9462be036273626ce020dfc115586ac89"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "a2de66ba8cdbc2e6cd211c5ab06be4dd294e1dc50bd92597532882603e01f65a"
+      },
+      {
+        "name": "report.json",
+        "hash": "c6b79c1b4351075b4f161fe7cfcb93edf23b486c09d848b6d707601924fd5d9b"
+      },
+      {
+        "name": "iter_notes.json",
+        "hash": "0ad2e1b398cc3ede4cc31f4f577bd708e4e52f8efb28c39b53701ba3af9e81f6"
+      },
+      {
+        "name": "build_hindpaw.py",
+        "hash": "dd8c8b5849d1367e88aebc2422f36803f2f1e8b581862fcee342b1f188ab67ba"
+      },
+      {
+        "name": "legcam.py",
+        "hash": "c7e584058c3edce6347205d32680f425a81a90bfe9bb5ada936df2b472502c95"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 39.2,
+    "blenderSeconds": 586.458,
+    "codexTokens": "193,165",
+    "defectResult": "D-g4sb: slipper read, heel blob and claw visibility fixed (claws 30 mm, dark; heel 24 mm at 30 mm height, was 44; toes separate). New defect: the digits are too low and thin in volume against the clay.",
+    "remains": [
+      "Low-severity surface-style differences: toe forms and pads are smoother and more regular than the textured clay. The anatomical slipper, heel and claw-visibility defects are resolved.",
+      "The side and front-three-quarter views occlude portions of the long clefts. Diagnostic top/front views and ray sections document the actual openings.",
+      "No supplied rear clay view exists. Rear composites label the reference mismatch."
+    ],
+    "checks": [
+      {
+        "title": "Hind paw, Codex pass 2",
+        "question": "Does the paw read as the clay?",
+        "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+        "after": "6131f374aa20c020998d4839490d5c5d27e6363c83cc21a4b79b747b1b6f9aab",
+        "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+        "sprite": "",
+        "recommended": "Critic read: the defect is fixed; the paw now reads as toes and claws. One defect left: the digits are low, thin pads on a flat sole where the clay's are thick, high-knuckled digits, and the instep is a step instead of the clay's long slope from the metatarsus into the toes."
+      }
+    ],
+    "note": "Paw fix pass 2: 39.2 min, 586 Blender s. Everything at or above 65 mm unmoved."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-15T14:07:59Z",
-  "briefSha256": "1fe10da2bc9d1007782735b48fd3fb5fa2437589d22332b47c658da28d2cda50"
+  "briefSha256": "1fe10da2bc9d1007782735b48fd3fb5fa2437589d22332b47c658da28d2cda50",
+  "checks": [
+    {
+      "title": "Hind paw, Codex pass 2",
+      "question": "Does the paw read as the clay?",
+      "before": "d265b6fcbff2e1f3fdd994590fd8b884eca9397680c871d8ccfc3d9d6aec8ec9",
+      "after": "6131f374aa20c020998d4839490d5c5d27e6363c83cc21a4b79b747b1b6f9aab",
+      "reference": "56269a7be56c4020a23c08838c8eb84c5a9ac70730ada74c94db8ed04b8c5529",
+      "sprite": "",
+      "recommended": "Critic read: the defect is fixed; the paw now reads as toes and claws. One defect left: the digits are low, thin pads on a flat sole where the clay's are thick, high-knuckled digits, and the instep is a step instead of the clay's long slope from the metatarsus into the toes."
+    }
+  ],
+  "reportedAt": "2026-10-15T14:48:18Z"
 }

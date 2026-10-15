@@ -1,0 +1,24 @@
+{
+  "id": "B-01M500JAS2S8EKVF6V3P1BP3RA",
+  "alias": "gsn9",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 part 3 pass 3: hind digit volume and instep (D-3sh5) on B-kgav, Codex",
+  "scope": "hind paws",
+  "defect": "D-01M500J4H0SK8F6KPTW3D6SSJ9",
+  "holds": [],
+  "inputs": [
+    {
+      "path": "2bed33840d829d8a2c7cb57c0ccae5c2ee7a88dcdef7793ea3ee3fe22ff1acd1",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-15T14:48:25Z",
+  "briefSha256": "3eab8716e430db971af2d66463553fd334a0e980b414609ca4a5723bb32eb0e9"
+}
