@@ -67,3 +67,7 @@ Next unfinished authorized action: commit the partial candidate's explicit sourc
 Committed the explicit 16 source/documentation paths for step 12e; no push. Rechecked candidate, retained s12d baseline, all three comparison pairs and corrected chart against delivery SHA-256 values. The candidate remains partial and does not supersede s12d. No baseline move is authorized by the conditional supersession rule in this state. The rejected preview archive is retained.
 
 No executable authorized model action remains within the brief: four invocations are exhausted. F001 root continuity and F007 width-jump reduction remain blocked by that explicit cap, not resolved or silently deferred as complete. A future authorized continuation should fix the connector mask and repeat the full artifact, scope, measurement and native-size visual audits. All currently authorized non-build delivery, verification, log and commit work is finished. This does not complete the broader creature or claim subjective approval.
+
+## Authorized fix continuation
+
+The user subsequently requested `briefs/12e-fix.md`, authorizing up to three further builds. Current continuation and disposition are in [fur-12e-fix-active-work.md](fur-12e-fix-active-work.md). The earlier four-build ledger and audit remain historical evidence; their cap no longer blocks the separately authorized fix pass. The orchestrator also superseded the scalar station-jump target with chart and render judgment while retaining the mid-tail fullness requirement.

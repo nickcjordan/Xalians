@@ -1,0 +1,44 @@
+{
+  "status": "partial",
+  "unresolved": "F001 bristly annular root direction break",
+  "buildsUsed": 3,
+  "buildsAllowed": 3,
+  "parentCommit": "00168a8d5d5960c93a68c5c8862448c3f0b94763",
+  "commitMessage": "Akinza fur step 12e fix: fill root connectors and smooth plume edges",
+  "committed": true,
+  "pushed": false,
+  "supersedesBaseline": false,
+  "retained": [
+    "s12d",
+    "s12e"
+  ],
+  "archives": [
+    "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12e-fix-try1",
+    "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12e-fix-try2"
+  ],
+  "artifacts": {
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/surface.blend": "e3ca17c1a123237c84417f77c3c2d147c07f40ab91e5e874993247786bf1a220",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/plan-info.json": "2d9d63f55591bf86ad1f2caced967d98d11a1ce6f2001403dc3f7233808ad0c8",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/measurement-core.npy": "94ec9ebff55b57bb40401a4873d89fdd4054302640a24a361c8995452d6ec7d3",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/artifact-guard-history.json": "0f76e65e1c72aaf184719a24e54583345e485bf49ccacff6da3c9f13993297f8",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/exterior-guard.json": "20f43ac5aff95a909cdf30403d74c2be0b08220694fa144459a6f2f68d719b56",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/saved-protection-check.json": "1c3058b60454d4fe8e44b532a955505f4a579dc4cec8f0ce8df438ce1fe8eb30",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/selection-check.json": "eaa428d44521ed988f214c552d43c2ff6661f9c4f9a4313e91013612d72a780d",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/r/sweep-flags.npz": "2ffe111f84060b70f1821e5e89bdd8543cb4bd929b6745cf4db208724571e3ad",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/r/collision-evidence.npz": "0de159cf95f7cf7e57edb9e8e6593be1de8ac7f0e7b89553a7a232dede1faf9d",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/r/obstacle-evidence.npz": "fffaf3b9a7afa86a928829bee264d943cf91ebaec9bebd20725daa9b4ebabe18",
+    "untracked/species-construction/akinza/surface/fur-steps/12e-fix-width-profile.png": "fd0ea3102e8a299d542a604879e61d669511776b04543348768c86b1c1eed0d1",
+    "untracked/species-construction/akinza/surface/fur-steps/12e-fix-metrics.json": "46d33f1366434d7ddb40a5f138446366a5b46e8710d4207329c50753529a4b48",
+    "untracked/species-construction/akinza/surface/fur-steps/12e-fix-tails-side.png": "b71cf17fdcc7f7825f1d84a1f1feed0bdb3f554c3544b4c3e1306ffff0a6c9c3",
+    "untracked/species-construction/akinza/surface/fur-steps/12e-fix-tails-back.png": "985824c0aabea2ca3b87344ec78dfd16a3ad9e8128e39bb3d6e53507a53a2676",
+    "untracked/species-construction/akinza/surface/fur-steps/12e-fix-tails-threequarter.png": "a67abecbcd6f600e3287af0a759a213b950cd5be0cfdc1813e6d1e93fc1e6507",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/r/tails-side.png": "8d62e205fcf2cae7f0c368f6a278fc26a2ac838025a73f298e012bc544675f37",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/r/tails-back.png": "d8a2259eea5984af5ea9a9c7dcc90ebf7c176bcdd4efc961000b064aafb1f013",
+    "untracked/species-construction/akinza/surface/fur-steps/s12e-fix/r/tails-threequarter.png": "3d3c45f5ff66c74942862d821b8ba6796359da484b57a2ea60368ee3ea86c3a1",
+    "untracked/species-construction/akinza/surface/fur-steps/12e-fix-build1.log": "6c3424c1e9fe376dcf64d015db9a56d7021ffacec7f071e20b7d1b1fed2bf3e3",
+    "untracked/species-construction/akinza/surface/fur-steps/12e-fix-build2.log": "cc35314d21e7f3340980fe0218fe03dd9569cdc155a189ffaa3ab6ccedd7966b",
+    "untracked/species-construction/akinza/surface/fur-steps/12e-fix-build3.log": "11a5fef9fee098196bcaaa199381f9a8b790797daacd36a6dd798b078d8148dc"
+  },
+  "sourceAndDocsFileCount": 14,
+  "verification": "All artifact hashes, archive models, explicit commit paths/message, parent commit and clean working tree checked after commit. Final audit seal binds the amended delivery commit."
+}
