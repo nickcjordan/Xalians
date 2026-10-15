@@ -410,6 +410,16 @@ def compute_attributes(skin, cfg, species):
         rear = smoothstep((co[:, 1]-flow['rearFade'][0])/np.diff(flow['rearFade'])[0])
         outer = smoothstep((lateral-flow['outerFade'][0])/np.diff(flow['outerFade'])[0])
         w *= np.maximum(rear, outer)
+        if 'backFacing' in flow:
+            # Keep the original front/rim grooming. The lateral replacement
+            # field is for the back surface, not white hairs over the blue cup.
+            back = smoothstep((nrm[:, 1]-flow['backFacing'][0])/np.diff(flow['backFacing'])[0])
+            if 'backFacingOuter' in flow:
+                outer_rim = smoothstep((lateral-flow['backFacingOuter'][0])/np.diff(flow['backFacingOuter'])[0])
+                front = smoothstep((nrm[:, 1]-flow['frontFacing'][0])/np.diff(flow['frontFacing'])[0])
+                w *= front*(1-outer_rim+outer_rim*back)
+            else:
+                w *= back
         shift = smoothstep((lateral-flow['sourceFade'][0])/np.diff(flow['sourceFade'])[0])
         origin = (np.array(flow['skullOrigin'])*(1-shift[:, None])
                   + np.array(flow['earOrigin'])*shift[:, None])
@@ -422,6 +432,41 @@ def compute_attributes(skin, cfg, species):
             cv = unit(cv-nrm*np.sum(cv*nrm, axis=1, keepdims=True))
         comb = unit(comb*(1-w[:, None])+cv*w[:, None])
         write_attribute(me, 'comb_flow', w)
+
+    if cfg.get('rootBridge'):
+        # Cross the ear/skull groove instead of combing along its vertical
+        # shadow. Parallel transport blends tangents across changing normals.
+        rb = cfg['rootBridge']
+        w = membership(co, rb['box'], floor, height, rb['margin'])
+        w *= smoothstep((np.abs(co[:, 0])-rb['sideFade'][0])/np.diff(rb['sideFade'])[0])
+        w *= smoothstep((nrm[:, 1]-rb['facing'][0])/np.diff(rb['facing'])[0])
+        target = np.tile(rb['direction'], (n, 1))
+        target[:, 0] *= sign
+        target[:, 2] -= rb['down']*smoothstep((rb['downZ'][1]-co[:, 2])/np.diff(rb['downZ'])[0])
+        target = unit(target-nrm*np.sum(target*nrm, axis=1, keepdims=True))
+        cv = unit(comb*(1-w[:, None])+target*w[:, None])
+        ea, eb = edges[:, 0], edges[:, 1]
+        sel = (w[ea] > 0) | (w[eb] > 0)
+        ea, eb = ea[sel], eb[sel]
+        cosine = np.sum(nrm[ea]*nrm[eb], axis=1)
+        good = cosine > -.5
+        ea, eb, cosine = ea[good], eb[good], cosine[good]
+        axis = np.cross(nrm[eb], nrm[ea])
+        degree = np.bincount(ea, minlength=n)+np.bincount(eb, minlength=n)+1
+        for _ in range(rb['iterations']):
+            va, vb = cv[ea], cv[eb]
+            ba = vb+np.cross(axis, vb)+np.cross(axis, np.cross(axis, vb))/(1+cosine[:, None])
+            ab = va-np.cross(axis, va)+np.cross(axis, np.cross(axis, va))/(1+cosine[:, None])
+            avg = np.stack([(cv[:, k]+np.bincount(ea, weights=ba[:, k], minlength=n)
+                             +np.bincount(eb, weights=ab[:, k], minlength=n))/degree for k in range(3)], 1)
+            avg = unit(avg-nrm*np.sum(avg*nrm, axis=1, keepdims=True))
+            cv = unit(avg*w[:, None]+comb*(1-w[:, None]))
+        comb = unit(comb*(1-w[:, None])+cv*w[:, None])
+        write_attribute(me, 'root_bridge', w)
+        if 'comb_flow' in me.attributes:
+            previous = np.empty(n)
+            me.attributes['comb_flow'].data.foreach_get('value', previous)
+            write_attribute(me, 'comb_flow', np.maximum(previous, w))
 
     if cfg.get('tailRootFlow') and tail_d is not None and cfg.get('tailLength', {}).get('tube'):
         # The tail region includes the thick hip skin. Comb that skin down into

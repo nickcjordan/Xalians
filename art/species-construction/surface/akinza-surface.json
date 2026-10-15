@@ -492,7 +492,7 @@
   ],
   "combFlows": [
     {
-      "note": "Fur step 12c: continuous lateral skull to ear-root and ear-tip flow; center occiput and muzzle held.",
+      "note": "Fur step12c fix: preserve the original front/rim grooming, keep outward back flow, and carry downward skull flow farther across the lower root before turning toward the ear tip.",
       "box": {
         "at": [
           0.0,
@@ -533,16 +533,66 @@
       "earOrigin": [
         0,
         -0.12,
-        0.5
+        0.6
       ],
       "scale": [
         1.8,
         0.5,
         1.0
       ],
-      "iterations": 120
+      "iterations": 120,
+      "backFacing": [
+        0.8,
+        0.95
+      ],
+      "backFacingOuter": [
+        0.28,
+        0.38
+      ],
+      "frontFacing": [
+        -0.05,
+        0.2
+      ]
     }
   ],
+  "rootBridge": {
+    "note": "12c fix: outward flow crosses lower ear/skull groove, turns down only below its end, and is smoothed by parallel transport; front and outer rim held.",
+    "box": {
+      "at": [
+        0.08,
+        0.22
+      ],
+      "x": [
+        0.05,
+        0.14
+      ],
+      "symmetricX": true,
+      "y": [
+        -0.02,
+        0.09
+      ]
+    },
+    "margin": 0.025,
+    "sideFade": [
+      0.06,
+      0.11
+    ],
+    "facing": [
+      0.15,
+      0.5
+    ],
+    "direction": [
+      1,
+      0.25,
+      0.05
+    ],
+    "down": 0.7,
+    "downZ": [
+      0.55,
+      0.6
+    ],
+    "iterations": 50
+  },
   "tailRootFlow": {
     "tubeFade": [0.9, 0.99],
     "note": "Fur step 12c: downflow on thick hip skin above the tail roots; the existing thin tail-tube mask holds plume directions and volume.",

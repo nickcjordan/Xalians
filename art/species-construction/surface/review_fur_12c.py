@@ -63,11 +63,12 @@ if __name__ == '__main__':
     p.add_argument('--surface', type=Path, required=True)
     p.add_argument('--out', type=Path, required=True)
     p.add_argument('--extract-only', action='store_true')
+    p.add_argument('--views', default=','.join(VIEWS))
     a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
     a.out.mkdir(parents=True, exist_ok=True)
     export(a.surface, a.out)
     if not a.extract_only:
         render.VIEWS.update(VIEWS)
         sys.argv = [__file__, '--', '--surface', str(a.surface), '--out', str(a.out),
-                    '--views', ','.join(VIEWS), '--samples', '32', '--palette', 'T7']
+                    '--views', a.views, '--samples', '32', '--palette', 'T7']
         render.main()

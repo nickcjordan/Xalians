@@ -61,3 +61,5 @@ Things the reference shows that belong to the surface phase (textures, painting,
 
 
 **Step12c, four-try partial result, not approved.** Head fur fans farther onto the ears; thick hip fur combed downward. Ear-back clash25.6% to23.7%, hip upward roots13.55% to.014%. Still off: lower-root part, crossed ear hair, bristly rim, new white cup-crossing hairs and remaining hip bloom. Checks: `fur-steps/12c-{head-backq,head-side,ear-back-close,body-backq}.png`; surface `s12c/surface.blend`.
+
+**Step12c fix, three-build partial result.** New cup whiskers repaired; front-rooted tips over cup17807 equals12b (original12c18433). Fine baseline rim fluff remains. Root part persists and is locally sharper; hip bloom deferred. Blue mask and approved12c body/plume held. Checks: `fur-steps/12c-fix-{head-backq,head-side,ear-back-close,body-backq}.png`; surface `s12c-fix/surface.blend`. Three-build cap exhausted, not approved.

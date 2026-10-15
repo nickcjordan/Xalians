@@ -1,0 +1,219 @@
+{
+  "method": "Every fifth actual strand root; overquery 48 neighbors within .012 world units, retain nearest 12 with surface normals dot > .25; tangent-projected first strand segment, parallel transported between tangent planes; clash > 60 degrees. Opposite sheet faces excluded; inspect sharp folds visually too.",
+  "before": {
+    "central_occiput": {
+      "sampled_roots": 2088,
+      "neighbor_pairs": 25056,
+      "roots_with_clash_fraction": 0.0,
+      "clashing_pair_fraction": 0.0
+    },
+    "lateral_skull": {
+      "sampled_roots": 5817,
+      "neighbor_pairs": 69804,
+      "roots_with_clash_fraction": 0.008939315798521575,
+      "clashing_pair_fraction": 0.001532863446220847
+    },
+    "ear_head_junction": {
+      "sampled_roots": 4205,
+      "neighbor_pairs": 50460,
+      "roots_with_clash_fraction": 0.027824019024970274,
+      "clashing_pair_fraction": 0.00453824811732065
+    },
+    "ear_backs": {
+      "sampled_roots": 5210,
+      "neighbor_pairs": 62520,
+      "roots_with_clash_fraction": 0.2560460652591171,
+      "clashing_pair_fraction": 0.056222008957133716
+    },
+    "ear_fronts": {
+      "sampled_roots": 4085,
+      "neighbor_pairs": 49020,
+      "roots_with_clash_fraction": 0.04773561811505508,
+      "clashing_pair_fraction": 0.012178702570379438
+    },
+    "back_and_flanks": {
+      "sampled_roots": 3834,
+      "neighbor_pairs": 46008,
+      "roots_with_clash_fraction": 0.007303077725612937,
+      "clashing_pair_fraction": 0.0014127977743001218
+    },
+    "chest_armpits_ribs": {
+      "sampled_roots": 19943,
+      "neighbor_pairs": 239316,
+      "roots_with_clash_fraction": 0.0016045730331444618,
+      "clashing_pair_fraction": 0.00037607180464323324
+    },
+    "arms": {
+      "sampled_roots": 9245,
+      "neighbor_pairs": 110938,
+      "roots_with_clash_fraction": 0.0006489994591671173,
+      "clashing_pair_fraction": 0.00013521065820548415
+    },
+    "legs_paws": {
+      "sampled_roots": 15697,
+      "neighbor_pairs": 188239,
+      "roots_with_clash_fraction": 0.0016563674587500795,
+      "clashing_pair_fraction": 0.00028155695684741204
+    },
+    "tails": {
+      "sampled_roots": 15209,
+      "neighbor_pairs": 182508,
+      "roots_with_clash_fraction": 0.007364060753501217,
+      "clashing_pair_fraction": 0.0011451552808644004
+    },
+    "hip_root_non_tube": {
+      "sampled_roots": 7292,
+      "neighbor_pairs": 87504,
+      "roots_with_clash_fraction": 0.0017827756445419638,
+      "clashing_pair_fraction": 0.0003999817151215944,
+      "upstream_fraction": 0.13549094898518924
+    }
+  },
+  "after": {
+    "central_occiput": {
+      "sampled_roots": 2088,
+      "neighbor_pairs": 25056,
+      "roots_with_clash_fraction": 0.0,
+      "clashing_pair_fraction": 0.0
+    },
+    "lateral_skull": {
+      "sampled_roots": 5817,
+      "neighbor_pairs": 69804,
+      "roots_with_clash_fraction": 0.012377514182568335,
+      "clashing_pair_fraction": 0.0018337058048249384
+    },
+    "ear_head_junction": {
+      "sampled_roots": 4205,
+      "neighbor_pairs": 50460,
+      "roots_with_clash_fraction": 0.034482758620689655,
+      "clashing_pair_fraction": 0.005231866825208086
+    },
+    "ear_backs": {
+      "sampled_roots": 5210,
+      "neighbor_pairs": 62520,
+      "roots_with_clash_fraction": 0.26621880998080616,
+      "clashing_pair_fraction": 0.059021113243762
+    },
+    "ear_fronts": {
+      "sampled_roots": 4085,
+      "neighbor_pairs": 49020,
+      "roots_with_clash_fraction": 0.04773561811505508,
+      "clashing_pair_fraction": 0.012219502243982048
+    },
+    "back_and_flanks": {
+      "sampled_roots": 3834,
+      "neighbor_pairs": 46008,
+      "roots_with_clash_fraction": 0.007563901930099113,
+      "clashing_pair_fraction": 0.0015432098765432098
+    },
+    "chest_armpits_ribs": {
+      "sampled_roots": 19943,
+      "neighbor_pairs": 239316,
+      "roots_with_clash_fraction": 0.0019555733841448127,
+      "clashing_pair_fraction": 0.0005515719801434088
+    },
+    "arms": {
+      "sampled_roots": 9245,
+      "neighbor_pairs": 110938,
+      "roots_with_clash_fraction": 0.0006489994591671173,
+      "clashing_pair_fraction": 0.00013521065820548415
+    },
+    "legs_paws": {
+      "sampled_roots": 15697,
+      "neighbor_pairs": 188239,
+      "roots_with_clash_fraction": 0.0016563674587500795,
+      "clashing_pair_fraction": 0.00028155695684741204
+    },
+    "tails": {
+      "sampled_roots": 15209,
+      "neighbor_pairs": 182508,
+      "roots_with_clash_fraction": 0.007824314550595042,
+      "clashing_pair_fraction": 0.0013752821794113135
+    },
+    "hip_root_non_tube": {
+      "sampled_roots": 7292,
+      "neighbor_pairs": 87504,
+      "roots_with_clash_fraction": 0.0013713658804168952,
+      "clashing_pair_fraction": 0.0004685500091424392,
+      "upstream_fraction": 0.00013713658804168953
+    }
+  },
+  "geometry_equal": true,
+  "roots_equal": true,
+  "attribute_max_absolute_change": {
+    "attr_position": 0.0,
+    "attr_eyed": 0.0,
+    "attr_kod_eyes": 0.0,
+    "attr_kod_nose": 0.0,
+    "attr_padd": 0.0,
+    "attr_solef": 0.0,
+    "attr_fur_guided": 0.0,
+    "attr_cupm": 0.0,
+    "attr_gid": 0.0,
+    "attr_fur_length": 0.0,
+    "attr_fur_density": 0.0,
+    "attr_fur_clump": 0.0,
+    "attr_fur_curl": 0.0,
+    "attr_fur_cscale": 0.0,
+    "attr_fur_lift": 0.0,
+    "attr_fur_droop": 0.0,
+    "attr_fur_taper": 0.0,
+    "attr_pale": 0.0,
+    "attr_rim": 0.0,
+    "attr_fur_tone": 0.0,
+    "attr_rest": 0.0,
+    "attr_under": 0.0,
+    "attr_pmask": 0.0,
+    "attr_dorsal": 0.0,
+    "attr_ptail": 0.0,
+    "attr_pmaskw": 0.0,
+    "attr_earw": 0.0,
+    "attr_angle": 0.0,
+    "attr_arc": 0.0,
+    "attr_bellyf": 0.0,
+    "attr_pmaskt": 0.0,
+    "attr_angle4": 0.0,
+    "attr_fielda": 0.0,
+    "attr_bellyf4": 0.0,
+    "attr_sth": 0.0,
+    "attr_fade": 0.0,
+    "attr_tailpos": 0.0,
+    "attr_pad": 0.0,
+    "attr_comb": 1.999638557434082
+  },
+  "changed_strand_roots_by_region": {
+    "central_occiput": 1,
+    "lateral_skull": 23125,
+    "ear_head_junction": 12560,
+    "ear_backs": 24955,
+    "ear_fronts": 174,
+    "back_and_flanks": 12184,
+    "chest_armpits_ribs": 20168,
+    "arms": 5352,
+    "legs_paws": 0,
+    "tails": 19632,
+    "hip_root_non_tube": 36194
+  },
+  "held_region_curve_checks": {
+    "muzzle": {
+      "strands": 4052,
+      "changed": 0,
+      "max_point_displacement": 0.0
+    },
+    "eye_nose_edges": {
+      "strands": 2098,
+      "changed": 0,
+      "max_point_displacement": 0.0
+    },
+    "paws_soles": {
+      "strands": 42064,
+      "changed": 0,
+      "max_point_displacement": 0.0
+    },
+    "full_tail_tubes": {
+      "strands": 47201,
+      "changed": 0,
+      "max_point_displacement": 5.372690026206328e-08
+    }
+  }
+}

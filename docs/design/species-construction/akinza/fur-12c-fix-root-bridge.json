@@ -1,0 +1,17 @@
+{
+  "12b": {
+    "roots": 17674,
+    "outward_fraction": 0.4805363811248161,
+    "median_outward_alignment": 0.2996864318847656
+  },
+  "12c": {
+    "roots": 17674,
+    "outward_fraction": 0.6987665497340726,
+    "median_outward_alignment": 0.8868053555488586
+  },
+  "fix3": {
+    "roots": 17674,
+    "outward_fraction": 0.7686997849949078,
+    "median_outward_alignment": 0.9781570434570312
+  }
+}

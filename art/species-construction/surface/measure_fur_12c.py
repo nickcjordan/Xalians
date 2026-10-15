@@ -68,6 +68,7 @@ if __name__ == '__main__':
     p.add_argument('--after', type=Path, required=True)
     p.add_argument('--out', type=Path, required=True)
     p.add_argument('--metrics-only', action='store_true')
+    p.add_argument('--prefix', default='12c')
     a = p.parse_args()
     old, new = (np.load(v/'evidence.npz') for v in (a.before, a.after))
     bm, masks = measure(old, new)
@@ -95,7 +96,7 @@ if __name__ == '__main__':
                                                     max_point_displacement=float(curve_delta[m].max()) if m.any() else 0)
                                             for k, m in held.items()})
     a.out.mkdir(parents=True, exist_ok=True)
-    (a.out/'12c-direction-clashes.json').write_text(json.dumps(result, indent=2)+'\n')
+    (a.out/(a.prefix+'-direction-clashes.json')).write_text(json.dumps(result, indent=2)+'\n')
     views = () if a.metrics_only else ('head-backq', 'head-side', 'ear-back-close', 'body-backq')
     for name in views:
         images = [Image.open(v/(name+'.png')).convert('RGB') for v in (a.before, a.after)]
@@ -105,6 +106,6 @@ if __name__ == '__main__':
         font = ImageFont.load_default(size=20)
         for i, im in enumerate(images):
             sheet.paste(im, (i*(w+12), 38))
-            draw.text((i*(w+12)+12, 8), ('Before: step 12b', 'Now: step 12c')[i], fill='black', font=font)
-        sheet.save(a.out/('12c-'+name+'.png'))
+            draw.text((i*(w+12)+12, 8), ('Before: step 12b', 'Now: step ' + a.prefix)[i], fill='black', font=font)
+        sheet.save(a.out/(a.prefix+'-'+name+'.png'))
     print(json.dumps(result, indent=2))

@@ -1,5 +1,7 @@
 # Akinza fur step 12c work record
 
+Follow-up authorization: briefs/12c-fix.md grants three more builds on2026-10-15. The current active follow-up and renewed obligations are in `fur-12c-fix-work.md`; the capped state below records the original pass.
+
 Outcome: natural continuous growth from the approved rear-head flow outward toward the ears, through the ear-head junction and along the ear surfaces; inspect and repair body direction seams.
 Authorization: execute briefs/12c.md exactly. Build on s12b (13fbcb90), at most four tries. Direction only. Hold assembled-3300 geometry, T7, soles, muzzle, eye/nose coverage, central rear-head flow, inner-ear blue mask, chest/armpit/rib texture and tail plume volume. Commit explicit paths only, no push. Claude reviews the result afterward; this record does not approve the art or close the broader Akinza project.
 

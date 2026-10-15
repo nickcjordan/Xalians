@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-12c-fix",
+  "outcome": "Remove the new white rim hairs crossing the upper blue cup and the lower rear ear-root part, preserving accepted12c hip downflow, skull fan and smoother ear backs; assess hip bloom only after those priorities succeed within three builds.",
+  "authorizedScope": "briefs/12c-fix.md: up to three additional builds; no blue mask or tail-volume edits; same four12b-before views; new commit, no amend, no push; write fix report and use it as final response.",
+  "workRecord": "docs/design/species-construction/akinza/fur-12c-fix-work.md",
+  "evidence": {
+    "side-try1": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/side-try1.png",
+      "sha256": "243a1008170a32204f3081a80b7e86ff9ef1b921586d722ea57788a0596811ac"
+    },
+    "rear-try1": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/rear-try1.png",
+      "sha256": "c199d6836c04584f390055f28b032e0c2f711fabcac76a228919f50411656d11"
+    },
+    "work": {
+      "path": "docs/design/species-construction/akinza/fur-12c-fix-work.md",
+      "sha256": "3ae47e54e885e93f6e37f465eb8c87c687d1a7687daaa84103642dfedb4638b6"
+    },
+    "head-side": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/12c-fix-head-side.png",
+      "sha256": "17608603dabe4290468e4a06ffacf6c282797e82b4ce600345bc719d14e9a004"
+    },
+    "head-backq": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/12c-fix-head-backq.png",
+      "sha256": "317e7f0788af7f5ba750f3ed6b33659d56885d8d45e2fa6d1494e0cd3296d9ea"
+    },
+    "ear-back-close": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/12c-fix-ear-back-close.png",
+      "sha256": "1a99e87b4d22ee9c79279b3730c0837cc4ad453b883b356d543a308756adea27"
+    },
+    "body-backq": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/12c-fix-body-backq.png",
+      "sha256": "fbc5d4679f2d283c2373a86524ef4f2b6278fcc71bcd5002bea4219ba8e2a9da"
+    },
+    "surface": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/surface.blend",
+      "sha256": "40fb4b013799ece4167c0ddcabd4f21a402f1f219930dfc3720c7b1cc566715c"
+    },
+    "brief": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/12c-fix.md",
+      "sha256": "f9a591c07ebe09449ae7dc38d059b7d7e0ecd00df392596f6ec59425dbd0be26"
+    },
+    "cup": {
+      "path": "docs/design/species-construction/akinza/fur-12c-fix-cup-crossings.json",
+      "sha256": "5234c5eeec9df1a86d58c3dc9bc95fb5456d3de93bc8a3e805b81c37e4bd26fb"
+    },
+    "directions": {
+      "path": "docs/design/species-construction/akinza/fur-12c-fix-direction-clashes.json",
+      "sha256": "927ce3ab6e1ba54b9559f801e2bc6a70de5da754f57432a070c2f7af5118f0f4"
+    },
+    "bridge": {
+      "path": "docs/design/species-construction/akinza/fur-12c-fix-root-bridge.json",
+      "sha256": "456e390c0815e30d22dab967cb5fe8eb910573cf8391e02a33885ba0a44efcab"
+    },
+    "independent": {
+      "path": ".codex/audit-state/fur-12c-fix-evidence/independent-review.txt",
+      "sha256": "bab0b82db7de57e7d9bdb0270d0930d98cfb43b6ed27a6733e54c8376b32022c"
+    }
+  },
+  "criteria": [
+    {
+      "id": "rim",
+      "expectation": "Remove visible sideways rim whiskers and upper blue-cup crossers; report required front-rooted tip counts plus rim/back diagnostics.",
+      "status": "pass",
+      "assessment": "Final side full-size and independent review show the new whiskers removed. Front tips17807 equals12b; whitefront1832 equals12b; side diagnostic140 versus138 baseline and249 original12c. Fine baseline rim fluff remains.",
+      "evidence": [
+        "work",
+        "head-side",
+        "head-backq",
+        "ear-back-close",
+        "body-backq",
+        "surface",
+        "cup",
+        "directions",
+        "independent",
+        "brief"
+      ]
+    },
+    {
+      "id": "root",
+      "expectation": "Remove lower ear-root direction part while retaining accepted outward skull/back flow.",
+      "status": "blocked",
+      "assessment": "Upper fan restored but lower root direction boundary remains, locally sharper than original12c. General junction clash3.448% versus12b2.782% and original12c2.378%. Three-build cap exhausted.",
+      "evidence": [
+        "work",
+        "head-side",
+        "head-backq",
+        "ear-back-close",
+        "body-backq",
+        "surface",
+        "cup",
+        "directions",
+        "independent",
+        "brief"
+      ]
+    },
+    {
+      "id": "hold",
+      "expectation": "Hold blue mask, geometry, palette, face/eye/nose/soles, hip downflow and established tail volume; assess optional bloom work only when priorities1/2 are done.",
+      "status": "pass",
+      "assessment": "Blue mask and geometry identical.293768 complete curves belowz.4 exactly equal to approved12c; muzzle, eye/nose edges and paws unchanged versus12b. Tail tubes differ by floating noise only versus12b, exact versus12c. Conditional hip work not performed.",
+      "evidence": [
+        "work",
+        "head-side",
+        "head-backq",
+        "ear-back-close",
+        "body-backq",
+        "surface",
+        "cup",
+        "directions",
+        "independent",
+        "brief"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Same four near1000-pixel before12b/now comparisons, full-size and independent audit, measurements/logs, separate new explicit-path commit without amendment or push, archived superseded surface, written report.",
+      "status": "pass",
+      "assessment": "All four final paired views inspected full size and independently reviewed. Final artifacts and metrics retained. New commit and post-commit archive/report are verified by final delivery receipt before sealing. No amendment or push.",
+      "evidence": [
+        "work",
+        "head-side",
+        "head-backq",
+        "ear-back-close",
+        "body-backq",
+        "surface",
+        "cup",
+        "directions",
+        "independent",
+        "brief"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "rim",
+      "status": "resolved",
+      "observation": "Try1 removes major horizontal whiskers but two diagonal upper-cup rim hairs remain; side-camera count152 versus12b138.",
+      "nextAction": "None for the new regression; fine baseline rim fluff remains documented.",
+      "resolution": "Final side full-size and independent review show the new whiskers removed. Front tips17807 equals12b; whitefront1832 equals12b; side diagnostic140 versus138 baseline and249 original12c. Fine baseline rim fluff remains.",
+      "resolutionEvidence": [
+        "head-side",
+        "cup",
+        "independent"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "root",
+      "status": "blocked",
+      "observation": "Upper fan restored but lower root direction boundary remains, locally sharper than original12c. General junction clash3.448% versus12b2.782% and original12c2.378%. Three-build cap exhausted.",
+      "nextAction": "With further authorization, replace the local outward/downward field boundary with a genuinely continuous root flow; recheck all four views and protected regions.",
+      "evidence": [
+        "head-backq",
+        "ear-back-close",
+        "directions",
+        "independent",
+        "brief"
+      ],
+      "blocker": {
+        "externalDependency": "Explicit user brief caps this pass at three additional builds. All three have been used.",
+        "attempts": "Try1 global facing gate, try2 localized outer-rim gate, try3 tangent-transport root bridge. Final boundary remains and is locally sharper.",
+        "unblocksWhen": "User authorizes additional modeling builds beyond this pass."
+      }
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent audit_12c",
+    "comparison": "Final four same-camera12b-before/fix3-now pairs and original12c inspected full size by builder and independent reviewer. Rim repaired; root target fails. No subjective approval claimed.",
+    "regressions": "Blue mask and geometry identical.293768 complete curves belowz.4 exactly equal to approved12c; muzzle, eye/nose edges and paws unchanged versus12b. Tail tubes differ by floating noise only versus12b, exact versus12c. Conditional hip work not performed. Root seam locally worsens and numeric junction/ear-back clash worsens; retained as blocked finding.",
+    "scopeCheck": "Three of three additional builds used. No blue mask, geometry, body or plume-volume edit. Hip bloom conditional prerequisite not met. Separate new commit, no amend or push.",
+    "sessionId": "akinza-fur-12c-fix",
+    "requestId": "1b5e4014-c36c-485a-9a7a-ed6a2a952611",
+    "performedAt": "2026-10-15T16:47:41.492546+00:00"
+  },
+  "stop": {
+    "kind": "blocked",
+    "reason": "User-defined three-build limit exhausted with lower-root part unresolved; authorized delivery and verification completed before final seal."
+  }
+}
