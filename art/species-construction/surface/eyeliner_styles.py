@@ -1,8 +1,9 @@
-"""Reversible eyeliner shaders on the existing globe band and adjacent skin.
+"""Selectable eyeliner shaders and external ribbon geometry.
 
 The saved globe has 59 latitude rings of 256 vertices. Rings 23 through 29
 span its inherited liner. G1-outer instead colors the surrounding lid and
-its existing short hairs. No positions, radii or material slots are changed.
+its existing short hairs. G1-ribbon uses separate lid strips and locally
+suppresses hair radii in their footprint, preserving inherited positions.
 """
 import json
 import hashlib
@@ -14,11 +15,18 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
-STYLES=('current','none','hairline','upper','cat-eye','ice-blue','mix-g1','mix-g2','mix-g3','G1-outer')
+STYLES=('current','none','hairline','upper','cat-eye','ice-blue','mix-g1','mix-g2','mix-g3','G1-outer','G1-ribbon')
 
 
 def apply(style,palette):
     if style not in STYLES:raise ValueError(f'Unknown eyeliner style: {style}')
+    for ob in bpy.data.objects:
+        if ob.name.startswith('Akinza G1 ribbon '):ob.hide_render=style!='G1-ribbon'
+    if style=='G1-ribbon':
+        from ribbon_eyeliner_13h import apply as ribbon, build, PREFIX
+        if not any(ob.name.startswith(PREFIX) for ob in bpy.data.objects):build()
+        ribbon()
+        return
     if style!='G1-outer':
         remove_outer()
     if style=='current':return

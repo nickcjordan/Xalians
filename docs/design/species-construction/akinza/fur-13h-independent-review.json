@@ -1,0 +1,34 @@
+{
+  "reviewer": "audit_13h",
+  "result": "incomplete",
+  "inspected": [
+    "build2 eye-close native",
+    "build2 head34 native",
+    "build2 head-front native",
+    "default and experimental source gating"
+  ],
+  "unresolved": [
+    "White hair intrusions and serrations along the upper ribbon, worst on the outer-right arc.",
+    "Bare gray skin between the lower liner and coat."
+  ],
+  "visualObservations": [
+    "Upper weight and charcoal value approximately match A.",
+    "Lower line is continuous.",
+    "No obvious sclera overlap or floating shelf in close, head34 or face views."
+  ],
+  "sourceReview": "Sparse behavior is the default. Dense reconstruction requires explicit experimental opt-in.",
+  "limit": "Three attempts used. Third save crashed and read-only recovery failed with Missing DNA block. No additional modeling authorized.",
+  "approval": "Independent review is not user approval.",
+  "numericReview": {
+    "newCollisionStrands": 338,
+    "regions": {
+      "head": 225,
+      "ears": 113
+    },
+    "crossingsPerRibbon": 169,
+    "otherNewFlags": 0,
+    "observation": "Original anatomical obstacles show no increase. Do not rename obstacles or alter thresholds to obtain a pass."
+  },
+  "finisherReview": "Comparison sheets are retained before asserting the failed gate. --reuse-analysis skips recomputation but does not waive the assertion.",
+  "remainingRepair": "No non-modeling correction can resolve the remaining fur/geometry defects or satisfy the collision gate."
+}

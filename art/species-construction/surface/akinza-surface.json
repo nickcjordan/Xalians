@@ -1,7 +1,7 @@
 {
   "note": "Surface (fur) settings for Akinza. Lengths are world units (the figure is 1.86 tall). Zones come from loop/species.json; a group may also give its own box in the same figure units (at: crown 0 to floor 1, x: world x over height, y: world y over height). margin is the blend distance outside a box in figure units. weights = membership * priority, so higher priority wins where boxes overlap.",
   "noseMaterial": {"Roughness": 0.55},
-  "eyeliner": {"style": "G1-outer", "styles": ["current", "none", "hairline", "upper", "cat-eye", "ice-blue", "mix-g1", "mix-g2", "mix-g3", "G1-outer"]},
+  "eyeliner": {"style": "G1-ribbon", "styles": ["current", "none", "hairline", "upper", "cat-eye", "ice-blue", "mix-g1", "mix-g2", "mix-g3", "G1-outer", "G1-ribbon"]},
   "strands": 420000,
   "points": 9,
   "seed": 7,

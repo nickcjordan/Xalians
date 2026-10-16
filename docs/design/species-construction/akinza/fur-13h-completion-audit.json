@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-13h",
+  "outcome": "Continuous external matte charcoal G1-ribbon eyeliner around both eyes, upper A-weight with a small outward increase, fine lower line and smooth corners, no covered eye white or hair poking through, fur reaching the outer edge.",
+  "authorizedScope": "Step 13h only, build on 13g, at most three builds, preserve assembled-3300 and unrelated fur, three native before-13e and after pairs, fresh full body-wide artifact gate, explicit-path commit and post-commit archive, no push or art self-approval.",
+  "workRecord": "docs/design/species-construction/akinza/fur-13h-active-work.md",
+  "evidence": {
+    "brief": {
+      "path": ".codex/audit-state/fur-13h-evidence/brief.md",
+      "sha256": "df495e0bcd84c5dc49fca6b54bc69fd6d3e3cb79e559d35865a084020ef06ec8"
+    },
+    "firstModel": {
+      "path": ".codex/audit-state/fur-13h-evidence/firstModel.blend",
+      "sha256": "54a424047350f6f5d616beed7ea2f50aef748f2ee5903d9751172ae4a21dd1b8"
+    },
+    "AReference": {
+      "path": ".codex/audit-state/fur-13h-evidence/AReference.png",
+      "sha256": "f1d01264a476bc863571b9e1f9b6c9cb609281a494b38bdecc1855d83ba06213"
+    },
+    "secondModel": {
+      "path": ".codex/audit-state/fur-13h-evidence/secondModel.blend",
+      "sha256": "d4cbd5c9ab28de064c2cad5014e65101e3b3ff3334554fd46ac49562dab7887a"
+    },
+    "secondClose": {
+      "path": ".codex/audit-state/fur-13h-evidence/secondClose.png",
+      "sha256": "5c08baec63f6f89d56ec8887256572ce4eb8e8162adcb96f5797209a35cd0e84"
+    },
+    "secondHead34": {
+      "path": ".codex/audit-state/fur-13h-evidence/secondHead34.png",
+      "sha256": "d8dff9f7eda9f0c9b4fb7509d9f8d5760c0d6bd54efd945309d63e819d2166f9"
+    },
+    "secondFace": {
+      "path": ".codex/audit-state/fur-13h-evidence/secondFace.png",
+      "sha256": "1b65fc6eba92379f99a56ce28174cca4eb474fb02ee301f7162f8f807074838b"
+    },
+    "diagnostics": {
+      "path": ".codex/audit-state/fur-13h-evidence/diagnostics.json",
+      "sha256": "72156e38c1cc20edaf2a67650b118a6ae6ce29581c866a2b27dfc7ed3d74eaed"
+    },
+    "secondCheck": {
+      "path": ".codex/audit-state/fur-13h-evidence/secondCheck.log",
+      "sha256": "80b85fcf948935ac31177f5cc9d79fa5f2168a7ba2ffd79f57ac4bf71fd511f7"
+    },
+    "finalModel": {
+      "path": ".codex/audit-state/fur-13h-evidence/finalModel.blend",
+      "sha256": "d4cbd5c9ab28de064c2cad5014e65101e3b3ff3334554fd46ac49562dab7887a"
+    },
+    "baseline13g": {
+      "path": ".codex/audit-state/fur-13h-evidence/baseline13g.blend",
+      "sha256": "3bd04f7600efea6743600626ac6570dec1ccf391b5b27a5591648a8ebe2425da"
+    },
+    "finalMetadata": {
+      "path": ".codex/audit-state/fur-13h-evidence/finalMetadata.json",
+      "sha256": "10a04362426e5f603fe3d5b2628eba40384a77a106e88b426f0caffef6ecdd57"
+    },
+    "radiusProof": {
+      "path": ".codex/audit-state/fur-13h-evidence/radiusProof.npz",
+      "sha256": "ba8b1573b26df67cff55c91ca9adef14943539158c9cf7323ccd5abf12978a3a"
+    },
+    "held": {
+      "path": ".codex/audit-state/fur-13h-evidence/held.json",
+      "sha256": "cbeb2e009fc8f1b26cea1ccfe6258d86bd7d11f7c42fd064a901ce0af384a443"
+    },
+    "crossings": {
+      "path": ".codex/audit-state/fur-13h-evidence/crossings.json",
+      "sha256": "a811b26e94bf6c1caeeec47a7c0b6653864a15760c69d61963df1a277ff79933"
+    },
+    "envelopes": {
+      "path": ".codex/audit-state/fur-13h-evidence/envelopes.json",
+      "sha256": "55b5a0a86b78ca2ccdd249596972a12e5c6f18d9a7df300d554bab834283bffb"
+    },
+    "visibility": {
+      "path": ".codex/audit-state/fur-13h-evidence/visibility.json",
+      "sha256": "635dd2430cf42c886cc2f980f360276b51f88eba3eeac6a2611b1e013ce044b4"
+    },
+    "artifactGate": {
+      "path": ".codex/audit-state/fur-13h-evidence/artifactGate.json",
+      "sha256": "4b1afce260c41e765604bb2b683cb9a369d3318b5d70ffa4520ae0405b37adbe"
+    },
+    "sweepMetrics": {
+      "path": ".codex/audit-state/fur-13h-evidence/sweepMetrics.json",
+      "sha256": "02933aa2af0700ebec03d6d2cc24f41be52462add7f7f8b663588e49424790f5"
+    },
+    "sweepFlags": {
+      "path": ".codex/audit-state/fur-13h-evidence/sweepFlags.npz",
+      "sha256": "b8bb3bd209c72bfb2f6e854635aa5fe7832cd77a5689bf046c76064448298b2e"
+    },
+    "collisionEvidence": {
+      "path": ".codex/audit-state/fur-13h-evidence/collisionEvidence.npz",
+      "sha256": "6594712d4ba0eb6755679a02ad8865003df110fb3ca0fafec99f85ef7aa8d45d"
+    },
+    "obstacleEvidence": {
+      "path": ".codex/audit-state/fur-13h-evidence/obstacleEvidence.npz",
+      "sha256": "02f8df5254228e3c42ab42205919feef3dee6f49d5accb827a5c169be3af1c96"
+    },
+    "rogueMetrics": {
+      "path": ".codex/audit-state/fur-13h-evidence/rogueMetrics.json",
+      "sha256": "90b65929856541f146cfac6cf1688f50ffd7e74e6675e294a8eef2f14998c11c"
+    },
+    "rogueFlags": {
+      "path": ".codex/audit-state/fur-13h-evidence/rogueFlags.npz",
+      "sha256": "d4579c770f72cca5c028e775fcd1d853e8a1b44367174a87b60578a3f554a6e2"
+    },
+    "savedCheckLog": {
+      "path": ".codex/audit-state/fur-13h-evidence/savedCheckLog.log",
+      "sha256": "16833a149670ef4bd649059578597363f252dbcc0d67801ffc4fea804ca9520a"
+    },
+    "savedCheckResult": {
+      "path": ".codex/audit-state/fur-13h-evidence/savedCheckResult.json",
+      "sha256": "e4657d4852cdfb72f9526e084e5e2297846657637bab0247b95856d954bd6e29"
+    },
+    "thirdCrashLog": {
+      "path": ".codex/audit-state/fur-13h-evidence/thirdCrashLog.log",
+      "sha256": "4d80f1e2c9e9885bca482f6fb1d97c3be25d1321bdec2379f42a19fc066b3971"
+    },
+    "thirdResult": {
+      "path": ".codex/audit-state/fur-13h-evidence/thirdResult.json",
+      "sha256": "0125bc52af144ae4d39e615f79ab5dacd5275901d1f8dc42e7449cec59c99978"
+    },
+    "partialRecovery": {
+      "path": ".codex/audit-state/fur-13h-evidence/partialRecovery.json",
+      "sha256": "6cbb06d84527dd0fd96e5fbd54020434c211d471339a3b0553a2a861d1fc1279"
+    },
+    "review": {
+      "path": ".codex/audit-state/fur-13h-evidence/review.json",
+      "sha256": "7b8d7aa36bf1264ba4de0e0098d8167b46adef0c2b372e11c51142392d90a3b9"
+    },
+    "delivery": {
+      "path": ".codex/audit-state/fur-13h-evidence/delivery.json",
+      "sha256": "d95b7e7be5c8c88d765cee9daecf314e7d650f97ac54a74f68b2e783ed522179"
+    },
+    "pairclose": {
+      "path": ".codex/audit-state/fur-13h-evidence/pairclose.png",
+      "sha256": "2d88bf6ea6656acc66a35d2eb2579611811240c70d1e871869446ab760cef7d1"
+    },
+    "pairhead34": {
+      "path": ".codex/audit-state/fur-13h-evidence/pairhead34.png",
+      "sha256": "bb6300aa455e6fbf8a31871180d5d587cda4a3416acaa6c8e86688ae1ba5679e"
+    },
+    "pairface": {
+      "path": ".codex/audit-state/fur-13h-evidence/pairface.png",
+      "sha256": "09b8f5d16726760b7cabe888d5995b37ea96bd6f5c17edb87e9a15009fc0e666"
+    },
+    "beforeeye-close": {
+      "path": ".codex/audit-state/fur-13h-evidence/beforeeye-close.png",
+      "sha256": "b29bed0ca9c37635175beca869bc506a567e7a7a4700048c08880047eaa90eaa"
+    },
+    "aftereye-close": {
+      "path": ".codex/audit-state/fur-13h-evidence/aftereye-close.png",
+      "sha256": "5c08baec63f6f89d56ec8887256572ce4eb8e8162adcb96f5797209a35cd0e84"
+    },
+    "beforehead34": {
+      "path": ".codex/audit-state/fur-13h-evidence/beforehead34.png",
+      "sha256": "63c4de1cb5a16d379d042efa60a0c7f6e1999cb73da8cd2da6cfd95c0d8667d9"
+    },
+    "afterhead34": {
+      "path": ".codex/audit-state/fur-13h-evidence/afterhead34.png",
+      "sha256": "d8dff9f7eda9f0c9b4fb7509d9f8d5760c0d6bd54efd945309d63e819d2166f9"
+    },
+    "beforehead-front": {
+      "path": ".codex/audit-state/fur-13h-evidence/beforehead-front.png",
+      "sha256": "ba283accd53b7847bed0cd8f9f2ea4dae9a6697ecdd2cc49e0422db0e57ae24a"
+    },
+    "afterhead-front": {
+      "path": ".codex/audit-state/fur-13h-evidence/afterhead-front.png",
+      "sha256": "1b65fc6eba92379f99a56ce28174cca4eb474fb02ee301f7162f8f807074838b"
+    },
+    "archive": {
+      "path": ".codex/audit-state/fur-13h-evidence/archive.json",
+      "sha256": "68b879bfd43839744a72c5f5f6f3e1da07f17669077a63b46b6520bacc07e953"
+    },
+    "workRecordSnapshot": {
+      "path": ".codex/audit-state/fur-13h-evidence/workRecordSnapshot.md",
+      "sha256": "51de8ef0eb3c531c6dd68a8efbcc441155d5c2aa46933397c70d81f38658c98f"
+    }
+  },
+  "criteria": [
+    {
+      "id": "appearance",
+      "expectation": "Native views show continuous outside-only A-weight upper liner, fine lower line, smooth corners and A charcoal without eye-white coverage.",
+      "status": "pass",
+      "assessment": "All three native sheets inspected. Approximate A upper weight and matte charcoal, continuous fine lower line, no obvious sclera overlap or floating shelf. No user approval claimed.",
+      "evidence": [
+        "pairclose",
+        "pairhead34",
+        "pairface",
+        "AReference",
+        "visibility",
+        "review"
+      ]
+    },
+    {
+      "id": "fur",
+      "expectation": "No hairs poke through the ribbon and fur reaches its outer edge without a bare band.",
+      "status": "blocked",
+      "assessment": "White upper hair bridges and lower bare skin remain. 152 ribbon centerline crossings and 0.6463 mm envelope excess in saved proof.",
+      "evidence": [
+        "pairclose",
+        "pairhead34",
+        "crossings",
+        "envelopes",
+        "review"
+      ]
+    },
+    {
+      "id": "protection",
+      "expectation": "Saved assembled meshes, all non-eyeliner data and unrelated fur are unchanged from 13g.",
+      "status": "pass",
+      "assessment": "Fresh saved proof preserves all assembled meshes, attributes, original point positions, types, 13g ear work and unrelated data. Only 1346 local point radii changed on 374 curves.",
+      "evidence": [
+        "held",
+        "savedCheckResult",
+        "finalModel",
+        "baseline13g"
+      ]
+    },
+    {
+      "id": "artifacts",
+      "expectation": "Fresh body-wide 12d and rogue gates include all 422620 strands and show no new flags or regional rise versus 13g.",
+      "status": "blocked",
+      "assessment": "All 422620 strands checked. Gate fails with 338 new ribbon collisions, head225/ears113. Original anatomical obstacles and all other categories have no increase; rogue total zero.",
+      "evidence": [
+        "artifactGate",
+        "sweepMetrics",
+        "sweepFlags",
+        "obstacleEvidence",
+        "rogueMetrics",
+        "review"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Three native pixel-exact requested before-13e and after sheets, explicit-path local commit, bounded archive after commit and no push.",
+      "status": "pass",
+      "assessment": "Three exact native sheets inspected. Explicit-path local commit made, baseline archived afterward with hash verified, no push.",
+      "evidence": [
+        "pairclose",
+        "pairhead34",
+        "pairface",
+        "delivery",
+        "archive"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "appearance",
+      "status": "resolved",
+      "observation": "First strip max projected width about 8 pixels falls short of A reference widest upper band about 35 pixels.",
+      "nextAction": "Build second candidate with upper .0075*(.85+.15*outward) projected width and inspect native front and three-quarter views.",
+      "acceptanceCriterion": "Upper weight about A widest ring with a small outer increase; lower remains thin.",
+      "evidence": [
+        "firstModel",
+        "AReference"
+      ],
+      "resolution": "Build 2 renders and independent native review confirm approximate A upper weight and matte charcoal value.",
+      "resolutionEvidence": [
+        "secondClose",
+        "secondHead34"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "fur",
+      "status": "blocked",
+      "observation": "Native close and head34 show white fibers bridging 5 to 15 pixels into the upper outer liner; saved centerline crossing check fails.",
+      "nextAction": "After additional build authorization, diagnose dense-save failure and repair the upper ribbon crossings.",
+      "acceptanceCriterion": "No visible bridging fiber or bare lower margin in all three native views.",
+      "evidence": [
+        "pairclose",
+        "pairhead34",
+        "crossings",
+        "envelopes",
+        "thirdCrashLog",
+        "thirdResult",
+        "partialRecovery",
+        "brief"
+      ],
+      "blocker": {
+        "externalDependency": "Step 13h brief explicitly permits up to 3 builds; more modeling is outside current authorization.",
+        "attempts": "Three build attempts, two complete saves. Third failed during serialization with return139; read-only recovery failed with Missing DNA block. Retained build2 inspected and all independent checks and delivery performed.",
+        "unblocksWhen": "Nick authorizes additional builds beyond the explicit cap. Diagnose serialization failure, repair the ribbon crossings and lower margin, then rerun all saved gates and native views."
+      }
+    },
+    {
+      "id": "F003",
+      "criterion": "fur",
+      "status": "blocked",
+      "observation": "Native close has a 15 to 25 pixel smooth lower band, and ray probes confirm it is skin.",
+      "nextAction": "After additional build authorization, fill the lower visible skin margin and verify all three native views.",
+      "acceptanceCriterion": "No visible bridging fiber or bare lower margin in all three native views.",
+      "evidence": [
+        "pairclose",
+        "pairhead34",
+        "crossings",
+        "envelopes",
+        "thirdCrashLog",
+        "thirdResult",
+        "partialRecovery",
+        "brief"
+      ],
+      "blocker": {
+        "externalDependency": "Step 13h brief explicitly permits up to 3 builds; more modeling is outside current authorization.",
+        "attempts": "Three build attempts, two complete saves. Third failed during serialization with return139; read-only recovery failed with Missing DNA block. Retained build2 inspected and all independent checks and delivery performed.",
+        "unblocksWhen": "Nick authorizes additional builds beyond the explicit cap. Diagnose serialization failure, repair the ribbon crossings and lower margin, then rerun all saved gates and native views."
+      }
+    },
+    {
+      "id": "F004",
+      "criterion": "artifacts",
+      "status": "blocked",
+      "observation": "Fresh full body gate has 338 new collision strands from the two ribbon meshes, head225 and ears113.",
+      "nextAction": "After additional build authorization, repair all hair/ribbon intersections and rerun the unchanged full gate. Do not exempt ribbon objects.",
+      "acceptanceCriterion": "Zero new flags and no regional rise versus 13g.",
+      "evidence": [
+        "artifactGate",
+        "obstacleEvidence",
+        "thirdCrashLog",
+        "thirdResult",
+        "partialRecovery",
+        "brief"
+      ],
+      "blocker": {
+        "externalDependency": "Step 13h brief explicitly permits up to 3 builds; more modeling is outside current authorization.",
+        "attempts": "Three build attempts, two complete saves. Third failed during serialization with return139; read-only recovery failed with Missing DNA block. Retained build2 inspected and all independent checks and delivery performed.",
+        "unblocksWhen": "Nick authorizes additional builds beyond the explicit cap. Diagnose serialization failure, repair the ribbon crossings and lower margin, then rerun all saved gates and native views."
+      }
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent audit_13h, final native/source/numeric review",
+    "comparison": "Three full native sheets compared with 13e and A. Ribbon method/weight/color/continuity visible. Upper fur intrusions and lower bare band unresolved.",
+    "regressions": "Saved unrelated data held. Full gate fails338 ribbon crossings; other categories unchanged and rogue0. Failed third save recovered only as unreadable partial.",
+    "scopeCheck": "13h only. 13g ear changes held. No anatomy/platform changes. Three attempts used; no fourth build, threshold exemptions, push or artistic self-approval.",
+    "sessionId": "akinza-fur-13h",
+    "requestId": "3d02cf7a-8650-45ce-9ba0-e513ec856dd7",
+    "performedAt": "2026-10-16T20:31:42.176440+00:00"
+  },
+  "stop": {
+    "kind": "blocked",
+    "reason": "Explicit three-build allowance exhausted by third-save crash. All independent authorized work including verification, native sheets, commit and post-commit archive is exhausted."
+  }
+}

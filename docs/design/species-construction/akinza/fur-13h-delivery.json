@@ -1,0 +1,45 @@
+{
+  "status": "incomplete",
+  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-13h/surface.blend",
+  "surfaceSha256": "d4cbd5c9ab28de064c2cad5014e65101e3b3ff3334554fd46ac49562dab7887a",
+  "retainedBuild": 2,
+  "buildAttempts": 3,
+  "successfulSaves": 2,
+  "thirdSave": {
+    "returncode": 139,
+    "partialReadable": false,
+    "error": "Missing DNA block"
+  },
+  "style": "G1-ribbon",
+  "default": true,
+  "images": {
+    "close": "untracked/species-construction/akinza/surface/fur-steps/13h-eyeliner-close.png",
+    "head34": "untracked/species-construction/akinza/surface/fur-steps/13h-eyeliner-head34.png",
+    "face": "untracked/species-construction/akinza/surface/fur-steps/13h-eyeliner-face.png"
+  },
+  "heldDataPass": true,
+  "changedRadiusPoints": 1346,
+  "artifactGatePass": false,
+  "newCollisionStrands": 338,
+  "collisionRegions": {
+    "head": 225,
+    "ears": 113
+  },
+  "ribbonCenterlineCrossings": 152,
+  "rogueTotal": 0,
+  "otherNewFlags": 0,
+  "stillOff": [
+    "Upper white hairs cross the ribbon.",
+    "Bare lower skin margin remains."
+  ],
+  "blocker": "The brief permits up to three builds. All three attempts were used; third save crashed and failed read-only recovery.",
+  "localCommit": "completed, explicit paths only",
+  "pushPerformed": false,
+  "archive": {
+    "status": "verified after first local commit",
+    "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13g-superseded-13h",
+    "surfaceSha256": "3bd04f7600efea6743600626ac6570dec1ccf391b5b27a5591648a8ebe2425da"
+  },
+  "review": "fur-13h-independent-review.json",
+  "approval": "No artistic approval is claimed."
+}
