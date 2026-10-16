@@ -21,7 +21,25 @@ All native close/head panels and both sheets inspected. Pixel-for-pixel sheet pl
 
 ## 13b: rogue hairs
 
-Pending model repair and saved sweeps. The additive local-envelope/flow diagnostic measures all active strands, including ear rims/tips, tail tips, elbows and heels. It does not replace the unchanged 12d collision, neighbor length, regional length, transfer or lift rules. The initial diagnostic was extended after direct projected inspection found short contrary-flow strays at Nick's ear apex.
+Second candidate visibly removes the upright rods and isolated diagonal in Nick's ear-tip area, preserving the coherent fringe and the approved front/back appearance. Independent native review found no further concrete visual defect. First candidate was rejected despite passing its originally loaded tests.
+
+The final additive diagnostic includes straightness relative to neighbors, tip-envelope excess and off-flow direction, alongside the unchanged five 12d rules. It tests the entire saved coat, including ear rims/tips, tails, elbows and heels. Radius-only culling removes 431 curves; every coordinate and non-radius attribute is verified unchanged, including all meshes, material graphs, roots and transforms.
+
+| Region | Rogue before | Rogue after |
+|---|---:|---:|
+| Chest/ribs |6|0|
+| Neck |0|0|
+| Head |111|0|
+| Ears |183|0|
+| Arms |5|0|
+| Hands |0|0|
+| Hips |3|0|
+| Legs |0|0|
+| Feet |0|0|
+| Tails |0|0|
+| Total |308|0|
+
+Full saved legacy totals: collision 0 -> 0, neighbor length 76 -> 50, regional length 2067 -> 1965, part transfer 1707 -> 1618, lift 104 -> 89. No new flagged IDs or regional increases. Separate solid-object collision flags 0. Final labeled back and ear-tip pairs inspected and pixel-for-pixel sources checked. Promoted surface: `fur-steps/s12-13b/surface.blend`. Not user-approved.
 
 ## 13c: prominent ear furnishings
 

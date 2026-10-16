@@ -1,0 +1,303 @@
+{
+  "part": "13b",
+  "surface": {
+    "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/surface.blend",
+    "sha256": "ea6cd7e69affb1b8847a8885f812efc8b2ce48049dd4015a0db0d4ef2b35ea29"
+  },
+  "beforeSha256": "e9b68fada7b033c0d844617cf4f1053a4cb0c0f1bf0acf8889b28ca09032cb0b",
+  "culledCurves": 431,
+  "modelTries": 2,
+  "heldDataEqual": true,
+  "artifactGate": {
+    "collision": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 0,
+          "after": 0
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "neighborLength": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 24,
+          "after": 9
+        },
+        "ears": {
+          "before": 52,
+          "after": 41
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "regionalLength": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 2067,
+          "after": 1965
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "partTransfer": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1687,
+          "after": 1598
+        },
+        "ears": {
+          "before": 20,
+          "after": 20
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "lift": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 8,
+          "after": 5
+        },
+        "ears": {
+          "before": 95,
+          "after": 83
+        },
+        "arms": {
+          "before": 1,
+          "after": 1
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "rogue": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 6,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 111,
+          "after": 0
+        },
+        "ears": {
+          "before": 183,
+          "after": 0
+        },
+        "arms": {
+          "before": 5,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 3,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    }
+  },
+  "images": {
+    "13b-head-backq.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13b-head-backq.png",
+      "size": [
+        2048,
+        1062
+      ],
+      "sha256": "4536fe9716066d6ad01333f2b5dc46954aed0189af8d84150bde1eaeacfeb6ca"
+    },
+    "13b-ear-tip-close.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13b-ear-tip-close.png",
+      "size": [
+        2000,
+        1038
+      ],
+      "sha256": "1edb1d3568e1ae84220ea5c920cd4054c4caf46f070483041b9dd496b6d39fc5"
+    }
+  },
+  "baselineArchiveAfterCommit": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12f-superseded-13b",
+  "baselineArchived": true
+}

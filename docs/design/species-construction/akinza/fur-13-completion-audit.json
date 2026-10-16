@@ -74,6 +74,61 @@
       "path": ".codex/audit-state/fur-13-evidence/sheetFace.png",
       "sha256": "3bf79a20a98337a180fd93a1393ae364e072b6580767e51a13123f74aae6a2f4",
       "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options-face.png"
+    },
+    "bTry1Ear": {
+      "path": ".codex/audit-state/fur-13-evidence/13b-try1-ear-tip.png",
+      "sha256": "ebaac6c002d8e5431dbe8e7b0d3b86ff17ee66ae3d9dd9ba9c6ab8487d5b074a",
+      "sourcePath": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13b-rejected-try1/r/ear-tip-close.png"
+    },
+    "bEar": {
+      "path": ".codex/audit-state/fur-13-evidence/bEar.png",
+      "sha256": "14213d9a77559e6eefb951d061cfd0a3d5c0f40b5abf77dab0f55be208c01f03",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/r/ear-tip-close.png"
+    },
+    "bBack": {
+      "path": ".codex/audit-state/fur-13-evidence/bBack.png",
+      "sha256": "3d056898016a7266dfc0d8b3639d1eae251c02e6a0f156f960a98727ee18b30f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/r/head-backq.png"
+    },
+    "bFront": {
+      "path": ".codex/audit-state/fur-13-evidence/bFront.png",
+      "sha256": "d2a90193bb407d0503233ec303c55496ead77989cfa3a439d0a8def72ee9efe4",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/r/ears-front.png"
+    },
+    "bRogue": {
+      "path": ".codex/audit-state/fur-13-evidence/bRogue.json",
+      "sha256": "90b65929856541f146cfac6cf1688f50ffd7e74e6675e294a8eef2f14998c11c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/r/rogue-metrics.json"
+    },
+    "beforeRogue": {
+      "path": ".codex/audit-state/fur-13-evidence/beforeRogue.json",
+      "sha256": "85c57df0200fbc908ef23b4ba8faf6b26155439911d706fc6b898a656d5048b4",
+      "sourcePath": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12f-superseded-13b/r/rogue-metrics.json"
+    },
+    "bModel": {
+      "path": ".codex/audit-state/fur-13-evidence/bModel.blend",
+      "sha256": "ea6cd7e69affb1b8847a8885f812efc8b2ce48049dd4015a0db0d4ef2b35ea29",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/surface.blend"
+    },
+    "bProtection": {
+      "path": ".codex/audit-state/fur-13-evidence/bProtection.json",
+      "sha256": "87776e299cabc76cbb15d26aec94d780a3c82d106ab7928c74ad2637871cc1b9",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/saved-protection-check.json"
+    },
+    "bMetrics": {
+      "path": ".codex/audit-state/fur-13-evidence/bMetrics.json",
+      "sha256": "c8073975dbfb0143987fca8ed22732b103fc7a462b9a8fcbaacdc7668fe4bfab",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/metrics.json"
+    },
+    "bBackPair": {
+      "path": ".codex/audit-state/fur-13-evidence/bBackPair.png",
+      "sha256": "4536fe9716066d6ad01333f2b5dc46954aed0189af8d84150bde1eaeacfeb6ca",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13b-head-backq.png"
+    },
+    "bEarPair": {
+      "path": ".codex/audit-state/fur-13-evidence/bEarPair.png",
+      "sha256": "1edb1d3568e1ae84220ea5c920cd4054c4caf46f070483041b9dd496b6d39fc5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13b-ear-tip-close.png"
     }
   },
   "criteria": [
@@ -92,9 +147,19 @@
     {
       "id": "rogue",
       "expectation": "Body-wide rogue test with before/after regional counts, visible ear-tip repair and requested comparisons.",
-      "status": "pending",
-      "assessment": "Work in progress; not yet demonstrated.",
-      "evidence": []
+      "status": "pass",
+      "assessment": "Native before/after inspected, independently reviewed, and strengthened body-wide diagnostic308->0. Final model used431 removals; nearby coherent fringe preserved. Full held-data confirmation remains in preservation criterion. Full saved sweeps, strengthened diagnostic and held-data equality now all pass; final labeled pairs directly inspected and pixel sources verified.",
+      "evidence": [
+        "bEar",
+        "bBack",
+        "bFront",
+        "bRogue",
+        "beforeRogue",
+        "bProtection",
+        "bMetrics",
+        "bBackPair",
+        "bEarPair"
+      ]
     },
     {
       "id": "tufts",
@@ -122,10 +187,18 @@
     {
       "id": "F001",
       "criterion": "rogue",
-      "status": "open",
+      "status": "resolved",
       "observation": "Baseline crop contains straight isolated hairs extending past the ear silhouette; initial length-only diagnostic missed contrary-flow strands.",
       "nextAction": "Use flow and envelope tests, repair sparse outliers, inspect the exact crop and run full saved gates.",
-      "acceptanceCriterion": "Visible ear-tip strays removed with no new regional artifacts."
+      "acceptanceCriterion": "Visible ear-tip strays removed with no new regional artifacts.",
+      "resolution": "Second radius-only candidate removes431 sparse hairs including561. Native close/back show the rods and diagonal gone, coherent fringe retained; independent audit confirms. Saved strengthened rogue counts308->0 with zero after in every region.",
+      "resolutionEvidence": [
+        "bEar",
+        "bBack",
+        "bFront",
+        "bRogue",
+        "beforeRogue"
+      ]
     },
     {
       "id": "F002",
@@ -167,16 +240,35 @@
         "E-head-front",
         "sheetFace"
       ]
+    },
+    {
+      "id": "F005",
+      "criterion": "rogue",
+      "status": "resolved",
+      "observation": "Try1 leaves isolated oblique strand561 visible in the exact ear-tip crop despite removing the tall original rods.",
+      "nextAction": "Apply the strengthened oblique envelope/flow diagnostic and build a second sparse radius-only candidate; inspect and run full saved gates.",
+      "acceptanceCriterion": "The visible diagonal is gone and the coherent lower-left fringe is preserved.",
+      "evidence": [
+        "bTry1Ear"
+      ],
+      "resolution": "Second radius-only candidate removes431 sparse hairs including561. Native close/back show the rods and diagonal gone, coherent fringe retained; independent audit confirms. Saved strengthened rogue counts308->0 with zero after in every region.",
+      "resolutionEvidence": [
+        "bEar",
+        "bBack",
+        "bFront",
+        "bRogue",
+        "beforeRogue"
+      ]
     }
   ],
   "audit": {
-    "reviewer": "Builder; independent review_13 source audit received",
-    "comparison": "Original brief and native baseline inspected; new results pending.",
-    "regressions": "No model mutations yet.",
+    "reviewer": "Builder plus independent review_13",
+    "comparison": "13a delivered and13b visual/numeric outcome inspected;13c remains unbuilt.",
+    "regressions": "13b saved meshes/materials/topology/transforms/roots and all non-radius hair attributes equal. Full saved legacy/rogue gates pass.13c still requires construction and its own regression checks.",
     "scopeCheck": "All three parts remain in scope; no default art approval.",
     "sessionId": "01a14217-f65b-7ad0-9d9b-7d371f00827a",
     "requestId": "3cbafcd6-3db0-42ed-b12e-72dce74c1e36",
-    "performedAt": "2026-10-16T01:06:58.638925+00:00"
+    "performedAt": "2026-10-16T01:59:35.763196+00:00"
   },
   "stop": {
     "kind": "continue"
