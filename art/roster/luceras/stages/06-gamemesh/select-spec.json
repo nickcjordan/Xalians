@@ -1,0 +1,72 @@
+{
+ "title": "Luceras Game Mesh",
+ "heading": "Luceras: the game mesh",
+ "lede": "Stage 6 of 11. The approved sculpt is about 300,000 triangles; the version that ships to phones is 11,478. One question: any visible loss? Each picture puts the sculpt on the left and the game mesh on the right. Fine skin detail is carried by a baked texture, so it still shows. Approve, or say what got lost and in which view.",
+ "fallback": "Approvals cannot be saved from this view; reply in chat.",
+ "compositeEmpty": "Confirm closes the game mesh; the surface stage (fur, color, horn and claw look) starts next.",
+ "confirmed": "Confirmed; the surface stage starts next.",
+ "fold": {
+  "title": "Decided by the pipeline owner",
+  "text": "Six Codex passes. Rebuilding the surface as a new mesh (passes 1 to 4) kept the overall shape but every local repair left seams or dark marks; reducing the sculpt directly (pass 5) kept its own surface and fixed the ears, tail root and paws at once; pass 6 removed two small faults. Budgets: 11,478 triangles (limit 12,000), 40 joints, at most 4 bone influences per point, 2 materials, one 1024 texture set. Codex time about 3.8 hours, about 1.3M tokens."
+ },
+ "order": [
+  "mesh"
+ ],
+ "elements": {
+  "mesh": {
+   "name": "Game mesh",
+   "mode": "gallery",
+   "question": "Any visible loss between the sculpt and the game mesh?",
+   "judge": [
+    "Sprite size and full body: the same creature?",
+    "Head, paws: anything missing or changed?",
+    "Bending: no collapse in the poses?"
+   ],
+   "reading": [],
+   "recommend": null,
+   "note": "Known: the top edge of the horns is slightly polygonal at the closest camera; the whiskers are off the mesh until the surface stage decides how they are drawn.",
+   "views": [
+    {
+     "label": "Sprite size",
+     "blob": "924c59c5b42458d17c116ef9329c25606b8cc70118c232f7d18b53440550e06c",
+     "caption": "Sprite size (192 px): sculpt left, game mesh right"
+    },
+    {
+     "label": "Full body, three-quarter",
+     "blob": "a82f7df941197714d06d6fe87062c85e02dc7987c73687f650f46a7c2bcfc76b",
+     "caption": "Sculpt left, game mesh right"
+    },
+    {
+     "label": "Full body, side",
+     "blob": "9ea146f31d955b1bb632fdb94e4870612479e11fe33029f2861cb6673b0e979e",
+     "caption": "Sculpt left, game mesh right"
+    },
+    {
+     "label": "Head, close",
+     "blob": "a55bba009fc827afa287031cccf9c6359c5206e71fed28ffaf494783be36397a",
+     "caption": "Sculpt left, game mesh right (whiskers come back in the surface stage)"
+    },
+    {
+     "label": "Front paws, close",
+     "blob": "ad7d428fceb0d63963c122eace9631c72a560c53b51eb38aa56a0d4118316043",
+     "caption": "Sculpt left, game mesh right"
+    },
+    {
+     "label": "Hind paw, close",
+     "blob": "3763013add57aa69794316d46381bbb5bdc489d9e651a4d51d08aedb397d7337",
+     "caption": "Sculpt left, game mesh right"
+    },
+    {
+     "label": "Bending",
+     "blob": "dc3786bd0f49218dd8e2b7d6e2afc20dc464a1abf577fe112b5f1253da81fc04",
+     "caption": "Four test poses: sculpt top row, game mesh bottom row"
+    },
+    {
+     "label": "Wireframe",
+     "blob": "f0b2801e94db3adb52386253b77f83dd417aba2618d20961d2b83da36b77eb94",
+     "caption": "The game mesh triangles"
+    }
+   ]
+  }
+ }
+}

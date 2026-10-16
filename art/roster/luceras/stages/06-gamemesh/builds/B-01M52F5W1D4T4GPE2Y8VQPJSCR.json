@@ -8,12 +8,447 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "ao_1024.png",
+      "hash": "ba2ed6aea8e2c2f0457ef40b205ef905ee8d6fd9b8957ec0be7ecf97aa141394"
+    },
+    {
+      "name": "ao_2048.png",
+      "hash": "a54e6a7775213f403d1f2e85681e3da68909e905c7068899b4f22c28e6fea3dc"
+    },
+    {
+      "name": "bake_settings.json",
+      "hash": "978e6ac69f2f2e578e805e4b3c08d83ddbf08dba6e588fc7ccd49c369a0436e3"
+    },
+    {
+      "name": "bend_review.json",
+      "hash": "3346a6e9379897d5f2f56129f8471673a2268d56c8f4063c552d7b879687bd59"
+    },
+    {
+      "name": "bilateral_thigh_pose_scan.json",
+      "hash": "01868fa9a0eb413224ed0aaefa55efcc4e7f2232495e407278c95645e736e9b5"
+    },
+    {
+      "name": "check_bend_elbow.png",
+      "hash": "dd3b3c443fbf6e1293841db5cea71724c2da47513c4b77eecfba04842dce5a06"
+    },
+    {
+      "name": "check_bend_hip.png",
+      "hash": "fb82c9d42e6b0552968d36be3fbf4c09d7287c758ac8b2c42d77e462d00367b6"
+    },
+    {
+      "name": "check_bend_hock.png",
+      "hash": "3437e7607e3ff4995b26063e665e1e2dfd646bb5e9ea327cbd3366505e00044e"
+    },
+    {
+      "name": "check_bend_neck.png",
+      "hash": "c978f3eeca129f9fe14a072130934c9e2f3949f0b81c77178d7f8be648ee4000"
+    },
+    {
+      "name": "check_bend_right_hip.png",
+      "hash": "743f2a262d28ff4dd7da06071a0bc62b8378539facc6858b460964ba987c5122"
+    },
+    {
+      "name": "check_bend_right_tail_base.png",
+      "hash": "9e858331534aacbe2b4ad58cd92b08522b535bac1110a8cae519a2675df32fac"
+    },
+    {
+      "name": "check_bend_shoulder.png",
+      "hash": "1af5984d7b71350b7bf85e6878e4c51a91b129f565ab92f76eeb43cd2aaa7d58"
+    },
+    {
+      "name": "check_bend_stifle.png",
+      "hash": "0d53488be732ad8b5dcd548e0a9bbd113abdd3581ea397d083f39e7f026a9d03"
+    },
+    {
+      "name": "check_bend_tail_base.png",
+      "hash": "cd0e7b26b64fad944d3d93ae884c3061225e59dff63e207817def4732fb58304"
+    },
+    {
+      "name": "check_bend_wrist.png",
+      "hash": "e9378c93bab6ab3d705e964d3a2cd17a43d3039362def97ef2d6985159e2e847"
+    },
+    {
+      "name": "check_ear_side.png",
+      "hash": "dc77c770dcdb4c207deb6ee62d8c87eecefd30b9614dfd61945fe9d8429b10e9"
+    },
+    {
+      "name": "check_ear_three_quarter.png",
+      "hash": "6ba62217d7c9892ee43f120c47475b11de44a35dd6176ed609fea6dd9948ee4e"
+    },
+    {
+      "name": "check_fore_paw_l_three_quarter.png",
+      "hash": "ad7d428fceb0d63963c122eace9631c72a560c53b51eb38aa56a0d4118316043"
+    },
+    {
+      "name": "check_fore_paw_r_three_quarter.png",
+      "hash": "81c5deef42139937683144da761fa45ddf8389e1ea8f2b560ac2f6f4782c49b0"
+    },
+    {
+      "name": "check_full_side.png",
+      "hash": "9ea146f31d955b1bb632fdb94e4870612479e11fe33029f2861cb6673b0e979e"
+    },
+    {
+      "name": "check_full_three_quarter.png",
+      "hash": "a82f7df941197714d06d6fe87062c85e02dc7987c73687f650f46a7c2bcfc76b"
+    },
+    {
+      "name": "check_head_three_quarter.png",
+      "hash": "a55bba009fc827afa287031cccf9c6359c5206e71fed28ffaf494783be36397a"
+    },
+    {
+      "name": "check_hind_paw_l_three_quarter.png",
+      "hash": "18b087f2bf534fc0336041baefa8a2ba097504479680f18956bf92af44170737"
+    },
+    {
+      "name": "check_hind_paw_r_three_quarter.png",
+      "hash": "1a4fbaded9a2692c9ceda3144209915b074a041f325ca58c7685618fa18598a6"
+    },
+    {
+      "name": "check_hind_paw_side.png",
+      "hash": "3763013add57aa69794316d46381bbb5bdc489d9e651a4d51d08aedb397d7337"
+    },
+    {
+      "name": "check_horn_silhouette_side.png",
+      "hash": "ba561d6630cf154cda2f4845891f188aebb19836f7a19fa28cd3c91f2d729257"
+    },
+    {
+      "name": "check_sprite.png",
+      "hash": "924c59c5b42458d17c116ef9329c25606b8cc70118c232f7d18b53440550e06c"
+    },
+    {
+      "name": "completion_audit.json",
+      "hash": "002909445ed76df67cc6352f472e1a9145199f5e5c3fb3ba0dbc8f91de0c5466"
+    },
+    {
+      "name": "frozen_geometry_audit.json",
+      "hash": "4f73619ab7435584fd202b64f75d1d5289228f77d3fa573b4d0465d740efb7c5"
+    },
+    {
+      "name": "gamemesh.blend",
+      "hash": "294527ef89b8711ba0e94edb8981bde76a0e3be5126ddb86e35ed1346636cc4f"
+    },
+    {
+      "name": "gamemesh.glb",
+      "hash": "c0be472a40d904b759e3fa4c0e576ff3581bfe738fd2b88803fcd76cce769c31"
+    },
+    {
+      "name": "glb_check.json",
+      "hash": "c7f75259700fcad02b1dc1b292d25b6f6ef53c3ccb56020c3d53a8acf52fce2a"
+    },
+    {
+      "name": "independent_review.json",
+      "hash": "819a99e3beec174bf0a3c1e9c6f9c7b42afb3a56e368b98b3696208a84195da1"
+    },
+    {
+      "name": "joint_edge_rings.json",
+      "hash": "afc615968a09f0c3aea4946f32ba0785ac95206f04f118250945f6249e5676f2"
+    },
+    {
+      "name": "landing_diagnosis.json",
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "local_bake_mask.json",
+      "hash": "b3e7202523bb89e7674ef3f0347375dcb196f019c2eb3f572a91758e31620d9e"
+    },
+    {
+      "name": "local_repair.json",
+      "hash": "91d73883a9c08fc5cbb50e4647da6eaf4a780c9b8e9c35e9a725865d3bb4397c"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "6feb1a8c23ca50de07d58ac524ec28b35c791d07df2205deb1f515e91c3d189d"
+    },
+    {
+      "name": "normal_1024.png",
+      "hash": "e0dcff264f57097b8f66e89fdf97694b8c2bfc8ab1c81935acb15700d09f5d1b"
+    },
+    {
+      "name": "normal_2048.png",
+      "hash": "c4b0631015ff34880aa54921e7545e5f230769c15ddc3b82be0167044d02112f"
+    },
+    {
+      "name": "normal_quality.json",
+      "hash": "365dc06f084e15e4b747a11e639721f0f6f214ea9905e81a548b225bc9b22b21"
+    },
+    {
+      "name": "pass6_bake.json",
+      "hash": "bf509a35a30ba82f0c63e1a1430a82d95477ac3e594f09d51b24656303c2ed14"
+    },
+    {
+      "name": "pose_grid.png",
+      "hash": "dc3786bd0f49218dd8e2b7d6e2afc20dc464a1abf577fe112b5f1253da81fc04"
+    },
+    {
+      "name": "remaining_fold_diagnosis.json",
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "render_provenance.json",
+      "hash": "7f2f88e346b1c9fbed7b39821b9a48f451a57be0071164c303fefa9fb43a95fe"
+    },
+    {
+      "name": "report.json",
+      "hash": "e4d5a672d0863e068189ffae0448af155f9292e8a8bc077fa7f384e56c326a79"
+    },
+    {
+      "name": "report.sha256",
+      "hash": "0280c22f1329f20aa969ef5b22e07915934a7349bf575a5aad2500256d6fa10e"
+    },
+    {
+      "name": "right_bend_review.json",
+      "hash": "6f95cbd1588771ee6daeb535520876c372c3288a980164dcec0ff55c4779943a"
+    },
+    {
+      "name": "right_render_provenance.json",
+      "hash": "fa21d7f346d55bb6d5d8147014e8acb46bc3570a0f4bb0d65febb2a45a0a0bf6"
+    },
+    {
+      "name": "sculpt_check.json",
+      "hash": "0266200e374c5a423cee55910d1a5f316d0ce4c7fd04a71e68f7c8d9aaee6571"
+    },
+    {
+      "name": "uv_layout.png",
+      "hash": "de1688bb8269cac0b7ce5d81422e7511b557cdcc316cef1a8def1db7e3de6f73"
+    },
+    {
+      "name": "wire_full_side.png",
+      "hash": "fec05dcdb91877ac7f6487a2b4d384c36deb480b9a50a4c93d826c29b3cb440b"
+    },
+    {
+      "name": "wire_full_three_quarter.png",
+      "hash": "f0b2801e94db3adb52386253b77f83dd417aba2618d20961d2b83da36b77eb94"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "ao_1024.png",
+        "hash": "ba2ed6aea8e2c2f0457ef40b205ef905ee8d6fd9b8957ec0be7ecf97aa141394"
+      },
+      {
+        "name": "ao_2048.png",
+        "hash": "a54e6a7775213f403d1f2e85681e3da68909e905c7068899b4f22c28e6fea3dc"
+      },
+      {
+        "name": "bake_settings.json",
+        "hash": "978e6ac69f2f2e578e805e4b3c08d83ddbf08dba6e588fc7ccd49c369a0436e3"
+      },
+      {
+        "name": "bend_review.json",
+        "hash": "3346a6e9379897d5f2f56129f8471673a2268d56c8f4063c552d7b879687bd59"
+      },
+      {
+        "name": "bilateral_thigh_pose_scan.json",
+        "hash": "01868fa9a0eb413224ed0aaefa55efcc4e7f2232495e407278c95645e736e9b5"
+      },
+      {
+        "name": "check_bend_elbow.png",
+        "hash": "dd3b3c443fbf6e1293841db5cea71724c2da47513c4b77eecfba04842dce5a06"
+      },
+      {
+        "name": "check_bend_hip.png",
+        "hash": "fb82c9d42e6b0552968d36be3fbf4c09d7287c758ac8b2c42d77e462d00367b6"
+      },
+      {
+        "name": "check_bend_hock.png",
+        "hash": "3437e7607e3ff4995b26063e665e1e2dfd646bb5e9ea327cbd3366505e00044e"
+      },
+      {
+        "name": "check_bend_neck.png",
+        "hash": "c978f3eeca129f9fe14a072130934c9e2f3949f0b81c77178d7f8be648ee4000"
+      },
+      {
+        "name": "check_bend_right_hip.png",
+        "hash": "743f2a262d28ff4dd7da06071a0bc62b8378539facc6858b460964ba987c5122"
+      },
+      {
+        "name": "check_bend_right_tail_base.png",
+        "hash": "9e858331534aacbe2b4ad58cd92b08522b535bac1110a8cae519a2675df32fac"
+      },
+      {
+        "name": "check_bend_shoulder.png",
+        "hash": "1af5984d7b71350b7bf85e6878e4c51a91b129f565ab92f76eeb43cd2aaa7d58"
+      },
+      {
+        "name": "check_bend_stifle.png",
+        "hash": "0d53488be732ad8b5dcd548e0a9bbd113abdd3581ea397d083f39e7f026a9d03"
+      },
+      {
+        "name": "check_bend_tail_base.png",
+        "hash": "cd0e7b26b64fad944d3d93ae884c3061225e59dff63e207817def4732fb58304"
+      },
+      {
+        "name": "check_bend_wrist.png",
+        "hash": "e9378c93bab6ab3d705e964d3a2cd17a43d3039362def97ef2d6985159e2e847"
+      },
+      {
+        "name": "check_ear_side.png",
+        "hash": "dc77c770dcdb4c207deb6ee62d8c87eecefd30b9614dfd61945fe9d8429b10e9"
+      },
+      {
+        "name": "check_ear_three_quarter.png",
+        "hash": "6ba62217d7c9892ee43f120c47475b11de44a35dd6176ed609fea6dd9948ee4e"
+      },
+      {
+        "name": "check_fore_paw_l_three_quarter.png",
+        "hash": "ad7d428fceb0d63963c122eace9631c72a560c53b51eb38aa56a0d4118316043"
+      },
+      {
+        "name": "check_fore_paw_r_three_quarter.png",
+        "hash": "81c5deef42139937683144da761fa45ddf8389e1ea8f2b560ac2f6f4782c49b0"
+      },
+      {
+        "name": "check_full_side.png",
+        "hash": "9ea146f31d955b1bb632fdb94e4870612479e11fe33029f2861cb6673b0e979e"
+      },
+      {
+        "name": "check_full_three_quarter.png",
+        "hash": "a82f7df941197714d06d6fe87062c85e02dc7987c73687f650f46a7c2bcfc76b"
+      },
+      {
+        "name": "check_head_three_quarter.png",
+        "hash": "a55bba009fc827afa287031cccf9c6359c5206e71fed28ffaf494783be36397a"
+      },
+      {
+        "name": "check_hind_paw_l_three_quarter.png",
+        "hash": "18b087f2bf534fc0336041baefa8a2ba097504479680f18956bf92af44170737"
+      },
+      {
+        "name": "check_hind_paw_r_three_quarter.png",
+        "hash": "1a4fbaded9a2692c9ceda3144209915b074a041f325ca58c7685618fa18598a6"
+      },
+      {
+        "name": "check_hind_paw_side.png",
+        "hash": "3763013add57aa69794316d46381bbb5bdc489d9e651a4d51d08aedb397d7337"
+      },
+      {
+        "name": "check_horn_silhouette_side.png",
+        "hash": "ba561d6630cf154cda2f4845891f188aebb19836f7a19fa28cd3c91f2d729257"
+      },
+      {
+        "name": "check_sprite.png",
+        "hash": "924c59c5b42458d17c116ef9329c25606b8cc70118c232f7d18b53440550e06c"
+      },
+      {
+        "name": "completion_audit.json",
+        "hash": "002909445ed76df67cc6352f472e1a9145199f5e5c3fb3ba0dbc8f91de0c5466"
+      },
+      {
+        "name": "frozen_geometry_audit.json",
+        "hash": "4f73619ab7435584fd202b64f75d1d5289228f77d3fa573b4d0465d740efb7c5"
+      },
+      {
+        "name": "gamemesh.blend",
+        "hash": "294527ef89b8711ba0e94edb8981bde76a0e3be5126ddb86e35ed1346636cc4f"
+      },
+      {
+        "name": "gamemesh.glb",
+        "hash": "c0be472a40d904b759e3fa4c0e576ff3581bfe738fd2b88803fcd76cce769c31"
+      },
+      {
+        "name": "glb_check.json",
+        "hash": "c7f75259700fcad02b1dc1b292d25b6f6ef53c3ccb56020c3d53a8acf52fce2a"
+      },
+      {
+        "name": "independent_review.json",
+        "hash": "819a99e3beec174bf0a3c1e9c6f9c7b42afb3a56e368b98b3696208a84195da1"
+      },
+      {
+        "name": "joint_edge_rings.json",
+        "hash": "afc615968a09f0c3aea4946f32ba0785ac95206f04f118250945f6249e5676f2"
+      },
+      {
+        "name": "landing_diagnosis.json",
+        "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "name": "local_bake_mask.json",
+        "hash": "b3e7202523bb89e7674ef3f0347375dcb196f019c2eb3f572a91758e31620d9e"
+      },
+      {
+        "name": "local_repair.json",
+        "hash": "91d73883a9c08fc5cbb50e4647da6eaf4a780c9b8e9c35e9a725865d3bb4397c"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "6feb1a8c23ca50de07d58ac524ec28b35c791d07df2205deb1f515e91c3d189d"
+      },
+      {
+        "name": "normal_1024.png",
+        "hash": "e0dcff264f57097b8f66e89fdf97694b8c2bfc8ab1c81935acb15700d09f5d1b"
+      },
+      {
+        "name": "normal_2048.png",
+        "hash": "c4b0631015ff34880aa54921e7545e5f230769c15ddc3b82be0167044d02112f"
+      },
+      {
+        "name": "normal_quality.json",
+        "hash": "365dc06f084e15e4b747a11e639721f0f6f214ea9905e81a548b225bc9b22b21"
+      },
+      {
+        "name": "pass6_bake.json",
+        "hash": "bf509a35a30ba82f0c63e1a1430a82d95477ac3e594f09d51b24656303c2ed14"
+      },
+      {
+        "name": "pose_grid.png",
+        "hash": "dc3786bd0f49218dd8e2b7d6e2afc20dc464a1abf577fe112b5f1253da81fc04"
+      },
+      {
+        "name": "remaining_fold_diagnosis.json",
+        "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "name": "render_provenance.json",
+        "hash": "7f2f88e346b1c9fbed7b39821b9a48f451a57be0071164c303fefa9fb43a95fe"
+      },
+      {
+        "name": "report.json",
+        "hash": "e4d5a672d0863e068189ffae0448af155f9292e8a8bc077fa7f384e56c326a79"
+      },
+      {
+        "name": "report.sha256",
+        "hash": "0280c22f1329f20aa969ef5b22e07915934a7349bf575a5aad2500256d6fa10e"
+      },
+      {
+        "name": "right_bend_review.json",
+        "hash": "6f95cbd1588771ee6daeb535520876c372c3288a980164dcec0ff55c4779943a"
+      },
+      {
+        "name": "right_render_provenance.json",
+        "hash": "fa21d7f346d55bb6d5d8147014e8acb46bc3570a0f4bb0d65febb2a45a0a0bf6"
+      },
+      {
+        "name": "sculpt_check.json",
+        "hash": "0266200e374c5a423cee55910d1a5f316d0ce4c7fd04a71e68f7c8d9aaee6571"
+      },
+      {
+        "name": "uv_layout.png",
+        "hash": "de1688bb8269cac0b7ce5d81422e7511b557cdcc316cef1a8def1db7e3de6f73"
+      },
+      {
+        "name": "wire_full_side.png",
+        "hash": "fec05dcdb91877ac7f6487a2b4d384c36deb480b9a50a4c93d826c29b3cb440b"
+      },
+      {
+        "name": "wire_full_three_quarter.png",
+        "hash": "f0b2801e94db3adb52386253b77f83dd417aba2618d20961d2b83da36b77eb94"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 16.8,
+    "defectResult": "D-2pxy: thigh slit and neck mark fixed; 0 non-manifold edges; no visible loss at sprite size and full body; close cameras match apart from a slightly polygonal horn top edge.",
+    "note": "Final game mesh candidate: 11,478 triangles, 40 joints, 4 influences, 0 unweighted, 0 non-manifold, 2 materials, normal and AO baked at 2048 and 1024. Presented to Nick."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-16T13:42:14Z",
-  "briefSha256": "379399119699f301ebc2617be540f883be904de8944a49fc7db3f136c8088fa0"
+  "briefSha256": "379399119699f301ebc2617be540f883be904de8944a49fc7db3f136c8088fa0",
+  "checks": [],
+  "reportedAt": "2026-10-16T13:59:56Z"
 }
