@@ -1,0 +1,15 @@
+{
+  "id": "N-01M52D5CERFEW5M88X5TS728C2",
+  "alias": "kfhy",
+  "stage": "06-gamemesh",
+  "who": "orchestrator",
+  "words": "Second audit on the game mesh: four passes of QuadriFlow plus local patches. The global shape holds, but every local repair (ear root, tail root, toe ends) adds seams, pinches or bake artifacts, because QuadriFlow resamples the surface and the patches are joined back by hand. Limiting assumption: the game mesh must be a remesh. Outcome: change the method: reduce the approved sculpt by edge-collapse decimation (symmetric, weighted by a density map so the head, ears, horn bases, paws and tail root keep more triangles), which keeps the sculpt's own surface and topology flow and has no seams to patch; then UVs, bakes and weights as before. Base meshes remain the production answer.",
+  "date": "2026-10-16",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M517RP2HHF8RTAT8BE65XG6P",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-16T13:07:01Z"
+}

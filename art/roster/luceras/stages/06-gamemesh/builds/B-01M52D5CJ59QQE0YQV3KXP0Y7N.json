@@ -1,0 +1,19 @@
+{
+  "id": "B-01M52D5CJ59QQE0YQV3KXP0Y7N",
+  "alias": "sgkc",
+  "stage": "06-gamemesh",
+  "kind": "build",
+  "goal": "Stage 6 pass 5: game mesh by weighted symmetric decimation of the sculpt (method change after audit); Codex",
+  "scope": "whole creature",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T13:07:01Z",
+  "briefSha256": "7835e1a118092ec9541fed2b1f3161d1f5248ea0fc9d73266658cc142205ce34"
+}
