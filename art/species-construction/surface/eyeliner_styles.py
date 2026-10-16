@@ -30,6 +30,7 @@ def apply(style,palette):
     if style.startswith('mix-'):
         widest=b.attr('liner_original_width').outputs['Fac']
         topwidth=b.m('MULTIPLY',widest,b.m('ADD',.55,b.m('MULTIPLY',b.ramp(outward,0,1),.45)))
+        if style=='mix-g3':topwidth=widest
         lowerwidth=.00035
         if style=='mix-g2':lowerwidth=b.m('MULTIPLY',lowerwidth,b.ramp(outward,-.55,.55))
         if style=='mix-g3':lowerwidth=0

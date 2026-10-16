@@ -1,21 +1,17 @@
 {
   "part": "13d",
-  "status": "blocked",
+  "status": "rendered",
   "surfaceChanged": false,
   "baselineSha256": "ea6cd7e69affb1b8847a8885f812efc8b2ce48049dd4015a0db0d4ef2b35ea29",
   "default": "current",
   "rendered": [
     "G1",
-    "G2"
-  ],
-  "notRendered": [
+    "G2",
     "G3"
   ],
-  "missingSheets": [
-    "13d-eyeliner-mix.png",
-    "13d-eyeliner-mix-face.png"
-  ],
-  "reason": "Thirty-minute exclusive slot timeout; unrelated repair Blender still active",
+  "notRendered": [],
+  "missingSheets": [],
+  "reason": "Shared slot became available; G3 rendered once per framing at full A upper weight.",
   "evidence": {
     "G1-eye-close": {
       "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/G1/eye-close.png",
@@ -47,11 +43,27 @@
     },
     "shader": {
       "path": "art/species-construction/surface/eyeliner_styles.py",
-      "sha256": "94a8675b67217fdeede24ed9b3f1f15872c0b141bdb96177c595832756e84a3b"
+      "sha256": "04fe987e8824441317dd04283102347cf17c27552124df3cec4b9c83735d8460"
     },
     "config": {
       "path": "art/species-construction/surface/akinza-surface.json",
       "sha256": "63022e17dc7b70f6c7c88e5c6e4bdc46ada321335ad855b2be1fb6517cea418e"
+    },
+    "G3-eye-close": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/G3/eye-close.png",
+      "sha256": "5091848b08173a15fbb5e402a44764c7936a7b274887854b9d5218168dfda101"
+    },
+    "G3-head-front": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/G3/head-front.png",
+      "sha256": "531eb03aab0920c9c368465bfbccc3f352d22f2e83997e396f0537de1db7fbc0"
+    },
+    "sheetClose": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13d-eyeliner-mix.png",
+      "sha256": "0e3ebec214931f179128bbfde0a5037cbcda8af13e6df93f564fe0c641a463ad"
+    },
+    "sheetFace": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13d-eyeliner-mix-face.png",
+      "sha256": "5d6e576048ce788ee5120eebe173fc901bc33a25ec3252e23227cf32a5d0dad6"
     }
   }
 }

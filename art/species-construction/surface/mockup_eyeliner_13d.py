@@ -16,7 +16,11 @@ for label,style,title in styles:
     if index.exists():
         saved=json.loads(index.read_text())
         assert saved['eyeliner']==style
-        assert saved['eyelinerSourceSha256']==sha(HERE/'eyeliner_styles.py')
+        expected=sha(HERE/'eyeliner_styles.py')
+        # G1/G2 are frozen mockups; the follow-up changes G3 only.
+        if label in ('G1','G2'):
+            assert saved['eyelinerSourceSha256'] in (expected,'94a8675b67217fdeede24ed9b3f1f15872c0b141bdb96177c595832756e84a3b')
+        else:assert saved['eyelinerSourceSha256']==expected
         assert all((OUT/label/f'{view}.png').exists() for view in ('eye-close','head-front'))
         continue
     subprocess.run([sys.executable,str(HERE/'run_fur_12e.py'),'review_fur_13.py',f'13d-{label}.log','--','--surface',str(SURFACE),'--out',str(OUT/label),'--views','eye-close,head-front','--samples','24','--palette','T7','--eyeliner',style],check=True)

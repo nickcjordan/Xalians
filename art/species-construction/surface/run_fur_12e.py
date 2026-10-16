@@ -19,8 +19,8 @@ if __name__ == '__main__':
     if '--worker' not in sys.argv:
         # The shared gpu class is an exclusive compute mutex, also excluding
         # every Blender class holder. Rendering itself still uses the CPU.
-        raise SystemExit(subprocess.call([sys.executable,str(slot),'run','gpu','--wait','1800',
-                                         '--owner','Akinza fur 12e serial CPU Blender','--',
+        raise SystemExit(subprocess.call([sys.executable,str(slot),'run','gpu','--wait','7200',
+                                         '--owner','Akinza fur serial CPU Blender','--',
                                          sys.executable,__file__,'--worker',*sys.argv[1:]]))
     sys.argv.remove('--worker')
     p=argparse.ArgumentParser();p.add_argument('script');p.add_argument('log');p.add_argument('args',nargs=argparse.REMAINDER)

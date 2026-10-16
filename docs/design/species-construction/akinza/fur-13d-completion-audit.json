@@ -42,7 +42,7 @@
     },
     "shader": {
       "path": "art/species-construction/surface/eyeliner_styles.py",
-      "sha256": "94a8675b67217fdeede24ed9b3f1f15872c0b141bdb96177c595832756e84a3b"
+      "sha256": "04fe987e8824441317dd04283102347cf17c27552124df3cec4b9c83735d8460"
     },
     "config": {
       "path": "art/species-construction/surface/akinza-surface.json",
@@ -50,15 +50,35 @@
     },
     "review": {
       "path": "docs/design/species-construction/akinza/fur-13d-review.md",
-      "sha256": "cd291a0190338153b4e46099294c2064e6fc93947e16f6977ebb340d31a11bea"
+      "sha256": "7999052f4ff7adbfe03e9e42c313296dc32ae034ff769bbdb257b9855f44108f"
     },
     "delivery": {
       "path": "docs/design/species-construction/akinza/fur-13d-delivery.json",
-      "sha256": "cfd0fc082af86bdfe8a3765aba3b1463a8101a2311a2bf0823b4cf8403f0787b"
+      "sha256": "0f8d5b97b138c2ddb95946c574dda7c19baaf5769c3648d8a584fa71a88e9e04"
     },
     "work": {
       "path": "docs/design/species-construction/akinza/fur-13d-active-work.md",
-      "sha256": "a0f89da935490592e8ef382035045ecc5586ff28e99697ba4f999aa37e02aa3d"
+      "sha256": "cca3322742e96dc9eb02e944dd80e275ceec38b0568bdcd1f3153de28a55b240"
+    },
+    "G3-eye-close": {
+      "path": ".codex/audit-state/fur-13d-evidence/G3-eye-close.png",
+      "sha256": "5091848b08173a15fbb5e402a44764c7936a7b274887854b9d5218168dfda101",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13d/G3/eye-close.png"
+    },
+    "G3-head-front": {
+      "path": ".codex/audit-state/fur-13d-evidence/G3-head-front.png",
+      "sha256": "531eb03aab0920c9c368465bfbccc3f352d22f2e83997e396f0537de1db7fbc0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13d/G3/head-front.png"
+    },
+    "sheetClose": {
+      "path": ".codex/audit-state/fur-13d-evidence/sheetClose.png",
+      "sha256": "0e3ebec214931f179128bbfde0a5037cbcda8af13e6df93f564fe0c641a463ad",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13d-eyeliner-mix.png"
+    },
+    "sheetFace": {
+      "path": ".codex/audit-state/fur-13d-evidence/sheetFace.png",
+      "sha256": "5d6e576048ce788ee5120eebe173fc901bc33a25ec3252e23227cf32a5d0dad6",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13d-eyeliner-mix-face.png"
     }
   },
   "criteria": [
@@ -76,15 +96,14 @@
     {
       "id": "visuals",
       "expectation": "Six native option images and both labeled three-panel sheets rendered once and inspected.",
-      "status": "blocked",
-      "assessment": "G1/G2 four native images directly and independently inspected. G3 never launched after the 1800-second mutex timeout, so both sheets remain absent.",
+      "status": "pass",
+      "assessment": "Six native images and both exact three-panel sheets inspected; G3 full measured A upper weight, no lower line. G1/G2 frozen. Rough arc ends disclosed under single-render rule.",
       "evidence": [
-        "G1-eye-close",
-        "G1-head-front",
-        "G2-eye-close",
-        "G2-head-front",
-        "review",
-        "blocker"
+        "G3-eye-close",
+        "G3-head-front",
+        "sheetClose",
+        "sheetFace",
+        "review"
       ]
     },
     {
@@ -103,7 +122,7 @@
     {
       "id": "F001",
       "criterion": "visuals",
-      "status": "blocked",
+      "status": "resolved",
       "observation": "G3 and both requested sheets missing because exclusive Blender access timed out.",
       "nextAction": "Once the unrelated Blender task ends, resume mockup_eyeliner_13d.py; reuse G1/G2 and render G3 once, inspect all sheets and update audit.",
       "evidence": [
@@ -114,7 +133,14 @@
         "externalDependency": "Shared exclusive Blender/gpu slot held by unrelated gamemesh initial and repair jobs.",
         "attempts": "G1/G2 finished serially. G3 waited the full 1800-second mutex timeout and exited3 without launching. Full fur sweeps ran during a released slot. Starting alongside external Blender violates the brief; other tasks were preserved.",
         "unblocksWhen": "External Blender jobs release the exclusive compute slot."
-      }
+      },
+      "resolution": "Exclusive slot released; G3 and both sheets now rendered and inspected.",
+      "resolutionEvidence": [
+        "G3-eye-close",
+        "G3-head-front",
+        "sheetClose",
+        "sheetFace"
+      ]
     },
     {
       "id": "F002",
@@ -123,18 +149,26 @@
       "observation": "G1/G2 corner width shoulders are abrupt, G2 inner upper termination blunt, outer thickening modest; normal-size distinctions subtle.",
       "rationale": "These are disclosed mockup roughness, with a tuning loop expressly prohibited for this step. They do not erase the missing G3 and sheet obligations.",
       "scopeSource": "13d-full.md: Mockups for Nick to choose from: ONE render per option, no tuning loop; if an option is rough, say so in the report. Speed matters more than polish here."
+    },
+    {
+      "id": "F003",
+      "criterion": "visuals",
+      "status": "out_of_scope",
+      "observation": "G3 still appears thinner than original A despite using full measured95th-percentile inset; exact A visual weight is not certified.",
+      "rationale": "Disclose this single-render mockup limitation. Another render or tuning loop is expressly prohibited; G1/G2 must remain frozen.",
+      "scopeSource": "briefs/13c-full.md: Mockups for Nick to choose from: ONE render per option, no tuning loop."
     }
   ],
   "audit": {
-    "reviewer": "Builder plus independent review_13d",
-    "comparison": "Code and G1/G2 compared with requested mix definitions and 13a reference. G3 and sheets remain unrendered, not approved.",
+    "reviewer": "Builder plus independent review_13c_full",
+    "comparison": "All G3 native/sheet images inspected versus G1/G2 and original A; G3 bolder and upper-only, exact A visual weight not certified and disclosed under one-render cap.",
     "regressions": "Full fresh saved fur sweep passed with all regional counts identical; source surface held; no concurrent13c changes staged.",
-    "scopeCheck": "Only step13d checkpoint; does not close wider Akinza work. No push, tuning loop or model save.",
-    "sessionId": "akinza-13d-20261016",
-    "requestId": "07a0e1bf-d217-4e67-b93e-c1925cbc7560",
-    "performedAt": "2026-10-16T12:31:01.155860+00:00"
+    "scopeCheck": "Part1 delivery only;13c remains actively unfinished in fur-13-active-work.md. No default selection or push.",
+    "sessionId": "akinza-13c-full-20261016",
+    "requestId": "559c2bd5-723b-42a3-8588-c3f510ddabe1",
+    "performedAt": "2026-10-16T12:40:24.357750+00:00"
   },
   "stop": {
-    "kind": "blocked"
+    "kind": "complete"
   }
 }
