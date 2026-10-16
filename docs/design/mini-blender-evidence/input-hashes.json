@@ -1,0 +1,10 @@
+{
+  "source/surface/surface.blend": "ea6cd7e69affb1b8847a8885f812efc8b2ce48049dd4015a0db0d4ef2b35ea29",
+  "source/surface/surface-info.json": "08bd8cee051acb6f48c7cf514083498ee63532d21cd43c763542fda2a496c58b",
+  "source/scripts/review_fur_12d.py": "88185ce4de0e7b45c3df456fe330ebd5bd0556c30a591ebc795dfd24d82fff24",
+  "source/scripts/render_surface.py": "e3f8b9d2da4aa613026d18098cc189eb508d7e385977c47bbf077230819ff729",
+  "source/scripts/tiger_stripes.py": "505cc2310e927d38a415483bb1fc07f704a6aa286303c63dcb1d21e3af722a05",
+  "source/scripts/eyeliner_styles.py": "04fe987e8824441317dd04283102347cf17c27552124df3cec4b9c83735d8460",
+  "source/scripts/akinza-palettes.json": "a5d3e766402fedcbaf3b054b38cbbf32fcf9641e4724c849283fc1140608dda9",
+  "source/scripts/akinza-surface.json": "63022e17dc7b70f6c7c88e5c6e4bdc46ada321335ad855b2be1fb6517cea418e"
+}

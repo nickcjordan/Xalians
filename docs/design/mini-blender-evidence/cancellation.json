@@ -1,0 +1,7 @@
+{
+  "returncode": 1,
+  "error": "client disconnected or canceled job",
+  "wallSeconds": 67.026947751,
+  "transferAndWallSeconds": 72.05902190000052,
+  "route": "mini"
+}

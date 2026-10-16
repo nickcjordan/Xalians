@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-16",
+  "blenderVersion": "5.2.2 LTS",
+  "blenderBuild": "d13f752e3b9c",
+  "blenderBinarySha256BothMachines": "bafec183e960819c76fe213c000cdb2284c53a87ef6791812f8728b51f07145b",
+  "timerShimSha256": "d15b89549d39a5e0471e94c34ff8f1fdb03428fd12ce968cd5ffb9dcc3964f3a",
+  "miniCpu": "Intel Core i7-8700B @3.20GHz",
+  "miniThreads": 12,
+  "computeVmCpus": 3,
+  "computeVmMemoryGiB": 4,
+  "containerMemoryGiB": 3,
+  "containerThreads": 3,
+  "ciVmCpus": 10,
+  "ciVmMemoryGiB": 8,
+  "wslCpus": 24,
+  "wslConfigChanged": false,
+  "ciConfigChanged": false,
+  "timerTests": "1000 increasing reads and zero upper register bits; unrelated UD2 and user-generated SIGILL both retain SIGILL exit132",
+  "measuredImageId": "sha256:7360373764ecc26ab6cf429ef739fe0137f9ad81502c6ce032698a21ccf6d9f4",
+  "measuredTimerShimSha256": "40a0d9dd6b6e4544954017400c531877668c35e42857979a345b8d09445adf20",
+  "installedImageIdPrefix": "4ca31db66d0f",
+  "imageRevisionNote": "After the fur job started, added forwarding of explicitly user-generated SIGILL. The measured kernel RDTSCP emulation path is unchanged; final installed image passes positive timer and negative signal tests, with denoised cube and live controls verified separately.",
+  "outputPngSha256": {
+    "mini": "50ddc2b131d05fd7ff1239147e769e75eefda8b1fc3c238a63ff4e93293a1c9f",
+    "local": "c2b068930a9666fe04ddda7003fd5aece546eba9007fd050fc1adfab6cbabcf2"
+  }
+}
