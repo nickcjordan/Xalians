@@ -8,12 +8,439 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "composite_front_vs_sheet.png",
+      "hash": "aa82df7274baaa7bc91d6b22e1fdf1773e2f404b7e1e3d9c2b1254a0ab12475e"
+    },
+    {
+      "name": "composite_head_vs_sheet.png",
+      "hash": "05b653379f8e5a0d2c26e6c2acd104401e1e35e3eaeba929230eef45a161d78d"
+    },
+    {
+      "name": "composite_hind_leg_vs_sheet.png",
+      "hash": "d6d5e748c0e02a27ed06d917f38b059993228fe94d0474efa5c74b01f03f6521"
+    },
+    {
+      "name": "composite_runtime_front_vs_sheet.png",
+      "hash": "edf3e8b596f7f71835e1d6239cb498e63896e7abf86e72e9ad669f4c52c5c9d6"
+    },
+    {
+      "name": "composite_runtime_head_vs_sheet.png",
+      "hash": "7a9964d058db8d7f5c59a6b6d243da533cf38b77e56d631d096fb7b8d06d02ed"
+    },
+    {
+      "name": "composite_runtime_hind_leg_vs_sheet.png",
+      "hash": "bec84fc3b3d48f8b8cb8821a0dca977dfb4940359980ff34a0b6c71c7f931d1e"
+    },
+    {
+      "name": "composite_runtime_side_vs_sheet.png",
+      "hash": "b2b9062a311779beda22c60debf42bf5929d6eadee88fe4df21afa372f0dd926"
+    },
+    {
+      "name": "composite_runtime_sprite_vs_sheet.png",
+      "hash": "6c92722e6bdd4a0ac2dce90be5ce0bee1fcf20b010e835761b17f3122d9e3a86"
+    },
+    {
+      "name": "composite_runtime_tail_plume_vs_sheet.png",
+      "hash": "115767bebe0826157f5514e26581a38b5057bf2433e751cd99ed995f93cbeb79"
+    },
+    {
+      "name": "composite_runtime_three_quarter_vs_sheet.png",
+      "hash": "c9ebe21822571230d6174f6f7a9a0730bce1bcaecf1120e90d288b8d61196509"
+    },
+    {
+      "name": "composite_side_vs_sheet.png",
+      "hash": "ad6607f60fe1f8cbc4c195e8bf8987c2459e1e36117c07a6773cc474fb5fe500"
+    },
+    {
+      "name": "composite_sprite_vs_sheet.png",
+      "hash": "c421e55631302e8e54bb63f31715c9ab185a28777592403ff45155bc09800cb1"
+    },
+    {
+      "name": "composite_tail_plume_vs_sheet.png",
+      "hash": "21a89367e2ce3b8a8d79f7b61267919ba4a00fbca697d932dabb410a30f522e7"
+    },
+    {
+      "name": "composite_three_quarter_vs_sheet.png",
+      "hash": "ef336c973a9c8749d1f745e62da780bc5e648dfa8fa20d3ce36aa86c4cfa7a05"
+    },
+    {
+      "name": "luceras_surface.glb",
+      "hash": "7d91ad79e981a062ecaebee53a290b34f872c59ef7bbf1fad584c356bc0c3fb5"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "b8275d9acc0e93986356a35f4f6ea99899d6b533245fd1527ada1202c51cf5ea"
+    },
+    {
+      "name": "report.json",
+      "hash": "3c65ce5c9d7f10a8bd0ea8a734c134bf671b4e5df7399f381eb44771c6e8a436"
+    },
+    {
+      "name": "runtime_check.json",
+      "hash": "c0de65fe3856f1505baf3f2a01081e467291649172ac979fb838bdc08ebcbee0"
+    },
+    {
+      "name": "runtime_final.log",
+      "hash": "2cb77dcdd325aaf390d7c881088816d884c969a7d166d084a5669fdff8663acc"
+    },
+    {
+      "name": "runtime_front.png",
+      "hash": "856f1cf87259575e7fe8965357ccc4da6cb987eb86b2e8ab5385548bf5e50874"
+    },
+    {
+      "name": "runtime_head.png",
+      "hash": "7f89dad0ec4d945f0d5e2e70b9b7d8e76089dacb8ef3c3a25bf82c24775f7114"
+    },
+    {
+      "name": "runtime_hind_leg.png",
+      "hash": "e34950af9f97cf4b19e3ed9fdc235be9696c4866dee3219201044c073eddc94d"
+    },
+    {
+      "name": "runtime_motion_00.png",
+      "hash": "952165aec09df3c10137f6ac7de49e7d0912cc7cf6dacad9be693fbdfe908852"
+    },
+    {
+      "name": "runtime_motion_01.png",
+      "hash": "71232483b5ee4236a9f31f541f0e7ee8461724f94ed25d28579e8dfce14a79e3"
+    },
+    {
+      "name": "runtime_motion_02.png",
+      "hash": "b41ad39f83bc28595e03c4c599b3cc10a2e1ba24c0ee5bf9fec030d554b308fe"
+    },
+    {
+      "name": "runtime_motion_03.png",
+      "hash": "06ce411aef0f51b955f153c8912e293152e1ec06510938d0ae19176be5b485f8"
+    },
+    {
+      "name": "runtime_motion_04.png",
+      "hash": "ec2ce406ce17a6e9db66db34f21f3c1b2f3f7a032287bf9b52376ff0e3babb05"
+    },
+    {
+      "name": "runtime_motion_05.png",
+      "hash": "02c965822650a56280ad26ab40690c680275840d44c84139cb78a9bd625582cd"
+    },
+    {
+      "name": "runtime_motion_06.png",
+      "hash": "a4fd9e5d22ffb110ae76eb2cf8f6dfa56826fa422ed4b1c10274be0d1bf97ef3"
+    },
+    {
+      "name": "runtime_motion_07.png",
+      "hash": "ef8f85b11c4037cf2d433a6792a051a6d8d1a10860764250362cf0715b5c1e1e"
+    },
+    {
+      "name": "runtime_motion_08.png",
+      "hash": "cb2852ff7f277a672f6ad4c3c37b7f809999ce7f3b1defc4d329c5e004f000ec"
+    },
+    {
+      "name": "runtime_motion_09.png",
+      "hash": "05c1ac239d98531779470b393df1b6cb89f0cb614f24dcb42f974d3c7cef148f"
+    },
+    {
+      "name": "runtime_motion_10.png",
+      "hash": "e4506a423ccd2cdd81d39d8ee78c52cc8fca78c85fe72998e682dd7c8c674016"
+    },
+    {
+      "name": "runtime_motion_11.png",
+      "hash": "3565c7121d36e3177f1b1504904256e15d6fcb6122c25a09fd1867541411af78"
+    },
+    {
+      "name": "runtime_motion_12.png",
+      "hash": "31ddb358c694ce290c405041268dbbf004d9df7c83349f7e850e938e25feb8db"
+    },
+    {
+      "name": "runtime_motion_13.png",
+      "hash": "914f5b145ddb91bfd0c2483f9dfdbf4aa4ff7c74dbdfae51d2e255f684f095aa"
+    },
+    {
+      "name": "runtime_motion_14.png",
+      "hash": "4658ac275f3d02c757b1668f1bf1fdec664b4e74585556713293e6c1a151fe91"
+    },
+    {
+      "name": "runtime_motion_15.png",
+      "hash": "522eeca69bfe89583ce27306117507d0f029a99c414aba854b7bae7148e09209"
+    },
+    {
+      "name": "runtime_motion_16.png",
+      "hash": "892ff36b8df157a88eeb052b44b6e51d2ea1edb11bafd5ad0fe70498e408ad7c"
+    },
+    {
+      "name": "runtime_motion_17.png",
+      "hash": "fe6f7f602f67c468aaf1b5123f29c398baa7c2f7ac93d2d05ea5294fd38e64a5"
+    },
+    {
+      "name": "runtime_motion_18.png",
+      "hash": "c04cdbe25ac97769309e84bd38022f7ebe080b1c8d36039e14f58835ad2c02e4"
+    },
+    {
+      "name": "runtime_motion_19.png",
+      "hash": "96e221a5f6686a3cf3825687358f3be65d0cb18e999963e2fdfa6fb533797abf"
+    },
+    {
+      "name": "runtime_motion_20.png",
+      "hash": "b5c25d7c5a0f826d76ba68f41b5093c12997e468d405dfaac0df8d3141b06825"
+    },
+    {
+      "name": "runtime_motion_21.png",
+      "hash": "47b91b233a7862788a93f7bba81ad724fb74328ec7dcd5576002a1df36476459"
+    },
+    {
+      "name": "runtime_motion_22.png",
+      "hash": "3256293ed3e99a9ad939b1d81c94fef6a0d1b95d4a978bd71969cdb9d3357d89"
+    },
+    {
+      "name": "runtime_motion_23.png",
+      "hash": "8aa98b59a6891eb4e2ec603cf4c67b3457f1b74aa8e706bef7c670130b4d88d8"
+    },
+    {
+      "name": "runtime_phone.png",
+      "hash": "91e8c06a3d205d6d9d6578c858121580d9225f0ca8b4b80235db25e910ea4d5d"
+    },
+    {
+      "name": "runtime_side.png",
+      "hash": "5ccbaf73c66c13caa31eaee044e17d227331b58575cc55191bdd5e9da9ff03d3"
+    },
+    {
+      "name": "runtime_sprite.png",
+      "hash": "9fe985c7ea1f428d518032d4a0bf98e74421c968a043ef311f40be1d1be0465e"
+    },
+    {
+      "name": "runtime_tail_plume.png",
+      "hash": "ff3af5db2c5e65e99a0d18530b8534e863793b17b38bd850442e36285e2d30e7"
+    },
+    {
+      "name": "runtime_three_quarter.png",
+      "hash": "96b7e8164f9326c5315388150424e761bba1d82f1482f3ba81d70eb05c935fc3"
+    },
+    {
+      "name": "surface.blend",
+      "hash": "860431efd04973cfc8aa85bdeb3a053d2c538c13fbb28628e1134bfa77a5e557"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "composite_front_vs_sheet.png",
+        "hash": "aa82df7274baaa7bc91d6b22e1fdf1773e2f404b7e1e3d9c2b1254a0ab12475e"
+      },
+      {
+        "name": "composite_head_vs_sheet.png",
+        "hash": "05b653379f8e5a0d2c26e6c2acd104401e1e35e3eaeba929230eef45a161d78d"
+      },
+      {
+        "name": "composite_hind_leg_vs_sheet.png",
+        "hash": "d6d5e748c0e02a27ed06d917f38b059993228fe94d0474efa5c74b01f03f6521"
+      },
+      {
+        "name": "composite_runtime_front_vs_sheet.png",
+        "hash": "edf3e8b596f7f71835e1d6239cb498e63896e7abf86e72e9ad669f4c52c5c9d6"
+      },
+      {
+        "name": "composite_runtime_head_vs_sheet.png",
+        "hash": "7a9964d058db8d7f5c59a6b6d243da533cf38b77e56d631d096fb7b8d06d02ed"
+      },
+      {
+        "name": "composite_runtime_hind_leg_vs_sheet.png",
+        "hash": "bec84fc3b3d48f8b8cb8821a0dca977dfb4940359980ff34a0b6c71c7f931d1e"
+      },
+      {
+        "name": "composite_runtime_side_vs_sheet.png",
+        "hash": "b2b9062a311779beda22c60debf42bf5929d6eadee88fe4df21afa372f0dd926"
+      },
+      {
+        "name": "composite_runtime_sprite_vs_sheet.png",
+        "hash": "6c92722e6bdd4a0ac2dce90be5ce0bee1fcf20b010e835761b17f3122d9e3a86"
+      },
+      {
+        "name": "composite_runtime_tail_plume_vs_sheet.png",
+        "hash": "115767bebe0826157f5514e26581a38b5057bf2433e751cd99ed995f93cbeb79"
+      },
+      {
+        "name": "composite_runtime_three_quarter_vs_sheet.png",
+        "hash": "c9ebe21822571230d6174f6f7a9a0730bce1bcaecf1120e90d288b8d61196509"
+      },
+      {
+        "name": "composite_side_vs_sheet.png",
+        "hash": "ad6607f60fe1f8cbc4c195e8bf8987c2459e1e36117c07a6773cc474fb5fe500"
+      },
+      {
+        "name": "composite_sprite_vs_sheet.png",
+        "hash": "c421e55631302e8e54bb63f31715c9ab185a28777592403ff45155bc09800cb1"
+      },
+      {
+        "name": "composite_tail_plume_vs_sheet.png",
+        "hash": "21a89367e2ce3b8a8d79f7b61267919ba4a00fbca697d932dabb410a30f522e7"
+      },
+      {
+        "name": "composite_three_quarter_vs_sheet.png",
+        "hash": "ef336c973a9c8749d1f745e62da780bc5e648dfa8fa20d3ce36aa86c4cfa7a05"
+      },
+      {
+        "name": "luceras_surface.glb",
+        "hash": "7d91ad79e981a062ecaebee53a290b34f872c59ef7bbf1fad584c356bc0c3fb5"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "b8275d9acc0e93986356a35f4f6ea99899d6b533245fd1527ada1202c51cf5ea"
+      },
+      {
+        "name": "report.json",
+        "hash": "3c65ce5c9d7f10a8bd0ea8a734c134bf671b4e5df7399f381eb44771c6e8a436"
+      },
+      {
+        "name": "runtime_check.json",
+        "hash": "c0de65fe3856f1505baf3f2a01081e467291649172ac979fb838bdc08ebcbee0"
+      },
+      {
+        "name": "runtime_final.log",
+        "hash": "2cb77dcdd325aaf390d7c881088816d884c969a7d166d084a5669fdff8663acc"
+      },
+      {
+        "name": "runtime_front.png",
+        "hash": "856f1cf87259575e7fe8965357ccc4da6cb987eb86b2e8ab5385548bf5e50874"
+      },
+      {
+        "name": "runtime_head.png",
+        "hash": "7f89dad0ec4d945f0d5e2e70b9b7d8e76089dacb8ef3c3a25bf82c24775f7114"
+      },
+      {
+        "name": "runtime_hind_leg.png",
+        "hash": "e34950af9f97cf4b19e3ed9fdc235be9696c4866dee3219201044c073eddc94d"
+      },
+      {
+        "name": "runtime_motion_00.png",
+        "hash": "952165aec09df3c10137f6ac7de49e7d0912cc7cf6dacad9be693fbdfe908852"
+      },
+      {
+        "name": "runtime_motion_01.png",
+        "hash": "71232483b5ee4236a9f31f541f0e7ee8461724f94ed25d28579e8dfce14a79e3"
+      },
+      {
+        "name": "runtime_motion_02.png",
+        "hash": "b41ad39f83bc28595e03c4c599b3cc10a2e1ba24c0ee5bf9fec030d554b308fe"
+      },
+      {
+        "name": "runtime_motion_03.png",
+        "hash": "06ce411aef0f51b955f153c8912e293152e1ec06510938d0ae19176be5b485f8"
+      },
+      {
+        "name": "runtime_motion_04.png",
+        "hash": "ec2ce406ce17a6e9db66db34f21f3c1b2f3f7a032287bf9b52376ff0e3babb05"
+      },
+      {
+        "name": "runtime_motion_05.png",
+        "hash": "02c965822650a56280ad26ab40690c680275840d44c84139cb78a9bd625582cd"
+      },
+      {
+        "name": "runtime_motion_06.png",
+        "hash": "a4fd9e5d22ffb110ae76eb2cf8f6dfa56826fa422ed4b1c10274be0d1bf97ef3"
+      },
+      {
+        "name": "runtime_motion_07.png",
+        "hash": "ef8f85b11c4037cf2d433a6792a051a6d8d1a10860764250362cf0715b5c1e1e"
+      },
+      {
+        "name": "runtime_motion_08.png",
+        "hash": "cb2852ff7f277a672f6ad4c3c37b7f809999ce7f3b1defc4d329c5e004f000ec"
+      },
+      {
+        "name": "runtime_motion_09.png",
+        "hash": "05c1ac239d98531779470b393df1b6cb89f0cb614f24dcb42f974d3c7cef148f"
+      },
+      {
+        "name": "runtime_motion_10.png",
+        "hash": "e4506a423ccd2cdd81d39d8ee78c52cc8fca78c85fe72998e682dd7c8c674016"
+      },
+      {
+        "name": "runtime_motion_11.png",
+        "hash": "3565c7121d36e3177f1b1504904256e15d6fcb6122c25a09fd1867541411af78"
+      },
+      {
+        "name": "runtime_motion_12.png",
+        "hash": "31ddb358c694ce290c405041268dbbf004d9df7c83349f7e850e938e25feb8db"
+      },
+      {
+        "name": "runtime_motion_13.png",
+        "hash": "914f5b145ddb91bfd0c2483f9dfdbf4aa4ff7c74dbdfae51d2e255f684f095aa"
+      },
+      {
+        "name": "runtime_motion_14.png",
+        "hash": "4658ac275f3d02c757b1668f1bf1fdec664b4e74585556713293e6c1a151fe91"
+      },
+      {
+        "name": "runtime_motion_15.png",
+        "hash": "522eeca69bfe89583ce27306117507d0f029a99c414aba854b7bae7148e09209"
+      },
+      {
+        "name": "runtime_motion_16.png",
+        "hash": "892ff36b8df157a88eeb052b44b6e51d2ea1edb11bafd5ad0fe70498e408ad7c"
+      },
+      {
+        "name": "runtime_motion_17.png",
+        "hash": "fe6f7f602f67c468aaf1b5123f29c398baa7c2f7ac93d2d05ea5294fd38e64a5"
+      },
+      {
+        "name": "runtime_motion_18.png",
+        "hash": "c04cdbe25ac97769309e84bd38022f7ebe080b1c8d36039e14f58835ad2c02e4"
+      },
+      {
+        "name": "runtime_motion_19.png",
+        "hash": "96e221a5f6686a3cf3825687358f3be65d0cb18e999963e2fdfa6fb533797abf"
+      },
+      {
+        "name": "runtime_motion_20.png",
+        "hash": "b5c25d7c5a0f826d76ba68f41b5093c12997e468d405dfaac0df8d3141b06825"
+      },
+      {
+        "name": "runtime_motion_21.png",
+        "hash": "47b91b233a7862788a93f7bba81ad724fb74328ec7dcd5576002a1df36476459"
+      },
+      {
+        "name": "runtime_motion_22.png",
+        "hash": "3256293ed3e99a9ad939b1d81c94fef6a0d1b95d4a978bd71969cdb9d3357d89"
+      },
+      {
+        "name": "runtime_motion_23.png",
+        "hash": "8aa98b59a6891eb4e2ec603cf4c67b3457f1b74aa8e706bef7c670130b4d88d8"
+      },
+      {
+        "name": "runtime_phone.png",
+        "hash": "91e8c06a3d205d6d9d6578c858121580d9225f0ca8b4b80235db25e910ea4d5d"
+      },
+      {
+        "name": "runtime_side.png",
+        "hash": "5ccbaf73c66c13caa31eaee044e17d227331b58575cc55191bdd5e9da9ff03d3"
+      },
+      {
+        "name": "runtime_sprite.png",
+        "hash": "9fe985c7ea1f428d518032d4a0bf98e74421c968a043ef311f40be1d1be0465e"
+      },
+      {
+        "name": "runtime_tail_plume.png",
+        "hash": "ff3af5db2c5e65e99a0d18530b8534e863793b17b38bd850442e36285e2d30e7"
+      },
+      {
+        "name": "runtime_three_quarter.png",
+        "hash": "96b7e8164f9326c5315388150424e761bba1d82f1482f3ba81d70eb05c935fc3"
+      },
+      {
+        "name": "surface.blend",
+        "hash": "860431efd04973cfc8aa85bdeb3a053d2c538c13fbb28628e1134bfa77a5e557"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 62.6,
+    "codexTokens": "383,036",
+    "note": "Surface pass 2: 14,982 triangles. Critic read: pattern now placed as the sheet (blaze, white muzzle, bib, belly, inner legs, pink-gray nose and inner ears); horns matte. Remaining: coat value far too dark and blue-tinted (sheet is a mid storm gray with lighter and darker strands), large hard-edged dark patches on the shoulder and flank; the fringe reads as sparse long white spikes on the chest and legs instead of an even soft shaggy outline; horn ridge crests lack the sheet's bronze highlights."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-16T15:13:58Z",
-  "briefSha256": "761265a777a9c080cc0d14c8b39eef10283e38c7f4ae92aeda3dc0edde118ce2"
+  "briefSha256": "761265a777a9c080cc0d14c8b39eef10283e38c7f4ae92aeda3dc0edde118ce2",
+  "checks": [],
+  "reportedAt": "2026-10-16T16:17:43Z"
 }

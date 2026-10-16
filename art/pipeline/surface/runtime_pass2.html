@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script></head><body>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(1);renderer.setSize(1024,1024);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color().setRGB(.12,.12,.12);
+const world=new THREE.HemisphereLight(0xffffff,0x777777,.50);scene.add(world);
+function bvec(p){return new THREE.Vector3(p[0],p[2],-p[1]);}
+function light(p,power){const l=new THREE.DirectionalLight(0xffffff,power);l.position.copy(bvec(p));l.target.position.copy(bvec([0,0,.3]));scene.add(l,l.target);return l;}
+const key=light([-1.6,-2.2,2.6],2.1);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-1.5;key.shadow.camera.right=1.5;key.shadow.camera.top=1.5;key.shadow.camera.bottom=-1.5;key.shadow.bias=-.0001;key.shadow.normalBias=.001;
+light([2.4,-1.8,1.2],.40);light([.6,2.8,2.2],1.1);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:new THREE.Color().setRGB(.12,.12,.12),roughness:.95}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const gltf=await new GLTFLoader().loadAsync('/asset/luceras_surface.glb');scene.add(gltf.scene);
+let triangleCount=0,meshes=0,materials=new Set();gltf.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;triangleCount+=o.geometry.index?o.geometry.index.count/3:o.geometry.attributes.position.count/3;meshes++;materials.add(o.material);}});
+const cameras=await fetch('/asset/cameras.json').then(r=>r.json());
+const camera=new THREE.OrthographicCamera(-1,1,1,-1,.01,100);
+window.renderView=(name,size=1024)=>{let c=cameras[name];renderer.setSize(size,size);camera.left=-c.ortho_scale/2;camera.right=c.ortho_scale/2;camera.top=c.ortho_scale/2;camera.bottom=-c.ortho_scale/2;camera.position.copy(bvec(c.position));
+ const q=new THREE.Quaternion(c.quaternion[1],c.quaternion[2],c.quaternion[3],c.quaternion[0]);const convert=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-Math.PI/2);camera.quaternion.copy(convert.multiply(q));camera.updateProjectionMatrix();camera.updateMatrixWorld();scene.updateMatrixWorld(true);renderer.render(scene,camera);return renderer.domElement.toDataURL('image/png');};
+window.assetInfo={three:THREE.REVISION,triangles:triangleCount,meshes,materials:[...materials].map(m=>({name:m.name,alphaTest:m.alphaTest,transparent:m.transparent,side:m.side,roughness:m.roughness,map:m.map?.image?.width,normal:m.normalMap?.image?.width,ao:m.aoMap?.image?.width})),joints:gltf.scene.getObjectByProperty('isSkinnedMesh',true)?.skeleton.bones.length,renderer:renderer.getContext().getParameter(renderer.getContext().RENDERER)};
+window.renderOrbit=(angle)=>{window.renderView('side',384);const center=new THREE.Vector3(0,.38,-.18);camera.position.sub(center).applyAxisAngle(new THREE.Vector3(0,1,0),angle).add(center);camera.lookAt(center);camera.updateMatrixWorld();renderer.render(scene,camera);return renderer.domElement.toDataURL('image/png');};
+window.debugAllShadows=()=>{renderer.shadowMap.enabled=false;gltf.scene.traverse(o=>{if(o.isMesh)o.material.needsUpdate=true;});};
+window.debugCardShadow=()=>{gltf.scene.traverse(o=>{if(o.isMesh&&o.name.startsWith('surface'))o.castShadow=false;});};
+window.debugAO=()=>{gltf.scene.traverse(o=>{if(o.isMesh)o.material.aoMapIntensity=0;});};
+window.debugFlat=()=>{gltf.scene.traverse(o=>{if(o.isMesh&&!o.name.startsWith('surface')){o.material.map=null;o.material.color.setRGB(.3,.3,.3);o.material.needsUpdate=true;}});};
+window.debugNormals=(value)=>{gltf.scene.traverse(o=>{if(o.isMesh&&o.material.normalScale)o.material.normalScale.set(value,value);});};
+const poseBones=['tail_03','tail_04','tail_06','leg_hl_02','leg_hr_02'].map(n=>gltf.scene.getObjectByName(n));
+const restPose=poseBones.map(b=>b.quaternion.clone());
+window.renderMotion=(phase)=>{poseBones.forEach((b,i)=>{b.quaternion.copy(restPose[i]);b.rotateX(Math.sin(phase+i*.45)*(i<3?.12:.18));});gltf.scene.updateMatrixWorld(true);return window.renderView('side',390);};
+window.resetMotion=()=>poseBones.forEach((b,i)=>b.quaternion.copy(restPose[i]));
+window.renderView('side');window.ready=true;
+</script></body></html>

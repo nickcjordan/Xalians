@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "B-nv32-surface-pass2",
+  "outcome": "Match the sheet pattern and shaggy outline, preserve accepted parts, and deliver all proof within the user timebox.",
+  "authorizedScope": "Stage 7 pass 2 surface, cards, materials and proof. Original body geometry preserved.",
+  "workRecord": "art/pipeline/surface/WORK_RECORD_PASS2.md",
+  "stop": {
+    "kind": "user_stop",
+    "userWords": "Cap 75 minutes; stop editing at 60.",
+    "source": "User Pass 2 B-nv32 brief. Editing cutoff 11:14 AM Chicago on 2026-10-16."
+  },
+  "findings": [
+    {
+      "id": "fur_fullness",
+      "criterion": "sheet_match",
+      "status": "open",
+      "observation": "Coat is visibly furred but still smoother and bristlier than the plush sheet at 390 and 192px. Some fine repeated lock rows and front-shoulder projection character remain.",
+      "nextAction": "Redistribute card coverage and refine larger overlapping texture locks against game-size sheet comparisons while staying within15,000 triangles."
+    },
+    {
+      "id": "card_roots",
+      "criterion": "card_quality",
+      "status": "open",
+      "observation": "Small dark angular roots/strands remain near the haunch, belly and hind feathering. Signed nearest-surface check reports up to 2.503 mm positive root-corner distance; alpha taper may hide some corners. No gross detachment seen in sampled poses. Dark underside fringe roots are more apparent in the Cycles hind close-up than in the runtime view.",
+      "nextAction": "Inspect flagged root corners individually, move or replace exposed cards, and vary hind fringe lock spacing."
+    },
+    {
+      "id": "plume_oblique",
+      "criterion": "card_quality",
+      "status": "open",
+      "observation": "Primary plume seam is resolved in requested close view. Two crossed sheets still reveal a narrow central overlap at some rear/oblique angles.",
+      "nextAction": "Refine crossed-sheet registration using rear and oblique runtime close-ups."
+    }
+  ],
+  "report": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-surface\\pass2\\report.json",
+  "result": {
+    "canStop": true,
+    "disposition": "user_stop",
+    "problems": []
+  }
+}

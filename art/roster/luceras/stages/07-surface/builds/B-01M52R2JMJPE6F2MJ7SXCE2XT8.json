@@ -1,0 +1,19 @@
+{
+  "id": "B-01M52R2JMJPE6F2MJ7SXCE2XT8",
+  "alias": "8dst",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Stage 7 pass 3: coat value and evenness, soft even shaggy outline, horn crest highlights; Codex",
+  "scope": "whole creature",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T16:17:43Z",
+  "briefSha256": "583fb057cf87609b479212eb28c77f282f07853e2dfb3485f7dea359ce54d55f"
+}

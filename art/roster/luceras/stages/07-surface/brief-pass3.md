@@ -1,0 +1,11 @@
+# Pass 3 (build B-8dst): coat value, soft shaggy outline, horn crests
+
+Base: your pass 2 in C:\dev\art-data\pipeline\codex-stream\luceras-surface\pass2\. Output folder pass3\, build id B-8dst. BRIEF.md holds; budgets as pass 2 (at most 15,000 triangles).
+
+The orchestrator read pass 2. The pattern is now placed as the sheet (blaze, white muzzle, bib and belly, inner legs, pink-gray nose and inner ears) and the horns are matte: keep all of that. Three things still separate it from the sheet, in this order:
+
+1. Coat value and evenness. The sheet's dark coat is a neutral, very slightly warm storm gray, measured on the furred side turnaround at about sRGB (80, 77, 75) on the back and (99, 94, 92) on the flank, with lighter and darker strands around that. Pass 2's dark coat is much darker and blue-tinted, and it has large flat, hard-edged dark patches on the shoulder and flank. Make the dark coat match those values in the three.js render under the neutral rig (measure your render the same way and write both numbers in iter_notes.json), remove the hard-edged patches, and keep the value variation at the scale of fur clumps, not big shapes. The white parts of the sheet are about sRGB (192, 191, 192), not pure white.
+2. Soft, even shaggy outline. The sheet's outline is fuzzy all along the body: many short soft tufts, longer on the chest bib, belly underline and hind-leg feathering. Pass 2 reads as a few long, sharp white spikes on the chest and legs over a smooth body. Use more, shorter, softer cards (tapered alpha, varied lengths and angles, colored like the coat beneath each card so the dark coat has dark tufts and the white bib has white tufts), spread evenly along the silhouette from every standard camera, within the 15,000 budget (take card triangles from the long spikes).
+3. Horn crests: the sheet's horns are matte dark brown with bronze highlights on the ridge crests (head close-up). Add that through roughness and a slight warm tint on the crests, using the baked normal or a curvature mask.
+
+Same proof as pass 2 (three.js renders against the sheet, including 192 px and phone size, look-dev renders, measurements, report). Run the checklist before you stop. Slot lock owner "codex B-8dst surface". Cap 60 minutes; stop editing at 48. When done, print the path of report.json and stop.
