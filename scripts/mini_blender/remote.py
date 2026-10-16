@@ -149,6 +149,41 @@ def wait_started(process, name):
         time.sleep(0.25)
 
 
+def run_phase(name, job, args, stream, deadline, check_cancel, cwd):
+    cmd = [DOCKER, '--host', 'unix://' + str(Path.home() / '.colima/default/docker.sock'),
+           'run', '--rm', '--name', name, '--cpus', '8', '--memory', '5632m',
+           '--memory-swap', '5632m', '--cpu-shares', '128', '--pids-limit', '256',
+           '--network', 'none', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
+           '--user', str(os.getuid()) + ':' + str(os.getgid()),
+           '--mount', 'type=bind,src=' + str(job) + ',dst=/job', '--workdir', cwd,
+           IMAGE, *args]
+    process = subprocess.Popen(cmd, stdout=stream, stderr=subprocess.STDOUT)
+    paused_seconds = 0.0
+    try:
+        wait_started(process, name)
+        while process.poll() is None:
+            check_cancel()
+            if time.monotonic() > deadline:
+                raise TimeoutError('remote job exceeded 24 hours')
+            if ci_busy() and pause_if_running(process, name):
+                pause_start = time.monotonic()
+                try:
+                    while ci_busy() and process.poll() is None:
+                        check_cancel()
+                        if time.monotonic() > deadline:
+                            raise TimeoutError('CI pause exceeded job deadline')
+                        time.sleep(5)
+                finally:
+                    unpause_if_running(process, name)
+                    paused_seconds += time.monotonic() - pause_start
+            time.sleep(2)
+    finally:
+        if process.poll() is None:
+            stop_container(name)
+        process.wait(timeout=20)
+    return process.returncode, paused_seconds
+
+
 def run(job_id):
     # Only a generated UUID may select the job directory or container name.
     if uuid.UUID(job_id).hex != job_id:
@@ -193,48 +228,32 @@ def run(job_id):
                     raise TimeoutError('CI did not become idle')
                 time.sleep(5)
             log = job / 'blender.log'
+            cwd = config.get('cwd', '/job')
+            (job / Path(cwd).relative_to('/job')).mkdir(parents=True, exist_ok=True)
+            inference_unsafe = False
             with log.open('wb') as stream:
-                cmd = [DOCKER, '--host', 'unix://' + str(Path.home() / '.colima/default/docker.sock'),
-                       'run', '--rm', '--name', name, '--cpus', '3', '--memory', '3g',
-                       '--memory-swap', '3g', '--cpu-shares', '128', '--pids-limit', '256',
-                       '--network', 'none', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
-                       '--user', str(os.getuid()) + ':' + str(os.getgid()),
-                       '--mount', 'type=bind,src=' + str(job) + ',dst=/job',
-                       IMAGE, *config['args']]
-                process = subprocess.Popen(cmd, stdout=stream, stderr=subprocess.STDOUT)
-                try:
-                    wait_started(process, name)
-                    while process.poll() is None:
-                        check_cancel()
-                        if time.monotonic() > deadline:
-                            raise TimeoutError('remote job exceeded 24 hours')
-                        if ci_busy():
-                            if not pause_if_running(process, name):
-                                continue
-                            pause_start = time.monotonic()
-                            try:
-                                while ci_busy() and process.poll() is None:
-                                    check_cancel()
-                                    if time.monotonic() > deadline:
-                                        raise TimeoutError('CI pause exceeded job deadline')
-                                    time.sleep(5)
-                            finally:
-                                unpause_if_running(process, name)
-                                paused_seconds += time.monotonic() - pause_start
-                        time.sleep(2)
-                finally:
-                    if process.poll() is None:
-                        stop_container(name)
-                    process.wait(timeout=20)
-            result = {'returncode': process.returncode, 'wallSeconds': time.monotonic() - started,
-                      'ciPausedSeconds': paused_seconds, 'memoryLimitBytes': 3 * 2**30, 'threads': 3}
+                code = 0
+                if config.get('inferred') and config.get('blendInputs'):
+                    shutil.copy2(ROOT / 'blend_guard.py', job / '.blend_guard.py')
+                    (job / '.blend_inputs.json').write_text(json.dumps({'blends': config['blendInputs'], 'inputs': config['inputPaths']}))
+                    code, paused = run_phase(name, job, ['-b', '--python-exit-code', '99', '--python',
+                                                       '/job/.blend_guard.py', '--', '/job/.blend_inputs.json'],
+                                             stream, deadline, check_cancel, cwd)
+                    paused_seconds += paused
+                    inference_unsafe = code == 99
+                if code == 0:
+                    code, paused = run_phase(name, job, config['args'], stream, deadline, check_cancel, cwd)
+                    paused_seconds += paused
+            result = {'returncode': code, 'wallSeconds': time.monotonic() - started,
+                      'ciPausedSeconds': paused_seconds, 'memoryLimitBytes': 5632 * 2**20, 'threads': 8,
+                      'inferenceUnsafe': inference_unsafe}
             (job / 'result.json').write_text(json.dumps(result, indent=2))
             with tarfile.open(fileobj=sys.stdout.buffer, mode='w|') as tar:
                 for path in ['blender.log', 'result.json', *config['outputs']]:
                     item = job / path
                     if item.exists():
                         tar.add(item, arcname=path)
-            return process.returncode
+            return code
     except Exception as error:
         # Transfer diagnostics even when the supervisor fails before Blender.
         (job / 'result.json').write_text(json.dumps({'returncode': 1, 'error': str(error),

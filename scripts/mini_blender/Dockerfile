@@ -9,7 +9,7 @@ RUN curl -fSLO https://download.blender.org/release/Blender5.2/blender-${BLENDER
  && ln -s /opt/blender-${BLENDER_VERSION}-linux-x64/blender /usr/local/bin/blender \
  && find /opt -maxdepth 1 -type f -delete
 WORKDIR /job
-ENV OMP_NUM_THREADS=3 OPENBLAS_NUM_THREADS=3
+ENV OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8
 FROM ubuntu:24.04 AS timer-build
 RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev
 COPY rdtscp_compat.c /src/rdtscp_compat.c
@@ -21,4 +21,4 @@ RUN gcc -O2 -Wall -Wextra -Werror /src/rdtscp_check.c -o /rdtscp-check \
  && sh -c 'LD_PRELOAD=/rdtscp_compat.so /rdtscp-check --signal; test "$?" -eq 132'
 FROM blender-base
 COPY --from=timer-build /rdtscp_compat.so /opt/rdtscp_compat.so
-ENTRYPOINT ["/usr/bin/nice", "-n", "15", "/usr/bin/time", "-v", "env", "LD_PRELOAD=/opt/rdtscp_compat.so", "blender", "-t", "3"]
+ENTRYPOINT ["/usr/bin/nice", "-n", "15", "/usr/bin/time", "-v", "env", "LD_PRELOAD=/opt/rdtscp_compat.so", "blender", "-t", "8"]

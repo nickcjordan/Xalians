@@ -1,0 +1,38 @@
+--- a/art/pipeline/slot/slot.py
++++ b/art/pipeline/slot/slot.py
+@@ -372,7 +372,34 @@
+     if not cmd:
+         print("run needs a command after --", file=sys.stderr)
+         return 2
+-    token = wait_acquire(a.cls, a.wait, a.owner, os.getpid())
++    deadline = time.monotonic() + a.wait
++    token = try_acquire(a.cls, a.owner, os.getpid())
++    if not token and a.cls == 'blender' and os.environ.get('XALIANS_MINI', '1') != '0':
++        # Only this branch's slot copy is changed. The integration patch and
++        # scripts/mini_blender must be adopted together by the pipeline branch.
++        repo = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
++        mini_dir = os.path.join(repo, 'scripts', 'mini_blender')
++        if os.path.isfile(os.path.join(mini_dir, 'infer.py')):
++            sys.path.insert(0, mini_dir)
++            try:
++                import infer
++                evidence = os.environ.get('XALIANS_MINI_EVIDENCE') or os.path.join(
++                    repo, 'untracked', 'mini-blender-auto', uuid.uuid4().hex)
++                try:
++                    return infer.spill(cmd, evidence)
++                except infer.Unsafe as error:
++                    print('mini spillover unsafe/unavailable: %s; waiting for local Blender slot' % error,
++                          file=sys.stderr, flush=True)
++                except RuntimeError as error:
++                    print('mini Blender job failed: %s' % error, file=sys.stderr, flush=True)
++                    return 1
++            except ImportError as error:
++                print('mini spillover integration unavailable: %s; waiting locally' % error,
++                      file=sys.stderr, flush=True)
++        else:
++            print('mini spillover helper is not installed; waiting locally', file=sys.stderr, flush=True)
++    if not token:
++        token = wait_acquire(a.cls, max(0, deadline - time.monotonic()), a.owner, os.getpid())
+     if not token:
+         print("timeout waiting for %s slot" % a.cls, file=sys.stderr)
+         return EXIT_TIMEOUT

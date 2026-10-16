@@ -1,0 +1,15 @@
+{
+  "wslTests": {
+    "returncode": 0,
+    "output": ".........local Blender slot busy; inferred 3 inputs and 1 output locations; spilling to mini\n.........local slot busy; routing to mini\n...................\n----------------------------------------------------------------------\nRan 37 tests in 3.269s\n\nOK\n"
+  },
+  "windowsTests": {
+    "returncode": 0,
+    "output": ".........local Blender slot busy; inferred 3 inputs and 1 output locations; spilling to mini\n.........local slot busy; routing to mini\n.......ssssssssssss\n----------------------------------------------------------------------\nRan 37 tests in 2.626s\n\nOK (skipped=12)\n"
+  },
+  "adoptionPatch": {
+    "returncode": 0,
+    "output": ""
+  },
+  "finalInferenceMatchesExecutedJob": true
+}

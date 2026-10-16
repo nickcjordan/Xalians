@@ -1,0 +1,55 @@
+{
+  "computeConfig": [
+    "cpu: 8",
+    "memory: 6",
+    "autoActivate: false"
+  ],
+  "ciConfigSha256": "77305bf0f82c8884762bddf2849cf05876bb6bdffdfee6348dac19dcd1e8315b",
+  "ciSizing": [
+    "cpus: 10",
+    "memory: 8GiB"
+  ],
+  "ciBusy": false,
+  "computeProcessNice": "10917 15 /Users/nick/.mini-runner/opt/lima/bin/limactl\n10923 15 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+  "imageId": "sha256:830439b4c38de4bdb53f8ea9d88ee26c1816f7349af1ac515530f7521cdc2ff3",
+  "containers": [
+    {
+      "name": "/mini-blender-f891ce45fddd44c5a3afab9daf88a12f",
+      "nanoCpus": 8000000000,
+      "memory": 5905580032,
+      "memorySwap": 5905580032,
+      "cpuShares": 128,
+      "networkMode": "none",
+      "args": [
+        "-n",
+        "15",
+        "/usr/bin/time",
+        "-v",
+        "env",
+        "LD_PRELOAD=/opt/rdtscp_compat.so",
+        "blender",
+        "-t",
+        "8",
+        "-b",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "/job/work/drive-c/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/review_fur_12d.py",
+        "--",
+        "--surface",
+        "/job/work/drive-c/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/surface",
+        "--out",
+        "/job/work/drive-c/dev/src/xalians-mini-blender-compute/untracked/mini-blender-followup/render",
+        "--views",
+        "body-front",
+        "--samples",
+        "32",
+        "--palette",
+        "T7",
+        "--device",
+        "CPU"
+      ],
+      "status": "running"
+    }
+  ]
+}

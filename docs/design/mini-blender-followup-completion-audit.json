@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "id": "mini-blender-followup-20261016",
+  "outcome": "Complete all three approved mini follow-up parts: increased compute with real comparison, safe command-only spill with real busy-slot proof, and authorized Messages cleanup.",
+  "authorizedScope": "Own mini-blender-compute branch only, free existing compute tools, Messages deletion only after sync-off check. Preserve CI/WSL configuration, other worktrees, Messages preferences and account sign-in. Publish auto-merge follow-up PR.",
+  "workRecord": "docs/design/mini-blender-followup-active-work.md",
+  "evidence": {
+    "guide": {
+      "path": "docs/design/mini-blender-compute.md",
+      "sha256": "1138b4088b94216edb7c129adfe8d817aa04f81237c0ad28cc8086ace79c07ad"
+    },
+    "inference": {
+      "path": "scripts/mini_blender/infer.py",
+      "sha256": "bc647fea155d4097b1ea0c3e2114ce1bc2674323c0d47560f06962e27dc81f28"
+    },
+    "guard": {
+      "path": "scripts/mini_blender/blend_guard.py",
+      "sha256": "be4346c68634fa9005dae2b3f49ae4698458848bb30acc511ab3b64f23f0957e"
+    },
+    "runner": {
+      "path": "scripts/mini_blender/mini_blender.py",
+      "sha256": "dd1b8418de21c49510d790d78b7441a6c86b88e18d8419797119acc7f0eb4afd"
+    },
+    "remote": {
+      "path": "scripts/mini_blender/remote.py",
+      "sha256": "9bdf255cf61982bc1785bc1eb02f7719d37812125d8bbc17f01beeaf9f52d410"
+    },
+    "image": {
+      "path": "scripts/mini_blender/Dockerfile",
+      "sha256": "c22c962ffab1427fe4bff1ad93e11af4d58512eebcc4d58151b2f1ae08fbbf80"
+    },
+    "installer": {
+      "path": "scripts/mini_blender/install.py",
+      "sha256": "8a601aa330cbf55bdb42e9e16bc6f3b692fe69af20744ed7c206d6f7e5c927f6"
+    },
+    "tests": {
+      "path": "scripts/mini_blender/test_infer.py",
+      "sha256": "c67bb021316f40412a3fe2ea8e13aecbe77f4a1d735b699a45c00c1a68ed727c"
+    },
+    "liveChecks": {
+      "path": "scripts/mini_blender/live_checks.py",
+      "sha256": "a640d7371eb46e2f8ebabcf75e1274f96f8a31e6da75ea893bcf7ce53980b871"
+    },
+    "slot": {
+      "path": "art/pipeline/slot/slot.py",
+      "sha256": "07726155854a7958cfbb38f18ed9f7d67e801202ab2dfeed4ab11f6ff10f0b25"
+    },
+    "adoption": {
+      "path": "docs/design/mini-blender-slot-adoption.patch",
+      "sha256": "9e2a52133a9370c0fbc141f9e7ecf667a48613fe1a3fda6e861da430f8e1f9e6"
+    },
+    "installation": {
+      "path": "docs/design/mini-blender-followup-evidence/installation.json",
+      "sha256": "f670f5d88d73fda7d52035985945f0df906c9bbcad5028dffaa550ee655a11fd"
+    },
+    "verification": {
+      "path": "docs/design/mini-blender-followup-evidence/verification.json",
+      "sha256": "ea2580d5bccb3e3f2cb9963f6c28d92eb16ffdcda0788c439af39466220e1521"
+    },
+    "messages": {
+      "path": "docs/design/mini-blender-followup-evidence/messages-cleanup.json",
+      "sha256": "5666f9ea7167d7653c40b23f0de1469a2c49afae6186d290fdeaab376b6ec0ff"
+    },
+    "messagesFinal": {
+      "path": "docs/design/mini-blender-followup-evidence/messages-final-verification.json",
+      "sha256": "888d12768c22774ee9496306b5a0ca0a0fa41f9051516c1a2ad035fcd912c9d0"
+    },
+    "review": {
+      "path": "docs/design/mini-blender-followup-evidence/review.md",
+      "sha256": "d480d64ad66d40de5b6bb867cd75592d5a23afd9c023a16ecbaa1a006e3c0d80"
+    },
+    "unsafeFallback": {
+      "path": "docs/design/mini-blender-followup-evidence/unsafe-local-fallback.json",
+      "sha256": "db4293b3cc028b34e5b5a317839d346ddcd8ec3ee8ba5221ccb29916ca179119"
+    },
+    "pcImage": {
+      "path": "untracked/mini-blender-benchmark/local/body-front.png",
+      "sha256": "c2b068930a9666fe04ddda7003fd5aece546eba9007fd050fc1adfab6cbabcf2"
+    },
+    "inputHashes": {
+      "path": "docs/design/mini-blender-evidence/input-hashes.json",
+      "sha256": "0abe40dc6308a6458c1e040040392d1987fc4e32dadd41dcc958039ea2c1e879"
+    }
+  },
+  "criteria": [
+    {
+      "id": "caps",
+      "expectation": "Install up to eight CPUs/about 6 GB Blender memory with low priority and CI precedence.",
+      "status": "pass",
+      "assessment": "Live container: 8 CPU quota, 5632 MiB and equal swap cap; compute VM8 CPUs/6GiB; hostagent and VZ worker nice15, CI VM10 CPUs/8GiB unchanged.",
+      "evidence": [
+        "installation",
+        "image",
+        "installer",
+        "remote"
+      ]
+    },
+    {
+      "id": "inference",
+      "expectation": "Command-only slot callers infer safe dependencies and outputs, spill automatically and log/follow local waiting when unsafe; do not edit other worktrees.",
+      "status": "pass",
+      "assessment": "Recursive scripts/modules/configs and known filesystem/asset reads are mirrored. Unsupported stateful/dynamic cases wait locally. 37WSL tests pass, Windows25pass/12POSIX skips. Real unsafe command exits3 after reason/local timeout. Only own slot copy changed; exact adoption patch and instructions supplied. Independent findings resolved.",
+      "evidence": [
+        "inference",
+        "guard",
+        "slot",
+        "adoption",
+        "guide",
+        "verification",
+        "review",
+        "unsafeFallback"
+      ]
+    },
+    {
+      "id": "benchmark",
+      "expectation": "Rerun the exact real Akinza job, through command-only busy-local-slot spill, and report time, peak RSS and pixel comparison.",
+      "status": "pending",
+      "assessment": "Full exact-snapshot command-only job running; wait for its result and queued real lifecycle checks.",
+      "evidence": [
+        "pcImage",
+        "inputHashes"
+      ]
+    },
+    {
+      "id": "messages",
+      "expectation": "Recheck Messages sync; if off clear all history/attachments/archives while preserving preferences and account sign-in, report disk space.",
+      "status": "pass",
+      "assessment": "Authoritative flag false before deletion and at final read-only verification. Attachments/Archive/Drafts and history databases empty, app closed. Preferences byte-identical, sign-in untouched. 52,540,493,824 ->98,696,671,232 free bytes immediately after cleanup.",
+      "evidence": [
+        "messages",
+        "messagesFinal"
+      ]
+    },
+    {
+      "id": "publication",
+      "expectation": "Update guide, publish explicit-path follow-up commits and an auto-merge PR because814merged.",
+      "status": "pending",
+      "assessment": "Guide and adoption instructions updated. Publish after benchmark acceptance.",
+      "evidence": [
+        "guide",
+        "adoption"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "inference",
+      "status": "resolved",
+      "observation": "Static inference needed alias/resource/package/loader and stateful-filesystem coverage before automatic spill was safe.",
+      "resolution": "Added conservative resolver/rejections and focused regression tests; independent reviewer reports no unresolved findings.",
+      "resolutionEvidence": [
+        "inference",
+        "tests",
+        "verification",
+        "review"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "benchmark",
+      "status": "open",
+      "observation": "Eight-thread real command-only fur proof and post-refactor lifecycle checks must finish.",
+      "nextAction": "Finish required evidence and audit it before publication/completion."
+    },
+    {
+      "id": "F003",
+      "criterion": "publication",
+      "status": "open",
+      "observation": "Prior PR814merged; a follow-up auto-merge PR is required.",
+      "nextAction": "Finish required evidence and audit it before publication/completion."
+    }
+  ],
+  "audit": {
+    "reviewer": "Primary direct outcome audit plus independent scoped agent /root/review_mini_blender",
+    "comparison": "All three original follow-up criteria checked against actual installed and generated results, not only code assertions.",
+    "regressions": "37WSL tests;25Windows tests plus12POSIX skips; patch check and final manifest equivalence pass. Real render/lifecycle results are required before benchmark passes.",
+    "scopeCheck": "No edits to reference/Akinza/creature-pipeline worktrees. CI VM/WSL unchanged. Explicit approved Messages deletion preserved settings. Branch adoption remains for the other session, with exact instructions provided as requested.",
+    "sessionId": "mini-blender-followup-20261016",
+    "requestId": "c59f1510-7497-44a5-bcb7-0efebf82ccbd",
+    "performedAt": "2026-10-16T14:14:45.188228+00:00"
+  },
+  "stop": {
+    "kind": "continue"
+  }
+}

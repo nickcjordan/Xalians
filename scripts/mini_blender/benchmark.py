@@ -48,8 +48,8 @@ def compare(root):
                'differentPixels': int(np.any(diff != 0, axis=2).sum()),
                'differentPixelPercent': float(np.any(diff != 0, axis=2).mean() * 100)}
     log = (root / 'mini-evidence/blender.log').read_text()
-    match = re.search(r'Maximum resident set size \(kbytes\):\s*(\d+)', log)
-    metrics['miniPeakRssKiB'] = int(match[1]) if match else None
+    peaks = re.findall(r'Maximum resident set size \(kbytes\):\s*(\d+)', log)
+    metrics['miniPeakRssKiB'] = max(map(int, peaks)) if peaks else None
     for name in ('mini', 'local'):
         metrics[name] = json.loads((root / (name + '-evidence/result.json')).read_text())
         metrics[name]['render'] = json.loads((root / name / 'index.json').read_text())
