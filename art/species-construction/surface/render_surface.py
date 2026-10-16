@@ -482,7 +482,8 @@ def main():
     parser.add_argument('--views', default=','.join(VIEWS))
     parser.add_argument('--device', default='CPU')
     parser.add_argument('--palette', default=None)
-    parser.add_argument('--eyeliner', default=None, choices=('current','none','hairline','upper','cat-eye','ice-blue'))
+    from eyeliner_styles import STYLES
+    parser.add_argument('--eyeliner', default=None, choices=STYLES)
     parser.add_argument('--hide-fur', action='store_true')
     parser.add_argument('--clay', action='store_true', help='with --hide-fur: the skin in one neutral matte gray, to judge the shape alone')
     parser.add_argument('--alpha', action='store_true', help='transparent background, RGBA (silhouette measures)')

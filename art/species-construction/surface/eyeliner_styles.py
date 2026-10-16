@@ -11,13 +11,15 @@ from render_surface import MatBuilder,lin
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
-STYLES=('current','none','hairline','upper','cat-eye','ice-blue')
+STYLES=('current','none','hairline','upper','cat-eye','ice-blue','mix-g1','mix-g2','mix-g3')
 
 
 def apply(style,palette):
     if style not in STYLES:raise ValueError(f'Unknown eyeliner style: {style}')
     if style=='current':return
-    mat=bpy.data.materials['Upper emphasized eyelid'];t=mat.node_tree;t.nodes.clear();b=MatBuilder(t)
+    mat=bpy.data.materials['Upper emphasized eyelid'];t=mat.node_tree
+    original_color=tuple(t.nodes.get('Principled BSDF').inputs['Base Color'].default_value) if style.startswith('mix-') else None
+    t.nodes.clear();b=MatBuilder(t)
     inset=b.attr('liner_distance').outputs['Fac']
     vertical=b.attr('liner_vertical').outputs['Fac']
     outward=b.attr('liner_outward').outputs['Fac']
@@ -25,16 +27,26 @@ def apply(style,palette):
     width=.00045
     if style in ('upper','cat-eye'):
         width=b.m('MULTIPLY',upper,b.m('ADD',.00045,b.m('MULTIPLY',b.ramp(outward,0,1),.00045)))
+    if style.startswith('mix-'):
+        widest=b.attr('liner_original_width').outputs['Fac']
+        topwidth=b.m('MULTIPLY',widest,b.m('ADD',.55,b.m('MULTIPLY',b.ramp(outward,0,1),.45)))
+        lowerwidth=.00035
+        if style=='mix-g2':lowerwidth=b.m('MULTIPLY',lowerwidth,b.ramp(outward,-.55,.55))
+        if style=='mix-g3':lowerwidth=0
+        width=b.m('ADD',b.m('MULTIPLY',upper,topwidth),b.m('MULTIPLY',b.m('SUBTRACT',1,upper),lowerwidth))
     band=b.m('SUBTRACT',1,b.ramp(inset,width,b.m('ADD',width,.00020)))
     if style=='none':band=0
     elif style=='upper':band=b.m('MULTIPLY',band,upper)
     elif style=='cat-eye':band=b.m('MULTIPLY',band,b.m('MAXIMUM',upper,.10))
+    elif style=='mix-g2':band=b.m('MULTIPLY',band,b.m('MAXIMUM',upper,b.ramp(outward,-.55,.15)))
+    elif style=='mix-g3':band=b.m('MULTIPLY',band,upper)
     white=t.nodes.new('ShaderNodeBsdfPrincipled');white.name='Unlined eye white'
     source=bpy.data.materials['Ocular white'].node_tree.nodes.get('Principled BSDF')
     for name in ('Base Color','Roughness','Coat Weight','Coat Roughness'):
         white.inputs[name].default_value=source.inputs[name].default_value
     dark=t.nodes.new('ShaderNodeBsdfPrincipled');dark.inputs['Roughness'].default_value=.58
     dark.inputs['Base Color'].default_value=lin(palette['blue']) if style=='ice-blue' else lin('#263947' if style=='cat-eye' else '#465765')
+    if style.startswith('mix-'):dark.inputs['Base Color'].default_value=original_color
     mix=t.nodes.new('ShaderNodeMixShader');b.put(mix,0,band);t.links.new(white.outputs[0],mix.inputs[1]);t.links.new(dark.outputs[0],mix.inputs[2])
     output=t.nodes.new('ShaderNodeOutputMaterial');t.links.new(mix.outputs[0],output.inputs['Surface'])
     skin=max((o for o in bpy.data.objects if o.type=='MESH'),key=lambda o:len(o.data.vertices))
@@ -51,6 +63,13 @@ def apply(style,palette):
             distance.append(np.dot(v-np.array(hit[0]),np.array(hit[1])))
         distance=np.array(distance)
         fields={'liner_distance':distance,'liner_vertical':(co[:,2]-.6524094)/.0911818,'liner_outward':(abs(co[:,0])-.0847464)/.067866}
+        if style.startswith('mix-'):
+            ids=[i for i,m in enumerate(me.materials) if m==mat]
+            bandverts=np.unique([v for p in me.polygons if p.material_index in ids for v in p.vertices])
+            measured=distance[bandverts];measured=measured[measured>0]
+            widest=float(np.quantile(measured,.95))
+            print('MIX_ORIGINAL_LINER',ob.name,'color',original_color,'width',widest,flush=True)
+            fields['liner_original_width']=np.full(len(co),widest)
         for name,v in fields.items():
             a=me.attributes.get(name) or me.attributes.new(name,'FLOAT','POINT');a.data.foreach_set('value',v.astype(np.float32))
     for sm in skin.data.materials:

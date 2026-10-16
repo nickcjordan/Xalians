@@ -1,0 +1,57 @@
+{
+  "part": "13d",
+  "status": "blocked",
+  "surfaceChanged": false,
+  "baselineSha256": "ea6cd7e69affb1b8847a8885f812efc8b2ce48049dd4015a0db0d4ef2b35ea29",
+  "default": "current",
+  "rendered": [
+    "G1",
+    "G2"
+  ],
+  "notRendered": [
+    "G3"
+  ],
+  "missingSheets": [
+    "13d-eyeliner-mix.png",
+    "13d-eyeliner-mix-face.png"
+  ],
+  "reason": "Thirty-minute exclusive slot timeout; unrelated repair Blender still active",
+  "evidence": {
+    "G1-eye-close": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/G1/eye-close.png",
+      "sha256": "a14ae16bf57463388f287c707eb42e9643ca64478d9db537d25c53bc8f8aa675"
+    },
+    "G1-head-front": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/G1/head-front.png",
+      "sha256": "8a2d50362c9197391f593b7dedfc2c894ea02e72451d8cf8ab7dbb6352080550"
+    },
+    "G2-eye-close": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/G2/eye-close.png",
+      "sha256": "4c7cd21bb1202a143a091aa4df6e909814b71c5da50424069042e0316eaacbfc"
+    },
+    "G2-head-front": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/G2/head-front.png",
+      "sha256": "a2e73b3844c0a1acb64a1de6bbb84f20daadcf6e28964e6d37f386a2fcb027dc"
+    },
+    "surface": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13b/surface.blend",
+      "sha256": "ea6cd7e69affb1b8847a8885f812efc8b2ce48049dd4015a0db0d4ef2b35ea29"
+    },
+    "gate": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/artifact-gate.json",
+      "sha256": "1e9ff974f026a27eea053f949d9e774929e14c5038f652bd6002b4237e3f0a39"
+    },
+    "blocker": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s13d/blocked-slot.txt",
+      "sha256": "974c00bb66f9cfd3a3e72904f64c4d5efb96d561f5d8ca3a6dcfd74bae93d550"
+    },
+    "shader": {
+      "path": "art/species-construction/surface/eyeliner_styles.py",
+      "sha256": "94a8675b67217fdeede24ed9b3f1f15872c0b141bdb96177c595832756e84a3b"
+    },
+    "config": {
+      "path": "art/species-construction/surface/akinza-surface.json",
+      "sha256": "63022e17dc7b70f6c7c88e5c6e4bdc46ada321335ad855b2be1fb6517cea418e"
+    }
+  }
+}
