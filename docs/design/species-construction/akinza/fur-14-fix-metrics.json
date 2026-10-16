@@ -1,0 +1,462 @@
+{
+  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/surface.blend",
+  "surfaceSha256": "6652a702fc1d77b3372d7031d894a2e669ed3be889ab1b1092ad3060f656b44e",
+  "beforeSha256": "d38fe78b1a3fca12b852d0e692258c2208c95fcf88517fe75de189a58a59ffe0",
+  "buildsUsed": 3,
+  "buildLimit": 3,
+  "nativeCurves": 420420,
+  "whiteCurves": 2200,
+  "blueUndercoatCurves": 68286,
+  "totalCurves": 490906,
+  "rootCause": "13g explicitly zeroed native radii on the13c-fix3 furnishing mask; density remained populated. Inactive roots did not transfer with the cup sculpt.",
+  "fix": {
+    "restoredBlue": 3094,
+    "nativeEdited": 4555,
+    "transitionTrimmed": 276,
+    "blueColorCorrected": 5781,
+    "whiteFibers": 2200,
+    "visibleWhiteFibers": 2200,
+    "maxNativeRootShift": 0.006287772208452225,
+    "sourceSha256": "d38fe78b1a3fca12b852d0e692258c2208c95fcf88517fe75de189a58a59ffe0",
+    "build": "s12-14-fix3"
+  },
+  "scope": {
+    "geometryExact": true,
+    "heldRootsExact": true,
+    "outsideAuthorizedEditCount": 0,
+    "nativeAttachmentMax": 0.0007000452023930848,
+    "normalAgreementMin": 0.5194073915481567,
+    "maxRootShift": 0.006287772208452225,
+    "restoredActiveBlue": 3094,
+    "velvetSupportVertices": 590,
+    "velvetMax": 0.25,
+    "velvetOutsideCup": 0,
+    "blueRootSpacingQuantiles": [
+      0.0013161382736877137,
+      0.0021510412555900554,
+      0.002906950974219623,
+      0.004723010918744615
+    ],
+    "coverageCaveat": "Root spacing is supporting evidence; actual native images decide visible coverage.",
+    "sideCreaseExceptions": [
+      {
+        "curve": 49219,
+        "rootExact": true,
+        "colorExact": true,
+        "protected13i": false,
+        "oldLength": 0.05508366972208023,
+        "newLength": 0.016998404636979103,
+        "maxPrefixError": 1.5988230276350812e-06
+      }
+    ]
+  },
+  "undercoatAttachment": {
+    "roots": 68286,
+    "maxTriangleAttachmentError": 3.3244313055900165e-08,
+    "minFrontFacing": 0.4859279692173004,
+    "allAdditionalSystemsDeclared": true
+  },
+  "held": {
+    "heldObjectsExact": true,
+    "allGeometryAndTopologyExact": true,
+    "earBackAndEyelinerExact": true,
+    "originalMaterialGraphsExact": true,
+    "nativeEdited": 4555,
+    "restoredBlue": 3094,
+    "surfaceSha256": "6652a702fc1d77b3372d7031d894a2e669ed3be889ab1b1092ad3060f656b44e"
+  },
+  "stillOff": [
+    "White furnishing hugs the temple-side rim and merges into white temple at normal framing instead of a clear leaning up/out tuft.",
+    "Smooth short blue bed has a visible texture boundary against surrounding coarse blue coat."
+  ],
+  "blockedBy": "Explicit three-build cap exhausted. Further model changes require new authorization.",
+  "status": "Visual outcome incomplete under explicit three-build cap. All saved gates pass; all native views, comparison sheets, current images, independent review and exact archival completed.",
+  "artifactGate": {
+    "collision": {
+      "newFlags": 0,
+      "newIds": [],
+      "addedCurves": 68286,
+      "addedCurveFlags": 0,
+      "recordedFlagsStillPresent": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 239,
+          "after": 225
+        },
+        "ears": {
+          "before": 214,
+          "after": 113
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "neighborLength": {
+      "newFlags": 0,
+      "newIds": [],
+      "addedCurves": 68286,
+      "addedCurveFlags": 0,
+      "recordedFlagsStillPresent": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 9,
+          "after": 5
+        },
+        "ears": {
+          "before": 40,
+          "after": 35
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "regionalLength": {
+      "newFlags": 0,
+      "newIds": [],
+      "addedCurves": 68286,
+      "addedCurveFlags": 0,
+      "recordedFlagsStillPresent": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1959,
+          "after": 1933
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "partTransfer": {
+      "newFlags": 0,
+      "newIds": [],
+      "addedCurves": 68286,
+      "addedCurveFlags": 0,
+      "recordedFlagsStillPresent": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1590,
+          "after": 1564
+        },
+        "ears": {
+          "before": 20,
+          "after": 20
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "lift": {
+      "newFlags": 0,
+      "newIds": [],
+      "addedCurves": 68286,
+      "addedCurveFlags": 0,
+      "recordedFlagsStillPresent": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 5,
+          "after": 5
+        },
+        "ears": {
+          "before": 83,
+          "after": 83
+        },
+        "arms": {
+          "before": 1,
+          "after": 1
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "rogue": {
+      "newFlags": 0,
+      "newIds": [],
+      "addedCurves": 68286,
+      "addedCurveFlags": 0,
+      "recordedFlagsStillPresent": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 0,
+          "after": 0
+        },
+        "ears": {
+          "before": 6,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    }
+  },
+  "images": {
+    "14-fix-ears-front.png": "ddd13e52280390c9246a925ada997c050aa14fa46864409738fc0b097577a630",
+    "14-fix-ear-root-close.png": "d3f8a5f9c259397019dddad34b6fe962f0934434f4f73d258c4f9c4734ecadd8",
+    "14-fix-ear-base-clay.png": "4dd2b648bfc68ab1daa9cc370987e21856ce000b5106a5e75f78026769b46f22",
+    "14-fix-artifact-overlay.png": "db91bdc34ad562e5518689df9ebbb70dc43ff1429a0db508e041100f0d450b0c",
+    "current-ears-front.png": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40",
+    "current-head-side.png": "26ef4d9cad1e075ab1b88e0bd03f9389f1f1743527f4acddfe1a0c2d076416e4",
+    "current-head-backq.png": "2f6ba84be668fca4006c4c7048f64143d3ef06fb6a409c5eae67e70bdff357fe",
+    "current-body-backq.png": "89bf3006d8da6764c1025b0580257ddf077ac0b7ddf40ed90297de6a19991f90",
+    "current-body-front.png": "c37ca09c53e647727b3498082e2f1c6436aa1a266dc4a9346357ed884c38af6f",
+    "current-tails-side.png": "9b07b7b260d43f278cf8000408a45727cc4e10608c4244d8d2206628bb08958e"
+  },
+  "render": {
+    "strands": 490906,
+    "strandPoints": 4900044,
+    "samples": 32,
+    "engine": "CYCLES CPU with denoise",
+    "images": [
+      {
+        "view": "ears-front",
+        "image": "ears-front.png",
+        "seconds": 16.7,
+        "resolution": [
+          1024,
+          667
+        ]
+      },
+      {
+        "view": "ear-root-close",
+        "image": "ear-root-close.png",
+        "seconds": 135.7,
+        "resolution": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "view": "head-side",
+        "image": "head-side.png",
+        "seconds": 69.1,
+        "resolution": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "view": "head-backq",
+        "image": "head-backq.png",
+        "seconds": 63.2,
+        "resolution": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "view": "body-backq",
+        "image": "body-backq.png",
+        "seconds": 37.5,
+        "resolution": [
+          768,
+          1024
+        ]
+      },
+      {
+        "view": "body-front",
+        "image": "body-front.png",
+        "seconds": 30.0,
+        "resolution": [
+          768,
+          1024
+        ]
+      },
+      {
+        "view": "tails-side",
+        "image": "tails-side.png",
+        "seconds": 61.4,
+        "resolution": [
+          1024,
+          1024
+        ]
+      }
+    ],
+    "renderSecondsTotal": 413.6,
+    "eyeliner": "G1-ribbon",
+    "eyelinerSourceSha256": "c2264ce0e3be5563ee4eab785a4077efb6cbbde05999b42210b1b3161c367710",
+    "wallSecondsIncludingLoad": 386.9,
+    "batchWallSecondsIncludingLoad": [
+      273.2,
+      386.9
+    ]
+  },
+  "archiveManifest": "docs/design/species-construction/akinza/fur-14-fix-archive.json"
+}

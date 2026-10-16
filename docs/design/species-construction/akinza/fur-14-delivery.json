@@ -1,7 +1,7 @@
 {
   "status": "incomplete; blocked by four-build cap",
   "geometryCommit": "ec627223",
-  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-14/surface.blend",
+  "surface": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-superseded-14-fix/surface.blend",
   "surfaceSha256": "d38fe78b1a3fca12b852d0e692258c2208c95fcf88517fe75de189a58a59ffe0",
   "assembly": "untracked/species-construction/akinza/assembled-3301/akinza.blend",
   "assemblySha256": "b20c3724b4856ca64923d2ee27e2f61f6739d9b8ec18a064fbe3915ab7231153",
@@ -10,12 +10,12 @@
     "14-ear-root-close.png": "untracked/species-construction/akinza/surface/fur-steps/14-ear-root-close.png",
     "14-ear-base-clay.png": "untracked/species-construction/akinza/surface/fur-steps/14-ear-base-clay.png",
     "14-artifact-overlay.png": "untracked/species-construction/akinza/surface/fur-steps/14-artifact-overlay.png",
-    "current-ears-front.png": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png",
-    "current-head-side.png": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png",
-    "current-head-backq.png": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png",
-    "current-body-backq.png": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png",
-    "current-body-front.png": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png",
-    "current-tails-side.png": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+    "current-ears-front.png": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-current-originals-superseded-14-fix/current-ears-front.png",
+    "current-head-side.png": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-current-originals-superseded-14-fix/current-head-side.png",
+    "current-head-backq.png": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-current-originals-superseded-14-fix/current-head-backq.png",
+    "current-body-backq.png": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-current-originals-superseded-14-fix/current-body-backq.png",
+    "current-body-front.png": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-current-originals-superseded-14-fix/current-body-front.png",
+    "current-tails-side.png": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-current-originals-superseded-14-fix/current-tails-side.png"
   },
   "imageHashes": {
     "14-ears-front.png": "00620af2b60bb61f0ca25e2ba0e3f05fb1b41ff4c7e74cababa576aeb84c92c5",
@@ -92,5 +92,7 @@
   "recordedAt": "2026-10-16T22:41:12.667666+00:00",
   "localCommitsMade": true,
   "elapsedApproxMinutes": 55,
-  "elapsedBasis": "Approximate session elapsed time including instruction reading and compute queues"
+  "elapsedBasis": "Approximate session elapsed time including instruction reading and compute queues",
+  "supersededBy": "docs/design/species-construction/akinza/fur-14-fix-delivery.json",
+  "historicalCurrentImages": "These are step14 images. Current-*.png now belongs to14-fix; preserved native copies are bound below."
 }

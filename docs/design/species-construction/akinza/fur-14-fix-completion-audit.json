@@ -1,0 +1,402 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-step14-fix",
+  "outcome": "Carry out all corrections in 14-fix.md, including visible fur coverage and tuft quality, artifact repairs and held-data preservation.",
+  "authorizedScope": "At most three new design builds; keep cups, 13i ear backs and 13h eyeliner. Commit only, no push.",
+  "workRecord": "docs/design/species-construction/akinza/fur-14-fix-active-work.md",
+  "evidence": {
+    "brief": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/brief.md",
+      "sha256": "566a2690539dea85521aa224e22fa8f94de5af623d86a54ca380da9d1f9c1606",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/14-fix.md"
+    },
+    "beforeClose": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/beforeClose.png",
+      "sha256": "d41239e7ee970663efc64c2fb6ced6c0536769e978547856896c5705cc12447f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-ear-root-close.png"
+    },
+    "beforeFront": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/beforeFront.png",
+      "sha256": "00620af2b60bb61f0ca25e2ba0e3f05fb1b41ff4c7e74cababa576aeb84c92c5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-ears-front.png"
+    },
+    "candidate1Close": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/candidate1Close.png",
+      "sha256": "6051aee8e6d4c94bb60be4c0ae6d318f8d82d8eb08d995dbf5ffcd66e6433741",
+      "sourcePath": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix1-rejected-14-fix/after/ear-root-close.png"
+    },
+    "finalFront": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/finalFront.png",
+      "sha256": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ears-front.png"
+    },
+    "finalClose": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/finalClose.png",
+      "sha256": "ea5f69227a4f98db416ff4eefadfa6b2a59ba8fee93b8e6711177141d1f65054",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ear-root-close.png"
+    },
+    "scope": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/scope.json",
+      "sha256": "7fa9551392a7e72c9c81c09182c34ad08df38baa2bec8c44b3fdd12b668afabf",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/scope-coverage.json"
+    },
+    "held": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/held.json",
+      "sha256": "402ae8c6ce9eaf08676f56bfe5e602498fd9c71d0622353801b961ef814969d1",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/held-data.json"
+    },
+    "radiusOnly": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/radiusOnly.json",
+      "sha256": "3d9483d5ee174f98e680c403b98b94f6c9e8b86b17fd9e5f6f20143b94725bbe",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/final-radius-only.json"
+    },
+    "undercoatAttachment": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/undercoatAttachment.json",
+      "sha256": "bc52a9cadd27521f4b8dd29d79d158c3c69d48e868654d10c3e095a61cbcbb39",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/undercoat-attachment.json"
+    },
+    "gate": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/gate.json",
+      "sha256": "f7e5b9da9dcb4938a685653c10ec4644285e4370eb23ed67f3afb2fc402f4baa",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/artifact-gate.json"
+    },
+    "finalSurface": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/finalSurface.blend",
+      "sha256": "6652a702fc1d77b3372d7031d894a2e669ed3be889ab1b1092ad3060f656b44e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/surface.blend"
+    },
+    "archive": {
+      "path": "docs/design/species-construction/akinza/fur-14-fix-archive.json",
+      "sha256": "f7299a1e006442c65606fec71e62d19b47d0b718b7103c05299bd9c0e993046e"
+    },
+    "metrics": {
+      "path": "docs/design/species-construction/akinza/fur-14-fix-metrics.json",
+      "sha256": "7d4d76a5785ccdbf79caf051b79037289b22ba0e75a7a9d409b13b8b707a80db"
+    },
+    "pairFront": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/pairFront.png",
+      "sha256": "ddd13e52280390c9246a925ada997c050aa14fa46864409738fc0b097577a630",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ears-front.png"
+    },
+    "pairClose": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/pairClose.png",
+      "sha256": "d3f8a5f9c259397019dddad34b6fe962f0934434f4f73d258c4f9c4734ecadd8",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ear-root-close.png"
+    },
+    "pairClay": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/pairClay.png",
+      "sha256": "4dd2b648bfc68ab1daa9cc370987e21856ce000b5106a5e75f78026769b46f22",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ear-base-clay.png"
+    },
+    "overlay": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/overlay.png",
+      "sha256": "db91bdc34ad562e5518689df9ebbb70dc43ff1429a0db508e041100f0d450b0c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-fix-artifact-overlay.png"
+    },
+    "current_ears-front": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/current_ears-front.png",
+      "sha256": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png"
+    },
+    "current_head-side": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/current_head-side.png",
+      "sha256": "26ef4d9cad1e075ab1b88e0bd03f9389f1f1743527f4acddfe1a0c2d076416e4",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png"
+    },
+    "current_head-backq": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/current_head-backq.png",
+      "sha256": "2f6ba84be668fca4006c4c7048f64143d3ef06fb6a409c5eae67e70bdff357fe",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png"
+    },
+    "current_body-backq": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/current_body-backq.png",
+      "sha256": "89bf3006d8da6764c1025b0580257ddf077ac0b7ddf40ed90297de6a19991f90",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png"
+    },
+    "current_body-front": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/current_body-front.png",
+      "sha256": "c37ca09c53e647727b3498082e2f1c6436aa1a266dc4a9346357ed884c38af6f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png"
+    },
+    "current_tails-side": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/current_tails-side.png",
+      "sha256": "9b07b7b260d43f278cf8000408a45727cc4e10608c4244d8d2206628bb08958e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+    },
+    "renderIndex": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/renderIndex.json",
+      "sha256": "8e213b4c8601db80cb656697bb690e379aa5653fd842ed9602b59ec68d5a0742",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/index.json"
+    },
+    "renderSource": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/renderSource.json",
+      "sha256": "e19c46e31590925938135795450fe6b7322d8c0207ed7766154100ec7dfb99a8",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/source.json"
+    },
+    "pairCheck": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/pairCheck.json",
+      "sha256": "c4f210e81974acc60fe6d9df0340e93e696d9e05b9c37ad2fa8da5dca7d0f941",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/pair-check.json"
+    },
+    "collisionEvidence": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/collisionEvidence.npz",
+      "sha256": "bdc3df03c94d6c388a53ff1f3c80c5934ce79a79bf271e681133cfc31b04d599",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/collision-evidence.npz"
+    },
+    "obstacleEvidence": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/obstacleEvidence.npz",
+      "sha256": "a20a447240d929305121b06ea62fb5c666e3eb730b1d741b41b8ca560b9ba22c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/obstacle-evidence.npz"
+    },
+    "flags": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/flags.npz",
+      "sha256": "2d8b49f5b2128797c6ab3ab852730fe57e42984a48390af4c8f13cf0f78fd07e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/sweep-flags.npz"
+    },
+    "rogueFlags": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/rogueFlags.npz",
+      "sha256": "256891f3a86d4337097e6474d3d1431225fb83259c1e95e208f980b8e51aeb79",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/rogue-flags.npz"
+    },
+    "savedExport": {
+      "path": ".codex/audit-state/fur-14-fix-evidence/savedExport.npz",
+      "sha256": "f94b7ced33256b696bfd96b683e33d7ac48db9bfde857fc5a3a2beb00fabfdc5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/evidence.npz"
+    },
+    "delivery": {
+      "path": "docs/design/species-construction/akinza/fur-14-fix-delivery.json",
+      "sha256": "f1cc499b50c602e88e25045c4c40c39cc2dff83bad445af3ed997ceb94ef1164"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-14-fix-independent-review.json",
+      "sha256": "3e79a5e91d45fd1a7fed6dc8cae3392c825b39e4f45a8edc365011e5523fe3ec"
+    }
+  },
+  "criteria": [
+    {
+      "id": "coverage",
+      "expectation": "Actual blue fibers cover the inner ear to crease and cup rim.",
+      "status": "pass",
+      "assessment": "Final native front/close show continuous actual blue fibers over former pale scalp. Texture integration remains separately unfinished.",
+      "evidence": [
+        "finalFront",
+        "finalClose",
+        "undercoatAttachment",
+        "scope"
+      ]
+    },
+    {
+      "id": "velvet",
+      "expectation": "Subtle cup-only gradient without a visible dark disk edge.",
+      "status": "pass",
+      "assessment": "Hard pigmented pupil disk removed. Cup shadow remains; C1 gradient weight <=0.25 has no support outside actual cup.",
+      "evidence": [
+        "finalFront",
+        "finalClose",
+        "scope"
+      ]
+    },
+    {
+      "id": "tuft",
+      "expectation": "White lower/front-rim band leans together up and outward, longest centrally with wispy tips at normal framing.",
+      "status": "blocked",
+      "assessment": "Final white hairs hug temple-side rim and merge into white temple at normal framing; requested clearly white up/out tuft remains unreadable. Three saved builds exhausted.",
+      "evidence": [
+        "brief",
+        "finalFront",
+        "finalClose"
+      ]
+    },
+    {
+      "id": "artifact",
+      "expectation": "Remove all 115 collision, 5 length and 6 rogue recorded flags; no new flags or regional rises in unchanged full tests.",
+      "status": "pass",
+      "assessment": "Fresh full saved skin/solid sweeps and unchanged numeric analyses: all recorded115collision,5length,6rogue flags gone; zero new IDs and regional rises in all six categories. Inherited338liner collisions held.",
+      "evidence": [
+        "gate"
+      ]
+    },
+    {
+      "id": "held",
+      "expectation": "Approved cups, 13i backs, 13h liner and unrelated geometry, fur and materials remain exact.",
+      "status": "pass",
+      "assessment": "Saved geometry/topology, archived13i protection union, liner and unrelated used-material/object data exact. Final3 differs from2 only in white radii.",
+      "evidence": [
+        "held",
+        "radiusOnly",
+        "scope"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Native step 14 before/after views, six current images, independent review, explicit local commit and verified archival; no push.",
+      "status": "pass",
+      "assessment": "All seven native views, three exact-pixel native pair sheets and six byte-exact current images inspected by primary and independent reviewer. Initial local implementation commit612b0acc preceded verified archival; final amendment records delivery. No push.",
+      "evidence": [
+        "delivery",
+        "review",
+        "archive",
+        "pairFront",
+        "pairClose",
+        "pairClay",
+        "pairCheck",
+        "renderIndex",
+        "renderSource",
+        "finalSurface"
+      ]
+    },
+    {
+      "id": "texture",
+      "expectation": "Local short blue coverage blends into surrounding approved coat without an obvious texture boundary.",
+      "status": "blocked",
+      "assessment": "Final close shows a smooth short blue bed with a visible boundary against coarse surrounding hairs.",
+      "evidence": [
+        "finalFront",
+        "finalClose"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F14FIX-1",
+      "criterion": "coverage",
+      "status": "resolved",
+      "observation": "Candidate1 restored fibers are too sparse; broad pale skin remains plainly visible in the native close.",
+      "nextAction": "Build the triangle-rooted dense blue undercoat, inspect native front/close, verify all new curves and held data.",
+      "evidence": [
+        "candidate1Close"
+      ],
+      "resolution": "Dense actual blue undercoat removes visible pale scalp.",
+      "resolutionEvidence": [
+        "finalFront",
+        "finalClose",
+        "held",
+        "scope",
+        "undercoatAttachment"
+      ]
+    },
+    {
+      "id": "F14FIX-2",
+      "criterion": "velvet",
+      "status": "resolved",
+      "observation": "Subtle cup-only gradient without a visible dark disk edge.",
+      "nextAction": "Inspect current saved evidence, implement required correction within the three-build cap, and verify the whole outcome.",
+      "evidence": [
+        "beforeClose",
+        "beforeFront"
+      ],
+      "resolution": "Soft cup-only gradient replaces hard pigmented disk.",
+      "resolutionEvidence": [
+        "finalFront",
+        "finalClose",
+        "held",
+        "scope",
+        "undercoatAttachment"
+      ]
+    },
+    {
+      "id": "F14FIX-3",
+      "criterion": "tuft",
+      "status": "blocked",
+      "observation": "Final white furnishing remains too faint and merged into temple fur at normal framing.",
+      "nextAction": "With additional build authorization, redesign visible lock silhouette and root/foreground placement rather than repeat a radius-only adjustment.",
+      "evidence": [
+        "brief",
+        "finalFront",
+        "finalClose"
+      ],
+      "blocker": {
+        "externalDependency": "The explicit maximum of three saved builds in14-fix.md is exhausted.",
+        "attempts": "Fix1 restored sparse blue hairs but left scalp and tile. Fix2 added continuous blue coat but white vanished. Fix3 changed only white radii; tuft remains unreadable.",
+        "unblocksWhen": "Nick authorizes further saved model builds."
+      }
+    },
+    {
+      "id": "F14FIX-4",
+      "criterion": "artifact",
+      "status": "resolved",
+      "observation": "Remove all 115 collision, 5 length and 6 rogue recorded flags; no new flags or regional rises in unchanged full tests.",
+      "nextAction": "Inspect current saved evidence, implement required correction within the three-build cap, and verify the whole outcome.",
+      "evidence": [
+        "beforeClose",
+        "beforeFront"
+      ],
+      "resolution": "All recorded flags are absent; no new flag IDs, added-hair flags or regional rises in complete saved tests.",
+      "resolutionEvidence": [
+        "gate"
+      ]
+    },
+    {
+      "id": "F14FIX-5",
+      "criterion": "held",
+      "status": "resolved",
+      "observation": "Approved cups, 13i backs, 13h liner and unrelated geometry, fur and materials remain exact.",
+      "nextAction": "Inspect current saved evidence, implement required correction within the three-build cap, and verify the whole outcome.",
+      "evidence": [
+        "beforeClose",
+        "beforeFront"
+      ],
+      "resolution": "Complete saved held-data and scope checks pass.",
+      "resolutionEvidence": [
+        "finalFront",
+        "finalClose",
+        "held",
+        "scope",
+        "undercoatAttachment"
+      ]
+    },
+    {
+      "id": "F14FIX-6",
+      "criterion": "delivery",
+      "status": "resolved",
+      "observation": "Native step 14 before/after views, six current images, independent review, explicit local commit and verified archival; no push.",
+      "nextAction": "Inspect current saved evidence, implement required correction within the three-build cap, and verify the whole outcome.",
+      "evidence": [
+        "beforeClose",
+        "beforeFront"
+      ],
+      "resolution": "Complete native evidence, exact copies, independent review and verified archival delivered. Implementation committed locally before archive; final amendment records current evidence. No push.",
+      "resolutionEvidence": [
+        "delivery",
+        "review",
+        "archive",
+        "pairCheck",
+        "renderIndex",
+        "pairFront",
+        "pairClose",
+        "pairClay"
+      ]
+    },
+    {
+      "id": "F14FIX-7",
+      "criterion": "texture",
+      "status": "blocked",
+      "observation": "Dense short blue bed has a visible texture boundary against longer surrounding blue fur.",
+      "nextAction": "With further build authorization, blend density, length and clumping across the local boundary without changing approved ear-back paths.",
+      "acceptanceCriterion": "Native normal front and close show a continuous coat transition with no obvious smooth patch edge.",
+      "evidence": [
+        "finalFront",
+        "finalClose",
+        "brief"
+      ],
+      "blocker": {
+        "externalDependency": "The explicit three-build cap is exhausted.",
+        "attempts": "Actual short blue undercoat resolves bare scalp in build2 and is exact in final3. Native and independent reviews expose the texture seam.",
+        "unblocksWhen": "Nick authorizes another model build."
+      }
+    }
+  ],
+  "audit": {
+    "reviewer": "Codex with scoped independent reviewer",
+    "comparison": "Primary and independent reviewers inspected all seven final native views and all three pairs against original14-fix target. Former pale scalp and hard pigment disk are repaired. Clearly white leaning furnishing and smooth blue-coat integration remain visibly inadequate and explicitly blocked.",
+    "regressions": "Full490906-curve fresh saved skin/solid sweeps and unchanged artifact analyses remove all115collision,5length,6rogue recorded IDs; zero new IDs, added-hair flags or regional rises. Exact held geometry/topology/materials,13i protection union,13h liner, bounded native attachments and68286barycentric roots verified. No additional visible whole-creature regression.",
+    "scopeCheck": "Exactly three saved fix builds, final3 retained; no fourth save, altered artifact thresholds, unrelated changes, data deletion, push or quality self-approval. Original visual outcome preserved as incomplete. All authorized non-model follow-through performed; final local amendment and audit seal record it.",
+    "sessionId": "akinza-fur-14-fix",
+    "requestId": "16aac1c9-3545-4720-878f-9857b2ab8032",
+    "performedAt": "2026-10-17T00:04:29.512053+00:00"
+  },
+  "stop": {
+    "kind": "blocked",
+    "reason": "14-fix.md explicitly caps this pass at three builds, now exhausted. Known faint temple-merged tuft and blue texture seam require another model save. All independent authorized checks, native views, comparisons, review, logs, local implementation commit and exact archival are complete; final amendment records them. No fourth build or quality approval is claimed."
+  }
+}

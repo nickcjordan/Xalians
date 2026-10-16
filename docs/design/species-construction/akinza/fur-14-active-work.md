@@ -1,5 +1,7 @@
 # Akinza step 14 work record
 
+Update October 16: the user authorized the scoped follow-up in briefs/14-fix.md, with at most three new builds. Active corrections and evidence now continue in [fur-14-fix-active-work.md](fur-14-fix-active-work.md). The exhausted four-build limit and incomplete findings below describe the original pass, not a blocker on the newly authorized fix pass.
+
 Outcome: a small mirrored ear-base concha, bright fine white hairs growing from it, and localized deeper blue velvet behind the hairs. Preserve 13h eyeliner, all other anatomy and fur.
 
 Authorization: brief 14 only; at most four total model builds; Part A and Parts B/C committed separately, no push. Source s12-13i on assembled-3300. Required views: native before/after ears-front, ear-root-close, shaved clay ear base, and six current images. Full body artifact sweep must not increase any regional count against 13i and no new cluster is allowed. Region match must show zero displacement outside localized ear-base falloff.

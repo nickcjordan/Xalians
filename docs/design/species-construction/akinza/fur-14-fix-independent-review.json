@@ -1,0 +1,188 @@
+{
+  "scope": "Step14fix only, at most3new builds. Independent scoped review; no user approval inferred.",
+  "candidate": "s12-14-fix3",
+  "codeReview": {
+    "rootAttachment": "Native global front-ray projection removed; bounded nearest roots and ear-only white-fiber BVH address previous gross sheet crossing. Saved checks still required.",
+    "guardConcern": "Prefix trimming resamples polyline and can create new chords through a concave sheet. Collision must be checked after trimming, not zeroed by assumption. Broad transition bounds should be checked against actual earw/normal scope."
+  },
+  "findings": [
+    {
+      "id": "F14FIX-V1",
+      "status": "resolved for candidate3; historical candidate1 failure retained",
+      "observation": "White tuft remains a broad pale patch at normal ears-front framing.",
+      "acceptance": "White rim-rooted hairs visibly lean up/out in a coherent furnishing, longest in band middle with wispy tips; no patch or block.",
+      "resolution": "Final3 no longer has broad white tile, but insufficient white furnishing is tracked separately as V3."
+    },
+    {
+      "id": "F14FIX-V2",
+      "status": "resolved for candidate3",
+      "observation": "Fix1 retains broad visible white scalp between sparse blue hairs.",
+      "acceptance": "Actual blue hairs cover whole inner ear down to crease and cup rim; no exposed white skin remains.",
+      "resolution": "Native3 close shows continuous dense blue hairs covering former white scalp. Adjacent texture discontinuity remains V4."
+    },
+    {
+      "id": "F14FIX-V3",
+      "status": "blocked by explicit three-build cap; unresolved",
+      "observation": "Candidate2 white tuft is effectively invisible at normal framing and nearly invisible at native close.",
+      "acceptance": "Clearly white rim-rooted furnishing visibly leans up/out at normal framing, with longest middle hairs and wispy tips.",
+      "blocker": "All three authorized model builds consumed. No fourth save authorized."
+    },
+    {
+      "id": "F14FIX-V4",
+      "status": "blocked by explicit three-build cap; unresolved",
+      "observation": "Final3 new blue bed has obvious smooth/short texture boundary against surrounding longer coarser approved inner-ear coat.",
+      "acceptance": "Restored blue coat blends visually into existing inner ear while retaining subtle cup-only gradient.",
+      "blocker": "All three authorized model builds consumed. No fourth save authorized."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix1-rejected-14-fix/after/ears-front.png",
+      "sha256": "dc2508b040e016df94dc5a5ce08488b33b8c439ed5be954e49e7ecbf341ede58"
+    },
+    {
+      "path": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix1-rejected-14-fix/after/ear-root-close.png",
+      "sha256": "6051aee8e6d4c94bb60be4c0ae6d318f8d82d8eb08d995dbf5ffcd66e6433741"
+    },
+    {
+      "path": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix2-rejected-14-fix/after/ears-front.png",
+      "sha256": "5d808e5583c3d4565af14c282e5e6bb7fffb64bdce7c09c601f25eb0ffc6b48d"
+    },
+    {
+      "path": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix2-rejected-14-fix/after/ear-root-close.png",
+      "sha256": "4817d1e5daadea9acd1d003e0e1e344b86b5187d1216dd6b1e4c8d2841f2de97"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ears-front.png",
+      "sha256": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ear-root-close.png",
+      "sha256": "ea5f69227a4f98db416ff4eefadfa6b2a59ba8fee93b8e6711177141d1f65054"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/artifact-gate.json",
+      "sha256": "f7e5b9da9dcb4938a685653c10ec4644285e4370eb23ed67f3afb2fc402f4baa"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/head-side.png",
+      "sha256": "26ef4d9cad1e075ab1b88e0bd03f9389f1f1743527f4acddfe1a0c2d076416e4"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/head-backq.png",
+      "sha256": "2f6ba84be668fca4006c4c7048f64143d3ef06fb6a409c5eae67e70bdff357fe"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/body-backq.png",
+      "sha256": "89bf3006d8da6764c1025b0580257ddf077ac0b7ddf40ed90297de6a19991f90"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/body-front.png",
+      "sha256": "c37ca09c53e647727b3498082e2f1c6436aa1a266dc4a9346357ed884c38af6f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/tails-side.png",
+      "sha256": "9b07b7b260d43f278cf8000408a45727cc4e10608c4244d8d2206628bb08958e"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ears-front.png",
+      "sha256": "ddd13e52280390c9246a925ada997c050aa14fa46864409738fc0b097577a630"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ear-root-close.png",
+      "sha256": "d3f8a5f9c259397019dddad34b6fe962f0934434f4f73d258c4f9c4734ecadd8"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ear-base-clay.png",
+      "sha256": "4dd2b648bfc68ab1daa9cc370987e21856ce000b5106a5e75f78026769b46f22"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png",
+      "sha256": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png",
+      "sha256": "26ef4d9cad1e075ab1b88e0bd03f9389f1f1743527f4acddfe1a0c2d076416e4"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png",
+      "sha256": "2f6ba84be668fca4006c4c7048f64143d3ef06fb6a409c5eae67e70bdff357fe"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png",
+      "sha256": "89bf3006d8da6764c1025b0580257ddf077ac0b7ddf40ed90297de6a19991f90"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png",
+      "sha256": "c37ca09c53e647727b3498082e2f1c6436aa1a266dc4a9346357ed884c38af6f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png",
+      "sha256": "9b07b7b260d43f278cf8000408a45727cc4e10608c4244d8d2206628bb08958e"
+    }
+  ],
+  "status": "Final evidence review complete; requested visual outcome incomplete, blocked by explicit three-build cap.",
+  "undercoatCodeReview": "Proposed build2 adds density-weighted short actual blue hairs, barycentric attachment on front-sheet triangles, new manifest system and all-strand new-ID tests. Checker reconstructs saved attachment and rejects back-facing roots. No concrete code error found. Coverage boundaries and continuous blue bed across white-root exclusion remain visual acceptance requirements.",
+  "candidate2": {
+    "candidate": "s12-14-fix2",
+    "nativeFrontAndCloseInspected": true,
+    "differencesFirst": "Clearly white furnishing is effectively absent at normal ears-front framing and nearly invisible at native close. Tiny pale rim and faint individual strands do not form a leaning tuft. Former exposed scalp is now covered by continuous blue hairs in inspected view. Cup has ordinary shadow without earlier hard pigmented pupil blob.",
+    "status": "incomplete; build3 should restore visible white furnishing opacity while preserving narrow rim band, blue bed and varied longest-center tips. Saved fresh gates still pending."
+  },
+  "candidate3": {
+    "candidate": "s12-14-fix3",
+    "nativeFrontAndCloseInspected": true,
+    "status": "Final result inspected; quality incomplete and blocked by explicit three-build cap.",
+    "differencesFirst": "White furnishing more visible than2, but mostly a pale curved lock along temple-side cup rim. At normal framing it remains faint and merges into white temple rather than forming clearly white up/out furnishing with wispy longest-center silhouette. Close confirms continuous actual blue hairs over former white scalp, ordinary cup shadow, and an obvious texture edge between dense smooth new blue bed and surrounding longer coarser approved coat.",
+    "additionalViewsInspected": [
+      "head-side",
+      "head-backq",
+      "body-backq",
+      "body-front",
+      "tails-side"
+    ],
+    "headSideComparison": "Versus archived step14 head-side, no unrelated visible facial, neck or eyeliner changes; restored blue ear-base field and smaller white lock visible."
+  },
+  "sideCreaseExceptionReview": {
+    "curve": 49219,
+    "evidence": "Source/final saved arrays independently compared. Root exact at(.16925235,-.04237526,.6582209); length55.084to16.998mm; old tip extends into ear base; final is source prefix.",
+    "assessment": "No concrete out-of-scope regression established by earw.924 alone. Anatomical side-crease exception is defensible with independent exact root/color/prefix and13i-back checks. Must report one exception explicitly rather than claim all transitions meet earw>.95."
+  },
+  "candidateHistory": [
+    "s12-14-fix1: broad white scalp and opaque furnishing",
+    "s12-14-fix2: blue coverage repaired, white furnishing effectively absent",
+    "s12-14-fix3: final permitted saved result; faint curved lock and blue texture boundary remain"
+  ],
+  "historicalCandidate1": {
+    "savedArrays": {
+      "changedNative": 4279,
+      "restoredBlue": 3094,
+      "colorCorrected": 7495,
+      "scope": 8625,
+      "rootUVMin": [
+        0.03152956,
+        0.00151452
+      ],
+      "rootUVMax": [
+        0.04520931,
+        0.03649991
+      ],
+      "allWhiteEndpointsUpAndOut": true,
+      "maximumVelvetWeight": 0.25
+    },
+    "visual": {
+      "nativeFrontInspected": true,
+      "nativeCloseInspected": true,
+      "differences": "Dark pupil-like blob is gone and blue surrounding coverage improves. White tuft still reads as broad pale tile/patch at each base, with blunt lower edge and little clear one-direction lean or wispy fan silhouette at normal framing. Viewer-left resembles slanted white rectangle; viewer-right softer but still patch. Close is needed to separate dense hairs from any remaining exposed skin.",
+      "closeFinding": "Severe broad white scalp remains visible between sparse blue hairs. Restoring3094short legacy paths does not provide continuous blue coat. White furnishing remains dense near root."
+    }
+  },
+  "savedGateReview": "Final artifact-gate JSON independently read: all six categories report zero new flags, zero added-curve flags, no recorded flags remaining, and no regional count increases. Numerical gate success does not resolve visual V3/V4.",
+  "finalReview": {
+    "inspection": "All seven final native views, five additional regression views against archived step14 equivalents, all three before-left/after-right pair sheets opened. Six current PNGs independently byte-equal to final native renders; pair right halves independently RGB-equal to native originals.",
+    "regression": "No unrelated visible face, neck, body, limb, tail, pattern or ear-back regression found. Clay pair correctly shows unchanged cup anatomy.",
+    "improvements": "Continuous actual blue coat covers former scalp. Hard pupil-like pigment patch removed. Recorded115collision,5length,6rogue flags eliminated with no new IDs, added-curve flags or regional increases across six categories.",
+    "remaining": "White furnishing stays faint at normal framing and reads as curved temple-side cup-rim lock instead of clearly leaning up/out furnishing with readable wispy longest-center silhouette. New dense short blue bed has obvious texture boundary against surrounding longer coarser approved coat.",
+    "stop": "Incomplete; further model correction requires authorization beyond explicit three-build cap. No ready/completed-quality claim or user approval."
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "status": "Visual outcome incomplete; blocked by explicit three-build cap. All authorized non-model verification, review, evidence and archival completed.",
+  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/surface.blend",
+  "surfaceSha256": "6652a702fc1d77b3372d7031d894a2e669ed3be889ab1b1092ad3060f656b44e",
+  "buildsUsed": 3,
+  "buildLimit": 3,
+  "images": {
+    "14-fix-ears-front.png": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ears-front.png",
+    "14-fix-ear-root-close.png": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ear-root-close.png",
+    "14-fix-ear-base-clay.png": "untracked/species-construction/akinza/surface/fur-steps/14-fix-ear-base-clay.png",
+    "14-fix-artifact-overlay.png": "untracked/species-construction/akinza/surface/fur-steps/14-fix-artifact-overlay.png",
+    "current-ears-front.png": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png",
+    "current-head-side.png": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png",
+    "current-head-backq.png": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png",
+    "current-body-backq.png": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png",
+    "current-body-front.png": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png",
+    "current-tails-side.png": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+  },
+  "imageHashes": {
+    "14-fix-ears-front.png": "ddd13e52280390c9246a925ada997c050aa14fa46864409738fc0b097577a630",
+    "14-fix-ear-root-close.png": "d3f8a5f9c259397019dddad34b6fe962f0934434f4f73d258c4f9c4734ecadd8",
+    "14-fix-ear-base-clay.png": "4dd2b648bfc68ab1daa9cc370987e21856ce000b5106a5e75f78026769b46f22",
+    "14-fix-artifact-overlay.png": "db91bdc34ad562e5518689df9ebbb70dc43ff1429a0db508e041100f0d450b0c",
+    "current-ears-front.png": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40",
+    "current-head-side.png": "26ef4d9cad1e075ab1b88e0bd03f9389f1f1743527f4acddfe1a0c2d076416e4",
+    "current-head-backq.png": "2f6ba84be668fca4006c4c7048f64143d3ef06fb6a409c5eae67e70bdff357fe",
+    "current-body-backq.png": "89bf3006d8da6764c1025b0580257ddf077ac0b7ddf40ed90297de6a19991f90",
+    "current-body-front.png": "c37ca09c53e647727b3498082e2f1c6436aa1a266dc4a9346357ed884c38af6f",
+    "current-tails-side.png": "9b07b7b260d43f278cf8000408a45727cc4e10608c4244d8d2206628bb08958e"
+  },
+  "nativeViews": {
+    "ears-front": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ears-front.png",
+      "sha256": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40"
+    },
+    "ear-root-close": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ear-root-close.png",
+      "sha256": "ea5f69227a4f98db416ff4eefadfa6b2a59ba8fee93b8e6711177141d1f65054"
+    },
+    "head-side": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/head-side.png",
+      "sha256": "26ef4d9cad1e075ab1b88e0bd03f9389f1f1743527f4acddfe1a0c2d076416e4"
+    },
+    "head-backq": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/head-backq.png",
+      "sha256": "2f6ba84be668fca4006c4c7048f64143d3ef06fb6a409c5eae67e70bdff357fe"
+    },
+    "body-backq": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/body-backq.png",
+      "sha256": "89bf3006d8da6764c1025b0580257ddf077ac0b7ddf40ed90297de6a19991f90"
+    },
+    "body-front": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/body-front.png",
+      "sha256": "c37ca09c53e647727b3498082e2f1c6436aa1a266dc4a9346357ed884c38af6f"
+    },
+    "tails-side": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/tails-side.png",
+      "sha256": "9b07b7b260d43f278cf8000408a45727cc4e10608c4244d8d2206628bb08958e"
+    }
+  },
+  "nativeComparison": {
+    "nativePixels": true,
+    "beforeLeft": true,
+    "beforeSurfaceSha256": "d38fe78b1a3fca12b852d0e692258c2208c95fcf88517fe75de189a58a59ffe0",
+    "currentViews": 6,
+    "currentPixelsExact": true,
+    "clayReusedBecauseAllGeometryExact": true
+  },
+  "renderBinding": {
+    "surfaceSha256": "6652a702fc1d77b3372d7031d894a2e669ed3be889ab1b1092ad3060f656b44e",
+    "viewSourceSha256": "abca177fa4e6b02f82c2e103c3d6c7a11b968452fcb54287504ae4d779ee9210"
+  },
+  "whatChanged": "Restored suppressed native blue fibers, added dense triangle-rooted blue undercoat, replaced hard cup pigment with a subtle cup-only gradient, and combed white fibers from a lower/front-rim band. Cleared all recorded step14 artifact flags.",
+  "stillOff": [
+    "White fibers hug temple-side rim and merge into white temple fur at normal framing instead of a clear white up/out tuft.",
+    "Short dense blue bed has an obvious texture boundary against longer surrounding blue hairs."
+  ],
+  "blockedBy": "14-fix.md explicitly allows at most three builds. Three saved builds used; no fourth authorized.",
+  "checks": {
+    "recordedCollisionFlagsCleared": 115,
+    "recordedLengthFlagsCleared": 5,
+    "recordedRogueFlagsCleared": 6,
+    "newFlagIds": 0,
+    "regionalIncreases": 0,
+    "freshSkinCollisions": 0,
+    "inheritedLinerCollisionsHeld": 338,
+    "cupsGeometryExact": true,
+    "earBack13iProtectedExact": true,
+    "eyeliner13hExact": true,
+    "nativePairsUnretouched": true,
+    "sixCurrentCopiesByteExact": true,
+    "primaryInspectedAllNativeViewsAndPairs": true,
+    "independentReview": "docs/design/species-construction/akinza/fur-14-fix-independent-review.json",
+    "independentReviewCompleted": true
+  },
+  "geometry": {
+    "changedThisFix": 0,
+    "heldCupCommit": "ec627223",
+    "originalCupMovedVertices": 702,
+    "originalCupMaxDisplacementMm": 7.966,
+    "originalCupOutsideRegionDisplacement": 0
+  },
+  "artifactGate": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/artifact-gate.json",
+  "scope": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/scope-coverage.json",
+  "archiveManifest": "docs/design/species-construction/akinza/fur-14-fix-archive.json",
+  "commitMessage": "Akinza fur step 14 fix: restore blue coverage and clear recorded artifacts",
+  "noPush": true,
+  "elapsedApproxMinutes": 83
+}
