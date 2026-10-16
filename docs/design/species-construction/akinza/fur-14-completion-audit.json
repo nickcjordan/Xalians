@@ -4,56 +4,308 @@
   "outcome": "Step 14 visible small ear openings, white airy furnishings from each cup and localized blue velvet, with all other regions and approved eyeliner held.",
   "authorizedScope": "Brief 14, at most four total builds, two separate commits, no push.",
   "workRecord": "docs/design/species-construction/akinza/fur-14-active-work.md",
-  "evidence": {},
+  "evidence": {
+    "brief": {
+      "path": ".codex/audit-state/fur-14-evidence/brief.md",
+      "sha256": "a63e84ca83ae3af974e66f5867567e6e56339ade5b4725be41b10df93880b8d0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/14.md"
+    },
+    "anatomy": {
+      "path": ".codex/audit-state/fur-14-evidence/anatomy.blend",
+      "sha256": "b20c3724b4856ca64923d2ee27e2f61f6739d9b8ec18a064fbe3915ab7231153",
+      "sourcePath": "untracked/species-construction/akinza/assembled-3301/akinza.blend"
+    },
+    "regionMatch": {
+      "path": "docs/design/species-construction/akinza/concha-14-region-match.json",
+      "sha256": "9803677ebce8f4d578472e89d31a026a8ff4d7286365dd214a3187cab197b3bd"
+    },
+    "clay": {
+      "path": ".codex/audit-state/fur-14-evidence/clay.png",
+      "sha256": "26ca795370d6e173bbe54e0cc1b72a7d6523925eb03a77d848c0d3f0a55c48a0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-ear-base-clay.png"
+    },
+    "selectedModel": {
+      "path": ".codex/audit-state/fur-14-evidence/selectedModel.blend",
+      "sha256": "d38fe78b1a3fca12b852d0e692258c2208c95fcf88517fe75de189a58a59ffe0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/surface.blend"
+    },
+    "rejectedModel": {
+      "path": ".codex/audit-state/fur-14-evidence/rejectedModel.blend",
+      "sha256": "782650fcbe063ed058c39f5b31350ee130fb597e57e1f2e9cde80463a2fd8560",
+      "sourcePath": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s14c-rejected-14/surface.blend"
+    },
+    "held": {
+      "path": ".codex/audit-state/fur-14-evidence/held.json",
+      "sha256": "9dce8a5c2113ecd32391a9806502a25117d534a41e6ba9a5accaa5eafeae95ca",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/held-data.json"
+    },
+    "gate": {
+      "path": ".codex/audit-state/fur-14-evidence/gate.json",
+      "sha256": "49cff3ff752e4848cdb8f210e9e329f8fb3a9c0044d1af380f787e6b3c2b2f92",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/artifact-gate.json"
+    },
+    "collisions": {
+      "path": ".codex/audit-state/fur-14-evidence/collisions.npz",
+      "sha256": "407554d4aa342123b7105d40b50b67d0e7ba9760e710d55a051bd363f07e2c53",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/r/collision-evidence.npz"
+    },
+    "obstacles": {
+      "path": ".codex/audit-state/fur-14-evidence/obstacles.npz",
+      "sha256": "02f8df5254228e3c42ab42205919feef3dee6f49d5accb827a5c169be3af1c96",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/r/obstacle-evidence.npz"
+    },
+    "flags": {
+      "path": ".codex/audit-state/fur-14-evidence/flags.npz",
+      "sha256": "03575152c1e9d0447415f18c0b9f40b1ca99721852d794ed06c8a05966dc0d3b",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/r/sweep-flags.npz"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-14-independent-review.json",
+      "sha256": "914d06c7dd124a32df7255f62560312402785b8da7ae7e09898dad93bfb9f847"
+    },
+    "initialFront": {
+      "path": ".codex/audit-state/fur-14-evidence/initialFront.png",
+      "sha256": "c422a275caeee73238c58472410176ea70fdb03574fd0479f1b441831fc00095",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/diagnostics/revision1-ears-front.png"
+    },
+    "initialClose": {
+      "path": ".codex/audit-state/fur-14-evidence/initialClose.png",
+      "sha256": "c091039373204a420f068a17ff53f043f9ac9c819989e9f84b3d7b8103dc470f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/diagnostics/revision1-ear-root-close.png"
+    },
+    "selection": {
+      "path": ".codex/audit-state/fur-14-evidence/selection.json",
+      "sha256": "668376d7305979076f58a2252d77a52bb2385bdac0d5928c2b31ce6523c8c46c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-selected-surface.json"
+    },
+    "delivery": {
+      "path": "docs/design/species-construction/akinza/fur-14-delivery.json",
+      "sha256": "234776a954c09c10bc9496ecae1b19c6b0e37d87fafe17be2479eeb41081fae1"
+    },
+    "metrics": {
+      "path": "docs/design/species-construction/akinza/fur-14-metrics.json",
+      "sha256": "620a9a9627837a520a583ec04f70bf10ce4ca52212c69bea5415762bf559cbfd"
+    },
+    "renderProof": {
+      "path": ".codex/audit-state/fur-14-evidence/renderProof.json",
+      "sha256": "3550a7ca9bd3910d999a76df30adbb1710c1eb9b9b2239e04b0db8fa274b246c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/native-render-proof.json"
+    },
+    "pairProof": {
+      "path": ".codex/audit-state/fur-14-evidence/pairProof.json",
+      "sha256": "c78f362cb466544e4ad21c5884deefa7ce59ab603c39404d440572c4505d83af",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/pair-check.json"
+    },
+    "pairFront": {
+      "path": ".codex/audit-state/fur-14-evidence/pairFront.png",
+      "sha256": "00620af2b60bb61f0ca25e2ba0e3f05fb1b41ff4c7e74cababa576aeb84c92c5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-ears-front.png"
+    },
+    "pairRoot": {
+      "path": ".codex/audit-state/fur-14-evidence/pairRoot.png",
+      "sha256": "d41239e7ee970663efc64c2fb6ced6c0536769e978547856896c5705cc12447f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-ear-root-close.png"
+    },
+    "overlay": {
+      "path": ".codex/audit-state/fur-14-evidence/overlay.png",
+      "sha256": "e125971fbf1d81e838ea1a00b416b5ea7d125423bde87a4682edd083e766269e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-artifact-overlay.png"
+    },
+    "current-ears-front": {
+      "path": ".codex/audit-state/fur-14-evidence/current-ears-front.png",
+      "sha256": "b780fd53d810459ee9152f4cdcbb27798a37e8675fcfd31e517f5072d94e8d37",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png"
+    },
+    "current-head-side": {
+      "path": ".codex/audit-state/fur-14-evidence/current-head-side.png",
+      "sha256": "8b70ff62cd0528f3d72bc57fd5fc5b438b17e40c60d3b5c1526ad99e9d15eda9",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png"
+    },
+    "current-head-backq": {
+      "path": ".codex/audit-state/fur-14-evidence/current-head-backq.png",
+      "sha256": "c9230349af0ea84b11f7c4dd7599ee45cc4313158d150b0ddb4d12ea30c18b6d",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png"
+    },
+    "current-body-backq": {
+      "path": ".codex/audit-state/fur-14-evidence/current-body-backq.png",
+      "sha256": "605a7e7383e0671b09e1c033556cb91705655bd06510c0d7ca04c78d02d0c355",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png"
+    },
+    "current-body-front": {
+      "path": ".codex/audit-state/fur-14-evidence/current-body-front.png",
+      "sha256": "3b058d137680b98e5eefa200f4bd88e23cb65922e56b228c63ba097b0c2498f3",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png"
+    },
+    "current-tails-side": {
+      "path": ".codex/audit-state/fur-14-evidence/current-tails-side.png",
+      "sha256": "66ceaf7c359d0cd6f881090a61aa7cb8aff8b498e92a0299e93057f76ea371d7",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+    },
+    "archive": {
+      "path": "docs/design/species-construction/akinza/fur-14-archive.json",
+      "sha256": "048a27f5dbc149acdf41c954e6a04f85ea7c45bf272c4d34b797dccb4ec77ebb"
+    },
+    "sourceInfo": {
+      "path": ".codex/audit-state/fur-14-evidence/sourceInfo.json",
+      "sha256": "2ea557e561923a03e8ca075daad8611183fe827d76527cf36e72de55e3b9135e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14/surface-info.json"
+    },
+    "pathsScript": {
+      "path": "art/species-construction/surface/concha_14_paths.py",
+      "sha256": "161a950d77fb3de53ce99f6116f711013e0bdb9e34d34f3ae5c78099dd6f7dda"
+    }
+  },
   "criteria": [
     {
       "id": "anatomy",
       "expectation": "Small mirrored ear-base cups with zero outside-region displacement and a visible soft ridge in shaved clay",
-      "status": "pending",
-      "assessment": "Verification in progress",
-      "evidence": []
+      "status": "pass",
+      "assessment": "Direct native clay and independent review show cup, soft lip and shadow.702 vertices move; outside falloff exactly zero. Slight lip scalloping remains at extreme close, nonblocking for Part A.",
+      "evidence": [
+        "anatomy",
+        "regionMatch",
+        "clay",
+        "review"
+      ]
     },
     {
       "id": "coat",
       "expectation": "Bright fine wispy white hairs rooted in the cups over localized deeper short blue velvet",
-      "status": "pending",
-      "assessment": "Verification in progress",
-      "evidence": []
+      "status": "blocked",
+      "assessment": "Selected third build, now s12-14, still has broad bare pale backing and dense comb-like hairs. Four total builds used; no fifth save authorized.",
+      "evidence": [
+        "selectedModel",
+        "initialFront",
+        "initialClose",
+        "review",
+        "brief",
+        "selection"
+      ]
     },
     {
       "id": "regression",
       "expectation": "Held geometry and eyeliner/unrelated fur exact; full saved body sweep has no new flag or regional rise",
-      "status": "pending",
-      "assessment": "Verification in progress",
-      "evidence": []
+      "status": "blocked",
+      "assessment": "Held unrelated data and original shader graphs exact. Full saved gate fails:115new collisions,5length and6rogue flags. No new regional-length,transfer or lift flags. New flags only head/ears.",
+      "evidence": [
+        "held",
+        "gate",
+        "collisions",
+        "obstacles",
+        "flags",
+        "review",
+        "brief"
+      ]
     },
     {
       "id": "delivery",
       "expectation": "All three native before-left pairs and six current images inspected, independent review, separate commits, no push and scoped archive",
-      "status": "pending",
-      "assessment": "Verification in progress",
-      "evidence": []
+      "status": "pass",
+      "assessment": "All three native pairs and six exact current copies inspected by builder and independent reviewer. Separate local commits made, no push; source13i and rejected14c archived after B/C commit with hashes, file counts and bytes unchanged. All permitted evidence work finished.",
+      "evidence": [
+        "pairFront",
+        "pairRoot",
+        "clay",
+        "pairProof",
+        "renderProof",
+        "review",
+        "delivery",
+        "archive",
+        "sourceInfo"
+      ]
     }
   ],
   "findings": [
     {
       "id": "F001",
       "criterion": "coat",
-      "status": "open",
+      "status": "resolved",
       "observation": "Coat native renders and full saved verification pending.",
-      "nextAction": "Inspect renders and gates; use the final permitted build for concrete repairs if needed."
+      "nextAction": "Finish all final native views and retained-candidate review; do not erase the separately recorded outcome failures.",
+      "resolution": "All final native images and saved gates were actually inspected. Verification is complete but outcome failures remain explicitly blocked as F002 and F003.",
+      "resolutionEvidence": [
+        "pairFront",
+        "pairRoot",
+        "renderProof",
+        "review",
+        "gate",
+        "delivery"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "coat",
+      "status": "blocked",
+      "observation": "Selected s14b white furnishings still read as a broad pasted pale patch and parallel comb, with inadequate backing contrast and no convincing airy locks.",
+      "nextAction": "After new build authorization, cover the exposed backing locally and use cup/ridge arc guides with variable free arched paths, then inspect matched native views before saving additional variants.",
+      "acceptanceCriterion": "Visible bright wispy hair locks grow from the opening over lower inner ear, without a solid patch, curtain or hem.",
+      "evidence": [
+        "selectedModel",
+        "initialFront",
+        "initialClose",
+        "review",
+        "brief"
+      ],
+      "blocker": {
+        "externalDependency": "Nick explicit four-build total allowance is exhausted.",
+        "attempts": "Two anatomy builds, including identical output-transfer retry after builder manifest error, then two coat builds. Fourth coat has a severe attachment regression, so selected third build is retained.",
+        "unblocksWhen": "Nick authorizes another model build beyond the explicit cap."
+      }
+    },
+    {
+      "id": "F003",
+      "criterion": "regression",
+      "status": "blocked",
+      "observation": "Selected full saved artifact gate adds115collision IDs,5neighbor-length and6rogue flags versus13i.58new sampled penetrations exceed0.6mm. Other spatial regions and flag categories do not rise.",
+      "nextAction": "After further build authorization, preserve local sheet attachment and correct actual intersections with per-strand segment guards before saving; rerun unchanged full saved sweep and held-data check.",
+      "acceptanceCriterion": "Zero new artifact IDs or regional rises under unchanged tests.",
+      "evidence": [
+        "selectedModel",
+        "held",
+        "gate",
+        "collisions",
+        "obstacles",
+        "flags",
+        "review",
+        "brief"
+      ],
+      "blocker": {
+        "externalDependency": "Additional model-save authorization is unavailable under the explicit four-build cap.",
+        "attempts": "Third-build saved gate failed; final authorized correction produced a gross cross-sheet projection regression and was rejected. All four total builds consumed.",
+        "unblocksWhen": "Nick authorizes additional builds."
+      }
+    },
+    {
+      "id": "F004",
+      "criterion": "regression",
+      "status": "resolved",
+      "observation": "Fourth build s14c projects333native roots over10mm, max82.216mm, across ear/head sheets.",
+      "nextAction": "Retain third build s14b instead, preserve rejected data for diagnosis and verify held roots.",
+      "acceptanceCriterion": "Delivery does not use the cross-sheet projected fourth build.",
+      "evidence": [
+        "rejectedModel",
+        "review"
+      ],
+      "resolution": "Selected existing s14b without another model build. Held roots are exact; edited-root max7.471mm. s14c is rejected and will be archived.",
+      "resolutionEvidence": [
+        "selectedModel",
+        "selection",
+        "held",
+        "review"
+      ]
     }
   ],
   "audit": {
     "reviewer": "Codex with independent step14 reviewer",
-    "comparison": "Part A direct native clay and independent compact-support review; coat pending",
-    "regressions": "Part A no external displacement; coat pending",
-    "scopeCheck": "Only brief 14; no scope reduction",
+    "comparison": "Builder and independent reviewer inspected all seven selected after views, both clay originals and all three native pairs. Individual fibers/cup shadow visibly improve versus old curtain, but airy tuft and backing target fail.",
+    "regressions": "Selected artifact gate fails with115new collision,5neighbor-length and6rogue IDs; no other region/category rises. No unrelated visual/data change. Rejected fourth build has actual root attachment regression and was not selected.",
+    "scopeCheck": "Original intended outcome retained. Four total builds used; selected third build unchanged, fourth rejected. Separate local geometry/fur commits, exact-source archive, no fifth save, threshold change, self-approval or push. No executable authorized model correction remains.",
     "sessionId": "akinza-fur-14",
     "requestId": "c9f40ae1-23a1-4165-9903-645d09cd48dd",
-    "performedAt": "Actual fresh audit time"
+    "performedAt": "2026-10-16T22:41:55.393011+00:00"
   },
   "stop": {
-    "kind": "continue"
+    "kind": "blocked",
+    "reason": "The explicit four-build cap prevents correcting the known airy-tuft/backing and artifact failures. All authorized non-model verification, review, commits, logs and archival are complete. Original step14 outcome is unfinished; no approval or quality pass is claimed."
   }
 }

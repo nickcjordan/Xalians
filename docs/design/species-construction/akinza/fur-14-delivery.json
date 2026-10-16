@@ -1,0 +1,96 @@
+{
+  "status": "incomplete; blocked by four-build cap",
+  "geometryCommit": "ec627223",
+  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-14/surface.blend",
+  "surfaceSha256": "d38fe78b1a3fca12b852d0e692258c2208c95fcf88517fe75de189a58a59ffe0",
+  "assembly": "untracked/species-construction/akinza/assembled-3301/akinza.blend",
+  "assemblySha256": "b20c3724b4856ca64923d2ee27e2f61f6739d9b8ec18a064fbe3915ab7231153",
+  "images": {
+    "14-ears-front.png": "untracked/species-construction/akinza/surface/fur-steps/14-ears-front.png",
+    "14-ear-root-close.png": "untracked/species-construction/akinza/surface/fur-steps/14-ear-root-close.png",
+    "14-ear-base-clay.png": "untracked/species-construction/akinza/surface/fur-steps/14-ear-base-clay.png",
+    "14-artifact-overlay.png": "untracked/species-construction/akinza/surface/fur-steps/14-artifact-overlay.png",
+    "current-ears-front.png": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png",
+    "current-head-side.png": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png",
+    "current-head-backq.png": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png",
+    "current-body-backq.png": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png",
+    "current-body-front.png": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png",
+    "current-tails-side.png": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+  },
+  "imageHashes": {
+    "14-ears-front.png": "00620af2b60bb61f0ca25e2ba0e3f05fb1b41ff4c7e74cababa576aeb84c92c5",
+    "14-ear-root-close.png": "d41239e7ee970663efc64c2fb6ced6c0536769e978547856896c5705cc12447f",
+    "14-ear-base-clay.png": "26ca795370d6e173bbe54e0cc1b72a7d6523925eb03a77d848c0d3f0a55c48a0",
+    "14-artifact-overlay.png": "e125971fbf1d81e838ea1a00b416b5ea7d125423bde87a4682edd083e766269e",
+    "current-ears-front.png": "b780fd53d810459ee9152f4cdcbb27798a37e8675fcfd31e517f5072d94e8d37",
+    "current-head-side.png": "8b70ff62cd0528f3d72bc57fd5fc5b438b17e40c60d3b5c1526ad99e9d15eda9",
+    "current-head-backq.png": "c9230349af0ea84b11f7c4dd7599ee45cc4313158d150b0ddb4d12ea30c18b6d",
+    "current-body-backq.png": "605a7e7383e0671b09e1c033556cb91705655bd06510c0d7ca04c78d02d0c355",
+    "current-body-front.png": "3b058d137680b98e5eefa200f4bd88e23cb65922e56b228c63ba097b0c2498f3",
+    "current-tails-side.png": "66ceaf7c359d0cd6f881090a61aa7cb8aff8b498e92a0299e93057f76ea371d7"
+  },
+  "whatChanged": "Added mirrored small ear-base cups, dedicated white hair fibers and localized deeper blue velvet; retained third build after rejecting the fourth-build attachment regression.",
+  "stillOff": [
+    "Broad pale bare backing, dense comb-like tuft and straight stalks rather than airy soft locks",
+    "Artifact gate adds 115 collision flags, five neighbor-length flags and six rogue hairs; no new regional-length, transfer or lift flags",
+    "Slight upper cup-lip scalloping at extreme clay close"
+  ],
+  "blockedBy": "Four total builds exhausted. One allowance was an identical geometry retry after builder output-manifest error. No fifth build authorized.",
+  "regionMatch": {
+    "movedVertices": 702,
+    "left": 351,
+    "right": 351,
+    "maxMoveMillimeters": 7.966043427586555,
+    "outsideFalloffMillimeters": 0,
+    "topologyUnchanged": true,
+    "closedComponents": 1,
+    "nonManifoldEdges": 0
+  },
+  "verification": {
+    "heldData": true,
+    "approved13hEyelinerExact": true,
+    "fullBodyArtifactGate": false,
+    "newFlags": {
+      "collision": 115,
+      "neighborLength": 5,
+      "rogue": 6,
+      "regionalLength": 0,
+      "partTransfer": 0,
+      "lift": 0
+    },
+    "newFlaggedCurves": 123,
+    "independentNativeReview": true,
+    "threePairsBeforeLeft": true,
+    "sixCurrentRGBExact": true
+  },
+  "buildsUsed": 4,
+  "selectedBuild": "third, originally s14b, renamed s12-14 without model change",
+  "rejectedBuild": "fourth s14c:333 native roots shifted over 10 mm, max82.216 mm",
+  "archive": {
+    "verified": true,
+    "receipt": "docs/design/species-construction/akinza/fur-14-archive.json",
+    "folders": [
+      {
+        "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s12-13i",
+        "archive": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13i-superseded-14",
+        "modelSha256": "2bbf9d1afcefc59c9ccef034fbbd394b3a426c1ccd9105fd4307eae673991681",
+        "fileCount": 141,
+        "bytes": 2779671408,
+        "unchanged": true
+      },
+      {
+        "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s14c",
+        "archive": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s14c-rejected-14",
+        "modelSha256": "782650fcbe063ed058c39f5b31350ee130fb597e57e1f2e9cde80463a2fd8560",
+        "fileCount": 24,
+        "bytes": 495109950,
+        "unchanged": true
+      }
+    ]
+  },
+  "push": false,
+  "recordedAt": "2026-10-16T22:41:12.667666+00:00",
+  "localCommitsMade": true,
+  "elapsedApproxMinutes": 55,
+  "elapsedBasis": "Approximate session elapsed time including instruction reading and compute queues"
+}

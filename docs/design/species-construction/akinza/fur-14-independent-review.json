@@ -1,0 +1,192 @@
+{
+  "reviewer": "Independent scoped review agent",
+  "scope": "Step 14 only. Read-only implementation review and reviewer evidence record. No user approval implied.",
+  "partA": {
+    "numerical": "NPZ independently recomputed: 702 moved/support vertices, 351 each ear; zero displacement outside ellipse and mask; Y-only displacements -0.00174693 to 0.00796604. v4 preserves entire v3 step prefix exactly.",
+    "visual": "Both native 1024 clay images inspected. Visible shallow oval cup, soft lip and interior shadow replace flat sheet. Slight scalloping at upper interior at extreme close. No blocking local visual finding. Tight crop leaves placement and relative width for wider ears-front check.",
+    "findings": []
+  },
+  "partBC": {
+    "status": "open visual finding",
+    "findings": [
+      {
+        "id": "B14-1",
+        "status": "open",
+        "evidence": "untracked/species-construction/akinza/surface/fur-steps/s12-14/after/ears-front.png",
+        "observation": "Native ears-front shows dense broad white patch with blunt outer perimeter and gray swirling center around each cup. It does not read as long fine hairs rising into airy soft locks with wispy tips.",
+        "correction": "Use remaining permitted build for airy hairs and distinguishable soft fan/locks. Inspect close framing first to identify cause.",
+        "acceptance": "At native front framing, white tuft visibly rises out of cup with hair texture and irregular wispy separated tips, no solid block or straight hem."
+      }
+    ],
+    "closeDiagnosis": "Broad smooth white patch is exposed pale skin outside the blue velvet footprint after earlier native hairs were suppressed; fine new hairs form near-parallel comb-like stalks in front. Enlarge feathered local blue skin backing within lower inner ear and redistribute roots along cup/ridge with arched trajectories. Close clips the outer tuft; front must assess silhouette."
+  },
+  "evidence": [
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s14a/before/ear-base-clay.png",
+      "sha256": "f5d0093586130703961503dc76575ec824e218ab8cef316817f460e8fde64827"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s14a/after/ear-base-clay.png",
+      "sha256": "a1af52cba033daa35910b44a5c882beb89ff4bb2d912d40f66cbc2d1aa5fafd0"
+    },
+    {
+      "path": "untracked/species-construction/akinza/assembled-3301/concha-region-match.npz",
+      "sha256": "d054ed95d114cbc742bc7543fc7cb4862e2d7704f972a9c6c8d30ca7598cd1a1"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/diagnostics/revision1-ears-front.png",
+      "sha256": "c422a275caeee73238c58472410176ea70fdb03574fd0479f1b441831fc00095"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/diagnostics/revision1-ear-root-close.png",
+      "sha256": "c091039373204a420f068a17ff53f043f9ac9c819989e9f84b3d7b8103dc470f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/diagnostics/rejected-revision2-patch-evidence.npz",
+      "sha256": "d301c705ae89607d7fd7aa9e84144f8e1a2117cc3eded8136531806f011601db"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/diagnostics/rejected-revision2-collision-evidence.npz",
+      "sha256": "dbbc1d5d2ebedcee7ef2d00f6a4826cfb7f3ae7ec7a4d0361fd8f197182f3648"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/diagnostics/rejected-revision2-sweep-flags.npz",
+      "sha256": "f4b00558a6a1ef2ca52a13f41f1c88cff44592d63bf80894667b799d72a6cb4c"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/diagnostics/rejected-revision2-rogue-flags.npz",
+      "sha256": "acd6a4a9bf3e29393a104ea8364e87d2f53423a873dba5d94c3137236d345d9f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/patch-evidence.npz",
+      "sha256": "e74dd87c329528f424dd6eeca9a11f0cff168288d812151935580e74e4d09ad9"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/r/collision-evidence.npz",
+      "sha256": "407554d4aa342123b7105d40b50b67d0e7ba9760e710d55a051bd363f07e2c53"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/held-data.json",
+      "sha256": "9dce8a5c2113ecd32391a9806502a25117d534a41e6ba9a5accaa5eafeae95ca"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/after/ears-front.png",
+      "sha256": "7288ce30cfda36a0bced3009d86672264a0c3e3633f2acd16dac55887e07af64"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/after/ear-root-close.png",
+      "sha256": "211d3fad164086b29b0318ca60ef18f4684077ef79580077813f7f0b63e929a8"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/after/head-side.png",
+      "sha256": "5edf5043a9e998d24311b32663113fff30b3be1ff1a924030f5ee8439c794379"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/after/head-backq.png",
+      "sha256": "8b1e520dc6715f02a32e94eda5ccff62d9221ae20234df91af5172d353348e44"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/after/body-backq.png",
+      "sha256": "7dbc472c1a2e912e9f6ee155d1bf4d2060b40fe6a46bc948dfea54d51c36518e"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/after/body-front.png",
+      "sha256": "86bcf1911d2075ca3e04f93176862eba27b81bb0bbb8f6750f4af606d9da95c3"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/after/tails-side.png",
+      "sha256": "b38ee458afe90b30fa1c9793c26c8af669f9c15c611cfc142960e78c2b955782"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/14-ears-front.png",
+      "sha256": "00620af2b60bb61f0ca25e2ba0e3f05fb1b41ff4c7e74cababa576aeb84c92c5"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/14-ear-root-close.png",
+      "sha256": "d41239e7ee970663efc64c2fb6ced6c0536769e978547856896c5705cc12447f"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/14-ear-base-clay.png",
+      "sha256": "26ca795370d6e173bbe54e0cc1b72a7d6523925eb03a77d848c0d3f0a55c48a0"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/before/ear-root-close.png",
+      "sha256": "09e04f13c4bf988c0145d7bd3b32f759f9be81df372230abb66af24fecded277"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/before/ears-front.png",
+      "sha256": "e30803b7240eae49ddf7f9eb4cb8d74801fb9bf8ac54294f4753f2e5265875b4"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14/surface.blend",
+      "sha256": "d38fe78b1a3fca12b852d0e692258c2208c95fcf88517fe75de189a58a59ffe0"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png",
+      "sha256": "b780fd53d810459ee9152f4cdcbb27798a37e8675fcfd31e517f5072d94e8d37"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png",
+      "sha256": "8b70ff62cd0528f3d72bc57fd5fc5b438b17e40c60d3b5c1526ad99e9d15eda9"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png",
+      "sha256": "c9230349af0ea84b11f7c4dd7599ee45cc4313158d150b0ddb4d12ea30c18b6d"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png",
+      "sha256": "605a7e7383e0671b09e1c033556cb91705655bd06510c0d7ca04c78d02d0c355"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png",
+      "sha256": "3b058d137680b98e5eefa200f4bd88e23cb65922e56b228c63ba097b0c2498f3"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png",
+      "sha256": "66ceaf7c359d0cd6f881090a61aa7cb8aff8b498e92a0299e93057f76ea371d7"
+    }
+  ],
+  "finalBuildDataReview": {
+    "candidate": "s14c",
+    "status": "rejected regression",
+    "findings": [
+      {
+        "id": "B14-2",
+        "status": "open",
+        "observation": "Front-ray clearance reprojects native roots onto frontmost head sheet across depth discontinuity. 333 native roots move over10mm,321 over30mm,max82.216mm. All333 lie outside concha ellipse. Native52757 first segment becomes about58mm; max native path length grows95.677mm. This is an actual attachment and scope regression, not a diagnostic bookkeeping issue.",
+        "cause": "clear_front applies frontmost Y ray to every edited root and point near overlapping head/ear sheets; expanded mask includes native folds beyond cup.",
+        "acceptance": "Preserve native attachment and held fur. No depth-sheet root relocation or new artifact clusters.",
+        "correction": "Reject s14c in favor of prior saved s14b for partial deliverable. Four-build limit prevents another model correction in this task."
+      }
+    ],
+    "gate": "Ears collisions113 to150; new IDs188(185native,3dedicated). Fifteen held native paths show0.6-1.027mm sampled penetration. All25new regionalLength and7new transfer flags have roots moved over10mm;93of102new rogue IDs likewise. Unchanged neighbors can gain some statistical flags, but dominant defect is substantive."
+  },
+  "candidateComparison": {
+    "selectedPartialCandidate": "s14b",
+    "reason": "No gross root relocation:1100native edits,median0.400mm,max7.471mm,zero shifts over10mm,held roots exact. Visually partial and fails artifact gate; no reason to retain s14c as deliverable.",
+    "remaining": "s14b broad pale backing and comb-like tuft remain visibly wrong.115new skin collision IDs(99native,16dedicated),58over0.6mm,max1.100mm. No user approval or whole-step completion inferred."
+  },
+  "finalSelectedVisualReview": {
+    "status": "Final review finished. All seven native selected after views, baseline comparisons, three requested assembled pairs, and six decoded-identical current views inspected.",
+    "candidate": "s12-14 (same saved model formerly s14b)",
+    "views": [
+      "ears-front",
+      "ear-root-close",
+      "head-side",
+      "head-backq",
+      "body-backq",
+      "body-front",
+      "tails-side"
+    ],
+    "finding": "B14-1 remains open: large pale blank skin backing surrounds cup, with dense nearly parallel hair stalks; at normal body framing furnishings read as circular gray/white marks rather than bright wispy fans rising up/out. Cup visibly shadows and matches clay result.",
+    "regression": "Head-side, head-backq, body-backq, body-front and tails-side compared with13i current views. No visible unrelated fur/anatomy/pattern/eyeliner regression. Exact saved held-data check supports comparison.",
+    "result": "Partial candidate, not ready or completed step. All four model builds consumed; no further model save authorized.",
+    "pairs": "All three pairs show before left, selected after right, matching views without deceptive cropping. Clay clearly adds shallow cup; furred close shows more distinct fibers and cup shadow versus previous curtain, but pale blank backing and comb-like hairs remain."
+  },
+  "finalConclusion": {
+    "status": "incomplete, model correction blocked by explicit four-build cap",
+    "partA": "Visible cup and zero outside-falloff displacement supported. Slight scalloping at extreme close remains.",
+    "partBC": "B14-1 remains open. Selected s12-14 is preferable to rejected s14c but does not fulfill airy soft locks or bug gate. No unrelated visual regression found.",
+    "requiredNextAuthorization": "Further model save/build beyond brief limit is required to repair known visual and collision defects. No user approval or ready/completed-step claim."
+  }
+}

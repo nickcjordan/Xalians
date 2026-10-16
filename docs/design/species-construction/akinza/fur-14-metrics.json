@@ -1,0 +1,474 @@
+{
+  "status": "incomplete; blocked by four-build cap",
+  "selectedSurface": "untracked/species-construction/akinza/surface/fur-steps/s12-14/surface.blend",
+  "selectedBuild": "third build, originally s14b",
+  "selectedSha256": "d38fe78b1a3fca12b852d0e692258c2208c95fcf88517fe75de189a58a59ffe0",
+  "rejectedBuild": "fourth build s14c; cross-sheet root projection",
+  "buildsUsed": 4,
+  "anatomy": {
+    "vertices": 621482,
+    "supportVertices": 702,
+    "movedVertices": 702,
+    "outsideFalloffMax": 0.0,
+    "maxMove": 0.007966043427586555,
+    "leftMoved": 351,
+    "rightMoved": 351,
+    "skinAfter": {
+      "components": 1,
+      "nonManifoldEdges": 0,
+      "vertices": 621482
+    },
+    "topologyUnchanged": true,
+    "spec": {
+      "centerUV": [
+        0.057,
+        0.019
+      ],
+      "radiusUV": [
+        0.026,
+        0.021
+      ],
+      "depth": 0.008,
+      "ridge": 0.0025,
+      "frontTolerance": 0.003,
+      "note": "Step 14 approved small mirrored ear-base cups. Compact support; front surface only; unchanged topology and every position outside the ellipse. Shaved anatomy only."
+    },
+    "inputSha256": "1ddd2f35a3ce5cdc3fe95dca281ecbd99312c55b5bc0371a8fb4fe63d1269dfe",
+    "scriptSha256": "3c9aa028911364d2c01d7c1f69cb36acf65fe22fb17cf94b312f7958a5838dd1",
+    "specSha256": "d0338203c6e95cd47534150c2c88be3169d834c6f4ad1d808709cb132c82a9cf",
+    "approval": null
+  },
+  "tuft": {
+    "fibers": 2200,
+    "perEar": 1100,
+    "allRootsInsideCup": true,
+    "rootCupRadiusMax": 0.7607597996304029,
+    "lengthMillimeters": [
+      49.8931770324707,
+      70.8419418334961,
+      91.71395874023438
+    ],
+    "rootRadiiMicrons": [
+      105.68833923339844,
+      140.97582244873047,
+      175.51400756835938
+    ]
+  },
+  "artifactGate": {
+    "collision": {
+      "newFlags": 115,
+      "newIds": [
+        35689,
+        35690,
+        35691,
+        35694,
+        35696,
+        35702,
+        35703,
+        35711,
+        35712,
+        35713,
+        35714,
+        35720,
+        35721,
+        35722,
+        35723,
+        35724,
+        35728,
+        48791,
+        48792,
+        48795,
+        48984,
+        48987,
+        49154,
+        49162,
+        49163,
+        49164,
+        49167,
+        49170,
+        49172,
+        49173,
+        49174,
+        49175,
+        49176,
+        49177,
+        49178,
+        49183,
+        49185,
+        49186,
+        49190,
+        49193,
+        49197,
+        49200,
+        49203,
+        49207,
+        49209,
+        49211,
+        49221,
+        52459,
+        52674,
+        52681,
+        52682,
+        52683,
+        52684,
+        52686,
+        52689,
+        52690,
+        52966,
+        52968,
+        52969,
+        52970,
+        52972,
+        52973,
+        52974,
+        60589,
+        60590,
+        60592,
+        60595,
+        60596,
+        60597,
+        60598,
+        60599,
+        60600,
+        60601,
+        60603,
+        60608,
+        60610,
+        60611,
+        60622,
+        60636,
+        60646,
+        120205,
+        120207,
+        120213,
+        120220,
+        120300,
+        120303,
+        130941,
+        130943,
+        131306,
+        131363,
+        131545,
+        131549,
+        131553,
+        131555,
+        131559,
+        131567,
+        131572,
+        131575,
+        131608,
+        420446,
+        420458,
+        420473,
+        420721,
+        420812,
+        420860,
+        420905,
+        421178,
+        421289,
+        421469,
+        421478,
+        421894,
+        422164,
+        422455,
+        422503,
+        422527
+      ],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 225,
+          "after": 239
+        },
+        "ears": {
+          "before": 113,
+          "after": 214
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "neighborLength": {
+      "newFlags": 5,
+      "newIds": [
+        36146,
+        36287,
+        36289,
+        36350,
+        36360
+      ],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 9,
+          "after": 9
+        },
+        "ears": {
+          "before": 35,
+          "after": 40
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "regionalLength": {
+      "newFlags": 0,
+      "newIds": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1959,
+          "after": 1959
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "partTransfer": {
+      "newFlags": 0,
+      "newIds": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1590,
+          "after": 1590
+        },
+        "ears": {
+          "before": 20,
+          "after": 20
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "lift": {
+      "newFlags": 0,
+      "newIds": [],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 5,
+          "after": 5
+        },
+        "ears": {
+          "before": 83,
+          "after": 83
+        },
+        "arms": {
+          "before": 1,
+          "after": 1
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "rogue": {
+      "newFlags": 6,
+      "newIds": [
+        36289,
+        36341,
+        36350,
+        36360,
+        120156,
+        122603
+      ],
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 0,
+          "after": 0
+        },
+        "ears": {
+          "before": 0,
+          "after": 6
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    }
+  },
+  "heldData": {
+    "unrelatedMeshesAndFurExact": true,
+    "originalShaderGraphsExact": true,
+    "approved13hLinerExact": true
+  },
+  "stillOff": [
+    "Broad pale bare backing and dense comb-like furnishings, not airy locks",
+    "115 new collision flags, 5 new neighbor-length flags, 6 rogue hairs",
+    "Slight clay lip scalloping at extreme close"
+  ]
+}

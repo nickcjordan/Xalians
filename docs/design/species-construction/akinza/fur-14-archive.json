@@ -1,0 +1,24 @@
+{
+  "archivedAfterInitialBCCommit": "202c0359",
+  "operation": "Move-Item",
+  "verified": true,
+  "timestamp": "2026-10-16T22:37:53.9894546Z",
+  "folders": [
+    {
+      "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s12-13i",
+      "archive": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13i-superseded-14",
+      "modelSha256": "2bbf9d1afcefc59c9ccef034fbbd394b3a426c1ccd9105fd4307eae673991681",
+      "fileCount": 141,
+      "bytes": 2779671408,
+      "unchanged": true
+    },
+    {
+      "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s14c",
+      "archive": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s14c-rejected-14",
+      "modelSha256": "782650fcbe063ed058c39f5b31350ee130fb597e57e1f2e9cde80463a2fd8560",
+      "fileCount": 24,
+      "bytes": 495109950,
+      "unchanged": true
+    }
+  ]
+}

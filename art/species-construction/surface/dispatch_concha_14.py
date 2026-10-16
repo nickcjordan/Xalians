@@ -3,6 +3,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from concha_14_paths import baseline
 
 ROOT=Path(__file__).resolve().parents[3]
 WORK=ROOT/'untracked/species-construction/akinza/surface/fur-steps'
@@ -19,12 +20,16 @@ if label!='probe':
     inputs+=list((ROOT/'art/species-construction/surface').glob('*.json'))
     inputs+=list((ROOT/'art/species-construction/specs').glob('*.json'))
     inputs+=[ROOT/'untracked/species-construction/akinza/assembled-3300/assembly.json']
-    inputs+=[ROOT/'untracked/species-construction/akinza/surface/fur-steps/s12-13i'/n for n in ('surface.blend','surface-info.json')]
+    inputs+=[baseline(WORK)/n for n in ('surface.blend','surface-info.json')]
     inputs+=list((ROOT/'untracked/species-construction/akinza/assembled-3301').glob('*.*'))
-    if label=='checks':inputs += [WORK/'s14b'/n for n in ('surface.blend','surface-info.json','patch-evidence.npz')]
+    selected='s12-14' if (WORK/'s12-14').is_dir() else 's14b'
+    if label in ('checks','checks-final'):inputs += [WORK/('s14c' if label=='checks-final' else selected)/n for n in ('surface.blend','surface-info.json','patch-evidence.npz')]
 inputs=list(dict.fromkeys(p for p in inputs if p.is_file()))
-outputs=[WORK/'14-probe.json'] if label=='probe' else [WORK/'s14a'] if label=='clay' else [WORK/'s14b'] if label=='coat' else [WORK/'s14b/r',WORK/'s14b/held-data.json'] if label=='checks' else [ROOT/'untracked/species-construction/akinza/assembled-3301']
-job=dict(mappings=[dict(source=str(ROOT),target='akinza')], inputs=list(map(str,inputs)),
+outputs=[WORK/'14-probe.json'] if label=='probe' else [WORK/'s14a'] if label=='clay' else [WORK/'s12-14'] if label=='coat' else [WORK/'s14c'] if label=='coat-final' else [WORK/('s12-14' if (WORK/'s12-14').is_dir() else 's14b')/'r',WORK/('s12-14' if (WORK/'s12-14').is_dir() else 's14b')/'held-data.json'] if label=='checks' else [ROOT/'untracked/species-construction/akinza/assembled-3301']
+if label=='checks-final':outputs=[WORK/'s14c/r',WORK/'s14c/held-data.json']
+mappings=[dict(source=str(ROOT),target='akinza')]
+if label!='probe' and not baseline(WORK).is_relative_to(ROOT):mappings.append(dict(source=str(baseline(WORK)),target='baseline13i'))
+job=dict(mappings=mappings, inputs=list(map(str,inputs)),
     outputs=list(map(str,outputs)),
     args=['-b','--factory-startup','--python-exit-code','1','--python',str(script_path),'--',*args])
 manifest=WORK/('14-'+label+'-job.json')
