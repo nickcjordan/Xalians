@@ -1,0 +1,8 @@
+{
+  "number": 814,
+  "url": "https://github.com/nickcjordan/Xalians/pull/814",
+  "stateAtVerification": "OPEN",
+  "autoMergeMethod": "MERGE",
+  "autoMergeEnabledAt": "2026-10-16T13:43:18Z",
+  "verification": "gh pr merge 814 --auto --merge succeeded; GitHub autoMergeRequest confirmed. Required CI checks were running, not yet merged."
+}

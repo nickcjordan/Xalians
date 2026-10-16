@@ -31,7 +31,7 @@ Add the Intel Mac mini as a second, CPU-only Blender 5.2.2 machine, with explici
 
 ## Next unfinished action
 
-Commit the explicitly staged implementation and evidence, push, open the full-description PR and enable auto merge. Implementation, comparison and installed-runner validation are complete; publication remains in progress.
+None within the authorized brief. Implementation, real comparison, documentation, explicit-path commit, push, PR and merge auto-merge are complete. GitHub required CI checks are running; auto merge is enabled, and no merged state is claimed. Existing command-only slot callers still require the documented manifest adoption by the slot owner, as allowed by the brief.
 
 ## Capability repair and renewed verification
 
@@ -49,3 +49,10 @@ Commit the explicitly staged implementation and evidence, push, open the full-de
 - Final installed-image live checks succeeded: denoised Cycles cube, 5.045-second simulated CI pause/resume, intentional Blender failure with 5.085-second pause and retained diagnostics, and cleanup. A queued test waited behind the real fur lock, confirming serialization. All 19 WSL tests pass; all 12 supervisor tests pass on the mini.
 - Remote jobs directory is empty and no mini-blender containers remain after the checks. Removed only the task's debug image. The installed compute image remains. CI and WSL configuration and other worktrees were preserved.
 - Independent whole-outcome review confirmed the image comparison and reported no further substantive code defects. Operating guide, raw comparison/logs, input/image hashes, lifecycle evidence and scoped review are under `docs/design/mini-blender-evidence/`.
+
+## Publication
+
+- PR: https://github.com/nickcjordan/Xalians/pull/814
+- Implementation commit: `4f47a9be`. Pushed branch `mini-blender-compute`.
+- Ran `gh pr merge 814 --auto --merge`; GitHub confirms MERGE auto merge enabled. Required checks were in progress at verification.
+- No remaining implementation findings or blockers. The final audit and publication evidence are committed in the follow-up work-record commit.

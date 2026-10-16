@@ -108,6 +108,10 @@
     "cancellation": {
       "path": "docs/design/mini-blender-evidence/cancellation.json",
       "sha256": "cf034713a30a9df6acf05e5210459447153f6fb9f993d15dee06b7e8c91ddd8a"
+    },
+    "publication": {
+      "path": "docs/design/mini-blender-evidence/publication.json",
+      "sha256": "1cf4f7736ecf78d5147542dba120ad2ec201682d0d1523f68d51f0ac35bf1679"
     }
   },
   "criteria": [
@@ -169,10 +173,11 @@
     {
       "id": "publication",
       "expectation": "Document results, commit explicit paths, push, open PR and enable auto merge.",
-      "status": "pending",
-      "assessment": "All implementation and full-image validation complete. Operating guide and evidence prepared; next authorized action is commit, push, PR and auto merge.",
+      "status": "pass",
+      "assessment": "Implementation committed with explicit staged paths and pushed. PR814 opened with full description. gh pr merge814 --auto --merge succeeded and GitHub confirms MERGE auto merge enabled; CI still running, no merged claim.",
       "evidence": [
-        "guide"
+        "guide",
+        "publication"
       ]
     }
   ],
@@ -299,21 +304,25 @@
     {
       "id": "F011",
       "criterion": "publication",
-      "status": "open",
+      "status": "resolved",
       "observation": "Results are not published in a PR yet.",
-      "nextAction": "After final verification, commit explicit files, push branch, open full-description PR and enable auto merge."
+      "resolution": "Pushed isolated branch, created PR814 and enabled MERGE auto merge. Required checks are running, consistent with the requested auto-merge handoff.",
+      "resolutionEvidence": [
+        "publication",
+        "guide"
+      ]
     }
   ],
   "audit": {
     "reviewer": "Codex primary plus scoped independent adversarial reviewer",
-    "comparison": "Compared every brief requirement with installed compute, actual full fur outputs, identical Blender binary hashes, selective transfers, shared-slot route, CI/lifetime controls and operating guide. Implementation passes; publication remains executable.",
+    "comparison": "Every requested deliverable checked against the brief: exact official binary, bounded extra compute, CI yielding, selective PC/WSL transfers, usable manifest spillover, cleanup, real fur comparison, operating guide, pushed PR and auto merge. Independent reviewer verified identical decoded images and no substantive code defects.",
     "regressions": "19 WSL tests and 12 macOS supervisor tests pass; final installed image passed denoised cube, real pause/resume and intentional failure cleanup. Independent reviewer confirmed decoded image equality and no further substantive code defects.",
-    "scopeCheck": "Preserved original full outcome, CI VM, WSL memory, reference edits and other worktree source.",
+    "scopeCheck": "Preserved the complete authorized outcome without modifying CI/WSL configuration, reference source or other sessions worktrees. Shared slot owner adoption is documented as explicitly permitted. No purchases, passwords or new CI runner registration.",
     "sessionId": "mini-blender-compute-20261016",
     "requestId": "04fa4928-c33f-4f4f-abe5-51de6ea5ba1d",
-    "performedAt": "2026-10-16T13:42:13.376439+00:00"
+    "performedAt": "2026-10-16T13:43:58.398681+00:00"
   },
   "stop": {
-    "kind": "continue"
+    "kind": "complete"
   }
 }
