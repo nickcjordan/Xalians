@@ -1,0 +1,248 @@
+{
+  "status": "partial; not self-approved",
+  "independentReviewer": "audit_13g",
+  "tuft": "Normal front still reads as folded white lobes or curtains, with hard lower anchor corners. Close view has more fibers but a smooth bent-curtain mass and nearly straight lower ends remain. Triangles are obvious and roots opaque; soft fur-lock appearance is not achieved.",
+  "tip": "Outer apex is rounder and finely wispy, replacing the clipped edge. Broad uniformly combed area transitions abruptly into curly coat; inward upper-right upright brush remains. Native head-back comparison shows broad flat pale shaved caps on both distal ear backs with abrupt wavy-coat boundaries, a clear in-scope regression.",
+  "brightness": {
+    "left": {
+      "cheekLinearLuminance": 0.7894715353256788,
+      "tuftLinearLuminance": 0.7482269505400859,
+      "ratio": 0.9477567170695035,
+      "relativeDifference": 0.052243282930496515,
+      "cheekPixels": 149,
+      "tuftPixels": 1474,
+      "cheekCenter": [
+        432.35555555555555,
+        471.21953712820766
+      ],
+      "tuftHull": [
+        [
+          320.4395134066358,
+          345.0532851429529
+        ],
+        [
+          322.8620967158565,
+          341.90064078364395
+        ],
+        [
+          326.9679166063851,
+          340.0277743494503
+        ],
+        [
+          347.7048852237655,
+          330.9280003670302
+        ],
+        [
+          369.7019253954476,
+          337.0954600534877
+        ],
+        [
+          367.02530472366897,
+          341.6318415183328
+        ],
+        [
+          364.16788209514857,
+          346.0258327459269
+        ],
+        [
+          361.1331078800154,
+          350.2849885891764
+        ],
+        [
+          338.78365523726853,
+          379.4408037910915
+        ],
+        [
+          335.4328658492477,
+          383.5081598127299
+        ],
+        [
+          331.90473467038004,
+          387.44093323089197
+        ],
+        [
+          328.1957917390047,
+          391.2354656574792
+        ],
+        [
+          325.79887333622685,
+          387.4188361023539
+        ],
+        [
+          323.4019549334491,
+          383.5775403563012
+        ],
+        [
+          321.0050365306713,
+          379.7115784193211
+        ],
+        [
+          318.60811812789353,
+          375.8209502914138
+        ],
+        [
+          316.21119972511576,
+          371.9056559725791
+        ],
+        [
+          319.7001395519869,
+          349.4871409734482
+        ]
+      ],
+      "cheekMeanRGB": [
+        224.53691275167756,
+        230.2550335570468,
+        236.5906040268454
+      ],
+      "tuftMeanRGB": [
+        218.12822252374343,
+        224.9864314789691,
+        231.68249660787154
+      ]
+    },
+    "right": {
+      "cheekLinearLuminance": 0.5643927870971541,
+      "tuftLinearLuminance": 0.5883963802587746,
+      "ratio": 1.0425299431714539,
+      "relativeDifference": 0.042529943171453866,
+      "cheekPixels": 149,
+      "tuftPixels": 1474,
+      "cheekCenter": [
+        591.6444444444444,
+        471.21953712820766
+      ],
+      "tuftHull": [
+        [
+          654.2980746045524,
+          337.09562598004015
+        ],
+        [
+          676.2951147762345,
+          330.9280631284489
+        ],
+        [
+          697.0320833936149,
+          340.0276599739158
+        ],
+        [
+          701.1379032841435,
+          341.9005917355111
+        ],
+        [
+          703.5604865933642,
+          345.0532143891283
+        ],
+        [
+          704.2998604480131,
+          349.48704651583046
+        ],
+        [
+          707.7888002748842,
+          371.90573684310687
+        ],
+        [
+          705.3918818721065,
+          375.82102979481954
+        ],
+        [
+          702.9949634693287,
+          379.7116567659313
+        ],
+        [
+          700.5980450665509,
+          383.57761775644224
+        ],
+        [
+          698.2011266637732,
+          387.4189127663523
+        ],
+        [
+          695.8042082609953,
+          391.23554179566145
+        ],
+        [
+          692.0952653296199,
+          387.44085332786597
+        ],
+        [
+          688.5671341507523,
+          383.50810556953326
+        ],
+        [
+          685.2163447627315,
+          379.44072258404134
+        ],
+        [
+          662.8668921199846,
+          350.28498240557815
+        ],
+        [
+          659.8321179048514,
+          346.02596229651624
+        ],
+        [
+          656.974695276331,
+          341.63210746563806
+        ]
+      ],
+      "cheekMeanRGB": [
+        193.6577181208053,
+        198.26845637583872,
+        203.64429530201323
+      ],
+      "tuftMeanRGB": [
+        195.64111261872526,
+        201.59158751696074,
+        207.34667571234647
+      ]
+    }
+  },
+  "withinFivePercent": false,
+  "scope": "Fresh saved comparison holds all original meshes, material graphs, transforms and unrelated fur; exactly the named hidden guides and visible children were added. Saved dedicated arrays match evidence.",
+  "artifactGate": "Fresh complete skin and eye/nose/claw sweeps, original plus new children: zero new IDs or regional increases, zero rogue hairs and zero solid-object collisions.",
+  "currentViews": "All six current images were inspected at native size; retained face, body, paws and tails show no new visible regression. Ear furnishing and rim defects remain explicit.",
+  "visibleArtifact": "Head-side contains a new thin dark kinked wire-like strand over the upper-right tuft face/edge, approximately pixels (887,135) to (932,168). Absent from held-fur baseline; numerical rogue count zero misses it.",
+  "strandScale": {
+    "nativeCheek": {
+      "count": 2356,
+      "rootRadiusPercentiles": [
+        0.000699999975040555,
+        0.000699999975040555,
+        0.000699999975040555,
+        0.000699999975040555,
+        0.000699999975040555
+      ],
+      "medianNormalViewDiameterPixels": 1.0619258880615234
+    },
+    "dedicatedTuft": {
+      "count": 2200,
+      "rootRadiusPercentiles": [
+        0.00018106000788975507,
+        0.00021049778297310695,
+        0.0002385457046329975,
+        0.00026888991851592436,
+        0.0003009225765708834
+      ],
+      "medianNormalViewDiameterPixels": 0.36188265681266785
+    }
+  },
+  "cap": "Four saved builds used; no fifth build or art approval.",
+  "attempts": [
+    {
+      "number": 1,
+      "note": "4200 children per ear, faceted paper fan, too dark, artifact regressions."
+    },
+    {
+      "number": 2,
+      "note": "Thinner varied fibers pass both brightness samples but still form smooth flaps."
+    },
+    {
+      "number": 3,
+      "note": "Broad short/mid/long distribution and attached roots still form smooth panels; pre-save artifact guard passes."
+    },
+    {
+      "number": 4,
+      "note": "1100 thicker children per ear, 14 guides per ear, 3167 inherited furnishing strands suppressed, 13614 tip/rim strands graded and repaired. Final art remains partial."
+    }
+  ]
+}

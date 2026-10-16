@@ -54,8 +54,10 @@ def export(surface, out):
             if width == 3:
                 values = values.reshape(-1, 3)
             data['curve_'+name] = values[starts] if len(attr.data) == len(points) else values
+    from fur_systems import append_evidence
+    append_evidence(surface, data)
     np.savez_compressed(out/'evidence.npz', **data)
-    print('EXPORTED', out, len(starts), flush=True)
+    print('EXPORTED', out, len(data['starts']), flush=True)
 
 
 if __name__ == '__main__':

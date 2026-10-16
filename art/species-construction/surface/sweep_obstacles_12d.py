@@ -8,9 +8,10 @@ from mathutils.bvhtree import BVHTree
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from refine_ear_root_12b2 import values
 surface=Path(sys.argv[sys.argv.index('--')+1]);out=Path(sys.argv[sys.argv.index('--')+2]);out.mkdir(parents=True,exist_ok=True)
-bpy.ops.wm.open_mainfile(filepath=str(surface/'surface.blend'));fur=bpy.data.objects['Akinza fur'].evaluated_get(bpy.context.evaluated_depsgraph_get()).data
-p=values(fur,'position','vector',3);s=np.empty(len(fur.curves),np.int32);fur.curves.foreach_get('first_point_index',s);count=np.diff(np.r_[s,len(p)]);lo=np.minimum.reduceat(p,s,axis=0);hi=np.maximum.reduceat(p,s,axis=0)
-radius=values(fur,'radius');active=np.maximum.reduceat(radius,s)>0
+bpy.ops.wm.open_mainfile(filepath=str(surface/'surface.blend'))
+from fur_systems import paths
+p,s,radius=paths(surface);count=np.diff(np.r_[s,len(p)]);lo=np.minimum.reduceat(p,s,axis=0);hi=np.maximum.reduceat(p,s,axis=0)
+active=np.maximum.reduceat(radius,s)>0
 hits=np.zeros(len(s),np.int16);depth=np.zeros(len(s),np.float32);candidate=np.zeros(len(s),bool);names=[];per_mesh=[];closed_mesh=[];boundary_edges=[];nonmanifold_edges=[];inside_counts=[];unverified_counts=[]
 
 def inside(tri,pos):

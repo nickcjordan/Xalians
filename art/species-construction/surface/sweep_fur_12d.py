@@ -14,8 +14,8 @@ skin=max((o for o in bpy.data.objects if o.type=='MESH'),key=lambda o:len(o.data
 tree=KDTree(len(co))
 for i,v in enumerate(co):tree.insert(Vector(v),i)
 tree.balance();nearest=np.array([tree.find(Vector(v))[1] for v in d['roots']],np.int32)
-cu=bpy.data.objects['Akinza fur'].data
-rad=np.empty(len(cu.points),np.float32);cu.attributes['radius'].data.foreach_get('value',rad);active=np.maximum.reduceat(rad,starts)>0
+from fur_systems import paths
+_,_,rad=paths(p);active=np.maximum.reduceat(rad,starts)>0
 end=starts+counts-1;tip_nearest=np.empty(len(starts),np.int32)
 penetration=np.zeros(len(starts),np.float32);intersections=np.zeros(len(starts),np.int16);max_clearance=np.zeros(len(starts),np.float32)
 for i,s in enumerate(starts):

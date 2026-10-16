@@ -1,0 +1,367 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-13g",
+  "outcome": "Dedicated designed-guide bright white triangular ear tufts that read as soft hair at normal framing, root half opaque, rendered cheek luminance within 5 percent; natural fine ear point with smooth upper-rim length blend.",
+  "authorizedScope": "Step 13g only, baseline 13e, at most four builds. Hold geometry and unrelated fur. Three native comparison sheets, six current views, complete unchanged-threshold artifact sweeps including new systems, explicit-path commit and bounded post-commit archive, no push or art self-approval.",
+  "workRecord": "docs/design/species-construction/akinza/fur-13g-active-work.md",
+  "evidence": {
+    "model": {
+      "path": ".codex/audit-state/fur-13g-evidence/model.blend",
+      "sha256": "3bd04f7600efea6743600626ac6570dec1ccf391b5b27a5591648a8ebe2425da"
+    },
+    "beforeModel": {
+      "path": ".codex/audit-state/fur-13g-evidence/beforeModel.blend",
+      "sha256": "7a0b2fe68e9344a7bca8c5394d1068698da230e41e81f91c3ec64035bcaab390"
+    },
+    "brief": {
+      "path": ".codex/audit-state/fur-13g-evidence/brief.md",
+      "sha256": "fee7479ebf91479d818c7ff66a009f068da81841b1bc16e9d52ee12e8887431e"
+    },
+    "beforeSide": {
+      "path": ".codex/audit-state/fur-13g-evidence/beforeSide.png",
+      "sha256": "bad68a3e43e7b0e76ca43955c4ce6ff9456d9c29144a92803a2e3281c279bdfb"
+    },
+    "beforeHeadBack": {
+      "path": ".codex/audit-state/fur-13g-evidence/beforeHeadBack.png",
+      "sha256": "34f49612dc3c77efc9b69a73e5576d0d9a0cf0668f5dcccbd274ad6ff1be9eb6"
+    },
+    "beforeFront": {
+      "path": ".codex/audit-state/fur-13g-evidence/beforeFront.png",
+      "sha256": "3b62ff3c25d2455d62358cd221b38191751c8b2e3c0def5873d08ad695f183f7"
+    },
+    "beforeRoot": {
+      "path": ".codex/audit-state/fur-13g-evidence/beforeRoot.png",
+      "sha256": "9ede4361eb73e546ed10b8e3a993045ece2509c2e3d5370c67ecc0cff304143b"
+    },
+    "beforeTip": {
+      "path": ".codex/audit-state/fur-13g-evidence/beforeTip.png",
+      "sha256": "bdc4cd71352aa90ebc9e8d32f3339cd8e9db4e916d5d24584f7ed06e9d23f86f"
+    },
+    "firstFront": {
+      "path": ".codex/audit-state/fur-13g-evidence/firstFront.png",
+      "sha256": "8d7d5e559ef2f3f1bb06a29fb3d085ca22e4f6a2fd676525f064d5397f8b7735"
+    },
+    "firstGate": {
+      "path": ".codex/audit-state/fur-13g-evidence/firstGate.json",
+      "sha256": "c8745b201685f104409665662161fac43eb8e0fd7eb97eebad8db84580e88565"
+    },
+    "thirdRoot": {
+      "path": ".codex/audit-state/fur-13g-evidence/thirdRoot.png",
+      "sha256": "1caaf8e35175aa255c2d725569c5836a0155aed9cda27d00a308f27b06a8f910"
+    },
+    "finalFront": {
+      "path": ".codex/audit-state/fur-13g-evidence/finalFront.png",
+      "sha256": "e8f2f853c0f51956faf508fcff0d82027c8a30d9bd1d072b570bf2a44ba3efdc"
+    },
+    "finalRoot": {
+      "path": ".codex/audit-state/fur-13g-evidence/finalRoot.png",
+      "sha256": "6dbd67074fbee0e61e4daf9516e28d2f22ce76667fd5a0813ba68a26158118ca"
+    },
+    "finalTip": {
+      "path": ".codex/audit-state/fur-13g-evidence/finalTip.png",
+      "sha256": "184344bfe942aaffca0529405d5ea4079ac27fef14f81051c08bf94137bd2e83"
+    },
+    "luminance": {
+      "path": ".codex/audit-state/fur-13g-evidence/luminance.json",
+      "sha256": "f970129b858d4e79855dd6d984ea93e7ceb6e24989bfd85dd5e044c277a74c9c"
+    },
+    "luminanceOverlay": {
+      "path": ".codex/audit-state/fur-13g-evidence/luminanceOverlay.png",
+      "sha256": "957fc07dfe5aa559ebe3512b4821c8a74aed5eec33f267f57b6212bb36a1d9a4"
+    },
+    "held": {
+      "path": ".codex/audit-state/fur-13g-evidence/held.json",
+      "sha256": "ddd89cada959f41eb4026653b8b177849e99e73b1d978a0ee1b7bbda8ca864a6"
+    },
+    "flags": {
+      "path": ".codex/audit-state/fur-13g-evidence/flags.npz",
+      "sha256": "143586ec5ec84c0301aeaa0568d0669c11fcffb754becec698a0ccef99f7d0af"
+    },
+    "solids": {
+      "path": ".codex/audit-state/fur-13g-evidence/solids.npz",
+      "sha256": "62f5faccd1670cc7e481a33961865bb4e687055d08cc6312b6cc49cfd4e5cdb1"
+    },
+    "rogue": {
+      "path": ".codex/audit-state/fur-13g-evidence/rogue.npz",
+      "sha256": "8d29b80fb8c849ea0bba00fdc41e64a60449f7522349cd8579dc7bce096db6a4"
+    },
+    "pairCheck": {
+      "path": ".codex/audit-state/fur-13g-evidence/pairCheck.json",
+      "sha256": "deb5f9ba3c85b2f32d8084cf895bc0236383208e908be21003d8715c0830b588"
+    },
+    "guides": {
+      "path": ".codex/audit-state/fur-13g-evidence/guides.npz",
+      "sha256": "94e6750aeb25db99f73b03d78934eac24ad104630c10a7b7901fe6035412210d"
+    },
+    "pair-ears-front": {
+      "path": ".codex/audit-state/fur-13g-evidence/pair-ears-front.png",
+      "sha256": "c1f2a81f45cfb19cf0f74d72e6ec18e29837bbb4dbdb99ba4c963c3db5c1d0d8"
+    },
+    "pair-ear-root-close": {
+      "path": ".codex/audit-state/fur-13g-evidence/pair-ear-root-close.png",
+      "sha256": "845dbadab749c82e0e3dedc893d2470cc4760032d7c69654b10cfeec4955faaf"
+    },
+    "pair-ear-tip-close": {
+      "path": ".codex/audit-state/fur-13g-evidence/pair-ear-tip-close.png",
+      "sha256": "184b24d89a4c9abf4dc4d694039680089af58245b768cac33ed57b0797a076ff"
+    },
+    "current-ears-front": {
+      "path": ".codex/audit-state/fur-13g-evidence/current-ears-front.png",
+      "sha256": "7d10fd03ac05a4b4fa4b1f6316d9a5d67a7fef3117391eedd7a99be7931c3d3f"
+    },
+    "current-head-side": {
+      "path": ".codex/audit-state/fur-13g-evidence/current-head-side.png",
+      "sha256": "8e166a2606d67949bbb54d1198a4a2ceac6b616fd013ee6944230893f6575d6b"
+    },
+    "current-head-backq": {
+      "path": ".codex/audit-state/fur-13g-evidence/current-head-backq.png",
+      "sha256": "8e16ca7eabc59b6b414106dc0089eda78676d10168b05ced2f11929360ae6ad5"
+    },
+    "current-body-backq": {
+      "path": ".codex/audit-state/fur-13g-evidence/current-body-backq.png",
+      "sha256": "c849bfc046d129762c933f56d12c54718f73099e26d2791d35502f12dce52982"
+    },
+    "current-body-front": {
+      "path": ".codex/audit-state/fur-13g-evidence/current-body-front.png",
+      "sha256": "321e28f353b56fbaae8e2f1d6e7db8d258659d31b3eef7262b9e061fb97a0d9b"
+    },
+    "current-tails-side": {
+      "path": ".codex/audit-state/fur-13g-evidence/current-tails-side.png",
+      "sha256": "6e889d37c3794ac4d4e8bcb404d9ac69f57dc5bb0f948af7d4a7cbc3bb8ba7bf"
+    },
+    "builder": {
+      "path": "art/species-construction/surface/build_ear_guides_13g.py",
+      "sha256": "2801fe4170eeacfb4be0ac074e3d961ada266cc62957b13c763b014e0947445a"
+    },
+    "guard": {
+      "path": "art/species-construction/surface/guard_ear_guides_13g.py",
+      "sha256": "dd53f474547c4d739a6e6a32503f43a024c60772d6897d7c860364d8614a0706"
+    },
+    "metrics": {
+      "path": "docs/design/species-construction/akinza/fur-13g-metrics.json",
+      "sha256": "ac42040274e19af2fe63fc8ea71ab1a51fa90ca538076509b5cdd7c69a38b096"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-13g-review.json",
+      "sha256": "b3feb8cc7ba6811d0d5fa527b5e53a068df520eed21f0a0c10a79f4ed959700d"
+    },
+    "delivery": {
+      "path": "docs/design/species-construction/akinza/fur-13g-delivery.json",
+      "sha256": "073a742ec14a8b8965e827cef3615ad9b89f8eff3665f5dda30907288c982f96"
+    }
+  },
+  "criteria": [
+    {
+      "id": "tuft",
+      "expectation": "Obvious soft hair triangles from 14 guides per ear, dense root half, soft locks and fine outer tips, no double furnishing.",
+      "status": "blocked",
+      "assessment": "Normal front still reads as folded white lobes or curtains, with hard lower anchor corners. Close view has more fibers but a smooth bent-curtain mass and nearly straight lower ends remain. Triangles are obvious and roots opaque; soft fur-lock appearance is not achieved.",
+      "evidence": [
+        "finalFront",
+        "finalRoot",
+        "firstFront",
+        "thirdRoot",
+        "guides",
+        "model",
+        "review"
+      ]
+    },
+    {
+      "id": "brightness",
+      "expectation": "Rendered tuft root-half linear luminance matches the fixed corresponding cheek samples within 5 percent.",
+      "status": "blocked",
+      "assessment": "Fixed samples: left ratio 0.9477567171, 5.2243 percent low, fails 5 percent. Right ratio 1.0425299432, 4.2530 percent high, passes. Sampling placement independently confirmed. No rounding into a pass.",
+      "evidence": [
+        "luminance",
+        "luminanceOverlay",
+        "finalFront",
+        "review"
+      ]
+    },
+    {
+      "id": "tip",
+      "expectation": "Soft slightly wispy point with graded varied lengths and smooth upper-rim blend, no clipped line or brush.",
+      "status": "blocked",
+      "assessment": "Outer apex is rounder and finely wispy, replacing the clipped edge. Broad uniformly combed area transitions abruptly into curly coat; inward upper-right upright brush remains. Native head-back comparison shows broad flat pale shaved caps on both distal ear backs with abrupt wavy-coat boundaries, a clear in-scope regression.",
+      "evidence": [
+        "beforeTip",
+        "finalTip",
+        "beforeHeadBack",
+        "current-head-backq",
+        "review",
+        "model"
+      ]
+    },
+    {
+      "id": "scope",
+      "expectation": "All original meshes, materials, transforms and unrelated fur exactly held; new guide/child saved arrays verified.",
+      "status": "pass",
+      "assessment": "Fresh saved comparison holds all original meshes, material graphs, transforms and unrelated fur; exactly the named hidden guides and visible children were added. Saved dedicated arrays match evidence.",
+      "evidence": [
+        "held",
+        "model",
+        "guides"
+      ]
+    },
+    {
+      "id": "artifacts",
+      "expectation": "Complete saved original and new-system skin/solid/neighbor/rogue sweep, no new flag IDs, clusters or regional increases.",
+      "status": "pass",
+      "assessment": "Fresh complete skin and eye/nose/claw sweeps, original plus new children: zero new IDs or regional increases, zero rogue hairs and zero solid-object collisions.",
+      "evidence": [
+        "firstGate",
+        "metrics",
+        "flags",
+        "solids",
+        "rogue",
+        "model"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Three exact native before-left/after-right sheets, six current views, direct and independent review, logs, separate commit, archive, no push.",
+      "status": "pass",
+      "assessment": "Three native pixel-exact sheets and six current views directly inspected; independent review complete, logs and explicit-path step commit, bounded archive after initial commit, no push.",
+      "evidence": [
+        "pairCheck",
+        "delivery",
+        "review",
+        "pair-ears-front",
+        "pair-ear-root-close",
+        "pair-ear-tip-close",
+        "current-ears-front",
+        "current-head-side",
+        "current-head-backq",
+        "current-body-backq",
+        "current-body-front",
+        "current-tails-side"
+      ]
+    },
+    {
+      "id": "visibleArtifacts",
+      "expectation": "No new visually isolated angular wire-like hairs missed by the quantitative sweep.",
+      "status": "blocked",
+      "assessment": "Head-side contains a new thin dark kinked wire-like strand over the upper-right tuft face/edge, approximately pixels (887,135) to (932,168). Absent from held-fur baseline; numerical rogue count zero misses it.",
+      "evidence": [
+        "beforeSide",
+        "current-head-side",
+        "review",
+        "model"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "tuft",
+      "status": "blocked",
+      "observation": "First three normal views show smooth panels or flaps rather than soft hair; first also had hard faceting and root seam.",
+      "nextAction": "Only after additional modeling authorization, replace the remaining coherent curtain with visibly separated rounded fur locks and an irregular attached root edge, then repeat all requested views and gates.",
+      "acceptanceCriterion": "At normal framing, the white triangle reads as furry locks rather than a solid folded plate.",
+      "evidence": [
+        "finalFront",
+        "finalRoot",
+        "firstFront",
+        "thirdRoot",
+        "guides",
+        "model",
+        "review"
+      ],
+      "blocker": {
+        "externalDependency": "Step13g explicitly caps this work at four builds.",
+        "attempts": "Four saved builds were rendered and inspected. Final native images still show the documented failures. Remaining executable verification, delivery, local commit and archive are complete.",
+        "unblocksWhen": "Nick authorizes additional modeling work in a new instruction or changes the target."
+      }
+    },
+    {
+      "id": "F002",
+      "criterion": "brightness",
+      "status": "blocked",
+      "observation": "Third candidate left root half is 8.1 percent darker than cheek; second matched but was visually rejected.",
+      "nextAction": "Only after additional build authorization, calibrate the left tuft scattering to the fixed cheek sample and repeat both side measurements without shifting sample regions.",
+      "acceptanceCriterion": "Both corresponding sample means are within 5 percent.",
+      "evidence": [
+        "luminance",
+        "luminanceOverlay",
+        "finalFront",
+        "review"
+      ],
+      "blocker": {
+        "externalDependency": "Step13g explicitly caps this work at four builds.",
+        "attempts": "Four saved builds were rendered and inspected. Final native images still show the documented failures. Remaining executable verification, delivery, local commit and archive are complete.",
+        "unblocksWhen": "Nick authorizes additional modeling work in a new instruction or changes the target."
+      }
+    },
+    {
+      "id": "F003",
+      "criterion": "artifacts",
+      "status": "resolved",
+      "observation": "First candidate produced new original-ear artifact flags. Third pre-save guard passes, but fourth fresh saved sweeps remain pending.",
+      "nextAction": "Finish all final saved sweeps and compare every category and region, including new children.",
+      "acceptanceCriterion": "Zero new flags and no regional increase.",
+      "evidence": [
+        "firstGate"
+      ],
+      "resolution": "Fresh complete skin and eye/nose/claw sweeps, original plus new children: zero new IDs or regional increases, zero rogue hairs and zero solid-object collisions.",
+      "resolutionEvidence": [
+        "metrics",
+        "flags",
+        "solids",
+        "rogue",
+        "model"
+      ]
+    },
+    {
+      "id": "F004",
+      "criterion": "tip",
+      "status": "blocked",
+      "observation": "Third native tip has a softened outer apex but retains an inward upright brush and visible length/direction transition.",
+      "nextAction": "Only after additional modeling authorization, preserve native curl while blending the combed texture boundary and shorten the remaining upright upper brush with a continuous local falloff.",
+      "acceptanceCriterion": "No brush or hard step at the point or upper rim.",
+      "evidence": [
+        "beforeTip",
+        "finalTip",
+        "beforeHeadBack",
+        "current-head-backq",
+        "review",
+        "model"
+      ],
+      "blocker": {
+        "externalDependency": "Step13g explicitly caps this work at four builds.",
+        "attempts": "Four saved builds were rendered and inspected. Final native images still show the documented failures. Remaining executable verification, delivery, local commit and archive are complete.",
+        "unblocksWhen": "Nick authorizes additional modeling work in a new instruction or changes the target."
+      }
+    },
+    {
+      "id": "F005",
+      "criterion": "visibleArtifacts",
+      "status": "blocked",
+      "observation": "Head-side contains a new thin dark kinked wire-like strand over the upper-right tuft face/edge, approximately pixels (887,135) to (932,168). Absent from held-fur baseline; numerical rogue count zero misses it.",
+      "nextAction": "Only after additional build authorization, identify and regroom the visible kinked strand over the tuft, then repeat native side inspection and full numeric gates.",
+      "acceptanceCriterion": "No new wire-like strand over the tuft in native side view.",
+      "evidence": [
+        "beforeSide",
+        "current-head-side",
+        "review",
+        "model"
+      ],
+      "blocker": {
+        "externalDependency": "Step13g explicitly caps this work at four builds.",
+        "attempts": "Four saved builds were rendered and inspected. Final native images still show the documented failures. Remaining executable verification, delivery, local commit and archive are complete.",
+        "unblocksWhen": "Nick authorizes additional modeling work in a new instruction or changes the target."
+      }
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent audit_13g",
+    "comparison": "The final visible outcome remains incomplete. Obvious white triangles and a softer apex do not satisfy soft fur locks, full upper-rim blending or both 5 percent samples.",
+    "regressions": "Fresh saved comparison holds all original meshes, material graphs, transforms and unrelated fur; exactly the named hidden guides and visible children were added. Saved dedicated arrays match evidence. Fresh complete skin and eye/nose/claw sweeps, original plus new children: zero new IDs or regional increases, zero rogue hairs and zero solid-object collisions.",
+    "scopeCheck": "Exactly four saved builds. All authorized verification, six current views, native pairs, direct/independent review, logs, explicit-path commit and bounded archive complete. No executable authorized action remains under this brief; no fifth build, push or self-approval.",
+    "sessionId": "akinza-fur-13g",
+    "requestId": "c3cd217e-3ebd-4de0-b69a-580b46d9f33f",
+    "performedAt": "2026-10-16T19:13:42.275880+00:00"
+  },
+  "stop": {
+    "kind": "blocked"
+  }
+}

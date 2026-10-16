@@ -1,0 +1,48 @@
+{
+  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-13g/surface.blend",
+  "surfaceSha256": "3bd04f7600efea6743600626ac6570dec1ccf391b5b27a5591648a8ebe2425da",
+  "baselineSha256": "7a0b2fe68e9344a7bca8c5394d1068698da230e41e81f91c3ec64035bcaab390",
+  "pairedViews": [
+    "13g-ears-front.png",
+    "13g-ear-root-close.png",
+    "13g-ear-tip-close.png"
+  ],
+  "currentViews": [
+    "current-ears-front.png",
+    "current-head-side.png",
+    "current-head-backq.png",
+    "current-body-backq.png",
+    "current-body-front.png",
+    "current-tails-side.png"
+  ],
+  "builds": 4,
+  "noPush": true,
+  "status": "partial; appearance not approved",
+  "archival": {
+    "status": "verified bounded move; no deletion",
+    "triggerCommit": "96ead58d9e692ee312ae7b9c066ed03383d66d49",
+    "finalSurfaceSha256": "3bd04f7600efea6743600626ac6570dec1ccf391b5b27a5591648a8ebe2425da",
+    "moves": [
+      {
+        "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s12-13e",
+        "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13e-superseded-13g",
+        "surfaceSha256": "7a0b2fe68e9344a7bca8c5394d1068698da230e41e81f91c3ec64035bcaab390"
+      },
+      {
+        "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s13g",
+        "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s13g-rejected-try1",
+        "surfaceSha256": "ce9034e48987ff4d6e8e375c0ae4868783e02961757aaded6772081218ce75d8"
+      },
+      {
+        "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s13g-rejected-try2",
+        "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s13g-rejected-try2",
+        "surfaceSha256": "d489eec8eb29e98553c6364921be917a37cd5fbd4fa1e84db6d8c000bb2199cc"
+      },
+      {
+        "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s13g-try3",
+        "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s13g-rejected-try3",
+        "surfaceSha256": "ae30a9639a2c3706e29bed9dd61a77e3e7e3623d79a13dec45a37fe57a16a9b6"
+      }
+    ]
+  }
+}
