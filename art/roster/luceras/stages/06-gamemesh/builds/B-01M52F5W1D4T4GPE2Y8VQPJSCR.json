@@ -1,0 +1,19 @@
+{
+  "id": "B-01M52F5W1D4T4GPE2Y8VQPJSCR",
+  "alias": "csbd",
+  "stage": "06-gamemesh",
+  "kind": "build",
+  "goal": "Stage 6 pass 6: fix the thigh slit and the neck mark (non-manifold edge) on the decimated mesh B-sgkc; nothing else; Codex",
+  "scope": "two local faults",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T13:42:14Z",
+  "briefSha256": "379399119699f301ebc2617be540f883be904de8944a49fc7db3f136c8088fa0"
+}
